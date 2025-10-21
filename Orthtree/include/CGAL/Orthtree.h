@@ -1276,15 +1276,6 @@ private: // functions :
     return recursive_descendant(child(node, i), remaining_indices...);
   }
 
-  bool do_intersect(Node_index n, const Sphere& sphere) const {
-
-    // Create a bounding box from the node
-    Bbox node_box = bbox(n);
-
-    // Check for intersection between the node and the sphere
-    return CGAL::do_intersect(node_box, sphere);
-  }
-
   template <typename Query, typename Node_output_iterator>
   Node_output_iterator intersected_nodes_recursive(const Query& query, Node_index node,
                                                    Node_output_iterator output) const {
@@ -1357,10 +1348,11 @@ private: // functions :
 
       struct Node_index_with_distance {
         Node_index index;
-        FT distance;
+        FT distance_center;
+        FT distance_box;
 
-        Node_index_with_distance(const Node_index& index, FT distance) :
-          index(index), distance(distance) {}
+        Node_index_with_distance(const Node_index& index, FT distance_center, FT distance_box) :
+          index(index), distance_center(distance_center), distance_box(distance_box) {}
       };
 
       // Recursive case: the node has children
@@ -1369,36 +1361,46 @@ private: // functions :
       std::vector<Node_index_with_distance> children_with_distances;
       children_with_distances.reserve(Self::degree);
 
+      Bbox_dimensions node_size = m_side_per_depth[depth(node) + 1];
+
+      for (FT &d : node_size)
+        d /= 2.0;
+
       // Fill the list with child nodes
       for (int i = 0; i < Self::degree; ++i) {
         auto child_node = child(node, i);
 
-        FT squared_distance = 0;
+        FT squared_distance_to_center = 0;
+        FT squared_distance_to_box = 0;
         Point c = m_traits.construct_center_d_object()(search_bounds);
         Point b = barycenter(child_node);
+        std::size_t idx = 0;
         for (const auto r : cartesian_range(c, b)) {
           FT d = (get<0>(r) - get<1>(r));
-          squared_distance += d * d;
+          squared_distance_to_center += d * d;
+          if (CGAL::abs(d) > node_size[idx])
+            squared_distance_to_box += CGAL::square(CGAL::abs(d) - node_size[idx]);
+          idx++;
         }
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(
           child_node,
-          squared_distance
+          squared_distance_to_center,
+          squared_distance_to_box
         );
       }
 
       // Sort the children by their distance from the search point
       std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto& left, auto& right) {
-        return left.distance < right.distance;
+        return left.distance_center < right.distance_center;
         });
 
       // Loop over the children
       for (auto child_with_distance : children_with_distances) {
 
         // Check whether the bounding box of the child intersects with the search bounds
-        if (CGAL::do_intersect(bbox(child_with_distance.index), search_bounds)) {
-
+        if (child_with_distance.distance_box < m_traits.compute_squared_radius_d_object()(search_bounds)) {
           // Recursively invoke this function
           nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results, k);
         }
