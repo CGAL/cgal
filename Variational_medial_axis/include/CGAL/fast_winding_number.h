@@ -173,7 +173,7 @@ struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 3>
  *    >::value_type
  *  >::Kernel
  * \endcode
- *         a model of `ReadWritePropertyMap`
+ * \tparam VertexPointMap  a model of `ReadWritePropertyMap`
  *       with `boost::graph_traits<TriangleMesh_>::%vertex_descriptor` as key and
  *       `GeomTraits_::Point_3` as value type.<br>
  *       <b>%Default:</b>
@@ -295,7 +295,7 @@ public:
    * @return the fast winding number of `p`
    */
   template <class NamedParameters = parameters::Default_named_parameters>
-  FT evaluate_fast_winding_number(const Point_3& p, const NamedParameters& np = parameters::default_values())  {
+  FT fast_winding_number(const Point_3& p, const NamedParameters& np = parameters::default_values())  {
     using parameters::choose_parameter;
     using parameters::get_parameter;
     beta_ = choose_parameter(get_parameter(np, internal_np::fast_winding_number_beta), FT(2.0));
@@ -362,7 +362,7 @@ public:
    * @param p the query point
    * @return `true` if `p` is inside the input mesh, `false` otherwise.
    */
-  bool is_inside(const Point_3& p) { return evaluate_fast_winding_number(p) > FT(0.5); }
+  bool is_inside(const Point_3& p) { return fast_winding_number(p) > FT(0.5); }
 
 private:
   std::size_t node_id(const Node* node) const { return std::size_t(node - tree_.root_node()); }
