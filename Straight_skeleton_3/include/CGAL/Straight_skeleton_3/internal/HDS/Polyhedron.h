@@ -1672,11 +1672,11 @@ private:
         throw std::runtime_error("The given edge already has a left and a right facet.");
       }
       VertexSPtr vertex_src = edge->src(this->shared_from_this());
-      if (!contrains_vertex(vertex_src)) {
+      if (!contains_vertex(vertex_src)) {
         add_vertex(vertex_src);
       }
       VertexSPtr vertex_dst = edge->dst(this->shared_from_this());
-      if (!contrains_vertex(vertex_dst)) {
+      if (!contains_vertex(vertex_dst)) {
         add_vertex(vertex_dst);
       }
     }
@@ -1730,7 +1730,7 @@ private:
       return result;
     }
 
-    bool contrains_vertex(const VertexSPtr& vertex) const
+    bool contains_vertex(const VertexSPtr& vertex) const
     {
       bool result = (vertices_.end() != std::find(vertices_.begin(), vertices_.end(), vertex));
       return result;
@@ -1976,7 +1976,7 @@ private:
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         facet->remove_vertex(vertex);
-        if (!contrains_vertex(vertex)) {
+        if (!contains_vertex(vertex)) {
           add_vertex(vertex);
         }
       }
@@ -2633,7 +2633,7 @@ public:
       while (it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
         if (FacetSPtr facet = facet_wptr.lock()) {
-          if (!facet->contrains_vertex(vertex)) {
+          if (!facet->contains_vertex(vertex)) {
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
             result = false;
@@ -2733,13 +2733,13 @@ public:
           result = false;
           break;
         }
-        if (!facet->contrains_vertex(edge->get_vertex_src())) {
+        if (!facet->contains_vertex(edge->get_vertex_src())) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
           break;
         }
-        if (!facet->contrains_vertex(edge->get_vertex_dst())) {
+        if (!facet->contains_vertex(edge->get_vertex_dst())) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;

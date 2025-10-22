@@ -4843,10 +4843,10 @@ public:
       edge->get_facet_R()->remove_vertex(vertices[i]);
       facet->remove_vertex(vertices[i]);
       polyhedron->remove_vertex(vertices[i]);
-      if (!edge->get_facet_L()->contrains_vertex(new_vertex)) {
+      if (!edge->get_facet_L()->contains_vertex(new_vertex)) {
         edge->get_facet_L()->add_vertex(new_vertex);
       }
-      if (!edge->get_facet_R()->contrains_vertex(new_vertex)) {
+      if (!edge->get_facet_R()->contains_vertex(new_vertex)) {
         edge->get_facet_R()->add_vertex(new_vertex);
       }
     }

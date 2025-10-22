@@ -610,8 +610,8 @@ public:
 
     // Start with the case of the edge living in the same plane as the facet (unlikely to happen)
     // @speed use the projection traits here too
-    bool coplanarity = (facet->contrains_vertex(e_src) || facet_pl->has_on(*e_src->point())) &&
-                       (facet->contrains_vertex(e_dst) || facet_pl->has_on(*e_dst->point()));
+    bool coplanarity = (facet->contains_vertex(e_src) || facet_pl->has_on(*e_src->point())) &&
+                       (facet->contains_vertex(e_dst) || facet_pl->has_on(*e_dst->point()));
     if (coplanarity) {
       auto test_fo_o_coplanarity = [&](const EdgeSPtr& /*fe*/, const auto& fo,
                                        const EdgeSPtr& /*e*/, const auto& o) -> bool
@@ -716,8 +716,8 @@ public:
         // intersection is a point, so there is an intersection if the point is not an extremity
         // of the edge, and if it is inside the facet
         if constexpr (std::is_same_v<O, Segment_3>) {
-          if (facet->contrains_vertex(e->get_vertex_src()) ||
-              facet->contrains_vertex(e->get_vertex_dst())) {
+          if (facet->contains_vertex(e->get_vertex_src()) ||
+              facet->contains_vertex(e->get_vertex_dst())) {
             return false;
           } else {
               // @speed adapt v2 to work with rays?
@@ -726,7 +726,7 @@ public:
         } else if constexpr (std::is_same_v<O, Ray_3>) {
           VertexSPtr r_src = (e->get_vertex_src()->degree() == 1) ? e->get_vertex_dst()
                                                                   : e->get_vertex_src();
-          if (facet->contrains_vertex(r_src)) {
+          if (facet->contains_vertex(r_src)) {
             return false;
           } else {
             return is_inside_using_ray_shooting(*ipoint, facet, handle_degree_1_as_ray);

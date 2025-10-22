@@ -501,10 +501,10 @@ public:
         } else {
           edge_vs->replace_vertex_dst(vertex_vs);
         }
-        if (!edge_vs->get_facet_L()->contrains_vertex(vertex_vs)) {
+        if (!edge_vs->get_facet_L()->contains_vertex(vertex_vs)) {
           edge_vs->get_facet_L()->add_vertex(vertex_vs);
         }
-        if (!edge_vs->get_facet_R()->contrains_vertex(vertex_vs)) {
+        if (!edge_vs->get_facet_R()->contains_vertex(vertex_vs)) {
           edge_vs->get_facet_R()->add_vertex(vertex_vs);
         }
       } else if (vertex_ps_src->degree() == 1) {
@@ -526,10 +526,10 @@ public:
         } else {
           edge_vs->replace_vertex_dst(vertex_vs);
         }
-        if (!edge_vs->get_facet_L()->contrains_vertex(vertex_vs)) {
+        if (!edge_vs->get_facet_L()->contains_vertex(vertex_vs)) {
           edge_vs->get_facet_L()->add_vertex(vertex_vs);
         }
-        if (!edge_vs->get_facet_R()->contrains_vertex(vertex_vs)) {
+        if (!edge_vs->get_facet_R()->contains_vertex(vertex_vs)) {
           edge_vs->get_facet_R()->add_vertex(vertex_vs);
         }
       } else {
