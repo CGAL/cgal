@@ -39,6 +39,7 @@
 #include <cstdlib> // for getenv
 
 namespace CGAL {
+namespace IO {
 
 /**
  * \ingroup PkgStreamSupportRef
@@ -686,6 +687,7 @@ inline bool stderr_supports_color() {
   return stream_supports_color(std::cerr);
 }
 
+} // namespace IO
 } // namespace CGAL
 
 #endif // CGAL_IO_COLOR_OSTREAM_H

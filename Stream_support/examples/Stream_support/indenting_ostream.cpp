@@ -5,8 +5,8 @@
 /*!
  * \example Stream_support/indenting_ostream.cpp
  *
- * This example demonstrates how to use CGAL::Basic_indenting_streambuf
- * and CGAL::basic_indenting_stream_guard for formatting output with
+ * This example demonstrates how to use CGAL::IO::Basic_indenting_streambuf
+ * and CGAL::IO::basic_indenting_stream_guard for formatting output with
  * automatic indentation.
  */
 
@@ -16,7 +16,7 @@ void demonstrate_basic_usage() {
   // Example 1: Basic indentation with std::cout
   {
     std::cout << "1. Basic indentation with std::cout:\n";
-    CGAL::Indenting_stream_guard guard(std::cout, "  ");
+    CGAL::IO::Indenting_stream_guard guard(std::cout, "  ");
 
     std::cout << "This line is indented\n";
     std::cout << "So is this one\n";
@@ -28,14 +28,14 @@ void demonstrate_basic_usage() {
   // Example 2: Nested indentation levels
   {
     std::cout << "2. Nested indentation levels:\n";
-    CGAL::Indenting_stream_guard level1(std::cout, "| ");
+    CGAL::IO::Indenting_stream_guard level1(std::cout, "| ");
 
     std::cout << "Level 1 indentation\n";
     {
-      CGAL::Indenting_stream_guard level2(std::cout, "| ");
+      CGAL::IO::Indenting_stream_guard level2(std::cout, "| ");
       std::cout << "Level 2 indentation\n";
       {
-        CGAL::Indenting_stream_guard level3(std::cout, "| ");
+        CGAL::IO::Indenting_stream_guard level3(std::cout, "| ");
         std::cout << "Level 3 indentation\n";
       }
       std::cout << "Back to level 2\n";
@@ -47,7 +47,7 @@ void demonstrate_basic_usage() {
   // Example 3: Custom indentation string
   {
     std::cout << "3. Custom indentation string:\n";
-    CGAL::Indenting_stream_guard guard(std::cout, ">>> ");
+    CGAL::IO::Indenting_stream_guard guard(std::cout, ">>> ");
 
     std::cout << "Custom prefix on each line\n";
     std::cout << "Works with multiple lines too\n";
@@ -61,7 +61,7 @@ void demonstrate_stringstream_usage() {
   // Using with stringstream for formatted output
   // Note: We create a custom ostream using the indenting streambuf
   std::ostringstream backing_stream;
-  CGAL::Indenting_streambuf indent_buf(*backing_stream.rdbuf(), "    ");
+  CGAL::IO::Indenting_streambuf indent_buf(*backing_stream.rdbuf(), "    ");
   std::ostream oss(&indent_buf);
 
   oss << "This goes to stringstream\n";
@@ -77,13 +77,13 @@ void simulate_debug_output() {
   std::cout << "Algorithm: Starting geometric computation\n";
 
   {
-    CGAL::Indenting_stream_guard guard(std::cout, "  ");
+    CGAL::IO::Indenting_stream_guard guard(std::cout, "  ");
     std::cout << "Phase 1: Input validation\n";
     std::cout << "- Checking vertices: OK\n";
     std::cout << "- Checking faces: OK\n";
 
     {
-      CGAL::Indenting_stream_guard inner_guard(std::cout, "    ");
+      CGAL::IO::Indenting_stream_guard inner_guard(std::cout, "    ");
       std::cout << "Detailed validation:\n";
       std::cout << "- Manifold check: PASSED\n";
       std::cout << "- Orientation check: PASSED\n";
@@ -98,7 +98,7 @@ void simulate_debug_output() {
     std::cout << "- Applying constraints...\n";
 
     {
-      CGAL::Indenting_stream_guard constraint_guard(std::cout, "    ");
+      CGAL::IO::Indenting_stream_guard constraint_guard(std::cout, "    ");
       std::cout << "Constraint processing:\n";
       for(int i = 0; i < 3; ++i) {
         std::cout << "- Processing constraint " << i << ": OK\n";
@@ -121,7 +121,7 @@ void demonstrate_multiple_streams() {
   // Apply indentation to both streams simultaneously
   {
     std::cout << "\nWith make_indenting_guards (2 spaces):\n";
-    auto guards = CGAL::make_indenting_guards(2, std::cout, std::cerr);
+    auto guards = CGAL::IO::make_indenting_guards(2, std::cout, std::cerr);
 
     std::cout << "This line is indented on cout\n";
     std::cout << "And this one too\n";
@@ -131,7 +131,7 @@ void demonstrate_multiple_streams() {
 
     // Nested indentation works too
     {
-      auto nested_guards = CGAL::make_indenting_guards(2, std::cout, std::cerr);
+      auto nested_guards = CGAL::IO::make_indenting_guards(2, std::cout, std::cerr);
       std::cout << "Double indented on cout\n";
       std::cerr << "Double indented on cerr\n";
     }
@@ -147,7 +147,7 @@ void demonstrate_multiple_streams() {
   // Using custom indent string with multiple streams
   {
     std::cout << "\nUsing custom indent string \">> \" with std::cout and std::clog:\n";
-    auto guards = CGAL::make_indenting_guards(">> ", std::cout, std::clog);
+    auto guards = CGAL::IO::make_indenting_guards(">> ", std::cout, std::clog);
 
     std::cout << "cout: Output with custom indent\n";
     std::clog << "clog: Log message with custom indent\n";

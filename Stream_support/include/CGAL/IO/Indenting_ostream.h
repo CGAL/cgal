@@ -25,6 +25,7 @@
 #include <tuple>
 
 namespace CGAL {
+namespace IO {
 
 /**
  * \ingroup PkgStreamSupportRef
@@ -323,6 +324,7 @@ auto make_indenting_guards(const std::string& indent_string, Streams&... streams
   return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, indent_string)...);
 }
 
+} // namespace IO
 } // namespace CGAL
 
 #endif // CGAL_IO_INDENTING_OSTREAM_H
