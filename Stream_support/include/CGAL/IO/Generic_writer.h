@@ -59,7 +59,7 @@ public:
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {
-      typename SC::Point_3 p = conv(get(point_map, points[i]));
+      decltype(auto) p = conv(get(point_map, points[i]));
       m_writer.write_vertex(p.x(), p.y(), p.z());
     }
 

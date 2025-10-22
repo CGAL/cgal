@@ -325,9 +325,9 @@ bool write_STL(std::ostream& os,
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
 
-      Point_3 pp = conv(p);
-      Point_3 qq = conv(q);
-      Point_3 rr = conv(r);
+      decltype(auto) pp = conv(p);
+      decltype(auto) qq = conv(q);
+      decltype(auto) rr = conv(r);
 
       const Vector_3 nn = collinear(pp,qq,rr) ? Vector_3(static_cast<FT>(1),static_cast<FT>(0),static_cast<FT>(0)) : unit_normal(pp,qq,rr);
 
