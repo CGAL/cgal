@@ -113,9 +113,9 @@ int main() {
   std::size_t count = 0;
   for(const Point& p : samples) {
     double exact = CGAL::to_double(fwn3.exact_winding_number(p));
-    double w1 = CGAL::to_double(fwn1.evaluate_fast_winding_number(p));
-    double w2 = CGAL::to_double(fwn2.evaluate_fast_winding_number(p));
-    double w3 = CGAL::to_double(fwn3.evaluate_fast_winding_number(p));
+    double w1 = CGAL::to_double(fwn1.fast_winding_number(p));
+    double w2 = CGAL::to_double(fwn2.fast_winding_number(p));
+    double w3 = CGAL::to_double(fwn3.fast_winding_number(p));
     double e1 = std::abs(w1 - exact);
     double e2 = std::abs(w2 - exact);
     double e3 = std::abs(w3 - exact);

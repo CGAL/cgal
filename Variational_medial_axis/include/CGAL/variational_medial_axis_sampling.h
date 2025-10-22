@@ -940,7 +940,7 @@ template <typename TriangleMesh_,
           typename AccelerationType_ = KD_tree_tag,
           typename GeomTraits_ = Default,
           typename VertexPointMap_ = Default>
-class Variational_medial_axis
+class Variational_medial_axis_sampling
 {
   using VPM = typename Default::Get<VertexPointMap_,
                                     typename boost::property_map<TriangleMesh_, vertex_point_t>::const_type>::type;
@@ -1039,7 +1039,7 @@ public:
   /// \cgalNamedParamsEnd
   ///
   template <class NamedParameters = parameters::Default_named_parameters>
-  Variational_medial_axis(const TriangleMesh_& tmesh,
+  Variational_medial_axis_sampling(const TriangleMesh_& tmesh,
                           const NamedParameters& np = parameters::default_values(),
                           const GT& gt = GT())
       : tmesh_(tmesh)
