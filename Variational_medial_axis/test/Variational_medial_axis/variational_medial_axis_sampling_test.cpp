@@ -14,7 +14,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::Variational_medial_axis<Mesh> VMAS;
-typedef CGAL::Medial_Skeleton<Mesh> Skeleton;
+typedef CGAL::Medial_skeleton<Mesh> Skeleton;
 
 // Test parameters structure
 struct TestParams
@@ -145,7 +145,7 @@ bool test_correcteness() {
 
   Skeleton saved_skeleton_bvh,saved_skeleton_kd_tree;
 
-  if(saved_skeleton_bvh.load_skeleton_from_ply(saved_file_bvh)) {
+  if(saved_skeleton_bvh.read_skeleton_from_PLY(saved_file_bvh)) {
     if(compare_skeletons(skeleton_bvh, saved_skeleton_bvh)) {
       std::cout << "Skeletons match after reading from file." << std::endl;
     } else {
@@ -154,7 +154,7 @@ bool test_correcteness() {
     }
   }
 
-  if(saved_skeleton_kd_tree.load_skeleton_from_ply(saved_file_kd_tree)) {
+  if(saved_skeleton_kd_tree.read_skeleton_from_PLY(saved_file_kd_tree)) {
     if(compare_skeletons(skeleton_kd_tree, saved_skeleton_kd_tree)) {
       std::cout << "KD-tree Skeletons match after reading from file." << std::endl;
     } else {

@@ -4,7 +4,7 @@
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
-using Medial_Skeleton = CGAL::Medial_Skeleton<Mesh>;
+using Medial_skeleton = CGAL::Medial_skeleton<Mesh>;
 
 int main(int argc, char** argv)
 {
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  Medial_Skeleton skeleton = extract_variational_medial_skeleton(
+  Medial_skeleton skeleton = extract_variational_medial_skeleton(
       mesh, CGAL::parameters::number_of_iterations(1000)// number of max iterations
       .number_of_spheres(200) // target number of spheres
       .number_of_samples(20000) // number of surface samples

@@ -18,7 +18,8 @@
 namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
-template <typename GT> struct Tensor3
+template <typename GT>
+struct Tensor3
 {
   using FT = typename GT::FT;
   using Vector_3 = typename GT::Vector_3;
@@ -65,7 +66,8 @@ template <typename GT> struct Tensor3
 // by Barill et al., Siggraph 2018
 template <class TriangleMesh, class GeomTraits = Default, int ORDER = 3> struct Fast_winding_number_Coeff;
 
-template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 1>
+template <class TriangleMesh, class GeomTraits>
+struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 1>
 {
   using GT = typename Default::Get<
       GeomTraits,
@@ -81,7 +83,8 @@ template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff
   Vector_3 weighted_normal = Vector_3(0, 0, 0);
 };
 
-template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 2>
+template <class TriangleMesh, class GeomTraits>
+struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 2>
 {
   using GT = typename Default::Get<
       GeomTraits,
@@ -105,7 +108,8 @@ template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff
   Mat3 Q = Mat3::Zero();
 };
 
-template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 3>
+template <class TriangleMesh, class GeomTraits>
+struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 3>
 {
   using GT = typename Default::Get<
       GeomTraits,
@@ -135,11 +139,13 @@ template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff
   Mat3 Q = Mat3::Zero();
   Tensor3<GT> T;
 };
+
 #endif // DOXYGEN_RUNNING
+
 /**
  * \ingroup PkgVMASRef
  * \class CGAL::Fast_winding_number
- * \brief Fast evaluation of the (normalized) winding number of a triangle mesh.
+ * \brief %Fast evaluation of the (normalized) winding number of a triangle mesh.
  *
  * This class implements a hierarchical (multipole / cluster–far field) approximation of
  * the generalized winding number for a triangle mesh.
@@ -156,7 +162,7 @@ template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff
  *         a built AABB tree over the faces of `TriangleMesh`
  * \tparam ORDER
  *         the order of the taylor expansion, must be 1, 2, or 3.<br>
- *        <b>Default:</b> `3`
+ *        <b>%Default:</b> `3`
  * \tparam GeomTraits
  *        a model of `Kernel`<br>
  *       <b>%Default:</b>
@@ -362,7 +368,7 @@ private:
   std::size_t node_id(const Node* node) const { return std::size_t(node - tree_.root_node()); }
 
   //This function precommutes the coefficients for all nodes in the AABB tree.
-  //We search form top to bottom, and for each node, we compute the coefficients
+  //We search from top to bottom, and for each node, we compute the coefficients
   //by looping over all of the faces it contains.
   void precompute_coeffs() {
 
@@ -386,8 +392,8 @@ private:
       for(auto it = prim_it; it < prim_it + nb_prim; ++it) {
         face_descriptor f = it->id();
         FT area = get(fam_, f);
-        Vector_3 normal = get(fnm_, f);
-        Point_3 centroid = get(fcm_, f);
+        const Vector_3& normal = get(fnm_, f);
+        const Point_3& centroid = get(fcm_, f);
 
         sum_centroid += (centroid - CGAL::ORIGIN) * area;
         sum_normal += area * normal;
@@ -404,13 +410,13 @@ private:
       for(auto it = prim_it; it < prim_it + nb_prim; ++it) {
         face_descriptor f = it->id();
         FT area = get(fam_, f);
-        Vector_3 normal = get(fnm_, f);
-        Point_3 centroid = get(fcm_, f);
+        const Vector_3& normal = get(fnm_, f);
+        const Point_3& centroid = get(fcm_, f);
         Vector_3 R = centroid - coeff.weighted_centroid;
 
         for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
-          Point_3 pv = get(vpm_, v);
-          max_norm_sq = std::max(max_norm_sq, (pv - coeff.weighted_centroid).squared_length());
+          const Point_3& pv = get(vpm_, v);
+          max_norm_sq = (std::max)(max_norm_sq, (pv - coeff.weighted_centroid).squared_length());
         }
         if constexpr(ORDER < 3)
           coeff.add(R, normal, area);
@@ -418,7 +424,7 @@ private:
           Vector_3 iv[3];
           int i = 0;
           for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
-            Point_3 pv = get(vpm_, v);
+            const Point_3& pv = get(vpm_, v);
             iv[i] = Vector_3(pv.x(), pv.y(), pv.z());
             ++i;
           }
@@ -493,7 +499,7 @@ private:
     FT w = FT(0);
     const Vector_3 R = coeffs_[node_id(node)].weighted_centroid - p;
     Vec3 R_eigen(R.x(), R.y(), R.z());
-    FT r = std::max(CGAL::approximate_sqrt(R.squared_length()), FT(1e-15));
+    FT r = (std::max)(CGAL::approximate_sqrt(R.squared_length()), FT(1e-15));
     if constexpr(ORDER >= 1) {
       Vector_3 G1 = R / (4 * CGAL_PI * r * r * r);
       w += CGAL::scalar_product(G1, coeffs_[node_id(node)].weighted_normal);

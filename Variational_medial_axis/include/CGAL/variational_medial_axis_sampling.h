@@ -37,8 +37,6 @@
 #include <boost/iterator/zip_iterator.hpp>
 
 
-// #include "C3t3_type.h"
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <functional>
 #include <tbb/blocked_range.h>
@@ -50,7 +48,7 @@ namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
 
-template <typename TriangleMesh, typename GT> class Medial_Sphere_Mesh;
+template <typename TriangleMesh, typename GT> class Medial_sphere_mesh;
 
 template <typename TriangleMesh, typename GT> class Medial_Sphere
 {
@@ -59,7 +57,7 @@ public:
   using Point_3 = typename GT::Point_3;
   using Point_Index = typename Point_set_3<Point_3>::Index;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSMesh = Medial_Sphere_Mesh<TriangleMesh, GT>;
+  using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
   using Sphere_ID = typename MSMesh::Sphere_ID;
 
   // Specalization for Compact_container_with_index
@@ -123,7 +121,8 @@ private:
   Sphere_ID id_;
 };
 
-template <typename TriangleMesh, typename GT> class Medial_Sphere_Mesh
+template <typename TriangleMesh, typename GT>
+class Medial_sphere_mesh
 {
 public:
   using FT = typename GT::FT;
@@ -198,7 +197,8 @@ private:
  *      >::Kernel
  * \endcode
  */
-template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_Skeleton
+template <typename TriangleMesh_, typename GeomTraits_ = Default>
+class Medial_skeleton
 {
   using GT = typename Default::Get<
       GeomTraits_,
@@ -207,7 +207,7 @@ template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_S
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
-  using MSMesh = Medial_Sphere_Mesh<TriangleMesh_, GT>;
+  using MSMesh = Medial_sphere_mesh<TriangleMesh_, GT>;
   using Sphere_ID = typename MSMesh::Sphere_ID;
 
 public:
@@ -245,7 +245,7 @@ public:
    * 3 vx vy vz
    * ```
    */
-  bool load_skeleton_from_ply(std::string& filepath) {
+  bool read_skeleton_from_PLY(std::string& filepath) {
     clear();
     std::ifstream ifs(filepath);
     if(!ifs) {
@@ -428,7 +428,7 @@ public:
     faces_.assign(face_set.begin(), face_set.end());
   }
 
-  MSMesh build_medial_sphere_mesh_from_skeleton() const {
+  MSMesh build_Medial_sphere_mesh_from_skeleton() const {
     MSMesh sphere_mesh;
     std::vector<Sphere_ID> index_to_id_map;
     index_to_id_map.reserve(vertices_.size());
@@ -506,7 +506,8 @@ private:
   std::vector<std::array<std::size_t, 3>> faces_;
 };
 #ifndef DOXYGEN_RUNNING
-template <class TriangleMesh_, class GeomTraits_ = Default> class Medial_skeleton_offset_function
+template <class TriangleMesh_, class GeomTraits_ = Default>
+class Medial_skeleton_offset_function
 {
   using GT = typename Default::Get<
       GeomTraits_,
@@ -516,7 +517,7 @@ template <class TriangleMesh_, class GeomTraits_ = Default> class Medial_skeleto
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSkeleton = Medial_Skeleton<TriangleMesh_, GeomTraits_>;
+  using MSkeleton = Medial_skeleton<TriangleMesh_, GeomTraits_>;
   // AABB tree types over spheres
   //This is useless now
   // using Iterator = typename std::vector<Sphere_3>::const_iterator;
@@ -576,9 +577,9 @@ public:
       const FT& r3 = radii_[c];
       const FT& r_max = r1>r2 ? (r1 > r3 ? r1 : r3) : (r2 > r3 ? r2 : r3);
       /* if(dmin > eval_slab(c1, c2, c3, r_max, r_max, r_max,p)) {
-         dmin = std::min(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
+         dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
        }*/
-      dmin = std::min(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
+      dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
       visited_edges.insert({a, b});
       visited_edges.insert({b, c});
       visited_edges.insert({c, a});
@@ -594,8 +595,8 @@ public:
       const FT& r2 = radii_[j];
       const FT r_max = r1 > r2 ? r1 : r2;
       /*if(dmin > eval_cone(c1, c2, r_max, r_max, p))
-        dmin = std::min(dmin, eval_cone(c1, c2, r1, r2, p));*/
-      dmin = std::min(dmin, eval_cone(c1, c2, r1, r2, p));
+        dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));*/
+      dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
       if(dmin < 0)
         return dmin;
     }
@@ -676,15 +677,15 @@ private:
     if(root_nb != 0) {
       t1 = std::clamp(t1, FT(0), FT(1));
       dist1 = cone_distance(p, c1, c2, r1, r2, t1);
-      dmin = std::min(dmin, dist1);
+      dmin = (std::min)(dmin, dist1);
       if(root_nb != 1) {
         t2 = std::clamp(t2, FT(0), FT(1));
         dist2 = cone_distance(p, c1, c2, r1, r2, t2);
-        dmin = std::min(dmin, dist2);
+        dmin = (std::min)(dmin, dist2);
       }
     }
-    dmin = std::min(dmin, cone_distance(p, c1, c2, r1, r2, FT(0)));
-    dmin = std::min(dmin, cone_distance(p, c1, c2, r1, r2, FT(1)));
+    dmin = (std::min)(dmin, cone_distance(p, c1, c2, r1, r2, FT(0)));
+    dmin = (std::min)(dmin, cone_distance(p, c1, c2, r1, r2, FT(1)));
     return dmin;
   }
 
@@ -853,12 +854,12 @@ private:
       }
     }
     if(feasible(t1, t2)) {
-      dmin = std::min(dmin, slab_distance(p, c1, c2, c3, r1, r2, r3, t1, t2));
+      dmin = (std::min)(dmin, slab_distance(p, c1, c2, c3, r1, r2, r3, t1, t2));
       return dmin;
     }
-    dmin = std::min(dmin, eval_cone(c1, c2, r1, r2, p));
-    dmin = std::min(dmin, eval_cone(c1, c3, r1, r3, p));
-    dmin = std::min(dmin, eval_cone(c2, c3, r2, r3, p));
+    dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
+    dmin = (std::min)(dmin, eval_cone(c1, c3, r1, r3, p));
+    dmin = (std::min)(dmin, eval_cone(c2, c3, r2, r3, p));
     return dmin;
   }
 
@@ -949,7 +950,7 @@ class Variational_medial_axis
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSMesh = Medial_Sphere_Mesh<TriangleMesh_, GT>;
+  using MSMesh = Medial_sphere_mesh<TriangleMesh_, GT>;
   using MSphere = typename MSMesh::MSphere;
   using Sphere_ID = typename MSMesh::Sphere_ID;
   using Point_set = Point_set_3<Point_3>;
@@ -1046,7 +1047,7 @@ public:
 
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
     nb_samples_ = choose_parameter(get_parameter(np, internal_np::number_of_samples), 100 * desired_number_of_spheres_);
-    nb_samples_ = std::max(nb_samples_, std::size_t(20000));
+    nb_samples_ = (std::max)(nb_samples_, std::size_t(20000));
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
@@ -1266,7 +1267,7 @@ public:
       return false;
     }
     iteration_count_ = 0;
-    int max_iteration = std::min(1000, std::max(100, 10 * nb_sphere));
+    int max_iteration = (std::min)(1000, (std::max)(100, 10 * nb_sphere));
     desired_number_of_spheres_ = sphere_mesh_->nb_spheres() + nb_sphere;
     bool converged = false;
     while(!converged && iteration_count_ < max_iteration) {
@@ -1319,17 +1320,17 @@ public:
   }
 
   /**
-   * \brief exports the medial skeleton as a `Medial_Skeleton` object.
+   * \brief exports the medial skeleton as a `Medial_skeleton` object.
    *
-   * This function builds a `Medial_Skeleton` from the current state of the medial sphere mesh.
+   * This function builds a `Medial_skeleton` from the current state of the medial sphere mesh.
    * It extracts the vertices, edges, and faces from the medial sphere mesh and constructs
    * the medial skeleton accordingly.
    *
    * \return
-   *     A `Medial_Skeleton` object containing the medial skeleton data.
+   *     A `Medial_skeleton` object containing the medial skeleton data.
    */
-  Medial_Skeleton<TriangleMesh_> export_skeleton() const {
-    Medial_Skeleton<TriangleMesh_> skeleton;
+  Medial_skeleton<TriangleMesh_, GeomTraits_> export_skeleton() const {
+    Medial_skeleton<TriangleMesh_, GeomTraits_> skeleton;
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
@@ -1342,15 +1343,17 @@ public:
    * This parameter controls the balance between the SQEM and Euclidean energy terms.
    * Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.
    */
-  FT lambda_param() const { return lambda_; }
+  FT lambda() const { return lambda_; }
 
   /**
-   * \brief sets function for `lambda_param()`.
+   * \brief sets function for `lambda()`.
    * Note: The lambda must be strictly positive; if set to zero, it will default to 0.2.
    */
   void set_lambda(FT lambda) {
     if(lambda <= FT(0)) {
-      std::cerr << "Warning: Lambda must be strictly positive. Setting to default value of 0.2." << std::endl;
+      if(verbose_){
+        std::cerr << "Warning: Lambda must be strictly positive. Setting to default value of 0.2." << std::endl;
+      }
       lambda_ = FT(0.2);
     } else {
       lambda_ = lambda;
@@ -1515,7 +1518,7 @@ private:
     }
 
     auto bbox = tree_->bbox();
-    scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
+    scale_ = (std::max)(bbox.xmax() - bbox.xmin(), (std::max)(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
     converged_threshold_ = scale_ * scale_ * 1e-5;
 
     // Initialize the fast winding number function
@@ -1543,7 +1546,7 @@ private:
   }
 
   std::pair<Point_3, FT>
-  shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,
+  shrinking_ball_algorithm_bvh(const std::vector<face_descriptor>& incident_faces,
                                const Point_3& p,                  // point on the surface
                                const Vector_3& n,                 // inverse of search direction
                                FT delta_convergence = FT(1e-5)) {
@@ -1673,7 +1676,6 @@ private:
     }
   }
 
-
   void assign_vertices_to_clusters() {
     for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
       Point_Index idx = *it;
@@ -1688,7 +1690,7 @@ private:
         Point_3 center = sphere.get_center();
         FT radius = sphere.get_radius();
 
-        // compute euclidean distance
+        // compute Euclidean distance
         FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
         dist_eucl *= dist_eucl;
 
@@ -1729,8 +1731,6 @@ private:
   }
 
   void correct_sphere(MSphere& sphere, const Eigen::Matrix<FT, 4, 1>& optimized_sphere_params) {
-
-    // Side_of_triangle_mesh<TriangleMesh_, GT, VPM, Tree> side_of(*tree_, traits_);
     Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
     auto [cp, closest_face] = tree_->closest_point_and_primitive(optimal_center);
     FT len = (optimal_center - cp).squared_length();
@@ -1764,7 +1764,6 @@ private:
     b.setZero();
     int idx = 0;
     EVec4 s;
-    s << center.x(), center.y(), center.z(), radius;
 
     for(int i = 0; i < 10; i++) {
       idx = 0;
@@ -1797,7 +1796,7 @@ private:
         b(idx) = rhs;
         ++idx;
 
-        // compute euclidean energy
+        // compute Euclidean energy
         EVec3 d = pos - EVec3(s(0), s(1), s(2));
         FT l = d.norm();
 
@@ -1833,7 +1832,9 @@ private:
     FT error = 0.0;
     FT area = sphere.get_area();
     if(area <= FT(0.0)) {
-      std::cerr << "Warning: sphere with zero area encountered, skipping error computation." << std::endl;
+      if(verbose_){
+        std::cerr << "Warning: sphere with zero area encountered, skipping error computation." << std::endl;
+      }
       return FT(0.0);
     }
 
@@ -1884,7 +1885,7 @@ private:
                             Point_3 center = sphere.get_center();
                             FT radius = sphere.get_radius();
 
-                            // compute euclidean distance
+                            // compute Euclidean distance
                             FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
                             dist_eucl *= dist_eucl;
 
@@ -1939,6 +1940,7 @@ private:
                         }
                       });
   }
+
   void optimize_sphere_positions_parallel(bool use_shrinking_ball_correction = false) {
     auto& spheres = sphere_mesh_->spheres();
     std::vector<std::reference_wrapper<MSphere>> sphere_refs(spheres.begin(), spheres.end());
@@ -2019,7 +2021,7 @@ private:
       return sphere_mesh_->get_sphere(a).get_error() > sphere_mesh_->get_sphere(b).get_error(); // sort by error
     });
 
-    int to_split_max = std::min(int(std::ceil(sphere_mesh_->nb_spheres() * 0.2)), 10);
+    int to_split_max = (std::min)(int(std::ceil(sphere_mesh_->nb_spheres() * 0.2)), 10);
     for(auto& sphere_id : sorted_sphere_ids) {
       if(sphere_mesh_->nb_spheres() >= desired_number_of_spheres_)
         break;
@@ -2036,6 +2038,7 @@ private:
       }
     }
   }
+
   void reset_algorithm_state() {
     iteration_count_ = 0;
     total_error_ = FT(0.0);
@@ -2135,7 +2138,7 @@ namespace IO {
  * @returns `true` if writing was successful, `false` otherwise.
  */
 template <typename TriangleMesh, typename GeomTraits, class NamedParameters = parameters::Default_named_parameters>
-bool write_PLY(const Medial_Skeleton<TriangleMesh, GeomTraits>& skeleton,
+bool write_PLY(const Medial_skeleton<TriangleMesh, GeomTraits>& skeleton,
                const std::string& filepath,
                const NamedParameters& np = parameters::default_values()) {
   std::ofstream ofs(filepath);

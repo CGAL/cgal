@@ -48,10 +48,10 @@ namespace CGAL {
 ///   \cgalParamNBegin{number_of_samples}
 ///     \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
 ///     \cgalParamType{unsigned int}
-///     \cgalParamDefault{max(20000, number_of_spheres * 100)}
+///     \cgalParamDefault{max(10000, number_of_spheres * 100)}
 ///     \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
 ///  \cgalParamNEnd
-///  \cgalParamNBegin{max_iteration_number}
+///  \cgalParamNBegin{number_of_iterations}
 ///     \cgalParamDescription{The maximum number of iterations for the optimization process.}
 ///     \cgalParamType{int}
 ///     \cgalParamDefault{1000}
@@ -86,7 +86,7 @@ namespace CGAL {
 ///
 ///
 template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
-typename CGAL::Medial_Skeleton<TriangleMesh>
+typename CGAL::Medial_skeleton<TriangleMesh>
 extract_variational_medial_skeleton(const TriangleMesh& tmesh,
                                     const NamedParameters& np = parameters::default_values()) {
   typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
