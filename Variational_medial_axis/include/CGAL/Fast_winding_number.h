@@ -14,7 +14,10 @@
 
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/boost/graph/properties.h>
+
 #include <CGAL/license/Variational_medial_axis.h>
+
 namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
