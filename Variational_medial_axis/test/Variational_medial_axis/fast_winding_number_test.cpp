@@ -19,7 +19,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <CGAL/fast_winding_number.h>
+#include <CGAL/Fast_winding_number.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point = Kernel::Point_3;
