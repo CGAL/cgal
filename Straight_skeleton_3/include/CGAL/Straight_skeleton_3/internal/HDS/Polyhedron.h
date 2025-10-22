@@ -709,7 +709,13 @@ public:
       result += "<" + IO::String_factory::fromDouble(CGAL::to_double(point()->x())) + " ";
       result += IO::String_factory::fromDouble(CGAL::to_double(point()->y())) + " ";
       result += IO::String_factory::fromDouble(CGAL::to_double(point()->z())) + ">";
-      result += ", Edges:" + IO::String_factory::fromInteger(edges_.size());
+      result += ", Edges:" + IO::String_factory::fromInteger(edges_.size()) + " {";
+      for (EdgeWPtr edge_wptr : edges_) {
+        if (EdgeSPtr edge = edge_wptr.lock()) {
+          result += " " + std::to_string(edge->get_ID());
+        }
+      }
+      result += " }";
       result += ", Facets:" + IO::String_factory::fromInteger(facets_.size()) + " {";
       for (FacetWPtr facet_wptr : facets_) {
         if (FacetSPtr facet = facet_wptr.lock()) {
