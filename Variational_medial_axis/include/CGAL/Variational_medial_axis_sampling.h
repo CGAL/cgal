@@ -1345,7 +1345,7 @@ public:
   /// \name Parameters
   /// @{
   /**
-   * \brief returns the Lambda parameter for the algorithm.
+   * \brief returns the lambda parameter for the algorithm.
    *
    * This parameter controls the balance between the SQEM and Euclidean energy terms.
    * Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.
@@ -1354,7 +1354,7 @@ public:
 
   /**
    * \brief sets function for `lambda()`.
-   * Note: The lambda must be strictly positive; if set to zero, it will default to 0.2.
+   * Note: The value of lambda must be strictly positive; if set to zero, it will default to 0.2.
    */
   void set_lambda(FT lambda) {
     if(lambda <= FT(0)) {
