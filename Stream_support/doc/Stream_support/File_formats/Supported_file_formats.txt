@@ -522,14 +522,14 @@ The Medit format, using file extension `.mesh`, is a format used by the Medit so
 In \cgal, it is used to represent 3D meshes.
 
 A precise specification of the format is available <a href="https://inria.hal.science/inria-00069921/document">in this report</a>,
-in the appendices (section 7.2.1, page 36).
+in the appendices (Section 7.2.1, Page 36).
 
 The following \cgal data structures can be exported into the `.mesh` file format:
 
 - `CGAL::Mesh_complex_3_in_triangulation_3`, using the function
-  \link CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &) `CGAL::IO::write_MEDIT(` \endlink, and
+  \link CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &) `CGAL::IO::write_MEDIT()` \endlink, and
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
-  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT(` \endlink.
+  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT()` \endlink.
 
 
 \section IOStreamTetgen Tetgen File Format
