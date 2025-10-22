@@ -822,10 +822,10 @@ int go(Mesh mesh, CDT_options options) {
   {
     auto start_time = std::chrono::high_resolution_clock::now();
     if(options.merge_facets) {
-      cdt.insert_mesh_vertices(mesh, pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap,
+      cdt.insert_vertices_range(vertices(mesh), pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap,
                                CGAL::parameters::vertex_is_constrained_map(pmaps.v_selected_map));
     } else {
-      cdt.insert_mesh_vertices(mesh, pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap);
+      cdt.insert_vertices_range(vertices(mesh), pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap);
     }
     CDT::Cell_handle hint{};
     for(auto v: vertices(mesh)) {
