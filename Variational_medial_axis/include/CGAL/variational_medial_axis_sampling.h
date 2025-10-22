@@ -50,7 +50,8 @@ namespace CGAL {
 
 template <typename TriangleMesh, typename GT> class Medial_sphere_mesh;
 
-template <typename TriangleMesh, typename GT> class Medial_Sphere
+template <typename TriangleMesh, typename GT>
+class Medial_sphere
 {
 public:
   using FT = typename GT::FT;
@@ -64,7 +65,7 @@ public:
   std::size_t for_compact_container() const { return static_cast<std::size_t>(id_); }
   void for_compact_container(std::size_t idx) { id_ = Sphere_ID(idx); }
 
-  Medial_Sphere(const Sphere_3& s)
+  Medial_sphere(const Sphere_3& s)
       : sphere_(s)
       , split_point_idx_(Point_Index())
       , error_(FT(0))
@@ -72,7 +73,7 @@ public:
       , do_not_split_(false)
       , id_(MSMesh::INVALID_SPHERE_ID) {}
 
-  Medial_Sphere(Sphere_3&& s)
+  Medial_sphere(Sphere_3&& s)
       : sphere_(std::move(s))
       , split_point_idx_(Point_Index())
       , error_(FT(0))
@@ -128,7 +129,7 @@ public:
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSphere = Medial_Sphere<TriangleMesh, GT>;
+  using MSphere = Medial_sphere<TriangleMesh, GT>;
 
   using Sphere_container =
       CGAL::Compact_container_with_index<MSphere, CGAL_ALLOCATOR(MSphere), Multiply_by_two_policy_for_cc_with_size<64>>;
@@ -187,7 +188,7 @@ private:
  * It stores the medial spheres, edges, and faces of the skeleton.
  *
  * @tparam TriangleMesh The type of the triangle mesh representing the shape.
- * @tparam GT The geometric traits class used for geometric computations.
+ * @tparam GT The geometric traits class used for geometric computations.<br>
  *         <b>%Default:</b>
  * \code
  *     CGAL::Kernel_traits<
@@ -505,6 +506,8 @@ private:
   std::vector<std::pair<std::size_t, std::size_t>> edges_;
   std::vector<std::array<std::size_t, 3>> faces_;
 };
+
+
 #ifndef DOXYGEN_RUNNING
 template <class TriangleMesh_, class GeomTraits_ = Default>
 class Medial_skeleton_offset_function
