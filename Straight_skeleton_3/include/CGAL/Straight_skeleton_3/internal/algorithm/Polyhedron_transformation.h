@@ -331,16 +331,14 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << *(Kernel_factory::createVector3(facet_from->get_plane())));
     CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << *(Kernel_factory::createVector3(facet_into->get_plane())));
 
-    // remove the facet incidence info from the edge such that the facets are not deleted
+    // First remove the facet incidence info from the edge such that the facets are not deleted
     // when Polyhedron::remove_edge() is called
     facet_into->remove_edge(edge);
     facet_from->remove_edge(edge);
-
     polyhedron->remove_edge(edge);
-    if (facet_into && facet_from && facet_into != facet_from) {
-      facet_into->merge(facet_from);
-      polyhedron->remove_facet(facet_from);
-    }
+
+    facet_into->merge(facet_from);
+    polyhedron->remove_facet(facet_from);
 
     CGAL_postcondition(polyhedron->is_consistent());
   }
@@ -384,9 +382,16 @@ public:
       }
     }
 
-    CGAL_postcondition(polyhedron->is_consistent());
+    IO::OBJFile::save("results/post_merge.obj", polyhedron, false /*do not triangulate*/);
+    std::cout << polyhedron->to_string() << std::endl;
+
+    // There can be multiple defects after merging, for example:
+    // - when we merge two facets sharing multiple edges, this can leave dangling vertices
+    // - we can end up with degree 2 vertices
+    // - ...
 
     sanitize(polyhedron); // remove degenerate vertices and facets
+    CGAL_postcondition(polyhedron->is_consistent());
 
     polyhedron->initialize_all_IDs();
 
@@ -430,7 +435,7 @@ public:
       VertexSPtr vertex = *it_v++;
       if (vertex->degree() < 3) {
         vertices_toremove.push_back(vertex);
-        CGAL_SS3_TRANSF_TRACE("Enlist: V" << vertex->get_ID());
+        CGAL_SS3_TRANSF_TRACE("Enlist " << vertex->to_string());
         for (FacetWPtr wf : vertex->facets()) {
           FacetSPtr facet = wf.lock();
           CGAL_SS3_TRANSF_TRACE("  Incident facet with: " << facet->vertices().size() << " vertices");
@@ -442,23 +447,46 @@ public:
       VertexSPtr vertex = *it_v++;
       CGAL_SS3_TRANSF_TRACE("Removing " << vertex->to_string());
 
-      if (vertex->degree() == 2) {
+      if (vertex->degree() == 0) {
+        // degree 0 so there are no incident edges, but it might still be a vertex incident to a face...
+        typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+        while (it_f != vertex->facets().end()) { // no C++11
+          FacetWPtr facet_wptr = *it_f++;
+          if (FacetSPtr facet = facet_wptr.lock()) {
+            facet->remove_vertex(vertex);
+          }
+        }
+        polyhedron->remove_vertex(vertex);
+      } else if (vertex->degree() == 1) {
+        EdgeSPtr edge = vertex->edges().front().lock();
+        CGAL_SS3_DEBUG_SPTR(edge);
+
+        typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+        while (it_f != vertex->facets().end()) { // no C++11
+          FacetWPtr facet_wptr = *it_f++;
+          if (FacetSPtr facet = facet_wptr.lock()) {
+            facet->remove_vertex(vertex);
+          }
+        }
+        for (FacetWPtr facet_wptr : { edge->get_facet_L(), edge->get_facet_R() }) {
+          if (FacetSPtr facet = facet_wptr.lock()) {
+            facet->remove_edge(edge);
+          }
+        }
+
+        polyhedron->remove_vertex(vertex); // removes the edge too
+      } else if (vertex->degree() == 2) {
         EdgeSPtr edge_src = vertex->first_edge();
         EdgeSPtr edge_dst = edge_src->next(vertex);
         CGAL_assertion(edge_src->has_vertex(vertex));
         CGAL_assertion(edge_dst->has_vertex(vertex));
 
-        VertexSPtr vertex_src = edge_src->get_vertex_src();
-        if (vertex_src == vertex) {
-          vertex_src = edge_src->get_vertex_dst();
-        }
-        VertexSPtr vertex_dst = edge_dst->get_vertex_src();
-        if (vertex_dst == vertex) {
-          vertex_dst = edge_dst->get_vertex_dst();
-        }
+        VertexSPtr vertex_src = edge_src->other(vertex);
+        VertexSPtr vertex_dst = edge_dst->other(vertex);
 
         FacetSPtr fL = edge_src->get_facet_L();
         FacetSPtr fR = edge_src->get_facet_R();
+        CGAL_assertion(fL && fR);
         CGAL_assertion(fL != fR);
 
         if (fL->vertices().size() == 3) {
@@ -488,7 +516,7 @@ public:
         }
 
         typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-        while (it_f != vertex->facets().end()) {
+        while (it_f != vertex->facets().end()) { // no C++11
           FacetWPtr facet_wptr = *it_f++;
           if (FacetSPtr facet = facet_wptr.lock()) {
             facet->remove_vertex(vertex);
@@ -506,10 +534,10 @@ public:
         } else {
           CGAL_assertion(false);
         }
+
+        polyhedron->remove_vertex(vertex);
       }
 
-      polyhedron->remove_vertex(vertex);
-      CGAL_postcondition(polyhedron->is_consistent());
       ++result;
     }
 
@@ -817,7 +845,8 @@ public:
     Point3SPtr dst_point = Kernel_wrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
 #endif
 
-    CGAL_assertion(bool(src_point) && bool(dst_point));
+    CGAL_SS3_DEBUG_SPTR(src_point);
+    CGAL_SS3_DEBUG_SPTR(dst_point);
     return Kernel_factory::createSegment3(src_point, dst_point);
   }
 
@@ -932,7 +961,6 @@ public:
         Plane3SPtr plane1 = facet_to_shifted_plane[facet1];
         Plane3SPtr plane2 = facet_to_shifted_plane[facet2];
         Line3SPtr intersection_line = Kernel_wrapper::intersection(plane1, plane2);
-        CGAL_assertion(bool(intersection_line));
 
         // Determine the direction using the unshifted positions
         Point3SPtr point_other = vertex_to_shifted_point[vertex_other];

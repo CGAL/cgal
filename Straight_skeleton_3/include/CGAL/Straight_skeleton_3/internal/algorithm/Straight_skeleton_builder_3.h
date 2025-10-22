@@ -3967,7 +3967,7 @@ public:
     EdgeSPtr edge = event->get_edge();
     const FT& event_time = event->time();
 
-    event->set_point(vanish_point(edge)); // @tmp somewhere proper
+    event->set_point(vanish_point(edge));
     Point3SPtr point = event->point();
 
     // @todo would nice:
