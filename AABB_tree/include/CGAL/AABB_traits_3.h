@@ -448,7 +448,6 @@ public:
         const FT sr = typename GeomTraits::Compute_squared_radius_3()(sphere);
 
         const Point center = typename GeomTraits::Construct_center_3()(sphere);
-        using Construct_cartesian_const_iterator = typename GeomTraits::Construct_cartesian_const_iterator_3;
         typename GeomTraits::Cartesian_const_iterator_3 cci = typename GeomTraits::Construct_cartesian_const_iterator_3()(center);
 
         if (*cci < bxmin)

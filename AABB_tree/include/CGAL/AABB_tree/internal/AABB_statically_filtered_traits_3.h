@@ -45,16 +45,16 @@ public:
       double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(),
         bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
 
-      if (fit_in_double(get_approx(c).x(), scx) &&
-        fit_in_double(get_approx(c).y(), scy) &&
-        fit_in_double(get_approx(c).z(), scz) &&
-        fit_in_double(s.squared_radius(), ssr))
+      if (internal::fit_in_double(get_approx(c).x(), scx) &&
+        internal::fit_in_double(get_approx(c).y(), scy) &&
+        internal::fit_in_double(get_approx(c).z(), scz) &&
+        internal::fit_in_double(s.squared_radius(), ssr))
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
         if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)) {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
+          return Base::Compare_distance::operator()(p, b, bound);
         }
         double distance = 0;
         double max1 = 0;
@@ -169,18 +169,17 @@ public:
 
         // double_tmp_result and eps were growing all the time
         // no need to test for > eps as done earlier in at least one case
-        if (double_tmp_result < -eps)
-          return CGAL::LARGER;
-        else
-          return CGAL::SMALLER;
+        return CGAL::SMALLER;
 
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
-      return Base::operator()(s, b);
+      return Base::Compare_distance::operator()(p, b, bound);
     }
   };
   AABB_statically_filtered_traits_3() : Base() {}
   AABB_statically_filtered_traits_3(BboxMap bbm) : Base(bbm) {}
+
+  Compare_distance compare_distance_object() const { return Compare_distance(); }
 };
 
 } //namespace CGAL
