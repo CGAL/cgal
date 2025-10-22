@@ -26,7 +26,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Side_of_triangle_mesh.h>
-#include <CGAL/fast_winding_number.h>
+#include <CGAL/Fast_winding_number.h>
 #include <CGAL/license/Variational_medial_axis.h>
 #include <CGAL/point_generators_3.h>
 #include <Eigen/Dense>
