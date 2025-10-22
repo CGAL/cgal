@@ -70,8 +70,17 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
     return false;
 }
 
+/** \brief Load nodes from a .nodes file.
+ *
+ * Load vertices coordinates from a .nodes file.
+ *
+ * \param[in] nodes_file Name of the input file.
+ * \param[in] nodes Pointer to a vector of points into which nodes are outputed.
+ * \param[in] adapt If `fill` is false, nodes must have the same dimension as the traits Point, if true, nodes dimension can be lower (and missing coordinates are filled with zeros) or higher (and coordinates are truncated to the traits dimension).
+ **/
+
 template <typename Traits>
-inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<typename Traits::Point> *nodes)
+inline size_t read_nodes(const std::string &node_file, std::vector<typename Traits::Point> *nodes, bool adapt = false)
 {
     typedef typename Traits::Point Point;
     std::ifstream in_file (node_file) ;
@@ -81,7 +90,8 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
     }
 
     // First line is the number of nodes
-    size_t nnodes, nnodes_tmp, nodes_dim ;
+    size_t nnodes, nnodes_tmp, nodes_dim, padding, d ;
+    bool fill;
     if ( ! in_file.eof())
     {
         std::string line;
@@ -91,10 +101,21 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
         std::istringstream is (line);
         is >> nnodes ;
         is >> nodes_dim ;
-        if (nodes_dim != Traits::Dimension::value) {
-            std::cerr << "read_nodes error: dimension of nodes incompatible with Traits::Dimension" << std::endl;
-            throw("read_nodes error: dimension of nodes incompatible with Traits::Dimension");
+        if (!adapt) {
+            if (nodes_dim != Traits::Dimension::value){
+                std::cerr << "read_nodes error: dimension of nodes incompatible with Traits::Dimension" << std::endl;
+                throw("read_nodes error: dimension of nodes incompatible with Traits::Dimension");
+            }
         }
+        else {
+            if (nodes_dim < Traits::Dimension::value){
+                fill = true;
+                padding = Traits::Dimension::value - nodes_dim;
+            }
+            else
+                fill = false;
+        }
+        d = (nodes_dim <= Traits::Dimension::value)?nodes_dim:Traits::Dimension::value;
     }
     nnodes_tmp =  nnodes ;
     while ( !(in_file.eof()) && (nnodes_tmp>0))
@@ -108,24 +129,29 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
         check_sanity_line(line, node_file) ;
         std::istringstream is (line);
         is >> trash ;
-        for (int i = 0; i<3; ++i)
+        for (int i = 0; i<d; ++i)
         {
             is >> x ;
             node.push_back(x) ;
         }
-        if (load_nodes){
-            if constexpr (Traits::Dimension::value == 2){
-                nodes->push_back(Point(node[0], node[1])) ;   // ignore z coordinate
-            }if constexpr (Traits::Dimension::value == 3){
-                nodes->push_back(Point(node[0], node[1], node[2])) ;
-            }else{
-                std::vector<typename Traits::FT> res ;
-                res[0] = typename Traits::FT(node[0]) ;
-                res[1] = typename Traits::FT(node[1]) ;
-                for (int i=res.size(); i<Traits::Dimension::value; ++i){
-                    res.push_back(typename Traits::FT(0)) ;
-                }
+        
+        if constexpr (Traits::Dimension::value == 2){
+            nodes->push_back(Point(typename Traits::FT(node[0]), typename Traits::FT(node[1]))) ;
+        }else if constexpr (Traits::Dimension::value == 3){
+            if ((padding <= 0) || (!adapt))
+                nodes->push_back(Point(typename Traits::FT(node[0]), typename Traits::FT(node[1]), typename Traits::FT(node[2]))) ;
+            else
+                nodes->push_back(Point(typename Traits::FT(node[0]), typename Traits::FT(node[1]), 0.)) ;
+        }else{
+            std::vector<typename Traits::FT> res(Traits::Dimension::value) ;
+            for (int i=0; i<d; ++i)
+                res[i] = typename Traits::FT(node[i]);
+            if (adapt)
+            {
+                for (int i=d; i<Traits::Dimension::value; ++i)
+                    res[i] = 0. ; ;
             }
+            nodes->push_back(Point(res.begin(), res.end()));
         }
     }
     in_file.close() ;
