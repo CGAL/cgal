@@ -206,6 +206,8 @@ class Fast_winding_number
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
+  using Cross_product_vector_3 = typename GT::Construct_cross_product_vector_3;
+  using Scalar_product_3 = typename GT::Compute_scalar_product_3;
   using Coeff = Fast_winding_number_Coeff<TriangleMesh, GeomTraits, ORDER>;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
@@ -479,11 +481,11 @@ private:
     }
     for(std::size_t j = 0; j < 3; ++j)
       iv[j] = iv[j] / l[j];
-    FT numerator = CGAL::scalar_product(iv[0], CGAL::cross_product((iv[1] - iv[0]), iv[2] - iv[1]));
+    FT numerator = Scalar_product_3()(iv[0], Cross_product_vector_3()((iv[1] - iv[0]), iv[2] - iv[1]));
     if(numerator == 0)
       return 0;
-    FT denominator = FT(1) + CGAL::scalar_product(iv[0], iv[1]) + CGAL::scalar_product(iv[1], iv[2]) +
-                     CGAL::scalar_product(iv[2], iv[0]);
+    FT denominator = FT(1) + Scalar_product_3()(iv[0], iv[1]) + Scalar_product_3()(iv[1], iv[2]) +
+                     Scalar_product_3()(iv[2], iv[0]);
     return 2 * std::atan2(numerator, denominator);
   }
 
@@ -506,7 +508,7 @@ private:
     FT r = (std::max)(CGAL::approximate_sqrt(R.squared_length()), FT(1e-15));
     if constexpr(ORDER >= 1) {
       Vector_3 G1 = R / (4 * CGAL_PI * r * r * r);
-      w += CGAL::scalar_product(G1, coeffs_[node_id(node)].weighted_normal);
+      w += Scalar_product_3()(G1, coeffs_[node_id(node)].weighted_normal);
     }
     if constexpr(ORDER >= 2) {
       FT r2 = r * r;
