@@ -407,7 +407,6 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-      // The following functions seem unused...?
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
       {

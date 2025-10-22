@@ -32,6 +32,7 @@ public:
     using Point = typename GeomTraits::Point_3;
     using Bounding_box = Bbox_3;
     using Sphere_3 = typename GeomTraits::Sphere_3;
+    using FT = typename GeomTraits::FT;
 
     Comparison_result operator()(const Point& p, const Bounding_box& b, const Point& bound) const {
       Sphere_3 s = GeomTraits().construct_sphere_3_object()(p, GeomTraits().compute_squared_distance_3_object()(p, bound));
@@ -174,6 +175,18 @@ public:
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
       return Base::Compare_distance::operator()(p, b, bound);
+    }
+
+    template <class Solid>
+    CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
+    {
+      return Base::Compare_distance::operator()(p, pr, bound);
+    }
+
+    template <class Solid>
+    CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
+    {
+      return Base::Compare_distance::operator()(p, pr, sq_distance);
     }
   };
   AABB_statically_filtered_traits_3() : Base() {}
