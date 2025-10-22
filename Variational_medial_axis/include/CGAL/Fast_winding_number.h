@@ -12,11 +12,14 @@
 #ifndef CGAL_FAST_WINDING_NUMBER_H
 #define CGAL_FAST_WINDING_NUMBER_H
 
+#include <CGAL/license/Variational_medial_axis.h>
+
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
-#include <CGAL/license/Variational_medial_axis.h>
 
 namespace CGAL {
 
