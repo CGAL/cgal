@@ -152,16 +152,17 @@ struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 3>
  *
  * \tparam TriangleMesh
  *         a model of `FaceListGraph`
- * \tparam FaceNormalMap
- *         a readable property map contains the normal of each face: face_descriptor -> Vector_3
- * \tparam FaceAreaMap
- *         a readable property map contains the area of each face: face_descriptor -> FT
- * \tparam FaceCentroidMap
- *         a readable property map contains the centroid of each face: face_descriptor -> Point_3
+ * \tparam FaceNormalMap a model of `ReadablePropertyMap`with `boost::graph_traits<TriangleMesh_>::%face_descriptor` as key
+ *         and `GeomTraits_::Vector_3` as value type.
+ *
+ * \tparam FaceAreaMapa model of `ReadablePropertyMap`with `boost::graph_traits<TriangleMesh_>::%face_descriptor` as key
+ *         and `GeomTraits_::FT` as value type.
+ * \tparam FaceCentroidMapa model of `ReadablePropertyMap`with `boost::graph_traits<TriangleMesh_>::%face_descriptor` as key
+ *         and `GeomTraits_::Point_3` as value type.
  * \tparam Tree
  *         a built AABB tree over the faces of `TriangleMesh`
  * \tparam ORDER
- *         the order of the taylor expansion, must be 1, 2, or 3.<br>
+ *         the order of the Taylor expansion, must be 1, 2, or 3.<br>
  *        <b>%Default:</b> `3`
  * \tparam GeomTraits
  *        a model of `Kernel`<br>
