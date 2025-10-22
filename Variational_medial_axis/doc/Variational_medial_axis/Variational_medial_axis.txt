@@ -55,7 +55,7 @@ Overview of the algorithm, image taken from \cgalCite{huang2024dynamic}
 The method takes as input triangulated surface mesh which can be a mode of `FaceListGraph`, such as `CGAL::Surface_mesh`.
 It also requires Eigen (version 3.2 or later) for the use of the `Eigen::LDLT` solver, which is employed to solve the linear systems arising during optimization.
 
-The output is stored in a \ref Medial_Skeleton structure, which contains three containers:
+The output is stored in a `Medial_skeleton` structure, which contains three containers:
 - **vertices**: each element corresponds to a medial sphere,
 - **edges**: each element is a `std::pair<std::size_t, std::size_t>` encoding the adjacency between two spheres,
 - **faces**: each element is a triplet of `Sphere_ID`(std::array<std::size_t, 3>) values encoding a triangular patch connecting three spheres.
