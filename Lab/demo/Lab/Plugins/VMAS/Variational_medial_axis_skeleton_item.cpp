@@ -46,7 +46,7 @@ Variational_medial_axis_skeleton_item::Variational_medial_axis_skeleton_item(CGA
 
 void Variational_medial_axis_skeleton_item::fill_subitems()
 {
-  auto skeleton = d->vmas.export_skeleton();
+  auto skeleton = d->vmas.skeleton();
 
   spheres = new Scene_spheres_item(this, 0, false, false);
   for (std::size_t i=0; i<skeleton.vertices().size(); ++i)
