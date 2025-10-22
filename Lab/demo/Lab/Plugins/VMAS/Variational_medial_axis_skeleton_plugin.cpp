@@ -22,7 +22,7 @@
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-#include <CGAL/variational_medial_axis_sampling.h>
+#include <CGAL/Variational_medial_axis_sampling.h>
 
 #include "C3t3_type.h"
 
