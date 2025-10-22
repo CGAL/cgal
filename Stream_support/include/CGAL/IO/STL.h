@@ -329,7 +329,7 @@ bool write_STL(std::ostream& os,
       decltype(auto) qq = conv(q);
       decltype(auto) rr = conv(r);
 
-      const Vector_3 nn = collinear(pp,qq,rr) ? Vector_3(static_cast<FT>(1),static_cast<FT>(0),static_cast<FT>(0)) : unit_normal(pp,qq,rr);
+      const Vector_3 nn = conv(internal::construct_normal_of_STL_face(p, q, r, k));
 
       const float coords[12] = { nn.x(), nn.y(), nn.z(),
                                  pp.x(), pp.y(), pp.z(),
