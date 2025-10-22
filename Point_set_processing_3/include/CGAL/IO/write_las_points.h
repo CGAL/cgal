@@ -379,59 +379,6 @@ bool write_LAS(const std::string& filename,
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-using IO::make_las_point_writer;
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename ForwardIterator,
-          typename PointMap>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_las_points(), please update your code")
-bool write_las_points(std::ostream& os, ///< output stream.
-                      ForwardIterator first, ///< first input point.
-                      ForwardIterator beyond, ///< past-the-end input point.
-                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return IO::write_LAS(os, points, parameters::point_map(point_map));
-}
-
-template <typename ForwardIterator>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_las_points(), please update your code")
-bool write_las_points(std::ostream& os, ///< output stream.
-                      ForwardIterator first, ///< first input point.
-                      ForwardIterator beyond) ///< past-the-end input point.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return IO::write_LAS(os, points);
-}
-
-/// \endcond
-
-template <typename PointRange,
-          typename PointMap,
-          typename ... PropertyHandler>
-CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
-                                                      const PointRange& points,
-                                                      std::tuple<PointMap,
-                                                      IO::LAS_property::X,
-                                                      IO::LAS_property::Y,
-                                                      IO::LAS_property::Z> point_property,
-                                                      PropertyHandler&& ... properties)
-{
-  return IO::write_LAS_with_properties(os, points, point_property, std::forward<PropertyHandler>(properties)...);
-}
-
-
-template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
-{
-  return IO::write_LAS(os, points, np);
-}
-
-#endif //CGAL_NO_DEPRECATED_CODE
-
 } // namespace CGAL
 
 #endif // CGAL_POINT_SET_PROCESSING_WRITE_LAS_POINTS_H

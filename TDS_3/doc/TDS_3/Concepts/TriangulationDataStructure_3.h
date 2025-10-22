@@ -960,7 +960,7 @@ OutputIterator
 adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
-Returns the degree of a vertex, that is, the number of incident vertices.
+Returns the degree of `v`, that is, the number of incident vertices.
 \pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
 */
 size_type degree(Vertex_handle v) const;
