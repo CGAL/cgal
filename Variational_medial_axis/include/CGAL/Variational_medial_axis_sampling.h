@@ -218,7 +218,7 @@ public:
    * @param filepath
    *     Filepath to the PLY file containing the medial skeleton data.
    * @return
-   *     True if the skeleton was successfully loaded, false otherwise.
+   *     `true` if the skeleton was successfully loaded, `false` otherwise.
    *
    * Note: The file format is :
    * ```
@@ -952,7 +952,6 @@ class Variational_medial_axis_sampling
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
-  using Sphere_3 = typename GT::Sphere_3;
   using MSMesh = Medial_sphere_mesh<TriangleMesh_, GT>;
   using MSphere = typename MSMesh::MSphere;
   using Sphere_ID = typename MSMesh::Sphere_ID;
@@ -981,6 +980,11 @@ class Variational_medial_axis_sampling
   using FWN = CGAL::Fast_winding_number<TriangleMesh_, Face_normal_map, Face_area_map, Face_centroid_map, Tree>;
 
 public:
+
+  /// sphere type
+  using Sphere_3 = typename GT::Sphere_3;
+
+
   /// \name Constructor
   ///@{
   ///
