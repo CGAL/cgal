@@ -1032,7 +1032,7 @@ public:
   ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{verbose}
-  ///     \cgalParamDescription{If true, the algorithm will print detailed information about its progress.}
+  ///     \cgalParamDescription{If `true`, the algorithm will print detailed information about its progress.}
   ///     \cgalParamType{bool}
   ///     \cgalParamDefault{false}
   ///   \cgalParamNEnd
@@ -1103,7 +1103,7 @@ public:
    *      \cgalParamExtra{Fix the random seed so that the result can be reproduced}
    *    \cgalParamNEnd
    *   \cgalParamNBegin{verbose}
-   *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress on the
+   *     \cgalParamDescription{If `true`, the algorithm will print detailed information about its progress on the
    * standard output.}
    *     \cgalParamType{bool}
    *     \cgalParamDefault{false}
@@ -1191,7 +1191,7 @@ public:
    * It can optionally enable sphere splitting based on convergence criteria.
    *
    * \param enable_split If true, allows sphere splitting based on convergence criteria.
-   * \return True if the algorithm has converged, false otherwise.
+   * \return `truet if the algorithm has converged, `false` otherwise.
    */
 
   bool update_single_step(bool enable_split = false) {

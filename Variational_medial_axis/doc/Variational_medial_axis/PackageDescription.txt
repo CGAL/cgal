@@ -29,6 +29,6 @@
 - `CGAL::extract_variational_medial_skeleton()`
 
 \cgalCRPSection{Classes}
-- `CGAL::Variational_medial_axis`
-- `CGAL::Medial_Skeleton`
+- `CGAL::Variational_medial_axis_sampling`
+- `CGAL::Medial_skeleton`
 */
