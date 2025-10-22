@@ -390,7 +390,7 @@ public:
    *
    * \cgalNamedParamsEnd
    *
-   * \pre `build_triangulation()` should have been called before calling this function.
+   * \pre `build_triangulation()` must have been called before calling this function.
    */
   template <class NamedParameters = parameters::Default_named_parameters,
             class TripleIndexRange>

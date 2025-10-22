@@ -48,9 +48,9 @@ This method expects as input a 3D point cloud sampled a manifold close surface w
 As the algorithm attempts to close the surface, it can tolerate some missing data and can handle little outliers and noise.
 If there are some significant gaps in the data, the internal flooding algorithm will generate triangle faces from points visible from inside the input surface.
 
-The output is of the form two triangle soups. It features the two largest components extracted from the flooding algorithm.
-One of them is always a manifold surface mesh, while the second might features some non-manifold edges.
-The fonction `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()` can be used to test them.
+The output is of the form of two triangle soups. It features the two largest components extracted from the flooding algorithm.
+One of them is always a manifold surface mesh, while the second might feature some non-manifold edges.
+The function `is_polygon_soup_a_polygon_mesh()` can be used to test them.
 
 \subsection secBMSRPar Parameter Settings
 

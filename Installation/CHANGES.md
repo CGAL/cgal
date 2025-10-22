@@ -6,7 +6,7 @@ Release date: July 2026
 
 ### [Ball merge surface reconstruction](https://doc.cgal.org/6.2/Manual/packages.html#PkgBallMerge) (new package)
 
--   This package implements a surface reconstuction algorithm from point set without normals sampled on a manifold surface.
+-   This package implements a surface reconstuction algorithm from a point set without normals sampled on a manifold surface.
     The algorithm is lightweight and based on flooding in the 3D Delaunay triangulation of the input point set. The output
     uses only input points.
 
