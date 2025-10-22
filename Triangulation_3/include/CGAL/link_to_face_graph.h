@@ -30,7 +30,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3Ref
 
-fills the face graph `tm` with the <A HREF="https://en.wikipedia.org/wiki/Simplicial_complex#Closure.2C_star.2C_and_link">link</a> of triangulation vertex `vh`.
+clears and fills the face graph `tm` with the <a href="https://en.wikipedia.org/wiki/Simplicial_complex#Closure.2C_star.2C_and_link">link</a> of triangulation vertex `vh`.
 If `t.dimension()!=3`, nothing is done.
 
 \tparam Triangulation_3 must be a \cgal 3D triangulation.
@@ -49,7 +49,7 @@ If `t.dimension()!=3`, nothing is done.
     \cgalParamDefault{`true`}
   \cgalParamNEnd
   \cgalParamNBegin{vertex_to_vertex_output_iterator}
-    \cgalParamDescription{an `OutputIterator` where pairs of input and output vertices are put upon creation in `tm`.}
+    \cgalParamDescription{an `OutputIterator` where pairs of input vertices and output descriptors are put upon creation in `tm`.}
     \cgalParamType{a class model of `OutputIterator` accepting
                    `std::pair<`Triangulation_3::Vertex_handle, `boost::graph_traits<TriangleMesh>::%vertex_descriptor>`}
     \cgalParamDefault{`Emptyset_iterator`}
@@ -63,7 +63,7 @@ If `t.dimension()!=3`, nothing is done.
 \cgalNamedParamsEnd
 
 \returns the vertex descriptor of the triangle mesh `tm` corresponding to the infinite vertex of `t`,
-         if `vh` is on the convex hull of the triangulation, and if `no_infinite_faces == false`.
+         if `vh` is on the convex hull of the triangulation, and if `ignore_infinite_faces` is `false`.
          Otherwise, an arbitrary vertex descriptor of the triangle mesh `tm`.
 
 \sa `convex_hull_3_to_face_graph()`
