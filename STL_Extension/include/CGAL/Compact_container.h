@@ -582,7 +582,7 @@ public:
 
     const_pointer ptr = &*cit;
 
-    for (const auto [chunk_ptr, size] : all_items) {
+    for (const auto& [chunk_ptr, size] : all_items) {
 
       // Are we in the address range of this block (excluding first and last
       // elements) ?
@@ -1301,7 +1301,7 @@ namespace std {
 
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
-      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+      return hash_value(i);
     }
   };
 #endif // CGAL_CFG_NO_STD_HASH

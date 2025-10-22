@@ -969,7 +969,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     of the smallest non-null edge of the soup or the value passed to the named parameter
  *                     `grid_spacing`.}
  *   \cgalParamNEnd
- * *   \cgalParamNBegin{use_monte_carlo_sampling}
+ *     \cgalParamNBegin{use_monte_carlo_sampling}
  *     \cgalParamDescription{if `true` is passed, points are generated randomly in each triangle.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
@@ -1689,8 +1689,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       // Thus, subdivision can only decrease the min, and the upper bound.
       Local_bounds<Kernel, Face_handle_1, Face_handle_2> bounds(triangle_bounds.upper);
 
-      // Ensure 'uface' is initialized in case the upper bound is not changed by the subdivision
+      // Ensure 'lface' and 'uface' are initialized in case the bounds are not changed by the subdivision
       bounds.tm2_uface = triangle_bounds.tm2_uface;
+      bounds.tm2_lface = triangle_bounds.tm2_lface;
 
       TM2_hd_traits traversal_traits_tm2(sub_t1_bbox, tm2, vpm2, bounds, global_bounds, infinity_value);
       tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);

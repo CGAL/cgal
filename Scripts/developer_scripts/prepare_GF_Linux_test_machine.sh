@@ -197,7 +197,7 @@ for member in "${GF_MEMBERS[@]}"; do
     $SUDO_OR_PRINT usermod -aG "$groups" -c "${GF_REAL_NAMES[$member]:-$user}" "$user"
   fi
 
-  $SUDO_OR_PRINT chmod o+rx "/home/$user"
+  $SUDO_OR_PRINT chmod g+rx,o+rx "/home/$user"
 
   $SUDO_OR_PRINT mkdir -p "/home/$user/.ssh"
   $SUDO_OR_PRINT chown "$user:$user" "/home/$user/.ssh"
@@ -232,6 +232,7 @@ if ! getent passwd cgaltest >/dev/null; then
   $SUDO_OR_PRINT useradd -m -s /bin/bash -c "CGAL Test User" cgaltest
 fi
 
+$SUDO_OR_PRINT chmod g+rx,o+rx "/home/cgaltest"
 $SUDO_OR_PRINT mkdir -p /home/cgaltest/.ssh
 $SUDO_OR_PRINT chown cgaltest:cgaltest /home/cgaltest/.ssh
 $SUDO_OR_PRINT chmod 700 /home/cgaltest/.ssh

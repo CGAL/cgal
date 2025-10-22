@@ -294,6 +294,8 @@ struct Output_rep<Triangulation_simplex_3<TriangulationDataStructure_3>, Tag >
   Simplex simplex;
   Tag tag;
 
+  Output_rep(const Simplex& s, Tag t = {}) : simplex(s), tag(t) {}
+
   std::ostream& operator()(std::ostream& os) const {
     auto display_vert = [&](auto v) {
       return CGAL::IO::oformat(v, tag);

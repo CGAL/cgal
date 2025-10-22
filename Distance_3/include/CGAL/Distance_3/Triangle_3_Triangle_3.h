@@ -262,11 +262,11 @@ compare_squared_distance(const typename K::Triangle_3& tr1,
                          const typename K::Triangle_3& tr2,
                          const K& k,
                          const typename K::FT& d2){
-    //TODO did something more intelligent (sq_dist and csq_dist does not exist for Segment-Triangle)
+    // sq_dist and csq_dist does not exist for Segment-Triangle, sq supports degenerate triangle
     if(tr1.is_degenerate() || tr2.is_degenerate())
-      return compare(squared_distance(tr1,tr2, k), d2);
+      return ::CGAL::compare(squared_distance(tr1,tr2, k), d2);
     if(do_intersect(tr1, tr2))
-      return compare(typename K::FT(0), d2);
+      return ::CGAL::compare(typename K::FT(0), d2);
     return compare_squared_distance_disjoint(tr1, tr2, k, d2);
 }
 

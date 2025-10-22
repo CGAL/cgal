@@ -35,6 +35,7 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -69,12 +70,6 @@ private:
 };
 
 template<typename I>
-Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const Iterator_range<I>& range)
-{
-  return Iterator_range<Prevent_deref<I> >(make_prevent_deref(range.first), make_prevent_deref(range.second));
-}
-
-template<typename I>
 Prevent_deref<I> make_prevent_deref(const I& i)
 {
   return Prevent_deref<I>(i);
@@ -84,6 +79,20 @@ template<typename I>
 Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const I& end)
 {
   return Iterator_range<Prevent_deref<I> >(make_prevent_deref(begin), make_prevent_deref(end));
+}
+
+template<typename R>
+auto make_prevent_deref_range(R&& range)
+{
+  static_assert( !std::is_rvalue_reference_v<R&&>,
+                 "make_prevent_deref_range cannot be used with"
+                 " rvalue references to avoid dangling references");
+  // Note: If CGAL were allowed to use C++20, we could use `std::ranges::begin/end`.
+  // That would allow this to work with rvalue ranges when `std::borrowed_range<R>` is `true`.
+  // See https://en.cppreference.com/w/cpp/ranges/begin.html#Notes
+  using std::begin;
+  using std::end;
+  return make_range(make_prevent_deref(begin(range)), make_prevent_deref(end(range)));
 }
 
 namespace cpp98 {
@@ -588,6 +597,13 @@ public:
       ++c_;
   }
 
+  // for non-const -> const conversion for example
+  template <class Iterator2>
+  Filter_iterator(const Filter_iterator<Iterator2, Predicate>& fi,
+                  std::enable_if_t<std::is_convertible_v<Iterator2, Iterator>>* = nullptr)
+    : e_(fi.end()), c_(fi.base()), p_(fi.predicate())
+  {}
+
   Self& operator++() {
     do { ++c_; } while (c_ != e_ && p_(c_));
     return *this;
@@ -656,6 +672,29 @@ inline
 bool operator!=(const Filter_iterator<I,P>& it1,
                 const Filter_iterator<I,P>& it2)
 { return !(it1 == it2); }
+
+
+// extra operators for test between const and non-const version for example
+template < class I1, class I2, class P >
+inline
+std::enable_if_t<std::is_convertible_v<I1, I2> || std::is_convertible_v<I2, I1>, bool >
+operator!=(const Filter_iterator<I1,P>& it1,
+           const Filter_iterator<I2,P>& it2)
+{ return it1.base() != it2.base(); }
+
+template < class I1, class I2, class P >
+inline
+std::enable_if_t<std::is_convertible_v<I1, I2> || std::is_convertible_v<I2, I1>, bool >
+operator==(const Filter_iterator<I1,P>& it1,
+           const Filter_iterator<I2,P>& it2)
+{ return it1.base() == it2.base(); }template < class I1, class I2, class P >
+
+inline
+std::enable_if_t<std::is_convertible_v<I1, I2> || std::is_convertible_v<I2, I1>, bool >
+operator<(const Filter_iterator<I1,P>& it1,
+          const Filter_iterator<I2,P>& it2)
+{ return it1.base() < it2.base(); }
+
 
 template <class I1,class Op>
 class Join_input_iterator_1

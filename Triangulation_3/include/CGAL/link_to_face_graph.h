@@ -90,6 +90,7 @@ link_to_face_graph(const Triangulation_3& t,
 
   remove_all_elements(tm);
   vertex_descriptor inf;
+
   typedef boost::unordered_map<Vertex_handle, vertex_descriptor> Vertex_map;
   Vertex_map vertex_map;
   std::vector<Cell_handle>  cells;
