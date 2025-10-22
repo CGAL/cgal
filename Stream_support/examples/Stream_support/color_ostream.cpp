@@ -9,13 +9,15 @@
  * ANSI colors.
  */
 
+using CGAL::Ansi_color;
+
 void demonstrate_basic_colors() {
   std::cout << "=== Basic Color Usage ===\n\n";
 
   // Example 1: Single color
   {
     std::cout << "1. Single color (Red):\n";
-    CGAL::Color_stream_guard guard(std::cout, CGAL::Ansi_color::Red);
+    CGAL::Color_stream_guard guard(std::cout, Ansi_color::Red);
 
     std::cout << "This text is red\n";
     std::cout << "All lines in this scope are red\n";
@@ -27,17 +29,17 @@ void demonstrate_basic_colors() {
     std::cout << "2. Different colors:\n";
 
     {
-      CGAL::Color_stream_guard green(std::cout, CGAL::Ansi_color::Green);
+      CGAL::Color_stream_guard green(std::cout, Ansi_color::Green);
       std::cout << "Green text\n";
     }
 
     {
-      CGAL::Color_stream_guard blue(std::cout, CGAL::Ansi_color::Blue);
+      CGAL::Color_stream_guard blue(std::cout, Ansi_color::Blue);
       std::cout << "Blue text\n";
     }
 
     {
-      CGAL::Color_stream_guard yellow(std::cout, CGAL::Ansi_color::Yellow);
+      CGAL::Color_stream_guard yellow(std::cout, Ansi_color::Yellow);
       std::cout << "Yellow text\n";
     }
   }
@@ -48,17 +50,17 @@ void demonstrate_basic_colors() {
     std::cout << "3. Bright colors:\n";
 
     {
-      CGAL::Color_stream_guard bright_red(std::cout, CGAL::Ansi_color::BrightRed);
+      CGAL::Color_stream_guard bright_red(std::cout, Ansi_color::BrightRed);
       std::cout << "Bright red text\n";
     }
 
     {
-      CGAL::Color_stream_guard bright_green(std::cout, CGAL::Ansi_color::BrightGreen);
+      CGAL::Color_stream_guard bright_green(std::cout, Ansi_color::BrightGreen);
       std::cout << "Bright green text\n";
     }
 
     {
-      CGAL::Color_stream_guard bright_cyan(std::cout, CGAL::Ansi_color::BrightCyan);
+      CGAL::Color_stream_guard bright_cyan(std::cout, Ansi_color::BrightCyan);
       std::cout << "Bright cyan text\n";
     }
   }
@@ -72,7 +74,7 @@ void demonstrate_combined_colors() {
   {
     std::cout << "1. Bold colors:\n";
     CGAL::Color_stream_guard guard(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::Red});
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Red});
 
     std::cout << "This text is bold and red\n";
   }
@@ -82,7 +84,7 @@ void demonstrate_combined_colors() {
   {
     std::cout << "2. Underlined colors:\n";
     CGAL::Color_stream_guard guard(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Underline, CGAL::Ansi_color::Blue});
+      std::vector<Ansi_color>{Ansi_color::Underline, Ansi_color::Blue});
 
     std::cout << "This text is underlined and blue\n";
   }
@@ -92,7 +94,7 @@ void demonstrate_combined_colors() {
   {
     std::cout << "3. Multiple attributes:\n";
     CGAL::Color_stream_guard guard(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::Underline, CGAL::Ansi_color::Green});
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Underline, Ansi_color::Green});
 
     std::cout << "This text is bold, underlined, and green\n";
   }
@@ -104,7 +106,7 @@ void demonstrate_background_colors() {
 
   {
     std::cout << "1. Red background:\n";
-    CGAL::Color_stream_guard guard(std::cout, CGAL::Ansi_color::BgRed);
+    CGAL::Color_stream_guard guard(std::cout, Ansi_color::BgRed);
     std::cout << "Text with red background\n";
   }
   std::cout << "Back to normal\n\n";
@@ -112,7 +114,7 @@ void demonstrate_background_colors() {
   {
     std::cout << "2. Foreground + background:\n";
     CGAL::Color_stream_guard guard(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Yellow, CGAL::Ansi_color::BgBlue});
+      std::vector<Ansi_color>{Ansi_color::Yellow, Ansi_color::BgBlue});
     std::cout << "Yellow text on blue background\n";
   }
   std::cout << "Back to normal\n\n";
@@ -120,7 +122,7 @@ void demonstrate_background_colors() {
   {
     std::cout << "3. Bold white on bright green background:\n";
     CGAL::Color_stream_guard guard(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::White, CGAL::Ansi_color::BgBrightGreen});
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::White, Ansi_color::BgBrightGreen});
     std::cout << "Bold white on bright green\n";
   }
   std::cout << "Back to normal\n\n";
@@ -130,15 +132,15 @@ void demonstrate_nested_colors() {
   std::cout << "=== Nested Color Scopes ===\n\n";
 
   {
-    CGAL::Color_stream_guard outer(std::cout, CGAL::Ansi_color::Blue);
+    CGAL::Color_stream_guard outer(std::cout, Ansi_color::Blue);
     std::cout << "Outer scope: blue text\n";
 
     {
-      CGAL::Color_stream_guard inner(std::cout, CGAL::Ansi_color::Red);
+      CGAL::Color_stream_guard inner(std::cout, Ansi_color::Red);
       std::cout << "Inner scope: red text\n";
 
       {
-        CGAL::Color_stream_guard innermost(std::cout, CGAL::Ansi_color::Green);
+        CGAL::Color_stream_guard innermost(std::cout, Ansi_color::Green);
         std::cout << "Innermost scope: green text\n";
       }
 
@@ -156,24 +158,24 @@ void simulate_colored_debug_output() {
   std::cout << "Algorithm: Starting computation\n";
 
   {
-    CGAL::Color_stream_guard info(std::cout, CGAL::Ansi_color::Cyan);
+    CGAL::Color_stream_guard info(std::cout, Ansi_color::Cyan);
     std::cout << "INFO: Initializing data structures\n";
   }
 
   {
     CGAL::Color_stream_guard success(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::Green});
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Green});
     std::cout << "SUCCESS: Data loaded successfully\n";
   }
 
   {
     CGAL::Color_stream_guard warning(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::Yellow});
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Yellow});
     std::cout << "WARNING: Large dataset detected, may take longer\n";
   }
 
   {
-    CGAL::Color_stream_guard processing(std::cout, CGAL::Ansi_color::Blue);
+    CGAL::Color_stream_guard processing(std::cout, Ansi_color::Blue);
     std::cout << "Processing vertices...\n";
     std::cout << "Processing edges...\n";
     std::cout << "Processing faces...\n";
@@ -181,7 +183,7 @@ void simulate_colored_debug_output() {
 
   {
     CGAL::Color_stream_guard success(std::cout,
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::Green});
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Green});
     std::cout << "SUCCESS: Computation completed\n";
   }
 
@@ -198,7 +200,7 @@ void demonstrate_multiple_streams() {
   // Apply colors to both streams simultaneously
   {
     std::cout << "\nWith make_color_guards (Red):\n";
-    auto guards = CGAL::make_color_guards(CGAL::Ansi_color::Red, std::cout, std::cerr);
+    auto guards = CGAL::make_color_guards(Ansi_color::Red, std::cout, std::cerr);
 
     std::cout << "Red text on cout\n";
     std::cerr << "Red text on cerr\n";
@@ -212,7 +214,7 @@ void demonstrate_multiple_streams() {
   {
     std::cout << "\nBold green on multiple streams:\n";
     auto guards = CGAL::make_color_guards(
-      std::vector<CGAL::Ansi_color>{CGAL::Ansi_color::Bold, CGAL::Ansi_color::Green},
+      std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Green},
       std::cout, std::clog);
 
     std::cout << "cout: Bold green output\n";
@@ -222,7 +224,136 @@ void demonstrate_multiple_streams() {
   std::cout << "\n";
 }
 
+void test_color_detection() {
+  std::cout << "=== Color Detection Tests ===\n\n";
+
+  // Test automatic detection in streambuf
+  std::cout << "1. Testing automatic color detection in Basic_color_streambuf:\n";
+  {
+    CGAL::Color_streambuf color_buf(*std::cout.rdbuf(), Ansi_color::Green);
+    std::cout << "   Colors automatically detected as: " << (color_buf.colors_enabled() ? "ENABLED" : "DISABLED")
+              << "\n";
+
+    // Temporarily install the buffer to show it works
+    auto* old_buf = std::cout.rdbuf(&color_buf);
+    std::cout << "   (This text should be green only if colors were auto-detected)\n";
+    std::cout.rdbuf(old_buf);
+  }
+  std::cout << "\n";
+
+  // Test stdout color support function
+  std::cout << "2. Testing stdout_supports_color() function:\n";
+  if(CGAL::stdout_supports_color()) {
+    std::cout << "   stdout supports colors: YES\n";
+    {
+      CGAL::Color_stream_guard guard(std::cout, Ansi_color::Green);
+      std::cout << "   (This text should be green if color is truly supported)\n";
+    }
+  } else {
+    std::cout << "   stdout supports colors: NO\n";
+    std::cout << "   (Colors are disabled - may be due to NO_COLOR env var,\n";
+    std::cout << "    redirection to file, or unsupported terminal)\n";
+  }
+  std::cout << "\n";
+
+  // Test stderr color support
+  std::cout << "3. Testing stderr_supports_color():\n";
+  if(CGAL::stderr_supports_color()) {
+    std::cout << "   stderr supports colors: YES\n";
+    {
+      CGAL::Color_stream_guard guard(std::cerr, Ansi_color::Yellow);
+      std::cerr << "   (This text should be yellow if color is truly supported)\n";
+    }
+  } else {
+    std::cout << "   stderr supports colors: NO\n";
+  }
+  std::cout << "\n";
+
+  // Test stream_supports_color() with different streams
+  std::cout << "4. Testing stream_supports_color() for different streams:\n";
+  std::cout << "   std::cout: " << (CGAL::stream_supports_color(std::cout) ? "YES" : "NO") << "\n";
+  std::cout << "   std::cerr: " << (CGAL::stream_supports_color(std::cerr) ? "YES" : "NO") << "\n";
+  std::cout << "   std::clog: " << (CGAL::stream_supports_color(std::clog) ? "YES" : "NO") << "\n";
+  std::cout << "\n";
+
+  // Demonstrate automatic coloring (no manual check needed!)
+  std::cout << "5. Automatic coloring example (no manual checking!):\n";
+  {
+    CGAL::Color_stream_guard guard(std::cout,
+                                   std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Cyan});
+    std::cout << "   This message is automatically colored only if terminal supports it!\n";
+    std::cout << "   No need to check stream_supports_color() manually - it's automatic!\n";
+  }
+  std::cout << "\n";
+
+  // Demonstrate smart error/warning coloring
+  std::cout << "6. Smart colored output (automatically adapts to terminal capabilities):\n";
+
+  // Info message - colors applied automatically!
+  std::cout << "   ";
+  {
+    CGAL::Color_stream_guard guard(std::cout, Ansi_color::Cyan);
+    std::cout << "INFO:";
+  }
+  std::cout << " Normal information message\n";
+
+  // Success message - colors applied automatically!
+  std::cout << "   ";
+  {
+    CGAL::Color_stream_guard guard(std::cout,
+                                   std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Green});
+    std::cout << "SUCCESS:";
+  }
+  std::cout << " Operation completed successfully\n";
+
+  // Warning message - colors applied automatically!
+  std::cout << "   ";
+  {
+    CGAL::Color_stream_guard guard(std::cout,
+                                   std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Yellow});
+    std::cout << "WARNING:";
+  }
+  std::cout << " Potential issue detected\n";
+
+  // Error message (using cerr) - colors applied automatically!
+  std::cerr << "   ";
+  {
+    CGAL::Color_stream_guard guard(std::cerr,
+                                   std::vector<Ansi_color>{Ansi_color::Bold, Ansi_color::Red});
+    std::cerr << "ERROR:";
+  }
+  std::cerr << " Critical error occurred\n";
+  std::cout << "\n";
+
+  // Environment hints
+  std::cout << "7. Environment information:\n";
+  const char* term = std::getenv("TERM");
+  const char* no_color = std::getenv("NO_COLOR");
+
+  std::cout << "   TERM variable: " << (term ? term : "(not set)") << "\n";
+  std::cout << "   NO_COLOR variable: " << (no_color ? "SET (colors disabled)" : "(not set)") << "\n";
+
+#ifdef _WIN32
+  std::cout << "   Platform: Windows\n";
+  const char* ansicon = std::getenv("ANSICON");
+  std::cout << "   ANSICON variable: " << (ansicon ? ansicon : "(not set)") << "\n";
+#else
+  std::cout << "   Platform: POSIX (Linux/macOS/Unix)\n";
+#endif
+
+  std::cout << "\n";
+  std::cout << "   Tip: To disable colors, set the NO_COLOR environment variable:\n";
+  std::cout << "        export NO_COLOR=1\n";
+  std::cout << "   Tip: When redirecting to a file, colors are automatically disabled:\n";
+  std::cout << "        ./color_ostream > output.txt\n";
+  std::cout << "\n";
+}
+
 int main() {
+  // First, test color detection
+  test_color_detection();
+
+  // Then demonstrate color features
   demonstrate_basic_colors();
   demonstrate_combined_colors();
   demonstrate_background_colors();

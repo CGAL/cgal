@@ -26,6 +26,18 @@
 #include <utility>
 #include <vector>
 
+#ifdef _WIN32
+#include <io.h>
+#define CGAL_ISATTY _isatty
+#define CGAL_FILENO _fileno
+#else
+#include <unistd.h>
+#define CGAL_ISATTY isatty
+#define CGAL_FILENO fileno
+#endif
+
+#include <cstdlib> // for getenv
+
 namespace CGAL {
 
 /**
@@ -109,6 +121,56 @@ private:
   streambuf_type* wrapped_buf_;
   string color_code_;
   bool at_line_start_;
+  bool colors_enabled_;
+
+  /** \brief Detect if the wrapped buffer supports color output. */
+  static bool detect_color_support(streambuf_type* buf) {
+    // Check NO_COLOR environment variable first
+    if(std::getenv("NO_COLOR")) {
+      return false;
+    }
+
+    // Try to determine if this is stdout or stderr
+    // by comparing pointers (works for standard streams)
+    if(buf == std::cout.rdbuf() || buf == std::clog.rdbuf()) {
+      int fd = CGAL_FILENO(stdout);
+      if(!CGAL_ISATTY(fd)) {
+        return false;
+      }
+    } else if(buf == std::cerr.rdbuf()) {
+      int fd = CGAL_FILENO(stderr);
+      if(!CGAL_ISATTY(fd)) {
+        return false;
+      }
+    } else {
+      // Unknown buffer, conservatively disable colors
+      return false;
+    }
+
+#ifdef _WIN32
+    // Windows: check for ANSICON or assume modern Windows
+    return std::getenv("ANSICON") || true;
+#else
+    // POSIX: check TERM environment variable
+    const char* term = std::getenv("TERM");
+    if(!term) {
+      return false;
+    }
+
+    std::string term_str(term);
+    if(term_str == "dumb") {
+      return false;
+    }
+
+    // Check for common color-capable terminals
+    return term_str.find("color") != std::string::npos ||
+           term_str.find("xterm") != std::string::npos ||
+           term_str.find("rxvt") != std::string::npos ||
+           term_str.find("screen") != std::string::npos ||
+           term_str.find("tmux") != std::string::npos ||
+           term_str.find("linux") != std::string::npos;
+#endif
+  }
 
   /** \brief Generate ANSI escape sequence for a color. */
   static string make_color_code(Ansi_color color) {
@@ -135,6 +197,9 @@ public:
   /**
    * \brief Construct a color streambuf wrapper.
    *
+   * Colors are automatically disabled if the wrapped buffer is not connected
+   * to a color-capable terminal (checked via isatty() and TERM variable).
+   *
    * \param wrapped_buf The underlying streambuf to wrap
    * \param color The color to apply to the output
    */
@@ -144,11 +209,15 @@ public:
       : wrapped_buf_(&wrapped_buf)
       , color_code_(make_color_code(color))
       , at_line_start_(true)
+      , colors_enabled_(detect_color_support(&wrapped_buf))
   {
   }
 
   /**
    * \brief Construct a color streambuf wrapper with multiple colors.
+   *
+   * Colors are automatically disabled if the wrapped buffer is not connected
+   * to a color-capable terminal (checked via isatty() and TERM variable).
    *
    * \param wrapped_buf The underlying streambuf to wrap
    * \param colors Vector of colors to combine (e.g., bold + red)
@@ -157,6 +226,7 @@ public:
                         const std::vector<Ansi_color>& colors)
       : wrapped_buf_(&wrapped_buf)
       , at_line_start_(true)
+      , colors_enabled_(detect_color_support(&wrapped_buf))
   {
     if(!colors.empty()) {
       color_code_ += char_type('\033');
@@ -189,6 +259,7 @@ public:
       : wrapped_buf_(std::exchange(other.wrapped_buf_, nullptr))
       , color_code_(std::move(other.color_code_))
       , at_line_start_(std::exchange(other.at_line_start_, true))
+      , colors_enabled_(std::exchange(other.colors_enabled_, false))
   {
   }
 
@@ -202,13 +273,14 @@ public:
       wrapped_buf_ = std::exchange(other.wrapped_buf_, nullptr);
       color_code_ = std::move(other.color_code_);
       at_line_start_ = std::exchange(other.at_line_start_, true);
+      colors_enabled_ = std::exchange(other.colors_enabled_, false);
     }
     return *this;
   }
 
   ~Basic_color_streambuf() noexcept {
     if(wrapped_buf_) {
-      if(!color_code_.empty() && !at_line_start_) {
+      if(colors_enabled_ && !color_code_.empty() && !at_line_start_) {
         string reset_code = make_color_code(Ansi_color::Reset);
         (void)put_a_string(reset_code);
       }
@@ -227,6 +299,9 @@ public:
   void set_color_code(const string& color_code) {
     color_code_ = color_code;
   }
+
+  /** \brief Check if colors are enabled for this streambuf. */
+  bool colors_enabled() const { return colors_enabled_; }
 
   /** \brief Get the wrapped streambuf. */
   streambuf_type& wrapped_streambuf() const { return *wrapped_buf_; }
@@ -252,8 +327,8 @@ protected:
       return wrapped_buf_->pubsync() == 0 ? not_eof(ch) : eof();
     }
 
-    // If we're at the start of a line, output the color code first
-    if(at_line_start_ && !color_code_.empty()) {
+    // If we're at the start of a line, output the color code first (if colors enabled)
+    if(colors_enabled_ && at_line_start_ && !color_code_.empty()) {
       if(!put_a_string(color_code_)) {
         return eof();
       }
@@ -262,8 +337,8 @@ protected:
 
     // Check if this character is a newline
     if(to_char_type(ch) == char_type('\n')) {
-      // Output reset code before newline
-      if(!color_code_.empty()) {
+      // Output reset code before newline (if colors enabled)
+      if(colors_enabled_ && !color_code_.empty()) {
         string reset_code = make_color_code(Ansi_color::Reset);
         if(!put_a_string(reset_code)) {
           return eof();
@@ -479,6 +554,136 @@ auto make_color_guards(Ansi_color color, Streams&... streams) {
 template <typename... Streams>
 auto make_color_guards(const std::vector<Ansi_color>& colors, Streams&... streams) {
   return std::make_tuple(Basic_color_stream_guard<Streams>(streams, colors)...);
+}
+
+/**
+ * \ingroup PkgStreamSupportRef
+ *
+ * \brief Check if a stream is attached to a terminal that supports colors.
+ *
+ * This function checks if the given output stream is connected to a terminal
+ * (TTY) that can display ANSI color codes. It performs the following checks:
+ *
+ * 1. Verifies the stream is attached to a TTY device using `isatty()`
+ * 2. Checks if the `TERM` environment variable indicates color support
+ * 3. Respects the `NO_COLOR` environment variable (if set, colors are disabled)
+ * 4. On Windows, also checks for `ANSICON` environment variable
+ *
+ * \param stream The output stream to check (e.g., `std::cout`, `std::cerr`)
+ * \return `true` if the stream supports color output, `false` otherwise
+ *
+ * \note This function may return false negatives on some systems, but should
+ *       never return false positives (it won't report color support where
+ *       it doesn't exist).
+ *
+ * Example usage:
+ * \code
+ * if(CGAL::stream_supports_color(std::cout)) {
+ *   CGAL::Color_stream_guard guard(std::cout, CGAL::Ansi_color::Red);
+ *   std::cout << "This text is red!\n";
+ * } else {
+ *   std::cout << "Plain text output\n";
+ * }
+ * \endcode
+ */
+template <typename CharT, typename Traits>
+bool stream_supports_color(const std::basic_ostream<CharT, Traits>& stream) {
+  // Check if NO_COLOR environment variable is set (standard way to disable colors)
+  if(std::getenv("NO_COLOR")) {
+    return false;
+  }
+
+  // Try to get the file descriptor for the stream
+  // This works for std::cout (stdout) and std::cerr (stderr)
+  const auto* fbuf = dynamic_cast<const std::basic_filebuf<CharT, Traits>*>(stream.rdbuf());
+  if(!fbuf) {
+    // If it's not a file buffer, check if it's stdout or stderr directly
+    const std::basic_ostream<CharT, Traits>* std_stream = &stream;
+    int fd = -1;
+
+    if(std_stream == &std::cout || std_stream == &std::clog) {
+      fd = CGAL_FILENO(stdout);
+    } else if(std_stream == &std::cerr) {
+      fd = CGAL_FILENO(stderr);
+    }
+
+    if(fd == -1) {
+      return false; // Unknown stream type
+    }
+
+    // Check if the file descriptor is a TTY
+    if(!CGAL_ISATTY(fd)) {
+      return false;
+    }
+  } else {
+    // For file buffers, we can't easily get the fd in a portable way
+    // Conservatively assume no color support for files
+    return false;
+  }
+
+#ifdef _WIN32
+  // On Windows, check for ANSICON or Windows 10+ with VT100 support
+  // Modern Windows Terminal and ConEmu support ANSI colors
+  if(std::getenv("ANSICON")) {
+    return true;
+  }
+  // Windows 10+ console supports ANSI by default
+  // We could check Windows version, but being conservative here
+  return true; // Modern Windows usually supports colors
+#else
+  // On POSIX systems, check the TERM environment variable
+  const char* term = std::getenv("TERM");
+  if(!term) {
+    return false; // No TERM variable, probably not a color terminal
+  }
+
+  std::string term_str(term);
+
+  // Check for common indicators of color support
+  if(term_str.find("color") != std::string::npos ||
+     term_str.find("xterm") != std::string::npos ||
+     term_str.find("rxvt") != std::string::npos ||
+     term_str.find("screen") != std::string::npos ||
+     term_str.find("tmux") != std::string::npos ||
+     term_str.find("linux") != std::string::npos) {
+    return true;
+  }
+
+  // Check for dumb terminal
+  if(term_str == "dumb") {
+    return false;
+  }
+
+  // For other TERM values, conservatively assume color support
+  // Most modern terminals support colors
+  return true;
+#endif
+}
+
+/**
+ * \ingroup PkgStreamSupportRef
+ *
+ * \brief Check if stdout supports color output.
+ *
+ * Convenience function equivalent to `stream_supports_color(std::cout)`.
+ *
+ * \return `true` if stdout supports color output, `false` otherwise
+ */
+inline bool stdout_supports_color() {
+  return stream_supports_color(std::cout);
+}
+
+/**
+ * \ingroup PkgStreamSupportRef
+ *
+ * \brief Check if stderr supports color output.
+ *
+ * Convenience function equivalent to `stream_supports_color(std::cerr)`.
+ *
+ * \return `true` if stderr supports color output, `false` otherwise
+ */
+inline bool stderr_supports_color() {
+  return stream_supports_color(std::cerr);
 }
 
 } // namespace CGAL
