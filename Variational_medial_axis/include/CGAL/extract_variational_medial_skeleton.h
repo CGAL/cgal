@@ -93,10 +93,10 @@ extract_variational_medial_skeleton(const TriangleMesh& tmesh,
                                                        Sequential_tag>::type Concurrency_tag;
   typedef typename internal_np::Lookup_named_param_def<internal_np::acceleration_structure_t, NamedParameters,
                                                        KD_tree_tag>::type Acceleration_type;
-  using VMAS = CGAL::Variational_medial_axis<TriangleMesh, Concurrency_tag, Acceleration_type>;
+  using VMAS = CGAL::Variational_medial_axis_sampling<TriangleMesh, Concurrency_tag, Acceleration_type>;
   VMAS vmas(tmesh, np);
-  vmas.compute_variational_medial_axis_sampling(np);
-  return vmas.export_skeleton();
+  vmas.sample(np);
+  return vmas.skeleton();
 }
 } // end of namespace CGAL
 

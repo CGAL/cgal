@@ -1113,7 +1113,7 @@ public:
    *
    */
   template <class NamedParameters = parameters::Default_named_parameters>
-  bool compute_variational_medial_axis_sampling(const NamedParameters& np = parameters::default_values()) {
+  bool sample(const NamedParameters& np = parameters::default_values()) {
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -1323,16 +1323,16 @@ public:
   }
 
   /**
-   * \brief exports the medial skeleton as a `Medial_skeleton` object.
+   * \brief returns the medial skeleton as a `Medial_skeleton` object.
    *
-   * This function builds a `Medial_skeleton` from the current state of the medial sphere mesh.
+   * This function builds a medial skeleton from the current state of the medial sphere mesh.
    * It extracts the vertices, edges, and faces from the medial sphere mesh and constructs
    * the medial skeleton accordingly.
    *
    * \return
    *     A `Medial_skeleton` object containing the medial skeleton data.
    */
-  Medial_skeleton<TriangleMesh_, GeomTraits_> export_skeleton() const {
+  Medial_skeleton<TriangleMesh_, GeomTraits_> skeleton() const {
     Medial_skeleton<TriangleMesh_, GeomTraits_> skeleton;
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
@@ -1341,7 +1341,7 @@ public:
   /// \name Parameters
   /// @{
   /**
-   * \brief gets the Lambda parameter for the algorithm.
+   * \brief returns the Lambda parameter for the algorithm.
    *
    * This parameter controls the balance between the SQEM and Euclidean energy terms.
    * Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.
@@ -1363,16 +1363,16 @@ public:
     }
   }
   /**
-   * \brief Get the desired number of spheres for the algorithm.
+   * \brief returns the desired number of spheres for the algorithm.
    */
   int number_of_spheres() const { return desired_number_of_spheres_; }
   /**
-   * \brief sets the expected number of spheres.
+   * \brief sets the desired number of spheres.
    */
   void set_number_of_spheres(int num) { desired_number_of_spheres_ = num; }
 
   /**
-   * \brief gets the maximum number of iterations for the algorithm.
+   * \brief returns the maximum number of iterations for the algorithm.
    *
    * In case the algorithm does not converge, it will stop after this number of iterations.
    */

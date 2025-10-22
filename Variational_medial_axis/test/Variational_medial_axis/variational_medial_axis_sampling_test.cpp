@@ -174,7 +174,7 @@ bool test_API() {
     return false;
   }
   VMAS vmas(mesh);
-  bool success = vmas.compute_variational_medial_axis_sampling(
+  bool success = vmas.sample(
       CGAL::parameters::lambda(0.2).number_of_spheres(200).concurrency_tag(CGAL::Sequential_tag{}));
   if(!success)
   {
@@ -194,7 +194,7 @@ bool test_API() {
     std::cout << "Adding spheres succeeded: new vertex count is " << skeleton2.number_of_vertices() << std::endl;
   }
   vmas.add_sphere_by_id(5);
-  auto skeleton3 = vmas.export_skeleton();
+  auto skeleton3 = vmas.skeleton();
   if(skeleton3.number_of_vertices() != skeleton.number_of_vertices() + 3) {
     std::cerr << "Adding spheres failed: expected " << skeleton.number_of_vertices() + 3 << " vertices, got "
               << skeleton3.number_of_vertices() << std::endl;
@@ -205,7 +205,7 @@ bool test_API() {
   vmas.remove_sphere_by_id(0);
   vmas.remove_sphere_by_id(1);
   vmas.remove_sphere_by_id(2);
-  auto skeleton4 = vmas.export_skeleton();
+  auto skeleton4 = vmas.skeleton();
   if(skeleton4.number_of_vertices() != skeleton.number_of_vertices()) {
     std::cerr << "Removing sphere failed: expected " << skeleton.number_of_vertices() << " vertices, got "
               << skeleton4.number_of_vertices() << std::endl;
@@ -232,12 +232,12 @@ bool test_determinism(const TestParams& params, const std::string& mesh_file_pat
   // Run algorithm multiple times with same parameters
   for(int i = 0; i < num_runs; ++i) {
     VMAS vmas(mesh);
-    vmas.compute_variational_medial_axis_sampling(CGAL::parameters::lambda(params.lambda)
-                                                      .number_of_spheres(params.num_spheres)
-                                                      //.verbose(true)
-                                                      .concurrency_tag(CGAL::Sequential_tag{}));
+    vmas.sample(CGAL::parameters::lambda(params.lambda)
+                .number_of_spheres(params.num_spheres)
+                //.verbose(true)
+                .concurrency_tag(CGAL::Sequential_tag{}));
 
-    skeletons.push_back(vmas.export_skeleton());
+    skeletons.push_back(vmas.skeleton());
   }
 
   // Compare all results with first one

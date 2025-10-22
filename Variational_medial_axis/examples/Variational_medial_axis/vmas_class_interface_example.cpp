@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 
   CGAL::Variational_medial_axis_sampling<Mesh, CGAL::Parallel_if_available_tag> vmas(mesh);
   // Compute medial skeleton with custom parameters
-  vmas.compute_variational_medial_axis_sampling(
+  vmas.sample(
       CGAL::parameters::number_of_iterations(1000) // number of max iterations
       .number_of_spheres(200)// target number of spheres
       .lambda(0.2) // lambda parameter for the optimization
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
   vmas.update(20);
 
   std::cout << "Exporting skeleton..." << std::endl;
-  auto skeleton = vmas.export_skeleton();
+  auto skeleton = vmas.skeleton();
 
   // Write skeleton to PLY file
   std::string output_filename = "skeleton.ply";

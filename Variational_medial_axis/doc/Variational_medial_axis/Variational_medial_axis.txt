@@ -93,17 +93,17 @@ The following example showcases the usage of this function:
 \cgalExample{Variational_medial_axis/vmas_free_function_example.cpp}
 
 \subsection VMASfunctionobject Function object
-The class `CGAL::Variational_medial_axis` provides some advanced usage of the algorithm
+The class `CGAL::Variational_medial_axis_sampling` provides some advanced usage of the algorithm
 Several key functions are provided for algorithm control:
-- `CGAL::Variational_medial_axis::compute_variational_medial_axis_sampling()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
+- `CGAL::Variational_medial_axis_sampling::sample()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
 The algorithm may fail either when the optimization does not converge (the error stays above the error threshold) or when the surface sampling is not dense enough to generate a sufficient number of medial spheres.
 The parameters are the same as those of the free function.
 
-- `CGAL::Variational_medial_axis::update_single_step()`: Performs a single iteration of the optimization process, with optional sphere splitting enabled. This allows for step-by-step execution and monitoring of the algorithm's progress.
+- `CGAL::Variational_medial_axis_sampling::update_single_step()`: Performs a single iteration of the optimization process, with optional sphere splitting enabled. This allows for step-by-step execution and monitoring of the algorithm's progress.
 
-- `CGAL::Variational_medial_axis::update()`: Executes a specified number of optimization iterations without sphere splitting.
+- `CGAL::Variational_medial_axis_sampling::update()`: Executes a specified number of optimization iterations without sphere splitting.
 
-- `CGAL::Variational_medial_axis::add_spheres(int nb_spheres)`: Adds a specified number of spheres by iteratively splitting existing spheres.
+- `CGAL::Variational_medial_axis_sampling::add_spheres(int nb_spheres)`: Adds a specified number of spheres by iteratively splitting existing spheres.
 
 The following example shows a different configuration of the parameters and basic usage of the above functions:
 
@@ -116,7 +116,7 @@ However, since this algorithm aims to generate coarse approximation of medial ax
 While the algorithm can handle meshes with multiple connected components, the resulting medial skeleton is only topologically faithful when a sufficient number of spheres is used to capture the correct connectivity.
 Furthermore, this method does not perform well on CAD models, which typically require additional feature detection to preserve sharp features.
 \section VMASDesign Design and Implementation History
-This package is the result of the work of Qijia HUANG during the 2025 season of the Google Summer of Code, mentored by Sébastien Loriot.
+This package is the result of the work of Qijia Huang during the 2025 season of the Google Summer of Code, mentored by Sébastien Loriot.
 
 */
 } /* namespace CGAL */
