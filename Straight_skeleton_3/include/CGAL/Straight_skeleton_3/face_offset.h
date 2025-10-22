@@ -140,9 +140,9 @@ bool face_offset(const TriangleMeshIn& tmesh,
   using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
 
   // Get config file path from named parameters if provided, else use default (working directory)
-  SS3::ConfigurationSPtr config = SS3::Configuration::getInstance();
+  SS3::ConfigurationSPtr config = SS3::Configuration::get_instance();
   std::string str_conf_file = parameters::choose_parameter(parameters::get_parameter(np_in, internal_np::config_file_path),
-                                                           config->findDefaultFilename());
+                                                           config->find_default_filename());
 
   CGAL_SS3_TRACE_V(4, "Seek config file @ " << str_conf_file);
   if (!config->load(str_conf_file)) {
@@ -189,9 +189,9 @@ bool face_offset(const TriangleMeshIn& tmesh,
 
   // Perturbation to ensure generic configuration
   bool safe_mode = true;
-  if (config->isLoaded()) {
+  if (config->is_loaded()) {
     if ((config->contains("Preprocessing", "check_degenerate_configuration") &&
-         !config->getBool("Preprocessing", "check_degenerate_configuration"))) {
+         !config->get_Boolean("Preprocessing", "check_degenerate_configuration"))) {
       safe_mode = false;
     }
   }

@@ -136,10 +136,10 @@ public:
                            + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
                            + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(edgeA=" << edge1->get_ID() << "[" << edge1->getVertexSrc()->get_ID() << "-"
-                                                 << edge1->getVertexDst()->get_ID() << "]"
-         << "; edgeB=" << edge2->get_ID() << "[" << edge2->getVertexSrc()->get_ID() << "-"
-                                                << edge2->getVertexDst()->get_ID() << "])";
+    sstr << "\t(edgeA=" << edge1->get_ID() << "[" << edge1->get_vertex_src()->get_ID() << "-"
+                                                 << edge1->get_vertex_dst()->get_ID() << "]"
+         << "; edgeB=" << edge2->get_ID() << "[" << edge2->get_vertex_src()->get_ID() << "-"
+                                                << edge2->get_vertex_dst()->get_ID() << "])";
     return sstr.str();
   }
 

@@ -52,9 +52,9 @@ private:
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
-  using SkelVertexData = typename Polyhedron::SkelVertexData;
+  using Skeleton_vertex_data = typename Polyhedron::Skeleton_vertex_data;
   using SkelVertexDataSPtr = typename Polyhedron::SkelVertexDataSPtr;
-  using SkelFacetData = typename Polyhedron::SkelFacetData;
+  using Skeleton_facet_data = typename Polyhedron::Skeleton_facet_data;
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
@@ -72,9 +72,9 @@ public:
   {
     this->type_ = Base::COMBI_VERTEX_SPLITTER;
     selected_combi_ = 0;
-    ConfigurationSPtr config = Configuration::getInstance();
-    if (config->isLoaded()) {
-      selected_combi_ = config->getInt("Algorithm", "selected_combinatorial_split");
+    ConfigurationSPtr config = Configuration::get_instance();
+    if (config->is_loaded()) {
+      selected_combi_ = config->get_int("Algorithm", "selected_combinatorial_split");
     }
   }
 
@@ -295,10 +295,10 @@ public:
       }
       EdgeSPtr edge_c;
       VertexSPtr vertex_dst_c;
-      if (edge->getVertexSrc() == vertex) {
-        vertex_dst_c = edge->getVertexDst()->clone();
-      } else if (edge->getVertexDst() == vertex) {
-        vertex_dst_c = edge->getVertexSrc()->clone();
+      if (edge->get_vertex_src() == vertex) {
+        vertex_dst_c = edge->get_vertex_dst()->clone();
+      } else if (edge->get_vertex_dst() == vertex) {
+        vertex_dst_c = edge->get_vertex_src()->clone();
       }
       result->add_vertex(vertex_dst_c);
       edge_c = Edge::create(vertex_c, vertex_dst_c);
@@ -308,15 +308,15 @@ public:
       result->add_edge(edge_c);
       if (edge_prev_c) {
         facet_c = Facet::create();
-        facet_c->setPlane(facet->plane());
-        edge_prev_c->setFacetL(facet_c);
+        facet_c->set_plane(facet->plane());
+        edge_prev_c->set_facet_L(facet_c);
         facet_c->add_edge(edge_prev_c);
-        edge_c->setFacetR(facet_c);
+        edge_c->set_facet_R(facet_c);
         facet_c->add_edge(edge_c);
-        facet_c_data = SkelFacetData::create(facet_c);
-        facet_c_data->setFacetOrigin(facet);
+        facet_c_data = Skeleton_facet_data::create(facet_c);
+        facet_c_data->set_facet_origin(facet);
         if (facet->has_data()) {
-          facet_c_data->set_speed(std::dynamic_pointer_cast<SkelFacetData>(facet->get_data())->get_speed());
+          facet_c_data->set_speed(std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data())->get_speed());
         }
         result->add_facet(facet_c);
       }
@@ -327,15 +327,15 @@ public:
       facet_next = edge->other(facet);
     }
     facet_c = Facet::create();
-    facet_c->setPlane(facet->plane());
-    edge_prev_c->setFacetL(facet_c);
+    facet_c->set_plane(facet->plane());
+    edge_prev_c->set_facet_L(facet_c);
     facet_c->add_edge(edge_prev_c);
-    edge_first_c->setFacetR(facet_c);
+    edge_first_c->set_facet_R(facet_c);
     facet_c->add_edge(edge_first_c);
-    facet_c_data = SkelFacetData::create(facet_c);
-    facet_c_data->setFacetOrigin(facet);
+    facet_c_data = Skeleton_facet_data::create(facet_c);
+    facet_c_data->set_facet_origin(facet);
     if (facet->has_data()) {
-        facet_c_data->set_speed(std::dynamic_pointer_cast<SkelFacetData>(facet->get_data())->get_speed());
+        facet_c_data->set_speed(std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data())->get_speed());
     }
     result->add_facet(facet_c);
     result->initialize_all_IDs();
@@ -377,14 +377,14 @@ public:
             vertex->has_incident_facet(facet_left)) {
           vertices_tosplit.erase(it_current);
           VertexSPtr vertex2 = vertex->split(facet_left, facet_right);
-          if (facet_left->getPlane() == facet_right->getPlane()) {
+          if (facet_left->get_plane() == facet_right->get_plane()) {
             EdgeSPtr edge = vertex->find_edge(vertex2);
             edges_toremove.push_back(edge);
           }
           if (vertex->has_data()) {
-            SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
-            SkelVertexDataSPtr data2 = SkelVertexData::create(vertex2);
-            data2->setWNode(data->getWNode());
+            SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
+            SkelVertexDataSPtr data2 = Skeleton_vertex_data::create(vertex2);
+            data2->set_wnode(data->get_wnode());
           }
           if (vertex->degree() > 3) {
             vertices_tosplit.push_back(vertex);
@@ -400,10 +400,10 @@ public:
     typename std::list<EdgeSPtr>::iterator it_e = edges_toremove.begin();
     while (it_e != edges_toremove.end()) {
       EdgeSPtr edge = *it_e++;
-      VertexSPtr vertex_src = edge->getVertexSrc();
-      VertexSPtr vertex_dst = edge->getVertexDst();
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
+      VertexSPtr vertex_src = edge->get_vertex_src();
+      VertexSPtr vertex_dst = edge->get_vertex_dst();
+      FacetSPtr facet_l = edge->get_facet_L();
+      FacetSPtr facet_r = edge->get_facet_R();
       facet_l->remove_edge(edge);
       facet_r->remove_edge(edge);
       polyhedron->remove_edge(edge);
@@ -441,8 +441,8 @@ public:
         }
         polyhedron->remove_vertex(vertex);
         EdgeSPtr edge_merged = Edge::create(vertex_merged_src, vertex_merged_dst);
-        edge_merged->setFacetL(facet_l);
-        edge_merged->setFacetR(facet_r);
+        edge_merged->set_facet_L(facet_l);
+        edge_merged->set_facet_R(facet_r);
         facet_l->add_edge(edge_merged);
         facet_r->add_edge(edge_merged);
         polyhedron->add_edge(edge_merged);
@@ -459,8 +459,8 @@ public:
     PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     NodeWPtr node;
     if (vertex->has_data()) {
-      SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
-      node = data->getWNode();
+      SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
+      node = data->get_wnode();
     }
     std::map<VertexSPtr, VertexSPtr> vertices;
     typename std::list<VertexSPtr>::iterator it_v = poly_split->vertices().begin();
@@ -470,42 +470,42 @@ public:
         VertexSPtr vertex_vs = Vertex::create(vertex_ps->point());
         vertices[vertex_ps] = vertex_vs;
         polyhedron->add_vertex(vertex_vs);
-        SkelVertexDataSPtr data = SkelVertexData::create(vertex_vs);
-        data->setWNode(node);
+        SkelVertexDataSPtr data = Skeleton_vertex_data::create(vertex_vs);
+        data->set_wnode(node);
       }
     }
 
     typename std::list<EdgeSPtr>::iterator it_e = poly_split->edges().begin();
     while (it_e != poly_split->edges().end()) {
       EdgeSPtr edge_ps = *it_e++;
-      VertexSPtr vertex_ps_src = edge_ps->getVertexSrc();
-      VertexSPtr vertex_ps_dst = edge_ps->getVertexDst();
-      FacetSPtr facet_ps_l = edge_ps->getFacetL();
-      FacetSPtr facet_ps_r = edge_ps->getFacetR();
+      VertexSPtr vertex_ps_src = edge_ps->get_vertex_src();
+      VertexSPtr vertex_ps_dst = edge_ps->get_vertex_dst();
+      FacetSPtr facet_ps_l = edge_ps->get_facet_L();
+      FacetSPtr facet_ps_r = edge_ps->get_facet_R();
       if (vertex_ps_dst->degree() == 1) {
         EdgeSPtr edge_vs;
         typename std::list<EdgeWPtr>::iterator it_ve = vertex->edges().begin();
         while (it_ve != vertex->edges().end()) {
           EdgeWPtr edge_wptr = *it_ve++;
           if (EdgeSPtr edge = edge_wptr.lock()) {
-            if (edge->getVertexSrc()->point() == vertex_ps_dst->point() ||
-                edge->getVertexDst()->point() == vertex_ps_dst->point()) {
+            if (edge->get_vertex_src()->point() == vertex_ps_dst->point() ||
+                edge->get_vertex_dst()->point() == vertex_ps_dst->point()) {
               edge_vs = edge;
               break;
             }
           }
         }
         VertexSPtr vertex_vs = vertices[vertex_ps_src];
-        if (edge_vs->getVertexSrc() == vertex) {
-          edge_vs->replaceVertexSrc(vertex_vs);
+        if (edge_vs->get_vertex_src() == vertex) {
+          edge_vs->replace_vertex_src(vertex_vs);
         } else {
-          edge_vs->replaceVertexDst(vertex_vs);
+          edge_vs->replace_vertex_dst(vertex_vs);
         }
-        if (!edge_vs->getFacetL()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetL()->add_vertex(vertex_vs);
+        if (!edge_vs->get_facet_L()->contrains_vertex(vertex_vs)) {
+          edge_vs->get_facet_L()->add_vertex(vertex_vs);
         }
-        if (!edge_vs->getFacetR()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetR()->add_vertex(vertex_vs);
+        if (!edge_vs->get_facet_R()->contrains_vertex(vertex_vs)) {
+          edge_vs->get_facet_R()->add_vertex(vertex_vs);
         }
       } else if (vertex_ps_src->degree() == 1) {
         EdgeSPtr edge_vs;
@@ -513,33 +513,33 @@ public:
         while (it_ve != vertex->edges().end()) {
           EdgeWPtr edge_wptr = *it_ve++;
           if (EdgeSPtr edge = edge_wptr.lock()) {
-            if (edge->getVertexSrc()->point() == vertex_ps_src->point() ||
-                edge->getVertexDst()->point() == vertex_ps_src->point()) {
+            if (edge->get_vertex_src()->point() == vertex_ps_src->point() ||
+                edge->get_vertex_dst()->point() == vertex_ps_src->point()) {
               edge_vs = edge;
               break;
             }
           }
         }
         VertexSPtr vertex_vs = vertices[vertex_ps_dst];
-        if (edge_vs->getVertexSrc() == vertex) {
-          edge_vs->replaceVertexSrc(vertex_vs);
+        if (edge_vs->get_vertex_src() == vertex) {
+          edge_vs->replace_vertex_src(vertex_vs);
         } else {
-          edge_vs->replaceVertexDst(vertex_vs);
+          edge_vs->replace_vertex_dst(vertex_vs);
         }
-        if (!edge_vs->getFacetL()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetL()->add_vertex(vertex_vs);
+        if (!edge_vs->get_facet_L()->contrains_vertex(vertex_vs)) {
+          edge_vs->get_facet_L()->add_vertex(vertex_vs);
         }
-        if (!edge_vs->getFacetR()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetR()->add_vertex(vertex_vs);
+        if (!edge_vs->get_facet_R()->contrains_vertex(vertex_vs)) {
+          edge_vs->get_facet_R()->add_vertex(vertex_vs);
         }
       } else {
         EdgeSPtr edge_vs = Edge::create(vertices[vertex_ps_src], vertices[vertex_ps_dst]);
-        SkelFacetDataSPtr data_l = std::dynamic_pointer_cast<SkelFacetData>(facet_ps_l->get_data());
-        SkelFacetDataSPtr data_r = std::dynamic_pointer_cast<SkelFacetData>(facet_ps_r->get_data());
+        SkelFacetDataSPtr data_l = std::dynamic_pointer_cast<Skeleton_facet_data>(facet_ps_l->get_data());
+        SkelFacetDataSPtr data_r = std::dynamic_pointer_cast<Skeleton_facet_data>(facet_ps_r->get_data());
         FacetSPtr facet_vs_l = data_l->get_facet_origin();
         FacetSPtr facet_vs_r = data_r->get_facet_origin();
-        edge_vs->setFacetL(facet_vs_l);
-        edge_vs->setFacetR(facet_vs_r);
+        edge_vs->set_facet_L(facet_vs_l);
+        edge_vs->set_facet_R(facet_vs_r);
         facet_vs_l->add_edge(edge_vs);
         facet_vs_r->add_edge(edge_vs);
         polyhedron->add_edge(edge_vs);

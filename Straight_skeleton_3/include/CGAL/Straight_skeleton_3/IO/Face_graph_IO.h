@@ -63,7 +63,7 @@ private:
   using Facet = typename Polyhedron::Facet;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
-  using SkelFacetData = typename Polyhedron::SkelFacetData;
+  using Skeleton_facet_data = typename Polyhedron::Skeleton_facet_data;
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
@@ -159,7 +159,7 @@ public:
         Plane3SPtr plane = Kernel_factory::createPlane3(poly_vertices[0]->point(),
                                                         poly_vertices[1]->point(),
                                                         poly_vertices[2]->point());
-        facet->setPlane(plane);
+        facet->set_plane(plane);
       } else {
         // @todo is there a point handling non triangulated inputs here and everywhere...?
         return { };
@@ -169,12 +169,12 @@ public:
       const FT weight = get(weight_pmap, fi);
       CGAL_assertion(weight > 0);
 
-      SkelFacetDataSPtr data = SkelFacetData::create(facet);
+      SkelFacetDataSPtr data = Skeleton_facet_data::create(facet);
       data->set_speed(weight);
     }
 
     for (const EdgeSPtr& edge : result->edges()) {
-      if (!(edge->getFacetL() && edge->getFacetR())) {
+      if (!(edge->get_facet_L() && edge->get_facet_R())) {
         CGAL_SS3_IO_TRACE_V(1, "Warning: Polyhedron has no closed boundary.");
         CGAL_SS3_IO_TRACE_V(1, edge->to_string());
       }
@@ -207,11 +207,11 @@ public:
 
     bool merge_faces = false;
 
-    ConfigurationSPtr config = Configuration::getInstance();
+    ConfigurationSPtr config = Configuration::get_instance();
     std::string section("Preprocessing");
-    if (config->isLoaded() &&
+    if (config->is_loaded() &&
       config->contains(section, "merge_coplanar_faces") &&
-      config->getBool(section, "merge_coplanar_faces")) {
+      config->get_Boolean(section, "merge_coplanar_faces")) {
       merge_faces = true;
     }
 
@@ -286,9 +286,9 @@ public:
           continue;
         }
 
-        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->getFacetL()->get_ID() << " and " << edge->getFacetR()->get_ID());
-        CGAL_assertion(sm.point(source(e, sm)) == *(edge->getVertexSrc()->point()));
-        CGAL_assertion(sm.point(target(e, sm)) == *(edge->getVertexDst()->point()));
+        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->get_facet_L()->get_ID() << " and " << edge->get_facet_R()->get_ID());
+        CGAL_assertion(sm.point(source(e, sm)) == *(edge->get_vertex_src()->point()));
+        CGAL_assertion(sm.point(target(e, sm)) == *(edge->get_vertex_dst()->point()));
 
         // @fixme it seems like intermediate states are somewhat unsound during edge merging
         merge_facets(edge, polyhedron);

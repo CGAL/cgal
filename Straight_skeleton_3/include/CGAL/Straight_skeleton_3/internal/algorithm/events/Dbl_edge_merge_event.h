@@ -167,14 +167,14 @@ public:
   std::array<EdgeSPtr, 4> get_edges() const
   {
     EdgeSPtr edge_11 = get_edge_11();
-    EdgeSPtr edge_12 = get_edge_11();
+    EdgeSPtr edge_12 = get_edge_12();
     FacetSPtr facet_1 = get_facet_1();
-    FacetSPtr f_other = edge_11->other(facet_1);
+    FacetSPtr facet_other = edge_11->other(facet_1);
 
     return CGAL::make_array(edge_11->next(facet_1),
                             edge_11->next(facet_1)->next(facet_1),
-                            edge_12->next(f_other),
-                            edge_12->next(f_other)->next(f_other));
+                            edge_12->next(facet_other),
+                            edge_12->next(facet_other)->next(facet_other));
   }
 
   bool is_valid() const

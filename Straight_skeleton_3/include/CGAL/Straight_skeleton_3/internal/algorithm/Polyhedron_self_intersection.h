@@ -70,19 +70,19 @@ public:
     CGAL_SS3_DEBUG_SPTR(edge2);
 
     // if handle_degree_1_as_ray is true, then that extremitiy is not considered
-    VertexSPtr v1_src = edge1->getVertexSrc();
+    VertexSPtr v1_src = edge1->get_vertex_src();
     if (handle_degree_1_as_ray && v1_src->degree() == 1) {
       v1_src = nullptr;
     }
-    VertexSPtr v1_dst = edge1->getVertexDst();
+    VertexSPtr v1_dst = edge1->get_vertex_dst();
     if (handle_degree_1_as_ray && v1_dst->degree() == 1) {
       v1_dst = nullptr;
     }
-    VertexSPtr v2_src = edge2->getVertexSrc();
+    VertexSPtr v2_src = edge2->get_vertex_src();
     if (handle_degree_1_as_ray && v2_src->degree() == 1) {
       v2_src = nullptr;
     }
-    VertexSPtr v2_dst = edge2->getVertexDst();
+    VertexSPtr v2_dst = edge2->get_vertex_dst();
     if (handle_degree_1_as_ray && v2_dst->degree() == 1) {
       v2_dst = nullptr;
     }
@@ -102,16 +102,16 @@ public:
     CGAL_SS3_DEBUG_SPTR(edge1);
     CGAL_SS3_DEBUG_SPTR(edge2);
     CGAL_precondition(edge1 != edge2);
-    CGAL_precondition(edge1->getVertexSrc() != edge1->getVertexDst() &&
-                      edge2->getVertexSrc() != edge2->getVertexDst());
+    CGAL_precondition(edge1->get_vertex_src() != edge1->get_vertex_dst() &&
+                      edge2->get_vertex_src() != edge2->get_vertex_dst());
 
     // edges should never be a full line
-    CGAL_precondition(edge1->getVertexSrc()->degree() != 1 || edge1->getVertexDst()->degree() != 1);
-    CGAL_precondition(edge2->getVertexSrc()->degree() != 1 || edge2->getVertexDst()->degree() != 1);
+    CGAL_precondition(edge1->get_vertex_src()->degree() != 1 || edge1->get_vertex_dst()->degree() != 1);
+    CGAL_precondition(edge2->get_vertex_src()->degree() != 1 || edge2->get_vertex_dst()->degree() != 1);
 
     // reject any degeneracy as a self-intersection
-    if (*(edge1->getVertexSrc()->point()) == *(edge1->getVertexDst()->point()) ||
-        *(edge2->getVertexSrc()->point()) == *(edge2->getVertexDst()->point())) {
+    if (*(edge1->get_vertex_src()->point()) == *(edge1->get_vertex_dst()->point()) ||
+        *(edge2->get_vertex_src()->point()) == *(edge2->get_vertex_dst()->point())) {
       return false;
     }
 
@@ -123,7 +123,7 @@ public:
 
     auto is_ray = [](const EdgeSPtr& edge) -> bool
     {
-      return (edge->getVertexSrc()->degree() == 1 || edge->getVertexDst()->degree() == 1);
+      return (edge->get_vertex_src()->degree() == 1 || edge->get_vertex_dst()->degree() == 1);
     };
 
     auto treat_o_o = [&](const EdgeSPtr&, const auto& oa,
@@ -135,36 +135,36 @@ public:
     auto treat_seg_seg = [&](const EdgeSPtr& a, const EdgeSPtr& b) -> bool
     {
       CGAL_precondition(!is_ray(a) && !is_ray(b));
-      const Segment_3 sa = { *(a->getVertexSrc()->point()),
-                             *(a->getVertexDst()->point()) };
-      const Segment_3 sb = { *(b->getVertexSrc()->point()),
-                             *(b->getVertexDst()->point()) };
+      const Segment_3 sa = { *(a->get_vertex_src()->point()),
+                             *(a->get_vertex_dst()->point()) };
+      const Segment_3 sb = { *(b->get_vertex_src()->point()),
+                             *(b->get_vertex_dst()->point()) };
       return treat_o_o(a, sa, b, sb);
     };
 
     auto treat_seg_ray = [&](const EdgeSPtr& a, const EdgeSPtr& b) -> bool
     {
       CGAL_precondition(!is_ray(a) && is_ray(b));
-      const Segment_3 s = { *(a->getVertexSrc()->point()),
-                            *(a->getVertexDst()->point()) };
-      const Ray_3 r = (b->getVertexSrc()->degree() == 1) ? Ray_3 { *b->getVertexDst()->point(),
-                                                                   *b->getVertexSrc()->point() }
-                                                         : Ray_3 { *b->getVertexSrc()->point(),
-                                                                   *b->getVertexDst()->point() };
+      const Segment_3 s = { *(a->get_vertex_src()->point()),
+                            *(a->get_vertex_dst()->point()) };
+      const Ray_3 r = (b->get_vertex_src()->degree() == 1) ? Ray_3 { *b->get_vertex_dst()->point(),
+                                                                     *b->get_vertex_src()->point() }
+                                                           : Ray_3 { *b->get_vertex_src()->point(),
+                                                                     *b->get_vertex_dst()->point() };
       return treat_o_o(a, s, b, r);
     };
 
     auto treat_ray_ray = [&](const EdgeSPtr& a, const EdgeSPtr& b) -> bool
     {
       CGAL_precondition(is_ray(a) && is_ray(b));
-      const Ray_3 ra = (a->getVertexSrc()->degree() == 1) ? Ray_3 { *a->getVertexDst()->point(),
-                                                                    *a->getVertexSrc()->point() }
-                                                          : Ray_3 { *a->getVertexSrc()->point(),
-                                                                    *a->getVertexDst()->point() };
-      const Ray_3 rb = (b->getVertexSrc()->degree() == 1) ? Ray_3 { *b->getVertexDst()->point(),
-                                                                    *b->getVertexSrc()->point() }
-                                                          : Ray_3 { *b->getVertexSrc()->point(),
-                                                                    *b->getVertexDst()->point() };
+      const Ray_3 ra = (a->get_vertex_src()->degree() == 1) ? Ray_3 { *a->get_vertex_dst()->point(),
+                                                                      *a->get_vertex_src()->point() }
+                                                            : Ray_3 { *a->get_vertex_src()->point(),
+                                                                      *a->get_vertex_dst()->point() };
+      const Ray_3 rb = (b->get_vertex_src()->degree() == 1) ? Ray_3 { *b->get_vertex_dst()->point(),
+                                                                      *b->get_vertex_src()->point() }
+                                                            : Ray_3 { *b->get_vertex_src()->point(),
+                                                                      *b->get_vertex_dst()->point() };
       return treat_o_o(a, ra, b, rb);
     };
 
@@ -271,8 +271,8 @@ public:
     std::vector<Point_3> candidate_ray_targets;
 
     for (const EdgeSPtr& edge : facet->edges()) {
-      Point3SPtr p_src = edge->getVertexSrc()->point();
-      Point3SPtr p_dst = edge->getVertexDst()->point();
+      Point3SPtr p_src = edge->get_vertex_src()->point();
+      Point3SPtr p_dst = edge->get_vertex_dst()->point();
 
       CGAL_SS3_ALGO_TRACE_V(64, " p_src = " << *p_src);
       CGAL_SS3_ALGO_TRACE_V(64, " p_dst = " << *p_dst);
@@ -285,17 +285,17 @@ public:
       CGAL_assertion(CGAL::scalar_product(Vector_3(*p_src, *p_dst), *normal) == 0);
 
       if (handle_degree_1_as_ray) {
-        CGAL_assertion(edge->getVertexSrc() != edge->getVertexDst());
-        CGAL_precondition(edge->getVertexSrc()->degree() != 1 || edge->getVertexDst()->degree() != 1);
+        CGAL_assertion(edge->get_vertex_src() != edge->get_vertex_dst());
+        CGAL_precondition(edge->get_vertex_src()->degree() != 1 || edge->get_vertex_dst()->degree() != 1);
 
         VertexSPtr r_src = nullptr;
         VertexSPtr r_dst = nullptr;
-        if (edge->getVertexSrc()->degree() == 1) {
-          r_src = edge->getVertexDst();
-          r_dst = edge->getVertexSrc();
-        } else if (edge->getVertexDst()->degree() == 1) {
-          r_src = edge->getVertexSrc();
-          r_dst = edge->getVertexDst();
+        if (edge->get_vertex_src()->degree() == 1) {
+          r_src = edge->get_vertex_dst();
+          r_dst = edge->get_vertex_src();
+        } else if (edge->get_vertex_dst()->degree() == 1) {
+          r_src = edge->get_vertex_src();
+          r_dst = edge->get_vertex_dst();
         }
 
         if (r_src && r_dst) {
@@ -594,15 +594,15 @@ public:
     CGAL_SS3_ALGO_TRACE_V(32, "  " << facet->to_string());
     CGAL_SS3_ALGO_TRACE_V(32, "  " << edge->to_string());
 
-    VertexSPtr e_src = edge->getVertexSrc();
-    VertexSPtr e_dst = edge->getVertexDst();
+    VertexSPtr e_src = edge->get_vertex_src();
+    VertexSPtr e_dst = edge->get_vertex_dst();
 
     CGAL_precondition(e_src != e_dst);
 
     // edges should never be a full line
     CGAL_precondition(e_src->degree() != 1 || e_dst->degree() != 1);
 
-    if (edge->getFacetL() == facet || edge->getFacetR() == facet) {
+    if (edge->get_facet_L() == facet || edge->get_facet_R() == facet) {
       return false;
     }
 
@@ -610,8 +610,8 @@ public:
 
     // Start with the case of the edge living in the same plane as the facet (unlikely to happen)
     // @speed use the projection traits here too
-    bool coplanarity = (facet->containsVertex(e_src) || facet_pl->has_on(*e_src->point())) &&
-                       (facet->containsVertex(e_dst) || facet_pl->has_on(*e_dst->point()));
+    bool coplanarity = (facet->contrains_vertex(e_src) || facet_pl->has_on(*e_src->point())) &&
+                       (facet->contrains_vertex(e_dst) || facet_pl->has_on(*e_dst->point()));
     if (coplanarity) {
       auto test_fo_o_coplanarity = [&](const EdgeSPtr& /*fe*/, const auto& fo,
                                        const EdgeSPtr& /*e*/, const auto& o) -> bool
@@ -634,12 +634,12 @@ public:
         if (handle_degree_1_as_ray) {
           VertexSPtr r_src = nullptr;
           VertexSPtr r_dst = nullptr;
-          if (fe->getVertexSrc()->degree() == 1) {
-            r_src = fe->getVertexDst();
-            r_dst = fe->getVertexSrc();
-          } else if (fe->getVertexDst()->degree() == 1) {
-            r_src = fe->getVertexSrc();
-            r_dst = fe->getVertexDst();
+          if (fe->get_vertex_src()->degree() == 1) {
+            r_src = fe->get_vertex_dst();
+            r_dst = fe->get_vertex_src();
+          } else if (fe->get_vertex_dst()->degree() == 1) {
+            r_src = fe->get_vertex_src();
+            r_dst = fe->get_vertex_dst();
           }
 
           if (r_src && r_dst) {
@@ -648,8 +648,8 @@ public:
           }
         }
 
-        Segment_3 s { *fe->getVertexSrc()->point(),
-                      *fe->getVertexDst()->point() };
+        Segment_3 s { *fe->get_vertex_src()->point(),
+                      *fe->get_vertex_dst()->point() };
         return test_fo_o_coplanarity(fe, s, e, o);
       };
 
@@ -716,17 +716,17 @@ public:
         // intersection is a point, so there is an intersection if the point is not an extremity
         // of the edge, and if it is inside the facet
         if constexpr (std::is_same_v<O, Segment_3>) {
-          if (facet->containsVertex(e->getVertexSrc()) ||
-              facet->containsVertex(e->getVertexDst())) {
+          if (facet->contrains_vertex(e->get_vertex_src()) ||
+              facet->contrains_vertex(e->get_vertex_dst())) {
             return false;
           } else {
               // @speed adapt v2 to work with rays?
             return is_inside_using_ray_shooting(*ipoint, facet, handle_degree_1_as_ray);
           }
         } else if constexpr (std::is_same_v<O, Ray_3>) {
-          VertexSPtr r_src = (e->getVertexSrc()->degree() == 1) ? e->getVertexDst()
-                                                                : e->getVertexSrc();
-          if (facet->containsVertex(r_src)) {
+          VertexSPtr r_src = (e->get_vertex_src()->degree() == 1) ? e->get_vertex_dst()
+                                                                  : e->get_vertex_src();
+          if (facet->contrains_vertex(r_src)) {
             return false;
           } else {
             return is_inside_using_ray_shooting(*ipoint, facet, handle_degree_1_as_ray);

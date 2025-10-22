@@ -80,32 +80,32 @@ public:
     : public std::enable_shared_from_this<Vertex>
   {
   public:
-    class VertexData
+    class Vertex_data
     {
       using VertexWPtr = std::weak_ptr<Vertex>;
       using VertexSPtr = std::shared_ptr<Vertex>;
 
-      using VertexDataSPtr = std::shared_ptr<VertexData>;
+      using VertexDataSPtr = std::shared_ptr<Vertex_data>;
 
     public:
-      VertexData() { /*intentionally does nothing*/ }
-      virtual ~VertexData() { /*intentionally does nothing*/ }
+      Vertex_data() { /*intentionally does nothing*/ }
+      virtual ~Vertex_data() { /*intentionally does nothing*/ }
 
       static VertexDataSPtr create(const VertexSPtr& vertex)
       {
         CGAL_SS3_DEBUG_SPTR(vertex);
-        VertexDataSPtr result = std::make_shared<VertexData>();
+        VertexDataSPtr result = std::make_shared<Vertex_data>();
         vertex->set_data(result);
         return result;
       }
 
       virtual VertexDataSPtr clone() const {
-        return std::make_shared<VertexData>(*this);
+        return std::make_shared<Vertex_data>(*this);
       }
     };
 
-    class SkelVertexData
-      : public VertexData
+    class Skeleton_vertex_data
+      : public Vertex_data
     {
       using VertexWPtr = std::weak_ptr<Vertex>;
       using VertexSPtr = std::shared_ptr<Vertex>;
@@ -115,23 +115,23 @@ public:
       using ArcWPtr = typename CGAL::Straight_skeleton_3<Traits>::ArcWPtr;
       using ArcSPtr = typename CGAL::Straight_skeleton_3<Traits>::ArcSPtr;
 
-      using VertexDataSPtr = std::shared_ptr<VertexData>;
-      using SkelVertexDataSPtr = std::shared_ptr<SkelVertexData>;
+      using VertexDataSPtr = std::shared_ptr<Vertex_data>;
+      using SkelVertexDataSPtr = std::shared_ptr<Skeleton_vertex_data>;
 
     public:
-      SkelVertexData() { /*intentionally does nothing*/ }
-      virtual ~SkelVertexData() { /*intentionally does nothing*/ }
+      Skeleton_vertex_data() { /*intentionally does nothing*/ }
+      virtual ~Skeleton_vertex_data() { /*intentionally does nothing*/ }
 
       static SkelVertexDataSPtr create(const VertexSPtr& vertex)
       {
         CGAL_SS3_DEBUG_SPTR(vertex);
-        SkelVertexDataSPtr result = std::make_shared<SkelVertexData>();
+        SkelVertexDataSPtr result = std::make_shared<Skeleton_vertex_data>();
         vertex->set_data(result);
         return result;
       }
 
       virtual VertexDataSPtr clone() const override {
-        return std::make_shared<SkelVertexData>(*this);
+        return std::make_shared<Skeleton_vertex_data>(*this);
       }
 
       ArcSPtr get_arc() const
@@ -146,7 +146,7 @@ public:
         this->arc_ = arc;
       }
 
-      NodeWPtr getWNode() const
+      NodeWPtr get_wnode() const
       {
         return this->node_;
       }
@@ -157,7 +157,7 @@ public:
         return this->node_.lock();
       }
 
-      void setWNode(NodeWPtr node)
+      void set_wnode(NodeWPtr node)
       {
         this->node_ = node;
       }
@@ -197,8 +197,8 @@ public:
     using FacetWPtr = std::weak_ptr<Facet>;
     using FacetSPtr = std::shared_ptr<Facet>;
 
-    using VertexDataSPtr = std::shared_ptr<VertexData>;
-    using SkelVertexDataSPtr = std::shared_ptr<SkelVertexData>;
+    using VertexDataSPtr = std::shared_ptr<Vertex_data>;
+    using SkelVertexDataSPtr = std::shared_ptr<Skeleton_vertex_data>;
 
   public:
     Vertex(Point3SPtr point)
@@ -315,8 +315,8 @@ public:
     {
       EdgeWPtr edge_wptr(edge);
       typename std::list<EdgeWPtr>::iterator it = edges_.insert(edges_.end(), edge_wptr);
-      VertexSPtr vertex_src = edge->getVertexSrc();
-      VertexSPtr vertex_dst = edge->getVertexDst();
+      VertexSPtr vertex_src = edge->get_vertex_src();
+      VertexSPtr vertex_dst = edge->get_vertex_dst();
       if (vertex_src == this->shared_from_this() && vertex_dst == this->shared_from_this()) {
         typename std::list<EdgeWPtr>::iterator it_e =
           STL_Extension::internal::weak_find(edges_.begin(), edges_.end(), edge_wptr);
@@ -335,11 +335,11 @@ public:
     bool remove_edge(const EdgeSPtr& edge)
     {
       bool result = false;
-      if (edge->getVertexSrc() == this->shared_from_this()) {
+      if (edge->get_vertex_src() == this->shared_from_this()) {
         edges_.erase(edge->getVertexSrcListIt());
         edge->setVertexSrcListIt(typename std::list<EdgeWPtr>::iterator());
         result = true;
-      } else if (edge->getVertexDst() == this->shared_from_this()) {
+      } else if (edge->get_vertex_dst() == this->shared_from_this()) {
         edges_.erase(edge->getVertexDstListIt());
         edge->setVertexDstListIt(typename std::list<EdgeWPtr>::iterator());
         result = true;
@@ -378,11 +378,11 @@ public:
       EdgeSPtr result = EdgeSPtr();
       for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
-          if (edge->getVertexSrc().get() == this && edge->getVertexDst() == dst) {
+          if (edge->get_vertex_src().get() == this && edge->get_vertex_dst() == dst) {
             result = edge;
             break;
           }
-          if (edge->getVertexDst().get() == this && edge->getVertexSrc() == dst) {
+          if (edge->get_vertex_dst().get() == this && edge->get_vertex_src() == dst) {
             result = edge;
             break;
           }
@@ -567,9 +567,9 @@ public:
         EdgeSPtr edge_first = edges_.front().lock();
         CGAL_assertion(bool(edge_first));
         EdgeSPtr edge;
-        FacetSPtr facet = edge_first->getFacetL();
-        if (edge_first->getVertexDst() == this->shared_from_this()) {
-          facet = edge_first->getFacetR();
+        FacetSPtr facet = edge_first->get_facet_L();
+        if (edge_first->get_vertex_dst() == this->shared_from_this()) {
+          facet = edge_first->get_facet_R();
         }
         while (edge != edge_first) {
           if (!edge) {
@@ -672,10 +672,10 @@ public:
       typename std::list<EdgeSPtr>::iterator it_e = edges.begin();
       while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
-        if (edge->getVertexSrc() == this->shared_from_this()) {
-          edge->replaceVertexSrc(result);
-        } else if (edge->getVertexDst() == this->shared_from_this()) {
-          edge->replaceVertexDst(result);
+        if (edge->get_vertex_src() == this->shared_from_this()) {
+          edge->replace_vertex_src(result);
+        } else if (edge->get_vertex_dst() == this->shared_from_this()) {
+          edge->replace_vertex_dst(result);
         }
       }
       typename std::list<FacetSPtr>::iterator it_f = facets.begin();
@@ -689,8 +689,8 @@ public:
 
       // 3. insert connecting edge
       EdgeSPtr edge = Edge::create(this->shared_from_this(), result);
-      edge->setFacetL(facet_left);
-      edge->setFacetR(facet_right);
+      edge->set_facet_L(facet_left);
+      edge->set_facet_R(facet_right);
       facet_left->add_edge(edge);
       facet_right->add_edge(edge);
 
@@ -738,31 +738,31 @@ public:
     : public std::enable_shared_from_this<Edge>
   {
   public:
-    class EdgeData
+    class Edge_data
     {
       using EdgeWPtr = std::weak_ptr<Edge>;
       using EdgeSPtr = std::shared_ptr<Edge>;
 
-      using EdgeDataSPtr = std::shared_ptr<EdgeData>;
+      using EdgeDataSPtr = std::shared_ptr<Edge_data>;
 
     public:
-      EdgeData() { /*intentionally does nothing*/ }
-      virtual ~EdgeData() { /*intentionally does nothing*/ }
+      Edge_data() { /*intentionally does nothing*/ }
+      virtual ~Edge_data() { /*intentionally does nothing*/ }
 
       static EdgeDataSPtr create(const EdgeSPtr& edge)
       {
-        EdgeDataSPtr result = std::make_shared<EdgeData>();
+        EdgeDataSPtr result = std::make_shared<Edge_data>();
         edge->set_data(result);
         return result;
       }
 
       virtual EdgeDataSPtr clone() const {
-        return std::make_shared<EdgeData>(*this);
+        return std::make_shared<Edge_data>(*this);
       }
     };
 
-    class SkelEdgeData
-      : public EdgeData
+    class Skeleton_edge_data
+      : public Edge_data
     {
       using EdgeWPtr = std::weak_ptr<Edge>;
       using EdgeSPtr = std::shared_ptr<Edge>;
@@ -772,22 +772,22 @@ public:
       using SheetWPtr = typename CGAL::Straight_skeleton_3<Traits>::SheetWPtr;
       using SheetSPtr = typename CGAL::Straight_skeleton_3<Traits>::SheetSPtr;
 
-      using EdgeDataSPtr = std::shared_ptr<EdgeData>;
-      using SkelEdgeDataSPtr = std::shared_ptr<SkelEdgeData>;
+      using EdgeDataSPtr = std::shared_ptr<Edge_data>;
+      using SkelEdgeDataSPtr = std::shared_ptr<Skeleton_edge_data>;
 
     public:
-      SkelEdgeData() : is_vanish_time_known_(false) { }
-      virtual ~SkelEdgeData() { /*intentionally does nothing*/ }
+      Skeleton_edge_data() : is_vanish_time_known_(false) { }
+      virtual ~Skeleton_edge_data() { /*intentionally does nothing*/ }
 
       static SkelEdgeDataSPtr create(const EdgeSPtr& edge)
       {
-        SkelEdgeDataSPtr result = std::make_shared<SkelEdgeData>();
+        SkelEdgeDataSPtr result = std::make_shared<Skeleton_edge_data>();
         edge->set_data(result);
         return result;
       }
 
       virtual EdgeDataSPtr clone() const override {
-        return std::make_shared<SkelEdgeData>(*this);
+        return std::make_shared<Skeleton_edge_data>(*this);
       }
 
       const std::optional<FT>& get_vanish_time()
@@ -833,8 +833,8 @@ public:
     using FacetWPtr = std::weak_ptr<Facet>;
     using FacetSPtr = std::shared_ptr<Facet>;
 
-    using EdgeDataSPtr = std::shared_ptr<EdgeData>;
-    using SkelEdgeDataSPtr = std::shared_ptr<SkelEdgeData>;
+    using EdgeDataSPtr = std::shared_ptr<Edge_data>;
+    using SkelEdgeDataSPtr = std::shared_ptr<Skeleton_edge_data>;
 
   public:
     Edge(const VertexSPtr& src, const VertexSPtr& dst)
@@ -874,13 +874,13 @@ public:
       return result;
     }
 
-    VertexSPtr getVertexSrc() const
+    VertexSPtr get_vertex_src() const
     {
       CGAL_SS3_DEBUG_SPTR(this->vertex_src_);
       return this->vertex_src_;
     }
 
-    void setVertexSrc(const VertexSPtr& src)
+    void set_vertex_src(const VertexSPtr& src)
     {
       this->vertex_src_ = src;
     }
@@ -895,13 +895,13 @@ public:
       this->vertex_src_list_it_ = list_it;
     }
 
-    VertexSPtr getVertexDst() const
+    VertexSPtr get_vertex_dst() const
     {
       CGAL_SS3_DEBUG_SPTR(this->vertex_dst_);
       return this->vertex_dst_;
     }
 
-    void setVertexDst(const VertexSPtr& dst)
+    void set_vertex_dst(const VertexSPtr& dst)
     {
       this->vertex_dst_ = dst;
     }
@@ -921,12 +921,12 @@ public:
       return (this->vertex_src_ == vertex || this->vertex_dst_ == vertex);
     }
 
-    FacetSPtr getFacetL() const
+    FacetSPtr get_facet_L() const
     {
       return this->facet_l_.lock();
     }
 
-    void setFacetL(const FacetSPtr& facet)
+    void set_facet_L(const FacetSPtr& facet)
     {
       this->facet_l_ = facet;
       this->cachedReflexStatus_ = std::nullopt;
@@ -942,12 +942,12 @@ public:
       this->facet_l_list_it_ = list_it;
     }
 
-    FacetSPtr getFacetR() const
+    FacetSPtr get_facet_R() const
     {
       return this->facet_r_.lock();
     }
 
-    void setFacetR(const FacetSPtr& facet)
+    void set_facet_R(const FacetSPtr& facet)
     {
       this->facet_r_ = facet;
       this->cachedReflexStatus_ = std::nullopt;
@@ -963,25 +963,25 @@ public:
       this->facet_r_list_it_ = list_it;
     }
 
-    FacetSPtr getFacetSrc() const
+    FacetSPtr get_facet_src() const
     {
       FacetSPtr result = FacetSPtr();
-      VertexSPtr vertex_src = getVertexSrc();
+      VertexSPtr vertex_src = get_vertex_src();
       if (vertex_src->degree() == 3) {
-        if (getFacetL()) {
-          result = getFacetL()->next(vertex_src);
+        if (get_facet_L()) {
+          result = get_facet_L()->next(vertex_src);
         }
       }
       return result;
     }
 
-    FacetSPtr getFacetDst() const
+    FacetSPtr get_facet_dst() const
     {
       FacetSPtr result = FacetSPtr();
-      VertexSPtr vertex_dst = getVertexDst();
+      VertexSPtr vertex_dst = get_vertex_dst();
       if (vertex_dst->degree() == 3) {
-        if (getFacetR()) {
-          result = getFacetR()->next(vertex_dst);
+        if (get_facet_R()) {
+          result = get_facet_R()->next(vertex_dst);
         }
       }
       return result;
@@ -1038,7 +1038,7 @@ public:
       return result;
     }
 
-    std::optional<bool> getReflexStatus() const
+    std::optional<bool> reflex_status() const
     {
       return cachedReflexStatus_;
     }
@@ -1238,11 +1238,11 @@ public:
     {
       EdgeSPtr result = Edge::create(middle, vertex_dst_);
       if (FacetSPtr facet_l = facet_l_.lock()) {
-        result->setFacetL(facet_l);
+        result->set_facet_L(facet_l);
         facet_l->add_edge(result);
       }
       if (FacetSPtr facet_r = facet_r_.lock()) {
-        result->setFacetR(facet_r);
+        result->set_facet_R(facet_r);
         facet_r->add_edge(result);
       }
       vertex_dst_->remove_edge(this->shared_from_this());
@@ -1257,44 +1257,44 @@ public:
     /**
       * More than just a simple set method.
       */
-    void replaceVertexSrc(const VertexSPtr& vertex_src)
+    void replace_vertex_src(const VertexSPtr& vertex_src)
     {
       vertex_src_->remove_edge(this->shared_from_this());
       vertex_src_ = vertex_src;
       vertex_src->add_edge(this->shared_from_this());
     }
 
-    void replaceVertexDst(const VertexSPtr& vertex_dst)
+    void replace_vertex_dst(const VertexSPtr& vertex_dst)
     {
       vertex_dst_->remove_edge(this->shared_from_this());
       vertex_dst_ = vertex_dst;
       vertex_dst->add_edge(this->shared_from_this());
     }
 
-    void replaceFacetL(const FacetSPtr& facet_l)
+    void replace_facet_L(const FacetSPtr& facet_l)
     {
       if (FacetSPtr facet = facet_l_.lock()) {
         facet->remove_edge(this->shared_from_this());
       }
-      setFacetL(facet_l);
+      set_facet_L(facet_l);
       facet_l->add_edge(this->shared_from_this());
     }
 
-    void replaceFacetR(const FacetSPtr& facet_r)
+    void replace_facet_R(const FacetSPtr& facet_r)
     {
       if (FacetSPtr facet = facet_r_.lock()) {
         facet->remove_edge(this->shared_from_this());
       }
-      setFacetR(facet_r);
+      set_facet_R(facet_r);
       facet_r->add_edge(this->shared_from_this());
     }
 
-    bool hasSameFacets(const EdgeSPtr& edge) const
+    bool has_same_facets(const EdgeSPtr& edge) const
     {
-      bool result = (facet_l_.lock() == edge->getFacetL() &&
-                     facet_r_.lock() == edge->getFacetR()) ||
-                    (facet_r_.lock() == edge->getFacetL() &&
-                     facet_l_.lock() == edge->getFacetR());
+      bool result = (facet_l_.lock() == edge->get_facet_L() &&
+                     facet_r_.lock() == edge->get_facet_R()) ||
+                    (facet_r_.lock() == edge->get_facet_L() &&
+                     facet_l_.lock() == edge->get_facet_R());
       return result;
     }
 
@@ -1305,8 +1305,8 @@ public:
         return *cachedReflexStatus_;
       }
       bool result = false;
-      FacetSPtr facet_l = this->getFacetL();
-      FacetSPtr facet_r = this->getFacetR();
+      FacetSPtr facet_l = this->get_facet_L();
+      FacetSPtr facet_r = this->get_facet_R();
       CGAL_precondition(bool(facet_l));
       CGAL_precondition(bool(facet_r));
       Plane3SPtr plane_l = facet_l->plane();
@@ -1330,42 +1330,42 @@ public:
       result += "id=" + IO::String_factory::fromInteger(id_);
       // result += ", addr=" + IO::String_factory::fromPointer(this);
       result += ", l=";
-      if (FacetSPtr facet_l = getFacetL()) {
+      if (FacetSPtr facet_l = get_facet_L()) {
           if (facet_l->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(getFacetL()->get_ID());
+            result += IO::String_factory::fromInteger(get_facet_L()->get_ID());
           } else {
-            // result += IO::String_factory::fromPointer(getFacetL().get());
+            // result += IO::String_factory::fromPointer(get_facet_L().get());
           }
       } else {
         result += "expired";
       }
       result += ", r=";
-      if (FacetSPtr facet_r = getFacetR()) {
+      if (FacetSPtr facet_r = get_facet_R()) {
           if (facet_r->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(getFacetR()->get_ID());
+            result += IO::String_factory::fromInteger(get_facet_R()->get_ID());
           } else {
-            // result += IO::String_factory::fromPointer(getFacetR().get());
+            // result += IO::String_factory::fromPointer(get_facet_R().get());
           }
       } else {
         result += "expired";
       }
       // src and dst faces
       result += ", s=";
-      if (getFacetSrc()) {
-          if (getFacetSrc()->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(getFacetSrc()->get_ID());
+      if (get_facet_src()) {
+          if (get_facet_src()->get_ID() != -1) {
+            result += IO::String_factory::fromInteger(get_facet_src()->get_ID());
           } else {
-            // result += IO::String_factory::fromPointer(getFacetSrc().get());
+            // result += IO::String_factory::fromPointer(get_facet_src().get());
           }
       } else {
         result += "nullptr";
       }
       result += ", d=";
-      if (getFacetDst()) {
-          if (getFacetDst()->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(getFacetDst()->get_ID());
+      if (get_facet_dst()) {
+          if (get_facet_dst()->get_ID() != -1) {
+            result += IO::String_factory::fromInteger(get_facet_dst()->get_ID());
           } else {
-            // result += IO::String_factory::fromPointer(getFacetDst().get());
+            // result += IO::String_factory::fromPointer(get_facet_dst().get());
           }
       } else {
         result += "nullptr";
@@ -1404,53 +1404,53 @@ public:
     friend class Polyhedron;
 
   public:
-    class FacetData
+    class Facet_data
     {
       using FacetWPtr = std::weak_ptr<Facet>;
       using FacetSPtr = std::shared_ptr<Facet>;
 
-      using FacetDataSPtr = std::shared_ptr<FacetData>;
+      using FacetDataSPtr = std::shared_ptr<Facet_data>;
 
     public:
-      FacetData() { /*intentionally does nothing*/ }
-      virtual ~FacetData() { /*intentionally does nothing*/ }
+      Facet_data() { /*intentionally does nothing*/ }
+      virtual ~Facet_data() { /*intentionally does nothing*/ }
 
       static FacetDataSPtr create(const FacetSPtr& facet)
       {
-        FacetDataSPtr result = std::make_shared<FacetData>();
+        FacetDataSPtr result = std::make_shared<Facet_data>();
         facet->set_data(result);
         return result;
       }
 
       virtual FacetDataSPtr clone(const FacetSPtr&) const {
-        return std::make_shared<FacetData>(*this);
+        return std::make_shared<Facet_data>(*this);
       }
     };
 
-    class SkelFacetData
-      : public FacetData
+    class Skeleton_facet_data
+      : public Facet_data
     {
       using FacetWPtr = std::weak_ptr<Facet>;
       using FacetSPtr = std::shared_ptr<Facet>;
 
-      using FacetDataSPtr = std::shared_ptr<FacetData>;
-      using SkelFacetDataSPtr = std::shared_ptr<SkelFacetData>;
+      using FacetDataSPtr = std::shared_ptr<Facet_data>;
+      using SkelFacetDataSPtr = std::shared_ptr<Skeleton_facet_data>;
 
     public:
-      SkelFacetData() { /*intentionally does nothing*/ }
-      virtual ~SkelFacetData() { /*intentionally does nothing*/ }
+      Skeleton_facet_data() { /*intentionally does nothing*/ }
+      virtual ~Skeleton_facet_data() { /*intentionally does nothing*/ }
 
       static SkelFacetDataSPtr create(const FacetSPtr& facet)
       {
-        SkelFacetDataSPtr result = std::make_shared<SkelFacetData>();
-        result->setFacetOrigin(facet);
+        SkelFacetDataSPtr result = std::make_shared<Skeleton_facet_data>();
+        result->set_facet_origin(facet);
         facet->set_data(result);
         return result;
       }
 
       virtual FacetDataSPtr clone(const FacetSPtr& origin) const override {
-        SkelFacetDataSPtr result = std::make_shared<SkelFacetData>(*this);
-        result->setFacetOrigin(origin);
+        SkelFacetDataSPtr result = std::make_shared<Skeleton_facet_data>(*this);
+        result->set_facet_origin(origin);
         return result;
       }
 
@@ -1460,7 +1460,7 @@ public:
         return this->facet_origin_.lock();
       }
 
-      void setFacetOrigin(const FacetSPtr& facet_origin)
+      void set_facet_origin(const FacetSPtr& facet_origin)
       {
         this->facet_origin_ = facet_origin;
       }
@@ -1519,8 +1519,8 @@ private:
     // using FacetWPtr = std::weak_ptr<Facet>;
     using FacetSPtr = std::shared_ptr<Facet>;
 
-    using FacetDataSPtr = std::shared_ptr<FacetData>;
-    using SkelFacetDataSPtr = std::shared_ptr<SkelFacetData>;
+    using FacetDataSPtr = std::shared_ptr<Facet_data>;
+    using SkelFacetDataSPtr = std::shared_ptr<Skeleton_facet_data>;
 
   public:
     Facet()
@@ -1588,15 +1588,15 @@ private:
       typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
       while (it_e != edges_.end()) {
         EdgeSPtr edge = *it_e++;
-        VertexSPtr src = old_to_new.at(edge->getVertexSrc());
-        VertexSPtr dst = old_to_new.at(edge->getVertexDst());
+        VertexSPtr src = old_to_new.at(edge->get_vertex_src());
+        VertexSPtr dst = old_to_new.at(edge->get_vertex_dst());
         EdgeSPtr edge_c = Edge::create(src, dst);
-        CGAL_assertion(edge_c->getVertexSrc() == src && edge_c->getVertexDst() == dst);
-        if (edge->getFacetL() == this->shared_from_this()) {
-          edge_c->setFacetL(result);
+        CGAL_assertion(edge_c->get_vertex_src() == src && edge_c->get_vertex_dst() == dst);
+        if (edge->get_facet_L() == this->shared_from_this()) {
+          edge_c->set_facet_L(result);
         }
-        if (edge->getFacetR() == this->shared_from_this()) {
-          edge_c->setFacetR(result);
+        if (edge->get_facet_R() == this->shared_from_this()) {
+          edge_c->set_facet_R(result);
         }
         result->add_edge(edge_c);
       }
@@ -1641,8 +1641,8 @@ private:
     void add_edge(const EdgeSPtr& edge)
     {
       typename std::list<EdgeSPtr>::iterator it = edges_.insert(edges_.end(), edge);
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
+      FacetSPtr facet_l = edge->get_facet_L();
+      FacetSPtr facet_r = edge->get_facet_R();
       if (facet_l == this->shared_from_this() && facet_r == this->shared_from_this()) {
         typename std::list<EdgeSPtr>::iterator it_e =
           std::find(edges_.begin(), edges_.end(), edge);
@@ -1656,21 +1656,21 @@ private:
       } else if (facet_r == this->shared_from_this()) {
         edge->setFacetRListIt(it);
       } else if (!facet_l) {
-        edge->setFacetL(this->shared_from_this());
+        edge->set_facet_L(this->shared_from_this());
         edge->setFacetLListIt(it);
       } else if (!facet_r) {
-        edge->setFacetR(this->shared_from_this());
+        edge->set_facet_R(this->shared_from_this());
         edge->setFacetRListIt(it);
       } else {
         CGAL_SS3_HDS_TRACE(edge->to_string());
         throw std::runtime_error("The given edge already has a left and a right facet.");
       }
       VertexSPtr vertex_src = edge->src(this->shared_from_this());
-      if (!containsVertex(vertex_src)) {
+      if (!contrains_vertex(vertex_src)) {
         add_vertex(vertex_src);
       }
       VertexSPtr vertex_dst = edge->dst(this->shared_from_this());
-      if (!containsVertex(vertex_dst)) {
+      if (!contrains_vertex(vertex_dst)) {
         add_vertex(vertex_dst);
       }
     }
@@ -1678,14 +1678,14 @@ private:
     bool remove_edge(const EdgeSPtr& edge)
     {
       bool result = false;
-      if (edge->getFacetL() == this->shared_from_this()) {
+      if (edge->get_facet_L() == this->shared_from_this()) {
         edges_.erase(edge->getFacetLListIt());
-        edge->setFacetL(FacetSPtr());
+        edge->set_facet_L(FacetSPtr());
         edge->setFacetLListIt(typename std::list<EdgeSPtr>::iterator());
         result = true;
-      } else if (edge->getFacetR() == this->shared_from_this()) {
+      } else if (edge->get_facet_R() == this->shared_from_this()) {
         edges_.erase(edge->getFacetRListIt());
-        edge->setFacetR(FacetSPtr());
+        edge->set_facet_R(FacetSPtr());
         edge->setFacetRListIt(typename std::list<EdgeSPtr>::iterator());
         result = true;
       }
@@ -1703,7 +1703,7 @@ private:
       typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
       while (it_e != edges_.end()) {
         EdgeSPtr edge = *it_e++;
-        if (edge->getFacetL() == facet || edge->getFacetR() == facet) {
+        if (edge->get_facet_L() == facet || edge->get_facet_R() == facet) {
           result = edge;
           break;
         }
@@ -1711,20 +1711,20 @@ private:
       return result;
     }
 
-    std::list<EdgeSPtr> findEdges(const FacetSPtr& facet) const
+    std::list<EdgeSPtr> find_edges(const FacetSPtr& facet) const
     {
       std::list<EdgeSPtr> result;
       typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
       while (it_e != edges_.end()) {
         EdgeSPtr edge = *it_e++;
-        if (edge->getFacetL() == facet || edge->getFacetR() == facet) {
+        if (edge->get_facet_L() == facet || edge->get_facet_R() == facet) {
           result.push_back(edge);
         }
       }
       return result;
     }
 
-    bool containsVertex(const VertexSPtr& vertex) const
+    bool contrains_vertex(const VertexSPtr& vertex) const
     {
       bool result = (vertices_.end() != std::find(vertices_.begin(), vertices_.end(), vertex));
       return result;
@@ -1736,7 +1736,7 @@ private:
       return result;
     }
 
-    void sortVertices()
+    void sort_vertices()
     {
       FacetSPtr self(this->shared_from_this());
       std::list<VertexSPtr> tmp;
@@ -1890,14 +1890,14 @@ private:
             while (it_e != vertex->edges().end()) {
               EdgeWPtr edge_wptr = *it_e++;
               if (EdgeSPtr edge = edge_wptr.lock()) {
-                FacetSPtr facet_l = edge->getFacetL();
-                FacetSPtr facet_r = edge->getFacetR();
+                FacetSPtr facet_l = edge->get_facet_L();
+                FacetSPtr facet_r = edge->get_facet_R();
                 if ((facet_l == this->shared_from_this() &&
                      facet_r == facet &&
-                     edge->getVertexDst() == vertex) ||
+                     edge->get_vertex_dst() == vertex) ||
                     (facet_r == this->shared_from_this() &&
                      facet_l == facet &&
-                     edge->getVertexSrc() == vertex)) {
+                     edge->get_vertex_src() == vertex)) {
                   result = facet;
                   break;
                 }
@@ -1941,14 +1941,14 @@ private:
             while (it_e != vertex->edges().end()) {
               EdgeWPtr edge_wptr = *it_e++;
               if (EdgeSPtr edge = edge_wptr.lock()) {
-                FacetSPtr facet_l = edge->getFacetL();
-                FacetSPtr facet_r = edge->getFacetR();
+                FacetSPtr facet_l = edge->get_facet_L();
+                FacetSPtr facet_r = edge->get_facet_R();
                 if ((facet_l == this->shared_from_this() &&
                      facet_r == facet &&
-                     edge->getVertexSrc() == vertex) ||
+                     edge->get_vertex_src() == vertex) ||
                     (facet_r == this->shared_from_this() &&
                      facet_l == facet &&
-                     edge->getVertexDst() == vertex)) {
+                     edge->get_vertex_dst() == vertex)) {
                   result = facet;
                   break;
                 }
@@ -1970,15 +1970,15 @@ private:
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         facet->remove_vertex(vertex);
-        if (!containsVertex(vertex)) {
+        if (!contrains_vertex(vertex)) {
           add_vertex(vertex);
         }
       }
       typename std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
       while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
-        FacetSPtr facet_l = edge->getFacetL();
-        FacetSPtr facet_r = edge->getFacetR();
+        FacetSPtr facet_l = edge->get_facet_L();
+        FacetSPtr facet_r = edge->get_facet_R();
         if ((facet_l == facet && facet_r == this->shared_from_this()) ||
             (facet_r == facet && facet_l == this->shared_from_this())) {
           facet->remove_edge(edge);
@@ -1987,12 +1987,12 @@ private:
         } else {
           if (facet_l == facet) {
             facet->remove_edge(edge);
-            edge->setFacetL(this->shared_from_this());
+            edge->set_facet_L(this->shared_from_this());
             add_edge(edge);
           }
           if (facet_r == facet) {
             facet->remove_edge(edge);
-            edge->setFacetR(this->shared_from_this());
+            edge->set_facet_R(this->shared_from_this());
             add_edge(edge);
           }
         }
@@ -2014,13 +2014,13 @@ private:
     /**
     * The direction of the normal points to the outside.
     */
-    Plane3SPtr getPlane() const
+    Plane3SPtr get_plane() const
     {
       CGAL_precondition(bool(this->plane_));
       return this->plane_;
     }
 
-    void setPlane(const Plane3SPtr& plane)
+    void set_plane(const Plane3SPtr& plane)
     {
       this->plane_ = plane;
     }
@@ -2028,11 +2028,11 @@ private:
     /**
     * First vertices have to form a triangle that is inside.
     */
-    bool initPlane()
+    bool init_plane()
     {
       bool result = false;
 
-      CGAL_SS3_HDS_TRACE("initPlane() of " << get_ID());
+      CGAL_SS3_HDS_TRACE("initialize plane of F" << get_ID());
 
       Point3SPtr point_prev;
       std::vector<Point3SPtr> points;
@@ -2075,13 +2075,13 @@ private:
     Plane3SPtr plane()
     {
       if (!this->plane_) {
-        this->initPlane();
+        this->init_plane();
       }
       CGAL_SS3_DEBUG_SPTR(this->plane_);
       return this->plane_;
     }
 
-    bool makeFirstConvex()
+    bool make_first_convex()
     {
       bool result = false;
       if (!plane_) {
@@ -2116,10 +2116,10 @@ private:
 
       if (edge_begin) {
         typename std::list<EdgeSPtr>::iterator it_e = edges_.insert(edges_.begin(), edge_begin);
-        if (edge_begin->getFacetL() == this->shared_from_this()) {
+        if (edge_begin->get_facet_L() == this->shared_from_this()) {
           edges_.erase(edge->getFacetLListIt());
           edge_begin->setFacetLListIt(it_e);
-        } else if (edge_begin->getFacetR() == this->shared_from_this()) {
+        } else if (edge_begin->get_facet_R() == this->shared_from_this()) {
           edges_.erase(edge->getFacetRListIt());
           edge_begin->setFacetRListIt(it_e);
         }
@@ -2129,7 +2129,7 @@ private:
           std::find(vertices_.begin(), vertices_.end(), vertex_begin);
         vertices_.erase(it_v);
         vertices_.insert(vertices_.begin(), vertex_begin);
-        sortVertices();
+        sort_vertices();
       }
       if (!result) {
         CGAL_SS3_HDS_TRACE("Warning: Unable to make first 3 vertices convex.");
@@ -2142,7 +2142,7 @@ private:
     /**
     * returns the number of vertices whose degree is higher than 3
     */
-    int numHighDegreeVertices() const
+    int num_high_degree_vertices() const
     {
       int result = 0;
       // get min degree
@@ -2168,7 +2168,7 @@ private:
       }
 
       if (has_data()) {
-        sstr << "Speed: " << std::dynamic_pointer_cast<SkelFacetData>(get_data())->get_speed() << ", ";
+        sstr << "Speed: " << std::dynamic_pointer_cast<Skeleton_facet_data>(get_data())->get_speed() << ", ";
       }
 
       sstr << "Vertices:" + IO::String_factory::fromInteger(vertices_.size()) + ", ";
@@ -2213,18 +2213,18 @@ public:
   using FacetWPtr = std::weak_ptr<Facet>;
   using FacetSPtr = std::shared_ptr<Facet>;
 
-  using VertexData = typename Vertex::VertexData;
-  using VertexDataSPtr = std::shared_ptr<VertexData>;
-  using SkelVertexData = typename Vertex::SkelVertexData;
-  using SkelVertexDataSPtr = std::shared_ptr<SkelVertexData>;
-  using EdgeData = typename Edge::EdgeData;
-  using EdgeDataSPtr = std::shared_ptr<EdgeData>;
-  using SkelEdgeData = typename Edge::SkelEdgeData;
-  using SkelEdgeDataSPtr = std::shared_ptr<SkelEdgeData>;
-  using FacetData = typename Facet::FacetData;
-  using FacetDataSPtr = std::shared_ptr<FacetData>;
-  using SkelFacetData = typename Facet::SkelFacetData;
-  using SkelFacetDataSPtr = std::shared_ptr<SkelFacetData>;
+  using Vertex_data = typename Vertex::Vertex_data;
+  using VertexDataSPtr = std::shared_ptr<Vertex_data>;
+  using Skeleton_vertex_data = typename Vertex::Skeleton_vertex_data;
+  using SkelVertexDataSPtr = std::shared_ptr<Skeleton_vertex_data>;
+  using Edge_data = typename Edge::Edge_data;
+  using EdgeDataSPtr = std::shared_ptr<Edge_data>;
+  using Skeleton_edge_data = typename Edge::Skeleton_edge_data;
+  using SkelEdgeDataSPtr = std::shared_ptr<Skeleton_edge_data>;
+  using Facet_data = typename Facet::Facet_data;
+  using FacetDataSPtr = std::shared_ptr<Facet_data>;
+  using Skeleton_facet_data = typename Facet::Skeleton_facet_data;
+  using SkelFacetDataSPtr = std::shared_ptr<Skeleton_facet_data>;
 
 public:
   Polyhedron()
@@ -2272,8 +2272,8 @@ public:
     typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
     while (it_e != edges_.end()) {
       EdgeSPtr edge = *it_e++;
-      VertexSPtr src = vertices_c[edge->getVertexSrc()];
-      VertexSPtr dst = vertices_c[edge->getVertexDst()];
+      VertexSPtr src = vertices_c[edge->get_vertex_src()];
+      VertexSPtr dst = vertices_c[edge->get_vertex_dst()];
       EdgeSPtr edge_c = Edge::create(src, dst);
       edge_c->set_ID(edge->get_ID());
       if (edge->has_data()) {
@@ -2286,7 +2286,7 @@ public:
     while (it_f != facets_.end()) {
       FacetSPtr facet = *it_f++;
       FacetSPtr facet_c = Facet::create();
-      facet_c->setPlane(facet->getPlane());
+      facet_c->set_plane(facet->get_plane());
       facet_c->set_ID(facet->get_ID());
       typename std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
       while (it_v != facet->vertices().end()) {
@@ -2297,11 +2297,11 @@ public:
       while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
         EdgeSPtr edge_c = edges_c[edge];
-        if (edge->getFacetL() == facet) {
-          edge_c->setFacetL(facet_c);
+        if (edge->get_facet_L() == facet) {
+          edge_c->set_facet_L(facet_c);
         }
-        if (edge->getFacetR() == facet) {
-          edge_c->setFacetR(facet_c);
+        if (edge->get_facet_R() == facet) {
+          edge_c->set_facet_R(facet_c);
         }
         facet_c->add_edge(edge_c);
       }
@@ -2448,7 +2448,7 @@ public:
   /**
    * Searches for a vertex with the same coordinates as the given vertex.
    */
-  VertexSPtr findVertex(const VertexSPtr& needle)
+  VertexSPtr find_vertex(const VertexSPtr& needle)
   {
     VertexSPtr result = VertexSPtr();
     typename std::list<VertexSPtr>::iterator it_v = vertices_.begin();
@@ -2468,11 +2468,11 @@ public:
     typename std::list<EdgeSPtr>::iterator it = edges_.insert(edges_.end(), edge);
     edge->set_polyhedron(this->shared_from_this());
     edge->setPolyhedronListIt(it);
-    VertexSPtr vertex = edge->getVertexSrc();
+    VertexSPtr vertex = edge->get_vertex_src();
     if (vertex->get_polyhedron() != this->shared_from_this()) {
       this->add_vertex(vertex);
     }
-    vertex = edge->getVertexDst();
+    vertex = edge->get_vertex_dst();
     if (vertex->get_polyhedron() != this->shared_from_this()) {
       this->add_vertex(vertex);
     }
@@ -2485,16 +2485,16 @@ public:
       edges_.erase(edge->getPolyhedronListIt());
       edge->setPolyhedronListIt(typename std::list<EdgeSPtr>::iterator());
       edge->set_polyhedron(PolyhedronSPtr());
-      FacetSPtr facet = edge->getFacetL();
+      FacetSPtr facet = edge->get_facet_L();
       if (facet) {
         this->remove_facet(facet);
       }
-      facet = edge->getFacetR();
+      facet = edge->get_facet_R();
       if (facet) {
         this->remove_facet(facet);
       }
-      edge->getVertexSrc()->remove_edge(edge);
-      edge->getVertexDst()->remove_edge(edge);
+      edge->get_vertex_src()->remove_edge(edge);
+      edge->get_vertex_dst()->remove_edge(edge);
       result = true;
     }
     return result;
@@ -2510,13 +2510,13 @@ public:
     typename std::list<EdgeSPtr>::iterator it_e = edges_.begin();
     while (it_e != edges_.end()) {
       EdgeSPtr edge = *it_e++;
-      if (edge->getVertexSrc()->point() == needle->getVertexSrc()->point() &&
-          edge->getVertexDst()->point() == needle->getVertexDst()->point()) {
+      if (edge->get_vertex_src()->point() == needle->get_vertex_src()->point() &&
+          edge->get_vertex_dst()->point() == needle->get_vertex_dst()->point()) {
         result = edge;
         break;
       }
-      if (edge->getVertexSrc()->point() == needle->getVertexDst()->point() &&
-          edge->getVertexDst()->point() == needle->getVertexSrc()->point()) {
+      if (edge->get_vertex_src()->point() == needle->get_vertex_dst()->point() &&
+          edge->get_vertex_dst()->point() == needle->get_vertex_src()->point()) {
         result = edge;
         break;
       }
@@ -2569,14 +2569,14 @@ public:
     return result;
   }
 
-  void initPlanes()
+  void init_planes()
   {
     for (const FacetSPtr& facet : facets_) {
-      facet->initPlane();
+      facet->init_plane();
     }
   }
 
-  void clearData()
+  void clear_data()
   {
     for (const VertexSPtr& vertex : vertices_) {
       vertex->set_data(VertexDataSPtr());
@@ -2605,16 +2605,16 @@ public:
       while (it_e != vertex->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
         if (EdgeSPtr edge = edge_wptr.lock()) {
-          if (vertex != edge->getVertexSrc() && vertex != edge->getVertexDst()) {
+          if (vertex != edge->get_vertex_src() && vertex != edge->get_vertex_dst()) {
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
             result = false;
             break;
           }
 
-          if (edge->getVertexSrc() == edge->getVertexDst())
+          if (edge->get_vertex_src() == edge->get_vertex_dst())
           {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexSrc());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_vertex_src());
             result = false;
             break;
           }
@@ -2627,7 +2627,7 @@ public:
       while (it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
         if (FacetSPtr facet = facet_wptr.lock()) {
-          if (!facet->containsVertex(vertex)) {
+          if (!facet->contrains_vertex(vertex)) {
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
             result = false;
@@ -2647,15 +2647,15 @@ public:
         result = false;
         break;
       }
-      if (!edge->getVertexSrc()->has_incident_edge(edge)) {
+      if (!edge->get_vertex_src()->has_incident_edge(edge)) {
         CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexSrc()->to_string());
+        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_vertex_src()->to_string());
         result = false;
         break;
       }
-      if (!edge->getVertexDst()->has_incident_edge(edge)) {
+      if (!edge->get_vertex_dst()->has_incident_edge(edge)) {
         CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexDst()->to_string());
+        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_vertex_dst()->to_string());
         result = false;
         break;
       }
@@ -2668,10 +2668,10 @@ public:
       if (edge_wptr.lock() != edge) {
         CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
       }
-      if (edge->getFacetL()) {
-        if (!edge->getFacetL()->has_incident_edge(edge)) {
+      if (edge->get_facet_L()) {
+        if (!edge->get_facet_L()->has_incident_edge(edge)) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getFacetL()->to_string());
+          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_L()->to_string());
           result = false;
           break;
         }
@@ -2683,10 +2683,10 @@ public:
         CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
       }
-      if (edge->getFacetR()) {
-        if (!edge->getFacetR()->has_incident_edge(edge)) {
+      if (edge->get_facet_R()) {
+        if (!edge->get_facet_R()->has_incident_edge(edge)) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getFacetR()->to_string());
+          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_R()->to_string());
           result = false;
           break;
         }
@@ -2721,19 +2721,19 @@ public:
       typename std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
       while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
-        if (edge->getFacetL() != facet && edge->getFacetR() != facet) {
+        if (edge->get_facet_L() != facet && edge->get_facet_R() != facet) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
           break;
         }
-        if (!facet->containsVertex(edge->getVertexSrc())) {
+        if (!facet->contrains_vertex(edge->get_vertex_src())) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
           break;
         }
-        if (!facet->containsVertex(edge->getVertexDst())) {
+        if (!facet->contrains_vertex(edge->get_vertex_dst())) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
@@ -2810,8 +2810,8 @@ public:
       typename std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
       while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
-        edge_out << "2 " << *(edge->getVertexSrc()->point()) << " "
-                         << *(edge->getVertexDst()->point()) << std::endl;
+        edge_out << "2 " << *(edge->get_vertex_src()->point()) << " "
+                         << *(edge->get_vertex_dst()->point()) << std::endl;
       }
     }
   }

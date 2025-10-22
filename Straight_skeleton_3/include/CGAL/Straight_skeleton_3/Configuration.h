@@ -88,7 +88,7 @@ class Configuration
 {
 #ifndef DOXYGEN_RUNNING
 public:
-  static ConfigurationSPtr getInstance()
+  static ConfigurationSPtr get_instance()
   {
     if (!instance_) {
       instance_ = ConfigurationSPtr(new Configuration());
@@ -97,7 +97,7 @@ public:
   }
 
   // Seek a file called 'StraightSkel.ini', either in the working directory
-  std::string findDefaultFilename()
+  std::string find_default_filename()
   {
     std::string name("StraightSkel");
     std::string result = name + ".ini";
@@ -164,7 +164,7 @@ public:
     return result;
   }
 
-  bool isLoaded() const
+  bool is_loaded() const
   {
     bool result = (properties_.size() > 0);
     return result;
@@ -177,7 +177,7 @@ public:
     return result;
   }
 
-  std::string getString(const std::string& section, const std::string& key)
+  std::string get_string(const std::string& section, const std::string& key)
   {
     std::string result;
     std::string mapkey = section + "." + key;
@@ -190,20 +190,20 @@ public:
     return result;
   }
 
-  int getInt(const std::string& section, const std::string& key)
+  int get_int(const std::string& section, const std::string& key)
   {
     int result = 0;
-    std::string value = getString(section, key);
+    std::string value = get_string(section, key);
     if (value.length() != 0) {
       result = atoi(value.c_str());
     }
     return result;
   }
 
-  double getDouble(const std::string& section, const std::string& key)
+  double get_double(const std::string& section, const std::string& key)
   {
     double result = 0.0;
-    std::string value = getString(section, key);
+    std::string value = get_string(section, key);
     if (value.length() != 0) {
       result = atof(value.c_str());
     }
@@ -211,10 +211,10 @@ public:
   }
 
   template <typename FT>
-  FT getFT(const std::string& section, const std::string& key)
+  FT get_FT(const std::string& section, const std::string& key)
   {
     FT result = 0.0;
-    std::string value = getString(section, key);
+    std::string value = get_string(section, key);
     if (value.length() != 0) {
       std::istringstream iss(value.c_str());
       iss >> result;
@@ -222,10 +222,10 @@ public:
     return result;
   }
 
-  bool getBool(const std::string& section, const std::string& key)
+  bool get_Boolean(const std::string& section, const std::string& key)
   {
     bool result = false;
-    std::string value = getString(section, key);
+    std::string value = get_string(section, key);
     if (value.length() != 0) {
       if (value.compare("1") == 0 ||
           value.compare("t") == 0 ||

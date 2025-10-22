@@ -292,13 +292,13 @@ struct Edge_facet_neighborhood
     : incident_facets_(collect_incident_facets(e))
   { }
 
-  static std::array<int, 4> collect_incident_facets(const EdgeSPtr& e)
+  static std::array<int, 4> collect_incident_facets(const EdgeSPtr& edge)
   {
-    CGAL_SS3_DEBUG_SPTR(e);
-    std::array<int, 4> result = {{ e->getFacetL()->get_ID(),
-                                   e->getFacetR()->get_ID(),
-                                   e->getFacetSrc()->get_ID(),
-                                   e->getFacetDst()->get_ID() }};
+    CGAL_SS3_DEBUG_SPTR(edge);
+    std::array<int, 4> result = {{ edge->get_facet_L()->get_ID(),
+                                   edge->get_facet_R()->get_ID(),
+                                   edge->get_facet_src()->get_ID(),
+                                   edge->get_facet_dst()->get_ID() }};
     return result;
   }
 

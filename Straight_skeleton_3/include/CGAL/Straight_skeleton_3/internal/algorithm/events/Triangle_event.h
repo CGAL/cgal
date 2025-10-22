@@ -162,7 +162,7 @@ public:
 
 protected:
   Point3SPtr point_;
-  FacetWPtr facet_; // @todo shouldn't be needed, edge_begin_->getFacetL is enough
+  FacetWPtr facet_; // @todo shouldn't be needed, edge_begin_->get_facet_L is enough
   EdgeWPtr edge_begin_;
 
   Edge_facet_neighborhood neighborhood_; // this covers the four faces involved in the triangle event

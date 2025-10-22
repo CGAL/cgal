@@ -365,7 +365,7 @@ public:
         }
         oss << "\n";
       } else {
-        Vector3SPtr n = Kernel_factory::createVector3(sheet->getPlane());
+        Vector3SPtr n = Kernel_factory::createVector3(sheet->get_plane());
         CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
         PK traits(*n);

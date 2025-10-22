@@ -95,31 +95,31 @@ public:
   std::array<VertexSPtr, 4> get_vertices() const
   {
     EdgeSPtr edge_begin = get_edge_begin();
-    return CGAL::make_array(edge_begin->getVertexSrc(),
-                            edge_begin->getVertexDst(),
-                            edge_begin->next(edge_begin->getFacetL())->dst(edge_begin->getFacetL()),
-                            edge_begin->next(edge_begin->getFacetR())->dst(edge_begin->getFacetR()));
+    return CGAL::make_array(edge_begin->get_vertex_src(),
+                            edge_begin->get_vertex_dst(),
+                            edge_begin->next(edge_begin->get_facet_L())->dst(edge_begin->get_facet_L()),
+                            edge_begin->next(edge_begin->get_facet_R())->dst(edge_begin->get_facet_R()));
   }
 
   std::array<EdgeSPtr, 6> get_edges() const
   {
     EdgeSPtr edge_begin = get_edge_begin();
-    EdgeSPtr e2 = edge_begin->next(edge_begin->getFacetL());
+    EdgeSPtr e2 = edge_begin->next(edge_begin->get_facet_L());
     return CGAL::make_array(edge_begin,
-                            edge_begin->prev(edge_begin->getFacetL()),
+                            edge_begin->prev(edge_begin->get_facet_L()),
                             e2,
-                            edge_begin->prev(edge_begin->getFacetR()),
-                            edge_begin->next(edge_begin->getFacetR()),
-                            e2->prev(e2->other(edge_begin->getFacetL())));
+                            edge_begin->prev(edge_begin->get_facet_R()),
+                            edge_begin->next(edge_begin->get_facet_R()),
+                            e2->prev(e2->other(edge_begin->get_facet_L())));
   }
 
   std::array<FacetSPtr, 4> get_facets() const
   {
     EdgeSPtr edge_begin = get_edge_begin();
-    return CGAL::make_array(edge_begin->getFacetL(),
-                            edge_begin->getFacetR(),
-                            edge_begin->getFacetL()->prev(edge_begin->getVertexDst()),
-                            edge_begin->getFacetR()->prev(edge_begin->getVertexSrc()));
+    return CGAL::make_array(edge_begin->get_facet_L(),
+                            edge_begin->get_facet_R(),
+                            edge_begin->get_facet_L()->prev(edge_begin->get_vertex_dst()),
+                            edge_begin->get_facet_R()->prev(edge_begin->get_vertex_src()));
   }
 
   bool is_valid() const

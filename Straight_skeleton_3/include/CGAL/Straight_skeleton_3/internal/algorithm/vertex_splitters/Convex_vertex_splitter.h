@@ -59,9 +59,9 @@ public:
   {
     this->type_ = Base::CONVEX_VERTEX_SPLITTER;
     optimization_ = -1;
-    ConfigurationSPtr config = Configuration::getInstance();
-    if (config->isLoaded()) {
-      std::string s_optimization = config->getString("Algorithm", "convex_split_optimization");
+    ConfigurationSPtr config = Configuration::get_instance();
+    if (config->is_loaded()) {
+      std::string s_optimization = config->get_string("Algorithm", "convex_split_optimization");
       if (s_optimization.compare("max") == 0) {
         optimization_ = -1;
       } else if (s_optimization.compare("min") == 0) {

@@ -661,12 +661,14 @@ public:
       facet_f_ = facet_f;
     }
 
-    void add_edge(const EdgeWPtr& edge) {
+    void add_edge(const EdgeWPtr& edge)
+    {
       CGAL_precondition(STL_Extension::internal::weak_find(edges_.begin(), edges_.end(), edge) == edges_.end());
       edges_.push_back(edge);
     }
 
-    const std::list<EdgeWPtr>& edges() const {
+    const std::list<EdgeWPtr>& edges() const
+    {
       return edges_;
     }
 
@@ -700,13 +702,13 @@ public:
       this->id_ = id;
     }
 
-    Plane3SPtr getPlane() const
+    Plane3SPtr get_plane() const
     {
       CGAL_SS3_DEBUG_SPTR(this->plane_);
       return this->plane_;
     }
 
-    void setPlane(const Plane3SPtr& plane)
+    void set_plane(const Plane3SPtr& plane)
     {
       CGAL_SS3_DEBUG_SPTR(plane);
       this->plane_ = plane;

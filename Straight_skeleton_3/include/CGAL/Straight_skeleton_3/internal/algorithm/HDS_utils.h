@@ -50,17 +50,17 @@ private:
 
   using Vertex = typename Polyhedron::Vertex;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
-  using SkelVertexData = typename Polyhedron::SkelVertexData;
+  using Skeleton_vertex_data = typename Polyhedron::Skeleton_vertex_data;
   using SkelVertexDataSPtr = typename Polyhedron::SkelVertexDataSPtr;
   using Edge = typename Polyhedron::Edge;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
-  using SkelEdgeData = typename Polyhedron::SkelEdgeData;
+  using Skeleton_edge_data = typename Polyhedron::Skeleton_edge_data;
   using SkelEdgeDataSPtr = typename Polyhedron::SkelEdgeDataSPtr;
   using Facet = typename Polyhedron::Facet;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
-  using SkelFacetData = typename Polyhedron::SkelFacetData;
+  using Skeleton_facet_data = typename Polyhedron::Skeleton_facet_data;
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
@@ -82,13 +82,13 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     Line3SPtr result = Line3SPtr();
-    VertexSPtr vertex_src = edge->getVertexSrc();
-    VertexSPtr vertex_dst = edge->getVertexDst();
+    VertexSPtr vertex_src = edge->get_vertex_src();
+    VertexSPtr vertex_dst = edge->get_vertex_dst();
     if (*(vertex_src->point()) == *(vertex_dst->point())) {
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
-      FacetSPtr facet_src = edge->getFacetSrc();
-      FacetSPtr facet_dst = edge->getFacetDst();
+      FacetSPtr facet_l = edge->get_facet_L();
+      FacetSPtr facet_r = edge->get_facet_R();
+      FacetSPtr facet_src = edge->get_facet_src();
+      FacetSPtr facet_dst = edge->get_facet_dst();
 
       Plane3SPtr offset_plane_l = Transformation::shift_plane(facet_l, -1);
       Plane3SPtr offset_plane_r = Transformation::shift_plane(facet_r, -1);
@@ -112,7 +112,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     const ArcSPtr& arc = data->get_arc();
     CGAL_SS3_DEBUG_SPTR(arc);
@@ -125,7 +125,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_SS3_DEBUG_SPTR(arc);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_arc(arc);
   }
@@ -134,7 +134,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     const NodeSPtr& node = data->get_node();
     CGAL_SS3_DEBUG_SPTR(node);
@@ -147,7 +147,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_SS3_DEBUG_SPTR(node);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_node(node);
   }
@@ -156,7 +156,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->has_final_point();
   }
@@ -165,7 +165,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->get_final_point();
   }
@@ -175,7 +175,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->set_final_point(point);
   }
@@ -216,7 +216,7 @@ public:
     }
 
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
 
     data->set_final_point(point);
@@ -230,7 +230,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->has_data());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
 
     // @todo technically we should check if it's the correct point
@@ -245,7 +245,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_precondition(edge->has_data());
-    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->get_data());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<Skeleton_edge_data>(edge->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->get_vanish_time();
   }
@@ -255,7 +255,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_precondition(edge->has_data());
-    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->get_data());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<Skeleton_edge_data>(edge->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_vanish_time(vanish_time);
   }
@@ -264,7 +264,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_precondition(edge->has_data());
-    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->get_data());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<Skeleton_edge_data>(edge->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     const SheetSPtr& sheet = data->get_sheet();
     CGAL_SS3_DEBUG_SPTR(data);
@@ -277,7 +277,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_SS3_DEBUG_SPTR(sheet);
     CGAL_precondition(edge->has_data());
-    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->get_data());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<Skeleton_edge_data>(edge->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_sheet(sheet);
   }
@@ -286,7 +286,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_precondition(edge->has_data());
-    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->get_data());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<Skeleton_edge_data>(edge->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_sheet(SheetSPtr());
   }
@@ -297,7 +297,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->get_speed();
   }
@@ -307,7 +307,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_speed(speed);
   }
@@ -316,7 +316,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->get_facet_origin();
   }
@@ -325,7 +325,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->get_base_plane();
   }
@@ -335,7 +335,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_base_plane(plane);
     CGAL_SS3_DEBUG_SPTR(get_base_plane(facet));
@@ -345,7 +345,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->has_final_plane();
   }
@@ -354,7 +354,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->get_final_plane();
   }
@@ -364,7 +364,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     return data->set_final_plane(plane);
   }
@@ -380,7 +380,7 @@ public:
     Plane3SPtr plane = Transformation::shift_plane(facet, offset_future_bound);
 
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_final_plane(plane);
   }
@@ -390,7 +390,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->get_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
 
     // @todo technically we should check if it's the correct plane
@@ -406,21 +406,21 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
 
-    if (edge->getReflexStatus()) {
-      return *(edge->getReflexStatus());
+    if (edge->reflex_status()) {
+      return *(edge->reflex_status());
     }
 
     bool result = false;
 
-    VertexSPtr vertex_src = edge->getVertexSrc();
-    VertexSPtr vertex_dst = edge->getVertexDst();
+    VertexSPtr vertex_src = edge->get_vertex_src();
+    VertexSPtr vertex_dst = edge->get_vertex_dst();
 
     // @todo is degenerate edge? pointer comparison or actual position comparison?
     if (*(vertex_src->point()) == *(vertex_dst->point())) {
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
-      FacetSPtr facet_src = edge->getFacetSrc();
-      FacetSPtr facet_dst = edge->getFacetDst();
+      FacetSPtr facet_l = edge->get_facet_L();
+      FacetSPtr facet_r = edge->get_facet_R();
+      FacetSPtr facet_src = edge->get_facet_src();
+      FacetSPtr facet_dst = edge->get_facet_dst();
 
       FT od = future_facing ? -1 : 1;
       Plane3SPtr offset_plane_l = Transformation::shift_plane(facet_l, od);
@@ -520,7 +520,7 @@ public:
       //                                                   vertices[1]->point(),
       //                                                   vertices[2]->point());
       //   Vector3SPtr v1 = Kernel_factory::createVector3(plane);
-      //   Vector3SPtr v2 = Kernel_factory::createVector3(facet->getPlane());
+      //   Vector3SPtr v2 = Kernel_factory::createVector3(facet->get_plane());
       //   if (((*v1) * (*v2)) > 0.0) {
       //     // angle between orthogonal vectors of planes < CGAL_PI/2.0
       //     // not a hole
@@ -543,12 +543,12 @@ public:
     for (unsigned int i = 0; i < 4; ++i) {
       vertices[i] = VertexSPtr();
     }
-    vertices[0] = edge_begin->getVertexSrc();
-    vertices[1] = edge_begin->getVertexDst();
-    EdgeSPtr edge_l = edge_begin->next(edge_begin->getFacetL());
-    vertices[2] = edge_l->dst(edge_begin->getFacetL());
-    EdgeSPtr edge_r = edge_begin->next(edge_begin->getFacetR());
-    vertices[3] = edge_r->dst(edge_begin->getFacetR());
+    vertices[0] = edge_begin->get_vertex_src();
+    vertices[1] = edge_begin->get_vertex_dst();
+    EdgeSPtr edge_l = edge_begin->next(edge_begin->get_facet_L());
+    vertices[2] = edge_l->dst(edge_begin->get_facet_L());
+    EdgeSPtr edge_r = edge_begin->next(edge_begin->get_facet_R());
+    vertices[3] = edge_r->dst(edge_begin->get_facet_R());
     for (unsigned int i = 0; i < 4; ++i) {
       if (!vertices[i]) {
         result = false;

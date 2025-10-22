@@ -91,10 +91,10 @@ public:
   std::array<VertexSPtr, 4> get_vertices() const
   {
     EdgeSPtr edge = get_edge();
-    FacetSPtr facet_l = edge->getFacetL();
-    FacetSPtr facet_r = edge->getFacetR();
-    return CGAL::make_array(edge->getVertexSrc(),
-                            edge->getVertexDst(),
+    FacetSPtr facet_l = edge->get_facet_L();
+    FacetSPtr facet_r = edge->get_facet_R();
+    return CGAL::make_array(edge->get_vertex_src(),
+                            edge->get_vertex_dst(),
                             edge->next(facet_l)->dst(facet_l),
                             edge->next(facet_r)->dst(facet_r));
   }
@@ -102,8 +102,8 @@ public:
   std::array<EdgeSPtr, 5> get_edges() const
   {
     EdgeSPtr edge = get_edge();
-    FacetSPtr facet_l = edge->getFacetL();
-    FacetSPtr facet_r = edge->getFacetR();
+    FacetSPtr facet_l = edge->get_facet_L();
+    FacetSPtr facet_r = edge->get_facet_R();
     return CGAL::make_array(edge,
                             edge->next(facet_l),
                             edge->prev(facet_l),
@@ -137,8 +137,8 @@ public:
                            + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
                            + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(edge=" << edge->get_ID() << "\n\t\t[" << edge->getVertexSrc()->to_string() << "\n\t\t "
-                                                      << edge->getVertexDst()->to_string() << "])";
+    sstr << "\t(edge=" << edge->get_ID() << "\n\t\t[" << edge->get_vertex_src()->to_string() << "\n\t\t "
+                                                      << edge->get_vertex_dst()->to_string() << "])";
     return sstr.str();
   }
 
