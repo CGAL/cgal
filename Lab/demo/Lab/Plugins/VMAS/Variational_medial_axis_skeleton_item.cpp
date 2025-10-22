@@ -12,7 +12,7 @@
 #include <QCursor>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/variational_medial_axis_sampling.h>
+#include <CGAL/Variational_medial_axis_sampling.h>
 #include <sstream>
 
 using namespace CGAL::Three;

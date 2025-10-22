@@ -450,7 +450,7 @@ public:
   }
 #endif // DoXYGEN_RUNNING
 
-  /// \name Accessor methods
+  /// \name Accessor Methods
   /// @{
   /**
    * returns the container of vertices, where each vertex is a medial sphere (`Sphere_3`).

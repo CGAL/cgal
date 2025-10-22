@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Variational_medial_axis.h>
 
-#include <CGAL/variational_medial_axis_sampling.h>
+#include <CGAL/Variational_medial_axis_sampling.h>
 
 namespace CGAL {
 
