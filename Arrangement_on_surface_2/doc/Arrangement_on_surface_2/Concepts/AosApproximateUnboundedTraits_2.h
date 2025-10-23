@@ -13,7 +13,7 @@
  * \cgalHasModelsEnd
  *
  * \sa `AosApproximateTraits_2`
- * \sa `draw()`
+ * \sa \link PkgArrangementOnSurface2Draw `CGAL::draw()`\endlink
  */
 class AosApproximateUnboundedTraits_2 {
 public:
