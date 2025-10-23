@@ -156,7 +156,7 @@ void main_code (const Options &options)
         using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits> ;
         using HDVF_type = HDVF::Hdvf<Complex> ;
 
-        HDVF::Cub_object_io mesh ;
+        HDVF::Cub_object_io<Traits> mesh ;
         typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
@@ -177,7 +177,7 @@ void main_code (const Options &options)
         // Complex
         Complex complex(mesh, primal_dual);
 
-        mesh_complex_output<HDVF::Cub_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<HDVF::Cub_object_io<Traits>, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
         HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;

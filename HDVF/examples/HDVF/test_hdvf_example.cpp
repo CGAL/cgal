@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        HDVF::Cub_object_io mesh ;
+        HDVF::Cub_object_io<Traits> mesh ;
         mesh.read_cub(argv[1], true);
 
         mesh.print_infos();

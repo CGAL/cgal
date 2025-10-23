@@ -219,7 +219,7 @@ void main_code (const Options &options)
         using SubCCType = HDVF::Sub_chain_complex_mask<Complex> ;
         using ToolsType = HDVF::Duality_cubical_complex_tools<Coefficient_ring, Traits> ;
 
-        HDVF::Cub_object_io mesh ;
+        HDVF::Cub_object_io<Traits> mesh ;
         typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
@@ -255,7 +255,7 @@ void main_code (const Options &options)
 
         // Output/export mesh and complex
 
-        mesh_complex_output<HDVF::Cub_object_io, Complex>(mesh, L, K, options) ;
+        mesh_complex_output<HDVF::Cub_object_io<Traits>, Complex>(mesh, L, K, options) ;
 
         // HDVF computation, export, output
         HDVF_type& hdvf(dual_HDVF_comput<Complex>(L, K, options)) ;

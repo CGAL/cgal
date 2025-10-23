@@ -226,7 +226,7 @@ void main_code (const Options &options)
         using FiltrationType = HDVF::Filtration_lower_star<Complex, Degree> ;
         using HDVF_type = HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> ;
 
-        HDVF::Cub_object_io mesh ;
+        HDVF::Cub_object_io<Traits> mesh ;
         typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
@@ -247,7 +247,7 @@ void main_code (const Options &options)
         // Complex
         Complex complex(mesh, primal_dual);
 
-        mesh_complex_output<HDVF::Cub_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<HDVF::Cub_object_io<Traits>, Complex>(mesh, complex, options) ;
 
         // Build filtration
         FiltrationType& f(build_filtration<Complex, Degree, FiltrationType>(complex, options)) ;
