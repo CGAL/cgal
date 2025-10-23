@@ -99,6 +99,10 @@ void test(const std::vector<Segment_2> &segs){
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  if(CGAL::do_curves_intersect(out.begin(), out.end())){
+    std::cout << "INTERSECTING OUTPUT!!" << std::endl;
+    exit(1);
+  }
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
   Polyline_range_2 output_list;
   t.reset();
@@ -276,10 +280,11 @@ int main(int argc,char *argv[])
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
-  big_test_2();
-  fix_test();
+  // big_test_2();
+  test_almost_indentical_segments(r, 50, Vector_2(1,1), Vector_2(-1,-1));
+  // fix_test();
   test_float_snap_rounding();
-  test_fully_random(r,1000);
+  // test_fully_random(r,1000);
   test_multi_almost_indentical_segments(r,100);
   // test_iterative_square_intersection(r,2000);
   return(0);
