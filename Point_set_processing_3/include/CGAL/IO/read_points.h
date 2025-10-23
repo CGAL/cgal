@@ -15,12 +15,12 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/IO/helpers.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/OFF/read_off_points.h>
+#include <CGAL/IO/PLY/read_ply_points.h>
+#include <CGAL/IO/XYZ/read_xyz_points.h>
 
 #ifdef CGAL_LINKED_WITH_LASLIB
-#include <CGAL/IO/read_las_points.h>
+#include <CGAL/IO/LAS/read_las_points.h>
 #endif
 
 #include <fstream>

@@ -1,28 +1,29 @@
-// Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (c) 1997
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
-#ifndef CGAL_POINT_SET_PROCESSING_WRITE_XYZ_POINTS_H
-#define CGAL_POINT_SET_PROCESSING_WRITE_XYZ_POINTS_H
-
-#include <CGAL/license/Point_set_processing_3.h>
+#ifndef CGAL_IO_PLY_WRITE_OFF_POINTS_H
+#define CGAL_IO_PLY_WRITE_OFF_POINTS_H
 
 #include <CGAL/IO/helpers.h>
-
-#include <CGAL/property_map.h>
-#include <CGAL/assertions.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Iterator_range.h>
+#include <CGAL/IO/OFF.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/assertions.h>
 
 #include <iostream>
 #include <fstream>
@@ -34,12 +35,11 @@ namespace Point_set_processing_3 {
 namespace internal {
 
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ_PSP(std::ostream& os,
+bool write_OFF_PSP(std::ostream& os,
                    const PointRange& points,
                    const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
 {
-  using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::get_parameter;
+  using CGAL::parameters::is_default_parameter;
 
   // basic geometric types
   typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
@@ -61,11 +61,18 @@ bool write_XYZ_PSP(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
+  // Write header
+  if (has_normals)
+    os << "NOFF" << std::endl;
+  else
+    os << "OFF" << std::endl;
+  os << points.size() << " 0 0" << std::endl;
+
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
   {
     os << get(point_map, *it);
-    if(has_normals)
+    if (has_normals)
       os << " " << get(normal_map, *it);
     os << "\n";
   }
@@ -76,14 +83,14 @@ bool write_XYZ_PSP(std::ostream& os,
 }
 
 } // namespace internal
-} // Point_set_processing_3
+} // namespace Point_set_processing_3
 
 namespace IO {
 
 /**
-   \ingroup PkgPointSetProcessing3IOXyz
+   \ingroup PkgPointSetProcessing3IOOff
 
-   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamXYZ.
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -112,17 +119,17 @@ namespace IO {
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
 
-     \cgalParamNBegin{stream_precision}
-       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-       \cgalParamType{int}
-       \cgalParamDefault{the precision of the stream `os`}
-     \cgalParamNEnd
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{the precision of the stream `os`}
+    \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ(std::ostream& os,
+bool write_OFF(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -130,19 +137,19 @@ bool write_XYZ(std::ostream& os,
 #endif
                )
 {
-  return Point_set_processing_3::internal::write_XYZ_PSP(os, points, np);
+  return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);
 }
 
 /**
-   \ingroup PkgPointSetProcessing3IOXyz
+   \ingroup PkgPointSetProcessing3IOOff
 
-   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamXYZ.
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param filename path to the output file
+   \param filename the path to the output file
    \param points input point range
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
@@ -165,17 +172,20 @@ bool write_XYZ(std::ostream& os,
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
 
-     \cgalParamNBegin{stream_precision}
-       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-       \cgalParamType{int}
-       \cgalParamDefault{`6`}
-     \cgalParamNEnd
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \returns `true` if writing was successful, `false` otherwise.
+
+   \sa \ref IOStreamOFF
 */
-template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ(const std::string& filename,
+template <typename PointRange,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const std::string& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -184,11 +194,12 @@ bool write_XYZ(const std::string& filename,
                )
 {
   std::ofstream os(filename);
-  return write_XYZ(os, points, np);
+  set_stream_precision_from_NP(os, np);
+  return write_OFF(os, points, np);
 }
 
-} // namespace IO
+} // IO namespace
 
 } // namespace CGAL
 
-#endif // CGAL_POINT_SET_PROCESSING_WRITE_XYZ_POINTS_H
+#endif // CGAL_IO_PLY_WRITE_OFF_POINTS_H

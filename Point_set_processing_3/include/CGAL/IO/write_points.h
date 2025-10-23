@@ -16,11 +16,11 @@
 
 #include <CGAL/IO/helpers.h>
 
-#include <CGAL/IO/write_off_points.h>
-#include <CGAL/IO/write_ply_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/IO/OFF/write_off_points.h>
+#include <CGAL/IO/PLY/write_ply_points.h>
+#include <CGAL/IO/XYZ/write_xyz_points.h>
 #ifdef CGAL_LINKED_WITH_LASLIB
-#include <CGAL/IO/write_las_points.h>
+#include <CGAL/IO/LAS/write_las_points.h>
 #endif
 
 #include <iostream>

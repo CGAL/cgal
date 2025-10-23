@@ -16,8 +16,8 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/helpers.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/write_off_points.h>
+#include <CGAL/IO/OFF/read_off_points.h>
+#include <CGAL/IO/OFF/write_off_points.h>
 
 #include <fstream>
 #include <string>
