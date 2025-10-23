@@ -12,6 +12,7 @@
 #ifndef CGAL_HDVF_TRAITS_2_H
 #define CGAL_HDVF_TRAITS_2_H
 
+#include <functional>
 #include <CGAL/license/HDVF.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
@@ -40,8 +41,11 @@ struct Hdvf_traits_2 {
     typedef typename K::FT FT;
     typedef CGAL::Bbox_2 Bbox;
     typedef typename K::Point_3 Point3;
-    static Point3 to_point3(const Point& p) { return Point3(p[0], p[1], 0); }
+    static std::function<Point3(const Point&)> to_point3;
 };
+
+template <typename K>
+std::function<typename K::Point_3(const typename K::Point_2&)> Hdvf_traits_2<K>::to_point3 = [](const K::Point_2& p) { return typename K::Point_3(p[0], p[1], 0); };
 
 } /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
