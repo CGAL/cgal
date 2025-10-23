@@ -120,6 +120,7 @@ public:
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
   using Point_2   = typename Traits::Point_2;
+  using Vector_2   = typename Traits::Vector_2;
   using Segment_2 = typename Traits::Segment_2;
   using Line_2    = typename Traits::Line_2;
 
@@ -167,7 +168,7 @@ void scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
   auto event_comparator=[&](Event a, Event b){
     const Point_2 &pa=pts[a.pi];
     const Point_2 &pb=pts[b.pi];
-    if(pa.x()!=pb.x())
+    if(a.pi!=b.pi && pa.x()!=pb.x())
       return Less_x_2()(pa,pb);
     // We want remove previous line before to insert new ones
     if(a.type!=b.type)
@@ -176,8 +177,8 @@ void scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
         return a.type < b.type;
       else
         return a.type > b.type;
-    // We compare with y only to have a complete order
-    return Less_y_2()(pa,pb);
+    // We compare pi only to have a complete order
+    return a.pi < b.pi;
   };
 
   auto pi_below_li=[&](size_t li, std::pair<size_t, size_t> pair_pi_li){
@@ -186,7 +187,10 @@ void scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
     if(ind_pi_support==li) return false;
 
     const Polyline &pl=polylines[li];
-    Orientation ori=orientation(pts[pl.front()], pts[pl.back()], pts[pi]);
+
+    Orientation ori=COLLINEAR;
+    if(pl.front()!=pi && pl.back()!=pi)
+      ori=orientation(pts[pl.front()], pts[pl.back()], pts[pi]);
     // When collinear, pick an other vertex of the line of pi to decide
     if(ori==COLLINEAR){
       const Polyline &pi_support = polylines[ind_pi_support];
@@ -260,19 +264,26 @@ void scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
         Polyline &pl=polylines[li];
         Segment_2 seg(pts[pl.front()], pts[pl.back()]);
 
-        // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
+        if(certainly(csq_dist_2(p, Line_2(pts[pl[0]], pts[pl[1]]), 1.)==LARGER))
+          return false;
+
+        // (A+B)^2 <= 4*max(A^2,B^2)
         double bound=round_bound_pts[pi];
         for(std::size_t i=0; i<pl.size(); ++i)
           bound = (std::max)(bound, round_bound_pts[pl[i]]);
-        bound*=16;
+        bound*=4;
 
-        if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
+        auto bb_p=p.bbox();
+        auto bb_seg= seg.bbox();
+        if(bb_p.ymax() >= bb_seg.ymin() && bb_seg.ymax() >= bb_p.ymin() && possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
+        // if(bb_p.ymax()+bound >= bb_seg.ymin() && bb_seg.ymax()+bound >= bb_p.ymin() && possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
         {
           // TODO check duplicates
           for(std::size_t i: pl)
             if(pts[i].x()==pts[pi].x())
               return false;
-          pts.emplace_back(p.x(), seg.supporting_line().y_at_x(p.x()));
+          pts.emplace_back(pts[event.pi].x(), seg.supporting_line().y_at_x(pts[event.pi].x()));
+          // pts.emplace_back(p.x(), seg.supporting_line().y_at_x(p.x()));
           std::size_t new_pi=pts.size()-1;
           round_bound_pts.emplace_back(round_bound(pts[new_pi]));
           // We insert it on pl before the last vertex
@@ -355,7 +366,6 @@ void round_and_post_process(PointsRange &pts, PolylineRange &polylines, const Tr
 {
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
-  using Vector_2  = typename Traits::Vector_2;
   using Line_2    = typename Traits::Line_2;
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
@@ -385,12 +395,6 @@ void round_and_post_process(PointsRange &pts, PolylineRange &polylines, const Tr
   Equal_2 equal = traits.equal_2_object();
   Round_2 round = traits.round_2_object();
 
-  auto Less_indexes_x_2=[&](std::size_t i, std::size_t j){
-    return Less_x_2()(pts[i], pts[j]);
-  };
-  auto Less_indexes_y_2=[&](std::size_t i, std::size_t j){
-    return Less_y_2()(pts[i], pts[j]);
-  };
   auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
     return Less_xy_2()(pts[i], pts[j]);
   };
@@ -476,14 +480,54 @@ void round_and_post_process(PointsRange &pts, PolylineRange &polylines, const Tr
     std::swap(poly, updated_polyline);
     ++i;
   }
+
+  //y
+  std::set<std::size_t, decltype(Less_indexes_yx_2)> p_sort_by_y(Less_indexes_yx_2);
+  for(std::size_t i=0; i!=pts.size(); ++i)
+    p_sort_by_y.insert(i);
+
+  using Iterator_set_y = typename std::set<std::size_t, decltype(Less_indexes_yx_2)>::iterator;
+
+  i=0;
+  for(Polyline &poly: polylines){
+    std::vector<std::size_t> updated_polyline;
+    updated_polyline.push_back(poly.front());
+    for(std::size_t i=1; i!=poly.size(); ++i){
+      if(pts[poly[i-1]].y()==pts[poly[i]].y()){
+        // updated_polyline.clear();
+        // std::swap(poly, updated_polyline);
+        // break;
+        Iterator_set_x start, end;
+        // Get all vertices between the two endpoints along x order
+        if(Less_indexes_yx_2(poly[i-1],poly[i])){
+          start=p_sort_by_y.upper_bound(poly[i-1]);
+          end=p_sort_by_y.lower_bound(poly[i]);
+          for(auto it=start; it!=end; ++it){
+            updated_polyline.push_back(*it);
+          }
+        } else {
+          start=p_sort_by_y.upper_bound(poly[i]);
+          end=p_sort_by_y.lower_bound(poly[i-1]);
+          for(auto it=end; it!=start;){
+            --it;
+            updated_polyline.push_back(*it);
+          }
+        }
+      }
+      updated_polyline.push_back(poly[i]);
+    }
+    std::swap(poly, updated_polyline);
+    ++i;
+  }
 }
 
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
-  scan(pts, polylines, traits);
-  round_and_post_process(pts, polylines, traits);
-  return;
+  // scan(pts, polylines, traits);
+  // round_and_post_process(pts, polylines, traits);
+  // return;
+  std::cout << "_________OLD___________" << std::endl;
 
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -652,92 +696,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
     CGAL_assertion((pl[0]==ps) && (pl[pl.size()-1]==pt));
   }
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Round" << std::endl;
-#endif
-  for(auto &p: pts)
-    p=round(p);
-
-  //The order of the points on an axis must be preserved for the correctness of the algorithm
-  CGAL_assertion(std::is_sorted(p_sort_by_x.begin(),p_sort_by_x.end(),Less_indexes_x_2));
-  CGAL_assertion(std::is_sorted(p_sort_by_y.begin(),p_sort_by_y.end(),Less_indexes_y_2));
-
-#ifdef DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Remove duplicate points" << std::endl;
-#endif
-  std::vector< std::size_t > unique_points(p_sort_by_x.begin(),p_sort_by_x.end());
-  std::sort(unique_points.begin(),unique_points.end(),Less_indexes_xy_2);
-  std::vector<Point_2> new_pts;
-  std::vector<std::size_t> old_to_new_index(pts.size());
-  for(std::size_t i=0; i!=pts.size(); ++i){
-    if(i==0 || !equal(pts[unique_points[i]],pts[unique_points[i-1]]))
-      new_pts.push_back(pts[unique_points[i]]);
-    old_to_new_index[unique_points[i]]=new_pts.size()-1;
-  }
-
-  std::swap(pts, new_pts);
-  for (auto& polyline : polylines) {
-    std::vector<std::size_t> updated_polyline;
-    for (std::size_t i=0; i<polyline.size(); ++i) {
-        std::size_t new_pi=old_to_new_index[polyline[i]];
-        if(i==0 || (new_pi!=updated_polyline[updated_polyline.size()-1]))
-          updated_polyline.push_back(new_pi);
-        assert(new_pi<pts.size());
-    }
-    std::swap(polyline, updated_polyline);
-  }
-
-#ifdef DOUBLE_2D_SNAP_VERBOSE
-  // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
-  std::cout << "Subdivide horizontal and vertical segments with vertices on them" << std::endl;
-#endif
-  //The order may have changed, we recompute it (Example: (1,1)<(1,2)<(1+e,1)) order changed if rounded)
-  p_sort_by_x.clear();
-  p_sort_by_y.clear();
-  for(std::size_t i=0; i!=pts.size(); ++i)
-  {
-    p_sort_by_x.insert(i);
-    p_sort_by_y.insert(i);
-  }
-
-  for(auto &poly: polylines){
-    std::vector<std::size_t> updated_polyline;
-    updated_polyline.push_back(poly[0]);
-    for(std::size_t i=1; i!=poly.size(); ++i){
-      if(pts[poly[i-1]].x()==pts[poly[i]].x()){
-        Iterator_set_x start, end;
-        // Get all vertices between the two endpoints along x order
-        if(Less_indexes_xy_2(poly[i-1],poly[i])){
-          start=p_sort_by_x.upper_bound(poly[i-1]);
-          end=p_sort_by_x.lower_bound(poly[i]);
-        } else {
-          start=p_sort_by_x.upper_bound(poly[i]);
-          end=p_sort_by_x.lower_bound(poly[i-1]);
-        }
-        // Add all endpoints between them to the polyline
-        for(auto it=start; it!=end; ++it){
-          updated_polyline.push_back(*it);
-        }
-      }
-      if(pts[poly[i-1]].y()==pts[poly[i]].y()){
-        Iterator_set_y start, end;
-        // Get all vertices between the two endpoints along y order
-        if(Less_indexes_yx_2(poly[i-1],poly[i])){
-          start=p_sort_by_y.upper_bound(poly[i-1]);
-          end=p_sort_by_y.lower_bound(poly[i]);
-        } else {
-          start=p_sort_by_y.upper_bound(poly[i]);
-          end=p_sort_by_y.lower_bound(poly[i-1]);
-        }
-        // Add all endpoints between them to the polyline
-        for(auto it=start; it!=end; ++it){
-          updated_polyline.push_back(*it);
-        }
-      }
-      updated_polyline.push_back(poly[i]);
-    }
-    std::swap(poly, updated_polyline);
-  }
+  round_and_post_process(pts, polylines, traits);
 }
 
 
