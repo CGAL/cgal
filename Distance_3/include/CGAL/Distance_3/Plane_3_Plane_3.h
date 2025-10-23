@@ -46,7 +46,7 @@ compare_squared_distance(const typename K::Plane_3& plane1,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(plane1,plane2,k), d2);
+  return ::CGAL::compare(squared_distance(plane1,plane2,k), d2);
 }
 
 } // namespace internal

@@ -284,9 +284,9 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   // (for example when there is a tangency between surfaces and is shared)
   if (h2 == graph_traits::null_halfedge()) return true;
 
-  const Point_3& p = get(vpm, source(h, tm));
-  const Point_3& q = get(vpm, target(h, tm));
-  const Point_3& r = get(vpm, source(h2, tm));
+  const Point_3 p = get(vpm, source(h, tm));
+  const Point_3 q = get(vpm, target(h, tm));
+  const Point_3 r = get(vpm, source(h2, tm));
 
   if (coplanar_cos_threshold==-1)
     return !collinear(p, q, r);

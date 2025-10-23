@@ -73,9 +73,7 @@ The \cgal Project.
 
 
 """
-RESULT_TXT_FOOTER = r"""</td>
-</tr>
-</table><hr>
+RESULT_TXT_FOOTER = r"""</table><hr>
 */
 """
 
@@ -222,6 +220,7 @@ def protect_accentuated_letters(authors):
         .replace("É", r"{\'E}")
         .replace("ä", r"{\"a}")
         .replace("ö", r"{\"o}")
+        .replace("ü", r"{\"u}")
         .replace("ñ", r"{\~n}")
         .replace("ã", r"{\~a}")
         .replace("ë", r"{\"e}")

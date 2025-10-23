@@ -52,7 +52,7 @@ compare_squared_distance(const typename K::Line_3& line1,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(line1,line2,k),d2);
+  return ::CGAL::compare(squared_distance(line1,line2,k),d2);
 }
 
 } // namespace internal

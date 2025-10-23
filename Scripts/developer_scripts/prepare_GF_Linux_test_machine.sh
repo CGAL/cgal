@@ -197,7 +197,7 @@ for member in "${GF_MEMBERS[@]}"; do
     $SUDO_OR_PRINT usermod -aG "$groups" -c "${GF_REAL_NAMES[$member]:-$user}" "$user"
   fi
 
-  $SUDO_OR_PRINT chmod o+rx "/home/$user"
+  $SUDO_OR_PRINT chmod g+rx,o+rx "/home/$user"
 
   $SUDO_OR_PRINT mkdir -p "/home/$user/.ssh"
   $SUDO_OR_PRINT chown "$user:$user" "/home/$user/.ssh"
@@ -232,9 +232,12 @@ if ! getent passwd cgaltest >/dev/null; then
   $SUDO_OR_PRINT useradd -m -s /bin/bash -c "CGAL Test User" cgaltest
 fi
 
+$SUDO_OR_PRINT chmod g+rx,o+rx "/home/cgaltest"
 $SUDO_OR_PRINT mkdir -p /home/cgaltest/.ssh
 $SUDO_OR_PRINT chown cgaltest:cgaltest /home/cgaltest/.ssh
 $SUDO_OR_PRINT chmod 700 /home/cgaltest/.ssh
+$SUDO_OR_PRINT usermod -aG docker cgaltest
+$SUDO_OR_PRINT loginctl enable-linger cgaltest
 
 keyfile="/home/cgaltest/.ssh/id_ed25519"
 if ! $SUDO_OR_PRINT test -f "$keyfile"; then
@@ -282,7 +285,7 @@ done
 
 # Optionally install bat, strace, and podman-docker if not present
 need_install=()
-for cmd in bat strace; do
+for cmd in bat strace python3-docker python3-pyxdg python3-sdnotify; do
   command -v "$cmd" &>/dev/null || need_install+=("$cmd")
 done
 
@@ -307,7 +310,7 @@ color_echo "Update the systemd tmpfiles configuration for podman."
 $SUDO_OR_PRINT touch /etc/containers/nodocker
 
 $SUDO_OR_PRINT mkdir -p /etc/tmpfiles.d
-sed 's|podman 0700 root root|podman 0700 root docker|g' /usr/lib/tmpfiles.d/podman.conf |
+sed 's|podman 0700 root root|podman 0770 root docker|g' /usr/lib/tmpfiles.d/podman.conf |
   $SUDO_OR_PRINT tee /etc/tmpfiles.d/podman.conf >/dev/null
 
 color_echo "Update the systemd socket configuration for podman."
@@ -324,7 +327,7 @@ EOF
 
 color_echo "Reloading systemd and enabling podman.socket."
 $SUDO_OR_PRINT systemctl daemon-reload
-$SUDO_OR_PRINT systemctl enable podman.socket
+$SUDO_OR_PRINT systemctl enable --now podman.socket
 $SUDO_OR_PRINT systemctl restart podman.socket
 
 color_echo "All done!"

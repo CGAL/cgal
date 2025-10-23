@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, Léo Valque, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -911,8 +911,10 @@ would then also includes overlaps of duplicated points.
 The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way to refine a triangle soup
 using the intersections of the triangles from the soup. In particular, if some points are duplicated they will be
 merged. Note that if a kernel with exact predicates but inexact constructions is used, some new self-intersections
-might be introduced due to rounding issues of points coordinates.
-To guarantee that the triangle soup is free from self-intersections, a kernel with exact constructions must be used.
+might be introduced due to the rounding of the coordinates of intersection points. The `apply_iterative_snap_rounding` option can be used to resolve this issue.
+When set to `true`, it ensures that the coordinates are rounded to fit in `double` with potential additional subdivisions,
+preventing any self-intersections from occurring.
+
 
 \subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
 Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
@@ -1477,6 +1479,7 @@ supervision of Sébastien Valette and Sébastien Loriot, who later finalized the
 The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
+The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
 
 */
 } /* namespace CGAL */

@@ -6,5 +6,5 @@
 release=${${PWD:t}/CGAL-/}
 tag=v${release}
 
-gh release upload "$tag" *.(zip|xz|txt|exe) -R CGAL/cgal
-gh release upload "$tag" CGAL-${release}-win64-auxiliary-libraries-gmp-mpfr.zip'#GMP and MPFR libraries, for Windows 64bits' -R CGAL/cgal --clobber
+gh release upload --clobber "$tag" *.(zip|xz|txt|exe) -R CGAL/cgal
+gh release upload --clobber "$tag" CGAL-${release}-win64-auxiliary-libraries-gmp-mpfr.zip'#GMP and MPFR libraries, for Windows 64bits' -R CGAL/cgal --clobber

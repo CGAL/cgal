@@ -68,7 +68,7 @@ compare_squared_distance(const typename K::Line_3& l,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(l, pl, k), d2);
+  return ::CGAL::compare(squared_distance(l, pl, k), d2);
 }
 
 template <class K>

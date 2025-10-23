@@ -303,11 +303,11 @@ private:
   mutable std::vector<float> *colors;
   mutable std::vector<float> *barycenters;
   mutable std::vector<float> *subdomain_ids;
-  mutable bool is_fast;
+  mutable bool is_fast = false;
   mutable QSlider* alphaSlider;
   mutable float m_alpha ;
 
-  bool cut_edges;
+  bool cut_edges = false;
 }; //end of class Scene_triangle_item
 
 
@@ -472,16 +472,16 @@ struct Scene_triangulation_3_item_priv {
     else
       return false;
   }
-  bool spheres_are_shown;
-  const Scene_item* data_item_;
+  bool spheres_are_shown = false;
+  const Scene_item* data_item_ = nullptr;
   QPixmap histogram_;
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
   std::unordered_map<int, int> visible_surface_patch_to_subdomain;
   std::unordered_map<int, int> id_to_compact;
-  QSlider* tet_Slider;
-  bool is_filterable;
+  QSlider* tet_Slider = nullptr;
+  bool is_filterable = false;
 
   //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
@@ -492,8 +492,8 @@ struct Scene_triangulation_3_item_priv {
   //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
-  mutable std::size_t positions_poly_size;
-  mutable std::size_t positions_lines_size;
+  mutable std::size_t positions_poly_size = 0;
+  mutable std::size_t positions_lines_size = 0;
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
@@ -509,33 +509,33 @@ struct Scene_triangulation_3_item_priv {
   mutable std::vector<float> s_radius;
   mutable std::vector<float> s_center;
   mutable std::vector<float> subdomain_ids;
-  mutable bool computed_stats;
-  mutable float max_edges_length;
-  mutable float min_edges_length;
-  mutable float mean_edges_length;
-  mutable float min_dihedral_angle;
-  mutable float max_dihedral_angle;
-  mutable float mean_dihedral_angle;
-  mutable std::size_t nb_spheres;
-  mutable std::size_t nb_subdomains;
-  mutable std::size_t nb_vertices;
-  mutable std::size_t nb_tets;
-  mutable float smallest_radius_radius;
-  mutable float smallest_edge_radius;
-  mutable float biggest_v_sma_cube;
-  QSlider* alphaSlider;
+  mutable bool computed_stats = false;
+  mutable float max_edges_length = 0.f;
+  mutable float min_edges_length = 0.f;
+  mutable float mean_edges_length = 0.f;
+  mutable float min_dihedral_angle = 0.f;
+  mutable float max_dihedral_angle = 0.f;
+  mutable float mean_dihedral_angle = 0.f;
+  mutable std::size_t nb_spheres = 0;
+  mutable std::size_t nb_subdomains = 0;
+  mutable std::size_t nb_vertices = 0;
+  mutable std::size_t nb_tets = 0;
+  mutable float smallest_radius_radius = 0.f;
+  mutable float smallest_edge_radius = 0.f;
+  mutable float biggest_v_sma_cube = 0.f;
+  QSlider* alphaSlider = nullptr;
 
   Tree tree;
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
   bool use_subdomain_colors = false;
-  std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset;
-  bool show_tetrahedra;
-  bool cut_plane_enabled;
-  bool is_aabb_tree_built;
-  bool last_intersection;
-  bool cut_edges;
+  std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset{};
+  bool show_tetrahedra = false;
+  bool cut_plane_enabled = false;
+  bool is_aabb_tree_built = false;
+  bool last_intersection = false;
+  bool cut_edges = false;
 
   void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
   {
@@ -727,9 +727,11 @@ Scene_triangulation_3_item::triangulation_changed()
   for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
-    max = (std::max)(max, fit->first->surface_patch_index(fit->second));
-    int index = fit->first->surface_patch_index(fit->second);
-    d->surface_patch_indices_.insert(index);
+    const int index = fit->first->surface_patch_index(fit->second);
+    max = (std::max)(max, index);
+    if(index != 0)
+      d->surface_patch_indices_.insert(index);
+
     int dom0 = fit->first->subdomain_index();
     int dom1 = fit->first->neighbor(fit->second)->subdomain_index();
     if (dom0 == 0) // if cell is not in complex
@@ -987,7 +989,7 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& base_color)
 Geom_traits::Plane_3 Scene_triangulation_3_item::plane(CGAL::qglviewer::Vec offset) const
 {
   if (!d->is_intersection_enabled())
-    return Geom_traits::Plane_3(1.0, 0.0, 0.0, std::numeric_limits<float>::max());
+    return Geom_traits::Plane_3(1.0, 0.0, 0.0, (std::numeric_limits<float>::max)());
   const CGAL::qglviewer::Vec& pos = d->frame->position() - offset;
   const CGAL::qglviewer::Vec& n =
     d->frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
@@ -1063,6 +1065,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(T3_faces)->setAlpha(alpha());
     getTriangleContainer(T3_faces)->setIsSurface(is_surface());
+    getTriangleContainer(T3_faces)->setSelected(is_selected);
     QOpenGLShaderProgram* program = viewer->getShaderProgram(getTriangleContainer(T3_faces)->getProgram());
     program->bind();
     if(d->is_filterable)

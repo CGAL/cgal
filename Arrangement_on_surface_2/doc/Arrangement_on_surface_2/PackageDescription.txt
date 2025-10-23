@@ -265,6 +265,6 @@ implemented as peripheral classes or as free (global) functions.
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
 
 \cgalCRPSection{Draw an `Arrangemen_2` object}
-- \link  PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
+- \link PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
 
 */

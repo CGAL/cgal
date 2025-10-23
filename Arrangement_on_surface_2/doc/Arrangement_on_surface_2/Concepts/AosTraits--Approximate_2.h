@@ -18,7 +18,7 @@ public:
 
   /*! obtains an approximation of `p`.
    */
-  CGAL::Approximate_point_2 operator()(AosTraits::Point_2 p);
+  Approximate_point_2 operator()(AosTraits::Point_2 p);
 
   /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
    * approximate points that represent an approximate polyline, and inserts

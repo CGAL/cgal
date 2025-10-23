@@ -202,7 +202,6 @@ compare_squared_distance(const typename K::Segment_3& s1,
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Construct_vector_3 cv = k.construct_vector_3_object();
   typename K::Compute_scalar_product_3 sp = k.compute_scalar_product_3_object();
-  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
   typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
 
   /* The content of this function is very similar with the one above, the difference is we can exit earlier if
@@ -254,7 +253,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
   {
     // res_y = 0;
     res_x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
-    return compare(sq_dist(p1+res_x*v1,p2), d2);
+    return csq_dist(p1+res_x*v1,p2, d2);
   }
   else // y >= 0
   {
@@ -263,12 +262,12 @@ compare_squared_distance(const typename K::Segment_3& s1,
     {
       // res_y = 1;
       res_x = boost::algorithm::clamp<FT>((e + c) / a, 0, 1); // (e + y*c) / a
-      return compare(sq_dist(p1+res_x*v1,p2+v2), d2);
+      return csq_dist(p1+res_x*v1,p2+v2, d2);
     }
     else if(res_x==0 || res_x==1) // 0 <= y <= 1
     {
       FT res_y = n / d;
-      return compare(sq_dist(p1 + res_x*v1, p2 + res_y*v2), d2);
+      return csq_dist(p1 + res_x*v1, p2 + res_y*v2, d2);
     }
     else
     {
@@ -278,7 +277,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
   }
 #else
   // Faster with Simple_cartesian<double>, a bit slower with EPICK or EPECK specifically if d2 is small
-  return compare(squared_distance(s1, s2 ,k), d2);
+  return ::CGAL::compare(squared_distance(s1, s2 ,k), d2);
 #endif
 }
 

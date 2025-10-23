@@ -53,4 +53,5 @@
 \example Polygon_mesh_processing/acvd_remeshing_example.cpp
 \example Polygon_mesh_processing/sample_example.cpp
 \example Polygon_mesh_processing/soup_autorefinement.cpp
+\example Polygon_mesh_processing/snap_polygon_soup.cpp
 */

@@ -157,7 +157,6 @@ namespace CGAL {
         CGAL_DECL_OBJ(Hyperplane, Object);
         CGAL_DECL_OBJ(Ray, Object);
         CGAL_DECL_OBJ(Iso_box, Object);
-        CGAL_DECL_OBJ(Bbox, Object);
         CGAL_DECL_OBJ(Aff_transformation, Object);
         CGAL_DECL_OBJ(Weighted_point, Object);
 #undef CGAL_DECL_OBJ_
@@ -279,9 +278,11 @@ namespace CGAL {
         CGAL_DECL_PREDICATE(Compare_point_cartesian_coordinate);
         CGAL_DECL_PREDICATE(Compare_distance);
         CGAL_DECL_PREDICATE(Compare_lexicographically);
+        CGAL_DECL_PREDICATE(Compare_squared_distance);
         CGAL_DECL_PREDICATE(Less_lexicographically);
         CGAL_DECL_PREDICATE(Less_or_equal_lexicographically);
         CGAL_DECL_PREDICATE(Equal_points);
+        CGAL_DECL_PREDICATE(Equal_vectors);
         CGAL_DECL_PREDICATE(Has_on_positive_side);
         CGAL_DECL_PREDICATE_(Orientation); // duplicate with the type
         CGAL_DECL_PREDICATE_(Oriented_side); // duplicate with the type
@@ -314,6 +315,7 @@ namespace CGAL {
         //CGAL_DECL_MISC(Construct_vector_cartesian_const_iterator);
         CGAL_DECL_MISC(Point_dimension);
         CGAL_DECL_MISC(Vector_dimension);
+        CGAL_DECL_MISC(Construct_bbox);
         CGAL_DECL_MISC(Linear_base); // Find a more appropriate category?
 #undef CGAL_DECL_MISC
 

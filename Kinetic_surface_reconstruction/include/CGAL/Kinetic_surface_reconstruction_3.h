@@ -946,7 +946,7 @@ private:
       KSP_3::internal::dump_polygons(polygon_regions, "faces_by_region-" + std::to_string(lambda) + ".ply");
 
     std::vector<std::vector<std::size_t> > borders;
-    std::vector<std::vector<std::size_t> > borders_per_region;
+    std::vector<std::vector<std::size_t> > borders_per_region(region);
     collect_connected_border(borders, region_index, borders_per_region);
 
     for (std::size_t i = 0; i < region; i++) {
@@ -1363,7 +1363,7 @@ private:
       for (std::size_t j = 0; j < polygons[i].size(); j++) {
         vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])))));
         CGAL_assertion_code(auto it =) va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
-        CGAL_assertion(it.second);
+        CGAL_assertion(it.second || it.first->first == polygons[i][j]);
 
         vertices.back()->info().i = i;
         vertices.back()->info().j = j;
@@ -1572,8 +1572,6 @@ private:
     // Search starting darts by searching faces
     //borders contains Attribute<0> handles casted to std::size_t
     std::vector<bool> processed(m_lcc.upper_bound_on_dart_ids(), false);
-
-    borders_per_region.resize(region_index.size());
 
     for (std::size_t i = 0;i<region_index.size();i++) {
       if (region_index[i] == -1)
