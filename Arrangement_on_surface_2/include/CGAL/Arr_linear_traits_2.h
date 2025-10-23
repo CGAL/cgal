@@ -1590,7 +1590,7 @@ public:
       auto ymin = bbox.ymin();
       auto xmax = bbox.xmax();
       auto ymax = bbox.ymax();
-      Approximate_kernel::Iso_rectangle_2 rect(xmin, ymin, xmax, ymax);        
+      Approximate_kernel::Iso_rectangle_2 rect(xmin, ymin, xmax, ymax);
       if (xcv.is_ray()) {
         auto ray = xcv.ray();
         Kernel kernel;
@@ -1601,8 +1601,8 @@ public:
         if (! result) return oi;
 
         if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = l2r ? res_seg->min() : res_seg->max();
-          *oi++ = l2r ? res_seg->max() : res_seg->min();
+          *oi++ = l2r ? (res_seg->min)() : (res_seg->max)();
+          *oi++ = l2r ? (res_seg->max)() : (res_seg->min)();
           return oi;
         }
         const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
@@ -1613,15 +1613,15 @@ public:
       if (xcv.is_line()) {
         const Line_2 & supp_line = xcv.supp_line();
         Approx_lin approx_supp_line(
-          CGAL::to_double(supp_line.a()),  
-          CGAL::to_double(supp_line.b()), 
+          CGAL::to_double(supp_line.a()),
+          CGAL::to_double(supp_line.b()),
           CGAL::to_double(supp_line.c()));
         const auto result = CGAL::intersection(rect, approx_supp_line);
         if (! result) return oi;
 
         if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = l2r ? res_seg->min() : res_seg->max();
-          *oi++ = l2r ? res_seg->max() : res_seg->min();
+          *oi++ = l2r ? (res_seg->min)() : (res_seg->max)();
+          *oi++ = l2r ? (res_seg->max)() : (res_seg->min)();
           return oi;
         }
         const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
@@ -1634,8 +1634,8 @@ public:
       if (! result) return oi;
 
       if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-        *oi++ = l2r ? res_seg->min() : res_seg->max();
-        *oi++ = l2r ? res_seg->max() : res_seg->min();
+        *oi++ = l2r ? (res_seg->min)() : (res_seg->max)();
+        *oi++ = l2r ? (res_seg->max)() : (res_seg->min)();
         return oi;
       }
       const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
