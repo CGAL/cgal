@@ -15,6 +15,7 @@
 
 #ifndef CGAL_DRAW_AOS_ARR_RENDER_CONTEXT_H
 #define CGAL_DRAW_AOS_ARR_RENDER_CONTEXT_H
+
 #include <cstdlib>
 #include <memory>
 #include <atomic>
@@ -36,23 +37,22 @@
 namespace CGAL {
 namespace draw_aos {
 
-/**
- * @brief A cancellable context mixin for asynchronous operations. It also tracks elapsed time for performance
+/** @brief A cancellable context mixin for asynchronous operations. It also tracks elapsed time for performance
  * profiling.
  *
  * The idea is borrowed from golang with a simple implementation.
  * @see https://pkg.go.dev/context
  */
-class Arr_cancellable_context_mixin
-{
+class Arr_cancellable_context_mixin {
   using Clock = std::chrono::steady_clock;
   using Duration = Clock::duration;
   using Time_point = std::chrono::time_point<Clock, Duration>;
 
 protected:
-  Arr_cancellable_context_mixin()
-      : m_start_time(Clock::now())
-      , m_cancelled(std::make_shared<std::atomic<bool>>(false)) {}
+  Arr_cancellable_context_mixin() :
+    m_start_time(Clock::now()),
+    m_cancelled(std::make_shared<std::atomic<bool>>(false))
+  {}
 
 public:
   Time_point start_time() const { return m_start_time; }
@@ -70,23 +70,20 @@ private:
   std::shared_ptr<std::atomic<bool>> m_cancelled;
 };
 
-/**
- * @brief Boundary context mixin for rendering arrangements within a bounding box.
+/** @brief Boundary context mixin for rendering arrangements within a bounding box.
  * Provides extended functionality for checking point-bbox relations.
  *
  * @tparam GeomTraits the geometry traits class.
  */
 template <typename GeomTraits>
-class Arr_bounds_context_mixin
-{
+class Arr_bounds_context_mixin {
   using Geom_traits = GeomTraits;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Point = typename Approx_traits::Point;
   using Approx_nt = typename Approx_traits::Approx_nt;
 
 protected:
-  Arr_bounds_context_mixin(const Bbox_2& bbox)
-      : m_bbox(bbox) {}
+  Arr_bounds_context_mixin(const Bbox_2& bbox) : m_bbox(bbox) {}
 
 public:
   double xmin() const { return m_bbox.xmin(); }
@@ -118,22 +115,22 @@ template <typename GeomTraits>
 using Arr_parameterization_context_mixin = Arr_coordinate_converter<GeomTraits>;
 
 template <typename Arrangement>
-class Arr_render_context : public Arr_cancellable_context_mixin,
-                           public Arr_parameterization_context_mixin<typename Arrangement::Geometry_traits_2>
-{
+class Arr_render_context :
+    public Arr_cancellable_context_mixin,
+    public Arr_parameterization_context_mixin<typename Arrangement::Geometry_traits_2> {
   using Cancellable_context_mixin = Arr_cancellable_context_mixin;
   using Param_context_mixin = Arr_parameterization_context_mixin<typename Arrangement::Geometry_traits_2>;
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Face_points_map = typename Arr_face_point_generator<Arrangement>::Face_points_map;
 
 public:
-  Arr_render_context(const Arrangement& arr, double approx_error, Face_points_map& face_points)
-      : Cancellable_context_mixin()
-      , Param_context_mixin(*arr.geometry_traits())
-      , m_arr(arr)
-      , m_traits(*arr.geometry_traits())
-      , m_approx_error(approx_error)
-      , m_face_points(face_points) {
+  Arr_render_context(const Arrangement& arr, double approx_error, Face_points_map& face_points) :
+    Cancellable_context_mixin(),
+    Param_context_mixin(*arr.geometry_traits()),
+    m_arr(arr),
+    m_traits(*arr.geometry_traits()),
+    m_approx_error(approx_error),
+    m_face_points(face_points) {
 #if defined(CGAL_DRAW_AOS_DEBUG) && defined(CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR)
     std::filesystem::path debug_file_dir(CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR);
     // clear the index file.
@@ -142,9 +139,9 @@ public:
   }
 
 public:
-  const double m_approx_error;
   const Arrangement& m_arr;
   const Geom_traits& m_traits;
+  const double m_approx_error;
   const Face_points_map& m_face_points;
 
 #if defined(CGAL_DRAW_AOS_DEBUG)
@@ -153,9 +150,9 @@ public:
 };
 
 template <typename Arrangement>
-class Arr_bounded_render_context : public Arr_render_context<Arrangement>,
-                                   public Arr_bounds_context_mixin<typename Arrangement::Geometry_traits_2>
-{
+class Arr_bounded_render_context :
+    public Arr_render_context<Arrangement>,
+    public Arr_bounds_context_mixin<typename Arrangement::Geometry_traits_2> {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Approx_point = typename Geom_traits::Approximate_point_2;
   using Render_context = Arr_render_context<Arrangement>;
@@ -163,10 +160,11 @@ class Arr_bounded_render_context : public Arr_render_context<Arrangement>,
   using Approx_cache = Arr_approximation_cache<Arrangement>;
 
 public:
-  Arr_bounded_render_context(const Render_context& ctx, const Bbox_2& bbox, Approx_cache& cache)
-      : Render_context(ctx)
-      , Bounds_context_mixin(bbox)
-      , m_cache(cache) {}
+  Arr_bounded_render_context(const Render_context& ctx, const Bbox_2& bbox, Approx_cache& cache) :
+    Render_context(ctx),
+    Bounds_context_mixin(bbox),
+    m_cache(cache)
+  {}
 
 public:
   Approx_cache& m_cache;
@@ -174,4 +172,5 @@ public:
 
 } // namespace draw_aos
 } // namespace CGAL
+
 #endif

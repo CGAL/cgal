@@ -23,8 +23,7 @@ namespace CGAL {
 namespace draw_aos {
 
 template <typename Arrangement>
-class Arr_bounded_approximate_vertex
-{
+class Arr_bounded_approximate_vertex {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Point_2 = typename Geom_traits::Point_2;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
@@ -32,11 +31,9 @@ class Arr_bounded_approximate_vertex
   using Bounded_render_context = Arr_bounded_render_context<Arrangement>;
 
 public:
-  Arr_bounded_approximate_vertex(const Bounded_render_context& ctx)
-      : m_ctx(ctx) {}
+  Arr_bounded_approximate_vertex(const Bounded_render_context& ctx) : m_ctx(ctx) {}
 
-  /**
-   * @brief Approximate a vertex within the x-bounded range.
+  /** @brief Approximate a vertex within the x-bounded range.
    *
    * The function uses cached values if available.
    * @precondition: The vertex must have an associated point.
@@ -47,7 +44,7 @@ public:
   const Point_geom& operator()(const Vertex_const_handle& vh) const {
     auto [iter, inserted] = m_ctx.m_cache.vertices().try_emplace(vh);
     Point_geom& point = iter->second;
-    if(!inserted) return point;
+    if (! inserted) return point;
     return point = m_ctx.to_uv(m_ctx.m_traits.approximate_2_object()(vh->point()));
   }
 

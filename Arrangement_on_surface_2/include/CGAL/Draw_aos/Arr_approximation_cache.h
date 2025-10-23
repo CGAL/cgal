@@ -15,6 +15,7 @@
 
 #ifndef CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
 #define CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
+
 #include <boost/range/iterator_range.hpp>
 
 #include <CGAL/Arr_enums.h>
@@ -24,16 +25,14 @@
 namespace CGAL {
 namespace draw_aos {
 
-/**
- * @brief Cache class for approximating arrangement on surface.
+/** @brief Cache class for approximating arrangement on surface.
  *
  * When iterating over the arrangement dcel, a feature(vertex, halfedge, face) might be visited multiple times.
  * This cache stores the approximated geometry for each feature to avoid redundant calculations.
  * @tparam Arrangement
  */
 template <typename Arrangement>
-class Arr_approximation_cache
-{
+class Arr_approximation_cache {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
 
@@ -67,4 +66,5 @@ private:
 
 } // namespace draw_aos
 } // namespace CGAL
+
 #endif

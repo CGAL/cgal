@@ -54,8 +54,7 @@ namespace draw_aos {
  * @brief Triangulator for a face of an arrangement within a bounding box.
  */
 template <typename Arrangement>
-class Arr_bounded_face_triangulator
-{
+class Arr_bounded_face_triangulator {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   constexpr static bool Is_on_curved_surface = is_or_derived_from_curved_surf_traits_v<Geom_traits>;
 
@@ -74,15 +73,12 @@ class Arr_bounded_face_triangulator
 
   enum Point_type { Vertex_only, Constraint_only, Vertex_and_constraint };
 
-  /*!
-   * \brief A index wrapper defaulted to invalid.
+  /*! \brief A index wrapper defaulted to invalid.
    */
-  class Index
-  {
+  class Index {
   public:
     Index() = default;
-    Index(int idx)
-        : m_index(idx) {}
+    Index(int idx) : m_index(idx) {}
 
     bool is_valid() const { return m_index != Invalid_index; }
     operator int() const { return m_index; }
@@ -111,8 +107,7 @@ public:
 private:
   static KPoint to_kpoint(Point pt) { return KPoint(pt.x(), pt.y()); }
 
-  /*!
-   * \brief Offset a point on a specific boundary outward by a given offset.
+  /*! \brief Offset a point on a specific boundary outward by a given offset.
    *
    * \pre side != Boundary_side::None
    */
@@ -120,32 +115,25 @@ private:
     CGAL_precondition(side != Boundary_side::None);
 
     switch(side) {
-    case Boundary_side::Left:
-      return Point(pt.x() - offset, pt.y());
-    case Boundary_side::Right:
-      return Point(pt.x() + offset, pt.y());
-    case Boundary_side::Top:
-      return Point(pt.x(), pt.y() + offset);
-    case Boundary_side::Bottom:
-      return Point(pt.x(), pt.y() - offset);
-    default:
-      return pt; // Should not reach here
+     case Boundary_side::Left: return Point(pt.x() - offset, pt.y());
+     case Boundary_side::Right: return Point(pt.x() + offset, pt.y());
+     case Boundary_side::Top: return Point(pt.x(), pt.y() + offset);
+     case Boundary_side::Bottom: return Point(pt.x(), pt.y() - offset);
+     default: return pt; // Should not reach here
     }
   }
 
-  /*!
-   * \brief Find the shared boundary side of two points, or None if they are not on the same boundary.
+  /*! \brief Find the shared boundary side of two points, or None if they are not on the same boundary.
    */
   Boundary_side shared_boundary(const Point& pt1, const Point& pt2) const {
-    if(m_ctx.is_on_left(pt1) && m_ctx.is_on_left(pt2)) return Boundary_side::Left;
-    if(m_ctx.is_on_right(pt1) && m_ctx.is_on_right(pt2)) return Boundary_side::Right;
-    if(m_ctx.is_on_bottom(pt1) && m_ctx.is_on_bottom(pt2)) return Boundary_side::Bottom;
-    if(m_ctx.is_on_top(pt1) && m_ctx.is_on_top(pt2)) return Boundary_side::Top;
+    if (m_ctx.is_on_left(pt1) && m_ctx.is_on_left(pt2)) return Boundary_side::Left;
+    if (m_ctx.is_on_right(pt1) && m_ctx.is_on_right(pt2)) return Boundary_side::Right;
+    if (m_ctx.is_on_bottom(pt1) && m_ctx.is_on_bottom(pt2)) return Boundary_side::Bottom;
+    if (m_ctx.is_on_top(pt1) && m_ctx.is_on_top(pt2)) return Boundary_side::Top;
     return Boundary_side::None;
   }
 
-  /*!
-   * \brief Add a helper point on the shared boundary of two points if they are on the same boundary side.
+  /*! \brief Add a helper point on the shared boundary of two points if they are on the same boundary side.
    *
    * When triangulating a arrangement face within a bounding box, curves outside the bounding box are projected on the
    * four sides of the bbox. Topological errors could be introduced if several segments are lying on the same side.
@@ -155,9 +143,9 @@ private:
     // Arrangements on curved surfaces currently draws the entire parameter space, so there's no need to add
     // helper points.
     if constexpr(Is_on_curved_surface) return;
-    if(from == to) return;
+    if (from == to) return;
     auto shared_side = shared_boundary(from, to);
-    if(shared_side == Boundary_side::None) return;
+    if (shared_side == Boundary_side::None) return;
     Point mid = CGAL::midpoint(from, to);
     m_points.push_back(offset_boundary_point(mid, shared_side, m_offset += 0.1));
     m_point_types.push_back(Constraint_only);
@@ -185,7 +173,7 @@ private:
   void insert_all_constraints() {
     auto constraint_filter = [this](int idx) { return m_point_types[idx] != Vertex_only; };
     auto index_to_point = [this](int idx) -> KPoint { return to_kpoint(m_points[idx]); };
-    for(auto [start_idx, end_idx] : m_cst_ranges) {
+    for (auto [start_idx, end_idx] : m_cst_ranges) {
       auto indexes_begin = boost::make_counting_iterator<int>(start_idx);
       auto indexes_end = boost::make_counting_iterator<int>(end_idx);
       auto filtered_begin = boost::make_filter_iterator(constraint_filter, indexes_begin, indexes_end);
@@ -197,14 +185,15 @@ private:
   }
 
 public:
-  Arr_bounded_face_triangulator(const Bounded_render_context& ctx, Face_const_handle fh)
-      : m_ctx(ctx)
-      , m_fh(fh) {}
+  Arr_bounded_face_triangulator(const Bounded_render_context& ctx, Face_const_handle fh) :
+    m_ctx(ctx),
+    m_fh(fh)
+  {}
 
   void push_back(Point pt) {
     CGAL_assertion_msg(m_curr_cst_begin.has_value(), "Call start_constraint() before push_back().");
 
-    if(m_points.size() - *m_curr_cst_begin >= 1) add_boundary_helper_point(m_points.back(), pt);
+    if (m_points.size() - *m_curr_cst_begin >= 1) add_boundary_helper_point(m_points.back(), pt);
     m_points.push_back(pt);
     m_point_types.push_back(Vertex_and_constraint);
   }
@@ -216,7 +205,7 @@ public:
 
     int cst_begin = *m_curr_cst_begin;
     m_curr_cst_begin.reset();
-    if(m_points.size() - cst_begin <= 2) {
+    if (m_points.size() - cst_begin <= 2) {
       m_points.erase(m_points.begin() + cst_begin, m_points.end());
       m_point_types.erase(m_point_types.begin() + cst_begin, m_point_types.end());
       return;
@@ -225,24 +214,23 @@ public:
     m_cst_ranges.emplace_back(cst_begin, m_points.size());
   }
 
-  /*!
-   * \brief Converts the triangulator to a triangulated face, moving internal data to the result.
+  /*! \brief Converts the triangulator to a triangulated face, moving internal data to the result.
    *
    * \return Triangulated_face
    */
   operator Triangle_soup() && {
     CGAL_assertion_msg(!m_curr_cst_begin.has_value(), "Call end_constraint() before conversion");
 
-    if(m_points.empty()) return Triangle_soup();
+    if (m_points.empty()) return Triangle_soup();
     if constexpr(Is_on_curved_surface) {
-      if(auto it = m_ctx.m_face_points.find(m_fh); it != m_ctx.m_face_points.end()) {
+      if (auto it = m_ctx.m_face_points.find(m_fh); it != m_ctx.m_face_points.end()) {
         m_points.insert(m_points.end(), it->second.begin(), it->second.end());
         m_point_types.insert(m_point_types.end(), it->second.size(), Vertex_only);
       }
     }
     insert_all_vertices();
     insert_all_constraints();
-    if(m_ct.number_of_faces() == 0) return Triangle_soup();
+    if (m_ct.number_of_faces() == 0) return Triangle_soup();
 
 #if defined(CGAL_DRAW_AOS_DEBUG)
     debug_print(*this);
@@ -255,12 +243,12 @@ public:
     // Collect triangles within the constrained domain.
     Triangle_soup ts;
     ts.triangles.reserve(m_ct.number_of_faces());
-    for(auto fit = m_ct.finite_faces_begin(); fit != m_ct.finite_faces_end(); ++fit) {
+    for (auto fit = m_ct.finite_faces_begin(); fit != m_ct.finite_faces_end(); ++fit) {
       Index v1 = fit->vertex(0)->info();
       Index v2 = fit->vertex(1)->info();
       Index v3 = fit->vertex(2)->info();
-      if(!v1.is_valid() || !v2.is_valid() || !v3.is_valid()) continue;
-      if(!get(in_domain, fit)) continue;
+      if (! v1.is_valid() || !v2.is_valid() || !v3.is_valid()) continue;
+      if (! get(in_domain, fit)) continue;
       ts.triangles.push_back(Triangle{v1, v2, v3});
     }
     ts.points = std::move(m_points);
@@ -300,20 +288,20 @@ void debug_print(const Arr_bounded_face_triangulator<Arrangement>& triangulator)
   auto points_path = debug_dir / points_filename;
   std::ofstream ofs_points(points_path);
   ofs_index << points_filename << std::endl;
-  for(int i = 0; i < triangulator.m_points.size(); ++i) {
-    if(m_point_types[i] == Point_type::Constraint_only) continue;
+  for (int i = 0; i < triangulator.m_points.size(); ++i) {
+    if (m_point_types[i] == Point_type::Constraint_only) continue;
     const auto& pt = m_points[i];
     ofs_points << pt.x() << " " << pt.y() << "\n";
   }
 
   int counter = 0;
-  for(auto [start_idx, end_idx] : triangulator.m_cst_ranges) {
+  for (auto [start_idx, end_idx] : triangulator.m_cst_ranges) {
     auto filename = ccb_constraint_file_name_prefix + "_" + std::to_string(counter++) + ".txt";
     auto filepath = debug_dir / filename;
     ofs_index << filename << std::endl;
     std::ofstream ofs_ccb_constraint(filepath);
-    for(int i = start_idx; i < end_idx; ++i) {
-      if(m_point_types[i] == Point_type::Vertex_only) continue;
+    for (int i = start_idx; i < end_idx; ++i) {
+      if (m_point_types[i] == Point_type::Vertex_only) continue;
       const auto& pt = m_points[i];
       ofs_ccb_constraint << pt.x() << " " << pt.y() << "\n";
     }
