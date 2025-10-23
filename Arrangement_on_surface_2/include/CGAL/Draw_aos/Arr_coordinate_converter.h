@@ -15,6 +15,7 @@
 
 #ifndef CGAL_DRAW_AOS_ARR_COORDINATE_CONVERTER_H
 #define CGAL_DRAW_AOS_ARR_COORDINATE_CONVERTER_H
+
 #include <cmath>
 
 #include <CGAL/number_type_config.h>
@@ -24,33 +25,28 @@
 namespace CGAL {
 namespace draw_aos {
 
-/*!
- * \brief class handling coordinate conversion between 2D parameterized surface coordinates and cartesian coordinates.
+/*! \brief class handling coordinate conversion between 2D parameterized surface coordinates and cartesian coordinates.
  *
  * \tparam GeomTraits
  */
 template <typename GeomTraits>
-class Arr_coordinate_converter
-{
+class Arr_coordinate_converter {
   using Geom_traits = GeomTraits;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_point = typename Approx_traits::Approx_point;
   using Point = typename Approx_traits::Point;
 
 public:
-  Arr_coordinate_converter(const GeomTraits& traits)
-      : m_traits(traits) {}
+  Arr_coordinate_converter(const GeomTraits& traits) : m_traits(traits) {}
 
-  /*!
-   * \brief Converts a point in cartesian coordinates to parameterized surface coordinates.
+  /*! \brief converts a point in cartesian coordinates to parameterized surface coordinates.
    *
    * \param pt
    * \return Point
    */
   Point to_uv(Approx_point pt) const { return pt; }
 
-  /*!
-   * \brief Converts a point in parameterized surface coordinates to cartesian coordinates.
+  /*! \brief Converts a point in parameterized surface coordinates to cartesian coordinates.
    *
    * \param pt
    * \return Approx_point
@@ -61,10 +57,9 @@ private:
   const GeomTraits& m_traits;
 };
 
-/*!
- * \brief Converter specialization for geodesic arc on sphere traits.
+/*! \brief Converter specialization for geodesic arc on sphere traits.
  *
- * Provides conversions between spherical coordinates and right-handed Cartesian coordinates. Sphercial coordinates are
+ * provides conversions between spherical coordinates and right-handed Cartesian coordinates. Sphercial coordinates are
  * represented as azimuth ( [0, 2 Pi) ) and polar ( [0, Pi] ) angle in radians. Points on the identification curve have
  * azimuth == 0. The south pole has polar == 0.
  *
@@ -73,8 +68,7 @@ private:
  * \tparam atanY
  */
 template <typename Kernel, int atanX, int atanY>
-class Arr_coordinate_converter<Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX, atanY>>
-{
+class Arr_coordinate_converter<Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX, atanY>> {
   using Geom_traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_point = typename Approx_traits::Approx_point;
@@ -82,14 +76,13 @@ class Arr_coordinate_converter<Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX
   using Point = typename Approx_traits::Point;
 
 public:
-  Arr_coordinate_converter(const Geom_traits& traits)
-      : m_traits(traits) {}
+  Arr_coordinate_converter(const Geom_traits& traits) : m_traits(traits) {}
 
   Point to_uv(Approx_point point) const {
     if(point.location() == Approx_point::MAX_BOUNDARY_LOC) return Point(0, CGAL_PI);
     if(point.location() == Approx_point::MIN_BOUNDARY_LOC) return Point(0, 0);
     Approx_nt azimuth_from_id =
-        std::fmod(std::atan2(point.dy(), point.dx()) - std::atan2(atanY, atanX) + 2 * CGAL_PI, 2 * CGAL_PI);
+      std::fmod(std::atan2(point.dy(), point.dx()) - std::atan2(atanY, atanX) + 2 * CGAL_PI, 2 * CGAL_PI);
     return Point(azimuth_from_id, std::acos(-point.dz()));
   }
 

@@ -25,21 +25,20 @@
 namespace CGAL {
 namespace draw_aos {
 
-/**
- * @brief Render arrangement on surface within a bounding box.
+/** @brief Render arrangement on surface within a bounding box.
  */
 template <typename Arrangement>
-class Arr_bounded_renderer
-{
+class Arr_bounded_renderer {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Face_const_handle = typename Arrangement::Face_const_handle;
   using Render_context = Arr_render_context<Arrangement>;
   using Approx_cache = Arr_approximation_cache<Arrangement>;
 
 public:
-  Arr_bounded_renderer(const Render_context& ctx, Bbox_2 bbox)
-      : m_ctx(ctx)
-      , m_bbox(bbox) {}
+  Arr_bounded_renderer(const Render_context& ctx, Bbox_2 bbox) :
+    m_ctx(ctx),
+    m_bbox(bbox)
+  {}
 
   Approx_cache render() const {
     Approx_cache cache;

@@ -15,6 +15,7 @@
 
 #ifndef CGAL_DRAW_AOS_TYPE_UTILS_H
 #define CGAL_DRAW_AOS_TYPE_UTILS_H
+
 #include <limits>
 #include <vector>
 #include <type_traits>
@@ -34,8 +35,7 @@ enum class Boundary_side {
 };
 
 template <typename, typename = std::void_t<>>
-struct has_approximate_2_object : std::false_type
-{};
+struct has_approximate_2_object : std::false_type {};
 
 template <typename Gt>
 struct has_approximate_2_object<Gt, std::void_t<decltype(std::declval<Gt>().approximate_2_object())>> : std::true_type
@@ -46,14 +46,13 @@ template <typename Gt>
 inline constexpr bool has_approximate_2_object_v = has_approximate_2_object<Gt>::value;
 
 template <typename, typename, typename = std::void_t<>>
-struct has_approximate_point : std::false_type
-{};
+struct has_approximate_point : std::false_type {};
 
 template <typename Gt, typename A>
 struct has_approximate_point<Gt,
                              A,
-                             std::void_t<decltype(std::declval<A>()(std::declval<const typename Gt::Point_2&>()))>>
-    : std::true_type
+                             std::void_t<decltype(std::declval<A>()(std::declval<const typename Gt::Point_2&>()))>> :
+    std::true_type
 {};
 
 // Detect whether A has operator()(const Gt::Point_2&)
@@ -61,18 +60,17 @@ template <typename Gt, typename A>
 inline constexpr bool has_approximate_point_v = has_approximate_point<Gt, A>::value;
 
 template <typename, typename, typename, typename = std::void_t<>>
-struct has_approximate_xcv : std::false_type
-{};
+struct has_approximate_xcv : std::false_type {};
 
 template <typename Gt, typename A, typename O>
-struct has_approximate_xcv<
-    Gt,
-    A,
-    O,
-    std::void_t<decltype(std::declval<A&>()(std::declval<const typename Gt::X_monotone_curve_2&>(),
-                                            std::declval<double>(),
-                                            std::declval<O>(),
-                                            std::declval<bool>()))>> : std::true_type
+struct has_approximate_xcv
+<Gt,
+ A,
+ O,
+ std::void_t<decltype(std::declval<A&>()(std::declval<const typename Gt::X_monotone_curve_2&>(),
+                                         std::declval<double>(),
+                                         std::declval<O>(),
+                                         std::declval<bool>()))>> : std::true_type
 {};
 
 // Detect whether A has operator()(const Gt::X_monotone_curve_2&, double, OutputIterator, bool)?
@@ -84,15 +82,15 @@ struct has_approximate_xcv_with_bounds : std::false_type
 {};
 
 template <typename Gt, typename A, typename O>
-struct has_approximate_xcv_with_bounds<
-    Gt,
-    A,
-    O,
-    std::void_t<decltype(std::declval<A&>()(std::declval<const typename Gt::X_monotone_curve_2&>(),
-                                            std::declval<double>(),
-                                            std::declval<O>(),
-                                            std::declval<Bbox_2>(),
-                                            std::declval<bool>()))>> : std::true_type
+struct has_approximate_xcv_with_bounds
+<Gt,
+ A,
+ O,
+ std::void_t<decltype(std::declval<A&>()(std::declval<const typename Gt::X_monotone_curve_2&>(),
+                                         std::declval<double>(),
+                                         std::declval<O>(),
+                                         std::declval<Bbox_2>(),
+                                         std::declval<bool>()))>> : std::true_type
 {};
 
 // Detect whether A has operator()(const X_monotone_curve&, double, OutputIterator, Bbox_2, bool)
@@ -102,9 +100,9 @@ inline constexpr bool has_approximate_xcv_with_bounds_v = has_approximate_xcv_wi
 // Detect whether a geometry traits has all the necessary types and functions for approximation
 template <typename Gt>
 constexpr bool has_approximate_traits_v =
-    has_approximate_2_object_v<Gt> && has_approximate_point_v<Gt, typename Gt::Approximate_2> &&
-    (has_approximate_xcv_v<Gt, typename Gt::Approximate_2> ||
-     has_approximate_xcv_with_bounds_v<Gt, typename Gt::Approximate_2>);
+  has_approximate_2_object_v<Gt> && has_approximate_point_v<Gt, typename Gt::Approximate_2> &&
+  (has_approximate_xcv_v<Gt, typename Gt::Approximate_2> ||
+   has_approximate_xcv_with_bounds_v<Gt, typename Gt::Approximate_2>);
 
 template <typename Gt, typename = std::void_t<>>
 struct has_is_in_x_range : std::false_type
@@ -112,8 +110,8 @@ struct has_is_in_x_range : std::false_type
 
 template <typename Gt>
 struct has_is_in_x_range<Gt,
-                         std::void_t<decltype(std::declval<typename Gt::X_monotone_curve_2>().is_in_x_range(
-                             std::declval<const typename Gt::Point_2&>()))>> : std::true_type
+                         std::void_t<decltype(std::declval<typename Gt::X_monotone_curve_2>().is_in_x_range
+                                              (std::declval<const typename Gt::Point_2&>()))>> : std::true_type
 {};
 
 // Detect whether Gt::X_monotone_curve_2 has a member function bool is_in_x_range(const Gt::Point_2&)
@@ -122,8 +120,7 @@ inline constexpr bool has_is_in_x_range_v = has_is_in_x_range<Gt>::value;
 
 // Detect whether Gt is or derives from Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
 template <typename Gt>
-struct is_or_derived_from_agas
-{
+struct is_or_derived_from_agas {
 private:
   template <typename Kernel_, int AtanX, int AtanY>
   static std::true_type test(const Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>*);
@@ -143,30 +140,25 @@ inline constexpr bool is_or_derived_from_curved_surf_traits_v = is_or_derived_fr
 
 // Static helpers to get template arguments from a geometry traits
 template <typename Gt>
-struct tmpl_args
-{};
+struct tmpl_args {};
 
 template <typename Kernel_, int AtanX, int AtanY>
-struct tmpl_args<Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>>
-{
+struct tmpl_args<Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>> {
   using Kernel = Kernel_;
   static constexpr int atan_x = AtanX;
   static constexpr int atan_y = AtanY;
 };
 
-/*!
- * \brief Approximation data types
+/*! \brief Approximation data types
  *
  * \tparam Gt Geometry traits
  */
 template <typename Gt>
-class Arr_approximate_traits
-{
+class Arr_approximate_traits {
   using Geom_traits = Gt;
 
   template <typename P, typename I>
-  struct Triangle_soup_
-  {
+  struct Triangle_soup_ {
     using Index = I;
     using Triangle = std::array<Index, 3>;
     using Point = P;
@@ -198,8 +190,7 @@ public:
  * \tparam Gt Geometry traits
  */
 template <typename Gt>
-class Construct_gt_point_2
-{
+class Construct_gt_point_2 {
   using Approx_traits = Arr_approximate_traits<Gt>;
   using Approx_point = typename Approx_traits::Approx_point;
   using Gt_point = typename Gt::Point_2;
@@ -210,8 +201,7 @@ public:
 
 // Specialization for Arr_geodesic_arc_on_sphere_traits_2
 template <typename Kernel, int AtanX, int AtanY>
-class Construct_gt_point_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>>
-{
+class Construct_gt_point_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>> {
   using Geom_traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
   using Approx_traits = Arr_approximate_traits<Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>>;
   using Approx_point = typename Approx_traits::Approx_point;
@@ -220,7 +210,8 @@ class Construct_gt_point_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, At
 public:
   Gt_point operator()(const Approx_point& pt) const {
     using Direction_3 = typename Kernel::Direction_3;
-    return Gt_point(Direction_3(pt.dx(), pt.dy(), pt.dz()), static_cast<typename Gt_point::Location_type>(pt.location()));
+    return Gt_point(Direction_3(pt.dx(), pt.dy(), pt.dz()),
+                    static_cast<typename Gt_point::Location_type>(pt.location()));
   }
 };
 

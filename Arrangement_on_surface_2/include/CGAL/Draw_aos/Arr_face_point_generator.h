@@ -15,6 +15,7 @@
 
 #ifndef CGAL_DRAW_AOS_ARR_FACE_POINT_GENERATOR_H
 #define CGAL_DRAW_AOS_ARR_FACE_POINT_GENERATOR_H
+
 #include <utility>
 #include <variant>
 #include <vector>
@@ -30,8 +31,7 @@
 namespace CGAL {
 namespace draw_aos {
 
-/*!
- * \brief Generate face interior points.
+/*! \brief Generate face interior points.
  *
  * \tparam Arrangement
  */
@@ -39,10 +39,9 @@ template <typename Arrangement, typename = void>
 class Arr_face_point_generator;
 
 template <typename Arrangement>
-class Arr_face_point_generator<
-    Arrangement,
-    std::enable_if_t<!is_or_derived_from_curved_surf_traits_v<typename Arrangement::Geometry_traits_2>>>
-{
+class Arr_face_point_generator<Arrangement,
+                               std::enable_if_t<!is_or_derived_from_curved_surf_traits_v
+                                                <typename Arrangement::Geometry_traits_2>>> {
   using Point_geom = typename Arr_approximate_traits<typename Arrangement::Geometry_traits_2>::Point;
   using Face_const_handle = typename Arrangement::Face_const_handle;
 
@@ -55,8 +54,7 @@ public:
 
 template <typename Arrangement>
 class Arr_face_point_generator<Arrangement,
-                               std::enable_if_t<is_or_derived_from_agas_v<typename Arrangement::Geometry_traits_2>>>
-{
+                               std::enable_if_t<is_or_derived_from_agas_v<typename Arrangement::Geometry_traits_2>>> {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_nt = typename Approx_traits::Approx_nt;
@@ -76,8 +74,8 @@ public:
     std::vector<Gt_point> points;
     Arr_coordinate_converter<Geom_traits> coords(traits);
     points.reserve(2 * CGAL_PI / cell_size * CGAL_PI / cell_size);
-    for(Approx_nt x = 0; x < 2 * CGAL_PI; x += cell_size) {
-      for(Approx_nt y = 0; y < CGAL_PI; y += cell_size) {
+    for (Approx_nt x = 0; x < 2 * CGAL_PI; x += cell_size) {
+      for (Approx_nt y = 0; y < CGAL_PI; y += cell_size) {
         auto pt = coords.to_cartesian(Point(x, y));
         points.push_back(traits.construct_point_2_object()(pt.dx(), pt.dy(), pt.dz()));
       }
@@ -86,7 +84,7 @@ public:
     unordered_flat_map<Face_const_handle, std::vector<Point>> face_points;
     CGAL::locate(arr, points.begin(), points.end(),
                  boost::make_function_output_iterator([&face_points, &traits, &coords](const Query_result& res) {
-                   if(!std::holds_alternative<Face_const_handle>(res.second)) return;
+                   if (! std::holds_alternative<Face_const_handle>(res.second)) return;
                    Face_const_handle fh = std::get<Face_const_handle>(res.second);
                    auto [it, _] = face_points.try_emplace(fh, std::vector<Point>());
                    it->second.push_back(coords.to_uv(traits.approximate_2_object()(res.first)));

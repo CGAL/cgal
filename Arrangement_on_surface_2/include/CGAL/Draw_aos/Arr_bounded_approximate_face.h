@@ -15,6 +15,7 @@
 
 #ifndef CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_FACE_H
 #define CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_FACE_H
+
 #include <iterator>
 #include <optional>
 #include <utility>
