@@ -7,7 +7,7 @@ using Kernel = CGAL::Simple_cartesian<double>;
 using FT = Kernel::FT;
 using Point_3 = Kernel::Point_3;
 
-int main(){
+int main() {
 
   // Construct tetrahedron
   const Point_3 p0(0.0, 0.0, 0.0);

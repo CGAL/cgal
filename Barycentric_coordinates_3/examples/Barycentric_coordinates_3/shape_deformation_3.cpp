@@ -1,9 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
-
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 #include <fstream>
 

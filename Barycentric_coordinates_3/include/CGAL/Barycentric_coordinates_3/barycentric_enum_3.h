@@ -37,15 +37,15 @@ enum class Computation_policy_3 {
 
   /*!
     Computation has a linear time complexity with respect to the number of
-    polygon vertices, but may suffer imprecisions near the polygon boundary.
+    face vertices, but may suffer imprecisions near the face boundary.
     No extra checks are carried out.
   */
   FAST = 0,
 
     /*!
     Computation has a linear time complexity with respect to the number of
-    polygon vertices, but may suffer imprecisions near the polygon boundary. In
-    addition, we check a position of the query point with respect to the polygon
+    face vertices, but may suffer imprecisions near the face boundary. In
+    addition, we check a position of the query point with respect to the face
     and use different computation strategies for different positions.
   */
   FAST_WITH_EDGE_CASES = 1

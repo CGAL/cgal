@@ -91,7 +91,7 @@ public:
     for 3D query points.
 
     \param tmesh
-    an instance of `TriangleMesh`, which must be a simplicial polyhedron
+    an instance of `TriangleMesh`
 
     \param policy
     one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
@@ -105,9 +105,9 @@ public:
     an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
     the default initialization is provided
 
-    \pre is_triangle_mesh(`tmesh`)
     \pre num_vertices(`tmesh`) >= 4.
-    \pre `tmesh` is simplicial.
+    \pre is_triangle_mesh(`tmesh`).
+    \pre is_closed(`tmesh`).
   */
   Mean_value_coordinates_3(const TriangleMesh& tmesh,
                            const Computation_policy_3 policy,
@@ -218,14 +218,14 @@ private:
         if(edge_case == internal::Edge_case::EXTERIOR_BOUNDARY){
 #ifdef CGAL_BARYCENTRIC_COORDINATES_3_VERBOSE
           std::cerr << std::endl <<
-          "WARNING: query does not belong to the polygon!" << std::endl;
+          "WARNING: query does not belong to the polyhedron!" << std::endl;
 #endif
           return coordinates;
         }
         if(edge_case == internal::Edge_case::EXTERIOR) {
 #ifdef CGAL_BARYCENTRIC_COORDINATES_3_VERBOSE
           std::cerr << std::endl <<
-          "WARNING: query does not belong to the polygon!" << std::endl;
+          "WARNING: query does not belong to the polyhedron!" << std::endl;
 #endif
         }
 
@@ -380,16 +380,16 @@ private:
   time is not a concern.
 
   \tparam Point_3
-  A model of `Kernel::Point_3`.
+  A model of `Kernel::Point_3`
 
   \tparam TriangleMesh
-  must be a model of the concept `FaceListGraph`.
+  must be a model of the concept `FaceListGraph`
 
   \tparam OutIterator
   a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
   \param tmesh
-  an instance of `TriangleMesh`, which must be a simplicial polyhedron
+  an instance of `TriangleMesh`
 
   \param query
   a query point
@@ -404,9 +404,9 @@ private:
   \return an output iterator to the element in the destination range,
   one past the last coordinates stored
 
-  \pre is_triangle_mesh(`tmesh`)
   \pre num_vertices(`tmesh`) >= 4.
-  \pre `tmesh` is simplicial.
+  \pre is_triangle_mesh(`tmesh`).
+  \pre is_closed(`tmesh`).
 */
 template<typename Point_3,
          typename TriangleMesh,

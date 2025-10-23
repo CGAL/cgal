@@ -3,7 +3,6 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -14,8 +13,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 using CP3 = CGAL::Barycentric_coordinates::Computation_policy_3;
 using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Surface_mesh, Kernel>;
 
-int main()
-{
+int main() {
 
   CGAL::Random_points_in_sphere_3<Point_3> gen(1.0);
   std::vector<Point_3> points;

@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/generators.h>
-
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -11,7 +10,7 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 namespace PMP = CGAL::Polygon_mesh_processing;
 using CP3 = CGAL::Barycentric_coordinates::Computation_policy_3;
 
-int main(){
+int main() {
 
   Surface_mesh concave;
 

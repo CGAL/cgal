@@ -1,11 +1,10 @@
-#define PHI 1.6180339887498948482
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
+
+#define PHI 1.6180339887498948482
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT = Kernel::FT;

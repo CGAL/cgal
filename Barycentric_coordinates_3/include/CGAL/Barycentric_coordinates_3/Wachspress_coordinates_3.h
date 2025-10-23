@@ -37,19 +37,19 @@ namespace Barycentric_coordinates {
   Wachspress coordinates are well-defined and non-negative in the closure of a convex
   polyhedron with triangular faces. The coordinates are computed analytically.
 
-  \tparam PolygonMesh
-  must be a model of the concept `FaceListGraph`.
+  \tparam TriangleMesh
+  must be a model of the concept `FaceListGraph`
 
   \tparam GeomTraits
   a model of `BarycentricTraits_3`
 
   \tparam VertexPointMap
-  a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
-  key type and `GeomTraits::Point_3` as value type.
+  a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
+  key type and `GeomTraits::Point_3` as value type
 */
-template<typename PolygonMesh,
+template<typename TriangleMesh,
          typename GeomTraits,
-         typename VertexPointMap = typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::const_type>
+         typename VertexPointMap = typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type>
 class Wachspress_coordinates_3
 {
 
@@ -59,7 +59,7 @@ public:
   /// @{
 
   /// \cond SKIP_IN_MANUAL
-  using Polygon_mesh = PolygonMesh;
+  using Triangle_mesh = TriangleMesh;
   using Geom_Traits = GeomTraits;
   using Vertex_point_map = VertexPointMap;
 
@@ -89,8 +89,8 @@ public:
     This class implements the behavior of Wachspress coordinates
     for 3D query points.
 
-    \param polygon_mesh
-    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    \param tmesh
+    an instance of `TriangleMesh`
 
     \param policy
     one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
@@ -101,18 +101,19 @@ public:
     the default initialization is provided
 
     \param vertex_point_map
-    an instance of `VertexPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
+    an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
     the default initialization is provided
 
-    \pre num_vertices(`polygon_mesh`) >= 4.
-    \pre `polygon_mesh` is strongly convex.
-    \pre `polygon_mesh` is simplicial.
+    \pre num_vertices(`tmesh`) >= 4.
+    \pre is_triangle_mesh(`tmesh`).
+    \pre is_closed(`tmesh`).
+    \pre is_strongly_convex_3(`tmesh`).
   */
-  Wachspress_coordinates_3(const PolygonMesh& polygon_mesh,
+  Wachspress_coordinates_3(const TriangleMesh& tmesh,
                            const Computation_policy_3 policy,
                            const VertexPointMap vertex_point_map,
                            const GeomTraits traits = GeomTraits())
-    : m_polygon_mesh(polygon_mesh)
+    : m_tmesh(tmesh)
     , m_computation_policy(policy)
     , m_vertex_point_map(vertex_point_map)
     , m_traits(traits)
@@ -122,19 +123,19 @@ public:
     , m_construct_vector_3(m_traits.construct_vector_3_object())
   {
     // Check if polyhedron is strongly convex
-    CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
-    m_weights.resize(vertices(m_polygon_mesh).size());
+    CGAL_assertion(is_strongly_convex_3(m_tmesh, m_traits));
+    m_weights.resize(vertices(m_tmesh).size());
   }
 
   /// @}
 
-  Wachspress_coordinates_3(const PolygonMesh& polygon_mesh,
+  Wachspress_coordinates_3(const TriangleMesh& tmesh,
                            const Computation_policy_3 policy =
                            Computation_policy_3::FAST_WITH_EDGE_CASES,
                            const GeomTraits traits = GeomTraits())
-    : Wachspress_coordinates_3(polygon_mesh,
+    : Wachspress_coordinates_3(tmesh,
                                policy,
-                               get_const_property_map(CGAL::vertex_point, polygon_mesh),
+                               get_const_property_map(CGAL::vertex_point, tmesh),
                                traits)
   {}
 
@@ -174,7 +175,7 @@ public:
   /// @}
 
 private:
-  const PolygonMesh& m_polygon_mesh;
+  const TriangleMesh& m_tmesh;
   const Computation_policy_3 m_computation_policy;
   const VertexPointMap m_vertex_point_map; // use it to map vertex to Point_3
   const GeomTraits m_traits;
@@ -198,7 +199,7 @@ private:
       case Computation_policy_3::FAST_WITH_EDGE_CASES:{
         // Calculate query position relative to the polyhedron
         const auto edge_case = internal::locate_wrt_polyhedron(
-          m_vertex_point_map, m_polygon_mesh, query, coordinates, m_traits, true);
+          m_vertex_point_map, m_tmesh, query, coordinates, m_traits, true);
 
         if(edge_case == internal::Edge_case::BOUNDARY) {
           return coordinates;
@@ -206,14 +207,14 @@ private:
         if(edge_case == internal::Edge_case::EXTERIOR_BOUNDARY){
 #ifdef CGAL_BARYCENTRIC_COORDINATES_3_VERBOSE
           std::cerr << std::endl <<
-          "WARNING: query does not belong to the polygon!" << std::endl;
+          "WARNING: query does not belong to the polyhedron!" << std::endl;
 #endif
           return coordinates;
         }
         if(edge_case == internal::Edge_case::EXTERIOR) {
 #ifdef CGAL_BARYCENTRIC_COORDINATES_3_VERBOSE
           std::cerr << std::endl <<
-          "WARNING: query does not belong to the polygon!" << std::endl;
+          "WARNING: query does not belong to the polyhedron!" << std::endl;
 #endif
         }
 
@@ -221,7 +222,7 @@ private:
       }
 
       default:{
-        internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
+        internal::get_default(vertices(m_tmesh).size(), coordinates);
         return coordinates;
       }
     }
@@ -237,7 +238,7 @@ private:
     CGAL_assertion(sum != FT(0));
 
     // The coordinates must be saved in the same order as vertices in the vertex range.
-    const auto vd = vertices(m_polygon_mesh);
+    const auto vd = vertices(m_tmesh);
     CGAL_assertion(m_weights.size() == vd.size());
 
     for (std::size_t vi = 0; vi < vd.size(); vi++) {
@@ -257,7 +258,7 @@ private:
 
     // Vertex index.
     std::size_t vi = 0;
-    for (auto vertex : vertices(m_polygon_mesh)) {
+    for (auto vertex : vertices(m_tmesh)) {
 
       // Call function to calculate wp coordinates
       const FT weight = compute_wp_vertex_query(vertex, query);
@@ -283,13 +284,13 @@ private:
     const Vector_3 query_vertex = m_construct_vector_3(query, vertex_val);
 
     // Loop on the faces the vertex
-    using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
-    halfedge_descriptor first_h = halfedge(vertex, m_polygon_mesh);
+    using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+    halfedge_descriptor first_h = halfedge(vertex, m_tmesh);
 
     auto compute_pf_i = [&](halfedge_descriptor h)
     {
       Vector_3 nf = internal::get_face_normal(
-        face(h, m_polygon_mesh), m_vertex_point_map, m_polygon_mesh, m_traits);
+        face(h, m_tmesh), m_vertex_point_map, m_tmesh, m_traits);
       nf = nf / approximate_sqrt(nf.squared_length());
       const FT hfx = m_dot_3(query_vertex, nf);
       CGAL_assertion(hfx != FT(0));
@@ -298,14 +299,14 @@ private:
 
     // First face.
     const Vector_3 pf_1 = compute_pf_i(first_h);
-    halfedge_descriptor h_i=prev(opposite(first_h, m_polygon_mesh), m_polygon_mesh);
+    halfedge_descriptor h_i=prev(opposite(first_h, m_tmesh), m_tmesh);
     Vector_3 pf_i=compute_pf_i(h_i);
     // Compute weight w_v
     FT weight = FT(0);
 
     // Iterate using the circulator
     do{
-      halfedge_descriptor h_i_p_1=prev(opposite(h_i, m_polygon_mesh), m_polygon_mesh);
+      halfedge_descriptor h_i_p_1=prev(opposite(h_i, m_tmesh), m_tmesh);
       if (h_i_p_1==first_h)
         break;
       const Vector_3 pf_i_p_1=compute_pf_i(h_i_p_1);
@@ -339,16 +340,16 @@ private:
   time is not a concern.
 
   \tparam Point_3
-  A model of `Kernel::Point_3`.
+  A model of `Kernel::Point_3`
 
-  \tparam PolygonMesh
-  must be a model of the concept `FaceListGraph`.
+  \tparam TriangleMesh
+  must be a model of the concept `FaceListGraph`
 
   \tparam OutIterator
   a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-  \param polygon_mesh
-  an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+  \param tmesh
+  an instance of `TriangleMesh`
 
   \param query
   a query point
@@ -363,22 +364,23 @@ private:
   \return an output iterator to the element in the destination range,
   one past the last coordinate stored
 
-  \pre num_vertices(`polygon_mesh`) >= 4.
-  \pre `polygon_mesh` is strongly convex.
-  \pre `polygon_mesh` is simplicial.
+  \pre num_vertices(`tmesh`) >= 4.
+  \pre is_triangle_mesh(`tmesh`).
+  \pre is_closed(`tmesh`).
+  \pre is_strongly_convex_3(`tmesh`).
 */
 template<typename Point_3,
-         typename PolygonMesh,
+         typename TriangleMesh,
          typename OutIterator>
 OutIterator
-wachspress_coordinates_3(const PolygonMesh& polygon_mesh,
+wachspress_coordinates_3(const TriangleMesh& tmesh,
                          const Point_3& query,
                          OutIterator c_begin,
                          const Computation_policy_3 policy = Computation_policy_3::FAST)
 {
   using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-  Wachspress_coordinates_3<PolygonMesh, Geom_Traits> wachspress(polygon_mesh, policy);
+  Wachspress_coordinates_3<TriangleMesh, Geom_Traits> wachspress(tmesh, policy);
   return wachspress(query, c_begin);
 }
 
