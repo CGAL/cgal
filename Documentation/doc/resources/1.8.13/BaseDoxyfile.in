@@ -92,6 +92,7 @@ ALIASES                = "cgal=%CGAL" \
                          "opencv=OpenCV" \
                          "tensorflow=TensorFlow" \
                          "metis=METIS" \
+                         "suitesparse=SuiteSparse" \
                          "zlib=zlib" \
                          "ceres=Ceres" \
                          "glpk=GLPK" \

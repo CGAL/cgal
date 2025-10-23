@@ -456,8 +456,8 @@ behaves with respect to these parameters.
 <TR>
 <TD> </TD>
 <TD><IMG border="0" height="250px" src="./implicit_domain.jpg"> </TD>
-</TR>
 <TD> </TD>
+</TR>
 <TR>
 <TD><IMG border="0" height="250px" src="./implicit_domain_3.jpg"></TD>
 <TD><IMG border="0" height="250px" src="./implicit_domain_4.jpg"></TD>
@@ -761,7 +761,7 @@ elements) is constructed using a call to the functor `construct_intersection`
 \snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h use construct intersection
 and eventually `%intersect_index` is the element \#1 of `%intersect`.
 \snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h get construct intersection
-The dimension of the underlying simplex is stored as the element \#2 of `%intersect``.
+The dimension of the underlying simplex is stored as the element \#2 of `%intersect`.
 
 The result of the custom initialization can be seen in
 \cgalFigureRef{mesh3custominitimage3D}. The generated 3D image contains a

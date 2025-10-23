@@ -402,7 +402,7 @@ Polynomial<NT> gcdex_(
  *
  *  CGALially, computation is performed ``denominator-free'' if
  *  supported by the coefficient type via \c CGAL::Fraction_traits
- *  (using \c pseudo_gcdex() ), otherwise the euclidean remainder
+ *  (using \c pseudo_gcdex() ), otherwise the Euclidean remainder
  *  sequence is used.
  *
  *  \pre \c NT must be a \c Field.

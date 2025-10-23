@@ -85,7 +85,7 @@ the according functor of the traits class. For an overview see the section "Glob
 
 \subsection Algebraic_foundationsTagsinAlgebraicStructure Tags in Algebraic Structure Traits
 
-\subsection Algebraic_foundationsAlgebraicCategory Algebraic Category
+\subsubsection Algebraic_foundationsAlgebraicCategory Algebraic Category
 
 For a type `AS`, `Algebraic_structure_traits<AS>`
 provides several tags. The most important tag is the `Algebraic_category`
@@ -100,7 +100,7 @@ The tags are derived from each other such that they reflect the
 hierarchy of the algebraic structure concept, e.g.,
 `Field_with_sqrt_tag` is derived from `Field_tag`.
 
-\subsection Algebraic_foundationsExactandNumericalSensitive Exact and Numerical Sensitive
+\subsubsection Algebraic_foundationsExactandNumericalSensitive Exact and Numerical Sensitive
 
 Moreover, `Algebraic_structure_traits<AS>` provides the tags `Is_exact`
 and `Is_numerical_sensitive`, which are both `Boolean_tag`s.

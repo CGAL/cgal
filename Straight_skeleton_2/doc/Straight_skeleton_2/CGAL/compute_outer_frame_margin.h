@@ -7,7 +7,7 @@ computes the separation required between a polygon and the outer frame used to o
 suitable for the computation of outer offset polygons at a given distance.
 
 Given a non-degenerate strictly-simple 2D polygon whose vertices are passed
-in the range [`first`,`beyond`), calculates the largest euclidean distance
+in the range [`first`,`beyond`), calculates the largest Euclidean distance
 `d` between each input vertex and its corresponding offset vertex at
 a distance `offset`.
 

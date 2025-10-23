@@ -1234,7 +1234,7 @@ insert_balls(const Vertex_handle& vp,
                 << n << "\n  between points ("
                 << vp_wp << ") and (" << vq_wp
                 << ") (arc length: "
-                << curve_segment_length(vp_wp, vq_wp,
+                << curve_segment_length(vp, vq,
                                         curve_index, d_sign)
                 << ")\n";
 #endif

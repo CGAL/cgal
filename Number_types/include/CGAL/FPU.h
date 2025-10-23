@@ -629,7 +629,9 @@ inline double IA_sqrt_toward_zero(double d) {
 } //namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
 #include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif
 #endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_FPU_H
