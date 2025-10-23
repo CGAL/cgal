@@ -192,9 +192,9 @@ void Variational_medial_axis_skeleton_plugin::trace_surface()
   CGAL::Timer timer;
   timer.start();
 
-  CGAL::Variational_medial_axis<Mesh, CGAL::Parallel_if_available_tag> vmas(*source_item->face_graph());
-  vmas.compute_variational_medial_axis_sampling(CGAL::parameters::number_of_spheres(nbs));
-  auto skeleton = vmas.export_skeleton();
+  CGAL::Variational_medial_axis_sampling<Mesh, CGAL::Parallel_if_available_tag> vmas(*source_item->face_graph());
+  vmas.sample(CGAL::parameters::number_of_spheres(nbs));
+  auto skeleton = vmas.skeleton();
 
   CGAL::Medial_skeleton_offset_function<Mesh> implicit_function(skeleton);
 
