@@ -366,6 +366,7 @@ public:
   typedef typename internal::Construct_circle_or_line_supporting_bisector<Self> Construct_circle_or_line_supporting_bisector;
   typedef internal::Construct_hyperbolic_segment_2<Self>        Construct_hyperbolic_segment_2;
   typedef typename Base::Construct_segment_2                    Construct_segment_2;
+  typedef typename internal::Hyperbolic_orientation_2<Self>     Hyperbolic_orientation_2;
 
 public:
   Hyperbolic_Delaunay_triangulation_CK_traits_2(const Base& kernel = Base()) : Base(kernel) {}
@@ -410,6 +411,10 @@ public:
   Compute_squared_Euclidean_distance_2
   compute_squared_Euclidean_distance_2_object() const
   { return this->Base::compute_squared_distance_2_object(); }
+
+  Hyperbolic_orientation_2
+  hyperbolic_orientation_2() const
+  { return Hyperbolic_orientation_2(*this); }
 
 };
 

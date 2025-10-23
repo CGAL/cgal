@@ -549,6 +549,10 @@ public:
   compute_squared_Euclidean_distance_2_object() const
   { return this->Base::compute_squared_distance_2_object(); }
 
+  Hyperbolic_orientation_2
+  hyperbolic_orientation_2() const
+  { return Hyperbolic_orientation_2(*this); }
+
 }; // class Hyperbolic_Delaunay_triangulation_traits_2
 
 } // namespace CGAL

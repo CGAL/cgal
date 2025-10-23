@@ -77,7 +77,6 @@ public:
 
 	//---------- location and insertion
 	Locate_type relative_position(Point const & query, unsigned & li, Anchor const & anch) const;
-	Orientation hyperbolic_orientation_2(Point const & p, Point const & q, Point const & r) const;  // à mettre dans le code de hyperbolic_traits
 	Anchor locate(Point const & query, bool use_visibility = false); // const ?
 	Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility = false); // const ?
 
@@ -460,34 +459,6 @@ from_stream(std::istream & s)
 
 //---------- location and insertion
 
-//TODO put this out of this class
-template<class Traits>
-Orientation
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-hyperbolic_orientation_2(Point const & p, Point const & q, Point const & r) const
-{
-	Point origin = Point(0, 0);
-	Orientation orientation_to_origin = orientation(p, origin, q);
-	if (orientation_to_origin == COLLINEAR) {
-		return orientation(p, q, r);
-	}
-
-	Traits gt;
-	CGAL::internal::Side_of_oriented_hyperbolic_segment_2 orientation_test = gt.side_of_oriented_hyperbolic_segment_2_object();
-	Oriented_side orientation_to_disk = orientation_test(p, q, r);
-	if (orientation_to_disk == ON_POSITIVE_SIDE) {
-		return orientation_to_origin;
-	} else if (orientation_to_disk == ON_NEGATIVE_SIDE) {
-		if (orientation_to_origin == LEFT_TURN) {
-			return RIGHT_TURN;
-		} else {
-			return LEFT_TURN;
-		}
-	} else {
-		return COLLINEAR;
-	}
-}
-
 // Output: The locate type lt of query relative to the anchor, and an index corresponding to:
 // - if lt == FACE: NULL_INDEX (= -1),
 // - if lt == EDGE: index of the edge on which query lies,
@@ -500,8 +471,10 @@ relative_position(Point const & query, unsigned & li, Anchor const & anch) const
 {
 	Locate_type lt = FACE;
 	li = NULL_INDEX;
+	Traits gt;
+	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 	for (unsigned i = 0; i < NB_SIDES; ++i) {
-		Orientation ori_query = hyperbolic_orientation_2(anch.vertices[i], anch.vertices[ccw(i)], query);
+		Orientation ori_query = ho2(anch.vertices[i], anch.vertices[ccw(i)], query);
 		if (ori_query == RIGHT_TURN) {
 			lt = OUTSIDE;
 			li = i;
@@ -510,7 +483,7 @@ relative_position(Point const & query, unsigned & li, Anchor const & anch) const
 		if (ori_query == COLLINEAR) {
 			lt = EDGE;
 			li = i;
-			if (hyperbolic_orientation_2(anch.vertices[ccw(i)], anch.vertices[cw(i)], query) == COLLINEAR) {
+			if (ho2(anch.vertices[ccw(i)], anch.vertices[cw(i)], query) == COLLINEAR) {
 				lt = VERTEX;
 				li = ccw(i);
 				break;
@@ -546,15 +519,17 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 	Point d;
 
 	// visibility walk
+	Traits gt;
+	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 	while (!found) {
 		Complex cross_ratio = Base::get_cross_ratio(dart);
 		d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
 		dart = Base::opposite(dart);
-		if (hyperbolic_orientation_2(c, d, query) == RIGHT_TURN){
+		if (ho2(c, d, query) == RIGHT_TURN){
 			b = a;
 			a = d;
 			dart = Base::ccw(dart);
-		} else if (hyperbolic_orientation_2(a, d, query) == LEFT_TURN) {
+		} else if (ho2(a, d, query) == LEFT_TURN) {
 			b = c;
 			c = d;
 			dart = Base::cw(dart);
@@ -583,9 +558,11 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 	Point r = hint.vertices[1];
 	Point l = hint.vertices[2];
 	ld = 0;
+	Traits gt;
+	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 
-	if (hyperbolic_orientation_2(p0, query, r) == RIGHT_TURN) {
-		while (hyperbolic_orientation_2(p0, query, l) == RIGHT_TURN) {
+	if (ho2(p0, query, r) == RIGHT_TURN) {
+		while (ho2(p0, query, l) == RIGHT_TURN) {
 			dart = Base::opposite(Base::cw(dart));
 			Point old_l = l;
 			l = Base::fourth_point_from_cross_ratio(p0, r, l, Base::get_cross_ratio(dart));
@@ -593,7 +570,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 			++ld;
 		}
 	} else {
-		while (hyperbolic_orientation_2(p0, query, r) != RIGHT_TURN) {
+		while (ho2(p0, query, r) != RIGHT_TURN) {
 			Point old_r = r;
 			r = Base::fourth_point_from_cross_ratio(r, l, p0, Base::get_cross_ratio(dart));
 			l = old_r;
@@ -605,10 +582,10 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 	// straight walk
 	dart = Base::ccw(dart);
 	Point p = p0;
-	while (hyperbolic_orientation_2(r, l, query) == RIGHT_TURN) {
+	while (ho2(r, l, query) == RIGHT_TURN) {
 		Complex cross_ratio = Base::get_cross_ratio(dart);
 		Point s = Base::fourth_point_from_cross_ratio(l, p, r, cross_ratio);
-		if (hyperbolic_orientation_2(p0, query, s) == RIGHT_TURN) {
+		if (ho2(p0, query, s) == RIGHT_TURN) {
 			p = r;
 			r = s;
 			dart = Base::cw(Base::opposite(dart));
