@@ -145,7 +145,7 @@ public:
   /*!
     \brief computes 3D Wachspress coordinates.
 
-    This function fills `c_begin` with 3D Wachspress coordinates computed
+    This function fills `oi` with 3D Wachspress coordinates computed
     at the `query` point with respect to the vertices of the input polyhedron.
 
     The number of returned coordinates equals to the number of vertices.
@@ -154,22 +154,22 @@ public:
     \f$n\f$ is the number of vertices, the query point \f$q\f$ can be obtained
     as \f$q = \sum_{i = 0}^{n-1}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
 
-    \tparam OutIterator
+    \tparam OutputIterator
     a model of `OutputIterator` that accepts values of type `FT`
 
     \param query
     a query point
 
-    \param c_begin
+    \param oi
     the beginning of the destination range with the computed coordinates
 
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored
   */
-  template<typename OutIterator>
-  OutIterator operator()(const Point_3& query, OutIterator c_begin)
+  template<typename OutputIterator>
+  OutputIterator operator()(const Point_3& query, OutputIterator oi)
   {
-    return compute(query, c_begin);
+    return compute(query, oi);
   }
 
   /// @}
@@ -328,9 +328,9 @@ private:
   \brief computes 3D Wachspress coordinates.
 
   This function computes 3D Wachspress coordinates at a given `query` point
-  with respect to the vertices of a convex `polyhedron` with triangular faces, that is one
+  with respect to the vertices of a convex polyhedron with triangular faces, that is one
   coordinate per vertex. The coordinates are stored in a destination range
-  beginning at `c_begin`.
+  beginning at `oi`.
 
   Internally, the class `Wachspress_coordinates_3` is used. If one wants to process
   multiple query points, it is better to use that class. When using the free function,
@@ -345,7 +345,7 @@ private:
   \tparam TriangleMesh
   must be a model of the concept `FaceListGraph`
 
-  \tparam OutIterator
+  \tparam OutputIterator
   a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
   \param tmesh
@@ -354,7 +354,7 @@ private:
   \param query
   a query point
 
-  \param c_begin
+  \param oi
   the beginning of the destination range with the computed coordinates
 
   \param policy
@@ -371,17 +371,17 @@ private:
 */
 template<typename Point_3,
          typename TriangleMesh,
-         typename OutIterator>
-OutIterator
+         typename OutputIterator>
+OutputIterator
 wachspress_coordinates_3(const TriangleMesh& tmesh,
                          const Point_3& query,
-                         OutIterator c_begin,
+                         OutputIterator oi,
                          const Computation_policy_3 policy = Computation_policy_3::FAST)
 {
   using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
   Wachspress_coordinates_3<TriangleMesh, Geom_Traits> wachspress(tmesh, policy);
-  return wachspress(query, c_begin);
+  return wachspress(query, oi);
 }
 
 } // namespace Barycentric_coordinates

@@ -51,6 +51,7 @@ defined for convex simplicial polytopes.}
 
 ## Free Functions ##
 - `tetrahedron_coordinates()`
+- `tetrahedron_coordinates_in_array()`
 - `wachspress_coordinates_3()`
 - `mean_value_coordinates_3()`
 - `discrete_harmonic_coordinates_3()`

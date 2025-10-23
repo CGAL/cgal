@@ -164,14 +164,14 @@ enum class Edge_case {
     typename VertexRange,
     typename VertexPointMap,
     typename TriangleMesh,
-    typename OutIterator,
+    typename OutputIterator,
     typename GeomTraits>
-  OutIterator boundary_coordinates_3(
+  OutputIterator boundary_coordinates_3(
     VertexRange& vertices_face,
     const VertexPointMap& vertex_point_map,
     const TriangleMesh& tmesh,
     const typename GeomTraits::Point_3& query,
-    OutIterator coordinates,
+    OutputIterator coordinates,
     const GeomTraits& traits,
     bool use_wp_flag){
 
@@ -250,13 +250,13 @@ enum class Edge_case {
   template<
     typename VertexPointMap,
     typename PolygonMesh,
-    typename OutIterator,
+    typename OutputIterator,
     typename GeomTraits>
   Edge_case locate_wrt_polyhedron(
     const VertexPointMap& vertex_point_map,
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
-    OutIterator coordinates,
+    OutputIterator coordinates,
     const GeomTraits& traits,
     const bool use_wp_flag = false){
 
