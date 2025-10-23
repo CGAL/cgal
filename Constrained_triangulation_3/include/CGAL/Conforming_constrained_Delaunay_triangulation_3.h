@@ -36,8 +36,9 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/unordered_flat_map.h>
 #include <CGAL/type_traits.h>
+#include <CGAL/unordered_flat_map.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/generators.h>
@@ -680,9 +681,113 @@ public:
           put(v_selected_map, vb, true);
         }
       }
-      cdt_impl.insert_vertices_range(vertices(mesh), mesh_vp_map, tr_vertex_pmap, p::vertex_is_constrained_map(v_selected_map));
+
+      auto extra_isolated_mesh_vertices = std::invoke([&]()
+      {
+        std::vector<boost::container::flat_set<vertex_descriptor>> extra_isolated_vertices(number_of_patches);
+        using Point = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_vp_map, std::declval<vertex_descriptor>()))>;
+        struct Point_info {
+          halfedge_descriptor halfedge;
+          int count;
+        };
+        CGAL::unordered_flat_map<Point, Point_info> points_to_halfedge;
+        auto visited_halfedges = get(CGAL::dynamic_halfedge_property_t<bool>(), mesh);
+
+        for(const auto h : halfedges(mesh)) {
+          // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+          // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+          // it means that the vertex is non manifold.
+          if(get(visited_halfedges, h))
+            continue;
+
+          const auto v = target(h, mesh);
+          const auto& p = get(mesh_vp_map, v);
+
+          bool is_vertex_non_manifold = false;
+
+          put(visited_halfedges, h, true);
+
+          const auto [it, inserted_new_point] = points_to_halfedge.emplace(p, Point_info{h, 1});
+          if(!inserted_new_point) { // unsuccessful insertion: already seen this point, but not from this star
+
+            auto& [first_halfedge, nb_of_occurrences] = it->second;
+            is_vertex_non_manifold = true;
+
+            // If this is the second time we visit that vertex and the first star was manifold, we have
+            // not yet marked the vertex as non-manifold from the first star, but must do so now.
+            if(nb_of_occurrences == 1) {
+              if(is_border(first_halfedge, mesh)) {
+                first_halfedge = opposite(first_halfedge, mesh);
+              }
+              auto first_patch_id = get(mesh_plc_face_id, face(first_halfedge, mesh));
+              if(!is_border_edge(first_halfedge, mesh)) {
+                // isolated non-manifold vertex on the patch `first_patch_id`
+                extra_isolated_vertices[first_patch_id].insert(v);
+              }
+            }
+            ++nb_of_occurrences;
+          }
+
+          // While walking the star of this halfedge, if we meet a border halfedge more than once,
+          // it means the mesh is pinched and we are also in the case of a non-manifold situation.
+          const auto [border_halfedge_counter, is_on_patch_border, patch_id_of_v] = std::invoke([&]() {
+            int border_halfedge_counter = 0;
+            bool is_on_patch_border = false;
+            std::optional<Patch_id_type> opt_patch_id_of_v = std::nullopt;
+            auto halfedge_around_v = h;
+            do {
+              const auto opposite_he = opposite(halfedge_around_v, mesh);
+              put(visited_halfedges, halfedge_around_v, true);
+              if(is_border(halfedge_around_v, mesh)) {
+                ++border_halfedge_counter;
+              } else {
+                auto halfedge_patch_id = get(mesh_plc_face_id, face(halfedge_around_v, mesh));
+                opt_patch_id_of_v = opt_patch_id_of_v.value_or(halfedge_patch_id);
+                if(opt_patch_id_of_v != halfedge_patch_id) {
+                  is_on_patch_border = true;
+                  put(v_selected_map, v, true);
+                }
+              }
+
+              halfedge_around_v = prev(opposite_he, mesh);
+            } while(halfedge_around_v != h);
+
+            CGAL_assertion(opt_patch_id_of_v.has_value());
+            return std::make_tuple(border_halfedge_counter, is_on_patch_border, opt_patch_id_of_v.value());
+          });
+
+          if(border_halfedge_counter > 1) {
+            is_vertex_non_manifold = true;
+          }
+
+          if(is_vertex_non_manifold) {
+            if(is_on_patch_border == false) {
+              // isolated non-manifold vertex on the patch `patch_id_of_v`
+              extra_isolated_vertices[patch_id_of_v].insert(v);
+            }
+          }
+        }
+        return extra_isolated_vertices;
+      });
+
+      std::for_each(extra_isolated_mesh_vertices.begin(), extra_isolated_mesh_vertices.end(),
+                    [&](const auto& isolated_vertices_in_patch) {
+                      for(const auto vd : isolated_vertices_in_patch) {
+                        put(v_selected_map, vd, true);
+                      }
+                    });
+
+      cdt_impl.insert_vertices_range(vertices(mesh), mesh_vp_map, tr_vertex_pmap,
+                                     p::vertex_is_constrained_map(v_selected_map));
       for(auto&& edges : patch_edges) {
-        cdt_impl.insert_constrained_face_defined_by_its_border_edges(edges, mesh_vp_map, tr_vertex_pmap);
+        auto index = &edges - &patch_edges[0];
+        auto face_index_opt =
+            cdt_impl.insert_constrained_face_defined_by_its_border_edges(edges, mesh_vp_map, tr_vertex_pmap);
+        for(auto vd : extra_isolated_mesh_vertices[index]) {
+          auto vh = get(tr_vertex_pmap, vd);
+          cdt_impl.mark_vertex_as_isolated_in_a_constrained_face(vh, face_index_opt);
+        }
+
       }
     } else {
       cdt_impl.insert_vertices_range(vertices(mesh), mesh_vp_map, tr_vertex_pmap);
@@ -1411,14 +1516,21 @@ public:
    *                              for bounding box computation (to identify the longest polyline).
    * @param mesh_vd_to_vh_pmap Property map used to convert mesh vertex descriptors
    *                           to triangulation Vertex_handle objects for insertion.
+   *
+   * @return An optional Face_index identifying the newly registered constrained face
+   *         (polygon constraint id). If multiple closed polylines are reconstructed (e.g.,
+   *         holes), the same Face_index is returned for the whole set. Returns std::nullopt
+   *         if no face can be created (for example, when the input edge set is empty).
    */
   template <typename Edges, typename VertexPointMap, typename VertexHandleMap>
-  void insert_constrained_face_defined_by_its_border_edges(Edges edges,
-                                                           VertexPointMap mesh_vd_to_point_pmap,
-                                                           VertexHandleMap mesh_vd_to_vh_pmap)
+  std::optional<Face_index>
+  insert_constrained_face_defined_by_its_border_edges(Edges edges,
+                                                      VertexPointMap mesh_vd_to_point_pmap,
+                                                      VertexHandleMap mesh_vd_to_vh_pmap)
   {
+    std::optional<Face_index> face_index = std::nullopt;
     if(edges.empty())
-      return;
+      return std::nullopt;
     auto polylines = segment_soup_to_polylines(std::move(edges));
     while(true) {
       const auto non_closed_polylines_begin =
@@ -1467,13 +1579,13 @@ public:
       }
     }
 
-    std::optional<int> face_index;
     for(auto& polyline : polylines) {
       CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
       polyline.pop_back();
       auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, mesh_vd_to_vh_pmap);
-      face_index = insert_constrained_face(range_of_vertices, false, face_index.value_or(-1));
+      face_index = insert_constrained_face(range_of_vertices, false, face_index);
     }
+    return face_index;
   }
 
   bool is_facet_constrained(Facet f) const {
@@ -1525,13 +1637,13 @@ public:
 
   template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
   std::optional<Face_index>
-  insert_constrained_polygon(const Polygon& polygon, bool restore_Delaunay = true, Face_index face_index = -1)
+  insert_constrained_polygon(const Polygon& polygon, bool restore_Delaunay = true, std::optional<Face_index> face_index = std::nullopt)
   {
     std::vector<Vertex_handle> handles;
     handles.reserve(polygon.size());
-    std::optional<Cell_handle> hint;
+    Cell_handle hint{};
     for(const auto& p : polygon) {
-      const auto v = this->insert(p, hint.value_or(Cell_handle{}), restore_Delaunay);
+      const auto v = this->insert(p, hint, restore_Delaunay);
       handles.push_back(v);
       hint = v->cell();
     }
@@ -1543,8 +1655,14 @@ public:
                             (std::is_convertible_v<std::ranges::range_value_t<Vertex_handles>, Vertex_handle>))
   std::optional<Face_index> insert_constrained_face(Vertex_handles&& vertex_handles,
                                                       bool restore_Delaunay = true,
-                                                      Face_index face_index = -1)
+                                                      std::optional<Face_index> face_index = std::nullopt)
   {
+    auto may_restore_Delaunay = make_scope_exit([this, do_it=restore_Delaunay]() {
+      if(do_it) this->restore_Delaunay();
+    });
+
+    restore_Delaunay = false;
+
     if(this->debug_input_faces()) {
       std::cerr << "insert_constrained_face (" << std::size(vertex_handles) << " vertices):\n";
       for(auto v: vertex_handles) {
@@ -1556,24 +1674,25 @@ public:
     const auto first_it = begin(vertex_handles);
     const auto vend =  end(vertex_handles);
     const auto size = std::distance(first_it, vend);
-    if(size < 2) return {};
-    if(size == 2) {
-      this->insert_constrained_edge(*first_it, *std::next(first_it));
+    if(size < 2 && !face_index.has_value()) return {};
+    if(size == 2 && !face_index.has_value()) {
+      this->insert_constrained_edge(*first_it, *std::next(first_it), restore_Delaunay);
       return {};
     }
     CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles};
     const auto circ_end{circ};
-    auto& borders = face_index < 0 ? this->face_borders.emplace_back() : this->face_borders[face_index];
+    auto& borders = face_index.has_value() ? this->face_borders[face_index.value()] : this->face_borders.emplace_back();
     auto& border = borders.emplace_back();
-    const auto polygon_contraint_id =
-        face_index < 0 ? static_cast<CDT_3_signed_index>(this->face_borders.size() - 1) : face_index;
+    border.reserve(std::size(vertex_handles));
+    const auto polygon_contraint_id = face_index.value_or(this->face_borders.size() - 1);
     do {
       const auto va = *circ;
       ++circ;
       const auto vb = *circ;
       const auto c_id = this->constraint_from_extremities(va, vb);
       if(c_id != Constrained_polyline_id{}) {
-        const bool constraint_c_id_is_reversed = va != (*this->constraint_hierarchy.vertices_in_constraint_begin(c_id));
+        const bool constraint_c_id_is_reversed =
+            va != (*this->constraint_hierarchy.vertices_in_constraint_begin(c_id));
         border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
         constraint_to_faces.emplace(c_id, polygon_contraint_id);
       } else {
@@ -1596,7 +1715,7 @@ public:
       os << this->point(*first_it) << std::endl;
     }
 
-    if(face_index < 0) {
+    if(!face_index.has_value()) {
       const auto accumulated_normal = std::invoke([&] {
         const auto last_it = std::next(first_it, size - 1);
         const auto &last_point = tr().point(*last_it);
@@ -1627,6 +1746,7 @@ public:
 
       face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
       face_constraint_misses_subfaces.resize(face_cdt_2.size());
+      extra_isolated_vertices.resize(face_cdt_2.size());
     }
     if(this->debug_input_faces()) {
       std::cerr << "insert_constrained_face return the polygon_contraint_id: " << polygon_contraint_id << '\n';
@@ -1670,6 +1790,31 @@ public:
       return std::nullopt;
     }
     return {std::move(steiner_vertices)};
+  }
+
+  /**
+   * \brief Marks a vertex as isolated within a constrained face.
+   *
+   * This function is used to track non-manifold vertices that are isolated
+   * within a specific patch/face constraint. These vertices don't lie on
+   * the border of the face but are contained within it.
+   *
+   * \param vh The vertex handle to mark as isolated
+   * \param face_index_opt Optional face index identifying which constrained face contains the isolated vertex
+   */
+  void mark_vertex_as_isolated_in_a_constrained_face(Vertex_handle vh, std::optional<Face_index> face_index_opt)
+  {
+    if(!face_index_opt.has_value()) {
+      return;
+    }
+
+    vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::INPUT_VERTEX);
+
+    const auto face_index = static_cast<std::size_t>(face_index_opt.value());
+
+    extra_isolated_vertices.resize((std::max)(face_index + 1, extra_isolated_vertices.size()));
+
+    extra_isolated_vertices[face_index].insert(vh);
   }
 
 private:
@@ -1782,10 +1927,15 @@ private:
         auto cstr_id = cdt_2.insert_constraint(va, vb);
         return cstr_id;
       };
+      auto insert_vertex_in_cdt_2 = [&](const auto& v) {
+        auto vh_2d = cdt_2.insert(tr().point(v));
+        vh_2d->info().vertex_handle_3d = v;
+        return vh_2d;
+      };
+
       for(const auto& handles : vec_of_handles)
       {
-        const auto first_2d  = cdt_2.insert(tr().point(handles.front()));
-        first_2d->info().vertex_handle_3d = handles.front();
+        const auto first_2d  = insert_vertex_in_cdt_2(handles.front());
         auto previous_2d = first_2d;
         for(auto it = handles.begin(), end = std::prev(handles.end());
             it != end; /* incremented in the loop */)
@@ -1812,8 +1962,7 @@ private:
                   --v_end;
                 };
                 while(vit != v_end) {
-                  auto vh_2d = cdt_2.insert(tr().point(*vit));
-                  vh_2d->info().vertex_handle_3d = *vit;
+                  auto vh_2d = insert_vertex_in_cdt_2(*vit);
                   insert_constraint_in_cdt_2(previous_2d, vh_2d);
                   previous_2d = vh_2d;
                   if(constraint_c_id_is_reversed) {
@@ -1826,10 +1975,8 @@ private:
             }
           }
 
-          auto vh_2d = it == end ? first_2d : cdt_2.insert(tr().point(vb));
-          if(it != end) {
-            vh_2d->info().vertex_handle_3d = vb;
-          }
+          auto vh_2d = it == end ? first_2d : insert_vertex_in_cdt_2(vb);
+          (void)vh_2d;
           try {
             insert_constraint_in_cdt_2(previous_2d, vh_2d);
           } catch(typename CDT_2::Intersection_of_constraints_exception&) {
@@ -1838,6 +1985,9 @@ private:
           }
           previous_2d = vh_2d;
         }
+      }
+      for(auto vh_3d : extra_isolated_vertices[polygon_contraint_id]) {
+        insert_vertex_in_cdt_2(vh_3d);
       }
       { // mark all the faces outside/inside, starting from one infinite face
         const bool simple_case =
@@ -4222,7 +4372,7 @@ protected:
   };
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
   boost::container::multimap<Constrained_polyline_id, CDT_3_signed_index> constraint_to_faces;
-
+  std::vector<boost::container::flat_set<Vertex_handle>> extra_isolated_vertices;
   // boost::dynamic_bitset<> face_constraint_misses_subfaces;
   // std::size_t face_constraint_misses_subfaces_find_first() const {
   //   return face_constraint_misses_subfaces.find_first();
