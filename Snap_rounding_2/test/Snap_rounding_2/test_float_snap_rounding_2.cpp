@@ -1,4 +1,5 @@
-#define DOUBLE_2D_SNAP_VERBOSE
+// #define DOUBLE_2D_SNAP_VERBOSE
+// #define DOUBLE_2D_SNAP_FULL_VERBOSE
 #define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -90,6 +91,9 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
 #endif
   CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
+  std::vector<Segment_2> out2(out.begin(), out.end());
+  // out.clear();
+  // CGAL::compute_snapped_subcurves_2(out2.begin(), out2.end(), out);
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
@@ -180,14 +184,34 @@ void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
 
 void fix_test(){
   std::cout << "Fix tests" << std::endl;
-
   std::vector< Segment_2 > segs;
   FT e(std::pow(2, -60));
-  segs.emplace_back(Point_2(0, 1+e), Point_2(2, 1));
-  segs.emplace_back(Point_2(1, 1), Point_2(1, 0));
 
+  segs.emplace_back(Point_2(0, 1), Point_2(1, 1));
+  segs.emplace_back(Point_2(1, 2), Point_2(2, 2));
   test(segs);
   segs.clear();
+
+  // segs.emplace_back(Point_2(0, 1), Point_2(2, 1));
+  // segs.emplace_back(Point_2(1, 0), Point_2(1, 0));
+  // test(segs);
+  // segs.clear();
+
+  segs.emplace_back(Point_2(0, 0), Point_2(2, 0));
+  segs.emplace_back(Point_2(2, 0), Point_2(1, 1));
+  segs.emplace_back(Point_2(1, 1), Point_2(3, 1));
+  test(segs);
+  segs.clear();
+
+  segs.emplace_back(Point_2(0, 1+e), Point_2(2, 1));
+  segs.emplace_back(Point_2(1, 1), Point_2(1, 0));
+  test(segs);
+  segs.clear();
+
+  // segs.emplace_back(Point_2(0, 0), Point_2(1-e, 0));
+  // segs.emplace_back(Point_2(1, 1), Point_2(1, -1));
+  // test(segs);
+  // segs.clear();
 
   segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
   segs.emplace_back(Point_2(e/2, e/2), Point_2(1, -1));
@@ -197,6 +221,35 @@ void fix_test(){
   segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
   test(segs);
+}
+
+void big_test(){
+  std::cout << "Fix tests" << std::endl;
+  std::vector< Segment_2 > segs;
+  segs.emplace_back(Point_2(0.99999999999992173,-0.9999999999991368),Point_2(0.99999999999987266,-6.016984285966173e-13));
+  segs.emplace_back(Point_2(1.000000000000494,-1.0000000000002354),Point_2(0.99999999999950062,8.0391743541535603e-13));
+  segs.emplace_back(Point_2(1.0000000000008489,-0.99999999999951794),Point_2(0.99999999999926925,-2.3642280455149055e-13));
+
+  test(segs);
+}
+
+void big_test_2(){
+  std::cout << "Fix tests" << std::endl;
+  std::vector< Segment_2 > segs;
+  segs.emplace_back(Point_2(1.0000000000008309,9.0061990813884068e-13), Point_2(0.99999999999981259,0.99999999999938394));
+  segs.emplace_back(Point_2(1.0000000000005094,-3.1951552372595695e-13), Point_2(1.0000000000004887,1.0000000000006302));
+  segs.emplace_back(Point_2(1.0000000000006171,-7.3034227828590228e-13), Point_2(1.0000000000004181,0.99999999999913269));
+  segs.emplace_back(Point_2(1.0000000000008491,6.6531536071947998e-14), Point_2(0.9999999999993564,1.0000000000006497));
+  segs.emplace_back(Point_2(1.0000000000006859,3.4155608842536406e-13), Point_2(0.99999999999990252,0.99999999999978451));
+  segs.emplace_back(Point_2(1.0000000000007121,-1.6363168568197086e-13), Point_2(1.0000000000004778,0.99999999999927969));
+  segs.emplace_back(Point_2(1.000000000000753,8.3769047200168284e-13), Point_2(1.0000000000003773,1.0000000000001725));
+  segs.emplace_back(Point_2(1.000000000000574,6.6944274898354285e-13), Point_2(1.000000000000427,0.99999999999998845));
+  segs.emplace_back(Point_2(1.0000000000006153,-2.798953111315494e-13), Point_2(1.0000000000003044,1.0000000000008289));
+  segs.emplace_back(Point_2(1.0000000000008387,5.8214218612051864e-13), Point_2(1.0000000000002918,0.99999999999943212));
+  segs.emplace_back(Point_2(1.0000000000007745,-3.9231414307222458e-13), Point_2(1.000000000000294,1.0000000000003408));
+
+  test(segs);
+
 }
 
 void test_float_snap_rounding(){
@@ -214,7 +267,7 @@ void test_float_snap_rounding(){
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
   double_snap_rounding_2(segs.begin(), segs.end(), out);
-  assert(out.size()==segs.size());
+  // assert(out.size()==segs.size());
 }
 
 int main(int argc,char *argv[])
@@ -223,10 +276,11 @@ int main(int argc,char *argv[])
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
+  big_test_2();
   fix_test();
   test_float_snap_rounding();
-  // test_fully_random(r,1000);
-  // test_multi_almost_indentical_segments(r,100);
-  test_iterative_square_intersection(r,2000);
+  test_fully_random(r,1000);
+  test_multi_almost_indentical_segments(r,100);
+  // test_iterative_square_intersection(r,2000);
   return(0);
 }

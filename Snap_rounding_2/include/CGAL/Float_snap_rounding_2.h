@@ -118,8 +118,373 @@ public:
 }
 
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
+void scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
+  using Point_2   = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+  using Line_2    = typename Traits::Line_2;
+
+  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
+
+  using PointsRangeIterator   = typename PointsRange::iterator;
+  using PolylineRangeIterator = typename PolylineRange::iterator;
+
+  using PBox = CGAL::Box_intersection_d::Box_with_info_d<double,2,size_t>;
+  using SBox = CGAL::Box_intersection_d::Box_with_handle_d<double,2,PolylineRangeIterator>;
+
+  using Less_x_2  = typename Traits::Less_x_2;
+  using Less_y_2  = typename Traits::Less_y_2;
+  using Less_xy_2 = typename Traits::Less_xy_2;
+  using Less_yx_2 = typename Traits::Less_yx_2;
+  using Equal_2   = typename Traits::Equal_2;
+  using Round_2   = typename Traits::Round_2;
+
+  using Construct_source_2         = typename Traits::Construct_source_2;
+  using Construct_target_2         = typename Traits::Construct_target_2;
+  using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
+  using Squared_round_bound_2      = typename Traits::Squared_round_bound_2;
+
+  Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
+  Squared_round_bound_2 round_bound = traits.squared_round_bound_2_object();
+  Construct_source_2 source = traits.construct_source_2_object();
+  Construct_target_2 target = traits.construct_target_2_object();
+  Equal_2 equal = traits.equal_2_object();
+  Round_2 round = traits.round_2_object();
+
+  // Precompute round bounds for points
+  std::vector<double> round_bound_pts;
+  round_bound_pts.reserve(pts.size());
+  for(std::size_t i=0; i<pts.size(); ++i)
+    round_bound_pts.emplace_back(round_bound(pts[i]));
+
+  enum class EVENT_TYPE{INSERT, MIDDLE, REMOVE};
+  struct Event{
+    Event(size_t pi_, size_t li_, EVENT_TYPE t_):pi(pi_),li(li_),type(t_){}
+    size_t pi;
+    size_t li;
+    EVENT_TYPE type;
+  };
+
+  auto event_comparator=[&](Event a, Event b){
+    const Point_2 &pa=pts[a.pi];
+    const Point_2 &pb=pts[b.pi];
+    if(pa.x()!=pb.x())
+      return Less_x_2()(pa,pb);
+    // We want remove previous line before to insert new ones
+    if(a.type!=b.type)
+      // Except of course if it is the same line (implying that line is vertical), we have to insert it before removing it
+      if(a.li==b.li)
+        return a.type < b.type;
+      else
+        return a.type > b.type;
+    // We compare with y only to have a complete order
+    return Less_y_2()(pa,pb);
+  };
+
+  auto pi_below_li=[&](size_t li, std::pair<size_t, size_t> pair_pi_li){
+    std::size_t ind_pi_support = pair_pi_li.second;
+    std::size_t pi = pair_pi_li.first;
+    if(ind_pi_support==li) return false;
+
+    const Polyline &pl=polylines[li];
+    Orientation ori=orientation(pts[pl.front()], pts[pl.back()], pts[pi]);
+    // When collinear, pick an other vertex of the line of pi to decide
+    if(ori==COLLINEAR){
+      const Polyline &pi_support = polylines[ind_pi_support];
+      std::size_t other_point = (pi_support.front()!=pi) ? pi_support.front() : pi_support.back();
+      ori=orientation(pts[pl.front()], pts[pl.back()], pts[other_point]);
+      assert(ori!=COLLINEAR);
+    }
+    return ori==RIGHT_TURN;
+  };
+
+#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+  std::cout << "Input points" << std::endl;
+  std::size_t i=0;
+  for(const Point_2 &p: pts)
+    std::cout << i++ << ": " << p << std::endl;
+  std::cout << std::endl;
+  std::cout << "Input polylines" << std::endl;
+  i=0;
+  for(const Polyline &pl: polylines){
+    std::cout << i++ << ":";
+    for(std::size_t pi: pl)
+      std::cout << " " << pi;
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+#endif
+
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Create the Event Queue" << std::endl;
+#endif
+
+  std::vector<Event> event_queue;
+  event_queue.reserve(2*polylines.size());
+  for(size_t li=0; li<polylines.size(); ++li){
+    Polyline &pl=polylines[li];
+    event_queue.emplace_back(pl.front(), li, EVENT_TYPE::INSERT);
+    for(size_t pi=1; pi<pl.size()-1; ++pi)
+      event_queue.emplace_back(pl[pi], li, EVENT_TYPE::MIDDLE);
+    event_queue.emplace_back(pl.back(), li, EVENT_TYPE::REMOVE);
+  }
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Sort the event queue along x direction" << std::endl;
+#endif
+  std::sort(event_queue.begin(), event_queue.end(), event_comparator);
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Goes through Event" << std::endl;
+#endif
+  // TODO Vector is suboptimal arbitrary insertion, looking or redblack tree of skip list
+  // Track order of the lines along y along the events
+  std::vector< size_t > y_order;
+  for(Event event: event_queue){
+    // Find the position of the event along the y direction
+    std::vector<size_t>::iterator pos_it = y_order.begin();
+    if(!y_order.empty())
+      pos_it = std::lower_bound(y_order.begin(), y_order.end(), std::pair<size_t, size_t>(event.pi, event.li), pi_below_li);
+#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+    std::cout << ((event.type==EVENT_TYPE::INSERT)?"Insert": "Remove") << " Event at point " << event.pi << " on line "<< event.li << std::endl;
+#endif
+    if(event.type==EVENT_TYPE::REMOVE){
+      assert(*pos_it==event.li);
+      y_order.erase(pos_it);
+    }
+
+    if(!y_order.empty()){
+      auto close_event=[&](std::size_t pi, std::size_t li){
+        // std::cout << pi << " " << li << std::endl;
+        if((pi==polylines[li].front()) || (pi==polylines[li].back()))
+          return false;
+
+        const Point_2 &p = pts[pi];
+        Polyline &pl=polylines[li];
+        Segment_2 seg(pts[pl.front()], pts[pl.back()]);
+
+        // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
+        double bound=round_bound_pts[pi];
+        for(std::size_t i=0; i<pl.size(); ++i)
+          bound = (std::max)(bound, round_bound_pts[pl[i]]);
+        bound*=16;
+
+        if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
+        {
+          // TODO check duplicates
+          for(std::size_t i: pl)
+            if(pts[i].x()==pts[pi].x())
+              return false;
+          pts.emplace_back(p.x(), seg.supporting_line().y_at_x(p.x()));
+          std::size_t new_pi=pts.size()-1;
+          round_bound_pts.emplace_back(round_bound(pts[new_pi]));
+          // We insert it on pl before the last vertex
+          pl.insert(pl.end()-1, new_pi);
+#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+          std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
+          std::cout << new_pi <<": " << pts[new_pi] << std::endl;
+          std::cout << li << ":";
+          for(std::size_t i: pl)
+            std::cout << " " << i;
+          std::cout << std::endl;
+#endif
+          return true;
+        }
+        return false;
+      };
+
+      // Look above segments and creates a point if there too close to safe snap
+      auto above = pos_it;
+      size_t pi=event.pi;
+      while(above!=y_order.end() && close_event(pi,*above)){
+        ++above;
+        pi=pts.size()-1;
+      }
+
+      // same with below segments
+      auto below = pos_it;
+      pi=event.pi;
+      if(below!=y_order.begin()){
+        --below;
+        while(close_event(pi,*(below))){
+          if(below==y_order.begin())
+            break;
+          pi=pts.size()-1;
+          --below;
+        }
+      }
+
+      while(close_event(pi,*(below))){
+        if(below==y_order.begin())
+          break;
+        pi=pts.size()-1;
+        --below;
+      }
+    }
+
+    if(event.type==EVENT_TYPE::INSERT){
+      y_order.insert(pos_it, event.li);
+    }
+  }
+
+  // We sort the point by y to ensure the order of the point is preserved
+  auto sort_pi=[&](std::size_t i, std::size_t j){
+    return pts[i].y() < pts[j].y();
+  };
+  std::vector< std::size_t > indices(pts.size(),0);
+  std::iota(indices.begin(),indices.end(),0);
+  std::sort(indices.begin(),indices.end(),sort_pi);
+
+#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+  std::cout << "Output points" << std::endl;
+  i=0;
+  for(const Point_2 &p: pts)
+    std::cout << i++ << ": " << p << std::endl;
+  std::cout << std::endl;
+  std::cout << "Output polylines" << std::endl;
+  i=0;
+  for(const Polyline &pl: polylines){
+    std::cout << i++ << ":";
+    for(std::size_t pi: pl)
+      std::cout << " " << pi;
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+#endif
+}
+
+template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
+void round_and_post_process(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
+{
+  using Point_2   = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+  using Vector_2  = typename Traits::Vector_2;
+  using Line_2    = typename Traits::Line_2;
+
+  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
+
+  using PointsRangeIterator   = typename PointsRange::iterator;
+  using PolylineRangeIterator = typename PolylineRange::iterator;
+
+  using PBox = CGAL::Box_intersection_d::Box_with_info_d<double,2,size_t>;
+  using SBox = CGAL::Box_intersection_d::Box_with_handle_d<double,2,PolylineRangeIterator>;
+
+  using Less_x_2  = typename Traits::Less_x_2;
+  using Less_y_2  = typename Traits::Less_y_2;
+  using Less_xy_2 = typename Traits::Less_xy_2;
+  using Less_yx_2 = typename Traits::Less_yx_2;
+  using Equal_2   = typename Traits::Equal_2;
+  using Round_2   = typename Traits::Round_2;
+
+  using Construct_source_2         = typename Traits::Construct_source_2;
+  using Construct_target_2         = typename Traits::Construct_target_2;
+  using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
+  using Squared_round_bound_2      = typename Traits::Squared_round_bound_2;
+
+  Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
+  Squared_round_bound_2 round_bound = traits.squared_round_bound_2_object();
+  Construct_source_2 source = traits.construct_source_2_object();
+  Construct_target_2 target = traits.construct_target_2_object();
+  Equal_2 equal = traits.equal_2_object();
+  Round_2 round = traits.round_2_object();
+
+  auto Less_indexes_x_2=[&](std::size_t i, std::size_t j){
+    return Less_x_2()(pts[i], pts[j]);
+  };
+  auto Less_indexes_y_2=[&](std::size_t i, std::size_t j){
+    return Less_y_2()(pts[i], pts[j]);
+  };
+  auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
+    return Less_xy_2()(pts[i], pts[j]);
+  };
+  auto Less_indexes_yx_2=[&](std::size_t i, std::size_t j){
+    return Less_yx_2()(pts[i], pts[j]);
+  };
+
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Round" << std::endl;
+#endif
+  for(auto &p: pts)
+    p=round(p);
+
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Remove duplicate points from collapsing" << std::endl;
+#endif
+
+  std::vector< std::size_t > unique_points(pts.size());
+  std::iota(unique_points.begin(), unique_points.end(), 0);
+  std::sort(unique_points.begin(), unique_points.end(), Less_indexes_xy_2);
+  std::vector<Point_2> new_pts;
+  std::vector<std::size_t> old_to_new_index(pts.size());
+  for(std::size_t i=0; i!=pts.size(); ++i){
+    if(i==0 || !equal(pts[unique_points[i]],pts[unique_points[i-1]]))
+      new_pts.push_back(pts[unique_points[i]]);
+    old_to_new_index[unique_points[i]]=new_pts.size()-1;
+  }
+
+  std::swap(pts, new_pts);
+  size_t i=0;
+  for (Polyline& polyline : polylines) {
+    std::vector<std::size_t> updated_polyline;
+    for (std::size_t i=0; i<polyline.size(); ++i) {
+        std::size_t new_pi=old_to_new_index[polyline[i]];
+        if(i==0 || (new_pi!=updated_polyline[updated_polyline.size()-1]))
+          updated_polyline.push_back(new_pi);
+        assert(new_pi<pts.size());
+        assert(pts[new_pi]==new_pts[polyline[i]]);
+    }
+    ++i;
+    std::swap(polyline, updated_polyline);
+  }
+
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
+  std::cout << "Subdivide vertical segments with vertices on them" << std::endl;
+#endif
+
+  std::set<std::size_t, decltype(Less_indexes_xy_2)> p_sort_by_x(Less_indexes_xy_2);
+  for(std::size_t i=0; i!=pts.size(); ++i)
+    p_sort_by_x.insert(i);
+
+  using Iterator_set_x = typename std::set<std::size_t, decltype(Less_indexes_xy_2)>::iterator;
+
+  i=0;
+  for(Polyline &poly: polylines){
+    std::vector<std::size_t> updated_polyline;
+    updated_polyline.push_back(poly.front());
+    for(std::size_t i=1; i!=poly.size(); ++i){
+      if(pts[poly[i-1]].x()==pts[poly[i]].x()){
+        // updated_polyline.clear();
+        // std::swap(poly, updated_polyline);
+        // break;
+        Iterator_set_x start, end;
+        // Get all vertices between the two endpoints along x order
+        if(Less_indexes_xy_2(poly[i-1],poly[i])){
+          start=p_sort_by_x.upper_bound(poly[i-1]);
+          end=p_sort_by_x.lower_bound(poly[i]);
+          for(auto it=start; it!=end; ++it){
+            updated_polyline.push_back(*it);
+          }
+        } else {
+          start=p_sort_by_x.upper_bound(poly[i]);
+          end=p_sort_by_x.lower_bound(poly[i-1]);
+          for(auto it=end; it!=start;){
+            --it;
+            updated_polyline.push_back(*it);
+          }
+        }
+      }
+      updated_polyline.push_back(poly[i]);
+    }
+    std::swap(poly, updated_polyline);
+    ++i;
+  }
+}
+
+template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
+  scan(pts, polylines, traits);
+  round_and_post_process(pts, polylines, traits);
+  return;
+
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Vector_2  = typename Traits::Vector_2;
@@ -412,6 +777,8 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename OutputContainer::iterator>::value_type>;
 
+  using Less_xy_2 = typename Traits::Less_xy_2;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -420,11 +787,15 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
 
-  std::vector<Segment_2> segs(input_begin, input_end);
+  std::vector<Segment_2> convert_input;
+  for(InputIterator it=input_begin; it!=input_end; ++it)
+    convert_input.push_back(Segment_2(to_exact(*it)));
+  std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
+  std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
-  compute_subcurves(input_begin, input_end, std::back_inserter(segs));
+  compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Change format to range of points and indexes" << std::endl;
@@ -435,7 +806,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   std::vector< std::vector< std::size_t> > polylines;
 
   // Transform range of the segments in the range of points and polyline of indexes
-  for(typename std::vector<Segment_2>::iterator it=segs.begin(); it!=segs.end(); ++it)
+  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
   {
     const Point_2& p1 = it->source();
     const Point_2& p2 = it->target();
@@ -452,11 +823,14 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
     }
   }
 
-  for(InputIterator it=segs.begin(); it!=segs.end(); ++it)
+  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
   {
     std::size_t index1 = point_to_index[it->source()];
     std::size_t index2 = point_to_index[it->target()];
-    polylines.push_back({index1, index2});
+    if(Less_xy_2()(it->source(), it->target()))
+      polylines.push_back({index1, index2});
+    else
+      polylines.push_back({index2, index1});
   }
 
   // Main algorithm
@@ -511,6 +885,8 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   using E2O = typename Traits::Converter_out;
   using VectorIterator = typename std::vector<Segment_2>::iterator;
 
+  using Less_xy_2 = typename Traits::Less_xy_2;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -525,6 +901,7 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
+  std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
   compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
 
@@ -558,7 +935,10 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   {
     std::size_t index1 = point_to_index[it->source()];
     std::size_t index2 = point_to_index[it->target()];
-    polylines.push_back({index1, index2});
+    if(Less_xy_2()(it->source(), it->target()))
+      polylines.push_back({index1, index2});
+    else
+      polylines.push_back({index2, index1});
   }
 
 
@@ -572,9 +952,15 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   // Output a range of segments while removing duplicate ones
   std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
   output.clear();
+  // for(auto &poly: polylines){
+  //   for(std::size_t i=1; i<poly.size(); ++i)
+  //     set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
+  // }
+  size_t j=0;
   for(auto &poly: polylines){
     for(std::size_t i=1; i<poly.size(); ++i)
       set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
+    ++j;
   }
   for(auto &pair: set_out_segs){
     output.emplace_back(from_exact(pts[pair.first]), from_exact(pts[pair.second]));
