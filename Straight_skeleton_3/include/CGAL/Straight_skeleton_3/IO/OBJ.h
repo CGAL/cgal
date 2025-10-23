@@ -18,7 +18,6 @@
 #define CGAL_STRAIGHT_SKELETON_3_IO_OBJ_H
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
@@ -72,15 +71,11 @@ public:
   {
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
-    using Point3SPtr = std::shared_ptr<Point_3>;
-    using Vector3SPtr = std::shared_ptr<Vector_3>;
 
     using Polyhedron = internal::HDS::Polyhedron<Traits>;
     using VertexSPtr = typename Polyhedron::VertexSPtr;
     using EdgeSPtr = typename Polyhedron::EdgeSPtr;
     using FacetSPtr = typename Polyhedron::FacetSPtr;
-
-    using Kernel_factory = internal::kernel::Kernel_factory<Traits>;
 
     bool result = true;
     CGAL_SS3_IO_TRACE("-- OBJ::Save(Polyhedron) to " << filename << " --");
@@ -116,15 +111,15 @@ public:
 
     // Write vertices
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr pt = vertex->point();
+      const Point_3& pt = vertex->point();
       if (convert_to_double) {
-        oss << "v " << CGAL::to_double(pt->x()) << " "
-                    << CGAL::to_double(pt->y()) << " "
-                    << CGAL::to_double(pt->z()) << "\n";
+        oss << "v " << CGAL::to_double(pt.x()) << " "
+                    << CGAL::to_double(pt.y()) << " "
+                    << CGAL::to_double(pt.z()) << "\n";
       } else {
-        oss << "v " << pt->x().exact() << " "
-                    << pt->y().exact() << " "
-                    << pt->z().exact() << "\n";
+        oss << "v " << pt.x().exact() << " "
+                    << pt.y().exact() << " "
+                    << pt.z().exact() << "\n";
       }
     }
 
@@ -136,10 +131,10 @@ public:
       }
 
       if (do_triangulate_facet) {
-        Vector3SPtr n = Kernel_factory::createVector3(facet->plane());
-        CGAL_assertion(*n != CGAL::NULL_VECTOR);
+        Vector_3 n = facet->get_plane().orthogonal_vector();
+        CGAL_assertion(n != CGAL::NULL_VECTOR);
 
-        PK traits(*n);
+        PK traits(n);
         PCDT pcdt(traits);
 
         std::map<VertexSPtr, PCDT_VH> face_vhs;
@@ -147,7 +142,7 @@ public:
         for (const VertexSPtr& vertex : facet->vertices()) {
           auto res = face_vhs.emplace(vertex, PCDT_VH());
           if (res.second) { // first time seeing this point
-            PCDT_VH vh = pcdt.insert(*(vertex->point()));
+            PCDT_VH vh = pcdt.insert(vertex->point());
             vh->info() = vertex;
             res.first->second = vh;
           }
@@ -158,8 +153,8 @@ public:
           VertexSPtr v0 = edge->src(facet);
           VertexSPtr v1 = edge->dst(facet);
 
-          if (*(v0->point()) == *(v1->point())) {
-            CGAL_SS3_IO_TRACE("Degenerate edge @ " << *(v0->point()));
+          if (v0->point() == v1->point()) {
+            CGAL_SS3_IO_TRACE("Degenerate edge @ " << v0->point());
 
             CGAL_assertion(v0->degree() != 1); // @todo handle that...
             VertexSPtr vm1 = edge->prev(facet)->src(facet);
@@ -181,7 +176,7 @@ public:
             catch(const typename PCDT::Intersection_of_constraints_exception&)
             {
               CGAL_SS3_IO_TRACE("Warning: Intersection of constraints");
-              CGAL_SS3_IO_TRACE("While inserting " << *(v0->point()) << " || " << *(v1->point()));
+              CGAL_SS3_IO_TRACE("While inserting " << v0->point() << " || " << v1->point());
               CGAL_SS3_IO_TRACE(facet->to_string());
               CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
               return false;
@@ -292,15 +287,11 @@ public:
   {
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
-    using Point3SPtr = std::shared_ptr<Point_3>;
-    using Vector3SPtr = std::shared_ptr<Vector_3>;
 
     using Skeleton = Straight_skeleton_3<Traits>;
     using NodeSPtr = typename Skeleton::NodeSPtr;
     using ArcSPtr = typename Skeleton::ArcSPtr;
     using SheetSPtr = typename Skeleton::SheetSPtr;
-
-    using Kernel_factory = internal::kernel::Kernel_factory<Traits>;
 
     // For triangulation
     using Itag = CGAL::Exact_intersections_tag;
@@ -332,18 +323,18 @@ public:
 
     // Write vertices
     for (const NodeSPtr& node : skeleton->nodes()) {
-      Point3SPtr point = node->point();
+      const Point_3& point = node->point();
       CGAL_SS3_IO_ENABLE_TRACE("Node's #arcs " << node->degree());
       CGAL_SS3_IO_ENABLE_TRACE("Node's #sheets " << node->sheets().size());
 
       if (convert_to_double) {
-        oss << "v " << CGAL::to_double(point->x()) << " "
-                    << CGAL::to_double(point->y()) << " "
-                    << CGAL::to_double(point->z()) << "\n";
+        oss << "v " << CGAL::to_double(point.x()) << " "
+                    << CGAL::to_double(point.y()) << " "
+                    << CGAL::to_double(point.z()) << "\n";
       } else {
-        oss << "v " << point->x().exact() << " "
-                    << point->y().exact() << " "
-                    << point->z().exact() << "\n";
+        oss << "v " << point.x().exact() << " "
+                    << point.y().exact() << " "
+                    << point.z().exact() << "\n";
       }
     }
 
@@ -365,10 +356,10 @@ public:
         }
         oss << "\n";
       } else {
-        Vector3SPtr n = Kernel_factory::createVector3(sheet->get_plane());
-        CGAL_assertion(*n != CGAL::NULL_VECTOR);
+        Vector_3 n = sheet->get_plane().orthogonal_vector();
+        CGAL_assertion(n != CGAL::NULL_VECTOR);
 
-        PK traits(*n);
+        PK traits(n);
         PCDT pcdt(traits);
 
         std::map<NodeSPtr, PCDT_VH> face_vhs;
@@ -377,7 +368,7 @@ public:
           auto res = face_vhs.emplace(node, PCDT_VH());
           CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
           if (res.second) {
-            PCDT_VH vh = pcdt.insert(*(node->point()));
+            PCDT_VH vh = pcdt.insert(node->point());
             vh->info() = node;
             res.first->second = vh;
           }
@@ -405,7 +396,7 @@ public:
           NodeSPtr v_src = contour->getNodeSrc();
           NodeSPtr v_dst = contour->getNodeDst();
           try {
-            pcdt.insert_constraint(*(v_src->point()), *(v_dst->point()));
+            pcdt.insert_constraint(v_src->point(), v_dst->point());
           } catch(const typename PCDT::Intersection_of_constraints_exception&) {
             CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");

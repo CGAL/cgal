@@ -308,7 +308,7 @@ public:
       result->add_edge(edge_c);
       if (edge_prev_c) {
         facet_c = Facet::create();
-        facet_c->set_plane(facet->plane());
+        facet_c->set_plane(facet->get_plane());
         edge_prev_c->set_facet_L(facet_c);
         facet_c->add_edge(edge_prev_c);
         edge_c->set_facet_R(facet_c);
@@ -327,7 +327,7 @@ public:
       facet_next = edge->other(facet);
     }
     facet_c = Facet::create();
-    facet_c->set_plane(facet->plane());
+    facet_c->set_plane(facet->get_plane());
     edge_prev_c->set_facet_L(facet_c);
     facet_c->add_edge(edge_prev_c);
     edge_first_c->set_facet_R(facet_c);

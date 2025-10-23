@@ -12,7 +12,6 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_GEOM_UTILS_H
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 
 #include <CGAL/assertions.h>
@@ -36,58 +35,47 @@ class Geom_utils
   using Point_3 = typename K::Point_3;
   using Plane_3 = typename K::Plane_3;
 
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
-
   using Kernel_wrapper = kernel::Kernel_wrapper<K>;
-  using Kernel_factory = kernel::Kernel_factory<K>;
 
 public:
-  static Plane3SPtr offset_plane(const Plane3SPtr& plane, const FT& shift)
+  static Plane_3 offset_plane(const Plane_3& plane, const FT& shift)
   {
-    CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(Kernel_wrapper::has_normalized_plane(plane));
 
     CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
-
-    const FT& a = plane->a();
-    const FT& b = plane->b();
-    const FT& c = plane->c();
-    const FT& d = plane->d();
-    Plane3SPtr result = Kernel_factory::createPlane3(a, b, c, d - shift);
-    CGAL_SS3_TRAITS_TRACE("Plane offset to: " << *result);
-    CGAL_SS3_DEBUG_SPTR(result);
+    const FT& a = plane.a();
+    const FT& b = plane.b();
+    const FT& c = plane.c();
+    const FT& d = plane.d();
+    Plane_3 result { a, b, c, d - shift };
+    CGAL_SS3_TRAITS_TRACE("Plane offset to: " << result);
 
     return result;
   }
 
-  static Point3SPtr intersection_point_offset_planes(const Plane3SPtr& plane_0, const FT& w0,
-                                                     const Plane3SPtr& plane_1, const FT& w1,
-                                                     const Plane3SPtr& plane_2, const FT& w2,
-                                                     const Plane3SPtr& plane_3, const FT& w3)
+  static Point_3 intersection_point_offset_planes(const Plane_3& plane_0, const FT& w0,
+                                                  const Plane_3& plane_1, const FT& w1,
+                                                  const Plane_3& plane_2, const FT& w2,
+                                                  const Plane_3& plane_3, const FT& w3)
   {
-    CGAL_SS3_DEBUG_SPTR(plane_0);
-    CGAL_SS3_DEBUG_SPTR(plane_1);
-    CGAL_SS3_DEBUG_SPTR(plane_2);
-    CGAL_SS3_DEBUG_SPTR(plane_3);
     CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
 
-    const FT& a0 = plane_0->a();
-    const FT& b0 = plane_0->b();
-    const FT& c0 = plane_0->c();
-    const FT& d0 = plane_0->d();
-    const FT& a1 = plane_1->a();
-    const FT& b1 = plane_1->b();
-    const FT& c1 = plane_1->c();
-    const FT& d1 = plane_1->d();
-    const FT& a2 = plane_2->a();
-    const FT& b2 = plane_2->b();
-    const FT& c2 = plane_2->c();
-    const FT& d2 = plane_2->d();
-    const FT& a3 = plane_3->a();
-    const FT& b3 = plane_3->b();
-    const FT& c3 = plane_3->c();
-    const FT& d3 = plane_3->d();
+    const FT& a0 = plane_0.a();
+    const FT& b0 = plane_0.b();
+    const FT& c0 = plane_0.c();
+    const FT& d0 = plane_0.d();
+    const FT& a1 = plane_1.a();
+    const FT& b1 = plane_1.b();
+    const FT& c1 = plane_1.c();
+    const FT& d1 = plane_1.d();
+    const FT& a2 = plane_2.a();
+    const FT& b2 = plane_2.b();
+    const FT& c2 = plane_2.c();
+    const FT& d2 = plane_2.d();
+    const FT& a3 = plane_3.a();
+    const FT& b3 = plane_3.b();
+    const FT& c3 = plane_3.c();
+    const FT& d3 = plane_3.d();
 
     CGAL_SS3_TRAITS_TRACE("Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
                                            << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
@@ -113,38 +101,32 @@ public:
 
     FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
-    Point3SPtr point = Kernel_factory::createPoint3(x, y, z);
-
-    return point;
+    return { x, y, z };
   }
 
-  static FT intersection_time_offset_planes(const Plane3SPtr& plane_0, const FT& w0,
-                                            const Plane3SPtr& plane_1, const FT& w1,
-                                            const Plane3SPtr& plane_2, const FT& w2,
-                                            const Plane3SPtr& plane_3, const FT& w3)
+  static FT intersection_time_offset_planes(const Plane_3& plane_0, const FT& w0,
+                                            const Plane_3& plane_1, const FT& w1,
+                                            const Plane_3& plane_2, const FT& w2,
+                                            const Plane_3& plane_3, const FT& w3)
   {
-    CGAL_SS3_DEBUG_SPTR(plane_0);
-    CGAL_SS3_DEBUG_SPTR(plane_1);
-    CGAL_SS3_DEBUG_SPTR(plane_2);
-    CGAL_SS3_DEBUG_SPTR(plane_3);
     CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
 
-    const FT& a0 = plane_0->a();
-    const FT& b0 = plane_0->b();
-    const FT& c0 = plane_0->c();
-    const FT& d0 = plane_0->d();
-    const FT& a1 = plane_1->a();
-    const FT& b1 = plane_1->b();
-    const FT& c1 = plane_1->c();
-    const FT& d1 = plane_1->d();
-    const FT& a2 = plane_2->a();
-    const FT& b2 = plane_2->b();
-    const FT& c2 = plane_2->c();
-    const FT& d2 = plane_2->d();
-    const FT& a3 = plane_3->a();
-    const FT& b3 = plane_3->b();
-    const FT& c3 = plane_3->c();
-    const FT& d3 = plane_3->d();
+    const FT& a0 = plane_0.a();
+    const FT& b0 = plane_0.b();
+    const FT& c0 = plane_0.c();
+    const FT& d0 = plane_0.d();
+    const FT& a1 = plane_1.a();
+    const FT& b1 = plane_1.b();
+    const FT& c1 = plane_1.c();
+    const FT& d1 = plane_1.d();
+    const FT& a2 = plane_2.a();
+    const FT& b2 = plane_2.b();
+    const FT& c2 = plane_2.c();
+    const FT& d2 = plane_2.d();
+    const FT& a3 = plane_3.a();
+    const FT& b3 = plane_3.b();
+    const FT& c3 = plane_3.c();
+    const FT& d3 = plane_3.d();
 
     CGAL_SS3_TRAITS_TRACE("Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
                                            << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"

@@ -40,7 +40,6 @@ class Surface_event
 
 private:
   using Point_3 = typename Traits::Point_3;
-  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -61,13 +60,12 @@ public:
   virtual ~Surface_event()
   { }
 
-  Point3SPtr point() const
+  const Point_3& point() const
   {
-    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void set_point(const Point3SPtr& point)
+  void set_point(const Point_3& point)
   {
     this->point_ = point;
   }
@@ -133,11 +131,9 @@ public:
     sstr << "Surface_event\n";
     sstr << "\t(ID=" << Base::get_ID() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
-    if (point_) {
-      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
-    }
+    sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
     sstr << "\t(edgeA=" << edge1->get_ID() << "\n\t\t[" << edge1->get_vertex_src()->to_string() << "\n\t\t "
                                                        << edge1->get_vertex_dst()->to_string() << "]\n"
          << "\t edgeB=" << edge2->get_ID() << "\n\t\t[" << edge2->get_vertex_src()->to_string() << "\n\t\t "
@@ -149,7 +145,7 @@ public:
 bool operator==(const Surface_event& other) const
 {
     return (Base::time() == other.time()) &&
-           (!point_ || !other.point_ || *point_ == *(other.point_)) &&
+           (!point_ || !other.point_ || point_ == other.point_) &&
            ((edge1_.lock() == other.edge1_.lock() &&
              edge2_.lock() == other.edge2_.lock()) ||
             (edge1_.lock() == other.edge2_.lock() &&
@@ -158,7 +154,7 @@ bool operator==(const Surface_event& other) const
 
 
 protected:
-  Point3SPtr point_;
+  Point_3 point_;
   EdgeWPtr edge1_;
   EdgeWPtr edge2_;
 

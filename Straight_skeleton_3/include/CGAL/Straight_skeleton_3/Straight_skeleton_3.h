@@ -66,8 +66,6 @@ public:
     using FT = typename Traits::FT;
     using Point_3 = typename Traits::Point_3;
 
-    using Point3SPtr = std::shared_ptr<Point_3>;
-
   private:
     using NodeSPtr = std::shared_ptr<Node>;
     using ArcWPtr = std::weak_ptr<Arc>;
@@ -85,15 +83,13 @@ public:
       return std::make_shared<Node>();
     }
 
-    Point3SPtr point() const
+    const Point_3& point() const
     {
-      CGAL_SS3_DEBUG_SPTR(point_);
       return point_;
     }
 
-    void set_point(const Point3SPtr& point)
+    void set_point(const Point_3& point)
     {
-      CGAL_SS3_DEBUG_SPTR(point);
       this->point_ = point;
     }
 
@@ -262,9 +258,9 @@ public:
       } else {
         result += String_factory::fromPointer(this) + ", ";
       }
-      result += "<" + String_factory::fromDouble(CGAL::to_double(point()->x())) + " ";
-      result += String_factory::fromDouble(CGAL::to_double(point()->y())) + " ";
-      result += String_factory::fromDouble(CGAL::to_double(point()->z())) + ">, ";
+      result += "<" + String_factory::fromDouble(CGAL::to_double(point().x())) + " ";
+      result += String_factory::fromDouble(CGAL::to_double(point().y())) + " ";
+      result += String_factory::fromDouble(CGAL::to_double(point().z())) + ">, ";
       result += ", arcs={";
       bool first = true;
       for (const ArcWPtr& arc_wptr : arcs_) {
@@ -291,7 +287,7 @@ public:
     }
 
   protected:
-    Point3SPtr point_;
+    Point_3 point_;
     FT time_;
     int id_;
 
@@ -312,9 +308,6 @@ public:
     using Vector_3 = typename Traits::Vector_3;
     using Line_3 = typename Traits::Line_3;
 
-    using Vector3SPtr = std::shared_ptr<Vector_3>;
-    using Line3SPtr = std::shared_ptr<Line_3>;
-
   private:
     using NodeSPtr = std::shared_ptr<Node>;
     using ArcWPtr = std::weak_ptr<Arc>;
@@ -322,10 +315,8 @@ public:
     using SheetWPtr = std::weak_ptr<Sheet>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
-    using Kernel_factory = Straight_skeletons_3::internal::kernel::Kernel_factory<Traits>;
-
   public:
-    Arc(const NodeSPtr& node_src, const Vector3SPtr& direction)
+    Arc(const NodeSPtr& node_src, const Vector_3& direction)
     {
       node_src_ = node_src;
       direction_ = direction;
@@ -346,7 +337,7 @@ public:
       sheets_.clear();
     }
 
-    static ArcSPtr create(const NodeSPtr& node_src, const Vector3SPtr& direction)
+    static ArcSPtr create(const NodeSPtr& node_src, const Vector_3& direction)
     {
       ArcSPtr result = std::make_shared<Arc>(node_src, direction);
       node_src->add_arc(result);
@@ -435,13 +426,18 @@ public:
       node_dst->add_arc(this->shared_from_this());
     }
 
-    Vector3SPtr getDirection() const
+    bool hasDirection() const
     {
-      CGAL_SS3_DEBUG_SPTR(direction_);
+      return this->direction_.has_value();
+    }
+
+    Vector_3 getDirection() const
+    {
+      CGAL_SS3_DEBUG_SPTR(this->direction_->has_value());
       return this->direction_;
     }
 
-    void setDirection(const Vector3SPtr& direction)
+    void setDirection(const Vector_3& direction)
     {
       this->direction_ = direction;
     }
@@ -539,13 +535,13 @@ public:
       return result;
     }
 
-    Line3SPtr line() const
+    Line_3 line() const
     {
-      Line3SPtr result = Line3SPtr();
+      Line_3 result;
       if (node_dst_) {
-        result = Kernel_factory::createLine3(node_src_->point(), node_dst_->point());
-      } else if (direction_) {
-        result = Kernel_factory::createLine3(node_src_->point(), direction_);
+        result = { node_src_->point(), node_dst_->point() };
+      } else if (direction_.has_value()) {
+        result = { node_src_->point(), *direction_ };
       }
       return result;
     }
@@ -593,7 +589,7 @@ public:
     typename std::list<ArcWPtr>::iterator node_src_list_it_;
     NodeSPtr node_dst_;
     typename std::list<ArcWPtr>::iterator node_dst_list_it_;
-    Vector3SPtr direction_;
+    std::optional<Vector_3> direction_;
     typename std::list<SheetWPtr> sheets_; // every arc has 3 sheets
     StraightSkeletonWPtr skel_;
 
@@ -610,8 +606,6 @@ public:
     : public std::enable_shared_from_this<Sheet>
   {
     using Plane_3 = typename Traits::Plane_3;
-
-    using Plane3SPtr = std::shared_ptr<Plane_3>;
 
   private:
     using NodeSPtr = std::shared_ptr<Node>;
@@ -702,13 +696,12 @@ public:
       this->id_ = id;
     }
 
-    Plane3SPtr get_plane() const
+    const Plane_3& get_plane() const
     {
-      CGAL_SS3_DEBUG_SPTR(this->plane_);
       return this->plane_;
     }
 
-    void set_plane(const Plane3SPtr& plane)
+    void set_plane(const Plane_3& plane)
     {
       CGAL_SS3_DEBUG_SPTR(plane);
       this->plane_ = plane;
@@ -865,7 +858,7 @@ public:
     std::list<EdgeWPtr> edges_;
 
     int id_;
-    Plane3SPtr plane_;
+    Plane_3 plane_;
 
   private:
     static int next_id_;
@@ -1219,7 +1212,7 @@ public:
         }
       } else {
         if (is_partial) {
-          if (!arc->getDirection()) {
+          if (!arc->hasDirection()) {
             CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination nor direction (partial skeleton)");
             result = false;
             break;

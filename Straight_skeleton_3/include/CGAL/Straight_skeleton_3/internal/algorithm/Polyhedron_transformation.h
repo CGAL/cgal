@@ -18,7 +18,6 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_TRANSFORMATION_H
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Geom_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
@@ -75,12 +74,6 @@ class Polyhedron_transformation
   using Line_3 = typename Traits::Line_3;
   using Plane_3 = typename Traits::Plane_3;
 
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Segment3SPtr = std::shared_ptr<Segment_3>;
-  using Vector3SPtr = std::shared_ptr<Vector_3>;
-  using Line3SPtr = std::shared_ptr<Line_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
-
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
@@ -102,13 +95,12 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Kernel_factory = kernel::Kernel_factory<Traits>;
   using Kernel_wrapper = kernel::Kernel_wrapper<Traits>;
   using Geom_utils = algorithm::Geom_utils<Traits>;
   using Hds_utils = algorithm::Hds_utils<Traits>;
 
 public:
-  static Point3SPtr bounding_box_min(const PolyhedronSPtr& polyhedron)
+  static Point_3 bounding_box_min(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     FT p_min[3];
@@ -116,19 +108,17 @@ public:
       p_min[i] = std::numeric_limits<double>::max();
     }
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->point();
+      const Point_3& p = vertex->point();
       for (unsigned int i = 0; i < 3; ++i) {
         if ((*p)[i] < p_min[i]) {
           p_min[i] = (*p)[i];
         }
       }
     }
-    Point3SPtr result = Kernel_factory::createPoint3(p_min[0], p_min[1], p_min[2]);
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
+    return { p_min[0], p_min[1], p_min[2] };
   }
 
-  static Point3SPtr bounding_box_max(const PolyhedronSPtr& polyhedron)
+  static Point_3 bounding_box_max(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     FT p_max[3];
@@ -136,27 +126,25 @@ public:
       p_max[i] = -std::numeric_limits<double>::max();
     }
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->point();
+      const Point_3& p = vertex->point();
       for (unsigned int i = 0; i < 3; ++i) {
         if ((*p)[i] > p_max[i]) {
           p_max[i] = (*p)[i];
         }
       }
     }
-    Point3SPtr result = Kernel_factory::createPoint3(p_max[0], p_max[1], p_max[2]);
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
+    return { p_max[0], p_max[1], p_max[2] };
   }
 
   static bool is_inside_bbox(const PolyhedronSPtr& polyhedron,
-                             const Point3SPtr& p_box_min, const Point3SPtr& p_box_max)
+                             const Point_3& p_box_min, const Point_3& p_box_max)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     CGAL_SS3_DEBUG_SPTR(p_box_min);
     CGAL_SS3_DEBUG_SPTR(p_box_max);
     bool result = true;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->point();
+      const Point_3& p = vertex->point();
       for (unsigned int i = 0; i < 3; ++i) {
         if (!((*p_box_min)[i] <= (*p)[i] && (*p)[i] <= (*p_box_max)[i])) {
           result = false;
@@ -172,55 +160,49 @@ public:
   }
 
   static void translate(const PolyhedronSPtr& polyhedron,
-                        const Vector3SPtr& v_t)
+                        const Vector_3& v_t)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     CGAL_SS3_DEBUG_SPTR(v_t);
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->point();
-      Point3SPtr p_t = Kernel_factory::createPoint3(*p + *v_t);
-      vertex->set_point(p_t);
+      const Point_3& p = vertex->point();
+      vertex->set_point(Point_3{p + v_t});
     }
 
     polyhedron->init_planes();
   }
 
   static void scale(const PolyhedronSPtr& polyhedron,
-                    const Vector3SPtr& v_s)
+                    const Vector_3& v_s)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     CGAL_SS3_DEBUG_SPTR(v_s);
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->point();
-      Point3SPtr p_s = Kernel_factory::createPoint3((*p)[0] * (*v_s)[0],
-                                                   (*p)[1] * (*v_s)[1],
-                                                   (*p)[2] * (*v_s)[2]);
-      vertex->set_point(p_s);
+      const Point_3& p = vertex->point();
+      vertex->set_point(Point_3{p[0]*v_s[0], p[1]*v_s[1], p[2]*v_s[2]});
     }
 
     polyhedron->init_planes();
   }
 
   static void translate_and_scale(const PolyhedronSPtr& polyhedron,
-                                  const Point3SPtr& p_box_min, const Point3SPtr& p_box_max)
+                                  const Point_3& p_box_min, const Point_3& p_box_max)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    CGAL_SS3_DEBUG_SPTR(p_box_min);
-    CGAL_SS3_DEBUG_SPTR(p_box_max);
 
-    Vector3SPtr v_box_min = Kernel_factory::createVector3(p_box_min);
-    Vector3SPtr v_box_max = Kernel_factory::createVector3(p_box_max);
-    Vector3SPtr v_size = Kernel_factory::createVector3(*v_box_max - *v_box_min);
-    Vector3SPtr v_center = Kernel_factory::createVector3((*v_box_min + *v_box_max) / 2.0);
+    Vector_3 v_box_min { CGAL::ORIGIN, p_box_min };
+    Vector_3 v_box_max { CGAL::ORIGIN, p_box_max };
+    Vector_3 v_size = v_box_max - v_box_min;
+    Vector_3 v_center = 0.5 * (v_box_min + v_box_max);
 
-    Point3SPtr p_box_min_curr = bounding_box_min(polyhedron);
-    Point3SPtr p_box_max_curr = bounding_box_max(polyhedron);
-    Vector3SPtr v_box_min_curr = Kernel_factory::createVector3(p_box_min_curr);
-    Vector3SPtr v_box_max_curr = Kernel_factory::createVector3(p_box_max_curr);
-    Vector3SPtr v_size_curr = Kernel_factory::createVector3(*v_box_max_curr - *v_box_min_curr);
-    Vector3SPtr v_center_curr = Kernel_factory::createVector3((*v_box_min_curr + *v_box_max_curr) / 2.0);
+    Point_3 p_box_min_curr = bounding_box_min(polyhedron);
+    Point_3 p_box_max_curr = bounding_box_max(polyhedron);
+    Vector_3 v_box_min_curr { CGAL::ORIGIN, p_box_min_curr };
+    Vector_3 v_box_max_curr { CGAL::ORIGIN, p_box_max_curr };
+    Vector_3 v_size_curr = v_box_max_curr - v_box_min_curr;
+    Vector_3 v_center_curr = 0.5 * (v_box_min_curr + v_box_max_curr);
 
     FT scale_factor = std::numeric_limits<double>::max(); // do not put FT
     for (unsigned int i = 0; i < 3; ++i) {
@@ -230,16 +212,16 @@ public:
       }
     }
     scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0;
-    Vector3SPtr v_s = Kernel_factory::createVector3(scale_factor, scale_factor, scale_factor);
+    Vector_3 v_s { scale_factor, scale_factor, scale_factor };
 
-    Vector3SPtr v_t = Kernel_factory::createVector3((*v_center_curr) * -1.0);
-    if (v_t->squared_length() > 0.0) {
+    Vector_3 v_t = - v_center_curr;
+    if (v_t->squared_length() > 0) {
       translate(polyhedron, v_t);
     }
-    if (scale_factor != 1.0) {
+    if (scale_factor != 1) {
       scale(polyhedron, v_s);
     }
-    if (v_center->squared_length() > 0.0) {
+    if (v_center->squared_length() > 0) {
       translate(polyhedron, v_center);
     }
   }
@@ -266,15 +248,15 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(8,"  scale = " << scale);
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->point();
-      CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated from: " << *(vertex->point()));
+      const Point_3& p = vertex->point();
+      CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated from: " << vertex->point());
 
-      double rx = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->x() * scale) / scale;
-      double ry = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->y() * scale) / scale;
-      double rz = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->z() * scale) / scale;
+      double rx = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p.x() * scale) / scale;
+      double ry = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p.y() * scale) / scale;
+      double rz = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p.z() * scale) / scale;
 
-      vertex->set_point(Kernel_factory::createPoint3(rx, ry, rz));
-      CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated to: " << *(vertex->point()));
+      vertex->set_point(Point_3{rx, ry, rz});
+      CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated to: " << vertex->point());
     }
   }
 
@@ -288,27 +270,23 @@ public:
     FacetSPtr facet_r = edge->get_facet_R();
     if (facet_l && facet_r) {
       if (epsilon == 0.) {
-        return (*(facet_l->plane()) == *(facet_r->plane())); // planes are normalized
+        return (facet_l->get_plane() == facet_r->get_plane()); // planes are normalized
       }
 
-      Vector3SPtr normal_l = Kernel_factory::createVector3(facet_l->plane());
-      Vector3SPtr normal_r = Kernel_factory::createVector3(facet_r->plane());
-      FT length_l = 0.0;
-      FT length_r = 0.0;
+      const Vector_3 normal_l = facet_l->get_plane().orthogonal_vector();
+      const Vector_3 normal_r = facet_r->get_plane().orthogonal_vector();
+
+      // these sqrt are tolerated because it does not matter for robustness
+      const FT length_l = CGAL::approximate_sqrt(normal_l.squared_length());
+      const FT length_r = CGAL::approximate_sqrt(normal_l.squared_length());
+
+      FT diff = 0;
+      FT diff_sq_length = 0;
       for (unsigned int i = 0; i < 3; ++i) {
-        length_l += (*normal_l)[i] * (*normal_l)[i];
-        length_r += (*normal_r)[i] * (*normal_r)[i];
+        diff = (normal_l[i]/length_l) - (normal_r[i]/length_r);
+        diff_sq_length += square(diff);
       }
-      // tolerate this sqrt because it does not matter for robustness
-      length_l = CGAL::approximate_sqrt(length_l);
-      length_r = CGAL::approximate_sqrt(length_r);
-      FT diff = 0.0;
-      FT diff_sq_length = 0.0;
-      for (unsigned int i = 0; i < 3; ++i) {
-        diff = ((*normal_l)[i]/length_l) - ((*normal_r)[i]/length_r);
-        diff_sq_length += diff*diff;
-      }
-      result = (diff_sq_length < CGAL::square(epsilon));
+      result = (diff_sq_length < square(epsilon));
     }
     return result;
   }
@@ -328,8 +306,8 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(16, "Merging F" << facet_from->get_ID() << " into F" << facet_into->get_ID() <<
                                 " Common edge E" << edge->get_ID() << " [V" << edge->get_vertex_src()->get_ID()
                                                                   << " - V" << edge->get_vertex_dst()->get_ID() << "]");
-    CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << *(Kernel_factory::createVector3(facet_from->get_plane())));
-    CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << *(Kernel_factory::createVector3(facet_into->get_plane())));
+    CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << facet_from->get_plane().orthogonal_vector());
+    CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << facet_into->get_plane().orthogonal_vector());
 
     // First remove the facet incidence info from the edge such that the facets are not deleted
     // when Polyhedron::remove_edge() is called
@@ -344,7 +322,7 @@ public:
   }
 
   static void merge_facets(const EdgeSPtr& edge,
-                          const PolyhedronSPtr& polyhedron)
+                           const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -381,9 +359,6 @@ public:
         ++result;
       }
     }
-
-    IO::OBJFile::save("results/post_merge.obj", polyhedron, false /*do not triangulate*/);
-    std::cout << polyhedron->to_string() << std::endl;
 
     // There can be multiple defects after merging, for example:
     // - when we merge two facets sharing multiple edges, this can leave dangling vertices
@@ -626,12 +601,12 @@ public:
     return result;
   }
 
-  static Point3SPtr offset_point_from_base(const VertexSPtr& vertex, const FT& time)
+  static Point_3 offset_point_from_base(const VertexSPtr& vertex, const FT& time)
   {
     CGAL_SS3_TRANSF_TRACE_V(16, "absolute offset of " << vertex->to_string());
     CGAL_SS3_DEBUG_SPTR(vertex);
 
-    std::array<Plane3SPtr, 3> planes;
+    std::array<Plane_3, 3> planes;
     unsigned int i = 0;
     typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
@@ -639,38 +614,35 @@ public:
       if (FacetSPtr facet = facet_wptr.lock()) {
         CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->get_ID());
         CGAL_assertion(facet->has_data());
-        Plane3SPtr base_plane = Hds_utils::get_base_plane(facet);
+        const Plane_3& base_plane = Hds_utils::get_base_plane(facet);
         const FT& speed = Hds_utils::get_speed(facet);
         planes[i++] = Geom_utils::offset_plane(base_plane, speed*time);
       }
     }
     CGAL_postcondition(i == 3);
 
-    Point3SPtr point = Kernel_wrapper::intersection(planes[0], planes[1], planes[2]);
+    std::optional<Point_3> point = Kernel_wrapper::intersection(planes[0], planes[1], planes[2]);
     if (!point) {
       CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of offset planes does not define a point!");
-      Point3SPtr result = Point3SPtr();
-      CGAL_SS3_DEBUG_SPTR(result);
       return { };
     }
 
     CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
-
-    return point;
+    return *point;
   }
 
-  static Segment3SPtr offset_edge_from_base(const EdgeSPtr& edge, const FT& time)
+  static Segment_3 offset_edge_from_base(const EdgeSPtr& edge, const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
-    return Kernel_factory::createSegment3(offset_point_from_base(edge->get_vertex_src(), time),
-                                         offset_point_from_base(edge->get_vertex_dst(), time));
+    return { offset_point_from_base(edge->get_vertex_src(), time),
+             offset_point_from_base(edge->get_vertex_dst(), time) };
   }
 
-  static Plane3SPtr offset_plane_from_base(const FacetSPtr& facet, const FT& time)
+  static Plane_3 offset_plane_from_base(const FacetSPtr& facet, const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_precondition(facet->has_data());
-    Plane3SPtr base_plane = Hds_utils::get_base_plane(facet);
+    const Plane_3& base_plane = Hds_utils::get_base_plane(facet);
     const FT& speed = Hds_utils::get_speed(facet);
     return Geom_utils::offset_plane(base_plane, speed*time);
   }
@@ -680,27 +652,25 @@ public:
     * its incident faces.
     */
   static bool reset_point(const VertexSPtr& vertex,
-                          const std::array<Plane3SPtr, 3>& planes)
+                          const std::array<const Plane_3*, 3>& planes)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_SS3_DEBUG_SPTR(planes[0]);
-    CGAL_SS3_DEBUG_SPTR(planes[1]);
-    CGAL_SS3_DEBUG_SPTR(planes[2]);
+    CGAL_precondition(planes[0]);
+    CGAL_precondition(planes[1]);
+    CGAL_precondition(planes[2]);
 
-    Point3SPtr point = Kernel_wrapper::intersection(planes[0], planes[1], planes[2]);
+    std::optional<Point_3> point = Kernel_wrapper::intersection(*(planes[0]), *(planes[1]), *(planes[2]));
     if (!point) {
       CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point!");
-      Point3SPtr result = Point3SPtr();
-      CGAL_SS3_DEBUG_SPTR(result);
       return false;
     }
 
-    vertex->set_point(point);
+    vertex->set_point(*point);
     CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
 
     CGAL_postcondition_code(for (FacetWPtr facet_wptr : vertex->facets()) {)
     CGAL_postcondition_code(    if (FacetSPtr facet = facet_wptr.lock()) {)
-    CGAL_postcondition(             facet->get_plane()->has_on(*point));
+    CGAL_postcondition(             facet->get_plane().has_on(*point));
     CGAL_postcondition_code(    })
     CGAL_postcondition_code(})
 
@@ -713,14 +683,14 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(16, "reset_point() of " << vertex->to_string());
     CGAL_SS3_DEBUG_SPTR(vertex);
 
-    std::array<Plane3SPtr, 3> planes;
+    std::array<const Plane_3*, 3> planes;
     unsigned int i = 0;
     typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
-        planes[i++] = facet->get_plane();
-        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->get_ID() << " [" << *(facet->get_plane()) << "]");
+        planes[i++] = &(facet->get_plane());
+        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->get_ID() << " [" << facet->get_plane() << "]");
       }
     }
     CGAL_postcondition(i == 3);
@@ -749,30 +719,30 @@ public:
     * returns the shifted position of the vertex of a polyhedron
     * \pre vertex->degree() == 3
     */
-  static Point3SPtr shift_point(const VertexSPtr& vertex,
-                                const FT& time)
+  static Point_3 shift_point(const VertexSPtr& vertex,
+                             const FT& time)
   {
     CGAL_SS3_TRANSF_TRACE_V(32, "shift " << vertex->to_string() << "\ntime = " << time);
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->degree() >= 3);
 
-    Plane3SPtr planes[3];
+    Plane_3 planes[3];
     unsigned int i = 0;
     typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
-        Plane3SPtr plane = facet->plane();
+        const Plane_3& plane = facet->get_plane();
 
         if (vertex->degree() > 3) {
           // planes are _offset_ planes, but it doesn't matter for the tests
           bool independent = true;
           if (i == 1) {
-            independent = !(CGAL::parallel(*(planes[0]), *plane));
+            independent = !(CGAL::parallel(planes[0], plane));
           } else if (i == 2) {
-            independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
-                                                     planes[1]->a(), planes[1]->b(), planes[1]->c(),
-                                                     plane->a(), plane->b(), plane->c()));
+            independent = !is_zero(CGAL::determinant(planes[0].a(), planes[0].b(), planes[0].c(),
+                                                     planes[1].a(), planes[1].b(), planes[1].c(),
+                                                     plane.a(), plane.b(), plane.c()));
           }
 
           if (!independent) {
@@ -783,7 +753,7 @@ public:
         planes[i] = shift_plane(facet, time);
 
         CGAL_SS3_TRANSF_TRACE_V(64, "facet[" << i << "] = " << facet->get_ID());
-        CGAL_SS3_TRANSF_TRACE_V(64, "Offset Plane[" << i << "] = " << *(planes[i]));
+        CGAL_SS3_TRANSF_TRACE_V(64, "Offset Plane[" << i << "] = " << planes[i]);
 
         ++i;
       }
@@ -794,27 +764,25 @@ public:
       return { };
     }
 
-    Point3SPtr point = Kernel_wrapper::intersection(planes[0], planes[1], planes[2]);
+    std::optional<Point_3> point = Kernel_wrapper::intersection(planes[0], planes[1], planes[2]);
     if (!point) {
       CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes doesn't define a point!");
-      Point3SPtr result = Point3SPtr();
-      CGAL_SS3_DEBUG_SPTR(result);
-      return result;
+      return { };
     }
 
     CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
 
-    CGAL_assertion_code(for (Plane3SPtr pi : planes))
-    CGAL_assertion(pi->has_on(*point));
+    CGAL_assertion_code(for (const Plane_3& pi : planes))
+    CGAL_assertion(pi.has_on(*point));
 
-    return point;
+    return *point;
   }
 
   /**
     * returns the shifted position of the edge of a polyhedron
     */
-  static Segment3SPtr shift_edge(const EdgeSPtr& edge,
-                                 const FT& time)
+  static Segment_3 shift_edge(const EdgeSPtr& edge,
+                              const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
 
@@ -829,35 +797,38 @@ public:
     const FT& speed_dst = Hds_utils::get_speed(facet_dst);
 
     // Offset the two common planes
-    Plane3SPtr offset_plane_l = Geom_utils::offset_plane(facet_l->plane(), speed_l*time);
-    Plane3SPtr offset_plane_r = Geom_utils::offset_plane(facet_r->plane(), speed_r*time);
-    Plane3SPtr offset_plane_src = Geom_utils::offset_plane(facet_src->plane(), speed_src*time);
-    Plane3SPtr offset_plane_dst = Geom_utils::offset_plane(facet_dst->plane(), speed_dst*time);
+    Plane_3 offset_plane_l = Geom_utils::offset_plane(facet_l->get_plane(), speed_l*time);
+    Plane_3 offset_plane_r = Geom_utils::offset_plane(facet_r->get_plane(), speed_r*time);
+    Plane_3 offset_plane_src = Geom_utils::offset_plane(facet_src->get_plane(), speed_src*time);
+    Plane_3 offset_plane_dst = Geom_utils::offset_plane(facet_dst->get_plane(), speed_dst*time);
 
 #if 0
     // leaving it here because it's not that intuitive: factoring the intersection of the
     // two common planes is much slower than computing two 3-plane intersections
-    Line3SPtr common_line = Kernel_wrapper::intersection(offset_plane_l, offset_plane_r);
-    Point3SPtr src_point = Kernel_wrapper::intersection(offset_plane_src, common_line);
-    Point3SPtr dst_point = Kernel_wrapper::intersection(offset_plane_dst, common_line);
+    std::optional<Line_3> common_line = Kernel_wrapper::intersection(offset_plane_l, offset_plane_r);
+    std::optional<Point_3> src_point = Kernel_wrapper::intersection(offset_plane_src, common_line);
+    std::optional<Point_3> dst_point = Kernel_wrapper::intersection(offset_plane_dst, common_line);
 #else
-    Point3SPtr src_point = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
-    Point3SPtr dst_point = Kernel_wrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
+    std::optional<Point_3> src_point = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
+    std::optional<Point_3> dst_point = Kernel_wrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
 #endif
 
-    CGAL_SS3_DEBUG_SPTR(src_point);
-    CGAL_SS3_DEBUG_SPTR(dst_point);
-    return Kernel_factory::createSegment3(src_point, dst_point);
+    if (!src_point || !dst_point) {
+      CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes doesn't define points!");
+      return { };
+    }
+
+    return { *src_point, *dst_point };
   }
 
   /**
     * returns the shifted position of the facet of a polyhedron
     */
-  static Plane3SPtr shift_plane(const FacetSPtr& facet,
-                                const FT& time)
+  static Plane_3 shift_plane(const FacetSPtr& facet,
+                             const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const Plane3SPtr& plane = facet->get_plane();
+    const Plane_3& plane = facet->get_plane();
     const FT& speed = Hds_utils::get_speed(facet);
     return Geom_utils::offset_plane(plane, speed*time);
   }
@@ -877,7 +848,7 @@ public:
     typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
       FacetSPtr facet = *it_f++;
-      Plane3SPtr offset_plane = shift_plane(facet, time);
+      Plane_3 offset_plane = shift_plane(facet, time);
       facet->set_plane(offset_plane);
     }
 
@@ -888,11 +859,10 @@ public:
       // See comment at the top of the function
       CGAL_assertion(vertex->degree() == 3);
 
-      Point3SPtr old_point = vertex->point(), new_point;
       if (time != 0 || recompute_positions) {
         CGAL_assertion_code(bool ok =)
-        reset_point(vertex);
-        CGAL_assertion(ok);
+          reset_point(vertex);
+        CGAL_postcondition(ok);
       }
     }
   }
@@ -908,12 +878,11 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // Maps to store shifted planes and points
-    std::unordered_map<FacetSPtr, Plane3SPtr> facet_to_shifted_plane;
-    std::unordered_map<VertexSPtr, Point3SPtr> vertex_to_shifted_point;
+    std::unordered_map<FacetSPtr, Plane_3> facet_to_shifted_plane;
+    std::unordered_map<VertexSPtr, Point_3> vertex_to_shifted_point;
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      Plane3SPtr offset_plane = shift_plane(facet, time);
-      facet_to_shifted_plane[facet] = offset_plane;
+      facet_to_shifted_plane.emplace(facet, shift_plane(facet, time));
     }
 
     // Degree 1 vertices are shifted by translating the shifted adjacent degree 3+ vertex adjacent
@@ -921,23 +890,25 @@ public:
     // So, before treating degree 1 vertices, we must treat the degree 3 vertices.
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       if (vertex->degree() >= 3) {
-        std::array<Plane3SPtr, 3> shifted_planes;
+        std::array<const Plane_3*, 3> shifted_planes;
         unsigned int i = 0;
         typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (i < 3 && it_f != vertex->facets().end()) {
           FacetWPtr facet_wptr = *it_f++;
           if (FacetSPtr facet = facet_wptr.lock()) {
-            shifted_planes[i++] = facet_to_shifted_plane[facet];
+            shifted_planes[i++] = &(facet_to_shifted_plane[facet]);
           }
         }
         CGAL_postcondition(i == 3);
 
-        Point3SPtr shifted_point = Kernel_wrapper::intersection(shifted_planes[0], shifted_planes[1], shifted_planes[2]);
+        std::optional<Point_3> shifted_point = Kernel_wrapper::intersection(*(shifted_planes[0]),
+                                                                            *(shifted_planes[1]),
+                                                                            *(shifted_planes[2]));
         if (!shifted_point) {
           CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of shifted planes doesn't define a point!");
           return false;
         }
-        vertex_to_shifted_point[vertex] = shifted_point;
+        vertex_to_shifted_point[vertex] = *shifted_point;
       }
     }
 
@@ -958,25 +929,25 @@ public:
 
         FacetSPtr facet1 = edge->get_facet_L();
         FacetSPtr facet2 = edge->get_facet_R();
-        Plane3SPtr plane1 = facet_to_shifted_plane[facet1];
-        Plane3SPtr plane2 = facet_to_shifted_plane[facet2];
-        Line3SPtr intersection_line = Kernel_wrapper::intersection(plane1, plane2);
+        const Plane_3& plane1 = facet_to_shifted_plane[facet1];
+        const Plane_3& plane2 = facet_to_shifted_plane[facet2];
+        std::optional<Line_3> intersection_line = Kernel_wrapper::intersection(plane1, plane2);
+        if (!intersection_line) {
+          CGAL_SS3_TRANSF_TRACE_V(1, "Error: pair of shifted planes doesn't define a line!");
+          return false;
+        }
 
         // Determine the direction using the unshifted positions
-        Point3SPtr point_other = vertex_to_shifted_point[vertex_other];
-        Point3SPtr point = vertex->point();
-        CGAL_assertion(*point != *point_other);
+        const Point_3& point_other = vertex_to_shifted_point[vertex_other];
+        const Point_3& point = vertex->point();
+        CGAL_assertion(point != point_other);
         Vector_3 direction = intersection_line->to_vector();
-        if (CGAL::scalar_product(direction, *point - *vertex_other->point()) < 0) {
+        if (CGAL::scalar_product(direction, point - vertex_other->point()) < 0) {
           direction = -direction;
         }
 
         // Apply the shift to the vertex
-        Point3SPtr offset_point = Kernel_factory::createPoint3(*point_other + direction);
-        if (!offset_point) {
-          return false;
-        }
-        vertex_to_shifted_point[vertex] = offset_point;
+        vertex_to_shifted_point[vertex] = Point_3{ point_other + direction };
       }
     }
 
@@ -1009,10 +980,10 @@ public:
     using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
     using PCDT_VH = typename PCDT::Vertex_handle;
 
-    Vector3SPtr n = Kernel_factory::createVector3(facet->plane());
-    CGAL_precondition(*n != CGAL::NULL_VECTOR);
+    Vector_3 n = facet->get_plane().orthogonal_vector();
+    CGAL_precondition(n != CGAL::NULL_VECTOR);
 
-    PK projection_traits(*n);
+    PK projection_traits(n);
     PCDT pcdt(projection_traits);
 
     std::map<VertexSPtr, PCDT_VH> face_vhs; // might have multiple vertices at the same position
@@ -1023,7 +994,7 @@ public:
       auto res = face_vhs.emplace(vertex, PCDT_VH());
       if (res.second) // first time seeing this point
       {
-        PCDT_VH vh = pcdt.insert(*(vertex->point()));
+        PCDT_VH vh = pcdt.insert(vertex->point());
         res.first->second = vh;
         vh->info() = vertex;
       }
@@ -1034,7 +1005,7 @@ public:
       EdgeSPtr edge = *it_e++;
       VertexSPtr v0 = edge->src(facet);
       VertexSPtr v1 = edge->dst(facet);
-      CGAL_assertion(*(v0->point()) != *(v1->point()));
+      CGAL_assertion(v0->point() != v1->point());
 
       PCDT_VH vh0 = face_vhs.at(v0);
       PCDT_VH vh1 = face_vhs.at(v1);
@@ -1102,9 +1073,7 @@ public:
       VertexSPtr v2 = fh->vertex(2)->info();
       std::vector<VertexSPtr> verts = {v0, v1, v2};
       FacetSPtr new_facet = Facet::create(verts);
-      Plane3SPtr plane = Kernel_factory::createPlane3(v0->point(),
-                                                      v1->point(),
-                                                      v2->point());
+      Plane_3 plane { v0->point(), v1->point(), v2->point() };
       new_facet->set_plane(plane);
       normalize_plane_coefficients(new_facet);
       SkelFacetDataSPtr new_data = Skeleton_facet_data::create(new_facet);
@@ -1122,9 +1091,9 @@ public:
   static bool has_normalized_plane(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const FT& a = facet->plane()->a();
-    const FT& b = facet->plane()->b();
-    const FT& c = facet->plane()->c();
+    const FT& a = facet->get_plane().a();
+    const FT& b = facet->get_plane().b();
+    const FT& c = facet->get_plane().c();
     return (a*a + b*b + c*c - 1) <= 1e-5;
   }
 
@@ -1134,19 +1103,19 @@ public:
   static bool normalize_plane_coefficients(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    const FT& a = facet->plane()->a();
-    const FT& b = facet->plane()->b();
-    const FT& c = facet->plane()->c();
-    const FT& d = facet->plane()->d();
+    const FT& a = facet->get_plane().a();
+    const FT& b = facet->get_plane().b();
+    const FT& c = facet->get_plane().c();
+    const FT& d = facet->get_plane().d();
 
     // this should be the only place with unavoidable SQRTs
-    const FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+    const FT n = CGAL::approximate_sqrt(square(a) + square(b) + square(c));
 
     if (!is_zero(n)) {
-      facet->set_plane(Kernel_factory::createPlane3(a/n, b/n, c/n, d/n)); // @todo to_double() it here too?
+      facet->set_plane(Plane_3{a/n, b/n, c/n, d/n}); // @todo to_double() it here too?
       return true;
     } else {
-      facet->set_plane(Kernel_factory::createPlane3(a, b, c, d));
+      facet->set_plane(Plane_3{a, b, c, d});
       return false;
     }
   }

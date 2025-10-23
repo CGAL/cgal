@@ -111,7 +111,6 @@
 // ----
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
@@ -189,12 +188,6 @@ private:
   using Vector_3 = typename Traits::Vector_3;
   using Line_3 = typename Traits::Line_3;
   using Plane_3 = typename Traits::Plane_3;
-
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Segment3SPtr = std::shared_ptr<Segment_3>;
-  using Vector3SPtr = std::shared_ptr<Vector_3>;
-  using Line3SPtr = std::shared_ptr<Line_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
 
 private:
   // Polyhedron Data Structure
@@ -293,7 +286,6 @@ private:
   };
 
 private:
-  using Kernel_factory = kernel::Kernel_factory<Traits>;
   using Kernel_wrapper = kernel::Kernel_wrapper<Traits>;
   using Geom_utils = algorithm::Geom_utils<Traits>;
   using Hds_utils = algorithm::Hds_utils<Traits>;
@@ -418,7 +410,7 @@ public:
     timer.start();
 #endif
 
-    CGAL_assertion(bool(polyhedron_));
+    CGAL_SS3_DEBUG_SPTR(polyhedron_);
     CGAL_assertion(polyhedron_->is_consistent());
 
 #if 1//def CGAL_SS3_DUMP_FILES
@@ -464,15 +456,15 @@ public:
     for (const FacetSPtr& facet : polyhedron->facets()) {
       FT speed = other_speed;
       const auto pl = facet->get_plane();
-      const auto normal = Kernel_factory::createVector3(pl);
+      const auto normal = pl.orthogonal_vector();
       // DEBUG_PRINT("SP X " << CGAL::scalar_product(*normal, Vector_3(1,0,0)));
       // DEBUG_PRINT("SP Y " << CGAL::scalar_product(*normal, Vector_3(0,1,0)));
       // DEBUG_PRINT("SP Z " << CGAL::scalar_product(*normal, Vector_3(0,0,1)));
-      if (CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector_3(1,0,0))) - 1) < 1e-3)
+      if (CGAL::abs(CGAL::abs(CGAL::scalar_product(normal, Vector_3(1,0,0))) - 1) < 1e-3)
         speed = x_speed;
-      if (CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector_3(0,1,0))) - 1) < 1e-3)
+      if (CGAL::abs(CGAL::abs(CGAL::scalar_product(normal, Vector_3(0,1,0))) - 1) < 1e-3)
         speed = y_speed;
-      if (CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector_3(0,0,1))) - 1) < 1e-3)
+      if (CGAL::abs(CGAL::abs(CGAL::scalar_product(normal, Vector_3(0,0,1))) - 1) < 1e-3)
         speed = z_speed;
 
       Hds_utils::set_speed(facet, speed);
@@ -521,11 +513,11 @@ public:
       }
 
       CGAL_assertion_code(for (const FacetSPtr& facet : polyhedron->facets()) {)
-      CGAL_assertion(facet->get_plane()->a() == Hds_utils::get_base_plane(facet)->a());
-      CGAL_assertion(facet->get_plane()->b() == Hds_utils::get_base_plane(facet)->b());
-      CGAL_assertion(facet->get_plane()->c() == Hds_utils::get_base_plane(facet)->c());
+      CGAL_assertion(facet->get_plane().a() == Hds_utils::get_base_plane(facet).a());
+      CGAL_assertion(facet->get_plane().b() == Hds_utils::get_base_plane(facet).b());
+      CGAL_assertion(facet->get_plane().c() == Hds_utils::get_base_plane(facet).c());
       CGAL_assertion_code(FT speed = Hds_utils::get_speed(facet);)
-      CGAL_assertion(facet->get_plane()->d() == Hds_utils::get_base_plane(facet)->d() - speed * current_time);
+      CGAL_assertion(facet->get_plane().d() == Hds_utils::get_base_plane(facet).d() - speed * current_time);
       CGAL_assertion_code(})
 
       Abstract_event_sptr event = nextEvent(queue, polyhedron, current_time);
@@ -577,7 +569,7 @@ public:
       std::ofstream nodes_out("final_nodes.xyz");
       nodes_out.precision(17);
       for (NodeSPtr node : skeleton_->nodes()) {
-        nodes_out << *(node->point()) << "\n";
+        nodes_out << node->point() << "\n";
       }
       nodes_out.close();
 
@@ -586,14 +578,14 @@ public:
       arcs_out.precision(17);
       for (ArcSPtr arc : skeleton_->arcs()) {
         arcs_out << "2 ";
-        arcs_out << *(arc->getNodeSrc()->point()) << " ";
+        arcs_out << arc->getNodeSrc()->point() << " ";
         if (arc->hasNodeDst()) {
-          arcs_out << *(arc->getNodeDst()->point()) << "\n";
+          arcs_out << arc->getNodeDst()->point() << "\n";
         } else {
-          Point3SPtr src_pt = arc->getNodeSrc()->point();
-          Vector3SPtr dir = arc->getDirection();
+          const Point_3& src_pt = arc->getNodeSrc()->point();
+          const Vector_3& dir = arc->getDirection();
           constexpr double ray_length = 0.1; // @todo relative value
-          Point_3 ray_pt = *src_pt + ray_length * (*dir);
+          Point_3 ray_pt = src_pt + ray_length * dir;
           arcs_out << ray_pt << "\n";
         }
       }
@@ -684,30 +676,23 @@ public:
         ++i;
       }
     }
-
     CGAL_assertion(i == 3);
 
-    Vector3SPtr direction;
-    Plane3SPtr plane_1 = facets[0]->get_plane();
-    Plane3SPtr plane_2 = facets[1]->get_plane();
-    Plane3SPtr plane_3 = facets[2]->get_plane();
-
+    const Plane_3& plane_1 = facets[0]->get_plane();
+    const Plane_3& plane_2 = facets[1]->get_plane();
+    const Plane_3& plane_3 = facets[2]->get_plane();
     const FT& speed_1 = Hds_utils::get_speed(facets[0]);
     const FT& speed_2 = Hds_utils::get_speed(facets[1]);
     const FT& speed_3 = Hds_utils::get_speed(facets[2]);
+    const Vector_3 n_1 = plane_1.orthogonal_vector();
+    const Vector_3 n_2 = plane_2.orthogonal_vector();
+    const Vector_3 n_3 = plane_3.orthogonal_vector();
+    const Vector_3 direction = Vector_3 { speed_1*n_1 + speed_2*n_2 + speed_3*n_3 };
 
-    Vector3SPtr n_1 = Kernel_factory::createVector3(plane_1);
-    Vector3SPtr n_2 = Kernel_factory::createVector3(plane_2);
-    Vector3SPtr n_3 = Kernel_factory::createVector3(plane_3);
-
-    direction = Kernel_factory::createVector3(speed_1 * (*n_1) + speed_2 * (*n_2) + speed_3 * (*n_3));
-
-    if (direction) {
-      result = Arc::create(data->get_node(), direction);
-      data->set_arc(result);
-    }
-
+    result = Arc::create(data->get_node(), direction);
+    data->set_arc(result);
     CGAL_SS3_DEBUG_SPTR(result);
+
     return result;
   }
 
@@ -727,38 +712,39 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet_l);
     CGAL_SS3_DEBUG_SPTR(facet_r);
 
-    Plane3SPtr plane_l = facet_l->get_plane();
-    Plane3SPtr plane_r = facet_r->get_plane();
+    const Plane_3& plane_l = facet_l->get_plane();
+    const Plane_3& plane_r = facet_r->get_plane();
     FacetSPtr facet_b = Hds_utils::get_facet_origin(facet_l);
     FT speed_l = Hds_utils::get_speed(facet_l);
     FacetSPtr facet_f = Hds_utils::get_facet_origin(facet_r);
     FT speed_r = Hds_utils::get_speed(facet_r);
 
-    Plane3SPtr plane_sheet;
+    Plane_3 plane_sheet;
     if (speed_l == speed_r) {
       if (Hds_utils::is_reflex(edge)) {
-        plane_sheet = Kernel_wrapper::bisector(Kernel_wrapper::opposite(plane_l), plane_r);
+        plane_sheet = Kernel_wrapper::bisector(plane_l.opposite(), plane_r);
       } else {
-        plane_sheet = Kernel_wrapper::bisector(plane_l, Kernel_wrapper::opposite(plane_r));
+        plane_sheet = Kernel_wrapper::bisector(plane_l, plane_r.opposite());
       }
     } else {
-      Line3SPtr line = Kernel_wrapper::intersection(plane_l, plane_r);
-      Plane3SPtr offset_l = Geom_utils::offset_plane(plane_l, -speed_l);
-      Plane3SPtr offset_r = Geom_utils::offset_plane(plane_r, -speed_r);
-      Line3SPtr line_offset = Kernel_wrapper::intersection(offset_l, offset_r);
-      Point3SPtr point_1 = Kernel_factory::createPoint3(line->point());
-      Vector3SPtr direction = Kernel_factory::createVector3(line);
-      Point3SPtr point_2 = Kernel_factory::createPoint3(*point_1 + *direction);
-      Point3SPtr point_3 = Kernel_factory::createPoint3(line_offset->point());
+      std::optional<Line_3> line = Kernel_wrapper::intersection(plane_l, plane_r);
+      Plane_3 offset_l = Geom_utils::offset_plane(plane_l, -speed_l);
+      Plane_3 offset_r = Geom_utils::offset_plane(plane_r, -speed_r);
+      std::optional<Line_3> line_offset = Kernel_wrapper::intersection(offset_l, offset_r);
+      Point_3 point_1 = line->point();
+      Vector_3 direction = line->to_vector();
+      Point_3 point_2 = point_1 + direction;
+      Point_3 point_3 = line_offset->point();
       if (Hds_utils::is_reflex(edge)) {
-        plane_sheet = Kernel_factory::createPlane3(point_3, point_2, point_1);
+        plane_sheet = Plane_3 { point_3, point_2, point_1 };
       } else {
-        plane_sheet = Kernel_factory::createPlane3(point_1, point_2, point_3);
+        plane_sheet = Plane_3 { point_1, point_2, point_3 };
       }
     }
 
     result = Sheet::create();
     result->add_edge(edge);
+
     result->set_plane(plane_sheet);
     result->setFacetB(facet_b);
     result->setFacetF(facet_f);
@@ -785,22 +771,30 @@ public:
 
     SheetSPtr sheet_into = Hds_utils::get_sheet(edge_into);
     SheetSPtr sheet_from = Hds_utils::get_sheet(edge_from);
+    CGAL_precondition(sheet_into && sheet_from);
+
+    std::cout << "merge E" << edge_from->get_ID() << " S" << sheet_from->get_ID() << std::endl;
+    std::cout << "into E" << edge_into->get_ID() << " S" << sheet_into->get_ID() << std::endl;
 
     if (sheet_into == sheet_from) {
       return;
     }
 
     std::list<EdgeWPtr> edges_from = sheet_from->edges(); // intentional copy
+    CGAL_assertion(!edges_from.empty());
 
     skeleton_->merge_sheets(sheet_into, sheet_from);
-    CGAL_assertion(bool(sheet_into));
+    CGAL_SS3_DEBUG_SPTR(sheet_into);
 
     for (EdgeWPtr edge_wptr : edges_from) {
       if (EdgeSPtr edge = edge_wptr.lock()) {
         Hds_utils::set_sheet(edge, sheet_into);
+        std::cout << "Set Sheet of E" << edge->get_ID() << std::endl;
         sheet_into->add_edge(edge);
       }
     }
+
+    CGAL_postcondition(Hds_utils::get_sheet(edge_from) == sheet_into);
   }
 
   /**
@@ -810,7 +804,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      Plane3SPtr plane = facet->get_plane();
+      const Plane_3& plane = facet->get_plane();
       CGAL_SS3_DEBUG_SPTR(plane);
       CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane));
       Hds_utils::set_base_plane(facet, plane);
@@ -859,7 +853,7 @@ public:
       CGAL_SS3_SPLITTER_TRACE_V(8, "Generic split vertex:\n" << vertex->to_string());
       if (vertex->degree() > 15) {
         CGAL_SS3_SPLITTER_TRACE_V(1, "Warning: degree of vertex (" << vertex->degree() << ") at "
-                                        << *(vertex->point()) << " is extremely high!");
+                                        << vertex->point() << " is extremely high!");
       }
       vertex_splitter->split_vertex(vertex);
     }
@@ -913,40 +907,39 @@ public:
   }
 
   static bool check_bisectors_V2(const EdgeSPtr& edge,
-                                 const Point3SPtr& point,
+                                 const Point_3& point,
                                  const FT& event_time)
   {
     std::optional<FT> vanish_time = Hds_utils::get_vanish_time(edge);
-    Point3SPtr o_src = Transformation::offset_point_from_base(edge->get_vertex_src(), event_time);
+    Point_3 o_src = Transformation::offset_point_from_base(edge->get_vertex_src(), event_time);
     if (vanish_time.has_value() && event_time == *vanish_time) {
-      return (*point == *o_src);
+      return (point == o_src);
     }
 
-    Point3SPtr o_dst = Transformation::offset_point_from_base(edge->get_vertex_dst(), event_time);
-    CGAL_assertion(*o_src != *o_dst);
-    CGAL_assertion(CGAL::collinear(*o_src, *point, *o_dst));
+    Point_3 o_dst = Transformation::offset_point_from_base(edge->get_vertex_dst(), event_time);
+    CGAL_assertion(o_src != o_dst);
+    CGAL_assertion(CGAL::collinear(o_src, point, o_dst));
 
-    return CGAL::collinear_are_ordered_along_line(*o_src, *point, *o_dst);
+    return CGAL::collinear_are_ordered_along_line(o_src, point, o_dst);
   }
 
   /**
   * Returns the intersection time of the 4 shifting planes.
   */
-  static Point3SPtr intersection_point_offset_planes(const FacetSPtr& facet_0,
-                                                     const FacetSPtr& facet_1,
-                                                     const FacetSPtr& facet_2,
-                                                     const FacetSPtr& facet_3)
+  static Point_3 intersection_point_offset_planes(const FacetSPtr& facet_0,
+                                                  const FacetSPtr& facet_1,
+                                                  const FacetSPtr& facet_2,
+                                                  const FacetSPtr& facet_3)
   {
     CGAL_SS3_DEBUG_SPTR(facet_0);
     CGAL_SS3_DEBUG_SPTR(facet_1);
     CGAL_SS3_DEBUG_SPTR(facet_2);
     CGAL_SS3_DEBUG_SPTR(facet_3);
 
-    Plane3SPtr plane_0 = Hds_utils::get_base_plane(facet_0);
-    Plane3SPtr plane_1 = Hds_utils::get_base_plane(facet_1);
-    Plane3SPtr plane_2 = Hds_utils::get_base_plane(facet_2);
-    Plane3SPtr plane_3 = Hds_utils::get_base_plane(facet_3);
-
+    const Plane_3& plane_0 = Hds_utils::get_base_plane(facet_0);
+    const Plane_3& plane_1 = Hds_utils::get_base_plane(facet_1);
+    const Plane_3& plane_2 = Hds_utils::get_base_plane(facet_2);
+    const Plane_3& plane_3 = Hds_utils::get_base_plane(facet_3);
     const FT& speed_0 = Hds_utils::get_speed(facet_0);
     const FT& speed_1 = Hds_utils::get_speed(facet_1);
     const FT& speed_2 = Hds_utils::get_speed(facet_2);
@@ -969,11 +962,10 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet_2);
     CGAL_SS3_DEBUG_SPTR(facet_3);
 
-    Plane3SPtr plane_0 = Hds_utils::get_base_plane(facet_0);
-    Plane3SPtr plane_1 = Hds_utils::get_base_plane(facet_1);
-    Plane3SPtr plane_2 = Hds_utils::get_base_plane(facet_2);
-    Plane3SPtr plane_3 = Hds_utils::get_base_plane(facet_3);
-
+    const Plane_3& plane_0 = Hds_utils::get_base_plane(facet_0);
+    const Plane_3& plane_1 = Hds_utils::get_base_plane(facet_1);
+    const Plane_3& plane_2 = Hds_utils::get_base_plane(facet_2);
+    const Plane_3& plane_3 = Hds_utils::get_base_plane(facet_3);
     const FT& speed_0 = Hds_utils::get_speed(facet_0);
     const FT& speed_1 = Hds_utils::get_speed(facet_1);
     const FT& speed_2 = Hds_utils::get_speed(facet_2);
@@ -983,7 +975,7 @@ public:
                                                        plane_2, speed_2, plane_3, speed_3);
   }
 
-  Point3SPtr vanish_point(const EdgeSPtr& edge)
+  Point_3 vanish_point(const EdgeSPtr& edge)
   {
     CGAL_SS3_CORE_TRACE_V(16, "VanishesAt() for " << edge->to_string());
 
@@ -1130,9 +1122,6 @@ public:
     }
 
     CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << event_time);
-
-    Point3SPtr point = intersection_point_offset_planes(facet_l1, facet_r1, facet_l2, facet_r2);
-
     return event_time;
   }
 
@@ -1215,8 +1204,10 @@ public:
     }
 
     // Bisector check
-    Point3SPtr point = intersection_point_offset_planes(edge_11->get_facet_L(), edge_11->get_facet_R(),
-                                                        edge_22->get_facet_L(), edge_22->get_facet_R());
+    Point_3 point = intersection_point_offset_planes(edge_11->get_facet_L(),
+                                                     edge_11->get_facet_R(),
+                                                     edge_22->get_facet_L(),
+                                                     edge_22->get_facet_R());
 
     if (!check_bisectors_V2(edge_11, point, event_time) ||
         !check_bisectors_V2(edge_22, point, event_time)) {
@@ -1287,8 +1278,10 @@ public:
     }
 
     // Bisector check
-    Point3SPtr point = intersection_point_offset_planes(edge_11->get_facet_L(), edge_11->get_facet_R(),
-                                                        edge_22->get_facet_L(), edge_22->get_facet_R());
+    Point_3 point = intersection_point_offset_planes(edge_11->get_facet_L(),
+                                                     edge_11->get_facet_R(),
+                                                     edge_22->get_facet_L(),
+                                                     edge_22->get_facet_R());
 
     if (!check_bisectors_V2(edge_11, point, event_time) ||
         !check_bisectors_V2(edge_22, point, event_time)) {
@@ -1348,8 +1341,10 @@ public:
     }
 
     // Bisector check
-    Point3SPtr point = intersection_point_offset_planes(edge_1->get_facet_L(), edge_1->get_facet_R(),
-                                                        edge_2->get_facet_L(), edge_2->get_facet_R());
+    Point_3 point = intersection_point_offset_planes(edge_1->get_facet_L(),
+                                                     edge_1->get_facet_R(),
+                                                     edge_2->get_facet_L(),
+                                                     edge_2->get_facet_R());
 
     if (!check_bisectors_V2(edge_1, point, event_time) ||
         !check_bisectors_V2(edge_2, point, event_time)) {
@@ -1378,8 +1373,10 @@ public:
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
 
-    Point3SPtr point = intersection_point_offset_planes(edge_1->get_facet_L(), edge_1->get_facet_R(),
-                                                        edge_2->get_facet_L(), edge_2->get_facet_R());
+    Point_3 point = intersection_point_offset_planes(edge_1->get_facet_L(),
+                                                     edge_1->get_facet_R(),
+                                                     edge_2->get_facet_L(),
+                                                     edge_2->get_facet_R());
 
     if (!check_bisectors_V2(edge_1, point, event_time) ||
         !check_bisectors_V2(edge_2, point, event_time)) {
@@ -1391,8 +1388,8 @@ public:
 
     // @speed is_degenerate(4 planes)? But it would be a sure filter failure, so, costly...
     FT shift = event_time - current_time;
-    Segment3SPtr e1o = Transformation::shift_edge(event->get_edge_1(), shift);
-    if (!e1o->is_degenerate()) {
+    Segment_3 e1o = Transformation::shift_edge(event->get_edge_1(), shift);
+    if (!e1o.is_degenerate()) {
       CGAL_SS3_CORE_TRACE_V(8, "Polyhedron split event: bisector check failure");
       return false;
     }
@@ -1462,8 +1459,10 @@ public:
     }
 
     // Bisector check
-    Point3SPtr point = intersection_point_offset_planes(edge_11->get_facet_L(), edge_11->get_facet_R(),
-                                                        edge_22->get_facet_L(), edge_22->get_facet_R());
+    Point_3 point = intersection_point_offset_planes(edge_11->get_facet_L(),
+                                                     edge_11->get_facet_R(),
+                                                     edge_22->get_facet_L(),
+                                                     edge_22->get_facet_R());
 
     if (!check_bisectors_V2(edge_11, point, event_time) ||
         !check_bisectors_V2(edge_22, point, event_time)) {
@@ -1490,8 +1489,10 @@ public:
     EdgeSPtr edge_2 = event->get_edge_2();
 
     // Bisector check
-    Point3SPtr point = intersection_point_offset_planes(edge_1->get_facet_L(), edge_1->get_facet_R(),
-                                                        edge_2->get_facet_L(), edge_2->get_facet_R());
+    Point_3 point = intersection_point_offset_planes(edge_1->get_facet_L(),
+                                                     edge_1->get_facet_R(),
+                                                     edge_2->get_facet_L(),
+                                                     edge_2->get_facet_R());
     CGAL_SS3_DEBUG_SPTR(point);
 
     if (!check_bisectors_V2(edge_1, point, event_time) ||
@@ -1553,13 +1554,13 @@ public:
     // and that seems more costly (and complicated).
     if (time_future_bound.has_value()) {
       CGAL::Bbox_3 b1;
-      b1 += pv->point()->bbox();
-      b1 += Hds_utils::get_final_point(pv, *time_future_bound)->bbox();
+      b1 += pv->point().bbox();
+      b1 += Hds_utils::get_final_point(pv, *time_future_bound).bbox();
 
       CGAL::Bbox_3 b2;
       for (const VertexSPtr& v : pf->vertices()) {
-        b2 += v->point()->bbox();
-        b2 += Hds_utils::get_final_point(v, *time_future_bound)->bbox();
+        b2 += v->point().bbox();
+        b2 += Hds_utils::get_final_point(v, *time_future_bound).bbox();
       }
 
       if (!CGAL::do_overlap(b1, b2)) {
@@ -1583,12 +1584,12 @@ public:
     //
     // Filter if the event point is on an edge (and a fortiori on a vertex)
     // as it will be a different kind of event
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
     FacetSPtr facet_clone = pf->clone();
 
-    FT shift = event->time() - current_time;
+    const FT shift = event->time() - current_time;
     const FT& speed = Hds_utils::get_speed(pf);
-    Plane3SPtr offset_plane = Geom_utils::offset_plane(pf->get_plane(), shift*speed);
+    const Plane_3 offset_plane = Geom_utils::offset_plane(pf->get_plane(), shift*speed);
     facet_clone->set_plane(offset_plane);
 
     // abusing the fact that vertices will have the same order in both facets
@@ -1597,7 +1598,7 @@ public:
     while (it_v != pf->vertices().end()) {
       VertexSPtr vertex = *it_v++;
       VertexSPtr offset_vertex = *it_v_offset++;
-      Point3SPtr point_offset = Transformation::shift_point(vertex, shift);
+      Point_3 point_offset = Transformation::shift_point(vertex, shift);
       offset_vertex->set_point(point_offset);
     }
 
@@ -1614,13 +1615,13 @@ public:
 
     bool boundary_rejection = false;
     for (const EdgeSPtr& edge : facet_clone->edges()) {
-      Segment3SPtr seg = Kernel_factory::createSegment3(edge->get_vertex_src()->point(),
-                                                        edge->get_vertex_dst()->point());
-      if (!seg || seg->is_degenerate()) {
+      Segment_3 seg { edge->get_vertex_src()->point(),
+                      edge->get_vertex_dst()->point() };
+      if (seg.is_degenerate()) {
         continue;
       }
 
-      if (seg->has_on(*point)) {
+      if (seg.has_on(point)) {
         boundary_rejection = true;
         break;
       }
@@ -2171,16 +2172,16 @@ public:
     // let's just check if bboxes overlap first
     if (time_future_bound.has_value()) {
       CGAL::Bbox_3 b1;
-      b1 += edge_1->get_vertex_src()->point()->bbox();
-      b1 += edge_1->get_vertex_dst()->point()->bbox();
-      b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound)->bbox();
-      b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound)->bbox();
+      b1 += edge_1->get_vertex_src()->point().bbox();
+      b1 += edge_1->get_vertex_dst()->point().bbox();
+      b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound).bbox();
+      b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound).bbox();
 
       CGAL::Bbox_3 b2;
-      b2 += edge_2->get_vertex_src()->point()->bbox();
-      b2 += edge_2->get_vertex_dst()->point()->bbox();
-      b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound)->bbox();
-      b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound)->bbox();
+      b2 += edge_2->get_vertex_src()->point().bbox();
+      b2 += edge_2->get_vertex_dst()->point().bbox();
+      b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound).bbox();
+      b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound).bbox();
 
       if (!CGAL::do_overlap(b1, b2)) {
         CGAL_SS3_CORE_TRACE_V(32, "Filtered possible surface event candidates\n\t" << edge_1->to_string() << "\n\t"
@@ -2238,10 +2239,10 @@ public:
       // as the first collect function with an initial bound that gets updated...
       CGAL::Bbox_3 b1;
       if (time_future_bound.has_value()) {
-        b1 += edge_1->get_vertex_src()->point()->bbox();
-        b1 += edge_1->get_vertex_dst()->point()->bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound)->bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound)->bbox();
+        b1 += edge_1->get_vertex_src()->point().bbox();
+        b1 += edge_1->get_vertex_dst()->point().bbox();
+        b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound).bbox();
+        b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound).bbox();
       }
 
       for (const EdgeSPtr& edge_2 : edges_2) {
@@ -2319,10 +2320,10 @@ public:
         // let's just check if bboxes overlap first
         if (time_future_bound.has_value()) {
           CGAL::Bbox_3 b2;
-          b2 += edge_2->get_vertex_src()->point()->bbox();
-          b2 += edge_2->get_vertex_dst()->point()->bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound)->bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound)->bbox();
+          b2 += edge_2->get_vertex_src()->point().bbox();
+          b2 += edge_2->get_vertex_dst()->point().bbox();
+          b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound).bbox();
+          b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound).bbox();
 
           if (!CGAL::do_overlap(b1, b2)) {
             CGAL_SS3_CORE_TRACE_V(64, "Filtered possible surface event candidates\n\t" << edge_1->to_string() << "\n\t"
@@ -2445,7 +2446,7 @@ public:
       }
 
       FacetSPtr facet_1_src = edge_1->get_facet_src();
-      CGAL_assertion(bool(facet_1_src));
+      CGAL_SS3_DEBUG_SPTR(facet_1_src);
       for (const EdgeSPtr& edge_2 : facet_1_src->edges()) {
         collect_polyhedron_split_event(edge_1, edge_2, polyhedron,
                                     current_time, time_future_bound,
@@ -2702,10 +2703,10 @@ public:
 
       CGAL::Bbox_3 b1;
       if (time_future_bound.has_value()) {
-        b1 += edge_1->get_vertex_src()->point()->bbox();
-        b1 += edge_1->get_vertex_dst()->point()->bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound)->bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound)->bbox();
+        b1 += edge_1->get_vertex_src()->point().bbox();
+        b1 += edge_1->get_vertex_dst()->point().bbox();
+        b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound).bbox();
+        b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound).bbox();
       }
 
       for (const EdgeSPtr& edge_2 : edges_reflex_2) {
@@ -2775,10 +2776,10 @@ public:
         // let's just check if bboxes overlap first
         if (time_future_bound.has_value()) {
           CGAL::Bbox_3 b2;
-          b2 += edge_2->get_vertex_src()->point()->bbox();
-          b2 += edge_2->get_vertex_dst()->point()->bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound)->bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound)->bbox();
+          b2 += edge_2->get_vertex_src()->point().bbox();
+          b2 += edge_2->get_vertex_dst()->point().bbox();
+          b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound).bbox();
+          b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound).bbox();
 
           if (!CGAL::do_overlap(b1, b2)) {
             CGAL_SS3_CORE_TRACE_V(64, "Filtered edge split candidates\n\t" << edge_1->to_string() << "\n\t"
@@ -2800,14 +2801,14 @@ public:
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         // @fixme below needs to be double checked
         if (use_canonical_event_reps) {
-          FT shift = *event_time - current_time;
-          Segment3SPtr e1o = Transformation::shift_edge(edge_1, shift);
-          if (e1o->is_degenerate()) {
+          const FT shift = *event_time - current_time;
+          const Segment_3 e1o = Transformation::shift_edge(edge_1, shift);
+          if (e1o.is_degenerate()) {
             // polyhedron split
             continue;
           }
-          Segment3SPtr e2o = Transformation::shift_edge(edge_2, shift);
-          if (e2o->is_degenerate()) {
+          const Segment_3 e2o = Transformation::shift_edge(edge_2, shift);
+          if (e2o.is_degenerate()) {
             // polyhedron split
             continue;
           }
@@ -2918,13 +2919,13 @@ public:
     // @fixme below needs to be double checked
     if (use_canonical_event_reps) {
       FT shift = *event_time - current_time;
-      Segment3SPtr e1o = Transformation::shift_edge(edge_1, shift);
-      if (e1o->is_degenerate()) {
+      const Segment_3 e1o = Transformation::shift_edge(edge_1, shift);
+      if (e1o.is_degenerate()) {
         // polyhedron split
         return;
       }
-      Segment3SPtr e2o = Transformation::shift_edge(edge_2, shift);
-      if (e2o->is_degenerate()) {
+      const Segment_3 e2o = Transformation::shift_edge(edge_2, shift);
+      if (e2o.is_degenerate()) {
         // polyhedron split
         return;
       }
@@ -2962,10 +2963,10 @@ public:
           continue;
         }
 
-        CGAL::Bbox_3 b = edge->get_vertex_src()->point()->bbox();
-        b += edge->get_vertex_dst()->point()->bbox();
-        b += Hds_utils::get_final_point(edge->get_vertex_src(), *time_future_bound)->bbox();
-        b += Hds_utils::get_final_point(edge->get_vertex_dst(), *time_future_bound)->bbox();
+        CGAL::Bbox_3 b = edge->get_vertex_src()->point().bbox();
+        b += edge->get_vertex_dst()->point().bbox();
+        b += Hds_utils::get_final_point(edge->get_vertex_src(), *time_future_bound).bbox();
+        b += Hds_utils::get_final_point(edge->get_vertex_dst(), *time_future_bound).bbox();
 
         boxes.emplace_back(b, edge);
       }
@@ -3021,10 +3022,10 @@ public:
         continue;
       }
 
-      CGAL::Bbox_3 b = edge->get_vertex_src()->point()->bbox();
-      b += edge->get_vertex_dst()->point()->bbox();
-      b += Hds_utils::get_final_point(edge->get_vertex_src(), *time_future_bound)->bbox();
-      b += Hds_utils::get_final_point(edge->get_vertex_dst(), *time_future_bound)->bbox();
+      CGAL::Bbox_3 b = edge->get_vertex_src()->point().bbox();
+      b += edge->get_vertex_dst()->point().bbox();
+      b += Hds_utils::get_final_point(edge->get_vertex_src(), *time_future_bound).bbox();
+      b += Hds_utils::get_final_point(edge->get_vertex_dst(), *time_future_bound).bbox();
 
       boxes.emplace_back(b, edge);
     }
@@ -3111,8 +3112,8 @@ public:
           // # If the facet is so far that even when shifting point and plane by the maximal
           // time, the vertex would not cross it, then we are done
           if (time_future_bound.has_value()) {
-            Point3SPtr shifted_pt = Hds_utils::get_final_point(vertex, *time_future_bound);
-            Plane3SPtr shifted_plane = Hds_utils::get_final_plane(facet, *time_future_bound);
+            Point_3 shifted_pt = Hds_utils::get_final_point(vertex, *time_future_bound);
+            Plane_3 shifted_plane = Hds_utils::get_final_plane(facet, *time_future_bound);
 
             if (Kernel_wrapper::side(shifted_plane, shifted_pt) < 0) {
               continue;
@@ -3124,8 +3125,8 @@ public:
             // (even if potential piercing vertices were cached...)
 
             // # If both move in the same direction, we cannot pierce
-            Vector_3 d (*(vertex->point()), *shifted_pt);
-            Vector_3 n = facet->get_plane()->orthogonal_vector();
+            const Vector_3 d (vertex->point(), shifted_pt);
+            const Vector_3 n = facet->get_plane().orthogonal_vector();
             if (n * d < 0) { // negative because the facet moves in a direction opposite of the normal
               continue;
             }
@@ -3811,7 +3812,7 @@ public:
       return save_event;
     }
 
-    CGAL_assertion(bool(event));
+    CGAL_SS3_DEBUG_SPTR(event);
 
     // if here, the topmost is neither a const nor save event
     queue.pop();
@@ -3968,7 +3969,7 @@ public:
     const FT& event_time = event->time();
 
     event->set_point(vanish_point(edge));
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     // @todo would nice:
     // - to avoid redundant checks (e.g. is_triangle multiple times)
@@ -4007,21 +4008,21 @@ public:
         FacetSPtr facet_2_src = edge_2->get_facet_src();
         FacetSPtr facet_2_dst = edge_2->get_facet_dst();
 
-        Plane3SPtr plane_l2 = facet_l2->get_plane();
-        CGAL_assertion_code(const FT& l2a = plane_l2->a();)
-        CGAL_assertion_code(const FT& l2b = plane_l2->b();)
-        CGAL_assertion_code(const FT& l2c = plane_l2->c();)
-        CGAL_assertion_code(const FT& l2d = plane_l2->d();)
+        const Plane_3& plane_l2 = facet_l2->get_plane();
+        CGAL_assertion_code(const FT& l2a = plane_l2.a();)
+        CGAL_assertion_code(const FT& l2b = plane_l2.b();)
+        CGAL_assertion_code(const FT& l2c = plane_l2.c();)
+        CGAL_assertion_code(const FT& l2d = plane_l2.d();)
         CGAL_assertion_code(const FT& speed_l2 = Hds_utils::get_speed(facet_l2);)
-        CGAL_assertion_code(FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
+        CGAL_assertion_code(FT lt2 = (l2a * point.x() + l2b * point.y() + l2c * point.z() + l2d) / speed_l2);
 
-        CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->get_plane();)
-        CGAL_assertion_code(const FT& r2a = plane_r2->a();)
-        CGAL_assertion_code(const FT& r2b = plane_r2->b();)
-        CGAL_assertion_code(const FT& r2c = plane_r2->c();)
-        CGAL_assertion_code(const FT& r2d = plane_r2->d();)
+        CGAL_assertion_code(const Plane_3& plane_r2 = facet_r2->get_plane();)
+        CGAL_assertion_code(const FT& r2a = plane_r2.a();)
+        CGAL_assertion_code(const FT& r2b = plane_r2.b();)
+        CGAL_assertion_code(const FT& r2c = plane_r2.c();)
+        CGAL_assertion_code(const FT& r2d = plane_r2.d();)
         CGAL_assertion_code(const FT& speed_r2 = Hds_utils::get_speed(facet_r2);)
-        CGAL_assertion_code(FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
+        CGAL_assertion_code(FT rt2 = (r2a * point.x() + r2b * point.y() + r2c * point.z() + r2d) / speed_r2);
 
         CGAL_assertion(lt2 == rt2);
         CGAL_assertion(!is_positive(lt2));
@@ -4351,7 +4352,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -4519,11 +4520,11 @@ public:
     } else if (not_flipped_valid && !flipped_valid) {
       flip_edge = false;
     } else if (flipped_valid && not_flipped_valid) {
-      Vector3SPtr n0 = Kernel_factory::createVector3(facets[0]->get_plane());
-      Vector3SPtr n2 = Kernel_factory::createVector3(facets[2]->get_plane());
-      Vector3SPtr n1 = Kernel_factory::createVector3(facets[1]->get_plane());
-      Vector3SPtr n3 = Kernel_factory::createVector3(facets[3]->get_plane());
-      CGAL::Comparison_result dac = CGAL::compare_angle(*n0, *n2, *n1, *n3);
+      const Vector_3 n0 = facets[0]->get_plane().orthogonal_vector();
+      const Vector_3 n2 = facets[2]->get_plane().orthogonal_vector();
+      const Vector_3 n1 = facets[1]->get_plane().orthogonal_vector();
+      const Vector_3 n3 = facets[3]->get_plane().orthogonal_vector();
+      CGAL::Comparison_result dac = CGAL::compare_angle(n0, n2, n1, n3);
 
       if (edge_event_ == 0) {
         // convex
@@ -4574,8 +4575,8 @@ public:
       }
 
       if (time_future_bound.has_value()) {
-        Hds_utils::set_final_point(vertex_src, nullptr);
-        Hds_utils::set_final_point(vertex_dst, nullptr);
+        Hds_utils::set_final_point(vertex_src, std::nullopt);
+        Hds_utils::set_final_point(vertex_dst, std::nullopt);
       }
 
       post_op_vertices_VV_ = {{ vertex_src, vertex_dst }};
@@ -4652,7 +4653,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -4741,7 +4742,7 @@ public:
     polyhedron->remove_vertex(vertex_2);
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(vertex, nullptr);
+      Hds_utils::set_final_point(vertex, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -4790,7 +4791,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -4853,7 +4854,7 @@ public:
     polyhedron->add_vertex(new_vertex);
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(new_vertex, nullptr);
+      Hds_utils::set_final_point(new_vertex, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -4915,7 +4916,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5031,7 +5032,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5145,7 +5146,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5219,7 +5220,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5326,8 +5327,8 @@ public:
     }
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(vertex_1, nullptr);
-      Hds_utils::set_final_point(vertex_2, nullptr);
+      Hds_utils::set_final_point(vertex_1, std::nullopt);
+      Hds_utils::set_final_point(vertex_2, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -5389,7 +5390,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5449,8 +5450,8 @@ public:
     }
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(vertex_1, nullptr);
-      Hds_utils::set_final_point(vertex_2, nullptr);
+      Hds_utils::set_final_point(vertex_1, std::nullopt);
+      Hds_utils::set_final_point(vertex_2, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -5507,7 +5508,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "Edge B = " << event->get_edge_2()->to_string());
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5611,9 +5612,9 @@ public:
     }
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(vertex, nullptr);
-      Hds_utils::set_final_point(vertex_21, nullptr);
-      Hds_utils::set_final_point(vertex_22, nullptr);
+      Hds_utils::set_final_point(vertex, std::nullopt);
+      Hds_utils::set_final_point(vertex_21, std::nullopt);
+      Hds_utils::set_final_point(vertex_22, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -5690,7 +5691,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5804,8 +5805,8 @@ public:
     }
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(vertex_l, nullptr);
-      Hds_utils::set_final_point(vertex_r, nullptr);
+      Hds_utils::set_final_point(vertex_l, std::nullopt);
+      Hds_utils::set_final_point(vertex_r, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -5871,7 +5872,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5997,8 +5998,8 @@ public:
     edge_tomerge_2->replace_facet_R(edge_tosplit->get_facet_R());
 
     if (time_future_bound.has_value()) {
-      Hds_utils::set_final_point(vertex_1, nullptr);
-      Hds_utils::set_final_point(vertex_2, nullptr);
+      Hds_utils::set_final_point(vertex_1, std::nullopt);
+      Hds_utils::set_final_point(vertex_2, std::nullopt);
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -6063,7 +6064,7 @@ public:
     CGAL_assertion(orientation != 0);
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -6144,7 +6145,7 @@ public:
 
     if (time_future_bound.has_value()) {
       for (std::size_t i=0; i<4; ++i) {
-        Hds_utils::set_final_point(vertices[i], nullptr);
+        Hds_utils::set_final_point(vertices[i], std::nullopt);
       }
     }
 
@@ -6215,7 +6216,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    Point3SPtr point = event->point();
+    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -6244,11 +6245,7 @@ public:
     // we need to check the other extremities of the edges
     for (EdgeWPtr ew : vertex->edges()) {
       EdgeSPtr edge = ew.lock();
-      if (edge->get_vertex_src() != vertex) {
-        post_op_vertices_pierce_.insert(edge->get_vertex_src());
-      } else {
-        post_op_vertices_pierce_.insert(edge->get_vertex_dst());
-      }
+      post_op_vertices_pierce_.insert(edge->other(vertex));
     }
 
     CGAL_postcondition(post_op_vertices_pierce_.size() == 3);
@@ -6301,7 +6298,7 @@ public:
 
     if (time_future_bound.has_value()) {
       for (std::size_t i=0; i<3; ++i) {
-        Hds_utils::set_final_point(vertices[i], nullptr);
+        Hds_utils::set_final_point(vertices[i], std::nullopt);
       }
     }
 
@@ -6410,6 +6407,8 @@ public:
       result = Event_status::EVENT_NOT_HANDLED;
     }
 
+    CGAL_SS3_CORE_TRACE_V(4, "-- Finished handling Event --");
+
     CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()))
     CGAL_postcondition(v->get_ID() != -1);
     CGAL_postcondition_code(for (const EdgeSPtr& e : polyhedron->edges()))
@@ -6426,7 +6425,6 @@ public:
     CGAL_postcondition(Hds_utils::get_sheet(e) != SheetSPtr());
 #endif
 
-    CGAL_SS3_CORE_TRACE_V(4, "-- Finished handling Event --");
     return result;
   }
 

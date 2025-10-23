@@ -19,7 +19,6 @@
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/weak_find.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 
 #include <CGAL/number_utils.h>
@@ -55,20 +54,12 @@ public:
   using PolyhedronWPtr = std::weak_ptr<Polyhedron>;
 
 private:
-  using Kernel_factory = kernel::Kernel_factory<Traits>;
-
   using FT = typename Traits::FT;
   using Point_3 = typename Traits::Point_3;
   using Segment_3 = typename Traits::Segment_3;
   using Vector_3 = typename Traits::Vector_3;
   using Line_3 = typename Traits::Line_3;
   using Plane_3 = typename Traits::Plane_3;
-
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Segment3SPtr = std::shared_ptr<Segment_3>;
-  using Vector3SPtr = std::shared_ptr<Vector_3>;
-  using Line3SPtr = std::shared_ptr<Line_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
 
 public:
   class Vertex;
@@ -170,16 +161,15 @@ public:
 
       bool has_final_point() const
       {
-        return bool(final_point_);
+        return final_point_.has_value();
       }
 
-      Point3SPtr get_final_point() const
+      const Point_3& get_final_point() const
       {
-        CGAL_SS3_DEBUG_SPTR(final_point_);
-        return final_point_;
+        return *(final_point_);
       }
 
-      void set_final_point(const Point3SPtr& point)
+      void set_final_point(const std::optional<Point_3>& point)
       {
         final_point_ = point;
       }
@@ -187,7 +177,7 @@ public:
     protected:
       ArcWPtr arc_;
       NodeWPtr node_;
-      Point3SPtr final_point_;
+      std::optional<Point_3> final_point_;
     };
 
   private:
@@ -201,7 +191,7 @@ public:
     using SkelVertexDataSPtr = std::shared_ptr<Skeleton_vertex_data>;
 
   public:
-    Vertex(Point3SPtr point)
+    Vertex(const Point_3& point)
       : point_(point), id_(-1)
     { }
 
@@ -211,7 +201,7 @@ public:
       edges_.clear();
     }
 
-    static VertexSPtr create(Point3SPtr point)
+    static VertexSPtr create(const Point_3& point)
     {
       CGAL_SS3_DEBUG_SPTR(point);
       return std::make_shared<Vertex>(point);
@@ -228,15 +218,13 @@ public:
       return result;
     }
 
-    Point3SPtr point() const
+    const Point_3& point() const
     {
-      CGAL_SS3_DEBUG_SPTR(point_);
       return point_;
     }
 
-    void set_point(const Point3SPtr& point)
+    void set_point(const Point_3& point)
     {
-      CGAL_SS3_DEBUG_SPTR(point);
       point_ = point;
     }
 
@@ -483,7 +471,7 @@ public:
       if (edges_.size() > 0) {
         EdgeSPtr first = EdgeSPtr();
         EdgeSPtr edge = edges_.front().lock();
-        CGAL_assertion(bool(edge));
+        CGAL_SS3_DEBUG_SPTR(edge);
         while (edge != first) {
           if (!first) {
             first = edge;
@@ -565,7 +553,7 @@ public:
       typename std::list<FacetSPtr>::iterator it_f_tmp = facets_tmp.begin();
       if (edges_.size() > 0) {
         EdgeSPtr edge_first = edges_.front().lock();
-        CGAL_assertion(bool(edge_first));
+        CGAL_SS3_DEBUG_SPTR(edge_first);
         EdgeSPtr edge;
         FacetSPtr facet = edge_first->get_facet_L();
         if (edge_first->get_vertex_dst() == this->shared_from_this()) {
@@ -706,9 +694,9 @@ public:
       std::string result("Vertex(");
       result += "id=" + IO::String_factory::fromInteger(id_) + ", ";
       // result += "addr=" + IO::String_factory::fromPointer(this) +", ";
-      result += "<" + IO::String_factory::fromDouble(CGAL::to_double(point()->x())) + " ";
-      result += IO::String_factory::fromDouble(CGAL::to_double(point()->y())) + " ";
-      result += IO::String_factory::fromDouble(CGAL::to_double(point()->z())) + ">";
+      result += "<" + IO::String_factory::fromDouble(CGAL::to_double(point().x())) + " ";
+      result += IO::String_factory::fromDouble(CGAL::to_double(point().y())) + " ";
+      result += IO::String_factory::fromDouble(CGAL::to_double(point().z())) + ">";
       result += ", Edges:" + IO::String_factory::fromInteger(edges_.size()) + " {";
       for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
@@ -728,7 +716,7 @@ public:
     }
 
   protected:
-    Point3SPtr point_;
+    Point_3 point_;
 
     std::list<EdgeWPtr> edges_;
     std::list<FacetWPtr> facets_;
@@ -828,10 +816,6 @@ public:
     };
 
   private:
-    using Segment3SPtr = std::shared_ptr<Segment_3>;
-    using Vector3SPtr = std::shared_ptr<Vector_3>;
-    using Line3SPtr = std::shared_ptr<Line_3>;
-
     // using VertexWPtr = std::weak_ptr<Vertex>;
     using VertexSPtr = std::shared_ptr<Vertex>;
     using EdgeWPtr = std::weak_ptr<Edge>;
@@ -922,7 +906,7 @@ public:
       this->vertex_dst_list_it_ = list_it;
     }
 
-    bool has_vertex(const VertexSPtr& vertex)
+    bool has_vertex(const VertexSPtr& vertex) const
     {
       return (this->vertex_src_ == vertex || this->vertex_dst_ == vertex);
     }
@@ -1049,18 +1033,19 @@ public:
       return cachedReflexStatus_;
     }
 
-    Segment3SPtr segment() const
+    Segment_3 segment() const
     {
-      return Kernel_factory::createSegment3(vertex_src_->point(), vertex_dst_->point());
+      return { vertex_src_->point(), vertex_dst_->point() };
     }
 
-    Line3SPtr line() const
+    Line_3 line() const
     {
-      return Kernel_factory::createLine3(vertex_src_->point(), vertex_dst_->point());
+      return { vertex_src_->point(), vertex_dst_->point() };
     }
 
     VertexSPtr other(const VertexSPtr& vertex) const
     {
+      CGAL_precondition(has_vertex(vertex));
       VertexSPtr result = VertexSPtr();
       if (vertex == vertex_src_) {
         result = vertex_dst_;
@@ -1306,24 +1291,24 @@ public:
 
     bool is_reflex() const
     {
-      CGAL_precondition(*(vertex_src_->point()) != *(vertex_dst_->point()));
+      CGAL_precondition(vertex_src_->point() != vertex_dst_->point());
       if (cachedReflexStatus_) {
         return *cachedReflexStatus_;
       }
       bool result = false;
       FacetSPtr facet_l = this->get_facet_L();
       FacetSPtr facet_r = this->get_facet_R();
-      CGAL_precondition(bool(facet_l));
-      CGAL_precondition(bool(facet_r));
-      Plane3SPtr plane_l = facet_l->plane();
-      Vector3SPtr normal_l = Kernel_factory::createVector3(plane_l);
-      Vector3SPtr dir = Kernel_factory::createVector3(line());
-      Point3SPtr p_src = vertex_src_->point();
-      CGAL_assertion(*normal_l != CGAL::NULL_VECTOR);
-      CGAL_assertion(*dir != CGAL::NULL_VECTOR);
-      Point_3 p = (*p_src) + CGAL::cross_product(*normal_l, *dir);
-      Plane3SPtr plane_r = facet_r->plane();
-      if (plane_r->oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
+      CGAL_SS3_DEBUG_SPTR(facet_l);
+      CGAL_SS3_DEBUG_SPTR(facet_r);
+      const Plane_3& plane_l = facet_l->get_plane();
+      const Vector_3 normal_l = plane_l.orthogonal_vector();
+      CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
+      const Vector_3 dir = line().to_vector();
+      CGAL_assertion(dir != CGAL::NULL_VECTOR);
+      const Point_3& p_src = vertex_src_->point();
+      Point_3 p = p_src + CGAL::cross_product(normal_l, dir);
+      const Plane_3& plane_r = facet_r->get_plane();
+      if (plane_r.oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
         result = true;
       }
       cachedReflexStatus_ = result;
@@ -1482,29 +1467,27 @@ public:
         speed_ = speed;
       }
 
-      Plane3SPtr get_base_plane() const
+      const Plane_3& get_base_plane() const
       {
-        CGAL_precondition(bool(this->base_plane_));
         return this->base_plane_;
       }
 
-      void set_base_plane(const Plane3SPtr& plane)
+      void set_base_plane(const Plane_3& plane)
       {
         this->base_plane_ = plane;
       }
 
       bool has_final_plane() const
       {
-        return bool(this->final_plane_);
+        return this->final_plane_.has_value();
       }
 
-      Plane3SPtr get_final_plane() const
+      const Plane_3& get_final_plane() const
       {
-        CGAL_precondition(bool(this->final_plane_));
-        return this->final_plane_;
+        return *(this->final_plane_);
       }
 
-      void set_final_plane(const Plane3SPtr& plane)
+      void set_final_plane(const std::optional<Plane_3>& plane)
       {
         this->final_plane_ = plane;
       }
@@ -1513,8 +1496,8 @@ public:
       FacetWPtr facet_origin_;
       FT speed_;
 
-      Plane3SPtr base_plane_;
-      Plane3SPtr final_plane_;
+      Plane_3 base_plane_;
+      std::optional<Plane_3> final_plane_;
     };
 
 private:
@@ -2020,13 +2003,12 @@ private:
     /**
     * The direction of the normal points to the outside.
     */
-    Plane3SPtr get_plane() const
+    const Plane_3& get_plane() const
     {
-      CGAL_precondition(bool(this->plane_));
       return this->plane_;
     }
 
-    void set_plane(const Plane3SPtr& plane)
+    void set_plane(const Plane_3& plane)
     {
       this->plane_ = plane;
     }
@@ -2040,16 +2022,16 @@ private:
 
       CGAL_SS3_HDS_TRACE("initialize plane of F" << get_ID());
 
-      Point3SPtr point_prev;
-      std::vector<Point3SPtr> points;
+      const Point_3* point_prev = nullptr;
+      std::vector<const Point_3*> points;
       typename std::list<VertexSPtr>::iterator it_v = vertices_.begin();
       while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
-        Point3SPtr point = vertex->point();
-        if (point_prev != point) {
-          points.push_back(point);
+        const Point_3& point = vertex->point();
+        if (!point_prev || point != *point_prev) {
+          points.push_back(&point);
         }
-        point_prev = point;
+        point_prev = &point;
       }
 
       CGAL_SS3_HDS_TRACE("computing normals from " << points.size() << " points");
@@ -2057,18 +2039,17 @@ private:
       CGAL_SS3_HDS_TRACE("point " << i << ": " << *points[i]);
 
       if (points.size() >= 3) {
-        Point3SPtr p0 = points[0];
-        Vector3SPtr normal = Kernel_factory::createVector3(0,0,0);
+        const Point_3& p0 = *(points[0]);
+        Vector_3 normal = CGAL::NULL_VECTOR;
         std::size_t last_i = points.size() - 1;
         for (std::size_t i=1; i<last_i; ++i) {
-          Point3SPtr p1 = points[i];
-          Point3SPtr p2 = points[i+1];
-          CGAL_assertion(p1 && p2);
-          *normal += 0.5 * CGAL::cross_product(*p2 - *p1, *p0 - *p1);
+          const Point_3& p1 = *(points[i]);
+          const Point_3& p2 = *(points[i+1]);
+          normal += 0.5 * CGAL::cross_product(p2 - p1, p0 - p1);
         }
 
-        if (*normal != CGAL::NULL_VECTOR) {
-          plane_ = Kernel_factory::createPlane3(p0, normal);
+        if (normal != CGAL::NULL_VECTOR) {
+          plane_ = Plane_3 { p0, normal };
           result = true;
         }
       }
@@ -2078,24 +2059,12 @@ private:
       return result;
     }
 
-    Plane3SPtr plane()
-    {
-      if (!this->plane_) {
-        this->init_plane();
-      }
-      CGAL_SS3_DEBUG_SPTR(this->plane_);
-      return this->plane_;
-    }
-
     bool make_first_convex()
     {
       bool result = false;
-      if (!plane_) {
-        return false;
-      }
       EdgeSPtr edge_begin;
       FacetSPtr self(this->shared_from_this());
-      Vector3SPtr normal = Kernel_factory::createVector3(plane_);
+      const Vector_3 normal = plane_.orthogonal_vector();
       EdgeSPtr edge = edges_.front();
       EdgeSPtr first = EdgeSPtr();
       while (edge != first) {
@@ -2103,10 +2072,10 @@ private:
           first = edge;
         }
         EdgeSPtr edge_next = edge->next(self);
-        Point3SPtr points[3];
-        points[0] = edge->src(self)->point();
-        points[1] = edge->dst(self)->point();
-        points[2] = edge_next->dst(self)->point();
+        const Point_3* points[3];
+        points[0] = &(edge->src(self)->point());
+        points[1] = &(edge->dst(self)->point());
+        points[2] = &(edge_next->dst(self)->point());
 
         // @fixme is this correct? the CGAL_PI/4.0 below is confusing...
         // Was it supposed to be CGAL_PI/2.0?
@@ -2166,12 +2135,10 @@ private:
       sstr << "Facet(";
       sstr << "id=" << IO::String_factory::fromInteger(id_) << ", ";
       // sstr << "addr=" << IO::String_factory::fromPointer(this) << ", ";
-      if (plane_) {
-        sstr << "Plane: <" << IO::String_factory::fromDouble(CGAL::to_double(plane_->a())) << ", "
-             << IO::String_factory::fromDouble(CGAL::to_double(plane_->b())) << ", "
-             << IO::String_factory::fromDouble(CGAL::to_double(plane_->c())) << ", "
-             << IO::String_factory::fromDouble(CGAL::to_double(plane_->d())) << ">, ";
-      }
+      sstr << "Plane: <" << IO::String_factory::fromDouble(CGAL::to_double(plane_.a())) << ", "
+            << IO::String_factory::fromDouble(CGAL::to_double(plane_.b())) << ", "
+            << IO::String_factory::fromDouble(CGAL::to_double(plane_.c())) << ", "
+            << IO::String_factory::fromDouble(CGAL::to_double(plane_.d())) << ">, ";
 
       if (has_data()) {
         sstr << "Speed: " << std::dynamic_pointer_cast<Skeleton_facet_data>(get_data())->get_speed() << ", ";
@@ -2201,7 +2168,7 @@ private:
     }
 
   protected:
-    Plane3SPtr plane_;
+    Plane_3 plane_;
     int id_;
     FacetDataSPtr data_;
 
@@ -2266,7 +2233,7 @@ public:
     typename std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
     while (it_v != vertices_.end()) {
       VertexSPtr vertex = *it_v++;
-      Point3SPtr point = vertex->point();
+      const Point_3& point = vertex->point();
       VertexSPtr vertex_c = Vertex::create(point);
       vertex_c->set_ID(vertex->get_ID());
       if (vertex->has_data()) {
@@ -2816,8 +2783,8 @@ public:
       typename std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
       while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
-        edge_out << "2 " << *(edge->get_vertex_src()->point()) << " "
-                         << *(edge->get_vertex_dst()->point()) << std::endl;
+        edge_out << "2 " << edge->get_vertex_src()->point() << " "
+                         << edge->get_vertex_dst()->point() << std::endl;
       }
     }
   }

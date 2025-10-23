@@ -41,7 +41,6 @@ class Pierce_event
 
 private:
   using Point_3 = typename Traits::Point_3;
-  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -66,13 +65,12 @@ public:
     return std::make_shared<Pierce_event>();
   }
 
-  Point3SPtr point() const
+  const Point_3& point() const
   {
-    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void set_point(const Point3SPtr& point)
+  void set_point(const Point_3& point)
   {
     this->point_ = point;
   }
@@ -125,11 +123,9 @@ public:
     sstr << "Pierce_event\n";
     sstr << "\t(ID=" << Base::get_ID() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
-    if (point_) {
-      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
-    }
+    sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
     sstr << "\t(vertex=" << vertex->to_string() << ")\n";
     sstr << "\t(facet=" << facet->get_ID() << ")";
     return sstr.str();
@@ -138,13 +134,13 @@ public:
   bool operator==(const Pierce_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
+            (!point_ || !other.point_ || point_ == other.point_) &&
             (facet_.lock() == other.facet_.lock()) &&
             (vertex_.lock() == other.vertex_.lock());
   }
 
 protected:
-  Point3SPtr point_;
+  Point_3 point_;
   FacetWPtr facet_;
   VertexWPtr vertex_;
 

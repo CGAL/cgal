@@ -18,7 +18,6 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_KERNEL_KERNEL_WRAPPER_H
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/determinant.h>
@@ -40,35 +39,20 @@ class Kernel_wrapper
 {
   using FT = typename K::FT;
   using Point_3 = typename K::Point_3;
-  using Segment_3 = typename K::Segment_3;
   using Vector_3 = typename K::Vector_3;
   using Line_3 = typename K::Line_3;
   using Plane_3 = typename K::Plane_3;
 
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Segment3SPtr = std::shared_ptr<Segment_3>;
-  using Vector3SPtr = std::shared_ptr<Vector_3>;
-  using Line3SPtr = std::shared_ptr<Line_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
-
-  using Kernel_factory = kernel::Kernel_factory<K>;
-
 public:
-  static Point3SPtr intersection(const Plane3SPtr& plane1,
-                                 const Plane3SPtr& plane2,
-                                 const Plane3SPtr& plane3)
+  static std::optional<Point_3> intersection(const Plane_3& plane1,
+                                             const Plane_3& plane2,
+                                             const Plane_3& plane3)
   {
-    CGAL_SS3_DEBUG_SPTR(plane1);
-    CGAL_SS3_DEBUG_SPTR(plane2);
-    CGAL_SS3_DEBUG_SPTR(plane3);
-
-    Point3SPtr result = Point3SPtr();
-
-    auto res = CGAL::intersection(*plane1, *plane2, *plane3);
+    auto res = CGAL::intersection(plane1, plane2, plane3);
     if (!res) {
       CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is... not?");
     } else if (const Point_3* ipoint = std::get_if<Point_3>(&*res)) {
-      result = Kernel_factory::createPoint3(*ipoint);
+      return *ipoint;
     } else {
       CGAL_SS3_TRAITS_TRACE_CODE(if (const Line_3* iline = std::get_if<Line_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iline);)
@@ -80,24 +64,17 @@ public:
       CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is... something else?");
       CGAL_SS3_TRAITS_TRACE_CODE(})
     }
-
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
+    return std::nullopt;
   }
 
-  static Line3SPtr intersection(const Plane3SPtr& plane1,
-                                const Plane3SPtr& plane2)
+  static std::optional<Line_3> intersection(const Plane_3& plane1,
+                                            const Plane_3& plane2)
   {
-    CGAL_SS3_DEBUG_SPTR(plane1);
-    CGAL_SS3_DEBUG_SPTR(plane2);
-
-    Line3SPtr result = Line3SPtr();
-
-    auto res = CGAL::intersection(*plane1, *plane2);
+    auto res = CGAL::intersection(plane1, plane2);
     if (!res) {
       CGAL_SS3_TRAITS_TRACE("Intersection of 2 planes is... not?");
     } else if (const Line_3 *iline = std::get_if<Line_3>(&*res)) {
-      result = Kernel_factory::createLine3(*iline);
+      return *iline;
     } else {
       CGAL_SS3_TRAITS_TRACE_CODE(if (const Plane_3* iplane = std::get_if<Plane_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iplane);)
@@ -106,24 +83,17 @@ public:
       CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... something else?");
       CGAL_SS3_TRAITS_TRACE_CODE(})
     }
-
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
+    return std::nullopt;
   }
 
-  static Point3SPtr intersection(const Plane3SPtr& plane,
-                                 const Line3SPtr& line)
+  static std::optional<Point_3> intersection(const Plane_3& plane,
+                                             const Line_3& line)
   {
-    CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_SS3_DEBUG_SPTR(line);
-
-    Point3SPtr result = Point3SPtr();
-
-    auto res = CGAL::intersection(*plane, *line);
+    auto res = CGAL::intersection(plane, line);
     if (!res) {
       CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... not?");
     } else if (const Point_3 *ipoint = std::get_if<Point_3>(&*res)) {
-      result = Kernel_factory::createPoint3(*ipoint);
+      return *ipoint;
     } else {
       CGAL_SS3_TRAITS_TRACE_CODE(if (const Line_3 *iline = std::get_if<Line_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iline);)
@@ -134,106 +104,46 @@ public:
 
       CGAL_warning_msg(false, "intersection of plane and line failed to produce a point");
     }
-
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
+    return std::nullopt;
   }
 
-  static Plane3SPtr bisector(const Plane3SPtr& plane1,
-                             const Plane3SPtr& plane2)
+  static Plane_3 bisector(const Plane_3& plane1,
+                          const Plane_3& plane2)
   {
-    CGAL_SS3_DEBUG_SPTR(plane1);
-    CGAL_SS3_DEBUG_SPTR(plane2);
-
     CGAL_SS3_TRAITS_TRACE("Warning: bisector() calls a square root!");
-
-    Plane3SPtr result = Kernel_factory::createPlane3(CGAL::bisector(*plane1, *plane2));
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
+    return CGAL::bisector(plane1, plane2);
   }
 
-  static FT squared_distance(const Point3SPtr& p1,
-                             const Point3SPtr& p2)
-  {
-    CGAL_SS3_DEBUG_SPTR(p1);
-    CGAL_SS3_DEBUG_SPTR(p2);
-    return CGAL::squared_distance(*p1, *p2);
-  }
-
-  static FT squared_distance(const Segment3SPtr& segment,
-                             const Point3SPtr& point)
-  {
-    CGAL_SS3_DEBUG_SPTR(segment);
-    CGAL_SS3_DEBUG_SPTR(point);
-    return CGAL::squared_distance(*segment, *point);
-  }
-
-  static FT squared_distance(const Line3SPtr& line,
-                             const Point3SPtr& point)
-  {
-    CGAL_SS3_DEBUG_SPTR(line);
-    CGAL_SS3_DEBUG_SPTR(point);
-    return CGAL::squared_distance(*line, *point);
-  }
-
-  static FT squared_distance(const Plane3SPtr& plane,
-                             const Point3SPtr& point)
-  {
-    CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_SS3_DEBUG_SPTR(point);
-    return CGAL::squared_distance(*plane, *point);
-  }
-
-  static Plane3SPtr opposite(const Plane3SPtr& plane)
-  {
-    CGAL_SS3_DEBUG_SPTR(plane);
-    Plane3SPtr result = Kernel_factory::createPlane3(plane->opposite());
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static Line3SPtr opposite(const Line3SPtr& line)
-  {
-    CGAL_SS3_DEBUG_SPTR(line);
-    Line3SPtr result = Kernel_factory::createLine3(line->opposite());
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static bool has_normalized_plane(const Plane3SPtr& plane)
+  static bool has_normalized_plane(const Plane_3& plane)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
 
-    const FT& a = plane->a();
-    const FT& b = plane->b();
-    const FT& c = plane->c();
+    const FT& a = plane.a();
+    const FT& b = plane.b();
+    const FT& c = plane.c();
 
     // inaccuracies during normalization since the sqrt is (usually) not exact
-    return (a*a + b*b + c*c - 1) <= 1e-5;
+    return (square(a) + square(b) + square(c) - 1) <= 1e-5;
   }
 
-  static int side(const Plane3SPtr& plane, const Point3SPtr& point)
+  static int side(const Plane_3& plane, const Point_3& point)
   {
-    CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_SS3_DEBUG_SPTR(point);
     int result = 0;
-    CGAL::Oriented_side side = plane->oriented_side(*point);
+    CGAL::Oriented_side side = plane.oriented_side(point);
     if (side == CGAL::ON_POSITIVE_SIDE) result = 1;
     if (side == CGAL::ON_NEGATIVE_SIDE) result = -1;
     return result;
   }
 
-  static int orientation(const Line3SPtr& line1,
-                         const Line3SPtr& line2)
+  static int orientation(const Line_3& line1,
+                         const Line_3& line2)
   {
-    CGAL_SS3_DEBUG_SPTR(line1);
-    CGAL_SS3_DEBUG_SPTR(line2);
     int result = 0;
-    Vector_3 dir1 = line1->to_vector();
-    Vector_3 dir2 = line2->to_vector();
-    Point_3 p0 = line1->point();
+    Vector_3 dir1 = line1.to_vector();
+    Vector_3 dir2 = line2.to_vector();
+    Point_3 p0 = line1.point();
     Point_3 p1 = p0 + dir1;
-    Point_3 p2 = line2->point();
+    Point_3 p2 = line2.point();
     Plane_3 plane(p0, p1, p2);
     Point_3 point = p2 + dir2;
     CGAL::Oriented_side side = plane.oriented_side(point);
@@ -242,39 +152,6 @@ public:
     } else if (side == CGAL::ON_NEGATIVE_SIDE) {
       result = -1;
     }
-    return result;
-  }
-
-  static Vector3SPtr cross(const Vector3SPtr& v1,
-                           const Vector3SPtr& v2)
-  {
-    CGAL_SS3_DEBUG_SPTR(v1);
-    CGAL_SS3_DEBUG_SPTR(v2);
-    Vector3SPtr result = Vector3SPtr();
-    result = Kernel_factory::createVector3(CGAL::cross_product(*v1, *v2));
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static Point3SPtr projection(const Line3SPtr& line,
-                               const Point3SPtr& point)
-  {
-    CGAL_SS3_DEBUG_SPTR(line);
-    CGAL_SS3_DEBUG_SPTR(point);
-    Point3SPtr result = Point3SPtr();
-    result = Kernel_factory::createPoint3(line->projection(*point));
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static Point3SPtr projection(const Plane3SPtr& plane,
-                               const Point3SPtr& point)
-  {
-    CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_SS3_DEBUG_SPTR(point);
-    Point3SPtr result = Point3SPtr();
-    result = Kernel_factory::createPoint3(plane->projection(*point));
-    CGAL_SS3_DEBUG_SPTR(result);
     return result;
   }
 };

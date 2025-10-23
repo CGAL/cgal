@@ -42,7 +42,6 @@ class Triangle_event
 
 private:
   using Point_3 = typename Traits::Point_3;
-  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -68,13 +67,12 @@ public:
     return std::make_shared<Triangle_event>();
   }
 
-  Point3SPtr point() const
+  const Point_3& point() const
   {
-    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void set_point(const Point3SPtr& point)
+  void set_point(const Point_3& point)
   {
     this->point_ = point;
   }
@@ -143,11 +141,9 @@ public:
     sstr << "Triangle_event\n";
     sstr << "\t(ID=" << Base::get_ID() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
-    if (point_) {
-      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
-    }
+    sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
     sstr << "\t(facet=" << facet->get_ID() << ")";
     return sstr.str();
   }
@@ -155,13 +151,13 @@ public:
   bool operator==(const Triangle_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
+            (!point_ || !other.point_ || point_ == other.point_) &&
             (facet_.lock() == other.facet_.lock()) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }
 
 protected:
-  Point3SPtr point_;
+  Point_3 point_;
   FacetWPtr facet_; // @todo shouldn't be needed, edge_begin_->get_facet_L is enough
   EdgeWPtr edge_begin_;
 

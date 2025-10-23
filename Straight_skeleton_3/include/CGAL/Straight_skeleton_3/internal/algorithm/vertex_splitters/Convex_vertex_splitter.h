@@ -113,7 +113,7 @@ public:
 
       // don't take it out of the loop
       PolyhedronSPtr poly_c = Base::copy_vertex(vertex);
-      CGAL_assertion(bool(poly_c));
+      CGAL_SS3_DEBUG_SPTR(poly_c);
       CGAL_assertion(poly_c->facets().size() == vertex->facets().size());
       poly_c->initialize_all_IDs();
 

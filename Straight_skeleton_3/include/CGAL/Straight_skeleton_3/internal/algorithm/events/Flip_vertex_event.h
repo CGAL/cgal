@@ -41,7 +41,6 @@ class Flip_vertex_event
 
 private:
   using Point_3 = typename Traits::Point_3;
-  using Point3SPtr = std::shared_ptr<Point_3>;
 
   using Polyhedron = HDS::Polyhedron<Traits>;
   using VertexWPtr = typename Polyhedron::VertexWPtr;
@@ -65,13 +64,12 @@ public:
     return std::make_shared<Flip_vertex_event>();
   }
 
-  Point3SPtr point() const
+  const Point_3& point() const
   {
-    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void set_point(const Point3SPtr& point)
+  void set_point(const Point_3& point)
   {
     this->point_ = point;
   }
@@ -167,7 +165,7 @@ public:
   bool operator==(const Flip_vertex_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
+            (!point_ || !other.point_ || point_ == other.point_) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&
@@ -179,7 +177,7 @@ public:
   }
 
 protected:
-  Point3SPtr point_;
+  Point_3 point_;
   VertexWPtr vertex_1_;
   VertexWPtr vertex_2_;
   FacetWPtr facet_1_;

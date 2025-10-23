@@ -18,7 +18,6 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_SELF_INTERSECTION_H
 
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/point_generators_3.h>
@@ -45,10 +44,6 @@ class Self_intersection
   using Line_3 = typename Traits::Line_3;
   using Plane_3 = typename Traits::Plane_3;
 
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Vector3SPtr = std::shared_ptr<Vector_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
-
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
@@ -56,9 +51,6 @@ private:
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
-
-private:
-  using Kernel_factory = kernel::Kernel_factory<Traits>;
 
 public:
   // check if edges share at least one vertex
@@ -110,8 +102,8 @@ public:
     CGAL_precondition(edge2->get_vertex_src()->degree() != 1 || edge2->get_vertex_dst()->degree() != 1);
 
     // reject any degeneracy as a self-intersection
-    if (*(edge1->get_vertex_src()->point()) == *(edge1->get_vertex_dst()->point()) ||
-        *(edge2->get_vertex_src()->point()) == *(edge2->get_vertex_dst()->point())) {
+    if (edge1->get_vertex_src()->point() == edge1->get_vertex_dst()->point() ||
+        edge2->get_vertex_src()->point() == edge2->get_vertex_dst()->point()) {
       return false;
     }
 
@@ -135,36 +127,36 @@ public:
     auto treat_seg_seg = [&](const EdgeSPtr& a, const EdgeSPtr& b) -> bool
     {
       CGAL_precondition(!is_ray(a) && !is_ray(b));
-      const Segment_3 sa = { *(a->get_vertex_src()->point()),
-                             *(a->get_vertex_dst()->point()) };
-      const Segment_3 sb = { *(b->get_vertex_src()->point()),
-                             *(b->get_vertex_dst()->point()) };
+      const Segment_3 sa = { a->get_vertex_src()->point(),
+                             a->get_vertex_dst()->point() };
+      const Segment_3 sb = { b->get_vertex_src()->point(),
+                             b->get_vertex_dst()->point() };
       return treat_o_o(a, sa, b, sb);
     };
 
     auto treat_seg_ray = [&](const EdgeSPtr& a, const EdgeSPtr& b) -> bool
     {
       CGAL_precondition(!is_ray(a) && is_ray(b));
-      const Segment_3 s = { *(a->get_vertex_src()->point()),
-                            *(a->get_vertex_dst()->point()) };
-      const Ray_3 r = (b->get_vertex_src()->degree() == 1) ? Ray_3 { *b->get_vertex_dst()->point(),
-                                                                     *b->get_vertex_src()->point() }
-                                                           : Ray_3 { *b->get_vertex_src()->point(),
-                                                                     *b->get_vertex_dst()->point() };
+      const Segment_3 s = { a->get_vertex_src()->point(),
+                            a->get_vertex_dst()->point() };
+      const Ray_3 r = (b->get_vertex_src()->degree() == 1) ? Ray_3 { b->get_vertex_dst()->point(),
+                                                                     b->get_vertex_src()->point() }
+                                                           : Ray_3 { b->get_vertex_src()->point(),
+                                                                     b->get_vertex_dst()->point() };
       return treat_o_o(a, s, b, r);
     };
 
     auto treat_ray_ray = [&](const EdgeSPtr& a, const EdgeSPtr& b) -> bool
     {
       CGAL_precondition(is_ray(a) && is_ray(b));
-      const Ray_3 ra = (a->get_vertex_src()->degree() == 1) ? Ray_3 { *a->get_vertex_dst()->point(),
-                                                                      *a->get_vertex_src()->point() }
-                                                            : Ray_3 { *a->get_vertex_src()->point(),
-                                                                      *a->get_vertex_dst()->point() };
-      const Ray_3 rb = (b->get_vertex_src()->degree() == 1) ? Ray_3 { *b->get_vertex_dst()->point(),
-                                                                      *b->get_vertex_src()->point() }
-                                                            : Ray_3 { *b->get_vertex_src()->point(),
-                                                                      *b->get_vertex_dst()->point() };
+      const Ray_3 ra = (a->get_vertex_src()->degree() == 1) ? Ray_3 { a->get_vertex_dst()->point(),
+                                                                      a->get_vertex_src()->point() }
+                                                            : Ray_3 { a->get_vertex_src()->point(),
+                                                                      a->get_vertex_dst()->point() };
+      const Ray_3 rb = (b->get_vertex_src()->degree() == 1) ? Ray_3 { b->get_vertex_dst()->point(),
+                                                                      b->get_vertex_src()->point() }
+                                                            : Ray_3 { b->get_vertex_src()->point(),
+                                                                      b->get_vertex_dst()->point() };
       return treat_o_o(a, ra, b, rb);
     };
 
@@ -221,14 +213,14 @@ public:
   static bool is_self_intersecting_facet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    Plane3SPtr pl = facet->plane();
-    Vector3SPtr normal = Kernel_factory::createVector3(pl);
-    if (is_zero(normal->z())) {
-      typedef CGAL::Projection_traits_xz_3<Traits> Traits_2;
+    const Plane_3& pl = facet->get_plane();
+    const Vector_3 normal = pl.orthogonal_vector();
+    if (is_zero(normal.z())) {
+      using Traits_2 = CGAL::Projection_traits_xz_3<Traits>;
       Traits_2 traits;
       return is_self_intersecting_facet(facet, traits);
     } else {
-      typedef CGAL::Projection_traits_xy_3<Traits> Traits_2;
+      using Traits_2 = CGAL::Projection_traits_xy_3<Traits>;
       Traits_2 traits;
       return is_self_intersecting_facet(facet, traits);
     }
@@ -259,8 +251,8 @@ public:
 
     CGAL_SS3_ALGO_TRACE_V(64, "is_inside() using ray shooting (" << point << ", F" << facet->get_ID() << ")");
 
-    Plane3SPtr pl = facet->plane();
-    Vector3SPtr normal = Kernel_factory::createVector3(pl);
+    const Plane_3& pl = facet->get_plane();
+    const Vector_3 normal = pl.orthogonal_vector();
 
     // shoot random rays till something is hit
     // essential to this: we know the facet does not self-intersect
@@ -271,18 +263,18 @@ public:
     std::vector<Point_3> candidate_ray_targets;
 
     for (const EdgeSPtr& edge : facet->edges()) {
-      Point3SPtr p_src = edge->get_vertex_src()->point();
-      Point3SPtr p_dst = edge->get_vertex_dst()->point();
+      const Point_3& p_src = edge->get_vertex_src()->point();
+      const Point_3& p_dst = edge->get_vertex_dst()->point();
 
-      CGAL_SS3_ALGO_TRACE_V(64, " p_src = " << *p_src);
-      CGAL_SS3_ALGO_TRACE_V(64, " p_dst = " << *p_dst);
-      CGAL_assertion(*p_src != *p_dst);
+      CGAL_SS3_ALGO_TRACE_V(64, " p_src = " << p_src);
+      CGAL_SS3_ALGO_TRACE_V(64, " p_dst = " << p_dst);
+      CGAL_assertion(p_src != p_dst);
 
       // this only stands for EPECK and flat faces
-      CGAL_assertion(pl->has_on(point));
-      CGAL_assertion(pl->has_on(*p_src));
-      CGAL_assertion(pl->has_on(*p_dst));
-      CGAL_assertion(CGAL::scalar_product(Vector_3(*p_src, *p_dst), *normal) == 0);
+      CGAL_assertion(pl.has_on(point));
+      CGAL_assertion(pl.has_on(p_src));
+      CGAL_assertion(pl.has_on(p_dst));
+      CGAL_assertion(CGAL::scalar_product(Vector_3(p_src, p_dst), normal) == 0);
 
       if (handle_degree_1_as_ray) {
         CGAL_assertion(edge->get_vertex_src() != edge->get_vertex_dst());
@@ -299,27 +291,27 @@ public:
         }
 
         if (r_src && r_dst) {
-          Ray_3 r { *r_src->point(), *r_dst->point() };
+          Ray_3 r { r_src->point(), r_dst->point() };
           if (r.has_on(point)) {
             // intersection if it's on the ray except if its the source
-            return (point != *(r_src->point()));
+            return (point != r_src->point());
           }
         } else {
-          Segment_3 s { *p_src, *p_dst };
+          Segment_3 s { p_src, p_dst };
           if (s.has_on(point)) {
             // intersection if it's on the ray except if its the source or target
-            return (point != *p_src && point != *p_dst);
+            return (point != p_src && point != p_dst);
           }
         }
       } else {
-        Segment_3 s { *p_src, *p_dst };
+        Segment_3 s { p_src, p_dst };
         if (s.has_on(point)) {
           // intersection if it's on the ray except if its the source or target
-          return (point != *p_src && point != *p_dst);
+          return (point != p_src && point != p_dst);
         }
       }
 
-      candidate_ray_targets.push_back(CGAL::midpoint(*p_src, *p_dst));
+      candidate_ray_targets.push_back(CGAL::midpoint(p_src, p_dst));
 
       CGAL_SS3_ALGO_TRACE_V(64, "new potential ray target: " << candidate_ray_targets.back() << " for " << edge->to_string());
     }
@@ -332,7 +324,7 @@ public:
       } else {
         Point_3 rnd_p = *random_point_on_sphere++;
         Point_3 target_p = point + Vector_3(CGAL::ORIGIN, rnd_p);
-        Point_3 proj_p = pl->projection(target_p);
+        Point_3 proj_p = pl.projection(target_p);
         if (proj_p == point) {
           continue;
         }
@@ -342,8 +334,8 @@ public:
       CGAL_SS3_ALGO_TRACE_V(64, "shooting_ray = " << shooting_ray.point(0) << " " << shooting_ray.point(1));
 
       CGAL_assertion(shooting_ray.point(0) == point);
-      CGAL_assertion(pl->has_on(shooting_ray.point(0)));
-      CGAL_assertion(pl->has_on(shooting_ray.point(1)));
+      CGAL_assertion(pl.has_on(shooting_ray.point(0)));
+      CGAL_assertion(pl.has_on(shooting_ray.point(1)));
 
       // normally we shouldn't need any of the random targets
       if (shooting_ray.is_degenerate()) {
@@ -383,10 +375,10 @@ public:
         CGAL_SS3_ALGO_TRACE_V(64, "consider edge: " << edge->to_string());
         VertexSPtr v_src = edge->src(facet);
         VertexSPtr v_dst = edge->dst(facet);
-        Point3SPtr p_src = v_src->point();
-        Point3SPtr p_dst = v_dst->point();
+        const Point_3& p_src = v_src->point();
+        const Point_3& p_dst = v_dst->point();
 
-        if (CGAL::collinear(*p_src, *p_dst, point)) {
+        if (CGAL::collinear(p_src, p_dst, point)) {
           // we have already checked that the point is not on an edge
           // while collecting ray targets
           continue;
@@ -395,17 +387,17 @@ public:
         if (handle_degree_1_as_ray) {
           if (v_src->degree() == 1) {
             if (v_dst->degree() == 1) {
-              treat_edge(edge, Line_3(*p_src, *p_dst));
+              treat_edge(edge, Line_3(p_src, p_dst));
             } else {
-              treat_edge(edge, Ray_3(*p_dst, *p_src));
+              treat_edge(edge, Ray_3(p_dst, p_src));
             }
           } else if (v_dst->degree() == 1) {
-            treat_edge(edge, Ray_3(*p_src, *p_dst));
+            treat_edge(edge, Ray_3(p_src, p_dst));
           } else {
-            treat_edge(edge, Segment_3(*p_src, *p_dst));
+            treat_edge(edge, Segment_3(p_src, p_dst));
           }
         } else {
-          treat_edge(edge, Segment_3(*p_src, *p_dst));
+          treat_edge(edge, Segment_3(p_src, p_dst));
         }
       }
 
@@ -418,18 +410,18 @@ public:
         continue; // try another ray, we will hit something eventually!
       }
 
-      Point3SPtr p_src = closest_edge->src(facet)->point();
-      Point3SPtr p_dst = closest_edge->dst(facet)->point();
+      const Point_3& p_src = closest_edge->src(facet)->point();
+      const Point_3& p_dst = closest_edge->dst(facet)->point();
 
-      CGAL_SS3_ALGO_TRACE_V(64, "p_src = " << *p_src);
-      CGAL_SS3_ALGO_TRACE_V(64, "p_src + normal = " << *p_src + *normal);
-      CGAL_SS3_ALGO_TRACE_V(64, "p_dst = " << *p_dst);
+      CGAL_SS3_ALGO_TRACE_V(64, "p_src = " << p_src);
+      CGAL_SS3_ALGO_TRACE_V(64, "p_src + normal = " << p_src + normal);
+      CGAL_SS3_ALGO_TRACE_V(64, "p_dst = " << p_dst);
       CGAL_SS3_ALGO_TRACE_V(64, "point = " << point);
 
-      CGAL_assertion(!CGAL::collinear(*p_src, *p_src + *normal, *p_dst));
-      CGAL_assertion(CGAL::scalar_product(Vector_3(*p_src, *p_src + *normal), Vector_3(*p_src, *p_dst)) == 0);
+      CGAL_assertion(!CGAL::collinear(p_src, p_src + normal, p_dst));
+      CGAL_assertion(CGAL::scalar_product(Vector_3(p_src, p_src + normal), Vector_3(p_src, p_dst)) == 0);
 
-      CGAL::Orientation o = CGAL::orientation(*p_src, *p_src + *normal, *p_dst, point);
+      CGAL::Orientation o = CGAL::orientation(p_src, p_src + normal, p_dst, point);
       CGAL_SS3_ALGO_TRACE_V(64, "Orientation = " << o);
 
       return (o != CGAL::NEGATIVE);
@@ -473,7 +465,7 @@ private:
   }
 
   template <typename ProjectionTraits>
-  static CGAL::Bounded_side bounded_side(const Point3SPtr& point,
+  static CGAL::Bounded_side bounded_side(const Point_3& point,
                                          const FacetSPtr& facet,
                                          const ProjectionTraits& traits)
   {
@@ -481,16 +473,16 @@ private:
 
     // Iterate over all edges, treating each as a segment in the projected plane
     for (const EdgeSPtr& edge : facet->edges()) {
-      Point3SPtr p_src = edge->src(facet)->point();
-      Point3SPtr p_dst = edge->dst(facet)->point();
+      const Point_3& p_src = edge->src(facet)->point();
+      const Point_3& p_dst = edge->dst(facet)->point();
 
       // Ray-shooting logic: check if the edge crosses the horizontal ray from point
       typename ProjectionTraits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
       typename ProjectionTraits::Compare_x_2 compare_x_2 = traits.compare_x_2_object();
       typename ProjectionTraits::Orientation_2 orientation_2 = traits.orientation_2_object();
 
-      CGAL::Comparison_result src_y = compare_y_2(*p_src, *point);
-      CGAL::Comparison_result dst_y = compare_y_2(*p_dst, *point);
+      CGAL::Comparison_result src_y = compare_y_2(p_src, point);
+      CGAL::Comparison_result dst_y = compare_y_2(p_dst, point);
 
       switch (src_y) {
         case CGAL::SMALLER:
@@ -498,14 +490,14 @@ private:
             case CGAL::SMALLER:
               break;
             case  CGAL::EQUAL:
-              switch (compare_x_2(*point, *p_dst)) {
+              switch (compare_x_2(point, p_dst)) {
                 case CGAL::SMALLER: is_inside = !is_inside; break;
                 case  CGAL::EQUAL:   return CGAL::ON_BOUNDARY;
                 case CGAL::LARGER:  break;
               }
               break;
             case CGAL::LARGER:
-              switch (which_side_in_slab(*point, *p_src, *p_dst, orientation_2, compare_x_2)) {
+              switch (which_side_in_slab(point, p_src, p_dst, orientation_2, compare_x_2)) {
                 case -1: is_inside = !is_inside; break;
                 case  0: return CGAL::ON_BOUNDARY;
               }
@@ -515,27 +507,27 @@ private:
         case  CGAL::EQUAL:
           switch (dst_y) {
             case CGAL::SMALLER:
-              switch (compare_x_2(*point, *p_src)) {
+              switch (compare_x_2(point, p_src)) {
                 case CGAL::SMALLER: is_inside = !is_inside; break;
                 case  CGAL::EQUAL:   return CGAL::ON_BOUNDARY;
                 case CGAL::LARGER:  break;
               }
               break;
             case  CGAL::EQUAL:
-              switch (compare_x_2(*point, *p_src)) {
+              switch (compare_x_2(point, p_src)) {
                 case CGAL::SMALLER:
-                  if (compare_x_2(*point, *p_dst) != CGAL::SMALLER)
+                  if (compare_x_2(point, p_dst) != CGAL::SMALLER)
                       return CGAL::ON_BOUNDARY;
                   break;
                 case  CGAL::EQUAL: return CGAL::ON_BOUNDARY;
                 case CGAL::LARGER:
-                  if (compare_x_2(*point, *p_dst) != CGAL::LARGER)
+                  if (compare_x_2(point, p_dst) != CGAL::LARGER)
                     return CGAL::ON_BOUNDARY;
                   break;
               }
               break;
             case CGAL::LARGER:
-              if (compare_x_2(*point, *p_src) ==  CGAL::EQUAL) {
+              if (compare_x_2(point, p_src) ==  CGAL::EQUAL) {
                 return CGAL::ON_BOUNDARY;
               }
               break;
@@ -544,13 +536,13 @@ private:
         case CGAL::LARGER:
           switch (dst_y) {
             case CGAL::SMALLER:
-              switch (which_side_in_slab(*point, *p_dst, *p_src, orientation_2, compare_x_2)) {
+              switch (which_side_in_slab(point, p_dst, p_src, orientation_2, compare_x_2)) {
                 case -1: is_inside = !is_inside; break;
                 case  0: return CGAL::ON_BOUNDARY;
               }
               break;
             case  CGAL::EQUAL:
-              if (compare_x_2(*point, *p_dst) ==  CGAL::EQUAL) {
+              if (compare_x_2(point, p_dst) ==  CGAL::EQUAL) {
                 return CGAL::ON_BOUNDARY;
               }
               break;
@@ -565,19 +557,19 @@ private:
   }
 
 public:
-  static bool is_inside_using_ray_shooting_V2(const Point3SPtr& point,
+  static bool is_inside_using_ray_shooting_V2(const Point_3& point,
                                               const FacetSPtr& facet)
   {
     CGAL_SS3_ALGO_TRACE_V(32, "is_inside() using ray shooting V2 (" << point << ", F" << facet->get_ID() << ")");
 
-    Plane3SPtr pl = facet->plane();
-    Vector3SPtr normal = Kernel_factory::createVector3(pl);
-    if (is_zero(normal->z())) {
-      typedef CGAL::Projection_traits_xz_3<Traits> Traits_2;
+    const Plane_3& pl = facet->get_plane();
+    const Vector_3 normal = pl.orthogonal_vector();
+    if (is_zero(normal.z())) {
+      using Traits_2 = CGAL::Projection_traits_xz_3<Traits>;
       Traits_2 traits;
       return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
     } else {
-      typedef CGAL::Projection_traits_xy_3<Traits> Traits_2;
+      using Traits_2 = CGAL::Projection_traits_xy_3<Traits>;
       Traits_2 traits;
       return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
     }
@@ -606,12 +598,12 @@ public:
       return false;
     }
 
-    Plane3SPtr facet_pl = facet->plane();
+    const Plane_3& facet_pl = facet->get_plane();
 
     // Start with the case of the edge living in the same plane as the facet (unlikely to happen)
     // @speed use the projection traits here too
-    bool coplanarity = (facet->contains_vertex(e_src) || facet_pl->has_on(*e_src->point())) &&
-                       (facet->contains_vertex(e_dst) || facet_pl->has_on(*e_dst->point()));
+    bool coplanarity = (facet->contains_vertex(e_src) || facet_pl.has_on(e_src->point())) &&
+                       (facet->contains_vertex(e_dst) || facet_pl.has_on(e_dst->point()));
     if (coplanarity) {
       auto test_fo_o_coplanarity = [&](const EdgeSPtr& /*fe*/, const auto& fo,
                                        const EdgeSPtr& /*e*/, const auto& o) -> bool
@@ -643,13 +635,13 @@ public:
           }
 
           if (r_src && r_dst) {
-            Ray_3 r { *r_src->point(), *r_dst->point() };
+            Ray_3 r { r_src->point(), r_dst->point() };
             return test_fo_o_coplanarity(fe, r, e, o);
           }
         }
 
-        Segment_3 s { *fe->get_vertex_src()->point(),
-                      *fe->get_vertex_dst()->point() };
+        Segment_3 s { fe->get_vertex_src()->point(),
+                      fe->get_vertex_dst()->point() };
         return test_fo_o_coplanarity(fe, s, e, o);
       };
 
@@ -677,18 +669,18 @@ public:
         }
 
         if (r_src && r_dst) {
-          Ray_3 r { *r_src->point(), *r_dst->point() };
+          Ray_3 r { r_src->point(), r_dst->point() };
           if (test_edges(edge, r)) {
             return true;
           }
         } else {
-          Segment_3 s { *e_src->point(), *e_dst->point() };
+          Segment_3 s { e_src->point(), e_dst->point() };
           if (test_edges(edge, s)) {
             return true;
           }
         }
       } else {
-        Segment_3 s { *e_src->point(), *e_dst->point() };
+        Segment_3 s { e_src->point(), e_dst->point() };
         if (test_edges(edge, s)) {
           return true;
         }
@@ -696,7 +688,7 @@ public:
 
       // if there is no intersection between the edge and any facet edge, then an extremity
       // of the edge is sufficient to determine where we are
-      return is_inside_using_ray_shooting(*(e_src->point()), facet, handle_degree_1_as_ray);
+      return is_inside_using_ray_shooting(e_src->point(), facet, handle_degree_1_as_ray);
     }
 
     // Here we know that the edge does not live in the plane of the facet
@@ -707,7 +699,7 @@ public:
 
       CGAL_SS3_ALGO_TRACE_V(64, "test_o_facet(" << e->get_ID() << " " << typeid(O).name() << ")");
 
-      CGAL::Object obj = CGAL::intersection(*facet_pl, o);
+      CGAL::Object obj = CGAL::intersection(facet_pl, o);
       if (!obj) {
         return false; // no intersection
       } else if (const Point_3 *ipoint = CGAL::object_cast<Point_3>(&obj)) {
@@ -752,12 +744,12 @@ public:
       }
 
       if (r_src && r_dst) {
-        Ray_3 r { *r_src->point(), *r_dst->point() };
+        Ray_3 r { r_src->point(), r_dst->point() };
         return test_o_facet(edge, r);
       }
     }
 
-    Segment_3 s { *e_src->point(), *e_dst->point() };
+    Segment_3 s { e_src->point(), e_dst->point() };
     return test_o_facet(edge, s);
   }
 

@@ -43,7 +43,6 @@ class Tetrahedron_event
 
 private:
   using Point_3 = typename Traits::Point_3;
-  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -68,13 +67,12 @@ public:
     return std::make_shared<Tetrahedron_event>();
   }
 
-  Point3SPtr point() const
+  const Point_3& point() const
   {
-    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void set_point(const Point3SPtr& point)
+  void set_point(const Point_3& point)
   {
     this->point_ = point;
   }
@@ -146,11 +144,9 @@ public:
     sstr << "Tetrahedron_event\n";
     sstr << "\t(ID=" << Base::get_ID() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
-    if (point_) {
-      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
-    }
+    sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
     sstr << "\t(vertices";
     for (int i=0; i<4; ++i)
       sstr << " " << vertices[i]->get_ID();
@@ -165,12 +161,12 @@ public:
   bool operator==(const Tetrahedron_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
+            (!point_ || !other.point_ || point_ == other.point_) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }
 
 protected:
-  Point3SPtr point_;
+  Point_3 point_;
   EdgeWPtr edge_begin_;
 
   Edge_facet_neighborhood neighborhood_;

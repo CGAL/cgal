@@ -13,7 +13,6 @@
 
 #include <CGAL/Straight_skeleton_3/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
 
@@ -48,10 +47,6 @@ class FaceGraphIO
   using Vector_3 = typename Traits::Vector_3;
   using Plane_3 = typename Traits::Plane_3;
 
-  using Point3SPtr = std::shared_ptr<Point_3>;
-  using Vector3SPtr = std::shared_ptr<Vector_3>;
-  using Plane3SPtr = std::shared_ptr<Plane_3>;
-
 private:
   using Polyhedron = internal::HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
@@ -67,7 +62,6 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Kernel_factory = internal::kernel::Kernel_factory<Traits>;
   using Transformation = internal::algorithm::Polyhedron_transformation<Traits>;
   using Hds_utils = internal::algorithm::Hds_utils<Traits>;
 
@@ -99,7 +93,7 @@ public:
 
     for (vertex_descriptor vi : vertices(tmesh)) {
       ++vertex_id_new;
-      Point3SPtr point = Kernel_factory::createPoint3(get(vpm, vi));
+      decltype(auto) point = get(vpm, vi);
       VertexSPtr vertex = Vertex::create(point);
       vertex->set_ID(vertex_id_new);
       result->add_vertex(vertex);
@@ -119,7 +113,6 @@ public:
       CGAL_assertion(num_vertices > 2);
 
       std::vector<VertexSPtr> poly_vertices(num_vertices);
-      Vector3SPtr normal_sum;
       for (unsigned int i = 0; i < num_vertices; ++i) {
         poly_vertices[i] = VertexSPtr();
       }
@@ -130,7 +123,7 @@ public:
         if (vertex_id < vertices.size()) {
           poly_vertices[pos++] = vertices[vertex_id];
           CGAL_SS3_IO_TRACE_V(32, "  V" << vertices[vertex_id]->get_ID() << "; "
-                                        << *(vertices[vertex_id]->point()));
+                                        << vertices[vertex_id]->point());
         } else {
           std::stringstream whatstream;
           whatstream << "Vertex with id=" << vertex_id << " does not exist.";
@@ -156,12 +149,13 @@ public:
       }
 
       if (num_vertices == 3) {
-        Plane3SPtr plane = Kernel_factory::createPlane3(poly_vertices[0]->point(),
-                                                        poly_vertices[1]->point(),
-                                                        poly_vertices[2]->point());
+        Plane_3 plane { poly_vertices[0]->point(),
+                        poly_vertices[1]->point(),
+                        poly_vertices[2]->point() };
         facet->set_plane(plane);
       } else {
         // @todo is there a point handling non triangulated inputs here and everywhere...?
+        CGAL_assertion(false);
         return { };
       }
       result->add_facet(facet);
@@ -182,7 +176,7 @@ public:
 
     Transformation::remove_vertices_deg_lt3(result);
 
-    CGAL_postcondition(bool(result));
+    CGAL_SS3_DEBUG_SPTR(result);
     CGAL_postcondition(result->is_consistent());
 
     return result;
@@ -227,9 +221,9 @@ public:
     namespace PMP = CGAL::Polygon_mesh_processing;
 
     CGAL::Bbox_3 bbox = PMP::bbox(tmesh);
-    const FT diag_length = CGAL::approximate_sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
-                                                  CGAL::square(bbox.ymax() - bbox.ymin()) +
-                                                  CGAL::square(bbox.zmax() - bbox.zmin()));
+    const FT diag_length = CGAL::approximate_sqrt(square(bbox.xmax() - bbox.xmin()) +
+                                                  square(bbox.ymax() - bbox.ymin()) +
+                                                  square(bbox.zmax() - bbox.zmin()));
 
     // Use shape detection to analyze the mesh
     std::vector<std::size_t> region_ids(num_faces(tmesh));
@@ -287,8 +281,8 @@ public:
         }
 
         CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->get_facet_L()->get_ID() << " and " << edge->get_facet_R()->get_ID());
-        CGAL_assertion(sm.point(source(e, sm)) == *(edge->get_vertex_src()->point()));
-        CGAL_assertion(sm.point(target(e, sm)) == *(edge->get_vertex_dst()->point()));
+        CGAL_assertion(sm.point(source(e, sm)) == edge->get_vertex_src()->point());
+        CGAL_assertion(sm.point(target(e, sm)) == edge->get_vertex_dst()->point());
 
         // @fixme it seems like intermediate states are somewhat unsound during edge merging
         merge_facets(edge, polyhedron);
@@ -342,7 +336,7 @@ public:
     std::unordered_map<VertexSPtr, vertex_descriptor> v_map;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       vertex_descriptor vi = add_vertex(pmesh);
-      put(vpm, vi, *(vertex->point()));
+      put(vpm, vi, vertex->point());
       v_map[vertex] = vi;
     }
 
@@ -356,10 +350,10 @@ public:
 
       double speed = CGAL::to_double(Hds_utils::get_speed(facet));
 
-      Vector3SPtr n = Kernel_factory::createVector3(facet->plane());
-      CGAL_assertion(*n != CGAL::NULL_VECTOR);
+      Vector_3 n = facet->get_plane().orthogonal_vector();
+      CGAL_assertion(n != CGAL::NULL_VECTOR);
 
-      PK traits(*n);
+      PK traits(n);
       PCDT pcdt(traits);
 
       std::map<VertexSPtr, PCDT_VH> face_vhs;
@@ -367,7 +361,7 @@ public:
       for (const VertexSPtr& vertex : facet->vertices()) {
         auto res = face_vhs.emplace(vertex, PCDT_VH());
         if (res.second) { // first time seeing this point
-          PCDT_VH vh = pcdt.insert(*(vertex->point()));
+          PCDT_VH vh = pcdt.insert(vertex->point());
           res.first->second = vh;
           vh->info() = vertex;
         }
@@ -378,9 +372,9 @@ public:
         VertexSPtr v0 = edge->src(facet);
         VertexSPtr v1 = edge->dst(facet);
 
-        if(*(v0->point()) == *(v1->point()))
+        if(v0->point() == v1->point())
         {
-          CGAL_SS3_IO_TRACE("Warning: degenerate edge at " << *(v0->point()));
+          CGAL_SS3_IO_TRACE("Warning: degenerate edge at " << v0->point());
           break;
         }
         else
@@ -395,7 +389,7 @@ public:
           catch(const typename PCDT::Intersection_of_constraints_exception&)
           {
             CGAL_SS3_IO_TRACE("Error: Intersection of constraints");
-            CGAL_SS3_IO_TRACE("While inserting " << *(v0->point()) << " || " << *(v1->point()));
+            CGAL_SS3_IO_TRACE("While inserting " << v0->point() << " || " << v1->point());
             CGAL_SS3_IO_TRACE(facet->to_string());
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
             return false;
