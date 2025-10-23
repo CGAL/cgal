@@ -108,7 +108,7 @@ HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const 
         std::string file(options.outfile_root+"_reduction.txt") ;
         std::ofstream out ( file, std::ios::out | std::ios::trunc);
 
-        if ( not out . good () ) {
+        if ( ! out . good () ) {
             std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
@@ -122,8 +122,8 @@ HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const 
         std::string file_per(options.outfile_root+"_per.txt") ;
         std::ofstream out_per ( file_per, std::ios::out | std::ios::trunc);
 
-        if ( not out_per . good () ) {
-            std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
+        if ( ! out_per . good () ) {
+            std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " ! found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out_per << "----> persistent diagram" << std::endl ;

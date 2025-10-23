@@ -66,7 +66,7 @@ class Filtration_core
 {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
     /*! \brief Type of value returned by the iterator.
      */

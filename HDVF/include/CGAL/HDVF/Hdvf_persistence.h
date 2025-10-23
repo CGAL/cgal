@@ -80,7 +80,7 @@ class Hdvf_persistence : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::
 {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
     /*! \brief Structure storing (full) persistent interval data:
      * - `time_birth`, `time_death`: persistent interval filtration indices
@@ -307,7 +307,7 @@ public:
         size_t i = 0 ;
         for (Persistent_interval hole : per_hdvf._persist)
         {
-            if (abs(hole.duration()) > 0)
+            if (std::abs(hole.duration()) > 0)
             {
                 out_stream << i << " --- duration : " << hole.duration() << " -- " ;
                 hole.insert(out_stream);

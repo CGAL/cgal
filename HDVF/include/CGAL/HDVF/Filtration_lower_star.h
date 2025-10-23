@@ -102,11 +102,11 @@ class Filtration_lower_star : public Filtration_core<ChainComplex, Degree>
 {
 private:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     /*! Type of parent filtration instance. */
     typedef Filtration_core<ChainComplex, Degree> Filtration_parent;
     /*! Type of value returned by the iterator. */
-    typedef Filtration_parent::Filtration_iter_value Filtration_iter_value;
+    typedef typename Filtration_parent::Filtration_iter_value Filtration_iter_value;
 public:
     /*!
      * \brief Copy constructor.

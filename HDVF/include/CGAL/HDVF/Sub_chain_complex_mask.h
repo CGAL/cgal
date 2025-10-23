@@ -43,7 +43,7 @@ class Sub_chain_complex_mask
 {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
 protected:
     /** \brief Dimension of the underlying complex. */

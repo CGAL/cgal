@@ -80,7 +80,7 @@ void dual_HDVF_pair (HDVF::Hdvf_duality<Complex>& dual_hdvf, const Options &opti
         std::string file(options.outfile_root+"_pairs.txt") ;
         std::ofstream out ( file, std::ios::out | std::ios::trunc);
 
-        if ( not out . good () ) {
+        if ( ! out . good () ) {
             std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
@@ -117,7 +117,7 @@ HDVF::Hdvf_duality<Complex>& dual_HDVF_comput (const Complex& L,  HDVF::Sub_chai
         std::string file(options.outfile_root+"_reduction.txt") ;
         std::ofstream out ( file, std::ios::out | std::ios::trunc);
 
-        if ( not out . good () ) {
+        if ( ! out . good () ) {
             std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
