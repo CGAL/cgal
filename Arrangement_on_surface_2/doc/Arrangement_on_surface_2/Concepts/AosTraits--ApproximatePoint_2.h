@@ -20,7 +20,7 @@ public:
    * `p`'s \f$y\f$-coordinate (if `i == 1`).
    * \pre `i` is either 0 or 1.
    */
-  CGAL::Approximate_number_type operator()(AosTraits::Point_2 p, int i);
+  Approximate_number_type operator()(AosTraits::Point_2 p, int i);
 
   /// @}
 }; /* end AosTraits::Approximate_2 */
