@@ -4356,7 +4356,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -4369,7 +4368,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(vertex_src)->close_arc(node);
@@ -4657,7 +4656,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -4671,10 +4669,13 @@ public:
 
     CGAL_assertion(edge_2 == edge_toremove_2->next(facet));
 
+    CGAL_SS3_CORE_TRACE_V(4, "Edge #1: " << edge_1->get_ID());
+    CGAL_SS3_CORE_TRACE_V(4, "Edge #2: " << edge_2->get_ID());
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(edge_toremove_1->src(facet))->close_arc(node);
@@ -4690,7 +4691,6 @@ public:
 #endif
 
     VertexSPtr vertex = edge_toremove_1->dst(facet);
-    vertex->set_point(point); // @fixme unnecessary
     VertexSPtr vertex_1 = edge_1->dst(facet);
     VertexSPtr vertex_2 = edge_2->src(facet);
     EdgeSPtr edge_b = edge_toremove_1->prev(edge_toremove_1->other(facet));
@@ -4920,7 +4920,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -4935,7 +4934,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
@@ -5036,7 +5035,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5060,7 +5058,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
@@ -5150,7 +5148,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5161,7 +5158,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
@@ -5224,7 +5221,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5281,7 +5277,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(vertex_1)->close_arc(node);
@@ -5394,7 +5390,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5406,7 +5401,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(vertex_1)->close_arc(node);
@@ -5695,7 +5690,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5723,7 +5717,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
@@ -5876,7 +5870,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->time();
-    const Point_3& point = event->point();
 
     shit_to_event_time(polyhedron, current_time, event_time);
 
@@ -5945,7 +5938,7 @@ public:
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
     node->set_time(event_time);
-    node->set_point(point);
+    node->set_point(event->point());
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(vertex_1)->close_arc(node);
