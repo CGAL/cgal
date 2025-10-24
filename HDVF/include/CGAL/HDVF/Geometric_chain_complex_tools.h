@@ -404,14 +404,14 @@ public:
 //        Complex_duality_data t = {L,K,tetL.nodes} ;
 //        return t ;
 //    }
-    
+
     static Complex_duality_data simplicial_chain_complex_bb (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
 
         std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
         std::cerr << "Imported set of simplices" << std::endl;
         std::cout << mesh_io;
-        
+
         // Create a temporary associated complex (to identify simplices of mesh_io)
         Chain_complex* _K = new Chain_complex(mesh_io);
 

@@ -44,20 +44,20 @@ struct Hdvf_traits_d {
     typedef CGAL::Bbox_d<Dimension> Bbox;
     typedef typename Exact_predicates_inexact_constructions_kernel::Point_3 Point3;
     static std::function<Point3(const Point&)> to_point3;
-    
+
     // Set of standard projection operators
     // R^d -> R^3 projection on first coordinates (x,y,z)
     static std::function<Point3(const Point&)> default_projection ;
-    
+
     // Projection on a given 3D affine plane (defined by three unit orthogonal vectors + point)
     static std::function<typename Exact_predicates_inexact_constructions_kernel::Point_3(const typename K::Point_d&)> plane_projection_builder(const typename K::Point_d& p0, const typename K::Vector_d& d1, const typename K::Vector_d& d2, const typename K::Vector_d& d3) {
         typedef Exact_predicates_inexact_constructions_kernel::Point_3 Point_3;
         typedef typename K::Point_d Point_d;
         typedef typename K::Vector_d Vector_d;
-        
+        //  See NewKernel_d\include\CGAL\NewKernel_d\Kernel_d_interface.h for what is available in K
         std::function<Point_3(const Point_d&)> project = [&](const Point_d& p) {
-            Vector_d tmp(p-p0);
-            return Point_3(tmp*d1, tmp*d2, tmp*d3);
+            Vector_d tmp(K().difference_of_points_d_object()(p,p0));
+            return Point_3(K().scalar_product_d_object()(tmp,d1), K().scalar_product_d_object()(tmp,d2), K().scalar_product_d_object()(tmp,d3));
         };
         return project;
     }
@@ -69,17 +69,22 @@ struct Hdvf_traits_d {
         typedef double FT;
         typedef Eigen_vector<FT> Vector;
         typedef Eigen_matrix<FT> Matrix;
-        
+
         // Barycenter of points
         Vector_d bary;
-        for (Point p : pts)
-            bary += (p-ORIGIN) ;
-        Point_d barycenter(ORIGIN + bary/pts.size()) ;
+        for (Point p : pts){
+            Vector_d v = K().point_to_vector_d_object()(p) ;
+            bary = bary + v;
+            // bary += (p-ORIGIN) ;
+       }
+        Vector_d v = K().scaled_vector_d_object()(bary, FT(1)/FT(pts.size())) ;
+        Point_d barycenter  = K().vector_to_point_d_object()(v) ;
+         // Point_d barycenter(ORIGIN + bary/pts.size()) ;
         // Define the PCA matrix by SVD
         Matrix A(pts.size(), K::Dimension::value);
         // Fill the matrix (p[i]-barycenter along line i)
         for (int i=0; i<pts.size(); ++i) {
-            Vector_d tmp(pts.at(i)-barycenter);
+            Vector_d tmp(K().difference_of_points_d_object()(pts.at(i),barycenter));
             for (int j=0; j<K::Dimension::value; ++j) {
                 A.set(i,j,tmp[j]);
             }
