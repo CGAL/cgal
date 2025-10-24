@@ -109,6 +109,15 @@ set(thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20240222_2201
 1514904.stl
 )
 
+set(thingi10k_FAILED_WITH_SEGFAULT_CTest_20251002
+1439534.stl
+196123.stl
+200695.stl
+135777.stl
+285604.stl
+822697.stl
+)
+
 function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
   set(options "ONLY_MERGE_FACETS")
   set(oneValueArgs TIMEOUT)
@@ -144,6 +153,9 @@ foreach(thingi_file_name ${thingi10k_max_10k_solid})
   endif()
   if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20240222_2201)
     list(APPEND LABELS "CTest_20240222_2201_failed_merge_facets")
+  endif()
+  if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_SEGFAULT_CTest_20251002)
+    list(APPEND LABELS "CTest_20251002_failed_segfault")
   endif()
   get_filename_component(thingi_ID "${thingi_file_name}" NAME_WE)
   CGAL_add_cdt3_test_from_Thingi10k(Thingi10K_${thingi_ID} ${thingi_file_name}

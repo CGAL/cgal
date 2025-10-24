@@ -76,35 +76,6 @@ struct is_convertible_without_narrowing : details::is_convertible_without_narrow
 template <typename From, typename To>
 inline constexpr bool is_convertible_without_narrowing_v = is_convertible_without_narrowing<From, To>::value;
 
-#if 0
-namespace is_complete_internals
-{
-    template<class T>
-    std::enable_if_t<sizeof(T) != 0, std::true_type>
-    check(T(*)());
-
-    std::false_type check(...);
-};
-
-template<class T, class Base = decltype(is_complete_internals::check(typename std::enable_if<true, T(*)()>::type()))>
-struct is_complete : Base { };
-
-template <class T>
-inline constexpr bool is_complete_v = is_complete<T>::value;
-
-namespace is_complete_testsuite
-{
-
-  struct S1;
-  static_assert(!is_complete<S1>::value, "error");
-  struct S2
-  {
-    static_assert(!is_complete<S2>::value, "error");
-  };
-  struct S3 {};
-  static_assert(is_complete<S3>::value, "error");
-}
-#endif
 
 } // end namespace CGAL
 
