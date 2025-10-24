@@ -278,7 +278,7 @@ public:
 
       // these sqrt are tolerated because it does not matter for robustness
       const FT length_l = CGAL::approximate_sqrt(normal_l.squared_length());
-      const FT length_r = CGAL::approximate_sqrt(normal_l.squared_length());
+      const FT length_r = CGAL::approximate_sqrt(normal_r.squared_length());
 
       FT diff = 0;
       FT diff_sq_length = 0;
