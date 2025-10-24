@@ -129,37 +129,8 @@ public:
 template< typename AABBTraits>
 class AABB_tree;
 
-
-/// This traits class handles any type of 2D geometric
-/// primitives provided that the proper intersection tests and
-/// constructions are implemented. It handles points, rays, lines and
-/// segments as query types for intersection detection and
-/// computations, and it handles points as query type for distance
-/// queries.
-///
-/// \cgalModels{AABBTraits,AABBRayIntersectionTraits}
-///
-/// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits_2,
-/// and provide the geometric types as well as the intersection tests and computations.
-/// \tparam Primitive provide the type of primitives stored in the AABB_tree.
-///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
-///
-/// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
-///                 and as value type a `Bounding_box`.
-///                 If the type is `Default` the `Datum` must have the
-///                 member function `bbox()` that returns the bounding box of the primitive.
-///
-/// If the argument `GeomTraits` is a model of the concept \ref
-/// AABBRayIntersectionGeomTraits_2, this class is also a model of \ref
-/// AABBRayIntersectionTraits.
-///
-/// \sa `AABBTraits`
-/// \sa `AABB_tree`
-/// \sa `AABBPrimitive`
-/// \sa `AABBPrimitiveWithSharedData`
-
 template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
-class AABB_traits_2
+class AABB_traits_base_2
 #ifndef DOXYGEN_RUNNING
 : public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
   public internal::AABB_tree::AABB_traits_intersection_base_2<GeomTraits>,
@@ -170,7 +141,7 @@ class AABB_traits_2
   typedef GeomTraits Geom_traits;
 public:
 
-  typedef AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap> AT;
+  typedef AABB_traits_base_2<GeomTraits, AABBPrimitive, BboxMap> AT;
   // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
   typedef AABBPrimitive Primitive;
@@ -224,9 +195,9 @@ public:
   BboxMap bbm;
 
   /// Default constructor.
-  AABB_traits_2() { }
+  AABB_traits_base_2() { }
 
-  AABB_traits_2(BboxMap bbm)
+  AABB_traits_base_2(BboxMap bbm)
     : bbm(bbm)
   {}
 
@@ -249,10 +220,10 @@ public:
    */
   class Split_primitives
   {
-    typedef AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap> Traits;
+    typedef AABB_traits_base_2<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
   public:
-    Split_primitives(const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Split_primitives(const AABB_traits_base_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
     typedef void result_type;
@@ -286,9 +257,9 @@ public:
    * @return the bounding box of the primitives of the iterator range
    */
   class Compute_bbox {
-    const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Compute_bbox(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Compute_bbox(const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits (traits) {}
 
     template<typename ConstPrimitiveIterator>
@@ -311,9 +282,9 @@ public:
   /// In the case the query is a `CGAL::AABB_tree`, the `do_intersect()`
   /// function of this tree is used.
   class Do_intersect {
-    const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Do_intersect(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Do_intersect(const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits(traits) {}
 
     template<typename Query>
@@ -346,9 +317,9 @@ public:
 
 
   class Intersection {
-    const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
+    const AABB_traits_base_2<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
   public:
-    Intersection(const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Intersection(const AABB_traits_base_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
       :m_traits(traits) {}
     template<typename Query>
     std::optional< typename Intersection_and_primitive_id<Query>::Type >
@@ -367,9 +338,9 @@ public:
   class Closest_point {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
-    const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Closest_point(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Closest_point(const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
       : m_traits(traits) {}
 
 
@@ -393,25 +364,12 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
-      {
-          return do_intersect_circle_iso_rectangle_2
-          (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
-      {
-          return do_intersect_circle_iso_rectangle_2
-          (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
-        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
+        return do_intersect_circle_iso_rectangle_2
+        (GeomTraits().construct_circle_2_object()
+          (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb) ?
+          CGAL::SMALLER : CGAL::LARGER;
       }
 
       // The following functions seem unused...?
@@ -500,26 +458,26 @@ private:
   }
 
   /// Comparison functions
-  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_x_2_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
-  static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits_base_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_y_2_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
 
-};  // end class AABB_traits_2
+};  // end class AABB_traits_base_2
 
 
 //-------------------------------------------------------
 // Private methods
 //-------------------------------------------------------
   template<typename GT, typename P, typename B>
-  typename AABB_traits_2<GT,P,B>::Axis
-  AABB_traits_2<GT,P,B>::longest_axis(const Bounding_box& bbox)
+  typename AABB_traits_base_2<GT,P,B>::Axis
+    AABB_traits_base_2<GT,P,B>::longest_axis(const Bounding_box& bbox)
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();
@@ -533,6 +491,63 @@ private:
       return CGAL_AXIS_Y;
     }
 }
+}
+
+//-------------------------------------------------------
+// Filtered traits
+//-------------------------------------------------------
+
+#include <CGAL/AABB_tree/internal/AABB_filtered_traits_2.h>
+
+namespace CGAL {
+
+/// This traits class handles any type of 2D geometric
+/// primitives provided that the proper intersection tests and
+/// constructions are implemented. It handles points, rays, lines and
+/// segments as query types for intersection detection and
+/// computations, and it handles points as query type for distance
+/// queries.
+///
+/// \cgalModels{AABBTraits,AABBRayIntersectionTraits}
+///
+/// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits_2,
+/// and provide the geometric types as well as the intersection tests and computations.
+/// \tparam Primitive provide the type of primitives stored in the AABB_tree.
+///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
+///
+/// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
+///                 and as value type a `Bounding_box`.
+///                 If the type is `Default` the `Datum` must have the
+///                 member function `bbox()` that returns the bounding box of the primitive.
+///
+/// If the argument `GeomTraits` is a model of the concept \ref
+/// AABBRayIntersectionGeomTraits_2, this class is also a model of \ref
+/// AABBRayIntersectionTraits.
+///
+/// \sa `AABBTraits`
+/// \sa `AABB_tree`
+/// \sa `AABBPrimitive`
+/// \sa `AABBPrimitiveWithSharedData`
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default, bool Has_filtered_predicates_ = internal::Has_filtered_predicates<GeomTraits>::value>
+  class AABB_traits_2;
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap>
+  class AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap, false> : public AABB_traits_base_2<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_base_2<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    AABB_traits_2() : Base() {}
+    AABB_traits_2(BboxMap bbm) : Base(bbm) {}
+  };
+
+  template<class GeomTraits, typename AABBPrimitive, typename BboxMap>
+  class AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap, true> : public AABB_filtered_traits_2<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_filtered_traits_2<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    AABB_traits_2() : Base() {}
+    AABB_traits_2(BboxMap bbm) : Base(bbm) {}
+  };
 
 /// @}
 
