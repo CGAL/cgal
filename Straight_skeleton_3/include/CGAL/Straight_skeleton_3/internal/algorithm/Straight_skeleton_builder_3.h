@@ -761,6 +761,13 @@ public:
     return result;
   }
 
+  static void set_sheet(EdgeSPtr edge,
+                        SheetSPtr sheet)
+  {
+    Hds_utils::set_sheet(edge, sheet);
+    sheet->add_edge(edge);
+  }
+
   void merge_sheets(EdgeSPtr edge_into,
                     EdgeSPtr edge_from)
   {
@@ -786,9 +793,8 @@ public:
 
     for (EdgeWPtr edge_wptr : edges_from) {
       if (EdgeSPtr edge = edge_wptr.lock()) {
-        Hds_utils::set_sheet(edge, sheet_into);
         std::cout << "Set Sheet of E" << edge->get_ID() << std::endl;
-        sheet_into->add_edge(edge);
+        set_sheet(edge, sheet_into);
       }
     }
 
@@ -5616,7 +5622,7 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    Hds_utils::set_sheet(edge_tmp, Hds_utils::get_sheet(edge_2));
+    set_sheet(edge_tmp, Hds_utils::get_sheet(edge_2));
 
     Hds_utils::set_node(vertex, node);
     ArcSPtr arc = create_arc(vertex);
@@ -5816,7 +5822,7 @@ public:
     ArcSPtr arc_r = create_arc(vertex_r);
     skeleton_->add_arc(arc_r);
 
-    Hds_utils::set_sheet(edge_22, Hds_utils::get_sheet(edge_2));
+    set_sheet(edge_22, Hds_utils::get_sheet(edge_2));
 
     Hds_utils::get_sheet(edge_2)->add_arc(arc_l);
     Hds_utils::get_sheet(edge_2)->add_arc(arc_r);
@@ -6009,7 +6015,7 @@ public:
     ArcSPtr arc_2 = create_arc(vertex_2);
     skeleton_->add_arc(arc_2);
 
-    Hds_utils::set_sheet(edge_tomerge_2, Hds_utils::get_sheet(edge_tosplit));
+    set_sheet(edge_tomerge_2, Hds_utils::get_sheet(edge_tosplit));
 
     for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
       for (EdgeWPtr edge_w : vertex->edges()) {
@@ -6148,8 +6154,8 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    Hds_utils::set_sheet(edge_12, Hds_utils::get_sheet(edge_1));
-    Hds_utils::set_sheet(edge_22, Hds_utils::get_sheet(edge_2));
+    set_sheet(edge_12, Hds_utils::get_sheet(edge_1));
+    set_sheet(edge_22, Hds_utils::get_sheet(edge_2));
 
     for (unsigned int i = 0; i < 4; ++i) {
       SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertices[i]->get_data());
