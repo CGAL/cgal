@@ -59,7 +59,7 @@ private:
     std::vector<std::map<halfedge_descriptor, Io_cell_type> > _he_index_to_io_cell;
 
 public:
-    /** \brief Constructor from atriangule mesh.
+    /** \brief Constructor from a triangular mesh.
      *
      */
     Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io<Traits>(2) {

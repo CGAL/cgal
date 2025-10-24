@@ -442,7 +442,7 @@ public:
         return true;
     }
 
-    bool write_off(const std::string &filename)
+    bool write_off(const std::string &filename) const
     {
         // 0 - open input file
         std::ofstream outfile(filename);
@@ -553,20 +553,26 @@ public:
 
     bool read_nodes_file(const std::string &filename) ;
 
-    void print_infos () const
+    std::ostream& print_infos (std::ostream& out_stream = std::cout) const
     {
-        std::cout << "Mesh_object_io infos - dim : "<< dim << ", nodes : " << nodes.size() << ", cells : " << cells.size() << std::endl ;
+        out_stream << "Mesh_object_io infos - dim : "<< dim << ", nodes : " << nodes.size() << ", cells : " << cells.size() << std::endl ;
         for (int q = 0; q <= dim; ++q)
-            std::cout << "cells of dim " << q << " : " << cells_of_dim(q) << std::endl ;
+            out_stream << "cells of dim " << q << " : " << cells_of_dim(q) << std::endl ;
+        return out_stream;
+    }
+    
+    
+    friend std::ostream& operator<<(std::ostream& out_stream, const Mesh_object_io& mesh_io) {
+        return mesh_io.print_infos(out_stream);
     }
 
     // Mesh computations
-    Point centroid()
+    Point centroid() const
     {
         return CGAL::centroid(nodes.begin(), nodes.end()) ;
     }
 
-    double radius(const Point &bary)
+    double radius(const Point &bary) const
     {
         double r = 0 ;
         for (Point v : nodes)
@@ -576,7 +582,7 @@ public:
         return r ;
     }
 
-    Bbox bbox(double ratio=1.)
+    Bbox bbox(double ratio=1.) const
     {
         return bounding_box(nodes.begin(), nodes.end()) .bbox();
         // @todo deal with ratio

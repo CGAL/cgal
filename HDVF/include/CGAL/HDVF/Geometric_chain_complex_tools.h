@@ -299,9 +299,9 @@ namespace Homological_discrete_vector_field {
 
 The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
-Technically, starting from a Simplicial_chain_complex `_K`, the method `simplicial_chain_complex_bb()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
-- L : complex built out of _K together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
-- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
+Technically, starting from a Simplicial_chain_complex `K_init`, the method `simplicial_chain_complex_bb()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
+- L : complex built out of K_init together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
+- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
 
 \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
 
@@ -332,45 +332,104 @@ public:
         std::vector<Point> nodes ;
     } Complex_duality_data ;
 
-    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a set of simplices `mesh_io`.
      *
-     * `_K` is embedded into a larger icosphere and a 3D constrained Delaunay triangulation is generated. Then \f$K\f$, \f$L\f$ and vertex coordinates are extracted and stored in a `Complex_duality_data` structure.
+     * On the one hand, a `Simplicial_chain_complex` is built from `mesh_io` (let us call if `_K`); on the other hand, this complex is embedded into a larger icosphere and a 3D constrained Delaunay tetraedrization is generated.
+     * Then \f$K\f$, \f$L\f$ and vertex coordinates are extracted and stored in a `Complex_duality_data` structure.
+     *
+     * After the function, `mesh_object_io` has been extended with the simplices of the closing icosphere.
      *
      * The following figures shows the resulting complex with an initial `Twirl` mesh (right - sectional view):
      * <img src="HDVF_twirl_view1.png" align="center" width=35%/>
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
-     * \param[in] _K Simplicial chain complex (working mesh).
+     * \param[in] mesh_io `Mesh_object_io` containing the initial set of simplicies (working mesh).
      * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      * \param[in] subdiv Subdivision level of the bounding icosphere.
      */
-    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
+//    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
+//    {
+//
+//        std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
+//        std::cerr << "Imported mesh" << std::endl;
+//        std::cout << _K;
+//        // Export _K to a MeshObject to add the icosphere and mesh with tetGen
+//        Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
+//        std::cerr << "Mesh_object_io from mesh" << std::endl;
+//        mesh_L.print_infos();
+//
+//        // Closing K by adding the icosphere
+//        //  Compute a bounding icosphere
+//        Point center = mesh_L.centroid() ;
+//        double r = mesh_L.radius(center) ;
+//        Icosphere_object_io<Traits> ico(subdiv,center, BB_ratio*r) ;
+//        std::cerr << "Icosphere generated" << std::endl;
+//        ico.print_infos() ;
+//
+//        // Add it to the mesh
+//        mesh_L.push_back(ico) ;
+//        std::cerr << "Mesh concatenation" << std::endl;
+//        mesh_L.print_infos() ;
+//
+//        // Write this mesh to an off file for Tetgen
+//        mesh_L.write_off(out_file_prefix) ;
+//        //        const std::string tetgen_path(CMAKE_TETGEN_PATH) ;
+//        // WARNING: use CGAL 3D triangulation to get rid of tetgen...
+//        const std::string tetgen_path("/Users/umenohana/Dropbox/G-Mod/TopAlg/code/tetgen1.6.0/build/") ;
+//        std::string tetgen_command = tetgen_path+"tetgen -pqkcYfe "+out_file_prefix+".off" ;
+//        system(tetgen_command.c_str()) ;
+//
+//        // Read the mesh built by tetgen for L
+//        Tet_object_io<Traits> tetL(out_file_prefix) ;
+//
+//        // Build the associated SimpComplex
+//        Chain_complex& L = *new Chain_complex(tetL) ;
+//        std::cout << "------ L:" << L;
+//
+//        // Build the Sub_chain_complex_mask encoding _K inside L
+//        Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
+//        // Visit all cells of _K and activate the corresponding bit in K
+//        for (int q=0; q<=_K.dimension(); ++q)
+//        {
+//            for (size_t i=0; i<_K.number_of_cells(q); ++i)
+//            {
+////                const std::vector<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices())
+//                const Simplex&  simplex(_K.index_to_cell(i,q)) ;
+////                const size_t id(L._simp2ind.at(q)[simplex]) ;
+//                const size_t id(L.cell_to_index(simplex));
+//                K.set_bit_on(q, id) ;
+//            }
+//        }
+//        Complex_duality_data t = {L,K,tetL.nodes} ;
+//        return t ;
+//    }
+    
+    static Complex_duality_data simplicial_chain_complex_bb (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
 
         std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
-        std::cerr << "Imported mesh" << std::endl;
-        std::cout << _K;
-        // Export _K to a MeshObject to add the icosphere and mesh with tetGen
-        Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
-        std::cerr << "Mesh_object_io from mesh" << std::endl;
-        mesh_L.print_infos();
+        std::cerr << "Imported set of simplices" << std::endl;
+        std::cout << mesh_io;
+        
+        // Create a temporary associated complex (to identify simplices of mesh_io)
+        Chain_complex* _K = new Chain_complex(mesh_io);
 
-        // Closing K by adding the icosphere
+        // Closing mesh_object_io by adding the icosphere
         //  Compute a bounding icosphere
-        Point center = mesh_L.centroid() ;
-        double r = mesh_L.radius(center) ;
+        Point center = mesh_io.centroid() ;
+        double r = mesh_io.radius(center) ;
         Icosphere_object_io<Traits> ico(subdiv,center, BB_ratio*r) ;
         std::cerr << "Icosphere generated" << std::endl;
         ico.print_infos() ;
 
         // Add it to the mesh
-        mesh_L.push_back(ico) ;
+        mesh_io.push_back(ico) ;
         std::cerr << "Mesh concatenation" << std::endl;
-        mesh_L.print_infos() ;
+        mesh_io.print_infos() ;
 
         // Write this mesh to an off file for Tetgen
-        mesh_L.write_off(out_file_prefix) ;
+        mesh_io.write_off(out_file_prefix) ;
         //        const std::string tetgen_path(CMAKE_TETGEN_PATH) ;
         // WARNING: use CGAL 3D triangulation to get rid of tetgen...
         const std::string tetgen_path("/Users/umenohana/Dropbox/G-Mod/TopAlg/code/tetgen1.6.0/build/") ;
@@ -384,20 +443,22 @@ public:
         Chain_complex& L = *new Chain_complex(tetL) ;
         std::cout << "------ L:" << L;
 
-        // Build the Sub_chain_complex_mask encoding _K inside L
+        // Build the Sub_chain_complex_mask encoding K_init inside L
         Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
-        // Visit all cells of _K and activate the corresponding bit in K
-        for (int q=0; q<=_K.dimension(); ++q)
+        // Visit all cells of K_init and activate the corresponding bit in K
+        for (int q=0; q<=_K->dimension(); ++q)
         {
-            for (size_t i=0; i<_K.number_of_cells(q); ++i)
+            for (size_t i=0; i<_K->number_of_cells(q); ++i)
             {
-//                const std::vector<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices())
-                const Simplex&  simplex(_K.index_to_cell(i,q)) ;
+//                const std::vector<size_t>& simplex(K_init._ind2simp.at(q).at(i).get_vertices())
+                const Simplex&  simplex(_K->index_to_cell(i,q)) ;
 //                const size_t id(L._simp2ind.at(q)[simplex]) ;
                 const size_t id(L.cell_to_index(simplex));
                 K.set_bit_on(q, id) ;
             }
         }
+        // Remove the temporary complex
+        delete _K;
         Complex_duality_data t = {L,K,tetL.nodes} ;
         return t ;
     }
@@ -430,9 +491,9 @@ public:
 
 The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 
-Starting from a Cubical_chain_complex `_K`, the method `cubical_chain_complex_bb()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
-- L : complex built of the "full" bounding box of `_K`
-- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying `_K` inside `L`
+Starting from a Cubical_chain_complex `K_init`, the method `cubical_chain_complex_bb()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
+- L : complex built of the "full" bounding box of `K_init`
+- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying `K_init` inside `L`
 
 Use the `frame()` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
 
@@ -452,27 +513,27 @@ public:
     Duality_cubical_complex_tools() {}
 
 
-    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a cubical complex `_K`.
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a cubical complex `K_init`.
      *
-     * `L` is the bounding box of `_K` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `_K`.
+     * `L` is the bounding box of `K_init` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `K_init`.
      *
      * The following figures shows the resulting complex with an initial simple cubical complex (right - sectional view):
      * <img src="HDVF_eight_view1.png" align="center" width=35%/>
      * <img src="HDVF_eight_view2.png" align="center" width=30%/>
      *
-     * \param[in] _K Initial cubical chain complex (working mesh).
+     * \param[in] K_init Initial cubical chain complex (working mesh).
      */
-    static std::pair<Chain_complex&, Sub_chain_complex&> cubical_chain_complex_bb (const Chain_complex& _K)
+    static std::pair<Chain_complex&, Sub_chain_complex&> cubical_chain_complex_bb (const Chain_complex& K_init)
     {
         Cub_object_io<Traits> tmp_L ;
-        tmp_L.dim = _K.dimension() ;
-        tmp_L.N = _K.size_bb() ;
+        tmp_L.dim = K_init.dimension() ;
+        tmp_L.N = K_init.size_bb() ;
         tmp_L.ncubs.resize(tmp_L.dim+1) ;
         // Visit all boolean indices in the BB of _CC and insert corresponding cells in the Cub_object_io of L
-        for (size_t i=0; i<_K.size(); ++i)
+        for (size_t i=0; i<K_init.size(); ++i)
         {
-            const std::vector<size_t> tmpkhal(_K.bindex_to_cell(i)) ;
-            const int dtmp(_K.dimension(tmpkhal)) ;
+            const std::vector<size_t> tmpkhal(K_init.bindex_to_cell(i)) ;
+            const int dtmp(K_init.dimension(tmpkhal)) ;
             (tmp_L.ncubs)[dtmp] += 1 ;
             tmp_L.cubs.push_back(tmpkhal) ;
         }
@@ -481,11 +542,11 @@ public:
         // Build the Sub_chain_complex_mask corresponding to _CC
         Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
         // Visit all cells of _CC and activate the corresponding bit in K
-        for (int q=0; q<=_K.dimension(); ++q)
+        for (int q=0; q<=K_init.dimension(); ++q)
         {
-            for (size_t i=0; i<_K.number_of_cells(q); ++i)
+            for (size_t i=0; i<K_init.number_of_cells(q); ++i)
             {
-                const std::vector<size_t> khal(_K.index_to_cell(i, q)) ;
+                const std::vector<size_t> khal(K_init.index_to_cell(i, q)) ;
                 const size_t j = L.cell_to_index(khal);
                 K.set_bit_on(q,j) ;
             }

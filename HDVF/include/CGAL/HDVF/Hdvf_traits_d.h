@@ -74,7 +74,7 @@ struct Hdvf_traits_d {
         Vector_d bary;
         for (Point p : pts)
             bary += (p-ORIGIN) ;
-        Point_d barycenter = ORIGIN + bary/pts.size() ;
+        Point_d barycenter(ORIGIN + bary/pts.size()) ;
         // Define the PCA matrix by SVD
         Matrix A(pts.size(), K::Dimension::value);
         // Fill the matrix (p[i]-barycenter along line i)
