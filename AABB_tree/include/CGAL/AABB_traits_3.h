@@ -398,6 +398,7 @@ public:
       typedef typename AT::Point Point;
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
+      typedef typename GeomTraits::Boolean Boolean;
   public:
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
@@ -426,7 +427,7 @@ public:
           CGAL::LARGER;
       }
 
-      CGAL::Comparison_result do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
+      Boolean do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
         const Bounding_box& box) const
       {
         typedef typename GeomTraits::FT       FT;
@@ -454,7 +455,7 @@ public:
           d = bxmin - *cci;
           d = square(d);
           if (d > sr)
-            return CGAL::LARGER;
+            return false;
 
           distance = d;
         }
@@ -463,7 +464,7 @@ public:
           d = *cci - bxmax;
           d = square(d);
           if (d > sr)
-            return CGAL::LARGER;
+            return false;
 
           distance = d;
         }
@@ -474,7 +475,7 @@ public:
           d = bymin - *cci;
           d = square(d);
           if (d > sr)
-            return CGAL::LARGER;
+            return false;
 
           distance += d;
         }
@@ -483,7 +484,7 @@ public:
           d = *cci - bymax;
           d = square(d);
           if (d > sr)
-            return CGAL::LARGER;
+            return false;
 
           distance += d;
         }
@@ -494,7 +495,7 @@ public:
           d = bzmin - *cci;
           d = square(d);
           if (d > sr)
-            return CGAL::LARGER;
+            return false;
 
           distance += d;
         }
@@ -503,13 +504,13 @@ public:
           d = *cci - bzmax;
           d = square(d);
           if (d > sr)
-            return CGAL::LARGER;
+            return false;
 
           distance += d;
         }
         // Note that with the way the distance above is computed, the distance is '0' if the box strictly
         // contains the sphere. But since we use '>', we don't exit
-        return (distance <= sr) ? CGAL::SMALLER : CGAL::LARGER;
+        return (distance <= sr);
       }
   };
 

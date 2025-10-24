@@ -30,6 +30,8 @@ struct Custom_traits_Hausdorff
     FT& operator+=(FT){ return *this; }
   };
 
+  typedef bool Boolean;
+
   struct Point_3
   {
     Point_3(){}
