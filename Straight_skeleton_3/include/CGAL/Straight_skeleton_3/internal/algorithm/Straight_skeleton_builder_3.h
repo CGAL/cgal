@@ -30,7 +30,8 @@
 // - 500087
 
 // @fixme:
-// - skeleton arc initial directions are wrong
+// - skeleton arc initial directions are wrong, and also pass an optional time to the save()
+//   function as to draw till that time
 // - handle save times at event time: merge vertices with equal position in output
 
 // @fixme later:
@@ -57,10 +58,13 @@
 //   event of any edge of the facet (probably not worth it, though)
 
 // @todo: cleaning
+// - document the OBJ::save(skeleton)
 // - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
-// - improve the visitor & give access to the skeleton data structure
 
 // @todo
+// - improve the visitor
+// - re-add inside/outside checks since outwards_ exists
+// - do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
 // - add tests; doc figures
 // - Do not accept non manifold inputs, non-triangulated inputs (clarify doc)
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
