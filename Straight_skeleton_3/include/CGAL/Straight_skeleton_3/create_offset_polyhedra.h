@@ -14,9 +14,7 @@
 #include <CGAL/Straight_skeleton_3/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/Straight_skeleton_builder_3.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_perturbation.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
+#include <CGAL/Straight_skeleton_3/create_straight_skeleton_3.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
@@ -117,107 +115,23 @@ template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh,
-                                                     std::vector<FT> save_times, // intentional copy
+                                                     const std::vector<FT>& save_times, // intentional copy
                                                      std::vector<PolygonMeshOut>& results,
                                                      const NamedParametersIn& np_in = parameters::default_values(),
                                                      const NamedParametersOut& np_out = parameters::default_values())
 {
-  namespace SS3 = CGAL::Straight_skeletons_3;
-  namespace SS3i = SS3::internal;
-  namespace SS3io = SS3::IO;
+  namespace SS3i = CGAL::Straight_skeletons_3::internal;
+  namespace SS3io = CGAL::Straight_skeletons_3::IO;
   namespace PMP = CGAL::Polygon_mesh_processing;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
 
   using Geom_traits = typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type;
 
   using Polyhedron = SS3i::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using Transformation = SS3i::algorithm::Polyhedron_transformation<Geom_traits>;
-  using Perturbation = SS3i::algorithm::Polyhedron_perturbation<Geom_traits>;
-  using Self_intersection = SS3i::algorithm::Self_intersection<Geom_traits>;
-  using Straight_skeleton_builder_3 = SS3i::algorithm::Straight_skeleton_builder_3<Geom_traits>;
   using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
 
-  // Get config file path from named parameters if provided, else use default (working directory)
-  SS3::ConfigurationSPtr config = SS3::Configuration::get_instance();
-  std::string str_conf_file = parameters::choose_parameter(parameters::get_parameter(np_in, internal_np::config_file_path),
-                                                           config->find_default_filename());
-
-  CGAL_SS3_TRACE_V(4, "Seek config file @ " << str_conf_file);
-  if (!config->load(str_conf_file)) {
-    CGAL_SS3_TRACE_V(1, "Error: Config file '" << str_conf_file << "' not found.");
-    return false;
-  }
-
-  const std::filesystem::path save_path = choose_parameter(get_parameter(np_in, internal_np::io_path),
-                                                           std::filesystem::current_path());
-
-  CGAL_precondition(!CGAL::is_empty(tmesh));
-  CGAL_precondition(CGAL::is_closed(tmesh));
-  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh));
-  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh));
-
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
-
-  // check that all times are of the same sign (ignoring zeros)
-  for (const FT& time : save_times) {
-    if (CGAL::is_zero(time)) {
-      CGAL_SS3_TRACE_V(1, "Error: time should be non-zero");
-      return false;
-    } else if (CGAL::is_positive(time) != outwards) {
-      CGAL_SS3_TRACE_V(1, "Error: times must all be positive or all negative.");
-      return false;
-    }
-  }
-
-  // The underlying implementation always shrinks the mesh, so for outwards offsetting,
-  // we reverse the face orientations, whether the mesh was outward oriented or not.
-  if (outwards) {
-    for (FT& t : save_times) {
-      t = -t;
-    }
-  }
-
-  // Convert the suface mesh into the SLS3-specific data structure that allows faces with multiple
-  // borders and disconnected facet connected components
-  PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np_in.outward_offsetting(outwards));
-  CGAL_SS3_DEBUG_SPTR(p);
-  Transformation::normalize_facet_planes(p);
-
-  CGAL_SS3_TRACE("Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
-
-  // Perturbation to ensure generic configuration
-  bool safe_mode = true;
-  if (config->is_loaded()) {
-    if ((config->contains("Preprocessing", "check_degenerate_configuration") &&
-         !config->get_Boolean("Preprocessing", "check_degenerate_configuration"))) {
-      safe_mode = false;
-    }
-  }
-
-  PolyhedronSPtr p_mem = p->clone();
-
-  // We always need to ensure that points are exactly on the planes of their incident facets
-  Perturbation::apply_rand_plane_tilts_V3(p);
-
-  if (safe_mode) {
-    for (;;) {
-      if (Perturbation::do_all_plane_pairs_intersect(p) &&
-          Perturbation::do_all_plane_triplets_intersect(p) &&
-          !Self_intersection::has_self_intersecting_surface(p)) {
-        CGAL_SS3_TRACE("Found a good perturbation");
-        break;
-      }
-
-      p = p_mem->clone();
-      Perturbation::apply_rand_plane_tilts_V3(p);
-    }
-  }
-
-  CGAL_SS3_TRACE("Post perturbation: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   // visitor to collect the results at save times
   struct Mesh_collector_visitor
@@ -234,15 +148,12 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
     std::vector<PolyhedronSPtr>& results_;
   };
 
-  auto skel_builder = Straight_skeleton_builder_3::create(p, save_times, save_path);
-
   std::vector<PolyhedronSPtr> results_p;
   Mesh_collector_visitor visitor(results_p);
-  skel_builder->setVisitor(&visitor);
 
   // main call
-  bool success = skel_builder->run();
-  if (!success) {
+  auto ss_ptr = Straight_skeletons_3::internal::construct_skeleton(tmesh, save_times, np_in.visitor(visitor));
+  if (!ss_ptr) {
     CGAL_SS3_TRACE_V(1, "Error: run() returned 'false'");
     return false;
   }
@@ -250,12 +161,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
   if (results_p.size() != save_times.size()) {
     CGAL_SS3_TRACE_V(1, "Error: expected " << save_times.size() << " polyhedra but only got " << results_p.size());
     return false;
-  }
-
-  if (outwards) {
-    for (FT& t : save_times) {
-      t = -t;
-    }
   }
 
   for (std::size_t i=0; i<results_p.size(); ++i) {
@@ -301,7 +206,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
   return true;
 }
 
-} // namespace Straight_skeletons_3
 } // namespace CGAL
 
 #endif /* CGAL_STRAIGHT_SKELETON_CREATE_OFFSET_POLYHEDRA_H */
