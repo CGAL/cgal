@@ -376,8 +376,8 @@ public:
 
         // Insert constraints along the boundary
         for (const ArcSPtr& arc : sheet->arcs()) {
-          NodeSPtr node_src = arc->getNodeSrc();
-          NodeSPtr node_dst = arc->getNodeDst();
+          NodeSPtr node_src = arc->get_node_src();
+          NodeSPtr node_dst = arc->get_node_dst();
           CGAL_SS3_IO_ENABLE_TRACE(" CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
           CGAL_SS3_DEBUG_SPTR(node_src);
           CGAL_SS3_DEBUG_SPTR(node_dst);
@@ -393,8 +393,8 @@ public:
         }
 
         for (const ArcSPtr& contour : sheet->contours()) {
-          NodeSPtr v_src = contour->getNodeSrc();
-          NodeSPtr v_dst = contour->getNodeDst();
+          NodeSPtr v_src = contour->get_node_src();
+          NodeSPtr v_dst = contour->get_node_dst();
           try {
             pcdt.insert_constraint(v_src->point(), v_dst->point());
           } catch(const typename PCDT::Intersection_of_constraints_exception&) {

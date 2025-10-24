@@ -138,11 +138,11 @@ public:
       CGAL_SS3_DEBUG_SPTR(arc);
       CGAL_precondition(!has_incident_arc(arc));
       typename std::list<ArcWPtr>::iterator it = arcs_.insert(arcs_.end(), ArcWPtr(arc));
-      if (arc->getNodeSrc() == this->shared_from_this()) {
-        arc->setNodeSrcListIt(it);
-      } else if (arc->hasNodeDst()) {
-        if (arc->getNodeDst() == this->shared_from_this()) {
-          arc->setNodeDstListIt(it);
+      if (arc->get_node_src() == this->shared_from_this()) {
+        arc->set_node_srcListIt(it);
+      } else if (arc->has_node_dst()) {
+        if (arc->get_node_dst() == this->shared_from_this()) {
+          arc->set_node_dstListIt(it);
         }
       }
     }
@@ -152,14 +152,14 @@ public:
       CGAL_SS3_DEBUG_SPTR(arc);
       CGAL_precondition(has_incident_arc(arc));
       bool result = false;
-      if (arc->getNodeSrc() == this->shared_from_this()) {
-        arcs_.erase(arc->getNodeSrcListIt());
-        arc->setNodeSrcListIt(typename std::list<ArcWPtr>::iterator());
+      if (arc->get_node_src() == this->shared_from_this()) {
+        arcs_.erase(arc->get_node_srcListIt());
+        arc->set_node_srcListIt(typename std::list<ArcWPtr>::iterator());
         result = true;
-      } else if (arc->hasNodeDst()) {
-        if (arc->getNodeDst() == this->shared_from_this()) {
-          arcs_.erase(arc->getNodeDstListIt());
-          arc->setNodeDstListIt(typename std::list<ArcWPtr>::iterator());
+      } else if (arc->has_node_dst()) {
+        if (arc->get_node_dst() == this->shared_from_this()) {
+          arcs_.erase(arc->get_node_dstListIt());
+          arc->set_node_dstListIt(typename std::list<ArcWPtr>::iterator());
           result = true;
         }
       }
@@ -631,25 +631,25 @@ public:
       return std::make_shared<Sheet>();
     }
 
-    FacetSPtr getFacetB() const
+    FacetSPtr get_facet_B() const
     {
       CGAL_SS3_DEBUG_SPTR(facet_b_);
       return facet_b_;
     }
 
-    void setFacetB(const FacetSPtr& facet_b)
+    void set_facet_B(const FacetSPtr& facet_b)
     {
       CGAL_SS3_DEBUG_SPTR(facet_b);
       facet_b_ = facet_b;
     }
 
-    FacetSPtr getFacetF() const
+    FacetSPtr get_facet_F() const
     {
       CGAL_SS3_DEBUG_SPTR(facet_f_);
       return facet_f_;
     }
 
-    void setFacetF(const FacetSPtr& facet_f)
+    void set_facet_F(const FacetSPtr& facet_f)
     {
       CGAL_SS3_DEBUG_SPTR(facet_f);
       facet_f_ = facet_f;
@@ -742,7 +742,7 @@ public:
       return result;
     }
 
-    void addContour(const ArcSPtr& contour)
+    void add_contour(const ArcSPtr& contour)
     {
       CGAL_SS3_DEBUG_SPTR(contour);
       /*std::list<ArcSPtr>::iterator it =*/ contours_.insert(contours_.end(), contour);
@@ -756,8 +756,8 @@ public:
     {
       CGAL_SS3_DEBUG_SPTR(sheet);
 
-      CGAL_precondition((this->facet_b_ == sheet->getFacetB() && this->facet_f_ == sheet->getFacetF()) ||
-                        (this->facet_b_ == sheet->getFacetF() && this->facet_f_ == sheet->getFacetB()));
+      CGAL_precondition((this->facet_b_ == sheet->get_facet_B() && this->facet_f_ == sheet->get_facet_F()) ||
+                        (this->facet_b_ == sheet->get_facet_F() && this->facet_f_ == sheet->get_facet_B()));
 
       // copy all arcs that do not yet exist in the sheet
       for (ArcSPtr arc : sheet->arcs()) {
@@ -769,7 +769,7 @@ public:
       // copy all contours that do not yet exist in the sheet
       for (ArcSPtr contour : sheet->contours()) {
         if (std::find(contours_.begin(), contours_.end(), contour) == contours_.end()) {
-          addContour(contour);
+          add_contour(contour);
         }
       }
 
@@ -1121,7 +1121,7 @@ public:
           break;
         }
 
-        if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
+        if (node != arc->get_node_src() && node != arc->get_node_dst()) {
           CGAL_SS3_SKEL_DS_TRACE("Error: incident arc does not have node as endpoint");
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
           CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
@@ -1172,47 +1172,47 @@ public:
         break;
       }
 
-      if (!arc->getNodeSrc()) {
+      if (!arc->get_node_src()) {
         CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have source");
         result = false;
         break;
       }
 
-      if (std::find(nodes_.begin(), nodes_.end(), arc->getNodeSrc()) == nodes_.end()) {
+      if (std::find(nodes_.begin(), nodes_.end(), arc->get_node_src()) == nodes_.end()) {
         CGAL_SS3_SKEL_DS_TRACE("Error: arc source is not a node present in the skeleton's node list");
-        CGAL_SS3_SKEL_DS_TRACE(arc->getNodeSrc()->to_string());
+        CGAL_SS3_SKEL_DS_TRACE(arc->get_node_src()->to_string());
         result = false;
         break;
       }
 
-      std::list<ArcWPtr> warcs = arc->getNodeSrc()->arcs();
+      std::list<ArcWPtr> warcs = arc->get_node_src()->arcs();
       if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
         CGAL_SS3_SKEL_DS_TRACE("Error: arc's source node does not have arc");
         CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
-        CGAL_SS3_SKEL_DS_TRACE(arc->getNodeSrc()->to_string());
+        CGAL_SS3_SKEL_DS_TRACE(arc->get_node_src()->to_string());
         result = false;
         break;
       }
 
-      if (arc->hasNodeDst()) {
-        if (std::find(nodes_.begin(), nodes_.end(), arc->getNodeDst()) == nodes_.end()) {
+      if (arc->has_node_dst()) {
+        if (std::find(nodes_.begin(), nodes_.end(), arc->get_node_dst()) == nodes_.end()) {
           CGAL_SS3_SKEL_DS_TRACE("Error: arc destination is not a node present in the skeleton's node list");
-          CGAL_SS3_SKEL_DS_TRACE(arc->getNodeDst()->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(arc->get_node_dst()->to_string());
           result = false;
           break;
         }
 
-        warcs = arc->getNodeDst()->arcs();
+        warcs = arc->get_node_dst()->arcs();
         if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
           CGAL_SS3_SKEL_DS_TRACE("Error: arc's target node does not have arc");
           CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->getNodeDst()->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(arc->get_node_dst()->to_string());
           result = false;
           break;
         }
       } else {
         if (is_partial) {
-          if (!arc->hasDirection()) {
+          if (!arc->has_direction()) {
             CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination nor direction (partial skeleton)");
             result = false;
             break;
@@ -1274,12 +1274,12 @@ public:
         result = false;
         break;
       }
-      if (!polyhedron_->has_facet(sheet->getFacetB())) {
+      if (!polyhedron_->has_facet(sheet->get_facet_B())) {
         CGAL_SS3_SKEL_DS_TRACE("Error: sheet's facet B is not in the polyhedron");
         CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
         result = false;
       }
-      if (!polyhedron_->has_facet(sheet->getFacetF())) {
+      if (!polyhedron_->has_facet(sheet->get_facet_F())) {
         CGAL_SS3_SKEL_DS_TRACE("Error: sheet's facet F is not in the polyhedron");
         CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
         result = false;
@@ -1332,9 +1332,9 @@ public:
           break;
         }
 
-        arc_nodes[arc->getNodeSrc()]++;
-        if (arc->hasNodeDst()) {
-          arc_nodes[arc->getNodeDst()]++;
+        arc_nodes[arc->get_node_src()]++;
+        if (arc->has_node_dst()) {
+          arc_nodes[arc->get_node_dst()]++;
         }
         for (auto [node, count] : arc_nodes) {
           if (count > 2) {
@@ -1376,8 +1376,8 @@ public:
         }
 
         // Check that contour has two valid, distinct incident nodes
-        NodeSPtr node_src = contour->getNodeSrc();
-        NodeSPtr node_dst = contour->getNodeDst();
+        NodeSPtr node_src = contour->get_node_src();
+        NodeSPtr node_dst = contour->get_node_dst();
         if (!node_src || !node_dst) {
           CGAL_SS3_SKEL_DS_TRACE("Error: contour does not have two valid incident nodes");
           CGAL_SS3_SKEL_DS_TRACE(contour->to_string());

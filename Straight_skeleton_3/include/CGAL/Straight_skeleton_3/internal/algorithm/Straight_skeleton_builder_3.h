@@ -578,12 +578,12 @@ public:
       arcs_out.precision(17);
       for (ArcSPtr arc : skeleton_->arcs()) {
         arcs_out << "2 ";
-        arcs_out << arc->getNodeSrc()->point() << " ";
-        if (arc->hasNodeDst()) {
-          arcs_out << arc->getNodeDst()->point() << "\n";
+        arcs_out << arc->get_node_src()->point() << " ";
+        if (arc->has_node_dst()) {
+          arcs_out << arc->get_node_dst()->point() << "\n";
         } else {
-          const Point_3& src_pt = arc->getNodeSrc()->point();
-          const Vector_3& dir = arc->getDirection();
+          const Point_3& src_pt = arc->get_node_src()->point();
+          const Vector_3& dir = arc->get_direction();
           constexpr double ray_length = 0.1; // @todo relative value
           Point_3 ray_pt = src_pt + ray_length * dir;
           arcs_out << ray_pt << "\n";
@@ -743,13 +743,11 @@ public:
     }
 
     result = Sheet::create();
-    result->add_edge(edge);
-
     result->set_plane(plane_sheet);
-    result->setFacetB(facet_b);
-    result->setFacetF(facet_f);
+    result->set_facet_B(facet_b);
+    result->set_facet_F(facet_f);
 
-    Hds_utils::set_sheet(edge, result);
+    set_sheet(edge, result);
 
     NodeSPtr node_src = Hds_utils::get_node(edge->get_vertex_src());
     NodeSPtr node_dst = Hds_utils::get_node(edge->get_vertex_dst());
@@ -891,7 +889,7 @@ public:
       // Contours are useful to get a closed polygon (with holes) to draw sheets.
       ArcSPtr contour = std::make_shared<Arc>(Hds_utils::get_node(edge->get_vertex_src()),
                                               Hds_utils::get_node(edge->get_vertex_dst()));
-      sheet->addContour(contour);
+      sheet->add_contour(contour);
 
       skeleton_->add_sheet(sheet);
 #endif
@@ -4368,8 +4366,8 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_src)->closeArc(node);
-    Hds_utils::get_arc(vertex_dst)->closeArc(node);
+    Hds_utils::get_arc(vertex_src)->close_arc(node);
+    Hds_utils::get_arc(vertex_dst)->close_arc(node);
 
     Hds_utils::get_sheet(edge)->add_node(node);
     Hds_utils::clear_sheet(edge);
@@ -4673,9 +4671,9 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(edge_toremove_1->src(facet))->closeArc(node);
-    Hds_utils::get_arc(edge_toremove_1->dst(facet))->closeArc(node);
-    Hds_utils::get_arc(edge_toremove_2->dst(facet))->closeArc(node);
+    Hds_utils::get_arc(edge_toremove_1->src(facet))->close_arc(node);
+    Hds_utils::get_arc(edge_toremove_1->dst(facet))->close_arc(node);
+    Hds_utils::get_arc(edge_toremove_2->dst(facet))->close_arc(node);
 
     Hds_utils::get_sheet(edge_toremove_1)->add_node(node);
     Hds_utils::get_sheet(edge_toremove_2)->add_node(node);
@@ -4810,7 +4808,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 3; ++i) {
-      Hds_utils::get_arc(vertices[i])->closeArc(node);
+      Hds_utils::get_arc(vertices[i])->close_arc(node);
     }
     std::array<EdgeSPtr, 3> edges = event->get_edges();
     for (unsigned int i = 0; i < 3; ++i) {
@@ -4935,7 +4933,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
-      Hds_utils::get_arc(vertices[i])->closeArc(node);
+      Hds_utils::get_arc(vertices[i])->close_arc(node);
     }
     for (unsigned int i = 0; i < 4; ++i) {
       Hds_utils::get_sheet(edges[i])->add_node(node);
@@ -5060,7 +5058,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
-      Hds_utils::get_arc(vertices[i])->closeArc(node);
+      Hds_utils::get_arc(vertices[i])->close_arc(node);
     }
     for (unsigned int i = 0; i < 5; ++i) {
       Hds_utils::get_sheet(edges[i])->add_node(node);
@@ -5161,7 +5159,7 @@ public:
     skeleton_->add_node(node);
 
     for (unsigned int i = 0; i < 4; ++i) {
-      Hds_utils::get_arc(vertices[i])->closeArc(node);
+      Hds_utils::get_arc(vertices[i])->close_arc(node);
     }
     for (unsigned int i = 0; i < 6; ++i) {
       Hds_utils::get_sheet(edges[i])->add_node(node);
@@ -5280,8 +5278,8 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_1)->closeArc(node);
-    Hds_utils::get_arc(vertex_2)->closeArc(node);
+    Hds_utils::get_arc(vertex_1)->close_arc(node);
+    Hds_utils::get_arc(vertex_2)->close_arc(node);
 
     Hds_utils::get_sheet(edge_11)->add_node(node);
     Hds_utils::get_sheet(edge_12)->add_node(node);
@@ -5405,8 +5403,8 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_1)->closeArc(node);
-    Hds_utils::get_arc(vertex_2)->closeArc(node);
+    Hds_utils::get_arc(vertex_1)->close_arc(node);
+    Hds_utils::get_arc(vertex_2)->close_arc(node);
 
     for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
       for (EdgeWPtr edge_w : vertex->edges()) {
@@ -5545,10 +5543,10 @@ public:
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_src())->closeArc(node);
+      Hds_utils::get_arc(edge_1->get_vertex_src())->close_arc(node);
     }
     if (facet_1_dst == edge_2->get_facet_L() || facet_1_dst == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_dst())->closeArc(node);
+      Hds_utils::get_arc(edge_1->get_vertex_dst())->close_arc(node);
     }
 
     for (EdgeWPtr edge_w : vertex->edges()) {
@@ -5723,10 +5721,10 @@ public:
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_src())->closeArc(node);
+      Hds_utils::get_arc(edge_1->get_vertex_src())->close_arc(node);
     }
     if (facet_1_dst == edge_2->get_facet_L() || facet_1_dst == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_dst())->closeArc(node);
+      Hds_utils::get_arc(edge_1->get_vertex_dst())->close_arc(node);
     }
 
     std::array<EdgeSPtr, 4> edges;
@@ -5944,8 +5942,8 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex_1)->closeArc(node);
-    Hds_utils::get_arc(vertex_2)->closeArc(node);
+    Hds_utils::get_arc(vertex_1)->close_arc(node);
+    Hds_utils::get_arc(vertex_2)->close_arc(node);
 
     for (EdgeSPtr e : {edge_11, edge_12, edge_21, edge_22}) {
       Hds_utils::get_sheet(e)->add_node(node);
@@ -6089,10 +6087,10 @@ public:
     FacetSPtr facet_1_dst = edge_1->get_facet_dst();
 
     if (facet_1_src == facet_l2 || facet_1_src == facet_r2) {
-      Hds_utils::get_arc(edge_1->get_vertex_src())->closeArc(node);
+      Hds_utils::get_arc(edge_1->get_vertex_src())->close_arc(node);
     }
     if (facet_1_dst == facet_l2 || facet_1_dst == facet_r2) {
-      Hds_utils::get_arc(edge_1->get_vertex_dst())->closeArc(node);
+      Hds_utils::get_arc(edge_1->get_vertex_dst())->close_arc(node);
     }
 
     Hds_utils::get_sheet(edge_1)->add_node(node);
@@ -6232,7 +6230,7 @@ public:
     node->set_point(point);
     skeleton_->add_node(node);
 
-    Hds_utils::get_arc(vertex)->closeArc(node);
+    Hds_utils::get_arc(vertex)->close_arc(node);
 
     for (EdgeWPtr edge_w : vertex->edges()) {
       if (EdgeSPtr edge = edge_w.lock()) {
