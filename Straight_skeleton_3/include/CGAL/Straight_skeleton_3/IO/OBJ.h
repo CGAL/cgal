@@ -54,14 +54,14 @@ class Straight_skeleton_3;
 namespace IO {
 
 /**
- * Wavefront obj file format
+ * Wavefront OBJ file format
  */
 class OBJFile
 {
 public:
   /**
-    * It is impossible for an obj file to store holes inside a facet,
-    * so we triangulate facet in this case. (@todo)
+    * It is impossible for an .obj file to store holes inside a facet,
+    * so we triangulate facets in this case.
     */
   template <typename Traits>
   static bool save(const std::string& filename,
@@ -324,8 +324,8 @@ public:
     // Write vertices
     for (const NodeSPtr& node : skeleton->nodes()) {
       const Point_3& point = node->point();
-      CGAL_SS3_IO_ENABLE_TRACE("Node's #arcs " << node->degree());
-      CGAL_SS3_IO_ENABLE_TRACE("Node's #sheets " << node->sheets().size());
+      CGAL_SS3_IO_TRACE("Node's #arcs " << node->degree());
+      CGAL_SS3_IO_TRACE("Node's #sheets " << node->sheets().size());
 
       if (convert_to_double) {
         oss << "v " << CGAL::to_double(point.x()) << " "

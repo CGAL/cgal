@@ -29,40 +29,42 @@
 #include <vector>
 
 namespace CGAL {
-namespace Straight_skeletons_3 {
 
 /*!
  * \ingroup PkgStraightSkeleton3OffsettingFunctions
  *
- * Given a range of values, this function generates face offsets of an input triangle mesh.
+ * This function generates face offsets of an input triangle mesh at user-specified times.
  *
- * The offset meshes are constructed by translating the faces of the input mesh by a distance
- * that depends on the specified time and their respective weights (speeds). During
- * offsetting, elements of the mesh interact with each other (merging, splitting, etc.).
+ * The offset polyhedra are constructed by progressively translating the faces of the input mesh
+ * along their normal directions at a speed proportional to their weight and treating events
+ * (face collapses, edge collapses, split events, etc.) as they occur. This process is
+ * equivalent to the construction of a straight skeleton, and the offset polyhedra correspond
+ * to the intermediate states of the input mesh during the straight skeleton construction.
  *
- * Positive time values signify outward offsetting, while negative values correspond to inward offsetting.
+ * Positive time values correspond to outward offsetting, while negative values or an empty times range
+ * correspond to inward offsetting.
  *
- * \warning An epsilon perturbation is always applied to the input mesh's geometry as to avoid so-called
- * degenerate positions, meaning a configuration where any three supporting planes of the facets
- * of the input mesh do not intersect in a single point.
+ * \warning An epsilon perturbation is always applied to the input mesh's geometry as to avoid
+ * degenerate configurations, See \ref Straight_skeleton_3Limitations for more information.
  *
- * \tparam TriangleMesh must be a model of `FaceListGraph`, `HalfedgeListGraph`
+ * \tparam TriangleMeshIn must be a model of `FaceListGraph`, `HalfedgeListGraph`
  * \tparam PolygonMeshOut must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
- * \tparam NamedParametersIn must be a model of `NamedParameters`
- * \tparam NamedParametersOut must be a model of `NamedParameters`
+ * \tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tmesh the input triangle mesh whose faces are to be offset
- * \param save_times the times at which the offset meshes are to be constructed
- * \param results the output vector of meshes that will contain the constructed offset meshes
- * \param np_in the input named parameters
+ * \param save_times the times at which the offset polyhedra are to be constructed
+ * \param results the output vector of polyhedra that will contain the constructed offset polyhedra
+ * \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *              among the ones listed below
  *  \cgalNamedParamsBegin
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
- *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
  *                     as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
  *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
  *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                      must be available in `TriangleMesh`.}
+ *                      must be available in `TriangleMeshIn`.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{geom_traits}
  *      \cgalParamDescription{an instance of a geometric traits class}
@@ -71,44 +73,44 @@ namespace Straight_skeletons_3 {
  *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type
  *                      and must provide exact predicates and exact constructions.}
  *    \cgalParamNEnd
- *    \cgalParamNBegin{face_weight}
+ *    \cgalParamNBegin{face_weight_map}
  *      \cgalParamDescription{a property map associating to each face the weight (speed) of the face.}
- *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%face_descriptor`
  *                     as key type and `double` as value type}
  *      \cgalParamDefault{A constant property map with uniform weight 1.0 for all faces.}
  *      \cgalParamExtra{Precondition: all face weights must be positive.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{config_file_path}
  *      \cgalParamDescription{the path to a configuration file to the algorithm. See the documentation
- *                            of the `Configuration` class for details.}
+ *                            of the class `CGAL::Straight_skeletons_3::Configuration` for details.}
  *      \cgalParamType{`std::string`}
  *      \cgalParamDefault{The path to a default configuration file which must be found in the working directory.}
  *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
- * \param np_out the output named parameters
+ * \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *               among the ones listed below
  *  \cgalNamedParamsBegin
- *    \cgalParamNBegin{face_weight}
- *      \cgalParamDescription{a property map filled by this function, associating to each face
- *                            the weight (speed) of the corresponding face in the input.}
- *      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
- *                     as key type and `double` as value type}
- *      \cgalParamDefault{unused}
+ *    \cgalParamNBegin{face_weight_map}
+ *     \cgalParamDescription{a property map filled by this function, associating to each output face
+ *                           the weight (speed) of its corresponding face in the input.}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%face_descriptor`
+ *                    as key type and `double` as value type}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{do_not_triangulate_faces}
+ *     \cgalParamDescription{a Boolean used to specify whether the offset meshes' faces
+ *                           should be triangulated or not.}
+ *     \cgalParamDefault{`false` (i.e., faces are not triangulated)}
+ *     \cgalParamExtra{Note that sometimes faces must be triangulated as to be representable in
+ *                     an halfedge data structure, for example faces with holes.}
  *    \cgalParamNEnd
- *   \cgalNamedParamsBegin
- *     \cgalParamNBegin{do_not_triangulate_faces}
- *       \cgalParamDescription{a Boolean used to specify whether the offset meshes' faces
- *                             should be triangulated or not.}
- *       \cgalParamDefault{`false` (i.e., faces are not triangulated)}
- *       \cgalParamExtra{Note that sometimes faces must be triangulated to be representable,
- *                       such as faces with holes.}
- *     \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
- * \pre save offsets should be either all positive, or all negative.
- * \pre the input mesh is a closed, outward-oriented, triangle mesh without self-intersections.
- *
  * \return `true` if offset meshes were successfully constructed; `false` otherwise.
+ *
+ * \pre Save offsets should be either all positive, or all negative.
+ * \pre The input mesh is a closed, outward-oriented, triangle mesh without self-intersections.
  */
 template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename FT,

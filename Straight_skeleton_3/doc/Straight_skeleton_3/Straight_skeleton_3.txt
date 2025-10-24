@@ -21,18 +21,41 @@ namespace CGAL {
 This package implements weighted straight skeletons of three-dimensional polyhedra.
 An intuitive way to think of the construction of straight skeletons is to imagine that wavefronts
 (or grassfires) are spawned at each face of the polyhedron, and are moving inward, parallel
-to the face. As the fronts progress, the shapes of faces change depending on the angles formed
-between polyhedral faces, and topological changes happen as faces collide or disappear.
-Under this transformation, polyhedral edges move along the angular bisector of the planes
-subtending their incident faces, tracing a partition of the interior of the polyhedron:
-the straight skeleton.
+to the face. As the fronts progress, vertices and edges of the polyhedron shift
+along the angular bisector of the planes subtending their incident faces
+and the shape of faces change depending on the angles formed between polyhedral faces.
 
 \cgalFigureAnchor{SLS3Progress}
 <center>
-<img src="sls_progress.png" style="max-width:40%;"/>
+<img src="sls_progress.png" style="max-width:60%;"/>
 </center>
 \cgalFigureCaptionBegin{SLS3Progress}
+Illustration of the shifting of polyhedral elements during wavefront propagation.
+Vertices move along angular trisectors, and edges along angular bisectors.
+\cgalFigureCaptionEnd
+
+During movement, topological changes may happen as faces collide or disappear.
+
+\cgalFigureAnchor{SLS3ContactEvent}
+<center>
+<img src="sls_contact_event.png" style="max-width:30%;"/>
+</center>
+\cgalFigureCaptionBegin{SLS3ContactEvent}
+A concave vertex hits a face during wavefront propagation, forming a tunnel.
+The polyhedron's combinatorial structure must be updated to create a hole in the opposite face.
+\cgalFigureCaptionEnd
+
+The trace of shifting (and changing) polyhedral elements under this transformation forms a complex structure,
+the <em>straight skeleton</em>. It can be seen as a partition of the interior of the polyhedron
+into regions corresponding to the original faces of the polyhedron.
+
+\cgalFigureAnchor{SLS3Skeleton}
+<center>
+<img src="sls_skeleton.png" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{SLS3Skeleton}
 Construction of a straight skeleton: the wavefront interfaces define the straight skeleton.
+The traces of shifting vertices draw arcs of the skeleton (in red).
 \cgalFigureCaptionEnd
 
 \section Straight_skeleton_3Definitions Definitions
@@ -41,7 +64,7 @@ We now give precise definitions of the various concepts relevant to this package
 
 \subsection Straight_skeleton_3PolyhedronDef Polyhedron
 
-The definition of polyhedron in use here is slightly more generic than what is usually found
+The definition of polyhedron in use here is standard and in line with what can be found
 in the rest of \cgal, for example in \ref PkgSurfaceMesh, \ref PkgPolyhedron,
 or \ref PkgPolygonMeshProcessing.
 
@@ -72,15 +95,16 @@ Example of valid polyhedral input.
 
 A significant limitation is however present in the current implementation: the polyhedron must be
 in a general position, i.e. all combinations of three planes must intersect in a single point.
-We refer to \ref Straight_skeleton_3Limitations for more details.
+Section \ref Straight_skeleton_3Limitations discusses this limitation in more details.
 
 \subsection Straight_skeleton_3StraightSkeletonDef Straight Skeleton
 
 We call the structural elements of an input polyhedron <em>contour elements</em>.
 Given a contour face called the <em>source face</em>, its <em>offset face</em> at time `t` is a face
 parallel and with the same orientation such that the Euclidean distance between the planes
-supporting both faces is exactly `t`. An offset face is always located to the bounded side of
-its source face, which is an oriented plane.
+supporting both faces is exactly `t`. In mathematical terms, if the supporting plane of the source face
+is described through the equation `ax+by+cz+d=0`, then the supporting plane of the offset face at distance `t` is
+`ax+by+cz+d-t=0`. An offset face is always located to the bounded side of its source face, which is an oriented plane.
 
 The straight skeleton is spawned by applying a continuous, <I>inward offsetting</I> to the contour faces.
 Under this transformation, polyhedral vertices (edges) move along the angular trisector (bisector)
@@ -102,14 +126,14 @@ Straight skeletons of various polyhedra.
 \cgalFigureEnd
 
 Constructing the exterior skeleton of the outer contour is achieved by reversing the orientation
-of the polyhedral faces, and shifting outwards. Note that the exterior skeleton is unbounded.
+of the polyhedral faces, and shifting outwards. Note that the exterior skeleton is always unbounded.
 
 \cgalFigureAnchor{SLS3Exterior}
 <center>
-<img src="exterior_skeleton.png" style="max-width:50%;"/>
+<img src="sls_exterior_skeleton.png" style="max-width:50%;"/>
 </center>
 \cgalFigureCaptionBegin{SLSExterior}
-Exterior skeleton
+Exterior skeleton, only complete sheets are drawn.
 \cgalFigureCaptionEnd
 
 \subsection Straight_skeleton_3WeightedStraightSkeletonDef Weighted Straight Skeleton
@@ -117,16 +141,16 @@ Exterior skeleton
 Weighted straight skeletons are a generalization of straight skeletons: contour faces are assigned
 a weight, which can be understood as assigning a speed to the wavefront spawned from
 the contour face. Vertices (edges) no longer move along the angular trisectors (bisectors)
-between three (two) contour faces, but along a <em>weighted</em> trisector (bisector).
+between three (two) contour faces, but along the <em>weighted</em> trisector (bisector).
 
 This \cgal package supports positive multiplicative weights: if the supporting plane of a contour face
-is described through the equation `ax+by+cz+d=0`, then the supporting plane of the offset face
-at distance `t` is `ax+by+cz+d-t=0`. With a multiplicative weight `w`, the equation becomes `ax+by+cz+d-wt=0`.
-Therefore, a larger weight implies a faster moving front.
+is described through the equation `ax+by+cz+d=0`, and the supporting plane of the offset face
+at distance `t` is `ax+by+cz+d-t=0` then with a multiplicative weight `w`, the equation becomes
+`ax+by+cz+d-wt=0`. Therefore, a larger weight implies a faster moving front.
 
 \cgalFigureAnchor{SLS3Weight}
 <center>
-<img src="sls_weights.png" style="max-width:70%;"/>
+<img src="sls_weights.png" style="max-width:50%;"/>
 </center>
 \cgalFigureCaptionBegin{SLSWeight}
 An unweighted straight skeleton (leftmost) and a randomly weighted straight skeleton of the same shape.
@@ -142,7 +166,7 @@ of a ball with a void.
 <img src="complex_skeleton_region_topology.png" style="max-width:75%;"/>
 </center>
 \cgalFigureCaptionBegin{SLS3RegionTopology}
-
+When weighted straight skeletons are considered, faces can have complex topologies.
 \cgalFigureCaptionEnd
 
 \subsection Straight_skeleton_32D3DComparison Comparison with Two-dimensional Straight Skeletons
@@ -190,8 +214,8 @@ the straight skeleton and the face offsetting of a polyhedron are not uniquely d
 
 \section Straight_skeleton_3PolyhedronOffsetting Polyhedron Offsetting
 
-The straight skeleton is defined by the trace of the moving edges, but one can also consider
-the state of the polyhedron at a fixed time `t` made up of the translated elements.
+The straight skeleton is defined by the trace of the moving polyhedral elements, but one can also consider
+the state of the polyhedron at a fixed time `t` during the offsetting process.
 This is the <I>offset polyhedron</I>. We call the process of computing an offset polyhedron
 <em>polyhedron face offsetting</em>, or simply <em>polyhedron offsetting</em>.
 
@@ -202,8 +226,8 @@ If the source polyhedron has holes, any of the offset polyhedra can have holes i
 as well have no holes at all (e.g., if the distance is sufficiently large). Each offset polyhedron
 has the same orientation as the source polyhedron.
 
-Outward offsetting, similarly to exterior straight skeletons, are achieved by reversing the orientation of
-the faces of the input polyhedron.
+Outward offsetting, similarly to exterior straight skeletons, is achieved by reversing the orientation
+of the faces of the input polyhedron.
 
 \cgalFigureAnchor{SLS3OutwardOffset}
 <center>
@@ -216,7 +240,7 @@ Outward offsets of the armadillo shape.
 \section Straight_skeleton_3Implementation Implementation
 
 The algorithm implemented in this package is an extension of the method used
-in \ref PkgStraightSkeleton2Ref: future modifications of the combinatorial structure
+in \ref PkgStraightSkeleton2Ref "2D Straight Skeleton": future modifications of the combinatorial structure
 of the polyhedron, called <em>events</em>, are detected and treated in a chronological order.
 While in 2D there are only 2 event types, edge events and split events, there exists 13 different
 event types in 3D, which can be regrouped in two categories: <em>vanish events</em>,
@@ -230,7 +254,7 @@ than simply drawing an isoline at height `t` of an existing straight skeleton. A
 functions of this package compute the straight skeleton <em>and</em> the offset polyhedron
 simultaneously.
 
-The main function to construct an offset polyhedron is `CGAL::Straight_skeletons_3::face_offset()`.
+The main function to construct offset polyhedra is `CGAL::create_straight_skeleton_and_offset_polyhedra_3()`.
 It enables building multiple offset polyhedra without recomputing the straight skeleton.
 In addition to the named parameters of this function, fine tuning of the algorithm is available
 to advanced users through a configuration file, see the class `CGAL::Straight_skeletons_3::Configuration`.
@@ -252,10 +276,10 @@ which means that only having a high degree of unique incident planes makes a ver
 
 \cgalFigureAnchor{SLS3HighDegreeVertices}
 <center>
-<img src="sls_high_degrees.png" style="max-width:40%;"/>
+<img src="sls_high_degrees.png" style="max-width:20%;"/>
 </center>
 \cgalFigureCaptionBegin{SLS3HighDegreeVertices}
-Some high degree vertices are problematic; others are not because of coplanar face merging.
+Some high-degree vertices are problematic; others are not because of coplanar face merging.
 \cgalFigureCaptionEnd
 
 A second, significant limitation is that the algorithm can only be applied to polyhedra in
@@ -272,8 +296,13 @@ arise while doing inexact square roots.
 The very basis of straight skeleton construction is the computation of the intersection of moving
 elements. In 3D, this central operation is the intersection of four (shifting) supporting planes,
 answering the question: when and where will these four planes intersect in a single point. The answers
-are the time and position of an event involving these four faces. For the computation to be correct,
+are the time and position of an event involving these four faces. For the computation to be meaningful,
 these planes must be normalized. This inevitably introduces square root computations.
+
+Another constraint comes from the splitting of high-degree vertices at the start of the algorithm.
+To determine whether a given combination of incident planes forms a valid degree 3 graph,
+numerous self-intersection tests must be performed. These tests currently rely on testing
+self-intersections of shifted faces, which requires exact constructions. [AND REALLY SHOULD NOT...]
 
 Consequently, the current algorithm requires a kernel providing <em>at least</em> exact predicates
 and exact constructions, possibly with exact square roots. Due to the mandatory perturbation mechanisms
@@ -287,16 +316,18 @@ Thus, we advise the use of the kernel `CGAL::Exact_predicates_exact_construction
 
 \section Straight_skeleton_3Example Examples
 
-\subsection Straight_skeleton_2CreateOffsetPolyhedron Constructing Offset Polyhedra
+\subsection Straight_skeleton_3CreateStraightSkeleton Construction and Drawing of a Straight Skeleton
+
+The following example illustrates how to construct an outer straight skeleton and draw it.
+
+\cgalExample{Straight_skeleton_3/create_straight_skeleton_3.cpp}
+
+\subsection Straight_skeleton_3CreateOffsetPolyhedron Constructing Offset Polyhedra
 
 The following example illustrates how to construct multiple offset polyhedra from the same polyhedron
 input.
 
-\cgalExample{Straight_skeleton_3/face_offset.cpp}
-
-\subsection Straight_skeleton_3LowlevelAPI Low Level API
-
-XXX
+\cgalExample{Straight_skeleton_3/create_offset_polyhedra.cpp}
 
 \section Straight_skeleton_3ImplementationHistory Implementation History
 

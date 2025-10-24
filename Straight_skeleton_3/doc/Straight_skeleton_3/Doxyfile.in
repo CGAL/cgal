@@ -2,3 +2,7 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Straight Skeleton and Polyhedron Offsetting"
 
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true
+

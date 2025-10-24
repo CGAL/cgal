@@ -32,17 +32,38 @@ namespace CGAL {
 /*!
  * \ingroup PkgStraightSkeleton3Classes
  *
- * This is the 3D straight skeleton.
+ * The class `Straight_skeleton_3` is a data structure providing access
+ * to the combinatorial and geometrical information of a 3D straight skeleton.
+ *
+ * A 3D straight skeleton is composed of nodes, arcs, and sheets.
+ *
+ * - Nodes are points at which topological changes have occurred during the propagation of the faces
+ *   of the polyhedron.
+ * - Arcs connect two nodes, and represent the trace of a vertex of the polyhedron during
+ *   the propagation of the faces of the polyhedron. The vertex spawned at the source of the arc,
+ *   and disappears at the destination of the arc.
+ * - Sheets are 2D surfaces connecting arcs and nodes, representing the trace of the edges
+ *   of the polyhedron during the propagation of the faces.
+ *
+ * If a maximal propagation time was set during construction of the skeleton (this is necessarily
+ * the case for outward offsetting), the straight skeleton may be partial, i.e., some arcs
+ * and sheets may be unbounded.
+ *
+ * \tparam Traits_ must be a model of `Kernel` and be the same type as the one used to
+ *         construct the straight skeleton.
  */
 template <typename Traits_>
 class Straight_skeleton_3
   : public std::enable_shared_from_this<Straight_skeleton_3<Traits_> >
 {
-public:
+  /*!
+  * Convenience typedef
+  */
   using Traits = Traits_;
   using Polyhedron = Straight_skeletons_3::internal::HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
+public:
   using StraightSkeletonWPtr = std::weak_ptr<Straight_skeleton_3<Traits> >;
   using StraightSkeletonSPtr = std::shared_ptr<Straight_skeleton_3<Traits> >;
 
@@ -58,18 +79,40 @@ public:
   /*!
   * \ingroup PkgStraightSkeleton3Classes
   *
-  * This is the 3D straight skeleton node class.
+  * The class `Node` represents a node of the straight skeleton, i.e., a combinatorial entity
+  * representing a point in 3D space at which an event has occurred during the propagation
+  * of the faces of the polyhedron.
+  *
+  * A node stores its 3D position, the time at which it was created, and the incident arcs and sheets.
+  *
+  * \sa `CGAL::Straight_skeleton_3`
+  * \sa `CGAL::Straight_skeleton_3::Arc`
+  * \sa `CGAL::Straight_skeleton_3::Sheet`
   */
   class Node
     : public std::enable_shared_from_this<Node>
   {
+  public:
+    /*!
+    * the field type used for coordinates and time values.
+    */
     using FT = typename Traits::FT;
+
+    /*!
+    * the point type used for the position of the node.
+    */
     using Point_3 = typename Traits::Point_3;
 
-  private:
     using NodeSPtr = std::shared_ptr<Node>;
+    /*!
+    * the weak pointer type to an arc.
+    */
     using ArcWPtr = std::weak_ptr<Arc>;
     using ArcSPtr = std::shared_ptr<Arc>;
+
+    /*!
+    * the weak pointer type to a sheet.
+    */
     using SheetWPtr = std::weak_ptr<Sheet>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
@@ -83,6 +126,9 @@ public:
       return std::make_shared<Node>();
     }
 
+    /*!
+    * returns the position of the node.
+    */
     const Point_3& point() const
     {
       return point_;
@@ -93,6 +139,9 @@ public:
       this->point_ = point;
     }
 
+    /*!
+    * returns the time at which the node was created.
+    */
     const FT& time() const
     {
       return time_;
@@ -123,6 +172,9 @@ public:
       this->list_it_ = list_it;
     }
 
+    /*!
+    * returns a unique ID of the node.
+    */
     int get_ID() const
     {
       return this->id_;
@@ -227,11 +279,17 @@ public:
       arcs_.clear();
     }
 
+    /*!
+    * return the list of incident arcs.
+    */
     std::list<ArcWPtr>& arcs()
     {
       return this->arcs_;
     }
 
+    /*!
+    * return the list of incident sheets.
+    */
     std::list<SheetWPtr>& sheets()
     {
       return this->sheets_;
@@ -250,6 +308,9 @@ public:
       return result;
     }
 
+    /*!
+    * returns combinatorial and geometrical information about the node as a string.
+    */
     std::string to_string() const
     {
       std::string result("Node(");
@@ -302,17 +363,49 @@ public:
   };
 
 public:
+  /*!
+  * \ingroup PkgStraightSkeleton3Classes
+  *
+  * The class `Arc` represents an arc of the straight skeleton, i.e., a connection between two nodes.
+  *
+  * If the skeleton is partial because the propagation was interrupted, some arcs may be unbounded
+  * and have only a source node. In this case, the arc stores a direction vector instead
+  * of a destination node.
+  *
+  * \sa `CGAL::Straight_skeleton_3`
+  * \sa `CGAL::Straight_skeleton_3::Node`
+  * \sa `CGAL::Straight_skeleton_3::Sheet`
+  */
   class Arc
     : public std::enable_shared_from_this<Arc>
   {
+  public:
+    /*!
+    * the vector type used for the direction of the arc.
+    */
     using Vector_3 = typename Traits::Vector_3;
+    /*!
+    * the line type used for the supporting line of the arc.
+    */
     using Line_3 = typename Traits::Line_3;
 
-  private:
+    /*!
+    * the shared pointer type to a node.
+    */
     using NodeSPtr = std::shared_ptr<Node>;
     using ArcWPtr = std::weak_ptr<Arc>;
+
+    /*!
+    * the shared pointer type to an arc.
+    */
     using ArcSPtr = std::shared_ptr<Arc>;
+    /*!
+    * the weak pointer type to a sheet.
+    */
     using SheetWPtr = std::weak_ptr<Sheet>;
+    /*!
+    * the shared pointer type to a sheet.
+    */
     using SheetSPtr = std::shared_ptr<Sheet>;
 
   public:
@@ -352,58 +445,69 @@ public:
       return result;
     }
 
-    NodeSPtr getNodeSrc() const
+    /*!
+    * returns the source node of the arc.
+    */
+    NodeSPtr get_node_src() const
     {
       CGAL_SS3_DEBUG_SPTR(node_src_);
       return node_src_;
     }
 
-    void setNodeSrc(const NodeSPtr& node_src)
+    void set_node_src(const NodeSPtr& node_src)
     {
       CGAL_SS3_DEBUG_SPTR(node_src);
-      CGAL_precondition(!hasNodeSrc() && !hasNodeDst());
+      CGAL_precondition(!has_node_src() && !has_node_dst());
       this->node_src_ = node_src;
     }
 
-    typename std::list<ArcWPtr>::iterator getNodeSrcListIt() const
+    typename std::list<ArcWPtr>::iterator get_node_srcListIt() const
     {
       return this->node_src_list_it_;
     }
 
-    void setNodeSrcListIt(typename std::list<ArcWPtr>::iterator node_src_list_it)
+    void set_node_srcListIt(typename std::list<ArcWPtr>::iterator node_src_list_it)
     {
       this->node_src_list_it_ = node_src_list_it;
     }
 
-    bool hasNodeSrc() const
+    bool has_node_src() const
     {
       return bool(node_src_);
     }
 
-    NodeSPtr getNodeDst() const
+    /*!
+    * returns the destination node of the arc.
+    * Note that for unbounded arcs, this function returns a null pointer.
+    * \sa `has_node_dst()`
+    */
+    NodeSPtr get_node_dst() const
     {
       CGAL_SS3_DEBUG_SPTR(node_dst_);
       return node_dst_;
     }
 
-    void setNodeDst(const NodeSPtr& node_dst)
+    void set_node_dst(const NodeSPtr& node_dst)
     {
       CGAL_SS3_DEBUG_SPTR(node_dst);
-      CGAL_precondition(hasNodeSrc() && !hasNodeDst());
+      CGAL_precondition(has_node_src() && !has_node_dst());
       this->node_dst_ = node_dst;
     }
 
-    typename std::list<ArcWPtr>::iterator getNodeDstListIt() const
+    typename std::list<ArcWPtr>::iterator get_node_dstListIt() const
     {
       return this->node_dst_list_it_;
     }
 
-    void setNodeDstListIt(typename std::list<ArcWPtr>::iterator node_dst_list_it)
+    void set_node_dstListIt(typename std::list<ArcWPtr>::iterator node_dst_list_it)
     {
       this->node_dst_list_it_ = node_dst_list_it;
     }
 
-    bool hasNodeDst() const
+    /*!
+    * returns whether the arc has a destination node.
+    */
+    bool has_node_dst() const
     {
       return bool(node_dst_);
     }
@@ -418,26 +522,30 @@ public:
       }
     }
 
-    void closeArc(const NodeSPtr& node_dst)
+    void close_arc(const NodeSPtr& node_dst)
     {
       CGAL_SS3_DEBUG_SPTR(node_dst);
-      CGAL_precondition(hasNodeSrc() && !hasNodeDst());
-      setNodeDst(node_dst);
+      CGAL_precondition(has_node_src() && !has_node_dst());
+      set_node_dst(node_dst);
       node_dst->add_arc(this->shared_from_this());
     }
 
-    bool hasDirection() const
+    bool has_direction() const
     {
       return this->direction_.has_value();
     }
 
-    Vector_3 getDirection() const
+    /*!
+    * returns the direction of the arc, i.e., the direction in which the vertex of the polyhedron
+    * is moving.
+    */
+    const Vector_3& get_direction() const
     {
       CGAL_SS3_DEBUG_SPTR(this->direction_->has_value());
-      return this->direction_;
+      return *(this->direction_);
     }
 
-    void setDirection(const Vector_3& direction)
+    void set_direction(const Vector_3& direction)
     {
       this->direction_ = direction;
     }
@@ -506,11 +614,18 @@ public:
       return result;
     }
 
+    /*!
+    * returns the list of incident sheets.
+    */
     std::list<SheetWPtr>& sheets()
     {
       return this->sheets_;
     }
 
+    /*!
+    * returns the other arc incident to `node` in the given `sheet`.
+    * \pre `sheet` contains this arc, and `node` is either the source or destination of this arc.
+    */
     ArcSPtr next(const SheetSPtr& sheet, const NodeSPtr& node) const
     {
       CGAL_precondition(has_incident_sheet(sheet));
@@ -535,6 +650,9 @@ public:
       return result;
     }
 
+    /*!
+    * returns the 3D line supporting the arc.
+    */
     Line_3 line() const
     {
       Line_3 result;
@@ -546,6 +664,9 @@ public:
       return result;
     }
 
+    /*!
+    * returns combinatorial and geometrical information about the arc as a string.
+    */
     std::string to_string() const
     {
       std::string result("Arc(");
@@ -602,13 +723,38 @@ public:
   };
 
 public:
+  /*!
+  * \ingroup PkgStraightSkeleton3Classes
+  *
+  * The class `Sheet` represents a sheet of the straight skeleton, i.e., a 2D surface
+  * bounded by arcs and nodes.
+  *
+  * A special type of arcs, called *contours*, are also stored in the sheet. Contours are not
+  * skeleton arcs per se, but rather correspond to the edges of the input polyhedron,
+  * which are needed for the union of arcs to form a closed polygon (when the sheet is bounded).
+  *
+  * In the case of a partial straight skeleton, the sheet may be unbounded.
+  *
+  * \sa `CGAL::Straight_skeleton_3`
+  * \sa `CGAL::Straight_skeleton_3::Node`
+  * \sa `CGAL::Straight_skeleton_3::Sheet`
+  */
   class Sheet
     : public std::enable_shared_from_this<Sheet>
   {
+  public:
+    /*!
+    * the plane type used for the supporting plane of the sheet.
+    */
     using Plane_3 = typename Traits::Plane_3;
 
-  private:
+    /*!
+    * the shared pointer type to a node.
+    */
     using NodeSPtr = std::shared_ptr<Node>;
+    /*!
+    * the shared pointer type to an arc.
+    */
     using ArcSPtr = std::shared_ptr<Arc>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
@@ -696,6 +842,9 @@ public:
       this->id_ = id;
     }
 
+    /*!
+    * returns the supporting plane of the sheet.
+    */
     const Plane_3& get_plane() const
     {
       return this->plane_;
@@ -749,9 +898,7 @@ public:
       contour->add_sheet(this->shared_from_this());
     }
 
-    /**
-    * merge 'sheet' into this sheet.
-    */
+    // merge 'sheet' into this sheet.
     void merge(const SheetSPtr& sheet)
     {
       CGAL_SS3_DEBUG_SPTR(sheet);
@@ -781,21 +928,34 @@ public:
       }
     }
 
+    /*!
+    * returns the list of arcs of the sheet.
+    */
     std::list<ArcSPtr>& arcs()
     {
       return this->arcs_;
     }
 
+    /*!
+    * returns the list of contours of the sheet.
+    * Note that this returns a list of arcs, as a sheet might be incident to multiple input edges.
+    */
     std::list<ArcSPtr>& contours()
     {
       return this->contours_;
     }
 
+    /*!
+    * returns the list of nodes of the sheet.
+    */
     std::list<NodeSPtr>& nodes()
     {
       return this->nodes_;
     }
 
+    /*!
+    * returns combinatorial and geometrical information about the sheet as a string.
+    */
     std::string to_string() const
     {
       std::stringstream result;
@@ -866,10 +1026,19 @@ public:
 
 public:
   using NodeWPtr = std::weak_ptr<Node>;
+  /*!
+  * the shared pointer type to a node.
+  */
   using NodeSPtr = std::shared_ptr<Node>;
   using ArcWPtr = std::weak_ptr<Arc>;
+  /*!
+  * the shared pointer type to an arc.
+  */
   using ArcSPtr = std::shared_ptr<Arc>;
   using SheetWPtr = std::weak_ptr<Sheet>;
+  /*!
+  * the shared pointer type to a sheet.
+  */
   using SheetSPtr = std::shared_ptr<Sheet>;
 
 private:
