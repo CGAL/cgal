@@ -82,7 +82,8 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * - `stop_after_last_save_event`: Boolean to enable or disable stopping immediately as soon as the
  *                                 last save event has been reached.
  *
- * \sa `CGAL::Straight_skeletons_3::face_offset()`
+ * \sa `CGAL::create_straight_skeleton_3()`
+ * \sa `CGAL::create_straight_skeleton_and_offset_polyhedra_3()`
  */
 class Configuration
 {

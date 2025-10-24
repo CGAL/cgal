@@ -8,8 +8,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_FACE_OFFSET_H
-#define CGAL_STRAIGHT_SKELETON_3_INTERNAL_FACE_OFFSET_H
+#ifndef CGAL_STRAIGHT_SKELETON_CREATE_OFFSET_POLYHEDRA_H
+#define CGAL_STRAIGHT_SKELETON_CREATE_OFFSET_POLYHEDRA_H
 
 #include <CGAL/Straight_skeleton_3/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
@@ -114,11 +114,11 @@ template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename FT,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
-bool face_offset(const TriangleMeshIn& tmesh,
-                 std::vector<FT> save_times, // intentional copy
-                 std::vector<PolygonMeshOut>& results,
-                 const NamedParametersIn& np_in = parameters::default_values(),
-                 const NamedParametersOut& np_out = parameters::default_values())
+bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh,
+                                                     std::vector<FT> save_times, // intentional copy
+                                                     std::vector<PolygonMeshOut>& results,
+                                                     const NamedParametersIn& np_in = parameters::default_values(),
+                                                     const NamedParametersOut& np_out = parameters::default_values())
 {
   namespace SS3 = CGAL::Straight_skeletons_3;
   namespace SS3i = SS3::internal;
@@ -302,4 +302,4 @@ bool face_offset(const TriangleMeshIn& tmesh,
 } // namespace Straight_skeletons_3
 } // namespace CGAL
 
-#endif /* CGAL_STRAIGHT_SKELETON_3_INTERNAL_FACE_OFFSET_H */
+#endif /* CGAL_STRAIGHT_SKELETON_CREATE_OFFSET_POLYHEDRA_H */

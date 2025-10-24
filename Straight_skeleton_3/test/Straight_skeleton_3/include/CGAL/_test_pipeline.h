@@ -5,7 +5,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_TEST_OFFSET_PIPELINE_H
 #define CGAL_STRAIGHT_SKELETON_3_TEST_OFFSET_PIPELINE_H
 
-#include <CGAL/Straight_skeleton_3/face_offset.h>
+#include <CGAL/Straight_skeleton_3/create_offset_polyhedra.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -178,15 +178,14 @@ bool run(const Mesh& sm,
   CGAL::Real_timer timer;
   timer.start();
 
-  bool success = CGAL::face_offset(sm, save_times,
-                                   results,
-                                   CGAL::parameters::face_weight_map(fwm));
+  bool success = CGAL::create_straight_skeleton_and_offset_polyhedra_3(
+    sm, save_times, results, CGAL::parameters::face_weight_map(fwm));
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;
 
   if (!success) {
-    std::cerr << "Error: face_offset() returned 'false'" << std::endl;
+    std::cerr << "Error: create_straight_skeleton_and_offset_polyhedra_3() returned 'false'" << std::endl;
     return false;
   }
 

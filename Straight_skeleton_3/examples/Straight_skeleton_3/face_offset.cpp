@@ -1,4 +1,4 @@
-#include <CGAL/Straight_skeleton_3/face_offset.h>
+#include <CGAL/Straight_skeleton_3/create_offset_polyhedra.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
   timer.start();
 
   // Main call
-  bool success = SS3::face_offset(sm, save_times, results);
+  bool success = CGAL::create_straight_skeleton_and_offset_polyhedra_3(sm, save_times, results);
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;
