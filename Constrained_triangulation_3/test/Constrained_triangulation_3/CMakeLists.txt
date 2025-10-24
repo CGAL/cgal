@@ -29,13 +29,6 @@ create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp")
 target_link_libraries(cdt_3_from_off_with_Epeck PRIVATE CDT_3_dependencies)
 create_single_source_cgal_program( "snap_and_cdt3.cpp")
 
-if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  add_executable(cdt_3_from_off_CGAL_DEBUG_CDT_3 cdt_3_from_off)
-  target_compile_definitions(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE CGAL_DEBUG_CDT_3=255)
-  target_link_libraries(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE CDT_3_dependencies)
-  cgal_add_test(cdt_3_from_off_CGAL_DEBUG_CDT_3)
-endif()
-
 add_executable(test_CDT_3_insert_constrained_edge_from_EDG_file cdt_test_insert_constrained_edge_from_EDG_file.cpp)
 target_link_libraries(test_CDT_3_insert_constrained_edge_from_EDG_file PRIVATE CDT_3_dependencies)
 target_compile_definitions(test_CDT_3_insert_constrained_edge_from_EDG_file PUBLIC CGAL_TEST_CDT_3_USE_CDT)
@@ -141,12 +134,6 @@ if (CGAL_CDT_TEST_USE_THINGI)
   CGAL_add_cdt3_from_local_off_test(error_mesh-p_not_equal_0-min2)
 
   include(./Thingi10k-CDT.cmake)
-endif()
-
-if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  add_test(NAME "execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" COMMAND cdt_3_from_off_CGAL_DEBUG_CDT_3 ${CGAL_DATA_DIR}/meshes/3torus.off)
-  cgal_add_compilation_test(cdt_3_from_off_CGAL_DEBUG_CDT_3)
-  cgal_setup_test_properties("execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" cdt_3_from_off_CGAL_DEBUG_CDT_3)
 endif()
 
 get_directory_property(all_tests TESTS)

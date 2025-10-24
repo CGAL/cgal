@@ -17,6 +17,7 @@
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
 #include <CGAL/unordered_flat_set.h>
@@ -34,7 +35,111 @@
 
 #ifndef DOXYGEN_RUNNING
 
+#if CGAL_USE_ITT
+#  include <ittnotify.h>
+#endif
+
 namespace CGAL {
+
+namespace CDT_3::internal {
+
+auto& tasks_manager() {
+  struct Tasks_manager {
+    enum {
+      READ_INPUT = 0,
+      MERGE_FACETS,
+      INSERT_VERTICES,
+      COMPUTE_DISTANCES,
+      CONFORMING,
+      CDT,
+      OUTPUT,
+      VALIDATION,
+      NB_TASKS
+    };
+
+  #if CGAL_USE_ITT
+    __itt_domain* cdt_3_domain = __itt_domain_create("org.cgal.CDT_3");
+    const std::array<__itt_string_handle*, NB_TASKS> task_handles = {
+      __itt_string_handle_create("CDT_3: read input file"),
+      __itt_string_handle_create("CDT_3: merge facets"),
+      __itt_string_handle_create("CDT_3: insert vertices"),
+      __itt_string_handle_create("CDT_3: compute distances"),
+      __itt_string_handle_create("CDT_3: conforming"),
+      __itt_string_handle_create("CDT_3: cdt"),
+      __itt_string_handle_create("CDT_3: outputs"),
+      __itt_string_handle_create("CDT_3: validation")
+    };
+  #endif
+    std::array<CGAL::Real_timer, NB_TASKS> timers{};
+    struct Scope_guard {
+      Tasks_manager *instance = nullptr;
+      int task_id;
+      Scope_guard(Tasks_manager *instance, int task_id) : instance(instance), task_id(task_id) {
+        instance->timers[task_id].start();
+#if CGAL_USE_ITT
+        __itt_task_begin(instance->cdt_3_domain, __itt_null, __itt_null, instance->task_handles[task_id]);
+#endif
+      }
+      ~Scope_guard() {
+        instance->timers[task_id].stop();
+#if CGAL_USE_ITT
+        __itt_task_end(instance->cdt_3_domain);
+#endif
+      }
+    };
+
+    Scope_guard make_task_scope_guard(int task_id) {
+      return Scope_guard(this, task_id);
+    }
+
+    Scope_guard READ_INPUT_TASK_guard() { return make_task_scope_guard(READ_INPUT); }
+    Scope_guard MERGE_FACETS_TASK_guard() { return make_task_scope_guard(MERGE_FACETS); }
+    Scope_guard INSERT_VERTICES_TASK_guard() { return make_task_scope_guard(INSERT_VERTICES); }
+    Scope_guard COMPUTE_DISTANCES_TASK_guard() { return make_task_scope_guard(COMPUTE_DISTANCES); }
+    Scope_guard CONFORMING_TASK_guard() { return make_task_scope_guard(CONFORMING); }
+    Scope_guard CDT_TASK_guard() { return make_task_scope_guard(CDT); }
+    Scope_guard OUTPUT_TASK_guard() { return make_task_scope_guard(OUTPUT); }
+    Scope_guard VALIDATION_TASK_guard() { return make_task_scope_guard(VALIDATION); }
+
+  }; // end struct Intel_OneAPI_ITT_API
+
+  static Tasks_manager instance;
+  return instance;
+} // end auto& tasks_manager()
+
+} // end namespace CDT_3::internal
+
+inline auto CDT_3_READ_INPUT_TASK_guard() {
+  return CDT_3::internal::tasks_manager().READ_INPUT_TASK_guard();
+}
+
+inline auto CDT_3_MERGE_FACETS_TASK_guard() {
+  return CDT_3::internal::tasks_manager().MERGE_FACETS_TASK_guard();
+}
+
+inline auto CDT_3_INSERT_VERTICES_TASK_guard() {
+  return CDT_3::internal::tasks_manager().INSERT_VERTICES_TASK_guard();
+}
+
+inline auto CDT_3_COMPUTE_DISTANCES_TASK_guard() {
+  return CDT_3::internal::tasks_manager().COMPUTE_DISTANCES_TASK_guard();
+}
+
+inline auto CDT_3_CONFORMING_TASK_guard() {
+  return CDT_3::internal::tasks_manager().CONFORMING_TASK_guard();
+}
+
+inline auto CDT_3_CDT_TASK_guard() {
+  return CDT_3::internal::tasks_manager().CDT_TASK_guard();
+}
+
+inline auto CDT_3_OUTPUT_TASK_guard() {
+  return CDT_3::internal::tasks_manager().OUTPUT_TASK_guard();
+}
+
+inline auto CDT_3_VALIDATION_TASK_guard() {
+  return CDT_3::internal::tasks_manager().VALIDATION_TASK_guard();
+}
 
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {

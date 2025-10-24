@@ -1,6 +1,3 @@
-#if __has_include(<format>)
-#define CGAL_DEBUG_CDT_3 1
-#endif
 #define CGAL_TRIANGULATION_CHECK_EXPENSIVE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>

@@ -2,13 +2,7 @@
 #pragma warning(disable: 4455)
 #endif
 
-#if defined(CGAL_DEBUG_CDT_3) && !__has_include(<format>)
-#undef CGAL_DEBUG_CDT_3
-#endif
-
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
-#define NO_TRY_CATCH 1
-// #define CGAL_DEBUG_CDT_3 1
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
@@ -275,34 +269,6 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 # define CDT_3_throw_exception_again throw
 #endif
 
-#if CGAL_USE_ITT
-#  include <ittnotify.h>
-#  define CGAL_CDT_3_TASK_BEGIN(task_handle) \
-  std::cerr << "START " << #task_handle << '\n'; \
-  __itt_task_begin(cdt_3_domain, __itt_null, __itt_null, task_handle);
-#  define CGAL_CDT_3_TASK_END(task_handle) \
-  std::cerr << "-STOP " << #task_handle << '\n'; \
-  __itt_task_end(cdt_3_domain);
-#  define CGAL_CDT_3_TASK_SCOPE(task_handle) \
-  CGAL_CDT_3_TASK_BEGIN(task_handle) \
-  auto scope_exit = CGAL::make_scope_exit([&]() { CGAL_CDT_3_TASK_END(task_handle); });
-
-  auto cdt_3_domain = __itt_domain_create("org.cgal.CDT_3");
-  auto read_input_task_handle = __itt_string_handle_create("CDT_3: read input file");
-  auto merge_facets_task_handle = __itt_string_handle_create("CDT_3: merge facets");
-  auto insert_vertices_task_handle = __itt_string_handle_create("CDT_3: insert vertices");
-  auto compute_distances_task_handle = __itt_string_handle_create("CDT_3: compute distances");
-  auto conforming_task_handle = __itt_string_handle_create("CDT_3: conforming");
-  auto cdt_task_handle = __itt_string_handle_create("CDT_3: cdt");
-  auto output_task_handle = __itt_string_handle_create("CDT_3: outputs");
-  auto validation_task_handle = __itt_string_handle_create("CDT_3: validation");
-
-#else // no ITT
-#  define CGAL_CDT_3_TASK_BEGIN(task_handle)
-#  define CGAL_CDT_3_TASK_END(task_handle)
-#  define CGAL_CDT_3_TASK_SCOPE(task_handle)
-#endif // no ITT
-
 void configure_cdt_debug_options(CDT& cdt, const CDT_options& options) {
   cdt.debug_Steiner_points(options.verbose_level > 0);
   cdt.debug_input_faces(options.debug_input_faces);
@@ -343,7 +309,7 @@ auto compute_bounding_box(const Mesh& mesh, const CDT_options& options) {
 
 std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options& options) {
   return [&cdt, &options]() {
-    CGAL_CDT_3_TASK_SCOPE(output_task_handle);
+    auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     {
       auto dump_tets_to_medit = [](std::string fname,
                               const std::vector<K::Point_3> &points,
@@ -725,8 +691,8 @@ Borders_of_patches maybe_merge_facets(
 
   if(!options.merge_facets) return patch_edges;
 
-  CGAL_CDT_3_TASK_BEGIN(merge_facets_task_handle);
   {
+    auto _ = CGAL::CDT_3_MERGE_FACETS_TASK_guard();
     auto start_time = std::chrono::high_resolution_clock::now();
 
     if(options.merge_facets_old_method) {
@@ -743,16 +709,14 @@ Borders_of_patches maybe_merge_facets(
                 << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
     }
   }
-  CGAL_CDT_3_TASK_END(merge_facets_task_handle);
 
   if(options.dump_patches_after_merge_filename.empty()) return patch_edges;
 
-  CGAL_CDT_3_TASK_BEGIN(output_task_handle);
   {
+    auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     std::ofstream out(options.dump_patches_after_merge_filename);
     CGAL::IO::write_PLY(out, mesh, CGAL::parameters::stream_precision(17));
   }
-  CGAL_CDT_3_TASK_END(output_task_handle);
 
   return patch_edges;
 }
@@ -813,15 +777,14 @@ int go(Mesh mesh, CDT_options options) {
   auto patch_edges = maybe_merge_facets(mesh, options, pmaps, bbox_max_span);
 
   if(!options.dump_patches_borders_prefix.empty()) {
-    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
+    auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     dump_patches_borders(patch_edges, pmaps, options.dump_patches_borders_prefix);
-    CGAL_CDT_3_TASK_END(output_task_handle);
   }
 
   auto mesh_descriptor_to_vertex_handle_pmap = get(CGAL::dynamic_vertex_property_t<CDT::Vertex_handle>(), mesh);
 
-  CGAL_CDT_3_TASK_BEGIN(insert_vertices_task_handle);
   {
+    auto _ = CGAL::CDT_3_INSERT_VERTICES_TASK_guard();
     auto start_time = std::chrono::high_resolution_clock::now();
     if(options.merge_facets) {
       cdt.insert_vertices_range(vertices(mesh), pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap,
@@ -844,10 +807,9 @@ int go(Mesh mesh, CDT_options options) {
     }
     cdt.add_bbox_points_if_not_dimension_3();
   }
-  CGAL_CDT_3_TASK_END(insert_vertices_task_handle);
 
-  CGAL_CDT_3_TASK_BEGIN(compute_distances_task_handle);
   {
+    auto _ = CGAL::CDT_3_COMPUTE_DISTANCES_TASK_guard();
     auto start_time = std::chrono::high_resolution_clock::now();
 
     auto exit_code = validate_minimum_vertex_distances(cdt, options.vertex_vertex_epsilon * bbox_max_span, options);
@@ -863,10 +825,9 @@ int go(Mesh mesh, CDT_options options) {
                 << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
     }
   }
-  CGAL_CDT_3_TASK_END(compute_distances_task_handle);
 
-  CGAL_CDT_3_TASK_BEGIN(conforming_task_handle);
   {
+    auto _ = CGAL::CDT_3_CONFORMING_TASK_guard();
     int poly_id = 0;
     auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -904,10 +865,9 @@ int go(Mesh mesh, CDT_options options) {
           std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
     }
   }
-  CGAL_CDT_3_TASK_END(conforming_task_handle);
 
   if(!options.dump_after_conforming_filename.empty()) {
-    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
+    auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     using Vertex_index = Mesh::Vertex_index;
     [[maybe_unused]] std::size_t time_stamp_counter = 0u;
     for(auto v: cdt.finite_vertex_handles()) {
@@ -929,23 +889,21 @@ int go(Mesh mesh, CDT_options options) {
     out_mesh.precision(17);
     out_mesh << mesh;
     out_mesh.close();
-    CGAL_CDT_3_TASK_END(output_task_handle);
   }
 
   if(!options.quiet) {
     std::cout << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
   }
 
-  CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
   {
+    auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
     CGAL_assertion(!options.call_is_valid || cdt.Base_triantulation::is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
   }
-  CGAL_CDT_3_TASK_END(validation_task_handle);
 
-  CGAL_CDT_3_TASK_BEGIN(cdt_task_handle);
   {
+    auto _ = CGAL::CDT_3_CDT_TASK_guard();
     auto start_time = std::chrono::high_resolution_clock::now();
     cdt.restore_constrained_Delaunay();
     if(!options.quiet) {
@@ -954,14 +912,12 @@ int go(Mesh mesh, CDT_options options) {
       std::cout << "Number of vertices after CDT: " << cdt.number_of_vertices() << "\n\n";
     }
   }
-  CGAL_CDT_3_TASK_END(cdt_task_handle);
 
-  CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
   {
+    auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
     CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
     CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
   }
-  CGAL_CDT_3_TASK_END(validation_task_handle);
 
   return EXIT_SUCCESS;
 }
@@ -1064,56 +1020,54 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  CGAL_CDT_3_TASK_BEGIN(read_input_task_handle);
-  auto start_time = std::chrono::high_resolution_clock::now();
-
   CGAL::CDT_3_read_polygon_mesh_output<Mesh> read_mesh_result;
-  if(options.read_mesh_with_operator) {
-    std::ifstream in(options.input_filename);
-    if(!in) {
-      std::cerr << "Cannot open file: " << options.input_filename << std::endl;
-      return EXIT_FAILURE;
-    }
-    Mesh mesh;
-    in >> mesh;
-    if(!in) {
-      std::cerr << "Error reading mesh with operator>>" << std::endl;
-      return EXIT_FAILURE;
-    }
-    read_mesh_result.polygon_mesh = std::move(mesh);
-  } else {
-    auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose_level);
-    read_mesh_result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
-  }
-
-  if (!read_mesh_result.polygon_mesh)
+  auto start_time = std::chrono::high_resolution_clock::now();
   {
-    std::cerr << "Not a valid input file." << std::endl;
-    std::cerr << "Details:\n" << read_mesh_result.polygon_mesh.error() << std::endl;
-    return EXIT_FAILURE;
-  }
-  Mesh mesh = std::move(*read_mesh_result.polygon_mesh);
-  if(!options.quiet) {
-    std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-    std::cout << "Number of vertices: " << mesh.number_of_vertices() << '\n';
-    std::cout << "Number of edges: " << mesh.number_of_edges() << '\n';
-    std::cout << "Number of faces: " << mesh.number_of_faces() << "\n\n";
+    auto _ = CGAL::CDT_3_READ_INPUT_TASK_guard();
 
-    if(!options.read_mesh_with_operator) {
-      std::cout << "Processing was successful.\n";
-      std::cout << "  Number of duplicated points: " << read_mesh_result.nb_of_duplicated_points << '\n';
-      std::cout << "  Number of simplified polygons: " << read_mesh_result.nb_of_simplified_polygons << '\n';
-      std::cout << "  Number of new polygons: " << read_mesh_result.nb_of_new_polygons << '\n';
-      std::cout << "  Number of removed invalid polygons: " << read_mesh_result.nb_of_removed_invalid_polygons << '\n';
-      std::cout << "  Number of removed duplicated polygons: " << read_mesh_result.nb_of_removed_duplicated_polygons << '\n';
-      std::cout << "  Number of removed isolated points: " << read_mesh_result.nb_of_removed_isolated_points << '\n';
-      std::cout << "  Polygon soup self-intersects: " << (read_mesh_result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
-      std::cout << "  Polygon mesh is manifold: " << (read_mesh_result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
-      std::cout << std::endl;
+    if(options.read_mesh_with_operator) {
+      std::ifstream in(options.input_filename);
+      if(!in) {
+        std::cerr << "Cannot open file: " << options.input_filename << std::endl;
+        return EXIT_FAILURE;
+      }
+      in >> *read_mesh_result.polygon_mesh;
+      if(!in) {
+        std::cerr << "Error reading mesh with operator>>" << std::endl;
+        return EXIT_FAILURE;
+      }
+    } else {
+      auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose_level);
+      read_mesh_result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
+    }
+
+    if (!read_mesh_result.polygon_mesh)
+    {
+      std::cerr << "Not a valid input file." << std::endl;
+      std::cerr << "Details:\n" << read_mesh_result.polygon_mesh.error() << std::endl;
+      return EXIT_FAILURE;
+    }
+    if(!options.quiet) {
+      std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+      std::cout << "Number of vertices: " << read_mesh_result.polygon_mesh->number_of_vertices() << '\n';
+      std::cout << "Number of edges: " << read_mesh_result.polygon_mesh->number_of_edges() << '\n';
+      std::cout << "Number of faces: " << read_mesh_result.polygon_mesh->number_of_faces() << "\n\n";
+
+      if(!options.read_mesh_with_operator) {
+        std::cout << "Processing was successful.\n";
+        std::cout << "  Number of duplicated points: " << read_mesh_result.nb_of_duplicated_points << '\n';
+        std::cout << "  Number of simplified polygons: " << read_mesh_result.nb_of_simplified_polygons << '\n';
+        std::cout << "  Number of new polygons: " << read_mesh_result.nb_of_new_polygons << '\n';
+        std::cout << "  Number of removed invalid polygons: " << read_mesh_result.nb_of_removed_invalid_polygons << '\n';
+        std::cout << "  Number of removed duplicated polygons: " << read_mesh_result.nb_of_removed_duplicated_polygons << '\n';
+        std::cout << "  Number of removed isolated points: " << read_mesh_result.nb_of_removed_isolated_points << '\n';
+        std::cout << "  Polygon soup self-intersects: " << (read_mesh_result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
+        std::cout << "  Polygon mesh is manifold: " << (read_mesh_result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
+        std::cout << std::endl;
+      }
     }
   }
-  CGAL_CDT_3_TASK_END(read_input_task_handle);
 
   if(options.reject_self_intersections && read_mesh_result.polygon_soup_self_intersects) {
     std::cerr << "ERROR: input mesh self-intersects\n";
@@ -1121,10 +1075,10 @@ int main(int argc, char* argv[]) {
   }
 
   if(!options.failure_assertion_expression.empty()) {
-    return bisect_errors(std::move(mesh), options);
+    return bisect_errors(std::move(*read_mesh_result.polygon_mesh), options);
   }
 
-  auto exit_code = go(std::move(mesh), options);
+  auto exit_code = go(std::move(*read_mesh_result.polygon_mesh), options);
   if(!options.quiet) {
     std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
