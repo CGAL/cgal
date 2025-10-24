@@ -356,9 +356,14 @@ public:
     return std::make_shared<Straight_skeleton_builder_3>(polyhedron, save_times, save_path);
   }
 
-  void setVisitor(Base_mesh_offset_visitor<Traits>* visitor)
+  void set_visitor(Base_mesh_offset_visitor<Traits>* visitor)
   {
     visitor_ = visitor;
+  }
+
+  void set_outward(const bool outwards)
+  {
+    outwards_ = outwards;
   }
 
   void init_vertex_splitter()
@@ -570,7 +575,7 @@ public:
 
 #ifdef CGAL_SS3_DUMP_FILES
       // Dump skeleton nodes in an .xyz file
-      std::ofstream nodes_out("final_nodes.xyz");
+      std::ofstream nodes_out("nodes.xyz");
       nodes_out.precision(17);
       for (NodeSPtr node : skeleton_->nodes()) {
         nodes_out << node->point() << "\n";
@@ -578,7 +583,7 @@ public:
       nodes_out.close();
 
       // Dump skeleton arcs as CGAL polylines
-      std::ofstream arcs_out("final_arcs.polylines.txt");
+      std::ofstream arcs_out("arcs.polylines.txt");
       arcs_out.precision(17);
       for (ArcSPtr arc : skeleton_->arcs()) {
         arcs_out << "2 ";
@@ -627,19 +632,16 @@ public:
 
     CGAL_SS3_CORE_TRACE_V(8, "== Straight Skeleton 3D finished ==");
 
-    CGAL_warning(!is_emptiness_expected || polyhedron->empty());
-
 #ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
 #endif
 
     CGAL_SS3_CORE_TRACE_V(2, events_summary());
 
+    CGAL_warning(!is_emptiness_expected || polyhedron->empty());
 
-    CGAL_assertion(skeleton_->is_consistent(false /*is_partial*/));
-#ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("final_skeleton.obj", skeleton_, true /*convert_to_double*/);
-#endif
+    CGAL_assertion_code(bool has_unbounded_elements = (outwards_ || !queue.empty());)
+    CGAL_assertion(skeleton_->is_consistent(has_unbounded_elements));
 
     return true;
   }
@@ -3898,8 +3900,8 @@ public:
     bool result = true;
 
     std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
-    ss_filename << save_path_.string() << "/skel_time_" << current_time << ".obj";
-    ss_filename_exact << save_path_.string() << "/skel_time_" << current_time << "_exact.obj";
+    ss_filename << save_path_.string() << "/time_" << current_time << "_skel.obj";
+    ss_filename_exact << save_path_.string() << "/time_" << current_time << "_skel_exact.obj";
 
     result = (IO::OBJFile::save(ss_filename.str(), skeleton,
                                 true /*convert_to_double*/) && result);
@@ -3926,7 +3928,7 @@ public:
 
 #ifdef CGAL_SS3_DUMP_FILES
     res = save_polyhedron(polyhedron, event_time);
-    // res = save_skeleton(skeleton_, event_time) && res;
+    res = save_skeleton(skeleton_, event_time) && res;
 #endif
 
     if (res) {
@@ -6490,6 +6492,7 @@ private:
   Base_mesh_offset_visitor<Traits>* visitor_ = nullptr;
 
   std::vector<FT> save_times_;
+  bool outwards_;
   std::filesystem::path save_path_;
 
   std::list<Abstract_event_sptr> events_;
