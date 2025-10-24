@@ -1266,6 +1266,7 @@ public:
       NodeSPtr node = *it_n++;
       CGAL_SS3_DEBUG_SPTR(node);
       if (node->get_skeleton() != this->shared_from_this()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: node's skeleton pointer is incorrect");
         CGAL_SS3_SKEL_DS_TRACE(node->to_string());
         result = false;
         break;
@@ -1336,6 +1337,7 @@ public:
       ArcWPtr arc_wptr(arc);
 
       if (arc->get_skeleton() != this->shared_from_this()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: arc's skeleton pointer is incorrect");
         CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
         result = false;
         break;
@@ -1439,6 +1441,7 @@ public:
       CGAL_SS3_DEBUG_SPTR(sheet);
       SheetWPtr sheet_wptr(sheet);
       if (sheet->get_skeleton() != this->shared_from_this()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: sheet's skeleton pointer is incorrect");
         CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
         result = false;
         break;

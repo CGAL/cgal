@@ -341,13 +341,28 @@ public:
     // Write sheets as faces, triangulating if requested
     for (const SheetSPtr& sheet : skeleton->sheets()) {
       const auto& nodes = sheet->nodes();
+
+      CGAL_SS3_IO_TRACE("  Sheet #nodes " << nodes.size());
+      CGAL_SS3_IO_TRACE("  Sheet #arcs " << sheet->arcs().size());
+
       if (nodes.size() < 3) {
         CGAL_warning_msg(false, "Sheet with less than 3 nodes found. Skipping.");
         continue;
       }
 
-      CGAL_SS3_IO_ENABLE_TRACE("  Sheet #nodes " << nodes.size());
-      CGAL_SS3_IO_ENABLE_TRACE("  Sheet #arcs " << sheet->arcs().size());
+      // ignore if the sheet has incomplete arcs
+      bool is_complete = true;
+      for (const ArcSPtr& arc : sheet->arcs()) {
+        if (!arc->has_node_dst()) {
+          is_complete = false;
+          break;
+        }
+      }
+
+      if (!is_complete) {
+        CGAL_SS3_IO_TRACE("  Incomplete sheet found. Skipping.");
+        continue;
+      }
 
       if (nodes.size() == 3) {
         oss << "f ";
@@ -364,7 +379,7 @@ public:
 
         std::map<NodeSPtr, PCDT_VH> face_vhs;
         for (const NodeSPtr& node : nodes) {
-          CGAL_SS3_IO_ENABLE_TRACE(" CDT add node " << node->get_ID());
+          CGAL_SS3_IO_TRACE(" CDT add node " << node->get_ID());
           auto res = face_vhs.emplace(node, PCDT_VH());
           CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
           if (res.second) {
@@ -378,7 +393,7 @@ public:
         for (const ArcSPtr& arc : sheet->arcs()) {
           NodeSPtr node_src = arc->get_node_src();
           NodeSPtr node_dst = arc->get_node_dst();
-          CGAL_SS3_IO_ENABLE_TRACE(" CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
+          CGAL_SS3_IO_TRACE(" CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
           CGAL_SS3_DEBUG_SPTR(node_src);
           CGAL_SS3_DEBUG_SPTR(node_dst);
           PCDT_VH vh0 = face_vhs.at(node_src);
