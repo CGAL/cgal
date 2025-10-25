@@ -61,7 +61,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOOff CGAL::IO::read_OFF(const std::string&, PointOutputIterator)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF CGAL::IO::read_OFF(const std::string&, PointOutputIterator)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -89,7 +89,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOOff CGAL::IO::write_OFF(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF CGAL::IO::write_OFF(const std::string&, const PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>

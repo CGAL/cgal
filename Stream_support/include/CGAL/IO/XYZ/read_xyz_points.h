@@ -1,53 +1,52 @@
-// Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (c) 1997
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
-#ifndef CGAL_POINT_SET_PROCESSING_READ_OFF_POINTS_H
-#define CGAL_POINT_SET_PROCESSING_READ_OFF_POINTS_H
+#ifndef CGAL_IO_PLY_READ_XYZ_POINTS_H
+#define CGAL_IO_PLY_READ_XYZ_POINTS_H
 
-#include <CGAL/license/Point_set_processing_3.h>
-
-#include <CGAL/IO/io.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/iterator.h>
 #include <CGAL/type_traits/is_iterator.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
-#include <type_traits>
 
 namespace CGAL {
 
 namespace IO {
 
 /**
-   \ingroup PkgPointSetProcessing3IOOff
+   \ingroup PkgPointSetProcessing3IOXyz
 
-   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
+   \brief reads points (positions + normals, if available), using the \ref IOStreamXYZ.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<OutputIterator>::%type`.
    It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
+   \tparam OutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param is input stream
-   \param output output iterator over points
+   \param is input stream.
+   \param output output iterator over points.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -72,18 +71,14 @@ namespace IO {
 
    \returns `true` if reading was successful, `false` otherwise.
 
-   \sa \ref IOStreamOFF
+   \sa \ref IOStreamXYZ
 */
 template <typename OutputIteratorValueType,
-          typename PointOutputIterator,
+          typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& is,
-              PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
-#endif
-              )
+bool read_XYZ(std::istream& is,
+              OutputIterator output,
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -95,15 +90,15 @@ bool read_OFF(std::istream& is,
   typedef typename NP_helper::Point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
-  typedef typename Kernel::FT FT;
 
   PointMap point_map = NP_helper::get_point_map(np);
   NormalMap normal_map = NP_helper::get_normal_map(np);
 
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+  //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
   typedef OutputIteratorValueType Enriched_point;
 
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
@@ -114,77 +109,68 @@ bool read_OFF(std::istream& is,
   }
 
   // scan points
-  std::string signature;
-  long pointsCount = 0, facesCount = 0, edgesCount = 0; // number of items in file
-  int pointsRead = 0; // current number of points read
-  int lineNumber = 0; // current line number
-  std::string line;
+  long pointsCount; // number of points in file
+  int lineNumber = 0; // line counter
+  std::string line; // line buffer
   std::istringstream iss;
+
   while(getline(is,line))
   {
-    iss.clear();
-    iss.str(line);
-
-    // Ignore empty lines and comments
-    if (line.empty () || line[0] == '#')
-      continue;
+    // position + normal
+    FT x,y,z;
+    FT nx,ny,nz;
 
     ++lineNumber;
 
-    // Reads file signature on first line
-    if (lineNumber == 1)
-    {
-      if ( !(iss >> signature) || (signature != "OFF" && signature != "NOFF") )
-      {
-        // if wrong file format
-        std::cerr << "Error line " << lineNumber << " of file (unexpected header)" << std::endl;
-        return false;
-      }
-    }
-    // Reads number of points on 2nd line
-    else if (lineNumber == 2)
-    {
-      if ( !(iss >> pointsCount >> facesCount >> edgesCount) )
-      {
-        std::cerr << "Error line " << lineNumber << " of file (incorrect header format)" << std::endl;
-        return false;
-      }
-    }
+    // Trims line buffer
+    line.erase(line.find_last_not_of (" ")+1);
+    line.erase(0, line.find_first_not_of (" "));
 
-    // Reads 3D points on next lines
-    else if (pointsRead < pointsCount)
+    // Skips comment or empty line...
+    if (line.length() == 0 || line[0] == '#')
     {
-      // Reads position + normal...
-      double x,y,z;
-      double nx,ny,nz;
+      continue;
+    }
+    // ...or reads position...
+    else
+    {
+      iss.clear();
+      iss.str(line);
       if (iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z))
       {
-        Point point{FT(x), FT(y), FT(z)};
+        Point point(x,y,z);
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
         if (iss >> IO::iformat(nx))
         {
           // In case we could read one number, we expect that there are two more
-          if(iss  >> IO::iformat(ny) >> IO::iformat(nz)){
-            normal = Vector(FT(nx),FT(ny),FT(nz));
+          if(iss >> IO::iformat(ny) >> IO::iformat(nz)){
+            normal = Vector(nx,ny,nz);
           } else {
             std::cerr << "Error line " << lineNumber << " of file (incomplete normal coordinates)" << std::endl;
             return false;
           }
         }
-        else if (signature == "NOFF")
-        {
-          std::cerr << "Error line " << lineNumber << " of file (expected normal coordinates)" << std::endl;
-          return false;
-        }
 
         Enriched_point pwn;
-        put(point_map,  pwn, point);  // point_map[&pwn] = point
-        put(normal_map, pwn, normal); // normal_map[&pwn] = normal
+        put(point_map,  pwn, point);  // point_map[pwn] = point
+
+        put(normal_map, pwn, normal); // normal_map[pwn] = normal
 
         *output++ = pwn;
-        ++pointsRead;
+        continue;
       }
+    }
+
+    // ...or skips number of points on first line (optional)
+    if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
+    {
+      continue;
+    }
+    else // if wrong file format
+    {
+      std::cerr << "Error line " << lineNumber << " of file (expected point coordinates)" << std::endl;
+      return false;
     }
   }
 
@@ -195,18 +181,18 @@ bool read_OFF(std::istream& is,
 }
 
 /**
-   \ingroup PkgPointSetProcessing3IOOff
+   \ingroup PkgPointSetProcessing3IOXyz
 
-   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
+   \brief reads points (positions + normals, if available), using the \ref IOStreamXYZ.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<OutputIterator>::%type`.
    It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
+   \tparam OutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param fname input file name
-   \param output output iterator over points
+   \param fname input file name.
+   \param output output iterator over points.
    \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
@@ -231,46 +217,42 @@ bool read_OFF(std::istream& is,
 
    \returns `true` if reading was successful, `false` otherwise.
 
-   \sa \ref IOStreamOFF
+   \sa \ref IOStreamXYZ
 */
 template <typename OutputIteratorValueType,
-          typename PointOutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
-              PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
-#endif
-              )
+          typename OutputIterator,
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_XYZ(const std::string& fname,
+              OutputIterator output,
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname);
-  return read_OFF<OutputIteratorValueType>(is, output, np);
+  return read_XYZ<OutputIteratorValueType>(is, output, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 // variants with default output iterator value type
-template <typename OutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
-  return read_OFF<typename value_type_traits<OutputIterator>::type>(is, output, np);
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
+bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname);
-  return read_OFF<typename value_type_traits<OutputIterator>::type>(is, output, np);
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 /// \endcond
 
 } // namespace IO
 
+
+
 } // namespace CGAL
 
-#endif // CGAL_POINT_SET_PROCESSING_READ_OFF_POINTS_H
+#endif // CGAL_IO_PLY_READ_XYZ_POINTS_H

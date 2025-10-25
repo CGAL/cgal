@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/IO/read_las_points.h>
+#include <CGAL/Point_set_3/IO/LAS.h>
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/scanline_orient_normals.h>

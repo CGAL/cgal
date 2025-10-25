@@ -1,18 +1,15 @@
-// Copyright (c) 2017  Geometry Factory
-// All rights reserved.
+// Copyright (c) 2017 GeometryFactory
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
 #ifndef CGAL_POINT_SET_PROCESSING_WRITE_LAS_POINTS_H
 #define CGAL_POINT_SET_PROCESSING_WRITE_LAS_POINTS_H
-
-#include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/IO/helpers.h>
 
