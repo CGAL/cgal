@@ -70,6 +70,9 @@ while True:
 
       m = re.search("^(\s*).*{", line)
       if m:
+        if len(params)==0:
+          stderr.write("Cannot parse documented named parameters ("+argv[1]+")\n")
+          exit(1)
         s=m.group(1)+"  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS("+np_name
         for p in params:
           s+=", "+p+"_t"
