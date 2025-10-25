@@ -43,7 +43,7 @@ namespace IO {
 // doxygen in ../OFF.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool read_OFF(std::istream& is,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np,
@@ -162,7 +162,7 @@ bool read_OFF(std::istream& is,
 // doxygen in ../OFF.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool read_OFF(const std::string& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np,
