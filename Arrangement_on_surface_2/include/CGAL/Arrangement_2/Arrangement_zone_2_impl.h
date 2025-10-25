@@ -788,21 +788,21 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
   return (m_geom_traits->compare_xy_2_object()(p, v_right->point()) == LARGER);
 }
 
-//! checks whether an point lies to the left of another point.
+//! checks whether a point lies to the left of another point.
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
-                const Point_2& p2, Arr_parameter_space ps2,
+is_to_left_impl(const Point_2& p1, Arr_parameter_space /* ps1 */,
+                const Point_2& p2, Arr_parameter_space /* ps2 */,
                 Arr_all_sides_oblivious_tag) const {
   auto cmp_xy = m_geom_traits->compare_xy_2_object();
   return (cmp_xy(p2, p1) == SMALLER);
 }
 
-//! checks whether an point lies to the left of another point.
+//! checks whether a point lies to the left of another point.
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
-                const Point_2& p2, Arr_parameter_space ps2,
+is_to_left_impl(const Point_2& p1, Arr_parameter_space /* ps1 */,
+                const Point_2& p2, Arr_parameter_space /* ps2 */,
                 Arr_has_identified_side_tag) const {
   auto is_on_y_ident = m_geom_traits->is_on_y_identification_2_object();
   if (is_on_y_ident(p1)) {
@@ -817,7 +817,7 @@ is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
   return (cmp_xy(p2, p1) == SMALLER);
 }
 
-//! checks whether an point lies to the left of another point.
+//! checks whether a point lies to the left of another point.
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,

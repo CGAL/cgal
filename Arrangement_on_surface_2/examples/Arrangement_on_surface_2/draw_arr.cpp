@@ -29,27 +29,33 @@ std::tuple<unsigned char, unsigned char, unsigned char> hsv_to_rgb(float hue, fl
     red = fc;
     green = fx;
     blue = 0;
-  } else if(1 <= hue_prime && hue_prime < 2) {
+  }
+  else if(1 <= hue_prime && hue_prime < 2) {
     red = fx;
     green = fc;
     blue = 0;
-  } else if(2 <= hue_prime && hue_prime < 3) {
+  }
+  else if(2 <= hue_prime && hue_prime < 3) {
     red = 0;
     green = fc;
     blue = fx;
-  } else if(3 <= hue_prime && hue_prime < 4) {
+  }
+  else if(3 <= hue_prime && hue_prime < 4) {
     red = 0;
     green = fx;
     blue = fc;
-  } else if(4 <= hue_prime && hue_prime < 5) {
+  }
+  else if(4 <= hue_prime && hue_prime < 5) {
     red = fx;
     green = 0;
     blue = fc;
-  } else if(5 <= hue_prime && hue_prime < 6) {
+  }
+  else if(5 <= hue_prime && hue_prime < 6) {
     red = fc;
     green = 0;
     blue = fx;
-  } else {
+  }
+  else {
     red = 0;
     green = 0;
     blue = 0;
@@ -127,7 +133,7 @@ void draw_nested() {
   {
     // a hexagon centered at the origin
     const double r = 10.0;
-    for(int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 6; ++i) {
       int next = (i + 1) % 6;
       Point source(r * cos(i * CGAL_PI / 3), r * sin(i * CGAL_PI / 3));
       Point target(r * cos(next * CGAL_PI / 3), r * sin(next * CGAL_PI / 3));
@@ -165,30 +171,28 @@ void draw_unbounded_linear_grid() {
   using Traits = CGAL::Arr_linear_traits_2<Kernel>;
   using Point = Traits::Point_2;
   using Segment = Traits::Segment_2;
-  using Ray = Traits::Ray_2;
   using Line = Traits::Line_2;
   using X_monotone_curve = Traits::X_monotone_curve_2;
   using Arrangement = CGAL::Arrangement_2<Traits>;
 
   Arrangement arr;
-  auto& traits = *arr.traits();
 
   // Insert a n*n grid
   int n = 5;
-  for(int i = 0; i < n; ++i) {
+  for (int i = 0; i < n; ++i) {
     Point p1(i * 5, 0);
     Point p2(i * 5, 1);
     CGAL::insert(arr, X_monotone_curve(Line(p1, p2)));
   }
-  for(int i = 0; i < n; ++i) {
+  for (int i = 0; i < n; ++i) {
     Point p1(0, i * 5);
     Point p2(1, i * 5);
     CGAL::insert(arr, X_monotone_curve(Line(p1, p2)));
   }
   // Generate a inner square(2*2) for all cells
   // And an inner triangle for each square
-  for(int i = 0; i < n; ++i) {
-    for(int j = 0; j < n; ++j) {
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
       Point p1(i * 5 + 1, j * 5 + 1);
       Point p2(i * 5 + 4, j * 5 + 4);
       CGAL::insert(arr, X_monotone_curve(Segment(p1, Point(p2.x(), p1.y()))));
@@ -224,7 +228,7 @@ void draw_random_segments(int n) {
   CGAL::Random random;
 
   std::vector<X_monotone_curve> curves;
-  for(int i = 0; i < n; ++i) {
+  for (int i = 0; i < n; ++i) {
     double x1 = random.get_double(-100, 100);
     double y1 = random.get_double(-100, 100);
     double x2 = random.get_double(-100, 100);

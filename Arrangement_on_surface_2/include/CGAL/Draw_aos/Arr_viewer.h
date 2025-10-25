@@ -169,7 +169,7 @@ protected:
 
   Bbox_2 arr_bbox() const { return Bbox_2(0, 0, 2 * CGAL_PI, CGAL_PI); }
 
-  Bbox_2 screen_to_world(const Camera& cam) const { return Bbox_2(0, 0, 2 * CGAL_PI, CGAL_PI); }
+  Bbox_2 screen_to_world(const Camera& /* cam */) const { return Bbox_2(0, 0, 2 * CGAL_PI, CGAL_PI); }
 
   void fit_camera(const Bbox_2&, Camera& cam) {
     using Vec = qglviewer::Vec;
