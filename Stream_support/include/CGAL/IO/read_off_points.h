@@ -8,5 +8,9 @@
 //
 // Author(s) : Simon Giraudot
 
-#include <CGAL/IO/OFF/read_off_points.h>
+#ifndef CGAL_IO_READ_OFF_POINTS_H
+#define CGAL_IO_READ_OFF_POINTS_H
 
+#include <CGAL/IO/OFF.h>
+
+#endif // CGAL_IO_READ_OFF_POINTS_H

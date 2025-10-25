@@ -24,9 +24,11 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/iterator.h>
 #include <CGAL/type_traits/is_iterator.h>
+#include <CGAL/IO/OFF.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
 
 #include <iostream>
 #include <fstream>
@@ -38,54 +40,14 @@ namespace CGAL {
 
 namespace IO {
 
-/**
-   \ingroup PkgPointSetProcessing3IOOff
-
-   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
-
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
-   It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param is input stream
-   \param output output iterator over points
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if reading was successful, `false` otherwise.
-
-   \sa \ref IOStreamOFF
-*/
+// doxygen in ../OFF.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
-#endif
+              const CGAL_NP_CLASS& np,
+              std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
               )
 {
   using parameters::choose_parameter;
@@ -197,54 +159,14 @@ bool read_OFF(std::istream& is,
   return true;
 }
 
-/**
-   \ingroup PkgPointSetProcessing3IOOff
-
-   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
-
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
-   It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param fname input file name
-   \param output output iterator over points
-   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if reading was successful, `false` otherwise.
-
-   \sa \ref IOStreamOFF
-*/
+// doxygen in ../OFF.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
-#endif
+              const CGAL_NP_CLASS& np,
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
               )
 {
   std::ifstream is(fname);
