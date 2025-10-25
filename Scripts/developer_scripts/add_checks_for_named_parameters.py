@@ -87,6 +87,7 @@ while True:
 
 
         add_macro=True
+        macro_already_here=False
 
         #do nothing if the macro is already there
         while True:
@@ -95,9 +96,7 @@ while True:
             stderr.write("Error parsing the function\n")
             exit(1)
           if re.search("CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS", line):
-            #TODO: in check mode, we should check that there is a match between code and `params`
-            add_macro=False
-            res+=line
+            macro_already_here=True
             break
           else:
             if line=="\n":
@@ -106,8 +105,9 @@ while True:
               break # do we want to support comments?
 
         if add_macro:
-          res+=s+"\n\n"
-          res+=line
+          res+=s+"\n"
+          if not macro_already_here:
+            res+="\n"+line
           modified=True
         break;
 
