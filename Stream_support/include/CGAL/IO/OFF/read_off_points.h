@@ -166,7 +166,7 @@ template <typename OutputIteratorValueType,
 bool read_OFF(const std::string& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np,
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
+              std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
               )
 {
   std::ifstream is(fname);
