@@ -175,7 +175,7 @@ private:
     return Polyline{};
   }
 
-  void approximate_vertex(Context& ctx, const Vertex_const_handle& vh) const {
+  void approximate_vertex(Context& /* ctx */, const Vertex_const_handle& vh) const {
     if (vh->is_at_open_boundary()) return;
     m_bounded_approx_vertex(vh);
   }
