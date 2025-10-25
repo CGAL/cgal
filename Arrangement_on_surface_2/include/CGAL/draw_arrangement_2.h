@@ -26,7 +26,9 @@
 #include <unordered_map>
 #include <utility>
 
+#ifdef CGAL_USE_BASIC_VIEWER
 #include <QApplication>
+#endif
 
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -40,7 +42,10 @@
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Draw_aos/type_utils.h>
+
+#ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/Draw_aos/Arr_viewer.h>
+#endif
 
 namespace CGAL {
 
@@ -399,10 +404,8 @@ public:
   /*! draws a curve, where the traits does have approximate_2_object.
    */
   template <typename T, std::enable_if_t<has_approximate_2_object_v<T> && !is_or_derived_from_agas_v<T>, int> = 0>
-  auto draw_curve_impl1(const T& traits, const X_monotone_curve& xcv, bool colored, const CGAL::IO::Color& c) {
-    using Approximate = typename Gt::Approximate_2;
-    draw_curve_impl2(traits, traits.approximate_2_object(), xcv, colored, c);
-  }
+  auto draw_curve_impl1(const T& traits, const X_monotone_curve& xcv, bool colored, const CGAL::IO::Color& c)
+  { draw_curve_impl2(traits, traits.approximate_2_object(), xcv, colored, c); }
 
   /*! draws a geodesic curve
    */
@@ -485,7 +488,7 @@ static auto map_from_pair_ranges(Range1 range1, Range2 range2) {
                                             boost::make_transform_iterator(end, tuple_to_pair));
 }
 
-/*! \brief tracking changes between an arrangement and its copy that will be later inserted to.
+/*! Tracking changes between an arrangement and its copy that will be later inserted to.
  *
  * \note tracks insertions only. If any other actions made(e.g. deletions, merging, etc), the state of the tracker
  * instance may become invalid.
@@ -536,7 +539,7 @@ protected:
 public:
   Arr_insertion_tracker(Arrangement& arr) : Base(arr) {}
 
-  /*! \brief Query the original face of a given face.
+  /*! queries the original face of a given face.
    *
    * \param fh a valid face handle in the modified arrangement.
    * \return Face_const_handle
@@ -547,7 +550,7 @@ public:
     return it->second; // new face from splitting an existing face
   }
 
-  /*! \brief Query the original halfedge of a given halfedge.
+  /*! queries the original halfedge of a given halfedge.
    *
    * \param heh a valid halfedge handle in the modified arrangement.
    * \return Halfedge_const_handle
@@ -559,7 +562,7 @@ public:
     return it->second;
   }
 
-  /*! \brief Query the original vertex of a given vertex.
+  /*! queries the original vertex of a given vertex.
    *
    * \param vh a valid vertex handle in the modified arrangement.
    * \return Vertex_const_handle
@@ -583,21 +586,23 @@ private:
   unordered_flat_map<Vertex_const_handle, Vertex_const_handle> m_vertex_map;
 };
 
+#ifdef CGAL_USE_BASIC_VIEWER
+//!
 void draw_unimplemented() {
-  std::cerr << "Geometry traits type of arrangement is required to support approximation of Point_2 and "
-               "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization."
-            << std::endl;
-  exit(1);
+  CGAL_error_msg("Geometry traits type of arrangement is required to support approximation of Point_2 and "
+                 "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization.");
 }
 
+//!
 template <typename Arrangement, typename GSOptions>
-void draw_impl_planar(
-    const Arrangement& arr, const GSOptions& gso, const char* title, Bbox_2 initial_bbox, QApplication& app) {
+void draw_impl_planar(const Arrangement& arr, const GSOptions& gso, const char* title, Bbox_2 initial_bbox,
+                      QApplication& app) {
   Arr_viewer viewer(app.activeWindow(), arr, gso, title, initial_bbox);
   viewer.show();
   app.exec();
 }
 
+//!
 template <typename Arrangement, typename GSOptions>
 void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
                     const char* title, Bbox_2 initial_bbox, QApplication& app) {
@@ -679,6 +684,7 @@ void draw_impl_agas(const Arrangement& arr, const GSOptions& gso,
   app.exec();
 }
 
+//!
 template <typename Arrangement, typename GSOptions, typename... Args>
 void draw(const Arrangement& arr, const GSOptions& gso, Args&&... args) {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
@@ -692,10 +698,11 @@ void draw(const Arrangement& arr, const GSOptions& gso, Args&&... args) {
   else
     return draw_impl_planar(arr, gso, std::forward<Args>(args)...);
 }
+#endif
 
 } // namespace draw_aos
 
-/*! \brief draws an arrangement on surface.
+/*! draws an arrangement on surface.
  *
  * \tparam Arrangement
  * \tparam GSOptions
@@ -711,6 +718,12 @@ void draw(const Arrangement& arr,
           const GSOptions& gso,
           const char* title = "2D Arrangement on Surface Viewer",
           Bbox_2 initial_bbox = Bbox_2(0, 0, 0, 0)) {
+  CGAL_USE(arr);
+  CGAL_USE(gso);
+  CGAL_USE(title);
+  CGAL_USE(initial_bbox);
+
+#ifdef CGAL_USE_BASIC_VIEWER
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -723,9 +736,10 @@ void draw(const Arrangement& arr,
   int argc;
   QApplication app(argc, nullptr);
   draw_aos::draw(arr, gso, title, initial_bbox, app);
+#endif
 }
 
-/*! \brief draws an arrangement on surface with default graphics scene options. Faces are colored randomly.
+/*! draws an arrangement on surface with default graphics scene options. Faces are colored randomly.
  *
  * \tparam Arrangement
  * \param arr the arrangement to be drawn
