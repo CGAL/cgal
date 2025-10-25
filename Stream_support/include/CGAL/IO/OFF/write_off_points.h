@@ -94,7 +94,6 @@ bool write_OFF(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np,
                std::enable_if_t<internal::is_Range<PointRange>::value>*
-#endif
                )
 {
   return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);

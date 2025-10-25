@@ -9,4 +9,9 @@
 // Author(s) : Simon Giraudot
 
 
-#include <CGAL/IO/LAS/write_las_points.h>
+#ifndef CGAL_IO_WRITE_OFF_POINTS_H
+#define CGAL_IO_WRITE_OFF_POINTS_H
+
+#include <CGAL/IO/OFF.h>
+
+#endif // CGAL_IO_WRITE_OFF_POINTS_H
