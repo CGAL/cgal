@@ -1215,24 +1215,24 @@ namespace experimental {
 // \param np_A an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
-//   \cgalParamBegin{vertex_point_map}
+//   \cgalParamNBegin{vertex_point_map}
 //     the property map with the points associated to the vertices of the source mesh.
 //     The type of this map is model of `ReadWritePropertyMap`. If this parameter is omitted,
 //     an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-//   \cgalParamEnd
-//   \cgalParamBegin{geom_traits}
+//   \cgalParamNEnd
+//   \cgalParamNBegin{geom_traits}
 //     a geometric traits class instance, must be a model of `Kernel`
-//   \cgalParamEnd
+//   \cgalParamNEnd
 // \cgalNamedParamsEnd
 //
 // \param np_B an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
-//   \cgalParamBegin{vertex_point_map}
+//   \cgalParamNBegin{vertex_point_map}
 //     the property map with the points associated to the vertices of the target mesh.
 //     The type of this map is model of `ReadablePropertyMap`. If this parameter is omitted,
 //     an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-//   \cgalParamEnd
+//   \cgalParamNEnd
 // \cgalNamedParamsEnd
 //
 // \return the number of snapped vertex pairs
