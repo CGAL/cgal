@@ -28,6 +28,7 @@ in_comment_section = False
 
 params_stack={}
 np_names=[]
+np_only={}
 while True:
   line = f.readline()
   if not line:
@@ -58,10 +59,6 @@ while True:
           res+=m.group(1)+"}\n"
           modified=True
           break
-
-
-        add_macro=True
-        macro_already_here=False
 
         #do nothing if the macro is already there
         while True:
@@ -103,12 +100,29 @@ while True:
       if re.search("cgalNamedParamsEnd", line):
         is_in_comment_section(line)
         for np_name in np_names:
-          params_stack[np_name]=params
+          if not np_only:
+            params_stack[np_name]=params
+          else:
+            #filter params
+            filtered_params=[]
+            for p in params:
+              if p in np_only.keys():
+                if np_name!=np_only[p]:
+                  continue;
+              filtered_params.append(p)
+            params_stack[np_name]=filtered_params
         np_names=[]
+        np_only={}
         break
       m = re.search(r"cgalParamNBegin{\s*([^ ]+)\s*}", line)
       if m:
-        params.append(m.group(1).strip())
+        last_param=m.group(1).strip()
+        params.append(last_param)
+      else:
+        m = re.search(r"cgalParamExtra{\s*`([^ ]+)`\s+only}", line)
+        if m:
+          np_only[last_param]=m.group(1)
+          #print(last_param + " is only for "+m.group(1))
     if not line:
       stderr.write("ERROR: don't remember why I put that ("+argv[1]+")\n")
       break
