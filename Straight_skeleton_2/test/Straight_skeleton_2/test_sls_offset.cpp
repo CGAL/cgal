@@ -41,16 +41,18 @@ typedef CGAL::Timer Timer;
 namespace CGAL {
 
 template<typename K>
-class Test_polygon_2 : public CGAL::Polygon_2<K> {
+struct Test_polygon_2 : public CGAL::Polygon_2<K> {
     typedef CGAL::Polygon_2<K> Base;
+    Test_polygon_2() { }
     Test_polygon_2(const Base&);
 public:
     using Base::Base;
 };
 
 template<typename K>
-class Test_polygon_with_holes_2 : public CGAL::Polygon_with_holes_2<K> {
+struct Test_polygon_with_holes_2 : public CGAL::Polygon_with_holes_2<K> {
     typedef CGAL::Polygon_with_holes_2<K> Base;
+    Test_polygon_with_holes_2() { }
     Test_polygon_with_holes_2(const Base&);
 public:
     using Base::Base;

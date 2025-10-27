@@ -18,7 +18,8 @@
 #ifndef CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
 #define CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -44,12 +45,11 @@ void draw(const MPH& aph);
 
 #endif
 
-#ifdef CGAL_USE_BASIC_VIEWER
+namespace CGAL {
+
+#if defined(CGAL_USE_BASIC_VIEWER)
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Multipolygon_with_holes_2.h>
-
-namespace CGAL {
 
 // Viewer class for Multipolygon_with_holes_2
 template <typename Multipolygon>
@@ -180,11 +180,17 @@ private:
   const Mpwh& m_mpwh;
 };
 
+#endif // CGAL_USE_BASIC_VIEWER
+
 // Specialization of draw function.
 template<class T, class C>
 void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
           const char* title = "Multipolygon_with_holes_2 Basic Viewer")
 {
+  CGAL_USE(mpwh);
+  CGAL_USE(title);
+
+#if defined(CGAL_USE_BASIC_VIEWER)
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -203,10 +209,9 @@ void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
     mainwindow.show();
     app.exec();
   }
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 } // End namespace CGAL
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H

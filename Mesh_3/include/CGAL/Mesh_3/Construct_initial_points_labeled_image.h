@@ -75,7 +75,7 @@ struct Get_point
  *
  * Functor for generating initial points in labeled images.
  * This functor is a model of the `InitialPointsGenerator_3` concept,
- * and can be passed as a parameter to `CGAL::make_mesh_3` using the
+ * and can be passed as a parameter to `CGAL::make_mesh_3()` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
  * This functor scans the complete image to detect all its connected components,

@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshParameterizationRef Triangulated Surface Mesh Parameterization Reference
+/// \defgroup PkgSurfaceMeshParameterizationRef Reference Manual
 
 
 /*!

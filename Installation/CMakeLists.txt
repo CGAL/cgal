@@ -949,6 +949,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
     find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
+    set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
     find_package(VTK COMPONENTS ImagingGeneral IOImage NO_MODULE)
     if(VTK_FOUND)
       get_target_property(VTK_INCLUDE_DIRS VTK::IOImage INTERFACE_INCLUDE_DIRECTORIES)
@@ -969,19 +970,6 @@ ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}" -std=c++17)
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
-    if(NOT RS_FOUND AND NOT RS3_FOUND)
-      set(compile_options
-          "${compile_options} \
--DCGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1=1 \
--DCGAL_ALGEBRAIC_KERNEL_RS_GMPQ_D_1=1")
-      message(STATUS "Skip RS headers \"CGAL/Algebraic_kernel_rs_gmpq_d_1.h\" \
-and \"CGAL/Algebraic_kernel_rs_gmpz_d_1.h\" because RS_FOUND is false.")
-    else()
-      set(compile_options
-          "${compile_options} \
--DCGAL_USE_MPFI=1 \
--DCGAL_USE_RS=1")
-    endif()
     if(NOT OpenMesh_FOUND)
       set(compile_options
           "${compile_options} \
@@ -1162,16 +1150,12 @@ LEDA_FOUND is false.")
               CMD UNIX_COMMAND "${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ ${flag} -H \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-              # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
-              # depends on RS.
             )
             # CMD2 is CMD without the -H option
             separate_arguments(
               CMD2 UNIX_COMMAND "${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ ${flag} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-              # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
-              # depends on RS.
             )
             set(chk_header_name
                 ${CGAL_BINARY_DIR}/package_info/${package}/check_headers/check_${header2}

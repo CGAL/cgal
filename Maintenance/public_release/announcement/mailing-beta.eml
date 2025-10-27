@@ -1,298 +1,205 @@
-Subject: CGAL 6.0 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 6.1 Beta 1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
 The CGAL Open Source Project is pleased to announce the release
-6.0 Beta 1 of CGAL, the Computational Geometry Algorithms Library.
+of CGAL 6.1 Beta 1, the Computational Geometry Algorithms Library.
 
-CGAL version 6.0 Beta 1 is a public testing release. It should provide a
-solid ground to report bugs that need to be tackled before the release
-of the final version of CGAL 6.0 in July 2024.
+CGAL version 6.1 Beta 1 is a public testing release. We encourage you to
+use it and report any bugs that should be addressed before the final
+release of CGAL 6.1 in September 2025.
 
-Besides fixes and general enhancement to existing packages, the
-following has changed since CGAL 5.6:
+This CGAL version was actually published two days ago on GitHub, at
+  https://github.com/CGAL/cgal/releases
+However, the CGAL website has been unavailable for a few days due to an
+unusual incident at our hosting provider.
+
+Besides fixes and general enhancements to existing packages, the
+following has changed since CGAL 6.0:
 
 General Changes
 
--   CGAL 6.0 is the first release of CGAL that requires a C++ compiler
-    with the support of C++17 or later. The new list of supported
-    compilers is:
+-   The new list of supported compilers is:
     -   Visual C++ 15.9, 16.10, 17.0 (from Visual Studio 2017, 2019
         and 2022) or later
-    -   Gnu g++ 11.4.0 or later (on Linux or macOS)
-    -   LLVM Clang version 15.0.7 or later (on Linux)
-    -   Apple Clang compiler versions 10.0.1, 12.0.5, and 15.0.0 (on
-        macOS)
--   The minimal supported version of Boost is now 1.72.0.
--   The CGAL Core library is no longer based on GMP, but on
-    Boost.Multiprecision. Either GMP backend or Boost backend can be
-    used.
--   All demos are now based on Qt6.
--   Breaking change: The CMake file UseCGAL.cmake has been removed from
-    CGAL. Usages of the CMake variables ${CGAL_USE_FILE} and
-    ${CGAL_LIBRARIES} must be replaced by a link to the imported target
-    CGAL::CGAL, for example:
-    target_link_library(your_target PRIVATE CGAL::CGAL).
+    -   Gnu g++ 12.2.0 or later (on Linux)
+    -   LLVM Clang version 20.1.6 or later (on Linux)
+    -   Apple Clang compiler versions 12.0.5 and 12.0.5 (on macOS)
+-   The minimal supported version of Boost is now 1.74.0.
 
-Kinetic Space Partition (new package)
+3D Constrained Triangulations (new package)
 
--   This package implements kinetic space partition: based on a set of
-    planar input shapes, the bounding box of the input data is split
-    into convex volumes. The complexity of the partition can be adjusted
-    with a single parameter.
+-   This package implements the construction of a 3D Constrained
+    Delaunay triangulation. This triangulation is a generalization of a
+    3D Delaunay Triangulation which conforms to the set of faces of a 3D
+    piecewise linear complex (PLC), ensuring that these faces are part
+    of the triangulation. As not all PLCs are tetrahedralizable, the
+    algorithm may insert Steiner points to construct the constrained
+    triangulation. The main entry point is the function
+    CGAL::make_conforming_constrained_Delaunay_triangulation_3().
 
-Kinetic Surface Reconstruction (new package)
+3D Isosurfacing (new package)
 
--   The package implements a piece-wise planar surface reconstruction
-    pipeline from point clouds combining methods from the Shape
-    Detection, Shape Regularization and Kinetic Shape Partition packages
-    and graph-cut to reconstruct surfaces from point clouds.
+-   This package provides algorithms to extract isosurfaces from scalar
+    fields. The algorithms provided in this first version include
+    Marching Cubes, Topologically Correct Marching Cubes, and Dual
+    Contouring. The algorithm is generic with respect to the scalar
+    field representation (implicit function, discrete values, …) and the
+    discretization data structure (Cartesian grid, octree, …). The
+    output is an indexed face set that stores an isosurface in the form
+    of a surface mesh.
 
-Basic Viewer (new package)
+dD Fréchet Distance (new package)
 
--   The basic viewer package provides interactive visualization for most
-    CGAL packages, such as 2D Arrangements, 2D Regularized Boolean
-    Set-Operations, Linear Cell Complex, 3D Boolean Operations on Nef
-    Polyhedra, 2D Periodic Triangulations, 3D Point Set, 2D Polygons, 3D
-    Polyhedral Surface, 2D Straight Skeleton and Polygon Offsetting,
-    Surface Mesh, 2D Triangulations, 3D Triangulations, 2D Voronoi
-    Diagrams, and more. The most simple use case of the basic viewer is
-    the call of the global CGAL::draw() function. There is one such
-    draw() function for each CGAL package that has a basic viewer. Such
-    a call opens an interactive window showing the given model and
-    allowing to navigate in the scene, show or hide some specific cells,
-    show the interior of the model if any, etc. The Basic_viewer is
-    based on Qt6.
+-   This package provides functions for computing the Fréchet distance
+    of polylines in any dimension under the Euclidean metric.
 
-Polygon Repair (new package)
+2D Triangulations on Hyperbolic Surfaces (new package)
 
--   This package provides algorithms to repair 2D polygons, polygons
-    with holes, and multipolygons with holes, by selecting faces of the
-    arrangement of the input using the odd-even heuristic.
+-   This package enables building and handling triangulations of closed
+    orientable hyperbolic surfaces. It offers functions for the
+    generation of the triangulation from a convex fundamental domain,
+    the Delaunay flip algorithm, and the construction of a portion of
+    the lift of the triangulation in the Poincaré disk. A method is
+    offered that generates such domains in genus two.
 
-2D and 3D Linear Geometry Kernel
+    See also the associated news entry.
 
--   Breaking change: Replaced all instances of boost::variant with
-    std::variant in the intersection functions.
--   Breaking change: Replaced all instances of boost::optional with
-    std::optional in the intersection functions.
+Polygon Repair
 
-3D Polyhedral Surface
+-   Added the non-zero rule (areas with non-zero winding number are
+    kept), as well as two functions to compute the conservative inner
+    and outer hull of similar polygons:
+    -   CGAL::Polygon_repair::join()
+    -   CGAL::Polygon_repair::intersect()
 
--   The demo of this package, also known as “Polyhedron Demo” has been
-    renamed “CGAL Lab” and moved to its own package (“Lab”).
-
-2D and 3D Fast Intersection and Distance Computation (AABB Tree)
-
--   The AABB tree can now be used with 2D or 3D primitives:
-    -   The concepts AABBGeomTraits and AABBRayIntersectionGeomTraits
-        have been replaced by AABBGeomTraits_3 and by
-        AABBRayIntersectionGeomTraits_3, respectively.
-    -   The concepts AABBGeomTraits_2 and
-        AABBRayIntersectionGeomTraits_2 have been introduced, as the 2D
-        counterparts.
-    -   The class CGAL::AABB_traits is deprecated and replaced by
-        CGAL::AABB_traits_3.
-    -   The class CGAL::AABB_traits_2 is introduced as the 2D
-        counterpart.
-    -   The class CGAL::AABB_segment_primitive has been deprecated and
-        replaced by the class CGAL::AABB_segment_primitive_3.
-    -   The class CGAL::AABB_triangle_primitive has been deprecated and
-        replaced by the class CGAL::AABB_triangle_primitive_3.
-    -   The following 2D primitive classes have been added:
-        CGAL::AABB_segment_primitive_2,
-        CGAL::AABB_polyline_segment_primitive_2,
-        CGAL::AABB_triangle_primitive_2,
-        CGAL::AABB_indexed_triangle_primitive_2.
--   Breaking change: The concept AABBTraits now refines the concept
-    SearchTraits.
--   Breaking change: Replaced all instances of boost::optional with
-    std::optional.
-
-2D Arrangements
-
--   Breaking change: Replaced all instances of boost::variant with
-    std::variant.
--   Breaking change: The type of the result of point location queries
-    has been changed to std::variant. Support for the old macro
-    CGAL_ARR_POINT_LOCATION_VERSION has been removed.
--   Breaking change: Eliminated the error-prone C-type casting that was
-    used to define observers. In general, backward compatibility was
-    maintained; however, the class template CGAL::Arr_observer has been
-    replaced by an alias template. (The class CGAL::Arr_observer was
-    renamed to CGAL::Aos_observer).
--   Introduced Arr_dcel, which essentially replaces the former
-    CGAL::Arr_default_dcel. Backward compatibility was maintained by the
-    introduction of the alias template CGAL::Arr_default_dcel.
-    CGAL::Arr_dcel, as opposed to the former CGAL::Arr_default_dcel is
-    templated (in addition to the geometry traits) by Vertex, Halfedge,
-    and Face template parameters, and they have default type values. All
-    this enables the layered extension of DCEL records.
--   Fixed a bug in the zone construction code applied to arrangements of
-    geodesic arcs on a sphere, when inserting an arc that lies on the
-    identification curve.
--   Introduced a new interactive program that demonstrates 2D
-    arrangements embedded on the sphere called earth. The program (i)
-    reads a database of all administrative boundaries of the countries
-    in the world, (ii) displays the globe with all countries and land
-    covered by water (which is land not covered by countries) on a
-    window, and (ii) enables interaction with the user.
-
-3D Envelopes
-
--   Breaking change: Construct_projected_boundary_2 in EnvelopeTraits_3
-    now uses std::variant instead of CGAL::Object.
--   Passed the base class of CGAL::Env_plane_traits_3 as a template
-    parameter with a default value (being the 2D arrangement linear
-    traits). Similarly, passed the base class of
-    CGAL::Env_triangle_traits_3 as a template parameter with a default
-    value (being the 2D arrangement segment traits).
-
-Combinatorial Maps and Generalized Maps
-
--   Added the function insert_cell_1_between_two_cells_2() to the
-    GenericMap concept, which enables users to insert an edge between
-    two different faces in order to create faces with holes.
-
--   Added new meshing criterion edge_distance, an upper bound for the
-    distance from the edge to the 1D feature.
-
--   Breaking change: the concept MeshEdgeCriteria_3 was modified to
-    include the new meshing criterion edge_distance.
-
-Quadtrees, Octrees, and Orthtrees
-
--   Breaking change:
-    -   Node splitting behavior and per-node data are now customizable
-        via the Traits class.
-    -   Nodes are now stored as a property map, with properties of each
-        node accessed by index.
-    -   Nearest neighbors functions only work for Orthtrees which
-        provide the necessary functionality.
-
-CGAL and the Boost Graph Library (BGL)
-
--   Added the function CGAL::remove_all_elements(), which removes
-    vertices, halfedges, and faces without collecting garbage and
-    without removing properties.
--   Dynamic property maps can now have a default value.
--   The class CGAL::Face_filtered_graph now supports patch IDs of any
-    type and not just faces_size_type. The only requirement is that the
-    type is hashable.
+    See also the associated news entry.
 
 Polygon Mesh Processing
 
+-   Added the parameter apply_iterative_snap_rounding to the function
+    CGAL::Polygon_mesh_processing::autorefine_triangle_soup(). When set
+    to true, the coordinates are rounded to fit in double and may
+    perform additional subdivisions to ensure the output is free of
+    self-intersections. See also the associated news entry.
 -   Added the function
-    CGAL::Polygon_mesh_processing::autorefine_triangle_soup(), which can
-    be used to refine a soup of triangles such that no pair of triangles
-    intersects in their interiors. Also added, the function
-    CGAL::Polygon_mesh_processing::autorefine() operating directly on a
-    triangle mesh and updating it using the aforementioned function on a
-    triangle soup.
--   Added the class CGAL::Corefinement::Non_manifold_output_visitor,
-    which can be used in corefinement based functions to deal with
-    non-manifold outputs.
--   Added the option to use a variable sizing field for
-    CGAL::Polygon_mesh_processing::isotropic_remeshing(), and a sizing
-    function based on a measure of local curvature for adaptive
-    remeshing.
+    CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()
+    to remesh triangle meshes. This remeshing algorithm uses clustering
+    on polygonal meshes as to approximate a Centroidal Voronoi Diagram
+    construction, and can move vertices as to recover sharp features and
+    corners. See also the associated news entry.
+-   New implementation of CGAL::Polygon_mesh_processing::clip() and
+    CGAL::Polygon_mesh_processing::split() with a plane as clipper that
+    is much faster and is now able to handle non-triangulated surface
+    meshes. See also the associated news entry.
 -   Added the function
-    CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()
-    which can be used to compute the mean and Gaussian curvatures, as
-    well as the principal curvature and directions.
+    CGAL::Polygon_mesh_processing::refine_with_plane(), which enables
+    users to refine a mesh with its intersection with a plane.
+-   Added a function in the visitor of the corefinement based methods to
+    trace faces in the output meshes which correspond to coplanar faces
+    of the input.
 -   Added the function
-    CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel() which can
-    be used to refine a polygon mesh along an isocurve.
--   Added the function CGAL::Polygon_mesh_processing::add_bbox(), which
-    enables adding a tight or extended, triangulated or not, bounding
-    box to a face graph.
+    CGAL::Polygon_mesh_processing::discrete_mean_curvature() and
+    CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature() to
+    evaluate the discrete curvature at a vertex of a mesh.
+-   Added the function CGAL::Polygon_mesh_processing::angle_sum() to
+    compute the sum of the angles around a vertex.
+
+Point Set Processing
+
+-   Added CGAL::poisson_eliminate(), which can be used to downsample a
+    point cloud to a target size while providing Poisson disk property,
+    i.e., a larger minimal distance between points.
+
+CGAL and the Boost Graph Library (BGL)
+
+-   Added the function dijkstra_shortest_path(), which can be used to
+    compute the geometrically shortest sequence of halfedges between two
+    vertices.
+-   Added the function CGAL::Euler::remove_degree_2_vertex(), which
+    enables users to remove vertices which have exactly two incident
+    edges.
+
+2D Arrangements
+
+-   Breaking change: Renamed the concept AosApproximateTraits_2 to
+    AosApproximatePointTraits_2 to make room for the new concept
+    AosApproximateTraits_2. This concept requires the provision of a
+    functor called Approximate_2 that has an operator that approximates
+    the coordinates of a point.
+-   Breaking change: The concept AosApproximateTraits_2 now refines the
+    concept AosApproximatePointTraits_2 and requires the provision of a
+    functor called Approximate_2. In addition to an operator that
+    approximates the coordinates of a point, it also requires the
+    provision of (i) an operator that approximates a points, and (ii) an
+    operator that approximates a curve.
+-   Renamed the prefix of the names of all concepts in the
+    Arrangement_on_surface_2 package from “Arrangement” to “Aos”.
+-   Introduced two traits decorators, namely CGAL::Arr_tracing_traits_2
+    and CGAL::Arr_counting_traits_2, which can be used to extract
+    debugging and informative metadata about the traits in use while a
+    program is being executed.
+-   Fixed the Landmark point-location strategy so that it can be applied
+    to arrangements on a sphere.
+-   Fixed a bug in the extensions of vertex and halfedge types of the
+    DCEL when used to instantiate Arrangement_with_history_2 or similar
+    arrangement classes that derive from Arrangement_2.
+-   Fixed do_intersect() of a 2D Arrangement with a curve.
+
+Triangulations
+
+-   All triangulations now offer the functions point(Vertex_handle) and
+    point(Simplex, int), which enables users to access the geometric
+    position of a vertex and of the i-th vertex of a simplex of a
+    triangulation.
+
+Poisson Surface Reconstruction
+
+-   Added a new mesh domain Poisson_mesh_domain_3 that integrates some
+    optimizations from the deprecated 3D Surface Mesh Generation
+    package.
 
 2D Triangulations
 
--   Breaking change: the concept TriangulationTraits_2 now requires an
-    additional functor Compare_xy_2.
-
-3D Triangulations
-
--   Added three member functions vertices() to the class
-    CGAL::Triangulation_3. Each of them returns an array containing the
-    vertices of the given triangulation simplex.
-
-dD Triangulations
-
--   Breaking change: CGAL::TDS_full_cell_mirror_storage_policy is now
-    unsupported in dimension larger than 127.
--   Breaking change: Inserting multiple unweighted points in the same
-    position now keeps the first one, instead of switching to the
-    latest. This only affects custom point types where not all points in
-    the same position are equivalent.
-
-Tetrahedral Remeshing
-
--   Added a sizing field as new parameter of
-    CGAL::tetrahedral_isotropic_remeshing(), which can be used to
-    perform non-uniform and adaptive remeshing.
--   Breaking change: The template parameters of
-    CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3 have been
-    modified, reverting changes introduced in CGAL 5.6.
--   Breaking change: The vertex base of
-    CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3 must now be a
-    model of the concept SimplicialMeshVertexBase_3 (and not only
-    TriangulationVertexBase_3).
-
-3D Simplicial Mesh Data Structure
-
--   Breaking change: The template parameters of
-    CGAL::Simplicial_mesh_cell_base_3 have been modified to enable
-    passing a geometric traits and a custom cell base class.
+-   Breaking change: In the class template
+    Constrained_triangulation_plus_2, the value type of the range
+    returned by subconstraints() has changed from
+    const std::pair<const Subconstraint, std::list<Context>*> to
+    Subconstraint. The old range type is now returned by a new function
+    named subconstraints_and_contexts().
 
 3D Mesh Generation
 
--   Breaking change: Removed the concept TriangleAccessor, the template
-    parameter TriangleAccessor, as well as the class Triangle_accessor.
-    These were no longer used for several releases.
--   Breaking change: Removed the class templates
-    CGAL::Gray_image_mesh_domain_3, CGAL::Implicit_mesh_domain_3, and
-    CGAL::Labeled_image_mesh_domain_3, which were deprecated since
-    CGAL-4.13.
+-   Added two new meshing parameters that enable custom mesh
+    initialization:
+-   initial_points_generator: enables the user to specify a functor that
+    generates initial points,
+-   initial_points: enables the user to specify a Range of initial
+    points.
+-   Added a new meshing parameter surface_only, which can be used to
+    improve performance when only surface mesh generation is sought.
+-   Added a new mesh domain Poisson_mesh_domain_3, which should be used
+    when generating a mesh from a Poisson surface obtained with the
+    package Poisson Surface Reconstruction. This mesh domain
+    re-integrates some optimizations for Poisson surface mesh generation
+    that were lost when the package 3D Mesh Generation had to be
+    replaced instead of the deprecated package 3D Surface Mesh
+    Generation.
 
-3D Surface Mesh Generation
+3D Subdivision Methods
 
--   This package is deprecated and the package 3D Mesh Generation should
-    be used instead.
+-   Added a new named parameter for
+    CGAL::Subdivision_method_3::Loop_subdivision() and
+    CGAL::Subdivision_method_3::CatmullClark_subdivision(), which
+    enables users to subdivide a mesh without modifying its geometry.
 
-Surface Mesh Parameterization
+Algebraic Kernel
 
--   Breaking change: The method
-    CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3 now
-    requires the Eigen library.
--   Breaking change: CGAL no longer ships its own version of OpenNL.
-
-Surface Mesh
-
--   Breaking change: The return type of
-    CGAL::Surface_mesh::property_map() has been changed to
-    std::optional.
-
-3D Point Set
-
--   Breaking change: The return type of
-    CGAL::Point_set_3::property_map() has been changed to std::optional.
-
-Shape Detection
-
--   Breaking change: Replaced all instances of boost::shared_ptr with
-    std::shared_ptr.
-
-2D Straight Skeleton and Polygon Offsetting
-
--   Breaking change: Replaced all instances of boost::shared_ptr with
-    std::shared_ptr.
--   Breaking change: Replaced all instances of boost::optional with
-    std::optional.
+-   Breaking change: Classes based on the RS Library are no longer
+    provided.
 
 
-See https://www.cgal.org/2024/06/21/cgal60-beta1/ for a
+See https://www.cgal.org/2025/07/07/cgal61-beta1/ for a
 complete list of changes.
 
 

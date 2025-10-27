@@ -36,3 +36,13 @@ add_executable(Linear_cell_complex_copy_test_index Linear_cell_complex_copy_test
 target_compile_definitions(Linear_cell_complex_copy_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
 target_link_libraries(Linear_cell_complex_copy_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_copy_test_index)
+
+# Alias tests (test old function names, with deprecated warnings disabled)
+create_single_source_cgal_program(test_triangulation_alias.cpp ${hfiles})
+target_compile_definitions(test_triangulation_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
+
+create_single_source_cgal_program(test_polyhedron_3_alias.cpp ${hfiles})
+target_compile_definitions(test_polyhedron_3_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
+
+create_single_source_cgal_program(test_plane_graph_alias.cpp ${hfiles})
+target_compile_definitions(test_plane_graph_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)

@@ -5,18 +5,18 @@ namespace CGAL {
  * \anchor arr_refaos_with_hist
  *
  * An object `arr` of the class `Arrangement_on_surface_with_history_2`
- * represents the planar subdivision induced by a set of input curves \f$ \cal
- * C\f$.  The arrangement is represented as a doubly-connected edge-list (<span
- * class="textsc">Dcel</span>).  As is the case for the
+ * represents the planar subdivision induced by a set of input curves
+ * \f$\cal C\f$.  The arrangement is represented as a doubly-connected edge-list
+ * (<span class="textsc">Dcel</span>).  As is the case for the
  * `Arrangement_2<Traits,Dcel>`, each <span class="textsc">Dcel</span> vertex is
- * associated with a point and each edge is associated with an \f$ x\f$-monotone
+ * associated with a point and each edge is associated with an \f$x\f$-monotone
  * curve whose interior is disjoint from all other edges and vertices. Each such
- * \f$ x\f$-monotone curve is a subcurve of some \f$ C \in \cal C\f$ - or may
- * represent an overlap among several curves in \f$ \cal C\f$.
+ * \f$x\f$-monotone curve is a subcurve of some \f$C \in \cal C\f$ - or may
+ * represent an overlap among several curves in \f$\cal C\f$.
  *
  * The `Arrangement_on_surface_with_history_2` class-template extends the
  * `Arrangement_2` class-template by keeping an additional container of input
- * curves representing \f$ \cal C\f$, and by maintaining a cross-mapping between
+ * curves representing \f$\cal C\f$, and by maintaining a cross-mapping between
  * these curves and the arrangement edges they induce. This way it is possible
  * to determine the inducing curve(s) of each arrangement edge. This mapping
  * also allows the traversal of input curves, and the traversal of edges induced
@@ -26,33 +26,32 @@ namespace CGAL {
  *
  * <UL>
  * <LI>The `GeometryTraits` template-parameter should be substituted by a
- * model of the `ArrangementTraits_2` concept. The traits class defines the
+ * model of the `AosTraits_2` concept. The traits class defines the
  * `Curve_2` type, which represents an input curve.  It also defines the types
- * of \f$ x\f$-monotone curves and two-dimensional points, namely
- * `ArrangementTraits_2::X_monotone_curve_2` and
- * `ArrangementTraits_2::Point_2`, respectively, and supports basic
+ * of \f$x\f$-monotone curves and two-dimensional points, namely
+ * `AosTraits_2::X_monotone_curve_2` and
+ * `AosTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
  * <LI>The `TopologyTraits` template-parameter should be substituted by a
- * class that is a model of the `ArrangementTopologyTraits` concept.
+ * class that is a model of the `AosTopologyTraits` concept.
  * </UL>
  *
  * \sa `Arrangement_with_history_2<GeometryTraits,Dcel>`
  * \sa `Arrangement_on_surface_2<GeometryTraits,TopologyTraits>`
- * \sa `ArrangementTraits_2`
- * \sa `ArrangementTopologyTraits`
+ * \sa `AosTraits_2`
+ * \sa `AosTopologyTraits`
  */
 template <typename GeometryTraits, typename TopologyTraits>
 class Arrangement_on_surface_with_history_2 :
-    public Arrangement_on_surface_2<GeometryTraits, TopologyTraits>
-{
+    public Arrangement_on_surface_2<GeometryTraits, TopologyTraits> {
 public:
   /// \name Types
   /// @{
 
-  //! the geometry traits class in use.
+  /// the geometry traits class in use.
   typedef GeometryTraits                                 Geometry_traits_2;
 
-  //! the topology traits class in use.
+  /// the topology traits class in use.
   typedef TopologyTraits                                 Topology_traits;
 
   /*! a private type used as an abbreviation of the
@@ -61,16 +60,16 @@ public:
   typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
                                                 TopologyTraits> Self;
 
-  //! the <span class="textsc">Dcel</span> representation of the arrangement.
+  /// the <span class="textsc">Dcel</span> representation of the arrangement.
   typedef typename Topology_traits::Dcel                 Dcel;
 
-  //! the point type, as defined by the traits class.
+  /// the point type, as defined by the traits class.
   typedef typename Geometry_traits_2::Point_2            Point_2;
 
-  //! the \f$ x\f$-monotone curve type, as defined by the traits class.
+  /// the \f$x\f$-monotone curve type, as defined by the traits class.
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
-  //! the curve type, as defined by the traits class.
+  /// the curve type, as defined by the traits class.
   typedef typename Geometry_traits_2::Curve_2            Curve_2;
 
   /// @}
@@ -82,7 +81,7 @@ public:
    */
   /// @{
 
-  //! a handle for an input curve.
+  /// a handle for an input curve.
   typedef unspecified_type Curve_handle;
 
   /*! a bidirectional iterator over the curves that induce the arrangement.
@@ -123,13 +122,13 @@ public:
   /// \name Assignment Methods
   /// @{
 
-  //! assignment operator.
+  /// assignment operator.
   Self& operator=(other);
 
-  //! assigns the contents of another arrangement.
+  /// assigns the contents of another arrangement.
   void assign(const Self& other);
 
-  //! clears the arrangement.
+  /// clears the arrangement.
   void clear ();
 
   /// @}
@@ -140,31 +139,31 @@ public:
 
   /// @{
 
-  //! returns the number of input curves that induce the arrangement.
+  /// returns the number of input curves that induce the arrangement.
   Size number_of_curves() const;
 
-  //! returns the begin-iterator of the curves inducing the arrangement.
+  /// returns the begin-iterator of the curves inducing the arrangement.
   Curve_iterator curves_begin();
 
   //! returns the past-the-end iterator of the curves inducing the arrangement.
   Curve_iterator curves_end();
 
-  //! returns the number of arrangement edges induced by the curve `ch`.
+  /// returns the number of arrangement edges induced by the curve `ch`.
   Size number_of_induced_edges(Curve_handle ch) const;
 
-  //! returns the begin-iterator of the edges induced by the curve `ch`.
+  /// returns the begin-iterator of the edges induced by the curve `ch`.
   Induced_edge_iterator induced_edges_begin(Curve_handle ch) const;
 
-  //! returns the past-the-end iterator of the edges induced by the curve `ch`.
+  /// returns the past-the-end iterator of the edges induced by the curve `ch`.
   Induced_edge_iterator induced_edges_end(Curve_handle ch) const;
 
-  //! returns the number of input curves that originate the edge `e`.
+  /// returns the number of input curves that originate the edge `e`.
   Size number_of_originating_curves(Halfedge_handle e) const;
 
-  //! returns the begin-iterator of the curves originating the edge `e`.
+  /// returns the begin-iterator of the curves originating the edge `e`.
   Originating_curve_iterator originating_curves_begin(Halfedge_handle e) const;
 
-  //! returns the past-the-end iterator of the curves originating the edge `e`.
+  /// returns the past-the-end iterator of the curves originating the edge `e`.
   Originating_curve_iterator originating_curves_end(Halfedge_handle e) const;
 
   /// @}
@@ -192,9 +191,9 @@ public:
   /*! merges the edges represented by `e1` and `e2` into a single edge.  The
    * function returns a handle for one of the merged halfedges.
    *
-   * \pre `e1` and `e2` share a common end-vertex, of degree \f$ 2\f$, and the
-   *      \f$ x\f$-monotone curves associated with `e1` and `e2` are mergeable
-   *      into a single \f$ x\f$-monotone curves.
+   * \pre `e1` and `e2` share a common end-vertex, of degree \f$2\f$, and the
+   *      \f$x\f$-monotone curves associated with `e1` and `e2` are mergeable
+   *      into a single \f$x\f$-monotone curves.
    */
   Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2);
 
@@ -210,7 +209,6 @@ public:
                           bool remove_target = true);
 
   /// @}
-
 }; /* end Arrangement_on_surface_with_history_2 */
 
 /*! \ingroup PkgArrangementOnSurface2Insert
@@ -222,14 +220,14 @@ public:
  * computing its zone until reaching the right endpoint.
  *
  * The given point-location object `pl` is used to locate the left endpoints of
- * the \f$ x\f$-monotone curves. By default, the function uses the "walk along
+ * the \f$x\f$-monotone curves. By default, the function uses the "walk along
  * line" point-location strategy - namely an instance of the class
  * `Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >`.
  *
  * \pre If provided, `pl` is attached to the given arrangement `arr`.
  */
-template<typename GeometryTraits, typename TopologyTraits,
-         typename PointLocation>
+template <typename GeometryTraits, typename TopologyTraits,
+          typename PointLocation>
 typename Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>::Curve_handle
 insert
 (Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>& arr,
@@ -261,7 +259,6 @@ Size remove_curve
 (Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>& arr,
  typename Arrangement_on_surface_with_history_2<GeometryTraits, TopologyTraits>::Curve_handle ch);
 
-
 /*! \addtogroup PkgArrangementOnSurface2Overlay
  *
  * Computes the overlay of two arrangements with history `arr1` and `arr2`, and
@@ -281,17 +278,16 @@ void overlay
  Arrangement_on_surface_with_history_2<GeometryTraits, ResTopologyTraits>& res,
  OverlayTraits& ovl_tr);
 
-
 /*! \addtogroup PkgArrangementOnSurface2Overlay
  *
  * Computes the (simple) overlay of two arrangements with history `arr1` and
- *`arr2`, and sets the output arrangement with history `res` to represent the
- *overlaid arrangement. The function also constructs a consolidated set of
- *curves that induce `res`. It employs the default overlay-traits, which
- *practically does nothing.
+ * `arr2`, and sets the output arrangement with history `res` to represent the
+ * overlaid arrangement. The function also constructs a consolidated set of
+ * curves that induce `res`. It employs the default overlay-traits, which
+ * practically does nothing.
  *
  * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
- *is not supported).
+ * is not supported).
  */
 template <typename GeometryTraits, typename TopologyTraits1,
           typename TopologyTraits2, typename ResTopologyTraits>

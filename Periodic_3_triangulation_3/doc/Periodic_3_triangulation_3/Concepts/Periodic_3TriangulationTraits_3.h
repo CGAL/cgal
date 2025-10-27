@@ -51,7 +51,7 @@ typedef unspecified_type Periodic_3_offset_3;
 
 /*!
 A type representing an axis-aligned
-cuboid. It must be a model of `Kernel::Iso_cuboid_3`.
+cuboid. It must be a model of `Kernel::IsoCuboid_3`.
 */
 typedef unspecified_type Iso_cuboid_3;
 

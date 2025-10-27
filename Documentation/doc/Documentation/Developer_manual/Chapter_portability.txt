@@ -65,7 +65,7 @@ probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
 A list of reasonable Boost libraries to use in the \cgal API is
-Graph, Optional, Parameter (for packages already using it),
+Graph, Parameter (for packages already using it),
 Property Map, Smart Pointers (for packages already using it),
 Variant.
 

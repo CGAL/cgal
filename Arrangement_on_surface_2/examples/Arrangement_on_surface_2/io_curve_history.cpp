@@ -3,7 +3,6 @@
 
 #include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/IO/Arr_with_history_iostream.h>
 

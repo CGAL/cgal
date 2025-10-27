@@ -153,7 +153,7 @@ i.e.\ \f$ |*g| < r\f$ . Three random numbers are needed from
 `rnd` for each point.
 
 */
-Random_points_in_sphere_3( double r, Random& rnd =
+Random_points_in_sphere_3( double r = 1.0, Random& rnd =
 get_default_random());
 
 /// @}
@@ -719,7 +719,7 @@ i.e.\ \f$ |*g| == r\f$ . Two random numbers are needed from
 `rnd` for each point.
 
 */
-Random_points_on_sphere_3( double r, Random& rnd =
+Random_points_on_sphere_3( double r=1.0, Random& rnd =
 get_default_random());
 
 /// @}

@@ -9,11 +9,6 @@ export SHOW_PROGRESS=""
 export KEEP_TESTS=""
 export DO_NOT_UPLOAD=""
 export DO_NOT_TEST=""
-export SCP="scp"
-export WGET="wget"
-export WGET_OPTS="--no-check-certificate --no-verbose"
-export CURL="curl"
-export CURL_OPTS="-k --remote-name --silent --location-trusted"
 export CGAL_URL="https://cgal.geometryfactory.com/CGAL/Releases"
 export UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 export UPLOAD_DEMOS_DESTINATION="cgaltest@cgaltest.geometryfactory.com:public_html/incoming"
@@ -22,7 +17,8 @@ export TAR="tar"
 export GUNZIP="gunzip"
 export COMPRESSOR="gzip"
 export CONSOLE_OUTPUT="y"
-export CGAL_HOME=$(pwd | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
+CGAL_HOME=$(pwd | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
+export CGAL_HOME
 export USE_TARGZ="y"
 export USE_TARBZ="n"
 export CGAL_RELEASE=""
@@ -34,14 +30,10 @@ export INSTALLATION_DIR=""
 export TESTSUITE_DIR=""
 USE_LATEST_UNZIPPED=""
 
-# ----------------------------------------------------------------------------------------
-# produce a string containing the actual date/time
-#  (used to identify files)
-# ----------------------------------------------------------------------------------------
-datestr()
-{
-  date +%d%m%Y%H%M
-}
+WGET="wget"
+WGET_OPTS=(--no-check-certificate --no-verbose)
+CURL="curl"
+CURL_OPTS=(-k --remote-name --silent --location-trusted)
 
 # ----------------------------------------------------------------------------------------
 # Logging functions
@@ -51,11 +43,13 @@ log()
   LOGFILE=${1}
   shift
   if [ -n "${CONSOLE_OUTPUT}" ]; then
-      printf "${*} ...\n"
+      printf "%s ...\n" "${*}"
   fi
-  printf "\n-------------------------------------------------------\n" >> "${LOGFILE}"
-  printf "  ${*} ...\n"                                                >> "${LOGFILE}"
-  printf "\n-------------------------------------------------------\n" >> "${LOGFILE}"
+  {
+    printf "\n-------------------------------------------------------\n"
+    printf "  %s ...\n" "$*"
+    printf "\n-------------------------------------------------------\n"
+  } >> "${LOGFILE}"
 }
 
 log_done()
@@ -64,29 +58,41 @@ log_done()
       printf \
       " done\n-------------------------------------------------------\n"
   fi
-  printf "\n-------------------------------------------------------\n" >> "${1}"
-  printf "  **DONE**\n"                                                >> "${1}"
-  printf "\n-------------------------------------------------------\n" >> "${1}"
+  {
+    printf "\n-------------------------------------------------------\n"
+    printf "  **DONE**\n"
+    printf "\n-------------------------------------------------------\n"
+  } >> "${1}"
 }
 
 error()
 {
   if [ -n "${CONSOLE_OUTPUT}" ]; then
-      printf "\nERROR: ${*}, exiting.\n" >&2
+      printf "\nERROR: %s, exiting.\n" "$*" >&2
   fi
-  printf "\nERROR: ${*}, exiting.\n" >> "${ACTUAL_LOGFILE}"
-  ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
-  FILENAME="${CGAL_RELEASE_ID}-log`datestr`.gz"
-  mv "${ACTUAL_LOGFILE}.gz" "${LOGS_DIR}/${FILENAME}"
-  if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
-    for i in ${MAIL_ADDRESS}; do
-      printf "ERROR\n${LOGS_DIR}/${FILENAME}\n" | \
-          ${SENDMAIL} -s "completed autotest" "${i}"
+  printf "\nERROR: %s, exiting.\n" "$*" >> "$ACTUAL_LOGFILE"
+  "$COMPRESSOR" -9f "$ACTUAL_LOGFILE"
+  FILENAME="${CGAL_RELEASE_ID}-log$(date_str).gz"
+  mv "${ACTUAL_LOGFILE}.gz" "$LOGS_DIR/$FILENAME"
+  if [ ! "$MAIL_ADDRESS" = "must_be_set_in_.autocgalrc" ]; then
+    for i in $MAIL_ADDRESS; do
+      printf "ERROR\n%s\n" "$LOGS_DIR/$FILENAME" | \
+          "$SENDMAIL" -s "completed autotest" "$i"
     done
   fi
-  rm -rf "$LOCK_FILE";
+  rm -rf "$LOCK_FILE"
   exit 1
 }
+
+# ----------------------------------------------------------------------------------------
+# produce a string containing the actual date/time
+#  (used to identify files)
+# ----------------------------------------------------------------------------------------
+date_str()
+{
+  date +%d%m%Y%H%M
+}
+
 
 # ----------------------------------------------------------------------------------------
 # Downloads the file "LATEST" whose contents indicates which release to test
@@ -96,14 +102,8 @@ download_latest()
   if [ -r "LATEST" ]; then
     rm -rf LATEST
   fi
-    log "${ACTUAL_LOGFILE}" "getting LATEST"
-    if [ -n "${USE_CURL}" ]; then
-      echo "using curl..."
-      ${CURL} ${CURL_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
-    else
-      echo "using wget..."
-      ${WGET} ${WGET_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
-    fi
+  log "$ACTUAL_LOGFILE" "getting LATEST"
+  download_file "$LATEST_LOCATION" >> "$ACTUAL_LOGFILE" 2>&1
   if [ ! -f "LATEST" ]; then
     error "COULD NOT DOWNLOAD LATEST!"
   fi
@@ -133,40 +133,34 @@ abort_if_latest_already_tested()
 get_cgal()
 {
   if [ -z "$CGAL_LOCATION" ]; then
-    for i in `cat LATEST`
-    do
-      CGAL_LOCATION="${CGAL_URL}/${i}";
-      CGAL_ZIPFILE="${i}";
-    done
+    while IFS= read -r i; do
+      CGAL_LOCATION="${CGAL_URL}/$i"
+      CGAL_ZIPFILE="$i"
+    done < LATEST
   else
-    CGAL_ZIPFILE=`echo "$CGAL_LOCATION" | sed 's|.*/||'`
+    CGAL_ZIPFILE="${CGAL_LOCATION##*/}"
   fi
 
-  CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
-  echo ${CGAL_RELEASE_ID} |tee last_release_id
-  if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
+  CGAL_RELEASE_ID="${CGAL_ZIPFILE%.tar.gz}"
+  echo "$CGAL_RELEASE_ID" | tee last_release_id
+  if [ "$CGAL_RELEASE_ID" != "$CGAL_ZIPFILE" ]; then
     USE_TARGZ="y"
   else
-    CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.bz2//"`
-    if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
+    CGAL_RELEASE_ID="${CGAL_ZIPFILE%.tar.bz2}"
+    if [ "$CGAL_RELEASE_ID" != "$CGAL_ZIPFILE" ]; then
       USE_TARBZ="y"
     fi
   fi
 
-  log "${ACTUAL_LOGFILE}" "CGAL_ZIPFILE    = ${CGAL_ZIPFILE}"
-  log "${ACTUAL_LOGFILE}" "CGAL_RELEASE_ID = ${CGAL_RELEASE_ID}"
+  log "$ACTUAL_LOGFILE" "CGAL_ZIPFILE    = $CGAL_ZIPFILE"
+  log "$ACTUAL_LOGFILE" "CGAL_RELEASE_ID = $CGAL_RELEASE_ID"
 
-  log "${ACTUAL_LOGFILE}" "getting CGAL"
-  rm -f "${CGAL_ZIPFILE}"
-  if [ -n "${USE_CURL}" ]; then
-      ${CURL} ${CURL_OPTS} "${CGAL_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
-  else
-      ${WGET} ${WGET_OPTS} "${CGAL_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
-  fi
-  if [ ${?} != 0 ]; then
+  log "$ACTUAL_LOGFILE" "getting CGAL"
+  rm -f "$CGAL_ZIPFILE"
+  if ! download_file "$CGAL_LOCATION" >> "$ACTUAL_LOGFILE" 2>&1; then
     error "Could not get CGAL"
   fi
-  log_done "${ACTUAL_LOGFILE}"
+  log_done "$ACTUAL_LOGFILE"
 }
 
 
@@ -175,40 +169,39 @@ get_cgal()
 # ----------------------------------------------------------------------------------------
 unzip_cgal()
 {
-  cd "${CGAL_HOME}"
+  cd "$CGAL_HOME" || exit
 
-  log "${ACTUAL_LOGFILE}" "unzipping CGAL"
-  if [ "${USE_TARGZ}" = "y" ]; then
-    DECOMPRESSOR="${GUNZIP}"
-    log_done "${ACTUAL_LOGFILE}"
+  log "$ACTUAL_LOGFILE" "unzipping CGAL"
+  if [ "$USE_TARGZ" = "y" ]; then
+    DECOMPRESSOR="$GUNZIP"
+    log_done "$ACTUAL_LOGFILE"
   fi
 
-  if [ "${USE_TARBZ}" = "y" ]; then
+  if [ "$USE_TARBZ" = "y" ]; then
     DECOMPRESSOR="bunzip2"
   fi
 
-  log "${ACTUAL_LOGFILE}" "untarring CGAL"
-  ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" | ${TAR} xf - >> "${ACTUAL_LOGFILE}" 2>&1
-  if [ ${?} != 0 ]; then
-    error "Could not untar CGAL"
+  log "$ACTUAL_LOGFILE" "untarring CGAL"
+  if ! "$DECOMPRESSOR" -c "$CGAL_ZIPFILE" | "$TAR" xf - >> "$ACTUAL_LOGFILE" 2>&1; then
+    error "Could not extract CGAL"
   fi
 
   # check, if CGAL_DIR exists
-  if [ -d "${CGAL_HOME}/${CGAL_RELEASE_ID}" ]; then
+  if [ -d "$CGAL_HOME/$CGAL_RELEASE_ID" ]; then
     # Reset CGAL-I symlink
-    log "${ACTUAL_LOGFILE}" "Resetting CGAL-I symlink to ${CGAL_HOME}/${CGAL_RELEASE_ID}"
+    log "$ACTUAL_LOGFILE" "Resetting CGAL-I symlink to $CGAL_HOME/$CGAL_RELEASE_ID"
     rm -f CGAL-I
-    ln -s "${CGAL_HOME}/${CGAL_RELEASE_ID}" CGAL-I
+    ln -s "$CGAL_HOME/$CGAL_RELEASE_ID" CGAL-I
     # Reset CGAL-3.x-I symlink
-    CGAL_RELEASE=`echo "${CGAL_RELEASE_ID}" | sed 's/I\([^-]*\)-.*/I\1/'`
-    log "${ACTUAL_LOGFILE}" "Resetting ${CGAL_RELEASE} symlink to ${CGAL_HOME}/${CGAL_RELEASE_ID}"
-    rm -f "${CGAL_RELEASE}"
-    ln -s "${CGAL_HOME}/${CGAL_RELEASE_ID}" "${CGAL_RELEASE}"
+    CGAL_RELEASE="${CGAL_RELEASE_ID%%-*}"
+    log "$ACTUAL_LOGFILE" "Resetting $CGAL_RELEASE symlink to $CGAL_HOME/$CGAL_RELEASE_ID"
+    rm -f "$CGAL_RELEASE"
+    ln -s "$CGAL_HOME/$CGAL_RELEASE_ID" "$CGAL_RELEASE"
   else
-    error "directory ${CGAL_HOME}/${CGAL_RELEASE_ID} does not exist"
+    error "directory $CGAL_HOME/$CGAL_RELEASE_ID does not exist"
   fi
 
-  log_done "${ACTUAL_LOGFILE}"
+  log_done "$ACTUAL_LOGFILE"
 }
 
 
@@ -237,7 +230,7 @@ do
       echo "Compiled test/ directory will be kept."
       KEEP_TESTS="y"
       ;;
-      "-g")
+    "-g")
       echo "Run testsuite from GIT branch"
       export INSTALLATION_DIR="Installation/"
       export TESTSUITE_DIR="Testsuite/"
@@ -250,26 +243,37 @@ do
 done
 # Load settings
 if [ -f "${CGAL_HOME}/.autocgalrc" ]; then
+  # shellcheck source=/dev/null
   . "${CGAL_HOME}/.autocgalrc"
 else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
   exit 1
 fi
 
+if [ -n "$USE_CURL" ]; then
+  download_file() {
+    "$CURL" "${CURL_OPTS[@]}" "$1"
+  }
+else
+  download_file() {
+    "$WGET" "${WGET_OPTS[@]}" "$1"
+  }
+fi
+
 LOGS_DIR="${CGAL_HOME}/AUTOTEST_LOGS"
 LOCK_FILE="${CGAL_HOME}/autotest_cgal_with_cmake.lock"
 
 # Setup logfile
-ACTUAL_LOGFILE="${CGAL_HOME}/`basename ${0}`.log"
+ACTUAL_LOGFILE="${CGAL_HOME}/$(basename "${0}").log"
 rm -f "${ACTUAL_LOGFILE}"
 
-echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}"
+echo "Running $(basename "${0}") \$Revision\$" >> "${ACTUAL_LOGFILE}"
 
-cd "$CGAL_HOME"
+cd "$CGAL_HOME" || exit
 
 # Starts the process
 
-if [ -z "${USE_LATEST_UNZIPPED}" -a -z "${SCRIPTS_DIR}" ]; then
+if [ -z "${USE_LATEST_UNZIPPED}" ] && [ -z "${SCRIPTS_DIR}" ]; then
   if [ -z "$CGAL_LOCATION" ]; then
     download_latest
     abort_if_latest_already_tested
@@ -279,59 +283,19 @@ if [ -z "${USE_LATEST_UNZIPPED}" -a -z "${SCRIPTS_DIR}" ]; then
 fi
 #reset CGAL-DIR with the updated CGAL-I
 if [ -n "${SCRIPTS_DIR}" ]; then
-  CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-git"`
+  CGAL_DIR=$(readlink "${CGAL_HOME}/CGAL-git")
 else
-  CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-I"`
+  CGAL_DIR=$(readlink "${CGAL_HOME}/CGAL-I")
 fi
 
 CGAL_DIR=$(echo "$CGAL_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
 CGAL_RELEASE_ID=$(cat last_release_id)
 for HOST in ${BUILD_HOSTS}; do
-  if [ "$HOST" != "localhost" ]; then
-    #launch docker container
-    echo "export SHOW_PROGRESS=$SHOW_PROGRESS"> env.sh
-    echo "export KEEP_TESTS=$KEEP_TESTS">> env.sh
-    echo "export DO_NOT_UPLOAD=$DO_NOT_UPLOAD">> env.sh
-    echo "export DO_NOT_TEST=$DO_NOT_TEST">> env.sh
-    echo "export SCP=$SCP">> env.sh
-    echo "export WGET=$WGET">> env.sh
-    echo "export WGET_OPTS=\"$WGET_OPTS\"">> env.sh
-    echo "export CURL=$CURL">> env.sh
-    echo "export CURL_OPTS=\"$CURL_OPTS\"">> env.sh
-    echo "export CGAL_URL=$CGAL_URL">> env.sh
-    echo "export UPLOAD_RESULT_DESTINATION=$UPLOAD_RESULT_DESTINATION">> env.sh
-    echo "export LATEST_LOCATION=$LATEST_LOCATION">> env.sh
-    echo "export TAR=$TAR">> env.sh
-    echo "export GUNZIP=$GUNZIP">> env.sh
-    echo "export COMPRESSOR=$COMPRESSOR">> env.sh
-    echo "export CONSOLE_OUTPUT=$CONSOLE_OUTPUT">> env.sh
-    echo "export CGAL_HOME=/cgal_root">> env.sh
-    echo "export USE_TARGZ=$USE_TARGZ">> env.sh
-    echo "export USE_TARBZ=$USE_TARBZ">> env.sh
-    echo "export CGAL_RELEASE=$CGAL_RELEASE">> env.sh
-    echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
-    echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
-    echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
-    echo "export REFERENCE_PLATFORMS_DIR=$REFERENCE_PLATFORMS_DIR">>env.sh
-    echo "export INSTALLATION_DIR=$INSTALLATION_DIR">>env.sh
-    echo "export TESTSUITE_DIR=$TESTSUITE_DIR">>env.sh
-    echo "export SCRIPTS_DIR=$SCRIPTS_DIR">>env.sh
-
-    docker pull cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
-    if [ -z "${SCRIPTS_DIR}" ]; then #if not from branch
-      echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
-      docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_HOME}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_HOME}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
-    else
-      echo "export CGAL_DIR=/cgal_root/CGAL-git">>env.sh
-      docker run --rm  -t -e HOST="${HOST}" -v ${CGAL_HOME}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_HOME}:/cgal_root -v${CGAL_DIR}:/cgal_root/CGAL-git cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
-    fi
-  else
-    HOST=$HOST bash -$- ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/run_testsuite_with_ctest
-  fi
+  HOST=$HOST bash -$- "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/run_testsuite_with_ctest"
 done
 
-cd "${CGAL_HOME}"
+cd "${CGAL_HOME}" || exit
 if [ -e "LATEST" ]; then
   mv LATEST RELEASE_NR
 fi

@@ -19,7 +19,7 @@ respectively.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point` (as defined below).
+        with `object` being a `Point` (as defined below).
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when
         `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
@@ -1669,7 +1669,7 @@ OutputIterator
 finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
-Returns the degree of a vertex, that is, the number of incident vertices.
+Returns the degree of `v`, that is, the number of incident vertices.
 The infinite vertex is counted.
 \pre `v != Vertex_handle()`, `t.is_vertex(v)`.
 */

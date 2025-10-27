@@ -16,7 +16,6 @@ optimization algorithms using the two-dimensional \cgal kernel.
 \sa `CGAL::Min_annulus_d<Traits>`
 \sa `CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>`
 \sa `CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>`
-\sa `MinSphereAnnulusDTraits`
 
 */
 template< typename K, typename ET, typename NT >

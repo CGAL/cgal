@@ -105,6 +105,18 @@ public:
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Compare_weighted_squared_radius_3;
 
+  typedef Filtered_predicate<
+            typename Exact_traits::Compare_squared_distance_3,
+            typename Filtering_traits::Compare_squared_distance_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_squared_distance_3;
+
+  typedef Filtered_predicate<
+            typename Exact_traits::Power_side_of_bounded_power_sphere_3,
+            typename Filtering_traits::Power_side_of_bounded_power_sphere_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Power_side_of_bounded_power_sphere_3;
+
   Coplanar_orientation_3 coplanar_orientation_3_object() const
   {
     typename Exact_traits::Coplanar_orientation_3 pe = regular_traits_e.coplanar_orientation_3_object();
@@ -135,6 +147,22 @@ public:
     typename Filtering_traits::Compare_weighted_squared_radius_3 pf = regular_traits_f.compare_weighted_squared_radius_3_object();
 
     return Compare_weighted_squared_radius_3(pe, pf);
+  }
+
+  Compare_squared_distance_3 compare_squared_distance_3_object() const
+  {
+    typename Exact_traits::Compare_squared_distance_3 pe = regular_traits_e.compare_squared_distance_3_object();
+    typename Filtering_traits::Compare_squared_distance_3 pf = regular_traits_f.compare_squared_distance_3_object();
+
+    return Compare_squared_distance_3(pe, pf);
+  }
+
+  Power_side_of_bounded_power_sphere_3 power_side_of_bounded_power_sphere_3_object() const
+  {
+    typename Exact_traits::Power_side_of_bounded_power_sphere_3 pe = regular_traits_e.power_side_of_bounded_power_sphere_3_object();
+    typename Filtering_traits::Power_side_of_bounded_power_sphere_3 pf = regular_traits_f.power_side_of_bounded_power_sphere_3_object();
+
+    return Power_side_of_bounded_power_sphere_3(pe, pf);
   }
 
 protected:

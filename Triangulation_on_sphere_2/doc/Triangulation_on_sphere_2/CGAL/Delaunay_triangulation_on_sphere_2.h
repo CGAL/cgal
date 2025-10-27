@@ -157,7 +157,7 @@ public:
   This function outputs in the container pointed to by `fit` the faces which are in conflict with point `p`,
   i. e., the faces whose circumcircle contains `p`. It outputs in the container pointed to by `eit`
   the boundary of the zone in conflict with `p`. The boundary edges of the conflict zone
-  are output in counter-clockwise order and each edge is described through its incident face
+  are output in counterclockwise order and each edge is described through its incident face
   which is not in conflict with `p`. The function returns in a `std::pair` the resulting output iterators.
 
   \tparam OutItFaces is an output iterator with `Face_handle` as value type.

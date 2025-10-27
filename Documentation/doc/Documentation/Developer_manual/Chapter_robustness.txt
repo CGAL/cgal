@@ -60,7 +60,7 @@ that (are still fairly generic and) guarantee exact predicate results and
 much higher efficiency than exact number types like arbitrary precision
 integers or rationals. The efficiency relies on the use of speedy
 floating-point arithmetic in order to filter out reliable floating-point
-computations. Interval arithmetic is largely used in such filter steps.
+computations. %Interval arithmetic is largely used in such filter steps.
 
 \section Developer_manualRequirementsandrecommendations Requirements and recommendations
 

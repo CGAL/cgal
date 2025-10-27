@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, p1);
     write_complement_to_file(out, p2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, p1);
     write_complement_to_file(out, pwh2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, p2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, pwh2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);

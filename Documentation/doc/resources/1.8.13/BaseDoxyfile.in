@@ -92,6 +92,7 @@ ALIASES                = "cgal=%CGAL" \
                          "opencv=OpenCV" \
                          "tensorflow=TensorFlow" \
                          "metis=METIS" \
+                         "suitesparse=SuiteSparse" \
                          "zlib=zlib" \
                          "ceres=Ceres" \
                          "glpk=GLPK" \
@@ -213,7 +214,7 @@ ALIASES                = "cgal=%CGAL" \
 # language is one of the parsers supported by doxygen: IDL, Java, Javascript,
 # C#, C, C++, D, PHP, Objective-C, Python, Fortran (fixed format Fortran:
 # FortranFixed, free formatted Fortran: FortranFree, unknown formatted Fortran:
-# Fortran. In the later case the parser tries to guess whether the code is fixed
+# Fortran. In the latter case the parser tries to guess whether the code is fixed
 # or free formatted code, this is the default for Fortran type files), VHDL. For
 # instance to make doxygen treat .inc files as Fortran files (default is PHP),
 # and .f files as C (default is Fortran), use: inc=Fortran f=C.

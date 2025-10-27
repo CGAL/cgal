@@ -142,10 +142,19 @@ public :
             this, &Basic_generator_plugin::on_tab_changed);
     connect(dock_widget, &GeneratorWidget::visibilityChanged,
             this, &Basic_generator_plugin::on_tab_changed);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(dock_widget->prismCheckBox, &QCheckBox::checkStateChanged,
+            this, &Basic_generator_plugin::on_tab_changed);
+    connect(dock_widget->pyramidCheckBox, &QCheckBox::checkStateChanged,
+            this, &Basic_generator_plugin::on_tab_changed);
+#else
     connect(dock_widget->prismCheckBox, &QCheckBox::stateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
     connect(dock_widget->pyramidCheckBox, &QCheckBox::stateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
+#endif
+    connect(dock_widget->polygon_checkBox, SIGNAL(toggled(bool)),
+            dock_widget->fill_checkBox, SLOT(setEnabled(bool)));
   }
 
   bool applicable(QAction*) const
@@ -375,7 +384,7 @@ void Basic_generator_plugin::generateCube()
       if (list.size()!=3){
         QMessageBox *msgBox = new QMessageBox;
         msgBox->setWindowTitle("Error");
-        msgBox->setText("ERROR : Input should consists of 3 doubles.");
+        msgBox->setText("ERROR : Input should consist of 3 doubles.");
         msgBox->exec();
         return;
       }
@@ -416,7 +425,7 @@ void Basic_generator_plugin::generateCube()
     if (list.size()!=6){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
-      msgBox->setText("ERROR : Input should consists of 6 doubles.");
+      msgBox->setText("ERROR : Input should consist of 6 doubles.");
       msgBox->exec();
       return;
     }
@@ -467,7 +476,7 @@ void Basic_generator_plugin::generatePrism()
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of 3 doubles.");
+    msgBox->setText("ERROR : Input should consist of 3 doubles.");
     msgBox->exec();
     return;
   }
@@ -514,7 +523,7 @@ void Basic_generator_plugin::generatePyramid()
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of 3 doubles.");
+    msgBox->setText("ERROR : Input should consist of 3 doubles.");
     msgBox->exec();
     return;
   }
@@ -557,7 +566,7 @@ void Basic_generator_plugin::generateSphere()
   if (list.size()!=4){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of four doubles.");
+    msgBox->setText("ERROR : Input should consist of four doubles.");
     msgBox->exec();
     return;
   }
@@ -607,7 +616,7 @@ void Basic_generator_plugin::generateTetrahedron()
       if (list.size() != 3) {
         QMessageBox* msgBox = new QMessageBox;
         msgBox->setWindowTitle("Error");
-        msgBox->setText("ERROR : Input should consists of 3 doubles.");
+        msgBox->setText("ERROR : Input should consist of 3 doubles.");
         msgBox->exec();
         return;
       }
@@ -641,7 +650,7 @@ void Basic_generator_plugin::generateTetrahedron()
       if (list.size() != 12) {
           QMessageBox* msgBox = new QMessageBox;
           msgBox->setWindowTitle("Error");
-          msgBox->setText("ERROR : Input should consists of 12 doubles.");
+          msgBox->setText("ERROR : Input should consist of 12 doubles.");
           msgBox->exec();
           return;
       }
@@ -685,7 +694,7 @@ void Basic_generator_plugin::generatePoints()
   if (list.size()%3!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->setText("ERROR : Input should consist of triplets.");
     msgBox->exec();
     return;
   }
@@ -742,14 +751,14 @@ void Basic_generator_plugin::generateLines()
     if(!is_2d && list.size()%3!=0){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
-      msgBox->setText("ERROR : Input should consists of triplets.");
+      msgBox->setText("ERROR : Input should consist of triplets.");
       msgBox->exec();
       return false;
     }
     else if(is_2d && list.size()%2!=0){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
-      msgBox->setText("ERROR : Input should consists of pairs.");
+      msgBox->setText("ERROR : Input should consist of pairs.");
       msgBox->exec();
       return false;
     }
@@ -912,7 +921,7 @@ void Basic_generator_plugin::generateGrid()
   if (list.size()!=6){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of 6 doubles.");
+    msgBox->setText("ERROR : Input should consist of 6 doubles.");
     msgBox->exec();
     return;
   }

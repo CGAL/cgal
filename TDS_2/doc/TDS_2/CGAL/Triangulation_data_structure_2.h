@@ -134,7 +134,7 @@ Vertex_handle join_vertices(Edges_circulator ec);
 /*!
 splits the vertex `v` into two vertices `v1` and `v2`.
 
-The common faces `f` and `g` of `v1` and `v2` are created after (in the counter-clockwise sense) the
+The common faces `f` and `g` of `v1` and `v2` are created after (in the counterclockwise sense) the
 faces `f1` and `f2`. The 4-tuple `(v1,v2,f,g)` is returned (see Fig. \ref figtdssplitjoin).
 
 \pre `dimension()` must be equal to `2`, `f1` and `f2` must be different from `Face_handle()` and `v` must be a vertex of both `f1` and `f2`.

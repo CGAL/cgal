@@ -4,6 +4,7 @@
 #include <CGAL/Exact_rational.h>
 
 #include <cassert>
+#include <array>
 
 typedef  CGAL::Exact_rational             NT;
 typedef  CGAL::Cartesian<NT>              K;
@@ -16,20 +17,20 @@ int
 main( int, char**)
 {
     const int n = 200;
-    Point     P[n];
+    std::array<Point, n>     P;
 
     for ( int i = 0; i < n; ++i)
-        P[ i] = Point( i % 2 ? i : -i , 0);
+        P.at(i) = Point( i % 2 ? i : -i , 0);
     // (0,0), (-1,0), (2,0), (-3,0)
 
     std::cout << "Computing ellipse (without randomization)...";
     std::cout.flush();
-    Min_ellipse  me1( P, P+n, false);    // very slow
+    Min_ellipse  me1( P.begin(), P.end(), false);    // very slow
     std::cout << "done." << std::endl;
 
     std::cout << "Computing ellipse (with randomization)...";
     std::cout.flush();
-    Min_ellipse  me2( P, P+n, true);     // fast
+    Min_ellipse  me2( P.begin(), P.end(), true);     // fast
     std::cout << "done." << std::endl;
 
     // because all input points are collinear, the ellipse is

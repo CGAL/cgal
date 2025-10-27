@@ -29,7 +29,6 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
@@ -397,6 +396,8 @@ public:
 
     using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
     using PointMap = typename NP_helper::Point_map;
+
+    static_assert(std::is_same_v<typename NP_helper::Geom_traits, Kernel>);
 
     PointMap point_map = NP_helper::get_point_map(np);
 

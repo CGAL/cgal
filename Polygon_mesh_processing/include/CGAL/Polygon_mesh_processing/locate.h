@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <variant>

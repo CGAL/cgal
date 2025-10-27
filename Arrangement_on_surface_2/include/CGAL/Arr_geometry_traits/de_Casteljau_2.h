@@ -77,7 +77,7 @@ bisect_control_polygon_2(InputIterator ctrl_pts_begin,
   while (last_index > 0)
   {
     // Construct (m - 1) control points from the m point we currently have,
-    // where the new i'th point is the midpoint between p[i]  and p[i + 1].
+    // where the new i-th point is the midpoint between p[i]  and p[i + 1].
     for (i = 0; i < last_index; ++i)
       vec[i] = midpoint(vec[i], vec[i + 1]);
 
@@ -134,7 +134,7 @@ typename InputIterator::value_type point_on_Bezier_curve_2
   while (last_index > 0)
   {
     // Construct (m - 1) control points from the m point we currently have,
-    // where the new i'th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
+    // where the new i-th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
     for (i = 0; i < last_index; ++i)
     {
       vec[i] = _Point_2(comp_t0*vec[i].x() + t0*vec[i + 1].x(),
@@ -197,7 +197,7 @@ typename InputIterator::value_type de_Casteljau_2
   while (last_index > 0)
   {
     // Construct (m - 1) control points from the m point we currently have,
-    // where the new i'th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
+    // where the new i-th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
     for (i = 0; i < last_index; ++i)
     {
       vec[i] = _Point_2(comp_t0*vec[i].x() + t0*vec[i + 1].x(),

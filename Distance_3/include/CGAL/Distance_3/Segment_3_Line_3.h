@@ -38,6 +38,8 @@ squared_distance(const typename K::Segment_3& seg,
   typename K::Construct_vector_3 vector = k.construct_vector_3_object();
   typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
 
+  //Probably writable with less if than currently
+
   const Point_3& linepoint = line.point();
   const Point_3& start = seg.source();
   const Point_3& end = seg.target();
@@ -60,26 +62,12 @@ squared_distance(const typename K::Segment_3& seg,
   const RT sdm_ss2l = wdot(perpend2line, start_min_lp, k);
   const RT sdm_se2l = wdot(perpend2line, end_min_lp, k);
 
-  if(sdm_ss2l < RT(0)) {
-    crossing = (sdm_se2l >= RT(0));
-  } else {
-    if(sdm_se2l <= RT(0)) {
-      crossing = true;
-    } else {
-      crossing = (sdm_ss2l == RT(0));
-    }
-  }
+  crossing = (sdm_ss2l*sdm_se2l) <= RT(0);
 
-  if(crossing) {
+  if(crossing)
     return squared_distance_to_plane(normal, start_min_lp, k);
-  } else {
-    const RT dm = distance_measure_sub(sdm_ss2l, sdm_se2l, start_min_lp, end_min_lp, k);
-    if(dm <= RT(0)) {
-      return squared_distance_to_line(linedir, start_min_lp, k);
-    } else {
-      return squared_distance_to_line(linedir, end_min_lp, k);
-    }
-  }
+  else
+    return (min)(squared_distance_to_line(linedir, start_min_lp, k), squared_distance_to_line(linedir, end_min_lp, k));
 }
 
 template <class K>
@@ -91,25 +79,29 @@ squared_distance(const typename K::Line_3& line,
   return squared_distance(seg, line, k);
 }
 
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Segment_3& seg,
+                         const typename K::Line_3& line,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  // Perform an early exit was slower
+  return ::CGAL::compare(squared_distance(seg, line, k), d2);
+}
+
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Line_3& line,
+                         const typename K::Segment_3& seg,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare_squared_distance(seg, line, k, d2);
+}
+
 } // namespace internal
 
-template <class K>
-inline
-typename K::FT
-squared_distance(const Segment_3<K>& seg,
-                 const Line_3<K>& line)
-{
-  return K().compute_squared_distance_3_object()(seg, line);
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Line_3<K>& line,
-                 const Segment_3<K>& seg)
-{
-  return K().compute_squared_distance_3_object()(line, seg);
-}
 
 } // namespace CGAL
 
