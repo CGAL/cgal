@@ -74,18 +74,18 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
  *
  * Load vertices coordinates from a .nodes file.
  *
- * \param[in] nodes_file Name of the input file.
+ * \param[in] filename Name of the input file.
  * \param[in] nodes Pointer to a vector of points into which nodes are outputed.
  * \param[in] adapt If `fill` is false, nodes must have the same dimension as the traits Point, if true, nodes dimension can be lower (and missing coordinates are filled with zeros) or higher (and coordinates are truncated to the traits dimension).
  **/
 
 template <typename Traits>
-inline size_t read_nodes(const std::string &node_file, std::vector<typename Traits::Point> *nodes, bool adapt = false)
+inline size_t read_nodes(const std::string &filename, std::vector<typename Traits::Point> *nodes, bool adapt = false)
 {
     typedef typename Traits::Point Point;
-    std::ifstream in_file (node_file) ;
+    std::ifstream in_file (filename) ;
     if ( ! in_file . good () ) {
-        std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << node_file << " not found.\n";
+        std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
 
@@ -96,7 +96,7 @@ inline size_t read_nodes(const std::string &node_file, std::vector<typename Trai
     {
         std::string line;
         getline( in_file, line );
-        check_sanity_line(line, node_file) ;
+        check_sanity_line(line, filename) ;
         // First number is the number of nodes, then dimension of nodes
         std::istringstream is (line);
         is >> nnodes ;
@@ -126,7 +126,7 @@ inline size_t read_nodes(const std::string &node_file, std::vector<typename Trai
         --nnodes_tmp ;
         std::string line;
         getline( in_file, line );
-        check_sanity_line(line, node_file) ;
+        check_sanity_line(line, filename) ;
         std::istringstream is (line);
         is >> trash ;
         for (int i = 0; i<d; ++i)
@@ -134,7 +134,7 @@ inline size_t read_nodes(const std::string &node_file, std::vector<typename Trai
             is >> x ;
             node.push_back(x) ;
         }
-        
+
         if constexpr (Traits::Dimension::value == 2){
             nodes->push_back(Point(typename Traits::FT(node[0]), typename Traits::FT(node[1]))) ;
         }else if constexpr (Traits::Dimension::value == 3){
@@ -560,8 +560,8 @@ public:
             out_stream << "cells of dim " << q << " : " << cells_of_dim(q) << std::endl ;
         return out_stream;
     }
-    
-    
+
+
     friend std::ostream& operator<<(std::ostream& out_stream, const Mesh_object_io& mesh_io) {
         return mesh_io.print_infos(out_stream);
     }

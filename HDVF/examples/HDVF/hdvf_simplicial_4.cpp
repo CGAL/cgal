@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     hdvf.write_reduction();
 
     // Output HDVF to vtk
-/   Traits::to_point3 = Traits::pca_frame_builder(complex.points());
+    Traits::to_point3 = Traits::pca_frame_builder(complex.points());
     CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
 
     // Save HDVF to .hdvf file
