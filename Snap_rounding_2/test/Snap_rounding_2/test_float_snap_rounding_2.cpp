@@ -101,6 +101,22 @@ void test(const std::vector<Segment_2> &segs){
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   if(CGAL::do_curves_intersect(out.begin(), out.end())){
     std::cout << "INTERSECTING OUTPUT!!" << std::endl;
+    std::vector<Point_2> bad_pts;
+    std::vector<Curve_2> out2;
+    for(auto seg: out)
+      out2.emplace_back(seg.source(), seg.target());
+    CGAL::compute_intersection_points(out2.begin(), out2.end(), std::back_inserter(bad_pts));
+    std::cout << bad_pts[0] << std::endl;
+    for(size_t i=0; i<out.size(); ++i)
+      if(out[i].has_on(bad_pts[0]) && bad_pts[0]!=out[i].source() && bad_pts[0]!=out[i].target())
+        for(size_t j=i+1; j<out.size(); ++j){
+          std::cout << i << " " << j << std::endl;
+          std::cout << out[i].has_on(out[j].source())  << out[i].has_on(out[j].target())
+                    << out[j].has_on(out[i].source())  << out[j].has_on(out[i].target()) << std::endl;
+          std::cout << out[i].is_vertical() << out[i].is_horizontal() << out[j].is_vertical() << out[j].is_horizontal() << std::endl;
+          std::cout << out[i] << std::endl;
+          std::cout << out[j] << std::endl;
+        }
     exit(1);
   }
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
@@ -281,11 +297,11 @@ int main(int argc,char *argv[])
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
   // big_test_2();
-  test_almost_indentical_segments(r, 50, Vector_2(1,1), Vector_2(-1,-1));
+  // test_almost_indentical_segments(r, 50, Vector_2(1,1), Vector_2(-1,-1));
   // fix_test();
   test_float_snap_rounding();
-  // test_fully_random(r,1000);
-  test_multi_almost_indentical_segments(r,100);
+  test_fully_random(r,1000);
+  test_multi_almost_indentical_segments(r,200);
   // test_iterative_square_intersection(r,2000);
   return(0);
 }
