@@ -59,8 +59,9 @@ create_single_source_cgal_program("isotropic_remeshing_with_allow_move.cpp")
 create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("soup_autorefinement.cpp")
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example.cpp")
   target_link_libraries(hole_filling_example PUBLIC CGAL::Eigen3_support)

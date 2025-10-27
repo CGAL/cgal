@@ -79,8 +79,9 @@ target_link_libraries(
          scene_implicit_function_item)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen3_support)
 else()
