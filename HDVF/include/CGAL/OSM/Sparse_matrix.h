@@ -66,6 +66,11 @@ class Sparse_matrix {
 public:
 
     /*!
+     Type of coefficient ring.
+     */
+    typedef CoefficientRing  Coefficient_ring;
+
+    /*!
      Type of chains associated to the matrix.
      */
     typedef Sparse_chain<CoefficientRing, StorageFormat> Matrix_chain;
@@ -280,7 +285,7 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \brief Displays a matrix in the output stream.
+     * \brief Writes a sparse matrix in the output stream.
      *
      * \param[in] stream The output stream.
      * \param[in] matrix The matrix to display.
