@@ -94,7 +94,7 @@ std::function<double(size_t)>  degree_function (const ChainComplex& complex,  co
  \cgalModels{Filtration}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
- \tparam Degree the scalar type of degrees.
+ \tparam Degree the scalar type of degrees, a model of `RealEmbeddable`.
  */
 
 template <typename ChainComplex, typename Degree>
