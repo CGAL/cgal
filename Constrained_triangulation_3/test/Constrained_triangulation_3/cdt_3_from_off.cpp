@@ -5,6 +5,7 @@
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Conforming_Delaunay_triangulation_3.h>
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -45,12 +46,8 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 #endif // use Epick
 
-struct Vb : public CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K> {};
-struct Cb : public CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K> {};
-struct Tds: public CGAL::Triangulation_data_structure_3<Vb, Cb> {};
-using Base_triantulation = CGAL::Delaunay_triangulation_3<K, Tds>;
-using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3_impl<Base_triantulation>;
-using Point = Base_triantulation::Point;
+using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
+using Point = K::Point_3;
 using Point_3 = K::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point>;
@@ -258,35 +255,29 @@ CDT_options::CDT_options(int argc, char* argv[]) {
   }
 }
 
-#if NO_TRY_CATCH
-# define CDT_3_try      if (true)
-# define CDT_3_catch(X) if (false)
-# define CDT_3_throw_exception_again
-#else
-// Else proceed normally.
-# define CDT_3_try      try
-# define CDT_3_catch(X) catch(X)
-# define CDT_3_throw_exception_again throw
-#endif
+CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
+  CGAL::CDT_3::Debug_options cdt_debug;
+  cdt_debug.Steiner_points(options.verbose_level > 0);
+  cdt_debug.input_faces(options.debug_input_faces);
+  cdt_debug.missing_region(options.verbose_level > 1 || options.debug_missing_regions);
+  cdt_debug.regions(options.debug_regions);
+  cdt_debug.validity(options.debug_validity);
+  cdt_debug.finite_edges_map(options.debug_finite_edges_map);
+  cdt_debug.subconstraints_to_conform(options.debug_subconstraints_to_conform);
+  cdt_debug.verbose_special_cases(options.debug_verbose_special_cases);
+  cdt_debug.encroaching_vertices(options.debug_encroaching_vertices);
+  cdt_debug.conforming_validation(options.debug_conforming_validation);
+  cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
+  cdt_debug.geometric_errors(options.debug_geometric_errors);
+  cdt_debug.polygon_insertion(options.debug_polygon_insertion);
+  cdt_debug.copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
+  cdt_debug.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
+  cdt_debug.use_finite_edges_map(options.use_finite_edges_map);
+  cdt_debug.display_statistics(!options.quiet);
+  cdt_debug.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
+  cdt_debug.set_vertex_vertex_epsilon(options.vertex_vertex_epsilon);
 
-void configure_cdt_debug_options(CDT& cdt, const CDT_options& options) {
-  cdt.debug_Steiner_points(options.verbose_level > 0);
-  cdt.debug_input_faces(options.debug_input_faces);
-  cdt.debug_missing_region(options.verbose_level > 1 || options.debug_missing_regions);
-  cdt.debug_regions(options.debug_regions);
-  cdt.debug_validity(options.debug_validity);
-  cdt.debug_finite_edges_map(options.debug_finite_edges_map);
-  cdt.debug_subconstraints_to_conform(options.debug_subconstraints_to_conform);
-  cdt.debug_verbose_special_cases(options.debug_verbose_special_cases);
-  cdt.debug_encroaching_vertices(options.debug_encroaching_vertices);
-  cdt.debug_conforming_validation(options.debug_conforming_validation);
-  cdt.debug_constraint_hierarchy(options.debug_constraint_hierarchy);
-  cdt.debug_geometric_errors(options.debug_geometric_errors);
-  cdt.debug_polygon_insertion(options.debug_polygon_insertion);
-  cdt.debug_copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
-  cdt.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
-  cdt.use_finite_edges_map(options.use_finite_edges_map);
-  cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
+  return cdt_debug;
 }
 
 auto compute_bounding_box(const Mesh& mesh, const CDT_options& options) {
@@ -334,7 +325,7 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
 
       auto& tr = cdt;
 
-      std::unordered_map<CDT::Cell_handle, int /*Subdomain_index*/> cells_map;
+      std::unordered_map<CDT::Triangulation::Cell_handle, int /*Subdomain_index*/> cells_map;
       for(auto ch : tr.all_cell_handles())
       {
         cells_map[ch] = 1;
@@ -380,13 +371,13 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
       std::ofstream dump(options.output_filename);
       dump.precision(17);
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-      cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
+      cdt.write_facets(dump, cdt.triangulation(), std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_facet_constrained(f);
       }));
 #else
       auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
       auto it_end = cdt.finite_facets_end();
-      cdt.write_facets(dump, cdt,
+      cdt.write_facets(dump, cdt.triangulation(),
                         CGAL::make_range(
                           boost::make_filter_iterator(is_facet_constrained,cdt.finite_facets_begin(), it_end),
                           boost::make_filter_iterator(is_facet_constrained,it_end, it_end)));
@@ -396,155 +387,6 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
   };
 }
 
-struct Min_distance_result {
-  double min_distance;
-  std::array<CDT::Vertex_handle, 2> vertices_of_min_edge;
-};
-
-Min_distance_result compute_minimum_vertex_distance(const CDT& cdt) {
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-  auto [min_sq_distance, min_edge] =
-      (std::ranges::min)(cdt.finite_edges() | std::views::transform([&](auto edge) {
-                           return std::make_pair(cdt.segment(edge).squared_length(), edge);
-                         }));
-#else
-  auto transform_fct = [&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); };
-  auto min_p = transform_fct(*cdt.finite_edges_begin());
-  for (auto ite=cdt.finite_edges_begin(); ite!=cdt.finite_edges_end(); ++ite)
-  {
-    auto p = transform_fct(*ite);
-    if (p < min_p)
-      p = min_p;
-  }
-  auto [min_sq_distance, min_edge] = min_p;
-#endif
-  auto min_distance = CGAL::to_double(CGAL::approximate_sqrt(min_sq_distance));
-  auto vertices_of_min_edge = cdt.vertices(min_edge);
-
-  return {min_distance, vertices_of_min_edge};
-}
-
-void print_minimum_distance_info(const Min_distance_result& min_dist) {
-  std::cout << "Min distance between vertices: " << min_dist.min_distance << '\n'
-            << "  between vertices:          : "
-            << CGAL::IO::oformat(min_dist.vertices_of_min_edge[0], CGAL::With_point_tag{}) << "    "
-            << CGAL::IO::oformat(min_dist.vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
-}
-
-int validate_minimum_vertex_distances(const CDT& cdt, double vertex_vertex_min_distance, const CDT_options& options) {
-  auto result = compute_minimum_vertex_distance(cdt);
-
-  if(!options.quiet) {
-    print_minimum_distance_info(result);
-  }
-  if(result.min_distance < vertex_vertex_min_distance) {
-    std::cerr << "ERROR: min distance between vertices is too small\n";
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}
-
-struct Constraint_distance_result {
-  double min_distance;
-  CDT::Vertex_handle min_va, min_vb, min_vertex;
-};
-
-template<typename BordersOfPatches, typename VertexPointMap>
-Constraint_distance_result compute_constraint_vertex_distances_from_patches_borders(
-    CDT& cdt,
-    const BordersOfPatches& patch_edges,
-    const VertexPointMap& tr_vertex_pmap) {
-
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-  auto edge_results = patch_edges
-    | std::views::join
-    | std::views::transform([&](const auto& edge_pair) {
-        auto [vda, vdb] = edge_pair;
-        auto va = get(tr_vertex_pmap, vda);
-        auto vb = get(tr_vertex_pmap, vdb);
-        auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
-        return std::make_tuple(CGAL::to_double(min_dist), va, vb, min_v);
-      });
-
-  auto min_result = std::ranges::min_element(edge_results, {}, [](const auto& tuple) {
-    return std::get<0>(tuple);
-  });
-
-  auto [min_distance, min_va, min_vb, min_vertex] = *min_result;
-#else
-  double min_distance = (std::numeric_limits<double>::max)();
-  CDT::Vertex_handle min_va, min_vb, min_vertex;
-
-  for(const auto& edges : patch_edges) {
-    for(auto [vda, vdb]: edges) {
-      auto va = get(tr_vertex_pmap, vda);
-      auto vb = get(tr_vertex_pmap, vdb);
-      auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
-      if(min_dist < min_distance) {
-        min_distance = CGAL::to_double(min_dist);
-        min_va = va;
-        min_vb = vb;
-        min_vertex = min_v;
-      }
-    }
-  }
-#endif
-
-  return {min_distance, min_va, min_vb, min_vertex};
-}
-
-template<typename VertexPointMap>
-Constraint_distance_result compute_constraint_vertex_distances_from_faces(
-    CDT& cdt,
-    const Mesh& mesh,
-    const VertexPointMap& tr_vertex_pmap) {
-
-  double min_distance = (std::numeric_limits<double>::max)();
-  CDT::Vertex_handle min_va, min_vb, min_vertex;
-
-  for(auto face_descriptor : faces(mesh)) {
-    auto he = halfedge(face_descriptor, mesh);
-    const auto end = he;
-    do {
-      auto va = get(tr_vertex_pmap, source(he, mesh));
-      auto vb = get(tr_vertex_pmap, target(he, mesh));
-      auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
-      if(min_dist < min_distance) {
-        min_distance = CGAL::to_double(min_dist);
-        min_va = va;
-        min_vb = vb;
-        min_vertex = min_v;
-      }
-      he = next(he, mesh);
-    } while((he = next(he, mesh)) != end);
-  }
-
-  return {min_distance, min_va, min_vb, min_vertex};
-}
-
-template<typename BordersOfPatches, typename VertexPointMap>
-void validate_constraint_vertex_distances_or_throw(
-    CDT& cdt,
-    const Mesh& mesh,
-    const CDT_options& options,
-    const BordersOfPatches& patch_edges,
-    const VertexPointMap& tr_vertex_pmap) {
-
-  auto [min_distance, min_va, min_vb, min_vertex] =
-      options.merge_facets ? compute_constraint_vertex_distances_from_patches_borders(cdt, patch_edges, tr_vertex_pmap)
-                           : compute_constraint_vertex_distances_from_faces(cdt, mesh, tr_vertex_pmap);
-
-  if(!options.quiet) {
-    std::cout << "Min distance between constraint segment and vertex: " << min_distance << '\n'
-              << "  between segment                                 : "
-              << CGAL::IO::oformat(min_va, CDT::Conforming_Dt::with_point) << "    "
-              << CGAL::IO::oformat(min_vb, CDT::Conforming_Dt::with_point) << '\n'
-              << "  and vertex                                      : "
-              << CGAL::IO::oformat(min_vertex, CDT::Conforming_Dt::with_point) << "\n\n";
-  }
-  cdt.check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance,
-                                             CDT::Check_distance::NON_SQUARED_DISTANCE);
-}
 
 template<typename PatchIdMap, typename VertexSelectedMap, typename EdgeBorderMap, typename VertexPointMap>
 struct Mesh_property_maps {
@@ -766,9 +608,9 @@ void dump_patches_borders(const BordersOfPatches& patch_edges,
 }
 
 int go(Mesh mesh, CDT_options options) {
-  CDT cdt;
-  configure_cdt_debug_options(cdt, options);
+  CGAL::CDT_3::Debug_options cdt_debug = cdt_debug_options(options);
 
+  // Compute bbox (used for distance checks scaling)
   auto bbox = compute_bounding_box(mesh, options);
   auto bbox_max_span = (std::max)(bbox.x_span(), (std::max)(bbox.y_span(), bbox.z_span()));
 
@@ -781,99 +623,18 @@ int go(Mesh mesh, CDT_options options) {
     dump_patches_borders(patch_edges, pmaps, options.dump_patches_borders_prefix);
   }
 
-  auto mesh_descriptor_to_vertex_handle_pmap = get(CGAL::dynamic_vertex_property_t<CDT::Vertex_handle>(), mesh);
-
-  {
-    auto _ = CGAL::CDT_3_INSERT_VERTICES_TASK_guard();
-    auto start_time = std::chrono::high_resolution_clock::now();
-    if(options.merge_facets) {
-      cdt.insert_vertices_range(vertices(mesh), pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap,
-                               CGAL::parameters::vertex_is_constrained_map(pmaps.v_selected_map));
-    } else {
-      cdt.insert_vertices_range(vertices(mesh), pmaps.mesh_vertex_point_map, mesh_descriptor_to_vertex_handle_pmap);
+  auto dump_mesh_with_steiner_points = [&](const auto& cdt) {
+    if(options.dump_after_conforming_filename.empty()) {
+      return;
     }
-    CDT::Cell_handle hint{};
-    for(auto v: vertices(mesh)) {
-      if(options.merge_facets && false == get(pmaps.v_selected_map, v)) continue;
-      auto vh = cdt.insert(get(pmaps.mesh_vertex_point_map, v), hint, false);
-      hint = vh->cell();
-      put(mesh_descriptor_to_vertex_handle_pmap, v, vh);
-    }
-    if(!options.quiet) {
-      auto timing = std::chrono::high_resolution_clock::now() - start_time;
-      std::cout << "[timings] inserted vertices in "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
-      std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
-    }
-    cdt.add_bbox_points_if_not_dimension_3();
-  }
-
-  {
-    auto _ = CGAL::CDT_3_COMPUTE_DISTANCES_TASK_guard();
-    auto start_time = std::chrono::high_resolution_clock::now();
-
-    auto exit_code = validate_minimum_vertex_distances(cdt, options.vertex_vertex_epsilon * bbox_max_span, options);
-    if(exit_code != EXIT_SUCCESS) {
-      return exit_code;
-    }
-
-    validate_constraint_vertex_distances_or_throw(cdt, mesh, options, patch_edges, mesh_descriptor_to_vertex_handle_pmap);
-
-    if(!options.quiet) {
-      auto timing = std::chrono::high_resolution_clock::now() - start_time;
-      std::cout << "[timings] compute distances on "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
-    }
-  }
-
-  {
-    auto _ = CGAL::CDT_3_CONFORMING_TASK_guard();
-    int poly_id = 0;
-    auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
-    auto start_time = std::chrono::high_resolution_clock::now();
-    if(options.merge_facets) {
-      for(auto& edges: patch_edges) {
-        cdt.insert_constrained_face_defined_by_its_border_edges(std::move(edges), pmaps.mesh_vertex_point_map,
-                                                                mesh_descriptor_to_vertex_handle_pmap);
-      }
-    } else {
-      for(auto face_descriptor : faces(mesh)) {
-        std::vector<Point_3> polygon;
-        const auto he = halfedge(face_descriptor, mesh);
-        for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
-          polygon.push_back(get(pmaps.mesh_vertex_point_map, vertex_it));
-        }
-        if(cdt.debug_polygon_insertion()) {
-          std::cerr << "NEW POLYGON #" << poly_id << '\n';
-        }
-        [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, false);
-        assert(id == poly_id);
-        ++poly_id;
-        // std::ofstream dump("dump.binary.cgal");
-        // CGAL::Mesh_3::save_binary_file(dump, cdt);
-      }
-    } // not merge_facets
-    if(!options.quiet) {
-      auto timing = std::chrono::high_resolution_clock::now() - start_time;
-      std::cout << "[timings] registered facets in "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
-    }
-    start_time = std::chrono::high_resolution_clock::now();
-    cdt.restore_Delaunay();
-    if(!options.quiet) {
-      std::cout << "[timings] restored Delaunay (conforming of facets borders) in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-    }
-  }
-
-  if(!options.dump_after_conforming_filename.empty()) {
     auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     using Vertex_index = Mesh::Vertex_index;
     [[maybe_unused]] std::size_t time_stamp_counter = 0u;
-    for(auto v: cdt.finite_vertex_handles()) {
+    for(auto v : cdt.finite_vertex_handles()) {
       [[maybe_unused]] const auto time_stamp = v->time_stamp();
       assert(++time_stamp_counter == time_stamp);
-      if(!v->ccdt_3_data().is_Steiner_vertex_on_edge()) continue;
+      if(!v->ccdt_3_data().is_Steiner_vertex_on_edge())
+        continue;
       const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
       const auto index_va = Vertex_index{static_cast<unsigned>(va->time_stamp() - 1)};
       const auto index_vb = Vertex_index{static_cast<unsigned>(vb->time_stamp() - 1)};
@@ -889,34 +650,26 @@ int go(Mesh mesh, CDT_options options) {
     out_mesh.precision(17);
     out_mesh << mesh;
     out_mesh.close();
-  }
+  };
 
+  // Build CDT directly from the polygon mesh using the official API
+  auto build_start = std::chrono::high_resolution_clock::now();
+  CDT cdt{std::invoke([&]() {
+    auto np = CGAL::parameters::debug(cdt_debug).visitor(std::ref(dump_mesh_with_steiner_points));
+    return options.merge_facets ? CDT(mesh, np.plc_face_id(pmaps.patch_id_map)) : CDT(mesh, np);
+  })};
   if(!options.quiet) {
-    std::cout << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
+    auto timing = std::chrono::high_resolution_clock::now() - build_start;
+    std::cout << "[timings] built CDT from mesh in "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
+    std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
   }
 
+  // Validation: check conforming status and validity
   {
     auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
-    CGAL_assertion(!options.call_is_valid || cdt.Base_triantulation::is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
-  }
-
-  {
-    auto _ = CGAL::CDT_3_CDT_TASK_guard();
-    auto start_time = std::chrono::high_resolution_clock::now();
-    cdt.restore_constrained_Delaunay();
-    if(!options.quiet) {
-      std::cout << "[timings] restored constrained Delaunay in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-      std::cout << "Number of vertices after CDT: " << cdt.number_of_vertices() << "\n\n";
-    }
-  }
-
-  {
-    auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
-    CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
-    CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
   }
 
   return EXIT_SUCCESS;
@@ -1008,9 +761,6 @@ int bisect_errors(Mesh mesh, CDT_options options) {
 }
 
 int main(int argc, char* argv[]) {
-  CDT::Conforming_Dt::with_offset.offset = -1;
-  CDT::Conforming_Dt::with_point.offset = -1;
-  CDT::Conforming_Dt::with_point_and_info.offset = -1;
   std::cerr.precision(17);
   std::cout.precision(17);
 
