@@ -4,7 +4,7 @@
 
 The concept `SparseChain` describes the requirements for sparse vectors (called *sparse chains* in homology) optimized for topological computations. More precisely, `SparseChain` provides all the operations on chains required by the `SparseMatrix` concept.
 
- `SparseChains` encode non zero coefficients of (sparse) chains.
+ `SparseChain` encodes non zero coefficients of a sparse chain.
 
  `SparseChain`  can be either row or column vectors. The following constants, called `StorageFormat`, encode the direction of sparse chains (and sparse matrices).
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
@@ -33,7 +33,7 @@ public:
     /*!
      * \brief Matrix and chain storage format (either OSM::ROW or OSM::COLUMN).
      */
-    typedef int StorageFormat;
+    typedef int Storage_format;
 
     /*!
      * \brief SparseChain iterator type.

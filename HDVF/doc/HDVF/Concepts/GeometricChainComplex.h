@@ -21,11 +21,6 @@ public:
 /// @{
 
 /*!
-Type of coefficients used to compute homology (model of `IntegralDomainWithoutDivision`)
- */
-typedef IntegralDomainWithoutDivision CoefficientRing;
-
-/*!
  Type of coordinates (the vector size is free, hence coordinates can be any dimension).
  */
 typedef unspecified_type Point ;

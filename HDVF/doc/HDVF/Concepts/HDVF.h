@@ -351,19 +351,19 @@ std::ostream& write_matrices(std::ostream &out = std::cout) const;
 std::ostream& write_reduction(std::ostream &out = std::cout) const;
 
 /*!
- *\brief Saves a HDVF and its reduction to a %hdvf file.
+ *\brief Writes a HDVF and its reduction to a stream.
  *
- * Save a HDVF together with the associated reduction (f, g, h, d matrices) to a %hdvf file.
+ * Write a HDVF together with the associated reduction (f, g, h, d matrices) to the stream `out` in  `.hdvf` file format.
  */
 
 std::ostream& write_hdvf_reduction(std::ostream& out) ;
 
 /*!
- * \brief Loads a HDVF and its reduction from a `.hdvf` file.
+ * \brief Reads a HDVF and its reduction from a stream.
  *
- * Load a HDVF and its reduction from a `.hdvf` file, a simple text file format (see for a specification).
+ * Reads a HDVF and its reduction from  the stream `in` in  `.hdvf` file format, a simple text file format (see for a specification).
  */
-std::istream& read_hdvf_reduction(std::istream& out) ;
+std::istream& read_hdvf_reduction(std::istream& in) ;
 
 /*!
  * \brief Exports primary/secondary/critical labels (in particular for vtk export).

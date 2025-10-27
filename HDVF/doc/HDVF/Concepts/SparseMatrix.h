@@ -44,17 +44,17 @@ public:
     /*!
      * \brief Type of coefficients stored in the matrix (a model of `IntegralDomainWithoutDivision`).
      */
-    typedef IntegralDomainWithoutDivision CoefficientRing;
+    typedef unspecified_type Coefficient_ring;
 
     /*!
-     * \brief Matrix and chain storage format (either ROW or COLUMN).
+     * \brief Matrix and chain storage format (either `ROW` or `COLUMN`).
      */
-    typedef int StorageFormat;
+    typedef int Storage_format;
 
     /*!
      * \brief A data structure storing indices of non empty chains.
      */
-    typedef unspecified_type NonZeroChainIndices;
+    typedef unspecified_type Non_zero_chain_indices;
 
     /*!
      * \brief Type of the chains stored in the matrix.
@@ -64,13 +64,13 @@ public:
     /// @}
 
 
-    /// \name Creation, filling
+    /// \name Creation, Filling
     /// @{
 
     /*!
      * \brief Creates an empty new sparse matrix object.
      *
-     * Default constructor, initialize an empty matrix of type `StorageFormat` with coefficients of type `CoefficientRing`.
+     * Default constructor, initialize an empty matrix of type `StorageFormat` with coefficients of type `Coefficient_ring`.
      * The default matrix size is 0x0.
      */
     SparseMatrix() ;
@@ -78,7 +78,7 @@ public:
     /*!
      * \brief Creates a new sparse matrix object with given rows/columns sizes.
      *
-     * Constructor with sizes, initialize an empty matrix of type `StorageFormat` with coefficients of type `CoefficientRing` and a given size along rows/columns.
+     * Constructor with sizes, initialize an empty matrix of type `StorageFormat` with coefficients of type `Coefficient_ring` and a given size along rows/columns.
      */
     SparseMatrix(const size_t rowCount, const size_t columnCount) ;
 
@@ -134,9 +134,9 @@ public:
     inline NonZeroChainIndices::iterator begin() const noexcept;
 
     /**
-     * \brief Iterator to the ending of the chain indices (visited by increasing indices).
+     * \brief Past-the-end iterator of the chain indices (visited by increasing indices).
      *
-     * The function returns an iterator to the ending of the chain indices.
+     * The function returns an iterator past the endd of the chain indices.
      */
     inline NonZeroChainIndices::iterator end() const noexcept;
 
@@ -148,9 +148,9 @@ public:
     inline NonZeroChainIndices::iterator reverse_begin() const noexcept;
 
     /**
-     * \brief Reverse iterator to the ending of the chain indices (visited by decreasing indices).
+     * \brief Past-the-end reverse iterator of the chain indices (visited by decreasing indices).
      *
-     * The function returns a reverse iterator to the ending of the chain indices.
+     * The function returns a past-the-end reverse iterator of the chain indices.
      */
     inline NonZeroChainIndices::iterator reverse_end() const noexcept;
 

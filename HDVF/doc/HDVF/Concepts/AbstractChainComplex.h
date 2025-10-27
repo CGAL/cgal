@@ -28,12 +28,7 @@ public:
 /// @{
 
 /*!
-Type of coefficients used to compute homology (model of `IntegralDomainWithoutDivision`)
- */
-typedef IntegralDomainWithoutDivision CoefficientRing;
-
-/*!
-Type of coefficients provided publicly.
+Type of coefficients ring used to compute homology, model of `IntegralDomainWithoutDivision`
  */
 typedef CoefficientRing Coefficient_ring;
 
