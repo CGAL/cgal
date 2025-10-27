@@ -63,7 +63,7 @@ class Simplex {
     {
         return _vertices.cbegin() ;
     }
-    /** \brief Returning a constant iterator after the last vertex of the simplex. */
+    /** \brief Returning a constant past-the-end iterator of the simplex. */
     const_iterator cend () { return _vertices.cend() ; }
 
     /** \brief Returns the dimension of a simplex.

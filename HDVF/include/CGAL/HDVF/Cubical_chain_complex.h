@@ -63,11 +63,11 @@ namespace Homological_discrete_vector_field {
 
  \section SecHdvfImplementation Implementation Details
 
- As described above, Khalimsky coordinates provide a convenient tool to identify cells of any dimension. Hence a complex of dimension \f$q\f$ can be encoded by a boolean matrix of size \f$N_1\times\cdots\times N_q\f$ (with previous notations). For convenience, this matrix is vectorized and thus the complex is stored in a boolean vector (denoted by  `_cells`) of size \f$N_1\times \cdots \times N_q\f$.
+ As described above, Khalimsky coordinates provide a convenient tool to identify cells of any dimension. Hence a complex of dimension \f$q\f$ can be encoded by a Boolean matrix of size \f$N_1\times\cdots\times N_q\f$ (with previous notations). For convenience, this matrix is vectorized and thus the complex is stored in a Boolean vector (denoted by  `_cells`) of size \f$N_1\times \cdots \times N_q\f$.
 
- Cells of any dimension are thus repesented by a given element of this boolean vector and the corresponding index is called their *boolean index*.
+ Cells of any dimension are thus repesented by a given element of this Boolean vector and the corresponding index is called their *Boolean index*.
 
- As stated above, besides this boolean representation, topological computations require to identify the bases of cells in any dimension (bases of the free chain groups). Hence, a cell of dimension \f$d\f$ is also identified by its index in the basis of \f$d\f$-dimensional cells. This index is called its *basis index*. The vector `_bool2base` stores, for each dimension, the map between boolean and base indices, while the `_base2bool` stores, for each dimension, the permutation between base and boolean indices.
+ As stated above, besides this Boolean representation, topological computations require to identify the bases of cells in any dimension (bases of the free chain groups). Hence, a cell of dimension \f$d\f$ is also identified by its index in the basis of \f$d\f$-dimensional cells. This index is called its *basis index*. The vector `_bool2base` stores, for each dimension, the map between Boolean and base indices, while the `_base2bool` stores, for each dimension, the permutation between base and Boolean indices.
 
  <img src="cubical_implementation.png" align="center" width=50%/>
 
@@ -233,7 +233,7 @@ public:
     }
 
     /** \brief Returns Khalimsky coordinates of the cell of "basis index" i in dimension q.
-     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "boolean index", see above).
+     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see above).
      *
      * \param[in] i "basis index" of a cell.
      * \param[in] q dimension of the cell.
@@ -247,7 +247,7 @@ public:
 
     /** \brief Returns the "basis index" of a cell given by its Khalimsky coordinates.
      *
-     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "boolean index", see above).
+     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see above).
      *
      * \param[in] cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
      * \returns The "basis index" of the cell among \f$q\f$-cells.
@@ -262,16 +262,16 @@ public:
     /** \brief Returns the dimension of a cell (given in Khalimsky coordinates). */
     int dimension(const std::vector<size_t>& cell) const;
 
-    /** \brief Returns Khalimsky coordinates of the cell of boolean index i.
+    /** \brief Returns Khalimsky coordinates of the cell of Boolean index i.
      *
-     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "boolean index" (see above).
+     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see above).
      *
-     * \param[in] i The "boolean" index of a cell.
+     * \param[in] i The "Boolean" index of a cell.
      * \returns Khalimsky coordinates of the cell.
      */
     std::vector<size_t> bindex_to_cell (size_t i) const {
         if (i > _P[_dim])
-            throw std::invalid_argument("Index exceeds the size of boolean vector");
+            throw std::invalid_argument("Index exceeds the size of Boolean vector");
         std::vector<size_t> khal(_dim);
         for (size_t k = 0; k < _dim; ++k) {
             khal[k] = i % _size_bb[k];
@@ -280,12 +280,12 @@ public:
         return khal;
     }
 
-    /** \brief Returns the boolean index of a cell given by its Khalimsky coordinates .
+    /** \brief Returns the Boolean index of a cell given by its Khalimsky coordinates.
      *
-     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "boolean index" (see above).
+     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see above).
      *
      * \param[in] cell Khalimsky coordinates of a cell.
-     * \returns The "boolean" index of the cell.
+     * \returns The "Boolean" index of the cell.
      */
     size_t cell_to_bindex (std::vector<size_t> cell) const {
         if (cell.size() != _dim) {
@@ -435,7 +435,7 @@ protected:
             return typename Traits::Kernel::Point_3(res[0], res[1], res[2]);
         else return typename Traits::Kernel::Point_d(res.begin(), res.end());
     }
-    
+
 public:
     /** \brief Gets the coordinates of the ith vertex */
 
@@ -595,12 +595,12 @@ public:
 protected:
     // Methods to access data
 
-    /* \brief Get _P (coefficients used for the vectorisation of the Khalimsky boolean matrix) */
+    /* \brief Get _P (coefficients used for the vectorisation of the Khalimsky Boolean matrix) */
     std::vector<size_t> get_P() const {
         return _P;
     }
 
-    /* \brief Get the boolean vector of the complex in Khalimsky coordinates */
+    /* \brief Get the Boolean vector of the complex in Khalimsky coordinates */
     std::vector<bool> get_cells() const {
         return _cells;
     }
@@ -660,7 +660,7 @@ protected:
     /* \brief Check if a cell (given in Khalimsky coordinates) is valid */
     bool is_valid_cell(const std::vector<size_t>& cell) const ;
 
-    /* \brief Check if a cell (given by its boolean index) is valid */
+    /* \brief Check if a cell (given by its Boolean index) is valid */
     bool is_valid_cell(size_t id_cell) const ;
 
     /* \brief Compute vertices of a cell given by its Khalimsky coordinates */
@@ -726,13 +726,13 @@ protected:
     int _dim;
     /* \brief Size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$*/
     std::vector<size_t> _size_bb;
-    /* \brief Vector of coefficients used for vectorization of the boolean representation */
+    /* \brief Vector of coefficients used for vectorization of the Boolean representation */
     std::vector<size_t> _P;
-    /* \brief Vectorized boolean representation of the complex (true if a cell is present, false otherwise) */
+    /* \brief Vectorized Boolean representation of the complex (true if a cell is present, false otherwise) */
     std::vector<bool> _cells;
-    /* \brief Maps from base indices to boolean indices (ie.\ indices in _cell) in each dimension */
+    /* \brief Maps from base indices to Boolean indices (ie.\ indices in _cell) in each dimension */
     std::vector<std::vector<size_t>> _base2bool;
-    /* \brief Maps from boolean indices (ie.\ indices in _cells) to base indices in each dimension */
+    /* \brief Maps from Boolean indices (ie.\ indices in _cells) to base indices in each dimension */
     std::vector<std::map<size_t, size_t>> _bool2base;
     /* \brief Vector of boundary matrices in each dimension */
     std::vector<Column_matrix>  _d;
@@ -752,21 +752,21 @@ protected:
     /* Initialize _cells, _base2bool and _bool2base */
     void initialize_cells(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type);
 
-    /* \brief Calculate the dimension of a cell (given by its boolean index) */
+    /* \brief Calculate the dimension of a cell (given by its Boolean index) */
     int dimension(size_t cell_index) const
     {
         return dimension(bindex_to_cell(cell_index)) ;
     }
 
-    /* \brief Computes voxel coordinates (in a binary object) from an index in a boolean vector
+    /* \brief Computes voxel coordinates (in a binary object) from an index in a Boolean vector
      *
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
-     * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
+     * Hence we consider a set of cells of maximal dimension vectorized to a Boolean vector.
      */
     std::vector<size_t> ind2vox(size_t index, std::vector<size_t> B, size_t max_size) const
     {
         if (index > max_size)
-            throw std::invalid_argument("ind2vox : index exceeding size of boolean vector");
+            throw std::invalid_argument("ind2vox : index exceeding size of Boolean vector");
         std::vector<size_t> coords(_dim);
         for (size_t k = 0; k < _dim; ++k) {
             coords[k] = index % B[k];
@@ -775,10 +775,10 @@ protected:
         return coords;
     }
 
-    /* \brief Computes an index in a boolean vector from voxel coordinates (in a binary object)
+    /* \brief Computes an index in a Boolean vector from voxel coordinates (in a binary object)
      *
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
-     * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
+     * Hence we consider a set of cells of maximal dimension vectorized to a Boolean vector.
      */
     size_t vox2ind(const std::vector<size_t>& base_indices, std::vector<size_t> B, size_t max_size) const {
         if (base_indices.size() != _dim) {
@@ -806,7 +806,7 @@ protected:
     /* \brief Insert a cell into the complex (and its faces if necessary) */
     void insert_cell(size_t cell);
 
-    /* \brief Compute (the boolean indices of) cells belonging to the boundary of `cell` (given by its boolean index) */
+    /* \brief Compute (the Boolean indices of) cells belonging to the boundary of `cell` (given by its Boolean index) */
     std::vector<size_t> calculate_boundaries(size_t cell) const;
 
 };
@@ -850,7 +850,7 @@ Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_
     for (int q = 0; q <= _dim; ++q) {
         calculate_d(q);
     }
-    
+
     // Initialize _points
     compute_points();
 }

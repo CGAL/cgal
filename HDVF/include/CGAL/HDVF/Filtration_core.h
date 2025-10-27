@@ -27,6 +27,15 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
+
+/*! \brief Type for indexing uniquely a cell.
+ * - First element of the pair: index of the cell.
+ * - Second element of the pair: dimension of the cell.
+ */
+typedef std::pair<std::size_t, int> Cell ;
+
+
+
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
@@ -55,11 +64,6 @@ namespace Homological_discrete_vector_field {
  \tparam Degree the scalar type of degrees (a model of the `RealEmbeddable` concept).
  */
 
-/*! \brief Type for indexing uniquely a cell.
- * - First element of the pair: index of the cell.
- * - Second element of the pair: dimension of the cell.
- */
-typedef std::pair<std::size_t, int> Cell ;
 
 template <typename ChainComplex, typename Degree>
 class Filtration_core
