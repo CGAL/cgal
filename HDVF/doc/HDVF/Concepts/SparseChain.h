@@ -69,7 +69,7 @@ public:
      *
      * Copy constructor, initialize a sparse chain from an existing sparse chain of same `ChaintypeFlag`.
      */
-    SparseChain(const Sparse_chain &other);
+    SparseChain(const SparseChain &other);
 
     /*!
      * \brief Assigns to other chain.
@@ -112,23 +112,23 @@ public:
     const_iterator cbegin() const noexcept;
 
     /*!
-     * \brief Iterator to the end of the chain.
+     * \brief Past-the-endiIterator of the chain.
      *
-     * The function returns an iterator to the ending of the chain.
+     * The function returns an iterator past the end of the chain.
      */
     iterator end() noexcept;
 
     /*!
-     * \brief Constant iterator to the end of the chain.
+     * \brief Constant past-the-enditerator of the chain.
      *
-     * The function returns a constant iterator to the ending of the chain.
+     * The function returns a constant iterator past the end of the chain.
      */
     const_iterator end() const noexcept;
 
     /*!
-     * \brief Constant iterator to the end of the chain.
+     * \brief Constant past-the-end iterator of the chain.
      *
-     * The function returns a constant iterator to the ending of the chain.
+     * The function returns a constant iterator past the endi of the chain.
      */
     const_iterator cend() const noexcept;
 
@@ -140,7 +140,7 @@ public:
     /*!
      * \brief Inserts `chain` in the output stream.
      */
-    friend std::ostream& operator<<(std::ostream &stream, const Sparse_chain& chain);
+    friend std::ostream& operator<<(std::ostream &stream, const SparseChain& chain);
 
     /// @}
 
@@ -153,7 +153,7 @@ public:
      * Add two chains and return the result in a new matrix.
      * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
-    friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain &second);
+    friend SparseChain operator+(const SparseChain &first, const SparseChain &second);
 
     /*!
      * \brief Subtracts a chain from another chain.
@@ -161,17 +161,17 @@ public:
      * Subtract two chains and return the result in a new matrix.
      * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
-    friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain &second);
+    friend SparseChain operator-(const SparseChain &first, const SparseChain &second);
 
     /*!
      * \brief Applies multiplication on each coefficient.
      */
-    friend Sparse_chain operator*(const CoefficientRing& lambda, const Sparse_chain &chain);
+    friend SparseChain operator*(const CoefficientRing& lambda, const SparseChain &chain);
 
     /*!
      * \brief Applies multiplication on each coefficient.
      */
-    friend Sparse_chain operator*(const Sparse_chain &_chain, const CoefficientRing& lambda);
+    friend SparseChain operator*(const SparseChain &_chain, const CoefficientRing& lambda);
 
     /*!
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
@@ -202,7 +202,7 @@ public:
      * Add a chain to `this`.
      * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
-    Sparse_chain& operator+=(const Sparse_chain &_other);
+    SparseChain& operator+=(const SparseChain &_other);
 
     /*!
      * \brief Subtracts a chain from `this`.
@@ -210,19 +210,19 @@ public:
      * Subtract a chain from `this`.
      * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
-    Sparse_chain& operator-=(const Sparse_chain &_other);
+    SparseChain& operator-=(const SparseChain &_other);
 
     /*!
      * \brief Applies multiplication on each coefficient of `this`.
      */
-    Sparse_chain& operator*=(const CoefficientRing& lambda);
+    SparseChain& operator*=(const CoefficientRing& lambda);
 
     /*!
      * \brief Transposes a SparseChain.
      *
      * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
      */
-    Sparse_chain transpose();
+    SparseChain transpose();
 
     /// @}
 
@@ -232,7 +232,7 @@ public:
     /*!
      * \brief Compares two chains.
      */
-    bool operator==(const Sparse_chain& other_chain);
+    bool operator==(const SparseChain& other_chain);
 
     /*!
      * \brief Gets the value of a coefficient of the chain.
@@ -264,28 +264,28 @@ public:
      *
      * Return a new chain where all coefficients of indices provided in the vector are removed.
      */
-    friend Sparse_chain operator/(const Sparse_chain &chain, const std::vector<size_t> &indices);
+    friend SparseChain operator/(const SparseChain &chain, const std::vector<size_t> &indices);
 
     /*!
      * \brief Gets a sub-chain from the chain.
      *
      * Return a new chain where the coefficients at a given index is removed.
      */
-    friend Sparse_chain operator/(const Sparse_chain &chain, size_t indices);
+    friend SparseChain operator/(const SparseChain &chain, size_t indices);
 
     /*!
      * \brief Restricts the chain to a sub-chain by removing indices.
      *
      * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
      */
-    Sparse_chain& operator/=(const std::vector<size_t> &indexes);
+    SparseChain& operator/=(const std::vector<size_t> &indexes);
 
     /**
      * \brief Restricts the chain to a sub-chain by removing a given index.
      *
      * Removes the index provided from the chain. Return a reference to the modified chain.
      */
-    Sparse_chain& operator/=(size_t index);
+    SparseChain& operator/=(size_t index);
 
     /**
      * \brief Removes all coefficients from the chain.

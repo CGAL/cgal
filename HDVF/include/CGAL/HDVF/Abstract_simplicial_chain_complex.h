@@ -65,7 +65,7 @@ public:
      *
      * Builds the abstract simplicial complex associated to a triangular mesh (i.e. performs the down closure of cells and set the boundary matrices in any dimension).
      *
-     * \param[in] mesh A `Mesh_object_io` containing a triangular mesh. Cells
+     * \param[in] mesh A `Mesh_object_io` containing a triangular mesh.
      */
     template <typename Traits>
     Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh);
@@ -140,7 +140,7 @@ public:
      *
      * Returns the dimension of the simplicial complex (i.e. largest dimension of cells).
      *
-     * \return The dimension of the complex..
+     * \return The dimension of the complex.
      */
     int dimension() const { return _dim ;}
 
@@ -199,9 +199,9 @@ public:
     }
 
     /**
-     * \brief Returns dimension 0simplex indices included in the cell with index id_cell of dimension q.
+     * \brief Returns 0-simplex indices included in the cell with index id_cell of dimension q.
      *
-     * Returns the dimension 0simplex indices included in the cell with index id_cell of dimension q.
+     * Returns the 0-simplex indices included in the cell with index id_cell of dimension q.
      *
      * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
