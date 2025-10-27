@@ -104,10 +104,10 @@ public:
     an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
     the default initialization is provided
 
-    \pre num_vertices(`tmesh`) >= 4.
-    \pre is_triangle_mesh(`tmesh`).
-    \pre is_closed(`tmesh`).
-    \pre is_strongly_convex_3(`tmesh`).
+    \pre boost::num_vertices(`tmesh`) >= 4.
+    \pre CGAL::is_triangle_mesh(`tmesh`).
+    \pre CGAL::is_closed(`tmesh`).
+    \pre CGAL::is_strongly_convex_3(`tmesh`).
   */
   Wachspress_coordinates_3(const TriangleMesh& tmesh,
                            const Computation_policy_3 policy,
@@ -364,10 +364,10 @@ private:
   \return an output iterator to the element in the destination range,
   one past the last coordinate stored
 
-  \pre num_vertices(`tmesh`) >= 4.
-  \pre is_triangle_mesh(`tmesh`).
-  \pre is_closed(`tmesh`).
-  \pre is_strongly_convex_3(`tmesh`).
+  \pre boost::num_vertices(`tmesh`) >= 4.
+  \pre CGAL::is_triangle_mesh(`tmesh`).
+  \pre CGAL::is_closed(`tmesh`).
+  \pre CGAL::is_strongly_convex_3(`tmesh`).
 */
 template<typename Point_3,
          typename TriangleMesh,

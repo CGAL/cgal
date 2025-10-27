@@ -30,7 +30,7 @@ int main() {
   // Get an array of triangle coordinates for all query points
   for(std::size_t i = 0; i < queries.size(); i++){
     const auto coords_array =
-    CGAL::Barycentric_coordinates::tetrahedron_coordinates_in_array(p0, p1, p2, p3, queries[i]);
+    CGAL::Barycentric_coordinates::tetrahedron_coordinates(p0, p1, p2, p3, queries[i]);
 
     std::cout << "tetrahedra coordinates (query " << i << "): " <<
       coords_array[0] << " " << coords_array[1] << " " <<
