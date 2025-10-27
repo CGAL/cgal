@@ -132,11 +132,12 @@ the iterators value type, is identical to the box type or a pointer
 to the box type (see the previous paragraph for the value versus
 pointer nature of the box handle).
 
-Two implementations of iso-oriented boxes are provided;
+Three implementations of iso-oriented boxes are provided;
 `Box_intersection_d::Box_d` as a plain box, and
-`Box_intersection_d::Box_with_handle_d` as a box plus a
-handle that can be used to point to the full geometry that is
-approximated by the box. Both implementations have template parameters
+`Box_intersection_d::Box_with_info_d`  and
+`Box_intersection_d::Box_with_handle_d` as a box plus respectively an info
+or an handle that can be used to point to the full geometry that is
+approximated by the box. Their implementations have template parameters
 for the number type used for the interval bounds, for the fixed
 dimension of the box, and for a policy class \cgalCite{cgal:a-mcdgp-01}
 selecting among several solutions for providing the `id`-number.
@@ -167,6 +168,10 @@ void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1
                         Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
                         Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
 \endcode
+
+We provide an example using boxes of different types to detect proximity between points and segments.
+
+\cgalExample{Box_intersection_d/boxes_with_different_types.cpp}
 
 \section secboxintersectminimal Minimal Example for Intersecting Boxes
 
