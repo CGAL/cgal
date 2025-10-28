@@ -136,8 +136,8 @@ struct CDT_options
   bool        use_finite_edges_map                = false;
   bool        call_is_valid                       = true;
   double      ratio                               = 0.1;
-  double      vertex_vertex_epsilon               = 1e-14;
-  double      segment_vertex_epsilon              = 1e-14;
+  double      vertex_vertex_epsilon               = 0.; // 1e-14;
+  double      segment_vertex_epsilon              = 0.; // 1e-14;
   double      coplanar_polygon_max_angle          = 5.1;
   double      coplanar_polygon_max_distance       = 1e-6;
   std::string failure_assertion_expression        {};

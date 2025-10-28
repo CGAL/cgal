@@ -381,7 +381,7 @@ protected:
   template <typename Visitor>
   Constrained_polyline_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb, Visitor&) {
     if(va != vb) {
-      if(segment_vertex_epsilon != 0.) {
+      if(debug().segment_vertex_epsilon() != 0.) {
         auto [min_dist, min_vertex] = min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
         check_segment_vertex_distance_or_throw(va, vb, min_vertex, CGAL::to_double(min_dist),
                                                Check_distance::NON_SQUARED_DISTANCE);
@@ -514,10 +514,6 @@ protected:
   }
 
 public:
-  void set_segment_vertex_epsilon(double epsilon) {
-    segment_vertex_epsilon = epsilon;
-  }
-
   CDT_3::Debug_options& debug() { return debug_options_; }
   const CDT_3::Debug_options& debug() const { return debug_options_; }
 
@@ -603,9 +599,9 @@ public:
       update_max_bbox_edge_length();
     }
     if((distance_type == Check_distance::NON_SQUARED_DISTANCE &&
-        min_dist < segment_vertex_epsilon * *max_bbox_edge_length) ||
+        min_dist < debug().segment_vertex_epsilon() * *max_bbox_edge_length) ||
        (distance_type == Check_distance::SQUARED_DISTANCE &&
-        min_dist < CGAL::square(segment_vertex_epsilon * *max_bbox_edge_length)))
+        min_dist < CGAL::square(debug().segment_vertex_epsilon() * *max_bbox_edge_length)))
     {
       std::stringstream ss;
       ss.precision(std::cerr.precision());
@@ -1065,7 +1061,7 @@ protected:
         return return_orig_result_point(lambda, orig_pb, orig_pa);
       }
     } else {
-      if(segment_vertex_epsilon > 0) {
+      if(debug().segment_vertex_epsilon() > 0) {
         if(!max_bbox_edge_length) {
           update_max_bbox_edge_length();
         }
@@ -1096,7 +1092,6 @@ protected:
   Constraint_hierarchy constraint_hierarchy = {comp};
   static_assert(CGAL::cdt_3_msvc_2019_or_older() || CGAL::is_nothrow_movable_v<Constraint_hierarchy>);
   Bbox_3 bbox{};
-  double segment_vertex_epsilon = 1e-8;
   mutable std::optional<double> max_bbox_edge_length;
   using Pair_of_vertex_handles = std::pair<Vertex_handle, Vertex_handle>;
   boost::container::map<Pair_of_vertex_handles, Constrained_polyline_id> pair_of_vertices_to_cid;
