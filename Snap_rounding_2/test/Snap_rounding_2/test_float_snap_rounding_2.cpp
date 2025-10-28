@@ -296,9 +296,10 @@ int main(int argc,char *argv[])
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
-  // big_test_2();
+  big_test();
+  big_test_2();
   // test_almost_indentical_segments(r, 50, Vector_2(1,1), Vector_2(-1,-1));
-  // fix_test();
+  fix_test();
   test_float_snap_rounding();
   test_fully_random(r,1000);
   test_multi_almost_indentical_segments(r,200);
