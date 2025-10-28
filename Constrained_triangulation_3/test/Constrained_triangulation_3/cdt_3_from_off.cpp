@@ -11,6 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/Random.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/utility.h>
 
@@ -763,6 +764,7 @@ int bisect_errors(Mesh mesh, CDT_options options) {
 int main(int argc, char* argv[]) {
   std::cerr.precision(17);
   std::cout.precision(17);
+  CGAL::get_default_random() = CGAL::Random(42);
 
   CDT_options options(argc, argv);
   if(options.need_help) {
