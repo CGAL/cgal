@@ -106,7 +106,7 @@ void draw_rect() {
       gso;
   gso.colored_face = [](const Arrangement&, Arrangement::Face_const_handle) -> bool { return true; };
 
-  gso.face_color = [](const Arrangement& arr, Arrangement::Face_const_handle fh) -> CGAL::IO::Color {
+  gso.face_color = [](const Arrangement&, Arrangement::Face_const_handle fh) -> CGAL::IO::Color {
     CGAL::Random random((size_t(fh.ptr())));
     float h = 360.0f * random.get_double(0, 1);
     float s = 0.5;
