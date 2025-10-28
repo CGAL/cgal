@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_FACE_TRIANGULATOR_H
 #define CGAL_DRAW_AOS_ARR_FACE_TRIANGULATOR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <algorithm>
 #include <optional>
 #include <type_traits>

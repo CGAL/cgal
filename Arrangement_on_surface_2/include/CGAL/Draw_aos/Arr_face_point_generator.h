@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_FACE_POINT_GENERATOR_H
 #define CGAL_DRAW_AOS_ARR_FACE_POINT_GENERATOR_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <utility>
 #include <variant>
 #include <vector>

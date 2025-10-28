@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
 #define CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <boost/range/iterator_range.hpp>
 
 #include <CGAL/Arr_enums.h>

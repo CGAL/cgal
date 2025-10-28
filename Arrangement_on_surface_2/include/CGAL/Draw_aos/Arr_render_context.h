@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_RENDER_CONTEXT_H
 #define CGAL_DRAW_AOS_ARR_RENDER_CONTEXT_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <cstdlib>
 #include <memory>
 #include <atomic>

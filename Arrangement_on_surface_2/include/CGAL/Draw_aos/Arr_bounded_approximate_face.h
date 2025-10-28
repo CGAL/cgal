@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_FACE_H
 #define CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_FACE_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <iterator>
 #include <optional>
 #include <utility>
