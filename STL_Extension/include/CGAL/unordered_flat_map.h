@@ -38,6 +38,22 @@
 
 namespace CGAL {
 
+  namespace internal_is_hashable {
+    using boost::hash_value;
+
+    template <typename T, typename = void>
+    struct Has_hash_value : std::false_type {};
+
+    template <typename T>
+    struct Has_hash_value<T, std::void_t<decltype(hash_value(std::declval<T>()))>>
+        : std::is_convertible<decltype(hash_value(std::declval<T>())), std::size_t>
+    {};
+  }
+
+  template <typename T>
+  inline constexpr bool is_hashable_v =
+      internal_is_hashable::Has_hash_value<T>::value && std::is_default_constructible_v<std::hash<T>>;
+
 template <
   typename Key,
   typename T,

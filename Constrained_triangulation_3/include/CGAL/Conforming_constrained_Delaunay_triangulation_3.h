@@ -696,7 +696,13 @@ public:
           halfedge_descriptor halfedge;
           int count;
         };
-        CGAL::unordered_flat_map<Point, Point_info> points_to_halfedge;
+
+        using Point_to_point_info_map = std::conditional_t<
+          CGAL::is_hashable_v<Point>,
+          CGAL::unordered_flat_map<Point, Point_info>,
+          std::map<Point, Point_info>>;
+
+        Point_to_point_info_map points_to_halfedge;
         auto visited_halfedges = get(CGAL::dynamic_halfedge_property_t<bool>(), mesh);
 
         for(const auto h : halfedges(mesh)) {
