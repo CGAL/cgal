@@ -347,21 +347,18 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 }
 
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
-std::size_t merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
+void merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
-  using P_ID     = std::size_t;
-  using Point_2  = typename Traits::Point_2;
+  using Point_2 = typename Traits::Point_2;
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
 
   using Less_xy_2 = typename Traits::Less_xy_2;
-  using Unique_point_container = std::map<Point_2, std::size_t, Less_xy_2>;
-
   using Equal_2 = typename Traits::Equal_2;
   Equal_2 equal = traits.equal_2_object();
 
-    auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
-      return Less_xy_2()(pts[i], pts[j]);
-    };
+  auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
+    return Less_xy_2()(pts[i], pts[j]);
+  };
 
   std::vector< std::size_t > unique_points(pts.size());
   std::iota(unique_points.begin(), unique_points.end(), 0);
@@ -388,61 +385,9 @@ std::size_t merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange 
     ++i;
     std::swap(polyline, updated_polyline);
   }
-  return 0;
-
-//   const std::size_t ini_points_n = pts.size();
-//   std::vector<std::size_t> point_index(ini_points_n, 0);
-
-//   Unique_point_container point_to_id(traits.less_xy_2_object());
-
-//   std::vector<Point_2> unique_points;
-//   unique_points.reserve(ini_points_n);
-
-//   for(std::size_t i=0; i<ini_points_n; ++i)
-//   {
-//     std::pair<typename Unique_point_container::iterator, bool> is_insert_successful =
-//       point_to_id.insert(std::make_pair(pts[i], unique_points.size()));
-
-// // #ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
-//     if(!is_insert_successful.second)
-//       std::cout << "points[" << i << "] = " << pts[i] << " was already encountered" << std::endl;
-// // #endif
-//     std::size_t id = is_insert_successful.first->second;
-
-//     if(id == unique_points.size())
-//       unique_points.push_back(pts[i]);
-//     point_index[i] = id;
-//   }
-
-//   if(unique_points.size() != ini_points_n)
-//   {
-//     for(P_ID pl_index=0, end=polylines.size(); pl_index!=end; ++pl_index)
-//     {
-//       Polyline& pl = polylines[pl_index];
-//       for(std::size_t i=0, pl_size = pl.size(); i<pl_size; ++i)
-//         pl[i] = point_index[pl[i]];
-//     }
-
-//     // std::swap(pts, unique_points);
-//     std::cout << pts.size() << " " << unique_points.size() << std::endl;
-//     pts.clear();
-//     for(const Point_2 &p: unique_points)
-//       pts.emplace_back(p);
-//   }
-
-//   const std::size_t removed_points_n = ini_points_n - pts.size();
-
-//   // std::cout << pts.size() << " " << unique_points.size() << std::endl;
-//   // for(auto pi: point_index)
-//   //   std::cout << pi << std::endl;
-
-// // #ifdef DOUBLE_2D_SNAP_VERBOSE
-//   if(removed_points_n > 0)
-//     std::cout << "Removed (merged) " << removed_points_n << " duplicate points" << std::endl;
-// // #endif
-//   return removed_points_n;
 }
 
+// Some points may have collapsed on a vertical segment, we subdivide these vertical segments accordingly
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
@@ -676,6 +621,8 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
 
+  Less_xy_2 less_xy_2 = traits.less_xy_2_object();
+
   std::vector<Segment_2> convert_input;
   for(InputIterator it=input_begin; it!=input_end; ++it)
     convert_input.push_back(Segment_2(to_exact(*it)));
@@ -689,8 +636,8 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Change format to range of points and indexes" << std::endl;
 #endif
-  std::set<Point_2> unique_point_set;
-  std::map<Point_2, int> point_to_index;
+  std::set<Point_2, Less_xy_2> unique_point_set(less_xy_2);
+  std::map<Point_2, std::size_t> point_to_index;
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
 
@@ -716,7 +663,7 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   {
     std::size_t index1 = point_to_index[it->source()];
     std::size_t index2 = point_to_index[it->target()];
-    if(Less_xy_2()(it->source(), it->target()))
+    if(less_xy_2(it->source(), it->target()))
       polylines.push_back({index1, index2});
     else
       polylines.push_back({index2, index1});
