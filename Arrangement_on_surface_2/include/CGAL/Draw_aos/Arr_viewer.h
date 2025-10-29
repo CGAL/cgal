@@ -187,7 +187,7 @@ protected:
   }
 
   Buffer_for_vao::Local_point to_local_point(Point pt) const {
-    auto approx_pt = Arr_coordinate_converter(*m_arr.geometry_traits()).to_cartesian(pt);
+    auto approx_pt = Arr_coordinate_converter<Geom_traits>(*m_arr.geometry_traits()).to_cartesian(pt);
     return Buffer_for_vao::Local_point(approx_pt.dx(), approx_pt.dy(), approx_pt.dz());
   }
 
