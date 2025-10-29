@@ -45,9 +45,10 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
                                  PolygonRange& polygons,
                                  const NamedParameters&)
 {
+  typedef typename PolygonRange::value_type  Face;
+  typedef typename Face::value_type            Index;
   vtkIdType nb_points = poly_data->GetNumberOfPoints();
   vtkIdType nb_cells = poly_data->GetNumberOfCells();
-  polygons.reserve(nb_cells);
   std::size_t initial_number_of_pts = points.size();
 
   // extract points
@@ -74,11 +75,11 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
     if(nb_vertices < 3)
       return false;
 
-    std::vector<std::size_t> ids(nb_vertices);
+    Face ids;
     for(vtkIdType k=0; k<nb_vertices; ++k)
     {
       vtkIdType id = cell_ptr->GetPointId(k);
-      ids[k] = id+initial_number_of_pts;
+      ids.push_back(Index(id+initial_number_of_pts));
     }
     polygons.push_back(ids);
   }
@@ -483,6 +484,7 @@ bool write_VTP(std::ostream& os,
     internal::write_soup_polys(os, polygons,size_map, cell_type);
   }
   os << "</VTKFile>" << std::endl;
+  return os.good();
 }
 
 /*!
