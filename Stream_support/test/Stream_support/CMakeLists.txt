@@ -14,7 +14,7 @@ find_library(
   DOC "Path to the lib3MF library")
 
 
-  set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 
 find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
 if(VTK_FOUND)
