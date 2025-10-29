@@ -21,7 +21,7 @@ typedef CGAL::Surface_mesh<K::Point_3>                     Surface_mesh;
 int main()
 {
   // Load mesh into a Surface_mesh (FaceGraph overload)
-  std::ifstream in("data/meshes/cube.off");
+  std::ifstream in(CGAL::data_file_path("meshes/cube.off"));
   if(!in) {
     std::cerr << "Cannot open data/meshes/cube.off\n";
     return EXIT_FAILURE;
@@ -37,17 +37,28 @@ int main()
   LCC_3 lcc_basic, lcc_reg;
 
   // Unregularized
-  CGAL::compute_octree(lcc_basic, sm, 2, 5, false, false, false);
+  CGAL::compute_octree(lcc_basic, sm,
+    CGAL::parameters::initial_grid_size(2).
+    maximum_subdivision_level(5).
+    create_all_voxels(false).
+    no_remove_outside(false).
+    regularized(false));
+
   // Regularized (stub: currently identical)
-  CGAL::compute_octree(lcc_reg,   sm, 2, 5, false, false, true);
+  CGAL::compute_octree(lcc_reg,   sm,
+    CGAL::parameters::initial_grid_size(2).
+    maximum_subdivision_level(5).
+    create_all_voxels(false).
+    no_remove_outside(false).
+    regularized(true));
 
   std::cout << "Octree (basic) darts: " << lcc_basic.number_of_darts() << "\n";
   std::cout << "Octree (regularized) darts: " << lcc_reg.number_of_darts() << "\n";
 
   // Filename overload (const char*) (builds another LCC)
-  LCC_3 lcc_from_file;
-  CGAL::compute_octree(lcc_from_file, "data/meshes/cube.off", 2, 5, false, false, false);
-  std::cout << "Octree (from filename) darts: " << lcc_from_file.number_of_darts() << "\n";
+//   LCC_3 lcc_from_file;
+//   CGAL::compute_octree(lcc_from_file, CGAL::data_file_path("meshes/cube.off"), 2, 5, false, false, false);
+//   std::cout << "Octree (from filename) darts: " << lcc_from_file.number_of_darts() << "\n";
 
   return EXIT_SUCCESS;
 }

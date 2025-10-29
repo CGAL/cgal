@@ -199,6 +199,13 @@ CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
 CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
 
+// List of named parameters used in the Linear Cell Complex package
+CGAL_add_named_parameter(create_all_voxels_t, create_all_voxels, create_all_voxels)
+CGAL_add_named_parameter(no_remove_outside_t, no_remove_outside, no_remove_outside)
+CGAL_add_named_parameter(regularized_t, regularized, regularized)
+CGAL_add_named_parameter(initial_grid_size_t, initial_grid_size, initial_grid_size)
+CGAL_add_named_parameter(maximum_subdivision_level_t, maximum_subdivision_level, maximum_subdivision_level)
+
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
 CGAL_add_named_parameter(normal_t, normal_map, normal_map)
