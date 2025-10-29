@@ -20,6 +20,7 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Container_helper.h>
 
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
@@ -49,6 +50,7 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
   typedef typename Face::value_type            Index;
   vtkIdType nb_points = poly_data->GetNumberOfPoints();
   vtkIdType nb_cells = poly_data->GetNumberOfCells();
+  CGAL::internal::reserve(polygons, nb_cells);
   std::size_t initial_number_of_pts = points.size();
 
   // extract points
@@ -125,7 +127,7 @@ bool read_VTP(const std::string& fname,
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose `value_type` is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
  *                      convertible to `std::size_t`
@@ -181,7 +183,7 @@ bool read_VTK(const std::string& fname,
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose `value_type` is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
  *                      convertible to `std::size_t`
