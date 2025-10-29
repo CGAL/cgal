@@ -582,7 +582,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   CDT_3_impl& impl() { return cdt_impl; }
-  /// /endcond
+  /// \endcond
 public:
   /** \name Constructors
   @{
