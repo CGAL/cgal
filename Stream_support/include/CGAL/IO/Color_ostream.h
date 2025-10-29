@@ -265,25 +265,25 @@ public:
     }
   }
 
-  /** \brief Get the current color code string. */
+  /** \brief gets the current color code string. */
   const string& color_code() const { return color_code_; }
 
   /**
-   * \brief Set a new color code.
+   * \brief sets a new color code.
    *
-   * \param string The new color code to apply
+   * \param color_code The new color code to apply
    */
   void set_color_code(const string& color_code) {
     color_code_ = color_code;
   }
 
-  /** \brief Check if colors are enabled for this streambuf. */
+  /** \brief checks if colors are enabled for this streambuf. */
   bool colors_enabled() const { return colors_enabled_; }
 
-  /** \brief Get the wrapped streambuf. */
+  /** \brief gets the wrapped streambuf. */
   streambuf_type& wrapped_streambuf() const { return *wrapped_buf_; }
 
-  /** \brief Detect if the wrapped buffer supports color output. */
+  /** \brief detects if the wrapped buffer supports color output. */
   static bool detect_color_support(streambuf_type* buf) {
     if(safe_getenv("NO_COLOR").value_or("").size() > 0) {
       return false;
@@ -457,7 +457,7 @@ private:
 
 public:
   /**
-   * \brief Construct and install a color streambuf on the given stream.
+   * \brief constructs and installs a color streambuf on the given stream.
    *
    * \param stream The stream to modify
    * \param color The color to apply to the output
@@ -477,7 +477,7 @@ public:
   }
 
   /**
-   * \brief Construct and install a color streambuf with multiple colors.
+   * \brief constructs and installs a color streambuf with multiple colors.
    *
    * \param stream The stream to modify
    * \param colors Vector of colors to combine (e.g., bold + red)
@@ -535,7 +535,7 @@ using Color_wstream_guard = Basic_color_stream_guard<std::wostream>;
 /**
  * \ingroup PkgStreamSupportRef
  *
- * \brief Create color guards for multiple streams simultaneously.
+ * \brief creates color guards for multiple streams simultaneously.
  *
  * This helper function creates `Basic_color_stream_guard` objects for
  * multiple streams at once. All streams will use the same color settings,
@@ -562,7 +562,7 @@ auto make_color_guards(Ansi_color color, Streams&... streams) {
 /**
  * \ingroup PkgStreamSupportRef
  *
- * \brief Create color guards for multiple streams with multiple colors.
+ * \brief creates color guards for multiple streams with multiple colors.
  *
  * This overload allows specifying multiple colors to combine (e.g., bold + red).
  *
@@ -579,7 +579,7 @@ auto make_color_guards(const std::vector<Ansi_color>& colors, Streams&... stream
 /**
  * \ingroup PkgStreamSupportRef
  *
- * \brief Check if a stream is attached to a terminal that supports colors.
+ * \brief checks if a stream is attached to a terminal that supports colors.
  *
  * This function checks if the given output stream is connected to a terminal
  * (TTY) that can display ANSI color codes. It performs the following checks:

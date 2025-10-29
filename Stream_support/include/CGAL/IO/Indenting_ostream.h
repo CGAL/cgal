@@ -56,7 +56,7 @@ private:
 
 public:
   /**
-   * \brief Construct an indenting streambuf wrapper.
+   * \brief constructs an indenting streambuf wrapper.
    *
    * \param wrapped_buf The underlying streambuf to wrap
    * \param indent_string The string to use for indentation (default: 2 spaces)
@@ -70,18 +70,18 @@ public:
   {
   }
 
-  /** \brief Get the current indentation string. */
+  /** \brief gets the current indentation string. */
   const string& indent_string() const { return indent_string_; }
 
   /**
-   * \brief Set a new indentation string.
+   * \brief sets a new indentation string.
    *
    * \param new_indent The new indentation string
    */
   void set_indent_string(const string& new_indent) { indent_string_ = new_indent; }
 
   /**
-   * \brief Set indentation level using repeated spaces.
+   * \brief sets indentation level using repeated spaces.
    *
    * \param level Number of indentation levels
    * \param spaces_per_level Number of spaces per level (default: 2)
@@ -90,7 +90,7 @@ public:
     indent_string_ = string(level * spaces_per_level, char_type(' '));
   }
 
-  /** \brief Get the wrapped streambuf. */
+  /** \brief gets the wrapped streambuf. */
   streambuf_type& wrapped_streambuf() const { return *wrapped_buf_; }
 
 protected:
@@ -212,7 +212,7 @@ private:
 
 public:
   /**
-   * \brief Construct and install an indenting streambuf on the given stream.
+   * \brief constructs and installs an indenting streambuf on the given stream.
    *
    * \param stream The stream to modify
    * \param indent_string The indentation string to use
@@ -232,7 +232,7 @@ public:
   }
 
   /**
-   * \brief Construct and install an indenting streambuf on the given stream
+   * \brief constructs and installs an indenting streambuf on the given stream
    *
    * \param stream The stream to modify
    * \param spaces_per_level Number of indentation spaces
@@ -282,7 +282,7 @@ using Indenting_wstream_guard = Basic_indenting_stream_guard<std::wostream>;
 /**
  * \ingroup PkgStreamSupportRef
  *
- * \brief Create indenting guards for multiple streams simultaneously.
+ * \brief creates indenting guards for multiple streams simultaneously.
  *
  * This helper function creates `Basic_indenting_stream_guard` objects for
  * multiple streams at once. All streams will use the same indentation settings,
@@ -309,7 +309,7 @@ auto make_indenting_guards(int spaces_per_level, Streams&... streams) {
 /**
  * \ingroup PkgStreamSupportRef
  *
- * \brief Create indenting guards for multiple streams with a custom indent string.
+ * \brief creates indenting guards for multiple streams with a custom indent string.
  *
  * This overload allows specifying a custom indentation string instead of a number
  * of spaces.
