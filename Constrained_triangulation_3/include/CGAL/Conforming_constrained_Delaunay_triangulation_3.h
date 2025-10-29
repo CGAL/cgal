@@ -4199,11 +4199,12 @@ public:
         CGAL_assertion(false == this->is_infinite(*facet_circ));
         const auto cell = facet_circ->first;
         const auto facet_index = facet_circ->second;
-        CGAL_assertion_msg(!cell->ccdt_3_data().is_facet_constrained(facet_index),
-                           std::invoke([&]() {
-                             this->dump_triangulation_to_off();
-                             return std::string("intersecting polygons!");
-                           }).c_str());
+        if(cell->ccdt_3_data().is_facet_constrained(facet_index)) {
+          CGAL_error_msg(std::invoke([&]() {
+                           if(this->debug().regions()) this->dump_triangulation_to_off();
+                           return std::string("intersecting polygons!");
+                         }).c_str());
+        }
         if(new_cell(cell)) {
           intersecting_cells.insert(cell);
         }
