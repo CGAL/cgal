@@ -243,7 +243,7 @@ void test_color_detection() {
 
   // Test stdout color support function
   std::cout << "2. Testing stdout_supports_color() function:\n";
-  if(CGAL::IO::stdout_supports_color()) {
+  if(CGAL::IO::stream_supports_color(std::cout)) {
     std::cout << "   stdout supports colors: YES\n";
     {
       CGAL::IO::Color_stream_guard guard(std::cout, Ansi_color::Green);
@@ -258,7 +258,7 @@ void test_color_detection() {
 
   // Test stderr color support
   std::cout << "3. Testing stderr_supports_color():\n";
-  if(CGAL::IO::stderr_supports_color()) {
+  if(CGAL::IO::stream_supports_color(std::cerr)) {
     std::cout << "   stderr supports colors: YES\n";
     {
       CGAL::IO::Color_stream_guard guard(std::cerr, Ansi_color::Yellow);
@@ -324,22 +324,6 @@ void test_color_detection() {
   }
   std::cerr << " Critical error occurred\n";
   std::cout << "\n";
-
-  // Environment hints
-  std::cout << "7. Environment information:\n";
-  const char* term = std::getenv("TERM");
-  const char* no_color = std::getenv("NO_COLOR");
-
-  std::cout << "   TERM variable: " << (term ? term : "(not set)") << "\n";
-  std::cout << "   NO_COLOR variable: " << (no_color ? "SET (colors disabled)" : "(not set)") << "\n";
-
-#ifdef _WIN32
-  std::cout << "   Platform: Windows\n";
-  const char* ansicon = std::getenv("ANSICON");
-  std::cout << "   ANSICON variable: " << (ansicon ? ansicon : "(not set)") << "\n";
-#else
-  std::cout << "   Platform: POSIX (Linux/macOS/Unix)\n";
-#endif
 
   std::cout << "\n";
   std::cout << "   Tip: To disable colors, set the NO_COLOR environment variable:\n";

@@ -19,7 +19,9 @@
 
 #include <CGAL/config.h>
 
+#include <cstdlib> // for std::getenv
 #include <ios>
+#include <optional>
 #include <streambuf>
 #include <string>
 #include <tuple>
@@ -27,16 +29,19 @@
 #include <vector>
 
 #ifdef _WIN32
-#include <io.h>
-#define CGAL_ISATTY _isatty
-#define CGAL_FILENO _fileno
+#  include <io.h>
+#  define CGAL_ISATTY _isatty
+#  define CGAL_FILENO _fileno
 #else
-#include <unistd.h>
-#define CGAL_ISATTY isatty
-#define CGAL_FILENO fileno
+#  include <unistd.h>
+#  define CGAL_ISATTY isatty
+#  define CGAL_FILENO fileno
 #endif
 
-#include <cstdlib> // for getenv
+#if defined(__STDC_LIB_EXT1__) && defined(_WIN32)
+#  include <stdlib.h> // for getenv_s
+#  define CGAL_USE_GETENV_S 1
+#endif
 
 namespace CGAL {
 namespace IO {
@@ -124,52 +129,23 @@ private:
   bool at_line_start_;
   bool colors_enabled_;
 
-  /** \brief Detect if the wrapped buffer supports color output. */
-  static bool detect_color_support(streambuf_type* buf) {
-    // Check NO_COLOR environment variable first
-    if(std::getenv("NO_COLOR")) {
-      return false;
-    }
-
-    // Try to determine if this is stdout or stderr
-    // by comparing pointers (works for standard streams)
-    if(buf == std::cout.rdbuf() || buf == std::clog.rdbuf()) {
-      int fd = CGAL_FILENO(stdout);
-      if(!CGAL_ISATTY(fd)) {
-        return false;
-      }
-    } else if(buf == std::cerr.rdbuf()) {
-      int fd = CGAL_FILENO(stderr);
-      if(!CGAL_ISATTY(fd)) {
-        return false;
-      }
+  static std::optional<std::string> safe_getenv(const char* name) {
+#if CGAL_USE_GETENV_S
+    static constexpr std::size_t buffer_size = 256;
+    std::array<char, buffer_size> buffer;
+    std::size_t size = 0;
+    if(getenv_s(&size, buffer.data(), buffer.size(), name) == 0 && size > 0) {
+      return std::string(buffer.data());
     } else {
-      // Unknown buffer, conservatively disable colors
-      return false;
+      return std::nullopt;
     }
-
-#ifdef _WIN32
-    // Windows: check for ANSICON or assume modern Windows
-    return std::getenv("ANSICON") || true;
 #else
-    // POSIX: check TERM environment variable
-    const char* term = std::getenv("TERM");
-    if(!term) {
-      return false;
+    const char* value = std::getenv(name);
+    if(value) {
+      return std::string(value);
+    } else {
+      return {};
     }
-
-    std::string term_str(term);
-    if(term_str == "dumb") {
-      return false;
-    }
-
-    // Check for common color-capable terminals
-    return term_str.find("color") != std::string::npos ||
-           term_str.find("xterm") != std::string::npos ||
-           term_str.find("rxvt") != std::string::npos ||
-           term_str.find("screen") != std::string::npos ||
-           term_str.find("tmux") != std::string::npos ||
-           term_str.find("linux") != std::string::npos;
 #endif
   }
 
@@ -306,6 +282,49 @@ public:
 
   /** \brief Get the wrapped streambuf. */
   streambuf_type& wrapped_streambuf() const { return *wrapped_buf_; }
+
+  /** \brief Detect if the wrapped buffer supports color output. */
+  static bool detect_color_support(streambuf_type* buf) {
+    if(safe_getenv("NO_COLOR").value_or("").size() > 0) {
+      return false;
+    }
+
+    if(safe_getenv("CLICOLOR_FORCE").value_or("").size() > 0) {
+      return true;
+    }
+
+    // Try to determine if this is stdout or stderr
+    // by comparing pointers (works for standard streams)
+    if(buf == std::cout.rdbuf() || buf == std::clog.rdbuf()) {
+      int fd = CGAL_FILENO(stdout);
+      if(!CGAL_ISATTY(fd)) {
+        return false;
+      }
+    } else if(buf == std::cerr.rdbuf()) {
+      int fd = CGAL_FILENO(stderr);
+      if(!CGAL_ISATTY(fd)) {
+        return false;
+      }
+    } else {
+      // Unknown buffer, conservatively disable colors
+      return false;
+    }
+
+#ifdef _WIN32
+    // Windows: assume modern Windows
+    return  true;
+#endif
+    // POSIX: check TERM environment variable
+    const std::string term_str = safe_getenv("TERM").value_or("");
+
+    // Check for common color-capable terminals
+    return term_str.find("color") != std::string::npos ||
+           term_str.find("xterm") != std::string::npos ||
+           term_str.find("rxvt") != std::string::npos ||
+           term_str.find("screen") != std::string::npos ||
+           term_str.find("tmux") != std::string::npos ||
+           term_str.find("linux") != std::string::npos;
+  }
 
 protected:
   using traits_type::eof;
@@ -589,102 +608,7 @@ auto make_color_guards(const std::vector<Ansi_color>& colors, Streams&... stream
  */
 template <typename CharT, typename Traits>
 bool stream_supports_color(const std::basic_ostream<CharT, Traits>& stream) {
-  // Check if NO_COLOR environment variable is set (standard way to disable colors)
-  if(std::getenv("NO_COLOR")) {
-    return false;
-  }
-
-  // Try to get the file descriptor for the stream
-  // This works for std::cout (stdout) and std::cerr (stderr)
-  const auto* fbuf = dynamic_cast<const std::basic_filebuf<CharT, Traits>*>(stream.rdbuf());
-  if(!fbuf) {
-    // If it's not a file buffer, check if it's stdout or stderr directly
-    const std::basic_ostream<CharT, Traits>* std_stream = &stream;
-    int fd = -1;
-
-    if(std_stream == &std::cout || std_stream == &std::clog) {
-      fd = CGAL_FILENO(stdout);
-    } else if(std_stream == &std::cerr) {
-      fd = CGAL_FILENO(stderr);
-    }
-
-    if(fd == -1) {
-      return false; // Unknown stream type
-    }
-
-    // Check if the file descriptor is a TTY
-    if(!CGAL_ISATTY(fd)) {
-      return false;
-    }
-  } else {
-    // For file buffers, we can't easily get the fd in a portable way
-    // Conservatively assume no color support for files
-    return false;
-  }
-
-#ifdef _WIN32
-  // On Windows, check for ANSICON or Windows 10+ with VT100 support
-  // Modern Windows Terminal and ConEmu support ANSI colors
-  if(std::getenv("ANSICON")) {
-    return true;
-  }
-  // Windows 10+ console supports ANSI by default
-  // We could check Windows version, but being conservative here
-  return true; // Modern Windows usually supports colors
-#else
-  // On POSIX systems, check the TERM environment variable
-  const char* term = std::getenv("TERM");
-  if(!term) {
-    return false; // No TERM variable, probably not a color terminal
-  }
-
-  std::string term_str(term);
-
-  // Check for common indicators of color support
-  if(term_str.find("color") != std::string::npos ||
-     term_str.find("xterm") != std::string::npos ||
-     term_str.find("rxvt") != std::string::npos ||
-     term_str.find("screen") != std::string::npos ||
-     term_str.find("tmux") != std::string::npos ||
-     term_str.find("linux") != std::string::npos) {
-    return true;
-  }
-
-  // Check for dumb terminal
-  if(term_str == "dumb") {
-    return false;
-  }
-
-  // For other TERM values, conservatively assume color support
-  // Most modern terminals support colors
-  return true;
-#endif
-}
-
-/**
- * \ingroup PkgStreamSupportRef
- *
- * \brief Check if stdout supports color output.
- *
- * Convenience function equivalent to `stream_supports_color(std::cout)`.
- *
- * \return `true` if stdout supports color output, `false` otherwise
- */
-inline bool stdout_supports_color() {
-  return stream_supports_color(std::cout);
-}
-
-/**
- * \ingroup PkgStreamSupportRef
- *
- * \brief Check if stderr supports color output.
- *
- * Convenience function equivalent to `stream_supports_color(std::cerr)`.
- *
- * \return `true` if stderr supports color output, `false` otherwise
- */
-inline bool stderr_supports_color() {
-  return stream_supports_color(std::cerr);
+  return Basic_color_streambuf<CharT, Traits>::detect_color_support(stream.rdbuf());
 }
 
 } // namespace IO
