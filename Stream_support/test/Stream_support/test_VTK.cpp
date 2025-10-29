@@ -23,7 +23,7 @@ int main()
 
   points.clear();
   polygons.clear();
-  ok = CGAL::IO::read_VTK(vtk_file, points, polygons, CGAL::parameters::verbose(true));
+  ok = CGAL::IO::read_VTP(vtk_file, points, polygons, CGAL::parameters::verbose(true));
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 #if 0
