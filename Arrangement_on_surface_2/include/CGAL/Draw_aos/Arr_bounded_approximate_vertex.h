@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_VERTEX_H
 #define CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_VERTEX_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <CGAL/Draw_aos/type_utils.h>
 #include <CGAL/Draw_aos/Arr_render_context.h>
 

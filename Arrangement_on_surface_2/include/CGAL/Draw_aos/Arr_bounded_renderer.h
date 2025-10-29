@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_BOUNDED_RENDERER_H
 #define CGAL_DRAW_AOS_ARR_BOUNDED_RENDERER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Draw_aos/Arr_approximation_cache.h>
 #include <CGAL/Draw_aos/Arr_bounded_approximate_face.h>

@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_ARR_COORDINATE_CONVERTER_H
 #define CGAL_DRAW_AOS_ARR_COORDINATE_CONVERTER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <cmath>
 
 #include <CGAL/number_type_config.h>

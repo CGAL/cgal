@@ -16,6 +16,8 @@
 #ifndef CGAL_DRAW_AOS_TYPE_UTILS_H
 #define CGAL_DRAW_AOS_TYPE_UTILS_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <limits>
 #include <vector>
 #include <type_traits>
