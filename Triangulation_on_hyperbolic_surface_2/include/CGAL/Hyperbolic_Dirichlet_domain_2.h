@@ -88,7 +88,7 @@ std::vector<typename Traits::Hyperbolic_Voronoi_point_2> compute_dirichlet_verti
     Traits gt;
     internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
     for (std::tuple<Dart_const_descriptor, Point, Point, Point>& triangle : realized_triangles){
-        Voronoi_point circumcenter = chc(std::get<1>(triangle), std::get<2>(triangle), std::get<3>(triangle));  // segfault ici
+        Voronoi_point circumcenter = chc(std::get<1>(triangle), std::get<2>(triangle), std::get<3>(triangle));
         dirichlet_vertices.push_back(circumcenter);
     }
     return dirichlet_vertices;

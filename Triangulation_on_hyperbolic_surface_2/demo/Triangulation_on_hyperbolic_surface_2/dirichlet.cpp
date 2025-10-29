@@ -15,7 +15,8 @@
 #include <fstream>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
 
-typedef CGAL::Exact_rational		NumberType;
+// typedef CGAL::Exact_rational		NumberType;
+typedef CGAL::Gmpq	NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                             ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                        	Traits;
@@ -33,25 +34,41 @@ typedef typename Delaunay_triangulation::Anchor                                 
 
 int main(int argc, char **argv)
 {
+	double eps = 0.1;
+	int seed = time(NULL);
+	int p = 0;
+
+	if (argc > 1) {
+		eps = std::stod(argv[1]);
+	}
+
+	if (argc > 2) {
+		p = atoi(argv[2]);
+	}
+
 	// 1. GENERATE THE INPUT
 	Domain domain;
-	int seed;
-	if (argc <= 2) {
-		seed = time(NULL);
-		std::cout << "Generating surface with random seed " << seed << "..." << std::endl;
+	if (argc <= 3) {
+		std::cout << "Using random seed " << seed << std::endl;
 	} else {
-		seed = atoi(argv[2]);
-		std::cout << "Generating surface with seed " << seed << "..." << std::endl;
+		seed = atoi(argv[3]);
 	}
 	Factory factory;
-	domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
+	if (seed >= 0) {
+		std::cout << "Generating surface with seed " << seed << "..." << std::endl;
+		domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
+	} else {
+		int genus = seed / 10;
+		int id = - seed % 10;
+		std::cout << "Loading surface FM-genus" << genus << "." << id << std::endl;
+		std::cout << "/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-surfaces/FM-genus" + std::to_string(genus) + "." + std::to_string(id) + ".txt" << std::endl;
+		std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-surfaces/FM-genus" + std::to_string(genus) + "." + std::to_string(id) + ".txt") >> domain;
+	}
+	Delaunay_triangulation dt = Delaunay_triangulation(domain);
 
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
-	// Domain domain;
-	// std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-genus-3.3.txt") >> domain;
-	Delaunay_triangulation dt = Delaunay_triangulation(domain);
 	Point v0 = dt.anchor().vertices[0];
 
 	// 3. DRAW DIRICHLET DOMAIN
@@ -61,13 +78,11 @@ int main(int argc, char **argv)
 	window.item().draw_dirichlet(domain);
 
 	// 3. COMPUTE EPSILON-NET and display useful info
-	double eps = 0.1;
-	if (argc > 1) {
-		eps = std::stod(argv[1]);
+	if constexpr(!std::is_same<NumberType, CGAL::Gmpq>::value) {
+		std::cout << "WARNING: Not using the CGAL::Gmpq number type. Precision will be ignored and to_double approximation will be used instead." << std::endl;
 	}
-
-	std::cout << "Computing a " << eps << "-net..." << std::endl;
-	std::cout << dt.epsilon_net(eps) << std::endl;
+	std::cout << "Computing a " << eps << "-net with floating-point precision " << p*53 << "..." << std::endl;
+	std::cout << dt.epsilon_net(eps, p) << std::endl;
 	CMap & cmap = dt.combinatorial_map();
 	cmap.display_characteristics(std::cout) << std::endl;
 

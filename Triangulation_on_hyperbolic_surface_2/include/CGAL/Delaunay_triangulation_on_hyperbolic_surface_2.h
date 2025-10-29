@@ -616,7 +616,7 @@ locate(Point const & query, bool use_visibility)
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility	)
+locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility)
 {
 	if (use_visibility) {
 		return locate_visibility_walk(query, lt, li, ld, hint);
@@ -935,7 +935,6 @@ void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark)
 {
-	// opti temps
 	this->combinatorial_map_.unmark(Base::ccw(dart), triangles_list_mark);
 	this->combinatorial_map_.unmark(Base::cw(dart), triangles_list_mark);
 	this->combinatorial_map_.mark(dart, triangles_list_mark);
