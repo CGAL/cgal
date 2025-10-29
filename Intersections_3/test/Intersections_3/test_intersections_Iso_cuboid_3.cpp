@@ -441,7 +441,7 @@ public:
     }
 
     // generic inside
-    for(int i=0; i<N; ++i)
+    for(int i=0; i<10000000; ++i)
     {
       int mx = this->r.get_int(this->m, this->M);
       int my = this->r.get_int(this->m, this->M);
@@ -472,7 +472,7 @@ public:
       Md = (std::max)((std::max)(My - y, y - my), Md);
       Md = (std::max)((std::max)(Mz - z, z - mz), Md);
 
-      check_do_intersect(cub, Sph(c, CGAL::square(this->r.get_int(md, Md))));
+      check_do_intersect(cub, Sph(c, CGAL::square((md + Md)>>1)));
     }
   }
 
