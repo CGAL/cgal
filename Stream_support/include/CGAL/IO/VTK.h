@@ -78,10 +78,11 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
       return false;
 
     Face ids;
+    CGAL::internal::resize(ids, nb_vertices);
     for(vtkIdType k=0; k<nb_vertices; ++k)
     {
       vtkIdType id = cell_ptr->GetPointId(k);
-      ids.push_back(Index(id+initial_number_of_pts));
+      ids[k] = Index(id+initial_number_of_pts);
     }
     polygons.push_back(ids);
   }
