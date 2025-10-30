@@ -2,6 +2,9 @@
 
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Kernel_traits.h>
 #include <QInputDialog>
 #include <QApplication>
 #include <fstream>
@@ -45,22 +48,51 @@ canLoad(QFileInfo) const {
 QList<Scene_item*>
 CGAL_Lab_wkt_plugin::
 load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
-  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
+  typedef Scene_polylines_item::Point_3 Point_3;
+  typedef CGAL::Kernel_traits<Point_3>::Kernel K;
+  typedef std::vector<Point_3> Polyline;
+  typedef CGAL::Projection_traits_xy_3<K>  Kernel;
+  typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
 
-  if(!in)
-    std::cerr << "Error!\n";
+  std::ifstream in(fileinfo.filePath().toUtf8());
 
-  QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  if(fileinfo.size() == 0)
+  if(!in || fileinfo.size() == 0)
   {
-    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::warning( tr("The file you are trying to load does not exist or is empty."));
     ok = false;
     return QList<Scene_item*>();
   }
 
-  std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
-  CGAL::IO::read_multi_linestring_WKT (in, polylines);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  std::vector<Point_3> points;
+  std::list<Polyline> polylines;
+  std::vector<Polygon> polygons;
+  bool success = CGAL::IO::read_WKT(in, points, polylines, polygons);
+  for(const Polygon& p : polygons)
+  {
+    Polyline polyline(p.outer_boundary().vertices_begin(), p.outer_boundary().vertices_end());
+    polyline.push_back(polyline.front());
+    polylines.push_back(polyline);
+    for(auto hit = p.holes_begin(); hit != p.holes_end(); ++hit)
+    {
+      Polyline hole(hit->vertices_begin(), hit->vertices_end());
+      hole.push_back(hole.front());
+      polylines.push_back(hole);
+    }
+  }
+  if(! polygons.empty()){
+    CGAL::Three::Three::warning( tr("The polygons will be drawn as polylines"));
+  }
+
+  if(!success || polylines.empty())
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is not a valid WKT file or is empty"));
+    ok = false;
+    QApplication::restoreOverrideCursor();
+    return QList<Scene_item*>();
+  }
 
   Scene_polylines_item* item = new Scene_polylines_item;
   item->polylines = polylines;

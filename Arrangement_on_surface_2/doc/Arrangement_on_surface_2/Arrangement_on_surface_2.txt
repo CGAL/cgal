@@ -1048,8 +1048,8 @@ not coincide with any existing arrangement vertex and does not lie on
 any edge. As mentioned in Section \ref arr_ssectraverse, it is
 possible to obtain the face containing an isolated vertex calling the
 member function `Arrangement_on_surface_2::Vertex::face()`. The member
-function
-`Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`
+function \link Arrangement_on_surface_2::remove_isolated_vertex()
+`Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`\endlink
 accepts a handle to an isolated vertex and removes it from the
 arrangement.
 
@@ -4196,7 +4196,7 @@ are both parameterized by a geometric kernel and model the concepts
 `AosTraits_2` and `AosLandmarkTraits_2`.
 \cgalFootnote{They also model the refined concept
 \cgalFootnoteCode{AosDirectionalXMonotoneTraits_2}, which enables Boolean set
-operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
+operations; see Package \ref PkgBooleanSetOperations2.} The class
 template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
 instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
 models the `AosLandmarkTraits_2` traits concept but not the
@@ -4937,7 +4937,7 @@ template models the concepts `AosTraits_2` and
 `AosOpenBoundaryTraits_2`, but it does not model the
 `AosLandmarkTraits_2` concept. It also models the refined
 concept `AosDirectionalXMonotoneTraits_2`, which enables
-Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Boolean set operations; see Package \ref PkgBooleanSetOperations2.
 Note that it is not a model of `AosLandmarkTraits_2` concept,
 so it is impossible to use the landmark point-location strategy with
 this traits class.
@@ -5167,7 +5167,7 @@ Every instance of the `Arr_Bezier_curve_traits_2` class templates
 models the concept `AosTraits_2` (but it does not model the
 `AosLandmarkTraits_2` concept). It also models the refined
 concept `AosDirectionalXMonotoneTraits_2`, which enables
-Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Boolean set operations; see Package \ref PkgBooleanSetOperations2.
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-bezier_curves,bezier_curves.png}

@@ -175,7 +175,7 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
 
   // 1. Compute the center of the circle supporting the geodesic between src and tar
 
-  // 1.a Inverse src and tar with respect to the unit circle and find the euclidean midpoints of the segments between respectively
+  // 1.a Inverse src and tar with respect to the unit circle and find the Euclidean midpoints of the segments between respectively
   //       src and its inversion, and tar and its inversion
 
   double src_norm_2 = src_x*src_x + src_y*src_y; // Can't be too close to zero because determinant was not
@@ -186,7 +186,7 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
   double tar_inv_x = tar_x / tar_norm_2;
   double tar_inv_y = tar_y / tar_norm_2;
 
-  // coordinates of the euclidean midpoints of the segments [src, src_inv] and [tar, tar_inv]
+  // coordinates of the Euclidean midpoints of the segments [src, src_inv] and [tar, tar_inv]
   double src_mid_x = (src_x + src_inv_x) / 2;
   double src_mid_y = (src_y + src_inv_y) / 2;
   double tar_mid_x = (tar_x + tar_inv_x) / 2;

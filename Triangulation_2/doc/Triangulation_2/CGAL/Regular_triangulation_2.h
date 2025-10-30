@@ -295,7 +295,7 @@ have negative power wrt. `p`. It outputs in the container
 pointed to by `eit` the boundary of the zone in conflict
 with `p`. It inserts the vertices that would be hidden by `p`
 into the container pointed to by `vit`. The boundary edges of
-the conflict zone are output in counter-clockwise order and each edge
+the conflict zone are output in counterclockwise order and each edge
 is described through its incident face which is not in conflict with
 `p`. The function returns in a `CGAL::Triple` the resulting output
 iterators.
@@ -436,12 +436,12 @@ const;
 /*!
 starts at an arbitrary unhidden vertex.
 */
-All_vertices_iterator all_vertices_end() const;
+All_vertices_iterator all_vertices_begin() const;
 
 /*!
 past the end iterator.
 */
-All_vertices_iterator all_vertices_begin() const;
+All_vertices_iterator all_vertices_end() const;
 
 /// @}
 

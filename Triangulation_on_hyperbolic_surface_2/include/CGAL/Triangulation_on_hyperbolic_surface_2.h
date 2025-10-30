@@ -37,7 +37,7 @@ namespace CGAL {
 Represents a geodesic triangulation of a closed orientable hyperbolic surface.
 The triangulation is stored as combinatorial map decorated with one cross-ratio per edge.
 It is also possible to specify an anchor for the triangulation. An anchor consists in 1) a dart of the combinatorial map, belonging by definition to a vertex V and a triangle T, together with
-2) three points A,B,C in the hyperbolic plane. The points A,B,C are the three vertices in counter-clockwise order of a triangle. This triangle is a lift
+2) three points A,B,C in the hyperbolic plane. The points A,B,C are the three vertices in counterclockwise order of a triangle. This triangle is a lift
 of T, and A is a lift of V.
 */
 template<class Traits>
