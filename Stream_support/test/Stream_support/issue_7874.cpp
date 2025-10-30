@@ -69,16 +69,28 @@ int main()
   }
 }
 
+{
   PolyhedronVN vn;
   PolyhedronVNMap povnpm(vn);
-  ScPolyhedronVertexNormalMap scpovnpm(povnpm);
-
-
   CGAL::Polygon_mesh_processing::compute_vertex_normals(po, povnpm);
 
-  // ERROR this produces an invalid plyfile
   CGAL::IO::write_polygon_mesh("write_polygon_mesh_po.ply", po,
+                               CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(povpm).vertex_normal_map(povnpm)) ;
+  if (!CGAL::IO::read_polygon_mesh("write_polygon_mesh_po.ply", po))
+  {
+    std::cerr << "Error: failed to read 'write_polygon_mesh_po.ply'" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  ScPolyhedronVertexNormalMap scpovnpm(povnpm);
+  CGAL::IO::write_polygon_mesh("write_polygon_mesh_po_sc.ply", po,
                                CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scpovpm).vertex_normal_map(scpovnpm)) ;
+  if (!CGAL::IO::read_polygon_mesh("write_polygon_mesh_po_sc.ply", po))
+  {
+    std::cerr << "Error: failed to read 'write_polygon_mesh_po_sc.ply'" << std::endl;
+    return EXIT_FAILURE;
+  }
+}
 
 {
   Surface_mesh osm;
@@ -115,7 +127,7 @@ int main()
 
  // ERROR this produces an invalid plyfile
   CGAL::IO::write_PLY("generic_write_PLY_po.ply", po, "generic write_PLY(Polyhedron)",
-                      CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scpovpm));
+                      CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(povpm));
 
 {
   Surface_mesh osm;

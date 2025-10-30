@@ -18,6 +18,7 @@
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <string>
@@ -397,8 +398,19 @@ bool write_PLY(std::ostream& os,
     }
   }
 
+
   os << "element vertex " << vertices(g).size() << std::endl;
-  internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+  if constexpr (std::is_same<typename Kernel_traits<Point_3>::Kernel::FT, float>::value)
+  {
+    internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+  }
+  else
+  {
+    typedef typename Kernel_traits<Point_3>::Kernel K;
+    typedef decltype(std::declval<CGAL::Cartesian_converter<K, Epick> >().operator()(std::declval<Point_3>())) Target_point;
+    auto fvpm = CGAL::make_cartesian_converter_property_map<Target_point>(vpm);
+    internal::output_property_header(os, make_ply_point_writer (fvpm));
+  }
 
   //if vcm is not default add v:color property
   if(has_vcolor)
@@ -413,19 +425,19 @@ bool write_PLY(std::ostream& os,
   {
     auto vnm = get_parameter(np, internal_np::vertex_normal_map);
     typedef decltype(vnm) Normal_map;
-    typedef typename Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
-    if(std::is_same<FloatDouble, float>::value)
-      {
-        os << "property float nx" << std::endl
-           << "property float ny" << std::endl
-           << "property float nz" << std::endl;
-      }
-      else
-      {
-        os << "property double nx" << std::endl
-           << "property double ny" << std::endl
-           << "property double nz" << std::endl;
-      }
+    typedef typename Normal_map::value_type Vector_3;
+    typedef typename Kernel_traits<Vector_3>::Kernel K;
+    typedef typename K::FT FT;
+    if constexpr (std::is_same<FT, float>::value)
+    {
+      internal::output_property_header(os, make_ply_normal_writer (CGAL::Identity_property_map<Vector_3>()));
+    }
+    else
+    {
+      typedef decltype(std::declval<CGAL::Cartesian_converter<K, Epick> >().operator()(std::declval<Vector_3>())) Target_vector;
+      auto fvnm = CGAL::make_cartesian_converter_property_map<Target_vector>(vnm);
+      internal::output_property_header(os, make_ply_normal_writer (fvnm));
+    }
   }
 
   os << "element face " << faces(g).size() << std::endl;
@@ -445,15 +457,41 @@ bool write_PLY(std::ostream& os,
 
   for(vertex_descriptor vd : vertices(g))
   {
-    const Point_3& p = get(vpm, vd);
-    internal::output_properties(os, &p, make_ply_point_writer (Identity_property_map<Point_3>()));
+    if constexpr (std::is_same<typename Kernel_traits<Point_3>::Kernel::FT, float>::value)
+    {
+      decltype(auto) p = get(vpm, vd);
+      internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+    }
+    else
+    {
+      typedef typename Kernel_traits<Point_3>::Kernel K;
+      typedef CGAL::cpp20::remove_cvref_t<decltype(std::declval<CGAL::Cartesian_converter<K, Epick> >().operator()(std::declval<Point_3>()))> Target_point;
+      CGAL::Cartesian_converter_property_map<Target_point, Vpm> fvpm = CGAL::make_cartesian_converter_property_map<Target_point>(vpm);
+      decltype(auto) fp = get(fvpm, vd);
+      internal::output_properties(os, &fp, make_ply_point_writer (CGAL::Identity_property_map<Target_point>()));
+    }
+
+    std::cout << "using generic writer" << std::endl;
+
     if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
     {
       auto vnm = get_parameter(np, internal_np::vertex_normal_map);
       typedef decltype(vnm) Normal_map;
       typedef typename Normal_map::value_type Vector_3;
-      Vector_3 vec = get(vnm,vd);
-      internal::output_properties(os, &vec, make_ply_normal_writer (Identity_property_map<Vector_3>()));
+
+      if constexpr (std::is_same<typename Kernel_traits<Vector_3>::Kernel::FT, float>::value)
+      {
+        decltype(auto) vec = get(vnm,vd);
+        internal::output_properties(os, &vec, make_ply_normal_writer (CGAL::Identity_property_map<Vector_3>()));
+      }
+      else
+      {
+        typedef typename Kernel_traits<Vector_3>::Kernel K;
+        typedef CGAL::cpp20::remove_cvref_t<decltype(std::declval<CGAL::Cartesian_converter<K, Epick> >().operator()(std::declval<Vector_3>()))> Target_vector;
+        auto fvnm = CGAL::make_cartesian_converter_property_map<Target_vector>(vnm);
+        decltype(auto) fvec = get(fvnm, vd);
+        internal::output_properties(os, &fvec, make_ply_normal_writer (CGAL::Identity_property_map<Target_vector>()));
+      }
     }
     if(has_vcolor)
     {
