@@ -308,7 +308,7 @@ A precise specification of those formats is available
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsLas CGAL::IO::write_LAS(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS CGAL::IO::write_LAS(const std::string&, const PointRange&)\endlink</td>
   </tr>
 </table>
 
@@ -331,7 +331,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsIoXYZ CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -341,7 +341,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsIOX CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
   </tr>
 </table>
 
