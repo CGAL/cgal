@@ -38,7 +38,7 @@ public:
 
 	typedef typename Traits::FT 										Number;
 	typedef typename Root_of_traits<Number>::Root_of_2					Algebraic_number;
-	typedef typename Traits::Complex                                    Complex;
+	typedef typename Traits::Complex                                    Complex_number;
 	typedef typename Traits::Hyperbolic_point_2                         Point;
 	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
 	typedef typename CMap::Dart_descriptor                              Dart_descriptor;
@@ -50,12 +50,8 @@ public:
 	typedef typename CMap::Dart_const_range                             Dart_const_range;
 	typedef typename CMap::template One_dart_per_cell_const_range<1>    Edge_const_range;
 	typedef typename CMap::template One_dart_per_cell_const_range<2>    Face_const_range;
-	typedef Hyperbolic_isometry_2<Traits>                               Isometry;
 	typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
-	typedef boost::numeric::interval<double>                            Interval;
-
-	unsigned const NB_SIDES = 3;
-	unsigned const NULL_INDEX = 4;
+	typedef Hyperbolic_isometry_2<Traits>                               Isometry;
 
 	//---------- CONSTRUCTORS
 	Delaunay_triangulation_on_hyperbolic_surface_2() {};
@@ -94,6 +90,11 @@ public:
 	double shortest_edge() const;
 
 private:
+	typedef boost::numeric::interval<double>                            Interval;
+
+	unsigned const NB_SIDES = 3;
+	unsigned const NULL_INDEX = 4;
+
 	//---------- CONSTRUCTORS
 	void set_anchors();
 
@@ -101,7 +102,7 @@ private:
 	unsigned ccw(unsigned i) const;
 	unsigned cw(unsigned i) const;
 	void set_attribute(Dart_descriptor dart, Anchor const & anchor);
-	void set_attribute(Dart_descriptor dart, Complex const & cross_ratio);
+	void set_attribute(Dart_descriptor dart, Complex_number const & cross_ratio);
 	void update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query);
 	
 	//---------- location and insertion
@@ -178,7 +179,7 @@ set_anchors()
 		for (int i = 0; i < 3; i++) {
 			Dart_descriptor invaded = Base::opposite(invader);
 			if (!cmap.is_marked(invaded, in_queue)) {
-				Complex cross_ratio = Base::get_cross_ratio(invader);
+				Complex_number cross_ratio = Base::get_cross_ratio(invader);
 				Point & c = current.vertices[i % 3];
 				Point & a = current.vertices[(i + 1) % 3];
 				Point & b = current.vertices[(i + 2) % 3];
@@ -294,7 +295,7 @@ set_attribute(Dart_descriptor dart, Anchor const & anchor)
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-set_attribute(Dart_descriptor dart, Complex const & cross_ratio)
+set_attribute(Dart_descriptor dart, Complex_number const & cross_ratio)
 {
 	this->combinatorial_map_.template set_attribute<1>(dart,
 		this->combinatorial_map_.template create_attribute<1>(cross_ratio));
@@ -337,7 +338,7 @@ is_valid() const
 			Point & c1 = current.vertices[i];
 			Point & a1 = current.vertices[ccw(i)];
 			Point & b1 = current.vertices[cw(i)];
-			Complex cross_ratio = Base::get_cross_ratio(current_dart);
+			Complex_number cross_ratio = Base::get_cross_ratio(current_dart);
 			Point d1 = Base::fourth_point_from_cross_ratio(a1, b1, c1, cross_ratio);
 
 			unsigned j = index_in_anchor(opposite_dart);
@@ -449,7 +450,7 @@ from_stream(std::istream & s)
 		Dart_descriptor dart_0 = darts_by_id[id_0];
 		Dart_descriptor dart_1 = darts_by_id[id_1];
     	this->combinatorial_map_.template sew<2>(dart_0, dart_1);
-    	Complex cross_ratio;
+    	Complex_number cross_ratio;
     	s >> cross_ratio;
     	set_attribute(dart_0, cross_ratio);
   }
@@ -500,7 +501,7 @@ typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
 {
-	Complex z_query (query.x(), query.y());
+	Complex_number z_query (query.x(), query.y());
 	CGAL_precondition(norm(z_query) < Number(1));
 	CGAL_expensive_precondition(Base::is_Delaunay()); 
 
@@ -522,7 +523,7 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 	Traits gt;
 	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 	while (!found) {
-		Complex cross_ratio = Base::get_cross_ratio(dart);
+		Complex_number cross_ratio = Base::get_cross_ratio(dart);
 		d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
 		dart = Base::opposite(dart);
 		if (ho2(c, d, query) == RIGHT_TURN){
@@ -549,7 +550,7 @@ typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
 {
-	Complex z_query (query.x(), query.y());
+	Complex_number z_query (query.x(), query.y());
 	CGAL_precondition(norm(z_query) < Number(1));
 
 	// initialisation
@@ -583,7 +584,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 	dart = Base::ccw(dart);
 	Point p = p0;
 	while (ho2(r, l, query) == RIGHT_TURN) {
-		Complex cross_ratio = Base::get_cross_ratio(dart);
+		Complex_number cross_ratio = Base::get_cross_ratio(dart);
 		Point s = Base::fourth_point_from_cross_ratio(l, p, r, cross_ratio);
 		if (ho2(p0, query, s) == RIGHT_TURN) {
 			p = r;
@@ -636,9 +637,9 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query)
 {       
 	// compute new cross-ratio
-	Complex old_cr = Base::get_cross_ratio(dart);
+	Complex_number old_cr = Base::get_cross_ratio(dart);
 	Point u = Base::fourth_point_from_cross_ratio(r, s, t, old_cr);
-	Complex new_cr = Base::cross_ratio(r, query, t, u);
+	Complex_number new_cr = Base::cross_ratio(r, query, t, u);
 
 	// modify anch and cross-ratio
 	std::shared_ptr<Anchor> anch = std::make_shared<Anchor>(anchor(dart));
@@ -690,7 +691,7 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 	Point & c = anch.vertices[li];
 	Point & a = anch.vertices[ccw(li)];
 	Point & b = anch.vertices[cw(li)];
-	Complex cross_ratio = Base::get_cross_ratio(insertion_dart);
+	Complex_number cross_ratio = Base::get_cross_ratio(insertion_dart);
 	Point d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
 
 	Dart_descriptor dart_ab = Base::ccw(insertion_dart);
@@ -761,7 +762,7 @@ flip(Dart_descriptor dart)
 	Point & C = anch.vertices[index];
 	Point & A = anch.vertices[ccw(index)];
 	Point & B = anch.vertices[cw(index)];
-	Complex cross_ratio = Base::get_cross_ratio(dart);
+	Complex_number cross_ratio = Base::get_cross_ratio(dart);
 	Point D = Base::fourth_point_from_cross_ratio(A, B, C, cross_ratio);
 
 	// flip the edge in the cmap and update the cross-ratios
@@ -925,7 +926,7 @@ approx_circumcenter(Voronoi_point c, int p) const
 		y = to_double(c.y());
 	}
 
-	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
+	CGAL_assertion(norm(Complex_number_number(x, y)) < Number(1));
 	Point approx = Point(x, y);
 	return approx;
 }
