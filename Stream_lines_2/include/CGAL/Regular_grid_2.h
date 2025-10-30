@@ -93,7 +93,7 @@ public:
 
 template <class StreamLinesTraits_2>
 inline
-typename Regular_grid_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
+typename StreamLinesTraits_2::Iso_rectangle_2
 Regular_grid_2<StreamLinesTraits_2>::bbox() const
 {
   return typename Geom_traits::Iso_rectangle_2(0.0, 0.0,
