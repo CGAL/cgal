@@ -12,6 +12,15 @@ Release date: July 2026
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
 - The old function names are still available but marked as deprecated for backward compatibility.
 
+
+### [Surface Mesh Simplification](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceMeshSimplification)
+
+-   Added the class `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`, which provides improved output for `CGAL::Surface_mesh_simplification::edge_collapse()`.
+    That class works the same as previous `GarlandHeckbert_policies`.
+    Its constructor accepts a `Mesh` and optional named parameters to set the weight of the line policy relative to the plane policy, set the boundary cost multiplier or provide vertex normals.
+-  **Breaking change**: `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h` and is no longer deprecated.
+
+
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
 Release date: Sept 2025
