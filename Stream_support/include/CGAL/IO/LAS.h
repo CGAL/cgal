@@ -11,13 +11,14 @@
 #ifndef CGAL_IO_LAS_H
 #define CGAL_IO_LAS_H
 
-#include <CGAL/IO/LAS/read_las_points.h>
-#include <CGAL/IO/LAS/write_las_points.h>
-
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <type_traits>
+#include <CGAL/IO/LAS/Las_property.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
 
@@ -28,7 +29,7 @@ namespace CGAL {
 namespace IO {
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLAS
+   \ingroup PkgStreamSupportIoFuncsLas
 
    generates a %LAS property handler to read 3D points. Points are
    constructed from the input the using 3 %LAS properties
@@ -47,7 +48,7 @@ make_las_point_reader(PointMap point_map);
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLAS
+   \ingroup PkgStreamSupportIoFuncsLas
 
    \brief reads user-selected points properties from a .las or .laz stream.
    Potential additional properties are ignored.
@@ -117,7 +118,7 @@ bool read_LAS_with_properties(std::istream& is,
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLAS
+   \ingroup PkgStreamSupportIoFuncsLas
 
    \brief reads points (position only) using the \ref IOStreamLAS.
 
@@ -164,7 +165,7 @@ bool read_LAS(std::istream& is,
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLAS
+   \ingroup PkgStreamSupportIoFuncsLas
 
    \brief reads points (position only) using the \ref IOStreamLAS.
 
@@ -207,5 +208,10 @@ bool read_LAS(const std::string& filename,
 } // namespace IO
 
 } // namespace CGAL
+
+
+#include <CGAL/IO/LAS/read_las_points.h>
+#include <CGAL/IO/LAS/write_las_points.h>
+
 
 #endif // CGAL_IO_LAS_H

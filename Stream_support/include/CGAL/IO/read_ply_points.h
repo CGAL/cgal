@@ -8,5 +8,9 @@
 //
 // Author(s) : Simon Giraudot
 
-#include <CGAL/IO/PLY/read_ply_points.h>
+#ifndef CGAL_IO_READ_PLY_POINTS_H
+#define CGAL_IO_READ_PLY_POINTS_H
 
+#include <CGAL/IO/PLY.h>
+
+#endif // CGAL_IO_READ_PLY_POINTS_H

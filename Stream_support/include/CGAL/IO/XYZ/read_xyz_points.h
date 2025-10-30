@@ -16,7 +16,7 @@
 #ifndef CGAL_IO_PLY_READ_XYZ_POINTS_H
 #define CGAL_IO_PLY_READ_XYZ_POINTS_H
 
-#include <CGAL/XYZ.h>
+#include <CGAL/IO/XYZ.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Origin.h>

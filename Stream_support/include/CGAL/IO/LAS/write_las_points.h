@@ -12,7 +12,7 @@
 #define CGAL_IO_LAS_WRITE_LAS_POINTS_H
 
 #include <CGAL/IO/helpers.h>
-
+#include <CGAL/IO/LAS/Las_property.h>
 #include <CGAL/IO/LAS.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Named_function_parameters.h>

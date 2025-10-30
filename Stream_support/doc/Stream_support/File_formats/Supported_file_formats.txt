@@ -239,7 +239,7 @@ A precise specification of those formats is available <a href="https://paulbourk
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::read_PLY(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::read_PLY(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -263,7 +263,7 @@ A precise specification of those formats is available <a href="https://paulbourk
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::write_PLY(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::write_PLY(const std::string&, const PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>

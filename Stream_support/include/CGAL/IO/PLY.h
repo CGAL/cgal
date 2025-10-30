@@ -14,6 +14,7 @@
 
 #include <CGAL/IO/PLY/PLY_reader.h>
 #include <CGAL/IO/PLY/PLY_writer.h>
+
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -512,7 +513,7 @@ bool write_PLY(const std::string& fname,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
-#endif
+#endif  // DOXYGEN_RUNNING
                )
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
@@ -530,8 +531,372 @@ bool write_PLY(const std::string& fname,
   }
 }
 
+
+
+#ifdef DOXYGEN_RUNNING
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   Class used to identify a %PLY property as a type and a name.
+
+   \sa `read_PLY_with_properties()`
+*/
+template <typename T>
+struct PLY_property
+{
+  typedef T type;
+  const char* name;
+  PLY_property(const char* name) : name(name) { }
+};
+
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   Generates a %PLY property handler to read 3D points. Points are
+   constructed from the input using 3 %PLY properties of type `FT`
+   and named `x`, `y` and `z`. `FT` is `float` if the points use
+   `CGAL::Simple_cartesian<float>` and `double` otherwise.
+
+   \tparam PointMap the property map used to store points.
+
+   \sa `read_PLY_with_properties()`
+   \sa \ref IOStreamPLY
+*/
+template <typename PointMap>
+std::tuple<PointMap,
+           typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
+           PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+make_ply_point_reader(PointMap point_map);
+
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   Generates a %PLY property handler to read 3D normal
+   vectors. Vectors are constructed from the input using 3 PLY
+   properties of type `FT` and named `nx`, `ny` and `nz`. `FT`
+   is `float` if the points use `CGAL::Simple_cartesian<float>` and
+   `double` otherwise.
+
+   \tparam VectorMap the property map used to store vectors.
+
+   \sa `read_PLY_with_properties()`
+   \sa \ref IOStreamPLY
+*/
+template <typename VectorMap>
+std::tuple<VectorMap,
+           typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
+           PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+make_ply_normal_reader(VectorMap normal_map);
+
+#endif // DOXYGEN_RUNNING
+
+/**
+  \ingroup PkgStreamSupportIoFuncsPLY
+
+  \brief reads user-selected points properties from a .ply stream (ASCII or binary).
+
+  Potential additional point properties and faces are ignored.
+
+  Properties are handled through a variadic list of property
+  handlers. A `PropertyHandler` can either be:
+
+  - A `std::pair<PropertyMap, PLY_property<T> >` if the user wants
+  to read a %PLY property as a scalar value T (for example, storing
+  an `int` %PLY property into an `int` variable).
+
+  - A `std::tuple<PropertyMap, Constructor,
+  PLY_property<T>...>` if the user wants to use one or several PLY
+  properties to construct a complex object (for example, storing 3
+  `uchar` %PLY properties into a %Color object that can for example
+  be a `std::array<unsigned char, 3>`). In that case, the
+  second element of the tuple should be a functor that constructs
+  the value type of `PropertyMap` from N objects of types `T`.
+
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+
+  \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+  It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+  It can be omitted when the default is fine.
+  \tparam PointOutputIterator iterator over output points.
+  \tparam PropertyHandler handlers to recover properties.
+
+  \returns `true` if reading was successful, `false` otherwise.
+
+  \sa \ref IOStreamPLY
+  \sa `make_ply_point_reader()`
+  \sa `make_ply_normal_reader()`
+*/
+template <typename OutputIteratorValueType,
+          typename PointOutputIterator,
+          typename ... PropertyHandler>
+bool read_PLY_with_properties(std::istream& is,
+                              PointOutputIterator output,
+                              PropertyHandler&& ... properties);
+
+
+
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   \brief reads points (positions + normals, if available), using the \ref IOStreamPLY.
+
+   Potential additional point properties and faces are ignored.
+
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param fname input file name.
+   \param output output iterator over points.
+   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if reading was successful, `false` otherwise.
+
+   \sa \ref IOStreamPLY
+   \sa `read_PLY_with_properties()`
+*/
+template <typename OutputIteratorValueType,
+          typename PointOutputIterator,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              PointOutputIterator output,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+              #ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
+              #endif
+              );
+
+
+
+#ifdef DOXYGEN_RUNNING // Document some parts from Stream_support here for convenience
+  /**
+     \ingroup PkgStreamSupportIoFuncsPLY
+
+     Generates a %PLY property handler to write 3D points. Points are
+     written as 3 %PLY properties of type `FT` and named `x`, `y` and
+     `z`. `FT` is `float` if the points use
+     `CGAL::Simple_cartesian<float>` and `double` otherwise.
+
+     \tparam PointMap the property map used to store points.
+
+     \sa `write_PLY_with_properties()`
+     \sa \ref IOStreamPLY
+  */
+  template <typename PointMap>
+  std::tuple<PointMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+  make_ply_point_writer(PointMap point_map);
+
+  /**
+     \ingroup PkgStreamSupportIoFuncsPLY
+
+     Generates a %PLY property handler to write 3D normal
+     vectors. Vectors are written as 3 %PLY properties of type `FT`
+     and named `nx`, `ny` and `nz`. `FT` is `float` if the vectors use
+     `CGAL::Simple_cartesian<float>` and `double` otherwise.
+
+     \tparam VectorMap the property map used to store vectors.
+
+     \sa `write_PLY_with_properties()`
+     \sa \ref IOStreamPLY
+  */
+  template <typename VectorMap>
+  std::tuple<VectorMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+  make_ply_normal_writer(VectorMap normal_map);
+#endif
+
+
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   \brief writes the range of `points` with properties using \ref IOStreamPLY.
+
+   Properties are handled through a variadic list of property
+   handlers. A `PropertyHandler` can either be:
+
+   - A `std::pair<PropertyMap, PLY_property<T> >` if the user wants
+   to write a scalar value T as a %PLY property (for example, writing
+   an `int` variable as an `int` %PLY property).
+
+   - A `std::tuple<PropertyMap, PLY_property<T>...>` if the
+   user wants to write a complex object as several %PLY
+   properties. In that case, a specialization of `Output_rep` must
+   be provided for `PropertyMap::value_type` that handles both ASCII
+   and binary output (see `CGAL::IO::get_mode()`).
+
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+                      its iterator is the key type of the `PropertyMap` objects provided
+                      within the `PropertyHandler` parameter.
+   \tparam PropertyHandler handlers to recover properties.
+
+   \returns `true` if writing was successful, `false` otherwise.
+
+   \sa \ref IOStreamPLY
+   \sa `make_ply_point_writer()`
+   \sa `make_ply_normal_writer()`
+*/
+template <typename PointRange,
+          typename ... PropertyHandler>
+  bool write_PLY_with_properties(std::ostream& os, ///< output stream.
+                                 const PointRange& points, ///< input point range.
+                                 PropertyHandler&& ... properties); ///< parameter pack of property handlers
+
+
+
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
+
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+                      its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param os output stream
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{stream_precision}
+       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{the precision of the stream `os`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+
+   \sa `write_PLY_with_properties()`
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               );
+
+
+/**
+   \ingroup PkgStreamSupportIoFuncsPLY
+
+   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+                      its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename the path to the output file
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{stream_precision}
+       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{`6`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+
+   \sa `write_PLY_with_properties()`
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& filename,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               );
+
 } // namespace IO
 
 } // namespace CGAL
+
+#include <CGAL/IO/PLY/read_ply_points.h>
+#include <CGAL/IO/PLY/write_ply_points.h>
+
 
 #endif // CGAL_IO_PLY_H

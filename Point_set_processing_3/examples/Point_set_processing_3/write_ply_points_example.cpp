@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 #include <utility>
 #include <vector>
