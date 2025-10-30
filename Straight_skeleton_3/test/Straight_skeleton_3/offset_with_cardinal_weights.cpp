@@ -73,7 +73,6 @@ int main(int argc, char** argv)
 
     put (fwm, f, bottom ? 10.0 : 1.0);
   }
-  // @tmp
 #endif
 
   bool result = SS3::utils::run(sm, fwm, save_times, save_path);

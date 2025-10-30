@@ -99,7 +99,7 @@ namespace CGAL {
  *   \cgalParamNBegin{do_not_triangulate_faces}
  *     \cgalParamDescription{a Boolean used to specify whether the offset meshes' faces
  *                           should be triangulated or not.}
- *     \cgalParamDefault{`false` (i.e., faces are not triangulated)}
+ *     \cgalParamDefault{`false` (i.e., faces are triangulated)}
  *     \cgalParamExtra{Note that sometimes faces must be triangulated as to be representable in
  *                     an halfedge data structure, for example faces with holes.}
  *    \cgalParamNEnd

@@ -346,7 +346,7 @@ public:
       CGAL_SS3_IO_TRACE("  Sheet #arcs " << sheet->arcs().size());
 
       if (nodes.size() < 3) {
-        CGAL_warning_msg(false, "Sheet with less than 3 nodes found. Skipping.");
+        CGAL_SS3_IO_TRACE("Sheet with fewer than 3 nodes found. Skipping.");
         continue;
       }
 
@@ -360,7 +360,7 @@ public:
       }
 
       if (!is_complete) {
-        CGAL_SS3_IO_TRACE("  Incomplete sheet found. Skipping.");
+        CGAL_SS3_IO_TRACE_V(16, "  Incomplete sheet found. Skipping.");
         continue;
       }
 
@@ -393,7 +393,7 @@ public:
         for (const ArcSPtr& arc : sheet->arcs()) {
           NodeSPtr node_src = arc->get_node_src();
           NodeSPtr node_dst = arc->get_node_dst();
-          CGAL_SS3_IO_TRACE(" CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
+          CGAL_SS3_IO_TRACE_V(32, " CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
           CGAL_SS3_DEBUG_SPTR(node_src);
           CGAL_SS3_DEBUG_SPTR(node_dst);
           PCDT_VH vh0 = face_vhs.at(node_src);
@@ -413,7 +413,7 @@ public:
           try {
             pcdt.insert_constraint(v_src->point(), v_dst->point());
           } catch(const typename PCDT::Intersection_of_constraints_exception&) {
-            CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
+            CGAL_SS3_IO_TRACE_V(1, "Error: Intersection of constraints in sheet triangulation");
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
             continue;
           }

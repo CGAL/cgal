@@ -241,7 +241,7 @@ public:
     }
 
     CGAL_SS3_TRANSF_TRACE_V(4, "Lower precision of input polyhedron");
-    CGAL_SS3_TRANSF_TRACE_V(8, " truncate precision: " << range);
+    CGAL_SS3_TRANSF_TRACE_V(4, "  truncate precision: " << range);
 
     double exp = std::ceil(std::log2(1.0 / range));
     double scale = std::pow(2.0, exp);
@@ -573,7 +573,7 @@ public:
       ++result;
     }
 
-    CGAL_SS3_TRANSF_TRACE("  final facet count: " << polyhedron->vertices().size());
+    CGAL_SS3_TRANSF_TRACE("  final vertex count: " << polyhedron->vertices().size());
     CGAL_postcondition(polyhedron->is_consistent());
 
     return result;

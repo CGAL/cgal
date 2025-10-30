@@ -58,7 +58,7 @@
 //   event of any edge of the facet (probably not worth it, though)
 
 // @todo: cleaning
-// - document the OBJ::save(skeleton)
+// - document `OBJ::save(skeleton)`
 // - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
 
 // @todo
@@ -73,7 +73,6 @@
 // - if checking perturbation fails because of self-intersections, use a smaller epsilon
 // - perform facet merging using CGAL's region growing and remesh_planar_faces() (?)
 // - re-enable the option to translate and scale (?)
-// - tolerate non-triangulated inputs (?)
 // - check for overly shared objects, redundant function calls (plane normalization, for example)
 
 // @todo latest:
@@ -422,7 +421,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron_);
     CGAL_assertion(polyhedron_->is_consistent());
 
-#if 1//def CGAL_SS3_DUMP_FILES
+#ifdef CGAL_SS3_DUMP_FILES
     IO::OBJFile::save("results/input.obj", polyhedron_, false /*do not triangulate*/);
 #endif
 
@@ -6063,7 +6062,7 @@ public:
     // this must be done **BEFORE** the shift because after the shift there is
     // an intersection between the two edges, and so the orientation becomes coplanar
     int orientation = Kernel_wrapper::orientation(Hds_utils::line(event->get_edge_1()),
-                                                 Hds_utils::line(event->get_edge_2()));
+                                                  Hds_utils::line(event->get_edge_2()));
     CGAL_assertion(orientation != 0);
 
     const FT& event_time = event->time();
@@ -6468,7 +6467,7 @@ public:
     sstr << "    EdgeEvents:            " << count_events(Abstract_event::EDGE_EVENT) << std::endl;
     sstr << "    EdgeMergeEvents:       " << count_events(Abstract_event::EDGE_MERGE_EVENT) << std::endl;
     sstr << "    TriangleEvents:        " << count_events(Abstract_event::TRIANGLE_EVENT) << std::endl;
-    sstr << "    Dbl_edge_merge_events:    " << count_events(Abstract_event::DBL_EDGE_MERGE_EVENT) << std::endl;
+    sstr << "    DblEdgeMergeEvents:    " << count_events(Abstract_event::DBL_EDGE_MERGE_EVENT) << std::endl;
     sstr << "    DblTriangleEvents:     " << count_events(Abstract_event::DBL_TRIANGLE_EVENT) << std::endl;
     sstr << "    TetrahedronEvents:     " << count_events(Abstract_event::TETRAHEDRON_EVENT) << std::endl;
     sstr << "  ContactEvents:" << std::endl;
