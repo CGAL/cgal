@@ -17,7 +17,7 @@ each specific format.
 - \ref IOStreamGocad
 - \ref IOStream3MF
 - \ref IOStreamWRL
-- \ref IOStreamPkgStreamSupportIoFuncsLas
+- \ref IOStreamLAS
 - \ref IOStreamAvizo
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
@@ -298,7 +298,7 @@ A precise specification of those formats is available
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsLas CGAL::IO::read_LAS(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS CGAL::IO::read_LAS(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -331,7 +331,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsIOXyz CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsIoXYZ CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -341,7 +341,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsIOXyz CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsIOX CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
   </tr>
 </table>
 

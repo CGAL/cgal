@@ -29,7 +29,7 @@ namespace CGAL {
 namespace IO {
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLas
+   \ingroup PkgStreamSupportIoFuncsLAS
 
    generates a %LAS property handler to read 3D points. Points are
    constructed from the input the using 3 %LAS properties
@@ -48,7 +48,7 @@ make_las_point_reader(PointMap point_map);
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLas
+   \ingroup PkgStreamSupportIoFuncsLAS
 
    \brief reads user-selected points properties from a .las or .laz stream.
    Potential additional properties are ignored.
@@ -118,7 +118,7 @@ bool read_LAS_with_properties(std::istream& is,
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLas
+   \ingroup PkgStreamSupportIoFuncsLAS
 
    \brief reads points (position only) using the \ref IOStreamLAS.
 
@@ -165,7 +165,7 @@ bool read_LAS(std::istream& is,
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsLas
+   \ingroup PkgStreamSupportIoFuncsLAS
 
    \brief reads points (position only) using the \ref IOStreamLAS.
 

@@ -29,7 +29,7 @@ namespace CGAL {
 namespace IO {
 
 /**
-   \ingroup PkgStreamSupportIoFuncsIOXyz
+   \ingroup PkgStreamSupportIoFuncsXYZ
 
    \brief reads points (positions + normals, if available), using the \ref IOStreamXYZ.
 
@@ -78,7 +78,7 @@ bool read_XYZ(std::istream& is,
 
 
 /**
-   \ingroup PkgStreamSupportIoFuncsIOXyz
+   \ingroup PkgStreamSupportIoFuncsXYZ
 
    \brief reads points (positions + normals, if available), using the \ref IOStreamXYZ.
 

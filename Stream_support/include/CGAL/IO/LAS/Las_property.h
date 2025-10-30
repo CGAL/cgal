@@ -73,7 +73,6 @@ typedef Base<unsigned short, Id::G> G;
 typedef Base<unsigned short, Id::B> B;
 typedef Base<unsigned short, Id::I> I;
 } // namespace LAS_property
-/// \endcond
 
 // documenation in ../LAS.h
 template <typename PointMap>
