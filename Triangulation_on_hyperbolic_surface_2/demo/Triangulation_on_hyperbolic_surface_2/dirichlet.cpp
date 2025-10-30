@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 	app.setApplicationName("Demo: Dirichlet domain and epsilon-net");
 	DemoWindow window;
-	window.item().draw_dirichlet(domain);
+	window.item().draw_Dirichlet(domain);
 
 	// 3. COMPUTE EPSILON-NET and display useful info
 	if constexpr(!std::is_same<NumberType, CGAL::Gmpq>::value) {

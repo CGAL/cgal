@@ -73,7 +73,7 @@ unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 // Input: Fundamental domain whose vertices are the same point on the surface
 // Output: vertices of a Dirichlet domain centered at the origin of the Poincaré disk
 template<class Traits>
-std::vector<typename Traits::Hyperbolic_Voronoi_point_2> compute_dirichlet_vertices(Hyperbolic_fundamental_domain_2<Traits> & domain)
+std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hyperbolic_fundamental_domain_2<Traits> & domain)
 {
 	typedef typename Traits::Point_2 									Point;
 	typedef typename Traits::Hyperbolic_Voronoi_point_2					Voronoi_point;
