@@ -14,7 +14,6 @@
 namespace CGAL {
   namespace IO {
 
-/// \cond SKIP_IN_MANUAL
 namespace LAS_property {
 namespace Id {
 
@@ -85,7 +84,6 @@ make_las_point_reader(PointMap point_map)
                           LAS_property::X(), LAS_property::Y(), LAS_property::Z());
 }
 
-/// \cond SKIP_IN_MANUAL
 
 } // namespace IO
 } // namespace CGAL
