@@ -96,31 +96,6 @@ void DemoWindowItem::draw_triangulation(Triangulation& triangulation)
   }
 }
 
-void DemoWindowItem::draw_dirichlet(Domain & domain)
-{
-  std::vector < Voronoi_point > vertices = CGAL::compute_dirichlet_vertices<Traits>(domain);
-  int n = vertices.size();
-  for (int i = 0; i < n; ++i) {
-    Point v0 = Point(CGAL::to_double(vertices[i].x()), CGAL::to_double(vertices[i].y()));
-    Point v1 =
-        Point(CGAL::to_double(vertices[(i + 1) % n].x()), CGAL::to_double(vertices[(i + 1) % n].y()));
-    dirichlet_edges_.push_back(std::make_pair(v0, v1));
-  }
-}
-
-void DemoWindowItem::draw_triangles(std::vector < Anchor > anchors)
-{
-  for (std::size_t i = 0; i < anchors.size(); i++) {
-    Point p0 = anchors[i].vertices[0];
-    Point p1 = anchors[i].vertices[1];
-    Point p2 = anchors[i].vertices[2];
-
-    edges_.push_back(std::make_pair(p0, p1));
-    edges_.push_back(std::make_pair(p1, p2));
-    edges_.push_back(std::make_pair(p2, p0));
-  }
-}
-
 void DemoWindowItem::draw_triangulation(Delaunay_triangulation & triangulation, Anchor & anchor)
 {
   typedef std::vector < std::tuple < typename Delaunay_triangulation::Dart_const_descriptor, Point,
@@ -137,6 +112,31 @@ void DemoWindowItem::draw_triangulation(Delaunay_triangulation & triangulation, 
     edges_.push_back(std::make_pair(point_1, point_2));
     edges_.push_back(std::make_pair(point_2, point_3));
     edges_.push_back(std::make_pair(point_3, point_1));
+  }
+}
+
+void DemoWindowItem::draw_triangles(std::vector < Anchor > anchors)
+{
+  for (std::size_t i = 0; i < anchors.size(); i++) {
+    Point p0 = anchors[i].vertices[0];
+    Point p1 = anchors[i].vertices[1];
+    Point p2 = anchors[i].vertices[2];
+
+    edges_.push_back(std::make_pair(p0, p1));
+    edges_.push_back(std::make_pair(p1, p2));
+    edges_.push_back(std::make_pair(p2, p0));
+  }
+}
+
+void DemoWindowItem::draw_dirichlet(Domain & domain)
+{
+  std::vector < Voronoi_point > vertices = CGAL::compute_dirichlet_vertices<Traits>(domain);
+  int n = vertices.size();
+  for (int i = 0; i < n; ++i) {
+    Point v0 = Point(CGAL::to_double(vertices[i].x()), CGAL::to_double(vertices[i].y()));
+    Point v1 =
+        Point(CGAL::to_double(vertices[(i + 1) % n].x()), CGAL::to_double(vertices[(i + 1) % n].y()));
+    dirichlet_edges_.push_back(std::make_pair(v0, v1));
   }
 }
 

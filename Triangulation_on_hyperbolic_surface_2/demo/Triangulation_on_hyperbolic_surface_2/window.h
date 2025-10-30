@@ -82,9 +82,9 @@ public:
 
   // Drawing methods
   void draw_triangulation(Triangulation& triangulation);
-  void draw_dirichlet(Domain& domain);
-  void draw_triangles(std::vector<Anchor> anchors);
   void draw_triangulation(Delaunay_triangulation& triangulation, Anchor& anchor);
+  void draw_triangles(std::vector<Anchor> anchors);
+  void draw_dirichlet(Domain& domain);
 
 private:
   // Sub-methods for drawing edges and vertices
