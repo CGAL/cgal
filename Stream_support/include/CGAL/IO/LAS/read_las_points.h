@@ -58,7 +58,7 @@ namespace CGAL {
 
 namespace IO {
 
-
+/// \cond SKIP_IN_MANUAL
 
 namespace internal {
 
@@ -225,6 +225,8 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
 } // namespace LAS
 } // namespace internal
 
+
+/// \endcond
 
 // documenation in ../LAS.h
 template <typename OutputIteratorValueType,
