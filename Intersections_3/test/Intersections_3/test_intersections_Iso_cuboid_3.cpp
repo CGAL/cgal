@@ -441,7 +441,7 @@ public:
     }
 
     // generic inside
-    for(int i=0; i<10000000; ++i)
+    for(int i=0; i<N; ++i)
     {
       int mx = this->r.get_int(this->m, this->M);
       int my = this->r.get_int(this->m, this->M);
