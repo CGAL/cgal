@@ -15,8 +15,8 @@
 #include <fstream>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
 
-// typedef CGAL::Exact_rational		NumberType;
-typedef CGAL::Gmpq	NumberType;
+typedef CGAL::Exact_rational		NumberType;
+// typedef CGAL::Gmpq	NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                             ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                        	Traits;
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 
 	// window.item().draw_triangles(to_draw);
 
-		// 4. SET THE FIRST ANCHOR OF THE DRAWING
+	// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	Anchor anchor = dt.locate(v0);
 	int index = 0;
 	for (int i = 0; i < 3; i++) {

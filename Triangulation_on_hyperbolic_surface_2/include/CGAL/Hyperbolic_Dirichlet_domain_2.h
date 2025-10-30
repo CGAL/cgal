@@ -9,16 +9,16 @@ namespace CGAL {
 // Input: triangulation with a single vertex v
 // Output: lift of this triangulation with one lift of v mapped to the origin of the Poincaré disk and all its incident triangles arout it.
 template<class Traits>
-std::vector<std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_const_descriptor, typename Traits::Point_2, typename Traits::Point_2, typename Traits::Point_2>>
-unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
+std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits>::Dart_const_descriptor, typename Traits::Point_2, typename Traits::Point_2, typename Traits::Point_2>>
+unfold(Triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 {
-	typedef typename Traits::Complex                                   Complex;
-	typedef typename Traits::Point_2                                   Point;
-	typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>     Delaunay_Triangulation;
-	typedef typename Delaunay_Triangulation::Anchor                    Anchor;
-	typedef typename Delaunay_Triangulation::CMap                      CMap;
-	typedef typename Delaunay_Triangulation::Dart_const_descriptor     Dart_const_descriptor;
-	typedef	CGAL::Hyperbolic_isometry_2<Traits>                        Isometry;
+	typedef typename Traits::Complex                                       Complex;
+	typedef typename Traits::Point_2                                       Point;
+	typedef Triangulation_on_hyperbolic_surface_2<Traits>                  Triangulation;
+	typedef typename Triangulation::Anchor                                 Anchor;
+	typedef typename Triangulation::Combinatorial_map_with_cross_ratios    CMap;
+	typedef typename Triangulation::Dart_const_descriptor                  Dart_const_descriptor;
+	typedef	CGAL::Hyperbolic_isometry_2<Traits>                            Isometry;
 
     Anchor & anchor = triangulation.anchor();
     CMap & cmap = triangulation.combinatorial_map();
@@ -75,12 +75,13 @@ unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 template<class Traits>
 std::vector<typename Traits::Hyperbolic_Voronoi_point_2> compute_dirichlet_vertices(Hyperbolic_fundamental_domain_2<Traits> & domain)
 {
-	typedef typename Traits::Point_2 									Point;
-	typedef typename Traits::Hyperbolic_Voronoi_point_2					Voronoi_point;
-	typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>		Delaunay_Triangulation;
-	typedef typename Delaunay_Triangulation::Dart_const_descriptor		Dart_const_descriptor;
+	typedef typename Traits::Point_2                               Point;
+	typedef typename Traits::Hyperbolic_Voronoi_point_2            Voronoi_point;
+	typedef Triangulation_on_hyperbolic_surface_2<Traits>          Triangulation;
+	typedef typename Triangulation::Dart_const_descriptor          Dart_const_descriptor;
 
-    Delaunay_Triangulation triangulation = Delaunay_Triangulation(domain);
+    Triangulation triangulation = Triangulation(domain);
+    triangulation.make_Delaunay();
 
     std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realized_triangles = unfold<Traits>(triangulation);
     std::vector<Voronoi_point> dirichlet_vertices;
