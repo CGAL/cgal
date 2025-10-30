@@ -1,4 +1,4 @@
-// Copyright (c) 2018 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,11 +8,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
+// Author(s)     : Sébastien Loriot
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_PLANE_FACE_REGION_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_PLANE_FACE_REGION_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -29,13 +29,12 @@ namespace Polygon_mesh {
 /*!
   \ingroup PkgShapeDetectionRGOnMesh
 
-  \brief Region type based on the quality of the least squares plane
-  fit applied to faces of a polygon mesh.
+  \brief Region type based on the plane of the first face selected.
 
-  This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
-  to chunks of faces in a polygon mesh and controls the quality of this fit.
-  If all quality conditions are satisfied, the chunk is accepted as a valid region,
-  otherwise rejected.
+  This class uses the supporting plane of the first face picked for the region
+  and expands it for all faces with a normal close to that of the first face
+  ("close" being defined by the `maximum_distance` parameter), and such that vertices are
+  not far from that supporting plane (far being defined by the `maximum_angle` or `cosine_of_maximum_angle` parameter).
 
   \tparam GeomTraits
   a model of `Kernel`
@@ -52,7 +51,7 @@ namespace Polygon_mesh {
 template<typename GeomTraits,
          typename PolygonMesh,
          typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
-class Least_squares_plane_fit_region {
+class Plane_face_region {
 public:
   /// \name Types
   /// @{
@@ -62,6 +61,8 @@ public:
   using Vertex_to_point_map = VertexToPointMap;
 
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
   /// \endcond
 
   /// Number type.
@@ -138,7 +139,7 @@ public:
         \cgalParamDescription{a property map associating normal vectors to the faces of `pmesh`.}
         \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
                        as key type and `GeomTraits::Vector_3` as value type.}
-        \cgalParamDefault{If this parameter is omitted, face normals will be estimated using cross products of vectors created
+        \cgalParamDefault{If this parameter is omitted, face normals will be estimated using crossproducts of vectors created
                           from consecutive vertices of the face.}
       \cgalParamNEnd
       \cgalParamNBegin{geom_traits}
@@ -154,11 +155,11 @@ public:
     \pre `minimum_region_size > 0`
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  Least_squares_plane_fit_region(
+  Plane_face_region(
     const PolygonMesh& pmesh,
     const CGAL_NP_CLASS& np = parameters::default_values()) :
   m_face_graph(pmesh),
-  m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+  m_vpm(parameters::choose_parameter(parameters::get_parameter(
     np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
   m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
   m_squared_length_3(m_traits.compute_squared_length_3_object()),
@@ -166,32 +167,29 @@ public:
   m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
   m_cross_product_3(m_traits.construct_cross_product_vector_3_object()),
   m_face_normals(get(CGAL::dynamic_face_property_t<Vector_3>(), pmesh)),
-  m_face_triangulations( get(CGAL::dynamic_face_property_t<std::vector<Triangle_3>>(), pmesh) )
-  {
-
+  m_face_triangulations( get(CGAL::dynamic_face_property_t<std::vector<Triangle_3>>(), pmesh) ) {
     static constexpr bool use_input_face_normal =
       !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_SD_RG_USE_PMP
     auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
     {
-      return Polygon_mesh_processing::compute_face_normal(face, pmesh, parameters::vertex_point_map(m_vertex_to_point_map));
+      return Polygon_mesh_processing::compute_face_normal(face, pmesh, parameters::vertex_point_map(m_vpm));
     };
 #else
-    auto get_face_normal = [this](Item face, const PolygonMesh& pmesh) -> Vector_3
+    auto get_face_normal = [this](const Item &face, const PolygonMesh& pmesh) -> Vector_3
     {
       const auto hedge = halfedge(face, pmesh);
       const auto vertices = vertices_around_face(hedge, pmesh);
       CGAL_precondition(vertices.size() >= 3);
 
       auto vertex = vertices.begin();
-      Point_3 p1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      Point_3 p2 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      Point_3 p3 = get(m_vertex_to_point_map, *vertex);
-      while(collinear(p1, p2, p3))
-      {
+      const Point_3& p1 = get(m_vpm, *vertex); ++vertex;
+      const Point_3& p2 = get(m_vpm, *vertex); ++vertex;
+      Point_3 p3 = get(m_vpm, *vertex);
+      while(collinear(p1, p2, p3)) {
         if (++vertex == vertices.end()) return NULL_VECTOR;
-        p3 = get(m_vertex_to_point_map, *vertex);
+        p3 = get(m_vpm, *vertex);
       }
 
       const Vector_3 u = p2 - p1;
@@ -200,13 +198,11 @@ public:
     };
 #endif
 
-    if constexpr (!use_input_face_normal)
-    {
+    if constexpr (!use_input_face_normal) {
       for (const Item &i : faces(pmesh))
         put(m_face_normals, i, get_face_normal(i, pmesh));
     }
-    else
-    {
+    else {
       auto fnm = parameters::get_parameter(np, internal_np::face_normal);
       for (const Item &i : faces(pmesh))
         put(m_face_normals, i, get(fnm, i));
@@ -218,7 +214,7 @@ public:
       auto s = h;
 
       do {
-        pts.push_back(get(m_vertex_to_point_map, target(h, pmesh)));
+        pts.push_back(get(m_vpm, target(h, pmesh)));
         h = next(h, pmesh);
       } while (h != s);
 
@@ -266,16 +262,15 @@ public:
   /*!
     \brief implements `RegionType::primitive()`.
 
-    This function provides the last primitive that has been fitted with the region.
+    This function provides the support plane of the seed face.
 
     \return Primitive parameters that fits the region.
 
-    \pre `is_valid_region(region)`
-    \pre `update(region)`
+    \pre is_valid_region(region)
+    \pre update(region)
   */
-
   Primitive primitive() const {
-    return m_plane_of_best_fit;
+    return m_plane;
   }
 
   /*!
@@ -292,25 +287,51 @@ public:
   */
   bool is_part_of_region(
     const Item query,
-    const Region&) const {
+    const Region&) const
+  {
+    if (m_cos_value_threshold==1 || m_distance_threshold == 0)
+    {
+      halfedge_descriptor h = halfedge(query, m_face_graph);
+      for (vertex_descriptor v : vertices_around_face(h, m_face_graph))
+      {
+        if (!coplanar(m_p, m_q, m_r, get(m_vpm, v)))
+          return false;
+      }
+      return true;
+    }
+    else
+    {
+      // test on distance of points to the plane of the seed face
+      const FT squared_distance_threshold = m_distance_threshold * m_distance_threshold;
+      halfedge_descriptor h = halfedge(query, m_face_graph);
+      for (vertex_descriptor v : vertices_around_face(h, m_face_graph))
+      {
+        //TODO: that's a bit dummy that we retest points that are already in the region...
+        //      not sure caching in a vpm does worth it (need reset for each region)
+        if (typename GeomTraits::Compare_squared_distance_3()(m_p, m_q, m_r,get(m_vpm, v), squared_distance_threshold) != SMALLER)
+          return false;
+      }
 
-    const FT squared_distance_to_fitted_plane = get_max_squared_distance(query);
-    if (squared_distance_to_fitted_plane < FT(0)) return false;
-    const FT squared_distance_threshold =
-      m_distance_threshold * m_distance_threshold;
+      if (m_cos_value_threshold == 1)
+        return true;
 
-    const Vector_3 face_normal = get(m_face_normals, query);
-    const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
-    const FT squared_cos_value = cos_value * cos_value;
+      const typename GeomTraits::Point_3& p2=get(m_vpm,source(h, m_face_graph));
+      const typename GeomTraits::Point_3& q2=get(m_vpm,target(h, m_face_graph));
+      typename GeomTraits::Point_3 r2;
 
-    FT squared_cos_value_threshold =
-      m_cos_value_threshold * m_cos_value_threshold;
-    squared_cos_value_threshold *= m_squared_length_3(face_normal);
-    squared_cos_value_threshold *= m_squared_length_3(m_normal_of_best_fit);
+      halfedge_descriptor guard = prev(h, m_face_graph);
+      do{
+        h=next(h, m_face_graph);
+        if (h == guard) return true;
+        r2=get(m_vpm,target(h, m_face_graph));
+      }
+      while(collinear(p2,q2,r2));
 
-    return (
-      ( squared_distance_to_fitted_plane <= squared_distance_threshold ) &&
-      ( squared_cos_value >= squared_cos_value_threshold ));
+      // test on the normal of the query face to the normal of the seed face
+      return typename GeomTraits::Compare_angle_3()(m_p,m_q,m_r,
+                                                    p2,q2,r2,
+                                                    m_cos_value_threshold) == SMALLER;
+    }
   }
 
   /*!
@@ -328,87 +349,51 @@ public:
   /*!
     \brief implements `RegionType::update()`.
 
-    This function fits the least squares plane to all vertices of the faces
-    from the `region`.
+    This function uses the support plane of the seed face as primitive.
 
     \param region
     Faces of the region represented as `Items`.
 
-    \return Boolean `true` if the plane fitting succeeded and `false` otherwise
+    \return Boolean `true` if the seed face is not degenerated and `false` otherwise
 
     \pre `region.size() > 0`
   */
   bool update(const Region& region) {
 
     CGAL_precondition(region.size() > 0);
-    if (region.size() == 1) { // create new reference plane and normal
-      const Item face = region[0];
+    if (region.size() == 1) { // init reference plane and normal
+      m_seed_face = region[0];
 
-      // The best fit plane will be a plane through this face centroid with
-      // its normal being the face's normal.
-      const Point_3 face_centroid = get_face_centroid(face);
-      const Vector_3 face_normal = get(m_face_normals, face);
+      halfedge_descriptor h = halfedge(m_seed_face, m_face_graph);
+
+      //safety check for degenerate faces
+      halfedge_descriptor guard = prev(h, m_face_graph);
+      m_p = get(m_vpm, source(h, m_face_graph));
+      m_q = get(m_vpm, target(h, m_face_graph));
+
+      do {
+        h = next(h, m_face_graph);
+        // If all vertices are collinear, the face is degenerate and not suitable as seed
+        if (h == guard) return false;
+        m_r = get(m_vpm, target(h, m_face_graph));
+      } while (collinear(m_p, m_q, m_r));
+
+      const Vector_3 face_normal = get(m_face_normals, m_seed_face);
       if (face_normal == CGAL::NULL_VECTOR) return false;
 
       CGAL_precondition(face_normal != CGAL::NULL_VECTOR);
-      m_plane_of_best_fit = Plane_3(face_centroid, face_normal);
-      m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
-
-    } else { // update reference plane and normal
-      CGAL_precondition(region.size() >= 2);
-      std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
-        get_plane_and_normal(region);
+      m_plane = Plane_3(m_p, face_normal);
+      m_normal = face_normal;
     }
+
     return true;
   }
 
   /// @}
 
-  /// \cond SKIP_IN_MANUAL
-  std::pair<Plane_3, Vector_3> get_plane_and_normal(
-    const Region& region) const {
-
-    // The best fit plane will be a plane fitted to all vertices of all
-    // region faces with its normal being perpendicular to the plane.
-    // Given that the points, and no normals, are used in estimating
-    // the plane, the estimated normal will point into an arbitrary
-    // one of the two possible directions.
-    // We flip it into the correct direction (the one that the majority
-    // of faces agree with) below.
-    // This fix is proposed by nh2:
-    // https://github.com/CGAL/cgal/pull/4563
-    const Plane_3 unoriented_plane_of_best_fit =
-      internal::create_plane_from_triangulated_faces(
-        region, m_face_triangulations, m_traits).first;
-    const Vector_3 unoriented_normal_of_best_fit =
-      unoriented_plane_of_best_fit.orthogonal_vector();
-
-    // Compute actual direction of plane's normal sign
-    // based on faces, which belong to that region.
-    // Approach: each face gets one vote to keep or flip the current plane normal.
-    long votes_to_keep_normal = 0;
-    for (const auto &face : region) {
-      const Vector_3 face_normal = get(m_face_normals, face);
-      const bool agrees =
-        m_scalar_product_3(face_normal, unoriented_normal_of_best_fit) > FT(0);
-      votes_to_keep_normal += (agrees ? 1 : -1);
-    }
-    const bool flip_normal = (votes_to_keep_normal < 0);
-
-    const Plane_3 plane_of_best_fit = flip_normal
-      ? unoriented_plane_of_best_fit.opposite()
-      : unoriented_plane_of_best_fit;
-    const Vector_3 normal_of_best_fit = flip_normal
-      ? (-1 * unoriented_normal_of_best_fit)
-      : unoriented_normal_of_best_fit;
-
-    return std::make_pair(plane_of_best_fit, normal_of_best_fit);
-  }
-  /// \endcond
-
 private:
   const Face_graph& m_face_graph;
-  const Vertex_to_point_map m_vertex_to_point_map;
+  const Vertex_to_point_map m_vpm;
   GeomTraits m_traits;
 
   FT m_distance_threshold;
@@ -423,8 +408,10 @@ private:
   typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<Vector_3> >::const_type m_face_normals;
   typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::vector<Triangle_3>> >::const_type m_face_triangulations;
 
-  Plane_3 m_plane_of_best_fit;
-  Vector_3 m_normal_of_best_fit;
+  Plane_3 m_plane;
+  Vector_3 m_normal;
+  face_descriptor m_seed_face;
+  Point_3 m_p, m_q, m_r; // Three non-collinear points of the m_seed_face
 
   // Compute centroid of the face.
   template<typename Face>
@@ -436,7 +423,7 @@ private:
 
     FT sum = FT(0), x = FT(0), y = FT(0), z = FT(0);
     for (const auto vertex : vertices) {
-      const Point_3& point = get(m_vertex_to_point_map, vertex);
+      const Point_3& point = get(m_vpm, vertex);
       x += point.x();
       y += point.y();
       z += point.z();
@@ -448,36 +435,10 @@ private:
     z /= sum;
     return Point_3(x, y, z);
   }
-
-  // The maximum squared distance from the vertices of the face
-  // to the best fit plane.
-  template<typename Face>
-  FT get_max_squared_distance(const Face& face) const {
-
-    FT max_squared_distance = -FT(1);
-    const FT a = CGAL::abs(m_plane_of_best_fit.a());
-    const FT b = CGAL::abs(m_plane_of_best_fit.b());
-    const FT c = CGAL::abs(m_plane_of_best_fit.c());
-    const FT d = CGAL::abs(m_plane_of_best_fit.d());
-    if (a == FT(0) && b == FT(0) && c == FT(0) && d == FT(0))
-      return max_squared_distance;
-
-    const auto hedge = halfedge(face, m_face_graph);
-    const auto vertices = vertices_around_face(hedge, m_face_graph);
-    CGAL_precondition(vertices.size() > 0);
-
-    for (const auto vertex : vertices) {
-      const Point_3& point = get(m_vertex_to_point_map, vertex);
-      const FT squared_distance = m_squared_distance_3(point, m_plane_of_best_fit);
-      max_squared_distance = (CGAL::max)(squared_distance, max_squared_distance);
-    }
-    CGAL_precondition(max_squared_distance >= FT(0));
-    return max_squared_distance;
-  }
 };
 
 } // namespace Polygon_mesh
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_LEAST_SQUARES_PLANE_FIT_REGION_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_PLANE_FACE_REGION_H
