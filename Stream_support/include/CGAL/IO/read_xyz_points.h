@@ -8,5 +8,11 @@
 //
 // Author(s) : Simon Giraudot
 
-#include <CGAL/IO/XYZ/read_xyz_points.h>
+
+#ifndef CGAL_IO_READ_XYZ_POINTS_H
+#define CGAL_IO_READ_XYZ_POINTS_H
+
+#include <CGAL/IO/XYZ.h>
+
+#endif // CGAL_IO_READ_XYZ_POINTS_H
 

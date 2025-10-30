@@ -9,4 +9,9 @@
 // Author(s) : Simon Giraudot
 
 
-#include <CGAL/IO/XYZ/write_xyz_points.h>
+#ifndef CGAL_IO_WRITE_XYZ_POINTS_H
+#define CGAL_IO_WRITE_XYZ_POINTS_H
+
+#include <CGAL/IO/XYZ.h>
+
+#endif // CGAL_IO_WRITE_XYZ_POINTS_H
