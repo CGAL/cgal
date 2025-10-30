@@ -1,5 +1,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/IO/PLY.h>
@@ -8,12 +9,14 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/boost/graph/generators.h>
 
-typedef CGAL::Surface_mesh<CGAL::Epeck::Point_3> Surface_mesh;
+// typedef CGAL::Exact_predicates_exact_constructions_kernel Epeck;
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational> Epeck;
+typedef CGAL::Surface_mesh<Epeck::Point_3> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-typedef CGAL::Polyhedron_3<CGAL::Epeck> Polyhedron_3;
+typedef CGAL::Polyhedron_3<Epeck> Polyhedron_3;
 typedef boost::graph_traits<Polyhedron_3>::vertex_descriptor pvertex_descriptor;
-typedef CGAL::Epeck::Point_3 Point_3;
-typedef CGAL::Epeck::Vector_3 Vector_3;
+typedef Epeck::Point_3 Point_3;
+typedef Epeck::Vector_3 Vector_3;
 typedef CGAL::Simple_cartesian<double> SC;
 typedef Surface_mesh::template Property_map<vertex_descriptor, Vector_3> VNMap;
 typedef CGAL::Cartesian_converter_property_map< SC::Vector_3, VNMap> ScSmVertexNormalMap;
