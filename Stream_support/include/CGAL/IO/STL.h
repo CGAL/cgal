@@ -236,14 +236,12 @@ typename K::Vector_3 construct_normal_of_STL_face(const typename K::Point_3& p,
   typedef typename K::FT FT;
   typedef typename K::Vector_3 Vector;
 
-  if(k.collinear_3_object()(p, q, r))
+  Vector res = k.construct_orthogonal_vector_3_object()(p, q, r);
+  const FT len = CGAL::approximate_sqrt(k.compute_squared_length_3_object()(res));
+  if (is_zero(len))
     return k.construct_vector_3_object()(1, 0, 0);
 
-  Vector res = k.construct_orthogonal_vector_3_object()(p, q, r);
-  const FT sql = k.compute_squared_length_3_object()(res);
-  res = k.construct_divided_vector_3_object()(res, CGAL::approximate_sqrt(sql));
-
-  return res;
+  return k.construct_divided_vector_3_object()(res, len);
 }
 
 } // namespace internal
@@ -299,6 +297,7 @@ bool write_STL(std::ostream& os,
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
+  typedef typename K::Vector_3                                              Vector;
 
   K k = choose_parameter<K>(get_parameter(np, internal_np::geom_traits));
 
@@ -308,9 +307,6 @@ bool write_STL(std::ostream& os,
   set_stream_precision_from_NP(os, np);
 
   typedef Simple_cartesian<float> SC;
-  typedef SC::FT FT;
-  typedef typename SC::Point_3  Point_3;
-  typedef typename SC::Vector_3 Vector_3;
   Cartesian_converter<K,SC> conv;
 
   if(get_mode(os) == BINARY)
@@ -324,12 +320,12 @@ bool write_STL(std::ostream& os,
       const Point& p = get(point_map, points[face[0]]);
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       decltype(auto) pp = conv(p);
       decltype(auto) qq = conv(q);
       decltype(auto) rr = conv(r);
-
-      const Vector_3 nn = conv(internal::construct_normal_of_STL_face(p, q, r, k));
+      decltype(auto) nn = conv(n);
 
       const float coords[12] = { nn.x(), nn.y(), nn.z(),
                                  pp.x(), pp.y(), pp.z(),
@@ -349,12 +345,13 @@ bool write_STL(std::ostream& os,
       const Point& p = get(point_map, points[face[0]]);
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
-      Point_3 pp = conv(p);
-      Point_3 qq = conv(q);
-      Point_3 rr = conv(r);
+      decltype(auto) pp = conv(p);
+      decltype(auto) qq = conv(q);
+      decltype(auto) rr = conv(r);
+      decltype(auto) nn = conv(n);
 
-      const Vector_3 nn = conv(internal::construct_normal_of_STL_face(p, q, r, k));
       os << "facet normal " << nn << "\nouter loop\n";
       os << "vertex " << pp << "\n";
       os << "vertex " << qq << "\n";
