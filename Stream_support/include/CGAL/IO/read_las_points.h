@@ -8,5 +8,11 @@
 //
 // Author(s) : Simon Giraudot
 
-#include <CGAL/IO/LAS/read_las_points.h>
+
+#ifndef CGAL_IO_READ_LAS_POINTS_H
+#define CGAL_IO_READ_LAS_POINTS_H
+
+#include <CGAL/IO/LAS.h>
+
+#endif // CGAL_IO_READ_LAS_POINTS_H
 

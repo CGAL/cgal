@@ -8,11 +8,12 @@
 //
 // Author(s) : Simon Giraudot
 
-#ifndef CGAL_POINT_SET_PROCESSING_WRITE_LAS_POINTS_H
-#define CGAL_POINT_SET_PROCESSING_WRITE_LAS_POINTS_H
+#ifndef CGAL_IO_LAS_WRITE_LAS_POINTS_H
+#define CGAL_IO_LAS_WRITE_LAS_POINTS_H
 
 #include <CGAL/IO/helpers.h>
 
+#include <CGAL/IO/LAS.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -384,4 +385,4 @@ bool write_LAS(const std::string& filename,
 
 } // namespace CGAL
 
-#endif // CGAL_POINT_SET_PROCESSING_WRITE_LAS_POINTS_H
+#endif // CGAL_IO_LAS_WRITE_LAS_POINTS_H
