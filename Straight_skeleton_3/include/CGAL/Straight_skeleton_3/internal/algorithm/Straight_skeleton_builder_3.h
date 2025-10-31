@@ -30,8 +30,6 @@
 // - 500087
 
 // @fixme:
-// - skeleton arc initial directions are wrong, and also pass an optional time to the save()
-//   function as to draw till that time
 // - handle save times at event time: merge vertices with equal position in output
 
 // @fixme later:
@@ -681,16 +679,31 @@ public:
     }
     CGAL_assertion(i == 3);
 
-    const Plane_3& plane_1 = facets[0]->get_plane();
-    const Plane_3& plane_2 = facets[1]->get_plane();
-    const Plane_3& plane_3 = facets[2]->get_plane();
-    const FT& speed_1 = Hds_utils::get_speed(facets[0]);
-    const FT& speed_2 = Hds_utils::get_speed(facets[1]);
-    const FT& speed_3 = Hds_utils::get_speed(facets[2]);
-    const Vector_3 n_1 = plane_1.orthogonal_vector();
-    const Vector_3 n_2 = plane_2.orthogonal_vector();
-    const Vector_3 n_3 = plane_3.orthogonal_vector();
-    const Vector_3 direction = Vector_3 { speed_1*n_1 + speed_2*n_2 + speed_3*n_3 };
+    const Plane_3& p0 = facets[0]->get_plane();
+    const Plane_3& p1 = facets[1]->get_plane();
+    const Plane_3& p2 = facets[2]->get_plane();
+    const FT& w0 = Hds_utils::get_speed(facets[0]);
+    const FT& w1 = Hds_utils::get_speed(facets[1]);
+    const FT& w2 = Hds_utils::get_speed(facets[2]);
+
+    FT det = p0.a() * (p1.b() * p2.c() - p1.c() * p2.b())
+               - p0.b() * (p1.a() * p2.c() - p1.c() * p2.a())
+               + p0.c() * (p1.a() * p2.b() - p1.b() * p2.a());
+    FT dir_x = w0 * (p1.b() * p2.c() - p1.c() * p2.b())
+                 - p0.b() * (w1 * p2.c() - p1.c() * w2)
+                 + p0.c() * (w1 * p2.b() - p1.b() * w2);
+    FT dir_y = p0.a() * (w1 * p2.c() - p1.c() * w2)
+                 - w0 * (p1.a() * p2.c() - p1.c() * p2.a())
+                 + p0.c() * (p1.a() * w2 - w1 * p2.a());
+    FT dir_z = p0.a() * (p1.b() * w2 - w1 * p2.b())
+                 - p0.b() * (p1.a() * w2 - w1 * p2.a())
+                 + w0 * (p1.a() * p2.b() - p1.b() * p2.a());
+
+    // above is the result of solving the system at t=0 and t=1, but we shift inwards
+    Vector_3 direction { - dir_x / det, - dir_y / det, - dir_z / det };
+
+    // approximate square root, but it doesn't matter for robustness
+    direction /= CGAL::approximate_sqrt(direction.squared_length());
 
     result = Arc::create(data->get_node(), direction);
     data->set_arc(result);
