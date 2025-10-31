@@ -67,14 +67,14 @@ simplification, etc.).
 
 \cgalCRPSection{I/O (XYZ/OFF Formats)}
 
-- \link PkgPointSetProcessing3IOOff OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
-- \link PkgPointSetProcessing3IOXyz XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
+- \link PkgStreamSupportIoFuncsOFF OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
+- \link PkgStreamSupportIoFuncsXYZ XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
 
 \cgalCRPSection{I/O (PLY Format)}
 
-- \link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink
+- \link PkgStreamSupportIoFuncsPLY `CGAL::IO::read_PLY()` \endlink
 - `CGAL::IO::read_PLY_with_properties()`
-- \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink
+- \link PkgStreamSupportIoFuncsPLY `CGAL::IO::write_PLY()` \endlink
 - `CGAL::IO::write_PLY_with_properties()`
 - `CGAL::IO::PLY_property<T>`
 - `CGAL::IO::make_ply_point_reader()`

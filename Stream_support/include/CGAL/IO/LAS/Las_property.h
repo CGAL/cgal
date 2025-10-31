@@ -11,6 +11,8 @@
 #ifndef CGAL_IO_LAS_LAS_PROPERTY_H
 #define CGAL_IO_LAS_LAS_PROPERTY_H
 
+#include <tuple>
+
 namespace CGAL {
   namespace IO {
 
