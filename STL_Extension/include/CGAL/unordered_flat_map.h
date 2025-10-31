@@ -45,8 +45,10 @@ namespace CGAL {
     struct Has_hash_value : std::false_type {};
 
     template <typename T>
-    struct Has_hash_value<T, std::void_t<decltype(hash_value(std::declval<T>()))>>
-        : std::is_convertible<decltype(hash_value(std::declval<T>())), std::size_t>
+    using hash_value_type = decltype(hash_value(std::declval<T>()));
+    template <typename T>
+    struct Has_hash_value<T, std::void_t<hash_value_type<T>>>
+        : std::is_convertible<hash_value_type<T>, std::size_t>
     {};
   }
 
