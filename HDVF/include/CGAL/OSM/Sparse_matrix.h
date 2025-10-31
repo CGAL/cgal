@@ -843,7 +843,7 @@ public:
 
 protected:
     // Protected method for set_coefficient
-    inline void set_coefficient(const size_t i, const size_t j, const CoefficientRing d) {
+    inline void set_coefficient(const size_t i, const size_t j, const Coefficient_ring d) {
         if (i >= _size.first) {
             throw std::runtime_error("Provided i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -884,7 +884,7 @@ public:
 
 protected:
     // Protected method for get_coefficient
-    inline CoefficientRing get_coefficient(const size_t i, const size_t j) const {
+    inline Coefficient_ring get_coefficient(const size_t i, const size_t j) const {
         if (i >= _size.first) {
             throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
         }

@@ -52,6 +52,9 @@ template <typename CoefficientRing, int StorageFormat>
 class Sparse_chain {
 
 public:
+    /*!  Type of the coefficient ring */
+    typedef CoefficientRing Coefficient_ring;
+
     /*!
      Type of chains iterators.
      */
@@ -380,7 +383,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    CoefficientRing operator[](size_t index) const {
+    Coefficient_ring operator[](size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -400,7 +403,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    inline CoefficientRing get_coefficient(size_t index) const {
+    inline Coefficient_ring get_coefficient(size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -421,7 +424,7 @@ public:
      * \param[in] index The coefficient index.
      * \param[in] d Value of the coefficient
      */
-    inline void set_coefficient(size_t index, CoefficientRing d)
+    inline void set_coefficient(size_t index, Coefficient_ring d)
     {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
@@ -594,7 +597,7 @@ public:
     }
 
     /**
-     * \brief Transposes a Sparse_chain.
+     * \brief Transposes a sparse chain.
      *
      * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
      *
@@ -639,7 +642,7 @@ private:
      *
      * \return The reference to the assigned coefficient.
      */
-    CoefficientRing& operator[](const size_t index)  {
+    Coefficient_ring& operator[](const size_t index)  {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
