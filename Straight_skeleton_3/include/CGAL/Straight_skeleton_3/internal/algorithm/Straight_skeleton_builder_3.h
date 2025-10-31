@@ -430,10 +430,6 @@ public:
     CGAL_assertion(!Self_intersection::has_self_intersecting_surface(polyhedron_));
 
     skeleton_->set_polyhedron(polyhedron_); // skeleton's polyhedron is fixed
-    PolyhedronSPtr polyhedron = polyhedron_->clone();
-
-    // store base plane coefficients
-    cache_base_planes(polyhedron);
 
 // @tmp some hardcoded weights for specific inputs
 // #define CGAL_SS3_ACUTE_WEIGHTS
@@ -459,7 +455,7 @@ public:
 #  error
 # endif
 
-    for (const FacetSPtr& facet : polyhedron->facets()) {
+    for (const FacetSPtr& facet : polyhedron_->facets()) {
       FT speed = other_speed;
       const auto pl = facet->get_plane();
       const auto normal = pl.orthogonal_vector();
@@ -477,6 +473,11 @@ public:
       // DEBUG_PRINT("speed to " << speed);
     }
 #endif
+
+    PolyhedronSPtr polyhedron = polyhedron_->clone();
+
+    // store base plane coefficients
+    cache_base_planes(polyhedron);
 
     if (!init(polyhedron, vertex_splitter_)) {
       CGAL_SS3_CORE_TRACE_V(8, "Error: failed to initialize polyhedron");
