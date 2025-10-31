@@ -588,11 +588,29 @@ public:
         if (arc->has_node_dst()) {
           arcs_out << arc->get_node_dst()->point() << "\n";
         } else {
-          const Point_3& src_pt = arc->get_node_src()->point();
-          const Vector_3& dir = arc->get_direction();
-          constexpr double ray_length = 0.1; // @todo relative value
-          Point_3 ray_pt = src_pt + ray_length * dir;
-          arcs_out << ray_pt << "\n";
+          std::set<FacetSPtr> incident_faces;
+          CGAL_assertion(arc->sheets().size() == 3);
+          for (SheetWPtr sheet_wptr : arc->sheets()) {
+            if (SheetSPtr sheet = sheet_wptr.lock()) {
+              incident_faces.insert(sheet->get_facet_B());
+              incident_faces.insert(sheet->get_facet_F());
+            }
+          }
+
+          CGAL_assertion(incident_faces.size() == 3);
+
+          std::array<Plane_3, 3> offset_planes;
+          unsigned int i = 0;
+          for (FacetSPtr inc_f : incident_faces) {
+            offset_planes[i++] = Geom_utils::offset_plane(inc_f->get_plane(), // static polyhedron's
+                                                          Hds_utils::get_speed(inc_f) * current_time);
+          }
+          CGAL_postcondition(i == 3);
+
+          std::optional<Point_3> res = Kernel_wrapper::intersection(offset_planes[0], offset_planes[1], offset_planes[2]);
+          CGAL_assertion(res.has_value());
+
+          arcs_out << *res << "\n";
         }
       }
       arcs_out.close();
