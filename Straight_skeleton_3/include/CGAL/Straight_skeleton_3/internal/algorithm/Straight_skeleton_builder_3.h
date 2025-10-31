@@ -299,7 +299,7 @@ private:
                                  Abstract_event_compare<Traits> >;
 
 public:
-  Straight_skeleton_builder_3(PolyhedronSPtr polyhedron)
+  Straight_skeleton_builder_3(const PolyhedronSPtr& polyhedron)
     : polyhedron_(polyhedron),
       save_path_(std::filesystem::current_path()),
       skeleton_(Straight_skeleton_3::create())
@@ -308,7 +308,7 @@ public:
     init_edge_event();
   }
 
-  Straight_skeleton_builder_3(PolyhedronSPtr polyhedron,
+  Straight_skeleton_builder_3(const PolyhedronSPtr& polyhedron,
                               const std::vector<FT>& save_times,
                               const std::filesystem::path& save_path)
     : polyhedron_(polyhedron),
@@ -574,49 +574,8 @@ public:
       CGAL_SS3_CORE_TRACE_V(2, skeleton_->to_string());
 
 #ifdef CGAL_SS3_DUMP_FILES
-      // Dump skeleton nodes in an .xyz file
-      std::ofstream nodes_out("nodes.xyz");
-      nodes_out.precision(17);
-      for (NodeSPtr node : skeleton_->nodes()) {
-        nodes_out << node->point() << "\n";
-      }
-      nodes_out.close();
-
-      // Dump skeleton arcs as CGAL polylines
-      std::ofstream arcs_out("arcs.polylines.txt");
-      arcs_out.precision(17);
-      for (ArcSPtr arc : skeleton_->arcs()) {
-        arcs_out << "2 ";
-        arcs_out << arc->get_node_src()->point() << " ";
-        if (arc->has_node_dst()) {
-          arcs_out << arc->get_node_dst()->point() << "\n";
-        } else {
-          std::set<FacetSPtr> incident_faces;
-          CGAL_assertion(arc->sheets().size() == 3);
-          for (SheetWPtr sheet_wptr : arc->sheets()) {
-            if (SheetSPtr sheet = sheet_wptr.lock()) {
-              incident_faces.insert(sheet->get_facet_B());
-              incident_faces.insert(sheet->get_facet_F());
-            }
-          }
-
-          CGAL_assertion(incident_faces.size() == 3);
-
-          std::array<Plane_3, 3> offset_planes;
-          unsigned int i = 0;
-          for (FacetSPtr inc_f : incident_faces) {
-            offset_planes[i++] = Geom_utils::offset_plane(inc_f->get_plane(), // static polyhedron's
-                                                          Hds_utils::get_speed(inc_f) * current_time);
-          }
-          CGAL_postcondition(i == 3);
-
-          std::optional<Point_3> res = Kernel_wrapper::intersection(offset_planes[0], offset_planes[1], offset_planes[2]);
-          CGAL_assertion(res.has_value());
-
-          arcs_out << *res << "\n";
-        }
-      }
-      arcs_out.close();
+      skeleton_->dump_nodes("last_nodes.xyz");
+      skeleton_->dump_arcs("last_arcs.polylines.txt", current_time);
 #endif
 
       CGAL_postcondition(polyhedron->is_consistent());

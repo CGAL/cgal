@@ -17,17 +17,31 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_SDS_STRAIGHT_SKELETON_3_H
 #define CGAL_STRAIGHT_SKELETON_3_SDS_STRAIGHT_SKELETON_3_H
 
+#include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/Geom_utils.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/weak_find.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_set>
 
 namespace CGAL {
+
+namespace Straight_skeletons_3 {
+namespace internal {
+namespace algorithm {
+
+template <typename Traits>
+class Hds_utils;
+
+} // namespace algorithm
+} // namespace internal
+} // namespace Straight_skeletons_3
 
 /*!
  * \ingroup PkgStraightSkeleton3Classes
@@ -60,8 +74,13 @@ class Straight_skeleton_3
   * Convenience typedef
   */
   using Traits = Traits_;
+  using FT = typename Traits::FT;
+  using Point_3 = typename Traits::Point_3;
+  using Plane_3 = typename Traits::Plane_3;
+
   using Polyhedron = Straight_skeletons_3::internal::HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
+  using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 public:
   using StraightSkeletonWPtr = std::weak_ptr<Straight_skeleton_3<Traits> >;
@@ -69,6 +88,9 @@ public:
 
 private:
   using String_factory = Straight_skeletons_3::IO::String_factory;
+  using Kernel_wrapper = Straight_skeletons_3::internal::kernel::Kernel_wrapper<Traits>;
+  using Geom_utils = Straight_skeletons_3::internal::algorithm::Geom_utils<Traits>;
+  using Hds_utils = Straight_skeletons_3::internal::algorithm::Hds_utils<Traits>;
 
 public:
   class Node;
@@ -1041,10 +1063,6 @@ public:
   */
   using SheetSPtr = std::shared_ptr<Sheet>;
 
-private:
-  using Abstract_event = Straight_skeletons_3::internal::algorithm::Abstract_event<Traits>;
-  using Abstract_event_sptr = std::shared_ptr<Abstract_event>;
-
 public:
   ~Straight_skeleton_3()
   {
@@ -1592,6 +1610,57 @@ public:
       sstr << "    " << sheet->to_string() << "\n";
     }
     return sstr.str();
+  }
+
+  // Dump skeleton nodes in an .xyz format
+  void dump_nodes(const std::string& filename) const
+  {
+    std::ofstream nodes_out(filename);
+    nodes_out.precision(17);
+    for (NodeSPtr node : nodes_) {
+      nodes_out << node->point() << "\n";
+    }
+    nodes_out.close();
+  }
+
+  // Dump skeleton arcs in a CGAL polylines format
+  void dump_arcs(const std::string& filename,
+                 const FT& time = FT(0)) const
+  {
+    std::ofstream arcs_out(filename);
+    arcs_out.precision(17);
+    for (ArcSPtr arc : arcs_) {
+      arcs_out << "2 ";
+      arcs_out << arc->get_node_src()->point() << " ";
+      if (arc->has_node_dst()) {
+        arcs_out << arc->get_node_dst()->point() << "\n";
+      } else {
+        std::set<FacetSPtr> incident_faces;
+        CGAL_assertion(arc->sheets().size() == 3);
+        for (SheetWPtr sheet_wptr : arc->sheets()) {
+          if (SheetSPtr sheet = sheet_wptr.lock()) {
+            incident_faces.insert(sheet->get_facet_B());
+            incident_faces.insert(sheet->get_facet_F());
+          }
+        }
+
+        CGAL_assertion(incident_faces.size() == 3);
+
+        std::array<Plane_3, 3> offset_planes;
+        unsigned int i = 0;
+        for (FacetSPtr inc_f : incident_faces) {
+          offset_planes[i++] = Geom_utils::offset_plane(inc_f->get_plane(), // static polyhedron's
+                                                        Hds_utils::get_speed(inc_f) * time);
+        }
+        CGAL_postcondition(i == 3);
+
+        std::optional<Point_3> res = Kernel_wrapper::intersection(offset_planes[0], offset_planes[1], offset_planes[2]);
+        CGAL_assertion(res.has_value());
+
+        arcs_out << *res << "\n";
+      }
+    }
+    arcs_out.close();
   }
 
 protected:
