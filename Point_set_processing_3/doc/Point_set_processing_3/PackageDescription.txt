@@ -10,23 +10,6 @@ simplification, etc.).
 \defgroup PkgPointSetProcessing3IO I/O Functions
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IOOff I/O (OFF Formats)
-\ingroup PkgPointSetProcessing3Ref
-
-\defgroup PkgPointSetProcessing3IOXyz I/O (XYZ Formats)
-\ingroup PkgPointSetProcessing3Ref
-
-\defgroup PkgPointSetProcessing3IOPly I/O (PLY Format)
-\ingroup PkgPointSetProcessing3Ref
-
-Read and write points (with or without additional properties) in PLY
-format.
-
-\defgroup PkgPointSetProcessing3IOLas I/O (LAS Format)
-\ingroup PkgPointSetProcessing3Ref
-
-Read and write points (with or without additional properties) in LAS
-format.
 
 \addtogroup PkgPointSetProcessing3Ref
 \cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessing3}

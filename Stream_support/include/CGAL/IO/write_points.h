@@ -1,18 +1,15 @@
 // Copyright (c) 2020  Geometry Factory
-// All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno
 
-#ifndef CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
-#define CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
-
-#include <CGAL/license/Point_set_processing_3.h>
+#ifndef CGAL_STREAM_SUPPORT_IO_WRITE_POINTS_H
+#define CGAL_STREAM_SUPPORT_IO_WRITE_POINTS_H
 
 #include <CGAL/IO/helpers.h>
 
@@ -31,7 +28,7 @@ namespace CGAL {
 namespace IO {
 
 /**
-  \ingroup PkgPointSetProcessing3IO
+  \ingroup IOstreamFunctions
 
   \brief writes the range of `points` with properties to a file.
 
@@ -115,4 +112,4 @@ bool write_points(const std::string& fname,
 
 } } // namespace CGAL::IO
 
-#endif // CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
+#endif // CGAL_STREAM_SUPPORT_IO_WRITE_POINTS_H
