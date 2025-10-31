@@ -136,7 +136,7 @@ public:
     /**
      * \brief Past-the-end iterator of the chain indices (visited by increasing indices).
      *
-     * The function returns an iterator past the endd of the chain indices.
+     * The function returns an iterator past the end of the chain indices.
      */
     inline Non_zero_chain_indices::iterator end() const noexcept;
 
@@ -198,17 +198,17 @@ public:
 
 
     /**
-     * \brief Substracts a matrix and assign.
+     * \brief Subtracts a matrix and assign.
      *
-     * Substracts each coefficient of the matrix together and stores the result in `matrix`.
+     * Subtracts each coefficient of the matrix together and stores the result in `matrix`.
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     SparseMatrix& operator-=(SparseMatrix &matrix, const SparseMatrix &other);
 
     /**
-     * \brief Substracts two matrices together.
+     * \brief Subtracts two matrices together.
      *
-     * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
+     * Subtracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     friend SparseMatrix operator-(const SparseMatrix &first, const SparseMatrix &second);

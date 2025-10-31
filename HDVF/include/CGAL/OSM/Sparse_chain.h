@@ -45,7 +45,7 @@ namespace OSM {
  \cgalModels{SparseChain}
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept, providing the ring used to compute homology.
- \tparam StorageFormat an integer constant encoding the storage format of matrices (`OSM::COLUMN` or `OSM::ROW`).
+ \tparam StorageFormat an integer constant encoding the storage format of matrices (`CGAL::OSM::COLUMN` or `CGAL::OSM::ROW`).
 */
 
 template <typename CoefficientRing, int StorageFormat>
@@ -96,10 +96,10 @@ public:
      *
      * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      *
-     * \param[in] chainSize The size of the Sparse_chain.
+     * \param[in] chainSize The size of the sparse chain.
      */
-    Sparse_chain(const size_t chainSize) {
-        _upperBound = chainSize;
+    Sparse_chain(const size_t chain_size) {
+        _upperBound = chain_size;
         _chainData = std::unordered_map<size_t, CoefficientRing>();
     }
 
@@ -108,7 +108,7 @@ public:
     /**
      * \brief Creates new SparseChain by copy.
      *
-     * Copy constructor, initialize a SparseChain from an existing SparseChain.
+     * Copy constructor, initialize a sparse chain from an existing sparse chain.
      *
      * \pre The chains have the same `CoefficientRing` and `StorageFormat`.
 
@@ -146,7 +146,7 @@ public:
 
     /** \relates Sparse_chain
      *
-     * \brief Displays a Sparse_chain in the output stream.
+     * \brief writes a sparse chain in the output stream.
      *
      * \param[in] stream The output stream.
      * \param[in] chain The chain to display.
@@ -168,9 +168,9 @@ public:
     }
 
     /**
-     * \brief Adds two chains together.
+     * \brief Adds two chains.
      *
-     * Adds two chains together and return the result in a new matrix.
+     * Adds two chains and return the result in a new matrix.
      *
      * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *

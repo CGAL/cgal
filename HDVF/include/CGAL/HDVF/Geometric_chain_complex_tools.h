@@ -355,7 +355,7 @@ public:
 //        std::cerr << "Imported mesh" << std::endl;
 //        std::cout << _K;
 //        // Export _K to a MeshObject to add the icosphere and mesh with tetGen
-//        Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
+//        Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_mesh_object(_K) ;
 //        std::cerr << "Mesh_object_io from mesh" << std::endl;
 //        mesh_L.print_infos();
 //
@@ -463,8 +463,8 @@ public:
         return t ;
     }
 
-    /** \brief Exports a SimpComplex to a MeshObject  */
-    static Mesh_object_io<Traits>& export_meshObject(const Chain_complex& _CC)
+    /** \brief Exports a chain complex to a Mesh_object_io  */
+    static Mesh_object_io<Traits>& export_mesh_object(const Chain_complex& _CC)
     {
         std::vector<Io_cell_type> vcells ;
         for (int q = 0; q <= _CC.dimension(); ++q)

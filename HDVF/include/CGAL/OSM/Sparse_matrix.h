@@ -408,9 +408,9 @@ public:
     /** @} */
 
     /**
-     * \brief Adds two matrices together into a new matrix.
+     * \brief Adds two matrices into a new matrix.
      *
-     * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `+=` for efficiency).
+     * Adds each coefficient of the matrices and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `+=` for efficiency).
      *
      * \pre Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      *
@@ -429,9 +429,9 @@ public:
     }
 
     /**
-     * \brief Substracts two matrices together into a new matrix.
+     * \brief Subtracts two matrices into a new matrix.
      *
-     * Substracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
+     * Subtracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
      *
      * \pre Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      *
@@ -490,11 +490,11 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \defgroup MatrixMatrixProdCol Matrices product (with column-based result).
+     * \defgroup MatrixMatrixProdCol Matrix multiplication (with column-based result).
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform multiplication between matrices and returns a new column-major matrix.
+     * @brief  Perform multiplication of matrices and return a new column-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The product is optimized (using standard definition or block products) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat` (when possible, prefer row-major by column-major products).
+     * Perform standard linear algebra multiplication of matrices and return a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The multiplication is optimized (using standard definition or block multiplications) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat` (when possible, prefer row-major by column-major multiplications).
      *
      * @param first The first matrix.
      * @param second The second matrix.
@@ -504,28 +504,28 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: COLUMN x COLUMN -> COLUMN
+     * \brief Matrix multiplication: COLUMN x COLUMN -> COLUMN
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, COLUMN> &second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: ROW x COLUMN -> COLUMN
+     * \brief Matrix multiplication: ROW x COLUMN -> COLUMN
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: COLUMN x ROW -> COLUMN
+     * \brief Matrix multiplication: COLUMN x ROW -> COLUMN
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, ROW> &second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: ROW x ROW -> COLUMN
+     * \brief Matrix multiplication: ROW x ROW -> COLUMN
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second);
@@ -534,11 +534,11 @@ public:
 
     /** \relates Sparse_matrix
      *
-     *\defgroup MatrixChainProd Matrix / column-chain product (with column-chain result).
+     *\defgroup MatrixChainProd Matrix / column-chain multiplication (with column-chain result).
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform multiplication between a sparse matrix (column or row major) and a column-chain. The function returns a new column-major chain.
+     * @brief  Perform multiplication of a sparse matrix (column or row major) and a column-chain. The function returns a new column-major chain.
      *
-     * Perform standard linear algebra product between a matrix and a column-chain (ie.\ matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the product is optimized for each of them).
+     * Perform standard linear algebra multiplication of a matrix and a column-chain (ie.\ matrix / column vector multiplication) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the multiplication is optimized for each of them).
      *
      * @param first The matrix.
      * @param second The column-major chain.
@@ -548,14 +548,14 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrix/column chain product: COLUMN matrix x COLUMN chain -> COLUMN chain.
+     * \brief Matrix/column chain multiplication: COLUMN matrix x COLUMN chain -> COLUMN chain.
      */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, COLUMN> &_second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrix/column chain product: ROW matrix x COLUMN chain -> COLUMN chain.
+     * \brief Matrix/column chain multiplication: ROW matrix x COLUMN chain -> COLUMN chain.
      */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, COLUMN> &_second);
@@ -564,11 +564,11 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \defgroup ChainMatrixProd Row-chain / matrix product (with row-chain result).
+     * \defgroup ChainMatrixProd Row-chain / matrix multiplication (with row-chain result).
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform multiplication between a row-chain and a sparse matrix (column or row major). The function returns a new row-major chain.
+     * @brief  Perform multiplication of a row-chain and a sparse matrix (column or row major). The function returns a new row-major chain.
      *
-     * Perform standard linear algebra product between a row-chain and a matrix (ie.\ row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the product is optimized for each of them).
+     * Perform standard linear algebra multiplication of a row-chain and a matrix (ie.\ row vector / matrix multiplication) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the multiplication is optimized for each of them).
      *
      * @param first The row-major chain.
      * @param second The matrix.
@@ -578,14 +578,14 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \brief Row chain/matrix product: ROW chain x COLUMN matrix -> ROW chain.
+     * \brief Row chain/matrix multiplication: ROW chain x COLUMN matrix -> ROW chain.
      */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second) ;
 
     /** \relates Sparse_matrix
      *
-     * \brief Row chain/matrix product: ROW chain x ROW matrix -> ROW chain.
+     * \brief Row chain/matrix multiplication: ROW chain x ROW matrix -> ROW chain.
      */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second) ;
@@ -594,11 +594,11 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \defgroup MatrixMatrixProdRow Matrices product (with row-based result).
+     * \defgroup MatrixMatrixProdRow matrix multiplication (with row-based result).
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform multiplication between matrices and returns a new row-major matrix.
+     * @brief  Perform multiplication of matrices and return a new row-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The product is optimized (using standard definition or block products) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat`.
+     * Perform standard linear algebra multiplication of matrices and return a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The multiplication is optimized (using standard definition or block multiplications) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat`.
      *
      * @param first The first matrix.
      * @param second The second matrix.
@@ -608,28 +608,28 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: COLUMN x COLUMN -> ROW
+     * \brief matrix multiplication: COLUMN x COLUMN -> ROW
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: ROW x COLUMN -> ROW
+     * \brief matrix multiplication: ROW x COLUMN -> ROW
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: COLUMN x ROW -> ROW
+     * \brief matrix multiplication: COLUMN x ROW -> ROW
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product: ROW x ROW -> ROW
+     * \brief matrix multiplication: ROW x ROW -> ROW
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
@@ -640,7 +640,7 @@ public:
      *
      * \defgroup MatrixMatrixAddAssign Sums matrices and assign.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform addition between matrices and assigns the result to `matrix`.
+     * @brief  Perform addition of matrices and assign the result to `matrix`.
      *
      * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
      *
@@ -691,7 +691,7 @@ public:
      *
      * \defgroup MatrixMatrixSubtractAssign Subtracts matrices and assign.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform subtraction between matrices and assigns the result to `matrix`.
+     * @brief  Perform subtraction of matrices and assign the result to `matrix`.
      *
      * Perform standard linear algebra subtraction. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
      *
@@ -781,9 +781,9 @@ public:
      *
      * \defgroup MatrixMatrixProdAssign Multiplies matrices and assign.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Perform product between matrices and assigns the result to `matrix`.
+     * @brief  Perform multiplication of matrices and assign the result to `matrix`.
      *
-     * Perform standard linear algebra product. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The product is optimized for each combination of `StorageFormat`.
+     * Perform standard linear algebra multiplication. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The multiplication is optimized for each combination of `StorageFormat`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -793,28 +793,28 @@ public:
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product and assign: COLUMN *= COLUMN.
+     * \brief Matrix multiplication and assign: COLUMN *= COLUMN.
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, COLUMN> &other);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product and assign: ROW *= ROW.
+     * \brief Matrix multiplication and assign: ROW *= ROW.
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, ROW> &other);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product and assign: COLUMN *= ROW.
+     * \brief Matrix multiplication and assign: COLUMN *= ROW.
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, ROW> &other);
 
     /** \relates Sparse_matrix
      *
-     * \brief Matrices product and assign: ROW *= COLUMN.
+     * \brief Matrix multiplication and assign: ROW *= COLUMN.
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, COLUMN> &other);
@@ -1320,7 +1320,7 @@ Sparse_matrix<_CT, _CTF> operator*(const Sparse_matrix<_CT, _CTF> &matrix, const
 }
 
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // COLUMN x COLUMN -> COLUMN
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, COLUMN> &second) {
@@ -1342,7 +1342,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, co
     return res;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // ROW x COLUMN -> COLUMN
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second) {
@@ -1365,7 +1365,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const
     return res;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // COLUMN x ROW -> COLUMN
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, ROW> &second) {
@@ -1379,7 +1379,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, co
     return res;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // ROW x ROW -> COLUMN
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second) {
@@ -1404,7 +1404,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const
     return res;
 }
 
-// Matrix - column chain product
+// Matrix - column chain multiplication
 // COLUMN matrix
 template <typename _CT>
 Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_chain<_CT, COLUMN> &second)
@@ -1420,7 +1420,7 @@ Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, con
     return column;
 }
 
-// Matrix - column chain product
+// Matrix - column chain multiplication
 // ROW matrix
 template <typename _CT>
 Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_chain<_CT, COLUMN> &second)
@@ -1438,7 +1438,7 @@ Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const 
     return column;
 }
 
-// Row chain - matrix product
+// Row chain - matrix multiplication
 // ROW matrix
 template <typename _CT>
 Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second)
@@ -1454,7 +1454,7 @@ Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &first, const Spar
     return row;
 }
 
-// Row chain - matrix product
+// Row chain - matrix multiplication
 // COLUMN matrix
 template <typename _CT>
 Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second)
@@ -1472,7 +1472,7 @@ Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &first, const Spar
     return row;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // COLUMN x COLUMN -> ROW
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, COLUMN> &second) {
@@ -1496,7 +1496,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &first, const
     return res;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // ROW x COLUMN -> ROW
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second) {
@@ -1519,7 +1519,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &first, const Sp
     return res;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // COLUMN x ROW -> ROW
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, ROW> &second) {
@@ -1533,7 +1533,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &first, const
     return res;
 }
 
-// Matrix-matrix product
+// Matrix-matrix multiplication
 // ROW x ROW -> ROW
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second) {
@@ -1647,7 +1647,7 @@ Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &matrix, const Spars
     return matrix;
 }
 
-// Matrices product and assign
+// matrix multiplication and assign
 // COLUMN += COLUMN
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, COLUMN> &other) {
@@ -1655,7 +1655,7 @@ Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const
     return matrix;
 }
 
-// Matrices product and assign
+// matrix multiplication and assign
 // ROW *= ROW
 template <typename _CT>
 Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, ROW> &other) {
@@ -1663,7 +1663,7 @@ Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Spars
     return matrix;
 }
 
-// Matrices product and assign
+// matrix multiplication and assign
 // COLUMN *= ROW
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, ROW> &other) {
@@ -1671,7 +1671,7 @@ Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const
     return matrix;
 }
 
-// Matrices product and assign
+// matrix multiplication and assign
 // ROW *= COLUMN
 template <typename _CT>
 Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, COLUMN> &other) {

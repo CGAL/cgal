@@ -84,13 +84,16 @@ Using appropriate combinations of such operations, one can change a HDVF until c
 template<typename ChainComplex>
 class Hdvf : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix> {
 public:
+    /*! \brief Chain complex type */
+    typedef ChainComplex Chain_complex;
+
     /*! \brief Type of coefficients used to compute homology. */
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
 
     /*!
      Type of parent Hdvf_core class.
      */
-    typedef Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix> HDVF_parent ;
+    typedef Hdvf_core<Chain_complex, OSM::Sparse_chain, OSM::Sparse_matrix> Base ;
 
     /**
      * \brief Default constructor.
@@ -100,7 +103,7 @@ public:
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
-    Hdvf(const ChainComplex& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf(const Chain_complex& K, int hdvf_opt = OPT_FULL) ;
 
     /*
      * \brief Constructor by copy.
@@ -311,10 +314,10 @@ public:
      * \param[in] chain The cycle to annotate in the homology basis.
      * \param[in] dim Dimension of the cycle.
      */
-    typename HDVF_parent::Column_chain get_annotation(typename HDVF_parent::Column_chain chain, int dim) const
+    typename Base::Column_chain get_annotation(typename Base::Column_chain chain, int dim) const
     {
         // Check that the chain is a cycle (must belong to the kernel of the boundary operator)
-        typename HDVF_parent::Column_chain bnd(this->_DD_col.at(dim) * chain) ;
+        typename Base::Column_chain bnd(this->_DD_col.at(dim) * chain) ;
         if (!bnd.is_null())
             throw("get_annotation: the chain provided is not a cycle");
 
@@ -334,10 +337,10 @@ public:
      * \param[in] chain The co-cycle to annotate in the homology basis.
      * \param[in] dim Dimension of the co-cycle.
      */
-    typename HDVF_parent::Row_chain get_coannotation(typename HDVF_parent::Row_chain chain, int dim) const
+    typename Base::Row_chain get_coannotation(typename Base::Row_chain chain, int dim) const
     {
         // Check that the chain is a co-cycle (must belong to the kernel of the boundary operator)
-        typename HDVF_parent::Row_chain bnd(chain * this->_DD_col.at(dim+1)) ;
+        typename Base::Row_chain bnd(chain * this->_DD_col.at(dim+1)) ;
         if (!bnd.is_null())
             throw("get_coannotation: the chain provided is not a co-cycle");
 
@@ -355,16 +358,16 @@ public:
      * \param[in] chain2 Second cycle.
      * \param[in] dim Dimension of both cycles.
      */
-    bool are_same_cycles (typename HDVF_parent::Column_chain chain1, typename HDVF_parent::Column_chain chain2, int dim)
+    bool are_same_cycles (typename Base::Column_chain chain1, typename Base::Column_chain chain2, int dim)
     {
         // Check if both chains are cycles (must belong to the kernel of the boundary operator)
-        typename HDVF_parent::Column_chain bnd1(this->_DD_col.at(dim) * chain1), bnd2(this->_DD_col.at(dim) * chain2) ;
+        typename Base::Column_chain bnd1(this->_DD_col.at(dim) * chain1), bnd2(this->_DD_col.at(dim) * chain2) ;
         if (!bnd1.is_null())
             throw("get_annotation: chain1 is not a cycle");
         if (!bnd2.is_null())
             throw("get_annotation: chain2 is not a cycle");
 
-        typename HDVF_parent::Column_chain annot1(get_annotation(chain1, dim)), annot2(get_annotation(chain2, dim)) ;
+        typename Base::Column_chain annot1(get_annotation(chain1, dim)), annot2(get_annotation(chain2, dim)) ;
         return annot1 == annot2 ;
     }
 
@@ -378,16 +381,16 @@ public:
      * \param[in] chain2 Second co-cycle.
      * \param[in] dim Dimension of both co-cycles.
      */
-    bool are_same_cocycles (typename HDVF_parent::Row_chain chain1, typename HDVF_parent::Row_chain chain2, int dim)
+    bool are_same_cocycles (typename Base::Row_chain chain1, typename Base::Row_chain chain2, int dim)
     {
         // Check if both chains are cocycles (must belong to the kernel of the boundary^* operator)
-        typename HDVF_parent::Row_chain cobnd1(chain1 * this->_DD_col.at(dim)), cobnd2(chain2 * this->_DD_col.at(dim)) ;
+        typename Base::Row_chain cobnd1(chain1 * this->_DD_col.at(dim)), cobnd2(chain2 * this->_DD_col.at(dim)) ;
         if (!cobnd1.is_null())
             throw("get_coannotation: chain1 is not a co-cycle");
         if (!cobnd2.is_null())
             throw("get_coannotation: chain2 is not a co-cycle");
 
-        typename HDVF_parent::Row_chain coannot1(get_coannotation(chain1, dim)), coannot2(get_coannotation(chain2, dim)) ;
+        typename Base::Row_chain coannot1(get_coannotation(chain1, dim)), coannot2(get_coannotation(chain2, dim)) ;
         return coannot1 == coannot2 ;
     }
 };
@@ -416,10 +419,10 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found) const
         // Search for +-1 in _F - iterate over rows
         for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); (it_row != this->_F_row[q].end() && !found); ++it_row)
         {
-            const typename HDVF_parent::Row_chain &row(OSM::cget_row(this->_F_row[q],*it_row));
+            const typename Base::Row_chain &row(OSM::cget_row(this->_F_row[q],*it_row));
 
             // Iterate through the entries of the row
-            for (typename HDVF_parent::Row_chain::const_iterator it = row.begin(); (it != row.end() && !found); ++it) {
+            for (typename Base::Row_chain::const_iterator it = row.begin(); (it != row.end() && !found); ++it) {
                 if ((it->second == 1) || (it->second == -1)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                     p.sigma = it->first; // primary cell
@@ -449,8 +452,8 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const
         if (this->_flag.at(q).at(tau) == PRIMARY)
         {
             // Get the column of tau
-            const typename HDVF_parent::Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
-            for (typename HDVF_parent::Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
+            const typename Base::Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
+            for (typename Base::Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
             {
                 if (abs(it->second) == 1)
                 {
@@ -465,8 +468,8 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const
         if (this->_flag.at(q).at(tau) == CRITICAL)
         {
             // Search along the row of tau
-            const typename HDVF_parent::Row_chain& row(OSM::cget_row(this->_F_row.at(q), tau)) ;
-            for (typename HDVF_parent::Row_chain::const_iterator it = row.cbegin(); (it != row.cend() && !found); ++it)
+            const typename Base::Row_chain& row(OSM::cget_row(this->_F_row.at(q), tau)) ;
+            for (typename Base::Row_chain::const_iterator it = row.cbegin(); (it != row.cend() && !found); ++it)
             {
                 if (abs(it->second) == 1)
                 {
@@ -492,10 +495,10 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found) cons
         // Search for +-1 in _F - iterate over rows
         for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); it_row != this->_F_row[q].end() ; ++it_row)
         {
-            const typename HDVF_parent::Row_chain &row(OSM::cget_row(this->_F_row[q],*it_row));
+            const typename Base::Row_chain &row(OSM::cget_row(this->_F_row[q],*it_row));
 
             // Iterate through the entries of the row
-            for (typename HDVF_parent::Row_chain::const_iterator it = row.begin(); it != row.end(); ++it) {
+            for (typename Base::Row_chain::const_iterator it = row.begin(); it != row.end(); ++it) {
                 if ((it->second == 1) || (it->second == -1)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and add it
                     Cell_pair p ;
@@ -527,8 +530,8 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size
         {
             std::cout << "------PRIMARY" << std::endl ;
             // Get the column of tau
-            const typename HDVF_parent::Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
-            for (typename HDVF_parent::Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
+            const typename Base::Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
+            for (typename Base::Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
             {
                 if (abs(it->second) == 1)
                 {
@@ -545,8 +548,8 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size
         if (this->_flag.at(q).at(tau) == CRITICAL)
         {
             std::cout << "------CRITICAL" << std::endl ;
-            const typename HDVF_parent::Row_chain& row(OSM::get_row(this->_F_row.at(q), tau)) ;
-            for (typename HDVF_parent::Row_chain::const_iterator it = row.cbegin(); it != row.cend(); ++it)
+            const typename Base::Row_chain& row(OSM::get_row(this->_F_row.at(q), tau)) ;
+            for (typename Base::Row_chain::const_iterator it = row.cbegin(); it != row.cend(); ++it)
             {
                 if (abs(it->second) == 1)
                 {
@@ -580,10 +583,10 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found) const
         // Search for +-1 in _G - iterate over cols
         for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); (it_col != this->_F_row[q].end() && !found); ++it_col)
         {
-            typename HDVF_parent::Column_chain &col(this->_G_col[q][*it_col]);
+            typename Base::Column_chain &col(this->_G_col[q][*it_col]);
 
             // Iterate through the entries of the col
-            for (typename HDVF_parent::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+            for (typename Base::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
                 if ((it->second == 1) || (it->second == -1)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                     p.sigma = it->first; // secondary cell
@@ -625,8 +628,8 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const
         // If tau is critical, search for sigma such that <g(tau),sigma>=+-1
         if (this->_flag.at(q).at(tau) == CRITICAL)
         {
-            typename HDVF_parent::Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
-            for (typename HDVF_parent::Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
+            typename Base::Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
+            for (typename Base::Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
             {
                 if (abs(it->second) == 1)
                 {
@@ -653,10 +656,10 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found) cons
         // Search for +-1 in _G - iterate over cols
         for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); it_col != this->_F_row[q].end(); ++it_col)
         {
-            typename HDVF_parent::Column_chain &col = this->_G_col[q][*it_col];
+            typename Base::Column_chain &col = this->_G_col[q][*it_col];
 
             // Iterate through the entries of the col
-            for (typename HDVF_parent::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
+            for (typename Base::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
                 if ((it->second == 1) || (it->second == -1)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                     Cell_pair p ;
@@ -701,8 +704,8 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size
         // If tau is critical, search for sigma such that <g(tau),sigma>=+-1
         if (this->_flag.at(q).at(tau) == CRITICAL)
         {
-            typename HDVF_parent::Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
-            for (typename HDVF_parent::Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
+            typename Base::Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
+            for (typename Base::Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
             {
                 if (abs(it->second) == 1)
                 {
@@ -738,16 +741,16 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const
         for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi)
         {
             const size_t pi = *it_pi ;
-            typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
-            typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-            typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+            typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+            typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+            typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
             for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
             {
-                typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+                typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
                 {
-                    typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-                    typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+                    typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+                    typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
 
                     // Compute xi and xi' to test the validity of MW
 
@@ -784,9 +787,9 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
         {
             const size_t pi(tau) ;
             // Col pi of H_q and proj_P(d(pi)) must at least be non empty
-            typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
-            typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-            typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+            typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+            typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+            typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
 
             if (H11.is_null() || projP_d_pi.is_null())
                 return p ;
@@ -794,12 +797,12 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
             // Search for sigma with col_sigma(H_q-1) non empty
             for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
             {
-                typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+                typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
                 {
                     // and proj_S(cod(sigma)) non empty
-                    typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-                    typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+                    typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+                    typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
                     if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
@@ -821,9 +824,9 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
             // cout << "secondary" << endl ;
             const size_t sigma(tau) ;
             // Row sigma of H_q-1 and proj_S(cod(sigma)) must at least be non empty
-            typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-            typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-            typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+            typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+            typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+            typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
             if (H11q1.is_null() || projS_cod_sigma.is_null())
                 return p ;
 
@@ -832,9 +835,9 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
             {
                 const size_t pi(*it_pi) ;
 
-                typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
-                typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-                typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+                typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+                typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+                typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
                 // proj_P of d(pi) must also be non empty
                 if (!projP_d_pi.is_null())
                 {
@@ -869,16 +872,16 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) con
         for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi)
         {
             const size_t pi = *it_pi ;
-            typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
-            typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-            typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+            typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+            typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+            typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
             for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
             {
-                typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+                typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
                 {
-                    typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-                    typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+                    typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+                    typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
 
                     // Compute xi and xi' to test the validity of MW
 
@@ -917,9 +920,9 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
         {
             const size_t pi(tau) ;
             // Col pi of H_q and proj_P(d(pi)) must at least be non empty
-            typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
-            typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-            typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+            typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+            typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+            typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
 
             if (H11.is_null() || projP_d_pi.is_null())
                 return pairs ;
@@ -927,12 +930,12 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
             // Search for sigma with col_sigma(H_q-1) non empty
             for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
             {
-                typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+                typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
                 {
                     // and proj_S(cod(sigma)) non empty
-                    typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-                    typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+                    typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+                    typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
                     if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
@@ -956,9 +959,9 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
             // cout << "secondary" << endl ;
             const size_t sigma(tau) ;
             // Row sigma of H_q-1 and proj_S(cod(sigma)) must at least be non empty
-            typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-            typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-            typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+            typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+            typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+            typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
             if (H11q1.is_null() || projS_cod_sigma.is_null())
                 return pairs ;
 
@@ -967,9 +970,9 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
             {
                 const size_t pi(*it_pi) ;
 
-                typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
-                typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-                typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+                typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+                typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+                typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
                 // proj_P of d(pi) must also be non empty
                 if (!projP_d_pi.is_null())
                 {
@@ -1006,8 +1009,8 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         std::cout << "R of " << pi << "(dim " << q << ") / " << sigma << "(dim " << q + 1 << ")" << std::endl;
 
         // Extract the relevant row and column chains from this->_H_col
-        typename HDVF_parent::Row_chain H12 = OSM::get_row(this->_H_col[q], sigma); // H12 is the row chain from this->_H_col[q] at index sigma
-        typename HDVF_parent::Column_chain H21 = OSM::get_column(this->_H_col[q], pi); // H21 is the column chain from this->_H_col[q] at index pi
+        typename Base::Row_chain H12 = OSM::get_row(this->_H_col[q], sigma); // H12 is the row chain from this->_H_col[q] at index sigma
+        typename Base::Column_chain H21 = OSM::get_column(this->_H_col[q], pi); // H21 is the column chain from this->_H_col[q] at index pi
 
         // Get the coefficient at the intersection of H12 and H21
         Coefficient_ring H11(H12[pi]); // H11 is the coefficient at row sigma and column pi
@@ -1027,7 +1030,7 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
 
         // Extract the relevant column chain from this->_F_row
-        typename HDVF_parent::Column_chain F11 = OSM::get_column(this->_F_row[q], pi); // F11 is the column chain from this->_F_row[q] at index pi
+        typename Base::Column_chain F11 = OSM::get_column(this->_F_row[q], pi); // F11 is the column chain from this->_F_row[q] at index pi
 
         // Remove the column pi from this->_F_row
         remove_column(this->_F_row[q], pi);
@@ -1035,7 +1038,7 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         //--------------------------------------------- Submatrices of G ------------------------------------------------------
 
         // Extract the relevant row chain from this->_G_col
-        typename HDVF_parent::Row_chain G11 = OSM::get_row(this->_G_col[q + 1], sigma); // G11 is the row chain from this->_G_col[q+1] at index sigma
+        typename Base::Row_chain G11 = OSM::get_row(this->_G_col[q + 1], sigma); // G11 is the row chain from this->_G_col[q+1] at index sigma
 
         // Remove the row sigma from this->_G_col
         remove_row(this->_G_col[q + 1], sigma);
@@ -1077,16 +1080,16 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         // Perform additional updates
 
         // Extract boundary and coboundary chains
-        typename HDVF_parent::Column_chain bnd_pi(this->_K.d(pi, q)); // Boundary of pi in dimension q
-        typename HDVF_parent::Row_chain cobnd_sigma(this->_K.cod(sigma, q + 1)); // Coboundary of sigma in dimension q+1
+        typename Base::Column_chain bnd_pi(this->_K.d(pi, q)); // Boundary of pi in dimension q
+        typename Base::Row_chain cobnd_sigma(this->_K.cod(sigma, q + 1)); // Coboundary of sigma in dimension q+1
 
         // Project the boundary and coboundary chains onto PRIMARY and SECONDARY flags
-        typename HDVF_parent::Column_chain proj_P_pi(this->projection(bnd_pi, PRIMARY, q));
-        typename HDVF_parent::Row_chain proj_S_sigma(this->projection(cobnd_sigma, SECONDARY, q + 1));
+        typename Base::Column_chain proj_P_pi(this->projection(bnd_pi, PRIMARY, q));
+        typename Base::Row_chain proj_S_sigma(this->projection(cobnd_sigma, SECONDARY, q + 1));
 
         if (q > 0) {
             // Update this->_DD_col[q] with projections and this->_F_row[q-1]
-            typename HDVF_parent::Column_chain c1(this->_F_row[q - 1] * proj_P_pi + this->projection(bnd_pi, CRITICAL, q));
+            typename Base::Column_chain c1(this->_F_row[q - 1] * proj_P_pi + this->projection(bnd_pi, CRITICAL, q));
             OSM::set_column(this->_DD_col[q], pi, c1);
             OSM::set_column(this->_G_col[q], pi, this->_H_col[q - 1] * proj_P_pi);
         }
@@ -1096,7 +1099,7 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
 
         if (q + 2 <= this->_K.dimension()) {
             // Update this->_DD_col[q+2] with projections
-            typename HDVF_parent::Row_chain c4(this->projection(cobnd_sigma, CRITICAL, q + 1) + proj_S_sigma * this->_G_col[q + 2]);
+            typename Base::Row_chain c4(this->projection(cobnd_sigma, CRITICAL, q + 1) + proj_S_sigma * this->_G_col[q + 2]);
             OSM::set_row(this->_DD_col[q + 2], sigma, c4);
         }
 
@@ -1127,8 +1130,8 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
             throw("M operation in max dimension !!!") ;
 
         // Extract row and column chains from this->_F_row
-        typename HDVF_parent::Row_chain F12(OSM::get_row(this->_F_row[q], gamma)); // F12 is the row chain from this->_F_row[q] at index gamma
-        typename HDVF_parent::Column_chain F21(OSM::get_column(this->_F_row[q], pi)); // F21 is the column chain from this->_F_row[q] at index pi
+        typename Base::Row_chain F12(OSM::get_row(this->_F_row[q], gamma)); // F12 is the row chain from this->_F_row[q] at index gamma
+        typename Base::Column_chain F21(OSM::get_column(this->_F_row[q], pi)); // F21 is the column chain from this->_F_row[q] at index pi
 
         // Get the coefficient at the intersection of F12 and F21
         const Coefficient_ring F11(F12.get_coefficient(pi)); // F11 is the coefficient at row gamma and column pi
@@ -1153,7 +1156,7 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         //---------------------------------------------- Submatrices of H -----------------------------------------------------
 
         // Extract the relevant column chain from this->_H_col
-        typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col[q], pi)); // H11 is the column chain from this->_H_col[q] at index pi
+        typename Base::Column_chain H11(OSM::get_column(this->_H_col[q], pi)); // H11 is the column chain from this->_H_col[q] at index pi
 
         // Remove the column pi from this->_H_col
         remove_column(this->_H_col[q], pi);
@@ -1162,7 +1165,7 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
 
         // For DD_q+1 and DD_q:
         // Extract the relevant row chains from this->_DD_col
-        typename HDVF_parent::Row_chain D11(OSM::get_row(this->_DD_col[q+1], gamma)); // D11 is the row chain from this->_DD_col[q+1] at index gamma
+        typename Base::Row_chain D11(OSM::get_row(this->_DD_col[q+1], gamma)); // D11 is the row chain from this->_DD_col[q+1] at index gamma
         remove_row(this->_DD_col[q + 1], gamma); // Remove row gamma from this->_DD_col[q + 1]
 
         //--------------------------------------------- Submatrices of DD ------------------------------------------------------
@@ -1206,16 +1209,16 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         if (q>0)
         {
             // Extract boundary chain and project it
-            typename HDVF_parent::Column_chain c = this->_K.d(pi, q); // Boundary of pi in dimension q
-            typename HDVF_parent::Column_chain projection_p(this->projection(c, PRIMARY, q-1)); // Project boundary chain to PRIMARY
-            typename HDVF_parent::Column_chain projection_c = this->projection(c, CRITICAL, q-1); // Project boundary chain to CRITICAL
+            typename Base::Column_chain c = this->_K.d(pi, q); // Boundary of pi in dimension q
+            typename Base::Column_chain projection_p(this->projection(c, PRIMARY, q-1)); // Project boundary chain to PRIMARY
+            typename Base::Column_chain projection_c = this->projection(c, CRITICAL, q-1); // Project boundary chain to CRITICAL
 
             // Set the column pi of this->_G_col[q] to (-1 * this->_H_col[q-1]) * projection_p
             OSM::set_column(this->_G_col[q], pi, (Coefficient_ring(-1) * this->_H_col[q - 1]) * projection_p);
 
             // Update this->_DD_col
             // Extract projections and perform updates
-            typename HDVF_parent::Column_chain tmp(this->_F_row[q - 1] * projection_p + projection_c); // Compute the product of this->_F_row[q - 1] and projection_p
+            typename Base::Column_chain tmp(this->_F_row[q - 1] * projection_p + projection_c); // Compute the product of this->_F_row[q - 1] and projection_p
             // Set the column pi of this->_DD_col[q] to cc
             OSM::set_column(this->_DD_col[q], pi, tmp);
         }
@@ -1244,8 +1247,8 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
             throw("W operation in dimension 0 !!!") ;
 
         // Extract row and column chains from this->_G_col
-        typename HDVF_parent::Row_chain G12(OSM::get_row(this->_G_col[q], sigma)); // G12 is the row chain from this->_G_col[q] at index sigma
-        typename HDVF_parent::Column_chain G21(OSM::get_column(this->_G_col[q], gamma)); // G21 is the column chain from this->_G_col[q] at index gamma
+        typename Base::Row_chain G12(OSM::get_row(this->_G_col[q], sigma)); // G12 is the row chain from this->_G_col[q] at index sigma
+        typename Base::Column_chain G21(OSM::get_column(this->_G_col[q], gamma)); // G21 is the column chain from this->_G_col[q] at index gamma
 
         // Get the coefficient at the intersection of G12 and G21
         Coefficient_ring G11(G12.get_coefficient(gamma)); // G11 is the coefficient at row sigma and column gamma
@@ -1272,7 +1275,7 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         //--------------------------------------------- Submatrices of H ------------------------------------------------------
 
         // Extract the row chain from this->_H_col
-        typename HDVF_parent::Row_chain H11(OSM::get_row(this->_H_col[q-1], sigma)); // H11 is the row chain from this->_H_col[q] at index sigma
+        typename Base::Row_chain H11(OSM::get_row(this->_H_col[q-1], sigma)); // H11 is the row chain from this->_H_col[q] at index sigma
 
         // Remove the row sigma from this->_H_col
         remove_row(this->_H_col[q-1], sigma);
@@ -1288,7 +1291,7 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         //--------------------------------------------- Submatrices of DD_q ------------------------------------------------------
 
         // Extract the column chain from this->_DD_col[q]
-        typename HDVF_parent::Column_chain D11_q(OSM::get_column(this->_DD_col[q], gamma)); // D11_q is the column chain from this->_DD_col[q] at index gamma
+        typename Base::Column_chain D11_q(OSM::get_column(this->_DD_col[q], gamma)); // D11_q is the column chain from this->_DD_col[q] at index gamma
 
         // Remove the column gamma from this->_DD_col
         remove_column(this->_DD_col[q], gamma);
@@ -1328,16 +1331,16 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         if (q < this->_K.dimension())
         {
             // Extract boundary chain and project it
-            typename HDVF_parent::Row_chain c = this->_K.cod(sigma, q); // Boundary of sigma in dimension q
-            typename HDVF_parent::Row_chain projection_s(this->projection(c, SECONDARY, q+1)); // Project boundary chain to SECONDARY
-            typename HDVF_parent::Row_chain projection_c(this->projection(c, CRITICAL, q+1)); // Project boundary chain to SECONDARY
+            typename Base::Row_chain c = this->_K.cod(sigma, q); // Boundary of sigma in dimension q
+            typename Base::Row_chain projection_s(this->projection(c, SECONDARY, q+1)); // Project boundary chain to SECONDARY
+            typename Base::Row_chain projection_c(this->projection(c, CRITICAL, q+1)); // Project boundary chain to SECONDARY
 
             // Set the row sigma of this->_F_row[q] to (-1 * projection_s * this->_H_col[q])
             OSM::set_row(this->_F_row[q], sigma, (-1 * projection_s) * this->_H_col[q]);
 
             // Set the row sigma of this->_DD_col[q + 1] to projection_s * this->_G_col[q + 1] + projection_c
 
-            typename HDVF_parent::Row_chain tmp(projection_s * this->_G_col[q + 1] + projection_c) ;
+            typename Base::Row_chain tmp(projection_s * this->_G_col[q + 1] + projection_c) ;
             OSM::set_row(this->_DD_col[q + 1], sigma, tmp);
         }
         // else : if the dimension is maximal, no update of this->_DD_col[q+1] and this->_F_row[q]
@@ -1370,27 +1373,27 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // H_q extractions
 
-        typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
+        typename Base::Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
         // H21 -> delete H11
         this->_H_col.at(q) /= std::vector<size_t>({pi}) ;
 
         // H_q-1 extractions
 
-        typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
+        typename Base::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
         // H21_q-1 -> delete H11q1
         remove_row(this->_H_col.at(q-1), sigma) ;
 
         // d(pi)
 
-        typename HDVF_parent::Column_chain d_pi = this->_K.d(pi, q) ;
-        typename HDVF_parent::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
-        typename HDVF_parent::Column_chain projC_d_pi = this->projection(d_pi, CRITICAL, q-1) ;
+        typename Base::Column_chain d_pi = this->_K.d(pi, q) ;
+        typename Base::Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
+        typename Base::Column_chain projC_d_pi = this->projection(d_pi, CRITICAL, q-1) ;
 
         // cod(sigma)
 
-        typename HDVF_parent::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
-        typename HDVF_parent::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-        typename HDVF_parent::Row_chain projC_cod_sigma = this->projection(cod_sigma, CRITICAL, q+1) ;
+        typename Base::Row_chain cod_sigma = this->_K.cod(sigma, q) ;
+        typename Base::Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
+        typename Base::Row_chain projC_cod_sigma = this->projection(cod_sigma, CRITICAL, q+1) ;
 
         // Compute xi and xi' to test the validity of MW
 
@@ -1404,13 +1407,13 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // F_q extraction
 
-        typename HDVF_parent::Column_chain F11(OSM::get_column(this->_F_row.at(q), pi)) ;
+        typename Base::Column_chain F11(OSM::get_column(this->_F_row.at(q), pi)) ;
         // F12 -> delete col F11
         remove_column(this->_F_row.at(q), pi) ;
 
         // G_q extractions
 
-        typename HDVF_parent::Row_chain G11(OSM::get_row(this->_G_col.at(q), sigma)) ;
+        typename Base::Row_chain G11(OSM::get_row(this->_G_col.at(q), sigma)) ;
         // G21 -> dele row G11
         remove_row(this->_G_col.at(q), sigma) ;
 
@@ -1418,7 +1421,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // H_q
 
-        typename HDVF_parent::Row_chain tmp1 = projS_cod_sigma * this->_H_col.at(q) ;
+        typename Base::Row_chain tmp1 = projS_cod_sigma * this->_H_col.at(q) ;
 
         this->_H_col.at(q) -= (H11 * xi) * tmp1 ;
         OSM::set_column(this->_H_col.at(q), sigma, H11 * xi) ;
@@ -1430,7 +1433,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // G_q+1 // note: G_q+1 is not be modified if the Hdvf is perfect
 
-        typename HDVF_parent::Row_chain tmp2(projS_cod_sigma * this->_G_col.at(q+1)) ;
+        typename Base::Row_chain tmp2(projS_cod_sigma * this->_G_col.at(q+1)) ;
         tmp2 += projC_cod_sigma ;
         this->_G_col.at(q+1) -= (H11 * xi) * tmp2 ;
 
@@ -1440,7 +1443,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // H_q-1
 
-        typename HDVF_parent::Column_chain tmp3(this->_H_col.at(q-1) * projP_d_pi) ;
+        typename Base::Column_chain tmp3(this->_H_col.at(q-1) * projP_d_pi) ;
 
         this->_H_col.at(q-1) -= (tmp3 * xip) * H11q1 ;
         OSM::set_row(this->_H_col.at(q-1), pi, xip * H11q1) ;
@@ -1452,7 +1455,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // F_q-1 // note: F_q-1 is not be modified if the Hdvf is perfect
 
-        typename HDVF_parent::Column_chain tmp4(this->_F_row.at(q-1) * projP_d_pi) ;
+        typename Base::Column_chain tmp4(this->_F_row.at(q-1) * projP_d_pi) ;
         tmp4 += projC_d_pi ;
         this->_F_row.at(q-1) -= (tmp4 * xip) * H11q1 ;
 

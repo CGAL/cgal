@@ -111,7 +111,7 @@ public:
         return _subChainsStates.begin() ;
     }
 
-    /** \brief Iterator to the end of the of the indices of non empty chains inside the mask. */
+    /** \brief Iterator past-the-end of the indices of non empty chains inside the mask. */
     inline Bitboard::iterator end() const noexcept
     {
         return _subChainsStates.end() ;

@@ -108,6 +108,8 @@ private:
     /*! Type of value returned by the iterator. */
     typedef typename Filtration_parent::Filtration_iter_value Filtration_iter_value;
 public:
+    /*! \brief chain complex type. */
+    typedef ChainComplex Chain_complex;
     /*!
      * \brief Copy constructor.
      *
@@ -124,7 +126,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg Vector of vertex degrees.
      */
-    Filtration_lower_star(const ChainComplex& K, const std::vector<Degree>& deg) : Filtration_parent(K)
+    Filtration_lower_star(const Chain_complex& K, const std::vector<Degree>& deg) : Filtration_parent(K)
     {
         star_filtration(deg);
     }
@@ -136,7 +138,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] degree_function Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const ChainComplex& K, std::function<Degree(size_t)>& degree_function) : Filtration_parent(K)
+    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& degree_function) : Filtration_parent(K)
     {
         star_filtration(degree_function);
     }
