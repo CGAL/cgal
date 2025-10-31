@@ -42,8 +42,11 @@ template <typename ChainComplex>
 class Sub_chain_complex_mask
 {
 public:
+    /*! \brief Chain complex type */
+    typedef ChainComplex Chain_complex;
+
     /*! \brief Type of coefficients used to compute homology. */
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
 
 protected:
     /** \brief Dimension of the underlying complex. */
@@ -124,7 +127,7 @@ public:
      * \param[in] K A constant reference to the underlying complex.
      * \param[in] full Build full / empty masks (default: full).
      */
-    Sub_chain_complex_mask(const ChainComplex& K, bool full=true) : _K(K)
+    Sub_chain_complex_mask(const Chain_complex& K, bool full=true) : _K(K)
     {
         _dim = K.dimension() ;
         _sub.resize(_dim+1) ;
@@ -152,7 +155,7 @@ public:
      * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
      * \param[in] close If this boolean is true, the faces of `cells` are also set to 1.
      */
-    Sub_chain_complex_mask(const ChainComplex& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
+    Sub_chain_complex_mask(const Chain_complex& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
     {
         _dim = K.dimension() ;
         _sub.resize(_dim+1) ;

@@ -79,8 +79,11 @@ template<typename ChainComplex, typename Degree, typename Filtration_ >
 class Hdvf_persistence : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
 {
 public:
+    /*! \brief Chain complex type */
+    typedef ChainComplex Chain_complex;
+
     /*! \brief Type of coefficients used to compute homology. */
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
 
     /*! \brief Structure storing (full) persistent interval data:
      * - `time_birth`, `time_death`: persistent interval filtration indices
@@ -227,7 +230,7 @@ public:
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param[in] with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
      */
-    Hdvf_persistence(const ChainComplex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
+    Hdvf_persistence(const Chain_complex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
 
     /**
      * \brief Computes a perfect persistent HDVF.

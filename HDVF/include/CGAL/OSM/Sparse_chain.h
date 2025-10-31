@@ -86,22 +86,20 @@ public:
      *
      * Creates a sparse chain encoding an empty linear combination of cells.
      */
-    Sparse_chain() {
-        _upperBound = 0;
-        _chainData = std::unordered_map<size_t, CoefficientRing>();
-    }
+    Sparse_chain()
+      : _upperBound(0), _chainData()
+    {}
 
     /**
      * \brief Creates new empty sparse chain (ie. zero-chain) of given size.
      *
      * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      *
-     * \param[in] chainSize The size of the sparse chain.
+     * \param[in] chain_size The size of the sparse chain.
      */
-    Sparse_chain(const size_t chain_size) {
-        _upperBound = chain_size;
-        _chainData = std::unordered_map<size_t, CoefficientRing>();
-    }
+    Sparse_chain(const size_t chain_size)
+      : _upperBound(chain_size), _chainData()
+    {}
 
 
 
@@ -114,10 +112,9 @@ public:
 
      * \param[in] otherToCopy The chain to copy.
      */
-    Sparse_chain(const Sparse_chain &otherToCopy) {
-        _upperBound = otherToCopy._upperBound;
-        _chainData = otherToCopy._chainData;
-    }
+    Sparse_chain(const Sparse_chain &otherToCopy)
+       : _upperBound(otherToCopy._upperBound),  _chainData(otherToCopy._chainData)
+    {}
 
     /**
      * \brief Assigns to other chain.

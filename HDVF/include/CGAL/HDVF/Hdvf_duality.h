@@ -71,8 +71,11 @@ namespace Homological_discrete_vector_field {
 template<typename ChainComplex>
 class Hdvf_duality : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix> {
 public:
+    /*! \brief Chain complex type.  */
+    typedef ChainComplex Chain_complex;
+
     /*! \brief Type of coefficients used to compute homology. */
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
 
 private:
     // Type of column-major chains
@@ -106,10 +109,10 @@ public:
      * \param[in] K A sub complex of `L` encoded through a bitboard.
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
      */
-    Hdvf_duality(const ChainComplex& L, Sub_chain_complex_mask<ChainComplex>& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf_duality(const Chain_complex& L, Sub_chain_complex_mask<Chain_complex>& K, int hdvf_opt = OPT_FULL) ;
 
     /**
-     * \brief Finds a valid Cell_pair of dimension q / q+1 for A *in the current sub chain complex*.
+     * \brief Finds a valid cell pair of dimension q / q+1 for A *in the current sub chain complex*.
      *
      * The function searches a pair of critical cells, *in the current sub chain complex*, \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
@@ -119,7 +122,7 @@ public:
     Cell_pair find_pair_A(int q, bool &found) const;
 
     /**
-     * \brief Finds a valid Cell_pair for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
+     * \brief Finds a valid cell pair for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches a cell \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -132,18 +135,18 @@ public:
     Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
     /**
-     * \brief Finds *all* valid Cell_pair of dimension q / q+1 *in the current sub chain complex* for A.
+     * \brief Finds *all* valid cell pairs of dimension q / q+1 *in the current sub chain complex* for A.
      *
      * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ *in the current sub chain complex* of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
-     * \param[in] q Lower dimension of the pair.
+     * \param[in] q Lower dimension of the pairs.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
     /**
-     * \brief Finds *all* valid Cell_pair for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
+     * \brief Finds *all* valid cell pairs for `A`containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches all `CRITICAL` cells \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -186,8 +189,8 @@ public:
     /**
      * \brief Computes a perfect HDVF over the current sub chain complex.
      *
-     * As long as valid pairs for A exist in the current sub chain complex, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
-     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+     * As long as valid pairs for `A` exist in the current sub chain complex, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
+     * If the coefficient ring of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
      * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
@@ -202,7 +205,7 @@ public:
      * \brief Computes a random perfect HDVF over the current sub chain complex.
      *
      * As long as valid pairs for A exist in the current sub chain complex, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
-     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the coefficient ring is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
      *
