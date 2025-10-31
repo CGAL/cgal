@@ -349,8 +349,9 @@ bool write_LAS(const std::string& filename,
 } // namespace CGAL
 
 
+#ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/LAS/read_las_points.h>
 #include <CGAL/IO/LAS/write_las_points.h>
-
+#endif
 
 #endif // CGAL_IO_LAS_H
