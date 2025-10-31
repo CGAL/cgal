@@ -2075,9 +2075,10 @@ public:
     if(this->debug().vertex_vertex_epsilon() > 0) {
       this->validate_vertex_vertex_distances_or_throw<merged_facets>(mesh, patch_edges, tr_vertex_pmap);
     }
-    if(this->debug().display_statistics()) {
-      std::cout << "[timings] compute distances in "
-                << task_guard.time_ms() << " ms\n";
+    if((this->debug().segment_vertex_epsilon() > 0 || this->debug().vertex_vertex_epsilon() > 0) &&
+       this->debug().display_statistics())
+    {
+      std::cout << "[timings] compute distances in " << task_guard.time_ms() << " ms\n";
     }
   }
 
@@ -2304,7 +2305,8 @@ private:
         }
         std::cerr << counter << " triangles(s) in the face\n";
       }
-      if(Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value &&
+      if(this->debug().input_faces() &&
+         Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value &&
          !std::all_of(cdt_2.finite_face_handles().begin(), cdt_2.finite_face_handles().end(), [=](const auto fh) {
            const auto p0 = cdt_2.point(fh->vertex(0));
            const auto v1 = cdt_2.point(fh->vertex(1)) - p0;
