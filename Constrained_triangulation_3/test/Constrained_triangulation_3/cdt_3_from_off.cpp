@@ -654,8 +654,10 @@ int go(Mesh mesh, CDT_options options) {
   };
 
   // Build CDT directly from the polygon mesh using the official API
+  CDT cdt;
+  auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
   auto build_start = std::chrono::high_resolution_clock::now();
-  CDT cdt{std::invoke([&]() {
+  cdt = CDT{std::invoke([&]() {
     auto np = CGAL::parameters::debug(cdt_debug).visitor(std::ref(dump_mesh_with_steiner_points));
     return options.merge_facets ? CDT(mesh, np.plc_face_id(pmaps.patch_id_map)) : CDT(mesh, np);
   })};
