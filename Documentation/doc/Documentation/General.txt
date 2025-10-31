@@ -204,10 +204,11 @@ public:
   /// returns the last inserted element.
   const value_type& back() const;
   /// removes the last inserted element if not empty.
-  void pop_back()
+  void pop_back();
   /// inserts an element
-  void push_back(const value_type&)
+  void push_back(const value_type&);
 };
+
 
 /*!
 See https://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
