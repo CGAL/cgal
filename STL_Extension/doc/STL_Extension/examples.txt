@@ -1,4 +1,5 @@
 /*!
+\example STL_Extension/bisect_failures_example.cpp
 \example STL_Extension/Default.cpp
 \example STL_Extension/Dispatch_output_iterator.cpp
 \example STL_Extension/in_place_list_prog.cpp

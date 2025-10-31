@@ -60,39 +60,17 @@ namespace CGAL {
  * \return Exit code: 0 (EXIT_SUCCESS) if no failures found, non-zero otherwise
  *
  * The algorithm:
- * 1. Starts with a ratio of 0.5 (removing 50% of elements) and divides data into "buckets"
- * 2. For each bucket, creates a simplified version by removing that portion
- * 3. Tests the simplified version with `run_fn`
- * 4. If it fails with the expected pattern, saves it as "bad" and resets to bisect further at the same ratio
- * 5. If it succeeds or fails differently, tries the next bucket
- * 6. After a complete pass with no faults found, reduces the ratio by half (0.5 → 0.25 → 0.125...)
- * 7. Repeats until the minimal failing case is found or ratio becomes too small
- * 8. Returns the minimal failing case
+ * 1. Tests the full data first to verify it fails and capture the failure pattern
+ * 2. Starts with a ratio of 0.5 (removing 50% of elements) and divides data into "buckets"
+ * 3. For each bucket, creates a simplified version by removing that portion
+ * 4. Tests the simplified version with `run_fn`
+ * 5. If it fails with the same pattern as the original, saves it as "bad" and restarts bisection with this smaller dataset
+ * 6. If it succeeds or fails differently, tries the next bucket
+ * 7. After a complete pass with no matching failures found, reduces the ratio by half (0.5 → 0.25 → 0.125...)
+ * 8. Repeats until no further simplification is possible (minimal failing case found)
+ * 9. Saves the minimal failing case as "final_bad" and returns its exit code
  *
- * Example usage:
- * \code
- * auto get_size = [](const Mesh& m) { return m.number_of_faces(); };
- *
- * auto simplify = [](Mesh& m, std::size_t start, std::size_t end) -> bool {
- *   // Remove faces from start to end
- *   for(std::size_t i = start; i < end && i < m.number_of_faces(); ++i) {
- *     m.remove_face(start);  // Always remove at start since indices shift
- *   }
- *   return true;
- * };
- *
- * auto run = [](const Mesh& m) -> int {
- *   return algorithm(m);  // Test the mesh
- * };
- *
- * auto save = [](const Mesh& m, const std::string& prefix) {
- *   std::ofstream out(prefix + ".off");
- *   out << m;
- * };
- *
- * // Use the function (ratio is automatically adjusted: starts at 0.5, halves when no fault found)
- * int result = bisect_failures(mesh, get_size, simplify, run, save);
- * \endcode
+ * \snippet STL_Extension/bisect_failures_example.cpp bisect_failures_snippet
  */
 template<typename InputData, typename GetSizeFn, typename SimplifyFn, typename RunFn, typename SaveFn>
 int bisect_failures(const InputData& data,
@@ -120,14 +98,14 @@ int bisect_failures(const InputData& data,
     try {
       exit_code = run_fn(current_data);
     } catch(Failure_exception& e) {
-      cgal_exc = Failure_exception(e.library(),
-                                   e.expression(),
-                                   e.filename(),
-                                   e.line_number(),
-                                   e.message());
+      cgal_exc = e;
+      std::clog << "    CAUGHT CGAL EXCEPTION: " << e.what() << '\n';
     } catch(std::exception& e) {
+      std::clog << "    CAUGHT EXCEPTION: " << e.what() << '\n';
       std_exc_msg = e.what();
     }
+    if(exit_code != EXIT_SUCCESS)
+      std::clog << "    RUN RETURNED EXIT CODE: " << exit_code << '\n';
     return std::make_tuple(cgal_exc, std_exc_msg, exit_code);
   };
 
@@ -185,8 +163,6 @@ int bisect_failures(const InputData& data,
         bool same_exit_code = false;
 
         if(cgal_exception) {
-          std::clog << "    CAUGHT CGAL EXCEPTION: " << cgal_exception->what() << '\n';
-
           if(initial_cgal_exception &&
              cgal_exception->message() == initial_cgal_exception->message() &&
              cgal_exception->expression() == initial_cgal_exception->expression() &&
@@ -197,7 +173,6 @@ int bisect_failures(const InputData& data,
             same_exception = true;
           }
         } else if(std_exception) {
-          std::clog << "    CAUGHT EXCEPTION: " << *std_exception << '\n';
           // Check if this is the same type of failure we're looking for
           if(initial_std_exception &&
              *initial_std_exception == *std_exception)
@@ -205,7 +180,6 @@ int bisect_failures(const InputData& data,
             same_exception = true;
           }
         } else if(this_run_exit_code != EXIT_SUCCESS) {
-          std::clog << "    RUN RETURNED EXIT CODE: " << this_run_exit_code << '\n';
           if(this_run_exit_code == initial_exit_code) {
             same_exit_code = true;
           }
