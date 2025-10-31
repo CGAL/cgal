@@ -83,8 +83,10 @@ hash_value (const Aff_transformation_2<K>& transform)
 {
   std::size_t result = hash_value(transform.cartesian(0,0));
   for(int i=0; i < 3; ++i)
-    for(int j = (i == 0 ? 1 : 0); j < 3; ++j)
-      boost::hash_combine(result, hash_value(transform.cartesian(i,j)));
+    for(int j=0; j < 3; ++j)
+      // Skip (0,0) as it was already used to initialize the hash
+      if (!(i == 0 && j == 0))
+        boost::hash_combine(result, hash_value(transform.cartesian(i,j)));
   return result;
 }
 
