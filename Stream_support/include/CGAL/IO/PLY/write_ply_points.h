@@ -107,56 +107,7 @@ bool write_PLY(std::ostream& os,
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
 
-/**
-   \ingroup PkgPointSetProcessing3IOPly
-
-   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
-
-   \tparam PointRange is a model of `ConstRange`. The value type of
-                      its iterator is the key type of the named parameter `point_map`.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param filename the path to the output file
-   \param points input point range
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
-       \cgalParamType{Boolean}
-       \cgalParamDefault{`true`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point range}
-       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{stream_precision}
-       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-       \cgalParamType{int}
-       \cgalParamDefault{`6`}
-       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if writing was successful, `false` otherwise.
-
-   \sa `write_PLY_with_properties()`
-*/
+// documented in ../PLY.h
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool write_PLY(const std::string& filename,
                const PointRange& points,

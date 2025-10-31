@@ -18,6 +18,7 @@
 
 #include <CGAL/IO/helpers.h>
 
+#include <CGAL/IO/XYZ.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
@@ -82,107 +83,23 @@ bool write_XYZ_PSP(std::ostream& os,
 
 namespace IO {
 
-/**
-   \ingroup PkgPointSetProcessing3IOXyz
-
-   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamXYZ.
-
-   \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param os output stream
-   \param points input point range
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point range}
-       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{stream_precision}
-       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-       \cgalParamType{int}
-       \cgalParamDefault{the precision of the stream `os`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if writing was successful, `false` otherwise.
-*/
-template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+// documented in ../XYZ.h
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool write_XYZ(std::ostream& os,
                const PointRange& points,
-               const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
-#endif
+               const CGAL_NP_CLASS& np,
+               std::enable_if_t<internal::is_Range<PointRange>::value>*
                )
 {
   return Point_set_processing_3::internal::write_XYZ_PSP(os, points, np);
 }
 
-/**
-   \ingroup PkgPointSetProcessing3IOXyz
-
-   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamXYZ.
-
-   \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param filename path to the output file
-   \param points input point range
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point range}
-       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{stream_precision}
-       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-       \cgalParamType{int}
-       \cgalParamDefault{`6`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if writing was successful, `false` otherwise.
-*/
-template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+// documented in ../XYZ.h
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool write_XYZ(const std::string& filename,
                const PointRange& points,
-               const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
-#endif
+               const CGAL_NP_CLASS& np,
+               std::enable_if_t<internal::is_Range<PointRange>::value>*
                )
 {
   std::ofstream os(filename);

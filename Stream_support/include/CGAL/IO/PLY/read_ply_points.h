@@ -97,58 +97,15 @@ bool read_PLY_with_properties(std::istream& is,
 
 /// \endcond
 
-/**
-   \ingroup PkgPointSetProcessing3IOPly
 
-   \brief reads points (positions + normals, if available), using the \ref IOStreamPLY.
-
-   Potential additional point properties and faces are ignored.
-
-  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
-
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
-   It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param is input stream.
-   \param output output iterator over points.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if reading was successful, `false` otherwise.
-
-   \sa `read_PLY_with_properties()`
-*/
+// documented in ../PLY.h
 template <typename OutputIteratorValueType,
-          typename PointOutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+typename PointOutputIterator,
+ typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool read_PLY(std::istream& is,
               PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
-#endif
+              const CGAL_NP_CLASS& np ,
+              std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
               )
 {
   using parameters::choose_parameter;
