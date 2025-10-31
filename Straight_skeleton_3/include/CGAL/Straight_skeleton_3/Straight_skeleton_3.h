@@ -1186,7 +1186,7 @@ public:
     }
   }
 
-  bool is_consistent(bool is_partial = true) const
+  bool is_consistent(bool no_unbounded_elements = false) const
   {
     bool result = true;
 
@@ -1382,16 +1382,16 @@ public:
           break;
         }
       } else {
-        if (is_partial) {
-          if (!arc->has_direction()) {
-            CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination nor direction (partial skeleton)");
-            result = false;
-            break;
-          }
-        } else {
+        if (no_unbounded_elements) {
           CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination (full skeleton)");
           result = false;
           break;
+        } else {
+          if (!arc->has_direction()) {
+            CGAL_SS3_SKEL_DS_TRACE("Error: arc has neither destination nor direction");
+            result = false;
+            break;
+          }
         }
       }
       unsigned int num_sheets = 0;

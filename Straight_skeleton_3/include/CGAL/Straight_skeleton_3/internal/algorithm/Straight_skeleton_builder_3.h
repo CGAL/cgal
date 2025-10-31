@@ -638,9 +638,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(2, events_summary());
 
     CGAL_warning(!is_emptiness_expected || polyhedron->empty());
-
-    CGAL_assertion_code(bool has_unbounded_elements = (outwards_ || !queue.empty());)
-    CGAL_assertion(skeleton_->is_consistent(has_unbounded_elements));
+    CGAL_assertion(skeleton_->is_consistent(is_emptiness_expected));
 
     return true;
   }
