@@ -110,8 +110,8 @@ public:
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
       for (unsigned int i = 0; i < 3; ++i) {
-        if ((*p)[i] < p_min[i]) {
-          p_min[i] = (*p)[i];
+        if (p[i] < p_min[i]) {
+          p_min[i] = p[i];
         }
       }
     }
@@ -128,8 +128,8 @@ public:
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
       for (unsigned int i = 0; i < 3; ++i) {
-        if ((*p)[i] > p_max[i]) {
-          p_max[i] = (*p)[i];
+        if (p[i] > p_max[i]) {
+          p_max[i] = p[i];
         }
       }
     }
@@ -146,7 +146,7 @@ public:
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
       for (unsigned int i = 0; i < 3; ++i) {
-        if (!((*p_box_min)[i] <= (*p)[i] && (*p)[i] <= (*p_box_max)[i])) {
+        if (!(p_box_min[i] <= p[i] && p[i] <= p_box_max[i])) {
           result = false;
           // CGAL_SS3_TRANSF_TRACE(*p << " is not in the box " << *p_box_min << " " << *p_box_max);
           break;

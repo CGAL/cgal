@@ -61,7 +61,6 @@
 
 // @todo
 // - improve the visitor
-// - re-add inside/outside checks since outwards_ exists
 // - do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
 // - add tests; doc figures
 // - Do not accept non manifold inputs, non-triangulated inputs (clarify doc)
@@ -551,6 +550,9 @@ public:
         visitor_->before_event(polyhedron, current_time, event);
       }
 
+      CGAL_assertion_code(Point_3 p_box_min = Transformation::bounding_box_min(polyhedron);)
+      CGAL_assertion_code(Point_3 p_box_max = Transformation::bounding_box_max(polyhedron);)
+
       // Event treatment
       Event_status es = handle_event(event, current_time, time_future_bound, polyhedron);
       CGAL_assertion(es != Event_status::EVENT_NOT_HANDLED);
@@ -622,6 +624,10 @@ public:
 
       if (visitor_) {
         visitor_->after_event(polyhedron, current_time);
+      }
+
+      if (!outwards_) {
+        CGAL_assertion(Transformation::is_inside_bbox(polyhedron, p_box_min, p_box_max));
       }
 
       // If we are only interested in specific times, there is no point going further
