@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/XYZ.h>
 #include <CGAL/Random.h>
 
 // Define the kernel.
