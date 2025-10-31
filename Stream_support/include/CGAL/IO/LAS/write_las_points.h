@@ -11,6 +11,8 @@
 #ifndef CGAL_IO_LAS_WRITE_LAS_POINTS_H
 #define CGAL_IO_LAS_WRITE_LAS_POINTS_H
 
+#ifdef CGAL_LINKED_WITH_LASLIB
+
 #include <CGAL/IO/helpers.h>
 #include <CGAL/IO/LAS/Las_property.h>
 #include <CGAL/IO/LAS.h>
@@ -283,4 +285,5 @@ bool write_LAS(const std::string& filename,
 
 } // namespace CGAL
 
+#endif // CGAL_LINKED_WITH_LASLIB
 #endif // CGAL_IO_LAS_WRITE_LAS_POINTS_H

@@ -12,6 +12,7 @@
 #define CGAL_IO_LAS_LAS_PROPERTY_H
 
 #include <tuple>
+#include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
   namespace IO {

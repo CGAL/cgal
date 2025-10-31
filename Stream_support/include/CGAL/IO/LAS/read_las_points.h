@@ -11,6 +11,8 @@
 #ifndef CGAL_IO_LAS_READ_LAS_POINTS_H
 #define CGAL_IO_LAS_READ_LAS_POINTS_H
 
+#ifdef CGAL_LINKED_WITH_LASLIB
+
 #include <CGAL/config.h>
 
 #include <CGAL/IO/LAS/Las_property.h>
@@ -336,4 +338,5 @@ bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_NP_CLA
 
 } // namespace CGAL
 
+#endif CGAL_LINKED_WITH_LASLIB
 #endif // CGAL_IO_LAS_READ_LAS_POINTS_H
