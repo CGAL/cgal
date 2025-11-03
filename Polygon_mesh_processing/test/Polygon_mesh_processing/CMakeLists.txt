@@ -7,6 +7,7 @@ project(Polygon_mesh_processing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core)
 
+create_single_source_cgal_program("slow_compute_normal.cpp")
 create_single_source_cgal_program("test_pmp_triangle.cpp")
 create_single_source_cgal_program("test_hausdorff_bounded_error_distance.cpp")
 create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
@@ -72,6 +73,7 @@ create_single_source_cgal_program("test_isolevel_refinement.cpp")
 create_single_source_cgal_program("test_corefinement_nm_bo.cpp")
 create_single_source_cgal_program("test_corefinement_cavities.cpp")
 create_single_source_cgal_program("issue_8730.cpp")
+create_single_source_cgal_program("issue_7164.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)

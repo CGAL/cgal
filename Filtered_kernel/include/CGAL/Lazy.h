@@ -229,14 +229,14 @@ print_dag(const Return_base_tag&, std::ostream& os, int level)
 
 struct Depth_base {
 #ifdef CGAL_PROFILE
-  int depth_;
+  mutable int depth_;
 
   Depth_base()
     : depth_(0)
   {}
 
   int depth() const { return depth_; }
-  void set_depth(int i)
+  void set_depth(int i) const
   {
     depth_ = i;
     CGAL_HISTOGRAM_PROFILER(std::string("[Lazy_kernel DAG depths]"), i);
@@ -244,7 +244,7 @@ struct Depth_base {
   }
 #else
   int depth() const { return 0; }
-  void set_depth(int) {}
+  void set_depth(int) const {}
 #endif
 };
 
@@ -656,6 +656,7 @@ class Lazy_rep_n final :
     auto* p = new typename Base::Indirect(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
     this->set_at(p);
     this->set_ptr(p);
+    this->set_depth(0);
     if(!noprune || is_currently_single_threaded())
       lazy_reset_member(l);
   }

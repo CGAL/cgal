@@ -1,8 +1,36 @@
 # Release History
 
+## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
+
+Release date: July 2026
+
+### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+-   Made the `Arr_linear_traits_2` a model of the new concept.
+-   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+
+
+### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
+
+- **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - `import_from_plane_graph()` → `read_plane_graph_in_lcc()`
+  - `import_from_polyhedron_3()` → `polyhedron_3_to_lcc()`
+  - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
+- The old function names are still available but marked as deprecated for backward compatibility.
+
+
+### [Surface Mesh Simplification](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceMeshSimplification)
+
+-   Added the class `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`, which provides improved output for `CGAL::Surface_mesh_simplification::edge_collapse()`.
+    That class works the same as previous `GarlandHeckbert_policies`.
+    Its constructor accepts a `Mesh` and optional named parameters to set the weight of the line policy relative to the plane policy, set the boundary cost multiplier or provide vertex normals.
+-  **Breaking change**: `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h` and is no longer deprecated.
+
+
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
-Release date: July 2025
+Release date: Sept 2025
 
 ### General Changes
 
@@ -45,6 +73,71 @@ Release date: July 2025
     in the Poincaré disk. A method is offered that generates such domains in genus two.
 
     See also the associated [news entry](https://www.cgal.org/2025/06/24/triangulations-on-hyperbolic-surfaces/).
+
+### 3D Isosurfacing (new package)
+
+-   This package provides algorithms to extract isosurfaces from different inputs. The input is represented
+    as a 3D domain and can be an implicit function or a Cartesian grid. The output is an indexed face
+    set that stores an isosurface in the form of a surface mesh. The provided algorithms include Marching Cubes,
+    topologically correct Marching Cubes, and Dual Contouring.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
+- Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
+- Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
+- Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+  to know faces in the output meshes that are corresponding to input coplanar faces.
+-   Added the function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
+    to remesh triangle meshes. This remeshing algorithm uses clustering on polygonal meshes as to
+    approximate a Centroidal Voronoi Diagram construction, and can move vertices as to recover
+    sharp features and corners.
+- New implementation of `CGAL::Polygon_mesh_processing::clip()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
+- New implementation of `CGAL::Polygon_mesh_processing::split()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
+- Added the function `CGAL::Polygon_mesh_processing::refine_with_plane()`, which enables users to refine a mesh with their intersection with a plane.
+
+### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
+- Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
+
+### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
+-   **Breaking change**: Classes based on the RS Library are no longer provided.
+
+### [BGL](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
+-   Added the function `CGAL::Euler::remove_degree_2_vertex()`, which enables users to remove vertices which have exactly two incident edges.
+
+### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
+-   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
+-   Fixed a bug in the extensions of vertex and halfedge types of the DCEL when used to instantiate Arrangement_with_history_2 or similar arrangement classes that derive from Arrangement_2.
+-   Renamed the prefix of the names of all concepts in the Arrangement_on_surface_2 package from "Arrangement" to "Aos".
+-   Renamed the old concept `AosApproximateTraits_2` to `AosApproximatePointTraits_2` to make room for the new concept `AosApproximateTraits_2`. This concept requires the provision of a functor called `Approximate_2` that has an operator that approximates the coordinates of a point.
+-   Introduced a new concept called `AosApproximateTraits_2`. It refines the concept `AosApproximatePointTraits_2`. This concept requires the provision of a functor called `Approximate_2`. In addition to an operator that approximates the coordinates of a point, it also requires the provision of (i) an operator that approximates a points, and (ii) an operator that approximates a curve.
+-   Changed all "typedef" style statements in the user manual to "using" style. (Observe that a similar update to the examples has already been made in a previous release.)
+-   Fixed do_intersect() of a 2D Arrangement and a curve.
+-   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+-   Made the `Arr_linear_traits_2` a model of the new concept.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
+
+-   Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generates initial points,
+  - `initial_points` : enables the user to specify a `Range` of initial points.
+-   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
+
+### [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
+-   Added a new mesh domain `Poisson_mesh_domain_3` that integrates some optimizations from the deprecated 3D Surface Mesh Generation package.
+
+### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
+
+-   Added a new named parameter for `CGAL::Subdivision_method_3::Loop_subdivision()` and
+    `CGAL::Subdivision_method_3::CatmullClark_subdivision()`, which enables users to subdivide
+    a mesh without modifying its geometry.
+
+### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
+
+-  **Breaking change**: In the class template `Constrained_triangulation_plus_2`, the value type of the range returned
+   by `subconstraints()` has changed from `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+   The old range type is now returned by a new function named `subconstraints_and_contexts()`.
 
 ### [Polygon Repair](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonRepair)
 

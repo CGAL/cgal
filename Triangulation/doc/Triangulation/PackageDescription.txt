@@ -101,6 +101,8 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 - `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
 - `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>`
 - `CGAL::Triangulation_face<TriangulationDataStructure_>`
+- `CGAL::TDS_full_cell_default_storage_policy`
+- `CGAL::TDS_full_cell_mirror_storage_policy`
 
 \cgalCRPSection{(Geometric) Triangulations}
 

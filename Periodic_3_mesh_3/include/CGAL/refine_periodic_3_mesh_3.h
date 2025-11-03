@@ -270,7 +270,7 @@ void project_dummy_points_of_surface(C3T3& c3t3,
  * `criteria` provides a sizing field to guide the discretization
  * of 1-dimensional exposed features.
  *
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param c3t3 the mesh to be refined.
  * \param domain the domain to be discretized
