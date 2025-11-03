@@ -62,6 +62,15 @@ inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
   return s_do_intersect(pgn1, pgn2, traits);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename Kernel, typename Container, bool b>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
+
 // Polygon_2, Polygon_with_hole_2 ==============================================
 // With Traits
 template <typename Kernel, typename Container, typename Traits>
@@ -79,6 +88,15 @@ inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_do_intersect(pgn1, pgn2, traits);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename Kernel, typename Container, bool b>
+inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
 
 // Polygon_with_hole_2, Polygon_2 ==============================================
 // With Traits
@@ -98,6 +116,15 @@ inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
   return s_do_intersect(pgn1, pgn2, traits);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename Kernel, typename Container, bool b>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_2<Kernel, Container>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
+
 // Polygon_with_hole_2, Polygon_with_hole_2 ====================================
 // With Traits
 template <typename Kernel, typename Container, typename Traits>
@@ -116,6 +143,15 @@ inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
   return s_do_intersect(pgn1, pgn2, traits);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename Kernel, typename Container, bool b>
+inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
+
 // General_polygon_2, General_polygon_2 ========================================
 // With Traits
 template <typename ArrTraits, typename GpsTraits>
@@ -133,6 +169,15 @@ inline bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_do_intersect(pgn1, pgn2, traits);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename ArrTraits, bool b>
+inline bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
+                         const General_polygon_2<ArrTraits>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
 
 // General_polygon_2, General_polygon_with_holes_2 =============================
 // With Traits
@@ -153,6 +198,16 @@ inline bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_do_intersect(pgn1, pgn2, traits);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename ArrTraits, bool b>
+inline bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
+                         const General_polygon_with_holes_2
+                           <General_polygon_2<ArrTraits> >& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
 
 // General_polygon_with_holes_2, General_polygon_2 =============================
 // With Traits
@@ -175,6 +230,17 @@ inline bool do_intersect(const General_polygon_with_holes_2
   return s_do_intersect(pgn1, pgn2, traits);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename ArrTraits, bool b>
+inline bool do_intersect(const General_polygon_with_holes_2
+                           <General_polygon_2<ArrTraits> >& pgn1,
+                         const General_polygon_2<ArrTraits>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
+
+
 // General_polygon_with_holes_2, General_polygon_with_holes_2 ==================
 // With Traits
 template <typename Polygon_, typename Traits>
@@ -192,6 +258,15 @@ inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
   typename Gps_default_traits<Polygon_with_holes>::Traits traits;
   return s_do_intersect(pgn1, pgn2, traits);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename Polygon_, bool b>
+inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                         const General_polygon_with_holes_2<Polygon_>& pgn2,
+                         std::bool_constant<b>) {
+  return do_intersect(pgn1, pgn2);
+}
+#endif
 
 //@}
 
@@ -224,6 +299,14 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
   return do_intersect(begin, end, traits, k);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename InputIterator, bool b>
+inline bool do_intersect(InputIterator begin, InputIterator end, std::bool_constant<b>,
+                         std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0) {
+  return do_intersect(begin, end);
+}
+#endif
+
 // With Traits
 template <typename InputIterator1, typename InputIterator2, typename Traits>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
@@ -248,6 +331,17 @@ inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
   typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_do_intersect(begin1, end1, begin2, end2, traits, k);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <typename InputIterator1, typename InputIterator2, bool b>
+inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                         InputIterator2 begin2, InputIterator2 end2,
+                         std::bool_constant<b>,
+                         std::enable_if_t<CGAL::is_iterator<InputIterator1>::value &&
+                                          CGAL::is_iterator<InputIterator2>::value >* = 0) {
+  return do_intersect(begin1, end1, begin2, end2);
+}
+#endif
 
 //@}
 
