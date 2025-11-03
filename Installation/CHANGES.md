@@ -4,6 +4,12 @@
 
 Release date: July 2026
 
+### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+-   Made the `Arr_linear_traits_2` a model of the new concept.
+
+
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
 - **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
