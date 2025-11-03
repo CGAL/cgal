@@ -168,14 +168,17 @@ construct_skeleton(const TriangleMesh& tmesh,
  *
  * constructs the interior or exterior straight skeleton of a 3D polyhedron.
  *
- * Positive time values signify outward offsetting, while negative values or an empty times range
- * correspond to inward offsetting.
+ * Positive time values signify outward construction, while negative values or an empty times range
+ * correspond to inward construction.
+ *
+ * Face weights may be passed to represent different front speeds. These values are always positive
+ * since they represent absolute speeds.
  *
  * The upper bound `max_time` defines how far the straight skeleton is constructed,
  * i.e. nodes at a time greater than `max_time` are not created, which may thus create
  * unbounded arcs and sheets in the straight skeleton.
  *
- * \warning An epsilon perturbation is always applied to the input mesh's geometry as to avoid
+ * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
  * degenerate configurations, See \ref Straight_skeleton_3Limitations for more information.
  *
  * \tparam TriangleMesh must be a model of `FaceListGraph`, `HalfedgeListGraph`
@@ -217,7 +220,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
- * \pre The value `max_time` should be either positive or negative (non-zero).
+ * \pre The value `max_time` must be either positive or negative (non-zero).
  * \pre The input `tmesh` must be a non-empty, closed, and self-intersection-free triangle mesh.
  */
 template <typename TriangleMesh,

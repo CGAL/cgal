@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
  * \ingroup PkgStraightSkeleton3OffsettingFunctions
  *
- * This function generates face offsets of an input triangle mesh at user-specified times.
+ * This function generates face offsets of an input triangle mesh at user-specified target times.
  *
  * The offset polyhedra are constructed by progressively translating the faces of the input mesh
  * along their normal directions at a speed proportional to their weight and treating events
@@ -39,10 +39,11 @@ namespace CGAL {
  * equivalent to the construction of a straight skeleton, and the offset polyhedra correspond
  * to the intermediate states of the input mesh during the straight skeleton construction.
  *
- * Positive time values correspond to outward offsetting, while negative values or an empty times range
- * correspond to inward offsetting.
+ * Positive time values correspond to outward offsetting, while negative values or an empty times
+ * range correspond to inward offsetting. Face weights are always positive since they represent
+ * absolute speeds.
  *
- * \warning An epsilon perturbation is always applied to the input mesh's geometry as to avoid
+ * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
  * degenerate configurations, See \ref Straight_skeleton_3Limitations for more information.
  *
  * \tparam TriangleMeshIn must be a model of `FaceListGraph`, `HalfedgeListGraph`
@@ -89,15 +90,8 @@ namespace CGAL {
  * \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *               among the ones listed below
  *  \cgalNamedParamsBegin
- *    \cgalParamNBegin{face_weight_map}
- *     \cgalParamDescription{a property map filled by this function, associating to each output face
- *                           the weight (speed) of its corresponding face in the input.}
- *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%face_descriptor`
- *                    as key type and `double` as value type}
- *     \cgalParamDefault{unused}
- *   \cgalParamNEnd
  *   \cgalParamNBegin{do_not_triangulate_faces}
- *     \cgalParamDescription{a Boolean used to specify whether the offset meshes' faces
+ *     \cgalParamDescription{a Boolean used to specify whether the faces of the offset meshes
  *                           should be triangulated or not.}
  *     \cgalParamDefault{`false` (i.e., faces are triangulated)}
  *     \cgalParamExtra{Note that sometimes faces must be triangulated as to be representable in
@@ -107,7 +101,7 @@ namespace CGAL {
  *
  * \return `true` if offset meshes were successfully constructed; `false` otherwise.
  *
- * \pre Save offsets should be either all positive, or all negative.
+ * \pre Target times must be either all positive, or all negative.
  * \pre The input mesh is a closed, outward-oriented, triangle mesh without self-intersections.
  */
 template <typename TriangleMeshIn, typename PolygonMeshOut,
