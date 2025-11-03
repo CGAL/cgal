@@ -1575,8 +1575,8 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
   bool lBottomFaceExists      = ! is_border(qp,g);
   bool lTopLeftFaceExists     = lTopFaceExists    && ! is_border(pt,g);
   bool lBottomRightFaceExists = lBottomFaceExists && ! is_border(qb,g);
-  bool lBottomIsTriangle       = lBottomFaceExists && next(next(qp, g), g) == prev(qp,g);
-  bool lTopIsTriangle          = lTopFaceExists && next(next(pq, g), g) == prev(pq,g);
+  bool lBottomIsTriangle       = lBottomFaceExists && is_triangle(qp,g);
+  bool lTopIsTriangle          = lTopFaceExists && is_triangle(pq,g);
 
   vertex_descriptor q = target(pq, g);
   vertex_descriptor p = source(pq, g);
@@ -1584,7 +1584,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
 
   bool lP_Erased = false;
 
-  if ( lTopFaceExists && lTopIsTriangle)
+  if ( lTopIsTriangle)
   {
     CGAL_precondition( ! is_border(opposite(pt, g),g) ) ; // p-q-t is a face of the mesh
     if ( lTopLeftFaceExists )
@@ -1611,7 +1611,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
     }
   }
 
-  if ( lBottomFaceExists && lBottomIsTriangle)
+  if ( lBottomIsTriangle)
   {
     CGAL_precondition( ! is_border(opposite(qb, g),g) ) ; // p-q-b is a face of the mesh
     if ( lBottomRightFaceExists )
