@@ -15,8 +15,8 @@
 #include <fstream>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
 
-typedef CGAL::Exact_rational		NumberType;
-// typedef CGAL::Gmpq	NumberType;
+// typedef CGAL::Exact_rational		NumberType;
+typedef CGAL::Gmpq	NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                             ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                        	Traits;
@@ -31,6 +31,18 @@ typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Delaunay_trian
 typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>                                            Delaunay_triangulation;
 typedef typename Delaunay_triangulation::CMap 																	CMap;
 typedef typename Delaunay_triangulation::Anchor                                                                 Anchor;
+
+typedef typename Delaunay_triangulation::Dart_const_descriptor	Dart;
+
+bool contains(std::vector<Point> vec, Point query)
+	{
+		for(auto p : vec) {
+			if(p == query) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 int main(int argc, char **argv)
 {
@@ -88,23 +100,23 @@ int main(int argc, char **argv)
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	// To center the drawing s.t. v0 is translated at 0
-	// Anchor anchor = dt.locate(v0);
-	// int index = 0;
-	// for (int i = 0; i < 3; i++) {
-	// 	if (v0 == anchor.vertices[i]) {
-	// 		index = i;
-	// 	}
-	// }
+	Anchor anchor = dt.locate(v0);
+	int index = 0;
+	for (int i = 0; i < 3; i++) {
+		if (v0 == anchor.vertices[i]) {
+			index = i;
+		}
+	}
 
-	// Isometry center_v0 = CGAL::hyperbolic_translation < Traits > (v0);
-	// Anchor start = Anchor();
-	// start.dart = anchor.dart;
-	// for (int i = 0; i < 3; i++) {
-	// 	start.vertices[i] = center_v0.evaluate(anchor.vertices[(i + index) % 3]);
-	// 	if (i < index) {
-	// 		start.dart = dt.Base::ccw(start.dart);
-	// 	}
-	// }
+	Isometry center_v0 = CGAL::hyperbolic_translation < Traits > (v0);
+	Anchor start = Anchor();
+	start.dart = anchor.dart;
+	for (int i = 0; i < 3; i++) {
+		start.vertices[i] = center_v0.evaluate(anchor.vertices[(i + index) % 3]);
+		if (i < index) {
+			start.dart = dt.Base::ccw(start.dart);
+		}
+	}
 
 	// // 5. DRAW the triangulation
 	// // using a BFS algo to explore the triangles
@@ -144,25 +156,63 @@ int main(int argc, char **argv)
 
 	// window.item().draw_triangles(to_draw);
 
+	std::queue < Anchor > bfs_queue;
+	std::vector < Anchor > to_draw;
+
+	size_t in_queue = cmap.get_new_mark();  // mark darts of triangles with an anchor in the queue
+	cmap.unmark_all(in_queue);
+	bfs_queue.push(start);
+
+	std::map<Dart, std::vector<Point>> test;
+
+	while (!bfs_queue.empty()) {
+		Anchor & current = bfs_queue.front();
+		test[current.dart].push_back(current.vertices[0]);
+		to_draw.push_back(current);
+		auto invader = current.dart;
+		for (int i = 0; i < 3; i++) {
+			auto invaded = dt.Base::opposite(invader);
+			if (test[dt.anchor(invaded).dart].size() < 50) {
+				Complex cross_ratio = dt.Base::get_cross_ratio(invader);
+				Point & c = current.vertices[i % 3];
+				Point & a = current.vertices[(i + 1) % 3];
+				Point & b = current.vertices[(i + 2) % 3];
+				Point d =
+				    dt.Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
+				Anchor bla = Anchor(invaded, a, c, d);
+				unsigned id = dt.index_in_anchor(invaded);
+				if(!contains(test[dt.anchor(invaded).dart], bla.vertices[id])) {
+					test[dt.anchor(bla.dart).dart].push_back(bla.vertices[id]);
+					bfs_queue.push(bla);
+				}
+			}
+			invader = dt.Base::ccw(invader);
+		}
+		bfs_queue.pop();
+	}
+	cmap.free_mark(in_queue);
+
+	window.item().draw_triangles(to_draw);
+
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
-	Anchor anchor = dt.locate(v0);
-	int index = 0;
-	for (int i = 0; i < 3; i++) {
-		if (v0 == anchor.vertices[i]) {
-			index = i;
-		}
-	}
+	// Anchor anchor = dt.locate(v0);
+	// int index = 0;
+	// for (int i = 0; i < 3; i++) {
+	// 	if (v0 == anchor.vertices[i]) {
+	// 		index = i;
+	// 	}
+	// }
 
-	Anchor start = Anchor();
-	start.dart = anchor.dart;
-	for (int i = 0; i < 3; i++) {
-		start.vertices[i] = anchor.vertices[(i + index) % 3];
-		if (i < index) {
-			start.dart = dt.Base::ccw(start.dart);
-		}
-	}
+	// Anchor start = Anchor();
+	// start.dart = anchor.dart;
+	// for (int i = 0; i < 3; i++) {
+	// 	start.vertices[i] = anchor.vertices[(i + index) % 3];
+	// 	if (i < index) {
+	// 		start.dart = dt.Base::ccw(start.dart);
+	// 	}
+	// }
 
-	window.item().draw_triangulation(dt, start);
+	// window.item().draw_triangulation(dt, start);
 	window.show();
 	QStringList args = app.arguments();
 	args.removeAt(0);

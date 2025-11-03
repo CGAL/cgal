@@ -22,13 +22,6 @@ struct Delaunay_triangulation_attributes {
 	};
 };
 
-enum Locate_type {
-	VERTEX,
-	EDGE,
-	FACE,
-	OUTSIDE = 4
-};
-
 template<class Traits>
 class Delaunay_triangulation_on_hyperbolic_surface_2: public Triangulation_on_hyperbolic_surface_2<Traits, Delaunay_triangulation_attributes<Traits>> {
 public:
@@ -37,10 +30,8 @@ public:
 	typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor    Anchor;
 
 	typedef typename Traits::FT 										Number;
-	typedef typename Root_of_traits<Number>::Root_of_2					Algebraic_number;
 	typedef typename Traits::Complex                                    Complex_number;
 	typedef typename Traits::Hyperbolic_point_2                         Point;
-	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
 	typedef typename CMap::Dart_descriptor                              Dart_descriptor;
 	typedef typename CMap::Dart_range                                   Dart_range;
 	typedef typename CMap::template One_dart_per_cell_range<0>          Vertex_range;
@@ -50,13 +41,24 @@ public:
 	typedef typename CMap::Dart_const_range                             Dart_const_range;
 	typedef typename CMap::template One_dart_per_cell_const_range<1>    Edge_const_range;
 	typedef typename CMap::template One_dart_per_cell_const_range<2>    Face_const_range;
-	typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
+
+	// undocumented types
+	typedef typename Root_of_traits<Number>::Root_of_2					Algebraic_number;
+	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
 	typedef Hyperbolic_isometry_2<Traits>                               Isometry;
+	typedef boost::numeric::interval<double>                            Interval;
+
+	enum Locate_type {
+		VERTEX = 0,
+		EDGE,
+		FACE,
+		OUTSIDE
+	};
 
 	//---------- CONSTRUCTORS
 	Delaunay_triangulation_on_hyperbolic_surface_2() {};
 	Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch);
-	Delaunay_triangulation_on_hyperbolic_surface_2(Domain const & domain);
+	Delaunay_triangulation_on_hyperbolic_surface_2(Hyperbolic_fundamental_domain_2<Traits> const & domain);
 	Delaunay_triangulation_on_hyperbolic_surface_2(Base & triangulation);
 
 	//---------- UTILITIES
@@ -66,7 +68,6 @@ public:
 	Anchor const & anchor() const;
 	unsigned index_in_anchor(Dart_const_descriptor const dart) const;
 	Dart_descriptor ith_dart(unsigned i, Anchor const & anch);
-	void display_vertices(Anchor const & anch, bool round = true) const;
 	bool is_valid() const;
 	void to_stream(std::ostream & s) const;
  	void from_stream(std::istream & s);
@@ -90,10 +91,8 @@ public:
 	double shortest_edge() const;
 
 private:
-	typedef boost::numeric::interval<double>                            Interval;
-
+	unsigned const NULL_INDEX = -1;
 	unsigned const NB_SIDES = 3;
-	unsigned const NULL_INDEX = 4;
 
 	//---------- CONSTRUCTORS
 	void set_anchors();
@@ -140,7 +139,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch)
 
 template<class Traits>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-Delaunay_triangulation_on_hyperbolic_surface_2(Domain const & domain)
+Delaunay_triangulation_on_hyperbolic_surface_2(Hyperbolic_fundamental_domain_2<Traits> const & domain)
 : Base(domain)
 {
 	Base::make_Delaunay();
@@ -302,30 +301,12 @@ set_attribute(Dart_descriptor dart, Complex_number const & cross_ratio)
 }
 
 template<class Traits>
-void
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-display_vertices(Anchor const & anch, bool round) const
-{       
-	if (round) {
-		for (unsigned i = 0; i < NB_SIDES; ++i) {
-			std::cout << "vertex " << i << " : ";
-			std::cout << "(" << to_double(anch.vertices[i].x()) << "," << to_double(anch.vertices[i].y()) <<")" << std::endl;
-		}
-	} else {
-		for (unsigned i = 0; i < NB_SIDES; ++i) {
-			std::cout << "vertex " << i << " : ";
-			std::cout << "(" << anch.vertices[i].x() << "," << anch.vertices[i].y() <<")" << std::endl;
-		}
-	}
-}
-
-template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 is_valid() const
 {
-	CGAL_assertion(Base::is_valid());
-	if (!Base::is_valid()) {
+	CGAL_assertion(Base::is_Delaunay());
+	if (!Base::is_Delaunay()) {
 		return false;
 	}
 
@@ -338,6 +319,9 @@ is_valid() const
 			Point & c1 = current.vertices[i];
 			Point & a1 = current.vertices[ccw(i)];
 			Point & b1 = current.vertices[cw(i)];
+			CGAL_precondition(norm(Complex_number(a1.x(), a1.y())) < Number(1));
+			CGAL_precondition(norm(Complex_number(b1.x(), b1.y())) < Number(1));
+			CGAL_precondition(norm(Complex_number(c1.x(), c1.y())) < Number(1));
 			Complex_number cross_ratio = Base::get_cross_ratio(current_dart);
 			Point d1 = Base::fourth_point_from_cross_ratio(a1, b1, c1, cross_ratio);
 
@@ -461,12 +445,12 @@ from_stream(std::istream & s)
 //---------- location and insertion
 
 // Output: The locate type lt of query relative to the anchor, and an index corresponding to:
-// - if lt == FACE: NULL_INDEX (= -1),
+// - if lt == FACE: NULL_INDEX,
 // - if lt == EDGE: index of the edge on which query lies,
 // - if lt == VERTEX: index of the vertex on which query lies,
 // - if lt == OUTSIDE: index of the first edge such that query and the third point of the triangle lies on different sides.
 template<class Traits>
-Locate_type
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Locate_type
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 relative_position(Point const & query, unsigned & li, Anchor const & anch) const
 {
@@ -501,9 +485,9 @@ typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
 {
-	Complex_number z_query (query.x(), query.y());
-	CGAL_precondition(norm(z_query) < Number(1));
-	CGAL_expensive_precondition(Base::is_Delaunay()); 
+	// Complex_number z_query (query.x(), query.y());
+	CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
+	CGAL_expensive_precondition(is_valid());
 
 	// initialisation
 	ld = 0;
@@ -550,8 +534,7 @@ typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
 {
-	Complex_number z_query (query.x(), query.y());
-	CGAL_precondition(norm(z_query) < Number(1));
+	CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
 
 	// initialisation
 	Dart_descriptor dart = hint.dart;
@@ -926,7 +909,7 @@ approx_circumcenter(Voronoi_point c, int p) const
 		y = to_double(c.y());
 	}
 
-	CGAL_assertion(norm(Complex_number_number(x, y)) < Number(1));
+	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
 	Point approx = Point(x, y);
 	return approx;
 }
@@ -955,11 +938,7 @@ epsilon_net(double const epsilon, unsigned const p)
 	std::list<Dart_descriptor> triangles;
 	for (typename Face_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
 		it != this->combinatorial_map_.template one_dart_per_cell<2>().end(); ++it) {
-		Anchor & current_anchor = anchor(it);
-		Voronoi_point c = circumcenter(current_anchor);
-		if (delta(c, current_anchor.vertices[0]) > BOUND) {
-			push_triangle(it, triangles, triangles_list_mark);
-		}
+		push_triangle(it, triangles, triangles_list_mark);
 	}
 
 	while (!triangles.empty()) {

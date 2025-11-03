@@ -43,4 +43,4 @@ target_link_libraries(dirichlet PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Q
 add_executable( benchs benchs.cpp window.cpp ${UIS})
 target_link_libraries(benchs PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
 
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
