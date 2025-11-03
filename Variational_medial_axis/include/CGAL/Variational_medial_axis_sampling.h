@@ -198,17 +198,17 @@ private:
  *      >::Kernel
  * \endcode
  */
-template <typename TriangleMesh_, typename GeomTraits_ = Default>
+template <typename TriangleMesh, typename GeomTraits = Default>
 class Medial_skeleton
 {
   using GT = typename Default::Get<
-      GeomTraits_,
+      GeomTraits,
       typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh_, vertex_point_t>::type>::value_type>::Kernel>::type;
+          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
-  using MSMesh = Medial_sphere_mesh<TriangleMesh_, GT>;
+  using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
   using Sphere_ID = typename MSMesh::Sphere_ID;
 
 public:
@@ -509,18 +509,18 @@ private:
 
 
 #ifndef DOXYGEN_RUNNING
-template <class TriangleMesh_, class GeomTraits_ = Default>
+template <class TriangleMesh, class GeomTraits = Default>
 class Medial_skeleton_offset_function
 {
   using GT = typename Default::Get<
-      GeomTraits_,
+      GeomTraits,
       typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh_, vertex_point_t>::type>::value_type>::Kernel>::type;
+          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSkeleton = Medial_skeleton<TriangleMesh_, GeomTraits_>;
+  using MSkeleton = Medial_skeleton<TriangleMesh, GeomTraits>;
   // AABB tree types over spheres
   //This is useless now
   // using Iterator = typename std::vector<Sphere_3>::const_iterator;
@@ -899,7 +899,7 @@ private:
 /// In addition, the user can explicitly request cluster merging or splitting operations to locally simplify or refine
 /// the skeleton structure.
 ///
-/// @tparam TriangleMesh_
+/// @tparam TriangleMesh
 ///         a model of `FaceListGraph`
 ///
 /// @tparam ConcurrencyTag_
@@ -913,71 +913,71 @@ private:
 ///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
 ///
-/// @tparam GeomTraits_
+/// @tparam GeomTraits
 ///         a model of `Kernel`<br>
 ///         <b>%Default:</b>
 /// \code
 ///     CGAL::Kernel_traits<
 ///       boost::property_traits<
-///          boost::property_map<TriangleMesh_, CGAL::vertex_point_t>::type
+///          boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type
 ///        >::value_type
 ///      >::Kernel
 /// \endcode
 ///
 /// @tparam VertexPointMap_
 ///         a model of `ReadWritePropertyMap`
-///         with `boost::graph_traits<TriangleMesh_>::%vertex_descriptor` as key and
-///         `GeomTraits_::Point_3` as value type.<br>
+///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
+///         `GeomTraits::Point_3` as value type.<br>
 ///         <b>%Default:</b>
 /// \code
-///   boost::property_map<TriangleMesh_, CGAL::vertex_point_t>::const_type.
+///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
 /// \endcode
 ///
 ///
 
-template <typename TriangleMesh_,
+template <typename TriangleMesh,
           typename ConcurrencyTag_ = Sequential_tag,
           typename AccelerationType_ = KD_tree_tag,
-          typename GeomTraits_ = Default,
+          typename GeomTraits = Default,
           typename VertexPointMap_ = Default>
 class Variational_medial_axis_sampling
 {
   using VPM = typename Default::Get<VertexPointMap_,
-                                    typename boost::property_map<TriangleMesh_, vertex_point_t>::const_type>::type;
+                                    typename boost::property_map<TriangleMesh, vertex_point_t>::const_type>::type;
   using GT = typename Default::Get<
-      GeomTraits_,
+      GeomTraits,
       typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh_, vertex_point_t>::type>::value_type>::Kernel>::type;
+          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
 
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
-  using MSMesh = Medial_sphere_mesh<TriangleMesh_, GT>;
+  using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
   using MSphere = typename MSMesh::MSphere;
   using Sphere_ID = typename MSMesh::Sphere_ID;
   using Point_set = Point_set_3<Point_3>;
   using Point_Index = typename Point_set::Index;
   using KD_tree_search_traits = CGAL::Search_traits_3<GT>;
 
-  using Tree = AABB_tree<AABB_traits_3<GT, AABB_face_graph_triangle_primitive<TriangleMesh_, VPM>>>;
+  using Tree = AABB_tree<AABB_traits_3<GT, AABB_face_graph_triangle_primitive<TriangleMesh, VPM>>>;
 
-  using face_descriptor = typename boost::graph_traits<TriangleMesh_>::face_descriptor;
-  using edge_descriptor = typename boost::graph_traits<TriangleMesh_>::edge_descriptor;
-  using vertex_descriptor = typename boost::graph_traits<TriangleMesh_>::vertex_descriptor;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   // Property map types
   using Vertex_normal_tag = CGAL::dynamic_vertex_property_t<Vector_3>;
-  using Vertex_normal_map = typename boost::property_map<TriangleMesh_, Vertex_normal_tag>::const_type;
+  using Vertex_normal_map = typename boost::property_map<TriangleMesh, Vertex_normal_tag>::const_type;
   using Face_normal_tag = CGAL::dynamic_face_property_t<Vector_3>;
-  using Face_normal_map = typename boost::property_map<TriangleMesh_, Face_normal_tag>::const_type;
+  using Face_normal_map = typename boost::property_map<TriangleMesh, Face_normal_tag>::const_type;
   using Face_nb_samples_tag = CGAL::dynamic_face_property_t<std::size_t>;
-  using Face_nb_samples_map = typename boost::property_map<TriangleMesh_, Face_nb_samples_tag>::const_type;
+  using Face_nb_samples_map = typename boost::property_map<TriangleMesh, Face_nb_samples_tag>::const_type;
   using Face_area_tag = CGAL::dynamic_face_property_t<FT>;
-  using Face_area_map = typename boost::property_map<TriangleMesh_, Face_area_tag>::const_type;
+  using Face_area_map = typename boost::property_map<TriangleMesh, Face_area_tag>::const_type;
   using Face_centroid_tag = CGAL::dynamic_face_property_t<Point_3>;
-  using Face_centroid_map = typename boost::property_map<TriangleMesh_, Face_centroid_tag>::const_type;
+  using Face_centroid_map = typename boost::property_map<TriangleMesh, Face_centroid_tag>::const_type;
 
-  using FWN = CGAL::Fast_winding_number<TriangleMesh_, Face_normal_map, Face_area_map, Face_centroid_map, Tree>;
+  using FWN = CGAL::Fast_winding_number<TriangleMesh, Face_normal_map, Face_area_map, Face_centroid_map, Tree>;
 
 public:
 
@@ -1043,7 +1043,7 @@ public:
   /// \cgalNamedParamsEnd
   ///
   template <class NamedParameters = parameters::Default_named_parameters>
-  Variational_medial_axis_sampling(const TriangleMesh_& tmesh,
+  Variational_medial_axis_sampling(const TriangleMesh& tmesh,
                           const NamedParameters& np = parameters::default_values(),
                           const GT& gt = GT())
       : tmesh_(tmesh)
@@ -1336,8 +1336,8 @@ public:
    * \return
    *     A `Medial_skeleton` object containing the medial skeleton data.
    */
-  Medial_skeleton<TriangleMesh_, GeomTraits_> skeleton() const {
-    Medial_skeleton<TriangleMesh_, GeomTraits_> skeleton;
+  Medial_skeleton<TriangleMesh, GeomTraits> skeleton() const {
+    Medial_skeleton<TriangleMesh, GeomTraits> skeleton;
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
@@ -1401,7 +1401,7 @@ private:
     bool success = false;
     // Create point set property maps
     std::tie(point_from_face_map_, success) = tpoints_.template add_property_map<face_descriptor>(
-        "points_from_face", boost::graph_traits<TriangleMesh_>::null_face());
+        "points_from_face", boost::graph_traits<TriangleMesh>::null_face());
     CGAL_assertion(success);
     std::tie(point_normal_map_, success) =
         tpoints_.template add_property_map<Vector_3>("point_normal", Vector_3(0., 0., 0.));
@@ -1426,7 +1426,7 @@ private:
 
     CGAL::Random rng(seed_);
 
-    CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_, VPM> g(tmesh_, vpm_, rng);
+    CGAL::Random_points_in_triangle_mesh_3<TriangleMesh, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples_; ++i) {
       Point_3 p = *g;
       face_descriptor f = g.last_item_picked();
@@ -2055,7 +2055,7 @@ private:
   }
 
 private:
-  const TriangleMesh_& tmesh_;
+  const TriangleMesh& tmesh_;
   Point_set tpoints_;
   GT traits_;
   VPM vpm_;
