@@ -349,6 +349,16 @@ public:
     int result = 0;
     std::list<EdgeWPtr> edges_toremove;
     for (const EdgeSPtr& edge : polyhedron->edges()) {
+      // the issue with below is that the weights also might be almost exactly the same...
+      // @todo add another epsilon...?
+#if 0
+      // always reject merges if weights are different
+      if (Hds_utils::get_speed(edge->get_facet_L()) != Hds_utils::get_speed(edge->get_facet_R())) {
+        std::cout << "F" << edge->get_facet_L()->id() << " and F" << edge->get_facet_R()->id() << " have different speeds: " << Hds_utils::get_speed(edge->get_facet_L()) << " " << Hds_utils::get_speed(edge->get_facet_R()) << std::endl;
+        continue;
+      }
+#endif
+
       if (has_coplanar_facets(edge, epsilon)) {
         edges_toremove.push_back(edge);
       }
