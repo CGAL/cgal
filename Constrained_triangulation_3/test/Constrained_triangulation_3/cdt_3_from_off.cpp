@@ -15,6 +15,9 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/utility.h>
 
+#include <CGAL/bisect_failures.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/region_growing.h>
@@ -24,7 +27,6 @@
 
 #include <cassert>
 #include <chrono>
-#include <exception>
 #include <fstream>
 #include <string_view>
 #include <string>
@@ -66,8 +68,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --merge-facets/--no-merge-facets: merge facets into patches (set by default)
   --merge-facets-old: merge facets using the old method
   --use-new-cavity-algorithm/--use-old-cavity-algorithm: use new or old cavity algorithm (default: new)
-  --failure-expression <expression>: expression to detect bad meshratio)
-  --ratio <double>: ratio of faces to remove (default: 0.1), if --failure-expression is used
+  --bisect: bisect failures
   --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
   --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
   --coplanar-polygon-max-angle <double>: max angle for coplanar polygons (default: 1)
@@ -135,12 +136,11 @@ struct CDT_options
   bool        debug_polygon_insertion             = false;
   bool        use_finite_edges_map                = false;
   bool        call_is_valid                       = true;
-  double      ratio                               = 0.1;
+  bool        bisect_failures                     = false;
   double      vertex_vertex_epsilon               = 0.; // 1e-14;
   double      segment_vertex_epsilon              = 0.; // 1e-14;
   double      coplanar_polygon_max_angle          = 5.1;
   double      coplanar_polygon_max_distance       = 1e-6;
-  std::string failure_assertion_expression        {};
   std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename                     {"dump.off"};
   std::string dump_patches_after_merge_filename   {};
@@ -181,10 +181,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
     } else if(arg == "--merge-facets-old"sv) {
       merge_facets                        = true;
       merge_facets_old_method             = true;
-    } else if(arg == "--failure-expression"sv) {
-      failure_assertion_expression        = get_next_arg_or_error_out();
-    } else if(arg == "--ratio"sv) {
-      ratio                               = std::stod(get_next_arg_or_error_out());
+    } else if(arg == "--bisect"sv) {
+      bisect_failures                     = true;
     } else if(arg == "--dump-patches-after-merge"sv) {
       dump_patches_after_merge_filename   = get_next_arg_or_error_out();
     } else if(arg == "--dump-patches-borders-prefix"sv) {
@@ -679,88 +677,41 @@ int go(Mesh mesh, CDT_options options) {
 }
 
 int bisect_errors(Mesh mesh, CDT_options options) {
-  auto nb_buckets = static_cast<int>(std::floor(1 / options.ratio)) + 1;
-  std::cerr << "RATIO: " << options.ratio << '\n';
+  // Lambda to get the size (number of faces) of the mesh
+  auto get_size = [](const Mesh& m) -> std::size_t {
+    return m.number_of_faces();
+  };
 
-  const Mesh orig_mesh{mesh};
-  Mesh bad_mesh{mesh};
+  // Lambda to simplify the mesh by removing faces in the range [start, end)
+  auto simplify = [](Mesh& m, std::size_t start, std::size_t end) -> bool {
+    // Remove faces from end-1 down to start (reverse order to maintain indices)
+    auto face_begin = m.faces().begin();
+    std::advance(face_begin, start);
+    auto face_end = face_begin;
+    std::advance(face_end, end - start);
 
-  int exit_code = EXIT_SUCCESS;
-
-  for(int bucket = 0; bucket < nb_buckets;) {
-    const auto nb_faces = mesh.number_of_faces();
-    auto nb_to_skip = static_cast<int>(std::round(nb_faces * options.ratio));
-    if(nb_to_skip < 1) {
-      nb_to_skip = 1;
-      nb_buckets = nb_faces;
+    for(auto it = face_end; it != face_begin; ) {
+      --it;
+      CGAL::Euler::remove_face(halfedge(*it, m), m);
     }
-    if(bucket == 0) {
-      std::cerr << "NB BUCKETS: " << nb_buckets << '\n';
-    }
 
-    auto simplify = [&](Mesh& m) {
-      std::cerr << "nb_to_skip: " << nb_to_skip << '\n';
-      std::cerr << "bucket: " << bucket << '\n';
-      const auto start = (std::min)(bucket * nb_to_skip, static_cast<int>(m.number_of_faces()));
-      const auto end = (std::min)(start + nb_to_skip, static_cast<int>(m.number_of_faces()));
-      std::cerr << "SKIP from " << start << " to " << end << '\n';
-      for(auto i = end - 1; i >= start; --i) {
-        const auto f = m.faces().begin() + i;
-        CGAL::Euler::remove_face(halfedge(*f, m), m);
-      }
-      assert(m.is_valid(true));
-      std::cerr << "number of faces: " << m.number_of_faces() << '\n';
-      if(m.number_of_faces() >= nb_faces) {
-        std::cerr << "ERROR: could not simplify mesh\n";
-        return false;
-      }
-      return true;
-    };
+    return m.is_valid(true);
+    return true;
+  };
 
-    if(simplify(mesh)) {
-      std::ofstream current("current_mesh.off");
-      current.precision(17);
-      current << mesh;
-      current.close();
+  // Lambda to run the test on the mesh
+  auto run_test = [&options](const Mesh& m) -> int {
+    return go(m, options);
+  };
 
-      try {
-        auto code = go(mesh, options);
-        if(code != EXIT_SUCCESS) {
-          exit_code = code;
-        }
-      } catch(std::exception& e) {
-        std::cerr << "CAUGHT EXCEPTION: " << e.what() << '\n';
-        if(std::string(e.what()).find(options.failure_assertion_expression) != std::string::npos) {
-          exit_code = EXIT_FAILURE;
-          std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
-          std::ofstream bad("bad_mesh.off");
-          bad.precision(17);
-          bad << mesh;
-          bad_mesh = mesh;
-          bucket = 0;
-          continue;
-        } else {
-          exit_code = EXIT_FAILURE;
-          std::cerr << "ERROR MESH: " << e.what() << '\n';
-          std::ofstream error("error_mesh.off");
-          error.precision(17);
-          error << mesh;
-          std::cerr << "go on...\n";
-        }
-      }
-      std::cerr << "GOOD MESH :-( " << mesh.number_of_faces() << " faces\n";
-    }
-    mesh = bad_mesh;
-    ++bucket;
-  }
-  if(bad_mesh.number_of_faces() < orig_mesh.number_of_faces()) {
-    std::cerr << "FINAL BAD MESH: " << bad_mesh.number_of_faces() << " faces\n";
-    std::ofstream final_bad("final_bad_mesh.off");
-    final_bad.precision(17);
-    final_bad << bad_mesh;
-    return go(bad_mesh, options);
-  }
-  return exit_code;
+  // Lambda to save the mesh to a file
+  auto save_mesh = [](const Mesh& m, const std::string& prefix) {
+    std::ofstream out(prefix + "_mesh.off");
+    out.precision(17);
+    out << m;
+  };
+
+  return CGAL::bisect_failures(mesh, get_size, simplify, run_test, save_mesh);
 }
 
 int main(int argc, char* argv[]) {
@@ -828,7 +779,7 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  if(!options.failure_assertion_expression.empty()) {
+  if(options.bisect_failures) {
     return bisect_errors(std::move(*read_mesh_result.polygon_mesh), options);
   }
 
