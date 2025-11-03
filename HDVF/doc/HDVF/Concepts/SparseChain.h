@@ -2,9 +2,10 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `SparseChain` describes the requirements for sparse vectors (called *sparse chains* in homology) optimized for topological computations. More precisely, `SparseChain` provides all the operations on chains required by the `SparseMatrix` concept.
+The concept `SparseChain` describes the requirements for sparse vectors (called *sparse chains* in homology) optimized for topological computations.
+More precisely, `SparseChain` provides all the operations on chains required by the `SparseMatrix` concept.
 
- `SparseChain` encodes non zero coefficients of a sparse chain.
+ `SparseChain` encodes non zero coefficients of a sparse vector.
 
  `SparseChain`  can be either row or column vectors. The following constants, called `StorageFormat`, encode the direction of sparse chains (and sparse matrices).
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
@@ -36,12 +37,12 @@ public:
     typedef int Storage_format;
 
     /*!
-     * \brief SparseChain iterator type.
+     * \brief Sparse chain iterator type.
      */
     typedef unspecified_type iterator;
 
     /*!
-     * \brief SparseChain constant iterator type.
+     * \brief Sparse chain constant iterator type.
      */
     typedef unspecified_type const_iterator;
 
@@ -58,7 +59,7 @@ public:
     SparseChain();
 
     /*!
-     * \brief Creates new empty sparse chain (ie. zero-chain) of given size.
+     * \brief Creates new empty sparse chain (ie.\ zero-chain) of given size.
      *
      * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      */
@@ -67,7 +68,7 @@ public:
     /*!
      * \brief Creates new sparse chain by copy.
      *
-     * Copy constructor, initialize a sparse chain from an existing sparse chain of same `ChaintypeFlag`.
+     * Copy constructor, initialize a sparse chain from an existing sparse chain of same storage format.
      */
     SparseChain(const SparseChain &other);
 
@@ -112,14 +113,14 @@ public:
     const_iterator cbegin() const noexcept;
 
     /*!
-     * \brief Past-the-endiIterator of the chain.
+     * \brief Past-the-end iterator of the chain.
      *
      * The function returns an iterator past the end of the chain.
      */
     iterator end() noexcept;
 
     /*!
-     * \brief Constant past-the-enditerator of the chain.
+     * \brief Constant past-the-end iterator of the chain.
      *
      * The function returns a constant iterator past the end of the chain.
      */
@@ -151,7 +152,7 @@ public:
      * \brief Adds two chains together.
      *
      * Add two chains and return the result in a new matrix.
-     * Chains must have the same `Coefficient_ring` and the same `StorageFormat`.
+     * Chains must have the same `Coefficient_ring` and the same storage format.
      */
     friend SparseChain operator+(const SparseChain &first, const SparseChain &second);
 
@@ -159,7 +160,7 @@ public:
      * \brief Subtracts a chain from another chain.
      *
      * Subtract two chains and return the result in a new matrix.
-     * Chains must have the same `Coefficient_ring` and the same `StorageFormat`.
+     * Chains must have the same `Coefficient_ring` and the same storage format.
      */
     friend SparseChain operator-(const SparseChain &first, const SparseChain &second);
 
@@ -174,7 +175,7 @@ public:
     friend SparseChain operator*(const SparseChain &_chain, const Coefficient_ring& lambda);
 
     /*!
-     * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
+     * \brief Performs matrix multiplication between a column chain and a row-chain and returns a column-based matrix.
      *
      * Generate a column-based matrix from the matrix multiplication and return it.
      * \pre chains must have the same `Coefficient_ring`.
@@ -201,7 +202,7 @@ public:
      * \brief Adds a chain to `this`.
      *
      * Add a chain to `this`.
-     * Chains must have the same `Coefficient_ring` and the same `StorageFormat`.
+     * Chains must have the same `Coefficient_ring` and the same storage format.
      */
     SparseChain& operator+=(const SparseChain &_other);
 
@@ -209,7 +210,7 @@ public:
      * \brief Subtracts a chain from `this`.
      *
      * Subtract a chain from `this`.
-     * Chains must have the same `Coefficient_ring` and the same `StorageFormat`.
+     * Chains must have the same `Coefficient_ring` and the same storage format.
      */
     SparseChain& operator-=(const SparseChain &_other);
 
@@ -219,9 +220,9 @@ public:
     SparseChain& operator*=(const Coefficient_ring& lambda);
 
     /*!
-     * \brief Transposes a SparseChain.
+     * \brief Transposes a sparse chain.
      *
-     * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
+     * The result is a chain with storage format switched between `CGAL::OSM::COLUMN` and `CGAL::OSM::ROW`.
      */
     SparseChain transpose();
 
@@ -279,7 +280,7 @@ public:
      *
      * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
      */
-    SparseChain& operator/=(const std::vector<size_t> &indexes);
+    SparseChain& operator/=(const std::vector<size_t> &indices);
 
     /**
      * \brief Restricts the chain to a sub-chain by removing a given index.
