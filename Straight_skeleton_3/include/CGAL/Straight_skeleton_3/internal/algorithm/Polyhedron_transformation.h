@@ -1015,8 +1015,8 @@ public:
       try {
         pcdt.insert_constraint(vh0, vh1);
       } catch(const typename PCDT::Intersection_of_constraints_exception&) {
-        CGAL_SS3_TRANSF_TRACE("Error: Intersection of constraint w/ " << vh0->point() << " " << vh1->point());
-        CGAL_SS3_TRANSF_TRACE(facet->to_string());
+        CGAL_SS3_TRANSF_TRACE_V(1, "Error: Intersection of constraint w/ " << vh0->point() << " " << vh1->point());
+        CGAL_SS3_TRANSF_TRACE_V(1, facet->to_string());
         CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
         return PCDT(projection_traits);
       }
@@ -1032,9 +1032,9 @@ public:
   triangulate_facet(const FacetSPtr& facet,
                     const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Triangulate facet " << facet->id() << " of polyhedron "
-                          << polyhedron->id() << " with " << facet->vertices().size()
-                          << " vertices");
+    CGAL_SS3_TRANSF_TRACE_V(16, "Triangulate facet " << facet->id() << " of polyhedron "
+                                << polyhedron->id() << " with " << facet->vertices().size()
+                                << " vertices");
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 

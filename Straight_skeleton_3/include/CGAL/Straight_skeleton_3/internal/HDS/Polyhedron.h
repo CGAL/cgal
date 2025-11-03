@@ -2020,7 +2020,7 @@ private:
     {
       bool result = false;
 
-      CGAL_SS3_HDS_TRACE("initialize plane of F" << id());
+      CGAL_SS3_HDS_TRACE_V(32, "initialize plane of F" << id());
 
       const Point_3* point_prev = nullptr;
       std::vector<const Point_3*> points;
@@ -2034,9 +2034,9 @@ private:
         point_prev = &point;
       }
 
-      CGAL_SS3_HDS_TRACE("computing normals from " << points.size() << " points");
+      CGAL_SS3_HDS_TRACE_V(64, "computing normals from " << points.size() << " points");
       CGAL_SS3_HDS_TRACE_CODE(for (std::size_t i=0; i<points.size(); ++i))
-      CGAL_SS3_HDS_TRACE("point " << i << ": " << *points[i]);
+      CGAL_SS3_HDS_TRACE_V(64, "point " << i << ": " << *points[i]);
 
       if (points.size() >= 3) {
         const Point_3& p0 = *(points[0]);

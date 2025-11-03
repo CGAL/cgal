@@ -854,7 +854,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(2, "Using " << vertex_splitter->to_string() << " to split vertices.");
 
     for (const VertexSPtr& vertex : vertices_tosplit) {
-      CGAL_SS3_SPLITTER_TRACE_V(8, "Generic split vertex:\n" << vertex->to_string());
+      CGAL_SS3_SPLITTER_TRACE_V(4, "Generic split vertex:\n" << vertex->to_string());
       if (vertex->degree() > 15) {
         CGAL_SS3_SPLITTER_TRACE_V(1, "Warning: degree of vertex (" << vertex->degree() << ") at "
                                         << vertex->point() << " is extremely high!");
