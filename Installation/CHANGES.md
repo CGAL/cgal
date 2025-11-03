@@ -27,6 +27,16 @@ Release date: July 2026
     Its constructor accepts a `Mesh` and optional named parameters to set the weight of the line policy relative to the plane policy, set the boundary cost multiplier or provide vertex normals.
 -  **Breaking change**: `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h` and is no longer deprecated.
 
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.1/Manual/packages.html#PkgBooleanSetOperations2)
+
+-   Optimized `do_intersect()`: (i) made it robust even with an inexact-predicate kernel, and (ii) made it quit
+    once an intersection is detected. (In the past, the intersection was computed in one phase and examined in a
+    subsequent phase.) This optimization somehow breaks backward compatibility as follows.
+    The variants of the free function `do_intersect()` that accept a third optional parameter, namely UsePolylines,
+    which determines whether the boundaries of the input polygons are treated as cyclic sequences of
+    (`x`-monotone) segments or as a cyclic sequences of (`x`-monotone) polylines, do not accept this third
+    parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
+    `do_intersect()`.)
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
@@ -248,16 +258,6 @@ Release date: Sept 2025
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
-### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.1/Manual/packages.html#PkgBooleanSetOperations2)
-
--   Optimized `do_intersect()`: (i) made it robust even with an inexact-predicate kernel, and (ii) made it quit
-    once an intersection is detected. (In the past, the intersection was computed in one phase and examined in a
-    subsequent phase.) This optimization somehow breaks backward compatibility as follows.
-    The variants of the free function `do_intersect()` that accept a third optional parameter, namely UsePolylines,
-    which determines whether the boundaries of the input polygons are treated as cyclic sequences of
-    (`x`-monotone) segments or as a cyclic sequences of (`x`-monotone) polylines, do not accept this third
-    parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
-    `do_intersect()`.)
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
