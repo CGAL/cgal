@@ -211,7 +211,7 @@ public:
     {
       VertexSPtr result = std::make_shared<Vertex>(point());
       CGAL_SS3_DEBUG_SPTR(result);
-      result->set_ID(get_ID());
+      result->set_id(id());
       if (has_data()) {
         result->set_data(get_data()->clone());
       }
@@ -258,12 +258,12 @@ public:
       polyhedron_list_it_ = list_it;
     }
 
-    int get_ID() const
+    int id() const
     {
       return id_;
     }
 
-    void set_ID(const int id)
+    void set_id(const int id)
     {
       id_ = id;
     }
@@ -700,14 +700,14 @@ public:
       result += ", Edges:" + IO::String_factory::fromInteger(edges_.size()) + " {";
       for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
-          result += " " + std::to_string(edge->get_ID());
+          result += " " + std::to_string(edge->id());
         }
       }
       result += " }";
       result += ", Facets:" + IO::String_factory::fromInteger(facets_.size()) + " {";
       for (FacetWPtr facet_wptr : facets_) {
         if (FacetSPtr facet = facet_wptr.lock()) {
-          result += " " + std::to_string(facet->get_ID());
+          result += " " + std::to_string(facet->id());
         }
       }
       result += " }";
@@ -857,7 +857,7 @@ public:
       CGAL_SS3_DEBUG_SPTR(result);
       result->vertex_src_->add_edge(result);
       result->vertex_tgt_->add_edge(result);
-      result->set_ID(get_ID());
+      result->set_id(id());
       if (has_data()) {
         result->set_data(get_data()->clone());
       }
@@ -998,12 +998,12 @@ public:
       this->polyhedron_list_it_ = list_it;
     }
 
-    int get_ID() const
+    int id() const
     {
       return this->id_;
     }
 
-    void set_ID(const int id)
+    void set_id(const int id)
     {
       this->id_ = id;
     }
@@ -1322,8 +1322,8 @@ public:
       // result += ", addr=" + IO::String_factory::fromPointer(this);
       result += ", l=";
       if (FacetSPtr facet_l = get_facet_L()) {
-          if (facet_l->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(get_facet_L()->get_ID());
+          if (facet_l->id() != -1) {
+            result += IO::String_factory::fromInteger(get_facet_L()->id());
           } else {
             // result += IO::String_factory::fromPointer(get_facet_L().get());
           }
@@ -1332,8 +1332,8 @@ public:
       }
       result += ", r=";
       if (FacetSPtr facet_r = get_facet_R()) {
-          if (facet_r->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(get_facet_R()->get_ID());
+          if (facet_r->id() != -1) {
+            result += IO::String_factory::fromInteger(get_facet_R()->id());
           } else {
             // result += IO::String_factory::fromPointer(get_facet_R().get());
           }
@@ -1343,8 +1343,8 @@ public:
       // src and tgt faces
       result += ", s=";
       if (get_facet_src()) {
-          if (get_facet_src()->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(get_facet_src()->get_ID());
+          if (get_facet_src()->id() != -1) {
+            result += IO::String_factory::fromInteger(get_facet_src()->id());
           } else {
             // result += IO::String_factory::fromPointer(get_facet_src().get());
           }
@@ -1353,8 +1353,8 @@ public:
       }
       result += ", d=";
       if (get_facet_tgt()) {
-          if (get_facet_tgt()->get_ID() != -1) {
-            result += IO::String_factory::fromInteger(get_facet_tgt()->get_ID());
+          if (get_facet_tgt()->id() != -1) {
+            result += IO::String_factory::fromInteger(get_facet_tgt()->id());
           } else {
             // result += IO::String_factory::fromPointer(get_facet_tgt().get());
           }
@@ -1589,7 +1589,7 @@ private:
         }
         result->add_edge(edge_c);
       }
-      result->set_ID(get_ID());
+      result->set_id(id());
       if (has_data()) {
         result->set_data(get_data()->clone(std::const_pointer_cast<Facet>(this->shared_from_this())));
       }
@@ -1990,12 +1990,12 @@ private:
       CGAL_assertion(get_polyhedron()->is_consistent());
     }
 
-    int get_ID() const
+    int id() const
     {
       return this->id_;
     }
 
-    void set_ID(const int id)
+    void set_id(const int id)
     {
       this->id_ = id;
     }
@@ -2020,7 +2020,7 @@ private:
     {
       bool result = false;
 
-      CGAL_SS3_HDS_TRACE("initialize plane of F" << get_ID());
+      CGAL_SS3_HDS_TRACE("initialize plane of F" << id());
 
       const Point_3* point_prev = nullptr;
       std::vector<const Point_3*> points;
@@ -2235,7 +2235,7 @@ public:
       VertexSPtr vertex = *it_v++;
       const Point_3& point = vertex->point();
       VertexSPtr vertex_c = Vertex::create(point);
-      vertex_c->set_ID(vertex->get_ID());
+      vertex_c->set_id(vertex->id());
       if (vertex->has_data()) {
         vertex_c->set_data(vertex->get_data()->clone());
       }
@@ -2248,7 +2248,7 @@ public:
       VertexSPtr src = vertices_c[edge->source()];
       VertexSPtr tgt = vertices_c[edge->target()];
       EdgeSPtr edge_c = Edge::create(src, tgt);
-      edge_c->set_ID(edge->get_ID());
+      edge_c->set_id(edge->id());
       if (edge->has_data()) {
         edge_c->set_data(edge->get_data()->clone());
       }
@@ -2260,7 +2260,7 @@ public:
       FacetSPtr facet = *it_f++;
       FacetSPtr facet_c = Facet::create();
       facet_c->set_plane(facet->get_plane());
-      facet_c->set_ID(facet->get_ID());
+      facet_c->set_id(facet->id());
       typename std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -2291,12 +2291,12 @@ public:
     return vertices_.empty() && edges_.empty() && facets_.empty();
   }
 
-  int get_ID() const
+  int id() const
   {
     return this->id_;
   }
 
-  void set_ID(const int id)
+  void set_id(const int id)
   {
     this->id_ = id;
   }
@@ -2306,29 +2306,29 @@ public:
     reset_all_IDs();
 
     for (const VertexSPtr& vertex : vertices_) {
-      vertex->set_ID(next_vertex_id_++);
+      vertex->set_id(next_vertex_id_++);
     }
     for (const EdgeSPtr& edge : edges_) {
-      edge->set_ID(next_edge_id_++);
+      edge->set_id(next_edge_id_++);
     }
     for (const FacetSPtr& facet : facets_) {
-      facet->set_ID(next_facet_id_++);
+      facet->set_id(next_facet_id_++);
     }
-    set_ID(-1);
+    set_id(-1);
   }
 
   void reset_all_IDs()
   {
     for (const VertexSPtr& vertex : vertices_) {
-      vertex->set_ID(-1);
+      vertex->set_id(-1);
     }
     for (const EdgeSPtr& edge : edges_) {
-      edge->set_ID(-1);
+      edge->set_id(-1);
     }
     for (const FacetSPtr& facet : facets_) {
-      facet->set_ID(-1);
+      facet->set_id(-1);
     }
-    set_ID(-1);
+    set_id(-1);
 
     next_vertex_id_ = 0;
     next_edge_id_ = 0;
@@ -2386,7 +2386,7 @@ public:
 
   void add_vertex(const VertexSPtr& vertex)
   {
-    vertex->set_ID(next_vertex_id_++);
+    vertex->set_id(next_vertex_id_++);
     typename std::list<VertexSPtr>::iterator it = vertices_.insert(vertices_.end(), vertex);
     vertex->set_polyhedron(this->shared_from_this());
     vertex->setPolyhedronListIt(it);
@@ -2437,7 +2437,7 @@ public:
 
   void add_edge(const EdgeSPtr& edge)
   {
-    edge->set_ID(next_edge_id_++);
+    edge->set_id(next_edge_id_++);
     typename std::list<EdgeSPtr>::iterator it = edges_.insert(edges_.end(), edge);
     edge->set_polyhedron(this->shared_from_this());
     edge->setPolyhedronListIt(it);
@@ -2499,7 +2499,7 @@ public:
 
   void add_facet(const FacetSPtr& facet)
   {
-    facet->set_ID(next_facet_id_++);
+    facet->set_id(next_facet_id_++);
     typename std::list<FacetSPtr>::iterator it_f = facets_.insert(facets_.end(), facet);
     facet->setPolyhedronListIt(it_f);
     facet->set_polyhedron(this->shared_from_this());

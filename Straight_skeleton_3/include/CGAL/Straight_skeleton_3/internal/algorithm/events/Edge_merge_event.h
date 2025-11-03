@@ -126,15 +126,15 @@ public:
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "Edge_merge_event\n";
-    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(ID=" << Base::id() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
-    sstr << "\t(facet=" << facet->get_ID() << ")\n";
-    sstr << "\t(edgeA=" << edge1->get_ID() << "\n\t\t[" << edge1->source()->to_string() << "\n\t\t "
+    sstr << "\t(facet=" << facet->id() << ")\n";
+    sstr << "\t(edgeA=" << edge1->id() << "\n\t\t[" << edge1->source()->to_string() << "\n\t\t "
                                                         << edge1->target()->to_string() << "])\n";
-    sstr << "\t(edgeB=" << edge2->get_ID() << "\n\t\t[" << edge2->source()->to_string() << "\n\t\t "
+    sstr << "\t(edgeB=" << edge2->id() << "\n\t\t[" << edge2->source()->to_string() << "\n\t\t "
                                                         << edge2->target()->to_string() << "])";
     return sstr.str();
   }

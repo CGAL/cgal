@@ -95,7 +95,7 @@ public:
       ++vertex_id_new;
       decltype(auto) point = get(vpm, vi);
       VertexSPtr vertex = Vertex::create(point);
-      vertex->set_ID(vertex_id_new);
+      vertex->set_id(vertex_id_new);
       result->add_vertex(vertex);
     }
 
@@ -122,7 +122,7 @@ public:
         unsigned int vertex_id = source(h, tmesh);
         if (vertex_id < vertices.size()) {
           poly_vertices[pos++] = vertices[vertex_id];
-          CGAL_SS3_IO_TRACE_V(32, "  V" << vertices[vertex_id]->get_ID() << "; "
+          CGAL_SS3_IO_TRACE_V(32, "  V" << vertices[vertex_id]->id() << "; "
                                         << vertices[vertex_id]->point());
         } else {
           std::stringstream whatstream;
@@ -136,7 +136,7 @@ public:
       }
 
       FacetSPtr facet = Facet::create(poly_vertices);
-      facet->set_ID(facet_id_new);
+      facet->set_id(facet_id_new);
 
       // Correspondence between the edges of the input mesh and the new edges
       // in the polyhedron
@@ -280,7 +280,7 @@ public:
           continue;
         }
 
-        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->get_facet_L()->get_ID() << " and " << edge->get_facet_R()->get_ID());
+        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->get_facet_L()->id() << " and " << edge->get_facet_R()->id());
         CGAL_assertion(sm.point(source(e, sm)) == edge->source()->point());
         CGAL_assertion(sm.point(target(e, sm)) == edge->target()->point());
 
@@ -345,7 +345,7 @@ public:
                                         CGAL::Constant_property_map<std::size_t, double>(1.0));
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      CGAL_assertion(facet->get_ID() != -1);
+      CGAL_assertion(facet->id() != -1);
       CGAL_assertion(facet->edges().size() >= 3);
 
       double speed = CGAL::to_double(Hds_utils::get_speed(facet));

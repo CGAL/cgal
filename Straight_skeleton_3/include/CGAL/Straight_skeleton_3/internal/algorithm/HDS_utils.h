@@ -196,7 +196,7 @@ public:
 
         final_planes[i++] = &(get_final_plane(facet));
 
-        CGAL_SS3_TRANSF_TRACE_V(32,"  Facet " << facet->get_ID() << " [" << get_final_plane(facet) << "]");
+        CGAL_SS3_TRANSF_TRACE_V(32,"  Facet " << facet->id() << " [" << get_final_plane(facet) << "]");
       }
     }
     CGAL_postcondition(i == 3);

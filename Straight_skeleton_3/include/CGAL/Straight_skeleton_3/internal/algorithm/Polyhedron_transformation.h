@@ -305,9 +305,9 @@ public:
     CGAL_precondition(edge->get_facet_L() == facet_from || edge->get_facet_R() == facet_from);
     CGAL_precondition(edge->get_facet_L() == facet_into || edge->get_facet_R() == facet_into);
 
-    CGAL_SS3_TRANSF_TRACE_V(16, "Merging F" << facet_from->get_ID() << " into F" << facet_into->get_ID() <<
-                                " Common edge E" << edge->get_ID() << " [V" << edge->source()->get_ID()
-                                                                   << " - V" << edge->target()->get_ID() << "]");
+    CGAL_SS3_TRANSF_TRACE_V(16, "Merging F" << facet_from->id() << " into F" << facet_into->id() <<
+                                " Common edge E" << edge->id() << " [V" << edge->source()->id()
+                                                               << " - V" << edge->target()->id() << "]");
     CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << facet_from->get_plane().orthogonal_vector());
     CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << facet_into->get_plane().orthogonal_vector());
 
@@ -467,7 +467,7 @@ public:
         CGAL_assertion(fL != fR);
 
         if (fL->vertices().size() == 3) {
-          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fL=" << fL->get_ID() << ")");
+          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fL=" << fL->id() << ")");
           EdgeSPtr third_edge;
           for (const EdgeSPtr& edge : fL->edges()) {
             if (edge != edge_src && edge != edge_tgt) {
@@ -480,7 +480,7 @@ public:
         }
 
         if (fR->vertices().size() == 3) {
-          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fR=" << fR->get_ID() << ")");
+          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fR=" << fR->id() << ")");
           EdgeSPtr third_edge;
           for (const EdgeSPtr& edge : fR->edges()) {
             if (edge != edge_src && edge != edge_tgt) {
@@ -614,7 +614,7 @@ public:
     while (i < 3 && it_f != vertex->facets().end()) {
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
-        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->get_ID());
+        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->id());
         CGAL_assertion(facet->has_data());
         const Plane_3& base_plane = Hds_utils::get_base_plane(facet);
         const FT& speed = Hds_utils::get_speed(facet);
@@ -692,7 +692,7 @@ public:
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
         planes[i++] = &(facet->get_plane());
-        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->get_ID() << " [" << facet->get_plane() << "]");
+        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->id() << " [" << facet->get_plane() << "]");
       }
     }
     CGAL_postcondition(i == 3);
@@ -754,7 +754,7 @@ public:
 
         planes[i] = shift_plane(facet, time);
 
-        CGAL_SS3_TRANSF_TRACE_V(64, "facet[" << i << "] = " << facet->get_ID());
+        CGAL_SS3_TRANSF_TRACE_V(64, "facet[" << i << "] = " << facet->id());
         CGAL_SS3_TRANSF_TRACE_V(64, "Offset Plane[" << i << "] = " << planes[i]);
 
         ++i;
@@ -1032,8 +1032,8 @@ public:
   triangulate_facet(const FacetSPtr& facet,
                     const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Triangulate facet " << facet->get_ID() << " of polyhedron "
-                          << polyhedron->get_ID() << " with " << facet->vertices().size()
+    CGAL_SS3_TRANSF_TRACE("Triangulate facet " << facet->id() << " of polyhedron "
+                          << polyhedron->id() << " with " << facet->vertices().size()
                           << " vertices");
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(polyhedron);

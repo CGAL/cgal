@@ -192,7 +192,7 @@ public:
           //                           << pcdt.number_of_faces() << " faces");
           // CGAL_SS3_IO_TRACE("Vertices: ");
           // CGAL_SS3_IO_TRACE_CODE(for (PCDT_VH vh : pcdt.finite_vertex_handles()) {)
-          // CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->get_ID());
+          // CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->id());
           // CGAL_SS3_IO_TRACE_CODE(})
         }
 
@@ -379,7 +379,7 @@ public:
 
         std::map<NodeSPtr, PCDT_VH> face_vhs;
         for (const NodeSPtr& node : nodes) {
-          CGAL_SS3_IO_TRACE(" CDT add node " << node->get_ID());
+          CGAL_SS3_IO_TRACE(" CDT add node " << node->id());
           auto res = face_vhs.emplace(node, PCDT_VH());
           CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
           if (res.second) {
@@ -393,7 +393,7 @@ public:
         for (const ArcSPtr& arc : sheet->arcs()) {
           NodeSPtr node_src = arc->source();
           NodeSPtr node_tgt = arc->target();
-          CGAL_SS3_IO_TRACE_V(32, " CDT arc between " << node_src->get_ID() << " and " << node_tgt->get_ID());
+          CGAL_SS3_IO_TRACE_V(32, " CDT arc between " << node_src->id() << " and " << node_tgt->id());
           CGAL_SS3_DEBUG_SPTR(node_src);
           CGAL_SS3_DEBUG_SPTR(node_tgt);
           PCDT_VH vh0 = face_vhs.at(node_src);

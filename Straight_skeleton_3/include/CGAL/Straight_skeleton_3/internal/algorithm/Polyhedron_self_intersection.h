@@ -249,7 +249,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet);
 
-    CGAL_SS3_ALGO_TRACE_V(64, "is_inside() using ray shooting (" << point << ", F" << facet->get_ID() << ")");
+    CGAL_SS3_ALGO_TRACE_V(64, "is_inside() using ray shooting (" << point << ", F" << facet->id() << ")");
 
     const Plane_3& pl = facet->get_plane();
     const Vector_3 normal = pl.orthogonal_vector();
@@ -560,7 +560,7 @@ public:
   static bool is_inside_using_ray_shooting_V2(const Point_3& point,
                                               const FacetSPtr& facet)
   {
-    CGAL_SS3_ALGO_TRACE_V(32, "is_inside() using ray shooting V2 (" << point << ", F" << facet->get_ID() << ")");
+    CGAL_SS3_ALGO_TRACE_V(32, "is_inside() using ray shooting V2 (" << point << ", F" << facet->id() << ")");
 
     const Plane_3& pl = facet->get_plane();
     const Vector_3 normal = pl.orthogonal_vector();
@@ -697,7 +697,7 @@ public:
     {
       using O = CGAL::cpp20::remove_cvref_t<decltype(o)>;
 
-      CGAL_SS3_ALGO_TRACE_V(64, "test_o_facet(" << e->get_ID() << " " << typeid(O).name() << ")");
+      CGAL_SS3_ALGO_TRACE_V(64, "test_o_facet(" << e->id() << " " << typeid(O).name() << ")");
 
       CGAL::Object obj = CGAL::intersection(facet_pl, o);
       if (!obj) {

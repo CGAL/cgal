@@ -142,18 +142,18 @@ public:
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "Tetrahedron_event\n";
-    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(ID=" << Base::id() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
     sstr << "\t(vertices";
     for (int i=0; i<4; ++i)
-      sstr << " " << vertices[i]->get_ID();
+      sstr << " " << vertices[i]->id();
     sstr << ")\n";
     sstr << "\t(edges";
     for (int i=0; i<6; ++i)
-      sstr << " " << edges[i]->get_ID();
+      sstr << " " << edges[i]->id();
     sstr << ")";
     return sstr.str();
   }

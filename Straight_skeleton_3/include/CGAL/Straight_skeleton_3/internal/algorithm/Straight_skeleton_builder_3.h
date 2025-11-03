@@ -532,7 +532,7 @@ public:
         break;
       }
 
-      CGAL_SS3_CORE_TRACE_V(2, "popped E" << event->get_ID() << " Type [" << event->getType() << "]");
+      CGAL_SS3_CORE_TRACE_V(2, "popped E" << event->id() << " Type [" << event->getType() << "]");
 
       static int event_id = -1;
       CGAL_SS3_CORE_TRACE_V(2, "--> Accepted event #" << ++event_id << " " << event->to_string() << " --");
@@ -778,8 +778,8 @@ public:
     SheetSPtr sheet_from = Hds_utils::get_sheet(edge_from);
     CGAL_precondition(sheet_into && sheet_from);
 
-    std::cout << "merge E" << edge_from->get_ID() << " S" << sheet_from->get_ID() << std::endl;
-    std::cout << "into E" << edge_into->get_ID() << " S" << sheet_into->get_ID() << std::endl;
+    std::cout << "merge E" << edge_from->id() << " S" << sheet_from->id() << std::endl;
+    std::cout << "into E" << edge_into->id() << " S" << sheet_into->id() << std::endl;
 
     if (sheet_into == sheet_from) {
       return;
@@ -793,7 +793,7 @@ public:
 
     for (EdgeWPtr edge_wptr : edges_from) {
       if (EdgeSPtr edge = edge_wptr.lock()) {
-        std::cout << "Set Sheet of E" << edge->get_ID() << std::endl;
+        std::cout << "Set Sheet of E" << edge->id() << std::endl;
         set_sheet(edge, sheet_into);
       }
     }
@@ -867,11 +867,11 @@ public:
 #endif
 
     CGAL_postcondition_code(for (auto v : polyhedron->vertices()))
-    CGAL_postcondition(v->get_ID() != -1);
+    CGAL_postcondition(v->id() != -1);
     CGAL_postcondition_code(for (auto e : polyhedron->edges()))
-    CGAL_postcondition(e->get_ID() != -1);
+    CGAL_postcondition(e->id() != -1);
     CGAL_postcondition_code(for (auto f : polyhedron->facets()))
-    CGAL_postcondition(f->get_ID() != -1);
+    CGAL_postcondition(f->id() != -1);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
@@ -987,14 +987,14 @@ public:
 
     FacetSPtr facetL = edge->get_facet_L();
     FacetSPtr facetR = edge->get_facet_R();
-    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->get_ID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->id());
+    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->id());
     CGAL_assertion(facetL && facetR && facetL != facetR);
 
     FacetSPtr facetP = edge->prev(facetL)->other(facetL);
     FacetSPtr facetN = edge->next(facetL)->other(facetL);
-    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->get_ID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->id());
+    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->id());
     CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
     CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
@@ -1014,14 +1014,14 @@ public:
 
     FacetSPtr facetL = edge->get_facet_L();
     FacetSPtr facetR = edge->get_facet_R();
-    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->get_ID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->id());
+    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->id());
     CGAL_assertion(facetL && facetR && facetL != facetR);
 
     FacetSPtr facetP = edge->prev(facetL)->other(facetL);
     FacetSPtr facetN = edge->next(facetL)->other(facetL);
-    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->get_ID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->id());
+    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->id());
     CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
     CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
@@ -1089,10 +1089,10 @@ public:
     FacetSPtr facet_l2 = edge_2->get_facet_L();
     FacetSPtr facet_r2 = edge_2->get_facet_R();
 
-    CGAL_SS3_CORE_TRACE_V(16, "Facet L1 = " << facet_l1->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "Facet R1 = " << facet_r1->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "Facet L2 = " << facet_l2->get_ID());
-    CGAL_SS3_CORE_TRACE_V(16, "Facet R2 = " << facet_r2->get_ID());
+    CGAL_SS3_CORE_TRACE_V(16, "Facet L1 = " << facet_l1->id());
+    CGAL_SS3_CORE_TRACE_V(16, "Facet R1 = " << facet_r1->id());
+    CGAL_SS3_CORE_TRACE_V(16, "Facet L2 = " << facet_l2->id());
+    CGAL_SS3_CORE_TRACE_V(16, "Facet R2 = " << facet_r2->id());
 
     // It is pointless to check for contact events that are farther in time than any of the two
     // involved edges as either they will be gone, or new events will be computed
@@ -1769,8 +1769,8 @@ public:
         }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         if (use_canonical_event_reps) {
-          CGAL_assertion(vertex_1->get_ID() != -1 && vertex_2->get_ID() != -1);
-          if (vertex_1->get_ID() > vertex_2->get_ID()) {
+          CGAL_assertion(vertex_1->id() != -1 && vertex_2->id() != -1);
+          if (vertex_1->id() > vertex_2->id()) {
             continue;
           }
         }
@@ -1808,7 +1808,7 @@ public:
         // consistency.
         VertexSPtr v1 = vertex_1;
         VertexSPtr v2 = vertex_2;
-        if (v1->get_ID() > v2->get_ID()) {
+        if (v1->id() > v2->id()) {
           std::swap(v1, v2);
         }
 
@@ -1936,7 +1936,7 @@ public:
 #endif
 
     for (const VertexSPtr& vertex_1 : vertices) {
-      CGAL_assertion(vertex_1->get_ID() != -1);
+      CGAL_assertion(vertex_1->id() != -1);
 
       if (Hds_utils::is_convex(vertex_1)) {
         continue;
@@ -1950,14 +1950,14 @@ public:
       }
 
       for (const VertexSPtr& vertex_2 : vertices_2) {
-        CGAL_assertion(vertex_2->get_ID() != -1);
+        CGAL_assertion(vertex_2->id() != -1);
 
         if (vertex_1 == vertex_2) {
           continue;
         }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         if (use_canonical_event_reps) {
-          if (vertex_1->get_ID() > vertex_2->get_ID()) {
+          if (vertex_1->id() > vertex_2->id()) {
             continue;
           }
         }
@@ -1976,7 +1976,7 @@ public:
         // See comment in the first instance of this swap
         VertexSPtr v1 = vertex_1;
         VertexSPtr v2 = vertex_2;
-        if (v1->get_ID() > v2->get_ID()) {
+        if (v1->id() > v2->id()) {
           std::swap(v1, v2);
         }
 
@@ -2004,7 +2004,7 @@ public:
         }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         if (use_canonical_event_reps) {
-          if (facet_1->get_ID() > facet_2->get_ID()) {
+          if (facet_1->id() > facet_2->id()) {
             continue;
           }
         }
@@ -2516,7 +2516,7 @@ public:
         }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         if (use_canonical_event_reps) {
-          if (vertex_1->get_ID() > vertex_2->get_ID()) {
+          if (vertex_1->id() > vertex_2->id()) {
             continue;
           }
         }
@@ -2535,7 +2535,7 @@ public:
         // See comment in the first instance of this swap
         VertexSPtr v1 = vertex_1;
         VertexSPtr v2 = vertex_2;
-        if (v1->get_ID() > v2->get_ID()) {
+        if (v1->id() > v2->id()) {
           std::swap(v1, v2);
         }
 
@@ -2725,7 +2725,7 @@ public:
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         if (use_canonical_event_reps) {
-          if (edge_1->get_ID() > edge_2->get_ID()) {
+          if (edge_1->id() > edge_2->id()) {
             continue;
           }
         }
@@ -2867,7 +2867,7 @@ public:
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
     if (use_canonical_event_reps) {
-      if (edge_1->get_ID() > edge_2->get_ID()) {
+      if (edge_1->id() > edge_2->id()) {
         return;
       }
     }
@@ -3083,7 +3083,7 @@ public:
 #endif
 
     for (const VertexSPtr& vertex : vertices) {
-      CGAL_assertion(vertex->get_ID() != -1);
+      CGAL_assertion(vertex->id() != -1);
 
       if (Hds_utils::is_reflex(vertex)) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
@@ -3220,7 +3220,7 @@ public:
       CGAL_SS3_CORE_TRACE_V(8, "Local Vertices for Vertex-Vertex Events (" << local_vertices_VV.size() << "):")
       CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
       CGAL_SS3_CORE_TRACE_CODE(for (const VertexSPtr& v : local_vertices_VV))
-      CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->get_ID();)
+      CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->id();)
       CGAL_SS3_CORE_TRACE_V(8, ss.str());
 
       const bool use_canonical_reps = false;
@@ -3309,7 +3309,7 @@ public:
       CGAL_SS3_CORE_TRACE_V(8, "Local Vertices for Pierce Events (" << local_vertices_VF.size() << "):");
       CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
       CGAL_SS3_CORE_TRACE_CODE(for (const VertexSPtr& v : local_vertices_VF))
-      CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->get_ID());
+      CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->id());
       CGAL_SS3_CORE_TRACE_V(8, ss.str());
 #else
       std::list<VertexSPtr> local_vertices_VF = polyhedron->vertices();
@@ -3485,7 +3485,7 @@ public:
     PQ duplicate_queue = queue;
     while (!duplicate_queue.empty()) {
       Abstract_event_sptr event = duplicate_queue.top();
-      CGAL_SS3_CORE_TRACE("Event E" << event->get_ID()
+      CGAL_SS3_CORE_TRACE("Event E" << event->id()
                             << " T" << event->getType()
                            << " @ " << event->time());
       if (event->is_valid()) {
@@ -3668,7 +3668,7 @@ public:
 
       CGAL_SS3_CORE_TRACE("Seek event @ " << event_scratch->time() << " Type " << event_scratch->getType());
 
-      CGAL_SS3_CORE_TRACE("Event E" << event_scratch->get_ID()
+      CGAL_SS3_CORE_TRACE("Event E" << event_scratch->id()
                           << " T" << event_scratch->getType()
                           << " @ " << event_scratch->time());
       CGAL_assertion(event_scratch->is_valid() && !is_event_obsolete(event_scratch));
@@ -3763,14 +3763,14 @@ public:
       // because it's before a zombie event.
       if (!is_save_event) {
         if (!event->is_valid()) {
-          CGAL_SS3_CORE_TRACE_V(16, "Skipping invalid event E" << event->get_ID());
+          CGAL_SS3_CORE_TRACE_V(16, "Skipping invalid event E" << event->id());
           event = {};
           queue.pop();
           continue;
         }
 
         if (is_event_in_the_past(event, current_time)) {
-          CGAL_SS3_CORE_TRACE_V(16, "Skipping event-in-the-past E" << event->get_ID());
+          CGAL_SS3_CORE_TRACE_V(16, "Skipping event-in-the-past E" << event->id());
           event = {};
           queue.pop();
           continue;
@@ -3780,7 +3780,7 @@ public:
         // have changed, then the event should be discarded.
         // "is_actual_..._event()" takes care of the other checks.
         if (is_event_obsolete(event)) {
-          CGAL_SS3_CORE_TRACE_V(16, "Skipping obsolete event E" << event->get_ID());
+          CGAL_SS3_CORE_TRACE_V(16, "Skipping obsolete event E" << event->id());
           event = {};
           queue.pop();
           continue;
@@ -4669,8 +4669,8 @@ public:
 
     CGAL_assertion(edge_2 == edge_toremove_2->next(facet));
 
-    CGAL_SS3_CORE_TRACE_V(4, "Edge #1: " << edge_1->get_ID());
-    CGAL_SS3_CORE_TRACE_V(4, "Edge #2: " << edge_2->get_ID());
+    CGAL_SS3_CORE_TRACE_V(4, "Edge #1: " << edge_1->id());
+    CGAL_SS3_CORE_TRACE_V(4, "Edge #2: " << edge_2->id());
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
@@ -4802,7 +4802,7 @@ public:
     std::array<VertexSPtr, 3> vertices = event->get_vertices();
     FacetSPtr facet = event->get_facet();
 
-    CGAL_SS3_CORE_TRACE_V(4, "Facet: " << facet->get_ID());
+    CGAL_SS3_CORE_TRACE_V(4, "Facet: " << facet->id());
     CGAL_SS3_CORE_TRACE_V(4, "VS:\n" << vertices[0]->to_string() << "\n"
                                      << vertices[1]->to_string() << "\n"
                                      << vertices[2]->to_string());
@@ -6407,11 +6407,11 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "-- Finished handling Event --");
 
     CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()))
-    CGAL_postcondition(v->get_ID() != -1);
+    CGAL_postcondition(v->id() != -1);
     CGAL_postcondition_code(for (const EdgeSPtr& e : polyhedron->edges()))
-    CGAL_postcondition(e->get_ID() != -1);
+    CGAL_postcondition(e->id() != -1);
     CGAL_postcondition_code(for (const FacetSPtr& f : polyhedron->facets()))
-    CGAL_postcondition(f->get_ID() != -1);
+    CGAL_postcondition(f->id() != -1);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()) {)

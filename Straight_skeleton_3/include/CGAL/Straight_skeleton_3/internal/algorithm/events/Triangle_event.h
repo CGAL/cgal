@@ -139,12 +139,12 @@ public:
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "Triangle_event\n";
-    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(ID=" << Base::id() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
-    sstr << "\t(facet=" << facet->get_ID() << ")";
+    sstr << "\t(facet=" << facet->id() << ")";
     return sstr.str();
   }
 

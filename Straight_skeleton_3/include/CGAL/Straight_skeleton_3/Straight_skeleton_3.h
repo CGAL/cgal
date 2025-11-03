@@ -197,12 +197,12 @@ public:
     /*!
     * returns a unique ID of the node.
     */
-    int get_ID() const
+    int id() const
     {
       return this->id_;
     }
 
-    void set_ID(const int id)
+    void set_id(const int id)
     {
       this->id_ = id;
     }
@@ -349,7 +349,7 @@ public:
       for (const ArcWPtr& arc_wptr : arcs_) {
         if (ArcSPtr arc = arc_wptr.lock()) {
           if (!first) result += ", ";
-          result += String_factory::fromInteger(arc->get_ID());
+          result += String_factory::fromInteger(arc->id());
           first = false;
         }
       }
@@ -359,7 +359,7 @@ public:
       for (const SheetWPtr& sheet_wptr : sheets_) {
         if (SheetSPtr sheet = sheet_wptr.lock()) {
           if (!first) result += ", ";
-          result += String_factory::fromInteger(sheet->get_ID());
+          result += String_factory::fromInteger(sheet->id());
           first = false;
         }
       }
@@ -592,12 +592,12 @@ public:
       this->list_it_ = list_it;
     }
 
-    int get_ID() const
+    int id() const
     {
       return this->id_;
     }
 
-    void set_ID(const int id)
+    void set_id(const int id)
     {
       this->id_ = id;
     }
@@ -701,13 +701,13 @@ public:
       // Node IDs
       result += "src=";
       if (node_src_) {
-        result += String_factory::fromInteger(node_src_->get_ID());
+        result += String_factory::fromInteger(node_src_->id());
       } else {
         result += "-1";
       }
       result += ", tgt=";
       if (node_tgt_) {
-        result += String_factory::fromInteger(node_tgt_->get_ID());
+        result += String_factory::fromInteger(node_tgt_->id());
       } else {
         result += "-1";
       }
@@ -717,7 +717,7 @@ public:
       for (const SheetWPtr& sheet_wptr : sheets_) {
         if (SheetSPtr sheet = sheet_wptr.lock()) {
           if (!first) result += ", ";
-          result += String_factory::fromInteger(sheet->get_ID());
+          result += String_factory::fromInteger(sheet->id());
           first = false;
         }
       }
@@ -854,12 +854,12 @@ public:
       this->list_it_ = list_it;
     }
 
-    int get_ID() const
+    int id() const
     {
       return this->id_;
     }
 
-    void set_ID(const int id)
+    void set_id(const int id)
     {
       this->id_ = id;
     }
@@ -993,7 +993,7 @@ public:
       bool first = true;
       for (const NodeSPtr& node : nodes_) {
         if (!first) result << ", ";
-        result << String_factory::fromInteger(node->get_ID());
+        result << String_factory::fromInteger(node->id());
         first = false;
       }
       result << "}, ";
@@ -1003,7 +1003,7 @@ public:
       first = true;
       for (const ArcSPtr& contour : contours_) {
         if (!first) result << ", ";
-        result << String_factory::fromInteger(contour->get_ID());
+        result << String_factory::fromInteger(contour->id());
         first = false;
       }
       result << "}, ";
@@ -1013,7 +1013,7 @@ public:
       first = true;
       for (const ArcSPtr& arc : arcs_) {
         if (!first) result << ", ";
-        result << String_factory::fromInteger(arc->get_ID());
+        result << String_factory::fromInteger(arc->id());
         first = false;
       }
       result << "}";
@@ -1190,17 +1190,17 @@ public:
     typename std::list<SheetSPtr>::iterator it_s = sheets_.begin();
     while (it_s != sheets_.end()) {
       SheetSPtr sheet = *it_s++;
-      sheet->set_ID(-1);
+      sheet->set_id(-1);
     }
     typename std::list<ArcSPtr>::iterator it_a = arcs_.begin();
     while (it_a != arcs_.end()) {
       ArcSPtr arc = *it_a++;
-      arc->set_ID(-1);
+      arc->set_id(-1);
     }
     typename std::list<NodeSPtr>::iterator it_n = nodes_.begin();
     while (it_n != nodes_.end()) {
       NodeSPtr node = *it_n++;
-      node->set_ID(-1);
+      node->set_id(-1);
     }
   }
 
@@ -1243,7 +1243,7 @@ public:
     {
       std::unordered_set<int> node_ids;
       for (const NodeSPtr& node : nodes_) {
-        int id = node->get_ID();
+        int id = node->id();
         if (!node_ids.insert(id).second) {
           CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Node ID in nodes_ list: " << id);
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
@@ -1256,7 +1256,7 @@ public:
     {
       std::unordered_set<int> arc_ids;
       for (const ArcSPtr& arc : arcs_) {
-        int id = arc->get_ID();
+        int id = arc->id();
         if (!arc_ids.insert(id).second) {
           CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Arc ID in arcs_ list: " << id);
           CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
@@ -1269,7 +1269,7 @@ public:
     {
       std::unordered_set<int> sheet_ids;
       for (const SheetSPtr& sheet : sheets_) {
-        int id = sheet->get_ID();
+        int id = sheet->id();
         if (!sheet_ids.insert(id).second) {
           CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Sheet ID in sheets_ list: " << id);
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());

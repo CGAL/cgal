@@ -155,10 +155,10 @@ public:
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "Flip_vertex_event\n";
-    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(ID=" << Base::id() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(vertex A=" << vertex_1->to_string() << "; vertex B=" << vertex_2->to_string() << ")\n";
-    sstr << "\t(facet A=" << facet_1->get_ID() << "; facet B=" << facet_2->get_ID() << ")";
+    sstr << "\t(facet A=" << facet_1->id() << "; facet B=" << facet_2->id() << ")";
     return sstr.str();
   }
 

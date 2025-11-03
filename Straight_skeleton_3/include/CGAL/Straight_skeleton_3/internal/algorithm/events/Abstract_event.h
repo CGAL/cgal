@@ -55,12 +55,12 @@ public:
     this->list_it_ = list_it;
   }
 
-  int get_ID() const
+  int id() const
   {
     return this->id_;
   }
 
-  void set_ID(const int id)
+  void set_id(const int id)
   {
     this->id_ = id;
   }
@@ -226,7 +226,7 @@ public:
         // Give priority to newer (higher) IDs. The point is that if an event has been updated
         // to a different type and appears multiple (non-zombie) times, it will be processed
         // with the updated type.
-        return eventA->get_ID() < eventB->get_ID();
+        return eventA->id() < eventB->id();
       }
       return (eventA->getType() > eventB->getType());
     }
@@ -257,7 +257,7 @@ struct Vertex_facet_neighborhood
     typename std::list<FacetWPtr>::const_iterator it = ifs.begin();
     for (int i = 0; i < 3; ++i, ++it) {
       if (FacetSPtr f = it->lock()) {
-        result[i] = f->get_ID();
+        result[i] = f->id();
       } else {
         CGAL_assertion(false);
         result[i] = -1;
@@ -295,10 +295,10 @@ struct Edge_facet_neighborhood
   static std::array<int, 4> collect_incident_facets(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
-    std::array<int, 4> result = {{ edge->get_facet_L()->get_ID(),
-                                   edge->get_facet_R()->get_ID(),
-                                   edge->get_facet_src()->get_ID(),
-                                   edge->get_facet_tgt()->get_ID() }};
+    std::array<int, 4> result = {{ edge->get_facet_L()->id(),
+                                   edge->get_facet_R()->id(),
+                                   edge->get_facet_src()->id(),
+                                   edge->get_facet_tgt()->id() }};
     return result;
   }
 
