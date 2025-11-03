@@ -27,15 +27,19 @@ typedef Kernel::FT                                              FT;
 typedef CGAL::Arr_segment_traits_2<Kernel>                      Arr_segment_traits_2;
 typedef Arr_segment_traits_2::Curve_2                           Curve_2;
 
-typedef CGAL::Snap_rounding_traits_2<Kernel>     SnapTraits;
+typedef CGAL::Polygon_2<Kernel>                                 Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>                      Polygon_with_holes_2;
+typedef std::vector<Polygon_with_holes_2>                       Pwh_vec_2;
 
-typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
-typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
-typedef std::vector<Polygon_with_holes_2>                   Pwh_vec_2;
+typedef CGAL::Cartesian<double>                                 Naive;
+typedef CGAL::Cartesian_converter<Kernel,Naive>                 EK_to_IK;
+typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
 
-typedef CGAL::Cartesian<double>                                        Naive;
-typedef CGAL::Cartesian_converter<Kernel,Naive>                         EK_to_IK;
-typedef CGAL::Cartesian_converter<Naive, Kernel>                         IK_to_EK;
+#ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
+#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Snap_rounding_2.h>
+typedef CGAL::Snap_rounding_traits_2<Kernel>                    SnapTraits;
+#endif
 
 //Biggest double with ulp smaller than an integer
 constexpr double maxFloat = std::pow(2,23);
@@ -90,10 +94,8 @@ void test(const std::vector<Segment_2> &segs){
   t.reset();
   t.start();
 #endif
-  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out));
   std::vector<Segment_2> out2(out.begin(), out.end());
-  // out.clear();
-  // CGAL::compute_snapped_subcurves_2(out2.begin(), out2.end(), out);
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
@@ -123,7 +125,7 @@ void test(const std::vector<Segment_2> &segs){
   Polyline_range_2 output_list;
   t.reset();
   t.start();
-  CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), output_list, 1./maxDouble);
+  CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), std::back_inserter(output_list), 1./maxDouble);
   t.stop();
   std::cout << "Running time with integer 2D snap (scaled at 10^15): " << t.time() << std::endl;
 #endif

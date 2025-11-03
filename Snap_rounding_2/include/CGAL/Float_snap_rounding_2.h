@@ -17,13 +17,11 @@
 #include <iostream>
 #endif
 
-#include <CGAL/intersection_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_2.h>
-#include <CGAL/Cartesian_converter.h>
+
+#include <CGAL/Float_snap_rounding_traits_2.h>
+
+#include <CGAL/intersection_2.h>
 #include <set>
 #include <vector>
 
@@ -33,70 +31,15 @@
 
 namespace CGAL {
 
-template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel>
-struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
-  typedef Arr_segment_traits_2<Exact_Kernel> Base;
-
-  typedef typename Base::FT        FT;
-  typedef typename Base::Point_2   Point_2;
-  typedef typename Base::Segment_2 Segment_2;
-  typedef typename Base::Vector_2  Vector_2;
-  typedef typename Base::Line_2    Line_2;
-
-  typedef typename Base::Less_x_2  Less_x_2;
-  typedef typename Base::Less_y_2  Less_y_2;
-  typedef typename Base::Less_xy_2 Less_xy_2;
-  typedef typename Base::Less_yx_2 Less_yx_2;
-  typedef typename Base::Equal_2   Equal_2;
-
-  typedef typename Base::Construct_source_2 Construct_source_2;
-  typedef typename Base::Construct_target_2 Construct_target_2;
-
-  typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_in;
-  typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_out;
-
-  // Return an upperbound of the squared distance between a point and its rounded value
-  struct Squared_round_bound_2{
-    double operator()(const FT &x) const{
-      double b=std::nextafter(to_interval(x).second - to_interval(x).first, std::numeric_limits<double>::infinity());
-      return b*b;
-    }
-    double operator()(const Point_2 &p) const{
-      return (*this)(p.x())+(*this)(p.y());
-    }
-  };
-
-  struct Construct_round_point_2{
-    double operator()(const FT &x) const{
-      return to_double(x);
-    }
-    Point_2 operator()(const Point_2 &p) const{
-      return Point_2((*this)(p.x()),(*this)(p.y()));
-    }
-  };
-
-  Converter_in converter_to_exact_object() const{
-    return Converter_in();
-  }
-
-  Converter_out converter_from_exact_object() const{
-    return Converter_out();
-  }
-
-  Squared_round_bound_2 squared_round_bound_2_object() const{
-    return Squared_round_bound_2();
-  }
-
-  Construct_round_point_2 construct_round_point_2_object() const{
-    return Construct_round_point_2();
-  }
-};
-
 namespace internal{
+  /*
+  Scan the vertices from left to right while maintening the y order of the segments.
+  Subdivide the segments if there are too close to a vertex
+  */
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
-  using Point_2   = typename Traits::Point_2;
   using FT        = typename Traits::FT;
+  using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
@@ -105,14 +48,17 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   using PolylineRangeIterator = typename PolylineRange::iterator;
 
   using Less_xy_2 = typename Traits::Less_xy_2;
-  using Less_yx_2 = typename Traits::Less_yx_2;
-  using Equal_2   = typename Traits::Equal_2;
+  using Less_y_2 = typename Traits::Less_y_2;
+  using Construct_segment_2 = typename Traits::Construct_segment_2;
+  using Construct_point_at_x_on_segment_2 = typename Traits::Construct_point_at_x_on_segment_2;
 
   using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
   using Squared_round_bound_2      = typename Traits::Squared_round_bound_2;
 
   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
-  Equal_2 equal = traits.equal_2_object();
+  Less_y_2 less_y_2 = traits.less_y_2_object();
+  Construct_segment_2 segment_2 = traits.construct_segment_2_object();
+  Construct_point_at_x_on_segment_2 point_at_x = traits.construct_point_at_x_on_segment_2_object();
 
   Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
   Squared_round_bound_2 round_bound = traits.squared_round_bound_2_object();
@@ -187,7 +133,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   std::cout << "Create the Event Queue" << std::endl;
 #endif
 
-  // Inout polylines are supposed going from left to right
+  // Input polylines are supposed going from left to right
   std::vector<Event> event_queue;
   event_queue.reserve(2*polylines.size());
   for(size_t li=0; li<polylines.size(); ++li){
@@ -207,7 +153,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Goes through Event" << std::endl;
 #endif
-  // TODO Vector is suboptimal for arbitrary insertion, looking or redblack tree of skip list
+  // TODO Vector is suboptimal for arbitrary insertion (Actually negligeable in the running time)
   // Track order of the lines along y along the events
   std::vector< size_t > y_order;
   y_order.push_back(event_queue[0].li);
@@ -233,7 +179,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 
         const Point_2 &p = pts[pi];
         Polyline &pl=polylines[li];
-        Segment_2 seg(pts[pl.front()], pts[pl.back()]);
+        Segment_2 seg=segment_2(pts[pl.front()], pts[pl.back()]);
 
         // (A+B)^2 <= 4*max(A^2,B^2)
         double bound=round_bound_pts[pi];
@@ -246,7 +192,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
           // We refine the pts to reduce the rounding shift and check again
           pts[pi].exact();
           pts[pl[pl.size()-2]].exact();
-          // The two following call of exact act act on seg variable since they appear in its DAG
+          // The two following call of exact act on seg variables since they appear in its DAG
           pts[pl.back()].exact();
           pts[pl.front()].exact();
           // Update the bounds
@@ -267,8 +213,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
                 return false;
 
             // Create a point on seg at the same x coordinate than p
-            FT y= (seg.supporting_line().y_at_x(pts[event.pi].x()));
-            pts.emplace_back(pts[event.pi].x(), y);
+            pts.push_back(point_at_x(seg, pts[event.pi].x()));
             std::size_t new_pi=pts.size()-1;
             round_bound_pts.emplace_back(round_bound(pts[new_pi]));
             // We insert it on pl before the last vertex
@@ -322,7 +267,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   // We sort the point by y to ensure the order of the point is preserved
   // Round value of y coordinates are indirectly modified in the case of a filter failure
   auto sort_pi=[&](std::size_t i, std::size_t j){
-    return pts[i].y() < pts[j].y();
+    return less_y_2(pts[i],pts[j]);
   };
   std::vector< std::size_t > indices(pts.size(),0);
   std::iota(indices.begin(),indices.end(),0);
@@ -445,7 +390,6 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
   Construct_round_point_2 round = traits.construct_round_point_2_object();
 
   snap_rounding_scan(pts, polylines, traits);
-
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Round" << std::endl;
 #endif
@@ -459,7 +403,6 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
   // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
   std::cout << "Subdivide vertical segments with vertices on them" << std::endl;
 #endif
-
   snap_post_process(pts, polylines, traits);
 }
 
@@ -471,16 +414,36 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 * Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interiors, based on the input curves.
 * The output is a range of polyline with each polyline corresponding to an input segment.
 *
+* TODO Currently compute_subcurves have no visitor to obtain a polyline per input segment, thus
+* currently the output contain one polyline per ubsegment of the arrangement
+*
 * @tparam Concurrency_tag allows choosing whether the algorithm runs in parallel or sequentially.
 * If `CGAL::Parallel_tag` is specified and CGAL is linked with the Intel TBB library, the algorithm will run in parallel.
 * Otherwise, if `CGAL::Sequential_tag` is specified (the default), the algorithm will run sequentially.
 * @tparam InputIterator iterator over a range of `Segment_2`
 * @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* \param begin,end the input segment range
+* \param out the output container
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
+*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
+*     \cgalParamType{CGAL::Concurrency_tag}
+*     \cgalParamDefault{CGAL::Sequential_tag}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
+*   \cgalParamNEnd
 */
 template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_begin,
-		                                                      InputIterator  	input_end,
-		                                                      OutputContainer&  output,
+typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
+		                                                      InputIterator  	end,
+		                                                      OutputContainer &out,
                                                           const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
@@ -495,8 +458,8 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
-  using I2E = typename Traits::Converter_in;
-  using E2O = typename Traits::Converter_out;
+  using I2E = typename Traits::Converter_to_exact;
+  using E2O = typename Traits::Converter_from_exact;
   using VectorIterator = typename std::vector<Segment_2>::iterator;
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename OutputContainer::iterator>::value_type>;
@@ -512,8 +475,8 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   E2O from_exact=traits.converter_from_exact_object();
 
   std::vector<Segment_2> convert_input;
-  for(InputIterator it=input_begin; it!=input_end; ++it)
-    convert_input.push_back(Segment_2(to_exact(*it)));
+  for(InputIterator it=begin; it!=end; ++it)
+    convert_input.push_back(to_exact(*it));
   std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
@@ -565,15 +528,14 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 #endif
 
   // Output polylines
-  output.clear();
   for(auto &poly: polylines){
     Polyline new_line;
     for(std::size_t pi: poly)
       new_line.push_back(pts[pi]);
-    output.push_back(new_line);
+    out.push_back(new_line);
   }
 
-  return output.begin();
+  return out.end();
 }
 
 /**
@@ -585,13 +547,29 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 * parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
 * @tparam InputIterator iterator of a segment range
 * @tparam OutputContainer inserter of a segment range
-* @tparam The exact kernel needed for computation (Epeck by default)
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* \param begin,end the input segment range
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
+*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
+*     \cgalParamType{CGAL::Concurrency_tag}
+*     \cgalParamDefault{CGAL::Sequential_tag}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
+*   \cgalParamNEnd
 */
-template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 input_begin,
-		                                                           InputIterator  	 input_end,
-		                                                           OutputContainer&  output,
-                                                               const NamedParameters &np = parameters::default_values())
+template <class InputIterator , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
+		                                       InputIterator  	 end,
+		                                       OutputIterator    out,
+                                           const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
                                                               NamedParameters,
@@ -605,13 +583,14 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
 
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
-  using I2E = typename Traits::Converter_in;
-  using E2O = typename Traits::Converter_out;
+  using I2E = typename Traits::Converter_to_exact;
+  using E2O = typename Traits::Converter_from_exact;
 
   using SegmentRange = std::vector<Segment_2>;
   using SegmentRangeIterator = typename SegmentRange::iterator;
 
   using Less_xy_2 = typename Traits::Less_xy_2;
+  using Construct_segment_2 = typename Traits::Construct_segment_2;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -622,10 +601,11 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
   E2O from_exact=traits.converter_from_exact_object();
 
   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
+  Construct_segment_2 segment_2 = traits.construct_segment_2_object();
 
   std::vector<Segment_2> convert_input;
-  for(InputIterator it=input_begin; it!=input_end; ++it)
-    convert_input.push_back(Segment_2(to_exact(*it)));
+  for(InputIterator it=begin; it!=end; ++it)
+    convert_input.push_back(to_exact(*it));
   std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
@@ -679,23 +659,23 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
 
   // Output a range of segments while removing duplicate ones
   std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
-  output.clear();
   for(auto &poly: polylines)
     for(std::size_t i=1; i<poly.size(); ++i)
       set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
   for(auto &pair: set_out_segs){
-    output.emplace_back(from_exact(pts[pair.first]), from_exact(pts[pair.second]));
+    *out++=from_exact(segment_2(pts[pair.first], pts[pair.second]));
     assert(pts[pair.first]!=pts[pair.second]);
   }
 
-  return output.begin();
+  return out;
 }
 
 /**
 * ingroup
 *
-* Given a range of Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygons.
-* Any polygon is guarantee to remain a Polygon in the output but may present pinched section and common vertices or segments with
+* Given a range of `Polygon_2`, compute rounded polygons such that their segments are either equal either disjoint in their interior, as induced by the input polygons.
+* The polygons are intended to be non-intersecting, unless the named parameter `compute_intersection` is set to `true`.
+* Any polygon is guarantee to remain a Polygon in the output but may present pinched section or/and common vertices or segments with
 * other polygons.
 *
 * @tparam InputIterator iterator of a CGAL::Polygon_2 range
@@ -712,17 +692,23 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
 *     \cgalParamDefault{CGAL::Sequential_tag}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{compute_intersection}
+*     \cgalParamDescription{Enable intersection computation between the polygons before performing snapping.}
+*     \cgalParamType{boolean}
+*     \cgalParamDefault{false}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{TODO}
-*     \cgalParamType{double}
-*     \cgalParamDefault{100}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * @warning The convex property of the polygons is not necessarly preserved
 */
-template <class InputIterator, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+template <class InputIterator, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
 void snap_polygons_2(InputIterator begin,
                      InputIterator end,
-                     OutputContainer out,
+                     OutputIterator out,
                      const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
@@ -738,8 +724,8 @@ void snap_polygons_2(InputIterator begin,
 
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
-  using I2E = typename Traits::Converter_in;
-  using E2O = typename Traits::Converter_out;
+  using I2E = typename Traits::Converter_to_exact;
+  using E2O = typename Traits::Converter_from_exact;
   using VectorIterator = typename std::vector<Segment_2>::iterator;
 
   using parameters::choose_parameter;
@@ -748,7 +734,7 @@ void snap_polygons_2(InputIterator begin,
   Polygon_2 P=*begin;
 
   const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
-  const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::do_intersection_computation), false);
+  const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersection), false);
 
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
@@ -761,27 +747,8 @@ void snap_polygons_2(InputIterator begin,
   std::vector<size_t> polygon_index;
 
   if(compute_intersections){
-    std::set<Point_2> unique_point_set;
-    std::map<Point_2, int> point_to_index;
-
-    // Transform the polygon in a range of points and polylines of indexes
-    for(const typename Polygon_2::Point_2 &p_: P.vertices())
-    {
-      Point_2 p=to_exact(p_);
-      if (unique_point_set.find(p) == unique_point_set.end()) {
-        unique_point_set.insert(p);
-        pts.push_back(p);
-        point_to_index[p] = pts.size() - 1;
-      }
-    }
-
-    for(const typename Polygon_2::Segment_2 &s: P.edges()){
-      Point_2 p1=to_exact(s.source());
-      Point_2 p2=to_exact(s.target());
-      std::size_t index1 = point_to_index[p1];
-      std::size_t index2 = point_to_index[p2];
-      polylines.push_back({index1, index2});
-    }
+    // TODO Need to compute_subcurves that output polylines to track the polygons
+    assert(0);
   } else {
     // Index of the segments that introduced a new polygon
     polygon_index.reserve(std::distance(begin, end));
