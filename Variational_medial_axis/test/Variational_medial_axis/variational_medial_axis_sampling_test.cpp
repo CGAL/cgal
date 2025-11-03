@@ -13,7 +13,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Surface_mesh<Point> Mesh;
-typedef CGAL::Variational_medial_axis<Mesh> VMAS;
+typedef CGAL::Variational_medial_axis_sampling<Mesh> VMAS;
 typedef CGAL::Medial_skeleton<Mesh> Skeleton;
 
 // Test parameters structure
@@ -183,9 +183,9 @@ bool test_API() {
   } else {
     std::cout << "compute_variational_medial_axis_sampling pass." << std::endl;
   }
-  auto skeleton = vmas.export_skeleton();
+  auto skeleton = vmas.skeleton();
   success = vmas.add_spheres(2);
-  auto skeleton2 = vmas.export_skeleton();
+  auto skeleton2 = vmas.skeleton();
   if(!success || skeleton2.number_of_vertices() != skeleton.number_of_vertices() + 2) {
     std::cerr << "Adding spheres failed: expected " << skeleton.number_of_vertices() + 2 << " vertices, got "
               << skeleton2.number_of_vertices() << std::endl;
