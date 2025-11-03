@@ -54,19 +54,26 @@
 // - Avoid recomputing the denominator when the point is required; store event time as a quotient
 // - In crash_time() for pierce events, we could tighten the future bound using the *farthest* vanish
 //   event of any edge of the facet (probably not worth it, though)
+// - get rid of the exact construction requirement? At least if we do not have to split high-degree
+//   vertices, it should be possible, but that would require writing filtered predicates like SLS2's.
+// - lighter & faster polyhedron data structures
+// - splitting high degree vertices in reasonable time with plane arrangements
+// - CT3 based contact event detection
 
 // @todo: cleaning
 // - document `OBJ::save(skeleton)`
 // - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
 
 // @todo
-// - improve the visitor
-// - do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
-// - add tests; doc figures
+// - Deal with almost coplanar faces having almost equal weight because the weight is based on the normal
+// - Move polyhedron_ if there is the skeleton is not being built
+// - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
+// - Add tests; doc figures
 // - Do not accept non manifold inputs, non-triangulated inputs (clarify doc)
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
 
 // @todo later:
+// - Improve the visitor
 // - if checking perturbation fails because of self-intersections, use a smaller epsilon
 // - perform facet merging using CGAL's region growing and remesh_planar_faces() (?)
 // - re-enable the option to translate and scale (?)
@@ -75,12 +82,8 @@
 // @todo latest:
 // - get rid of all the shared ptr stuff, we only need to zombie the elements and use IDs
 // - use traits' functors
-// - get rid of the exact construction requirement? At least if we do not have to split high-degree
-//   vertices, it should be possible, but that would require writing filtered predicates like SLS2's.
-// - lighter & faster polyhedron data structures
 // - write a sanitization algorithm without perturbation, something akin to: apply_rand_plane_tilts_V3(p, eps=0),
 //   which only ensures that points are on supporting planes, but does NOT perturb the planes.
-// - splitting high degree vertices in reasonable time
 
 // ----
 
