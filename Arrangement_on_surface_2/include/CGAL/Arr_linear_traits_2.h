@@ -34,6 +34,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include "CGAL/number_utils.h"
 
 namespace CGAL {
 
@@ -1560,6 +1561,7 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
                               OutputIterator oi, bool l2r = true) const {
+      if(xcv.is_ray() || xcv.is_line()) return oi;
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
