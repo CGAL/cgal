@@ -222,7 +222,7 @@ private:
   QTimer flyTimer_;
 
   bool rotatesAroundUpVector_;
-  // Inverse the direction of an horizontal mouse motion. Depends on the
+  // Inverse the direction of a horizontal mouse motion. Depends on the
   // projected screen orientation of the vertical axis when the mouse button is
   // pressed.
   bool constrainedRotationIsReversed_;

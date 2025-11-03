@@ -743,7 +743,7 @@ public:
         typedef std::vector<Halfedge_handle> HVector;
         HVector stack;
         // Algorithm: The next() pointer is used as visited tag
-        //     for a graph search. If the next pointer of an halfedge
+        //     for a graph search. If the next pointer of a halfedge
         //     or its opposite halfedge is set to Halfedge_handle(),
         //     this edge has already been visited and must not be put
         //     on the stack again.

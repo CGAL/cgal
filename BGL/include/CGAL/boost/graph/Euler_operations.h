@@ -1896,7 +1896,7 @@ bool satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descript
  * \param h halfedge descriptor
  * \param g the graph
  *
- * \returns an halfedge linking the two vertices adjacent to the vertex being removed.
+ * \returns a halfedge linking the two vertices adjacent to the vertex being removed.
  *
  * \pre `degree(target(h, g), g) == 2`.
  *
