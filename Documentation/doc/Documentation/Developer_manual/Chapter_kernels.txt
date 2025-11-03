@@ -45,7 +45,7 @@ In any way, a package has to work with both representations.
 Since \cgal uses homogeneous representation for affine geometry  and not
 for projective geometry, the homogenizing coordinate  is non zero.
 The cartesian
-representation corresponding to an homogeneous point
+representation corresponding to a homogeneous point
 \f$ (x_0,x_1,...,x_d,w)\f$ is
 \f$ (x_0/w,x_1/w,...,x_d/w)\f$. Hence, homogeneous representation is not unique;
 \f$ (\alpha x,\alpha y,\alpha z,\alpha w)\f$ is an alternative
