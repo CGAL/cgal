@@ -215,7 +215,14 @@ public:
 
 #if 1
     PolyhedronSPtr polyhedron = IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
+
+#if 0
+    // this actually makes things worse because we want to merge almost coplanar facets afterwards,
+    // and truncating precision will increase the variance of the normals of facets almost living
+    // on the same non-cardinal plane, resulting in fewer merges.
     Transformation::truncate_precision(polyhedron);
+#endif
+
     Transformation::merge_coplanar_facets(polyhedron);
 #else
     namespace PMP = CGAL::Polygon_mesh_processing;
