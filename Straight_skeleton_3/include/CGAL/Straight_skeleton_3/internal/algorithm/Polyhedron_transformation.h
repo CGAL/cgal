@@ -171,6 +171,7 @@ public:
     }
 
     polyhedron->init_planes();
+    normalize_facet_planes(polyhedron);
   }
 
   static void scale(const PolyhedronSPtr& polyhedron,
@@ -185,6 +186,7 @@ public:
     }
 
     polyhedron->init_planes();
+    normalize_facet_planes(polyhedron);
   }
 
   static void translate_and_scale(const PolyhedronSPtr& polyhedron,
@@ -260,6 +262,7 @@ public:
     }
 
     polyhedron->init_planes();
+    normalize_facet_planes(polyhedron);
   }
 
   static bool has_coplanar_facets(const EdgeSPtr& edge,
