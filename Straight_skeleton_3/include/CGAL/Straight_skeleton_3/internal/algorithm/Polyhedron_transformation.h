@@ -270,30 +270,30 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
 
-    bool result = false;
     FacetSPtr facet_l = edge->get_facet_L();
     FacetSPtr facet_r = edge->get_facet_R();
-    if (facet_l && facet_r) {
-      if (epsilon == 0.) {
-        return (facet_l->get_plane() == facet_r->get_plane()); // planes are normalized
-      }
+    CGAL_SS3_DEBUG_SPTR(facet_l);
+    CGAL_SS3_DEBUG_SPTR(facet_r);
 
-      const Vector_3 normal_l = facet_l->get_plane().orthogonal_vector();
-      const Vector_3 normal_r = facet_r->get_plane().orthogonal_vector();
-
-      // these sqrt are tolerated because it does not matter for robustness
-      const FT length_l = CGAL::approximate_sqrt(normal_l.squared_length());
-      const FT length_r = CGAL::approximate_sqrt(normal_r.squared_length());
-
-      FT diff = 0;
-      FT diff_sq_length = 0;
-      for (unsigned int i = 0; i < 3; ++i) {
-        diff = (normal_l[i]/length_l) - (normal_r[i]/length_r);
-        diff_sq_length += square(diff);
-      }
-      result = (diff_sq_length < square(epsilon));
+    if (epsilon == 0.) {
+      return (facet_l->get_plane() == facet_r->get_plane()); // planes are normalized
     }
-    return result;
+
+    const Vector_3 normal_l = facet_l->get_plane().orthogonal_vector();
+    const Vector_3 normal_r = facet_r->get_plane().orthogonal_vector();
+
+    // these sqrt are tolerated because it does not matter for robustness
+    const FT length_l = CGAL::approximate_sqrt(normal_l.squared_length());
+    const FT length_r = CGAL::approximate_sqrt(normal_r.squared_length());
+
+    FT diff = 0;
+    FT diff_sq_length = 0;
+    for (unsigned int i = 0; i < 3; ++i) {
+      diff = (normal_l[i]/length_l) - (normal_r[i]/length_r);
+      diff_sq_length += square(diff);
+    }
+
+    return (diff_sq_length < square(epsilon));
   }
 
   static void merge_facets(const EdgeSPtr& edge,

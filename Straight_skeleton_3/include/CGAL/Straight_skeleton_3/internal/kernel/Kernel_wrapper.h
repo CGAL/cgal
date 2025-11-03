@@ -123,7 +123,7 @@ public:
     const FT& c = plane.c();
 
     // inaccuracies during normalization since the sqrt is (usually) not exact
-    return (square(a) + square(b) + square(c) - 1) <= 1e-5;
+    return (square(a) + square(b) + square(c) - FT(1)) <= 1e-5;
   }
 
   static int side(const Plane_3& plane, const Point_3& point)
