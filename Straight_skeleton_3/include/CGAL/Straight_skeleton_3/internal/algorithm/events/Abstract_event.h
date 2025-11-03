@@ -30,12 +30,12 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Abstract_event
 {
-  using Abstract_event_sptr = std::shared_ptr<Abstract_event<Traits> >;
+  using Abstract_event_sptr = std::shared_ptr<Abstract_event<GeomTraits> >;
 
-  using FT = typename Traits::FT;
+  using FT = typename GeomTraits::FT;
 
 public:
   Abstract_event(int type = -2)
@@ -205,18 +205,18 @@ private:
   static int next_id_;
 };
 
-template <typename Traits>
-int Abstract_event<Traits>::next_id_ = 0;
+template <typename GeomTraits>
+int Abstract_event<GeomTraits>::next_id_ = 0;
 
-template <typename Traits>
+template <typename GeomTraits>
 class Abstract_event_compare
   : public CGAL::cpp98::binary_function<bool,
-                                        std::shared_ptr<Abstract_event<Traits> >,
-                                        std::shared_ptr<Abstract_event<Traits> > >
+                                        std::shared_ptr<Abstract_event<GeomTraits> >,
+                                        std::shared_ptr<Abstract_event<GeomTraits> > >
 {
 public:
-  bool operator()(const std::shared_ptr<Abstract_event<Traits> >& eventA,
-                  const std::shared_ptr<Abstract_event<Traits> >& eventB) const
+  bool operator()(const std::shared_ptr<Abstract_event<GeomTraits> >& eventA,
+                  const std::shared_ptr<Abstract_event<GeomTraits> >& eventB) const
   {
     CGAL_SS3_DEBUG_SPTR(eventA);
     CGAL_SS3_DEBUG_SPTR(eventB);
@@ -235,10 +235,10 @@ public:
   }
 };
 
-template <typename Traits>
+template <typename GeomTraits>
 struct Vertex_facet_neighborhood
 {
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
@@ -281,10 +281,10 @@ private:
   std::array<int, 3> incident_facets_;
 };
 
-template <typename Traits>
+template <typename GeomTraits>
 struct Edge_facet_neighborhood
 {
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
   Edge_facet_neighborhood() {}

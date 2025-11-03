@@ -32,25 +32,25 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Surface_event
-  : public Abstract_event<Traits>
+  : public Abstract_event<GeomTraits>
 {
-  using Base = Abstract_event<Traits>;
+  using Base = Abstract_event<GeomTraits>;
 
 private:
-  using Point_3 = typename Traits::Point_3;
+  using Point_3 = typename GeomTraits::Point_3;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
-  using Surface_event_sptr = std::shared_ptr<Surface_event<Traits> >;
+  using Surface_event_sptr = std::shared_ptr<Surface_event<GeomTraits> >;
 
 private:
-  using Edge_facet_neighborhood = algorithm::Edge_facet_neighborhood<Traits>;
+  using Edge_facet_neighborhood = algorithm::Edge_facet_neighborhood<GeomTraits>;
 
 public:
   Surface_event()

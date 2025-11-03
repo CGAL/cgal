@@ -33,19 +33,19 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Self_intersection
 {
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Segment_3 = typename Traits::Segment_3;
-  using Vector_3 = typename Traits::Vector_3;
-  using Ray_3 = typename Traits::Ray_3;
-  using Line_3 = typename Traits::Line_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Segment_3 = typename GeomTraits::Segment_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Ray_3 = typename GeomTraits::Ray_3;
+  using Line_3 = typename GeomTraits::Line_3;
+  using Plane_3 = typename GeomTraits::Plane_3;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using VertexSPtr = typename Polyhedron::VertexSPtr;
@@ -216,11 +216,11 @@ public:
     const Plane_3& pl = facet->get_plane();
     const Vector_3 normal = pl.orthogonal_vector();
     if (is_zero(normal.z())) {
-      using Traits_2 = CGAL::Projection_traits_xz_3<Traits>;
+      using Traits_2 = CGAL::Projection_traits_xz_3<GeomTraits>;
       Traits_2 traits;
       return is_self_intersecting_facet(facet, traits);
     } else {
-      using Traits_2 = CGAL::Projection_traits_xy_3<Traits>;
+      using Traits_2 = CGAL::Projection_traits_xy_3<GeomTraits>;
       Traits_2 traits;
       return is_self_intersecting_facet(facet, traits);
     }
@@ -565,11 +565,11 @@ public:
     const Plane_3& pl = facet->get_plane();
     const Vector_3 normal = pl.orthogonal_vector();
     if (is_zero(normal.z())) {
-      using Traits_2 = CGAL::Projection_traits_xz_3<Traits>;
+      using Traits_2 = CGAL::Projection_traits_xz_3<GeomTraits>;
       Traits_2 traits;
       return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
     } else {
-      using Traits_2 = CGAL::Projection_traits_xy_3<Traits>;
+      using Traits_2 = CGAL::Projection_traits_xy_3<GeomTraits>;
       Traits_2 traits;
       return (bounded_side(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
     }

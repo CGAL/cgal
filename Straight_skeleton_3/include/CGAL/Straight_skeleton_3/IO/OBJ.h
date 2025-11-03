@@ -38,14 +38,14 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace HDS {
 
-template <typename Traits_>
+template <typename GeomTraits>
 class Polyhedron;
 
 } // namespace HDS
 
 namespace SDS {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Straight_skeleton_3;
 
 } // namespace SDS
@@ -63,16 +63,16 @@ public:
     * It is impossible for an .obj file to store holes inside a facet,
     * so we triangulate facets in this case.
     */
-  template <typename Traits>
+  template <typename GeomTraits>
   static bool save(const std::string& filename,
-                   std::shared_ptr<internal::HDS::Polyhedron<Traits> > polyhedron,
+                   std::shared_ptr<internal::HDS::Polyhedron<GeomTraits> > polyhedron,
                    bool do_triangulate = true,
                    bool convert_to_double = true)
   {
-    using Point_3 = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
 
-    using Polyhedron = internal::HDS::Polyhedron<Traits>;
+    using Polyhedron = internal::HDS::Polyhedron<GeomTraits>;
     using VertexSPtr = typename Polyhedron::VertexSPtr;
     using EdgeSPtr = typename Polyhedron::EdgeSPtr;
     using FacetSPtr = typename Polyhedron::FacetSPtr;
@@ -89,7 +89,7 @@ public:
     // CGAL::Exact_intersections_tag
     // CGAL::No_constraint_intersection_requiring_constructions_tag
     using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
-    using PK = CGAL::Projection_traits_3<Traits>;
+    using PK = CGAL::Projection_traits_3<GeomTraits>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
     using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
@@ -280,22 +280,22 @@ public:
     return result;
   }
 
-  template <typename Traits>
+  template <typename GeomTraits>
   static bool save(const std::string& filename,
-                   std::shared_ptr<Straight_skeleton_3<Traits> > skeleton,
+                   std::shared_ptr<Straight_skeleton_3<GeomTraits> > skeleton,
                    bool convert_to_double = true)
   {
-    using Point_3 = typename Traits::Point_3;
-    using Vector_3 = typename Traits::Vector_3;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
 
-    using Skeleton = Straight_skeleton_3<Traits>;
+    using Skeleton = Straight_skeleton_3<GeomTraits>;
     using NodeSPtr = typename Skeleton::NodeSPtr;
     using ArcSPtr = typename Skeleton::ArcSPtr;
     using SheetSPtr = typename Skeleton::SheetSPtr;
 
     // For triangulation
     using Itag = CGAL::Exact_intersections_tag;
-    using PK = CGAL::Projection_traits_3<Traits>;
+    using PK = CGAL::Projection_traits_3<GeomTraits>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<NodeSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
     using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;

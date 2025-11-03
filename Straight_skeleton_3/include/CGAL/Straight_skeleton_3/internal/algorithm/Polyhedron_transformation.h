@@ -61,21 +61,21 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Hds_utils;
 
-template <typename Traits>
+template <typename GeomTraits>
 class Polyhedron_transformation
 {
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Segment_3 = typename Traits::Segment_3;
-  using Vector_3 = typename Traits::Vector_3;
-  using Line_3 = typename Traits::Line_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Segment_3 = typename GeomTraits::Segment_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Line_3 = typename GeomTraits::Line_3;
+  using Plane_3 = typename GeomTraits::Plane_3;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using Vertex = typename Polyhedron::Vertex;
@@ -95,9 +95,9 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Kernel_wrapper = kernel::Kernel_wrapper<Traits>;
-  using Geom_utils = algorithm::Geom_utils<Traits>;
-  using Hds_utils = algorithm::Hds_utils<Traits>;
+  using Kernel_wrapper = kernel::Kernel_wrapper<GeomTraits>;
+  using Geom_utils = algorithm::Geom_utils<GeomTraits>;
+  using Hds_utils = algorithm::Hds_utils<GeomTraits>;
 
 public:
   static Point_3 bounding_box_min(const PolyhedronSPtr& polyhedron)
@@ -974,7 +974,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet);
 
     using Itag = CDT2Tag;
-    using PK = CGAL::Projection_traits_3<Traits>;
+    using PK = CGAL::Projection_traits_3<GeomTraits>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
     using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;

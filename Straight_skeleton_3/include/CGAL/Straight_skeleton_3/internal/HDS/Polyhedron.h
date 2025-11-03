@@ -36,30 +36,30 @@
 
 namespace CGAL {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Straight_skeleton_3;
 
 namespace Straight_skeletons_3 {
 namespace internal {
 namespace HDS {
 
-template <typename Traits_>
+template <typename GeomTraits>
 class Polyhedron
-  : public std::enable_shared_from_this<Polyhedron<Traits_> >
+  : public std::enable_shared_from_this<Polyhedron<GeomTraits> >
 {
 public:
-  using Traits = Traits_;
+  using Geom_traits = GeomTraits;
 
   using PolyhedronSPtr = std::shared_ptr<Polyhedron>;
   using PolyhedronWPtr = std::weak_ptr<Polyhedron>;
 
 private:
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Segment_3 = typename Traits::Segment_3;
-  using Vector_3 = typename Traits::Vector_3;
-  using Line_3 = typename Traits::Line_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+  using Segment_3 = typename Geom_traits::Segment_3;
+  using Vector_3 = typename Geom_traits::Vector_3;
+  using Line_3 = typename Geom_traits::Line_3;
+  using Plane_3 = typename Geom_traits::Plane_3;
 
 public:
   class Vertex;
@@ -101,10 +101,10 @@ public:
       using VertexWPtr = std::weak_ptr<Vertex>;
       using VertexSPtr = std::shared_ptr<Vertex>;
 
-      using NodeWPtr = typename CGAL::Straight_skeleton_3<Traits>::NodeWPtr;
-      using NodeSPtr = typename CGAL::Straight_skeleton_3<Traits>::NodeSPtr;
-      using ArcWPtr = typename CGAL::Straight_skeleton_3<Traits>::ArcWPtr;
-      using ArcSPtr = typename CGAL::Straight_skeleton_3<Traits>::ArcSPtr;
+      using NodeWPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::NodeWPtr;
+      using NodeSPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::NodeSPtr;
+      using ArcWPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::ArcWPtr;
+      using ArcSPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::ArcSPtr;
 
       using VertexDataSPtr = std::shared_ptr<Vertex_data>;
       using SkelVertexDataSPtr = std::shared_ptr<Skeleton_vertex_data>;
@@ -763,8 +763,8 @@ public:
       using FacetWPtr = std::weak_ptr<Facet>;
       using FacetSPtr = std::shared_ptr<Facet>;
 
-      using SheetWPtr = typename CGAL::Straight_skeleton_3<Traits>::SheetWPtr;
-      using SheetSPtr = typename CGAL::Straight_skeleton_3<Traits>::SheetSPtr;
+      using SheetWPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::SheetWPtr;
+      using SheetSPtr = typename CGAL::Straight_skeleton_3<Geom_traits>::SheetSPtr;
 
       using EdgeDataSPtr = std::shared_ptr<Edge_data>;
       using SkelEdgeDataSPtr = std::shared_ptr<Skeleton_edge_data>;

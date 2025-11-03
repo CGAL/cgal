@@ -39,16 +39,16 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace IO {
 
-template <typename Traits>
+template <typename GeomTraits>
 class FaceGraphIO
 {
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Vector_3 = typename Traits::Vector_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Plane_3 = typename GeomTraits::Plane_3;
 
 private:
-  using Polyhedron = internal::HDS::Polyhedron<Traits>;
+  using Polyhedron = internal::HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using Vertex = typename Polyhedron::Vertex;
@@ -62,8 +62,8 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Transformation = internal::algorithm::Polyhedron_transformation<Traits>;
-  using Hds_utils = internal::algorithm::Hds_utils<Traits>;
+  using Transformation = internal::algorithm::Polyhedron_transformation<GeomTraits>;
+  using Hds_utils = internal::algorithm::Hds_utils<GeomTraits>;
 
 public:
   template <typename TriangleMesh,
@@ -210,11 +210,11 @@ public:
     }
 
     if (!merge_faces) {
-      return IO::FaceGraphIO<Traits>::load(tmesh, np);
+      return IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
     }
 
 #if 1
-    PolyhedronSPtr polyhedron = IO::FaceGraphIO<Traits>::load(tmesh, np);
+    PolyhedronSPtr polyhedron = IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
     Transformation::truncate_precision(polyhedron);
     Transformation::merge_coplanar_facets(polyhedron);
 #else
@@ -312,7 +312,7 @@ public:
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
     using Itag = CGAL::Exact_intersections_tag;
-    using PK = CGAL::Projection_traits_3<Traits>;
+    using PK = CGAL::Projection_traits_3<GeomTraits>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
     using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;

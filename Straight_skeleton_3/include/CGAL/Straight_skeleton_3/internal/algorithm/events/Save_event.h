@@ -26,16 +26,16 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Save_event
-  : public Abstract_event<Traits>
+  : public Abstract_event<GeomTraits>
 {
-  using Base = Abstract_event<Traits>;
-  using Save_event_sptr = std::shared_ptr<Save_event<Traits> >;
+  using Base = Abstract_event<GeomTraits>;
+  using Save_event_sptr = std::shared_ptr<Save_event<GeomTraits> >;
 
 public:
   Save_event()
-    : Base(Abstract_event<Traits>::SAVE_EVENT)
+    : Base(Abstract_event<GeomTraits>::SAVE_EVENT)
   { }
 
   static Save_event_sptr create()

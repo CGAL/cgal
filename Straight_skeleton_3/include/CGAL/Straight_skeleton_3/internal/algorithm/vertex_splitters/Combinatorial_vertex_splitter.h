@@ -32,15 +32,15 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Combi_vertex_splitter
-  : public Abstract_vertex_splitter<Traits>
+  : public Abstract_vertex_splitter<GeomTraits>
 {
-  using Base = Abstract_vertex_splitter<Traits>;
+  using Base = Abstract_vertex_splitter<GeomTraits>;
   using Combi_vertex_splitter_sptr = std::shared_ptr<Combi_vertex_splitter>;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using Vertex = typename Polyhedron::Vertex;
@@ -58,7 +58,7 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Straight_skeleton_3 = Straight_skeleton_3<Traits>;
+  using Straight_skeleton_3 = Straight_skeleton_3<GeomTraits>;
 
   using NodeWPtr = typename Straight_skeleton_3::NodeWPtr;
   using NodeSPtr = typename Straight_skeleton_3::NodeSPtr;

@@ -26,12 +26,12 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Const_time_event
-  : public Abstract_event<Traits>
+  : public Abstract_event<GeomTraits>
 {
-  using Base = Abstract_event<Traits>;
-  using Const_time_event_sptr = std::shared_ptr<Const_time_event<Traits> >;
+  using Base = Abstract_event<GeomTraits>;
+  using Const_time_event_sptr = std::shared_ptr<Const_time_event<GeomTraits> >;
 
 public:
   Const_time_event()

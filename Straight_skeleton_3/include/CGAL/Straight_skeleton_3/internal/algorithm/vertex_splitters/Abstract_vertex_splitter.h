@@ -28,17 +28,17 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Abstract_vertex_splitter
 {
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using VertexSPtr = typename Polyhedron::VertexSPtr;
 
 private:
-  using Transformation = algorithm::Polyhedron_transformation<Traits>;
-  using Self_intersection = algorithm::Self_intersection<Traits>;
+  using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
+  using Self_intersection = algorithm::Self_intersection<GeomTraits>;
 
 public:
   // static const int ANGLE_VERTEX_SPLITTER = -1;  // does not work

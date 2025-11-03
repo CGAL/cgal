@@ -34,18 +34,18 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Dbl_triangle_event
-  : public Abstract_event<Traits>
+  : public Abstract_event<GeomTraits>
 {
-  using Base = Abstract_event<Traits>;
-  using Dbl_triangle_event_sptr = std::shared_ptr<Dbl_triangle_event<Traits> >;
+  using Base = Abstract_event<GeomTraits>;
+  using Dbl_triangle_event_sptr = std::shared_ptr<Dbl_triangle_event<GeomTraits> >;
 
 private:
-  using Point_3 = typename Traits::Point_3;
+  using Point_3 = typename GeomTraits::Point_3;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;

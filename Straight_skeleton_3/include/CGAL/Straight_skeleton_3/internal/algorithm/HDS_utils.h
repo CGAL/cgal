@@ -26,20 +26,20 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Polyhedron_transformation;
 
-template <typename Traits>
+template <typename GeomTraits>
 class Hds_utils
 {
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Vector_3 = typename Traits::Vector_3;
-  using Line_3 = typename Traits::Line_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Line_3 = typename GeomTraits::Line_3;
+  using Plane_3 = typename GeomTraits::Plane_3;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using Vertex = typename Polyhedron::Vertex;
@@ -58,7 +58,7 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Straight_skeleton_3 = Straight_skeleton_3<Traits>;
+  using Straight_skeleton_3 = Straight_skeleton_3<GeomTraits>;
   using StraightSkeletonWPtr = std::weak_ptr<Straight_skeleton_3>;
   using StraightSkeletonSPtr = std::shared_ptr<Straight_skeleton_3>;
 
@@ -67,8 +67,8 @@ private:
   using SheetSPtr = typename Straight_skeleton_3::SheetSPtr;
 
 private:
-  using Kernel_wrapper = kernel::Kernel_wrapper<Traits>;
-  using Transformation = algorithm::Polyhedron_transformation<Traits>;
+  using Kernel_wrapper = kernel::Kernel_wrapper<GeomTraits>;
+  using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
 
 public:
   static Line_3 line(const EdgeSPtr& edge)

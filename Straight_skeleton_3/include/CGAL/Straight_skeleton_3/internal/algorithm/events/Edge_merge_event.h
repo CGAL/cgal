@@ -31,18 +31,18 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Edge_merge_event
-  : public Abstract_event<Traits>
+  : public Abstract_event<GeomTraits>
 {
-  using Base = Abstract_event<Traits>;
-  using Edge_merge_event_sptr = std::shared_ptr<Edge_merge_event<Traits> >;
+  using Base = Abstract_event<GeomTraits>;
+  using Edge_merge_event_sptr = std::shared_ptr<Edge_merge_event<GeomTraits> >;
 
 private:
-  using Point_3 = typename Traits::Point_3;
+  using Point_3 = typename GeomTraits::Point_3;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
   using FacetWPtr = typename Polyhedron::FacetWPtr;

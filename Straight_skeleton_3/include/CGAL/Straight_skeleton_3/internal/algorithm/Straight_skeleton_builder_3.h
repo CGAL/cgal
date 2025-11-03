@@ -148,12 +148,12 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 struct Base_mesh_offset_visitor
 {
-  using FT = typename Traits::FT;
-  using PolyhedronSPtr = std::shared_ptr<HDS::Polyhedron<Traits> >;
-  using Abstract_event_sptr = std::shared_ptr<Abstract_event<Traits> >;
+  using FT = typename GeomTraits::FT;
+  using PolyhedronSPtr = std::shared_ptr<HDS::Polyhedron<GeomTraits> >;
+  using Abstract_event_sptr = std::shared_ptr<Abstract_event<GeomTraits> >;
 
   virtual bool go_further(int, PolyhedronSPtr, FT) = 0;
   virtual void before_event(PolyhedronSPtr, FT, Abstract_event_sptr) = 0;
@@ -161,13 +161,13 @@ struct Base_mesh_offset_visitor
   virtual void after_event(PolyhedronSPtr, FT) = 0;
 };
 
-template <typename Traits>
+template <typename GeomTraits>
 struct Default_mesh_offset_visitor
-  : public Base_mesh_offset_visitor<Traits>
+  : public Base_mesh_offset_visitor<GeomTraits>
 {
-  using FT = typename Traits::FT;
-  using PolyhedronSPtr = std::shared_ptr<HDS::Polyhedron<Traits> >;
-  using Abstract_event_sptr = std::shared_ptr<Abstract_event<Traits> >;
+  using FT = typename GeomTraits::FT;
+  using PolyhedronSPtr = std::shared_ptr<HDS::Polyhedron<GeomTraits> >;
+  using Abstract_event_sptr = std::shared_ptr<Abstract_event<GeomTraits> >;
 
   bool go_further(int, PolyhedronSPtr, FT) override { return true; }
   void before_event(PolyhedronSPtr, FT, Abstract_event_sptr) override { }
@@ -175,23 +175,23 @@ struct Default_mesh_offset_visitor
   void after_event(PolyhedronSPtr, FT) override { }
 };
 
-template <typename Traits>
+template <typename GeomTraits>
 class Straight_skeleton_builder_3
 {
-  using Straight_skeleton_builder_sptr = std::shared_ptr<Straight_skeleton_builder_3<Traits> >;
+  using Straight_skeleton_builder_sptr = std::shared_ptr<Straight_skeleton_builder_3<GeomTraits> >;
 
 private:
   // Geometry
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Segment_3 = typename Traits::Segment_3;
-  using Vector_3 = typename Traits::Vector_3;
-  using Line_3 = typename Traits::Line_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Segment_3 = typename GeomTraits::Segment_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Line_3 = typename GeomTraits::Line_3;
+  using Plane_3 = typename GeomTraits::Plane_3;
 
 private:
   // Polyhedron Data Structure
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronWPtr = typename Polyhedron::PolyhedronWPtr;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
@@ -219,7 +219,7 @@ private:
 
 private:
   // Straight Skeleton Data Structure
-  using Straight_skeleton_3 = CGAL::Straight_skeleton_3<Traits>;
+  using Straight_skeleton_3 = CGAL::Straight_skeleton_3<GeomTraits>;
   using StraightSkeletonWPtr = typename Straight_skeleton_3::StraightSkeletonWPtr;
   using StraightSkeletonSPtr = typename Straight_skeleton_3::StraightSkeletonSPtr;
 
@@ -234,49 +234,49 @@ private:
 
 private:
   // Vertex Splitters
-  using Abstract_vertex_splitter = algorithm::Abstract_vertex_splitter<Traits>;
+  using Abstract_vertex_splitter = algorithm::Abstract_vertex_splitter<GeomTraits>;
   using Abstract_vertex_splitter_sptr = std::shared_ptr<Abstract_vertex_splitter>;
-  using Combi_vertex_splitter = algorithm::Combi_vertex_splitter<Traits>;
-  using Convex_vertex_splitter = algorithm::Convex_vertex_splitter<Traits>;
+  using Combi_vertex_splitter = algorithm::Combi_vertex_splitter<GeomTraits>;
+  using Convex_vertex_splitter = algorithm::Convex_vertex_splitter<GeomTraits>;
 
 private:
   // Events
-  using Abstract_event = algorithm::Abstract_event<Traits>;
+  using Abstract_event = algorithm::Abstract_event<GeomTraits>;
   using Abstract_event_sptr = std::shared_ptr<Abstract_event>;
 
-  using Const_time_event = algorithm::Const_time_event<Traits>;
+  using Const_time_event = algorithm::Const_time_event<GeomTraits>;
   using Const_time_event_sptr = std::shared_ptr<Const_time_event>;
-  using Save_event = algorithm::Save_event<Traits>;
+  using Save_event = algorithm::Save_event<GeomTraits>;
   using Save_event_sptr = std::shared_ptr<Save_event>;
 
-  using Vanish_event = algorithm::Vanish_event<Traits>;
+  using Vanish_event = algorithm::Vanish_event<GeomTraits>;
   using Vanish_event_sptr = std::shared_ptr<Vanish_event>;
-  using Edge_event = algorithm::Edge_event<Traits>;
+  using Edge_event = algorithm::Edge_event<GeomTraits>;
   using Edge_event_sptr = std::shared_ptr<Edge_event>;
-  using Edge_merge_event = algorithm::Edge_merge_event<Traits>;
+  using Edge_merge_event = algorithm::Edge_merge_event<GeomTraits>;
   using Edge_merge_event_sptr = std::shared_ptr<Edge_merge_event>;
-  using Triangle_event = algorithm::Triangle_event<Traits>;
+  using Triangle_event = algorithm::Triangle_event<GeomTraits>;
   using Triangle_event_sptr = std::shared_ptr<Triangle_event>;
-  using Dbl_edge_merge_event = algorithm::Dbl_edge_merge_event<Traits>;
+  using Dbl_edge_merge_event = algorithm::Dbl_edge_merge_event<GeomTraits>;
   using Dbl_edge_merge_event_sptr = std::shared_ptr<Dbl_edge_merge_event>;
-  using Dbl_triangle_event = algorithm::Dbl_triangle_event<Traits>;
+  using Dbl_triangle_event = algorithm::Dbl_triangle_event<GeomTraits>;
   using Dbl_triangle_event_sptr = std::shared_ptr<Dbl_triangle_event>;
-  using Tetrahedron_event = algorithm::Tetrahedron_event<Traits>;
+  using Tetrahedron_event = algorithm::Tetrahedron_event<GeomTraits>;
   using Tetrahedron_event_sptr = std::shared_ptr<Tetrahedron_event>;
 
-  using Vertex_event = algorithm::Vertex_event<Traits>;
+  using Vertex_event = algorithm::Vertex_event<GeomTraits>;
   using Vertex_event_sptr = std::shared_ptr<Vertex_event>;
-  using Flip_vertex_event = algorithm::Flip_vertex_event<Traits>;
+  using Flip_vertex_event = algorithm::Flip_vertex_event<GeomTraits>;
   using Flip_vertex_event_sptr = std::shared_ptr<Flip_vertex_event>;
-  using Surface_event = algorithm::Surface_event<Traits>;
+  using Surface_event = algorithm::Surface_event<GeomTraits>;
   using Surface_event_sptr = std::shared_ptr<Surface_event>;
-  using Polyhedron_split_event = algorithm::Polyhedron_split_event<Traits>;
+  using Polyhedron_split_event = algorithm::Polyhedron_split_event<GeomTraits>;
   using Polyhedron_split_event_sptr = std::shared_ptr<Polyhedron_split_event>;
-  using Split_merge_event = algorithm::Split_merge_event<Traits>;
+  using Split_merge_event = algorithm::Split_merge_event<GeomTraits>;
   using Split_merge_event_sptr = std::shared_ptr<Split_merge_event>;
-  using Edge_split_event = algorithm::Edge_split_event<Traits>;
+  using Edge_split_event = algorithm::Edge_split_event<GeomTraits>;
   using Edge_split_event_sptr = std::shared_ptr<Edge_split_event>;
-  using Pierce_event = algorithm::Pierce_event<Traits>;
+  using Pierce_event = algorithm::Pierce_event<GeomTraits>;
   using Pierce_event_sptr = std::shared_ptr<Pierce_event>;
 
   enum class Event_status {
@@ -286,17 +286,17 @@ private:
   };
 
 private:
-  using Kernel_wrapper = kernel::Kernel_wrapper<Traits>;
-  using Geom_utils = algorithm::Geom_utils<Traits>;
-  using Hds_utils = algorithm::Hds_utils<Traits>;
-  using Transformation = algorithm::Polyhedron_transformation<Traits>;
-  using Perturbation = algorithm::Polyhedron_perturbation<Traits>;
-  using Self_intersection = algorithm::Self_intersection<Traits>;
+  using Kernel_wrapper = kernel::Kernel_wrapper<GeomTraits>;
+  using Geom_utils = algorithm::Geom_utils<GeomTraits>;
+  using Hds_utils = algorithm::Hds_utils<GeomTraits>;
+  using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
+  using Perturbation = algorithm::Polyhedron_perturbation<GeomTraits>;
+  using Self_intersection = algorithm::Self_intersection<GeomTraits>;
 
 private:
   using PQ = std::priority_queue<Abstract_event_sptr,
                                  std::vector<Abstract_event_sptr>,
-                                 Abstract_event_compare<Traits> >;
+                                 Abstract_event_compare<GeomTraits> >;
 
 public:
   Straight_skeleton_builder_3(const PolyhedronSPtr& polyhedron)
@@ -352,7 +352,7 @@ public:
     return std::make_shared<Straight_skeleton_builder_3>(polyhedron, save_times, save_path);
   }
 
-  void set_visitor(Base_mesh_offset_visitor<Traits>* visitor)
+  void set_visitor(Base_mesh_offset_visitor<GeomTraits>* visitor)
   {
     visitor_ = visitor;
   }
@@ -6483,7 +6483,7 @@ private:
   Abstract_vertex_splitter_sptr vertex_splitter_;
   int edge_event_;
 
-  Base_mesh_offset_visitor<Traits>* visitor_ = nullptr;
+  Base_mesh_offset_visitor<GeomTraits>* visitor_ = nullptr;
 
   std::vector<FT> save_times_;
   bool outwards_;

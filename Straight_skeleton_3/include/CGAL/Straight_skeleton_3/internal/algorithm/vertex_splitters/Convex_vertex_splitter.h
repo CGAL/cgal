@@ -32,23 +32,23 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Convex_vertex_splitter
-  : public Combi_vertex_splitter<Traits>
+  : public Combi_vertex_splitter<GeomTraits>
 {
-  using Base = Combi_vertex_splitter<Traits>;
+  using Base = Combi_vertex_splitter<GeomTraits>;
   using Convex_vertex_splitter_sptr = std::shared_ptr<Convex_vertex_splitter>;
 
 private:
-  using Polyhedron = HDS::Polyhedron<Traits>;
+  using Polyhedron = HDS::Polyhedron<GeomTraits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
-  using Transformation = algorithm::Polyhedron_transformation<Traits>;
-  using Self_intersection = algorithm::Self_intersection<Traits>;
+  using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
+  using Self_intersection = algorithm::Self_intersection<GeomTraits>;
 
 private:
   using vec2i = boost::shared_array<int>;
@@ -160,7 +160,7 @@ public:
     }
     CGAL_assertion(combi_opt != combi());
     CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << Base::combi_to_string(combi_opt));
-    Combi_vertex_splitter<Traits>::apply(poly_opt, vertex);
+    Combi_vertex_splitter<GeomTraits>::apply(poly_opt, vertex);
     return polyhedron;
   }
 

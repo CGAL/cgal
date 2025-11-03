@@ -36,7 +36,7 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-template <typename Traits>
+template <typename GeomTraits>
 class Hds_utils;
 
 } // namespace algorithm
@@ -63,34 +63,34 @@ class Hds_utils;
  * the case for outward offsetting), the straight skeleton may be partial, i.e., some arcs
  * and sheets may be unbounded.
  *
- * \tparam Traits_ must be a model of `Kernel` and be the same type as the one used to
+ * \tparam GeomTraits must be a model of `Kernel` and be the same type as the one used to
  *         construct the straight skeleton.
  */
-template <typename Traits_>
+template <typename GeomTraits>
 class Straight_skeleton_3
-  : public std::enable_shared_from_this<Straight_skeleton_3<Traits_> >
+  : public std::enable_shared_from_this<Straight_skeleton_3<GeomTraits> >
 {
   /*!
   * Convenience typedef
   */
-  using Traits = Traits_;
-  using FT = typename Traits::FT;
-  using Point_3 = typename Traits::Point_3;
-  using Plane_3 = typename Traits::Plane_3;
+  using Geom_traits = GeomTraits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+  using Plane_3 = typename Geom_traits::Plane_3;
 
-  using Polyhedron = Straight_skeletons_3::internal::HDS::Polyhedron<Traits>;
+  using Polyhedron = Straight_skeletons_3::internal::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 public:
-  using StraightSkeletonWPtr = std::weak_ptr<Straight_skeleton_3<Traits> >;
-  using StraightSkeletonSPtr = std::shared_ptr<Straight_skeleton_3<Traits> >;
+  using StraightSkeletonWPtr = std::weak_ptr<Straight_skeleton_3<Geom_traits> >;
+  using StraightSkeletonSPtr = std::shared_ptr<Straight_skeleton_3<Geom_traits> >;
 
 private:
   using String_factory = Straight_skeletons_3::IO::String_factory;
-  using Kernel_wrapper = Straight_skeletons_3::internal::kernel::Kernel_wrapper<Traits>;
-  using Geom_utils = Straight_skeletons_3::internal::algorithm::Geom_utils<Traits>;
-  using Hds_utils = Straight_skeletons_3::internal::algorithm::Hds_utils<Traits>;
+  using Kernel_wrapper = Straight_skeletons_3::internal::kernel::Kernel_wrapper<Geom_traits>;
+  using Geom_utils = Straight_skeletons_3::internal::algorithm::Geom_utils<Geom_traits>;
+  using Hds_utils = Straight_skeletons_3::internal::algorithm::Hds_utils<Geom_traits>;
 
 public:
   class Node;
@@ -118,12 +118,12 @@ public:
     /*!
     * the field type used for coordinates and time values.
     */
-    using FT = typename Traits::FT;
+    using FT = typename Geom_traits::FT;
 
     /*!
     * the point type used for the position of the node.
     */
-    using Point_3 = typename Traits::Point_3;
+    using Point_3 = typename Geom_traits::Point_3;
 
     using NodeSPtr = std::shared_ptr<Node>;
     /*!
@@ -405,11 +405,11 @@ public:
     /*!
     * the vector type used for the direction of the arc.
     */
-    using Vector_3 = typename Traits::Vector_3;
+    using Vector_3 = typename Geom_traits::Vector_3;
     /*!
     * the line type used for the supporting line of the arc.
     */
-    using Line_3 = typename Traits::Line_3;
+    using Line_3 = typename Geom_traits::Line_3;
 
     /*!
     * the shared pointer type to a node.
@@ -768,7 +768,7 @@ public:
     /*!
     * the plane type used for the supporting plane of the sheet.
     */
-    using Plane_3 = typename Traits::Plane_3;
+    using Plane_3 = typename Geom_traits::Plane_3;
 
     /*!
     * the shared pointer type to a node.
@@ -1673,13 +1673,13 @@ protected:
 
 } // namespace CGAL
 
-template <typename Traits>
-int CGAL::Straight_skeleton_3<Traits>::Node::next_id_ = 0;
+template <typename GeomTraits>
+int CGAL::Straight_skeleton_3<GeomTraits>::Node::next_id_ = 0;
 
-template <typename Traits>
-int CGAL::Straight_skeleton_3<Traits>::Arc::next_id_ = 0;
+template <typename GeomTraits>
+int CGAL::Straight_skeleton_3<GeomTraits>::Arc::next_id_ = 0;
 
-template <typename Traits>
-int CGAL::Straight_skeleton_3<Traits>::Sheet::next_id_ = 0;
+template <typename GeomTraits>
+int CGAL::Straight_skeleton_3<GeomTraits>::Sheet::next_id_ = 0;
 
 #endif /* CGAL_STRAIGHT_SKELETON_3_SDS_STRAIGHT_SKELETON_3_H */
