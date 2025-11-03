@@ -281,8 +281,8 @@ public:
         }
 
         CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->get_facet_L()->get_ID() << " and " << edge->get_facet_R()->get_ID());
-        CGAL_assertion(sm.point(source(e, sm)) == edge->get_vertex_src()->point());
-        CGAL_assertion(sm.point(target(e, sm)) == edge->get_vertex_dst()->point());
+        CGAL_assertion(sm.point(source(e, sm)) == edge->source()->point());
+        CGAL_assertion(sm.point(target(e, sm)) == edge->target()->point());
 
         // @fixme it seems like intermediate states are somewhat unsound during edge merging
         merge_facets(edge, polyhedron);
@@ -370,7 +370,7 @@ public:
       unsigned int ne = 0;
       for (const EdgeSPtr& edge : facet->edges()) {
         VertexSPtr v0 = edge->src(facet);
-        VertexSPtr v1 = edge->dst(facet);
+        VertexSPtr v1 = edge->tgt(facet);
 
         if(v0->point() == v1->point())
         {

@@ -106,8 +106,8 @@ public:
     EdgeSPtr edge_begin = get_edge_begin();
     FacetSPtr facet = get_facet();
     return CGAL::make_array(edge_begin->src(facet),
-                            edge_begin->dst(facet),
-                            edge_begin->next(facet)->dst(facet));
+                            edge_begin->tgt(facet),
+                            edge_begin->next(facet)->tgt(facet));
   }
 
   std::array<EdgeSPtr, 3> get_edges() const

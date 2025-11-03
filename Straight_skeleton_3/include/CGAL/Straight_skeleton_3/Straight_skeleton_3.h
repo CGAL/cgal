@@ -55,7 +55,7 @@ class Hds_utils;
  *   of the polyhedron.
  * - Arcs connect two nodes, and represent the trace of a vertex of the polyhedron during
  *   the propagation of the faces of the polyhedron. The vertex spawned at the source of the arc,
- *   and disappears at the destination of the arc.
+ *   and disappears at the target of the arc.
  * - Sheets are 2D surfaces connecting arcs and nodes, representing the trace of the edges
  *   of the polyhedron during the propagation of the faces.
  *
@@ -212,11 +212,11 @@ public:
       CGAL_SS3_DEBUG_SPTR(arc);
       CGAL_precondition(!has_incident_arc(arc));
       typename std::list<ArcWPtr>::iterator it = arcs_.insert(arcs_.end(), ArcWPtr(arc));
-      if (arc->get_node_src() == this->shared_from_this()) {
-        arc->set_node_srcListIt(it);
-      } else if (arc->has_node_dst()) {
-        if (arc->get_node_dst() == this->shared_from_this()) {
-          arc->set_node_dstListIt(it);
+      if (arc->source() == this->shared_from_this()) {
+        arc->set_source_list_it(it);
+      } else if (arc->has_target()) {
+        if (arc->target() == this->shared_from_this()) {
+          arc->set_target_list_it(it);
         }
       }
     }
@@ -226,14 +226,14 @@ public:
       CGAL_SS3_DEBUG_SPTR(arc);
       CGAL_precondition(has_incident_arc(arc));
       bool result = false;
-      if (arc->get_node_src() == this->shared_from_this()) {
-        arcs_.erase(arc->get_node_srcListIt());
-        arc->set_node_srcListIt(typename std::list<ArcWPtr>::iterator());
+      if (arc->source() == this->shared_from_this()) {
+        arcs_.erase(arc->get_source_list_it());
+        arc->set_source_list_it(typename std::list<ArcWPtr>::iterator());
         result = true;
-      } else if (arc->has_node_dst()) {
-        if (arc->get_node_dst() == this->shared_from_this()) {
-          arcs_.erase(arc->get_node_dstListIt());
-          arc->set_node_dstListIt(typename std::list<ArcWPtr>::iterator());
+      } else if (arc->has_target()) {
+        if (arc->target() == this->shared_from_this()) {
+          arcs_.erase(arc->get_target_list_it());
+          arc->set_target_list_it(typename std::list<ArcWPtr>::iterator());
           result = true;
         }
       }
@@ -392,7 +392,7 @@ public:
   *
   * If the skeleton is partial because the propagation was interrupted, some arcs may be unbounded
   * and have only a source node. In this case, the arc stores a direction vector instead
-  * of a destination node.
+  * of a target node.
   *
   * \sa `CGAL::Straight_skeleton_3`
   * \sa `CGAL::Straight_skeleton_3::Node`
@@ -438,16 +438,16 @@ public:
       id_ = next_id_++;
     }
 
-    Arc(const NodeSPtr& node_src, const NodeSPtr& node_dst)
+    Arc(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
     {
       node_src_ = node_src;
-      node_dst_ = node_dst;
+      node_tgt_ = node_tgt;
       id_ = next_id_++;
     }
 
     ~Arc() {
       node_src_.reset();
-      node_dst_.reset();
+      node_tgt_.reset();
       direction_.reset();
       sheets_.clear();
     }
@@ -459,97 +459,97 @@ public:
       return result;
     }
 
-    static ArcSPtr create(const NodeSPtr& node_src, const NodeSPtr& node_dst)
+    static ArcSPtr create(const NodeSPtr& node_src, const NodeSPtr& node_tgt)
     {
-      ArcSPtr result = std::make_shared<Arc>(node_src, node_dst);
+      ArcSPtr result = std::make_shared<Arc>(node_src, node_tgt);
       node_src->add_arc(result);
-      node_dst->add_arc(result);
+      node_tgt->add_arc(result);
       return result;
     }
 
     /*!
     * returns the source node of the arc.
     */
-    NodeSPtr get_node_src() const
+    NodeSPtr source() const
     {
       CGAL_SS3_DEBUG_SPTR(node_src_);
       return node_src_;
     }
 
-    void set_node_src(const NodeSPtr& node_src)
+    void set_source(const NodeSPtr& node_src)
     {
       CGAL_SS3_DEBUG_SPTR(node_src);
-      CGAL_precondition(!has_node_src() && !has_node_dst());
+      CGAL_precondition(!has_source() && !has_target());
       this->node_src_ = node_src;
     }
 
-    typename std::list<ArcWPtr>::iterator get_node_srcListIt() const
+    typename std::list<ArcWPtr>::iterator get_source_list_it() const
     {
       return this->node_src_list_it_;
     }
 
-    void set_node_srcListIt(typename std::list<ArcWPtr>::iterator node_src_list_it)
+    void set_source_list_it(typename std::list<ArcWPtr>::iterator node_src_list_it)
     {
       this->node_src_list_it_ = node_src_list_it;
     }
 
-    bool has_node_src() const
+    bool has_source() const
     {
       return bool(node_src_);
     }
 
     /*!
-    * returns the destination node of the arc.
+    * returns the target node of the arc.
     * Note that for unbounded arcs, this function returns a null pointer.
-    * \sa `has_node_dst()`
+    * \sa `has_target()`
     */
-    NodeSPtr get_node_dst() const
+    NodeSPtr target() const
     {
-      CGAL_SS3_DEBUG_SPTR(node_dst_);
-      return node_dst_;
+      CGAL_SS3_DEBUG_SPTR(node_tgt_);
+      return node_tgt_;
     }
 
-    void set_node_dst(const NodeSPtr& node_dst)
+    void set_target(const NodeSPtr& node_tgt)
     {
-      CGAL_SS3_DEBUG_SPTR(node_dst);
-      CGAL_precondition(has_node_src() && !has_node_dst());
-      this->node_dst_ = node_dst;
+      CGAL_SS3_DEBUG_SPTR(node_tgt);
+      CGAL_precondition(has_source() && !has_target());
+      this->node_tgt_ = node_tgt;
     }
 
-    typename std::list<ArcWPtr>::iterator get_node_dstListIt() const
+    typename std::list<ArcWPtr>::iterator get_target_list_it() const
     {
-      return this->node_dst_list_it_;
+      return this->tgt_list_it_;
     }
 
-    void set_node_dstListIt(typename std::list<ArcWPtr>::iterator node_dst_list_it)
+    void set_target_list_it(typename std::list<ArcWPtr>::iterator node_tgt_list_it)
     {
-      this->node_dst_list_it_ = node_dst_list_it;
+      this->tgt_list_it_ = node_tgt_list_it;
     }
 
     /*!
-    * returns whether the arc has a destination node.
+    * returns whether the arc has a target node.
     */
-    bool has_node_dst() const
+    bool has_target() const
     {
-      return bool(node_dst_);
+      return bool(node_tgt_);
     }
 
     NodeSPtr other(const NodeSPtr& node) const
     {
-      CGAL_precondition(node == node_src_ || node == node_dst_);
+      CGAL_precondition(node == node_src_ || node == node_tgt_);
       if (node == node_src_) {
-        return node_dst_;
+        return node_tgt_;
       } else {
         return node_src_;
       }
     }
 
-    void close_arc(const NodeSPtr& node_dst)
+    void close_arc(const NodeSPtr& node_tgt)
     {
-      CGAL_SS3_DEBUG_SPTR(node_dst);
-      CGAL_precondition(has_node_src() && !has_node_dst());
-      set_node_dst(node_dst);
-      node_dst->add_arc(this->shared_from_this());
+      CGAL_SS3_DEBUG_SPTR(node_tgt);
+      CGAL_precondition(has_source() && !has_target());
+      set_target(node_tgt);
+      node_tgt->add_arc(this->shared_from_this());
     }
 
     bool has_direction() const
@@ -646,12 +646,12 @@ public:
 
     /*!
     * returns the other arc incident to `node` in the given `sheet`.
-    * \pre `sheet` contains this arc, and `node` is either the source or destination of this arc.
+    * \pre `sheet` contains this arc, and `node` is either the source or target of this arc.
     */
     ArcSPtr next(const SheetSPtr& sheet, const NodeSPtr& node) const
     {
       CGAL_precondition(has_incident_sheet(sheet));
-      CGAL_precondition(node == node_src_ || node == node_dst_);
+      CGAL_precondition(node == node_src_ || node == node_tgt_);
       ArcSPtr result = ArcSPtr();
       // check the arcs incident to the node
       std::list<ArcWPtr> warcs = node->arcs();
@@ -678,8 +678,8 @@ public:
     Line_3 line() const
     {
       Line_3 result;
-      if (node_dst_) {
-        result = { node_src_->point(), node_dst_->point() };
+      if (node_tgt_) {
+        result = { node_src_->point(), node_tgt_->point() };
       } else if (direction_.has_value()) {
         result = { node_src_->point(), *direction_ };
       }
@@ -705,9 +705,9 @@ public:
       } else {
         result += "-1";
       }
-      result += ", dst=";
-      if (node_dst_) {
-        result += String_factory::fromInteger(node_dst_->get_ID());
+      result += ", tgt=";
+      if (node_tgt_) {
+        result += String_factory::fromInteger(node_tgt_->get_ID());
       } else {
         result += "-1";
       }
@@ -730,8 +730,8 @@ public:
   protected:
     NodeSPtr node_src_;
     typename std::list<ArcWPtr>::iterator node_src_list_it_;
-    NodeSPtr node_dst_;
-    typename std::list<ArcWPtr>::iterator node_dst_list_it_;
+    NodeSPtr node_tgt_;
+    typename std::list<ArcWPtr>::iterator tgt_list_it_;
     std::optional<Vector_3> direction_;
     typename std::list<SheetWPtr> sheets_; // every arc has 3 sheets
     StraightSkeletonWPtr skel_;
@@ -1309,7 +1309,7 @@ public:
           break;
         }
 
-        if (node != arc->get_node_src() && node != arc->get_node_dst()) {
+        if (node != arc->source() && node != arc->target()) {
           CGAL_SS3_SKEL_DS_TRACE("Error: incident arc does not have node as endpoint");
           CGAL_SS3_SKEL_DS_TRACE(node->to_string());
           CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
@@ -1361,52 +1361,52 @@ public:
         break;
       }
 
-      if (!arc->get_node_src()) {
+      if (!arc->source()) {
         CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have source");
         result = false;
         break;
       }
 
-      if (std::find(nodes_.begin(), nodes_.end(), arc->get_node_src()) == nodes_.end()) {
+      if (std::find(nodes_.begin(), nodes_.end(), arc->source()) == nodes_.end()) {
         CGAL_SS3_SKEL_DS_TRACE("Error: arc source is not a node present in the skeleton's node list");
-        CGAL_SS3_SKEL_DS_TRACE(arc->get_node_src()->to_string());
+        CGAL_SS3_SKEL_DS_TRACE(arc->source()->to_string());
         result = false;
         break;
       }
 
-      std::list<ArcWPtr> warcs = arc->get_node_src()->arcs();
+      std::list<ArcWPtr> warcs = arc->source()->arcs();
       if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
         CGAL_SS3_SKEL_DS_TRACE("Error: arc's source node does not have arc");
         CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
-        CGAL_SS3_SKEL_DS_TRACE(arc->get_node_src()->to_string());
+        CGAL_SS3_SKEL_DS_TRACE(arc->source()->to_string());
         result = false;
         break;
       }
 
-      if (arc->has_node_dst()) {
-        if (std::find(nodes_.begin(), nodes_.end(), arc->get_node_dst()) == nodes_.end()) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc destination is not a node present in the skeleton's node list");
-          CGAL_SS3_SKEL_DS_TRACE(arc->get_node_dst()->to_string());
+      if (arc->has_target()) {
+        if (std::find(nodes_.begin(), nodes_.end(), arc->target()) == nodes_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc target is not a node present in the skeleton's node list");
+          CGAL_SS3_SKEL_DS_TRACE(arc->target()->to_string());
           result = false;
           break;
         }
 
-        warcs = arc->get_node_dst()->arcs();
+        warcs = arc->target()->arcs();
         if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
           CGAL_SS3_SKEL_DS_TRACE("Error: arc's target node does not have arc");
           CGAL_SS3_SKEL_DS_TRACE(arc->to_string());
-          CGAL_SS3_SKEL_DS_TRACE(arc->get_node_dst()->to_string());
+          CGAL_SS3_SKEL_DS_TRACE(arc->target()->to_string());
           result = false;
           break;
         }
       } else {
         if (no_unbounded_elements) {
-          CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination (full skeleton)");
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have target (full skeleton)");
           result = false;
           break;
         } else {
           if (!arc->has_direction()) {
-            CGAL_SS3_SKEL_DS_TRACE("Error: arc has neither destination nor direction");
+            CGAL_SS3_SKEL_DS_TRACE("Error: arc has neither target nor direction");
             result = false;
             break;
           }
@@ -1522,9 +1522,9 @@ public:
           break;
         }
 
-        arc_nodes[arc->get_node_src()]++;
-        if (arc->has_node_dst()) {
-          arc_nodes[arc->get_node_dst()]++;
+        arc_nodes[arc->source()]++;
+        if (arc->has_target()) {
+          arc_nodes[arc->target()]++;
         }
         for (auto [node, count] : arc_nodes) {
           if (count > 2) {
@@ -1566,9 +1566,9 @@ public:
         }
 
         // Check that contour has two valid, distinct incident nodes
-        NodeSPtr node_src = contour->get_node_src();
-        NodeSPtr node_dst = contour->get_node_dst();
-        if (!node_src || !node_dst) {
+        NodeSPtr node_src = contour->source();
+        NodeSPtr node_tgt = contour->target();
+        if (!node_src || !node_tgt) {
           CGAL_SS3_SKEL_DS_TRACE("Error: contour does not have two valid incident nodes");
           CGAL_SS3_SKEL_DS_TRACE(contour->to_string());
           result = false;
@@ -1578,7 +1578,7 @@ public:
         // Check that both nodes appear in the sheet's node list
         const auto& sheet_nodes = sheet->nodes();
         if (std::find(sheet_nodes.begin(), sheet_nodes.end(), node_src) == sheet_nodes.end() ||
-            std::find(sheet_nodes.begin(), sheet_nodes.end(), node_dst) == sheet_nodes.end()) {
+            std::find(sheet_nodes.begin(), sheet_nodes.end(), node_tgt) == sheet_nodes.end()) {
           CGAL_SS3_SKEL_DS_TRACE("Error: contour's nodes do not appear in sheet's node list");
           CGAL_SS3_SKEL_DS_TRACE(contour->to_string());
           CGAL_SS3_SKEL_DS_TRACE(sheet->to_string());
@@ -1631,9 +1631,9 @@ public:
     arcs_out.precision(17);
     for (ArcSPtr arc : arcs_) {
       arcs_out << "2 ";
-      arcs_out << arc->get_node_src()->point() << " ";
-      if (arc->has_node_dst()) {
-        arcs_out << arc->get_node_dst()->point() << "\n";
+      arcs_out << arc->source()->point() << " ";
+      if (arc->has_target()) {
+        arcs_out << arc->target()->point() << "\n";
       } else {
         std::set<FacetSPtr> incident_faces;
         CGAL_assertion(arc->sheets().size() == 3);

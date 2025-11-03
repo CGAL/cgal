@@ -75,25 +75,25 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     Line_3 result;
-    VertexSPtr vertex_src = edge->get_vertex_src();
-    VertexSPtr vertex_dst = edge->get_vertex_dst();
-    if (vertex_src->point() == vertex_dst->point()) {
+    VertexSPtr vertex_src = edge->source();
+    VertexSPtr vertex_tgt = edge->target();
+    if (vertex_src->point() == vertex_tgt->point()) {
       FacetSPtr facet_l = edge->get_facet_L();
       FacetSPtr facet_r = edge->get_facet_R();
       FacetSPtr facet_src = edge->get_facet_src();
-      FacetSPtr facet_dst = edge->get_facet_dst();
+      FacetSPtr facet_tgt = edge->get_facet_tgt();
 
       Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, -1);
       Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, -1);
       Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, -1);
-      Plane_3 offset_plane_dst = Transformation::shift_plane(facet_dst, -1);
+      Plane_3 offset_plane_tgt = Transformation::shift_plane(facet_tgt, -1);
 
       std::optional<Point_3> p_src = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
-      std::optional<Point_3> p_dst = Kernel_wrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
-      if (!p_src || !p_dst) {
+      std::optional<Point_3> p_tgt = Kernel_wrapper::intersection(offset_plane_tgt, offset_plane_l, offset_plane_r);
+      if (!p_src || !p_tgt) {
         return { };
       }
-      Vector_3 v_dir { *p_dst - *p_src };
+      Vector_3 v_dir { *p_tgt - *p_src };
       result = Line_3 { vertex_src->point(), v_dir };
     } else {
       result = edge->line();
@@ -406,27 +406,27 @@ public:
 
     bool result = false;
 
-    VertexSPtr vertex_src = edge->get_vertex_src();
-    VertexSPtr vertex_dst = edge->get_vertex_dst();
+    VertexSPtr vertex_src = edge->source();
+    VertexSPtr vertex_tgt = edge->target();
 
     // @todo is degenerate edge? pointer comparison or actual position comparison?
-    if (vertex_src->point() == vertex_dst->point()) {
+    if (vertex_src->point() == vertex_tgt->point()) {
       FacetSPtr facet_l = edge->get_facet_L();
       FacetSPtr facet_r = edge->get_facet_R();
       FacetSPtr facet_src = edge->get_facet_src();
-      FacetSPtr facet_dst = edge->get_facet_dst();
+      FacetSPtr facet_tgt = edge->get_facet_tgt();
 
       FT od = future_facing ? -1 : 1;
       const Plane_3 offset_plane_l = Transformation::shift_plane(facet_l, od);
       const Plane_3 offset_plane_r = Transformation::shift_plane(facet_r, od);
       const Plane_3 offset_plane_src = Transformation::shift_plane(facet_src, od);
-      const Plane_3 offset_plane_dst = Transformation::shift_plane(facet_dst, od);
+      const Plane_3 offset_plane_tgt = Transformation::shift_plane(facet_tgt, od);
 
       std::optional<Point_3> p_src = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
-      std::optional<Point_3> p_dst = Kernel_wrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
-      CGAL_assertion(p_src && p_dst);
+      std::optional<Point_3> p_tgt = Kernel_wrapper::intersection(offset_plane_tgt, offset_plane_l, offset_plane_r);
+      CGAL_assertion(p_src && p_tgt);
 
-      const Vector_3 v_dir { *p_src, *p_dst };
+      const Vector_3 v_dir { *p_src, *p_tgt };
       CGAL_assertion(v_dir != CGAL::NULL_VECTOR);
 
       const Vector_3 normal_l = offset_plane_l.orthogonal_vector();
@@ -536,12 +536,12 @@ public:
     for (unsigned int i = 0; i < 4; ++i) {
       vertices[i] = VertexSPtr();
     }
-    vertices[0] = edge_begin->get_vertex_src();
-    vertices[1] = edge_begin->get_vertex_dst();
+    vertices[0] = edge_begin->source();
+    vertices[1] = edge_begin->target();
     EdgeSPtr edge_l = edge_begin->next(edge_begin->get_facet_L());
-    vertices[2] = edge_l->dst(edge_begin->get_facet_L());
+    vertices[2] = edge_l->tgt(edge_begin->get_facet_L());
     EdgeSPtr edge_r = edge_begin->next(edge_begin->get_facet_R());
-    vertices[3] = edge_r->dst(edge_begin->get_facet_R());
+    vertices[3] = edge_r->tgt(edge_begin->get_facet_R());
     for (unsigned int i = 0; i < 4; ++i) {
       if (!vertices[i]) {
         result = false;

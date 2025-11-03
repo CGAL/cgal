@@ -306,8 +306,8 @@ public:
     CGAL_precondition(edge->get_facet_L() == facet_into || edge->get_facet_R() == facet_into);
 
     CGAL_SS3_TRANSF_TRACE_V(16, "Merging F" << facet_from->get_ID() << " into F" << facet_into->get_ID() <<
-                                " Common edge E" << edge->get_ID() << " [V" << edge->get_vertex_src()->get_ID()
-                                                                  << " - V" << edge->get_vertex_dst()->get_ID() << "]");
+                                " Common edge E" << edge->get_ID() << " [V" << edge->source()->get_ID()
+                                                                   << " - V" << edge->target()->get_ID() << "]");
     CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << facet_from->get_plane().orthogonal_vector());
     CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << facet_into->get_plane().orthogonal_vector());
 
@@ -454,12 +454,12 @@ public:
         polyhedron->remove_vertex(vertex); // removes the edge too
       } else if (vertex->degree() == 2) {
         EdgeSPtr edge_src = vertex->first_edge();
-        EdgeSPtr edge_dst = edge_src->next(vertex);
+        EdgeSPtr edge_tgt = edge_src->next(vertex);
         CGAL_assertion(edge_src->has_vertex(vertex));
-        CGAL_assertion(edge_dst->has_vertex(vertex));
+        CGAL_assertion(edge_tgt->has_vertex(vertex));
 
         VertexSPtr vertex_src = edge_src->other(vertex);
-        VertexSPtr vertex_dst = edge_dst->other(vertex);
+        VertexSPtr vertex_tgt = edge_tgt->other(vertex);
 
         FacetSPtr fL = edge_src->get_facet_L();
         FacetSPtr fR = edge_src->get_facet_R();
@@ -470,7 +470,7 @@ public:
           CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fL=" << fL->get_ID() << ")");
           EdgeSPtr third_edge;
           for (const EdgeSPtr& edge : fL->edges()) {
-            if (edge != edge_src && edge != edge_dst) {
+            if (edge != edge_src && edge != edge_tgt) {
               third_edge = edge;
               break;
             }
@@ -483,7 +483,7 @@ public:
           CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fR=" << fR->get_ID() << ")");
           EdgeSPtr third_edge;
           for (const EdgeSPtr& edge : fR->edges()) {
-            if (edge != edge_src && edge != edge_dst) {
+            if (edge != edge_src && edge != edge_tgt) {
               third_edge = edge;
               break;
             }
@@ -500,14 +500,14 @@ public:
           }
         }
 
-        edge_dst->get_facet_L()->remove_edge(edge_dst);
-        edge_dst->get_facet_R()->remove_edge(edge_dst);
-        polyhedron->remove_edge(edge_dst);
+        edge_tgt->get_facet_L()->remove_edge(edge_tgt);
+        edge_tgt->get_facet_R()->remove_edge(edge_tgt);
+        polyhedron->remove_edge(edge_tgt);
 
-        if (edge_src->get_vertex_dst() == vertex) {
-          edge_src->replace_vertex_dst(vertex_dst);
-        } else if (edge_src->get_vertex_src() == vertex) {
-          edge_src->replace_vertex_src(vertex_dst);
+        if (edge_src->target() == vertex) {
+          edge_src->replace_vertex_tgt(vertex_tgt);
+        } else if (edge_src->source() == vertex) {
+          edge_src->replace_vertex_src(vertex_tgt);
         } else {
           CGAL_assertion(false);
         }
@@ -636,8 +636,8 @@ public:
   static Segment_3 offset_edge_from_base(const EdgeSPtr& edge, const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
-    return { offset_point_from_base(edge->get_vertex_src(), time),
-             offset_point_from_base(edge->get_vertex_dst(), time) };
+    return { offset_point_from_base(edge->source(), time),
+             offset_point_from_base(edge->target(), time) };
   }
 
   static Plane_3 offset_plane_from_base(const FacetSPtr& facet, const FT& time)
@@ -790,37 +790,37 @@ public:
 
     FacetSPtr facet_l = edge->get_facet_L();
     FacetSPtr facet_r = edge->get_facet_R();
-    FacetSPtr facet_src = edge->get_facet_L()->next(edge->get_vertex_src());
-    FacetSPtr facet_dst = edge->get_facet_R()->next(edge->get_vertex_dst());
+    FacetSPtr facet_src = edge->get_facet_L()->next(edge->source());
+    FacetSPtr facet_tgt = edge->get_facet_R()->next(edge->target());
 
     const FT& speed_l = Hds_utils::get_speed(facet_l);
     const FT& speed_r = Hds_utils::get_speed(facet_r);
     const FT& speed_src = Hds_utils::get_speed(facet_src);
-    const FT& speed_dst = Hds_utils::get_speed(facet_dst);
+    const FT& speed_tgt = Hds_utils::get_speed(facet_tgt);
 
     // Offset the two common planes
     Plane_3 offset_plane_l = Geom_utils::offset_plane(facet_l->get_plane(), speed_l*time);
     Plane_3 offset_plane_r = Geom_utils::offset_plane(facet_r->get_plane(), speed_r*time);
     Plane_3 offset_plane_src = Geom_utils::offset_plane(facet_src->get_plane(), speed_src*time);
-    Plane_3 offset_plane_dst = Geom_utils::offset_plane(facet_dst->get_plane(), speed_dst*time);
+    Plane_3 offset_plane_tgt = Geom_utils::offset_plane(facet_tgt->get_plane(), speed_tgt*time);
 
 #if 0
     // leaving it here because it's not that intuitive: factoring the intersection of the
     // two common planes is much slower than computing two 3-plane intersections
     std::optional<Line_3> common_line = Kernel_wrapper::intersection(offset_plane_l, offset_plane_r);
     std::optional<Point_3> src_point = Kernel_wrapper::intersection(offset_plane_src, common_line);
-    std::optional<Point_3> dst_point = Kernel_wrapper::intersection(offset_plane_dst, common_line);
+    std::optional<Point_3> tgt_point = Kernel_wrapper::intersection(offset_plane_tgt, common_line);
 #else
     std::optional<Point_3> src_point = Kernel_wrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
-    std::optional<Point_3> dst_point = Kernel_wrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
+    std::optional<Point_3> tgt_point = Kernel_wrapper::intersection(offset_plane_tgt, offset_plane_l, offset_plane_r);
 #endif
 
-    if (!src_point || !dst_point) {
+    if (!src_point || !tgt_point) {
       CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes doesn't define points!");
       return { };
     }
 
-    return { *src_point, *dst_point };
+    return { *src_point, *tgt_point };
   }
 
   /**
@@ -1006,7 +1006,7 @@ public:
     while (it_e != facet->edges().end()) {
       EdgeSPtr edge = *it_e++;
       VertexSPtr v0 = edge->src(facet);
-      VertexSPtr v1 = edge->dst(facet);
+      VertexSPtr v1 = edge->tgt(facet);
       CGAL_assertion(v0->point() != v1->point());
 
       PCDT_VH vh0 = face_vhs.at(v0);

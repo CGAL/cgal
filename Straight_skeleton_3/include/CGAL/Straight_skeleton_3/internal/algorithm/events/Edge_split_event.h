@@ -132,10 +132,10 @@ public:
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
-    sstr << "\t(edgeA=" << edge1->get_ID() << "[" << edge1->get_vertex_src()->get_ID() << "-"
-                                                 << edge1->get_vertex_dst()->get_ID() << "]"
-         << "; edgeB=" << edge2->get_ID() << "[" << edge2->get_vertex_src()->get_ID() << "-"
-                                                << edge2->get_vertex_dst()->get_ID() << "])";
+    sstr << "\t(edgeA=" << edge1->get_ID() << "[" << edge1->source()->get_ID() << "-"
+                                                  << edge1->target()->get_ID() << "]"
+         << "; edgeB=" << edge2->get_ID() << "[" << edge2->source()->get_ID() << "-"
+                                                 << edge2->target()->get_ID() << "])";
     return sstr.str();
   }
 

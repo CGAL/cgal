@@ -151,7 +151,7 @@ public:
         auto ne = 0;
         for (const EdgeSPtr& edge : facet->edges()) {
           VertexSPtr v0 = edge->src(facet);
-          VertexSPtr v1 = edge->dst(facet);
+          VertexSPtr v1 = edge->tgt(facet);
 
           if (v0->point() == v1->point()) {
             CGAL_SS3_IO_TRACE("Degenerate edge @ " << v0->point());
@@ -235,7 +235,7 @@ public:
           do {
             visited_edges.insert(edge);
             boundary_vertices.push_back(edge->src(facet));
-            if (edge->dst(facet)->degree() == 1) {
+            if (edge->tgt(facet)->degree() == 1) {
               is_open = true;
               break;
             }
@@ -244,7 +244,7 @@ public:
 
           // If open, also walk backward to collect remaining boundary vertices
           if (is_open) {
-            boundary_vertices.push_back(edge->dst(facet));
+            boundary_vertices.push_back(edge->tgt(facet));
             edge = start_edge;
             while (edge->src(facet)->degree() != 1) {
               edge = edge->prev(facet);
@@ -353,7 +353,7 @@ public:
       // ignore if the sheet has incomplete arcs
       bool is_complete = true;
       for (const ArcSPtr& arc : sheet->arcs()) {
-        if (!arc->has_node_dst()) {
+        if (!arc->has_target()) {
           is_complete = false;
           break;
         }
@@ -391,13 +391,13 @@ public:
 
         // Insert constraints along the boundary
         for (const ArcSPtr& arc : sheet->arcs()) {
-          NodeSPtr node_src = arc->get_node_src();
-          NodeSPtr node_dst = arc->get_node_dst();
-          CGAL_SS3_IO_TRACE_V(32, " CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
+          NodeSPtr node_src = arc->source();
+          NodeSPtr node_tgt = arc->target();
+          CGAL_SS3_IO_TRACE_V(32, " CDT arc between " << node_src->get_ID() << " and " << node_tgt->get_ID());
           CGAL_SS3_DEBUG_SPTR(node_src);
-          CGAL_SS3_DEBUG_SPTR(node_dst);
+          CGAL_SS3_DEBUG_SPTR(node_tgt);
           PCDT_VH vh0 = face_vhs.at(node_src);
-          PCDT_VH vh1 = face_vhs.at(node_dst);
+          PCDT_VH vh1 = face_vhs.at(node_tgt);
           try {
             pcdt.insert_constraint(vh0, vh1);
           } catch(const typename PCDT::Intersection_of_constraints_exception&) {
@@ -408,10 +408,10 @@ public:
         }
 
         for (const ArcSPtr& contour : sheet->contours()) {
-          NodeSPtr v_src = contour->get_node_src();
-          NodeSPtr v_dst = contour->get_node_dst();
+          NodeSPtr v_src = contour->source();
+          NodeSPtr v_tgt = contour->target();
           try {
-            pcdt.insert_constraint(v_src->point(), v_dst->point());
+            pcdt.insert_constraint(v_src->point(), v_tgt->point());
           } catch(const typename PCDT::Intersection_of_constraints_exception&) {
             CGAL_SS3_IO_TRACE_V(1, "Error: Intersection of constraints in sheet triangulation");
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");

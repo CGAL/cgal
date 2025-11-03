@@ -703,7 +703,7 @@ public:
   static SheetSPtr create_sheet(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
-    CGAL_precondition(edge->get_vertex_src() != edge->get_vertex_dst());
+    CGAL_precondition(edge->source() != edge->target());
 
     SheetSPtr result = SheetSPtr();
 
@@ -749,14 +749,14 @@ public:
 
     set_sheet(edge, result);
 
-    NodeSPtr node_src = Hds_utils::get_node(edge->get_vertex_src());
-    NodeSPtr node_dst = Hds_utils::get_node(edge->get_vertex_dst());
+    NodeSPtr node_src = Hds_utils::get_node(edge->source());
+    NodeSPtr node_tgt = Hds_utils::get_node(edge->target());
     result->add_node(node_src);
-    if (node_src != node_dst) {
-      result->add_node(node_dst);
+    if (node_src != node_tgt) {
+      result->add_node(node_tgt);
     }
-    result->add_arc(Hds_utils::get_arc(edge->get_vertex_src()));
-    result->add_arc(Hds_utils::get_arc(edge->get_vertex_dst()));
+    result->add_arc(Hds_utils::get_arc(edge->source()));
+    result->add_arc(Hds_utils::get_arc(edge->target()));
 
     return result;
   }
@@ -893,8 +893,8 @@ public:
 
       // Squatting the arc type, this isn't really an arc, but a contour edge.
       // Contours are useful to get a closed polygon (with holes) to draw sheets.
-      ArcSPtr contour = std::make_shared<Arc>(Hds_utils::get_node(edge->get_vertex_src()),
-                                              Hds_utils::get_node(edge->get_vertex_dst()));
+      ArcSPtr contour = std::make_shared<Arc>(Hds_utils::get_node(edge->source()),
+                                              Hds_utils::get_node(edge->target()));
       sheet->add_contour(contour);
 
       skeleton_->add_sheet(sheet);
@@ -915,16 +915,16 @@ public:
                                  const FT& event_time)
   {
     std::optional<FT> vanish_time = Hds_utils::get_vanish_time(edge);
-    Point_3 o_src = Transformation::offset_point_from_base(edge->get_vertex_src(), event_time);
+    Point_3 o_src = Transformation::offset_point_from_base(edge->source(), event_time);
     if (vanish_time.has_value() && event_time == *vanish_time) {
       return (point == o_src);
     }
 
-    Point_3 o_dst = Transformation::offset_point_from_base(edge->get_vertex_dst(), event_time);
-    CGAL_assertion(o_src != o_dst);
-    CGAL_assertion(CGAL::collinear(o_src, point, o_dst));
+    Point_3 o_tgt = Transformation::offset_point_from_base(edge->target(), event_time);
+    CGAL_assertion(o_src != o_tgt);
+    CGAL_assertion(CGAL::collinear(o_src, point, o_tgt));
 
-    return CGAL::collinear_are_ordered_along_line(o_src, point, o_dst);
+    return CGAL::collinear_are_ordered_along_line(o_src, point, o_tgt);
   }
 
   /**
@@ -1311,7 +1311,7 @@ public:
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     // convex split checks
     bool conv_split_event = false;
@@ -1321,18 +1321,18 @@ public:
         continue;
       }
       FacetSPtr facet_src = edge->get_facet_src();
-      FacetSPtr facet_dst = edge->get_facet_dst();
+      FacetSPtr facet_tgt = edge->get_facet_tgt();
       if (facet_1_src == edge_2->get_facet_L() ||
-          facet_1_dst == edge_2->get_facet_L()) {
+          facet_1_tgt == edge_2->get_facet_L()) {
         if (facet_src == edge_2->get_facet_R() ||
-            facet_dst == edge_2->get_facet_R()) {
+            facet_tgt == edge_2->get_facet_R()) {
           conv_split_event = true;
           break;
         }
       } else if (facet_1_src == edge_2->get_facet_R() ||
-                 facet_1_dst == edge_2->get_facet_R()) {
+                 facet_1_tgt == edge_2->get_facet_R()) {
         if (facet_src == edge_2->get_facet_L() ||
-            facet_dst == edge_2->get_facet_L()) {
+            facet_tgt == edge_2->get_facet_L()) {
           conv_split_event = true;
           break;
         }
@@ -1538,8 +1538,8 @@ public:
     for (EdgeWPtr edge_wptr : pv->edges()) {
       if (EdgeSPtr edge = edge_wptr.lock()) {
         FacetSPtr facet_src = edge->get_facet_src();
-        FacetSPtr facet_dst = edge->get_facet_dst();
-        if (pf == facet_src || pf == facet_dst) {
+        FacetSPtr facet_tgt = edge->get_facet_tgt();
+        if (pf == facet_src || pf == facet_tgt) {
           has_edge_to_facet = true;
           break;
         }
@@ -1619,8 +1619,8 @@ public:
 
     bool boundary_rejection = false;
     for (const EdgeSPtr& edge : facet_clone->edges()) {
-      Segment_3 seg { edge->get_vertex_src()->point(),
-                      edge->get_vertex_dst()->point() };
+      Segment_3 seg { edge->source()->point(),
+                      edge->target()->point() };
       if (seg.is_degenerate()) {
         continue;
       }
@@ -1694,9 +1694,9 @@ public:
     for (const EdgeSPtr& edge : edges) {
       CGAL_SS3_DEBUG_SPTR(edge);
 
-      VertexSPtr vertex_src = edge->get_vertex_src();
-      VertexSPtr vertex_dst = edge->get_vertex_dst();
-      if (vertex_src->point() == vertex_dst->point()) {
+      VertexSPtr vertex_src = edge->source();
+      VertexSPtr vertex_tgt = edge->target();
+      if (vertex_src->point() == vertex_tgt->point()) {
         Hds_utils::set_vanish_time(edge, std::nullopt);
         continue;
       }
@@ -1758,7 +1758,7 @@ public:
       for (FacetWPtr facet_wptr : vertex_1->facets()) {
         if (FacetSPtr facet = facet_wptr.lock()) {
             vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
-            // @speed sort vertices_2 as to get the first vertex after start_e->dst(facet)
+            // @speed sort vertices_2 as to get the first vertex after start_e->tgt(facet)
         }
       }
 
@@ -2113,7 +2113,7 @@ public:
     }
 
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     if (edge_1->get_facet_L() == edge_2->get_facet_L() ||
         edge_1->get_facet_L() == edge_2->get_facet_R() ||
@@ -2123,50 +2123,50 @@ public:
       return;
     }
 
-    if (edge_1->get_vertex_src()->point() == edge_2->get_vertex_src()->point() ||
-        edge_1->get_vertex_src()->point() == edge_2->get_vertex_dst()->point() ||
-        edge_1->get_vertex_dst()->point() == edge_2->get_vertex_src()->point() ||
-        edge_1->get_vertex_dst()->point() == edge_2->get_vertex_dst()->point()) {
+    if (edge_1->source()->point() == edge_2->source()->point() ||
+        edge_1->source()->point() == edge_2->target()->point() ||
+        edge_1->target()->point() == edge_2->source()->point() ||
+        edge_1->target()->point() == edge_2->target()->point()) {
       // share a vertex
       return;
     }
 
     // vertex of edge_1 splits edge_2
-    if (!((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_dst) ||
-          (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() != facet_1_src) ||
-          (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_dst) ||
-          (edge_2->get_facet_R() == facet_1_dst && edge_2->get_facet_L() != facet_1_src))) {
+    if (!((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_tgt) ||
+          (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() != facet_1_src) ||
+          (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_tgt) ||
+          (edge_2->get_facet_R() == facet_1_tgt && edge_2->get_facet_L() != facet_1_src))) {
       // no surface event
       return;
     }
 
     FacetSPtr facet_2_src = edge_2->get_facet_src();
-    FacetSPtr facet_2_dst = edge_2->get_facet_dst();
-    if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_dst) ||
-        (edge_1->get_facet_L() == facet_2_dst && edge_1->get_facet_R() != facet_2_src) ||
-        (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_dst) ||
-        (edge_1->get_facet_R() == facet_2_dst && edge_1->get_facet_L() != facet_2_src)) {
+    FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
+    if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_tgt) ||
+        (edge_1->get_facet_L() == facet_2_tgt && edge_1->get_facet_R() != facet_2_src) ||
+        (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_tgt) ||
+        (edge_1->get_facet_R() == facet_2_tgt && edge_1->get_facet_L() != facet_2_src)) {
       // flip vertex event
       return;
     }
 
-    if (edge_1->get_vertex_src()->find_edge(edge_2->get_vertex_src()) ||
-        edge_1->get_vertex_src()->find_edge(edge_2->get_vertex_dst()) ||
-        edge_1->get_vertex_dst()->find_edge(edge_2->get_vertex_src()) ||
-        edge_1->get_vertex_dst()->find_edge(edge_2->get_vertex_dst()) ) {
+    if (edge_1->source()->find_edge(edge_2->source()) ||
+        edge_1->source()->find_edge(edge_2->target()) ||
+        edge_1->target()->find_edge(edge_2->source()) ||
+        edge_1->target()->find_edge(edge_2->target()) ) {
       // edge event (when a pyramid grows outwards)
       // a surface split is not possible with only one edge in between
       return;
     }
 
     if ((edge_1->get_facet_L() == facet_2_src && facet_1_src == edge_2->get_facet_L()) ||
-        (edge_1->get_facet_L() == facet_2_dst && facet_1_src == edge_2->get_facet_R()) ||
-        (edge_1->get_facet_R() == facet_2_src && facet_1_dst == edge_2->get_facet_L()) ||
-        (edge_1->get_facet_R() == facet_2_dst && facet_1_dst == edge_2->get_facet_R()) ||
+        (edge_1->get_facet_L() == facet_2_tgt && facet_1_src == edge_2->get_facet_R()) ||
+        (edge_1->get_facet_R() == facet_2_src && facet_1_tgt == edge_2->get_facet_L()) ||
+        (edge_1->get_facet_R() == facet_2_tgt && facet_1_tgt == edge_2->get_facet_R()) ||
         (edge_1->get_facet_R() == facet_2_src && facet_1_src == edge_2->get_facet_R()) ||
-        (edge_1->get_facet_R() == facet_2_dst && facet_1_src == edge_2->get_facet_L()) ||
-        (edge_1->get_facet_L() == facet_2_src && facet_1_dst == edge_2->get_facet_R()) ||
-        (edge_1->get_facet_L() == facet_2_dst && facet_1_dst == edge_2->get_facet_L())) {
+        (edge_1->get_facet_R() == facet_2_tgt && facet_1_src == edge_2->get_facet_L()) ||
+        (edge_1->get_facet_L() == facet_2_src && facet_1_tgt == edge_2->get_facet_R()) ||
+        (edge_1->get_facet_L() == facet_2_tgt && facet_1_tgt == edge_2->get_facet_L())) {
       // vertex event
       return;
     }
@@ -2176,16 +2176,16 @@ public:
     // let's just check if bboxes overlap first
     if (time_future_bound.has_value()) {
       CGAL::Bbox_3 b1;
-      b1 += edge_1->get_vertex_src()->point().bbox();
-      b1 += edge_1->get_vertex_dst()->point().bbox();
-      b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound).bbox();
-      b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound).bbox();
+      b1 += edge_1->source()->point().bbox();
+      b1 += edge_1->target()->point().bbox();
+      b1 += Hds_utils::get_final_point(edge_1->source(), *time_future_bound).bbox();
+      b1 += Hds_utils::get_final_point(edge_1->target(), *time_future_bound).bbox();
 
       CGAL::Bbox_3 b2;
-      b2 += edge_2->get_vertex_src()->point().bbox();
-      b2 += edge_2->get_vertex_dst()->point().bbox();
-      b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound).bbox();
-      b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound).bbox();
+      b2 += edge_2->source()->point().bbox();
+      b2 += edge_2->target()->point().bbox();
+      b2 += Hds_utils::get_final_point(edge_2->source(), *time_future_bound).bbox();
+      b2 += Hds_utils::get_final_point(edge_2->target(), *time_future_bound).bbox();
 
       if (!CGAL::do_overlap(b1, b2)) {
         CGAL_SS3_CORE_TRACE_V(32, "Filtered possible surface event candidates\n\t" << edge_1->to_string() << "\n\t"
@@ -2234,19 +2234,19 @@ public:
       CGAL_SS3_DEBUG_SPTR(edge_1);
 
       FacetSPtr facet_1_src = edge_1->get_facet_src();
-      FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+      FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
       std::list<EdgeSPtr> edges_2;
       edges_2.insert(edges_2.end(), facet_1_src->edges().begin(), facet_1_src->edges().end());
-      edges_2.insert(edges_2.end(), facet_1_dst->edges().begin(), facet_1_dst->edges().end());
+      edges_2.insert(edges_2.end(), facet_1_tgt->edges().begin(), facet_1_tgt->edges().end());
 
       // not outside of the loop just because maybe one day this will be called
       // as the first collect function with an initial bound that gets updated...
       CGAL::Bbox_3 b1;
       if (time_future_bound.has_value()) {
-        b1 += edge_1->get_vertex_src()->point().bbox();
-        b1 += edge_1->get_vertex_dst()->point().bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound).bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound).bbox();
+        b1 += edge_1->source()->point().bbox();
+        b1 += edge_1->target()->point().bbox();
+        b1 += Hds_utils::get_final_point(edge_1->source(), *time_future_bound).bbox();
+        b1 += Hds_utils::get_final_point(edge_1->target(), *time_future_bound).bbox();
       }
 
       for (const EdgeSPtr& edge_2 : edges_2) {
@@ -2271,50 +2271,50 @@ public:
           continue;
         }
 
-        if (edge_1->get_vertex_src()->point() == edge_2->get_vertex_src()->point() ||
-            edge_1->get_vertex_src()->point() == edge_2->get_vertex_dst()->point() ||
-            edge_1->get_vertex_dst()->point() == edge_2->get_vertex_src()->point() ||
-            edge_1->get_vertex_dst()->point() == edge_2->get_vertex_dst()->point()) {
+        if (edge_1->source()->point() == edge_2->source()->point() ||
+            edge_1->source()->point() == edge_2->target()->point() ||
+            edge_1->target()->point() == edge_2->source()->point() ||
+            edge_1->target()->point() == edge_2->target()->point()) {
           // share a vertex
           continue;
         }
 
         // vertex of edge_1 splits edge_2
-        if (!((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_dst) ||
-              (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() != facet_1_src) ||
-              (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_dst) ||
-              (edge_2->get_facet_R() == facet_1_dst && edge_2->get_facet_L() != facet_1_src))) {
+        if (!((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_tgt) ||
+              (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() != facet_1_src) ||
+              (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_tgt) ||
+              (edge_2->get_facet_R() == facet_1_tgt && edge_2->get_facet_L() != facet_1_src))) {
           // no surface event
           continue;
         }
 
         FacetSPtr facet_2_src = edge_2->get_facet_src();
-        FacetSPtr facet_2_dst = edge_2->get_facet_dst();
-        if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_dst) ||
-            (edge_1->get_facet_L() == facet_2_dst && edge_1->get_facet_R() != facet_2_src) ||
-            (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_dst) ||
-            (edge_1->get_facet_R() == facet_2_dst && edge_1->get_facet_L() != facet_2_src)) {
+        FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
+        if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_tgt) ||
+            (edge_1->get_facet_L() == facet_2_tgt && edge_1->get_facet_R() != facet_2_src) ||
+            (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_tgt) ||
+            (edge_1->get_facet_R() == facet_2_tgt && edge_1->get_facet_L() != facet_2_src)) {
           // flip vertex event
           continue;
         }
 
-        if (edge_1->get_vertex_src()->find_edge(edge_2->get_vertex_src()) ||
-            edge_1->get_vertex_src()->find_edge(edge_2->get_vertex_dst()) ||
-            edge_1->get_vertex_dst()->find_edge(edge_2->get_vertex_src()) ||
-            edge_1->get_vertex_dst()->find_edge(edge_2->get_vertex_dst()) ) {
+        if (edge_1->source()->find_edge(edge_2->source()) ||
+            edge_1->source()->find_edge(edge_2->target()) ||
+            edge_1->target()->find_edge(edge_2->source()) ||
+            edge_1->target()->find_edge(edge_2->target()) ) {
           // edge event (when a pyramid grows outwards)
           // a surface split is not possible with only one edge in between
           continue;
         }
 
         if ((edge_1->get_facet_L() == facet_2_src && facet_1_src == edge_2->get_facet_L()) ||
-            (edge_1->get_facet_L() == facet_2_dst && facet_1_src == edge_2->get_facet_R()) ||
-            (edge_1->get_facet_R() == facet_2_src && facet_1_dst == edge_2->get_facet_L()) ||
-            (edge_1->get_facet_R() == facet_2_dst && facet_1_dst == edge_2->get_facet_R()) ||
+            (edge_1->get_facet_L() == facet_2_tgt && facet_1_src == edge_2->get_facet_R()) ||
+            (edge_1->get_facet_R() == facet_2_src && facet_1_tgt == edge_2->get_facet_L()) ||
+            (edge_1->get_facet_R() == facet_2_tgt && facet_1_tgt == edge_2->get_facet_R()) ||
             (edge_1->get_facet_R() == facet_2_src && facet_1_src == edge_2->get_facet_R()) ||
-            (edge_1->get_facet_R() == facet_2_dst && facet_1_src == edge_2->get_facet_L()) ||
-            (edge_1->get_facet_L() == facet_2_src && facet_1_dst == edge_2->get_facet_R()) ||
-            (edge_1->get_facet_L() == facet_2_dst && facet_1_dst == edge_2->get_facet_L())) {
+            (edge_1->get_facet_R() == facet_2_tgt && facet_1_src == edge_2->get_facet_L()) ||
+            (edge_1->get_facet_L() == facet_2_src && facet_1_tgt == edge_2->get_facet_R()) ||
+            (edge_1->get_facet_L() == facet_2_tgt && facet_1_tgt == edge_2->get_facet_L())) {
           // vertex event
           continue;
         }
@@ -2324,10 +2324,10 @@ public:
         // let's just check if bboxes overlap first
         if (time_future_bound.has_value()) {
           CGAL::Bbox_3 b2;
-          b2 += edge_2->get_vertex_src()->point().bbox();
-          b2 += edge_2->get_vertex_dst()->point().bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound).bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound).bbox();
+          b2 += edge_2->source()->point().bbox();
+          b2 += edge_2->target()->point().bbox();
+          b2 += Hds_utils::get_final_point(edge_2->source(), *time_future_bound).bbox();
+          b2 += Hds_utils::get_final_point(edge_2->target(), *time_future_bound).bbox();
 
           if (!CGAL::do_overlap(b1, b2)) {
             CGAL_SS3_CORE_TRACE_V(64, "Filtered possible surface event candidates\n\t" << edge_1->to_string() << "\n\t"
@@ -2390,24 +2390,24 @@ public:
     CGAL_SS3_DEBUG_SPTR(edge_2);
 
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
-    if (edge_1->get_vertex_src()->point() == edge_2->get_vertex_src()->point() ||
-        edge_1->get_vertex_src()->point() == edge_2->get_vertex_dst()->point() ||
-        edge_1->get_vertex_dst()->point() == edge_2->get_vertex_src()->point() ||
-        edge_1->get_vertex_dst()->point() == edge_2->get_vertex_dst()->point()) {
+    if (edge_1->source()->point() == edge_2->source()->point() ||
+        edge_1->source()->point() == edge_2->target()->point() ||
+        edge_1->target()->point() == edge_2->source()->point() ||
+        edge_1->target()->point() == edge_2->target()->point()) {
       // share a vertex
       return;
     }
-    if (!((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() == facet_1_dst) ||
-          (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() == facet_1_src))) {
+    if (!((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() == facet_1_tgt) ||
+          (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() == facet_1_src))) {
       // no polyhedron split event
       return;
     }
-    if (edge_1->get_vertex_src()->find_edge(edge_2->get_vertex_src()) ||
-        edge_1->get_vertex_src()->find_edge(edge_2->get_vertex_dst()) ||
-        edge_1->get_vertex_dst()->find_edge(edge_2->get_vertex_src()) ||
-        edge_1->get_vertex_dst()->find_edge(edge_2->get_vertex_dst())) {
+    if (edge_1->source()->find_edge(edge_2->source()) ||
+        edge_1->source()->find_edge(edge_2->target()) ||
+        edge_1->target()->find_edge(edge_2->source()) ||
+        edge_1->target()->find_edge(edge_2->target())) {
       // does not work when there is only one edge in between
       return;
     }
@@ -2703,14 +2703,14 @@ public:
       CGAL_SS3_DEBUG_SPTR(edge_1);
 
       FacetSPtr facet_1_src = edge_1->get_facet_src();
-      FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+      FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
       CGAL::Bbox_3 b1;
       if (time_future_bound.has_value()) {
-        b1 += edge_1->get_vertex_src()->point().bbox();
-        b1 += edge_1->get_vertex_dst()->point().bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_src(), *time_future_bound).bbox();
-        b1 += Hds_utils::get_final_point(edge_1->get_vertex_dst(), *time_future_bound).bbox();
+        b1 += edge_1->source()->point().bbox();
+        b1 += edge_1->target()->point().bbox();
+        b1 += Hds_utils::get_final_point(edge_1->source(), *time_future_bound).bbox();
+        b1 += Hds_utils::get_final_point(edge_1->target(), *time_future_bound).bbox();
       }
 
       for (const EdgeSPtr& edge_2 : edges_reflex_2) {
@@ -2742,32 +2742,32 @@ public:
           // on same facet
           continue;
         }
-        if (edge_1->get_vertex_src()->point() == edge_2->get_vertex_src()->point() ||
-            edge_1->get_vertex_src()->point() == edge_2->get_vertex_dst()->point() ||
-            edge_1->get_vertex_dst()->point() == edge_2->get_vertex_src()->point() ||
-            edge_1->get_vertex_dst()->point() == edge_2->get_vertex_dst()->point()) {
+        if (edge_1->source()->point() == edge_2->source()->point() ||
+            edge_1->source()->point() == edge_2->target()->point() ||
+            edge_1->target()->point() == edge_2->source()->point() ||
+            edge_1->target()->point() == edge_2->target()->point()) {
           // share a vertex
           continue;
         }
 
-        if (((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() == facet_1_dst) ||
-             (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() == facet_1_src))) {
+        if (((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() == facet_1_tgt) ||
+             (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() == facet_1_src))) {
           // polyhedron split event
           continue;
         }
         FacetSPtr facet_2_src = edge_2->get_facet_src();
-        FacetSPtr facet_2_dst = edge_2->get_facet_dst();
-        if ((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_dst) ||
-            (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() != facet_1_src) ||
-            (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_dst) ||
-            (edge_2->get_facet_R() == facet_1_dst && edge_2->get_facet_L() != facet_1_src)) {
+        FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
+        if ((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_tgt) ||
+            (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() != facet_1_src) ||
+            (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_tgt) ||
+            (edge_2->get_facet_R() == facet_1_tgt && edge_2->get_facet_L() != facet_1_src)) {
           // surface event
           continue;
         }
-        if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_dst) ||
-            (edge_1->get_facet_L() == facet_2_dst && edge_1->get_facet_R() != facet_2_src) ||
-            (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_dst) ||
-            (edge_1->get_facet_R() == facet_2_dst && edge_1->get_facet_L() != facet_2_src)) {
+        if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_tgt) ||
+            (edge_1->get_facet_L() == facet_2_tgt && edge_1->get_facet_R() != facet_2_src) ||
+            (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_tgt) ||
+            (edge_1->get_facet_R() == facet_2_tgt && edge_1->get_facet_L() != facet_2_src)) {
           // surface event
           continue;
         }
@@ -2780,10 +2780,10 @@ public:
         // let's just check if bboxes overlap first
         if (time_future_bound.has_value()) {
           CGAL::Bbox_3 b2;
-          b2 += edge_2->get_vertex_src()->point().bbox();
-          b2 += edge_2->get_vertex_dst()->point().bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_src(), *time_future_bound).bbox();
-          b2 += Hds_utils::get_final_point(edge_2->get_vertex_dst(), *time_future_bound).bbox();
+          b2 += edge_2->source()->point().bbox();
+          b2 += edge_2->target()->point().bbox();
+          b2 += Hds_utils::get_final_point(edge_2->source(), *time_future_bound).bbox();
+          b2 += Hds_utils::get_final_point(edge_2->target(), *time_future_bound).bbox();
 
           if (!CGAL::do_overlap(b1, b2)) {
             CGAL_SS3_CORE_TRACE_V(64, "Filtered edge split candidates\n\t" << edge_1->to_string() << "\n\t"
@@ -2860,7 +2860,7 @@ public:
     timer.start();
 
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     CGAL_SS3_DEBUG_SPTR(edge_1);
     CGAL_SS3_DEBUG_SPTR(edge_2);
@@ -2884,32 +2884,32 @@ public:
       // on same facet
       return;
     }
-    if (edge_1->get_vertex_src()->point() == edge_2->get_vertex_src()->point() ||
-        edge_1->get_vertex_src()->point() == edge_2->get_vertex_dst()->point() ||
-        edge_1->get_vertex_dst()->point() == edge_2->get_vertex_src()->point() ||
-        edge_1->get_vertex_dst()->point() == edge_2->get_vertex_dst()->point()) {
+    if (edge_1->source()->point() == edge_2->source()->point() ||
+        edge_1->source()->point() == edge_2->target()->point() ||
+        edge_1->target()->point() == edge_2->source()->point() ||
+        edge_1->target()->point() == edge_2->target()->point()) {
       // share a vertex
       return;
     }
 
-    if (((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() == facet_1_dst) ||
-         (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() == facet_1_src))) {
+    if (((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() == facet_1_tgt) ||
+         (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() == facet_1_src))) {
         // polyhedron split event
         return;
     }
     FacetSPtr facet_2_src = edge_2->get_facet_src();
-    FacetSPtr facet_2_dst = edge_2->get_facet_dst();
-    if ((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_dst) ||
-        (edge_2->get_facet_L() == facet_1_dst && edge_2->get_facet_R() != facet_1_src) ||
-        (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_dst) ||
-        (edge_2->get_facet_R() == facet_1_dst && edge_2->get_facet_L() != facet_1_src)) {
+    FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
+    if ((edge_2->get_facet_L() == facet_1_src && edge_2->get_facet_R() != facet_1_tgt) ||
+        (edge_2->get_facet_L() == facet_1_tgt && edge_2->get_facet_R() != facet_1_src) ||
+        (edge_2->get_facet_R() == facet_1_src && edge_2->get_facet_L() != facet_1_tgt) ||
+        (edge_2->get_facet_R() == facet_1_tgt && edge_2->get_facet_L() != facet_1_src)) {
       // surface event
       return;
     }
-    if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_dst) ||
-        (edge_1->get_facet_L() == facet_2_dst && edge_1->get_facet_R() != facet_2_src) ||
-        (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_dst) ||
-        (edge_1->get_facet_R() == facet_2_dst && edge_1->get_facet_L() != facet_2_src)) {
+    if ((edge_1->get_facet_L() == facet_2_src && edge_1->get_facet_R() != facet_2_tgt) ||
+        (edge_1->get_facet_L() == facet_2_tgt && edge_1->get_facet_R() != facet_2_src) ||
+        (edge_1->get_facet_R() == facet_2_src && edge_1->get_facet_L() != facet_2_tgt) ||
+        (edge_1->get_facet_R() == facet_2_tgt && edge_1->get_facet_L() != facet_2_src)) {
       // surface event
         return;
     }
@@ -2967,10 +2967,10 @@ public:
           continue;
         }
 
-        CGAL::Bbox_3 b = edge->get_vertex_src()->point().bbox();
-        b += edge->get_vertex_dst()->point().bbox();
-        b += Hds_utils::get_final_point(edge->get_vertex_src(), *time_future_bound).bbox();
-        b += Hds_utils::get_final_point(edge->get_vertex_dst(), *time_future_bound).bbox();
+        CGAL::Bbox_3 b = edge->source()->point().bbox();
+        b += edge->target()->point().bbox();
+        b += Hds_utils::get_final_point(edge->source(), *time_future_bound).bbox();
+        b += Hds_utils::get_final_point(edge->target(), *time_future_bound).bbox();
 
         boxes.emplace_back(b, edge);
       }
@@ -3026,10 +3026,10 @@ public:
         continue;
       }
 
-      CGAL::Bbox_3 b = edge->get_vertex_src()->point().bbox();
-      b += edge->get_vertex_dst()->point().bbox();
-      b += Hds_utils::get_final_point(edge->get_vertex_src(), *time_future_bound).bbox();
-      b += Hds_utils::get_final_point(edge->get_vertex_dst(), *time_future_bound).bbox();
+      CGAL::Bbox_3 b = edge->source()->point().bbox();
+      b += edge->target()->point().bbox();
+      b += Hds_utils::get_final_point(edge->source(), *time_future_bound).bbox();
+      b += Hds_utils::get_final_point(edge->target(), *time_future_bound).bbox();
 
       boxes.emplace_back(b, edge);
     }
@@ -3256,7 +3256,7 @@ public:
 
       // this is the modified edges as 'edge_2'
       // since we know that for a polyhedron split event, edge_2's LR facets
-      // are the src and dst of edge_1, we can build a subset of all edges for edge_1s
+      // are the src and tgt of edge_1, we can build a subset of all edges for edge_1s
       for (const EdgeSPtr& edge_2 : local_edges_EE) {
         std::set<EdgeSPtr> edges_1;
         for (const FacetSPtr& facet_2 : {edge_2->get_facet_L(), edge_2->get_facet_R()}) {
@@ -3999,18 +3999,18 @@ public:
       }
 
       FacetSPtr facet_src = edge->get_facet_src();
-      FacetSPtr facet_dst = edge->get_facet_dst();
+      FacetSPtr facet_tgt = edge->get_facet_tgt();
 
       // This does not work when there is more than one edge between both facets.
-      // EdgeSPtr edge_2 = facet_src->find_edge(facet_dst);
-      std::list<EdgeSPtr> edges_2 = facet_src->find_edges(facet_dst); // @todo shouldn't this check also happen in other events?...
+      // EdgeSPtr edge_2 = facet_src->find_edge(facet_tgt);
+      std::list<EdgeSPtr> edges_2 = facet_src->find_edges(facet_tgt); // @todo shouldn't this check also happen in other events?...
 
       bool split_event = false;
       for (const EdgeSPtr& edge_2 : edges_2) {
         FacetSPtr facet_l2 = edge_2->get_facet_L();
         FacetSPtr facet_r2 = edge_2->get_facet_R();
         FacetSPtr facet_2_src = edge_2->get_facet_src();
-        FacetSPtr facet_2_dst = edge_2->get_facet_dst();
+        FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
 
         const Plane_3& plane_l2 = facet_l2->get_plane();
         CGAL_assertion_code(const FT& l2a = plane_l2.a();)
@@ -4360,8 +4360,8 @@ public:
     shit_to_event_time(polyhedron, current_time, event_time);
 
     EdgeSPtr edge = event->get_edge();
-    VertexSPtr vertex_src = edge->get_vertex_src();
-    VertexSPtr vertex_dst = edge->get_vertex_dst();
+    VertexSPtr vertex_src = edge->source();
+    VertexSPtr vertex_tgt = edge->target();
 
     CGAL_SS3_CORE_TRACE_V(4,"Edge:\n" << edge->to_string());
 
@@ -4372,7 +4372,7 @@ public:
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(vertex_src)->close_arc(node);
-    Hds_utils::get_arc(vertex_dst)->close_arc(node);
+    Hds_utils::get_arc(vertex_tgt)->close_arc(node);
 
     Hds_utils::get_sheet(edge)->add_node(node);
     Hds_utils::clear_sheet(edge);
@@ -4382,14 +4382,14 @@ public:
     std::array<VertexSPtr, 4> vertices;
     vertices[0] = vertex_src->prev(edge->get_facet_L());
     vertices[1] = vertex_src->next(edge->get_facet_R());
-    vertices[2] = vertex_dst->prev(edge->get_facet_R());
-    vertices[3] = vertex_dst->next(edge->get_facet_L());
+    vertices[2] = vertex_tgt->prev(edge->get_facet_R());
+    vertices[3] = vertex_tgt->next(edge->get_facet_L());
 
     std::array<FacetSPtr, 4> facets;
     facets[1] = edge->get_facet_R();
     facets[3] = edge->get_facet_L();
     facets[0] = facets[3]->next(vertex_src);
-    facets[2] = facets[1]->next(vertex_dst);
+    facets[2] = facets[1]->next(vertex_tgt);
 
     // check if edge should be flipped
     bool flip_edge = true;
@@ -4410,23 +4410,23 @@ public:
             \                      /
             E0          F3       E3
               \                  /
-      F0     src ------------ dst      F2
+      F0     src ------------ tgt      F2
               /                 \
             E1         F1       E2
           /                      \
         V1                       V2
 
-        dst of Ei = Vi
+        tgt of Ei = Vi
       */
 
       VertexSPtr vertex_src_clone = vertex_src->clone();
-      VertexSPtr vertex_dst_clone = vertex_dst->clone();
-      EdgeSPtr edge_no_flip = Edge::create(vertex_src_clone, vertex_dst_clone);
+      VertexSPtr vertex_tgt_clone = vertex_tgt->clone();
+      EdgeSPtr edge_no_flip = Edge::create(vertex_src_clone, vertex_tgt_clone);
       std::array<EdgeSPtr, 4> edges;
       edges[0] = Edge::create(vertex_src_clone, vertices[0]->clone());
       edges[1] = Edge::create(vertex_src_clone, vertices[1]->clone());
-      edges[2] = Edge::create(vertex_dst_clone, vertices[2]->clone());
-      edges[3] = Edge::create(vertex_dst_clone, vertices[3]->clone());
+      edges[2] = Edge::create(vertex_tgt_clone, vertices[2]->clone());
+      edges[3] = Edge::create(vertex_tgt_clone, vertices[3]->clone());
       std::vector<FacetSPtr> facets_clone(4);
       for (unsigned int i = 0; i < 4; ++i) {
         facets_clone[i] = Facet::create(); // combinatorics built manually below
@@ -4473,23 +4473,23 @@ public:
                 F0          \   F3   /
                             E0     E3
                               \   /
-              src ------------ dst
+              src ------------ tgt
             /   \
           E1     E2
           /   F1   \        F2
         V1         V2
 
-        dst of Ei = Vi
+        tgt of Ei = Vi
       */
 
       VertexSPtr vertex_src_clone = vertex_src->clone();
-      VertexSPtr vertex_dst_clone = vertex_dst->clone();
-      EdgeSPtr edge_flipped = Edge::create(vertex_src_clone, vertex_dst_clone);
+      VertexSPtr vertex_tgt_clone = vertex_tgt->clone();
+      EdgeSPtr edge_flipped = Edge::create(vertex_src_clone, vertex_tgt_clone);
       std::array<EdgeSPtr, 4> edges;
-      edges[0] = Edge::create(vertex_dst_clone, vertices[0]->clone());
+      edges[0] = Edge::create(vertex_tgt_clone, vertices[0]->clone());
       edges[1] = Edge::create(vertex_src_clone, vertices[1]->clone());
       edges[2] = Edge::create(vertex_src_clone, vertices[2]->clone());
-      edges[3] = Edge::create(vertex_dst_clone, vertices[3]->clone());
+      edges[3] = Edge::create(vertex_tgt_clone, vertices[3]->clone());
       std::vector<FacetSPtr> facets_clone(4);
       for (unsigned int i = 0; i < 4; ++i) {
         facets_clone[i] = Facet::create(); // combinatorics built manually below
@@ -4548,16 +4548,16 @@ public:
     std::array<EdgeSPtr, 4> edges;
     edges[0] = edge->next(vertex_src);
     edges[1] = edges[0]->next(vertex_src);
-    edges[2] = edge->next(vertex_dst);
-    edges[3] = edges[2]->next(vertex_dst);
+    edges[2] = edge->next(vertex_tgt);
+    edges[3] = edges[2]->next(vertex_tgt);
 
     CGAL_SS3_CORE_TRACE_V(16, "flip_edge = " << flip_edge);
 
     if (flip_edge) {
       facets[3]->remove_vertex(vertex_src);
       facets[2]->add_vertex(vertex_src);
-      facets[1]->remove_vertex(vertex_dst);
-      facets[0]->add_vertex(vertex_dst);
+      facets[1]->remove_vertex(vertex_tgt);
+      facets[0]->add_vertex(vertex_tgt);
 
       facets[1]->remove_edge(edge);
       facets[3]->remove_edge(edge);
@@ -4566,31 +4566,31 @@ public:
       facets[0]->add_edge(edge);
       facets[2]->add_edge(edge);
 
-      if (edges[0]->get_vertex_src() == vertex_src) {
-        edges[0]->replace_vertex_src(vertex_dst);
-      } else if (edges[0]->get_vertex_dst() == vertex_src) {
-        edges[0]->replace_vertex_dst(vertex_dst);
+      if (edges[0]->source() == vertex_src) {
+        edges[0]->replace_vertex_src(vertex_tgt);
+      } else if (edges[0]->target() == vertex_src) {
+        edges[0]->replace_vertex_tgt(vertex_tgt);
       }
-      if (edges[2]->get_vertex_src() == vertex_dst) {
+      if (edges[2]->source() == vertex_tgt) {
         edges[2]->replace_vertex_src(vertex_src);
-      } else if (edges[2]->get_vertex_dst() == vertex_dst) {
-        edges[2]->replace_vertex_dst(vertex_src);
+      } else if (edges[2]->target() == vertex_tgt) {
+        edges[2]->replace_vertex_tgt(vertex_src);
       }
 
       if (time_future_bound.has_value()) {
         Hds_utils::set_final_point(vertex_src, std::nullopt);
-        Hds_utils::set_final_point(vertex_dst, std::nullopt);
+        Hds_utils::set_final_point(vertex_tgt, std::nullopt);
       }
 
-      post_op_vertices_VV_ = {{ vertex_src, vertex_dst }};
+      post_op_vertices_VV_ = {{ vertex_src, vertex_tgt }};
 
       // now, in the facets that have grown in size, we also need to collect
       // vertices that might create new events because they are now separated-enough
       // from other vertices in the cycle
       post_op_vertices_VV_.insert(vertex_src->prev(facets[0]));
-      post_op_vertices_VV_.insert(vertex_dst->next(facets[0]));
+      post_op_vertices_VV_.insert(vertex_tgt->next(facets[0]));
       post_op_vertices_VV_.insert(vertex_src->next(facets[2]));
-      post_op_vertices_VV_.insert(vertex_dst->prev(facets[2]));
+      post_op_vertices_VV_.insert(vertex_tgt->prev(facets[2]));
       CGAL_assertion(post_op_vertices_VV_.size() == 6);
 
       // if there was no flip, then (unmodified) vertices should not have new events
@@ -4602,7 +4602,7 @@ public:
     }
 
     // update arcs and sheets
-    for (VertexSPtr vertex_ext : { vertex_src, vertex_dst }) {
+    for (VertexSPtr vertex_ext : { vertex_src, vertex_tgt }) {
       Hds_utils::set_node(vertex_ext, node);
 
       ArcSPtr arc = create_arc(vertex_ext);
@@ -4624,20 +4624,20 @@ public:
 #endif
 
     // Gather relevant elements for local queue updates
-    post_op_vertices_ = {{ vertex_src, vertex_dst }};
+    post_op_vertices_ = {{ vertex_src, vertex_tgt }};
     post_op_edges_ = {{ edge,
                         edge->next(vertex_src),
                         edge->prev(vertex_src),
-                        edge->next(vertex_dst),
-                        edge->prev(vertex_dst) }};
+                        edge->next(vertex_tgt),
+                        edge->prev(vertex_tgt) }};
     post_op_facets_ = {{ facets[0], facets[1], facets[2], facets[3] }};
     CGAL_postcondition(post_op_vertices_.size() == 2 &&
                        post_op_edges_.size() == 5 &&
                        post_op_facets_.size() == 4);
 
     for (const EdgeSPtr& poe : post_op_edges_) {
-        post_op_vertices_pierce_.insert(poe->get_vertex_src());
-        post_op_vertices_pierce_.insert(poe->get_vertex_dst());
+        post_op_vertices_pierce_.insert(poe->source());
+        post_op_vertices_pierce_.insert(poe->target());
     }
     CGAL_postcondition(post_op_vertices_pierce_.size() == 6);
 
@@ -4679,8 +4679,8 @@ public:
     skeleton_->add_node(node);
 
     Hds_utils::get_arc(edge_toremove_1->src(facet))->close_arc(node);
-    Hds_utils::get_arc(edge_toremove_1->dst(facet))->close_arc(node);
-    Hds_utils::get_arc(edge_toremove_2->dst(facet))->close_arc(node);
+    Hds_utils::get_arc(edge_toremove_1->tgt(facet))->close_arc(node);
+    Hds_utils::get_arc(edge_toremove_2->tgt(facet))->close_arc(node);
 
     Hds_utils::get_sheet(edge_toremove_1)->add_node(node);
     Hds_utils::get_sheet(edge_toremove_2)->add_node(node);
@@ -4690,35 +4690,35 @@ public:
     merge_sheets(edge_1, edge_2);
 #endif
 
-    VertexSPtr vertex = edge_toremove_1->dst(facet);
-    VertexSPtr vertex_1 = edge_1->dst(facet);
+    VertexSPtr vertex = edge_toremove_1->tgt(facet);
+    VertexSPtr vertex_1 = edge_1->tgt(facet);
     VertexSPtr vertex_2 = edge_2->src(facet);
     EdgeSPtr edge_b = edge_toremove_1->prev(edge_toremove_1->other(facet));
     EdgeSPtr edge_b1 = edge_1->prev(edge_1->other(facet));
     EdgeSPtr edge_b2 = edge_2->next(edge_2->other(facet));
     facet->remove_vertex(vertex);
     edge_1->other(facet)->add_vertex(vertex);
-    if (edge_b1->get_vertex_src() == vertex_1) {
+    if (edge_b1->source() == vertex_1) {
       edge_b1->replace_vertex_src(vertex);
     } else {
-      edge_b1->replace_vertex_dst(vertex);
+      edge_b1->replace_vertex_tgt(vertex);
     }
-    if (edge_b2->get_vertex_src() == vertex_2) {
+    if (edge_b2->source() == vertex_2) {
       edge_b2->replace_vertex_src(vertex);
     } else {
-      edge_b2->replace_vertex_dst(vertex);
+      edge_b2->replace_vertex_tgt(vertex);
     }
-    if (edge_1->get_vertex_dst() == vertex_1) {
-      if (edge_2->get_vertex_src() == vertex_2) {
-        edge_1->replace_vertex_dst(edge_2->get_vertex_dst());
+    if (edge_1->target() == vertex_1) {
+      if (edge_2->source() == vertex_2) {
+        edge_1->replace_vertex_tgt(edge_2->target());
       } else {
-        edge_1->replace_vertex_dst(edge_2->get_vertex_src());
+        edge_1->replace_vertex_tgt(edge_2->source());
       }
     } else {
-      if (edge_2->get_vertex_src() == vertex_2) {
-        edge_1->replace_vertex_src(edge_2->get_vertex_dst());
+      if (edge_2->source() == vertex_2) {
+        edge_1->replace_vertex_src(edge_2->target());
       } else {
-        edge_1->replace_vertex_src(edge_2->get_vertex_src());
+        edge_1->replace_vertex_src(edge_2->source());
       }
     }
     edge_toremove_1->get_facet_L()->remove_edge(edge_toremove_1);
@@ -4839,10 +4839,10 @@ public:
     Skeleton_vertex_data::create(new_vertex);
     for (unsigned int i = 0; i < 3; ++i) {
       EdgeSPtr edge = vertices[i]->edges().front().lock();
-      if (edge->get_vertex_src() == vertices[i]) {
+      if (edge->source() == vertices[i]) {
         edge->replace_vertex_src(new_vertex);
-      } else if (edge->get_vertex_dst() == vertices[i]) {
-        edge->replace_vertex_dst(new_vertex);
+      } else if (edge->target() == vertices[i]) {
+        edge->replace_vertex_tgt(new_vertex);
       }
       edge->get_facet_L()->remove_vertex(vertices[i]);
       edge->get_facet_R()->remove_vertex(vertices[i]);
@@ -4959,33 +4959,33 @@ public:
       polyhedron->remove_edge(edge);
     }
 
-    if (edge_11->get_vertex_dst() == vertices[0]) {
-      if (edge_12->get_vertex_src() == vertices[2]) {
-        edge_11->replace_vertex_dst(edge_12->get_vertex_dst());
+    if (edge_11->target() == vertices[0]) {
+      if (edge_12->source() == vertices[2]) {
+        edge_11->replace_vertex_tgt(edge_12->target());
       } else {
-        edge_11->replace_vertex_dst(edge_12->get_vertex_src());
+        edge_11->replace_vertex_tgt(edge_12->source());
       }
     } else {
-      if (edge_12->get_vertex_src() == vertices[2]) {
-        edge_11->replace_vertex_src(edge_12->get_vertex_dst());
+      if (edge_12->source() == vertices[2]) {
+        edge_11->replace_vertex_src(edge_12->target());
       } else {
-        edge_11->replace_vertex_src(edge_12->get_vertex_src());
+        edge_11->replace_vertex_src(edge_12->source());
       }
     }
     edge_12->get_facet_L()->remove_edge(edge_12);
     edge_12->get_facet_R()->remove_edge(edge_12);
     polyhedron->remove_edge(edge_12);
-    if (edge_21->get_vertex_dst() == vertices[1]) {
-      if (edge_22->get_vertex_src() == vertices[3]) {
-        edge_21->replace_vertex_dst(edge_22->get_vertex_dst());
+    if (edge_21->target() == vertices[1]) {
+      if (edge_22->source() == vertices[3]) {
+        edge_21->replace_vertex_tgt(edge_22->target());
       } else {
-        edge_21->replace_vertex_dst(edge_22->get_vertex_src());
+        edge_21->replace_vertex_tgt(edge_22->source());
       }
     } else {
-      if (edge_22->get_vertex_src() == vertices[3]) {
-        edge_21->replace_vertex_src(edge_22->get_vertex_dst());
+      if (edge_22->source() == vertices[3]) {
+        edge_21->replace_vertex_src(edge_22->target());
       } else {
-        edge_21->replace_vertex_src(edge_22->get_vertex_src());
+        edge_21->replace_vertex_src(edge_22->source());
       }
     }
     edge_22->get_facet_L()->remove_edge(edge_22);
@@ -5046,8 +5046,8 @@ public:
 
     FacetSPtr facet_l = edge->get_facet_L();
     FacetSPtr facet_r = edge->get_facet_R();
-    VertexSPtr vertex_l = edge->next(facet_l)->dst(facet_l);
-    VertexSPtr vertex_r = edge->next(facet_r)->dst(facet_r);
+    VertexSPtr vertex_l = edge->next(facet_l)->tgt(facet_l);
+    VertexSPtr vertex_r = edge->next(facet_r)->tgt(facet_r);
     EdgeSPtr edge_l = edge->next(facet_l);
     FacetSPtr facet_ll = edge_l->other(facet_l);
     edge_l = edge_l->prev(facet_ll);
@@ -5090,17 +5090,17 @@ public:
       polyhedron->remove_edge(edge);
     }
 
-    if (edge_l->get_vertex_src() == vertex_l) {
-      if (edge_r->get_vertex_dst() == vertex_r) {
-        edge_l->replace_vertex_src(edge_r->get_vertex_src());
+    if (edge_l->source() == vertex_l) {
+      if (edge_r->target() == vertex_r) {
+        edge_l->replace_vertex_src(edge_r->source());
       } else {
-        edge_l->replace_vertex_src(edge_r->get_vertex_dst());
+        edge_l->replace_vertex_src(edge_r->target());
       }
     } else {
-      if (edge_r->get_vertex_dst() == vertex_r) {
-        edge_l->replace_vertex_dst(edge_r->get_vertex_src());
+      if (edge_r->target() == vertex_r) {
+        edge_l->replace_vertex_tgt(edge_r->source());
       } else {
-        edge_l->replace_vertex_dst(edge_r->get_vertex_dst());
+        edge_l->replace_vertex_tgt(edge_r->target());
       }
     }
     edge_r->get_facet_L()->remove_edge(edge_r);
@@ -5294,17 +5294,17 @@ public:
     merge_sheets(edge_tomerge_1, edge_tomerge_2);
 #endif
 
-    if (edge_tomerge_1->get_vertex_src() == vertex_1) {
-      if (edge_tomerge_2->get_vertex_src() == vertex_2) {
-        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->get_vertex_dst());
+    if (edge_tomerge_1->source() == vertex_1) {
+      if (edge_tomerge_2->source() == vertex_2) {
+        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->target());
       } else {
-        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->get_vertex_src());
+        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->source());
       }
     } else {
-      if (edge_tomerge_2->get_vertex_src() == vertex_2) {
-        edge_tomerge_1->replace_vertex_dst(edge_tomerge_2->get_vertex_dst());
+      if (edge_tomerge_2->source() == vertex_2) {
+        edge_tomerge_1->replace_vertex_tgt(edge_tomerge_2->target());
       } else {
-        edge_tomerge_1->replace_vertex_dst(edge_tomerge_2->get_vertex_src());
+        edge_tomerge_1->replace_vertex_tgt(edge_tomerge_2->source());
       }
     }
     facet_1->remove_vertex(vertex_2);
@@ -5312,18 +5312,18 @@ public:
     facet_1b->add_vertex(vertex_2);
     facet_2b->add_vertex(vertex_1);
     edge_tomerge_2->replace_vertex_src(vertex_1);
-    edge_tomerge_2->replace_vertex_dst(vertex_2);
+    edge_tomerge_2->replace_vertex_tgt(vertex_2);
     edge_tomerge_2->replace_facet_L(facet_1b);
     edge_tomerge_2->replace_facet_R(facet_2b);
-    if (edge_12->get_vertex_src() == vertex_1) {
+    if (edge_12->source() == vertex_1) {
       edge_12->replace_vertex_src(vertex_2);
     } else {
-      edge_12->replace_vertex_dst(vertex_2);
+      edge_12->replace_vertex_tgt(vertex_2);
     }
-    if (edge_21->get_vertex_src() == vertex_2) {
+    if (edge_21->source() == vertex_2) {
       edge_21->replace_vertex_src(vertex_1);
     } else {
-      edge_21->replace_vertex_dst(vertex_1);
+      edge_21->replace_vertex_tgt(vertex_1);
     }
 
     if (time_future_bound.has_value()) {
@@ -5371,8 +5371,8 @@ public:
     // probably could improve this but _vertex events are rare_, so we are rarely
     // looking for new pierce events after a vertex event so it doesn't matter much
     for (const EdgeSPtr& poe : post_op_edges_) {
-      post_op_vertices_pierce_.insert(poe->get_vertex_src());
-      post_op_vertices_pierce_.insert(poe->get_vertex_dst());
+      post_op_vertices_pierce_.insert(poe->source());
+      post_op_vertices_pierce_.insert(poe->target());
     }
 
     add_event(event);
@@ -5437,15 +5437,15 @@ public:
       }
     }
 
-    if (edge_1->get_vertex_src() == vertex_1) {
+    if (edge_1->source() == vertex_1) {
       edge_1->replace_vertex_src(vertex_2);
-    } else if (edge_1->get_vertex_dst() == vertex_1) {
-      edge_1->replace_vertex_dst(vertex_2);
+    } else if (edge_1->target() == vertex_1) {
+      edge_1->replace_vertex_tgt(vertex_2);
     }
-    if (edge_2->get_vertex_src() == vertex_2) {
+    if (edge_2->source() == vertex_2) {
       edge_2->replace_vertex_src(vertex_1);
-    } else if (edge_2->get_vertex_dst() == vertex_2) {
-      edge_2->replace_vertex_dst(vertex_1);
+    } else if (edge_2->target() == vertex_2) {
+      edge_2->replace_vertex_tgt(vertex_1);
     }
 
     if (time_future_bound.has_value()) {
@@ -5485,8 +5485,8 @@ public:
     // probably could improve this but flip vertex events are uncommon, so we are rarely
     // looking for new pierce events after a vertex event, and it does not matter much
     for (const EdgeSPtr& poe : post_op_edges_) {
-      post_op_vertices_pierce_.insert(poe->get_vertex_src());
-      post_op_vertices_pierce_.insert(poe->get_vertex_dst());
+      post_op_vertices_pierce_.insert(poe->source());
+      post_op_vertices_pierce_.insert(poe->target());
     }
 
     add_event(event);
@@ -5514,25 +5514,25 @@ public:
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     VertexSPtr vertex = VertexSPtr();
     EdgeSPtr edge_b1 = EdgeSPtr();
     EdgeSPtr edge_b2 = EdgeSPtr();
     if (edge_2->get_facet_L() == facet_1_src) {
-      vertex = edge_1->get_vertex_src();
+      vertex = edge_1->source();
       edge_b1 = edge_1->prev(edge_1->get_facet_L());
       edge_b2 = edge_1->next(edge_1->get_facet_R());
     } else if (edge_2->get_facet_R() == facet_1_src) {
-      vertex = edge_1->get_vertex_src();
+      vertex = edge_1->source();
       edge_b1 = edge_1->next(edge_1->get_facet_R());
       edge_b2 = edge_1->prev(edge_1->get_facet_L());
-    } else if (edge_2->get_facet_L() == facet_1_dst) {
-      vertex = edge_1->get_vertex_dst();
+    } else if (edge_2->get_facet_L() == facet_1_tgt) {
+      vertex = edge_1->target();
       edge_b1 = edge_1->prev(edge_1->get_facet_R());
       edge_b2 = edge_1->next(edge_1->get_facet_L());
-    } else if (edge_2->get_facet_R() == facet_1_dst) {
-      vertex = edge_1->get_vertex_dst();
+    } else if (edge_2->get_facet_R() == facet_1_tgt) {
+      vertex = edge_1->target();
       edge_b1 = edge_1->next(edge_1->get_facet_L());
       edge_b2 = edge_1->prev(edge_1->get_facet_R());
     }
@@ -5544,10 +5544,10 @@ public:
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_src())->close_arc(node);
+      Hds_utils::get_arc(edge_1->source())->close_arc(node);
     }
-    if (facet_1_dst == edge_2->get_facet_L() || facet_1_dst == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_dst())->close_arc(node);
+    if (facet_1_tgt == edge_2->get_facet_L() || facet_1_tgt == edge_2->get_facet_R()) {
+      Hds_utils::get_arc(edge_1->target())->close_arc(node);
     }
 
     for (EdgeWPtr edge_w : vertex->edges()) {
@@ -5565,15 +5565,15 @@ public:
     Skeleton_vertex_data::create(vertex_22);
     polyhedron->add_vertex(vertex_21);
     polyhedron->add_vertex(vertex_22);
-    if (edge_b1->get_vertex_src() == vertex) {
+    if (edge_b1->source() == vertex) {
       edge_b1->replace_vertex_src(vertex_21);
-    } else if (edge_b1->get_vertex_dst() == vertex) {
-      edge_b1->replace_vertex_dst(vertex_21);
+    } else if (edge_b1->target() == vertex) {
+      edge_b1->replace_vertex_tgt(vertex_21);
     }
-    if (edge_b2->get_vertex_src() == vertex) {
+    if (edge_b2->source() == vertex) {
       edge_b2->replace_vertex_src(vertex_22);
-    } else if (edge_b2->get_vertex_dst() == vertex) {
-      edge_b2->replace_vertex_dst(vertex_22);
+    } else if (edge_b2->target() == vertex) {
+      edge_b2->replace_vertex_tgt(vertex_22);
     }
     edge_b1->get_facet_L()->add_vertex(vertex_21);
     edge_b1->get_facet_R()->add_vertex(vertex_21);
@@ -5590,21 +5590,21 @@ public:
     Skeleton_edge_data::create(edge_22);
 
     if (edge_2->get_facet_L() == facet_1_src ||
-        edge_2->get_facet_L() == facet_1_dst) {
+        edge_2->get_facet_L() == facet_1_tgt) {
       edge_2->get_facet_L()->remove_vertex(vertex);
-      if (vertex == edge_1->get_vertex_src()) {
+      if (vertex == edge_1->source()) {
         edge_21->replace_facet_L(edge_1->get_facet_L());
         edge_22->replace_facet_L(edge_1->get_facet_R());
-      } else if (vertex == edge_1->get_vertex_dst()) {
+      } else if (vertex == edge_1->target()) {
         edge_21->replace_facet_L(edge_1->get_facet_R());
         edge_22->replace_facet_L(edge_1->get_facet_L());
       }
     } else {
       edge_2->get_facet_R()->remove_vertex(vertex);
-      if (vertex == edge_1->get_vertex_src()) {
+      if (vertex == edge_1->source()) {
         edge_21->replace_facet_R(edge_1->get_facet_R());
         edge_22->replace_facet_R(edge_1->get_facet_L());
-      } else if (vertex == edge_1->get_vertex_dst()) {
+      } else if (vertex == edge_1->target()) {
         edge_21->replace_facet_R(edge_1->get_facet_L());
         edge_22->replace_facet_R(edge_1->get_facet_R());
       }
@@ -5672,7 +5672,7 @@ public:
     // @speed the vertex at the top of the reflex edge is not a modified vertex, so the only
     // event that could appear is with the facet it just go disconnected from (i.e.,
     // edge_2->other_face)?
-    post_op_vertices_pierce_ = {{ edge_1->get_vertex_src(), edge_1->get_vertex_dst(), vertex_21, vertex_22 }};
+    post_op_vertices_pierce_ = {{ edge_1->source(), edge_1->target(), vertex_21, vertex_22 }};
     CGAL_postcondition(post_op_vertices_pierce_.size() == 4);
 
     add_event(event);
@@ -5696,7 +5696,7 @@ public:
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     CGAL_SS3_CORE_TRACE_V(4, "Edge 1 = " << edge_1->to_string());
     CGAL_SS3_CORE_TRACE_V(4, "Edge 2 = " << edge_2->to_string());
@@ -5704,14 +5704,14 @@ public:
     VertexSPtr vertex_l = VertexSPtr();
     VertexSPtr vertex_r = VertexSPtr();
     if (edge_2->get_facet_L() == facet_1_src &&
-        edge_2->get_facet_R() == facet_1_dst) {
-      vertex_l = edge_1->get_vertex_src();
-      vertex_r = edge_1->get_vertex_dst();
+        edge_2->get_facet_R() == facet_1_tgt) {
+      vertex_l = edge_1->source();
+      vertex_r = edge_1->target();
     }
-    if (edge_2->get_facet_L() == facet_1_dst &&
+    if (edge_2->get_facet_L() == facet_1_tgt &&
         edge_2->get_facet_R() == facet_1_src) {
-      vertex_l = edge_1->get_vertex_dst();
-      vertex_r = edge_1->get_vertex_src();
+      vertex_l = edge_1->target();
+      vertex_r = edge_1->source();
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -5721,10 +5721,10 @@ public:
     skeleton_->add_node(node);
 
     if (facet_1_src == edge_2->get_facet_L() || facet_1_src == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_src())->close_arc(node);
+      Hds_utils::get_arc(edge_1->source())->close_arc(node);
     }
-    if (facet_1_dst == edge_2->get_facet_L() || facet_1_dst == edge_2->get_facet_R()) {
-      Hds_utils::get_arc(edge_1->get_vertex_dst())->close_arc(node);
+    if (facet_1_tgt == edge_2->get_facet_L() || facet_1_tgt == edge_2->get_facet_R()) {
+      Hds_utils::get_arc(edge_1->target())->close_arc(node);
     }
 
     std::array<EdgeSPtr, 4> edges;
@@ -5742,18 +5742,18 @@ public:
 
     EdgeSPtr edge_22;
     if (edge_2->get_facet_L() == facet_1_src &&
-        edge_2->get_facet_R() == facet_1_dst) {
-      EdgeSPtr edge_l = edge_1->prev(edge_1->get_vertex_dst());
-      if (edge_l->get_vertex_src() == vertex_r) {
+        edge_2->get_facet_R() == facet_1_tgt) {
+      EdgeSPtr edge_l = edge_1->prev(edge_1->target());
+      if (edge_l->source() == vertex_r) {
         edge_l->replace_vertex_src(vertex_l);
-      } else if (edge_l->get_vertex_dst() == vertex_r) {
-        edge_l->replace_vertex_dst(vertex_l);
+      } else if (edge_l->target() == vertex_r) {
+        edge_l->replace_vertex_tgt(vertex_l);
       }
-      EdgeSPtr edge_r = edge_1->prev(edge_1->get_vertex_src());
-      if (edge_r->get_vertex_src() == vertex_l) {
+      EdgeSPtr edge_r = edge_1->prev(edge_1->source());
+      if (edge_r->source() == vertex_l) {
         edge_r->replace_vertex_src(vertex_r);
-      } else if (edge_r->get_vertex_dst() == vertex_l) {
-        edge_r->replace_vertex_dst(vertex_r);
+      } else if (edge_r->target() == vertex_l) {
+        edge_r->replace_vertex_tgt(vertex_r);
       }
 
       edge_1->get_facet_R()->remove_vertex(vertex_l);
@@ -5762,30 +5762,30 @@ public:
       edge_2->get_facet_L()->add_vertex(vertex_r);
 
       edge_22 = edge_1;
-      edge_22->replace_vertex_dst(edge_2->get_vertex_dst());
-      edge_2->replace_vertex_dst(vertex_l);
+      edge_22->replace_vertex_tgt(edge_2->target());
+      edge_2->replace_vertex_tgt(vertex_l);
       edge_22->replace_vertex_src(vertex_r);
 
       edge_22->replace_facet_L(edge_2->get_facet_L());
       edge_22->replace_facet_R(edge_2->get_facet_R());
     }
     // @todo just else it...
-    if (edge_2->get_facet_L() == facet_1_dst &&
+    if (edge_2->get_facet_L() == facet_1_tgt &&
         edge_2->get_facet_R() == facet_1_src) {
-      vertex_l = edge_1->get_vertex_dst();
-      vertex_r = edge_1->get_vertex_src();
+      vertex_l = edge_1->target();
+      vertex_r = edge_1->source();
 
-      EdgeSPtr edge_l = edge_1->next(edge_1->get_vertex_src());
-      if (edge_l->get_vertex_src() == vertex_r) {
+      EdgeSPtr edge_l = edge_1->next(edge_1->source());
+      if (edge_l->source() == vertex_r) {
         edge_l->replace_vertex_src(vertex_l);
-      } else if (edge_l->get_vertex_dst() == vertex_r) {
-        edge_l->replace_vertex_dst(vertex_l);
+      } else if (edge_l->target() == vertex_r) {
+        edge_l->replace_vertex_tgt(vertex_l);
       }
-      EdgeSPtr edge_r = edge_1->next(edge_1->get_vertex_dst());
-      if (edge_r->get_vertex_src() == vertex_l) {
+      EdgeSPtr edge_r = edge_1->next(edge_1->target());
+      if (edge_r->source() == vertex_l) {
         edge_r->replace_vertex_src(vertex_r);
-      } else if (edge_r->get_vertex_dst() == vertex_l) {
-        edge_r->replace_vertex_dst(vertex_r);
+      } else if (edge_r->target() == vertex_l) {
+        edge_r->replace_vertex_tgt(vertex_r);
       }
 
       edge_1->get_facet_R()->remove_vertex(vertex_l);
@@ -5794,8 +5794,8 @@ public:
       edge_2->get_facet_L()->add_vertex(vertex_r);
 
       edge_22 = edge_1;
-      edge_22->replace_vertex_dst(edge_2->get_vertex_dst());
-      edge_2->replace_vertex_dst(vertex_r);
+      edge_22->replace_vertex_tgt(edge_2->target());
+      edge_2->replace_vertex_tgt(vertex_r);
       edge_22->replace_vertex_src(vertex_l);
 
       edge_22->replace_facet_L(edge_2->get_facet_L());
@@ -5953,26 +5953,26 @@ public:
     merge_sheets(edge_tomerge_1, edge_tomerge_2);
 #endif
 
-    if (edge_tomerge_1->get_vertex_src() == vertex_1) {
-      if (edge_tomerge_2->get_vertex_src() == vertex_2) {
-        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->get_vertex_dst());
+    if (edge_tomerge_1->source() == vertex_1) {
+      if (edge_tomerge_2->source() == vertex_2) {
+        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->target());
       } else {
-        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->get_vertex_src());
+        edge_tomerge_1->replace_vertex_src(edge_tomerge_2->source());
       }
     } else {
-      if (edge_tomerge_2->get_vertex_src() == vertex_2) {
-        edge_tomerge_1->replace_vertex_dst(edge_tomerge_2->get_vertex_dst());
+      if (edge_tomerge_2->source() == vertex_2) {
+        edge_tomerge_1->replace_vertex_tgt(edge_tomerge_2->target());
       } else {
-        edge_tomerge_1->replace_vertex_dst(edge_tomerge_2->get_vertex_src());
+        edge_tomerge_1->replace_vertex_tgt(edge_tomerge_2->source());
       }
     }
-    if (edge_12->get_vertex_dst() == vertex_1) {
-      edge_12->replace_vertex_dst(vertex_2);
+    if (edge_12->target() == vertex_1) {
+      edge_12->replace_vertex_tgt(vertex_2);
     } else {
       edge_12->replace_vertex_src(vertex_2);
     }
-    if (edge_21->get_vertex_dst() == vertex_2) {
-      edge_21->replace_vertex_dst(vertex_1);
+    if (edge_21->target() == vertex_2) {
+      edge_21->replace_vertex_tgt(vertex_1);
     } else {
       edge_21->replace_vertex_src(vertex_1);
     }
@@ -5982,14 +5982,14 @@ public:
     facet_2b->add_vertex(vertex_1);
     if (edge_tosplit->get_facet_L() == facet_1b &&
         edge_tosplit->get_facet_R() == facet_2b) {
-      edge_tomerge_2->replace_vertex_src(edge_tosplit->get_vertex_src());
-      edge_tomerge_2->replace_vertex_dst(vertex_2);
+      edge_tomerge_2->replace_vertex_src(edge_tosplit->source());
+      edge_tomerge_2->replace_vertex_tgt(vertex_2);
       edge_tosplit->replace_vertex_src(vertex_1);
     } else if (edge_tosplit->get_facet_L() == facet_2b &&
                edge_tosplit->get_facet_R() == facet_1b) {
-      edge_tomerge_2->replace_vertex_dst(edge_tosplit->get_vertex_dst());
+      edge_tomerge_2->replace_vertex_tgt(edge_tosplit->target());
       edge_tomerge_2->replace_vertex_src(vertex_2);
-      edge_tosplit->replace_vertex_dst(vertex_1);
+      edge_tosplit->replace_vertex_tgt(vertex_1);
     }
     edge_tomerge_2->replace_facet_L(edge_tosplit->get_facet_L());
     edge_tomerge_2->replace_facet_R(edge_tosplit->get_facet_R());
@@ -6083,13 +6083,13 @@ public:
     skeleton_->add_node(node);
 
     FacetSPtr facet_1_src = edge_1->get_facet_src();
-    FacetSPtr facet_1_dst = edge_1->get_facet_dst();
+    FacetSPtr facet_1_tgt = edge_1->get_facet_tgt();
 
     if (facet_1_src == facet_l2 || facet_1_src == facet_r2) {
-      Hds_utils::get_arc(edge_1->get_vertex_src())->close_arc(node);
+      Hds_utils::get_arc(edge_1->source())->close_arc(node);
     }
-    if (facet_1_dst == facet_l2 || facet_1_dst == facet_r2) {
-      Hds_utils::get_arc(edge_1->get_vertex_dst())->close_arc(node);
+    if (facet_1_tgt == facet_l2 || facet_1_tgt == facet_r2) {
+      Hds_utils::get_arc(edge_1->target())->close_arc(node);
     }
 
     Hds_utils::get_sheet(edge_1)->add_node(node);
@@ -6132,8 +6132,8 @@ public:
     EdgeSPtr edge_22 = edge_2->split(vertices[3]);
     Skeleton_edge_data::create(edge_12);
     Skeleton_edge_data::create(edge_22);
-    edge_1->replace_vertex_dst(vertices[0]);
-    edge_2->replace_vertex_dst(vertices[1]);
+    edge_1->replace_vertex_tgt(vertices[0]);
+    edge_2->replace_vertex_tgt(vertices[1]);
     for (unsigned int i = 0; i < 4; ++i) {
       // adds the vertices also
       edges[i]->get_facet_L()->add_edge(edges[i]);
@@ -6193,8 +6193,8 @@ public:
     // facets grow so we also need to check vertices that are extremities of edges
     // being subdivided
     for (const EdgeSPtr& poe : post_op_edges_) {
-      post_op_vertices_pierce_.insert(poe->get_vertex_src());
-      post_op_vertices_pierce_.insert(poe->get_vertex_dst());
+      post_op_vertices_pierce_.insert(poe->source());
+      post_op_vertices_pierce_.insert(poe->target());
     }
     CGAL_postcondition(post_op_vertices_pierce_.size() == 8);
 
@@ -6253,9 +6253,9 @@ public:
     EdgeSPtr edge = vertex->first_edge();
     for (unsigned int i = 0; i < 3; ++i) {
       edges[i] = edge;
-      if (edge->get_vertex_src() == vertex) {
+      if (edge->source() == vertex) {
         facets[i] = edge->get_facet_L();
-      } else if (edge->get_vertex_dst() == vertex) {
+      } else if (edge->target() == vertex) {
         facets[i] = edge->get_facet_R();
       }
       edge = edge->next(vertex);
@@ -6270,10 +6270,10 @@ public:
     }
     for (unsigned int i = 0; i < 3; ++i) {
       EdgeSPtr edge = edges[i];
-      if (edge->get_vertex_src() == vertex) {
+      if (edge->source() == vertex) {
         edge->replace_vertex_src(vertices[i]);
-      } else if (edge->get_vertex_dst() == vertex) {
-        edge->replace_vertex_dst(vertices[i]);
+      } else if (edge->target() == vertex) {
+        edge->replace_vertex_tgt(vertices[i]);
       }
       facets[i]->remove_vertex(vertex);
       facets[i]->add_vertex(vertices[i]);

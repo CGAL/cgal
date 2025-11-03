@@ -675,7 +675,7 @@ public:
       for (const FacetSPtr& f : facets_to_process) {
         for (const EdgeSPtr& e : f->edges()) {
           VertexSPtr sv = e->src(f);
-          VertexSPtr tv = e->dst(f);
+          VertexSPtr tv = e->tgt(f);
           if (sv->degree() == 3 || tv->degree() == 3) {
             continue;
           }

@@ -298,7 +298,7 @@ struct Edge_facet_neighborhood
     std::array<int, 4> result = {{ edge->get_facet_L()->get_ID(),
                                    edge->get_facet_R()->get_ID(),
                                    edge->get_facet_src()->get_ID(),
-                                   edge->get_facet_dst()->get_ID() }};
+                                   edge->get_facet_tgt()->get_ID() }};
     return result;
   }
 

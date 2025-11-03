@@ -156,8 +156,8 @@ public:
     FacetSPtr facet_1 = get_facet_1();
     FacetSPtr facet_2 = get_facet_2();
 
-    return CGAL::make_array(edge_11->dst(facet_1),
-                            edge_21->dst(facet_2),
+    return CGAL::make_array(edge_11->tgt(facet_1),
+                            edge_21->tgt(facet_2),
                             edge_12->src(facet_1),
                             edge_22->src(facet_2));
   }

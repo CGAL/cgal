@@ -93,10 +93,10 @@ public:
   std::array<VertexSPtr, 4> get_vertices() const
   {
     EdgeSPtr edge_begin = get_edge_begin();
-    return CGAL::make_array(edge_begin->get_vertex_src(),
-                            edge_begin->get_vertex_dst(),
-                            edge_begin->next(edge_begin->get_facet_L())->dst(edge_begin->get_facet_L()),
-                            edge_begin->next(edge_begin->get_facet_R())->dst(edge_begin->get_facet_R()));
+    return CGAL::make_array(edge_begin->source(),
+                            edge_begin->target(),
+                            edge_begin->next(edge_begin->get_facet_L())->tgt(edge_begin->get_facet_L()),
+                            edge_begin->next(edge_begin->get_facet_R())->tgt(edge_begin->get_facet_R()));
   }
 
   std::array<EdgeSPtr, 6> get_edges() const
@@ -116,8 +116,8 @@ public:
     EdgeSPtr edge_begin = get_edge_begin();
     return CGAL::make_array(edge_begin->get_facet_L(),
                             edge_begin->get_facet_R(),
-                            edge_begin->get_facet_L()->prev(edge_begin->get_vertex_dst()),
-                            edge_begin->get_facet_R()->prev(edge_begin->get_vertex_src()));
+                            edge_begin->get_facet_L()->prev(edge_begin->target()),
+                            edge_begin->get_facet_R()->prev(edge_begin->source()));
   }
 
   bool is_valid() const
