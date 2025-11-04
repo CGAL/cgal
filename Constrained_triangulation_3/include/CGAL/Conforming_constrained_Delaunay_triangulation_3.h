@@ -1374,7 +1374,7 @@ protected:
     {
       const auto point = self->point(v_Steiner);
       if(!self->cdt_2_are_initialized) return;
-      for(const auto& [_, poly_id] : CGAL::make_range(self->constraint_to_faces.equal_range(constraint))) {
+      for(const auto& [_, poly_id] : CGAL::make_range(self->incident_faces_to_polyline.equal_range(constraint))) {
         auto& non_const_cdt_2 = self->face_cdt_2[poly_id];
         const auto& cdt_2 = non_const_cdt_2;
 
@@ -1829,18 +1829,17 @@ public:
       const auto va = *circ;
       ++circ;
       const auto vb = *circ;
-      const auto c_id = this->constraint_from_extremities(va, vb);
+      auto c_id = this->constraint_from_extremities(va, vb);
       if(c_id != Constrained_polyline_id{}) {
         const bool constraint_c_id_is_reversed =
             va != (*this->constraint_hierarchy.vertices_in_constraint_begin(c_id));
         border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
-        constraint_to_faces.emplace(c_id, polygon_contraint_id);
       } else {
-        const auto c_id = this->insert_constrained_edge(va, vb, restore_Delaunay);
+        c_id = this->insert_constrained_edge(va, vb, restore_Delaunay);
         CGAL_assertion(c_id != Constrained_polyline_id{});
         border.push_back(Face_edge{c_id});
-        constraint_to_faces.emplace(c_id, polygon_contraint_id);
       }
+      incident_faces_to_polyline.emplace(c_id, polygon_contraint_id);
     } while(circ != circ_end);
 
     if(this->debug().input_faces()) {
@@ -4713,7 +4712,7 @@ protected:
     bool is_reverse = false;
   };
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
-  boost::container::multimap<Constrained_polyline_id, CDT_3_signed_index> constraint_to_faces;
+  boost::container::multimap<Constrained_polyline_id, CDT_3_signed_index> incident_faces_to_polyline;
   std::vector<boost::container::flat_set<Vertex_handle>> extra_isolated_vertices;
   // boost::dynamic_bitset<> face_constraint_misses_subfaces;
   // std::size_t face_constraint_misses_subfaces_find_first() const {
