@@ -41,105 +41,68 @@ public:
     typedef Triangulation3 Triangulation_3;
     typedef typename Triangulation3::Vertex_handle vertex_descriptor ;
     typedef typename Triangulation3::Cell_handle cell_descriptor ;
+    typedef typename Triangulation3::Point Point ;
 private:
 
     /** \brief Storage of vertices Io_cell_type <-> Cell_handle permutation.
      *
-     * `_io_cell_to_cell_handle` maps a Io_cell_type to its associated Halfedge_index in the mesh
+     * Vertices maps:
+     *- `_io_cell_to_vertex_handle` maps a vertex Io_cell_type to its associated Vertex_handle in the triangulation
+     *- `_vertex_handle_to_io_cell` stores  the map between Vertex_handle and Io_cell_type of vertices (of dimension 0).
      *
-     * `_cell_handle_to_io_cell` stores  the map between Cell_handle and Io_cell_type of Cells (of dimension 3).
+     *Cells maps (dimension 3):
+     *- `_io_cell_to_cell_handle` maps a Io_cell_type to its associated Cell_handle in the triangulation
+     *
+     *- `_cell_handle_to_io_cell` stores  the map between Cell_handle and Io_cell_type of Cells (of dimension 3).
      */
-    std::map<Io_cell_type, halfedge_descriptor> _io_cell_to_cell_handle;
-    std::map<halfedge_descriptor, Io_cell_type> _cell_handle_to_io_cell;
+    std::map<size_t, vertex_descriptor> _io_cell_to_vertex_handle;
+    std::map<vertex_descriptor, size_t> _vertex_handle_to_io_cell;
+    
+    std::map<Io_cell_type, cell_descriptor> _io_cell_to_cell_handle;
+    std::map<cell_descriptor, Io_cell_type> _cell_handle_to_io_cell;
 
 public:
     /** \brief Constructor from a `Triangulation_3`.
      *
      */
-    Surface_mesh_io(const Triangulation_3& mesh) : Mesh_object_io<Traits>(3) {
+    Triangulation_3_io(const Triangulation_3& triangulation) : Mesh_object_io<Traits>(3) {
         typedef typename Traits::Point Point;
 
-        this->nvertices = mesh.number_of_vertices();
-        this->ncells = mesh.number_of_vertices() + mesh.number_of_finite_cells();
+        this->nvertices = triangulation.number_of_vertices();
+        this->ncells = triangulation.number_of_vertices() + triangulation.number_of_finite_cells();
 
-        auto vpm = get(CGAL::vertex_point, mesh);
         // Load nodes
-        for (vertex_descriptor v : vertices(mesh)) {
-            Point p(get(vpm,v));
+        for (Point p : triangulation.points()) {
             this->nodes.push_back(p);
         }
         // Load vertices
         size_t tmp_index(0);
-        for (vertex_descriptor v : vertices(mesh)) {
+        for (vertex_descriptor v : triangulation.finite_vertex_handles()) {
             // Corresponding Io_cell_type
             Io_cell_type tmp_io_cell({tmp_index});
             // Add to cells
             this->cells.push_back(tmp_io_cell);
-            // Associated he
-            halfedge_descriptor vertex_he(halfedge(v,mesh));
             // Store the permutation
-            _io_cell_to_he_index[tmp_io_cell] = vertex_he;
-            _he_index_to_io_cell.at(0)[vertex_he] = tmp_io_cell;
+            _io_cell_to_vertex_handle[tmp_index] = v;
+            _vertex_handle_to_io_cell[v] = tmp_index;
             ++tmp_index;
         }
-        // Load edges
-        for (edge_descriptor e : edges(mesh)) {
-            // Associated he
-            halfedge_descriptor edge_he(halfedge(e,mesh));
+        // Load cells
+        for (cell_descriptor c : triangulation.finite_cell_handles()) {
             // Compute corresponding Io_cell
             std::vector<size_t> tmp_cell;
-            // Vertex1
-            {
-                // Get the halfedge "encoding" the target vertex
-                halfedge_descriptor vert_he_ind(halfedge(target(edge_he, mesh), mesh));
-                // Get corresponding io_cell
-                Io_cell_type vert(_he_index_to_io_cell.at(0).at(vert_he_ind));
-                assert(vert.size()==1); // vertex
-                // Push_back the index
-                tmp_cell.push_back(vert.at(0));
+            // Visit vertices around the face to get the indices of vertices
+            std::array<vertex_descriptor, 4> verts(triangulation.vertices(c));
+            for (int i=0; i<4; ++i){
+                tmp_cell.push_back(_vertex_handle_to_io_cell[verts[i]]);
             }
-            // Vertex2
-            {
-                // Get the halfedge "encoding" the source vertex
-                halfedge_descriptor vert_he_ind(halfedge(target(opposite(edge_he, mesh), mesh), mesh));
-                // Get the corresponding io_cell
-                Io_cell_type vert(_he_index_to_io_cell.at(0).at(vert_he_ind));
-                assert(vert.size()==1); // vertex
-                // Push_back the index
-                tmp_cell.push_back(vert.at(0));
-            }
+            // Sort this vector
             std::sort(tmp_cell.begin(), tmp_cell.end());
             // Add to cells
             this->cells.push_back(tmp_cell);
             // Set the permutation
-            _io_cell_to_he_index[tmp_cell] = edge_he;
-            _he_index_to_io_cell.at(1)[edge_he] = tmp_cell;
-        }
-        // Load faces
-        for (face_descriptor f : faces(mesh)) {
-            // Associated he
-            halfedge_descriptor face_he(halfedge(f,mesh));
-            // Compute corresponding Io_cell
-            std::vector<size_t> tmp_cell;
-            // Visit vertices around the face
-            size_t cpt_verts(0);
-            for(vertex_descriptor v : vertices_around_face(halfedge(f,mesh), mesh)){
-                ++cpt_verts;
-                // Get the halfedge stored in the vertex
-                halfedge_descriptor vert_he_ind(halfedge(v,mesh));
-                // Get the corresponding io_cell
-                Io_cell_type vert(_he_index_to_io_cell.at(0).at(vert_he_ind));
-                assert(vert.size()==1); // vertex
-                // Push_back the index
-                tmp_cell.push_back(vert.at(0));
-            }
-            std::cout << cpt_verts << std::endl;
-            std::sort(tmp_cell.begin(), tmp_cell.end());
-            // Add to cells
-            this->cells.push_back(tmp_cell);
-            // Set the permutation
-            _io_cell_to_he_index[tmp_cell] = face_he;
-            _he_index_to_io_cell.at(2)[face_he] = tmp_cell;
+            _io_cell_to_cell_handle[tmp_cell] = c;
+            _cell_handle_to_io_cell[c] = tmp_cell;
         }
     }
 } ;
