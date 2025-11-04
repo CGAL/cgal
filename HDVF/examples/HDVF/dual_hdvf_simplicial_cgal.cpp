@@ -35,7 +35,13 @@ int main(int argc, char **argv)
     
     // Load simplicial object into Surface_mesh
     Surface_mesh sm;
-    CGAL::IO::read_polygon_mesh(filename, sm); 
+    CGAL::IO::read_polygon_mesh(filename, sm);
+    
+    if (sm.number_of_vertices() == 0)
+    {
+        std::cerr << "Emtpy mesh read" << std::endl;
+        throw("Emtpy mesh read");
+    }
     
 //    std::cout << sm;
     

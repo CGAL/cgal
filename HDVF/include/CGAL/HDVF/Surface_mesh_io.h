@@ -141,7 +141,8 @@ public:
                 // Push_back the index
                 tmp_cell.push_back(vert.at(0));
             }
-            std::cout << cpt_verts << std::endl;
+            // Faces must be triangles
+            assert(cpt_verts == 3);
             std::sort(tmp_cell.begin(), tmp_cell.end());
             // Add to cells
             this->cells.push_back(tmp_cell);
