@@ -1313,7 +1313,7 @@ protected:
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
     const auto face_id = static_cast<std::size_t>(cell->ccdt_3_data().face_constraint_index(facet_index));
     this->face_constraint_misses_subfaces_set(face_id);
-    auto fh_2 = cell->ccdt_3_data().face_2(this->face_cdt_2[face_id], facet_index);
+    auto fh_2 = cell->ccdt_3_data().face_2(this->face_cdt_2(face_id), facet_index);
     fh_2->info().facet_3d = {};
     fh_2->info().missing_subface = true;
     this->set_facet_constrained({cell, facet_index}, -1, {});
@@ -1375,7 +1375,7 @@ protected:
       const auto point = self->point(v_Steiner);
       if(!self->cdt_2_are_initialized) return;
       for(const auto& [_, poly_id] : CGAL::make_range(self->incident_faces_to_polyline.equal_range(constraint))) {
-        auto& non_const_cdt_2 = self->face_cdt_2[poly_id];
+        auto& non_const_cdt_2 = self->non_const_face_cdt_2(poly_id);
         const auto& cdt_2 = non_const_cdt_2;
 
         auto opt_edge = self->edge_of_cdt_2(cdt_2, va, vb);
@@ -1542,7 +1542,7 @@ public:
       const auto mirror_facet = this->mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
         const auto poly_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
-        const CDT_2& cdt_2 = face_cdt_2[poly_id];
+        const CDT_2& cdt_2 = face_cdt_2(poly_id);
         const auto f2d = outside_cell->ccdt_3_data().face_2(cdt_2, outside_face_index);
         set_facet_constrained(mirror_facet, poly_id, f2d);
       }
@@ -1821,10 +1821,13 @@ public:
     }
     CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles};
     const auto circ_end{circ};
-    auto& borders = face_index.has_value() ? this->face_borders[face_index.value()] : this->face_borders.emplace_back();
+    auto& borders =
+        face_index.has_value()
+            ? this->non_const_face_borders(face_index.value())
+            : this->face_data.emplace_back(CDT_2_traits{compute_accumulated_normal(first_it, size)}).borders;
     auto& border = borders.emplace_back();
     border.reserve(std::size(vertex_handles));
-    const auto polygon_contraint_id = face_index.value_or(this->face_borders.size() - 1);
+    const auto polygon_contraint_id = face_index.value_or(this->face_data.size() - 1);
     do {
       const auto va = *circ;
       ++circ;
@@ -1855,11 +1858,8 @@ public:
     }
 
     if(!face_index.has_value()) {
-      const auto accumulated_normal = compute_accumulated_normal(first_it, size);
-
-      face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
-      face_constraint_misses_subfaces.resize(face_cdt_2.size());
-      extra_isolated_vertices.resize(face_cdt_2.size());
+      // Face_data already created above with emplace_back
+      face_constraint_misses_subfaces.resize(face_data.size());
     }
     if(this->debug().input_faces()) {
       std::cerr << "insert_constrained_face return the polygon_contraint_id: " << polygon_contraint_id << '\n';
@@ -1925,11 +1925,11 @@ public:
 
     const auto face_index = static_cast<std::size_t>(face_index_opt.value());
 
-    extra_isolated_vertices.resize((std::max)(face_index + 1, extra_isolated_vertices.size()));
+    // Ensure face_data has enough capacity - the Face_data will be created elsewhere with proper traits
+    CGAL_assertion(face_index < face_data.size());
 
-    extra_isolated_vertices[face_index].insert(vh);
+    this->non_const_face_isolated_vertices(face_index).insert(vh);
   }
-
 
   struct Min_distance_result {
     double min_distance;
@@ -2157,9 +2157,10 @@ private:
 
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_contraint_id)
   {
-    const auto vec_of_handles = std::invoke([this, polygon_contraint_id]() {
+    const auto& borders_ref = this->face_borders(polygon_contraint_id);
+    const auto vec_of_handles = std::invoke([this, &borders_ref]() {
       std::vector<std::vector<Vertex_handle>> vec_of_handles;
-      for(const auto& border : this->face_borders[polygon_contraint_id]) {
+      for(const auto& border : borders_ref) {
         auto& handles = vec_of_handles.emplace_back();
         for(const auto& face_edge : border) {
           const auto c_id = face_edge.constrained_polyline_id;
@@ -2271,7 +2272,7 @@ private:
           previous_2d = vh_2d;
         }
       }
-      for(auto vh_3d : extra_isolated_vertices[polygon_contraint_id]) {
+      for(auto vh_3d : face_isolated_vertices(polygon_contraint_id)) {
         insert_vertex_in_cdt_2(vh_3d);
       }
       { // mark all the faces outside/inside, starting from one infinite face
@@ -2364,7 +2365,7 @@ private:
 
   void search_for_missing_subfaces(CDT_3_signed_index polygon_contraint_id)
   {
-    const CDT_2& cdt_2 = face_cdt_2[polygon_contraint_id];
+    const CDT_2& cdt_2 = face_cdt_2(polygon_contraint_id);
 
     for(const auto fh: cdt_2.all_face_handles())
     {
@@ -3431,7 +3432,7 @@ private:
       const auto mirror_facet = this->mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
         const auto poly_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
-        const CDT_2& cdt_2 = face_cdt_2[poly_id];
+        const CDT_2& cdt_2 = face_cdt_2(poly_id);
         const auto f2d = outside_cell->ccdt_3_data().face_2(cdt_2, outside_face_index);
         set_facet_constrained(mirror_facet, poly_id, f2d);
       }
@@ -3820,7 +3821,7 @@ private:
   }
 
   bool restore_face(CDT_3_signed_index face_index) {
-    CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
+    CDT_2& non_const_cdt_2 = this->non_const_face_cdt_2(face_index);
     const CDT_2& cdt_2 = non_const_cdt_2;
     if constexpr (cdt_3_can_use_cxx20_format())
       if(this->debug().copy_triangulation_into_hole() || this->debug().verbose_special_cases()) {
@@ -3844,7 +3845,7 @@ private:
       reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
     }
     std::set<CDT_2_face_handle> processed_faces;
-    auto& region_index = faces_region_numbers[face_index];
+    auto& region_index = face_region_number(face_index);
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) {
@@ -4045,11 +4046,10 @@ public:
   void restore_constrained_Delaunay()
   {
     this->is_Delaunay = false;
-    faces_region_numbers.resize(face_constraint_misses_subfaces.size());
     for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end;
         ++i)
     {
-      CDT_2& cdt_2 = face_cdt_2[i];
+      CDT_2& cdt_2 = non_const_face_cdt_2(i);
       fill_cdt_2(cdt_2, i);
       search_for_missing_subfaces(i);
     }
@@ -4410,7 +4410,7 @@ public:
   {
     using EK = CGAL::Exact_predicates_exact_constructions_kernel;
     const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
-    const auto& cdt_2 = this->face_cdt_2[face_index];
+    const auto& cdt_2 = this->face_cdt_2(face_index);
 
     std::cerr << cdt_3_format("restore_subface_region face index: {}, region #{}, intersecting edge #{}: ({}   {})\n",
                               face_index, region_index, edge_index,
@@ -4584,14 +4584,14 @@ public:
   }
 
   void dump_face(CDT_3_signed_index face_index) {
-    const auto& cdt_2 = face_cdt_2[face_index];
+    const auto& cdt_2 = face_cdt_2(face_index);
     std::ofstream dump_region(std::string("dump_face_") + std::to_string(face_index) + ".off");
     dump_region.precision(17);
     write_region_to_OFF(dump_region, cdt_2);
   }
 
   void dump_region(CDT_3_signed_index face_index, int region_index) {
-    const auto& cdt_2 = face_cdt_2[face_index];
+    const auto& cdt_2 = face_cdt_2(face_index);
     dump_region(face_index, region_index, cdt_2);
   }
 
@@ -4684,7 +4684,7 @@ public:
     auto i = face_constraint_misses_subfaces_find_first();
     bool has_missing_subfaces = i != npos;
     while(i != npos) {
-      const CDT_2& cdt = face_cdt_2[i];
+      const CDT_2& cdt = face_cdt_2(i);
       for(const auto fh: cdt.finite_face_handles()) {
         if (false == fh->info().is_outside_the_face &&
             true == fh->info().missing_subface)
@@ -4704,32 +4704,69 @@ public:
   /// @}
 
 protected:
-  Insert_in_conflict_visitor insert_in_conflict_visitor = {this};
-  std::vector<CDT_2> face_cdt_2;
-  bool cdt_2_are_initialized = false;
+  // Nested types
   struct Face_edge {
     Constrained_polyline_id constrained_polyline_id;
     bool is_reverse = false;
   };
-  std::vector<std::vector<std::vector<Face_edge>>> face_borders;
+
+  struct Face_data {
+    CDT_2 cdt_2;
+    std::vector<std::vector<Face_edge>> borders;
+    boost::container::flat_set<Vertex_handle> isolated_vertices;
+    int region_number = 0;
+
+    // Constructor to initialize CDT_2 with traits
+    template<typename Traits>
+    explicit Face_data(const Traits& traits) : cdt_2(traits) {}
+  };
+
+protected:
+  // Accessor functions for Face_data members
+  CDT_2& non_const_face_cdt_2(std::size_t face_id) {
+    return face_data[face_id].cdt_2;
+  }
+  const CDT_2& face_cdt_2(std::size_t face_id) const {
+    return face_data[face_id].cdt_2;
+  }
+  std::vector<std::vector<Face_edge>>& non_const_face_borders(std::size_t face_id) {
+    return face_data[face_id].borders;
+  }
+  const std::vector<std::vector<Face_edge>>& face_borders(std::size_t face_id) const {
+    return face_data[face_id].borders;
+  }
+  boost::container::flat_set<Vertex_handle>& non_const_face_isolated_vertices(std::size_t face_id) {
+    return face_data[face_id].isolated_vertices;
+  }
+  const boost::container::flat_set<Vertex_handle>& face_isolated_vertices(std::size_t face_id) const {
+    return face_data[face_id].isolated_vertices;
+  }
+  int& face_region_number(std::size_t face_id) {
+    return face_data[face_id].region_number;
+  }
+  const int& face_region_number(std::size_t face_id) const {
+    return face_data[face_id].region_number;
+  }
+
+protected:
+
+  // Visitor objects
+  Insert_in_conflict_visitor insert_in_conflict_visitor = {this};
+
+  // Per-face data (indexed by face_id)
+  std::vector<Face_data> face_data;
+
+  // Polyline-to-face mapping
   boost::container::multimap<Constrained_polyline_id, CDT_3_signed_index> incident_faces_to_polyline;
-  std::vector<boost::container::flat_set<Vertex_handle>> extra_isolated_vertices;
-  // boost::dynamic_bitset<> face_constraint_misses_subfaces;
-  // std::size_t face_constraint_misses_subfaces_find_first() const {
-  //   return face_constraint_misses_subfaces.find_first();
-  // }
-  // std::size_t face_constraint_misses_subfaces_find_next(std::size_t pos) const {
-  //   return face_constraint_misses_subfaces.find_next(pos);
-  // }
-  // void face_constraint_misses_subfaces_set(std::size_t pos) {
-  //   face_constraint_misses_subfaces.set(pos);
-  // }
-  // void face_constraint_misses_subfaces_reset(std::size_t pos) {
-  //   face_constraint_misses_subfaces.reset(pos);
-  // }
-  // static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
-  // static_assert(false == CGAL::is_nothrow_movable_v<boost::dynamic_bitset<>>);
+
+  // State flags
+  bool cdt_2_are_initialized = false;
+
+  // Constraint tracking
+  static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
   std::vector<bool> face_constraint_misses_subfaces;
+
+  // Helper methods for constraint tracking
   std::size_t face_constraint_misses_subfaces_find_first(std::size_t pos = 0) const {
     auto it = std::find(face_constraint_misses_subfaces.begin() + pos, face_constraint_misses_subfaces.end(), true);
     return it == face_constraint_misses_subfaces.end() ? face_constraint_misses_subfaces_npos
@@ -4744,8 +4781,6 @@ protected:
   void face_constraint_misses_subfaces_reset(std::size_t pos) {
     face_constraint_misses_subfaces[pos] = false;
   }
-  static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
-  std::vector<int> faces_region_numbers;
 };
 
 #endif // DOXYGEN_RUNNING
