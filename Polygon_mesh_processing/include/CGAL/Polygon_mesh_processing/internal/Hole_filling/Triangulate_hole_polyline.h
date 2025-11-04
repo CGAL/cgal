@@ -1447,6 +1447,12 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     vertices[v->info()] = v;
   }
 
+  if (vertices.size()!=cdt.number_of_vertices())
+  {
+    visitor.end_planar_phase(false);
+    return false;
+  }
+
   try
   {
     for (std::size_t i = 0; i < size; ++i) {
