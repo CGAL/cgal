@@ -18,25 +18,26 @@
 
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
-#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
-#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/circulator.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/intersection_3.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
-#include <CGAL/Union_find.h>
-#include <CGAL/circulator.h>
-#include <CGAL/intersection_3.h>
-#include <CGAL/iterator.h>
-#include <CGAL/Iterator_range.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/assertions.h>
+#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/type_traits.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/utility.h>
 
@@ -1810,33 +1811,7 @@ public:
     }
 
     if(!face_index.has_value()) {
-      const auto accumulated_normal = std::invoke([&] {
-        const auto last_it = std::next(first_it, size - 1);
-        const auto &last_point = tr().point(*last_it);
-
-        auto &&traits = tr().geom_traits();
-        auto &&cross_product = traits.construct_cross_product_vector_3_object();
-        auto &&vector = traits.construct_vector_3_object();
-        auto &&sum_vector = traits.construct_sum_of_vectors_3_object();
-
-        Vector_3 accumulated_normal = vector(CGAL::NULL_VECTOR);
-        for (auto vit = first_it, next_it = std::next(first_it);
-            next_it != last_it; ++vit, ++next_it) {
-          accumulated_normal =
-              sum_vector(accumulated_normal,
-                        cross_product(vector(last_point, tr().point(*vit)),
-                                      vector(last_point, tr().point(*next_it))));
-        }
-        if (accumulated_normal.x() < 0 ||
-            (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
-            (accumulated_normal.x() == 0 && accumulated_normal.y() == 0 &&
-            accumulated_normal.z() < 0)
-            )
-        {
-          accumulated_normal = - accumulated_normal;
-        }
-        return accumulated_normal;
-      });
+      const auto accumulated_normal = compute_accumulated_normal(first_it, size);
 
       face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
       face_constraint_misses_subfaces.resize(face_cdt_2.size());
@@ -2521,6 +2496,60 @@ private:
     // create a new region
     Next_region(const std::string& what, CDT_2_face_handle fh) : std::logic_error(what), fh_2d(fh) {}
   };
+
+  template <typename VertexIterator>
+  Vector_3 compute_accumulated_normal(VertexIterator first_it, std::size_t size) const
+  {
+    const auto before_last_it = std::next(first_it, size - 2);
+    const auto last_it = std::next(before_last_it);
+    const auto second_it = std::next(first_it);
+
+    Vector_3 accumulated_normal =
+        this->debug().use_epeck_for_normals()
+            ? std::invoke([&]() {
+                // Use exact Epeck kernel for robust normal computation
+                using Epeck_ft = internal::Exact_field_selector<double>::Type;
+                using Exact_kernel = Simple_cartesian<Epeck_ft>;
+                Exact_kernel exact_kernel;
+                auto&& cross_product = exact_kernel.construct_cross_product_vector_3_object();
+                auto&& vector = exact_kernel.construct_vector_3_object();
+                auto&& sum_vector = exact_kernel.construct_sum_of_vectors_3_object();
+                Cartesian_converter<Exact_kernel, Geom_traits> back_from_exact;
+                Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
+
+                const auto last_point = to_exact(tr().point(*last_it));
+                return back_from_exact(std::inner_product(
+                    first_it, before_last_it, second_it, typename Exact_kernel::Vector_3(CGAL::NULL_VECTOR), sum_vector,
+                    [&](const auto& va, const auto& vb) {
+                      return cross_product(vector(last_point, to_exact(tr().point(va))),
+                                           vector(last_point, to_exact(tr().point(vb))));
+                    }));
+              })
+            : std::invoke([&]() {
+                // Use approximate computation with traits
+                auto&& traits = tr().geom_traits();
+                auto&& cross_product = traits.construct_cross_product_vector_3_object();
+                auto&& vector = traits.construct_vector_3_object();
+                auto&& sum_vector = traits.construct_sum_of_vectors_3_object();
+
+                const auto last_point = tr().point(*last_it);
+                return std::inner_product(first_it, before_last_it, second_it, vector(CGAL::NULL_VECTOR), sum_vector,
+                                          [&](const auto& va, const auto& vb) {
+                                            return cross_product(vector(last_point, tr().point(va)),
+                                                                 vector(last_point, tr().point(vb)));
+                                          });
+              });
+
+    if (accumulated_normal.x() < 0 ||
+        (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
+        (accumulated_normal.x() == 0 && accumulated_normal.y() == 0 &&
+        accumulated_normal.z() < 0)
+        )
+    {
+      accumulated_normal = - accumulated_normal;
+    }
+    return accumulated_normal;
+  }
 
   // -------------------------
   // construct_cavities

@@ -63,6 +63,7 @@ struct Debug_options {
     debug_geometric_errors,
     debug_polygon_insertion,
     display_statistics,
+    use_epeck_for_normals,
     nb_of_flags
   };
 
@@ -117,6 +118,9 @@ struct Debug_options {
 
   bool display_statistics() const { return flags[static_cast<int>(Flags::display_statistics)]; }
   void display_statistics(bool b) { flags.set(static_cast<int>(Flags::display_statistics), b); }
+
+  bool use_epeck_for_normals() const { return flags[static_cast<int>(Flags::use_epeck_for_normals)]; }
+  void use_epeck_for_normals(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_normals), b); }
 
   double segment_vertex_epsilon() const { return segment_vertex_epsilon_; }
   void set_segment_vertex_epsilon(double eps) { segment_vertex_epsilon_ = eps; }
