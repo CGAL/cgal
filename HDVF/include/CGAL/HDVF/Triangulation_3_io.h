@@ -9,8 +9,8 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_HDVF_SURFACE_MESH_IO_H
-#define CGAL_HDVF_SURFACE_MESH_IO_H
+#ifndef CGAL_HDVF_TRIANGULATION_3_IO_H
+#define CGAL_HDVF_TRIANGULATION_3_IO_H
 
 #include <CGAL/license/HDVF.h>
 
@@ -29,46 +29,38 @@ namespace Homological_discrete_vector_field {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Surface_mesh_io` is an intermediate IO class, used to load a triangle mesh and produce simplicial complexes.
-\tparam TriangleMesh a model of `FaceGraph` and `HalfedgeGraph` concepts, e.g., a `CGAL::Surface_mesh`.
+ The class `Triangulation_3_io` is an intermediate IO class, used to load a `Triangulation_3` and produce simplicial complexes. The class loads the Vertices and the Cells (ie. tetrahedra) of the `Triangulation_3` into a `Mesh_object_io`.
+\tparam Triangulation3 a model of  `CGAL::Triangulation_3`.
 \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
-template <typename TriangleMesh, typename Traits>
-class Surface_mesh_io : public Mesh_object_io<Traits>
+template <typename Triangulation3, typename Traits>
+class Triangulation_3_io : public Mesh_object_io<Traits>
 {
 public:
-    typedef TriangleMesh Surface_mesh;
-    typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor ;
-    typedef typename boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor ;
-    typedef typename boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor ;
-    typedef typename boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor ;
+    typedef Triangulation3 Triangulation_3;
+    typedef typename Triangulation3::Vertex_handle vertex_descriptor ;
+    typedef typename Triangulation3::Cell_handle cell_descriptor ;
 private:
 
-    /** \brief Storage of vertices Io_cell_type <-> Vertex_index permutation.
+    /** \brief Storage of vertices Io_cell_type <-> Cell_handle permutation.
      *
-     * `_io_cell_to_he_index` maps a Io_cell_type to its associated Halfedge_index in the mesh
+     * `_io_cell_to_cell_handle` maps a Io_cell_type to its associated Halfedge_index in the mesh
      *
-     * `_he_index_to_io_cell.at(q)` stores, for each dimension `q`,  the map between Halfedge_index and Io_cell_type of cells of dimension `q`
-     *
-     * All cells, whatever their dimension, are identified by halfedges:
-     * - a vertex is the `target` of the halfedge
-     * - an edge is the `edge` of the halfedge
-     * - a face is the `face` of the halfedge
+     * `_cell_handle_to_io_cell` stores  the map between Cell_handle and Io_cell_type of Cells (of dimension 3).
      */
-    std::map<Io_cell_type, halfedge_descriptor> _io_cell_to_he_index;
-    std::vector<std::map<halfedge_descriptor, Io_cell_type> > _he_index_to_io_cell;
+    std::map<Io_cell_type, halfedge_descriptor> _io_cell_to_cell_handle;
+    std::map<halfedge_descriptor, Io_cell_type> _cell_handle_to_io_cell;
 
 public:
-    /** \brief Constructor from a triangular mesh.
+    /** \brief Constructor from a `Triangulation_3`.
      *
      */
-    Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io<Traits>(2) {
+    Surface_mesh_io(const Triangulation_3& mesh) : Mesh_object_io<Traits>(3) {
         typedef typename Traits::Point Point;
 
-        this->nvertices = num_vertices(mesh);
-        this->ncells = num_vertices(mesh) + num_edges(mesh) + num_faces(mesh) ;
-        _he_index_to_io_cell.resize(3);
+        this->nvertices = mesh.number_of_vertices();
+        this->ncells = mesh.number_of_vertices() + mesh.number_of_finite_cells();
 
         auto vpm = get(CGAL::vertex_point, mesh);
         // Load nodes
@@ -156,4 +148,4 @@ public:
 } /* end namespace CGAL */
 
 
-#endif // CGAL_HDVF_SURFACE_MESH_IO_H
+#endif // CGAL_HDVF_TRIANGULATION_3_IO_H

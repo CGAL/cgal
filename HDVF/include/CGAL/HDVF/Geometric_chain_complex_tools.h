@@ -18,6 +18,9 @@
 #include <map>
 #include <stdexcept>
 #include <unordered_set>
+#include <CGAL/boost/graph/generators.h>
+#include <CGAL/Subdivision_method_3/subdivision_methods_3.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Hdvf_core.h>
@@ -25,9 +28,11 @@
 #include <CGAL/HDVF/Hdvf_duality.h>
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Surface_mesh_io.h>
 #include <CGAL/HDVF/Cub_object_io.h>
 #include <CGAL/HDVF/Tet_object_io.h>
 #include <CGAL/HDVF/Icosphere_object_io.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/OSM/OSM.h>
 
 /**
@@ -316,6 +321,8 @@ public:
     typedef Simplicial_chain_complex<CoefficientRing,Traits> Chain_complex ;
     /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
+    /** \brief Type of 3D surface meshes. */
+    typedef CGAL::Surface_mesh<typename Traits::Kernel::Point_3> Triangle_mesh;
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
 
@@ -332,6 +339,24 @@ public:
         std::vector<Point> nodes ;
     } Complex_duality_data ;
 
+private:
+    static Sub_chain_complex& compute_sub_chain_complex(const Chain_complex& _K, const Chain_complex &L){
+        // Build the Sub_chain_complex_mask encoding K_init inside L
+        Sub_chain_complex& K(*(new Sub_chain_complex(L, false))) ;
+        // Visit all cells of K_init and activate the corresponding bit in K
+        for (int q=0; q<=_K.dimension(); ++q)
+        {
+            for (size_t i=0; i<_K.number_of_cells(q); ++i)
+            {
+                const Simplex&  simplex(_K.index_to_cell(i,q)) ;
+                const size_t id(L.cell_to_index(simplex));
+                K.set_bit_on(q, id) ;
+            }
+        }
+        return K;
+    }
+    
+public:
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a set of simplices `mesh_io`.
      *
      * On the one hand, a `Simplicial_chain_complex` is built from `mesh_io` (let us call if `_K`); on the other hand, this complex is embedded into a larger icosphere and a 3D constrained Delaunay tetraedrization is generated.
@@ -348,63 +373,6 @@ public:
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      * \param[in] subdiv Subdivision level of the bounding icosphere.
      */
-//    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
-//    {
-//
-//        std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
-//        std::cerr << "Imported mesh" << std::endl;
-//        std::cout << _K;
-//        // Export _K to a MeshObject to add the icosphere and mesh with tetGen
-//        Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_mesh_object(_K) ;
-//        std::cerr << "Mesh_object_io from mesh" << std::endl;
-//        mesh_L.print_infos();
-//
-//        // Closing K by adding the icosphere
-//        //  Compute a bounding icosphere
-//        Point center = mesh_L.centroid() ;
-//        double r = mesh_L.radius(center) ;
-//        Icosphere_object_io<Traits> ico(subdiv,center, BB_ratio*r) ;
-//        std::cerr << "Icosphere generated" << std::endl;
-//        ico.print_infos() ;
-//
-//        // Add it to the mesh
-//        mesh_L.push_back(ico) ;
-//        std::cerr << "Mesh concatenation" << std::endl;
-//        mesh_L.print_infos() ;
-//
-//        // Write this mesh to an off file for Tetgen
-//        mesh_L.write_off(out_file_prefix) ;
-//        //        const std::string tetgen_path(CMAKE_TETGEN_PATH) ;
-//        // WARNING: use CGAL 3D triangulation to get rid of tetgen...
-//        const std::string tetgen_path("/Users/umenohana/Dropbox/G-Mod/TopAlg/code/tetgen1.6.0/build/") ;
-//        std::string tetgen_command = tetgen_path+"tetgen -pqkcYfe "+out_file_prefix+".off" ;
-//        system(tetgen_command.c_str()) ;
-//
-//        // Read the mesh built by tetgen for L
-//        Tet_object_io<Traits> tetL(out_file_prefix) ;
-//
-//        // Build the associated SimpComplex
-//        Chain_complex& L = *new Chain_complex(tetL) ;
-//        std::cout << "------ L:" << L;
-//
-//        // Build the Sub_chain_complex_mask encoding _K inside L
-//        Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
-//        // Visit all cells of _K and activate the corresponding bit in K
-//        for (int q=0; q<=_K.dimension(); ++q)
-//        {
-//            for (size_t i=0; i<_K.number_of_cells(q); ++i)
-//            {
-////                const std::vector<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices())
-//                const Simplex&  simplex(_K.index_to_cell(i,q)) ;
-////                const size_t id(L._simp2ind.at(q)[simplex]) ;
-//                const size_t id(L.cell_to_index(simplex));
-//                K.set_bit_on(q, id) ;
-//            }
-//        }
-//        Complex_duality_data t = {L,K,tetL.nodes} ;
-//        return t ;
-//    }
-
     static Complex_duality_data simplicial_chain_complex_bb (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
 
@@ -444,25 +412,78 @@ public:
         std::cout << "------ L:" << L;
 
         // Build the Sub_chain_complex_mask encoding K_init inside L
-        Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
-        // Visit all cells of K_init and activate the corresponding bit in K
-        for (int q=0; q<=_K->dimension(); ++q)
-        {
-            for (size_t i=0; i<_K->number_of_cells(q); ++i)
-            {
-//                const std::vector<size_t>& simplex(K_init._ind2simp.at(q).at(i).get_vertices())
-                const Simplex&  simplex(_K->index_to_cell(i,q)) ;
-//                const size_t id(L._simp2ind.at(q)[simplex]) ;
-                const size_t id(L.cell_to_index(simplex));
-                K.set_bit_on(q, id) ;
-            }
-        }
+        Sub_chain_complex& K(compute_sub_chain_complex(*_K, L));
         // Remove the temporary complex
         delete _K;
         Complex_duality_data t = {L,K,tetL.nodes} ;
         return t ;
     }
 
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Surface_mesh`.
+     *
+     * On the one hand, a `Simplicial_chain_complex` is built from the `Surface_mesh` (let us call it `_K`); on the other hand, this complex is embedded into a larger icosphere and a 3D constrained Delaunay tetraedrization is generated.
+     * Then \f$K\f$, \f$L\f$ and vertex coordinates are built and extracted (from both previous computation) and stored in a `Complex_duality_data` structure.
+     *
+     * After the function, `mesh_object_io` has been extended with the simplices of the closing icosphere.
+     *
+     * The following figures shows the resulting complex with an initial `Twirl` mesh (right - sectional view):
+     * <img src="HDVF_twirl_view1.png" align="center" width=35%/>
+     * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
+     *
+     * \param[in] mesh `Surface_mesh` containing the initial mesh.
+     * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
+     * \param[in] subdiv Subdivision level of the bounding icosphere.
+     */
+    
+    static Complex_duality_data simplicial_chain_complex_bb (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
+    {
+
+        std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
+        std::cerr << "Imported mesh" << std::endl;
+        std::cout << mesh;
+        
+        // Create a temporary Surfaces_mesh_io (to load the mesh)
+        Surface_mesh_io<Triangle_mesh, Traits> K_init_mesh_io(mesh);
+        // Create a temporary associated complex (to identify simplices of mesh_io)
+        Chain_complex* _K = new Chain_complex(K_init_mesh_io);
+
+        // Closing mesh_object_io by adding the icosphere
+        //  Compute a bounding icosphere
+        Point center = K_init_mesh_io.centroid() ;
+        double r = K_init_mesh_io.radius(center) ;
+        Triangle_mesh ico;
+        CGAL::make_icosahedron<Triangle_mesh, Point>(ico, center, r);
+          CGAL::Subdivision_method_3::Loop_subdivision(
+            ico, CGAL::parameters::number_of_iterations(subdiv)
+          );
+        
+        std::cerr << "Icosphere generated" << std::endl;
+        std::cout << ico ;
+
+        // Add it to the mesh
+        mesh += ico ;
+        std::cerr << "Mesh concatenation" << std::endl;
+        std::cout << mesh ;
+
+        // Constrained Delaunay Tetraedrisation
+        auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh);
+        Triangle_mesh mesh_L = std::move(ccdt).triangulation();
+
+        // Build the associated Surface_mesh_io
+        Surface_mesh_io<Triangle_mesh, Traits> L_mesh_io(mesh_L);
+        // Build the associated SimpComplex
+        Chain_complex& L = *new Chain_complex(L_mesh_io) ;
+        std::cout << "------ L:" << L;
+
+        // Build the Sub_chain_complex_mask encoding K_init inside L
+        Sub_chain_complex& K(compute_sub_chain_complex(*_K, L));
+        // Remove the temporary complex
+        delete _K;
+        Complex_duality_data t = {L,K,L_mesh_io.nodes} ;
+        return t ;
+    }
+
+    
     /** \brief Exports a chain complex to a Mesh_object_io  */
     static Mesh_object_io<Traits>& export_mesh_object(const Chain_complex& _CC)
     {

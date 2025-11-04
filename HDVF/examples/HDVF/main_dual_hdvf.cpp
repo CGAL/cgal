@@ -175,13 +175,9 @@ void main_code (const Options &options)
         HDVF::Mesh_object_io<Traits> mesh ;
         mesh.read_off(options.in_file) ;
 
-        // Complex
-        Complex* complex = new Complex(mesh);
-
         // Build L (bounding sphere meshed with tetgen), K and L-K
 
-        typename ToolsType::Complex_duality_data t(ToolsType::simplicial_chain_complex_bb(*complex)) ;
-        delete complex ;
+        typename ToolsType::Complex_duality_data t(ToolsType::simplicial_chain_complex_bb(mesh)) ;
         Complex& L(t.L) ;
         SubCCType& K(t.K) ;
 
