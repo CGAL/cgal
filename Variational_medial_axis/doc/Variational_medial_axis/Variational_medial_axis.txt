@@ -90,7 +90,7 @@ This function accepts the following parameters:
 
 The following example showcases the usage of this function:
 
-\cgalExample{Variational_medial_axis/vmas_free_function_example.cpp}
+\cgalExample{Variational_medial_axis/vmas_free_function.cpp}
 
 \subsection VMASfunctionobject Function object
 The class `CGAL::Variational_medial_axis_sampling` provides some advanced usage of the algorithm
@@ -107,7 +107,7 @@ The parameters are the same as those of the free function.
 
 The following example shows a different configuration of the parameters and basic usage of the above functions:
 
-\cgalExample{Variational_medial_axis/vmas_class_interface_example.cpp}
+\cgalExample{Variational_medial_axis/vmas_class_interface.cpp}
 
 
 \section VMASlimits Limitations and Practical Considerations

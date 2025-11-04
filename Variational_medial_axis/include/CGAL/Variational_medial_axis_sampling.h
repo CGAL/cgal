@@ -13,6 +13,8 @@
 #ifndef CGAL_VARIATIONAL_MEDIAL_AXIS_SAMPLING_H
 #define CGAL_VARIATIONAL_MEDIAL_AXIS_SAMPLING_H
 
+#include <CGAL/license/Variational_medial_axis.h>
+
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_sphere_primitive_3.h>
 #include <CGAL/AABB_traits_3.h>
@@ -27,7 +29,6 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Fast_winding_number.h>
-#include <CGAL/license/Variational_medial_axis.h>
 #include <CGAL/point_generators_3.h>
 #include <Eigen/Dense>
 #include <algorithm>
