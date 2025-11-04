@@ -314,7 +314,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
                             const PolygonTraits& traits);
 
 /// Computes if a polygon is clockwise or counterclockwise oriented.
-/// \pre `is_simple_2(first, last, traits);`
+/// \pre \link CGAL::is_simple_2 `is_simple_2`\endlink(`first`, `last`, `traits`)
 ///
 /// \tparam Traits is a model of the concept
 ///           `PolygonTraits_2`.

@@ -27,7 +27,7 @@ the source and target points of `xc`, respectively. If the target
 point of `xc2` and the source point of `xc1` coincide; then
 the source point of `xc2` and the target point of `xc1` become
 the source and target points of `xc`, respectively.
-\pre `are_mergeable_2`(`xc1`, `xc2`) is true.
+\pre \link ArrDirectionalTraits::AreMergeable_2 `are_mergeable_2`\endlink(`xc1`, `xc2`) is `true`.
 */
 void operator()(ArrDirectionalTraits::X_monotone_curve_2 xc1,
 ArrDirectionalTraits::X_monotone_curve_2 xc2,
