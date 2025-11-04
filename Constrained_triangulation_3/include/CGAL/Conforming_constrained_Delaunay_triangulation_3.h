@@ -2155,7 +2155,7 @@ private:
     }
   };
 
-  void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_contraint_id)
+  void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_contraint_id) const
   {
     const auto& borders_ref = this->face_borders(polygon_contraint_id);
     const auto vec_of_handles = std::invoke([this, &borders_ref]() {
@@ -2262,13 +2262,7 @@ private:
           }
 
           auto vh_2d = it == end ? first_2d : insert_vertex_in_cdt_2(vb);
-          (void)vh_2d;
-          try {
-            insert_constraint_in_cdt_2(previous_2d, vh_2d);
-          } catch(typename CDT_2::Intersection_of_constraints_exception&) {
-            // intersection of constraints probably due to the projection
-            throw Non_planar_plc_facet_exception();
-          }
+          insert_constraint_in_cdt_2(previous_2d, vh_2d);
           previous_2d = vh_2d;
         }
       }
@@ -4050,8 +4044,13 @@ public:
         ++i)
     {
       CDT_2& cdt_2 = non_const_face_cdt_2(i);
-      fill_cdt_2(cdt_2, i);
-      search_for_missing_subfaces(i);
+      try {
+        fill_cdt_2(cdt_2, i);
+        search_for_missing_subfaces(i);
+      } catch (typename CDT_2::Intersection_of_constraints_exception&) {
+        std::cerr << "ERROR: Intersection of constraints in face #F" << i << "\n";
+        this->face_data[i].skip_face = true;
+      }
     }
     if(this->debug().input_faces()) {
       for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
@@ -4712,6 +4711,7 @@ protected:
 
   struct Face_data {
     CDT_2 cdt_2;
+    bool skip_face = false;
     std::vector<std::vector<Face_edge>> borders;
     boost::container::flat_set<Vertex_handle> isolated_vertices;
     int region_number = 0;
