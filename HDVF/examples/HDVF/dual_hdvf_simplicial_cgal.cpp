@@ -30,14 +30,14 @@ int main(int argc, char **argv)
 {
     std::string filename ;
     if (argc > 2) std::cout << "usage: dual_hdvf_simplicial off_file" << std::endl;
-    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
     else filename = argv[1];
     
     // Load simplicial object into Surface_mesh
     Surface_mesh sm;
-    CGAL::IO::read_polygon_mesh(filename, sm);
+    CGAL::IO::read_polygon_mesh(filename, sm); 
     
-    std::cout << sm;
+//    std::cout << sm;
     
     // Build K and L
     typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(sm, 1.5, 2));

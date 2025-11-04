@@ -29,10 +29,10 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Surface_mesh_io.h>
+#include <CGAL/HDVF/Triangulation_3_io.h>
 #include <CGAL/HDVF/Cub_object_io.h>
 #include <CGAL/HDVF/Tet_object_io.h>
 #include <CGAL/HDVF/Icosphere_object_io.h>
-#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/OSM/OSM.h>
 
 /**
@@ -437,10 +437,11 @@ public:
     
     static Complex_duality_data simplicial_chain_complex_bb (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
     {
-
+        typedef CGAL::Triangulation_data_structure_3<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<typename Traits::Kernel>, CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<typename Traits::Kernel>> TDS;
+        typedef CGAL::Triangulation_3<typename Traits::Kernel, TDS> Triangulation;
+        
         std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
         std::cerr << "Imported mesh" << std::endl;
-        std::cout << mesh;
         
         // Create a temporary Surfaces_mesh_io (to load the mesh)
         Surface_mesh_io<Triangle_mesh, Traits> K_init_mesh_io(mesh);
@@ -452,34 +453,41 @@ public:
         Point center = K_init_mesh_io.centroid() ;
         double r = K_init_mesh_io.radius(center) ;
         Triangle_mesh ico;
-        CGAL::make_icosahedron<Triangle_mesh, Point>(ico, center, r);
+        CGAL::make_icosahedron<Triangle_mesh, Point>(ico, center, r*BB_ratio);
           CGAL::Subdivision_method_3::Loop_subdivision(
             ico, CGAL::parameters::number_of_iterations(subdiv)
           );
         
         std::cerr << "Icosphere generated" << std::endl;
-        std::cout << ico ;
 
         // Add it to the mesh
         mesh += ico ;
         std::cerr << "Mesh concatenation" << std::endl;
-        std::cout << mesh ;
+        std::string off_file("tmp/test_bounded.off");
+        std::ofstream out (off_file , std::ios::out | std::ios::trunc);
+
+        if ( ! out . good () ) {
+            std::cerr << "Cannot output dualized mesh to:\n  " << off_file << " - not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        out << mesh ;
+        out.close();
 
         // Constrained Delaunay Tetraedrisation
         auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh);
-        Triangle_mesh mesh_L = std::move(ccdt).triangulation();
+        Triangulation tri_L = std::move(ccdt).triangulation();
 
-        // Build the associated Surface_mesh_io
-        Surface_mesh_io<Triangle_mesh, Traits> L_mesh_io(mesh_L);
+        // Build the associated Triangulation_3_io
+        Triangulation_3_io<Triangulation, Traits> L_tri_io(tri_L);
         // Build the associated SimpComplex
-        Chain_complex& L = *new Chain_complex(L_mesh_io) ;
+        Chain_complex& L = *new Chain_complex(L_tri_io) ;
         std::cout << "------ L:" << L;
 
         // Build the Sub_chain_complex_mask encoding K_init inside L
         Sub_chain_complex& K(compute_sub_chain_complex(*_K, L));
         // Remove the temporary complex
         delete _K;
-        Complex_duality_data t = {L,K,L_mesh_io.nodes} ;
+        Complex_duality_data t = {L,K,L_tri_io.nodes} ;
         return t ;
     }
 
