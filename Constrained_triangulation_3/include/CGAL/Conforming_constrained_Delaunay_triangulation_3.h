@@ -1847,15 +1847,10 @@ public:
     } while(circ != circ_end);
 
     if(this->debug().input_faces()) {
-      std::stringstream filename;
-      filename << "dump-input-face-" << polygon_constraint_id << "_polygon_" << borders.size() - 1 << ".polylines.txt";
-      std::ofstream os(filename.str());
-      os.precision(17);
-      os << vertex_handles.size() + 1 << "   ";
-      for(auto v : vertex_handles) {
-        os << this->point(v) << "  ";
-      }
-      os << this->point(*first_it) << std::endl;
+      std::vector<std::vector<Vertex_handle>> single_polygon{std::vector(vertex_handles.begin(), vertex_handles.end())};
+      dump_face_polygons(single_polygon, polygon_constraint_id,
+                         "dump-input-face-" + std::to_string(polygon_constraint_id) + "_polygon_" +
+                             std::to_string(borders.size() - 1) + ".polylines.txt");
     }
 
     if(!face_index.has_value()) {
@@ -2159,47 +2154,11 @@ private:
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_constraint_id) const
   {
     const auto& borders_ref = this->face_borders(polygon_constraint_id);
-    const auto vec_of_handles = std::invoke([this, &borders_ref]() {
-      std::vector<std::vector<Vertex_handle>> vec_of_handles;
-      for(const auto& border : borders_ref) {
-        auto& handles = vec_of_handles.emplace_back();
-        for(const auto& face_edge : border) {
-          const auto c_id = face_edge.constrained_polyline_id;
-          const bool reversed = face_edge.is_reverse;
-          const auto v_begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
-          const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
-          CGAL_assertion(std::distance(v_begin, v_end) >= 2);
-          auto va = *v_begin;
-          auto vb = *std::prev(v_end);
-          if(reversed) {
-            using std::swap;
-            swap(va, vb);
-          }
-          if(handles.empty()) {
-            handles.push_back(va);
-          } else {
-            CGAL_assertion(handles.back() == va);
-          }
-          handles.push_back(vb);
-        }
-        CGAL_assertion(handles.front() == handles.back());
-      }
-      return vec_of_handles;
-    });
+    const auto vec_of_handles = build_face_border_handles(borders_ref);
 
     if(this->debug().input_faces()) {
       std::cerr << "Polygon #" << polygon_constraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
-      auto filename = "dump_cdt_2_polygons_" + std::to_string(polygon_constraint_id) + ".polylines.txt";
-      std::cerr << "  dumping it to \"" << filename << "\".\n";
-      std::ofstream out(filename);
-      out.precision(17);
-      for(const auto& handles : vec_of_handles) {
-        out << handles.size() << "      ";
-        for(auto it = handles.begin(), end = handles.end(); it != end; ++it) {
-          out << "   " << tr().point(*it);
-        }
-        out << "   " << tr().point(handles.front()) << '\n';
-      }
+       dump_face_polygons(vec_of_handles, polygon_constraint_id);
     }
     // create and fill the 2D triangulation
     {
@@ -2501,9 +2460,6 @@ private:
       const Vertex_handle va_3d = c->vertex(i);
       const Vertex_handle vb_3d = c->vertex(j);
 
-      // std::ofstream dump_edges_around("dump_edges_around.polylines.txt");
-      // dump_edges_around.precision(17);
-
       auto cell_circ = this->incident_cells(c, i, j), end = cell_circ;
       CGAL_assertion(cell_circ != nullptr);
       do {
@@ -2515,7 +2471,6 @@ private:
         const auto index_vc = this->next_around_edge(index_va, index_vb);
         const auto index_vd = this->next_around_edge(index_vb, index_va);
 
-        //write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
         if(is_marked(cell_circ->vertex(index_vc), Vertex_marker::REGION_BORDER)) continue;
         if(is_marked(cell_circ->vertex(index_vd), Vertex_marker::REGION_BORDER)) continue;
         int cd_intersects_region = does_edge_interior_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
@@ -4051,6 +4006,7 @@ public:
       } catch (typename CDT_2::Intersection_of_constraints_exception&) {
         std::cerr << "ERROR: Intersection of constraints in face F#" << i << "\n";
         this->face_data[i].skip_face = true;
+        dump_face_polygons(build_face_border_handles(face_borders(i)), i);
       }
     }
     if(this->debug().input_faces()) {
@@ -4576,6 +4532,24 @@ public:
     write_3d_triangulation_to_OFF(dump, *this);
   }
 
+  void dump_face_polygons(
+    const std::vector<std::vector<Vertex_handle>>& vec_of_handles,
+    CDT_3_signed_index polygon_constraint_id,
+    std::string filename = {}) const
+  {
+    if(filename.empty()) filename =  "dump_cdt_2_polygons_" + std::to_string(polygon_constraint_id) + ".polylines.txt";
+    std::cerr << "  dumping it to \"" << filename << "\".\n";
+    std::ofstream out(filename);
+    out.precision(17);
+    for(const auto& handles : vec_of_handles) {
+      out << handles.size() << "      ";
+      for(auto it = handles.begin(), end = handles.end(); it != end; ++it) {
+        out << "   " << tr().point(*it);
+      }
+      out << "   " << tr().point(handles.front()) << '\n';
+    }
+  }
+
   void dump_region(CDT_3_signed_index face_index, int region_index, const CDT_2& cdt_2) {
     std::ofstream dump_region(std::string("dump_region_") + std::to_string(face_index) + "_" +
                               std::to_string(region_index) + ".off");
@@ -4747,6 +4721,36 @@ protected:
   }
   const int& face_region_number(std::size_t face_id) const {
     return face_data[face_id].region_number;
+  }
+
+  std::vector<std::vector<Vertex_handle>>
+  build_face_border_handles(const std::vector<std::vector<Face_edge>>& borders_ref) const
+  {
+    std::vector<std::vector<Vertex_handle>> vec_of_handles;
+    for(const auto& border : borders_ref) {
+      auto& handles = vec_of_handles.emplace_back();
+      for(const auto& face_edge : border) {
+        const auto c_id = face_edge.constrained_polyline_id;
+        const bool reversed = face_edge.is_reverse;
+        const auto v_begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+        const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+        CGAL_assertion(std::distance(v_begin, v_end) >= 2);
+        auto va = *v_begin;
+        auto vb = *std::prev(v_end);
+        if(reversed) {
+          using std::swap;
+          swap(va, vb);
+        }
+        if(handles.empty()) {
+          handles.push_back(va);
+        } else {
+          CGAL_assertion(handles.back() == va);
+        }
+        handles.push_back(vb);
+      }
+      CGAL_assertion(handles.front() == handles.back());
+    }
+    return vec_of_handles;
   }
 
 protected:
