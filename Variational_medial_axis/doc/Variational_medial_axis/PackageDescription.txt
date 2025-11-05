@@ -10,7 +10,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Qijia Huang}
-\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis inspired by variational shape approximation}
+\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis}
 \cgalPkgManuals{Chapter_VMAS,PkgVMASRef}
 \cgalPkgSummaryEnd
 
