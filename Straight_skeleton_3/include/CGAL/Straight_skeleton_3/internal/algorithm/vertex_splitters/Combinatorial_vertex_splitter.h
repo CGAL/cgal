@@ -557,12 +557,12 @@ public:
     return polyhedron;
   }
 
-  virtual PolyhedronSPtr split_vertex(const VertexSPtr& vertex)
+  virtual bool split_vertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     if (vertex->degree() <= 3) {
-      return polyhedron;
+      return true;
     }
     vertex->sort();
     std::list<combi> combinations = generate_all_combinations(vertex->degree());
@@ -588,8 +588,12 @@ public:
 
     CGAL_SS3_SPLITTER_TRACE_V(16, "Valid split-combination #: " << combinations_valid.size());
 
-    CGAL_warning(!combinations_valid.empty());
-    CGAL_warning(!polys_split.empty());
+    if (combinations_valid.empty()) {
+      CGAL_SS3_SPLITTER_TRACE_V(1, "Error: No valid split-combination found!");
+      return false;
+    }
+
+    CGAL_assertion(!polys_split.empty());
 
     unsigned int selected_combinatorial_split = selected_combi_ % combinations_valid.size();
     it_combi = combinations_valid.begin();
@@ -603,7 +607,7 @@ public:
         break;
       }
     }
-    return polyhedron;
+    return true;
   }
 
   static std::string combi_to_string(const combi& combination)

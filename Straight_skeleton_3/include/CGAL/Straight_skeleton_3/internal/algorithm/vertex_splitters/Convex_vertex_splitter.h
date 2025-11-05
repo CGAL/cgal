@@ -89,19 +89,19 @@ public:
     return result;
   }
 
-  virtual PolyhedronSPtr split_vertex(const VertexSPtr& vertex)
+  virtual bool split_vertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_SS3_SPLITTER_TRACE_V(16, "\n> Splitting " << vertex->to_string());
     PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     if (vertex->degree() <= 3) {
-        return polyhedron;
+      return true;
     }
     vertex->sort();
     std::list<combi> combinations = Base::generate_all_combinations(vertex->degree());
     CGAL_SS3_SPLITTER_TRACE_V(16, combinations.size() << " combinations");
 
-    combi combi_opt;
+    std::optional<combi> combi_opt = std::nullopt;
     PolyhedronSPtr poly_opt;
     PolyhedronSPtr poly_opt_offset;
     int num_convex_edges_opt = 0;
@@ -158,10 +158,16 @@ public:
         }
       }
     }
-    CGAL_assertion(combi_opt != combi());
-    CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << Base::combi_to_string(combi_opt));
+
+    if (!combi_opt.has_value()) {
+      CGAL_SS3_SPLITTER_TRACE_V(1, "Error: No valid split-combination found!");
+      return false;
+    }
+
+    CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << Base::combi_to_string(*combi_opt));
     Combi_vertex_splitter<GeomTraits>::apply(poly_opt, vertex);
-    return polyhedron;
+
+    return true;
   }
 
   virtual std::string to_string() const

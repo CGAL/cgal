@@ -827,8 +827,6 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    bool result = true;
-
     CGAL_SS3_CORE_TRACE("Input: " << polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
@@ -862,7 +860,10 @@ public:
         CGAL_SS3_SPLITTER_TRACE_V(1, "Warning: degree of vertex (" << vertex->degree() << ") at "
                                         << vertex->point() << " is extremely high!");
       }
-      vertex_splitter->split_vertex(vertex);
+      if (!vertex_splitter->split_vertex(vertex)) {
+        CGAL_SS3_CORE_TRACE_V(1, "Error: failed to split vertex at " << vertex->point());
+        return false;
+      }
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -910,7 +911,7 @@ public:
       }
     }
 
-    return result;
+    return true;
   }
 
   static bool check_bisectors_V2(const EdgeSPtr& edge,

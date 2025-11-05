@@ -55,7 +55,7 @@ public:
 
   virtual ~Abstract_vertex_splitter() { /*intentionally does nothing*/ }
 
-  virtual PolyhedronSPtr split_vertex(const VertexSPtr& vertex) = 0; // abstract
+  virtual bool split_vertex(const VertexSPtr& vertex) = 0; // abstract
 
   virtual int getType() const
   {
