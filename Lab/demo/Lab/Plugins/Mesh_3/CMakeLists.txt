@@ -39,6 +39,7 @@ if(ITK_FOUND)
   message(STATUS "ITK found")
   include(${ITK_USE_FILE})
   target_link_libraries(mesh_3_plugin PRIVATE CGAL::ITK_support)
+  target_compile_definitions(mesh_3_plugin PRIVATE ITK_LEGACY_FUTURE_REMOVE)
 endif(ITK_FOUND)
 
 find_package(VTK 9.0 QUIET COMPONENTS ImagingGeneral IOImage IOXML NO_MODULE)
