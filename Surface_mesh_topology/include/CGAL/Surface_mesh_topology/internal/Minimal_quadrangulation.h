@@ -15,7 +15,7 @@
 // Should be defined before to include Path_on_surface_with_rle.h
 // If nothing is defined, use V1
 // #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
-// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Minimal_quadrangulation)
+// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash table (built and given by Minimal_quadrangulation)
 #define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Minimal_quadrangulation)
 
 #include <CGAL/license/Surface_mesh_topology.h>

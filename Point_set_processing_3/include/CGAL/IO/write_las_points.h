@@ -103,7 +103,13 @@ namespace LAS {
   inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Withheld_flag&)
   { r.set_withheld_flag(v); }
   inline void output_value(LASpoint& r, const float& v, const LAS_property::Scan_angle&)
-  { r.set_scan_angle_rank(char(v)); }
+  {
+#if LAS_TOOLS_VERSION < 250517
+    r.set_scan_angle_rank(I8_QUANTIZE(v));
+#else
+    r.set_scan_angle(v);
+#endif
+  }
   inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::User_data&)
   { r.set_user_data(v); }
   inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::Point_source_ID&)

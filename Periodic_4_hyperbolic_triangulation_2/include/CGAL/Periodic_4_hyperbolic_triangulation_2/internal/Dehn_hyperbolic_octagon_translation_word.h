@@ -89,7 +89,6 @@ private:
   {
     Word_idx_type start = 0;
     Word_idx_type mstart = 0;
-    Word_idx_type end = 1;
     Word_idx_type max = 1;
     Word_idx_type len = 1;
     std::vector<Word_idx_type> tmp, mvec;
@@ -98,7 +97,6 @@ private:
     {
       if(is_next_relation_index(w[i], w[i-1]))
       {
-        end++;
         len++;
         tmp.push_back(w[i]);
         if(len > max) {
@@ -112,7 +110,6 @@ private:
         tmp.clear();
         tmp.push_back(w[i]);
         start = i;
-        end = i;
         len = 0;
       }
     }

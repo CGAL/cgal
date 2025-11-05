@@ -116,9 +116,9 @@ typedef unspecified_type Vertex_handle;
 typedef unspecified_type Cell_handle;
 
 /*!
-Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `Parallel_if_available_tag`. If it is
+Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`. If it is
 `CGAL::Parallel_tag`, the following functions can be called concurrently:
-`create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
+`create_vertex()`, `create_cell()`, `delete_vertex()`, `delete_cell()`.
 */
 typedef unspecified_type Concurrency_tag;
 
@@ -232,13 +232,13 @@ TriangulationDataStructure_3(const TriangulationDataStructure_3 & tds1);
 
 /*!
 Assignment operator. All vertices and cells are duplicated, and the former
-data structure of `tds` is deleted.
+data structure is deleted.
 */
 TriangulationDataStructure_3& operator= (const TriangulationDataStructure_3 & tds1);
 
 /*!
-`tds1` is copied into `tds`. If `v != Vertex_handle()`,
-the vertex of `tds` corresponding to `v` is returned,
+`tds1` is copied into `this`. If `v != Vertex_handle()`,
+the vertex corresponding to `v` is returned,
 otherwise `Vertex_handle()` is returned.
 \pre The optional argument `v` is a vertex of `tds1`.
 */
@@ -266,19 +266,19 @@ otherwise `Vertex_handle()` is returned.
 \pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
 */
 template <class TDS_src, class ConvertVertex, class ConvertCell>
-Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertCell& convert_cell);
+Vertex_handle copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertCell& convert_cell);
 
 /*!
-Swaps `tds` and `tds1`. There is no copy of cells and vertices,
+Swaps `this` and `tds1`. There is no copy of cells and vertices,
 thus this method runs in constant time. This method should be preferred to
-`tds`=`tds1` or `tds`(`tds1`) when `tds1` is deleted after
-that.
+copy assignment (`*this = tds1`) or copy construction (`*this(tds1)`)
+if `tds1` is deleted after the copy.
 */
 void swap(TriangulationDataStructure_3 & tds1);
 
 /*!
-Deletes all cells and vertices. `tds` is reset as a triangulation
-data structure constructed by the default constructor.
+Deletes all cells and vertices. The triangulation data structure is reset as if
+constructed by the default constructor.
 */
 void clear();
 
@@ -301,7 +301,7 @@ counted.
 size_type number_of_vertices() const;
 
 /*!
-The number of cells. Returns 0 if `tds`.`dimension()`\f$ <3\f$.
+The number of cells. Returns 0 if `dimension()`\f$ <3\f$.
 */
 size_type number_of_cells() const;
 
@@ -311,12 +311,12 @@ size_type number_of_cells() const;
 /// @{
 
 /*!
-The number of facets. Returns 0 if `tds`.`dimension()`\f$ <2\f$.
+The number of facets. Returns 0 if `dimension()`\f$ <2\f$.
 */
 size_type number_of_facets() const;
 
 /*!
-The number of edges. Returns 0 if `tds`.`dimension()`\f$ <1\f$.
+The number of edges. Returns 0 if `dimension()`\f$ <1\f$.
 */
 size_type number_of_edges() const;
 
@@ -339,19 +339,19 @@ void set_dimension(int n);
 /// @{
 
 /*!
-Tests whether `v` is a vertex of `tds`.
+Tests whether `v` is a vertex of the triangulation data structure.
 */
 bool is_vertex(Vertex_handle v) const;
 
 /*!
-Tests whether `(c,i,j)` is an edge of `tds`. Answers `false` when
-`dimension()` \f$ <1\f$ .
+Tests whether `(c,i,j)` is an edge of the triangulation data structure.
+Answers `false` when `dimension()` \f$ <1\f$ .
 \pre \f$ i,j \in\{0,1,2,3\}\f$
 */
 bool is_edge(Cell_handle c, int i, int j) const;
 
 /*!
-Tests whether `(u,v)` is an edge of `tds`. If the edge is found,
+Tests whether `(u,v)` is an edge of the triangulation data structure. If the edge is found,
 it computes a cell `c` having this edge and the indices `i`
 and `j` of the vertices `u` and `v`, in this order.
 */
@@ -359,19 +359,19 @@ bool is_edge(Vertex_handle u, Vertex_handle v,
 Cell_handle & c, int & i, int & j) const;
 
 /*!
-Tests whether `(u,v)` is an edge of `tds`.
+Tests whether `(u,v)` is an edge of the triangulation data structure.
 */
 bool is_edge(Vertex_handle u, Vertex_handle v) const;
 
 /*!
-Tests whether `(c,i)` is a facet of `tds`. Answers `false` when
-`dimension()` \f$ <2\f$ .
+Tests whether `(c,i)` is a facet of of the triangulation data structure.
+Answers `false` when `dimension()` \f$ <2\f$ .
 \pre \f$ i \in\{0,1,2,3\}\f$
 */
 bool is_facet(Cell_handle c, int i) const;
 
 /*!
-Tests whether `(u,v,w)` is a facet of `tds`. If the facet is found,
+Tests whether `(u,v,w)` is a facet of the triangulation data structure. If the facet is found,
 it computes a cell `c` having this facet and the indices `i`,
 `j` and `k` of the vertices `u`, `v` and `w`, in
 this order.
@@ -380,13 +380,13 @@ bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
 Cell_handle & c, int & i, int & j, int & k) const;
 
 /*!
-Tests whether `c` is a cell of `tds`. Answers `false` when
-`dimension()` \f$ <3\f$ .
+Tests whether `c` is a cell of the triangulation data structure.
+Answers `false` when `dimension()` \f$ <3\f$ .
 */
 bool is_cell(Cell_handle c) const;
 
 /*!
-Tests whether `(u,v,w,t)` is a cell of `tds`. If the cell
+Tests whether `(u,v,w,t)` is a cell of the triangulation data structure. If the cell
 `c` is found, it computes the indices `i`, `j`, `k`
 and `l` of the vertices `u`, `v`, `w` and `t` in
 `c`, in this order.
@@ -401,7 +401,7 @@ Cell_handle & c, int & i, int & j, int & k, int & l) const;
 /*!
 If `v` is a vertex of `f`, then `j` is the index of
 `v` in the cell `f.first`, and the method returns `true`.
-\pre `tds`.dimension()=3
+\pre `dimension() == 3`
 */
 bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
 
@@ -429,17 +429,17 @@ bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
 /// @{
 
 /*!
-
+\pre `dimension() == 3`
 */
 bool are_equal(const Facet & f, const Facet & g) const;
 
 /*!
-
+\pre `dimension() == 3`
 */
 bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;
 
 /*!
-For these three methods: \pre `tds`.dimension()=3.
+\pre `dimension() == 3`
 */
 bool are_equal(const Facet & f, Cell_handle n, int j) const;
 
@@ -528,7 +528,7 @@ void flip_flippable(Cell_handle c, int i);
 Creates a new vertex, inserts it in cell `c` and returns its handle.
 The cell `c` is split into four new cells, each of these cells being
 formed by the new vertex and a facet of `c`.
-\pre `tds`.`dimension()` \f$ = 3\f$ and `c` is a cell of `tds`.
+\pre `dimension()` \f$ = 3\f$ and \link is_cell `is_cell(c)`\endlink.
 */
 Vertex_handle insert_in_cell(Cell_handle c);
 
@@ -536,14 +536,14 @@ Vertex_handle insert_in_cell(Cell_handle c);
 Creates a new vertex, inserts it in facet `f` and returns its handle.
 In dimension 3, the two incident cells are split into 3 new cells;
 in dimension 2, the facet is split into 3 facets.
-\pre `tds`.`dimension()` \f$ \geq2\f$ and `f` is a facet of `tds`.
+\pre `dimension()` \f$ \geq2\f$ and \link is_facet(Cell_handle, int)const `is_facet(f.first, f.second)`\endlink.
 */
 Vertex_handle insert_in_facet(const Facet & f);
 
 /*!
 Creates a new vertex, inserts it in facet `i` of `c` and returns its
 handle.
-\pre `tds`.`dimension()` \f$ \geq2\f$, \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i=3\f$ in dimension 2 and `(c,i)` is a facet of `tds`.
+\pre `dimension()` \f$ \geq2\f$, \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i=3\f$ in dimension 2 and \link is_facet(Cell_handle, int)const `is_facet(c, i)`\endlink.
 */
 Vertex_handle insert_in_facet(Cell_handle c, int i);
 
@@ -553,14 +553,14 @@ In dimension 3, all the
 incident cells are split into 2 new cells; in dimension 2, the 2
 incident facets are split into 2 new facets; in dimension 1, the edge is
 split into 2 new edges.
-\pre `tds`.`dimension()` \f$ \geq1\f$ and `e` is an edge of `tds`.
+\pre `dimension()` \f$ \geq1\f$ and \link is_edge(Cell_handle, int,int)const `is_edge(e.first, e.second, e.third)`\endlink.
 */
 Vertex_handle insert_in_edge(Edge e);
 
 /*!
 Creates a new vertex, inserts it in edge \f$ (i,j)\f$ of `c` and returns its
 handle.
-\pre `tds`.`dimension()` \f$ \geq1\f$. \f$ i\neq j\f$, \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1 and `(c,i,j)` is an edge of `tds`.
+\pre `dimension()` \f$ \geq1\f$. \f$ i\neq j\f$, \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1 and \link is_edge(Cell_handle, int,int)const `is_edge(c,i,j)`\endlink.
 */
 Vertex_handle insert_in_edge(Cell_handle c, int i, int j);
 
@@ -582,8 +582,7 @@ This method can be used to insert the first two vertices in an empty
 triangulation.
 
 A handle to `v` is returned.
-\pre `tds`.`dimension()` \f$ = d < 3\f$. When `tds`.`number_of_vertices()` \f$ >0\f$, \f$ star \neq\f$ `Vertex_handle()` and `star` is a vertex of `tds`.
-
+\pre `dimension()` \f$ = d < 3\f$. When `number_of_vertices()` \f$ >0\f$, \f$ star \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(star)`\endlink.
 
 \anchor TDS3figtopoinsert_outside_affine_hull
 \image html topo-insert_outside_affine_hull.png "insert_increase_dimension (1-dimensional case)."
@@ -603,15 +602,14 @@ described, and `begin->neighbor(i)` does not. Then this function deletes
 all the cells (resp. facets) describing the hole, creates a new vertex
 `v`, and for each facet (resp. edge) on the boundary of the hole, creates
 a new cell (resp. facet) with `v` as vertex. `v` is returned.
-\pre `tds`.`dimension()` \f$ \geq2\f$, the set of cells (resp. facets) is connected, and its boundary is connected.
+\pre `dimension()` \f$ \geq2\f$, the set of cells (resp. facets) is connected, and its boundary is connected.
 */
 template <class CellIt>
 Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
 Cell_handle begin, int i);
 
 /*!
-Same as above, except that `newv` will be used as the new vertex, which
-must have been allocated previously with e.g. `create_vertex`.
+Same as above, except that `newv` will be used as the new vertex, which must have been allocated previously with, e.g., `create_vertex()`.
 */
 template <class CellIt>
 Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
@@ -627,7 +625,8 @@ This operation is the reciprocal of `insert_increase_dimension()`.
 It transforms a triangulation of the sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$ into the
 triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \mathbb{R}^{d}\f$ by removing the vertex
 `v`. Delete the cells incident to `w`, keep the others.
-\pre `tds`.`dimension()` \f$ = d \geq-1\f$. `tds`.`degree(v)` \f$ =\f$ `degree(w)` \f$ =\f$ `tds`.`number_of_vertices()` \f$ -1\f$.
+\pre `dimension()` \f$ = d \geq-1\f$.
+\pre \link degree `degree(v)`\endlink \f$ =\f$ \link degree `degree(w)`\endlink \f$ =\f$ `number_of_vertices()` \f$ -1\f$.
 
 */
 void remove_decrease_dimension(Vertex_handle v, Vertex_handle w = v);
@@ -635,10 +634,10 @@ void remove_decrease_dimension(Vertex_handle v, Vertex_handle w = v);
 /*!
 Removes `v`. The incident simplices of maximal dimension incident to
 `v` are replaced by a single simplex of the same dimension. This
-operation is exactly the reciprocal to `tds`.`insert_in_cell(v)` in
-dimension 3, `tds`.`insert_in_facet(v)` in dimension 2, and
-`tds`.`insert_in_edge(v)` in dimension 1.
-\pre `tds`.`degree(v)` \f$ =\f$ `tds`.`dimension()+1`.
+operation is exactly the reciprocal to `insert_in_cell(v)` in
+dimension 3, `insert_in_facet(v)` in dimension 2, and
+`insert_in_edge(v)` in dimension 1.
+\pre \link degree `degree(v)`\endlink \f$ =\f$ `dimension()+1`.
 
 */
 Cell_handle remove_from_maximal_dimension_simplex(Vertex_handle v);
@@ -656,7 +655,8 @@ triangulation of the sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$ onto the
 triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \mathbb{R}^{d}\f$ formed by the link of `v`
 augmented with the vertex `v` itself, for \f$ d\f$==2,3; this one is placed on the facet `(c, i)`
 (see Fig. \ref TDS3dim_down).
-\pre The dimension must be 2 or 3. The degree of `v` must be equal to the total number of vertices of the triangulation data structure minus 1.
+\pre The dimension must be 2 or 3.
+\pre The degree of `v` must be equal to the total number of vertices of the triangulation data structure minus 1.
 
 \anchor TDS3dim_down
 \image html tds-dim_down.png
@@ -680,7 +680,7 @@ void decrease_dimension(Cell_handle c, int i);
 \cgalAdvancedBegin
 Changes the orientation of all cells of the triangulation data structure.
 \cgalAdvancedEnd
-\pre `tds`.`dimension()` \f$ \geq1\f$.
+\pre `dimension()` \f$ \geq1\f$.
 */
 void reorient();
 
@@ -746,7 +746,7 @@ Cell_handle n2, Cell_handle n3);
 \cgalAdvancedBegin
 Removes the vertex from the triangulation data structure.
 \cgalAdvancedEnd
-\pre The vertex is a vertex of `tds`.
+\pre \link is_vertex `is_vertex(v)`\endlink.
 */
 void delete_vertex( Vertex_handle v );
 
@@ -755,7 +755,7 @@ void delete_vertex( Vertex_handle v );
 \cgalAdvancedBegin
 Removes the cell from the triangulation data structure.
 \cgalAdvancedEnd
-\pre The cell is a cell of `tds`.
+\pre \link is_cell(Cell_handle)const `is_cell(c)`\endlink.
 */
 void delete_cell( Cell_handle c );
 
@@ -783,7 +783,7 @@ void delete_cells(CellIt first, CellIt last);
 /// @{
 
 /*!
-Returns `cells_end()` when `tds.dimension()` \f$ <3\f$.
+Returns `cells_end()` when `dimension()` \f$ <3\f$.
 */
 Cell_iterator cells_begin() const;
 
@@ -794,7 +794,7 @@ Cell_iterator cells_end() const;
 
 /*!
 Low-level access to the cells, does not return `cells_end()`
-when `tds.dimension()` \f$ <3\f$.
+when `dimension()` \f$ <3\f$.
 */
 Cell_iterator raw_cells_begin() const;
 
@@ -804,7 +804,7 @@ Cell_iterator raw_cells_begin() const;
 Cell_iterator raw_cells_end() const;
 
 /*!
-Returns `facets_end()` when `tds.dimension()` \f$ <2\f$.
+Returns `facets_end()` when `dimension()` \f$ <2\f$.
 */
 Facet_iterator facets_begin() const;
 
@@ -814,7 +814,7 @@ Facet_iterator facets_begin() const;
 Facet_iterator facets_end() const;
 
 /*!
-Returns `edges_end()` when `tds.dimension()` \f$ <1\f$.
+Returns `edges_end()` when `dimension()` \f$ <1\f$.
 */
 Edge_iterator edges_begin() const;
 
@@ -840,7 +840,7 @@ Vertex_iterator vertices_end() const;
 
 /*!
 Starts at an arbitrary cell incident to `e`.
-\pre `tds.dimension()` \f$ =3\f$
+\pre `dimension()` \f$ =3\f$
 */
 Cell_circulator incident_cells(const Edge & e) const;
 
@@ -851,7 +851,7 @@ Cell_circulator incident_cells(Cell_handle c, int i, int j) const;
 
 /*!
 Starts at cell `start`.
-\pre `tds.dimension()` \f$ =3\f$ and `start` is incident to `e`.
+\pre `dimension()` \f$ =3\f$ and `start` is incident to `e`.
 */
 Cell_circulator incident_cells(const Edge & e, Cell_handle start) const;
 
@@ -865,9 +865,9 @@ const;
 Starts at an arbitrary facet incident to `e`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 
-\pre `tds.dimension()` \f$ =3\f$
+\pre `dimension()` \f$ =3\f$
 */
 Facet_circulator incident_facets(Edge e) const;
 
@@ -875,7 +875,7 @@ Facet_circulator incident_facets(Edge e) const;
 As above for edge `(i,j)` of `c`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Cell_handle c, int i, int j) const;
 
@@ -883,7 +883,7 @@ Facet_circulator incident_facets(Cell_handle c, int i, int j) const;
 Starts at facet `start`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 
 \pre `start` is incident to `e`.
 */
@@ -893,7 +893,7 @@ Facet_circulator incident_facets(Edge e, Facet start) const;
 Starts at facet of index `f` in `start`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Edge e, Cell_handle start, int f) const;
 
@@ -901,7 +901,7 @@ Facet_circulator incident_facets(Edge e, Cell_handle start, int f) const;
 As above for edge `(i,j)` of `c`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Facet start) const;
@@ -910,7 +910,7 @@ Facet start) const;
 As above for edge `(i,j)` of `c` and facet `(start,f)`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Cell_handle start, int f) const;
@@ -924,7 +924,8 @@ Cell_handle start, int f) const;
 Copies the `Cell_handle`s of all cells incident to `v` to the
 output iterator `cells`.
 Returns the resulting output iterator.
-\pre `tds.dimension()` \f$ =3\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `dimension()` \f$ =3\f$
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -934,7 +935,8 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 Copies the `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `tds.dimension()` \f$ >1\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `dimension()` \f$ >1\f$
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -943,7 +945,8 @@ incident_facets(Vertex_handle v, OutputIterator facets) const;
 /*!
 Copies all `Edge`s incident to `v` to the
 output iterator `edges`. Returns the resulting output iterator.
-\pre `tds.dimension()` \f$ >0\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `dimension()` \f$ >0\f$
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -951,9 +954,9 @@ incident_edges(Vertex_handle v, OutputIterator edges) const;
 
 /*!
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the
-output iterator `vertices`. If `tds.dimension()` \f$ <0\f$, then do
+output iterator `vertices`. If `dimension()` \f$ <0\f$, then do
 nothing. Returns the resulting output iterator.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -961,7 +964,8 @@ adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
 Returns the degree of `v`, that is, the number of incident vertices.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()`
+\pre \link is_vertex `is_vertex(v)`\endlink
 */
 size_type degree(Vertex_handle v) const;
 
@@ -1045,7 +1049,7 @@ Writes `tds` into the stream `os`
 ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds);
 
 /*! \ingroup PkgIOTDS3
-The tds streamed in `is`, of original type `TDS_src`, is written into the triangulation data structure. As the vertex and cell
+The triangulation data structure streamed in `is`, of original type `TDS_src`, is written into the triangulation data structure. As the vertex and cell
  types might be different and incompatible, the creation of new cells and vertices
 is made thanks to the functors `convert_vertex` and `convert_cell`, that convert
 vertex and cell types. For each vertex `v_src` in `is`, the corresponding

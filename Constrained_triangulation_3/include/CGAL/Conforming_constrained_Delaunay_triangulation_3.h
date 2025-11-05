@@ -1074,7 +1074,7 @@ public:
 
   /*!
    * @brief same as `face_constraint_index(f)` with `f` being `Triangulation::Facet(ch, index)`.
-   * @pre `is_facet_constrained(f)`
+   * @pre \link Conforming_constrained_Delaunay_triangulation_3::is_facet_constrained `is_facet_constrained`\endlink(`f`)
    */
   CDT_3_signed_index face_constraint_index(typename Triangulation::Cell_handle ch, int i) const
   {
@@ -1084,7 +1084,7 @@ public:
   /*!
    * @brief returns the index of the constraint that constrains the
    * facet \p f
-   * @pre `is_facet_constrained(f)`
+   * @pre \link Conforming_constrained_Delaunay_triangulation_3::is_facet_constrained `is_facet_constrained`\endlink(`f`)
    */
   CDT_3_signed_index face_constraint_index(const typename Triangulation::Facet& f) const
   {

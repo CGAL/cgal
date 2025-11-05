@@ -15,9 +15,9 @@ then
   exit
 fi
 
-if [ "$branch" != "master" ];
+if [ "$branch" != "main" ];
 then
-  echo "Call $0 from branch 'master'"
+  echo "Call $0 from branch 'main'"
   exit
 fi
 

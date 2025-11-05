@@ -65,7 +65,7 @@ namespace Polygon_mesh_processing {
 
   @return pair of `faces_out` and `vertices_out`
 
-  \pre `is_triangle_mesh(tmesh)`
+  @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
 
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
