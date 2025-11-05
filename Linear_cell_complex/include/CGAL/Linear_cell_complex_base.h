@@ -213,7 +213,7 @@ namespace CGAL {
       return *this;
     }
 
-    /** Create a vertex attribute.
+    /** Creates a vertex attribute.
      * @return an handle on the new attribute.
      */
     template<typename ...Args>
@@ -221,7 +221,7 @@ namespace CGAL {
     { return Base::template create_attribute<0>(args...); }
 
     /**
-     * Create a new dart associated with an handle through an attribute.
+     * Creates a new dart associated with an handle through an attribute.
      * @param ahandle the point handle to associated with the dart.
      * @return a Dart_descriptor on the new dart.
      */
@@ -232,7 +232,7 @@ namespace CGAL {
       return res;
     }
 
-    /** Create a new dart associated with a point.
+    /** Creates a new dart associated with a point.
      * @param apoint the point to associated with the dart.
      * @return a Dart_descriptor on the new dart.
      */
@@ -307,7 +307,7 @@ namespace CGAL {
       return point_of_vertex_attribute(this->template attribute<0>(adart));
     }
 
-    /** Test if the lcc is valid.
+    /** Tests if the lcc is valid.
      * A Linear_cell_complex is valid if it is a valid Combinatorial_map with
      * an attribute associated to each dart.
      * @return true iff the map is valid.
@@ -550,7 +550,7 @@ namespace CGAL {
       return res;
     }
 
-    /** Create a segment given 2 points.
+    /** Creates a segment given 2 points.
      * @param p0 the first point.
      * @param p1 the second point.
      * if closed==true, the edge has no 2-free dart.
@@ -564,7 +564,7 @@ namespace CGAL {
                           closed);
     }
 
-    /** Create a triangle given 3 points.
+    /** Creates a triangle given 3 points.
      * @param p0 the first point.
      * @param p1 the second point.
      * @param p2 the third point.
@@ -579,7 +579,7 @@ namespace CGAL {
                            create_vertex_attribute(p2));
     }
 
-    /** Create a quadrangle given 4 points.
+    /** Creates a quadrangle given 4 points.
      * @param p0 the first point.
      * @param p1 the second point.
      * @param p2 the third point.
@@ -598,7 +598,7 @@ namespace CGAL {
     }
 
 
-    /** Create a tetrahedron given 4 Vertex_attribute_descriptor.
+    /** Creates a tetrahedron given 4 Vertex_attribute_descriptor.
      * @param h0 the first vertex handle.
      * @param h1 the second vertex handle.
      * @param h2 the third vertex handle.
@@ -619,7 +619,7 @@ namespace CGAL {
       return this->make_combinatorial_tetrahedron(d1, d2, d3, d4);
     }
 
-    /** Create a tetrahedron given 4 points.
+    /** Creates a tetrahedron given 4 points.
      * @param p0 the first point.
      * @param p1 the second point.
      * @param p2 the third point.
@@ -638,7 +638,7 @@ namespace CGAL {
                               create_vertex_attribute(p3));
     }
 
-    /** Create an hexahedron given 8 Vertex_attribute_descriptor.
+    /** Creates an hexahedron given 8 Vertex_attribute_descriptor.
      *    (8 vertices, 12 edges and 6 facets)
      * \verbatim
      *       4----7
@@ -678,7 +678,7 @@ namespace CGAL {
       return this->make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
     }
 
-    /** Create an hexahedron given 8 points.
+    /** Creates an hexahedron given 8 points.
      * \verbatim
      *       4----7
      *      /|   /|
@@ -717,7 +717,7 @@ namespace CGAL {
                              create_vertex_attribute(p7));
     }
 
-    /** Create a prism given 6 Vertex_attribute_descriptor.
+    /** Creates a prism given 6 Vertex_attribute_descriptor.
      *    (6 vertices, 9 edges and 5 facets)
      * \verbatim
      *      3---4
@@ -751,7 +751,7 @@ namespace CGAL {
       return make_combinatorial_prism(d1, d2, d3, d4, d5);
     }
 
-    /** Create a prism given 6 points.
+    /** Creates a prism given 6 points.
      * \verbatim
      *      3---4
      *      |\ /|
@@ -783,7 +783,7 @@ namespace CGAL {
                         create_vertex_attribute(p5));
     }
 
-    /** Create a pyramid given 5 Vertex_attribute_descriptor.
+    /** Creates a pyramid given 5 Vertex_attribute_descriptor.
      *    (5 vertices, 8 edges and 5 facets)
      * \verbatim
      *       4
@@ -815,7 +815,7 @@ namespace CGAL {
       return make_combinatorial_pyramid(d1, d2, d3, d4, d5);
     }
 
-    /** Create a pyramid given 5 points.
+    /** Creates a pyramid given 5 points.
      * \verbatim
      *       4
      *      /|\
