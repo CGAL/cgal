@@ -1190,8 +1190,7 @@ private:
         break; // no change in closest face
       }
       FT r_next = compute_radius(p, n, q_next);
-      CGAL_assertion(CGAL::is_finite(r_next));
-      CGAL_assertion(r_next > FT(0));
+      CGAL_assertion(CGAL::is_finite(r_next) && r_next > FT(0));
       Point_3 c_next = p - (r_next * n);
       FT separation_angle = approximate_angle(p - c_next, q_next - c_next);
       if(j > 0 && separation_angle < denoise_preserve) {
@@ -1233,8 +1232,7 @@ private:
         break; // convergence
       }
       FT r_next = compute_radius(p, n, q_next);
-      CGAL_assertion(CGAL::is_finite(r_next));
-      CGAL_assertion(r_next > FT(0));
+      CGAL_assertion(CGAL::is_finite(r_next) && r_next > FT(0));
       Point_3 c_next = p - (r_next * n);
       FT seperation_angle = approximate_angle(p - c_next, q_next - c_next);
       if(j > 0 && seperation_angle < denoise_preserve) {
