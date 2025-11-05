@@ -33,7 +33,7 @@ class Configuration;
 
 using ConfigurationSPtr = std::shared_ptr<Configuration>;
 
-/**
+/*
  * \ingroup PkgStraightSkeleton3Classes
  *
  * \class CGAL::Straight_skeletons_3::Configuration

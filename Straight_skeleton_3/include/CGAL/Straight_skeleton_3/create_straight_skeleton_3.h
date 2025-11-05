@@ -171,12 +171,12 @@ construct_skeleton(const TriangleMesh& tmesh,
  * Positive time values signify outward construction, while negative values or an empty times range
  * correspond to inward construction.
  *
- * Face weights may be passed to represent different front speeds. These values are always positive
+ * Face weights may be passed to represent different front speeds. These values must always be positive
  * since they represent absolute speeds.
  *
  * The upper bound `max_time` defines how far the straight skeleton is constructed,
- * i.e. nodes at a time greater than `max_time` are not created, which may thus create
- * unbounded arcs and sheets in the straight skeleton.
+ * i.e. nodes at a time greater than `max_time` are not created. This may result
+ * in the presence of unbounded arcs and sheets in the straight skeleton.
  *
  * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
  * degenerate configurations, See \ref Straight_skeleton_3Limitations for more information.

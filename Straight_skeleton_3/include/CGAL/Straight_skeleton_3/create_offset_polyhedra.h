@@ -40,7 +40,7 @@ namespace CGAL {
  * to the intermediate states of the input mesh during the straight skeleton construction.
  *
  * Positive time values correspond to outward offsetting, while negative values or an empty times
- * range correspond to inward offsetting. Face weights are always positive since they represent
+ * range correspond to inward offsetting. Face weights must always be positive since they represent
  * absolute speeds.
  *
  * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
@@ -79,12 +79,14 @@ namespace CGAL {
  *      \cgalParamDefault{A constant property map with uniform weight 1.0 for all faces.}
  *      \cgalParamExtra{Precondition: all face weights must be positive.}
  *    \cgalParamNEnd
+ * \cond SKIP_IN_MANUAL
  *    \cgalParamNBegin{config_file_path}
  *      \cgalParamDescription{the path to a configuration file to the algorithm. See the documentation
  *                            of the class `CGAL::Straight_skeletons_3::Configuration` for details.}
  *      \cgalParamType{`std::string`}
  *      \cgalParamDefault{The path to a default configuration file which must be found in the working directory.}
  *    \cgalParamNEnd
+ * \endcond
  *  \cgalNamedParamsEnd
  *
  * \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters"
@@ -97,6 +99,13 @@ namespace CGAL {
  *     \cgalParamExtra{Note that sometimes faces must be triangulated as to be representable in
  *                     a halfedge data structure, for example faces with holes.}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{face_weight_map}
+ *     \cgalParamDescription{a property map filled by this function, associating to an output face
+ *                           its corresponding input face.}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `std::pair<boost::graph_traits<PolygonMeshOut>::%face_descriptor, const PolygonMeshOut&>`
+ *                    as key type and `boost::graph_traits<TriangleMeshIn>::%face_descriptor` as value type}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
  * \return `true` if offset meshes were successfully constructed; `false` otherwise.
