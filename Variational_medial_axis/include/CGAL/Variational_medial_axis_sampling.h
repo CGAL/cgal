@@ -424,22 +424,27 @@ public:
    * returns the container of vertices, where each vertex is a medial sphere (`Sphere_3`).
    */
   const std::vector<Sphere_3>& vertices() const { return vertices_; }
+
   /**
    * returns the container of edges, where each edge is represented as a pair of indices in the vertices vector.
    */
   const std::vector<std::pair<std::size_t, std::size_t>>& edges() const { return edges_; }
+
   /**
    * returns the container of faces, where each face is represented as an array of three indices in the vertices vector.
    */
   const std::vector<std::array<std::size_t, 3>>& faces() const { return faces_; }
+
   /**
    * returns the number of vertices in the medial skeleton.
    */
   std::size_t number_of_vertices() const { return vertices_.size(); }
+
   /**
    * returns the number of edges in the medial skeleton.
    */
   std::size_t number_of_edges() const { return edges_.size(); }
+
   /**
    * returns the number of faces in the medial skeleton.
    */
@@ -453,6 +458,7 @@ public:
     edges_.clear();
     faces_.clear();
   }
+
   /**
    * sets the data for the medial skeleton.
    * @param vertices A list of `Sphere_3` representing the vertices (medial spheres).
@@ -468,6 +474,7 @@ public:
   }
 
   /// @}
+
 private:
   // Data members
   std::vector<Sphere_3> vertices_; // Each vertex is a complete medial sphere
@@ -544,7 +551,6 @@ class Variational_medial_axis_sampling
       typename Kernel_traits<typename boost::property_traits<
           typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
 
-  using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
@@ -567,7 +573,7 @@ class Variational_medial_axis_sampling
   using Face_normal_map = typename boost::property_map<TriangleMesh, Face_normal_tag>::const_type;
   using Face_nb_samples_tag = CGAL::dynamic_face_property_t<std::size_t>;
   using Face_nb_samples_map = typename boost::property_map<TriangleMesh, Face_nb_samples_tag>::const_type;
-  using Face_area_tag = CGAL::dynamic_face_property_t<FT>;
+  using Face_area_tag = CGAL::dynamic_face_property_t<typename GT::FT>;
   using Face_area_map = typename boost::property_map<TriangleMesh, Face_area_tag>::const_type;
   using Face_centroid_tag = CGAL::dynamic_face_property_t<Point_3>;
   using Face_centroid_map = typename boost::property_map<TriangleMesh, Face_centroid_tag>::const_type;
