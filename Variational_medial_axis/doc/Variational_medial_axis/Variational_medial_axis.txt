@@ -60,7 +60,7 @@ The output is stored in a `Medial_skeleton` structure, which contains three cont
 - **edges**: each element is a `std::pair<std::size_t, std::size_t>` encoding the adjacency between two spheres,
 - **faces**: each element is a triplet of `Sphere_ID`(std::array<std::size_t, 3>) values encoding a triangular patch connecting three spheres.
 
-A helper function `CGAL:write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
+A helper function `CGAL:IO::write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
 which can then be visualized in external software such as Blender.
 
 \subsection VMASacc Acceleration Structure

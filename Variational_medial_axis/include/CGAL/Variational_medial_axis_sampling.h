@@ -189,7 +189,7 @@ private:
  * It stores the medial spheres, edges, and faces of the skeleton.
  *
  * @tparam TriangleMesh The type of the triangle mesh representing the shape.
- * @tparam GT The geometric traits class used for geometric computations.<br>
+ * @tparam GeomTraits The geometric traits class used for geometric computations.<br>
  *         <b>%Default:</b>
  * \code
  *     CGAL::Kernel_traits<
@@ -497,14 +497,14 @@ private:
 /// @tparam TriangleMesh
 ///         a model of `FaceListGraph`
 ///
-/// @tparam ConcurrencyTag_
+/// @tparam ConcurrencyTag
 ///         a tag indicating whether the algorithm should run sequentially or in parallel.
-///         This determines the execution mode at compile time.
+///         This determines the execution mode at compile time.<br>
 ///         <b>%Default:</b> `CGAL::Sequential_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, `CGAL::Parallel_if_available_tag`
 ///
-///  @tparam AccelerationType_
-///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
+///  @tparam AccelerationType
+///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.<br>
 ///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
 ///
@@ -531,8 +531,8 @@ private:
 ///
 
 template <typename TriangleMesh,
-          typename ConcurrencyTag_ = Sequential_tag,
-          typename AccelerationType_ = KD_tree_tag,
+          typename ConcurrencyTag = Sequential_tag,
+          typename AccelerationType = KD_tree_tag,
           typename GeomTraits = Default,
           typename VertexPointMap_ = Default>
 class Variational_medial_axis_sampling
@@ -579,6 +579,8 @@ public:
   /// sphere type
   using Sphere_3 = typename GT::Sphere_3;
 
+  /// number type
+  using FT = typename GT::FT;
 
   /// \name Constructor
   ///@{
@@ -657,7 +659,7 @@ public:
                             get_const_property_map(CGAL::vertex_point, tmesh));
     seed_ = choose_parameter(get_parameter(np, internal_np::random_seed), 42);
 #ifndef CGAL_LINKED_WITH_TBB
-    static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
+    static_assert(!std::is_same_v<ConcurrencyTag, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
     init();
   }
@@ -733,12 +735,12 @@ public:
       // Sample the surface mesh
       sample_surface_mesh();
       // Build AABB-tree
-      if constexpr(std::is_same_v<AccelerationType_, KD_tree_tag>) {
+      if constexpr(std::is_same_v<AccelerationType, KD_tree_tag>) {
         tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
       }
     }
 
-    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
+    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>) {
 #if CGAL_LINKED_WITH_TBB
       // Compute the shrinking balls in parallel
       compute_shrinking_balls_parallel();
@@ -797,7 +799,7 @@ public:
     // Clean data
     sphere_mesh_->reset();
 
-    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
+    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>) {
 #ifdef CGAL_LINKED_WITH_TBB
       // Compute the cluster sphere for each vertex
       assign_vertices_to_clusters_parallel();
@@ -1113,7 +1115,7 @@ private:
     // get bounding box of the mesh
     sample_surface_mesh();
     // Build AABB-tree
-    if constexpr(std::is_same_v<AccelerationType_, KD_tree_tag>) {
+    if constexpr(std::is_same_v<AccelerationType, KD_tree_tag>) {
       tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
     } else {
       tree_->accelerate_distance_queries();
@@ -1266,7 +1268,7 @@ private:
 
     Vector_3 normal = point_normal_map_[idx];
     Point_3 p = tpoints_.point(idx);
-    auto [center, radius] = compute_shrinking_ball_impl(p, normal, AccelerationType_{});
+    auto [center, radius] = compute_shrinking_ball_impl(p, normal, AccelerationType{});
     point_medial_sphere_pos_map_[idx] = center;
     point_medial_sphere_radius_map_[idx] = radius;
   }
@@ -1342,7 +1344,7 @@ private:
     if(!fast_winding_number_->is_inside(optimal_center))
       normal = -normal; // if the center is outside, flip the normal
 
-    auto [c, r] = compute_shrinking_ball_impl(cp, normal, AccelerationType_{});
+    auto [c, r] = compute_shrinking_ball_impl(cp, normal, AccelerationType{});
 
     sphere.set_center(c);
     sphere.set_radius(r);
