@@ -4,8 +4,8 @@
 /*!
  * \example Stream_support/color_ostream.cpp
  *
- * This example demonstrates how to use CGAL::IO::Basic_color_streambuf
- * and CGAL::IO::Basic_color_stream_guard for formatting output with
+ * This example demonstrates how to use `CGAL::IO::Basic_color_streambuf`
+ * and `CGAL::IO::Basic_color_stream_guard` for formatting output with
  * ANSI colors.
  */
 
