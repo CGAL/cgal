@@ -154,7 +154,7 @@ construct_skeleton(const TriangleMesh& tmesh,
   }
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("final_skeleton.obj", skel_builder->get_skeleton(), true /*convert_to_double*/);
+    IO::write_OBJ("final_skeleton.obj", skel_builder->get_skeleton());
 #endif
 
   return skel_builder->get_skeleton();

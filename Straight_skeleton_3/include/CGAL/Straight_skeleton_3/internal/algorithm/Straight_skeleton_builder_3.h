@@ -422,7 +422,7 @@ public:
     CGAL_assertion(polyhedron_->is_consistent());
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/input.obj", polyhedron_, false /*do not triangulate*/);
+    IO::write_OBJ("results/input.obj", polyhedron_, parameters::do_not_triangulate_faces(true));
 #endif
 
     CGAL_SS3_CORE_TRACE_V(1, polyhedron_->vertices().size() << " NV " << polyhedron_->facets().size() << " NF");
@@ -566,8 +566,10 @@ public:
       current_time = upcoming_event_time;
 
 #ifdef CGAL_SS3_DUMP_FILES
-      IO::OBJFile::save("results/event_" + std::to_string(event_id) + ".obj", polyhedron, false /*do_triangulate*/);
-      IO::OBJFile::save("results/event_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
+      IO::write_OBJ("results/event_" + std::to_string(event_id) + ".obj", polyhedron,
+                    parameters::do_not_triangulate_faces(true));
+      IO::write_OBJ("results/event_" + std::to_string(event_id) + "_triangulated.obj",
+                    parameters::do_not_triangulate_faces(false));
 #endif
 
       if (visitor_ && event->getType() == Abstract_event::SAVE_EVENT) {
@@ -867,7 +869,7 @@ public:
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/post_split.obj", polyhedron, false /*do not triangulate*/);
+    IO::write_OBJ("results/post_split.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     CGAL_postcondition_code(for (auto v : polyhedron->vertices()))
@@ -3871,9 +3873,8 @@ public:
 #ifdef CGAL_SS3_DUMP_FILES
     // below will have degeneracies since we have not yet treated the event
     static int shift_id = -1;
-    IO::OBJFile::save("results/shift_" + std::to_string(++shift_id) + ".obj",
-                      polyhedron,
-                      false /*do not triangulate*/);
+    IO::write_OBJ("results/shift_" + std::to_string(++shift_id) + ".obj", polyhedron,
+                  parameters::do_not_triangulate_faces(true));
 #endif
   }
 
@@ -3884,23 +3885,16 @@ public:
 
     bool result = true;
 
-    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
+    std::stringstream ss_filename, ss_filename_triangulated;
     ss_filename.precision(17);
     ss_filename_triangulated.precision(17);
-    ss_filename_exact.precision(17);
-    ss_filename << save_path_.string() << "/time_" << current_time << ".obj";
-    ss_filename_triangulated << save_path_.string() << "/time_" << current_time << "_triangulated.obj";
-    ss_filename_exact << save_path_.string() << "/time_" << current_time << "_exact.obj";
+    ss_filename << save_path_.string() << "/offset_" << current_time << ".obj";
+    ss_filename_triangulated << save_path_.string() << "/offset_" << current_time << "_triangulated.obj";
 
-    result = (IO::OBJFile::save(ss_filename.str(), polyhedron,
-                                false /*do_triangulate*/,
-                                true /*convert_to_double*/) && result);
-    result = (IO::OBJFile::save(ss_filename_triangulated.str(), polyhedron,
-                                true /*do_triangulate*/,
-                                true /*convert_to_double*/) && result);
-    result = (IO::OBJFile::save(ss_filename_exact.str(), polyhedron,
-                                true /*do_triangulate*/,
-                                false /*convert_to_double*/) && result);
+    result = (IO::write_OBJ(ss_filename.str(), polyhedron,
+                            parameters::do_not_triangulate_faces(true)) && result);
+    result = (IO::write_OBJ(ss_filename_triangulated.str(), polyhedron,
+                            parameters::do_not_triangulate_faces(false)) && result);
 
     return result;
   }
@@ -3910,18 +3904,10 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(skeleton);
 
-    bool result = true;
+    std::stringstream ss_filename;
+    ss_filename << save_path_.string() << "/skeleton_" << current_time << ".obj";
 
-    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
-    ss_filename << save_path_.string() << "/time_" << current_time << "_skel.obj";
-    ss_filename_exact << save_path_.string() << "/time_" << current_time << "_skel_exact.obj";
-
-    result = (IO::OBJFile::save(ss_filename.str(), skeleton,
-                                true /*convert_to_double*/) && result);
-    result = (IO::OBJFile::save(ss_filename_exact.str(), skeleton,
-                                false /*convert_to_double*/) && result);
-
-    return result;
+    return IO::write_OBJ(ss_filename.str(), skeleton);
   }
 
   Event_status handle_save_event(const Save_event_sptr& event,

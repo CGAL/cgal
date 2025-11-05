@@ -343,7 +343,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/coplanar_merge_before.obj", polyhedron, false /*do not triangulate*/);
+    IO::write_OBJ("results/coplanar_merge_before.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     int result = 0;
@@ -388,8 +388,7 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(4, "  final facet count: " << polyhedron->facets().size());
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,
-                      false /*do not triangulate*/);
+    IO::write_OBJ("results/coplanar_merge_after.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     return result;

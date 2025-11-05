@@ -15,6 +15,9 @@
 ///
 /// The following classes are the main classes of this package.
 
+/// \defgroup PkgStraightSkeleton3IO I/O Functions
+/// \ingroup PkgStraightSkeleton3Ref
+
 /*!
 \addtogroup PkgStraightSkeleton3Ref
 \cgalPkgDescriptionBegin{3D Straight Skeleton and Polyhedron Offsetting,PkgStraightSkeleton3}
@@ -44,6 +47,8 @@
 
 \cgalCRPSection{Classes}
 - `CGAL::Straight_skeleton_3`
-- `CGAL::Straight_skeletons_3::Configuration`
+
+\cgalCRPSection{I/O Functions}
+- \link PkgStraightSkeleton3IO `CGAL::Straight_skeletons_3::IO::write_OBJ()`\endlink
 
 */

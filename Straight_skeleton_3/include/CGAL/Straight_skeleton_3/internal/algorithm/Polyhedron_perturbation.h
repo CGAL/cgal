@@ -467,9 +467,7 @@ public:
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/tilt-v3_input.obj", polyhedron,
-                      false /*do_triangulate*/,
-                      true /*convert_to_double*/);
+    IO::write_OBJ("results/tilt-v3_input.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     CGAL_SS3_TRANSF_TRACE_CODE(unsigned int had_to_triangulate_n = 0;)
@@ -740,9 +738,7 @@ public:
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/tilt-v3_preprocessed.obj", polyhedron,
-                           false /*do_triangulate*/,
-                           true /*convert_to_double*/);
+    IO::write_OBJ("results/tilt-v3_preprocessed.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     // Forward declarations for mutually recursive lambdas
@@ -1293,9 +1289,7 @@ public:
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/tilt_v3-pre_reset.obj", polyhedron,
-                      false /*do_triangulate*/,
-                      true /*convert_to_double*/);
+    IO::write_OBJ("results/tilt_v3-pre_reset.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     CGAL_SS3_TRANSF_TRACE_V(16, "Reset the position of not-fully-constrained vertices...");
@@ -1319,12 +1313,8 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(8, "All facets processed");
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::OBJFile::save("results/tilt_v3.obj", polyhedron,
-                           false /*do_triangulate*/,
-                           true /*convert_to_double*/);
-    IO::OBJFile::save("results/tilt_v3-triangulated.obj", polyhedron,
-                           true /*do_triangulate*/,
-                           true /*convert_to_double*/);
+    IO::write_OBJ("results/tilt_v3.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+    IO::write_OBJ("results/tilt_v3-triangulated.obj", polyhedron, parameters::do_not_triangulate_faces(false));
 #endif
 
     CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()) {)
