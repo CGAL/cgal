@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Variational_medial_axis.h>
 
+#ifndef DOXYGEN_RUNNING
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/properties.h>
@@ -554,4 +555,5 @@ private:
 
 } // end of namespace CGAL
 
+#endif DOXYGEN_RUNNING
 #endif // CGAL_FAST_WINDING_NUMBER_H
