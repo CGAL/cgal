@@ -148,7 +148,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
   // main call
   auto ss_ptr = Straight_skeletons_3::internal::construct_skeleton(tmesh, save_times, np_in.visitor(visitor));
   if (!ss_ptr) {
-    CGAL_SS3_TRACE_V(1, "Error: run() returned 'false'");
     return false;
   }
 

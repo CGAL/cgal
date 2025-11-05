@@ -482,7 +482,7 @@ public:
     cache_base_planes(polyhedron);
 
     if (!init(polyhedron, vertex_splitter_)) {
-      CGAL_SS3_CORE_TRACE_V(8, "Error: failed to initialize polyhedron");
+      CGAL_SS3_CORE_TRACE_V(1, "Error: failed to initialize polyhedron");
       return false;
     }
 
@@ -3653,7 +3653,7 @@ public:
       CGAL_SS3_CORE_TRACE("First event from duplicate: " << event_duplicate->to_string());
 
       if (!is_same_event(event_scratch, event_duplicate)) {
-        CGAL_SS3_CORE_TRACE("Error: top events differ");
+        CGAL_SS3_CORE_TRACE_V(1, "Error: top events differ");
         CGAL_assertion(false);
         return false;
       }
@@ -3703,8 +3703,8 @@ public:
       }
 
       if (!found) {
-          CGAL_SS3_CORE_TRACE("Error: could not find event in duplicate queue");
-          CGAL_SS3_CORE_TRACE("Event: " << event_scratch->to_string());
+          CGAL_SS3_CORE_TRACE_V(1, "Error: could not find event in duplicate queue");
+          CGAL_SS3_CORE_TRACE_V(1, "Event: " << event_scratch->to_string());
           return false;
       }
     }
@@ -4545,7 +4545,7 @@ public:
         flip_edge = true;
       }
     } else {
-      throw std::runtime_error("Error: not able to handle Edge_event (2).");
+      return Event_status::EVENT_NOT_HANDLED;
     }
 
     std::array<EdgeSPtr, 4> edges;
@@ -6402,7 +6402,7 @@ public:
       result = handle_pierce_event(std::dynamic_pointer_cast<Pierce_event>(event),
                                  current_time, time_future_bound, polyhedron);
     } else {
-      CGAL_SS3_CORE_TRACE("Error: Cannot handle event of type " << event->getType());
+      CGAL_SS3_CORE_TRACE_V(1, "Error: Cannot handle event of type " << event->getType());
       CGAL_assertion(false);
       result = Event_status::EVENT_NOT_HANDLED;
     }
