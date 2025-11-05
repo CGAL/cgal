@@ -519,7 +519,7 @@ private:
 ///      >::Kernel
 /// \endcode
 ///
-/// @tparam VertexPointMap_
+/// @tparam VertexPointMap
 ///         a model of `ReadWritePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `GeomTraits::Point_3` as value type.<br>
@@ -534,10 +534,10 @@ template <typename TriangleMesh,
           typename ConcurrencyTag = Sequential_tag,
           typename AccelerationType = KD_tree_tag,
           typename GeomTraits = Default,
-          typename VertexPointMap_ = Default>
+          typename VertexPointMap = Default>
 class Variational_medial_axis_sampling
 {
-  using VPM = typename Default::Get<VertexPointMap_,
+  using VPM = typename Default::Get<VertexPointMap,
                                     typename boost::property_map<TriangleMesh, vertex_point_t>::const_type>::type;
   using GT = typename Default::Get<
       GeomTraits,
@@ -608,7 +608,7 @@ public:
   ///     \cgalParamDefault{max(20000, number_of_spheres * 100)}
   ///     \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
   ///  \cgalParamNEnd
-  /// \cgalParamNBegin{max_iteration_number}
+  /// \cgalParamNBegin{number_of_iterations}
   ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
   ///    \cgalParamType{int}
   ///    \cgalParamDefault{1000}
@@ -686,7 +686,7 @@ public:
    *      \cgalParamDefault{max(20000, number_of_spheres * 100)}
    *      \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
    *   \cgalParamNEnd
-   *  \cgalParamNBegin{max_iteration_number}
+   *  \cgalParamNBegin{number_of_iterations}
    *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
    *     \cgalParamType{int}
    *     \cgalParamDefault{1000}
