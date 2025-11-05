@@ -698,7 +698,7 @@ public:
    *     \cgalParamDefault{1000}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
-   *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
+   *     \cgalParamDescription{A weight balancing the two energy terms {SQEM(Spherical Quadrics Error Metric) and Euclidean}. Smaller values encourage
    * the skeleton to extend deeper into local geometric features of the shape.}
    *     \cgalParamType{FT}
    *     \cgalParamDefault{FT(0.2)}
