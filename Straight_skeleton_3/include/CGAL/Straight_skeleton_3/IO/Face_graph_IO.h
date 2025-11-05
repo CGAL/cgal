@@ -161,7 +161,7 @@ public:
       result->add_facet(facet);
 
       const FT weight = get(weight_pmap, fi);
-      CGAL_assertion(weight > 0);
+      CGAL_assertion(weight >= 0);
 
       SkelFacetDataSPtr data = Skeleton_facet_data::create(facet);
       data->set_speed(weight);

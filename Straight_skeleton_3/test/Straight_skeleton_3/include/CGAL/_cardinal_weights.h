@@ -122,8 +122,8 @@ bool assign_cardinal_weights(const char* weights_filename,
   // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
 
-  // std::cout << "HACK" << std::endl;
-  // eps_weight = 0;
+  std::cout << "ZERO SPEED ENABLED" << std::endl;
+  eps_weight = 0;
 
   if(x1_val == 0) { CGAL_SS3_TRACE_V(16, "x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
   if(x2_val == 0) { CGAL_SS3_TRACE_V(16, "x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
@@ -189,7 +189,7 @@ bool assign_cardinal_weights(const char* weights_filename,
     // be detected if its value type is, e.g., EPECK::FT
     // Could be FT if there were no intermediary saving
     put(fwm, f, CGAL::to_double(weight));
-    CGAL_postcondition(get(fwm, f) > 0);
+    CGAL_postcondition(get(fwm, f) >= 0);
   }
 
   CGAL_SS3_TRACE_V(8, "E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);

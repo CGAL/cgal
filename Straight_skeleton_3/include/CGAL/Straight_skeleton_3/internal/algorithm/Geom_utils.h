@@ -58,8 +58,6 @@ public:
                                                   const Plane_3& plane_2, const FT& w2,
                                                   const Plane_3& plane_3, const FT& w3)
   {
-    CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
-
     const FT& a0 = plane_0.a();
     const FT& b0 = plane_0.b();
     const FT& c0 = plane_0.c();
@@ -93,6 +91,10 @@ public:
     CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_3));
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
+
+    // @fixme abusing the fact that we should never be there if the event time has not been OK
+    // but it should probably return an optional still? Anyway, get rid of all point computations...
+    CGAL_assertion(den != 0);
 
     // note that below is only valid for normalized coefficients
     FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
@@ -101,16 +103,14 @@ public:
 
     FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
-    return { x, y, z };
+    return Point_3{ x, y, z };
   }
 
-  static FT intersection_time_offset_planes(const Plane_3& plane_0, const FT& w0,
-                                            const Plane_3& plane_1, const FT& w1,
-                                            const Plane_3& plane_2, const FT& w2,
-                                            const Plane_3& plane_3, const FT& w3)
+  static std::optional<FT> intersection_time_offset_planes(const Plane_3& plane_0, const FT& w0,
+                                                           const Plane_3& plane_1, const FT& w1,
+                                                           const Plane_3& plane_2, const FT& w2,
+                                                           const Plane_3& plane_3, const FT& w3)
   {
-    CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
-
     const FT& a0 = plane_0.a();
     const FT& b0 = plane_0.b();
     const FT& c0 = plane_0.c();
@@ -145,9 +145,13 @@ public:
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
+    if (is_zero(den)) {
+      return std::nullopt;
+    }
+
     FT tn = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0);
 
-    return tn / den;
+    return FT{tn / den};
   }
 };
 

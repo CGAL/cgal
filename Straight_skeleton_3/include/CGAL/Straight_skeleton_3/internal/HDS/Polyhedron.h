@@ -1458,7 +1458,7 @@ public:
 
       const FT& get_speed() const
       {
-        CGAL_assertion(speed_ > 0);
+        CGAL_assertion(speed_ >= 0);
         return speed_;
       }
 

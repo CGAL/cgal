@@ -960,10 +960,10 @@ public:
   /**
     * Returns the intersection time of the 4 shifting planes.
     */
-  FT intersection_time_offset_planes(const FacetSPtr& facet_0,
-                                     const FacetSPtr& facet_1,
-                                     const FacetSPtr& facet_2,
-                                     const FacetSPtr& facet_3)
+  static std::optional<FT> intersection_time_offset_planes(const FacetSPtr& facet_0,
+                                                           const FacetSPtr& facet_1,
+                                                           const FacetSPtr& facet_2,
+                                                           const FacetSPtr& facet_3)
   {
     CGAL_SS3_DEBUG_SPTR(facet_0);
     CGAL_SS3_DEBUG_SPTR(facet_1);
@@ -1029,21 +1029,27 @@ public:
     CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
     CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
-    const FT vanish_time = intersection_time_offset_planes(facetL, facetP, facetR, facetN);
+    const std::optional<FT> vanish_time = intersection_time_offset_planes(facetL, facetP, facetR, facetN);
 
-    if (time_past_bound && vanish_time >= *time_past_bound) {
+    if (!vanish_time.has_value()) {
+      CGAL_SS3_TRAITS_TRACE("No vanish time");
+      Hds_utils::set_vanish_time(edge, std::nullopt);
+      return { };
+    }
+
+    if (time_past_bound && *vanish_time >= *time_past_bound) {
       CGAL_SS3_TRAITS_TRACE("Vanish event is strictly in the past");
       Hds_utils::set_vanish_time(edge, std::nullopt);
       return { };
     }
 
-    if (time_future_bound && vanish_time < *time_future_bound) {
+    if (time_future_bound && *vanish_time < *time_future_bound) {
       CGAL_SS3_TRAITS_TRACE("Vanish event is too far in the future");
       Hds_utils::set_vanish_time(edge, std::nullopt);
       return { };
     }
 
-    Hds_utils::set_vanish_time(edge, vanish_time);
+    Hds_utils::set_vanish_time(edge, *vanish_time);
     return vanish_time;
   }
 
@@ -1062,19 +1068,23 @@ public:
       fs[i] = wf.lock();
     }
 
-    FT event_time = intersection_time_offset_planes(facet, fs[0], fs[1], fs[2]);
+    std::optional<FT> event_time = intersection_time_offset_planes(facet, fs[0], fs[1], fs[2]);
+    if (!event_time.has_value()) {
+      CGAL_SS3_TRAITS_TRACE("No contact event");
+      return { };
+    }
 
-    if (time_past_bound && event_time >= *time_past_bound) {
+    if (time_past_bound && *event_time >= *time_past_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is strictly in the past");
       return { };
     }
 
-    if (time_future_bound && event_time < *time_future_bound) {
+    if (time_future_bound && *event_time < *time_future_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is too far in the future");
       return { };
     }
 
-    CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << event_time);
+    CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << *event_time);
 
     return event_time;
   }
@@ -1117,19 +1127,24 @@ public:
       }
     }
 
-    FT event_time = intersection_time_offset_planes(facet_l1, facet_r1, facet_l2, facet_r2);
+    std::optional<FT> event_time = intersection_time_offset_planes(facet_l1, facet_r1, facet_l2, facet_r2);
 
-    if (time_past_bound && event_time >= *time_past_bound) {
+    if (!event_time) {
+      CGAL_SS3_TRAITS_TRACE("No contact event");
+      return { };
+    }
+
+    if (time_past_bound && *event_time >= *time_past_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is strictly in the past");
       return { };
     }
 
-    if (tight_future_bound && event_time < *tight_future_bound) {
+    if (tight_future_bound && *event_time < *tight_future_bound) {
       CGAL_SS3_TRAITS_TRACE("Contact event is too far in the future");
       return { };
     }
 
-    CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << event_time);
+    CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << *event_time);
     return event_time;
   }
 
