@@ -25,7 +25,10 @@ int main()
 
   if(!CGAL::IO::write_VTK("beam-with-mixed-cells.vtk", lcc, nullptr,
                           &volume_scalars))
-  { std::cout<<"Error for write_VTK."<<std::endl; return EXIT_FAILURE; }
+  {
+    std::cout<<"Error for write_VTK."<<std::endl;
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
