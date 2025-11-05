@@ -1753,16 +1753,16 @@ public:
     return (f_vertices == fh_vertices);
   }
 
-  void set_facet_constrained(Facet f, CDT_3_signed_index polygon_contraint_id,
+  void set_facet_constrained(Facet f, CDT_3_signed_index polygon_constraint_id,
                              CDT_2_face_handle fh)
   {
     CGAL_assertion(fh == CDT_2_face_handle{} || same_triangle(f, fh));
 
     const auto [c, facet_index] = f;
-    c->ccdt_3_data().set_facet_constraint(facet_index, polygon_contraint_id, fh);
+    c->ccdt_3_data().set_facet_constraint(facet_index, polygon_constraint_id, fh);
     if(tr().dimension() > 2) {
       const auto [n, n_index] = tr().mirror_facet({c, facet_index});
-      n->ccdt_3_data().set_facet_constraint(n_index, polygon_contraint_id, fh);
+      n->ccdt_3_data().set_facet_constraint(n_index, polygon_constraint_id, fh);
     }
     if(fh == CDT_2_face_handle{}) return;
 
@@ -1828,7 +1828,7 @@ public:
             : this->face_data.emplace_back(CDT_2_traits{compute_accumulated_normal(first_it, size)}).borders;
     auto& border = borders.emplace_back();
     border.reserve(std::size(vertex_handles));
-    const auto polygon_contraint_id = face_index.value_or(this->face_data.size() - 1);
+    const auto polygon_constraint_id = face_index.value_or(this->face_data.size() - 1);
     do {
       const auto va = *circ;
       ++circ;
@@ -1843,12 +1843,12 @@ public:
         CGAL_assertion(c_id != Constrained_polyline_id{});
         border.push_back(Face_edge{c_id});
       }
-      incident_faces_to_polyline.emplace(c_id, polygon_contraint_id);
+      incident_faces_to_polyline.emplace(c_id, polygon_constraint_id);
     } while(circ != circ_end);
 
     if(this->debug().input_faces()) {
       std::stringstream filename;
-      filename << "dump-input-face-" << polygon_contraint_id << "_polygon_" << borders.size() - 1 << ".polylines.txt";
+      filename << "dump-input-face-" << polygon_constraint_id << "_polygon_" << borders.size() - 1 << ".polylines.txt";
       std::ofstream os(filename.str());
       os.precision(17);
       os << vertex_handles.size() + 1 << "   ";
@@ -1863,9 +1863,9 @@ public:
       face_constraint_misses_subfaces.resize(face_data.size());
     }
     if(this->debug().input_faces()) {
-      std::cerr << "insert_constrained_face return the polygon_contraint_id: " << polygon_contraint_id << '\n';
+      std::cerr << "insert_constrained_face return the polygon_constraint_id: " << polygon_constraint_id << '\n';
     }
-    return polygon_contraint_id;
+    return polygon_constraint_id;
   }
 
   std::optional<std::vector<Vertex_handle>>
@@ -2156,9 +2156,9 @@ private:
     }
   };
 
-  void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_contraint_id) const
+  void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_constraint_id) const
   {
-    const auto& borders_ref = this->face_borders(polygon_contraint_id);
+    const auto& borders_ref = this->face_borders(polygon_constraint_id);
     const auto vec_of_handles = std::invoke([this, &borders_ref]() {
       std::vector<std::vector<Vertex_handle>> vec_of_handles;
       for(const auto& border : borders_ref) {
@@ -2188,8 +2188,8 @@ private:
     });
 
     if(this->debug().input_faces()) {
-      std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
-      auto filename = "dump_cdt_2_polygons_" + std::to_string(polygon_contraint_id) + ".polylines.txt";
+      std::cerr << "Polygon #" << polygon_constraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
+      auto filename = "dump_cdt_2_polygons_" + std::to_string(polygon_constraint_id) + ".polylines.txt";
       std::cerr << "  dumping it to \"" << filename << "\".\n";
       std::ofstream out(filename);
       out.precision(17);
@@ -2267,7 +2267,7 @@ private:
           previous_2d = vh_2d;
         }
       }
-      for(auto vh_3d : face_isolated_vertices(polygon_contraint_id)) {
+      for(auto vh_3d : face_isolated_vertices(polygon_constraint_id)) {
         insert_vertex_in_cdt_2(vh_3d);
       }
       { // mark all the faces outside/inside, starting from one infinite face
@@ -2329,7 +2329,7 @@ private:
            return cross_product(cdt_2.geom_traits().normal(), cross_product(v1, v2)) == NULL_VECTOR;
          }))
       {
-        std::cerr << std::string("Polygon #") + std::to_string(polygon_contraint_id) +
+        std::cerr << std::string("Polygon #") + std::to_string(polygon_constraint_id) +
                          " is not coplanar.\n";
       }
     } // end of the construction of the CDT_2
@@ -2358,9 +2358,9 @@ private:
     }
   }
 
-  void search_for_missing_subfaces(CDT_3_signed_index polygon_contraint_id)
+  void search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id)
   {
-    const CDT_2& cdt_2 = face_cdt_2(polygon_contraint_id);
+    const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
 
     for(const auto fh: cdt_2.all_face_handles())
     {
@@ -2372,15 +2372,15 @@ private:
       int i, j, k;
       if(!tr().is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
-        face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_contraint_id));
+        face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-        std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_contraint_id);
+        std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
         write_triangle(std::cerr, v0, v1, v2);
 #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
       } else {
         fh->info().missing_subface = false;
         const int facet_index = 6 - i - j - k;
-        set_facet_constrained({c, facet_index}, polygon_contraint_id, fh);
+        set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
       }
     }
   }
