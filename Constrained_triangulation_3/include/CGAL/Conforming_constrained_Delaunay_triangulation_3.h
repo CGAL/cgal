@@ -1344,7 +1344,7 @@ protected:
             if(c->ccdt_3_data().is_facet_constrained(li)) {
               self->register_facet_to_be_constrained(c, li);
   #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-              std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
+              std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
               self->write_2d_triangle(std::cerr, fh_2);
   #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
             }
@@ -3043,7 +3043,7 @@ private:
             return true;
           } else if(this->debug().regions()) {
             std::cerr << "NOTE: the other diagonal is in the 3D triangulation BUT the edge is not flippable!\n";
-            std::cerr << "  The region " << region_index << " of face #F" << face_index << " has four points:\n";
+            std::cerr << "  The region " << region_index << " of face F#" << face_index << " has four points:\n";
             std::cerr << "    v0: " << v0->point() << '\n';
             std::cerr << "    v1: " << v1->point() << '\n';
             std::cerr << "    v2: " << v2->point() << '\n';
@@ -3867,7 +3867,7 @@ private:
       auto handle_error_with_region = [&](const char* what, CDT_2_face_handle fh_2d) {
         if(this->debug().regions() || this->debug().verbose_special_cases()) {
           std::cerr << "NOTE: " << what << " in sub-region " << (region_index - 1)
-                    << " of face #F" << face_index << '\n';
+                    << " of face F#" << face_index << '\n';
         }
         if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug().verbose_special_cases()) {
           std::cerr << "  constrained edges are:\n";
@@ -4049,7 +4049,7 @@ public:
         fill_cdt_2(cdt_2, i);
         search_for_missing_subfaces(i);
       } catch (typename CDT_2::Intersection_of_constraints_exception&) {
-        std::cerr << "ERROR: Intersection of constraints in face #F" << i << "\n";
+        std::cerr << "ERROR: Intersection of constraints in face F#" << i << "\n";
         this->face_data[i].skip_face = true;
       }
     }
@@ -4075,7 +4075,7 @@ public:
         the_process_made_progress = true;
       }
       catch(PLC_error& e) {
-        std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(e.face_index) + "\n";
+        std::cerr << std::string("ERROR: PLC error with face F#") << std::to_string(e.face_index) + "\n";
         i = face_constraint_misses_subfaces_find_next(i);
         if(i == npos) {
           std::cerr << "ERROR: No more missing face to restore after a PLC error\n";
@@ -4084,7 +4084,7 @@ public:
           }
           throw;
         }
-        std::cerr << "Next face is face #F " << i << '\n';
+        std::cerr << "Next face is face F# " << i << '\n';
         continue;
       }
       i = face_constraint_misses_subfaces_find_next(i);
