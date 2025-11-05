@@ -213,41 +213,8 @@ class Medial_skeleton
   using Sphere_ID = typename MSMesh::Sphere_ID;
 
 public:
-  /**
-   * loads a medial skeleton from a PLY file.
-   *
-   * @param filepath
-   *     Filepath to the PLY file containing the medial skeleton data.
-   * @return
-   *     `true` if the skeleton was successfully loaded, `false` otherwise.
-   *
-   * Note: The file format is :
-   * ```
-   * ply
-   * format ascii 1.0
-   * element vertex N
-   * property float x
-   * property float y
-   * property float z
-   * property float radius
-   * element edge M
-   * property int vertex1
-   * property int vertex2
-   * element face K
-   * property list uchar int vertex_indices
-   * end_header
-   * x1 y1 z1 r1
-   * ...          // N vertices
-   * xn yn zn rn
-   * vx vy
-   * ...          // M edges
-   * vz vw
-   * 3 v1 v2 v3
-   * ...          // K faces
-   * 3 vx vy vz
-   * ```
-   */
-  bool read_skeleton_from_PLY(std::string& filepath) {
+
+  bool read_PLY(const std::string& filepath) {
     clear();
     std::ifstream ifs(filepath);
     if(!ifs) {
@@ -2186,6 +2153,51 @@ bool write_PLY(const Medial_skeleton<TriangleMesh, GeomTraits>& skeleton,
   }
   return true;
 }
+
+
+  /**
+   * @ingroup PkgVMASRef
+   * loads a medial skeleton from a PLY file.
+   *
+   * @param skeleton the skeleton
+   * @param filepath
+   *     Filepath to the PLY file containing the medial skeleton data.
+   * @return
+   *     `true` if the skeleton was successfully loaded, `false` otherwise.
+   *
+   * Note: The file format is :
+   * ```
+   * ply
+   * format ascii 1.0
+   * element vertex N
+   * property float x
+   * property float y
+   * property float z
+   * property float radius
+   * element edge M
+   * property int vertex1
+   * property int vertex2
+   * element face K
+   * property list uchar int vertex_indices
+   * end_header
+   * x1 y1 z1 r1
+   * ...          // N vertices
+   * xn yn zn rn
+   * vx vy
+   * ...          // M edges
+   * vz vw
+   * 3 v1 v2 v3
+   * ...          // K faces
+   * 3 vx vy vz
+   * ```
+   */
+
+template <typename TriangleMesh, typename GeomTraits>
+bool read_PLY(Medial_skeleton<TriangleMesh, GeomTraits>& skeleton,
+              const std::string& filepath) {
+    return skeleton.read_PLY(filepath);
+}
+
 } // namespace IO
 
 } // namespace CGAL

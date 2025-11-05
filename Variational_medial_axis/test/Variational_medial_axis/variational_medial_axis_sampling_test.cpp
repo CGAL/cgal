@@ -145,7 +145,7 @@ bool test_correcteness() {
 
   Skeleton saved_skeleton_bvh,saved_skeleton_kd_tree;
 
-  if(saved_skeleton_bvh.read_skeleton_from_PLY(saved_file_bvh)) {
+  if(CGAL::IO::read_PLY(saved_skeleton_bvh, saved_file_bvh)) {
     if(compare_skeletons(skeleton_bvh, saved_skeleton_bvh)) {
       std::cout << "Skeletons match after reading from file." << std::endl;
     } else {
@@ -154,7 +154,7 @@ bool test_correcteness() {
     }
   }
 
-  if(saved_skeleton_kd_tree.read_skeleton_from_PLY(saved_file_kd_tree)) {
+  if(CGAL::IO::read_PLY(saved_skeleton_kd_tree, saved_file_kd_tree)) {
     if(compare_skeletons(skeleton_kd_tree, saved_skeleton_kd_tree)) {
       std::cout << "KD-tree Skeletons match after reading from file." << std::endl;
     } else {
