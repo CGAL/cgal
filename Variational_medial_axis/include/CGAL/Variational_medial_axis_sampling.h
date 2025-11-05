@@ -798,7 +798,7 @@ public:
    * It can optionally enable sphere splitting based on convergence criteria.
    *
    * \param enable_split If true, allows sphere splitting based on convergence criteria.
-   * \return `truet if the algorithm has converged, `false` otherwise.
+   * \return `true` if the algorithm has converged, `false` otherwise.
    */
 
   bool update_single_step(bool enable_split = false) {
@@ -870,7 +870,7 @@ public:
    *
    * \pre nb_sphere must be positive
    * \pre At least one sphere must already exist
-   * \return True if spheres were added successfully, false otherwise.
+   * \return `true` if spheres were added successfully, `false` otherwise.
    */
   bool add_spheres(int nb_sphere) {
     if(nb_sphere == 0) {
@@ -983,12 +983,12 @@ public:
    *
    * In case the algorithm does not converge, it will stop after this number of iterations.
    */
-  int max_iteration() const { return max_iteration_; }
+  int number_of_iterations() const { return max_iteration_; }
 
   /**
    * \brief sets the maximum number of iterations.
    */
-  void set_max_iteration(int max_iter) { max_iteration_ = max_iter; }
+  void set_number_of_iterations(int max_iter) { max_iteration_ = max_iter; }
   ///@}
 private:
   //Sample points on the surface mesh and compute k-nearest neighbors for each point so that we can construct the connectivity of skeleton
