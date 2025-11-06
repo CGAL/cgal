@@ -5,7 +5,7 @@
 
 The concept `FloatSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
 an instance of the `Traits` template-parameter of
-the free functions \ref CGAL::snap_polygons_2(), \ref CGAL::compute_snapped_subcurves_2() and \ref CGAL::double_snap_rounding_2().
+the free functions of TODO.
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
 
@@ -133,6 +133,16 @@ Construct_round_point_2 construct_round_point_2_object();
 */
 Squared_round_bound_2 squared_round_bound_2_object();
 
+/*!
+
+*/
+Converter_to_exact converter_to_exact_object();
+
+/*!
+
+*/
+Converter_from_exact converter_from_exact_object();
+
 
 /// @}
 
@@ -145,7 +155,7 @@ namespace FSRTraits_2{
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::ConstructRoundPoint_2 `Float_snap_rounding_traits_2::Construct_round_point_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Construct_round_point_2 `Float_snap_rounding_traits_2::Construct_round_point_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructRoundPoint_2
@@ -162,7 +172,7 @@ class ConstructRoundPoint_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::SquaredRoundBound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
   \cgalHasModelsEnd
 */
 class SquaredRoundBound_2
@@ -179,7 +189,7 @@ class SquaredRoundBound_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::ConverterToExact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_to_exact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
   \cgalHasModelsEnd
 */
 class ConverterToExact
@@ -198,7 +208,7 @@ class ConverterToExact
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::ConverterToExact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_from_exact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
   \cgalHasModelsEnd
 */
 class ConverterFromExact
