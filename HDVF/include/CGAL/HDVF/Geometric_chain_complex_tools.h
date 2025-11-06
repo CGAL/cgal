@@ -447,6 +447,7 @@ public:
         Surface_mesh_io<Triangle_mesh, Traits> K_init_mesh_io(mesh);
         // Create a temporary associated complex (to identify simplices of mesh_io)
         Chain_complex* _K = new Chain_complex(K_init_mesh_io);
+        std::cout << "------ _K:" << *_K;
 
         // Closing mesh_object_io by adding the icosphere
         //  Compute a bounding icosphere
@@ -472,9 +473,16 @@ public:
         }
         out << mesh ;
         out.close();
+        
+        // Generate plc_facet_map
+        auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), mesh);
+        int cpt(0);
+        for  (typename Triangle_mesh::Face_iterator it = mesh.faces_begin(); it!= mesh.faces_end(); ++it){
+            plc_facet_map[*it] = cpt++;
+        }
 
-        // Constrained Delaunay Tetraedrisation
-        auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh);
+        // Constrained Delaunay Tetraedrisation preserving plc_facet_map
+        auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh, CGAL::parameters::plc_face_id(plc_facet_map));
         Triangulation tri_L = std::move(ccdt).triangulation();
 
         // Build the associated Triangulation_3_io
@@ -482,6 +490,15 @@ public:
         // Build the associated SimpComplex
         Chain_complex& L = *new Chain_complex(L_tri_io) ;
         std::cout << "------ L:" << L;
+        
+        std::vector<std::vector<size_t> > indices(L.dimension()+1);
+        for (int q=0; q<=L.dimension(); ++q){
+            for (int i=0; i<L.number_of_cells(q); ++i){
+                indices.at(q).push_back(i);
+            }
+        }
+        std::string vtk_file("tmp/test_CDT3.vtk");
+        Chain_complex::chain_complex_to_vtk(L, vtk_file, &indices, "int");
 
         // Build the Sub_chain_complex_mask encoding K_init inside L
         Sub_chain_complex& K(compute_sub_chain_complex(*_K, L));

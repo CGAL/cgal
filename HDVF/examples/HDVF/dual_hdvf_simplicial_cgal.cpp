@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Surface_mesh_io.h>
@@ -15,7 +16,7 @@
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
 //typedef HDVF::Zp<5,int,true> Coefficient_ring;
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
     std::string filename ;
     if (argc > 2) std::cout << "usage: dual_hdvf_simplicial off_file" << std::endl;
     else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
+//    else if (argc == 1) filename  = "data/data_simplicial/three_triangles.off";
     else filename = argv[1];
     
     // Load simplicial object into Surface_mesh
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 //    std::cout << sm;
     
     // Build K and L
-    typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(sm, 1.5, 2));
+    typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(sm, 1.7, 1 ));
     std::cout << "--- Triangulation built" << std::endl ;
     Complex& L(t.L);
     Sub_chain_complex& K(t.K);
