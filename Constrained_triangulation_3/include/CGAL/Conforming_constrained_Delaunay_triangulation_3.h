@@ -2504,7 +2504,9 @@ private:
       Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
 
       auto&& construct = get_ctor(exact_kernel);
-      return back_from_exact(construct(to_exact(args)...));
+      auto exact_result = construct(to_exact(args)...);
+      this->exact(exact_result);
+      return back_from_exact(exact_result);
     } else {
       auto&& construct = get_ctor(tr().geom_traits());
       return construct(args...);
@@ -2546,12 +2548,14 @@ private:
                 Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
 
                 const auto last_point = to_exact(tr().point(*last_it));
-                return back_from_exact(std::inner_product(
+                auto exact_result = std::inner_product(
                     first_it, before_last_it, second_it, typename Exact_kernel::Vector_3(CGAL::NULL_VECTOR), sum_vector,
                     [&](const auto& va, const auto& vb) {
                       return cross_product(vector(last_point, to_exact(tr().point(va))),
                                            vector(last_point, to_exact(tr().point(vb))));
-                    }));
+                    });
+                this->exact(exact_result);
+                return back_from_exact(exact_result);
               })
             : std::invoke([&]() {
                 // Use approximate computation with traits

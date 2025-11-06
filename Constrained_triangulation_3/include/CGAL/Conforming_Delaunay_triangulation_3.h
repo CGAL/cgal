@@ -53,6 +53,7 @@
 #include <sstream>
 #include <stack>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -998,6 +999,19 @@ protected:
     return vector_of_encroaching_vertices;
   }
 
+  template<typename, typename = void>
+  static constexpr bool has_exact_member_function_v = false;
+
+  template <typename T>
+  static constexpr bool has_exact_member_function_v<T, std::void_t<decltype(std::declval<T>().exact())>> = true;
+
+  template <typename T>
+  static void exact(T&& obj) {
+    if constexpr (has_exact_member_function_v<T>) {
+      std::forward<T>(obj).exact();
+    }
+  }
+
   // Helper to compute a projected point with optional exact kernel and custom threshold check
   // lambda_computer receives (kernel, converter) and returns the lambda parameter for projection
   // use_midpoint_check receives (lambda, std::optional<Point>) and returns true if midpoint should be used instead
@@ -1031,27 +1045,31 @@ protected:
 
           const auto lambda = lambda_computer(exact_kernel, to_exact);
 
-          // Check threshold before computing projection
-          if(use_midpoint_check(lambda, std::nullopt)) {
-            // Only convert midpoint points when needed
+          auto exact_midpoint_point_fct = [&]() {
             const auto midpoint_start_exact = to_exact(midpoint_start);
             const auto midpoint_end_exact = to_exact(midpoint_end);
-            return back_from_exact(exact_midpoint(midpoint_start_exact, midpoint_end_exact));
+            auto exact_result = exact_midpoint(midpoint_start_exact, midpoint_end_exact);
+            this->exact(exact_result);
+            return back_from_exact(exact_result);
+          };
+
+          // Check threshold before computing projection
+          if(use_midpoint_check(lambda, std::nullopt)) {
+            return exact_midpoint_point_fct();
           }
 
           // Only convert projection points when needed
           const auto start_pt_exact = to_exact(start_pt);
           const auto end_pt_exact = to_exact(end_pt);
           const auto vector_exact = exact_vector(start_pt_exact, end_pt_exact);
-          const auto projected_exact = exact_translate(start_pt_exact, exact_scaled_vector(vector_exact, lambda));
+          auto projected_exact = exact_translate(start_pt_exact, exact_scaled_vector(vector_exact, lambda));
+          this->exact(projected_exact);
           const auto projected_approx = back_from_exact(projected_exact);
 
           // Second threshold check with actual projected point if needed
           if(use_midpoint_check(lambda, projected_approx)) {
-            const auto midpoint_start_exact = to_exact(midpoint_start);
-            const auto midpoint_end_exact = to_exact(midpoint_end);
-            return back_from_exact(exact_midpoint(midpoint_start_exact, midpoint_end_exact));
-          }
+            return exact_midpoint_point_fct();
+        }
 
           return projected_approx;
         });
