@@ -4,6 +4,8 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Float_snap_rounding_traits_2.h>
 #include <CGAL/Float_snap_rounding_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
@@ -38,12 +40,12 @@ typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
 #include <CGAL/Snap_rounding_traits_2.h>
 #include <CGAL/Snap_rounding_2.h>
-typedef CGAL::Snap_rounding_traits_2<Kernel>                    SnapTraits;
+typedef CGAL::Snap_rounding_traits_2<Kernel>                     SnapTraits;
 #endif
 
 //Biggest double with ulp smaller than an integer
-constexpr double maxFloat = std::pow(2,23);
-constexpr double maxDouble = std::pow(2,52);
+const double maxFloat = std::pow(2,23);
+const double maxDouble = std::pow(2,52);
 
 Segment_2 scale_segment(const Segment_2 &s){
   auto scale_value=[](FT x){
