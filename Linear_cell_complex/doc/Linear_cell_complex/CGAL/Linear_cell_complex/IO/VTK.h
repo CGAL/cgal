@@ -22,7 +22,7 @@ namespace IO {
  */
 
 /**
- * \brief Read a VTK legacy ASCII file and load it into a 3D
+ * \brief Reads a VTK legacy ASCII file and load it into a 3D
  *        Linear_cell_complex.
  * \ingroup PkgLinearCellComplexRefIOVTK
  *
@@ -44,7 +44,7 @@ bool read_VTK(const char* filename,
               std::vector<VolumeScalarType>* volume_scalars);
 
 /**
- * \brief Write a 3D Linear_cell_complex to a VTK legacy ASCII file.
+ * \brief Writes a 3D Linear_cell_complex to a VTK legacy ASCII file.
  * \ingroup PkgLinearCellComplexRefIOVTK
  *
  * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
