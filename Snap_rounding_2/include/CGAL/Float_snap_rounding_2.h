@@ -38,14 +38,10 @@ namespace internal{
   */
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
-  using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
-
-  using PointsRangeIterator   = typename PointsRange::iterator;
-  using PolylineRangeIterator = typename PolylineRange::iterator;
 
   using Less_xy_2 = typename Traits::Less_xy_2;
   using Less_y_2 = typename Traits::Less_y_2;
@@ -141,10 +137,10 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
     event_queue.emplace_back(pl.front(), li, EVENT_TYPE::INSERT);
     for(size_t pi=1; pi<pl.size()-1; ++pi){
       event_queue.emplace_back(pl[pi], li, EVENT_TYPE::MIDDLE);
-      assert(less_xy_2(pl[pi-1], pl[pi]));
+      assert(less_xy_2(pts[pl[pi-1]], pts[pl[pi]]));
     }
     event_queue.emplace_back(pl.back(), li, EVENT_TYPE::REMOVE);
-    assert(less_xy_2(pl.front(), pl.back()));
+    assert(less_xy_2(pts[pl.front()], pts[pl.back()]));
   }
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Sort the event queue along x direction" << std::endl;
@@ -189,45 +185,48 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 
         if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
         {
-          // We refine the pts to reduce the rounding shift and check again
-          pts[pi].exact();
-          pts[pl[pl.size()-2]].exact();
-          // The two following call of exact act on seg variables since they appear in its DAG
-          pts[pl.back()].exact();
-          pts[pl.front()].exact();
-          // Update the bounds
-          round_bound_pts[pi]=round_bound(pts[pi]);
-          round_bound_pts[pl[pl.size()-2]]=round_bound(pts[pl[pl.size()-2]]);
-          round_bound_pts[pl.back()]=round_bound(pts[pl.back()]);
-          round_bound_pts[pl.front()]=round_bound(pts[pl.front()]);
-          bound=round_bound_pts[pi];
-          bound = (std::max)(bound, round_bound_pts[pl[pl.size()-2]]);
-          bound = (std::max)(bound, round_bound_pts[pl.back()]);
-          bound*=4;
+          if constexpr(std::is_same_v<Exact_predicates_exact_constructions_kernel, typename Traits::Exact_type>){
+            // We refine the pts to reduce the rounding shift and check again
+            pts[pi].exact();
+            pts[pl[pl.size()-2]].exact();
+            // The two following call of exact act on seg variables since they appear in its DAG
+            pts[pl.back()].exact();
+            pts[pl.front()].exact();
+            // Update the bounds
+            round_bound_pts[pi]=round_bound(pts[pi]);
+            round_bound_pts[pl[pl.size()-2]]=round_bound(pts[pl[pl.size()-2]]);
+            round_bound_pts[pl.back()]=round_bound(pts[pl.back()]);
+            round_bound_pts[pl.front()]=round_bound(pts[pl.front()]);
+            bound=round_bound_pts[pi];
+            bound = (std::max)(bound, round_bound_pts[pl[pl.size()-2]]);
+            bound = (std::max)(bound, round_bound_pts[pl.back()]);
+            bound*=4;
 
-           // Check if the point and the segment are still too closed for a safe rounding
-          if(csq_dist_2(p, seg, bound)!=CGAL::LARGER){
-            // Check if segment was not already subdivided by another point
-            for(std::size_t i: pl)
-              if(pts[i].x()==pts[pi].x())
-                return false;
-
-            // Create a point on seg at the same x coordinate than p
-            pts.push_back(point_at_x(seg, pts[event.pi].x()));
-            std::size_t new_pi=pts.size()-1;
-            round_bound_pts.emplace_back(round_bound(pts[new_pi]));
-            // We insert it on pl before the last vertex
-            pl.insert(pl.end()-1, new_pi);
-#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
-            std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
-            std::cout << new_pi <<": " << pts[new_pi] << std::endl;
-            std::cout << li << ":";
-            for(std::size_t i: pl)
-              std::cout << " " << i;
-            std::cout << std::endl;
-#endif
-            return true;
+            // Check if the point and the segment are still too closed for a safe rounding
+            if(csq_dist_2(p, seg, bound)==CGAL::LARGER)
+              return false;
           }
+
+          // Check if segment was not already subdivided by another point
+          for(std::size_t i: pl)
+            if(pts[i].x()==pts[pi].x())
+              return false;
+
+          // Create a point on seg at the same x coordinate than p
+          pts.push_back(point_at_x(seg, pts[event.pi].x()));
+          std::size_t new_pi=pts.size()-1;
+          round_bound_pts.emplace_back(round_bound(pts[new_pi]));
+          // We insert it on pl before the last vertex
+          pl.insert(pl.end()-1, new_pi);
+#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+          std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
+          std::cout << new_pi <<": " << pts[new_pi] << std::endl;
+          std::cout << li << ":";
+          for(std::size_t i: pl)
+            std::cout << " " << i;
+          std::cout << std::endl;
+#endif
+          return true;
         }
         return false;
       };
@@ -317,7 +316,6 @@ void merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange &polyli
   }
 
   std::swap(pts, new_pts);
-  size_t i=0;
   for (Polyline& polyline : polylines) {
     std::vector<std::size_t> updated_polyline;
     for (std::size_t i=0; i<polyline.size(); ++i) {
@@ -327,7 +325,6 @@ void merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange &polyli
         assert(new_pi<pts.size());
         assert(pts[new_pi]==new_pts[polyline[i]]);
     }
-    ++i;
     std::swap(polyline, updated_polyline);
   }
 }
@@ -351,7 +348,6 @@ void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits 
 
   using Iterator_set_x = typename std::set<std::size_t, decltype(Less_indexes_xy_2)>::iterator;
 
-  std::size_t i=0;
   for(Polyline &poly: polylines){
     std::vector<std::size_t> updated_polyline;
     updated_polyline.push_back(poly.front());
@@ -377,7 +373,6 @@ void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits 
       updated_polyline.push_back(poly[i]);
     }
     std::swap(poly, updated_polyline);
-    ++i;
   }
 }
 
@@ -531,7 +526,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
   for(auto &poly: polylines){
     Polyline new_line;
     for(std::size_t pi: poly)
-      new_line.push_back(pts[pi]);
+      new_line.push_back(from_exact(pts[pi]));
     out.push_back(new_line);
   }
 
@@ -723,10 +718,8 @@ void snap_polygons_2(InputIterator begin,
                                                               DefaultTraits>::type;
 
   using Point_2 = typename Traits::Point_2;
-  using Segment_2 = typename Traits::Segment_2;
   using I2E = typename Traits::Converter_to_exact;
   using E2O = typename Traits::Converter_from_exact;
-  using VectorIterator = typename std::vector<Segment_2>::iterator;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -773,9 +766,9 @@ void snap_polygons_2(InputIterator begin,
 #endif
 
   // Output a range of segments while removing duplicate ones
-  for(size_t input_ind=0; input_ind<std::distance(begin,end); ++input_ind){
-    for(size_t pl_ind=polygon_index[input_ind]; pl_ind<polygon_index[input_ind+1]; ++pl_ind){
-      std::vector<size_t> &poly = polylines[pl_ind];
+  for(std::size_t input_ind=0; input_ind<std::size_t(std::distance(begin,end)); ++input_ind){
+    for(std::size_t pl_ind=polygon_index[input_ind]; pl_ind<polygon_index[input_ind+1]; ++pl_ind){
+      std::vector<std::size_t> &poly = polylines[pl_ind];
       Polygon_2 P;
       for(std::size_t i=1; i<poly.size(); ++i)
         P.push_back(from_exact(pts[poly[i]]));

@@ -41,6 +41,8 @@ template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_c
 struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
   typedef Arr_segment_traits_2<Exact_Kernel> Base;
 
+  typedef Exact_Kernel Exact_type;
+
   typedef typename Base::FT        FT;
   typedef typename Base::Point_2   Point_2;
   typedef typename Base::Segment_2 Segment_2;
