@@ -251,10 +251,10 @@ public:
 };
 
 template <typename GeomTraits, bool Has_filtered_predicates = internal::Has_filtered_predicates<GeomTraits>::value, bool Has_static_filters = internal::Has_static_filters<GeomTraits>::value>
-class Compare_distance_getter {};
+class Compare_distance_getter_3 {};
 
 template <typename GeomTraits>
-class Compare_distance_getter<GeomTraits, false, false> {
+class Compare_distance_getter_3<GeomTraits, false, false> {
   // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
   // depending on that it defines
 public:
@@ -265,7 +265,7 @@ public:
 };
 
 template <typename GeomTraits>
-class Compare_distance_getter<GeomTraits, true, false> {
+class Compare_distance_getter_3<GeomTraits, true, false> {
   // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
   // depending on that it defines
 
@@ -290,27 +290,26 @@ public:
 };
 
 template <typename GeomTraits>
-class Compare_distance_getter<GeomTraits, true, true> {
+class Compare_distance_getter_3<GeomTraits, true, true> {
   // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
   // depending on that it defines
   class Statically_filtered_compare_distance {
-
+  public:
     typedef typename GeomTraits::Point_3 Point;
     typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Boolean Boolean;
 
     /// Bounding box type.
-    typedef typename CGAL::Bbox_3 Bounding_box;
-  public:
+    typedef CGAL::Bbox_3 Bounding_box;
 
     template <class Solid>
     CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const {
-      return Compare_distance_getter<GeomTraits, true, false>::compare_distance_object()(p, pr, bound);
+      return Compare_distance_getter_3<GeomTraits, true, false>::compare_distance_object()(p, pr, bound);
     }
 
     template <class Solid>
     CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const {
-      return Compare_distance_getter<GeomTraits, true, false>::compare_distance_object()(p, pr, sq_distance);
+      return Compare_distance_getter_3<GeomTraits, true, false>::compare_distance_object()(p, pr, sq_distance);
     }
 
     Comparison_result operator()(const Point& p, const Bounding_box& b, const Point& bound) const {
@@ -334,7 +333,7 @@ class Compare_distance_getter<GeomTraits, true, true> {
 
         if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)) {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Compare_distance_getter<GeomTraits, true, false>::compare_distance_object()(p, b, bound);
+          return Compare_distance_getter_3<GeomTraits, true, false>::compare_distance_object()(p, b, bound);
         }
         double distance = 0;
         double max1 = 0;
@@ -453,7 +452,7 @@ class Compare_distance_getter<GeomTraits, true, true> {
 
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
-      return Compare_distance_getter<GeomTraits, true, false>::compare_distance_object()(p, b, bound);
+      return Compare_distance_getter_3<GeomTraits, true, false>::compare_distance_object()(p, b, bound);
     }
   };
 public:
@@ -730,10 +729,10 @@ public:
     }
   };
 
-  typedef typename internal::AABB_tree::Compare_distance_getter<GeomTraits>::type Compare_distance;
+  typedef typename internal::AABB_tree::Compare_distance_getter_3<GeomTraits>::type Compare_distance;
 
   Closest_point closest_point_object() const {return Closest_point(*this);}
-  Compare_distance compare_distance_object() const {return internal::AABB_tree::Compare_distance_getter<GeomTraits>::compare_distance_object();}
+  Compare_distance compare_distance_object() const {return internal::AABB_tree::Compare_distance_getter_3<GeomTraits>::compare_distance_object();}
 
   typedef enum { CGAL_AXIS_X = 0,
                  CGAL_AXIS_Y = 1,
@@ -775,7 +774,7 @@ private:
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
 
-};  // end class AABB_traits_base_3
+};  // end class AABB_traits_3
 
 
 //-------------------------------------------------------
@@ -812,8 +811,6 @@ private:
     }
   }
 }
-
-/// @}
 
 }  // end namespace CGAL
 
