@@ -75,8 +75,9 @@ create_single_source_cgal_program("issue_8730.cpp")
 create_single_source_cgal_program("issue_7164.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("fairing_test.cpp")
   target_link_libraries(fairing_test PRIVATE CGAL::Eigen3_support)
