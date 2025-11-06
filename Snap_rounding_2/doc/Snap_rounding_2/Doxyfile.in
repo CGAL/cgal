@@ -1,3 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Snap Rounding"
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Float_snap_rounding_2.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Float_snap_rounding_traits_2.h

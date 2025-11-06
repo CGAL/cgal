@@ -1,11 +1,11 @@
 
 /*!
-\ingroup PkgFloatSnapRounding2Concepts
+\ingroup PkgSnapRounding2Concepts
 \cgalConcept
 
 The concept `FloatSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
 an instance of the `Traits` template-parameter of
-the free functions \ref `CGAL::snap_polygons_2()`, `CGAL::compute_snapped_subcurves_2()` and `CGAL::double_snap_rounding_2()`.
+the free functions \ref CGAL::snap_polygons_2(), \ref CGAL::compute_snapped_subcurves_2() and \ref CGAL::double_snap_rounding_2().
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
 
@@ -142,7 +142,7 @@ Squared_round_bound_2 squared_round_bound_2_object();
 namespace FSRTraits_2{
 
 /*!
-  \ingroup PkgFloatSnapRounding2Concepts
+  \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
   \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::ConstructRoundPoint_2 `Float_snap_rounding_traits_2::Construct_round_point_2` \endlink}
@@ -159,7 +159,7 @@ class ConstructRoundPoint_2
 };
 
 /*!
-  \ingroup PkgFloatSnapRounding2Concepts
+  \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
   \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::SquaredRoundBound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
@@ -176,7 +176,7 @@ class SquaredRoundBound_2
 };
 
 /*!
-  \ingroup PkgFloatSnapRounding2Concepts
+  \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
   \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::ConverterToExact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
@@ -195,7 +195,7 @@ class ConverterToExact
 };
 
 /*!
-  \ingroup PkgFloatSnapRounding2Concepts
+  \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
   \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::ConverterToExact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}

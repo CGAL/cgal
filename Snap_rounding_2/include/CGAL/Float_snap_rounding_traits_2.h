@@ -25,7 +25,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgFloatSnapRounding2Ref
+\ingroup PkgSnapRounding2Ref
 
 The class `Float_snap_rounding_traits_2<Kernel>` is a model of the
 `FloatSnapRoundingTraits_2` concept, and is the only traits class supplied
