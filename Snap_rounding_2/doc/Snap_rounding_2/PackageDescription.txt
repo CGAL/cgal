@@ -1,7 +1,5 @@
 /// \defgroup PkgSnapRounding2Ref Reference Manual
 /// \defgroup PkgSnapRounding2Concepts Concepts
-/// \defgroup PkgFloatSnapRounding2Ref Reference Manual*
-/// \defgroup PkgFloatSnapRounding2Concepts Concepts*
 /// \ingroup PkgSnapRounding2Ref
 /*!
 \addtogroup PkgSnapRounding2Ref
