@@ -64,7 +64,7 @@ namespace Barycentric_coordinates {
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored
 
-    \pre area_2(p0, p1, p2) != 0
+    \pre \link BarycentricTraits_2::Compute_area_2 `area_2`\endlink(p0, p1, p2) != 0
   */
   template<
   typename OutIterator,
@@ -133,7 +133,7 @@ namespace Barycentric_coordinates {
     \return a tuple `std::tuple<GeomTraits::FT, GeomTraits::FT, GeomTraits::FT>`
     with the computed coordinates
 
-    \pre area_2(p0, p1, p2) != 0
+    \pre \link BarycentricTraits_2::Compute_area_2 `area_2`\endlink(p0, p1, p2) != 0
   */
   template<typename GeomTraits>
   std::tuple<

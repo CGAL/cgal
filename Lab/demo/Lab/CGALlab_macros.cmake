@@ -29,7 +29,7 @@ add_dependencies(CGALlab_compile_all_plugins CGALlab_all_plugins)
       add_file_dependencies( ${moc_file_name} "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
     endif()
 
-    qt_add_plugin(${plugin_name} SHARED ${option} ${moc_file_name} ${plugin_implementation_base_name}.cpp ${other_sources})
+    add_library(${plugin_name} MODULE ${option} ${moc_file_name} ${plugin_implementation_base_name}.cpp ${other_sources})
     set_property(TARGET ${plugin_name}
       PROPERTY LIBRARY_OUTPUT_DIRECTORY
       "${CGAL_LAB_DEMO_PLUGINS_DIR}")

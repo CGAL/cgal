@@ -2104,7 +2104,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
   // For each face with hole(s), create the extra halfedges to bridge the gap between
   // the skeleton face's border and the holes by shooting a ray from a vertex hole to a halfedge
   //   .first is the source of the ray
-  //   .second is th event creating the intersection of the ray with an halfedge
+  //   .second is th event creating the intersection of the ray with a halfedge
 
   // Collect first for all faces, apply later because one might split
   std::vector<std::pair<Halfedge_handle, EventPtr> > artifical_events;

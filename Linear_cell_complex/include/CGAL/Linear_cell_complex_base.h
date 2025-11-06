@@ -214,14 +214,14 @@ namespace CGAL {
     }
 
     /** Creates a vertex attribute.
-     * @return an handle on the new attribute.
+     * @return a handle on the new attribute.
      */
     template<typename ...Args>
     Vertex_attribute_descriptor create_vertex_attribute(const Args&... args)
     { return Base::template create_attribute<0>(args...); }
 
     /**
-     * Creates a new dart associated with an handle through an attribute.
+     * Creates a new dart associated with a handle through an attribute.
      * @param ahandle the point handle to associated with the dart.
      * @return a Dart_descriptor on the new dart.
      */

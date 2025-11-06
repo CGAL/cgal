@@ -369,6 +369,10 @@ public:
     return debug_flags[static_cast<int>(Debug_flags::use_older_cavity_algorithm)];
   }
 
+  bool use_newer_cavity_algorithm() const {
+    return !debug_flags[static_cast<int>(Debug_flags::use_older_cavity_algorithm)];
+  }
+
   void use_older_cavity_algorithm(bool b) {
     debug_flags.set(static_cast<int>(Debug_flags::use_older_cavity_algorithm), b);
   }
@@ -772,7 +776,9 @@ protected:
           std::cerr << "!! The constraint passes through a vertex!\n";
           std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
           std::cerr << "  ->     vertex " << display_vert(v) << '\n';
+#if CGAL_DEBUG_CDT_3
           debug_dump("bug-through-vertex");
+#endif
           CGAL_error();
         }
       } break;

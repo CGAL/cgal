@@ -24,7 +24,7 @@ create_single_source_cgal_program(
   "linear_cell_complex_3_with_colored_vertices.cpp")
 create_single_source_cgal_program("linear_cell_complex_3_with_mypoint.cpp")
 create_single_source_cgal_program("linear_cell_complex_4.cpp")
-create_single_source_cgal_program("plane_graph_to_lcc_2.cpp")
+create_single_source_cgal_program("read_plane_graph_in_lcc_2.cpp")
 create_single_source_cgal_program("voronoi_2.cpp")
 create_single_source_cgal_program("voronoi_3.cpp")
 create_single_source_cgal_program("linear_cell_complex_3_vtk_io.cpp")

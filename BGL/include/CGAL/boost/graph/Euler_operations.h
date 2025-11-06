@@ -585,8 +585,11 @@ add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
 * checks whether a new face defined by a range of vertices (identified by their descriptors,
 * `boost::graph_traits<Graph>::%vertex_descriptor`) can be added.
 */
-template <typename VertexRange,typename PMesh>
-bool can_add_face(const VertexRange& vrange, const PMesh& sm)
+template <typename VertexRange,
+          typename PMesh>
+bool can_add_face(const VertexRange& vrange,
+                  const PMesh& sm,
+                  const bool verbose = false)
 {
   typedef typename boost::graph_traits<PMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PMesh>::halfedge_descriptor halfedge_descriptor;
@@ -603,10 +606,16 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
   typename std::vector<vertex_descriptor>::iterator it = std::unique(f2.begin(),f2.end());
 
   if((N > 0) && (it != f2.end())){
+    if (verbose){
+      std::cerr << "Cannot add face: face contains duplicate vertices." << std::endl;
+    }
     return false;
   }
 
   if(N < 3){
+    if (verbose){
+      std::cerr << "Cannot add face: face must contain at least 3 vertices." << std::endl;
+    }
     return false;
   }
 
@@ -617,6 +626,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
     bool found;
     std::tie(hd,found) = halfedge(face[i],face[i+1],sm);
     if(found && (! is_border(hd,sm))){
+      if (verbose){
+        std::cerr << "Cannot add face: face contains an edge that is not a border halfedge." << std::endl;
+      }
       return false;
     }
   }
@@ -627,6 +639,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
     }
 
     if(! is_border(face[i],sm)){
+      if (verbose){
+        std::cerr << "Cannot add face: face contains a vertex that is not a border vertex." << std::endl;
+      }
       return false;
     }
   }
@@ -648,8 +663,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
 
     if ( halfedge_around_vertex == boost::graph_traits<PMesh>::null_halfedge() ||
          halfedge(previous_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge()||
-         halfedge(next_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge()
-         ) continue;
+         halfedge(next_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge() ) {
+      continue;
+    }
 
     halfedge_descriptor start=halfedge_around_vertex;
     //halfedges pointing to/running out from vertex indices[i]
@@ -694,14 +710,18 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
         if ( is_border(opposite(halfedge_around_vertex,sm),sm) ) break;
       }
       while (halfedge_around_vertex != prev_hd);
-      if (halfedge_around_vertex == prev_hd) return false;
+      if (halfedge_around_vertex == prev_hd) {
+        if (verbose){
+          std::cerr << "Cannot add face: halfedge_around_vertex == prev_hd" << std::endl;
+        }
+        return false;
+      }
       start = halfedge_around_vertex;
     }
   }
 
   return true;
 }
-
 
 
 /**
@@ -1552,7 +1572,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
  *
  * \returns vertex `v1`.
  * \pre g must be a triangulated graph
- * \pre `does_satisfy_link_condition(e,g) == true`.
+ * \pre \link CGAL::Euler::does_satisfy_link_condition `does_satisfy_link_condition`\endlink(e,g) == `true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1670,7 +1690,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
  * \returns vertex `v1`.
  * \pre This function requires `g` to be an oriented 2-manifold with or without boundaries.
  *       Furthermore, the edge `v0v1` must satisfy the link condition, which guarantees that the surface mesh is also 2-manifold after the edge collapse.
- * \pre `get(edge_is_constrained_map, v0v1)==false`.
+ * \pre `get(edge_is_constrained_map, v0v1) == false`.
  * \pre  `v0` and `v1` are not both incident to a constrained edge.
  */
 
@@ -1876,7 +1896,7 @@ bool satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descript
  * \param h halfedge descriptor
  * \param g the graph
  *
- * \returns an halfedge linking the two vertices adjacent to the vertex being removed.
+ * \returns a halfedge linking the two vertices adjacent to the vertex being removed.
  *
  * \pre `degree(target(h, g), g) == 2`.
  *

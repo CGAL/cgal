@@ -43,7 +43,7 @@ namespace Surface_mesh_topology {
     bool can_be_pushed(halfedge_descriptor hd, bool flip=false) const;
 
     /// adds `hd` at the end of this path. If `flip` is true, the opposite of `hd` is considered.
-    /// @pre `can_be_pushed(hd)`
+    /// @pre \link can_be_pushed `can_be_pushed(hd)`\endlink
     void push_back(halfedge_descriptor hd, bool flip=false);
 
     /// returns `true` iff the dart/halfedge with index `i` can be added at the end of this path.
@@ -52,7 +52,7 @@ namespace Surface_mesh_topology {
 
     /// adds the dart/halfedge with index `i` at the end of this path.
     /// If Mesh is a `Polyhedron_3`, takes time proportional to the number of halfedges.
-    /// @pre `can_be_pushed_by_index(i)`
+    /// @pre \link can_be_pushed_by_index `can_be_pushed_by_index(i)`\endlink
     void push_back_by_index(std::size_t i);
 
     /// adds successively all dart/halfedges in `l` (a sequence of indices), at the end of the path.

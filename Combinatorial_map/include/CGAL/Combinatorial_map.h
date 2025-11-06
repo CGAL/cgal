@@ -572,7 +572,7 @@ namespace CGAL {
       }
     }
 
-    /** Import the given hds which should be a model of an halfedge graph. */
+    /** Import the given hds which should be a model of a halfedge graph. */
     template<class HEG>
     void import_from_halfedge_graph(const HEG& heg,
                                     std::unordered_map
@@ -3710,7 +3710,7 @@ namespace CGAL {
     void set_automatic_attributes_management_without_correction(bool newval)
     { this->automatic_attributes_management = newval; }
 
-    /** Creates an half-edge.
+    /** Creates a half-edge.
      * @return a dart of the new half-edge.
      */
     Dart_descriptor make_half_edge()

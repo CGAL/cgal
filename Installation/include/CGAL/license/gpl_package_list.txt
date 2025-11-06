@@ -20,7 +20,7 @@ Convex_hull_3 3D Convex Hulls
 Convex_hull_d dD Convex Hulls and Delaunay Triangulations
 Envelope_2 2D Envelopes
 Envelope_3 3D Envelopes
-Frechet_distance dD Fréchet Distance
+Frechet_distance dD Frechet Distance
 GraphicsView CGAL and the Qt Graphics View Framework
 Heat_method_3 3D Heat Method
 Hyperbolic_triangulation_2 2D Hyperbolic Delaunay Triangulations

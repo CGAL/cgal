@@ -151,7 +151,7 @@ provided by the vertex class. The degree of a vertex is not cached and cannot be
 from the vertex, but you can calculate this number by manually counting the number of incident halfedges
 around the vertex.
 
-Each vertex stores a 2D point and a time, which is the euclidean distance from the vertex's point
+Each vertex stores a 2D point and a time, which is the Euclidean distance from the vertex's point
 to the lines supporting each of the defining contour edges of the vertex (the distance is
 the same to each line). Unless the polygon is convex, this distance is not equal to the edges,
 as in the case of a Medial Axis, therefore, the time of a skeleton vertex does not correspond

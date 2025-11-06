@@ -78,7 +78,7 @@ halfedge data structure than by using the high-level Euler operators
 of the polyhedron.
 
 \cgalFigureBegin{figureModifierDesign,modifier_small.png}
-Class diagram for the modifier. It illustrates the safe access to an internal representation through an high-level interface.
+Class diagram for the modifier. It illustrates the safe access to an internal representation through a high-level interface.
 \cgalFigureEnd
 
 The solution provided here is inspired by the strategy
