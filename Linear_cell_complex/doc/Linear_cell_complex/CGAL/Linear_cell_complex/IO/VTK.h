@@ -26,7 +26,7 @@ namespace IO {
  *        Linear_cell_complex.
  * \ingroup PkgLinearCellComplexRefIOVTK
  *
- * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
+ * \tparam LCC must be a `CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`
  * \tparam VertexScalarType Type for vertex scalar data (default: float)
  * \tparam VolumeScalarType Type for volume scalar data (default: float)
  * \param filename Path to the VTK file
@@ -47,7 +47,7 @@ bool read_VTK(const char* filename,
  * \brief Writes a 3D Linear_cell_complex to a VTK legacy ASCII file.
  * \ingroup PkgLinearCellComplexRefIOVTK
  *
- * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
+ * \tparam LCC must be a `CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`
  * \tparam VertexScalarType Type for vertex scalar data (default: float)
  * \tparam VolumeScalarType Type for volume scalar data (default: float)
  * \param filename Path to the output VTK file
