@@ -1825,7 +1825,7 @@ public:
     auto& borders =
         face_index.has_value()
             ? this->non_const_face_borders(face_index.value())
-            : this->face_data.emplace_back(CDT_2_traits{compute_accumulated_normal(first_it, size)}).borders;
+            : this->face_data.emplace_back(CDT_2_traits{construct_accumulated_normal(first_it, size)}).borders;
     auto& border = borders.emplace_back();
     border.reserve(std::size(vertex_handles));
     const auto polygon_constraint_id = face_index.value_or(this->face_data.size() - 1);
@@ -2492,8 +2492,41 @@ private:
     Next_region(const std::string& what, CDT_2_face_handle fh) : std::logic_error(what), fh_2d(fh) {}
   };
 
+  template<typename GetConstructor, typename... Args>
+  Point_3 construct_with_optional_exact_kernel(GetConstructor&& get_ctor, Args&&... args) const
+  {
+    if(this->debug().use_epeck_for_Steiner_points()) {
+      // Use exact Epeck kernel for robust computation
+      using Epeck_ft = internal::Exact_field_selector<double>::Type;
+      using Exact_kernel = Simple_cartesian<Epeck_ft>;
+      Exact_kernel exact_kernel;
+      Cartesian_converter<Exact_kernel, Geom_traits> back_from_exact;
+      Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
+
+      auto&& construct = get_ctor(exact_kernel);
+      return back_from_exact(construct(to_exact(args)...));
+    } else {
+      auto&& construct = get_ctor(tr().geom_traits());
+      return construct(args...);
+    }
+  }
+
+  Point_3 construct_midpoint(const Point_3& a, const Point_3& b) const
+  {
+    return construct_with_optional_exact_kernel(
+        [](auto&& kernel) { return kernel.construct_midpoint_3_object(); },
+        a, b);
+  }
+
+  Point_3 construct_centroid(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
+  {
+    return construct_with_optional_exact_kernel(
+        [](auto&& kernel) { return kernel.construct_centroid_3_object(); },
+        p1, p2, p3);
+  }
+
   template <typename VertexIterator>
-  Vector_3 compute_accumulated_normal(VertexIterator first_it, std::size_t size) const
+  Vector_3 construct_accumulated_normal(VertexIterator first_it, std::size_t size) const
   {
     const auto before_last_it = std::next(first_it, size - 2);
     const auto last_it = std::next(before_last_it);
@@ -3627,7 +3660,10 @@ private:
                                                                CDT_2_face_handle fh_2d)
   {
     const auto& cdt_2 = non_const_cdt_2;
-    auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
+
+    auto steiner_pt = construct_centroid(cdt_2.point(fh_2d->vertex(0)),
+                                         cdt_2.point(fh_2d->vertex(1)),
+                                         cdt_2.point(fh_2d->vertex(2)));
     if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug().verbose_special_cases()) {
       std::cerr << cdt_3_format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
                                IO::oformat(cdt_2.triangle(fh_2d)));
@@ -3728,7 +3764,8 @@ private:
   void insert_mid_point_in_constrained_edge(Vertex_handle va_3d, Vertex_handle vb_3d) {
     const auto a = this->point(va_3d);
     const auto b = this->point(vb_3d);
-    const auto mid = CGAL::midpoint(a, b);
+
+    const auto mid = construct_midpoint(a, b);
     if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug().Steiner_points()) {
       std::cerr << cdt_3_format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
                               IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
