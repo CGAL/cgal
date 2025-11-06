@@ -50,7 +50,6 @@ namespace internal {
                                           const Hyperbolic_point_2& q,
                                           const Hyperbolic_point_2& r) const
     {
-
       Construct_circle_or_line_supporting_bisector<Traits> cclsb(_gt);
 
       Hyperbolic_point_2 po(CGAL::ORIGIN);
@@ -76,6 +75,7 @@ namespace internal {
           typedef typename CK2_Intersection_traits<Traits, Circle_2, Circle_2>::type Intersection_result;
           std::vector< Intersection_result > inters;
           intersection(*c_pq, *c_qr, std::back_inserter(inters));
+          CGAL_assertion(inters.size() != 0);
 
           CGAL_assertion_code(bool ok=)
           assign(pair, inters[0]);
@@ -107,6 +107,7 @@ namespace internal {
       typedef typename CK2_Intersection_traits<Traits, Euclidean_line_2, Circle_2>::type Intersection_result;
       std::vector< Intersection_result > inters;
       intersection(*l, *c, std::back_inserter(inters));
+      CGAL_assertion(inters.size() != 0);
 
       CGAL_assertion_code(bool ok=)
       assign(pair,inters[0]);

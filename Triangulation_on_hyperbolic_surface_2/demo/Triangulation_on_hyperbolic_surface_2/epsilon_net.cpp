@@ -35,7 +35,7 @@ typedef typename Delaunay_triangulation::Anchor                                 
 
 double eps = 0.1;
 int seed = time(NULL);
-int p = 0;
+int p = 1;
 
 int main(int argc, char *argv[])
 {
@@ -62,14 +62,9 @@ int main(int argc, char *argv[])
 		int genus = seed / 10;
 		int id = - seed % 10;
 		std::cout << "Loading surface FM-genus" << genus << "." << id << std::endl;
-		std::cout << "/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-surfaces/FM-genus" + std::to_string(genus) + "." + std::to_string(id) + ".txt" << std::endl;
 		std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-surfaces/FM-genus" + std::to_string(genus) + "." + std::to_string(id) + ".txt") >> domain;
 	}
-	CGAL::Timer timer;
-	timer.start();
 	Delaunay_triangulation dt = Delaunay_triangulation(domain);
-	timer.stop();
-	std::cout << "Constructor time: " << timer.time() << " seconds." << std::endl;
 
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
@@ -81,14 +76,13 @@ int main(int argc, char *argv[])
 		std::cout << "WARNING: Not using the CGAL::Gmpq number type. Precision will be ignored and to_double approximation will be used instead." << std::endl;
 	}
 	std::cout << "Computing a " << eps << "-net with floating-point precision " << p*53 << "..." << std::endl;
+	CGAL::Timer timer;
 	timer.start();
 	std::cout << "Is epsilon-net? " << dt.epsilon_net(eps, p) << std::endl;
 	timer.stop();
 	std::cout << "Done in " << timer.time() << " seconds." << std::endl;
 	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
-	// std::cout << dt.is_epsilon_covering(eps) << dt.is_epsilon_packing(eps) << std::endl;
-	// std::cout << dt.shortest_edge() << std::endl;
-	std::cout << dt.shortest_loop() << std::endl;
+	// std::cout << dt.shortest_loop() << std::endl;
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	Anchor anchor = dt.locate(v0);

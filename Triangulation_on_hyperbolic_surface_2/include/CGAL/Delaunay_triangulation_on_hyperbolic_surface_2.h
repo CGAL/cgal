@@ -182,6 +182,8 @@ set_anchors()
 				Point & c = current.vertices[i % 3];
 				Point & a = current.vertices[(i + 1) % 3];
 				Point & b = current.vertices[(i + 2) % 3];
+				CGAL_assertion_code(Traits gt;);
+				CGAL_assertion(gt.is_Delaunay_hyperbolic_2_object()(a, b, c));
 				Point d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
 				CGAL_assertion(norm(Complex_number(d.x(), d.y())) < Number(1));
 				bfs_queue.push(Anchor(invaded, a, c, d));
@@ -884,6 +886,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 circumcenter(Anchor const & anch) const
 {
 	Traits gt;
+	CGAL_precondition(gt.is_Delaunay_hyperbolic_2_object()(anch.vertices[0], anch.vertices[1], anch.vertices[2]));
 	typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
 	return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);
 }
