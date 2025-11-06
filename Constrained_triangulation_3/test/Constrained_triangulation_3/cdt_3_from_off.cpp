@@ -123,6 +123,8 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-geometric-errors: debug geometric error handling
   --debug-polygon-insertion: debug polygon insertion process
   --use-finite-edges-map: use a hash map for finite edges (default: false)
+  --use-epeck-for-normals: use exact kernel for normal computations (default: false)
+  --use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
 
   --verbose/-V: verbose (can be used several times)
   --quiet: do not print anything
@@ -161,6 +163,8 @@ struct CDT_options
   bool        debug_geometric_errors              = false;
   bool        debug_polygon_insertion             = false;
   bool        use_finite_edges_map                = false;
+  bool        use_epeck_for_normals               = false;
+  bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
   bool        bisect_failures                     = false;
   double      vertex_vertex_epsilon               = 0.; // 1e-14;
@@ -257,6 +261,10 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       debug_polygon_insertion             = true;
     } else if(arg == "--use-finite-edges-map"sv) {
       use_finite_edges_map                = true;
+    } else if(arg == "--use-epeck-for-normals"sv) {
+      use_epeck_for_normals               = true;
+    } else if(arg == "--use-epeck-for-Steiner-points"sv) {
+      use_epeck_for_Steiner_points        = true;
     } else if(arg == "--verbose"sv || arg == "-V"sv) {
       ++verbose_level;
     } else if(arg == "--help"sv || arg == "-h"sv) {
@@ -299,6 +307,8 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt_debug.use_finite_edges_map(options.use_finite_edges_map);
   cdt_debug.display_statistics(!options.quiet);
+  cdt_debug.use_epeck_for_normals(options.use_epeck_for_normals);
+  cdt_debug.use_epeck_for_Steiner_points(options.use_epeck_for_Steiner_points);
   cdt_debug.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
   cdt_debug.set_vertex_vertex_epsilon(options.vertex_vertex_epsilon);
 
