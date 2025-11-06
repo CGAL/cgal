@@ -1,18 +1,30 @@
 #ifdef _MSC_VER
-#pragma warning(disable: 4455)
+#  pragma warning(disable: 4455)
 #endif
 
+#include <CGAL/config.h>
+
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/enum.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Random.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/use.h>
 #include <CGAL/utility.h>
 
 #include <CGAL/bisect_failures.h>
@@ -25,16 +37,30 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <algorithm>
+#include <array>
 #include <cassert>
 #include <chrono>
+#include <cstddef>
+#include <cstdlib>
 #include <fstream>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <stack>
 #include <string_view>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
+#include <version>
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-#include <ranges>
+#  include <ranges>
 #endif
 
 #if CGAL_CDT_3_USE_EPECK
