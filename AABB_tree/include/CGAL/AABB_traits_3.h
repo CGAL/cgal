@@ -128,7 +128,7 @@ public:
 };
 
 template<typename GeomTraits>
-class Compare_distance {
+class Compare_distance_3 {
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Boolean Boolean;
@@ -258,9 +258,9 @@ class Compare_distance_getter_3<GeomTraits, false, false> {
   // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
   // depending on that it defines
 public:
-  typedef Compare_distance<GeomTraits> type;
-  static Compare_distance<GeomTraits> compare_distance_object() {
-    return Compare_distance<GeomTraits>();
+  typedef Compare_distance_3<GeomTraits> type;
+  static Compare_distance_3<GeomTraits> compare_distance_object() {
+    return Compare_distance_3<GeomTraits>();
   }
 };
 
@@ -276,8 +276,8 @@ class Compare_distance_getter_3<GeomTraits, true, false> {
   typedef typename Kernel::C2E                                    C2E;
   typedef typename Kernel::C2F                                    C2F;
 
-  typedef Compare_distance<EKernel> Exact_functor;
-  typedef Compare_distance<AKernel> Filtered_functor;
+  typedef Compare_distance_3<EKernel> Exact_functor;
+  typedef Compare_distance_3<AKernel> Filtered_functor;
 
 public:
   typedef Filtered_predicate<Exact_functor, Filtered_functor,
