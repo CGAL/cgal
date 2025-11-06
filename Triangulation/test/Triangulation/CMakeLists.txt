@@ -11,8 +11,9 @@ endif()
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 QUIET)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   include_directories(BEFORE "include")
 
