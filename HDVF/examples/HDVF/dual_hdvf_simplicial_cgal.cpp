@@ -2,7 +2,6 @@
 #include <fstream>
 #include <functional>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Surface_mesh_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
@@ -34,36 +33,36 @@ int main(int argc, char **argv)
     else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
 //    else if (argc == 1) filename  = "data/data_simplicial/three_triangles.off";
     else filename = argv[1];
-    
+
     // Load simplicial object into Surface_mesh
     Surface_mesh sm;
     CGAL::IO::read_polygon_mesh(filename, sm);
-    
+
     if (sm.number_of_vertices() == 0)
     {
         std::cerr << "Emtpy mesh read" << std::endl;
         throw("Emtpy mesh read");
     }
-    
+
 //    std::cout << sm;
-    
+
     // Build K and L
     typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(sm, 1.7, 1 ));
     std::cout << "--- Triangulation built" << std::endl ;
     Complex& L(t.L);
     Sub_chain_complex& K(t.K);
     std::cout << "--- K,L built" << std::endl ;
-    
+
     std::cout << "----> complex informations" << std::endl ;
     std::cout << "------> complex L" << std::endl ;
     std::cout << L;
     std::cout << "------> subcomplex K" << std::endl ;
     std::cout << K << std::endl ;
-    
+
     // Create and compute a perfect HDVF
     HDVF_type hdvf(L, K, HDVF::OPT_FULL);
     hdvf.compute_perfect_hdvf();
-    
+
     // Export K HDVF
     hdvf.set_mask_K();
     CGAL::IO::write_VTK(hdvf, L, "tmp/res_complex_K", false) ;
