@@ -27,8 +27,9 @@ cgal_add_test(test_tetrahedral_remeshing_mls)
 
 
 # Tests using Mesh_3 require Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_mesh_and_remesh_polyhedron_with_features.cpp")
   target_link_libraries(test_mesh_and_remesh_polyhedron_with_features PUBLIC CGAL::Eigen3_support)

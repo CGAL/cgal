@@ -42,8 +42,9 @@ create_single_source_cgal_program("test_wp_deprecated_api.cpp")
 create_single_source_cgal_program("test_mv_deprecated_api.cpp")
 create_single_source_cgal_program("test_dh_deprecated_api.cpp")
 
-find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_hm_unit_square.cpp")
   target_link_libraries(test_hm_unit_square PUBLIC CGAL::Eigen3_support)

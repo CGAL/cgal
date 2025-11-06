@@ -80,8 +80,10 @@ if(NOT CGAL_DISABLE_GMP)
   create_single_source_cgal_program( "Gmpfi.cpp" )
   create_single_source_cgal_program( "Gmpfr_bug.cpp" )
   create_single_source_cgal_program( "test_eigen.cpp" )
-  find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+
+  find_package(Eigen3 QUIET)
   include(CGAL_Eigen3_support)
+
   if (TARGET CGAL::Eigen3_support)
     target_link_libraries(test_eigen PUBLIC CGAL::Eigen3_support)
   endif()
