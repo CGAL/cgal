@@ -4090,6 +4090,11 @@ public:
         the_process_made_progress = false;
       }
     }
+    if(std::any_of(begin(face_data), end(face_data),
+                   [](const auto& fd) { return fd.skip_face; }))
+    {
+      CGAL_error_msg("Constrained Delaunay triangulation could not be restored: some faces could not be processed.");
+    }
   }
 
   void add_bbox_points_if_not_dimension_3() {
