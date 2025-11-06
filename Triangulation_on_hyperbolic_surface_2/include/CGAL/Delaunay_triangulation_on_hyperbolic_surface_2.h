@@ -82,7 +82,7 @@ public:
 	void insert(Point const & query);
 
 	//---------- eps-net methods
-	bool epsilon_net(double const epsilon, unsigned const p = 0);
+	bool epsilon_net(double const epsilon, unsigned const p = 1);
 	bool is_epsilon_covering(const double epsilon) const;
 	bool is_epsilon_packing(const double epsilon) const;
 	bool is_epsilon_net(const double epsilon) const;
@@ -121,7 +121,7 @@ private:
 	Number delta(Point const & u, Point const & v) const;
 	Algebraic_number delta(Voronoi_point const & u, Point const & v) const;
 	Voronoi_point circumcenter(Anchor const & anch) const;
-	Point approx_circumcenter(Voronoi_point c, int precision = 1) const;
+	Point approx_circumcenter(Voronoi_point c, int p = 1) const;
 	void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
@@ -183,6 +183,7 @@ set_anchors()
 				Point & a = current.vertices[(i + 1) % 3];
 				Point & b = current.vertices[(i + 2) % 3];
 				Point d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
+				CGAL_assertion(norm(Complex_number(d.x(), d.y())) < Number(1));
 				bfs_queue.push(Anchor(invaded, a, c, d));
 				cmap.mark(invaded, in_queue);
 				cmap.mark(Base::ccw(invaded), in_queue);
@@ -196,6 +197,7 @@ set_anchors()
 
 	this->anchor_ = Anchor();
 	this->has_anchor_ = false;
+	CGAL_assertion(is_valid());
 }
 
 
@@ -316,9 +318,9 @@ is_valid() const
 
 		for (unsigned i = 0; i < NB_SIDES; ++i) {
 			Dart_const_descriptor opposite_dart = Base::const_opposite(current_dart);
-			Point & c1 = current.vertices[i];
-			Point & a1 = current.vertices[ccw(i)];
-			Point & b1 = current.vertices[cw(i)];
+			Point const & c1 = current.vertices[i];
+			Point const & a1 = current.vertices[ccw(i)];
+			Point const & b1 = current.vertices[cw(i)];
 			CGAL_precondition(norm(Complex_number(a1.x(), a1.y())) < Number(1));
 			CGAL_precondition(norm(Complex_number(b1.x(), b1.y())) < Number(1));
 			CGAL_precondition(norm(Complex_number(c1.x(), c1.y())) < Number(1));
@@ -327,13 +329,13 @@ is_valid() const
 
 			unsigned j = index_in_anchor(opposite_dart);
 			Anchor const & neighbor = anchor(opposite_dart);
-			Point & a2 = neighbor.vertices[j];
-			Point & c2 = neighbor.vertices[ccw(j)];
+			Point const & a2 = neighbor.vertices[j];
+			Point const & c2 = neighbor.vertices[ccw(j)];
 			Isometry pair_sides = isometry_pairing_the_sides<Traits>(a2, c2, a1, c1);
 			CGAL_assertion(pair_sides.evaluate(a2) == a1);
 			CGAL_assertion(pair_sides.evaluate(c2) == c1);
 
-			Point d2 = pair_sides.evaluate(anchor(opposite_dart).vertices[ccw(j)]);
+			Point d2 = pair_sides.evaluate(neighbor.vertices[cw(j)]);
 			CGAL_assertion(d2 == d1);
 			if (d2 != d1) {
 				return false;
@@ -554,7 +556,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 			++ld;
 		}
 	} else {
-		while (ho2(p0, query, r) != RIGHT_TURN) {
+		while (ho2(p0, query, r) == LEFT_TURN) {
 			Point old_r = r;
 			r = Base::fourth_point_from_cross_ratio(r, l, p0, Base::get_cross_ratio(dart));
 			l = old_r;
@@ -882,8 +884,8 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 circumcenter(Anchor const & anch) const
 {
 	Traits gt;
-	CGAL::internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
-	return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);;
+	typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
+	return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);
 }
 
 template<class Traits>
@@ -989,7 +991,7 @@ is_epsilon_covering(const double epsilon) const
 		Anchor const & current_anchor = anchor(it);
 
 		Traits gt;
-		CGAL::internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
+		typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
 		Voronoi_point c = chc(current_anchor.vertices[0], current_anchor.vertices[1], current_anchor.vertices[2]);
 		Point v0 = current_anchor.vertices[0];
 		Algebraic_number d = delta(c, v0);
