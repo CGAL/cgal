@@ -153,7 +153,7 @@ public:
     /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
      * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
      */
-    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_parent ;
+    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> Base ;
 
     /*! Type of filtrations used to compute persistence.
      */
@@ -215,9 +215,9 @@ private:
     // Hide find_pair_A methods of the Hdvf_core class
     // Hide A operation of the Hdvf_core class
     // This operation is redefined with a different prototype in Hdvf_persistence and set as private since persistence lets no choice for A pairing (rule of the "youngest")
-    using HDVF_parent::find_pair_A;
-    using HDVF_parent::find_pairs_A;
-    using HDVF_parent::A;
+    using Base::find_pair_A;
+    using Base::find_pairs_A;
+    using Base::A;
 public:
     /**
      * \brief Hdvf_persistence default constructor
@@ -807,7 +807,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
 template<typename ChainComplex, typename Degree, typename Filtration_ >
 std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistent_interval& hole)
 {
-    typedef Hdvf_persistence<ChainComplex, Degree, Filtration_> HDVF_parent;
+    typedef Hdvf_persistence<ChainComplex, Degree, Filtration_> Base;
     // time (cell, dim) -> time (cell, dim) / degree duration
 
     if (hole.time_death != hole.time_birth) // finite interval
