@@ -39,8 +39,13 @@ class Simplex {
     template<typename _CoefficientType>
     friend class Abstract_simplicial_chain_complex ;
 
-    private:
+public:
+    /** \brief Type of simplices representation.
+     *
+     * Simplices are stored as a sorted vector of vertex indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
+     **/
     typedef std::vector<size_t> Simplex_data_type;
+private:
     // Indices of the simplex vertices - sorted vector
     Simplex_data_type _vertices;
 
