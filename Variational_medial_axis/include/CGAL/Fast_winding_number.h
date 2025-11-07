@@ -555,5 +555,5 @@ private:
 
 } // end of namespace CGAL
 
-#endif DOXYGEN_RUNNING
+#endif // DOXYGEN_RUNNING
 #endif // CGAL_FAST_WINDING_NUMBER_H
