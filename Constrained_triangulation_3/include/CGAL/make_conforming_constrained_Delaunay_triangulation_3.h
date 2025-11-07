@@ -216,6 +216,10 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange &poin
                                                           const PolygonRange &polygons,
                                                           const NamedParameters &np = parameters::default_values())
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  PMP::merge_duplicate_points(points, polygons);
+  PMP::orient_polygon_soup(points, polygons);
+  
   using Geom_traits = typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
 
   using Default_CDT = Conforming_constrained_Delaunay_triangulation_3<Geom_traits>;
