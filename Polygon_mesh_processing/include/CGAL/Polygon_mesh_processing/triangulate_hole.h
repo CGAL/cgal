@@ -58,6 +58,49 @@ namespace Polygon_mesh_processing {
       void end_fair_phase() const {}
     #endif
     };
+
+
+#ifndef DOXYGEN_RUNNING
+  // probably not needed if we're using c++17 constexpr
+  struct Default_user_is_face_valid
+  {
+    Default_user_is_face_valid(){}
+
+    template <class VertexDescriptor, class Point>
+    Default_user_is_face_valid(const std::vector<VertexDescriptor>& /* border_vertices */,
+                               const std::vector<Point>& /* hole_points */)
+    {}
+
+    template<class Point>
+    constexpr
+    bool operator()(const std::vector<Point>& /* points */,
+                    int /* v0 */, int /* v1 */, int /* v2 */) const
+    {
+      return true;
+    }
+
+    constexpr
+    bool operator()(int /* v0 */, int /* v1 */, int /* v2 */) const
+    {
+      return true;
+    }
+  };
+
+  template <class PolygonMesh>
+  struct Default_compatibility_check_builder
+  {
+    using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+    template <class Point>
+    Default_user_is_face_valid
+    operator()(const std::vector<vertex_descriptor>& border_vertices,
+                               const std::vector<Point>& hole_points)
+    {
+      return Default_user_is_face_valid(border_vertices, hole_points);
+    }
+  };
+#endif
+
   } // namespace Hole_filling
 
   /*!
@@ -220,6 +263,12 @@ namespace Polygon_mesh_processing {
 
     Hole_filling::Default_visitor default_visitor;
 
+    using User_is_face_valid =
+      typename internal_np::Lookup_named_param_def<internal_np::compatibility_check_t,
+                                                   CGAL_NP_CLASS,
+                                                   Hole_filling::Default_user_is_face_valid // default
+                                                  >::type;
+
     return
       internal::triangulate_hole_polygon_mesh(
         pmesh,
@@ -231,6 +280,7 @@ namespace Polygon_mesh_processing {
         use_cdt,
         choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
         choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
+        choose_parameter<User_is_face_valid>(parameters::get_parameter(np, internal_np::compatibility_check)),
         max_squared_distance).first;
   }
 
@@ -739,9 +789,18 @@ bool use_dt3 =
       choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 #endif
 
+    using User_is_face_valid =
+      typename internal_np::Lookup_named_param_def<internal_np::compatibility_check_t,
+                                                   NamedParameters,
+                                                   Hole_filling::Default_user_is_face_valid // default
+                                                  >::type;
+    User_is_face_valid user_is_valid = choose_parameter<User_is_face_valid>(parameters::get_parameter(np, internal_np::compatibility_check));
+
+    using Is_valid_base = CGAL::internal::Is_not_degenerate_triangle;
+    CGAL::internal::Is_valid_compose<Is_valid_base, User_is_face_valid> is_valid(Is_valid_base(), user_is_valid);
+
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
-    typedef CGAL::internal::Weight_calculator<Weight,
-                  CGAL::internal::Is_not_degenerate_triangle>  WC;
+    typedef CGAL::internal::Weight_calculator<Weight, decltype(is_valid)>  WC;
     typedef std::vector<std::pair<int, int> > Holes;
     typedef std::back_insert_iterator<Holes>  Holes_out;
 
@@ -760,12 +819,6 @@ bool use_dt3 =
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     if (use_cdt)
     {
-      struct Always_valid
-      {
-        bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
-      };
-      Always_valid is_valid;
-
       const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
       typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
       default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
@@ -781,7 +834,7 @@ bool use_dt3 =
            points,
            tracer,
            choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
-           is_valid,
+           user_is_valid,
            choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
            max_squared_distance))
       {
@@ -790,7 +843,7 @@ bool use_dt3 =
       }
     }
 #endif
-    triangulate_hole_polyline(points, third_points, tracer, WC(),
+    triangulate_hole_polyline(points, third_points, tracer, WC(is_valid),
                               choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
                               use_dt3,
                               choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
