@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
   std::cout << "Computes the intersections and snaps the segments" << std::endl;
   std::vector< Segment_2> out;
-  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out));
   std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
   std::cout << "Size of the output: " << out.size() << std::endl;
 
