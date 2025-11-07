@@ -312,6 +312,8 @@ class Compare_distance_getter_3<GeomTraits, true, true> {
       return Compare_distance_getter_3<GeomTraits, true, false>::compare_distance_object()(p, pr, sq_distance);
     }
 
+    // This static filter was introduced by https://github.com/CGAL/cgal/pull/5507 .
+    // It prefers to indicate an intersection over using exact arithmetic.
     Comparison_result operator()(const Point& p, const Bounding_box& b, const Point& bound) const {
       Sphere_3 s = GeomTraits().construct_sphere_3_object()(p, GeomTraits().compute_squared_distance_3_object()(p, bound));
       CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +

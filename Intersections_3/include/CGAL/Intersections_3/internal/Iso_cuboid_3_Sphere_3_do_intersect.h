@@ -90,8 +90,8 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
     d = square(d);
     distance += d;
   }
-  // Note that with the way the distance above is computed, the distance is '0' if the box strictly
-  // contains the sphere. But since we use '>', we don't exit
+  // Note that with the way the distance above is computed, the distance is '0'
+  // if the box contains the center of the sphere. But since we use '>', we don't exit
   if (distance > sr)
     return false;
 

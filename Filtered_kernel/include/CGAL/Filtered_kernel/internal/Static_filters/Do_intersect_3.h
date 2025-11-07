@@ -616,14 +616,207 @@ public:
   Boolean
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {
-    return Base::operator()(s, b);
+    return this->operator()(s, b);
   }
 
-  // The parameter overestimate is used to avoid a filter failure in AABB_tree::closest_point()
   Boolean
   operator()(const Sphere_3 &s, const Bbox_3& b) const
   {
-    return Base::operator()(s,b);
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+      std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    Get_approx<Point_3> get_approx; // Identity functor for all points
+    const Point_3& c = s.center();
+
+    double scx, scy, scz, ssr;
+    double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(),
+      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
+
+    if (fit_in_double(get_approx(c).x(), scx) &&
+      fit_in_double(get_approx(c).y(), scy) &&
+      fit_in_double(get_approx(c).z(), scz) &&
+      fit_in_double(s.squared_radius(), ssr))
+    {
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+      if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)) {
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s, b);
+      }
+      double distance = 0;
+      double max1 = 0;
+      double double_tmp_result = 0;
+      double eps = 0;
+      if (scx < bxmin)
+      {
+        double bxmin_scx = bxmin - scx;
+        max1 = bxmin_scx;
+
+        distance = square(bxmin_scx);
+        double_tmp_result = (distance - ssr);
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+      else if (scx > bxmax)
+      {
+        double scx_bxmax = scx - bxmax;
+        max1 = scx_bxmax;
+
+        distance = square(scx_bxmax);
+        double_tmp_result = (distance - ssr);
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+
+
+      if (scy < bymin)
+      {
+        double bymin_scy = bymin - scy;
+        if (max1 < bymin_scy) {
+          max1 = bymin_scy;
+        }
+
+        distance += square(bymin_scy);
+        double_tmp_result = (distance - ssr);
+
+        if ((max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+      else if (scy > bymax)
+      {
+        double scy_bymax = scy - bymax;
+        if (max1 < scy_bymax) {
+          max1 = scy_bymax;
+        }
+        distance += square(scy_bymax);
+        double_tmp_result = (distance - ssr);
+
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+
+
+      if (scz < bzmin)
+      {
+        double bzmin_scz = bzmin - scz;
+        if (max1 < bzmin_scz) {
+          max1 = bzmin_scz;
+        }
+        distance += square(bzmin_scz);
+        double_tmp_result = (distance - ssr);
+
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+      else if (scz > bzmax)
+      {
+        double scz_bzmax = scz - bzmax;
+        if (max1 < scz_bzmax) {
+          max1 = scz_bzmax;
+        }
+
+        distance += square(scz_bzmax);
+        double_tmp_result = (distance - ssr);
+
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+
+      // If the center is inside the box, check the distance to the closest box face and the furthest corner.
+      if (distance == 0) {
+        double dx = (std::min)(bxmax - scx, scx - bxmin);
+        double dy = (std::min)(bymax - scy, scy - bymin);
+        double dz = (std::min)(bzmax - scz, scz - bzmin);
+
+        // Distance to closest box face
+        distance = (std::min)(dx, (std::min)(dy, dz)) - ssr;
+
+        if ((distance < 3.33558365626356687717e-147) || (distance > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, distance);
+
+        // Is the sphere fully contained in the box?
+        if (distance > eps)
+          return false;
+
+        dx = square(dx);
+        dy = square(dy);
+        dz = square(dz);
+
+        max1 = (std::max)(dx, (std::max)(dy, dz));
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)((std::max)(ssr, dx), (std::max)(dy, dz));
+
+        double outer_distance = dx + dy + dz - ssr;
+
+        // Is the box fully contained in the sphere?
+        if (outer_distance > eps)
+          return false;
+
+        if (distance < eps && outer_distance < eps)
+          return true;
+      }
+
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+    }
+    return Base::operator()(s, b);
   }
 
 
