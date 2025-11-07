@@ -2,7 +2,7 @@
 #include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/variational_medial_axis_sampling.h>
+#include <CGAL/Variational_medial_axis_sampling.h>
 #include <CGAL/extract_variational_medial_skeleton.h>
 #include <cmath>
 #include <filesystem>

@@ -1357,8 +1357,8 @@ private:
     using LDLTSolver = Eigen::LDLT<EMat>;
 
     auto& cluster_points = sphere.get_cluster_points_idx();
-    Point_3 center = sphere.get_center();
-    FT radius = sphere.get_radius();
+//    Point_3 center = sphere.get_center();
+//    FT radius = sphere.get_radius();
 
     auto nrows = 2 * cluster_points.size();
     EMat J(nrows, 4);
