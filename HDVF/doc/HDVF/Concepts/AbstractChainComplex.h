@@ -16,7 +16,6 @@ It provides methods to:
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex<IntegralDomainWithoutDivision>`}
- \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Cubical_chain_complex<IntegralDomainWithoutDivision>`}
 \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask<IntegralDomainWithoutDivision, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
