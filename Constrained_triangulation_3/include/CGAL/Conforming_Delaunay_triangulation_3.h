@@ -29,6 +29,8 @@
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/unordered_flat_set.h>
 
@@ -1211,7 +1213,7 @@ protected:
 
     const auto result_point = compute_projected_point(
         pa, pb,
-        [&](auto&& kernel, auto&& converter) {
+        [&](auto&& kernel, auto&& converter) -> typename CGAL::cpp20::remove_cvref_t<decltype(kernel)>::FT{
           auto&& vec_func = kernel.construct_vector_3_object();
           auto&& sc_prod_func = kernel.compute_scalar_product_3_object();
           auto&& sq_len_func = kernel.compute_squared_length_3_object();
@@ -1222,7 +1224,10 @@ protected:
 
           const auto vector_ab = vec_func(pa_converted, pb_converted);
           const auto vector_a_ref = vec_func(pa_converted, ref_pt_converted);
-          return sc_prod_func(vector_a_ref, vector_ab) / sq_len_func(vector_ab);
+          const auto denum = CGAL::approximate_sqrt(sq_len_func(vector_ab));
+          const auto num = sc_prod_func(vector_a_ref, vector_ab);
+          auto result = num / denum;
+          return result;
         });
 
 #if CGAL_CDT_3_DEBUG_CONFORMING
