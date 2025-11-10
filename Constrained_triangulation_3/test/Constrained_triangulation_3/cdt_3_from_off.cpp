@@ -163,8 +163,8 @@ struct CDT_options
   bool        debug_geometric_errors              = false;
   bool        debug_polygon_insertion             = false;
   bool        use_finite_edges_map                = false;
-  bool        use_epeck_for_normals               = false;
-  bool        use_epeck_for_Steiner_points        = false;
+  bool        use_epeck_for_normals               = true;
+  bool        use_epeck_for_Steiner_points        = true;
   bool        call_is_valid                       = true;
   bool        bisect_failures                     = false;
   double      vertex_vertex_epsilon               = 0.; // 1e-14;
