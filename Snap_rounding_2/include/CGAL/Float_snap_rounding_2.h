@@ -701,10 +701,10 @@ OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
 * @warning The convex property of the polygons is not necessarly preserved
 */
 template <class InputIterator, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void snap_polygons_2(InputIterator begin,
-                     InputIterator end,
-                     OutputIterator out,
-                     const NamedParameters &np = parameters::default_values())
+void compute_snapped_polygons_2(InputIterator begin,
+                                InputIterator end,
+                                OutputIterator out,
+                                const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
                                                               NamedParameters,
@@ -805,11 +805,11 @@ void snap_polygons_2(InputIterator begin,
 * @warning The convex property is not necessarly preserved
 */
 template <class Polygon_2, class NamedParameters = parameters::Default_named_parameters>
-void snap_polygon_2(const Polygon_2 &P, Polygon_2 &out, const NamedParameters &np = parameters::default_values())
+void compute_snapped_polygon_2(const Polygon_2 &P, Polygon_2 &out, const NamedParameters &np = parameters::default_values())
 {
   std::array<Polygon_2, 1> vec({P});
   std::vector<Polygon_2> out_vec;
-  snap_polygons_2(vec.begin(), vec.end(), std::back_inserter(out_vec), np);
+  compute_snapped_polygons_2(vec.begin(), vec.end(), std::back_inserter(out_vec), np);
   out = out_vec[0];
 }
 
