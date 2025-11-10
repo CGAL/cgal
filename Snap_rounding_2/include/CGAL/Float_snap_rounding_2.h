@@ -600,7 +600,8 @@ OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
 
   std::vector<Segment_2> convert_input;
   for(InputIterator it=begin; it!=end; ++it)
-    convert_input.push_back(to_exact(*it));
+    if(it->source()!=it->target())
+      convert_input.push_back(to_exact(*it));
   std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
@@ -717,6 +718,8 @@ void compute_snapped_polygons_2(InputIterator begin,
                                                               NamedParameters,
                                                               DefaultTraits>::type;
 
+  using Less_xy_2 = typename Traits::Less_xy_2;
+
   using Point_2 = typename Traits::Point_2;
   using I2E = typename Traits::Converter_to_exact;
   using E2O = typename Traits::Converter_from_exact;
@@ -728,6 +731,8 @@ void compute_snapped_polygons_2(InputIterator begin,
 
   const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
   const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersection), false);
+
+  Less_xy_2 less_xy_2 = traits.less_xy_2_object();
 
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
@@ -751,7 +756,10 @@ void compute_snapped_polygons_2(InputIterator begin,
       for(const typename Polygon_2::Point_2 &p: it->vertices())
         pts.push_back(to_exact(p));
       for(size_t i=0; i<P.size()-1; ++i)
-        polylines.push_back({i, i+1});
+        if(less_xy_2(pts[i], pts[i+1]))
+          polylines.push_back({i, i+1});
+        else
+          polylines.push_back({i+1, i});
       polylines.push_back({pts.size()-1,index_start});
       assert(pts.size()==polylines.size());
     }
