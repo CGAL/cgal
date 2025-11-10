@@ -1031,64 +1031,60 @@ protected:
 
     if constexpr (!Algebraic_structure_traits<typename T_3::Geom_traits::FT>::Is_exact::value) {
       if(debug().use_epeck_for_Steiner_points()) {
-        return std::invoke([&]() {
-          using Epeck_ft = internal::Exact_field_selector<double>::Type;
-          using Exact_kernel = Simple_cartesian<Epeck_ft>;
-          Exact_kernel exact_kernel;
-          Cartesian_converter<Exact_kernel, Geom_traits> back_from_exact;
-          Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
+        using Epeck_ft = internal::Exact_field_selector<double>::Type;
+        using Exact_kernel = Simple_cartesian<Epeck_ft>;
+        Exact_kernel exact_kernel;
+        Cartesian_converter<Exact_kernel, Geom_traits> back_from_exact;
+        Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
 
-          auto&& exact_vector = exact_kernel.construct_vector_3_object();
-          auto&& exact_midpoint = exact_kernel.construct_midpoint_3_object();
-          auto&& exact_scaled_vector = exact_kernel.construct_scaled_vector_3_object();
-          auto&& exact_translate = exact_kernel.construct_translated_point_3_object();
+        auto&& exact_vector = exact_kernel.construct_vector_3_object();
+        auto&& exact_midpoint = exact_kernel.construct_midpoint_3_object();
+        auto&& exact_scaled_vector = exact_kernel.construct_scaled_vector_3_object();
+        auto&& exact_translate = exact_kernel.construct_translated_point_3_object();
 
-          const auto lambda = lambda_computer(exact_kernel, to_exact);
+        auto lambda = lambda_computer(exact_kernel, to_exact);
 
-          auto exact_midpoint_point_fct = [&]() {
-            const auto midpoint_start_exact = to_exact(midpoint_start);
-            const auto midpoint_end_exact = to_exact(midpoint_end);
-            auto exact_result = exact_midpoint(midpoint_start_exact, midpoint_end_exact);
-            this->exact(exact_result);
-            return back_from_exact(exact_result);
-          };
+        auto exact_midpoint_point_fct = [&]() {
+          const auto midpoint_start_exact = to_exact(midpoint_start);
+          const auto midpoint_end_exact = to_exact(midpoint_end);
+          auto exact_result = exact_midpoint(midpoint_start_exact, midpoint_end_exact);
+          this->exact(exact_result);
+          return back_from_exact(exact_result);
+        };
 
-          // Check threshold before computing projection
-          if(use_midpoint_check(lambda, std::nullopt)) {
-            return exact_midpoint_point_fct();
-          }
-
-          // Only convert projection points when needed
-          const auto start_pt_exact = to_exact(start_pt);
-          const auto end_pt_exact = to_exact(end_pt);
-          const auto vector_exact = exact_vector(start_pt_exact, end_pt_exact);
-          auto projected_exact = exact_translate(start_pt_exact, exact_scaled_vector(vector_exact, lambda));
-          this->exact(projected_exact);
-          const auto projected_approx = back_from_exact(projected_exact);
-
-          // Second threshold check with actual projected point if needed
-          if(use_midpoint_check(lambda, projected_approx)) {
-            return exact_midpoint_point_fct();
+        // Check threshold before computing projection
+        if(use_midpoint_check(lambda, std::nullopt)) {
+          return exact_midpoint_point_fct();
         }
 
-          return projected_approx;
-        });
+        // Only convert projection points when needed
+        const auto start_pt_exact = to_exact(start_pt);
+        const auto end_pt_exact = to_exact(end_pt);
+        const auto vector_exact = exact_vector(start_pt_exact, end_pt_exact);
+        auto projected_exact = exact_translate(start_pt_exact, exact_scaled_vector(vector_exact, lambda));
+        this->exact(projected_exact);
+        const auto projected_approx = back_from_exact(projected_exact);
+
+        // Second threshold check with actual projected point if needed
+        if(use_midpoint_check(lambda, projected_approx)) {
+          return exact_midpoint_point_fct();
+        }
+
+        return projected_approx;
       }
     }
-    return std::invoke([&]() {
-      const auto lambda = lambda_computer(gt, CGAL::cpp20::identity{});
+    auto lambda = lambda_computer(gt, CGAL::cpp20::identity{});
 
-      // Check threshold before computing projection
-      if(use_midpoint_check(lambda, std::nullopt)) {
-        return midpoint_functor(midpoint_start, midpoint_end);
-      }
+    // Check threshold before computing projection
+    if(use_midpoint_check(lambda, std::nullopt)) {
+      return midpoint_functor(midpoint_start, midpoint_end);
+    }
 
-      const auto vector_ab = vector_functor(start_pt, end_pt);
-      const auto projected_pt = translate_functor(start_pt, scaled_vector_functor(vector_ab, lambda));
+    const auto vector_ab = vector_functor(start_pt, end_pt);
+    const auto projected_pt = translate_functor(start_pt, scaled_vector_functor(vector_ab, lambda));
 
-      // Second threshold check with actual projected point if needed
-      return use_midpoint_check(lambda, projected_pt) ? midpoint_functor(midpoint_start, midpoint_end) : projected_pt;
-    });
+    // Second threshold check with actual projected point if needed
+    return use_midpoint_check(lambda, projected_pt) ? midpoint_functor(midpoint_start, midpoint_end) : projected_pt;
   }
 
   // Convenience wrapper for simple lambda-based threshold (lambda < 0.2 || lambda > 0.8)
