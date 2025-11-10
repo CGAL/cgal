@@ -1804,8 +1804,8 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
           // q will be removed, swap it with p
           internal::swap_vertices(p, q, g);
           join_face(edges_to_erase[0],g);
-          join_vertex(qp,g);
           CGAL_assertion(source(qp,g)==p);
+          join_vertex(qp,g);
           return q;
         }
         if(!is_border(opposite(next(qp,g),g),g))
