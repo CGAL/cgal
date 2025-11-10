@@ -6,14 +6,12 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>
 
+#include <CGAL/Float_snap_rounding_traits_2.h>
 #include <CGAL/Float_snap_rounding_2.h>
 
+typedef CGAL::Exact_predicates_exact_constructions_kernel                      Epeck;
 typedef CGAL::Cartesian<CGAL::Exact_rational>                                 Rational_Kernel;
 typedef CGAL::Float_snap_rounding_traits_2<Rational_Kernel, Rational_Kernel>  Rational_Traits;
-
-struct ConceptTraits{
-
-};
 
 template<class Traits>
 struct Test{
