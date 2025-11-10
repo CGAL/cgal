@@ -1008,10 +1008,11 @@ protected:
   static constexpr bool has_exact_member_function_v<T, std::void_t<decltype(std::declval<T>().exact())>> = true;
 
   template <typename T>
-  static void exact(T&& obj) {
+  static decltype(auto) exact(T&& obj) {
     if constexpr (has_exact_member_function_v<T>) {
-      std::forward<T>(obj).exact();
+      return std::forward<T>(obj).exact();
     }
+    return std::forward<T>(obj);
   }
 
   // Helper to compute a projected point with optional exact kernel and custom threshold check
@@ -1079,14 +1080,14 @@ protected:
 
     // Check threshold before computing projection
     if(use_midpoint_check(lambda, std::nullopt)) {
-      return midpoint_functor(midpoint_start, midpoint_end);
+      return exact(midpoint_functor(midpoint_start, midpoint_end));
     }
 
     const auto vector_ab = vector_functor(start_pt, end_pt);
     const auto projected_pt = translate_functor(start_pt, scaled_vector_functor(vector_ab, lambda));
 
     // Second threshold check with actual projected point if needed
-    return use_midpoint_check(lambda, projected_pt) ? midpoint_functor(midpoint_start, midpoint_end) : projected_pt;
+    return exact(use_midpoint_check(lambda, projected_pt) ? midpoint_functor(midpoint_start, midpoint_end) : projected_pt);
   }
 
   // Convenience wrapper for simple lambda-based threshold (lambda < 0.2 || lambda > 0.8)
@@ -1122,7 +1123,7 @@ protected:
 
     if(this->dimension() < 2) {
       std::cerr << "dim < 2: midpoint\n";
-      return {midpoint_functor(pa, pb), va->cell(), va};
+      return {exact(midpoint_functor(pa, pb)), va->cell(), va};
     }
 
     if(debug().encroaching_vertices()) {
@@ -1184,7 +1185,7 @@ protected:
 #if CGAL_CDT_3_DEBUG_CONFORMING
         std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
-        return {result_point, reference_vertex->cell(), reference_vertex};
+        return {exact(result_point), reference_vertex->cell(), reference_vertex};
       };
 
       const auto length_orig_ab = CGAL::approximate_sqrt(sq_length_functor(vector_orig_ab));
@@ -1236,7 +1237,7 @@ protected:
     std::cerr << "  lambda = " << lambda << '\n';
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
-    return {result_point, reference_vertex->cell(), reference_vertex};
+    return {exact(result_point), reference_vertex->cell(), reference_vertex};
   }
 
 protected:
