@@ -774,23 +774,9 @@ public:
 
       // If the center is inside the box, check the distance to the closest box face and the furthest corner.
       if (distance == 0) {
-        double dx = (std::min)(bxmax - scx, scx - bxmin);
-        double dy = (std::min)(bymax - scy, scy - bymin);
-        double dz = (std::min)(bzmax - scz, scz - bzmin);
-
-        // Distance to closest box face
-        distance = (std::min)(dx, (std::min)(dy, dz)) - ssr;
-
-        if ((distance < 3.33558365626356687717e-147) || (distance > 1.67597599124282407923e+153)) {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
-        }
-
-        eps = 1.99986535548615598560e-15 * (std::max)(ssr, distance);
-
-        // Is the sphere fully contained in the box?
-        if (distance > eps)
-          return false;
+        double dx = (std::max)(bxmax - scx, scx - bxmin);
+        double dy = (std::max)(bymax - scy, scy - bymin);
+        double dz = (std::max)(bzmax - scz, scz - bzmin);
 
         dx = square(dx);
         dy = square(dy);
@@ -804,13 +790,14 @@ public:
 
         eps = 1.99986535548615598560e-15 * (std::max)((std::max)(ssr, dx), (std::max)(dy, dz));
 
-        double outer_distance = dx + dy + dz - ssr;
+        distance = dx + dy + dz - ssr;
 
         // Is the box fully contained in the sphere?
-        if (outer_distance > eps)
+        if (distance > eps)
           return false;
 
-        if (distance < eps && outer_distance < eps)
+        // Does the box intersect the sphere or is the sphere fully contained in the box?
+        if (distance < -eps)
           return true;
       }
 

@@ -82,12 +82,18 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(bzmin) - to_FT(center.z());
     d = square(d);
+    if (certainly(d > sr))
+      return false;
+
     distance += d;
   }
   else if(compare(center.z(), bzmax) == LARGER)
   {
     d = to_FT(center.z()) - to_FT(bzmax);
     d = square(d);
+    if (certainly(d > sr))
+      return false;
+
     distance += d;
   }
   // Note that with the way the distance above is computed, the distance is '0'
