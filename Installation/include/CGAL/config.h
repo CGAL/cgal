@@ -135,6 +135,10 @@
 #  include <CGAL/Testsuite/vc_debug_hook.h>
 #endif
 
+#ifndef CGAL_NO_GDB_AUTOLOAD
+#  include <CGAL/gdb_autoload.h>
+#endif
+
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
 //----------------------------------------------------------------------//

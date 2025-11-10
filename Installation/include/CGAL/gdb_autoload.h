@@ -26,10 +26,20 @@
 // Use inline assembly to embed the .debug_gdb_scripts section
 __asm__(
     ".pushsection \".debug_gdb_scripts\", \"MS\",@progbits,1\n"
-    ".byte 1\n"  // Python script marker
-    ".asciz \"share/gdb/auto-load/cgal_printers.py\"\n"
+    ".ascii \"\\4gdb.inlined-script.CGAL\\n\"\n"
+    ".ascii \"import gdb\\n\"\n"
+    ".ascii \"path=[line.strip() for line in gdb.execute('info sources', to_string=True).split(',') if line.count('include/CGAL/gdb_autoload.h')][0].replace('/include/CGAL/gdb_autoload.h', '')\\n\"\n"
+    ".ascii \"gdb.execute('source ' + path + '/share/gdb/auto-load/cgal_printers.py')\\n\"\n"
     ".popsection\n"
 );
+
+namespace CGAL {
+
+  // This is only here to have a CGAL symbol in the object file,
+  // so the gdb 'info sources' command can find this file's path.
+  inline static int gdb_autoload_dummy_instance = 0;
+
+}
 
 #endif // __ELF__
 

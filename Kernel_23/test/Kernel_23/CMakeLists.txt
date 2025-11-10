@@ -32,6 +32,11 @@ create_single_source_cgal_program("test_kernel__.cpp")
 create_single_source_cgal_program("test_projection_traits.cpp")
 create_single_source_cgal_program("test_Projection_traits_xy_3_Intersect_2.cpp")
 
+create_single_source_cgal_program("test_gdb_pretty_printers.cpp")
+if(CGAL_ENABLE_TESTING)
+  set_tests_properties("execution   of  test_gdb_pretty_printers" PROPERTIES WILL_FAIL TRUE)
+endif()
+
 if(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS)
   # Templated operators:
   # - create a lot of possible combinations, which is expensive to test
