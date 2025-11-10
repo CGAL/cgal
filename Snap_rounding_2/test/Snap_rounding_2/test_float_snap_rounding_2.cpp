@@ -1,7 +1,3 @@
-// #define DOUBLE_2D_SNAP_VERBOSE
-// #define DOUBLE_2D_SNAP_FULL_VERBOSE
-#define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -17,7 +13,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
 typedef CGAL::Float_snap_rounding_traits_2<Kernel>              Traits_2;
 typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
@@ -71,7 +67,8 @@ void compute_subcurves_and_naive_snap(Iterator begin, Iterator end, OutRange &ou
   IK_to_EK to_exact;
   std::vector<Curve_2> segs;
   for(Iterator it=begin; it!=end; ++it)
-    segs.emplace_back(*it);
+    if(it->source()!=it->target())
+      segs.emplace_back(*it);
   CGAL::compute_subcurves(segs.begin(), segs.end(), std::back_inserter(out));
   //Naive snap
   OutRange out2;
@@ -111,7 +108,9 @@ void test(const std::vector<Segment_2> &segs){
   t.stop();
   std::cout << "Running time with integer 2D snap (scaled at 10^15): " << t.time() << std::endl;
 #endif
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "\n";
+#endif
 }
 
 void test_fully_random(CGAL::Random &r, size_t nb_segments){
@@ -124,11 +123,11 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
 }
 
 void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
-  std::cout << "Test fully random" << std::endl;
+  std::cout << "Test random polygons" << std::endl;
   std::vector<Polygon_2> polygons;
   for(size_t i=0; i!=nb_polygons; ++i){
     Polygon_2 poly;
-    for(size_t j=0; j!=nb_polygons; ++j)
+    for(size_t j=0; j!=nb_pts; ++j)
       poly.push_back(Point_2(random_point(r), random_point(r)));
     polygons.emplace_back(poly);
   }
@@ -145,7 +144,9 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
 
 void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector_2 source, Vector_2 target){
   // Difficult test
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "Test with almost identical segments from " << source << " to " << target << std::endl;
+#endif
   std::vector<Segment_2> segs;
   double eps=std::pow(2,-40);
   for(size_t i=0; i!=nb_segments; ++i){
@@ -206,36 +207,56 @@ void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
 }
 
 void fix_test(){
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "Fix tests" << std::endl;
+#endif
   std::vector< Segment_2 > segs;
   FT e(std::pow(2, -60));
 
+  // Disjoint segments
   segs.emplace_back(Point_2(0, 1), Point_2(1, 1));
   segs.emplace_back(Point_2(1, 2), Point_2(2, 2));
   test(segs);
   segs.clear();
 
-  // segs.emplace_back(Point_2(0, 1), Point_2(2, 1));
-  // segs.emplace_back(Point_2(1, 0), Point_2(1, 0));
-  // test(segs);
-  // segs.clear();
+  // Degenerate segment
+  segs.emplace_back(Point_2(0, 1), Point_2(2, 1));
+  segs.emplace_back(Point_2(1, 0), Point_2(1, 0));
+  test(segs);
+  segs.clear();
 
+  // Collinear segments
+  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  segs.emplace_back(Point_2(2, 0), Point_2(6, 0));
+  test(segs);
+  segs.clear();
+
+  // Duplicate segment
+  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  test(segs);
+  segs.clear();
+
+  // Polyline
   segs.emplace_back(Point_2(0, 0), Point_2(2, 0));
   segs.emplace_back(Point_2(2, 0), Point_2(1, 1));
   segs.emplace_back(Point_2(1, 1), Point_2(3, 1));
   test(segs);
   segs.clear();
 
+  // Horizontal intersection when round
   segs.emplace_back(Point_2(0, 1+e), Point_2(2, 1));
   segs.emplace_back(Point_2(1, 1), Point_2(1, 0));
   test(segs);
   segs.clear();
 
+  // Vertical intersection when round
   segs.emplace_back(Point_2(0, 0), Point_2(1-e, 0));
   segs.emplace_back(Point_2(1, 1), Point_2(1, -1));
   test(segs);
   segs.clear();
 
+  // A more complex example
   segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
   segs.emplace_back(Point_2(e/2, e/2), Point_2(1, -1));
   segs.emplace_back(Point_2(0, 2-e/2), Point_2(2, 0));
@@ -245,6 +266,7 @@ void fix_test(){
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
   test(segs);
 
+  // Minimal intersection subsets of a random examples
   segs.emplace_back(Point_2(0.99999999999992173,-0.9999999999991368),Point_2(0.99999999999987266,-6.016984285966173e-13));
   segs.emplace_back(Point_2(1.000000000000494,-1.0000000000002354),Point_2(0.99999999999950062,8.0391743541535603e-13));
   segs.emplace_back(Point_2(1.0000000000008489,-0.99999999999951794),Point_2(0.99999999999926925,-2.3642280455149055e-13));
@@ -267,7 +289,9 @@ void fix_test(){
 }
 
 void test_float_snap_rounding(){
-  std::cout << "Fix tests" << std::endl;
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  std::cout << "Test the other API" << std::endl;
+#endif
 
   std::vector< Segment_2 > segs;
   std::vector< Polyline_2 > out;
@@ -281,7 +305,6 @@ void test_float_snap_rounding(){
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
   double_snap_rounding_2(segs.begin(), segs.end(), out);
-  // assert(out.size()==segs.size());
 }
 
 int main(int argc,char *argv[])
@@ -290,12 +313,11 @@ int main(int argc,char *argv[])
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
-  // test_almost_indentical_segments(r, 50, Vector_2(1,1), Vector_2(-1,-1));
   fix_test();
   test_float_snap_rounding();
   test_fully_random(r,1000);
   test_multi_almost_indentical_segments(r,200);
-  test_random_polygons(r,200,10);
+  // test_random_polygons(r,200,10);
   // test_iterative_square_intersection(r,2000);
   return(0);
 }
