@@ -1878,7 +1878,7 @@ void Scene::draw_sphere(float R, int prec)
     }
 
 }
-void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
+void Scene::draw_cylinder(float R, int prec, std::unique_ptr<std::vector<float>>&  vertices, std::unique_ptr<std::vector<float>>&  normals)
 {
     vertices->resize(0);
     int rings=360/prec, sectors=360/prec;
