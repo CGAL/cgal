@@ -1,16 +1,3 @@
-// Copyright (c) 2025 GeometryFactory (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-// Author(s)     : Laurent Rineau
-
-// Test partially written by Github Copilot
-
 #include <CGAL/assertions.h>
 #include <CGAL/bisect_failures.h>
 #include <algorithm>
