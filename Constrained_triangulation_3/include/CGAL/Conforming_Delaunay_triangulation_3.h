@@ -1001,15 +1001,15 @@ protected:
     return vector_of_encroaching_vertices;
   }
 
-  template<typename, typename = void>
-  static constexpr bool has_exact_member_function_v = false;
+  template <typename T, typename = void> struct has_exact_member_function : std::false_type
+  {};
 
   template <typename T>
-  static constexpr bool has_exact_member_function_v<T, std::void_t<decltype(std::declval<T>().exact())>> = true;
+  struct has_exact_member_function<T, std::void_t<decltype(std::declval<T>().exact())>> : std::true_type
+  {};
 
-  template <typename T>
-  static decltype(auto) exact(T&& obj) {
-    if constexpr (has_exact_member_function_v<T>) {
+  template <typename T> static decltype(auto) exact(T&& obj) {
+    if constexpr(has_exact_member_function<T>::value) {
       return std::forward<T>(obj).exact();
     }
     return std::forward<T>(obj);
