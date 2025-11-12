@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2025 GeometryFactory Sarl
 """
 CGAL GDB Pretty Printers
 
