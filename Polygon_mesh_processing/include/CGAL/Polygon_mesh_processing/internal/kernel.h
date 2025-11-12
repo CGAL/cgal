@@ -109,6 +109,45 @@ kernel(const TriangleMesh& pm,
     auto plane = make_array( get(vpm,source(h, pm)),
                              get(vpm,target(h, pm)),
                              get(vpm,target(next(h, pm), pm)) );
+
+#ifdef CGAL_USE_OPTI_WITH_BBOX
+    auto pred = kgt.oriented_side_3_object();
+    auto gbox = bbox(kernel);
+    std::array<Point_3, 8> corners = CGAL::make_array(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
+                                                      Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
+                                                      Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
+                                                      Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+                                                      Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
+                                                      Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
+                                                      Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()),
+                                                      Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()));
+    int i=0;
+    auto first_ori=pred(plane, corners[i]);
+    while(++i!=8 && first_ori==ON_ORIENTED_BOUNDARY)
+      first_ori=pred(plane, corners[i]);
+
+    if (i==8) continue;
+    bool all_the_same=true;
+    for (;i<8;++i)
+    {
+      auto other_ori=pred(plane, corners[i]);
+      if (other_ori!=ON_ORIENTED_BOUNDARY && other_ori!=first_ori)
+      {
+        all_the_same=false;
+        break;
+      }
+    }
+
+    if (all_the_same)
+    {
+      if (first_ori==ON_NEGATIVE_SIDE) continue;
+      else
+      {
+        return TriangleMesh();
+      }
+    }
+#endif
+
     clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).used_for_kernel(true));
     if (is_empty(kernel)) break;
   }
