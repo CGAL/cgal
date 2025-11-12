@@ -27,7 +27,7 @@ namespace Polygon_mesh {
 
   \brief Edge-adjacent faces connectivity in a polygon mesh.
 
-  This class returns all faces, which are edge-adjacent to a query face in a
+  This class returns all faces which are edge-adjacent to a query face in a
   polygon mesh being a `PolygonMesh`.
 
   \tparam PolygonMesh

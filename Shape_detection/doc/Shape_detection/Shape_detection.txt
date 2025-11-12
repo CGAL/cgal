@@ -521,7 +521,7 @@ as the one explained in Section \ref Shape_detection_RegionGrowingPoints_paramet
 In the example below, we show how to use region growing to detect planes on a polygon mesh that can be either stored as `CGAL::Surface_mesh` or `CGAL::Polyhedron_3`.
 
 We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets") that is why in this example we also sort the input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting`
-and only then detect regions. The example also shows the use of `CGAL::Shape_detection::Polygon_mesh::Plane_face_region`, which expands a region using the support plane of a face without refitting and `CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`, which sorts the faces in decreasing area.
+and only then detect regions. The example also shows the use of `CGAL::Shape_detection::Polygon_mesh::Plane_face_region`, which expands a region using the support plane of a face without refitting and `CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`, which sorts the faces by decreasing area.
 
 \cgalExample{Shape_detection/region_growing_planes_on_polygon_mesh.cpp}
 
@@ -529,7 +529,7 @@ and only then detect regions. The example also shows the use of `CGAL::Shape_det
 \subsubsection Shape_detection_RegionGrowingMesh_performance Performance
 
 Since accessing neighbors of a face in a polygon mesh is fast, performance of the region growing on a polygon mesh
-mostly depends on the `RegionType` model's implementation, which is usually fast, too. `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` is faster than `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` as it does not perform a refitting of the plane to the region, whereas the latter may provide a tighter fit of the plane to the region and thus result in a lower number of regions, and larger regions.
+mostly depends on the `RegionType` model's implementation, which is usually fast, too. `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` is faster than `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` as it does not perform a refitting of the plane to the region, whereas the latter may provide a tighter fit of the plane to the region and thus results in a lower number of regions, and larger regions.
 
 
 \subsection Shape_detection_RegionGrowingSegments Segment Set
