@@ -1974,7 +1974,8 @@ public:
                                                            const VertexPointMap& tr_vertex_pmap) const
   {
 
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L && \
+               (!defined(_LIBCPP_STD_VER) || defined(_LIBCPP_HAS_NO_INCOMPLETE_RANGES))
     auto edge_results = patch_edges
       | std::views::join
       | std::views::transform([&](const auto& edge_pair) {
