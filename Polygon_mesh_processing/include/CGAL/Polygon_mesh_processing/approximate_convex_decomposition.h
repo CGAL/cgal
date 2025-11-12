@@ -1475,11 +1475,12 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
 }
 
 } // namespace internal
+
 /**
  * \ingroup PMP_convex_decomposition_grp
  *
  * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface.
- *        The remaining voxels are labeled as outside or inside by floodfill, in case the input mesh is closed, or by axis-aligned ray shooting, i.e., along x,
+ *        The remaining voxels are labeled as outside or inside by flood fill, in case the input mesh is closed, or by axis-aligned ray shooting, i.e., along x,
  *        y and z-axis in positive and negative directions. A voxel is only labeled as inside if at least 3 faces facing away from the voxel have been hit and
  *        no face facing towards the voxel. In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied.
  *        Afterwards, a greedy pair-wise merging combines smaller convex hulls until the given number of convex hulls is met.
@@ -1515,13 +1516,13 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{volume_error}
- *     \cgalParamDescription{maximum difference in fraction of volume of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split if the `maximum_depth` has not been reached yet.}
+ *     \cgalParamDescription{maximum difference in fraction of volumes of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split if the `maximum_depth` has not been reached yet.}
  *     \cgalParamType{double}
  *     \cgalParamDefault{0.01}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{split_at_concavity}
- *     \cgalParamDescription{split the local box of the convex hull at the concavity along the longest axis of the bounding box. Otherwise, split in the middle of the longest axis (faster, but less precise).}
+ *     \cgalParamDescription{If `true`, the local box of a convex hull is split at the concavity along the longest axis of the bounding box. Otherwise, it is split in the middle of the longest axis, which is faster, but less precise.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{true}
  *   \cgalParamNEnd
@@ -1550,7 +1551,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *
  * \cgalNamedParamsEnd
  *
- * \return number of convex hulls. Can be lower than the `maximum_number_of_convex_hulls` if the specified `volume_error` is quickly met.
+ * \return the number of convex hulls. Note that this value may be lower than the `maximum_number_of_convex_hulls`, for example if the specified `volume_error` is quickly met.
  *
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
