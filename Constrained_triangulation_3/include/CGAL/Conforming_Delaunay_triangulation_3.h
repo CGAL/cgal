@@ -1010,7 +1010,7 @@ protected:
 
   template <typename T> static decltype(auto) exact(T&& obj) {
     if constexpr(has_exact_member_function<T>::value) {
-      return std::forward<T>(obj).exact();
+      obj.exact();
     }
     return std::forward<T>(obj);
   }
