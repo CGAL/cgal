@@ -790,7 +790,7 @@ public:
 
         eps = 1.99986535548615598560e-15 * (std::max)((std::max)(ssr, dx), (std::max)(dy, dz));
 
-        distance = dx + dy + dz - ssr;
+        distance = ssr - dx - dy - dz;
 
         // Is the box fully contained in the sphere?
         if (distance > eps)
