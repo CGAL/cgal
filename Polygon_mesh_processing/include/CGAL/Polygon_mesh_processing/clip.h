@@ -265,6 +265,24 @@ bool close(PolygonMesh& pm, VertexPointMap vpm, typename Traits::Vector_3 plane_
 
 #endif
 
+template <class PolygonMesh,
+          class Visitor>
+void naive_close(PolygonMesh& pm, Visitor& visitor)
+{
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+
+  std::vector< halfedge_descriptor > border_cycles;
+  extract_boundary_cycles(pm, std::back_inserter(border_cycles));
+  std::vector< Bbox_3 > bboxes;
+
+  for (halfedge_descriptor h : border_cycles)
+  {
+    visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+    Euler::fill_hole(h, pm);
+    visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
+  }
+}
+
 
 template <class Plane_3,
           class TriangleMesh,
@@ -994,7 +1012,7 @@ bool clip(PolygonMesh& pm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference     ;
+  using parameters::get_parameter_reference;
 
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
@@ -1026,11 +1044,12 @@ bool clip(PolygonMesh& pm,
   const bool allow_self_intersections =
     choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
-
+  constexpr bool traits_supports_cdt2 = !internal::Has_member_Does_not_support_CDT2<GT>::value;
+  const bool used_for_kernel = choose_parameter(get_parameter(np, internal_np::used_for_kernel), false);
   auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
   auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
 
-  if (triangulate && !is_triangle_mesh(pm))
+  if (traits_supports_cdt2 && triangulate && !is_triangle_mesh(pm))
     triangulate = false;
 
   refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
@@ -1082,15 +1101,26 @@ bool clip(PolygonMesh& pm,
 
   remove_connected_components(pm, ccs_to_remove, fcc);
 
-  if (clip_volume)
+  if constexpr (traits_supports_cdt2)
   {
-    //TODO: add in the traits construct_orthogonal_vector
-    if (triangulate)
-      internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
-    else
-      if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
-        internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+    if (clip_volume)
+    {
+      if (!used_for_kernel)
+      {
+        //TODO: add in the traits construct_orthogonal_vector
+        if (triangulate)
+          internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+        else
+          if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
+            internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+      }
+      else
+        internal::naive_close(pm, visitor);
+    }
   }
+  else
+    if (clip_volume)
+      internal::naive_close(pm, visitor);
 
   return true;
 }
