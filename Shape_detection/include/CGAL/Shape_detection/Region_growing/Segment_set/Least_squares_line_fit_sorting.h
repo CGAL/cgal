@@ -90,7 +90,7 @@ public:
 
     \param neighbor_query
     an instance of `NeighborQuery` that is used internally to
-    access vertex's neighbors
+    access segment's neighbors
 
     \param np
     a sequence of \ref bgl_namedparameters "Named Parameters"

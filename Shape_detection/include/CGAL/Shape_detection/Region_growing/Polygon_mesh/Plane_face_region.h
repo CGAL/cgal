@@ -184,8 +184,8 @@ public:
       CGAL_precondition(vertices.size() >= 3);
 
       auto vertex = vertices.begin();
-      const Point_3& p1 = get(m_vpm, *vertex); ++vertex;
-      const Point_3& p2 = get(m_vpm, *vertex); ++vertex;
+      const boost::property_traits<Vertex_to_point_map>::reference p1 = get(m_vpm, *vertex); ++vertex;
+      const boost::property_traits<Vertex_to_point_map>::reference p2 = get(m_vpm, *vertex); ++vertex;
       Point_3 p3 = get(m_vpm, *vertex);
       while(collinear(p1, p2, p3)) {
         if (++vertex == vertices.end()) return NULL_VECTOR;

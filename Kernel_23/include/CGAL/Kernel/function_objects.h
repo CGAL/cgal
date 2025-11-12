@@ -934,7 +934,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  Comparison_result;
     typedef typename K::FT                 FT;
     typedef typename K::Point_3            Point_3;
-  public:
 
   public:
     template <class T1, class T2>
