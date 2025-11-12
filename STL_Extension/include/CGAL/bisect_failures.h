@@ -44,18 +44,20 @@ namespace CGAL {
  * failing data, progressively narrowing down to the minimal case.
  *
  * \tparam InputData The type of input data to bisect (must be copyable and assignable)
- * \tparam GetSizeFn Function object type: `std::size_t GetSizeFn(const InputData&)`
- * \tparam SimplifyFn Function object type: `bool SimplifyFn(InputData&, std::size_t start, std::size_t end)`
- * \tparam RunFn Function object type: `int RunFn(const InputData&)`
- * \tparam SaveFn Function object type: `void SaveFn(const InputData&, const std::string&)`
+ * \tparam GetSizeFn Function object type: `std::size_t GetSizeFn(const InputData& data)`
+ * \tparam SimplifyFn Function object type: `bool SimplifyFn(InputData& data, std::size_t start, std::size_t end)`
+ * \tparam RunFn Function object type: `int RunFn(const InputData& data)`
+ * \tparam SaveFn Function object type: `void SaveFn(const InputData& data, const std::string& filename_prefix)`
  *
  * \param data The input data to bisect
  * \param get_size_fn Function that returns the "size" of the data (e.g., number of elements).
- * \param simplify_fn Function that simplifies the data by removing elements from [start, end).
+ * \param simplify_fn Function that simplifies the data by removing elements from `[start, end)`.
  *                    Should return `true` if simplification succeeded, `false` otherwise.
- * \param run_fn Function that tests the data. Should return 0 (EXIT_SUCCESS) on success, non-zero on failure.
+ * \param run_fn Function that tests the data. Should return 0 (`EXIT_SUCCESS`) on success, non-zero on failure.
  *                May also throw exceptions to indicate failure.
- * \param save_fn Function that saves the data to a file or output. Parameters: (data, filename_prefix)
+ * \param save_fn Function that saves the data to a file or output. Its second parameter
+ *                (`filename_prefix`) indicates the context (e.g., "bad", "final_bad", "error", "current")
+ *                and can be used to name the output accordingly.
  *
  * \return Exit code: 0 (EXIT_SUCCESS) if no failures found, non-zero otherwise
  *
