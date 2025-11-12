@@ -168,16 +168,38 @@ public:
 
   /// \name \f$ \varepsilon \f$-net
   /// @{
-  bool epsilon_net(double const epsilon, unsigned const p = 0);
+  /*!
+    \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-net of the surface.
+
+    Tries to compute an `epsilon`-net of the surface.
+
+    When `Number` is `CGAL::Gmpq`, the algorithm rounds the coordinate of circumcenters to `CGAL::Gmpfr` with precision `p*53`.
+  */
+  bool epsilon_net(double const epsilon, unsigned const p = 1);
+  /*!
+    \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-covering of the surface.
+  */
   bool is_epsilon_covering(const double epsilon) const;
+  /*!
+    \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-packing of the surface.
+  */
   bool is_epsilon_packing(const double epsilon) const;
+  /*!
+    \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-net of the surface.
+  */
   bool is_epsilon_net(const double epsilon) const;
   /// @}
 
   /// \name Other functions
   /// @{
+  /*!
+    \return a `double` approximation of the length of the shortest geodesic loop in the Delaunay triangulation.
+  */
   double shortest_loop() const;
-  double shortest_edge() const;
+  /*!
+    \return a `double` approximation of the length of the shortest non-loop edge in the Delaunay triangulation.
+  */
+  double shortest_non_loop_edge() const;
   /// @}
 }
 

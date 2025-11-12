@@ -69,6 +69,8 @@ public:
 	unsigned index_in_anchor(Dart_const_descriptor const dart) const;
 	Dart_descriptor ith_dart(unsigned i, Anchor const & anch);
 	bool is_valid() const;
+
+	// undocumented
 	void to_stream(std::ostream & s) const;
  	void from_stream(std::istream & s);
 
@@ -88,7 +90,7 @@ public:
 	bool is_epsilon_net(const double epsilon) const;
 	
 	double shortest_loop() const;
-	double shortest_edge() const;
+	double shortest_non_loop_edge() const;
 
 private:
 	unsigned const NULL_INDEX = -1;
@@ -1073,7 +1075,7 @@ shortest_loop() const
 template<class Traits>
 double
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-shortest_edge() const
+shortest_non_loop_edge() const
 {
 	Number min_delta_length = 999;
 	for (typename Edge_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
