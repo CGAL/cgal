@@ -6,13 +6,14 @@
 #include <CGAL/Container_helper.h>
 #include <boost/range/value_type.hpp>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 // You must have tinygltf.h in your include path
-#include "tinygltf.h"
+#include "tiny_gltf.h"
 
 namespace CGAL {
 namespace IO {

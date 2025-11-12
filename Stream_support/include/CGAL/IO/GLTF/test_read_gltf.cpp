@@ -2,6 +2,13 @@
 #include <CGAL/IO/GLTF/read_GLTF.h>
 #include <vector>
 #include <iostream>
+#include <CGAL/IO/polygon_soup_io.h>
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "tiny_gltf.h"
+
+
 
 int main() {
     using Kernel = CGAL::Simple_cartesian<double>;
@@ -10,7 +17,7 @@ int main() {
     std::vector<Point> points;
     std::vector<std::vector<std::size_t>> polygons;
 
-    std::string filename = "Box.gltf";
+    std::string filename = "../Box.gltf";
 
     std::cout << "Attempting to load GLTF file: " << filename << std::endl;
 
@@ -38,5 +45,5 @@ int main() {
         std::cout << std::endl;
     }
 
-    return EXIT_SUCCESS;
+    return 0;
 }
