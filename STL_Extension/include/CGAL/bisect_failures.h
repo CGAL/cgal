@@ -72,7 +72,7 @@ namespace CGAL {
  * 8. Repeats until no further simplification is possible (minimal failing case found)
  * 9. Saves the minimal failing case as "final_bad" and returns its exit code
  *
- * \snippet STL_Extension/bisect_failures_example.cpp bisect_failures_snippet
+ * \snippet STL_Extension/bisect_failures.cpp bisect_failures_snippet
  */
 template<typename InputData, typename GetSizeFn, typename SimplifyFn, typename RunFn, typename SaveFn>
 int bisect_failures(const InputData& data,
