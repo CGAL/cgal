@@ -114,7 +114,9 @@ void test(const std::vector<Segment_2> &segs){
 }
 
 void test_fully_random(CGAL::Random &r, size_t nb_segments){
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "Test fully random" << std::endl;
+#endif
   std::vector<Segment_2> segs;
   for(size_t i=0; i!=nb_segments; ++i)
     segs.emplace_back(random_point(r), random_point(r));
@@ -123,7 +125,9 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
 }
 
 void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "Test random polygons" << std::endl;
+#endif
   std::vector<Polygon_2> polygons;
   for(size_t i=0; i!=nb_polygons; ++i){
     Polygon_2 poly;
