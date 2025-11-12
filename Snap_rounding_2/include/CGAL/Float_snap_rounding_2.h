@@ -165,7 +165,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
       pos_it = std::lower_bound(y_order.begin(), y_order.end(), std::pair<size_t, size_t>(event.pi, event.li), pi_below_li);
     if(event.type==EVENT_TYPE::REMOVE){
       assert(*pos_it==event.li);
-      y_order.erase(pos_it);
+      pos_it = y_order.erase(pos_it);
     }
 
     if(!y_order.empty()){
