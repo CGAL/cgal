@@ -216,7 +216,7 @@ Box box_union(const Box& a, const Box& b) {
 }
 
 template<typename FT>
-std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const std::size_t number_of_voxels) {
+std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const unsigned int number_of_voxels) {
   std::size_t max_voxels_axis = std::cbrt(number_of_voxels);
   assert(max_voxels_axis > 3);
   // get longest axis
@@ -844,22 +844,10 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
         }
   }
 
-  //export_grid("before.ply", bb, grid, grid_size, voxel_size);
-  //auto filterS = [](const int8_t& l) -> bool {return l == SURFACE; };
-  //auto filterO = [](const int8_t& l) -> bool {return l == OUTSIDE; };
-  //auto filterI = [](const int8_t& l) -> bool {return l == INSIDE; };
-  //export_grid("before_surface_ray.ply", bb, grid, grid_size, voxel_size, filterS);
-  //export_grid("before_outside.ply", bb, grid, grid_size, voxel_size, filterO);
-
-  if (CGAL::is_closed(mesh)) {
+  if (CGAL::is_closed(mesh))
     naive_floodfill(grid, grid_size);
-    //is_valid(grid, grid_size);
-  }
   else
     rayshooting_fill<FaceGraph, GeomTraits>(grid, grid_size, bb, voxel_size, mesh, tag);
-
-  //export_grid("after_inside_ray.ply", bb, grid, grid_size, voxel_size, filterI);
-  //export_grid("after_outside_ray.ply", bb, grid, grid_size, voxel_size, filterO);
 
   c.bbox.upper = {grid_size[0] - 1, grid_size[1] - 1, grid_size[2] - 1};
 
@@ -870,9 +858,6 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
           c.inside.push_back({x, y, z});
         else if (vox(x, y, z) == SURFACE)
           c.surface.push_back({x, y, z});
-
-  //export_grid("after_inside.ply", bb, grid, grid_size, voxel_size, filterI);
-  //export_grid("after_outside.ply", bb, grid, grid_size, voxel_size, filterO);
 }
 
 template<typename GeomTraits, typename FaceGraph, typename Concurrency_tag>
@@ -1112,7 +1097,7 @@ void choose_splitting_plane(Candidate<GeomTraits>& c, unsigned int &axis, unsign
 
 template<typename GeomTraits, typename NamedParameters>
 bool finished(Candidate<GeomTraits> &c, const NamedParameters& np) {
-  const typename GeomTraits::FT max_error = parameters::choose_parameter(parameters::get_parameter(np, internal_np::volume_error), 1);
+  const typename GeomTraits::FT max_error = parameters::choose_parameter(parameters::get_parameter(np, internal_np::volume_error), 0.01);
 
   if (c.ch.volume_error <= max_error)
     return true;
@@ -1209,10 +1194,9 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
     std::move(final_candidates.begin(), final_candidates.end(), std::back_inserter(candidates));
 }
 
-template<typename GeomTraits, typename NamedParameters>
-void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const NamedParameters& np, CGAL::Parallel_tag) {
+template<typename GeomTraits>
+void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const unsigned int max_convex_hulls, CGAL::Parallel_tag) {
 #ifdef CGAL_LINKED_WITH_TBB
-  const std::size_t max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 64);
   if (candidates.size() <= max_convex_hulls)
     return;
 
@@ -1345,9 +1329,8 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
 #endif
 }
 
-template<typename GeomTraits, typename NamedParameters>
-void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const NamedParameters& np, CGAL::Sequential_tag) {
-  const std::size_t max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 64);
+template<typename GeomTraits>
+void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const unsigned int max_convex_hulls, CGAL::Sequential_tag) {
   if (candidates.size() <= max_convex_hulls)
     return;
 
@@ -1501,13 +1484,13 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *        no face facing towards the voxel. In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied.
  *        Afterwards, a greedy pair-wise merging combines smaller convex hulls until the given number of convex hulls is met.
  *
- * \tparam FaceGraph a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
+ * \tparam FaceGraph a model of `HalfedgeListGraph`, and `FaceListGraph`
  *
  * \tparam OutputIterator must be an output iterator accepting variables of type `std::pair<std::vector<geom_traits::Point_3>, std::vector<std::array<unsigned int, 3> > >`.
  *
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param mesh the input mesh to approximate by convex hulls
+ * \param tmesh the input triangle mesh to approximate by convex hulls
  * \param out_hulls output iterator into which convex hulls are recorded
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -1572,11 +1555,11 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterator out_hulls, const NamedParameters& np = parameters::default_values()) {
+std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputIterator out_hulls, const NamedParameters& np = parameters::default_values()) {
   using Geom_traits = typename GetGeomTraits<FaceGraph, NamedParameters>::type;
 
   using FT = typename Geom_traits::FT;
-  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
+  const unsigned int num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Parallel_if_available_tag>::type;
 
 #ifndef CGAL_LINKED_WITH_TBB
@@ -1586,7 +1569,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   }
 #endif
 
-  const std::size_t max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 64);
+  const unsigned int max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 16);
   assert(max_convex_hulls > 0);
 
   if (max_convex_hulls == 1) {
@@ -1597,22 +1580,22 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
     using VPM = typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type;
     typedef CGAL::Property_map_to_unary_function<VPM> Vpmap_fct;
 
-    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
+    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
     Vpmap_fct v2p(vpm);
 
-    convex_hull_3(boost::make_transform_iterator(vertices(mesh).begin(), v2p), boost::make_transform_iterator(vertices(mesh).end(), v2p), ch.points, ch.indices);
+    convex_hull_3(boost::make_transform_iterator(vertices(tmesh).begin(), v2p), boost::make_transform_iterator(vertices(tmesh).end(), v2p), ch.points, ch.indices);
 
     *out_hulls = std::make_pair(std::move(ch.points), std::move(ch.indices));
     return 1;
   }
 
-  Bbox_3 bb = bbox(mesh);
+  Bbox_3 bb = bbox(tmesh);
   const auto [grid_size, voxel_size] = internal::calculate_grid_size<FT>(bb, num_voxels);
 
   std::vector<int8_t> grid(grid_size[0] * grid_size[1] * grid_size[2], internal::Grid_cell::INSIDE);
 
   std::vector<internal::Candidate<Geom_traits>> candidates(1);
-  init(candidates[0], mesh, grid, bb, grid_size, voxel_size, Concurrency_tag());
+  init(candidates[0], tmesh, grid, bb, grid_size, voxel_size, Concurrency_tag());
 
   const FT hull_volume = candidates[0].ch.volume;
 
@@ -1625,7 +1608,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   candidates.clear();
 
   // merge until target number is reached
-  merge(hulls, hull_volume, np, Concurrency_tag());
+  merge(hulls, hull_volume, max_convex_hulls, Concurrency_tag());
 
   for (std::size_t i = 0; i < hulls.size(); i++)
     *out_hulls++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
