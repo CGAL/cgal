@@ -78,6 +78,9 @@ pushd Triangulation_on_sphere_2_Demo_with_dlls; zip -r ../triangulation_on_spher
 pushd Lab_Demo_with_dlls; zip -r ../CGALlab.zip *; popd
 pushd Arrangement_on_surface_2_earth_Demo_with_dlls; zip -r ../arrangements_2_earth.zip *; popd
 
+# CGAL-6.1
+pushd Triangulation_on_hyperbolic_surface_2_Demo_with_dlls; zip -r ../triangulation_on_hyperbolic_surface_2.zip *; popd
+
 # check
 echo CHECK now. The following lines should be empty.
 for f in *zip; do unzip -qql $f; done | awk '{print $4}' >| done
