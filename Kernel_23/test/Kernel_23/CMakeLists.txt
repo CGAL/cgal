@@ -62,7 +62,7 @@ if(CGAL_ENABLE_TESTING)
 
     set_tests_properties("execution   of  test_gdb_pretty_printers"
       PROPERTIES
-      PASS_REGULAR_EXPRESSION "CGAL pretty printers loaded")
+      PASS_REGULAR_EXPRESSION "CGAL pretty printers auto-loaded")
   endif()
 endif()
 

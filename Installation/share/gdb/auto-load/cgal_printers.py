@@ -11,6 +11,7 @@ Auto-loaded via .debug_gdb_scripts section.
 
 import re
 import gdb
+import os
 
 def base(val):
     """Get the base of a possibly derived CGAL type"""
@@ -129,4 +130,6 @@ def register_cgal_printer(printer):
 
 deregister_existing_cgal_printers()
 register_cgal_printer(cgal_lookup_function)
-print("CGAL pretty printers loaded (manual registration)")
+# Get the full path of this script file
+current_file = os.path.abspath(__file__)
+print(f"CGAL pretty printers auto-loaded from {current_file}")
