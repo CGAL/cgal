@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.19...3.31)
 project(Kernel_23_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -32,9 +32,38 @@ create_single_source_cgal_program("test_kernel__.cpp")
 create_single_source_cgal_program("test_projection_traits.cpp")
 create_single_source_cgal_program("test_Projection_traits_xy_3_Intersect_2.cpp")
 
-create_single_source_cgal_program("test_gdb_pretty_printers.cpp")
+add_executable("test_gdb_pretty_printers" "test_gdb_pretty_printers.cpp")
+target_link_libraries("test_gdb_pretty_printers" PRIVATE CGAL::CGAL)
 if(CGAL_ENABLE_TESTING)
-  set_tests_properties("execution   of  test_gdb_pretty_printers" PROPERTIES WILL_FAIL TRUE)
+  cgal_add_compilation_test("test_gdb_pretty_printers")
+  find_program(GDB_EXECUTABLE gdb)
+  if(NOT GDB_EXECUTABLE)
+    add_test(NAME "execution   of  test_gdb_pretty_printers"
+      COMMAND "$<TARGET_FILE:test_gdb_pretty_printers>")
+    message(VERBOSE "GDB executable not found, test expected to fail")
+    set_tests_properties("execution   of  test_gdb_pretty_printers"
+      PROPERTIES WILL_FAIL TRUE)
+  else()
+    message(VERBOSE "GDB executable found: ${GDB_EXECUTABLE}")
+    file(GENERATE
+           OUTPUT "$<CONFIG>/test_gdb_pretty_printers.gdb"
+           CONTENT "
+             set auto-load safe-path /
+             file \"$<TARGET_FILE:test_gdb_pretty_printers>\"
+             run
+             bt
+             quit
+             "
+          TARGET "test_gdb_pretty_printers")
+    add_test(NAME "execution   of  test_gdb_pretty_printers"
+      COMMAND "${GDB_EXECUTABLE}" --batch --quiet --nx
+        -x "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_gdb_pretty_printers.gdb"
+        )
+
+    set_tests_properties("execution   of  test_gdb_pretty_printers"
+      PROPERTIES
+      PASS_REGULAR_EXPRESSION "CGAL pretty printers loaded")
+  endif()
 endif()
 
 if(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS)
