@@ -8,7 +8,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/tags.h>
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 #include <CGAL/Real_timer.h>
 

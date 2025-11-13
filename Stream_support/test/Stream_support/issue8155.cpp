@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/config.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/PLY.h>
 #include <CGAL/property_map.h>
 #include <boost/iterator/function_output_iterator.hpp>
 

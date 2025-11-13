@@ -5,8 +5,8 @@
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 
 
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/XYZ.h>
+#include <CGAL/IO/PLY.h>
 
 #include <CGAL/Real_timer.h>
 
