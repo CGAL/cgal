@@ -288,7 +288,7 @@ public:
 
   inline static With_offset_tag with_offset{ -1 };
   inline static With_point_tag with_point{ {-1} };
-  inline static With_point_and_info_tag with_point_and_info{ {-1} };
+  inline static With_point_and_info_tag with_point_and_info{ { {-1} } };
 
   Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
     : T_3(gt)
