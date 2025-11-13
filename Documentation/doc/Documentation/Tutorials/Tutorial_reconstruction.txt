@@ -83,12 +83,12 @@ a newline character and each coordinate separated by a white
 space. Other formats available are 'OFF', 'PLY' and 'LAS'. \cgal
 provides functions to read such formats:
 
-- `read_XYZ()`
-- `read_OFF()`
-- `read_PLY()`
-- `read_PLY_with_properties()` to read additional PLY properties
-- `read_LAS()`
-- `read_LAS_with_properties()` to read additional LAS properties
+- `CGAL::IO::read_XYZ()`
+- `CGAL::IO::read_OFF()`
+- `CGAL::IO::read_PLY()`
+- `CGAL::IO::read_PLY_with_properties()` to read additional PLY properties
+- `CGAL::IO::read_LAS()`
+- `CGAL::IO::read_LAS_with_properties()` to read additional LAS properties
 
 \cgal also provides a dedicated container `CGAL::Point_set_3` to
 handle point sets with additional properties such as normal
