@@ -909,12 +909,8 @@ public:
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
       const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
-      auto xs = CGAL::to_double(src.x());
-      auto ys = CGAL::to_double(src.y());
-      auto xt = CGAL::to_double(trg.x());
-      auto yt = CGAL::to_double(trg.y());
-      *oi++ = Approximate_point_2(xs, ys);
-      *oi++ = Approximate_point_2(xt, yt);
+      *oi++ = operator()(src);
+      *oi++ = operator()(trg);
       return oi;
     }
   };
