@@ -1,3 +1,9 @@
+#if defined(NDEBUG)
+#  #undef NDEBUG
+#endif
+#if defined(CGAL_NDEBUG)
+#  undef CGAL_NDEBUG
+#endif
 #include <CGAL/assertions.h>
 #include <CGAL/bisect_failures.h>
 #include <algorithm>
@@ -151,7 +157,7 @@ int main() {
 #if defined(CGAL_NDEBUG)
   std::cerr << "Error: This test requires CGAL assertions to be enabled.\n"
                "       Please compile without NDEBUG and CGAL_NDEBUG.\n";
-  return 0;
+  return EXIT_FAILURE;
 #endif
   std::cout << "=== Edge Cases ===\n\n";
 
