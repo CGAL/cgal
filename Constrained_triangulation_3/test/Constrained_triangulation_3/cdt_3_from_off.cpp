@@ -498,7 +498,7 @@ int merge_facets_region_growing(Mesh& mesh,
     }
   }
   if(!dump_surface_mesh_after_merge_filename.empty()) {
-    static constexpr auto max_size_t = std::numeric_limits<std::size_t>::max();
+    static constexpr auto max_size_t = (std::numeric_limits<std::size_t>::max)();
     auto [corner_id_map, corner_id_map_ok] =
         mesh.add_property_map<vertex_descriptor, std::size_t>("v:corner_id", max_size_t);
     assert(corner_id_map_ok);
