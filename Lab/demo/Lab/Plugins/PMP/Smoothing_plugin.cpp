@@ -379,11 +379,6 @@ public Q_SLOTS:
       selection_item->poly_item_changed();
       selection_item->changed_with_poly_item();
     }
-    else
-    {
-      std::cerr << "Something's gone wrong.\n";
-      CGAL_assertion(false);
-    }
 
     QApplication::restoreOverrideCursor();
   }
