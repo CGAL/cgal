@@ -118,7 +118,13 @@ bool read_OBJ(std::istream& is,
       polygons.emplace_back();
       while(iss >> i)
       {
-        if(i < 1)
+        if (i == 0)
+        {
+          if(verbose)
+            std::cerr << "error: vertex index of face cannot be 0" << std::endl;
+          return false;
+        }
+        else if(i < 1)
         {
           const std::size_t n = polygons.back().size();
           ::CGAL::internal::resize(polygons.back(), n + 1);
