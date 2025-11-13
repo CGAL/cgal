@@ -466,10 +466,6 @@ namespace CGAL {
 } // end of the temporary compatibility with CGAL-4.14
 #endif // CGAL_NO_DEPRECATED_CODE
 
-#if __has_include(<version>)
-#  include <version>
-#endif
-
 namespace CGAL {
 
 // Typedef for the type of nullptr.
