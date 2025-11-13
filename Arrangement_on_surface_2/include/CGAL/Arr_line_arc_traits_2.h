@@ -43,46 +43,41 @@ namespace CGAL {
 // Traits class for CGAL::Arrangement_2 (and similar) based on a
 // CircularKernel.
 
-template < typename CircularKernel >
+template <typename CircularKernel>
 class Arr_line_arc_traits_2 {
-
   CircularKernel ck;
 
 public:
+  using Kernel = CircularKernel;
+  using Curve_2 = typename CircularKernel::Line_arc_2;
+  using X_monotone_curve_2 = typename CircularKernel::Line_arc_2;
+  using Multiplicity = std::size_t;
 
-  typedef CircularKernel Kernel;
-  typedef typename CircularKernel::Line_arc_2  Curve_2;
-  typedef typename CircularKernel::Line_arc_2  X_monotone_curve_2;
-  typedef unsigned int                         Multiplicity;
+  using Point = typename CircularKernel::Circular_arc_point_2;
+  using Point_2 = typename CircularKernel::Circular_arc_point_2;
 
-  typedef typename CircularKernel::Circular_arc_point_2      Point;
-  typedef typename CircularKernel::Circular_arc_point_2      Point_2;
+  using Has_left_category = CGAL::Tag_false;
+  using Has_merge_category = CGAL::Tag_false;
+  using Has_do_intersect_category = CGAL::Tag_false;
 
-  typedef CGAL::Tag_false                        Has_left_category;
-  typedef CGAL::Tag_false                          Has_merge_category;
-  typedef CGAL::Tag_false                        Has_do_intersect_category;
+  using Left_side_category = Arr_oblivious_side_tag;
+  using Bottom_side_category = Arr_oblivious_side_tag;
+  using Top_side_category = Arr_oblivious_side_tag;
+  using Right_side_category = Arr_oblivious_side_tag;
 
-  typedef Arr_oblivious_side_tag                 Left_side_category;
-  typedef Arr_oblivious_side_tag                 Bottom_side_category;
-  typedef Arr_oblivious_side_tag                 Top_side_category;
-  typedef Arr_oblivious_side_tag                 Right_side_category;
+  Arr_line_arc_traits_2(const CircularKernel& k = CircularKernel()) : ck(k) {}
 
-  Arr_line_arc_traits_2(const CircularKernel &k = CircularKernel())
-    : ck(k) {}
-
-  typedef typename CircularKernel::Compare_x_2          Compare_x_2;
-  typedef typename CircularKernel::Compare_xy_2         Compare_xy_2;
-  typedef typename CircularKernel::Compare_y_at_x_2     Compare_y_at_x_2;
-  typedef typename CircularKernel::Compare_y_to_right_2 Compare_y_at_x_right_2;
-  typedef typename CircularKernel::Equal_2              Equal_2;
-  // typedef typename CircularKernel::Make_x_monotone_2    Make_x_monotone_2;
-  typedef typename CircularKernel::Split_2              Split_2;
-  typedef typename CircularKernel::Construct_circular_min_vertex_2
-                                                        Construct_min_vertex_2;
-  typedef typename CircularKernel::Construct_circular_max_vertex_2
-                                                        Construct_max_vertex_2;
-  typedef typename CircularKernel::Is_vertical_2        Is_vertical_2;
-  typedef typename CircularKernel::Intersect_2          Intersect_2;
+  using Compare_x_2 = typename CircularKernel::Compare_x_2;
+  using Compare_xy_2 = typename CircularKernel::Compare_xy_2;
+  using Compare_y_at_x_2 = typename CircularKernel::Compare_y_at_x_2;
+  using Compare_y_at_x_right_2 = typename CircularKernel::Compare_y_to_right_2;
+  using Equal_2 = typename CircularKernel::Equal_2;
+  // using Make_x_monotone_2 = typename CircularKernel::Make_x_monotone_2;
+  using Split_2 = typename CircularKernel::Split_2;
+  using Construct_min_vertex_2 = typename CircularKernel::Construct_circular_min_vertex_2;
+  using Construct_max_vertex_2 = typename CircularKernel::Construct_circular_max_vertex_2;
+  using Is_vertical_2 = typename CircularKernel::Is_vertical_2;
+  using Intersect_2 = typename CircularKernel::Intersect_2;
 
   Compare_x_2 compare_x_2_object() const
   { return ck.compare_x_2_object(); }
@@ -106,7 +101,7 @@ public:
   { return ck.split_2_object(); }
 
   Intersect_2 intersect_2_object() const
-    { return ck.intersect_2_object(); }
+  { return ck.intersect_2_object(); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return ck.construct_circular_min_vertex_2_object(); }
@@ -121,9 +116,8 @@ public:
   class Make_x_monotone_2 {
   public:
     template <typename OutputIterator>
-    OutputIterator operator()(const Curve_2& line, OutputIterator oi) const
-    {
-      typedef std::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
+    OutputIterator operator()(const Curve_2& line, OutputIterator oi) const {
+      using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
       *oi++ = Make_x_monotone_result(line);
       return oi;
     }
@@ -137,4 +131,4 @@ public:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_CIRCULAR_KERNEL_LINE_ARC_TRAITS_H
+#endif

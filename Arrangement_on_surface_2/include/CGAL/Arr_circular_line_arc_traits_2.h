@@ -41,515 +41,395 @@
 #include <CGAL/Arr_tags.h>
 
 namespace CGAL {
-  namespace VariantFunctors{
 
-    // Takes an iterator range of Object(Line/Circular_arc/Point),
-    // returns a variant of Line, Circular_arc, and Point_2.
-    template <class CK, class Arc1, class Arc2, class OutputIterator>
-    OutputIterator
-    object_to_object_variant(const std::vector<CGAL::Object>& res1,
-                             OutputIterator res2)
-    {
-      typedef typename CK::Circular_arc_point_2         Point_2;
-      typedef std::variant<Arc1, Arc2>                X_monotone_curve_2;
-      typedef std::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_result;
+namespace VariantFunctors {
 
-      for (auto it = res1.begin(); it != res1.end(); ++it) {
-        if (const Arc1* arc = CGAL::object_cast<Arc1>(&*it)) {
-          std::variant<Arc1, Arc2> v =  *arc;
-          *res2++ = Make_x_monotone_result(v);
-        }
-        else if (const Arc2* line = CGAL::object_cast<Arc2>(&*it)) {
-          std::variant<Arc1, Arc2> v =  *line;
-          *res2++ = Make_x_monotone_result(v);
-        }
-        else if (const Point_2* p = CGAL::object_cast<Point_2>(&*it)) {
-          *res2++ = Make_x_monotone_result(*p);
-        }
-        else CGAL_error();
+// Takes an iterator range of Object(Line/Circular_arc/Point),
+// returns a variant of Line, Circular_arc, and Point_2.
+template <typename CK, typename Arc1, typename Arc2, typename OutputIterator>
+OutputIterator object_to_object_variant(const std::vector<CGAL::Object>& res1,
+                                        OutputIterator res2) {
+  using Point_2 = typename CK::Circular_arc_point_2;
+  using X_monotone_curve_2 = std::variant<Arc1, Arc2>;
+  using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
+
+  for (auto it = res1.begin(); it != res1.end(); ++it) {
+    if (const Arc1* arc = CGAL::object_cast<Arc1>(&*it)) {
+      std::variant<Arc1, Arc2> v = *arc;
+      *res2++ = Make_x_monotone_result(v);
+    }
+    else if (const Arc2* line = CGAL::object_cast<Arc2>(&*it)) {
+      std::variant<Arc1, Arc2> v = *line;
+      *res2++ = Make_x_monotone_result(v);
+    }
+    else if (const Point_2* p = CGAL::object_cast<Point_2>(&*it)) {
+      *res2++ = Make_x_monotone_result(*p);
+    }
+    else CGAL_error();
+  }
+  return res2;
+}
+
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Compare_y_to_right_2 {
+public:
+  using result_type = CGAL::Comparison_result;
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+
+  result_type operator()(const std::variant<Arc1, Arc2>& a1,
+                         const std::variant<Arc1, Arc2>& a2,
+                         const Circular_arc_point_2& p) const {
+    if (const Arc1* arc1 = std::get_if<Arc1>(&a1)) {
+      if (const Arc1* arc2 = std::get_if<Arc1>(&a2)) {
+        return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
       }
-      return res2;
+      else {
+        const Arc2* arc2e = std::get_if<Arc2>(&a2);
+        return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2e, p);
+      }
+    }
+    const Arc2* arc1 = std::get_if<Arc2>(&a1);
+    if (const Arc1* arc2 = std::get_if<Arc1>(&a2)) {
+      return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2, p);
+    }
+    const Arc2* arc2e = std::get_if<Arc2>(&a2);
+    return CircularKernel().compare_y_to_right_2_object()(*arc1, *arc2e, p);
+  }
+};
+
+template <typename CircularKernel>
+class Variant_Equal_2 {
+public:
+  template <typename T>
+  bool operator()(const T& a0, const T& a1) const
+  { return CircularKernel().equal_2_object()(a0,a1); }
+
+  template <typename T1, typename T2>
+  bool operator()(const T1& , const T2&) const
+  { return false; }
+};
+
+template <typename CircularKernel, class Arc1, class Arc2>
+class Equal_2 : public CircularKernel::Equal_2 {
+public:
+  using Curve_2 = std::variant< Arc1, Arc2>;
+  using result_type = bool;
+  using CircularKernel::Equal_2::operator();
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+  using Line_arc_2 = typename CircularKernel::Line_arc_2;
+  using Circular_arc_2 = typename CircularKernel::Circular_arc_2;
+  using CK_Equal_2 = typename CircularKernel::Equal_2;
+
+  result_type operator()(const Circular_arc_point_2& p0,
+                         const Circular_arc_point_2& p1) const
+  { return CK_Equal_2()(p0, p1); }
+
+  result_type operator()(const Circular_arc_2& a0, const Circular_arc_2& a1) const
+  { return CK_Equal_2()(a0, a1); }
+
+  result_type operator()(const Line_arc_2& a0, const Line_arc_2& a1) const
+  { return CK_Equal_2()(a0, a1); }
+
+  result_type operator()(const Line_arc_2& /*a0*/, const Circular_arc_2& /*a1*/) const
+  { return false; }
+
+  result_type operator()(const Circular_arc_2& /*a0*/, const Line_arc_2& /*a1*/) const
+  { return false; }
+
+  result_type operator()(const Curve_2& a0, const Curve_2& a1) const
+  { return std::visit(Variant_Equal_2<CircularKernel>(), a0, a1); }
+};
+
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Compare_y_at_x_2 {
+public:
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+  using result_type = CGAL::Comparison_result;
+
+  result_type operator()(const Circular_arc_point_2& p,
+                         const std::variant< Arc1, Arc2>& A1) const {
+    if (const Arc1* arc1 = std::get_if<Arc1>(&A1)){
+      return CircularKernel().compare_y_at_x_2_object()(p, *arc1);
+    }
+    else {
+      const Arc2* arc2 = std::get_if<Arc2>(&A1);
+      return CircularKernel().compare_y_at_x_2_object()(p, *arc2);
+    }
+  }
+};
+
+template <typename CircularKernel>
+class Variant_Do_overlap_2 {
+public:
+  template <typename T>
+  bool operator()(const T& a0, const T& a1) const
+  { return CircularKernel().do_overlap_2_object()(a0, a1); }
+
+  template <typename T1, typename T2>
+  bool operator()(const T1&, const T2&) const
+  { return false; }
+};
+
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Do_overlap_2 {
+public:
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+  using result_type = bool;
+
+  result_type operator()(const std::variant< Arc1, Arc2>& A0,
+                         const std::variant< Arc1, Arc2>& A1) const
+  { return std::visit(Variant_Do_overlap_2<CircularKernel>(), A0, A1); }
+};
+
+//! A functor for subdividing curves into x-monotone curves.
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Make_x_monotone_2 {
+public:
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+
+  template <typename OutputIterator, typename Not_X_Monotone>
+  OutputIterator operator()(const std::variant<Arc1, Arc2, Not_X_Monotone>& A,
+                            OutputIterator res) const {
+    if ( const Arc1* arc1 = std::get_if<Arc1>(&A)) {
+      return CircularKernel().make_x_monotone_2_object()(*arc1, res);
+    }
+    else {
+      const Arc2* arc2 = std::get_if<Arc2>(&A);
+      return CircularKernel().make_x_monotone_2_object()(*arc2, res);
+    }
+  }
+};
+
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Intersect_2 {
+public:
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+
+  template <typename OutputIterator>
+  OutputIterator operator()(const std::variant< Arc1, Arc2>& c1,
+                            const std::variant< Arc1, Arc2>& c2,
+                            OutputIterator oi) const {
+    if (const Arc1* arc1 = std::get_if<Arc1>(&c1)) {
+      if ( const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
+        return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
+      }
+      const Arc2* arc2 = std::get_if<Arc2>(&c2);
+      return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
     }
 
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Compare_y_to_right_2
-    {
-    public:
-      typedef CGAL::Comparison_result result_type;
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-
-      result_type
-        operator()(const std::variant< Arc1, Arc2 > &a1,
-                   const std::variant< Arc1, Arc2 > &a2,
-                   const Circular_arc_point_2 &p) const
-      {
-        if ( const Arc1* arc1 = std::get_if<Arc1>( &a1 ) ){
-          if ( const Arc1* arc2 = std::get_if<Arc1>( &a2 ) ){
-            return CircularKernel()
-              .compare_y_to_right_2_object()(*arc1, *arc2, p);
-          }
-          else {
-            const Arc2* arc2e = std::get_if<Arc2>( &a2 );
-            return CircularKernel()
-              .compare_y_to_right_2_object()(*arc1, *arc2e, p);
-          }
-        }
-        const Arc2* arc1 = std::get_if<Arc2>( &a1 );
-        if ( const Arc1* arc2 = std::get_if<Arc1>( &a2 ) ){
-          return CircularKernel()
-            .compare_y_to_right_2_object()(*arc1, *arc2, p);
-        }
-        const Arc2* arc2e = std::get_if<Arc2>( &a2 );
-        return CircularKernel()
-          .compare_y_to_right_2_object()(*arc1, *arc2e, p);
-      }
-    };
-
-
-    template <class CircularKernel>
-    class Variant_Equal_2
-    {
-    public :
-
-      template < typename T >
-      bool
-      operator()(const T &a0, const T &a1) const
-      {
-        return CircularKernel().equal_2_object()(a0,a1);
-      }
-
-      template < typename T1, typename T2 >
-      bool
-      operator()(const T1 &, const T2 &) const
-      {
-        return false;
-      }
-    };
-
-
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Equal_2
-      : public CircularKernel::Equal_2
-    {
-    public:
-      typedef std::variant< Arc1, Arc2 >  Curve_2;
-      typedef bool result_type;
-      using CircularKernel::Equal_2::operator();
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-      typedef typename CircularKernel::Line_arc_2     Line_arc_2;
-      typedef typename CircularKernel::Circular_arc_2 Circular_arc_2;
-      typedef typename CircularKernel::Equal_2        CK_Equal_2;
-
-    result_type
-    operator() (const Circular_arc_point_2 &p0,
-                const Circular_arc_point_2 &p1) const
-    { return CK_Equal_2()(p0, p1); }
-
-    result_type
-    operator() (const Circular_arc_2 &a0, const Circular_arc_2 &a1) const
-    { return CK_Equal_2()(a0, a1); }
-
-    result_type
-    operator() (const Line_arc_2 &a0, const Line_arc_2 &a1) const
-    { return CK_Equal_2()(a0, a1); }
-
-    result_type
-    operator() ( const Line_arc_2 &/*a0*/, const Circular_arc_2 &/*a1*/) const
-    { return false; }
-
-    result_type
-    operator() ( const Circular_arc_2 &/*a0*/, const Line_arc_2 &/*a1*/) const
-    { return false; }
-
-      result_type
-      operator()(const Curve_2 &a0, const Curve_2 &a1) const
-      {
-        return std::visit
-          ( Variant_Equal_2<CircularKernel>(), a0, a1 );
-      }
-
-    };
-
-
-
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Compare_y_at_x_2
-    {
-    public:
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-      typedef CGAL::Comparison_result result_type;
-
-      result_type
-      operator() (const Circular_arc_point_2 &p,
-                  const std::variant< Arc1, Arc2 > &A1) const
-      {
-        if ( const Arc1* arc1 = std::get_if<Arc1>( &A1 ) ){
-          return CircularKernel().compare_y_at_x_2_object()(p, *arc1);
-        }
-        else {
-          const Arc2* arc2 = std::get_if<Arc2>( &A1 );
-          return CircularKernel().compare_y_at_x_2_object()(p, *arc2);
-        }
-      }
-    };
-
-    template <class CircularKernel>
-    class Variant_Do_overlap_2
-    {
-    public:
-      template < typename T >
-      bool
-      operator()(const T &a0, const T &a1) const
-      {
-        return CircularKernel().do_overlap_2_object()(a0, a1);
-      }
-
-      template < typename T1, typename T2 >
-      bool
-      operator()(const T1 &, const T2 &) const
-      {
-        return false;
-      }
-    };
-
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Do_overlap_2
-    {
-    public:
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-      typedef bool result_type;
-
-      result_type
-      operator()(const std::variant< Arc1, Arc2 > &A0,
-                 const std::variant< Arc1, Arc2 > &A1) const
-      {
-        return std::visit
-          ( Variant_Do_overlap_2<CircularKernel>(), A0, A1 );
-      }
-    };
-
-
-    //! A functor for subdividing curves into x-monotone curves.
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Make_x_monotone_2
-    {
-    public:
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-
-      template < class OutputIterator,class Not_X_Monotone >
-      OutputIterator
-      operator()(const std::variant<Arc1, Arc2, Not_X_Monotone> &A,
-                 OutputIterator res) const
-      {
-        if ( const Arc1* arc1 = std::get_if<Arc1>( &A ) ) {
-          return CircularKernel().
-            make_x_monotone_2_object()(*arc1, res);
-        }
-        else {
-          const Arc2* arc2 = std::get_if<Arc2>( &A );
-            return CircularKernel().
-              make_x_monotone_2_object()(*arc2, res);
-        }
-      }
-    };
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Intersect_2
-    {
-    public:
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                        Circular_arc_point_2;
-
-      template < class OutputIterator >
-        OutputIterator
-        operator()(const std::variant< Arc1, Arc2 > &c1,
-                   const std::variant< Arc1, Arc2 > &c2,
-                   OutputIterator oi) const
-      {
-        if ( const Arc1* arc1 = std::get_if<Arc1>( &c1 ) ){
-          if ( const Arc1* arc2 = std::get_if<Arc1>( &c2 ) ){
-            return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
-          }
-          const Arc2* arc2 = std::get_if<Arc2>( &c2 );
-          return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);
-        }
-
-        const Arc2* arc1e = std::get_if<Arc2>( &c1 );
-        if ( const Arc1* arc2 = std::get_if<Arc1>( &c2 ) ){
-          return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
-        }
-        const Arc2* arc2 = std::get_if<Arc2>( &c2 );
-        return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
-      }
-
-    };
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Split_2
-    {
-
-    public:
-    typedef typename CircularKernel::Circular_arc_point_2
-                                                Circular_arc_point_2;
-      typedef void result_type;
-      result_type
-        operator()(const std::variant< Arc1, Arc2 > &A,
-                   const Circular_arc_point_2 &p,
-                   std::variant< Arc1, Arc2 > &ca1,
-                   std::variant< Arc1, Arc2 > &ca2) const
-      {
-        // TODO : optimize by extracting the references from the variants ?
-        if ( const Arc1* arc1 = std::get_if<Arc1>( &A ) ){
-          Arc1 carc1;
-          Arc1 carc2;
-          CircularKernel().split_2_object()(*arc1, p, carc1, carc2);
-          ca1 = carc1;
-          ca2 = carc2;
-          return ;
-
-        }
-        else{
-          const Arc2* arc2 = std::get_if<Arc2>( &A );
-          Arc2 cline1;
-          Arc2 cline2;
-          CircularKernel().split_2_object()(*arc2, p, cline1, cline2);
-          ca1 = cline1;
-          ca2 = cline2;
-          return ;
-
-        }
-      }
-    };
-
-
-     template <class CircularKernel>
-    class Variant_Construct_min_vertex_2
-    {
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-
-    public :
-
-      typedef Circular_arc_point_2  result_type;
-      //typedef const result_type&       qualified_result_type;
-
-      template < typename T >
-      //std::remove_reference_t<qualified_result_type>
-        Circular_arc_point_2
-      operator()(const T &a) const
-      {
-        //CGAL_kernel_precondition(CircularKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
-        return CircularKernel().construct_circular_min_vertex_2_object()(a);
-      }
-    };
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Construct_min_vertex_2//: public Has_qrt
-    {
-      typedef typename CircularKernel::Circular_arc_point_2      Point_2;
-    public:
-
-      typedef Point_2                  result_type;
-      //typedef const result_type&       qualified_result_type;
-
-      //std::remove_reference_t<qualified_result_type>
-      result_type
-      operator() (const std::variant< Arc1, Arc2 > & cv) const
-      {
-        return std::visit
-          ( Variant_Construct_min_vertex_2<CircularKernel>(), cv );
-      }
-    };
-
-
-
-
-
-     template <class CircularKernel>
-    class Variant_Construct_max_vertex_2
-    {
-      typedef typename CircularKernel::Circular_arc_point_2
-                                                  Circular_arc_point_2;
-
-    public:
-      typedef Circular_arc_point_2  result_type;
-      //typedef const result_type&       qualified_result_type;
-
-      template < typename T >
-      //std::remove_reference_t<qualified_result_type>
-        Circular_arc_point_2
-      operator()(const T &a) const
-      {
-        //CGAL_kernel_precondition(CircularKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
-        return (CircularKernel().construct_circular_max_vertex_2_object()(a));
-      }
-    };
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Construct_max_vertex_2//: public Has_qrt
-    {
-      typedef typename CircularKernel::Circular_arc_point_2      Point_2;
-
-    public:
-      /*! obtains the right endpoint of the x-monotone curve (segment).
-       * \param cv The curve.
-       * \return The right endpoint.
-       */
-      typedef Point_2                  result_type;
-      //typedef const result_type&       qualified_result_type;
-
-       //std::remove_reference<qualified_result_type>
-      result_type
-       operator() (const std::variant< Arc1, Arc2 > & cv) const
-      {
-        return std::visit
-          ( Variant_Construct_max_vertex_2<CircularKernel>(), cv );
-      }
-    };
-
-    template <class CircularKernel>
-    class Variant_Is_vertical_2
-    {
-    public:
-
-      template < typename T >
-      bool
-      operator()(const T &a) const
-      {
-        return CircularKernel().is_vertical_2_object()(a);
-      }
-    };
-
-    template <class CircularKernel, class Arc1, class Arc2>
-    class Is_vertical_2
-    {
-    public:
-      typedef bool result_type;
-
-      bool operator() (const std::variant< Arc1, Arc2 >& cv) const
-      {
-        return std::visit
-          ( Variant_Is_vertical_2<CircularKernel>(), cv );
-      }
-    };
-
+    const Arc2* arc1e = std::get_if<Arc2>(&c1);
+    if ( const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
+      return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
+    }
+    const Arc2* arc2 = std::get_if<Arc2>(&c2);
+    return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
   }
+};
 
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Split_2 {
+public:
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+  using result_type = void;
 
-  // an empty class used to have different types between Curve_2 and X_monotone_curve_2
-  // in Arr_circular_line_arc_traits_2.
-  namespace internal_Argt_traits {
-    struct Not_X_Monotone{};
-    inline std::ostream& operator << (std::ostream& os, const Not_X_Monotone&)
-    {return os;}
+  result_type operator()(const std::variant< Arc1, Arc2>& A,
+                         const Circular_arc_point_2& p,
+                         std::variant< Arc1, Arc2>& ca1,
+                         std::variant< Arc1, Arc2>& ca2) const {
+    // TODO : optimize by extracting the references from the variants ?
+    if (const Arc1* arc1 = std::get_if<Arc1>(&A)) {
+      Arc1 carc1;
+      Arc1 carc2;
+      CircularKernel().split_2_object()(*arc1, p, carc1, carc2);
+      ca1 = carc1;
+      ca2 = carc2;
+      return ;
+    }
+    else {
+      const Arc2* arc2 = std::get_if<Arc2>(&A);
+      Arc2 cline1;
+      Arc2 cline2;
+      CircularKernel().split_2_object()(*arc2, p, cline1, cline2);
+      ca1 = cline1;
+      ca2 = cline2;
+      return ;
+    }
   }
+};
 
-  /// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
+template <typename CircularKernel>
+class Variant_Construct_min_vertex_2 {
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+public:
+  using result_type = Circular_arc_point_2;
+  // using qualified_result_type = const result_type& ;
 
-  template < typename CircularKernel>
-  class Arr_circular_line_arc_traits_2 {
+  template <typename T>
+  //std::remove_reference_t<qualified_result_type>
+  Circular_arc_point_2 operator()(const T& a) const {
+    //CGAL_kernel_precondition(CircularKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
+    return CircularKernel().construct_circular_min_vertex_2_object()(a);
+  }
+};
 
-    typedef Arr_circular_line_arc_traits_2< CircularKernel >   Self;
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Construct_min_vertex_2 {
+  //: public Has_qrt
+  using Point_2 = typename CircularKernel::Circular_arc_point_2;
 
-    typedef typename CircularKernel::Line_arc_2                Arc1;
-    typedef typename CircularKernel::Circular_arc_2            Arc2;
+public:
+  using result_type = Point_2;
+  // using qualified_result_type = const result_type&;
 
-  public:
+  //std::remove_reference_t<qualified_result_type>
+  result_type operator() (const std::variant< Arc1, Arc2>& cv) const
+  { return std::visit(Variant_Construct_min_vertex_2<CircularKernel>(), cv); }
+};
 
-    typedef CircularKernel Kernel;
-    typedef typename CircularKernel::Circular_arc_point_2
-                                                Circular_arc_point_2;
+template <typename CircularKernel>
+class Variant_Construct_max_vertex_2 {
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+public:
+  using result_type = Circular_arc_point_2;
+  // using qualified_result_type = const result_type&;
 
-    typedef typename CircularKernel::Circular_arc_point_2      Point;
-    typedef typename CircularKernel::Circular_arc_point_2      Point_2;
+  template <typename T>
+    //std::remove_reference_t<qualified_result_type>
+  Circular_arc_point_2 operator()(const T& a) const {
+    //CGAL_kernel_precondition(CircularKernel().compare_xy_2_object()(a.left(), a.right())==CGAL::SMALLER);
+    return (CircularKernel().construct_circular_max_vertex_2_object()(a));
+  }
+};
 
-    typedef unsigned int                           Multiplicity;
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Construct_max_vertex_2 {
+  //: public Has_qrt
+  using Point_2 = typename CircularKernel::Circular_arc_point_2;
 
-    typedef CGAL::Tag_false                        Has_left_category;
-    typedef CGAL::Tag_false                        Has_merge_category;
-    typedef CGAL::Tag_false                        Has_do_intersect_category;
+public:
+  /*! obtains the right endpoint of the x-monotone curve (segment).
+   * \param cv The curve.
+   * \return The right endpoint.
+   */
+  using result_type = Point_2;
+  // using qualified_result_type = const result_type&;
 
-    typedef Arr_oblivious_side_tag                 Left_side_category;
-    typedef Arr_oblivious_side_tag                 Bottom_side_category;
-    typedef Arr_oblivious_side_tag                 Top_side_category;
-    typedef Arr_oblivious_side_tag                 Right_side_category;
+  //std::remove_reference<qualified_result_type>
+  result_type operator() (const std::variant<Arc1, Arc2>& cv) const
+  { return std::visit(Variant_Construct_max_vertex_2<CircularKernel>(), cv); }
+};
 
-    typedef internal_Argt_traits::Not_X_Monotone                Not_X_Monotone;
+template <typename CircularKernel>
+class Variant_Is_vertical_2 {
+public:
+  template <typename T>
+  bool operator()(const T& a) const
+  { return CircularKernel().is_vertical_2_object()(a); }
+};
 
-    typedef std::variant< Arc1, Arc2, Not_X_Monotone >        Curve_2;
-    typedef std::variant< Arc1, Arc2 >                        X_monotone_curve_2;
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Is_vertical_2 {
+public:
+  using result_type = bool;
 
-  private:
-    CircularKernel ck;
-  public:
+  bool operator() (const std::variant<Arc1, Arc2>& cv) const
+  { return std::visit(Variant_Is_vertical_2<CircularKernel>(), cv); }
+};
 
-    Arr_circular_line_arc_traits_2(const CircularKernel &k = CircularKernel())
-      : ck(k) {}
+}
 
-    typedef typename CircularKernel::Compare_x_2           Compare_x_2;
-    typedef typename CircularKernel::Compare_xy_2          Compare_xy_2;
-    typedef typename
-    VariantFunctors::Construct_min_vertex_2<CircularKernel, Arc1, Arc2>
-                                                  Construct_min_vertex_2;
-    typedef
-    VariantFunctors::Construct_max_vertex_2<CircularKernel, Arc1, Arc2>
-                                                  Construct_max_vertex_2;
-    typedef VariantFunctors::Is_vertical_2<CircularKernel, Arc1, Arc2>
-                                                  Is_vertical_2;
-    typedef VariantFunctors::Compare_y_at_x_2<CircularKernel, Arc1, Arc2>
-                                                  Compare_y_at_x_2;
-    typedef VariantFunctors::Compare_y_to_right_2<CircularKernel, Arc1, Arc2>
-                                                  Compare_y_at_x_right_2;
-    typedef VariantFunctors::Equal_2<CircularKernel, Arc1, Arc2>
-                                                  Equal_2;
-    typedef VariantFunctors::Make_x_monotone_2<CircularKernel, Arc1, Arc2>
-                                                  Make_x_monotone_2;
-    typedef VariantFunctors::Split_2<CircularKernel, Arc1, Arc2>
-                                                  Split_2;
-    typedef VariantFunctors::Intersect_2<CircularKernel, Arc1, Arc2>
-                                                  Intersect_2;
+// an empty class used to have different types between Curve_2 and X_monotone_curve_2
+// in Arr_circular_line_arc_traits_2.
+namespace internal_Argt_traits {
 
-    Compare_x_2 compare_x_2_object() const
-    { return ck.compare_x_2_object(); }
+struct Not_X_Monotone{};
 
-    Compare_xy_2 compare_xy_2_object() const
-    { return ck.compare_xy_2_object(); }
+inline std::ostream& operator << (std::ostream& os, const Not_X_Monotone&) { return os; }
 
-    Compare_y_at_x_2 compare_y_at_x_2_object() const
-    { return Compare_y_at_x_2(); }
+}
 
-    Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-    { return Compare_y_at_x_right_2(); }
+/// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
 
-    Equal_2 equal_2_object() const
-    { return Equal_2(); }
+template <typename CircularKernel>
+class Arr_circular_line_arc_traits_2 {
+  using Self = Arr_circular_line_arc_traits_2<CircularKernel>;
 
-    Make_x_monotone_2 make_x_monotone_2_object() const
-    { return Make_x_monotone_2(); }
+  using Arc1 = typename CircularKernel::Line_arc_2;
+  using Arc2 = typename CircularKernel::Circular_arc_2;
 
-    Split_2 split_2_object() const
-    { return Split_2(); }
+public:
+  using Kernel = CircularKernel;
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
 
-    Intersect_2 intersect_2_object() const
-    { return Intersect_2(); }
+  using Point = typename CircularKernel::Circular_arc_point_2;
+  using Point_2 = typename CircularKernel::Circular_arc_point_2;
 
-    Construct_min_vertex_2 construct_min_vertex_2_object() const
-    { return Construct_min_vertex_2(); }
+  using Multiplicity = std::size_t;
 
-    Construct_max_vertex_2 construct_max_vertex_2_object() const
-    { return Construct_max_vertex_2(); }
+  using Has_left_category = CGAL::Tag_false;
+  using Has_merge_category = CGAL::Tag_false;
+  using Has_do_intersect_category = CGAL::Tag_false;
 
-    Is_vertical_2 is_vertical_2_object() const
-    { return Is_vertical_2();}
+  using Left_side_category = Arr_oblivious_side_tag;
+  using Bottom_side_category = Arr_oblivious_side_tag;
+  using Top_side_category = Arr_oblivious_side_tag;
+  using Right_side_category = Arr_oblivious_side_tag;
+
+  using Not_X_Monotone = internal_Argt_traits::Not_X_Monotone;
+
+  using Curve_2 = std::variant<Arc1, Arc2, Not_X_Monotone>;
+  using X_monotone_curve_2 = std::variant<Arc1, Arc2>;
+
+private:
+  CircularKernel ck;
+
+public:
+  Arr_circular_line_arc_traits_2(const CircularKernel& k = CircularKernel()) : ck(k) {}
+
+  using Compare_x_2 = typename CircularKernel::Compare_x_2;
+  using Compare_xy_2 = typename CircularKernel::Compare_xy_2;
+  using Construct_min_vertex_2 = typename  VariantFunctors::Construct_min_vertex_2<CircularKernel, Arc1, Arc2>;
+  using Construct_max_vertex_2 = VariantFunctors::Construct_max_vertex_2<CircularKernel, Arc1, Arc2>;
+  using Is_vertical_2 = VariantFunctors::Is_vertical_2<CircularKernel, Arc1, Arc2>;
+  using Compare_y_at_x_2 = VariantFunctors::Compare_y_at_x_2<CircularKernel, Arc1, Arc2>;
+  using Compare_y_at_x_right_2 = VariantFunctors::Compare_y_to_right_2<CircularKernel, Arc1, Arc2>;
+  using Equal_2 = VariantFunctors::Equal_2<CircularKernel, Arc1, Arc2>;
+  using Make_x_monotone_2 = VariantFunctors::Make_x_monotone_2<CircularKernel, Arc1, Arc2>;
+  using Split_2 = VariantFunctors::Split_2<CircularKernel, Arc1, Arc2>;
+  using Intersect_2 = VariantFunctors::Intersect_2<CircularKernel, Arc1, Arc2>;
+
+  Compare_x_2 compare_x_2_object() const
+  { return ck.compare_x_2_object(); }
+
+  Compare_xy_2 compare_xy_2_object() const
+  { return ck.compare_xy_2_object(); }
+
+  Compare_y_at_x_2 compare_y_at_x_2_object() const
+  { return Compare_y_at_x_2(); }
+
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
+  { return Compare_y_at_x_right_2(); }
+
+  Equal_2 equal_2_object() const
+  { return Equal_2(); }
+
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return Make_x_monotone_2(); }
+
+  Split_2 split_2_object() const
+  { return Split_2(); }
+
+  Intersect_2 intersect_2_object() const
+  { return Intersect_2(); }
+
+  Construct_min_vertex_2 construct_min_vertex_2_object() const
+  { return Construct_min_vertex_2(); }
+
+  Construct_max_vertex_2 construct_max_vertex_2_object() const
+  { return Construct_max_vertex_2(); }
+
+  Is_vertical_2 is_vertical_2_object() const
+  { return Is_vertical_2();}
 };
 
 } // namespace CGAL
