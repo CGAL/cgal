@@ -4293,23 +4293,77 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     }
   } else {
     for(auto ch : tr.all_cell_handles()) {
-      ch->set_subdomain_index(1);
+      ch->set_subdomain_index(-1);
     }
 
-    std::stack<decltype(tr.infinite_cell())> stack;
-    stack.push(tr.infinite_cell());
-    while(!stack.empty()) {
-      auto ch = stack.top();
-      stack.pop();
-      ch->set_subdomain_index(0);
-      for(int i = 0; i < 4; ++i) {
-        if(ch->ccdt_3_data().is_facet_constrained(i))
-          continue;
-        auto n = ch->neighbor(i);
-        if(n->subdomain_index() == 1) {
-          stack.push(n);
+    // Use a flood algorithm to mark constrained connected components.
+    // The connected component containing the infinite vertex is marked with index 0.
+    // Nested components are marked with increasing indices.
+    // Disconnected components that have the same nesting level get the same index parity:
+    // for example two cubes within a larger bounding box will be index 2 and 4.
+    std::list<typename Tr::Facet> border;
+    int next_even_subdomain = 0;
+    int next_odd_subdomain = 1;
+
+    // Function to flood-fill a connected component with a given subdomain index
+    auto flood_component = [&tr, &border](typename Tr::Cell_handle start, int subdomain_index) {
+      if(start->subdomain_index() != -1)
+        return;
+
+      std::list<typename Tr::Cell_handle> queue;
+      queue.push_back(start);
+
+      while(!queue.empty()) {
+        auto ch = queue.front();
+        queue.pop_front();
+        if(ch->subdomain_index() == -1) {
+          ch->set_subdomain_index(subdomain_index);
+          for(int i = 0; i < 4; i++) {
+            typename Tr::Facet f(ch, i);
+            auto n = ch->neighbor(i);
+            if(n->subdomain_index() == -1) {
+              if(ch->ccdt_3_data().is_facet_constrained(i))
+                border.push_back(f);
+              else
+                queue.push_back(n);
+            }
+          }
         }
       }
+    };
+
+    // Start with the infinite cell's component using index 0
+    flood_component(tr.infinite_cell(), next_even_subdomain);
+    next_even_subdomain += 2;
+
+    for (;;) { // while there are unvisited cells
+      while(!border.empty()) {
+        auto f = border.front();
+        border.pop_front();
+        auto n = f.first->neighbor(f.second);
+        if(n->subdomain_index() == -1) {
+          // If we are coming from an even subdomain, use next odd, and vice versa
+          bool from_even = (f.first->subdomain_index() % 2 == 0);
+          int next_index = from_even ? next_odd_subdomain : next_even_subdomain;
+          flood_component(n, next_index);
+          if(from_even)
+            next_odd_subdomain += 2;
+          else
+            next_even_subdomain += 2;
+        }
+      }
+
+      bool found_unvisited = false;
+      for(auto ch : tr.finite_cell_handles()) {
+        if(ch->subdomain_index() == -1) {
+          flood_component(ch, next_even_subdomain);
+          next_even_subdomain += 2;
+          found_unvisited = true;
+          break;
+        }
+      }
+      if(!found_unvisited)
+        break;
     }
 
     for(auto f : tr.finite_facets())
