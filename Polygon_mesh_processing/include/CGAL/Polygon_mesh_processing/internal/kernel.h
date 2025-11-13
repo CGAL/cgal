@@ -94,6 +94,12 @@ kernel(const TriangleMesh& pm,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  //TODO: what do we do with a mesh that is not closed?
+  //TODO: what do we do if the input is not a triangle mesh?
+
+  if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
+    return TriangleMesh();
+
 
 
   CGAL::Bbox_3 bb3 = bbox(pm, np);
