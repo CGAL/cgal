@@ -588,7 +588,7 @@ private:
 
 #ifdef CGAL_USE_BASIC_VIEWER
 //!
-void draw_unimplemented() {
+inline void draw_unimplemented() {
   CGAL_error_msg("Geometry traits type of arrangement is required to support approximation of Point_2 and "
                  "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization.");
 }
