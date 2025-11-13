@@ -714,7 +714,6 @@ struct Cartesian_converter_property_map
   {
     return CGAL::Cartesian_converter<K1, K2>()(get(pm.vpm, k));
   }
-
   friend void put(Cartesian_converter_property_map<GeomObject, Vpm>& pm, const key_type& k, const value_type& v)
   {
     put(pm.vpm, k, CGAL::Cartesian_converter<K2, K1>()(v));

@@ -1193,7 +1193,7 @@ protected:
 
     // accessor for  low-level arrangement functionalities
     CGAL::Arr_accessor<Aos_2> accessor(*arr);
-    // the face field of outer and inner ccb are used in the loop to access the old face an halfedge
+    // the face field of outer and inner ccb are used in the loop to access the old face a halfedge
     // used to contribute to. These two vectors are used to delay the association to the new face to
     // avoid overwriting a field that is still needed
     typedef std::pair<typename Aos_2::Dcel::Outer_ccb*, typename Aos_2::Dcel::Face*> Outer_ccb_and_face;

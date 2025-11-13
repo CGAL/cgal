@@ -467,14 +467,14 @@ const typename Attribute_type<i>::type::Info & info(Dart_const_descriptor adart)
 
 /*!
 A shortcut for \link GenericMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute `attribute<i>`\endlink`(adart))`.
-\pre `attribute<i>(adart)!=nullptr`.
+\pre \link GenericMap::attribute `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
 Dart_descriptor & dart(Dart_descriptor adart);
 
 /*!
 A shortcut for \link GenericMap::dart_of_attribute(typename Attribute_const_descriptor<i>::type)const `dart_of_attribute<i>`\endlink`(`\link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart))` for const descriptor.
-\pre `attribute<i>(adart)!=nullptr`.
+\pre \link GenericMap::attribute(Dart_const_descriptor)const `attribute<i>`\endlink`(adart)!=nullptr`.
 */
 template<unsigned int i>
 Dart_const_descriptor dart(Dart_const_descriptor adart) const;
@@ -771,13 +771,13 @@ bool is_marked(Dart_const_descriptor d, size_type m) const;
 
 /*!
 Marks dart `d` for `m`.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink and `d`\f$ \in \f$ `darts()`.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`) and `d`\f$ \in \f$ `darts()`.
 */
 void mark(Dart_const_descriptor d, size_type m) const;
 
 /*!
 Unmarks dart `d` for the mark `m`.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink and `d`\f$ \in \f$ `darts()`.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`) and `d`\f$ \in \f$ `darts()`.
 */
 void unmark(Dart_const_descriptor d, size_type m) const;
 
@@ -785,31 +785,31 @@ void unmark(Dart_const_descriptor d, size_type m) const;
 Inverse the mark `m` for all the darts of the generic map.
 All the marked darts become unmarked and all the unmarked darts
 become marked.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`).
 */
 void negate_mark(size_type m) const;
 
 /*!
 Unmarks all the darts of the generic map for `m`.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`).
 */
 void unmark_all(size_type m) const;
 
 /*!
 Returns the number of marked darts for `m`.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`).
 */
 size_type number_of_marked_darts(size_type m) const;
 
 /*!
 Return the number of unmarked darts for `m`.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`).
 */
 size_type number_of_unmarked_darts(size_type m) const;
 
 /*!
 Frees mark `m`.
-\pre \link GenericMap::is_reserved `is_reserved(m)`\endlink.
+\pre \link GenericMap::is_reserved `is_reserved`\endlink(`m`).
 */
 void free_mark(size_type m) const;
 
@@ -820,7 +820,7 @@ void free_mark(size_type m) const;
 
 /*!
 Creates a combinatorial hexahedron (six combinatorial quadrangles 2-sewn together), and adds it in the generic map. Returns a descriptor on one dart of this combinatorial hexahedron.
-\pre `dimension` \f$\geq\f$ 2.
+\pre \link GenericMap::dimension `dimension`\endlink \f$\geq\f$ 2.
 
 \sa `make_edge()`
 \sa `make_combinatorial_polygon()`
@@ -831,7 +831,7 @@ Dart_descriptor make_combinatorial_hexahedron();
 
 /*!
 Creates a combinatorial polygon of length `lg` (a cycle of `lg` edges), and adds it in the generic map. Returns a descriptor on one dart of this combinatorial polygon.
-\pre `dimension`\f$ \geq\f$ 1 and `lg`\f$ >\f$ 0.
+\pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 1 and `lg`\f$ >\f$ 0.
 
 \sa `make_edge()`
 \sa `make_combinatorial_tetrahedron()`
@@ -841,7 +841,7 @@ Dart_descriptor make_combinatorial_polygon(unsigned int lg);
 
 /*!
 Creates a combinatorial tetrahedron (four combinatorial triangles 2-sewn together), and adds it in the generic map. Returns a descriptor on one dart of this combinatorial tetrahedron.
-\pre `dimension`\f$ \geq\f$ 2.
+\pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 2.
 
 \sa `make_edge()`
 \sa `make_combinatorial_polygon()`
@@ -851,7 +851,7 @@ Dart_descriptor make_combinatorial_tetrahedron();
 
 /*!
 Creates an isolated edge (two darts sewn to represent one edge and two vertices) and adds it in the generic map. Returns a descriptor on one dart of this edge.
-\pre `dimension`\f$ \geq\f$ 2.
+\pre \link GenericMap::dimension `dimension`\endlink \f$ \geq\f$ 2.
 
 \sa `make_combinatorial_polygon()`
 \sa `make_combinatorial_tetrahedron()`
@@ -908,7 +908,7 @@ Dart_descriptor insert_cell_0_in_cell_2(Dart_descriptor d);
 
 /*!
 Inserts a 1-cell in the 2-cell containing `d1` and `d2`. Returns `previous(d1)`, a descriptor on one dart belonging to the new 1-cell.
-\pre `is_insertable_cell_1_in_cell_2(d1,d2)`.
+\pre \link GenericMap::is_insertable_cell_1_in_cell_2 `is_insertable_cell_1_in_cell_2`\endlink(`d1`,`d2`).
 
 See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_edge} and for generalized map in \cgalFigureRef{fig_gmap_insert_edge}.
 
@@ -930,7 +930,7 @@ Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor d1, Dart_descriptor d2);
 
 /*!
 Inserts a 1-cell between the 2-cell containing `d1` and the one containing `d2`. Returns `previous(d1)`, a descriptor on one dart belonging to the new 1-cell.
-\pre `is_insertable_cell_1_between_two_cells_2(d1,d2)`.
+\pre \link GenericMap::is_insertable_cell_1_between_two_cells_2 `is_insertable_cell_1_between_two_cells_2`\endlink(`d1`,`d2`).
 
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, call \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink(<I>a</I>,<I>a'</I>) is called for all enabled i-attributes, for i>=2, with <I>a</I> the original 2-attribute associated with `d1` and <I>a'</I> the original 2-attribute associated with `d2`. If set, the dynamic on-merge function of i-attributes is also called on <I>a</I> and <I>a'</I>.
 
@@ -957,7 +957,7 @@ Dart_descriptor insert_cell_1(Dart_descriptor d1, Dart_descriptor d2);
 
 /*!
 Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns `opposite<2>(*afirst)`, a descriptor on one dart belonging to the new 2-cell.
-\pre `is_insertable_cell_2_in_cell_3(afirst,alast)`.
+\pre \link GenericMap::is_insertable_cell_2_in_cell_3 `is_insertable_cell_2_in_cell_3`\endlink(`afirst`,`alast`).
 
 See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_facet} and for generalized map in \cgalFigureRef{fig_gmap_insert_facet}.
 
@@ -1045,7 +1045,7 @@ bool is_removable(Dart_const_descriptor d);
 
 /*!
 Removes the <I>i</I>-cell containing `d`. Returns the number of darts removed from the generic map.
-\pre `is_removable<i>(d)`.
+\pre \link GenericMap::is_removable `is_removable<i>`\endlink(`d`).
 
 See examples in \cgalFigureRef{fig_cmap_insert_vertex}, \cgalFigureRef{fig_cmap_insert_edge} and \cgalFigureRef{fig_cmap_insert_facet}.
 

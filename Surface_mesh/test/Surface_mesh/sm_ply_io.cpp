@@ -76,7 +76,7 @@ int main()
   out.open("out_ascii.ply");
   CGAL::IO::write_PLY(out, mesh);
   out.close();
-  out.open("out_binary.ply");
+  out.open("out_binary.ply", std::ios::binary);
   CGAL::IO::set_binary_mode(out);
   CGAL::IO::write_PLY(out, mesh);
   out.close();
@@ -87,7 +87,7 @@ int main()
   {
     std::cout << "Reading " << fn << "\n";
     in.close();
-    in.open(fn);
+    in.open(fn, std::ios::binary);
     SMesh mesh_bis;
     CGAL::IO::read_PLY(in, mesh_bis);
 
