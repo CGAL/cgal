@@ -1,16 +1,3 @@
-// Copyright 2009,2014 Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-//
-// author(s)     : Waqar Khan <wkhan@mpi-inf.mpg.de>
-
-
 /* Usage
  *
  *  This example converts arbitrary-precision arrangement into fixed-precision using Snap Rounding and by using INPUT DATA FROM A USER SPECIFIED FILE.
