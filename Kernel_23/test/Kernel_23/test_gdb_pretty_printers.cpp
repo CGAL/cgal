@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 int main() {
-  CGAL::Point_3<CGAL::Simple_cartesian<double>> p(1, 2, 3);
+  [[maybe_unused]]CGAL::Point_3<CGAL::Simple_cartesian<double>> p(1, 2, 3);
   std::abort();
   return 1;
 }
