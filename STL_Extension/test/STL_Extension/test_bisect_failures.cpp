@@ -148,6 +148,11 @@ int test(int test_id,
 }
 
 int main() {
+#if defined(CGAL_NDEBUG)
+  std::cerr << "Error: This test requires CGAL assertions to be enabled.\n"
+               "       Please compile without NDEBUG and CGAL_NDEBUG.\n";
+  return 0;
+#endif
   std::cout << "=== Edge Cases ===\n\n";
 
   std::cout << "## Test 1: Empty data - should succeed\n";
