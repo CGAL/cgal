@@ -1,14 +1,3 @@
-// Copyright (c) 2025 GeometryFactory (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-//
-// Author(s)     : Laurent Rineau
-
 #include <CGAL/bisect_failures.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -52,7 +41,7 @@ int main(int argc, char* argv[]) {
     return m.number_of_faces();
   };
 
-  auto simplify = [](Mesh& m, std::size_t start, std::size_t end) -> bool {
+  auto simplify = [](Mesh& m, int start, int end) -> bool {
     for(auto i = end - 1; i >= start; --i) {
       const auto f = m.faces().begin() + i;
       CGAL::Euler::remove_face(halfedge(*f, m), m);
@@ -87,5 +76,5 @@ int main(int argc, char* argv[]) {
     std::cout << "\nFailure detected during bisection. Result code: " << result << "\n";
   }
 
-  return result;
+  return EXIT_SUCCESS;
 }

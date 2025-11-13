@@ -1,16 +1,9 @@
-// Copyright (c) 2025 GeometryFactory (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-// Author(s)     : Laurent Rineau
-
-// Test partially written by Github Copilot
-
+#if defined(NDEBUG)
+#  #undef NDEBUG
+#endif
+#if defined(CGAL_NDEBUG)
+#  undef CGAL_NDEBUG
+#endif
 #include <CGAL/assertions.h>
 #include <CGAL/bisect_failures.h>
 #include <algorithm>
@@ -161,6 +154,11 @@ int test(int test_id,
 }
 
 int main() {
+#if defined(CGAL_NDEBUG)
+  std::cerr << "Error: This test requires CGAL assertions to be enabled.\n"
+               "       Please compile without NDEBUG and CGAL_NDEBUG.\n";
+  return EXIT_FAILURE;
+#endif
   std::cout << "=== Edge Cases ===\n\n";
 
   std::cout << "## Test 1: Empty data - should succeed\n";
