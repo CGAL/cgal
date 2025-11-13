@@ -304,7 +304,7 @@ namespace Homological_discrete_vector_field {
 
 The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
-Technically, starting from a Simplicial_chain_complex `K_init`, the method `simplicial_chain_complex_bb()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
+Technically, starting from a Simplicial_chain_complex `K_init`, the method `dualize_complex()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
 - L : complex built out of K_init together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
 
@@ -326,7 +326,7 @@ public:
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
 
-    /** \brief Type returned by `simplicial_chain_complex_bb()`.
+    /** \brief Type returned by `dualize_complex()`.
      *
      * The structure contains a triple:
      * - A simplicial chain complex `L` (homeomorphic to \f$\mathbb B^3\f$).
@@ -373,10 +373,10 @@ public:
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      * \param[in] subdiv Subdivision level of the bounding icosphere.
      */
-    static Complex_duality_data simplicial_chain_complex_bb (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
+    static Complex_duality_data dualize_complex (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
 
-        std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
+        std::cerr << "-- Starting dualize_complex" << std::endl;
         std::cerr << "Imported set of simplices" << std::endl;
         std::cout << mesh_io;
 
@@ -435,12 +435,12 @@ public:
      * \param[in] subdiv Subdivision level of the bounding icosphere.
      */
     
-    static Complex_duality_data simplicial_chain_complex_bb (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
+    static Complex_duality_data dualize_complex (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
     {
         typedef CGAL::Triangulation_data_structure_3<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<typename Traits::Kernel>, CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<typename Traits::Kernel>> TDS;
         typedef CGAL::Triangulation_3<typename Traits::Kernel, TDS> Triangulation;
         
-        std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
+        std::cerr << "-- Starting dualize_complex" << std::endl;
         std::cerr << "Imported mesh" << std::endl;
         
         // Create a temporary Surfaces_mesh_io (to load the mesh)
@@ -537,7 +537,7 @@ public:
 
 The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 
-Starting from a Cubical_chain_complex `K_init`, the method `cubical_chain_complex_bb()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
+Starting from a Cubical_chain_complex `K_init`, the method `dualize_complex()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
 - L : complex built of the "full" bounding box of `K_init`
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying `K_init` inside `L`
 
@@ -569,7 +569,7 @@ public:
      *
      * \param[in] K_init Initial cubical chain complex (working mesh).
      */
-    static std::pair<Chain_complex&, Sub_chain_complex&> cubical_chain_complex_bb (const Chain_complex& K_init)
+    static std::pair<Chain_complex&, Sub_chain_complex&> dualize_complex (const Chain_complex& K_init)
     {
         Cub_object_io<Traits> tmp_L ;
         tmp_L.dim = K_init.dimension() ;

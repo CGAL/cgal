@@ -187,9 +187,10 @@ public:
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
-     * Chains must have the same `Coefficient_ring`.
+     * \pre chains must have the same `Coefficient_ring`.
+     * \pre `column.is_column()`  and `row.is_row()`  must be `true`
      */
-    friend Sparse_matrix<Coefficient_ring, ROW> operator%(const Sparse_chain<Coefficient_ring, COLUMN> &column, const Sparse_chain<Coefficient_ring, ROW> &row);
+    friend Sparse_matrix<Coefficient_ring, ROW> operator%(const Sparse_chain &column, const Sparse_chain &row);
 
     /*!
      * \brief Performs dot product between two chains (ROW x COLUMN).

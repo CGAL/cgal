@@ -177,7 +177,7 @@ void main_code (const Options &options)
 
         // Build L (bounding sphere meshed with tetgen), K and L-K
 
-        typename ToolsType::Complex_duality_data t(ToolsType::simplicial_chain_complex_bb(mesh)) ;
+        typename ToolsType::Complex_duality_data t(ToolsType::dualize_complex(mesh)) ;
         Complex& L(t.L) ;
         SubCCType& K(t.K) ;
 
@@ -244,7 +244,7 @@ void main_code (const Options &options)
 
         // Build L, K and L-K
 
-        std::pair<Complex&, SubCCType&> p(ToolsType::cubical_chain_complex_bb(*complex)) ;
+        std::pair<Complex&, SubCCType&> p(ToolsType::dualize_complex(*complex)) ;
         delete complex ;
         Complex &L(p.first) ;
         SubCCType &K(p.second) ;

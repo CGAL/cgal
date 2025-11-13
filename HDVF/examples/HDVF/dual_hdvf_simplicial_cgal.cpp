@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 //    std::cout << sm;
 
     // Build K and L
-    typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(sm, 1.7, 1 ));
+    typename Tools_type::Complex_duality_data t(Tools_type::dualize_complex(sm, 1.7, 1 ));
     std::cout << "--- Triangulation built" << std::endl ;
     Complex& L(t.L);
     Sub_chain_complex& K(t.K);

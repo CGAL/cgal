@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     mesh.print_infos();
     
     // Build K and L
-    typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(mesh, 1.5, "tmp/file_K_closed.off", 1)) ;
+    typename Tools_type::Complex_duality_data t(Tools_type::dualize_complex(mesh, 1.5, "tmp/file_K_closed.off", 1)) ;
     std::cout << "--- Triangulation built" << std::endl ;
     Complex& L(t.L) ;
     Sub_chain_complex& K(t.K) ;
