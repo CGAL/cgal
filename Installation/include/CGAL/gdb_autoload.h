@@ -37,7 +37,7 @@ namespace CGAL {
 
   // This is only here to have a CGAL symbol in the object file,
   // so the gdb 'info sources' command can find this file's path.
-  inline static int gdb_autoload_dummy_instance = 0;
+  [[maybe_unused]] inline static int gdb_autoload_dummy_instance = 0;
 
 }
 
