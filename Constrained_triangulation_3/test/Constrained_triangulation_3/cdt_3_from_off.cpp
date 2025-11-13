@@ -414,12 +414,12 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
       }));
 #else
       auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
-      auto it_end = cdt.finite_facets_end();
-      cdt.write_facets(dump, cdt.triangulation(),
-                        CGAL::make_range(
-                          boost::make_filter_iterator(is_facet_constrained,cdt.finite_facets_begin(), it_end),
-                          boost::make_filter_iterator(is_facet_constrained,it_end, it_end)));
-
+      const auto& tr = cdt.triangulation();
+      auto it_begin = tr.finite_facets_begin();
+      auto it_end = tr.finite_facets_end();
+      auto filtered_it_begin = boost::make_filter_iterator(is_facet_constrained,it_begin, it_end);
+      auto filtered_it_end = boost::make_filter_iterator(is_facet_constrained,it_end, it_end);
+      cdt.write_facets(dump, tr, CGAL::make_range(filtered_it_begin, filtered_it_end));
 #endif
     }
   };
