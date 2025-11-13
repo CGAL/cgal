@@ -49,9 +49,13 @@ if(CGAL_ENABLE_TESTING)
            OUTPUT "$<CONFIG>/test_gdb_pretty_printers.gdb"
            CONTENT "
              set auto-load safe-path /
+             set debuginfod enabled off
              file \"$<TARGET_FILE:test_gdb_pretty_printers>\"
              run
              bt
+             frame function abort
+             up
+             p p
              quit
              "
           TARGET "test_gdb_pretty_printers")
