@@ -23,12 +23,13 @@ int main()
   std::vector<PointVectorPair> pv_pairs;
   const std::function<void(const PointVectorPair& p)> lambda =
     [&](const PointVectorPair& p) {
-    FT len = p.second.squared_length();
-    if (len > 0 || len != 1.0) {
-      Vector_3 n = p.second * (1.0 / CGAL::sqrt(len));
-      pv_pairs.push_back(std::make_pair(p.first, n));
-    }
-    else pv_pairs.push_back(p);
+      const FT len = CGAL::sqrt(p.second.squared_length());
+      if (len > 0) {
+        Vector_3 n = p.second / len;
+        pv_pairs.push_back(std::make_pair(p.first, n));
+      } else {
+        pv_pairs.push_back(p);
+      }
     };
 
   pv_pairs.clear();
