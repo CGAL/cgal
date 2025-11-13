@@ -17,7 +17,7 @@ namespace CGAL {
   The algorithm is interface compatible with the
   `box_intersection_d()` function. Similarly, we call the
   `value_type` of the iterators the <I>box handle</I>, which is
-  either our box type or a pointer type to our box type.
+  either our box types or a pointer type to our box types.
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the
   %Cartesian product of \f$ d\f$ intervals. We call the
@@ -35,13 +35,13 @@ namespace CGAL {
   `Box_intersection_d::CLOSED`.
 
   In addition, a box has a unique `id`-number. Boxes with equal
-  `id`-number are not reported since they obviously intersect trivially.
+  `id`-number and same types are not reported since they obviously intersect trivially.
 
   The algorithm uses a traits class of the `BoxIntersectionTraits_d`
   concept to access the boxes. A default traits class is provided that
-  assumes that the box type is a model of the `BoxIntersectionBox_d`
-  concept and that the box handle, i.e., the iterators value type, is
-  identical to the box type or a pointer to the box type.
+  assumes that the box types are model of the `BoxIntersectionBox_d`
+  concept and that the box handles, i.e., the iterators value types, are
+  identical to the box types or a pointer to the box types.
 
   An important special application of this algorithm is the test for
   self-intersections where the second box sequence is an identical copy
@@ -190,13 +190,13 @@ void box_intersection_all_pairs_d(
 
   <UL>
   <LI>`RandomAccessIterator1`, and \f$ \ldots\f$ `2`, must meet
-  the requirements of `RandomAccessIterator` and both value types must be the same.
-  We call this value type `Box_handle` in the following.
+  the requirements of `RandomAccessIterator`.
+  We call their values type `Box_handle_1` and `Box_handle_2` in the following.
   <LI>`Callback` must be of the `BinaryFunction` concept.
-  The `Box_handle` must be convertible to both argument types. The
+  `Box_handle_1` and `Box_handle_2` must be convertible to both argument types. The
   return type is not used and can be `void`.
   <LI>The `Box_handle` must be a model of the `Assignable` concept.
-  <LI>In addition, if the default box traits is used the `Box_handle` must
+  <LI>In addition, if the default box traits is used `Box_handle_1` and `Box_handle_2` must
   be a class type `T` or a pointer to a class type `T`, where
   `T` must be a model of the `BoxIntersectionBox_d` concept.
   In both cases, the default box traits specializes to a suitable
@@ -291,10 +291,9 @@ void box_intersection_all_pairs_d(
   \ingroup PkgBoxIntersectionD_box_intersection_d
 
   Invocation of box intersection with default box traits
-  `Box_intersection_d::Box_traits_d<Box_handle>`, where
-  `Box_handle` corresponds to the iterator value type of
-  `RandomAccessIterator1`.
-
+  `Box_intersection_d::Box_traits_d<Box_handle_1, Box_handle_2>`, where
+  `Box_handle_1` and `Box_handle_2` corresponds respectively to the iterator value type of
+  `RandomAccessIterator1` and `RandomAccessIterator2`.
 
 */
 template< class ConcurrencyTag = CGAL::Sequential_tag,
