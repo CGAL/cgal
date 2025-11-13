@@ -183,13 +183,13 @@ void Viewer::compile_shaders()
         "} \n"
         "\n"
     };
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex, this);
     if(!vertex_shader->compileSourceCode(vertex_source))
     {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
 
-    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment, this);
     if(!fragment_shader->compileSourceCode(fragment_source))
     {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -258,14 +258,14 @@ void Viewer::compile_shaders()
         "} \n"
         "\n"
     };
-    QOpenGLShader *vertex_shader_spheres = new QOpenGLShader(QOpenGLShader::Vertex);
+    QOpenGLShader *vertex_shader_spheres = new QOpenGLShader(QOpenGLShader::Vertex, this);
     if(!vertex_shader_spheres->compileSourceCode(vertex_source_spheres))
     {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
 
 
-    QOpenGLShader *fragment_shader_spheres= new QOpenGLShader(QOpenGLShader::Fragment);
+    QOpenGLShader *fragment_shader_spheres= new QOpenGLShader(QOpenGLShader::Fragment, this);
     if(!fragment_shader_spheres->compileSourceCode(fragment_source_spheres))
     {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -312,7 +312,7 @@ void Viewer::compile_shaders()
 
 
 
-    QOpenGLShader *vertex_shader_cylinders = new QOpenGLShader(QOpenGLShader::Vertex);
+    QOpenGLShader *vertex_shader_cylinders = new QOpenGLShader(QOpenGLShader::Vertex, this);
     if(!vertex_shader_cylinders->compileSourceCode(vertex_source_cylinders))
     {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
@@ -1628,7 +1628,7 @@ void Viewer::draw()
 
 }
 
-void Viewer::drawVertex(const Point_3& p, std::vector<float> *vertices)
+void Viewer::drawVertex(const Point_3& p, Coords_ptr& vertices)
 {
 
     vertices->push_back(p.x()); vertices->push_back(p.y()); vertices->push_back(p.z());
@@ -1636,13 +1636,13 @@ void Viewer::drawVertex(const Point_3& p, std::vector<float> *vertices)
 
 }
 
-void Viewer::drawEdge(const Point_3& from, const Point_3& to, std::vector<float> *vertices)
+void Viewer::drawEdge(const Point_3& from, const Point_3& to, Coords_ptr& vertices)
 {
     vertices->push_back( from.x()); vertices->push_back(from.y()); vertices->push_back(from.z());
     vertices->push_back( to.x()); vertices->push_back(to.y()); vertices->push_back(to.z());
 }
 
-void Viewer::drawFacet(const Triangle_3& t, std::vector<float> *vertices)
+void Viewer::drawFacet(const Triangle_3& t, Coords_ptr& vertices)
 {
     Point_3 p0 = t.vertex(0);
     Point_3 p1 = t.vertex(1);
@@ -2482,7 +2482,7 @@ void Viewer::incremental_insert() {
 }
 
 
-void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
+void Viewer::draw_cylinder(float R, int prec, Coords_ptr& vertices, Coords_ptr& normals)
 {
     vertices->resize(0);
     normals->resize(0);
@@ -2551,7 +2551,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
     }
 }
 
-void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
+void Viewer::draw_sphere(float R, int prec, Coords_ptr& vertices, Coords_ptr& normals)
 {
     vertices->resize(0);
     normals->resize(0);

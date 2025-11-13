@@ -42,42 +42,41 @@ public:
     , m_hasEmptyS(false)
     , m_showTrackball(true)
     , m_pDlgPrefer(nullptr)
-    {
-      pos_emptyFacet = new std::vector<float>();
-      pos_emptySphere= new std::vector<float>();
-      points_emptySphere = new std::vector<float>();
-      pos_points = new std::vector<float>();
-      pos_newPoint = new std::vector<float>();
-      pos_selectedVertex = new std::vector<float>();
-      pos_movingPoint = new std::vector<float>();
-      pos_queryPoint = new std::vector<float>();
-      pos_trackBall  = new std::vector<float>();
-      pos_voronoi = new std::vector<float>();
-      pos_delaunay = new std::vector<float>();
-      pos_facets = new std::vector<float>();
-      pos_newFacet = new std::vector<float>();
-      pos_nearest_neighbor = new std::vector<float>();
-      points_locationSphere = new std::vector<float>();
-      points_cylinder = new std::vector<float>();
-      normals_cylinder = new std::vector<float>();
-      points_sphere = new std::vector<float>();
-      points_trackBall = new std::vector<float>();
-      normals_sphere = new std::vector<float>();
-      normals_emptySphere = new std::vector<float>();
-      normals_trackBall= new std::vector<float>();
-      transfo1_voronoi = new std::vector<float>();
-      transfo2_voronoi = new std::vector<float>();
-      transfo3_voronoi = new std::vector<float>();
-      transfo4_voronoi = new std::vector<float>();
-      transfo1_delaunay = new std::vector<float>();
-      transfo2_delaunay = new std::vector<float>();
-      transfo3_delaunay = new std::vector<float>();
-      transfo4_delaunay = new std::vector<float>();
-      incremental_points = new std::vector<float>();
-      incremental_next_point = new std::vector<float>();
-      incremental_facet = new std::vector<float>();
-      incremental_conflict = new std::vector<float>();
-    }
+    , pos_emptyFacet{new Coords}
+    , pos_emptySphere{new Coords}
+    , points_emptySphere{new Coords}
+    , pos_points{new Coords}
+    , pos_newPoint{new Coords}
+    , pos_selectedVertex{new Coords}
+    , pos_movingPoint{new Coords}
+    , pos_queryPoint{new Coords}
+    , pos_trackBall{ new Coords}
+    , pos_voronoi{new Coords}
+    , pos_delaunay{new Coords}
+    , pos_facets{new Coords}
+    , pos_newFacet{new Coords}
+    , pos_nearest_neighbor{new Coords}
+    , points_locationSphere{new Coords}
+    , points_cylinder{new Coords}
+    , normals_cylinder{new Coords}
+    , points_sphere{new Coords}
+    , points_trackBall{new Coords}
+    , normals_sphere{new Coords}
+    , normals_emptySphere{new Coords}
+    , normals_trackBall{new Coords}
+    , transfo1_voronoi{new Coords}
+    , transfo2_voronoi{new Coords}
+    , transfo3_voronoi{new Coords}
+    , transfo4_voronoi{new Coords}
+    , transfo1_delaunay{new Coords}
+    , transfo2_delaunay{new Coords}
+    , transfo3_delaunay{new Coords}
+    , transfo4_delaunay{new Coords}
+    , incremental_points{new Coords}
+    , incremental_next_point{new Coords}
+    , incremental_facet{new Coords}
+    , incremental_conflict{new Coords}
+  {}
 
   ~Viewer()
   {
@@ -269,12 +268,15 @@ protected:
   QString helpString() const;
 
 private:
+  using Coords = std::vector<float>;
+  using Coords_ptr = std::unique_ptr<std::vector<float>>;
+
   // draw a 3d effect vertex
-  void drawVertex(const Point_3& p, std::vector<float> *vertices);
+  void drawVertex(const Point_3& p, Coords_ptr&  vertices);
   // draw a 3d effect edge
-  void drawEdge(const Point_3& from, const Point_3 &to, std::vector<float> *vertices);
+  void drawEdge(const Point_3& from, const Point_3 &to, Coords_ptr&  vertices);
   // draw a facet
-  void drawFacet(const Triangle_3& t, std::vector<float> *vertices);
+  void drawFacet(const Triangle_3& t, Coords_ptr&  vertices);
   // test whether the give 3D point is on the sphere
   inline bool isOnSphere( const Point_3 & pt ) {
     return ( (pt.x()*pt.x() + pt.y()*pt.y() + pt.z()*pt.z()) == (m_fRadius*m_fRadius) );
@@ -347,75 +349,74 @@ private:
   static const int vaoSize = 29;
   static const int vboSize = 34;
   // define material
-   QVector4D        ambient;
-   QVector4D        diffuse;
-   QVector4D        specular;
-   GLfloat      shininess ;
-      int poly_vertexLocation[3];
-      int normalsLocation[3];
-      int mvpLocation[3];
-      int mvLocation[2];
-      int centerLocation[5];
-      int colorLocation[3];
-      int lightLocation[5*2];
+  QVector4D        ambient;
+  QVector4D        diffuse;
+  QVector4D        specular;
+  GLfloat      shininess ;
+  int poly_vertexLocation[3];
+  int normalsLocation[3];
+  int mvpLocation[3];
+  int mvLocation[2];
+  int centerLocation[5];
+  int colorLocation[3];
+  int lightLocation[5*2];
 
-      bool are_buffers_initialized;
-      bool extension_is_found;
+  bool are_buffers_initialized;
+  bool extension_is_found;
 
-      std::vector<float> *pos_emptyFacet;
-      std::vector<float> *pos_emptySphere;
-      std::vector<float> *points_emptySphere;
-      std::vector<float> *pos_points;
-      std::vector<float> *pos_newPoint;
-      std::vector<float> *pos_selectedVertex;
-      std::vector<float> *pos_movingPoint;
-      std::vector<float> *pos_queryPoint;
-      std::vector<float> *pos_trackBall;
-      std::vector<float> *points_trackBall;
-      std::vector<float> *pos_voronoi;
-      std::vector<float> *pos_delaunay;
-      std::vector<float> *pos_facets;
-      std::vector<float> *pos_newFacet;
-      std::vector<float> *pos_nearest_neighbor;
-      std::vector<float> *points_locationSphere;
-      std::vector<float> *points_cylinder;
-      std::vector<float> *normals_cylinder;
-      std::vector<float> *points_sphere;
-      std::vector<float> *normals_sphere;
-      std::vector<float> *normals_emptySphere;
-      std::vector<float> *normals_trackBall;
-      std::vector<float> *transfo1_voronoi;
-      std::vector<float> *transfo2_voronoi;
-      std::vector<float> *transfo3_voronoi;
-      std::vector<float> *transfo4_voronoi;
-      std::vector<float> *transfo1_delaunay;
-      std::vector<float> *transfo2_delaunay;
-      std::vector<float> *transfo3_delaunay;
-      std::vector<float> *transfo4_delaunay;
-      std::vector<float> *incremental_points;
-      std::vector<float> *incremental_next_point;
-      std::vector<float> *incremental_facet;
-      std::vector<float> *incremental_conflict;
+  Coords_ptr pos_emptyFacet;
+  Coords_ptr pos_emptySphere;
+  Coords_ptr points_emptySphere;
+  Coords_ptr pos_points;
+  Coords_ptr pos_newPoint;
+  Coords_ptr pos_selectedVertex;
+  Coords_ptr pos_movingPoint;
+  Coords_ptr pos_queryPoint;
+  Coords_ptr pos_trackBall;
+  Coords_ptr pos_voronoi;
+  Coords_ptr pos_delaunay;
+  Coords_ptr pos_facets;
+  Coords_ptr pos_newFacet;
+  Coords_ptr pos_nearest_neighbor;
+  Coords_ptr points_locationSphere;
+  Coords_ptr points_cylinder;
+  Coords_ptr normals_cylinder;
+  Coords_ptr points_sphere;
+  Coords_ptr points_trackBall;
+  Coords_ptr normals_sphere;
+  Coords_ptr normals_emptySphere;
+  Coords_ptr normals_trackBall;
+  Coords_ptr transfo1_voronoi;
+  Coords_ptr transfo2_voronoi;
+  Coords_ptr transfo3_voronoi;
+  Coords_ptr transfo4_voronoi;
+  Coords_ptr transfo1_delaunay;
+  Coords_ptr transfo2_delaunay;
+  Coords_ptr transfo3_delaunay;
+  Coords_ptr transfo4_delaunay;
+  Coords_ptr incremental_points;
+  Coords_ptr incremental_next_point;
+  Coords_ptr incremental_facet;
+  Coords_ptr incremental_conflict;
+  //pickin
+  QMap<float, int> picked_IDs;
+  QPoint picking_pos;
 
-      //picking
-      QMap<float, int> picked_IDs;
-      QPoint picking_pos;
-
-      QOpenGLBuffer buffers[vboSize];
-      QOpenGLVertexArrayObject vao[vaoSize];
-      QOpenGLShaderProgram rendering_program;
-      QOpenGLShaderProgram rendering_program_spheres;
-      QOpenGLShaderProgram rendering_program_cylinders;
-      typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-      typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-      PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
-      PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
-      void initialize_buffers();
-      void compute_elements();
-      void attrib_buffers(CGAL::QGLViewer*);
-      void compile_shaders();
-      void draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
-      void draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
+  QOpenGLBuffer buffers[vboSize];
+  QOpenGLVertexArrayObject vao[vaoSize];
+  QOpenGLShaderProgram rendering_program;
+  QOpenGLShaderProgram rendering_program_spheres;
+  QOpenGLShaderProgram rendering_program_cylinders;
+  typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+  typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+  PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+  PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+  void initialize_buffers();
+  void compute_elements();
+  void attrib_buffers(CGAL::QGLViewer*);
+  void compile_shaders();
+  void draw_cylinder(float R, int prec, Coords_ptr&  vertices, Coords_ptr&  normals);
+  void draw_sphere(float R, int prec, Coords_ptr&  vertices, Coords_ptr&  normals);
 };
 
 #endif
