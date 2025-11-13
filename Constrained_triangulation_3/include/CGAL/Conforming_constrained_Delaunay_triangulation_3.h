@@ -131,6 +131,9 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#if __has_include(<version>)
+#  include <version>
+#endif
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
 #endif

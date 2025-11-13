@@ -57,6 +57,9 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#if __has_include(<version>)
+#  include <version>
+#endif
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #  include <ranges>
