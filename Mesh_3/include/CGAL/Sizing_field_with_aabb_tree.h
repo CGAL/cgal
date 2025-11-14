@@ -245,7 +245,7 @@ public:
           FT curve_length = d_ptr->domain.curve_length(curve_index);
           auto loc =
             d_ptr->domain.locate_corner(curve_index, pair.first);
-          Point_3 other_point =
+          auto [other_point, _] =
             d_ptr->domain.construct_point_on_curve(pair.first,
                                                    curve_index,
                                                    curve_length / 2,
