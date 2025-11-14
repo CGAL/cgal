@@ -26,11 +26,11 @@ void test_traits()
   std::ofstream("clipped.off") << m;
 }
 
-void test_kernel()
+void test_kernel(std::string fname)
 {
   CGAL::Real_timer timer;
   Mesh m;
-  std::ifstream(CGAL::data_file_path("meshes/blobby.off")) >> m;
+  std::ifstream(fname) >> m;
 
   timer.start();
   Mesh kernel = PMP::experimental::kernel(m);
@@ -40,11 +40,11 @@ void test_kernel()
   std::cout << "test_kernel done in " << timer.time() << "\n";
 }
 
-void test_exact_kernel()
+void test_exact_kernel(std::string fname)
 {
   CGAL::Real_timer timer;
   EMesh m;
-  std::ifstream(CGAL::data_file_path("meshes/blobby.off")) >> m;
+  std::ifstream(fname) >> m;
   timer.start();
   EMesh kernel = PMP::experimental::kernel(m);
   timer.stop();
@@ -53,11 +53,11 @@ void test_exact_kernel()
   std::cout << "test_exact_kernel done in " << timer.time() << "\n";
 }
 
-void test_kernel_with_chull()
+void test_kernel_with_chull(std::string fname)
 {
   CGAL::Real_timer timer;
   Mesh m;
-  std::ifstream(CGAL::data_file_path("meshes/blobby.off")) >> m;
+  std::ifstream(fname) >> m;
 
   timer.start();
   Mesh kernel = PMP::experimental::kernel_using_chull(m);
@@ -66,11 +66,11 @@ void test_kernel_with_chull()
   std::ofstream("kernel_with_chull.off") << kernel;
   std::cout << "test_kernel_with_chull done in " << timer.time() << "\n";
 }
-void test_kernel_with_chull_and_constructions()
+void test_kernel_with_chull_and_constructions(std::string fname)
 {
   CGAL::Real_timer timer;
   Mesh m;
-  std::ifstream(CGAL::data_file_path("meshes/blobby.off")) >> m;
+  std::ifstream(fname) >> m;
 
   timer.start();
   Mesh kernel = PMP::experimental::kernel_using_chull_and_constructions(m);
@@ -80,11 +80,12 @@ void test_kernel_with_chull_and_constructions()
   std::cout << "test_kernel_with_chull_and_constructions done in " << timer.time() << "\n";
 }
 
-int main()
+int main(int argc, char** argv)
 {
   test_traits();
-  test_kernel();
-  test_exact_kernel();
-  test_kernel_with_chull();
-  test_kernel_with_chull_and_constructions();
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  test_kernel(filename);
+  test_exact_kernel(filename);
+  test_kernel_with_chull(filename);
+  test_kernel_with_chull_and_constructions(filename);
 }
