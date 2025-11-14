@@ -246,6 +246,10 @@ bool write_polygon_mesh(const std::string& fname,
     return write_OBJ(fname, g, np);
   else if(ext == "off")
     return write_OFF(fname, g, np);
+#ifdef CGAL_USE_OPENMESH
+  else if(ext == "om")
+    return write_OM(fname, g, np);
+#endif
   else if(ext == "ply")
     return write_PLY(fname, g, np);
   else if(ext == "stl")
