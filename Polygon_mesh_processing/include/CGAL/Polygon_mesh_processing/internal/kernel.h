@@ -189,13 +189,15 @@ kernel_using_chull(const TriangleMesh& pm,
                          get(vpm,target(next(h, pm), pm)) );
   }
 
+  auto origin_opt = CGAL::halfspace_intersection_interior_point_3(planes.begin(), planes.end());
+
   TriangleMesh kernel;
 
-  // if no point inside the intersection is provided, one
-  // will be automatically found using linear programming
-  CGAL::halfspace_intersection_3(planes.begin(),
-                                 planes.end(),
-                                 kernel );
+  if (origin_opt.has_value())
+    CGAL::halfspace_intersection_3(planes.begin(),
+                                   planes.end(),
+                                   kernel,
+                                   origin_opt);
 
   return kernel;
 }
@@ -228,13 +230,15 @@ kernel_using_chull_and_constructions(const TriangleMesh& pm,
                          get(vpm,target(next(h, pm), pm)) );
   }
 
+  auto origin_opt = CGAL::halfspace_intersection_interior_point_3(planes.begin(), planes.end());
+
   TriangleMesh kernel;
 
-  // if no point inside the intersection is provided, one
-  // will be automatically found using linear programming
-  CGAL::halfspace_intersection_with_constructions_3(planes.begin(),
-                                                    planes.end(),
-                                                    kernel );
+  if (origin_opt.has_value())
+    CGAL::halfspace_intersection_with_constructions_3(planes.begin(),
+                                                      planes.end(),
+                                                      kernel,
+                                                      origin_opt);
 
   return kernel;
 }
