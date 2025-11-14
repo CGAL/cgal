@@ -30,7 +30,11 @@ void test_kernel(std::string fname)
 {
   CGAL::Real_timer timer;
   Mesh m;
-  std::ifstream(fname) >> m;
+  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
+  {
+    std::cerr << "ERROR: cannot read " << fname << "\n";
+    exit(1);
+  }
 
   timer.start();
   Mesh kernel = PMP::experimental::kernel(m);
@@ -44,7 +48,11 @@ void test_exact_kernel(std::string fname)
 {
   CGAL::Real_timer timer;
   EMesh m;
-  std::ifstream(fname) >> m;
+  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
+  {
+    std::cerr << "ERROR: cannot read " << fname << "\n";
+    exit(1);
+  }
   timer.start();
   EMesh kernel = PMP::experimental::kernel(m);
   timer.stop();
@@ -57,7 +65,11 @@ void test_kernel_with_chull(std::string fname)
 {
   CGAL::Real_timer timer;
   Mesh m;
-  std::ifstream(fname) >> m;
+  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
+  {
+    std::cerr << "ERROR: cannot read " << fname << "\n";
+    exit(1);
+  }
 
   timer.start();
   Mesh kernel = PMP::experimental::kernel_using_chull(m);
@@ -70,7 +82,11 @@ void test_kernel_with_chull_and_constructions(std::string fname)
 {
   CGAL::Real_timer timer;
   Mesh m;
-  std::ifstream(fname) >> m;
+  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
+  {
+    std::cerr << "ERROR: cannot read " << fname << "\n";
+    exit(1);
+  }
 
   timer.start();
   Mesh kernel = PMP::experimental::kernel_using_chull_and_constructions(m);
