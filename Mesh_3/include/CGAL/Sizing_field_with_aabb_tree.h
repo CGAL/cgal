@@ -228,13 +228,13 @@ public:
 
     //fill incidences of corners with curves
     d_ptr->corners_incident_curves.resize(d_ptr->corners.size());
-    for(const typename Corners_indices::value_type& pair : d_ptr->corners_indices)
+    for(const auto& [corner_pt, corner_index] : d_ptr->corners_indices)
     {
-      d_ptr->dt.insert(pair.first);
+      d_ptr->dt.insert(corner_pt);
 
       // Fill `corners_incident_curves[corner_id]`
-      Curves_ids& incident_curves = d_ptr->corners_incident_curves[pair.second];
-      d_ptr->domain.get_corner_incident_curves(pair.second,
+      Curves_ids& incident_curves = d_ptr->corners_incident_curves[corner_index];
+      d_ptr->domain.get_corner_incident_curves(corner_index,
                                         std::inserter(incident_curves,
                                                       incident_curves.end()));
       // For each incident loop, insert a point on the loop, as far as
@@ -244,9 +244,9 @@ public:
         if(domain.is_loop(curve_index)) {
           FT curve_length = d_ptr->domain.curve_length(curve_index);
           auto loc =
-            d_ptr->domain.locate_corner(curve_index, pair.first);
+            d_ptr->domain.locate_corner(curve_index, corner_pt);
           auto [other_point, _] =
-            d_ptr->domain.construct_point_on_curve(pair.first,
+            d_ptr->domain.construct_point_on_curve(corner_pt,
                                                    curve_index,
                                                    curve_length / 2,
                                                    loc);
