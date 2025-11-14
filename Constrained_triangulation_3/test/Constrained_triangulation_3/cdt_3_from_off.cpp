@@ -486,10 +486,10 @@ int merge_facets_region_growing(Mesh& mesh,
                                 double coplanar_polygon_max_angle,
                                 const std::string& dump_surface_mesh_after_merge_filename) {
   namespace np = CGAL::parameters;
-  int number_of_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+  int number_of_patches = static_cast<int>(CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
       mesh, pmaps.patch_id_map,
       np::maximum_distance(coplanar_polygon_max_distance)
-         .maximum_angle(coplanar_polygon_max_angle));
+         .maximum_angle(coplanar_polygon_max_angle)));
   for(auto f: faces(mesh)) {
     if(get(pmaps.patch_id_map, f) < 0) {
       std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << number_of_patches << '\n';
