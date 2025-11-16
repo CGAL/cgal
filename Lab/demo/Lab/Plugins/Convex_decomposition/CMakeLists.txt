@@ -1,5 +1,11 @@
 include(CGALlab_macros)
 
-cgal_lab_plugin(nef_plugin Nef_plugin)
-target_link_libraries(nef_plugin PRIVATE scene_nef_polyhedron_item scene_surface_mesh_item)
+set(CMAKE_AUTOMOC ON)
 
+cgal_lab_plugin(nef_plugin Nef_plugin)
+
+qt6_wrap_ui(acdUI_FILES Approximate_convex_decomposition_dialog.ui)
+cgal_lab_plugin(acd_plugin Approximate_convex_decomposition_plugin ${acdUI_FILES})
+
+target_link_libraries(nef_plugin PRIVATE scene_nef_polyhedron_item scene_surface_mesh_item)
+target_link_libraries(acd_plugin PRIVATE scene_surface_mesh_item)
