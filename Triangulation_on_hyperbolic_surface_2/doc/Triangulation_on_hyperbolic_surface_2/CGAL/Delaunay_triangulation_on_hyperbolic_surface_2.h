@@ -156,7 +156,9 @@ public:
   Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility = false); // const ?
 
   /*!
-    Inserts `query` in the Delaunay triangulation after having locating it, starting from `hint`.
+    Inserts `query` in the Delaunay triangulation after having located it, starting from `hint`.
+
+    \pre <code>is_valid()</code> and <code>norm(Complex_number(query.x(), query.y())) < Number(1)</code>
   */
   void insert(Point const & query, Anchor & hint);
 
@@ -178,6 +180,8 @@ public:
   bool epsilon_net(double const epsilon, unsigned const p = 1);
   /*!
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-covering of the surface.
+
+    \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>
   */
   bool is_epsilon_covering(const double epsilon) const;
   /*!

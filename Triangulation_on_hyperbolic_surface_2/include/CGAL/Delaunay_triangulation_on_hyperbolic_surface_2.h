@@ -488,7 +488,6 @@ typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
 {
-	// Complex_number z_query (query.x(), query.y());
 	CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
 	CGAL_expensive_precondition(is_valid());
 
@@ -835,7 +834,8 @@ void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 insert(Point const & query, Anchor & hint)
 {
-	CGAL_expensive_precondition(Base::is_Delaunay());
+	CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
+	CGAL_expensive_precondition(is_valid());
 
 	std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(query, hint);
 	std::list<Dart_descriptor> darts_to_flip;
@@ -935,6 +935,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 epsilon_net(double const epsilon, unsigned const p)
 {
 	CGAL_precondition(is_epsilon_packing(epsilon));
+	CGAL_precondition(p > 0);
 	Interval const delta_epsilon = cosh(epsilon) - 1;
 	Number const BOUND = upper(delta_epsilon);
 	size_t triangles_list_mark = this->combinatorial_map_.get_new_mark();
