@@ -4,11 +4,8 @@
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
 #include <CGAL/Root_of_traits.h>
 #include <boost/numeric/interval.hpp>
-
-// #include <CGAL/number_utils.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpfr.h>
-// #include <type_traits>
 
 
 namespace CGAL{
@@ -327,9 +324,9 @@ is_valid() const
 			Point const & c1 = current.vertices[i];
 			Point const & a1 = current.vertices[ccw(i)];
 			Point const & b1 = current.vertices[cw(i)];
-			CGAL_precondition(norm(Complex_number(a1.x(), a1.y())) < Number(1));
-			CGAL_precondition(norm(Complex_number(b1.x(), b1.y())) < Number(1));
-			CGAL_precondition(norm(Complex_number(c1.x(), c1.y())) < Number(1));
+			CGAL_assertion(norm(Complex_number(a1.x(), a1.y())) < Number(1));
+			CGAL_assertion(norm(Complex_number(b1.x(), b1.y())) < Number(1));
+			CGAL_assertion(norm(Complex_number(c1.x(), c1.y())) < Number(1));
 			Complex_number cross_ratio = Base::get_cross_ratio(current_dart);
 			Point d1 = Base::fourth_point_from_cross_ratio(a1, b1, c1, cross_ratio);
 
