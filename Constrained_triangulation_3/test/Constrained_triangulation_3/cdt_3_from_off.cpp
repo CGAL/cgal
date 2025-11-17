@@ -125,8 +125,8 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-geometric-errors: debug geometric error handling
   --debug-polygon-insertion: debug polygon insertion process
   --use-finite-edges-map: use a hash map for finite edges (default: false)
-  --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: true)
-  --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: true)
+  --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
+  --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
 
   --verbose/-V: verbose (can be used several times)
   --quiet: do not print anything
@@ -165,8 +165,8 @@ struct CDT_options
   bool        debug_geometric_errors              = false;
   bool        debug_polygon_insertion             = false;
   bool        use_finite_edges_map                = false;
-  bool        use_epeck_for_normals               = true;
-  bool        use_epeck_for_Steiner_points        = true;
+  bool        use_epeck_for_normals               = false;
+  bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
   bool        bisect_failures                     = false;
   double      vertex_vertex_epsilon               = 0.; // 1e-14;
