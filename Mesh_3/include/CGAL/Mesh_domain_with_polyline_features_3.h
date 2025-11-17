@@ -36,6 +36,7 @@
 #include <map>
 #include <algorithm>
 #include <type_traits>
+#include <unordered_map>
 
 #include <variant>
 #include <memory>
@@ -218,6 +219,7 @@ public:
   /// returns the length of the polyline
   FT length() const
   {
+    length_timer.start();
     if(length_ < 0.)
     {
       FT result(0);
@@ -229,6 +231,7 @@ public:
       }
       length_ = result;
     }
+    length_timer.stop();
     return length_;
   }
 
@@ -445,20 +448,27 @@ private:
   const_iterator locate(const Point_3& p, bool end_point_first=false) const
   {
     CGAL_precondition(is_valid());
+    old_locate_timer.start();
 
     // First look if p is one of the points of the polyline
     const_iterator result = std::find(points_.begin(), points_.end(), p);
     if ( result != points_.end() )
     {
-      if ( result != points_.begin() )
-      { return --result; }
+      if ( result != points_.begin() ) {
+        old_locate_timer.stop();
+        return --result;
+      }
       else
       {
         // Treat loops
-        if ( end_point_first && p == end_point() )
-        { return last_segment_source(); }
-        else
-        { return result; }
+        if ( end_point_first && p == end_point() ) {
+          old_locate_timer.stop();
+          return last_segment_source();
+        }
+        else {
+          old_locate_timer.stop();
+          return result;
+        }
       }
     }
 
@@ -515,7 +525,7 @@ private:
       previous = it;
     } // end the while loop on the vertices of the polyline
 
-
+    old_locate_timer.stop();
     if(result == points_.begin()) {
       return (end_point_first && !nearest_is_a_segment) ? last_segment_source() : points_.begin();
     } else {
@@ -857,6 +867,15 @@ public:
                                       const Point_3& r,
                                       const Curve_index& index) const;
 
+  CGAL::Sign distance_sign_along_loop(const Point_3& p,
+                                      const Point_3& q,
+                                      const Point_3& r,
+                                      const Curve_index& index,
+                                      Polyline_const_iterator pit,
+                                      Polyline_const_iterator qit,
+                                      Polyline_const_iterator rit) const;
+
+
   /// implements `MeshDomainWithFeatures_3::distance_sign()`.
   CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
                            const Curve_index& index,
@@ -1012,6 +1031,7 @@ public:
 private:
   mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
+  mutable std::unordered_map<Point_3, Polyline_const_iterator> vertex_to_polyline_iterator_;
 
 public:
   const Corners_incidences& corners_incidences_map() const
@@ -1058,6 +1078,29 @@ public:
     std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 #endif
   } // build_curves_aabb_tree()
+
+  Polyline_const_iterator locate_in_polyline(const Point_3& p,
+                                             const int dim,
+                                             const Curve_index& index) const
+  {
+     ++locate_counter;
+
+     CGAL_assertion(dim < 2);
+
+     Polyline_const_iterator it;
+     if(dim == 0) // corner
+       it = locate_corner(index, p);
+     else
+       it = vertex_to_polyline_iterator_.at(p);
+
+     //locate_timer.stop();
+     return it;
+  }
+
+  void set_polyline_iterator(const Point_3& p, Polyline_const_iterator it) const
+  {
+    vertex_to_polyline_iterator_[p] = it;
+  }
 
   void dump_curve(const Curve_index& index, const std::string& prefix) const
   {
@@ -1731,6 +1774,34 @@ distance_sign_along_loop(const Point_3& p,
   // Compare pq and pr
   if ( pq <= pr ) { return CGAL::POSITIVE; }
   else { return CGAL::NEGATIVE; }
+}
+
+template <class MD_>
+CGAL::Sign Mesh_domain_with_polyline_features_3<MD_>::
+distance_sign_along_loop(const Point_3& p,
+                         const Point_3& q,
+                         const Point_3& r,
+                         const Curve_index& index,
+                         Polyline_const_iterator pit,
+                         Polyline_const_iterator qit,
+                         Polyline_const_iterator rit) const
+{
+  CGAL_assertion(p != q);
+  CGAL_assertion(p != r);
+  CGAL_assertion(r != q);
+
+  // Find edge
+  typename Edges::const_iterator eit = edges_.find(index);
+  CGAL_assertion(eit != edges_.end());
+  CGAL_assertion(eit->second.is_loop());
+
+  FT pq = eit->second.curve_segment_length(p,q,CGAL::POSITIVE,pit,qit);
+  FT pr = eit->second.curve_segment_length(p,r,CGAL::POSITIVE,pit,rit);
+
+  // Compare pq and pr
+  if ( pq <= pr ) { return CGAL::POSITIVE; } else {
+    return CGAL::NEGATIVE;
+  }
 }
 
 template <class MD_>

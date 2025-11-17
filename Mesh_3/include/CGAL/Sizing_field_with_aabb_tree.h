@@ -575,7 +575,12 @@ public:
           if (const Point_3* pp = std::get_if<Point_3>(&*int_res))
           {
             FT new_sqd = CGAL::squared_distance(p, *pp);
-            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
+            auto p_polyline_const_it = ppid.second.second;
+            auto pp_polyline_const_it = prim.id().second;
+            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp,
+                                                                       p_polyline_const_it,
+                                                                       pp_polyline_const_it,
+                                                                       curve_id));
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cerr << "Intersection point : Point_3(" << *pp << ") ";

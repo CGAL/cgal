@@ -494,24 +494,7 @@ private:
     return use_edge_distance_;
   }
 
-  Polyline_iterator locate_in_polyline(Vertex_handle vh, const Curve_index& index) const
-  {
-    CGAL_assertion(vh->in_dimension() < 2);
 
-    if(vh->in_dimension() == 0) //corner
-    {
-      auto cp = c3t3_.triangulation().geom_traits().construct_point_3_object();
-      return domain_.locate_corner(index, cp(vh->point()));
-    }
-    else
-      return vertex_to_polyline_iterator_.at(vh);
-  }
-
-  void set_polyline_iterator(Vertex_handle vh, Polyline_iterator it)
-  {
-    CGAL_assertion(vh->in_dimension() == 1);
-    vertex_to_polyline_iterator_[vh] = it;
-  }
 
 private:
   C3T3& c3t3_;
@@ -526,7 +509,6 @@ private:
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
   const std::size_t maximal_number_of_vertices_;
-  std::unordered_map<Vertex_handle, Polyline_iterator> vertex_to_polyline_iterator_;
   Mesh_error_code* const error_code_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
@@ -1090,7 +1072,7 @@ insert_balls_on_edges()
                                   p_index,
                                   Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
-          set_polyline_iterator(vp, p_polyline_iter);
+          domain_.set_polyline_iterator(p, p_polyline_iter);
         }
 
         // No 'else' because in that case 'is_vertex(..)' already filled
@@ -1264,11 +1246,12 @@ insert_balls(const Vertex_handle& vp,
                                         curve_index, d_sign)
                 << ")\n";
 #endif
-      const auto [bp, polyline_iter] =
-        domain_.construct_point_on_curve(cp(vp_wp),
+      const Bare_point p = cp(vp_wp);
+      const auto [bp, polyline_iter] = //[Bare_point, Polyline_const_iterator]
+        domain_.construct_point_on_curve(p,
                                          curve_index,
                                          d_signF * d / 2,
-                                         locate_in_polyline(vp, curve_index));
+                                         domain_.locate_in_polyline(p, vp->in_dimension(), curve_index));
       const Bare_point new_point = bp;
       const int dim = 1; // new_point is on edge
       const Index index = domain_.index_from_curve_index(curve_index);
@@ -1285,7 +1268,7 @@ insert_balls(const Vertex_handle& vp,
                            Vertex_handle(),
                            out);
       const Vertex_handle new_vertex = pair.first;
-      set_polyline_iterator(new_vertex, polyline_iter);
+      domain_.set_polyline_iterator(new_point, polyline_iter);
 
       if(forced_stop()) return out;
       out = pair.second;
@@ -1363,7 +1346,7 @@ insert_balls(const Vertex_handle& vp,
   const Index index = domain_.index_from_curve_index(curve_index);
 
   // Launch balls
-  Polyline_iterator p_loc = locate_in_polyline(vp, curve_index);
+  Polyline_iterator p_loc = domain_.locate_in_polyline(p, vp->in_dimension(), curve_index);
   CGAL_assertion(p_loc == domain_.locate_point(curve_index, p));
   Bare_point prev_pt = p;
   FT dist_to_prev = pt_dist;
@@ -1383,7 +1366,7 @@ insert_balls(const Vertex_handle& vp,
       smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
     out = pair.second;
-    set_polyline_iterator(new_vertex, polyline_iter);
+    domain_.set_polyline_iterator(new_point, polyline_iter);
 
     // Add edge to c3t3
     if(!c3t3_.is_in_complex(prev, new_vertex)) {
@@ -1600,8 +1583,8 @@ approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
   const Bare_point& pb = vb->point().point();
 
   const Curve_index curve_index = c3t3_.curve_index(e);
-  Polyline_iterator pa_it = locate_in_polyline(va, curve_index);
-  Polyline_iterator pb_it = locate_in_polyline(vb, curve_index);
+  Polyline_iterator pa_it = domain_.locate_in_polyline(pa, va->in_dimension(), curve_index);
+  Polyline_iterator pb_it = domain_.locate_in_polyline(pb, vb->in_dimension(), curve_index);
 
   // Construct the geodesic middle point
   const FT signed_geodesic_distance
@@ -1875,14 +1858,14 @@ curve_segment_length(const Vertex_handle v1,
       v2_valid_curve_index = (domain_.curve_index(v2->index()) == curve_index);
   }
 
-  const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
-  const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
+  const Bare_point p1 = cp(c3t3_.triangulation().point(v1));
+  const Bare_point p2 = cp(c3t3_.triangulation().point(v2));
 
   FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
-    ? domain_.curve_segment_length(cp(v1_wp),
-                                   cp(v2_wp),
-                                   locate_in_polyline(v1, curve_index),
-                                   locate_in_polyline(v2, curve_index),
+    ? domain_.curve_segment_length(p1,
+                                   p2,
+                                   domain_.locate_in_polyline(p1, v1->in_dimension(), curve_index),
+                                   domain_.locate_in_polyline(p2, v2->in_dimension(), curve_index),
                                    curve_index,
                                    orientation)
     : compute_distance(v1, v2); //curve polyline may not be consistent
@@ -1934,12 +1917,15 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
     const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
     const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
 
+    const Bare_point p1 = cp(v1_wp);
+    const Bare_point p2 = cp(v2_wp);
+
     const bool cov = domain_.is_curve_segment_covered(curve_index,
-                                                      orientation,
-                                                      cp(v1_wp), cp(v2_wp),
-                                                      cw(v1_wp), cw(v2_wp),
-                                                      locate_in_polyline(v1, curve_index),
-                                                      locate_in_polyline(v2, curve_index));
+                               orientation,
+                               p1, p2,
+                               cw(v1_wp), cw(v2_wp),
+                               domain_.locate_in_polyline(p1, v1->in_dimension(), curve_index),
+                               domain_.locate_in_polyline(p2, v2->in_dimension(), curve_index));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     if(cov) {
@@ -1973,20 +1959,28 @@ orientation_of_walk(const Vertex_handle& start,
 
   const Weighted_point& start_wp = c3t3_.triangulation().point(start);
   const Weighted_point& next_wp = c3t3_.triangulation().point(next);
+  const Bare_point start_p = cp(start_wp);
+  const Bare_point next_p = cp(next_wp);
 
   if(domain_.is_loop(curve_index)) {
     // if the curve is a cycle, the direction is the direction passing
     // through the next vertex, and the next-next vertex
     Vertex_handle next_along_curve = next_vertex_along_curve(next,start,curve_index);
     const Weighted_point& next_along_curve_wp = c3t3_.triangulation().point(next_along_curve);
+    const Bare_point next_along_curve_p = cp(next_along_curve_wp);
 
     return domain_.distance_sign_along_loop(
-             cp(start_wp), cp(next_wp), cp(next_along_curve_wp), curve_index);
-  } else {
+              start_p, next_p, next_along_curve_p, curve_index,
+              domain_.locate_in_polyline(start_p, start->in_dimension(), curve_index),
+              domain_.locate_in_polyline(next_p, next->in_dimension(), curve_index),
+              domain_.locate_in_polyline(next_along_curve_p, next_along_curve->in_dimension(), curve_index));
+  }
+  else
+  {
     // otherwise, the sign is just the sign of the geodesic distance
-    return domain_.distance_sign(cp(start_wp), cp(next_wp), curve_index,
-                                 locate_in_polyline(start, curve_index),
-                                 locate_in_polyline(next, curve_index));
+    return domain_.distance_sign(start_p, next_p, curve_index,
+                                 domain_.locate_in_polyline(start_p, start->in_dimension(), curve_index),
+                                 domain_.locate_in_polyline(next_p, next->in_dimension(), curve_index));
   }
 }
 
