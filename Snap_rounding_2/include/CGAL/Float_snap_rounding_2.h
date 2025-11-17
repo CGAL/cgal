@@ -185,13 +185,15 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 
         if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
         {
-          if constexpr(std::is_same_v<Exact_predicates_exact_constructions_kernel, typename Traits::Exact_type>){
+          if (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename Traits::Exact_type>)
+          {
+            internal::Evaluate<typename Traits::FT> evaluate;
             // We refine the pts to reduce the rounding shift and check again
-            pts[pi].exact();
-            pts[pl[pl.size()-2]].exact();
+            evaluate(pts[pi]);
+            evaluate(pts[pl[pl.size()-2]]);
             // The two following call of exact act on seg variables since they appear in its DAG
-            pts[pl.back()].exact();
-            pts[pl.front()].exact();
+            evaluate(pts[pl.back()]);
+            evaluate(pts[pl.front()]);
             // Update the bounds
             round_bound_pts[pi]=round_bound(pts[pi]);
             round_bound_pts[pl[pl.size()-2]]=round_bound(pts[pl[pl.size()-2]]);
