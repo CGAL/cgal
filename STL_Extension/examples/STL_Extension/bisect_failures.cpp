@@ -17,22 +17,22 @@ int main(int argc, char* argv[]) {
 
   Mesh mesh_a;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh_a)) {
-    std::cerr << "Error: cannot read file " << filename << "\n";
+    std::cerr << "Error: cannot read file " << filename << std::endl
     return EXIT_FAILURE;
   }
 
   std::cout << "Loaded mesh with " << mesh_a.number_of_vertices() << " vertices and "
-            << mesh_a.number_of_faces() << " faces\n";
+            << mesh_a.number_of_faces() << " faces" << std::endl;
 
   const std::string clip_name = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/cube.off");
   Mesh mesh_b;
   if(!CGAL::IO::read_polygon_mesh(clip_name, mesh_b)) {
-    std::cerr << "Error: cannot read file " << clip_name << "\n";
+    std::cerr << "Error: cannot read file " << clip_name << std::endl
     return EXIT_FAILURE;
   }
 
   std::cout << "Loaded clipping mesh mesh with " << mesh_b.number_of_vertices() << " vertices and "
-            << mesh_b.number_of_faces() << " faces\n";
+            << mesh_b.number_of_faces() << " faces" << std::endl
 
   //! [bisect_failures_snippet]
   // Define the callbacks for bisect_failures
@@ -57,23 +57,23 @@ int main(int argc, char* argv[]) {
   auto save = [](const Mesh& m, const std::string& prefix) {
     std::string out_filename = prefix + ".off";
     if(!CGAL::IO::write_polygon_mesh(out_filename, m)) {
-      std::cerr << "Warning: Could not save mesh to " << out_filename << "\n";
+      std::cerr << "Warning: Could not save mesh to " << out_filename << std::endl
     } else {
       std::cout << "Saved mesh with " << m.number_of_faces()
-                << " faces to " << out_filename << "\n";
+                << " faces to " << out_filename << std::endl
     }
   };
 
   // Run bisection to find minimal failing case
-  std::cout << "\n=== Starting bisection to find minimal failing case ===\n\n";
+  std::cout << "\n=== Starting bisection to find minimal failing case ===\n" << std::endl
 
   int result = CGAL::bisect_failures(mesh_a, get_size, simplify, run, save);
   //! [bisect_failures_snippet]
 
   if(result == EXIT_SUCCESS) {
-    std::cout << "\nNo failure detected during bisection.\n";
+    std::cout << "\nNo failure detected during bisection." << std::endl
   } else {
-    std::cout << "\nFailure detected during bisection. Result code: " << result << "\n";
+    std::cout << "\nFailure detected during bisection. Result code: " << result << std::endl
   }
 
   return EXIT_SUCCESS;
