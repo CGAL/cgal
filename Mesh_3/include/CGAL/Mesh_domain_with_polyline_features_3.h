@@ -219,7 +219,6 @@ public:
   /// returns the length of the polyline
   FT length() const
   {
-    length_timer.start();
     if(length_ < 0.)
     {
       FT result(0);
@@ -231,7 +230,6 @@ public:
       }
       length_ = result;
     }
-    length_timer.stop();
     return length_;
   }
 
@@ -448,27 +446,20 @@ private:
   const_iterator locate(const Point_3& p, bool end_point_first=false) const
   {
     CGAL_precondition(is_valid());
-    old_locate_timer.start();
 
     // First look if p is one of the points of the polyline
     const_iterator result = std::find(points_.begin(), points_.end(), p);
     if ( result != points_.end() )
     {
-      if ( result != points_.begin() ) {
-        old_locate_timer.stop();
-        return --result;
-      }
+      if ( result != points_.begin() )
+      { return --result; }
       else
       {
         // Treat loops
-        if ( end_point_first && p == end_point() ) {
-          old_locate_timer.stop();
-          return last_segment_source();
-        }
-        else {
-          old_locate_timer.stop();
-          return result;
-        }
+        if ( end_point_first && p == end_point() )
+        { return last_segment_source(); }
+        else
+        { return result; }
       }
     }
 
@@ -525,7 +516,6 @@ private:
       previous = it;
     } // end the while loop on the vertices of the polyline
 
-    old_locate_timer.stop();
     if(result == points_.begin()) {
       return (end_point_first && !nearest_is_a_segment) ? last_segment_source() : points_.begin();
     } else {
@@ -533,16 +523,12 @@ private:
     }
   }
 
-  // FT squared_distance(const Point_3& p, const Point_3& q) const
-  // {
-  //   typename Kernel::Compute_squared_distance_3 sq_distance =
-  //     Kernel().compute_squared_distance_3_object();
-  //   return sq_distance(p,q);
-  // }
 
   FT distance(const Point_3& p, const Point_3& q) const
   {
-    return CGAL::sqrt(squared_distance(p, q));
+    typename Kernel::Compute_squared_distance_3 sq_distance =
+      Kernel().compute_squared_distance_3_object();
+    return CGAL::sqrt(sq_distance(p, q));
   }
 
   Angle angle(const Point_3& p,
@@ -1083,8 +1069,6 @@ public:
                                              const int dim,
                                              const Curve_index& index) const
   {
-     ++locate_counter;
-
      CGAL_assertion(dim < 2);
 
      Polyline_const_iterator it;
@@ -1093,7 +1077,6 @@ public:
      else
        it = vertex_to_polyline_iterator_.at(p);
 
-     //locate_timer.stop();
      return it;
   }
 
