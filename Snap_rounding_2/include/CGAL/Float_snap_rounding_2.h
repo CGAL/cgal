@@ -185,7 +185,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 
         if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
         {
-          if (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename Traits::Exact_type>)
+          if constexpr (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename Traits::Exact_type>)
           {
             internal::Evaluate<typename Traits::FT> evaluate;
             // We refine the pts to reduce the rounding shift and check again
