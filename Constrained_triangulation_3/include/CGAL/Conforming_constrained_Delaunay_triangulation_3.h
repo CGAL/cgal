@@ -4100,7 +4100,13 @@ public:
     if(std::any_of(begin(face_data), end(face_data),
                    [](const auto& fd) { return fd.skip_face; }))
     {
-      CGAL_error_msg("Constrained Delaunay triangulation could not be restored: some faces could not be processed.");
+      std::vector<CDT_3_signed_index> failed_faces;
+      for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_data.size()); i < end; ++i) {
+        if(face_data[i].skip_face) {
+          failed_faces.push_back(i);
+        }
+      }
+      throw Constrained_triangulation_insertion_exception(failed_faces);
     }
   }
 
