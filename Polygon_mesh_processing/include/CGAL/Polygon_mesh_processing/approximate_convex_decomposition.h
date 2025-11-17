@@ -1324,7 +1324,6 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
 #else
   CGAL_USE(candidates);
   CGAL_USE(hull_volume);
-  CGAL_USE(np);
   assert(false);
 #endif
 }
