@@ -16,6 +16,7 @@
 #include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/assertions.h>
 
@@ -57,6 +58,21 @@ std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surf
 
 template<class Traits, class Attributes>
 void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation)
+{
+  triangulation.from_stream(s);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+template<class Traits>
+std::ostream&
+operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
+{
+  triangulation.to_stream(s);
+  return s;
+}
+
+template<class Traits>
+void operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
 {
   triangulation.from_stream(s);
 }

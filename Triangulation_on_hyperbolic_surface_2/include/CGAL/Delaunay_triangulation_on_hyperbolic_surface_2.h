@@ -2,12 +2,13 @@
 #define CGAL_DELAUNAY_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Root_of_traits.h>
 #include <boost/numeric/interval.hpp>
-#include <memory>
-#include <CGAL/number_utils.h>
+
+// #include <CGAL/number_utils.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpfr.h>
-#include <type_traits>
+// #include <type_traits>
 
 
 namespace CGAL{
@@ -95,6 +96,7 @@ public:
 private:
 	unsigned const NULL_INDEX = -1;
 	unsigned const NB_SIDES = 3;
+	unsigned const DOUBLE_PREC = 53;
 
 	//---------- CONSTRUCTORS
 	void set_anchors();
@@ -123,7 +125,7 @@ private:
 	Number delta(Point const & u, Point const & v) const;
 	Algebraic_number delta(Voronoi_point const & u, Point const & v) const;
 	Voronoi_point circumcenter(Anchor const & anch) const;
-	Point approx_circumcenter(Voronoi_point c, int p = 1) const;
+	Point approx_circumcenter(Voronoi_point c, unsigned p = 1) const;
 	void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
@@ -422,10 +424,8 @@ from_stream(std::istream & s)
 		for(int i = 0; i < NB_SIDES; ++i) {
 			Number x; 
 			s >> x;
-			// Number x >> line;
 			Number y;
 			s >> y;
-			// Number y >> line;
 			anch.vertices[i] = Point(x, y);
 		}
 		set_attribute(anch.dart, anch);
@@ -896,13 +896,13 @@ circumcenter(Anchor const & anch) const
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter(Voronoi_point c, int p) const
+approx_circumcenter(Voronoi_point c, unsigned p) const
 {
 	Number x;
 	Number y;
 	if constexpr(std::is_same<Number, Gmpq>::value) {
 		CGAL_precondition(p > 0);
-		p *= 53;
+		p *= DOUBLE_PREC;
 		Gmpfr a_0 = Gmpfr( c.x().a0().numerator(), p) / Gmpfr( c.x().a0().denominator(), p);
 		Gmpfr a_1 = Gmpfr( c.x().a1().numerator(), p) / Gmpfr( c.x().a1().denominator(), p);
 		Gmpfr r = Gmpfr( c.x().root().numerator(), p) / Gmpfr( c.x().root().denominator(), p);
@@ -1100,23 +1100,6 @@ shortest_non_loop_edge() const
 		}
 	}
 	return std::acosh(1 + to_double(min_delta_length));
-}
-
-//---------- GLOBAL FUNCTIONS
-
-template<class Traits>
-std::ostream&
-operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
-{
-  triangulation.to_stream(s);
-  return s;
-}
-
-template<class Traits>
-void
-operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
-{
-  triangulation.from_stream(s);
 }
 
 }  // namespace CGAL
