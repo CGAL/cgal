@@ -45,9 +45,7 @@ struct Three_point_cut_plane_traits
     Point_3 operator()(const Plane_3& plane, const Point_3& p, const Point_3& q)
     {
       typename Kernel::Construct_plane_line_intersection_point_3 construction;
-      typename Kernel::Plane_3 k_plane(plane[0], plane[1], plane[2]);
-
-      return construction(k_plane, p, q);
+      return construction(plane[0], plane[1], plane[2], p, q);
     }
   };
 
