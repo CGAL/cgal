@@ -175,7 +175,7 @@ public:
     friend SparseChain operator*(const SparseChain &_chain, const Coefficient_ring& lambda);
 
     /*!
-     * \brief Performs matrix multiplication between a column chain and a row-chain and returns a column-based matrix.
+     * \brief Performs matrix multiplication between a column chain and a row chain and returns a column-based matrix.
      *
      * Generate a column-based matrix from the matrix multiplication and return it.
      * \pre chains must have the same `Coefficient_ring`.
@@ -184,20 +184,21 @@ public:
     friend SparseMatrix operator*(const SparseChain &column, const SparseChain &row);
 
     /*!
-     * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
+     * \brief Performs matrix multiplication between a column chain and a row chain and returns a row-based matrix.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
      * \pre chains must have the same `Coefficient_ring`.
      * \pre `column.is_column()`  and `row.is_row()`  must be `true`
      */
-    friend Sparse_matrix<Coefficient_ring, ROW> operator%(const Sparse_chain &column, const Sparse_chain &row);
+    friend SparseMatrix operator%(const Sparse_chain &column, const Sparse_chain &row);
 
     /*!
-     * \brief Performs dot product between two chains (ROW x COLUMN).
+     * \brief Performs dot product between a row chain and a column chain.
      *
-     * Chains must have the same `Coefficient_ring`.
+     * \pre chains must have the same `Coefficient_ring`.
+     * \pre `row.is_row()` and `column.is_column()` must be `true`
      */
-    friend Coefficient_ring operator*(const Sparse_chain<Coefficient_ring, ROW> &row, const Sparse_chain<Coefficient_ring, COLUMN> &column);
+    friend Coefficient_ring operator*(const Sparse_chain &row, const Sparse_chain &column);
 
     /*!
      * \brief Adds a chain to `this`.
@@ -223,7 +224,7 @@ public:
     /*!
      * \brief Transposes a sparse chain.
      *
-     * The result is a chain with storage format switched between `CGAL::OSM::COLUMN` and `CGAL::OSM::ROW`.
+     * The result is a chain with storage format switched between column and row.
      */
     SparseChain transpose();
 

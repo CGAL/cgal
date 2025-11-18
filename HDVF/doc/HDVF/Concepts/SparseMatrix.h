@@ -268,18 +268,20 @@ public:
      *
      * Generates a column-based chain from the matrix multiplication and returns it.
      *
-     * The matrix and the chain must have the same coefficient type.
+     * \pre the matrix and the chain must have the same `Coefficient_ring`.
+     * \pre `column.is_column()` must be `true`
      */
-    friend Sparse_chain<Coefficient_ring, COLUMN> operator*(const SparseMatrix& first, const Sparse_chain<Coefficient_ring, COLUMN>& second);
+    friend SparseChain operator*(const SparseMatrix& matrix, const SparseChain& column);
 
     /**
      * \brief Performs multiplication between a row-based chain and a matrix.
      *
      * Generates a row-based chain from the matrix multiplication and returns it.
      *
-     * The matrix and the chain must have the same coefficient type.
+     * \pre the matrix and the chain must have the same `Coefficient_ring`.
+     * \pre `row.is_row()` must be `true`
      */
-    friend Sparse_chain<Coefficient_ring, ROW> operator*(const Sparse_chain<Coefficient_ring, ROW>& first, const SparseMatrix& second);
+    friend SparseChain operator*(const SparseChain& row, const SparseMatrix& matrix);
 
     /**
      * \brief Transposes a matrix.
@@ -319,41 +321,53 @@ public:
      * \brief Gets the value of the column at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
+     *
+     *\returns a column chain.
      */
-    friend Sparse_chain<Coefficient_ring, COLUMN> get_column(const SparseMatrix &matrix, size_t index);
+    friend SparseChain get_column(const SparseMatrix &matrix, size_t index);
 
     /**
      * \brief Gets the value of the row at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
+     *
+     *\returns a row chain.
      */
-    friend Sparse_chain<Coefficient_ring, ROW> get_row(const SparseMatrix &matrix, size_t index);
+    friend SparseChain get_row(const SparseMatrix &matrix, size_t index);
 
     /**
      * \brief Gets a constant reference over the column of  index`i` from a column matrix.
+     * \pre `matrix.is_column()` must be `true`.
+     *
+     * \returns a constant reference to a column chain.
      */
-    const Sparse_chain<Coefficient_ring, COLUMN> & cget_column(const SparseMatrix<Coefficient_ring, COLUMN> & matrix, size_t i);
+    const SparseChain& cget_column(const SparseMatrix& matrix, size_t i);
 
     /**
      * \brief Gets a constant reference over the row of  index`i` from a row matrix.
+     * \pre `matrix.is_row()` must be `true`.
+     *
+     * \returns a constant reference to a row chain.
      */
-    const Sparse_chain<Coefficient_ring, ROW> & cget_row(const SparseMatrix<Coefficient_ring, ROW> & matrix, size_t i);
+    const SparseChain& cget_row(const SparseMatrix& matrix, size_t i);
 
     /**
      * \brief Sets a column in the matrix (whatever the `StorageFormat` of the matrix).
      *
-     * Set the `i`th column of `matrix` to `chain`.
+     * Set the `i`th column of `matrix` to `column`.
      * For column-matrices, it should be equivalent to an assignment, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
+     * \pre `column.is_column()` must be `true`
      */
-    void set_column(SparseMatrix &matrix, size_t i, const Sparse_chain<Coefficient_ring, COLUMN> &chain);
+    void set_column(SparseMatrix &matrix, size_t i, const SparseChain &column);
 
     /**
      * \brief Sets a row in `matrix` (whatever the `StorageFormat` of the matrix).
      *
      * Set the `i`th row of `matrix` to `chain`.
      * For row-matrices, it should be equivalent to an assignment, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
+     * \pre `row.is_row()` must be `true`
      */
-    void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain<Coefficient_ring, ROW> &chain);
+    void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain &row);
 
     /**
      * \brief Gets a submatrix from the matrix.

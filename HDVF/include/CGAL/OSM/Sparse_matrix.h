@@ -540,8 +540,8 @@ public:
      *
      * Perform standard linear algebra multiplication of a matrix and a column-chain (ie.\ matrix / column vector multiplication) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the multiplication is optimized for each of them).
      *
-     * @param first The matrix.
-     * @param second The column-major chain.
+     * @param matrix The matrix.
+     * @param column The column-major chain.
      * @return The result of the matrix multiplication, column-based.
      * @{
      */
@@ -551,14 +551,14 @@ public:
      * \brief Matrix/column chain multiplication: COLUMN matrix x COLUMN chain -> COLUMN chain.
      */
     template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, COLUMN> &_second);
+    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_matrix, const Sparse_chain<_CT, COLUMN> &_column);
 
     /** \relates Sparse_matrix
      *
      * \brief Matrix/column chain multiplication: ROW matrix x COLUMN chain -> COLUMN chain.
      */
     template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, COLUMN> &_second);
+    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_matrix, const Sparse_chain<_CT, COLUMN> &_column);
 
     /** @} */
 
@@ -570,8 +570,8 @@ public:
      *
      * Perform standard linear algebra multiplication of a row-chain and a matrix (ie.\ row vector / matrix multiplication) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the multiplication is optimized for each of them).
      *
-     * @param first The row-major chain.
-     * @param second The matrix.
+     * @param row The row-major chain.
+     * @param matriw The matrix.
      * @return The result of the matrix multiplication, row-based.
      * @{
      */
@@ -581,14 +581,14 @@ public:
      * \brief Row chain/matrix multiplication: ROW chain x COLUMN matrix -> ROW chain.
      */
     template <typename _CT>
-    friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second) ;
+    friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_row, const Sparse_matrix<_CT, ROW> &_matrix) ;
 
     /** \relates Sparse_matrix
      *
      * \brief Row chain/matrix multiplication: ROW chain x ROW matrix -> ROW chain.
      */
     template <typename _CT>
-    friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second) ;
+    friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_row, const Sparse_matrix<_CT, COLUMN> &_matrix) ;
 
     /** @} */
 
@@ -1016,7 +1016,7 @@ public:
      *
      * \defgroup SetColumn Sets a column.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief Set the value of the column at a given `index` from the matrix to `chain` (whatever the `StorageFormat` of the matrix).
+     * @brief Set the value of the column at a given `index` from the matrix to `column` (whatever the `StorageFormat` of the matrix).
      *
      * \note For column-matrices, it is equivalent to `operator[]` followed by an assignment, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      *
@@ -1024,7 +1024,7 @@ public:
      *
      * @param matrix The  matrix.
      * @param index The column index.
-     * @param chain The new column value.
+     * @param column The new column value.
      * @{
      */
 
@@ -1033,14 +1033,14 @@ public:
      * \brief Sets a column in a COLUMN matrix.
      */
     template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
+    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &column);
 
     /** \relates Sparse_matrix
      *
      * \brief Sets a column in a ROW matrix.
      */
     template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
+    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &column);
 
     /** @} */
 
@@ -1056,7 +1056,7 @@ public:
      *
      * @param matrix The  matrix.
      * @param index The row index.
-     * @param chain The new row value.
+     * @param row The new row value.
      * @{
      */
 
@@ -1065,14 +1065,14 @@ public:
      * \brief Sets a row in a COLUMN matrix.
      */
     template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
+    friend void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &row);
 
     /** \relates Sparse_matrix
      *
      * \brief Sets a row in a ROW matrix.
      */
     template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
+    friend void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &row);
 
     /** @} */
 
