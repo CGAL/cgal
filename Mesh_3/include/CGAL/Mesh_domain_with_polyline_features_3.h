@@ -157,6 +157,14 @@ public:
     return cover_pred(s1, s2, *c2_it, c2);
   }
 
+  bool is_curve_segment_covered(CGAL::Orientation orientation,
+                                const Point_3& c1, const Point_3& c2,
+                                const FT sq_r1,    const FT sq_r2) const
+  {
+    return is_curve_segment_covered(orientation,
+                                    c1, c2, sq_r1, sq_r2, locate(c1), locate(c2));
+  }
+
   FT curve_segment_length(const Point_3& p, const Point_3 q,
                           CGAL::Orientation orientation) const
   {
@@ -424,6 +432,11 @@ public:
 
     // pit == qit, then we have to sort p&q along (pit,pit+1)
     return ( compare_distance(*pit,p,q) != CGAL::LARGER );
+  }
+
+  bool are_ordered_along(const Point_3& p, const Point_3& q) const
+  {
+    return are_ordered_along(p, q, locate(p), locate(q, true));
   }
 
 private:
@@ -863,7 +876,12 @@ public:
 
 
   /// implements `MeshDomainWithFeatures_3::distance_sign()`.
-  CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
+  CGAL::Sign distance_sign(const Point_3& p,
+                           const Point_3& q,
+                           const Curve_index& index) const;
+
+  CGAL::Sign distance_sign(const Point_3& p,
+                           const Point_3& q,
                            const Curve_index& index,
                            Polyline_const_iterator pit,
                            Polyline_const_iterator qit) const;
@@ -872,6 +890,11 @@ public:
   bool is_loop(const Curve_index& index) const;
 
   /// implements `MeshDomainWithFeatures_3::is_curve_segment_covered()`.
+  bool is_curve_segment_covered(const Curve_index& index,
+                                CGAL::Orientation orientation,
+                                const Point_3& c1, const Point_3& c2,
+                                const FT sq_r1, const FT sq_r2) const;
+
   bool is_curve_segment_covered(const Curve_index& index,
                                 CGAL::Orientation orientation,
                                 const Point_3& c1, const Point_3& c2,
@@ -1733,6 +1756,24 @@ distance_sign(const Point_3& p, const Point_3& q,
     return CGAL::NEGATIVE;
 }
 
+template <class MD_>
+CGAL::Sign
+Mesh_domain_with_polyline_features_3<MD_>::
+distance_sign(const Point_3& p,
+              const Point_3& q,
+              const Curve_index& curve_index) const
+{
+  typename Edges::const_iterator eit = edges_.find(curve_index);
+  CGAL_assertion(eit != edges_.end());
+  CGAL_precondition(!eit->second.is_loop());
+
+  if(p == q)
+    return CGAL::ZERO;
+  else if(eit->second.are_ordered_along(p, q))
+    return CGAL::POSITIVE;
+  else
+    return CGAL::NEGATIVE;
+}
 
 template <class MD_>
 CGAL::Sign
@@ -1816,6 +1857,20 @@ is_curve_segment_covered(const Curve_index& index,
                                               c1, c2,
                                               sq_r1, sq_r2,
                                               c1_it, c2_it);
+}
+
+template <class MD_>
+bool
+Mesh_domain_with_polyline_features_3<MD_>::
+is_curve_segment_covered(const Curve_index& index,
+                         CGAL::Orientation orientation,
+                         const Point_3& c1, const Point_3& c2,
+                         const FT sq_r1, const FT sq_r2) const
+{
+  typename Edges::const_iterator eit = edges_.find(index);
+  CGAL_assertion(eit != edges_.end());
+
+  return eit->second.is_curve_segment_covered(orientation, c1, c2, sq_r1, sq_r2);
 }
 
 template <class MD_>

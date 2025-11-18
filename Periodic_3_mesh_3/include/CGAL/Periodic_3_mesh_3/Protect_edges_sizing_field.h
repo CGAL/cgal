@@ -98,6 +98,8 @@ public:
   typedef typename MeshDomain::Corner_index         Corner_index;
   typedef typename MeshDomain::Index                Index;
 
+  using Polyline_iterator = typename CGAL::Mesh_3::internal::Polyline<Gt>::const_iterator;
+
 private:
   typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
 
@@ -1884,35 +1886,40 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls_on_edges()
 {
   // Get features
-  typedef std::tuple<Curve_index,
-                             std::pair<Bare_point,Index>,
-                             std::pair<Bare_point,Index> >    Feature_tuple;
-  typedef std::vector<Feature_tuple>                          Input_features;
+  // Get features
+  struct Feature_tuple
+  {
+    Curve_index curve_index_;
+    Polyline_iterator polyline_begin_;
+    std::pair<Bare_point, Index> point_s_;
+    std::pair<Bare_point, Index> point_t_;
+  };
+  typedef std::vector<Feature_tuple> Input_features;
 
   Input_features input_features;
   domain_.get_curves(std::back_inserter(input_features));
 
   // Iterate on edges
-  for(typename Input_features::iterator fit = input_features.begin(),
-       end = input_features.end() ; fit != end ; ++fit)
+  for(const Feature_tuple& ft : input_features)
   {
-    const Curve_index& curve_index = std::get<0>(*fit);
+    const Curve_index& curve_index = ft.curve_index_;
     if(! is_treated(curve_index))
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "** treat curve #" << curve_index << std::endl;
       std::cerr << "is it a loop? " << domain_.is_loop(curve_index) << std::endl;
 #endif
-      const Bare_point& p = std::get<1>(*fit).first;
-      const Bare_point& q = std::get<2>(*fit).first;
-
-      const Index& p_index = std::get<1>(*fit).second;
-      const Index& q_index = std::get<2>(*fit).second;
+      const Bare_point& p = ft.point_s_.first;
+      const Index& p_index = ft.point_s_.second;
+      const Polyline_iterator& p_polyline_iter = ft.polyline_begin_;
 
       Vertex_handle vp,vq;
       if(! domain_.is_loop(curve_index))
       {
         vp = get_vertex_corner_from_point(p, p_index);
+
+        const Bare_point& q = ft.point_t_.first;
+        const Index& q_index = ft.point_t_.second;
         vq = get_vertex_corner_from_point(q, q_index);
       }
       else
@@ -1943,6 +1950,7 @@ insert_balls_on_edges()
                                   p_index,
                                   curve_index,
                                   CGAL::Emptyset_iterator()).first;
+          domain_.set_polyline_iterator(p, p_polyline_iter);
         }
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
