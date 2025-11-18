@@ -1,3 +1,15 @@
+// Copyright (c) 2024
+// INRIA Nancy (France), and Université de Lorraine (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Vincent Despré, Camille Lanuel, Marc Pouget, Monique Teillaud
+
 #ifndef CGAL_DELAUNAY_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 #define CGAL_DELAUNAY_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 
