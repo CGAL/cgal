@@ -15,8 +15,8 @@ typedef CGAL::Algebraic_structure_traits<Coefficient_field> ATCoefs_field;
 typedef CGAL::Algebraic_structure_traits<Coefficient_ring> ATCoefs_ring;
 
 int main() {
-    Coefficient_field f1(1), f2(3), f0(0), fp(Coefficient_field::p_val());
-    Coefficient_ring r1(1), r2(3), r0(0), rp(Coefficient_ring::p_val());
+    Coefficient_field f1(1), f2(3), f0(0), fp((Coefficient_field()));
+    Coefficient_ring r1(1), r2(3), r0(0), rp((Coefficient_ring()));
     
     std::cerr << "-- Test Zp ==" << std::endl;
     {

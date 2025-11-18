@@ -26,7 +26,7 @@ namespace Homological_discrete_vector_field {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Zp` implements the concept `IntegralDomainWithoutDivision` with the field \f$\mathbb Z/p\mathbb Z\f$. This is a "lightweight" implementation which aims at providing fast operations and constructors.
+ The class `Zp` implements the concept `IntegralDomainWithoutDivision` with the ring \f$\mathbb Z/p\mathbb Z\f$ (which is a field when `p`is prime). This is a "lightweight" implementation which aims at providing fast operations and constructors.
 
  According to the value of `p`, users can chose the size of the representation used to store values (default size: `int`).
 
@@ -35,22 +35,23 @@ namespace Homological_discrete_vector_field {
  \cgalModels{IntegralDomainWithoutDivision}
 
  \tparam p a positive integer.
- \tparam _TSlot a type used for the inner storage of the values (default: `int`).
+ \tparam T a type used for the inner storage of the values (default: `int`).
+ \tparam IsPrime a boolean encoding weather `p` is a prime number or not.
  */
 
-template <size_t p, typename _TSlot = unsigned int, bool IsPrime = true>
+template <size_t p, typename T = unsigned int, bool IsPrime = true>
 class Zp {
-    _TSlot _i ;
+    T _i ;
 public:
 
     /** \brief Constructor from a value */
-    Zp(_TSlot i=0) : _i( (i>=0)?(i % _TSlot(p)):((i % _TSlot(p)) + _TSlot(p)) ) { }
+    Zp(T i=0) : _i( (i>=0)?(i % T(p)):((i % T(p)) + T(p)) ) { }
 
     // Copy constructor
     Zp(const Zp& a) : _i(a._i) {}
 
     /** \brief Returns the value of p. */
-    static _TSlot p_val () { return _TSlot(p); }
+    static T operator() () { return T(p); }
     
     /** \brief Tests if the element is 0. */
     bool is_zero() const { return _i == 0 ; }
@@ -70,40 +71,40 @@ public:
     /** \brief Unary operator-. */
     friend Zp operator- (const Zp& a)
     {
-        return Zp(_TSlot(p) - a._i) ;
+        return Zp(T(p) - a._i) ;
     }
 
     /** \brief Operator+. */
     friend Zp     operator+ (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot, IsPrime>(a._i + b._i) ;
+        return Zp<p, T, IsPrime>(a._i + b._i) ;
     }
 
     /** \brief Operator-. */
     friend Zp     operator- (const Zp& a, const Zp& b) {
         if (a._i >= b._i)
-            return Zp<p, _TSlot, IsPrime>(a._i - b._i) ;
+            return Zp<p, T, IsPrime>(a._i - b._i) ;
         else
-            return Zp<p, _TSlot, IsPrime>((_TSlot(p) - b._i) + a._i);
+            return Zp<p, T, IsPrime>((T(p) - b._i) + a._i);
     }
 
     /** \brief Operator*. */
     friend Zp     operator* (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot, IsPrime>(a._i * b._i) ;
+        return Zp<p, T, IsPrime>(a._i * b._i) ;
     }
 
     /** \brief Operator/. */
     friend Zp     operator/ (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot, IsPrime>(a._i / b._i) ;
+        return Zp<p, T, IsPrime>(a._i / b._i) ;
     }
 
     /** \brief Operator+=. */
     Zp &     operator+= (const Zp& a)
     {
         _i += a._i;
-        _i %= _TSlot(p) ;
+        _i %= T(p) ;
         return *this ;
     }
 
@@ -114,7 +115,7 @@ public:
             _i -= a._i ;
         else
         {
-            _i += (_TSlot(p) - a._i) ;
+            _i += (T(p) - a._i) ;
         }
         return *this ;
     }
@@ -123,7 +124,7 @@ public:
     Zp &     operator*= (const Zp& a)
     {
         _i *= a._i ;
-        _i %= _TSlot(p) ;
+        _i %= T(p) ;
         return *this ;
     }
 
@@ -131,7 +132,7 @@ public:
     Zp &     operator/= (const Zp& a)
     {
         _i /= a._i ;
-        _i %= _TSlot(p) ;
+        _i %= T(p) ;
         return *this ;
     }
 
@@ -150,7 +151,7 @@ public:
     /** \brief Absolute value. */
     friend Zp  abs(const Zp& a)
     {
-        return Zp<p,_TSlot, IsPrime>(a) ;
+        return Zp<p,T, IsPrime>(a) ;
     }
 
     /** \brief Operator<<. */
@@ -183,12 +184,12 @@ public:
 } /* end namespace Homological_discrete_vector_field */
 
 // Specialization for p being not a prime number
-template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, _TSlot, false> >
-  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, false>, Integral_domain_without_division_tag >  {
+template <int p, typename T> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, T, false> >
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, T, false>, Integral_domain_without_division_tag >  {
   public:
       typedef Tag_true            Is_exact;
       typedef Tag_false           Is_numerical_sensitive;
-      typedef Homological_discrete_vector_field::Zp<p, _TSlot, false> Type;
+      typedef Homological_discrete_vector_field::Zp<p, T, false> Type;
 
     class Is_invertible //   AF: Does not yet exist in Number_types and Algebraic_foundations
       : public CGAL::cpp98::unary_function< Type, bool > {
@@ -201,12 +202,12 @@ template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_
 
 
   // Specialization for p being not a prime number
-  template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, _TSlot, true> >
-  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, true>, Field_tag >  {
+  template <int p, typename T> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, T, true> >
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, T, true>, Field_tag >  {
   public:
       typedef Tag_true            Is_exact;
       typedef Tag_false           Is_numerical_sensitive;
-      typedef Homological_discrete_vector_field::Zp<p, _TSlot, true> Type;
+      typedef Homological_discrete_vector_field::Zp<p, T, true> Type;
 
     class Is_invertible
       : public CGAL::cpp98::unary_function< Type, bool > {
@@ -217,9 +218,9 @@ template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_
     };
   };
 
-template <int p, typename _TSlot, bool IsPrime> class Real_embeddable_traits< Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> >
-  : public INTERN_RET::Real_embeddable_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> , CGAL::Tag_true > {
-      typedef Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> Type;
+template <int p, typename T, bool IsPrime> class Real_embeddable_traits< Homological_discrete_vector_field::Zp<p, T, IsPrime> >
+  : public INTERN_RET::Real_embeddable_traits_base< Homological_discrete_vector_field::Zp<p, T, IsPrime> , CGAL::Tag_true > {
+      typedef Homological_discrete_vector_field::Zp<p, T, IsPrime> Type;
   public:
 
     class Is_positive

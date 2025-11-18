@@ -28,8 +28,6 @@ namespace Homological_discrete_vector_field {
 
  The class `Z2` implements the concept `IntegralDomainWithoutDivision` with the field \f$\mathbb Z/2\mathbb Z\f$. This implementation is optimized to use bitwise operations and should be prefered to `Zp<2>`.
 
- \warning For \f$\mathbb Z/2\mathbb Z\f$, prefer the class `Z2` which is optimized.
-
  \cgalModels{IntegralDomainWithoutDivision}
  */
 
@@ -42,6 +40,9 @@ public:
 
     // Copy constructor
     Z2(const Z2& a) : _i(a._i) {}
+    
+    /** \brief Returns 2 (ie. p such that `Z2`=\f$\mathbbZ/2\mathbb Z\f$). */
+    static char operator() () { return char(2); }
 
     bool is_zero() const { return _i == 0 ; }
 
