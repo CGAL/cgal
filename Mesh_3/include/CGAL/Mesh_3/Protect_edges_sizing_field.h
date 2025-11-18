@@ -46,7 +46,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Mesh_domain_with_polyline_features_3.h>
+#include <CGAL/Mesh_3/internal/Polyline.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 

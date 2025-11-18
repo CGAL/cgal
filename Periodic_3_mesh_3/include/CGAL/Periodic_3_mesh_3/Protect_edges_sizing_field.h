@@ -45,6 +45,7 @@
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Mesh_3/internal/Polyline.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
