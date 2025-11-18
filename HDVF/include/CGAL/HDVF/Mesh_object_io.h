@@ -74,9 +74,9 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
  *
  * Load vertices coordinates from a .nodes file.
  *
- * \param[in] filename Name of the input file.
- * \param[in] nodes Pointer to a vector of points into which nodes are outputed.
- * \param[in] adapt If `fill` is false, nodes must have the same dimension as the traits Point, if true, nodes dimension can be lower (and missing coordinates are filled with zeros) or higher (and coordinates are truncated to the traits dimension).
+ * \param filename Name of the input file.
+ * \param nodes Pointer to a vector of points into which nodes are outputed.
+ * \param adapt If `fill` is false, nodes must have the same dimension as the traits Point, if true, nodes dimension can be lower (and missing coordinates are filled with zeros) or higher (and coordinates are truncated to the traits dimension).
  **/
 
 template <typename Traits>
@@ -276,12 +276,12 @@ public:
      *
      * Simplices are described by the list of vertex indices.
      *
-     * \param[in] d The dimension `d` can be positive or negative:
+     * \param d The dimension `d` can be positive or negative:
      * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
      * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
-     * \param[in] vnodes Vector of vertex coordinates.
-     * \param[in] vcells Vector of cells (described by a sorted vector of indices)
-     * \param[in] sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
+     * \param vnodes Vector of vertex coordinates.
+     * \param vcells Vector of cells (described by a sorted vector of indices)
+     * \param sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
      */
     Mesh_object_io(int d, const std::vector<Point> &vnodes, const std::vector<Io_cell_type> &vcells, bool sort_data = false) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) {
         check_dimension() ;

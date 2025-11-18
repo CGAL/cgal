@@ -114,7 +114,7 @@ public:
      *
      * Builds an "empty" filtration with `K` as underlying chain complex.
      *
-     *\param[in] K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
+     *\param K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
      */
     Filtration_core(const ChainComplex& K) : _K(K)
     {}
@@ -122,9 +122,9 @@ public:
     /*! \brief Constructor from a vector of cells (ordering of cells) and an associated vector of degrees.
      *
      * The constructor check that the filtration is valid (a cell is introduced in the filtration after its faces and the degree vector is increasing) and throw an exception if not.
-     * \param[in] K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
-     * \param[in] filtration An ordering of the cells of `K` encoded as a vector of its cells.
-     * \param[in] deg The (increasing) vector of cell degrees.
+     * \param K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
+     * \param filtration An ordering of the cells of `K` encoded as a vector of its cells.
+     * \param deg The (increasing) vector of cell degrees.
      */
     Filtration_core(const ChainComplex& K, const std::vector<Cell>& filtration, const std::vector<Degree>& deg) : _K(K), _filtration(filtration), _deg(deg)
     {
@@ -137,7 +137,7 @@ public:
      *
      * Builds a `Filtration_core` by copy from another.
      *
-     * \param[in] f An initial `Filtration_core`.
+     * \param f An initial `Filtration_core`.
      */
     Filtration_core(const Filtration_core& f) : _K(f._K), _filtration(f._filtration), _cell_to_t(f._cell_to_t) {}
 
@@ -154,8 +154,8 @@ public:
 
         /** \brief Iterator constructor
          *
-         * \param[in] f Constant reference on the `Filtration_core` iterated.
-         * \param[in] i The initial index.
+         * \param f Constant reference on the `Filtration_core` iterated.
+         * \param i The initial index.
          */
         iterator(const Filtration_core& f, std::size_t i=0) : _i(i), _f(f) {}
 

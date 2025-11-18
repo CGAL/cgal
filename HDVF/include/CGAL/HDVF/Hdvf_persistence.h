@@ -92,7 +92,7 @@ public:
      *
      * Infinite intervals are encoded by setting birth data = death data (time, degree and cell).
      */
-    struct Persistent_interval {
+    struct Persistence_interval {
         size_t time_birth, time_death;
         Degree degree_birth, degree_death;
         Cell cell_birth, cell_death;
@@ -111,7 +111,7 @@ public:
         }
 
         /**
-         * \brief Output the hole to a stream.
+         * \brief Output the persistence interval to a stream.
          */
         inline std::ostream& insert (std::ostream& out_stream) const
         {
@@ -162,11 +162,11 @@ public:
     /*! \brief Hole information returned by the persistent diagram iterator.
      *
      * Information comprises:
-     * - `Persistent_interval` providing informations related to the "times" of the persistent interval (index, degree and cell of birth/death).
+     * - `Persistence_interval` providing informations related to the "times" of the persistent interval (index, degree and cell of birth/death).
      * - `labelsPSC` storing HDVF flags at death time of the hole
      */
     typedef struct {
-        Persistent_interval hole ;
+        Persistence_interval hole ;
         std::vector<std::vector<int> > labelsPSC ;
         Column_chain homology_chain_birth, homology_chain_death, cohomology_chain_birth, cohomology_chain_death ;
     } Persistent_hole ;
@@ -181,7 +181,7 @@ protected:
     std::vector<std::vector<size_t> > _K_to_per, _per_to_K ;
 
     /* \brief Vector of persistent pairs computed */
-    std::vector<Persistent_interval> _persist ;
+    std::vector<Persistence_interval> _persist ;
 
     /* \brief Boolean determining weather or not export homology/cohomology generators associated to persistent pairs
      * - If _with_export is true, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
@@ -225,10 +225,10 @@ public:
      * Builds an "empty" HDVF_persistence (with all cells critical) associated to the chain complex `K` and the filtration `f`.
      * By default, the HDVF option is set to OPT_FULL (full reduction computed)
      *
-     * \param[in] K A chain complex (a model of `AbstractChainComplex`).
-     * \param[in] f A filtration (a model of `Filtration`).
-     * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
-     * \param[in] with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
+     * \param K A chain complex (a model of `AbstractChainComplex`).
+     * \param f A filtration (a model of `Filtration`).
+     * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
      */
     Hdvf_persistence(const Chain_complex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
 
@@ -238,7 +238,7 @@ public:
      * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for A (returned by `find_pair_A()`), and applies the corresponding `A()` operation.
      * By definition of persistent homology, the `IntegralDomainWithoutDivision` of coefficients *must be* a field.
      *
-     * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
+     * \param verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
      * \returns The vector of all `Cell_pair` paired with A.
      */
@@ -271,7 +271,7 @@ public:
                 const size_t ti(_f._cell_to_t.at(c)) ;
                 const Degree di(_f._deg.at(i)) ;
 
-                Persistent_interval hole;
+                Persistence_interval hole;
                 hole.time_birth = ti;
                 hole.time_death = ti;
                 hole.degree_birth = di;
@@ -302,13 +302,13 @@ public:
      *
      * Prints out finite and infinite persistence intervals.
      *
-     * \param[in] out_stream Reference to an out stream.
-     * \param[in] per_hdvf Constant reference on the Hdvf_persistence to print.
+     * \param out_stream Reference to an out stream.
+     * \param per_hdvf Constant reference on the Hdvf_persistence to print.
      */
     friend std::ostream& operator<< (std::ostream& out_stream, const Hdvf_persistence& per_hdvf)
     {
         size_t i = 0 ;
-        for (Persistent_interval hole : per_hdvf._persist)
+        for (Persistence_interval hole : per_hdvf._persist)
         {
             if (std::abs(hole.duration()) > 0)
             {
@@ -325,7 +325,7 @@ public:
      *
      * Prints out the filtration and associated permutations (_K_to_per and _per_to_K) between indices of cells in each dimension in the basis of K and indices along the filtration.
      *
-     * \param[in] out Reference to an out stream.
+     * \param out Reference to an out stream.
      */
     std::ostream& print_hdvf_persistence_info (std::ostream& out)
     {
@@ -459,9 +459,9 @@ public:
 
         /*! \brief Iterator constructor
          *
-         * \param[in] per_hdvf Constant reference over the Hdvf_persistence iterated.
-         * \param[in] i The initial index.
-         * \param[in] discard_small If `true` (default), only persistent intervals of (strictly) positive degree duration are iterated. Otherwise, all persistent intervals are iterated.
+         * \param per_hdvf Constant reference over the Hdvf_persistence iterated.
+         * \param i The initial index.
+         * \param discard_small If `true` (default), only persistent intervals of (strictly) positive degree duration are iterated. Otherwise, all persistent intervals are iterated.
          */
         iterator(const Hdvf_persistence& per_hdvf, size_t i=0, bool discard_small = true) : _i(i), _per_hdvf(per_hdvf), _discard_small(discard_small)
         {
@@ -549,7 +549,7 @@ public:
     /**
      * \brief Iterator to the beginning of persistent intervals.
      *
-     * \param[in] discard_small If `true`, the iterator visits only persistent intervals of (strictly) positive degree duration. Otherwise, visit all persistent intervals.
+     * \param discard_small If `true`, the iterator visits only persistent intervals of (strictly) positive degree duration. Otherwise, visit all persistent intervals.
      *
      * \returns The iterator to the beginning of the chain indices.
      */
@@ -621,7 +621,7 @@ private:
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
      * (ie.\ such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
      *
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     Cell_pair find_pair_A(bool &found) ;
 
@@ -755,7 +755,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
     const size_t q_current(_f._filtration.at(t_current).second) ; // Get the dimension of the new current cell
     ++_t_dim.at(q_current) ; // Update time in the dimension of the current cell
     const size_t t_dim_current(_t_dim.at(q_current)-1); // Time of the current cell in its dimension
-    _masks.at(q_current).setOn(t_dim_current) ; // Update mask accordingly
+    _masks.at(q_current).set_on(t_dim_current) ; // Update mask accordingly
     this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
 
     // Search for pairing
@@ -771,8 +771,8 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
 //        FiltrIndexPerInterval interval(ti, tj) ;
 //        CellsPerInterval interval_cells(ci, cj) ;
 //        DegreePerInterval interval_deg(_f._deg.at(ti), _f._deg.at(tj)) ;
-//        Persistent_interval hole(interval, interval_cells, interval_deg) ;
-        Persistent_interval hole;
+//        Persistence_interval hole(interval, interval_cells, interval_deg) ;
+        Persistence_interval hole;
         hole.time_birth = ti;
         hole.time_death = tj;
         hole.degree_birth = _f._deg.at(ti);
@@ -805,7 +805,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
 
 // HELP !!!!!
 template<typename ChainComplex, typename Degree, typename Filtration_ >
-std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistent_interval& hole)
+std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistence_interval& hole)
 {
     typedef Hdvf_persistence<ChainComplex, Degree, Filtration_> Base;
     // time (cell, dim) -> time (cell, dim) / degree duration

@@ -106,9 +106,9 @@ public:
      *
      * Initially, the sub chain complex mask is set to `K`.
      *
-     * \param[in] L A complex of a given dimension \f$n\f$ homeomorphic to \f$\mathcal B^n\f$.
-     * \param[in] K A sub complex of `L` encoded through a bitboard.
-     * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
+     * \param L A complex of a given dimension \f$n\f$ homeomorphic to \f$\mathcal B^n\f$.
+     * \param K A sub complex of `L` encoded through a bitboard.
+     * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
      */
     Hdvf_duality(const Chain_complex& L, Sub_chain_complex_mask<Chain_complex>& K, int hdvf_opt = OPT_FULL) ;
 
@@ -117,8 +117,8 @@ public:
      *
      * The function searches a pair of critical cells, *in the current sub chain complex*, \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
-     * \param[in] q Lower dimension of the pair.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     Cell_pair find_pair_A(int q, bool &found) const;
 
@@ -129,9 +129,9 @@ public:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      *
-     * \param[in] q Dimension of the cell `gamma`.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
-     * \param[in] gamma Index of a cell to pair.
+     * \param q Dimension of the cell `gamma`.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param gamma Index of a cell to pair.
      */
     Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
@@ -141,8 +141,8 @@ public:
      * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ *in the current sub chain complex* of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
-     * \param[in] q Lower dimension of the pairs.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param q Lower dimension of the pairs.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
@@ -154,9 +154,9 @@ public:
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
-     * \param[in] q Dimension of the cell `gamma`.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
-     * \param[in] gamma Index of a cell to pair.
+     * \param q Dimension of the cell `gamma`.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param gamma Index of a cell to pair.
      */
     std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
 
@@ -196,7 +196,7 @@ public:
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
      *
-     * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
+     * \param verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
      * \return The vector of all `Cell_pair` paired with A.
      */
@@ -212,7 +212,7 @@ public:
      *
      * \warning This method is slower that `compute_perfect_hdvf()` (finding out all possible valid pairs requires additional time).
      *
-     * \param[in] verbose If this  parameter is `true`, all intermediate reductions are printed out.
+     * \param verbose If this  parameter is `true`, all intermediate reductions are printed out.
      *
      * \return The vector of all pairs of cells used for apply A.
      */
@@ -246,7 +246,7 @@ public:
      *
      * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`.
      *
-     * \param[in] flag PSC_flag to select.
+     * \param flag PSC_flag to select.
      */
     std::vector<std::vector<size_t> > psc_flags (PSC_flag flag) const ;
 
@@ -255,8 +255,8 @@ public:
      *
      * The function returns the vector of cells of dimension `q` with a given `PSC_flag`.
      *
-     * \param[in] flag PSC_flag to select.
-     * \param[in] q Dimension visited.
+     * \param flag PSC_flag to select.
+     * \param q Dimension visited.
      */
     std::vector<size_t> psc_flags (PSC_flag flag, int q) const ;
 

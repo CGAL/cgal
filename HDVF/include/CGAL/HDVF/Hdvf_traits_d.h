@@ -40,6 +40,7 @@ struct Hdvf_traits_d {
     using Dimension = Dimension_tag< K::Dimension::value >;
     typedef K Kernel;
     typedef typename K::Point_d Point;
+    typedef typename K::Vector_d Vector;
     typedef typename K::FT FT;
     typedef CGAL::Bbox_d<Dimension> Bbox;
     typedef typename Exact_predicates_inexact_constructions_kernel::Point_3 Point3;

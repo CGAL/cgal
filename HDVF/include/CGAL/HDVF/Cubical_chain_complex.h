@@ -115,8 +115,8 @@ public:
      *
      *<img src="primal_dual.png" align="center" width=20%/>
      *
-     * \param[in] cub A Cub_object_io containing a set of "cubical" cells.
-     * \param[in] type Type of construction used (PRIMAL or DUAL).
+     * \param cub A Cub_object_io containing a set of "cubical" cells.
+     * \param type Type of construction used (PRIMAL or DUAL).
      */
     Cubical_chain_complex(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type);
 
@@ -135,7 +135,7 @@ public:
      *
      * Stores a copy of an cubical chain complex in *this.
      *
-     * \param[in] complex The cubical chain complex which will be copied.
+     * \param complex The cubical chain complex which will be copied.
      */
     Cubical_chain_complex& operator=(const Cubical_chain_complex& complex)
     {
@@ -156,8 +156,8 @@ public:
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension q: boundary of the cell id_cell in dimension q.
      *
-     * \param[in] id_cell Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param id_cell Index of the cell.
+     * \param q Dimension of the cell.
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
@@ -176,8 +176,8 @@ public:
      *
      * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
      *
-     * \param[in] id_cell Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param id_cell Index of the cell.
+     * \param q Dimension of the cell.
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
      */
@@ -192,7 +192,7 @@ public:
     /**
      * \brief Returns the number of cells in a given dimension.
      *
-     * \param[in] q Dimension along which the number of cells is returned.
+     * \param q Dimension along which the number of cells is returned.
      *
      * \return Number of cells in dimension q.
      */
@@ -235,8 +235,8 @@ public:
     /** \brief Returns Khalimsky coordinates of the cell of "basis index" i in dimension q.
      * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see above).
      *
-     * \param[in] i "basis index" of a cell.
-     * \param[in] q dimension of the cell.
+     * \param i "basis index" of a cell.
+     * \param q dimension of the cell.
      * \returns Khalimsky coordinates of the cell.
      */
     std::vector<size_t> index_to_cell (size_t i, int q) const
@@ -249,7 +249,7 @@ public:
      *
      * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "Boolean index", see above).
      *
-     * \param[in] cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
+     * \param cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
      * \returns The "basis index" of the cell among \f$q\f$-cells.
      */
     size_t cell_to_index (std::vector<size_t> cell) const
@@ -266,7 +266,7 @@ public:
      *
      * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see above).
      *
-     * \param[in] i The "Boolean" index of a cell.
+     * \param i The "Boolean" index of a cell.
      * \returns Khalimsky coordinates of the cell.
      */
     std::vector<size_t> bindex_to_cell (size_t i) const {
@@ -284,7 +284,7 @@ public:
      *
      * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "Boolean index" (see above).
      *
-     * \param[in] cell Khalimsky coordinates of a cell.
+     * \param cell Khalimsky coordinates of a cell.
      * \returns The "Boolean" index of the cell.
      */
     size_t cell_to_bindex (std::vector<size_t> cell) const {
@@ -323,7 +323,7 @@ public:
      *
      * It is a column-major sparse matrix containing the boundaries of dim-cells (ie.\ rows encode q-1 cells and columns q cells).
      *
-     * \param[in] q Dimension of the boundary matrix (ie.\ columns will contain the boundary of dimension q cells).
+     * \param q Dimension of the boundary matrix (ie.\ columns will contain the boundary of dimension q cells).
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
@@ -338,8 +338,8 @@ public:
      *
      * Returns the dimension 0 vertex indices included in the cell with index `id_cell` of dimension `q`.
      *
-     * \param[in] id_cell Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param id_cell Index of the cell.
+     * \param q Dimension of the cell.
      *
      * \return A vector of 0-cell indices.
      */
@@ -471,10 +471,10 @@ public:
      *
      * \tparam LabelType Type of labels provided (default: int).
      *
-     * \param[in] K Cubical complex exported.
-     * \param[in] filename Output file root (output filenames will be built from this root).
-     * \param[in] labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
-     * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
+     * \param K Cubical complex exported.
+     * \param filename Output file root (output filenames will be built from this root).
+     * \param labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+     * \param label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
     static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
@@ -584,11 +584,11 @@ public:
      *
      * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.
      *
-     * \param[in] K Cubical complex exported.
-     * \param[in] filename Output file root (output filenames will be built from this root).
-     * \param[in] chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
-     * \param[in] q Dimension of the cells of the chain.
-     * \param[in] cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
+     * \param K Cubical complex exported.
+     * \param filename Output file root (output filenames will be built from this root).
+     * \param chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
+     * \param q Dimension of the cells of the chain.
+     * \param cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
     static void chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 

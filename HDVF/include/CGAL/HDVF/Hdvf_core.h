@@ -146,8 +146,8 @@ public:
      *
      * Builds an "empty" HDVF_core associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
-     * \param[in] K A chain complex (a model of `AbstractChainComplex`)
-     * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param K A chain complex (a model of `AbstractChainComplex`)
+     * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
     Hdvf_core(const ChainComplex& K, int hdvf_opt = OPT_FULL) ;
 
@@ -156,7 +156,7 @@ public:
      *
      * Builds a HDVF by copy from another, including options.
      *
-     * \param[in] hdvf An initial HDVF.
+     * \param hdvf An initial HDVF.
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt) { }
 
@@ -169,8 +169,8 @@ public:
      *
      * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
-     * \param[in] q Lower dimension of the pair.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual Cell_pair find_pair_A(int q, bool &found) const;
 
@@ -181,9 +181,9 @@ public:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      *
-     * \param[in] q Dimension of the cell `gamma`.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
-     * \param[in] gamma Index of a cell to pair.
+     * \param q Dimension of the cell `gamma`.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param gamma Index of a cell to pair.
      */
     virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
@@ -193,8 +193,8 @@ public:
      * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
-     * \param[in] q Lower dimension of the pair.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
@@ -206,9 +206,9 @@ public:
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
-     * \param[in] q Dimension of the cell `gamma`.
-     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
-     * \param[in] gamma Index of a cell to pair.
+     * \param q Dimension of the cell `gamma`.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param gamma Index of a cell to pair.
      */
     virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
 
@@ -217,9 +217,9 @@ public:
      *
      * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes `PRIMARY`, \f$\gamma_2\f$ becomes `SECONDARY`. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
      *
-     * \param[in] gamma1 First cell of the pair (dimension `q`)
-     * \param[in] gamma2 Second cell of the pair (dimension `q+1`)
-     * \param[in] q Dimension of the pair
+     * \param gamma1 First cell of the pair (dimension `q`)
+     * \param gamma2 Second cell of the pair (dimension `q+1`)
+     * \param q Dimension of the pair
      */
     void A(size_t gamma1, size_t gamma2, int q);
 
@@ -232,7 +232,7 @@ public:
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
      *
-     * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
+     * \param verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
      * \return The vector of all `Cell_pair` paired with A.
      */
@@ -248,7 +248,7 @@ public:
      *
      * \warning This method is slower that `compute_perfect_hdvf()` (finding out all possible valid pairs requires additional time).
      *
-     * \param[in] verbose If this  parameter is `true`, all intermediate reductions are printed out.
+     * \param verbose If this  parameter is `true`, all intermediate reductions are printed out.
      *
      * \return The vector of all pairs of cells used for apply A.
      */
@@ -278,7 +278,7 @@ public:
      *
      * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`.
      *
-     * \param[in] flag PSC_flag to select.
+     * \param flag PSC_flag to select.
      */
 
     // !!! Why should it be virtual for duality?????
@@ -290,16 +290,16 @@ public:
      *
      * The function returns the vector of cells of dimension `q` with a given `PSC_flag`.
      *
-     * \param[in] flag PSC_flag to select.
-     * \param[in] q Dimension visited.
+     * \param flag PSC_flag to select.
+     * \param q Dimension visited.
      */
     virtual std::vector<size_t> psc_flags (PSC_flag flag, int q) const ;
 
     /*!
      * \brief Gets the PSC_flag of the cell `tau` in dimension `q`.
      *
-     * \param[in] tau Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param tau Index of the cell.
+     * \param q Dimension of the cell.
      */
     PSC_flag psc_flag (int q, size_t tau) const { return _flag.at(q).at(tau); }
 
@@ -400,8 +400,8 @@ public:
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
-     * \param[in] cell_index Index of the (critical) cell.
-     * \param[in] dim Dimension of the (critical) cell.
+     * \param cell_index Index of the (critical) cell.
+     * \param dim Dimension of the (critical) cell.
      *
      * \return A column-major chain.
      */
@@ -476,8 +476,8 @@ public:
 
 /** \brief Compares the HDVF with another HDVF over the same underlying complex.
  *
- * \param[in] other Other HDVF to compare.
- * \param[in] full_compare Turns on "in depth" HDVF comparison (reduction matrices).
+ * \param other Other HDVF to compare.
+ * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
  */
 
     bool compare(const Hdvf_core& other, bool full_compare = false)
@@ -550,9 +550,9 @@ protected:
     /* \brief Project a chain onto a given PSC_flag
      * The methods cancels all the coefficients of the chain of dimension `q` that do not correspond to`PSC_flag`. This is actually an implementation of the projection operator onto the sub A-module generated by cells of PSC_flag `flag`.
      *
-     * \param[in] chain The chain projected.
-     * \param[in] flag The PSC_flag onto which the chain is projected.
-     * \param[in] q Dimension of the chain
+     * \param chain The chain projected.
+     * \param flag The PSC_flag onto which the chain is projected.
+     * \param q Dimension of the chain
      *
      * \result Returns a copy of `chain` where only coefficients of cells of PSC_flag `flag` are kept (all other coefficients are cancelled).
      */

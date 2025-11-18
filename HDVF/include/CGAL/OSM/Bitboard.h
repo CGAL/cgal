@@ -73,19 +73,19 @@ private:
     /* \brief The number of bits we want to store. */
     std::size_t _size;
 
-public:
-    /**
+    /*
      * \brief Compute fast 64bit int log2.
      * \pre The value must have a population count of 1.
      *
-     * \param[in] _value The value we want to get the bit index (i.e. log2).
+     * \param _value The value we want to get the bit index (i.e. log2).
      * \returns The bit position.
      */
-    static std::size_t bitIndex(std::uint64_t _value) {
+    static std::size_t bit_index(std::uint64_t _value) {
         if (_value == 1) return 0;
         return tab64[((std::uint64_t)((_value - (_value >> 1)) * 0x07EDD5E59A4E28C2)) >> 58] + 1;
     }
 
+public:
     /**
      * \struct Bitboard::iterator
      * \brief The iterator over bitboards.
@@ -104,9 +104,9 @@ public:
 
         /**
          * \brief Iterator constructor.
-         * \param[in] _index The initial index.
-         * \param[in] _size The bitboard size.
-         * \param[in] _boards The reference to the bitboards.
+         * \param _index The initial index.
+         * \param _size The bitboard size.
+         * \param _boards The reference to the bitboards.
          *
          * \author Fedyna K.
          * \version 0.2.0
@@ -140,11 +140,11 @@ public:
             //
             // We can use this to iterate through all ones in order.
             // The following code scales up this principle for multiple contiguous 64bit bitboards.
-            std::size_t innerIndex ; //= bitIndex(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
+            std::size_t innerIndex ; //= bit_index(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
             if (arrayIndex < iteratedBoards.size())
             {
                 do {
-                    innerIndex = bitIndex(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
+                    innerIndex = bit_index(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
                     index = arrayIndex * BITBOARD_INT_SIZE + innerIndex;
                     iteratedBoards[arrayIndex] &= iteratedBoards[arrayIndex] - 1;
 
@@ -200,9 +200,9 @@ public:
 
         /**
          * \brief Reverse iterator constructor.
-         * \param[in] _index The initial index.
-         * \param[in] _size The bitboard size.
-         * \param[in] _boards The reference to the bitboards.
+         * \param _index The initial index.
+         * \param _size The bitboard size.
+         * \param _boards The reference to the bitboards.
          */
         reverse_iterator(const std::size_t _index, const std::size_t _size, const std::vector<std::uint64_t> &_boards):
         index(_index),
@@ -253,7 +253,7 @@ public:
             // The following code scales up this principle for multiple contiguous 64bit bitboards.
             // MSB are stored in the rightmost 64bits bitboard.
 
-            std::size_t innerIndex ; //= bitIndex(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
+            std::size_t innerIndex ; //= bit_index(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
             if (arrayIndex != size_t_maxvalue)
             {
                 do {
@@ -320,7 +320,7 @@ public:
     /**
      * \brief Bitboard value intializer. Initialize bitboard with given vector of bitboards.
      *
-     * \param[in] _bitboard The vector of 64bit ints.
+     * \param _bitboard The vector of 64bit ints.
      */
     Bitboard(const std::vector<std::uint64_t> &_bitboard):
     boards(_bitboard),
@@ -330,8 +330,8 @@ public:
     /**
      * \brief Bitboard size initializer. Initialize bitboard with given size.
      *
-     * \param[in] _size The size of the bitboard.
-     * \param[in] empty If the boolean is `true`, create an empty bitboard (all bits set to 0), otherwise create a full bitboard (all bits set to 1).
+     * \param _size The size of the bitboard.
+     * \param empty If the boolean is `true`, create an empty bitboard (all bits set to 0), otherwise create a full bitboard (all bits set to 1).
      */
     Bitboard(const std::size_t _size, bool empty = true):
     boards(std::vector<std::uint64_t>(_size / BITBOARD_INT_SIZE + (_size % BITBOARD_INT_SIZE != 0))),
@@ -341,7 +341,7 @@ public:
     /**
      * \brief Bitboard copy constructor. Initialize bitboard with given bitboard.
      *
-     * \param[in] _bitboard The bitboard to copy.
+     * \param _bitboard The bitboard to copy.
      */
     Bitboard(const Bitboard &_bitboard):
     boards(_bitboard.boards),
@@ -352,7 +352,7 @@ public:
     /**
      * \brief Bitboard assign operator. Initialize bitboard with given bitboard.
      *
-     * \param[in] _bitboard The bitboard to copy.
+     * \param _bitboard The bitboard to copy.
      */
     Bitboard& operator=(const Bitboard &_bitboard) {
         this->boards = _bitboard.boards;
@@ -378,7 +378,7 @@ public:
     /**
      * \brief Bitwise NOT of a bitboard.
      *
-     * \param[in] _bitboard The argument bitboard.
+     * \param _bitboard The argument bitboard.
      * \returns A new bitboard which is the result of the NOT.
      */
     friend Bitboard operator~(const Bitboard& _bitboard) {
@@ -423,7 +423,7 @@ public:
      * \brief Stream operator that displays all bits.
      *
      * \param[in,out] _stream The stream to edit.
-     * \param[in] _bitboard The bitboard to display.
+     * \param _bitboard The bitboard to display.
      * \returns The edited stream.
      */
     friend std::ostream& operator<<(std::ostream &_stream, const Bitboard &_bitboard) {
@@ -442,8 +442,8 @@ public:
     /**
      * \brief Bitwise OR between two bitboards.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
      */
     friend Bitboard operator|(const Bitboard &_left, const Bitboard &_right) {
@@ -455,8 +455,8 @@ public:
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
      */
     friend Bitboard operator|(const Bitboard &_left, const std::size_t &_right) {
@@ -468,8 +468,8 @@ public:
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
      */
     friend Bitboard operator|(const std::size_t &_left, const Bitboard &_right) {
@@ -481,8 +481,8 @@ public:
     /**
      * \brief Bitwise AND between two bitboards.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
      */
     friend Bitboard operator&(const Bitboard &_left, const Bitboard &_right) {
@@ -494,8 +494,8 @@ public:
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
      */
     friend Bitboard operator&(const Bitboard &_left, const std::size_t &_right) {
@@ -507,8 +507,8 @@ public:
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
      */
     friend Bitboard operator&(const std::size_t &_left, const Bitboard &_right) {
@@ -520,8 +520,8 @@ public:
     /**
      * \brief Bitwise XOR between two bitboards.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
      */
     friend Bitboard operator^(const Bitboard &_left, const Bitboard &_right) {
@@ -533,8 +533,8 @@ public:
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
      */
     friend Bitboard operator^(const Bitboard &_left, const std::size_t &_right) {
@@ -546,8 +546,8 @@ public:
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
      *
-     * \param[in] _left The left hand side.
-     * \param[in] _right The right hand side.
+     * \param _left The left hand side.
+     * \param _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
      */
     friend Bitboard operator^(const std::size_t &_left, const Bitboard &_right) {
@@ -559,7 +559,7 @@ public:
     /**
      * \brief Bitwise OR between two bitboards.
      *
-     * \param[in] _other The other bitboard.
+     * \param _other The other bitboard.
      * \returns The reference to the ORed bitboard.
      */
     Bitboard& operator|=(const Bitboard &_other) {
@@ -573,7 +573,7 @@ public:
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
      *
-     * \param[in] _other The bit position.
+     * \param _other The bit position.
      * \returns The reference to the ORed bitboard.
      */
     Bitboard& operator|=(const std::size_t &_other) {
@@ -587,7 +587,7 @@ public:
     /**
      * \brief Bitwise AND between two bitboards.
      *
-     * \param[in] _other The other bitboard.
+     * \param _other The other bitboard.
      * \returns The reference to the ANDed bitboard.
      */
     Bitboard& operator&=(const Bitboard &_other) {
@@ -601,7 +601,7 @@ public:
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
      *
-     * \param[in] _other The bit position.
+     * \param _other The bit position.
      * \returns The reference to the ANDed bitboard.
      */
     Bitboard& operator&=(const std::size_t &_other) {
@@ -615,7 +615,7 @@ public:
     /**
      * \brief Bitwise XOR between two bitboards.
      *
-     * \param[in] _other The other bitboard.
+     * \param _other The other bitboard.
      * \returns The reference to the XORed bitboard.
      */
     Bitboard& operator^=(const Bitboard &_other) {
@@ -629,7 +629,7 @@ public:
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
      *
-     * \param[in] _other The bit position.
+     * \param _other The bit position.
      * \returns The reference to the XORed bitboard.
      */
     Bitboard& operator^=(const std::size_t &_other) {
@@ -643,7 +643,7 @@ public:
     /**
      * \brief Toggle on and off a given bit.
      *
-     * \param[in] _index The bit position.
+     * \param _index The bit position.
      */
     void toggle(const std::size_t &_index) {
         *this ^= _index;
@@ -652,25 +652,25 @@ public:
     /**
      * \brief Toggle on a given bit.
      *
-     * \param[in] _index The bit position.
+     * \param _index The bit position.
      */
-    void setOn(const std::size_t &_index) {
+    void set_on(const std::size_t &_index) {
         *this |= _index;
     }
 
     /**
      * \brief Toggle off a given bit.
      *
-     * \param[in] _index The bit position.
+     * \param _index The bit position.
      */
-    void setOff(const std::size_t &_index) {
+    void set_off(const std::size_t &_index) {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
 
         boards[boardIndex] &= ~bit;
     }
 
-    bool isOn(const std::size_t &_index) const {
+    bool is_on(const std::size_t &_index) const {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
 

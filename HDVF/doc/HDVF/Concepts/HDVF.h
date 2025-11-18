@@ -191,8 +191,8 @@ typedef Sparse_matrix<CoefficientType, CGAL::OSM::ROW> Row_matrix;
  *
  * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
  *
- * \param[in] q Lower dimension of the pair.
- * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+ * \param q Lower dimension of the pair.
+ * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  */
 virtual Cell_pair find_pair_A(int q, bool &found) const;
 
@@ -203,9 +203,9 @@ virtual Cell_pair find_pair_A(int q, bool &found) const;
  * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
  * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
  *
- * \param[in] q Dimension of the cell `gamma`.
- * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
- * \param[in] gamma Index of a cell to pair.
+ * \param q Dimension of the cell `gamma`.
+ * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+ * \param gamma Index of a cell to pair.
  */
 virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
@@ -215,8 +215,8 @@ virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
  * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
  * It returns a vector of such pairs.
  *
- * \param[in] q Lower dimension of the pair.
- * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+ * \param q Lower dimension of the pair.
+ * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  */
 virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
@@ -228,9 +228,9 @@ virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
  * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
  * It returns a vector of such pairs.
  *
- * \param[in] q Dimension of the cell `gamma`.
- * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
- * \param[in] gamma Index of a cell to pair.
+ * \param q Dimension of the cell `gamma`.
+ * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+ * \param gamma Index of a cell to pair.
  */
 virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
 

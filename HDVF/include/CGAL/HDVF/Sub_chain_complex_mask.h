@@ -65,7 +65,7 @@ private:
      *
      * The method activates bits corresponding to the set of cells encoded by `cells` and recursively activates all bits corresponding to their faces.
      *
-     * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
+     * \param cells A vector containing, in each dimension, a vector of cell indices.
      */
     void down_closure (const std::vector<std::vector<int> > &cells)
     {
@@ -75,9 +75,9 @@ private:
         {
             for (int i : cells.at(q))
             {
-                if (!_sub.at(q).isOn(i))
+                if (!_sub.at(q).is_on(i))
                 {
-                    _sub.at(q).setOn(i) ;
+                    _sub.at(q).set_on(i) ;
                     ++_nb_cells.at(q) ;
                     if (q>0) // Then faces must be considered
                     {
@@ -86,7 +86,7 @@ private:
                         for (typename OSM::Sparse_chain<Coefficient_ring, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
                         {
                             const int c(it->first) ;
-                            if (!_sub.at(q-1).isOn(c))
+                            if (!_sub.at(q-1).is_on(c))
                             {
                                 faces.at(q-1).push_back(c) ;
                                 rec_needed = true ;
@@ -105,7 +105,7 @@ private:
      *
      * The method activates bits corresponding to the set of cells encoded by `cells`.
      *
-     * \param[in] cells A vector giving, for each dimension, a vector of cell indices.
+     * \param cells A vector giving, for each dimension, a vector of cell indices.
      */
     void set_cells (const std::vector<std::vector<int> > &cells)
     {
@@ -113,7 +113,7 @@ private:
         {
             for (int i : cells.at(q))
             {
-                _sub.at(q).setOn(i) ;
+                _sub.at(q).set_on(i) ;
                 ++_nb_cells.at(q) ;
             }
         }
@@ -124,8 +124,8 @@ public:
      *
      * Build a `Sub_chain_complex_mask` associated to `K` with all bits set to 1 in the masks if `full` is true, and all bits set to 0 otherwise.
      *
-     * \param[in] K A constant reference to the underlying complex.
-     * \param[in] full Build full / empty masks (default: full).
+     * \param K A constant reference to the underlying complex.
+     * \param full Build full / empty masks (default: full).
      */
     Sub_chain_complex_mask(const Chain_complex& K, bool full=true) : _K(K)
     {
@@ -151,9 +151,9 @@ public:
      *
      * Build masks associated to the underlying complex `K` with all bits corresponding to `cells` (and their faces if `close` is true) set to 1.
      *
-     * \param[in] K A constant reference to the underlying complex.
-     * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
-     * \param[in] close If this boolean is true, the faces of `cells` are also set to 1.
+     * \param K A constant reference to the underlying complex.
+     * \param cells A vector containing, in each dimension, a vector of cell indices.
+     * \param close If this boolean is true, the faces of `cells` are also set to 1.
      */
     Sub_chain_complex_mask(const Chain_complex& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
     {
@@ -184,7 +184,7 @@ public:
      *
      * Builds a `Sub_chain_complex_mask` by copy from another.
      *
-     * \param[in] otherToCopy An initial `Sub_chain_complex_mask`.
+     * \param otherToCopy An initial `Sub_chain_complex_mask`.
      */
     Sub_chain_complex_mask(const Sub_chain_complex_mask& otherToCopy) : _K(otherToCopy._K)
     {
@@ -198,7 +198,7 @@ public:
      *
      * \warning The operator argument must provide a sub chain complex mask over the *same underlying chain complex*. It not so, the assignment will throw an exception.
      *
-     * \param[in] otherToCopy A `Sub_chain_complex_mask` copied into `this` (`otherToCopy` and `this` must have the same underlying chain complex).
+     * \param otherToCopy A `Sub_chain_complex_mask` copied into `this` (`otherToCopy` and `this` must have the same underlying chain complex).
      */
     Sub_chain_complex_mask& operator= (const Sub_chain_complex_mask& otherToCopy)
     {
@@ -234,26 +234,26 @@ public:
     /** \brief Gets a bit of the mask (bit i in dimension q). */
     inline bool get_bit(int q, int i) const
     {
-        return _sub.at(q).isOn(i) ;
+        return _sub.at(q).is_on(i) ;
     }
 
     /** \brief Sets a bit to 1 (bit i in dimension q). */
     inline void set_bit_on(int q, int i)
     {
-        if (!_sub.at(q).isOn(i))
+        if (!_sub.at(q).is_on(i))
         {
             _nb_cells[q]++ ;
-            _sub.at(q).setOn(i) ;
+            _sub.at(q).set_on(i) ;
         }
     }
 
     /** \brief Sets a bit to 0 (bit i in dimension q). */
     inline void set_bit_off(int q, int i)
     {
-        if (_sub.at(q).isOn(i))
+        if (_sub.at(q).is_on(i))
         {
             _nb_cells[q]--;
-            _sub.at(q).setOff(i) ;
+            _sub.at(q).set_off(i) ;
         }
     }
 
@@ -278,7 +278,7 @@ public:
      *
      * \warning For efficiency, screening is performed on the major direction of matrices (so along columns for column-major matrices and along row for row-major matrices).
      *
-     * \param[in] matrices A vector of  `OSM::Sub_sparse_matrix` (in each dimension).
+     * \param matrices A vector of  `OSM::Sub_sparse_matrix` (in each dimension).
      */
     template <typename CT, int CTF>
     void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, CTF> >& matrices)
@@ -294,8 +294,8 @@ public:
      *
      * Nullify all coefficients out of the mask.
      *
-     * \param[in] chain The chain restricted.
-     * \param[in] q Dimension of the chain.
+     * \param chain The chain restricted.
+     * \param q Dimension of the chain.
      */
     template <typename CT, int CTF>
     inline void screen_chain(OSM::Sparse_chain<CT, CTF>& chain, int q)

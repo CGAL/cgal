@@ -98,7 +98,7 @@ public:
      *
      * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      *
-     * \param[in] chain_size The size of the sparse chain.
+     * \param chain_size The size of the sparse chain.
      */
     Sparse_chain(const size_t chain_size)
       : _upperBound(chain_size), _chainData()
@@ -113,7 +113,7 @@ public:
      *
      * \pre The chains have the same `CoefficientRing` and `StorageFormat`.
 
-     * \param[in] otherToCopy The chain to copy.
+     * \param otherToCopy The chain to copy.
      */
     Sparse_chain(const Sparse_chain &otherToCopy)
        : _upperBound(otherToCopy._upperBound),  _chainData(otherToCopy._chainData)
@@ -128,7 +128,7 @@ public:
      *
      * \warning Chains must have the same `CoefficientRing`.
      *
-     * \param[in] otherToCopy The chain we want to copy.
+     * \param otherToCopy The chain we want to copy.
      */
     Sparse_chain& operator=(const Sparse_chain &otherToCopy) {
         _upperBound = otherToCopy._upperBound;
@@ -148,8 +148,8 @@ public:
      *
      * \brief writes a sparse chain in the output stream.
      *
-     * \param[in] stream The output stream.
-     * \param[in] chain The chain to display.
+     * \param stream The output stream.
+     * \param chain The chain to display.
      *
      * \return A reference to the modified stream.
      */
@@ -177,7 +177,7 @@ public:
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise a compilation error if the two chains don't have the same `StorageFormat`.
      *
-     * \param[in] other The other chain.
+     * \param other The other chain.
      *
      * \return A new chain representing the result.
      */
@@ -198,7 +198,7 @@ public:
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise a compilation error if the two chains don't have the same `StorageFormat`.
      *
-     * \param[in] other The other chain.
+     * \param other The other chain.
      *
      * \return A new chain representing the result.
      */
@@ -213,8 +213,8 @@ public:
      *
      * \brief Applies multiplication on each coefficient.
      *
-     * \param[in] lambda The factor to apply.
-     * \param[in] chain The  chain.
+     * \param lambda The factor to apply.
+     * \param chain The  chain.
      *
      * \return A new chain representing the result.
      */
@@ -229,7 +229,7 @@ public:
     /**
      * \brief Applies multiplication on each coefficient.
      *
-     * \param[in] lambda The factor to apply.
+     * \param lambda The factor to apply.
      *
      * \return A new chain representing the result.
      */
@@ -250,8 +250,8 @@ public:
      *
      * \warning Will raise an error if chains do not have the same `CoefficientRing`.
      *
-     * \param[in] column The column chain.
-     * \param[in] row The row chain.
+     * \param column The column chain.
+     * \param row The row chain.
      *
      * \return The result of the matrix multiplication, column-based.
      */
@@ -268,8 +268,8 @@ public:
      *
      * \warning Will raise an error if chains do not have the same `CoefficientRing`.
      *
-     * \param[in] column The column chain.
-     * \param[in] row The row chain.
+     * \param column The column chain.
+     * \param row The row chain.
      *
      * \return The result of the matrix multiplication, row-based.
      */
@@ -284,8 +284,8 @@ public:
      *
      * \warning Will raise an error if the chains do not have the same `CoefficientRing`.
      *
-     * \param[in] row The row chain.
-     * \param[in] column The column chain.
+     * \param row The row chain.
+     * \param column The column chain.
      *
      * \return The result of type CoefficientRing.
      */
@@ -302,7 +302,7 @@ public:
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise an error if the two chains don't have the same `StorageFormat`.
      *
-     * \param[in] other The other chain.
+     * \param other The other chain.
      *
      * \return The modified chain representing the result.
      */
@@ -332,7 +332,7 @@ public:
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise an error if the two chains don't have the same `StorageFormat`.
      *
-     * \param[in] other The other chain.
+     * \param other The other chain.
      *
      * \return The modified chain representing the result.
      */
@@ -357,7 +357,7 @@ public:
      *
      * If `lambda` is null, this function comes to nullify the chain.
      *
-     * \param[in] lambda The factor to apply.
+     * \param lambda The factor to apply.
      *
      * \return The modified chain representing the result.
      */
@@ -379,7 +379,7 @@ public:
      *
      * \warning The chain will perform boundary check.
      *
-     * \param[in] index The coefficient index.
+     * \param index The coefficient index.
      *
      * \return The value of the coefficient.
      */
@@ -399,7 +399,7 @@ public:
      *
      * \warning The chain will perform boundary check.
      *
-     * \param[in] index The coefficient index.
+     * \param index The coefficient index.
      *
      * \return The value of the coefficient.
      */
@@ -421,8 +421,8 @@ public:
      *
      * \warning The chain will perform boundary check.
      *
-     * \param[in] index The coefficient index.
-     * \param[in] d Value of the coefficient
+     * \param index The coefficient index.
+     * \param d Value of the coefficient
      */
     inline void set_coefficient(size_t index, Coefficient_ring d)
     {
@@ -438,7 +438,7 @@ public:
     /**
      * \brief Checks if a coefficient is null.
      *
-     * \param[in] index The index to check.
+     * \param index The index to check.
      * \return True if the data is null at given index.
      */
     const bool is_null(size_t index) const {
@@ -462,7 +462,7 @@ public:
      *
      * \note Will return a copy of the chain if `indices` is empty.
      *
-     * \param[in] indices The indices to remove.
+     * \param indices The indices to remove.
      *
      * \return A new chain representing the result.
      */
@@ -477,7 +477,7 @@ public:
      *
      * Return a new chain where the coefficients at a given index is removed.
      *
-     * \param[in] index The index to remove.
+     * \param index The index to remove.
      */
     Sparse_chain operator/(size_t index) {
         Sparse_chain newChain = *this;
@@ -492,7 +492,7 @@ public:
      *
      * \note Will not alter the chain if `indices` is empty.
      *
-     * \param[in] indices The indices to remove.
+     * \param indices The indices to remove.
      *
      * \return Return a reference to the modified chain.
      */
@@ -511,7 +511,7 @@ public:
      *
      * \note Will not alter the chain if given vector is empty.
      *
-     * \param[in] index The index to remove.
+     * \param index The index to remove.
      *
      * \return Return a reference to the modified chain.
      */
@@ -638,7 +638,7 @@ private:
      *
      * \warning The chain will perform boundary check.
      *
-     * \param[in] index The coefficient index.
+     * \param index The coefficient index.
      *
      * \return The reference to the assigned coefficient.
      */

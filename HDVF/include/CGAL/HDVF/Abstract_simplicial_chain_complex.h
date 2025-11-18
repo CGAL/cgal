@@ -65,7 +65,7 @@ public:
      *
      * Builds the abstract simplicial complex associated to a triangular mesh (i.e. performs the down closure of cells and set the boundary matrices in any dimension).
      *
-     * \param[in] mesh A `Mesh_object_io` containing a triangular mesh.
+     * \param mesh A `Mesh_object_io` containing a triangular mesh.
      */
     template <typename Traits>
     Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh);
@@ -83,7 +83,7 @@ public:
      *
      * Stores a copy of an abstract simplicial chain complex in `*this`.
      *
-     * \param[in] complex The abstract simplicial chain complex which will be copied.
+     * \param complex The abstract simplicial chain complex which will be copied.
      */
     Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex)
     {
@@ -102,8 +102,8 @@ public:
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell id_cell in dimension q.
      *
-     * \param[in] id_cell %Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param id_cell %Index of the cell.
+     * \param q Dimension of the cell.
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
@@ -122,8 +122,8 @@ public:
      *
      * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
      *
-     * \param[in] id_cell %Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param id_cell %Index of the cell.
+     * \param q Dimension of the cell.
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
      */
@@ -147,7 +147,7 @@ public:
     /**
      * \brief Returns the number of cells in a given dimension.
      *
-     * \param[in] q Dimension along which the number of cells is returned.
+     * \param q Dimension along which the number of cells is returned.
      *
      * \return Number of cells in dimension q.
      */
@@ -189,7 +189,7 @@ public:
      *
      * It is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
      *
-     * \param[in] q Dimension of the boundary matrix (i.e. columns will contain the boundary of dimension q cells).
+     * \param q Dimension of the boundary matrix (i.e. columns will contain the boundary of dimension q cells).
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
@@ -207,14 +207,14 @@ public:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      *
-     * \param[in] id_cell %Index of the cell.
-     * \param[in] q Dimension of the cell.
+     * \param id_cell %Index of the cell.
+     * \param q Dimension of the cell.
      *
      * \return A vector of 0-simplex indices.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
-        std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).get_vertices()) ;
+        std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).vertices()) ;
         std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
         for (size_t vert_id : verts)
@@ -292,7 +292,7 @@ protected:
      * Compute the boundary with the standard simplicial complex definition:
      * \f[\partial (\{v_0,\ldots,v_q\}) = \sum_{i=0}^q (-1)^q \{v_0,\ldots, \hat{v_i},\ldots,v_q\}\f]
      *
-     * \param[in] q Dimension considered for computation.
+     * \param q Dimension considered for computation.
      */
     void  calculate_d(int q) const;
 
@@ -303,7 +303,7 @@ protected:
      *
      * \warning `insert_simplex()` does not update the boundary matrix.
      *
-     * \param[in] tau The simplex inserted.
+     * \param tau The simplex inserted.
      */
     void insert_simplex(const Simplex& tau);
 

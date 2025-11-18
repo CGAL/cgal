@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <map>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Abstract_simplicial_chain_complex.h>
 #include <CGAL/OSM/OSM.h>
@@ -45,7 +46,8 @@ public:
     /** \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
     /** \brief Type of vtk export vertex coordinates */
-    typedef typename Traits::Point3 Point3 ;
+//    typedef typename Traits::Point3 Point3 ;
+    typedef CGAL::Simple_cartesian<double>::Point_3 Point3;
 
 protected:
     /** \brief Vector of vertex coordinates */
@@ -75,7 +77,7 @@ public:
      *
      * Stores a copy of a simplicial complex in *this.
      *
-     * \param[in] complex The simplicial complex which will be copied.
+     * \param complex The simplicial complex which will be copied.
      */
     Simplicial_chain_complex& operator= (const Simplicial_chain_complex& complex)
     {
@@ -99,7 +101,7 @@ public:
     Point point(size_t i) const
     {
         const Simplex simpl(this->_ind2simp.at(0).at(i)) ;
-        const std::vector<size_t> verts(simpl.get_vertices()) ;
+        const std::vector<size_t> verts(simpl.vertices()) ;
         const size_t id(*(verts.cbegin())) ;
         return _coords.at(id);
     }
@@ -113,10 +115,10 @@ public:
      *
      * \tparam LabelType Type of labels provided (default: int).
      *
-     * \param[in] K Simplicial complex exported.
-     * \param[in] filename Output file root (output filenames will be built from this root).
-     * \param[in] labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
-     * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
+     * \param K Simplicial complex exported.
+     * \param filename Output file root (output filenames will be built from this root).
+     * \param labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+     * \param label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
     static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
@@ -221,11 +223,11 @@ public:
      *
      * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.
      *
-     * \param[in] K Simplicial complex exported.
-     * \param[in] filename Output file root (output filenames will be built from this root).
-     * \param[in] chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
-     * \param[in] q Dimension of the cells of the chain.
-     * \param[in] cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
+     * \param K Simplicial complex exported.
+     * \param filename Output file root (output filenames will be built from this root).
+     * \param chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
+     * \param q Dimension of the cells of the chain.
+     * \param cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
     static void chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 };

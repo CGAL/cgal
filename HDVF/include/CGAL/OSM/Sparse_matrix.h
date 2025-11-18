@@ -96,7 +96,7 @@ protected:
      *
      * \warning The operator changes the status of the chain and the matrix will perform boundary check.
      *
-     * \param[in] _index The coefficient index.
+     * \param _index The coefficient index.
      *
      * \return The reference to the chain stored at given index.
      */
@@ -130,8 +130,8 @@ public:
      *
      * Create a new empty Sparse_matrix object of type `StorageFormat` with coefficients of type `CoefficientRing` and a given size along rows/columns.
      *
-     * \param[in] rowCount The number of rows to preallocate.
-     * \param[in] columnCount The number of columns to preallocate.
+     * \param rowCount The number of rows to preallocate.
+     * \param columnCount The number of columns to preallocate.
      */
     Sparse_matrix(const size_t rowCount, const size_t columnCount) {
         size_t mainSize = StorageFormat == COLUMN ? columnCount : rowCount;
@@ -152,7 +152,7 @@ public:
      * Create a new SparseMatrix from another SparseMatrix object (with possibly a different `StorageFormat`). Initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `StorageFormat`).
      * If types are different, the constructor performs conversion.
      *
-     * \param[in] otherToCopy The matrix copied.
+     * \param otherToCopy The matrix copied.
      */
     template <int CTF>
     Sparse_matrix(const Sparse_matrix<CoefficientRing,CTF> &otherToCopy) {
@@ -191,7 +191,7 @@ public:
                 for (typename Sparse_chain<CoefficientRing, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
                 {
                     _chains[it->first][i] = it->second ;
-                    _chainsStates.setOn(it->first) ;
+                    _chainsStates.set_on(it->first) ;
                 }
             }
         }
@@ -204,7 +204,7 @@ public:
      *
      * \pre The matrices must have the same type.
      *
-     * \param[in] otherToCopy The matrix we want to copy.
+     * \param otherToCopy The matrix we want to copy.
      *
      * \return The reference to the modified matrix.
      */
@@ -287,8 +287,8 @@ public:
      *
      * \brief Writes a sparse matrix in the output stream.
      *
-     * \param[in] stream The output stream.
-     * \param[in] matrix The matrix to display.
+     * \param stream The output stream.
+     * \param matrix The matrix to display.
      *
      * \return A reference to the modified stream.
      */
@@ -416,7 +416,7 @@ public:
      *
      * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
-     * \param[in] other The second matrix.
+     * \param other The second matrix.
      *
      * \return A new matrix representing the result.
      */
@@ -437,7 +437,7 @@ public:
      *
      * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
-     * \param[in] other The second matrix.
+     * \param other The second matrix.
      *
      * \return A new matrix representing the result.
      */
@@ -457,8 +457,8 @@ public:
      *
      * If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      *
-     * \param[in] lambda The factor to apply.
-     * \param[in] matrix The matrix.
+     * \param lambda The factor to apply.
+     * \param matrix The matrix.
      *
      * \return A new matrix representing the result.
      */
@@ -477,7 +477,7 @@ public:
      *
      * If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      *
-     * \param[in] lambda The factor to apply.
+     * \param lambda The factor to apply.
      *
      * \return A new matrix representing the result.
      */
@@ -664,7 +664,7 @@ public:
             this->_chains[index] += other._chains[index];
 
             if (this->_chains[index].is_null()) {
-                this->_chainsStates.setOff(index);
+                this->_chainsStates.set_off(index);
             }
         }
 
@@ -715,7 +715,7 @@ public:
             this->_chains[index] -= other._chains[index];
 
             if (this->_chains[index].is_null()) {
-                this->_chainsStates.setOff(index);
+                this->_chainsStates.set_off(index);
             }
         }
 
@@ -743,7 +743,7 @@ public:
      *
      * If `lambda` is 0, this comes to nullify the matrix.
      *
-     * \param[in] lambda The factor to apply.
+     * \param lambda The factor to apply.
      *
      * \return The modified matrix representing the result.
      */
@@ -826,7 +826,7 @@ public:
      *
      * \warning The matrix will perform boundary check.
      *
-     * \param[in] index The chain index.
+     * \param index The chain index.
      *
      * \return The chain stored at given index.
      */
@@ -874,10 +874,10 @@ public:
      *
      * \warning The matrix will perform boundary check.
      *
-     * \param[in] matrix Reference on the matrix to modify.
-     * \param[in] i The row index.
-     * \param[in] j The column index.
-     * \param[in] d The value.
+     * \param matrix Reference on the matrix to modify.
+     * \param i The row index.
+     * \param j The column index.
+     * \param d The value.
      */
     template <typename _CT, int _CTF>
     friend void set_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d);
@@ -906,9 +906,9 @@ public:
      *
      * \warning The matrix will perform boundary check.
      *
-     * \param[in] matrix Constant reference on the matrix.
-     * \param[in] i The row index.
-     * \param[in] j The column index.
+     * \param matrix Constant reference on the matrix.
+     * \param i The row index.
+     * \param j The column index.
      *
      * \return The value of the given coefficient.
      */
@@ -987,8 +987,8 @@ public:
      *
      * \warning The matrix will perform boundary check.
      *
-     * \param[in] matrix The matrix considered.
-     * \param[in] index The column index.
+     * \param matrix The matrix considered.
+     * \param index The column index.
      *
      * \return A constant reference over the column stored at given index.
      */
@@ -1003,8 +1003,8 @@ public:
      *
      * \warning The matrix will perform boundary check.
      *
-     * \param[in] matrix The matrix considered.
-     * \param[in] index The row index.
+     * \param matrix The matrix considered.
+     * \param index The row index.
      *
      * \return A const reference over the row stored at given index.
      */
@@ -1133,7 +1133,7 @@ public:
     /** \brief Removes the chain at a given `index` from a matrix. */
     Sparse_matrix& operator/=(const size_t index) {
         _chains[index].nullify();
-        _chainsStates.setOff(index);
+        _chainsStates.set_off(index);
 
         return *this;
     }
@@ -1169,8 +1169,8 @@ public:
      *
      * Removes column of index `index` whatever the `StorageFormat` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      *
-     * \param[in] matrix Reference on the matrix to modify.
-     * \param[in] index The index to remove.
+     * \param matrix Reference on the matrix to modify.
+     * \param index The index to remove.
      *
      * \return The modified matrix representing the result.
      */
@@ -1205,8 +1205,8 @@ public:
      *
      * Removes row of index `index` whatever the `StorageFormat` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      *
-     * \param[in] matrix Reference on the matrix to modify.
-     * \param[in] index The index to remove.
+     * \param matrix Reference on the matrix to modify.
+     * \param index The index to remove.
      *
      * \return The modified matrix representing the result.
      */
@@ -1222,14 +1222,14 @@ protected:
             Matrix_chain &tmp(_chains[j]);
             tmp /= tmp_id;
             if (tmp.is_null())
-                _chainsStates.setOff(j) ;
+                _chainsStates.set_off(j) ;
         } else // OSM::ROW
         {
             std::vector<size_t> tmp_id({j}) ;
             Matrix_chain &tmp(_chains[i]);
             tmp /= tmp_id;
             if (tmp.is_null())
-                _chainsStates.setOff(i) ;
+                _chainsStates.set_off(i) ;
         }
         return *this;
     }
@@ -1241,9 +1241,9 @@ public:
      *
      * Removes coefficient at row `i` and column `j`.
      *
-     * \param[in] matrix Reference on the matrix to modify.
-     * \param[in] i Index of the row
-     * \param[in] j Index of the column
+     * \param matrix Reference on the matrix to modify.
+     * \param i Index of the row
+     * \param j Index of the column
      *
      * \return The modified matrix representing the result.
      */
@@ -1331,7 +1331,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, co
         Sparse_chain<_CT, COLUMN> column(first._size.first);
 
         for (auto colRight: second._chains[index]) {
-            if (first._chainsStates.isOn(colRight.first)) {
+            if (first._chainsStates.is_on(colRight.first)) {
                 column += colRight.second * first._chains[colRight.first];
             }
         }
@@ -1544,7 +1544,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &first, const Sp
         Sparse_chain<_CT, ROW> row(second._size.second);
 
         for (auto colRight: first._chains[index]) {
-            if (first._chainsStates.isOn(colRight.first)) {
+            if (first._chainsStates.is_on(colRight.first)) {
                 row += colRight.second * second._chains[colRight.first];
             }
         }
@@ -1570,7 +1570,7 @@ Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &matrix, const
             matrix._chains[index] += get_column(other, index);
 
             if (matrix._chains[index].is_null()) {
-                matrix._chainsStates.setOff(index);
+                matrix._chainsStates.set_off(index);
             }
         }
     }
@@ -1593,7 +1593,7 @@ Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &matrix, const Spars
             matrix._chains[index] += get_row(other, index);
 
             if (matrix._chains[index].is_null()) {
-                matrix._chainsStates.setOff(index);
+                matrix._chainsStates.set_off(index);
             }
         }
     }
@@ -1616,7 +1616,7 @@ Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &matrix, const
             matrix._chains[index] -= get_column(other, index);
 
             if (matrix._chains[index].is_null()) {
-                matrix._chainsStates.setOff(index);
+                matrix._chainsStates.set_off(index);
             }
         }
     }
@@ -1639,7 +1639,7 @@ Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &matrix, const Spars
             matrix._chains[index] -= get_row(other, index);
 
             if (matrix._chains[index].is_null()) {
-                matrix._chainsStates.setOff(index);
+                matrix._chainsStates.set_off(index);
             }
         }
     }
@@ -1750,7 +1750,7 @@ void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_
         throw std::runtime_error("set_column dimension error") ;
     matrix[index] = chain;
     if (chain.is_null())
-        matrix._chainsStates.setOff(index) ;
+        matrix._chainsStates.set_off(index) ;
 }
 
 // Set column in a ROW matrix
@@ -1763,7 +1763,7 @@ void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_cha
             matrix._chains[i] /= index;
 
             if (matrix._chains[i].is_null()) {
-                matrix._chainsStates.setOff(i);
+                matrix._chainsStates.set_off(i);
             }
         }
 
@@ -1784,7 +1784,7 @@ void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_cha
             matrix._chains[i] /= index;
 
             if (matrix._chains[i].is_null()) {
-                matrix._chainsStates.setOff(i);
+                matrix._chainsStates.set_off(i);
             }
         }
 
@@ -1802,7 +1802,7 @@ void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<
         throw("set_column dimension error") ;
     matrix[index] = chain;
     if (chain.is_null())
-        matrix._chainsStates.setOff(index) ;
+        matrix._chainsStates.set_off(index) ;
 }
 
 template <typename _CT, int _CTF>

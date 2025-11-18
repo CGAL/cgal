@@ -53,10 +53,10 @@ namespace IO {
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each critical cell to vtk files.
  *
- * \param[in] hdvf Reference to the HDVF exported.
- * \param[in] complex Underlying geometric chain complex.
- * \param[in] filename Prefix of all generated files.
- * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
+ * \param hdvf Reference to the HDVF exported.
+ * \param complex Underlying geometric chain complex.
+ * \param filename Prefix of all generated files.
+ * \param co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  *
  * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
  *
@@ -128,10 +128,10 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, Chain
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
  *
- * \param[in] per_hdvf Reference to the persistent HDVF exported.
- * \param[in] complex Underlying geometric chain complex.
- * \param[in] filename Prefix of all generated files.
- * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
+ * \param per_hdvf Reference to the persistent HDVF exported.
+ * \param complex Underlying geometric chain complex.
+ * \param filename Prefix of all generated files.
+ * \param co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
 template <typename ChainComplex, typename Degree, typename FiltrationType>
@@ -142,7 +142,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
 
     using HDVF_type = Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
-    using Persistent_interval = HDVF_type::Persistent_interval;
+    using Persistence_interval = HDVF_type::Persistence_interval;
 
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
@@ -156,7 +156,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
     for (typename HDVF_type::iterator it = per_hdvf.begin(); it != per_hdvf.end(); ++it)
     {
         typename HDVF_type::Persistent_hole hole_data(*it) ;
-        const Persistent_interval hole(hole_data.hole) ;
+        const Persistence_interval hole(hole_data.hole) ;
         // Export informations of this hole
         /* V1 */
         info_file << i << " -> " << " --- duration : " << hole.duration() << " -- " ;
@@ -232,10 +232,10 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
 
  Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
 
- \param[in] hdvf Reference to the HDVF exported.
- \param[in] complex Underlying geometric chain complex.
- \param[in] filename Prefix of all generated files.
- \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
+ \param hdvf Reference to the HDVF exported.
+ \param complex Underlying geometric chain complex.
+ \param filename Prefix of all generated files.
+ \param co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
 template <typename ChainComplex, typename VertexIdType = size_t>
@@ -368,10 +368,10 @@ public:
      * <img src="HDVF_twirl_view1.png" align="center" width=35%/>
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
-     * \param[in] mesh_io `Mesh_object_io` containing the initial set of simplicies (working mesh).
-     * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
-     * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
-     * \param[in] subdiv Subdivision level of the bounding icosphere.
+     * \param mesh_io `Mesh_object_io` containing the initial set of simplicies (working mesh).
+     * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
+     * \param out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
+     * \param subdiv Subdivision level of the bounding icosphere.
      */
     static Complex_duality_data dualize_complex (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
@@ -430,9 +430,9 @@ public:
      * <img src="HDVF_twirl_view1.png" align="center" width=35%/>
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
-     * \param[in] mesh `Surface_mesh` containing the initial mesh.
-     * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
-     * \param[in] subdiv Subdivision level of the bounding icosphere.
+     * \param mesh `Surface_mesh` containing the initial mesh.
+     * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
+     * \param subdiv Subdivision level of the bounding icosphere.
      */
     
     static Complex_duality_data dualize_complex (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
@@ -517,7 +517,7 @@ public:
             for (size_t i = 0; i<_CC.number_of_cells(q); ++i)
             {
                 const Simplex& s(_CC.index_to_cell(i,q)) ;
-                vcells.push_back(s.get_vertices()) ;
+                vcells.push_back(s.vertices()) ;
             }
 
         std::vector<Point> coords;
@@ -567,7 +567,7 @@ public:
      * <img src="HDVF_eight_view1.png" align="center" width=35%/>
      * <img src="HDVF_eight_view2.png" align="center" width=30%/>
      *
-     * \param[in] K_init Initial cubical chain complex (working mesh).
+     * \param K_init Initial cubical chain complex (working mesh).
      */
     static std::pair<Chain_complex&, Sub_chain_complex&> dualize_complex (const Chain_complex& K_init)
     {

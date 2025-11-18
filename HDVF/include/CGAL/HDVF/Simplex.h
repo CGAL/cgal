@@ -44,24 +44,24 @@ public:
      *
      * Simplices are stored as a sorted vector of vertex indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
      **/
-    typedef std::vector<size_t> Simplex_data_type;
+    typedef std::vector<size_t> Simplex_data;
 private:
     // Indices of the simplex vertices - sorted vector
-    Simplex_data_type _vertices;
+    Simplex_data _vertices;
 
     public:
     /** \brief Constructor from a vector of vertex indices.
      *
-     * \param[in] vertices Vector of the simplex vertex indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
-     * \param[in] sort_data If `true` vectors of vertex indices are sorted, if `false` indices are assumed to be sorted (faster).
+     * \param vertices Vector of the simplex vertex indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
+     * \param sort_data If `true` vectors of vertex indices are sorted, if `false` indices are assumed to be sorted (faster).
      */
-    Simplex(const Simplex_data_type& vertices, bool sort_data = false) : _vertices(vertices) {
+    Simplex(const Simplex_data& vertices, bool sort_data = false) : _vertices(vertices) {
         if (sort_data)
             std::sort(_vertices.begin(), _vertices.end());
     }
 
     /** \brief Constant iterator over the vertices of a simplex. */
-    typedef Simplex_data_type::const_iterator const_iterator ;
+    typedef Simplex_data::const_iterator const_iterator ;
 
     /** \brief Returning a constant iterator on the first vertex of the simplex. */
     const_iterator cbegin ()
@@ -92,7 +92,7 @@ private:
 
         auto it = _vertices.begin();
         for (size_t i = 0; i < _vertices.size(); ++i) {
-            Simplex_data_type simplex_vertices;
+            Simplex_data simplex_vertices;
             std::copy_if(_vertices.begin(), _vertices.end(), std::inserter(simplex_vertices, simplex_vertices.begin()),
                          [it](const size_t& vertex) { return vertex != *it; });
             result.emplace_back(simplex_vertices);
@@ -103,7 +103,7 @@ private:
     }
 
     /** \brief Gets the set of vertex indices of the simplex. */
-    const Simplex_data_type& get_vertices() const
+    const Simplex_data& vertices() const
     {
         return _vertices ;
     }
@@ -112,7 +112,7 @@ private:
      *
      * Compare the object with another simplex according to the lexicographical order on vertex indices sets.
      *
-     * \param[in] other Compare `this` with `other` (returns  `this < other`).
+     * \param other Compare `this` with `other` (returns  `this < other`).
      */
     bool operator<(const Simplex& other) const {
         return _vertices < other._vertices;

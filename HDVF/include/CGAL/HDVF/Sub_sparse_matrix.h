@@ -56,8 +56,8 @@ public:
      *
      * Default constructor. Constructor with sizes, initialize an empty Sub_sparse_matrix of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns. The constructor sets the mask to `full`.
      *
-     * \param[in] rowCount The number of rows to preallocate (default 0).
-     * \param[in] columnCount The number of columns to preallocate (default 0).
+     * \param rowCount The number of rows to preallocate (default 0).
+     * \param columnCount The number of columns to preallocate (default 0).
      */
     Sub_sparse_matrix(size_t rowCount=0, size_t columnCount=0) : Sparse_matrix<CoefficientRing, StorageFormat>(rowCount, columnCount)
     {
@@ -73,9 +73,9 @@ public:
      *
      * Create a new empty `Sub_sparse_matrix` of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns and a given mask.
      *
-     * \param[in] rowCount The number of rows to preallocate.
-     * \param[in] columnCount The number of columns to preallocate.
-     * \param[in] subChain Bitboard describing the subset of indices considered as a mask.
+     * \param rowCount The number of rows to preallocate.
+     * \param columnCount The number of columns to preallocate.
+     * \param subChain Bitboard describing the subset of indices considered as a mask.
      */
     Sub_sparse_matrix(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientRing, StorageFormat>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
     {
@@ -85,7 +85,7 @@ public:
      *
      * Create a new empty `Sub_sparse_matrix` from another of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns and a given mask.
      *
-     * \param[in] otherToCopy `Sub_sparse_matrix` copied into `this`.
+     * \param otherToCopy `Sub_sparse_matrix` copied into `this`.
      */
     Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientRing, StorageFormat>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
 
@@ -93,7 +93,7 @@ public:
      *
      * Create a new `Sub_sparse_matrix` from a `Sparse_matrix` object (with the same `StorageFormat`). Create a "full" mask.
      *
-     * \param[in] otherToCopy The matrix copied.
+     * \param otherToCopy The matrix copied.
      */
     Sub_sparse_matrix(const Sparse_matrix<CoefficientRing,StorageFormat>& otherToCopy) : Sparse_matrix<CoefficientRing, StorageFormat>(otherToCopy)
     {
@@ -131,25 +131,25 @@ public:
      *
      * Set the bit encoding a given index to 1 (ie.\ add the index in the mask).
      *
-     * \param[in] index Index to turn on in the mask.
+     * \param index Index to turn on in the mask.
      */
     inline void set_bit_on (size_t index)
     {
-        _subChains.setOn(index) ;
-        if (this->_chainsStates.isOn(index))
-            _subChainsStates.setOn(index) ;
+        _subChains.set_on(index) ;
+        if (this->_chainsStates.is_on(index))
+            _subChainsStates.set_on(index) ;
     }
 
     /** \brief Removes an index from the mask.
      *
      * Set the bit encoding a given index to 0 (ie.\ remove the index from the mask).
      *
-     * \param[in] index Index to turn off in the mask.
+     * \param index Index to turn off in the mask.
      */
     inline void set_bit_off (size_t index)
     {
-        _subChains.setOff(index) ;
-        _subChainsStates.setOff(index) ;
+        _subChains.set_off(index) ;
+        _subChainsStates.set_off(index) ;
     }
 
     /** \brief Changes the mask to its complement. */
@@ -162,7 +162,7 @@ public:
      *
      * \pre The matrices must have the same type.
      *
-     * \param[in] otherToCopy The matrix we want to copy.
+     * \param otherToCopy The matrix we want to copy.
      *
      * \return The reference to the modified matrix.
      */
@@ -179,8 +179,8 @@ public:
      *
      * Displays the sparse matrix as well as its mask.
      *
-     * \param[in] stream The output stream.
-     * \param[in] matrix The matrix to display.
+     * \param stream The output stream.
+     * \param matrix The matrix to display.
      *
      * \return A reference to the modified stream.
      */

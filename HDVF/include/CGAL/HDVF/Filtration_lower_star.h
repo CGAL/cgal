@@ -115,7 +115,7 @@ public:
      *
      * Builds a filtration by copy from another.
      *
-     * \param[in] f An initial lower star filtration.
+     * \param f An initial lower star filtration.
      */
     Filtration_lower_star(const Filtration_lower_star& f) : Filtration_parent(f) {}
 
@@ -123,8 +123,8 @@ public:
      *
      * The constructor computes all cell degrees as the minimum of the degrees of their vertices and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
-     * \param[in] K Constant reference to the underlying complex.
-     * \param[in] deg Vector of vertex degrees.
+     * \param K Constant reference to the underlying complex.
+     * \param deg Vector of vertex degrees.
      */
     Filtration_lower_star(const Chain_complex& K, const std::vector<Degree>& deg) : Filtration_parent(K)
     {
@@ -135,12 +135,12 @@ public:
      *
      * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `degree_function`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
-     * \param[in] K Constant reference to the underlying complex.
-     * \param[in] degree_function Function mapping vertices of `K` to their degree.
+     * \param K Constant reference to the underlying complex.
+     * \param function_degree Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& degree_function) : Filtration_parent(K)
+    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& function_degree) : Filtration_parent(K)
     {
-        star_filtration(degree_function);
+        star_filtration(function_degree);
     }
 
 
