@@ -29,7 +29,8 @@ struct Test{
     segs.emplace_back(Point_2(1,1), Point_2(3,1));
     segs.emplace_back(Point_2(1,2), Point_2(3,0));
     std::vector<Segment_2> out;
-    CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(Traits()));
+    Traits traits;
+    CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(traits));
     assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   }
 };
