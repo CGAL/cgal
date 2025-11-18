@@ -12,6 +12,9 @@
 /// \defgroup PkgHyperbolicSurfaceTriangulation2InputOutput Input/Output Functions
 /// \ingroup PkgHyperbolicSurfaceTriangulation2Ref
 
+/// \defgroup PkgHyperbolicSurfaceTriangulation2DirichletDomain Dirichlet Domain Function
+/// \ingroup PkgHyperbolicSurfaceTriangulation2Ref
+
 /*!
 \addtogroup PkgHyperbolicSurfaceTriangulation2Ref
 
