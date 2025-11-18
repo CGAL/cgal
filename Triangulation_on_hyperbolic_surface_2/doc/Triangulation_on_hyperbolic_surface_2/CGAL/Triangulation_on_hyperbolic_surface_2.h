@@ -126,14 +126,6 @@ public:
 
   /// @}
 
-  /// \name Assignment
-  /// @{
-
-  /*!
-    \pre <code> other.is_valid() </code>
-  */
-  Triangulation_on_hyperbolic_surface_2& operator=(Triangulation_on_hyperbolic_surface_2 other);
-
   /// @}
 
   /// \name Access Functions
