@@ -328,15 +328,13 @@ public:
 
     /** \brief Type returned by `dualize_complex()`.
      *
-     * The structure contains a triple:
-     * - A simplicial chain complex `L` (homeomorphic to \f$\mathbb B^3\f$).
-     * - A sub chain complex mask `K` (encoding the initial mesh)
-     * - The vector of vertex coordinates of `L`
+     * The structure contains a pair:
+     * - A simplicial chain complex `L_complex` (homeomorphic to \f$\mathbb B^3\f$).
+     * - A sub chain complex mask `K_complex` (encoding the initial mesh inside `L_complex`)
      */
     typedef struct {
-        Chain_complex& L ;
-        Sub_chain_complex& K ;
-        std::vector<Point> nodes ;
+        Chain_complex& L_complex ;
+        Sub_chain_complex& K_complex ;
     } Complex_duality_data ;
 
 private:
@@ -415,7 +413,7 @@ public:
         Sub_chain_complex& K(compute_sub_chain_complex(*_K, L));
         // Remove the temporary complex
         delete _K;
-        Complex_duality_data t = {L,K,tetL.nodes} ;
+        Complex_duality_data t = {L,K} ;
         return t ;
     }
 
@@ -504,7 +502,7 @@ public:
         Sub_chain_complex& K(compute_sub_chain_complex(*_K, L));
         // Remove the temporary complex
         delete _K;
-        Complex_duality_data t = {L,K,L_tri_io.nodes} ;
+        Complex_duality_data t = {L,K} ;
         return t ;
     }
 
@@ -555,6 +553,18 @@ public:
     typedef Cubical_chain_complex<CoefficientRing, Traits> Chain_complex ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
+    
+    /** \brief Type returned by `dualize_complex()`.
+     *
+     * The structure contains a pair:
+     * - A simplicial chain complex `L_complex` (homeomorphic to \f$\mathbb B^3\f$).
+     * - A sub chain complex mask `K_complex` (encoding the initial mesh inside `L_complex`)
+     */
+    typedef struct {
+        Chain_complex& L_complex ;
+        Sub_chain_complex& K_complex ;
+    } Complex_duality_data ;
+    
     // Constructor
     Duality_cubical_complex_tools() {}
 
@@ -569,7 +579,7 @@ public:
      *
      * \param K_init Initial cubical chain complex (working mesh).
      */
-    static std::pair<Chain_complex&, Sub_chain_complex&> dualize_complex (const Chain_complex& K_init)
+    static Complex_duality_data dualize_complex (const Chain_complex& K_init)
     {
         Cub_object_io<Traits> tmp_L ;
         tmp_L.dim = K_init.dimension() ;
@@ -597,7 +607,7 @@ public:
                 K.set_bit_on(q,j) ;
             }
         }
-        return std::pair<Chain_complex&, Sub_chain_complex&>(L,K) ;
+        return Complex_duality_data({L,K}) ;
     }
 } ;
 
