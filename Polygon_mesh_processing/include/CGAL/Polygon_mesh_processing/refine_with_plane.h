@@ -427,10 +427,12 @@ void refine_with_plane(PolygonMesh& pm,
     for (halfedge_descriptor h : halfedges_around_target(hv, pm))
     {
       if (is_border(h, pm)) continue;
+
+
       Oriented_side prev_ori = get(vertex_os, source(h, pm)),
                     next_ori = get(vertex_os, target(next(h, pm), pm));
-      if (prev_ori == ON_ORIENTED_BOUNDARY || next_ori == ON_ORIENTED_BOUNDARY) continue; // skip full edge
-      if (prev_ori!=next_ori) splitted_faces[face(h, pm)].push_back(h); // skip tangency point
+      splitted_faces[face(h, pm)].push_back(h);
+      if (prev_ori==ON_ORIENTED_BOUNDARY || next_ori==ON_ORIENTED_BOUNDARY || prev_ori==next_ori) splitted_faces[face(h, pm)].push_back(h); // skip crossing points
     }
   }
 
@@ -439,14 +441,14 @@ void refine_with_plane(PolygonMesh& pm,
   {
     std::size_t nb_hedges = f_and_hs.second.size();
 
-    CGAL_assertion( nb_hedges%2 ==0 );
-
     visitor.before_subface_creations(f_and_hs.first, pm);
 
     if (nb_hedges==2)
     {
       halfedge_descriptor h1=f_and_hs.second[0], h2=f_and_hs.second[1];
-      CGAL_assertion(next(h1,pm)!=h2 && next(h2,pm)!=h1); // the edge does not already exist
+      if(next(h1,pm)==h2 || next(h2,pm)==h1 || h1==h2) // the edge does not already exist
+        continue;
+
       visitor.before_subface_created(pm);
       halfedge_descriptor res = CGAL::Euler::split_face(h1, h2, pm);
       visitor.after_subface_created(face(h2, pm), pm);
@@ -490,12 +492,35 @@ void refine_with_plane(PolygonMesh& pm,
       };
       std::sort(f_and_hs.second.begin(), f_and_hs.second.end(), less_hedge);
 
+      if (f_and_hs.second.front()==*std::next(f_and_hs.second.begin()))
+        f_and_hs.second.erase(f_and_hs.second.begin());
+      if (f_and_hs.second.back()==*std::prev(f_and_hs.second.end(),2))
+        f_and_hs.second.pop_back();
+
+      nb_hedges = f_and_hs.second.size();
+      CGAL_assertion(nb_hedges%2==0);
+
       for (std::size_t i=0; i<nb_hedges; i+=2)
       {
-        halfedge_descriptor h1=f_and_hs.second[i], h2=f_and_hs.second[i+1];
-        CGAL_assertion(next(h1,pm)!=h2 && next(h2,pm)!=h1); // the edge does not already exist
+        halfedge_descriptor h1=f_and_hs.second[i],
+                            h2=f_and_hs.second[i+1],
+                            h3=i+2<nb_hedges?f_and_hs.second[i+2]:boost::graph_traits<PolygonMesh>::null_halfedge();
+
+        if(next(h1,pm)==h2 || next(h2,pm)==h1 || h1==h2) // the edge does not already exist
+          continue;
+
+        bool update_h3 = h2==h3;
+
         visitor.before_subface_created(pm);
         halfedge_descriptor res = CGAL::Euler::split_face(h1, h2, pm);
+
+        if (update_h3 && face(f_and_hs.second[i+3], pm)!=face(h3,pm))
+        {
+          CGAL_assertion(target(h3, pm)==target(res,pm));
+          CGAL_assertion(face(f_and_hs.second[i+3], pm)==face(res,pm));
+          f_and_hs.second[i+2]=res;
+        }
+
         if constexpr (has_visitor)
         {
           if (face(h1,pm)!=face(h2,pm))
