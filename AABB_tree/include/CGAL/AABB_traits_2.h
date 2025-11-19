@@ -198,7 +198,9 @@ public:
   }
 };
 
-template <typename GeomTraits, bool Has_filtered_predicates = internal::Has_filtered_predicates<GeomTraits>::value, bool Has_static_filters = internal::Has_static_filters<GeomTraits>::value>
+template <typename GeomTraits,
+          bool Has_filtered_predicates = internal::Has_filtered_predicates<GeomTraits>::value,
+          bool Has_static_filters = internal::Has_static_filters<GeomTraits>::value>
 class Compare_distance_getter_2 {};
 
 template <typename GeomTraits>
