@@ -124,6 +124,12 @@ public:
 
   bool is_zombie() const
   {
+#ifdef CGAL_AW2_DEBUG_PP
+    std::cout << "Zombie check of " << std::endl;
+    std::cout << "  " << &*(m_edge.first) << ": " << m_edge.first->erase_counter() << " " << m_erase_counter_mem << std::endl;
+    std::cout << "  " << &*(m_mirror_edge.first) << ": " << m_mirror_edge.first->erase_counter() << " " << m_mirror_erase_counter_mem << std::endl;
+#endif
+
     return (m_edge.first->erase_counter() != m_erase_counter_mem) ||
            (m_mirror_edge.first->erase_counter() != m_mirror_erase_counter_mem);
   }

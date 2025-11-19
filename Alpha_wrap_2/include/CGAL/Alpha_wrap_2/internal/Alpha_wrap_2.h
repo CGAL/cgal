@@ -17,26 +17,13 @@
 #ifndef CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
-#ifdef CGAL_AW2_DEBUG_PP
- #ifndef CGAL_AW2_DEBUG
-  #define CGAL_AW2_DEBUG
-  #define CGAL_AW2_DEBUG_INITIALIZATION
-  #define CGAL_AW2_DEBUG_STEINER_COMPUTATION
-  #define CGAL_AW2_DEBUG_QUEUE
-  #define CGAL_AW2_DEBUG_EDGE_STATUS
-  #define CGAL_AW2_DEBUG_MANIFOLDNESS
- #endif
-#endif
-
 // @bug
-// - restore hints in closest point call
-// - point_set_wrap broken with unordered queue
 // - mixed_input broken (ordered or unordered queue)
-// - fix return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
 
 // @todo
 // - Add initialize_with_cavities
 // - arrange polygons if we have no purged cavities
+// - multipolygon would make more sense? see also "purge inner CCs" + arrange_offset_polygons from SLS2
 
 // @todo long
 // - check what could be factorized with AW3 (e.g. oracle base?)
@@ -46,7 +33,6 @@
 // - document and test DT2 face base classes
 // - bench queues and whatnot
 // - if(is_neighbor_cc_in_offset) should be removed if sphere marching is used
-// - test new traversable criterion (ball fits)
 
 #include <CGAL/license/Alpha_wrap_2.h>
 
