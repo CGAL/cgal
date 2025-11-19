@@ -974,7 +974,7 @@ epsilon_net(double const epsilon, unsigned const p)
 				std::list<Dart_descriptor> darts_to_flip;
 				for (Dart_descriptor const & dart : darts_of_new_anchors) {
 					push_triangle(dart, triangles, triangles_list_mark);
-					push_flippable_edge(dart, darts_to_flip);  //the darts of the new anchors correspond to the edges of the triangle the point was inserted in
+					push_flippable_edge(dart, darts_to_flip);
 					push_flippable_edge(Base::ccw(dart), darts_to_flip);
 				}
 
