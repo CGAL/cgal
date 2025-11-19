@@ -967,6 +967,9 @@ epsilon_net(double const epsilon, unsigned const p)
 			Voronoi_point c = circumcenter(current_anchor);
 			if (delta(c, current_anchor.vertices[0]) > BOUND) {
 				Point approx_c = approx_circumcenter(c, p);
+				if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
+					break;  // avoid undefined behavior in case of bad approx outside of Poincaré
+				}
 				std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, true);
 				std::list<Dart_descriptor> darts_to_flip;
 				for (Dart_descriptor const & dart : darts_of_new_anchors) {
