@@ -13,7 +13,6 @@
 #ifndef CGAL_HYPERBOLIC_DIRICHLET_DOMAIN_2
 #define CGAL_HYPERBOLIC_DIRICHLET_DOMAIN_2
 
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
 
 namespace CGAL {
@@ -98,7 +97,7 @@ std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hype
     std::vector<Voronoi_point> dirichlet_vertices;
 
     Traits gt;
-    internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
+    typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
     for (std::tuple<Dart_const_descriptor, Point, Point, Point>& triangle : realized_triangles){
         Voronoi_point circumcenter = chc(std::get<1>(triangle), std::get<2>(triangle), std::get<3>(triangle));
         dirichlet_vertices.push_back(circumcenter);
