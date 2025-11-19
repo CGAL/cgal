@@ -34,6 +34,9 @@ add_executable( Triangulation_on_hyperbolic_surface_2_demo Triangulation_on_hype
 target_link_libraries(Triangulation_on_hyperbolic_surface_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
 cgal_add_compilation_test(Triangulation_on_hyperbolic_surface_2_demo)
 
+add_executable( Hyperbolic_Dirichlet_domain_2_demo Hyperbolic_Dirichlet_domain_2_demo.cpp window.cpp ${UIS})
+target_link_libraries(Hyperbolic_Dirichlet_domain_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
+
 add_executable( epsilon_net epsilon_net.cpp window.cpp ${UIS})
 target_link_libraries(epsilon_net PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
 
