@@ -1,14 +1,3 @@
-#define CGAL_AW2_DEBUG
-#define CGAL_AW2_DEBUG_DUMP_INTERMEDIATE_WRAPS
-#define CGAL_AW2_DEBUG_QUEUE
-#define CGAL_AW2_DEBUG_DUMP_EVERY_STEP
-// #define CGAL_AW2_DEBUG_QUEUE_PP
-#define CGAL_AW2_DEBUG_STEINER_COMPUTATION
-// #define CGAL_AW2_DEBUG_SPHERE_MARCHING
-#define CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
-#define CGAL_AW2_DEBUG_EDGE_STATUS
-#define CGAL_AW2_DEBUG_TRAVERSABILITY
-
 #include "output_helper.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

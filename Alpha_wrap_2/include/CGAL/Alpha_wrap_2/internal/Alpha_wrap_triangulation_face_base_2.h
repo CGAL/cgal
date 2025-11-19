@@ -31,6 +31,20 @@ enum class Face_label
   MANIFOLD
 };
 
+inline std::string label_string(const Face_label& label) {
+  switch(label) {
+    case Face_label::OUTSIDE:
+      return "OUTSIDE";
+    case Face_label::INSIDE:
+      return "INSIDE";
+    case Face_label::MANIFOLD:
+      return "MANIFOLD";
+    default:
+      CGAL_assertion_msg(false, "Unknown label");
+      return {};
+  }
+}
+
 std::ostream& operator <<(std::ostream& os, const Face_label& label)
 {
    os << static_cast<std::underlying_type<Face_label>::type>(label);

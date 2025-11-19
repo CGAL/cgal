@@ -1,13 +1,12 @@
 #ifndef CGAL_ALPHA_WRAP_2_EXAMPLES_OUTPUT_HELPER_H
 #define CGAL_ALPHA_WRAP_2_EXAMPLES_OUTPUT_HELPER_H
 
+#define CGAL_AW2_OUTPUT_TO_WKT
+
 #include <CGAL/IO/WKT.h>
 
 #include <fstream>
 #include <string>
-
-// @todo wkt cannot be opened with the demo.....
-// @todo multipolygon would make most sense? see also "purge inner CCs" + arrange_offset_polygons from SLS2
 
 std::string generate_output_name(std::string input_name,
                                  const double alpha,
