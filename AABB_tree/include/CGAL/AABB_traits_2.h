@@ -26,6 +26,9 @@
 #include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/AABB_tree/internal/Remove_optional.h>
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Search_traits_2.h>
 #include <optional>
@@ -120,6 +123,256 @@ public:
   Intersection_distance intersection_distance_object() const { return Intersection_distance(); }
 };
 
+template<typename GeomTraits>
+class Compare_distance_2 {
+  typedef typename GeomTraits::Point_2 Point;
+  typedef typename GeomTraits::FT FT;
+
+  /// Bounding box type.
+  typedef typename CGAL::Bbox_2 Bounding_box;
+public:
+  CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
+  {
+    return do_intersect_circle_iso_rectangle_2
+    (GeomTraits().construct_circle_2_object()
+      (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb) ?
+      CGAL::SMALLER : CGAL::LARGER;
+  }
+
+  template <class Solid>
+  CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
+  {
+    return GeomTraits().do_intersect_2_object()
+      (GeomTraits().construct_circle_2_object()
+        (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), pr) ?
+      CGAL::SMALLER : CGAL::LARGER;
+  }
+
+  template <class Solid>
+  CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
+  {
+    return GeomTraits().do_intersect_2_object()
+      (GeomTraits().construct_circle_2_object()(p, sq_distance),
+        pr) ?
+      CGAL::SMALLER :
+      CGAL::LARGER;
+  }
+
+  typename GeomTraits::Boolean do_intersect_circle_iso_rectangle_2(const typename GeomTraits::Circle_2& circle,
+    const typename GeomTraits::Iso_rectangle_2& rec) const
+  {
+    typedef typename GeomTraits::FT       FT;
+    typedef typename GeomTraits::Point_2  Point;
+
+    Point center = circle.center();
+
+    // Check that the minimum distance to the box is smaller than the radius, otherwise there is
+    // no intersection. `distance` stays at 0 if the center is inside or on `rec`.
+    FT distance = FT(0);
+    if (center.x() < rec.xmin())
+    {
+      FT d = rec.xmin() - center.x();
+      distance += d * d;
+    }
+    else if (center.x() > rec.xmax())
+    {
+      FT d = center.x() - rec.xmax();
+      distance += d * d;
+    }
+
+    if (center.y() < rec.ymin())
+    {
+      FT d = rec.ymin() - center.y();
+      distance += d * d;
+    }
+    else if (center.y() > rec.ymax())
+    {
+      FT d = center.y() - rec.ymax();
+      distance += d * d;
+    }
+
+    if (distance <= circle.squared_radius())
+      return true;
+
+    return false;
+  }
+};
+
+template <typename GeomTraits, bool Has_filtered_predicates = internal::Has_filtered_predicates<GeomTraits>::value, bool Has_static_filters = internal::Has_static_filters<GeomTraits>::value>
+class Compare_distance_getter_2 {};
+
+template <typename GeomTraits>
+class Compare_distance_getter_2<GeomTraits, false, false> {
+  // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
+  // depending on that it defines
+public:
+  typedef Compare_distance_2<GeomTraits> type;
+  static Compare_distance_2<GeomTraits> compare_distance_object() {
+    return Compare_distance_2<GeomTraits>();
+  }
+};
+
+template <typename GeomTraits>
+class Compare_distance_getter_2<GeomTraits, true, false> {
+  // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
+  // depending on that it defines
+
+  typedef GeomTraits                                              Kernel;
+
+  typedef typename Kernel::Exact_kernel                           EKernel;
+  typedef typename Kernel::Approximate_kernel                     AKernel;
+  typedef typename Kernel::C2E                                    C2E;
+  typedef typename Kernel::C2F                                    C2F;
+
+  typedef Compare_distance_2<EKernel> Exact_functor;
+  typedef Compare_distance_2<AKernel> Filtered_functor;
+
+public:
+  typedef Filtered_predicate<Exact_functor, Filtered_functor,
+    C2E, C2F> Compare_distance_pred;
+  typedef Compare_distance_pred type;
+
+  static Compare_distance_pred compare_distance_object() {
+    return Compare_distance_pred(Exact_functor(), Filtered_functor());
+  }
+};
+
+template <typename GeomTraits>
+class Compare_distance_getter_2<GeomTraits, true, true> {
+  // this class is in charge of checking what K provides (i.e., can we use filtered predicates, can we use statically filtered predicates, etc.)
+  // depending on that it defines
+  class Statically_filtered_compare_distance {
+  public:
+    typedef typename GeomTraits::Point_2 Point;
+    typedef typename GeomTraits::FT FT;
+    typedef typename GeomTraits::Circle_2 Circle_2;
+
+    /// Bounding box type.
+    typedef CGAL::Bbox_2 Bounding_box;
+
+    template <class Solid>
+    CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const {
+      return Compare_distance_getter_2<GeomTraits, true, false>::compare_distance_object()(p, pr, bound);
+    }
+
+    template <class Solid>
+    CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const {
+      return Compare_distance_getter_2<GeomTraits, true, false>::compare_distance_object()(p, pr, sq_distance);
+    }
+
+    Comparison_result operator()(const Point& p, const Bounding_box& b, const Point& bound) const {
+      Circle_2 s = GeomTraits().construct_circle_2_object()(p, GeomTraits().compute_squared_distance_2_object()(p, bound));
+
+      CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+        std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+      internal::Static_filters_predicates::Get_approx<Point> get_approx; // Identity functor for all points
+      const Point& c = s.center();
+
+      double scx, scy, ssr;
+      double bxmin = b.xmin(), bymin = b.ymin(),
+        bxmax = b.xmax(), bymax = b.ymax();
+
+      if (internal::fit_in_double(get_approx(c).x(), scx) &&
+        internal::fit_in_double(get_approx(c).y(), scy) &&
+        internal::fit_in_double(s.squared_radius(), ssr))
+      {
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+        if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Compare_distance_getter_2<GeomTraits, true, false>::compare_distance_object()(p, b, bound);
+        }
+        double distance = 0;
+        double max1 = 0;
+        double double_tmp_result = 0;
+        double eps = 0;
+        if (scx < bxmin)
+        {
+          double bxmin_scx = bxmin - scx;
+          max1 = bxmin_scx;
+
+          distance = square(bxmin_scx);
+          double_tmp_result = (distance - ssr);
+
+          if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153))
+            return CGAL::SMALLER;
+
+          eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return CGAL::LARGER;
+        }
+        else if (scx > bxmax)
+        {
+          double scx_bxmax = scx - bxmax;
+          max1 = scx_bxmax;
+
+          distance = square(scx_bxmax);
+          double_tmp_result = (distance - ssr);
+
+          if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153))
+            return CGAL::SMALLER;
+
+          eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return CGAL::LARGER;
+        }
+
+        if (scy < bymin)
+        {
+          double bymin_scy = bymin - scy;
+          if (max1 < bymin_scy) {
+            max1 = bymin_scy;
+          }
+
+          distance += square(bymin_scy);
+          double_tmp_result = (distance - ssr);
+
+          if ((max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153)))
+            return CGAL::SMALLER;
+
+          eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+          if (double_tmp_result > eps) {
+            return CGAL::LARGER;
+          }
+        }
+        else if (scy > bymax)
+        {
+          double scy_bymax = scy - bymax;
+          if (max1 < scy_bymax) {
+            max1 = scy_bymax;
+          }
+          distance += square(scy_bymax);
+          double_tmp_result = (distance - ssr);
+
+          if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153)))
+            return CGAL::SMALLER;
+
+          eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return CGAL::LARGER;
+        }
+
+        // double_tmp_result and eps were growing all the time
+        // no need to test for > eps as done earlier in at least one case
+
+        return CGAL::SMALLER;
+      }
+      return Compare_distance_getter_2<GeomTraits, true, false>::compare_distance_object()(p, b, bound);
+    }
+  };
+public:
+  typedef Statically_filtered_compare_distance type;
+
+  static Statically_filtered_compare_distance compare_distance_object() {
+    return Statically_filtered_compare_distance();
+  }
+};
+
 } } //end of namespace internal::AABB_tree
 
 /// \addtogroup PkgAABBTreeRef
@@ -128,35 +381,6 @@ public:
 // forward declaration
 template< typename AABBTraits>
 class AABB_tree;
-
-
-/// This traits class handles any type of 2D geometric
-/// primitives provided that the proper intersection tests and
-/// constructions are implemented. It handles points, rays, lines and
-/// segments as query types for intersection detection and
-/// computations, and it handles points as query type for distance
-/// queries.
-///
-/// \cgalModels{AABBTraits,AABBRayIntersectionTraits}
-///
-/// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits_2,
-/// and provide the geometric types as well as the intersection tests and computations.
-/// \tparam Primitive provide the type of primitives stored in the AABB_tree.
-///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
-///
-/// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
-///                 and as value type a `Bounding_box`.
-///                 If the type is `Default` the `Datum` must have the
-///                 member function `bbox()` that returns the bounding box of the primitive.
-///
-/// If the argument `GeomTraits` is a model of the concept \ref
-/// AABBRayIntersectionGeomTraits_2, this class is also a model of \ref
-/// AABBRayIntersectionTraits.
-///
-/// \sa `AABBTraits`
-/// \sa `AABB_tree`
-/// \sa `AABBPrimitive`
-/// \sa `AABBPrimitiveWithSharedData`
 
 template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
 class AABB_traits_2
@@ -385,98 +609,10 @@ public:
     }
   };
 
-  // This should go down to the GeomTraits, i.e. the kernel
-  // and the internal implementation should change its name from
-  // do_intersect to something like does_contain (this is what we compute,
-  // this is not the same do_intersect as the spherical kernel)
-  class Compare_distance {
-      typedef typename AT::Point Point;
-      typedef typename AT::FT FT;
-      typedef typename AT::Primitive Primitive;
-  public:
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
-      {
-          return do_intersect_circle_iso_rectangle_2
-          (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
+  typedef typename internal::AABB_tree::Compare_distance_getter_2<GeomTraits>::type Compare_distance;
 
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
-      {
-          return do_intersect_circle_iso_rectangle_2
-          (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
-      {
-        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
-      }
-
-      // The following functions seem unused...?
-      template <class Solid>
-      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
-      {
-          return GeomTraits().do_intersect_2_object()
-          (GeomTraits().construct_circle_2_object()
-          (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), pr)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
-      template <class Solid>
-      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
-      {
-        return GeomTraits().do_intersect_2_object()
-          (GeomTraits().construct_circle_2_object()(p, sq_distance),
-           pr) ?
-          CGAL::SMALLER :
-          CGAL::LARGER;
-      }
-
-      typename GeomTraits::Boolean do_intersect_circle_iso_rectangle_2(const typename GeomTraits::Circle_2& circle,
-        const typename GeomTraits::Iso_rectangle_2& rec) const
-      {
-        typedef typename GeomTraits::FT       FT;
-        typedef typename GeomTraits::Point_2  Point;
-
-        Point center = circle.center();
-
-        // Check that the minimum distance to the box is smaller than the radius, otherwise there is
-        // no intersection. `distance` stays at 0 if the center is inside or on `rec`.
-        FT distance = FT(0);
-        if (center.x() < rec.xmin())
-        {
-          FT d = rec.xmin() - center.x();
-          distance += d * d;
-        }
-        else if (center.x() > rec.xmax())
-        {
-          FT d = center.x() - rec.xmax();
-          distance += d * d;
-        }
-
-        if (center.y() < rec.ymin())
-        {
-          FT d = rec.ymin() - center.y();
-          distance += d * d;
-        }
-        else if (center.y() > rec.ymax())
-        {
-          FT d = center.y() - rec.ymax();
-          distance += d * d;
-        }
-
-        if (distance <= circle.squared_radius())
-          return true;
-
-        return false;
-      }
-  };
-
-  Closest_point closest_point_object() const {return Closest_point(*this);}
-  Compare_distance compare_distance_object() const {return Compare_distance();}
+  Closest_point closest_point_object() const { return Closest_point(*this); }
+  Compare_distance compare_distance_object() const { return internal::AABB_tree::Compare_distance_getter_2<GeomTraits>::compare_distance_object(); }
 
   typedef enum { CGAL_AXIS_X = 0,
                  CGAL_AXIS_Y = 1} Axis;
@@ -520,7 +656,7 @@ private:
 //-------------------------------------------------------
   template<typename GT, typename P, typename B>
   typename AABB_traits_2<GT,P,B>::Axis
-  AABB_traits_2<GT,P,B>::longest_axis(const Bounding_box& bbox)
+    AABB_traits_2<GT,P,B>::longest_axis(const Bounding_box& bbox)
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();
@@ -535,9 +671,7 @@ private:
     }
 }
 
-/// @}
-
-}  // end namespace CGAL
+} // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
