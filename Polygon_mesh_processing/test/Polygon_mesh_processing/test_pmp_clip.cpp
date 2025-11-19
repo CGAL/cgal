@@ -936,6 +936,73 @@ void test_new_clip()
     assert(faces(c).size()==8);
     assert(vertices(c).size()==9);
   }
+  // tangent case
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_0.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==3);
+    assert(vertices(c).size()==7);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_0.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==3);
+    assert(vertices(c).size()==7);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_1.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==9);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_1.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==9);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-320), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==4);
+    assert(vertices(c).size()==14);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-320), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==4);
+    assert(vertices(c).size()==14);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+std::ofstream("/tmp/ref.off") << c;
+    assert(faces(c).size()==1);
+    assert(vertices(c).size()==13);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==1);
+    assert(vertices(c).size()==13);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_3.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==18);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_3.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==18);
+  }
 
   {
     TriangleMesh ele;
@@ -946,6 +1013,10 @@ void test_new_clip()
     assert(faces(ele).size()==1220);
     assert(vertices(ele).size()==691);
   }
+
+
+
+
 }
 
 struct Clip_and_split_visitor
