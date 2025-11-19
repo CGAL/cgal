@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include <CGAL/Exact_rational.h>
+#include <CGAL/Gmpq.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
@@ -10,11 +11,11 @@
 
 using namespace CGAL;
 
-typedef CGAL::Exact_rational                                                      NumberType;
+typedef CGAL::Gmpq                                                      NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                  ParentTraits;
 
-// typedef Simple_cartesian<Exact_rational>                                Kernel;
+// typedef Simple_cartesian<NumberType>                                Kernel;
 // typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
 typedef Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
