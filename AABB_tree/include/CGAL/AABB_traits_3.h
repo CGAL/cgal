@@ -313,7 +313,9 @@ class Compare_distance_getter_3<GeomTraits, true, true> {
     }
 
     // This static filter was introduced by https://github.com/CGAL/cgal/pull/5507 .
-    // It prefers to indicate an intersection over using exact arithmetic.
+    // In case of uncertainty, it avoids exact arithmetic and indicates an intersection.
+    // This is acceptable for search data structures like AABB trees as the actual elements
+    // will be tested later.
     Comparison_result operator()(const Point& p, const Bounding_box& b, const Point& bound) const {
       Sphere_3 s = GeomTraits().construct_sphere_3_object()(p, GeomTraits().compute_squared_distance_3_object()(p, bound));
       CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
