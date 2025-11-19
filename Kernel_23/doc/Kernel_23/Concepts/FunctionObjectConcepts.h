@@ -791,7 +791,7 @@ public:
                                const K::Point_3& a2,
                                const K::Point_3& b2,
                                const K::Point_3& c2,
-                               const K::FT& cosine) const
+                               const K::FT& cosine);
 
   /*!
   compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
@@ -1229,8 +1229,7 @@ public:
                                const Kernel::Point_3& q,
                                const Kernel::Point_3& r,
                                const Kernel::Point_3& query,
-                               const Kernel::FT& sqd) const
-  {
+                               const Kernel::FT& sqd);
 
   /// @}
 
