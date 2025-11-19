@@ -122,7 +122,8 @@ public :
 
     connect(ui_widget.clip_radioButton, &QRadioButton::toggled,
             [this](bool b){
-      ui_widget.close_checkBox->setEnabled(!ui_widget.do_not_modify_CheckBox->isChecked() &&b);
+      ui_widget.close_checkBox->setEnabled(!ui_widget.do_not_modify_CheckBox->isChecked() && b);
+      ui_widget.coplanarCheckBox->setEnabled(ui_widget.clip_radioButton->isChecked());
     });
     connect(actionClipPolyhedra , SIGNAL(triggered()),
             this, SLOT(pop_widget()));
@@ -235,7 +236,7 @@ public Q_SLOTS:
       for(int id : scene->selectionIndices())
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
-        if(sm_item && CGAL::is_triangle_mesh(*sm_item->polyhedron()))
+        if(sm_item)
         {
           if(!ui_widget.do_not_modify_CheckBox->isChecked() && CGAL::Polygon_mesh_processing::does_self_intersect(*sm_item->face_graph()))
             CGAL::Three::Three::warning(tr("%1 has not been clipped because it has self intersections.").arg(sm_item->name()));
@@ -255,10 +256,10 @@ public Q_SLOTS:
             {
               CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                   plane->plane(),
-                                                  CGAL::parameters::clip_volume(
-                                                    ui_widget.close_checkBox->isChecked()).
-                                                  throw_on_self_intersection(true).
-                                                  use_compact_clipper(
+                                                  CGAL::parameters::clip_volume(ui_widget.close_checkBox->isChecked())
+                                                  .do_not_triangulate_faces(!ui_widget.triangulated_checkBox->isChecked())
+                                                  .throw_on_self_intersection(true)
+                                                  .use_compact_clipper(
                                                     !ui_widget.coplanarCheckBox->isChecked())
                                                   .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
             }
@@ -280,6 +281,7 @@ public Q_SLOTS:
                 CGAL::Polygon_mesh_processing::split(*(sm_item->face_graph()),
                                                     plane->plane(),
                                                      CGAL::parameters::throw_on_self_intersection(true)
+                                                     .do_not_triangulate_faces(!ui_widget.triangulated_checkBox->isChecked())
                                                      .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
               }
             }

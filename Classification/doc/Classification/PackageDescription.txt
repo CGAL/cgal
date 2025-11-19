@@ -1,4 +1,4 @@
-/// \defgroup PkgClassificationRef Classification Reference
+/// \defgroup PkgClassificationRef Reference Manual
 
 /*!
 \defgroup PkgClassificationConcepts Concepts

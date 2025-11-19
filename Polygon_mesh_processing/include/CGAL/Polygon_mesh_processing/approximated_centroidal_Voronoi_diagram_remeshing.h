@@ -651,7 +651,7 @@ acvd_impl(TriangleMesh& tmesh,
       int vi;
       vertex_descriptor vd;
       do {
-        vi = rnd.get_int(0, nb_vertices);
+        vi = rnd.get_int(0, static_cast<int>(nb_vertices));
         vd = *std::next(vertices(tmesh).begin(), vi);
       } while (get(vertex_cluster_pmap, vd) != -1);
 
@@ -1105,7 +1105,7 @@ acvd_impl(TriangleMesh& tmesh,
           std::size_t cb = points.size() - 1;
 
           if (cb_first == -1)
-            cb_first = cb;
+            cb_first = static_cast<int>(cb);
 
           std::size_t ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
 
@@ -1276,8 +1276,8 @@ acvd_impl(TriangleMesh& tmesh,
         if (clusters[c].nb_vertices == 1)
           continue;
 
-        put(vertex_cluster_pmap, v, clusters.size());
-        CGAL_assertion(get(vertex_cluster_pmap, v) == (int) clusters.size());
+        put(vertex_cluster_pmap, v, static_cast<int>(clusters.size()));
+        CGAL_assertion(get(vertex_cluster_pmap, v) == static_cast<int>(clusters.size()));
         clusters.emplace_back();
       }
 
@@ -1291,7 +1291,7 @@ acvd_impl(TriangleMesh& tmesh,
     for (std::size_t nmi : one_ring)
       frozen_clusters[nmi] = false;
 
-    nb_clusters = clusters.size();
+    nb_clusters = static_cast<int>(clusters.size());
     frozen_clusters.resize(nb_clusters, false);
     nb_loops = 0;
     qem_energy_minimization = false;
@@ -1390,6 +1390,9 @@ acvd_impl(TriangleMesh& tmesh,
 *
 * \cgalNamedParamsEnd
 *
+*
+* @pre `tmesh` is a triangulated surface mesh and has exactly one connected component.
+*
 * @return `true` if `nb_vertices` was sufficiently large for remeshing the input, and `false` if more points were used
 *
 */
@@ -1399,7 +1402,7 @@ bool approximated_centroidal_Voronoi_diagram_remeshing(TriangleMesh& tmesh,
                                                        std::size_t nb_vertices,
                                                        const NamedParameters& np = parameters::default_values())
 {
-  auto ps = internal::acvd_impl(tmesh, nb_vertices, np);
+  auto ps = internal::acvd_impl(tmesh, static_cast<int>(nb_vertices), np);
   CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
 
   auto vpm = parameters::choose_parameter(

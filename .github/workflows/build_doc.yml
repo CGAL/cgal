@@ -29,6 +29,7 @@ permissions:
 
 jobs:
   pre_build_checks:
+    if: ${{ inputs.pr_number || startsWith(github.event.comment.body, '/build:') || startsWith(github.event.comment.body, '/force-build:') }}
     runs-on: ubuntu-latest
     name: Trigger the build?
     outputs:
@@ -163,7 +164,7 @@ jobs:
           wget --no-verbose cgal.github.io -O index.html
           if ! egrep -qF "/$PR_NUMBER/$ROUND" index.html || [ "$force" = "yes" ]; then
             #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only origin/master...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+            LIST_OF_PKGS=$(git diff --name-only origin/main...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
               echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
               exit 1

@@ -29,8 +29,8 @@
 #  include <boost/unordered/unordered_flat_map.hpp>
 #  include <boost/unordered/unordered_flat_set.hpp>
 #else // Boost before 1.81.0, use the C++11 std::unordered_map
-#  include <unordered_map>
-#  include <unordered_set>
+#  include <boost/unordered_map.hpp>
+#  include <boost/unordered_set.hpp>
 #endif
 
 #include <functional> // for std::hash, std::equal_to
@@ -53,9 +53,9 @@ template <
 
   using unordered_flat_map = boost::unordered_flat_map<Key, T, Hash, KeyEqual, Allocator>;
 
-#else // use the C++11 std::unordered_map
+#else // use the Boost implementation of C++11 std::unordered_map (for noexcept)
 
-  using unordered_flat_map = std::unordered_map<Key, T, Hash, KeyEqual, Allocator>;
+  using unordered_flat_map = boost::unordered_map<Key, T, Hash, KeyEqual, Allocator>;
 
 #endif
 
@@ -73,9 +73,9 @@ template <
 
   using unordered_flat_set = boost::unordered_flat_set<Key, Hash, KeyEqual, Allocator>;
 
-#else // use the C++11 std::unordered_set
+#else // use the Boost implementation of C++11 std::unordered_set (for noexcept)
 
-  using unordered_flat_set = std::unordered_set<Key, Hash, KeyEqual, Allocator>;
+  using unordered_flat_set = boost::unordered_set<Key, Hash, KeyEqual, Allocator>;
 
 #endif
 

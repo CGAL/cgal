@@ -51,6 +51,9 @@
 
 namespace CGAL {
 
+template <typename D>
+class Bbox_d;
+
 template <class E,
           class A,
           class E2A,
@@ -97,6 +100,10 @@ CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
 #undef CGAL_LAZY_FORWARD
 
+template<class A> Bbox_d<A> const& approx(Bbox_d<A> const& d) { return d; }
+template<class A> Bbox_d<A> const& exact (Bbox_d<A> const& d) { return d; }
+template<class A> int              depth (Bbox_d<A> const&  ) { return 0; }
+
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> approx(T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, int> depth(T){return -1;}
@@ -112,23 +119,19 @@ template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){
 
 namespace internal{
 
-  template <typename AT, typename ET, typename E2A>
-  struct Evaluate<Lazy<AT, ET, E2A>>
+template <typename ET>
+struct Evaluate<Lazy_exact_nt<ET>>
+{
+  template <typename AT, typename ET2, typename E2A>
+  void operator()(const Lazy<AT, ET2, E2A>& l)
   {
-      void operator()(const Lazy<AT, ET, E2A>& l)
-      {
-          exact(l);
-      }
+    exact(l);
+  }
+  void operator()(const Lazy_exact_nt<ET>& l)
+  {
+    exact(l);
+  }
 };
-
-  template <typename ET>
-  struct Evaluate<Lazy_exact_nt<ET>>
-  {
-      void operator()(const Lazy_exact_nt<ET>& l)
-      {
-          exact(l);
-      }
-  };
 } // internal namespace
 
 // For an iterator, exact/approx applies to the objects it points to
@@ -226,14 +229,14 @@ print_dag(const Return_base_tag&, std::ostream& os, int level)
 
 struct Depth_base {
 #ifdef CGAL_PROFILE
-  int depth_;
+  mutable int depth_;
 
   Depth_base()
     : depth_(0)
   {}
 
   int depth() const { return depth_; }
-  void set_depth(int i)
+  void set_depth(int i) const
   {
     depth_ = i;
     CGAL_HISTOGRAM_PROFILER(std::string("[Lazy_kernel DAG depths]"), i);
@@ -241,7 +244,7 @@ struct Depth_base {
   }
 #else
   int depth() const { return 0; }
-  void set_depth(int) {}
+  void set_depth(int) const {}
 #endif
 };
 
@@ -653,6 +656,7 @@ class Lazy_rep_n final :
     auto* p = new typename Base::Indirect(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
     this->set_at(p);
     this->set_ptr(p);
+    this->set_depth(0);
     if(!noprune || is_currently_single_threaded())
       lazy_reset_member(l);
   }

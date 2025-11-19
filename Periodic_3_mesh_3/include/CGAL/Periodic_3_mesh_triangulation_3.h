@@ -964,7 +964,6 @@ public:
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
-    transl_wc1.x() += 1;
     for(;;) /* while not in */
     {
       // can safely perform a construction here because the kernel has exact constructions
@@ -991,6 +990,7 @@ public:
     for(;;) /* while not in */
     {
       dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
+
       if(compute_x(dp) < dom.xmin())
         transl_wc2.x() += 1;
       else if(compute_y(dp) < dom.ymin())

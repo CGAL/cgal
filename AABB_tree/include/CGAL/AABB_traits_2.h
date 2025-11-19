@@ -396,15 +396,15 @@ public:
   public:
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
       {
-          return GeomTraits().do_intersect_2_object()
+          return do_intersect_circle_iso_rectangle_2
           (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb,true)?
+           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
           CGAL::SMALLER : CGAL::LARGER;
       }
 
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
       {
-          return GeomTraits().do_intersect_2_object()
+          return do_intersect_circle_iso_rectangle_2
           (GeomTraits().construct_circle_2_object()
            (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
           CGAL::SMALLER : CGAL::LARGER;
@@ -433,6 +433,45 @@ public:
            pr) ?
           CGAL::SMALLER :
           CGAL::LARGER;
+      }
+
+      typename GeomTraits::Boolean do_intersect_circle_iso_rectangle_2(const typename GeomTraits::Circle_2& circle,
+        const typename GeomTraits::Iso_rectangle_2& rec) const
+      {
+        typedef typename GeomTraits::FT       FT;
+        typedef typename GeomTraits::Point_2  Point;
+
+        Point center = circle.center();
+
+        // Check that the minimum distance to the box is smaller than the radius, otherwise there is
+        // no intersection. `distance` stays at 0 if the center is inside or on `rec`.
+        FT distance = FT(0);
+        if (center.x() < rec.xmin())
+        {
+          FT d = rec.xmin() - center.x();
+          distance += d * d;
+        }
+        else if (center.x() > rec.xmax())
+        {
+          FT d = center.x() - rec.xmax();
+          distance += d * d;
+        }
+
+        if (center.y() < rec.ymin())
+        {
+          FT d = rec.ymin() - center.y();
+          distance += d * d;
+        }
+        else if (center.y() > rec.ymax())
+        {
+          FT d = center.y() - rec.ymax();
+          distance += d * d;
+        }
+
+        if (distance <= circle.squared_radius())
+          return true;
+
+        return false;
       }
   };
 

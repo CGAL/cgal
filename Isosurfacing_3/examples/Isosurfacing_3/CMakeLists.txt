@@ -6,12 +6,13 @@ project( Isosurfacing_3_Examples )
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
 
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage  vtkIOXML vtkIOMINC vtkIOLegacy NO_MODULE)
 if(VTK_FOUND)
   message(STATUS "VTK was found")

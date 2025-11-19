@@ -44,11 +44,11 @@ The following table lists some \cgal data structures that have I/O functions com
     <td rowspan="6" width="75">Input</td>
     <td rowspan="3" width="175">Polygon Mesh</td>
     <td width="250">`CGAL::Surface_mesh`</td>
-    <td width="500">\link PkgSurfaceMeshIOFuncOFF CGAL::IO::read_OFF(const std::string&, CGAL::Surface_mesh&)\endlink</td>
+    <td width="550">\link PkgSurfaceMeshIOFuncOFF CGAL::IO::read_OFF(const std::string&, CGAL::Surface_mesh&)\endlink</td>
   </tr>
   <tr>
     <td>`CGAL::Polyhedron_3`</td>
-    <td>\link PkgPolyhedronIOFunc CGAL::IO::read_OFF(const std::string&, CGAL::Polyhedron_3&)\endlink</td>
+    <td>\ref CGAL::IO::read_OFF(std::istream& in, CGAL::Polyhedron_3<Traits>& P)</td>
   </tr>
   <tr>
     <td>Any model of `MutableFaceGraph`</td>
@@ -76,7 +76,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>`CGAL::Polyhedron_3`</td>
-    <td>\link PkgPolyhedronIOFunc CGAL::IO::write_OFF(const std::string&, const CGAL::Polyhedron_3&)\endlink</td>
+    <td>\ref CGAL::IO::write_OFF(std::ostream&, const CGAL::Polyhedron_3<Traits>&)</td>
   </tr>
   <tr>
     <td>Any model of `FaceGraph`</td>
@@ -106,7 +106,7 @@ which offers combinatorial repairing while reading bad inputs.
 \section IOStreamOBJ Wavefront Advanced Visualizer Object Format (OBJ)
 
 The `OBJ` file format, using the file extension `.obj`, is a simple \ascii data format that represents 3D geometry.
-Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
+Vertices are stored in a counterclockwise order by default, making explicit declaration of face normals unnecessary.
 
 A precise specification of the format is available <a href="https://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
 
@@ -118,7 +118,7 @@ A precise specification of the format is available <a href="https://www.martinre
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsOBJ CGAL::IO::read_OBJ(const std::string&, Graph&)\endlink</td>
+    <td width="550">\link PkgBGLIoFuncsOBJ CGAL::IO::read_OBJ(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -156,7 +156,7 @@ More information are provided <a href="https://www.graphics.rwth-aachen.de/media
     <td width="75">Input</td>
     <td width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsOM CGAL::IO::read_OM(const std::string&, Graph&)\endlink</td>
+    <td width="550">\link PkgBGLIoFuncsOM CGAL::IO::read_OM(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Output</td>
@@ -182,7 +182,7 @@ A precise specification of those formats is available <a href="https://www.fabbe
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsSTL CGAL::IO::read_STL(const std::string&, Graph&)\endlink</td>
+    <td width="550">\link PkgBGLIoFuncsSTL CGAL::IO::read_STL(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -226,7 +226,7 @@ A precise specification of those formats is available <a href="https://paulbourk
     <td rowspan="5" width="75">Input</td>
     <td rowspan="2" width="175">Polygon Mesh</td>
     <td width="250">`CGAL::Surface_mesh`</td>
-    <td width="500">\link PkgSurfaceMeshIOFuncPLY CGAL::IO::read_PLY(const std::string&, CGAL::Surface_mesh&)\endlink</td>
+    <td width="550">\link PkgSurfaceMeshIOFuncPLY CGAL::IO::read_PLY(const std::string&, CGAL::Surface_mesh&)\endlink</td>
   </tr>
   <tr>
     <td>Any model of `MutableFaceGraph`</td>
@@ -294,7 +294,7 @@ A precise specification of those formats is available
     <td rowspan="2" width="75">Input</td>
     <td rowspan="2" width="175">Point Set</td>
     <td width="250">`CGAL::Point_set_3`</td>
-    <td width="500">\link PkgPointSet3IOLAS CGAL::IO::read_LAS(const std::string&, CGAL::Point_set_3&)\endlink</td>
+    <td width="550">\link PkgPointSet3IOLAS CGAL::IO::read_LAS(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
@@ -327,7 +327,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
     <td rowspan="2" width="75">Input</td>
     <td rowspan="2" width="175">Point Set</td>
     <td width="250">`CGAL::Point_set_3`</td>
-    <td width="500">\link PkgPointSet3IOXYZ CGAL::IO::read_XYZ(const std::string&, CGAL::Point_set_3&)\endlink</td>
+    <td width="550">\link PkgPointSet3IOXYZ CGAL::IO::read_XYZ(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
@@ -361,7 +361,7 @@ A precise specification of the format is available <a href="https://paulbourke.n
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsGOCAD CGAL::IO::read_GOCAD(const std::string&, Graph&)\endlink</td>
+    <td width="550">\link PkgBGLIoFuncsGOCAD CGAL::IO::read_GOCAD(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -405,7 +405,7 @@ note that only versions `1.x` are currently supported in \cgal.
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">`CGAL::Surface_mesh`</td>
-    <td width="500">\link PkgSurfaceMeshIOFunc3MF CGAL::IO::read_3MF(const std::string&, Surface_meshRange&)\endlink</td>
+    <td width="550">\link PkgSurfaceMeshIOFunc3MF CGAL::IO::read_3MF(const std::string&, Surface_meshRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -446,7 +446,7 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
     <td rowspan="1" width="75">Output</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `FaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsWRL CGAL::IO::write_WRL(const std::string&, const Graph&)\endlink</td>
+    <td width="550">\link PkgBGLIoFuncsWRL CGAL::IO::write_WRL(const std::string&, const Graph&)\endlink</td>
   </tr>
 </table>
 
@@ -479,7 +479,7 @@ A precise specification of those formats is available at
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="800">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
+    <td width="550">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -522,10 +522,14 @@ The Medit format, using file extension `.mesh`, is a format used by the Medit so
 In \cgal, it is used to represent 3D meshes.
 
 A precise specification of the format is available <a href="https://inria.hal.science/inria-00069921/document">in this report</a>,
-in the appendices (section 7.2.1, page 36).
+in the appendices (Section 7.2.1, Page 36).
 
-Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`
-This can be done using the function \link CGAL::IO::write_MEDIT `CGAL::IO::write_MEDIT()`\endlink.
+The following \cgal data structures can be exported into the `.mesh` file format:
+
+- `CGAL::Mesh_complex_3_in_triangulation_3`, using the function
+  \link CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &) `CGAL::IO::write_MEDIT()` \endlink, and
+- `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
+  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT()` \endlink.
 
 
 \section IOStreamTetgen Tetgen File Format

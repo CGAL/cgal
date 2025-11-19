@@ -42,7 +42,7 @@ or `Triangulation_3`); however some packages serve special needs:
 More Information
 ================
 * [The CGAL web site](https://www.cgal.org/)
-* [Latest CGAL release documentation pages](https://doc.cgal.org/)
-* [Latest CGAL master documentation pages, updated once a week](https://cgal.geometryfactory.com/CGAL/doc/master/)
+* [Documentation of the latest CGAL release](https://doc.cgal.org/)
+* [Documentation of the CGAL `main` branch (updated weekly)](https://cgal.geometryfactory.com/CGAL/doc/master/)
 * [CGAL daily testsuite results](https://cgal.geometryfactory.com/CGAL/testsuite/)
 * [Guidelines for CGAL developers](https://github.com/CGAL/cgal/wiki/Guidelines) and [Information for new developers](https://github.com/CGAL/cgal/wiki/Information-for-New-Developers)

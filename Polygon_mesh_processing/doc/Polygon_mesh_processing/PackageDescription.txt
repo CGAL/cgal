@@ -1,4 +1,4 @@
-/// \defgroup PkgPolygonMeshProcessingRef Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingRef Reference Manual
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessingRef
 
@@ -277,6 +277,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
 - `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()`
+- `CGAL::Polygon_mesh_processing::refine_with_plane()`
 
 \cgalCRPSection{I/O Functions}
 - \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink

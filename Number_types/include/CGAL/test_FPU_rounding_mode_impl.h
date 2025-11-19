@@ -51,11 +51,13 @@ get_static_check_fpu_rounding_mode_is_restored()
   return check_fpu_rounding_mode_is_restored;
 }
 
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
 namespace {
   CGAL_UNUSED const Check_FPU_rounding_mode_is_restored &
     check_fpu_rounding_mode_is_restored
     = get_static_check_fpu_rounding_mode_is_restored();
 }
+#endif
 
 #else
 

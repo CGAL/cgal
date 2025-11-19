@@ -58,9 +58,11 @@ create_single_source_cgal_program("isotropic_remeshing_with_custom_sizing_exampl
 create_single_source_cgal_program("isotropic_remeshing_with_allow_move.cpp")
 create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("soup_autorefinement.cpp")
+create_single_source_cgal_program("snap_polygon_soup.cpp")
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("acvd_remeshing_example.cpp")
   target_link_libraries(acvd_remeshing_example PUBLIC CGAL::Eigen3_support)
@@ -140,6 +142,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(hausdorff_distance_remeshing_example PRIVATE CGAL::TBB_support)
   target_link_libraries(hausdorff_bounded_error_distance_example PRIVATE CGAL::TBB_support)
   target_link_libraries(soup_autorefinement PRIVATE CGAL::TBB_support)
+  target_link_libraries(snap_polygon_soup PRIVATE CGAL::TBB_support)
 
   create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
   target_link_libraries(corefinement_parallel_union_meshes PRIVATE CGAL::TBB_support)

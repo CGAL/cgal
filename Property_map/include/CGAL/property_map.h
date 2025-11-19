@@ -622,7 +622,8 @@ struct Constant_property_map
   typedef const value_type&                             reference;
   typedef boost::read_write_property_map_tag            category;
 
-  Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
+  Constant_property_map() : default_value{} { }
+  Constant_property_map(const value_type& default_value) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
   inline friend
@@ -707,7 +708,6 @@ struct Cartesian_converter_property_map
   {
     return CGAL::Cartesian_converter<K1, K2>()(get(pm.vpm, k));
   }
-
   friend void put(Cartesian_converter_property_map<GeomObject, Vpm>& pm, const key_type& k, const value_type& v)
   {
     put(pm.vpm, k, CGAL::Cartesian_converter<K2, K1>()(v));

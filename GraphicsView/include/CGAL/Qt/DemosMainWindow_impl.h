@@ -221,7 +221,10 @@ void
 DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
 {
   QFile about_CGAL(html_resource_name);
-  about_CGAL.open(QIODevice::ReadOnly);
+  if (!about_CGAL.open(QIODevice::ReadOnly)) {
+    QMessageBox::warning(this, tr("Error"), tr("Could not open resource file: %1").arg(html_resource_name));
+    return;
+  }
   QString about_CGAL_txt = QTextStream(&about_CGAL).readAll();
 #ifdef CGAL_VERSION_STR
   QString cgal_version(CGAL_VERSION_STR);

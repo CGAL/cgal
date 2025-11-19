@@ -2,7 +2,6 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-
 #include <boost/range/distance.hpp>
 
 #include <string>
@@ -213,12 +212,30 @@ collapse_edge_test()
     assert(found == 2);
     CGAL::clear(test_mesh);
   }
+  // Case 6 non pure triangle mesh
+  {
+    Mesh ref;
+    if(!CGAL::IO::read_OFF("data/polygon_mesh_to_collapse.off", ref))
+    {
+      std::cout << "Error reading file: data/polygon_mesh_to_collapse.off" << std::endl;
+      exit(1);
+    }
+    std::size_t nbe=halfedges(ref).size();
+    for (std::size_t i=0; i< nbe; ++i)
+    {
+      Mesh m = ref;
+      auto h = *std::next(halfedges(m).begin(), i);
+
+      if (CGAL::Euler::does_satisfy_link_condition(edge(h,m),m))
+        CGAL::Euler::collapse_edge(edge(h,m), m);
+      assert(CGAL::is_valid_polygon_mesh(m));
+    }
+  }
 }
 
 
 int main()
 {
-
   collapse_edge_test<Polyhedron>();
   collapse_edge_test<SM>();
 

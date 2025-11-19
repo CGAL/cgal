@@ -1,4 +1,4 @@
-/// \defgroup PkgArrangementOnSurface2Ref 2D Arrangement Reference
+/// \defgroup PkgArrangementOnSurface2Ref Reference Manual
 
 /// \defgroup PkgArrangementOnSurface2Concepts Concepts
 /// \ingroup PkgArrangementOnSurface2Ref
@@ -113,6 +113,7 @@ implemented as peripheral classes or as free (global) functions.
 
 - `AosApproximateTraits_2`
 - `AosApproximatePointTraits_2`
+- `AosApproximateUnboundedTraits_2`
 - `AosBasicTopologyTraits`
 - `AosBasicTraits_2`
 - `AosBottomSideTraits_2`
@@ -167,6 +168,8 @@ implemented as peripheral classes or as free (global) functions.
 \cgalCRPSection{Function Object Concepts}
 
 - `AosTraits::Approximate_2`
+- `AosTraits::ApproximatePoint_2`
+- `AosTraits::ApproximateUnbounded_2`
 - `AosTraits::AreMergeable_2`
 - `AosTraits::CompareX_2`
 - `AosTraits::CompareXy_2`
@@ -262,6 +265,6 @@ implemented as peripheral classes or as free (global) functions.
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
 
 \cgalCRPSection{Draw an `Arrangemen_2` object}
-- \link  PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
+- \link PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
 
 */

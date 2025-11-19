@@ -28,7 +28,7 @@ of type `Data` specified in the definition of `map`.
 \cgalHeading{Implementation}
 
 `Unique_hash_map` is implemented via a chained hashing scheme. Access
-operations `map``[i]` take expected time \cgalBigO{1}. The `table_size`
+operations `map[i]` take expected time \cgalBigO{1}. The `table_size`
 parameter passed to chained hashing can be used to avoid unnecessary
 rehashing when set to the number of expected elements in the map.
 The design is derived from the \stl `hash_map` and the \leda type
@@ -144,7 +144,7 @@ void clear(const Data& default);
 
 /*!
 
-returns a reference to the variable `map``(key)`. If `key`
+returns a reference to the variable `map(key)`. If `key`
 has not been inserted into `map` before, `key` is inserted and
 initialized with `default_value`.
 */
@@ -152,7 +152,7 @@ Data& operator[](const Key& key);
 
 /*!
 
-returns a const reference to the variable `*this``(key)`. If `key`
+returns a const reference to the variable `*this(key)`. If `key`
 has not been inserted into `*this` before, a const reference to the
 `default_value` is returned. However, `key` is not inserted
 into `*this`.

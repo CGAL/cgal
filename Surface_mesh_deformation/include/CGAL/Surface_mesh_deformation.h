@@ -617,7 +617,7 @@ public:
    *
    * @param vd a control vertex
    * @param t translation vector
-   * \pre `is_control_vertex(vd)`
+   * \pre \link is_control_vertex `is_control_vertex(vd)`\endlink
    */
   template<class Vect>
   void translate(vertex_descriptor vd, const Vect& t)
@@ -662,7 +662,7 @@ public:
    * @param vd a control vertex
    * @param to_rotation_center the vector to translate the origin to the center of the rotation
    * @param quat quaternion of the rotation
-   * \pre `is_control_vertex(vd)`
+   * \pre \link is_control_vertex `is_control_vertex(vd)`\endlink
    * \pre `quad` represents a rotation
    */
   template <typename Quaternion, typename Vect>
@@ -709,7 +709,7 @@ public:
   /**
     * Returns the target position of a control vertex.
     * \param vd a control vertex
-    * \pre `is_control_vertex(vd)`
+    * \pre \link is_control_vertex `is_control_vertex(vd)`\endlink
     */
   const Point& target_position(vertex_descriptor vd)
   {

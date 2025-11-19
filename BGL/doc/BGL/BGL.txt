@@ -87,9 +87,9 @@ boost::graph_traits<Graph>::edge_iterator ei;
 
 Algorithms obtain incidence information in graphs with the help of global
 functions such as:
-- `std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);` to obtain an iterator range providing access to all the vertices, or
-- `vertices_size_type num_vertices(const Graph&);` to obtain the number of vertices of a graph, or
-- `vertex_descriptor source(edge_descriptor, const Graph&);` to obtain the source vertex of an edge.
+- \ref VertexListGraph::vertices(const VertexListGraph&) "std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g)" to obtain an iterator range providing access to all the vertices, or
+- \link VertexListGraph::num_vertices(const VertexListGraph&) `vertices_size_type num_vertices(const Graph&)`\endlink to obtain the number of vertices of a graph, or
+- \link IncidenceGraph `vertex_descriptor source(edge_descriptor, const Graph&)` \endlink to obtain the source vertex of an edge.
 
 Note, that the way we have written the types is a simplification; in reality,
 the signature of the first of the above functions is:
@@ -698,7 +698,7 @@ using one of the following tags:
 - `CGAL::Alpha_expansion_boost_adjacency_list_tag` (default)
 - `CGAL::Alpha_expansion_boost_compressed_sparse_raw_tag`
 - `CGAL::Alpha_expansion_MaxFlow_tag`, released under GPL
-  license and provided by the \ref PkgSurfaceMeshSegmentationRef
+  license and provided by the \ref PkgSurfaceMeshSegmentation
   package
 
 All these implementations produce the exact same result but behave

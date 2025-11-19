@@ -88,4 +88,13 @@ namespace boost::foreach {
   template<typename T>
   struct is_lightweight_proxy<CGAL::Iterator_range<T>> : boost::mpl::true_ {};
 }
+
+#if CGAL_CXX20 && __cpp_lib_ranges >= 201911L
+#  include <ranges>
+
+  template<typename I>
+  inline constexpr bool std::ranges::enable_borrowed_range<CGAL::Iterator_range<I>> = true;
+
+#endif // C++20
+
 #endif // CGAL_ITERATOR_RANGE_H

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.16...3.31)
 project(Lab_Demo)
 include(FeatureSummary)
 
@@ -51,12 +51,14 @@ if(Qt6_FOUND)
   add_compile_definitions(QT_NO_KEYWORDS)
 endif(Qt6_FOUND)
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
 set_package_properties(
   Eigen3 PROPERTIES
   DESCRIPTION "A library for linear algebra."
   PURPOSE "Required for most plugins (Meshing, Mesh and Point Set Processing, etc.).")
-include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message(STATUS "NOTICE: Eigen was not found.")
 endif()
@@ -255,16 +257,26 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(scene_tetrahedra_item PRIVATE scene_c3t3_item)
 
 
+  # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
+  add_library(c3t3_type_pch OBJECT c3t3_type_pch_empty_source.cpp C3t3_type.h)
+  target_link_libraries(c3t3_type_pch PRIVATE CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::Gui)
+  set_property(TARGET c3t3_type_pch PROPERTY POSITION_INDEPENDENT_CODE TRUE)
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(scene_c3t3_item PRIVATE CGAL::TBB_support)
-    target_link_libraries(scene_triangulation_3_item PRIVATE CGAL::TBB_support)
-    target_link_libraries(scene_tetrahedra_item PRIVATE CGAL::TBB_support)
+    target_link_libraries(c3t3_type_pch PRIVATE CGAL::TBB_support)
   endif()
+  # target_precompile_headers(c3t3_type_pch PRIVATE [["C3t3_type.h"]])
 
-  if(COMMAND target_precompile_headers)
-    # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
-    target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
-  endif()
+  function(CGAL_Lab_target_use_c3t3_type target)
+    target_link_libraries(${target} PRIVATE c3t3_type_pch)
+    # target_precompile_headers(${target} REUSE_FROM c3t3_type_pch)
+    if(TARGET CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+    endif()
+  endfunction(CGAL_Lab_target_use_c3t3_type)
+
+  CGAL_Lab_target_use_c3t3_type(scene_c3t3_item)
+  CGAL_Lab_target_use_c3t3_type(scene_triangulation_3_item)
+  CGAL_Lab_target_use_c3t3_type(scene_tetrahedra_item)
 
   add_item(scene_aff_transformed_item Plugins/PCA/Scene_aff_transformed_item.cpp)
 
@@ -383,21 +395,19 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     target_link_libraries(cgal_lab PRIVATE Qt6::WebSockets)
   endif()
   cgal_add_compilation_test(cgal_lab)
+
+  #
+  # the `CGALlab` executable
+  #   required as a dependency by all plugins
+  #
   add_executable(CGALlab CGALlab.cpp)
   target_link_libraries(CGALlab PRIVATE cgal_lab)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
   cgal_add_compilation_test(CGALlab)
 
-  target_link_libraries(CGALlab PRIVATE demo_framework)
-
-  # Link with CGAL
-  target_link_libraries(CGALlab PRIVATE CGAL::CGAL_Qt6)
-
-  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
-
-  ###########
-  # PLUGINS #
-  ###########
+  #
+  # PLUGINS
+  #
 
   file(
     GLOB DEMO_PLUGINS
@@ -409,13 +419,21 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_subdirectory(implicit_functions)
 
+  add_dependencies(CDT_3  IO_surface_meshes detect_sharp_edges_plugin polylines_io_plugin selection_plugin)
+  add_dependencies(Mesh_3 IO_surface_meshes)
+
   #
   # EXECUTABLES
   #
   add_executable(CGAL_Mesh_3 Mesh_3.cpp)
-  add_dependencies(CGAL_Mesh_3 Mesh_3)
+  add_dependencies(CGAL_Mesh_3 Mesh_3 IO_surface_meshes)
   target_link_libraries(CGAL_Mesh_3 PRIVATE cgal_lab)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3)
+
+  add_executable(CGAL_CDT_3 CGAL_Lab_CDT_3.cpp)
+  add_dependencies(CGAL_CDT_3 CDT_3 IO_surface_meshes)
+  target_link_libraries(CGAL_CDT_3 PRIVATE cgal_lab)
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_CDT_3)
 
   add_executable(CGAL_Classification Classification.cpp)
   add_dependencies(CGAL_Classification Classification)
