@@ -40,10 +40,8 @@ namespace Polygon_mesh {
   \cgalModels{NeighborQuery}
 */
 template<typename PolygonMesh>
-class One_ring_neighbor_query
-{
+class One_ring_neighbor_query {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
-  using Face_graph = PolygonMesh;
 public:
   /// Item type.
   using Item = typename boost::graph_traits<PolygonMesh>::face_descriptor;
@@ -103,7 +101,7 @@ public:
   /// @}
 
 private:
-  const Face_graph& m_face_graph;
+  const PolygonMesh& m_face_graph;
 };
 
 } // namespace Polygon_mesh

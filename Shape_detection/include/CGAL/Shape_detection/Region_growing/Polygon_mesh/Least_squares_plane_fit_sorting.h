@@ -54,7 +54,6 @@ public:
   /// @{
 
   /// \cond SKIP_IN_MANUAL
-  using Face_graph = PolygonMesh;
   using Neighbor_query = NeighborQuery;
   using Vertex_to_point_map = VertexToPointMap;
   /// \endcond
@@ -165,7 +164,7 @@ public:
   /// @}
 
 private:
-  const Face_graph& m_face_graph;
+  const PolygonMesh& m_face_graph;
   Neighbor_query& m_neighbor_query;
   const Vertex_to_point_map m_vertex_to_point_map;
   GeomTraits m_traits;

@@ -113,7 +113,7 @@ public:
       \cgalParamNEnd
       \cgalParamNBegin{maximum_angle}
         \cgalParamDescription{the maximum angle in degrees between
-        the normal of a point and the radius of a sphere}
+        the normal of a point and the normal of the sphere at the projected point}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{25 degrees}
       \cgalParamNEnd

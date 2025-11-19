@@ -134,7 +134,7 @@ public:
     \cgalNamedParamsEnd
 
     \pre `input_range.size() > 0`
-    \pre `K > 0`
+    \pre `k_neighbors > 0`
   */
   template<typename InputRange,
            typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -179,7 +179,7 @@ public:
     \param neighbors
     `Items` of points, which are neighbors of the query point
 
-    \pre `query` is a valid const_iterator of InputRange
+    \pre `query` is a valid `const_iterator` of `InputRange`
   */
   void operator()(
     const Item query,

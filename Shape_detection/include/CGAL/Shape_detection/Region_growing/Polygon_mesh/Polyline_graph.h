@@ -27,7 +27,7 @@ namespace Polygon_mesh {
 
   \brief Polygon mesh edges connected into a graph.
 
-  This class returns all edges, which form polylines splitting the polygon mesh
+  This class returns all edges which form polylines splitting the polygon mesh
   being a `PolygonMesh` into planar regions.
 
   \tparam PolygonMesh

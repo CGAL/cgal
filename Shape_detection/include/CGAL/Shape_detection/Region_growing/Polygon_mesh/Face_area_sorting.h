@@ -95,7 +95,7 @@ public:
   Face_area_sorting(
     const PolygonMesh& pmesh,
     const CGAL_NP_CLASS& np = parameters::default_values())
-      : m_face_graph(pmesh)
+      : m_pmesh(pmesh)
       , m_vpm(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                            get_const_property_map(CGAL::vertex_point, pmesh)))
       , m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
@@ -146,7 +146,7 @@ public:
       const PolygonMesh& pmesh,
       const Dummy&,
       const CGAL_NP_CLASS& np = parameters::default_values())
-    : m_face_graph(pmesh)
+    : m_pmesh(pmesh)
     , m_vpm(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
       get_const_property_map(CGAL::vertex_point, pmesh)))
     , m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
@@ -204,7 +204,7 @@ public:
   /// @}
 
 private:
-  const PolygonMesh& m_face_graph;
+  const PolygonMesh& m_pmesh;
   VertexToPointMap m_vpm;
   GeomTraits m_traits;
   Seed_range m_ordered;
@@ -216,10 +216,10 @@ private:
     std::size_t idx = 0;
     for (Item item : m_ordered)
     {
-      halfedge_descriptor hd = halfedge(item, m_face_graph);
+      halfedge_descriptor hd = halfedge(item, m_pmesh);
       std::vector<typename GeomTraits::Point_3> pts;
 
-      for (vertex_descriptor v : vertices_around_face(hd,m_face_graph))
+      for (vertex_descriptor v : vertices_around_face(hd,m_pmesh))
         pts.push_back( get(m_vpm, v) );
 
       if (pts.size()==3)

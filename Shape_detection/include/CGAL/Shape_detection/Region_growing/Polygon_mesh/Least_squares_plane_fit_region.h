@@ -58,7 +58,6 @@ public:
   /// @{
 
   /// \cond SKIP_IN_MANUAL
-  using Face_graph = PolygonMesh;
   using Vertex_to_point_map = VertexToPointMap;
 
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
@@ -75,7 +74,7 @@ public:
   using Primitive = typename GeomTraits::Plane_3;
 
   /// Region map
-  using Region_index_map = typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
+  using Region_index_map = typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
 
   /// @}
 
@@ -147,7 +146,7 @@ public:
       \cgalParamNEnd
     \cgalNamedParamsEnd
 
-    \pre `faces(tmesh).size() > 0`
+    \pre `faces(pmesh).size() > 0`
     \pre `maximum_distance >= 0`
     \pre `maximum_angle >= 0 && maximum_angle <= 90`
     \pre `cosine_of_maximum_angle >= 0 && cosine_of_maximum_angle <= 1`
@@ -157,7 +156,7 @@ public:
   Least_squares_plane_fit_region(
     const PolygonMesh& pmesh,
     const CGAL_NP_CLASS& np = parameters::default_values()) :
-  m_face_graph(pmesh),
+  m_pmesh(pmesh),
   m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
     np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
   m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
@@ -227,7 +226,7 @@ public:
       put(m_face_triangulations, i, face_triangulation);
     }
 
-    CGAL_precondition(faces(m_face_graph).size() > 0);
+    CGAL_precondition(faces(m_pmesh).size() > 0);
     const FT max_distance = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
     CGAL_precondition(max_distance >= FT(0));
@@ -260,7 +259,7 @@ public:
     This function creates an empty property map that maps each face to a `std::size_t`.
   */
   Region_index_map region_index_map() {
-    return get(CGAL::dynamic_face_property_t<std::size_t>(), m_face_graph);
+    return get(CGAL::dynamic_face_property_t<std::size_t>(), m_pmesh);
   }
 
   /*!
@@ -407,7 +406,7 @@ public:
   /// \endcond
 
 private:
-  const Face_graph& m_face_graph;
+  const PolygonMesh& m_pmesh;
   const Vertex_to_point_map m_vertex_to_point_map;
   GeomTraits m_traits;
 
@@ -420,8 +419,8 @@ private:
   const Scalar_product_3 m_scalar_product_3;
   const Cross_product_3 m_cross_product_3;
 
-  typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<Vector_3> >::const_type m_face_normals;
-  typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::vector<Triangle_3>> >::const_type m_face_triangulations;
+  typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<Vector_3> >::const_type m_face_normals;
+  typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<std::vector<Triangle_3>> >::const_type m_face_triangulations;
 
   Plane_3 m_plane_of_best_fit;
   Vector_3 m_normal_of_best_fit;
@@ -430,8 +429,8 @@ private:
   template<typename Face>
   Point_3 get_face_centroid(const Face& face) const {
 
-    const auto hedge = halfedge(face, m_face_graph);
-    const auto vertices = vertices_around_face(hedge, m_face_graph);
+    const auto hedge = halfedge(face, m_pmesh);
+    const auto vertices = vertices_around_face(hedge, m_pmesh);
     CGAL_precondition(vertices.size() > 0);
 
     FT sum = FT(0), x = FT(0), y = FT(0), z = FT(0);
@@ -462,8 +461,8 @@ private:
     if (a == FT(0) && b == FT(0) && c == FT(0) && d == FT(0))
       return max_squared_distance;
 
-    const auto hedge = halfedge(face, m_face_graph);
-    const auto vertices = vertices_around_face(hedge, m_face_graph);
+    const auto hedge = halfedge(face, m_pmesh);
+    const auto vertices = vertices_around_face(hedge, m_pmesh);
     CGAL_precondition(vertices.size() > 0);
 
     for (const auto vertex : vertices) {

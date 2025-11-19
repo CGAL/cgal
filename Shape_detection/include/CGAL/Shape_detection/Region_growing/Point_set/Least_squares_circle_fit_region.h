@@ -263,7 +263,6 @@ public:
       return true;
     }
 
-    // TODO: Why do we get so many nan in this class?
     if (std::isnan(CGAL::to_double(m_radius))) {
       return false;
     }
@@ -376,7 +375,7 @@ private:
 /*!
     \ingroup PkgShapeDetectionRGOnPointSet3
     shortcut to ease the definition of the class when using `CGAL::Point_set_3`.
-    To be used together with `make_least_squares_sphere_fit_sorting()`.
+    To be used together with `make_least_squares_circle_fit_region()`.
     \relates Least_squares_circle_fit_region
  */
 template <class PointSet3>
