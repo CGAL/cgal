@@ -1227,6 +1227,20 @@ private:
         {
           // std::cout << "new face has time stamp " << new_fh->time_stamp() << std::endl;
           new_fh->set_label(m_tr.is_infinite(new_fh) ? Face_label::OUTSIDE : Face_label::INSIDE);
+
+#ifndef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
+          // In DT2, the Bowyer-Watson algorithm is not used (at the moment): the Steiner point
+          // is inserted in a face, and then Delaunay is restored with a propagation of edge flips.
+          // That's an issue for the zombie strategy because a single face gets erased (and
+          // re-used), and the TDS2 (rightfully) does not mark faces being flipped as being
+          // erased, and thus we do not see the face as having changed in the AW2 zombie checks.
+          //
+          // So, we force an increment here to make sure that gates in the queue are correctly
+          // detected as zombies when popped.
+          //
+          // @todo it's not very clean to abuse the erase counter like that...
+          new_fh->increment_erase_counter();
+#endif
         }
         while(++new_fh != done);
 
