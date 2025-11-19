@@ -4,7 +4,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
@@ -13,7 +13,7 @@ using namespace CGAL;
 
 typedef CGAL::Gmpq                                                      NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                  ParentTraits;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>     ParentTraits;
 
 // typedef Simple_cartesian<NumberType>                                Kernel;
 // typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 
   // 2. Draw the triangulation
   QApplication app(argc, argv);
-  app.setApplicationName("Hyperbolic surfaces triangulation 2 Demo");
+  app.setApplicationName("Triangulation on hyperbolic surface 2 Demo");
 
   DemoWindow window;
   window.item().draw_triangulation(triangulation);
