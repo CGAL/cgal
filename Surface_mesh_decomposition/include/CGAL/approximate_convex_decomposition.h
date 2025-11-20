@@ -769,10 +769,8 @@ struct Candidate {
   Bbox_uint bbox;
   Convex_hull_candidate<GeomTraits> ch;
 
-  Candidate() : depth(0), bbox({ 0, 0, 0 }, { 0, 0, 0 }) {index = cidx++;}
-  Candidate(std::size_t depth, Bbox_uint &bbox) : depth(depth), bbox(bbox) { index = cidx++; }
-private:
-  inline static std::size_t cidx = 0;
+  Candidate() : depth(0), bbox({ 0, 0, 0 }, { 0, 0, 0 }) {}
+  Candidate(std::size_t depth, Bbox_uint &bbox) : depth(depth), bbox(bbox) {}
 };
 
 template<typename GeomTraits>
