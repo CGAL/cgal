@@ -258,7 +258,8 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
                                LAS_property::X,
                                LAS_property::Y,
                                LAS_property::Z> point_property, ///< property handler for points
-                               PropertyHandler&& ... properties); ///< parameter pack of property handlers
+                               PropertyHandler&& ... properties ///< parameter pack of property handlers
+                               );
 
 /**
    \ingroup PkgStreamSupportIoFuncsLAS
