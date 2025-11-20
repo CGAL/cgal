@@ -133,7 +133,7 @@ We adopt the simple formula below to compute tetrahedron coordinates of the quer
 \f$w_i = \frac{V_i}{V}\f$
 </center>
 
-where \f$V_i\f$ is the signed volume of the sub-tetrahedron opposite to the vertex \f$i\f$ and \f$V\f$
+where \f$V_i\f$ is the signed volume of the sub-tetrahedron opposite to the vertex \f$i\f$, i.e., the tetrahedron where the vertex \f$i\f$ is replaced by the query point `q`. \f$V\f$
 is the total volume of the tetrahedron, that is \f$V = V_0 + V_1 + V_2 + V_3\f$.
 
 These coordinates can be computed exactly if an exact number type is chosen, for any query point and with respect to any non-degenerate tetrahedron. No special cases are handled.
@@ -193,8 +193,8 @@ star-shaped polyhedron.
 
 Efficiency is crucial in this implementation.
 These coordinates are used in applications that require
-calculations for millions of points; thus developing metrics
-to evaluate performance is absolutely necessary. In this section,
+calculations for millions of points; thus, developing metrics
+to evaluate performance is necessary. In this section,
 we present benchmark results for each algorithm.
 
 The benchmark and runtimes are evaluated by regularly sampling
