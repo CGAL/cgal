@@ -48,7 +48,7 @@
 
 - `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a closed orientable hyperbolic surface. It offers functions for the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
 
-- `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` represents a Delaunay triangulation of a closed orientable hyperbolic surface. It offers functions for the generation of the Delaunay triangulation from a convex fundamental domain, the insertion of a point in the Delaunay triangulation and two point location algorithms.
+- `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` represents a Delaunay triangulation of a closed orientable hyperbolic surface. It offers functions for the generation of the Delaunay triangulation from a convex fundamental domain, the insertion of a point in the Delaunay triangulation, two point location algorithms and the \f$ \varepsilon \f$-net algorithm.
 
 - `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a closed orientable hyperbolic surface.
 
