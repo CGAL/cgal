@@ -10,7 +10,7 @@
 
 #include <CGAL/Random.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
 typedef CGAL::Float_snap_rounding_traits_2<Kernel>              Traits_2;
 typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
