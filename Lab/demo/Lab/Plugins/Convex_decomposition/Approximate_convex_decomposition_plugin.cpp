@@ -1,7 +1,7 @@
 #include "config.h"
 
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
-#include <CGAL/Polygon_mesh_processing/approximate_convex_decomposition.h>
+#include <CGAL/approximate_convex_decomposition.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "ui_Approximate_convex_decomposition_dialog.h"
 
@@ -114,7 +114,7 @@ approximate_convex_decomposition()
   std::vector<Convex_hull> convex_volumes;
   convex_volumes.reserve(9);
 
-  CGAL::Polygon_mesh_processing::approximate_convex_decomposition(*(sm_item->face_graph()), std::back_inserter(convex_volumes),
+  CGAL::approximate_convex_decomposition(*(sm_item->face_graph()), std::back_inserter(convex_volumes),
     CGAL::parameters::maximum_depth(maximumDepth)
     .volume_error(volumeError)
     .maximum_number_of_convex_volumes(maximumConvexHulls)
