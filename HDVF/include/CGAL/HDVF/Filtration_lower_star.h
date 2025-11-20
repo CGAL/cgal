@@ -133,26 +133,26 @@ public:
 
     /*! \brief Constructor from a function mapping vertices to degrees.
      *
-     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `degree_function`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
+     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `degree`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
      * \param K Constant reference to the underlying complex.
-     * \param function_degree Function mapping vertices of `K` to their degree.
+     * \param degree Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& function_degree) : Filtration_parent(K)
+    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& degree) : Filtration_parent(K)
     {
-        star_filtration(function_degree);
+        star_filtration(degree);
     }
 
 
 protected:
     // Build lower-star filtration
-    /*! \brief Function building the filtration from the vector of vertices degrees.
+    /*! \brief Function building the filtration from the vector of vertex degrees.
      */
     void star_filtration(const std::vector<Degree>& deg) ;
 
     /*! \brief Function building the filtration from a function mapping vertices to their degree.
      */
-    void star_filtration(std::function<Degree(size_t)>& degree_function) ;
+    void star_filtration(std::function<Degree(size_t)>& degree) ;
 };
 
 
@@ -222,12 +222,12 @@ void Filtration_lower_star<ChainComplex, Degree>::star_filtration(const std::vec
 }
 
 template <typename ChainComplex, typename Degree>
-void Filtration_lower_star<ChainComplex, Degree>::star_filtration(std::function<Degree(size_t)>& degree_function)
+void Filtration_lower_star<ChainComplex, Degree>::star_filtration(std::function<Degree(size_t)>& degree)
 {
     std::vector<Degree> deg ;
     for (size_t i=0; i<this->_K.number_of_cells(0); ++i)
     {
-        deg.push_back(degree_function(i)) ;
+        deg.push_back(degree(i)) ;
     }
     star_filtration(deg) ;
 }

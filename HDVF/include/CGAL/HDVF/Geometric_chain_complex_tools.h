@@ -353,7 +353,7 @@ private:
         }
         return K;
     }
-    
+
 public:
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a set of simplices `mesh_io`.
      *
@@ -432,15 +432,15 @@ public:
      * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param subdiv Subdivision level of the bounding icosphere.
      */
-    
+
     static Complex_duality_data dualize_complex (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
     {
         typedef CGAL::Triangulation_data_structure_3<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<typename Traits::Kernel>, CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<typename Traits::Kernel>> TDS;
         typedef CGAL::Triangulation_3<typename Traits::Kernel, TDS> Triangulation;
-        
+
         std::cerr << "-- Starting dualize_complex" << std::endl;
         std::cerr << "Imported mesh" << std::endl;
-        
+
         // Create a temporary Surfaces_mesh_io (to load the mesh)
         Surface_mesh_io<Triangle_mesh, Traits> K_init_mesh_io(mesh);
         // Create a temporary associated complex (to identify simplices of mesh_io)
@@ -456,7 +456,7 @@ public:
           CGAL::Subdivision_method_3::Loop_subdivision(
             ico, CGAL::parameters::number_of_iterations(subdiv)
           );
-        
+
         std::cerr << "Icosphere generated" << std::endl;
 
         // Add it to the mesh
@@ -471,7 +471,7 @@ public:
         }
         out << mesh ;
         out.close();
-        
+
         // Generate plc_facet_map
         auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), mesh);
         int cpt(0);
@@ -488,7 +488,7 @@ public:
         // Build the associated SimpComplex
         Chain_complex& L = *new Chain_complex(L_tri_io) ;
         std::cout << "------ L:" << L;
-        
+
         std::vector<std::vector<size_t> > indices(L.dimension()+1);
         for (int q=0; q<=L.dimension(); ++q){
             for (int i=0; i<L.number_of_cells(q); ++i){
@@ -506,7 +506,7 @@ public:
         return t ;
     }
 
-    
+
     /** \brief Exports a chain complex to a Mesh_object_io  */
     static Mesh_object_io<Traits>& export_mesh_object(const Chain_complex& _CC)
     {
@@ -553,7 +553,7 @@ public:
     typedef Cubical_chain_complex<CoefficientRing, Traits> Chain_complex ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
-    
+
     /** \brief Type returned by `dualize_complex()`.
      *
      * The structure contains a pair:
@@ -564,7 +564,7 @@ public:
         Chain_complex& L_complex ;
         Sub_chain_complex& K_complex ;
     } Complex_duality_data ;
-    
+
     // Constructor
     Duality_cubical_complex_tools() {}
 
