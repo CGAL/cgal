@@ -19,13 +19,22 @@ Release date: July 2026
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
 - The old function names are still available but marked as deprecated for backward compatibility.
 
-
 ### [Surface Mesh Simplification](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceMeshSimplification)
 
 -   Added the class `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`, which provides improved output for `CGAL::Surface_mesh_simplification::edge_collapse()`.
     That class works the same as previous `GarlandHeckbert_policies`.
     Its constructor accepts a `Mesh` and optional named parameters to set the weight of the line policy relative to the plane policy, set the boundary cost multiplier or provide vertex normals.
 -  **Breaking change**: `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h` and is no longer deprecated.
+
+### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
+
+- Added new stream formatting capabilities for improved debugging and logging:
+  - [`CGAL::IO::Basic_indenting_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__streambuf.html)
+    and [`CGAL::IO::Basic_indenting_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__stream__guard.html)
+    for automatic indentation of output streams
+  - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html)
+    and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html)
+    for ANSI color support in terminal output
 
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)

@@ -65,9 +65,22 @@ the printing mode.
 
 \cgalCRPSection{Enum}
 - \link PkgStreamSupportEnumRef `CGAL::IO::Mode` \endlink
+- `CGAL::IO::Ansi_color`
 
 \cgalCRPSection{Classes}
 - `CGAL::IO::Color`
+- `CGAL::IO::Basic_color_streambuf<CharT,Traits>`
+- `CGAL::IO::Color_streambuf`
+- `CGAL::IO::Color_wstreambuf`
+- `CGAL::IO::Basic_color_stream_guard<StreamT>`
+- `CGAL::IO::Color_stream_guard`
+- `CGAL::IO::Color_wstream_guard`
+- `CGAL::IO::Basic_indenting_streambuf<CharT,Traits>`
+- `CGAL::IO::Indenting_streambuf`
+- `CGAL::IO::Indenting_wstreambuf`
+- `CGAL::IO::Basic_indenting_stream_guard<StreamT>`
+- `CGAL::IO::Indenting_stream_guard`
+- `CGAL::IO::Indenting_wstream_guard`
 - `CGAL::Istream_iterator<T,Stream>`
 - `CGAL::Ostream_iterator<T,Stream>`
 - `CGAL::Verbose_ostream`
@@ -75,6 +88,9 @@ the printing mode.
 - `CGAL::Output_rep<T,F>`
 
 \cgalCRPSection{Functions}
+- `CGAL::IO::make_color_guards()`
+- `CGAL::IO::stream_supports_color()`
+- `CGAL::IO::make_indenting_guards()`
 - `CGAL::IO::get_mode()`
 - `CGAL::IO::is_ascii()`
 - `CGAL::IO::is_binary()`
