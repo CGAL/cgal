@@ -17,8 +17,20 @@ decomposing both polyhedra into convex pieces, compute pairwise
 Minkowski sums of the convex pieces, and unite the pairwise sums.
 
 While it is desirable to have a decomposition into a minimum number of
-pieces, this problem is known to be NP-hard \cgalCite{c-cpplb-84}. Our
-implementation decomposes a Nef polyhedron \f$ N\f$ into \cgalBigO{r^2} convex
+pieces, this problem is known to be NP-hard \cgalCite{c-cpplb-84}. This
+package offers two methods for decomposing polyhedra. The
+\ref Convex_decomposition_3Nef "Convex Decomposition of Nef Polyhedra"
+splits polyhedra into convex pieces with an upper bound on the number
+of pieces. The \ref Convex_decomposition_3ACD_Intro
+"Approximate convex decomposition" method offers a fast
+approximate decomposition of the convex hull into convex volumes. While
+any number of convex volumes can be generated, these convex volumes
+are more compact than the convex hull, but still include additional
+empty space than just the input polyhedron.
+
+\section Convex_decomposition_3Nef Convex Decomposition of Nef Polyhedra
+
+Our implementation decomposes a Nef polyhedron \f$ N\f$ into \cgalBigO{r^2} convex
 pieces, where \f$ r\f$ is the number of edges that have two adjacent
 facets that span an angle of more than 180 degrees with respect to the
 interior of the polyhedron. Those edges are also called reflex edges.
@@ -38,7 +50,7 @@ illustrates the two steps.
 At the moment our implementation is restricted to the decomposition of
 bounded polyhedra. An extension to unbounded polyhedra is planned.
 
-\section Convex_decomposition_3InterfaceandUsage Interface and Usage
+\subsection Convex_decomposition_3InterfaceandUsage Interface and Usage
 
 An instance of `Nef_polyhedron_3` represents a subdivision of the
 three-dimensional space into vertices, edges, facets, and
@@ -78,6 +90,271 @@ extended kernels is unnecessary and expensive. We therefore do not
 support the use of extended kernels in the convex decomposition.
 
 \cgalExample{Convex_decomposition_3/list_of_convex_parts.cpp}
+
+\section Convex_decomposition_3ACD_Intro Approximate Convex Decomposition
+
+\cgalFigureAnchor{Acd_topfig}
+<center>
+<img src="https://soesau.github.io/acd_top.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Acd_topfig}
+Approximate convex decomposition of the elephant.off model.\n From left to right: 1. input mesh 2. 5 convex volumes 3. 8 convex volumes 4. 12 convex volumes
+\cgalFigureCaptionEnd
+
+The H-VACD, introduced by  computes a set of convex volumes that fit the polyhedron. Contrary to the decomposition of the polyhedron into convex parts, the convex volumes cover the polyhedron, but also include additional volume outside of the polyhedron.
+A sufficiently tight enclosure of the polyhedron by several convex volumes allows fast intersection calculation and collision detection among polyhedra while offering a non-hierachical approach and may thus be easier to use in a parallel setting.
+The resulting set of convex volumes minimizes the volume between their union and the polyhedron while fully including the input polyhedron. While the optimal solution with `n` convex hulls that cover the polydron with the smallest additional volume remains NP-hard, this method provides a fast error-driven approximation.
+
+\subsection Convex_decomposition_3ACD_Algorithm Algorithm
+The algorithm computes a set of convex volumes \f$ C=\{C_i\f$ with \f$ i \in[0..n-1]\} \f$ that cover the input polyhedron while minimizing the additional covered volume:
+
+\f{equation}{
+\arg \min_C d(\bigcup_{C_i \in C} C_i, P) \\
+\f}
+<center>with</center>
+\f{equation}{
+d(A, B) = |A| - |B|
+\f}
+
+Where \f$|A|\f$ is the volume of A, P is the input polyhedron and \f$C_i\f$ are convex volumes. The convex volumes \f$C_i\f$ are pairwise disjunct, i.e., \f$|C_i \cap C_j| = 0\f$ if \f$i \neq j\f$. And the union of convex volumes contain the input polyhedron \f$ P \subset \bigcup_{C_i \in C} \f$.
+
+\cgalFigureAnchor{Acd_pipelinefig}
+<center>
+<img src="https://soesau.github.io/acd_pipeline.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Acd_pipelinefig}
+Approximate convex decomposition pipeline.\n From left to right: 1. input mesh 2. voxel grid 3. convex volumes after error-driven splitting 4. final convex volumes after merging
+\cgalFigureCaptionEnd
+
+The method employs a top-down splitting phase followed by a bottom-up merging to achieve the target number of convex volumes. The splitting phase aims at decomposing the input mesh into smaller mostly convex parts. Each part of the input mesh is approximated with its convex hull. In a hierarchical manner, each part of the mesh is split into two parts when its convexity is low. The convexity is measured by the volume difference of the part and its convex hull. Splitting a part into two can be done by simply cutting the longest side of the bounding box in half. A better choice is often found by searching the longest side of the bounding box for a concave spot. However, it comes with a higher computational cost. The hierarchical splitting stops when either the convexity is sufficiently high or the maximum depth is reached.
+The volume calculation, convex hull computation and the concavity search is accelerated by a voxel grid. The grid is prepared before the splitting phase and is labelled into outside, inside or surface. The convex hulls are calculated from voxel corners. Thus, a mesh with a high resolution is less penalized by its number of vertices.
+The splitting phase typically results in a number of convex volumes larger than targeted. The second phase employs a bottom-up merging that reduces the number of convex volumes to the targeted number while aiming at maintaining a low volume difference between convex volumes and the input mesh. The greedy merging maintains a priority queue to incrementally merge the pair of convex volumes with the smallest increase of volume difference.
+
+The splitting phase is not limited by the chosen `maximum_number_of_convex_hulls`, because a splitting into a larger number of more convex parts with a subsequent merging leads to better results.
+
+
+\subsection Convex_decomposition_3ACD_Parameters Parameters
+Several parameters of the algorithm impact the quality of the result as well as the running time.
+- `maximum_number_of_convex_hulls`: The maximum number of convex volumes output by the method. The actual number may be lower for mostly convex input meshes, e.g., a sphere. The impact on the running time is rather low. The default is 16.
+- `maximum_depth`: The maximum depth for the hierarchical splitting phase. For complex meshes, a higher maximum depth is required to split small concavities into convex parts. The choice of  `maximum_depth` has a larger impact on the running time. The default is 10.
+- `maximum_number_of_voxels`: This parameter controls the resolution of the voxel grid used for speed-up. Larger numbers result in a higher memory footprint and a higher running time. A small number also limits the `maximum_depth`. The voxel grid is isotropic and the longest axis of the bounding box will be split into a number of voxels equal to the cubic root of `maximum_number_of_voxels`. The default value is 1.000.000.
+- `volume_error`: The splitting of a convex volume into smaller parts is controlled by the `volume_error` which provides the tolerance for difference in volume. The difference is calculated by \f$ (|C_i| - |P_i|) / |P_i|\f$. The default value is 0.01. Thus, if a convex volume has 1 percent more volume that the part of the input mesh it approximates, it will be further divided.
+- `split_at_concavity`: The splitting can be either performed after searching a concavity on the longest side of the bounding box or simply by splitting the longest side of the bounding box in half. The default value is true, i.e., splitting at the concavity.
+
+\subsection Convex_decomposition_3ACD_Performance Performance
+
+<b>Here will be images and more tables to show the impact of different parameters</b>
+
+The method has been evaluated on several models:
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Data set
+<TD class="math" ALIGN=CENTER NOWRAP>
+Faces
+<TD class="math" ALIGN=CENTER NOWRAP>
+Volume
+<TD class="math" ALIGN=CENTER NOWRAP>
+Convex hull volume
+<TD class="math" ALIGN=CENTER NOWRAP>
+Overhead
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Camel
+<TD class="math" ALIGN=RIGHT NOWRAP>
+19.536
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0.0468
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0.15541
+<TD class="math" ALIGN=CENTER NOWRAP>
+2.32388
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Elephant
+<TD class="math" ALIGN=RIGHT NOWRAP>
+5.558
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0.0462
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0.12987
+<TD class="math" ALIGN=CENTER NOWRAP>
+1.81087
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Triceratops
+<TD class="math" ALIGN=RIGHT NOWRAP>
+5.660
+<TD class="math" ALIGN=RIGHT NOWRAP>
+136.732
+<TD class="math" ALIGN=RIGHT NOWRAP>
+336.925
+<TD class="math" ALIGN=CENTER NOWRAP>
+1.46412
+<TR>
+<TD ALIGN=LEFT NOWRAP COLSPAN=12><HR>
+</TABLE>
+
+If not mentioned otherwise, all tests used a volume error of 0.01, a maximum depth of 10, 1 million voxels and split at the concavity.
+
+Impact of varying the number of generated convex volumes with splitting at the concavity on volume overhead:
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Data set
+<TD class="math" ALIGN=CENTER NOWRAP>
+Split location
+<TD class="math" ALIGN=CENTER NOWRAP>
+5 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+7 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+9 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+11 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+12 volumes
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Camel
+<TD class="math" ALIGN=RIGHT NOWRAP>
+Concavity
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.8006
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6680
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.5871
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.5736
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.5463
+<TD class="math" ALIGN=LEFT NOWRAP>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Elephant
+<TD class="math" ALIGN=RIGHT NOWRAP>
+Concavity
+<TD class="math" ALIGN=LEFT NOWRAP>
+1.1927
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.9731
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.84613
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.7506
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6947
+<TD class="math" ALIGN=LEFT NOWRAP>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Triceratops
+<TD class="math" ALIGN=RIGHT NOWRAP>
+Concavity
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.9770
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.7676
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6722
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.5971
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.5658
+<TD class="math" ALIGN=LEFT NOWRAP>
+<TR>
+<TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
+</TABLE>
+
+And by using the mid split:
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Data set
+<TD class="math" ALIGN=CENTER NOWRAP>
+Split location
+<TD class="math" ALIGN=CENTER NOWRAP>
+5 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+7 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+9 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+11 volumes
+<TD class="math" ALIGN=CENTER NOWRAP>
+12 volumes
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Camel
+<TD class="math" ALIGN=RIGHT NOWRAP>
+Mid
+<TD class="math" ALIGN=LEFT NOWRAP>
+1.1158
+<TD class="math" ALIGN=LEFT NOWRAP>
+1.0468
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.8660
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6764
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6057
+<TD class="math" ALIGN=LEFT NOWRAP>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Elephant
+<TD class="math" ALIGN=RIGHT NOWRAP>
+Mid
+<TD class="math" ALIGN=LEFT NOWRAP>
+1.2121
+<TD class="math" ALIGN=LEFT NOWRAP>
+1.00867
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.8444
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.7465
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6931
+<TD class="math" ALIGN=LEFT NOWRAP>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Triceratops
+<TD class="math" ALIGN=RIGHT NOWRAP>
+Mid
+<TD class="math" ALIGN=LEFT NOWRAP>
+1.2191
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6870
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.8463
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.7375
+<TD class="math" ALIGN=LEFT NOWRAP>
+0.6871
+<TD class="math" ALIGN=LEFT NOWRAP>
+<TR>
+<TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
+</TABLE>
+
+The running time for all cases in the above tables were between 1.4 and 3 seconds while being slightly lower when splitting at the concavity. Although searching the voxel grid for the concavity takes additional computational time, it is more than compensated by fewer splits.
+
+\subsection Convex_decomposition_3ACD_Example Example
+
+\cgalExample{Surface_mesh_decomposition/approximate_convex_decomposition.cpp }
 
 */
 } /* namespace CGAL */

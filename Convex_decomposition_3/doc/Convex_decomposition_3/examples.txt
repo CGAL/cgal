@@ -1,3 +1,4 @@
 /*!
 \example Convex_decomposition_3/list_of_convex_parts.cpp
+\example Surface_mesh_decomposition/approximate_convex_decomposition.cpp
 */
