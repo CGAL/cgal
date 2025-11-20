@@ -108,7 +108,7 @@ See \cgalCite{despre2022experimental} for details.
 \subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Delaunay_Triangulations Data Structure for Delaunay Triangulations
 
 <div style="color:red">
-The data structure for triangulations is enriched in order to be more convenient and more time efficient for the \f$ \varepsilon \f$-net algorithm or other algorithms that often have to access lifts of triangles in \f$ \mathbb{D} \f$.
+The data structure is enriched for Delaunay triangulations in order to be more convenient and more time efficient for the \f$ \varepsilon \f$-net algorithm or other algorithms that often have to access lifts of triangles in \f$ \mathbb{D} \f$.
 In order to have constant time access to a lift of any triangle, an anchor is associated with <em>each</em> face of the triangulation. Note that the anchors associated with adjacent triangles do not necessarily correspond to adjacent lifts
 in \f$ \mathbb{D} \f$. This implies that, when working with a lift of a triangle, if an operation requires the third vertex of an adjacent lift, its coordinates must first be computed using the cross-ratio of their common edge.
 </div>
@@ -126,13 +126,28 @@ This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cg
 
 \section Section_Hyperbolic_Surface_Triangulations_Epsilon_Nets \f$ \varepsilon \f$-nets
 
-<div style="color:red">
+<span style="color:red">NEW</span>
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Epsilon_Net_Definition Definition
+
+The notion of \f$ \varepsilon \f$-net formalizes the idea of a "well-distributed" sampling of a metic space, in our case, a hyperbolic surface.
+
 Let \f$ (X, d) \f$ be a metric space and \f$ \varepsilon > 0 \f$. A subset \f$ P \subset X \f$ is:
 
 - an \f$ \varepsilon \f$-covering if \f$ d(x, P) \leq \varepsilon \f$ for all \f$ x \in X \f$, that is, the closed balls of radius \f$ \varepsilon \f$ centered at the points of \f$ P \f$ cover \f$ X \f$;
 - an \f$ \varepsilon \f$-packing if \f$ d(p, q) \geq \varepsilon \f$ for all \f$ p \neq q \in P \f$, that is, the open balls of radius \f$ \varepsilon/2 \f$ centered at the points of \f$ P \f$ are pairwise disjoint;
 - an \f$ \varepsilon \f$-net if it is both an \f$ \varepsilon \f$-covering and an \f$ \varepsilon \f$-packing.
-</div>
+
+The `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` class contains the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` method that tries to compute an \f$ \varepsilon \f$-net of a hyperbolic surface, starting from an \f$ \varepsilon \f$-packing (usually, a Delaunay triangulation with a single vertex). The construction might not result in an \f$ \varepsilon \f$-net, but the method returns a Boolean indicating whether the result is a certified \f$ \varepsilon \f$-net.
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Epsilon_Net_Numbers Number Type
+
+The algorithm is a Delaunay refinement algorithm that inserts the circumcenter of triangles whose circumradius is larger than \f$ \varepsilon \f$ until there is none. To ensure robustness and efficiency, this method is best used with a rational number type.
+
+To avoid cascading square roots, each coordinate of a circumcenter is rounded to a double precision number using the `CGAL::to_double()` function, and is then converted to the rational number type chosen by the user.
+
+Additionally, the precision of this rounding method can be increased by rounding the coordinates to a fixed precision floating-point number `CGAL::Gmpfr` instead of rounding them to a `double`. However, this method requires the user to use the `CGAL::Gmpq` number type for the coordinates of the vertices. The precision of the `CGAL::Gmpfr` numbers involved is \f$ p\times 53 \f$, where \f$ p \f$ is an integer given to the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` method and 53 is the precision of a `double`. The rounding method using the `double` number type is used only when the program uses a rational number type different from `CGAL::Gmpq`. It usually works for hyperbolic surfaces of genus 2 or 3 with a lage systole, but a higher precision is required to obtain a valid \f$ \varepsilon \f$-net on surfaces of higher genus.
+
 
 \section Section_Hyperbolic_Surface_Triangulations_Software_Design Software Design
 
