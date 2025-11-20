@@ -182,7 +182,7 @@ CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 CGAL_add_named_parameter(maximum_number_of_voxels_t, maximum_number_of_voxels, maximum_number_of_voxels)
 CGAL_add_named_parameter(maximum_depth_t, maximum_depth, maximum_depth)
 CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
-CGAL_add_named_parameter(maximum_number_of_convex_hulls_t, maximum_number_of_convex_hulls, maximum_number_of_convex_hulls)
+CGAL_add_named_parameter(maximum_number_of_convex_volumes_t, maximum_number_of_convex_volumes, maximum_number_of_convex_volumes)
 CGAL_add_named_parameter(split_at_concavity_t, split_at_concavity, split_at_concavity)
 
 

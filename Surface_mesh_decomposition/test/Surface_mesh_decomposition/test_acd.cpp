@@ -23,27 +23,27 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
 
-  std::vector<Convex_hull> convex_hulls;
+  std::vector<Convex_hull> convex_volumes;
 
   // Try with empty mesh
-  CGAL::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
+  CGAL::approximate_convex_decomposition(mesh, std::back_inserter(convex_volumes),
     CGAL::parameters::maximum_depth(10)
     .volume_error(0.1)
-    .maximum_number_of_convex_hulls(9)
+    .maximum_number_of_convex_volumes(9)
     .split_at_concavity(true)
     .maximum_number_of_voxels(1000000)
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
-  assert(convex_hulls.size() == 0);
+  assert(convex_volumes.size() == 0);
 
   if (!PMP::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
-  convex_hulls.reserve(9);
+  convex_volumes.reserve(9);
 
-  CGAL::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
+  CGAL::approximate_convex_decomposition(mesh, std::back_inserter(convex_volumes),
     CGAL::parameters::maximum_depth(10)
     .volume_error(0.1)
     .maximum_number_of_convex_hulls(9)
@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
     .maximum_number_of_voxels(1000000)
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
-  assert(convex_hulls.size() > 0);
-  assert(convex_hulls.size() <= 9);
+  assert(convex_volumes.size() > 0);
+  assert(convex_volumes.size() <= 9);
 
   return 0;
 }

@@ -1607,7 +1607,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *
  * \cgalNamedParamsEnd
  *
- * \return the number of convex hulls. Note that this value may be lower than the `maximum_number_of_convex_hulls`, for example if the specified `volume_error` is quickly met.
+ * \return the number of convex hulls. Note that this value may be lower than the `maximum_number_of_convex_volumes`, for example if the specified `volume_error` is quickly met.
  *
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
@@ -1626,7 +1626,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
   }
 #endif
 
-  const unsigned int max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 16);
+  const unsigned int max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_volumes), 16);
   assert(max_convex_hulls > 0);
 
   if (max_convex_hulls == 1) {

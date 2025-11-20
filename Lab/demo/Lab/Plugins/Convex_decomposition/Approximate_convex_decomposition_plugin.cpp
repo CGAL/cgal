@@ -111,13 +111,13 @@ approximate_convex_decomposition()
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  std::vector<Convex_hull> convex_hulls;
-  convex_hulls.reserve(9);
+  std::vector<Convex_hull> convex_volumes;
+  convex_volumes.reserve(9);
 
-  CGAL::Polygon_mesh_processing::approximate_convex_decomposition(*(sm_item->face_graph()), std::back_inserter(convex_hulls),
+  CGAL::Polygon_mesh_processing::approximate_convex_decomposition(*(sm_item->face_graph()), std::back_inserter(convex_volumes),
     CGAL::parameters::maximum_depth(maximumDepth)
     .volume_error(volumeError)
-    .maximum_number_of_convex_hulls(maximumConvexHulls)
+    .maximum_number_of_convex_volumes(maximumConvexHulls)
     .split_at_concavity(splitConcavity)
     .maximum_number_of_voxels(numVoxels)
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
@@ -126,10 +126,10 @@ approximate_convex_decomposition()
   std::vector<QColor> distinct_colors;
   // the first color is either the background or the unique domain
 
-  compute_deterministic_color_map(QColor(80, 250, 80), convex_hulls.size(), std::back_inserter(distinct_colors));
+  compute_deterministic_color_map(QColor(80, 250, 80), convex_volumes.size(), std::back_inserter(distinct_colors));
 
-  for (std::size_t i = 0; i < convex_hulls.size(); i++) {
-    const Convex_hull& ch = convex_hulls[i];
+  for (std::size_t i = 0; i < convex_volumes.size(); i++) {
+    const Convex_hull& ch = convex_volumes[i];
     SMesh sm;
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(ch.first, ch.second, sm);
 

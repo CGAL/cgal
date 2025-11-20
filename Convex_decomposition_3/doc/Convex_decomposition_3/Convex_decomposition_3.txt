@@ -130,12 +130,12 @@ The method employs a top-down splitting phase followed by a bottom-up merging to
 The volume calculation, convex hull computation and the concavity search is accelerated by a voxel grid. The grid is prepared before the splitting phase and is labelled into outside, inside or surface. The convex hulls are calculated from voxel corners. Thus, a mesh with a high resolution is less penalized by its number of vertices.
 The splitting phase typically results in a number of convex volumes larger than targeted. The second phase employs a bottom-up merging that reduces the number of convex volumes to the targeted number while aiming at maintaining a low volume difference between convex volumes and the input mesh. The greedy merging maintains a priority queue to incrementally merge the pair of convex volumes with the smallest increase of volume difference.
 
-The splitting phase is not limited by the chosen `maximum_number_of_convex_hulls`, because a splitting into a larger number of more convex parts with a subsequent merging leads to better results.
+The splitting phase is not limited by the chosen `maximum_number_of_convex_volumes`, because a splitting into a larger number of more convex parts with a subsequent merging leads to better results.
 
 
 \subsection Convex_decomposition_3ACD_Parameters Parameters
 Several parameters of the algorithm impact the quality of the result as well as the running time.
-- `maximum_number_of_convex_hulls`: The maximum number of convex volumes output by the method. The actual number may be lower for mostly convex input meshes, e.g., a sphere. The impact on the running time is rather low. The default is 16.
+- `maximum_number_of_convex_volumes`: The maximum number of convex volumes output by the method. The actual number may be lower for mostly convex input meshes, e.g., a sphere. The impact on the running time is rather low. The default is 16.
 - `maximum_depth`: The maximum depth for the hierarchical splitting phase. For complex meshes, a higher maximum depth is required to split small concavities into convex parts. The choice of  `maximum_depth` has a larger impact on the running time. The default is 10.
 - `maximum_number_of_voxels`: This parameter controls the resolution of the voxel grid used for speed-up. Larger numbers result in a higher memory footprint and a higher running time. A small number also limits the `maximum_depth`. The voxel grid is isotropic and the longest axis of the bounding box will be split into a number of voxels equal to the cubic root of `maximum_number_of_voxels`. The default value is 1.000.000.
 - `volume_error`: The splitting of a convex volume into smaller parts is controlled by the `volume_error` which provides the tolerance for difference in volume. The difference is calculated by \f$ (|C_i| - |P_i|) / |P_i|\f$. The default value is 0.01. Thus, if a convex volume has 1 percent more volume that the part of the input mesh it approximates, it will be further divided.
