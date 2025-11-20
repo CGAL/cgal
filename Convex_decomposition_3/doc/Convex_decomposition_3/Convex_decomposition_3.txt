@@ -20,8 +20,8 @@ While it is desirable to have a decomposition into a minimum number of
 pieces, this problem is known to be NP-hard \cgalCite{c-cpplb-84}. This
 package offers two methods for decomposing polyhedra. The
 \ref Convex_decomposition_3Nef "Convex Decomposition of Nef Polyhedra"
-splits polyhedra into convex pieces with an upper bound on the number
-of pieces. The \ref Convex_decomposition_3ACD_Intro
+splits polyhedra into convex pieces with an upper bound on their number.
+The \ref Convex_decomposition_3ACD_Intro
 "Approximate convex decomposition" method offers a fast
 approximate decomposition of the convex hull into convex volumes. While
 any number of convex volumes can be generated, these convex volumes

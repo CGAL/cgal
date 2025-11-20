@@ -1533,11 +1533,11 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
 /**
  * \ingroup PkgConvexDecomposition3Ref
  *
- * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface.
+ * \brief approximates the input mesh by a number of convex volumes. The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface.
  *        The remaining voxels are labeled as outside or inside by flood fill, in case the input mesh is closed, or by axis-aligned ray shooting, i.e., along x,
  *        y and z-axis in positive and negative directions. A voxel is only labeled as inside if at least 3 faces facing away from the voxel have been hit and
  *        no face facing towards the voxel. In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied.
- *        Afterwards, a greedy pair-wise merging combines smaller convex hulls until the given number of convex hulls is met.
+ *        Afterwards, a greedy pair-wise merging combines smaller convex volumes until the given number of convex volumes is met.
  *
  * \tparam FaceGraph a model of `HalfedgeListGraph`, and `FaceListGraph`
  *
@@ -1545,8 +1545,8 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param tmesh the input triangle mesh to approximate by convex hulls
- * \param out_hulls output iterator into which convex hulls are recorded
+ * \param tmesh the input triangle mesh to approximate by convex volumes
+ * \param out_volumes output iterator into which convex volumes are recorded
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -1610,7 +1610,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputIterator out_hulls, const NamedParameters& np = parameters::default_values()) {
+std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputIterator out_volumes, const NamedParameters& np = parameters::default_values()) {
   using Geom_traits = typename GetGeomTraits<FaceGraph, NamedParameters>::type;
 
   using FT = typename Geom_traits::FT;
@@ -1666,7 +1666,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
   merge(hulls, hull_volume, max_convex_hulls, Concurrency_tag());
 
   for (std::size_t i = 0; i < hulls.size(); i++)
-    *out_hulls++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
+    *out_volumes++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
 
   return hulls.size();
 }
