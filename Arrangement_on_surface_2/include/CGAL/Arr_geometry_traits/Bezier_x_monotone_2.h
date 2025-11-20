@@ -685,7 +685,7 @@ point_position(const Point_2& p, Bezier_cache& cache) const
     return EQUAL;
   }
 
-  // Then check whether the bezier is an horizontal segment or
+  // Then check whether the bezier is a horizontal segment or
   // if p has the same x-coordinate as one of the endpoint
 
   const Comparison_result  res1 =  p.compare_x(_ps, cache);

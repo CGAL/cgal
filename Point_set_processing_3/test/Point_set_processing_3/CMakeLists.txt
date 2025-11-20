@@ -22,7 +22,6 @@ endif()
 # Executables that do *not* require Eigen
 create_single_source_cgal_program( "read_test.cpp" )
 create_single_source_cgal_program( "test_read_write_point_set.cpp" )
-create_single_source_cgal_program( "test_deprecated_io_point_set.cpp" )
 create_single_source_cgal_program( "test_poisson_eliminate.cpp" )
 create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
 create_single_source_cgal_program( "analysis_test.cpp" )
@@ -39,7 +38,6 @@ if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910
   include(CGAL_LASLIB_support)
   if (TARGET CGAL::LASLIB_support)
     target_link_libraries(test_read_write_point_set PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
-    target_link_libraries(test_deprecated_io_point_set PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
   else()
     message(STATUS "NOTICE: the LAS reader test requires LASlib and will not be compiled.")
   endif()
@@ -48,8 +46,9 @@ else()
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen
   create_single_source_cgal_program( "normal_estimation_test.cpp" )

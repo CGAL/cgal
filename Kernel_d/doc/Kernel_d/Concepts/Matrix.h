@@ -272,7 +272,7 @@ iterator begin();
 an iterator pointing beyond the last entry
 of \f$ M\f$.
 */
-terator end();
+iterator end();
 
 /*!
 an iterator pointing to the first entry

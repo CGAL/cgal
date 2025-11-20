@@ -105,11 +105,12 @@ There are several member functions allowing to insert specific configurations of
 
 There are two functions allowing to build a linear cell complex from two other \cgal data types:
 <UL>
-<LI>\link ::import_from_triangulation_3 `import_from_triangulation_3(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
-<LI>\link ::import_from_polyhedron_3 `import_from_polyhedron_3(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
+
+<LI>\link CGAL::triangulation_3_to_lcc `triangulation_3_to_lcc(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
+<LI>\link CGAL::polyhedron_3_to_lcc `polyhedron_3_to_lcc(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
 </UL>
 
-Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the  \link ::import_from_plane_graph `reference manual`\endlink for the file format).
+Lastly, the function \link CGAL::read_plane_graph_in_lcc `read_plane_graph_in_lcc(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the \link CGAL::read_plane_graph_in_lcc `reference manual`\endlink for the file format).
 
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
@@ -280,7 +281,7 @@ The following example shows the incremental builder.
 
 \subsection Linear_cell_complexInsert Insert an Edge Between Two Different Faces
 
-The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating an hole in the first face.
+The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating a hole in the first face.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3_insert.cpp}
 

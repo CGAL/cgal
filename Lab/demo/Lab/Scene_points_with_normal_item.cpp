@@ -808,8 +808,7 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
 
   // Compute the radius of each point = (distance max to k nearest neighbors)/2.
   {
-    int i=0;
-    for (Point_set::iterator it=d->m_points->begin(); it!=d->m_points->end(); ++it, ++i)
+    for (Point_set::iterator it=d->m_points->begin(); it!=d->m_points->end(); ++it)
     {
       Neighbor_search search(tree, d->m_points->point(*it), k+1, 0, true, tr_dist);
       double maxdist2 = (--search.end())->second; // squared distance to furthest neighbor

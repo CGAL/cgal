@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/Timer.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -36,8 +37,8 @@ int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fold.off");
-  std::ifstream is(filename);
-  if(!is || !(is >> surface_mesh))
+
+  if(!CGAL::IO::read_polygon_mesh(filename, surface_mesh))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;

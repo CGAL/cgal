@@ -871,7 +871,54 @@ private:
  */
 template <typename Graph>
 class Face_around_face_circulator
-{};
+#ifndef DOXYGEN_RUNNING
+  : public boost::iterator_adaptor<
+             Face_around_face_circulator<Graph>                    // Derived
+             , Halfedge_around_face_circulator<Graph>                  // Base
+             , typename boost::graph_traits<Graph>::face_descriptor  // Value
+             , Bidirectional_circulator_tag                              // CategoryOrTraversal
+             , typename boost::graph_traits<Graph>::face_descriptor  // Reference
+             >
+#endif
+{
+  internal::Opposite_face<Graph> fct;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+
+public:
+#ifndef DOXYGEN_RUNNING
+  typedef std::size_t size_type;
+#endif
+
+  Face_around_face_circulator()
+  {}
+
+  Face_around_face_circulator(halfedge_descriptor h, const Graph& g)
+    : Face_around_face_circulator::iterator_adaptor_(Halfedge_around_face_circulator<Graph>(h,g)), fct(g)
+  {}
+
+#ifndef DOXYGEN_RUNNING
+
+  explicit operator bool() const
+  {
+    return (! (this->base_reference() == nullptr));
+  }
+
+  bool operator== (void*) const
+  {
+    return this->base_reference()== nullptr;
+  }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference()!= nullptr;
+  }
+
+private:
+  friend class boost::iterator_core_access;
+  typename  boost::graph_traits<Graph>::face_descriptor dereference() const { return fct(*this->base_reference()); }
+#endif
+
+};
 
 /**
  * \ingroup PkgBGLIterators
