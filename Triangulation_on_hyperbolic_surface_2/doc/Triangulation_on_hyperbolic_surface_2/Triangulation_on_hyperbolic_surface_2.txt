@@ -105,6 +105,11 @@ See \cgalCite{despre2022experimental} for details.
  Computation of the cross ratio of an edge.
 \cgalFigureCaptionEnd
 
+\subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Delaunay_Triangulations Data Structure for Delaunay Triangulations
+
+The data structure for triangulations is enriched in order to be more convenient and more time efficient for the \f$ \varepsilon \f$-net algorithm or other algorithms that often have to access lifts of triangles in \f$ \mathbb{D} \f$.
+In order to have constant time access to a lift of any triangle, an anchor is associated with <em>each</em> face of the triangulation. Note that the anchors associated with adjacent triangles do not necessarily correspond to adjacent lifts
+in \f$ \mathbb{D} \f$. This implies that, when working with a lift of a triangle, if an operation requires the third vertex of an adjacent lift, its coordinates must first be computed using the cross-ratio of their common edge.
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Delaunay Delaunay Flip Algorithm
 
