@@ -252,7 +252,7 @@ public:
   using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
 
-  inline static With_offset_tag with_offset{ {-1} };
+  inline static With_offset_tag with_offset{ -1 };
   inline static With_point_tag with_point{ {-1} };
   inline static With_point_and_info_tag with_point_and_info{ { {-1} } };
 
