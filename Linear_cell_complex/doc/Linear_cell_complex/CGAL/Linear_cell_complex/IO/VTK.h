@@ -6,7 +6,7 @@ namespace IO {
  * format.
  *
  * Only supports:
- * - Linear_cell_complex_for_combinatorial_map<3,3>
+ * - `CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`
  * - VTK legacy ASCII format (.vtk files)
  * - Optional scalar fields for vertices and volumes
  *
@@ -23,14 +23,14 @@ namespace IO {
 
 /**
  * \brief Reads a VTK legacy ASCII file and load it into a 3D
- *        Linear_cell_complex.
+ *        linear cell complex.
  * \ingroup PkgLinearCellComplexRefIOVTK
  *
  * \tparam LCC must be a `CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`
  * \tparam VertexScalarType Type for vertex scalar data (default: float)
  * \tparam VolumeScalarType Type for volume scalar data (default: float)
  * \param filename Path to the VTK file
- * \param alcc The Linear_cell_complex to populate (will be cleared first)
+ * \param alcc The linear cell complex to populate (will be cleared first)
  * \param vertex_scalars Optional output vector to store per-vertex scalar values.
  *                      If provided, will be resized to match number of vertices.
  * \param volume_scalars Optional output vector to store per-volume scalar values.
@@ -51,7 +51,7 @@ bool read_VTK(const char* filename,
  * \tparam VertexScalarType Type for vertex scalar data (default: float)
  * \tparam VolumeScalarType Type for volume scalar data (default: float)
  * \param filename Path to the output VTK file
- * \param alcc The Linear_cell_complex to export
+ * \param alcc The linear cell complex to export
  * \param vertex_scalars Optional per-vertex scalar data. If provided, must have
  *                      same size as number of vertex attributes in the LCC.
  * \param volume_scalars Optional per-volume scalar data. If provided, must have

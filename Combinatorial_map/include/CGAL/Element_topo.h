@@ -78,7 +78,7 @@ cell_topo topo_from_name(const std::string& t)
 }
 
 /**
- * @brief To get the type of dimD cell of the CMap of cmapdim dimension.
+ * @brief To get the type of `dimD` cell of the `CMap` of `cmapdim` dimension.
  */
 template<typename CMap, unsigned int dimcell,
          unsigned int cmapdim=CMap::dimension>
