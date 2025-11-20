@@ -8,12 +8,9 @@
 
 #include <CGAL/Boolean_set_operations_2.h>
 
-#include <CGAL/Cartesian_converter.h>
-
 #include <CGAL/Random.h>
-#include <CGAL/Real_timer.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef CGAL::Float_snap_rounding_traits_2<Kernel>              Traits_2;
 typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
@@ -29,9 +26,14 @@ typedef CGAL::Polygon_2<Kernel>                                 Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>                      Polygon_with_holes_2;
 typedef std::vector<Polygon_with_holes_2>                       Pwh_vec_2;
 
-typedef CGAL::Cartesian<double>                                 Naive;
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#include <CGAL/Real_timer.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
+typedef CGAL::Simple_cartesian<double>                          Naive;
 typedef CGAL::Cartesian_converter<Kernel,Naive>                 EK_to_IK;
 typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
+#endif
 
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
 #include <CGAL/Snap_rounding_traits_2.h>
@@ -61,6 +63,7 @@ Point_2 random_noise_point(CGAL::Random& r, double m, double M, Vector_2 v)
   return Point_2(FT(r.get_double(m, M) + CGAL::to_double(v.x())), FT(r.get_double(m, M)  + CGAL::to_double(v.y())));
 }
 
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
 template<class Iterator, class OutRange>
 void compute_subcurves_and_naive_snap(Iterator begin, Iterator end, OutRange &out){
   EK_to_IK to_inexact;
@@ -79,6 +82,7 @@ void compute_subcurves_and_naive_snap(Iterator begin, Iterator end, OutRange &ou
   }
   std::swap(out,out2);
 }
+#endif
 
 void test(const std::vector<Segment_2> &segs){
   std::vector<Segment_2> out;
