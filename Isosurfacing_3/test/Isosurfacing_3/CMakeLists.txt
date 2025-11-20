@@ -4,7 +4,7 @@ project(Isosurfacing_3_Tests)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 find_package(TBB QUIET)

@@ -8,8 +8,9 @@ project(Periodic_3_mesh_3_Examples)
 find_package(CGAL REQUIRED)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()

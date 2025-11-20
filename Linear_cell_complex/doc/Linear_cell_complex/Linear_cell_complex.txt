@@ -281,7 +281,7 @@ The following example shows the incremental builder.
 
 \subsection Linear_cell_complexInsert Insert an Edge Between Two Different Faces
 
-The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating an hole in the first face.
+The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating a hole in the first face.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3_insert.cpp}
 
