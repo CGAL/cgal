@@ -101,7 +101,7 @@ support the use of extended kernels in the convex decomposition.
 Approximate convex decomposition of the elephant.off model.\n From left to right: 1. input mesh 2. 5 convex volumes 3. 8 convex volumes 4. 12 convex volumes
 \cgalFigureCaptionEnd
 
-The H-VACD, introduced by  computes a set of convex volumes that fit the polyhedron. Contrary to the decomposition of the polyhedron into convex parts, the convex volumes cover the polyhedron, but also include additional volume outside of the polyhedron.
+The H-VACD method \cgalCite{cgal:mamou2016volumetric}, "Hierarchical volumetrix approximate convex decomposition", computes a set of convex volumes that fit the polyhedron. Contrary to the decomposition of the polyhedron into convex parts, the convex volumes cover the polyhedron, but also include additional volume outside of it.
 A sufficiently tight enclosure of the polyhedron by several convex volumes allows fast intersection calculation and collision detection among polyhedra while offering a non-hierachical approach and may thus be easier to use in a parallel setting.
 The resulting set of convex volumes minimizes the volume between their union and the polyhedron while fully including the input polyhedron. While the optimal solution with `n` convex hulls that cover the polydron with the smallest additional volume remains NP-hard, this method provides a fast error-driven approximation.
 
