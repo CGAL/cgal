@@ -72,6 +72,10 @@ namespace CGAL {
  * 8. Repeats until no further simplification is possible (minimal failing case found)
  * 9. Saves the minimal failing case as "final_bad" and returns its exit code
  *
+ * \warning CGAL::bisect_failures requires the tested code to be compiled with
+ * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined.
+ *
+ * Here is an example of how to use `CGAL::bisect_failures`:
  * \snippet STL_Extension/bisect_failures.cpp bisect_failures_snippet
  */
 template<typename InputData, typename GetSizeFn, typename SimplifyFn, typename RunFn, typename SaveFn>

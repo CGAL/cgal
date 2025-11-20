@@ -1,3 +1,12 @@
+// CGAL::bisect_failures requires the code to be compiled with assertions
+// enabled. That means NDEBUG and CGAL_NDEBUG should not be defined.
+#if defined(NDEBUG)
+#  undef NDEBUG
+#endif
+#if defined(CGAL_NDEBUG)
+#  undef CGAL_NDEBUG
+#endif
+
 #include <CGAL/bisect_failures.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
