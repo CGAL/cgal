@@ -127,7 +127,11 @@ This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cg
 \section Section_Hyperbolic_Surface_Triangulations_Epsilon_Nets \f$ \varepsilon \f$-nets
 
 <div style="color:red">
+Let \f$ (X, d) \f$ be a metric space and \f$ \varepsilon > 0 \f$. A subset \f$ P \subset X \f$ is:
 
+- an \f$ \varepsilon \f$-covering if \f$ d(x, P) \leq \varepsilon \f$ for all \f$ x \in X \f$, that is, the closed balls of radius \f$ \varepsilon \f$ centered at the points of \f$ P \f$ cover \f$ X \f$;
+- an \f$ \varepsilon \f$-packing if \f$ d(p, q) \geq \varepsilon \f$ for all \f$ p \neq q \in P \f$, that is, the open balls of radius \f$ \varepsilon/2 \f$ centered at the points of \f$ P \f$ are pairwise disjoint;
+- an \f$ \varepsilon \f$-net if it is both an \f$ \varepsilon \f$-covering and an \f$ \varepsilon \f$-packing.
 </div>
 
 \section Section_Hyperbolic_Surface_Triangulations_Software_Design Software Design
