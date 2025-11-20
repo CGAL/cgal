@@ -706,7 +706,7 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
             // A segment intersection is not helpful as it means the triangle normal is orthogonal to the ray
             if (std::get_if<Point_3>(&(intersection->first))) {
               face_descriptor fd = intersection->second;
-              Vector_3 n = compute_face_normal(fd, mesh);
+              Vector_3 n = Polygon_mesh_processing::compute_face_normal(fd, mesh);
               if (dirs[i] * n > 0)
                 inside++;
               else
