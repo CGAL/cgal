@@ -22,7 +22,7 @@ package offers two methods for decomposing polyhedra. The
 \ref Convex_decomposition_3Nef "Convex Decomposition of Nef Polyhedra"
 splits polyhedra into convex pieces with an upper bound on their number.
 The \ref Convex_decomposition_3ACD_Intro
-"Approximate convex decomposition" method offers a fast
+"Approximate Convex Decomposition" method offers a fast
 approximate decomposition of the convex hull into convex volumes. While
 any number of convex volumes can be generated, these convex volumes
 are more compact than the convex hull, but still include additional
@@ -98,7 +98,7 @@ extended kernels in the convex decomposition is not supported.
 <img src="https://soesau.github.io/acd_top.jpg" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Acd_topfig}
-Approximate convex decomposition of the elephant.off model.\n From left to right: 1. input mesh 2. 5 convex volumes 3. 8 convex volumes 4. 12 convex volumes
+Approximate convex decomposition of the elephant.off model.\n From left to right: input mesh, 5, 8, and 12 convex volumes
 \cgalFigureCaptionEnd
 
 The H-VACD method \cgalCite{cgal:mamou2016volumetric}, "Hierarchical volumetrix approximate convex decomposition", computes a set of convex volumes that fit the polyhedron. Contrary to the decomposition of the polyhedron into convex parts, the convex volumes cover the polyhedron, but also include additional volume outside of it.
@@ -116,7 +116,7 @@ The algorithm computes a set of convex volumes \f$ C=\{C_i\f$ with \f$ i \in[0..
 d(A, B) = |A| - |B|
 \f}
 
-Where \f$|A|\f$ is the volume of A, P is the input polyhedron and \f$C_i\f$ are convex volumes. The convex volumes \f$C_i\f$ are pairwise disjunct, i.e., \f$|C_i \cap C_j| = 0\f$ if \f$i \neq j\f$. And the union of convex volumes contain the input polyhedron \f$ P \subset \bigcup_{C_i \in C} \f$.
+Where \f$|A|\f$ is the volume of A, P is the input polyhedron and \f$C_i\f$ are convex volumes. The convex volumes \f$C_i\f$ are pairwise disjoint, i.e., \f$|C_i \cap C_j| = 0\f$ if \f$i \neq j\f$. And the union of convex volumes contain the input polyhedron \f$ P \subset \bigcup_{C_i \in C} \f$.
 
 \cgalFigureAnchor{Acd_pipelinefig}
 <center>
@@ -127,7 +127,8 @@ Approximate convex decomposition pipeline.\n From left to right: 1. input mesh 2
 \cgalFigureCaptionEnd
 
 The method employs a top-down splitting phase followed by a bottom-up merging to achieve the target number of convex volumes. The splitting phase aims at decomposing the input mesh into smaller mostly convex parts. Each part of the input mesh is approximated with its convex hull. In a hierarchical manner, each part of the mesh is split into two parts when its convexity is low. The convexity is measured by the volume difference of the part and its convex hull. Splitting a part into two can be done by simply cutting the longest side of the bounding box in half. A better choice is often found by searching the longest side of the bounding box for a concave spot. However, it comes with a higher computational cost. The hierarchical splitting stops when either the convexity is sufficiently high or the maximum depth is reached.
-The volume calculation, convex hull computation and the concavity search is accelerated by a voxel grid. The grid is prepared before the splitting phase and is labelled into outside, inside or surface. The convex hulls are calculated from voxel corners. Thus, a mesh with a high resolution is less penalized by its number of vertices.
+The volume calculation, convex hull computation and the concavity search is accelerated by a voxel grid. The grid is prepared before the splitting phase and voxel cells overlapping with triangles are labeled as surface. The remaining voxels are labeled as outside or inside by flood fill, in case the input mesh is closed, or by axis-aligned ray shooting, i.e., along x, y and z-axes in positive and negative directions. A voxel is only labeled as inside if at least 3 faces facing away from the voxel have been hit and
+no face facing towards the voxel. The convex hulls are calculated from voxel corners. Thus, a mesh with a high resolution is less penalized by its number of vertices.
 The splitting phase typically results in a number of convex volumes larger than targeted. The second phase employs a bottom-up merging that reduces the number of convex volumes to the targeted number while aiming at maintaining a low volume difference between convex volumes and the input mesh. The greedy merging maintains a priority queue to incrementally merge the pair of convex volumes with the smallest increase of volume difference.
 
 The splitting phase is not limited by the chosen `maximum_number_of_convex_volumes`, because a splitting into a larger number of more convex parts with a subsequent merging leads to better results.

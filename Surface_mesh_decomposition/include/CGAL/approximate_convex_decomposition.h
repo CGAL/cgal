@@ -1533,11 +1533,10 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
 /**
  * \ingroup PkgConvexDecomposition3Ref
  *
- * \brief approximates the input mesh by a number of convex volumes. The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface.
- *        The remaining voxels are labeled as outside or inside by flood fill, in case the input mesh is closed, or by axis-aligned ray shooting, i.e., along x,
- *        y and z-axis in positive and negative directions. A voxel is only labeled as inside if at least 3 faces facing away from the voxel have been hit and
- *        no face facing towards the voxel. In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied.
- *        Afterwards, a greedy pair-wise merging combines smaller convex volumes until the given number of convex volumes is met.
+ * \brief approximates the input mesh by a number of convex volumes.
+ *         The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface. The remaining voxels are labeled as outside or inside.
+ *         In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied or the `maximum_depth` is reached.
+ *         Finally, a greedy pair-wise merging combines smaller convex volumes until `maximum_number_of_convex_volumes` is met.
  *
  * \tparam FaceGraph a model of `HalfedgeListGraph`, and `FaceListGraph`
  *
@@ -1607,6 +1606,8 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *
  * \return the number of convex hulls. Note that this value may be lower than the `maximum_number_of_convex_volumes`, for example if the specified `volume_error` is quickly met.
  *
+ * \pre `tmesh` is a triangle mesh.
+ * \pre `tmesh` is not self-intersecting.
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
@@ -1640,7 +1641,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
 
     convex_hull_3(boost::make_transform_iterator(vertices(tmesh).begin(), v2p), boost::make_transform_iterator(vertices(tmesh).end(), v2p), ch.points, ch.indices);
 
-    *out_hulls = std::make_pair(std::move(ch.points), std::move(ch.indices));
+    *out_volumes = std::make_pair(std::move(ch.points), std::move(ch.indices));
     return 1;
   }
 
