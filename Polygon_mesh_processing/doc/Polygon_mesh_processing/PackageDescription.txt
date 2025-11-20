@@ -66,10 +66,6 @@
 /// Classes and functions that answer queries about a polygon mesh or its elements.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_convex_decomposition_grp Approximate Convex Decomposition
-/// Function to approximate a mesh by a number of convex hulls.
-/// \ingroup PkgPolygonMeshProcessingRef
-
 /// \defgroup PMP_IO_grp I/O Functions
 /// \ingroup PkgPolygonMeshProcessingRef
 
@@ -282,7 +278,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
 - `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()`
 - `CGAL::Polygon_mesh_processing::refine_with_plane()`
-- `CGAL::Polygon_mesh_processing::approximate_convex_decomposition()`
 
 \cgalCRPSection{I/O Functions}
 - \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink
