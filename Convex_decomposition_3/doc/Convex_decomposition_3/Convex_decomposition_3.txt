@@ -30,7 +30,7 @@ empty space than just the input polyhedron.
 
 \section Convex_decomposition_3Nef Convex Decomposition of Nef Polyhedra
 
-Our implementation decomposes a Nef polyhedron \f$ N\f$ into \cgalBigO{r^2} convex
+The method decomposes a Nef polyhedron \f$ N\f$ into \cgalBigO{r^2} convex
 pieces, where \f$ r\f$ is the number of edges that have two adjacent
 facets that span an angle of more than 180 degrees with respect to the
 interior of the polyhedron. Those edges are also called reflex edges.
@@ -41,14 +41,14 @@ optimal \cgalCite{c-cpplb-84}.
 Vertical decomposition based on the insertion of vertical facets (viewed from the top). Left: Non-convex polyhedron. Middle: Non-vertical reflex edges have been resolved. Right: Vertical reflex edges have been resolved. The sub-volumes are convex.
 \cgalFigureEnd
 
-Our decomposition runs in two steps. In the first step, each
+The decomposition runs in two steps. In the first step, each
 non-vertical reflex edge \f$ e\f$ is resolved by insertion of vertical
-facets through \f$ e\f$. In the second step, we do the same with the
-vertical reflex edges. \cgalFigureRef{figverticalDecomposition}
+facets through \f$ e\f$. In the second step, the
+vertical reflex edges are handled in the same way. \cgalFigureRef{figverticalDecomposition}
 illustrates the two steps.
 
-At the moment our implementation is restricted to the decomposition of
-bounded polyhedra. An extension to unbounded polyhedra is planned.
+At the moment the implementation is restricted to the decomposition of
+bounded polyhedra.
 
 \subsection Convex_decomposition_3InterfaceandUsage Interface and Usage
 
@@ -86,8 +86,8 @@ of accessing the convex pieces is to convert them into separate Nef
 polyhedra, as illustrated by the example code given below.
 
 Note that due to the restriction to bounded polyhedra, the use of
-extended kernels is unnecessary and expensive. We therefore do not
-support the use of extended kernels in the convex decomposition.
+extended kernels is unnecessary and expensive. Therefore the use of
+extended kernels in the convex decomposition is not supported.
 
 \cgalExample{Convex_decomposition_3/list_of_convex_parts.cpp}
 
@@ -355,6 +355,11 @@ The running time for all cases in the above tables were between 1.4 and 3 second
 \subsection Convex_decomposition_3ACD_Example Example
 
 \cgalExample{Surface_mesh_decomposition/approximate_convex_decomposition.cpp }
+
+
+\section Convex_decomposition_3_history Design and Implementation History
+
+This package was created by Peter Hachenberger with the `CGAL::convex_decomposition_3()` method. In 2025, it has been extended by Sven Oesau with the `CGAL::approximate_convex_decomposition()` method.
 
 */
 } /* namespace CGAL */
