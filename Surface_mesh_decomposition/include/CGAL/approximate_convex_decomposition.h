@@ -1581,10 +1581,10 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `FaceGraph`.}
  *   \cgalParamNEnd
@@ -1598,7 +1598,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `Kernel`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type of `FaceGraph`, using `CGAL::Kernel_traits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the value type of the vertex-point map, using `CGAL::Kernel_traits`}
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
