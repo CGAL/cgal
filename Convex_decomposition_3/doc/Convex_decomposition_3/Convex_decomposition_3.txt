@@ -254,7 +254,7 @@ Concavity
 <TD class="math" ALIGN=LEFT NOWRAP>
 0.9731
 <TD class="math" ALIGN=LEFT NOWRAP>
-0.84613
+0.8461
 <TD class="math" ALIGN=LEFT NOWRAP>
 0.7506
 <TD class="math" ALIGN=LEFT NOWRAP>
@@ -326,7 +326,7 @@ Mid
 <TD class="math" ALIGN=LEFT NOWRAP>
 1.2121
 <TD class="math" ALIGN=LEFT NOWRAP>
-1.00867
+1.0087
 <TD class="math" ALIGN=LEFT NOWRAP>
 0.8444
 <TD class="math" ALIGN=LEFT NOWRAP>
@@ -341,15 +341,15 @@ Triceratops
 <TD class="math" ALIGN=RIGHT NOWRAP>
 Mid
 <TD class="math" ALIGN=LEFT NOWRAP>
-1.2191
+0.8358
 <TD class="math" ALIGN=LEFT NOWRAP>
 0.6870
 <TD class="math" ALIGN=LEFT NOWRAP>
-0.8463
+0.7071
 <TD class="math" ALIGN=LEFT NOWRAP>
 0.7375
 <TD class="math" ALIGN=LEFT NOWRAP>
-0.6871
+0.6586
 <TD class="math" ALIGN=LEFT NOWRAP>
 <TR>
 <TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
