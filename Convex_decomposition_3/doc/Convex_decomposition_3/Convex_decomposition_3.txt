@@ -89,6 +89,10 @@ Note that due to the restriction to bounded polyhedra, the use of
 extended kernels is unnecessary and expensive. Therefore the use of
 extended kernels in the convex decomposition is not supported.
 
+\subsection Convex_decomposition_3Example Example
+
+This example shows the usage of `CGAL::convex_decomposition_3(Nef_polyhedron_3&)` to decompose a Nef polyhedron into convex parts.
+
 \cgalExample{Convex_decomposition_3/list_of_convex_parts.cpp}
 
 \section Convex_decomposition_3ACD_Intro Approximate Convex Decomposition
@@ -354,6 +358,8 @@ Mid
 The running time for all cases in the above tables were between 1.4 and 3 seconds while being slightly lower when splitting at the concavity. Although searching the voxel grid for the concavity takes additional computational time, it is more than compensated by fewer splits.
 
 \subsection Convex_decomposition_3ACD_Example Example
+
+The example shows the approximate convex decomposition of the knot2.off mesh into 9 convex volumes that are saved as off files.
 
 \cgalExample{Surface_mesh_decomposition/approximate_convex_decomposition.cpp }
 
