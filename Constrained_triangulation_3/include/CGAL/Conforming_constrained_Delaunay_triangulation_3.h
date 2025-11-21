@@ -1372,8 +1372,9 @@ protected:
     {
       const auto point = self->point(v_Steiner);
       if(!self->cdt_2_are_initialized) return;
-      for(const auto& [_, poly_id] : CGAL::make_range(self->incident_faces_to_polyline.equal_range(constraint))) {
-        auto& non_const_cdt_2 = self->non_const_face_cdt_2(poly_id);
+      for(const auto& [_, polygon_id] : CGAL::make_range(self->incident_faces_to_polyline.equal_range(constraint))) {
+        if(self->face_data[polygon_id].skip_face) continue;
+        auto& non_const_cdt_2 = self->non_const_face_cdt_2(polygon_id);
         const auto& cdt_2 = non_const_cdt_2;
 
         auto opt_edge = self->edge_of_cdt_2(cdt_2, va, vb);
@@ -1422,7 +1423,7 @@ protected:
           fc->info().is_edge_also_in_3d_triangulation.set(other_edge.first->info().is_edge_also_in_3d_triangulation.test(other_edge.second));
         } while(++fc != fc_begin);
 
-        self->face_constraint_misses_subfaces_set(poly_id);
+        self->face_constraint_misses_subfaces_set(polygon_id);
       }
       conforming_dt_visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v_Steiner);
     }
@@ -1539,10 +1540,10 @@ public:
       const auto [outside_cell, outside_face_index] = outside_facet;
       const auto mirror_facet = this->mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
-        const auto poly_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
-        const CDT_2& cdt_2 = face_cdt_2(poly_id);
+        const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
+        const CDT_2& cdt_2 = face_cdt_2(polygon_id);
         const auto f2d = outside_cell->ccdt_3_data().face_2(cdt_2, outside_face_index);
-        set_facet_constrained(mirror_facet, poly_id, f2d);
+        set_facet_constrained(mirror_facet, polygon_id, f2d);
       }
     }
 
@@ -3416,10 +3417,10 @@ private:
       const auto [outside_cell, outside_face_index] = outside_facet;
       const auto mirror_facet = this->mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
-        const auto poly_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
-        const CDT_2& cdt_2 = face_cdt_2(poly_id);
+        const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
+        const CDT_2& cdt_2 = face_cdt_2(polygon_id);
         const auto f2d = outside_cell->ccdt_3_data().face_2(cdt_2, outside_face_index);
-        set_facet_constrained(mirror_facet, poly_id, f2d);
+        set_facet_constrained(mirror_facet, polygon_id, f2d);
       }
     };
 
