@@ -135,6 +135,10 @@
 #  include <CGAL/Testsuite/vc_debug_hook.h>
 #endif
 
+#ifndef CGAL_NO_GDB_AUTOLOAD
+#  include <CGAL/gdb_autoload.h>
+#endif
+
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
 //----------------------------------------------------------------------//
@@ -461,10 +465,6 @@ namespace CGAL {
   using cpp11::copy_n;
 } // end of the temporary compatibility with CGAL-4.14
 #endif // CGAL_NO_DEPRECATED_CODE
-
-#if __has_include(<version>)
-#  include <version>
-#endif
 
 namespace CGAL {
 

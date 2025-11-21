@@ -109,6 +109,152 @@ set(thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20240222_2201
 1514904.stl
 )
 
+set(thingi10k_FAILED_WITH_SEGFAULT_CTest_20251002
+1439534.stl
+196123.stl
+200695.stl
+135777.stl
+285604.stl
+822697.stl
+)
+
+set(thingi10k_FAILED_CTest_20251002
+100606.stl
+100644.stl
+101955.stl
+109130.stl
+116873.stl
+116876.stl
+135777.stl
+139737.stl
+1439534.stl
+145329.stl
+145330.stl
+1505036.stl
+1514900.stl
+196121.stl
+196122.stl
+196123.stl
+196126.stl
+196127.stl
+199814.stl
+199818.stl
+200695.stl
+215991.stl
+230152.stl
+230153.stl
+239188.stl
+276937.stl
+285604.stl
+285605.stl
+288352.stl
+288353.stl
+288354.stl
+288355.stl
+39182.stl
+39245.stl
+472050.stl
+55278.stl
+61418.stl
+622000.stl
+669962.stl
+67817.stl
+702204.stl
+723893.stl
+822697.stl
+904476.stl
+91474.stl
+95796.stl
+95797.stl
+97515.stl
+)
+
+set(thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20251028
+139765.stl
+1452677.stl
+1452678.stl
+1452679.stl
+145329.stl
+145330.stl
+145331.stl
+1505036.stl
+1514900.stl
+153100.stl
+1652975.stl
+1652976.stl
+1706457.stl
+186546.stl
+196121.stl
+196122.stl
+196123.stl
+196126.stl
+196127.stl
+196194.stl
+199814.stl
+199818.stl
+206318.stl
+215991.stl
+230152.stl
+230153.stl
+237632.stl
+239188.stl
+255657.stl
+255658.stl
+276937.stl
+285603.stl
+286161.stl
+288352.stl
+288446.stl
+360073.stl
+362398.stl
+37743.stl
+383022.stl
+39182.stl
+39245.stl
+39495.stl
+39499.stl
+40841.stl
+41521.stl
+42040.stl
+44025.stl
+44064.stl
+44901.stl
+472050.stl
+50659.stl
+51797.stl
+57811.stl
+61418.stl
+61431.stl
+622000.stl
+62592.stl
+62593.stl
+65144.stl
+65395.stl
+65402.stl
+669962.stl
+68255.stl
+702204.stl
+70381.stl
+71461.stl
+723893.stl
+72419.stl
+726665.stl
+77343.stl
+84624.stl
+90225.stl
+906183.stl
+91147.stl
+91474.stl
+93702.stl
+93703.stl
+95796.stl
+95797.stl
+97515.stl
+97590.stl
+97593.stl
+99895.stl
+)
+
 function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
   set(options "ONLY_MERGE_FACETS")
   set(oneValueArgs TIMEOUT)
@@ -144,6 +290,15 @@ foreach(thingi_file_name ${thingi10k_max_10k_solid})
   endif()
   if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20240222_2201)
     list(APPEND LABELS "CTest_20240222_2201_failed_merge_facets")
+  endif()
+  if(thingi_file_name IN_LIST thingi10k_FAILED_CTest_20251002)
+    list(APPEND LABELS "CTest_20251002_failed")
+  endif()
+  if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_SEGFAULT_CTest_20251002)
+    list(APPEND LABELS "CTest_20251002_failed_segfault")
+  endif()
+  if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20251028)
+    list(APPEND LABELS "CTest_20251028_failed_merge_facets")
   endif()
   get_filename_component(thingi_ID "${thingi_file_name}" NAME_WE)
   CGAL_add_cdt3_test_from_Thingi10k(Thingi10K_${thingi_ID} ${thingi_file_name}
