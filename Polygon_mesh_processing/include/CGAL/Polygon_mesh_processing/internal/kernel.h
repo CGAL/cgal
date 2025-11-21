@@ -18,6 +18,10 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
 
+#include <CGAL/Homogeneous.h>
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Cartesian_converter.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -107,16 +111,47 @@ kernel(const TriangleMesh& pm,
                         kernel);
 
   Three_point_cut_plane_traits<GT> kgt;
+#ifdef CGAL_USE_CONCAVE_FACE_FIRST
+  auto compute_dihedral_angle=[](const TriangleMesh& mesh, const halfedge_descriptor h) {
+    // Calcul de l'angle dihédral entre les deux faces à partir des quatre points
+    return to_double(approximate_dihedral_angle(mesh.point(mesh.source(h)), mesh.point(mesh.target(h)),
+                    mesh.point(mesh.target(mesh.next(h))), mesh.point(mesh.target(mesh.next(mesh.opposite(h))))));
+  };
+
+  std::vector<std::pair<face_descriptor, double>> faces_with_angles;
+  for(face_descriptor f : faces(pm)){
+    double max_dihedral_angle = 0.0;
+    auto h = pm.halfedge(f);
+    auto hf_circ = pm.halfedges_around_face(h);
+    for (auto he : hf_circ) {
+        if (!pm.is_border(he)) {
+            max_dihedral_angle = (std::max)(max_dihedral_angle,compute_dihedral_angle(pm, he));
+        }
+        faces_with_angles.push_back({f, max_dihedral_angle});
+    }
+  }
+  std::sort(faces_with_angles.begin(), faces_with_angles.end(),
+        [](const std::pair<face_descriptor, double>& a, const std::pair<face_descriptor, double>& b) {
+            return a.second > b.second;
+        });
+  for(auto pair : faces_with_angles)
+  {
+    auto h = halfedge(pair.first, pm);
+    auto plane = make_array( get(vpm,source(h, pm)),
+                             get(vpm,target(h, pm)),
+                             get(vpm,target(next(h, pm), pm)) );
+#else
   for (auto f : faces(pm))
   {
     auto h = halfedge(f, pm);
     auto plane = make_array( get(vpm,source(h, pm)),
                              get(vpm,target(h, pm)),
                              get(vpm,target(next(h, pm), pm)) );
+#endif
 
 #ifdef CGAL_USE_OPTI_WITH_BBOX
     auto pred = kgt.oriented_side_3_object();
-    auto gbox = bbox(kernel);
+    bb3 = bbox(kernel);
     std::array<Point_3, 8> corners = CGAL::make_array(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
                                                       Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
                                                       Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
@@ -239,6 +274,274 @@ kernel_using_chull_and_constructions(const TriangleMesh& pm,
                                                       origin_opt);
 
   return kernel;
+}
+
+
+
+//__________________________________________________________________________________________________________________________________
+
+template <class Kernel>
+struct Plane_based_traits
+{
+  using FT = typename Kernel::FT;
+  using RT = typename Kernel::RT;
+  using plane_descriptor = std::size_t;
+  using Plane_3 = std::pair<typename Kernel::Plane_3, plane_descriptor>;
+
+  std::vector<Plane_3> *m_planes;
+
+  using Input_point_3 = typename Kernel::Point_3;
+  using Geometric_point_3 = typename Kernel::Point_3;
+
+  struct Point_3 : public Geometric_point_3{
+    std::array<plane_descriptor, 3> supports;
+    mutable std::set<plane_descriptor> other_coplanar;
+    using Base = Geometric_point_3;
+
+    Point_3(){}
+    Point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c, const std::vector<Plane_3> &planes):
+          Base(*CGAL::Intersections::internal::intersection_point(planes[a].first, planes[b].first, planes[c].first, Kernel())),
+                                                                        supports({a,b,c}){
+    }
+
+    Point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p): Base(p), supports({a,b,c}){}
+  };
+
+  Point_3 construct_point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c){
+    return Point_3(a, b, c, *m_planes);
+  }
+
+  Point_3 construct_point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p){
+    return Point_3(a, b, c, p);
+  }
+
+  struct Does_not_support_CDT2{};
+
+  struct Oriented_side_3
+  {
+    Oriented_side operator()(const Plane_3& plane, const Point_3& p)  const
+    {
+      if((p.supports[0]==plane.second) || (p.supports[1]==plane.second) || (p.supports[2]==plane.second))
+        return COPLANAR;
+      Oriented_side ori = plane.first.oriented_side(p);
+      if(ori==COPLANAR)
+        p.other_coplanar.emplace(plane.second);
+      return ori;
+    }
+  };
+
+  struct Construct_plane_line_intersection_point_3
+  {
+    std::vector<Plane_3>* m_planes;
+    Construct_plane_line_intersection_point_3(std::vector<Plane_3>* planes) : m_planes(planes){}
+    Point_3 operator()(const Plane_3& plane, const Point_3& p, const Point_3& q)
+    {
+      auto get_common_supports=[](const Point_3& p, const Point_3 &q){
+        plane_descriptor first=-1;
+        plane_descriptor second=-1;
+        for(short int i=0; i!=3; ++i)
+          for(short int j=0; j!=3; ++j)
+            if(p.supports[i]==q.supports[j])
+              if(first==-1){
+                first=p.supports[i];
+                break;
+              } else {
+                second=p.supports[i];
+                return std::make_pair(first, second);
+              }
+
+        for(plane_descriptor plane: p.other_coplanar)
+          for(short int j=0; j!=3; ++j)
+            if(plane==q.supports[j])
+              if(first==-1){
+                first=plane;
+                break;
+              } else {
+                second=plane;
+                return std::make_pair(first, second);
+              }
+
+        for(plane_descriptor plane: q.other_coplanar)
+          for(short int j=0; j!=3; ++j)
+            if(plane==p.supports[j])
+              if(first==-1){
+                first=plane;
+                break;
+              } else {
+                second=plane;
+                return std::make_pair(first, second);
+              }
+
+        for(plane_descriptor plane: p.other_coplanar)
+          for(plane_descriptor qlane: q.other_coplanar)
+            if(plane==qlane)
+              if(first==-1){
+                first=plane;
+                break;
+              } else {
+                second=plane;
+                return std::make_pair(first, second);
+              }
+        // The two points do not shair a common support
+        std::cout << p.supports[0] << " " << p.supports[1] << " " << p.supports[2] << std::endl;
+        std::cout << q.supports[0] << " " << q.supports[1] << " " << q.supports[2] << std::endl;
+        CGAL_assertion_code(std::cout << "The two points do not share two common supporting planes" << std::endl;)
+        CGAL_assertion(0);
+      };
+
+      auto orient=[](const typename Kernel::Plane_3& plane, const Geometric_point_3& p){
+        return sign (plane.a()*p.hx() + plane.b()*p.hy() + plane.c()*p.hz() + plane.d() * p.hw());
+      };
+      std::pair<plane_descriptor, plane_descriptor> line_supports=get_common_supports(p, q);
+      Point_3 res(plane.second, line_supports.first, line_supports.second, *m_planes);
+      return res;
+    }
+  };
+
+  template<class Mesh>
+  Plane_based_traits(const Mesh &m){
+    m_planes = new std::vector<Plane_3>;
+    m_planes->reserve(faces(m).size());
+    get_planes(m, std::back_inserter(*m_planes));
+  }
+
+  template<class Mesh, class OutputIterator>
+  void get_planes(const Mesh &m, OutputIterator out){
+    using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+    using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+    size_t k=0;
+    auto to_int=[](const typename Mesh::Point &p){
+      return Geometric_point_3(int(p.x()),int(p.y()),int(p.z()));
+    };
+    auto to_int_plane=[&](face_descriptor f){
+      auto pmap=boost::make_function_property_map<vertex_descriptor>([&](vertex_descriptor v){
+        return to_int(m.point(v));
+      });
+      // auto pl = compute_face_normal(f, m);
+      auto pl = compute_face_normal(f, m, parameters::vertex_point_map(pmap));
+      return typename Kernel::Vector_3(pl.x(),pl.y(),pl.z());
+    };
+    for(face_descriptor f : faces(m)){
+      Plane_3 pl(typename Kernel::Plane_3(to_int(m.point(m.target(m.halfedge(f)))),
+                                          to_int_plane(f)),
+                 k);
+      out++=pl;
+      k++;
+    }
+
+  }
+
+  Oriented_side_3 oriented_side_3_object() const
+  {
+    return Oriented_side_3();
+  }
+
+  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object()
+  {
+    return Construct_plane_line_intersection_point_3(m_planes);
+  }
+
+  struct Construct_plane_3{
+    std::vector<Plane_3>* m_planes;
+    Construct_plane_3(std::vector<Plane_3>* planes) : m_planes(planes){}
+    Plane_3 operator()(const typename Kernel::Plane_3 &pl){
+      m_planes->emplace_back(pl, m_planes->size());
+      return m_planes->back();
+    }
+
+    Plane_3 operator()(const RT &a, const RT &b, const RT &c, const RT &d){
+      return (*this)(typename Kernel::Plane_3(a,b,c,d));
+    }
+  };
+
+  Construct_plane_3 construct_plane_3_object()
+  {
+    return Construct_plane_3(m_planes);
+  }
+
+  const std::vector<Plane_3>& planes(){
+    return *m_planes;
+  }
+
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
+// for does self-intersect
+  using Segment_3 = typename Kernel::Segment_3;
+  using Triangle_3 = typename Kernel::Triangle_3;
+  using Construct_segment_3 = typename Kernel::Construct_segment_3;
+  using Construct_triangle_3 =typename  Kernel::Construct_triangle_3;
+  using Do_intersect_3 = typename Kernel::Do_intersect_3;
+  Construct_segment_3 construct_segment_3_object() const { return Construct_segment_3(); }
+  Construct_triangle_3 construct_triangle_3_object() const { return Construct_triangle_3(); }
+  Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
+#endif
+};
+
+template <class TriangleMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+TriangleMesh
+trettner_kernel(const TriangleMesh& pm,
+                const NamedParameters& np = parameters::default_values())
+{
+  // TODO: bench if with EPECK we can directly use Kernel::Plane_3
+  // TODO: TriangleMesh as output is not correct since it is actually a PolygonMesh
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  // using int256 = boost::multiprecision::int256_t;
+  using int256 = Exact_integer;
+  using GT = Plane_based_traits<Homogeneous<int256>>;
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, pm));
+
+  using Point_3 = typename GT::Point_3;
+  using Plane_3 = typename GT::Plane_3;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  GT gt(pm);
+  std::vector<Plane_3> planes=gt.planes();
+
+  auto plane_3 = gt.construct_plane_3_object();
+
+  //TODO: what do we do with a mesh that is not closed?
+  //TODO: what do we do if the input is not a triangle mesh?
+
+  if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
+    return TriangleMesh();
+
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor      edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
+
+  typedef Surface_mesh<Point_3> InternMesh;
+
+  CGAL::Bbox_3 bb3 = bbox(pm, np);
+  InternMesh kernel;
+  Plane_3 xl=plane_3(1,0,0,int(-bb3.xmin()));
+  Plane_3 yl=plane_3(0,1,0,int(-bb3.ymin()));
+  Plane_3 zl=plane_3(0,0,1,int(-bb3.zmin()));
+  Plane_3 xr=plane_3(1,0,0,int(-bb3.xmax()));
+  Plane_3 yr=plane_3(0,1,0,int(-bb3.ymax()));
+  Plane_3 zr=plane_3(0,0,1,int(-bb3.zmax()));
+  CGAL::make_hexahedron(gt.construct_point_3(xl.second, yl.second, zl.second),
+                        gt.construct_point_3(xl.second, yl.second, zr.second),
+                        gt.construct_point_3(xl.second, yr.second, zr.second),
+                        gt.construct_point_3(xl.second, yr.second, zl.second),
+                        gt.construct_point_3(xr.second, yr.second, zl.second),
+                        gt.construct_point_3(xr.second, yl.second, zl.second),
+                        gt.construct_point_3(xr.second, yl.second, zr.second),
+                        gt.construct_point_3(xr.second, yr.second, zr.second),
+                        kernel);
+
+  for (auto plane: planes)
+  {
+    clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
+    if (is_empty(kernel)) break;
+  }
+
+  // return kernel;
+  return pm;
 }
 
 

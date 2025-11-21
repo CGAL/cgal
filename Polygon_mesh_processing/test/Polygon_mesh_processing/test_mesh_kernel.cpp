@@ -52,6 +52,45 @@ void round_mesh(Mesh &m){
   }
 }
 
+template<class Mesh>
+void to_integer_mesh(Mesh &m){
+  auto exp = [](const double v)
+  {
+    int n;
+    frexp(v, &n);
+    return n;
+  };
+  auto pow_2 = [](const int k)
+  {
+      return (k>=0)?std::pow(2,k):1./std::pow(2,-k);
+  };
+
+  CGAL::Bbox_3 bb;
+  for(auto vh : m.vertices()){
+    bb += m.point(vh).bbox();
+  }
+  size_t grid_size=26;
+  std::array<double, 3> max_abs{(std::max)(-bb.xmin(), bb.xmax()),
+                                (std::max)(-bb.ymin(), bb.ymax()),
+                                (std::max)(-bb.zmin(), bb.zmax())};
+  // Compute scale so that the exponent of max absolute value are 52-1.
+  std::array<double, 3> scale{pow_2(grid_size - exp(max_abs[0]) - 1),
+                              pow_2(grid_size - exp(max_abs[1]) - 1),
+                              pow_2(grid_size - exp(max_abs[2]) - 1)};
+
+  // auto round=[&](Point_3 &p){
+  auto round=[&](typename Mesh::Point &p){
+    return typename Mesh::Point(std::ceil((CGAL::to_double(p.x()) * scale[0]) - 0.5),
+                                std::ceil((CGAL::to_double(p.y()) * scale[1]) - 0.5),
+                                std::ceil((CGAL::to_double(p.z()) * scale[2]) - 0.5));
+  };
+
+  for(auto vh : m.vertices()){
+    auto &p = m.point(vh);
+    p = round(p);
+  }
+}
+
 void test_traits()
 {
   Mesh m;
@@ -171,6 +210,24 @@ void test_kernel_with_chull_and_constructions(std::string fname)
   std::cout << "test_kernel_with_chull_and_constructions done in " << timer.time() << "\n";
 }
 
+void test_trettner_kernel(std::string fname)
+{
+  CGAL::Real_timer timer;
+  Mesh m;
+  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
+  {
+    std::cerr << "ERROR: cannot read " << fname << "\n";
+    exit(1);
+  }
+  to_integer_mesh(m);
+  timer.start();
+  Mesh kernel = PMP::experimental::trettner_kernel(m);
+  timer.stop();
+
+  std::ofstream("ekernel.off") << kernel;
+  std::cout << "test_trettner_kernel done in " << timer.time() << "\n";
+}
+
 int main(int argc, char** argv)
 {
   // test_traits();
@@ -178,7 +235,8 @@ int main(int argc, char** argv)
   // test_kernel(filename);
   // test_kernel_with_rounding(filename);
   // test_exact_kernel(filename);
-  test_exact_kernel_with_rounding(filename);
+  // test_exact_kernel_with_rounding(filename);
+  test_trettner_kernel(filename);
   // test_kernel_with_chull(filename);
   // test_kernel_with_chull_and_constructions(filename);
 }
