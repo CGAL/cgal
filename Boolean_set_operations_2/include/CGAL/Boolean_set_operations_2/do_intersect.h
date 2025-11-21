@@ -38,7 +38,7 @@ namespace CGAL {
 /// \name do_intersect() functions.
 //@{
 
-/*! We do not use polyline for do_intersect), as we relly on the overlay traits
+/*! We do not use polyline for do_intersect), as we rely on the overlay traits
  * to only intercept intersections between the interiors of segments that
  * comprise the boundary of polygons. Observe that The intersections between the
  * interiors of polylines that comprise the boundary of polygons may include an
