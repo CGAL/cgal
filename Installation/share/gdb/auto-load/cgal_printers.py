@@ -10,8 +10,8 @@ Auto-loaded via .debug_gdb_scripts section.
 """
 
 import re
-import gdb
 import os
+import gdb
 
 def base(val):
     """Get the base of a possibly derived CGAL type"""
@@ -67,11 +67,13 @@ class CGALPointPrinterBase:
 
 
 class PointC3Printer(CGALPointPrinterBase):
+    """Pretty printer for CGAL::PointC3<any>"""
     def __init__(self, val):
         super().__init__(val, "PointC3")
 
 
 class Point3Printer(CGALPointPrinterBase):
+    """Pretty printer for CGAL::Point_3<any>"""
     def __init__(self, val):
         super().__init__(val, "Point_3")
 
