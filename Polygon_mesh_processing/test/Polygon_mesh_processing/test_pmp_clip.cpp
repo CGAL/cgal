@@ -910,15 +910,19 @@ void test_new_clip()
     assert(faces(e).size()==5);
     assert(vertices(e).size()==24);
   }
-
   {
     TriangleMesh c;
     std::ifstream("data-clip/c.off") >> c;
     PMP::refine_with_plane(c, K::Plane_3(1,0,0,-2));
     assert(faces(c).size()==2);
     assert(vertices(c).size()==8);
+    c.clear();
+    std::ifstream("data-clip/c.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-2));
+    assert(faces(c).size()==2);
+    assert(vertices(c).size()==8);
   }
-
   {
     TriangleMesh e;
     std::ifstream("data-clip/ee.off") >> e;
@@ -927,7 +931,6 @@ void test_new_clip()
     assert(faces(e).size()==30);
     assert(vertices(e).size()==28);
   }
-
   {
     TriangleMesh c;
     std::ifstream("data-clip/c.off") >> c;
@@ -980,7 +983,6 @@ void test_new_clip()
     TriangleMesh c;
     std::ifstream("data-clip/tgt_case_2.off") >> c;
     PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
-std::ofstream("/tmp/ref.off") << c;
     assert(faces(c).size()==1);
     assert(vertices(c).size()==13);
     c.clear();
@@ -1003,7 +1005,6 @@ std::ofstream("/tmp/ref.off") << c;
     assert(faces(c).size()==6);
     assert(vertices(c).size()==18);
   }
-
   {
     TriangleMesh ele;
     std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> ele;
@@ -1013,10 +1014,6 @@ std::ofstream("/tmp/ref.off") << c;
     assert(faces(ele).size()==1220);
     assert(vertices(ele).size()==691);
   }
-
-
-
-
 }
 
 struct Clip_and_split_visitor

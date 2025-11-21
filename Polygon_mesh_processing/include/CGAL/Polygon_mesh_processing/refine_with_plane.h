@@ -484,7 +484,6 @@ void refine_with_plane(PolygonMesh& pm,
     else
     {
       // sort hedges to make them match
-      CGAL_assertion(!triangulate);
       // TODO: need mechanism to make it robust even with EPICK
       auto less_hedge = [&pm, vpm](halfedge_descriptor h1, halfedge_descriptor h2)
       {
@@ -492,13 +491,23 @@ void refine_with_plane(PolygonMesh& pm,
       };
       std::sort(f_and_hs.second.begin(), f_and_hs.second.end(), less_hedge);
 
-      if (f_and_hs.second.front()==*std::next(f_and_hs.second.begin()))
-        f_and_hs.second.erase(f_and_hs.second.begin());
+      if (f_and_hs.second[0]==f_and_hs.second[1])
+      {
+        halfedge_descriptor h = f_and_hs.second[0];
+        if ( get(vertex_os, source(h, pm))==ON_ORIENTED_BOUNDARY || get(vertex_os, target(next(h, pm), pm))==ON_ORIENTED_BOUNDARY)
+          f_and_hs.second.erase(f_and_hs.second.begin());
+      }
       if (f_and_hs.second.back()==*std::prev(f_and_hs.second.end(),2))
-        f_and_hs.second.pop_back();
+      {
+        halfedge_descriptor h = f_and_hs.second.back();
+        if ( get(vertex_os, source(h, pm))==ON_ORIENTED_BOUNDARY || get(vertex_os, target(next(h, pm), pm))==ON_ORIENTED_BOUNDARY)
+          f_and_hs.second.pop_back();
+      }
+
 
       nb_hedges = f_and_hs.second.size();
       CGAL_assertion(nb_hedges%2==0);
+      CGAL_assertion(!triangulate || nb_hedges==2);
 
       for (std::size_t i=0; i<nb_hedges; i+=2)
       {
