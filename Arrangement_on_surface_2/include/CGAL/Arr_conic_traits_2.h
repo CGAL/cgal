@@ -32,7 +32,7 @@
 
 #include <boost/math/constants/constants.hpp>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
@@ -59,37 +59,37 @@ namespace CGAL {
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class Arr_conic_traits_2 {
 public:
-  typedef RatKernel                       Rat_kernel;
-  typedef AlgKernel                       Alg_kernel;
-  typedef NtTraits                        Nt_traits;
+  using Rat_kernel = RatKernel;
+  using Alg_kernel = AlgKernel;
+  using Nt_traits = NtTraits;
 
-  typedef typename Rat_kernel::FT         Rational;
-  typedef typename Rat_kernel::Point_2    Rat_point_2;
-  typedef typename Rat_kernel::Segment_2  Rat_segment_2;
-  typedef typename Rat_kernel::Line_2     Rat_line_2;
-  typedef typename Rat_kernel::Circle_2   Rat_circle_2;
+  using Rational = typename Rat_kernel::FT;
+  using Rat_point_2 = typename Rat_kernel::Point_2;
+  using Rat_segment_2 = typename Rat_kernel::Segment_2;
+  using Rat_line_2 = typename Rat_kernel::Line_2;
+  using Rat_circle_2 = typename Rat_kernel::Circle_2;
 
-  typedef typename Alg_kernel::FT         Algebraic;
-  typedef typename Alg_kernel::Point_2    Alg_point_2;
+  using Algebraic = typename Alg_kernel::FT;
+  using Alg_point_2 = typename Alg_kernel::Point_2;
 
-  typedef typename Nt_traits::Integer     Integer;
+  using Integer = typename Nt_traits::Integer;
 
   // Category tags:
-  typedef Tag_true                        Has_left_category;
-  typedef Tag_true                        Has_merge_category;
-  typedef Tag_false                       Has_do_intersect_category;
+  using Has_left_category = Tag_true;
+  using Has_merge_category = Tag_true;
+  using Has_do_intersect_category = Tag_false;
   //typedef std::true_type                Has_line_segment_constructor;
 
-  typedef Arr_oblivious_side_tag          Left_side_category;
-  typedef Arr_oblivious_side_tag          Bottom_side_category;
-  typedef Arr_oblivious_side_tag          Top_side_category;
-  typedef Arr_oblivious_side_tag          Right_side_category;
+  using Left_side_category = Arr_oblivious_side_tag;
+  using Bottom_side_category = Arr_oblivious_side_tag;
+  using Top_side_category = Arr_oblivious_side_tag;
+  using Right_side_category = Arr_oblivious_side_tag;
 
   // Traits objects:
-  typedef Conic_arc_2<Rat_kernel, Alg_kernel, Nt_traits>  Curve_2;
-  typedef Conic_x_monotone_arc_2<Curve_2>                 X_monotone_curve_2;
-  typedef Conic_point_2<Alg_kernel>                       Point_2;
-  typedef size_t                                          Multiplicity;
+  using Curve_2 = Conic_arc_2<Rat_kernel, Alg_kernel, Nt_traits>;
+  using X_monotone_curve_2 = Conic_x_monotone_arc_2<Curve_2>;
+  using Point_2 = Conic_point_2<Alg_kernel>;
+  using Multiplicity = std::size_t;
 
 private:
   // Type definition for the intersection points mapping.
@@ -106,16 +106,14 @@ private:
     }
   };
 
-  typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-  typedef std::list<Intersection_point>             Intersection_list;
-  typedef std::map<Conic_pair, Intersection_list, Less_conic_pair>
-                                                    Intersection_map;
-  typedef typename Intersection_map::iterator       Intersection_map_iterator;
+  using Intersection_point = std::pair<Point_2, Multiplicity>;
+  using Intersection_list = std::list<Intersection_point>;
+  using Intersection_map = std::map<Conic_pair, Intersection_list, Less_conic_pair>;
+  using Intersection_map_iterator = typename Intersection_map::iterator;
 
-
-  typedef std::shared_ptr<Rat_kernel>               Shared_rat_kernel;
-  typedef std::shared_ptr<Alg_kernel>               Shared_alg_kernel;
-  typedef std::shared_ptr<Nt_traits>                Shared_nt_traits;
+  using Shared_rat_kernel = std::shared_ptr<Rat_kernel>;
+  using Shared_alg_kernel = std::shared_ptr<Alg_kernel>;
+  using Shared_nt_traits = std::shared_ptr<Nt_traits>;
 
   const Shared_rat_kernel m_rat_kernel;
   const Shared_alg_kernel m_alg_kernel;
@@ -127,10 +125,10 @@ private:
 public:
   /*! constructs default.
    */
-  Arr_conic_traits_2()
-   : m_rat_kernel(std::make_shared<Rat_kernel>()),
-     m_alg_kernel(std::make_shared<Alg_kernel>()),
-     m_nt_traits(std::make_shared<Nt_traits>())
+  Arr_conic_traits_2() :
+    m_rat_kernel(std::make_shared<Rat_kernel>()),
+    m_alg_kernel(std::make_shared<Alg_kernel>()),
+    m_nt_traits(std::make_shared<Nt_traits>())
   {}
 
   /*! constructs from resources.
@@ -360,8 +358,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
-                                 const Point_2& p) const
-    {
+                                 const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
       CGAL_precondition(m_traits.contains_point(xcv1, p) &&
@@ -538,8 +535,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
-                                 const Point_2& p) const
-    {
+                                 const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
       CGAL_precondition(m_traits.contains_point(xcv1, p) &&
@@ -703,8 +699,7 @@ public:
      * \return `true` if the two curves are the same; `false` otherwise.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const
-    {
+                    const X_monotone_curve_2& xcv2) const {
       if (&xcv1 == &xcv2) return true;
       return equals(xcv1, xcv2);
     }
@@ -924,8 +919,7 @@ public:
 
           if (((cv.orientation() == COUNTERCLOCKWISE) &&
                (start_pos == order_vpts)) ||
-              ((cv.orientation() == CLOCKWISE) && (start_pos != order_vpts)))
-          {
+              ((cv.orientation() == CLOCKWISE) && (start_pos != order_vpts))) {
             ind_first = 1;
             ind_second = 0;
           }
@@ -1101,8 +1095,7 @@ public:
       else if (m_traits.is_between_endpoints(xcv2, xcv1.source()) &&
                m_traits.is_between_endpoints(xcv2, xcv1.target()) &&
                (m_traits.is_strictly_between_endpoints(xcv2, xcv1.source()) ||
-                m_traits.is_strictly_between_endpoints(xcv2, xcv1.target())))
-      {
+                m_traits.is_strictly_between_endpoints(xcv2, xcv1.target()))) {
         // Case 4 - *this:     +----------->
         //            arc:   +================>
         overlap = xcv1;
@@ -1285,8 +1278,7 @@ public:
       for (i = 0; i < n_xs; ++i) {
         for (j = 0; j < n_ys; ++j) {
           if (xcv1.is_on_supporting_conic(xs[i], ys[j]) &&
-              xcv2.is_on_supporting_conic(xs[i], ys[j]))
-          {
+              xcv2.is_on_supporting_conic(xs[i], ys[j])) {
             // Create the intersection point and set its generating conics.
             Point_2 ip(xs[i], ys[j]);
 
@@ -1314,8 +1306,7 @@ public:
     OutputIterator intersect(const X_monotone_curve_2& xcv1,
                              const X_monotone_curve_2& xcv2,
                              Intersection_map& inter_map,
-                             OutputIterator oi) const
-    {
+                             OutputIterator oi) const {
       if (m_traits.has_same_supporting_conic(xcv1, xcv2)) {
         // Check for overlaps between the two arcs.
         X_monotone_curve_2 overlap;
@@ -1392,8 +1383,7 @@ public:
       // both \f$x\f$-monotone arcs.
       for (auto iter = inter_list.begin(); iter != inter_list.end(); ++iter) {
         if (m_traits.is_between_endpoints(xcv1, (*iter).first) &&
-            m_traits.is_between_endpoints(xcv2, (*iter).first))
-        {
+            m_traits.is_between_endpoints(xcv2, (*iter).first)) {
           *oi++ = *iter;
         }
       }
@@ -1481,8 +1471,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2,
-                    X_monotone_curve_2& xcv) const
-    {
+                    X_monotone_curve_2& xcv) const {
       CGAL_precondition(m_traits.are_mergeable_2_object()(xcv2, xcv1));
       xcv = xcv1;
       merge(xcv, xcv2);
@@ -1523,9 +1512,9 @@ public:
    * point-location strategy and the drawing function.
    */
   //@{
-  typedef double                                        Approximate_number_type;
-  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  typedef Approximate_kernel::Point_2                   Approximate_point_2;
+  using Approximate_number_type = double;
+  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+  using Approximate_point_2 = Approximate_kernel::Point_2;
 
   class Approximate_curve_length_2 {
   protected:
@@ -1901,8 +1890,7 @@ public:
     template <typename OutputIterator>
     OutputIterator approximate_parabola(const X_monotone_curve_2& xcv,
                                         double error, OutputIterator oi,
-                                        bool l2r = true)
-      const {
+                                        bool l2r = true) const {
       // std::cout << "PARABOLA\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
@@ -2104,8 +2092,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Curve_2& cv,
                                   const Point_2& source, const Point_2& target,
-                                  const Conic_id& id) const
-    {
+                                  const Conic_id& id) const {
       // Set the two endpoints.
       X_monotone_curve_2 xcv(cv, id);
       xcv.set_source(source);
@@ -2122,8 +2109,7 @@ public:
      * \return A segment connecting `source` and `target`.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target)
-      const
-    {
+      const {
       X_monotone_curve_2 xcv;
 
       // Set the basic properties.
@@ -2157,8 +2143,7 @@ public:
     X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
                                   const Algebraic& c,
                                   const Point_2& source, const Point_2& target)
-      const
-    {
+      const {
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
       Comparison_result res = cmp_xy(source, target);
       CGAL_precondition(res != EQUAL);
@@ -2238,8 +2223,7 @@ public:
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w)
-      const
-    {
+      const {
       // Ensure that the given curve is an ellipse (4rs - t^2 is positive).
       CGAL_precondition(CGAL::sign(4*r*s - t*t) == POSITIVE);
 
@@ -2445,8 +2429,7 @@ public:
 
       if (! m_traits.is_strictly_between_endpoints(arc, mp2) ||
           ! m_traits.is_strictly_between_endpoints(arc, mp3) ||
-          ! m_traits.is_strictly_between_endpoints(arc, mp4))
-      {
+          ! m_traits.is_strictly_between_endpoints(arc, mp4)) {
         arc.reset_flags();            // invalid arc
         return arc;
       }
@@ -2853,8 +2836,7 @@ public:
      * \pre both points must be interior and must lie on \c cv
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& src, const Point_2& tgt) const
-    {
+                                  const Point_2& src, const Point_2& tgt) const {
       // make functor objects
       CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
                              m_traits.compare_y_at_x_2_object());
@@ -3084,16 +3066,14 @@ public:
     const auto& target = cv.target();
     // Make sure both endpoint lie on the supporting conic.
     if (! is_on_supporting_conic(cv, source) ||
-        ! is_on_supporting_conic(cv, target))
-    {
+        ! is_on_supporting_conic(cv, target)) {
       cv.reset_flags();            // invalid arc
       return;
     }
 
     // Check whether we have a degree 2 curve.
     if ((CGAL::sign(r) != ZERO) || (CGAL::sign(s) != ZERO) ||
-        (CGAL::sign(t) != ZERO))
-    {
+        (CGAL::sign(t) != ZERO)) {
       if (cv.orientation() == COLLINEAR) {
         // Make sure the midpoint is on the line pair (thus making sure that
         // the two points are not taken from different lines).
@@ -3105,8 +3085,7 @@ public:
                         m_nt_traits->convert(u)) * p_mid.x() +
                        (m_nt_traits->convert(s)*p_mid.y() +
                         m_nt_traits->convert(v)) * p_mid.y() +
-                       m_nt_traits->convert(w)) != ZERO)
-        {
+                       m_nt_traits->convert(w)) != ZERO) {
           cv.reset_flags();    // invalid arc
           return;
         }
@@ -3645,8 +3624,7 @@ public:
       // Compute the degree of the underlying conic.
       if ((CGAL::sign(xcv.r()) != ZERO) ||
           (CGAL::sign(xcv.s()) != ZERO) ||
-          (CGAL::sign(xcv.t()) != ZERO))
-      {
+          (CGAL::sign(xcv.t()) != ZERO)) {
         xcv.set_flag(X_monotone_curve_2::DEGREE_2);
         xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
       }
@@ -3856,8 +3834,7 @@ public:
         for (int j = 0; j < n_ys; ++j) {
           if (CGAL::compare(m_nt_traits->convert(Integer(two*s)) * ys[j],
                             -(m_nt_traits->convert(t) * xs[i] +
-                              m_nt_traits->convert(v))) == EQUAL)
-          {
+                              m_nt_traits->convert(v))) == EQUAL) {
             ps[n++] = Point_2(xs[i], ys[j]);
             break;
           }
@@ -4128,8 +4105,7 @@ public:
                            double& xs_t, double& ys_t, double& ts,
                            double& xt_t, double& yt_t, double& tt,
                            double& a, double& b, double& cx, double& cy,
-                           bool l2r = true)
-    const {
+                           bool l2r = true) const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
     const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
@@ -4206,8 +4182,7 @@ public:
                              double& xs_t, double& ys_t, double& ts,
                              double& xt_t, double& yt_t, double& tt,
                              double& a, double& b, double& cx, double& cy,
-                             bool l2r = true)
-    const {
+                             bool l2r = true) const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
     const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);

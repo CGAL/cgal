@@ -41,9 +41,9 @@ class _One_root_point_2_rep {
   friend class _One_root_point_2<NumberType_, Filter_>;
 
 public:
-  typedef NumberType_                               NT;
-  typedef _One_root_point_2_rep<NT, Filter_>        Self;
-  typedef Sqrt_extension<NT, NT, Tag_true,Boolean_tag<Filter_> >    CoordNT;
+  using NT = NumberType_;
+  using Self = _One_root_point_2_rep<NT, Filter_>;
+  using CoordNT = Sqrt_extension<NT, NT, Tag_true,Boolean_tag<Filter_> >;
 
 private:
   CoordNT _x;            // The coordinates.
@@ -70,18 +70,17 @@ public:
  */
 template <typename NumberType_, bool Filter_>
 class _One_root_point_2 :
-  public Handle_for<_One_root_point_2_rep<NumberType_, Filter_> >
-{
+  public Handle_for<_One_root_point_2_rep<NumberType_, Filter_>> {
 public:
-  typedef NumberType_                           NT;
-  typedef _One_root_point_2<NT, Filter_>        Self;
+  using NT = NumberType_;
+  using Self = _One_root_point_2<NT, Filter_>;
 
 private:
-  typedef _One_root_point_2_rep<NT, Filter_>    Point_rep;
-  typedef Handle_for<Point_rep>                 Point_handle;
+  using Point_rep = _One_root_point_2_rep<NT, Filter_>;
+  using Point_handle = Handle_for<Point_rep>;
 
 public:
-  typedef typename Point_rep::CoordNT           CoordNT;
+  using CoordNT = typename Point_rep::CoordNT;
 
   /*! constructs default. */
   _One_root_point_2() : Point_handle(Point_rep()) {}
@@ -106,8 +105,7 @@ public:
   const CoordNT& y() const { return (this->ptr()->_y); }
 
   /*! checks for equality. */
-  bool equals(const Self& p) const
-  {
+  bool equals(const Self& p) const {
     if (this->identical(p)) return (true);
 
     return (CGAL::compare(this->ptr()->_x, p.ptr()->_x) == EQUAL &&
@@ -119,8 +117,7 @@ public:
   bool operator == (const Self& p) const { return equals(p); }
 
   /*! sets the point coordinates. */
-  void set(const NT& x, const NT& y)
-  {
+  void set(const NT& x, const NT& y) {
     this->copy_on_write();
     this->ptr()->_x = CoordNT(x);
     this->ptr()->_y = CoordNT(y);
@@ -128,8 +125,7 @@ public:
   }
 
   /*! sets the point coordinates. */
-  void set(const CoordNT& x, const CoordNT& y)
-  {
+  void set(const CoordNT& x, const CoordNT& y) {
     this->copy_on_write();
     this->ptr()->_x = x;
     this->ptr()->_y = y;
@@ -141,8 +137,7 @@ public:
  */
 template <typename NT, bool Filter>
 std::ostream& operator<<(std::ostream& os,
-                         const _One_root_point_2<NT, Filter>& p)
-{
+                         const _One_root_point_2<NT, Filter>& p) {
   os << CGAL::to_double(p.x()) << ' ' << CGAL::to_double(p.y());
   return (os);
 }
@@ -165,15 +160,15 @@ std::istream & operator >> (std::istream & is,
 template <typename Kernel_, bool Filter_>
 class _Circle_segment_2 {
 public:
-  typedef Kernel_                                          Kernel;
-  typedef typename Kernel::FT                              NT;
-  typedef _One_root_point_2<NT, Filter_>                   Point_2;
-  typedef typename Kernel::Circle_2                        Circle_2;
-  typedef typename Kernel::Segment_2                       Segment_2;
-  typedef typename Kernel::Line_2                          Line_2;
+  using Kernel = Kernel_;
+  using NT = typename Kernel::FT;
+  using Point_2 = _One_root_point_2<NT, Filter_>;
+  using Circle_2 = typename Kernel::Circle_2;
+  using Segment_2 = typename Kernel::Segment_2;
+  using Line_2 = typename Kernel::Line_2;
 
 protected:
-  typedef typename Point_2::CoordNT                        CoordNT;
+  using CoordNT = typename Point_2::CoordNT;
 
   // Data members:
   Line_2 m_line;              // The supporting line (for line segments).
@@ -234,8 +229,7 @@ public:
     m_has_radius(false),
     m_source(source),
     m_target(target),
-    m_orient(COLLINEAR)
-  {
+    m_orient(COLLINEAR) {
     CGAL_precondition(CGAL::compare(source.x() * line.a() + line.c(),
                                     -source.y() * line.b()) == EQUAL);
 
@@ -282,8 +276,7 @@ public:
     m_has_radius(false),
     m_source(source),
     m_target(target),
-    m_orient(circ.orientation())
-  {
+    m_orient(circ.orientation()) {
     CGAL_assertion(m_orient != COLLINEAR);
 
     CGAL_precondition
@@ -315,8 +308,7 @@ public:
     m_radius(r),
     m_source(source),
     m_target(target),
-    m_orient(orient)
-  {
+    m_orient(orient) {
     CGAL_assertion(orient != COLLINEAR);
 
     CGAL_precondition
@@ -343,8 +335,7 @@ public:
      m_is_full(false),
      m_has_radius(false),
      m_source(p1.x(), p1.y()),
-     m_target(p3.x(), p3.y())
-  {
+     m_target(p3.x(), p3.y()) {
     // Set the source and target.
     NT x1 = p1.x();
     NT y1 = p1.y();
@@ -359,7 +350,7 @@ public:
     // Compute the lines: A1*x + B1*y + C1 = 0,
     //               and: A2*x + B2*y + C2 = 0,
     // where:
-    const NT _two  = 2;
+    const NT _two = 2;
 
     const NT A1 = _two*(x1 - x2);
     const NT B1 = _two*(y1 - y2);
@@ -423,8 +414,7 @@ public:
   /*! obtains the supporting line.
    * \pre The curve orientation is COLLINEAR.
    */
-  const Line_2& supporting_line() const
-  {
+  const Line_2& supporting_line() const {
     CGAL_precondition(m_orient == COLLINEAR);
     return m_line;
   }
@@ -432,8 +422,7 @@ public:
   /*! obtains the supporting circle.
    * \pre The curve orientation is not COLLINEAR.
    */
-  const Circle_2& supporting_circle() const
-  {
+  const Circle_2& supporting_circle() const {
     CGAL_precondition(m_orient != COLLINEAR);
     return m_circ;
   }
@@ -444,8 +433,7 @@ public:
   /*! obtains the source point.
    * \pre The curve is not a full circle.
    */
-  const Point_2& source() const
-  {
+  const Point_2& source() const {
     CGAL_precondition(! m_is_full);
     return (m_source);
   }
@@ -453,8 +441,7 @@ public:
   /*! obtains the target point.
    * \pre The curve is not a full circle.
    */
-  const Point_2& target() const
-  {
+  const Point_2& target() const {
     CGAL_precondition(! m_is_full);
     return (m_target);
   }
@@ -464,8 +451,7 @@ public:
    * \pre The curve is circular.
    * \return The number of points (0, 1, or 2).
    */
-  unsigned int vertical_tangency_points(Point_2* vpts) const
-  {
+  unsigned int vertical_tangency_points(Point_2* vpts) const {
     CGAL_precondition(m_orient != COLLINEAR);
     unsigned int n_vpts = 0;
 
@@ -519,8 +505,7 @@ private:
    */
   unsigned int _ccw_vertical_tangency_points(const Point_2& src,
                                              const Point_2& trg,
-                                             Point_2* vpts) const
-  {
+                                             Point_2* vpts) const {
     unsigned int n_vpts = 0;
     const NT& x0 = m_circ.center().x();
     const NT& y0 = m_circ.center().y();
@@ -547,8 +532,7 @@ private:
       if ((qs % 4) == 1) {
         // We collect the left tangency point when going from Q[1] to Q[2]:
         if (CGAL::compare(x0, trg.x()) != LARGER ||
-            CGAL::compare(y0, trg.y()) != EQUAL)
-        {
+            CGAL::compare(y0, trg.y()) != EQUAL) {
           if (m_has_radius)
             vpts[n_vpts] = Point_2(CoordNT(x0 - m_radius), y0);
           else
@@ -561,8 +545,7 @@ private:
       else if ((qs % 4) == 3) {
         // We collect the right tangency point when going from Q[3] to Q[0]:
         if (CGAL::compare(x0, trg.x()) != SMALLER ||
-            CGAL::compare(y0, trg.y()) != EQUAL)
-        {
+            CGAL::compare(y0, trg.y()) != EQUAL) {
           if (m_has_radius)
             vpts[n_vpts] = Point_2(CoordNT(x0 + m_radius), y0);
           else
@@ -581,8 +564,7 @@ private:
   /*! obtains the index of the quarter-plane containing the given point,
    * where the circle center is considered to be the origin.
    */
-  int _quart_index(const Point_2& p) const
-  {
+  int _quart_index(const Point_2& p) const {
     // The plane looks like:
     //
     //      Q[1] :  |   Q[0]:
@@ -608,8 +590,7 @@ private:
  */
 template <typename Kernel, bool Filter>
 std::ostream&
-operator<<(std::ostream& os, const _Circle_segment_2<Kernel, Filter>& c)
-{
+operator<<(std::ostream& os, const _Circle_segment_2<Kernel, Filter>& c) {
   if (c.orientation() == COLLINEAR) {
     os<< "segment: " << c.source() << " -> " << c.target();
   }
@@ -632,35 +613,33 @@ operator<<(std::ostream& os, const _Circle_segment_2<Kernel, Filter>& c)
 template <typename Kernel_, bool Filter_>
 class _X_monotone_circle_segment_2 {
 public:
-  typedef Kernel_                                          Kernel;
-  typedef _X_monotone_circle_segment_2<Kernel, Filter_>    Self;
-  typedef typename Kernel::FT                              NT;
-  typedef _One_root_point_2<NT, Filter_>                   Point_2;
-  typedef typename Kernel::Circle_2                        Circle_2;
-  typedef typename Kernel::Line_2                          Line_2;
-  typedef typename Point_2::CoordNT                        CoordNT;
+  using Kernel = Kernel_;
+  using Self = _X_monotone_circle_segment_2<Kernel, Filter_>;
+  using NT = typename Kernel::FT;
+  using Point_2 = _One_root_point_2<NT, Filter_>;
+  using Circle_2 = typename Kernel::Circle_2;
+  using Line_2 = typename Kernel::Line_2;
+  using CoordNT = typename Point_2::CoordNT;
 
   // Type definition for the intersection points mapping.
-  typedef std::pair<unsigned int, unsigned int>         Curve_id_pair;
-  typedef unsigned int                                  Multiplicity;
-  typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef std::list<Intersection_point>                 Intersection_list;
+  using Curve_id_pair = std::pair<unsigned int, unsigned int>;
+  using Multiplicity = std::size_t;
+  using Intersection_point = std::pair<Point_2, Multiplicity>;
+  using Intersection_list = std::list<Intersection_point>;
 
   /*! \struct Less functor for Curve_id_pair.
    */
   struct Less_id_pair {
-    bool operator()(const Curve_id_pair& ip1, const Curve_id_pair& ip2) const
-    {
+    bool operator()(const Curve_id_pair& ip1, const Curve_id_pair& ip2) const {
       // Compare the pairs of IDs lexicographically.
       return (ip1.first < ip2.first ||
               (ip1.first == ip2.first && ip1.second < ip2.second));
     }
   };
 
-  typedef std::map<Curve_id_pair, Intersection_list, Less_id_pair>
-                                                  Intersection_map;
-  typedef typename Intersection_map::value_type   Intersection_map_entry;
-  typedef typename Intersection_map::iterator     Intersection_map_iterator;
+  using Intersection_map = std::map<Curve_id_pair, Intersection_list, Less_id_pair>;
+  using Intersection_map_entry = typename Intersection_map::value_type;
+  using Intersection_map_iterator = typename Intersection_map::iterator;
 
 protected:
   NT m_first;           // The x-coordinate of the circle center.
@@ -713,8 +692,7 @@ public:
     m_third(line.c()),
     m_source(source),
     m_target(target),
-    m_info(index << INDEX_SHIFT_BITS)
-  {
+    m_info(index << INDEX_SHIFT_BITS) {
     // Check if the segment is directed left or right:
     Comparison_result res = CGAL::compare(source.x(), target.x());
 
@@ -740,8 +718,7 @@ public:
                                const typename Kernel::Point_2& target) :
     m_source(source.x(), source.y()),
     m_target(target.x(), target.y()),
-    m_info(0)
-  {
+    m_info(0) {
     Line_2 line(source, target);
     m_first  = line.a();
     m_second = line.b();
@@ -778,8 +755,7 @@ public:
     m_third(circ.squared_radius()),
     m_source(source),
     m_target(target),
-    m_info(index << INDEX_SHIFT_BITS)
-  {
+    m_info(index << INDEX_SHIFT_BITS) {
     // Check if the segment is directed left or right:
     Comparison_result res = CGAL::compare (source.x(), target.x());
 
@@ -802,8 +778,7 @@ public:
   /*! obtains the supporting line.
    * \pre The arc is linear (a line segment).
    */
-  Line_2 supporting_line() const
-  {
+  Line_2 supporting_line() const {
     CGAL_precondition (is_linear());
     return (Line_2 (a(), b(), c()));
   }
@@ -811,8 +786,7 @@ public:
   /*! obtains the supporting circle.
    * \pre The arc is circular.
    */
-  Circle_2 supporting_circle() const
-  {
+  Circle_2 supporting_circle() const {
     CGAL_precondition (is_circular());
 
     typename Kernel::Point_2 center(x0(), y0());
@@ -843,8 +817,7 @@ public:
 
   /*! checks whether the given point is in the x-range of the arc.
    */
-  bool is_in_x_range(const Point_2& p) const
-  {
+  bool is_in_x_range(const Point_2& p) const {
     Comparison_result res = CGAL::compare (p.x(), left().x());
 
     if (res == SMALLER) return false;
@@ -858,8 +831,7 @@ public:
   { return ((m_info & IS_VERTICAL_SEGMENT_MASK) != 0); }
 
   /*! obtains the orientation of the arc. */
-  inline Orientation orientation() const
-  {
+  inline Orientation orientation() const {
     unsigned int or_ = (m_info & ORIENTATION_MASK);
     if (or_ == COUNTERCLOCKWISE_CODE) return (CGAL::COUNTERCLOCKWISE);
     else if (or_ == CLOCKWISE_CODE) return (CGAL::CLOCKWISE);
@@ -870,16 +842,14 @@ public:
 
   /*! checks the position of a given point with respect to the arc.
    */
-  Comparison_result point_position(const Point_2& p) const
-  {
+  Comparison_result point_position(const Point_2& p) const {
     if (is_linear()) return (_line_point_position(p));
     else return (_circ_point_position (p));
   }
 
   /*! compares the two arcs to the right of their intersection point.
    */
-  Comparison_result compare_to_right(const Self& cv, const Point_2& p) const
-  {
+  Comparison_result compare_to_right(const Self& cv, const Point_2& p) const {
     if (is_linear()) {
       if (cv.is_linear()) return (_lines_compare_to_right (cv, p));
       Comparison_result res = cv._circ_line_compare_to_right (*this, p);
@@ -894,8 +864,7 @@ public:
 
   /*! compares the two arcs to the left of their intersection point.
    */
-  Comparison_result compare_to_left(const Self& cv, const Point_2& p) const
-  {
+  Comparison_result compare_to_left(const Self& cv, const Point_2& p) const {
     if (is_linear()) {
       if (cv.is_linear()) return (_lines_compare_to_left (cv, p));
       Comparison_result res = cv._circ_line_compare_to_left(*this, p);
@@ -910,8 +879,7 @@ public:
 
   /*! checks whether the two arcs have the same supporting curve.
    */
-  bool has_same_supporting_curve(const Self& cv) const
-  {
+  bool has_same_supporting_curve(const Self& cv) const {
     // Check if the curve indices are the same.
     if (_index() != 0 && _index() == cv._index()) return true;
 
@@ -950,8 +918,7 @@ public:
 
   /*! checks whether the two curves are equal.
    */
-  bool equals(const Self& cv) const
-  {
+  bool equals(const Self& cv) const {
     if (! this->has_same_supporting_curve(cv)) return false;
 
     if (is_linear()) {
@@ -969,8 +936,7 @@ public:
 
   /*! splits the curve at a given point into two sub-arcs.
    */
-  void split(const Point_2& p, Self& c1, Self& c2) const
-  {
+  void split(const Point_2& p, Self& c1, Self& c2) const {
     // Copy the properties of this arc to the sub-arcs.
     c1 = *this;
     c2 = *this;
@@ -990,8 +956,7 @@ public:
    */
   template <typename OutputIterator>
   OutputIterator intersect(const Self& cv, OutputIterator oi,
-                           Intersection_map* inter_map = nullptr) const
-  {
+                           Intersection_map* inter_map = nullptr) const {
     // First check whether the two arcs have the same supporting curve.
     if (has_same_supporting_curve(cv)) {
       // Check for overlaps between the two arcs.
@@ -1064,8 +1029,7 @@ public:
     // Report only the intersection points that lie on both arcs.
     for (auto iter = inter_list.begin(); iter != inter_list.end(); ++iter) {
       if (this->_is_between_endpoints (iter->first) &&
-          cv._is_between_endpoints (iter->first))
-      {
+          cv._is_between_endpoints (iter->first)) {
         *oi++ = *iter;
       }
     }
@@ -1075,8 +1039,7 @@ public:
 
   /*! checks whether it is possible to merge our arc with the given arc.
    */
-  bool can_merge_with(const Self& cv) const
-  {
+  bool can_merge_with(const Self& cv) const {
     // In order to merge the two arcs, they should have the same supporting
     // curve.
     if (! this->has_same_supporting_curve(cv)) return false;
@@ -1089,8 +1052,7 @@ public:
   /*! merges our arc with the given arc.
    * \pre The two arcs are mergeable.
    */
-  void merge(const Self& cv)
-  {
+  void merge(const Self& cv) {
     CGAL_precondition(this->can_merge_with (cv));
 
     // Check if we should extend the arc to the left or to the right.
@@ -1109,8 +1071,7 @@ public:
   }
 
   /*! constructs an opposite arc. */
-  Self construct_opposite() const
-  {
+  Self construct_opposite() const {
     Self opp_cv;
     opp_cv.m_first = this->m_first;
     opp_cv.m_second = this->m_second;
@@ -1127,8 +1088,7 @@ public:
     return (opp_cv);
   }
 
-  Bbox_2 bbox() const
-  {
+  Bbox_2 bbox() const {
     double x_min = to_double(left().x());
     double x_max = to_double(right().x());
     double y_min = to_double(left().y());
@@ -1167,8 +1127,7 @@ protected:
 
   /*! checks if the circular arc lies on the upper half of the supporting circle.
    */
-  inline bool _is_upper() const
-  {
+  inline bool _is_upper() const {
     Orientation orient = orientation();
     bool dir_right = ((m_info & IS_DIRECTED_RIGHT_MASK) != 0);
 
@@ -1197,8 +1156,7 @@ protected:
 
   /*! checks the position of a given point with respect to a line segment.
    */
-  Comparison_result _line_point_position(const Point_2& p) const
-  {
+  Comparison_result _line_point_position(const Point_2& p) const {
     // Check if we have a vertical segment.
 
     CGAL_precondition(is_in_x_range(p));
@@ -1229,20 +1187,17 @@ protected:
 
   /*! checks the position of a given point with respect to a circular arc.
    */
-  Comparison_result _circ_point_position(const Point_2& p) const
-  {
+  Comparison_result _circ_point_position(const Point_2& p) const {
 
     Comparison_result c_res = CGAL::compare (p.y(), y0());
 
     if (_is_upper()) {
       // Check if p lies below the "equator" (while the arc lies above it):
-      if (c_res == SMALLER)
-        return (SMALLER);
+      if (c_res == SMALLER) return (SMALLER);
     }
     else {
       // Check if p lies above the "equator" (while the arc lies below it):
-      if (c_res == LARGER)
-        return (LARGER);
+      if (c_res == LARGER) return (LARGER);
     }
 
     // Check if p lies inside the supporting circle, namely we have to check
@@ -1271,8 +1226,7 @@ protected:
   /*! compares two line segments to the right of their intersection point.
    */
   Comparison_result _lines_compare_to_right(const Self& cv,
-                                            const Point_2& /* p */) const
-  {
+                                            const Point_2& /* p */) const {
     if (_index() != 0 && _index() == cv._index()) return (EQUAL);
 
     // Special treatment for vertical segments: a vertical segment is larger
@@ -1292,8 +1246,7 @@ protected:
    * their intersection point.
    */
   Comparison_result _circ_line_compare_to_right(const Self& cv,
-                                                const Point_2& p) const
-  {
+                                                const Point_2& p) const {
     // A vertical segment lies above any other circle to the right of p:
     if (cv.is_vertical()) return (SMALLER);
 
@@ -1334,8 +1287,7 @@ protected:
   /*! compares two circular arcs to the right of their intersection point.
    */
   Comparison_result _circs_compare_to_right(const Self& cv,
-                                            const Point_2& p) const
-  {
+                                            const Point_2& p) const {
     if (_index() != 0 && _index() == cv._index()) {
       // Check the case of comparing two circular arcs that originate from the
       // same supporting circle. Their comparison result is not EQUAL only if
@@ -1413,13 +1365,11 @@ protected:
     // Compare the slopes of the two tangents to the circles.
     Comparison_result  slope_res;
 
-    if (sign_slope1 == ZERO && sign_slope2 == ZERO)
-    {
+    if (sign_slope1 == ZERO && sign_slope2 == ZERO) {
       // Special case were both circles have a horizontal tangent:
       slope_res = EQUAL;
     }
-    else
-    {
+    else {
       // Actually compare the slopes.
       const bool swap_res = (sign_denom1 != sign_denom2);
       const CoordNT A = NT(cv.y0() - y0())*p.x() + (y0()*cv.x0() - cv.y0()*x0());
@@ -1466,8 +1416,7 @@ protected:
   /*! compares two line segments to the left of their intersection point.
    */
   Comparison_result _lines_compare_to_left(const Self& cv,
-                                           const Point_2& ) const
-  {
+                                           const Point_2& ) const {
     if (_index() != 0 && _index() == cv._index()) return (EQUAL);
 
     // Special treatment for vertical segments: a vertical segment is smaller
@@ -1489,8 +1438,7 @@ protected:
    * their intersection point.
    */
   Comparison_result _circ_line_compare_to_left(const Self& cv,
-                                               const Point_2& p) const
-  {
+                                               const Point_2& p) const {
     // A vertical segment lies below any other circle to the left of p:
     if (cv.is_vertical()) return (LARGER);
 
@@ -1534,8 +1482,7 @@ protected:
   /*! compares the two arcs to the left of their intersection point.
    */
   Comparison_result _circs_compare_to_left(const Self& cv,
-                                           const Point_2& p) const
-  {
+                                           const Point_2& p) const {
     if (_index() != 0 && _index() == cv._index()) {
       // Check the case of comparing two circular arcs that originate from the
       // same supporting circle. Their comparison result is not EQUAL only if
@@ -1614,8 +1561,7 @@ protected:
     // Compare the slopes of the two tangents to the circles.
     Comparison_result  slope_res;
 
-    if (sign_slope1 == ZERO && sign_slope2 == ZERO)
-    {
+    if (sign_slope1 == ZERO && sign_slope2 == ZERO) {
       // Special case were both circles have a horizontal tangent:
       slope_res = EQUAL;
     }
@@ -1668,8 +1614,7 @@ protected:
   /*! computes the intersections between two line segments.
    */
   void _lines_intersect(const Self& cv,
-                        Intersection_list& inter_list) const
-  {
+                        Intersection_list& inter_list) const {
     // The intersection of the lines:
     //   a1*x + b1*y + c1 = 0   and   a2*x + b2*y + c2 = 0 ,
     // is given by:
@@ -1695,8 +1640,7 @@ protected:
    * the supporting line of the segment cv.
    */
   void _circ_line_intersect(const Self& cv,
-                            Intersection_list& inter_list) const
-  {
+                            Intersection_list& inter_list) const {
     Point_2 p;
     unsigned int mult;
 
@@ -1818,8 +1762,7 @@ protected:
 
   /*! computes the intersections between two circles.
    */
-  void _circs_intersect(const Self& cv, Intersection_list& inter_list) const
-  {
+  void _circs_intersect(const Self& cv, Intersection_list& inter_list) const {
     Point_2 p;
     unsigned int mult;
 
@@ -1884,8 +1827,7 @@ protected:
   /*! checks if the given point lies on the arc.
    * \pre p lies on the supporting curve.
    */
-  bool _is_between_endpoints(const Point_2& p) const
-  {
+  bool _is_between_endpoints(const Point_2& p) const {
     if (is_linear()) {
       if (is_vertical()) {
         // Check if the point is in the y-range of the arc.
@@ -1908,8 +1850,7 @@ protected:
     // Check whether p lies on the upper or on the lower part of the circle.
     Comparison_result c_res = CGAL::compare(p.y(), y0());
 
-    if ((_is_upper() && c_res == SMALLER) || (! _is_upper() && c_res == LARGER))
-    {
+    if ((_is_upper() && c_res == SMALLER) || (! _is_upper() && c_res == LARGER)) {
       // The point lies on the other half of the circle:
       return false;
     }
@@ -1921,8 +1862,7 @@ protected:
   /*! checks whether the given point lies in the interior of the arc.
    * \pre p lies on the supporting curve.
    */
-  bool _is_strictly_between_endpoints(const Point_2& p) const
-  {
+  bool _is_strictly_between_endpoints(const Point_2& p) const {
     if (p.equals (m_source) || p.equals (m_target)) return false;
     return (_is_between_endpoints(p));
   }
@@ -1932,8 +1872,7 @@ protected:
    * \param overlap Output: The overlapping arc (if any).
    * \return Whether we found an overlap.
    */
-  bool _compute_overlap(const Self& cv, Self& overlap) const
-  {
+  bool _compute_overlap(const Self& cv, Self& overlap) const {
     // Check if the two arcs are identical.
     if (is_linear()) {
       // In case of line segments we can swap the source and target:
@@ -1999,10 +1938,9 @@ protected:
     return false;
   }
 
-  public:
+public:
   template <class OutputIterator>
-  void approximate(OutputIterator oi, unsigned int n) const
-  {
+  void approximate(OutputIterator oi, unsigned int n) const {
     const double x_left = CGAL::to_double(this->source().x());
     const double y_left = CGAL::to_double(this->source().y());
 
@@ -2045,8 +1983,7 @@ protected:
    * \pre Both ps and pt lies on the arc and must conform with the current
    *      direction of the arc.
    */
-  Self trim(const Point_2& ps, const Point_2& pt) const
-  {
+  Self trim(const Point_2& ps, const Point_2& pt) const {
     Self arc = *this;
 
     arc.m_source = ps;
@@ -2063,8 +2000,7 @@ protected:
 template <class Kernel, bool Filter>
 std::ostream&
 operator<<(std::ostream& os,
-           const _X_monotone_circle_segment_2<Kernel, Filter> & arc)
-{
+           const _X_monotone_circle_segment_2<Kernel, Filter>& arc) {
   if (! arc.is_linear())
     os << "(" << arc.supporting_circle() << ") ";
 
