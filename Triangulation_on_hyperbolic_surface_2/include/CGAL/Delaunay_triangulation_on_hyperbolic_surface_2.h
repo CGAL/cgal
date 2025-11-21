@@ -472,7 +472,7 @@ relative_position(Point const & query, unsigned & li, Anchor const & anch) const
 	Locate_type lt = FACE;
 	li = NULL_INDEX;
 	Traits gt;
-	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
+	typename Traits::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 	for (unsigned i = 0; i < NB_SIDES; ++i) {
 		Orientation ori_query = ho2(anch.vertices[i], anch.vertices[ccw(i)], query);
 		if (ori_query == RIGHT_TURN) {
@@ -519,7 +519,7 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 
 	// visibility walk
 	Traits gt;
-	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
+	typename Traits::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 	while (!found) {
 		Complex_number cross_ratio = Base::get_cross_ratio(dart);
 		d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
@@ -557,7 +557,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 	Point l = hint.vertices[2];
 	ld = 0;
 	Traits gt;
-	CGAL::internal::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
+	typename Traits::Hyperbolic_orientation_2 ho2 = gt.hyperbolic_orientation_2();
 
 	if (ho2(p0, query, r) == RIGHT_TURN) {
 		while (ho2(p0, query, l) == RIGHT_TURN) {
