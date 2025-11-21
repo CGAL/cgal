@@ -19,6 +19,7 @@
 #include <functional>
 #include <stdexcept>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 namespace CGAL {
@@ -41,17 +42,17 @@ using CDT_3_signed_index = int; // must be signed
    /** \brief Constructor.
     * \param failed_faces a vector of indices of the faces that could not be processed.
     */
-   Constrained_triangulation_insertion_exception(const std::vector<CDT_3_signed_index>& failed_faces)
+   Constrained_triangulation_insertion_exception(std::vector<CDT_3_signed_index> failed_faces)
        : std::domain_error(std::invoke([&]() {
          std::ostringstream oss;
-         oss << "Constrained Delaunay triangulation could not be restored: " << m_failed_faces.size()
+         oss << "Constrained Delaunay triangulation could not be restored: " << failed_faces.size()
              << " faces could not be processed:\n";
-         for(const CDT_3_signed_index& index : m_failed_faces) {
+         for(const CDT_3_signed_index& index : failed_faces) {
            oss << " " << index << "\n";
          }
          return oss.str();
        }))
-       , m_failed_faces(failed_faces) {}
+       , m_failed_faces(std::move(failed_faces)) {}
 
    /** \brief Returns the vector of indices of the faces that could not be processed.
     */
