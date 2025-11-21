@@ -22,7 +22,7 @@ The `CGAL::approximate_convex_decomposition()` instead splits the convex hull of
 
 \cgalCRPSection{Functions}
 - `CGAL::approximate_convex_decomposition(FaceGraph)`
-- `CGAL::convex_decomposition_3(Nef_polyhedron_3)`
+- `CGAL::convex_decomposition_3(NefPolyhedron_3)`
 
 */
 
