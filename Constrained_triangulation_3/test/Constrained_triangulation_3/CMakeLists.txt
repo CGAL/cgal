@@ -128,6 +128,8 @@ if (CGAL_CDT_TEST_USE_THINGI)
   CGAL_add_cdt3_from_local_off_test(196123-min3)
   CGAL_add_cdt3_from_local_off_test(200695-min3)
   CGAL_add_cdt3_from_local_off_test(285604-min8)
+  CGAL_add_cdt3_from_local_off_test(100644-min)
+  CGAL_add_cdt3_from_local_off_test(505036-min1)
   CGAL_add_cdt3_from_local_off_test(error_mesh-p_not_equal_0-min2)
 
   include(./Thingi10k-CDT.cmake)
