@@ -40,8 +40,8 @@ namespace IO {
 template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
 bool read_VTK(const char* filename,
               LCC& alcc,
-              std::vector<VertexScalarType>* vertex_scalars,
-              std::vector<VolumeScalarType>* volume_scalars);
+              std::vector<VertexScalarType>* vertex_scalars=nullptr,
+              std::vector<VolumeScalarType>* volume_scalars=nullptr);
 
 /**
  * \brief Writes a 3D Linear_cell_complex to a VTK legacy ASCII file.
@@ -61,8 +61,8 @@ bool read_VTK(const char* filename,
 template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
 bool write_VTK(const char* filename,
                const LCC& alcc,
-               const std::vector<VertexScalarType>* vertex_scalars,
-               const std::vector<VolumeScalarType>* volume_scalars);
+               const std::vector<VertexScalarType>* vertex_scalars=nullptr,
+               const std::vector<VolumeScalarType>* volume_scalars=nullptr);
 
 } // namespace IO
 } // namespace CGAL
