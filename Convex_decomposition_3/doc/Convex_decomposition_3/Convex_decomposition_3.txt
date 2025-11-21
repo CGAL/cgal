@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_Convex_Decomposition_of_Polyhedra
 \anchor chapterConvexDecomposition3
 \cgalAutoToc
-\author Peter Hachenberger
+\author Peter Hachenberger, Sven Oesau
 
 \section Convex_decomposition_3Introduction Introduction
 
@@ -361,7 +361,7 @@ The running time for all cases in the above tables were between 1.4 and 3 second
 
 The example shows the approximate convex decomposition of the knot2.off mesh into 9 convex volumes that are saved as off files.
 
-\cgalExample{Surface_mesh_decomposition/approximate_convex_decomposition.cpp }
+\cgalExample{Convex_decomposition_3/approximate_convex_decomposition.cpp }
 
 
 \section Convex_decomposition_3_history Design and Implementation History

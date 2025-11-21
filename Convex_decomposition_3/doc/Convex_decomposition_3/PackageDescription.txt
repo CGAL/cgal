@@ -21,8 +21,8 @@ The `CGAL::approximate_convex_decomposition()` instead splits the convex hull of
 \cgalClassifedRefPages
 
 \cgalCRPSection{Functions}
-- `CGAL::convex_decomposition_3(Nef_polyhedron_3& N)`
 - `CGAL::approximate_convex_decomposition(FaceGraph)`
+- `CGAL::convex_decomposition_3(Nef_polyhedron_3)`
 
 */
 
