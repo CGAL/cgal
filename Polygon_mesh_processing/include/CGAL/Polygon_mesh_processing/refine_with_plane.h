@@ -432,7 +432,9 @@ void refine_with_plane(PolygonMesh& pm,
       Oriented_side prev_ori = get(vertex_os, source(h, pm)),
                     next_ori = get(vertex_os, target(next(h, pm), pm));
       splitted_faces[face(h, pm)].push_back(h);
-      if (prev_ori==ON_ORIENTED_BOUNDARY || next_ori==ON_ORIENTED_BOUNDARY || prev_ori==next_ori) splitted_faces[face(h, pm)].push_back(h); // skip crossing points
+      // we insert tangency point twice as the vertex might be use twice to split a face
+      if (prev_ori==ON_ORIENTED_BOUNDARY || next_ori==ON_ORIENTED_BOUNDARY || prev_ori==next_ori)
+        splitted_faces[face(h, pm)].push_back(h); // skip crossing points
     }
   }
 
@@ -491,6 +493,9 @@ void refine_with_plane(PolygonMesh& pm,
       };
       std::sort(f_and_hs.second.begin(), f_and_hs.second.end(), less_hedge);
 
+      // remove duplicated vertex at the beginning and at the end of the sorted list
+      // in case the next/prev edge is fully included (its the entry/exit point of the line
+      // and we don't need twice the vertex in that case)
       if (f_and_hs.second[0]==f_and_hs.second[1])
       {
         halfedge_descriptor h = f_and_hs.second[0];
@@ -515,7 +520,7 @@ void refine_with_plane(PolygonMesh& pm,
                             h2=f_and_hs.second[i+1],
                             h3=i+2<nb_hedges?f_and_hs.second[i+2]:boost::graph_traits<PolygonMesh>::null_halfedge();
 
-        if(next(h1,pm)==h2 || next(h2,pm)==h1 || h1==h2) // the edge does not already exist
+        if(next(h1,pm)==h2 || next(h2,pm)==h1 || h1==h2) // the edge does not already exist or is an outer tangency
           continue;
 
         bool update_h3 = h2==h3;
