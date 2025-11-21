@@ -46,8 +46,8 @@ public:
     /** \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
     /** \brief Type of vtk export vertex coordinates */
-//    typedef typename Traits::Point3 Point3 ;
-    typedef CGAL::Simple_cartesian<double>::Point_3 Point3;
+    typedef typename Traits::Point3 Point3 ;
+//    typedef CGAL::Simple_cartesian<double>::Point_3 Point3;
 
 protected:
     /** \brief Vector of vertex coordinates */

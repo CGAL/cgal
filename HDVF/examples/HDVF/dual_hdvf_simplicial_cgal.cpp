@@ -30,8 +30,8 @@ int main(int argc, char **argv)
 {
     std::string filename ;
     if (argc > 2) std::cout << "usage: dual_hdvf_simplicial off_file" << std::endl;
-    else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
-//    else if (argc == 1) filename  = "data/data_simplicial/three_triangles.off";
+//    else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
+    else if (argc == 1) filename  = "data/data_simplicial/three_triangles.off";
     else filename = argv[1];
 
     // Load simplicial object into Surface_mesh
@@ -47,10 +47,11 @@ int main(int argc, char **argv)
 //    std::cout << sm;
 
     // Build K and L
-    typename Tools_type::Complex_duality_data t(Tools_type::dualize_complex(sm, 1.7, 1 ));
+    typename Tools_type::Complex_duality_data t;
+    Tools_type::dualize_complex(sm, t, 1.7, 1 );
     std::cout << "--- Triangulation built" << std::endl ;
-    Complex& L(t.L_complex);
-    Sub_chain_complex& K(t.K_complex);
+    Complex& L(*t.L_complex);
+    Sub_chain_complex& K(*t.K_complex);
     std::cout << "--- K,L built" << std::endl ;
 
     std::cout << "----> complex informations" << std::endl ;
