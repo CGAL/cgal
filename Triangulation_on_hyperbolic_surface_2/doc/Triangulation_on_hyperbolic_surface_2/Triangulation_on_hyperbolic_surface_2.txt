@@ -179,6 +179,17 @@ The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes the 
  Lift, in the Poincaré disk, of a Delaunay triangulation of a genus two hyperbolic surface with one vertex.
 \cgalFigureCaptionEnd
 
+<div style="color:red">
+The Delaunay_triangulation_on_hyperbolic_surface_2_demo.cpp file is a demo that can be used to compute an \f$ \varepsilon \f$-net of a hyperbolic surface and display the Delaunay triangulation of the output.
+\cgalFigureAnchor{DTHS2-demo-output}
+<center>
+  <img src="123_01.svg" style="max-width:25%; width:25%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{DTHS2-demo-output}
+Lift, in the Poincaré disk, of the Delaunay triangulation of a 0.1-net of a genus two hyperbolic surface with seed 123.
+\cgalFigureCaptionEnd
+</div>
+
 
 \section Section_Hyperbolic_Surface_Triangulations_Example Example
 
