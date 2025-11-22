@@ -26,6 +26,7 @@ namespace Kernel {
   \sa `Kernel::IsDegenerate_2`
   \sa `Kernel::OrientedSide_2`
 
+  \warning Circle_2 is the bordless 1-manifold embedded in 2D. It is not a disk. Be careful when implementing functors.
 */
 class Circle_2 {
 public:
@@ -60,6 +61,7 @@ public:
   \sa `Kernel::HasOnUnboundedSide_3`
   \sa `Kernel::IsDegenerate_3`
 
+  \warning Circle_3 is the bordless 1-manifold embedded in 3D. It is not a disk. Be careful when implementing functors.
 */
 class Circle_3 {
 public:
@@ -640,6 +642,7 @@ public:
   \sa `Kernel::IsDegenerate_3`
   \sa `Kernel::OrientedSide_3`
 
+  \warning Sphere_3 is the bordless 2-manifold embedded in 3D. It is not a ball. Be careful when implementing functors.
 */
 class Sphere_3 {
 public:
