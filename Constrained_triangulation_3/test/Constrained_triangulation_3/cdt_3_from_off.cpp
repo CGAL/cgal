@@ -111,6 +111,9 @@ Usage: cdt_3_from_off [options] input.off output.off
   --read-mesh-with-operator: read the mesh with operator>>
   --reject-self-intersections: reject self-intersecting polygon soups
   --no-is-valid: do not call is_valid checks
+
+  --debug-Steiner-points: debug Steiner point insertion
+  --debug-Steiner-points-construction: debug Steiner point construction
   --debug-input-faces: debug input faces
   --debug-missing-regions: debug missing regions
   --debug-regions: debug regions
@@ -124,6 +127,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-constraint-hierarchy: debug constraint hierarchy operations
   --debug-geometric-errors: debug geometric error handling
   --debug-polygon-insertion: debug polygon insertion process
+
   --use-finite-edges-map: use a hash map for finite edges (default: false)
   --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
   --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
@@ -150,6 +154,8 @@ struct CDT_options
   bool        reject_self_intersections           = false;
   bool        repair_mesh                         = true;
   bool        read_mesh_with_operator             = false;
+  bool        debug_Steiner_points                = false;
+  bool        debug_Steiner_points_construction   = false;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -235,6 +241,10 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       quiet                               = true;
     } else if(arg == "--no-is-valid"sv) {
       call_is_valid                       = false;
+    } else if(arg == "--debug-Steiner-points"sv) {
+      debug_Steiner_points                = true;
+    } else if(arg == "--debug-Steiner-points-construction"sv) {
+      debug_Steiner_points_construction   = true;
     } else if(arg == "--debug-input-faces"sv) {
       debug_input_faces                   = true;
     } else if(arg == "--debug-missing-regions"sv) {
@@ -296,7 +306,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 
 CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   CGAL::CDT_3::Debug_options cdt_debug;
-  cdt_debug.Steiner_points(options.verbose_level > 0);
+  cdt_debug.Steiner_points(options.debug_Steiner_points || options.verbose_level > 0);
+  cdt_debug.Steiner_points_construction(options.debug_Steiner_points_construction);
   cdt_debug.input_faces(options.debug_input_faces);
   cdt_debug.missing_region(options.verbose_level > 1 || options.debug_missing_regions);
   cdt_debug.regions(options.debug_regions);
