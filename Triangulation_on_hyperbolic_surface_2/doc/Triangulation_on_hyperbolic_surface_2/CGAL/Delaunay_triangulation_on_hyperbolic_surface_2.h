@@ -176,6 +176,7 @@ public:
     Tries to compute an `epsilon`-net of the surface.
 
     When `Number` is `CGAL::Gmpq`, the algorithm rounds the coordinate of circumcenters to `CGAL::Gmpfr` with precision `p*53`.
+    When `Number` is <em>not</em> `CGAL::Gmpq`, `p` is ignored.
 
     \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>
   */
