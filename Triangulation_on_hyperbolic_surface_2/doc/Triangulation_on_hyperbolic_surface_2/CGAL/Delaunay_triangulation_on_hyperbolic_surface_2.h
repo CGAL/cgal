@@ -176,12 +176,12 @@ public:
     Tries to compute an `epsilon`-net of the surface.
 
     When `Number` is `CGAL::Gmpq`, the algorithm rounds the coordinate of circumcenters to `CGAL::Gmpfr` with precision `p*53`.
+
+    \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>
   */
   bool epsilon_net(double const epsilon, unsigned const p = 1);
   /*!
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-covering of the surface.
-
-    \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>
   */
   bool is_epsilon_covering(const double epsilon) const;
   /*!
