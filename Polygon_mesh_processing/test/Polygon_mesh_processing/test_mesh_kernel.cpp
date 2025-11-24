@@ -166,7 +166,8 @@ void test_exact_kernel_with_rounding(std::string fname)
     std::cerr << "ERROR: cannot read " << fname << "\n";
     exit(1);
   }
-  round_mesh(m);
+  // round_mesh(m);
+  to_integer_mesh(m);
   timer.start();
   EMesh kernel = PMP::experimental::kernel(m);
   timer.stop();
@@ -221,10 +222,10 @@ void test_trettner_kernel(std::string fname)
   }
   to_integer_mesh(m);
   timer.start();
-  Mesh kernel = PMP::experimental::trettner_kernel(m);
+  auto kernel = PMP::experimental::trettner_kernel(m);
   timer.stop();
 
-  std::ofstream("ekernel.off") << kernel;
+  std::ofstream("tkernel.off") << kernel;
   std::cout << "test_trettner_kernel done in " << timer.time() << "\n";
 }
 
@@ -235,7 +236,7 @@ int main(int argc, char** argv)
   // test_kernel(filename);
   // test_kernel_with_rounding(filename);
   // test_exact_kernel(filename);
-  // test_exact_kernel_with_rounding(filename);
+  test_exact_kernel_with_rounding(filename);
   test_trettner_kernel(filename);
   // test_kernel_with_chull(filename);
   // test_kernel_with_chull_and_constructions(filename);

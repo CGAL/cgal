@@ -280,18 +280,20 @@ kernel_using_chull_and_constructions(const TriangleMesh& pm,
 
 //__________________________________________________________________________________________________________________________________
 
+using int256 = boost::multiprecision::int256_t;
+using int512 = boost::multiprecision::int512_t;
+using intexact = Exact_integer;
+
 template <class Kernel>
 struct Plane_based_traits
 {
   using FT = typename Kernel::FT;
   using RT = typename Kernel::RT;
+  using Geometric_point_3 = typename Kernel::Point_3;
+
   using plane_descriptor = std::size_t;
   using Plane_3 = std::pair<typename Kernel::Plane_3, plane_descriptor>;
-
   std::vector<Plane_3> *m_planes;
-
-  using Input_point_3 = typename Kernel::Point_3;
-  using Geometric_point_3 = typename Kernel::Point_3;
 
   struct Point_3 : public Geometric_point_3{
     std::array<plane_descriptor, 3> supports;
@@ -301,19 +303,23 @@ struct Plane_based_traits
     Point_3(){}
     Point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c, const std::vector<Plane_3> &planes):
           Base(*CGAL::Intersections::internal::intersection_point(planes[a].first, planes[b].first, planes[c].first, Kernel())),
-                                                                        supports({a,b,c}){
+          supports({a,b,c}){
     }
 
     Point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p): Base(p), supports({a,b,c}){}
   };
 
-  Point_3 construct_point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c){
-    return Point_3(a, b, c, *m_planes);
-  }
+  struct Construct_point_3{
+    std::vector<Plane_3>* m_planes;
+    Construct_point_3(std::vector<Plane_3>* planes) : m_planes(planes){}
+    Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c){
+      return Point_3(a, b, c, *m_planes);
+    }
 
-  Point_3 construct_point_3(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p){
-    return Point_3(a, b, c, p);
-  }
+    Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p){
+      return Point_3(a, b, c, p);
+    }
+  };
 
   struct Does_not_support_CDT2{};
 
@@ -394,6 +400,12 @@ struct Plane_based_traits
       };
       std::pair<plane_descriptor, plane_descriptor> line_supports=get_common_supports(p, q);
       Point_3 res(plane.second, line_supports.first, line_supports.second, *m_planes);
+
+      int512 max=57896044618658097711785492504343953926634992332820282019728792003956564819968; //2^256
+      assert(abs(p.hx())<=max);
+      assert(abs(p.hy())<=max);
+      assert(abs(p.hz())<=max);
+      assert(abs(p.hw())<=max);
       return res;
     }
   };
@@ -417,7 +429,6 @@ struct Plane_based_traits
       auto pmap=boost::make_function_property_map<vertex_descriptor>([&](vertex_descriptor v){
         return to_int(m.point(v));
       });
-      // auto pl = compute_face_normal(f, m);
       auto pl = compute_face_normal(f, m, parameters::vertex_point_map(pmap));
       return typename Kernel::Vector_3(pl.x(),pl.y(),pl.z());
     };
@@ -442,10 +453,16 @@ struct Plane_based_traits
   }
 
   struct Construct_plane_3{
+
     std::vector<Plane_3>* m_planes;
     Construct_plane_3(std::vector<Plane_3>* planes) : m_planes(planes){}
     Plane_3 operator()(const typename Kernel::Plane_3 &pl){
       m_planes->emplace_back(pl, m_planes->size());
+      int512 max = 1208925819614629174706176; //2^80
+      assert(abs(pl.a())<=max);
+      assert(abs(pl.b())<=max);
+      assert(abs(pl.c())<=max);
+      assert(abs(pl.d())<=max);
       return m_planes->back();
     }
 
@@ -457,6 +474,11 @@ struct Plane_based_traits
   Construct_plane_3 construct_plane_3_object()
   {
     return Construct_plane_3(m_planes);
+  }
+
+  Construct_point_3 construct_point_3_object()
+  {
+    return Construct_point_3(m_planes);
   }
 
   const std::vector<Plane_3>& planes(){
@@ -478,43 +500,33 @@ struct Plane_based_traits
 
 template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
-TriangleMesh
+Surface_mesh<Plane_based_traits<Homogeneous<int512>>::Point_3>
 trettner_kernel(const TriangleMesh& pm,
                 const NamedParameters& np = parameters::default_values())
 {
-  // TODO: bench if with EPECK we can directly use Kernel::Plane_3
-  // TODO: TriangleMesh as output is not correct since it is actually a PolygonMesh
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  // using int256 = boost::multiprecision::int256_t;
-  using int256 = Exact_integer;
-  using GT = Plane_based_traits<Homogeneous<int256>>;
+  using GT = Plane_based_traits<Homogeneous<int512>>;
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_const_property_map(vertex_point, pm));
 
   using Point_3 = typename GT::Point_3;
   using Plane_3 = typename GT::Plane_3;
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
+
+  using Construct_plane_3 = GT::Construct_plane_3;
+  using Construct_point_3 = GT::Construct_point_3;
+
+  using InternMesh = Surface_mesh<Point_3>;
 
   GT gt(pm);
   std::vector<Plane_3> planes=gt.planes();
 
-  auto plane_3 = gt.construct_plane_3_object();
-
-  //TODO: what do we do with a mesh that is not closed?
-  //TODO: what do we do if the input is not a triangle mesh?
+  Construct_plane_3 plane_3 = gt.construct_plane_3_object();
+  Construct_point_3 point_3 = gt.construct_point_3_object();
 
   if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
-    return TriangleMesh();
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor      edge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
-
-  typedef Surface_mesh<Point_3> InternMesh;
+    return Surface_mesh<Point_3>();
 
   CGAL::Bbox_3 bb3 = bbox(pm, np);
   InternMesh kernel;
@@ -524,14 +536,14 @@ trettner_kernel(const TriangleMesh& pm,
   Plane_3 xr=plane_3(1,0,0,int(-bb3.xmax()));
   Plane_3 yr=plane_3(0,1,0,int(-bb3.ymax()));
   Plane_3 zr=plane_3(0,0,1,int(-bb3.zmax()));
-  CGAL::make_hexahedron(gt.construct_point_3(xl.second, yl.second, zl.second),
-                        gt.construct_point_3(xl.second, yl.second, zr.second),
-                        gt.construct_point_3(xl.second, yr.second, zr.second),
-                        gt.construct_point_3(xl.second, yr.second, zl.second),
-                        gt.construct_point_3(xr.second, yr.second, zl.second),
-                        gt.construct_point_3(xr.second, yl.second, zl.second),
-                        gt.construct_point_3(xr.second, yl.second, zr.second),
-                        gt.construct_point_3(xr.second, yr.second, zr.second),
+  CGAL::make_hexahedron(point_3(xl.second, yl.second, zl.second),
+                        point_3(xl.second, yl.second, zr.second),
+                        point_3(xl.second, yr.second, zr.second),
+                        point_3(xl.second, yr.second, zl.second),
+                        point_3(xr.second, yr.second, zl.second),
+                        point_3(xr.second, yl.second, zl.second),
+                        point_3(xr.second, yl.second, zr.second),
+                        point_3(xr.second, yr.second, zr.second),
                         kernel);
 
   for (auto plane: planes)
@@ -540,8 +552,7 @@ trettner_kernel(const TriangleMesh& pm,
     if (is_empty(kernel)) break;
   }
 
-  // return kernel;
-  return pm;
+  return kernel;
 }
 
 
