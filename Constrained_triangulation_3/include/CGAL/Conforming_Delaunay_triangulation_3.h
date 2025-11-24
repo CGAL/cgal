@@ -54,6 +54,7 @@
 #include <ostream>
 #include <sstream>
 #include <stack>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -794,11 +795,29 @@ protected:
     Locate_type lt;
     int li, lj;
     const Cell_handle c = tr().locate(steiner_pt, lt, li, lj, hint);
+    if(lt == T_3::VERTEX) {
+      auto other_v = c->vertex(li);
+      const auto [c_va, c_vb] = constraint_extremities(constraint);
+      std::stringstream ss;
+      ss.precision(std::cerr.precision());
+      ss << "insert_Steiner_point_on_subconstraint: Steiner point coincides with an existing vertex\n";
+      ss << "  -> Steiner point: " << steiner_pt << '\n';
+      ss << "     on constraint: " << display_vert(c_va) << "  -  " << display_vert(c_vb) << '\n';
+      ss << "  -> existing vertex: " << IO::oformat(other_v, with_point_and_info) << '\n';
+      if(other_v->ccdt_3_data().number_of_incident_constraints() > 0) {
+        const auto c_id = other_v->ccdt_3_data().constrained_polyline_id(*this);
+        const auto [c_va, c_vb] = constraint_extremities(c_id);
+        ss << "     which is on constraint: " << display_vert(c_va) << " - " << display_vert(c_vb) << '\n';
+        ss << "  Possible cause: two input segments are too close to each other\n";
+      } else if(other_v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::INPUT_VERTEX) {
+        ss << "     which is an input vertex.\n";
+        ss << "  Possible cause: an input segment is too close to an input vertex\n";
+      }
+      throw std::runtime_error(std::move(ss).str());
+    }
     const Vertex_handle v = visitor.insert_in_triangulation(steiner_pt, lt, c, li, lj);
     v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
-    if(lt != T_3::VERTEX) {
-      v->ccdt_3_data().set_on_constraint(constraint);
-    }
+    v->ccdt_3_data().set_on_constraint(constraint);
     constraint_hierarchy.add_Steiner(va, vb, v);
     visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v);
     add_to_subconstraints_to_conform(va, v, constraint);
