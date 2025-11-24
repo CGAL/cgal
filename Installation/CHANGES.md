@@ -4,7 +4,7 @@
 
 Release date: July 2026
 
-### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
+### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
 -   Made the `Arr_linear_traits_2` a model of the new concept.
@@ -27,7 +27,7 @@ Release date: July 2026
     Its constructor accepts a `Mesh` and optional named parameters to set the weight of the line policy relative to the plane policy, set the boundary cost multiplier or provide vertex normals.
 -  **Breaking change**: `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h` and is no longer deprecated.
 
-### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.1/Manual/packages.html#PkgBooleanSetOperations2)
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.2/Manual/packages.html#PkgBooleanSetOperations2)
 
 -   Optimized `do_intersect()`: (i) made it robust even with an inexact-predicate kernel, and (ii) made it quit
     once an intersection is detected. (In the past, the intersection was computed in one phase and examined in a
