@@ -39,7 +39,6 @@ void round_mesh(Mesh &m){
                               pow_2(grid_size - exp(max_abs[1]) - 1),
                               pow_2(grid_size - exp(max_abs[2]) - 1)};
 
-  // auto round=[&](Point_3 &p){
   auto round=[&](typename Mesh::Point &p){
     return typename Mesh::Point(std::ceil((CGAL::to_double(p.x()) * scale[0]) - 0.5) / scale[0],
                                 std::ceil((CGAL::to_double(p.y()) * scale[1]) - 0.5) / scale[1],

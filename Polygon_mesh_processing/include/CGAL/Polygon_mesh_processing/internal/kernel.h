@@ -401,11 +401,9 @@ struct Plane_based_traits
       std::pair<plane_descriptor, plane_descriptor> line_supports=get_common_supports(p, q);
       Point_3 res(plane.second, line_supports.first, line_supports.second, *m_planes);
 
-      int512 max=57896044618658097711785492504343953926634992332820282019728792003956564819968; //2^256
-      assert(abs(p.hx())<=max);
-      assert(abs(p.hy())<=max);
-      assert(abs(p.hz())<=max);
-      assert(abs(p.hw())<=max);
+      namespace mp = boost::multiprecision;
+      CGAL_assertion_code(int256 max2E200=mp::pow(int256(2),200);)
+      CGAL_assertion((mp::abs(p.hx())<=max2E200) && (mp::abs(p.hy())<=max2E200) && (mp::abs(p.hz())<=max2E200) && (mp::abs(p.hw())<=max2E200));
       return res;
     }
   };
@@ -421,7 +419,10 @@ struct Plane_based_traits
   void get_planes(const Mesh &m, OutputIterator out){
     using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
     using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+
+    Construct_plane_3 plane_3 = construct_plane_3_object();
     size_t k=0;
+    namespace mp = boost::multiprecision;
     auto to_int=[](const typename Mesh::Point &p){
       return Geometric_point_3(int(p.x()),int(p.y()),int(p.z()));
     };
@@ -430,15 +431,11 @@ struct Plane_based_traits
         return to_int(m.point(v));
       });
       auto pl = compute_face_normal(f, m, parameters::vertex_point_map(pmap));
-      return typename Kernel::Vector_3(pl.x(),pl.y(),pl.z());
+      return typename Kernel::Vector_3(pl.hx(),pl.hy(),pl.hz());
     };
-    for(face_descriptor f : faces(m)){
-      Plane_3 pl(typename Kernel::Plane_3(to_int(m.point(m.target(m.halfedge(f)))),
-                                          to_int_plane(f)),
-                 k);
-      out++=pl;
-      k++;
-    }
+    for(face_descriptor f : faces(m))
+      plane_3(typename Kernel::Plane_3(to_int(m.point(m.target(m.halfedge(f)))),
+                                       to_int_plane(f)));
 
   }
 
@@ -457,12 +454,11 @@ struct Plane_based_traits
     std::vector<Plane_3>* m_planes;
     Construct_plane_3(std::vector<Plane_3>* planes) : m_planes(planes){}
     Plane_3 operator()(const typename Kernel::Plane_3 &pl){
+      namespace mp = boost::multiprecision;
       m_planes->emplace_back(pl, m_planes->size());
-      int512 max = 1208925819614629174706176; //2^80
-      assert(abs(pl.a())<=max);
-      assert(abs(pl.b())<=max);
-      assert(abs(pl.c())<=max);
-      assert(abs(pl.d())<=max);
+      CGAL_assertion_code(int256 max2E60=mp::pow(int256(2),60);)
+      CGAL_assertion_code(int256 max2E90=mp::pow(int256(2),90);)
+      CGAL_assertion((mp::abs(pl.a())<=max2E60) && (mp::abs(pl.b())<=max2E60) && (mp::abs(pl.c())<=max2E60) && (mp::abs(pl.d())<=max2E90));
       return m_planes->back();
     }
 
@@ -500,14 +496,14 @@ struct Plane_based_traits
 
 template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
-Surface_mesh<Plane_based_traits<Homogeneous<int512>>::Point_3>
+Surface_mesh<Plane_based_traits<Homogeneous<int256>>::Point_3>
 trettner_kernel(const TriangleMesh& pm,
                 const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  using GT = Plane_based_traits<Homogeneous<int512>>;
+  using GT = Plane_based_traits<Homogeneous<int256>>;
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_const_property_map(vertex_point, pm));
 
