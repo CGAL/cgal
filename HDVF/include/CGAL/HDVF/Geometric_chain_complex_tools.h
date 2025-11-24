@@ -299,23 +299,37 @@ namespace Homological_discrete_vector_field {
 
 /** \brief Type returned by `dualize_complex()`.
  *
+ * \tparam ChainComplex Type of the underlying chain complex.
+ *
  * The structure contains a pair:
- * - A simplicial chain complex `L_complex` (homeomorphic to \f$\mathbb B^3\f$).
- * - A sub chain complex mask `K_complex` (encoding the initial mesh inside `L_complex`)
+ * - `L_complex`: a pointer over simplicial chain complex (homeomorphic to \f$\mathbb B^3\f$).
+ * - `K_complex`: a sub chain complex mask  (encoding the initial mesh inside `*L_complex`)
  */
 template <typename ChainComplex>
 class Complex_duality_data_t {
 public:
-    /** \brief Type of chain complex. */
+    /** \brief Type of the underlying chain complex. */
     typedef ChainComplex Chain_complex;
-    /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
+    /** \brief Type of sub chain complex mask encoding the sub complex `*K_complex`. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
-    
+    /** \brief Pointer over a complex homeomorphic to \f$\mathbb B^3\f$. */
     Chain_complex* L_complex ;
+    /** \brief Pointer over a sub chain complex mask encoding a sub complex of `*L_complex`. */
     Sub_chain_complex* K_complex ;
     
+    /** \brief Default constructor*/
     Complex_duality_data_t() : L_complex(NULL), K_complex(NULL) {}
+    
+    /** \brief Constructor from a pointer over a chain complex and a sub chain complex mask.
+     *
+     * \warning The `Complex_duality_data_t` destructor deletes its underlying complex and sub chain complex mask.
+     */
     Complex_duality_data_t(Chain_complex* L, Sub_chain_complex* K) : L_complex(L), K_complex(K) {}
+    Complex_duality_data_t(const Complex_duality_data_t&) = delete;
+    /** Destructor of the class.
+     *
+     * The `Complex_duality_data_t` destructor deletes its underlying complex and sub chain complex mask.
+     * */
     ~Complex_duality_data_t() {
         delete L_complex;
         delete K_complex;
