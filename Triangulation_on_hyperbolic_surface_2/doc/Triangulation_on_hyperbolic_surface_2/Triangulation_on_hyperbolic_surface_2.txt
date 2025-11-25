@@ -150,7 +150,7 @@ The algorithm is a Delaunay refinement algorithm that inserts the circumcenter o
 To avoid cascading square roots, each coordinate of a circumcenter is rounded to the number type provided by the user. There are two cases:
 
 - When the number type is <em>not</em> `CGAL::Gmpq`, each coordinate is rounded to a double precision number using the `CGAL::to_double()` function, and is then converted to the number type chosen by the user.
-- When the number type is `CGAL::Gmpq`, the precision of this rounding method can be increased by rounding the coordinates to a fixed precision floating-point number `CGAL::Gmpfr` instead of rounding them to a `double`. The precision of the `CGAL::Gmpfr` numbers involved is \f$ p\times 53 \f$, where \f$ p \f$ is an integer given to the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` method and 53 is the precision of a `double`. When \f$ p=1 \f$, it is thus equivalent to using the `CGAL::to_double()` approximation.
+- When the number type is `CGAL::Gmpq`, each coordinates is rounded to a fixed precision floating-point number `CGAL::Gmpfr`. The precision of the `CGAL::Gmpfr` numbers involved is \f$ p\times 53 \f$, where \f$ p \f$ is an integer given to the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` method and 53 is the precision of a `double`. When \f$ p = 1 \f$, it is thus equivalent to using the `CGAL::to_double()` approximation.
 
 The algorithm does not check whether the construction is correct on the go. Instead, it only checks the correctness at the end. This is why it can happen that the result is not a certified \f$ \varepsilon \f$-net.
 The rounding method using the `CGAL::to_double()` approximation usually works for hyperbolic surfaces of genus 2 or 3 with a lage systole, but a higher precision is required to obtain a valid \f$ \varepsilon \f$-net on surfaces of higher genus.
@@ -174,29 +174,42 @@ The package offers <span style="color:red">four</span> main classes:
 The secondary class `CGAL::Hyperbolic_isometry_2` defines isometries in the Poincaré disk together with operations to work with them.
 
 
-\section Visualization_Triangulation_lift Visualization of a Triangulation
+\section Visualization Visualization
 
-The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes the lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}). This package contains a demo (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which can be used to display triangulations.
+<div style="color:red">changé titre (Visualization of a Triangulation -> Visualization)</div>
+<div style="color:red">This package contains several demos (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which displays triangulations.</div>
+
+The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes the lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}).
 
 \cgalFigureAnchor{THS2-demo-output}
 <center>
   <img src="demo-output.png" style="max-width:25%; width:25%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{THS2-demo-output}
- Lift, in the Poincaré disk, of a Delaunay triangulation of a genus two hyperbolic surface with one vertex.
+ Lift, in the Poincaré disk, of a Delaunay triangulation of a genus two hyperbolic surface with one vertex (from Triangulation_on_hyperbolic_surface_2_demo.cpp).
 \cgalFigureCaptionEnd
 
 <div style="color:red">
-The Delaunay_triangulation_on_hyperbolic_surface_2_demo.cpp file is a demo that can be used to compute an \f$ \varepsilon \f$-net of a hyperbolic surface and display the Delaunay triangulation of the output.
 \cgalFigureAnchor{DTHS2-demo-output}
 <center>
   <img src="123_01.svg" style="max-width:25%; width:25%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{DTHS2-demo-output}
-Lift, in the Poincaré disk, of the Delaunay triangulation of a 0.1-net of a genus two hyperbolic surface with seed 123.
+Lift, in the Poincaré disk, of the Delaunay triangulation of a 0.1-net of a genus two hyperbolic surface with seed 123 (from Delaunay_triangulation_on_hyperbolic_surface_2_demo.cpp).
 \cgalFigureCaptionEnd
 </div>
 
+<div style="color:red">Additionally, the `CGAL::Dirichlet_vertices()` function can be used to display a Dirichlet domain.</div>
+
+<div style="color:red">
+\cgalFigureAnchor{HDD2-demo-output}
+<center>
+  <img src="dirichlet.svg" style="max-width:25%; width:25%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{HDD2-demo-output}
+Lift, in the Poincaré disk, of a Dirichlet domain of a genus two surface (from Hyperbolic_Dirichlet_domain_2_demo.cpp).
+\cgalFigureCaptionEnd
+</div>
 
 \section Section_Hyperbolic_Surface_Triangulations_Example Example
 
