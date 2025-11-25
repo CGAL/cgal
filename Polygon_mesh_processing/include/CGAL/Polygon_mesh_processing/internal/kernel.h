@@ -293,7 +293,13 @@ struct Plane_based_traits
 
   using plane_descriptor = std::size_t;
   using Plane_3 = std::pair<typename Kernel::Plane_3, plane_descriptor>;
-  std::vector<Plane_3> *m_planes;
+
+private:
+  using plane_range_pointer = std::shared_ptr<std::vector<Plane_3>>;
+  plane_range_pointer m_planes;
+public:
+
+
 
   struct Point_3 : public Geometric_point_3{
     std::array<plane_descriptor, 3> supports;
@@ -310,10 +316,13 @@ struct Plane_based_traits
   };
 
   struct Construct_point_3{
-    std::vector<Plane_3>* m_planes;
-    Construct_point_3(std::vector<Plane_3>* planes) : m_planes(planes){}
+    plane_range_pointer m_planes;
+    Construct_point_3(plane_range_pointer planes) : m_planes(planes){}
     Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c){
-      return Point_3(a, b, c, *m_planes);
+      const std::vector<Plane_3> &planes = *m_planes;
+      auto res = CGAL::Intersections::internal::intersection_point(planes[a].first, planes[b].first, planes[c].first, Kernel());
+      CGAL_assertion(res);
+      return Point_3(a, b, c, *res);
     }
 
     Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p){
@@ -338,11 +347,14 @@ struct Plane_based_traits
 
   struct Construct_plane_line_intersection_point_3
   {
-    std::vector<Plane_3>* m_planes;
-    Construct_plane_line_intersection_point_3(std::vector<Plane_3>* planes) : m_planes(planes){}
+    plane_range_pointer m_planes;
+    Construct_plane_line_intersection_point_3(plane_range_pointer planes) : m_planes(planes){}
     Point_3 operator()(const Plane_3& plane, const Point_3& p, const Point_3& q)
     {
-      auto get_common_supports=[](const Point_3& p, const Point_3 &q){
+      Construct_point_3 point_3(m_planes);
+      const std::vector<Plane_3> &planes=*m_planes;
+
+      auto get_common_supports=[&](const Point_3& p, const Point_3 &q){
         plane_descriptor first=-1;
         plane_descriptor second=-1;
         for(short int i=0; i!=3; ++i)
@@ -356,36 +368,36 @@ struct Plane_based_traits
                 return std::make_pair(first, second);
               }
 
-        for(plane_descriptor plane: p.other_coplanar)
+        for(plane_descriptor pd: p.other_coplanar)
           for(short int j=0; j!=3; ++j)
-            if(plane==q.supports[j])
+            if(pd==q.supports[j])
               if(first==-1){
-                first=plane;
+                first=pd;
                 break;
-              } else {
-                second=plane;
+              } else if(planes[first].first!=planes[pd].first){
+                second=pd;
                 return std::make_pair(first, second);
               }
 
-        for(plane_descriptor plane: q.other_coplanar)
+        for(plane_descriptor pd: q.other_coplanar)
           for(short int j=0; j!=3; ++j)
-            if(plane==p.supports[j])
+            if(pd==p.supports[j])
               if(first==-1){
-                first=plane;
+                first=pd;
                 break;
-              } else {
-                second=plane;
+              } else if(planes[first].first!=planes[pd].first){
+                second=pd;
                 return std::make_pair(first, second);
               }
 
-        for(plane_descriptor plane: p.other_coplanar)
-          for(plane_descriptor qlane: q.other_coplanar)
-            if(plane==qlane)
+        for(plane_descriptor pd: p.other_coplanar)
+          for(plane_descriptor qd: q.other_coplanar)
+            if(pd==qd)
               if(first==-1){
-                first=plane;
+                first=pd;
                 break;
-              } else {
-                second=plane;
+              } else if(planes[first].first!=planes[pd].first){
+                second=pd;
                 return std::make_pair(first, second);
               }
         // The two points do not shair a common support
@@ -395,34 +407,25 @@ struct Plane_based_traits
         CGAL_assertion(0);
       };
 
-      auto orient=[](const typename Kernel::Plane_3& plane, const Geometric_point_3& p){
-        return sign (plane.a()*p.hx() + plane.b()*p.hy() + plane.c()*p.hz() + plane.d() * p.hw());
-      };
       std::pair<plane_descriptor, plane_descriptor> line_supports=get_common_supports(p, q);
-      Point_3 res(plane.second, line_supports.first, line_supports.second, *m_planes);
+      assert((planes[line_supports.first].first != planes[line_supports.second].first) &&
+             (planes[line_supports.first].first != planes[line_supports.second].first.opposite()));
+      Point_3 res=point_3(plane.second, line_supports.first, line_supports.second);
 
       namespace mp = boost::multiprecision;
-      CGAL_assertion_code(int256 max2E200=mp::pow(int256(2),200);)
-      CGAL_assertion((mp::abs(p.hx())<=max2E200) && (mp::abs(p.hy())<=max2E200) && (mp::abs(p.hz())<=max2E200) && (mp::abs(p.hw())<=max2E200));
+      CGAL_assertion_code(int256 max2E195=mp::pow(int256(2),195);)
+      CGAL_assertion_code(int256 max2E169=mp::pow(int256(2),169);)
+      CGAL_assertion((mp::abs(p.hx())<=max2E195) && (mp::abs(p.hy())<=max2E195) && (mp::abs(p.hz())<=max2E195) && (mp::abs(p.hw())<=max2E169));
       return res;
     }
   };
 
   template<class Mesh>
   Plane_based_traits(const Mesh &m){
-    m_planes = new std::vector<Plane_3>;
-    m_planes->reserve(faces(m).size());
-    get_planes(m, std::back_inserter(*m_planes));
-  }
-
-  template<class Mesh, class OutputIterator>
-  void get_planes(const Mesh &m, OutputIterator out){
+    namespace mp = boost::multiprecision;
     using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
     using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
 
-    Construct_plane_3 plane_3 = construct_plane_3_object();
-    size_t k=0;
-    namespace mp = boost::multiprecision;
     auto to_int=[](const typename Mesh::Point &p){
       return Geometric_point_3(int(p.x()),int(p.y()),int(p.z()));
     };
@@ -433,10 +436,16 @@ struct Plane_based_traits
       auto pl = compute_face_normal(f, m, parameters::vertex_point_map(pmap));
       return typename Kernel::Vector_3(pl.hx(),pl.hy(),pl.hz());
     };
+
+    m_planes = std::make_shared<std::vector<Plane_3>>();
+    m_planes->reserve(faces(m).size());
+
+    // The ptr need to be initialized to get the functor
+    Construct_plane_3 plane_3 = construct_plane_3_object();
+
     for(face_descriptor f : faces(m))
       plane_3(typename Kernel::Plane_3(to_int(m.point(m.target(m.halfedge(f)))),
                                        to_int_plane(f)));
-
   }
 
   Oriented_side_3 oriented_side_3_object() const
@@ -451,14 +460,14 @@ struct Plane_based_traits
 
   struct Construct_plane_3{
 
-    std::vector<Plane_3>* m_planes;
-    Construct_plane_3(std::vector<Plane_3>* planes) : m_planes(planes){}
+    plane_range_pointer m_planes;
+    Construct_plane_3(plane_range_pointer planes) : m_planes(planes){}
     Plane_3 operator()(const typename Kernel::Plane_3 &pl){
       namespace mp = boost::multiprecision;
       m_planes->emplace_back(pl, m_planes->size());
-      CGAL_assertion_code(int256 max2E60=mp::pow(int256(2),60);)
-      CGAL_assertion_code(int256 max2E90=mp::pow(int256(2),90);)
-      CGAL_assertion((mp::abs(pl.a())<=max2E60) && (mp::abs(pl.b())<=max2E60) && (mp::abs(pl.c())<=max2E60) && (mp::abs(pl.d())<=max2E90));
+      CGAL_assertion_code(int256 max2E55=mp::pow(int256(2),55);)
+      CGAL_assertion_code(int256 max2E82=mp::pow(int256(2),82);)
+      CGAL_assertion((mp::abs(pl.a())<=max2E55) && (mp::abs(pl.b())<=max2E55) && (mp::abs(pl.c())<=max2E82) && (mp::abs(pl.d())<=max2E82));
       return m_planes->back();
     }
 
@@ -516,7 +525,7 @@ trettner_kernel(const TriangleMesh& pm,
   using InternMesh = Surface_mesh<Point_3>;
 
   GT gt(pm);
-  std::vector<Plane_3> planes=gt.planes();
+  const std::vector<Plane_3> &planes=gt.planes();
 
   Construct_plane_3 plane_3 = gt.construct_plane_3_object();
   Construct_point_3 point_3 = gt.construct_point_3_object();
