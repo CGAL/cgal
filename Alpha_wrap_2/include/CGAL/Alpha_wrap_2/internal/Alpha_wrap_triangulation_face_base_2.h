@@ -45,10 +45,10 @@ inline std::string label_string(const Face_label& label) {
   }
 }
 
-std::ostream& operator <<(std::ostream& os, const Face_label& label)
+inline std::ostream& operator <<(std::ostream& os, const Face_label& label)
 {
-   os << static_cast<std::underlying_type<Face_label>::type>(label);
-   return os;
+  os << static_cast<std::underlying_type<Face_label>::type>(label);
+  return os;
 }
 
 template < typename GT,
