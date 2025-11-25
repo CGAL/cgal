@@ -1,3 +1,4 @@
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
@@ -5,21 +6,24 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
+
+#include <iostream>
+#include <sstream>
+#include <vector>
 
 using namespace CGAL;
 
-typedef Gmpq														NumberType;
-typedef Circular_kernel_2<Simple_cartesian<NumberType>, Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
+typedef Circular_kernel_2<Simple_cartesian<Exact_rational>, Algebraic_kernel_for_circles_2_2<Exact_rational>> Kernel;
 typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>		ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>					Traits;
+typedef Hyperbolic_surface_traits_2<ParentTraits> 					Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>						Domain;
 typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>		Delaunay_triangulation;
+typedef typename Delaunay_triangulation::Anchor						Anchor;
+typedef typename Delaunay_triangulation::CMap						CMap;
 
 typedef typename Traits::FT											FT;
 typedef typename Traits::Hyperbolic_point_2							Point;
-
-double epsilon = 0.25;
-int p = 2;
 
 Domain build_domain()
 {
@@ -49,17 +53,32 @@ Domain build_domain()
 	return Domain(vertices, pairings);
 }
 
-int main(int argc, char *argv[])
+int main()
 {
-  	Domain domain = build_domain();
+	Domain domain = build_domain();
 	Delaunay_triangulation dt = Delaunay_triangulation(domain);
 
 	assert(dt.is_valid());
 
-  	bool is_eps_net = dt.epsilon_net(epsilon, p);
+	std::cout << "printing triangulation for test purposes: " << std::endl << dt;
 
-  	assert(is_eps_net);
-  	assert(dt.is_valid());
+	Anchor a0 = dt.locate(Point(0.5, 0.5)); // straight walk
+	Anchor a1 = dt.locate(Point(0.5, 0.5), true); // visibility walk
 
-  	return 0;
+	assert(dt.anchor(a0.dart).dart == dt.anchor(a1.dart).dart); //check that both anchors correspond to the same triangle
+
+	bool same_vertices = true;
+	for (unsigned i = 0; i < 3; ++i) {
+		bool found = false;
+		for (unsigned j = 0; j < 3; ++j) {
+			if (a0.vertices[i] == a1.vertices[j]) {
+				found = true;
+			}
+		}
+		same_vertices = same_vertices && found;
+	}
+
+	assert(same_vertices);
+
+	return 0;
 }
