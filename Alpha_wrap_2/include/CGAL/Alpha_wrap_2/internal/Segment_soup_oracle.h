@@ -102,6 +102,12 @@ public:
   { }
 
 public:
+  void clear()
+  {
+    m_segments_ptr->clear();
+    Oracle_base::clear();
+  }
+
   template <typename SegmentRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_segments(const SegmentRange& segments,

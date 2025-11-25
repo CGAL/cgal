@@ -98,6 +98,12 @@ public:
   { }
 
 public:
+  void clear()
+  {
+    m_points_ptr->clear();
+    Oracle_base::clear();
+  }
+
   // adds a range of points to the oracle
   template <typename PointRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
