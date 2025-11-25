@@ -759,7 +759,16 @@ int bisect_errors(Mesh mesh, CDT_options options) {
 
   // Lambda to save the mesh to a file
   auto save_mesh = [](const Mesh& m, const std::string& prefix) {
-    std::ofstream out(prefix + "_mesh.off");
+    static int count = 0;
+    auto filename = prefix + "_mesh";
+    if(prefix == "bad") {
+      ++count;
+      filename += "_";
+      filename += std::to_string(count) + ".off";
+    } else {
+      filename += ".off";
+    }
+    std::ofstream out(filename);
     out.precision(17);
     out << m;
   };
