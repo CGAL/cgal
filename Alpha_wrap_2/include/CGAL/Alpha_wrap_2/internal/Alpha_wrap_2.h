@@ -233,7 +233,10 @@ public:
   const Oracle& oracle() const { return m_oracle; }
   Triangulation& triangulation() { return m_tr; }
   const Triangulation& triangulation() const { return m_tr; }
+  Alpha_PQ& queue() { return m_queue; }
   const Alpha_PQ& queue() const { return m_queue; }
+  const FT& alpha() const { return m_alpha; }
+  const FT& offset() const { return m_offset; }
 
   double default_alpha() const
   {
