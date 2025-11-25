@@ -11,9 +11,9 @@
 
 using namespace CGAL;
 
-typedef CGAL::Gmpq                                                      NumberType;
-typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>     ParentTraits;
+typedef Gmpq                                                      NumberType;
+typedef Circular_kernel_2<Simple_cartesian<NumberType>, Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
+typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>     ParentTraits;
 
 // typedef Simple_cartesian<NumberType>                                Kernel;
 // typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
