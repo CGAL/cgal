@@ -911,18 +911,18 @@ private:
   }
 
   Steiner_status compute_steiner_point(const Gate& gate,
-                                       Point_2& steiner_point) const
+                                       Point_3& steiner_point) const
   {
-    const Face_handle fh = gate.face();
+    const Facet& f = gate.facet();
     const Cell_handle ch = f.first;
     const int s = f.second;
     const Cell_handle nh = ch->neighbor(s);
     return compute_steiner_point(ch, nh, steiner_point);
   }
 
-  bool compute_steiner_point(const Cell_handle ch,
-                             const Cell_handle neighbor,
-                             Point_3& steiner_point) const
+  Steiner_status compute_steiner_point(const Cell_handle ch,
+                                       const Cell_handle neighbor,
+                                       Point_3& steiner_point) const
   {
     CGAL_precondition(!m_tr.is_infinite(neighbor));
 
