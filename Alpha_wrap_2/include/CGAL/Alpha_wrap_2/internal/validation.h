@@ -186,18 +186,10 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
     return false;
   }
 
-  if(!Polygon_repair::internal::is_valid(wrap))
+  if(!Polygon_repair::is_valid(wrap))
   {
 #ifdef CGAL_AW3_DEBUG
     std::cerr << "Error: invalid wrap" << std::endl;
-#endif
-    return false;
-  }
-
-  if(Alpha_wraps_2::internal::has_degenerated_edges(wrap))
-  {
-#ifdef CGAL_AW3_DEBUG
-    std::cerr << "Error: Wrap has degenerate edges" << std::endl;
 #endif
     return false;
   }
