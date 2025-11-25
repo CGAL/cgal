@@ -1953,7 +1953,8 @@ private:
       m_queue.push(g); // no need for a resize here since the vector capacity is unchanged
   }
 
-  void dump_triangulation(const std::string filename)
+  void dump_triangulation(const std::string filename,
+                          const bool color_by_region_label = false) const
   {
     std::stringstream vertices_ss;
     vertices_ss.precision(17);
@@ -1978,20 +1979,56 @@ private:
       }
     }
 
-    // Then output faces with colors
+    // If coloring by region_label, collect region labels and assign colors
+    std::unordered_map<int, std::array<int, 3> > region_colors;
+    if(color_by_region_label)
+    {
+      std::set<int> region_labels;
+      for(auto fit = m_tr.finite_faces_begin(); fit != m_tr.finite_faces_end(); ++fit)
+        region_labels.insert(fit->region_label());
+
+      CGAL::Random rng(0);
+      std::vector<std::array<int, 3> > palette;
+      for(std::size_t i=0; i<region_labels.size(); ++i) {
+        // @todo something better looking...
+        palette.push_back({rng.get_int(0, 256),
+                           rng.get_int(0, 256),
+                           rng.get_int(0, 256)});
+      }
+      int idx = 0;
+      for(int label : region_labels) // labels are not a nice 0...n sequence
+        region_colors[label] = palette[idx++];
+    }
+
     for(auto fit = m_tr.finite_faces_begin(); fit != m_tr.finite_faces_end(); ++fit)
     {
       faces_ss << "3";
       for(int i = 0; i < 3; ++i)
         faces_ss << " " << vertex_to_id[fit->vertex(i)];
 
-      // Color format: r g b
-      if(fit->is_inside())
-        faces_ss << " 51 153 51"; // green for inside
-      else if(fit->label() == Face_label::MANIFOLD)
-        faces_ss << " 246 211 45"; // yellow for manifold
+      if(color_by_region_label)
+      {
+        auto it = region_colors.find(fit->region_label());
+        if(it != region_colors.end())
+        {
+          auto& c = it->second;
+          faces_ss << " " << c[0] << " " << c[1] << " " << c[2];
+        }
+        else
+        {
+          faces_ss << " 128 128 128"; // fallback gray
+        }
+      }
       else
-        faces_ss << " 192 28 40"; // red for outside
+      {
+        // Color format: r g b
+        if(fit->is_inside())
+          faces_ss << " 51 153 51"; // green for inside
+        else if(fit->label() == Face_label::MANIFOLD)
+          faces_ss << " 246 211 45"; // yellow for manifold
+        else
+          faces_ss << " 192 28 40"; // red for outside
+      }
 
       faces_ss << "\n";
       ++nf;
