@@ -46,6 +46,7 @@ struct Gate_steiner_info
   std::optional<Point_3> m_steiner_point = std::nullopt;
 
   bool has_steiner_point() const { return m_steiner_point.has_value(); }
+  bool has_steiner_from_intersection() const { return (m_steiner_status == Steiner_status::RULE_1); }
   bool has_steiner_from_projection() const { return (m_steiner_status == Steiner_status::RULE_2); }
   const Point_3& steiner_point() const {
     CGAL_precondition(has_steiner_point());
