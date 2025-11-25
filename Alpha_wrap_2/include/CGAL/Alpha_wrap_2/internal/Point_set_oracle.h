@@ -101,8 +101,8 @@ public:
   // adds a range of points to the oracle
   template <typename PointRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void add_point_set(const PointRange& points,
-                     const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
+  void add_points(const PointRange& points,
+                  const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
     if(points.empty())
     {
@@ -119,7 +119,7 @@ public:
     std::cout << "Insert into AABB tree (points)..." << std::endl;
 #endif
 
-    this->tree().insert(std::next(std::cbegin(*m_points_ptr), old_size), std::cend(*m_points_ptr));
+    this->tree().rebuild(std::cbegin(*m_points_ptr), std::cend(*m_points_ptr));
 
     // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
     // it will be done at the first treatment of an edge that needs a Steiner point.
@@ -127,7 +127,9 @@ public:
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
 
-    CGAL_postcondition(this->tree().size() == m_points_ptr->size());
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "PS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
   }
 };
 
