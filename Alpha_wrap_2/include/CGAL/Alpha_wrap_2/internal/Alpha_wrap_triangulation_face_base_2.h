@@ -70,6 +70,7 @@ public:
 
 private:
   Face_label m_label = Face_label::INSIDE;
+  int m_region_label = 0; // used during boundary extraction
 
 #ifndef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
   unsigned int m_erase_counter;
@@ -94,6 +95,8 @@ public:
   void set_label(const Face_label label) { m_label = label; }
   bool is_inside() const { return m_label == Face_label::INSIDE; }
   bool is_outside() const { return m_label == Face_label::OUTSIDE; }
+  int region_label() const { return m_region_label; }
+  void set_region_label(const int region_label) { m_region_label = region_label; }
 
 #ifndef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
   unsigned int erase_counter() const
