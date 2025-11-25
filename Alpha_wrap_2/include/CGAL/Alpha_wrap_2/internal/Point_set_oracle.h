@@ -1,5 +1,4 @@
 // Copyright (c) 2019-2022 Google LLC (USA).
-// Copyright (c) 2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -110,6 +109,10 @@ public:
   void add_points(const PointRange& points,
                   const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "Insert into AABB tree (points)..." << std::endl;
+#endif
+
     if(points.empty())
     {
 #ifdef CGAL_AW2_DEBUG
@@ -120,10 +123,6 @@ public:
 
     const std::size_t old_size = m_points_ptr->size();
     m_points_ptr->insert(std::cend(*m_points_ptr), std::cbegin(points), std::cend(points));
-
-#ifdef CGAL_AW2_DEBUG
-    std::cout << "Insert into AABB tree (points)..." << std::endl;
-#endif
 
     this->tree().rebuild(std::cbegin(*m_points_ptr), std::cend(*m_points_ptr));
 

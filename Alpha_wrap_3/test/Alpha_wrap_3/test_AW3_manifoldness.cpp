@@ -57,7 +57,7 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
     assert(AW3::internal::has_expected_Hausdorff_distance(nm_wrap, input_mesh, alpha, offset));
   }
 
-  assert(AW3::internal::check_edge_length(nm_wrap, alpha));
+  assert(AW3::internal::has_bounded_edge_length(nm_wrap, alpha));
 
   FT base_vol = 0;
   if(!is_closed(nm_wrap))

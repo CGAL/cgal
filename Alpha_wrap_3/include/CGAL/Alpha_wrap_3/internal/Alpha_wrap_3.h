@@ -207,13 +207,27 @@ public:
     static_assert(std::is_floating_point<FT>::value);
   }
 
+  void clear()
+  {
+    m_oracle.clear();
+    m_bbox = {};
+    m_alpha = m_sq_alpha = FT(-1);
+    m_offset = m_sq_offset = FT(-1);
+    m_seeds.clear();
+    m_tr.clear();
+    m_queue.clear();
+  }
+
 public:
   const Geom_traits& geom_traits() const { return m_tr.geom_traits(); }
   Oracle& oracle() { return m_oracle; }
   const Oracle& oracle() const { return m_oracle; }
   Triangulation& triangulation() { return m_tr; }
   const Triangulation& triangulation() const { return m_tr; }
+  Alpha_PQ& queue() { return m_queue; }
   const Alpha_PQ& queue() const { return m_queue; }
+  const FT& alpha() const { return m_alpha; }
+  const FT& offset() const { return m_offset; }
 
   double default_alpha() const
   {
@@ -365,6 +379,11 @@ public:
 #endif
     }
 
+ #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    IO::write_polygon_mesh("final_wrap.off", output_mesh, CGAL::parameters::stream_precision(17));
+    dump_triangulation_faces("final_tr.off", false /*only_boundary_faces*/);
+ #endif
+
     extract_surface(output_mesh, ovpm, !do_enforce_manifoldness);
 
 #ifdef CGAL_AW3_TIMER
@@ -375,11 +394,6 @@ public:
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Alpha wrap vertices:  " << vertices(output_mesh).size() << std::endl;
     std::cout << "Alpha wrap faces:     " << faces(output_mesh).size() << std::endl;
-
- #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
-    IO::write_polygon_mesh("final_wrap.off", output_mesh, CGAL::parameters::stream_precision(17));
-    dump_triangulation_faces("final_tr.off", false /*only_boundary_faces*/);
- #endif
 #endif
 
     visitor.on_alpha_wrapping_end(*this);
@@ -501,7 +515,7 @@ private:
   // which yields
   //   r = a * sin(2pi / 5) =~ 0.95105651629515353 * a
   // Faces of an icosahedron are equilateral triangles with size a and circumradius a / sqrt(3)
-  // Since we want faces of the icosahedron to be traversable, we want a such that
+  // Since we want faces of the icosahedron to be traversable, we want `a` such that
   //   a / sqrt(3) > alpha
   // Hence r such that
   //   r / (sqrt(3) * sin(2pi/5)) > alpha
@@ -509,7 +523,7 @@ private:
   //
   // Furthermore, the triangles between edges of the icosahedron and the center of the icosahedron
   // are not equilateral triangles since a is slightly bigger than r. They are
-  // slightly flattened isocele triangles with base 'a' and the circumradius is smaller.
+  // slightly flattened isocele triangles with base `a` and the circumradius is smaller.
   // The circumradius is
   //   r_iso = r² / (2 * h) = r² / (2 * sqrt(r² - (a / 2)²))
   // Since r = a * sin(2pi / 5)
@@ -896,6 +910,16 @@ private:
     return less_squared_radius_of_min_empty_sphere(m_sq_alpha, f, m_tr);
   }
 
+  Steiner_status compute_steiner_point(const Gate& gate,
+                                       Point_2& steiner_point) const
+  {
+    const Face_handle fh = gate.face();
+    const Cell_handle ch = f.first;
+    const int s = f.second;
+    const Cell_handle nh = ch->neighbor(s);
+    return compute_steiner_point(ch, nh, steiner_point);
+  }
+
   bool compute_steiner_point(const Cell_handle ch,
                              const Cell_handle neighbor,
                              Point_3& steiner_point) const
@@ -950,7 +974,7 @@ private:
 #ifdef CGAL_AW3_DEBUG_STEINER_COMPUTATION
         std::cout << "Steiner found through first_intersection(): " << steiner_point << std::endl;
 #endif
-        return true;
+        return Steiner_status::RULE_1;
       }
     }
 
@@ -959,6 +983,10 @@ private:
     {
       // steiner point is the closest point on input from cell centroid with offset
       const Point_3 closest_pt = m_oracle.closest_point(neighbor_cc);
+#ifdef CGAL_AW3_DEBUG_STEINER_COMPUTATION
+      std::cout << "Steiner found through neighboring triangle intersecting the input" << std::endl;
+      std::cout << "Closest point: " << closest_pt << std::endl;
+#endif
       CGAL_assertion(closest_pt != neighbor_cc);
 
       Vector_3 unit = vector(closest_pt, neighbor_cc);
@@ -968,19 +996,18 @@ private:
       steiner_point = translate(closest_pt, unit);
 
 #ifdef CGAL_AW3_DEBUG_STEINER_COMPUTATION
-      std::cout << "Steiner found through neighboring tet intersecting the input: " << steiner_point << std::endl;
-      std::cout << "Closest point: " << closest_pt << std::endl;
-      std::cout << "Direction: " << vector(closest_pt, neighbor_cc) << std::endl;
+      std::cout << "Direction: " << unit << std::endl;
+      std::cout << "Steiner: " << steiner_point << std::endl;
 #endif
 
-      return true;
+      return Steiner_status::RULE_2;
     }
 
 #ifdef CGAL_AW3_DEBUG_STEINER_COMPUTATION
     std::cout << "No Steiner point" << std::endl;
 #endif
 
-    return false;
+    return Steiner_status::NO_STEINER_POINT;
   }
 
 private:
@@ -1043,7 +1070,12 @@ public:
     CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
 
     if(m_tr.is_infinite(nh))
+    {
+#ifdef CGAL_AW3_DEBUG_FACET_STATUS
+      std::cout << "Infinite neighboring cell" << std::endl;
+#endif
       return Facet_status::HAS_INFINITE_NEIGHBOR;
+    }
 
     if(nh->is_outside())
     {
@@ -1104,9 +1136,23 @@ private:
     const FT sqr = smallest_squared_radius_3(f, m_tr);
     const bool is_permissive = (status == Facet_status::HAS_INFINITE_NEIGHBOR ||
                                 status == Facet_status::SCAFFOLDING);
-    m_queue.resize_and_push(Gate(f, sqr, is_permissive));
+    Gate new_gate(f, sqr, is_permissive);
 #else
-    m_queue.push(Gate(f, m_tr));
+    Gate new_gate(f, m_tr);
+#endif
+
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+    Point_3 steiner_point;
+    Steiner_status steiner_status = compute_steiner_point(new_gate, steiner_point);
+    new_gate.m_steiner_status = steiner_status;
+    if(steiner_status == Steiner_status::RULE_1 || steiner_status == Steiner_status::RULE_2)
+      new_gate.m_steiner_point = steiner_point;
+#endif
+
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+  m_queue.resize_and_push(new_gate);
+#else
+  m_queue.push(new_gate);
 #endif
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
@@ -1241,26 +1287,25 @@ private:
 #endif
 
       const Facet& f = gate.facet();
-      CGAL_precondition(!m_tr.is_infinite(f));
-
       const Cell_handle ch = f.first;
       const int s = f.second;
-      CGAL_precondition(ch->is_outside());
-
       const Cell_handle nh = ch->neighbor(s);
-      CGAL_precondition(nh->label() == Cell_label::INSIDE || nh->label() == Cell_label::OUTSIDE);
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
       static int fid = 0;
       std::cout << m_tr.number_of_vertices() << " DT vertices" << std::endl;
       std::cout << m_queue.size() << " facets in the queue" << std::endl;
-      std::cout << "Face " << fid++ << "\n"
-                << "c = " << &*ch << " (" << m_tr.is_infinite(ch) << "), n = " << &*nh << " (" << m_tr.is_infinite(nh) << ")" << "\n"
-                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
-                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
-                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
+      std::cout << "Face " << fid++ << " ["
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << " "
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << " "
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << "]" << std::endl;
+      std::cout << "c = " << &*ch << " (inf: " << m_tr.is_infinite(ch) << ", label: " << ch->label() << "), n = "
+                          << &*nh << " (inf: " << m_tr.is_infinite(nh) << ", label: " << nh->label() << ")" << "\n"
+
+# ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
       std::cout << "Priority: " << gate.priority() << " (sq alpha: " << m_sq_alpha << ")" << std::endl;
       std::cout << "Permissiveness: " << gate.is_permissive_facet() << std::endl;
+# endif
 #endif
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
@@ -1277,6 +1322,10 @@ private:
       face_out.close();
 #endif
 
+      CGAL_precondition(!m_tr.is_infinite(f));
+      CGAL_precondition(ch->is_outside());
+      CGAL_precondition(nh->label() == Cell_label::INSIDE || nh->label() == Cell_label::OUTSIDE);
+
       visitor.before_facet_treatment(*this, gate);
 
       m_queue.pop();
@@ -1291,7 +1340,8 @@ private:
       }
 
       Point_3 steiner_point;
-      if(compute_steiner_point(ch, nh, steiner_point))
+      Steiner_status ss = compute_steiner_point(ch, nh, steiner_point);
+      if(ss != Steiner_status::NO_STEINER_POINT)
       {
 //        std::cout << CGAL::abs(CGAL::approximate_sqrt(m_oracle.squared_distance(steiner_point)) - m_offset)
 //                  << " vs " << 1e-2 * m_offset << std::endl;

@@ -22,16 +22,46 @@
 
 #include <cassert>
 #include <iostream>
+#include <optional>
 
 namespace CGAL {
 namespace Alpha_wraps_3 {
 namespace internal {
+
+enum class Steiner_status
+{
+  UNKONWN = 0,
+  NO_STEINER_POINT,
+  RULE_1,
+  RULE_2
+};
+
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+template <typename Tr>
+struct Gate_steiner_info
+{
+  using Point_3 = typename Tr::Geom_traits::Point_3;
+
+  Steiner_status m_steiner_status = Steiner_status::UNKNOWN;
+  std::optional<Point_3> m_steiner_point = std::nullopt;
+
+  bool has_steiner_point() const { return m_steiner_point.has_value(); }
+  bool has_steiner_from_projection() const { return (m_steiner_status == Steiner_status::RULE_2); }
+  const Point_3& steiner_point() const {
+    CGAL_precondition(has_steiner_point());
+    return *m_steiner_point;
+  }
+};
+#endif
 
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
 
 // Represents an alpha-traversable facet in the mutable priority queue
 template <typename Tr>
 class Gate
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+  : public Gate_steiner_info<Tr>
+#endif
 {
   using Facet = typename Tr::Facet;
   using FT = typename Tr::Geom_traits::FT;
@@ -97,6 +127,9 @@ struct Less_gate
 // Represents an alpha-traversable facet in the mutable priority queue
 template <typename Tr>
 class Gate
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+  : public Gate_steiner_info<Tr>
+#endif
 {
   using Facet = typename Tr::Facet;
   using FT = typename Tr::Geom_traits::FT;
