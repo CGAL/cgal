@@ -17,22 +17,25 @@
 #ifndef CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
-// @bug
-// - mixed_input broken (ordered or unordered queue)
-
-// @todo
-// - Add initialize_with_cavities
-// - arrange polygons if we have no purged cavities
-// - multipolygon would make more sense? see also "purge inner CCs" + arrange_offset_polygons from SLS2
-
-// @todo long
-// - check what could be factorized with AW3 (e.g. oracle base?)
-// - test relaxed sphere marching
-// - test expensive assertions in T3
+// @todo yesterday
 // - document and test new kernel functors
 // - document and test DT2 face base classes
+// - Fix doc of polygon concepts
+// - AW2 ref manual doc + submit feature
+
+// @todo
+// - continue adding tests
+// - Add initialize_with_cavities
+// - test multi polygon island representation (use seeds)
+// - sphere marching from the AW3 branch
+
+// @todo long
+// - support .xy, .xyl, .pwn, ...?
 // - bench queues and whatnot
+// - test relaxed sphere marching
 // - if(is_neighbor_cc_in_offset) should be removed if sphere marching is used
+// - check what could be factorized with AW3 (e.g. oracle base?)
+// - test expensive assertions in T3
 
 #include <CGAL/license/Alpha_wrap_2.h>
 
@@ -50,21 +53,15 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Default.h>
 #include <CGAL/Named_function_parameters.h>
 #ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
  #include <CGAL/Modifiable_priority_queue.h>
 #endif
-#include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h> // only if non-manifoldness is not treated
+#include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 
 #include <algorithm>
@@ -141,7 +138,7 @@ public:
   // Use the geom traits from the triangulation, and trust the (advanced) user that provided it
   using Geom_traits = typename Triangulation::Geom_traits;
 
-private:
+public:
   using Face_handle = typename Triangulation::Face_handle;
   using Face_circulator = typename Triangulation::Face_circulator;
   using Edge = typename Triangulation::Edge;
@@ -158,8 +155,6 @@ private:
   // An unsorted queue is a LIFO queue, and is experimentally much faster (~35%),
   // but intermediate results are not useful: a LIFO carves deep before than wide,
   // and can thus for example leave scaffolding faces till almost the end of the refinement.
-  //
-  // @todo bench this in 2D
 #ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Triangulation>, CGAL_BOOST_PAIRING_HEAP>;
 #else
@@ -263,17 +258,15 @@ private:
   }
 
 public:
-  template <typename OutputPolygons,
+  template <typename MultipolygonWithHoles,
             typename InputNamedParameters = parameters::Default_named_parameters,
             typename OutputNamedParameters = parameters::Default_named_parameters>
   void operator()(const double alpha, // = default_alpha()
                   const double offset, // = alpha / 30.
-                  OutputPolygons& output_polygons,
+                  MultipolygonWithHoles& wrap,
                   const InputNamedParameters& in_np = parameters::default_values(),
                   const OutputNamedParameters& out_np = parameters::default_values())
   {
-    namespace PMP = Polygon_mesh_processing;
-
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
@@ -1016,7 +1009,6 @@ private:
 
       Vector_2 unit = vector(closest_pt, neighbor_cc);
 
-      // PMP::internal::normalize() requires sqrt()
       unit = scale(unit, m_offset / approximate_sqrt(geom_traits().compute_squared_length_2_object()(unit)));
       steiner_point = translate(closest_pt, unit);
 
@@ -1187,7 +1179,7 @@ private:
     return true;
   }
 
-private:
+public:
   bool initialize(const double alpha,
                   const double offset,
                   const bool refining)
@@ -1277,8 +1269,12 @@ private:
     // Explore all finite faces that are reachable from one of the initial outside faces.
     while(!m_queue.empty())
     {
-      if(!visitor.go_further(*this))
+      if(!visitor.go_further(*this)) {
+#ifdef CGAL_AW2_DEBUG_QUEUE_PP
+        std::cout << "Stopping on visitor request" << std::endl;
+#endif
         return false;
+      }
 
 #ifdef CGAL_AW2_DEBUG_QUEUE_PP
       check_queue_sanity();

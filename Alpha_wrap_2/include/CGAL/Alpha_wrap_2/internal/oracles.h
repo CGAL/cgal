@@ -20,6 +20,5 @@
 
 #include <CGAL/Alpha_wrap_2/internal/Point_set_oracle.h>
 #include <CGAL/Alpha_wrap_2/internal/Segment_soup_oracle.h>
-#include <CGAL/Alpha_wrap_2/internal/Triangle_soup_oracle.h>
 
 #endif // CGAL_ALPHA_WRAP_2_INTERNAL_ORACLES_H
