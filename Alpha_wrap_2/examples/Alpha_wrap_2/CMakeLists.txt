@@ -6,9 +6,9 @@ project(Alpha_wrap_2_Examples)
 
 find_package(CGAL REQUIRED)
 
-create_single_source_cgal_program("AABB_2.cpp")
-
 # create a target per cppfile
-create_single_source_cgal_program("triangle_soup_wrap_2.cpp")
 create_single_source_cgal_program("point_set_wrap_2.cpp")
+create_single_source_cgal_program("polyline_wrap_2.cpp")
+create_single_source_cgal_program("polygon_wrap_2.cpp")
+create_single_source_cgal_program("triangle_soup_wrap_2.cpp")
 create_single_source_cgal_program("mixed_inputs_wrap_2.cpp")

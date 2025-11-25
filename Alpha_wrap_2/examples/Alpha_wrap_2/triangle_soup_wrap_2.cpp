@@ -1,13 +1,16 @@
+#define CGAL_AW2_DEBUG_PP
+
 #include "output_helper.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/alpha_wrap_2.h>
-#include <CGAL/Polygon_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/IO/WKT.h>
 
 #include <array>
 #include <iostream>
@@ -20,7 +23,7 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = K::Point_2;
 using Point_3 = K::Point_3;
 
-using Polygon_2 = CGAL::Polygon_2<K>;
+using Multipolygon = CGAL::Multipolygon_with_holes_2<K>;
 
 int main(int argc, char** argv)
 {
@@ -68,17 +71,20 @@ int main(int argc, char** argv)
   CGAL::Real_timer t;
   t.start();
 
-  std::vector<Polygon_2> wrap;
+  Multipolygon wrap;
   CGAL::alpha_wrap_2(points_2, faces, alpha, offset, wrap);
 
   t.stop();
-  std::cout << "Result: " << wrap.size() << " polygons" << std::endl;
+  std::cout << "Result: " << wrap.polygons_with_holes().size() << " polygons" << std::endl;
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
   const std::string output_name = generate_output_name(filename, relative_alpha, relative_offset);
   std::cout << "Writing to " << output_name << std::endl;
-  write_polygons(output_name, wrap);
+
+  std::ofstream out(output_name);
+  out.precision(std::numeric_limits<double>::max_digits10);
+  CGAL::IO::write_multi_polygon_WKT(out, wrap);
 
   std::cout << "Done." << std::endl;
 

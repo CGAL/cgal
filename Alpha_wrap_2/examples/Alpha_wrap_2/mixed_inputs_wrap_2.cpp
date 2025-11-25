@@ -1,23 +1,14 @@
-
-#define CGAL_AW2_DEBUG
-#define CGAL_AW2_DEBUG_DUMP_INTERMEDIATE_WRAPS
-#define CGAL_AW2_DEBUG_QUEUE
-#define CGAL_AW2_DEBUG_DUMP_EVERY_STEP
-// #define CGAL_AW2_DEBUG_QUEUE_PP
-#define CGAL_AW2_DEBUG_STEINER_COMPUTATION
-// #define CGAL_AW2_DEBUG_SPHERE_MARCHING
-#define CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
-#define CGAL_AW2_DEBUG_EDGE_STATUS
-#define CGAL_AW2_DEBUG_TRAVERSABILITY
+#define CGAL_AW2_DEBUG_PP
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/alpha_wrap_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/Polygon_2.h>
+#include <CGAL/IO/WKT.h>
 
 #include <iostream>
 #include <string>
@@ -32,7 +23,7 @@ using Segments = std::vector<Segment_2>;
 using Points = std::vector<Point_2>;
 using Triangles = std::vector<Triangle_2>;
 
-using Polygon_2 = CGAL::Polygon_2<K>;
+using Multipolygon = CGAL::Multipolygon_with_holes_2<K>;
 
 int main(int argc, char** argv)
 {
@@ -50,7 +41,7 @@ int main(int argc, char** argv)
   // Generate random segments between random points in the square
   Segments segments;
   CGAL::Random_points_in_square_2<Point_2> segment_point_gen(0.5);
-  for(int i = 0; i < num_segments; ++i)
+  for(int i=0; i<num_segments; ++i)
   {
     Point_2 p = *segment_point_gen++;
     Point_2 q = *segment_point_gen++;
@@ -61,7 +52,7 @@ int main(int argc, char** argv)
   // Generate random triangles in the square
   Triangles triangles;
   CGAL::Random_points_in_square_2<Point_2> triangle_point_gen(0.5);
-  for(int i = 0; i < num_triangles; ++i)
+  for(int i=0; i<num_triangles; ++i)
   {
     Point_2 p = *triangle_point_gen++;
     Point_2 q = *triangle_point_gen++;
@@ -103,21 +94,19 @@ int main(int argc, char** argv)
   CGAL::Real_timer t;
   t.start();
 
-  using Triangle_Oracle = CGAL::Alpha_wraps_2::internal::Triangle_soup_oracle<K>;
-  using Segment_Oracle = CGAL::Alpha_wraps_2::internal::Segment_soup_oracle<K, Triangle_Oracle>;
+  using Segment_Oracle = CGAL::Alpha_wraps_2::internal::Segment_soup_oracle<K>;
   using Oracle = CGAL::Alpha_wraps_2::internal::Point_set_oracle<K, Segment_Oracle>;
 
-  Triangle_Oracle triangle_oracle(K{});
-  Segment_Oracle segment_oracle(triangle_oracle);
+  Segment_Oracle segment_oracle(K{});
   Oracle oracle(segment_oracle);
 
-  oracle.add_point_set(points, CGAL::parameters::default_values());
-  oracle.add_segment_soup(segments, CGAL::parameters::default_values());
-  oracle.add_triangle_soup(triangles, CGAL::parameters::default_values());
+  oracle.add_points(points);
+  oracle.add_segments(segments);
+  oracle.add_triangles(triangles);
 
   CGAL::Alpha_wraps_2::internal::Alpha_wrapper_2<Oracle> aw2(oracle);
 
-  std::vector<Polygon_2> wrap;
+  Multipolygon wrap;
   aw2(alpha, offset, wrap);
 
   t.stop();
@@ -128,13 +117,12 @@ int main(int argc, char** argv)
                            std::to_string(num_segments) + "_" +
                            std::to_string(num_triangles) + "_" +
                            std::to_string(static_cast<int>(relative_alpha)) + "_" +
-                           std::to_string(static_cast<int>(relative_offset)) + ".txt";
+                           std::to_string(static_cast<int>(relative_offset)) + ".wkt";
   std::cout << "Writing to " << output_name << std::endl;
 
   std::ofstream out(output_name);
-  out.precision(17);
-  for(const auto& p : wrap)
-    out << p << std::endl;
+  out.precision(std::numeric_limits<double>::max_digits10);
+  CGAL::IO::write_multi_polygon_WKT(out, wrap);
 
   return EXIT_SUCCESS;
 }
