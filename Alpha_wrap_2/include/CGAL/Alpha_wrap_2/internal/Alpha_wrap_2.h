@@ -381,7 +381,11 @@ public:
 #endif
     }
 
-    extract_boundary(output_polygons);
+#ifdef CGAL_AW2_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation("final_wrap.off");
+#endif
+
+    extract_boundary(wrap);
 
 #ifdef CGAL_AW2_TIMER
     t.stop();
@@ -389,28 +393,24 @@ public:
 #endif
 
 #ifdef CGAL_AW2_DEBUG
-    std::cout << "Alpha wrap polygons:  " << output_polygons.size() << std::endl;
-
- #ifdef CGAL_AW2_DEBUG_DUMP_INTERMEDIATE_WRAPS
-    dump_triangulation("final_wrap.off");
- #endif
+    std::cout << "Alpha wrap #PWHs:  " << wrap.polygons_with_holes().size() << std::endl;
 #endif
 
     visitor.on_alpha_wrapping_end(*this);
   }
 
   // Convenience overloads
-  template <typename OutputPolygons>
+  template <typename MultipolygonWithHoles>
   void operator()(const double alpha,
-                  OutputPolygons& output_polygons)
+                  MultipolygonWithHoles& wrap)
   {
-    return operator()(alpha, alpha / 30. /*offset*/, output_polygons);
+    return operator()(alpha, alpha / 30. /*offset*/, wrap);
   }
 
-  template <typename OutputPolygons>
-  void operator()(OutputPolygons& output_polygons)
+  template <typename MultipolygonWithHoles>
+  void operator()(MultipolygonWithHoles& wrap)
   {
-    return operator()(default_alpha(), output_polygons);
+    return operator()(default_alpha(), wrap);
   }
 
   // This function is public only because it is used in the tests
@@ -700,73 +700,235 @@ private:
   }
 
 public:
-  // Since we duplicate points in polygons, manifold or not does not matter much.
-  //
   // It could be tempting to walk "inside" to get a single polygon from pinched polygons,
   // but it would not be better: neither walk could get a proper result for e.g. an "8"-shaped
   // wrap and a crescent-with-ends-touching-shaped wrap.
-  template <typename OutputPolygons>
-  void extract_boundary(OutputPolygons& output_polygons) const
+  template <typename MultipolygonWithHoles>
+  void extract_boundary(MultipolygonWithHoles& out) const
   {
 #ifdef CGAL_AW2_DEBUG
     std::cout << "> Extract wrap..." << std::endl;
+    std::cout << m_tr.number_of_vertices() << " vertices, "
+              << m_tr.number_of_faces() << " faces" << std::endl;
+    dump_triangulation("pre_labelling.off");
 #endif
 
+    using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
+    using Polygon_2 = typename Polygon_with_holes_2::Polygon_2;
+
+    // Since we duplicate points in polygons, manifold or not does not matter much.
     CGAL_assertion_code(for(Vertex_handle v : m_tr.finite_vertex_handles()))
     CGAL_assertion(!is_non_manifold(v));
 
-    for(auto eit = m_tr.finite_edges_begin(), eend = m_tr.finite_edges_end(); eit != eend; ++eit)
+    // same-ish as label_region(), or mark_domain_in_triangulation()
+    unsigned int number_of_polygons = 0;
+    unsigned int number_of_holes = 0;
+
     {
-      Edge e = *eit;
-      if(!e.first->is_outside())
-        e = m_tr.mirror_edge(e);
+      auto label_region = [&](Face_handle start_fh, int label,
+                              std::stack<std::pair<Face_handle, int> >& to_check)
+      {
+        std::stack<Face_handle> to_check_in_region;
+        to_check_in_region.push(start_fh);
 
-      const Face_handle fh = e.first;
-      if(fh->tds_data().processed())
-        continue;
-
-      const int s = e.second;
-      const Face_handle nh = fh->neighbor(s);
-      if(!is_on_outside_boundary(fh, nh))
-        continue;
-
-      std::cout << "Starting new polygon" << std::endl;
-
-      std::vector<Point_2> polygon;
-
-      // rotate around the edge's source until finding the next boundary edge
-      // and do so until we are the first edge again
-      const Face_handle start_face = fh;
-      const int start_s = s;
-
-      Face_handle curr_face = start_face;
-      int curr_s = start_s;
-      do {
-        // Add the vertex in CCW order when looking from outside
-        polygon.push_back(m_tr.point(curr_face, Triangulation::ccw(curr_s)));
-        std::cout << "Adding " << polygon.back() << std::endl;
-
-        curr_face->tds_data().mark_processed();
-
-        curr_s = Triangulation::cw(curr_s);
-        for (;;)
+        while(!to_check_in_region.empty())
         {
-          Face_handle curr_nh = curr_face->neighbor(curr_s);
-          if(is_on_outside_boundary(curr_face, curr_nh))
-            break;
+          Face_handle fh = to_check_in_region.top();
+          to_check_in_region.pop();
+          if (fh->tds_data().processed()) {
+            continue;
+          }
 
-            curr_s = Triangulation::cw(m_tr.mirror_index(curr_face, curr_s));
-            curr_face = curr_nh;
+          CGAL_assertion(fh->region_label() == 0);
+          fh->set_region_label(label);
+          fh->tds_data().mark_processed();
+
+          for(int nid=0; nid<3; ++nid)
+          {
+            Face_handle nh = fh->neighbor(nid);
+            if(is_on_outside_boundary(fh, nh)) // on boundary, so regions are changing
+            {
+              if(!nh->tds_data().processed())
+                to_check.emplace(nh, label);
+            }
+            else // same region
+            {
+              to_check_in_region.push(nh);
+            }
+          }
         }
-      }
-      while (curr_face != start_face || curr_s != start_s);
 
-      output_polygons.emplace_back(polygon.begin(), polygon.end());
+        dump_triangulation("label_"+std::to_string(label)+".off", true /*use region labels*/);
+      };
+
+      // Exterior gets label -1, ccw polygons get positive labels, holes get negative labels
+      std::stack<std::pair<Face_handle, int> > to_check; // 'int' is the label of the neighbhoring cell
+      label_region(m_tr.infinite_face(), -1, to_check);
+
+      // Label region of front element to_check list
+      while(!to_check.empty())
+      {
+        auto [fh, adj_label] = to_check.top();
+
+        if(fh->region_label() == 0) // label = 0 means not labeled yet
+        {
+          if(adj_label < 0)
+          {
+            label_region(fh, number_of_polygons+1, to_check);
+            ++number_of_polygons;
+          }
+          else
+          {
+            label_region(fh, -(number_of_holes+2), to_check);
+            ++number_of_holes;
+          }
+        }
+        to_check.pop();
+      }
+
+      // std::cout << number_of_polygons << " polygons with " << number_of_holes << " holes in triangulation" << std::endl;
+
+      for (Face_handle fh : m_tr.all_face_handles())
+      {
+        CGAL_assertion(fh->tds_data().processed());
+        fh->tds_data().clear();
+      }
     }
 
-    // Reset the conflict flags
-    for(Face_handle fh : m_tr.all_face_handles())
-      fh->tds_data().clear();
+    // now build the multipolygon
+    {
+      auto reconstruct_ring = [&](std::list<Point_2>& ring,
+                                  Face_handle fh_adjacent_to_boundary,
+                                  int opposite_vertex)
+      {
+        // std::cout << "Reconstructing ring for face " << fh_adjacent_to_boundary->region_label() << "..." << std::endl;
+
+        // Create ring
+        Face_handle current_fh = fh_adjacent_to_boundary;
+        int current_opposite_vertex = opposite_vertex;
+        do
+        {
+          CGAL_assertion(current_fh->region_label() == fh_adjacent_to_boundary->region_label());
+          current_fh->tds_data().mark_processed();
+          Vertex_handle pivot_vertex = current_fh->vertex(current_fh->cw(current_opposite_vertex));
+          // std::cout << "\tAdding point " << pivot_vertex->point() << std::endl;
+          ring.push_back(pivot_vertex->point());
+          Face_circulator fc = m_tr.incident_faces(pivot_vertex, current_fh);
+          do {
+            ++fc;
+          } while(fc->region_label() != current_fh->region_label());
+
+          current_fh = fc;
+          current_opposite_vertex = fc->cw(fc->index(pivot_vertex));
+        }
+        while(current_fh != fh_adjacent_to_boundary ||
+              current_opposite_vertex != opposite_vertex);
+
+        // Start at lexicographically smallest vertex
+        typename std::list<Point_2>::iterator smallest_vertex = ring.begin();
+        for (typename std::list<Point_2>::iterator current_vertex = ring.begin();
+             current_vertex != ring.end(); ++current_vertex)
+        {
+          if (*current_vertex < *smallest_vertex)
+            smallest_vertex = current_vertex;
+        }
+
+        if(ring.front() != *smallest_vertex) {
+          ring.splice(ring.begin(), ring, smallest_vertex, ring.end());
+        }
+      };
+
+      struct Polygon_less {
+        bool operator()(const Polygon_2& pa, const Polygon_2& pb) const {
+          typename Polygon_2::Vertex_iterator va = pa.vertices_begin();
+          typename Polygon_2::Vertex_iterator vb = pb.vertices_begin();
+          while (va != pa.vertices_end() && vb != pb.vertices_end()) {
+            if (*va != *vb) return *va < *vb;
+            ++va;
+            ++vb;
+          }
+          if (vb == pb.vertices_end()) return false;
+          return true;
+        }
+      };
+
+      struct Polygon_with_holes_less {
+        Polygon_less pl;
+        bool operator()(const Polygon_with_holes_2& pa, const Polygon_with_holes_2& pb) const {
+          if (pl(pa.outer_boundary(), pb.outer_boundary())) return true;
+          if (pl(pb.outer_boundary(), pa.outer_boundary())) return false;
+          typename Polygon_with_holes_2::Hole_const_iterator ha = pa.holes_begin();
+          typename Polygon_with_holes_2::Hole_const_iterator hb = pb.holes_begin();
+          while (ha != pa.holes_end() && hb != pb.holes_end()) {
+            if (pl(*ha, *hb)) return true;
+            if (pl(*hb, *ha)) return false;
+          }
+          if (hb == pb.holes_end()) return false;
+          return true;
+        }
+      };
+
+      std::vector<Polygon_2> polygons; // outer boundaries
+      std::vector<std::set<Polygon_2, Polygon_less> > holes; // holes are ordered (per polygon)
+      polygons.resize(number_of_polygons);
+      holes.resize(number_of_polygons);
+
+      for(const Face_handle fh : m_tr.finite_face_handles())
+      {
+        CGAL_assertion(fh->region_label() != 0);
+        if(fh->region_label() < 0) // holes
+          continue;
+        if(fh->tds_data().processed()) // already reconstructed
+          continue;
+
+        for(int i=0; i<3; ++i)
+        {
+          if(fh->region_label() == fh->neighbor(i)->region_label()) // not adjacent to boundary
+            continue;
+
+          // Reconstruct ring
+          std::list<Point_2> ring;
+          reconstruct_ring(ring, fh, i);
+
+          // Put ring in polygons
+          Polygon_2 polygon;
+          polygon.reserve(ring.size());
+          polygon.insert(polygon.vertices_end(),ring.begin(), ring.end());
+
+          // std::cout << "Reconstructed ring for polygon " << fh->region_label() << " with ccw? " << (polygon.orientation() == CGAL::COUNTERCLOCKWISE) << std::endl;
+
+          std::cout << "ring" << std::endl;
+          for (const auto& pt : polygon) {
+            std::cout << pt << std::endl;
+          }
+
+          // polygon.orientation() has a is_simple_2 precondition, which can fail if AW2's manifold
+          // option is turned off. In fact, the orientation code works for a weakly simple input.
+          Orientation o  = CGAL::Polygon::internal::orientation_2_no_precondition(
+                            polygon.begin(), polygon.end(), geom_traits());
+
+          if(polygon.orientation() == CGAL::COUNTERCLOCKWISE)
+            polygons[fh->region_label()-1] = std::move(polygon);
+          else
+            holes[fh->region_label()-1].insert(std::move(polygon));
+          break;
+        }
+      }
+
+      // Create polygons with holes and put in multipolygon
+      std::set<Polygon_with_holes_2, Polygon_with_holes_less> ordered_polygons;
+      for(std::size_t i = 0; i < polygons.size(); ++i)
+      {
+        ordered_polygons.insert(Polygon_with_holes_2(std::move(polygons[i]),
+                                std::make_move_iterator(holes[i].begin()),
+                                std::make_move_iterator(holes[i].end())));
+      }
+      for(const Polygon_with_holes_2& polygon : ordered_polygons)
+      {
+        // std::cout << "Adding polygon " << polygon << std::endl;
+        out.add_polygon_with_holes(std::move(polygon));
+      }
+    }
   }
 
 private:
