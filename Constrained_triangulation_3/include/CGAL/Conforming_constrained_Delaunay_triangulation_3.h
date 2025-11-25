@@ -1827,6 +1827,9 @@ public:
     auto& border = borders.emplace_back();
     border.reserve(std::size(vertex_handles));
     const auto polygon_constraint_id = face_index.value_or(this->face_data.size() - 1);
+    if(this->debug().input_faces()) {
+      std::cerr << "insert_constrained_face: new polygon_constraint_id: " << polygon_constraint_id << '\n';
+    }
     do {
       const auto va = *circ;
       ++circ;
@@ -1845,6 +1848,10 @@ public:
     } while(circ != circ_end);
 
     if(this->debug().input_faces()) {
+      for(auto [c_id, is_reversed] : border) {
+        std::cerr << "  - edge on constraint c_id #" << c_id.index()
+                  << (is_reversed ? " (reversed)" : "") << '\n';
+      }
       std::vector<std::vector<Vertex_handle>> single_polygon{std::vector(vertex_handles.begin(), vertex_handles.end())};
       dump_face_polygons(single_polygon, polygon_constraint_id,
                          "dump-input-face-" + std::to_string(polygon_constraint_id) + "_polygon_" +
@@ -1854,9 +1861,6 @@ public:
     if(!face_index.has_value()) {
       // Face_data already created above with emplace_back
       face_constraint_misses_subfaces.resize(face_data.size());
-    }
-    if(this->debug().input_faces()) {
-      std::cerr << "insert_constrained_face return the polygon_constraint_id: " << polygon_constraint_id << '\n';
     }
     return polygon_constraint_id;
   }
@@ -2218,6 +2222,11 @@ private:
                 }
               }
             }
+          } else {
+            std::cerr << "ERROR: edge between "
+                      << tr().point(va) << " and "
+                      << tr().point(vb)
+                      << " is not a known constraint of the CDT_3.\n";
           }
 
           auto vh_2d = it == end ? first_2d : insert_vertex_in_cdt_2(vb);
