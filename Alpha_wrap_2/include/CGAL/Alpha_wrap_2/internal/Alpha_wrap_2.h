@@ -216,6 +216,17 @@ public:
     static_assert(std::is_floating_point<FT>::value);
   }
 
+  void clear()
+  {
+    m_oracle.clear();
+    m_bbox = {};
+    m_alpha = m_sq_alpha = FT(-1);
+    m_offset = m_sq_offset = FT(-1);
+    m_seeds.clear();
+    m_tr.clear();
+    m_queue.clear();
+  }
+
 public:
   const Geom_traits& geom_traits() const { return m_tr.geom_traits(); }
   Oracle& oracle() { return m_oracle; }
