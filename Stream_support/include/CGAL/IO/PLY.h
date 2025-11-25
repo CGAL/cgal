@@ -674,7 +674,7 @@ bool read_PLY_with_properties(std::istream& is,
 
 
 /**
-   \ingroup PkgStreamSupportFuncsIoPLY
+   \ingroup PkgStreamSupportIoFuncsPLY
 
    \brief reads points (positions + normals, if available), using the \ref IOStreamPLY.
 
