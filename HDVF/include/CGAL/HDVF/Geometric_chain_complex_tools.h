@@ -316,10 +316,10 @@ public:
     Chain_complex* L_complex ;
     /** \brief Pointer over a sub chain complex mask encoding a sub complex of `*L_complex`. */
     Sub_chain_complex* K_complex ;
-    
+
     /** \brief Default constructor*/
     Complex_duality_data_t() : L_complex(NULL), K_complex(NULL) {}
-    
+
     /** \brief Constructor from a pointer over a chain complex and a sub chain complex mask.
      *
      * \warning The `Complex_duality_data_t` destructor deletes its underlying complex and sub chain complex mask.
@@ -399,6 +399,7 @@ public:
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
      * \param mesh_io `Mesh_object_io` containing the initial set of simplicies (working mesh).
+     * @param dualized_complex Output structure containing the dualized complex data.
      * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      * \param subdiv Subdivision level of the bounding icosphere.
@@ -461,6 +462,7 @@ public:
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
      * \param mesh `Surface_mesh` containing the initial mesh.
+     * \param dualized_complex Output structure containing the dualized complex data.
      * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param subdiv Subdivision level of the bounding icosphere.
      */
@@ -523,9 +525,9 @@ public:
 //                faces_constr.at(i).push_back(f);
 //            }
 //        }
-        
+
         Triangulation tri_L = std::move(ccdt).triangulation();
-        
+
         // Build the associated Triangulation_3_io
         Triangulation_3_io<Triangulation, Traits> L_tri_io(tri_L);
         // Build the associated SimpComplex
@@ -611,6 +613,7 @@ public:
      * <img src="HDVF_eight_view2.png" align="center" width=30%/>
      *
      * \param K_init Initial cubical chain complex (working mesh).
+     * \param dualized_complex Output structure containing the dualized complex data.
      */
     static void dualize_complex (const Chain_complex& K_init, Complex_duality_data& dualized_complex)
     {
