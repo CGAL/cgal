@@ -40,7 +40,7 @@
 #  define CGAL_FILENO fileno
 #endif
 
-#if defined(__STDC_LIB_EXT1__) && defined(_WIN32)
+#if defined(__STDC_LIB_EXT1__) || defined(_WIN32)
 #  include <array>
 #  include <stdlib.h> // for getenv_s
 #  define CGAL_USE_GETENV_S 1
