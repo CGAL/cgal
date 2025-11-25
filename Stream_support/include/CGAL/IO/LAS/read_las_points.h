@@ -338,5 +338,5 @@ bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_NP_CLA
 
 } // namespace CGAL
 
-#endif CGAL_LINKED_WITH_LASLIB
+#endif // CGAL_LINKED_WITH_LASLIB
 #endif // CGAL_IO_LAS_READ_LAS_POINTS_H
