@@ -937,9 +937,19 @@ private:
     return less_squared_radius_of_min_empty_circle(m_sq_alpha, e, m_tr);
   }
 
-  bool compute_steiner_point(const Face_handle fh,
-                             const Face_handle neighbor,
-                             Point_2& steiner_point) const
+  Steiner_status compute_steiner_point(const Gate& gate,
+                                       Point_2& steiner_point) const
+  {
+    const Edge& e = gate.edge();
+    const Face_handle fh = e.first;
+    const int s = e.second;
+    const Face_handle nh = e.first->neighbor(s);
+    return compute_steiner_point(fh, nh, steiner_point);
+  }
+
+  Steiner_status compute_steiner_point(const Face_handle fh,
+                                       const Face_handle neighbor,
+                                       Point_2& steiner_point) const
   {
     CGAL_precondition(!m_tr.is_infinite(neighbor));
 
@@ -989,7 +999,7 @@ private:
 #ifdef CGAL_AW2_DEBUG_STEINER_COMPUTATION
         std::cout << "Steiner found through first_intersection(): " << steiner_point << std::endl;
 #endif
-        return true;
+        return Steiner_status::RULE_1;
       }
     }
 
@@ -1015,14 +1025,14 @@ private:
       std::cout << "Steiner: " << steiner_point << std::endl;
 #endif
 
-      return true;
+      return Steiner_status::RULE_2;
     }
 
 #ifdef CGAL_AW2_DEBUG_STEINER_COMPUTATION
     std::cout << "No Steiner point" << std::endl;
 #endif
 
-    return false;
+    return Steiner_status::NO_STEINER_POINT;
   }
 
 private:
@@ -1330,7 +1340,8 @@ private:
       }
 
       Point_2 steiner_point;
-      if(compute_steiner_point(fh, nh, steiner_point))
+      Steiner_status status = compute_steiner_point(fh, nh, steiner_point);
+      if(status != Steiner_status::NO_STEINER_POINT)
       {
 //        std::cout << CGAL::abs(CGAL::approximate_sqrt(m_oracle.squared_distance(steiner_point)) - m_offset)
 //                  << " vs " << 1e-2 * m_offset << std::endl;

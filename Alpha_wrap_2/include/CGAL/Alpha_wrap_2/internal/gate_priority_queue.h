@@ -28,6 +28,14 @@ namespace CGAL {
 namespace Alpha_wraps_2 {
 namespace internal {
 
+enum class Steiner_status
+{
+  UNKNOWN = 0,
+  NO_STEINER_POINT,
+  RULE_1,
+  RULE_2
+};
+
 #ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
 
 // Represents an alpha-traversable edge in the mutable priority queue
