@@ -23,6 +23,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <optional>
 
 namespace CGAL {
 namespace Alpha_wraps_2 {
@@ -36,11 +37,35 @@ enum class Steiner_status
   RULE_2
 };
 
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+template <typename Tr>
+struct Gate_steiner_info
+{
+  using Point_2 = typename Tr::Geom_traits::Point_2;
+
+  Gate_steiner_info() : m_steiner_status(Steiner_status::UNKNOWN), m_steiner_point(std::nullopt) { }
+
+  Steiner_status m_steiner_status;
+  std::optional<Point_2> m_steiner_point;
+
+  bool has_steiner_point() const { return m_steiner_point.has_value(); }
+  bool has_steiner_from_intersection() const { return (m_steiner_status == Steiner_status::RULE_1); }
+  bool has_steiner_from_projection() const { return (m_steiner_status == Steiner_status::RULE_2); }
+  const Point_2& steiner_point() const {
+    CGAL_precondition(has_steiner_point());
+    return *m_steiner_point;
+  }
+};
+#endif
+
 #ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
 
 // Represents an alpha-traversable edge in the mutable priority queue
 template <typename Tr>
 class Gate
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+  : public Gate_steiner_info<Tr>
+#endif
 {
   using Edge = typename Tr::Edge;
   using FT = typename Tr::Geom_traits::FT;
@@ -106,6 +131,9 @@ struct Less_gate
 // Represents an alpha-traversable edge in the mutable priority queue
 template <typename Tr>
 class Gate
+#ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
+  : public Gate_steiner_info<Tr>
+#endif
 {
   using Edge = typename Tr::Edge;
   using FT = typename Tr::Geom_traits::FT;
