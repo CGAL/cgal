@@ -39,6 +39,7 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exception_ostream.h>
 #include <CGAL/exceptions.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/IO/Color.h>
@@ -2628,13 +2629,14 @@ private:
 
     std::set<std::pair<Vertex_handle, Vertex_handle>> non_intersecting_edges_set;
 
-    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug().regions()) {
-      expensive_debug_dump_tetrahedra_intersect_region(face_index, region_index, cdt_2, fh_region);
-    }
-
     detect_edges_and_cells_intersecting_region(face_index, region_index, cdt_2, fh_region, region_border_vertices,
                                                first_intersecting_edge, intersecting_edges, intersecting_cells,
                                                non_intersecting_edges_set);
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug().regions()) {
+      expensive_debug_dump_tetrahedra_intersect_region(face_index, region_index, cdt_2, fh_region,
+                                                       std::as_const(intersecting_cells));
+    }
+
     if(this->use_older_cavity_algorithm()) {
       process_older_cavity_algorithm(intersecting_edges, cr_intersecting_cells, vertices_of_upper_cavity,
                                      vertices_of_lower_cavity, facets_of_upper_cavity, facets_of_lower_cavity);
@@ -3457,6 +3459,9 @@ private:
       int i;
       typename CDT_2::Locate_type lt;
       const auto fh = cdt_2.locate(p, lt, i, hint);
+      if(lt != CDT_2::VERTEX) {
+         exception_ostream() << cdt_3_format("vertex_of_cdt_2_functor: point {}  lt = {}\n", IO::oformat(p), int(lt));
+      }
       CGAL_assume(lt == CDT_2::VERTEX);
       hint = fh;
       return fh->vertex(i);
@@ -4491,11 +4496,13 @@ public:
           return b;
         }))
       {
-        std::cerr << cdt_3_format(
-            "ERROR: The following tetrahedron (#{}) does not intersect the region:\n  {}\n  {}\n  {}\n  {}\n",
-            ch->time_stamp(),
-            IO::oformat(ch->vertex(0), with_point_and_info), IO::oformat(ch->vertex(1), with_point_and_info),
-            IO::oformat(ch->vertex(2), with_point_and_info), IO::oformat(ch->vertex(3), with_point_and_info));
+        exception_ostream()
+            << cdt_3_format(
+                   "ERROR: The following tetrahedron (#{}) does not intersect the region:\n  {}\n  {}\n  {}\n  {}",
+                   ch->time_stamp(), IO::oformat(ch->vertex(0), with_point_and_info),
+                   IO::oformat(ch->vertex(1), with_point_and_info), IO::oformat(ch->vertex(2), with_point_and_info),
+                   IO::oformat(ch->vertex(3), with_point_and_info))
+            << std::endl;
       }
     }
   }
@@ -4504,7 +4511,8 @@ public:
   void expensive_debug_dump_tetrahedra_intersect_region(CDT_3_signed_index face_index,
                                                         int region_index,
                                                         const CDT_2& cdt_2,
-                                                        const Fh_region& fh_region)
+                                                        const Fh_region& fh_region,
+                                                        const std::set<Cell_handle>& intersecting_cells_to_check)
   {
     using Mesh = Surface_mesh<Point_3>;
     using Face_index = typename Mesh::Face_index;
@@ -4516,12 +4524,18 @@ public:
     auto [color_vpmap, _] = tets_intersect_region_mesh.template add_property_map<Face_index, int>("f:patch_id");
 
     for(auto ch : tr().finite_cell_handles()) {
+      const bool is_in_set = intersecting_cells_to_check.find(ch) != intersecting_cells_to_check.end();
       auto tetrahedron = tr().tetrahedron(ch);
       if(!std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
           const auto triangle = cdt_2.triangle(fh);
           return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
         }))
       {
+        if(is_in_set) {
+          exception_ostream() << cdt_3_format(
+              "ERROR: tetrahedron #{} is in the intersecting_cells_to_check set but it does not intersect the region",
+              ch->time_stamp()) << std::endl;
+        }
         continue;
       }
       bool intersects = false;
@@ -4535,6 +4549,13 @@ public:
       }
       if(!intersects) {
         std::cerr << "ERROR: tetrahedron #" << ch->time_stamp() << " has no edge intersecting the region\n";
+      }
+      if(is_in_set != intersects) {
+        exception_ostream() << cdt_3_format(
+            "ERROR: tetrahedron #{} is {} in the intersecting_cells_to_check set but it {}intersects the region\n",
+            ch->time_stamp(),
+            is_in_set ? "" : "not",
+            intersects ? "" : "does not ")<< std::endl;
       }
       std::ofstream dump_tetrahedron(
           cdt_3_format("dump_intersecting_{}_{}_tetrahedron_{}.off", face_index, region_index, ch->time_stamp()));
