@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/XYZ.h>
 #include <CGAL/Random.h>
 
 #define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
