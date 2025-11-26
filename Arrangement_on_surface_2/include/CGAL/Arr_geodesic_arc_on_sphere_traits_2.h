@@ -28,7 +28,7 @@
 #include <variant>
 
 #include <CGAL/config.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/tss.h>
 #include <CGAL/intersections.h>
@@ -2856,7 +2856,7 @@ public:
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
   using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Cartesian<Approximate_number_type>;
+  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
   using Approximate_point_2 = Arr_extended_direction_3<Approximate_kernel>;
   using Approximate_kernel_vector_3 = Approximate_kernel::Vector_3;
   using Approximate_kernel_direction_3 = Approximate_kernel::Direction_3;
