@@ -1516,7 +1516,7 @@ public:
   using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
   using Approximate_point_2 = Approximate_kernel::Point_2;
 
-  class Approximate_curve_length_2 {
+  class Approximate_length_2 {
   protected:
     using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
@@ -1526,7 +1526,7 @@ public:
     /*! constructs
      * \param traits the traits.
      */
-    Approximate_curve_length_2(const Traits& traits) : m_traits(traits) {}
+    Approximate_length_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
@@ -1546,7 +1546,7 @@ public:
   private:
     /*! obtains the segment length.
      */
-    double segment_length(const X_monotone_curve_2& xcv) {
+    double segment_length(const X_monotone_curve_2& xcv) const {
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& minv = min_vertex(xcv);
@@ -1586,7 +1586,7 @@ public:
 
     /*! obtains the parabolic arc length.
      */
-    double parabola_length(const X_monotone_curve_2& xcv) {
+    double parabola_length(const X_monotone_curve_2& xcv) const {
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
       double xs_t, ys_t, xt_t, yt_t;
@@ -1606,7 +1606,7 @@ public:
       return d;
     }
 
-    double ellipse_length(const X_monotone_curve_2& xcv) {
+    double ellipse_length(const X_monotone_curve_2& xcv) const {
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
       double xs_t, ys_t, xt_t, yt_t;
@@ -1627,7 +1627,7 @@ public:
       return d;
     }
 
-    double hyperbola_length(const X_monotone_curve_2& /* xcv */) {
+    double hyperbola_length(const X_monotone_curve_2& /* xcv */) const {
       CGAL_error_msg("Not implemented yet!");
       double l(0.0);
       return l;
