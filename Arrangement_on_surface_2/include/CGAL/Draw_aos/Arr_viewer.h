@@ -180,7 +180,7 @@ protected:
   double approximation_error(const Bbox_2& bbox, int viewport_width) const {
     // If crossing hemisphere
     if (bbox.x_span() >= CGAL_PI) return 1.0 / viewport_width;
-    // Otherwise we evalute the error bound with respect to the longest longitude arc
+    // Otherwise we evaluate the error bound with respect to the longest longitude arc
     double theta =
       std::abs(bbox.ymin() - CGAL_PI / 2.0) < std::abs(bbox.ymax() - CGAL_PI / 2.0) ? bbox.ymin() : bbox.ymax();
     return bbox.x_span() * std::sin(theta) / viewport_width;
