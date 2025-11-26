@@ -2256,7 +2256,7 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   ///
-  /// This operator calls `write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2268,7 +2268,7 @@ private: //------------------------------------------------------- private data
   /// Extracts the surface mesh from an input stream in OFF
   /// and appends it to the surface mesh `sm`.
   ///
-  /// This operator calls `read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
