@@ -1068,8 +1068,18 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 template <unsigned int i>
 size_type remove_cell(Dart_descriptor d);
 
+/*!
+\ingroup PkgCombinatorialMapsRefIO
+  Writes `amap` in `os`, using our own internal file format in XML. Writes both the topology of the combinatorial map and its enabled attributes.
+ */
+friend std::ostream& operator<< (std::ostream& os, const GenericMap& amap);
+
+/*!
+  \ingroup PkgCombinatorialMapsRefIO
+  Reads `amap` from `is`, using our own internal file format in XML. Reads both the topology of the combinatorial map and its enabled attributes which are present in `is`. Note that if `amap` is not empty before the reading, the new map is added in the previous one.
+ */
+friend std::ifstream& operator>> (std::ifstream& is, GenericMap& amap);
+
 /// @}
 
 }; /* end GenericMap */
-
-
