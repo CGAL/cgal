@@ -469,9 +469,8 @@ public:
     static void dualize_complex (Triangle_mesh& mesh, Complex_duality_data& dualized_complex, double BB_ratio=1.5, unsigned int subdiv = 2)
     {
         typedef CGAL::Triangulation_data_structure_3<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<typename Traits::Kernel>, CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<typename Traits::Kernel>> TDS;
-        typedef CGAL::Conforming_constrained_Delaunay_triangulation_3<typename Traits::Kernel, TDS> CCDT3;
         typedef CGAL::Triangulation_3<typename Traits::Kernel, TDS> Triangulation;
-
+        typedef CGAL::Conforming_constrained_Delaunay_triangulation_3<typename Traits::Kernel, Triangulation> CCDT3;
         std::cerr << "-- Starting dualize_complex" << std::endl;
         std::cerr << "Imported mesh" << std::endl;
 
@@ -517,14 +516,14 @@ public:
         auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh, CGAL::parameters::plc_face_id(plc_facet_map));
 
 //        // Detect refined constrained faces
-//        std::vector<std::vector<const typename Triangulation::Facet& > > faces_constr(cpt);
-//        for (auto f : ccdt.constrained_facets()) {
-//            if (ccdt.is_facet_constrained(f))
-//            {
-//                const int i(ccdt.face_constraint_index(f));
-//                faces_constr.at(i).push_back(f);
-//            }
-//        }
+        std::vector<std::vector<typename Triangulation::Facet > > faces_constr(cpt);
+       for (typename Triangulation::Facet f : ccdt.constrained_facets()) {
+            if (ccdt.is_facet_constrained(f))
+            {
+                const int i(ccdt.face_constraint_index(f));
+                faces_constr.at(i).push_back(f);
+            }
+      }
 
         Triangulation tri_L = std::move(ccdt).triangulation();
 

@@ -1260,9 +1260,9 @@ public:
     inline Bitboard::iterator begin() const noexcept { return _chainsStates.begin(); }
 
     /**
-     * \brief Iterator to the ending of chain indices.
+     * \brief Iterator past-the-end of chain indices.
      *
-     * \return The iterator to the ending of chain indices.
+     * \return The iterator past-the-end of chain indices.
      */
     inline Bitboard::iterator end() const noexcept { return _chainsStates.end(); }
 
@@ -1277,9 +1277,9 @@ public:
     inline Bitboard::reverse_iterator reverse_begin(size_t index) noexcept { return _chainsStates.reverse_begin(index); }
 
     /**
-     * \brief Reverse iterator to the ending of chain indices.
+     * \brief Reverse iterator past-the-end of chain indices.
      *
-     * \return The reverse iterator to the ending of chain indices.
+     * \return The reverse iterator past-the-end of chain indices.
      */
     inline Bitboard::reverse_iterator reverse_end() noexcept { return _chainsStates.reverse_end(); }
 

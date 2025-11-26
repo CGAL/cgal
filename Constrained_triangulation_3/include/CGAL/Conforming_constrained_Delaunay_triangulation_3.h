@@ -934,7 +934,7 @@ public:
    */
   CDT_3_signed_index face_constraint_index(typename Triangulation::Cell_handle ch, int i) const
   {
-    return ch->face_id[static_cast<unsigned>(i)];
+    return ch->ccdt_3_data().face_constraint_index(i);
   }
 
   /*!

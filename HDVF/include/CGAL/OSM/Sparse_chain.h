@@ -568,7 +568,7 @@ public:
      *
      * \warning The chain is stored unordered for speed reason.
      *
-     * \return The function returns an iterator to the ending of the chain.
+     * \return The function returns an iterator past-the-end of the chain.
      */
     iterator end() noexcept {
         return _chainData.end();
@@ -579,7 +579,7 @@ public:
      *
      * \warning The chain is stored unordered for speed reason.
      *
-     * \return The function returns a constant iterator to the ending of the chain.
+     * \return The function returns a constant iterator past-the end of the chain.
      */
     const_iterator end() const noexcept {
         return _chainData.end();

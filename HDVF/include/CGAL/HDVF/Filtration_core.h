@@ -110,9 +110,7 @@ protected:
      */
     typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::ROW> Row_chain ;
 public:
-    /*! \brief Filtration_core default constructor
-     *
-     * Builds an "empty" filtration with `K` as underlying chain complex.
+    /*! \brief Constructor of an empty filtration with an underlying chain complex.
      *
      *\param K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
      */
@@ -214,9 +212,9 @@ public:
     iterator begin() { return iterator(*this, 0) ; }
 
     /**
-     * \brief Iterator to the ending of the filtration.
+     * \brief Iterator past-the-end of the filtration.
      *
-     * \return The iterator to the ending of the filtration.
+     * \return The iterator past-the-end of the filtration.
      */
     iterator end() { return iterator(*this, _filtration.size()) ; }
 
