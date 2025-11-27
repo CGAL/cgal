@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 
 	// window.item().draw_triangles(to_draw);
 
-	window.item().draw_triangulation(dt, start);
+	window.item().draw_triangulation(dt, start); // with lift() method
 	window.show();
 	QStringList args = app.arguments();
 	args.removeAt(0);
