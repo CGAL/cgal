@@ -1,8 +1,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
@@ -14,8 +12,10 @@
 
 using namespace CGAL;
 
-typedef Circular_kernel_2<Simple_cartesian<Exact_rational>, Algebraic_kernel_for_circles_2_2<Exact_rational>> Kernel;
-typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>		ParentTraits;
+
+typedef Simple_cartesian<CGAL::Exact_rational>						Kernel;
+typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>			ParentTraits;
+
 typedef Hyperbolic_surface_traits_2<ParentTraits> 					Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>						Domain;
 typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>		Delaunay_triangulation;
@@ -49,7 +49,6 @@ Domain build_domain()
 	for (std::size_t k=0; k<8; ++k) {
 		pairings.push_back((k+4)%8);
 	}
-
 	return Domain(vertices, pairings);
 }
 
