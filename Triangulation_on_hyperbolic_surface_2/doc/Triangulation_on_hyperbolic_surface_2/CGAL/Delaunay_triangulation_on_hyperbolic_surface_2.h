@@ -198,7 +198,7 @@ public:
   /// \name Other functions
   /// @{
   /*!
-    \return a `double` approximation of the length of the shortest geodesic loop in the Delaunay triangulation.
+    \return a `double` approximation of the length of the shortest geodesic loop in the Delaunay triangulation. Returns 0 (NULL) if there is no loop.
   */
   double shortest_loop() const;
   /*!
