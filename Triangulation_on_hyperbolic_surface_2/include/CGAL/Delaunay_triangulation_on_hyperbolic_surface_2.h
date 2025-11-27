@@ -132,7 +132,7 @@ private:
 
 	//---------- eps-net methods
 	Number delta(Point const & u, Point const & v) const;
-	Algebraic_number delta(Voronoi_point const & u, Point const & v) const;
+	auto delta_center(Voronoi_point const & u, Point const & v) const;
 	Voronoi_point circumcenter(Anchor const & anch) const;
 	Point approx_circumcenter(Voronoi_point c, unsigned p = 1) const;
 	void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
@@ -355,7 +355,6 @@ is_valid() const
 			if (d2 != d1) {
 				return false;
 			}
-
 			current_dart = Base::const_ccw(current_dart);
 		}
 	}
@@ -882,9 +881,9 @@ delta(Point const & u, Point const & v) const
 }
 
 template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Algebraic_number
+auto
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-delta(Voronoi_point const & u, Point const & v) const
+delta_center(Voronoi_point const & u, Point const & v) const
 {
 	Algebraic_number num = (u.x() - v.x()) * (u.x() - v.x()) + (u.y() - v.y()) * (u.y() - v.y());
 	Algebraic_number den = (1 - (u.x() * u.x() + u.y() * u.y())) * (1 - (v.x() * v.x() + v.y() * v.y()));
@@ -965,7 +964,7 @@ epsilon_net(double const epsilon, unsigned const p)
 		if(this->combinatorial_map_.is_marked(current_dart, triangles_list_mark)){
 			this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
 			Voronoi_point c = circumcenter(current_anchor);
-			if (delta(c, current_anchor.vertices[0]) > BOUND) {
+			if (delta_center(c, current_anchor.vertices[0]) > BOUND) {
 				Point approx_c = approx_circumcenter(c, p);
 				if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
 					break;  // avoid undefined behavior in case of bad approx outside of Poincaré
@@ -1012,7 +1011,7 @@ is_epsilon_covering(const double epsilon) const
 		typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
 		Voronoi_point c = chc(current_anchor.vertices[0], current_anchor.vertices[1], current_anchor.vertices[2]);
 		Point v0 = current_anchor.vertices[0];
-		Algebraic_number d = delta(c, v0);
+		auto d = delta_center(c, v0);
 		if (!(d <= lower_bound)) {
 			is_covering = false;
 			break;
