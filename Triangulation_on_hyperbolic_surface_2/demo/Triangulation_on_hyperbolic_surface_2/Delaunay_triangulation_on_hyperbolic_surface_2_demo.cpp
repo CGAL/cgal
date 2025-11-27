@@ -25,7 +25,7 @@ typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>    Delaunay_trian
 /*
 	HOW TO USE THIS DEMO
 	./Delaunay_triangulation_on_hyperbolic_surface_2_demo [epsilon] [surface seed] [precision]
-	With no arguments, uses the default values defined below.
+	Without arguments, uses the default values defined below.
 */
 
 // DEFAULT VALUES
@@ -35,6 +35,14 @@ int p = 1;
 
 int main(int argc, char *argv[])
 {
+	if(argc == 1) {
+		std::cout << "HOW TO USE THIS DEMO:\n"
+							<< "./Delaunay_triangulation_on_hyperbolic_surface_2_demo [epsilon] [surface seed] [precision]\n"
+							<< "Without arguments, uses default values: epsilon = 0.25, random seed, precision = 1.\n"
+							<< "WARNING: when not using the CGAL::Gmpq number type, precision is ignored and, instead, to_double is used to round coordinates of circumcenters.\n"
+							<< "--------------------"
+							<< std::endl;
+	}
   // 1. Parse args and generate the input
 	if (argc > 1) {
 		epsilon = std::stod(argv[1]);
@@ -62,7 +70,7 @@ int main(int argc, char *argv[])
 
 	// 3. Compute epsilon-net and display useful info
 	if constexpr(!std::is_same<NumberType, Gmpq>::value) {
-		std::cout << "WARNING: Not using the Gmpq number type. Precision will be ignored and to_double approximation will be used instead." << std::endl;
+		std::cout << "WARNING: Not using the CGAL::Gmpq number type. Precision will be ignored and to_double approximation will be used instead." << std::endl;
 	}
 	std::cout << "Computing a " << epsilon << "-net with floating-point precision " << p*53 << "..." << std::endl;
 	Timer timer;
