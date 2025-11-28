@@ -24,7 +24,7 @@ std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surf
 
   extracts the triangulation from a stream.
 
-  The format of the input should be the same as the format of the output of
+  The format of the input is the same as the format of the output of
   the '<<' operator for Triangulation_on_hyperbolic_surface_2.
 */
 std::istream& operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
@@ -48,7 +48,7 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<
 
   extracts the domain from a stream.
 
-  The format of the input must be the same as the format of the output of
+  The format of the input is the same as the format of the output of
   the '<<' operator for Hyperbolic_fundamental_domain_2.
 */
 std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
@@ -82,7 +82,7 @@ std::istream& operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_s
 
   extracts the Delaunay triangulation from a stream.
 
-  The format of the input should be the same as the format of the output of
+  The format of the input is the same as the format of the output of
   the '<<' operator for Delaunay_triangulation_on_hyperbolic_surface_2.
 */
 std::ostream& operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
