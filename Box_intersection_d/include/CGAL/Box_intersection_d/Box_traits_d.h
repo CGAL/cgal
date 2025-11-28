@@ -67,13 +67,21 @@ struct Box_traits_d<const Box_*> {
     static int dimension()                         { return Box_::dimension();}
 };
 
+namespace internal{
 
-template< class BoxTraits, bool closed >
-struct Predicate_traits_d : public BoxTraits {
-    typedef typename BoxTraits::Box_parameter Box_parameter;
-    typedef typename BoxTraits::NT         NT;
+template< class BoxTraits_1, class BoxTraits_2, bool closed >
+struct Predicate_traits_d : public BoxTraits_1{
+    typedef typename BoxTraits_1::Box_parameter Box_parameter_1;
+    typedef typename BoxTraits_2::Box_parameter Box_parameter_2;
+    typedef typename BoxTraits_1::NT            NT;
+
+    static const bool has_unique_box_traits = std::is_same_v<BoxTraits_1, BoxTraits_2>;
 
     template<bool b> struct Bool_t {};
+
+    static int dimension(){
+        return (std::min)(BoxTraits_1::dimension(), BoxTraits_2::dimension());
+    }
 
     static bool hi_greater(NT hi, NT val, Bool_t<true> ) { return hi >= val;}
     static bool hi_greater(NT hi, NT val, Bool_t<false> ){ return hi >  val;}
@@ -83,52 +91,69 @@ struct Predicate_traits_d : public BoxTraits {
 
     // compare dim a b = islolesslo a b dim
     class Compare :
-        public CGAL::cpp98::binary_function<Box_parameter,Box_parameter,bool>
+        public CGAL::cpp98::binary_function<Box_parameter_1,Box_parameter_2,bool>
     {
         int dim;
     public:
         Compare(int dim) : dim(dim) {}
-        bool operator()(Box_parameter a, Box_parameter b) const {
+        template<class Bp1, class Bp2>
+        bool operator()(Bp1 a, Bp2 b) const {
             return is_lo_less_lo(a,b,dim);
         }
     };
 
+    // to be adapat with different Box_traits
     // loless val dim box = getlo box dim < val
-    class Lo_less : public CGAL::cpp98::unary_function<Box_parameter,bool> {
+    class Lo_less : public CGAL::cpp98::unary_function<Box_parameter_1,bool> {
         NT value;
         int dim;
     public:
         Lo_less(NT value, int dim) : value(value), dim(dim) {}
-        bool operator() (Box_parameter box) const {
-            return BoxTraits::min_coord(box, dim) < value;
+        template<class Bp>
+        bool operator() (Bp box) const {
+            if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                         std::remove_cv_t<std::remove_reference_t<Bp>>>)
+                return BoxTraits_1::min_coord(box, dim) < value;
+            else
+                return BoxTraits_2::min_coord(box, dim) < value;
         }
     };
 
-    class Hi_greater : public CGAL::cpp98::unary_function<Box_parameter,bool> {
+    class Hi_greater : public CGAL::cpp98::unary_function<Box_parameter_1,bool> {
         NT value;
         int dim;
     public:
         Hi_greater(NT value, int dim) : value(value), dim(dim) {}
-        bool operator() (Box_parameter box) const {
-            return hi_greater( BoxTraits::max_coord(box, dim), value);
+        template<class Bp>
+        bool operator() (Bp box) const {
+            if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                         std::remove_cv_t<std::remove_reference_t<Bp>>>)
+                return hi_greater( BoxTraits_1::max_coord(box, dim), value);
+            else
+                return hi_greater( BoxTraits_2::max_coord(box, dim), value);
         }
     };
 
     // spanning lo hi dim box = getlo box dim < lo && gethi box dim > hi
-    class Spanning : public CGAL::cpp98::unary_function<Box_parameter,bool> {
+    class Spanning : public CGAL::cpp98::unary_function<Box_parameter_1,bool> {
         NT lo, hi;
         int dim;
     public:
         Spanning(NT lo, NT hi, int dim) : lo(lo), hi(hi), dim(dim) {}
         // returns true <=> box spans [lo,hi) in dimension dim
-        bool operator() (Box_parameter box) const {
-            return BoxTraits::min_coord(box,dim) < lo
-                && BoxTraits::max_coord(box,dim) > hi;
+        template<class Bp>
+        bool operator() (Bp box) const {
+            if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                         std::remove_cv_t<std::remove_reference_t<Bp>>>)
+                return BoxTraits_1::min_coord(box,dim) < lo
+                    && BoxTraits_1::max_coord(box,dim) > hi;
+            else
+                return BoxTraits_2::min_coord(box,dim) < lo
+                    && BoxTraits_2::max_coord(box,dim) > hi;
         }
     };
 
     static Compare    compare_object(int dim) { return Compare(dim); }
-
     static Lo_less    lo_less_object(NT value, int dim) {
                           return Lo_less(value, dim);
     }
@@ -138,23 +163,54 @@ struct Predicate_traits_d : public BoxTraits {
     static Spanning   spanning_object(NT lo, NT hi, int dim) {
                           return Spanning( lo, hi, dim );
     }
-    static bool is_lo_less_lo(Box_parameter a, Box_parameter b, int dim) {
-        return BoxTraits::min_coord(a,dim)  < BoxTraits::min_coord(b,dim) ||
-               ( BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) &&
-                 BoxTraits::id(a) < BoxTraits::id(b) );
+
+    template<class Bp1, class Bp2>
+    static bool is_lo_less_lo(Bp1 a, Bp2 b, int dim) {
+        if constexpr(std::is_same_v<Bp1, Bp2>)
+            // We nned to check ids if the boxes have the same types
+            if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                         std::remove_cv_t<std::remove_reference_t<Bp1>>>)
+                return BoxTraits_1::min_coord(a,dim)  < BoxTraits_1::min_coord(b,dim) ||
+                     ( BoxTraits_1::min_coord(a,dim) == BoxTraits_1::min_coord(b,dim) &&
+                       BoxTraits_1::id(a) < BoxTraits_1::id(b) );
+            else
+                return BoxTraits_2::min_coord(a,dim)  < BoxTraits_2::min_coord(b,dim) ||
+                     ( BoxTraits_2::min_coord(a,dim) == BoxTraits_2::min_coord(b,dim) &&
+                       BoxTraits_2::id(a) < BoxTraits_2::id(b) );
+        else if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                          std::remove_cv_t<std::remove_reference_t<Bp1>>>)
+            return BoxTraits_1::min_coord(a,dim)  < BoxTraits_2::min_coord(b,dim) ||
+                   ( BoxTraits_1::min_coord(a,dim) == BoxTraits_2::min_coord(b,dim));
+        else
+            return BoxTraits_2::min_coord(a,dim)  < BoxTraits_1::min_coord(b,dim) ||
+                   ( BoxTraits_2::min_coord(a,dim) == BoxTraits_1::min_coord(b,dim));
     }
 
-    static bool is_lo_less_hi(Box_parameter a, Box_parameter b, int dim) {
-        return hi_greater( BoxTraits::max_coord(b,dim),
-                           BoxTraits::min_coord(a,dim));
+    template<class Bp1, class Bp2>
+    static bool is_lo_less_hi(Bp1 a, Bp2 b, int dim) {
+        if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                     std::remove_cv_t<std::remove_reference_t<Bp1>>>)
+            return hi_greater( BoxTraits_2::max_coord(b,dim),
+                               BoxTraits_1::min_coord(a,dim));
+        else
+            return hi_greater( BoxTraits_1::max_coord(b,dim),
+                               BoxTraits_2::min_coord(a,dim));
     }
-    static bool does_intersect (Box_parameter a, Box_parameter b, int dim) {
+
+    static bool does_intersect (Box_parameter_1 a, Box_parameter_2 b, int dim) {
         return is_lo_less_hi(a,b,dim) && is_lo_less_hi(b,a,dim);
     }
-    static bool contains_lo_point(Box_parameter a, Box_parameter b, int dim) {
+
+    template<class Bp1, class Bp2>
+    static bool contains_lo_point(Bp1 a, Bp2 b, int dim) {
         return is_lo_less_lo(a,b,dim) && is_lo_less_hi(b,a,dim);
     }
 };
+
+} // end of internal
+
+template< class BoxTraits, bool closed >
+struct Predicate_traits_d : internal::Predicate_traits_d<BoxTraits, BoxTraits, closed>{};
 
 } // end namespace Box_intersection_d
 
