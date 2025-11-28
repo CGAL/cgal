@@ -4,7 +4,7 @@ namespace CGAL {
   \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
   This item defines attributes for edges and faces.
-  Edge attributes are of type `Complex_number` reprensenting cross-ratios.
+  Edge attributes are of type `Complex_number` representing cross-ratios.
   Face attributes attributes are of type `Anchor` representing a lift of a triangle.
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
