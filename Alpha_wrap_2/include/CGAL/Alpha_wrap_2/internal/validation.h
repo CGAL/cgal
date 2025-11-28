@@ -12,15 +12,15 @@
 #ifndef CGAL_ALPHA_WRAP_2_TEST_ALPHA_WRAP_VALIDATION_H
 #define CGAL_ALPHA_WRAP_2_TEST_ALPHA_WRAP_VALIDATION_H
 
-#include <CGAL/license/Alpha_wrap_3.h>
-
-#include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/mark_domain_in_triangulation.h>
-#include <CGAL/Polygon_repair/repair.h>
+#include <CGAL/license/Alpha_wrap_2.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/box_intersection_d.h>
+#include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/mark_domain_in_triangulation.h>
+#include <CGAL/Polygon_repair/repair.h>
 
 #include <iostream>
 #include <unordered_map>
@@ -116,11 +116,11 @@ bool is_simple(const MultipolygonWithHoles& wrap)
     } while (++ec != done);
 
     if (cntr != 2) {
-#ifdef CGAL_AW3_DEBUG
+#ifdef CGAL_AW2_DEBUG
       std::cerr << "Vertex " << cdt.point(vh) << " has " << cntr << " incident constraints" << std::endl;
 #endif
+      return false;
     }
-    return false;
   }
 
   return true;
@@ -180,7 +180,7 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
 
   if(Alpha_wraps_2::internal::is_empty(wrap))
   {
-#ifdef CGAL_AW3_DEBUG
+#ifdef CGAL_AW2_DEBUG
     std::cerr << "Error: empty wrap" << std::endl;
 #endif
     return false;
@@ -188,7 +188,7 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
 
   if(!Polygon_repair::is_valid(wrap))
   {
-#ifdef CGAL_AW3_DEBUG
+#ifdef CGAL_AW2_DEBUG
     std::cerr << "Error: invalid wrap" << std::endl;
 #endif
     return false;
@@ -198,7 +198,7 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
   {
     if(!Alpha_wraps_2::internal::is_simple(wrap))
     {
-#ifdef CGAL_AW3_DEBUG
+#ifdef CGAL_AW2_DEBUG
       std::cerr << "Error: Wrap is not simple" << std::endl;
 #endif
     }
@@ -207,7 +207,7 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
   {
     if(!Alpha_wraps_2::internal::is_weakly_simple(wrap))
     {
-#ifdef CGAL_AW3_DEBUG
+#ifdef CGAL_AW2_DEBUG
       std::cerr << "Error: Wrap is not weakly simple" << std::endl;
 #endif
     }
@@ -216,44 +216,170 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
   return true;
 }
 
-template <typename MultipolygonWithHoles,
-          typename NamedParameters = parameters::Default_named_parameters>
-bool is_valid_wrap(const MultipolygonWithHoles& wrap,
-                   const NamedParameters& np = parameters::default_values())
+template <typename Point, typename CDT, typename InDomain>
+bool is_point_inside_marked_CDT(const Point& p,
+                                const CDT& cdt,
+                                const InDomain in_domain)
 {
-  return is_valid_wrap(wrap, true /*consider manifoldness*/, np);
-}
+  using CDT_FH = typename CDT::Face_handle;
+  using CDT_VH = typename CDT::Vertex_handle;
+  using Locate_type = typename CDT::Locate_type;
+  using Face_circulator = typename CDT::Face_circulator;
 
-template <typename MultipolygonWithHoles, typename PointRange, typename FaceRange,
-          typename OutputNamedParameters = parameters::Default_named_parameters,
-          typename InputNamedParameters = parameters::Default_named_parameters>
-bool is_outer_wrap_of_triangle_soup(const MultipolygonWithHoles& wrap,
-                                    PointRange points, // intentional copies
-                                    FaceRange faces,
-                                    const OutputNamedParameters& out_np = parameters::default_values(),
-                                    const InputNamedParameters& in_np = parameters::default_values())
-{
-  // @todo
+  CDT_FH fh;
+  int li;
+  Locate_type lt;
+  fh = cdt.locate(p, lt, li);
+
+  if(lt == CDT::VERTEX) {
+    CDT_VH vh = fh->vertex(li);
+    bool is_in = false;
+    Face_circulator fc = cdt.incident_faces(vh), done(fc);
+    do {
+      if (get(in_domain, fc)) {
+        is_in = true;
+        break;
+      }
+    } while(++fc != done);
+    if (!is_in) {
+#ifdef CGAL_AW2_DEBUG
+      std::cerr << "A polyline point [on vertex] is outside the wrap: " << p << std::endl;
+#endif
+      return false;
+    }
+  } else if (lt == CDT::EDGE) {
+    if (!get(in_domain, fh) && !get(in_domain, fh->neighbor(li))) {
+#ifdef CGAL_AW2_DEBUG
+      std::cerr << "A polyline point [on edge] is outside the wrap: " << p << std::endl;
+#endif
+      return false;
+    }
+  } else if (lt == CDT::FACE) {
+    if (!get(in_domain, fh)) {
+#ifdef CGAL_AW2_DEBUG
+      std::cerr << "A polyline point [on face] is outside the wrap: " << p << std::endl;
+#endif
+      return false;
+    }
+  } else {
+#ifdef CGAL_AW2_DEBUG
+    std::cerr << "A polyline point is outside of convex/affine hull?! " << p << std::endl;
+#endif
+    return false;
+  }
+
   return true;
 }
 
-template <typename MultipolygonWithHoles, typename PointRange, typename FaceRange,
+//////////////////////////////////////// POLYLINES /////////////////////////////////////////////////
+
+template <typename MultipolygonWithHoles, typename PolylineRange,
           typename OutputNamedParameters = parameters::Default_named_parameters,
           typename InputNamedParameters = parameters::Default_named_parameters>
-bool is_valid_wrap_of_triangle_soup(const MultipolygonWithHoles& wrap,
-                                    const PointRange& points,
-                                    const FaceRange& faces,
-                                    const OutputNamedParameters& out_np = parameters::default_values(),
-                                    const InputNamedParameters& in_np = parameters::default_values())
+bool is_outer_wrap_of_polylines(const MultipolygonWithHoles& wrap,
+                                const PolylineRange& polylines,
+                                const OutputNamedParameters& out_np = parameters::default_values(),
+                                const InputNamedParameters& in_np = parameters::default_values())
+{
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  using IPM = typename GetPointMap<PolylineRange, InputNamedParameters>::const_type;
+  IPM in_pm = choose_parameter<IPM>(get_parameter(in_np, internal_np::point_map));
+
+  using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
+  using Polygon_2 = typename Polygon_with_holes_2::Polygon_2;
+  using Segment_2 = typename Polygon_2::Segment_2;
+  using Point_2 = typename Polygon_2::Point_2;
+  using Box = CGAL::Box_intersection_d::Box_with_handle_d<double, 2, Segment_2*>;
+
+  // Build boxed segments for wrap
+  std::vector<Segment_2> wrap_segments;
+  for(const Polygon_with_holes_2& pwh : wrap.polygons_with_holes()) {
+    for(auto eit = pwh.outer_boundary().edges_begin(); eit != pwh.outer_boundary().edges_end(); ++eit)
+      wrap_segments.push_back(*eit);
+    for(const Polygon_2& hole : pwh.holes())
+      for(auto eit = hole.edges_begin(); eit != hole.edges_end(); ++eit)
+        wrap_segments.push_back(*eit);
+  }
+  std::vector<Box> wrap_boxes;
+  wrap_boxes.reserve(wrap_segments.size());
+  for(auto& seg : wrap_segments) {
+    wrap_boxes.emplace_back(seg.bbox(), &seg);
+  }
+
+  // Build boxed segments for input polylines
+  std::vector<Segment_2> input_segments;
+  for(const auto& polyline : polylines) {
+    if(polyline.size() < 2)
+      continue;
+    for(std::size_t i=1; i<polyline.size(); ++i)
+      input_segments.emplace_back(polyline[i-1], polyline[i]);
+  }
+  std::vector<Box> input_boxes;
+  input_boxes.reserve(input_segments.size());
+  for(Segment_2& seg : input_segments) {
+    input_boxes.emplace_back(seg.bbox(), &seg);
+  }
+
+  // Intersection callback
+  struct FirstIntersection {};
+  struct Overlap {
+    void operator()(const Box& a, const Box& b) const {
+      if(CGAL::do_intersect(*(a.handle()), *(b.handle())))
+        throw FirstIntersection();
+    }
+  };
+
+  try {
+    CGAL::box_intersection_d(wrap_boxes.begin(), wrap_boxes.end(),
+                             input_boxes.begin(), input_boxes.end(),
+                             Overlap());
+  } catch(const FirstIntersection&) {
+#ifdef CGAL_AW2_DEBUG
+    std::cerr << "Polyline segment intersects wrap boundary" << std::endl;
+#endif
+    return false;
+  }
+
+  // Mark domain
+  auto cdt = cdt_from_wrap(wrap);
+
+  using CDT = decltype(cdt);
+  using CDT_FH = typename CDT::Face_handle;
+
+  std::unordered_map<CDT_FH, bool> in_domain_map;
+  boost::associative_property_map<std::unordered_map<CDT_FH, bool> > in_domain(in_domain_map);
+  CGAL::mark_domain_in_triangulation(cdt, in_domain);
+
+  for(const auto& polyline : polylines) {
+    for(const auto& p : polyline) {
+      if(!is_point_inside_marked_CDT(p, cdt, in_domain))
+        return false;
+    }
+  }
+
+  return true;
+}
+
+template <typename MultipolygonWithHoles, typename PolylineRange,
+          typename OutputNamedParameters = parameters::Default_named_parameters,
+          typename InputNamedParameters = parameters::Default_named_parameters>
+bool is_valid_wrap_of_polylines(const MultipolygonWithHoles& wrap,
+                                const PolylineRange& polylines,
+                                const OutputNamedParameters& out_np = parameters::default_values(),
+                                const InputNamedParameters& in_np = parameters::default_values())
 {
   if(!is_valid_wrap(wrap, out_np))
     return false;
 
-  if(!is_outer_wrap_of_triangle_soup(wrap, points, faces, out_np, in_np))
+  if(!is_outer_wrap_of_polylines(wrap, polylines, out_np, in_np))
     return false;
 
   return true;
 }
+
+//////////////////////////////////////// POINT SET /////////////////////////////////////////////////
 
 template <typename MultipolygonWithHoles, typename PointRange,
           typename OutputNamedParameters = parameters::Default_named_parameters,
@@ -284,51 +410,8 @@ bool is_outer_wrap_of_point_set(const MultipolygonWithHoles& wrap,
   CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
   for(const auto& p : points)
-  {
-    CDT_FH fh;
-    int li;
-    Locate_type lt;
-    fh = cdt.locate(p, lt, li);
-
-    if(lt == CDT::VERTEX) {
-      CDT_VH vh = fh->vertex(li);
-
-      bool is_in = false;
-      Face_circulator fc = cdt.incident_faces(vh), done(fc);
-      do {
-        if (get(in_domain, fc)) {
-          is_in = true;
-          break;
-        }
-      } while(++fc != done);
-
-      if (!is_in) {
-#ifdef CGAL_AW3_DEBUG
-        std::cerr << "An input point [on vertex] is outside the wrap: " << get(in_pm, p) << std::endl;
-#endif
-        return false;
-      }
-    } else if (lt == CDT::EDGE) {
-      if (!get(in_domain, fh) && !get(in_domain, fh->neighbor(li))) {
-#ifdef CGAL_AW3_DEBUG
-        std::cerr << "An input point [on edge] is outside the wrap: " << get(in_pm, p) << std::endl;
-#endif
-        return false;
-      }
-    } else if (lt == CDT::FACE) {
-      if (!get(in_domain, fh)) {
-#ifdef CGAL_AW3_DEBUG
-        std::cerr << "An input point [on face] is outside the wrap: " << get(in_pm, p) << std::endl;
-#endif
-        return false;
-      }
-    } else {
-#ifdef CGAL_AW3_DEBUG
-      std::cerr << "An input point is outside of convex/affine hull?! " << get(in_pm, p) << std::endl;
-#endif
+    if(!is_point_inside_marked_CDT(get(in_pm, p), cdt, in_domain))
       return false;
-    }
-  }
 
   return true;
 }

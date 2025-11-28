@@ -8,3 +8,4 @@ find_package(CGAL REQUIRED)
 
 # create a target per cppfile
 create_single_source_cgal_program("test_alpha_wrap_2_points.cpp")
+create_single_source_cgal_program("test_alpha_wrap_2_polylines.cpp")
