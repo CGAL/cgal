@@ -1,4 +1,4 @@
-// Copyright (c) 2024
+// Copyright (c) 2025
 // INRIA Nancy (France), and Université de Lorraine (France).
 // All rights reserved.
 //
@@ -12,6 +12,8 @@
 
 #ifndef CGAL_HYPERBOLIC_DIRICHLET_DOMAIN_2
 #define CGAL_HYPERBOLIC_DIRICHLET_DOMAIN_2
+
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
 

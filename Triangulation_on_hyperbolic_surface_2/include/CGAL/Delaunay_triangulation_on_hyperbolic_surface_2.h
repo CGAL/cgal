@@ -1,4 +1,4 @@
-// Copyright (c) 2024
+// Copyright (c) 2025
 // INRIA Nancy (France), and Université de Lorraine (France).
 // All rights reserved.
 //
@@ -12,6 +12,8 @@
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 #define CGAL_DELAUNAY_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
+
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
 #include <CGAL/Root_of_traits.h>
