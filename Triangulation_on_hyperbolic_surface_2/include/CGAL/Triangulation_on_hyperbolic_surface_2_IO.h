@@ -1,5 +1,5 @@
 // Copyright (c) 2024
-// INRIA Nancy (France), and Université Gustave Eiffel Marne-la-Vallee (France).
+// INRIA Nancy (France), Université de Lorraine (France), and Université Gustave Eiffel Marne-la-Vallee (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
