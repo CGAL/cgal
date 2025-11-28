@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 
-namespace AW3 = CGAL::Alpha_wraps_2;
-
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = K::Point_2;
 using Point_3 = K::Point_3;
@@ -28,6 +26,7 @@ using Multipolygon = CGAL::Multipolygon_with_holes_2<K>;
 int main(int argc, char** argv)
 {
   std::cout.precision(17);
+  std::cerr.precision(17);
 
   // Read the input
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby-shuffled.off");

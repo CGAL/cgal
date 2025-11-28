@@ -1,4 +1,4 @@
-#define CGAL_AW3_TIMER
+#define CGAL_AW2_TIMER
 
 #include <CGAL/alpha_wrap_2.h>
 #include <CGAL/Alpha_wrap_2/internal/validation.h>
@@ -79,12 +79,14 @@ void xyz_to_multipoint(const std::string& filename)
   std::cout << "Wrote " << points.size() << " points to '" << out_filename << "'" << std::endl;
 }
 
-void alpha_wrap_point_set(Points& input_points,
+bool alpha_wrap_point_set(Points& input_points,
                           const double alpha,
                           const double offset)
 {
   namespace AW2 = CGAL::Alpha_wraps_2;
   namespace PMP = CGAL::Polygon_mesh_processing;
+
+  bool result = true;
 
   std::cout << "Input: " << input_points.size() << " points" << std::endl;
   std::cout << "Alpha: " << alpha << " Offset: " << offset << std::endl;
@@ -98,20 +100,32 @@ void alpha_wrap_point_set(Points& input_points,
   std::cout << "Result: " << wrap.polygons_with_holes().size() << " polygons" << std::endl;
 
   std::ofstream out("last.off");
-  out.precision(17);
+  out.precision(std::numeric_limits<double>::max_digits10);
   CGAL::IO::write_multi_polygon_WKT(out, wrap);
 
-  assert(AW2::internal::is_valid_wrap(wrap, enforce_manifoldness));
-  assert(AW2::internal::is_outer_wrap_of_point_set(wrap, input_points));
+  if(!AW2::internal::is_valid_wrap(wrap, enforce_manifoldness)) {
+    std::cerr << "Error: invalid wrap" << std::endl;
+    result = false;
+  }
+  if(!AW2::internal::is_outer_wrap_of_point_set(wrap, input_points)) {
+    std::cerr << "Error: wrap does not contain the input" << std::endl;
+    result = false;
+  }
 
   // if(!enforce_manifoldness)
   //   assert(AW2::internal::has_expected_Hausdorff_distance(wrap, input_points, alpha, offset));
 
-  if(!enforce_manifoldness)
-    assert(AW2::internal::has_bounded_edge_length(wrap, alpha));
+  if(!enforce_manifoldness) {
+    if(!AW2::internal::has_bounded_edge_length(wrap, alpha)) {
+      std::cerr << "Error: edge length check failure" << std::endl;
+      result = false;
+    }
+  }
+
+  return result;
 }
 
-void alpha_wrap_point_set(const std::string& filename,
+bool alpha_wrap_point_set(const std::string& filename,
                           const double alpha_rel,
                           const double offset_rel)
 {
@@ -129,12 +143,14 @@ void alpha_wrap_point_set(const std::string& filename,
   const double alpha = longest_diag_length / alpha_rel;
   const double offset = longest_diag_length / offset_rel;
 
-  alpha_wrap_point_set(input_points, alpha, offset);
+  return alpha_wrap_point_set(input_points, alpha, offset);
 }
 
-void alpha_wrap_point_set(const std::string& filename)
+bool alpha_wrap_point_set(const std::string& filename)
 {
   std::cout << "\n== " << filename << "==" << std::endl;
+
+  bool result = true;
 
   CGAL::Random r;
 
@@ -150,10 +166,10 @@ void alpha_wrap_point_set(const std::string& filename)
                                 Point_2(bbox.xmin(), bbox.ymin());
   double longest_diag_length = CGAL::to_double(CGAL::approximate_sqrt(longest_diag.squared_length()));
 
-  for(int i=0; i<2; ++i)
+  for(int i=0; i<3; ++i)
   {
-    const double alpha_expo = r.get_double(0., 6); // to have alpha_rel between 1 and 64
-    const double offset_expo = r.get_double(0., 6);
+    const double alpha_expo = r.get_double(2., 6); // to have alpha_rel between 1 and 64
+    const double offset_expo = r.get_double(2., 6);
     const double alpha_rel = std::pow(2, alpha_expo);
     const double offset_rel = std::pow(2, offset_expo);
     const double alpha = longest_diag_length / alpha_rel;
@@ -164,8 +180,14 @@ void alpha_wrap_point_set(const std::string& filename)
                           << " " << offset << " (rel " << offset_rel << ")" << std::endl;
     std::cout << "Random seed = " << r.get_seed() << std::endl;
 
-    alpha_wrap_point_set(input_points, alpha, offset);
+    if(!alpha_wrap_point_set(input_points, alpha, offset)) {
+      result = false;
+#ifdef CGAL_AW2_BREAK_ON_TEST_FAILURE
+      break;
+#endif
+    }
   }
+  return result;
 }
 
 int main(int argc, char** argv)
@@ -176,26 +198,36 @@ int main(int argc, char** argv)
   // xyz_to_multipoint(argv[1]);
   // return EXIT_SUCCESS;
 
+  bool result = true;
+
   // For convenience to do manual testing
   if(argc > 1)
   {
     const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 20.;
     const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 600.;
 
-    alpha_wrap_point_set(argv[1], relative_alpha, relative_offset);
+    result = alpha_wrap_point_set(argv[1], relative_alpha, relative_offset);
+  }
+  else
+  {
+    std::vector<std::string> default_inputs = { "data/buildings_outline.wkt",
+                                                "data/circles.wkt",
+                                                "data/duplicate_points.wkt",
+                                                "data/four_points.wkt",
+                                                "data/hippo2.wkt",
+                                                "data/kitten.wkt",
+                                                "data/spheres.wkt" };
 
-    std::cout << "Done!" << std::endl;
-    return EXIT_SUCCESS;
+    for(const std::string& filename : default_inputs) {
+      if(!alpha_wrap_point_set(filename)) {
+        result = false;
+#ifdef CGAL_AW2_BREAK_ON_TEST_FAILURE
+        break;
+#endif
+      }
+    }
   }
 
-  alpha_wrap_point_set("data/buildings_outline.wkt");
-  alpha_wrap_point_set("data/circles.wkt");
-  alpha_wrap_point_set("data/duplicate_points.wkt");
-  alpha_wrap_point_set("data/four_points.wkt");
-  alpha_wrap_point_set("data/hippo2.wkt");
-  alpha_wrap_point_set("data/kitten.wkt");
-  alpha_wrap_point_set("data/spheres.wkt");
-
   std::cout << "Done!" << std::endl;
-  return EXIT_SUCCESS;
+  return result ? EXIT_SUCCESS : EXIT_FAILURE;
 }

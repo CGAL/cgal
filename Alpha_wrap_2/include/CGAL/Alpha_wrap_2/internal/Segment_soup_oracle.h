@@ -310,7 +310,6 @@ public:
 #endif
           continue;
         }
-        std::cout << "insert " << s << std::endl;
         m_segments_ptr->push_back(s);
       }
     }

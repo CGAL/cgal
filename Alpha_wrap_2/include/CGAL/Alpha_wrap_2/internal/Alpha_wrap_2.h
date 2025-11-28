@@ -890,11 +890,6 @@ public:
 
           // std::cout << "Reconstructed ring for polygon " << fh->region_label() << " with ccw? " << (polygon.orientation() == CGAL::COUNTERCLOCKWISE) << std::endl;
 
-          std::cout << "ring" << std::endl;
-          for (const auto& pt : polygon) {
-            std::cout << pt << std::endl;
-          }
-
           // polygon.orientation() has a is_simple_2 precondition, which can fail if AW2's manifold
           // option is turned off. In fact, the orientation code works for a weakly simple input.
           Orientation o  = CGAL::Polygon::internal::orientation_2_no_precondition(

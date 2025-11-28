@@ -171,7 +171,7 @@ public:
   }
 };
 
-#endif // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+#endif // CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
 
 template <typename Tr>
 struct Gate_ID_PM

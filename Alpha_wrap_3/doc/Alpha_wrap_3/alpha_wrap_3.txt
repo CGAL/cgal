@@ -12,6 +12,8 @@ namespace CGAL {
 <img src="aw3_bike_lod.jpg" style="max-width:70%;"/>
 </center>
 
+Note: a two-dimensional version of this package is also available: \ref PkgAlphaWrap2.
+
 \section aw3_introduction Introduction
 
 Various tasks in geometric modeling and processing require 3D objects represented as valid surface meshes,
@@ -295,7 +297,7 @@ which tends to improve the preservation of convex sharp features.
 which tends to generate triangles with better quality in terms of angles, in 3D.
 \cgalFigureCaptionEnd
 
-By default, we recommend to set the offset parameter to a small fraction of alpha, so that alpha
+By default, we recommend to set the offset parameter to a small fraction of alpha, such that alpha
 becomes the main parameter that controls the final level of detail.
 
 The image below illustrates the impact of both parameters.

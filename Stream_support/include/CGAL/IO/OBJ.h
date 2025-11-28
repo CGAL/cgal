@@ -266,6 +266,19 @@ bool read_OBJ(std::istream& is,
   return !is.bad();
 }
 
+// convenience overload
+template <typename PointRange, typename PolylinRange, typename PolygonRange>
+bool read_OBJ(std::istream& is,
+              PointRange& points,
+              PolylinRange& polylines,
+              PolygonRange& polygons,
+              const bool verbose = false)
+{
+  return read_OBJ(is, points, polylines, polygons,
+                  CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                  verbose);
+}
+
 } // namespace internal
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ

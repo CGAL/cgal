@@ -30,8 +30,8 @@ int main(int argc, char** argv)
 
   const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("wkt/LetterAbis.wkt");
 
-  // read_multi_linestring expect an actual MULTILINESTRING entry whereas read_WKT will read
-  // both MULTILINESTRING and LINESTRING into a multi-linestring.
+  // read_multi_linestring() expects an actual MULTILINESTRING entry whereas read_WKT() will read
+  // all MULTILINESTRING and LINESTRING into a multi-linestring.
   Points pts_in;
   Polylines mls_in;
   Multipolygon mp_in;
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   std::cout << mls_in.size() << " input polylines" << std::endl;
 
   // Compute the alpha and offset values
-  const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 10.;
+  const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 20.;
   const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 300.;
 
   CGAL::Bbox_2 bbox;
