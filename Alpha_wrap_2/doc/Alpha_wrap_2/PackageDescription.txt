@@ -1,27 +1,28 @@
 /// \defgroup PkgAlphaWrap2Ref Reference Manual
 
 /// \defgroup AW2_free_functions_grp Free Functions
-/// Functions to create a wrap from point clouds, triangle soups, and triangle meshes.
+/// Functions to create a wrap from point clouds, segment soups, and polygons with holes.
 /// \ingroup PkgAlphaWrap2Ref
 
 /*!
 \addtogroup PkgAlphaWrap2Ref
 \cgalPkgDescriptionBegin{2D Alpha Wrapping,PkgAlphaWrap2}
-\cgalPkgPicture{alpha_wrap_2.jpg}
+\cgalPkgPicture{alpha_wrap_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Michael Hemmer, Cédric Portaneri, and Mael Rouxel-Labbé}
-\cgalPkgDesc{This component takes a 2D triangle soup, 2D segment soup, or a 2D point set as input,
-             and generates a valid triangulated simple multi polygon that strictly contains the input (watertight, intersection-free and 1-manifold). The algorithm proceeds by shrink-wrapping
+\cgalPkgDesc{This component takes a polygon soup, a 2D segment soup, and/or a 2D point set as input,
+             and generates a valid (watertight, intersection-free and 1-manifold) multi-polygon that
+             strictly encloses the input. The algorithm proceeds by shrink-wrapping
              and refining a 2D Delaunay triangulation starting from a loose bounding box of the input.
              Two user-defined parameters, alpha and offset, offer control over the maximum size
              of cavities where the shrink-wrapping process can enter, and the tightness
-             of the final polygon to the input, respectively. Once combined, these parameters
+             of the final polygon(s) to the input, respectively. Once combined, these parameters
              provide a means to trade fidelity to the input for complexity of the output.}
 \cgalPkgManuals{Chapter_2D_Alpha_wrapping,PkgAlphaWrap2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.2}
-\cgalPkgDependsOn{\ref PkgTriangulation2 and \ref PkgPolygonMeshProcessing}
+\cgalPkgDependsOn{\ref PkgTriangulation2 and \ref PkgPolygonRepair}
 \cgalPkgBib{cgal:achpr-aw2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
