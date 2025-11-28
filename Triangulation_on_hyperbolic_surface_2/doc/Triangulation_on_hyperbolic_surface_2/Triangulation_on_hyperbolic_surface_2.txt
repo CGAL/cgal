@@ -124,7 +124,7 @@ When a flip occurs, the cross ratios of the involved edges are modified via simp
 The <em>Delaunay flip algorithm</em> flips edges that do not satisfy the Delaunay until no more edges violate the criterion, with no preference on the order of the flips.
 This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cgalCite{despre2020flipping}.
 
-\section Section_Hyperbolic_Surface_Triangulations_Epsilon_Nets \f$ \varepsilon \f$-nets
+\section Section_Hyperbolic_Surface_Triangulations_Epsilon_Nets ε-nets
 
 <span style="color:red">NEW SECTION</span>
 
