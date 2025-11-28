@@ -345,7 +345,7 @@ void alpha_wrap_2(const InputMultiPolygonWithHoles& multipolygon,
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_MultipolygonWithHoles<InputMultiPolygonWithHoles>::value>* = nullptr
 #endif
-                 )
+                  )
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -427,7 +427,7 @@ void alpha_wrap_2(const SegmentRange& segments,
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_Segment_2_range<SegmentRange>::value>* = nullptr
 #endif
-                )
+                  )
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -501,8 +501,9 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
                   MultipolygonWithHoles& alpha_wrap,
                   const InputNamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                  , std::enable_if_t<Alpha_wraps_2::internal::is_MultiLineString<MultiLineString>::value>* = nullptr)
+                  , std::enable_if_t<Alpha_wraps_2::internal::is_MultiLineString<MultiLineString>::value>* = nullptr
 #endif
+                  )
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -576,10 +577,11 @@ void alpha_wrap_2(const PointRange& points,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np,
+                  const InputNamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                  std::enable_if_t<Alpha_wraps_2::internal::is_Point_2_range<PointRange>::value>* = nullptr)
+                  , std::enable_if_t<Alpha_wraps_2::internal::is_Point_2_range<PointRange>::value>* = nullptr
 #endif
+                  )
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
