@@ -23,12 +23,32 @@ namespace internal {
 enum class Cell_label
 {
   // Cells that have been carved
-  OUTSIDE,
+  OUTSIDE = 0,
   // Cells that have not yet been carved
   INSIDE,
   // OUTSIDE cells that have been labeled "inside" again as to make the result manifold
   MANIFOLD
 };
+
+inline std::string label_string(const Cell_label& label) {
+  switch(label) {
+    case Cell_label::OUTSIDE:
+      return "OUTSIDE";
+    case Cell_label::INSIDE:
+      return "INSIDE";
+    case Cell_label::MANIFOLD:
+      return "MANIFOLD";
+    default:
+      CGAL_assertion_msg(false, "Unknown label");
+      return {};
+  }
+}
+
+inline std::ostream& operator <<(std::ostream& os, const Cell_label& label)
+{
+   os << static_cast<std::underlying_type<Cell_label>::type>(label);
+   return os;
+}
 
 template < typename GT,
            typename Cb = CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<GT> >
