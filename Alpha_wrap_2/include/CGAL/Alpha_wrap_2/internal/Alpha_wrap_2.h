@@ -17,22 +17,24 @@
 #ifndef CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
+// @fixme yesterday
+// - assertion on very small alphas
+// - demo can't wrap from pure drawing
+
 // @todo yesterday
 // - document and test new kernel functors
 // - document and test DT2 face base classes
-// - Fix doc of polygon concepts
-// - AW2 ref manual doc + submit feature
+// - submit feature
 
 // @todo
-// - continue adding tests
+// - continue adding tests (manifoldness)
 // - Add initialize_with_cavities
 // - test multi polygon island representation (use seeds)
-// - sphere marching from the AW3 branch
+// - test (relaxed) sphere marching from the AW3 branch, add to AW3 if better
 
 // @todo long
-// - support .xy, .xyl, .pwn, ...?
-// - bench queues and whatnot
-// - test relaxed sphere marching
+// - add support for .xy, .xyl, .pwn, ... inputs?
+// - bench sorted/unsorted queues
 // - if(is_neighbor_cc_in_offset) should be removed if sphere marching is used
 // - check what could be factorized with AW3 (e.g. oracle base?)
 // - test expensive assertions in T3
