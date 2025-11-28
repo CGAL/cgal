@@ -40,13 +40,4 @@ target_link_libraries(Delaunay_triangulation_on_hyperbolic_surface_2_demo PRIVAT
 add_executable( Hyperbolic_Dirichlet_domain_2_demo Hyperbolic_Dirichlet_domain_2_demo.cpp window.cpp ${UIS})
 target_link_libraries(Hyperbolic_Dirichlet_domain_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
 
-add_executable( epsilon_net epsilon_net.cpp window.cpp ${UIS})
-target_link_libraries(epsilon_net PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
-
-add_executable( dirichlet dirichlet.cpp window.cpp ${UIS})
-target_link_libraries(dirichlet PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
-
-add_executable( benchs benchs.cpp window.cpp ${UIS})
-target_link_libraries(benchs PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
-
 set(CMAKE_BUILD_TYPE "Release")
