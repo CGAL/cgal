@@ -79,5 +79,8 @@ int main()
 
 	assert(same_vertices);
 
+	assert(dt.shortest_loop() != 0);
+	assert(dt.shortest_non_loop_edge() != 0);
+
 	return 0;
 }
