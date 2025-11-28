@@ -25,13 +25,13 @@ template<class Traits>
 std::vector<std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_const_descriptor, typename Traits::Point_2, typename Traits::Point_2, typename Traits::Point_2>>
 unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 {
-	typedef typename Traits::Complex                                   Complex;
-	typedef typename Traits::Point_2                                   Point;
-	typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>     Delaunay_Triangulation;
-	typedef typename Delaunay_Triangulation::Anchor                    Anchor;
-	typedef typename Delaunay_Triangulation::CMap                      CMap;
-	typedef typename Delaunay_Triangulation::Dart_const_descriptor     Dart_const_descriptor;
-	typedef	CGAL::Hyperbolic_isometry_2<Traits>                        Isometry;
+    typedef typename Traits::Complex                                   Complex;
+    typedef typename Traits::Point_2                                   Point;
+    typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>     Delaunay_Triangulation;
+    typedef typename Delaunay_Triangulation::Anchor                    Anchor;
+    typedef typename Delaunay_Triangulation::CMap                      CMap;
+    typedef typename Delaunay_Triangulation::Dart_const_descriptor     Dart_const_descriptor;
+    typedef CGAL::Hyperbolic_isometry_2<Traits>                        Isometry;
 
     Anchor & anchor = triangulation.anchor();
     CMap & cmap = triangulation.combinatorial_map();
@@ -88,10 +88,10 @@ unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 template<class Traits>
 std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hyperbolic_fundamental_domain_2<Traits> & domain)
 {
-	typedef typename Traits::Point_2 									Point;
-	typedef typename Traits::Hyperbolic_Voronoi_point_2					Voronoi_point;
-	typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>		Delaunay_Triangulation;
-	typedef typename Delaunay_Triangulation::Dart_const_descriptor		Dart_const_descriptor;
+    typedef typename Traits::Point_2                                    Point;
+    typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
+    typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>      Delaunay_Triangulation;
+    typedef typename Delaunay_Triangulation::Dart_const_descriptor      Dart_const_descriptor;
 
     Delaunay_Triangulation triangulation = Delaunay_Triangulation(domain);
 

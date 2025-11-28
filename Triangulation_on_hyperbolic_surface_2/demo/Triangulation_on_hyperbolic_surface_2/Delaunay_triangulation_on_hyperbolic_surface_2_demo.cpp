@@ -23,9 +23,9 @@ typedef Hyperbolic_fundamental_domain_factory_2<Traits>           Factory;
 typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>    Delaunay_triangulation;
 
 /*
-	HOW TO USE THIS DEMO
-	./Delaunay_triangulation_on_hyperbolic_surface_2_demo [epsilon] [surface seed] [precision]
-	Without arguments, uses the default values defined below.
+  HOW TO USE THIS DEMO
+  ./Delaunay_triangulation_on_hyperbolic_surface_2_demo [epsilon] [surface seed] [precision]
+  Without arguments, uses the default values defined below.
 */
 
 // DEFAULT VALUES
@@ -35,76 +35,76 @@ int p = 1;
 
 int main(int argc, char *argv[])
 {
-	if(argc == 1) {
-		std::cout << "HOW TO USE THIS DEMO:\n"
-							<< "./Delaunay_triangulation_on_hyperbolic_surface_2_demo [epsilon] [surface seed] [precision]\n"
-							<< "Without arguments, uses default values: epsilon = 0.25, random seed, precision = 1.\n"
-							<< "WARNING: when not using the CGAL::Gmpq number type, precision is ignored and, instead, to_double is used to round coordinates of circumcenters.\n"
-							<< "--------------------"
-							<< std::endl;
-	}
+  if(argc == 1) {
+    std::cout << "HOW TO USE THIS DEMO:\n"
+              << "./Delaunay_triangulation_on_hyperbolic_surface_2_demo [epsilon] [surface seed] [precision]\n"
+              << "Without arguments, uses default values: epsilon = 0.25, random seed, precision = 1.\n"
+              << "WARNING: when not using the CGAL::Gmpq number type, precision is ignored and, instead, to_double is used to round coordinates of circumcenters.\n"
+              << "--------------------"
+              << std::endl;
+  }
   // 1. Parse args and generate the input
-	if (argc > 1) {
-		epsilon = std::stod(argv[1]);
-	}
+  if (argc > 1) {
+    epsilon = std::stod(argv[1]);
+  }
 
-	Domain domain;
-	if (argc <= 2) {
-		std::cout << "Using random seed " << seed << std::endl;
-	} else {
-		seed = atoi(argv[2]);
-	}
-	Factory factory;
-	std::cout << "Generating surface with seed " << seed << "..." << std::endl;
-	domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
-	Delaunay_triangulation dt = Delaunay_triangulation(domain);
+  Domain domain;
+  if (argc <= 2) {
+    std::cout << "Using random seed " << seed << std::endl;
+  } else {
+    seed = atoi(argv[2]);
+  }
+  Factory factory;
+  std::cout << "Generating surface with seed " << seed << "..." << std::endl;
+  domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
+  Delaunay_triangulation dt = Delaunay_triangulation(domain);
 
-	if (argc > 3) {
-		p = atoi(argv[3]);
-	}
+  if (argc > 3) {
+    p = atoi(argv[3]);
+  }
 
-	// 2. Get a vertex
-	// So that if you run the demo on a same surface but with different values of epsilon,
-	// the drawing will be centered at the same vertex and it will look similar.
-	Point v0 = dt.anchor().vertices[0];
+  // 2. Get a vertex
+  // So that if you run the demo on a same surface but with different values of epsilon,
+  // the drawing will be centered at the same vertex and it will look similar.
+  Point v0 = dt.anchor().vertices[0];
 
-	// 3. Compute epsilon-net and display useful info
-	if constexpr(!std::is_same<NumberType, Gmpq>::value) {
-		std::cout << "WARNING: Not using the CGAL::Gmpq number type. Precision will be ignored and to_double approximation will be used instead." << std::endl;
-	}
-	std::cout << "Computing a " << epsilon << "-net with floating-point precision " << p*53 << "..." << std::endl;
-	Timer timer;
-	timer.start();
-	std::cout << "Is epsilon-net? " << dt.epsilon_net(epsilon, p) << std::endl;
-	timer.stop();
-	std::cout << "Done in " << timer.time() << " seconds." << std::endl;
-	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
+  // 3. Compute epsilon-net and display useful info
+  if constexpr(!std::is_same<NumberType, Gmpq>::value) {
+    std::cout << "WARNING: Not using the CGAL::Gmpq number type. Precision will be ignored and to_double approximation will be used instead." << std::endl;
+  }
+  std::cout << "Computing a " << epsilon << "-net with floating-point precision " << p*53 << "..." << std::endl;
+  Timer timer;
+  timer.start();
+  std::cout << "Is epsilon-net? " << dt.epsilon_net(epsilon, p) << std::endl;
+  timer.stop();
+  std::cout << "Done in " << timer.time() << " seconds." << std::endl;
+  dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
 
-	// 4. SET THE FIRST ANCHOR OF THE DRAWING
-	Anchor anchor = dt.locate(v0);
-	int index = 0;
-	for (int i = 0; i < 3; i++) {
-		if (v0 == anchor.vertices[i]) {
-			index = i;
-		}
-	}
+  // 4. SET THE FIRST ANCHOR OF THE DRAWING
+  Anchor anchor = dt.locate(v0);
+  int index = 0;
+  for (int i = 0; i < 3; i++) {
+    if (v0 == anchor.vertices[i]) {
+      index = i;
+    }
+  }
 
-	Anchor start = Anchor();
-	start.dart = anchor.dart;
-	for (int i = 0; i < 3; i++) {
-		start.vertices[i] = anchor.vertices[(i + index) % 3];
-		if (i < index) {
-			start.dart = dt.Base::ccw(start.dart);
-		}
-	}
+  Anchor start = Anchor();
+  start.dart = anchor.dart;
+  for (int i = 0; i < 3; i++) {
+    start.vertices[i] = anchor.vertices[(i + index) % 3];
+    if (i < index) {
+      start.dart = dt.Base::ccw(start.dart);
+    }
+  }
 
-	// 5. DRAW
-	QApplication app(argc, argv);
-	app.setApplicationName("Delaunay triangulation on hyperbolic surface 2 Demo");
-	DemoWindow window;
-	window.item().draw_triangulation(dt, start);
-	window.show();
-	QStringList args = app.arguments();
-	args.removeAt(0);
-	return app.exec();
+  // 5. DRAW
+  QApplication app(argc, argv);
+  app.setApplicationName("Delaunay triangulation on hyperbolic surface 2 Demo");
+  DemoWindow window;
+  window.item().draw_triangulation(dt, start);
+  window.show();
+  QStringList args = app.arguments();
+  args.removeAt(0);
+  return app.exec();
 }

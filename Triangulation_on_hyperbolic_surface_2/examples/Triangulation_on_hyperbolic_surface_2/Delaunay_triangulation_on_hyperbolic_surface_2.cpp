@@ -12,12 +12,12 @@
 #include <time.h>
 
 typedef CGAL::Exact_rational                                                                                            Rational;
-typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<Rational>,CGAL::Algebraic_kernel_for_circles_2_2<Rational>>		Kernel;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                             		ParentTraits;
-typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                         		Traits;
-typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                													Domain;
-typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>        													Factory;
-typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>          											Delaunay_triangulation;
+typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<Rational>,CGAL::Algebraic_kernel_for_circles_2_2<Rational>>    Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                                 ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                             Traits;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                                         Domain;
+typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>                                 Factory;
+typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>                                Delaunay_triangulation;
 
 int main() {
   // Generates the domain:
