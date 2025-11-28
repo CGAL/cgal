@@ -137,7 +137,7 @@ Vertex_range vertices_range() {
 Edge_range edges_range() {
   return combinatorial_map_.template one_dart_per_cell<1>();
 }
-Face_range faces_range() {  
+Face_range faces_range() {
   return combinatorial_map_.template one_dart_per_cell<2>();
 }
 Vertex_const_range vertices_const_range() const {
@@ -202,7 +202,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
   }
 
   // Sew the boundary edges and set their cross ratios
-  for (std::size_t  k1=0; k1<size; k1++) {
+  for (std::size_t k1=0; k1<size; k1++) {
     std::size_t k2 = domain.paired_side(k1);
 
     p0 = domain.vertex((k1+1)%size);
