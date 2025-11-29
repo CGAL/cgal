@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 
     assert(is_eps_net);
     assert(dt.is_valid());
+    assert(dt.shortest_non_loop_edge() != 0);
 
     return 0;
 }

@@ -202,7 +202,7 @@ public:
   */
   double shortest_loop() const;
   /*!
-    \return a `double` approximation of the length of the shortest non-loop edge in the Delaunay triangulation.
+    \return a `double` approximation of the length of the shortest non-loop edge in the Delaunay triangulation. Returns 0 (NULL) if all edges are loops.
   */
   double shortest_non_loop_edge() const;
   /// @}

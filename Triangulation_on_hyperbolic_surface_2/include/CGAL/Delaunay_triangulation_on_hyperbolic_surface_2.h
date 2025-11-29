@@ -1094,6 +1094,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 shortest_non_loop_edge() const
 {
     Number min_delta_length = 999;
+    double res = NULL;
     for (typename Edge_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
                                        it != this->combinatorial_map_.template one_dart_per_cell<1>().end(); ++it) {
         Anchor const & current_anchor = anchor(it);
@@ -1112,10 +1113,11 @@ shortest_non_loop_edge() const
         }
         if(!is_loop) {
             Number delta_length = delta(a, b);
-            min_delta_length = min(min_delta_length,delta_length);
+            min_delta_length = min(min_delta_length, delta_length);
+            res = std::acosh(1 + to_double(min_delta_length));
         }
     }
-    return std::acosh(1 + to_double(min_delta_length));
+    return res;
 }
 
 }  // namespace CGAL
