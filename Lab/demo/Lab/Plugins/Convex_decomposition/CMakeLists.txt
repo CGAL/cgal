@@ -9,3 +9,9 @@ cgal_lab_plugin(acd_plugin Approximate_convex_decomposition_plugin ${acdUI_FILES
 
 target_link_libraries(nef_plugin PRIVATE scene_nef_polyhedron_item scene_surface_mesh_item)
 target_link_libraries(acd_plugin PRIVATE scene_surface_mesh_item)
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(acd_plugin PRIVATE CGAL::TBB_support)
+endif()

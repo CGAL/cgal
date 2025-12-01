@@ -7,6 +7,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_group_item.h>
 
 #include <QObject>
 #include <QAction>
@@ -103,40 +104,45 @@ approximate_convex_decomposition()
   if (i == QDialog::Rejected)
     return;
 
-  const unsigned int maximumDepth = static_cast<unsigned int>(ui.maximumDepth->value());
-  const unsigned int maximumConvexHulls = static_cast<unsigned int>(ui.maximumConvexHulls->value());
-  const unsigned int numVoxels = static_cast<unsigned int>(ui.numVoxels->value());
-  const double volumeError = ui.volumeError->value();
-  const bool splitConcavity = ui.splitConcavity->isChecked();
+  const unsigned int maximum_depth = static_cast<unsigned int>(ui.maximumDepth->value());
+  const unsigned int maximum_convex_hulls = static_cast<unsigned int>(ui.maximumConvexHulls->value());
+  const unsigned int num_voxels = static_cast<unsigned int>(ui.numVoxels->value());
+  const double volume_error = ui.volumeError->value();
+  const bool split_concavity = ui.splitConcavity->isChecked();
+  const bool refitting = ui.refitting->isChecked();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   std::vector<Convex_hull> convex_volumes;
-  convex_volumes.reserve(9);
+  convex_volumes.reserve(maximum_convex_hulls);
 
   CGAL::approximate_convex_decomposition(*(sm_item->face_graph()), std::back_inserter(convex_volumes),
-    CGAL::parameters::maximum_depth(maximumDepth)
-    .volume_error(volumeError)
-    .maximum_number_of_convex_volumes(maximumConvexHulls)
-    .split_at_concavity(splitConcavity)
-    .maximum_number_of_voxels(numVoxels)
+    CGAL::parameters::maximum_depth(maximum_depth)
+    .volume_error(volume_error)
+    .maximum_number_of_convex_volumes(maximum_convex_hulls)
+    .split_at_concavity(split_concavity)
+    .refitting(refitting)
+    .maximum_number_of_voxels(num_voxels)
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
-
 
   std::vector<QColor> distinct_colors;
   // the first color is either the background or the unique domain
 
   compute_deterministic_color_map(QColor(80, 250, 80), convex_volumes.size(), std::back_inserter(distinct_colors));
 
+  Scene_group_item* group = new Scene_group_item(tr("%1 %2 decomposition").arg(sm_item->name()).arg(maximum_convex_hulls));
+  scene->addItem(group);
+
   for (std::size_t i = 0; i < convex_volumes.size(); i++) {
-    const Convex_hull& ch = convex_volumes[i];
+    Convex_hull& ch = convex_volumes[i];
     SMesh sm;
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(ch.first, ch.second, sm);
 
-    Scene_surface_mesh_item* component_item = new Scene_surface_mesh_item(sm);
+    Scene_surface_mesh_item* component_item = new Scene_surface_mesh_item(std::move(sm));
     component_item->setName(tr("%1 %2").arg(sm_item->name()).arg(i));
     component_item->setColor(distinct_colors[i]);
     Three::scene()->addItem(component_item);
+    Three::scene()->changeGroup(component_item, group);
   }
 
   QApplication::restoreOverrideCursor();

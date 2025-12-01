@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
     .volume_error(0.1)
     .maximum_number_of_convex_volumes(9)
     .split_at_concavity(true)
+    .refitting(true)
     .maximum_number_of_voxels(1000000)
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
