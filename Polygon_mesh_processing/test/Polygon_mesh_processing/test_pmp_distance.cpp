@@ -30,6 +30,8 @@ struct Custom_traits_Hausdorff
     FT& operator+=(FT){ return *this; }
   };
 
+  typedef bool Boolean;
+
   struct Point_3
   {
     Point_3(){}
@@ -157,7 +159,9 @@ struct Custom_traits_Hausdorff
 
   struct Construct_max_vertex_3{};
 
-  struct Construct_center_3{};
+  struct Construct_center_3{
+    Point_3 operator()(const Sphere_3&) const { return Point_3(); }
+  };
 
 
   typedef const FT* Cartesian_const_iterator_3;

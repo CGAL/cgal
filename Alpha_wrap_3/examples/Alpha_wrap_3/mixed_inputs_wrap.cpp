@@ -100,8 +100,8 @@ int main(int argc, char** argv)
   Oracle oracle(ss_oracle);
 
   oracle.add_triangle_soup(points, faces, CGAL::parameters::default_values());
-  oracle.add_segment_soup(segments, CGAL::parameters::default_values());
-  oracle.add_point_set(ps_points, CGAL::parameters::default_values());
+  oracle.add_segments(segments, CGAL::parameters::default_values());
+  oracle.add_points(ps_points, CGAL::parameters::default_values());
 
   CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 

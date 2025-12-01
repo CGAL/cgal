@@ -99,11 +99,21 @@ public:
   { }
 
 public:
+  void clear()
+  {
+    m_segments_ptr->clear();
+    Oracle_base::clear();
+  }
+
   template <typename SegmentRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void add_segment_soup(const SegmentRange& segments,
-                        const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
+  void add_segments(const SegmentRange& segments,
+                    const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB Tree (" << segments.size() << " segments)..." << std::endl;
+#endif
+
     if(segments.empty())
     {
 #ifdef CGAL_AW3_DEBUG
@@ -129,10 +139,7 @@ public:
       m_segments_ptr->push_back(s);
     }
 
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB tree (segments)..." << std::endl;
-#endif
-    this->tree().insert(std::next(std::cbegin(*m_segments_ptr), old_size), std::cend(*m_segments_ptr));
+    this->tree().rebuild(std::cbegin(*m_segments_ptr), std::cend(*m_segments_ptr));
 
     // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
     // it will be done at the first treatment of a facet that needs a Steiner point.
@@ -140,7 +147,9 @@ public:
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
 
-    CGAL_postcondition(this->tree().size() == m_segments_ptr->size());
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "SS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
   }
 };
 

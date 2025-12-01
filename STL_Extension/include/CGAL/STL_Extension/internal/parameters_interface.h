@@ -270,7 +270,7 @@ CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 CGAL_add_named_parameter(nb_flip_smooth_iterations_t, nb_flip_smooth_iterations, nb_flip_smooth_iterations)
 
-// List of named parameters used in Alpha_wrap_3
+// List of named parameters used in Alpha_wrap_23
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
 CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
 CGAL_add_named_parameter(refine_triangulation_t, refine_triangulation, refine_triangulation)
