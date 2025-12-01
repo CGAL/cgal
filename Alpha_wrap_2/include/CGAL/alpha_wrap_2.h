@@ -122,7 +122,7 @@ struct is_MultiLineString
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
-* \tparam PointRange a model of `RandomAccessContainer` whose value type is the point type
+* \tparam PointRange a model of `RandomAccessContainer` whose value type is a point type model of `Kernel::Point_2`
 * \tparam FaceRange a model of `Range` whose value type is a model of `RandomAccessContainer`
 *                   whose value type is an integral type
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
@@ -223,7 +223,7 @@ void alpha_wrap_2(const PointRange& points,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
 * \tparam TriangleRange a model of `Range` whose value type is a model of `RandomAccessContainer`
-*                       of size 3 whose value type is the point type
+*                       of size 3 whose value type is a point type model of `Kernel::Point_2`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -394,7 +394,7 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
-* \tparam SegmentRange a model of `Range` whose value type is a segment type
+* \tparam SegmentRange a model of `Range` whose value type is a segment type model of `Kernel::Segment_2`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -470,7 +470,7 @@ void alpha_wrap_2(const SegmentRange& segments,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
 * \tparam MultiLineString a model of `RandomAccessContainer` whose value type is a model of `RandomAccessContainer`
-* whose value type is a point type
+* whose value type is a point type model of `Kernel::Point_2`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -548,7 +548,7 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
-* \tparam PointRange model of `Range` whose value type is a point type
+* \tparam PointRange model of `Range` whose value type is a point type model of `Kernel::Point_2`
 * \tparam MultipolygonWithHoles model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
