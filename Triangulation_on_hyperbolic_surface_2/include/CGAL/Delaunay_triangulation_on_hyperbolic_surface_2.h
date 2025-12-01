@@ -101,7 +101,7 @@ public:
     bool is_epsilon_packing(const double epsilon) const;
     bool is_epsilon_net(const double epsilon) const;
 
-    double shortest_loop() const;
+    double shortest_loop_edge() const;
     double shortest_non_loop_edge() const;
 
 private:
@@ -1063,7 +1063,7 @@ is_epsilon_net(const double epsilon) const
 template<class Traits>
 double
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-shortest_loop() const
+shortest_loop_edge() const
 {
     Number min_delta_length = 999;
     double res = NULL;

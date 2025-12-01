@@ -198,9 +198,9 @@ public:
   /// \name Other functions
   /// @{
   /*!
-    \return a `double` approximation of the length of the shortest geodesic loop in the Delaunay triangulation. Returns 0 (NULL) if there is no loop.
+    \return a `double` approximation of the length of the shortest geodesic loop edge in the Delaunay triangulation. Returns 0 (NULL) if there is no loop edge.
   */
-  double shortest_loop() const;
+  double shortest_loop_edge() const;
   /*!
     \return a `double` approximation of the length of the shortest non-loop edge in the Delaunay triangulation. Returns 0 (NULL) if all edges are loops.
   */
