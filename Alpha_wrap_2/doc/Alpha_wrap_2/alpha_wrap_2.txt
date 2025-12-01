@@ -211,7 +211,7 @@ a floating point number type as inexactness is inherent to the algorithm since t
 form description of new vertices on the offset surface.
 
 The output is a multi polygon, i.e., a set of polygons, whose type is chosen by the user,
-under the constraint that it must be a model of the `MultiPolygonWithHoles_2` concept.
+under the constraint that it must be a model of the `MultipolygonWithHoles_2` concept.
 
 \section aw2_parameters Choosing Parameters
 

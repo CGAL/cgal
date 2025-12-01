@@ -84,7 +84,7 @@ CGAL_IS_RANGE_OF_KERNEL_OBJECT(Triangle_2)
 
 #undef CGAL_IS_RANGE_OF_KERNEL_OBJECT
 
-// multipolygon, check for a typedef 'Polygon_with_holes_2' required by `MultiPolygonWithHoles_2`
+// multipolygon, check for a typedef 'Polygon_with_holes_2' required by `MultipolygonWithHoles_2`
 template <typename Input>
 struct is_MultipolygonWithHoles
 {
@@ -311,8 +311,8 @@ void alpha_wrap_2(const TriangleRange& triangles,
 * to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
 * polygon repair functions using different strategies.
 *
-* \tparam InputMultiPolygonWithHoles a model of `MultipolygonWithHoles_2`
-* \tparam OutputMultiPolygonWithHoles a model of `MultipolygonWithHoles_2`
+* \tparam InputMultipolygonWithHoles a model of `MultipolygonWithHoles_2`
+* \tparam OutputMultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param multipolygon a multipolygon
@@ -334,23 +334,23 @@ void alpha_wrap_2(const TriangleRange& triangles,
 *
 * \pre `alpha` and `offset` are strictly positive values.
 */
-template <typename InputMultiPolygonWithHoles,
-          typename OutputMultiPolygonWithHoles,
+template <typename InputMultipolygonWithHoles,
+          typename OutputMultipolygonWithHoles,
           typename InputNamedParameters>
-void alpha_wrap_2(const InputMultiPolygonWithHoles& multipolygon,
+void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
                   const double alpha,
                   const double offset,
-                  OutputMultiPolygonWithHoles& alpha_wrap,
+                  OutputMultipolygonWithHoles& alpha_wrap,
                   const InputNamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                  , std::enable_if_t<Alpha_wraps_2::internal::is_MultipolygonWithHoles<InputMultiPolygonWithHoles>::value>* = nullptr
+                  , std::enable_if_t<Alpha_wraps_2::internal::is_MultipolygonWithHoles<InputMultipolygonWithHoles>::value>* = nullptr
 #endif
                   )
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  using In_polygon_with_holes_2 = typename InputMultiPolygonWithHoles::Polygon_with_holes_2;
+  using In_polygon_with_holes_2 = typename InputMultipolygonWithHoles::Polygon_with_holes_2;
   using In_polygon_2 = typename In_polygon_with_holes_2::Polygon_2;
   using In_point_2 = typename boost::range_value<In_polygon_2>::type;
   using In_K = typename CGAL::Kernel_traits<In_point_2>::type;
@@ -359,7 +359,7 @@ void alpha_wrap_2(const InputMultiPolygonWithHoles& multipolygon,
                                                                    InputNamedParameters,
                                                                    In_K>::type;
 
-  using Out_polygon_with_holes_2 = typename OutputMultiPolygonWithHoles::Polygon_with_holes_2;
+  using Out_polygon_with_holes_2 = typename OutputMultipolygonWithHoles::Polygon_with_holes_2;
   using Out_polygon_2 = typename Out_polygon_with_holes_2::Polygon_2;
   using Out_point_2 = typename boost::range_value<Out_polygon_2>::type;
   using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
