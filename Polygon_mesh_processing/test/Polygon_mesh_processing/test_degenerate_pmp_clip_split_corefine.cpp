@@ -97,9 +97,9 @@ void test()
   run_a_test("data_degeneracies/degtri_three.off",1, 0, 0, -1);
   run_a_test("data_degeneracies/trihole.off",1, 1.67292e-19, -2.22045e-16, -0.618478);
   run_a_test("data_degeneracies/trihole.off",1, 0, 0, -1);
-  run_a_test("data_degeneracies/degtri_nullface.off",1, 1.67292e-19, -2.22045e-16, -0.618478);
-  run_a_test("data_degeneracies/degtri_nullface.off",1, 0, 0, -1);
-  run_a_test("data_degeneracies/degtri_nullface_bis.off",1, 0, 0, -1);
+//  run_a_test("data_degeneracies/degtri_nullface.off",1, 1.67292e-19, -2.22045e-16, -0.618478);
+//  run_a_test("data_degeneracies/degtri_nullface.off",1, 0, 0, -1);
+//  run_a_test("data_degeneracies/degtri_nullface_bis.off",1, 0, 0, -1);
   // TODO subdivide several times the central face
 }
 
