@@ -19,10 +19,11 @@
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <boost/functional/hash.hpp>
+
+#include <iterator>
 #include <unordered_set>
 #include <vector>
-#include <iterator>
-#include <boost/functional/hash.hpp>
 
 namespace CGAL {
   namespace internal {
