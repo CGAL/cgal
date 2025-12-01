@@ -321,7 +321,7 @@ values of alpha smaller than the size of the holes.
 
 \cgalFigureAnchor{aw2_double_sided_fig}
 <center>
-<img src="aw2_double_sided.jpg" style="max-width:30%;"/>
+<img src="aw2_double_sided.jpg" style="max-width:40%;"/>
 </center>
 \cgalFigureCaptionBegin{aw2_double_sided_fig}
 Wrapping a Bunny in 2D, with decreasing values for alpha.
