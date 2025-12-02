@@ -1,40 +1,43 @@
 
-
+namespace boost { namespace multiprecision {
 
 /*!
-\ingroup nt_gmp
+\ingroup nt_boost
 
-The class `mpq_class` is an exact multiprecision rational number type,
-provided by \gmp.
+The class `cpp_rational` is an exact multiprecision rational number type,
+provided by \boost.
 CGAL provides the necessary functions to make it compliant to the number type
 concept.
 
 \cgalModels{Field,RealEmbeddable,Fraction}
 
-See the \gmp documentation for additional details.
+See the \boost documentation for additional details on
+<a href="https://www.boost.org/doc/libs/latest/libs/multiprecision/doc/html/boost_multiprecision/tut/rational.html">Boost Multiprecision Rational Types</a>
 
 */
 
-class mpq_class {
-}; /* end mpq_class */
+class cpp_rational {
+};
 
 
 
 
 /*!
-\ingroup nt_gmp
+\ingroup nt_boost
 
-The class `mpz_class` is an exact multiprecision integer number type,
-provided by \gmp.
+The class `cpp_int` is an exact multiprecision integer number type,
+provided by \boost.
 CGAL provides the necessary functions to make it compliant to the number type
 concept.
 
 \cgalModels{EuclideanRing,RealEmbeddable}
 
-See the \gmp documentation for additional details.
+See the \boost documentation for additional details on
+<a href="https://www.boost.org/doc/libs/latest/libs/multiprecision/doc/html/boost_multiprecision/tut/ints.html">Boost Multiprecision Integer Types</a>
 
 */
 
-class mpz_class {
-}; /* end mpz_class */
+class cpp_int {
+};
 
+}} //namespace boost::multiprecision
