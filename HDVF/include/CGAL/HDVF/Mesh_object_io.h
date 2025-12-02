@@ -258,9 +258,9 @@ private:
     }
 
 public:
-    // The variable `dim` is used to encode both the dimension of the object loaded and wether it encodes a complex (with cells of various dimensions) or a mesh (a collection of triangles)
-    // - if dim > 0 : Mesh_object_io encodes a mesh and all cells have dimension d
-    // - if dim < 0 : Mesh_object_io encodes a complex (possibly incomplete) of dimension d
+    // The variable `dim` is used to encode both the dimension of the object loaded and whether it encodes a complex (with cells of various dimensions) or a mesh (a collection of triangles)
+    // - if `dim` > 0 : `Mesh_object_io` encodes a mesh and all cells have dimension `d`
+    // - if `dim` < 0 : `Mesh_object_io` encodes a complex (possibly incomplete) of dimension `d`
     int dim = 0 ;
     size_t nvertices, ncells, nedges ;
     std::vector<Point> nodes ; // Coordinates of vertices (optional)

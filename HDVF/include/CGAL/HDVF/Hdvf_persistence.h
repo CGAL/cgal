@@ -183,7 +183,7 @@ protected:
     /* \brief Vector of persistent pairs computed */
     std::vector<Persistence_interval> _persist ;
 
-    /* \brief Boolean determining wether or not export homology/cohomology generators associated to persistent pairs
+    /* \brief Boolean determining whether or not export homology/cohomology generators associated to persistent pairs
      * - If `_with_export` is `true`, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
      * - If `_with_export` is `false`, only persistent intervals are stored.
      */
