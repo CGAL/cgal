@@ -240,11 +240,13 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
 
   auto comp = k.compare_xyz_3_object();
   auto sort_ptrs = [&comp](const Point_3* p1, const Point_3* p2) { return comp(*p1, *p2) == SMALLER; };
-  auto intersection_is_a_vertex_or_a_common_edge = [&]() {
-    CGAL_assume(nb_of_t1_vertices_in_the_line >= 0 && nb_of_t1_vertices_in_the_line <= 3);
+  auto intersection_is_a_common_edge = [&]() {
+    if(nb_of_t1_vertices_in_the_line < 2) return false;
+    CGAL_assume(nb_of_t1_vertices_in_the_line <= 3);
+    if(nb_of_t2_vertices_in_the_line < 2) return false;
+    CGAL_assume(nb_of_t2_vertices_in_the_line <= 3);
     std::sort(t1_vertices_in_the_line.data(), t1_vertices_in_the_line.data() + nb_of_t1_vertices_in_the_line,
               sort_ptrs);
-    CGAL_assume(nb_of_t2_vertices_in_the_line >= 0 && nb_of_t2_vertices_in_the_line <= 3);
     std::sort(t2_vertices_in_the_line.data(), t2_vertices_in_the_line.data() + nb_of_t2_vertices_in_the_line,
               sort_ptrs);
     std::size_t nb_of_common_vertices = 0;
@@ -252,7 +254,7 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
         t1_vertices_in_the_line.data(), t1_vertices_in_the_line.data() + nb_of_t1_vertices_in_the_line,
         t2_vertices_in_the_line.data(), t2_vertices_in_the_line.data() + nb_of_t2_vertices_in_the_line,
         CGAL::Counting_output_iterator(&nb_of_common_vertices), sort_ptrs);
-    return nb_of_common_vertices == 1 || nb_of_common_vertices == 2;
+    return nb_of_common_vertices == 2;
   };
 
   switch(dp)
@@ -352,7 +354,7 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
               push_to_t2_vertices_in_the_line(&a);
               push_to_t2_vertices_in_the_line(&b);
               push_to_t2_vertices_in_the_line(&c);
-              if(intersection_is_a_vertex_or_a_common_edge()) return false;
+              if(intersection_is_a_common_edge()) return false;
               return CGAL::Intersections::internal::do_intersect_coplanar(t1,t2,k);
             }
             default: // should not happen.
@@ -386,7 +388,7 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
   if(db == COPLANAR) push_to_t2_vertices_in_the_line(&b);
   if(dc == COPLANAR) push_to_t2_vertices_in_the_line(&c);
 
-  if(intersection_is_a_vertex_or_a_common_edge()) return false;
+  if(intersection_is_a_common_edge()) return false;
 
   switch(da)
   {
@@ -512,6 +514,23 @@ bool does_tetrahedron_intersect_triangle_interior(typename Kernel::Tetrahedron_3
                                                   typename Kernel::Triangle_3 tr,
                                                   const Kernel& k)
 {
+  if(do_intersect(tet, tr) == false)
+    return false;
+
+  using Point_3 = typename Kernel::Point_3;
+
+  std::array<Point_3,4> tet_points{ tet.vertex(0), tet.vertex(1), tet.vertex(2), tet.vertex(3) };
+  std::array<Point_3,3> tr_points{ tr.vertex(0), tr.vertex(1), tr.vertex(2) };
+  std::sort(tet_points.begin(), tet_points.end());
+  std::sort(tr_points.begin(), tr_points.end());
+  std::size_t nb_of_common_vertices = 0;
+  std::set_intersection(
+      tet_points.begin(), tet_points.end(),
+      tr_points.begin(), tr_points.end(),
+      CGAL::Counting_output_iterator(&nb_of_common_vertices));
+  if(nb_of_common_vertices >= 2)
+    return false;
+
   CGAL_kernel_precondition(!k.is_degenerate_3_object()(tr));
   CGAL_kernel_precondition(!k.is_degenerate_3_object()(tet));
 
