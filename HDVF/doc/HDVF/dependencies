@@ -3,6 +3,7 @@ Kernel_23
 Kernel_d
 STL_Extension
 Algebraic_foundations
+Number_types
 Circulator
 Stream_support
 Surface_mesh

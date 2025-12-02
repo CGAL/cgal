@@ -76,16 +76,16 @@ public:
 
     /*! \brief Type of coefficients used to compute homology. */
     typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
-    
+
     /*!
      Type of parent Hdvf_core class.
      */
     typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> Base ;
-    
+
     // Inherited types
     using Column_chain = Base::Column_chain;
     using Row_chain = Base::Row_chain;
-    
+
 private:
     // Complex L
     const ChainComplex& _L ;

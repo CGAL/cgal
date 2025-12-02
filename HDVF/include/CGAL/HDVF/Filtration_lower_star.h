@@ -70,7 +70,7 @@ std::function<double(size_t)>  degree_function (const ChainComplex& complex,  co
 }
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Filtration_lower_star` implements the lower star filtration on a given complex implementing the concept `AbstractChainComplex`.
 

@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Sub_chain_complex_mask` is a technical class implementing a sub chain complex. A sub chain complex \f$A\f$ of a chain complex \f$K\f$ is a subset \f$A\subseteq K\f$ such that the restricted boundary operator \f$\partial_A = \partial_K|_A\f$ still satisfies \f$\partial_A^2 = 0\f$.
 

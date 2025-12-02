@@ -22,7 +22,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
   /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFTraitsClasses
 
  The class `Hdvf_traits_2` implements the `HDVFTraits` concept for 2D data, using a geometric kernel `K`.
 

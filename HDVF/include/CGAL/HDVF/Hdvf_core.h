@@ -64,7 +64,7 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
 }
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short). The ring of coefficients for homology computation must be a model of `IntegralDomainWithoutDivision`.
 

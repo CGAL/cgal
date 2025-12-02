@@ -10,8 +10,6 @@
 /// \defgroup PkgHDVFTraitsClasses Traits Classes
 /// \ingroup PkgHDVFRef
 
-/// \defgroup PkgHDVFMiscellaneous Miscellaneous
-/// \ingroup PkgHDVFRef
 
 /*!
 \cgalPkgDescriptionBegin{HDVF,PkgHDVF}

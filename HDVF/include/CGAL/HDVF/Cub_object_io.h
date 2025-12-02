@@ -32,8 +32,7 @@ typedef std::vector<size_t> IOCubCellType ;
 typedef std::vector<IOCubCellType> IOCubChainType ;
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
-
+ \ingroup PkgHDVFRef
  The class `Cub_object_io` is an intermediate IO class, used to load binary volumes and produce cubical complexes.
 
  */
@@ -132,7 +131,7 @@ public:
             std::cerr << "read_pgm error: dimension of Cubical_complex and Traits differ" << std::endl;
             throw "read_pgm error: dimension of Cubical_complex and Traits differ";
         }
-            
+
         N = std::vector<size_t>(dim) ;
         for (size_t i=0; i<dim; ++i)
             N.at(i) = sizes.at(i) ;

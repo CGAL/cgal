@@ -159,7 +159,7 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
 }
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Mesh_object_io` is an intermediate IO class, used to load triangular/tetraedral meshes and produce simplicial complexes.
 

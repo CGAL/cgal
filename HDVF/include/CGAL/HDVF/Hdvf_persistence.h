@@ -32,7 +32,7 @@ namespace Homological_discrete_vector_field {
 
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Hdvf_persistence` computes persistent homology using HDVFs (over a ring of coefficients which should actually be a **field**). Hence, unlike other persistence algorithms, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs**. Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
 

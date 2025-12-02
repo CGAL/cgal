@@ -37,7 +37,7 @@ typedef std::pair<std::size_t, int> Cell ;
 
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Filtration_core` implements data structures and methods required by the `Filtration` concept.
 

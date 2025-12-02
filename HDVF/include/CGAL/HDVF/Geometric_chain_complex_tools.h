@@ -367,7 +367,7 @@ public:
 // Build K sub-chain complex of L (homeomorphic to B^n)
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
 The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
@@ -609,7 +609,7 @@ public:
 // Adjust L size
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
 The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 

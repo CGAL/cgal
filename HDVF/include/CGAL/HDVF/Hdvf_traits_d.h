@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
   /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFTraitsClasses
 
  The class `Hdvf_traits_d` implements the `HDVFTraits` concept for dD data, using a geometric kernel `K`.
 
@@ -96,7 +96,7 @@ struct Hdvf_traits_d {
 #else
         Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(A.eigen_object(), ::Eigen::ComputeFullV);
 #endif
-        
+
         std::vector<std::vector<double>> d(3);
         std::vector<Vector_d> dirs(3);
         // Fill d[i] vector

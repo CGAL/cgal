@@ -27,7 +27,7 @@ namespace Homological_discrete_vector_field {
 
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Surface_mesh_io` is an intermediate IO class, used to load a triangle mesh and produce simplicial complexes.
 \tparam TriangleMesh a model of `FaceGraph` and `HalfedgeGraph` concepts, e.g., a `CGAL::Surface_mesh`.

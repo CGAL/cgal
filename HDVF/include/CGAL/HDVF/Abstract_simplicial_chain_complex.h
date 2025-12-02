@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Abstract_simplicial_chain_complex` represents (topological) chain complexes associated to abstract simplicial complexes.
 

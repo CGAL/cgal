@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (%HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
 
@@ -94,7 +94,7 @@ public:
      Type of parent Hdvf_core class.
      */
     typedef Hdvf_core<Chain_complex, OSM::Sparse_chain, OSM::Sparse_matrix> Base ;
-    
+
     // Inherited types
     using Column_chain = Base::Column_chain;
     using Row_chain = Base::Row_chain;
