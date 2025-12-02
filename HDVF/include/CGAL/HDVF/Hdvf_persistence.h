@@ -150,8 +150,8 @@ public:
      */
     typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
-    /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
-     * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
+    /*! Type of parent HDVF class (`Hdvf_core` with appropriate template parameters)
+     * The `SparseMatrix` model is set to `Sub_sparse_matrix` to activate (co)homology computation over a subcomplex.
      */
     typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> Base ;
 
@@ -175,7 +175,7 @@ protected:
     /* \brief Reference to the filtration used for persistence */
     const Filtration &_f ;
 
-    /* \brief Permutation between indices in the chain complex K and indices along the filtration
+    /* \brief Permutation between indices in the chain complex `K` and indices along the filtration
      * Indices along the filtration provide new indices for cells in each dimension.
      */
     std::vector<std::vector<size_t> > _K_to_per, _per_to_K ;
@@ -183,9 +183,9 @@ protected:
     /* \brief Vector of persistent pairs computed */
     std::vector<Persistence_interval> _persist ;
 
-    /* \brief Boolean determining weather or not export homology/cohomology generators associated to persistent pairs
-     * - If _with_export is true, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
-     * - If _with_export is false, only persistent intervals are stored.
+    /* \brief Boolean determining wether or not export homology/cohomology generators associated to persistent pairs
+     * - If `_with_export` is `true`, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
+     * - If `_with_export` is `false`, only persistent intervals are stored.
      */
     bool _with_export ;
 
@@ -298,12 +298,12 @@ public:
      */
     const Filtration& filtration() { return _f; }
 
-    /** \brief Overload of operator<< for Hdvf_persistence.
+    /** \brief Overload of `operator<<()` for `Hdvf_persistence`.
      *
      * Prints out finite and infinite persistence intervals.
      *
-     * \param out_stream Reference to an out stream.
-     * \param per_hdvf Constant reference on the Hdvf_persistence to print.
+     * \param out_stream Reference to an output stream.
+     * \param per_hdvf Constant reference on the `Hdvf_persistence` to print.
      */
     friend std::ostream& operator<< (std::ostream& out_stream, const Hdvf_persistence& per_hdvf)
     {
@@ -323,9 +323,9 @@ public:
 
     /** \brief Prints informations related to the filtration.
      *
-     * Prints out the filtration and associated permutations (_K_to_per and _per_to_K) between indices of cells in each dimension in the basis of K and indices along the filtration.
+     * Prints out the filtration and associated permutations (`_K_to_per` and `_per_to_K`) between indices of cells in each dimension in the basis of `K` and indices along the filtration.
      *
-     * \param out Reference to an out stream.
+     * \param out Reference to an output stream.
      */
     std::ostream& print_hdvf_persistence_info (std::ostream& out)
     {
@@ -346,9 +346,9 @@ public:
 
 
     /**
-     * \brief Exports primary/secondary/critical labels (e.g. for vtk export).
+     * \brief Exports primary/secondary/critical labels (e.g.\ for vtk export).
      *
-     * The method exports the labels of every cells in each dimension.
+     * The method exports the labels of every cell in each dimension.
      * Encoding used:
      * - `PRIMARY`: -1
      * - `SECONDARY`: +1
@@ -383,7 +383,7 @@ public:
     }
 
     /**
-     * \brief Exports homology generators associated to `cell_index` (critical cell) of dimension  `q` (e.g. forx@ vtk export).
+     * \brief Exports homology generators associated to `cell_index` (critical cell) of dimension  `q` (e.g.\ for vtk export).
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
@@ -481,7 +481,7 @@ public:
         // Operators
         /*! \brief Iterator dereference
          *
-         * \returns A `Persistent_hole` is a structure containing all informations related to the current persistence hole.
+         * \returns A `Persistent_hole` is a structure containing all information related to the current persistence hole.
          */
         value_type operator*() const
         {
@@ -502,9 +502,9 @@ public:
         }
 
         /**
-         * \brief Prefix incrementation. Finds next persistent interval.
+         * \brief Prefix increment. Finds next persistent interval.
          *
-         * If `discard_small` is true, the iterator searches next persistent interval with a (strictly) positive degree duration, otherwise, the iterator returns next persistent interval.
+         * If `discard_small` is `true`, the iterator searches next persistent interval with a (strictly) positive degree duration, otherwise, the iterator returns next persistent interval.
          *
          * \returns The reference to the current iterator.
          */
@@ -523,20 +523,20 @@ public:
         }
 
         /**
-         * \brief Postfix incrementation. Finds the next not-null index.
-         * \returns The pre-incremented iterator.
+         * \brief Postfix increment. Finds the next non-null index.
+         * \returns The pre-increment iterator.
          */
         iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
 
         /**
          * \brief Equality check.
-         * \returns True if the indices are equal.
+         * \returns `true` if the indices are equal.
          */
         friend bool operator== (const iterator& a, const iterator& b) { return a._i == b._i; };
 
         /**
          * \brief Inequality check.
-         * \returns True if the indices are different.
+         * \returns `true` if the indices are different.
          */
         friend bool operator!= (const iterator& a, const iterator& b) { return a._i != b._i; };
 
@@ -565,8 +565,8 @@ public:
 private:
     /* \brief Export current persistent pair informations.
      *
-     * This method exports and saves PSC labels, homology and cohomology generators of the current persistent pair `p` to corresponding private vectors (_export_label, _export_g, _export_fstar).
-     * The method is invoqued on the result of `find_pair_A` before pairing cells with the A operation.
+     * This method exports and saves PSC labels, homology and cohomology generators of the current persistent pair `p` to corresponding private vectors (`_export_label`, `_export_g`, `_export_fstar`).
+     * The method is invoqued on the result of `find_pair_A()` before pairing cells with the A operation.
      */
     void export_hdvf_persistence_pair(Cell_pair p)
     {
@@ -616,7 +616,7 @@ private:
     }
 
     /*
-     * \brief Find a valid Cell_pair for A for persistent homology.
+     * \brief Find a valid `Cell_pair` for `A()` for persistent homology.
      *
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
      * (ie.\ such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
@@ -628,7 +628,7 @@ private:
     /*
      * \brief Step forward along the filtration.
      *
-     * Searches a possible persistent pair for A with `find_pair_A`, apply A and update internal structures.
+     * Searches a possible persistent pair for `A()` with `find_pair_A`, apply `A()` and update internal structures.
      */
     Cell_pair step_persist(bool& found, bool verbose = false) ;
 } ;

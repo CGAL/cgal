@@ -34,7 +34,7 @@ namespace CGAL {
 
  \tparam p a positive integer.
  \tparam T a type used for the inner storage of the values (default: `int`).
- \tparam IsPrime a boolean encoding weather `p` is a prime number or not.
+ \tparam IsPrime a `bool` encoding wether `p` is a prime number or not.
  */
 
 template <size_t p, typename T = unsigned int, bool IsPrime = true>

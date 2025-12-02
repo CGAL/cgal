@@ -37,7 +37,7 @@ public:
     // Copy constructor
     Z2(const Z2& a) : _i(a._i) {}
 
-    /** \brief Returns 2 (ie.\ p such that `Z2`=\f$\mathbbZ/2\mathbb Z\f$). */
+    /** \brief Returns 2 (ie.\ p such that `Z2`=\f$\mathbb Z/2\mathbb Z\f$). */
     static char operator() () { return char(2); }
 
     bool is_zero() const { return _i == 0 ; }
