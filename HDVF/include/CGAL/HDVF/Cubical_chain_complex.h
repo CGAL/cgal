@@ -385,7 +385,7 @@ protected:
     std::ostream&  print_complex(std::ostream& out = std::cout) const {
         for (int q = 0; q <= _dim; ++q) {
             out << "-------- dimension " << q << std::endl;
-            out << "cellules de dimension " << q << " : " << _base2bool.at(q).size() << std::endl;
+            out << "cells of dimension " << q << " : " << _base2bool.at(q).size() << std::endl;
             for (size_t id_base = 0; id_base < _base2bool.at(q).size(); ++id_base) {
                 size_t id_bool = _base2bool.at(q).at(id_base);
                 std::vector<size_t> khal = bindex_to_cell(id_bool);
@@ -395,7 +395,7 @@ protected:
             }
 
             if (_base2bool[q].size() > 0 && q <= _dim) {
-                out << "matrice de bord de dimension " << q << std::endl;
+                out << "border matrix of dimension " << q << std::endl;
                 out << _d[q] << std::endl;
             }
         }
@@ -636,7 +636,7 @@ protected:
         CoefficientRing sign = 1;
         for (size_t i = 0; i < _dim; ++i) {
             if (c[i] % 2 == 1) {
-                // Calculate the coefficient based on the number of odd entries in c from 0 to i-1
+                // compute the coefficient based on the number of odd entries in c from 0 to i-1
                 sign *= -1;
 
                 size_t cell1 = index_bool + _P[i];
@@ -752,7 +752,7 @@ protected:
     /* Initialize _cells, _base2bool and _bool2base */
     void initialize_cells(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type);
 
-    /* \brief Calculate the dimension of a cell (given by its Boolean index) */
+    /* \brief compute the dimension of a cell (given by its Boolean index) */
     int dimension(size_t cell_index) const
     {
         return dimension(bindex_to_cell(cell_index)) ;
@@ -801,13 +801,13 @@ protected:
 
 
     /* \brief Computes the boundary matrix of dimension q */
-    void  calculate_d(int q) ;
+    void  compute_d(int q) ;
 
     /* \brief Insert a cell into the complex (and its faces if necessary) */
     void insert_cell(size_t cell);
 
     /* \brief Compute (the Boolean indices of) cells belonging to the boundary of `cell` (given by its Boolean index) */
-    std::vector<size_t> calculate_boundaries(size_t cell) const;
+    std::vector<size_t> compute_boundaries(size_t cell) const;
 
 };
 
@@ -848,7 +848,7 @@ Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_
     // Initialize _d
     _d.resize(_dim+1);
     for (int q = 0; q <= _dim; ++q) {
-        calculate_d(q);
+        compute_d(q);
     }
 
     // Initialize _points
@@ -877,7 +877,7 @@ void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_
         for (size_t i=0; i<cub.cubs.size(); ++i)
         {
             std::vector<size_t> coords(cub.cubs.at(i)) ;
-            // Calculate the coordinates of the voxel in the dual complex
+            // compute the coordinates of the voxel in the dual complex
             for (size_t i=0; i<_dim; ++i)
                 coords.at(i)*=2 ;
             const size_t cell_index(cell_to_bindex(coords)) ;
@@ -896,7 +896,7 @@ void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_
             for (size_t i = 0; i < _P[_dim]; ++i) {
 
                 if (dimension(bindex_to_cell(i)) == q) {
-                    std::vector<size_t> boundaries = calculate_boundaries(i);
+                    std::vector<size_t> boundaries = compute_boundaries(i);
                     bool all_boundaries_present = true;
                     for (const auto& boundary_cell : boundaries) {
                         if (!_cells[boundary_cell]) {
@@ -963,7 +963,7 @@ void Cubical_chain_complex<CoefficientRing, Traits>::insert_cell(size_t cell) {
     _base2bool[dim].push_back(cell);
     _bool2base[dim][cell] = cell_base_index;
 
-    std::vector<size_t> boundaries(calculate_boundaries(cell));
+    std::vector<size_t> boundaries(compute_boundaries(cell));
     for (const auto& boundary : boundaries) {
         if (!_cells[boundary]) {
             insert_cell(boundary);
@@ -975,9 +975,9 @@ void Cubical_chain_complex<CoefficientRing, Traits>::insert_cell(size_t cell) {
 }
 
 
-// calculate_d implementation
+// compute_d implementation
 template<typename CoefficientRing, typename Traits>
-void Cubical_chain_complex<CoefficientRing, Traits>::calculate_d(int dim)  {
+void Cubical_chain_complex<CoefficientRing, Traits>::compute_d(int dim)  {
     size_t nb_lignes = (dim == 0) ? 0 : number_of_cells(dim - 1);
 
     _d[dim] = Column_matrix(nb_lignes, number_of_cells(dim));
@@ -1004,16 +1004,16 @@ int Cubical_chain_complex<CoefficientRing,Traits>::dimension(const std::vector<s
     return dimension;
 }
 
-// calculate_boundaries implementation
+// compute_boundaries implementation
 template<typename CoefficientRing, typename Traits>
-std::vector<size_t> Cubical_chain_complex<CoefficientRing, Traits>::calculate_boundaries(size_t idcell) const {
+std::vector<size_t> Cubical_chain_complex<CoefficientRing, Traits>::compute_boundaries(size_t idcell) const {
     std::vector<size_t> boundaries;
     std::vector<size_t> c = bindex_to_cell(idcell);
 
     for (size_t i = 0; i < _dim; ++i) {
         if (c[i] % 2 == 1)
         {
-            // Calculate the coefficient based on the number of odd entries in c from 0 to i-1
+            // compute the coefficient based on the number of odd entries in c from 0 to i-1
             size_t cell1 = idcell + _P[i];
             if (is_valid_cell(cell1))
                 boundaries.push_back(cell1) ;

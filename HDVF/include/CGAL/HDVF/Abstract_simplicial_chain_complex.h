@@ -294,7 +294,7 @@ protected:
      *
      * \param q Dimension considered for computation.
      */
-    void  calculate_d(int q) const;
+    void  compute_d(int q) const;
 
     /*
      * \brief Method inserting a simplex (and its faces if necessary) into the abstract simplicial complex.
@@ -350,7 +350,7 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
 
     _d.resize(_dim+1);
     for (int dim = 0; dim <= _dim; ++dim) {
-        calculate_d(dim);
+        compute_d(dim);
     }
 }
 
@@ -373,9 +373,9 @@ void Abstract_simplicial_chain_complex<CoefficientRing>::insert_simplex(const Si
     }
 }
 
-// calculate _d boundary matrix
+// compute _d boundary matrix
 template<typename CoefficientRing>
-void Abstract_simplicial_chain_complex<CoefficientRing>::calculate_d(int dim) const {
+void Abstract_simplicial_chain_complex<CoefficientRing>::compute_d(int dim) const {
     size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
     _d[dim] = Column_matrix(nb_lignes, _nb_cells[dim]);
 
@@ -398,7 +398,7 @@ void Abstract_simplicial_chain_complex<CoefficientRing>::calculate_d(int dim) co
                     chain.set_coefficient(ind_j, (j % 2 == 0) ? 1 : -1);
                 }
                 else
-                    throw "calculate_d boundary simplex not found!";
+                    throw "compute_d boundary simplex not found!";
             }
 
             // Insert the chain into the corresponding column of the delta matrix

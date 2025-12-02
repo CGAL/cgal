@@ -4,7 +4,7 @@
 /// \defgroup PkgHDVFConcepts Concepts
 /// \ingroup PkgHDVFRef
 
-/// \defgroup PkgHDVFAlgorithmClasses Algorithm Classes
+/// \defgroup PkgHDVFAlgorithmClasses Sparse Matrices and Vectors
 /// \ingroup PkgHDVFRef
 
 /// \defgroup PkgHDVFTraitsClasses Traits Classes

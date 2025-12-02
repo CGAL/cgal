@@ -33,7 +33,7 @@ typedef std::vector<IOCubCellType> IOCubChainType ;
 
 /*!
  \ingroup PkgHDVFRef
- The class `Cub_object_io` is an intermediate IO class, used to load binary volumes and produce cubical complexes.
+ The class `Cub_object_io` is an intermediate %IO class, used to load binary volumes and produce cubical complexes.
 
  */
 
