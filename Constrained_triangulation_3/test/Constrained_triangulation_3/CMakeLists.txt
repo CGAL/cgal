@@ -39,7 +39,7 @@ cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
   set(options ONLY_MERGE_FACETS)
   set(oneValueArgs DATA_FILENAME TIMEOUT)
-  set(multiValueArgs LABELS)
+  set(multiValueArgs LABELS OPTIONS)
   cmake_parse_arguments(PARSE_ARGV 2 "MY" "${options}" "${oneValueArgs}"
                       "${multiValueArgs}")
   if(NOT MY_DATA_FILENAME)
@@ -58,7 +58,7 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
   cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
   add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}"
       COMMAND cdt_3_from_off
-       --merge-facets --segment-vertex-epsilon 0 --vertex-vertex-epsilon 0
+       --merge-facets --segment-vertex-epsilon 0 --vertex-vertex-epsilon 0 ${MY_OPTIONS}
       ${data_dir}/${data_filename}
       ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off --merge-facets ${data_name}" cdt_3_from_off)
@@ -100,6 +100,7 @@ CGAL_add_cdt3_from_local_off_test(cheese28)
 CGAL_add_cdt3_from_local_off_test(cheese31)
 CGAL_add_cdt3_from_local_off_test(cheese36-bis)
 CGAL_add_cdt3_from_local_off_test(cheese36)
+CGAL_add_cdt3_from_local_off_test(cheese-min1-no-merge-facets-read-mesh-with-operator OPTIONS --read-mesh-with-operator --debug-regions)
 CGAL_add_cdt3_from_local_off_test(cheese6-PLCerrorWithFace0)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-11)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-1)
@@ -130,7 +131,7 @@ if (CGAL_CDT_TEST_USE_THINGI)
   CGAL_add_cdt3_from_local_off_test(40985-min3)
   CGAL_add_cdt3_from_local_off_test(505036-min1)
   CGAL_add_cdt3_from_local_off_test(57811-min)
-  CGAL_add_cdt3_from_local_off_test(734961-min1)
+  CGAL_add_cdt3_from_local_off_test(734961-min2)
   CGAL_add_cdt3_from_local_off_test(error_mesh-p_not_equal_0-min2)
   CGAL_add_cdt3_from_local_off_test(thingi-1036467-selection3)
 
