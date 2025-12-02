@@ -145,6 +145,9 @@ function process_file_single_function {
       echo "====== [SUCCESS] ======"
       echo "$CMD" > $RESULT_FILE
       echo "SUCCESS" >> $RESULT_FILE
+    elif grep -q -e "Error: 'ours' is BAD" "$LOG_FILE"; then
+      echo "$CMD" > $RESULT_FILE
+      echo "OFFSET FAILURE" >> $RESULT_FILE
     else
       echo "====== [ERROR]: outputs differ ======"
       echo "$CMD" > $RESULT_FILE
