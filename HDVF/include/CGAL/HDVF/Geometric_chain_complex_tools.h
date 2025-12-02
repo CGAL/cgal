@@ -313,27 +313,19 @@ public:
     /** \brief Type of sub chain complex mask encoding the sub complex `*K_complex`. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Pointer over a complex homeomorphic to \f$\mathbb B^3\f$. */
-    Chain_complex* L_complex ;
+    std::shared_ptr<Chain_complex> L_complex ;
     /** \brief Pointer over a sub chain complex mask encoding a sub complex of `*L_complex`. */
-    Sub_chain_complex* K_complex ;
+    std::shared_ptr<Sub_chain_complex> K_complex ;
 
     /** \brief Default constructor*/
-    Complex_duality_data_t() : L_complex(NULL), K_complex(NULL) {}
+    Complex_duality_data_t() : L_complex(nullptr), K_complex(nullptr) {}
 
     /** \brief Constructor from a pointer over a chain complex and a sub chain complex mask.
      *
      * \warning The `Complex_duality_data_t` destructor deletes its underlying complex and sub chain complex mask.
      */
-    Complex_duality_data_t(Chain_complex* L, Sub_chain_complex* K) : L_complex(L), K_complex(K) {}
-    Complex_duality_data_t(const Complex_duality_data_t&) = delete;
-    /** Destructor of the class.
-     *
-     * The `Complex_duality_data_t` destructor deletes its underlying complex and sub chain complex mask.
-     * */
-    ~Complex_duality_data_t() {
-        delete L_complex;
-        delete K_complex;
-    }
+    Complex_duality_data_t(std::shared_ptr<Chain_complex> L, std::shared_ptr<Sub_chain_complex> K) : L_complex(L), K_complex(K) {}
+//    Complex_duality_data_t(const Complex_duality_data_t&) = delete;
 } ;
 
 
@@ -370,9 +362,9 @@ public:
     Duality_simplicial_complex_tools() {}
 
 private:
-    static Sub_chain_complex compute_sub_chain_complex(const Chain_complex& _K, const Chain_complex &L){
+    static std::shared_ptr<Sub_chain_complex> compute_sub_chain_complex(const Chain_complex& _K, const Chain_complex &L){
         // Build the Sub_chain_complex_mask encoding K_init inside L
-        Sub_chain_complex K(Sub_chain_complex(L, false)) ;
+        std::shared_ptr<Sub_chain_complex> K(std::make_shared<Sub_chain_complex>(L, false));
         // Visit all cells of K_init and activate the corresponding bit in K
         for (int q=0; q<=_K.dimension(); ++q)
         {
@@ -380,7 +372,7 @@ private:
             {
                 const Simplex&  simplex(_K.index_to_cell(i,q)) ;
                 const size_t id(L.cell_to_index(simplex));
-                K.set_bit_on(q, id) ;
+                K->set_bit_on(q, id) ;
             }
         }
         return K;
@@ -399,12 +391,11 @@ public:
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
      * \param mesh_io `Mesh_object_io` containing the initial set of simplicies (working mesh).
-     * @param dualized_complex Output structure containing the dualized complex data.
      * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      * \param subdiv Subdivision level of the bounding icosphere.
      */
-    static void dualize_complex (Mesh_object_io<Traits>& mesh_io, Complex_duality_data& dualized_complex, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
+    static Complex_duality_data dualize_complex (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
 
         std::cerr << "-- Starting dualize_complex" << std::endl;
@@ -439,15 +430,18 @@ public:
         Tet_object_io<Traits> tetL(out_file_prefix) ;
 
         // Build the output data structure
+        Complex_duality_data dualized_complex;
         // Build the associated SimpComplex
-        dualized_complex.L_complex = new Chain_complex(tetL) ;
-        Chain_complex& L(*dualized_complex.L_complex);
-        std::cout << "------ L:" << L;
+        dualized_complex.L_complex = std::make_shared<Chain_complex>(tetL) ;
+        std::shared_ptr<Chain_complex> L(dualized_complex.L_complex);
+        std::cout << "------ L:" << *L;
 
         // Build the Sub_chain_complex_mask encoding K_init inside L
-        dualized_complex.K_complex = new Sub_chain_complex(compute_sub_chain_complex(*_K, L));
+        dualized_complex.K_complex = compute_sub_chain_complex(*_K, *L);
         // Remove the temporary complex
         delete _K;
+        
+        return dualized_complex;
     }
 
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Surface_mesh`.
@@ -462,11 +456,10 @@ public:
      * <img src="HDVF_twirl_view2.png" align="center" width=30%/>
      *
      * \param mesh `Surface_mesh` containing the initial mesh.
-     * \param dualized_complex Output structure containing the dualized complex data.
      * \param BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param subdiv Subdivision level of the bounding icosphere.
      */
-    static void dualize_complex (Triangle_mesh& mesh, Complex_duality_data& dualized_complex, double BB_ratio=1.5, unsigned int subdiv = 2)
+    static Complex_duality_data dualize_complex (Triangle_mesh& mesh, double BB_ratio=1.5, unsigned int subdiv = 2)
     {
         typedef CGAL::Triangulation_data_structure_3<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<typename Traits::Kernel>, CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<typename Traits::Kernel>> TDS;
         typedef CGAL::Triangulation_3<typename Traits::Kernel, TDS> Triangulation;
@@ -514,39 +507,47 @@ public:
 
         // Constrained Delaunay Tetraedrisation preserving plc_facet_map
         auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh, CGAL::parameters::plc_face_id(plc_facet_map));
-
-//        // Detect refined constrained faces
+        
+        // Detect refined constrained faces
         std::vector<std::vector<typename Triangulation::Facet > > faces_constr(cpt);
-       for (typename Triangulation::Facet f : ccdt.constrained_facets()) {
+        for (typename Triangulation::Facet f : ccdt.constrained_facets()) {
             if (ccdt.is_facet_constrained(f))
             {
                 const int i(ccdt.face_constraint_index(f));
                 faces_constr.at(i).push_back(f);
             }
-      }
-
+        }
+        for (int i=0; i<faces_constr.size(); ++i) {
+            if (faces_constr.at(i).size()>1)
+                std::cout << i << ": " << faces_constr.at(i).size() << std::endl;
+        }
+        
         Triangulation tri_L = std::move(ccdt).triangulation();
-
+        
+        // Build the output object
+        Complex_duality_data dualized_complex;
         // Build the associated Triangulation_3_io
         Triangulation_3_io<Triangulation, Traits> L_tri_io(tri_L);
         // Build the associated SimpComplex
-        dualized_complex.L_complex = new Chain_complex(L_tri_io) ;
-        Chain_complex& L(*dualized_complex.L_complex);
-        std::cout << "------ L:" << L;
+        dualized_complex.L_complex = std::make_shared<Chain_complex>(L_tri_io) ;
+        std::shared_ptr<Chain_complex> L(dualized_complex.L_complex);
+        std::cout << "------ L:" << *L;
 
-        std::vector<std::vector<size_t> > indices(L.dimension()+1);
-        for (int q=0; q<=L.dimension(); ++q){
-            for (int i=0; i<L.number_of_cells(q); ++i){
+        std::vector<std::vector<size_t> > indices(L->dimension()+1);
+        for (int q=0; q<=L->dimension(); ++q){
+            for (int i=0; i<L->number_of_cells(q); ++i){
                 indices.at(q).push_back(i);
             }
         }
         std::string vtk_file("tmp/test_CDT3.vtk");
-        Chain_complex::chain_complex_to_vtk(L, vtk_file, &indices, "int");
+        Chain_complex::chain_complex_to_vtk(*L, vtk_file, &indices, "int");
 
         // Build the Sub_chain_complex_mask encoding K_init inside L
-        dualized_complex.K_complex = new Sub_chain_complex (compute_sub_chain_complex(*_K, L));
+        dualized_complex.K_complex = compute_sub_chain_complex(*_K, *L);
         // Remove the temporary complex
         delete _K;
+        
+        return dualized_complex;
     }
 
 
@@ -612,9 +613,8 @@ public:
      * <img src="HDVF_eight_view2.png" align="center" width=30%/>
      *
      * \param K_init Initial cubical chain complex (working mesh).
-     * \param dualized_complex Output structure containing the dualized complex data.
      */
-    static void dualize_complex (const Chain_complex& K_init, Complex_duality_data& dualized_complex)
+    static Complex_duality_data dualize_complex (const Chain_complex& K_init)
     {
         Cub_object_io<Traits> tmp_L ;
         tmp_L.dim = K_init.dimension() ;
@@ -628,22 +628,43 @@ public:
             (tmp_L.ncubs)[dtmp] += 1 ;
             tmp_L.cubs.push_back(tmpkhal) ;
         }
-        dualized_complex.L_complex = new Chain_complex(tmp_L, Chain_complex::PRIMAL);
-        Chain_complex& L(*dualized_complex.L_complex) ;
+        
+        // Build the output object
+        Complex_duality_data dualized_complex;
+        dualized_complex.L_complex = std::make_shared<Chain_complex>(tmp_L, Chain_complex::PRIMAL);
+        std::shared_ptr<Chain_complex> L(dualized_complex.L_complex) ;
 
         // Build the Sub_chain_complex_mask corresponding to _CC
-        dualized_complex.K_complex = new Sub_chain_complex (Sub_chain_complex(L, false)) ;
-        Sub_chain_complex& K(*dualized_complex.K_complex) ;
+        dualized_complex.K_complex = std::make_shared<Sub_chain_complex> (Sub_chain_complex(*L, false)) ;
+        std::shared_ptr<Sub_chain_complex> K(dualized_complex.K_complex) ;
         // Visit all cells of _CC and activate the corresponding bit in K
         for (int q=0; q<=K_init.dimension(); ++q)
         {
             for (size_t i=0; i<K_init.number_of_cells(q); ++i)
             {
                 const std::vector<size_t> khal(K_init.index_to_cell(i, q)) ;
-                const size_t j = L.cell_to_index(khal);
-                K.set_bit_on(q,j) ;
+                const size_t j = L->cell_to_index(khal);
+                K->set_bit_on(q,j) ;
             }
         }
+        return dualized_complex;
+    }
+    
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Cub_object_io` `K_init`.
+     *
+     * `L` is the bounding box of `K_init` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `K_init`.
+     *
+     * The following figures shows the resulting complex with an initial simple cubical complex (right - sectional view):
+     * <img src="HDVF_eight_view1.png" align="center" width=35%/>
+     * <img src="HDVF_eight_view2.png" align="center" width=30%/>
+     *
+     * \param K_init Initial `Cub_object_io` (cubical object).
+     */
+    static Complex_duality_data dualize_complex (const Cub_object_io<Traits>& K_init, typename Chain_complex::Cubical_complex_primal_dual primal_dual) {
+        Chain_complex* _K = new Chain_complex(K_init, primal_dual);
+        Complex_duality_data res(dualize_complex(*_K));
+        delete _K;
+        return res;
     }
 } ;
 

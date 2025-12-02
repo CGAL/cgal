@@ -39,11 +39,10 @@ int main(int argc, char **argv)
     mesh.print_infos();
     
     // Build K and L
-    typename Tools_type::Complex_duality_data t;
-    Tools_type::dualize_complex(mesh, t, 1.5, "tmp/file_K_closed.off", 1) ;
+    typename Tools_type::Complex_duality_data t = Tools_type::dualize_complex(mesh, 1.5, "tmp/file_K_closed.off", 1) ;
     std::cout << "--- Triangulation built" << std::endl ;
-    Complex& L(*t.L_complex) ;
-    Sub_chain_complex& K(*t.K_complex) ;
+    std::shared_ptr<Complex> L(t.L_complex) ;
+    std::shared_ptr<Sub_chain_complex> K(t.K_complex) ;
     std::cout << "--- K,L built" << std::endl ;
     
     std::cout << "----> complex informations" << std::endl ;
@@ -53,15 +52,15 @@ int main(int argc, char **argv)
     std::cout << K << std::endl ;
     
     // Create and compute a perfect HDVF
-    HDVF_type hdvf(L, K, HDVF::OPT_FULL);
+    HDVF_type hdvf(*L, *K, HDVF::OPT_FULL);
     hdvf.compute_perfect_hdvf();
     
     // Export K HDVF
     hdvf.set_mask_K();
-    CGAL::IO::write_VTK(hdvf, L, "tmp/res_complex_K", false) ;
+    CGAL::IO::write_VTK(hdvf, *L, "tmp/res_complex_K", false) ;
     // Export L-K HDVF
     hdvf.set_mask_L_K();
-    CGAL::IO::write_VTK(hdvf, L, "tmp/res_cocomplex_L_K", false) ;
+    CGAL::IO::write_VTK(hdvf, *L, "tmp/res_cocomplex_L_K", false) ;
     // Compute pairing
     std::vector<HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
     // Output pairing

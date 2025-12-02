@@ -177,17 +177,16 @@ void main_code (const Options &options)
 
         // Build L (bounding sphere meshed with tetgen), K and L-K
 
-        typename ToolsType::Complex_duality_data t;
-        ToolsType::dualize_complex(mesh,t) ;
-        Complex& L(*t.L_complex) ;
-        SubCCType& K(*t.K_complex) ;
+        typename ToolsType::Complex_duality_data t = ToolsType::dualize_complex(mesh) ;
+        std::shared_ptr<Complex> L(t.L_complex) ;
+        std::shared_ptr<SubCCType> K(t.K_complex) ;
 
         // Output/export mesh and complex
 
-        mesh_complex_output<HDVF::Mesh_object_io<Traits>, Complex>(mesh, L, K, options) ;
+        mesh_complex_output<HDVF::Mesh_object_io<Traits>, Complex>(mesh, *L, *K, options) ;
 
         // HDVF computation, export, output
-        HDVF_type& hdvf(dual_HDVF_comput<Complex>(L, K, options)) ;
+        HDVF_type& hdvf(dual_HDVF_comput<Complex>(*L, *K, options)) ;
 
         // Export to vtk
         if (options.with_vtk_export)
@@ -196,12 +195,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, *L, options.outfile_root+"_complex_K", options.co_faces) ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, *L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
             }
         }
 
@@ -240,23 +239,18 @@ void main_code (const Options &options)
             mesh.frame() ;
         }
 
-        // Complex
-        Complex* complex = new Complex(mesh, primal_dual);
-
         // Build L, K and L-K
 
-        typename ToolsType::Complex_duality_data p;
-        ToolsType::dualize_complex(*complex,p) ;
-        delete complex ;
-        Complex &L(*p.L_complex) ;
-        SubCCType &K(*p.K_complex) ;
+        typename ToolsType::Complex_duality_data p = ToolsType::dualize_complex(mesh, primal_dual) ;
+        std::shared_ptr<Complex> L(p.L_complex) ;
+        std::shared_ptr<SubCCType> K(p.K_complex) ;
 
         // Output/export mesh and complex
 
-        mesh_complex_output<HDVF::Cub_object_io<Traits>, Complex>(mesh, L, K, options) ;
+        mesh_complex_output<HDVF::Cub_object_io<Traits>, Complex>(mesh, *L, *K, options) ;
 
         // HDVF computation, export, output
-        HDVF_type& hdvf(dual_HDVF_comput<Complex>(L, K, options)) ;
+        HDVF_type& hdvf(dual_HDVF_comput<Complex>(*L, *K, options)) ;
 
         // Export to vtk
         if (options.with_vtk_export)
@@ -265,12 +259,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, *L, options.outfile_root+"_complex_K", options.co_faces) ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, *L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
             }
         }
 
