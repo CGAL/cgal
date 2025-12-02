@@ -1,27 +1,46 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/IO/GLTF/read_GLTF.h>
 #include <vector>
 #include <iostream>
-#include <CGAL/IO/polygon_soup_io.h>
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
-
-
+#include "read_gltf.h"
 
 int main() {
     using Kernel = CGAL::Simple_cartesian<double>;
     using Point = Kernel::Point_3;
 
-    std::vector<Point> points;
-    std::vector<std::vector<std::size_t>> polygons;
-
-    std::string filename = "../Box.gltf";
+    std::string filename = "../../Cube.gltf";
 
     std::cout << "Attempting to load GLTF file: " << filename << std::endl;
 
-    bool success = CGAL::IO::read_GLTF(filename, points, polygons);
+    tinygltf::Model model;
+    tinygltf::TinyGLTF loader;
+    std::string err;
+    std::string warn;
+
+    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filename);
+
+    if (!warn.empty()) {
+        std::cout << "GLTF warning: " << warn << std::endl;
+    }
+    if (!err.empty()) {
+        std::cerr << "GLTF error: " << err << std::endl;
+    }
+    if (!ret) {
+        std::cerr << "Failed to parse GLTF file: " << filename << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::cout << "Successfully parsed GLTF file." << std::endl;
+    std::cout << "Number of meshes: " << model.meshes.size() << std::endl;
+    std::cout << "Number of accessors: " << model.accessors.size() << std::endl;
+    std::cout << "Number of bufferViews: " << model.bufferViews.size() << std::endl;
+    std::cout << "Number of buffers: " << model.buffers.size() << std::endl;
+
+    // Now use the CGAL reader
+    std::vector<Point> points;
+    std::vector<std::vector<std::size_t>> polygons;
+
+    bool success = CGAL::IO::internal::read_GLTF(filename, points, polygons, true);
 
     if (!success) {
         std::cerr << "Failed to read GLTF file: " << filename << std::endl;
