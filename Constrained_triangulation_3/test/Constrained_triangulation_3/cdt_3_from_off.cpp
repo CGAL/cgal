@@ -748,6 +748,14 @@ int bisect_errors(Mesh mesh, CDT_options options) {
       CGAL::Euler::remove_face(halfedge(*it, m), m);
     }
 
+    std::stringstream ss;
+    ss.precision(17);
+    ss << m;
+    ss.seekg(0);
+    Mesh simplified_mesh;
+    ss >> simplified_mesh;
+    m = std::move(simplified_mesh);
+
     return m.is_valid(true);
     return true;
   };
