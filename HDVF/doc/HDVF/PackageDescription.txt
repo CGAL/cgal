@@ -16,7 +16,7 @@
 
 /*!
 \addtogroup PkgHDVFRef
-\cgalPkgDescriptionBegin{HDVF,PkgHDVF}
+\cgalPkgDescriptionBegin{Homological Discrete Vector Fields, PkgHDVF}
 \cgalPkgPicture{HDVF-small.png}
 
 \cgalPkgSummaryBegin
