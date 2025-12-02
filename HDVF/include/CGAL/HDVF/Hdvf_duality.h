@@ -27,7 +27,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Hdvf_duality` is the implementation of homological discrete vector fields (HDVF for short) for Alexander duality computation.
 

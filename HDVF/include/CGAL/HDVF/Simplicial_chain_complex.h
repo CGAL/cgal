@@ -28,7 +28,7 @@ namespace Homological_discrete_vector_field {
 template<typename CoefficientRing, typename Traits> class Duality_simplicial_complex_tools ;
 
 /*!
- \ingroup PkgHDVFAlgorithmClasses
+ \ingroup PkgHDVFRef
 
  The class `Simplicial_chain_complex` refines the `Abstract_simplicial_chain_complex` class by assigning coordinates to vertices (i.e.\ 0-simplices). Hence, vtk output is available.
 
