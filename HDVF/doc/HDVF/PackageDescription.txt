@@ -38,10 +38,10 @@ The package provides an implementation of Homological Discrete %Vector Fields, a
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-- `AbstactChainComplex`
+- `AbstractChainComplex`
 
 \cgalCRPSection{Classes}
-- `CGAL::Homological_discrete_vector_field::Abstact_simplicial_chain_complex`
+- `CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex`
 
 
 */
