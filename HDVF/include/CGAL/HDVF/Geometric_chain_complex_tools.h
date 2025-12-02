@@ -474,7 +474,7 @@ public:
         dualized_complex.K_complex = compute_sub_chain_complex(*_K, *L);
         // Remove the temporary complex
         delete _K;
-        
+
         return dualized_complex;
     }
 
@@ -541,7 +541,7 @@ public:
 
         // Constrained Delaunay Tetraedrisation preserving plc_facet_map
         auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh, CGAL::parameters::plc_face_id(plc_facet_map));
-        
+
         // Detect refined constrained faces
         std::vector<std::vector<typename Triangulation::Facet > > faces_constr(cpt);
         for (typename Triangulation::Facet f : ccdt.constrained_facets()) {
@@ -555,9 +555,9 @@ public:
             if (faces_constr.at(i).size()>1)
                 std::cout << i << ": " << faces_constr.at(i).size() << std::endl;
         }
-        
+
         Triangulation tri_L = std::move(ccdt).triangulation();
-        
+
         // Build the output object
         Complex_duality_data dualized_complex;
         // Build the associated Triangulation_3_io
@@ -580,7 +580,7 @@ public:
         dualized_complex.K_complex = compute_sub_chain_complex(*_K, *L);
         // Remove the temporary complex
         delete _K;
-        
+
         return dualized_complex;
     }
 
@@ -662,7 +662,7 @@ public:
             (tmp_L.ncubs)[dtmp] += 1 ;
             tmp_L.cubs.push_back(tmpkhal) ;
         }
-        
+
         // Build the output object
         Complex_duality_data dualized_complex;
         dualized_complex.L_complex = std::make_shared<Chain_complex>(tmp_L, Chain_complex::PRIMAL);
@@ -683,7 +683,7 @@ public:
         }
         return dualized_complex;
     }
-    
+
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Cub_object_io` `K_init`.
      *
      * `L` is the bounding box of `K_init` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `K_init`.
@@ -693,6 +693,7 @@ public:
      * <img src="HDVF_eight_view2.png" align="center" width=30%/>
      *
      * \param K_init Initial `Cub_object_io` (cubical object).
+     * \param primal_dual TBD
      */
     static Complex_duality_data dualize_complex (const Cub_object_io<Traits>& K_init, typename Chain_complex::Cubical_complex_primal_dual primal_dual) {
         Chain_complex* _K = new Chain_complex(K_init, primal_dual);
