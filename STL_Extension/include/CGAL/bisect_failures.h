@@ -21,10 +21,13 @@
 #include <CGAL/utility.h>
 
 #include <cmath>
+#include <cstddef>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <optional>
 #include <string>
+#include <tuple>
 
 namespace CGAL {
 
@@ -170,8 +173,8 @@ int bisect_failures(const InputData& data,
 
         if(cgal_exception) {
           if(initial_cgal_exception &&
-             cgal_exception->message() == initial_cgal_exception->message() &&
-             cgal_exception->expression() == initial_cgal_exception->expression() &&
+            //  cgal_exception->message() == initial_cgal_exception->message() &&
+            //  cgal_exception->expression() == initial_cgal_exception->expression() &&
              cgal_exception->library() == initial_cgal_exception->library() &&
              cgal_exception->filename() == initial_cgal_exception->filename() &&
              cgal_exception->line_number() == initial_cgal_exception->line_number())

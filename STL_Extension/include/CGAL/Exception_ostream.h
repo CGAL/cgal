@@ -12,48 +12,71 @@
 #ifndef CGAL_EXCEPTION_OSTREAM_H
 #define CGAL_EXCEPTION_OSTREAM_H
 
+#include <ios>
 #include <ostream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
+
+#include <CGAL/exceptions.h>
 
 namespace CGAL {
 
 /**
  * \class Exception_basic_ostream
- * \brief A std::basic_ostream that throws an exception with its buffer content when flushed.
+ * \brief A stream-like object that throws an exception with its buffer content when destroyed.
  *
  * Usage:
  * \code
- * CGAL::Exception_basic_ostream os;
- * os << "Error: " << value << std::endl; // throws std::runtime_error with the message
+ * {
+ *   CGAL::Exception_basic_ostream os;
+ *   os << "Error: " << value;
+ * } // throws std::runtime_error with the message when os goes out of scope
  * \endcode
  *
- * \tparam CharT Character type (default: char)
- * \tparam Traits Character traits (default: std::char_traits<CharT>)
+ * \note This class is move-only.
+ *
+ * \tparam CharT Character type (default: `char`)
+ * \tparam Traits Character traits (default: `std::char_traits<CharT>`)
  */
 template <typename CharT = char, typename Traits = std::char_traits<CharT>>
-class Exception_basic_ostream : public std::basic_ostream<CharT, Traits> {
-  class buffer_type : public std::basic_stringbuf<CharT, Traits> {
-  public:
-    using int_type = typename Traits::int_type;
-    buffer_type() = default;
-    // When the buffer is flushed, throw an exception with the buffer content
-    int sync() override {
-      std::basic_string<CharT, Traits> msg = this->str();
-      this->str({}); // clear buffer
-      throw std::runtime_error(std::string(msg.begin(), msg.end()));
-    }
-  };
-  buffer_type buffer_;
+class Exception_basic_ostream {
+  std::basic_ostringstream<CharT, Traits> stream_;
 public:
-  Exception_basic_ostream() : std::basic_ostream<CharT, Traits>(&buffer_) {}
-  // Disallow copy and move
-  Exception_basic_ostream(const Exception_basic_ostream&) = delete;
-  Exception_basic_ostream& operator=(const Exception_basic_ostream&) = delete;
-  Exception_basic_ostream(Exception_basic_ostream&&) = delete;
-  Exception_basic_ostream& operator=(Exception_basic_ostream&&) = delete;
-  ~Exception_basic_ostream() override = default;
+  Exception_basic_ostream() = default;
+
+  // move-only
+  Exception_basic_ostream(Exception_basic_ostream&&) = default;
+  Exception_basic_ostream& operator=(Exception_basic_ostream&&) = default;
+
+  ~Exception_basic_ostream() noexcept(false) {
+    std::basic_string<CharT, Traits> msg = stream_.str();
+    if(!msg.empty()) {
+      throw CGAL::Failure_exception("CGAL", "", __FILE__, __LINE__, std::string(msg.begin(), msg.end()));
+    }
+  }
+
+  template<typename T>
+  Exception_basic_ostream& operator<<(T&& value) {
+    stream_ << std::forward<T>(value);
+    return *this;
+  }
+
+  // Support for stream manipulators
+  Exception_basic_ostream& operator<<(std::basic_ostream<CharT, Traits>& (*manip)(std::basic_ostream<CharT, Traits>&)) {
+    stream_ << manip;
+    return *this;
+  }
+
+  Exception_basic_ostream& operator<<(std::basic_ios<CharT, Traits>& (*manip)(std::basic_ios<CharT, Traits>&)) {
+    stream_ << manip;
+    return *this;
+  }
+
+  Exception_basic_ostream& operator<<(std::ios_base& (*manip)(std::ios_base&)) {
+    stream_ << manip;
+    return *this;
+  }
+
 };
 
 /// /relates Exception_basic_ostream
@@ -62,8 +85,8 @@ using Exception_ostream = Exception_basic_ostream<char>;
 /// /relates Exception_basic_ostream
 using Exception_wostream = Exception_basic_ostream<wchar_t>;
 
-inline Exception_ostream& exception_ostream() {
-  static Exception_ostream os;
+inline Exception_ostream exception_ostream() {
+  Exception_ostream os;
   return os;
 }
 
