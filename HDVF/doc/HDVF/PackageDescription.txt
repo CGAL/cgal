@@ -10,6 +10,9 @@
 /// \defgroup PkgHDVFTraitsClasses Traits Classes
 /// \ingroup PkgHDVFRef
 
+/// \defgroup PkgHDVFIOClasses IO Classes
+/// \ingroup PkgHDVFRef
+
 
 /*!
 \cgalPkgDescriptionBegin{HDVF,PkgHDVF}

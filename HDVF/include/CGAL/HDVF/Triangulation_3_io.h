@@ -27,7 +27,7 @@ namespace Homological_discrete_vector_field {
 
 
 /*!
- \ingroup PkgHDVFRef
+ \ingroup PkgHDVFIOClasses
 
  The class `Triangulation_3_io` is an intermediate %IO class, used to load a `Triangulation_3` and produce simplicial complexes. The class loads the vertices and the cells (ie. tetrahedra) of the `Triangulation_3` into a `Mesh_object_io`.
 \tparam Triangulation3 a model of  `CGAL::Triangulation_3`.
