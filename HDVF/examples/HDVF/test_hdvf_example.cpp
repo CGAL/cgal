@@ -87,7 +87,7 @@ int main(int argc, char **argv)
         cycle2.set_coefficient(12, 1) ;
         HDVF_type::Column_chain annot2(hdvf.get_annotation(cycle2,1));
         std::cout << "Cycle2:" << cycle1 << std::endl ;
-        Complex::chain_to_vtk(complex, "cycle2.vtk", cycle2, 1) ;
+        CGAL::IO::write_VTK(complex, "cycle2.vtk", cycle2, 1) ;
         std::cout << "Annotation of cycle 2: " << annot2 << std::endl ;
 
         // Test get_coannotation
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
         HDVF_type::Column_chain cycle4(cycle3) ;
         cycle4 += hdvf.homology_chain(criticals.at(1), 1) ; // Cycle4: cycle3 + second hole
         std::cout << "Cycle4: " << cycle4 << std::endl ;
-        Complex::chain_to_vtk(complex, "cycle4.vtk", cycle4, 1) ;
+        CGAL::IO::write_VTK(complex, "cycle4.vtk", cycle4, 1) ;
         std::cout << "are_same_cycles cycle1 and cycle4: " << hdvf.are_same_cycles(cycle1, cycle4, 1) << std::endl ;
 
         // Test are_same_cocycles

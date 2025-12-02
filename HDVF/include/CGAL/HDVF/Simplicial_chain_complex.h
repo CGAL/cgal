@@ -108,7 +108,7 @@ public:
 
     // VTK export
 
-    /**
+    /*
      * \brief Exports a simplicial complex (plus, optionally, labels) to a VTK file.
      *
      * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
@@ -218,7 +218,7 @@ public:
         out.close() ;
     }
 
-    /**
+    /*
      * \brief Exports a chain over a simplicial complex to a VTK file.
      *
      * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.

@@ -290,6 +290,40 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_duality<ChainComplex> &h
         }
     }
 }
+
+/**
+ * \brief Exports a model of `GeometricChainComplex` (plus, optionally, labels) to a VTK file.
+ *
+ * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
+ *
+ * \tparam LabelType Type of labels provided (default: int).
+ *
+ * \param K Model of `GeometricChainComplex` exported.
+ * \param filename Output file root (output filenames will be built from this root).
+ * \param labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+ * \param label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
+ */
+template <typename Chain_complex, typename LabelType = int>
+static void write_VTK(const Chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+    Chain_complex::chain_complex_to_vtk(K, filename, labels, label_type_name);
+}
+
+/**
+ * \brief Exports a chain over a model of `GeometricChainComplex` to a VTK file.
+ *
+ * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.
+ *
+ * \param K Model of `GeometricChainComplex` exported.
+ * \param filename Output file root (output filenames will be built from this root).
+ * \param chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
+ * \param q Dimension of the cells of the chain.
+ * \param cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
+ */
+template <typename Chain_complex>
+void write_VTK(const Chain_complex &K, const std::string &filename, const OSM::Sparse_chain<typename Chain_complex::Coefficient_ring, OSM::COLUMN>& chain, int q, size_t cellId = -1){
+    Chain_complex::chain_to_vtk(K, filename, chain, q, cellId);
+}
+
 } /* end namespace IO */
 
 namespace Homological_discrete_vector_field {
