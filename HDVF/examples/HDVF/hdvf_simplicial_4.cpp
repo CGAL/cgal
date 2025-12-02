@@ -1,20 +1,21 @@
 #include <iostream>
 #include <fstream>
+
 #include <CGAL/Epick_d.h>
+#include <CGAL/Zp.h>
+#include <CGAL/Z2.h>
 #include <CGAL/HDVF/Hdvf_traits_d.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
-#include <CGAL/HDVF/Zp.h>
-#include <CGAL/HDVF/Z2.h>
 #include <CGAL/HDVF/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 //typedef int Coefficient_ring;
-//typedef HDVF::Z2 Coefficient_ring;
-typedef HDVF::Zp<5, char, true> Coefficient_ring;
+//typedef CGAL::Z2 Coefficient_ring;
+typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
 typedef CGAL::Epick_d<CGAL::Dimension_tag<4>> Kernel;
 typedef HDVF::Hdvf_traits_d<Kernel> Traits;

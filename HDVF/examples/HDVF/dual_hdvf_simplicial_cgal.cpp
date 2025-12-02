@@ -1,14 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+
+#include <CGAL/Zp.h>
+#include <CGAL/Z2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Surface_mesh_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
 #include <CGAL/HDVF/Filtration_lower_star.h>
-#include <CGAL/HDVF/Zp.h>
-#include <CGAL/HDVF/Z2.h>
 #include <CGAL/HDVF/Hdvf_duality.h>
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/OSM/OSM.h>
@@ -18,8 +19,8 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
-//typedef HDVF::Zp<5,int,true> Coefficient_ring;
-typedef HDVF::Z2 Coefficient_ring;
+//typedef CGAL::Zp<5,int,true> Coefficient_ring;
+typedef CGAL::Z2 Coefficient_ring;
 typedef HDVF::Simplicial_chain_complex<Coefficient_ring, Traits> Complex;
 typedef HDVF::Hdvf_duality<Complex> HDVF_type;
 typedef HDVF::Duality_simplicial_complex_tools<Coefficient_ring,Traits> Tools_type;

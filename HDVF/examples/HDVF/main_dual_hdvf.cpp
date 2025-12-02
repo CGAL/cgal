@@ -10,6 +10,9 @@
 
 #include <iostream>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Zp.h>
+#include <CGAL/Z2.h>
+
 #include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Simplex.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
@@ -25,9 +28,6 @@
 #include <CGAL/HDVF/Icosphere_object_io.h>
 #include <CGAL/HDVF/Tet_object_io.h>
 #include "arguments.h"
-#include <CGAL/HDVF/Zp.h>
-#include <CGAL/HDVF/Z2.h>
-
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 // ------- A ring
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-            using Coefficient_ring = HDVF::Z2 ;
+            using Coefficient_ring = CGAL::Z2 ;
             main_code<Coefficient_ring>(options) ;
         }
         else
@@ -304,7 +304,7 @@ int main(int argc, char **argv)
             std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
-        typedef HDVF::Zp<SCALAR,int,true> Coefficient_ring;
+        typedef CGAL::Zp<SCALAR,int,true> Coefficient_ring;
 #endif
     }
 

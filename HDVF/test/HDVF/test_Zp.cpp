@@ -4,12 +4,11 @@
 #include <set>
 #include <ostream>
 #include <cassert>
-#include <CGAL/HDVF/Zp.h>
+#include <CGAL/Zp.h>
 
-namespace HDVF=CGAL::Homological_discrete_vector_field;
 
-typedef HDVF::Zp<5, char, true> Coefficient_field;
-typedef HDVF::Zp<12, char, false> Coefficient_ring;
+typedef CGAL::Zp<5, char, true> Coefficient_field;
+typedef CGAL::Zp<12, char, false> Coefficient_ring;
 
 typedef CGAL::Algebraic_structure_traits<Coefficient_field> ATCoefs_field;
 typedef CGAL::Algebraic_structure_traits<Coefficient_ring> ATCoefs_ring;
@@ -17,7 +16,7 @@ typedef CGAL::Algebraic_structure_traits<Coefficient_ring> ATCoefs_ring;
 int main() {
     Coefficient_field f1(1), f2(3), f0(0), fp((Coefficient_field()));
     Coefficient_ring r1(1), r2(3), r0(0), rp((Coefficient_ring()));
-    
+
     std::cerr << "-- Test Zp ==" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -37,7 +36,7 @@ int main() {
         std::cerr << "Test 2==-2: " << comp_false << std::endl ;
         assert(!comp_false) ;
     }
-    
+
     std::cerr << "-- Test Zp !=" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -57,7 +56,7 @@ int main() {
         std::cerr << "Test 2!=14: " << comp_false << std::endl ;
         assert(!comp_false) ;
     }
-    
+
     std::cerr << "-- Test Zp is_zero" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -77,7 +76,7 @@ int main() {
         std::cerr << "Test non zero element: " << comp_false << std::endl ;
         assert(!comp_false) ;
     }
-    
+
     std::cerr << "-- Test Zp unary operator+" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -91,7 +90,7 @@ int main() {
         std::cerr << "Test +6 == 6: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp unary operator-" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -105,7 +104,7 @@ int main() {
         std::cerr << "Test -5 == 7: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator+" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -119,7 +118,7 @@ int main() {
         std::cerr << "Test 6+8 == 2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator-" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -133,7 +132,7 @@ int main() {
         std::cerr << "Test 6-8 == -2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator*" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -147,7 +146,7 @@ int main() {
         std::cerr << "Test 6*7 == 6: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator/" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -161,7 +160,7 @@ int main() {
         std::cerr << "Test 8/3 == 2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator+=" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -179,7 +178,7 @@ int main() {
         std::cerr << "Test 6+=8 == 2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator-=" << std::endl;
     {
         Coefficient_field tmp(2);
@@ -197,7 +196,7 @@ int main() {
         std::cerr << "Test 6-=8 == -2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator*=" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -215,7 +214,7 @@ int main() {
         std::cerr << "Test 6*=7 == 6: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp operator/=" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -233,7 +232,7 @@ int main() {
         std::cerr << "Test 8/=3 == 2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-    
+
     std::cerr << "-- Test Zp is_invertible" << std::endl;
     {
         std::cerr << "----> Field Z5" << std::endl;
@@ -253,9 +252,9 @@ int main() {
         std::cerr << "Test is_invertible(2): " << comp_false << std::endl ;
         assert(!comp_false) ;
     }
-    
+
     std::cout << "n1==0 : " << ATCoefs_field::Is_zero()(f1) << std::endl;
-    
+
     return 0;
 }
 

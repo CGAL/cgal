@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
@@ -13,7 +13,6 @@
 #ifndef CGAL_HDVF_ZP_H
 #define CGAL_HDVF_ZP_H
 
-#include <CGAL/license/HDVF.h>
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/number_utils.h>
@@ -21,7 +20,6 @@
 #include <iostream>
 
 namespace CGAL {
-namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -52,7 +50,7 @@ public:
 
     /** \brief Returns the value of p. */
     static T operator() () { return T(p); }
-    
+
     /** \brief Tests if the element is 0. */
     bool is_zero() const { return _i == 0 ; }
 
@@ -61,7 +59,7 @@ public:
         _i = a._i;
         return *this;
     }
-    
+
     /** \brief Unary operator+ */
     friend Zp operator+ (const Zp& a)
     {
@@ -168,7 +166,7 @@ public:
         a = Zp(tmp) ;
         return (in) ;
     }
-    
+
     /** \brief Returns the invertibility of the element. */
     bool is_invertible() {
         if (IsPrime)
@@ -181,15 +179,14 @@ public:
     }
 };
 
-} /* end namespace Homological_discrete_vector_field */
 
 // Specialization for p being not a prime number
-template <int p, typename T> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, T, false> >
-  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, T, false>, Integral_domain_without_division_tag >  {
+template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, false> >
+  : public Algebraic_structure_traits_base< Zp<p, T, false>, Integral_domain_without_division_tag >  {
   public:
       typedef Tag_true            Is_exact;
       typedef Tag_false           Is_numerical_sensitive;
-      typedef Homological_discrete_vector_field::Zp<p, T, false> Type;
+      typedef Zp<p, T, false> Type;
 
     class Is_invertible //   AF: Does not yet exist in Number_types and Algebraic_foundations
       : public CGAL::cpp98::unary_function< Type, bool > {
@@ -202,12 +199,12 @@ template <int p, typename T> class Algebraic_structure_traits< Homological_discr
 
 
   // Specialization for p being not a prime number
-  template <int p, typename T> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, T, true> >
-  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, T, true>, Field_tag >  {
+  template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, true> >
+  : public Algebraic_structure_traits_base< Zp<p, T, true>, Field_tag >  {
   public:
       typedef Tag_true            Is_exact;
       typedef Tag_false           Is_numerical_sensitive;
-      typedef Homological_discrete_vector_field::Zp<p, T, true> Type;
+      typedef Zp<p, T, true> Type;
 
     class Is_invertible
       : public CGAL::cpp98::unary_function< Type, bool > {
@@ -218,9 +215,9 @@ template <int p, typename T> class Algebraic_structure_traits< Homological_discr
     };
   };
 
-template <int p, typename T, bool IsPrime> class Real_embeddable_traits< Homological_discrete_vector_field::Zp<p, T, IsPrime> >
-  : public INTERN_RET::Real_embeddable_traits_base< Homological_discrete_vector_field::Zp<p, T, IsPrime> , CGAL::Tag_true > {
-      typedef Homological_discrete_vector_field::Zp<p, T, IsPrime> Type;
+template <int p, typename T, bool IsPrime> class Real_embeddable_traits< Zp<p, T, IsPrime> >
+  : public INTERN_RET::Real_embeddable_traits_base< Zp<p, T, IsPrime> , CGAL::Tag_true > {
+      typedef Zp<p, T, IsPrime> Type;
   public:
 
     class Is_positive

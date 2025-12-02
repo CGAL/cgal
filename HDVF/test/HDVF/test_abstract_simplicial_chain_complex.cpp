@@ -5,8 +5,8 @@
 #include <ostream>
 #include <cassert>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Z2.h>
 #include <CGAL/HDVF/Hdvf_traits_3.h>
-#include <CGAL/HDVF/Z2.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Abstract_simplicial_chain_complex.h>
 #include <CGAL/OSM/Sparse_matrix.h>
@@ -16,7 +16,7 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
-typedef HDVF::Z2 CoefficientType;
+typedef CGAL::Z2 CoefficientType;
 typedef HDVF::Abstract_simplicial_chain_complex<CoefficientType> ChainComplexType;
 typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
