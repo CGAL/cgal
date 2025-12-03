@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 GeometryFactory (France).
+// Copyright (c) 2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sébastien Loriot
+// Author(s)     : Léo Valque
 
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_CLIP_CONVEX_H
@@ -18,13 +18,6 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
-#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#endif
-#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -47,7 +40,7 @@ void clip_convex(PolygonMesh& pm,
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   // np typedefs
-  using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
+  // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
   using Default_visitor = Default_cut_visitor<PolygonMesh>;
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -72,18 +65,18 @@ void clip_convex(PolygonMesh& pm,
   if (throw_on_self_intersection && !is_triangle_mesh(pm))
     throw_on_self_intersection = false;
 
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::concurrency_tag_t,
-    NamedParameters,
-    Sequential_tag
-  > ::type Concurrency_tag;
+  // typedef typename internal_np::Lookup_named_param_def <
+  //   internal_np::concurrency_tag_t,
+  //   NamedParameters,
+  //   Sequential_tag
+  // > ::type Concurrency_tag;
 
   // constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
-  auto scalar_product = traits.compute_scalar_product_3_object();
-  auto point_on_plane = traits.construct_point_on_plane_3_object();
+  auto sq = traits.compute_squared_distance_3_object();
+  // auto csq = traits.compare_squared_distance_3_object();
   // auto vector_3 = traits.construct_vector_3_object();
 
   // TODO: the default is not thread-safe for example for Polyhedron
@@ -99,26 +92,22 @@ void clip_convex(PolygonMesh& pm,
   Vertex_oriented_side_map vertex_os;
 
   // ____________________ Find a crossing edge _____________________
-  Vector_3 normal = traits.construct_orthogonal_vector_3_object()(plane);
 
   vertex_descriptor src=*vertices(pm).begin();
-  Vector_3 vec(point_on_plane(plane), get(vpm,src));
-  FT sp_src = scalar_product(vec, normal); // Not normalized distance to the plane
+  FT sp_src = sq(plane, get(vpm, src)); // Not normalized distance
   Sign direction_to_zero = sign(sp_src);
 
   vertex_descriptor trg;
   FT sp_trg;
 
-  bool is_local_max;
   bool is_crossing_edge=false;
-
   if(direction_to_zero!=EQUAL){
     do{
-      is_local_max=true;
+      bool is_local_max=true;
       for(auto v: vertices_around_target(src ,pm)){
-        vec = Vector_3(point_on_plane(plane), get(vpm, v));
-        sp_trg = scalar_product(vec, normal);
-        // TODO with EPICK, I need a predicate that compare scalar_product
+        sp_trg = sq(plane, get(vpm, v));
+        CGAL_assertion(sq(plane, get(vpm, v)) == sp_trg);
+        // TODO with EPICK, use compare_distance(plane, src, plane, trg) (But no possibility to memorize some computations for the next)
         // Check if v in the direction to the plane
         if(compare(sp_src, sp_trg)==direction_to_zero){
           if(sign(sp_trg)!=direction_to_zero){
@@ -134,10 +123,10 @@ void clip_convex(PolygonMesh& pm,
           break;
         }
       }
-      // No intersection with the plane, the is empty or full
+      // No intersection with the plane, kernel is either empty or full
       if(is_local_max){
         if(direction_to_zero==POSITIVE)
-          pm.clear(); // The result is empty
+          clear(pm); // The result is empty
         return;
       }
     } while(!is_crossing_edge);
@@ -155,8 +144,8 @@ void clip_convex(PolygonMesh& pm,
       Oriented_side side_v = oriented_side(plane, get(vpm, v));
       if(side_v==ON_POSITIVE_SIDE){
         src = v;
-        vec = Vector_3(point_on_plane(plane), get(vpm, src));
-        sp_src = scalar_product(vec, normal);
+        sp_src = sq(plane, get(vpm, src));
+        // CGAL_assertion(sq(plane, get(vpm, src)) == sp_src);
         no_positive_side = false;
         break;
       }
@@ -203,7 +192,7 @@ void clip_convex(PolygonMesh& pm,
         // The edge is along the plane, add it to boundaries
         boundaries.emplace_back(h);
         boundaries_vertices.emplace(target(h, pm));
-        pm.set_halfedge(target(h, pm), h);
+        set_halfedge(target(h, pm), h, pm);
 
         h = next(h, pm);
         side_trg=oriented_side(plane, get(vpm, target(h,pm)));
@@ -238,14 +227,14 @@ void clip_convex(PolygonMesh& pm,
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
     boundaries.emplace_back(sh);
     boundaries_vertices.emplace(target(sh, pm));
-    pm.set_halfedge(target(sh, pm), sh);
+    set_halfedge(target(sh, pm), sh, pm);
 
     CGAL_assertion(target(sh, pm) == target(h, pm));
     h = opposite(next(sh,pm), pm);
-  } while(target(h, pm)!=v_start || (boundaries.size()==0 && h!=h_start));
+  } while(target(h, pm)!=v_start || (boundaries.empty() && h!=h_start));
 
   CGAL_assertion(is_valid_polygon_mesh(pm));
-  CGAL_assertion(boundaries.size());
+  CGAL_assertion(!boundaries.empty());
 
   // Remove the negative side
   std::set<vertex_descriptor> vertices_to_remove;
@@ -267,7 +256,6 @@ void clip_convex(PolygonMesh& pm,
     halfedge_descriptor h = h_start;
 
     do {
-      // if(boundaries.find(h)==boundaries.end()){
       if((std::find(boundaries.begin(), boundaries.end(), h)==boundaries.end()) &&
          (std::find(boundaries.begin(), boundaries.end(), opposite(h,pm))==boundaries.end())){ // TODO avoid this linear operation
         edges_to_remove.emplace(edge(h, pm));
@@ -295,15 +283,15 @@ void clip_convex(PolygonMesh& pm,
 
   // Reorder halfedges of the hole
   for(size_t i=1; i<boundaries.size(); ++i)
-    pm.set_next(boundaries[i-1], boundaries[i]);
-  pm.set_next(boundaries.back(), boundaries[0]);
+    set_next(boundaries[i-1], boundaries[i], pm);
+  set_next(boundaries.back(), boundaries[0], pm);
 
   // Fill the hole
   face_descriptor f=pm.add_face();
   for(auto h: boundaries){
-    pm.set_face(h, f);
+    set_face(h, f, pm);
   }
-  pm.set_halfedge(f, boundaries[0]);
+  set_halfedge(f, boundaries[0], pm);
 
   // std::ofstream("clip.off") << pm;
   CGAL_assertion(is_valid_polygon_mesh(pm));

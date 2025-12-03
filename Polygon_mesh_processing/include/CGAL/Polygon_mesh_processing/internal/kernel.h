@@ -64,10 +64,13 @@ struct Three_point_cut_plane_traits
     }
   };
 
-  struct Construct_point_on_plane_3{
-    Point_3 operator()(const Plane_3& plane)
+  struct Compute_squared_distance_3
+  {
+    using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
+    FT operator()(const Plane_3& plane, const Point_3& p)
     {
-      return plane[0];
+      typename Kernel::Plane_3 pl(plane[0], plane[1], plane[2]);
+      return Compute_scalar_product_3()(Vector_3(ORIGIN, p), pl.orthogonal_vector())+pl.d();
     }
   };
 
@@ -86,13 +89,7 @@ struct Three_point_cut_plane_traits
     return Construct_orthogonal_vector_3();
   }
 
-  Construct_point_on_plane_3 construct_point_on_plane_3_object() const
-  {
-    return Construct_point_on_plane_3();
-  }
-
-  using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
-  Compute_scalar_product_3 compute_scalar_product_3_object() const { return Compute_scalar_product_3(); }
+  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect
@@ -218,7 +215,6 @@ kernel(const TriangleMesh& pm,
     }
 #endif
     clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).used_for_kernel(true));
-    // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).used_for_kernel(true));
     if (is_empty(kernel)) break;
   }
 
@@ -353,7 +349,6 @@ public:
     Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c){
       const std::vector<Plane_3> &planes = *m_planes;
       auto res = CGAL::Intersections::internal::intersection_point(planes[a].first, planes[b].first, planes[c].first, Kernel());
-      CGAL_assertion(res);
       return Point_3(a, b, c, *res);
     }
 
@@ -391,7 +386,7 @@ public:
         plane_descriptor second=-1;
         for(short int i=0; i!=3; ++i)
           for(short int j=0; j!=3; ++j)
-            if(p.supports[i]==q.supports[j])
+            if(p.supports[i]==q.supports[j]){
               if(first==-1){
                 first=p.supports[i];
                 break;
@@ -399,10 +394,11 @@ public:
                 second=p.supports[i];
                 return std::make_pair(first, second);
               }
+            }
 
         for(plane_descriptor pd: p.other_coplanar)
           for(short int j=0; j!=3; ++j)
-            if(pd==q.supports[j])
+            if(pd==q.supports[j]){
               if(first==-1){
                 first=pd;
                 break;
@@ -410,10 +406,11 @@ public:
                 second=pd;
                 return std::make_pair(first, second);
               }
+            }
 
         for(plane_descriptor pd: q.other_coplanar)
           for(short int j=0; j!=3; ++j)
-            if(pd==p.supports[j])
+            if(pd==p.supports[j]){
               if(first==-1){
                 first=pd;
                 break;
@@ -421,10 +418,11 @@ public:
                 second=pd;
                 return std::make_pair(first, second);
               }
+            }
 
         for(plane_descriptor pd: p.other_coplanar)
           for(plane_descriptor qd: q.other_coplanar)
-            if(pd==qd)
+            if(pd==qd){
               if(first==-1){
                 first=pd;
                 break;
@@ -432,6 +430,7 @@ public:
                 second=pd;
                 return std::make_pair(first, second);
               }
+            }
         // The two points do not shair a common support
         std::cout << p.supports[0] << " " << p.supports[1] << " " << p.supports[2] << std::endl;
         std::cout << q.supports[0] << " " << q.supports[1] << " " << q.supports[2] << std::endl;
@@ -450,6 +449,28 @@ public:
       CGAL_assertion_code(int256 max2E169=mp::pow(int256(2),169);)
       // CGAL_assertion((mp::abs(p.hx())<=max2E195) && (mp::abs(p.hy())<=max2E195) && (mp::abs(p.hz())<=max2E195) && (mp::abs(p.hw())<=max2E169));
       return res;
+    }
+  };
+
+  struct Construct_orthogonal_vector_3
+  {
+    Vector_3 operator()(const Plane_3& plane, const Point_3& p)  const
+    {
+      if((p.supports[0]==plane.second) || (p.supports[1]==plane.second) || (p.supports[2]==plane.second))
+        return COPLANAR;
+      Oriented_side ori = plane.first.oriented_side(p);
+      if(ori==COPLANAR)
+        p.other_coplanar.emplace(plane.second);
+      return ori;
+    }
+  };
+
+  struct Compute_squared_distance_3
+  {
+    using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
+    FT operator()(const Plane_3& plane, const Point_3& p)
+    {
+      return Compute_scalar_product_3()(Vector_3(ORIGIN, p), plane.first.orthogonal_vector())+plane.first.d();
     }
   };
 
@@ -481,16 +502,6 @@ public:
                                        to_int_plane(f)));
   }
 
-  Oriented_side_3 oriented_side_3_object() const
-  {
-    return Oriented_side_3();
-  }
-
-  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object()
-  {
-    return Construct_plane_line_intersection_point_3(m_planes);
-  }
-
   struct Construct_plane_3{
 
     plane_range_pointer m_planes;
@@ -509,14 +520,13 @@ public:
     }
   };
 
-  Construct_plane_3 construct_plane_3_object()
-  {
-    return Construct_plane_3(m_planes);
-  }
-
-  Construct_point_3 construct_point_3_object()
-  {
-    return Construct_point_3(m_planes);
+  Oriented_side_3 oriented_side_3_object() const { return Oriented_side_3(); }
+  Construct_plane_3 construct_plane_3_object() { return Construct_plane_3(m_planes); }
+  Construct_point_3 construct_point_3_object() { return Construct_point_3(m_planes); }
+  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const { return Construct_orthogonal_vector_3(); }
+  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
+  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const {
+    return Construct_plane_line_intersection_point_3(m_planes);
   }
 
   const std::vector<Plane_3>& planes(){
@@ -546,8 +556,6 @@ trettner_kernel(const TriangleMesh& pm,
   using parameters::get_parameter;
 
   using GT = Plane_based_traits<Homogeneous<int256>>;
-  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                              get_const_property_map(vertex_point, pm));
 
   using Point_3 = typename GT::Point_3;
   using Plane_3 = typename GT::Plane_3;
@@ -586,7 +594,7 @@ trettner_kernel(const TriangleMesh& pm,
 
   for (auto plane: planes)
   {
-    // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
+    clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
     if (is_empty(kernel)) break;
   }
 
@@ -604,8 +612,6 @@ trettner_epeck_kernel(const TriangleMesh& pm,
 
   // using GT = Plane_based_traits<Homogeneous<int256>>;
   using GT = Plane_based_traits<Exact_predicates_exact_constructions_kernel>;
-  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                              get_const_property_map(vertex_point, pm));
 
   using Point_3 = typename GT::Point_3;
   using Plane_3 = typename GT::Plane_3;
@@ -644,7 +650,7 @@ trettner_epeck_kernel(const TriangleMesh& pm,
 
   for (auto plane: planes)
   {
-    // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
+    clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
     if (is_empty(kernel)) break;
   }
 
