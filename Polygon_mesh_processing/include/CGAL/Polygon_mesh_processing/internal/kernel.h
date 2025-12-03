@@ -15,8 +15,11 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/clip_convex.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Exact_integer.h>
@@ -33,6 +36,7 @@ struct Three_point_cut_plane_traits
   using FT = typename Kernel::FT;
   using Plane_3 = std::array<typename Kernel::Point_3, 3>;
   using Point_3 = typename Kernel::Point_3;
+  using Vector_3 = typename Kernel::Vector_3;
 
   struct Does_not_support_CDT2{};
 
@@ -53,6 +57,20 @@ struct Three_point_cut_plane_traits
     }
   };
 
+  struct Construct_orthogonal_vector_3{
+    Vector_3 operator()(const Plane_3& plane)
+    {
+      return typename Kernel::Plane_3(plane[0], plane[1], plane[2]).orthogonal_vector();
+    }
+  };
+
+  struct Construct_point_on_plane_3{
+    Point_3 operator()(const Plane_3& plane)
+    {
+      return plane[0];
+    }
+  };
+
   Oriented_side_3 oriented_side_3_object() const
   {
     return Oriented_side_3();
@@ -62,6 +80,19 @@ struct Three_point_cut_plane_traits
   {
     return Construct_plane_line_intersection_point_3();
   }
+
+  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const
+  {
+    return Construct_orthogonal_vector_3();
+  }
+
+  Construct_point_on_plane_3 construct_point_on_plane_3_object() const
+  {
+    return Construct_point_on_plane_3();
+  }
+
+  using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
+  Compute_scalar_product_3 compute_scalar_product_3_object() const { return Compute_scalar_product_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect
@@ -186,8 +217,8 @@ kernel(const TriangleMesh& pm,
       }
     }
 #endif
-
-    clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).used_for_kernel(true));
+    clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).used_for_kernel(true));
+    // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).used_for_kernel(true));
     if (is_empty(kernel)) break;
   }
 
@@ -290,6 +321,7 @@ struct Plane_based_traits
   using FT = typename Kernel::FT;
   using RT = typename Kernel::RT;
   using Geometric_point_3 = typename Kernel::Point_3;
+  using Vector_3 = typename Kernel::Vector_3;
 
   using plane_descriptor = std::size_t;
   using Plane_3 = std::pair<typename Kernel::Plane_3, plane_descriptor>;
@@ -405,6 +437,7 @@ public:
         std::cout << q.supports[0] << " " << q.supports[1] << " " << q.supports[2] << std::endl;
         CGAL_assertion_code(std::cout << "The two points do not share two common supporting planes" << std::endl;)
         CGAL_assertion(0);
+        return std::make_pair(first, second);
       };
 
       std::pair<plane_descriptor, plane_descriptor> line_supports=get_common_supports(p, q);
@@ -415,7 +448,7 @@ public:
       namespace mp = boost::multiprecision;
       CGAL_assertion_code(int256 max2E195=mp::pow(int256(2),195);)
       CGAL_assertion_code(int256 max2E169=mp::pow(int256(2),169);)
-      CGAL_assertion((mp::abs(p.hx())<=max2E195) && (mp::abs(p.hy())<=max2E195) && (mp::abs(p.hz())<=max2E195) && (mp::abs(p.hw())<=max2E169));
+      // CGAL_assertion((mp::abs(p.hx())<=max2E195) && (mp::abs(p.hy())<=max2E195) && (mp::abs(p.hz())<=max2E195) && (mp::abs(p.hw())<=max2E169));
       return res;
     }
   };
@@ -467,7 +500,7 @@ public:
       m_planes->emplace_back(pl, m_planes->size());
       CGAL_assertion_code(int256 max2E55=mp::pow(int256(2),55);)
       CGAL_assertion_code(int256 max2E82=mp::pow(int256(2),82);)
-      CGAL_assertion((mp::abs(pl.a())<=max2E55) && (mp::abs(pl.b())<=max2E55) && (mp::abs(pl.c())<=max2E82) && (mp::abs(pl.d())<=max2E82));
+      // CGAL_assertion((mp::abs(pl.a())<=max2E55) && (mp::abs(pl.b())<=max2E55) && (mp::abs(pl.c())<=max2E82) && (mp::abs(pl.d())<=max2E82));
       return m_planes->back();
     }
 
@@ -553,15 +586,70 @@ trettner_kernel(const TriangleMesh& pm,
 
   for (auto plane: planes)
   {
-    clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
+    // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
     if (is_empty(kernel)) break;
   }
 
   return kernel;
 }
 
+template <class TriangleMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+Surface_mesh<Plane_based_traits<Exact_predicates_exact_constructions_kernel>::Point_3>
+trettner_epeck_kernel(const TriangleMesh& pm,
+                const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
+  // using GT = Plane_based_traits<Homogeneous<int256>>;
+  using GT = Plane_based_traits<Exact_predicates_exact_constructions_kernel>;
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, pm));
 
+  using Point_3 = typename GT::Point_3;
+  using Plane_3 = typename GT::Plane_3;
+
+  using Construct_plane_3 = GT::Construct_plane_3;
+  using Construct_point_3 = GT::Construct_point_3;
+
+  using InternMesh = Surface_mesh<Point_3>;
+
+  GT gt(pm);
+  const std::vector<Plane_3> &planes=gt.planes();
+
+  Construct_plane_3 plane_3 = gt.construct_plane_3_object();
+  Construct_point_3 point_3 = gt.construct_point_3_object();
+
+  if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
+    return Surface_mesh<Point_3>();
+
+  CGAL::Bbox_3 bb3 = bbox(pm, np);
+  InternMesh kernel;
+  Plane_3 xl=plane_3(1,0,0,int(-bb3.xmin()));
+  Plane_3 yl=plane_3(0,1,0,int(-bb3.ymin()));
+  Plane_3 zl=plane_3(0,0,1,int(-bb3.zmin()));
+  Plane_3 xr=plane_3(1,0,0,int(-bb3.xmax()));
+  Plane_3 yr=plane_3(0,1,0,int(-bb3.ymax()));
+  Plane_3 zr=plane_3(0,0,1,int(-bb3.zmax()));
+  CGAL::make_hexahedron(point_3(xl.second, yl.second, zl.second),
+                        point_3(xl.second, yl.second, zr.second),
+                        point_3(xl.second, yr.second, zr.second),
+                        point_3(xl.second, yr.second, zl.second),
+                        point_3(xr.second, yr.second, zl.second),
+                        point_3(xr.second, yl.second, zl.second),
+                        point_3(xr.second, yl.second, zr.second),
+                        point_3(xr.second, yr.second, zr.second),
+                        kernel);
+
+  for (auto plane: planes)
+  {
+    // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(gt).do_not_triangulate_faces(true).used_for_kernel(true));
+    if (is_empty(kernel)) break;
+  }
+
+  return kernel;
+}
 
 
 } } } // end of CGAL::Polygon_mesh_processing::experimental

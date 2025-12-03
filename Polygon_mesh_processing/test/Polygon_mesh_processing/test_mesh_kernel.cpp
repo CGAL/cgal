@@ -103,6 +103,31 @@ void test_traits()
   std::ofstream("clipped.off") << m;
 }
 
+void elementary_test_kernel()
+{
+  using Point_3 = typename EK::Point_3;
+  CGAL::Real_timer timer;
+  EMesh m;
+  // make_hexahedron(Point_3(0, 1, 0), Point_3(0, 1, 1), Point_3(1, 0, 1), Point_3(1, 0, 0),
+  //                 Point_3(0.75, 0.25, 0.25), Point_3(0.25, 0.75, 0.25), Point_3(0.25, 0.75, 0.75), Point_3(0.75, 0.25, 0.75),
+  //                 m);
+  // make_tetrahedron(Point_3(1, 0, 0), Point_3(0, 1, 0), Point_3(0, 0, 1), Point_3(0.5, 0.5, 0.5),
+  //                 m);
+  // make_tetrahedron(Point_3(1, 0, 0), Point_3(1, 1, 0), Point_3(0, 1, 0), Point_3(0, 0, 0),
+  //                 m);
+  make_hexahedron(Point_3(1,0,0), Point_3(1,1,0), Point_3(0,1,0), Point_3(0,0,0),
+                  Point_3(0,0,1), Point_3(1,0,1), Point_3(1,1,1), Point_3(0,1,1),
+                  m);
+
+  timer.start();
+  EMesh kernel = PMP::experimental::kernel(m);
+  timer.stop();
+
+  std::ofstream("kernel.off") << kernel;
+  std::cout << "test_kernel done in " << timer.time() << "\n";
+}
+
+
 void test_kernel(std::string fname)
 {
   CGAL::Real_timer timer;
@@ -228,15 +253,35 @@ void test_trettner_kernel(std::string fname)
   std::cout << "test_trettner_kernel done in " << timer.time() << "\n";
 }
 
+void test_trettner_epeck_kernel(std::string fname)
+{
+  CGAL::Real_timer timer;
+  Mesh m;
+  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
+  {
+    std::cerr << "ERROR: cannot read " << fname << "\n";
+    exit(1);
+  }
+  to_integer_mesh(m);
+  timer.start();
+  auto kernel = PMP::experimental::trettner_epeck_kernel(m);
+  timer.stop();
+
+  std::ofstream("tkernel.off") << kernel;
+  std::cout << "test_trettner_kernel with epeck done in " << timer.time() << "\n";
+}
+
 int main(int argc, char** argv)
 {
   // test_traits();
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  // elementary_test_kernel();
   // test_kernel(filename);
   // test_kernel_with_rounding(filename);
   // test_exact_kernel(filename);
   test_exact_kernel_with_rounding(filename);
-  test_trettner_kernel(filename);
+  // test_trettner_kernel(filename);
+  // test_trettner_epeck_kernel(filename);
   // test_kernel_with_chull(filename);
   // test_kernel_with_chull_and_constructions(filename);
 }
