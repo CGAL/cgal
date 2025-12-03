@@ -306,23 +306,23 @@ The following table shows which file formats can be read from and written for po
   </tr>
   <tr>
     <th>\ref IOStreamOFF "OFF"</th>
-    <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::read_OFF()` \endlink</td>
-    <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::read_OFF()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::write_OFF()` \endlink</td>
   </tr>
   <tr>
     <th>\ref IOStreamXYZ "XYZ"</th>
-    <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink</td>
-    <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::write_XYZ()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ `CGAL::IO::read_XYZ()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ `CGAL::IO::write_XYZ()` \endlink</td>
   </tr>
   <tr>
     <th>\ref IOStreamPLY "PLY"</th>
-    <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink</td>
-    <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::read_PLY()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::write_PLY()` \endlink</td>
   </tr>
   <tr>
     <th>\ref IOStreamLAS "LAS"</th>
-    <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::read_LAS()` \endlink</td>
-    <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::write_LAS()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS `CGAL::IO::read_LAS()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS `CGAL::IO::write_LAS()` \endlink</td>
   </tr>
 </table>
 
