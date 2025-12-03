@@ -279,9 +279,9 @@ int main(int argc, char** argv)
   // test_kernel(filename);
   // test_kernel_with_rounding(filename);
   // test_exact_kernel(filename);
-  test_exact_kernel_with_rounding(filename);
+  // test_exact_kernel_with_rounding(filename);
   // test_trettner_kernel(filename);
-  // test_trettner_epeck_kernel(filename);
+  test_trettner_epeck_kernel(filename);
   // test_kernel_with_chull(filename);
   // test_kernel_with_chull_and_constructions(filename);
 }

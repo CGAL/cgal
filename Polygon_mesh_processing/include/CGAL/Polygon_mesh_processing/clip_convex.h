@@ -48,7 +48,6 @@ void clip_convex(PolygonMesh& pm,
 
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
-  using Vector_3 = typename GT::Vector_3;
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -139,13 +138,11 @@ void clip_convex(PolygonMesh& pm,
   if(sign(sp_trg)==EQUAL && direction_to_zero!=POSITIVE){
     // Search a vertex around trg coming from positive side
     bool no_positive_side = true;
-    bool no_negative_side = true;
     for(auto v: vertices_around_target(trg ,pm)){
       Oriented_side side_v = oriented_side(plane, get(vpm, v));
       if(side_v==ON_POSITIVE_SIDE){
         src = v;
         sp_src = sq(plane, get(vpm, src));
-        // CGAL_assertion(sq(plane, get(vpm, src)) == sp_src);
         no_positive_side = false;
         break;
       }
@@ -163,7 +160,7 @@ void clip_convex(PolygonMesh& pm,
 
   // Cut the convex along the plane by marching along crossing edges starting from the previous edge
   std::vector<halfedge_descriptor> boundaries;
-  std::set<vertex_descriptor> boundaries_vertices;
+  std::vector<vertex_descriptor> boundaries_vertices;
 
   halfedge_descriptor h = halfedge(src, trg, pm).first;
   if(sign(sp_trg)!=EQUAL)
@@ -191,7 +188,7 @@ void clip_convex(PolygonMesh& pm,
       while(side_trg == ON_ORIENTED_BOUNDARY){
         // The edge is along the plane, add it to boundaries
         boundaries.emplace_back(h);
-        boundaries_vertices.emplace(target(h, pm));
+        boundaries_vertices.emplace_back(target(h, pm));
         set_halfedge(target(h, pm), h, pm);
 
         h = next(h, pm);
@@ -226,7 +223,7 @@ void clip_convex(PolygonMesh& pm,
     // Split the face
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
     boundaries.emplace_back(sh);
-    boundaries_vertices.emplace(target(sh, pm));
+    boundaries_vertices.emplace_back(target(sh, pm));
     set_halfedge(target(sh, pm), sh, pm);
 
     CGAL_assertion(target(sh, pm) == target(h, pm));
@@ -236,10 +233,12 @@ void clip_convex(PolygonMesh& pm,
   CGAL_assertion(is_valid_polygon_mesh(pm));
   CGAL_assertion(!boundaries.empty());
 
-  // Remove the negative side
+  // ________________________ Remove the negative side _________________________
   std::set<vertex_descriptor> vertices_to_remove;
   std::set<edge_descriptor> edges_to_remove;
   std::set<face_descriptor> faces_to_remove;
+
+  std::sort(boundaries_vertices.begin(), boundaries_vertices.end());
 
   // Go through to find all elements to delete
   face_descriptor start_face(face(halfedge(src, pm), pm));
@@ -259,7 +258,7 @@ void clip_convex(PolygonMesh& pm,
       if((std::find(boundaries.begin(), boundaries.end(), h)==boundaries.end()) &&
          (std::find(boundaries.begin(), boundaries.end(), opposite(h,pm))==boundaries.end())){ // TODO avoid this linear operation
         edges_to_remove.emplace(edge(h, pm));
-        if(boundaries_vertices.find(target(h, pm))==boundaries_vertices.end())
+        if(!std::binary_search(boundaries_vertices.begin(), boundaries_vertices.end(), target(h, pm)))
           vertices_to_remove.emplace(target(h, pm));
         CGAL_assertion(oriented_side(plane, get(vpm, target(h, pm)))!=ON_NEGATIVE_SIDE);
         face_descriptor fn = face(opposite(h, pm), pm);

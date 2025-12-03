@@ -348,8 +348,8 @@ public:
     Construct_point_3(plane_range_pointer planes) : m_planes(planes){}
     Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c){
       const std::vector<Plane_3> &planes = *m_planes;
-      auto res = CGAL::Intersections::internal::intersection_point(planes[a].first, planes[b].first, planes[c].first, Kernel());
-      return Point_3(a, b, c, *res);
+      auto res = intersection(planes[a].first, planes[b].first, planes[c].first);
+      return Point_3(a, b, c, std::get<Geometric_point_3>(*res));
     }
 
     Point_3 operator()(plane_descriptor a, plane_descriptor b, plane_descriptor c, Geometric_point_3 p){
