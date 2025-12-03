@@ -47,6 +47,7 @@ template <class PointRange, class PolygonRange, class ColorOutputIterator, class
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
+              std::string& comments,
               HEdgesOutputIterator hedges_out,
               ColorOutputIterator fc_out,
               ColorOutputIterator vc_out,
@@ -71,6 +72,8 @@ bool read_PLY(std::istream& is,
     is.setstate(std::ios::failbit);
     return false;
   }
+
+  comments = reader.comments();
 
   for(std::size_t i=0; i<reader.number_of_elements(); ++i)
   {
@@ -228,6 +231,7 @@ template <class PointRange, class PolygonRange, class ColorRange, class HEdgesRa
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
+              std::string& comments,
               HEdgesRange& hedges,
               ColorRange& fcolors,
               ColorRange& vcolors,
@@ -235,7 +239,7 @@ bool read_PLY(std::istream& is,
               const bool verbose = false,
               std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr)
 {
-  return internal::read_PLY(is, points, polygons,
+  return internal::read_PLY(is, points, polygons, comments,
                             std::back_inserter(hedges),
                             std::back_inserter(fcolors),
                             std::back_inserter(vcolors),
@@ -247,6 +251,7 @@ template <class PointRange, class PolygonRange, class ColorRange>
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
+              std::string& comments,
               ColorRange& fcolors,
               ColorRange& vcolors,
               const bool verbose = false)
@@ -254,7 +259,7 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return internal::read_PLY(is, points, polygons,
+  return internal::read_PLY(is, points, polygons, comments,
                             std::back_inserter(dummy_pui),
                             std::back_inserter(fcolors),
                             std::back_inserter(vcolors),
@@ -284,7 +289,8 @@ bool read_PLY(std::istream& is,
  * \param is the input stream
  * \param points points of the soup of polygons
  * \param polygons a range of polygons. Each element in it describes a polygon
- *        using the indices of the points in `points`.
+ *        using the indices of the points in `points`
+ *  \param comments a string that will contain all the comments found in the PLY file
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -307,6 +313,7 @@ template <class PointRange, class PolygonRange, typename CGAL_NP_TEMPLATE_PARAME
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
+              std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
@@ -319,13 +326,27 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return internal::read_PLY(is, points, polygons, std::back_inserter(dummy_pui),
+  return internal::read_PLY(is, points, polygons, comments, std::back_inserter(dummy_pui),
                             choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
                                              CGAL::Emptyset_iterator()),
                             choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
                                              CGAL::Emptyset_iterator()),
                             std::back_inserter(dummy_pf),
                             choose_parameter(get_parameter(np, internal_np::verbose), true));
+}
+
+template <class PointRange, class PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
+#endif
+              )
+{
+  std::string unused_comments;
+  return read_PLY(is, points, polygons, unused_comments, np);
 }
 
 /*!
@@ -344,7 +365,8 @@ bool read_PLY(std::istream& is,
  * \param fname the path to the input file
  * \param points points of the soup of polygons
  * \param polygons a range of polygons. Each element in it describes a polygon
- *        using the indices of the points in `points`.
+ *        using the indices of the points in `points`
+ *  \param comments a string that will contain all the comments found in the PLY file
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -367,6 +389,7 @@ template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_
 bool read_PLY(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
+              std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
@@ -378,14 +401,28 @@ bool read_PLY(const std::string& fname,
   {
     std::ifstream is(fname, std::ios::binary);
     CGAL::IO::set_mode(is, CGAL::IO::BINARY);
-    return read_PLY(is, points, polygons, np);
+    return read_PLY(is, points, polygons, comments, np);
   }
   else
   {
     std::ifstream is(fname);
     CGAL::IO::set_mode(is, CGAL::IO::ASCII);
-    return read_PLY(is, points, polygons, np);
+    return read_PLY(is, points, polygons, comments, np);
   }
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              PointRange& points,
+              PolygonRange& polygons,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
+#endif
+              )
+{
+    std::string unused_comments;
+    return read_PLY(fname, points, polygons, unused_comments, np);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
