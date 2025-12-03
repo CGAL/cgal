@@ -230,7 +230,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
 
 /// \endcond
 
-// documenation in ../LAS.h
+// documentation in ../LAS.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename ... PropertyHandler>
@@ -279,7 +279,7 @@ bool read_LAS_with_properties(std::istream& is,
 
 /// \endcond
 
-// documenation in ../LAS.h
+// documentation in ../LAS.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>

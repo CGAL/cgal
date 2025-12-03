@@ -147,7 +147,7 @@ struct Get_cell_topo<CMap, 3, 3>
     else if(cmap.is_volume_combinatorial_tetrahedron10(it))
     { return TETRAHEDRON10; }
 
-    // For non symetric object, we need to test all darts
+    // For non symmetric object, we need to test all darts
     for (auto itv=cmap.template darts_of_cell<3>(it).begin(),
          itvend=cmap.template darts_of_cell<3>(it).end(); itv!=itvend; ++itv)
     {
