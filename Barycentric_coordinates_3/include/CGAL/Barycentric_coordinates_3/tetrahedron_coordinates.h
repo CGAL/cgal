@@ -171,7 +171,7 @@ tetrahedron_coordinates(
 
   using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
   const GeomTraits traits;
-  return tetrahedron_coordinates(
+  return tetrahedron_coordinates<GeomTraits>(
     p0, p1, p2, p3, query, traits);
 }
 

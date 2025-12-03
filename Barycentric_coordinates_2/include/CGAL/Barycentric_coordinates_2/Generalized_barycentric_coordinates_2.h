@@ -458,8 +458,6 @@ private:
         // Some convenient typedefs.
         typedef std::vector<FT> Coordinate_vector;
 
-        typedef std::back_insert_iterator<Coordinate_vector> Vector_insert_iterator;
-
         // Create a coordinate vector.
         Coordinate_vector coordinate;
         coordinate.reserve(2);
