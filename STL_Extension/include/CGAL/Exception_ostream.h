@@ -13,6 +13,7 @@
 #define CGAL_EXCEPTION_OSTREAM_H
 
 #include <ios>
+#include <iostream>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -42,7 +43,9 @@ template <typename CharT = char, typename Traits = std::char_traits<CharT>>
 class Exception_basic_ostream {
   std::basic_ostringstream<CharT, Traits> stream_;
 public:
-  Exception_basic_ostream() = default;
+  Exception_basic_ostream() : stream_() {
+    stream_.precision(std::cerr.precision());
+  }
 
   // move-only
   Exception_basic_ostream(Exception_basic_ostream&&) = default;
