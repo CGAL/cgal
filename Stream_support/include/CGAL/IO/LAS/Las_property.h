@@ -76,7 +76,7 @@ typedef Base<unsigned short, Id::B> B;
 typedef Base<unsigned short, Id::I> I;
 } // namespace LAS_property
 
-// documenation in ../LAS.h
+// documentation in ../LAS.h
 template <typename PointMap>
 std::tuple<PointMap,
            typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,

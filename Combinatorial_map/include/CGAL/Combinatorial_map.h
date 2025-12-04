@@ -4109,7 +4109,7 @@ namespace CGAL {
     }
 
     /** Tests if a volume is a combinatorial pyramid.
-     * @param d1 an intial dart
+     * @param d1 an initial dart
      * @return true iff the volume containing d1 is a combinatorial pyramid.
      */
     bool is_volume_combinatorial_pyramid(Dart_const_descriptor d1) const
