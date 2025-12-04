@@ -815,7 +815,7 @@ private Q_SLOTS:
     face_descriptor unused_fd;
     Point_3 unused_p;
     ::zoomToId(mesh,
-               QString("v%1").arg(max_v),
+               QString("v%1").arg(static_cast<int>(max_v)),
                getActiveViewer(),
                unused_fd, unused_p);
   }
