@@ -73,7 +73,7 @@ public:
 
   /// Primitive
 #ifdef DOXYGEN_RUNNING
-  using Primitive = struct {
+  struct Primitive {
     typename GeomTraits::Line_3 axis;
     typename GeomTraits::FT radius;
   };

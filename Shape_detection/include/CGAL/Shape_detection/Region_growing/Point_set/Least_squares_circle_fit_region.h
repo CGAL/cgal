@@ -75,7 +75,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   /// Primitive
-  using Primitive = struct {
+  struct Primitive {
     typename GeomTraits::Point_2 center;
     typename GeomTraits::FT radius;
   };

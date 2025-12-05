@@ -164,69 +164,13 @@ public:
   m_squared_length_3(m_traits.compute_squared_length_3_object()),
   m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
   m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
-  m_cross_product_3(m_traits.construct_cross_product_vector_3_object()),
-  m_face_normals(get(CGAL::dynamic_face_property_t<Vector_3>(), pmesh)),
-  m_face_triangulations( get(CGAL::dynamic_face_property_t<std::vector<Triangle_3>>(), pmesh) ) {
-    static constexpr bool use_input_face_normal =
-      !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
-
-#ifdef CGAL_SD_RG_USE_PMP
-    auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
-    {
-      return Polygon_mesh_processing::compute_face_normal(face, pmesh, parameters::vertex_point_map(m_vpm));
-    };
-#else
-    auto get_face_normal = [this](const Item &face, const PolygonMesh& pmesh) -> Vector_3
-    {
-      const auto hedge = halfedge(face, pmesh);
-      const auto vertices = vertices_around_face(hedge, pmesh);
-      CGAL_precondition(vertices.size() >= 3);
-
-      auto vertex = vertices.begin();
-      const typename boost::property_traits<Vertex_to_point_map>::reference p1 = get(m_vpm, *vertex); ++vertex;
-      const typename boost::property_traits<Vertex_to_point_map>::reference p2 = get(m_vpm, *vertex); ++vertex;
-      Point_3 p3 = get(m_vpm, *vertex);
-      while(collinear(p1, p2, p3)) {
-        if (++vertex == vertices.end()) return NULL_VECTOR;
-        p3 = get(m_vpm, *vertex);
-      }
-
-      const Vector_3 u = p2 - p1;
-      const Vector_3 v = p3 - p1;
-      return m_cross_product_3(u, v);
-    };
-#endif
-
-    if constexpr (!use_input_face_normal) {
-      for (const Item &i : faces(pmesh))
-        put(m_face_normals, i, get_face_normal(i, pmesh));
-    }
-    else {
-      auto fnm = parameters::get_parameter(np, internal_np::face_normal);
-      for (const Item &i : faces(pmesh))
-        put(m_face_normals, i, get(fnm, i));
-    }
-
-    for (const Item &i : faces(pmesh)) {
-      std::vector<Point_3> pts;
-      auto h = halfedge(i, pmesh);
-      auto s = h;
-
-      do {
-        pts.push_back(get(m_vpm, target(h, pmesh)));
-        h = next(h, pmesh);
-      } while (h != s);
-
-      std::vector<Triangle_3> face_triangulation;
-      internal::triangulate_face<GeomTraits>(pts, face_triangulation);
-      put(m_face_triangulations, i, face_triangulation);
-    }
-
+  m_cross_product_3(m_traits.construct_cross_product_vector_3_object()) {
     CGAL_precondition(faces(m_pmesh).size() > 0);
     const FT max_distance = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
     CGAL_precondition(max_distance >= FT(0));
     m_distance_threshold = max_distance;
+    m_squared_distance_threshold = m_distance_threshold * m_distance_threshold;
 
     const FT max_angle = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
@@ -301,15 +245,10 @@ public:
     else
     {
       // test on distance of points to the plane of the seed face
-      const FT squared_distance_threshold = m_distance_threshold * m_distance_threshold;
       halfedge_descriptor h = halfedge(query, m_pmesh);
       for (vertex_descriptor v : vertices_around_face(h, m_pmesh))
-      {
-        //TODO: that's a bit dummy that we retest points that are already in the region...
-        //      not sure caching in a vpm does worth it (need reset for each region)
-        if (typename GeomTraits::Compare_squared_distance_3()(m_p, m_q, m_r,get(m_vpm, v), squared_distance_threshold) != SMALLER)
+        if (typename GeomTraits::Compare_squared_distance_3()(m_p, m_q, m_r,get(m_vpm, v), m_squared_distance_threshold) != SMALLER)
           return false;
-      }
 
       if (m_cos_value_threshold == 1)
         return true;
@@ -377,8 +316,10 @@ public:
         m_r = get(m_vpm, target(h, m_pmesh));
       } while (collinear(m_p, m_q, m_r));
 
-      const Vector_3 face_normal = get(m_face_normals, m_seed_face);
-      if (face_normal == CGAL::NULL_VECTOR) return false;
+      const Vector_3 u = m_q - m_p;
+      const Vector_3 v = m_r - m_p;
+
+      const Vector_3 face_normal = m_cross_product_3(u, v);
 
       CGAL_precondition(face_normal != CGAL::NULL_VECTOR);
       m_plane = Plane_3(m_p, face_normal);
@@ -396,6 +337,7 @@ private:
   GeomTraits m_traits;
 
   FT m_distance_threshold;
+  FT m_squared_distance_threshold;
   FT m_cos_value_threshold;
   std::size_t m_min_region_size;
 
@@ -404,7 +346,6 @@ private:
   const Scalar_product_3 m_scalar_product_3;
   const Cross_product_3 m_cross_product_3;
 
-  typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<Vector_3> >::const_type m_face_normals;
   typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<std::vector<Triangle_3>> >::const_type m_face_triangulations;
 
   Plane_3 m_plane;

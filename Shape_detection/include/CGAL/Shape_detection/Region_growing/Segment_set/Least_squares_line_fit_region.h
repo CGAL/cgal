@@ -75,7 +75,7 @@ namespace Segment_set {
 
 #ifdef DOXYGEN_RUNNING
    /// Primitive type depends on the dimension of the input data.
-   using Primitive = typename GeomTraits::Line_2 or typename GeomTraits::Line_3
+   using Primitive = typename GeomTraits::Line_2 or typename GeomTraits::Line_3;
 #else
    using Primitive = typename Segment_set_traits::Line;
 #endif
