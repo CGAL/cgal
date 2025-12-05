@@ -782,7 +782,34 @@ public:
    */
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
-    return intersected_nodes_recursive(query, root(), output);
+    if constexpr (dimension == 3)
+      return intersected_nodes_recursive(query, root(), output, m_kernel.do_intersect_3_object());
+    else
+      return intersected_nodes_recursive(query, root(), output, m_kernel.do_intersect_2_object());
+  }
+
+  /*!
+    \brief finds the leaf nodes that intersect with any primitive.
+
+    \note this function requires the function
+    `bool CGAL::do_intersect(QueryType, Traits::Bbox_d)` to be defined.
+
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
+
+    \tparam Query the primitive class (e.g., sphere, ray)
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
+    \tparam IntersectionFunctor a functor that is invoked on each node while traversing the tree to determine
+            intersection must be of type `bool(const Query&, const Traits::Bbox_d&)`
+
+    \param query the intersecting primitive.
+    \param output output iterator.
+    \param func the intersection functor.
+
+    \return the output iterator after writing
+   */
+  template <typename Query, typename OutputIterator, typename IntersectionFunctor>
+  OutputIterator intersected_nodes(const Query& query, OutputIterator output, IntersectionFunctor &func) const {
+    return intersected_nodes_recursive(query, root(), output, func);
   }
 
   /// @}
@@ -1276,12 +1303,12 @@ private: // functions :
     return recursive_descendant(child(node, i), remaining_indices...);
   }
 
-  template <typename Query, typename Node_output_iterator>
+  template <typename Query, typename Node_output_iterator, typename IntersectionFunctor>
   Node_output_iterator intersected_nodes_recursive(const Query& query, Node_index node,
-                                                   Node_output_iterator output) const {
+                                                   Node_output_iterator output, IntersectionFunctor func) const {
 
     // Check if the current node intersects with the query
-    if (CGAL::do_intersect(query, bbox(node))) {
+    if (func(query, bbox(node))) {
 
       // if this node is a leaf, then it's considered an intersecting node
       if (is_leaf(node)) {
@@ -1291,7 +1318,7 @@ private: // functions :
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < degree; ++i) {
-        intersected_nodes_recursive(query, child(node, i), output);
+        intersected_nodes_recursive(query, child(node, i), output, func);
       }
     }
     return output;
