@@ -18,7 +18,6 @@ typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>             Triangul
 
 typedef typename Traits::FT                                             FT;
 typedef typename Traits::Hyperbolic_point_2                             Point;
-typedef typename Traits::Complex                                        Complex;
 
 Domain build_domain()
 {

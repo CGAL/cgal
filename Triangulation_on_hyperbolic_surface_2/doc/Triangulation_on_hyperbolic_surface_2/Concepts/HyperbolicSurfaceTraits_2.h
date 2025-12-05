@@ -17,6 +17,11 @@ public:
   /// @{
 
   /*!
+    Field number type.
+  */
+  typedef unspecified_type  FT;
+
+  /*!
     represents a complex number, model of `ComplexNumber`,
     over the field `HyperbolicSurfaceTraits_2::FT` for its real and imaginary parts.
   */
