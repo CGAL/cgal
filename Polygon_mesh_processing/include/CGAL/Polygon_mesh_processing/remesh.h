@@ -210,7 +210,10 @@ template<typename PolygonMesh
        , typename FaceRange
        , typename SizingFunction
        , typename NamedParameters = parameters::Default_named_parameters
-       , typename = typename std::enable_if_t<!std::is_convertible_v<SizingFunction, double>>>
+#ifndef DOXYGEN_RUNNING
+       , typename = typename std::enable_if_t<!std::is_convertible_v<SizingFunction, double>>
+#endif
+       >
 void isotropic_remeshing(const FaceRange& faces
                        , SizingFunction& sizing
                        , PolygonMesh& pmesh
@@ -356,7 +359,10 @@ template<typename PolygonMesh
        , typename FaceRange
        , typename SizingValue
        , typename NamedParameters = parameters::Default_named_parameters
-       , typename = typename std::enable_if_t<std::is_convertible_v<SizingValue, double>>>
+#ifndef DOXYGEN_RUNNING
+       , typename = typename std::enable_if_t<std::is_convertible_v<SizingValue, double>>
+#endif
+       >
 void isotropic_remeshing(const FaceRange& faces
                        , const SizingValue target_edge_length
                        , PolygonMesh& pmesh
@@ -443,7 +449,10 @@ template<typename PolygonMesh
        , typename EdgeRange
        , typename SizingFunction
        , typename NamedParameters = parameters::Default_named_parameters
-       , typename = typename std::enable_if_t<!std::is_convertible_v<SizingFunction, double>>>
+#ifndef DOXYGEN_RUNNING
+       , typename = typename std::enable_if_t<!std::is_convertible_v<SizingFunction, double>>
+#endif
+       >
 void split_long_edges(const EdgeRange& edges
                     , SizingFunction& sizing
                     , PolygonMesh& pmesh
@@ -500,7 +509,10 @@ template<typename PolygonMesh
        , typename EdgeRange
        , typename SizingValue
        , typename NamedParameters = parameters::Default_named_parameters
-       , typename = typename std::enable_if_t<std::is_convertible_v<SizingValue, double>>>
+#ifndef DOXYGEN_RUNNING
+       , typename = typename std::enable_if_t<std::is_convertible_v<SizingValue, double>>
+#endif
+       >
 void split_long_edges(const EdgeRange& edges
                     , const SizingValue max_length
                     , PolygonMesh& pmesh

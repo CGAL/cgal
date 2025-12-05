@@ -652,7 +652,9 @@ namespace Polygon_mesh_processing {
 
   @pre `third_points.size() == points.size()`
 
-  @tparam PointRange range of points, model of `Range`.
+  @tparam PointRange1 range of points, model of `Range`.
+    Its iterator type is `InputIterator`.
+  @tparam PointRange2 range of points, model of `Range`.
     Its iterator type is `InputIterator`.
   @tparam OutputIterator model of `OutputIterator`, to collect patch faces.
      A specialization for `CGAL::value_type_traits<OutputIterator>` must be available,

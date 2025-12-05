@@ -98,6 +98,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 ///
 /// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 /// @tparam TriangleMesh a model of `HalfedgeGraph`
+/// @tparam OutputIterator a model of `OutputIterator`
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param edges a subset of edges of `tm`
