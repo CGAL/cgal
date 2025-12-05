@@ -499,7 +499,7 @@ We provide two sortings:
 
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` - the input faces are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each face.
-- `CGAL::Shape_detection::Polygon_mesh::Face_area_sorting` - the input faces are sorted with respect to the area. The largest face is chosen as the first seed.
+- `CGAL::Shape_detection::Polygon_mesh::Face_area_sorting` - the input faces are sorted with respect to their areas. The largest face is chosen as the first seed.
 
 
 \subsubsection Shape_detection_RegionGrowingMesh_parameters Parameters

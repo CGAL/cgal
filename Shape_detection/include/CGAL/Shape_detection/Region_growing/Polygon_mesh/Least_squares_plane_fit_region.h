@@ -201,17 +201,17 @@ public:
 
     if constexpr (!use_input_face_normal)
     {
-      for (const Item &i : faces(pmesh))
+      for (Item i : faces(pmesh))
         put(m_face_normals, i, get_face_normal(i, pmesh));
     }
     else
     {
       auto fnm = parameters::get_parameter(np, internal_np::face_normal);
-      for (const Item &i : faces(pmesh))
+      for (Item i : faces(pmesh))
         put(m_face_normals, i, get(fnm, i));
     }
 
-    for (const Item &i : faces(pmesh)) {
+    for (Item i : faces(pmesh)) {
       std::vector<Point_3> pts;
       auto h = halfedge(i, pmesh);
       auto s = h;
