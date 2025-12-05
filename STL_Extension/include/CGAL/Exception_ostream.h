@@ -18,6 +18,15 @@
 #include <sstream>
 #include <string>
 
+#include <CGAL/config.h>
+#if __has_include(<version>)
+#  include <version>
+#endif
+
+#if __cpp_lib_source_location >= 202011L
+#  include <source_location>
+#endif
+
 #include <CGAL/exceptions.h>
 
 namespace CGAL {
@@ -42,10 +51,22 @@ namespace CGAL {
 template <typename CharT = char, typename Traits = std::char_traits<CharT>>
 class Exception_basic_ostream {
   std::basic_ostringstream<CharT, Traits> stream_;
+  const char* file_;
+  int line_;
 public:
-  Exception_basic_ostream() : stream_() {
+#if __cpp_lib_source_location >= 202011L
+  Exception_basic_ostream(std::source_location location = std::source_location::current())
+    : stream_(), file_(location.file_name()), line_(location.line())
+  {
     stream_.precision(std::cerr.precision());
   }
+#else
+  Exception_basic_ostream(const char* file = __FILE__, int line = __LINE__)
+    : stream_(), file_(file), line_(line)
+  {
+    stream_.precision(std::cerr.precision());
+  }
+#endif
 
   // move-only
   Exception_basic_ostream(Exception_basic_ostream&&) = default;
@@ -54,7 +75,7 @@ public:
   ~Exception_basic_ostream() noexcept(false) {
     std::basic_string<CharT, Traits> msg = stream_.str();
     if(!msg.empty()) {
-      throw CGAL::Failure_exception("CGAL", "", __FILE__, __LINE__, std::string(msg.begin(), msg.end()));
+      throw CGAL::Failure_exception("CGAL", "", file_, line_, std::string(msg.begin(), msg.end()));
     }
   }
 
