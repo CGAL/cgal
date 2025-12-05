@@ -80,7 +80,6 @@ struct Debug_options {
     regions,
     copy_triangulation_into_hole,
     validity,
-    use_older_cavity_algorithm,
     debug_finite_edges_map,
     use_finite_edges_map,
     debug_subconstraints_to_conform,
@@ -116,9 +115,6 @@ struct Debug_options {
   bool validity() const { return flags[static_cast<int>(Flags::validity)]; }
   void validity(bool b) { flags.set(static_cast<int>(Flags::validity), b); }
 
-  bool use_older_cavity_algorithm() const { return flags[static_cast<int>(Flags::use_older_cavity_algorithm)]; }
-  bool use_newer_cavity_algorithm() const { return !flags[static_cast<int>(Flags::use_older_cavity_algorithm)]; }
-  void use_older_cavity_algorithm(bool b) { flags.set(static_cast<int>(Flags::use_older_cavity_algorithm), b); }
 
   bool finite_edges_map() const { return flags[static_cast<int>(Flags::debug_finite_edges_map)]; }
   void finite_edges_map(bool b) { flags.set(static_cast<int>(Flags::debug_finite_edges_map), b); }
@@ -556,9 +552,6 @@ public:
   const CDT_3::Debug_options& debug() const { return debug_options_; }
 
   // Backward compatibility wrappers (deprecated, use debug().method() instead)
-  bool use_older_cavity_algorithm() const { return debug_options_.use_older_cavity_algorithm(); }
-  bool use_newer_cavity_algorithm() const { return debug_options_.use_newer_cavity_algorithm(); }
-  void use_older_cavity_algorithm(bool b) { debug_options_.use_older_cavity_algorithm(b); }
   bool use_finite_edges_map() const { return update_all_finite_edges_ && debug_options_.use_finite_edges_map_flag(); }
   void use_finite_edges_map(bool b) { debug_options_.use_finite_edges_map(b); }
 

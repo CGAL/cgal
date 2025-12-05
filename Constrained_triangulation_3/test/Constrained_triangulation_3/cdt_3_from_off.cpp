@@ -95,7 +95,6 @@ Usage: cdt_3_from_off [options] input.off output.off
 
   --merge-facets/--no-merge-facets: merge facets into patches (set by default)
   --merge-facets-old: merge facets using the old method
-  --use-new-cavity-algorithm/--use-old-cavity-algorithm: use new or old cavity algorithm (default: new)
   --bisect: bisect failures
   --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
   --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
@@ -160,7 +159,6 @@ struct CDT_options
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
   bool        debug_copy_triangulation_into_hole  = false;
-  bool        use_new_cavity_algorithm            = true;
   bool        debug_validity                      = false;
   bool        debug_finite_edges_map              = false;
   bool        debug_subconstraints_to_conform     = false;
@@ -206,10 +204,6 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       merge_facets                        = true;
     } else if(arg == "--no-merge-facets"sv) {
       merge_facets                        = false;
-    } else if(arg == "--use-new-cavity-algorithm"sv) {
-      use_new_cavity_algorithm            = true;
-    } else if(arg == "--use-old-cavity-algorithm"sv) {
-      use_new_cavity_algorithm            = false;
     } else if(arg == "--reject-self-intersections"sv) {
       reject_self_intersections           = true;
     } else if(arg == "--no-repair"sv) {
@@ -321,7 +315,6 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);
   cdt_debug.copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
-  cdt_debug.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt_debug.use_finite_edges_map(options.use_finite_edges_map);
   cdt_debug.display_statistics(!options.quiet);
   cdt_debug.use_epeck_for_normals(options.use_epeck_for_normals);
