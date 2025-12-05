@@ -14,10 +14,17 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
-#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_data_3.h>
-#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
+
+#include <istream>
+#include <ostream>
+#include <string>
+#include <type_traits>
+#include <utility>
 
 namespace CGAL {
 
