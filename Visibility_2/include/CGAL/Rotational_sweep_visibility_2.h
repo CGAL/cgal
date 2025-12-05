@@ -238,7 +238,6 @@ private:
       }
 
       CGAL_unreachable();
-      return false;
     }
 
   };
