@@ -105,12 +105,19 @@ void simplify_range(HalfedgeRange& halfedge_range,
   typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
   typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type     Range_halfedges;
 
-  const bool all_hedges = (::CGAL::internal::exact_num_halfedges(tm)==halfedge_range.size());
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+  static int i = 0;
+  std::ofstream out_in("results/input_" + std::string((i++ == 0) ? "A" : "B") + ".polylines.txt");
+  out_in.precision(17);
+#endif
 
-  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm, all_hedges);
-  if (!all_hedges)
-    for(halfedge_descriptor h : halfedge_range)
-      put(range_halfedges, h, true);
+  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm, false);
+  for(halfedge_descriptor h : halfedge_range) {
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+    out_in << "2 " << get(vpm, source(h, tm)) << " " << get(vpm, target(h, tm)) << "\n";
+#endif
+    put(range_halfedges, h, true);
+  }
 
   CGAL_postcondition_code(const std::size_t initial_n = halfedge_range.size();)
 
