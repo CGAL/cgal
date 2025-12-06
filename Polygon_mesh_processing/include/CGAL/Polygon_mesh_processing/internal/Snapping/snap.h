@@ -107,7 +107,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
 #ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
   static int i = 0;
-  std::ofstream out_in("results/input_" + std::string((i++ == 0) ? "A" : "B") + ".polylines.txt");
+  std::ofstream out_in("results/before_simplification_" + std::to_string(i++) + ".polylines.txt");
   out_in.precision(17);
 #endif
 
