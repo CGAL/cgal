@@ -246,7 +246,7 @@ public:
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "squared distance between "
               << va << " [" << get(m_vpm_A, va) << "] and "
-              << vb << " [" << get(m_vpm_B, vb) << "]: " << sq_dist
+              << vb << " [" << get(m_vpm_B, vb) << "]: " << CGAL::squared_distance(get(m_vpm_A, va), get(m_vpm_B, vb))
               << " (tol a/b: " << tol_a << " " << tol_b << ") larger? " << (res == CGAL::LARGER)
               << std::endl;
 #endif
