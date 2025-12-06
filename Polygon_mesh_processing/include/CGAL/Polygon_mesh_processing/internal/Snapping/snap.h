@@ -121,6 +121,9 @@ void simplify_range(HalfedgeRange& halfedge_range,
   while(!edges_to_test.empty())
   {
     const halfedge_descriptor h = *(edges_to_test.begin());
+    CGAL_precondition(is_border(h, tm));
+    CGAL_precondition(!is_border(opposite(h, tm), tm));
+
     edges_to_test.erase(edges_to_test.begin());
 
     const vertex_descriptor vs = source(h, tm);
@@ -137,7 +140,6 @@ void simplify_range(HalfedgeRange& halfedge_range,
     if(gt.compare_squared_distance_3_object()(ps,pt,CGAL::square(max_tol)) == SMALLER)
     {
       const halfedge_descriptor prev_h = prev(h, tm);
-      const halfedge_descriptor next_h = next(h, tm);
       const halfedge_descriptor prev_oh = prev(opposite(h, tm), tm);
 
       // check that the border has at least 4 edges not to create degenerate volumes
@@ -190,19 +192,35 @@ void simplify_range(HalfedgeRange& halfedge_range,
         if(!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
           continue;
 
+        // Since `o_h` is not a border halfedge, `prev(opp(h))` gets replaced with `opp(next(opp(h)))`.
+        // But `prev(opp(h))` might have been be a border edge whereas `opp(next(opp(h)))` might not be.
+        // So, if `opp(prev(opp(h)))` was a border halfedge in the range, we must add `next(opp(h))`
+        // to the range.
+        bool was_opoh_border_in_range = false;
+
         const halfedge_descriptor opoh = opposite(prev(opposite(h, tm), tm), tm);
-        if(is_border(opoh, tm))
+        if(is_border(opoh, tm) && get(range_halfedges, opoh)) {
+          was_opoh_border_in_range = true;
           edges_to_test.erase(opoh);
+        }
 
         vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
+        CGAL_postcondition(bool(is_border(v, tm)));
+        CGAL_postcondition(target(prev_h, tm) == v);
 
         put(vpm, v, new_p);
         put(tolerance_map, v, new_tolerance);
 
+        const halfedge_descriptor next_ph = next(prev_h, tm);
+        if(was_opoh_border_in_range) {
+          put(range_halfedges, next_ph, true);
+        }
+
         if(get(range_halfedges, prev_h))
           edges_to_test.insert(prev_h);
-        if(next_h != opoh && get(range_halfedges, next_h))
-          edges_to_test.insert(next_h);
+        if(get(range_halfedges, next_ph))
+          edges_to_test.insert(next_ph);
+
         ++collapsed_n;
       }
     }
