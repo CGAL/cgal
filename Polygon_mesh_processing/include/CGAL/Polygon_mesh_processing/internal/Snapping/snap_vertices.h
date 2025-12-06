@@ -755,8 +755,8 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
      is_empty_range(halfedge_range_B.begin(), halfedge_range_B.end()))
     return 0;
 
-  // Vertex-Vertex snapping is performed by identify points which are already equal
-  // and grouping them together so that they are moved together
+  // Vertex-Vertex snapping identifies points which are already equal
+  // and groups them together so that they are moved together
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "(A) Positions" << std::endl;
