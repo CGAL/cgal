@@ -782,10 +782,7 @@ public:
    */
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
-    if constexpr (dimension == 3)
-      return intersected_nodes_recursive(query, root(), output, m_kernel.do_intersect_3_object());
-    else
-      return intersected_nodes_recursive(query, root(), output, m_kernel.do_intersect_2_object());
+    return intersected_nodes_recursive(query, root(), output, [](const Query& query, const typename Traits::Bbox_d &box) -> bool {return CGAL::do_intersect(query, box);});
   }
 
   /*!
