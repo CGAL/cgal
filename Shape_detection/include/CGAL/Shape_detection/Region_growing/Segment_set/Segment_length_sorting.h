@@ -72,11 +72,11 @@ public:
   /*!
     \brief initializes all internal data structures.
 
-    \tparam NamedParameters
-    a sequence of \ref bgl_namedparameters "Named Parameters"
-
     \tparam InputRange
     a model of `ConstRange` whose iterator type is `InputIterator`
+
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
 
     \param input_range
     an instance of `InputRange` with 2D or 3D segments
@@ -112,6 +112,68 @@ public:
       np, internal_np::segment_map))),
       m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
       m_segment_set_traits(m_traits)
+  {
+    CGAL_precondition(input_range.size() > 0);
+
+    using NP_helper = internal::Default_property_map_helper<NamedParameters, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
+    using Item_map = typename NP_helper::type;
+    Item_map item_map = NP_helper::get(np);
+
+    m_ordered.resize(input_range.size());
+    std::size_t index = 0;
+    for (auto it = input_range.begin(); it != input_range.end(); it++)
+      m_ordered[index++] = get(item_map, it);
+    m_scores.resize(input_range.size(), 0.);
+  }
+
+  /*!
+    \brief initializes all internal data structures.
+    Three-parameter constructor with a dummy parameter provided for compatibility with other sorting types.
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `InputIterator`
+
+    \tparam Dummy
+    Dummy parameter, not used.
+
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+
+    \param input_range
+    an instance of `InputRange` with 2D or 3D segments
+
+    \param np
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{segment_map}
+        \cgalParamDescription{an instance of `SegmentMap` that maps the `Item` of a segment
+        to `GeomTraits::Segment_2` or `GeomTraits::Segment_3`}
+        \cgalParamDefault{`SegmentMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{item_map}
+        \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
+                              as key type and `Item` as value type.}
+        \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of `GeomTraits`}
+        \cgalParamDefault{`GeomTraits()`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
+
+    \pre `input_range.size() > 0`
+  */
+  template<typename InputRange, typename Dummy,
+    typename NamedParameters = parameters::Default_named_parameters>
+  Segment_length_sorting(const InputRange& input_range,
+    const Dummy&,
+    const NamedParameters& np = parameters::default_values())
+    : m_segment_map(parameters::choose_parameter<SegmentMap>(parameters::get_parameter(
+      np, internal_np::segment_map))),
+    m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
+    m_segment_set_traits(m_traits)
   {
     CGAL_precondition(input_range.size() > 0);
 
