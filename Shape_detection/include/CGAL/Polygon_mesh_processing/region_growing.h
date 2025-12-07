@@ -163,7 +163,7 @@ struct Region_and_Sorting_helper<GeomTraits, PolygonMesh, VertexToPointMap, ECM,
                             If false, the plane is equal to the support plane of the seed face.}
       \cgalParamType{`CGAL::Boolean_tag`}
       \cgalParamDefault{`CGAL::Tag_false()`}
-      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
+      \cgalParamExtra{Valid values are CGAL::Tag_true() or CGAL::Tag_false().}
     \cgalParamNEnd
     \cgalParamNBegin{postprocess_regions}
       \cgalParamDescription{Apply a postprocessing step to the output of the region growing algorithm.}
@@ -381,7 +381,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
                             If false, the line primitive is equal to the support line of the seed edge.}
       \cgalParamType{`CGAL::Boolean_tag`}
       \cgalParamDefault{`CGAL::Tag_false()`}
-      \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
+      \cgalParamExtra{Valid values are CGAL::Tag_true() or CGAL::Tag_false().}
     \cgalParamNEnd
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `mesh`}
