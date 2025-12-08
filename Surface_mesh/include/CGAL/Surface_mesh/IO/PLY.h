@@ -982,6 +982,10 @@ namespace IO {
 ///             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
 ///             of the stream must be set to `BINARY`.
 ///
+/// \attention The PLY format does not support 64 bits integer types. Therefore, if a property
+///            of type `std::int64_t` or `std::uint64_t` is found, it is converted to
+///            `std::int32_t` or `std::uint32_t` respectively while writing.
+///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.
 ///               In typical use cases it will be a 2D or 3D point type.
