@@ -27,7 +27,7 @@ namespace Barycentric_coordinates {
 /*!
   \ingroup PkgBarycentricCoordinates3RefAnalytic
 
-  \brief 3D discrete harmonic coordinates.
+  \brief computes 3D discrete harmonic coordinates with respect to a closed convex triangle mesh.
 
   This class implements 3D discrete harmonic coordinates \cite cgal:bc:jlw-ggcccsp-07, which can be computed
   at any point inside a convex polyhedron with triangular faces.
@@ -143,12 +143,12 @@ public:
 
 
   /*!
-    \brief computes 3D discrete harmonic coordinates.
+    \brief computes 3D discrete harmonic coordinates with respect to a closed convex triangle mesh.
 
     This function fills `oi` with 3D discrete harmonic coordinates computed
     at the `query` point with respect to the vertices of the input polyhedron.
 
-    The number of returned coordinates equals to the number of vertices.
+    The number of returned coordinates equals the number of vertices of `tmesh`.
 
     After the coordinates \f$b_i\f$ with \f$i = 0\dots n-1\f$ are computed, where
     \f$n\f$ is the number of vertices, the query point \f$q\f$ can be obtained
@@ -354,7 +354,7 @@ private:
 /*!
   \ingroup PkgBarycentricCoordinates3RefFunctions
 
-  \brief computes 3D discrete harmonic coordinates.
+  \brief computes 3D discrete harmonic coordinates with respect to a closed convex triangle mesh.
 
   This function computes 3D discrete harmonic coordinates at a given `query` point
   with respect to the vertices of a convex `polyhedron` with triangular faces, that is one

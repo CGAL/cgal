@@ -24,7 +24,7 @@ namespace Barycentric_coordinates {
 /*!
   \ingroup PkgBarycentricCoordinates3RefFunctions
 
-  \brief computes tetrahedron coordinates.
+  \brief computes barycentric coordinates with respect to a tetrahedron.
 
   This function computes barycentric coordinates at a given `query` point
   with respect to the points `p0`, `p1`, `p2`, and `p3`, which form a tetrahedron, that is one
@@ -104,7 +104,7 @@ OutputIterator tetrahedron_coordinates(
 /*!
   \ingroup PkgBarycentricCoordinates3RefFunctions
 
-  \brief computes tetrahedron coordinates.
+  \brief computes barycentric coordinates with respect to a tetrahedron.
 
   This function computes barycentric coordinates at a given `query` point
   with respect to the points `p0`, `p1`, `p2`, and `p3`, which form a tetrahedron, that is one

@@ -26,7 +26,7 @@ namespace Barycentric_coordinates {
 /*!
   \ingroup PkgBarycentricCoordinates3RefFunctions
 
-  \brief computes boundary barycentric coordinates.
+  \brief computes boundary barycentric coordinates with respect to a closed convex triangle mesh.
 
   This function computes boundary barycentric coordinates at a given `query` point
   with respect to the vertices of a convex simplicial polyhedron, that is one
@@ -102,7 +102,7 @@ boundary_coordinates_3(const TriangleMesh& tmesh,
 /*!
   \ingroup PkgBarycentricCoordinates3RefFunctions
 
-  \brief computes boundary barycentric coordinates.
+  \brief computes boundary barycentric coordinates with respect to a closed convex triangle mesh.
 
   This function computes boundary barycentric coordinates at a given `query` point
   with respect to the vertices of a simple `polyhedron`, that is one

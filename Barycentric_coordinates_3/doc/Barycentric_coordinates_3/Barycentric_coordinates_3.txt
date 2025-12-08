@@ -211,7 +211,7 @@ The points shown in red are the sample points used to make the benchmark.
 The performance strongly depends on the chosen kernel,
 for this test, we choose to use `Simple_cartesian<double>` because is much faster than others.
 Also, we can see that time (WP) << time (DH) < time (MV). This happens because the Wachspress
-implementation has fewer instructions per loop than the other two.
+implementation has fewer instructions per loop than the other two. For 100k points those generalized barycentric coordinates are calculated within a convex hull with 500 vertices the timings are 17.5s (WP), 25.4s (DH) and 33.3s (MV).
 
 \cgalFigureBegin{bc_coords_bench_3, bc_coords_bench_3.png}
 Time in seconds to compute \f$n^3\f$ coordinate values for a cube.
@@ -230,33 +230,29 @@ unit sides that lie on the coordinate axis.
 <th class="markdownTableHeadCenter">Total time (in seconds)</th>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000</td>
-<td class="markdownTableBodyCenter">0.002662682533</td>
-</tr>
-<tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">50000</td>
-<td class="markdownTableBodyCenter">0.09459688663</td>
+<td class="markdownTableBodyCenter">0.09</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">100000</td>
-<td class="markdownTableBodyCenter">0.1865084648</td>
+<td class="markdownTableBodyCenter">0.19</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">500000</td>
-<td class="markdownTableBodyCenter">0.8238497972</td>
+<td class="markdownTableBodyCenter">0.82</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">1000000</td>
-<td class="markdownTableBodyCenter">1.665773582</td>
+<td class="markdownTableBodyCenter">1.67</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">5000000</td>
-<td class="markdownTableBodyCenter">8.359417105</td>
+<td class="markdownTableBodyCenter">8.36</td>
 </tr>
 </table>
 
-To benchmark each coordinate, we used a 2.6 GHz Intel Core i7 processor (6 cores)
-and 16 GB DDR4 2933MHz memory. The installed operating system was Ubuntu 20.04 LTS.
+To benchmark each coordinate, we used a 2.5 GHz Intel Core i7 processor (8 cores)
+and 32 GB DDR4 2933MHz memory. The installed operating system was Windows 11.
 
 \section gbc_3_history History
 
