@@ -662,48 +662,42 @@ struct add_color_map<Point, Simplex, Simplex2, false> {
   }
 };
 
-template <std::size_t s, class Point, typename Simplex, class T, class ... TN>
-void fill_header_impl(std::tuple<T,TN...>,
-                      const char* const type_strings[],
-                      const Surface_mesh<Point>& sm,
-                      const std::string& pname,
-                      std::ostream& os,
-                      std::vector<Abstract_property_printer<Simplex>*>& printers)
+template <typename Point, typename Simplex, typename VT, typename ST>
+bool add_printer(std::size_t cid,
+                 const char* const type_strings[],
+                 const Surface_mesh<Point>& sm,
+                 const std::string& pname,
+                 std::ostream& os,
+                 std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
-  constexpr std::size_t cid = s-std::tuple_size<std::tuple<T,TN...>>::value;
+  // single value (VT)
   {
-    typedef typename Surface_mesh<Point>::template Property_map<Simplex, T>   Pmap;
-    auto pmap  = sm.template property_map<Simplex,T>(pname);
+    typedef typename Surface_mesh<Point>::template Property_map<Simplex, VT> Pmap;
+    auto pmap = sm.template property_map<Simplex, VT>(pname);
     if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(*pmap));
-      return;
+      printers.push_back(new internal::Simple_property_printer<Simplex, Pmap, ST>(*pmap));
+      return true;
     }
   }
+
+  // vector value (std::vector<VT>)
   {
-    typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<T>>   Pmap;
-    auto pmap  = sm.template property_map<Simplex,std::vector<T>>(pname);
+    typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<VT> > Pmap;
+    auto pmap = sm.template property_map<Simplex, std::vector<VT> >(pname);
     if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property list uchar " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(*pmap));
-      return;
+      printers.push_back(new internal::Simple_property_vector_printer<Simplex, Pmap, std::vector<VT>, ST>(*pmap));
+      return true;
     }
   }
-  fill_header_impl<s>(std::tuple<TN...>(),type_strings, sm, pname, os, printers);
+  return false;
 }
 
-template <std::size_t s, class Point, typename Simplex>
-void fill_header_impl(std::tuple<>,
-                      const char* const [],
-                      const Surface_mesh<Point>&,
-                      const std::string&,
-                      std::ostream&,
-                      std::vector<Abstract_property_printer<Simplex>*>&)
-{}
 
 template <typename Point, typename Simplex,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -712,13 +706,21 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef std::tuple<std::int8_t, std::uint8_t,
-                     std::int16_t , std::uint16_t,
-                     std::int32_t , std::uint32_t,
-                     std::int64_t, std:: uint64_t,
-                     float, double> Type_tuple;
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int64_t, std::uint64_t,
+                     float, double> VT_tuple; // value_type of the property
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int32_t, std::uint32_t,
+                     float, double> ST_tuple; // corresponding PLY type
 
-  static constexpr const char* type_strings[] =
-           { "char", "uchar", "short", "ushort","int", "uint", "int", "uint", "float", "double" };
+  static constexpr const char* type_strings[] = { "char", "uchar",
+                                                  "short", "ushort",
+                                                  "int", "uint",
+                                                  "int", "uint", // 64 --> 32
+                                                  "float", "double" };
 
   typedef typename Surface_mesh<Point>::Face_index   FIndex;
   typedef typename Surface_mesh<Point>::Vertex_index VIndex;
@@ -746,18 +748,17 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
   if (std::is_same<Simplex, FIndex>::value && has_fcolor) {
     os << "property uchar red" << std::endl
-      << "property uchar green" << std::endl
-      << "property uchar blue" << std::endl
-      << "property uchar alpha" << std::endl;
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
     add_color_map<Point, Simplex, FIndex>()(printers, fcm);
   }
 
-  if (std::is_same<Simplex, VIndex>::value && has_vcolor)
-  {
+  if (std::is_same<Simplex, VIndex>::value && has_vcolor) {
     os << "property uchar red" << std::endl
-      << "property uchar green" << std::endl
-      << "property uchar blue" << std::endl
-      << "property uchar alpha" << std::endl;
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
 
     add_color_map<Point, Simplex, VIndex>()(printers, vcm);
   }
@@ -774,7 +775,15 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     if(fill_simplex_specific_header(os, sm, printers, prop[i], np))
       continue;
 
-    fill_header_impl<std::tuple_size<Type_tuple>::value>(Type_tuple(), type_strings, sm, prop[i], os, printers);
+    constexpr auto VT_size = std::tuple_size<VT_tuple>::value;
+
+    [&]<std::size_t... Is>(std::index_sequence<Is...>) {
+      // If any call returns true, the expression short-circuits, effectively stopping iteration for this 'i'.
+      (void)(add_printer<Point, Simplex,
+                         std::tuple_element_t<Is, VT_tuple>,
+                         std::tuple_element_t<Is, ST_tuple> >(
+                           Is, type_strings, sm, prop[i], os, printers) || ...);
+    } (std::make_index_sequence<VT_size>{});
   }
 }
 
