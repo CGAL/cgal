@@ -228,23 +228,28 @@ public:
 
     //fill incidences of corners with curves
     d_ptr->corners_incident_curves.resize(d_ptr->corners.size());
-    for(const typename Corners_indices::value_type& pair : d_ptr->corners_indices) {
-      d_ptr->dt.insert(pair.first);
+    for(const auto& [corner_pt, corner_index] : d_ptr->corners_indices)
+    {
+      d_ptr->dt.insert(corner_pt);
 
       // Fill `corners_incident_curves[corner_id]`
-      Curves_ids& incident_curves = d_ptr->corners_incident_curves[pair.second];
-      d_ptr->domain.get_corner_incident_curves(pair.second,
+      Curves_ids& incident_curves = d_ptr->corners_incident_curves[corner_index];
+      d_ptr->domain.get_corner_incident_curves(corner_index,
                                         std::inserter(incident_curves,
                                                       incident_curves.end()));
-      // For each incident loops, insert a point on the loop, as far as
+      // For each incident loop, insert a point on the loop, as far as
       // possible.
-      for(Curve_index curve_index : incident_curves) {
+      for(Curve_index curve_index : incident_curves)
+      {
         if(domain.is_loop(curve_index)) {
           FT curve_length = d_ptr->domain.curve_length(curve_index);
-          Point_3 other_point =
-            d_ptr->domain.construct_point_on_curve(pair.first,
+          auto loc =
+            d_ptr->domain.locate_corner(curve_index, corner_pt);
+          auto [other_point, _] =
+            d_ptr->domain.construct_point_on_curve(corner_pt,
                                                    curve_index,
-                                                   curve_length / 2);
+                                                   curve_length / 2,
+                                                   loc);
           d_ptr->dt.insert(other_point);
         }
       }
@@ -570,7 +575,12 @@ public:
           if (const Point_3* pp = std::get_if<Point_3>(&*int_res))
           {
             FT new_sqd = CGAL::squared_distance(p, *pp);
-            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
+            auto p_polyline_const_it = ppid.second.second;
+            auto pp_polyline_const_it = prim.id().second;
+            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp,
+                                                                       p_polyline_const_it,
+                                                                       pp_polyline_const_it,
+                                                                       curve_id));
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cerr << "Intersection point : Point_3(" << *pp << ") ";
