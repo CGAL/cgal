@@ -16,8 +16,11 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -41,17 +44,17 @@ void clip_convex(PolygonMesh& pm,
 
   // np typedefs
   // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
-  using Default_visitor = Default_cut_visitor<PolygonMesh>;
-  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  // using Default_visitor = Default_cut_visitor<PolygonMesh>;
+  // using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
+  // using Point_3 = typename GT::Point_3;
 
-  Default_visitor default_visitor;
-  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
-  constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+  // Default_visitor default_visitor;
+  // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
@@ -64,31 +67,11 @@ void clip_convex(PolygonMesh& pm,
   if (throw_on_self_intersection && !is_triangle_mesh(pm))
     throw_on_self_intersection = false;
 
-  // typedef typename internal_np::Lookup_named_param_def <
-  //   internal_np::concurrency_tag_t,
-  //   NamedParameters,
-  //   Sequential_tag
-  // > ::type Concurrency_tag;
-
-  // constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
-
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
   auto sq = traits.compute_squared_distance_3_object();
   // auto csq = traits.compare_squared_distance_3_object();
   // auto vector_3 = traits.construct_vector_3_object();
-
-  // TODO: the default is not thread-safe for example for Polyhedron
-  using V_os_tag = dynamic_vertex_property_t<Oriented_side>;
-  static constexpr bool use_default_vosm =
-    is_default_parameter<NamedParameters, internal_np::vertex_oriented_side_map_t>::value;
-
-  using Vertex_oriented_side_map =
-    std::conditional_t<use_default_vosm,
-                       typename boost::property_map<PolygonMesh, V_os_tag>::type,
-                       typename internal_np::Get_param<typename NamedParameters::base,
-                                                       internal_np::vertex_oriented_side_map_t>::type>;
-  Vertex_oriented_side_map vertex_os;
 
   // ____________________ Find a crossing edge _____________________
 
@@ -190,7 +173,6 @@ void clip_convex(PolygonMesh& pm,
         boundaries.emplace_back(h);
         boundaries_vertices.emplace_back(target(h, pm));
         set_halfedge(target(h, pm), h, pm);
-
         h = next(h, pm);
         side_trg=oriented_side(plane, get(vpm, target(h,pm)));
       }
@@ -234,38 +216,33 @@ void clip_convex(PolygonMesh& pm,
   CGAL_assertion(!boundaries.empty());
 
   // ________________________ Remove the negative side _________________________
-  std::set<vertex_descriptor> vertices_to_remove;
-  std::set<edge_descriptor> edges_to_remove;
-  std::set<face_descriptor> faces_to_remove;
+  std::vector<vertex_descriptor> vertices_to_remove;
+  std::vector<edge_descriptor> edges_to_remove;
+  std::vector<face_descriptor> faces_to_remove;
 
+  std::vector<halfedge_descriptor> boundary_edges;
+  for(halfedge_descriptor h: boundaries)
+    boundary_edges.push_back(h);
   std::sort(boundaries_vertices.begin(), boundaries_vertices.end());
-
-  // Go through to find all elements to delete
-  face_descriptor start_face(face(halfedge(src, pm), pm));
-  std::stack<face_descriptor> stack;
-  stack.push(start_face);
-  faces_to_remove.emplace(start_face);
-
-  while (!stack.empty()) {
-    face_descriptor f = stack.top();
-    stack.pop();
-
-    // Walk adjacent faces via halfedges
+  std::sort(boundary_edges.begin(), boundary_edges.end());
+  auto is_boundary=[&](edge_descriptor e){
+    halfedge_descriptor h = halfedge(e, pm);
+    return std::binary_search(boundary_edges.begin(), boundary_edges.end(), h) ||
+           std::binary_search(boundary_edges.begin(), boundary_edges.end(), opposite(h, pm));
+  };
+  connected_component(face(halfedge(src, pm), pm), pm, std::back_inserter(faces_to_remove),
+                      parameters::edge_is_constrained_map(boost::make_function_property_map<edge_descriptor>(is_boundary)));
+  for(face_descriptor f: faces_to_remove){
     halfedge_descriptor h_start = halfedge(f, pm);
     halfedge_descriptor h = h_start;
-
     do {
-      if((std::find(boundaries.begin(), boundaries.end(), h)==boundaries.end()) &&
-         (std::find(boundaries.begin(), boundaries.end(), opposite(h,pm))==boundaries.end())){ // TODO avoid this linear operation
-        edges_to_remove.emplace(edge(h, pm));
-        if(!std::binary_search(boundaries_vertices.begin(), boundaries_vertices.end(), target(h, pm)))
-          vertices_to_remove.emplace(target(h, pm));
+      if(!is_boundary(edge(h, pm))){ // TODO avoid this linear operation
+        if(h < opposite(h, pm)) // To avoid multiple assertions of a same edge
+          edges_to_remove.push_back(edge(h, pm));
+        if(halfedge(target(h, pm), pm) == h && // To avoid multiple assertions of a same vertex
+           !std::binary_search(boundaries_vertices.begin(), boundaries_vertices.end(), target(h, pm)))
+          vertices_to_remove.push_back(target(h, pm));
         CGAL_assertion(oriented_side(plane, get(vpm, target(h, pm)))!=ON_NEGATIVE_SIDE);
-        face_descriptor fn = face(opposite(h, pm), pm);
-        if (faces_to_remove.find(fn)==faces_to_remove.end()) {
-          faces_to_remove.emplace(fn);
-          stack.push(fn);
-        }
       }
       h = next(h, pm);
     } while (h != h_start);
@@ -292,8 +269,10 @@ void clip_convex(PolygonMesh& pm,
   }
   set_halfedge(f, boundaries[0], pm);
 
-  // std::ofstream("clip.off") << pm;
+  if( pm.number_of_vertices() < 3) //Degenerate to a segment
+    clear(pm);
   CGAL_assertion(is_valid_polygon_mesh(pm));
+  // std::ofstream("clip.off") << pm;
 }
 
 } } // CGAL::Polygon_mesh_processing
