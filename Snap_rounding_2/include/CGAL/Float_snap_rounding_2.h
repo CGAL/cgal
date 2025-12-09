@@ -49,7 +49,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   using Construct_point_at_x_on_segment_2 = typename Traits::Construct_point_at_x_on_segment_2;
 
   using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
-  using Squared_round_bound_2      = typename Traits::Squared_round_bound_2;
+  using Compute_squared_round_bound_2 = typename Traits::Compute_squared_round_bound_2;
 
   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
   Less_y_2 less_y_2 = traits.less_y_2_object();
@@ -57,7 +57,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   Construct_point_at_x_on_segment_2 point_at_x = traits.construct_point_at_x_on_segment_2_object();
 
   Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
-  Squared_round_bound_2 round_bound = traits.squared_round_bound_2_object();
+  Compute_squared_round_bound_2 round_bound = traits.compute_squared_round_bound_2_object();
 
   // Precompute round bounds for points
   std::vector<double> round_bound_pts;
@@ -67,9 +67,9 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 
   enum class EVENT_TYPE{INSERT, MIDDLE, REMOVE};
   struct Event{
-    Event(size_t pi_, size_t li_, EVENT_TYPE t_):pi(pi_),li(li_),type(t_){}
-    size_t pi;
-    size_t li;
+    Event(std::size_t pi_, std::size_t li_, EVENT_TYPE t_):pi(pi_),li(li_),type(t_){}
+    std::size_t pi;
+    std::size_t li;
     EVENT_TYPE type;
   };
 
@@ -88,7 +88,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
     return a.li < b.li;
   };
 
-  auto pi_below_li=[&](size_t li, std::pair<size_t, size_t> pair_pi_li){
+  auto pi_below_li=[&](std::size_t li, std::pair<std::size_t, std::size_t> pair_pi_li){
     std::size_t ind_pi_support = pair_pi_li.second;
     std::size_t pi = pair_pi_li.first;
     if(ind_pi_support==li) return false;
@@ -132,10 +132,10 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   // Input polylines are supposed going from left to right
   std::vector<Event> event_queue;
   event_queue.reserve(2*polylines.size());
-  for(size_t li=0; li<polylines.size(); ++li){
+  for(std::size_t li=0; li<polylines.size(); ++li){
     Polyline &pl=polylines[li];
     event_queue.emplace_back(pl.front(), li, EVENT_TYPE::INSERT);
-    for(size_t pi=1; pi<pl.size()-1; ++pi){
+    for(std::size_t pi=1; pi<pl.size()-1; ++pi){
       event_queue.emplace_back(pl[pi], li, EVENT_TYPE::MIDDLE);
       assert(less_xy_2(pts[pl[pi-1]], pts[pl[pi]]));
     }
@@ -151,18 +151,18 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 #endif
   // TODO Vector is suboptimal for arbitrary insertion (Actually negligeable in the running time)
   // Track order of the lines along y along the events
-  std::vector< size_t > y_order;
+  std::vector< std::size_t > y_order;
   y_order.push_back(event_queue[0].li);
-  for(size_t i=1; i<event_queue.size();++i)
+  for(std::size_t i=1; i<event_queue.size();++i)
   {
     Event event = event_queue[i];
 #ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
     std::cout << ((event.type==EVENT_TYPE::INSERT)?"Insert": "Remove") << " Event at point " << event.pi << " on line "<< event.li << std::endl;
 #endif
     // Find the position of the event along the y direction
-    std::vector<size_t>::iterator pos_it = y_order.begin();
+    std::vector<std::size_t>::iterator pos_it = y_order.begin();
     if(!y_order.empty())
-      pos_it = std::lower_bound(y_order.begin(), y_order.end(), std::pair<size_t, size_t>(event.pi, event.li), pi_below_li);
+      pos_it = std::lower_bound(y_order.begin(), y_order.end(), std::pair<std::size_t, std::size_t>(event.pi, event.li), pi_below_li);
     if(event.type==EVENT_TYPE::REMOVE){
       assert(*pos_it==event.li);
       pos_it = y_order.erase(pos_it);
@@ -237,7 +237,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
       {
         // Look above segments and creates a point if there too close for a safe rounding
         auto above = pos_it;
-        size_t pi=event.pi;
+        std::size_t pi=event.pi;
         while(above!=y_order.end() && close_event(pi,*above)){
           if((pi!=polylines[*above].front()) && (pi!=polylines[*above].back()))
             pi=pts.size()-1;
@@ -382,9 +382,9 @@ template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange 
 void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
   using Point_2   = typename Traits::Point_2;
-  using Construct_round_point_2    = typename Traits::Construct_round_point_2;
+  using Construct_rounded_point_2    = typename Traits::Construct_rounded_point_2;
 
-  Construct_round_point_2 round = traits.construct_round_point_2_object();
+  Construct_rounded_point_2 round = traits.construct_rounded_point_2_object();
 
   snap_rounding_scan(pts, polylines, traits);
 #ifdef DOUBLE_2D_SNAP_VERBOSE
@@ -408,7 +408,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 /**
 * ingroup PkgSnapRounding2Ref
 *
-* Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interiors, based on the input curves.
+* Subdivides and rounded a set of segments so that they are pairwise disjoint in their interiors.
 * The output is a range of polyline with each polyline corresponding to an input segment.
 *
 * TODO Currently compute_subcurves have no visitor to obtain a polyline per input segment, thus
@@ -466,7 +466,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
@@ -672,8 +672,8 @@ OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
 * ingroup PkgSnapRounding2Ref
 *
 * Given a range of `Polygon_2`, compute rounded polygons such that their segments are either equal either disjoint in their interior, as induced by the input polygons.
-* The polygons are intended to be non-intersecting, unless the named parameter `compute_intersection` is set to `true`.
-* Any polygon is guarantee to remain a Polygon in the output but may present pinched section or/and common vertices or segments with
+* The polygons are intended to be non-intersecting, unless the named parameter `compute_intersections` is set to `true`.
+* Any polygon is guaranteed to remain a Polygon in the output but may present pinched section or/and common vertices or segments with
 * other polygons.
 *
 * @tparam InputIterator iterator of a CGAL::Polygon_2 range
@@ -690,7 +690,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
 *     \cgalParamDefault{CGAL::Sequential_tag}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{compute_intersection}
+*   \cgalParamNBegin{compute_intersections}
 *     \cgalParamDescription{Enable intersection computation between the polygons before performing snapping.}
 *     \cgalParamType{boolean}
 *     \cgalParamDefault{false}
@@ -701,7 +701,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
 *   \cgalParamNEnd
-* @warning The convex property of the polygons is not necessarly preserved
+* @warning If an input polygon is convex, it might no longer be convex in the output of this function
 */
 template <class InputIterator, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
 void compute_snapped_polygons_2(InputIterator begin,
@@ -732,7 +732,7 @@ void compute_snapped_polygons_2(InputIterator begin,
   Polygon_2 P=*begin;
 
   const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
-  const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersection), false);
+  const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersections), false);
 
   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
 
@@ -744,7 +744,7 @@ void compute_snapped_polygons_2(InputIterator begin,
 #endif
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
-  std::vector<size_t> polygon_index;
+  std::vector<std::size_t> polygon_index;
 
   if(compute_intersections){
     // TODO Need to compute_subcurves that output polylines to track the polygons
@@ -753,11 +753,11 @@ void compute_snapped_polygons_2(InputIterator begin,
     // Index of the segments that introduced a new polygon
     polygon_index.reserve(std::distance(begin, end));
     for(InputIterator it=begin; it!=end; ++it){
-      size_t index_start=polylines.size();
+      std::size_t index_start=polylines.size();
       polygon_index.push_back(polylines.size());
       for(const typename Polygon_2::Point_2 &p: it->vertices())
         pts.push_back(to_exact(p));
-      for(size_t i=0; i<P.size()-1; ++i)
+      for(std::size_t i=0; i<P.size()-1; ++i)
         if(less_xy_2(pts[i], pts[i+1]))
           polylines.push_back({i, i+1});
         else

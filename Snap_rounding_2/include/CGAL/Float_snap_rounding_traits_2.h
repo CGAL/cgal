@@ -60,7 +60,7 @@ struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
   typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_from_exact;
 
   // Return an upperbound of the squared distance between a point and its rounded value
-  struct Squared_round_bound_2{
+  struct Compute_squared_round_bound_2{
     double operator()(const FT &x) const{
       double b=std::nextafter(to_interval(x).second - to_interval(x).first, std::numeric_limits<double>::infinity());
       return b*b;
@@ -74,7 +74,7 @@ struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
     }
   };
 
-  struct Construct_round_point_2{
+  struct Construct_rounded_point_2{
     double operator()(const FT &x) const{
       return to_double(x);
     }
@@ -98,12 +98,12 @@ struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
     return Converter_from_exact();
   }
 
-  Squared_round_bound_2 squared_round_bound_2_object() const{
-    return Squared_round_bound_2();
+  Compute_squared_round_bound_2 compute_squared_round_bound_2_object() const{
+    return Compute_squared_round_bound_2();
   }
 
-  Construct_round_point_2 construct_round_point_2_object() const{
-    return Construct_round_point_2();
+  Construct_rounded_point_2 construct_rounded_point_2_object() const{
+    return Construct_rounded_point_2();
   }
 
   Construct_point_at_x_on_segment_2 construct_point_at_x_on_segment_2_object() const{

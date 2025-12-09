@@ -407,7 +407,7 @@ CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_para
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 
 //List of named parameters used in Snap_rounding_2
-CGAL_add_named_parameter(compute_intersection_t, compute_intersection, compute_intersection)
+CGAL_add_named_parameter(compute_intersections_t, compute_intersections, compute_intersections)
 
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
