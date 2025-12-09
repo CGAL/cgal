@@ -136,7 +136,7 @@ Three implementations of iso-oriented boxes are provided;
 `Box_intersection_d::Box_d` as a plain box, and
 `Box_intersection_d::Box_with_info_d`  and
 `Box_intersection_d::Box_with_handle_d` as a box plus respectively an info
-or an handle that can be used to point to the full geometry that is
+or a handle that can be used to point to the full geometry that is
 approximated by the box. Their implementations have template parameters
 for the number type used for the interval bounds, for the fixed
 dimension of the box, and for a policy class \cgalCite{cgal:a-mcdgp-01}
