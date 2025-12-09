@@ -37,12 +37,9 @@
 #include <atomic>
 #include <tbb/parallel_for_each.h>
 #include <tbb/concurrent_unordered_map.h>
-#include <tbb/concurrent_priority_queue.h>
 #else
 #include <unordered_map>
 #endif
-
-#include <CGAL/Polygon_mesh_processing/triangle.h>
 
 namespace CGAL {
 namespace internal {
@@ -1218,6 +1215,34 @@ void shrink_candidates(const FaceGraph& tmesh, std::vector<Candidate<GeomTraits>
     corners[6] = Point_3(c.ch.bbox.xmax(), c.ch.bbox.ymin(), c.ch.bbox.zmax());
     corners[7] = Point_3(c.ch.bbox.xmax(), c.ch.bbox.ymax(), c.ch.bbox.zmax());
 
+    for (const Vec3_uint& v : c.new_surface) {
+      std::size_t idx = 0;
+      if (v[0] == c.bbox.lower[0])
+        idx = 0;
+      else if (v[0] == c.bbox.upper[0])
+        idx = 4;
+      else continue;
+      if (v[1] == c.bbox.lower[1])
+        idx += 0;
+      else if (v[1] == c.bbox.upper[1])
+        idx += 1;
+      else continue;
+      if (v[2] == c.bbox.lower[2])
+        idx += 0;
+      else if (v[2] == c.bbox.upper[2])
+        idx += 2;
+      else continue;
+
+      if (taken[idx])
+        continue;
+
+      typename Tree::Point_and_primitive_id res = tree.closest_point_and_primitive(corners[idx]);
+      const Triangle_3& t = CGAL::Polygon_mesh_processing::triangle(res.second, tmesh);
+      auto pl = t.supporting_plane();
+      if (pl.oriented_side(corners[idx]) != CGAL::ON_POSITIVE_SIDE)
+        taken[idx] = true;
+    }
+
     for (auto& i : intersections) {
       const Point_3* p;
       const Segment_3* s;
@@ -1234,26 +1259,18 @@ void shrink_candidates(const FaceGraph& tmesh, std::vector<Candidate<GeomTraits>
         pts.push_back((*t)[0]);
         pts.push_back((*t)[1]);
         pts.push_back((*t)[2]);
-        auto pl = t->supporting_plane();
-        for (std::size_t c = 0; c < 8; c++)
-          if (!taken[c])
-            if (pl.oriented_side(corners[c]) != CGAL::ON_POSITIVE_SIDE)
-              taken[c] = true;
       }
       else if (v = std::get_if<std::vector<Point_3>>(&(i.first))) {
-        const Triangle_3 &t = CGAL::Polygon_mesh_processing::triangle(i.second, tmesh);
-        auto pl = t.supporting_plane();
-        for (std::size_t c = 0; c < 8; c++)
-          if (!taken[c])
-            if (pl.oriented_side(corners[c]) != CGAL::ON_POSITIVE_SIDE)
-              taken[c] = true;
         std::copy(v->begin(), v->end(), std::back_inserter(pts));
       }
     }
 
+    bool added = false;
     for (std::size_t c = 0; c < 8; c++)
-      if (taken[c])
+      if (taken[c]) {
         pts.push_back(corners[c]);
+        added = true;
+      }
 
     pts.reserve(pts.size() + c.new_surface.size() * 8);
 
@@ -1281,6 +1298,12 @@ void shrink_candidates(const FaceGraph& tmesh, std::vector<Candidate<GeomTraits>
       c.ch.volume_error = -1;
     else
       c.ch.volume_error = CGAL::abs(c.ch.volume - c.ch.voxel_volume) / c.ch.voxel_volume;
+
+    if (c.ch.volume < 0) {
+      for (auto &a : c.ch.indices)
+        std::swap(a[1], a[2]);
+      c.ch.volume = -c.ch.volume;
+    }
   }
 }
 
@@ -1320,6 +1343,34 @@ void shrink_candidates(const FaceGraph& tmesh, std::vector<Candidate<GeomTraits>
     corners[6] = Point_3(c.ch.bbox.xmax(), c.ch.bbox.ymin(), c.ch.bbox.zmax());
     corners[7] = Point_3(c.ch.bbox.xmax(), c.ch.bbox.ymax(), c.ch.bbox.zmax());
 
+    for (const Vec3_uint& v : c.new_surface) {
+      std::size_t idx = 0;
+      if (v[0] == c.bbox.lower[0])
+        idx = 0;
+      else if (v[0] == c.bbox.upper[0])
+        idx = 4;
+      else continue;
+      if (v[1] == c.bbox.lower[1])
+        idx += 0;
+      else if (v[1] == c.bbox.upper[1])
+        idx += 1;
+      else continue;
+      if (v[2] == c.bbox.lower[2])
+        idx += 0;
+      else if (v[2] == c.bbox.upper[2])
+        idx += 2;
+      else continue;
+
+      if (taken[idx])
+        continue;
+
+      typename Tree::Point_and_primitive_id res = tree.closest_point_and_primitive(corners[idx]);
+      const Triangle_3& t = CGAL::Polygon_mesh_processing::triangle(res.second, tmesh);
+      auto pl = t.supporting_plane();
+      if (pl.oriented_side(corners[idx]) != CGAL::ON_POSITIVE_SIDE)
+        taken[idx] = true;
+    }
+
     for (auto& i : intersections) {
       const Point_3* p;
       const Segment_3* s;
@@ -1336,26 +1387,17 @@ void shrink_candidates(const FaceGraph& tmesh, std::vector<Candidate<GeomTraits>
         pts.push_back((*t)[0]);
         pts.push_back((*t)[1]);
         pts.push_back((*t)[2]);
-        auto pl = t->supporting_plane();
-        for (std::size_t c = 0; c < 8; c++)
-          if (!taken[c])
-            if (pl.oriented_side(corners[c]) != CGAL::ON_POSITIVE_SIDE)
-              taken[c] = true;
       }
-      else if (v = std::get_if<std::vector<Point_3>>(&(i.first))) {
-        const Triangle_3& t = CGAL::Polygon_mesh_processing::triangle(i.second, tmesh);
-        auto pl = t.supporting_plane();
-        for (std::size_t c = 0; c < 8; c++)
-          if (!taken[c])
-            if (pl.oriented_side(corners[c]) != CGAL::ON_POSITIVE_SIDE)
-              taken[c] = true;
+      else if (v = std::get_if<std::vector<Point_3>>(&(i.first)))
         std::copy(v->begin(), v->end(), std::back_inserter(pts));
-      }
     }
 
-    for (std::size_t c = 0;c<8;c++)
-      if (taken[c])
+    bool added = false;
+    for (std::size_t c = 0; c < 8; c++)
+      if (taken[c]) {
         pts.push_back(corners[c]);
+        added = true;
+      }
 
     pts.reserve(pts.size() + c.new_surface.size() * 8);
 
@@ -1383,6 +1425,12 @@ void shrink_candidates(const FaceGraph& tmesh, std::vector<Candidate<GeomTraits>
       c.ch.volume_error = -1;
     else
       c.ch.volume_error = CGAL::abs(c.ch.volume - c.ch.voxel_volume) / c.ch.voxel_volume;
+
+    if (c.ch.volume < 0) {
+      for (auto& a : c.ch.indices)
+        std::swap(a[1], a[2]);
+      c.ch.volume = -c.ch.volume;
+    }
   };
 
   tbb::parallel_for_each(candidates, shrink);
@@ -1533,6 +1581,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
     }
 
     ch.volume = volume<GeomTraits>(ch.points, ch.indices);
+
     if (ci.volume_error == -1 || cj.volume_error == -1) {
       m.volume_error = -1;
       ch.volume_error = 0;
@@ -1690,6 +1739,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
     }
 
     ch.volume = volume<GeomTraits>(ch.points, ch.indices);
+
     if (ci.volume_error == -1 || cj.volume_error == -1) {
       m.volume_error = -1;
       ch.volume_error = 0;
@@ -1803,9 +1853,9 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  * \ingroup PkgConvexDecomposition3Ref
  *
  * \brief approximates the input mesh by a number of convex volumes.
- *         The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface. The remaining voxels are labeled as outside or inside.
- *         In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied or the `maximum_depth` is reached.
- *         Finally, a greedy pair-wise merging combines smaller convex volumes until `maximum_number_of_convex_volumes` is met.
+ *        The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface. The remaining voxels are labeled as outside or inside.
+ *        In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied or the `maximum_depth` is reached.
+ *        Finally, a greedy pair-wise merging combines smaller convex volumes until `maximum_number_of_convex_volumes` is met.
  *
  * \tparam FaceGraph a model of `HalfedgeListGraph`, and `FaceListGraph`
  *
@@ -1890,9 +1940,13 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
   using Geom_traits = typename GetGeomTraits<FaceGraph, NamedParameters>::type;
 
   using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
   const unsigned int num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
   const bool refitting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::refitting), true);
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Parallel_if_available_tag>::type;
+
+  if (faces(tmesh).size() == 0)
+    return 0;
 
 #ifndef CGAL_LINKED_WITH_TBB
   if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>) {
@@ -1904,20 +1958,28 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
   const unsigned int max_convex_volumes = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_volumes), 16);
   assert(max_convex_volumes > 0);
 
-  if (max_convex_volumes == 1) {
-    internal::Convex_hull_candidate<Geom_traits> ch;
+  std::vector<Point_3> points;
+  std::vector<std::array<unsigned int, 3> > indices;
 
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-    using VPM = typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type;
-    typedef CGAL::Property_map_to_unary_function<VPM> Vpmap_fct;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using VPM = typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type;
+  typedef CGAL::Property_map_to_unary_function<VPM> Vpmap_fct;
 
-    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
-    Vpmap_fct v2p(vpm);
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
+  Vpmap_fct v2p(vpm);
 
-    convex_hull_3(boost::make_transform_iterator(vertices(tmesh).begin(), v2p), boost::make_transform_iterator(vertices(tmesh).end(), v2p), ch.points, ch.indices);
+  convex_hull_3(boost::make_transform_iterator(vertices(tmesh).begin(), v2p), boost::make_transform_iterator(vertices(tmesh).end(), v2p), points, indices);
 
-    *out_volumes = std::make_pair(std::move(ch.points), std::move(ch.indices));
+  if (indices.size() < 4) {
+    *out_volumes++ = std::make_pair(std::move(points), std::move(indices));
+    return 1;
+  }
+
+  const FT hull_volume = internal::volume<Geom_traits>(points, indices);
+
+  if (hull_volume == 0 || max_convex_volumes == 1) {
+    *out_volumes = std::make_pair(std::move(points), std::move(indices));
     return 1;
   }
 
@@ -1929,12 +1991,19 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
   std::vector<internal::Candidate<Geom_traits>> candidates(1);
   internal::init(candidates[0], tmesh, grid, bb, grid_size, voxel_size, Concurrency_tag());
 
-  const FT hull_volume = candidates[0].ch.volume;
+
+  if (hull_volume == 0) {
+    *out_volumes = std::make_pair(std::move(candidates[0].ch.points), std::move(candidates[0].ch.indices));
+    return 1;
+  }
 
   internal::recurse(candidates, grid, grid_size, bb, voxel_size, np, Concurrency_tag());
 
   if (refitting)
     internal::shrink_candidates<Geom_traits, FaceGraph>(tmesh, candidates, bb, voxel_size, Concurrency_tag());
+
+  for (std::size_t i = 0; i < candidates.size(); i++)
+    CGAL::IO::write_polygon_soup(std::to_string(i) + "_after.off", candidates[i].ch.points, candidates[i].ch.indices);
 
   std::vector<internal::Convex_hull_candidate<Geom_traits>> volumes;
   for (internal::Candidate<Geom_traits> &c : candidates)
