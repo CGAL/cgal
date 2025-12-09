@@ -123,8 +123,7 @@ protected:
  * Functor to construct a point on a curve
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_point_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_point_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -174,8 +173,7 @@ public:
  * Functor to construct point on an arc
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_point_on_arc_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_point_on_arc_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -228,8 +226,7 @@ public:
  * Functor to construct an x-monotone arc
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_arc_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_arc_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -427,8 +424,7 @@ public:
  * Functor that checks whether a given arc is vertical
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Is_vertical_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Is_vertical_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -463,8 +459,7 @@ public:
  * Functor constructing minimum point of an arc (if interior)
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_min_vertex_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_min_vertex_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -502,8 +497,7 @@ public:
  * Functor constructing maximum point of an arc (if interior)
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_max_vertex_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_max_vertex_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -541,8 +535,7 @@ public:
  * Functor constructing an interior point of on an arc.
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_interior_vertex_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_interior_vertex_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -649,8 +642,7 @@ private:
  * Functor that compares x-coordinates of two interior points
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_x_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_x_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -691,8 +683,7 @@ public:
  * Functor that compares coordinates of two interior points lexicographically
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_xy_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_xy_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -753,8 +744,7 @@ public:
  * an arc
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_y_at_x_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_y_at_x_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -861,8 +851,7 @@ public:
  * of a point
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_y_at_x_left_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_y_at_x_left_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -957,8 +946,7 @@ public:
  * of a point
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_y_at_x_right_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_y_at_x_right_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1054,8 +1042,7 @@ public:
  * Functor that checks whether a point is in the x-range of an arc
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Is_in_x_range_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Is_in_x_range_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1092,8 +1079,7 @@ public:
  * Tests two objects, whether they are equal
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Equal_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Equal_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1123,8 +1109,7 @@ public:
    * \return \c true if the two point are the same; \c false otherwise.
    */
   result_type operator()(const Point_2& p1, const Point_2& p2) const {
-    return (Curved_kernel_via_analysis_2::instance().
-            compare_xy_2_object()(p1, p2) == CGAL::EQUAL);
+    return (Curved_kernel_via_analysis_2::instance().compare_xy_2_object()(p1, p2) == CGAL::EQUAL);
   }
 
   /*! \brief
@@ -1162,8 +1147,7 @@ public:
  * Functor that checks whether two arcs overlap
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Do_overlap_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Do_overlap_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1250,12 +1234,60 @@ public:
   }
 };
 
+/*! \class Do_intersect
+ * A functor for intersection detection
+ */
+template <typename CurvedKernelViaAnalysis_2>
+class Do_intersect_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2>  {
+public:
+  //! this instance' first template parameter
+  using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
+
+  //! the base type
+  using Base = Curved_kernel_via_analysis_2_functor_base<Curved_kernel_via_analysis_2>;
+
+  CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
+
+  using Multiplicity = std::size_t;
+  using Intersection_point = std::pair<Point_2, Multiplicity>;
+  using Intersection_result = std::variant<Intersection_point, Arc_2>;
+
+  //! the result type
+  using result_type = bool;
+
+  /*! \brief
+   * Standard constructor
+   *
+   * \param kernel The kernel
+   */
+  Do_intersect_2(Curved_kernel_via_analysis_2* kernel) : Base(kernel) {}
+
+  /*! determines whether two given \f$x\f$-monotone curves intersect.
+   * \param xcv1 the first curve.
+   * \param xcv2 the second curve.
+   * \return a boolean flag indicating whether the curves intersect.
+   * \todo Reimplement without using Intersect_2 to make robust (and efficient) with inexact constructions.
+   */
+  result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
+    CERR("\nintersect; cv1: " << cv1 << ";\n cv2:" << cv2 << "");
+    std::vector<Arc_2> arcs;
+    if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) return true;
+    arcs.clear();
+
+    // process non-ov erlapping case
+    std::vector<Intersection_point> vec;
+    Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
+    auto empty = vec.empty();
+    vec.clear();
+    return ! empty;
+  }
+};
+
 /*! \brief
  * Functor that computes the intersections of two arcs
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Intersect_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Intersect_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1298,8 +1330,7 @@ public:
    * \return The past-the-end iterator.
    */
   template <typename OutputIterator>
-  OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
-                            OutputIterator oi) const {
+  OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2, OutputIterator oi) const {
     CERR("\nintersect; cv1: " << cv1 << ";\n cv2:" << cv2 << "");
 
     // if arcs overlap, just store their common part, otherwise compute
@@ -1321,8 +1352,7 @@ public:
  * Functors that trims an arc
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Trim_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Trim_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1374,8 +1404,7 @@ public:
  * Functor that splits a arc at an interior point
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Split_2 : public
-Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Split_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1425,8 +1454,7 @@ public:
  * Functor that computes whether two arcs are mergeable
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Are_mergeable_2 : public
-Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Are_mergeable_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1525,8 +1553,7 @@ public:
  * Functor that merges two arcs
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Merge_2 : public
-Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Merge_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1592,8 +1619,7 @@ public:
  * Functor that computes whether a point lies on a supporting curve
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Is_on_2 : public
-Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Is_on_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1659,8 +1685,7 @@ public:
  * Functor that decomposes curve into x-monotone arcs and isolated points
  */
 template <class CurvedKernelViaAnalysis_2>
-class Make_x_monotone_2 : public
-Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Make_x_monotone_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1758,8 +1783,7 @@ public:
  * Functor computing parameter space in x for arc
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Parameter_space_in_x_2 : public
-Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Parameter_space_in_x_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1809,8 +1833,7 @@ public:
  * Functor that compares ends of arcs near left or right boundary
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_y_near_boundary_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_y_near_boundary_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1925,8 +1948,7 @@ public:
 // bottom-top
 
 template <typename CurvedKernelViaAnalysis_2>
-class Parameter_space_in_y_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Parameter_space_in_y_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -1978,8 +2000,7 @@ public:
  * Functor that compares x-limits at the top or bottom boundary
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_x_on_boundary_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_x_on_boundary_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -2077,8 +2098,7 @@ public:
  * Functor that compares x-coordinates near the top or bottom boundary
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_x_near_boundary_2 :
-    public Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2> {
+class Compare_x_near_boundary_2 : public Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -2143,8 +2163,7 @@ public:
  * Functor to construct a point on a curve
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Compare_endpoints_xy_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Compare_endpoints_xy_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -2181,8 +2200,7 @@ public:
  * Functor to construct a point on a curve
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Construct_opposite_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Construct_opposite_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -2215,8 +2233,7 @@ public:
  * Functor that computes the x-extreme points of a curve
  */
 template <typename CurvedKernelViaAnalysis_2>
-class X_extreme_points_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class X_extreme_points_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -2270,8 +2287,7 @@ public:
  * Functor that computes the y-extreme points of a curve
  */
 template <typename CurvedKernelViaAnalysis_2>
-class Y_extreme_points_2 :
-    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
+class Y_extreme_points_2 : public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 public:
   //! this instance' first template parameter
   using Curved_kernel_via_analysis_2 = CurvedKernelViaAnalysis_2;
@@ -2396,6 +2412,7 @@ public:
   CGAL_CKvA_2_functor_pred(Equal_2, equal_2_object);
   CGAL_CKvA_2_functor_pred(Is_in_x_range_2, is_in_x_range_2_object);
   CGAL_CKvA_2_functor_pred(Do_overlap_2, do_overlap_2_object);
+  CGAL_CKvA_2_functor_cons(Do_intersect_2, do_intersect_2_object);
   CGAL_CKvA_2_functor_cons(Intersect_2, intersect_2_object);
   CGAL_CKvA_2_functor_cons(Trim_2, trim_2_object);
   CGAL_CKvA_2_functor_cons(Split_2, split_2_object);
