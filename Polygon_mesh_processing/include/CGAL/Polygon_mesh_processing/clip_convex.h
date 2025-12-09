@@ -167,7 +167,7 @@ void clip_convex(PolygonMesh& pm,
     Oriented_side side_trg = oriented_side(plane, get(vpm, target(h,pm)));
 
     if(side_trg != ON_NEGATIVE_SIDE){
-      // The face does not cross the plane
+      // The face does not cross the plane, we look for a face incident to the same vertex than h that crosses the plane.
       while(side_trg == ON_ORIENTED_BOUNDARY){
         // The edge is along the plane, add it to boundaries
         boundaries.emplace_back(h);
@@ -210,6 +210,9 @@ void clip_convex(PolygonMesh& pm,
 
     CGAL_assertion(target(sh, pm) == target(h, pm));
     h = opposite(next(sh,pm), pm);
+
+    // During the loop, if a mesh vertex lies on the plane, we look for a face incident to that vertex that crosses the plane.
+    // The second part of the while-condition ensures we don't exit prematurely in this looking.
   } while(target(h, pm)!=v_start || (boundaries.empty() && h!=h_start));
 
   CGAL_assertion(is_valid_polygon_mesh(pm));
