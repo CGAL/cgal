@@ -37,7 +37,7 @@ namespace CGAL{
   /// hull in a given direction. In particular, this operation is called by `CGAL::Convex_hull_3::do_intersect()` and therefore, this class
   ///  is optimized for very fast intersection tests.
   ///
-  /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of ` MutableFaceGraph`.
+  /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of `MutableFaceGraph`.
   ///         An internal property map for  ` CGAL::vertex_point_t` must be available, from which the point type `Point` is deduced.
   ///         There is no requirement on `Point`, besides being default constructible and assignable.
   ///         In typical use cases it will be a 3D point type.
