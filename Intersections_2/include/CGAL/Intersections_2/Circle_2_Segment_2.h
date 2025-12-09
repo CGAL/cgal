@@ -58,7 +58,7 @@ do_intersect(const typename K::Circle_2& circ,
   else if (ltgt <= sqrad * ltgtw)
     return true;
 
-  return sq_dist(c, s.supporting_line()) <= sqrad;
+  return sq_dist(c, s) <= sqrad;
 }
 
 template <class K>
@@ -93,7 +93,7 @@ do_intersect(const typename K::Circle_2& circ,
   else if (ltgt <= sqrad)
     return true;
 
-  return sq_dist(c, s.supporting_line()) <= sqrad;
+  return sq_dist(c, s) <= sqrad;
 }
 
 template <class K>
