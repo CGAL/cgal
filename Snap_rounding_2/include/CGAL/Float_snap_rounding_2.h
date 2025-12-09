@@ -344,28 +344,25 @@ void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits 
     return less_xy_2(pts[i], pts[j]);
   };
 
-  std::set<std::size_t, decltype(Less_indexes_xy_2)> p_sort_by_x(Less_indexes_xy_2);
-  for(std::size_t i=0; i!=pts.size(); ++i)
-    p_sort_by_x.insert(i);
-
-  using Iterator_set_x = typename std::set<std::size_t, decltype(Less_indexes_xy_2)>::iterator;
-
+  std::vector< std::size_t > p_sort_by_x(pts.size());
+  std::iota(p_sort_by_x.begin(), p_sort_by_x.end(), 0);
+  std::sort(p_sort_by_x.begin(), p_sort_by_x.end(), Less_indexes_xy_2);
   for(Polyline &poly: polylines){
     std::vector<std::size_t> updated_polyline;
     updated_polyline.push_back(poly.front());
     for(std::size_t i=1; i!=poly.size(); ++i){
       if(pts[poly[i-1]].x()==pts[poly[i]].x()){
-        Iterator_set_x start, end;
+        std::vector< std::size_t >::iterator start, end;
         // Get all vertices between the two endpoints along x order
         if(Less_indexes_xy_2(poly[i-1],poly[i])){
-          start=p_sort_by_x.upper_bound(poly[i-1]);
-          end=p_sort_by_x.lower_bound(poly[i]);
+          start=std::upper_bound(p_sort_by_x.begin(), p_sort_by_x.end(), poly[i-1]);
+          end=std::lower_bound(p_sort_by_x.begin(), p_sort_by_x.end(), poly[i]);
           for(auto it=start; it!=end; ++it){
             updated_polyline.push_back(*it);
           }
         } else {
-          start=p_sort_by_x.upper_bound(poly[i]);
-          end=p_sort_by_x.lower_bound(poly[i-1]);
+          start=std::upper_bound(p_sort_by_x.begin(), p_sort_by_x.end(), poly[i]);
+          end=std::lower_bound(p_sort_by_x.begin(), p_sort_by_x.end(), poly[i-1]);
           for(auto it=end; it!=start;){
             --it;
             updated_polyline.push_back(*it);
@@ -421,7 +418,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 * @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 * \param begin,end the input segment range
-* \param out the output container
+* \param out the output inserter
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{concurrency_tag}
@@ -440,12 +437,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
 typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
 		                                                      InputIterator  	end,
-		                                                      OutputContainer &out,
+		                                                      OutputContainer out,
                                                           const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
                                                               NamedParameters,
                                                               Sequential_tag>::type;
+
+  using Polyline = std::remove_cv_t<typename OutputContainer::container_type::value_type>;
 
   using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
   using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
@@ -458,8 +457,6 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
   using I2E = typename Traits::Converter_to_exact;
   using E2O = typename Traits::Converter_from_exact;
   using VectorIterator = typename std::vector<Segment_2>::iterator;
-
-  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename OutputContainer::iterator>::value_type>;
 
   using Less_xy_2 = typename Traits::Less_xy_2;
 
@@ -529,10 +526,10 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
     Polyline new_line;
     for(std::size_t pi: poly)
       new_line.push_back(from_exact(pts[pi]));
-    out.push_back(new_line);
+    *out++ = new_line;
   }
 
-  return out.end();
+  return out;
 }
 
 /**

@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Float_snap_rounding_traits_2.h>
 #include <CGAL/Float_snap_rounding_2.h>
@@ -41,7 +40,7 @@ typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
 typedef CGAL::Snap_rounding_traits_2<Kernel>                     SnapTraits;
 #endif
 
-//Biggest double with ulp smaller than an integer
+//Biggest double with ulp smaller than one
 const double maxFloat = std::pow(2,23);
 const double maxDouble = std::pow(2,52);
 
@@ -312,7 +311,7 @@ void test_float_snap_rounding(){
   segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
-  double_snap_rounding_2(segs.begin(), segs.end(), out);
+  double_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(out));
 }
 
 int main(int argc,char *argv[])
