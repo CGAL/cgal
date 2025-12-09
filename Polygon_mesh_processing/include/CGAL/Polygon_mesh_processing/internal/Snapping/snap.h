@@ -718,12 +718,18 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
     halfedge_descriptor h_to_split = es.first;
     CGAL_assertion(is_border(h_to_split, tm_T));
 
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
+                << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
+                << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
+#endif
+
     Vertices_with_new_position& splitters = es.second;
 
     if(splitters.size() > 1)
     {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << " _______ Multiple splitting points on the same halfedge" << std::endl;
+      std::cout << " _______ Multiple splitting points on the same halfedge, sorting..." << std::endl;
 #endif
 
       const Point_ref hsp = get(vpm_T, source(h_to_split, tm_T));
@@ -746,20 +752,36 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       const vertex_descriptor splitter_v = target(splitter_h, tm_S);
       const Point new_position = is_source_mesh_fixed ? get(vpm_S, splitter_v) : vnp.second;
 
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << "With point: " << new_position << " (first choice: " << vnp.second << ")" << std::endl;
+#endif
+
       bool do_split = true;
 
       // In case of self-snapping, avoid degenerate caps
       const bool is_same_mesh = (&tm_T == &tm_S);
-      if(is_same_mesh && target(next(opposite(h_to_split, tm_T), tm_T), tm_T) == splitter_v)
+      if(is_same_mesh && target(next(opposite(h_to_split, tm_T), tm_T), tm_T) == splitter_v) {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Reject split (A)" << std::endl;
+#endif
         do_split = false;
+      }
 
       // Do not split if it would create a degenerate needle
       if((new_position == get(vpm_T, target(h_to_split, tm_T))) ||
-         (new_position == get(vpm_T, source(h_to_split, tm_T))))
+         (new_position == get(vpm_T, source(h_to_split, tm_T)))) {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Reject split (B)" << std::endl;
+#endif
         do_split = false;
+      }
 
-      if(!first_split && new_position == previous_split_position)
+      if(!first_split && new_position == previous_split_position) {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Reject split (C)" << std::endl;
+#endif
         do_split = false;
+      }
 
       // check if the new faces after split will not be degenerate
       const Point& p0 = new_position;
@@ -784,13 +806,21 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
       if(first_split_face)
       {
-        if(p0p2 <= 0 || collinear(p0,p1,p2) || collinear(p0,p2,p3))
+        if(p0p2 <= 0 || collinear(p0,p1,p2) || collinear(p0,p2,p3)) {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Reject split (D)" << std::endl;
+#endif
           do_split = false;
+        }
       }
       else
       {
-        if(p1p3 <= 0 || collinear(p0,p1,p3) || collinear(p1,p2,p3))
+        if(p1p3 <= 0 || collinear(p0,p1,p3) || collinear(p1,p2,p3)) {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Reject split (E)" << std::endl;
+#endif
           do_split = false;
+        }
       }
 
       if(do_split && !is_source_mesh_fixed)
@@ -799,6 +829,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
         {
           if(!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
           {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Reject split (F)" << std::endl;
+#endif
             do_split = false;
             break;
           }
@@ -809,10 +842,6 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       }
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
-                << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
-                << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
-      std::cout << "With point: " << new_position << " (init: " << vnp.second << ")" << std::endl;
       std::cout << "Actually split? " << do_split << std::endl;
 #endif
 
@@ -967,11 +996,11 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 
   for(halfedge_descriptor h : halfedge_range_T)
   {
-    CGAL_precondition(is_border(edge(h, tm_T), tm_T));
+    CGAL_precondition(is_border_edge(h, tm_T));
     if(get(locked_halfedges_T, h))
     {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << edge(h, tm_T) << " is locked and not a valid target" << std::endl;
+      std::cout << edge(h, tm_T) << " [" << source(h, tm_T) << " - " << target(h, tm_T) << "] is locked and not a valid target" << std::endl;
 #endif
       continue;
     }
