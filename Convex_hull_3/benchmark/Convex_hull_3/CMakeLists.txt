@@ -2,11 +2,11 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.22)
-project(Periodic_2_triangulation_2_Benchs)
+project(Bench_convex_hull_3)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 5.0.0 REQUIRED) #(5.0.0 or greater)
 include(CGAL_Eigen3_support)
 
 include_directories(BEFORE "include")

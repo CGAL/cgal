@@ -393,7 +393,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *
 * provides a lower bound on the squared distance between the two convex graphs.
 *
-* @tparam AdjacencyGraph: is a model of `AdjacencyGraph`.
+* @tparam AdjacencyGraph is a model of `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *

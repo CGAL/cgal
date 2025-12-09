@@ -552,14 +552,14 @@ struct Do_intersect_traits<K, K, Converter, true> {
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* checks if the convex hulls of the two point sets intersect or not.
+* checks if the convex hulls of the two point sets intersect or not. The points in a set do not need to be in convex position.
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param r1 range points of the first convex considered in the do-intersect test
-* @param r2 range points of the second convex considered in the do-intersect test
+* @param r1 range points of the first convex hull considered in the do-intersect test
+* @param r2 range points of the second convex hull considered in the do-intersect test
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *

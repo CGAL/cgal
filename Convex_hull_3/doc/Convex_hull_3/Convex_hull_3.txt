@@ -156,7 +156,7 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \section Convex_hull_3Do_intersect Intersection test of Convex Hulls
 
-The `do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere
+The `Convex_hull_3::do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere
 @todo Add \ cgalCite{TODO}.
 Input convex hulls can be provided in three forms: as range of points, as graph of points or as instance of the `Convex_hull_hierarchy` class.
 
