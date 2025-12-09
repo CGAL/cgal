@@ -1855,7 +1855,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  * \brief approximates the input mesh by a number of convex volumes.
  *        The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface. The remaining voxels are labeled as outside or inside.
  *        In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied or the `maximum_depth` is reached.
- *        Finally, a greedy pair-wise merging combines smaller convex volumes until `maximum_number_of_convex_volumes` is met.
+ *        Finally, a greedy pairwise merging combines smaller convex volumes until `maximum_number_of_convex_volumes` is met.
  *
  * \tparam FaceGraph a model of `HalfedgeListGraph`, and `FaceListGraph`
  *
@@ -2001,9 +2001,6 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
 
   if (refitting)
     internal::shrink_candidates<Geom_traits, FaceGraph>(tmesh, candidates, bb, voxel_size, Concurrency_tag());
-
-  for (std::size_t i = 0; i < candidates.size(); i++)
-    CGAL::IO::write_polygon_soup(std::to_string(i) + "_after.off", candidates[i].ch.points, candidates[i].ch.indices);
 
   std::vector<internal::Convex_hull_candidate<Geom_traits>> volumes;
   for (internal::Candidate<Geom_traits> &c : candidates)
