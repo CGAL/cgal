@@ -102,7 +102,6 @@ struct Predicate_traits_d : public BoxTraits_1{
         }
     };
 
-    // to be adapat with different Box_traits
     // loless val dim box = getlo box dim < val
     class Lo_less : public CGAL::cpp98::unary_function<Box_parameter_1,bool> {
         NT value;
