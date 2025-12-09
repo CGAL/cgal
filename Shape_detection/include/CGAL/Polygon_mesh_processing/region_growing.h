@@ -448,8 +448,6 @@ detect_corners_of_regions(
   using Helper = internal::Region_and_Sorting_helper<Traits, PolygonMesh, VPM, Ecm, Least_squares_fitting>;
 
   using Polyline_graph     = typename Helper::Polyline_graph;
-  using Segment_map        = typename Polyline_graph::Segment_map;
-  using Item               = typename Polyline_graph::Item;
 
   using Line_region  = typename Helper::Line_region;
   using Line_sorting = typename Helper::Line_sorting;

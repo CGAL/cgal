@@ -134,7 +134,7 @@ public:
     a model of `ConstRange` whose iterator type is `InputIterator`
 
     \tparam Dummy
-    Dummy parameter, not used.
+    Dummy parameter that matches NeighborQuery in other sorting classes. Is not used.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -166,7 +166,8 @@ public:
     \pre `input_range.size() > 0`
   */
   template<typename InputRange, typename Dummy,
-    typename NamedParameters = parameters::Default_named_parameters>
+    typename NamedParameters = parameters::Default_named_parameters,
+    std::enable_if_t<std::is_same<Item, typename Dummy::Item>::value, bool> = true>
   Segment_length_sorting(const InputRange& input_range,
     const Dummy&,
     const NamedParameters& np = parameters::default_values())
