@@ -342,6 +342,7 @@ struct Test
     check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, 22), p( 2, 34)));
     check_no_do_intersect  (C(p( 4, 16), 18), S(p(5, 7), p(6, 8)));
     check_no_do_intersect  (C(p( 0, 0), 25), S(p(-2, -2), p(2, 2)));
+    check_no_do_intersect  (C(p( 0, 0), 1), S(p(0, 2), p(0, 3)));
 
     check_do_intersect     (C(p( 3, 4), 0), S(p(-3,  8), p( 6,  2)));
     check_do_intersect     (C(p( 4, 3), 4), S(p( 6, -7), p( 5, 2)));
