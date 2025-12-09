@@ -17,7 +17,7 @@ namespace CGAL {
   The algorithm is interface compatible with the
   `box_intersection_d()` function. Similarly, we call the
   `value_type` of the iterators the <I>box handle</I>, which is
-  either our box types or a pointer type to our box types.
+  either one of our box types or a pointer type to one of our box types.
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the
   %Cartesian product of \f$ d\f$ intervals. We call the
@@ -35,7 +35,7 @@ namespace CGAL {
   `Box_intersection_d::CLOSED`.
 
   In addition, a box has a unique `id`-number. Boxes with equal
-  `id`-number and same types are not reported since they obviously intersect trivially.
+  `id`-number and same types are not reported since they intersect trivially.
 
   The algorithm uses a traits class of the `BoxIntersectionTraits_d`
   concept to access the boxes. A default traits class is provided that
@@ -191,7 +191,7 @@ void box_intersection_all_pairs_d(
   <UL>
   <LI>`RandomAccessIterator1`, and \f$ \ldots\f$ `2`, must meet
   the requirements of `RandomAccessIterator`.
-  We call their values type `Box_handle_1` and `Box_handle_2` in the following.
+  We call their value types `Box_handle_1` and `Box_handle_2` in the following.
   <LI>`Callback` must be of the `BinaryFunction` concept.
   `Box_handle_1` and `Box_handle_2` must be convertible to both argument types. The
   return type is not used and can be `void`.
@@ -292,7 +292,7 @@ void box_intersection_all_pairs_d(
 
   Invocation of box intersection with default box traits
   `Box_intersection_d::Box_traits_d<Box_handle_1, Box_handle_2>`, where
-  `Box_handle_1` and `Box_handle_2` corresponds respectively to the iterator value type of
+  `Box_handle_1` and `Box_handle_2` correspond respectively to the iterator value type of
   `RandomAccessIterator1` and `RandomAccessIterator2`.
 
 */
