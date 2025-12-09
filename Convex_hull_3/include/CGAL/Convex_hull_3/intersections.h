@@ -199,7 +199,7 @@ typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_graph_3(const Gr
 /**
 * \ingroup PkgConvexHull3Functions
 *
-* computes the furthest point of the convex graph along the direction.
+* computes the furthest point of the convex graph along the direction `dir`.
 *
 * @tparam Graph: is a model of `AdjacencyGraph`.
 * @tparam Direction_3: is a model of CGAL::Direction_3.
@@ -362,7 +362,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
     switch( this->size() ) {
       case 0 : return Vector_3(1,0,0); break; // An arbitrary one
       case 1 : return this->begin()->north_; break;
-      case 2 :{   // The two vertex are opposite so we do not take their mean
+      case 2 :{   // The two vertices are opposite so we do not take their mean
                   // We want a direction with negative dot with bith north_
                   // We take the two perpendicular vector of resp north_0, and north_1 that lies on the same circle on them
                   // And we take a barycenter of them
