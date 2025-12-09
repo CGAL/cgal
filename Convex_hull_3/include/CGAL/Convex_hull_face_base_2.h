@@ -18,8 +18,6 @@
 #include <CGAL/license/Convex_hull_3.h>
 
 #include <CGAL/Triangulation_ds_face_base_2.h>
-#include <CGAL/Has_timestamp.h>
-#include <CGAL/Time_stamper.h>
 
 #include <list>
 
@@ -31,7 +29,6 @@ class Convex_hull_face_base_2
   : public Fb
 {
   int _info = 0;
-  std::size_t time_stamp_ = std::size_t(-2);
 
 public:
   typedef typename Fb::Vertex_handle                   Vertex_handle;
@@ -59,7 +56,7 @@ public:
                           Vertex_handle v2,
                           Face_handle   n0,
                           Face_handle   n1,
-                          Face_handle   n2 )
+                          Face_handle   n2)
     : Fb(v0, v1, v2, n0, n1, n2), _info(0) {}
 
   const int& info() const { return _info; }
@@ -67,18 +64,6 @@ public:
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
-
-  /// For the determinism of Compact_container iterators
-  ///@{
-  typedef Tag_true Has_timestamp;
-
-  std::size_t time_stamp() const {
-    return time_stamp_;
-  }
-  void set_time_stamp(const std::size_t& ts) {
-    time_stamp_ = ts;
-  }
-  ///@}
 };
 
 } //namespace CGAL
