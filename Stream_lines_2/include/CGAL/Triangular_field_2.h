@@ -134,7 +134,7 @@ protected:
 
 template <class StreamLinesTraits_2>
 inline
-typename Triangular_field_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
+typename StreamLinesTraits_2::Iso_rectangle_2
 Triangular_field_2<StreamLinesTraits_2>::bbox() const
 {
   return typename Geom_traits::Iso_rectangle_2(minx, miny, maxx,

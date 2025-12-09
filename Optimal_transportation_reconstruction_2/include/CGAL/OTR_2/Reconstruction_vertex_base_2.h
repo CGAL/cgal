@@ -16,6 +16,8 @@
 
 
 #include <CGAL/Triangulation_vertex_base_2.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/OTR_2/Sample.h>
 
 namespace CGAL {
@@ -53,6 +55,7 @@ private:
   int       m_sample;
   Point     m_relocated;
   FT        m_relevance;
+  std::size_t time_stamp_ = std::size_t(-2);
 
 
 public:
@@ -110,6 +113,18 @@ public:
   Point& relocated() { return m_relocated; }
 
   bool  has_sample_assigned() const { return sample() != -1; }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
 //---------------STRUCT LESS VERTEX_HANDLE---------------------
 template <class T>

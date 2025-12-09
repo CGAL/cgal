@@ -34,6 +34,7 @@
 #include <CGAL/iterator.h>
 
 #include <CGAL/boost/graph/Face_filtered_graph.h>
+
 #if defined(CGAL_METIS_ENABLED)
 #include <CGAL/boost/graph/partition.h>
 #endif // CGAL_METIS_ENABLED
@@ -42,14 +43,16 @@
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 #endif // CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
+#  include <any>
+#endif
 
-#include <any>
-
-#include <unordered_set>
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <limits>
+#include <type_traits>
+#include <unordered_set>
 
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
  #ifndef CGAL_HAUSDORFF_DEBUG
@@ -1467,7 +1470,11 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
 
-  CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
+  if constexpr(std::is_floating_point_v<FT>) {
+    CGAL_precondition(std::nextafter(sq_initial_bound, (std::numeric_limits<FT>::max)()) >= square(FT(error_bound)));
+  } else {
+    CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
+  }
   CGAL_precondition(sq_distance_bound != FT(0)); // value is -1 if unused
   CGAL_precondition(tm1_tree.size() > 0);
   CGAL_precondition(tm2_tree.size() > 0);
@@ -1689,8 +1696,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       // Thus, subdivision can only decrease the min, and the upper bound.
       Local_bounds<Kernel, Face_handle_1, Face_handle_2> bounds(triangle_bounds.upper);
 
-      // Ensure 'uface' is initialized in case the upper bound is not changed by the subdivision
+      // Ensure 'lface' and 'uface' are initialized in case the bounds are not changed by the subdivision
       bounds.tm2_uface = triangle_bounds.tm2_uface;
+      bounds.tm2_lface = triangle_bounds.tm2_lface;
 
       TM2_hd_traits traversal_traits_tm2(sub_t1_bbox, tm2, vpm2, bounds, global_bounds, infinity_value);
       tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);

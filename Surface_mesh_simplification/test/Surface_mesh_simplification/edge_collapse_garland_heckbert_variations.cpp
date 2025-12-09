@@ -32,6 +32,7 @@ typedef SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>               
 typedef SMS::GarlandHeckbert_probabilistic_plane_policies<Surface_mesh, Kernel>    Prob_plane;
 typedef SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>               Classic_tri;
 typedef SMS::GarlandHeckbert_probabilistic_triangle_policies<Surface_mesh, Kernel> Prob_tri;
+typedef SMS::GarlandHeckbert_plane_and_line_policies<Surface_mesh, Kernel>         Classic_plane_and_line;
 
 // settings for benchmarking - throw away the first n_burns results and keep the n_samples samples
 constexpr int n_burns = 1;
@@ -41,6 +42,7 @@ constexpr std::size_t classic_plane_index = 0;
 constexpr std::size_t prob_plane_index = 1;
 constexpr std::size_t classic_tri_index = 2;
 constexpr std::size_t prob_tri_index = 3;
+constexpr std::size_t plane_and_line_index = 4;
 
 // =================================================================================================
 // =================================================================================================
@@ -89,15 +91,14 @@ get_all_meshes(const std::vector<std::string>& filenames)
 
 template <typename Policy>
 Surface_mesh edge_collapse(Surface_mesh& mesh,
-                           const double ratio = 0.2)
+                           const double ratio,
+                           const Policy p)
 {
   typedef typename Policy::Get_cost Cost;
   typedef typename Policy::Get_placement Placement;
   typedef SMS::Bounded_normal_change_placement<Placement> Bounded_placement;
 
   std::cout << "Edge collapse mesh of " << num_edges(mesh) << " edges. Policy: " << typeid(Policy).name() << std::endl;
-
-  const Policy p { mesh, 100 };
 
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
@@ -115,6 +116,12 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
   std::cout << edges(mesh).size() << " edges. Elapsed: " << std::to_string(elapsed_ns) << " (ms)\n";
 
   return mesh;
+}
+
+template <typename Policy>
+Surface_mesh edge_collapse(Surface_mesh& mesh,
+                           const double ratio = 0.2){
+  return edge_collapse(mesh, ratio, Policy(mesh));
 }
 
 // =================================================================================================
@@ -146,21 +153,6 @@ void time_mesh(const TriangleMesh mesh,
 }
 
 template <typename TriangleMesh>
-void time_policy(const TriangleMesh& mesh,
-                 std::ostream& out,
-                 const std::string& policy)
-{
-  if(policy == "classic_plane")
-    time_mesh<Classic_plane>(mesh, out);
-  else if(policy == "classic_tri")
-    time_mesh<Classic_tri>(mesh, out);
-  else if(policy == "prob_plane")
-    time_mesh<Prob_plane>(mesh, out);
-  else if(policy == "prob_tri")
-    time_mesh<Prob_tri>(mesh, out);
-}
-
-template <typename TriangleMesh>
 void time_all_policies(const TriangleMesh& mesh,
                        std::ostream& out)
 {
@@ -170,6 +162,7 @@ void time_all_policies(const TriangleMesh& mesh,
   time_mesh<Classic_tri>(mesh, out);
   time_mesh<Prob_plane>(mesh, out);
   time_mesh<Prob_tri>(mesh, out);
+  time_mesh<Classic_plane_and_line>(mesh, out);
 }
 
 // =================================================================================================
@@ -196,15 +189,16 @@ double hausdorff_error(const TriangleMesh& mesh,
 
 // calculate approximate Hausdorff errors for all different policies at the same decimation ratio
 template <typename TriangleMesh>
-std::array<FT, 4> hausdorff_errors(const TriangleMesh& mesh,
+std::array<FT, 5> hausdorff_errors(const TriangleMesh& mesh,
                                    double ratio)
 {
-  std::array<FT, 4> ret { {0, 0, 0, 0} };
+  std::array<FT, 5> ret { {0, 0, 0, 0, 0} };
 
   ret[classic_plane_index] = hausdorff_error<Classic_plane>(mesh, ratio);
   ret[prob_plane_index] = hausdorff_error<Prob_plane>(mesh, ratio);
   ret[classic_tri_index] = hausdorff_error<Classic_tri>(mesh, ratio);
   ret[prob_tri_index] = hausdorff_error<Prob_tri>(mesh, ratio);
+  ret[plane_and_line_index] = hausdorff_error<Classic_plane_and_line>(mesh, ratio);
 
   return ret;
 }
@@ -218,13 +212,14 @@ void hausdorff_errors(const TriangleMesh& mesh,
 
   for(InputIt it=begin; it!=end; ++it)
   {
-    std::array<double, 4> errs = hausdorff_errors(mesh, *it);
+    std::array<double, 5> errs = hausdorff_errors(mesh, *it);
     out << " -- Hausdorff error for collapse with ratio: " << *it << '\n';
 
     out << "classic plane: " << errs[classic_plane_index] << std::endl;
     out << "prob plane   : " << errs[prob_plane_index] << std::endl;
     out << "classic tri  : " << errs[classic_tri_index] << std::endl;
     out << "prob tri     : " << errs[prob_tri_index] << std::endl;
+    out << "plane + line : " << errs[plane_and_line_index] << std::endl;
   }
 }
 
@@ -252,11 +247,13 @@ void gather_face_aspect_ratio(const TriangleMesh& mesh,
   Surface_mesh pp = mesh;
   Surface_mesh ct = mesh;
   Surface_mesh pt = mesh;
+  Surface_mesh pl = mesh;
 
   edge_collapse<Classic_plane>(cp);
   edge_collapse<Prob_plane>(pp);
   edge_collapse<Classic_tri>(ct);
   edge_collapse<Prob_tri>(pt);
+  edge_collapse<Classic_plane_and_line>(pl);
 
   out << "Face aspect-ratio: classic plane\n";
   write_aspect_ratios(cp, out);
@@ -266,6 +263,8 @@ void gather_face_aspect_ratio(const TriangleMesh& mesh,
   write_aspect_ratios(ct, out);
   out << "Face aspect-ratio: prob triangle\n";
   write_aspect_ratios(pt, out);
+  out << "Face aspect-ratio: classic plane and line\n";
+  write_aspect_ratios(pl, out);
 }
 
 template <typename TriangleMesh>
@@ -287,6 +286,21 @@ void run(const std::pair<TriangleMesh, std::string>& input)
   gather_face_aspect_ratio(input.first, out);
 }
 
+template<typename TriangleMesh>
+void test_parameters_plane_and_line(const TriangleMesh& mesh){
+  using CGAL::Surface_mesh_simplification::make_GarlandHeckbert_plane_and_line_policies;
+  using PMap = boost::associative_property_map<std::map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, typename Kernel::Vector_3>>;
+  std::map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, typename Kernel::Vector_3> map;
+  PMap pmap(map);
+  CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, pmap);
+  TriangleMesh cp = mesh;
+  edge_collapse(cp, 0.2, make_GarlandHeckbert_plane_and_line_policies(cp,
+                                  CGAL::parameters::line_policies_weight(0.001)
+                                    .discontinuity_multiplier(50)
+                                    .geom_traits(Kernel())
+                                    .vertex_normal_map(pmap)));
+}
+
 int main(int argc, char** argv)
 {
   std::vector<std::string> default_data = { "data/helmet.off",
@@ -301,8 +315,10 @@ int main(int argc, char** argv)
     data = default_data;
 
   std::vector<std::pair<Surface_mesh, std::string> > named_meshes = get_all_meshes(data);
-  for(const auto& e : named_meshes)
+  for(const auto& e : named_meshes){
     run(e);
+    test_parameters_plane_and_line(e.first);
+  }
 
   std::cout << "Done!" << std::endl;
 

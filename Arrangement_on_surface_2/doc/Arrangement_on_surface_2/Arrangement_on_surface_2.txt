@@ -1048,8 +1048,8 @@ not coincide with any existing arrangement vertex and does not lie on
 any edge. As mentioned in Section \ref arr_ssectraverse, it is
 possible to obtain the face containing an isolated vertex calling the
 member function `Arrangement_on_surface_2::Vertex::face()`. The member
-function
-`Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`
+function \link Arrangement_on_surface_2::remove_isolated_vertex()
+`Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`\endlink
 accepts a handle to an isolated vertex and removes it from the
 arrangement.
 
@@ -4890,7 +4890,7 @@ using Arrangement = CGAL::Arrangement_2<Traits>;
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-conic_multiplicities,conic_multiplicities.png}
-An arrangement of a circular arc and an hyperbolic arc, as constructed
+An arrangement of a circular arc and a hyperbolic arc, as constructed
 in \ref Arrangement_on_surface_2/conic_multiplicities.cpp.
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
@@ -6841,9 +6841,9 @@ arrangement-with-history from a file:
 \cgalExample{Arrangement_on_surface_2/io_curve_history.cpp}
 
 \cgalAdvancedBegin
-The arrangement package also includes the free functions `write(arr,
-os, formatter)` and `read(arr, os, formatter)` that operate on a given
-arrangement-with-history instance `arr`.  Both functions are
+The arrangement package also includes the free functions
+`write(arr, os, formatter)` and `read(arr, os, formatter)` that operate
+on a given arrangement-with-history instance `arr`.  Both functions are
 parameterized by a `formatter` object, which defines the I/O
 format. The package contains a template called,
 `Arr_with_hist_text_formatter<ArranagmentFormatter>`, which extends an
@@ -6855,12 +6855,24 @@ and defines a simple textual input/output format.
 \subsection arr_ssecarr_io_vis Drawing an Arrangement
 <!-- ----------------------------------------------------------------------- -->
 
-An arrangement data structure can be visualized by calling the \link PkgArrangementOnSurface2Draw CGAL::draw<arr>() \endlink function as shown in the following example. This function opens a new window showing the given arrangement. A call to this function is blocking; that is, the program continues execution only after the user closes the window.
+An arrangement data structure can be visualized by calling one of the
+\link PkgArrangementOnSurface2Draw `CGAL::draw()` \endlink
+overloaded template functions. Every variant opens a new window
+showing the given arrangement. A call to any \link
+PkgArrangementOnSurface2Draw `CGAL::draw()` \endlink function is
+blocking; that is, the program continues execution only after the user
+closes the window. The most simple variant accepts the arrangement to
+draw and an optional string used as the title of the window. In the
+following example we exploit a variant that also accepts an object the
+type of which is an instance of the class template
+`Graphics_scene_options`. It allows us to tune the drawings.
 
 \cgalExample{Arrangement_on_surface_2/draw_arr.cpp}
 
-This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro
+`CGAL_USE_BASIC_VIEWER` is defined.  Linking with the cmake target
+`CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the
+definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{aos_fig-draw_arr,draw_arr.png}
 A snapshot of the window created by the program
@@ -6868,6 +6880,10 @@ A snapshot of the window created by the program
 of 14 vertices, 15 edges, and 3 faces. Notice that the colors are generated at random.
 \cgalFigureEnd
 
+Another pair of overloaded \link PkgArrangementOnSurface2Draw
+`CGAL::draw()` \endlink functions also accept a bounding box. Each
+of these two variants can be ised to draw arrangements induced by
+unbounded curves.
 
 <!-- ======================================================================= -->
 \section aos_sec-bgl Adapting to Boost Graphs

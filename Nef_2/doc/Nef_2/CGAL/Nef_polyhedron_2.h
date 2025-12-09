@@ -432,16 +432,15 @@ bool is_isolated(Vertex_const_handle v) ;
 
 returns one halfedge with source `v`. It's the starting point for
 the circular iteration over the halfedges with source `v`.
-\pre `!is_isolated(v)`.
-
+\pre `!`\ref is_isolated(Vertex_const_handle) "is_isolated" `(v)`.
 */
 Halfedge_const_handle first_out_edge(Vertex_const_handle v) ;
 
 /*!
 
 returns the halfedge with source `v` that is the last
-in the circular iteration before encountering `first_out_edge(v)`
-again. \pre `!is_isolated(v)`.
+in the circular iteration before encountering `first_out_edge(v)` again.
+\pre `!`\ref is_isolated(Vertex_const_handle) "is_isolated" `(v)`.
 
 */
 Halfedge_const_handle last_out_edge(Vertex_const_handle v) ;
@@ -482,7 +481,8 @@ Face_const_handle face(Halfedge_const_handle e) ;
 
 /*!
 
-returns the face incident to `v`. \pre `is_isolated(v)`.
+returns the face incident to `v`.
+\pre `!`\ref is_isolated(Vertex_const_handle) "is_isolated" `(v)`.
 */
 Face_const_handle face(Vertex_const_handle v) ;
 
@@ -733,13 +733,15 @@ bool is_standard(Vertex_const_handle v) ;
 
 /*!
 returns the standard
-point that is the embedding of `v`. \pre `E.is_standard(v)`.
+point that is the embedding of `v`.
+\pre \ref is_standard(Vertex_const_handle v) "is_standard"(`v`).
 */
 Point point(Vertex_const_handle v) ;
 
 /*!
 returns the ray defining
-the non-standard point on the frame. \pre `!E.is_standard(v)`.
+the non-standard point on the frame.
+\pre !\ref is_standard(Vertex_const_handle v) "is_standard"(`v`).
 */
 Ray ray(Vertex_const_handle v) ;
 
