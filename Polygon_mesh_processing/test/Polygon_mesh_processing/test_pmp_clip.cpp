@@ -427,7 +427,44 @@ void test()
     PMP::clip(tm1, K::Plane_3(0,-1,0,0), params::use_compact_clipper(false).clip_volume(true));
     assert(faces(tm1).size() == 6);
   }
-
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    PMP::triangulate_faces(input);
+    K::Plane_3 plane(0, -1, 0, -1);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true));
+    assert(faces(input).size()==36);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    K::Plane_3 plane(0, -1, 0, -1);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true).do_not_triangulate_faces(true));
+    assert(faces(input).size()==14);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    PMP::triangulate_faces(input);
+    K::Plane_3 plane(0, -1, 0, -2);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true));
+    assert(faces(input).size()==32);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    K::Plane_3 plane(0, -1, 0, -2);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true).do_not_triangulate_faces(true));
+    assert(faces(input).size()==16);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    PMP::triangulate_faces(input);
+    K::Plane_3 plane(0, 1, 0, 2);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true));
+    assert(faces(input).size()==0);
+  }
   // test special case
   {
     TriangleMesh tm1, tm2;
