@@ -71,7 +71,7 @@ private:
  */
 template <typename Kernel, int atanX, int atanY>
 class Arr_coordinate_converter<Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX, atanY>> {
-  using Geom_traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+  using Geom_traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atanX, atanY>;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_point = typename Approx_traits::Approx_point;
   using Approx_nt = typename Approx_traits::Approx_nt;
