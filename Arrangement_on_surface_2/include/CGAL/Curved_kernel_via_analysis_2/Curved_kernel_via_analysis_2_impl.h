@@ -83,8 +83,6 @@ public:
   //! tag specifies that merge and split functors are supported
   using Has_merge_category = CGAL::Tag_true;
 
-  using Has_do_intersect_category = CGAL::Tag_true;
-
   using Left_side_category = Arr_open_side_tag;
   using Bottom_side_category = Arr_open_side_tag;
   using Top_side_category = Arr_open_side_tag;

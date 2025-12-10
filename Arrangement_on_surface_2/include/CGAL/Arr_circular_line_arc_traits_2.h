@@ -394,7 +394,6 @@ public:
 
   using Has_left_category = CGAL::Tag_false;
   using Has_merge_category = CGAL::Tag_false;
-  using Has_do_intersect_category = CGAL::Tag_true;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;

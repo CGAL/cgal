@@ -52,7 +52,6 @@ public:
 
   // Categories
   typedef typename Base::Has_left_category          Has_left_category;
-  typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_category< Base >::Category
                                                     Left_side_category;

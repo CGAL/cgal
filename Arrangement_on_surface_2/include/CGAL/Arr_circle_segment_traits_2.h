@@ -56,7 +56,6 @@ public:
   // Category tags:
   using Has_left_category = Tag_true;
   using Has_merge_category = Tag_true;
-  using Has_do_intersect_category = Tag_true;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;

@@ -74,7 +74,6 @@ public:
 
   using Has_left_category = typename CKvA_2::Has_left_category;
   using Has_merge_category = typename CKvA_2::Has_merge_category;
-  using Has_do_intersect_category = typename CKvA_2::Has_do_intersect_category;
 
   using Left_side_category = typename CKvA_2::Left_side_category;
   using Bottom_side_category = typename CKvA_2::Bottom_side_category;
