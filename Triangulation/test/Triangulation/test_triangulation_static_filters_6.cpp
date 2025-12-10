@@ -23,7 +23,7 @@ int main()
     const int D = 6;   // we work in Euclidean 6-space
 
     std::vector<Triangulation::Point> points;
-    std::ifstream in("data/points.txt");
+    std::ifstream in("data/points_6.txt");
     Triangulation::Point p;
     int d;
     in >> d;
