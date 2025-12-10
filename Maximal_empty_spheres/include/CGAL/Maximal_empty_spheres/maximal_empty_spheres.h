@@ -29,9 +29,10 @@
 namespace CGAL {
 
     template<typename Dimension>
-    void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Eigen::MatrixXi *contact_indices=NULL, double atol=1e-8, int debug_level=1) {
-
+    void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Eigen::MatrixXi *contact_indices=NULL,
+            double atol=1e-8, int debug_level=1, int  ncp_max = 16,bool cone_filter=false) {
         bool full_simplices_only=true;
+
         const int D = Dimension::value;
         assert( D == G.cols()-1 && "Dimension does not match the number of columns in G");
 
@@ -157,7 +158,7 @@ namespace CGAL {
         // std::cout << "Ks * NC.T" << std::endl << Ks * NC.transpose() << std::endl;
 
         // @todo: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
-        int n_check_planes = (NC.rows()<=200)? NC.rows(): 200;
+        int n_check_planes = (NC.rows()<=ncp_max)? NC.rows(): ncp_max;
         if(debug_level > 0){
           std::cout << "n_check_planes: " << n_check_planes << std::endl;
           std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
@@ -171,7 +172,6 @@ namespace CGAL {
             std::cout << ((NC * Ks.transpose()).rowwise().maxCoeff().array() <= atol).array().all() << std::endl;
         }
 
-        bool cone_filter=true;
         int n_cone_filtered=0;
         std::vector<Eigen::RowVectorXd> solutions_;
         std::vector<Eigen::RowVectorXi> contact_indices_;
