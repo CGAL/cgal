@@ -2,7 +2,6 @@
 /// \defgroup PkgTriangulation3Concepts Concepts
 /// \ingroup PkgTriangulation3Ref
 
-
 /// \defgroup PkgTriangulation3TriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulation3Ref
 
@@ -10,6 +9,9 @@
 /// \ingroup PkgTriangulation3Ref
 
 /// \defgroup PkgTriangulation3VertexCellClasses Vertex and Cell Classes
+/// \ingroup PkgTriangulation3Ref
+
+/// \defgroup PkgTriangulation3Miscellaneous Miscellaneous
 /// \ingroup PkgTriangulation3Ref
 
 /*!
@@ -94,28 +96,32 @@ is opposite to the vertex with the same index. See
 
 \cgalCRPSubsection{Main Classes}
 
-- `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure>`
-- `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3,LocationPolicy,SurjectiveLockDataStructure>`
-- `CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure>`
-- `CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>`
-- `CGAL::Triangulation_vertex_base_with_info_3<Info, TriangulationTraits_3, TriangulationVertexBase_3>`
-- `CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>`
-- `CGAL::Triangulation_cell_base_with_info_3<Info, TriangulationTraits_3, TriangulationCellBase_3>`
-- `CGAL::Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3,Cb>`
-- `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3,Cb>`
-- `CGAL::Regular_triangulation_vertex_base_3<RegularTriangulationTraits_3,Vb>`
-- `CGAL::Regular_triangulation_cell_base_3<RegularTriangulationTraits_3,Cb>`
-- `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<RegularTriangulationTraits_3,Cb>`
-- `CGAL::Triangulation_simplex_3<Triangulation_3>`
+- `CGAL::Triangulation_3<Traits,TDS,SLDS>`
+- `CGAL::Delaunay_triangulation_3<Traits,TDS,LP,SLDS>`
+- `CGAL::Regular_triangulation_3<Traits,TDS,SLDS>`
+- `CGAL::Triangulation_vertex_base_3<Traits,TDSVb>`
+- `CGAL::Triangulation_vertex_base_with_info_3<Info,Traits,Vb>`
+- `CGAL::Triangulation_cell_base_3<Traits,TDSCb>`
+- `CGAL::Triangulation_cell_base_with_info_3<Info,Traits,Cb>`
+- `CGAL::Delaunay_triangulation_cell_base_3<Traits,Cb>`
+- `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<Traits,Cb>`
+- `CGAL::Regular_triangulation_vertex_base_3<Traits,Vb>`
+- `CGAL::Regular_triangulation_cell_base_3<Traits,Cb>`
+- `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<Traits,Cb>`
+- `CGAL::Triangulation_simplex_3<TDS>`
 
 \cgalCRPSubsection{Traits Classes}
 
-- `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>`
+- `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>` (deprecated)
 - `CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>`
 
 \cgalCRPSection{Enums}
 
 - `CGAL::Triangulation_3::Locate_type`
+
+\cgalCRPSection{Functions}
+
+- `CGAL::link_to_face_graph()`
 
 \cgalCRPSection{Draw a Triangulation 3}
 
