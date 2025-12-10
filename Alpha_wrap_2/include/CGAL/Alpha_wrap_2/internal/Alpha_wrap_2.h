@@ -21,7 +21,6 @@
 // - demo can't wrap from pure drawing
 
 // @todo yesterday
-// - document and test new kernel functors
 // - document and test DT2 face base classes
 // - submit feature
 

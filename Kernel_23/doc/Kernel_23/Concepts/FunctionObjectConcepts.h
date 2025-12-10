@@ -1221,6 +1221,50 @@ public:
   \sa `compare_squared_radius_grp`
 
 */
+class CompareSquaredRadius_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    compares the squared radius of the circle of radius 0 centered at `p` to `sr`.
+    This returns the opposite sign of `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::FT& sr);
+
+  /*!
+    compares the squared radius of the circle defined by the
+    points `p` and `q` to `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::FT& sr);
+
+  /*!
+    compares the squared radius of the circle defined by the
+    points `p`, `q`, and `r` to `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::Point_2& r,
+                               const Kernel::FT& sr);
+
+  /// @}
+
+}; /* end Kernel::CompareSquaredRadius_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines{AdaptableTernaryFunction}
+
+  \sa `compare_squared_radius_grp`
+
+*/
 class CompareSquaredRadius_3 {
 public:
 
@@ -6114,7 +6158,13 @@ public:
     returns the point of `t` that is the closest to `p`.
   */
   Kernel::Point_2 operator()(const Kernel::Triangle_2& t,
-                             const Kernel::Point_3& p);
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns `t`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Point_2& t,
+                             const Kernel::Point_2&);
 
   /// @}
 
