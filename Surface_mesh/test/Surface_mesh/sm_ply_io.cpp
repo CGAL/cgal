@@ -72,6 +72,18 @@ int main()
     ++dvalue;
   }
 
+  std::size_t uvalue=3001;
+  auto h_uvmap = mesh.add_property_map<SMesh::Halfedge_index, std::vector<std::size_t>>("h:uv").first;
+  auto h_umap = mesh.add_property_map<SMesh::Halfedge_index, std::size_t>("h:u").first;
+  auto h_vmap = mesh.add_property_map<SMesh::Halfedge_index, std::size_t>("h:v").first;
+  for (SMesh::Halfedge_index h : halfedges(mesh))
+  {
+    h_uvmap[h]={uvalue, 2*uvalue};
+    h_umap[h]=uvalue;
+    h_vmap[h]=2*uvalue;
+    ++uvalue;
+  }
+
   out.close();
   out.open("out_ascii.ply");
   CGAL::IO::write_PLY(out, mesh);
@@ -119,6 +131,21 @@ int main()
       assert(f_umap[f]==dvalue);
       assert(f_vmap[f]==-dvalue);
       ++dvalue;
+    }
+
+    auto h_uvmap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::vector<std::uint32_t>>("h:uv").value();
+    auto h_umap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:u").value();
+    auto h_vmap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:v").value();
+
+    uvalue=3001;
+    for (SMesh::Halfedge_index h : halfedges(mesh_bis))
+    {
+      assert(h_uvmap_bis[h].size()==2);
+      assert(h_uvmap_bis[h][0]==uvalue);
+      assert(h_uvmap_bis[h][1]==2*uvalue);
+      assert(h_umap_bis[h]==uvalue);
+      assert(h_vmap_bis[h]==2*uvalue);
+      ++uvalue;
     }
   }
 
