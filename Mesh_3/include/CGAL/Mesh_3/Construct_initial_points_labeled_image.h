@@ -19,6 +19,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <CGAL/Image_3.h>
 
