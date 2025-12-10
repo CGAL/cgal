@@ -975,11 +975,9 @@ private:
 #endif
 
     // fh's circumcenter should not be within the offset volume
-    CGAL_assertion_code(const Point_2& fh_cc = circumcenter(fh);)
+    const Point_2& fh_cc = circumcenter(fh);
     CGAL_assertion_code(const Disk_2 fh_cc_offset_disk = disk(fh_cc, m_sq_offset);)
     CGAL_assertion(!m_oracle.do_intersect(fh_cc_offset_disk));
-
-    const Point_2& fh_cc = circumcenter(fh);
 
     // If the voronoi edge intersects the offset, the steiner point is the first intersection
     if(m_oracle.first_intersection(fh_cc, neighbor_cc, steiner_point, m_offset))
