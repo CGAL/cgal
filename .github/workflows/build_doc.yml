@@ -213,7 +213,7 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: address
             });
 
@@ -230,6 +230,6 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: msg
             });
