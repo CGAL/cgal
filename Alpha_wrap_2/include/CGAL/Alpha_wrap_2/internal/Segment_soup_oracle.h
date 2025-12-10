@@ -23,6 +23,7 @@
 #include <CGAL/AABB_segment_primitive_2.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/property_map.h>
 
 #include <algorithm>
@@ -373,6 +374,109 @@ public:
           m_segments_ptr->push_back(s);
         }
       }
+    }
+
+    this->tree().rebuild(std::cbegin(*m_segments_ptr), std::cend(*m_segments_ptr));
+
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of an edge that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "SS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
+  }
+
+  template <typename PolygonWithHoles,
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
+  void add_polygon_with_holes(const PolygonWithHoles& pwh,
+                              const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+  {
+    const std::size_t old_size = m_segments_ptr->size();
+
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "Insert into AABB tree (polygon with holes)..." << std::endl;
+#endif
+
+    if(pwh.outer_boundary().is_empty() && pwh.holes().empty())
+    {
+#ifdef CGAL_AW2_DEBUG
+      std::cout << "Warning: Input is empty (polygon with holes)" << std::endl;
+#endif
+      return;
+    }
+
+    for(const Segment& s : pwh.outer_boundary().edges()) {
+      if(is_degenerate(s))
+      {
+#ifdef CGAL_AW2_DEBUG
+        std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+        continue;
+      }
+      m_segments_ptr->push_back(s);
+    }
+
+    for(const auto& hole : pwh.holes()) {
+      for(const Segment& s : hole.edges()) {
+        if(is_degenerate(s))
+        {
+#ifdef CGAL_AW2_DEBUG
+          std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+          continue;
+        }
+        m_segments_ptr->push_back(s);
+      }
+    }
+
+    this->tree().rebuild(std::cbegin(*m_segments_ptr), std::cend(*m_segments_ptr));
+
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of an edge that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "SS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
+  }
+
+  template <typename Traits_, typename Container_,
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
+  void add_polygon(const CGAL::Polygon_2<Traits_, Container_>& p,
+                   const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+  {
+    const std::size_t old_size = m_segments_ptr->size();
+
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "Insert into AABB tree (polyon)..." << std::endl;
+#endif
+
+    if(p.is_empty())
+    {
+#ifdef CGAL_AW2_DEBUG
+      std::cout << "Warning: Input is empty (polyon)" << std::endl;
+#endif
+      return;
+    }
+
+    for(const Segment& s : p.edges()) {
+      if(is_degenerate(s))
+      {
+#ifdef CGAL_AW2_DEBUG
+        std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+        continue;
+      }
+      m_segments_ptr->push_back(s);
     }
 
     this->tree().rebuild(std::cbegin(*m_segments_ptr), std::cend(*m_segments_ptr));

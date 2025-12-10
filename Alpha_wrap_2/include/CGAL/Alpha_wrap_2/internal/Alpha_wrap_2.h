@@ -1194,6 +1194,14 @@ public:
     std::cout << "> Initialize..." << std::endl;
 #endif
 
+    if(m_oracle.empty())
+    {
+#ifdef CGAL_AW2_DEBUG
+      std::cout << "Oracle is empty." << std::endl;
+#endif
+      return false;
+    }
+
     const bool resuming = refining && (alpha == m_alpha) && (offset == m_offset);
 
 #ifdef CGAL_AW2_DEBUG

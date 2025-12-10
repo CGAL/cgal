@@ -84,6 +84,14 @@ CGAL_IS_RANGE_OF_KERNEL_OBJECT(Triangle_2)
 
 #undef CGAL_IS_RANGE_OF_KERNEL_OBJECT
 
+template <typename Input>
+struct is_GeneralPolygonWithHoles_2
+{
+  // to distinguish between SequenceContainers of points, and GeneralPolygonWithHoles_2
+  BOOST_MPL_HAS_XXX_TRAIT_DEF(Hole_const_iterator)
+  static constexpr bool value = has_Hole_const_iterator<Input>::value;
+};
+
 // multipolygon, check for a typedef 'Polygon_with_holes_2' required by `MultipolygonWithHoles_2`
 template <typename Input>
 struct is_MultipolygonWithHoles
@@ -273,7 +281,7 @@ void alpha_wrap_2(const TriangleRange& triangles,
   using Out_point_2 = typename boost::range_value<Polygon_2>::type;
   using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
 
-  // could imagine this being just a conversion, but ask for equality for now
+  // could imagine this being just a conversion, but demand equality for now
   static_assert(std::is_same_v<In_K, Out_K>);
 
   using Oracle = Alpha_wraps_2::internal::Segment_soup_oracle<Geom_traits>;
@@ -291,14 +299,157 @@ void alpha_wrap_2(const TriangleRange& triangles,
 // The convenience overloads are common to all ranges
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// WITH A MULTI-POLYGON ----------------------------------------------------------------------------
+// WITH POLYGONS -----------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
 * \ingroup AW2_free_functions_grp
 *
 * \brief computes a watertight, 1-manifold, simple multipolygon that strictly contains
-* an input range of polygons.
+* an input polygon.
+*
+* The parameters `alpha` and `offset` respectively control which features will appear in the output,
+* and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
+*
+* \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
+* \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param p the input polygon
+* \param alpha the value of the parameter `alpha`
+* \param offset the value of the parameter `offset`
+* \param alpha_wrap the output multipolygon
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
+*                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
+* \pre `alpha` and `offset` are strictly positive values.
+*/
+template <typename Traits_, typename Container_,
+          typename MultipolygonWithHoles,
+          typename InputNamedParameters>
+void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
+                  const double alpha,
+                  const double offset,
+                  MultipolygonWithHoles& alpha_wrap,
+                  const InputNamedParameters& np)
+{
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  using In_K = Traits_;
+
+  using Geom_traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                                   InputNamedParameters,
+                                                                   In_K>::type;
+
+  using Out_polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
+  using Out_polygon_2 = typename Out_polygon_with_holes_2::Polygon_2;
+  using Out_point_2 = typename boost::range_value<Out_polygon_2>::type;
+  using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
+
+  // could imagine this being just a conversion, but demand equality for now
+  static_assert(std::is_same_v<In_K, Out_K>);
+
+  using Oracle = Alpha_wraps_2::internal::Segment_soup_oracle<Geom_traits>;
+  using Wrapper = Alpha_wraps_2::internal::Alpha_wrapper_2<Oracle>;
+
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  Oracle oracle(alpha, gt);
+  oracle.add_polygon(p);
+
+  Wrapper alpha_wrap_builder(oracle);
+  alpha_wrap_builder(alpha, offset, alpha_wrap);
+}
+
+/*!
+* \ingroup AW2_free_functions_grp
+*
+* \brief computes a watertight, 1-manifold, simple multipolygon that strictly contains
+* an input polygon with holes.
+*
+* The parameters `alpha` and `offset` respectively control which features will appear in the output,
+* and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
+*
+* \tparam PolygonWithHoles a model of `GeneralPolygonWithHoles_2`
+* \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
+* \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param pwh the input polygon with holes
+* \param alpha the value of the parameter `alpha`
+* \param offset the value of the parameter `offset`
+* \param alpha_wrap the output multipolygon
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
+*                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
+* \pre `alpha` and `offset` are strictly positive values.
+*/
+template <typename PolygonWithHoles,
+          typename MultipolygonWithHoles,
+          typename InputNamedParameters>
+void alpha_wrap_2(const PolygonWithHoles& pwh,
+                  const double alpha,
+                  const double offset,
+                  MultipolygonWithHoles& alpha_wrap,
+                  const InputNamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                  , std::enable_if_t<Alpha_wraps_2::internal::is_GeneralPolygonWithHoles_2<PolygonWithHoles>::value>* = nullptr
+#endif
+                  )
+{
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  using In_polygon_2 = typename PolygonWithHoles::Polygon_2;
+  using In_point_2 = typename boost::range_value<In_polygon_2>::type;
+  using In_K = typename CGAL::Kernel_traits<In_point_2>::type;
+
+  using Geom_traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                                   InputNamedParameters,
+                                                                   In_K>::type;
+
+  using Out_polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
+  using Out_polygon_2 = typename Out_polygon_with_holes_2::Polygon_2;
+  using Out_point_2 = typename boost::range_value<Out_polygon_2>::type;
+  using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
+
+  // could imagine this being just a conversion, but demand equality for now
+  static_assert(std::is_same_v<In_K, Out_K>);
+
+  using Oracle = Alpha_wraps_2::internal::Segment_soup_oracle<Geom_traits>;
+  using Wrapper = Alpha_wraps_2::internal::Alpha_wrapper_2<Oracle>;
+
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  Oracle oracle(alpha, gt);
+  oracle.add_polygon_with_holes(pwh);
+
+  Wrapper alpha_wrap_builder(oracle);
+  alpha_wrap_builder(alpha, offset, alpha_wrap);
+}
+
+/*!
+* \ingroup AW2_free_functions_grp
+*
+* \brief computes a watertight, 1-manifold, simple multipolygon that strictly contains
+* an input multipolygon.
 *
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
@@ -364,7 +515,7 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
   using Out_point_2 = typename boost::range_value<Out_polygon_2>::type;
   using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
 
-  // could imagine this being just a conversion, but ask for equality for now
+  // could imagine this being just a conversion, but demand equality for now
   static_assert(std::is_same_v<In_K, Out_K>);
 
   using Oracle = Alpha_wraps_2::internal::Segment_soup_oracle<Geom_traits>;
