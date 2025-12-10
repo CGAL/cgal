@@ -97,6 +97,8 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 - `CGAL::Triangulation_face_base_2<Traits,Fb>`
 - `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
+- `CGAL::Delaunay_triangulation_face_base_2<Traits,Fb>`
+- `CGAL::Delaunay_triangulation_face_base_with_circumcenter_2<Traits,Fb>`
 - `CGAL::Regular_triangulation_face_base_2<Traits,Fb>`
 - `CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>`
 - `CGAL::Constrained_triangulation_face_base_2<Traits,Fb>`

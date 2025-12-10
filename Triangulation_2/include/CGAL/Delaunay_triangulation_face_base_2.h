@@ -40,20 +40,20 @@ public:
   };
 
 public:
-Delaunay_triangulation_face_base_2()
-       : Fb() {}
+  Delaunay_triangulation_face_base_2()
+    : Fb() {}
 
-       Delaunay_triangulation_face_base_2(Vertex_handle v0,
-                                          Vertex_handle v1,
-                                          Vertex_handle v2)
+  Delaunay_triangulation_face_base_2(Vertex_handle v0,
+                                     Vertex_handle v1,
+                                     Vertex_handle v2)
     : Fb(v0,v1,v2) {}
 
-    Delaunay_triangulation_face_base_2(Vertex_handle v0,
-                                       Vertex_handle v1,
-                                       Vertex_handle v2,
-                                       Face_handle n0,
-                                       Face_handle n1,
-                                       Face_handle n2)
+  Delaunay_triangulation_face_base_2(Vertex_handle v0,
+                                     Vertex_handle v1,
+                                     Vertex_handle v2,
+                                     Face_handle n0,
+                                     Face_handle n1,
+                                     Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2) {}
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
