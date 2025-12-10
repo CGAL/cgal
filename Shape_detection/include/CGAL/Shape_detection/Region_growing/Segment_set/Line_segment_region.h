@@ -211,6 +211,7 @@ public:
     const auto& seg = get(m_segment_map, query);
     const Point& s = seg.source();
     const Point& t = seg.target();
+
     const Vector dir(s, t);
     if (m_distance_threshold > FT(0)) {
       const auto& seed_seg = get(m_segment_map, m_seed);
@@ -221,6 +222,9 @@ public:
           m_compare_squared_distance(t, seed_line, m_squared_distance_threshold) != SMALLER)
         return false;
     }
+
+    if (s == t)
+      return true;
 
     if (m_cos_value_threshold < FT(1)) {
       const auto& seed_seg = get(m_segment_map, m_seed);
