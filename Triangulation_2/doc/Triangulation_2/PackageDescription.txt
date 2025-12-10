@@ -5,10 +5,11 @@
 /// \defgroup PkgTriangulation2TriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulation2Ref
 
+/// \defgroup PkgTriangulation2TraitsClasses Traits Classes
+/// \ingroup PkgTriangulation2Ref
 
 /// \defgroup PkgTriangulation2VertexFaceClasses Vertex and Face Classes
 /// \ingroup PkgTriangulation2Ref
-
 
 /// \defgroup PkgTriangulation2Miscellaneous Miscellaneous
 /// \ingroup PkgTriangulation2Ref
@@ -107,6 +108,11 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
 
 - `CGAL::Triangulation_cw_ccw_2`
+
+\cgalCRPSubsection{Traits Classes}
+
+- `CGAL::Robust_circumcenter_filtered_traits_2<K>`
+- `CGAL::Robust_weighted_circumcenter_filtered_traits_2<K>`
 
 \cgalCRPSection{Functions}
 
