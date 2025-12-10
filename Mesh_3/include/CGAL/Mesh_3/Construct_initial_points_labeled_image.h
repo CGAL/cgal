@@ -189,6 +189,7 @@ struct Construct_initial_points_labeled_image
                                                      Word()));
     std::cout << "  " << seeds.size() << " components were found." << std::endl;
     std::cout << "Construct initial points..." << std::endl;
+    int nb_of_points = 0;
     for(const Seed seed : seeds)
     {
       const Point_3 seed_point = get_point(seed.i, seed.j, seed.k);
@@ -320,9 +321,11 @@ struct Construct_initial_points_labeled_image
           c3t3.set_index(v, intersect_index);
 
           *pts++ = std::make_pair(pi, intersect_index); // dimension 2 by construction, points are on surface
+          ++nb_of_points;
         }
       }
     }
+    std::cout << "  " << nb_of_points << " initial points were constructed." << std::endl;
     return pts;
   }
 };

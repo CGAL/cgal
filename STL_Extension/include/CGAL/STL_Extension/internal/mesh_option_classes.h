@@ -265,21 +265,34 @@ struct Initialization_options
       , call_( [](void* g, Point_output_function_iterator oit, const int n) {
                  using Real_generator = CGAL::cpp20::remove_cvref_t<Generator>;
                  auto* real_g = static_cast<Real_generator*>(g);
-                 return (*real_g)(oit, n);
+                 if( n < 0 )
+                   return (*real_g)(oit);
+                 else
+                  return (*real_g)(oit, n);
                } )
     {
     }
 
     Generator_ref() = default;
 
-    Point_output_function_iterator operator()(Point_output_function_iterator oit, const int n) const
+    template <typename ...Args>
+    Point_output_function_iterator operator()(Point_output_function_iterator oit, Args&& ...args) const
     {
-      return call_(generator_, oit, n);
+      if constexpr(sizeof...(args) == 0) {
+        return call_(generator_, oit, -1);
+      } else {
+        return call_(generator_, oit, std::forward<Args>(args)...);
+      }
     }
 
-    Point_output_function_iterator operator()(Point_output_function_iterator oit, const int n)
+    template <typename ...Args>
+    Point_output_function_iterator operator()(Point_output_function_iterator oit, Args&& ...args)
     {
-      return call_(generator_, oit, n);
+      if constexpr(sizeof...(args) == 0) {
+        return call_(generator_, oit, -1);
+      } else {
+        return call_(generator_, oit, std::forward<Args>(args)...);
+      }
     }
 
     bool operator==(std::nullptr_t) const { return generator_ == nullptr; }
@@ -296,8 +309,8 @@ struct Initialization_options
     , end_it(cend(initial_points))
   {}
 
-  template <typename Self, typename OutputIterator>
-  static OutputIterator call_operator(Self& self, OutputIterator pts_it, const int n)
+  template <typename Self, typename OutputIterator, typename ...Args>
+  static OutputIterator call_operator(Self& self, OutputIterator pts_it, Args&& ...args)
   {
     // add initial_points
     pts_it = std::copy(self.begin_it, self.end_it, pts_it);
@@ -312,20 +325,20 @@ struct Initialization_options
     Point_output_function_iterator output_iterator{ function_ref };
 
     // ...and use the type-erased output iterator with the type-erased generator.
-    self.initial_points_generator_(output_iterator, n);
+    self.initial_points_generator_(output_iterator, std::forward<Args>(args)...);
     return pts_it;
   }
 
-  template<typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, const int n = 0)
+  template<typename OutputIterator, typename ...Args>
+  OutputIterator operator()(OutputIterator pts, Args&& ...args)
   {
-    return call_operator(*this, pts, n);
+    return call_operator(*this, pts, std::forward<Args>(args)...);
   }
 
-  template<typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, const int n = 0) const
+  template<typename OutputIterator, typename ...Args>
+  OutputIterator operator()(OutputIterator pts, Args&& ...args) const
   {
-    return call_operator(*this, pts, n);
+    return call_operator(*this, pts, std::forward<Args>(args)...);
   }
 
   bool is_default() const
