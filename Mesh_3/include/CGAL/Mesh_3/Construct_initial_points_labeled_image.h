@@ -135,6 +135,8 @@ struct Construct_initial_points_labeled_image
   * - a `Weighted_point_3` for the point
   * - an `int` for the minimal dimension of the subcomplexes on which the point lies
   * - a `MeshDomain::Index` for the corresponding subcomplex index
+  * @param pts output iterator to store the constructed points
+  * @param n number of points to be constructed per connected component
   */
   template <typename OutputIterator>
   OutputIterator operator()(OutputIterator pts, const int n = 20) const
