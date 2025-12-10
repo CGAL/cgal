@@ -149,7 +149,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Goes through Event" << std::endl;
 #endif
-  // TODO Vector is suboptimal for arbitrary insertion (Actually negligeable in the running time)
+  // Vector is suboptimal for arbitrary insertion (Actually negligeable in the running time)
   // Track order of the lines along y along the events
   std::vector< std::size_t > y_order;
   y_order.push_back(event_queue[0].li);
@@ -435,10 +435,10 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 *   \cgalParamNEnd
 */
 template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	begin,
-		                                                      InputIterator  	end,
-		                                                      OutputContainer out,
-                                                          const NamedParameters &np = parameters::default_values())
+OutputContainer double_snap_rounding_2(InputIterator  	begin,
+		                                   InputIterator  	end,
+		                                   OutputContainer  out,
+                                       const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
                                                               NamedParameters,
