@@ -33,6 +33,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_has.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2_dispatching.h>
 
 namespace CGAL {
@@ -139,10 +140,8 @@ public:
     /*! 1. Implementation of the operator in case the bottom, top, right, and
      * left sides do not have boundary conditions.
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_all_sides_oblivious_tag,
-                                     Arr_all_sides_oblivious_tag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_all_sides_oblivious_tag, Arr_all_sides_oblivious_tag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
       return cmp_y_at_x(p, xcv);
@@ -151,10 +150,8 @@ public:
     /*! 2. Implementation of the operator in case the left and right sides are
      * identified, and the bottom and top sides do not have boundary conditions.
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_has_identified_side_tag,
-                                     Arr_all_sides_oblivious_tag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_has_identified_side_tag, Arr_all_sides_oblivious_tag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
 
@@ -249,10 +246,8 @@ public:
     /*! 5. Implementation of the operator in case the left and right sides are
      * identified, and the bottom and top sides are also identified.
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_has_identified_side_tag xtag,
-                                     Arr_has_identified_side_tag ytag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_has_identified_side_tag xtag, Arr_has_identified_side_tag ytag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
 
@@ -281,10 +276,8 @@ public:
      * boundary conditions (but they are not identified) and the bottom and top
      * sides are identified.
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_boundary_cond_tag xtag,
-                                     Arr_has_identified_side_tag ytag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_boundary_cond_tag xtag, Arr_has_identified_side_tag ytag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
 
@@ -322,10 +315,8 @@ public:
      * not have boundary condition, and the bottom and top sides do have (but
      * they are not identified).
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_all_sides_oblivious_tag,
-                                     Arr_boundary_cond_tag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_all_sides_oblivious_tag, Arr_boundary_cond_tag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
 
@@ -363,10 +354,8 @@ public:
     * identified, and the bottom and top sides have boundary conditions (but
     * they are not identified).
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_has_identified_side_tag xtag,
-                                     Arr_boundary_cond_tag ytag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_has_identified_side_tag xtag, Arr_boundary_cond_tag ytag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
 
@@ -393,10 +382,8 @@ public:
      * boundary conditions, but they are not identified, and the bottom and
      * top sides also have boundary conditions, but they are not identified.
      */
-    Comparison_result compare_y_at_x(const Point_2& p,
-                                     const X_monotone_curve_2& xcv,
-                                     Arr_boundary_cond_tag xtag,
-                                     Arr_boundary_cond_tag ytag) const {
+    Comparison_result compare_y_at_x(const Point_2& p, const X_monotone_curve_2& xcv,
+                                     Arr_boundary_cond_tag xtag, Arr_boundary_cond_tag ytag) const {
       const Base& base = m_self;
       auto cmp_y_at_x = base.compare_y_at_x_2_object();
 
@@ -465,10 +452,8 @@ public:
 
     /*! Implementation of the operator() in case the HasLeft tag is true.
      */
-    Comparison_result _compare_y_at_x_left_imp(const X_monotone_curve_2& xcv1,
-                                               const X_monotone_curve_2& xcv2,
-                                               const Point_2& p,
-                                               Tag_true) const {
+    Comparison_result _compare_y_at_x_left_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                               const Point_2& p, Tag_true) const {
       const Base* base = m_self;
       return (base->compare_y_at_x_left_2_object()(xcv1, xcv2, p));
     }
@@ -476,10 +461,8 @@ public:
     /*! Implementation of the operator() in case the HasLeft tag is false.
      */
     Comparison_result
-    _compare_y_at_x_left_imp(const X_monotone_curve_2& xcv1,
-                             const X_monotone_curve_2& xcv2,
-                             const Point_2& CGAL_assertion_code(p),
-                             Tag_false) const {
+    _compare_y_at_x_left_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                             const Point_2& CGAL_assertion_code(p), Tag_false) const {
       auto ps_x = m_self->parameter_space_in_x_2_object();
       auto ps_y = m_self->parameter_space_in_y_2_object();
       auto min_vertex = m_self->construct_min_vertex_2_object();
@@ -487,8 +470,7 @@ public:
 
       // Check if the left ends of the curves are bounded endpoints.
       const Arr_parameter_space ps_x1 = ps_x(xcv1, ARR_MIN_END);
-      const Arr_parameter_space ps_y1 =
-        (ps_x1 != ARR_INTERIOR ? ARR_INTERIOR : ps_y(xcv1, ARR_MIN_END));
+      const Arr_parameter_space ps_y1 = (ps_x1 != ARR_INTERIOR ? ARR_INTERIOR : ps_y(xcv1, ARR_MIN_END));
       const bool has_left1 = (ps_x1 == ARR_INTERIOR && ps_y1 == ARR_INTERIOR);
 
       const Arr_parameter_space ps_x2 = ps_x(xcv2, ARR_MIN_END);
@@ -553,8 +535,7 @@ public:
       // If the category indicates that "do_intersect" is available, it calls
       // the function with same name defined in the base class. Otherwise, it
       // uses the intersection construction to implement this predicate.
-      // return _do_intersect_imp(xcv1, xcv2, Has_do_intersect_category());
-      return false;
+      return _do_intersect_imp(xcv1, xcv2, has_intersect_2<Base>::value);
     }
 
   protected:
@@ -575,14 +556,14 @@ public:
 
     /*! Implementation of the operator() in case the HasDoIntersect tag is true.
      */
-    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Tag_true) const {
+    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, std::true_type) const {
       const Base* base = m_self;
       return (base->do_intersect_2_object()(xcv1, xcv2));
     }
 
     /*! Implementation of the operator() in case the HasDoIntersect tag is false.
      */
-    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Tag_false) const {
+    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, std::false_type) const {
       using Intersection_point = std::pair<Point_2, Multiplicity>;
       using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
       std::list<Intersection_result> intersections;
@@ -766,8 +747,7 @@ public:
     /*! Implementation of the operator() in case the base should used.
      */
     Comparison_result comp_y_near_bnd(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
-                                      Arr_curve_end ce,
-                                      Arr_use_traits_tag) const
+                                      Arr_curve_end ce, Arr_use_traits_tag) const
     { return m_base->compare_y_near_boundary_2_object()(xcv1, xcv2, ce); }
 
     /*! Implementation of the operator() in case the dummy should be used.
@@ -1169,16 +1149,14 @@ public:
   protected:
     // for open
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce,
-                                          Arr_open_side_tag) const {
+                                          Arr_curve_end ce, Arr_open_side_tag) const {
       Comparison_result res = m_self->compare_y_near_boundary_2_object()(xcv1, xcv2, ce);
       return res;
     }
 
     // for closed and identified
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce,
-                                          Arr_not_oblivious_side_tag) const {
+                                          Arr_curve_end ce, Arr_not_oblivious_side_tag) const {
       Comparison_result res =
         m_self->compare_y_on_boundary_2_object()(m_self->construct_vertex_at_curve_end_2_object()(xcv1, ce),
                                                  m_self->construct_vertex_at_curve_end_2_object()(xcv2, ce));
@@ -1612,8 +1590,7 @@ public:
     //@{
     /*! Implementation in the case of oblivious boundaries. */
     bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
-                       Arr_all_sides_oblivious_tag,
-                       Arr_all_sides_oblivious_tag) const {
+                       Arr_all_sides_oblivious_tag, Arr_all_sides_oblivious_tag) const {
       auto compare_x = m_self->compare_x_2_object();
       auto min_res = compare_x(p, m_self->construct_min_vertex_2_object()(xcv));
       if (min_res == SMALLER) return false;   // p is to the left of the x-range
@@ -2091,8 +2068,7 @@ public:
     bool operator()(const X_monotone_curve_2& cv, bool cv_to_right,
                     const X_monotone_curve_2& cv1, bool cv1_to_right,
                     const X_monotone_curve_2& cv2, bool cv2_to_right,
-                    const Point_2& p,
-                    bool& cv_equal_cv1, bool& cv_equal_cv2) const {
+                    const Point_2& p, bool& cv_equal_cv1, bool& cv_equal_cv2) const {
       // std::cout << "is_between(" << std::endl
       //           << "  " << cv << "," << cv_to_right << "," << std::endl
       //           << "  " << cv1 << "," << cv1_to_right << "," << std::endl
@@ -2206,13 +2182,9 @@ public:
      * bottom-top boundary sided are contracted.
      * \pre p cannot lie on the top boundary
      */
-    bool is_between_rrr(const X_monotone_curve_2& cv,
-                        const X_monotone_curve_2& cv1,
-                        const X_monotone_curve_2& cv2,
-                        const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
-                        Arr_has_identified_side_tag,
-                        Arr_has_contracted_side_tag) const {
+    bool is_between_rrr(const X_monotone_curve_2& cv, const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
+                        const Point_2& p, bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag, Arr_has_contracted_side_tag) const {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
       auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
@@ -2264,10 +2236,8 @@ public:
       // None of the curves coincide with the identification curve
       auto psx = ps_in_x(cv, ARR_MIN_END);
       if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
-        return is_between_rrr(cv, cv1, cv2, p,
-                              cv_equal_cv1, cv_equal_cv2,
-                              Arr_all_sides_oblivious_tag(),
-                              Arr_all_sides_oblivious_tag());
+        return is_between_rrr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(), Arr_all_sides_oblivious_tag());
       if (psy == ARR_BOTTOM_BOUNDARY) {
         auto res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
         auto res1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
@@ -2362,10 +2332,8 @@ public:
       auto psx1 = ps_in_x(cv1, ARR_MIN_END);
       CGAL_assertion(psx1 != ARR_RIGHT_BOUNDARY);
       if (psx1 == ARR_INTERIOR)
-        return is_between_lrr(cv, cv1, cv2, p,
-                              cv_equal_cv1, cv_equal_cv2,
-                              Arr_all_sides_oblivious_tag(),
-                              Arr_all_sides_oblivious_tag());
+        return is_between_lrr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(), Arr_all_sides_oblivious_tag());
 
       return (cmp_y_near_bd(cv1, cv2, ARR_MIN_END) == SMALLER);
     }
@@ -2439,10 +2407,8 @@ public:
       auto psx = ps_in_x(cv, ARR_MIN_END);
       CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
       if (psx == ARR_INTERIOR)
-        return is_between_rlr(cv, cv1, cv2, p,
-                              cv_equal_cv1, cv_equal_cv2,
-                              Arr_all_sides_oblivious_tag(),
-                              Arr_all_sides_oblivious_tag());
+        return is_between_rlr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(), Arr_all_sides_oblivious_tag());
 
       return (cmp_y_near_bd(cv, cv2, ARR_MIN_END) == LARGER);
     }
@@ -2673,10 +2639,8 @@ public:
       auto psx = ps_in_x(cv, ARR_MAX_END);
       CGAL_assertion(psx != ARR_LEFT_BOUNDARY);
       if (psx == ARR_INTERIOR)
-        return is_between_lrl(cv, cv1, cv2, p,
-                              cv_equal_cv1, cv_equal_cv2,
-                              Arr_all_sides_oblivious_tag(),
-                              Arr_all_sides_oblivious_tag());
+        return is_between_lrl(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(), Arr_all_sides_oblivious_tag());
 
       // psx == ARR_RIGHT_BOUNDARY)
       auto res = cmp_y_near_bd(cv, cv2, ARR_MAX_END);
@@ -2747,10 +2711,8 @@ public:
       auto psx = ps_in_x(cv, ARR_MAX_END);
       CGAL_assertion(psx != ARR_LEFT_BOUNDARY);
       if (psx == ARR_INTERIOR)
-        return is_between_llr(cv, cv1, cv2, p,
-                              cv_equal_cv1, cv_equal_cv2,
-                              Arr_all_sides_oblivious_tag(),
-                              Arr_all_sides_oblivious_tag());
+        return is_between_llr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(), Arr_all_sides_oblivious_tag());
 
       // psx == ARR_RIGHT_BOUNDARY
       auto res = cmp_y_near_bd(cv, cv1, ARR_MAX_END);
@@ -2863,10 +2825,8 @@ public:
       // None of the curves coincide with the identification curve
       auto psx = ps_in_x(cv, ARR_MAX_END);
       if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
-        return is_between_lll(cv, cv1, cv2, p,
-                              cv_equal_cv1, cv_equal_cv2,
-                              Arr_all_sides_oblivious_tag(),
-                              Arr_all_sides_oblivious_tag());
+        return is_between_lll(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(), Arr_all_sides_oblivious_tag());
       if (psy == ARR_TOP_BOUNDARY) {
         auto res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
         auto res1 = cmp_x_on_bd(cv, ARR_MAX_END, cv1, ARR_MAX_END);
@@ -2923,12 +2883,9 @@ public:
      *         LARGER if we encounter xcv2 before xcv1;
      *         EQUAL otherwise.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 bool xcv1_to_right,
-                                 const X_monotone_curve_2& xcv2,
-                                 bool xcv2_to_right,
-                                 const Point_2& p,
-                                 bool from_top = true) const {
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, bool xcv1_to_right,
+                                 const X_monotone_curve_2& xcv2, bool xcv2_to_right,
+                                 const Point_2& p, bool from_top = true) const {
       // Act according to where xcv1 and xcv2 lie.
       if (!xcv1_to_right && !xcv2_to_right)
         // Both are defined to the left of p, and we encounter xcv1 before
@@ -2946,7 +2903,7 @@ public:
         // is xcv2) first. If we start from the bottom, we encounter xcv1 first.
         return (from_top ? LARGER : SMALLER);
 
-      CGAL_assertion(xcv1_to_right && !xcv2_to_right);
+      CGAL_assertion(xcv1_to_right && ! xcv2_to_right);
 
       // If we start from the top, we encounter the right curve (which
       // is xcv1) first. If we start from the bottom, we encounter xcv2 first.
@@ -3240,8 +3197,7 @@ public:
 
     /*! compares two x-monotone curves lexigoraphically.
      */
-    Comparison_result operator()(const X_monotone_curve_2& c1,
-                                 const X_monotone_curve_2& c2,
+    Comparison_result operator()(const X_monotone_curve_2& c1, const X_monotone_curve_2& c2,
                                  std::list<Intersection_result>& intersections,
                                  Arr_not_all_sides_oblivious_tag) const {
       auto psx = m_self.parameter_space_in_x_2_object();
@@ -3331,8 +3287,7 @@ public:
         // Compare slightly to the right near the boundary.
         typedef typename Self::Compare_y_near_boundary_2
           Compare_y_near_boundary_2;
-        Compare_y_near_boundary_2 cmp_y_near_bnd =
-          m_self.compare_y_near_boundary_2_object();
+        Compare_y_near_boundary_2 cmp_y_near_bnd = m_self.compare_y_near_boundary_2_object();
         res = cmp_y_near_bnd(c1, c2, CGAL::ARR_MIN_END);
         if (res != EQUAL) return res;
 
@@ -3349,8 +3304,7 @@ public:
       // thus both are vertical.
 
       typedef typename Self::Compare_y_on_boundary_2  Compare_y_on_boundary_2;
-      Compare_y_on_boundary_2 cmp_y_on_bnd =
-        m_self.compare_y_on_boundary_2_object();
+      Compare_y_on_boundary_2 cmp_y_on_bnd = m_self.compare_y_on_boundary_2_object();
       const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
       const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
       Comparison_result res = cmp_y_on_bnd(c1_min, c2_min);
