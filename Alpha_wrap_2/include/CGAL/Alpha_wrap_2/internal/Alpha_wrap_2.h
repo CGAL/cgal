@@ -18,7 +18,6 @@
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
 // @fixme yesterday
-// - assertion on very small alphas
 // - demo can't wrap from pure drawing
 
 // @todo yesterday
