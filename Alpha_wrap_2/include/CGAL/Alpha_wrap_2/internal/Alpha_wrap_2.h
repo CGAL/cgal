@@ -21,21 +21,17 @@
 // - demo can't wrap from pure drawing
 
 // @todo yesterday
-// - document and test DT2 face base classes
 // - submit feature
 
 // @todo
 // - continue adding tests (manifoldness)
 // - Add initialize_with_cavities
 // - test multi polygon island representation (use seeds)
-// - test (relaxed) sphere marching from the AW3 branch, add to AW3 if better
 
 // @todo long
 // - add support for .xy, .xyl, .pwn, ... inputs?
 // - bench sorted/unsorted queues
-// - if(is_neighbor_cc_in_offset) should be removed if sphere marching is used
 // - check what could be factorized with AW3 (e.g. oracle base?)
-// - test expensive assertions in T3
 
 #include <CGAL/license/Alpha_wrap_2.h>
 
