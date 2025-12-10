@@ -584,69 +584,6 @@ public:
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(this); }
 
-  /*! A functor that determines whether two x-monotone curves intersect.
-   */
-  class Do_intersect_2 {
-  public:
-    /*! determines whether two x-monotone curves intersect.
-     * \param xcv1 the first curve.
-     * \param xcv2 the second curve.
-     * \return true if xcv1 and xcv2 intersect false otherwise.
-     */
-    bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const
-    {
-      // The function is implemented based on the Has_do_intersect category.
-      // If the category indicates that "do_intersect" is available, it calls
-      // the function with same name defined in the base class. Otherwise, it
-      // uses the intersection construction to implement this predicate.
-      return _do_intersect_imp(xcv1, xcv2, Has_do_intersect_category());
-    }
-
-  protected:
-    //! The base traits.
-    const Self* m_self;
-
-    /*! constructs.
-     * \param self The traits adaptor class. It must be passed, to handle
-     *             non stateless traits objects, (which stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Do_intersect_2(const Self* self) : m_self(self) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_traits_basic_adaptor_2<Base>;
-
-    /*! Implementation of the operator() in case the HasDoIntersect tag is true.
-     */
-    bool _do_intersect_imp(const X_monotone_curve_2& xcv1,
-                           const X_monotone_curve_2& xcv2,
-                           Tag_true) const
-    {
-      const Base* base = m_self;
-      return (base->do_intersect_2_object()(xcv1, xcv2));
-    }
-
-    /*! Implementation of the operator() in case the HasDoIntersect tag is false.
-     */
-    bool _do_intersect_imp(const X_monotone_curve_2& xcv1,
-                           const X_monotone_curve_2& xcv2,
-                           Tag_false) const
-    {
-      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
-      std::list<Intersection_result> intersections;
-      m_self->intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
-      return ! intersections.empty();
-    }
-  };
-
-  /*! obtains a Compare_y_at_x_left_2 function object. */
-  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(this); }
-
   //@}
 
   /// \name Overridden functors for boundaries.
@@ -3311,7 +3248,6 @@ public:
   // Categories.
   typedef typename Base::Has_left_category             Has_left_category;
   typedef typename Base::Has_merge_category            Has_merge_category;
-  typedef typename Base::Has_do_intersect_category     Has_do_intersect_category;
 
   typedef typename Base::Left_side_category            Left_side_category;
   typedef typename Base::Bottom_side_category          Bottom_side_category;
