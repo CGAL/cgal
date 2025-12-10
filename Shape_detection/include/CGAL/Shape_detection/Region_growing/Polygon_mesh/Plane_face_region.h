@@ -232,7 +232,7 @@ public:
     const Item query,
     const Region&) const
   {
-    if (m_cos_value_threshold==1 || m_distance_threshold == 0)
+    if (m_cos_value_threshold == 1 || m_distance_threshold == 0)
     {
       halfedge_descriptor h = halfedge(query, m_pmesh);
       for (vertex_descriptor v : vertices_around_face(h, m_pmesh))
@@ -249,9 +249,6 @@ public:
       for (vertex_descriptor v : vertices_around_face(h, m_pmesh))
         if (typename GeomTraits::Compare_squared_distance_3()(m_p, m_q, m_r,get(m_vpm, v), m_squared_distance_threshold) != SMALLER)
           return false;
-
-      if (m_cos_value_threshold == 1)
-        return true;
 
       const typename GeomTraits::Point_3& p2=get(m_vpm,source(h, m_pmesh));
       const typename GeomTraits::Point_3& q2=get(m_vpm,target(h, m_pmesh));

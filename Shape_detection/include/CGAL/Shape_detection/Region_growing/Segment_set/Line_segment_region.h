@@ -211,40 +211,41 @@ public:
     const auto& seg = get(m_segment_map, query);
     const Point& s = seg.source();
     const Point& t = seg.target();
+    const auto& seed_seg = get(m_segment_map, m_seed);
+    const Point& seed_s = seed_seg.source();
+    const Point& seed_t = seed_seg.target();
 
-    const Vector dir(s, t);
-    if (m_distance_threshold > FT(0)) {
-      const auto& seed_seg = get(m_segment_map, m_seed);
-      const Point& seed_s = seed_seg.source();
-      const Point& seed_t = seed_seg.target();
-      Line seed_line(seed_s, seed_t);
-      if (m_compare_squared_distance(s, seed_line, m_squared_distance_threshold) != SMALLER ||
+    if (m_distance_threshold == 0 || m_cos_value_threshold == 1)
+      return collinear(seed_s, seed_t, s) && collinear(seed_s, seed_t, t);
+    else
+    {
+      if (m_distance_threshold > FT(0)) {
+        Line seed_line(seed_s, seed_t);
+        if (m_compare_squared_distance(s, seed_line, m_squared_distance_threshold) != SMALLER ||
           m_compare_squared_distance(t, seed_line, m_squared_distance_threshold) != SMALLER)
-        return false;
-    }
+          return false;
+      }
 
-    if (s == t)
+      if (s == t)
+        return true;
+
+      if (m_cos_value_threshold < FT(1)) {
+        typename GeomTraits::Compute_scalar_product_3 scalar_product = m_traits.compute_scalar_product_3_object();
+        typename GeomTraits::Construct_vector_3 vector = m_traits.construct_vector_3_object();
+        typename GeomTraits::Compute_squared_length_3 sq_length = m_traits.compute_squared_length_3_object();
+
+        const Vector_3 seed_dir = vector(seed_s, seed_t);
+        const Vector_3 query_dir = vector(s, t);
+
+        typename GeomTraits::FT sc_prod = scalar_product(seed_dir, query_dir);
+
+        return CGAL::compare(CGAL::square(m_cos_value_threshold)
+          * sq_length(seed_dir) * sq_length(query_dir),
+          CGAL::square(sc_prod)) == SMALLER;
+      }
+
       return true;
-
-    if (m_cos_value_threshold < FT(1)) {
-      const auto& seed_seg = get(m_segment_map, m_seed);
-      const Point& seed_s = seed_seg.source();
-      const Point& seed_t = seed_seg.target();
-
-      typename GeomTraits::Compute_scalar_product_3 scalar_product = m_traits.compute_scalar_product_3_object();
-      typename GeomTraits::Construct_vector_3 vector = m_traits.construct_vector_3_object();
-      typename GeomTraits::Compute_squared_length_3 sq_length = m_traits.compute_squared_length_3_object();
-
-      const Vector_3 seed_dir = vector(seed_s, seed_t);
-      const Vector_3 query_dir = vector(s, t);
-
-      typename GeomTraits::FT sc_prod = scalar_product(seed_dir, query_dir);
-
-      return CGAL::compare(CGAL::square(m_cos_value_threshold)
-        * sq_length(seed_dir) * sq_length(query_dir),
-        CGAL::square(sc_prod)) == SMALLER;
     }
-    return true;
   }
 
   /*!
