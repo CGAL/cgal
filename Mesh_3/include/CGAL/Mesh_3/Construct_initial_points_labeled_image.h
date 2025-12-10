@@ -105,7 +105,7 @@ struct Construct_initial_points_labeled_image
   * Constructs a functor for generating initial points in labeled images.
   * @param image the labeled image that defines the mesh domain
   * @param domain the mesh domain
-  *  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{verbose}
