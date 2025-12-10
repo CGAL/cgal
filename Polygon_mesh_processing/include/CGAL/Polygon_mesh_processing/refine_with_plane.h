@@ -431,6 +431,11 @@ void refine_with_plane(PolygonMesh& pm,
 
       Oriented_side prev_ori = get(vertex_os, source(h, pm)),
                     next_ori = get(vertex_os, target(next(h, pm), pm));
+
+
+      // skip vertices enclosed by vertices on the plane
+      if (prev_ori==ON_ORIENTED_BOUNDARY && next_ori==ON_ORIENTED_BOUNDARY)
+        continue;
       splitted_faces[face(h, pm)].push_back(h);
       // we insert tangency point twice as the vertex might be use twice to split a face
       if (prev_ori==ON_ORIENTED_BOUNDARY || next_ori==ON_ORIENTED_BOUNDARY || prev_ori==next_ori)
