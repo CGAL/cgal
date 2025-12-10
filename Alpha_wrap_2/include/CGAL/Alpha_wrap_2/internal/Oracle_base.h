@@ -99,7 +99,7 @@ struct AABB_tree_oracle_helper
     using Offset_intersection = internal::Offset_intersection<GT, AABB_distance_oracle>;
 
     AABB_distance_oracle dist_oracle(tree);
-    Offset_intersection offset_intersection(dist_oracle, offset_size, intersection_precision, 1 /*lip*/);
+    Offset_intersection offset_intersection(dist_oracle, offset_size, intersection_precision);
     return offset_intersection.first_intersection(p, q, o);
   }
 };

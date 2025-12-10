@@ -949,12 +949,13 @@ private:
 
     const Point_2& neighbor_cc = circumcenter(neighbor);
     const Disk_2 neighbor_cc_offset_disk = disk(neighbor_cc, m_sq_offset);
-    const bool is_neighbor_cc_in_offset = m_oracle.do_intersect(neighbor_cc_offset_disk);
 
 #ifdef CGAL_AW2_DEBUG_STEINER_COMPUTATION
     std::cout << "Compute_steiner_point(" << &*fh << ", " << &*neighbor << ")" << std::endl;
 
     const Point_2& chc = circumcenter(fh);
+    const bool is_neighbor_cc_in_offset = m_oracle.do_intersect(neighbor_cc_offset_disk);
+
     std::cout << "FH" << std::endl;
     std::cout << "\t" << fh->vertex(0)->point() << std::endl;
     std::cout << "\t" << fh->vertex(1)->point() << std::endl;
@@ -978,18 +979,15 @@ private:
     CGAL_assertion_code(const Disk_2 fh_cc_offset_disk = disk(fh_cc, m_sq_offset);)
     CGAL_assertion(!m_oracle.do_intersect(fh_cc_offset_disk));
 
-    if(is_neighbor_cc_in_offset)
-    {
-      const Point_2& fh_cc = circumcenter(fh);
+    const Point_2& fh_cc = circumcenter(fh);
 
-      // If the voronoi edge intersects the offset, the steiner point is the first intersection
-      if(m_oracle.first_intersection(fh_cc, neighbor_cc, steiner_point, m_offset))
-      {
+    // If the voronoi edge intersects the offset, the steiner point is the first intersection
+    if(m_oracle.first_intersection(fh_cc, neighbor_cc, steiner_point, m_offset))
+    {
 #ifdef CGAL_AW2_DEBUG_STEINER_COMPUTATION
-        std::cout << "Steiner found through first_intersection(): " << steiner_point << std::endl;
+      std::cout << "Steiner found through first_intersection(): " << steiner_point << std::endl;
 #endif
-        return Steiner_status::RULE_1;
-      }
+      return Steiner_status::RULE_1;
     }
 
     Triangle_with_outside_info<Geom_traits> tr(neighbor, geom_traits());

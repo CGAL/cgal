@@ -57,11 +57,8 @@ class Offset_intersection
 public:
   Offset_intersection(const DistanceOracle& oracle,
                       const FT& off,
-                      const FT& prec,
-                      const FT& lip)
-    : dist_oracle(oracle), offset(off), precision(prec), lipschitz(lip),
-      sq_offset_minus_precision(CGAL::square(offset - precision)),
-      sq_offset_plus_precision(CGAL::square(offset + precision))
+                      const FT& prec)
+    : dist_oracle(oracle), offset(off), precision(prec)
   {
     CGAL_assertion(offset > precision);
   }
@@ -70,7 +67,7 @@ public:
                           const Point_2& t,
                           Point_2& output_pt)
   {
-    return SQsphere_marching_search(s, t, output_pt);
+    return sphere_marching_search(s, t, output_pt);
   }
 
 private:
@@ -81,10 +78,6 @@ private:
   DistanceOracle dist_oracle;
   FT offset;
   FT precision;
-  FT lipschitz;
-
-  FT sq_offset_minus_precision;
-  FT sq_offset_plus_precision;
 
   bool sphere_marching_search(const Point_2& s,
                               const Point_2& t,
@@ -93,6 +86,8 @@ private:
 #ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
     std::cout << "Sphere march between " << s << " and " << t << std::endl;
 #endif
+
+    CGAL_precondition(s != t);
 
     const FT sq_seg_length = squared_distance(s, t);
     const FT seg_length = approximate_sqrt(sq_seg_length);
@@ -128,153 +123,81 @@ private:
     return false;
   }
 
-  bool SQsphere_marching_search(const Point_2& s,
+  // @fixme somehow this is slower than the naive version...
+  bool sphere_marching_search_pp(const Point_2& s,
                                 const Point_2& t,
                                 Point_2& output_pt)
   {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-    std::cout << "Sphere march between " << s << " and " << t << std::endl;
-#endif
+    CGAL_precondition(s != t);
 
     const FT sq_seg_length = squared_distance(s, t);
     const FT seg_length = approximate_sqrt(sq_seg_length);
     const Vector_2 seg_unit_v = (t - s) / seg_length;
 
-    Point_2 current_pt = s;
-    Point_2 closest_point = dist_oracle.tree.closest_point(current_pt);
-    FT sq_current_dist = squared_distance(current_pt, closest_point);
+    // Initial evaluation at s
+    Point_2 closest_point = dist_oracle.tree.closest_point(s);
+    FT initial_dist = approximate_sqrt(squared_distance(s, closest_point)) - offset;
+    const FT function_sign = initial_dist < 0 ? -1 : 1;
+
+    FT w = 1.6;
     FT step = 0;
+    FT step_length = 0;
 
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-    std::cout << "bounds: " << sq_offset_minus_precision << " " << sq_offset_plus_precision << std::endl;
-#endif
+    FT candidate_error = std::numeric_limits<FT>::infinity();
+    FT candidate_step = 0;
+    Point_2 candidate_pt = s;
+    FT previous_radius = 0;
 
-    for(;;)
+    const FT t_max = 2 * seg_length;
+
+    for (;;)
     {
+      Point_2 current_pt = s + (step * seg_unit_v);
 #ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-      std::cout << "current point " << current_pt << std::endl;
-      std::cout << "current sq dist " << sq_current_dist << std::endl;
-      std::cout << "closest point: " << closest_point << std::endl;
-      std::cout << "sq dist to closest: " << sq_current_dist << std::endl;
+      std::cout << "current_pt = " << current_pt << std::endl;
 #endif
 
-      // abs(dist - offset) < epsilon
-      if((sq_current_dist > sq_offset_minus_precision) &&
-         (sq_current_dist < sq_offset_plus_precision))
+      closest_point = dist_oracle.tree.closest_point(current_pt, closest_point);
+      FT dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+
+      FT signed_radius = function_sign * dist;
+      FT radius = CGAL::abs(signed_radius);
+
+      const bool sor_fail = w > 1 && (radius + previous_radius) < step_length;
+
+      if(sor_fail)
       {
-        output_pt = current_pt;
-        return true;
-      }
-
-      step += (std::max)(approximate_sqrt(sq_current_dist) - offset, 2 * precision);
-      CGAL_assertion(step > 0);
-      current_pt = s + (step * seg_unit_v);
-
-      if(squared_distance(s, current_pt) > sq_seg_length)
-      {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-        std::cout << "Next target farther than the segment's extremity: " << current_pt << std::endl;
-#endif
-        return false;
-      }
-
-      // the previous closest point gives an upper bound so it's a good hint
-      // @todo
-      // closest_point = dist_oracle.tree.closest_point(current_pt, closest_point /*hint*/);
-      closest_point = dist_oracle.tree.closest_point(current_pt);
-      sq_current_dist = squared_distance(current_pt, closest_point);
-    }
-
-    return false;
-  }
-
-  bool SQsphere_marching_search_pp(const Point_2& s,
-                                   const Point_2& t,
-                                   Point_2& output_pt)
-  {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-    std::cout << "Sphere march between " << s << " and " << t << std::endl;
-#endif
-
-    const FT seg_length = approximate_sqrt(squared_distance(s, t));
-    const Vector_2 seg_unit_v = (t - s) / seg_length;
-
-    Point_2 current_pt = s;
-    Point_2 closest_point = dist_oracle.tree.closest_point(current_pt);
-    FT sq_current_dist = squared_distance(current_pt, closest_point);
-    FT step = 0;
-
-    bool relaxing = true;
-    FT w = 1.8; // over-extending factor
-
-    for(;;)
-    {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-      std::cout << "current point " << current_pt << std::endl;
-      std::cout << "current sq dist " << sq_current_dist << std::endl;
-      std::cout << "bounds: " << sq_offset_minus_precision << " " << sq_offset_plus_precision << std::endl;
-#endif
-
-      // If abs(dist - offset) < precision, we're done
-      if((sq_current_dist > sq_offset_minus_precision) &&
-         (sq_current_dist < sq_offset_plus_precision))
-      {
-        output_pt = current_pt;
-        return true;
-      }
-
-      const Point_2 previous_pt = current_pt;
-      const Point_2 previous_hint = closest_point;
-      const FT previous_radius = approximate_sqrt(sq_current_dist) - offset;
-      const FT previous_step = step;
-
-      const FT local_step = (std::max)(previous_radius, 2 * precision);
-
-      if(relaxing)
-      {
-        step += w * local_step;
-        w = 1.1; // take bigger and bigger steps
+        step_length -= w * step_length;
+        w = 1;
       }
       else
       {
-        step += local_step;
+        step_length = signed_radius * w;
       }
 
-      CGAL_assertion(step > 0);
+      previous_radius = radius;
 
-      // move to the next point on the segment
-      current_pt = s + (step * seg_unit_v);
-
-      // the previous closest point gives an upper bound so it's a good hint
-      closest_point = dist_oracle.tree.closest_point(current_pt, closest_point /*hint*/);
-      sq_current_dist = squared_distance(current_pt, closest_point);
-
-      // check if we have over-relaxed (the sphere are disjoint)
-      if(relaxing)
+      if(step <= seg_length)
       {
-        const FT centers_dist = approximate_sqrt(squared_distance(previous_pt, current_pt));
-        const FT current_radius = approximate_sqrt(sq_current_dist) - offset;
-        if(previous_radius + current_radius < centers_dist)
+        FT error = radius;
+        if(!sor_fail && error < candidate_error)
         {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
-          std::cout << "Over relaxed, reverting" << std::endl;
-#endif
-
-          // revert the last step, and no more relaxation
-          relaxing = false;
-
-          current_pt = previous_pt;
-          closest_point = previous_hint;
-          sq_current_dist = squared_distance(current_pt, closest_point);
-          step = previous_step;
-
-          continue;
+          candidate_step = step;
+          candidate_error = error;
+          candidate_pt = current_pt;
         }
       }
 
-      // check if we ran out of segment to test
-      if(step > seg_length)
-        return false;
+      if(!sor_fail && candidate_error < precision)
+        break;
+
+      step += step_length;
+    }
+
+    if(candidate_error < precision)
+    {
+      output_pt = candidate_pt;
+      return true;
     }
 
     return false;
