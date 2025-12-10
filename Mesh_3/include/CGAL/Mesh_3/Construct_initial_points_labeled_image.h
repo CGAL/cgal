@@ -99,16 +99,32 @@ struct Construct_initial_points_labeled_image
 {
   const CGAL::Image_3& image_;
   const MeshDomain& domain_;
+  const bool verbose_;
 
   /*!
   * Constructs a functor for generating initial points in labeled images.
   * @param image the labeled image that defines the mesh domain
   * @param domain the mesh domain
+  *  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{verbose}
+  *     \cgalParamDescription{if `true`, information about the connected components
+  *                           detected in the image are printed out during the
+  *                           initial points generation process.}
+  *     \cgalParamType{`bool`}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   */
+
+  template <typename NamedParameters = parameters::Default_named_parameters>
   Construct_initial_points_labeled_image(const CGAL::Image_3& image,
-                                         const MeshDomain& domain)
+                                         const MeshDomain& domain,
+                                         NamedParameters np = parameters::default_values())
     : image_(image)
     , domain_(domain)
+    , verbose_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false))
   { }
 
   /*!
@@ -181,14 +197,18 @@ struct Construct_initial_points_labeled_image
 
     Seeds seeds;
     Mesh_3::internal::Get_point<Point_3> get_point(&image_);
-    std::cout << "Searching for connected components..." << std::endl;
+    if(verbose_) {
+      std::cout << "Searching for connected components..." << std::endl;
+    }
     CGAL_IMAGE_IO_CASE(image_.image(), search_for_connected_components_in_labeled_image(image_,
                                                      std::back_inserter(seeds),
                                                      CGAL::Emptyset_iterator(),
                                                      transform,
                                                      Word()));
-    std::cout << "  " << seeds.size() << " components were found." << std::endl;
-    std::cout << "Construct initial points..." << std::endl;
+    if(verbose_) {
+      std::cout << "  " << seeds.size() << " components were found." << std::endl;
+      std::cout << "Construct initial points..." << std::endl;
+    }
     int nb_of_points = 0;
     for(const Seed seed : seeds)
     {
@@ -325,7 +345,9 @@ struct Construct_initial_points_labeled_image
         }
       }
     }
-    std::cout << "  " << nb_of_points << " initial points were constructed." << std::endl;
+    if(verbose_) {
+      std::cout << "  " << nb_of_points << " initial points were constructed." << std::endl;
+    }
     return pts;
   }
 };
