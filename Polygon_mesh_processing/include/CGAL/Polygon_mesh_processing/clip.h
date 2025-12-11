@@ -969,12 +969,19 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
-  *    \cgalParamNBegin{do_not_triangulate_faces}
-  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
-  *                            Always `true` if `pm` is not a triangle mesh.}
-  *      \cgalParamType{Boolean}
-  *      \cgalParamDefault{`false`}
-  *    \cgalParamNEnd
+  *   \cgalParamNBegin{do_not_triangulate_faces}
+  *     \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                           Always `true` if `pm` is not a triangle mesh.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
   *
@@ -1118,6 +1125,13 @@ bool clip(PolygonMesh& pm,
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
@@ -1154,6 +1168,13 @@ bool clip(PolygonMesh& pm,
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -1344,6 +1365,14 @@ void split(TriangleMesh& tm,
   *      \cgalParamType{Boolean}
   *      \cgalParamDefault{`false`}
   *    \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @see `clip()`
@@ -1465,6 +1494,13 @@ void split(PolygonMesh& pm,
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
