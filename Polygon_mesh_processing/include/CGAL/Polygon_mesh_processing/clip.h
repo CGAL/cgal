@@ -1001,7 +1001,7 @@ bool clip(PolygonMesh& pm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference     ;
+  using parameters::get_parameter_reference;
 
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
