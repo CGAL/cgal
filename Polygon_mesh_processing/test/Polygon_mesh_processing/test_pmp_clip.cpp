@@ -1043,6 +1043,16 @@ void test_new_clip()
     assert(vertices(c).size()==18);
   }
   {
+    TriangleMesh c;
+    CGAL::make_quad(K::Point_3(0.,0.,0.),K::Point_3(1.,-1.,0.),K::Point_3(1.,0.,0.),K::Point_3(1.,1.,0.),c);
+    CGAL::make_quad(K::Point_3(0.,0.,0.),K::Point_3(1.,1.,0.),  K::Point_3(2.,2.,0.),K::Point_3(0.,2.,0.),c);
+
+    PMP::refine_with_plane(c, K::Plane_3(1.,0.,0.,-1.), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==3);
+    assert(vertices(c).size()==9);
+    std::ofstream("/tmp/out.off") << c;
+  }
+  {
     TriangleMesh ele;
     std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> ele;
     PMP::clip(ele, K::Plane_3(1,0,0,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));

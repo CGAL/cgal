@@ -433,11 +433,8 @@ void refine_with_plane(PolygonMesh& pm,
                     next_ori = get(vertex_os, target(next(h, pm), pm));
 
 
-      // skip vertices enclosed by vertices on the plane
-      if (prev_ori==ON_ORIENTED_BOUNDARY && next_ori==ON_ORIENTED_BOUNDARY)
-        continue;
       splitted_faces[face(h, pm)].push_back(h);
-      // we insert tangency point twice as the vertex might be use twice to split a face
+      // we insert tangency point twice as the vertex will be used twice to split a face (if not a crossing)
       if (prev_ori==ON_ORIENTED_BOUNDARY || next_ori==ON_ORIENTED_BOUNDARY || prev_ori==next_ori)
         splitted_faces[face(h, pm)].push_back(h); // skip crossing points
     }
@@ -447,6 +444,19 @@ void refine_with_plane(PolygonMesh& pm,
   for (std::pair<const face_descriptor, std::vector<halfedge_descriptor>>& f_and_hs : splitted_faces)
   {
     std::size_t nb_hedges = f_and_hs.second.size();
+
+    // filter out faces that are included in the cutting plane (the cut line does not apply)
+    if (at_least_one_on && nb_hedges%2==0)
+    {
+      bool skip=true;
+      for (std::size_t i=0; i<nb_hedges; i+=2)
+        if(f_and_hs.second[i]!=f_and_hs.second[i+1])
+        {
+          skip=false;
+          break;
+        }
+      if (skip) continue;
+    }
 
     visitor.before_subface_creations(f_and_hs.first, pm);
 
