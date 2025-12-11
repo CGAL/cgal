@@ -136,14 +136,13 @@ public:
 /*! exports a conic arc.
  */
 template <typename NT, bool Filter>
-std::ostream& operator<<(std::ostream& os,
-                         const _One_root_point_2<NT, Filter>& p) {
+std::ostream& operator<<(std::ostream& os, const _One_root_point_2<NT, Filter>& p) {
   os << CGAL::to_double(p.x()) << ' ' << CGAL::to_double(p.y());
   return (os);
 }
 
 /*
-template <class NT, bool Filter>
+template <typename NT, bool Filter>
 std::istream & operator >> (std::istream & is,
                             _One_root_point_2<NT, Filter>& p)
 {
@@ -230,11 +229,8 @@ public:
     m_source(source),
     m_target(target),
     m_orient(COLLINEAR) {
-    CGAL_precondition(CGAL::compare(source.x() * line.a() + line.c(),
-                                    -source.y() * line.b()) == EQUAL);
-
-    CGAL_precondition(CGAL::compare(target.x() * line.a() + line.c(),
-                                    -target.y() * line.b()) == EQUAL);
+    CGAL_precondition(CGAL::compare(source.x() * line.a() + line.c(), -source.y() * line.b()) == EQUAL);
+    CGAL_precondition(CGAL::compare(target.x() * line.a() + line.c(), -target.y() * line.b()) == EQUAL);
   }
 
   /*! constructs from a circle.
@@ -311,15 +307,11 @@ public:
     m_orient(orient) {
     CGAL_assertion(orient != COLLINEAR);
 
-    CGAL_precondition
-      (CGAL::compare(CGAL::square(source.x() - c.x()),
-                     CGAL::square(r) -
-                     CGAL::square(source.y() - c.y())) == EQUAL);
+    CGAL_precondition(CGAL::compare(CGAL::square(source.x() - c.x()),
+                                    CGAL::square(r) - CGAL::square(source.y() - c.y())) == EQUAL);
 
-    CGAL_precondition
-      (CGAL::compare(CGAL::square(target.x() - c.x()),
-                     CGAL::square(r) -
-                     CGAL::square(target.y() - c.y())) == EQUAL);
+    CGAL_precondition(CGAL::compare(CGAL::square(target.x() - c.x()),
+                                    CGAL::square(r) - CGAL::square(target.y() - c.y())) == EQUAL);
   }
 
   /*! constructs a circular arc, from the given three points, in case of
@@ -354,13 +346,11 @@ public:
 
     const NT A1 = _two*(x1 - x2);
     const NT B1 = _two*(y1 - y2);
-    const NT C1 =
-      CGAL::square(y2) - CGAL::square(y1) + CGAL::square(x2) - CGAL::square(x1);
+    const NT C1 = CGAL::square(y2) - CGAL::square(y1) + CGAL::square(x2) - CGAL::square(x1);
 
     const NT A2 = _two*(x2 - x3);
     const NT B2 = _two*(y2 - y3);
-    const NT C2 =
-      CGAL::square(y3) - CGAL::square(y2) + CGAL::square(x3) - CGAL::square(x2);
+    const NT C2 = CGAL::square(y3) - CGAL::square(y2) + CGAL::square(x3) - CGAL::square(x2);
 
     // Compute the coordinates of the intersection point between the
     // two lines, given by (Nx / D, Ny / D), where:
@@ -384,8 +374,7 @@ public:
 
     typename Kernel::Point_2 circ_center(x_center, y_center);
 
-    NT sqr_rad =
-      (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) / CGAL::square(D);
+    NT sqr_rad = (CGAL::square(D*x2 - Nx) + CGAL::square(D*y2 - Ny)) / CGAL::square(D);
 
     // Determine the orientation: If the mid-point forms a left-turn with
     // the source and the target points, the orientation is positive (going
@@ -536,8 +525,7 @@ private:
           if (m_has_radius)
             vpts[n_vpts] = Point_2(CoordNT(x0 - m_radius), y0);
           else
-            vpts[n_vpts] =
-              Point_2(CoordNT(x0, NT(-1), m_circ.squared_radius()), y0);
+            vpts[n_vpts] = Point_2(CoordNT(x0, NT(-1), m_circ.squared_radius()), y0);
 
           n_vpts++;
         }
@@ -549,8 +537,7 @@ private:
           if (m_has_radius)
             vpts[n_vpts] = Point_2(CoordNT(x0 + m_radius), y0);
           else
-            vpts[n_vpts] =
-              Point_2(CoordNT(x0, NT(1), m_circ.squared_radius()), y0);
+            vpts[n_vpts] = Point_2(CoordNT(x0, NT(1), m_circ.squared_radius()), y0);
           n_vpts++;
         }
       }
@@ -596,8 +583,7 @@ operator<<(std::ostream& os, const _Circle_segment_2<Kernel, Filter>& c) {
   }
   else {
     if (! c.is_full()) {
-      os << "circular arc: " << c.supporting_circle() << ' '
-         << c.source() << " -> " << c.target();
+      os << "circular arc: " << c.supporting_circle() << ' ' << c.source() << " -> " << c.target();
     }
     else {
       os << "circular arc: " << c.supporting_circle();
@@ -808,12 +794,10 @@ public:
   bool has_right() const { return true; }
 
   /*! obtains the left endpoint of the arc. */
-  inline const Point_2& left() const
-  { return (((m_info & IS_DIRECTED_RIGHT_MASK) != 0) ? m_source : m_target); }
+  inline const Point_2& left() const { return (((m_info & IS_DIRECTED_RIGHT_MASK) != 0) ? m_source : m_target); }
 
   /*! obtains the right endpoint of the arc. */
-  inline const Point_2& right() const
-  { return (((m_info & IS_DIRECTED_RIGHT_MASK) != 0) ? m_target : m_source); }
+  inline const Point_2& right() const { return (((m_info & IS_DIRECTED_RIGHT_MASK) != 0) ? m_target : m_source); }
 
   /*! checks whether the given point is in the x-range of the arc.
    */
@@ -1082,8 +1066,7 @@ public:
     // Take care of the information bits: We flip the orientation bits and
     // the bits that marks the direction.
     if (is_linear()) opp_cv.m_info = (this->m_info ^ IS_DIRECTED_RIGHT_MASK);
-    else
-      opp_cv.m_info = (this->m_info ^ IS_DIRECTED_RIGHT_MASK ^ ORIENTATION_MASK);
+    else opp_cv.m_info = (this->m_info ^ IS_DIRECTED_RIGHT_MASK ^ ORIENTATION_MASK);
 
     return (opp_cv);
   }
@@ -1097,12 +1080,10 @@ public:
     if (is_circular()) {
       const Circle_2& circ = this->supporting_circle();
       if (_is_upper()) {
-        y_max = to_double(circ.center().y())+
-          std::sqrt(to_double(circ.squared_radius()));
+        y_max = to_double(circ.center().y()) + std::sqrt(to_double(circ.squared_radius()));
       }
       else {
-        y_min = to_double(circ.center().y()) -
-          std::sqrt(to_double(circ.squared_radius()));
+        y_min = to_double(circ.center().y()) - std::sqrt(to_double(circ.squared_radius()));
       }
     }
 
@@ -1133,8 +1114,7 @@ protected:
 
     CGAL_precondition(orient != COLLINEAR);
 
-    return ((orient == COUNTERCLOCKWISE && !dir_right) ||
-            (orient == CLOCKWISE && dir_right));
+    return ((orient == COUNTERCLOCKWISE && !dir_right) || (orient == CLOCKWISE && dir_right));
   }
   //@}
 
@@ -1354,12 +1334,10 @@ protected:
     else if (sign_numer2 == ZERO) sign_slope2 = ZERO;
     else sign_slope2 = NEGATIVE;
 
-    if ((sign_slope1 == POSITIVE && sign_slope2 != POSITIVE) ||
-        (sign_slope1 == ZERO && sign_slope2 == NEGATIVE))
+    if ((sign_slope1 == POSITIVE && sign_slope2 != POSITIVE) || (sign_slope1 == ZERO && sign_slope2 == NEGATIVE))
       return (LARGER);
 
-    if ((sign_slope2 == POSITIVE && sign_slope1 != POSITIVE) ||
-        (sign_slope2 == ZERO && sign_slope1 == NEGATIVE))
+    if ((sign_slope2 == POSITIVE && sign_slope1 != POSITIVE) || (sign_slope2 == ZERO && sign_slope1 == NEGATIVE))
       return (SMALLER);
 
     // Compare the slopes of the two tangents to the circles.
@@ -1550,12 +1528,10 @@ protected:
     else if (sign_numer2 == ZERO) sign_slope2 = ZERO;
     else sign_slope2 = NEGATIVE;
 
-    if ((sign_slope1 == POSITIVE && sign_slope2 != POSITIVE) ||
-        (sign_slope1 == ZERO && sign_slope2 == NEGATIVE))
+    if ((sign_slope1 == POSITIVE && sign_slope2 != POSITIVE) || (sign_slope1 == ZERO && sign_slope2 == NEGATIVE))
       return (SMALLER);
 
-    if ((sign_slope2 == POSITIVE && sign_slope1 != POSITIVE) ||
-        (sign_slope2 == ZERO && sign_slope1 == NEGATIVE))
+    if ((sign_slope2 == POSITIVE && sign_slope1 != POSITIVE) || (sign_slope2 == ZERO && sign_slope1 == NEGATIVE))
       return (LARGER);
 
     // Compare the slopes of the two tangents to the circles.
@@ -1741,21 +1717,17 @@ protected:
 
     mult = 1;
     if (minus_root_first) {
-      p = Point_2(CoordNT(x_base, -x_root_coeff, disc),
-                  CoordNT(y_base, y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, -x_root_coeff, disc), CoordNT(y_base, y_root_coeff, disc));
       inter_list.push_back(Intersection_point (p, mult));
 
-      p = Point_2(CoordNT(x_base, x_root_coeff, disc),
-                  CoordNT(y_base, -y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, x_root_coeff, disc), CoordNT(y_base, -y_root_coeff, disc));
       inter_list.push_back(Intersection_point(p, mult));
     }
     else {
-      p = Point_2(CoordNT(x_base, x_root_coeff, disc),
-                  CoordNT(y_base, -y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, x_root_coeff, disc), CoordNT(y_base, -y_root_coeff, disc));
       inter_list.push_back(Intersection_point(p, mult));
 
-      p = Point_2(CoordNT(x_base, -x_root_coeff, disc),
-                  CoordNT(y_base, y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, -x_root_coeff, disc), CoordNT(y_base, y_root_coeff, disc));
       inter_list.push_back(Intersection_point(p, mult));
     }
   }
@@ -1772,8 +1744,7 @@ protected:
     const NT diff_y = cv.y0() - y0();
     const NT sqr_dist = CGAL::square(diff_x) + CGAL::square(diff_y);
     const NT diff_sqr_rad = sqr_r() - cv.sqr_r();
-    const NT disc = 2 * sqr_dist * (sqr_r() + cv.sqr_r()) -
-      (CGAL::square(diff_sqr_rad) + CGAL::square(sqr_dist));
+    const NT disc = 2 * sqr_dist * (sqr_r() + cv.sqr_r()) - (CGAL::square(diff_sqr_rad) + CGAL::square(sqr_dist));
     CGAL::Sign sign_disc = CGAL::sign (disc);
 
     // The two circles do not intersect.
@@ -1805,21 +1776,17 @@ protected:
 
     mult = 1;
     if (minus_root_first) {
-      p = Point_2(CoordNT(x_base, -x_root_coeff, disc),
-                  CoordNT(y_base, y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, -x_root_coeff, disc), CoordNT(y_base, y_root_coeff, disc));
       inter_list.push_back(Intersection_point (p, mult));
 
-      p = Point_2(CoordNT(x_base, x_root_coeff, disc),
-                  CoordNT(y_base, -y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, x_root_coeff, disc), CoordNT(y_base, -y_root_coeff, disc));
       inter_list.push_back(Intersection_point (p, mult));
     }
     else {
-      p = Point_2(CoordNT(x_base, x_root_coeff, disc),
-                  CoordNT(y_base, -y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, x_root_coeff, disc), CoordNT(y_base, -y_root_coeff, disc));
       inter_list.push_back(Intersection_point (p, mult));
 
-      p = Point_2(CoordNT(x_base, -x_root_coeff, disc),
-                  CoordNT(y_base, y_root_coeff, disc));
+      p = Point_2(CoordNT(x_base, -x_root_coeff, disc), CoordNT(y_base, y_root_coeff, disc));
       inter_list.push_back(Intersection_point(p, mult));
     }
   }
@@ -1877,18 +1844,14 @@ protected:
     if (is_linear()) {
       // In case of line segments we can swap the source and target:
       if (((m_source.equals(cv.m_source) && m_target.equals(cv.m_target)) ||
-           (m_source.equals(cv.m_target) && m_target.equals(cv.m_source))))
-      {
+           (m_source.equals(cv.m_target) && m_target.equals(cv.m_source)))) {
         overlap = cv;
         return true;
       }
     }
     else {
-      if ((orientation() == cv.orientation() &&
-           m_source.equals(cv.m_source) && m_target.equals(cv.m_target)) ||
-          (orientation() != cv.orientation() &&
-           m_source.equals(cv.m_target) && m_target.equals(cv.m_source)))
-      {
+      if ((orientation() == cv.orientation() && m_source.equals(cv.m_source) && m_target.equals(cv.m_target)) ||
+          (orientation() != cv.orientation() && m_source.equals(cv.m_target) && m_target.equals(cv.m_source))) {
         overlap = cv;
         return true;
       }
@@ -1923,11 +1886,8 @@ protected:
 
       return true;
     }
-    else if (cv._is_between_endpoints(m_source) &&
-             cv._is_between_endpoints(m_target) &&
-             (cv._is_strictly_between_endpoints(m_source) ||
-              cv._is_strictly_between_endpoints(m_target)))
-    {
+    else if (cv._is_between_endpoints(m_source) && cv._is_between_endpoints(m_target) &&
+             (cv._is_strictly_between_endpoints(m_source) || cv._is_strictly_between_endpoints(m_target))) {
       // Case 4 - *this:     +----------->
       //             cv:   +================>
       overlap = *this;
@@ -1939,7 +1899,7 @@ protected:
   }
 
 public:
-  template <class OutputIterator>
+  template <typename OutputIterator>
   void approximate(OutputIterator oi, unsigned int n) const {
     const double x_left = CGAL::to_double(this->source().x());
     const double y_left = CGAL::to_double(this->source().y());
@@ -1997,13 +1957,9 @@ public:
 
 /*! exports a circular arcs or a line segment
  */
-template <class Kernel, bool Filter>
-std::ostream&
-operator<<(std::ostream& os,
-           const _X_monotone_circle_segment_2<Kernel, Filter>& arc) {
-  if (! arc.is_linear())
-    os << "(" << arc.supporting_circle() << ") ";
-
+template <typename Kernel, bool Filter>
+std::ostream& operator<<(std::ostream& os, const _X_monotone_circle_segment_2<Kernel, Filter>& arc) {
+  if (! arc.is_linear()) os << "(" << arc.supporting_circle() << ") ";
   os << "[" << arc.source() << " --> " << arc.target() << "]";
   return (os);
 }

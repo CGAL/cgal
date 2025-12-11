@@ -200,6 +200,7 @@ public:
   }
 };
 
+//
 template <typename CircularKernel, typename Arc1, typename Arc2>
 class Intersect_2 {
 public:
@@ -223,6 +224,31 @@ public:
     }
     const Arc2* arc2 = std::get_if<Arc2>(&c2);
     return CircularKernel().intersect_2_object()(*arc1e, *arc2, oi);
+  }
+};
+
+//
+template <typename CircularKernel, typename Arc1, typename Arc2>
+class Do_intersect_2 {
+public:
+  using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
+
+  bool operator()(const std::variant< Arc1, Arc2>& c1,
+                  const std::variant< Arc1, Arc2>& c2) const {
+    if (const Arc1* arc1 = std::get_if<Arc1>(&c1)) {
+      if (const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
+        return CircularKernel().do_intersect_2_object()(*arc1, *arc2);
+      }
+      const Arc2* arc2 = std::get_if<Arc2>(&c2);
+      return CircularKernel().do_intersect_2_object()(*arc1, *arc2);
+    }
+
+    const Arc2* arc1e = std::get_if<Arc2>(&c1);
+    if (const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
+      return CircularKernel().do_intersect_2_object()(*arc1e, *arc2);
+    }
+    const Arc2* arc2 = std::get_if<Arc2>(&c2);
+    return CircularKernel().do_intersect_2_object()(*arc1e, *arc2);
   }
 };
 
@@ -368,7 +394,6 @@ public:
 
   using Has_left_category = CGAL::Tag_false;
   using Has_merge_category = CGAL::Tag_false;
-  using Has_do_intersect_category = CGAL::Tag_false;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;
@@ -397,39 +422,31 @@ public:
   using Make_x_monotone_2 = VariantFunctors::Make_x_monotone_2<CircularKernel, Arc1, Arc2>;
   using Split_2 = VariantFunctors::Split_2<CircularKernel, Arc1, Arc2>;
   using Intersect_2 = VariantFunctors::Intersect_2<CircularKernel, Arc1, Arc2>;
+  using Do_intersect_2 = VariantFunctors::Do_intersect_2<CircularKernel, Arc1, Arc2>;
 
-  Compare_x_2 compare_x_2_object() const
-  { return ck.compare_x_2_object(); }
+  Compare_x_2 compare_x_2_object() const { return ck.compare_x_2_object(); }
 
-  Compare_xy_2 compare_xy_2_object() const
-  { return ck.compare_xy_2_object(); }
+  Compare_xy_2 compare_xy_2_object() const { return ck.compare_xy_2_object(); }
 
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(); }
 
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(); }
 
-  Equal_2 equal_2_object() const
-  { return Equal_2(); }
+  Equal_2 equal_2_object() const { return Equal_2(); }
 
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(); }
 
-  Split_2 split_2_object() const
-  { return Split_2(); }
+  Split_2 split_2_object() const { return Split_2(); }
 
-  Intersect_2 intersect_2_object() const
-  { return Intersect_2(); }
+  Intersect_2 intersect_2_object() const { return Intersect_2(); }
 
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(); }
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(); }
 
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(); }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(); }
 
-  Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2();}
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(); }
+
+  Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2();}
 };
 
 } // namespace CGAL

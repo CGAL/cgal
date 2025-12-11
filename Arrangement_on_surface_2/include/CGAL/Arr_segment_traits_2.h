@@ -61,7 +61,6 @@ public:
   // Category tags:
   using Has_left_category = Tag_true;
   using Has_merge_category = Tag_true;
-  using Has_do_intersect_category = Tag_false;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;
@@ -536,6 +535,94 @@ public:
   /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
 
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_segment_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_segment_traits_2<Kernel>;
+
+    // Specialized do_intersect with many tests skipped because at
+    // this point, we already know which point is left / right for
+    // both segments
+    bool do_intersect(const Point_2& A1, const Point_2& A2,
+                      const Point_2& B1, const Point_2& B2) const {
+      const Kernel& kernel = m_traits;
+      auto compare_xy = kernel.compare_xy_2_object();
+      namespace interx = CGAL::Intersections::internal;
+
+      switch(make_certain(compare_xy(A1,B1))) {
+       case SMALLER:
+        switch(make_certain(compare_xy(A2,B1))) {
+         case SMALLER: return false;
+         case EQUAL: return true;
+         default: // LARGER
+          switch(make_certain(compare_xy(A2,B2))) {
+           case SMALLER:
+            return interx::seg_seg_do_intersect_crossing(A1,A2,B1,B2, kernel);
+           case EQUAL: return true;
+           default: // LARGER
+            return interx::seg_seg_do_intersect_contained(A1,A2,B1,B2, kernel);
+          }
+        }
+       case EQUAL: return true;
+       default: // LARGER
+        switch(make_certain(compare_xy(B2,A1))) {
+         case SMALLER: return false;
+         case EQUAL: return true;
+         default: // LARGER
+          switch(make_certain(compare_xy(B2,A2))) {
+           case SMALLER:
+            return interx::seg_seg_do_intersect_crossing(B1,B2,A1,A2, kernel);
+           case EQUAL: return true;
+           default: // LARGER
+            return interx::seg_seg_do_intersect_contained(B1,B2,A1,A2, kernel);
+          }
+        }
+      }
+      CGAL_error();     // never reached
+      return false;
+    }
+
+    /*! determines whether the bounding boxes of two segments overlap
+     */
+    bool do_bboxes_overlap(const X_monotone_curve_2& cv1,
+                           const X_monotone_curve_2& cv2) const {
+      const Kernel& kernel = m_traits;
+      auto construct_bbox = kernel.construct_bbox_2_object();
+      auto bbox1 = construct_bbox(cv1.source()) + construct_bbox(cv1.target());
+      auto bbox2 = construct_bbox(cv2.source()) + construct_bbox(cv2.target());
+      return CGAL::do_overlap(bbox1, bbox2);
+    }
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      // Early ending with Bbox overlapping test
+      if (! do_bboxes_overlap(xcv1, xcv2)) return false;
+
+      // Early ending with specialized do_intersect
+      return do_intersect(xcv1.left(), xcv1.right(), xcv2.left(), xcv2.right());
+    }
+  };
+
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
+
   //@}
 
   //! \name Intersections, subdivisions, and mergings
@@ -627,59 +714,6 @@ public:
 
     friend class Arr_segment_traits_2<Kernel>;
 
-    // Specialized do_intersect with many tests skipped because at
-    // this point, we already know which point is left / right for
-    // both segments
-    bool do_intersect(const Point_2& A1, const Point_2& A2,
-                      const Point_2& B1, const Point_2& B2) const {
-      const Kernel& kernel = m_traits;
-      auto compare_xy = kernel.compare_xy_2_object();
-      namespace interx = CGAL::Intersections::internal;
-
-      switch(make_certain(compare_xy(A1,B1))) {
-       case SMALLER:
-        switch(make_certain(compare_xy(A2,B1))) {
-         case SMALLER: return false;
-         case EQUAL: return true;
-         default: // LARGER
-          switch(make_certain(compare_xy(A2,B2))) {
-           case SMALLER:
-            return interx::seg_seg_do_intersect_crossing(A1,A2,B1,B2, kernel);
-           case EQUAL: return true;
-           default: // LARGER
-            return interx::seg_seg_do_intersect_contained(A1,A2,B1,B2, kernel);
-          }
-        }
-       case EQUAL: return true;
-       default: // LARGER
-        switch(make_certain(compare_xy(B2,A1))) {
-         case SMALLER: return false;
-         case EQUAL: return true;
-         default: // LARGER
-          switch(make_certain(compare_xy(B2,A2))) {
-           case SMALLER:
-            return interx::seg_seg_do_intersect_crossing(B1,B2,A1,A2, kernel);
-           case EQUAL: return true;
-           default: // LARGER
-            return interx::seg_seg_do_intersect_contained(B1,B2,A1,A2, kernel);
-          }
-        }
-      }
-      CGAL_error();     // never reached
-      return false;
-    }
-
-    /*! determines whether the bounding boxes of two segments overlap
-     */
-    bool do_bboxes_overlap(const X_monotone_curve_2& cv1,
-                           const X_monotone_curve_2& cv2) const {
-      const Kernel& kernel = m_traits;
-      auto construct_bbox = kernel.construct_bbox_2_object();
-      auto bbox1 = construct_bbox(cv1.source()) + construct_bbox(cv1.target());
-      auto bbox2 = construct_bbox(cv2.source()) + construct_bbox(cv2.target());
-      return CGAL::do_overlap(bbox1, bbox2);
-    }
-
   public:
     /*! finds the intersections of the two given curves and insert them into the
      * given output iterator. As two segments may intersect only once, only a
@@ -695,13 +729,8 @@ public:
                               OutputIterator oi) const {
       using Intersection_point = std::pair<Point_2, Multiplicity>;
 
-      // Early ending with Bbox overlapping test
-      if (! do_bboxes_overlap(cv1, cv2)) return oi;
-
-      // Early ending with specialized do_intersect
       const Kernel& kernel = m_traits;
-      if (! do_intersect(cv1.left(), cv1.right(), cv2.left(), cv2.right()))
-        return oi;
+      if (! m_traits.do_intersect_2_object()(cv1, cv2)) return oi;
 
       // An intersection is guaranteed.
 

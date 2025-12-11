@@ -67,8 +67,6 @@ public:
   typedef typename Base_traits_2::Has_left_category  Has_left_category;
   typedef typename Base_traits_2::Has_merge_category Base_has_merge_category;
   typedef Tag_true                                   Has_merge_category;
-  typedef typename Base_traits_2::Has_do_intersect_category
-                                                     Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_category<Base_traits_2>::
   Category                                           Left_side_category;

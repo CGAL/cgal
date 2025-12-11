@@ -60,10 +60,6 @@ public:
 
   typedef typename Gt2::Multiplicity           Multiplicity;
 
-  typedef typename Gt2::Has_do_intersect_category
-                                               Has_do_intersect_category;
-
-
   typedef typename internal::Arr_complete_left_side_category< Gt2>::Category
                                                     Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_category< Gt2>::Category

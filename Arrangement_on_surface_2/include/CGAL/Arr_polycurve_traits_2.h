@@ -51,7 +51,6 @@ public:
   /// \name Types inherited from the polycurve basic traits class.
   //@{
   using Has_left_category = typename Base::Has_left_category;
-  using Has_do_intersect_category = typename Base::Has_do_intersect_category;
 
   using Left_side_category = typename Base::Left_side_category;
   using Bottom_side_category = typename Base::Bottom_side_category;

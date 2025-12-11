@@ -60,7 +60,6 @@ public:
 
   // Categories:
   using Has_left_category = Tag_true;
-  using Has_do_intersect_category = Tag_false;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;
@@ -98,6 +97,9 @@ public:
 
   /*! checks if two segments or if two points are identical. */
   using Equal_2 = typename Kernel::Equal_2;
+
+  /*! checks if two segments intersect. */
+  using Do_intersect_2 = typename Kernel::Do_intersect_2;
 
   //@}
 

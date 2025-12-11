@@ -55,7 +55,6 @@ public:
   typedef typename Base::Multiplicity                   Multiplicity;
 
   typedef typename Base::Has_left_category            Has_left_category;
-  typedef typename Base::Has_do_intersect_category    Has_do_intersect_category;
 
   // should be ok, as basic_insertion (=Base) completes incomplete tags
   typedef typename Base::Left_side_category             Left_side_category;

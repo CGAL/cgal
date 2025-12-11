@@ -58,7 +58,6 @@ public:
 
   using Has_left_category = CGAL::Tag_false;
   using Has_merge_category = CGAL::Tag_false;
-  using Has_do_intersect_category = CGAL::Tag_false;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;
@@ -78,39 +77,31 @@ public:
   using Construct_max_vertex_2 = typename CircularKernel::Construct_circular_max_vertex_2;
   using Is_vertical_2 = typename CircularKernel::Is_vertical_2;
   using Intersect_2 = typename CircularKernel::Intersect_2;
+  using Do_intersect_2 = typename CircularKernel::Do_intersect_2;
 
-  Compare_x_2 compare_x_2_object() const
-  { return ck.compare_x_2_object(); }
+  Compare_x_2 compare_x_2_object() const { return ck.compare_x_2_object(); }
 
-  Compare_xy_2 compare_xy_2_object() const
-  { return ck.compare_xy_2_object(); }
+  Compare_xy_2 compare_xy_2_object() const { return ck.compare_xy_2_object(); }
 
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return ck.compare_y_at_x_2_object(); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return ck.compare_y_at_x_2_object(); }
 
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return ck.compare_y_to_right_2_object(); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return ck.compare_y_to_right_2_object(); }
 
-  Equal_2 equal_2_object() const
-  { return ck.equal_2_object(); }
+  Equal_2 equal_2_object() const { return ck.equal_2_object(); }
 
-  // Make_x_monotone_2 make_x_monotone_2_object() const
-  // { return ck.make_x_monotone_2_object(); }
+  // Make_x_monotone_2 make_x_monotone_2_object() const { return ck.make_x_monotone_2_object(); }
 
-  Split_2 split_2_object() const
-  { return ck.split_2_object(); }
+  Split_2 split_2_object() const { return ck.split_2_object(); }
 
-  Intersect_2 intersect_2_object() const
-  { return ck.intersect_2_object(); }
+  Intersect_2 intersect_2_object() const { return ck.intersect_2_object(); }
 
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return ck.construct_circular_min_vertex_2_object(); }
+  Do_intersect_2 do_intersect_2_object() const { return ck.do_intersect_2_object(); }
 
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return ck.construct_circular_max_vertex_2_object(); }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const { return ck.construct_circular_min_vertex_2_object(); }
 
-  Is_vertical_2 is_vertical_2_object() const
-  { return ck.is_vertical_2_object();}
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return ck.construct_circular_max_vertex_2_object(); }
+
+  Is_vertical_2 is_vertical_2_object() const { return ck.is_vertical_2_object();}
 
   //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
