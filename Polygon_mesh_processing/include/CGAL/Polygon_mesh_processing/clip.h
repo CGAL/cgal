@@ -786,7 +786,7 @@ struct Visitor_wrapper_for_triangulate_face
   * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
+  * \attention In the current implementation, `clipper` will be modified (refined with the intersection with `tm`) unless the named parameter `do_not_modify` is set to `true`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(clipper)` \endlink
