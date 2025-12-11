@@ -50,6 +50,7 @@ defined for convex simplicial polytopes.}
 - `Discrete_harmonic_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
 
 ## Free Functions ##
+- `apply_barycentric_coordinates()`
 - `tetrahedron_coordinates()`
 - `wachspress_coordinates_3()`
 - `mean_value_coordinates_3()`

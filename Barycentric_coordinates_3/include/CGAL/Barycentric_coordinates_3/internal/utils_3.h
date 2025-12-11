@@ -26,9 +26,9 @@
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
 
-namespace CGAL{
-namespace Barycentric_coordinates{
-namespace internal{
+namespace CGAL {
+namespace Barycentric_coordinates {
+namespace internal {
 
 enum class Edge_case {
 
@@ -316,8 +316,8 @@ enum class Edge_case {
       return Edge_case::INTERIOR;
   }
 
-}
-}
-}
+} // namespace internal
+} // namespace Barycentric_coordinates
+} // namespace CGAL
 
 #endif
