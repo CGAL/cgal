@@ -179,13 +179,16 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   // std::cout << "Ks * NC.T" << std::endl << Ks * NC.transpose() << std::endl;
 
   // @todo: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
-  int n_check_planes = (NC.rows()<=200)? NC.rows(): 200;
+  int n_check_planes = (NC.rows()<=ncp_max)? NC.rows(): ncp_max;
   if(debug_level > 0) {
     std::cout << "n_check_planes: " << n_check_planes << std::endl;
     std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
   }
 
   Eigen::Vector<bool,Eigen::Dynamic> inv = ((Ks * NC.block(0,0,n_check_planes,D+3).transpose()).rowwise().maxCoeff().array() >= atol);
+  // std::cout << "inv.sum(): " << inv.cast<int>().sum() << std::endl;
+  // std::cout << "not in dir?: " << ((Ks * s0).array() > 0. ).cast<int>().sum() << std::endl;
+
   for (int i=0; i<Ks.rows(); ++i) {
     if (inv(i)) {
       Ks.row(i) *= -1;
@@ -198,12 +201,12 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
     std::cout << ((NC * Ks.transpose()).rowwise().maxCoeff().array() <= atol).array().all() << std::endl;
   }
 
-  // bool cone_filter=true;
   int n_cone_filtered=0;
   std::vector<Eigen::RowVectorXd> solutions_;
   std::vector<Eigen::RowVectorXi> contact_indices_;
   for(auto ch : infinite_cells) {
     int ci = ch->data();
+    /*
     std::array<typename Triangulation::Point,D+3> points;
     int j  = 0;
     for (int i=0; i<D+3; ++i) {
@@ -212,13 +215,16 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
         ++j;
       }
     }
+    */
     for (int i=0; i<D+3; ++i) {
       if(ch->vertex(i) != t.infinite_vertex()) {
+        /*
         points[j] = t.tds().mirror_vertex(ch,i)->point();
         auto ori = t.geom_traits().orientation_d_object()(points.begin(), points.end());
         if(ori == COPLANAR){
           std::cout << "Coplanar points!" << std::endl;
         }
+        */
         int cj =  ch->neighbor(i)->data();
         if ((ci < cj) &&    // only treat each edge once
             (!full_simplices_only || (full_simplices(ci) && full_simplices(cj)))) {  // only consider edges between full simplices
@@ -254,100 +260,6 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
             }
           }
         }
-
-        /*
-<<<<<<< HEAD
-        if (debug_level > 0 && nafs > 0) {
-            std::cout << "Warning: " << nafs << " simplices were not full simplices, i.e. they are not full-dimensional in the ambient space." << std::endl;
-        }
-
-        // std::cout << "Ks.shape: (" << Ks.rows() << ", " << Ks.cols() << ")" << std::endl;
-        // std::cout << "Ks: " << std::endl << Ks << std::endl;
-        // std::cout << "Ks * NC.T" << std::endl << Ks * NC.transpose() << std::endl;
-
-        // @todo: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
-        int n_check_planes = (NC.rows()<=ncp_max)? NC.rows(): ncp_max;
-        if(debug_level > 0){
-          std::cout << "n_check_planes: " << n_check_planes << std::endl;
-          std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
-        }
-        Eigen::Vector<bool,Eigen::Dynamic> inv = ((Ks * NC.block(0,0,n_check_planes,D+3).transpose()).rowwise().maxCoeff().array() >= atol);
-        for (int i=0; i<Ks.rows(); i++) if (inv(i)) Ks.row(i) *= -1;
-
-        if (debug_level > 3) {
-            // costly and not possible for large sets of spheres
-            std::cout << "Debugging, remove later (matrices too large), all Ks in the cone?: ";
-            std::cout << ((NC * Ks.transpose()).rowwise().maxCoeff().array() <= atol).array().all() << std::endl;
-        }
-
-        int n_cone_filtered=0;
-        std::vector<Eigen::RowVectorXd> solutions_;
-        std::vector<Eigen::RowVectorXi> contact_indices_;
-        for(auto ch : infinite_cells) {
-            int ci = ch->data();
-            for (int i=0; i<D+3; i++) {
-                 if(ch->vertex(i) != t.infinite_vertex()) {
-                    int cj =  ch->neighbor(i)->data();
-                    if ((ci < cj) &&    // only treat each edge once
-                        (!full_simplices_only || (full_simplices(ci) && full_simplices(cj)))  // only consider edges between full simplices
-                        ) {
-                        double ls[2]; // 1,l2;
-                        line_quadric_intersection(Ks.row(ci), Ks.row(cj), H, ls[0],ls[1]);
-                        for (int li=0; li<2; li++){
-                            if ((0.<=ls[li]) && (ls[li]<=1.)){
-                                Eigen::RowVectorXd s_ = (1-ls[li])*Ks.row(ci)+ls[li]*Ks.row(cj);
-
-                                if ((s_(D+2) < 0.) && (s_(D+1) >= 0) && (fabs(s_(D+2)) >= atol)) {
-
-                                    bool add=true;
-                                    if (cone_filter){
-                                        if (((s_*NC.transpose()).array() > atol).any()){
-                                            add=false;
-                                            n_cone_filtered++;
-                                        }
-                                    }
-                                    if (add) {
-
-                                        solutions_.push_back(s_);
-                                        if (contact_indices){
-                                            Eigen::RowVectorXi st(D+1);
-                                            int ni=0;
-                                            for (int j=0; j<D+2; j++){
-                                                if (ch->vertex((i+1+j)%(D+3)) != t.infinite_vertex())
-                                                    st(ni++) = ch->vertex((i+1+j)%(D+3))->data();
-                                            }
-                                            contact_indices_.emplace_back(st);
-                                        }
-
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                 }
-            }
-        }
-        if(debug_level > 0) {
-          std::cout << "Filtered " << n_cone_filtered << " spheres that were not in the cone" << std::endl;
-        }
-        Eigen::MatrixXd solutions(solutions_.size(),D+3);
-        for (int i=0; i<solutions_.size(); i++){
-            solutions.row(i) = solutions_[i];
-        }
-
-        lie_to_spheres(solutions, result);
-
-        if(debug_level > 0) {
-          std::cout << "Solutions.size: " << solutions.rows() << ", " << solutions.cols() << std::endl;
-        }
-        if (contact_indices){
-            contact_indices->resize(solutions_.size(),D+1);
-            for (int i=0; i<solutions_.size(); i++) contact_indices->block(i,0,1,D+1) = contact_indices_[i];
-        }
-
-=======
-    */
       }
     }
   }
