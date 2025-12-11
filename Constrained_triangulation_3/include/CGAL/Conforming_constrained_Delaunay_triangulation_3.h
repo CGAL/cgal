@@ -2473,6 +2473,103 @@ private:
         }
       }
     }
+
+    // Coplanar case:
+    //   check if both edge vertices are in the region and edge is not a border edge of the region
+    if(region_vertices.count(vc) > 0 && region_vertices.count(vd) > 0 &&
+       border_edges_set.count(CGAL::make_sorted_pair(vc, vd)) == 0)
+    {
+      // Call does_coplanar_edge_interior_intersect_region directly
+      auto orientation_2d = cdt_2.geom_traits().orientation_2_object();
+
+      const auto p = pc;
+      const auto q = pd;
+
+      typename CDT_2::Locate_type lt_p;
+      int index_p;
+      auto fh_p = cdt_2.locate(p, lt_p, index_p);
+      CGAL_assume(lt_p == CDT_2::VERTEX);
+
+      typename CDT_2::Locate_type lt_q;
+      int index_q;
+      auto fh_q = cdt_2.locate(q, lt_q, index_q);
+      CGAL_assume(lt_q == CDT_2::VERTEX);
+
+      auto vp_2d = fh_p->vertex(index_p);
+      auto vq_2d = fh_q->vertex(index_q);
+
+      auto line_face_circulator = cdt_2.line_walk(p, q, fh_p);
+      auto start = line_face_circulator;
+      CGAL_assertion(line_face_circulator == nullptr || start->has_vertex(vp_2d));
+      if(line_face_circulator != nullptr) do {
+        typename CDT_2::Face_handle fh = line_face_circulator;
+
+        // We want a face:
+        //  - of the region
+        //  - and intersected in its interior by the edge (p,q).
+
+        if(false == fh->info().is_in_region) {
+          continue;
+        }
+
+        auto pq_is_collinear_to_triangle_edge = [&]() {
+          const auto a = cdt_2.point(fh->vertex(0));
+          const auto b = cdt_2.point(fh->vertex(1));
+          const auto c = cdt_2.point(fh->vertex(2));
+
+          const auto nb_of_collinear = static_cast<int>(orientation_2d(p, q, a) == CGAL::COLLINEAR) +
+                                        static_cast<int>(orientation_2d(p, q, b) == CGAL::COLLINEAR) +
+                                        static_cast<int>(orientation_2d(p, q, c) == CGAL::COLLINEAR);
+          return nb_of_collinear >= 2;
+        };
+
+        if(pq_is_collinear_to_triangle_edge()) {
+          continue;
+        }
+
+        auto fh_incident_to_p_or_q_but_its_interior_does_not_intersect_pq = [&]() {
+          int i = -1;
+          auto seg_v1 = vp_2d;
+          auto seg_v2 = vq_2d;
+          if(fh->has_vertex(vq_2d, i)) {
+            std::swap(seg_v1, seg_v2);
+          } else {
+            (void)fh->has_vertex(vp_2d, i);
+          }
+
+          if(i < 0)
+            return false;
+
+          // here fh has exactly one of the two edge vertices: seg_v1
+          // then the segment must intersect the opposite edge of the triangle
+
+          const auto p = cdt_2.point(seg_v1);
+          const auto q = cdt_2.point(seg_v2);
+
+          const auto o1 = orientation_2d(p, q, cdt_2.point(fh->vertex(cdt_2.cw(i))));
+          const auto o2 = orientation_2d(p, q, cdt_2.point(fh->vertex(cdt_2.ccw(i))));
+          CGAL_assertion(o1 != CGAL::COLLINEAR && o2 != CGAL::COLLINEAR);
+          return o1 == o2;
+        };
+
+        if(fh_incident_to_p_or_q_but_its_interior_does_not_intersect_pq()) {
+          continue;
+        }
+
+        if(this->debug().regions()) {
+          std::cerr << "Edge interior intersects region in face with vertices:\n  "
+                    << IO::oformat(fh->vertex(0)->info().vertex_handle_3d, with_point_and_info) << "\n  "
+                    << IO::oformat(fh->vertex(1)->info().vertex_handle_3d, with_point_and_info) << "\n  "
+                    << IO::oformat(fh->vertex(2)->info().vertex_handle_3d, with_point_and_info) << "\n";
+        }
+
+        return {1,
+                {fh->vertex(0)->info().vertex_handle_3d, fh->vertex(1)->info().vertex_handle_3d,
+                  fh->vertex(2)->info().vertex_handle_3d}};
+      } while(false == line_face_circulator->has_vertex(vq_2d) && ++line_face_circulator != start);
+    } // End of if(region_vertices.count(vc) > 0 && region_vertices.count(vd) > 0 &&
+      //           border_edges_set.count(CGAL::make_sorted_pair(vc, vd)) == 0)
+
     return {0, {}};
   }
 
