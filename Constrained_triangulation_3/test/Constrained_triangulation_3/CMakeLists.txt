@@ -117,6 +117,7 @@ OPTION(CGAL_CDT_TEST_USE_THINGI OFF "Internal switch to test Thingi10k data set"
 if (CGAL_CDT_TEST_USE_THINGI)
   CGAL_add_cdt3_from_local_off_test(100644-min)
   CGAL_add_cdt3_from_local_off_test(106884-min1)
+  CGAL_add_cdt3_from_local_off_test(112541-min)
   CGAL_add_cdt3_from_local_off_test(113344-min3)
   CGAL_add_cdt3_from_local_off_test(1147177-min1)
   CGAL_add_cdt3_from_local_off_test(135777-min3)
