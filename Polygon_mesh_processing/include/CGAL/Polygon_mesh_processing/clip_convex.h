@@ -52,6 +52,17 @@ void clip_convex(PolygonMesh& pm,
   using FT = typename GT::FT;
   // using Point_3 = typename GT::Point_3;
 
+  struct Default_Bbox{
+    // Needed to compile with MSVC
+    vertex_descriptor operator[](std::size_t /*i*/){ return vertex_descriptor(); }
+    Default_Bbox operator*(){ return *this; }
+  };
+  using Bbox = typename internal_np::Lookup_named_param_def<internal_np::bounding_box_t, NamedParameters, Default_Bbox*>::type;
+  constexpr bool update_bbox = !std::is_same_v< std::remove_reference_t<Bbox>, Default_Bbox*>;
+
+  Default_Bbox* default_bbox;
+  Bbox bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), default_bbox);
+
   // Default_visitor default_visitor;
   // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
   // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
@@ -143,7 +154,7 @@ void clip_convex(PolygonMesh& pm,
 
   // Cut the convex along the plane by marching along crossing edges starting from the previous edge
   std::vector<halfedge_descriptor> boundaries;
-  std::vector<vertex_descriptor> boundaries_vertices;
+  std::vector<vertex_descriptor> boundary_vertices;
 
   halfedge_descriptor h = halfedge(src, trg, pm).first;
   if(sign(sp_trg)!=EQUAL)
@@ -171,7 +182,7 @@ void clip_convex(PolygonMesh& pm,
       while(side_trg == ON_ORIENTED_BOUNDARY){
         // The edge is along the plane, add it to boundaries
         boundaries.emplace_back(h);
-        boundaries_vertices.emplace_back(target(h, pm));
+        boundary_vertices.emplace_back(target(h, pm));
         set_halfedge(target(h, pm), h, pm);
         h = next(h, pm);
         side_trg=oriented_side(plane, get(vpm, target(h,pm)));
@@ -205,7 +216,7 @@ void clip_convex(PolygonMesh& pm,
     // Split the face
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
     boundaries.emplace_back(sh);
-    boundaries_vertices.emplace_back(target(sh, pm));
+    boundary_vertices.emplace_back(target(sh, pm));
     set_halfedge(target(sh, pm), sh, pm);
 
     CGAL_assertion(target(sh, pm) == target(h, pm));
@@ -226,7 +237,7 @@ void clip_convex(PolygonMesh& pm,
   std::vector<halfedge_descriptor> boundary_edges;
   for(halfedge_descriptor h: boundaries)
     boundary_edges.push_back(h);
-  std::sort(boundaries_vertices.begin(), boundaries_vertices.end());
+  std::sort(boundary_vertices.begin(), boundary_vertices.end());
   std::sort(boundary_edges.begin(), boundary_edges.end());
   auto is_boundary=[&](edge_descriptor e){
     halfedge_descriptor h = halfedge(e, pm);
@@ -243,12 +254,103 @@ void clip_convex(PolygonMesh& pm,
         if(h < opposite(h, pm)) // To avoid multiple assertions of a same edge
           edges_to_remove.push_back(edge(h, pm));
         if(halfedge(target(h, pm), pm) == h && // To avoid multiple assertions of a same vertex
-           !std::binary_search(boundaries_vertices.begin(), boundaries_vertices.end(), target(h, pm)))
+           !std::binary_search(boundary_vertices.begin(), boundary_vertices.end(), target(h, pm)))
           vertices_to_remove.push_back(target(h, pm));
         CGAL_assertion(oriented_side(plane, get(vpm, target(h, pm)))!=ON_NEGATIVE_SIDE);
       }
       h = next(h, pm);
     } while (h != h_start);
+  }
+
+  if constexpr(update_bbox){
+    auto &bbox = *bbox_pointer;
+    for (vertex_descriptor v : vertices_to_remove){
+      // TODO find a way to factorize
+
+      // Update xmin
+      if(v==bbox[0]){
+        bbox[0] = *(boundary_vertices.begin());
+        double xmin = to_interval(get(vpm, bbox[0]).x()).first;
+        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
+          vertex_descriptor v = *it;
+          double x = to_interval(get(vpm, v).x()).first;
+          if(x < xmin){
+            xmin = x;
+            bbox[0] = v;
+          }
+        }
+      }
+
+      // Update xmax
+      if(v==bbox[1]){
+        bbox[1] = *(boundary_vertices.begin());
+        double xmax = to_interval(get(vpm, bbox[1]).x()).second;
+        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
+          vertex_descriptor v = *it;
+          double x = to_interval(get(vpm, v).x()).second;
+          if(x > xmax){
+            xmax = x;
+            bbox[1] = v;
+          }
+        }
+      }
+
+      // Update ymin
+      if(v==bbox[2]){
+        bbox[2] = *(boundary_vertices.begin());
+        double ymin = to_interval(get(vpm, bbox[2]).y()).first;
+        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
+          vertex_descriptor v = *it;
+          double y = to_interval(get(vpm, v).y()).first;
+          if(y < ymin){
+            ymin = y;
+            bbox[2] = v;
+          }
+        }
+      }
+
+      // Update ymax
+      if(v==bbox[3]){
+        bbox[3] = *(boundary_vertices.begin());
+        double ymax = to_interval(get(vpm, bbox[3]).y()).second;
+        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
+          vertex_descriptor v = *it;
+          double y = to_interval(get(vpm, v).y()).second;
+          if(y > ymax){
+            ymax = y;
+            bbox[3] = v;
+          }
+        }
+      }
+
+      // Update zmin
+      if(v==bbox[4]){
+        bbox[4] = *(boundary_vertices.begin());
+        double zmin = to_interval(get(vpm, bbox[4]).z()).first;
+        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
+          vertex_descriptor v = *it;
+          double z = to_interval(get(vpm, v).z()).first;
+          if(z < zmin){
+            zmin = z;
+            bbox[4] = v;
+          }
+        }
+      }
+
+      // Update zmax
+      if(v==bbox[5]){
+        bbox[5] = *(boundary_vertices.begin());
+        double zmax = to_interval(get(vpm, bbox[5]).z()).second;
+        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
+          vertex_descriptor v = *it;
+          double z = to_interval(get(vpm, v).z()).second;
+          if(z > zmax){
+            zmax = z;
+            bbox[5] = v;
+          }
+        }
+      }
+    }
   }
 
   for (vertex_descriptor v : vertices_to_remove){
