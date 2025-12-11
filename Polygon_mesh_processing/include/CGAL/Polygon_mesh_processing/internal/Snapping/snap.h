@@ -203,9 +203,10 @@ void simplify_range(HalfedgeRange& halfedge_range,
         // But `prev(opp(h))` might have been be a border edge whereas `opp(next(opp(h)))` might not be.
         // So, if `opp(prev(opp(h)))` was a border halfedge in the range, we must add `next(opp(h))`
         // to the range.
-        bool was_opoh_border_in_range = false;
-
         const halfedge_descriptor opoh = opposite(prev(opposite(h, tm), tm), tm);
+        bool was_opoh_border_in_range = false;
+        const halfedge_descriptor noh = next(opposite(h, tm), tm);
+
         if(is_border(opoh, tm) && get(range_halfedges, opoh)) {
           was_opoh_border_in_range = true;
           edges_to_test.erase(opoh);
@@ -218,15 +219,17 @@ void simplify_range(HalfedgeRange& halfedge_range,
         put(vpm, v, new_p);
         put(tolerance_map, v, new_tolerance);
 
-        const halfedge_descriptor next_ph = next(prev_h, tm);
-        if(was_opoh_border_in_range) {
-          put(range_halfedges, next_ph, true);
+        if(was_opoh_border_in_range)
+        {
+          CGAL_assertion(is_border(noh, tm));
+          put(range_halfedges, noh, true);
         }
 
-        if(get(range_halfedges, prev_h))
-          edges_to_test.insert(prev_h);
-        if(get(range_halfedges, next_ph))
-          edges_to_test.insert(next_ph);
+        for(halfedge_descriptor ih : halfedges_around_target(v, tm))
+        {
+          if(get(range_halfedges, ih))
+            edges_to_test.insert(ih);
+        }
 
         ++collapsed_n;
       }
