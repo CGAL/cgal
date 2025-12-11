@@ -265,10 +265,11 @@ struct Initialization_options
       , call_( [](void* g, Point_output_function_iterator oit, const int n) {
                  using Real_generator = CGAL::cpp20::remove_cvref_t<Generator>;
                  auto* real_g = static_cast<Real_generator*>(g);
-                 if( n < 0 )
-                   return (*real_g)(oit);
-                 else
-                  return (*real_g)(oit, n);
+                 if constexpr (std::is_invocable_v<Real_generator, Point_output_function_iterator>) {
+                   if( n < 0 )
+                     return (*real_g)(oit);
+                 }
+                 return (*real_g)(oit, n);
                } )
     {
     }
