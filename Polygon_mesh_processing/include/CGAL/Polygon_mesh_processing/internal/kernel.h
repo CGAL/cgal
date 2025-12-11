@@ -179,49 +179,28 @@ kernel(const PolygonMesh& pm,
   std::array<Point_3, 8> corners;
   if(bbox_filtering){
     // We store the vertices that realized the bbox
-    // TODO try to factorize
-    for(vertex_descriptor v: vertices(kernel)){
-      double x = to_interval(get(kernel_vpm, v).x()).first;
-      if(x == bb3.xmin()){
-        bbox_vertices[0] = v;
-        break;
-      }
-    }
-    for(vertex_descriptor v: vertices(kernel)){
-      double x = to_interval(get(kernel_vpm, v).x()).second;
-      if(x == bb3.xmax()){
-        bbox_vertices[1] = v;
-        break;
-      }
-    }
+    struct BBoxEntry {
+      std::size_t index;
+      std::function<double(const Point_3&)> bound;
+      std::function<double(const Bbox_3&)> value;
+    };
+    std::array<BBoxEntry,6> entries {{
+        {0, [](const Point_3& p){ return to_interval(p.x()).first;  }, [](const Bbox_3& b){ return b.xmin(); }},
+        {1, [](const Point_3& p){ return to_interval(p.x()).second; }, [](const Bbox_3& b){ return b.xmax(); }},
+        {2, [](const Point_3& p){ return to_interval(p.y()).first;  }, [](const Bbox_3& b){ return b.ymin(); }},
+        {3, [](const Point_3& p){ return to_interval(p.y()).second; }, [](const Bbox_3& b){ return b.ymax(); }},
+        {4, [](const Point_3& p){ return to_interval(p.z()).first;  }, [](const Bbox_3& b){ return b.zmin(); }},
+        {5, [](const Point_3& p){ return to_interval(p.z()).second; }, [](const Bbox_3& b){ return b.zmax(); }}
+    }};
 
-    for(vertex_descriptor v: vertices(kernel)){
-      double y = to_interval(get(kernel_vpm, v).y()).first;
-      if(y == bb3.ymin()){
-        bbox_vertices[2] = v;
-        break;
-      }
-    }
-    for(vertex_descriptor v: vertices(kernel)){
-      double y = to_interval(get(kernel_vpm, v).y()).second;
-      if(y == bb3.ymax()){
-        bbox_vertices[3] = v;
-        break;
-      }
-    }
-
-    for(vertex_descriptor v: vertices(kernel)){
-      double z = to_interval(get(kernel_vpm, v).z()).first;
-      if(z == bb3.zmin()){
-        bbox_vertices[4] = v;
-        break;
-      }
-    }
-    for(vertex_descriptor v: vertices(kernel)){
-      double z = to_interval(get(kernel_vpm, v).z()).second;
-      if(z == bb3.zmax()){
-        bbox_vertices[5] = v;
-        break;
+    for (const auto& e : entries){
+      for (vertex_descriptor v : vertices(kernel)){
+        std::size_t i = e.index;
+        double bound = e.bound(get(kernel_vpm, v));
+        if (bound == e.value(bb3)){
+          bbox_vertices[i] = v;
+          break;
+        }
       }
     }
     corners = CGAL::make_array(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
@@ -310,18 +289,15 @@ kernel(const PolygonMesh& pm,
 
       if (i==8) continue;
       bool all_the_same=true;
-      for (;i<8;++i)
-      {
+      for (;i<8;++i){
         auto other_ori=pred(plane, corners[i]);
-        if (other_ori!=ON_ORIENTED_BOUNDARY && other_ori!=first_ori)
-        {
+        if (other_ori!=ON_ORIENTED_BOUNDARY && other_ori!=first_ori){
           all_the_same=false;
           break;
         }
       }
 
-      if (all_the_same)
-      {
+      if (all_the_same){
         if (first_ori==ON_NEGATIVE_SIDE) continue;
         else
         {
@@ -331,23 +307,19 @@ kernel(const PolygonMesh& pm,
       clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).bounding_box(&bbox_vertices));
       if (is_empty(kernel)) break;
 
-      CGAL_assertion(kernel.is_valid(bbox_vertices[0]));
-      CGAL_assertion(kernel.is_valid(bbox_vertices[1]));
-      CGAL_assertion(kernel.is_valid(bbox_vertices[2]));
-      CGAL_assertion(kernel.is_valid(bbox_vertices[3]));
-      CGAL_assertion(kernel.is_valid(bbox_vertices[4]));
-      CGAL_assertion(kernel.is_valid(bbox_vertices[5]));
+      CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i))
+        CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
 
       bb3 = get(kernel_vpm, bbox_vertices[0]).bbox()+get(kernel_vpm, bbox_vertices[1]).bbox()+get(kernel_vpm, bbox_vertices[2]).bbox()+
             get(kernel_vpm, bbox_vertices[3]).bbox()+get(kernel_vpm, bbox_vertices[4]).bbox()+get(kernel_vpm, bbox_vertices[5]).bbox();
       corners = CGAL::make_array(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                                Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                                Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                                Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
-                                Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
-                                Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                                Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()),
-                                Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()));
+                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
+                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
+                                 Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+                                 Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
+                                 Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
+                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()),
+                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()));
     }
     else
     {

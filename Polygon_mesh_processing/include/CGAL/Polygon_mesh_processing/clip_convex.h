@@ -50,7 +50,7 @@ void clip_convex(PolygonMesh& pm,
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   using FT = typename GT::FT;
-  // using Point_3 = typename GT::Point_3;
+  using Point_3 = typename GT::Point_3;
 
   struct Default_Bbox{
     // Needed to compile with MSVC
@@ -264,89 +264,37 @@ void clip_convex(PolygonMesh& pm,
 
   if constexpr(update_bbox){
     auto &bbox = *bbox_pointer;
+    struct BBoxEntry {
+      std::size_t index;
+      std::function<double(const Point_3&)> bound;
+      bool take_min;
+    };
+
+    std::array<BBoxEntry,6> entries {{
+        {0, [](const Point_3& p){ return to_interval(p.x()).first;  }, true},  // xmin
+        {1, [](const Point_3& p){ return to_interval(p.x()).second; }, false}, // xmax
+        {2, [](const Point_3& p){ return to_interval(p.y()).first;  }, true},  // ymin
+        {3, [](const Point_3& p){ return to_interval(p.y()).second; }, false}, // ymax
+        {4, [](const Point_3& p){ return to_interval(p.z()).first;  }, true},  // zmin
+        {5, [](const Point_3& p){ return to_interval(p.z()).second; }, false}  // zmax
+    }};
+
     for (vertex_descriptor v : vertices_to_remove){
-      // TODO find a way to factorize
-
-      // Update xmin
-      if(v==bbox[0]){
-        bbox[0] = *(boundary_vertices.begin());
-        double xmin = to_interval(get(vpm, bbox[0]).x()).first;
-        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
-          vertex_descriptor v = *it;
-          double x = to_interval(get(vpm, v).x()).first;
-          if(x < xmin){
-            xmin = x;
-            bbox[0] = v;
-          }
-        }
-      }
-
-      // Update xmax
-      if(v==bbox[1]){
-        bbox[1] = *(boundary_vertices.begin());
-        double xmax = to_interval(get(vpm, bbox[1]).x()).second;
-        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
-          vertex_descriptor v = *it;
-          double x = to_interval(get(vpm, v).x()).second;
-          if(x > xmax){
-            xmax = x;
-            bbox[1] = v;
-          }
-        }
-      }
-
-      // Update ymin
-      if(v==bbox[2]){
-        bbox[2] = *(boundary_vertices.begin());
-        double ymin = to_interval(get(vpm, bbox[2]).y()).first;
-        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
-          vertex_descriptor v = *it;
-          double y = to_interval(get(vpm, v).y()).first;
-          if(y < ymin){
-            ymin = y;
-            bbox[2] = v;
-          }
-        }
-      }
-
-      // Update ymax
-      if(v==bbox[3]){
-        bbox[3] = *(boundary_vertices.begin());
-        double ymax = to_interval(get(vpm, bbox[3]).y()).second;
-        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
-          vertex_descriptor v = *it;
-          double y = to_interval(get(vpm, v).y()).second;
-          if(y > ymax){
-            ymax = y;
-            bbox[3] = v;
-          }
-        }
-      }
-
-      // Update zmin
-      if(v==bbox[4]){
-        bbox[4] = *(boundary_vertices.begin());
-        double zmin = to_interval(get(vpm, bbox[4]).z()).first;
-        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
-          vertex_descriptor v = *it;
-          double z = to_interval(get(vpm, v).z()).first;
-          if(z < zmin){
-            zmin = z;
-            bbox[4] = v;
-          }
-        }
-      }
-
-      // Update zmax
-      if(v==bbox[5]){
-        bbox[5] = *(boundary_vertices.begin());
-        double zmax = to_interval(get(vpm, bbox[5]).z()).second;
-        for(auto it=++boundary_vertices.begin(); it!=boundary_vertices.end(); ++it){
-          vertex_descriptor v = *it;
-          double z = to_interval(get(vpm, v).z()).second;
-          if(z > zmax){
-            zmax = z;
-            bbox[5] = v;
+      for (const auto& e : entries){
+        // Only update this bbox entry if the removed vertex *was* this extremum
+        std::size_t i = e.index;
+        if (v == bbox[i]){
+          auto it = boundary_vertices.begin();
+          bbox[i] = *it;
+          double bound = e.bound(get(vpm, bbox[i]));
+          for (++it; it != boundary_vertices.end(); ++it){
+            vertex_descriptor v = *it;
+            double val = e.bound(get(vpm, v));
+            if ((e.take_min && val < bound) ||
+              (!e.take_min && val > bound)){
+              bound = val;
+              bbox[i] = v;
+            }
           }
         }
       }
