@@ -7,6 +7,7 @@ project(Polygon_mesh_processing_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
+create_single_source_cgal_program("polygon_soup_to_polygon_soup.cpp" )
 create_single_source_cgal_program("sample_example.cpp" )
 create_single_source_cgal_program("extrude.cpp" )
 create_single_source_cgal_program( "list_non_pure_triangle_meshes.cpp" )
