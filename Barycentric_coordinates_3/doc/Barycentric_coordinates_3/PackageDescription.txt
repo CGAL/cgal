@@ -45,9 +45,9 @@ defined for convex simplicial polytopes.}
 - `BarycentricTraits_3`
 
 ## Analytic Coordinates ##
-- `Wachspress_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
-- `Mean_value_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
-- `Discrete_harmonic_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
+- `Wachspress_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
+- `Mean_value_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
+- `Discrete_harmonic_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
 
 ## Free Functions ##
 - `apply_barycentric_coordinates()`

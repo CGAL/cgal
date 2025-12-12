@@ -59,7 +59,7 @@ namespace Barycentric_coordinates {
   \param tmesh
   an instance of `TriangleMesh`
 
-  \param coords
+  \param coordinates
   barycentric coordinates of the point
 
   \param vpm
@@ -68,10 +68,6 @@ namespace Barycentric_coordinates {
   \return point with type `boost::property_traits<VertexPointMap>::value_type`
 
   \pre `vertices(tmesh).size()` == `coords.size()`
-  \pre boost::num_vertices(`tmesh`) >= 4.
-  \pre CGAL::is_triangle_mesh(`tmesh`).
-  \pre CGAL::is_closed(`tmesh`).
-  \pre CGAL::is_strongly_convex_3(`tmesh`).
 */
 template<typename TriangleMesh, typename CoordinateRange, typename VertexPointMap, typename GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type>
 typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm) {
@@ -111,10 +107,10 @@ typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_co
   \tparam GeomTraits
   a model of `BarycentricTraits_3`
 
-  \param pts
+  \param points
   a range of input points
 
-  \param coords
+  \param coordinates
   barycentric coordinates of the point
 
   \return point with type `GeomTraits::Point_3`
