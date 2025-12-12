@@ -133,14 +133,14 @@ public:
 
     /*! \brief Constructor from a function mapping vertices to degrees.
      *
-     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `degree`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
+     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `deg`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
      * \param K Constant reference to the underlying complex.
-     * \param degree Function mapping vertices of `K` to their degree.
+     * \param deg Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& degree) : Filtration_parent(K)
+    Filtration_lower_star(const Chain_complex& K, std::function<Degree(size_t)>& deg) : Filtration_parent(K)
     {
-        star_filtration(degree);
+        star_filtration(deg);
     }
 
 

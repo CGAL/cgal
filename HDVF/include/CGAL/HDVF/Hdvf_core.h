@@ -142,7 +142,7 @@ protected:
 
 public:
     /**
-     * \brief Default constructor.
+     * \brief Constructor from a chain complex.
      *
      * Builds an "empty" HDVF_core associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *

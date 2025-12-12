@@ -355,11 +355,8 @@ public:
     Complex_duality_data_t() : L_complex(nullptr), K_complex(nullptr) {}
 
     /** \brief Constructor from a pointer over a chain complex and a sub chain complex mask.
-     *
-     * \warning The `Complex_duality_data_t` destructor deletes its underlying complex and sub chain complex mask.
      */
     Complex_duality_data_t(std::shared_ptr<Chain_complex> L, std::shared_ptr<Sub_chain_complex> K) : L_complex(L), K_complex(K) {}
-//    Complex_duality_data_t(const Complex_duality_data_t&) = delete;
 } ;
 
 
