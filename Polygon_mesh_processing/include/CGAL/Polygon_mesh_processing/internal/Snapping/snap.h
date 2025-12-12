@@ -146,7 +146,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
     if(gt.compare_squared_distance_3_object()(ps,pt,CGAL::square(max_tol)) == SMALLER)
     {
-      const halfedge_descriptor prev_h = prev(h, tm);
+      CGAL_precondition_code(const halfedge_descriptor prev_h = prev(h, tm);)
       const halfedge_descriptor prev_oh = prev(opposite(h, tm), tm);
 
       // check that the border has at least 4 edges not to create degenerate volumes
