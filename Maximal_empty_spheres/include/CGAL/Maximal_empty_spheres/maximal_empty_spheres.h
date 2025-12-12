@@ -106,7 +106,9 @@ namespace CGAL {
     timer.start();
     Triangulation t(D+2);
     t.insert_and_index(points.begin(), points.end());
-    if (debug_level > 0) { std::cout << "Convex hull of " << points.size() << " points computed in " << timer.time() << " seconds." << std::endl; }
+    if (debug_level > 0) {
+        std::cout << "Convex hull of " << points.size() << " points computed in " << timer.time() << " seconds." << std::endl;
+        }
     // --> recover the infinite cells (contain the convex hull)
     std::vector<typename Triangulation::Full_cell_handle> infinite_cells;
     for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
@@ -115,9 +117,13 @@ namespace CGAL {
         }
     }
 
-        // --> get a unique index per cell
-        int ci=0;
-        for(auto ch : infinite_cells) ch->data() = ci++;
+    if (debug_level > 0){
+        std::cout << "--> " << infinite_cells.size() << " infinite full cells" << std::endl;
+    }
+
+    // --> get a unique index per cell
+    int ci=0;
+    for(auto ch : infinite_cells) ch->data() = ci++;
 
         Eigen::JacobiSVD<Eigen::MatrixXd> svd;
         Eigen::MatrixXd Ks(infinite_cells.size(),D+3);
@@ -157,7 +163,7 @@ namespace CGAL {
         // std::cout << "Ks * NC.T" << std::endl << Ks * NC.transpose() << std::endl;
 
         // @todo: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
-        int n_check_planes = (NC.rows()<=200)? NC.rows(): 200;
+        int n_check_planes = (NC.rows()<=10)? NC.rows(): 10;
         if(debug_level > 0){
           std::cout << "n_check_planes: " << n_check_planes << std::endl;
           std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
@@ -171,7 +177,7 @@ namespace CGAL {
             std::cout << ((NC * Ks.transpose()).rowwise().maxCoeff().array() <= atol).array().all() << std::endl;
         }
 
-        bool cone_filter=true;
+        bool cone_filter=false;
         int n_cone_filtered=0;
         std::vector<Eigen::RowVectorXd> solutions_;
         std::vector<Eigen::RowVectorXi> contact_indices_;
