@@ -75,12 +75,13 @@ namespace Barycentric_coordinates {
 */
 template<typename TriangleMesh, typename CoordinateRange, typename VertexPointMap, typename GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type>
 typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm) {
-  CGAL_precondition(num_vertices(tmesh) == std::distance(std::begin(coordinates), std::end(coordinates)));
+  CGAL_precondition(vertices(tmesh).size() == std::distance(std::begin(coordinates), std::end(coordinates)));
   using Point = typename boost::property_traits<VertexPointMap>::value_type;
   using Kernel = typename CGAL::Kernel_traits<Point>::type;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using FT = typename Kernel::FT;
 
-  std::array<typename Kernel::FT, 3> p = { FT(0), FT(0), FT(0) };
+  std::array<FT, 3> p = { FT(0), FT(0), FT(0) };
   std::size_t i = 0;
   for (vertex_descriptor v : vertices(tmesh)) {
     const Point& pv = get(vpm, v);
