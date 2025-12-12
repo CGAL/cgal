@@ -100,6 +100,20 @@ public:
         return vertices().end();
     }
 
+    // These overloads allow callers that know the current geometric dimension
+    // to iterate only over valid vertices (0..cur_dim).
+    Vertex_handle_const_iterator vertices_begin(const int cur_dim) const /* Concept */
+    {
+        CGAL_USE(cur_dim);
+        return vertices().begin();
+    }
+
+    Vertex_handle_const_iterator vertices_end(const int cur_dim) const /* Concept */
+    {
+        CGAL_precondition(0 <= cur_dim && cur_dim <= maximal_dimension());
+        return vertices().begin() + (cur_dim + 1);
+    }
+
     Vertex_handle vertex(const int i) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
