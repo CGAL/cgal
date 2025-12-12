@@ -129,7 +129,7 @@ Less_y_2 less_y_2_object();
 /*!
 
 */
-Construct_round_point_2 construct_round_point_2_object();
+Construct_rounded_point_2 construct_rounded_point_2_object();
 
 /*!
 
@@ -158,7 +158,7 @@ namespace FSRTraits_2{
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Construct_round_point_2 `Float_snap_rounding_traits_2::Construct_round_point_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Construct_rounded_point_2 `Float_snap_rounding_traits_2::Construct_rounded_point_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructRoundPoint_2

@@ -403,7 +403,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 } // end of namespace internal
 
 /**
-* ingroup PkgSnapRounding2Ref
+* \ingroup PkgSnapRounding2Ref
 *
 * Subdivides and rounded a set of segments so that they are pairwise disjoint in their interiors.
 * The output is a range of polyline with each polyline corresponding to an input segment.
@@ -533,7 +533,7 @@ OutputContainer double_snap_rounding_2(InputIterator  	begin,
 }
 
 /**
-* ingroup PkgSnapRounding2Ref
+* \ingroup PkgSnapRounding2Ref
 *
 * Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
 *
@@ -666,7 +666,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
 }
 
 /**
-* ingroup PkgSnapRounding2Ref
+* \ingroup PkgSnapRounding2Ref
 *
 * Given a range of `Polygon_2`, compute rounded polygons such that their segments are either equal either disjoint in their interior, as induced by the input polygons.
 * The polygons are intended to be non-intersecting, unless the named parameter `compute_intersections` is set to `true`.
@@ -786,7 +786,7 @@ void compute_snapped_polygons_2(InputIterator begin,
 
 
 /**
-* ingroup
+* \ingroup PkgSnapRounding2Ref
 *
 * Given a Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygon.
 * The output is guarantee to be a Polygon but may present pinched section.
