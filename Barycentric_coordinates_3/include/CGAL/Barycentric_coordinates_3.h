@@ -126,8 +126,9 @@ typename boost::range_value<PointRange>::type apply_barycentric_coordinates(cons
   CGAL_precondition(std::distance(std::begin(points), std::end(points)) == std::distance(std::begin(coordinates), std::end(coordinates)));
   using Point = typename boost::range_value<PointRange>::type;
   using Kernel = typename CGAL::Kernel_traits<Point>::type;
+  using FT = typename Kernel::FT;
 
-  std::array<typename Kernel::FT, 3> p = { FT(0), FT(0), FT(0) };
+  std::array<FT, 3> p = { FT(0), FT(0), FT(0) };
   std::size_t i = 0;
   for (const Point& pv : points) {
     for (int c = 0; c < 3; c++)
