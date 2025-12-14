@@ -23,33 +23,6 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Dense>
-#ifdef CGAL_USE_MPFI 
-#include <CGAL/Gmpfi.h> 
-
-namespace Eigen {
-namespace internal {
-
-template<>
-struct scalar_score_coeff_op<CGAL::Gmpfi> {
-  // We use Gmpfr as the result type because Gmpfi comparisons can be uncertain, 
-  // but Eigen requires a strict weak ordering for pivoting.
-  typedef CGAL::Gmpfr result_type; 
-
-  result_type operator()(const CGAL::Gmpfi& x) const {
-    // Return the supremum of the absolute value of the interval.
-    // This provides a deterministic magnitude score for interval values.
-    return CGAL::abs(x).sup();
-  }
-};
-
-template<>
-struct functor_traits<scalar_score_coeff_op<CGAL::Gmpfi> > {
-  enum { Cost = 10, PacketAccess = false };
-};
-
-}
-}
-#endif
 
 // Just check that it all compiles.
 template <class NT, int s>
