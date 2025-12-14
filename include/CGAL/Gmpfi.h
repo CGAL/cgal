@@ -371,6 +371,10 @@ struct scalar_score_coeff_op<CGAL::Gmpfi> {
   }
 };
 
+template<> struct scalar_score_coeff_op<CGAL::Gmpfr> {
+  using result_type = CGAL::Gmpfr;
+  result_type operator()(const CGAL::Gmpfr& x) const { return CGAL::abs(x); }
+};
 template<>
 struct functor_traits<scalar_score_coeff_op<CGAL::Gmpfi> > {
   enum { Cost = 10, PacketAccess = false };
