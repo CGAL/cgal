@@ -360,9 +360,9 @@ template<typename T> struct functor_traits;
 
 template<>
 struct scalar_score_coeff_op<CGAL::Gmpfi> {
-  // We use Gmpfr as the result type because Gmpfi comparisons can be uncertain, 
+  // We use Gmpfr as the result type because Gmpfi comparisons can be uncertain,
   // but Eigen requires a strict weak ordering for pivoting.
-  typedef CGAL::Gmpfr result_type; 
+  typedef CGAL::Gmpfr result_type;
 
   result_type operator()(const CGAL::Gmpfi& x) const {
     // Return the supremum of the absolute value of the interval.
@@ -377,7 +377,7 @@ struct functor_traits<scalar_score_coeff_op<CGAL::Gmpfi> > {
 };
 
 }
-} 
+}
 #endif
 
 #include <CGAL/GMP/Gmpfi_type.h>
