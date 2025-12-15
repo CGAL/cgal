@@ -1930,6 +1930,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  * \cgalNamedParamsEnd
  *
  * \return the number of convex hulls. Note that this value may be lower than the `maximum_number_of_convex_volumes`, for example if the specified `volume_error` is quickly met.
+ *         Note that the output volumes can be degenerated, especially, when a large `maximum_number_of_convex_volumes` is chosen with a limited `maximum_depth`.
  *
  * \pre `tmesh` is a triangle mesh.
  * \pre `tmesh` is not self-intersecting.
