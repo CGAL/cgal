@@ -437,9 +437,9 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 *   \cgalParamNEnd
 */
 template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-OutputContainer double_snap_rounding_2(InputIterator  	begin,
-		                                   InputIterator  	end,
-		                                   OutputContainer  out,
+OutputContainer double_snap_rounding_2(InputIterator begin,
+                                       InputIterator    end,
+                                       OutputContainer  out,
                                        const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
@@ -562,9 +562,9 @@ OutputContainer double_snap_rounding_2(InputIterator  	begin,
 *   \cgalParamNEnd
 */
 template <class InputIterator , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator compute_snapped_subcurves_2(InputIterator  	 begin,
-		                                       InputIterator  	 end,
-		                                       OutputIterator    out,
+OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
+                                           InputIterator     end,
+                                           OutputIterator    out,
                                            const NamedParameters &np = parameters::default_values())
 {
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
