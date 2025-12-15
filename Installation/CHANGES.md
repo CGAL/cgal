@@ -4,6 +4,11 @@
 
 Release date: July 2026
 
+### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
+-   This package provides functions to compute various types of generalized barycentric coordinates
+    (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
+    3D polyhedra.
+
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
 - **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
