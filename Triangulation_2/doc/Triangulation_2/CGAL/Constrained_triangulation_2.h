@@ -256,7 +256,7 @@ Constrained_edges constrained_edges() const;
 
 /*!
 inserts point `p` and restores the status (constrained or not) of all
-the touched edges. If present, `f` is used as an hint
+the touched edges. If present, `f` is used as a hint
 for the location of `p`.
 */
 Vertex_handle insert(Point p, Face_handle f = Face_handle() );

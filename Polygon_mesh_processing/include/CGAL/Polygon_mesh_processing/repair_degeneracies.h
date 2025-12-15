@@ -562,7 +562,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 /// removed by flipping the edge opposite to the largest angle (with the exception of caps on the boundary that are
 /// simply removed from the mesh).
 ///
-/// @pre `CGAL::is_triangle_mesh(tmesh)`
+/// @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// @tparam FaceRange a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
@@ -1371,7 +1371,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
 // removes the degenerate edges from a triangulated surface mesh.
 // An edge is considered degenerate if its two extremities share the same location.
 //
-// @pre `CGAL::is_triangle_mesh(tmesh)`
+// @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
 //
 // @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 // @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1926,7 +1926,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
 // A face is considered degenerate if two of its vertices share the same location,
 // or more generally if all its vertices are collinear.
 //
-// @pre `CGAL::is_triangle_mesh(tmesh)`
+// @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
 //
 // @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 // @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

@@ -96,7 +96,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     }
     else
     {
-      ok = true;
+      ok = false;
       return QList<Scene_item*>();
     }
   }

@@ -81,7 +81,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ( context.payload.input && context.payload.inputs.doc_version ) {
+            if ( context.payload.inputs && context.payload.inputs.doc_version ) {
               return context.payload.inputs.doc_version
             }
             const body = context.payload.comment.body
@@ -164,7 +164,7 @@ jobs:
           wget --no-verbose cgal.github.io -O index.html
           if ! egrep -qF "/$PR_NUMBER/$ROUND" index.html || [ "$force" = "yes" ]; then
             #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only origin/master...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+            LIST_OF_PKGS=$(git diff --name-only origin/main...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
               echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
               exit 1
@@ -213,7 +213,7 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: address
             });
 
@@ -230,6 +230,6 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: msg
             });

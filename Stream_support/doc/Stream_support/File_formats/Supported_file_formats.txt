@@ -22,6 +22,7 @@ each specific format.
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
 - \ref IOStreamWKT
+- \ref IOStreamVTKLCC
 
 \section IOStreamOFF Object File Format (OFF)
 
@@ -61,7 +62,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOOff CGAL::IO::read_OFF(const std::string&, PointOutputIterator)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF CGAL::IO::read_OFF(const std::string&, PointOutputIterator)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -89,7 +90,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOOff CGAL::IO::write_OFF(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF CGAL::IO::write_OFF(const std::string&, const PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -239,7 +240,7 @@ A precise specification of those formats is available <a href="https://paulbourk
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::read_PLY(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::read_PLY(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -263,7 +264,7 @@ A precise specification of those formats is available <a href="https://paulbourk
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::write_PLY(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::write_PLY(const std::string&, const PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -298,7 +299,7 @@ A precise specification of those formats is available
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOLas CGAL::IO::read_LAS(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS CGAL::IO::read_LAS(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -308,7 +309,7 @@ A precise specification of those formats is available
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOLas CGAL::IO::write_LAS(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS CGAL::IO::write_LAS(const std::string&, const PointRange&)\endlink</td>
   </tr>
 </table>
 
@@ -331,7 +332,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOXyz CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -341,7 +342,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOXyz CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::write_XYZ(const std::string&, const PointRange&)\endlink</td>
   </tr>
 </table>
 
@@ -504,6 +505,30 @@ The following \cgal data structures can be exported into the `.VTU` file format:
 - `CGAL::Mesh_complex_3_in_triangulation_3`, using \link CGAL::IO::output_to_vtu() `CGAL::IO::output_to_vtu()` \endlink
 - `CGAL::Constrained_Delaunay_triangulation_2`, using the function \link CGAL::IO::write_VTU `CGAL::IO::write_VTU()` \endlink
 
+\section IOStreamVTKLCC VTK Legacy File Format for Linear Cell Complex
+
+The VTK legacy format, using file extension `.vtk`, is an \ascii format used to store 3D volumetric meshes.
+This specific implementation supports Linear Cell Complex structures with various 3D cell types including
+tetrahedra, hexahedra, prisms, pyramids, and generic polyhedra. Optional scalar data can be associated
+with both vertices and volumes.
+
+<table class="iotable">
+  <tr>
+    <th colspan="4">VTK Legacy File Format for Linear Cell Complex</th>
+  </tr>
+  <tr>
+    <td rowspan="1" width="75">Input</td>
+    <td rowspan="1" width="175">3D Volumetric Mesh</td>
+    <td width="250">`CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`</td>
+    <td width="550"> \link PkgLinearCellComplexRefIOVTK `CGAL::IO::read_VTK()` \endlink</td>
+  </tr>
+  <tr>
+    <td rowspan="1">Output</td>
+    <td rowspan="1">3D Volumetric Mesh</td>
+    <td>`CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`</td>
+    <td> \link PkgLinearCellComplexRefIOVTK `CGAL::IO::Write_VTK<LCC>()` \endlink</td>
+  </tr>
+</table>
 
 \section IOStreamAvizo Avizo File Format
 
@@ -522,14 +547,14 @@ The Medit format, using file extension `.mesh`, is a format used by the Medit so
 In \cgal, it is used to represent 3D meshes.
 
 A precise specification of the format is available <a href="https://inria.hal.science/inria-00069921/document">in this report</a>,
-in the appendices (section 7.2.1, page 36).
+in the appendices (Section 7.2.1, Page 36).
 
 The following \cgal data structures can be exported into the `.mesh` file format:
 
 - `CGAL::Mesh_complex_3_in_triangulation_3`, using the function
-  \link CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &) `CGAL::IO::write_MEDIT(` \endlink, and
+  \link CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &) `CGAL::IO::write_MEDIT()` \endlink, and
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
-  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT(` \endlink.
+  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT()` \endlink.
 
 
 \section IOStreamTetgen Tetgen File Format

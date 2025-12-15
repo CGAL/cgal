@@ -6,7 +6,7 @@
 
 The class `mpq_class` is an exact multiprecision rational number type,
 provided by \gmp.
-CGAL provides the necessary functions to make it compliant to the number type
+This header provides the necessary functions to make it compliant to the number type
 concept.
 
 \cgalModels{Field,RealEmbeddable,Fraction}
@@ -26,7 +26,7 @@ class mpq_class {
 
 The class `mpz_class` is an exact multiprecision integer number type,
 provided by \gmp.
-CGAL provides the necessary functions to make it compliant to the number type
+This header provides the necessary functions to make it compliant to the number type
 concept.
 
 \cgalModels{EuclideanRing,RealEmbeddable}
