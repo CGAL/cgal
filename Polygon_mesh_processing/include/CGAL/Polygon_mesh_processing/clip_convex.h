@@ -223,7 +223,7 @@ void clip_convex(PolygonMesh& pm,
     h = opposite(next(sh,pm), pm);
 
     // During the loop, if a mesh vertex lies on the plane, we look for a face incident to that vertex that crosses the plane.
-    // The second part of the while-condition ensures we don't exit prematurely in this looking.
+    // The second part of the while-condition ensures we don't exit prematurely
   } while(target(h, pm)!=v_start || (boundaries.empty() && h!=h_start));
 
   CGAL_assertion(is_valid_polygon_mesh(pm));
