@@ -99,7 +99,7 @@ This example shows the usage of `CGAL::convex_decomposition_3(Nef_polyhedron_3&)
 
 \cgalFigureAnchor{Acd_topfig}
 <center>
-<img src="https://soesau.github.io/acd_top.jpg" style="max-width:70%;"/>
+<img src="acd_top.jpg" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{Acd_topfig}
 Approximate convex decomposition of the elephant.off model.\n From left to right: input mesh, 6, 9, and 12 convex volumes
@@ -124,7 +124,7 @@ Where \f$|A|\f$ is the volume of A, P is the input polyhedron and \f$C_i\f$ are 
 
 \cgalFigureAnchor{Acd_pipelinefig}
 <center>
-<img src="https://soesau.github.io/acd_pipeline.jpg" style="max-width:90%;"/>
+<img src="acd_pipeline.jpg" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{Acd_pipelinefig}
 Approximate convex decomposition pipeline.\n From left to right: 1. input mesh 2. voxel grid 3. convex volumes after error-driven splitting 4. final convex volumes after merging
@@ -199,7 +199,7 @@ The running time for all cases in the above tables were between 1.4 and 5.1 seco
 
 \cgalFigureAnchor{Acd_resultsfig}
 <center>
-<img src="https://soesau.github.io/acd_results.jpg" style="max-width:90%;"/>
+<img src="acd_results.jpg" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{Acd_resultsfig}
 Approximate convex decomposition results.\n From left to right: input mesh, 4, 8, and 12 convex volumes
