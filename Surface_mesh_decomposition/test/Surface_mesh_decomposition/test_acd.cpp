@@ -18,11 +18,7 @@ using vertex_descriptor = Mesh::Vertex_index;
 using face_descriptor = Mesh::Face_index;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main(int argc, char* argv[])
-{
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/knot2.off");
-  std::cout << filename << std::endl;
-
+int main() {
   Mesh mesh;
 
   std::vector<Convex_hull> convex_volumes;
@@ -38,14 +34,13 @@ int main(int argc, char* argv[])
 
   assert(convex_volumes.size() == 0);
 
-  vertex_descriptor v0 = mesh.add_vertex(Point(0, 0, 0));
-  vertex_descriptor v1 = mesh.add_vertex(Point(1, 0, 0));
-  vertex_descriptor v2 = mesh.add_vertex(Point(0, 1, 0));
-  vertex_descriptor v3 = mesh.add_vertex(Point(1, 0, 0));
-  vertex_descriptor v4 = mesh.add_vertex(Point(0, 1, 0));
+  if (!PMP::IO::read_polygon_mesh(CGAL::data_file_path("meshes/sphere.off"), mesh)) {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
-  face_descriptor fd = mesh.add_face(v0, v1, v2);
-  mesh.add_face(v1, v4, v3);
+  convex_volumes.clear();
+  convex_volumes.reserve(9);
 
   CGAL::approximate_convex_decomposition(mesh, std::back_inserter(convex_volumes),
     CGAL::parameters::maximum_depth(10)
@@ -55,16 +50,11 @@ int main(int argc, char* argv[])
     .maximum_number_of_voxels(1000000)
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
-  for (std::size_t i = 0; i < convex_volumes.size(); i++) {
-    const Convex_hull& ch = convex_volumes[i];
-    CGAL::IO::write_polygon_soup(std::to_string(i) + ".off", ch.first, ch.second);
-  }
-
   assert(convex_volumes.size() == 1);
 
   mesh.clear();
 
-  if (!PMP::IO::read_polygon_mesh(filename, mesh)) {
+  if (!PMP::IO::read_polygon_mesh(CGAL::data_file_path("meshes/knot2.off"), mesh)) {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
@@ -83,5 +73,5 @@ int main(int argc, char* argv[])
   assert(convex_volumes.size() > 0);
   assert(convex_volumes.size() <= 9);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

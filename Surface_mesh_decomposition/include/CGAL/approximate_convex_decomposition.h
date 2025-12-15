@@ -1852,7 +1852,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
 /**
  * \ingroup PkgConvexDecomposition3Ref
  *
- * \brief approximates the input mesh by a number of convex volumes.
+ * \brief approximates the closed input mesh by a number of convex volumes.
  *        The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface. The remaining voxels are labeled as outside or inside.
  *        In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied or the `maximum_depth` is reached.
  *        Finally, a greedy pairwise merging combines smaller convex volumes until `maximum_number_of_convex_volumes` is met.
@@ -1933,6 +1933,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  *
  * \pre `tmesh` is a triangle mesh.
  * \pre `tmesh` is not self-intersecting.
+ * \pre CGAL::is_closed(`tmesh`).
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
@@ -1944,6 +1945,8 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
   const unsigned int num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
   const bool refitting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::refitting), true);
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Parallel_if_available_tag>::type;
+
+  CGAL_precondition(CGAL::is_closed(tmesh));
 
   if (faces(tmesh).size() == 0)
     return 0;
@@ -1990,7 +1993,6 @@ std::size_t approximate_convex_decomposition(const FaceGraph& tmesh, OutputItera
 
   std::vector<internal::Candidate<Geom_traits>> candidates(1);
   internal::init(candidates[0], tmesh, grid, bb, grid_size, voxel_size, Concurrency_tag());
-
 
   if (hull_volume == 0) {
     *out_volumes = std::make_pair(std::move(candidates[0].ch.points), std::move(candidates[0].ch.indices));

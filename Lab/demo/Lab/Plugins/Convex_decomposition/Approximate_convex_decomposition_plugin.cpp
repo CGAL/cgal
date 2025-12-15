@@ -126,11 +126,10 @@ approximate_convex_decomposition()
     .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   std::vector<QColor> distinct_colors;
-  // the first color is either the background or the unique domain
 
   compute_deterministic_color_map(QColor(80, 250, 80), convex_volumes.size(), std::back_inserter(distinct_colors));
 
-  Scene_group_item* group = new Scene_group_item(tr("%1 %2 decomposition").arg(sm_item->name()).arg(maximum_convex_hulls));
+  Scene_group_item* group = new Scene_group_item(tr("%1 - %2 component decomposition").arg(sm_item->name()).arg(maximum_convex_hulls));
   scene->addItem(group);
 
   for (std::size_t i = 0; i < convex_volumes.size(); i++) {

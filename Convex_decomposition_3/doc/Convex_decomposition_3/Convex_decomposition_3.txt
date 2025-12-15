@@ -195,7 +195,15 @@ And by using the mid split:
 |   Knot2       | Mid | + | 1.2451 | 0.9286 | 0.6178 | 0.4373 | 0.3558 |
 |   Knot2       | Mid | - | 1.7143 | 1.3477 | 1.0436 | 0.9030 | 0.7910 |
 
-The running time for all cases in the above tables were between 1.4 and 3 seconds while being slightly lower when splitting at the concavity. Although searching the voxel grid for the concavity takes additional computational time, it is more than compensated by fewer splits.
+The running time for all cases in the above tables were between 1.4 and 5.1 seconds while being slightly lower when splitting at the concavity. Although searching the voxel grid for the concavity takes additional computational time, it is more than compensated by fewer splits.
+
+\cgalFigureAnchor{Acd_resultsfig}
+<center>
+<img src="https://soesau.github.io/acd_results.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Acd_resultsfig}
+Approximate convex decomposition results.\n From left to right: input mesh, 4, 8, and 12 convex volumes
+\cgalFigureCaptionEnd
 
 \subsection Convex_decomposition_3ACD_Example Example
 
