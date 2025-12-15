@@ -13,6 +13,8 @@
 #ifndef CGAL_FLOAT_SNAP_ROUNDING_TRAITS_2_H
 #define CGAL_FLOAT_SNAP_ROUNDING_TRAITS_2_H
 
+#include <CGAL/license/Snap_rounding_2.h>
+
 #include <CGAL/Arr_segment_traits_2.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

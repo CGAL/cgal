@@ -13,6 +13,8 @@
 #ifndef CGAL_FLOAT_SNAP_ROUNDING_2_H
 #define CGAL_FLOAT_SNAP_ROUNDING_2_H
 
+#include <CGAL/license/Snap_rounding_2.h>
+
 #ifdef DOUBLE_2D_SNAP_VERBOSE
 #include <iostream>
 #endif
