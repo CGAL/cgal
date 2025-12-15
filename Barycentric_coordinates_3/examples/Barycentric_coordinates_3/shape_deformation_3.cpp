@@ -11,15 +11,12 @@ using Point_3 =  Kernel::Point_3;
 using FT =  Kernel::FT;
 
 using Surface_mesh =  CGAL::Surface_mesh<Point_3>;
-namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv) {
-
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
   Surface_mesh sm;
 
-  if(!CGAL::IO::read_polygon_mesh(filename, sm))
-  {
+  if(!CGAL::IO::read_polygon_mesh(filename, sm)) {
     std::cerr << "Invalid input: " << filename  << std::endl;
     return 1;
   }
@@ -49,9 +46,7 @@ int main(int argc, char** argv) {
   std::vector<Point_3> target_cube{p0_new, p1_new, p2_new, p3_new,
                                    p4_new, p5_new, p6_new, p7_new};
 
-
-  for(Surface_mesh::Vertex_index v : vertices(deformed)){
-
+  for(Surface_mesh::Vertex_index v : vertices(deformed)) {
     const Point_3 vertex_val = get(vertex_point_map, v);
     coords.clear();
     mv(vertex_val, std::back_inserter(coords));
