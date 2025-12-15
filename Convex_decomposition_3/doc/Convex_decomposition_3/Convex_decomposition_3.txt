@@ -139,6 +139,7 @@ To optionally improve the fit of the convex volumes, they can be refitted to the
 
 The splitting phase is not limited by the chosen `maximum_number_of_convex_volumes`, because a splitting into a larger number of more convex parts with a subsequent merging leads to better results.
 
+Due to the hierarchical splitting using planes, it is possible that a convex volume is degenerated. In the merging phase, these degenerated convex volumes are merged with a high priority. However, it is possible that the output of the method still contains degenerated convex volumes. This is especially the case, when a large `maximum_number_of_convex_volumes` is chosen while using a limited `maximum_depth`.
 
 \subsection Convex_decomposition_3ACD_Parameters Parameters
 Several parameters of the algorithm impact the quality of the result as well as the running time.
@@ -157,9 +158,10 @@ The method has been evaluated on several models:
 
 |  Data set                              | Faces |     Volume |    Convex hull volume |   Overhead |
 | :---- | ----: | ----: | -: | -: |
-|   Camel                       | 19.536 | 0.0468 | 0.15541 | 2.32388 |
-|   Elephant         | 5.558 | 0.0462 | 0.12987 | 1.81087 |
-|   Triceratops                  | 5.660 | 136.732 | 336.925 | 1.46412 |
+|   Camel          | 19.536 | 0.0468 | 0.15541 | 2.32388 |
+|   Elephant       | 5.558 | 0.0462 | 0.12987 | 1.81087 |
+|   Triceratops    | 5.660 | 136.732 | 336.925 | 1.46412 |
+|   Knot2    | 11.520 | 0.0488 | 0.19141 | 2.92334 |
 
 
 If not mentioned otherwise, all tests used a volume error of 0.01, a maximum depth of 10, 1 million voxels and split at the concavity.
@@ -169,12 +171,14 @@ Impact of varying the number of generated convex volumes with splitting at the c
 
 |  Data set  | Split location |     Refitting |    4 volumes |   6 volumes |   8 volumes |   10 volumes |   12 volumes |
 | :---- | ----: | ----: | -: | -: | -: | -: | -: |
-|   Camel       | Concavity | + | 0.6951 | 0.4316 | 0.3016 | 0.2173 | 0.1939 |
+|   Camel       | Concavity | + | 0.6951 | 0.4316 | 0.3016 | 0.2514 | 0.1955 |
 |   Camel       | Concavity | - | 0.9932 | 0.7482 | 0.6174 | 0.5507 | 0.5261 |
 |   Elephant    | Concavity | + | 0.7897 | 0.6505 | 0.4973 | 0.3986 | 0.3299 |
 |   Elephant    | Concavity | - | 1.2140 | 1.0028 | 0.8071 | 0.7290 | 0.6870 |
 |   Triceratops | Concavity | + | 0.5952 | 0.3978 | 0.3548 | 0.2385 | 0.2057 |
 |   Triceratops | Concavity | - | 1.0073 | 0.7490 | 0.7035 | 0.5966 | 0.5429 |
+|   Knot2       | Concavity | + | 1.2721 | 0.9538 | 0.6395 | 0.4748 | 0.4040 |
+|   Knot2       | Concavity | - | 1.7901 | 1.4242 | 1.1538 | 0.9394 | 0.8496 |
 
 
 And by using the mid split:
@@ -182,12 +186,14 @@ And by using the mid split:
 
 |  Data set  | Split location |     Refitting |    4 volumes |   6 volumes |   8 volumes |   10 volumes |   12 volumes |
 | :---- | ----: | ----: | -: | -: | -: | -: | -: |
-|   Camel       | Mid | + | 0.9970 | 0.5762 | 0.5332 | 0.4040 | 0.2390 |
+|   Camel       | Mid | + | 0.7994 | 0.5589 | 0.3928 | 0.3211 | 0.2266 |
 |   Camel       | Mid | - | 1.0875 | 0.9280 | 0.8394 | 0.6801 | 0.5529 |
-|   Elephant    | Mid | + | 0.7424 | 0.5672 | 0.4207 | 0.3619 | 0.3043 |
-|   Elephant    | Mid | - | 1.2075 | 1.0410 | 0.8247 | 0.6950 | 0.6434 |
-|   Triceratops | Mid | + | 0.7671 | 0.5096 | 0.3965 | 0.3309 | 0.2494 |
-|   Triceratops | Mid | - | 1.0470 | 0.8990 | 0.6749 | 0.5803 | 0.5230 |
+|   Elephant    | Mid | + | 0.7448 | 0.5692 | 0.4453 | 0.3844 | 0.2912 |
+|   Elephant    | Mid | - | 1.2075 | 1.0410 | 0.8247 | 0.6779 | 0.6263 |
+|   Triceratops | Mid | + | 0.7149 | 0.4380 | 0.3984 | 0.2801 | 0.2303 |
+|   Triceratops | Mid | - | 1.0470 | 0.8990 | 0.6749 | 0.5803 | 0.5237 |
+|   Knot2       | Mid | + | 1.2451 | 0.9286 | 0.6178 | 0.4373 | 0.3558 |
+|   Knot2       | Mid | - | 1.7143 | 1.3477 | 1.0436 | 0.9030 | 0.7910 |
 
 The running time for all cases in the above tables were between 1.4 and 3 seconds while being slightly lower when splitting at the concavity. Although searching the voxel grid for the concavity takes additional computational time, it is more than compensated by fewer splits.
 
