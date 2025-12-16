@@ -8,7 +8,7 @@ The class `Delaunay_triangulation_face_base_with_circumcenter_2` derives from
 `Fb`, a face base class of a 2D triangulation.
 It provides an easy way to cache the computation of the circumcenters of
 triangles.
-Note that input/output operators discard this additional information.
+Note that input/output stream operators discard this additional information.
 
 All functions modifying the vertices of the face invalidate the cached
 circumcenter.
