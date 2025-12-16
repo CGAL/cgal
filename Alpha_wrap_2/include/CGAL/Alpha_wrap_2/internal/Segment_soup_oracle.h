@@ -416,11 +416,9 @@ public:
   template <typename MultipolygonWithHoles,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_multipolygon(const MultipolygonWithHoles& mp,
-                        const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+                        const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
     using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
-
-    const std::size_t old_size = m_segments_ptr->size();
 
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
 
@@ -435,6 +433,8 @@ public:
 #endif
       return;
     }
+
+    const std::size_t old_size = m_segments_ptr->size();
 
     for(const Polygon_with_holes_2& polygon : mp.polygons_with_holes()) {
       for(const Segment& s : polygon.outer_boundary().edges()) {
@@ -477,10 +477,8 @@ public:
   template <typename PolygonWithHoles,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_polygon_with_holes(const PolygonWithHoles& pwh,
-                              const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+                              const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
-    const std::size_t old_size = m_segments_ptr->size();
-
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
@@ -494,6 +492,8 @@ public:
 #endif
       return;
     }
+
+    const std::size_t old_size = m_segments_ptr->size();
 
     for(const Segment& s : pwh.outer_boundary().edges()) {
       if(is_degenerate(s))
@@ -535,10 +535,8 @@ public:
   template <typename Traits_, typename Container_,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_polygon(const CGAL::Polygon_2<Traits_, Container_>& p,
-                   const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+                   const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
-    const std::size_t old_size = m_segments_ptr->size();
-
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
@@ -552,6 +550,8 @@ public:
 #endif
       return;
     }
+
+    const std::size_t old_size = m_segments_ptr->size();
 
     for(const Segment& s : p.edges()) {
       if(is_degenerate(s))
