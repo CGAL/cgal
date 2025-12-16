@@ -68,8 +68,10 @@ OutputIterator contact_points(const Eigen::MatrixXd &G, OutputIterator Pwns, Eig
         }
     }
 
-    // std::cout << "CP Indices: " << std::endl;
-    // std::cout << contact_point_indices.transpose() << std::endl;
+    /*
+    std::cout << "CP Indices: (" << contact_point_indices.rows() << "," << contact_point_indices.cols() << ")" << std::endl;
+    std::cout << contact_point_indices.transpose() << std::endl;
+    */
 
     // std::cout << "CP Radii: " << std::endl;
     // std::cout << contact_point_radii.transpose() << std::endl;
