@@ -46,7 +46,7 @@ If it has already been computed in the past, the cached value is returned.
 /// @{
 
 /*!
-Computes the circumcenter of the triangle, or retrieves it if already computed.
+computes the circumcenter of the triangle, or retrieves it if already computed.
 */
 const Point& circumcenter(const Traits&gt = Traits()) const;
 

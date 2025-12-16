@@ -38,7 +38,7 @@ provides a `circumcenter()` member function.
 
 /// @{
 /*!
-Returns the circumcenter of the face
+returns the circumcenter of the face
 */
 const Point& circumcenter(const Traits& gt = Traits()) const;
 

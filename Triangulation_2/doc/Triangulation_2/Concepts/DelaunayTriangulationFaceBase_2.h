@@ -1,4 +1,3 @@
-
 /*!
 \ingroup PkgTriangulation2Concepts
 \cgalConcept
@@ -15,9 +14,7 @@ in the face an operator that computes its circumcenter.
 \cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits_2`
-
 */
-
 class DelaunayTriangulationFaceBase_2 {
 public:
 
@@ -29,7 +26,7 @@ typedef DelaunayTriangulationTraits_2::Point_2 Point;
 /// \name Access Functions
 /// @{
 /*!
-Returns the circumcenter of the face.
+returns the circumcenter of the face.
 `DelaunayTriangulationTraits_2` is the geometric traits class of the triangulation.
 */
 const Point& circumcenter(const DelaunayTriangulationTraits_2& gt = DelaunayTriangulationTraits_2()) const;

@@ -100,7 +100,7 @@ public:
 /// @{
 
 /*!
-Introduces an empty constrained Delaunay triangulation `cdt`.
+introduces an empty constrained Delaunay triangulation `cdt`.
 */
 Constrained_Delaunay_triangulation_2(const Traits &t = Traits());
 
@@ -113,7 +113,7 @@ Constrained_Delaunay_triangulation_2(const
 Constrained_Delaunay_triangulation_2& cdt1);
 
 /*!
-Builds a constrained triangulation with constraints
+builds a constrained triangulation with constraints
 in the range `[first,last)` by calling
 `insert_constraints(first, last)`.
 \tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
@@ -132,13 +132,13 @@ const Traits& t=Traits());
 /// @{
 
 /*!
-Inserts point `p` in the triangulation, with face
+inserts point `p` in the triangulation, with face
 `f` as a hint for the location of `p`.
 */
 Vertex_handle insert(Point p, Face_handle f = Face_handle());
 
 /*!
-Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`.
+inserts point `p` in the triangulation at the location given by `(lt,loc,i)`.
 \sa `Triangulation_2::locate()`
 */
 Vertex_handle
@@ -152,7 +152,7 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p);
 
 /*!
-Inserts the points in the range `[first,last)`.
+inserts the points in the range `[first,last)`.
 Returns the number of inserted points.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`.
 */
@@ -183,13 +183,13 @@ Inserts the line segment `ab` as a constraint in the triangulation.
 void insert_constraint(Point a, Point b);
 
 /*!
-Inserts the line segment between the points `c.first` and `c.second` as  a constraint in the triangulation.
+inserts the line segment between the points `c.first` and `c.second` as  a constraint in the triangulation.
 */
   void push_back(const std::pair<Point,Point>& c);
 
 
 /*!
-Inserts the line segment whose endpoints are the vertices `va` and
+inserts the line segment whose endpoints are the vertices `va` and
 `vb` as a constraint in the triangulation.
 */
 void insert_constraint(Vertex_handle va, Vertex_handle vb);
@@ -234,18 +234,18 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
 
 
 /*!
-Removes vertex v.
+removes vertex v.
 \pre Vertex `v` is not incident to a constrained edge.
 */
 void remove(Vertex_handle & v);
 
 /*!
-Make the edges incident to vertex `v` unconstrained edges.
+makes the edges incident to vertex `v` unconstrained edges.
 */
 void remove_incident_constraints(Vertex_handle v);
 
 /*!
-Make the edge `(f,i)` unconstrained.
+makes the edge `(f,i)` unconstrained.
 */
 void remove_constraint(const Face_handle & f, int i);
 
@@ -354,8 +354,7 @@ Flip `f` and `f->neighbor(i)`.
 void flip(Face_handle& f, int i);
 
 /*!
-makes the triangulation constrained Delaunay by flipping
-edges.
+makes the triangulation constrained Delaunay by flipping edges.
 \cgalAdvancedBegin
 The list `edges` contains an initial list of edges to be
 flipped. The returned triangulation is constrained Delaunay if the

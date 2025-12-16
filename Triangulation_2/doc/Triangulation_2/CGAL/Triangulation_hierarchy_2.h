@@ -74,15 +74,11 @@ The class `Triangulation_hierarchy_vertex_base_2` is designed to be used as a ve
 of a triangulation plugged into a
 `Triangulation_hierarchy_2<Tr>`.
 
-It is
-a model of the concept
-`TriangulationHierarchyVertexBase_2` which refines
-the concept
-`TriangulationVertexBase_2`.
+It is a model of the concept `TriangulationHierarchyVertexBase_2` which refines
+the concept `TriangulationVertexBase_2`.
 
 This class is templated by a parameter `Vb`
-which is to be instantiated by a model of the concept
-`TriangulationVertexBase_2`.
+which is to be instantiated by a model of the concept `TriangulationVertexBase_2`.
 The class `Triangulation_hierarchy_vertex_base_2<Vb>` inherits
 from the class `Vb`.
 This design allows to use either the default
