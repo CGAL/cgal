@@ -222,13 +222,21 @@ private:
 
     CGAL_precondition(s != t);
 
-    const FT sq_seg_length = squared_distance(s, t);
-    const FT seg_length = approximate_sqrt(sq_seg_length);
-    const Vector_3 seg_unit_v = (t - s) / seg_length;
-
     Point_3 current_pt = s;
     Point_3 closest_point = dist_oracle.tree.closest_point(current_pt);
     FT current_dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+
+    const FT sq_seg_length = squared_distance(s, t);
+    const FT seg_length = approximate_sqrt(sq_seg_length);
+    if(is_zero(seg_length))
+    {
+      closest_point = dist_oracle.tree.closest_point(t);
+      current_dist = approximate_sqrt(squared_distance(t, closest_point)) - offset;
+      output_pt = t;
+      return (CGAL::abs(current_dist) < precision);
+    }
+
+    const Vector_3 seg_unit_v = (t - s) / seg_length;
 
     for(;;)
     {
