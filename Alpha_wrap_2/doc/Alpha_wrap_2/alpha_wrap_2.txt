@@ -55,7 +55,7 @@ The algorithm handles these cases by wrapping an offset of the input.
 
 \section aw2_definition Approach
 
-Many approaches have been devised to enclose a 2D model within a volume, featuring different balances
+Many approaches have been devised to enclose a 2D model within a polygon, featuring different balances
 between the runtime and quality (i.e., tightness) of the approximation.
 Within the simplest cases, an axis-aligned or oriented bounding box clearly satisfies some desired properties;
 however, the approximation error is uncontrollable and often very large.
@@ -63,7 +63,7 @@ Computing the convex hull of the input also matches some of the desired properti
 and improves the quality of the result, albeit at the price of increasing the runtime.
 However, the approximation remains crude, especially in the case of several components.
 
-The convex hull is, in fact, a special case of alpha shapes (\ref Chapter_2D_Alpha_Shapes).
+The convex hull is, in fact, a special case of alpha shapes (\ref PkgAlphaShapes2).
 Mathematically, the alpha shape is a subcomplex of the Delaunay triangulation, with simplicies
 being part of the complex depending on the size of their minimal (empty) Delaunay ball.
 Intuitively, constructing 2D alpha shapes can be thought of as carving 2D space with an empty ball
@@ -71,7 +71,7 @@ of user-defined radius alpha.
 Alpha shapes yield provable, good piecewise-linear approximations of a shape \cgalCite{bb-srmua-97t},
 but are defined on point sets, whereas we wish to deal with more general input data, such as segment soups.
 Even after sampling the segment soup, alpha shapes do not guarantee to be conservative for any alpha.
-Finally, inner structures are also carved within the volumes, instead of being filtered out.
+Finally, inner structures are also carved within the interior, instead of being filtered out.
 
 Inspired by alpha shapes, we replace the above notion of carving by <em>shrink-wrapping</em>:
 we iteratively construct a subcomplex of a 2D Delaunay triangulation by starting from
@@ -81,7 +81,7 @@ In addition, the underlying triangulation---and thus the complex incidentally---
 as shrinking proceeds.
 Thus, instead of carving from the convex hull of the input data as in alpha shapes, we construct
 an entirely new polygon through a Delaunay refinement-like algorithm. The refinement algorithm inserts Steiner points
-on the boundary of an offset volume, defined as a level set of the unsigned distance field to the input.
+on the boundary of an offset surface, defined as a level set of the unsigned distance field to the input.
 
 This process both prevents the creation of inner structures within the output and avoids superfluous computations.
 In addition, detaching our wrap construction from the geometry and discretization of the input has several advantages:
@@ -89,7 +89,7 @@ In addition, detaching our wrap construction from the geometry and discretizatio
 as all that is required is answering three basic geometric queries: (a) the distance between a point
 and the input, (b) the projection of a query point onto the input, (c) an intersection test
 between a triangle and the input, and (2) The user has more freedom to trade tightness
-to the input for final polgyon complexity, as constructing a conservative approximation on a large offset
+to the input for final polygon complexity, as constructing a conservative approximation on a large offset
 of the input requires fewer polygon edges.
 
 \subsection aw2_algorithm Algorithm
@@ -133,7 +133,7 @@ In our algorithm, a gate (green Delaunay edge) is said to be not alpha-traversab
 When traversing from an outside face \f$ f_o \f$ to an inside face \f$ f_i \f$ through an alpha-traversable edge \f$ e \f$,
 two criteria are tested to prevent the wrapping process from colliding with the input:
 
-(1) We check for an intersection between the dual Voronoi edge of \f$ e \f$, i.e. the segment between
+(1) We check for an intersection between the dual Voronoi edge of \f$ e \f$, i.e., the segment between
 the circumcenters of the two incident faces, and the <em>offset surface</em>, defined as the level set
 of unsigned isosurface to the input.
 If one or several intersections exists, the first intersection point, along the dual Voronoi edge
@@ -185,7 +185,7 @@ that are guaranteed to break the faces in need of refinement and reduce the neig
 Because the main refinement criterion is the insertion of an intersection between a dual Voronoi edge
 and an offset of the input, or the projection of a Voronoi vertex onto the offset of the input,
 the algorithm has similarities to popular meshing algorithms based on Delaunay filtering
-and refinement (see \ref Chapter_3D_Mesh_Generation).
+and refinement (see \ref PkgMesh3).
 
 \section aw2_interface Interface
 
@@ -194,7 +194,7 @@ as a set of polygons, and two user-defined scalar parameters: the <em>alpha</em>
 It proceeds by shrink-wrapping and refining a 2D Delaunay triangulation starting from a loose bounding box of the input.
 The parameter <em>alpha</em> refers to the size of cavities or holes that cannot be traversed during wrapping,
 and hence to the final level of detail, as alpha acts like a sizing field in a common Delaunay
-refinement algorithm (\ref Chapter_3D_Mesh_Generation).
+refinement algorithm (\ref PkgMesh3).
 The parameter <em>offset</em> refers to the distance between the vertices of the refined triangulation
 and the input, so that a large offset translates into a loose enclosing of the input.
 This second parameter offers a means to control the trade-off between tightness and complexity.
@@ -210,6 +210,8 @@ form description of new vertices on the offset surface.
 
 The output is a multi polygon, i.e., a set of polygons, whose type is chosen by the user,
 under the constraint that it must be a model of the `MultipolygonWithHoles_2` concept.
+
+A three-dimensional version of this package is also available: \ref PkgAlphaWrap3.
 
 \section aw2_parameters Choosing Parameters
 
@@ -310,7 +312,7 @@ For each alpha, the models with lower complexity can be used as a scale-space re
 The offset parameter is crucial to our approach because it guarantees that the output is a
 set of 1-manifold, simple polygons.
 Indeed, and even when the input is a zero-area structure such as a single segment,
-the output wrap is a thin domain enclosing the said segment \cgalFigureRef{aw2_inputs_fig}.
+the output wrap is a thin domain enclosing the said segment, see \cgalFigureRef{aw2_inputs_fig}.
 
 Users should keep in mind that the wrapping algorithm performs with an the unsigned distance field,
 and has no means of determining whether it is acting on both sides of a same input segment.
