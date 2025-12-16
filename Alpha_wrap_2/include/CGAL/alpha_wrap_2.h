@@ -43,6 +43,8 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/property_map.h>
 
 #include <boost/range/has_range_iterator.hpp>
@@ -385,7 +387,6 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
 * to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
 * polygon repair functions using different strategies.
 
-* \tparam PolygonWithHoles a model of `GeneralPolygonWithHoles_2`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -407,25 +408,19 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
 *
 * \pre `alpha` and `offset` are strictly positive values.
 */
-template <typename PolygonWithHoles,
+template <typename Traits_, typename Container_,
           typename MultipolygonWithHoles,
           typename InputNamedParameters = parameters::Default_named_parameters>
-void alpha_wrap_2(const PolygonWithHoles& pwh,
+void alpha_wrap_2(const CGAL::Polygon_with_holes_2<Traits_, Container_>& pwh,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np = parameters::default_values()
-#ifndef DOXYGEN_RUNNING
-                  , std::enable_if_t<Alpha_wraps_2::internal::is_GeneralPolygonWithHoles_2<PolygonWithHoles>::value>* = nullptr
-#endif
-                  )
+                  const InputNamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  using In_polygon_2 = typename PolygonWithHoles::Polygon_2;
-  using In_point_2 = typename boost::range_value<In_polygon_2>::type;
-  using In_K = typename CGAL::Kernel_traits<In_point_2>::type;
+  using In_K = Traits_;
 
   using Geom_traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                                    InputNamedParameters,

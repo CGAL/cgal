@@ -28,7 +28,7 @@ using Triangle_2 = Kernel::Triangle_2;
 using Points = std::vector<Point_2>;
 
 using Polygon_2 = CGAL::Polygon_2<Kernel>;
-using Polygon_with_holes = CGAL::General_polygon_with_holes_2<Polygon_2>;
+using Polygon_with_holes = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon = CGAL::Multipolygon_with_holes_2<Kernel>;
 
 // This is just to test the API, polygons are converted into polylines anyway
