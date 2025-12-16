@@ -351,19 +351,6 @@ public:
     typename Base::Locate_type lt;
     int li, lj;
     Cell_handle ch = Base::locate(p, lt, li, lj, start);
-
-    CGAL_assertion(average_spacing > 0.0);
-    for(int i=0; i < 4; ++i)
-    {
-      Vertex_handle v = ch->vertex(i);
-      if(!Base::is_infinite(v)){
-        if(CGAL::squared_distance(v->point(), p) < 0.00001){
-          // std::cout  << "close point found: " << v->point() << " vs " << p << std::endl;
-          return v;
-        }
-      }
-    }
-
     Vertex_handle v = Base::insert(p, lt, ch, li, lj);
     v->type() = static_cast<unsigned char>(type);
     return v;

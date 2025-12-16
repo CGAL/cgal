@@ -77,6 +77,48 @@ double operator[](int i)const;
 Cartesian_const_iterator_d cartesian_begin()const;
 /*! returns an iterator pointing beyond the last Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_end()const;
+
+/*! returns whether the points coincide. This may not be safe
+    if the points are the result of inexact constructions. */
+friend bool operator==(Point_d,Point_d);
+/*! returns whether the points are distinct. This may not be safe
+    if the points are the result of inexact constructions. */
+friend bool operator!=(Point_d,Point_d);
+};
+
+/*!
+represents a vector in the Euclidean space
+\cgalModels{DefaultConstructible,Assignable}
+*/
+class Vector_d {
+public:
+/*! introduces a vector with coordinates (x0, x1, ...) where the number of
+    coordinates matches the dimension.
+    \pre `DimensionTag` is a fixed dimension, not `Dynamic_dimension_tag`. */
+Vector_d(double x0, double x1, ...);
+
+/*! introduces a vector with coordinate set `[first,end)`.
+    \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
+    \tparam InputIterator has its value type that is convertible to `double`.
+    */
+template<typename InputIterator>
+Vector_d(InputIterator first, InputIterator end);
+
+/*! returns the i-th coordinate of a vector.
+    \pre `i` is non-negative and less than the dimension. */
+double operator[](int i)const;
+
+/*! returns an iterator pointing to the zeroth Cartesian coordinate. */
+Cartesian_const_iterator_d cartesian_begin()const;
+/*! returns an iterator pointing beyond the last Cartesian coordinate. */
+Cartesian_const_iterator_d cartesian_end()const;
+
+/*! returns whether the vectors coincide. This may not be safe
+    if the vectors are the result of inexact constructions. */
+friend bool operator==(Vector_d,Vector_d);
+/*! returns whether the vectors are distinct. This may not be safe
+    if the vectors are the result of inexact constructions. */
+friend bool operator!=(Vector_d,Vector_d);
 };
 
 /*!

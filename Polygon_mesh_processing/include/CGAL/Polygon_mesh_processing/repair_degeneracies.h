@@ -646,6 +646,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
@@ -702,21 +703,25 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   CGAL_precondition(is_triangle_mesh(tmesh));
 
   // constrain extremities of constrained edges
-  for(face_descriptor f : face_range)
+  if constexpr (!is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value ||
+                !is_default_parameter<NamedParameters, internal_np::vertex_is_constrained_t>::value)
   {
-    if(f == boost::graph_traits<TriangleMesh>::null_face())
-      continue;
-
-    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
+    for(face_descriptor f : face_range)
     {
-      if(get(ecm, edge(h, tmesh)))
+      if(f == boost::graph_traits<TriangleMesh>::null_face())
+        continue;
+
+      for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, tmesh), tmesh))
       {
-        put(vcm, source(h, tmesh), true);
-        put(vcm, target(h, tmesh), true);
-      }
-      else if(get(vcm_np, target(h, tmesh)))
-      {
-        put(vcm, target(h, tmesh), true);
+        if(get(ecm, edge(h, tmesh)))
+        {
+          put(vcm, source(h, tmesh), true);
+          put(vcm, target(h, tmesh), true);
+        }
+        else if(get(vcm_np, target(h, tmesh)))
+        {
+          put(vcm, target(h, tmesh), true);
+        }
       }
     }
   }
@@ -813,7 +818,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 
       const edge_descriptor e = edge(h, tmesh);
       CGAL_assertion(!get(ecm, edge(h, tmesh)));
-      CGAL_assertion(!get(vcm, source(h, tmesh)) && !get(vcm, target(h, tmesh)));
+      CGAL_assertion(!get(vcm, source(h, tmesh)) || !get(vcm, target(h, tmesh)));
 
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
       std::cout << "  treat needle: " << e

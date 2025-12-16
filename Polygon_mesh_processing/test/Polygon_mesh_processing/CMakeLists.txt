@@ -7,6 +7,7 @@ project(Polygon_mesh_processing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core)
 
+create_single_source_cgal_program("slow_compute_normal.cpp")
 create_single_source_cgal_program("test_pmp_triangle.cpp")
 create_single_source_cgal_program("test_hausdorff_bounded_error_distance.cpp")
 create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
