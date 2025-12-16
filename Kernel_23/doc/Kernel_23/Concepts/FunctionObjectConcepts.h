@@ -1216,10 +1216,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines{AdaptableTernaryFunction}
-
   \sa `compare_squared_radius_grp`
-
 */
 class CompareSquaredRadius_2 {
 public:
@@ -1229,23 +1226,22 @@ public:
   /// @{
 
   /*!
-    compares the squared radius of the circle of radius 0 centered at `p` to `sr`.
-    This returns the opposite sign of `sr`.
+    compares the squared radius of the circle of radius `0` centered at `p` to `sr`.
+    This returns \ref CGAL::EQUAL if `sr` is zero, \ref CGAL::SMALLER if `sr` is positive,
+    and \ref CGAL::LARGER if `sr` is negative.
   */
   Comparison_result operator()(const Kernel::Point_2& p,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the circle defined by the
-    points `p` and `q` to `sr`.
+    compares the squared radius of the smallest circle passing through the points `p` and `q` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_2& p,
                                const Kernel::Point_2& q,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the circle defined by the
-    points `p`, `q`, and `r` to `sr`.
+    compares the squared radius of the circle defined by the points `p`, `q`, and `r` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_2& p,
                                const Kernel::Point_2& q,
@@ -1260,10 +1256,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines{AdaptableTernaryFunction}
-
   \sa `compare_squared_radius_grp`
-
 */
 class CompareSquaredRadius_3 {
 public:
@@ -1273,24 +1266,22 @@ public:
   /// @{
 
   /*!
-    compares the squared radius of the sphere of radius 0 centered
-    at `p` to `sr`.
-    This returns the opposite sign of `sr`.
+    compares the squared radius of the sphere of radius `0` centered at `p` to `sr`.
+    This returns \ref CGAL::EQUAL if `sr` is zero, \ref CGAL::SMALLER if `sr` is positive,
+    and \ref CGAL::LARGER if `sr` is negative.
   */
   Comparison_result operator()(const Kernel::Point_3& p,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p` and `q` to `sr`.
+    compares the squared radius of the smallest sphere passing through the points `p` and `q` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p`, `q`, and `r` to `sr`.
+    compares the squared radius of the smallest sphere defined by the points `p`, `q`, and `r` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
@@ -1298,8 +1289,7 @@ public:
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p`, `q`, `r`, and `s` to `sr`.
+    compares the squared radius of the sphere defined by the points `p`, `q`, `r`, and `s` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
@@ -6742,8 +6732,7 @@ public:
                                const Orientation & orientation = COUNTERCLOCKWISE);
 
   /*!
-    introduces a sphere initialized to the diametral sphere of
-    the circle.
+    introduces a sphere initialized to the diametral sphere of the circle.
   */
   Kernel::Sphere_3 operator()( const Kernel::Circle_3 &c);
 
