@@ -1,5 +1,5 @@
-#ifndef CGAL_IO_GLTF_H
-#define CGAL_IO_GLTF_H
+#ifndef CGAL_IO_READ_GLTF_H
+#define CGAL_IO_READ_GLTF_H
 
 #include <CGAL/IO/GLTF/read_gltf.h>
 #include <string>
