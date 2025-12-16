@@ -151,15 +151,16 @@ bool alpha_wrap_polylines(Polylines& input_polylines,
 
   const bool enforce_manifoldness = true;
 
+  std::ofstream out_i("input.wkt");
+  out_i.precision(std::numeric_limits<double>::max_digits10);
+  CGAL::IO::write_multi_linestring_WKT(out_i, input_polylines);
+
   Multipolygon wrap;
   CGAL::alpha_wrap_2(input_polylines, alpha, offset, wrap,
                      CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness));
 
   std::cout << "Result: " << wrap.polygons_with_holes().size() << " polygons" << std::endl;
 
-  std::ofstream out_i("input.wkt");
-  out_i.precision(std::numeric_limits<double>::max_digits10);
-  CGAL::IO::write_multi_linestring_WKT(out_i, input_polylines);
   std::ofstream out_w("wrap.wkt");
   out_w.precision(std::numeric_limits<double>::max_digits10);
   CGAL::IO::write_multi_polygon_WKT(out_w, wrap);
@@ -266,10 +267,12 @@ int main(int argc, char** argv)
         std::cout << "\n== " << fname << " ==" << std::endl;
         if(!alpha_wrap_polylines(fname)) {
           result = false;
+          std::cout << "FAILURE" << std::endl;
 #ifdef CGAL_AW2_BREAK_ON_TEST_FAILURE
           break;
 #endif
         }
+        std::cout << "OK" << std::endl;
       }
     }
     else
