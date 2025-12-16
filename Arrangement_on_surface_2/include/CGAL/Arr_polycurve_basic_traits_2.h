@@ -1120,8 +1120,8 @@ public:
       Comparison_result dir1 = cmp_endpts(xcv1[0]);
       Comparison_result dir2 = cmp_endpts(xcv2[0]);
 
-      const bool consistent = (dir1 == dir2);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      const bool consistent = (dir1 == dir2);
       CGAL_assertion(consistent);
 #endif
 

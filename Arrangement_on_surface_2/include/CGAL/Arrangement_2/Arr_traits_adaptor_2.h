@@ -900,7 +900,7 @@ public:
     Arr_parameter_space parameter_space_in_y(const Point_2& p, Arr_has_identified_side_tag) const {
       // if the point lies on the bottom-top identification, return
       // ARR_BOTTOM_BOUNDARY as an arbitrary but consistent choice
-      if (m_base->is_on_x_identification_2_object()(p)) ARR_BOTTOM_BOUNDARY;
+      if (m_base->is_on_x_identification_2_object()(p)) return ARR_BOTTOM_BOUNDARY;
       return m_base->parameter_space_in_x_2_object()(p);
     }
 

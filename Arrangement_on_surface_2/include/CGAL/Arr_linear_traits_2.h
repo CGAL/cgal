@@ -956,7 +956,6 @@ public:
      * \return a boolean flag indicating whether the curves intersect.
      */
     bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
-      const Kernel& kernel = m_traits;
       if (xcv1.is_segment()) {
         Segment_2 seg1(xcv1.source(), xcv1.target());
         return this->do_intersect(seg1, xcv2);

@@ -990,8 +990,6 @@ template <typename GeomTraits>
 bool Traits_test<GeomTraits>::
 do_intersect_wrapper(std::istringstream& str_stream) {
   using Traits = GeomTraits;
-  using Point_2 = typename Traits::Point_2;
-  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
 
   std::size_t id1, id2;
   str_stream >> id1 >> id2;
