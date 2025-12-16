@@ -132,7 +132,8 @@ struct is_MultiLineString
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
-* \tparam PointRange a model of `RandomAccessContainer` whose value type is a point type model of `Kernel::Point_2`
+* \tparam PointRange a model of `RandomAccessContainer` whose value type is `GeomTraits::Point_2`,
+*                    with `GeomTraits` being the type of the parameter `geom_traits`
 * \tparam FaceRange a model of `Range` whose value type is a model of `RandomAccessContainer`
 *                   whose value type is an integral type
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
@@ -149,7 +150,7 @@ struct is_MultiLineString
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the value type of the point range, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
 *   \cgalParamNEnd
@@ -223,7 +224,8 @@ void alpha_wrap_2(const PointRange& points,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
 * \tparam TriangleRange a model of `Range` whose value type is a model of `RandomAccessContainer`
-*                       of size 3 whose value type is a point type model of `Kernel::Point_2`
+*                       of size 3 whose value type is `GeomTraits::Point_2`,
+*                       with `GeomTraits` being the type of the parameter `geom_traits`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -237,7 +239,7 @@ void alpha_wrap_2(const PointRange& points,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the input triangle range, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the triangle type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
 *   \cgalParamNEnd
@@ -546,7 +548,8 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
-* \tparam SegmentRange a model of `Range` whose value type is a segment type model of `Kernel::Segment_2`
+* \tparam SegmentRange a model of `Range` whose value type is `GeomTraits::Segment_2`,
+*                      with `GeomTraits` being the type of the parameter `geom_traits`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -560,7 +563,7 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the input point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the segment type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
 *   \cgalParamNEnd
@@ -622,7 +625,8 @@ void alpha_wrap_2(const SegmentRange& segments,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
 * \tparam MultiLineString a model of `RandomAccessContainer` whose value type is a model of `RandomAccessContainer`
-* whose value type is a point type model of `Kernel::Point_2`
+*                         whose value type is `GeomTraits::Point_2`, with `GeomTraits` being the type
+*                         of the parameter `geom_traits`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -636,7 +640,7 @@ void alpha_wrap_2(const SegmentRange& segments,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the input point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the segment type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
 *   \cgalParamNEnd
@@ -700,7 +704,8 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
-* \tparam PointRange model of `Range` whose value type is a point type model of `Kernel::Point_2`
+* \tparam PointRange model of `Range` whose value type is `GeomTraits::Point_2`,
+*                    with `GeomTraits` being the type of the parameter `geom_traits`
 * \tparam MultipolygonWithHoles model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -714,7 +719,7 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the input point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
 *   \cgalParamNEnd
