@@ -11,4 +11,4 @@ find_package(Eigen3 3.3.0 REQUIRED)
 include(CGAL_Eigen3_support)
 
 add_executable(test_read_GLTF test_read_GLTF.cpp tiny_gltf_impl.cpp)
-target_link_libraries(test_read_GLTF PUBLIC CGAL::CGAL CGAL::Eigen3_support)
+target_link_libraries(test_read_GLTF PUBLIC CGAL::CGAL )
