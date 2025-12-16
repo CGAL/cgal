@@ -328,6 +328,91 @@ public:
 #endif
   }
 
+  template <typename PolygonalChains,
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
+  void add_polygonal_chains(const PolygonalChains& pcs,
+                            const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    using Polygonal_chain = typename boost::range_value<PolygonalChains>::type;
+    using value_type = boost::range_value<Polygonal_chain>::type;
+
+    using IPM = Identity_property_map<value_type>;
+    using Point_map = typename internal_np::Lookup_named_param_def<
+                        internal_np::point_t,
+                        CGAL_NP_CLASS,
+                        IPM>::type;
+
+    Point_map point_map = parameters::choose_parameter<Point_map>(
+                            parameters::get_parameter(np, internal_np::point_map));
+
+    const bool close_pc = choose_parameter(get_parameter(np, internal_np::close_chains), false);
+
+    typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "Insert into AABB tree (polygonal chain)..." << std::endl;
+#endif
+
+    if(pcs.empty())
+    {
+#ifdef CGAL_AW2_DEBUG
+      std::cout << "Warning: Input is empty (polygonal chain)" << std::endl;
+#endif
+      return;
+    }
+
+    const std::size_t old_size = m_segments_ptr->size();
+
+    for(const Polygonal_chain& pc : pcs)
+    {
+      for(std::size_t i=0; i<pc.size()-1; ++i)
+      {
+        const Segment s = segment(get(point_map, pc[i]),
+                                  get(point_map, pc[i+1]));
+        if(is_degenerate(s))
+        {
+#ifdef CGAL_AW2_DEBUG
+          std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+          continue;
+        }
+        m_segments_ptr->push_back(s);
+      }
+
+      if(close_pc && pc.size() > 1)
+      {
+        const Segment s = segment(get(point_map, pc[pc.size() - 1]),
+                                  get(point_map, pc[0]));
+        if(is_degenerate(s))
+        {
+#ifdef CGAL_AW2_DEBUG
+          std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+        }
+        else
+        {
+          m_segments_ptr->push_back(s);
+        }
+      }
+    }
+
+    this->tree().rebuild(std::cbegin(*m_segments_ptr), std::cend(*m_segments_ptr));
+
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of an edge that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "SS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
+  }
+
   template <typename MultipolygonWithHoles,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
   void add_multipolygon(const MultipolygonWithHoles& mp,
