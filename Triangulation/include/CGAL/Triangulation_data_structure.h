@@ -32,6 +32,9 @@
 #include <queue>
 #include <stack>
 #include <set>
+#include <type_traits>
+#include <utility>
+#include <map>
 
 #include <boost/iterator/counting_iterator.hpp>
 
@@ -67,19 +70,31 @@ public:
     class Full_cell_data
     {
         unsigned char bits_;
+        // Bit used to mark full cells during traversal algorithms
+        static constexpr unsigned char VISITED_BIT   = 0x01;
+        // Bit used to cache whether the full cell is incident to the infinite vertex.
+        static constexpr unsigned char INFINITE_BIT  = 0x02;
+
         public:
         Full_cell_data() : bits_(0) {}
         Full_cell_data(const Full_cell_data & fcd) : bits_(fcd.bits_) {}
 
-        void clear()         { bits_ = 0; }
-        void mark_visited()  { bits_ = 1; }
-        void clear_visited() { bits_ = 0; }
-
-        bool is_clear()   const { return bits_ == 0; }
-        bool is_visited() const { return bits_ == 1; }
+        
+        void mark_visited()        { bits_ |= VISITED_BIT; }
+        void clear_visited()       { bits_ &= ~VISITED_BIT; }
+        bool is_visited() const    { return (bits_ & VISITED_BIT) != 0; }
         // WARNING: if we use more bits and several bits can be set at once,
         // then make sure to use bitwise operation above, instead of direct
         // affectation.
+
+        void set_infinite(bool b)
+        {
+            if (b) bits_ |= INFINITE_BIT;
+            else   bits_ &= ~INFINITE_BIT;
+        }
+        bool is_infinite() const   { return bits_ & INFINITE_BIT; }
+        
+        void clear()         { bits_ = 0; }
     };
 
 protected:
@@ -355,9 +370,16 @@ public:
     // NOT DOCUMENTED...
     Rotor rotate_rotor(Rotor & f)
     {
-        int opposite = mirror_index(full_cell(f), index_of_covertex(f));
-        Full_cell_handle s = neighbor(full_cell(f), index_of_covertex(f));
-        int new_second = s->index(vertex(full_cell(f), index_of_second_covertex(f)));
+        Full_cell_handle c = full_cell(f);
+        // Indices of the two covertices defining the rotor
+        int first = index_of_covertex(f);
+        int second = index_of_second_covertex(f);
+
+        int opposite = mirror_index(c, first);
+        Full_cell_handle s = neighbor(c, first);
+
+        // This identifies the rotated rotor in the adjacent full cell
+        int new_second = s->index(c->vertex(second));
         return Rotor(s, new_second, opposite);
     }
 
@@ -671,16 +693,17 @@ Triangulation_data_structure<Dim, Vb, Fcb>
                     OutputIterator & out) const /* Concept */
 {
     CGAL_precondition(visited.empty());
-    std::queue<Full_cell_handle> queue;
+    std::vector<Full_cell_handle> st;
+    st.reserve(256);
     set_visited(start, true);
     visited.push_back(start);
-    queue.push(start);
+    st.push_back(start);
     const int cur_dim = current_dimension();
     Facet ft;
-    while( ! queue.empty() )
+    while( ! st.empty() )
     {
-        Full_cell_handle s = queue.front();
-        queue.pop();
+        Full_cell_handle s = st.back();
+        st.pop_back();
         *out = s;
         ++out;
         for( int i = 0; i <= cur_dim; ++i )
@@ -691,7 +714,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
                 set_visited(n, true);
                 visited.push_back(n);
                 if( tp(Facet(s, i)) )
-                    queue.push(n);
+                    st.push_back(n);
                 else
                     ft = Facet(s, i);
             }
@@ -1068,20 +1091,22 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 {
     CGAL_precondition(start != Full_cell_handle());
 
-    std::queue<Full_cell_handle> queue;
+    std::vector<Full_cell_handle> st;
+    st.reserve(256);
     set_visited(start, false);
-    queue.push(start);
+    st.push_back(start);
     const int cur_dim = current_dimension();
-    while( ! queue.empty() )
+    while( ! st.empty() )
     {
-        Full_cell_handle s = queue.front();
-        queue.pop();
+        Full_cell_handle s = st.back();
+        st.pop_back();
         for( int i = 0; i <= cur_dim; ++i )
         {
-            if( get_visited(s->neighbor(i)) )
+            Full_cell_handle n = s->neighbor(i);
+            if( get_visited(n) )
             {
-                set_visited(s->neighbor(i), false);
-                queue.push(s->neighbor(i));
+                set_visited(n, false);
+                st.push_back(n);
             }
         }
     }
@@ -1092,7 +1117,7 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
 ::do_insert_increase_dimension(Vertex_handle x, Vertex_handle star)
 {
     Full_cell_handle start = full_cells_begin();
-    Full_cell_handle swap_me;
+    Full_cell_handle swap_me = Full_cell_handle();
     const int cur_dim = current_dimension();
     for( Full_cell_iterator S = full_cells_begin(); S != full_cells_end(); ++S )
     {
@@ -1114,12 +1139,13 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
     }
     // now we setup the neighbors
     set_visited(start, false);
-    std::queue<Full_cell_handle> queue;
-    queue.push(start);
-    while( ! queue.empty() )
+    std::vector<Full_cell_handle> st;
+    st.reserve(256);
+    st.push_back(start);
+    while( ! st.empty() )
     {
-        Full_cell_handle S = queue.front();
-        queue.pop();
+        Full_cell_handle S = st.back();
+        st.pop_back();
         // here, the first visit above ensured that all neighbors exist now.
         // Now we need to connect them with adjacency relation
         int star_index;
@@ -1146,7 +1172,7 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
             if( get_visited(neighbor(S, k)) )
             {
                 set_visited(neighbor(S, k), false);
-                queue.push(neighbor(S, k));
+                st.push_back(neighbor(S, k));
             }
     }
     if( ( ( cur_dim % 2 ) == 0 ) && ( cur_dim > 1 ) )
