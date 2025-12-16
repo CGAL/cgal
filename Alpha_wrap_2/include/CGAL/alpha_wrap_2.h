@@ -298,6 +298,14 @@ void alpha_wrap_2(const TriangleRange& triangles,
 * \brief computes a watertight, 1-manifold, simple multipolygon that strictly contains
 * an input polygon.
 *
+* \note This function merely inserts and wraps all edges from the outer boundary.
+* It does *not* repair the polygon first. Consequently, for example, if the polygon were
+* to not be simple, with its a subcycle with opposite orientation, then the wrap would
+* still be constructed as to contain this subcycle.
+* In some use cases, it may be desirable to first repair invalid inputs. We refer
+* to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
+* polygon repair functions using different strategies.
+*
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
@@ -369,6 +377,14 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
 * The parameters `alpha` and `offset` respectively control which features will appear in the output,
 * and the distance from the input. See Section \ref aw2_parameters for a detailed breakdown of their influence.
 *
+* \note This function merely inserts and wraps all edges from the outer boundary and from the
+* holes of the polygon with holes. It does *not* repair the polygon with holes first. Consequently,
+* for example, if the polygon with holes were to be invalid with an edge that lays outside of the region
+* enclosed by its outer boundary, then the wrap would still be constructed as to contain this edge.
+* In some use cases, it may be desirable to first repair invalid inputs. We refer
+* to the \cgal component \link Chapter_2D_Polygon_repair Polygon Repair\endlink for various
+* polygon repair functions using different strategies.
+
 * \tparam PolygonWithHoles a model of `GeneralPolygonWithHoles_2`
 * \tparam MultipolygonWithHoles a model of `MultipolygonWithHoles_2`
 * \tparam InputNamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
