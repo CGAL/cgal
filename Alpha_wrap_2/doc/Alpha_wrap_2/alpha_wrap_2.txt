@@ -12,8 +12,6 @@ namespace CGAL {
 <img src="aw2_banner.png" style="max-width:70%;"/>
 </center>
 
-Note: a three-dimensional version of this package is also available: \ref PkgAlphaWrap3.
-
 \section aw2_introduction Introduction
 
 Various tasks in geometric modeling and processing require 2D objects represented as valid polygons,

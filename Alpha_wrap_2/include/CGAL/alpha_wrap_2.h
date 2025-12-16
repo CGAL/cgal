@@ -157,13 +157,13 @@ struct is_MultiLineString
 */
 template <typename PointRange, typename FaceRange,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const PointRange& points,
                   const FaceRange& faces,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np)
+                  const InputNamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -183,16 +183,6 @@ void alpha_wrap_2(const PointRange& points,
 }
 
 // Convenience overloads
-
-template <typename PointRange, typename FaceRange, typename MultipolygonWithHoles>
-void alpha_wrap_2(const PointRange& points,
-                  const FaceRange& faces,
-                  const double alpha,
-                  const double offset,
-                  MultipolygonWithHoles& alpha_wrap)
-{
-  return alpha_wrap_2(points, faces, alpha, offset, alpha_wrap, CGAL::parameters::default_values());
-}
 
 // without offset
 template <typename PointRange, typename FaceRange, typename MultipolygonWithHoles,
@@ -255,12 +245,12 @@ void alpha_wrap_2(const PointRange& points,
 */
 template <typename TriangleRange,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const TriangleRange& triangles,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np
+                  const InputNamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_Triangle_2_range<TriangleRange>::value>* = nullptr
 #endif
@@ -334,12 +324,12 @@ void alpha_wrap_2(const TriangleRange& triangles,
 */
 template <typename Traits_, typename Container_,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np)
+                  const InputNamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -403,12 +393,12 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
 */
 template <typename PolygonWithHoles,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const PolygonWithHoles& pwh,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np
+                  const InputNamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_GeneralPolygonWithHoles_2<PolygonWithHoles>::value>* = nullptr
 #endif
@@ -487,12 +477,12 @@ void alpha_wrap_2(const PolygonWithHoles& pwh,
 */
 template <typename InputMultipolygonWithHoles,
           typename OutputMultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
                   const double alpha,
                   const double offset,
                   OutputMultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np
+                  const InputNamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_MultipolygonWithHoles<InputMultipolygonWithHoles>::value>* = nullptr
 #endif
@@ -569,12 +559,12 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
 */
 template <typename SegmentRange,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const SegmentRange& segments,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np
+                  const InputNamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_Segment_2_range<SegmentRange>::value>* = nullptr
 #endif
@@ -645,12 +635,12 @@ void alpha_wrap_2(const SegmentRange& segments,
 */
 template <typename MultiLineString,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const MultiLineString& multilinestring,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np
+                  const InputNamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_MultiLineString<MultiLineString>::value>* = nullptr
 #endif
@@ -723,12 +713,12 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
 */
 template <typename PointRange,
           typename MultipolygonWithHoles,
-          typename InputNamedParameters>
+          typename InputNamedParameters = parameters::Default_named_parameters>
 void alpha_wrap_2(const PointRange& points,
                   const double alpha,
                   const double offset,
                   MultipolygonWithHoles& alpha_wrap,
-                  const InputNamedParameters& np
+                  const InputNamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , std::enable_if_t<Alpha_wraps_2::internal::is_Point_2_range<PointRange>::value>* = nullptr
 #endif
@@ -752,15 +742,6 @@ void alpha_wrap_2(const PointRange& points,
 }
 
 // Convenience overloads, common to all ranges
-
-template <typename Input, typename MultipolygonWithHoles>
-void alpha_wrap_2(const Input& input,
-                  const double alpha,
-                  const double offset,
-                  MultipolygonWithHoles& alpha_wrap)
-{
-  return alpha_wrap_2(input, alpha, offset, alpha_wrap, CGAL::parameters::default_values());
-}
 
 // without offset
 template <typename Input, typename MultipolygonWithHoles,
