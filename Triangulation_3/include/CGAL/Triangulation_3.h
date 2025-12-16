@@ -26,6 +26,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>

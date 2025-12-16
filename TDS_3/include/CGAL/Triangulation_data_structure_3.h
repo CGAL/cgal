@@ -3277,12 +3277,12 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 remove_from_maximal_dimension_simplex(Vertex_handle v)
 {
+    const auto dim = static_cast<size_type>(dimension());
     CGAL_precondition(dimension() >= 1);
-    CGAL_precondition(degree(v) == (size_type) dimension() + 1);
-    CGAL_precondition(number_of_vertices() >
-                                    (size_type) dimension() + 1);
+    CGAL_precondition(degree(v) == dim + 1);
+    CGAL_precondition(number_of_vertices() > dim + 1);
 
-    if (number_of_vertices() == (size_type) dimension() + 2) {
+    if (number_of_vertices() == dim + 2) {
         remove_decrease_dimension(v);
         return Cell_handle();
     }
