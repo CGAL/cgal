@@ -60,8 +60,9 @@ create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("soup_autorefinement.cpp")
 create_single_source_cgal_program("snap_polygon_soup.cpp")
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("acvd_remeshing_example.cpp")
   target_link_libraries(acvd_remeshing_example PUBLIC CGAL::Eigen3_support)

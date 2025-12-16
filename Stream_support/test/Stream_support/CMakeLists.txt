@@ -20,6 +20,15 @@ else()
   message(STATUS "NOTICE : the LAS reader does not work with your version of Visual Studio 2017.")
 endif()
 
+
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
+find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
+if (VTK_FOUND AND VTK_LIBRARIES)
+  message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
+else()
+  message(STATUS "Tests that use VTK will not be compiled.")
+endif() #VTK_FOUND
+
 # create a target per cppfile
 file(
   GLOB cppfiles
@@ -45,7 +54,15 @@ foreach(cppfile ${cppfiles})
         message(STATUS "NOTICE: Some tests require the LASlib library, and will not be compiled.")
       endif()
     else()
-      create_single_source_cgal_program("${cppfile}")
+      if("${cppfile}" STREQUAL "test_VTK.cpp")
+        if (VTK_FOUND AND VTK_LIBRARIES)
+          create_single_source_cgal_program("test_VTK.cpp")
+          target_link_libraries(test_VTK PRIVATE ${VTK_LIBRARIES})
+          target_compile_definitions(test_VTK PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
+        endif()
+      else()
+        create_single_source_cgal_program("${cppfile}")
+      endif()
     endif()
   endif()
 endforeach()

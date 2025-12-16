@@ -46,7 +46,7 @@ class. In this example we use the class `Interval_skip_list_interval`.
 \subsection Interval_skip_listExamplewithFacesofaTriangulated Example with Faces of a Triangulated Terrain
 
 The second example creates an interval skip list that allows to find all the faces
-of a terrain intersected by an horizontal plane at a given height.
+of a terrain intersected by a horizontal plane at a given height.
 The data points for the terrain are read from a file.
 
 As model for the interval concept, we use a class that is a wrapper

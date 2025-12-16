@@ -1279,6 +1279,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 *         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`,
 *         model of `Range`.
 *         Its iterator type is `InputIterator`.
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param pmesh the polygon mesh to be modified by stitching
 * \param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
@@ -1305,10 +1306,11 @@ template <typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(PolygonMesh& pmesh,
                            const HalfedgePairsRange& hedge_pairs_to_stitch,
-                           const CGAL_NP_CLASS& np = parameters::default_values(),
-                           std::enable_if_t<
-                             boost::has_range_iterator<HalfedgePairsRange>::value
-                           >* = 0)
+                           const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                           , std::enable_if_t<boost::has_range_iterator<HalfedgePairsRange>::value>* = 0
+#endif
+                          )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1398,7 +1400,6 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2`, respectively.
 ///
-/// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 /// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///

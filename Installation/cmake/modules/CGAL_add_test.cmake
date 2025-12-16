@@ -92,8 +92,12 @@ function(cgal_add_compilation_test exe_name)
   elseif(NOT TARGET "compilation_of__${PROJECT_NAME}")#CMAKE_VS_MSBUILD_COMMAND
     #this target is just a flag, to deal with the scope problem with the tests
     add_custom_target("compilation_of__${PROJECT_NAME}")
+    set(SOLUTION_FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln")
+    if(MSVC_VERSION GREATER_EQUAL 1950)
+      set(SOLUTION_FILE "${SOLUTION_FILE}x")
+    endif()
     add_test(NAME "compilation of  ${PROJECT_NAME}"
-      COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
+      COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${SOLUTION_FILE}" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
     set_property(TEST "compilation of  ${PROJECT_NAME}"
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
     set_property(TEST "compilation of  ${PROJECT_NAME}"

@@ -221,7 +221,7 @@ a visible circle through an iterator called
 `ApolloniusGraphVertexBase_2` concept and is implemented by its
 model, the `Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 class. It is also possible to iterate through the entire set of hidden
-sites using an homonymous iterator defined by the
+sites using a homonymous iterator defined by the
 `Apollonius_graph_2<Gt,Agds>` class.
 
 Since storing hidden sites may not be of interest in some cases (e.g.,

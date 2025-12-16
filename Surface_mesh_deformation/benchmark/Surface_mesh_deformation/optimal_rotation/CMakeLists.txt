@@ -3,8 +3,9 @@ project(benchmark_for_closest_rotation)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("benchmark_for_concept_models.cpp")
   target_link_libraries(benchmark_for_concept_models PRIVATE CGAL::Eigen3_support)

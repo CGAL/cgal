@@ -14,6 +14,7 @@ find_package(CGAL REQUIRED)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   file(
     GLOB cppfiles

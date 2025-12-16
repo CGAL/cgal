@@ -1,6 +1,6 @@
 include(CGALlab_macros)
 
-if(TARGET CGAL::Eigen3_support AND "${Eigen3_VERSION}" VERSION_GREATER "3.1.90")
+if(TARGET CGAL::Eigen3_support)
 
   qt6_wrap_ui(editionUI_FILES Deform_mesh.ui)
   add_item(scene_edit_item
