@@ -77,7 +77,7 @@ a model of the concept `TriangulationTraits_2`.
 
 \tparam Tds is the triangulation data structure which
 must be a model of the concept `TriangulationDataStructure_2`.
-By default, the triangulation data structure is instantiated by
+By default, the triangulation data structure is instantiated with
 `Triangulation_data_structure_2 < Triangulation_vertex_base_2<Gt>, Triangulation_face_base_2<Gt> >`.
 
 \cgalHeading{Traversal of the Triangulation}

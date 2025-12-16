@@ -11,7 +11,7 @@ vertex base class of regular triangulations.
 \tparam Traits has to be a model of `RegularTriangulationTraits_2`.
 
 \tparam Vb has to be a model of the concept `TriangulationVertexBase_2` and is by default
-           instantiated by `Triangulation_vertex_base_2<Traits>`.
+           instantiated with `Triangulation_vertex_base_2<Traits>`.
 
 \cgalModels{RegularTriangulationVertexBase_2}
 

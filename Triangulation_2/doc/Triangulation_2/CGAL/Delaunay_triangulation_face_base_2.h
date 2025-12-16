@@ -10,7 +10,7 @@ The class `Delaunay_triangulation_face_base_2` is a model of the concept
 \tparam Traits is the geometric traits class and must be a model of `DelaunayTriangulationTraits_2`.
 
 \tparam Fb must be a model of `TriangulationFaceBase_2`.
-By default, this parameter is instantiated by
+By default, this parameter is instantiated with
 `Triangulation_face_base_2<Traits>`.
 
 \cgalModels{DelaunayTriangulationFaceBase_2}

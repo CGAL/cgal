@@ -11,7 +11,7 @@ of regular triangulations.
 \tparam Traits has to be a model of `RegularTriangulationTraits_2`.
 
 \tparam Fb has to be a model of `TriangulationFaceBase_2`.
-        By default, this parameter is instantiated by `Triangulation_face_base_2<Traits>`.
+        By default, this parameter is instantiated with `Triangulation_face_base_2<Traits>`.
 
 \cgalModels{RegularTriangulationFaceBase_2}
 

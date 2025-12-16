@@ -19,7 +19,7 @@ the triangulation.
 
 \tparam Vb must be a vertex base class from which
 `Triangulation_vertex_base_with_info_3` derives. By default
-this parameter is instantiated by
+this parameter is instantiated with
 `Triangulation_vertex_base_2<Traits>`.
 
 \cgalModelsBareBegin
