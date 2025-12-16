@@ -23,7 +23,24 @@
 namespace CGAL {
 namespace IO {
 
-// Public entry point for polygon soup (points and polygons)
+/// \ingroup PkgStreamSupportIoFuncsGLTF
+///
+/// \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamGLTF.
+///
+/// \attention The polygon soup is not cleared, and the data from the file are appended.
+///
+/// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+/// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
+///                      whose `value_type` is itself a model of the concept `SequenceContainer`
+///                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+///                      convertible to `std::size_t`
+///
+/// \param fname the path to the input file
+/// \param points points of the soup of polygons
+/// \param polygons a range of polygons. Each element in it describes a polygon
+///        using the indices of the points in `points`.
+///
+/// \returns `true` if the reading was successful, `false` otherwise.
 template <typename PointRange, typename PolygonRange>
 bool read_GLTF(const std::string& filename,
                PointRange& points,
