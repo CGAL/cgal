@@ -275,6 +275,7 @@ CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_
 CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
 CGAL_add_named_parameter(refine_triangulation_t, refine_triangulation, refine_triangulation)
 CGAL_add_named_parameter(keep_inner_connected_components_t, keep_inner_connected_components, keep_inner_connected_components)
+CGAL_add_named_parameter(close_chains_t, close_chains, close_chains)
 
 // SMDS_3 parameters
 CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
