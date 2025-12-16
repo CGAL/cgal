@@ -1,8 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/IO/GLTF.h>
+
 #include <vector>
 #include <iostream>
-// #include "tiny_gltf.h"
-#include <CGAL/IO/GLTF.h>
 
 int main() {
     using Kernel = CGAL::Simple_cartesian<double>;

@@ -1,3 +1,19 @@
+// Copyright (c) 2025
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Dema Nasrawt and Aidan Pawlak
+
 #ifndef CGAL_IO_GLTF_READ_GLTF_H
 #define CGAL_IO_GLTF_READ_GLTF_H
 
@@ -6,7 +22,6 @@
 #include <CGAL/Container_helper.h>
 #include <boost/range/value_type.hpp>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>
 #include <string>
