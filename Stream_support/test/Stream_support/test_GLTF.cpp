@@ -1,14 +1,14 @@
 #include <CGAL/Simple_cartesian.h>
 #include <vector>
 #include <iostream>
-#include "tiny_gltf.h"
-#include "read_gltf.h"
+// #include "tiny_gltf.h"
+#include <CGAL/IO/GLTF.h>
 
 int main() {
     using Kernel = CGAL::Simple_cartesian<double>;
     using Point = Kernel::Point_3;
 
-    std::string filename = "../../Cube.gltf";
+    std::string filename = "./data//Cube.gltf";
 
     std::cout << "Attempting to load GLTF file: " << filename << std::endl;
 
