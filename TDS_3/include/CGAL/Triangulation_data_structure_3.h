@@ -23,22 +23,35 @@
 
 #include <CGAL/basic.h>
 
+#include <array>
+#include <cstddef>
+#include <functional>
+#include <iostream>
+#include <istream>
+#include <limits>
+#include <ostream>
+#include <stack>
 #include <utility>
 #include <vector>
-#include <stack>
-#include <limits>
 
-#include <boost/unordered_set.hpp>
+#include <boost/container_hash/hash.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <CGAL/utility.h>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered/unordered_set_fwd.hpp>
+
+#include <CGAL/assertions.h>
+#include <CGAL/config.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/iterator.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
-
-#include <CGAL/Unique_hash_map.h>
-#include <CGAL/assertions.h>
+#include <CGAL/tags.h>
 #include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Compact_container.h>
@@ -3621,9 +3634,14 @@ is_valid(bool verbose, int level ) const
           return false;
 
       // Euler relation
-      if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
-        if (verbose)
-            std::cerr << "Euler relation unsatisfied" << std::endl;
+      const auto euler_characteristic =
+          static_cast<difference_type>(cell_count - facet_count + edge_count - vertex_count);
+      if ( euler_characteristic != 0 ) {
+        if(verbose) {
+          std::cerr << "Euler relation unsatisfied\n"
+                    << "    cell_count - facet_count + edge_count - vertex_count = "
+                    << euler_characteristic<< std::endl;
+        }
         CGAL_assertion(false);
         return false;
       }
