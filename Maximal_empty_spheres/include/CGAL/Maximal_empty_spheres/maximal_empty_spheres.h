@@ -38,7 +38,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
                            Eigen::MatrixXi* contact_indices = nullptr,
                            double atol = 1e-8,
                            int debug_level = 1,
-                           int  ncp_max = 16,
+                           int  ncp_max = 10,
                            bool cone_filter=false
                            )
 {
@@ -118,6 +118,10 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   Timer timer;
   timer.start();
 
+  if (debug_level > 0) {
+    std::cout << "...inserting in triangulation..." << std::endl;
+  }
+
   Triangulation t(D+2);
   t.insert_and_index(points.begin(), points.end());
 
@@ -189,7 +193,8 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   if (true){
     Eigen::MatrixXd NC_(n_check_planes,D+3);
     for (int i=0; i<n_check_planes; i++){
-        NC_.row(i) = NC.row((i*20747) % NC.rows());
+        // NC_.row(i) = NC.row((i*20747) % NC.rows());
+        NC_.row(i) = NC.row((Eigen::MatrixXi::Random(1,1)(0,0)) % NC.rows());
     } 
     inv = ((Ks * NC_.transpose()).rowwise().maxCoeff().array() >= atol);
   } else {
