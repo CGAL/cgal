@@ -158,11 +158,19 @@ kernel(const PolygonMesh& pm,
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  using EK = Exact_predicates_exact_constructions_kernel;
+  using K2EK = Cartesian_converter<GT, EK>;
+  using EK2K = Cartesian_converter<EK, GT>;
+  K2EK to_exact;
+  EK2K from_exact;
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_const_property_map(vertex_point, pm));
 
   using Point_3 = typename GT::Point_3;
-  using Plane_3 = typename Three_point_cut_plane_traits<GT>::Plane_3;
+  using EPoint_3 = typename EK::Point_3;
+  using Plane_3 = typename Three_point_cut_plane_traits<EK>::Plane_3;
+
+  using KernelPointMap = typename boost::property_map<PolygonMesh, dynamic_vertex_property_t<EPoint_3> >::type;
 
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
@@ -177,55 +185,58 @@ kernel(const PolygonMesh& pm,
   CGAL::make_hexahedron(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()), Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()), Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()), Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
                         Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()), Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()), Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()), Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
                         kernel);
-  auto kernel_vpm = get_property_map(vertex_point, kernel);
+  auto base_vpm = get_property_map(vertex_point, kernel);
+  KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
+  for(vertex_descriptor v: vertices(kernel))
+    put(kvpm, v, to_exact(get(base_vpm, v)));
   vertex_descriptor start_vertex = *vertices(pm).begin();
 
   std::array<vertex_descriptor, 6> bbox_vertices;
-  std::array<Point_3, 8> corners;
+  std::array<EPoint_3, 8> corners;
   if(bbox_filtering){
     // We store the vertices that realized the bbox
     struct BBoxEntry {
       std::size_t index;
-      std::function<double(const Point_3&)> bound;
+      std::function<double(const EPoint_3&)> bound;
       std::function<double(const Bbox_3&)> value;
     };
     std::array<BBoxEntry,6> entries {{
-        {0, [](const Point_3& p){ return to_interval(p.x()).first;  }, [](const Bbox_3& b){ return b.xmin(); }},
-        {1, [](const Point_3& p){ return to_interval(p.x()).second; }, [](const Bbox_3& b){ return b.xmax(); }},
-        {2, [](const Point_3& p){ return to_interval(p.y()).first;  }, [](const Bbox_3& b){ return b.ymin(); }},
-        {3, [](const Point_3& p){ return to_interval(p.y()).second; }, [](const Bbox_3& b){ return b.ymax(); }},
-        {4, [](const Point_3& p){ return to_interval(p.z()).first;  }, [](const Bbox_3& b){ return b.zmin(); }},
-        {5, [](const Point_3& p){ return to_interval(p.z()).second; }, [](const Bbox_3& b){ return b.zmax(); }}
+        {0, [](const EPoint_3& p){ return to_interval(p.x()).first;  }, [](const Bbox_3& b){ return b.xmin(); }},
+        {1, [](const EPoint_3& p){ return to_interval(p.x()).second; }, [](const Bbox_3& b){ return b.xmax(); }},
+        {2, [](const EPoint_3& p){ return to_interval(p.y()).first;  }, [](const Bbox_3& b){ return b.ymin(); }},
+        {3, [](const EPoint_3& p){ return to_interval(p.y()).second; }, [](const Bbox_3& b){ return b.ymax(); }},
+        {4, [](const EPoint_3& p){ return to_interval(p.z()).first;  }, [](const Bbox_3& b){ return b.zmin(); }},
+        {5, [](const EPoint_3& p){ return to_interval(p.z()).second; }, [](const Bbox_3& b){ return b.zmax(); }}
     }};
 
     for (const auto& e : entries){
       for (vertex_descriptor v : vertices(kernel)){
         std::size_t i = e.index;
-        double bound = e.bound(get(kernel_vpm, v));
+        double bound = e.bound(get(kvpm, v));
         if (bound == e.value(bb3)){
           bbox_vertices[i] = v;
           break;
         }
       }
     }
-    corners = CGAL::make_array(Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
-                               Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
-                               Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                               Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
-                               Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                               Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                               Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                               Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
+    corners = CGAL::make_array(EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+                               EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
+                               EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
+                               EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
+                               EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
+                               EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
+                               EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
+                               EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
   }
 
-  Three_point_cut_plane_traits<GT> kgt;
+  Three_point_cut_plane_traits<EK> kgt;
 
   std::vector<Plane_3> planes;
   for (auto f : faces){
     auto h = halfedge(f, pm);
-    planes.emplace_back(get(vpm,source(h, pm)),
-                        get(vpm,target(h, pm)),
-                        get(vpm,target(next(h, pm), pm)));
+    planes.emplace_back(to_exact(get(vpm,source(h, pm))),
+                        to_exact(get(vpm,target(h, pm))),
+                        to_exact(get(vpm,target(next(h, pm), pm))));
   }
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine());
@@ -240,35 +251,37 @@ kernel(const PolygonMesh& pm,
       if(pred(plane, corners[index]) != ON_POSITIVE_SIDE)
         continue;
       if(pred(plane, corners[7-index]) == ON_POSITIVE_SIDE)
-        return PolygonMesh();
+        return PolygonMesh(); // empty
 
-      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).
+      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
                                                                   bounding_box(&bbox_vertices).starting_vertex_descriptor(start_vertex));
-      if (is_empty(kernel)) break;
+      if (is_empty(kernel)) return kernel;
 
       CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i))
         CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
 
-      // update bbox
-      bb3 = get(kernel_vpm, bbox_vertices[0]).bbox()+get(kernel_vpm, bbox_vertices[1]).bbox()+get(kernel_vpm, bbox_vertices[2]).bbox()+
-            get(kernel_vpm, bbox_vertices[3]).bbox()+get(kernel_vpm, bbox_vertices[4]).bbox()+get(kernel_vpm, bbox_vertices[5]).bbox();
-      corners = CGAL::make_array(Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
-                                 Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
-                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
-                                 Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                                 Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
+      // update bbox TODO can be smarter
+      bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
+            get(kvpm, bbox_vertices[3]).bbox()+get(kvpm, bbox_vertices[4]).bbox()+get(kvpm, bbox_vertices[5]).bbox();
+      corners = CGAL::make_array(EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+                                 EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
+                                 EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
+                                 EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
+                                 EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
+                                 EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
+                                 EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
+                                 EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
     }
     else
     {
-      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).
+      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
                                                                   starting_vertex_descriptor(start_vertex));
-      if (is_empty(kernel)) break;
+      if (is_empty(kernel)) return kernel;
     }
   }
 
+  for(vertex_descriptor v : vertices(kernel))
+    put(base_vpm, v, from_exact(get(kvpm, v)));
   return kernel;
 };
 

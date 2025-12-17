@@ -166,7 +166,7 @@ void test_kernel_with_rounding(std::string fname)
   timer.stop();
 
   std::ofstream("kernel.off") << kernel;
-  std::cout << "test_kernel done in " << timer.time() << "\n";
+  std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_kernel done in " << timer.time() << "\n";
 }
 
 void test_exact_kernel(std::string fname)
@@ -183,7 +183,7 @@ void test_exact_kernel(std::string fname)
   timer.stop();
 
   std::ofstream("ekernel.off") << kernel;
-  std::cout << "test_exact_kernel done in " << timer.time() << "\n";
+  std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_exact_kernel done in " << timer.time() << "\n";
 }
 
 void test_exact_kernel_with_rounding(std::string fname)
@@ -203,7 +203,7 @@ void test_exact_kernel_with_rounding(std::string fname)
   timer.stop();
 
   std::ofstream("ekernel.off") << kernel;
-  std::cout << "test_exact_kernel done in " << timer.time() << "\n";
+  std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_exact_kernel done in " << timer.time() << "\n";
 
   // timer.reset();
   // timer.start();
@@ -320,9 +320,9 @@ int main(int argc, char** argv)
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   // elementary_test_kernel();
   // test_kernel(filename);
-  // test_kernel_with_rounding(filename);
+  test_kernel_with_rounding(filename);
   // test_exact_kernel(filename);
-  test_exact_kernel_with_rounding(filename);
+  // test_exact_kernel_with_rounding(filename);
   // test_trettner_kernel(filename);
   // test_plane_based_kernel(filename);
   // test_kernel_with_chull(filename);
