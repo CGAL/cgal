@@ -151,10 +151,7 @@ Several parameters of the algorithm impact the quality of the result as well as 
 - `split_at_concavity`: The splitting can be either performed after searching a concavity on the longest side of the bounding box or simply by splitting the longest side of the bounding box in half. The default value is true, i.e., splitting at the concavity.
 
 \subsection Convex_decomposition_3ACD_Performance Performance
-
-<b>Here will be images and more tables to show the impact of different parameters</b>
-
-The method has been evaluated on several models:
+The method is demonstrated on a few models:
 
 |  Data set                              | Faces |     Volume |    Convex hull volume |   Overhead |
 | :---- | ----: | ----: | -: | -: |
@@ -164,38 +161,36 @@ The method has been evaluated on several models:
 |   Knot2    | 11.520 | 0.0488 | 0.19141 | 2.92334 |
 
 
+The overhead is the convex hull volume divided by the volume of the mesh.
 If not mentioned otherwise, all tests used a volume error of 0.01, a maximum depth of 10, 1 million voxels and split at the concavity.
 
 Impact of varying the number of generated convex volumes with splitting at the concavity and refitting to the convex hull of the input mesh on volume overhead:
 
 
-|  Data set  | Split location |     Refitting |    4 volumes |   6 volumes |   8 volumes |   10 volumes |   12 volumes |
-| :---- | ----: | ----: | -: | -: | -: | -: | -: |
-|   Camel       | Concavity | + | 0.6951 | 0.4316 | 0.3016 | 0.2514 | 0.1955 |
-|   Camel       | Concavity | - | 0.9932 | 0.7482 | 0.6174 | 0.5507 | 0.5261 |
-|   Elephant    | Concavity | + | 0.7897 | 0.6505 | 0.4973 | 0.3986 | 0.3299 |
-|   Elephant    | Concavity | - | 1.2140 | 1.0028 | 0.8071 | 0.7290 | 0.6870 |
-|   Triceratops | Concavity | + | 0.5952 | 0.3978 | 0.3548 | 0.2385 | 0.2057 |
-|   Triceratops | Concavity | - | 1.0073 | 0.7490 | 0.7035 | 0.5966 | 0.5429 |
-|   Knot2       | Concavity | + | 1.2721 | 0.9538 | 0.6395 | 0.4748 | 0.4040 |
-|   Knot2       | Concavity | - | 1.7901 | 1.4242 | 1.1538 | 0.9394 | 0.8496 |
+|  Data set  | Split location |     Refitting |    4 volumes |   6 volumes |   8 volumes |   10 volumes |   12 volumes | Running time |
+| :---- | ----: | ----: | -: | -: | -: | -: | -: | -: |
+|   Camel       | Concavity | + | 0.6951 | 0.4316 | 0.3016 | 0.2514 | 0.1955 | 2.22s |
+|   Camel       | Concavity | - | 0.9932 | 0.7482 | 0.6174 | 0.5507 | 0.5261 | 1.20s |
+|   Camel       | Mid | + | 0.7994 | 0.5589 | 0.3928 | 0.3211 | 0.2266 | 2.58s |
+|   Camel       | Mid | - | 1.0875 | 0.9280 | 0.8394 | 0.6801 | 0.5529 | 1.29s |
+|          |  | |  |  |  |  |  | |
+|   Elephant    | Concavity | + | 0.7897 | 0.6505 | 0.4973 | 0.3986 | 0.3299 | 1.16s |
+|   Elephant    | Concavity | - | 1.2140 | 1.0028 | 0.8071 | 0.7290 | 0.6870 | 0.98s |
+|   Elephant    | Mid | + | 0.7448 | 0.5692 | 0.4453 | 0.3844 | 0.2912 | 1.99s |
+|   Elephant    | Mid | - | 1.2075 | 1.0410 | 0.8247 | 0.6779 | 0.6263 | 1.45s |
+|          |  | |  |  |  |  |  | |
+|   Triceratops | Concavity | + | 0.5952 | 0.3978 | 0.3548 | 0.2385 | 0.2057 | 1.03s |
+|   Triceratops | Concavity | - | 1.0073 | 0.7490 | 0.7035 | 0.5966 | 0.5429 | 0.59s |
+|   Triceratops | Mid | + | 0.7149 | 0.4380 | 0.3984 | 0.2801 | 0.2303 | 1.53s |
+|   Triceratops | Mid | - | 1.0470 | 0.8990 | 0.6749 | 0.5803 | 0.5237 | 0.91s |
+|          |  | |  |  |  |  |  | |
+|   Knot2       | Concavity | + | 1.2721 | 0.9538 | 0.6395 | 0.4748 | 0.4040 | 1.95s |
+|   Knot2       | Concavity | - | 1.7901 | 1.4242 | 1.1538 | 0.9394 | 0.8496 | 1.49s |
+|   Knot2       | Mid | + | 1.2451 | 0.9286 | 0.6178 | 0.4373 | 0.3558 | 2.08s |
+|   Knot2       | Mid | - | 1.7143 | 1.3477 | 1.0436 | 0.9030 | 0.7910 | 1.78s |
 
-
-And by using the mid split:
-
-
-|  Data set  | Split location |     Refitting |    4 volumes |   6 volumes |   8 volumes |   10 volumes |   12 volumes |
-| :---- | ----: | ----: | -: | -: | -: | -: | -: |
-|   Camel       | Mid | + | 0.7994 | 0.5589 | 0.3928 | 0.3211 | 0.2266 |
-|   Camel       | Mid | - | 1.0875 | 0.9280 | 0.8394 | 0.6801 | 0.5529 |
-|   Elephant    | Mid | + | 0.7448 | 0.5692 | 0.4453 | 0.3844 | 0.2912 |
-|   Elephant    | Mid | - | 1.2075 | 1.0410 | 0.8247 | 0.6779 | 0.6263 |
-|   Triceratops | Mid | + | 0.7149 | 0.4380 | 0.3984 | 0.2801 | 0.2303 |
-|   Triceratops | Mid | - | 1.0470 | 0.8990 | 0.6749 | 0.5803 | 0.5237 |
-|   Knot2       | Mid | + | 1.2451 | 0.9286 | 0.6178 | 0.4373 | 0.3558 |
-|   Knot2       | Mid | - | 1.7143 | 1.3477 | 1.0436 | 0.9030 | 0.7910 |
-
-The running time for all cases in the above tables were between 1.4 and 5.1 seconds while being slightly lower when splitting at the concavity. Although searching the voxel grid for the concavity takes additional computational time, it is more than compensated by fewer splits.
+The columns for the different number of volumes indicate the overhead of the union of the convex volumes compared to the volume of the mesh. Note that the convex volumes may overlap, thus the volume of their union may be lower than the sum of volumes.
+Although searching the voxel grid for the concavity takes additional computational time, it is compensated by fewer splits.
 
 \cgalFigureAnchor{Acd_resultsfig}
 <center>
