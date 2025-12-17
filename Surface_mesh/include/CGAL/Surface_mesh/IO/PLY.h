@@ -698,6 +698,23 @@ bool add_printer(std::size_t cid,
   return false;
 }
 
+struct PLY_supported_data_types
+{
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int64_t, std::uint64_t,
+                     float, double> VT_tuple; // value_type of the property map
+
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int32_t, std::uint32_t,
+                     float, double> ST_tuple; // corresponding PLY type
+
+  static constexpr std::size_t data_types_n = std::tuple_size<VT_tuple>::value;
+  static_assert(data_types_n == std::tuple_size<ST_tuple>::value);
+};
 
 template <typename Point, typename Simplex,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -705,17 +722,6 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                  std::vector<Abstract_property_printer<Simplex>*>& printers,
                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  typedef std::tuple<std::int8_t, std::uint8_t,
-                     std::int16_t, std::uint16_t,
-                     std::int32_t, std::uint32_t,
-                     std::int64_t, std::uint64_t,
-                     float, double> VT_tuple; // value_type of the property
-  typedef std::tuple<std::int8_t, std::uint8_t,
-                     std::int16_t, std::uint16_t,
-                     std::int32_t, std::uint32_t,
-                     std::int32_t, std::uint32_t,
-                     float, double> ST_tuple; // corresponding PLY type
-
   static constexpr const char* type_strings[] = { "char", "uchar",
                                                   "short", "ushort",
                                                   "int", "uint",
@@ -775,16 +781,24 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     if(fill_simplex_specific_header(os, sm, printers, prop[i], np))
       continue;
 
-    constexpr auto VT_size = std::tuple_size<VT_tuple>::value;
-
-    [&]<std::size_t... Is>(std::index_sequence<Is...>) {
-      // If any call returns true, the expression short-circuits, effectively stopping iteration for this 'i'.
-      (void)(add_printer<Point, Simplex,
-                         std::tuple_element_t<Is, VT_tuple>,
-                         std::tuple_element_t<Is, ST_tuple> >(
-                           Is, type_strings, sm, prop[i], os, printers) || ...);
-    } (std::make_index_sequence<VT_size>{});
+    add_printers_for_all_types(std::make_index_sequence<PLY_supported_data_types::data_types_n>{},
+                               type_strings, sm, prop[i], os, printers);
   }
+}
+
+template <std::size_t... Is, typename PointT, typename Simplex>
+void add_printers_for_all_types(std::index_sequence<Is...>,
+                                const char* const* type_strings,
+                                const Surface_mesh<PointT>& sm,
+                                const std::string& prop_name,
+                                std::ostream& os,
+                                std::vector<Abstract_property_printer<Simplex>*>& printers)
+{
+  // The || ... fold short-circuits exactly like the original lambda
+  (void)(add_printer<PointT, Simplex,
+                      std::tuple_element_t<Is, PLY_supported_data_types::VT_tuple>,
+                      std::tuple_element_t<Is, PLY_supported_data_types::ST_tuple> >(
+                        Is, type_strings, sm, prop_name, os, printers) || ...);
 }
 
 } // namespace internal
