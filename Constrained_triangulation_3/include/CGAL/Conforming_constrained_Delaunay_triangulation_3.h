@@ -2891,15 +2891,18 @@ private:
         const auto va = vertices[i];
 
         if(is_marked(va, Vertex_marker::CAVITY)) {
-          CGAL_assertion(!is_marked(va, Vertex_marker::CAVITY_ABOVE) &&
-                         !is_marked(va, Vertex_marker::CAVITY_BELOW));
-          clear_mark(va, Vertex_marker::CAVITY);
           if(above_below == 1) {
             vertices_of_upper_cavity.push_back(va);
             set_mark(va, Vertex_marker::CAVITY_ABOVE);
+            if(is_marked(va, Vertex_marker::CAVITY_BELOW)) {
+              throw Next_region("Both cavities meet at a vertex",fh_region[0]);
+            }
           } else {
             vertices_of_lower_cavity.push_back(va);
             set_mark(va, Vertex_marker::CAVITY_BELOW);
+            if(is_marked(va, Vertex_marker::CAVITY_ABOVE)) {
+              throw Next_region("Both cavities meet at a vertex", fh_region[0]);
+            }
           }
         }
         const auto vb = vertices[tr().ccw(i)];
@@ -2949,6 +2952,44 @@ private:
 
     clear_marks(vertices_of_lower_cavity, Vertex_marker::CAVITY_BELOW);
     clear_marks(vertices_of_lower_cavity, Vertex_marker::CAVITY);
+
+    auto _ = make_scope_exit([&]() {
+      CGAL_assertion(std::all_of(cr_intersecting_cells.begin(), cr_intersecting_cells.end(), [&](Cell_handle c) {
+        for(auto v: tr().vertices(c)) {
+          if(is_marked(v, Vertex_marker::CAVITY)) {
+            return false;
+          }
+        }
+        return true;
+      }));
+    });
+
+    const bool has_vertices_inside_the_cavity = std::invoke([&]() {
+      for(auto c : cr_intersecting_cells) {
+        for(auto v : tr().vertices(c)) {
+          if(is_marked(v, Vertex_marker::CAVITY)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    });
+    if(has_vertices_inside_the_cavity) {
+      if(this->debug().regions()) {
+        std::cerr << "The cavity interior contain internal vertices:\n";
+      }
+      for(auto c : cr_intersecting_cells) {
+        for(auto v : tr().vertices(c)) {
+          if(is_marked(v, Vertex_marker::CAVITY)) {
+            clear_mark(v, Vertex_marker::CAVITY);
+            if(this->debug().regions()) {
+              std::cerr << "  " << IO::oformat(v, with_point_and_info) << "\n";
+            }
+          }
+        }
+      }
+      throw Next_region("The cavities interior contain internal vertices", fh_region[0]);
+    }
 
     if(this->debug().regions()) {
       debug_dump_cavity_outputs(face_index, region_index, intersecting_edges, facets_of_border, facets_of_upper_cavity, facets_of_lower_cavity);
@@ -4262,43 +4303,6 @@ public:
                                      const Conforming_constrained_Delaunay_triangulation_3_impl &tr) const
   {
     write_facets(out, tr, tr.finite_facets());
-  }
-
-  void process_older_cavity_algorithm(const std::vector<Edge>& intersecting_edges,
-                                      const std::set<Cell_handle>& intersecting_cells,
-                                      std::vector<Vertex_handle>& vertices_of_upper_cavity,
-                                      std::vector<Vertex_handle>& vertices_of_lower_cavity,
-                                      std::vector<Facet>& facets_of_upper_cavity,
-                                      std::vector<Facet>& facets_of_lower_cavity)
-  {
-    auto new_vertex = make__new_element_functor<Vertex_handle>();
-
-    for(auto intersecting_edge: intersecting_edges) {
-      const auto [v_above, v_below] = tr().vertices(intersecting_edge);
-
-      if(new_vertex(v_above)) {
-        vertices_of_upper_cavity.push_back(v_above);
-      }
-      if(new_vertex(v_below)) {
-        vertices_of_lower_cavity.push_back(v_below);
-      }
-
-      auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
-      CGAL_assume(cell_circ != nullptr);
-      do {
-        const Cell_handle cell = cell_circ;
-        const auto index_v_above = cell->index(v_above);
-        const auto index_v_below = cell->index(v_below);
-        const auto cell_above = cell->neighbor(index_v_below);
-        const auto cell_below = cell->neighbor(index_v_above);
-        if(0 == intersecting_cells.count(cell_above)) {
-          facets_of_upper_cavity.emplace_back(cell_above, cell_above->index(cell));
-        }
-        if(0 == intersecting_cells.count(cell_below)) {
-          facets_of_lower_cavity.emplace_back(cell_below, cell_below->index(cell));
-        }
-      } while(++cell_circ != end);
-    }
   }
 
   template <typename Element_type>
