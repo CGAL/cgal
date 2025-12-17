@@ -380,24 +380,24 @@ struct scalar_score_coeff_op<CGAL::Gmpfi> {
     //  - higher category is always better
     //  - for equal categories, tighter interval is better
     bool operator<(const result_type& o) const {
-      if (category != o.category) 
+      if (category != o.category)
         return category < o.category;
       return tie_breaker < o.tie_breaker;
     }
     bool operator==(const result_type& o) const {
       return category == o.category && tie_breaker == o.tie_breaker;
     }
-    bool operator!=(const result_type& o) const { 
-      return !(*this == o); 
+    bool operator!=(const result_type& o) const {
+      return !(*this == o);
     }
-    bool operator>(const result_type& o) const { 
-      return o < *this; 
+    bool operator>(const result_type& o) const {
+      return o < *this;
     }
-    bool operator<=(const result_type& o) const { 
-      return !(*this > o); 
+    bool operator<=(const result_type& o) const {
+      return !(*this > o);
     }
-    bool operator>=(const result_type& o) const { 
-      return !(*this < o); 
+    bool operator>=(const result_type& o) const {
+      return !(*this < o);
     }
   };
 
