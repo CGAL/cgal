@@ -107,6 +107,12 @@ jobs:
     if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build || false) }}
     steps:
 
+      - name: Display environment variables
+        run: |
+          echo "pr_number=${{ env.pr_number }}"
+          echo "doc_version=${{ env.doc_version }}"
+          echo "force_build=${{ env.force_build }}"
+
       - name: Emoji-comment
         if: github.event_name == 'issue_comment'
         continue-on-error: true
