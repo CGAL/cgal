@@ -152,7 +152,7 @@ kernel(const PolygonMesh& pm,
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
-  // using face_descriptor = typename BGT::face_descriptor;
+  using face_descriptor = typename BGT::face_descriptor;
   // using edge_descriptor = typename BGT::edge_descriptor;
   // using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
@@ -231,18 +231,17 @@ kernel(const PolygonMesh& pm,
 
   Three_point_cut_plane_traits<EK> kgt;
 
-  std::vector<Plane_3> planes;
-  for (auto f : faces){
-    auto h = halfedge(f, pm);
-    planes.emplace_back(to_exact(get(vpm,source(h, pm))),
-                        to_exact(get(vpm,target(h, pm))),
-                        to_exact(get(vpm,target(next(h, pm), pm))));
-  }
+  std::vector<face_descriptor> planes(faces.begin(), faces.end());
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine());
 
-  for(auto plane: planes)
+  for(auto f: planes)
   {
+    auto h = halfedge(f, pm);
+    Plane_3 plane(to_exact(get(vpm,source(h, pm))),
+                  to_exact(get(vpm,target(h, pm))),
+                  to_exact(get(vpm,target(next(h, pm), pm))));
+
     if(bbox_filtering){
       // By looking the sign of the plane value, we can check only two corners
       auto pred = kgt.oriented_side_3_object();
