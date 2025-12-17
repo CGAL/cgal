@@ -261,7 +261,7 @@ public:
                   const double offset, // = alpha / 30.
                   MultipolygonWithHoles& wrap,
                   const InputNamedParameters& in_np = parameters::default_values(),
-                  const OutputNamedParameters& out_np = parameters::default_values())
+                  const OutputNamedParameters& /*out_np*/ = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
@@ -937,18 +937,20 @@ private:
   {
     CGAL_precondition(!m_tr.is_infinite(neighbor));
 
-    typename Geom_traits::Construct_disk_2 disk = geom_traits().construct_disk_2_object();
     typename Geom_traits::Construct_vector_2 vector = geom_traits().construct_vector_2_object();
     typename Geom_traits::Construct_translated_point_2 translate = geom_traits().construct_translated_point_2_object();
     typename Geom_traits::Construct_scaled_vector_2 scale = geom_traits().construct_scaled_vector_2_object();
 
+    CGAL_assertion_code(typename Geom_traits::Construct_disk_2 disk = geom_traits().construct_disk_2_object();)
+
     const Point_2& neighbor_cc = circumcenter(neighbor);
-    const Disk_2 neighbor_cc_offset_disk = disk(neighbor_cc, m_sq_offset);
 
 #ifdef CGAL_AW2_DEBUG_STEINER_COMPUTATION
     std::cout << "Compute_steiner_point(" << &*fh << ", " << &*neighbor << ")" << std::endl;
 
     const Point_2& chc = circumcenter(fh);
+
+    const Disk_2 neighbor_cc_offset_disk = disk(neighbor_cc, m_sq_offset);
     const bool is_neighbor_cc_in_offset = m_oracle.do_intersect(neighbor_cc_offset_disk);
 
     std::cout << "FH" << std::endl;
@@ -1919,7 +1921,9 @@ private:
     std::cout << "\t~~~ Check queue sanity ~~~" << std::endl;
 
     std::vector<Gate> queue_gates;
+#ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
     Gate previous_top_gate = m_queue.top();
+#endif
     while(!m_queue.empty())
     {
       const Gate& current_gate = m_queue.top();

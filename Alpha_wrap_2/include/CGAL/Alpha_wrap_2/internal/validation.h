@@ -62,7 +62,6 @@ auto cdt_from_wrap(const MultipolygonWithHoles& wrap)
 
   using Itag = CGAL::No_constraint_intersection_tag;
   using CDT = Constrained_triangulation_2<K, CGAL::Default, Itag>;
-  using CDT_FH = typename CDT::Face_handle;
 
   CDT cdt;
 
@@ -133,7 +132,6 @@ bool has_bounded_edge_length(const MultipolygonWithHoles& wrap,
 {
   using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
   using Polygon_2 = typename Polygon_with_holes_2::Polygon_2;
-  using Edges = typename Polygon_2::Edges;
   using Segment_2 = typename Polygon_2::Segment_2;
 
   const auto sq_alpha_bound = 4 * square(alpha);
@@ -174,7 +172,7 @@ template <typename MultipolygonWithHoles,
           typename NamedParameters = parameters::Default_named_parameters>
 bool is_valid_wrap(const MultipolygonWithHoles& wrap,
                    const bool check_manifoldness,
-                   const NamedParameters& np = parameters::default_values())
+                   const NamedParameters& /*np*/ = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -278,19 +276,15 @@ template <typename MultipolygonWithHoles, typename PolylineRange,
           typename InputNamedParameters = parameters::Default_named_parameters>
 bool is_outer_wrap_of_polylines(const MultipolygonWithHoles& wrap,
                                 const PolylineRange& polylines,
-                                const OutputNamedParameters& out_np = parameters::default_values(),
-                                const InputNamedParameters& in_np = parameters::default_values())
+                                const OutputNamedParameters& /*out_np*/ = parameters::default_values(),
+                                const InputNamedParameters& /*in_np*/ = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  using IPM = typename GetPointMap<PolylineRange, InputNamedParameters>::const_type;
-  IPM in_pm = choose_parameter<IPM>(get_parameter(in_np, internal_np::point_map));
-
   using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
   using Polygon_2 = typename Polygon_with_holes_2::Polygon_2;
   using Segment_2 = typename Polygon_2::Segment_2;
-  using Point_2 = typename Polygon_2::Point_2;
   using Box = CGAL::Box_intersection_d::Box_with_handle_d<double, 2, Segment_2*>;
 
   // Build boxed segments for wrap
@@ -386,24 +380,20 @@ template <typename MultipolygonWithHoles, typename PointRange,
           typename InputNamedParameters = parameters::Default_named_parameters>
 bool is_outer_wrap_of_point_set(const MultipolygonWithHoles& wrap,
                                 const PointRange& points,
-                                const OutputNamedParameters& out_np = parameters::default_values(),
+                                const OutputNamedParameters& /*out_np*/ = parameters::default_values(),
                                 const InputNamedParameters& in_np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
   using IPM = typename GetPointMap<PointRange, InputNamedParameters>::const_type;
-  using K = typename Kernel_traits<typename boost::property_traits<IPM>::value_type>::Kernel;
 
   IPM in_pm = choose_parameter<IPM>(get_parameter(in_np, internal_np::point_map));
 
   auto cdt = cdt_from_wrap(wrap);
 
   using CDT = decltype(cdt);
-  using CDT_VH = typename CDT::Vertex_handle;
   using CDT_FH = typename CDT::Face_handle;
-  using Locate_type = typename CDT::Locate_type;
-  using Face_circulator = typename CDT::Face_circulator;
 
   std::unordered_map<CDT_FH, bool> in_domain_map;
   boost::associative_property_map<std::unordered_map<CDT_FH, bool> > in_domain(in_domain_map);

@@ -121,7 +121,6 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_points_ptr->size();
     m_points_ptr->insert(std::cend(*m_points_ptr), std::cbegin(points), std::cend(points));
 
     this->tree().rebuild(std::cbegin(*m_points_ptr), std::cend(*m_points_ptr));

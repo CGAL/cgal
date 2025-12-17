@@ -38,9 +38,7 @@ void xyz_to_multipoint(const std::string& filename)
 
   Points points;
   std::string line;
-  int lineNumber = 0;
   while (std::getline(in, line)) {
-    ++lineNumber;
     // Trim whitespace
     line.erase(line.find_last_not_of(" \t\r\n") + 1);
     line.erase(0, line.find_first_not_of(" \t\r\n"));

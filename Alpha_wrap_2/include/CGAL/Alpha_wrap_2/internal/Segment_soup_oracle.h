@@ -126,8 +126,6 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_segments_ptr->size();
-
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
 
     for(const Segment& s : segments)
@@ -173,8 +171,6 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_segments_ptr->size();
-
     typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
 
@@ -218,7 +214,6 @@ public:
     using parameters::get_parameter;
 
     using PPM = typename GetPointMap<PointRange, CGAL_NP_CLASS>::const_type;
-    using Point_ref = typename boost::property_traits<PPM>::reference;
 
     using Face = typename boost::range_value<FaceRange>::type;
 
@@ -233,8 +228,6 @@ public:
 #endif
       return;
     }
-
-    const std::size_t old_size = m_segments_ptr->size();
 
     PPM pm = choose_parameter<PPM>(get_parameter(np, internal_np::point_map));
     static_assert(std::is_same<typename boost::property_traits<PPM>::value_type, Point>::value);
@@ -281,8 +274,6 @@ public:
                            const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
     using LineString = typename boost::range_value<MultiLineString>::type;
-
-    const std::size_t old_size = m_segments_ptr->size();
 
     typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
@@ -337,7 +328,7 @@ public:
     using parameters::get_parameter;
 
     using Polygonal_chain = typename boost::range_value<PolygonalChains>::type;
-    using value_type = boost::range_value<Polygonal_chain>::type;
+    using value_type = typename boost::range_value<Polygonal_chain>::type;
 
     using IPM = Identity_property_map<value_type>;
     using Point_map = typename internal_np::Lookup_named_param_def<
@@ -364,8 +355,6 @@ public:
 #endif
       return;
     }
-
-    const std::size_t old_size = m_segments_ptr->size();
 
     for(const Polygonal_chain& pc : pcs)
     {
@@ -434,8 +423,6 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_segments_ptr->size();
-
     for(const Polygon_with_holes_2& polygon : mp.polygons_with_holes()) {
       for(const Segment& s : polygon.outer_boundary().edges()) {
         if(is_degenerate(s))
@@ -493,8 +480,6 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_segments_ptr->size();
-
     for(const Segment& s : pwh.outer_boundary().edges()) {
       if(is_degenerate(s))
       {
@@ -550,8 +535,6 @@ public:
 #endif
       return;
     }
-
-    const std::size_t old_size = m_segments_ptr->size();
 
     for(const Segment& s : p.edges()) {
       if(is_degenerate(s))

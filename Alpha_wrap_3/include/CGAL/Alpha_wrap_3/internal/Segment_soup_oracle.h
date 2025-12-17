@@ -124,8 +124,6 @@ public:
 
     typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
 
-    const std::size_t old_size = m_segments_ptr->size();
-
     for(const Segment& s : segments)
     {
       if(is_degenerate(s))

@@ -106,7 +106,7 @@ struct is_MultipolygonWithHoles
 template <typename Input>
 struct is_MultiLineString
 {
-  static constexpr bool value = [] -> bool {
+  static constexpr bool value = []() -> bool {
     if constexpr (boost::has_range_const_iterator<Input>::value) {
       using Outer_range = typename boost::range_value<Input>::type;
       return is_Point_2_range<Outer_range>::value;
@@ -599,6 +599,9 @@ void alpha_wrap_2(const SegmentRange& segments,
   using Out_point_2 = typename boost::range_value<Polygon_2>::type;
   using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
 
+  // could imagine this being just a conversion, but demand equality for now
+  static_assert(std::is_same_v<In_K, Out_K>);
+
   using Oracle = Alpha_wraps_2::internal::Segment_soup_oracle<Geom_traits>;
   using Wrapper = Alpha_wraps_2::internal::Alpha_wrapper_2<Oracle>;
 
@@ -676,6 +679,9 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
   using Polygon_2 = typename Polygon_with_holes_2::Polygon_2;
   using Out_point_2 = typename boost::range_value<Polygon_2>::type;
   using Out_K = typename CGAL::Kernel_traits<Out_point_2>::type;
+
+  // could imagine this being just a conversion, but demand equality for now
+  static_assert(std::is_same_v<In_K, Out_K>);
 
   using Oracle = Alpha_wraps_2::internal::Segment_soup_oracle<Geom_traits>;
   using Wrapper = Alpha_wraps_2::internal::Alpha_wrapper_2<Oracle>;
