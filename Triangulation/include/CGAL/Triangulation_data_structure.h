@@ -79,7 +79,7 @@ public:
         Full_cell_data() : bits_(0) {}
         Full_cell_data(const Full_cell_data & fcd) : bits_(fcd.bits_) {}
 
-        
+
         void mark_visited()        { bits_ |= VISITED_BIT; }
         void clear_visited()       { bits_ &= ~VISITED_BIT; }
         bool is_visited() const    { return (bits_ & VISITED_BIT) != 0; }
@@ -93,7 +93,7 @@ public:
             else   bits_ &= ~INFINITE_BIT;
         }
         bool is_infinite() const   { return bits_ & INFINITE_BIT; }
-        
+
         void clear()         { bits_ = 0; }
     };
 

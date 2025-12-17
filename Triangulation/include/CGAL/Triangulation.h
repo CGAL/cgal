@@ -231,7 +231,7 @@ protected: // HELPER FUNCTIONS
 
 public:
 
-    // This avoids linear scanning of vertices in is_infinite(c), reducing overhead 
+    // This avoids linear scanning of vertices in is_infinite(c), reducing overhead
     // in high-dimensional predicates.
     inline void update_full_cell_infinite_flag(Full_cell_handle c) const
     {

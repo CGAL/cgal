@@ -31,7 +31,7 @@ struct has_mirror_impl : std::false_type {};
 // Specialization enabled when the storage policy provides mirror-index support.
 template <typename T>
 struct has_mirror_impl<
-    T, 
+    T,
     std::void_t<decltype(std::declval<T>().set_mirror_index(0,0))>
     > : std::true_type {};
 
