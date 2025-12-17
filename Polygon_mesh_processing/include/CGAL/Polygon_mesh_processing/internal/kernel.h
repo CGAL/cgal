@@ -36,18 +36,19 @@ template <class Kernel>
 struct Three_point_cut_plane_traits
 {
   using FT = typename Kernel::FT;
-  // using Plane_3 = std::array<typename Kernel::Point_3, 3>;
-
   using Point_3 = typename Kernel::Point_3;
+
   struct Plane_3: public std::array<typename Kernel::Point_3, 3>{
     using Base = std::array<typename Kernel::Point_3, 3>;
+    using Explicit_plane = typename Kernel::Plane_3;
 
     Plane_3(const Point_3 &a, const Point_3 &b, const Point_3 &c): Base({a, b, c}){}
     Plane_3(const std::array<Point_3, 3> &arr): Base(arr){}
 
+    // Warning: it is slow (Planes are constructed each time)
     bool operator<(const Plane_3 &b) const{
-      typename Kernel::Plane_3 pa((*this)[0], (*this)[1], (*this)[2]);
-      typename Kernel::Plane_3 pb(b[0], b[1], b[2]);
+      Explicit_plane pa = explicit_plane();
+      Explicit_plane pb = b.explicit_plane();
       Comparison_result res = compare(pa.a(), pb.a());
       if(res == EQUAL)
         res = compare(pa.b(), pb.b());
@@ -59,10 +60,15 @@ struct Three_point_cut_plane_traits
     };
 
     bool operator==(const Plane_3 &b) const{
-      typename Kernel::Plane_3 pa((*this)[0], (*this)[1], (*this)[2]);
-      typename Kernel::Plane_3 pb(b[0], b[1], b[2]);
+      Explicit_plane pa = explicit_plane();
+      Explicit_plane pb = b.explicit_plane();
       return pa==pb;
     }
+
+    Explicit_plane explicit_plane() const{
+      return  Explicit_plane((*this)[0], (*this)[1], (*this)[2]);
+    }
+
   };
   using Vector_3 = typename Kernel::Vector_3;
 
@@ -132,48 +138,47 @@ struct Three_point_cut_plane_traits
 #endif
 };
 
+namespace internal{
 template <class PolygonMesh,
+          class FaceRange,
           class NamedParameters = parameters::Default_named_parameters>
 PolygonMesh
 kernel(const PolygonMesh& pm,
+       const FaceRange& faces,
        const NamedParameters& np = parameters::default_values())
 {
-  // TODO: bench if with EPECK we can directly use Kernel::Plane_3
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
-  using face_descriptor = typename BGT::face_descriptor;
+  // using face_descriptor = typename BGT::face_descriptor;
   // using edge_descriptor = typename BGT::edge_descriptor;
-  using halfedge_descriptor = typename BGT::halfedge_descriptor;
+  // using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_const_property_map(vertex_point, pm));
-  // GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-  using Point_3 = typename GT::Point_3;
 
+  using Point_3 = typename GT::Point_3;
   using Plane_3 = typename Three_point_cut_plane_traits<GT>::Plane_3;
 
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
-  bool remove_duplicate = choose_parameter(get_parameter(np, internal_np::remove_duplicate_planes), false);
-  bool concave_optim = choose_parameter(get_parameter(np, internal_np::look_concave_planes_first), false);
-  bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), false);
+  bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
 
-  //TODO: what do we do with a mesh that is not closed?
-  if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
-    return PolygonMesh();
+  // To speedup on stupid benchmarks
+  // if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
+  //   return PolygonMesh();
 
-
-
+  // Build the starting cube
   CGAL::Bbox_3 bb3 = bbox(pm, np);
   PolygonMesh kernel;
   CGAL::make_hexahedron(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()), Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()), Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()), Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
                         Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()), Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()), Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()), Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
                         kernel);
   auto kernel_vpm = get_property_map(vertex_point, kernel);
+  vertex_descriptor start_vertex = *vertices(pm).begin();
 
   std::array<vertex_descriptor, 6> bbox_vertices;
   std::array<Point_3, 8> corners;
@@ -203,75 +208,24 @@ kernel(const PolygonMesh& pm,
         }
       }
     }
-    corners = CGAL::make_array(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                               Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                               Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                               Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+    corners = CGAL::make_array(Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
                                Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
+                               Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
+                               Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
+                               Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
                                Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                               Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()),
-                               Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()));
+                               Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
+                               Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
   }
 
   Three_point_cut_plane_traits<GT> kgt;
 
   std::vector<Plane_3> planes;
-  if(concave_optim){
-    auto compute_dihedral_angle=[&](const halfedge_descriptor h) {
-      // Compute the dihedral angle of the edge
-      return to_double(approximate_dihedral_angle(
-                        get(vpm, source(h, pm)),
-                        get(vpm, target(h, pm)),
-                        get(vpm, target(next(h, pm), pm)),
-                        get(vpm, target(next(opposite(h, pm), pm), pm))));
-    };
-
-    std::vector<std::pair<Plane_3, double>> faces_with_angles;
-    for(face_descriptor f : faces(pm)){
-      double max_dihedral_angle = 0.0;
-      halfedge_descriptor h = halfedge(f, pm);
-      auto hf_circ = halfedges_around_face(h, pm);
-      for (halfedge_descriptor he : hf_circ) {
-        if (!pm.is_border(he)) {
-            max_dihedral_angle = (std::max)(max_dihedral_angle, compute_dihedral_angle(he));
-        }
-      }
-      Plane_3 pl(get(vpm,source(h, pm)),
-                 get(vpm,target(h, pm)),
-                 get(vpm,target(next(h, pm), pm)));
-      faces_with_angles.push_back({pl, max_dihedral_angle});
-    }
-
-    if(remove_duplicate){
-      std::sort(faces_with_angles.begin(), faces_with_angles.end(),
-              [](const std::pair<Plane_3, double>& a, const std::pair<Plane_3, double>& b) {
-                return a.first < b.first;
-              });
-      std::unique(faces_with_angles.begin(), faces_with_angles.end(),
-              [](const std::pair<Plane_3, double>& a, const std::pair<Plane_3, double>& b) {
-                return a.first == b.first;
-              });
-    }
-
-    std::sort(faces_with_angles.begin(), faces_with_angles.end(),
-          [](const std::pair<Plane_3, double>& a, const std::pair<Plane_3, double>& b) {
-              return a.second > b.second;
-          });
-    for(auto pair : faces_with_angles)
-      planes.push_back(pair.first);
-  }
-  else
-  {
-    for (auto f : faces(pm)){
-      auto h = halfedge(f, pm);
-      planes.emplace_back(get(vpm,source(h, pm)),
-                          get(vpm,target(h, pm)),
-                          get(vpm,target(next(h, pm), pm)));
-    }
-    if(remove_duplicate){
-      std::sort(planes.begin(), planes.end());
-      std::unique(planes.begin(), planes.end());
-    }
+  for (auto f : faces){
+    auto h = halfedge(f, pm);
+    planes.emplace_back(get(vpm,source(h, pm)),
+                        get(vpm,target(h, pm)),
+                        get(vpm,target(next(h, pm), pm)));
   }
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine());
@@ -279,57 +233,55 @@ kernel(const PolygonMesh& pm,
   for(auto plane: planes)
   {
     if(bbox_filtering){
-      // TODO looking the sign of a, b, c of the plane, we can look only 2 orientations instead of possibly the eight one
-
+      // By looking the sign of the plane value, we can check only two corners
       auto pred = kgt.oriented_side_3_object();
-      int i=0;
-      auto first_ori=pred(plane, corners[i]);
-      while(++i!=8 && first_ori==ON_ORIENTED_BOUNDARY)
-        first_ori=pred(plane, corners[i]);
+      auto eplane = plane.explicit_plane();
+      std::size_t index = (is_positive(eplane.a())?4:0) + (is_positive(eplane.b())?2:0) + (is_positive(eplane.c())?1:0);
+      if(pred(plane, corners[index]) != ON_POSITIVE_SIDE)
+        continue;
+      if(pred(plane, corners[7-index]) == ON_POSITIVE_SIDE)
+        return PolygonMesh();
 
-      if (i==8) continue;
-      bool all_the_same=true;
-      for (;i<8;++i){
-        auto other_ori=pred(plane, corners[i]);
-        if (other_ori!=ON_ORIENTED_BOUNDARY && other_ori!=first_ori){
-          all_the_same=false;
-          break;
-        }
-      }
-
-      if (all_the_same){
-        if (first_ori==ON_NEGATIVE_SIDE) continue;
-        else
-        {
-          return PolygonMesh();
-        }
-      }
-      clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).bounding_box(&bbox_vertices));
+      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).
+                                                                  bounding_box(&bbox_vertices).starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) break;
 
       CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i))
         CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
 
+      // update bbox
       bb3 = get(kernel_vpm, bbox_vertices[0]).bbox()+get(kernel_vpm, bbox_vertices[1]).bbox()+get(kernel_vpm, bbox_vertices[2]).bbox()+
             get(kernel_vpm, bbox_vertices[3]).bbox()+get(kernel_vpm, bbox_vertices[4]).bbox()+get(kernel_vpm, bbox_vertices[5]).bbox();
-      corners = CGAL::make_array(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                                 Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+      corners = CGAL::make_array(Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
                                  Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
+                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
+                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
+                                 Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
                                  Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()),
-                                 Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()));
+                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
+                                 Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
     }
     else
     {
-      clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true));
+      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).
+                                                                  starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) break;
     }
   }
 
   return kernel;
 };
+
+} // end of namespace internal
+
+template <class PolygonMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+PolygonMesh
+kernel(const PolygonMesh& pm,
+       const NamedParameters& np = parameters::default_values())
+{
+  return internal::kernel(pm, faces(pm), np);
+}
 
 template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
@@ -454,6 +406,7 @@ public:
 
   struct Construct_point_3;
   struct Point_3 : public Geometric_point_3{
+    // TODO need important rework
     // std::array<plane_descriptor, 3> supports;
     // mutable std::set<plane_descriptor> other_coplanar;
     mutable std::vector<plane_descriptor> supports;

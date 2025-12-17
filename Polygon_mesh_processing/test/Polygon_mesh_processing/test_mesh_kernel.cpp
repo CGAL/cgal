@@ -198,46 +198,47 @@ void test_exact_kernel_with_rounding(std::string fname)
   // round_mesh(m);
   to_integer_mesh(m);
   timer.start();
-  EMesh kernel = PMP::experimental::kernel(m);
+  EMesh kernel = PMP::experimental::kernel(m, CGAL::parameters::shuffle_planes(true));
+  // EMesh kernel = PMP::experimental::kernel(m);
   timer.stop();
 
   std::ofstream("ekernel.off") << kernel;
   std::cout << "test_exact_kernel done in " << timer.time() << "\n";
 
-  timer.reset();
-  timer.start();
-  PMP::experimental::kernel(m, CGAL::parameters::shuffle_planes(true));
-  timer.stop();
+  // timer.reset();
+  // timer.start();
+  // PMP::experimental::kernel(m, CGAL::parameters::shuffle_planes(true));
+  // timer.stop();
 
-  std::cout << "test_exact_kernel with shuffle done in " << timer.time() << "\n";
+  // std::cout << "test_exact_kernel with shuffle done in " << timer.time() << "\n";
 
-  timer.reset();
-  timer.start();
-  PMP::experimental::kernel(m, CGAL::parameters::use_bounding_box_filtering(false));
-  timer.stop();
+  // timer.reset();
+  // timer.start();
+  // PMP::experimental::kernel(m, CGAL::parameters::use_bounding_box_filtering(false));
+  // timer.stop();
 
-  std::cout << "test_exact_kernel without bbox done in " << timer.time() << "\n";
+  // std::cout << "test_exact_kernel without bbox done in " << timer.time() << "\n";
 
-  timer.reset();
-  timer.start();
-  PMP::experimental::kernel(m, CGAL::parameters::remove_duplicate_planes(true));
-  timer.stop();
+  // timer.reset();
+  // timer.start();
+  // PMP::experimental::kernel(m, CGAL::parameters::remove_duplicate_planes(true));
+  // timer.stop();
 
-  std::cout << "test_exact_kernel with remove duplicates done in " << timer.time() << "\n";
+  // std::cout << "test_exact_kernel with remove duplicates done in " << timer.time() << "\n";
 
-  timer.reset();
-  timer.start();
-  PMP::experimental::kernel(m, CGAL::parameters::look_concave_planes_first(true));
-  timer.stop();
+  // timer.reset();
+  // timer.start();
+  // PMP::experimental::kernel(m, CGAL::parameters::look_concave_planes_first(true));
+  // timer.stop();
 
-  std::cout << "test_exact_kernel with concave optim done in " << timer.time() << "\n";
+  // std::cout << "test_exact_kernel with concave optim done in " << timer.time() << "\n";
 
-  timer.reset();
-  timer.start();
-  PMP::experimental::kernel(m, CGAL::parameters::look_concave_planes_first(true).remove_duplicate_planes(true));
-  timer.stop();
+  // timer.reset();
+  // timer.start();
+  // PMP::experimental::kernel(m, CGAL::parameters::look_concave_planes_first(true).remove_duplicate_planes(true));
+  // timer.stop();
 
-  std::cout << "test_exact_kernel with concave optim and plane remove duplicates done in " << timer.time() << "\n";
+  // std::cout << "test_exact_kernel with concave optim and plane remove duplicates done in " << timer.time() << "\n";
 }
 
 void test_kernel_with_chull(std::string fname)

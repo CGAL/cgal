@@ -26,9 +26,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
-void clip_convex(PolygonMesh& pm,
-                 const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
-                 const NamedParameters& np = parameters::default_values())
+typename boost::graph_traits<PolygonMesh>::vertex_descriptor
+clip_convex(PolygonMesh& pm,
+            const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
+            const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -81,12 +82,11 @@ void clip_convex(PolygonMesh& pm,
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
   auto sq = traits.compute_squared_distance_3_object();
-  // auto csq = traits.compare_squared_distance_3_object();
-  // auto vector_3 = traits.construct_vector_3_object();
 
   // ____________________ Find a crossing edge _____________________
 
-  vertex_descriptor src=*vertices(pm).begin();
+  vertex_descriptor start = choose_parameter(get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
+  vertex_descriptor src = start;
   FT sp_src = sq(plane, get(vpm, src)); // Not normalized distance
   Sign direction_to_zero = sign(sp_src);
 
@@ -100,7 +100,6 @@ void clip_convex(PolygonMesh& pm,
       for(auto v: vertices_around_target(src ,pm)){
         sp_trg = sq(plane, get(vpm, v));
         CGAL_assertion(sq(plane, get(vpm, v)) == sp_trg);
-        // TODO with EPICK, use compare_distance(plane, src, plane, trg) (But no possibility to memorize some computations for the next)
         // Check if v in the direction to the plane
         if(compare(sp_src, sp_trg)==direction_to_zero){
           if(sign(sp_trg)!=direction_to_zero){
@@ -118,9 +117,11 @@ void clip_convex(PolygonMesh& pm,
       }
       // No intersection with the plane, kernel is either empty or full
       if(is_local_max){
-        if(direction_to_zero==POSITIVE)
+        if(direction_to_zero==POSITIVE){
           clear(pm); // The result is empty
-        return;
+          return BGT::null_vertex();
+        }
+        return start;
       }
     } while(!is_crossing_edge);
   } else {
@@ -143,7 +144,7 @@ void clip_convex(PolygonMesh& pm,
     }
     // Nothing to clip
     if(no_positive_side)
-      return;
+      return start;
   } else if(direction_to_zero==NEGATIVE){
     // Orient the edge from negative to positive
     std::swap(src, trg);
@@ -326,6 +327,8 @@ void clip_convex(PolygonMesh& pm,
     clear(pm);
   CGAL_assertion(is_valid_polygon_mesh(pm));
   // std::ofstream("clip.off") << pm;
+
+  return *boundary_vertices.begin();
 }
 
 } } // CGAL::Polygon_mesh_processing
