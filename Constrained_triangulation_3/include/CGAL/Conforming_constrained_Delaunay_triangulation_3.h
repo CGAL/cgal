@@ -2131,7 +2131,7 @@ private:
 
   void set_mark(Vertex_handle v, Vertex_marker m) {
     if(this->debug().regions()) {
-      std::cerr << " set_mark(" << this->display_vert(v) << ", ";
+      std::cerr << "set_mark(" << this->display_vert(v) << ", ";
       switch(m) {
         case Vertex_marker::CLEAR: std::cerr << "CLEAR"; break;
         case Vertex_marker::REGION_BORDER: std::cerr << "REGION_BORDER"; break;
@@ -2941,7 +2941,7 @@ private:
           }
         }
       }
-    }
+    } // end of while(!stack.empty()) of cavity border traversal
     CGAL_assertion(remaining_facets_of_border.empty());
 
     clear_marks(vertices_of_upper_cavity, Vertex_marker::CAVITY_ABOVE);
@@ -2987,7 +2987,7 @@ private:
       auto guard_color = CGAL::IO::make_color_guards(CGAL::IO::Ansi_color::Yellow, std::cerr);
       std::cerr << "restore_subface_region face index: " << face_index << ", region #" << region_index << "\n";
     }
-    auto guard_indenting = CGAL::IO::make_indenting_guards(2, std::cerr, std::cout);
+    auto guard_indenting = CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout);
 
     const auto& cdt_2 = non_const_cdt_2;
     const auto& fh_region = non_const_fh_region;
@@ -3247,8 +3247,10 @@ private:
     }
     auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
 
-    if(this->debug().copy_triangulation_into_hole()) {
+    std::optional<decltype(CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog))> indent_guards;
+    if(this->debug().copy_triangulation_into_hole() || this->debug().regions()) {
       std::cerr << "# upper cavity\n";
+      indent_guards.emplace(IO::make_indenting_guards("  ", std::cerr, std::cout, std::clog));
     }
     [[maybe_unused]] const auto [upper_cavity_triangulation, vertices_of_upper_cavity,
                                  map_upper_cavity_vertices_to_ambient_vertices, facets_of_upper_cavity,
@@ -3258,8 +3260,10 @@ private:
     const auto& upper_cavity_triangulation_ = upper_cavity_triangulation;
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
-    if(this->debug().copy_triangulation_into_hole()) {
+    if(this->debug().copy_triangulation_into_hole() || this->debug().regions()) {
+      indent_guards.reset();
       std::cerr << "# lower cavity\n";
+      indent_guards.emplace(IO::make_indenting_guards("  ", std::cerr, std::cout, std::clog));
     }
     [[maybe_unused]] const auto [lower_cavity_triangulation, vertices_of_lower_cavity,
                                  map_lower_cavity_vertices_to_ambient_vertices, facets_of_lower_cavity,
@@ -3269,6 +3273,9 @@ private:
     const auto& lower_cavity_triangulation_ = lower_cavity_triangulation;
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
+    if(this->debug().copy_triangulation_into_hole() || this->debug().regions()) {
+      indent_guards.reset();
+    }
 
     // the following transform_reduce is like `std::any_of` but without the fast-exit
     if(std::transform_reduce(fh_region.begin(), fh_region.end(), false, std::logical_or<bool>{}, [&](auto fh) {
@@ -3488,6 +3495,9 @@ private:
     std::set<Cell_handle> cells_to_remove{cells_of_lower_cavity.begin(), cells_of_lower_cavity.end()};
     cells_to_remove.insert(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
     for(auto c : cells_to_remove) {
+      if(this->debug().copy_triangulation_into_hole()) {
+        std::cerr << "delete cell " << IO::oformat(c) << "\n";
+      }
       this->tds().delete_cell(c);
     }
 
@@ -4425,7 +4435,7 @@ public:
     out.precision(17);
     write_facets(out, tr(), facets_of_border);
     out.close();
-
+    std::cerr << "intersecting edges:\n";
     // Dump intersecting edges information
     for(auto edge : intersecting_edges) {
       auto [v1, v2] = tr().vertices(edge);
@@ -4481,8 +4491,6 @@ public:
       return IO::oformat(std::forward<decltype(args)>(args)..., with_point_and_info);
     };
 
-    std::cerr << cdt_3_format("restore_subface_region face index: {}, region #{}\n",
-                              face_index, region_index);
     auto indent_guard = CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog);
     std::cerr << cdt_3_format("intersecting edge #{}: ( {}   {} )\n"
                               "intersected triangle vertices: {}\n"
