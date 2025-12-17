@@ -1605,7 +1605,10 @@ private:
   bool is_marked(Vertex_handle v) const {
     return v->ccdt_3_data().is_marked();
   }
-
+/// \brief Exception thrown when a facet of a PLC is not planar.
+    ///
+    /// This exception is thrown by the method `make_conforming_constrained_Delaunay_triangulation_3()`
+    /// when the input constraints contain a facet that is not planar.
   class Non_planar_plc_facet_exception : public std::exception
   {
     const char* what() const throw()
