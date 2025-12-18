@@ -891,7 +891,7 @@ public:
           Orientation o  = CGAL::Polygon::internal::orientation_2_no_precondition(
                             polygon.begin(), polygon.end(), geom_traits());
 
-          if(polygon.orientation() == CGAL::COUNTERCLOCKWISE)
+          if(o == CGAL::COUNTERCLOCKWISE)
             polygons[fh->region_label()-1] = std::move(polygon);
           else
             holes[fh->region_label()-1].insert(std::move(polygon));
