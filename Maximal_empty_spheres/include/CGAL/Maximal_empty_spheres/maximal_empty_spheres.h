@@ -28,6 +28,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <random>
 
 namespace CGAL {
 #ifndef DOXYGEN_RUNNING
@@ -194,7 +195,13 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
     Eigen::MatrixXd NC_(n_check_planes,D+3);
     for (int i=0; i<n_check_planes; i++){
         // NC_.row(i) = NC.row((i*20747) % NC.rows());
-        NC_.row(i) = NC.row((Eigen::MatrixXi::Random(1,1)(0,0)) % NC.rows());
+        // NC_.row(i) = NC.row(abs(Eigen::MatrixXi::Random(1,1)(0,0)) % NC.rows());
+
+        // random:
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distr(0, NC.rows());
+        NC_.row(i) = NC.row(distr(gen));
     } 
     inv = ((Ks * NC_.transpose()).rowwise().maxCoeff().array() >= atol);
   } else {
