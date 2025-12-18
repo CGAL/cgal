@@ -38,6 +38,7 @@ done
 cmake -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++1y" ..
 if [ -n "$DO_CHECK_HEADERS" ]; then
     make -j"$(nproc --all)" -k check_headers
+    make -j"$(nproc --all)" -k check_headers_linked_twice
 fi
 make -j"$(nproc --all)" -k packages_dependencies
 echo " Checks finished"
