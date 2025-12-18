@@ -388,7 +388,7 @@ create_riemannian_graph(
                 // Add edge
                 typename boost::graph_traits<Riemannian_graph>::edge_descriptor e;
                 bool inserted;
-                boost::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
+                std::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
                                                    vertex(neighbor_index, riemannian_graph),
                                                    riemannian_graph);
                 CGAL_assertion(inserted);
@@ -410,7 +410,7 @@ create_riemannian_graph(
         {
           typename boost::graph_traits<Riemannian_graph>::edge_descriptor e;
           bool inserted;
-          boost::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
+          std::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
                                              vertex(source_point_index, riemannian_graph),
                                              riemannian_graph);
           CGAL_assertion(inserted);

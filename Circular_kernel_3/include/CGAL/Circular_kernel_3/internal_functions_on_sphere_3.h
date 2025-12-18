@@ -85,7 +85,7 @@ namespace CGAL {
 
     template < class SK >
     inline
-    typename SK::Linear_kernel::Bounded_side_3::result_type
+    typename SK::Bounded_side
     bounded_side(const typename SK::Sphere_3 &s,
                  const typename SK::Circular_arc_point_3 &p) {
       typedef typename SK::Algebraic_kernel Algebraic_kernel;
@@ -99,7 +99,7 @@ namespace CGAL {
 
     template < class SK >
     inline
-    typename SK::Linear_kernel::Bounded_side
+    typename SK::Bounded_side
     bounded_side(const typename SK::Circle_3 &c,
                  const typename SK::Circular_arc_point_3 &p) {
       typedef typename SK::Algebraic_kernel Algebraic_kernel;
@@ -471,7 +471,7 @@ namespace CGAL {
       return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK>());
     }
 
-    // At the moment we dont need those functions
+    // At the moment we don't need those functions
     // But in the future maybe (some make_x_monotone? etc..)
     template <class SK>
     typename SK::Circular_arc_point_3

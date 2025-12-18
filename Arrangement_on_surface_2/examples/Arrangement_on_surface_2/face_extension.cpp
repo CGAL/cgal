@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/face_extension.cpp
 // Extending the arrangement-face records.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arr_observer.h>
 

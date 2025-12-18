@@ -112,19 +112,19 @@ int main(int argc, char** argv)
   {
     if (i!=0)
     {
-      random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
+      random=CGAL::Random(random.get_int(0, (std::numeric_limits<int>::max)()));
     }
     std::cout<<"Random seed: "<<random.get_seed()<<": ";
 
     if (!withE)
     { E=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                cm.number_of_darts()/10))); }
+                                  (10, (std::max)(std::size_t(11),
+                                                  cm.number_of_darts()/10))); }
 
     if (!withD)
     { D=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                cm.number_of_darts()/10))); }
+                                  (10, (std::max)(std::size_t(11),
+                                                  cm.number_of_darts()/10))); }
 
 
 

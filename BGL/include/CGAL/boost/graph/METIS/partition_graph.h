@@ -47,7 +47,7 @@ struct Output_vertex_partition_ids
                   VertexPartitionIDPmap vertex_partition_id_map)
   {
     typename boost::graph_traits<TriangleMesh>::vertex_iterator vit, ve;
-    boost::tie(vit, ve) = vertices(tm);
+    std::tie(vit, ve) = vertices(tm);
     for(; vit!=ve; ++vit)
       put(vertex_partition_id_map, *vit, npart[get(indices, *vit)]);
   }
@@ -64,7 +64,7 @@ struct Output_face_partition_ids
                   FacePartitionIDPmap face_partition_id_map)
   {
     typename boost::graph_traits<TriangleMesh>::face_iterator fit, fe;
-    boost::tie(fit, fe) = faces(tm);
+    std::tie(fit, fe) = faces(tm);
     for(int i=0; fit!=fe; ++fit, ++i)
       put(face_partition_id_map, *fit, epart[i]);
   }
@@ -98,7 +98,7 @@ void partition_graph(const TriangleMesh& tm,
 
   // fill the adjacency info
   face_iterator fit, fe;
-  boost::tie(fit, fe) = faces(tm);
+  std::tie(fit, fe) = faces(tm);
   for(int i=0, j=0; fit!=fe; ++fit, ++i)
   {
     eptr[i] = j;

@@ -136,6 +136,7 @@ void test2(){
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
   typedef typename K1::Compute_squared_radius_smallest_orthogonal_sphere_d CSRSOS;
+  typedef typename K1::Construct_bbox_d CB;
   //typedef typename K1::Point_drop_weight_d PDW;
   typedef CP PDW;
   typedef typename K1::Compute_weight_d PW;
@@ -151,6 +152,7 @@ void test2(){
     (2)
 #endif
     ;
+  CB cb Kinit(construct_bbox_d_object);
   CP cp Kinit(construct_point_d_object);
   CV cv Kinit(construct_vector_d_object);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
@@ -217,6 +219,8 @@ void test2(){
   CGAL_USE(cr);
   using std::abs;
   P a=cp(3,4);
+  CGAL::Bbox_d<CGAL::Dimension_tag<2>> bb2 = cb(a);
+  std::cout << "bb2 = " << bb2 << std::endl;
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
   P b=vp(cv(5,6,7));
@@ -348,6 +352,7 @@ void test2(){
 #endif
   P z0=cp( 0+2,5-3);
   P z1=cp(-5+2,0-3);
+  cv(z0,z1);
   assert(abs(sd(z0,z1)-50)<.0001);
   assert(ed(z0,z0) && !ed(z0,z1));
   P z2=cp( 3+2,4-3);
@@ -745,16 +750,19 @@ static_assert(std::is_same<CGAL::Dimension_tag<3>,Ker3::Dimension>::value);
 static_assert(std::is_same<CGAL::Dynamic_dimension_tag,Kerd::Dimension>::value);
 static_assert(std::is_same<CGAL::Dimension_tag<2>,CGAL::Ambient_dimension<Ker2::Point_d>::type>::value);
 static_assert(std::is_same<CGAL::Dimension_tag<3>,CGAL::Ambient_dimension<Ker3::Point_d,Ker3>::type>::value);
+
+static_assert(Ker2::Has_filtered_predicates_tag::value);
+static_assert(Ker3::Has_filtered_predicates_tag::value);
+static_assert(Kerd::Has_filtered_predicates_tag::value);
+
 int main(){
   //Broken with Linear_base_d (output iterator)
   //test2<CGAL::Kernel_d_interface<KK> >();
   test2<Ker2>(); test2i<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
-#if !defined _MSC_VER || _MSC_VER >= 1910
   test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
   test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
   test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
   test4<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
-#endif
 }

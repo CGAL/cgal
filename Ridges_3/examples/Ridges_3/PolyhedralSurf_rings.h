@@ -64,7 +64,7 @@ T_PolyhedralSurf_rings(const TPoly& P)
 {
   //init the ring_index_map
   Vertex_const_iterator itb, ite;
-  boost::tie(itb,ite) = vertices(P);
+  std::tie(itb,ite) = vertices(P);
   for(;itb!=ite;itb++) ring_index_map[*itb] = -1;
 }
 

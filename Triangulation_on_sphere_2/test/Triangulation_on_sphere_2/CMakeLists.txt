@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project( Triangulation_on_sphere_2_Tests )
 
@@ -23,7 +23,7 @@ include(CGAL_Eigen3_support)
 
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "test_dtos_dual.cpp" )
-  target_link_libraries(test_dtos_dual PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(test_dtos_dual PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: The Eigen library was not found. The test 'test_dtos_dual' will not be compiled.")
 endif()

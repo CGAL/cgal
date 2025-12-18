@@ -45,7 +45,7 @@ canLoad(QFileInfo) const {
 QList<Scene_item*>
 CGAL_Lab_wkt_plugin::
 load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
-  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
+  std::ifstream in(fileinfo.filePath().toUtf8());
 
   if(!in)
     std::cerr << "Error!\n";
@@ -56,11 +56,26 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
     ok = false;
+    QApplication::restoreOverrideCursor();
     return QList<Scene_item*>();
   }
 
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
-  CGAL::IO::read_multi_linestring_WKT (in, polylines);
+  bool success = CGAL::IO::read_multi_linestring_WKT (in, polylines);
+  if(! success){
+    in.close();
+    in.open(fileinfo.filePath().toUtf8());
+    std::vector<Scene_polylines_item::Point_3> polyline;
+    std::cout << " read" << std::endl;
+    success = CGAL::IO::read_linestring_WKT (in, polyline);
+    std::cout << " done " <<  std::boolalpha << success << "  "  << polyline.size() << std::endl;
+    if(! success){
+      ok = false;
+      QApplication::restoreOverrideCursor();
+      return QList<Scene_item*>();
+    }
+    polylines.push_back(polyline);
+  }
 
   Scene_polylines_item* item = new Scene_polylines_item;
   item->polylines = polylines;

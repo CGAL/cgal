@@ -241,11 +241,11 @@ void test_triangulate_refine_and_fair_hole(const std::string file_name) {
 }
 
 template <class Polyhedron>
-void test_ouput_iterators_triangulate_hole(const std::string file_name) {
+void test_output_iterators_triangulate_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
 
-  std::cout << "test_ouput_iterators_triangulate_hole:" << std::endl;
+  std::cout << "test_output_iterators_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
   Polyhedron poly, poly_2;
@@ -273,11 +273,11 @@ void test_ouput_iterators_triangulate_hole(const std::string file_name) {
 }
 
 template <class Polyhedron>
-void test_ouput_iterators_triangulate_and_refine_hole(const std::string file_name) {
+void test_output_iterators_triangulate_and_refine_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
-  std::cout << "test_ouput_iterators_triangulate_and_refine_hole:" << std::endl;
+  std::cout << "test_output_iterators_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
   Polyhedron poly, poly_2;
@@ -403,8 +403,8 @@ typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
     test_triangulate_hole<Polyhedron>(it->c_str());
     test_triangulate_and_refine_hole<Polyhedron>(it->c_str());
     test_triangulate_refine_and_fair_hole<Polyhedron>(it->c_str());
-    test_ouput_iterators_triangulate_and_refine_hole<Polyhedron>(it->c_str());
-    test_ouput_iterators_triangulate_hole<Polyhedron>(it->c_str());
+    test_output_iterators_triangulate_and_refine_hole<Polyhedron>(it->c_str());
+    test_output_iterators_triangulate_hole<Polyhedron>(it->c_str());
     test_triangulate_hole_weight<Polyhedron>(it->c_str(), 0);
     std::cout << std::endl;
   }

@@ -106,7 +106,7 @@ public:
   void init()
   {
     m_free_list=std::stack<size_type>();
-    assert(m_free_list.empty());
+    CGAL_assertion(m_free_list.empty());
     if(m_cc_with_index->capacity()>0)
     { m_used.assign(m_cc_with_index->capacity(), false); }
     else { m_used.clear(); }
@@ -610,16 +610,16 @@ public:
   }
 
   iterator begin() { return empty()?end():iterator(this, 0, 0); }
-  iterator end()   { return iterator(this, upper_bound()); }
+  iterator end()   { return iterator(this, null_descriptor); }
 
   const_iterator begin() const { return empty()?end():const_iterator(this, 0, 0); }
-  const_iterator end()   const { return const_iterator(this, upper_bound()); }
+  const_iterator end()   const { return const_iterator(this, null_descriptor); }
 
-  reverse_iterator rbegin() { return reverse_iterator(end()); }
+  reverse_iterator rbegin() { return reverse_iterator(iterator(this, upper_bound())); }
   reverse_iterator rend()   { return reverse_iterator(begin()); }
 
   const_reverse_iterator
-  rbegin() const { return const_reverse_iterator(end()); }
+  rbegin() const { return const_reverse_iterator(iterator(this, upper_bound())); }
   const_reverse_iterator
   rend()   const { return const_reverse_iterator(begin()); }
 
@@ -878,7 +878,8 @@ namespace internal {
     CC_iterator_with_index(const iterator &it): m_ptr_to_cc(it.m_ptr_to_cc),
       m_index(it.m_index)
     {
-      CGAL_assertion(m_index<=m_ptr_to_cc->upper_bound());
+       CGAL_assertion(m_index<=m_ptr_to_cc->upper_bound() ||
+                     m_index==DSC::null_descriptor);
     }
 
     // Same for assignment operator
@@ -928,14 +929,16 @@ namespace internal {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr_to_cc!=nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(m_index<m_ptr_to_cc->upper_bound(),
-         "Incrementing end() ?");
+      CGAL_assertion_msg(m_index<m_ptr_to_cc->upper_bound() &&
+                             m_index!=DSC::null_descriptor,
+                         "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do
       { ++m_index; }
       while(m_index<m_ptr_to_cc->upper_bound() &&
             (!m_ptr_to_cc->is_used(m_index)));
+      if(m_index==m_ptr_to_cc->upper_bound()) { m_index=DSC::null_descriptor; }
     }
 
     void decrement()
@@ -969,7 +972,7 @@ namespace internal {
 
     pointer   operator->() const { return &((*m_ptr_to_cc)[m_index]); }
 
-    bool is_end() const { return m_index>=m_ptr_to_cc->upper_bound(); }
+    bool is_end() const { return m_index==DSC::null_descriptor; }
 
     // Can itself be used for bit-squatting.
     size_type for_compact_container() const

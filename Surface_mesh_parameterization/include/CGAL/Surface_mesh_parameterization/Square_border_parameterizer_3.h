@@ -132,7 +132,7 @@ private:
     double min = DBL_MAX; // distance for 'best'
 
     std::size_t id = 0, min_id = (std::numeric_limits<std::size_t>::max)();
-    for(boost::tie(b,e) = halfedges_around_face(bhd, mesh); b!=e; ++b, ++id) {
+    for(std::tie(b,e) = halfedges_around_face(bhd, mesh); b!=e; ++b, ++id) {
       double d = CGAL::abs(offset[id] - value);
       if(d < min) {
         best = b;
@@ -160,7 +160,7 @@ private:
     double total_len = compute_border_length(mesh, bhd);
 
     halfedge_around_face_iterator b, e;
-    boost::tie(b,e) =  halfedges_around_face(bhd, mesh);
+    std::tie(b,e) =  halfedges_around_face(bhd, mesh);
     for(halfedge_around_face_iterator it = b; it!= e; ++it) {
       vertex_descriptor vs = source(*it, mesh);
       vertex_descriptor vt = target(*it, mesh);

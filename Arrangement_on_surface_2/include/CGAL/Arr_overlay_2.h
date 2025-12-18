@@ -241,7 +241,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
    * If the type Ovl_gt2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor.
+   * the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).

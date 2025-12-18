@@ -1,9 +1,27 @@
 set(LIBRARIES_TO_CHECK
-  Eigen3 Qt6 TBB OpenMesh Boost
-  GMP Threads SuiteSparse MPFI METIS
-  VTK SCIP OSQP LASLIB GLPK
-  ITT Ceres MPFR libpointmatcher ITK
-  OpenGR OpenCV ZLIB
+  Boost
+  Ceres
+  Eigen3
+  GLPK
+  GMP
+  ITK
+  ITT
+  LASLIB
+  libpointmatcher
+  METIS
+  MPFI
+  MPFR
+  OpenCV
+  OpenGR
+  OpenMesh
+  OSQP
+  Qt6
+  SCIP
+  SuiteSparse
+  TBB
+  Threads
+  VTK
+  ZLIB
 )
 
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)

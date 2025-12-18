@@ -112,6 +112,7 @@ The class `Polyhedral_mesh_domain_3` implements
 a domain defined by a simplicial polyhedral surface.
 
 The input polyhedral surface must be free of intersections.
+
 It must include (at least) one closed connected component
 that defines the boundary of the domain to be meshed.
 Inside this bounding component,
@@ -119,6 +120,10 @@ the input polyhedral surface may contain
 several other components (closed or not)
 that will be represented in the final mesh.
 This class is a model of the concept `MeshDomain_3`.
+
+\note When the given surface(s) are not closed, the surface only will be meshed.
+It is then recommended to use the parameter `parameters::surface_only()` to speedup
+the meshing process.
 
 \tparam Polyhedron stands for the type of the input polyhedral surface(s),
 model of `FaceListGraph`.
@@ -238,10 +243,11 @@ public:
   /// @{
 
   /*!
-    Construction from a bounding polyhedral surface which must be closed, and free of intersections.
-    The inside of `bounding_polyhedron` will be meshed.
+    Construction from a polyhedral surface which must be free of intersections.
+    If `polyhedron` is closed, its inside will be meshed,
+    otherwise there will be no interior and only the surface will be meshed.
   */
-  Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron
+  Polyhedral_mesh_domain_3(const Polyhedron& polyhedron
 #ifndef DOXYGEN_RUNNING
                            , CGAL::Random* p_rng = nullptr
 #endif
@@ -250,12 +256,15 @@ public:
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
   {
-    this->add_primitives(bounding_polyhedron);
-    if(! is_triangle_mesh(bounding_polyhedron)) {
+    this->add_primitives(polyhedron);
+    if(!is_triangle_mesh(polyhedron)) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }
     this->build();
+
+    if(!is_closed(polyhedron))
+      set_surface_only();
   }
 
   /*!

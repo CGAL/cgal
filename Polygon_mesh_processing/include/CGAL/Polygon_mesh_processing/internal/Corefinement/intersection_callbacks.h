@@ -19,6 +19,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <memory>
@@ -27,14 +28,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
-
-struct Self_intersection_exception :
-  public std::runtime_error
-{
-  Self_intersection_exception()
-    : std::runtime_error("Self-intersection detected in input mesh")
-  {}
-};
 
 template<class TriangleMesh, class EdgeToFaces>
 class Collect_face_bbox_per_edge_bbox {

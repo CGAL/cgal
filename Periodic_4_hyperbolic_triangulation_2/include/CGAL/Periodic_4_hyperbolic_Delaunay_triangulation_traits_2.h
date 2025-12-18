@@ -48,45 +48,43 @@ class Hyperbolic_traits_with_translations_2_adaptor
   typedef typename Kernel::Construct_hyperbolic_point_2   Construct_hyperbolic_point_2;
 
 public:
-  typedef typename Predicate::result_type                 result_type;
-
   using Predicate::operator();
 
   Hyperbolic_traits_with_translations_2_adaptor(const Predicate_ pred = Predicate_()) : Predicate_(pred) {}
 
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Hyperbolic_translation& o0, const Hyperbolic_translation& o1) const
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Hyperbolic_translation& o0, const Hyperbolic_translation& o1) const
   {
     return operator()(pp(p0, o0), pp(p1, o1));
   }
 
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2,
-                         const Hyperbolic_translation& o0, const Hyperbolic_translation& o1, const Hyperbolic_translation& o2) const
+  decltype(auto) operator()(const Point& p0, const Point& p1, const Point& p2,
+                            const Hyperbolic_translation& o0, const Hyperbolic_translation& o1, const Hyperbolic_translation& o2) const
   {
     return operator()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
   }
 
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3,
-                         const Hyperbolic_translation& o0, const Hyperbolic_translation& o1,
-                         const Hyperbolic_translation& o2, const Hyperbolic_translation& o3) const
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3,
+                            const Hyperbolic_translation& o0, const Hyperbolic_translation& o1,
+                            const Hyperbolic_translation& o2, const Hyperbolic_translation& o3) const
   {
     return operator()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
   }
 
   // Added for Side_of_hyperbolic_triangle_2
   template <typename T>
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3, T& t) const
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3, T& t) const
   {
     return operator()(p0, p1, p2, p3, t);
   }
 
   template <typename T>
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3,
-                         const Hyperbolic_translation& o0, const Hyperbolic_translation& o1,
-                         const Hyperbolic_translation& o2, const Hyperbolic_translation& o3, T& t) const
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3,
+                            const Hyperbolic_translation& o0, const Hyperbolic_translation& o1,
+                            const Hyperbolic_translation& o2, const Hyperbolic_translation& o3, T& t) const
   {
     return operator()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3), t);
   }
@@ -109,8 +107,6 @@ private:
   typedef typename Kernel::Hyperbolic_translation         Hyperbolic_translation;
 
 public:
-  typedef Point                                           result_type;
-
   using Construct_point_base::operator();
 
   Periodic_4_construct_hyperbolic_point_2() { }
@@ -165,14 +161,13 @@ class Compute_approximate_hyperbolic_diameter
     typedef typename Traits:: Euclidean_line_2     Euclidean_line_2;
     typedef typename Traits::Circle_2              Circle_2;
     typedef typename Traits::Hyperbolic_point_2    Hyperbolic_point_2;
-  public:
-    typedef double result_type;
 
+  public:
     Compute_approximate_hyperbolic_diameter(const Traits& gt = Traits()) : _gt(gt) {}
 
-    result_type operator()(const Hyperbolic_point_2& p1,
-                           const Hyperbolic_point_2& p2,
-                           const Hyperbolic_point_2& p3)
+    double operator()(const Hyperbolic_point_2& p1,
+                      const Hyperbolic_point_2& p2,
+                      const Hyperbolic_point_2& p3)
     {
 
       Circle_2 c = _gt.construct_circle_2_object()(p1, p2, p3);
@@ -442,8 +437,6 @@ class Compute_approximate_hyperbolic_diameter
 
   public:
     Construct_inexact_hyperbolic_circumcenter_2(const Traits& gt = Traits()) : _gt(gt) {}
-
-    typedef Hyperbolic_Voronoi_point_2                      result_type;
 
     Hyperbolic_Voronoi_point_2 operator()(const Hyperbolic_point_2& p,
                                           const Hyperbolic_point_2& q,

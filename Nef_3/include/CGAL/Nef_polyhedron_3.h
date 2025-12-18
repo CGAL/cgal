@@ -1541,7 +1541,7 @@ protected:
 
   Nef_polyhedron_3<Kernel,Items, Mark>
   symmetric_difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
+  /*{\Mop returns the symmetric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/ {
     CGAL_NEF_TRACEN(" symmetric difference between nef3 "<<&*this<<" and "<<&N1);
     if (is_empty()) return N1;

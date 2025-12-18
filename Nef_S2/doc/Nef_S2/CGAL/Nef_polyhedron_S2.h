@@ -1072,7 +1072,7 @@ Nef_polyhedron_S2<K> difference(const Nef_polyhedron_S2<K>&
 N1) ;
 
 /*!
-returns the symmectric difference
+returns the symmetric difference
 `N - T` \f$ \cup\f$ `T - N`.
 */
 Nef_polyhedron_S2<K> symmetric_difference( const

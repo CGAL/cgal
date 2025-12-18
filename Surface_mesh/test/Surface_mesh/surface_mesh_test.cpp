@@ -28,19 +28,19 @@ void standard_iterators()
   Surface_fixture f;
 
   Sm::Vertex_iterator vb, ve;
-  boost::tie(vb, ve) = f.m.vertices();
+  std::tie(vb, ve) = f.m.vertices();
   test_iterator(vb, ve, 5);
 
   Sm::Halfedge_iterator hb, he;
-  boost::tie(hb, he) = f.m.halfedges();
+  std::tie(hb, he) = f.m.halfedges();
   test_iterator(hb, he, 14);
 
   Sm::Edge_iterator eb, ee;
-  boost::tie(eb, ee) = f.m.edges();
+  std::tie(eb, ee) = f.m.edges();
   test_iterator(eb, ee, 7);
 
   Sm::Face_iterator fb, fe;
-  boost::tie(fb, fe) = f.m.faces();
+  std::tie(fb, fe) = f.m.faces();
   test_iterator(fb, fe, 3);
 }
 
@@ -97,7 +97,7 @@ void memory_reuse_test()
 
   Faces faces;
   Sm::Face_iterator fb, fe;
-  for(boost::tie(fb, fe) = f.m.faces(); fb != fe; ++fb) {
+  for(std::tie(fb, fe) = f.m.faces(); fb != fe; ++fb) {
     faces.push_back(VecFace());
     Sm::Vertex_around_face_circulator vafb(f.m.halfedge(*fb), f.m), vafe(vafb);
     if(vafb)
@@ -108,7 +108,7 @@ void memory_reuse_test()
   }
 
   Sm::Vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = f.m.vertices(); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = f.m.vertices(); vb != ve; ++vb) {
     f.m.set_halfedge(*vb, Sm::Halfedge_index());
   }
 
@@ -223,10 +223,10 @@ void properties () {
   Sm::Property_map<Sm::Vertex_index, int> prop;
   bool created = false;
 
-  boost::tie(prop,created) = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
+  std::tie(prop,created) = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
   assert(created == true);
 
-  boost::tie(prop, created)= f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty");
+  std::tie(prop, created)= f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty");
   assert(created == false);
 }
 

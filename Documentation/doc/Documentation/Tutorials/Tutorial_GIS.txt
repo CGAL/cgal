@@ -303,14 +303,14 @@ described in this tutorial.
 
 This tutorial is based on the following \cgal packages:
 
-- \ref PkgTriangulation2Ref
-- \ref PkgPointSet3Ref
-- \ref PkgPointSetProcessing3Ref
+- \ref PkgTriangulation2
+- \ref PkgPointSet3
+- \ref PkgPointSetProcessing3
 - \ref PkgSurface_mesh
-- \ref PkgBGLRef
-- \ref PkgPolygonMeshProcessingRef
-- \ref PkgPolylineSimplification2Ref
-- \ref PkgClassificationRef
+- \ref PkgBGL
+- \ref PkgPolygonMeshProcessing
+- \ref PkgPolylineSimplification2
+- \ref PkgClassification
 
 The data set used throughout this tutorial comes from the
 https://www.usgs.gov/ database, licensed under the _US Government

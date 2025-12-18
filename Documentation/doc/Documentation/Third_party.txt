@@ -11,12 +11,12 @@ supporting C++17 or later.
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 15.0.7 |
-| \ms Windows      | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | \ms Visual `C++` 15.9, 16.10, 17.0 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| macOS            | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 15.0.0 |
+| Linux            | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 20.1.6 or later |
+| \ms Windows      | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 15.9, 16.10, 17.14 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| macOS            | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | Apple `Clang` compiler versions 12.0.5, 14.0.0, and 15.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
@@ -54,7 +54,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.72 or later</b>
+<b>Version 1.74 or later</b>
 
 The \boost libraries are a set of portable C++ source libraries.
 Most of \boost libraries are header-only, but a few of them need to be compiled or
@@ -69,8 +69,9 @@ For Visual C++ you can download precompiled libraries
 from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
 
 As there is no canonical directory for where to find \boost on Windows,
-we recommend that you define the environment variable
-`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
+we recommend to use the config mode of CMake by defining the environment variable
+`Boost_DIR` (case sensitive) to the path of the directory in your boost installation
+containing the file `BoostConfig.cmake`, e.g.`C:/local/boost_1_80_0/lib64-msvc-14.3/cmake/Boost-1.80.0`.
 
 \subsection thirdpartyMP Multi Precision Number Type Library
 
@@ -86,7 +87,6 @@ Version supported are <b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later
 
 The \boost library also provides a module for multi precision integers and rational numbers:
 <A HREF="https://www.boost.org/doc/libs/release/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
-Versions supported are <b>\boost Version 1.72 or later</b>.
 
 The components \cgal, and `CGAL_Qt6` require either \gmp and \mpfr, or \boost multiprecision
 for multi precision numbers. `CGAL_Core` requires \boost multiprecision.
@@ -144,7 +144,7 @@ The \eigen web site is <A HREF="https://libeigen.gitlab.io/">`https://libeigen.g
 
 \opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
 
-\cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3Ref
+\cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3
 packages. In order to use \opengr in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OpenGR_support` provided in `CGAL_OpenGR_support.cmake`.
 
 The \opengr web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://github.com/STORM-IRIT/OpenGR`</A>.
@@ -153,7 +153,7 @@ The \opengr web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://
 
 \libpointmatcher is a modular library implementing the Iterative Closest Point (ICP) algorithm for aligning point clouds, released under a permissive BSD license.
 
-\cgal provides wrappers for the ICP algorithm of \libpointmatcher in the \ref PkgPointSetProcessing3Ref
+\cgal provides wrappers for the ICP algorithm of \libpointmatcher in the \ref PkgPointSetProcessing3
 packages. In order to use \libpointmatcher in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::pointmatcher_support` provided in
@@ -179,19 +179,6 @@ optional: it is used by some models of the
 
 \mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
-\subsection thirdpartyRS3 RS and RS3
-
-\rs (Real Solutions) is devoted to the study of the real roots of
-polynomial systems with a finite number of complex roots (including
-univariate polynomials). In \cgal, \rs is used by one model of the
-\ref PkgAlgebraicKernelD "Algebraic Kernel".
-
-\rs is freely distributable for non-commercial use. You can download it
-from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \rs package also includes \rs3, the
-successor of \rs, which is used in conjunction with it.
-
-The libraries \rs and \rs3 need \mpfi, which can be downloaded from
-<A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
 \subsection thirdpartyNTL NTL
 <b>Version 5.1 or later</b>
@@ -291,7 +278,7 @@ for instance, on Windows, you can download it from <A HREF="https://www.zlib.net
 
 \ceres is an open source C++ library for modeling and solving large, complicated optimization problems.
 
-In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessingRef package for mesh smoothing, which
+In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessing package for mesh smoothing, which
 requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
@@ -303,7 +290,7 @@ for more information.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
 If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
-\attention In the master branch of \ceres `glog` was dropped as a dependecy and `abseil` was added instead. It is not compatible with \visualstudio 2017 or earlier versions.
+\attention In the master branch of \ceres `glog` was dropped as a dependency and `abseil` was added instead. It is not compatible with \visualstudio 2017 or earlier versions.
 
 \subsection thirdpartyGLPK GLPK
 

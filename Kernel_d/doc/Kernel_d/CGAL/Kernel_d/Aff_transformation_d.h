@@ -98,7 +98,7 @@ in the plane spanned by the base vectors \f$ b_{e1}\f$ and \f$ b_{e2}\f$ in
 \f$ d\f$-space. Thus the default use delivers a planar rotation in the
 \f$ x\f$-\f$ y\f$ plane.
 
-\pre \f$ sin_num^2 + cos_num^2 = den^2\f$ and \f$ 0 \leq e_1 < e_2 < d\f$.
+\pre \f$ sin\_num^2 + cos\_num^2 = den^2\f$ and \f$ 0 \leq e_1 < e_2 < d\f$.
 \pre `den != 0`.
 
 */

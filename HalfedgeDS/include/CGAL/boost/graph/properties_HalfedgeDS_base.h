@@ -20,7 +20,7 @@
 #include <CGAL/number_utils.h>
 #include <memory>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
-#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/squared_distance_3.h>
 #include <CGAL/Dynamic_property_map.h>
 
 namespace CGAL {
@@ -70,7 +70,7 @@ public:
   {
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
-    for(boost::tie(it, end) = edges(p); it != end; ++it, ++data)
+    for(std::tie(it, end) = edges(p); it != end; ++it, ++data)
       (*map_)[*it] = data;
   }
 

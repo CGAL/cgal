@@ -21,6 +21,8 @@ The type of the surface mesh to simplify. Must be a model of the `MutableFaceGra
 */
 typedef Edge_profile::Triangle_mesh TriangleMesh;
 
+/// @}
+
 /// \name Operations
 /// @{
 

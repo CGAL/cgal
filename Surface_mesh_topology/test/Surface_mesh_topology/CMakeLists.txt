@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_mesh_topology_Tests)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-# add_definitions(-DCGAL_TRACE_PATH_TESTS)
-# add_definitions(-DCGAL_TRACE_CMAP_TOOLS)
+# add_compile_definitions(CGAL_TRACE_PATH_TESTS)
+# add_compile_definitions(CGAL_TRACE_CMAP_TOOLS)
 # add_definitions("-Wall -Wextra")
-# add_definitions("-D_GLIBCXX_DEBUG")
+# add_compile_definitions(_GLIBCXX_DEBUG)
 
 set(SOURCE_FILES
   fundamental_group_of_the_circle.cpp
@@ -34,8 +34,8 @@ foreach(cppfile ${SOURCE_FILES})
 endforeach()
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(fundamental_group_of_the_circle PUBLIC CGAL::CGAL_Basic_viewer)
-  target_link_libraries(fundamental_group_of_the_torus PUBLIC CGAL::CGAL_Basic_viewer)
-  target_link_libraries(path_with_rle_deformation_tests PUBLIC CGAL::CGAL_Basic_viewer)
-  target_link_libraries(test_homotopy PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(fundamental_group_of_the_circle PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(fundamental_group_of_the_torus PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(path_with_rle_deformation_tests PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(test_homotopy PRIVATE CGAL::CGAL_Basic_viewer)
 endif()

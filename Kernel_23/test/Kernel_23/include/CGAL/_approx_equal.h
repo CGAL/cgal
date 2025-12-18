@@ -1,5 +1,6 @@
 #ifndef CGAL_TESTSUITE_APPROX_EQUAL_H
 #define CGAL_TESTSUITE_APPROX_EQUAL_H
+
 #include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {

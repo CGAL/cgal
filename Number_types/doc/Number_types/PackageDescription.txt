@@ -1,4 +1,4 @@
-/// \defgroup PkgNumberTypesRef Number Types Reference
+/// \defgroup PkgNumberTypesRef Reference Manual
 
 /// \defgroup PkgNumberTypesConcepts Concepts
 /// \ingroup PkgNumberTypesRef
@@ -33,7 +33,6 @@
 
 /*!
 \addtogroup PkgNumberTypesRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Number Types,PkgNumberTypes}
 \cgalPkgPicture{illustration.png}
 \cgalPkgSummaryBegin

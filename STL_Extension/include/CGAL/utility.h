@@ -343,6 +343,12 @@ Scope_exit<F> make_scope_exit(F&& f) {
   return Scope_exit<F>(std::forward<F>(f));
 }
 
+template<class... Ts>
+struct overloaded : Ts... {
+  using Ts::operator()...;
+};
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
 } //namespace CGAL
 
 namespace std {

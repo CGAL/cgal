@@ -107,6 +107,15 @@ public:
     return base.cartesian_end();
   }
 
+  typename R_::Boolean operator==(const PointC3 &p) const
+  {
+      return base == p.base;
+  }
+  typename R_::Boolean operator!=(const PointC3 &p) const
+  {
+      return !(*this == p);
+  }
+
   int dimension() const
   {
       return base.dimension();

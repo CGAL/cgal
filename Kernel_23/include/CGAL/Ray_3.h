@@ -28,6 +28,7 @@ namespace CGAL {
 template <class R_>
 class Ray_3 : public R_::Kernel_base::Ray_3
 {
+  typedef typename R_::Boolean               Boolean;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
@@ -96,8 +97,8 @@ public:
   Line_3      supporting_line() const;
   Ray_3       opposite() const;
 
-  bool        is_degenerate() const;
-  bool        collinear_has_on(const Point_3 &p) const;
+  Boolean is_degenerate() const;
+  Boolean collinear_has_on(const Point_3 &p) const;
 */
 
   decltype(auto)
@@ -124,7 +125,7 @@ public:
     return source();
   }
 
-  bool has_on(const Point_3 &p) const
+  Boolean has_on(const Point_3 &p) const
   {
     return R().has_on_3_object()(*this, p);
   }
@@ -156,7 +157,7 @@ public:
     return R().construct_line_3_object()(source(), second_point());
   }
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);
   }

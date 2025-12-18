@@ -238,7 +238,7 @@ struct Surface_fixture_1 {
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
       if     (get(pm, *vb) == Point_3(0, 0, 0))
         u = *vb;
       else if(get(pm, *vb) == Point_3(1, 0, 0))
@@ -259,13 +259,13 @@ struct Surface_fixture_1 {
     f1 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
     CGAL::Halfedge_around_face_iterator<Graph> hafib, hafie;
-    for(boost::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib)
+    for(std::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib)
     {
       if(! CGAL::is_border(opposite(*hafib, m), m))
         f2 = face(opposite(*hafib, m), m);
     }
     typename boost::graph_traits<Graph>::face_iterator fb, fe;
-    for(boost::tie(fb, fe) = faces(m); fb != fe; ++fb) {
+    for(std::tie(fb, fe) = faces(m); fb != fe; ++fb) {
       if(*fb != f1 && *fb != f2)
         f3 = *fb;
     }
@@ -289,7 +289,7 @@ struct Surface_fixture_2 {
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
       if     (get(pm, *vb) == Point_3(0, 2, 0))
         u = *vb;
       else if(get(pm, *vb) == Point_3(2, 2, 0))
@@ -308,25 +308,25 @@ struct Surface_fixture_2 {
     assert(y != boost::graph_traits<Graph>::null_vertex());
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
     bool found;
-    boost::tie(h, found) = halfedge(x, v, m);
+    std::tie(h, found) = halfedge(x, v, m);
     assert(found);
     assert(! CGAL::is_border(h,m));
     f1 = face(h, m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
 
-    boost::tie(h, found) = halfedge(v, u, m);
+    std::tie(h, found) = halfedge(v, u, m);
     assert(found);
     assert(!CGAL::is_border(h,m));
     f2 = face(h, m);
     assert(f2 != boost::graph_traits<Graph>::null_face());
 
-    boost::tie(h, found) = halfedge(u, w, m);
+    std::tie(h, found) = halfedge(u, w, m);
     assert(found);
     assert(!CGAL::is_border(h,m));
     f3 = face(h, m);
     assert(f3 != boost::graph_traits<Graph>::null_face());
 
-    boost::tie(h, found) = halfedge(w, x, m);
+    std::tie(h, found) = halfedge(w, x, m);
     assert(found);
     assert(!CGAL::is_border(h,m));
     f4 = face(h, m);
@@ -351,7 +351,7 @@ struct Surface_fixture_3 {
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
       if     (get(pm, *vb) == Point_3(0, 1, 0))
         u = *vb;
       else if(get(pm, *vb) == Point_3(0, 0, 0))
@@ -399,7 +399,7 @@ struct Surface_fixture_4 {
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
-    for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
+    for(std::tie(hb, he) = halfedges(m); hb != he; ++hb) {
       if(CGAL::is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(0,0,0)){
           if(found == 0){
@@ -435,7 +435,7 @@ struct Surface_fixture_5 {
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
-    for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
+    for(std::tie(hb, he) = halfedges(m); hb != he; ++hb) {
       if(CGAL::is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(2,1,0)){
           h1 = *hb;
@@ -500,7 +500,7 @@ struct Surface_fixture_8 {
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
-    for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
+    for(std::tie(hb, he) = halfedges(m); hb != he; ++hb) {
       if(get(pm, source(*hb,m)) == Point_3(0,0,0) &&
          get(pm, target(*hb,m)) == Point_3(1,0,0)){
           h1 = *hb;
@@ -521,8 +521,6 @@ struct Surface_fixture_8 {
 
   Graph m;
   typename boost::graph_traits<Graph>::halfedge_descriptor h1, h2, h3;
-
 };
-
 
 #endif /* CGAL_TEST_PREFIX_H */

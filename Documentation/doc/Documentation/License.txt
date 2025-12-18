@@ -67,6 +67,8 @@ To enable checking, users have to define one of the following macros:
 The license checking is not a mean to control users as no information
 is collected or transmitted.
 
+\note With `Clang`, paths to CGAL headers shall not be passed with `-isystem` option in order for the warning messages to be emitted.
+
 \section licensesWhere Determining the license of a CGAL file
 
 It is specified in each file of the \cgal library which license applies to it.

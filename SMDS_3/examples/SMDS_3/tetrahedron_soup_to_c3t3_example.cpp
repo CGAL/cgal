@@ -69,7 +69,12 @@ int main(int , char* [])
 
   //build a C3T3
   C3T3 c3t3;
-  c3t3.triangulation() = tr;
+  c3t3.set_triangulation(tr);
+
+  std::cout << "Number of corners: " << c3t3.number_of_corners() << std::endl;
+  std::cout << "Number of edges: " << c3t3.number_of_edges() << std::endl;
+  std::cout << "Number of facets: " << c3t3.number_of_facets() << std::endl;
+  std::cout << "Number of cells: " << c3t3.number_of_cells() << std::endl;
 
   std::ofstream ofs("c3t3_output.mesh");
   CGAL::IO::write_MEDIT(ofs, c3t3);

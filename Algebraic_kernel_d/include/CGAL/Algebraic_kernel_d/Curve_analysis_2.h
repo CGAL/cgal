@@ -520,7 +520,7 @@ private:
     void set_event_lines(InputIterator1 event_begin,
                          InputIterator1 event_end,
                          InputIterator2 intermediate_begin,
-                         InputIterator2 CGAL_precondition_code(intermediate_end)) const {
+                         InputIterator2 CGAL_assertion_code(intermediate_end)) const {
 
         if(! this->ptr()->event_coordinates) {
 

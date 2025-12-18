@@ -126,7 +126,7 @@ private:
       \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
     \cgalParamNBegin{postprocess_regions}
-      \cgalParamDescription{Apply a post-processing step to the output of the region growing algorithm.}
+      \cgalParamDescription{Apply a postprocessing step to the output of the region growing algorithm.}
       \cgalParamType{`bool`}
       \cgalParamDefault{false}
     \cgalParamNEnd
@@ -212,7 +212,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
 
   if (choose_parameter(get_parameter(np, internal_np::postprocess_regions), false))
   {
-    // first try for a post-processing: look at regions made of one face and check if a
+    // first try for a postprocessing: look at regions made of one face and check if a
     // larger region contains its 3 vertices and if so assigned it to it.
     typedef typename boost::property_traits<RegionMap>::value_type Id;
     for (std::size_t i=0; i<tmp.size(); ++i)

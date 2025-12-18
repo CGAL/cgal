@@ -254,42 +254,7 @@ public:
   {
     return t.transform(*this);
   }
-
 };
-
-
-template < class R >
-inline
-bool
-operator==(const Vector_2<R> &v, const Null_vector &n)
-{
-  return R().equal_2_object()(v, n);
-}
-
-template < class R >
-inline
-bool
-operator==(const Null_vector &n, const Vector_2<R> &v)
-{
-  return v == n;
-}
-
-template < class R >
-inline
-bool
-operator!=(const Vector_2<R> &v, const Null_vector &n)
-{
-  return !(v == n);
-}
-
-template < class R >
-inline
-bool
-operator!=(const Null_vector &n, const Vector_2<R> &v)
-{
-  return !(v == n);
-}
-
 
 template <class R >
 std::ostream&

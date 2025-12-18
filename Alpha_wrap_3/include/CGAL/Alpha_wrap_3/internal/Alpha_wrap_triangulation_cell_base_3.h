@@ -97,7 +97,7 @@ template <typename Cb>
 class Cell_base_with_timestamp
   : public Cb
 {
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 
 public:
   using Has_timestamp = CGAL::Tag_true;
@@ -112,7 +112,7 @@ public:
 public:
   template <typename... Args>
   Cell_base_with_timestamp(const Args&... args)
-    : Cb(args...), time_stamp_(-1)
+    : Cb(args...)
   { }
 
   Cell_base_with_timestamp(const Cell_base_with_timestamp& other)

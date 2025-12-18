@@ -96,10 +96,14 @@ public:
   using Node_index = typename Base::Node_index;
   using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
 
+  static_assert(std::is_same_v<typename std::iterator_traits<typename PointRange::iterator>::iterator_category, std::random_access_iterator_tag>);
+
   Orthtree_traits_point(
     PointRange& points,
     PointMap point_map = PointMap()
   ) : m_points(points), m_point_map(point_map) {}
+
+  using Construct_root_node_bbox = typename Self::Bbox_d(*)();
 
   auto construct_root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d {
@@ -152,41 +156,65 @@ public:
     };
   }
 
-  auto construct_root_node_contents_object() const {
-    return [&]() -> typename Self::Node_data {
-      return {m_points.begin(), m_points.end()};
-    };
+  struct Construct_root_node_contents {
+    PointRange& m_points;
+    Construct_root_node_contents(PointRange& points) : m_points(points) {}
+    typename Self::Node_data operator()() {
+      return { m_points.begin(), m_points.end() };
+    }
+  };
+
+  Construct_root_node_contents construct_root_node_contents_object() const {
+    return Construct_root_node_contents(m_points);
   }
 
-  auto distribute_node_contents_object() const {
-    return [&](Node_index n, Tree& tree, const typename Self::Point_d& center) {
+  struct Distribute_node_contents {
+    const PointMap m_point_map;
+    Distribute_node_contents(const PointMap& point_map) : m_point_map(point_map) {}
+    void operator()(Node_index n, Tree& tree, const typename Self::Point_d& center) {
       CGAL_precondition(!tree.is_leaf(n));
       reassign_points(tree, m_point_map, n, center, tree.data(n));
     };
+  };
+
+  Distribute_node_contents distribute_node_contents_object() const {
+    return Distribute_node_contents(m_point_map);
   }
 
-  auto construct_sphere_d_object() const {
+  using Construct_sphere_d = typename Self::Sphere_d(*)(const typename Self::Point_d&, const typename Self::FT&);
+
+  Construct_sphere_d construct_sphere_d_object() const {
     return [](const typename Self::Point_d& center, const typename Self::FT& squared_radius) -> typename Self::Sphere_d {
       return typename Self::Sphere_d(center, squared_radius);
       };
   }
 
-  auto construct_center_d_object() const {
+  using Construct_center_d = typename Self::Point_d(*)(const typename Self::Sphere_d&);
+
+  Construct_center_d construct_center_d_object() const {
     return [](const typename Self::Sphere_d& sphere) -> typename Self::Point_d {
       return sphere.center();
       };
   }
 
-  auto compute_squared_radius_d_object() const {
+  using Compute_squared_radius_d = typename Self::FT(*)(const typename Self::Sphere_d&);
+
+  Compute_squared_radius_d compute_squared_radius_d_object() const {
     return [](const typename Self::Sphere_d& sphere) -> typename Self::FT {
       return sphere.squared_radius();
       };
   }
 
-  auto squared_distance_of_element_object() const {
-    return [&](const Node_data_element& index, const typename Self::Point_d& point) -> typename Self::FT {
+  struct Squared_distance_of_element {
+    const PointMap m_point_map;
+    Squared_distance_of_element(const PointMap& point_map) : m_point_map(point_map) {}
+    typename Self::FT operator()(const Node_data_element& index, const typename Self::Point_d& point) {
       return CGAL::squared_distance(get(m_point_map, index), point);
-      };
+    };
+  };
+
+  Squared_distance_of_element squared_distance_of_element_object() const {
+    return Squared_distance_of_element(m_point_map);
   }
 
   PointRange& m_points;

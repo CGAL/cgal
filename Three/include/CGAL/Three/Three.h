@@ -35,10 +35,18 @@
 
 namespace CGAL{
 namespace Three{
-//define enum depending on Qt version
+
+struct OverrideCursorScopeGuard
+{
+  OverrideCursorScopeGuard(QCursor cursor) { QApplication::setOverrideCursor(cursor); }
+  ~OverrideCursorScopeGuard() { QApplication::restoreOverrideCursor(); }
+};
+
 class CGAL_Lab_plugin_interface;
 class THREE_EXPORT Three{
 public:
+
+  using CursorScopeGuard = CGAL::Three::OverrideCursorScopeGuard; // for compatibility
 
   Three();
   virtual ~Three(){}
@@ -122,19 +130,6 @@ protected:
   static QMutex* s_mutex;
   static QWaitCondition* s_wait_condition;
   static bool s_is_locked;
-
-public:
-  struct CursorScopeGuard
-  {
-    CursorScopeGuard(QCursor cursor)
-    {
-      QApplication::setOverrideCursor(cursor);
-    }
-    ~CursorScopeGuard()
-    {
-      QApplication::restoreOverrideCursor();
-    }
-  };
 };
 }
 }

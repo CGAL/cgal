@@ -273,7 +273,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 
 };  // end class Mesh_cell_base_3
 

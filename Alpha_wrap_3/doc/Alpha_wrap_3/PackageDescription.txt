@@ -1,4 +1,4 @@
-/// \defgroup PkgAlphaWrap3Ref 3D Alpha Wrapping
+/// \defgroup PkgAlphaWrap3Ref Reference Manual
 
 /// \defgroup AW3_free_functions_grp Free Functions
 /// Functions to create a wrap from point clouds, triangle soups, and triangle meshes.

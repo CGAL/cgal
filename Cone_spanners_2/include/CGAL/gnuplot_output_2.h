@@ -109,7 +109,7 @@ std::string gnuplot_edge_list (const Graph& g)
     ss << std::fixed;  // Use fixed floating-point notation
 
     typename Graph::edge_iterator eit, ee;
-    for (boost::tie(eit, ee) = boost::edges(g); eit != ee; ++eit) {
+    for (std::tie(eit, ee) = boost::edges(g); eit != ee; ++eit) {
         typename Graph::vertex_descriptor src = boost::source(*eit, g);
         typename Graph::vertex_descriptor end = boost::target(*eit, g);
         ss << "set arrow from ";
@@ -129,7 +129,7 @@ std::string gnuplot_vertex_list(const Graph& g) {
     ss << std::fixed;
 
     typename Graph::vertex_iterator vit, ve;
-    for (boost::tie(vit, ve) = boost::vertices(g); vit != ve; ++vit) {
+    for (std::tie(vit, ve) = boost::vertices(g); vit != ve; ++vit) {
         ss << to_double(g[*vit].x()) << "  " << to_double(g[*vit].y()) << std::endl;
     }
     return ss.str();

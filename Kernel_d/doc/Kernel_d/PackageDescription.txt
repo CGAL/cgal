@@ -1,4 +1,4 @@
-/// \defgroup PkgKernelDRef dD Geometry Kernel Reference
+/// \defgroup PkgKernelDRef Reference Manual
 
 /// \defgroup PkgKernelDLinAlgConcepts Linear Algebra Concepts
 /// \ingroup PkgKernelDRef
@@ -21,7 +21,6 @@
 
 /*!
 \addtogroup PkgKernelDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{dD Geometry Kernel,PkgKernelD}
 \cgalPkgPicture{hypercube.png}
 \cgalPkgSummaryBegin
@@ -62,6 +61,7 @@
 - `CGAL::Sphere_d<Kernel>`
 - `CGAL::Iso_box_d<Kernel>`
 - `CGAL::Aff_transformation_d<Kernel>`
+- `CGAL::Bbox_d<Dimension>`
 
 \cgalCRPSection{Global %Kernel Functions}
 - `CGAL::affinely_independent()`

@@ -72,7 +72,7 @@
 
 #include <boost/type_traits.hpp>
 #include <optional>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include <cassert>
 #include <cstdlib>
@@ -1520,10 +1520,10 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
     CGAL_assertion(ext == Directory_extension_type::BMP);
 
     // vtkBMPReader does not provide SetDirectoryName()...
-    std::vector<boost::filesystem::path> paths;
+    std::vector<std::filesystem::path> paths;
     vtkStringArray* files = vtkStringArray::New();
-    boost::filesystem::path p(dirname.toUtf8().data());
-    for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p))
+    std::filesystem::path p(dirname.toUtf8().data());
+    for(const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(p))
     {
       std::string s = x.path().string();
       if(CGAL::IO::internal::get_file_extension(s) != "bmp")
@@ -1532,10 +1532,10 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
       paths.push_back(x.path());
     }
 
-    // boost::filesystem::directory_iterator does not guarantee a sorted order
+    // std::filesystem::directory_iterator does not guarantee a sorted order
     std::sort(std::begin(paths), std::end(paths));
 
-    for(const boost::filesystem::path& p : paths)
+    for(const std::filesystem::path& p : paths)
       files->InsertNextValue(p.string());
 
     if(files->GetSize() == 0)

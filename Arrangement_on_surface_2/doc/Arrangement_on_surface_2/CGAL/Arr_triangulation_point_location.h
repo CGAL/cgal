@@ -14,13 +14,12 @@ namespace CGAL {
  * (especially when the number of modifications applied to the arrangement is
  * high) and provided only for educational purposes.
  *
- * \cgalModels{ArrangementPointLocation_2,ArrangementVerticalRayShoot_2}
+ * \cgalModels{AosPointLocation_2,AosVerticalRayShoot_2}
  *
- * \sa `ArrangementPointLocation_2`
- * \sa `ArrangementVerticalRayShoot_2`
+ * \sa `AosPointLocation_2`
+ * \sa `AosVerticalRayShoot_2`
  * \sa `CGAL::Arr_point_location_result<Arrangement>`
  */
-
 template <typename Arrangement_>
 class Arr_triangulation_point_location : public Arrangement_::Observer {}
 

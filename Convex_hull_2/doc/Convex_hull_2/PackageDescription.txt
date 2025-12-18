@@ -1,4 +1,4 @@
-/// \defgroup PkgConvexHull2Ref 2D Convex Hulls and Extreme Points Reference
+/// \defgroup PkgConvexHull2Ref Reference Manual
 
 /// \defgroup PkgConvexHull2Concepts Concepts
 /// \ingroup PkgConvexHull2Ref

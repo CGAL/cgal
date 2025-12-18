@@ -25,7 +25,7 @@ Compares the \f$ \theta\f$-coordinates of `p` and `q` relatively to `sphere`.
 
 \sa \link compare_x_grp `CGAL::compare_x()` \endlink
 \sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
-\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_xyz_grp `CGAL::compare_xyz()` \endlink
 \sa \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
 \sa \link compare_y_grp `CGAL::compare_y()` \endlink
 \sa \link compare_yx_grp `CGAL::compare_yx()` \endlink

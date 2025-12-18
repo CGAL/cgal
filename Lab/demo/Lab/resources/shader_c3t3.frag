@@ -98,7 +98,7 @@ void main(void) {
       vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; 
       vec4 ret_color = vec4((my_color*light_amb).xyz + diffuse.xyz + specular.xyz,1); 
       if(is_selected)
-          out_color = vec4(ret_color.r+70.0/255.0, ret_color.g+70.0/255.0, ret_color.b+70.0/255.0, alpha);
+          out_color = vec4(ret_color.r+35.0/255.0, ret_color.g+35.0/255.0, ret_color.b+35.0/255.0, alpha);
       else
           out_color = vec4(ret_color.xyz, alpha);
     }

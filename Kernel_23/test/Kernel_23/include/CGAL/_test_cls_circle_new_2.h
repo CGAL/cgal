@@ -20,7 +20,7 @@
 
 template <class R>
 bool
-_test_cls_circle_new_2(const R& )
+_test_cls_circle_new_2(const R& r)
 {
  std::cout << "Testing class Circle_2";
 
@@ -33,9 +33,11 @@ _test_cls_circle_new_2(const R& )
  typedef typename  R::Circle_2 Circle_2;
  typedef typename  R::Aff_transformation_2 Aff_transformation_2;
 
- typename R::Construct_vector_2 construct_vector;
- typename R::Construct_point_2 construct_point;
- typename R::Construct_translated_point_2 construct_translated_point;
+ const bool nonexact = std::is_floating_point<FT>::value;
+
+ typename R::Construct_vector_2 construct_vector = r.construct_vector_2_object();
+ typename R::Construct_point_2 construct_point = r.construct_point_2_object();
+ typename R::Construct_translated_point_2 construct_translated_point = r.construct_translated_point_2_object();
 
  typename R::Circle_2  ic;
  Circle_2 c0; // af: CGAL::Circle_2<R> c0;
@@ -129,6 +131,11 @@ _test_cls_circle_new_2(const R& )
  assert( cc.has_on_boundary( construct_translated_point(p3, - vx6)) );
 
  std::cout << '.';
+
+ if(nonexact) {
+   std::cout << "done" << std::endl;
+   return true;
+ }
 
  Aff_transformation_2
           rotate1(CGAL::ROTATION,Direction_2(n11,n13),-n2,n12),

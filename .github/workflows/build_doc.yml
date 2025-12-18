@@ -29,6 +29,7 @@ permissions:
 
 jobs:
   pre_build_checks:
+    if: ${{ inputs.pr_number || startsWith(github.event.comment.body, '/build:') || startsWith(github.event.comment.body, '/force-build:') }}
     runs-on: ubuntu-latest
     name: Trigger the build?
     outputs:

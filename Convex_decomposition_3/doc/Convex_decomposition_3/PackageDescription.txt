@@ -1,4 +1,4 @@
-/// \defgroup PkgConvexDecomposition3Ref Convex Decomposition of Polyhedra Reference
+/// \defgroup PkgConvexDecomposition3Ref Reference Manual
 
 /*!
 \addtogroup PkgConvexDecomposition3Ref

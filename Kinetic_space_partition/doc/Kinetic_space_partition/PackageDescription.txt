@@ -1,5 +1,5 @@
 /*!
-\defgroup PkgKineticSpacePartitionRef Kinetic Space Partition Reference
+\defgroup PkgKineticSpacePartitionRef Reference Manual
 
 \defgroup PkgKineticSpacePartitionConcepts Concepts
 \ingroup PkgKineticSpacePartitionRef

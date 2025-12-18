@@ -91,9 +91,11 @@ template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
   typedef typename R::Point_3     Point;
-  typedef Bbox_2 result_type;
 
-  Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
+  Bbox_2 operator()(const Point& p) const {
+    typename R::Construct_bbox_3 bb;
+    return Projector<R, dim>::bbox(bb(p));
+  }
 };
 
 template <class R,int dim>
@@ -177,39 +179,43 @@ public:
 template <class R,int dim>
 class Side_of_bounded_circle_projected_3
 {
+  typedef typename R::Bounded_side Bounded_side;
+  typedef typename R::Point_3      Point;
+
 public:
-  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
-
 
   typename R::Point_2 project(const Point& p) const
   {
     return typename R::Point_2(x(p),y(p));
   }
-  CGAL::Bounded_side operator() (const Point &p,
-                                  const Point &q,
-                                  const Point &r,
-                                  const Point &s) const
-    {
-      return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
-    }
 
-    CGAL::Bounded_side operator() (const Point &p,
-                                  const Point &q,
-                                  const Point &r) const
-    {
-      return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
-    }
+  Bounded_side operator()(const Point &p,
+                          const Point &q,
+                          const Point &r,
+                          const Point &s) const
+  {
+    return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
+  }
+
+  Bounded_side operator()(const Point &p,
+                          const Point &q,
+                          const Point &r) const
+  {
+    return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
+  }
 };
 
 template <class R,int dim>
 class Compare_distance_projected_3
 {
 public:
+  typedef typename R::Comparison_result Comparison_result;
   typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
 
@@ -255,22 +261,23 @@ template <class R, int dim>
 class Compare_signed_distance_to_line_projected_3
 {
 public:
+  typedef typename R::Comparison_result Comparison_result;
   typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef typename R::Comparison_result result_type;
 
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  result_type operator()(const Point_3& p,
-                         const Point_3& q,
-                         const Point_3& r,
-                         const Point_3& s) const
+  Comparison_result operator()(const Point_3& p,
+                               const Point_3& q,
+                               const Point_3& r,
+                               const Point_3& s) const
   {
     return typename R::Compare_signed_distance_to_line_2()
       (  project(p), project(q), project(r), project(s) );
@@ -281,22 +288,23 @@ template <class R, int dim>
 class Less_signed_distance_to_line_projected_3
 {
 public:
+  typedef typename R::Boolean   Boolean;
   typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef typename R::Boolean result_type;
 
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  result_type operator()(const Point_3& p,
-                         const Point_3& q,
-                         const Point_3& r,
-                         const Point_3& s) const
+  Boolean operator()(const Point_3& p,
+                     const Point_3& q,
+                     const Point_3& r,
+                     const Point_3& s) const
   {
     return typename R::Less_signed_distance_to_line_2()
       (  project(p), project(q), project(r), project(s) );
@@ -314,6 +322,7 @@ public:
   typedef typename R::Segment_3 Segment_3;
   typedef typename R::Segment_2 Segment_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
 
@@ -598,8 +607,6 @@ class Compute_squared_length_projected_3
   typedef typename R::Vector_3    Vector_3;
   typedef typename R::FT          FT;
 
-  typedef FT result_type;
-
   FT x(const Vector_3 &v) const { return Projector<R,dim>::x(v); }
   FT y(const Vector_3 &v) const { return Projector<R,dim>::y(v); }
 
@@ -634,6 +641,7 @@ template <class R, int dim>
 class Compare_power_distance_projected_3
 {
 public:
+  typedef typename R::Comparison_result         Comparison_result;
   typedef typename R::Point_2                   Point_2;
   typedef typename R::Weighted_point_2          Weighted_point_2;
   typedef typename R::Point_3                   Point_3;
@@ -815,6 +823,7 @@ template <class R, int dim>
 class Power_side_of_bounded_power_circle_projected_3
 {
 public:
+  typedef typename R::Bounded_side              Bounded_side;
   typedef typename R::Point_2                   Point_2;
   typedef typename R::Weighted_point_2          Weighted_point_2;
   typedef typename R::Point_3                   Point_3;
@@ -830,24 +839,24 @@ public:
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
-  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
-                                const Weighted_point_3 &wq,
-                                const Weighted_point_3 &wr,
-                                const Weighted_point_3 &ws) const
+  Bounded_side operator()(const Weighted_point_3 &wp,
+                          const Weighted_point_3 &wq,
+                          const Weighted_point_3 &wr,
+                          const Weighted_point_3 &ws) const
   {
     return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq),
                                                     project(wr), project(ws));
   }
 
-  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
-                                const Weighted_point_3 &wq,
-                                const Weighted_point_3 &wr) const
+  Bounded_side operator()(const Weighted_point_3 &wp,
+                          const Weighted_point_3 &wq,
+                          const Weighted_point_3 &wr) const
   {
     return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq), project(wr));
   }
 
-  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
-                                const Weighted_point_3 &wq) const
+  Bounded_side operator()(const Weighted_point_3 &wp,
+                          const Weighted_point_3 &wq) const
   {
     return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq));
   }
@@ -974,8 +983,10 @@ public:
   typedef typename Rp::Compare_xyz_3                          Compare_xy_2;
 
   struct Less_xy_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q) const
+    typedef typename R::Comparison_result Comparison_result;
+    typedef typename R::Boolean Boolean;
+
+    Boolean operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_x_2 cx;
       Comparison_result crx = cx(p,q);
@@ -988,8 +999,8 @@ public:
 
 
   struct Less_yx_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_y_2 cy;
       Comparison_result cry = cy(p,q);
@@ -1001,8 +1012,8 @@ public:
   };
 
   struct Equal_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q) const
     {
 
       Equal_x_2 eqx;
@@ -1012,8 +1023,8 @@ public:
   };
 
   struct Left_turn_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
 
       Orientation_2 ori;
@@ -1022,7 +1033,7 @@ public:
   };
 
   struct Collinear_2 {
-    typedef typename R::Boolean result_type;
+    typedef typename R::Boolean Boolean;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       Orientation_2 ori;

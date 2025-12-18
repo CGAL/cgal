@@ -202,8 +202,8 @@ public:
             std::pair<double, double> lower_I(CGAL::to_interval(x.lower()));
             std::pair<double, double> upper_I(CGAL::to_interval(x.upper()));
             return std::pair< double, double >(
-                    CGAL::min(lower_I.first , upper_I.first ),
-                    CGAL::max(lower_I.second, upper_I.second));
+                    (CGAL::min)(lower_I.first , upper_I.first ),
+                    (CGAL::max)(lower_I.second, upper_I.second));
         }
     };
 };

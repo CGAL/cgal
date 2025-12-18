@@ -48,29 +48,6 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-template <typename PointRange, typename PolygonRange>
-struct Polygon_types
-{
-  typedef typename boost::range_value<PointRange>::type                             Point_3;
-  typedef typename boost::range_value<PolygonRange>::type                           Polygon_3;
-
-  typedef typename boost::range_iterator<Polygon_3>::type                           V_ID_iterator;
-  typedef typename std::iterator_traits<V_ID_iterator>::value_type                  V_ID;
-  typedef typename std::vector<Polygon_3>::size_type                                P_ID;
-};
-
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
-struct GetPolygonGeomTraits
-{
-  typedef typename internal_np::Lookup_named_param_def <
-                     internal_np::geom_traits_t,
-                     NamedParameters,
-                     typename CGAL::Kernel_traits<
-                       typename internal::Polygon_types<
-                         PointRange, PolygonRange>::Point_3 >::type
-                   > ::type                                                         type;
-};
-
 template <typename Stream, typename Polygon>
 void print_polygon(Stream& out, const Polygon& polygon)
 {
@@ -171,8 +148,8 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
                                               PolygonRange& polygons,
                                               const Traits& traits = Traits())
 {
-  typedef typename Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
-  typedef typename Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   std::size_t simplified_polygons_n = 0;
 
@@ -216,9 +193,9 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
                                                    PolygonRange& polygons,
                                                    const Traits& traits = Traits())
 {
-  typedef typename Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
-  typedef typename Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
-  typedef typename Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   typedef typename Traits::Less_xyz_3                                   Less_xyz_3;
 
@@ -353,7 +330,7 @@ std::size_t remove_invalid_polygons_in_array_polygon_soup(PointRange& points,
                                                           PolygonRange& polygons,
                                                           const Traits& traits = Traits())
 {
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   std::vector<std::size_t> to_remove;
   const std::size_t ini_polygons_size = polygons.size();
@@ -418,8 +395,8 @@ template <typename PointRange, typename PolygonRange>
 std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
                                                    PolygonRange& polygons)
 {
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   if(points.empty())
     return 0;
@@ -537,14 +514,14 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
                                                    PolygonRange& polygons,
                                                    const NamedParameters& np = parameters::default_values())
 {
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+  typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
   Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::Less_xyz_3                                             Less_xyz_3;
@@ -727,7 +704,7 @@ template <typename PointRange, typename PolygonRange>
 struct Polygon_hash
 {
   typedef std::size_t                                                             result_type;
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   Polygon_hash(const PointRange& points, const PolygonRange& canonical_polygons)
     : points(points), canonical_polygons(canonical_polygons)
@@ -754,7 +731,7 @@ template <typename PointRange, typename PolygonRange, typename Reversed_markers,
 struct Polygon_equality_tester
 {
   typedef bool                                                                    result_type;
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
   Polygon_equality_tester(const PointRange& points,
                           const PolygonRange& canonical_polygons,
@@ -846,7 +823,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
                                                    const Traits& traits = Traits(),
                                                    const bool same_orientation = false)
 {
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
 
   typedef internal::Polygon_hash<PointRange, PolygonRange>                        Hasher;
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
@@ -951,7 +928,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
+  typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
 
   const bool erase_all_duplicates = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
   const bool same_orientation = choose_parameter(get_parameter(np, internal_np::require_same_orientation), false);
@@ -961,7 +938,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   std::cout << "Erase all duplicate polygons: " << std::boolalpha << erase_all_duplicates << std::endl;
 #endif
 
-  typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+  typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
   Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   std::deque<std::vector<P_ID> > all_duplicate_polygons;
@@ -1045,7 +1022,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 namespace internal {
 
 template <typename PointRange, typename PolygonRange,
-          typename Polygon = typename Polygon_types<PointRange, PolygonRange>::Polygon_3>
+          typename Polygon = typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3>
 struct Polygon_soup_fixer
 {
   template <typename NamedParameters>
