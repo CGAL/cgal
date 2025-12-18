@@ -6,8 +6,8 @@
 \cgalPkgPicture{Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Peter Hachenberger, Sven Oesau}
-\cgalPkgDesc{This packages provides two functions for computing a set of convex volumes that cover a bounded polyhedron. The `CGAL::convex_decomposition_3()` splits provides a decomposition into \cgalBigO{r^2} convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal.
-The `CGAL::approximate_convex_decomposition()` instead splits the convex hull of the polyhedron into a set of convex volumes. While these convex volumes cover additional space outside of the polyhedron, the computation is fast for any chosen number of convex volumes.}
+\cgalPkgDesc{This packages provides two functions for computing a set of convex volumes that cover a bounded polyhedron. A convex decomposition of Nef Polyhedra into \cgalBigO{r^2} convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal.
+A second method approximates the input mesh with convex volumes. While these convex volumes cover additional space outside of the polyhedron, the computation is fast for any chosen number of convex volumes.}
 \cgalPkgManuals{Chapter_Convex_Decomposition_of_Polyhedra,PkgConvexDecomposition3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

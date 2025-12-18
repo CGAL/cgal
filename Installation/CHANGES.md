@@ -13,7 +13,6 @@ Release date: July 2026
 
 ### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
 - Added the function `CGAL::approximate_convex_decomposition()` that computes a set of convex volumes that cover an input mesh.
-  It performs a hierarchical splitting of the convex hull guided by an volumetric error and performs a subsequent merging of convex hulls to obtain the targeted count.
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
