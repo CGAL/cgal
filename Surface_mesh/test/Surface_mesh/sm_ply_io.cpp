@@ -97,7 +97,7 @@ int main()
   const std::array<std::string,2> fnames = {"out_ascii.ply", "out_binary.ply"};
   for (std::string fn : fnames)
   {
-    std::cout << "Reading " << fn << "\n";
+    std::cout << "Reading " << fn << std::endl;
     in.close();
     in.open(fn, std::ios::binary);
     SMesh mesh_bis;
@@ -133,8 +133,11 @@ int main()
       ++dvalue;
     }
 
+    assert((mesh_bis.property_map<SMesh::Halfedge_index, std::vector<std::uint32_t>>("h:uv").has_value()));
     auto h_uvmap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::vector<std::uint32_t>>("h:uv").value();
+    assert((mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:u").has_value()));
     auto h_umap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:u").value();
+    assert((mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:v").has_value()));
     auto h_vmap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:v").value();
 
     uvalue=3001;
