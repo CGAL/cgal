@@ -249,6 +249,16 @@ Construct_triangle_2 construct_triangle_2_object();
 /*!
 
 */
+Less_x_2 less_x_2_object();
+
+/*!
+
+*/
+Less_y_2 less_y_2_object();
+
+/*!
+
+*/
 Compare_x_2 compare_x_2_object();
 
 /*!
