@@ -527,14 +527,6 @@ private:
       std::cout << "Initialize from seed " << seed_p << std::endl;
 #endif
 
-      if(bbox.has_on_unbounded_side(seed_p))
-      {
-#ifdef CGAL_AW2_DEBUG_INITIALIZATION
-        std::cerr << "Warning: seed " << seed_p << " is outside the bounding box" << std::endl;
-#endif
-        continue;
-      }
-
       // get the closest point on the input
       const Point_2 closest_pt = m_oracle.closest_point(seed_p);
       const FT sq_d_to_closest = geom_traits().compute_squared_distance_2_object()(seed_p, closest_pt);
