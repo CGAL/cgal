@@ -989,8 +989,6 @@ bool Traits_test<GeomTraits>::intersect_wrapper(std::istringstream& str_stream) 
 template <typename GeomTraits>
 bool Traits_test<GeomTraits>::
 do_intersect_wrapper(std::istringstream& str_stream) {
-  using Traits = GeomTraits;
-
   std::size_t id1, id2;
   str_stream >> id1 >> id2;
   bool res = this->m_geom_traits.do_intersect_2_object()(this->m_xcurves[id1], this->m_xcurves[id2]);
