@@ -149,7 +149,7 @@ struct is_MultiLineString
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the value type of the point range, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
@@ -238,7 +238,7 @@ void alpha_wrap_2(const PointRange& points,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the input triangle range, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the triangle type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
@@ -325,7 +325,7 @@ void alpha_wrap_2(const TriangleRange& triangles,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
@@ -401,7 +401,7 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
@@ -478,7 +478,7 @@ void alpha_wrap_2(const CGAL::Polygon_with_holes_2<Traits_, Container_>& pwh,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits` and
 *                       the point type of the multipolygon}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
@@ -562,7 +562,7 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the input point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the segment type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
@@ -642,7 +642,7 @@ void alpha_wrap_2(const SegmentRange& segments,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the input point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the segment type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}
@@ -724,7 +724,7 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamType{a class model of `AlphaWrapTraits_2`}
 *     \cgalParamDefault{a \cgal Kernel deduced from the input point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw2_interface).</li></ul>}

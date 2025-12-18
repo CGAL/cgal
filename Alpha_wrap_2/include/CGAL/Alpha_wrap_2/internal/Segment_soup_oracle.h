@@ -126,7 +126,7 @@ public:
       return;
     }
 
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
     for(const Segment& s : segments)
     {
@@ -171,8 +171,8 @@ public:
       return;
     }
 
-    typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Construct_segment_2 segment = this->m_gt.construct_segment_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
     for(const auto& tr : triangles)
     {
@@ -232,8 +232,8 @@ public:
     PPM pm = choose_parameter<PPM>(get_parameter(np, internal_np::point_map));
     static_assert(std::is_same<typename boost::property_traits<PPM>::value_type, Point>::value);
 
-    typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Construct_segment_2 segment = this->m_gt.construct_segment_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
     for(const Face& f : faces)
     {
@@ -275,8 +275,8 @@ public:
   {
     using LineString = typename boost::range_value<MultiLineString>::type;
 
-    typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Construct_segment_2 segment = this->m_gt.construct_segment_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
     std::cout << "Insert into AABB tree (multi-linestring)..." << std::endl;
@@ -341,8 +341,8 @@ public:
 
     const bool close_pc = choose_parameter(get_parameter(np, internal_np::close_chains), false);
 
-    typename Geom_traits::Construct_segment_2 segment = this->geom_traits().construct_segment_2_object();
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Construct_segment_2 segment = this->m_gt.construct_segment_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
     std::cout << "Insert into AABB tree (polygonal chain)..." << std::endl;
@@ -409,7 +409,7 @@ public:
   {
     using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
 
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
     std::cout << "Insert into AABB tree (multi-polygon)..." << std::endl;
@@ -466,7 +466,7 @@ public:
   void add_polygon_with_holes(const PolygonWithHoles& pwh,
                               const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
     std::cout << "Insert into AABB tree (polygon with holes)..." << std::endl;
@@ -522,7 +522,7 @@ public:
   void add_polygon(const CGAL::Polygon_2<Traits_, Container_>& p,
                    const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
-    typename Geom_traits::Is_degenerate_2 is_degenerate = this->geom_traits().is_degenerate_2_object();
+    typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
 #ifdef CGAL_AW2_DEBUG
     std::cout << "Insert into AABB tree (polyon)..." << std::endl;

@@ -1,5 +1,8 @@
 /// \defgroup PkgAlphaWrap2Ref Reference Manual
 
+/// \defgroup PkgAlphaWrap2Concepts Concepts
+/// \ingroup PkgAlphaWrap2Ref
+
 /// \defgroup AW2_free_functions_grp Free Functions
 /// Functions to create a wrap from point clouds, segment soups, and polygons with holes.
 /// \ingroup PkgAlphaWrap2Ref
@@ -29,6 +32,9 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `AlphaWrapTraits_2`
 
 \cgalCRPSection{Functions}
 - \link AW2_free_functions_grp `CGAL::alpha_wrap_2()` \endlink

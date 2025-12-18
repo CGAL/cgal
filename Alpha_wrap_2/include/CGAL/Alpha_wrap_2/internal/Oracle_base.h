@@ -361,7 +361,7 @@ public:
     return AABB_helper::first_intersection(p, q, o, offset_size, 1e-2 * offset_size, tree());
   }
 
-private:
+protected:
   Geom_traits m_gt;
   AABB_tree_ptr m_tree_ptr;
 };
