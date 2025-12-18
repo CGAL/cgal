@@ -454,8 +454,8 @@ private:
     std::cout << "Insert Bbox vertices" << std::endl;
 #endif
 
-    // insert in dt the eight corner vertices of the input loose bounding box
-    for(int i=0; i<8; ++i)
+    // insert in dt the four corner vertices of the input loose bounding box
+    for(int i=0; i<4; ++i)
     {
       const Point_2 bp = SC2GT()(m_bbox.vertex(i));
       Vertex_handle bv = m_tr.insert(bp);
@@ -1675,7 +1675,7 @@ private:
   {
     bool do_remove = true;
     auto vit = m_tr.finite_vertices_begin();
-    for(std::size_t i=0; i<8; ++i)
+    for(std::size_t i=0; i<4; ++i)
     {
       Vertex_handle v = vit++;
 
@@ -1699,7 +1699,7 @@ private:
       return false;
 
     vit = m_tr.finite_vertices_begin();
-    for(std::size_t i=0; i<8; ++i)
+    for(std::size_t i=0; i<4; ++i)
     {
       Vertex_handle v = vit++;
       m_tr.remove(v);
