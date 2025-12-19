@@ -18,7 +18,7 @@
 #include <CGAL/Constrained_triangulation_3/internal/ostream_redirect_guard.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
-#include <tl/expected.hpp>
+#include <CGAL/tl/expected.hpp>
 #include <sstream>
 
 namespace CGAL {
