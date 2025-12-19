@@ -945,6 +945,9 @@ if(CGAL_BRANCH_BUILD)
   Note that this option will modify the source directory!" FALSE)
 
     message("== Setting header checking ==")
+    find_package(CGAL COMPONENTS Qt6
+                 REQUIRED NO_PACKAGE_ROOT_PATH NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH
+                 HINTS "${CGAL_SOURCE_DIR}")
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
@@ -1208,6 +1211,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
     foreach(header ${list_of_headers_to_test})
       file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
     endforeach() #loop on headers to include in test file
+    file(COPY_FILE ${CGAL_BINARY_DIR}/test_headers.cpp ${CGAL_BINARY_DIR}/test_headers2.cpp)
     file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "int main(){}\n")
 
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
@@ -1219,6 +1223,14 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
       POST_BUILD
       COMMAND ${CMAKE_CXX_COMPILER} ${compile_options} ${include_options} -x
               c++ -fsyntax-only ${CGAL_BINARY_DIR}/test_headers.cpp)
+
+    # New check that headers can be included in different compilation units, that can be linked
+    # together. That checks for missing `inline` keywords.
+    add_executable(check_headers_linked_twice
+                   ${CGAL_BINARY_DIR}/test_headers.cpp
+                   ${CGAL_BINARY_DIR}/test_headers2.cpp)
+    target_link_libraries(check_headers_linked_twice PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 VTK::IOImage Qt6::Widgets)
+    target_compile_options(check_headers_linked_twice PRIVATE ${compile_options} ${include_options})
 
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
     message(
