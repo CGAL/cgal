@@ -1905,7 +1905,7 @@ private:
     std::cout << "\t~~~ Check queue sanity ~~~" << std::endl;
 
     std::vector<Gate> queue_gates;
-#ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     Gate previous_top_gate = m_queue.top();
 #endif
     while(!m_queue.empty())
