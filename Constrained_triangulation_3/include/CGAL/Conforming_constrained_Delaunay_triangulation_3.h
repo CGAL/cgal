@@ -77,6 +77,7 @@
 #include <iterator>
 #include <optional>
 #include <sstream>
+#include <stack>
 #include <vector>
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
@@ -4301,7 +4302,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     // Nested components are marked with increasing indices.
     // Disconnected components that have the same nesting level get the same index parity:
     // for example two cubes within a larger bounding box will be index 2 and 4.
-    std::list<typename Tr::Facet> border;
+    std::stack<typename Tr::Facet> border;
     int next_even_subdomain = 0;
     int next_odd_subdomain = 1;
 
@@ -4310,12 +4311,12 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
       if(start->subdomain_index() != -1)
         return;
 
-      std::list<typename Tr::Cell_handle> queue;
-      queue.push_back(start);
+      std::stack<typename Tr::Cell_handle> queue;
+      queue.push(start);
 
       while(!queue.empty()) {
-        auto ch = queue.front();
-        queue.pop_front();
+        auto ch = queue.top();
+        queue.pop();
         if(ch->subdomain_index() == -1) {
           ch->set_subdomain_index(subdomain_index);
           for(int i = 0; i < 4; i++) {
@@ -4323,9 +4324,9 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
             auto n = ch->neighbor(i);
             if(n->subdomain_index() == -1) {
               if(ch->ccdt_3_data().is_facet_constrained(i))
-                border.push_back(f);
+                border.push(f);
               else
-                queue.push_back(n);
+                queue.push(n);
             }
           }
         }
@@ -4338,8 +4339,8 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
 
     for (;;) { // while there are unvisited cells
       while(!border.empty()) {
-        auto f = border.front();
-        border.pop_front();
+        auto f = border.top();
+        border.pop();
         auto n = f.first->neighbor(f.second);
         if(n->subdomain_index() == -1) {
           // If we are coming from an even subdomain, use next odd, and vice versa
