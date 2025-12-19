@@ -4890,7 +4890,7 @@ using Arrangement = CGAL::Arrangement_2<Traits>;
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-conic_multiplicities,conic_multiplicities.png}
-An arrangement of a circular arc and an hyperbolic arc, as constructed
+An arrangement of a circular arc and a hyperbolic arc, as constructed
 in \ref Arrangement_on_surface_2/conic_multiplicities.cpp.
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->

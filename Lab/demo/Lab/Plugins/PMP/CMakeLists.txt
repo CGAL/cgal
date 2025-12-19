@@ -28,61 +28,57 @@ target_link_libraries(extrude_plugin PRIVATE scene_surface_mesh_item
                                              scene_selection_item)
 
 if(TARGET CGAL::Eigen3_support)
-  if("${Eigen3_VERSION}" VERSION_GREATER "3.1.90")
-    qt6_wrap_ui( acvd_remeshingUI_FILES ACVD_remeshing_dialog.ui)
-    cgal_lab_plugin(acvd_remeshing_plugin ACVD_remeshing_plugin ${acvd_remeshingUI_FILES} KEYWORDS PMP)
-    target_link_libraries(acvd_remeshing_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item CGAL::Eigen3_support)
+  qt6_wrap_ui( acvd_remeshingUI_FILES ACVD_remeshing_dialog.ui)
+  cgal_lab_plugin(acvd_remeshing_plugin ACVD_remeshing_plugin ${acvd_remeshingUI_FILES} KEYWORDS PMP)
+  target_link_libraries(acvd_remeshing_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item CGAL::Eigen3_support)
 
-    qt6_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
-    cgal_lab_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES} KEYWORDS PMP)
-    target_link_libraries(hole_filling_plugin PRIVATE scene_surface_mesh_item scene_polylines_item scene_selection_item CGAL::Eigen3_support)
+  qt6_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
+  cgal_lab_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES} KEYWORDS PMP)
+  target_link_libraries(hole_filling_plugin PRIVATE scene_surface_mesh_item scene_polylines_item scene_selection_item CGAL::Eigen3_support)
 
-    qt6_wrap_ui( fairingUI_FILES Fairing_widget.ui)
-    cgal_lab_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES} KEYWORDS PMP)
-    target_link_libraries(fairing_plugin PRIVATE scene_selection_item CGAL::Eigen3_support)
+  qt6_wrap_ui( fairingUI_FILES Fairing_widget.ui)
+  cgal_lab_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES} KEYWORDS PMP)
+  target_link_libraries(fairing_plugin PRIVATE scene_selection_item CGAL::Eigen3_support)
 
-    qt6_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
-    cgal_lab_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-    target_link_libraries(mean_curvature_flow_skeleton_plugin
-      PRIVATE
-        scene_surface_mesh_item
-        scene_points_with_normal_item
-        scene_polylines_item
-        scene_mcf_item
-        demo_framework
-        CGAL::Eigen3_support)
-    # The smoothing plugin can still do some things, even if Ceres is not found
-    qt6_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
-    cgal_lab_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-    target_link_libraries(smoothing_plugin PRIVATE scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
-    find_package(Ceres QUIET)
-    include(CGAL_Ceres_support)
-    if(TARGET CGAL::Ceres_support)
-      target_link_libraries(smoothing_plugin PRIVATE CGAL::Ceres_support)
-    endif()
+  qt6_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
+  cgal_lab_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
+  target_link_libraries(mean_curvature_flow_skeleton_plugin
+    PRIVATE
+      scene_surface_mesh_item
+      scene_points_with_normal_item
+      scene_polylines_item
+      scene_mcf_item
+      demo_framework
+      CGAL::Eigen3_support)
+  # The smoothing plugin can still do some things, even if Ceres is not found
+  qt6_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
+  cgal_lab_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+  target_link_libraries(smoothing_plugin PRIVATE scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
+  find_package(Ceres QUIET)
+  include(CGAL_Ceres_support)
+  if(TARGET CGAL::Ceres_support)
+    target_link_libraries(smoothing_plugin PRIVATE CGAL::Ceres_support)
+  endif()
 
-    set_package_properties(
-      Ceres PROPERTIES
-      DESCRIPTION "A large scale non-linear optimization library."
-      PURPOSE "Can be used as a solver in the smoothing plugin.")
-    target_link_libraries(extrude_plugin PRIVATE CGAL::Eigen3_support)
+  set_package_properties(
+    Ceres PROPERTIES
+    DESCRIPTION "A large scale non-linear optimization library."
+    PURPOSE "Can be used as a solver in the smoothing plugin.")
+  target_link_libraries(extrude_plugin PRIVATE CGAL::Eigen3_support)
 
-    qt6_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
-    cgal_lab_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
-                           ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP CDT_3)
-    target_link_libraries(remesh_planar_patches_plugin PRIVATE scene_surface_mesh_item  CGAL::Eigen3_support)
+  qt6_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
+  cgal_lab_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
+                         ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP CDT_3)
+  target_link_libraries(remesh_planar_patches_plugin PRIVATE scene_surface_mesh_item  CGAL::Eigen3_support)
 
-    if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-      set_tests_properties(
-        "compilation of  extrude_plugin"
-        "compilation of  fairing_plugin"
-        "compilation of  hole_filling_plugin"
-        "compilation of  remesh_planar_patches_plugin"
-        "compilation of  smoothing_plugin"
-        PROPERTIES RESOURCE_LOCK Selection_test_resources)
-    endif()
-  else()
-    message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
+  if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    set_tests_properties(
+      "compilation of  extrude_plugin"
+      "compilation of  fairing_plugin"
+      "compilation of  hole_filling_plugin"
+      "compilation of  remesh_planar_patches_plugin"
+      "compilation of  smoothing_plugin"
+      PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 else()
   message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
