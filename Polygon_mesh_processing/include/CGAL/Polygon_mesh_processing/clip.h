@@ -1056,7 +1056,7 @@ bool clip(PolygonMesh& pm,
     clip_volume=false;
 
   if (clip_volume && !is_closed(pm)) clip_volume=false;
-  if (clip_volume && !use_compact_clipper) use_compact_clipper=true;
+  if (clip_volume && use_compact_clipper) use_compact_clipper=false;
 
   CGAL_precondition(!clip_volume || !triangulate || does_bound_a_volume(pm));
 
