@@ -56,7 +56,6 @@ public:
   // Category tags:
   using Has_left_category = Tag_true;
   using Has_merge_category = Tag_true;
-  using Has_do_intersect_category = Tag_false;
 
   using Left_side_category = Arr_oblivious_side_tag;
   using Bottom_side_category = Arr_oblivious_side_tag;
@@ -73,7 +72,7 @@ protected:
 
 public:
   /*! constructs default. */
-  Arr_circle_segment_traits_2 (bool use_intersection_caching = false) :
+  Arr_circle_segment_traits_2(bool use_intersection_caching = false) :
     m_use_cache(use_intersection_caching)
   {}
 
@@ -99,7 +98,7 @@ public:
      *         SMALLER if x(p1) < x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const {
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       if (p1.identical (p2)) return (EQUAL);
 
       return (CGAL::compare (p1.x(), p2.x()));
@@ -107,7 +106,7 @@ public:
   };
 
   /*! obtains a `Compare_x_2` functor object. */
-  Compare_x_2 compare_x_2_object () const { return Compare_x_2(); }
+  Compare_x_2 compare_x_2_object() const { return Compare_x_2(); }
 
   class Compare_xy_2 {
   public:
@@ -118,19 +117,18 @@ public:
      *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
      *         EQUAL if the two points are equal.
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const {
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       if (p1.identical (p2)) return (EQUAL);
 
       Comparison_result res = CGAL::compare(p1.x(), p2.x());
       if (res != EQUAL) return (res);
 
-      return (CGAL::compare (p1.y(), p2.y()));
+      return (CGAL::compare(p1.y(), p2.y()));
     }
   };
 
   /*! obtains a Compare_xy_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () const
-  { return Compare_xy_2(); }
+  Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(); }
 
   class Construct_min_vertex_2 {
   public:
@@ -138,13 +136,12 @@ public:
      * \param cv The curve.
      * \return The left endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
+    const Point_2& operator()(const X_monotone_curve_2 & cv) const
     { return (cv.left()); }
   };
 
   /*! obtains a `Construct_min_vertex_2` functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object () const
-  { return Construct_min_vertex_2(); }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(); }
 
   class Construct_max_vertex_2 {
   public:
@@ -157,8 +154,7 @@ public:
   };
 
   /*! obtains a Construct_max_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object () const
-  { return Construct_max_vertex_2(); }
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(); }
 
   class Is_vertical_2 {
   public:
@@ -166,13 +162,11 @@ public:
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv) const
-    { return (cv.is_vertical()); }
+    bool operator()(const X_monotone_curve_2& cv) const { return (cv.is_vertical()); }
   };
 
   /*! obtains an `Is_vertical_2` functor object. */
-  Is_vertical_2 is_vertical_2_object () const
-  { return Is_vertical_2(); }
+  Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
   class Compare_y_at_x_2 {
   public:
@@ -193,8 +187,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_2` functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object () const
-  { return Compare_y_at_x_2(); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(); }
 
   class Compare_y_at_x_right_2 {
   public:
@@ -208,42 +201,41 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2,
-                                  const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
-      CGAL_precondition (cv1.point_position (p) == EQUAL &&
-                         cv2.point_position (p) == EQUAL);
+      CGAL_precondition(cv1.point_position(p) == EQUAL &&
+                        cv2.point_position(p) == EQUAL);
 
-      if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
-          (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL)) {
+      if ((CGAL::compare(cv1.left().x(),cv1.right().x()) == EQUAL) &&
+          (CGAL::compare(cv2.left().x(),cv2.right().x()) == EQUAL)) {
         //both cv1 and cv2 are vertical
-        CGAL_precondition (!(cv1.right()).equals(p) && !(cv2.right()).equals(p));
+        CGAL_precondition(! (cv1.right()).equals(p) && !(cv2.right()).equals(p));
       }
-      else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
-               (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL)) {
+      else if ((CGAL::compare(cv1.left().x(),cv1.right().x()) != EQUAL) &&
+               (CGAL::compare(cv2.left().x(),cv2.right().x()) == EQUAL)) {
         //only cv1 is vertical
-        CGAL_precondition (!(cv1.right()).equals(p));
+        CGAL_precondition(!(cv1.right()).equals(p));
       }
-      else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
-               (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL)) {
+      else if ((CGAL::compare(cv1.left().x(),cv1.right().x()) == EQUAL) &&
+               (CGAL::compare(cv2.left().x(),cv2.right().x()) != EQUAL)) {
         //only cv2 is vertical
-        CGAL_precondition (!(cv2.right()).equals(p));
+        CGAL_precondition(! (cv2.right()).equals(p));
       }
       else {
         //both cv1 and cv2 are non vertical
-        CGAL_precondition (CGAL::compare (cv1.right().x(),p.x()) == LARGER &&
-                           CGAL::compare (cv2.right().x(),p.x()) == LARGER);
+        CGAL_precondition(CGAL::compare (cv1.right().x(),p.x()) == LARGER &&
+                          CGAL::compare (cv2.right().x(),p.x()) == LARGER);
       }
       // Compare the two curves immediately to the right of p:
-      return (cv1.compare_to_right (cv2, p));
+      return (cv1.compare_to_right(cv2, p));
     }
   };
 
   /*! obtains a `Compare_y_at_x_right_2` functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
-  { return Compare_y_at_x_right_2(); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(); }
 
   class Compare_y_at_x_left_2 {
   public:
@@ -257,43 +249,42 @@ public:
      * \return The relative position of `cv1` with respect to `cv2` immdiately
      *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2,
-                                  const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
 
-      CGAL_precondition (cv1.point_position (p) == EQUAL &&
-                         cv2.point_position (p) == EQUAL);
+      CGAL_precondition(cv1.point_position (p) == EQUAL &&
+                        cv2.point_position (p) == EQUAL);
 
-      if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
-          (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL)) {
+      if ((CGAL::compare(cv1.left().x(),cv1.right().x()) == EQUAL) &&
+          (CGAL::compare(cv2.left().x(),cv2.right().x()) == EQUAL)) {
         //both cv1 and cv2 are vertical
-        CGAL_precondition (!(cv1.left()).equals(p) && !(cv2.left()).equals(p));
+        CGAL_precondition(! (cv1.left()).equals(p) && !(cv2.left()).equals(p));
       }
-      else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
-               (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL)) {
+      else if ((CGAL::compare(cv1.left().x(),cv1.right().x()) != EQUAL) &&
+               (CGAL::compare(cv2.left().x(),cv2.right().x()) == EQUAL)) {
         //only cv1 is vertical
-        CGAL_precondition (!(cv1.left()).equals(p));
+        CGAL_precondition(! (cv1.left()).equals(p));
       }
-      else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
-               (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL)) {
+      else if ((CGAL::compare(cv1.left().x(),cv1.right().x()) == EQUAL) &&
+               (CGAL::compare(cv2.left().x(),cv2.right().x()) != EQUAL)) {
         //only cv2 is vertical
-        CGAL_precondition (!(cv2.left()).equals(p));
+        CGAL_precondition(! (cv2.left()).equals(p));
       }
       else {
         //both cv1 and cv2 are non vertical
-        CGAL_precondition (CGAL::compare (cv1.left().x(),p.x()) == SMALLER &&
-                           CGAL::compare (cv2.left().x(),p.x()) == SMALLER);
+        CGAL_precondition(CGAL::compare (cv1.left().x(),p.x()) == SMALLER &&
+                          CGAL::compare (cv2.left().x(),p.x()) == SMALLER);
       }
       // Compare the two curves immediately to the left of p:
-      return (cv1.compare_to_left (cv2, p));
+      return (cv1.compare_to_left(cv2, p));
     }
   };
 
   /*! obtains a `Compare_y_at_x_left_2` functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
-  { return Compare_y_at_x_left_2(); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(); }
 
   class Equal_2 {
   public:
@@ -303,8 +294,8 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2) const {
+    bool operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2) const {
       if (&cv1 == &cv2) return (true);
 
       return (cv1.equals (cv2));
@@ -315,13 +306,49 @@ public:
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
      */
-    bool operator() (const Point_2& p1, const Point_2& p2) const
-    { return (p1.equals (p2)); }
+    bool operator()(const Point_2& p1, const Point_2& p2) const { return (p1.equals (p2)); }
   };
 
   /*! obtains an `Equal_2` functor object. */
-  Equal_2 equal_2_object () const
-  { return Equal_2(); }
+  Equal_2 equal_2_object() const { return Equal_2(); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_circle_segment_traits_2<Kernel, Filter>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs.
+     * \param traits The traits.
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_circle_segment_traits_2<Kernel, Filter>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     * \todo Reimplement without using Intersect_2 to make robust (and efficient) with EPIC.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+      std::vector<Intersection_result> intersections;
+      m_traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersections));
+      auto empty = intersections.empty();
+      intersections.clear();
+      return ! empty;
+    }
+  };
+
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   //@}
 
   /// \name Functor definitions for approximations. Used by the landmarks
@@ -533,10 +560,7 @@ public:
 
       if (cv.orientation() == COLLINEAR) {
         // The curve is a line segment.
-        *oi++ = X_monotone_curve_2(cv.supporting_line(),
-                                   cv.source(),
-                                   cv.target(),
-                                   index);
+        *oi++ = X_monotone_curve_2(cv.supporting_line(), cv.source(), cv.target(), index);
         return oi;
       }
 
@@ -547,8 +571,7 @@ public:
 
       if (sign_rad == ZERO) {
         // Create an isolated point.
-        *oi++ = Point_2(circ.center().x(),
-                        circ.center().y());
+        *oi++ = Point_2(circ.center().x(), circ.center().y());
         return oi;
       }
 
@@ -561,59 +584,27 @@ public:
         CGAL_assertion (n_vpts == 2);
 
         // Subdivide the circle into two arcs (an upper and a lower half).
-        *oi++ = X_monotone_curve_2(circ,
-                                   vpts[0], vpts[1],
-                                   cv.orientation(),
-                                   index);
-
-        *oi++ = X_monotone_curve_2(circ,
-                                   vpts[1], vpts[0],
-                                   cv.orientation(),
-                                   index);
+        *oi++ = X_monotone_curve_2(circ, vpts[0], vpts[1], cv.orientation(), index);
+        *oi++ = X_monotone_curve_2(circ, vpts[1], vpts[0], cv.orientation(), index);
       }
       else {
         // Act according to the number of vertical tangency points.
         if (n_vpts == 2) {
           // Subdivide the circular arc into three \f$x\f$-monotone arcs.
-          *oi++ = X_monotone_curve_2(circ,
-                                     cv.source(), vpts[0],
-                                     cv.orientation(),
-                                     index);
-
-          *oi++ = X_monotone_curve_2(circ,
-                                     vpts[0], vpts[1],
-                                     cv.orientation(),
-                                     index);
-
-          *oi++ = X_monotone_curve_2(circ,
-                                     vpts[1],
-                                     cv.target(),
-                                     cv.orientation(),
-                                     index);
+          *oi++ = X_monotone_curve_2(circ, cv.source(), vpts[0], cv.orientation(), index);
+          *oi++ = X_monotone_curve_2(circ, vpts[0], vpts[1], cv.orientation(), index);
+          *oi++ = X_monotone_curve_2(circ, vpts[1], cv.target(), cv.orientation(), index);
         }
         else if (n_vpts == 1) {
           // Subdivide the circular arc into two \f$x\f$-monotone arcs.
-          *oi++ = X_monotone_curve_2(circ,
-                                     cv.source(),
-                                     vpts[0],
-                                     cv.orientation(),
-                                     index);
-
-          *oi++ = X_monotone_curve_2(circ,
-                                     vpts[0],
-                                     cv.target(),
-                                     cv.orientation(),
-                                     index);
+          *oi++ = X_monotone_curve_2(circ, cv.source(), vpts[0], cv.orientation(), index);
+          *oi++ = X_monotone_curve_2(circ, vpts[0], cv.target(), cv.orientation(), index);
         }
         else {
           CGAL_assertion(n_vpts == 0);
 
           // The arc is already \f$x\f$-monotone:
-          *oi++ = X_monotone_curve_2(circ,
-                                     cv.source(),
-                                     cv.target(),
-                                     cv.orientation(),
-                                     index);
+          *oi++ = X_monotone_curve_2(circ, cv.source(), cv.target(), cv.orientation(), index);
         }
       }
 
@@ -622,8 +613,7 @@ public:
   };
 
   /*! obtains a `Make_x_monotone_2` functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(m_use_cache); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(m_use_cache); }
 
   class Split_2 {
   public:
@@ -636,11 +626,11 @@ public:
      * \param c2 Output: The right resulting subcurve (`p` is its left endpoint).
      * \pre `p` lies on cv but is not one of its end-points.
      */
-    void operator() (const X_monotone_curve_2& cv, const Point_2& p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const {
-      CGAL_precondition (cv.point_position(p)==EQUAL &&
-      ! p.equals (cv.source()) &&
-      ! p.equals (cv.target()));
+    void operator()(const X_monotone_curve_2& cv, const Point_2& p,
+                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const {
+      CGAL_precondition(cv.point_position(p)==EQUAL &&
+                        ! p.equals (cv.source()) &&
+                        ! p.equals (cv.target()));
 
       cv.split (p, c1, c2);
       return;
@@ -648,7 +638,7 @@ public:
   };
 
   /*! obtains a `Split_2` functor object. */
-  Split_2 split_2_object () const { return Split_2(); }
+  Split_2 split_2_object() const { return Split_2(); }
 
   class Intersect_2 {
   private:
@@ -685,14 +675,13 @@ public:
      *         supported by the same line and share a common endpoint; (false)
      *         otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2) const
+    bool operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2) const
     { return (cv1.can_merge_with (cv2)); }
   };
 
   /*! obtains an `Are_mergeable_2` functor object. */
-  Are_mergeable_2 are_mergeable_2_object () const
-  { return Are_mergeable_2(); }
+  Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(); }
 
   /*! \class Merge_2
    * A functor that merges two \f$x\f$-monotone arcs into one.
@@ -718,18 +707,18 @@ public:
      * \param c Output: The merged curve.
      * \pre The two curves are mergeable.
      */
-    void operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2,
-                     X_monotone_curve_2& c) const {
+    void operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2,
+                    X_monotone_curve_2& c) const {
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
 
       c = cv1;
-      c.merge (cv2);
+      c.merge(cv2);
     }
   };
 
   /*! obtains a `Merge_2` functor object. */
-  Merge_2 merge_2_object () const { return Merge_2(this); }
+  Merge_2 merge_2_object() const { return Merge_2(this); }
 
   class Compare_endpoints_xy_2 {
   public:
@@ -738,15 +727,13 @@ public:
      * \return `SMALLER` if the curve is directed right, else return `LARGER`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv) const {
-      if(cv.is_directed_right())
-        return(SMALLER);
+      if (cv.is_directed_right()) return(SMALLER);
       return (LARGER);
     }
   };
 
   /*! obtains a `Compare_endpoints_xy_2` functor object. */
-  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  { return Compare_endpoints_xy_2(); }
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const { return Compare_endpoints_xy_2(); }
 
   class Construct_opposite_2 {
   public:
@@ -759,8 +746,7 @@ public:
   };
 
   /*! obtains a `Construct_opposite_2` functor object. */
-  Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(); }
+  Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(); }
 
   class Trim_2 {
   protected:
@@ -789,8 +775,7 @@ public:
                                   const Point_2& src,
                                   const Point_2& tgt)const {
       // make functor objects
-      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
-                             m_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 = m_traits.compare_y_at_x_2_object());
       CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
       // Check whether source and target are two distinct points and they lie

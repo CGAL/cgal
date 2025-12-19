@@ -57,7 +57,6 @@ public:
   // Category tags:
   using Has_left_category = Tag_true;
   using Has_merge_category = Tag_true;
-  using Has_do_intersect_category = Tag_false;
 
   using Left_side_category = Arr_open_side_tag;
   using Bottom_side_category = Arr_open_side_tag;
@@ -911,6 +910,68 @@ public:
 
   /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object() const { return Equal_2(); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_linear_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+
+  private:
+    template <typename T>
+    bool do_intersect(const T& t, const X_monotone_curve_2& xcv2) const {
+      const Kernel& kernel = m_traits;
+      if (xcv2.is_segment()) {
+        Segment_2 seg2(xcv2.source(), xcv2.target());
+        return kernel.do_intersect_2_object()(t, seg2);
+      }
+      if (xcv2.is_line()) {
+        Line_2 line2(xcv2.source(), xcv2.target());
+        return kernel.do_intersect_2_object()(t, line2);
+      }
+      CGAL_assertion(xcv2.is_ray());
+      Ray_2 ray2(xcv2.source(), xcv2.target());
+      return kernel.do_intersect_2_object()(t, ray2);
+    }
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      if (xcv1.is_segment()) {
+        Segment_2 seg1(xcv1.source(), xcv1.target());
+        return this->do_intersect(seg1, xcv2);
+      }
+      if (xcv1.is_line()) {
+        Line_2 line1(xcv1.source(), xcv1.target());
+        return this->do_intersect(line1, xcv2);
+      }
+      CGAL_assertion(xcv1.is_ray());
+      Ray_2 ray1(xcv1.source(), xcv1.target());
+      return this->do_intersect(ray1, xcv2);
+    }
+  };
+
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   //@}
 
   /// \name Functor definitions to handle boundaries

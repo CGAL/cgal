@@ -135,7 +135,6 @@ public:
   // Category tags:
   using Has_left_category = Tag_true;
   using Has_merge_category = Tag_true;
-  using Has_do_intersect_category = Tag_false;
 
   using Left_side_category = Arr_identified_side_tag;
   using Bottom_side_category = Arr_contracted_side_tag;
@@ -1497,6 +1496,135 @@ public:
 
   /*! obtains an `Equal_2` function object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  private:
+    /*! determines whether a direction pierces an arc.
+     * \param point the direction.
+     * \param xc the arc.
+     * \return true iff point pierces xc.
+     * \pre point lies in the underlying plane of xc.
+     */
+    bool is_in_between(const Point_2& point,
+                       const X_monotone_curve_2& xc) const {
+      const Kernel& kernel = m_traits;
+      CGAL_precondition(m_traits.has_on(xc.normal(), point));
+
+      const Point_2& left = xc.left();
+      const Point_2& right = xc.right();
+
+      // Handle the poles:
+      if (point.is_max_boundary()) return (right.is_max_boundary());
+      if (point.is_min_boundary()) return (left.is_min_boundary());
+
+      if (xc.is_vertical()) {
+        // Compare the \f$x\f$-coordinates. If they are not equal, return false:
+        Direction_3 normal = xc.normal();
+        bool plane_is_positive, p_is_positive;
+        CGAL::Sign xsign = Traits::x_sign(normal);
+        if (xsign == ZERO) {
+          plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
+          p_is_positive = Traits::x_sign(point) == POSITIVE;
+        } else {
+          plane_is_positive = xsign == POSITIVE;
+          p_is_positive = Traits::y_sign(point) == POSITIVE;
+        }
+
+        bool xc_is_positive = ((plane_is_positive && xc.is_directed_right()) ||
+                               (!plane_is_positive && !xc.is_directed_right()));
+
+        if ((xc_is_positive && !p_is_positive) ||
+            (!xc_is_positive && p_is_positive))
+          return false;
+
+        // Compare the \f$y\f$-coordinates:
+        return (((left.is_min_boundary()) ||
+                 (m_traits.compare_y(point, left) != SMALLER)) &&
+                ((right.is_max_boundary()) ||
+                 (m_traits.compare_y(point, right) != LARGER)));
+      }
+
+      // The arc is not vertical. Compare the projections onto the
+      // \f$xy\f$-plane:
+      typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
+      Direction_2 p = Traits::project_xy(point);
+      Direction_2 r = Traits::project_xy(right);
+      if (equal_2(p, r)) return true;
+      Direction_2 l = Traits::project_xy(left);
+      if (equal_2(p, l)) return true;
+      return kernel.counterclockwise_in_between_2_object()(p, l, r);
+    }
+
+  protected:
+    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
+
+    //! The traits (in case it has state)
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     */
+    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const {
+      CGAL_precondition(! xc1.is_degenerate());
+      CGAL_precondition(! xc2.is_degenerate());
+
+      const Kernel& kernel = m_traits;
+
+      auto equal_3 = kernel.equal_3_object();
+      const Direction_3& normal1 = xc1.normal();
+      const Direction_3& normal2 = xc2.normal();
+
+      Direction_3 opposite_normal1 = kernel.construct_opposite_direction_3_object()(normal1);
+
+      if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
+        // The underlying planes are the same
+        if (xc1.is_vertical()) {
+          // Both arcs are vertical
+          bool res = kernel.equal_3_object()(normal1, normal2);
+          if ((! res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
+              (res && (xc1.is_directed_right() != xc2.is_directed_right()))) {
+            if (xc1.left().is_min_boundary() && xc2.left().is_min_boundary()) return true;
+            if (xc1.right().is_max_boundary() && xc2.right().is_max_boundary()) return true;
+            return false;
+          }
+
+          return true;
+        }
+
+        return true;
+      }
+
+      // The following is suspicious; it may introduce instability for inexact kernels
+      auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      Vector_3 v = cross_prod(xc1.normal().vector(), xc2.normal().vector());
+
+      // Observe that xc1 and xc2 may share two endpoints.
+      Point_2 ed = m_traits.construct_point_2_object()(v.direction());
+      if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) return true;
+
+      Vector_3 vo(kernel.construct_opposite_vector_3_object()(v));
+      Point_2 edo = m_traits.construct_point_2_object()(vo.direction());
+      if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) return true;
+
+      return false;
+    }
+  };
+
+  /*! obtains a `Do_intersect_2` function object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   //@}
 
   /// \name Functor definitions to handle boundaries
