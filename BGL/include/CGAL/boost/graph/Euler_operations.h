@@ -1537,6 +1537,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
  * collapses an edge in a graph.
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
+ *
  * Let `h` be the halfedge of `e`, and let `v0` and `v1` be the source and target vertices of `h`.
  * Let `p_h` and `p_o_h` be respectively the edges of `prev(h,g)` and `prev(opposite(h, g), g)`.
  * Let `o_n_h` and `o_n_o_h` be respectively the edges of `opposite(next(h,g))` and `opposite(next(opposite(h, g), g))`.
