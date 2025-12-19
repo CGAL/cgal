@@ -20,9 +20,9 @@
 
 #include <CGAL/Distance_3/Point_3_Point_3.h>
 #include <CGAL/Distance_3/Point_3_Weighted_point_3.h>
+#include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Distance_3/Point_3_Segment_3.h>
 #include <CGAL/Distance_3/Point_3_Ray_3.h>
-#include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Distance_3/Point_3_Triangle_3.h>
 #include <CGAL/Distance_3/Point_3_Plane_3.h>
 #include <CGAL/Distance_3/Point_3_Tetrahedron_3.h>
@@ -44,5 +44,7 @@
 #include <CGAL/Distance_3/Triangle_3_Triangle_3.h>
 
 #include <CGAL/Distance_3/Plane_3_Plane_3.h>
+
+#include <CGAL/global_functions_distance_3.h>
 
 #endif // CGAL_DISTANCE_3_H

@@ -160,7 +160,7 @@ In constructing Theta graphs, this functor uses the algorithm from
 Chapter 4 of the book by Narasimhan and Smid \cgalCite{cgal:ns-gsn-07}.
 Basically, it is a sweep line algorithm and uses a
 balanced search tree to store the vertices that have already been scanned.
-It has the complexity of \f$O(n \log n)\f$, where \f$n\f$ is the number of vertices in the plane.
+It has the complexity of \cgalBigO{n \log n}, where \f$n\f$ is the number of vertices in the plane.
 This complexity has been proved to be optimal.
 
 For more details on how to use this `Construct_theta_graph_2` functor to write an application to build Theta graphs,
@@ -178,13 +178,13 @@ The functor `Construct_yao_graph_2` has a similar definition as `Construct_theta
 
 The way of using these two template parameters is the same as that of `Construct_theta_graph_2`,
 so please refer to the previous subsection for the details. We note here that construction algorithm for Yao graph
-is a slight adaptation of the algorithm for constructing Theta graph, having a complexity of \f$O(n^2)\f$.
+is a slight adaptation of the algorithm for constructing Theta graph, having a complexity of \cgalBigO{n^2}.
 The increase of complexity in this adaptation is because in constructing Theta graph,
 the searching of the 'closest' node by projection distance can be done by a balanced search tree,
 but in constructing Yao graph, the searching of the 'closest' node by Euclidean distance cannot be
 done by a balanced search tree.
 
-Note that an optimal algorithm for constructing Yao graph with a complexity of \f$O(n \log n)\f$ is
+Note that an optimal algorithm for constructing Yao graph with a complexity of \cgalBigO{n \log n} is
 described in \cgalCite{cgal:cht-oacov-90}. However, this algorithm is much more complex to implement than
 the current algorithm implemented, and it can hardly reuse the codes for constructing Theta graphs,
 so it is not implemented in this package right now.
@@ -304,7 +304,7 @@ and `Construct_yao_graph_2` construct full Theta and Yao graphs. They also provi
 to compute Half Theta and Yao graphs. As mentioned in Section \ref sec_CBS_mydefinitions,
 only the edges for the odd or even cones are added to the graph in an Half Theta and Yao
 graph. To do so, the constructor of the functors provides a parameter of type
-`Cones_selected` which is a enumeration that contains the following possible values:
+`Cones_selected` which is an enumeration that contains the following possible values:
 `ALL_CONES`, `EVEN_CONES` and `ODD_CONES`. Users should include the
 `CGAL/Cone_spanners_enum_2.h` header file to use these enum values. The following are the
 examples on the functor constructions for Half Theta and Yao Graphs.

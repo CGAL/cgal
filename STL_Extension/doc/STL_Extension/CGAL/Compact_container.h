@@ -71,7 +71,7 @@ the halfedge data structures.
 
 It supports bidirectional iterators and allows a constant time amortized
 `insert()` operation. You cannot specify where to insert new objects
-(i.e.\ you don't know where they will end up in the iterator sequence,
+(i.e., you don't know where they will end up in the iterator sequence,
 although `insert()` returns an iterator pointing to the newly inserted
 object). You can erase any element with a constant time complexity.
 
@@ -80,9 +80,9 @@ memory since it doesn't store two additional pointers for the iterator needs.
 It doesn't deallocate elements until the destruction or `clear()` of the
 container. The iterator does not have constant amortized time complexity for
 the increment and decrement operations in all cases, only when not too many
-elements have not been freed (i.e.\ when the `size()` is close to the
+elements have not been freed (i.e., when the `size()` is close to the
 `capacity()`). Iterating from `begin()` to `end()` takes
-`O(capacity())` time, not `size()`. In the case where the container
+\cgalBigO{capacity()} time, not `size()`. In the case where the container
 has a small `size()` compared to its `capacity()`, we advise to
 "defragment the memory" by copying the container if the iterator performance
 is needed.
@@ -96,10 +96,10 @@ geometric graphs like handles to vertices in triangulations.
 
 In addition, in a way inspired from the Boost.Intrusive containers, it is
 possible to construct iterators from references to values in containers
-using the `iterator_to` and `s_iterator_to` functions.
+using the `iterator_to()` and `s_iterator_to()` functions.
 
 The objects stored in the `Compact_container` can optionally store an
-"erase counter". If it exists, i.e.\ if the object is a model of the
+"erase counter". If it exists, i.e, if the object is a model of the
 `ObjectWithEraseCounter` concept, each time an object is erased from the
 container, the erase counter of the object will be incremented.
 For example, this erase counter can be exploited using the `CC_safe_handle`
@@ -512,13 +512,13 @@ size_type capacity() const;
 /// @{
 
 /*!
-returns true if the element `pos` is used (i.e.\ valid).
+returns true if the element `pos` is used (i.e., valid).
 */
 bool is_used(const_iterator pos) const;
 
 /*!
 returns true if the element at position `i` in the container is used
-(i.e.\ valid).
+(i.e., valid).
 
 \pre \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
 */
@@ -532,7 +532,7 @@ bool is_used(size_type i) const;
 /*!
 returns the element at pos `i` in the container.
 
-\pre `is_used(i) == true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+\pre \link is_used(size_type)const `is_used(i)`\endlink`== true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
 */
 
 const T& operator[] (size_type i) const;
@@ -545,7 +545,7 @@ const T& operator[] (size_type i) const;
 /*!
 returns the element at pos `i` in the container.
 
-\pre `is_used(i) == true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+\pre \link is_used(size_type)const `is_used(i)`\endlink`== true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
 */
 
 T& operator[] (size_type i);
@@ -661,7 +661,7 @@ void clear();
 
 /// \name Ownership testing
 /// The following functions are mostly helpful for efficient debugging, since
-/// their complexity is \f$ O(\sqrt{\mathrm{c.capacity()}})\f$.
+/// their complexity is \cgalBigO{\sqrt{\mathrm{c.capacity()}}}.
 /// @{
 
 /*!
@@ -670,9 +670,9 @@ void clear();
 bool owns(const_iterator pos);
 
 /*!
- * returns whether `pos` is in the range `[cc.begin(), cc`.end())` (`cc.end()` excluded).
+ * returns whether `pos` is in the range `[cc.begin(), cc.end())` (`cc.end()` excluded).
  */
-bool owns_dereferencable(const_iterator pos);
+bool owns_dereferenceable(const_iterator pos);
 
 /// @}
 
@@ -681,7 +681,7 @@ bool owns_dereferencable(const_iterator pos);
 /// @{
 /*!
 adds the items of `cc2` to the end of `cc` and `cc2` becomes empty.
-The time complexity is O(`cc`.`capacity()`-`cc`.`size()`).
+The time complexity is \cgalBigO{cc.capacity()-cc.size()}.
 \pre `cc2` must not be the same as `cc`, and the allocators of `cc` and `cc2` must be compatible: `cc.get_allocator() == cc2.get_allocator()`.
 */
 void merge(Compact_container<T, Allocator> &cc);

@@ -19,7 +19,6 @@
 
 // includes
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
 #include <CGAL/Optimisation/debug.h>
 #include <CGAL/IO/Verbose_ostream.h>
 

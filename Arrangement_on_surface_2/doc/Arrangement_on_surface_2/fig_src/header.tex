@@ -11,7 +11,7 @@
 % ======== Math ===============================================================
 \usepackage{amsmath,amscd,amsthm}
 \usepackage{empheq}
-
+\usepackage{bm}
 % ======== pdf, url and hyperlink =============================================
 % \usepackage{url}
 \usepackage{hyperref}
@@ -42,11 +42,35 @@
 % graphicx.
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usepackage{mathptmx}
-\usetikzlibrary{calc,patterns,decorations.pathmorphing,decorations.markings,matrix,fit,decorations.pathreplacing,arrows,automata,positioning,shapes,chains,spy}
-%\usetikzlibrary{quotes,angles,graph}
-\usetikzlibrary{intersections,through,backgrounds}
+% \pgfplotsset{compat=1.16}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{fillbetween}
 \usepackage{tikz-3dplot}
+\usepackage{mathptmx}
+\usetikzlibrary{arrows,arrows.meta}
+\usetikzlibrary{automata}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{calligraphy}
+\usetikzlibrary{calc}
+\usetikzlibrary{chains}
+\usetikzlibrary{cd}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{fit}
+\usetikzlibrary{intersections}
+\usetikzlibrary{math}
+\usetikzlibrary{matrix}
+\usetikzlibrary{patterns}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{shadows.blur}
+\usetikzlibrary{spy}
+\usetikzlibrary{through}
+\usepackage{tikz-3dplot}
+%\usetikzlibrary{quotes,angles,graph}
 \tikzset{%
   invisible/.style={opacity=0},
   only/.code args={<#1>#2}{\only<#1>{\pgfkeysalso{#2}}},
@@ -54,8 +78,66 @@
   temporal/.code args={<#1>#2#3#4}{%
     \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}}},
   point/.style={circle,inner sep=1.5pt,minimum size=1.5pt,draw,fill=#1},
-  point/.default=red
+  point/.default=red,
+  halfedge/.style={-{Stealth[left,scale=1.5]},commutative diagrams/shift left=#1},
+  halfedge/.default=3pt
+  edge/.style={line width=0.8pt,draw=#1},
+  edge/.default=blue,
+  halfedge/.style={-{Stealth[left,scale=1.5]},
+    commutative diagrams/shift left=#1},
+  halfedge/.default=3pt,
+  cross/.style={#1,cross out,draw,very thick,rotate=0,
+    minimum size=2*(4pt-\pgflinewidth),inner sep=0pt,outer sep=0pt},
+  cross/.default=red
 }
+\pgfplotsset{%
+  axisLimits/.style={enlarge x limits={abs value=\axisLimitsAbsValue,auto},
+    enlarge y limits={abs value=\axisLimitsAbsValue,auto}}}
+\newlength{\axisLimitsAbsValue}\setlength{\axisLimitsAbsValue}{0.08cm}
+% ------------------------------------------------------------------------------
+\newcommand{\mySimpleAxes}[4]{%
+  \draw[-{Stealth[scale=1.5]}] (#1,0)--(#3,0) node[right]{$x$};
+  \draw[-{Stealth[scale=1.5]}] (0,#2)--(0,#4) node[above]{$y$};
+}
+% ------------------------------------------------------------------------------
+% #1 half length of tick
+% #2 min x
+% #3 min y
+% #4 max x
+% #5 max y
+\NewDocumentCommand{\myAxes}{O{4pt}mmmmO{0.001}}{%
+  %axis
+  \draw[-{Stealth[scale=1.5]}] (#2,0)--(#4,0);
+  \draw[-{Stealth[scale=1.5]}] (0,#3)--(0,#5);
+  %ticks
+  \pgfmathtruncatemacro{\xs}{int(#2)};
+  \pgfmathtruncatemacro{\xe}{int(#4-#6)};
+  \pgfmathtruncatemacro{\ys}{int(#3)};
+  \pgfmathtruncatemacro{\ye}{int(#5-#6)};
+  \foreach \x in {\xs,...,\xe} \draw (\x,#1)--(\x,-#1);
+  \foreach \y in {\ys,...,\ye} \draw (#1,\y)--(-#1,\y);%
+}
+% ------------------------------------------------------------------------------
+%Syntax: [draw options] (center) (initial angle:final angle:radius)
+\def\centerarc[#1](#2)(#3:#4:#5){\draw[#1]([shift=(#3:#5)]#2) arc (#3:#4:#5)}
+% ------------------------------------------------------------------------------
+\def\arrCrossVertexZ(#1)#2#3{\node[cross=#3] at (#1) (#2) {};}
+\def\arrQueryVertexZ(#1)#2{\arrCrossVertexZ(#1){#2}{red}}
+\def\arrCrossLabeledVertexZ[#1](#2)#3#4#5{\node [cross=#5,label={[label distance=-3pt]#1:{#4}}] at (#2) (#3) {};}
+\def\arrQueryLabeledVertexZ[#1](#2)#3#4{\arrCrossLabeledVertexZ[#1](#2){#3}{#4}{red}}
+%
+\def\arrColorVertexZ(#1)#2#3{\node[point=#3] at (#1) (#2) {};}
+\def\arrMinorVertexZ(#1)#2{\arrColorVertexZ(#1){#2}{cyan}}
+\def\arrMainVertexZ(#1)#2{\arrColorVertexZ(#1){#2}{red}}
+\def\arrIntersectionVertexZ(#1)#2{\arrColorVertexZ(#1){#2}{white}}
+\def\arrColoredLabeledVertexZ[#1](#2)#3#4#5{\node [point=#5,label={[label distance=-3pt]#1:{#4}}] at (#2) (#3) {};}
+\def\arrMainLabeledVertexZ[#1](#2)#3#4{\arrColoredLabeledVertexZ[#1](#2){#3}{#4}{red}}
+\def\arrMinorLabeledVertexZ[#1](#2)#3#4{\arrColoredLabeledVertexZ[#1](#2){#3}{#4}{cyan}}
+% ------------------------------------------------------------------------------
+\def\arrvZ[#1](#2)#3{\arrColoredLabeledVertexZ[#1](#2){#3}{$v_{#3}$}{red}}
+\def\arruZ[#1](#2)#3{\arrColoredLabeledVertexZ[#1](#2){#3}{$u_{#3}$}{red}}
+\def\arrpZ[#1](#2)#3{\arrColoredLabeledVertexZ[#1](#2){#3}{$p_{#3}$}{red}}
+% ==============================================================================
 \makeatletter
 \def\nodesDef{\@ifnextchar[{\@nodesDefWith}{\@nodesDefWithout}}
 \def\@nodesDefWith[#1]#2{\foreach \c in #2 { \node[point=#1] (n\c) at (\c) {}; }}
@@ -81,6 +163,7 @@
 % \usepackage{picins}
 \usepackage[absolute,overlay]{textpos}
 \usepackage{ifthen}
+\usepackage{xparse}
 \usepackage{etoolbox}
 %
 

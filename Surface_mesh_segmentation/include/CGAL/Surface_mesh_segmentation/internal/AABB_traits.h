@@ -16,9 +16,10 @@
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
 
-#include <CGAL/AABB_traits.h>
-#include <boost/utility/enable_if.hpp>
+#include <CGAL/AABB_traits_3.h>
 #include <boost/type_traits.hpp>
+
+#include <type_traits>
 
 namespace CGAL
 {
@@ -26,18 +27,18 @@ namespace CGAL
 /// @cond CGAL_DOCUMENT_INTERNAL
 template<typename GeomTraits, typename AABB_primitive, bool fast_bbox_intersection>
 class AABB_traits_SDF :
-  public AABB_traits<GeomTraits, AABB_primitive>
+  public AABB_traits_3<GeomTraits, AABB_primitive>
 {
 public:
-  typedef AABB_traits<GeomTraits, AABB_primitive> Base_traits;
+  typedef AABB_traits_3<GeomTraits, AABB_primitive> Base_traits;
   typedef typename Base_traits::Bounding_box Bounding_box;
-  typedef typename Base_traits::Point_3 Point_3;
+  typedef typename Base_traits::Point Point_3;
 
   class Do_intersect
     : public Base_traits::Do_intersect
   {
   public:
-    Do_intersect(const AABB_traits<GeomTraits,AABB_primitive>& traits)
+    Do_intersect(const AABB_traits_3<GeomTraits,AABB_primitive>& traits)
       :Base_traits::Do_intersect(traits) {}
 
     // not sure is it safe on templated funcs ? may be do not inherit and repeat functions...
@@ -45,9 +46,9 @@ public:
 
     // activate functions below if K::FT is floating point and fast_bbox_intersection = true
     template <class K>
-    typename boost::enable_if_c<
-      boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
-          bool >::type
+    std::enable_if_t<
+      std::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
+          bool >
     operator()(const CGAL::Segment_3<K>& segment, const Bounding_box& bbox) const {
       const Point_3& p = segment.source();
       const Point_3& q = segment.target();
@@ -63,9 +64,9 @@ public:
     }
 
     template <class K>
-    typename boost::enable_if_c<
-      boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
-          bool >::type
+    std::enable_if_t<
+      std::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
+          bool >
     operator()(const CGAL::Ray_3<K>& ray, const Bounding_box& bbox) const {
       const Point_3& p = ray.source();
       const Point_3& q = ray.second_point();

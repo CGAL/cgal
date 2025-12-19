@@ -17,7 +17,6 @@
 
 #include <cstddef>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 
 #include <cassert>
 #include <CGAL/tags.h>
@@ -25,6 +24,8 @@
 
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Sqrt_extension.h>
+
+#include <type_traits>
 
 #ifndef CGAL_TEST_CONVERT_TO_BFI_H
 #define CGAL_TEST_CONVERT_TO_BFI_H
@@ -40,7 +41,7 @@ template <typename BFI, typename From>
 void test_convert_to_bfi_from(BFI,From){
   typedef typename CGAL::Coercion_traits<BFI,From>::Type CT_type;
   CGAL_USE_TYPE(CT_type);
-  CGAL_static_assertion(( ::boost::is_same<CT_type, BFI>::value));
+  static_assert(::std::is_same<CT_type, BFI>::value);
   assert(CGAL::convert_to_bfi(From(0))  == BFI(0));
   assert(CGAL::convert_to_bfi(From(1))  == BFI(1));
   assert(CGAL::convert_to_bfi(From(2))  == BFI(2));

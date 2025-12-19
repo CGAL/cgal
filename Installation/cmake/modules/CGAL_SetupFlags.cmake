@@ -6,7 +6,7 @@ if ( NOT CGAL_SETUP_FLAGS_INCLUDED )
 # override the flags used to build the libraries
 #
 set( CGAL_DONT_OVERRIDE_CMAKE_FLAGS_DESCRIPTION
-     "Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS. When this is FALSE, all the CMAKE_*_FLAGS flags are overriden with the values used when building the CGAL libs. For CGAL_*_flags (used for ADDITIONAL flags) , there is no need to set this to TRUE."
+     "Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS. When this is FALSE, all the CMAKE_*_FLAGS flags are overridden with the values used when building the CGAL libs. For CGAL_*_flags (used for ADDITIONAL flags) , there is no need to set this to TRUE."
    )
 
 option( CGAL_DONT_OVERRIDE_CMAKE_FLAGS
@@ -46,7 +46,7 @@ uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS_DEBUG      ${CGAL_EXE_LINKER_FLAGS_DE
 
 # Set a default build type if none is given
 if ( NOT CMAKE_BUILD_TYPE )
-  if( RUNNING_CGAL_AUTO_TEST )
+  if( RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE )
     typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE Debug   )
   else ()
     typed_cache_set ( STRING "Build type: Release, Debug, RelWithDebInfo or MinSizeRel" CMAKE_BUILD_TYPE Release )

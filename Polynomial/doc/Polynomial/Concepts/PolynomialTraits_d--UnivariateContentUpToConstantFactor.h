@@ -15,9 +15,7 @@ and `PolynomialTraits_d::MultivariateContent`.
 However, a concept `PolynomialTraits_d::MultivariateContentUpToConstantFactor`
 does not exist since the result is trivial.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

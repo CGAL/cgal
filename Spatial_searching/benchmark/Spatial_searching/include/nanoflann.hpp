@@ -97,7 +97,7 @@ namespace nanoflann
                 {
                         CountType i;
                         for (i=count; i>0; --i) {
-#ifdef NANOFLANN_FIRST_MATCH   // If defined and two poins have the same distance, the one with the lowest-index will be returned first.
+#ifdef NANOFLANN_FIRST_MATCH   // If defined and two points have the same distance, the one with the lowest-index will be returned first.
                                 if ( (dists[i-1]>dist) || ((dist==dists[i-1])&&(indices[i-1]>index)) ) {
 #else
                                 if (dists[i-1]>dist) {
@@ -393,7 +393,7 @@ namespace nanoflann
         /** @addtogroup param_grp Parameter structs
           * @{ */
 
-        /**  Parameters (see http://code.google.com/p/nanoflann/ for help choosing the parameters)
+        /**  Parameters (see https://github.com/jlblancoc/nanoflann for help choosing the parameters)
           */
         struct KDTreeSingleIndexAdaptorParams
         {
@@ -413,8 +413,8 @@ namespace nanoflann
                         checks(checks_IGNORED_), eps(eps_), sorted(sorted_) {}
 
                 int   checks;  //!< Ignored parameter (Kept for compatibility with the FLANN interface).
-                float eps;  //!< search for eps-approximate neighbours (default: 0)
-                bool sorted; //!< only for radius search, require neighbours sorted by distance (default: true)
+                float eps;  //!< search for eps-approximate neighbors (default: 0)
+                bool sorted; //!< only for radius search, require neighbors sorted by distance (default: true)
         };
         /** @} */
 
@@ -577,13 +577,13 @@ namespace nanoflann
 
         // ----------------  CArray -------------------------
         /** A STL container (as wrapper) for arrays of constant size defined at compile time (class imported from the MRPT project)
-         * This code is an adapted version from Boost, modifed for its integration
+         * This code is an adapted version from Boost, modified for its integration
          *        within MRPT (JLBC, Dec/2009) (Renamed array -> CArray to avoid possible potential conflicts).
          * See
-         *      http://www.josuttis.com/cppcode
+         *      https://www.josuttis.com/cppcode/
          * for details and the latest version.
          * See
-         *      http://www.boost.org/libs/array for Documentation.
+         *      https://www.boost.org/libs/array for Documentation.
          * for documentation.
          *
          * (C) Copyright Nicolai M. Josuttis 2001.
@@ -712,7 +712,7 @@ namespace nanoflann
          *   // Must return the Euclidean (L2) distance between the vector "p1[0:size-1]" and the data point with index "idx_p2" stored in the class:
          *   inline DistanceType kdtree_distance(const T *p1, const size_t idx_p2,size_t size) const { ... }
          *
-         *   // Must return the dim'th component of the idx'th point in the class:
+         *   // Must return the dim-th component of the idx-th point in the class:
          *   inline T kdtree_get_pt(const size_t idx, int dim) const { ... }
          *
          *   // Optional bounding-box computation: return false to default to a standard bbox computation loop.
@@ -823,7 +823,7 @@ namespace nanoflann
                 };
 
                 /**
-                 * Array of k-d trees used to find neighbours.
+                 * Array of k-d trees used to find neighbors.
                  */
                 NodePtr root_node;
                 typedef BranchStruct<NodePtr, DistanceType> BranchSt;
@@ -851,7 +851,7 @@ namespace nanoflann
                  *
                  * Params:
                  *          inputData = dataset with the input features
-                 *          params = parameters passed to the kdtree algorithm (see http://code.google.com/p/nanoflann/ for help choosing the parameters)
+                 *          params = parameters passed to the kdtree algorithm (see https://github.com/jlblancoc/nanoflann for help choosing the parameters)
                  */
                 KDTreeSingleIndexAdaptor(const int dimensionality, const DatasetAdaptor& inputData, const KDTreeSingleIndexAdaptorParams& params = KDTreeSingleIndexAdaptorParams() ) :
                         dataset(inputData), index_params(params), root_node(NULL), distance(inputData)
@@ -1002,7 +1002,7 @@ namespace nanoflann
                         if(node->child1 == NULL && node->child2 == NULL)
                                 return 1;
                         else{
-                                return std::max(depth(node->child1)+1,depth(node->child2)+1);
+                                return (std::max)(depth(node->child1)+1,depth(node->child2)+1);
                         }
                 }
 
@@ -1130,8 +1130,8 @@ namespace nanoflann
                                 node->sub.divhigh = right_bbox[cutfeat].low;
 
                                 for (int i=0; i<(DIM>0 ? DIM : dim); ++i) {
-                                        bbox[i].low = std::min(left_bbox[i].low, right_bbox[i].low);
-                                        bbox[i].high = std::max(left_bbox[i].high, right_bbox[i].high);
+                                        bbox[i].low = (std::min)(left_bbox[i].low, right_bbox[i].low);
+                                        bbox[i].high = (std::max)(left_bbox[i].high, right_bbox[i].high);
                                 }
                         }
 
@@ -1470,7 +1470,7 @@ namespace nanoflann
                         return s;
                 }
 
-                // Returns the dim'th component of the idx'th point in the class:
+                // Returns the dim-th component of the idx-th point in the class:
                 inline num_t kdtree_get_pt(const size_t idx, int dim) const {
                         return m_data_matrix.coeff(idx,dim);
                 }

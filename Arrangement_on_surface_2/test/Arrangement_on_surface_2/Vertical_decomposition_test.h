@@ -44,9 +44,9 @@ public:
   typedef typename Arrangement::Edge_const_iterator       Edge_const_iterator;
   typedef typename Arrangement::Vertex_const_iterator     Vertex_const_iterator;
 
-  typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+  typedef std::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>               Cell_type;
-  typedef boost::optional<Cell_type>                      Vert_type;
+  typedef std::optional<Cell_type>                      Vert_type;
   typedef typename std::pair<Vert_type, Vert_type>        Vert_pair;
   typedef typename std::pair<Vertex_const_handle, Vert_pair>
                                                           Vert_decomp_entry;
@@ -195,15 +195,15 @@ compare(const Result_type& expected, Vert_type actual)
   if (! actual) return false;
 
   auto obj = *actual;
-  // Assign object to a fase.
-  if (const auto* fh_expected = boost::get<Face_const_handle>(&(expected))) {
-    if (boost::get<Vertex_const_handle>(&obj)) {
+  // Assign object to a face.
+  if (const auto* fh_expected = std::get_if<Face_const_handle>(&(expected))) {
+    if (std::get_if<Vertex_const_handle>(&obj)) {
       std::cout << "Error: vertical decomposition!" << std::endl;
       std::cout << "Expected: a face."  << std::endl;
       std::cout << "Actual: a vertex." << std::endl;
       return false;
     }
-    if (boost::get<Halfedge_const_handle>(&obj)) {
+    if (std::get_if<Halfedge_const_handle>(&obj)) {
       std::cout << "Error: vertical decomposition!" << std::endl;
       std::cout << "Expected: a face."  << std::endl;
       std::cout << "Actual: a halfedge." << std::endl;
@@ -213,9 +213,9 @@ compare(const Result_type& expected, Vert_type actual)
   }
 
   // Assign object to a halfedge.
-  const auto* hh_expected = boost::get<Halfedge_const_handle>(&(expected));
+  const auto* hh_expected = std::get_if<Halfedge_const_handle>(&(expected));
   if (hh_expected) {
-    if (const auto* hh_actual = boost::get<Halfedge_const_handle>(&obj)) {
+    if (const auto* hh_actual = std::get_if<Halfedge_const_handle>(&obj)) {
       if (*hh_expected == *hh_actual) return true;
 
       std::cout << "Error: vertical decomposition!" << std::endl;
@@ -230,13 +230,13 @@ compare(const Result_type& expected, Vert_type actual)
     std::cout << "Expected: a halfedge, " << (*hh_expected)->curve()
               << std::endl;
 
-    if (const auto* vh_actual = boost::get<Vertex_const_handle>(&obj)) {
+    if (const auto* vh_actual = std::get_if<Vertex_const_handle>(&obj)) {
       std::cout << "Actual: a vertex, " << (*vh_actual)->point() << std::endl;
       return false;
     }
 
     Face_const_handle fh_actual;
-    if (boost::get<Face_const_handle>(&obj)) {
+    if (std::get_if<Face_const_handle>(&obj)) {
       std::cout << "Actual: a face." << std::endl;
       return false;
     }
@@ -245,9 +245,9 @@ compare(const Result_type& expected, Vert_type actual)
   }
 
   // Assign object to a vertex.
-  const auto* vh_expected = boost::get<Vertex_const_handle>(&(expected));
+  const auto* vh_expected = std::get_if<Vertex_const_handle>(&(expected));
   if (vh_expected) {
-    if (const auto* vh_actual = boost::get<Vertex_const_handle>(&obj)) {
+    if (const auto* vh_actual = std::get_if<Vertex_const_handle>(&obj)) {
       if (*vh_expected == *vh_actual) return true;
 
       std::cout << "Error: vertical decomposition!" << std::endl;
@@ -261,12 +261,12 @@ compare(const Result_type& expected, Vert_type actual)
     std::cout << "Error: vertical decomposition!" << std::endl;
     std::cout << "Expected: a vertex, " << (*vh_expected)->point() << std::endl;
 
-    if (const auto* hh_actual = boost::get<Halfedge_const_handle>(&obj)) {
+    if (const auto* hh_actual = std::get_if<Halfedge_const_handle>(&obj)) {
       std::cout << "Actual: a halfedge, " << (*hh_actual)->curve() << std::endl;
       return false;
     }
 
-    if (boost::get<Face_const_handle>(&obj)) {
+    if (std::get_if<Face_const_handle>(&obj)) {
       std::cout << "Actual: a face." << std::endl;
       return false;
     }
@@ -291,22 +291,22 @@ print(const Vert_decomp_entry& result)
   assert(obj_below);
   auto obj = *obj_below;
   std::cout << "  feature below: ";
-  if (const auto* hh  = boost::get<Halfedge_const_handle>(&obj))
+  if (const auto* hh  = std::get_if<Halfedge_const_handle>(&obj))
     std::cout << '[' << (*hh)->curve() << ']';
-  else if (const auto* vh = boost::get<Vertex_const_handle>(&obj))
+  else if (const auto* vh = std::get_if<Vertex_const_handle>(&obj))
     std::cout << '(' << (*vh)->point() << ')';
-  else if (const auto* fh = boost::get<Face_const_handle>(&obj))
+  else if (const auto* fh = std::get_if<Face_const_handle>(&obj))
     std::cout << "NONE";
   else std::cout << "EMPTY";
 
   assert(obj_above);
   obj = *obj_above;
   std::cout << "  feature above: ";
-  if (const auto* hh  = boost::get<Halfedge_const_handle>(&obj))
+  if (const auto* hh  = std::get_if<Halfedge_const_handle>(&obj))
     std::cout << '[' << (*hh)->curve() << ']';
-  else if (const auto* vh = boost::get<Vertex_const_handle>(&obj))
+  else if (const auto* vh = std::get_if<Vertex_const_handle>(&obj))
     std::cout << '(' << (*vh)->point() << ')';
-  else if (const auto* vh = boost::get<Face_const_handle>(&obj))
+  else if (const auto* vh = std::get_if<Face_const_handle>(&obj))
     std::cout << "NONE";
   else std::cout << "EMPTY";
 

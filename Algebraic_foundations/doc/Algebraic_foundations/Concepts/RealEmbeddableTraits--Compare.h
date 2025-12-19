@@ -7,7 +7,7 @@ namespace RealEmbeddableTraits_ {
 
 `AdaptableBinaryFunction` compares two real embeddable numbers.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `RealEmbeddableTraits`
 

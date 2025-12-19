@@ -34,18 +34,14 @@
 #include <boost/bind/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#if BOOST_VERSION >= 104700
-#  include <boost/random/uniform_int_distribution.hpp>
-#else
-#  include <boost/random/uniform_int.hpp>
-#endif
+#include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/normal_distribution.hpp>
 #if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/vector.hpp>
 #endif
 #include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/make_shared.hpp>
 #include <unordered_set>
 #include <iostream>
@@ -65,17 +61,10 @@ inline void init_feature_class_data(FeatureClassDataFloat& /*data*/, int /*n_cla
 }
 typedef std::unordered_set<int> FeatureSet;
 
-#if BOOST_VERSION >= 104700
 typedef boost::random::uniform_int_distribution<> UniformIntDist;
 typedef boost::random::normal_distribution<> NormalDist;
 typedef boost::random::mt19937 RandomGen;
 typedef boost::random::uniform_01<> UnitDist;
-#else
-typedef boost::uniform_int<> UniformIntDist;
-typedef boost::normal_distribution<> NormalDist;
-typedef boost::uniform_01<> UnitDist;
-typedef boost::mt19937 RandomGen;
-#endif
 
 struct ForestParams {
     size_t n_classes;

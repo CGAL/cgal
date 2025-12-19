@@ -15,7 +15,7 @@ int main(int, char**)
 
   auto result = intersection(cub, pl);
 
-  const std::vector<Point>* res = boost::get <std::vector<Point> >(&*result);
+  const std::vector<Point>* res = std::get_if <std::vector<Point> >(&*result);
   for(const Point& p : *res)
     std::cout << p << std::endl;
 

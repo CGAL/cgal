@@ -7,7 +7,7 @@ namespace AlgebraicStructureTraits_{
 
 `AdaptableUnaryFunction` providing the square root.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

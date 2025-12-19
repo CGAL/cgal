@@ -104,7 +104,7 @@ private:
   typedef Union_of_segment_cycles_2<Traits_2, Polygon_2>  Union_2;
 
   const Kernel* m_kernel;
-  bool m_own_kernel;    // inidicates whether the kernel should be freed up.
+  bool m_own_kernel;    // indicates whether the kernel should be freed up.
 
   // Data members:
   Equal_2                 f_equal;
@@ -192,7 +192,7 @@ public:
    * polygon.
    * \param pgn1 The first polygon.
    * \param pgn2 The second polygon.
-   * \param sum_bound Output: A polygon respresenting the outer boundary
+   * \param sum_bound Output: A polygon representing the outer boundary
    *                          of the Minkowski sum.
    * \param sum_holes Output: An output iterator for the holes in the sum,
    *                          represented as simple polygons.
@@ -266,7 +266,6 @@ public:
 
     // Construct the segments of the convolution cycles.
     unsigned int curr_id = 0;
-    unsigned int cycles = 0;
     Segments_list conv_segments;
     Segments_list cycle;
     Labels_set used_labels;
@@ -340,7 +339,6 @@ public:
               CGAL_assertion(cycle.empty());
             }
           }
-          ++cycles;
         }
 
         curr1 = next1;
@@ -613,7 +611,7 @@ private:
         res = f_compare_xy(curr_pt, next_pt);
 
         if (res != EQUAL) {
-          cycle.insert(curr,
+          after_next = cycle.insert(curr,
                        Labeled_segment_2(Segment_2(curr_pt, next_pt),
                                          X_curve_label((res == SMALLER),
                                                        cycle_id,

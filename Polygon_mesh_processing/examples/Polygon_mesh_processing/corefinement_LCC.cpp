@@ -12,7 +12,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                       Point;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel>           MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, MyTraits>::type LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, MyTraits>::type Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
-  LCC mesh1, mesh2;
+  Mesh mesh1, mesh2;
   if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;

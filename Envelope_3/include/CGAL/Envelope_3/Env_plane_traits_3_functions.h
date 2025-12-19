@@ -16,65 +16,62 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/use.h>
 
 namespace CGAL {
 
 template <class K>
-Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
-                                          const typename K::Plane_3 &h2,
-                                          const typename K::Line_2  &l,
-                                          const K& k)
+std::optional< std::variant<typename K::Line_2, typename K::Ray_2, typename K::Segment_2, typename K::Point_2> >
+plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
+                                   const typename K::Plane_3 &h2,
+                                   const typename K::Line_2  &l,
+                                   const K& k)
 {
   typedef typename K::Line_3     Line_3;
   typedef typename K::Line_2     Line_2;
   typedef typename K::Plane_3    Plane_3;
 
   // intersect the two planes
-  Object h_obj = k.intersect_3_object()(h1, h2);
-  if(h_obj.is_empty())
-    return Object(); // no intersection at all (paralles planes)
+  auto h_obj = k.intersect_3_object()(h1, h2);
+  if(h_obj == std::nullopt)
+    return std::nullopt; // no intersection at all (parallel planes)
 
   Plane_3 p;
-  if(assign(p, h_obj))
-    return Object();
+  if(std::get_if<Plane_3>(&(*h_obj))==nullptr)
+    return std::nullopt;
 
   // if two planes are not parallel they must intersect at a 3D line
-  Line_3 l3;
-  CGAL_assertion_code(bool b =)
-    assign(l3, h_obj);
-  CGAL_assertion(b);
+  const Line_3* l3 = std::get_if<Line_3>(&(*h_obj));
+  CGAL_assertion(l3!=nullptr);
 
-  const Line_2& proj_inter_line = project_xy(l3, k);
+  const Line_2& proj_inter_line = project_xy(*l3, k);
 
-  return line_under_linear_constraint(proj_inter_line, l, k);
+  return line_under_linear_constraint(proj_inter_line, l, k); //LR
 }
 
 template <class K>
-Object half_plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
-                                               const typename K::Line_2  &l1,
-                                               const typename K::Plane_3 &h2,
-                                               const typename K::Line_2  &l2,
-                                               const K& k)
+std::optional< std::variant<typename K::Line_2, typename K::Ray_2, typename K::Segment_2, typename K::Point_2> >
+half_plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
+                                        const typename K::Line_2  &l1,
+                                        const typename K::Plane_3 &h2,
+                                        const typename K::Line_2  &l2,
+                                        const K& k)
 {
   typedef typename K::Ray_2      Ray_2;
   typedef typename K::Line_2     Line_2;
 
-  Object obj = plane_half_plane_proj_intersection(h1, h2, l2, k);
-  if(obj.is_empty())
-    return Object();
+  auto obj = plane_half_plane_proj_intersection(h1, h2, l2, k);
+  if(obj == std::nullopt)
+    return std::nullopt;
 
-  Line_2 l;
-  if(assign(l, obj))
-    return line_under_linear_constraint(l, l1, k);
+  if(const Line_2* line = std::get_if<Line_2>(&(*obj)))
+    return line_under_linear_constraint(*line, l1, k);
 
-  Ray_2 ray;
-  if(assign(ray, obj))
-    return ray_under_linear_constraint(ray, l1, k);
+  if(const Ray_2* ray = std::get_if<Ray_2>(&(*obj)))
+    return ray_under_linear_constraint(*ray, l1, k);
 
-  CGAL_error(); // doesnt suppose to reach here
-  return Object();
+  CGAL_error(); // doesn't suppose to reach here
+  return std::nullopt;
 }
 
 template <class K>
@@ -97,96 +94,91 @@ typename K::Line_2 project_xy(const typename K::Line_3& l,
 // l1 is a line, l2 is a linear constraint (determined by the direction
 // of the line).
 template <class K>
-Object line_under_linear_constraint(const typename K::Line_2& l1,
-                                    const typename K::Line_2& l2,
-                                    const K& k)
+std::optional< std::variant<typename K::Line_2, typename K::Ray_2, typename K::Segment_2, typename K::Point_2> >
+line_under_linear_constraint(const typename K::Line_2& l1,
+                             const typename K::Line_2& l2,
+                             const K& k)
 {
   typedef typename K::Ray_2         Ray_2;
-  typedef typename K::Line_2        Line_2;
   typedef typename K::Vector_2      Vector_2;
   typedef typename K::Point_2       Point_2;
 
-  Object obj = k.intersect_2_object()(l1, l2);
-  Point_2 p;
-  if(assign(p, obj))
-  {
-    const Vector_2& vec = k.construct_vector_2_object()(l1);
-    const Point_2& s = k.construct_translated_point_2_object()(p, vec);
-    const Ray_2& ray = k.construct_ray_2_object()(p, s);
-    Oriented_side side = k.oriented_side_2_object()(l2, s);
-    if(side == ON_NEGATIVE_SIDE)
-    {
-      return make_object(k.construct_opposite_ray_2_object()(ray));
-    }
+  auto obj = k.intersect_2_object()(l1, l2);
 
-    CGAL_assertion(side == ON_POSITIVE_SIDE); //the two lines are not parallel
-    return make_object(ray);
-  }
-
-  if(obj.is_empty()) // the two lines are parallel
+  if(obj == std::nullopt)// the two lines are parallel
   {
     const Point_2& s = k.construct_point_on_2_object()(l1, 0);
     Oriented_side side = k.oriented_side_2_object()(l2, s);
 
     if(side == ON_NEGATIVE_SIDE)
-      return Object();
+      return std::nullopt;
 
     CGAL_assertion(side == ON_POSITIVE_SIDE); // the two lines are parallel
-    return make_object(l1);
+    return l1;
+  }
+
+  if(const Point_2* p = std::get_if<Point_2>(&(*obj)))
+  {
+    const Vector_2& vec = k.construct_vector_2_object()(l1);
+    const Point_2& s = k.construct_translated_point_2_object()(*p, vec);
+    const Ray_2& ray = k.construct_ray_2_object()(*p, s);
+    Oriented_side side = k.oriented_side_2_object()(l2, s);
+    if(side == ON_NEGATIVE_SIDE)
+    {
+      return k.construct_opposite_ray_2_object()(ray);
+    }
+
+    CGAL_assertion(side == ON_POSITIVE_SIDE); //the two lines are not parallel
+    return ray;
   }
 
   // the two lines overlap
-  CGAL_USE_TYPE(Line_2);
-  CGAL_assertion_code(Line_2 dummy;);
-  CGAL_assertion_code(bool b =  assign(dummy, obj););
-  CGAL_assertion(b);
-
-  return make_object(l1);
+  return l1;
 }
 
 template <class K>
-Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
-                                   const typename K::Line_2& l,
-                                   const K& k)
+std::optional< std::variant<typename K::Line_2, typename K::Ray_2, typename K::Segment_2, typename K::Point_2> >
+ray_under_linear_constraint(const typename K::Ray_2&  ray,
+                            const typename K::Line_2& l,
+                            const K& k)
 {
   typedef typename K::Vector_2      Vector_2;
   typedef typename K::Point_2       Point_2;
 
   const Point_2& s = k.construct_point_on_2_object()(ray, 0);
   Oriented_side side = k.oriented_side_2_object()(l, s);
-  Object obj = k.intersect_2_object()(ray, l);
-  if(obj.is_empty())
+  auto obj = k.intersect_2_object()(ray, l);
+  if(obj == std::nullopt)
   {
     if(side == ON_NEGATIVE_SIDE)
-      return Object();
+      return std::nullopt;
 
     CGAL_assertion(side == ON_POSITIVE_SIDE);
-    return make_object(ray);
+    return ray;
   }
 
-  Point_2 p;
-  if(assign(p, obj))
+  if(const Point_2* p = std::get_if<Point_2>(&(*obj)))
   {
     if(side == ON_POSITIVE_SIDE)
-      return make_object(k.construct_segment_2_object()(s, p));
+      return k.construct_segment_2_object()(s, *p);
 
     Vector_2 vec = k.construct_vector_2_object()(ray);
     if(side == ON_NEGATIVE_SIDE)
-      return make_object(k.construct_ray_2_object()(p, vec));
+      return k.construct_ray_2_object()(*p, vec);
 
     CGAL_assertion(side == ON_ORIENTED_BOUNDARY);
     const Vector_2& vec_of_l = k.construct_vector_2_object()(l);
 
     Orientation orient = k.orientation_2_object()(vec_of_l, vec);
     if(orient == LEFT_TURN)
-      return make_object(ray);
+      return ray;
 
     CGAL_assertion(orient == RIGHT_TURN);
-    return make_object(s);
+    return s;
   }
 
   // the ray and the line overlap
-  return make_object(ray);
+  return ray;
 }
 
 

@@ -7,8 +7,10 @@ The concept `SurfaceMeshShortestPathTraits` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Surface_mesh_shortest_path`.
 
-\cgalRefines `CopyConstructible` and `Assignable`
-\cgalHasModel `CGAL::Surface_mesh_shortest_path_traits<K,P>`
+\cgalRefines{CopyConstructible,Assignable}
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Surface_mesh_shortest_path_traits<K,P>}
+\cgalHasModelsEnd
 
 */
 
@@ -112,7 +114,7 @@ public:
   `Point_2 operator()(Segment_2 s, int i)`
   to return the source or target of `s`, depending on whether `i` is 0 or 1 respectively, and
   `Point_2 operator()(Triangle_2 t, int i)`
-  to return the `i`th vertex of `t`.
+  to return the `i`-th vertex of `t`.
   */
   typedef unspecified_type Construct_vertex_2;
 
@@ -152,7 +154,7 @@ public:
   /*!
   Function object type.
   Must provide
-  `boost::optional< boost::variant< T... > > operator()(A obj1, B obj2)`
+  `std::optional< std::variant< T... > > operator()(A obj1, B obj2)`
   to compute the intersection between `obj1` and `obj2`, where `A` and `B` can be any type amongst
   `Line_2`, `Ray_2`, `Segment_2`.
   */
@@ -184,7 +186,7 @@ public:
   `Point_3 operator()(Segment_3 s, int i)`
   to return the source or target of `s`, depending on whether `i` is 0 or 1 respectively, and
   `Point_3 operator()(Triangle_3 t, int i)`
-  to return the `i`th vertex of `t`.
+  to return the `i`-th vertex of `t`.
   */
   typedef unspecified_type Construct_vertex_3;
 
@@ -229,9 +231,9 @@ public:
   Function object type that provides
   `Triangle_2 operator()(Triangle_3 t, std::size_t i, Segment_2 base)`
   which computes a 2-dimensional projection of t that preserves edge lengths,
-  such that the `i`th edge of the projection of `t` is incident to `base`.
+  such that the `i`-th edge of the projection of `t` is incident to `base`.
 
-  \pre The length of the `i`th edge of `t` is equal to the length of `base`
+  \pre The length of the `i`-th edge of `t` is equal to the length of `base`
   */
   typedef unspecified_type Construct_triangle_3_along_segment_2_flattening;
 
@@ -256,7 +258,7 @@ public:
   /*!
   Function object type that provides
   `FT operator(Barycentric_coordinates b, std::size_t i)`
-  to get the `i`th weight of barycentric coordinates `b`.
+  to get the `i`-th weight of barycentric coordinates `b`.
   */
   typedef unspecified_type Construct_barycentric_coordinates_weight;
 

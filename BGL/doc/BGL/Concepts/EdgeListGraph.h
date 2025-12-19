@@ -9,9 +9,11 @@ The concept `EdgeListGraph` refines the concept
 <a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
 and adds the requirement for traversal of all edges in a graph.
 
-\cgalRefines <a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
+\cgalRefines{<a href="https://www.boost.org/libs/graph/doc/Graph.html">Graph</a>}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

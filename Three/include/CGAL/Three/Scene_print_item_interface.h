@@ -61,6 +61,6 @@ public:
 }
 }
 
-Q_DECLARE_INTERFACE(CGAL::Three::Scene_print_item_interface, "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
+Q_DECLARE_INTERFACE(CGAL::Three::Scene_print_item_interface, "com.geometryfactory.CGALLab.PrintInterface/1.0")
 #endif // SCENE_PRINT_ITEM_INTERFACE_H
 

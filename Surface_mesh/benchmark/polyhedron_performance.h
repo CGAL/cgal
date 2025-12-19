@@ -10,7 +10,7 @@
 #include <CGAL/HalfedgeDS_face_base.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 #include <CGAL/Memory_sizer.h>
 
 #include <iostream>
@@ -461,7 +461,7 @@ private:
      )
     vb->id() = index++;
 
-  SMS::Count_ratio_stop_predicate<Polyhedron> stop(0.1);
+  SMS::Edge_count_ratio_stop_predicate<Polyhedron> stop(0.1);
   int r = SMS::edge_collapse(P, stop);
 #endif
   }

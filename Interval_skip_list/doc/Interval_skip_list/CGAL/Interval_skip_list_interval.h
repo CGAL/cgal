@@ -11,7 +11,7 @@ can be open or closed at each endpoint.
 
 The output operator is defined for `std::ostream`.
 
-\cgalModels `Interval`
+\cgalModels{Interval}
 
 */
 template< typename Value >

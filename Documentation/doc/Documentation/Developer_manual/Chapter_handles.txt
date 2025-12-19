@@ -7,8 +7,8 @@
 \section Developer_manualReferencecounting Reference counting
 
 As of release 2.1, a reference counting scheme is used for
-the kernel objects in the kernels `Cartesian` and
-`Homogeneous`.
+the kernel objects in the kernels `CGAL::Cartesian` and
+`CGAL::Homogeneous`.
 All copies of an object share a common representation object storing
 the data associated with a kernel object; see \cgalFigureRef{figrefcounted}.
 
@@ -19,7 +19,7 @@ of the data that we would have to copy without sharing representations.
 The drawback is an indirection in accessing the data. Such an indirection is
 bad in terms of cache efficiency.
 Thus there are also non-reference-counting kernels available
-`Simple_cartesian` and `Simple_homogeneous`.
+`CGAL::Simple_cartesian` and `CGAL::Simple_homogeneous`.
 
 \cgalFigureBegin{figrefcounted,reference_counting.png}
 Objects using reference counting (bottom) share common representation; copying creates a new handle (drawn at the right) pointing to the same  representation as the object copied. Without reference counting (top)  all data are copied to the new object (drawn at the right);
@@ -144,7 +144,7 @@ shared with other `My_geo_object` objects.
 
 \section Developer_manualTemplatedhandles Templated handles
 
-Factoring out the common functionality in base classes enables re-use of
+Factoring out the common functionality in base classes enables reuse of
 the code, but there is also a major drawback. The `Handle` class does not
 know the type of the representation object. It maintains a `Rep*` pointer.
 Therefore, this pointer must be cast to a pointer to the actual type
@@ -161,13 +161,13 @@ following member functions
 to manage its internal reference counting:
 
 <UL>
-<LI>`add_reference`
+<LI>`add_reference()`
 
-<LI>`remove_reference`
+<LI>`remove_reference()`
 
-<LI>`bool is_referenced`
+<LI>`bool is_referenced()`
 
-<LI>`bool is_shared`
+<LI>`bool is_shared()`
 
 </UL>
 See the UML class diagram in \cgalFigureRef{figHandleFor}.
@@ -257,7 +257,7 @@ You get this functionality by including `CGAL/Handle_for.h`
 
 \section Developer_manualAllocation Allocation
 
-Class `Handle_for` has two template parameters. Besides the
+Class `CGAL::Handle_for` has two template parameters. Besides the
 type of the stored object, there is also a parameter specifying an
 allocator.
 Any concrete argument must be a model for the `Allocator` concept

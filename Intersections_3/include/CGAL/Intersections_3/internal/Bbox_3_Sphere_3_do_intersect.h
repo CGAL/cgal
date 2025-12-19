@@ -23,9 +23,10 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Sphere_3& sphere,
-                  const CGAL::Bbox_3& bbox,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Sphere_3& sphere,
+             const CGAL::Bbox_3& bbox,
+             const K& k)
 {
   return do_intersect_sphere_box_3(sphere,
                                    bbox.xmin(), bbox.ymin(), bbox.zmin(),
@@ -34,9 +35,10 @@ bool do_intersect(const typename K::Sphere_3& sphere,
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const typename K::Sphere_3& sphere,
-                  const K& k)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bbox,
+             const typename K::Sphere_3& sphere,
+             const K& k)
 {
   return do_intersect(sphere, bbox, k);
 }

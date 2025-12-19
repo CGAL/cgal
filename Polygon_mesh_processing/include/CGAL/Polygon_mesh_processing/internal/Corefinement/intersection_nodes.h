@@ -17,7 +17,6 @@
 
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <boost/type_traits/is_floating_point.hpp>
 #include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
@@ -31,7 +30,7 @@ template <class TriangleMesh,
           class VertexPointMap1, class VertexPointMap2,
           bool Predicates_on_constructions_needed,
           bool Has_exact_constructions =
-          !boost::is_floating_point<
+          !std::is_floating_point<
             typename Kernel_traits<
               typename boost::property_traits<VertexPointMap1>::value_type
             >::Kernel::FT
@@ -49,8 +48,8 @@ public:
 private:
 //typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
-                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                                      typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
   typedef std::vector <Point_3>                                    Nodes_vector;
@@ -64,12 +63,6 @@ private:
   Nodes_vector nodes;
   Exact_kernel ek;
   Exact_to_double exact_to_double;
-
-  typename Exact_kernel::Point_3
-  to_exact(const typename Input_kernel::Point_3& p) const
-  {
-    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
-  }
 
 public:
   const TriangleMesh &tm1, &tm2;
@@ -85,6 +78,12 @@ public:
   , vpm1(vpm1_)
   , vpm2(vpm2_)
   {}
+
+  static typename Exact_kernel::Point_3
+  to_exact(const typename Input_kernel::Point_3& p)
+  {
+    return typename Exact_kernel::Point_3(p.x(), p.y(), p.z());
+  }
 
   const Point_3& operator[](std::size_t i) const {
     return nodes[i];
@@ -132,7 +131,7 @@ public:
   template <class Mesh_to_map_node>
   void finalize(const Mesh_to_map_node&) {}
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
   }
@@ -151,8 +150,8 @@ public:
 
 private:
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
-                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                             typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
 
@@ -202,8 +201,9 @@ public:
     return enodes[i];
   }
 
+  static
   Exact_kernel::Point_3
-  to_exact(const Point_3& p) const
+  to_exact(const Point_3& p)
   {
     return Exact_kernel::Point_3(p.x(), p.y(), p.z());
   }
@@ -265,9 +265,9 @@ public:
                to_exact( get(vpm, target(next(h3,tm),tm))));
     const auto inter_res = exact_intersection(p1, p2, p3);
 
-    CGAL_assertion(inter_res != boost::none);
+    CGAL_assertion(inter_res != std::nullopt);
     const Exact_kernel::Point_3* pt =
-      boost::get<Exact_kernel::Point_3>(&(*inter_res));
+      std::get_if<Exact_kernel::Point_3>(&(*inter_res));
     CGAL_assertion(pt!=nullptr);
     add_new_node(*pt);
   }
@@ -310,7 +310,7 @@ public:
     }
   }
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(enodes.size() == std::set<typename Exact_kernel::Point_3>(enodes.begin(), enodes.end()).size());
   }
@@ -327,8 +327,8 @@ class Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2,
 {
 //typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type  Point_3;
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
-                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                             typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   typedef typename Kernel_traits<Point_3>::Kernel                  Input_kernel;
   typedef std::vector <Point_3>                                    Nodes_vector;
@@ -386,9 +386,9 @@ public:
                get(vpm, target(next(h3,tm),tm)));
     const auto inter_res = intersection(p1, p2, p3);
 
-    CGAL_assertion(inter_res != boost::none);
+    CGAL_assertion(inter_res != std::nullopt);
     const Point_3* pt =
-      boost::get<Point_3>(&(*inter_res));
+      std::get_if<Point_3>(&(*inter_res));
     CGAL_assertion(pt!=nullptr);
     add_new_node(*pt);
   }
@@ -419,7 +419,7 @@ public:
     nodes.push_back(p);
   }
 
-  const Point_3& to_exact(const Point_3& p) const { return p; }
+  static const Point_3& to_exact(const Point_3& p) { return p; }
 
   template <class VPM> // VertexPointMap1 or VertexPointMap2
   void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
@@ -434,7 +434,7 @@ public:
   {}
 
 
-  void check_no_duplicates()
+  void check_no_duplicates() const
   {
     CGAL_assertion(nodes.size() == std::set<Point_3>(nodes.begin(), nodes.end()).size());
   }

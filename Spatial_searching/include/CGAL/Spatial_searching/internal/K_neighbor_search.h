@@ -60,8 +60,8 @@ protected:
 
   public:
 
-    Distance_larger(bool search_the_nearest_neighbour)
-      : search_nearest(search_the_nearest_neighbour)
+    Distance_larger(bool search_the_nearest_neighbor)
+      : search_nearest(search_the_nearest_neighbor)
     {}
 
     bool operator()(const Point_ptr_with_transformed_distance& p1,

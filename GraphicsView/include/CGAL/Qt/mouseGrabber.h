@@ -269,7 +269,7 @@ protected:
   //@}
 
 private:
-  // Copy constructor and opertor= are declared private and undefined
+  // Copy constructor and operator= are declared private and undefined
   // Prevents everyone from trying to use them
   MouseGrabber(const MouseGrabber &);
   MouseGrabber &operator=(const MouseGrabber &);

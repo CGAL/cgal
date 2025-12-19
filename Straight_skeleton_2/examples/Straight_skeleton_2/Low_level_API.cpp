@@ -5,9 +5,9 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 #include <cassert>
@@ -22,7 +22,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::Point_2 Point_2;
 typedef CGAL::Polygon_2<Kernel>    Contour;
-typedef boost::shared_ptr<Contour> ContourPtr;
+typedef std::shared_ptr<Contour> ContourPtr;
 typedef std::vector<ContourPtr>    ContourSequence ;
 
 typedef CGAL::Straight_skeleton_2<Kernel> Ss;
@@ -58,7 +58,7 @@ int main()
   // Since the package doesn't support that operation directly, we use the following trick:
   // (1) Place the polygon as a hole of a big outer frame.
   // (2) Construct the skeleton on the interior of that frame (with the polygon as a hole)
-  // (3) Construc the offset contours
+  // (3) Construct the offset contours
   // (4) Identify the offset contour that corresponds to the frame and remove it from the result
 
 
@@ -66,7 +66,7 @@ int main()
 
   // First we need to determine the proper separation between the polygon and the frame.
   // We use this helper function provided in the package.
-  boost::optional<double> margin = CGAL::compute_outer_frame_margin(star.begin(),star.end(),offset);
+  std::optional<double> margin = CGAL::compute_outer_frame_margin(star.begin(),star.end(),offset);
 
   // Proceed only if the margin was computed (an extremely sharp corner might cause overflow)
   if ( margin )
@@ -97,12 +97,12 @@ int main()
     ssb.enter_contour(star.rbegin(),star.rend());
 
     // Construct the skeleton
-    boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+    std::shared_ptr<Ss> ss = ssb.construct_skeleton();
 
     // Proceed only if the skeleton was correctly constructed.
     if ( ss )
     {
-      print_straight_skeleton(*ss);
+      CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*ss);
 
       // Instantiate the container of offset contours
       ContourSequence offset_contours ;
@@ -131,7 +131,7 @@ int main()
       // Remove the offset contour that corresponds to the frame.
       offset_contours.erase(f);
 
-      print_polygons(offset_contours);
+      CGAL::Straight_skeletons_2::IO::print_polygons(offset_contours);
     }
   }
 

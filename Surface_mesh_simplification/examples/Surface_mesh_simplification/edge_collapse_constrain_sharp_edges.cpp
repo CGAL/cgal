@@ -4,7 +4,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/property_map.h>
 
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
   std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   // Contract the surface mesh as much as possible
-  SMS::Count_stop_predicate<Surface_mesh> stop(0);
+  SMS::Edge_count_stop_predicate<Surface_mesh> stop(0);
 
   std::cout << "Collapsing as many non-sharp edges of mesh: " << filename << " as possible..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh, stop,

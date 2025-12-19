@@ -6,7 +6,7 @@
 Computes the second coordinate of an
 `AlgebraicKernel_d_2::AlgebraicReal_2`.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicKernel_d_2::ComputeY_2`
 

@@ -37,7 +37,7 @@ class Gradient_of_feature : public Feature_base
   const InputRange& m_input;
   ItemMap m_map;
   Feature_handle m_feature;
-  boost::shared_ptr<NeighborQuery> m_query;
+  std::shared_ptr<NeighborQuery> m_query;
 
 public:
   /*!

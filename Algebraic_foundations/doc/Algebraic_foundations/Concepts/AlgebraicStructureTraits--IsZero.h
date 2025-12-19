@@ -7,7 +7,7 @@ namespace AlgebraicStructureTraits_{
 
 `AdaptableUnaryFunction`, returns true in case the argument is the zero element of the ring.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 \sa `RealEmbeddableTraits_::IsZero`

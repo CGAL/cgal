@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::CompareY_2`
+\cgalRefines{Kernel::CompareY_2}
 
 \sa `CircularKernel::CompareX_2`
 \sa `CircularKernel::CompareXY_2`

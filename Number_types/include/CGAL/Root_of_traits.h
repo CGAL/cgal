@@ -76,7 +76,9 @@ compute_roots_of_2(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
     }
   }
   else {
-    *oit++ = -c/b; return oit;
+    Root_of_1 cb = -c / b;
+    *oit++ = Root_of_2(cb);
+    return oit;
   }
 }
 
@@ -150,7 +152,7 @@ private:
     // We have the typedef as VC10 fails with
     // static_assert(FrT::Is_fraction::value)
     typedef typename FrT::Is_fraction ISF;
-    CGAL_static_assertion((ISF::value));
+    static_assert(ISF::value);
 
 
     typedef typename FrT::Numerator_type      RT;

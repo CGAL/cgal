@@ -14,7 +14,7 @@ _test_depth(const R& )
   Point_3 m = CGAL::midpoint(p,q);
 
   auto result = CGAL::intersection(s0, s1);
-  const Point_3* ip = boost::get<Point_3>(&*result);
+  const Point_3* ip = std::get_if<Point_3>(&*result);
 
   assert(CGAL::depth(p) == 0);
   assert(CGAL::depth(q) == 0);

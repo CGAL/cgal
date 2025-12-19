@@ -20,14 +20,14 @@
 
 /*! \file The non-caching segment traits-class for the arrangement package.
  * This traits class handles general segments. It is a model of the
- * ArrangementTraits_2 concept, a refinement of the ArrangementBasicTraits_2
+ * AosTraits_2 concept, a refinement of the AosBasicTraits_2
  * concept. The class is templated by a kernel and inherits from the
- * Arr_non_caching_segment_basic_traits_2 class instanciated with the kernel -
- * a model of the ArrangementBasicTraits_2 concept. It defined a few additional
+ * Arr_non_caching_segment_basic_traits_2 class instantiated with the kernel -
+ * a model of the AosBasicTraits_2 concept. It defined a few additional
  * functors required by the concept it models.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/tags.h>
@@ -38,7 +38,7 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementTraits_2 concept that handles general
+ * A model of the AosTraits_2 concept that handles general
  * line segments.
  */
 template <typename Kernel_T = Exact_predicates_exact_constructions_kernel>
@@ -52,7 +52,7 @@ public:
   typedef typename Base::Segment_assertions                Segment_assertions;
   typedef typename Base::Has_exact_division                Has_exact_division;
 
-  /*! Default constructor */
+  /*! constructs default */
   Arr_non_caching_segment_traits_2() : Base() {}
 
   /// \name Types and functors inherited from the base
@@ -118,7 +118,7 @@ public:
    */
   class Make_x_monotone_2 {
   public:
-    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+    /*! subdivides a given curve into x-monotone subcurves and insert them into
      * a given output iterator. As segments are always x_monotone, only one
      * x-monotone curve is inserted into the output iterator.
      * \param cv the segment.
@@ -131,25 +131,25 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with a variant.
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(cv);
       return oi;
     }
   };
 
-  /*! Obtain a Make_x_monotone_2 functor object. */
+  /*! obtains a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(); }
 
   /*! \class
-   * A functor for splitting a segment into two segements.
+   * A functor for splitting a segment into two segments.
    */
   class Split_2 {
     typedef Arr_non_caching_segment_traits_2<Kernel_T>    Self;
 
   public:
-    /*! Split a given x-monotone curve at a given point into two sub-curves.
+    /*! splits a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
      * \param p The split point.
      * \param c1 Output: The left resulting subcurve (p is its right endpoint).
@@ -189,7 +189,7 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 functor object. */
+  /*! obtains a Split_2 functor object. */
   Split_2 split_2_object() const { return Split_2(); }
 
   /*! \class
@@ -202,7 +202,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Intersect_2(const Traits& traits) : m_traits(traits) {}
@@ -210,7 +210,7 @@ public:
     friend class Arr_non_caching_segment_traits_2<Kernel>;
 
   public:
-    /*! Find the intersections of the two given segments and insert them into
+    /*! finds the intersections of the two given segments and insert them into
      * the given output iterator. As two segments may itersect only once, only
      * a single intersection will be contained in the iterator.
      * \param cv1 The first curve.
@@ -224,8 +224,6 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       const Kernel& kernel = m_traits;
       auto res = kernel.intersect_2_object()(cv1, cv2);
@@ -233,20 +231,20 @@ public:
       // There is no intersection:
       if (! res) return oi;
 
-      // Chack if the intersection is a point:
-      const Point_2* p_p = boost::get<Point_2>(&*res);
+      // Check if the intersection is a point:
+      const Point_2* p_p = std::get_if<Point_2>(&*res);
       if (p_p != nullptr) {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
         // If the two segments intersect at their endpoints, then the
         // multiplicity is undefined, but we deliberately ignore it for
-        // efficieny reasons.
-        *oi++ = Intersection_result(Intersection_point(*p_p, 1));
+        // efficiency reasons.
+        *oi++ = Intersection_point(*p_p, 1);
         return oi;
       }
 
       // The intersection is a segment.
-      const X_monotone_curve_2* cv_p = boost::get<X_monotone_curve_2>(&*res);
+      const X_monotone_curve_2* cv_p = std::get_if<X_monotone_curve_2>(&*res);
       CGAL_assertion(cv_p != nullptr);
 
       Comparison_result cmp1 = m_traits.compare_endpoints_xy_2_object()(cv1);
@@ -257,16 +255,16 @@ public:
         // in the overlap segment
         if (m_traits.compare_endpoints_xy_2_object()(*cv_p) != cmp1) {
           auto ctr_opposite = kernel.construct_opposite_segment_2_object();
-          *oi++ = Intersection_result(ctr_opposite(*cv_p));
+          *oi++ = ctr_opposite(*cv_p);
           return oi;
         }
       }
-      *oi++ = Intersection_result(*cv_p);
+      *oi++ = *cv_p;
       return oi;
     }
   };
 
-  /*! Obtain an Intersect_2 functor object. */
+  /*! obtains an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   /*! \class
@@ -279,7 +277,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Are_mergeable_2(const Traits* traits) : m_traits(traits) {}
@@ -287,7 +285,7 @@ public:
     friend class Arr_non_caching_segment_traits_2<Kernel>;
 
   public:
-    /*! Check whether it is possible to merge two given x-monotone curves.
+    /*! checks whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are mergeable, that is, if they are
@@ -310,7 +308,7 @@ public:
     }
   };
 
-  /*! Obtain an Are_mergeable_2 functor object */
+  /*! obtains an Are_mergeable_2 functor object */
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(this); }
 
@@ -324,7 +322,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
@@ -332,7 +330,7 @@ public:
     friend class Arr_non_caching_segment_traits_2<Kernel>;
 
   public:
-    /*! Merge two given segments into a single segment.
+    /*! merges two given segments into a single segment.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
@@ -367,7 +365,7 @@ public:
     }
   };
 
-  /*! Obtain a Merge_2 functor object */
+  /*! obtains a Merge_2 functor object */
   Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
@@ -375,14 +373,13 @@ public:
   //@{
   typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2;
 
-  /*! Obtain a Construct_opposite_2 functor object */
+  /*! obtains a Construct_opposite_2 functor object */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(); }
 
   class Compare_endpoints_xy_2 {
   public:
-    /*!
-     * Compare the two endpoints of a given curve lexigoraphically.
+    /*! compares the two endpoints of a given curve lexigoraphically.
      * \param cv The curve.
      * \return SMALLER if cv is directed from left to right and LARGER
      * otherwise.
@@ -399,7 +396,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_endpoints_xy_2 functor object */
+  /*! obtains a Compare_endpoints_xy_2 functor object */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(); }
   //@}
@@ -410,14 +407,14 @@ public:
   //! Functor
   typedef typename Kernel::Construct_segment_2    Construct_curve_2;
 
-  /*! Obtain a Construct_curve_2 functor object. */
+  /*! obtains a Construct_curve_2 functor object. */
   Construct_curve_2 construct_curve_2_object() const
   { return this->construct_segment_2_object(); }
 
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

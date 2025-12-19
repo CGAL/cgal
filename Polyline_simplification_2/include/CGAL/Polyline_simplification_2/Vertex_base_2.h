@@ -25,7 +25,7 @@ namespace Polyline_simplification_2 {
 
 /// A vertex base class with data members needed by the simplification algorithm.
 /// \tparam Vb must be a model of the concept `TriangulationVertexBase_2`
-/// \cgalModels `PolylineSimplificationVertexBase_2`.
+/// \cgalModels{PolylineSimplificationVertexBase_2}
   template<class K, class Vb = CGAL::Triangulation_vertex_base_2<K> >
 class Vertex_base_2
   : public Vb

@@ -31,7 +31,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/tss.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 /*
  *  AUXILIARY CLASSES AND FUNCTIONS
@@ -303,7 +303,7 @@ public:
             Integer alpha_num = Integer(1), int log_denom = 1
     ) : alpha_num_(alpha_num),
         beta_num_((Integer(1) << log_denom) - alpha_num),
-        half_((log_denom > 0) ? (Integer(1) << log_denom-1) : 0),
+        half_((log_denom > 0) ? Integer(Integer(1) << log_denom-1) : 0),
         log_denom_(log_denom)
     {
         CGAL_precondition(log_denom_ >= 0);
@@ -436,6 +436,9 @@ public:
   friend class CGAL::internal::Bitstream_descartes_E08_tree<TRAITS>;
   friend class CGAL::internal::Bitstream_descartes_E08_tree_rep<TRAITS>;
 
+  Bitstream_descartes_E08_node(const Self&) = default;
+  Self& operator= (const Self&) = delete;
+
 private:
     // "node data" (set individually in subdivision)
     Integer lower_num_, upper_num_; // TODO use lower_num_, width_num_ instead
@@ -443,7 +446,7 @@ private:
     Integer_vector coeff_; // wrt [lower_, upper_], approximate
     int min_var_, max_var_;
     bool coeff_update_delayed_;
-    // "state data" (copied en bloc by .copy_state_from())
+    // "state data" (copied en block by .copy_state_from())
     long subdepth_bound_, subdepth_current_;
     long log_eps_;   // $q - p$
     long log_C_eps_; // $q - p + 4n$
@@ -466,8 +469,6 @@ private:
         log_eps_          = n.log_eps_;
         log_C_eps_        = n.log_C_eps_;
     }
-
-    Self& operator= (const Self&) = delete;
 }; // struct Bitstream_descartes_E08_node
 
 

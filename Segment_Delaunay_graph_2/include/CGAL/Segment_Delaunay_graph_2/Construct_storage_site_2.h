@@ -32,111 +32,109 @@ public:
   typedef typename Storage_traits::Point_handle      Point_handle;
   typedef typename Storage_traits::Geom_traits       Geom_traits;
 
-  typedef Storage_site_2                             result_type;
-
 protected:
   typedef typename Geom_traits::Intersections_tag    ITag;
 
-  result_type construct(const Point_handle& h1,
-                        const Point_handle& h2,
-                        const Point_handle& h3,
-                        const Point_handle& h4, const Tag_true&) const {
+  Storage_site_2 construct(const Point_handle& h1,
+                           const Point_handle& h2,
+                           const Point_handle& h3,
+                           const Point_handle& h4, const Tag_true&) const {
     return Storage_site_2::construct_storage_site_2(h1, h2, h3, h4);
   }
 
   inline
-  result_type construct(const Point_handle& h1,
-                        const Point_handle& h2,
-                        const Point_handle& h3,
-                        const Point_handle& h4,
-                        const Point_handle& h5,
-                        const Point_handle& h6, const Tag_true&) const {
+  Storage_site_2 construct(const Point_handle& h1,
+                           const Point_handle& h2,
+                           const Point_handle& h3,
+                           const Point_handle& h4,
+                           const Point_handle& h5,
+                           const Point_handle& h6, const Tag_true&) const {
     return Storage_site_2::construct_storage_site_2(h1, h2, h3, h4, h5, h6);
   }
 
   inline
-  result_type construct(const Point_handle& h1,
-                        const Point_handle& h2,
-                        const Point_handle& h3,
-                        const Point_handle& h4,
-                        bool is_first_exact, const Tag_true&) const {
+  Storage_site_2 construct(const Point_handle& h1,
+                           const Point_handle& h2,
+                           const Point_handle& h3,
+                           const Point_handle& h4,
+                           bool is_first_exact, const Tag_true&) const {
     return Storage_site_2::construct_storage_site_2(h1, h2, h3, h4,
                                                     is_first_exact);
   }
 
 
-  result_type construct(const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&, const Tag_false&) const {
+  Storage_site_2 construct(const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&, const Tag_false&) const {
     CGAL_error();
     return Storage_site_2();
   }
 
   inline
-  result_type construct(const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&, const Tag_false&) const {
+  Storage_site_2 construct(const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&, const Tag_false&) const {
     CGAL_error();
     return Storage_site_2();
   }
 
   inline
-  result_type construct(const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&,
-                        const Point_handle&,
-                        bool /* is_first_exact */, const Tag_false&) const {
+  Storage_site_2 construct(const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&,
+                           const Point_handle&,
+                           bool /* is_first_exact */, const Tag_false&) const {
     CGAL_error();
     return Storage_site_2();
   }
 
 public:
   inline
-  result_type operator()(const Point_handle& h) const {
+  Storage_site_2 operator()(const Point_handle& h) const {
     return Storage_site_2::construct_storage_site_2(h);
   }
 
   inline
-  result_type operator()(const Point_handle& h1,
-                         const Point_handle& h2) const {
+  Storage_site_2 operator()(const Point_handle& h1,
+                            const Point_handle& h2) const {
     return Storage_site_2::construct_storage_site_2(h1, h2);
   }
 
   inline
-  result_type operator()(const Point_handle& h1,
-                         const Point_handle& h2,
-                         const Point_handle& h3,
-                         const Point_handle& h4) const {
+  Storage_site_2 operator()(const Point_handle& h1,
+                            const Point_handle& h2,
+                            const Point_handle& h3,
+                            const Point_handle& h4) const {
     return construct(h1, h2, h3, h4, ITag());
   }
 
   inline
-  result_type operator()(const Point_handle& h1,
-                         const Point_handle& h2,
-                         const Point_handle& h3,
-                         const Point_handle& h4,
-                         const Point_handle& h5,
-                         const Point_handle& h6) const {
+  Storage_site_2 operator()(const Point_handle& h1,
+                            const Point_handle& h2,
+                            const Point_handle& h3,
+                            const Point_handle& h4,
+                            const Point_handle& h5,
+                            const Point_handle& h6) const {
     return construct(h1, h2, h3, h4, h5, h6, ITag());
   }
 
   inline
-  result_type operator()(const Point_handle& h1,
-                         const Point_handle& h2,
-                         const Point_handle& h3,
-                         const Point_handle& h4,
-                         bool is_first_exact) const {
+  Storage_site_2 operator()(const Point_handle& h1,
+                            const Point_handle& h2,
+                            const Point_handle& h3,
+                            const Point_handle& h4,
+                            bool is_first_exact) const {
     return construct(h1, h2, h3, h4, is_first_exact, ITag());
   }
 
   // constructs the point of intersection
   inline
-  result_type operator()(const Storage_site_2& ss0,
-                         const Storage_site_2& ss1) const {
+  Storage_site_2 operator()(const Storage_site_2& ss0,
+                            const Storage_site_2& ss1) const {
     CGAL_precondition( ss0.is_segment() && ss1.is_segment() );
     return Storage_site_2::construct_storage_site_2
       ( ss0.source_of_supporting_site(),
@@ -329,9 +327,9 @@ public:
   // endpoints the point of intersection of ss1 and ss0; the boolean
   // determines if the first or segment subsegment is constructed
   inline
-  result_type operator()(const Storage_site_2& ss0,
-                         const Storage_site_2& ss1,
-                         bool first) const {
+  Storage_site_2 operator()(const Storage_site_2& ss0,
+                            const Storage_site_2& ss1,
+                            bool first) const {
     //    CGAL_precondition( ss0.is_segment() && ss1.is_segment() );
     CGAL_precondition( ss0.is_segment() );
     if ( ss1.is_point() ) {

@@ -46,7 +46,7 @@ public:
   LineC2() {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
-    : base(CGAL::make_array(a, b, c)) {}
+    : base{a, b, c} {}
 
   typename R_::Boolean   operator==(const LineC2 &l) const;
   typename R_::Boolean   operator!=(const LineC2 &l) const;

@@ -7,7 +7,7 @@
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
@@ -46,7 +46,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   My_visitor(Stats* s) : stats(s) {}
 
   // Called during the collecting phase for each edge collected.
-  void OnCollected(const Profile&, const boost::optional<double>&)
+  void OnCollected(const Profile&, const std::optional<double>&)
   {
     ++(stats->collected);
     std::cerr << "\rEdges collected: " << stats->collected << std::endl;
@@ -55,7 +55,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   // Called during the processing phase for each edge selected.
   // If cost is absent the edge won't be collapsed.
   void OnSelected(const Profile&,
-                  boost::optional<double> cost,
+                  std::optional<double> cost,
                   std::size_t /* initial */,
                   std::size_t /* current */)
   {
@@ -67,7 +67,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   // Called during the processing phase for each edge being collapsed.
   // If placement is absent the edge is left uncollapsed.
   void OnCollapsing(const Profile&,
-                    boost::optional<Point> placement)
+                    std::optional<Point> placement)
   {
     if(!placement)
       ++(stats->placement_uncomputable);
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   std::ifstream is(argc > 1 ? argv[1] : "data/helmet.off");
   is >> input_mesh;
 
-  SMS::Count_stop_predicate<Surface> stop(0); // go as far as you can while in the envelope
+  SMS::Edge_count_stop_predicate<Surface> stop(0); // go as far as you can while in the envelope
 
   Stats stats;
   My_visitor vis(&stats);
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
 
 
   std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges processed: "  << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable

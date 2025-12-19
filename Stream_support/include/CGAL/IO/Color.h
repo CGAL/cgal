@@ -19,11 +19,12 @@
 
 #include <CGAL/config.h>
 #include <CGAL/array.h>
+
+#include <boost/functional/hash.hpp>
+
 #include <algorithm>
 #include <cstdlib>
 #include <cmath>
-
-
 
 namespace CGAL {
 
@@ -150,13 +151,13 @@ public:
 
   /*!
     returns the \f$i^{th}\f$ component of the rgb color (the
-    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is green, the \f$2^{nd}\f$ is blue and the \f$3^{rd}\f$ is alpha).
   */
   unsigned char operator[] (std::size_t i) const { return m_data[i]; }
 
   /*!
-    returns a reference on the \f$i^{th}\f$ component of `c` (the
-    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
+    returns a reference on the \f$i^{th}\f$ component of the rgb color (the
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is green, the \f$2^{nd}\f$ is blue and the \f$3^{rd}\f$ is alpha).
   */
   unsigned char& operator[] (std::size_t i)  { return m_data[i]; }
 
@@ -287,7 +288,6 @@ public:
   }
 
   /// @}
-
 };
 
 
@@ -375,6 +375,22 @@ using IO::white;
 using IO::yellow;
 #endif
 
-} //namespace CGAL
+} // namespace CGAL
+
+namespace std {
+
+template <>
+struct hash<CGAL::IO::Color>
+{
+  std::size_t operator()(const CGAL::IO::Color& c) const
+  {
+    std::size_t result = boost::hash_value(c[0]);
+    for(std::size_t i=1; i<4; ++i)
+      boost::hash_combine(result, c[i]);
+    return result;
+  }
+};
+
+} // namespace std
 
 #endif  // CGAL_COLOR_H

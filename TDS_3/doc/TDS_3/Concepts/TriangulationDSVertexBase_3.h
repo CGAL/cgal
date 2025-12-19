@@ -3,7 +3,7 @@
 \ingroup PkgTDS3Concepts
 \cgalConcept
 
-\cgalRefines TriangulationDataStructure_3::Vertex
+\cgalRefines{TriangulationDataStructure_3::Vertex}
 
 The concept TriangulationDSVertexBase_3 describes the requirements for the vertex base class
 of a CGAL::Triangulation_data_structure_3<Vb,Cb>.
@@ -28,7 +28,9 @@ cell classes. The <I>rebound</I> base classes so obtained are the classes which
 are used as base classes for the final vertex and cell classes.
 More information can be found in Section \ref TDS3secdesign.
 
-\cgalHasModel `CGAL::Triangulation_ds_vertex_base_3<TDS>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_vertex_base_3<TDS>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDSCellBase_3`
 \sa `CGAL::Triangulation_data_structure_3<Vb,Cb>`

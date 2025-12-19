@@ -9,10 +9,12 @@ The concept `AlphaWrapOracle` defines the requirements for an Alpha Wrap <em>Ora
 that answers a number of queries over the input of the algorithm.
 The oracle is the template parameter of the class `CGAL::Alpha_wraps_3_::Alpha_wrap_3`.
 
-\cgalHasModel `CGAL::Alpha_wraps_3_::Point_set_oracle`
-\cgalHasModel `CGAL::Alpha_wraps_3_::Segment_soup_oracle`
-\cgalHasModel `CGAL::Alpha_wraps_3_::Triangle_mesh_oracle`
-\cgalHasModel `CGAL::Alpha_wraps_3_::Triangle_soup_oracle`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Alpha_wraps_3_::Point_set_oracle}
+\cgalHasModels{CGAL::Alpha_wraps_3_::Segment_soup_oracle}
+\cgalHasModels{CGAL::Alpha_wraps_3_::Triangle_mesh_oracle}
+\cgalHasModels{CGAL::Alpha_wraps_3_::Triangle_soup_oracle}
+\cgalHasModelsEnd
 
 */
 template <typename GeomTraits>

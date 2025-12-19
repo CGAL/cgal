@@ -43,7 +43,7 @@ penalty. Hence, it may be advisable to configure \cgal with
 `CGAL_HAS_NO_THREADS`.   See Section  \ref Preliminaries_thread_safety "Thread Safety"
 in the preliminaries.
 
-\cgalModels `Field`
+\cgalModels{Field}
 
 */
 

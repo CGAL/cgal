@@ -2,7 +2,7 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-\cgalRefines `HalfedgeDSHalfedge`
+\cgalRefines{HalfedgeDSHalfedge}
 
 The concept `StraightSkeletonHalfedge_2` describes the requirements for the halfedge type of the
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSHalfedge` concept.
@@ -12,7 +12,9 @@ The only geometric embedding used by the Straight Skeleton Data Structure are th
 in the contour and skeleton vertices. However, for any halfedge, there is a 2D segment implicitly
 given by its `source` and `target` vertices.
 
-\cgalHasModel `CGAL::Straight_skeleton_halfedge_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Straight_skeleton_halfedge_base_2}
+\cgalHasModelsEnd
 
 \sa `StraightSkeleton_2`
 \sa `StraightSkeletonHalfedge_2`
@@ -42,6 +44,26 @@ StraightSkeletonHalfedge_2( int id );
 
 /// \name Access Functions
 /// @{
+
+/*!
+returns the ID of the halfedge
+*/
+int id() const;
+
+/*!
+resets the ID of the halfedge to `aID`
+*/
+void reset_id ( int aID );
+
+/*!
+returns the weight of the halfedge
+*/
+FT weight() const;
+
+/*!
+sets the weight of the halfedge to `aWeight`
+*/
+void set_weight( FT aWeight );
 
 /*!
 

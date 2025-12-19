@@ -27,9 +27,9 @@ public:
   Edge_length_cost() {}
 
   template <typename Profile, typename T>
-  boost::optional<typename Profile::FT> operator()(const Profile& profile, const T& /*placement*/) const
+  std::optional<typename Profile::FT> operator()(const Profile& profile, const T& /*placement*/) const
   {
-    typedef boost::optional<typename Profile::FT>                     result_type;
+    typedef std::optional<typename Profile::FT>                     result_type;
     return result_type(profile.geom_traits().compute_squared_distance_3_object()(profile.p0(), profile.p1()));
   }
 };

@@ -25,7 +25,7 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -45,8 +45,8 @@ public:
 private:
   Traits traits;
   // the iterator range of the Point_container
-  boost::optional<iterator> m_b ;
-  boost::optional<iterator> m_e ;
+  std::optional<iterator> m_b ;
+  std::optional<iterator> m_e ;
 
   int built_coord;    // a coordinate for which the pointer list is built
   Kd_tree_rectangle<FT,D> bbox;       // bounding box, i.e. rectangle of node
@@ -232,8 +232,9 @@ public:
 
   // building the container from a sequence of Point_d*
   Point_container(const int d, iterator begin, iterator end,const Traits& traits_) :
-    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(bbox)
+    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(d)
   {
+    tbox = bbox;
     built_coord = max_span_coord();
   }
 
@@ -419,7 +420,28 @@ public:
 
     typename Traits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
     FT val1 = *(mpit+split_coord);
+
+    // Avoid using the low coord value as it results in an empty split
+    if (val1 == tbox.min_coord(split_coord)) {
+      iterator it = std::min_element(mid, end(), [=](const Point_d* a, const Point_d* b) -> bool {
+        FT a_c = *(construct_it(*a) + split_coord);
+        FT b_c = *(construct_it(*b) + split_coord);
+
+        if (a_c == val1)
+          return false;
+
+        if (b_c == val1)
+          return true;
+
+        return a_c < b_c;
+        });
+      return *(construct_it(**it) + split_coord);
+    }
+
     mid++;
+    if (mid == end())
+      return val1;
+
     mpit = construct_it((*(*mid)));
     FT val2 = *(mpit+split_coord);
     return (val1+val2)/FT(2);

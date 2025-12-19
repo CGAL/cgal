@@ -119,14 +119,14 @@ Vector operator+(const Vector& v1) ;
 /*!
 Subtraction.
 
-\pre `v.dimension() = v1.dimension()`.
+\pre `v.dimension() == v1.dimension()`.
 */
 Vector operator-(const Vector& v1) ;
 
 /*!
 Inner Product.
 
-\pre `v.dimension() = v1.dimension()`.
+\pre `v.dimension() == v1.dimension()`.
 */
 NT operator*(const Vector& v1) ;
 

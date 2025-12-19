@@ -10,31 +10,29 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel    Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>    Segment_traits_2;
-typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>        Poly_traits_2;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Segment_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+using Poly_traits_2 = CGAL::Arr_polyline_traits_2<Segment_traits_2>;
 
-typedef Poly_traits_2::Point_2                               Point_2;
-typedef Poly_traits_2::Curve_2                               Poly_curve_2;
-typedef Poly_traits_2::X_monotone_curve_2                    X_poly_curve_2;
-typedef CGAL::Arr_spherical_topology_traits_2<Poly_traits_2>
-  Topol_poly_traits_2;
-typedef CGAL::Arrangement_on_surface_2<Poly_traits_2, Topol_poly_traits_2>
-                                                             Poly_arr;
+using Point_2 = Poly_traits_2::Point_2;
+using Poly_curve_2 = Poly_traits_2::Curve_2;
+using X_poly_curve_2 = Poly_traits_2::X_monotone_curve_2;
+using Topol_poly_traits_2 =
+  CGAL::Arr_spherical_topology_traits_2<Poly_traits_2>;
+using Poly_arr =
+  CGAL::Arrangement_on_surface_2<Poly_traits_2, Topol_poly_traits_2>;
 
-typedef Segment_traits_2::Curve_2                            Seg_curve_2;
-typedef Segment_traits_2::X_monotone_curve_2                 X_seg_curve_2;
-typedef CGAL::Arr_spherical_topology_traits_2<Segment_traits_2>
-  Topol_segment_traits_2;
-typedef CGAL::Arrangement_on_surface_2<Segment_traits_2, Topol_segment_traits_2>
-                                                             Segment_arr;
+using Seg_curve_2 = Segment_traits_2::Curve_2;
+using X_seg_curve_2 = Segment_traits_2::X_monotone_curve_2;
+using Topol_segment_traits_2 =
+  CGAL::Arr_spherical_topology_traits_2<Segment_traits_2>;
+using Segment_arr =
+  CGAL::Arrangement_on_surface_2<Segment_traits_2, Topol_segment_traits_2>;
 
 int main() {
   Segment_traits_2 seg_traits;
-  Segment_traits_2::Construct_point_2 ctr_p =
-    seg_traits.construct_point_2_object();
-  Segment_traits_2::Construct_x_monotone_curve_2 ctr_seg =
-    seg_traits.construct_x_monotone_curve_2_object();
+  auto ctr_p = seg_traits.construct_point_2_object();
+  auto ctr_seg = seg_traits.construct_x_monotone_curve_2_object();
 
   Point_2 p1 = ctr_p(0, 1, -1);
   Point_2 p2 = ctr_p(-11, 7, -7);
@@ -62,8 +60,7 @@ int main() {
   points.push_back(p5);
 
   Poly_traits_2 poly_traits;
-  Poly_traits_2::Construct_x_monotone_curve_2 ctr =
-    poly_traits.construct_x_monotone_curve_2_object();
+  auto ctr = poly_traits.construct_x_monotone_curve_2_object();
   Poly_arr poly_arr(&poly_traits);
   insert(poly_arr, ctr(seg_cv1));
   insert(poly_arr, ctr(seg_cv2));

@@ -96,9 +96,7 @@ namespace Internal {
 
   template < class Node >
   struct Project_site_2 {
-    typedef Node                   argument_type;
     typedef typename Node::Site_2  Site;
-    typedef Site                   result_type;
 
     Site operator()(const Node& x) const {
       return x.site();
@@ -108,9 +106,7 @@ namespace Internal {
 
   template < class Node, class Site_t >
   struct Project_input_to_site_2 {
-    typedef Node                   argument_type;
     typedef Site_t                 Site;
-    typedef Site                   result_type;
 
     Site operator()(const Node& x) const {
       if ( boost::tuples::get<2>(x) /*x.third*/ ) { // it is a point
@@ -632,11 +628,11 @@ public:
   }
 
   template <class Segment_2>
-  static const Point_2& get_source(const Segment_2& segment){
+  static Point_2 get_source(const Segment_2& segment){
     return segment.source();
   }
   template <class Segment_2>
-  static const Point_2& get_target(const Segment_2& segment){
+  static Point_2 get_target(const Segment_2& segment){
     return segment.target();
   }
 

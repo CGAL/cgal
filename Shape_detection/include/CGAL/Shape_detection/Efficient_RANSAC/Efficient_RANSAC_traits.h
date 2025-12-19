@@ -23,7 +23,7 @@ namespace CGAL {
     \ingroup PkgShapeDetectionRANSAC
     \brief %Default traits class for the `CGAL::Shape_detection::Efficient_RANSAC`.
 
-    \cgalModels `EfficientRANSACTraits`
+    \cgalModels{EfficientRANSACTraits}
 
     \tparam Gt must be a model of the concept `Kernel` with `Gt::FT` being `float` or `double`.
 
@@ -39,6 +39,8 @@ namespace CGAL {
             class InputPointMap,
             class InputNormalMap>
   struct Efficient_RANSAC_traits {
+    ///
+    typedef Gt GeomTraits;
     ///
     typedef typename Gt::FT FT;
     ///

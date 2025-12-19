@@ -9,10 +9,12 @@ forming its boundary.
 The concept `IntersectionGeometricTraits_3` mainly provides the detection
 and construction of intersections between segments and triangles.
 
-\cgalHasModel All models of the `Kernel` concept.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `BisectionGeometricTraits_3`
-\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+\sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 
 */
 class IntersectionGeometricTraits_3 {
@@ -53,9 +55,9 @@ Function object that constructs the intersection
 between a 3D segment and a 3D triangle.
 Partial model of `::Kernel::Intersect_3`. Provides the operators:
 
-- `boost::optional< boost::variant< Point_3, Segment_3 > > operator()(Segment_3 seg, Triangle_3 tr)`
+- `std::optional< std::variant< Point_3, Segment_3 > > operator()(Segment_3 seg, Triangle_3 tr)`
 
-- `boost::optional< boost::variant< Point_3, Segment_3 > > operator()(Triangle_3 tr, Segment_3 seg)`
+- `std::optional< std::variant< Point_3, Segment_3 > > operator()(Triangle_3 tr, Segment_3 seg)`
 
 which computes the intersection between the triangle and the segment.
 */

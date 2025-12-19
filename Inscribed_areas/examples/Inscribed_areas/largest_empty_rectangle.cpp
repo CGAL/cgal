@@ -1,8 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 
-#include <fstream>
+#include <iostream>
 
 typedef double                                 Number_Type;
 typedef CGAL::Simple_cartesian<Number_Type>    K;

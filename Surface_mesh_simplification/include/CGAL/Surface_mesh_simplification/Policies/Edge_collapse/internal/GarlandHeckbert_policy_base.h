@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -71,6 +71,10 @@ public:
     : m_quadric_calculator(quadric_calculator)
   {
     m_cost_matrices = get(Cost_property(), tmesh);
+  }
+
+  Quadric_calculator quadric_calculator() const{
+    return m_quadric_calculator;
   }
 };
 
@@ -130,6 +134,15 @@ public:
 
 public:
   template <typename VertexPointMap>
+  Mat_4 construct_quadric(const vertex_descriptor v,
+                          const TriangleMesh& tmesh,
+                          const VertexPointMap vpm,
+                          const GeomTraits& gt) const
+  {
+    return quadric_calculator().construct_quadric_from_vertex(v, tmesh, vpm, gt);
+  }
+
+  template <typename VertexPointMap>
   Mat_4 construct_quadric(const halfedge_descriptor he,
                           const TriangleMesh& tmesh,
                           const VertexPointMap vpm,
@@ -154,10 +167,8 @@ public:
                   const VertexPointMap vpm,
                   const GeomTraits& gt) const
   {
-    Mat_4 zero_mat = Mat_4::Zero();
-
     for(vertex_descriptor v : vertices(tmesh))
-      put(vcm(), v, zero_mat);
+      put(vcm(), v, construct_quadric(v, tmesh, vpm, gt));
 
     for(face_descriptor f : faces(tmesh))
     {
@@ -199,14 +210,14 @@ public:
 public:
   // Cost
   template <typename Profile>
-  boost::optional<typename Profile::FT>
+  std::optional<typename Profile::FT>
   operator()(const Profile& profile,
-             const boost::optional<typename Profile::Point>& placement) const
+             const std::optional<typename Profile::Point>& placement) const
   {
-    typedef boost::optional<typename Profile::FT>                              Optional_FT;
+    typedef std::optional<typename Profile::FT>                              Optional_FT;
 
     if(!placement)
-      return boost::optional<typename Profile::FT>();
+      return std::optional<typename Profile::FT>();
 
     CGAL_precondition(!get(vcm(), profile.v0()).isZero(0));
     CGAL_precondition(!get(vcm(), profile.v1()).isZero(0));
@@ -222,7 +233,7 @@ public:
 public:
   // Placement
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
+  std::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
     CGAL_precondition(!get(vcm(), profile.v0()).isZero(0));
     CGAL_precondition(!get(vcm(), profile.v1()).isZero(0));
@@ -236,7 +247,7 @@ public:
 
     const Col_4 opt = construct_optimum(combined_matrix, p0, p1);
 
-    boost::optional<typename Profile::Point> pt = typename Profile::Point(opt(0) / opt(3),
+    std::optional<typename Profile::Point> pt = typename Profile::Point(opt(0) / opt(3),
                                                                           opt(1) / opt(3),
                                                                           opt(2) / opt(3));
 

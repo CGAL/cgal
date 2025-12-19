@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-
+#include <CGAL/Random.h>
 #include <fstream>
 #include <iostream>
 

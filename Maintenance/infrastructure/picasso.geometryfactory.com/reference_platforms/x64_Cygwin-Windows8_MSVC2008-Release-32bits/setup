@@ -1,8 +1,0 @@
-export CGAL_DIR='/cygdrive/c/CGAL/reference_platforms/x64_Cygwin-Windows8_MSVC2008-Debug-32bits'
-export VC_VERSION="9"
-export ARCH="32"
-export PLATFORM_REFERENCE="/cygdrive/c/CGAL/reference_platforms"
-source "${PLATFORM_REFERENCE}/setup_common"
-
-COLLECT_DEMOS_BINARIES=y
-export COLLECT_DEMOS_BINARIES

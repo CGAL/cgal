@@ -10,13 +10,13 @@ functionality, such as handles, iterators, and circulators.
 Specifically, for a `key` value the expression `&*key` must
 return a unique address.
 
-\cgalModels `UniqueHashFunction`
+\cgalModels{UniqueHashFunction}
 
 \sa `CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>`
 
 \cgalHeading{Implementation}
 
-Plain type cast of `&*key` to `std::size_t` and devided
+Plain type cast of `&*key` to `std::size_t` and divided
 by the size of the `std::iterator_traits<Handle>::%value_type` to
 avoid correlations with the internal table size, which is a power of
 two.

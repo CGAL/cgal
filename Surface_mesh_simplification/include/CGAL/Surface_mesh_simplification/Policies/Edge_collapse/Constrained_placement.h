@@ -31,7 +31,7 @@ public:
   {}
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
+  std::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
     typedef typename Profile::TM                                    TM;
     typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;

@@ -38,7 +38,7 @@ public :
    */
     TextItem() {}
     /*!
-     * \brief The construtor for the TextItem
+     * \brief The constructor for the TextItem
      * \param p_x, p_y, p_z the coordinates of the TextItem.
      * \param p_text the text to render.
      * \param p_3D
@@ -52,12 +52,7 @@ public :
         :x(p_x), y(p_y), z(p_z),_3D(p_3D), _is_always_visible(always_visible), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
        _width = float(fm.horizontalAdvance(m_text)+2);
-#else
-       _width = float(fm.width(m_text)+2);
-#endif
-
        _height = float(fm.height());
     }
     //!\brief Accessor for the string
@@ -183,7 +178,7 @@ protected:
     QList<TextListItem*> textItems;
     //!\brief List of `TextItem`s
     //!
-    //! Usually fed by the viewer, it holds the text informations from the
+    //! Usually fed by the viewer, it holds the text information from the
     //! viewer that are displayed directly on the screen, like the fps,
     //! the distances, etc.
     QList<TextItem*> local_textItems;

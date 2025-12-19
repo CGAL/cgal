@@ -64,7 +64,7 @@ public:
   { *this = plane_from_point_direction<R>(o, v.direction()); }
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
-    : base(CGAL::make_array(a, b, c, d)) {}
+    : base{a, b, c, d} {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
   { *this = plane_from_points<R>(l.point(),
@@ -169,7 +169,9 @@ inline
 typename PlaneC3<R>::Point_3
 PlaneC3<R>::point() const
 {
-  return point_on_plane(*this);
+  FT x, y, z;
+  point_on_planeC3(a(), b(), c(), d(), x, y, z);
+  return R().construct_point_3_object()(x, y, z);
 }
 
 template < class R >
@@ -178,7 +180,13 @@ typename PlaneC3<R>::Point_3
 PlaneC3<R>::
 projection(const typename PlaneC3<R>::Point_3 &p) const
 {
-  return projection_plane(p, *this);
+  FT x, y, z;
+  projection_planeC3(a(), b(), c(), d(),
+                     R().compute_x_3_object()(p),
+                     R().compute_y_3_object()(p),
+                     R().compute_z_3_object()(p),
+                     x, y, z);
+  return R().construct_point_3_object()(x, y, z);
 }
 
 template < class R >

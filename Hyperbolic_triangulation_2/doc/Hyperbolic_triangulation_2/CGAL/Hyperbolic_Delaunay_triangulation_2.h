@@ -200,7 +200,19 @@ public:
     /*!
       Returns the hyperbolic segment formed by the vertices of edge `e`.
     */
-    Hyperbolic_segment hyperbolic_segment (const Edge& e) const;
+    Hyperbolic_segment hyperbolic_segment(const Edge& e) const;
+
+    /*!
+      Returns the hyperbolic point given by the finite vertex `vh`.
+    */
+    Point point(const Vertex_handle vh) const;
+
+    /*!
+      Returns the point given by vertex `i` of face `fh`.
+      \pre `t.dimension()` \f$ \geq0\f$ and \f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
+    */
+    Point point(const Face_handle fh, const int i) const;
+
   ///@}
 
 
@@ -208,20 +220,11 @@ public:
   /// @{
     /*!
       Inserts the point `p` in the triangulation.
-      If the point `p` coincides with a existing vertex, then the vertex is returned
+      If the point `p` coincides with an existing vertex, then the vertex is returned
       and the triangulation is not modified. The optional parameter `start` is used
       to initialize the location of `p`.
     */
     Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
-
-    /*!
-      Inserts the point p at the location given by `(lt,loc,li)`.
-      The handle to the new vertex is returned.
-
-      \sa locate()
-    */
-    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li);
-
 
     /*!
       Inserts the points in the range [first,last) into the triangulation.
@@ -245,7 +248,7 @@ public:
     void remove(Vertex_handle v);
 
     /*!
-      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+      Removes the vertices in the iterator range `[first, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
     */
     template <class VertexRemoveIterator>

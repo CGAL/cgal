@@ -9,11 +9,11 @@ storage sites are sites that are used to store the information of a
 site in a more compact form (that uses less storage). This is achieved
 by storing handles to points instead of points.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_storage_site_2<Gt>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>`
@@ -234,14 +234,14 @@ Point_handle target_of_supporting_site(unsigned int i);
 /*!
 Returns a handle to the source point of the `i`-th crossing site
 of the this site.
-\pre `is_segment()` must be `true`, `is_input(i)` must be `false` and `i` must either be `0` or `1`.
+\pre `is_segment()` must be `true`, \link is_input(unsigned int) `is_input(i)`\endlink must be `false` and `i` must either be `0` or `1`.
 */
 Point_handle source_of_crossing_site(unsigned int i);
 
 /*!
 Returns a handle to the target point of the `i`-th supporting
 site of the this site.
-\pre `is_segment()` must be `true`, `is_input(i)` must be `false` and `i` must either be `0` or `1`.
+\pre `is_segment()` must be `true`, \link is_input(unsigned int) `is_input(i)`\endlink must be `false` and `i` must either be `0` or `1`.
 */
 Point_handle target_of_crossing_site(unsigned int i);
 

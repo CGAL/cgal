@@ -11,6 +11,11 @@
 // Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
 //                 Bernd Gaertner
 
+#ifndef CGAL_MIN_SPHERE_D_MIN_SPHERE_D_IMPL_H
+#define CGAL_MIN_SPHERE_D_MIN_SPHERE_D_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 #include <iterator>
 
 namespace CGAL {
@@ -62,7 +67,7 @@ operator << ( std::ostream& os, const Min_sphere_d<Traits>& min_sphere)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg
+        CGAL_assertion_msg
             ( false, "IO::get_mode( os) invalid!");
         break; }
 
@@ -93,7 +98,7 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
       } break;
 
       default:
-        CGAL_optimisation_assertion_msg( false, "IO::mode invalid!");
+        CGAL_assertion_msg( false, "IO::mode invalid!");
         break;
  }
 
@@ -105,3 +110,5 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_MIN_SPHERE_D_MIN_SPHERE_D_IMPL_H

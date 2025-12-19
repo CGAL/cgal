@@ -15,26 +15,17 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Mesh_cell_base_3.h>
+#include <CGAL/Compact_simplicial_mesh_cell_base_3.h>
 
-namespace CGAL
-{
-namespace Tetrahedral_remeshing
-{
-namespace internal
-{
-struct Fake_MD_C
-{
-  typedef int Subdomain_index;
-  typedef int Surface_patch_index;
-  typedef int Index;
-};
-}
+#include <CGAL/assertions.h>
+
+namespace CGAL {
+namespace Tetrahedral_remeshing {
 
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
 
-The class `Remeshing_cell_base_3` is a model of the concept `MeshCellBase_3`.
+The class `Remeshing_cell_base_3` is a model of the concept `RemeshingCellBase_3`.
 It is designed to serve as cell base class for the 3D triangulation
 used in the tetrahedral remeshing process.
 
@@ -42,24 +33,59 @@ used in the tetrahedral remeshing process.
 It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which `Remeshing_cell_base_3` derives.
-It must be a model of the `TriangulationCellBase_3` concept.
-It has the default value `Triangulation_cell_base_3<Gt>`.
+It must be a model of the `SimplicialMeshCellBase_3` concept.
 
-\cgalModels `MeshCellBase_3`
+\cgalModels{RemeshingCellBase_3}
 
 */
-#ifndef DOXYGEN_RUNNING
 template<typename Gt,
-         typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
-using Remeshing_cell_base_3
-  = CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>;
-#else
-template<typename Gt,
-         typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
-class Remeshing_cell_base_3;
-#endif
+         typename Cb = CGAL::Compact_simplicial_mesh_cell_base_3<
+                         int /*Subdomain_index*/,
+                         int /*Surface_patch_index*/> >
+class Remeshing_cell_base_3
+  : public Cb
+{
+public:
+  using FT = typename Gt::FT;
 
-}//end namespace Tetrahedral_remeshing
-}//end namespace CGAL
+  using Vertex_handle = typename Cb::Vertex_handle;
+  using Cell_handle = typename Cb::Cell_handle;
+
+  using Geom_traits = Gt;
+
+public:
+  template <typename TDS2>
+  struct Rebind_TDS
+  {
+    using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+    using Other = Remeshing_cell_base_3<Gt, Cb2>;
+  };
+
+public:
+  using Cb::Cb; // constructors
+
+public:
+  void set_sliver_value(const FT value)
+  {
+    sliver_cache_validity_ = true;
+    sliver_value_ = value;
+  }
+
+  FT sliver_value() const
+  {
+    CGAL_assertion(is_cache_valid());
+    return sliver_value_;
+  }
+
+  bool is_cache_valid() const { return sliver_cache_validity_; }
+  void reset_cache_validity() const { sliver_cache_validity_ = false; }
+
+private:
+  FT sliver_value_ = 0.;
+  mutable bool sliver_cache_validity_ = false;
+};
+
+} // namespace Tetrahedral_remeshing
+} // namespace CGAL
 
 #endif //CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_3_H

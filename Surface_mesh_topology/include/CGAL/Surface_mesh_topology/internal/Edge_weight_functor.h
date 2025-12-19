@@ -33,12 +33,12 @@ template<typename Mesh>
 struct Euclidean_length_weight_functor
 {
   using Weight_t=double;
-  using Dart_const_handle=typename Get_map<Mesh, Mesh>::type::Dart_const_handle;
+  using Dart_const_descriptor=typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor;
 
   Euclidean_length_weight_functor(const Mesh& m) : m_mesh(m), m_map(m)
   {}
 
-  Weight_t operator() (Dart_const_handle dh) const
+  Weight_t operator() (Dart_const_descriptor dh) const
   {
     return CGAL::sqrt(CGAL::squared_distance
                       (Get_traits<Mesh>::get_point(m_mesh, dh),

@@ -32,7 +32,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points.
+The algorithm requires \cgalBigO{n} time for a set of \f$ n\f$ input points.
 
 
 
@@ -80,7 +80,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points.
+The algorithm requires \cgalBigO{n} time for a set of \f$ n\f$ input points.
 
 
 

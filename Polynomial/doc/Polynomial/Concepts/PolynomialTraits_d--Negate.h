@@ -11,9 +11,7 @@ the polynomial is considered as a univariate polynomial in one specific variable
 This functor is provided for efficiency reasons, since this operation just flips the sign
 of all odd coefficients with respect to the specified variable.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

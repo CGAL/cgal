@@ -26,22 +26,37 @@ namespace CGAL {
   template <class, class>
   class Concurrent_compact_container;
 
-  template<unsigned int, class, class, class>
+  template <class, class, class, class>
+  class Compact_container_with_index;
+
+  template<unsigned int, class, class>
   class Combinatorial_map_storage_1;
 
-  template<unsigned int, class, class, class>
+  template<unsigned int, class, class>
+  class Combinatorial_map_storage_with_index;
+
+  template<unsigned int, class, class>
   class Generalized_map_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class, class>
+  template<unsigned int, class, class>
+  class Generalized_map_storage_with_index;
+
+  template<unsigned int, unsigned int, class, class, class>
   class CMap_linear_cell_complex_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class, class>
+  template<unsigned int, unsigned int, class, class, class>
+  class CMap_linear_cell_complex_storage_with_index;
+
+  template<unsigned int, unsigned int, class, class, class>
   class GMap_linear_cell_complex_storage_1;
+
+  template<unsigned int, unsigned int, class, class, class>
+  class GMap_linear_cell_complex_storage_with_index;
 
   namespace internal {
 
-  template<class, class>
-  struct Init_id;
+    template<class, class>
+    struct Init_id;
 
   } // end namespace internal
 
@@ -51,8 +66,8 @@ namespace CGAL {
 
   /** Definition of nD dart without information.
    * The_dart class describes an nD dart (basic element of a combinatorial or generalized map).
-   * A dart is composed with handle towards its neighbors,
-   * a bitset containing Boolean marks, and handle towards enabled attributes.
+   * A dart is composed with descriptor towards its neighbors,
+   * a bitset containing Boolean marks, and descriptor towards enabled attributes.
    * n is the dimension of the space (2 for 2D, 3 for 3D...)
    * Refs the ref class
    */
@@ -60,41 +75,57 @@ namespace CGAL {
   struct Dart_without_info: public Add_id<WithId>
   {
   public:
-    template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
-
-    template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
-
     template <class, class, class, class>
     friend class Compact_container;
 
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_with_index;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_with_index;
+
     template<class, class>
     friend struct internal::Init_id;
 
-    typedef Dart_without_info<d,Refs, WithId> Self;
-    typedef typename Refs::Dart_handle        Dart_handle;
-    typedef typename Refs::size_type          size_type;
-    typedef typename Refs::Dart_const_handle  Dart_const_handle;
-    typedef typename Refs::Helper             Helper;
-    typedef WithId                            Has_id;
+    typedef Dart_without_info<d,Refs, WithId>    Self;
+    typedef typename Refs::Dart_descriptor       Dart_descriptor;
+    typedef typename Refs::size_type             size_type;
+    typedef typename Refs::Dart_const_descriptor Dart_const_descriptor;
+    typedef typename Refs::Helper                Helper;
+    typedef WithId                               Has_id;
+    using Type_for_compact_container=typename Refs::Type_for_compact_container;
 
     /// Typedef for attributes
     template<int i>
-    struct Attribute_handle: public Refs::template Attribute_handle<i>
+    struct Attribute_descriptor: public Refs::template Attribute_descriptor<i>
     {};
     template<int i>
-    struct Attribute_const_handle:
-      public Refs::template Attribute_const_handle<i>
+    struct Attribute_const_descriptor:
+      public Refs::template Attribute_const_descriptor<i>
     {};
 
     /// The number of used marks.
@@ -103,19 +134,29 @@ namespace CGAL {
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d;
 
-    void * for_compact_container() const
+    Type_for_compact_container for_compact_container() const
     { return mf[0].for_compact_container(); }
-    void for_compact_container(void *p)
+    void for_compact_container(Type_for_compact_container p)
     { mf[0].for_compact_container(p); }
 
-    Dart_handle get_f(unsigned int i) const
+    Dart_descriptor get_f(unsigned int i) const
     {
-      assert(i<=dimension);
+      CGAL_assertion(i<=dimension);
       return mf[i];
     }
 
+    bool operator==(const Self& other) const
+    {
+      if(mmarks!=other.mmarks ||
+         mattribute_descriptors!=other.mattribute_descriptors)
+      { return false; }
+      for(unsigned int i=0; i<=dimension; ++i)
+      { if(mf[i]!=other.mf[i]) { return false; }}
+      return true;
+    }
+
   protected:
-    /** Default constructor: no real initialisation,
+    /** Default constructor: no real initialization,
      *  because this is done in the combinatorial map class.
      */
     Dart_without_info()
@@ -124,11 +165,21 @@ namespace CGAL {
     /** Copy constructor:
      * @param adart a dart.
      */
-    Dart_without_info(const Dart_without_info& adart) : mmarks(adart.mmarks),
-    mattribute_handles(adart.mattribute_handles)
+    Dart_without_info(const Dart_without_info& other) :
+      mmarks(other.mmarks),
+      mattribute_descriptors(other.mattribute_descriptors)
     {
-      for (unsigned int i = 0; i <= dimension; ++i)
-        mf[i] = adart.mf[i];
+      for (unsigned int i=0; i<=dimension; ++i)
+      { mf[i]=other.mf[i]; }
+    }
+
+    Self& operator=(const Self& other)
+    {
+      mmarks=other.mmarks;
+      mattribute_descriptors=other.mattribute_descriptors;
+      for (unsigned int i=0; i<=dimension; ++i)
+      { mf[i]=other.mf[i]; }
+      return *this;
     }
 
     /** Return the mark value of a given mark number.
@@ -171,33 +222,33 @@ namespace CGAL {
      void set_marks(const std::bitset<NB_MARKS>& amarks) const
     { mmarks = amarks; }
 
-    /// @return a handle on the i-attribute
+    /// @return a descriptor on the i-attribute
     template<int i>
-    typename Attribute_handle<i>::type attribute()
+    typename Attribute_descriptor<i>::type attribute()
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles);
+        (mattribute_descriptors);
     }
     template<int i>
-    typename Attribute_const_handle<i>::type attribute() const
+    typename Attribute_const_descriptor<i>::type attribute() const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles);
+        (mattribute_descriptors);
     }
 
   protected:
-    /// Neighboors for each dimension +1 (from 0 to dimension).
-    Dart_handle mf[dimension+1];
+    /// Neighbors for each dimension +1 (from 0 to dimension).
+    Dart_descriptor mf[dimension+1];
 
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;
 
     /// Attributes enabled
-    typename Helper::Attribute_handles mattribute_handles;
+    typename Helper::Attribute_descriptors mattribute_descriptors;
   };
 
   // Dart definition with an info;
@@ -207,17 +258,7 @@ namespace CGAL {
   struct Dart : public Dart_without_info<d, Refs, WithID>
   {
   public:
-    template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
-
-    template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    using Base=Dart_without_info<d, Refs, WithID>;
 
     template <class, class, class, class>
     friend class Compact_container;
@@ -225,19 +266,49 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_with_index;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_with_index;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_with_index;
+
     typedef Dart<d, Refs, Info_, WithID> Self;
     typedef Info_                        Info;
 
+    bool operator==(const Self& other) const
+    { return Base::operator==(other) && minfo==other.minfo; }
+
   protected:
-    /** Default constructor: no real initialisation,
+    /** Default constructor: no real initialization,
      *  because this is done in the combinatorial or generalized map class.
      */
-    Dart()
-    {}
+    Dart()=default; //  default => zero-initializing built-in types
 
     Dart(const Info_& info) : minfo(info)
     {}
 
+  protected:
     Info_& info()
     { return minfo; }
     const Info_& info() const
@@ -250,6 +321,14 @@ namespace CGAL {
   // Specialization of Dart class when info==void
   template <unsigned int d, typename Refs, class WithID>
   struct Dart<d, Refs, void, WithID> : public Dart_without_info<d, Refs, WithID>
+  {
+  public:
+    typedef CGAL::Void Info;
+  };
+
+  // Specialization of Dart class when info==CGAL::Void
+  template <unsigned int d, typename Refs, class WithID>
+  struct Dart<d, Refs, CGAL::Void, WithID> : public Dart_without_info<d, Refs, WithID>
   {
   public:
     typedef CGAL::Void Info;

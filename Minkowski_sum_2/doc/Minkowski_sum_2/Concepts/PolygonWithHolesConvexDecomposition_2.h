@@ -7,10 +7,12 @@ decomposing an input polygon \f$ P\f$, which may have holes, into a set of
 convex sub-polygons \f$ P_1, \ldots, P_k\f$, such that
 \f$ \cup_{i=1}^{k}{P_k} = P\f$.
 
-\cgalRefines `PolygonConvexDecomposition_2`
+\cgalRefines{PolygonConvexDecomposition_2}
 
-\cgalHasModel `CGAL::Polygon_vertical_decomposition_2<Kernel,Container>`
-\cgalHasModel `CGAL::Polygon_triangulation_decomposition_2<Kernel,Container>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polygon_vertical_decomposition_2<Kernel,Container>}
+\cgalHasModels{CGAL::Polygon_triangulation_decomposition_2<Kernel,Container>}
+\cgalHasModelsEnd
 
 */
 

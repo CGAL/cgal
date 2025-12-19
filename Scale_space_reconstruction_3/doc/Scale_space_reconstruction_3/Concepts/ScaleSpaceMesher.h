@@ -11,8 +11,10 @@ namespace Scale_space_reconstruction_3 {
  * A mesher is a functor that can be applied to a range of
  * points and that returns a set of facets.
  *
- * \cgalHasModel CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher
- * \cgalHasModel CGAL::Scale_space_reconstruction_3::Advancing_front_mesher
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher}
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Advancing_front_mesher}
+ * \cgalHasModelsEnd
  *
  */
 class Mesher

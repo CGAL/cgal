@@ -81,7 +81,7 @@ private:
     for ( LCC::Dart_range::iterator dit=lcc.darts().begin(),
             dend=lcc.darts().end(); dit!=dend; ++dit )
     {
-      if ( lcc.attribute<2>(dit)==NULL )
+      if ( lcc.attribute<2>(dit)==LCC::null_descriptor )
         lcc.set_attribute<2>(dit, lcc.create_attribute<2>());
     }
     assert( lcc.is_valid());
@@ -155,7 +155,7 @@ private:
 
     for (fit = lcc.attributes<2>().begin(); fit != fend; ++fit)
     {
-      LCC::Dart_handle dh = fit->dart();
+      LCC::Dart_descriptor dh = fit->dart();
       LCCPoint_3& p0 = lcc.point(dh);
       dh = lcc.beta<1>(dh);
       LCCPoint_3& p1 = lcc.point(dh);
@@ -210,15 +210,15 @@ private:
     assert( lcc.is_valid());
   }
 
-  void flip_edge(LCC::Dart_handle d)
+  void flip_edge(LCC::Dart_descriptor d)
   {
-    LCC::Dart_handle d1 = lcc.beta<1>(d);
-    LCC::Dart_handle d2 = lcc.beta<2, 1>(d);
+    LCC::Dart_descriptor d1 = lcc.beta<1>(d);
+    LCC::Dart_descriptor d2 = lcc.beta<2, 1>(d);
 
     CGAL_assertion ( !lcc.is_free<1>(d1) && !lcc.is_free<1>(d2) );
 
-    LCC::Dart_handle d3 = lcc.beta<1>(d1);
-    LCC::Dart_handle d4 = lcc.beta<1>(d2);
+    LCC::Dart_descriptor d3 = lcc.beta<1>(d1);
+    LCC::Dart_descriptor d4 = lcc.beta<1>(d2);
 
     // We isolated the edge
     lcc.link_beta_1(lcc.beta<0>(d), d2);
@@ -329,20 +329,20 @@ private:
     vit=vend; vend=lcc.attributes<0>().end();
     for (; vit!=vend; )
     {
-      LCC::Dart_handle cur = vit->dart();
+      LCC::Dart_descriptor cur = vit->dart();
       ++vit;
       collapse_edge(cur);
     }
     assert( lcc.is_valid());
   }
 
-  void contract_face(LCC::Dart_handle dh)
+  void contract_face(LCC::Dart_descriptor dh)
   {
-    CGAL_assertion( dh!=lcc.null_dart_handle );
-    LCC::Dart_handle d1=lcc.beta<2>(dh);
-    LCC::Dart_handle d2=lcc.beta<1,2>(dh);
-    CGAL_assertion(d1!=lcc.null_dart_handle &&
-                   d2!=lcc.null_dart_handle);
+    CGAL_assertion( dh!=lcc.null_dart_descriptor );
+    LCC::Dart_descriptor d1=lcc.beta<2>(dh);
+    LCC::Dart_descriptor d2=lcc.beta<1,2>(dh);
+    CGAL_assertion(d1!=lcc.null_dart_descriptor &&
+                   d2!=lcc.null_dart_descriptor);
 
     lcc.basic_link_beta<2>(d1, d2);
     lcc.set_dart_of_attribute<0>(lcc.vertex_attribute(d1), d1);
@@ -352,13 +352,13 @@ private:
     lcc.erase_dart(dh);
   }
 
-  void collapse_edge(LCC::Dart_handle dh)
+  void collapse_edge(LCC::Dart_descriptor dh)
   {
-    CGAL_assertion( dh!=lcc.null_dart_handle );
+    CGAL_assertion( dh!=lcc.null_dart_descriptor );
     CGAL_assertion(!lcc.is_free<2>(dh));
 
-    LCC::Dart_handle h1=lcc.beta<0>(dh);
-    LCC::Dart_handle o1=lcc.beta<2,1>(dh);
+    LCC::Dart_descriptor h1=lcc.beta<0>(dh);
+    LCC::Dart_descriptor o1=lcc.beta<2,1>(dh);
 
     lcc.set_attribute<0>(dh, lcc.attribute<0>(lcc.beta<2>(dh)));
 

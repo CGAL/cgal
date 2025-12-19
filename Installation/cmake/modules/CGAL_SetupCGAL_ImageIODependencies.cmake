@@ -2,7 +2,7 @@
 # CGAL_SetupCGAL_ImageIODependencies
 # ----------------------------------
 #
-# The module searchs for the dependencies of the `CGAL_ImageIO` library:
+# The module searches for the dependencies of the `CGAL_ImageIO` library:
 #   - the `Zlib` library (optional)
 #
 # by calling

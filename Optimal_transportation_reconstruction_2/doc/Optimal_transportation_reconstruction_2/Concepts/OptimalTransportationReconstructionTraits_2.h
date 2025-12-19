@@ -6,10 +6,12 @@
 The concept `OptimalTransportationReconstructionTraits_2` describes the requirements
 for the traits class of `CGAL::Optimal_transportation_reconstruction_2`.
 
-\cgalRefines `DelaunayTriangulationTraits_2`
+\cgalRefines{DelaunayTriangulationTraits_2}
 
-\cgalHasModel Any model of the `Kernel` concept
-\cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsBare{`CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)}
+\cgalHasModelsEnd
 
 \sa `CGAL::Optimal_transportation_reconstruction_2`
 

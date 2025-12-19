@@ -22,6 +22,7 @@ struct Custom_traits_Hausdorff
     FT operator+(FT)const{return FT();}
     FT operator*(FT)const{return FT();}
     bool operator<=(FT)const{return false;}
+    bool operator==(FT)const{return false;}
     bool operator>=(FT)const{return false;}
     bool operator!=(FT)const{return false;}
     bool operator<(FT)const{return false;}
@@ -85,7 +86,7 @@ struct Custom_traits_Hausdorff
   Compute_squared_area_3 compute_squared_area_3_object(){return Compute_squared_area_3();}
 // } end of new requirements
 
-// requirements from AABBGeomTraits {
+// requirements from AABBGeomTraits_3 {
   struct Sphere_3
   {};
 
@@ -121,7 +122,7 @@ struct Custom_traits_Hausdorff
 
   struct Has_on_bounded_side_3
   {
-    //documented as Comparision_result
+    //documented as Comparison_result
     CGAL::Comparison_result operator()(const Point_3&, const Point_3&, const Point_3&) const
     {return CGAL::ZERO;}
     bool operator()(const Sphere_3&, const Point_3&)
@@ -144,7 +145,7 @@ struct Custom_traits_Hausdorff
   Compute_squared_distance_3 compute_squared_distance_3_object() const {return Compute_squared_distance_3();}
   Do_intersect_3 do_intersect_3_object() const {return Do_intersect_3();}
   Equal_3 equal_3_object() const {return Equal_3();}
-// } end of requirments from AABBGeomTraits
+// } end of requirements from AABBGeomTraits_3
 
 
 // requirements from SearchGeomTraits_3 {

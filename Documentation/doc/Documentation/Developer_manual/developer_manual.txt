@@ -2,7 +2,7 @@
 
 \page dev_manual Developer Manual
 
-The developer manual is primarly aimed at \cgal developers, but may also be interesting to any \cgal user.
+The developer manual is primarily aimed at \cgal developers, but may also be interesting to any \cgal user.
 
 - \subpage devman_intro
 - \subpage devman_code_format
@@ -23,4 +23,5 @@ The developer manual is primarly aimed at \cgal developers, but may also be inte
 - \subpage devman_info
 - \subpage devman_create_cgal_CMakeLists
 - \subpage deprecated
+- \subpage Doxygen_for_CGAL
 */

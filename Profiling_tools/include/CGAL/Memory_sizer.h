@@ -15,7 +15,7 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 
-// This has only been implemented for MacOSX/Darwin, Linux and VC++ for now.
+// This has only been implemented for macOS/Darwin, Linux and VC++ for now.
 #if !defined _MSC_VER && !defined __linux__ && !defined __APPLE__
 
 #include <iostream>
@@ -125,7 +125,7 @@ private:
 
 #else // __APPLE__ is defined
 
-    // http://miknight.blogspot.com/2005/11/resident-set-size-in-mac-os-x.html
+    // https://miknight.blogspot.com/2005/11/resident-set-size-in-mac-os-x.html
                 // This is highly experimental. But still better than returning 0.
                 // It appears that we might need certain 'rights' to get access to the kernel
                 // task... It works if you have admin rights apparently

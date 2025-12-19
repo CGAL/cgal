@@ -1,4 +1,4 @@
-/// \defgroup PkgCircularKernel2Ref 2D Circular Geometry Kernel Reference
+/// \defgroup PkgCircularKernel2Ref Reference Manual
 
 /// \defgroup PkgCircularKernel2GeometricConcepts Geometric Concepts
 /// \ingroup PkgCircularKernel2Ref
@@ -22,7 +22,6 @@
 
 /*!
 \addtogroup PkgCircularKernel2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Circular Geometry Kernel,PkgCircularKernel2}
 \cgalPkgPicture{Boolean_operation_detail.png}
 \cgalPkgSummaryBegin

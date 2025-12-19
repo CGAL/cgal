@@ -52,8 +52,6 @@ private:
 
 public:
   typedef typename Base::Oriented_side        Oriented_side;
-  typedef Oriented_side                       result_type;
-  typedef Site_2                              argument_type;
 
   // computes the oriented side of the Voronoi vertex of s1, s2, inf
   // wrt the line that passes through the point p and its direction

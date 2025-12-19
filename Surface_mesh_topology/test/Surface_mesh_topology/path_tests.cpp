@@ -60,7 +60,7 @@ bool basic_tests()
   }
 
   Path_on_surface<CMap> p4(p3);
-  p4.reverse(); // Here p3==p4 because the path is symetric (it does a round trip)
+  p4.reverse(); // Here p3==p4 because the path is symmetric (it does a round trip)
   if (p3!=p4 || !p3.are_paths_equals(p4))
   {
     std::cerr<<"path_tests ERROR: p3!=p4 || !p3.are_paths_equals(p4)."<<std::endl;

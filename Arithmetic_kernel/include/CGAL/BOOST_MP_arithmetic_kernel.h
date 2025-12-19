@@ -19,6 +19,10 @@
 
 #ifdef CGAL_USE_BOOST_MP
 
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_arithmetic_kernel.h>
+#endif
+
 //Currently already included in boost_mp.h
 //#include <boost/multiprecision/cpp_int.hpp>
 //#ifdef CGAL_USE_GMP
@@ -26,20 +30,29 @@
 //#endif
 
 // FIXME: the could be several kernels based on Boost.Multiprecision.
-
 namespace CGAL {
 /** \ingroup CGAL_Arithmetic_kernel
  *  \brief The Boost.Multiprecision set of exact number types
  */
+
+#if !defined(CGAL_USE_CORE) || defined(CGAL_CORE_USE_GMP_BACKEND)
 struct BOOST_cpp_arithmetic_kernel : internal::Arithmetic_kernel_base {
   typedef boost::multiprecision::cpp_int Integer;
   typedef boost::multiprecision::cpp_rational Rational;
 };
+#else
+typedef CORE_arithmetic_kernel BOOST_cpp_arithmetic_kernel;
+#endif
+
 #ifdef CGAL_USE_GMP
+#if !defined(CGAL_USE_CORE) || !defined(CGAL_CORE_USE_GMP_BACKEND)
 struct BOOST_gmp_arithmetic_kernel : internal::Arithmetic_kernel_base {
   typedef boost::multiprecision::mpz_int Integer;
   typedef boost::multiprecision::mpq_rational Rational;
 };
+#else
+typedef CORE_arithmetic_kernel BOOST_gmp_arithmetic_kernel;
+#endif
 #endif
 
 template <class T1, class T2, class T3, class T4, class T5>

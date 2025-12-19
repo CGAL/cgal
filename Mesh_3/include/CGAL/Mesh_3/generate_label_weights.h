@@ -21,13 +21,14 @@
 #include <itkImage.h>
 #include <itkImageDuplicator.h>
 #include <itkBinaryThresholdImageFilter.h>
-#include <itkRecursiveGaussianImageFilter.h>
+#include <itkDiscreteGaussianImageFilter.h>
 #include <itkMaximumImageFilter.h>
 
 #include <iostream>
 #include <vector>
 #include <set>
 #include <type_traits>
+#include <algorithm>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -108,12 +109,47 @@ SIGN get_sign()
 //    SGN_UNKNOWN
 }
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+template<typename Image_word_type>
+void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
+                            const char* filename = "")
+{
+  auto t = itk_img->GetOrigin();
+  auto v = itk_img->GetSpacing();
+  auto region = itk_img->GetRequestedRegion();
+
+  _image* img
+    = _createImage(region.GetSize(0), region.GetSize(1), region.GetSize(2),
+      1,                                        //vectorial dimension
+      v[0], v[1], v[2],
+      sizeof(Image_word_type),                     //image word size in bytes
+      internal::get_wordkind<Image_word_type>(),   //image word kind WK_FIXED, WK_FLOAT, WK_UNKNOWN
+      internal::get_sign<Image_word_type>());      //image word sign
+  Image_word_type* img_ptr = (Image_word_type*)(img->data);
+
+  const int size = region.GetSize(0) * region.GetSize(1) * region.GetSize(2);
+  std::fill(img_ptr,
+            img_ptr + size,
+            Image_word_type(0));
+  img->tx = t[0];
+  img->ty = t[1];
+  img->tz = t[2];
+
+  std::copy(itk_img->GetBufferPointer(),
+            itk_img->GetBufferPointer() + size,
+            img_ptr);
+
+  if(!std::string(filename).empty())
+    _writeImage(img, filename);
+}
+#endif
+
 }//namespace internal
 
 /// @cond INTERNAL
 template<typename Image_word_type>
 CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
-                                                    const float& sigma)
+                                                          const float& sigma)
 {
   typedef unsigned char Weights_type; //from 0 t 255
   const std::size_t img_size = image.size();
@@ -141,9 +177,14 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   std::set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+  CGAL_assertion(internal::count_non_white_pixels<Image_word_type>(image)
+              == internal::count_non_white_pixels<Image_word_type>(itk_img.GetPointer()));
+#endif
+
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
   using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, WeightsType>;
-  using GaussianFilterType = itk::RecursiveGaussianImageFilter<WeightsType, WeightsType>;
+  using GaussianFilterType = itk::DiscreteGaussianImageFilter<WeightsType, WeightsType>;
   using MaximumImageFilterType = itk::MaximumImageFilter<WeightsType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
@@ -178,11 +219,26 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     indicator->SetUpperThreshold(label);
     indicator->Update();
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+    std::ostringstream oss;
+    oss << "indicator_" << id << ".inr.gz";
+    std::cout << "filename = " << oss.str().c_str() << std::endl;
+    internal::convert_itk_to_image_3(indicator->GetOutput(), oss.str().c_str());
+#endif
+
     //perform gaussian smoothing
     typename GaussianFilterType::Pointer smoother = GaussianFilterType::New();
+    smoother->SetUseImageSpacing(true);//variance/std deviation is counted real world distances
     smoother->SetInput(indicator->GetOutput());
-    smoother->SetSigma(sigma);
+    smoother->SetVariance(sigma*sigma);
     smoother->Update();
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+    std::ostringstream oss1;
+    oss1 << "smooth_" << id << ".inr.gz";
+    std::cout << "filename = " << oss1.str().c_str() << std::endl;
+    internal::convert_itk_to_image_3(smoother->GetOutput(), oss1.str().c_str());
+#endif
 
     //take the max of smoothed indicator functions
     if (id == 0)
@@ -197,13 +253,21 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
     }
 
     id++;
+  }
+
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-    std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
-    std::cout << "\tnon zero in max ("
-      << label << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
+    std::ostringstream oss2;
+    oss2 << "max_" << "all" << ".inr.gz";
+    std::cout << "filename = " << oss2.str().c_str() << std::endl;
+    internal::convert_itk_to_image_3(blured_max.GetPointer(), oss2.str().c_str());
 #endif
-  }
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+//    std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
+    std::cout << "\tnon zero in max ("
+      << id << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
+#endif
 
   //copy pixels to weights
   std::copy(blured_max->GetBufferPointer(),
@@ -227,6 +291,7 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 /// @endcond
 
 /*!
+* \ingroup PkgMesh3Functions
 * Free function that generates a `CGAL::Image_3` of weights associated to each
 * voxel of `image`, to make the output mesh surfaces smoother.
 * The weights image is generated using the algorithm described by Stalling et al
@@ -235,14 +300,19 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 *
 * @param image the input labeled image from which the weights image is computed.
 *   Both will then be used to construct a `Labeled_mesh_domain_3`.
-* @param sigma the standard deviation parameter of the internal Gaussian filter
+* @param sigma the standard deviation parameter of the internal Gaussian filter,
+*   measured in real-world distances. The size of a voxel (e.g. shortest length
+*   or longest length) usually is a good value for this parameter.
+*   Note that if `sigma` is too small, the "stair-effect" of meshing from
+*   a voxel image can appear. On the other side, if `sigma` is too large,
+*   thin volumes (basically one voxel thick) may be lost in the meshing process
+*   because the computed weights are too blurry.
 *
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`,
 * with the same dimensions as `image`
 */
-
-CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
-                               const float& sigma)
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image, const float& sigma)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
     return generate_label_weights_with_known_word_type<Word>(image, sigma);

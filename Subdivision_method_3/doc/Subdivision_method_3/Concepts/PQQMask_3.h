@@ -9,9 +9,11 @@ policy concept of geometric computations is used in
 
 \image html CCBorderMask.svg
 
-\cgalRefines `SubdivisionMask_3`
+\cgalRefines{SubdivisionMask_3}
 
-\cgalHasModel `CGAL::CatmullClark_mask_3<PolygonMesh, VertexPointMap>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::CatmullClark_mask_3<PolygonMesh, VertexPointMap>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Subdivision_method_3`
 

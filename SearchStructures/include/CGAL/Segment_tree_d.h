@@ -263,7 +263,7 @@ protected:
        }
        else
        {
-         // recursiv call for the construction. the interval is devided.
+         // recursiv call for the construction. the interval is divided.
          build_segment_tree(n - (int)n/2, leftchild, rightchild,
                          prevchild, leftmostlink, index, last, keys);
          link_type vparent = new_Segment_tree_node_t
@@ -533,9 +533,9 @@ public:
       }
       else
       {
-        CGAL_Tree_warning_msg(m_interface.comp(m_interface.get_left(*count),
-                                             m_interface.get_right(*count)),
-                                  "invalid segment ignored");
+        CGAL_warning_msg(m_interface.comp(m_interface.get_left(*count),
+                                          m_interface.get_right(*count)),
+                         "invalid segment ignored");
       }
       count++;
     }
@@ -627,9 +627,9 @@ public:
     if(is_less_equal(m_interface.get_right_win(win),
                      m_interface.get_left_win(win)))
     {
-      CGAL_Tree_warning_msg(m_interface.comp(m_interface.get_right_win(win),
-                                               m_interface.get_left_win(win)),
-                                "invalid window -- query ignored");
+      CGAL_warning_msg(m_interface.comp(m_interface.get_right_win(win),
+                                        m_interface.get_left_win(win)),
+                       "invalid window -- query ignored");
       return result;
     }
     link_type v = root();
@@ -680,9 +680,9 @@ public:
     if(is_less_equal(m_interface.get_right_win(win),
                      m_interface.get_left_win(win)))
     {
-      CGAL_Tree_warning_msg(m_interface.comp(m_interface.get_right_win(win),
-                                               m_interface.get_left_win(win)),
-                                "invalid window -- query ignored");
+      CGAL_warning_msg(m_interface.comp(m_interface.get_right_win(win),
+                                        m_interface.get_left_win(win)),
+                       "invalid window -- query ignored");
       return result;
     }
     link_type v = root();

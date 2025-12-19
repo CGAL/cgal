@@ -4,7 +4,7 @@ FUNDAMENTAL GROUP OF THE TORUS
 We know that the fundamental group of the torus is the direct product ZxZ
 Hence we can choose a path on a circle by choosing an pair of integers
 
-The test generats all groups of four integers (i, j, k, l) between -5 and 5 and the associated paths pij and pkl with two different basepoints
+The test generates all groups of four integers (i, j, k, l) between -5 and 5 and the associated paths pij and pkl with two different basepoints
 Then it verify that
 -> pij is contractible iff i==0 and j==0
 -> pkl is contractible iff k==0 and l==0
@@ -121,7 +121,7 @@ int main()
 /*
 #ifdef CGAL_USE_BASIC_VIEWER
   std::vector<Path_on_surface<SM> > paths={pij, pkl};
-  CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt5
+  CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt6
 #endif // CGAL_USE_BASIC_VIEWER
 */
   for (int i=-4; i<=4; ++i)
@@ -155,7 +155,7 @@ int main()
       if (!hkl_kl)
       { std::cout<<"FAILURE : a path associated with ints "<<k<<", "<<l<<" is not homotopic to himself"<<std::endl; test_valid=false; }
       if (hij_kl!=hkl_ij)
-      { std::cout<<"FAILURE : the homotopy relation is not symetric on paths associated with ints "<<i<<", "<<j<<" and "<<k<<", "<<l<<std::endl; test_valid=false; }
+      { std::cout<<"FAILURE : the homotopy relation is not symmetric on paths associated with ints "<<i<<", "<<j<<" and "<<k<<", "<<l<<std::endl; test_valid=false; }
 
       if (i==k && j==l && (!hij_kl || !hkl_ij))
       { std::cout<<"FAILURE : paths both associated with ints "<<i<<", "<<j<<" are not homotopic"<<std::endl; test_valid=false; }

@@ -15,8 +15,6 @@
 #include <CGAL/license/Surface_mesh_skeletonization.h>
 
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
@@ -45,6 +43,7 @@ namespace CGAL{
 ///        and the set of input vertices that contracted to `vd` can be retrieved
 ///        using `skeleton[vd].point` and `skeleton[vd].vertices` respectively.
 ///
+/// @pre `tmesh` is a triangulated surface mesh without borders and has exactly one connected component.
 template <class TriangleMesh>
 void extract_mean_curvature_flow_skeleton(const TriangleMesh& tmesh,
                                           typename Mean_curvature_flow_skeletonization<TriangleMesh>::Skeleton& skeleton)

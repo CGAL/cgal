@@ -50,19 +50,22 @@ auto field = [](const Point& p, const int, const Mesh_domain::Index)
 int main()
 {
   Mesh_domain domain =
-    Mesh_domain::create_implicit_mesh_domain(capsule_function,
-                                             K::Sphere_3(CGAL::ORIGIN, 49.));
+    Mesh_domain::create_implicit_mesh_domain(function = capsule_function,
+                                             bounding_object = K::Sphere_3(CGAL::ORIGIN, 49.));
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.5,
                          facet_distance=field);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      perturb(time_limit = 0, sliver_bound = 0),
+                                      exude(time_limit = 0, sliver_bound = 0));
 
-  // Output
-  std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+//  // Output
+//  std::ofstream medit_file("out.mesh");
+//  CGAL::IO::write_MEDIT(medit_file, c3t3);
+//  medit_file.close();
 
   return 0;
 }

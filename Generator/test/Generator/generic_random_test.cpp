@@ -157,7 +157,8 @@ int test_T2(const FT eps)
   cdt.insert(Point_2(-1,3));
 
   // Refine the triangulation
-  CGAL::refine_Delaunay_mesh_2(cdt, Mesh_2_criteria(0.125, 0.5));
+  Mesh_2_criteria criteria(0.125, 0.5);
+  CGAL::refine_Delaunay_mesh_2(cdt, CGAL::parameters::criteria(criteria));
 
   CGAL::Random_points_in_triangle_mesh_2<Point_2, CDT> g(cdt);
   std::copy_n(g, 300, std::back_inserter(points));

@@ -41,7 +41,7 @@ that is pure, connected and without boundaries nor singularities. The
 <i>dimension</i> of the triangulation is the dimension of its maximal
 simplices.
 
-<!--- cardinality, i.e., they have the same number of vertices.--->
+<!--- cardinality, i.e., they have the same number of vertices. -->
 In the sequel, we will call these maximal simplices <I>full cells</I>.
 A <I>face</I> of a simplex is a subset of this simplex.
 A <I>proper face</I> of a simplex is a strict subset of this simplex.
@@ -130,22 +130,21 @@ Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
 <I>neighbors</I>. A full cell has always exactly \f$ d+1\f$ neighbors.
 
 Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) include
-<BLOCKQUOTE>
+\par
 <DL>
 <DT><B>\f$d=-2\f$</B><DD> This corresponds to an empty
 triangulation data structure.
 <DT><B>\f$d=-1\f$</B><DD> This corresponds to an abstract simplicial
 complex reduced to a single vertex.
- <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity.--->
+ <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity. -->
 <DT><B>\f$d=0\f$</B><DD> This corresponds to an abstract simplicial
 complex including two vertices, each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
-<!--- (geometrically, the finite vertex and the infinite vertex),--->
+<!--- (geometrically, the finite vertex and the infinite vertex), -->
 <DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a triangulation of
 the sphere \f$ \mathbb{S}^d\f$.
 </DL>
-</BLOCKQUOTE>
 
 ## The `Triangulation_data_structure` Class ##
 
@@ -164,7 +163,7 @@ neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. Th
 of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \sigma\f$
 is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
 \f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
-the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
+the \f$ i\f$-th vertex of \f$ \sigma\f$ (\cgalFigureRef{triangulationfigfullcell}).
 
 The vertices and full cells of the triangulations are accessed through
 `handles` and `iterators`. A handle is a model of the
@@ -184,7 +183,7 @@ to \f$ f \f$.
 \if READY_TO_PUBLISH
 \cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
 neighbor of \f$ c\f$ is called the <I>\f$ i\f$-th mirror-index</I> of
-\f$ c\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
+\f$ c\f$ (\cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
 often needed for maintaining the triangulation data structure. Thus,
 it might be desirable, for performance reasons, to store the mirror
 indices alongside the references to the vertices and neighbors in a
@@ -260,7 +259,7 @@ Therefore, the reader will make
 the best use of this example by reading it slowly, together with the reference
 manual documentation of the methods that are called (see here:
 `TriangulationDataStructure`) and by trying to understand the various
-`assert(...)` statements.--->
+`assert(...)` statements. -->
 
 \cgalExample{triangulation_data_structure_static.cpp}
 
@@ -347,8 +346,8 @@ ask the triangulation to construct the set of edges
 (\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices
-(include files <tt>triangulation1.cpp</tt> and
-<tt>triangulation2.cpp</tt> are given and commented below).
+(include files <tt>triangulation1.h</tt> and
+<tt>triangulation2.h</tt> are given and commented below).
 
 \cgalExample{triangulation.cpp}
 
@@ -368,14 +367,14 @@ there are (at least) two possibilities:
 The first is to iterate over the full cells of the triangulation and check if they
 are infinite or not:
 
-\cgalExample{triangulation1.cpp}
+\cgalExample{triangulation1.h}
 
 A second possibility is to ask the triangulation to gather all the full cells
 incident to the infinite vertex: they form precisely the set of infinite
 full cells:
 
 
-\cgalExample{triangulation2.cpp}
+\cgalExample{triangulation2.h}
 
 One important difference between the two examples above is that the first uses
 <I>little</I> memory but traverses <I>all</I> the full cells, while the second
@@ -396,7 +395,7 @@ circumscribing ball whose interior does not contain
 any vertex of the triangulation.
 
 In case of degeneracies (co-spherical points) the triangulation is not
-uniquely defined. Note however that the CGAL implementation computes a
+uniquely defined. Note however that the %CGAL implementation computes a
 unique triangulation even in these cases.
 
 When a new point `p` is inserted into a Delaunay triangulation, the
@@ -406,7 +405,7 @@ of an infinite full cell is the empty half-space bounded by the affine hull
 of the finite facet of this cell. The set of full cells that are in
 conflict with `p` form the <I>conflict zone</I>. The full cells
 in the conflict zone are removed, leaving a hole that contains `p`. That
-hole is ``star shaped'' around `p` and thus is re-triangulated using
+hole is &ldquo;star shaped&rdquo; around `p` and thus is re-triangulated using
 `p` as a center vertex.
 
 Delaunay triangulations support insertion of points, removal of vertices,
@@ -489,7 +488,7 @@ than inserting the same points one by one.
 
 The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
 `CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
-the concept `TriangulationDataStructure_` which is instantiated with a vertex
+the concept `TriangulationDataStructure` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
 The template parameter `RegularTriangulationTraits_` must be a model of the concept
@@ -513,11 +512,11 @@ Then, for each point to insert, it locates it by walking in the triangulation,
 using the previously inserted vertex as a "hint". Finally, the point is
 inserted.
 In the worst case scenario, without spatial sort, the expected complexity is
-\f$ O(n^{\lceil\frac{d}{2}\rceil+1}) \f$.
+\cgalBigO{(n^{\lceil\frac{d}{2}\rceil+1}}$.
 When the algorithm is run on uniformly distributed points, the localization complexity is
-\f$ O(n^{\frac{1}{d}}) \f$ and the size of the triangulation is \f$ O(n) \f$, which gives
-a complexity of \f$ O(n^{1+\frac{1}{d}}) \f$ for the insertion.
-With spatial sort and random points, one can expect a complexity of \f$ O(n\log n) \f$.
+\cgalBigO{(n^{\frac{1}{d}}}$ and the size of the triangulation is \cgalBigO{(n}$, which gives
+a complexity of \cgalBigO{(n^{1+\frac{1}{d}}}$ for the insertion.
+With spatial sort and random points, one can expect a complexity of \cgalBigO{(n\log n}$.
 Please refer to \cgalCite{boissonnat2009Delaunay} for more details.
 
 We provide below (\cgalFigureRef{Triangulationfigbenchmarks100},
@@ -537,8 +536,8 @@ The program has been compiled with Microsoft Visual C++ 2013 in Release mode.
 <tr align=center><td align=right>Time (s)</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td><td>45</td><td>185</td><td>686</td><td>2390</td></tr>
 <tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>< 1</td><td>1</td><td>3</td><td>13</td><td>53</td><td>182</td><td>662</td><td>2187</td><td>7156</td></tr>
 <tr align=center><td align=right>Number of maximal simplices</td><td>184</td><td>487</td><td>1,548</td><td>5,548</td><td>19,598</td><td>67,102</td><td>230,375</td><td>715,984</td><td>2,570,623</td><td>7,293,293</td><td>21,235,615</td></tr>
-<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr></td><td>
-<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=12><HR></td></tr>
 </TABLE>
 </CENTER>
 \cgalFigureCaptionBegin{Triangulationfigbenchmarks100}
@@ -554,8 +553,8 @@ Performance of the insertion of 100 points in a Delaunay triangulation.
 <tr align=center><td align=right>Time (s)</td><td>0.01</td><td>0.05</td><td>0.5</td><td>3.4</td><td>24</td><td>183</td><td>1365</td></tr>
 <tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>2.7</td><td>14</td><td>81</td><td>483</td><td>2827</td></tr>
 <tr align=center><td align=right>Number of maximal simplices</td><td>1,979</td><td>6,315</td><td>25,845</td><td>122,116</td><td>596,927</td><td>3,133,318</td><td>16,403,337</td></tr>
-<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr></td><td>
-<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=8><HR></td></tr>
 </TABLE>
 </CENTER>
 \cgalFigureCaptionBegin{Triangulationfigbenchmarks1000}
@@ -581,7 +580,7 @@ work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2017, Clément
 Jamin added the regular triangulations.
 
 Clément Jamin's work was supported by the
-<a href="https://cordis.europa.eu/project/rcn/111529/factsheet/en">Advanced Grant of the European Research Council GUDHI</a>
+<a href="https://cordis.europa.eu/project/id/339025">Advanced Grant of the European Research Council GUDHI</a>
 (Geometric Understanding in Higher Dimensions).
 
 

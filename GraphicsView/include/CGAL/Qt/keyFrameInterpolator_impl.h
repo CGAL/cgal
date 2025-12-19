@@ -355,7 +355,7 @@ void KeyFrameInterpolator::updateCurrentKeyFrameForTime(qreal time) {
 
   // TODO: Special case for loops when closed path is implemented !!
   if (!currentFrameValid_)
-    // Recompute everything from scrach
+    // Recompute everything from scratch
     currentFrame_[1]->toFront();
 
   while (currentFrame_[1]->peekNext()->time() > time) {

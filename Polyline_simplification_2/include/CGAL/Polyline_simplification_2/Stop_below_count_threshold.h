@@ -27,7 +27,7 @@ namespace Polyline_simplification_2
 /// This class is a stop predicate returning `true` when the number of
 /// vertices is smaller than a certain threshold.
 ///
-/// \cgalModels `PolylineSimplificationStopPredicate`.
+/// \cgalModels{PolylineSimplificationStopPredicate}
 class Stop_below_count_threshold
 {
 public :

@@ -19,7 +19,7 @@ A translation \f$g\f$ in \f$\mathcal G\f$ is a mapping acting on the hyperbolic 
 \f$\mathbb H^2\f$. It has the form
 \f[ g(z) = \frac{ \alpha\cdot z + \beta }{ \overline{\beta}\cdot z + \overline{\alpha} }, \qquad
         \alpha,\beta \in \mathbb C, \qquad z \in \mathbb H^2, \qquad |\alpha|^2 - |\beta|^2 = 1, \f]
-where \f$\overline{\alpha}\f$ ane \f$\overline{\beta}\f$ are the complex conjugates of
+where \f$\overline{\alpha}\f$ and \f$\overline{\beta}\f$ are the complex conjugates of
 \f$\alpha\f$ and \f$\beta\f$ respectively. In this implementation, the translation \f$g\f$
 is uniquely defined by its coefficients \f$\alpha\f$ and \f$\beta\f$.
 
@@ -124,7 +124,7 @@ public:
                 Comparison operator.
                  Each translation \f$g\f$ of \f$\mathcal G\f$, when applied to the octagon \f$\mathcal D_O\f$,
                  produces a copy of \f$\mathcal D_O\f$ labeled by the translation \f$g\f$. The copies of
-                 \f$\mathcal D_O\f$ incident to \f$\mathcal D_O\f$ are naturally ordered counter-clockwise around
+                 \f$\mathcal D_O\f$ incident to \f$\mathcal D_O\f$ are naturally ordered counterclockwise around
                  \f$\mathcal D_O\f$. The comparison operator compares two translations based on the ordering
                  of the copies of \f$\mathcal D_O\f$ that they produce. For more details, see Section
                  \ref P4HT2_representation of the User manual.

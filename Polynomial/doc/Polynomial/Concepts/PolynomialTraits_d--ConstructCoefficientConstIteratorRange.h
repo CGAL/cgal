@@ -7,9 +7,7 @@ This `AdaptableUnaryFunction` returns a const iterator range over the
 coefficients of the given polynomial, with respect to the outermost variable, \f$ x_{d-1}\f$.
 The range starts with the coefficient for \f$ x_{d-1}^0\f$.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

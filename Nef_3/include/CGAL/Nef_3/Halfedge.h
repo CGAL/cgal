@@ -21,6 +21,7 @@
 
 #include <string>
 #include <sstream>
+#include <CGAL/IO/io.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Origin.h>
@@ -30,7 +31,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -41,7 +42,7 @@ class Halfedge_base
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
-  typedef boost::any GenPtr;
+  typedef std::any GenPtr;
   #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Vector_3  Vector_3;

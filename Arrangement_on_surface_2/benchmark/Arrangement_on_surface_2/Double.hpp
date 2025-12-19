@@ -36,7 +36,7 @@ public:
     return(*this);
   }
 
-  // Arithmetic opertors.
+  // Arithmetic operators.
   Double operator+(const Double & x) const { return Double(val + x.val); }
 
   Double operator-(const Double & x) const { return Double(val - x.val); }
@@ -48,7 +48,7 @@ public:
   // Unary minus.
   Double operator-() const { return Double(-val); }
 
-  // Arithmetic opertors and assignment.
+  // Arithmetic operators and assignment.
   void operator+=(const Double & x) { val += x.val; }
 
   void operator-=(const Double & x) { val -= x.val; }

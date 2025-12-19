@@ -14,7 +14,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
-#include <CGAL/multiset_assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/memory.h>
 #include <CGAL/number_utils_classes.h>
@@ -27,15 +26,15 @@ namespace CGAL {
  * Container class representing a red-black tree, which is a balanced binary
  * tree that has the following invariants:
  * 1. Each node has a color, which is either red or black.
- * 2. Each red node has two red children (if a child is missing, it is
+ * 2. Each red node has two black children (if a child is missing, it is
  *    considered as a black node).
  * 3. The number of black nodes from every path from the tree root to a leaf
  *    is the same for all tree leaves (it is called the 'black height' of the
  *    tree).
- * Due to propeties 2-3, the height of a red-black tree containing n nodes
+ * Due to properties 2-3, the height of a red-black tree containing n nodes
  * is bounded by 2*log_2(n).
  *
- * The Multiset template requires three template parmeters:
+ * The Multiset template requires three template parameters:
  * - The contained Type class represents the objects stored in the tree.
  *   It has to support the default constructor, the copy constructor and
  *   the assignment operator (operator=).
@@ -43,7 +42,7 @@ namespace CGAL {
  *   class Type: It has to support an operator() that receives two objects from
  *   the Type class and returns SMALLER, EQUAL or LARGER, depending on the
  *   comparison result.
- *   In case the deafult parameter is supplied, the Type class has to support
+ *   In case the default parameter is supplied, the Type class has to support
  *   the less-than (<) and the equal (==) operators.
  * - The Allocator represents an allocator class. By default, it is the CGAL
  *   allocator.
@@ -168,7 +167,7 @@ protected:
     Node* predecessor () const
     {
       // The DUMMY_BEGIN node has no predecessor.
-      CGAL_multiset_assertion (color != DUMMY_BEGIN);
+      CGAL_assertion (color != DUMMY_BEGIN);
 
       Node        *predP;
 
@@ -203,7 +202,7 @@ protected:
     Node* successor () const
     {
       // The DUMMY_END node has no successor.
-      CGAL_multiset_assertion (color != DUMMY_END);
+      CGAL_assertion (color != DUMMY_END);
 
       Node        *succP;
 
@@ -292,7 +291,7 @@ protected:
 
 public:
 
-  // Forward decleration:
+  // Forward declaration:
   class const_iterator;
 
   /*! \class
@@ -326,7 +325,7 @@ public:
 
   public:
 
-    /*! Deafult constructor. */
+    /*! Default constructor. */
     iterator () :
       nodeP (nullptr)
     {}
@@ -346,7 +345,7 @@ public:
     /*! Increment operator (prefix notation). */
     iterator& operator++ ()
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       nodeP = nodeP->successor();
       return (*this);
@@ -355,7 +354,7 @@ public:
     /*! Increment operator (postfix notation). */
     iterator operator++ (int )
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       iterator temp = *this;
 
@@ -366,7 +365,7 @@ public:
     /*! Decrement operator (prefix notation). */
     iterator& operator-- ()
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       nodeP = nodeP->predecessor();
       return (*this);
@@ -375,7 +374,7 @@ public:
     /*! Decrement operator (postfix notation). */
     iterator operator-- (int )
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       iterator temp = *this;
 
@@ -388,7 +387,7 @@ public:
      */
     reference operator* () const
     {
-      CGAL_multiset_precondition (nodeP != nullptr && nodeP->is_valid());
+      CGAL_precondition (nodeP != nullptr && nodeP->is_valid());
 
       return (nodeP->object);
     }
@@ -398,7 +397,7 @@ public:
      */
     pointer operator-> () const
     {
-      CGAL_multiset_precondition (nodeP != nullptr && nodeP->is_valid());
+      CGAL_precondition (nodeP != nullptr && nodeP->is_valid());
 
       return (&(nodeP->object));
     }
@@ -436,7 +435,7 @@ public:
 
   public:
 
-    /*! Deafult constructor. */
+    /*! Default constructor. */
     const_iterator () :
       nodeP (nullptr)
     {}
@@ -461,7 +460,7 @@ public:
     /*! Increment operator (prefix notation). */
     const_iterator& operator++ ()
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       nodeP = nodeP->successor();
       return (*this);
@@ -470,7 +469,7 @@ public:
     /*! Increment operator (postfix notation). */
     const_iterator operator++ (int )
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       const_iterator temp = *this;
 
@@ -481,7 +480,7 @@ public:
     /*! Decrement operator (prefix notation). */
     const_iterator& operator-- ()
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       nodeP = nodeP->predecessor();
       return (*this);
@@ -490,7 +489,7 @@ public:
     /*! Decrement operator (postfix notation). */
     const_iterator operator-- (int )
     {
-      CGAL_multiset_precondition (nodeP != nullptr);
+      CGAL_precondition (nodeP != nullptr);
 
       const_iterator temp = *this;
 
@@ -503,7 +502,7 @@ public:
      */
     reference operator* () const
     {
-      CGAL_multiset_precondition (nodeP != nullptr && nodeP->is_valid());
+      CGAL_precondition (nodeP != nullptr && nodeP->is_valid());
 
       return (nodeP->object);
     }
@@ -513,7 +512,7 @@ public:
      */
     pointer operator-> () const
     {
-      CGAL_multiset_precondition (nodeP != nullptr && nodeP->is_valid());
+      CGAL_precondition (nodeP != nullptr && nodeP->is_valid());
 
       return (&(nodeP->object));
     }
@@ -545,25 +544,25 @@ public:
   //@{
 
   /*!
-   * Default constructor. [takes O(1) operations]
+   * Default constructor. [takes \cgalBigO{1} operations]
    */
   Multiset ();
 
   /*!
-   * Constructor with a comparison object. [takes O(1) operations]
+   * Constructor with a comparison object. [takes \cgalBigO{1} operations]
    * \param comp A comparison object to be used by the tree.
    */
   Multiset (const Compare& comp);
 
   /*!
-   * Copy constructor. [takes O(n) operations]
+   * Copy constructor. [takes \cgalBigO{n} operations]
    * \param tree The copied tree.
    */
   Multiset (const Self& tree);
 
   /*!
    * Construct a tree that contains all objects in the given range.
-   * [takes O(n log n) operations]
+   * [takes \cgalBigO{n log n} operations]
    * \param first An iterator for the first object in the range.
    * \param last A past-the-end iterator for the range.
    */
@@ -588,18 +587,18 @@ public:
   }
 
   /*!
-   * Destructor. [takes O(n) operations]
+   * Destructor. [takes \cgalBigO{n} operations]
    */
   virtual ~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED);
 
   /*!
-   * Assignment operator. [takes O(n) operations]
+   * Assignment operator. [takes \cgalBigO{n} operations]
    * \param tree The copied tree.
    */
   Self& operator= (const Self& tree);
 
   /*!
-   * Swap two trees. [takes O(1) operations]
+   * Swap two trees. [takes \cgalBigO{1} operations]
    * \param tree The copied tree.
    */
   void swap (Self& tree);
@@ -609,13 +608,13 @@ public:
   //@{
 
   /*!
-   * Test two trees for equality. [takes O(n) operations]
+   * Test two trees for equality. [takes \cgalBigO{n} operations]
    * \param tree The compared tree.
    */
   bool operator== (const Self& tree) const;
 
   /*!
-   * Check if our tree is lexicographically smaller. [takes O(n) operations]
+   * Check if our tree is lexicographically smaller. [takes \cgalBigO{n} operations]
    * \param tree The compared tree.
    */
   bool operator< (const Self& tree) const;
@@ -625,7 +624,7 @@ public:
   //@{
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& key_comp ()
   {
@@ -633,7 +632,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& value_comp ()
   {
@@ -642,7 +641,7 @@ public:
 
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& key_comp () const
   {
@@ -650,7 +649,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& value_comp () const
   {
@@ -708,8 +707,8 @@ public:
   }
 
   /*!
-   * Get the size of the tree. [takes O(1) operations, unless the tree
-   * was involved in a split operation, then it may take O(n) time.]
+   * Get the size of the tree. [takes \cgalBigO{1} operations, unless the tree
+   * was involved in a split operation, then it may take \cgalBigO{n} time.]
    * \return The number of objects stored in the tree.
    */
   size_t size () const;
@@ -726,14 +725,14 @@ public:
   /// \name Insertion functions.
 
   /*!
-   * Insert an object into the tree. [takes O(log n) operations]
+   * Insert an object into the tree. [takes \cgalBigO{log n} operations]
    * \param object The object to be inserted.
    * \return An iterator pointing to the inserted object.
    */
   iterator insert (const Type& object);
 
   /*!
-   * Insert a range of k objects into the tree. [takes O(k log n) operations]
+   * Insert a range of k objects into the tree. [takes \cgalBigO{k log n} operations]
    * \param first An iterator for the first object in the range.
    * \param last A past-the-end iterator for the range.
    */
@@ -752,7 +751,7 @@ public:
 
   /*!
    * Insert an object to the tree, with a given hint to its position.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position A hint for the position of the object.
    * \param object The object to be inserted.
    * \return An iterator pointing to the inserted object.
@@ -762,7 +761,7 @@ public:
 
   /*!
    * Insert an object to the tree, as the successor the given object.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position Points to the object after which the new object should
    *                 be inserted (or an invalid iterator to insert the object
    *                 as the tree minimum).
@@ -775,7 +774,7 @@ public:
 
   /*!
    * Insert an object to the tree, as the predecessor the given object.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position Points to the object before which the new object should
    *                 be inserted (or an invalid iterator to insert the object
    *                 as the tree maximum).
@@ -790,7 +789,7 @@ public:
   //@{
 
   /*!
-   * Erase objects from the tree. [takes O(log n) operations]
+   * Erase objects from the tree. [takes \cgalBigO{log n} operations]
    * \param object The object to be removed.
    * \return The number of objects removed from the tree.
    *          Note that all iterators to the erased objects become invalid.
@@ -799,7 +798,7 @@ public:
 
   /*!
    * Remove the object pointed by the given iterator.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position An iterator pointing the object to be erased.
    * \pre The iterator must be a valid.
    *      Note that all iterators to the erased object become invalid.
@@ -807,7 +806,7 @@ public:
   void erase (iterator position);
 
   /*!
-   * Clear the contents of the tree. [takes O(n) operations]
+   * Clear the contents of the tree. [takes \cgalBigO{n} operations]
    */
   void clear ();
 
@@ -818,7 +817,7 @@ public:
 
   /*!
    * Search the tree for the given key (non-const version).
-   * [takes O(log n) operations]
+   * [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A iterator pointing to the first equivalent object in the tree,
@@ -844,7 +843,7 @@ public:
 
   /*!
    * Search the tree for the given key (const version).
-   * [takes O(log n) operations]
+   * [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A iterator pointing to the first equivalent object in the tree,
@@ -870,7 +869,7 @@ public:
 
   /*!
    * Count the number of object in the tree equivalent to a given key.
-   * [takes O(log n + d) operations]
+   * [takes \cgalBigO{log n + d} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The number of equivalent objects.
@@ -906,7 +905,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (non-const version). [takes O(log n) operations]
+   * (non-const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, or end() if the key is not found
@@ -932,7 +931,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (non-const version). [takes O(log n) operations]
+   * (non-const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, along with a flag indicating whether
@@ -958,7 +957,7 @@ public:
 
   /*!
    * Get the first element whose key is greater than a given key
-   * (non-const version). [takes O(log n) operations]
+   * (non-const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The upper bound of the key, or end() if the key is not found
@@ -984,7 +983,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (const version). [takes O(log n) operations]
+   * (const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, or end() if the key is not found
@@ -1010,7 +1009,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (const version). [takes O(log n) operations]
+   * (const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, along with a flag indicating whether
@@ -1036,7 +1035,7 @@ public:
 
   /*!
    * Get the first element whose key is greater than a given key
-   * (const version). [takes O(log n) operations]
+   * (const version). [takes \cgalBigO{log n} operations]
    * \param object The query object.
    * \return The upper bound of the key, or end() if the key is not found
    *         in the tree.
@@ -1061,7 +1060,7 @@ public:
 
   /*!
    * Get the range of objects in the tree that are equivalent to a given key
-   * (non-const version). [takes O(log n + d) operations]
+   * (non-const version). [takes \cgalBigO{log n + d} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A pair of (lower_bound(key), upper_bound(key)).
@@ -1109,7 +1108,7 @@ public:
 
   /*!
    * Get the range of objects in the tree that are equivalent to a given key
-   * (const version). [takes O(log n + d) operations]
+   * (const version). [takes \cgalBigO{log n + d} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A pair of (lower_bound(key), upper_bound(key)).
@@ -1164,7 +1163,7 @@ public:
 
   /*!
    * Replace the object pointed by a given iterator with another object.
-   * [takes O(1) operations]
+   * [takes \cgalBigO{1} operations]
    * \param position An iterator pointing the object to be replaced.
    * \param object The new object.
    * \pre The given iterator is valid.
@@ -1175,7 +1174,7 @@ public:
 
   /*!
    * Swap the location two objects in the tree, given by their positions.
-   * [takes O(1) operations]
+   * [takes \cgalBigO{1} operations]
    * \param pos1 An iterator pointing to the first object.
    * \param pos1 An iterator pointing to the second object.
    * \pre The two iterators are valid.
@@ -1185,7 +1184,7 @@ public:
 
   /*!
    * Catenate the tree with a given tree, whose minimal object is not less
-   * than the maximal object of this tree. [takes O(log n) operations]
+   * than the maximal object of this tree. [takes \cgalBigO{log n} operations]
    * The function clears the other given tree, but all its iterators remain
    * valid and can be used with the catenated tree.
    * \param tree The tree to catenate to out tree.
@@ -1197,7 +1196,7 @@ public:
   /*!
    * Split the tree such that all remaining objects are less than a given
    * key, and all objects greater than (or equal to) this key form
-   * a new output tree. [takes O(log n) operations]
+   * a new output tree. [takes \cgalBigO{log n} operations]
    * \param key The split key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \param tree Output: The tree that will eventually contain all objects
@@ -1221,7 +1220,7 @@ public:
   /*!
    * Split the tree at a given position, such that it contains all objects
    * in the range [begin, position) and all objects in the range
-   * [position, end) form a new output tree. [takes O(log n) operations]
+   * [position, end) form a new output tree. [takes \cgalBigO{log n} operations]
    * \param position An iterator pointing at the split position.
    * \param tree Output: The output tree.
    * \pre The output tree is initially empty.
@@ -1241,13 +1240,13 @@ public:
   bool is_valid() const;
 
   /*!
-   * Get the height of the tree. [takes O(n) operations]
+   * Get the height of the tree. [takes \cgalBigO{n} operations]
    * \return The length of the longest path from the root to a leaf node.
    */
   size_t height () const;
 
   /*!
-   * Get the black-height of the tree. [takes O(1) operations]
+   * Get the black-height of the tree. [takes \cgalBigO{1} operations]
    * \return The number of black nodes from the root to each leaf node.
    */
   inline size_t black_height () const
@@ -1276,7 +1275,7 @@ protected:
   /*! Check whether a node is black. */
   inline bool _is_black (const Node *nodeP) const
   {
-    // Note that invalid nodes are considered ro be black as well.
+    // Note that invalid nodes are considered to be black as well.
     return (nodeP == nullptr || nodeP->color != Node::RED);
   }
   //@}
@@ -1956,7 +1955,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
 {
   Node  *nodeP = position.nodeP;
 
-  CGAL_multiset_precondition (_is_valid (nodeP));
+  CGAL_precondition (_is_valid (nodeP));
 
   // Compare the object to the one stored at the given node in order to decide
   // in which direction to proceed.
@@ -1980,7 +1979,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
       if (k > max_steps)
       {
         // In case the given position is too far away (more than log(n) steps)
-        // from the true poisition of the object, break the loop.
+        // from the true position of the object, break the loop.
         found_pos = false;
         break;
       }
@@ -2004,7 +2003,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
       if (k > max_steps)
       {
         // In case the given position is too far away (more than log(n) steps)
-        // from the true poisition of the object, break the loop.
+        // from the true position of the object, break the loop.
         found_pos = false;
         break;
       }
@@ -2033,7 +2032,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_after (iterator 
   Node  *nodeP = position.nodeP;
 
   // In case we are given a nullptr node, object should be the tree minimum.
-  CGAL_multiset_assertion (nodeP != &endNode);
+  CGAL_assertion (nodeP != &endNode);
 
   if (nodeP == &beginNode)
     nodeP = nullptr;
@@ -2042,7 +2041,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_after (iterator 
   {
     // In case the tree is empty, make sure that we did not receive a valid
     // iterator.
-    CGAL_multiset_precondition (nodeP == nullptr);
+    CGAL_precondition (nodeP == nullptr);
 
     // Assign a new root node. Notice that the root is always black.
     rootP = _allocate_node (object, Node::BLACK);
@@ -2070,7 +2069,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_after (iterator 
     // child of the current minimal leaf.
     parentP = beginNode.parentP;
 
-    CGAL_multiset_precondition (comp_f(object, parentP->object) != LARGER);
+    CGAL_precondition (comp_f(object, parentP->object) != LARGER);
 
     parentP->leftP = newNodeP;
 
@@ -2081,9 +2080,9 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_after (iterator 
   else
   {
     // Make sure the insertion does not violate the tree order.
-    CGAL_multiset_precondition_code (Node *_succP = nodeP->successor());
-    CGAL_multiset_precondition (comp_f(object, nodeP->object) != SMALLER);
-    CGAL_multiset_precondition (! _succP->is_valid() ||
+    CGAL_precondition_code (Node *_succP = nodeP->successor());
+    CGAL_precondition (comp_f(object, nodeP->object) != SMALLER);
+    CGAL_precondition (! _succP->is_valid() ||
                                 comp_f(object, _succP->object) != LARGER);
 
     // In case given node has no right child, place the new node as its
@@ -2131,7 +2130,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_before (iterator
   Node  *nodeP = position.nodeP;
 
   // In case we are given a nullptr node, object should be the tree maximum.
-  CGAL_multiset_assertion (nodeP != &beginNode);
+  CGAL_assertion (nodeP != &beginNode);
 
   if (nodeP == &endNode)
     nodeP = nullptr;
@@ -2140,7 +2139,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_before (iterator
   {
     // In case the tree is empty, make sure that we did not receive a valid
     // iterator.
-    CGAL_multiset_precondition (nodeP == nullptr);
+    CGAL_precondition (nodeP == nullptr);
 
     // Assign a new root node. Notice that the root is always black.
     rootP = _allocate_node(object, Node::BLACK);
@@ -2168,7 +2167,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_before (iterator
     // child of the current maximal leaf.
     parentP = endNode.parentP;
 
-    CGAL_multiset_precondition (comp_f(object, parentP->object) != SMALLER);
+    CGAL_precondition (comp_f(object, parentP->object) != SMALLER);
 
     parentP->rightP = newNodeP;
 
@@ -2179,9 +2178,9 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_before (iterator
   else
   {
     // Make sure the insertion does not violate the tree order.
-    CGAL_multiset_precondition_code (Node *_predP = nodeP->predecessor());
-    CGAL_multiset_precondition (comp_f(object, nodeP->object) != LARGER);
-    CGAL_multiset_precondition (! _predP->is_valid() ||
+    CGAL_precondition_code (Node *_predP = nodeP->predecessor());
+    CGAL_precondition (comp_f(object, nodeP->object) != LARGER);
+    CGAL_precondition (! _predP->is_valid() ||
                                 comp_f(object, _predP->object) != SMALLER);
 
     // In case given node has no left child, place the new node as its
@@ -2258,7 +2257,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::erase (iterator po
 {
   Node  *nodeP = position.nodeP;
 
-  CGAL_multiset_precondition (_is_valid (nodeP));
+  CGAL_precondition (_is_valid (nodeP));
 
   _remove_at (nodeP);
   return;
@@ -2294,16 +2293,16 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::replace (iterator 
 {
   Node  *nodeP = position.nodeP;
 
-  CGAL_multiset_precondition (_is_valid (nodeP));
+  CGAL_precondition (_is_valid (nodeP));
 
   // Make sure the replacement does not violate the tree order.
-  CGAL_multiset_precondition_code (Node *_succP = nodeP->successor());
-  CGAL_multiset_precondition (_succP == nullptr ||
+  CGAL_precondition_code (Node *_succP = nodeP->successor());
+  CGAL_precondition (_succP == nullptr ||
                               _succP->color == Node::DUMMY_END ||
                               comp_f(object, _succP->object) != LARGER);
 
-  CGAL_multiset_precondition_code (Node *_predP = nodeP->predecessor());
-  CGAL_multiset_precondition (_predP == nullptr ||
+  CGAL_precondition_code (Node *_predP = nodeP->predecessor());
+  CGAL_precondition (_predP == nullptr ||
                               _predP->color == Node::DUMMY_BEGIN ||
                               comp_f(object, _predP->object) != SMALLER);
 
@@ -2323,30 +2322,30 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::swap (iterator pos
   Node        *node1_P = pos1.nodeP;
   Node        *node2_P = pos2.nodeP;
 
-  CGAL_multiset_precondition (_is_valid (node1_P));
-  CGAL_multiset_precondition (_is_valid (node2_P));
+  CGAL_precondition (_is_valid (node1_P));
+  CGAL_precondition (_is_valid (node2_P));
 
   if (node1_P == node2_P)
     return;
 
   // Make sure the swap does not violate the tree order.
-  CGAL_multiset_precondition_code (Node *_succ1_P = node1_P->successor());
-  CGAL_multiset_precondition (! _is_valid (_succ1_P) ||
+  CGAL_precondition_code (Node *_succ1_P = node1_P->successor());
+  CGAL_precondition (! _is_valid (_succ1_P) ||
                               comp_f (node2_P->object,
                                       _succ1_P->object) != LARGER);
 
-  CGAL_multiset_precondition_code (Node *_pred1_P = node1_P->predecessor());
-  CGAL_multiset_precondition (! _is_valid (_pred1_P) ||
+  CGAL_precondition_code (Node *_pred1_P = node1_P->predecessor());
+  CGAL_precondition (! _is_valid (_pred1_P) ||
                               comp_f (node2_P->object,
                                       _pred1_P->object) != SMALLER);
 
-  CGAL_multiset_precondition_code (Node *_succ2_P = node2_P->successor());
-  CGAL_multiset_precondition (! _is_valid (_succ2_P) ||
+  CGAL_precondition_code (Node *_succ2_P = node2_P->successor());
+  CGAL_precondition (! _is_valid (_succ2_P) ||
                               comp_f (node1_P->object,
                                       _succ2_P->object) != LARGER);
 
-  CGAL_multiset_precondition_code (Node *_pred2_P = node2_P->predecessor());
-  CGAL_multiset_precondition (! _is_valid (_pred2_P) ||
+  CGAL_precondition_code (Node *_pred2_P = node2_P->predecessor());
+  CGAL_precondition (! _is_valid (_pred2_P) ||
                               comp_f (node1_P->object,
                                       _pred2_P->object) != SMALLER);
 
@@ -2438,13 +2437,13 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
   if (min2_P == nullptr)
   {
     // The other tree is empty - nothing to do.
-    CGAL_multiset_assertion (tree.rootP == nullptr);
+    CGAL_assertion (tree.rootP == nullptr);
     return;
   }
   else if (max1_P == nullptr)
   {
     // Our tree is empty: Copy all other tree properties to our tree.
-    CGAL_multiset_assertion (rootP == nullptr);
+    CGAL_assertion (rootP == nullptr);
 
     _shallow_assign (tree);
     return;
@@ -2452,19 +2451,19 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
 
   // Make sure that the minimal object in the other tree is not less than the
   // maximal object in our tree.
-  CGAL_multiset_precondition (comp_f (max1_P->object,
+  CGAL_precondition (comp_f (max1_P->object,
                                       min2_P->object) != LARGER);
 
   // Make sure both tree roots black.
-  CGAL_multiset_assertion (_is_black (rootP));
-  CGAL_multiset_assertion (_is_black (tree.rootP));
+  CGAL_assertion (_is_black (rootP));
+  CGAL_assertion (_is_black (tree.rootP));
 
   // Splice max1_P (or min2_P) from its tree, but without deleting it.
   Node*   auxP = nullptr;
 
   if (max1_P != rootP)
   {
-    // Splice max1_P from its current poisition in our tree.
+    // Splice max1_P from its current position in our tree.
     // We know it is has no right child, so we just have to connect its
     // left child with its parent.
     max1_P->parentP->rightP = max1_P->leftP;
@@ -2480,7 +2479,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
   }
   else if (min2_P != tree.rootP)
   {
-    // Splice min2_P from its current poisition in the other tree.
+    // Splice min2_P from its current position in the other tree.
     // We know it is has no left child, so we just have to connect its
     // right child with its parent.
     if (min2_P->parentP != nullptr)
@@ -2561,7 +2560,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
 
     if (_is_red (node2_P))
       node2_P = node2_P->leftP;
-    CGAL_multiset_assertion (_is_valid (node2_P));
+    CGAL_assertion (_is_valid (node2_P));
   }
   else
   {
@@ -2578,7 +2577,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
 
     if (_is_red (node1_P))
       node1_P = node1_P->rightP;
-    CGAL_multiset_assertion (_is_valid (node2_P));
+    CGAL_assertion (_is_valid (node2_P));
   }
 
   // Check which one of the tree roots have we reached.
@@ -2615,7 +2614,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
     // moving auxP to be their parent.
     parentP = node1_P->parentP;
 
-    CGAL_multiset_assertion (parentP != nullptr);
+    CGAL_assertion (parentP != nullptr);
 
     // The catenated tree will be rooted at the current root of our tree.
     newRootP = rootP;
@@ -2670,7 +2669,7 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator position,
                                                 Self& tree)
 {
-  CGAL_multiset_precondition (tree.empty());
+  CGAL_precondition (tree.empty());
 
   // Check the extremal cases.
   if (position == begin())
@@ -2691,7 +2690,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
   // is at most twice the black-height of the tree.
   Node    *nodeP = position.nodeP;
 
-  CGAL_multiset_precondition (_is_valid (nodeP));
+  CGAL_precondition (_is_valid (nodeP));
 
   Node              *currP = nodeP;
   Comparison_result *path = new Comparison_result [2 * iBlackHeight];
@@ -2708,7 +2707,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
     currP = currP->parentP;
   }
-  CGAL_multiset_assertion (currP == rootP);
+  CGAL_assertion (currP == rootP);
 
   // Now go down the path and split the tree accordingly. We also keep
   // track of the black-height of the current node.
@@ -2726,7 +2725,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
   while (depth >= 0)
   {
-    CGAL_multiset_assertion (_is_valid (currP));
+    CGAL_assertion (_is_valid (currP));
 
     // If we encounter a black node, the black-height of both its left and
     // right subtrees is decremented.
@@ -2750,7 +2749,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
       if (_is_valid (childP) && rightTree.rootP == nullptr)
       {
-        // Assing T_r to rightTree.
+        // Assign T_r to rightTree.
         rightTree.rootP = childP;
         rightTree.iBlackHeight = iCurrBHeight;
 
@@ -2770,8 +2769,8 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
       else if (_is_valid (childP))
       {
         // Catenate T_r with the current rightTree.
-        CGAL_multiset_assertion (_is_valid (spineRightP) &&
-                                 _is_valid(auxRightP));
+        CGAL_assertion (_is_valid (spineRightP) &&
+                        _is_valid(auxRightP));
 
         // Make sure the root of T_r is black.
         size_t    iCurrRightBHeight = iCurrBHeight;
@@ -2784,7 +2783,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
         // Go down the leftmost path of rightTree until locating a black
         // node whose black height is exactly iCurrRightBHeight.
-        CGAL_multiset_assertion (iRightBHeight >= iCurrRightBHeight);
+        CGAL_assertion (iRightBHeight >= iCurrRightBHeight);
 
         while (iRightBHeight > iCurrRightBHeight)
         {
@@ -2795,7 +2794,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
         if (_is_red (spineRightP))
           spineRightP = spineRightP->leftP;
-        CGAL_multiset_assertion (_is_valid (spineRightP));
+        CGAL_assertion (_is_valid (spineRightP));
 
         // Use the auxiliary node and make it the parent of T_r (which
         // becomes its left sub-tree) and spineRightP (which becomes its
@@ -2885,7 +2884,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
       if (_is_valid (childP) && leftTree.rootP == nullptr)
       {
-        // Assing T_l to leftTree.
+        // Assign T_l to leftTree.
         leftTree.rootP = childP;
         leftTree.iBlackHeight = iCurrBHeight;
 
@@ -2905,8 +2904,8 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
       else if (_is_valid (childP))
       {
         // Catenate T_l with the current leftTree.
-        CGAL_multiset_assertion (_is_valid (spineLeftP) &&
-                                 _is_valid(auxLeftP));
+        CGAL_assertion (_is_valid (spineLeftP) &&
+                        _is_valid(auxLeftP));
 
         // Make sure the root of T_l is black.
         size_t    iCurrLeftBHeight = iCurrBHeight;
@@ -2919,7 +2918,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
         // Go down the rightmost path of leftTree until locating a black
         // node whose black height is exactly iCurrLeftBHeight.
-        CGAL_multiset_assertion (iLeftBHeight >= iCurrLeftBHeight);
+        CGAL_assertion (iLeftBHeight >= iCurrLeftBHeight);
 
         while (iLeftBHeight > iCurrLeftBHeight)
         {
@@ -2930,7 +2929,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
         if (_is_red (spineLeftP))
           spineLeftP = spineLeftP->rightP;
-        CGAL_multiset_assertion (_is_valid (spineLeftP));
+        CGAL_assertion (_is_valid (spineLeftP));
 
         // Use the auxiliary node and make it the parent of T_l (which
         // becomes its right sub-tree) and spineLeftP (which becomes its
@@ -3012,7 +3011,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
   // It is now possible to free the path.
   delete[] path;
 
-  CGAL_multiset_assertion (auxLeftP == nullptr && auxRightP == nodeP);
+  CGAL_assertion (auxLeftP == nullptr && auxRightP == nodeP);
 
   // Fix the properties of the left tree: We know its minimal node is the
   // same as the current minimum.
@@ -3020,7 +3019,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
   leftTree.beginNode.parentP->leftP = &(leftTree.beginNode);
 
   // Traverse the rightmost path of the left tree to find the its maximum.
-  CGAL_multiset_assertion (_is_valid (spineLeftP));
+  CGAL_assertion (_is_valid (spineLeftP));
 
   while (_is_valid (spineLeftP->rightP))
     spineLeftP = spineLeftP->rightP;
@@ -3130,7 +3129,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_shallow_clear ()
 template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
 void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_at (Node* nodeP)
 {
-  CGAL_multiset_precondition (_is_valid (nodeP));
+  CGAL_precondition (_is_valid (nodeP));
 
   if (nodeP == rootP &&
       ! _is_valid (rootP->leftP) && ! _is_valid (rootP->rightP))
@@ -3155,11 +3154,11 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_at (Node* 
     // which is the leftmost child in its right sub-tree and has at most
     // one child (it may have a right child).
     Node    *succP = _sub_minimum (nodeP->rightP);
-    CGAL_multiset_assertion (_is_valid (succP));
+    CGAL_assertion (_is_valid (succP));
 
     // Now physically swap nodeP and its successor. Notice this may temporarily
     // violate the tree properties, but we are going to remove nodeP anyway.
-    // This way we have moved nodeP to a position were it is more convinient
+    // This way we have moved nodeP to a position were it is more convenient
     // to delete it.
     _swap (nodeP, succP);
   }
@@ -3169,7 +3168,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_at (Node* 
 
   if (_is_valid (nodeP->leftP))
   {
-    CGAL_multiset_assertion (! _is_valid (nodeP->rightP));
+    CGAL_assertion (! _is_valid (nodeP->rightP));
     childP = nodeP->leftP;
   }
   else
@@ -3247,8 +3246,8 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 void Multiset<Type, Compare, Allocator, UseCompactContainer>::_swap (Node* node1_P,
                                                 Node* node2_P)
 {
-  CGAL_multiset_assertion (_is_valid (node1_P));
-  CGAL_multiset_assertion (_is_valid (node2_P));
+  CGAL_assertion (_is_valid (node1_P));
+  CGAL_assertion (_is_valid (node2_P));
 
   // Store the properties of the first node.
   typename Node::Node_color   color1 = node1_P->color;
@@ -3388,8 +3387,8 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 void Multiset<Type, Compare, Allocator, UseCompactContainer>::_swap_siblings (Node* node1_P,
                                                          Node* node2_P)
 {
-  CGAL_multiset_assertion (_is_valid (node1_P));
-  CGAL_multiset_assertion (_is_valid (node2_P));
+  CGAL_assertion (_is_valid (node1_P));
+  CGAL_assertion (_is_valid (node2_P));
 
   // Store the properties of the first node.
   typename Node::Node_color   color1 = node1_P->color;
@@ -3422,7 +3421,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_swap_siblings (No
   Node        *parent_P = node1_P->parentP;
   Node        *temp;
 
-  CGAL_multiset_assertion (parent_P == node2_P->parentP);
+  CGAL_assertion (parent_P == node2_P->parentP);
 
   temp = parent_P->leftP;
   parent_P->leftP = parent_P->rightP;
@@ -3464,7 +3463,7 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 size_t Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_height
     (const Node* nodeP) const
 {
-  CGAL_multiset_assertion (_is_valid (nodeP));
+  CGAL_assertion (_is_valid (nodeP));
 
   // Recursively calculate the heights of the left and right sub-trees.
   size_t   iRightHeight = 0;
@@ -3552,7 +3551,7 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
 Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_minimum (Node* nodeP) const
 {
-  CGAL_multiset_assertion (_is_valid (nodeP));
+  CGAL_assertion (_is_valid (nodeP));
 
   Node    *minP = nodeP;
 
@@ -3568,7 +3567,7 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
 Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_maximum (Node* nodeP) const
 {
-  CGAL_multiset_assertion (_is_valid (nodeP));
+  CGAL_assertion (_is_valid (nodeP));
 
   Node    *maxP = nodeP;
 
@@ -3593,7 +3592,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_rotate_left (Node
   // Get the right child of the node.
   Node        *yNodeP = xNodeP->rightP;
 
-  CGAL_multiset_assertion (_is_valid (yNodeP));
+  CGAL_assertion (_is_valid (yNodeP));
 
   // Change its left subtree (T2) to x's right subtree.
   xNodeP->rightP = yNodeP->leftP;
@@ -3639,7 +3638,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_rotate_right (Nod
   // Get the left child of the node.
   Node        *xNodeP = yNodeP->leftP;
 
-  CGAL_multiset_assertion (_is_valid (xNodeP));
+  CGAL_assertion (_is_valid (xNodeP));
 
   // Change its right subtree (T2) to y's left subtree.
   yNodeP->leftP = xNodeP->rightP;
@@ -3683,7 +3682,7 @@ template <class Type, class Compare, typename Allocator, typename UseCompactCont
 typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
 Multiset<Type, Compare, Allocator, UseCompactContainer>::_duplicate (const Node* nodeP)
 {
-  CGAL_multiset_assertion (_is_valid (nodeP));
+  CGAL_assertion (_is_valid (nodeP));
 
   // Create a node of the same color, containing the same object.
   Node   *dupNodeP = _allocate_node(nodeP->object, nodeP->color);
@@ -3711,7 +3710,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::_duplicate (const Node*
 template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
 void Multiset<Type, Compare, Allocator, UseCompactContainer>::_destroy (Node* nodeP)
 {
-  CGAL_multiset_assertion (_is_valid (nodeP));
+  CGAL_assertion (_is_valid (nodeP));
 
   // Destroy the children recursively.
   if (_is_valid (nodeP->rightP))
@@ -3734,9 +3733,9 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_destroy (Node* no
 template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
 void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Node* nodeP)
 {
-  CGAL_multiset_precondition (_is_red (nodeP));
+  CGAL_precondition (_is_red (nodeP));
 
-  // Fix the red-black propreties: we may have inserted a red leaf as the
+  // Fix the red-black properties: we may have inserted a red leaf as the
   // child of a red parent - so we have to fix the coloring of the parent
   // recursively.
   Node        *currP = nodeP;
@@ -3748,7 +3747,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Nod
     // Get a pointer to the current node's grandparent (notice the root is
     // always black, so the red parent must have a parent).
     grandparentP = currP->parentP->parentP;
-    CGAL_multiset_precondition (grandparentP != nullptr);
+    CGAL_precondition (grandparentP != nullptr);
 
     if (currP->parentP == grandparentP->leftP)
     {
@@ -3781,7 +3780,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Nod
 
         // Color the parent black and the grandparent red.
         currP->parentP->color = Node::BLACK;
-        CGAL_multiset_assertion (grandparentP == currP->parentP->parentP);
+        CGAL_assertion (grandparentP == currP->parentP->parentP);
         grandparentP->color = Node::RED;
 
         // Right-rotate the grandparent's sub-tree
@@ -3819,7 +3818,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Nod
 
         // Color the parent black and the grandparent red.
         currP->parentP->color = Node::BLACK;
-        CGAL_multiset_assertion(grandparentP == currP->parentP->parentP);
+        CGAL_assertion(grandparentP == currP->parentP->parentP);
         grandparentP->color = Node::RED;
 
         // Left-rotate the grandparent's sub-tree
@@ -3873,7 +3872,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
         siblingP = currParentP->rightP;
       }
 
-      CGAL_multiset_assertion (_is_valid (siblingP));
+      CGAL_assertion (_is_valid (siblingP));
 
       if (_is_black (siblingP->leftP) && _is_black (siblingP->rightP))
       {
@@ -3889,14 +3888,14 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
         // the black height of the entire tree.
         if (currP == rootP)
         {
-          CGAL_multiset_assertion (currParentP == nullptr);
+          CGAL_assertion (currParentP == nullptr);
           iBlackHeight--;
         }
       }
       else
       {
         // In this case, at least one of the sibling's children is red.
-        // It is therfore obvious that the sibling itself is black.
+        // It is therefore obvious that the sibling itself is black.
         if (_is_black (siblingP->rightP))
         {
           // The left child is red: Color it black, and color the sibling red.
@@ -3938,7 +3937,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
         siblingP = currParentP->leftP;
       }
 
-      CGAL_multiset_assertion (_is_valid (siblingP));
+      CGAL_assertion (_is_valid (siblingP));
 
       if (_is_black (siblingP->leftP) && _is_black (siblingP->rightP))
       {
@@ -3954,14 +3953,14 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
         // the black height of the entire tree.
         if (currP == rootP)
         {
-          CGAL_multiset_assertion (currParentP == nullptr);
+          CGAL_assertion (currParentP == nullptr);
           iBlackHeight--;
         }
       }
       else
       {
         // In this case, at least one of the sibling's children is red.
-        // It is therfore obvious that the sibling itself is black.
+        // It is therefore obvious that the sibling itself is black.
         if (_is_black (siblingP->leftP))
         {
           // The right child is red: Color it black, and color the sibling red.
@@ -4011,8 +4010,8 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::_allocate_node
         (const Type& object,
          typename Node::Node_color color)
 {
-  CGAL_multiset_assertion (color != Node::DUMMY_BEGIN &&
-                           color != Node::DUMMY_END);
+  CGAL_assertion (color != Node::DUMMY_BEGIN &&
+                  color != Node::DUMMY_END);
 
   Node* new_node = node_alloc.allocate(beginNode);
   new_node->init(object, color);

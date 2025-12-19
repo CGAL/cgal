@@ -3,6 +3,9 @@
 #include <iostream>
 
 // That one should not be needed in the long term:
+#include <CGAL/double.h>
+#include <CGAL/float.h>
+#include <CGAL/int.h>
 #include <CGAL/Interval_nt.h>
 
 #ifdef CGAL_USE_LEDA
@@ -15,6 +18,11 @@
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #endif
+
+
+#include <CGAL/float.h>
+#include <CGAL/double.h>
+#include <CGAL/int.h>
 
 #if 0
 #ifdef CGAL_USE_CLN

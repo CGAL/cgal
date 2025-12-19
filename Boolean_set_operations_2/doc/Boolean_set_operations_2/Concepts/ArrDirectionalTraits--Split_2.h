@@ -3,9 +3,11 @@ namespace ArrDirectionalTraits {
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
-\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Split_2`
+\cgalHasModelsBegin
+\cgalHasModels{AosDirectionalXMonotoneTraits_2::Split_2}
+\cgalHasModelsEnd
 
 */
 

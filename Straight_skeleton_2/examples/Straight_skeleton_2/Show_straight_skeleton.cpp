@@ -1,16 +1,16 @@
-#include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
+#include <vector>
+#include <iterator>
+#include <iostream>
+#include <iomanip>
+#include <string>
 #include <fstream>
 #include <cassert>
 
-#include<boost/shared_ptr.hpp>
+#include <CGAL/draw_straight_skeleton_2.h>
 
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_with_holes_2.h>
-#include<CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 
 #include "dump_to_eps.h"
 
@@ -21,7 +21,7 @@ typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 typedef CGAL::Straight_skeleton_2<K>  Straight_skeleton ;
 
-typedef boost::shared_ptr<Straight_skeleton> Straight_skeleton_ptr ;
+typedef std::shared_ptr<Straight_skeleton> Straight_skeleton_ptr ;
 
 int main( int argc, char* argv[] )
 {
@@ -42,7 +42,7 @@ int main( int argc, char* argv[] )
       for(Polygon_with_holes::Hole_const_iterator it = input.holes_begin();
           it != input.holes_end();
           ++it){
-        assert(it->is_counterclockwise_oriented());
+        assert(it->is_clockwise_oriented());
       }
 
       //check the validity of the input and fix orientation
@@ -51,8 +51,6 @@ int main( int argc, char* argv[] )
         std::cerr << "ERROR: outer boundary is not simple.";
         return 1;
       }
-      if ( input.outer_boundary().is_clockwise_oriented() )
-        input.outer_boundary().reverse_orientation();
       int k=0;
       for (Polygon_with_holes::Hole_iterator it = input.holes_begin();
                                              it!=input.holes_end(); ++it, ++k)
@@ -62,8 +60,6 @@ int main( int argc, char* argv[] )
           std::cerr << "ERROR: hole "<< k << " is not simple.\n";
           return 1;
         }
-        if (it->is_counterclockwise_oriented())
-          it->reverse_orientation();
       }
 
       Straight_skeleton_ptr ss = CGAL::create_interior_straight_skeleton_2(input);
@@ -99,11 +95,12 @@ int main( int argc, char* argv[] )
   {
     std::cerr << "Computes the straight skeleton in the interior of a polygon with holes and draws it in an EPS file." << std::endl
               << std::endl
-              << "Usage: show_straight_skeleton <intput_file> [output_eps_file]" << std::endl
+              << "Usage: show_straight_skeleton <input_file> [output_eps_file]" << std::endl
               << std::endl
-              << "       intput_file  Text file describing the input polygon with holes." << std::endl
-              << "         (See input_file_format.txt for details)" << std::endl
-              << "       output_file     [default='innput_file.skeleton.eps']" << std::endl ;
+              << "       input_file  Text file describing the input polygon with holes." << std::endl
+              << "         (See input_file_format.txt for details" << std::endl
+              << "         or use input_file_example.txt)" << std::endl
+              << "       output_file     [default='input_file.skeleton.eps']" << std::endl ;
   }
 
   return 0;

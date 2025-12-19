@@ -20,6 +20,7 @@
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Rational_traits.h>
 
 namespace CGAL {
 
@@ -74,20 +75,20 @@ intersection(
 }
 
 template<typename K>
-inline bool
-do_intersect(const typename K::Iso_rectangle_2 &irect1,
-             const typename K::Iso_rectangle_2 &irect2,
-             const K&) {
+typename K::Boolean
+do_intersect(const typename K::Iso_rectangle_2& irect1,
+             const typename K::Iso_rectangle_2& irect2,
+             const K&)
+{
   return bool(intersection(irect1, irect2));
 }
 
 } // namespace internal
 } // namespace Intersections
 
-
 CGAL_INTERSECTION_FUNCTION_SELF(Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_rectangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_ISO_RECTANGLE_2_ISO_RECTANGLE_2_H

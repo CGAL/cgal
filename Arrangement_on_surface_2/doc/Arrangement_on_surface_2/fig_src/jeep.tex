@@ -1,0 +1,11 @@
+\documentclass[tikz, border=5mm]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{patterns.meta}
+\usetikzlibrary{shapes.geometric}
+\begin{document}
+\begin{tikzpicture}
+    \draw[line width=0.2pt,draw=black,
+      pattern={Hatch[angle=45,distance={6pt},line width=0.4pt]},
+      pattern color=black](0,0) rectangle (10,6);
+\end{tikzpicture}
+\end{document}

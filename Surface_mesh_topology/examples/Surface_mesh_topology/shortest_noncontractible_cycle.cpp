@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Finding shortest non contractible cycle..."<<std::endl;
 
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3> cst(lcc);
-  LCC_3::Dart_const_handle root=lcc.dart_handle
+  LCC_3::Dart_const_descriptor root=lcc.dart_descriptor
     (CGAL::get_default_random().get_int(0, static_cast<int>(lcc.number_of_darts()))); // One dart of the mesh
 
   Path_on_surface cycle1=
@@ -54,7 +54,11 @@ int main(int argc, char* argv[])
 
   std::cout<<"Cycle 1 (pink): "; display_cycle_info(lcc, cycle1);
   std::cout<<"Cycle 2 (green): "; display_cycle_info(lcc, cycle2);
-  if (draw) { CGAL::draw(lcc, {cycle1, cycle2}); }
+  if (draw)
+  {
+    auto cycles={cycle1, cycle2};
+    CGAL::draw(lcc, cycles);
+  }
 
   return EXIT_SUCCESS;
 }

@@ -78,7 +78,7 @@ in order to deal with a <i>bad</i> order of the input points.
 \section SectBoundingAnnulus Bounding Annulus in dD
 
 We provide the class `Min_annulus_d<Traits>` for arbitrary dimensions
-to compute the smalles enclosing annulus for a set of points.
+to compute the smallest enclosing annulus for a set of points.
 In 2D the annulus consists of two concentric circles, in 3D of
 two concentric spheres.
 

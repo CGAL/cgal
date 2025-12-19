@@ -6,8 +6,8 @@ namespace CGAL {
 
 \details The algorithm obtains a constrained triangulation from the input arrangement, then computes visibility by
 expanding the triangle that contains the query point.
-Preprocessing takes \f$ O(n)\f$ time and \f$ O(n) \f$ space, where \f$ n \f$ is the number of vertices of input polygon.
-The query time is \f$ O(nh)\f$, where \f$ h \f$ is the number of holes+1 of input polygon. Thus, for simple polygons (or a polygon with a constant number of holes) the algorithm complexity is linear, but it is \f$ O(n^2)\f$ in the worst case, as the number of holes can be linear in \f$ n \f$.
+Preprocessing takes \cgalBigO{n} time and \cgalBigO{n}$ space, where \f$ n \f$ is the number of vertices of input polygon.
+The query time is \cgalBigO{nh}, where \f$ h \f$ is the number of holes+1 of input polygon. Thus, for simple polygons (or a polygon with a constant number of holes) the algorithm complexity is linear, but it is \cgalBigO{n^2} in the worst case, as the number of holes can be linear in \f$ n \f$.
 
 
 \tparam Arrangement_2_ is the type used to represent the input environment.
@@ -17,7 +17,7 @@ It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2:
 \tparam RegularizationCategory indicates whether the output should be regularized. It can be
 specified by one of the following: `#Tag_true` or `#Tag_false`, where `#Tag_false` is the default value.
 
-\cgalModels `Visibility_2`
+\cgalModels{Visibility_2}
 
 \sa `CGAL::Simple_polygon_visibility_2`
 \sa `CGAL::Rotational_sweep_visibility_2`
@@ -63,7 +63,7 @@ public:
 
 /*!
 Attaches the given arrangement to the visibility object and computes the restricted triangulation.
-This takes \f$ O(n) \f$ time, where \f$ n \f$ is the number of vertices.
+This takes \cgalBigO{n}$ time, where \f$ n \f$ is the number of vertices.
 
 From this moment on the class observes changes in the arrangement. If the arrangement changes
 a new restricted triangulation is computed. Re-attaching forces re-computation.

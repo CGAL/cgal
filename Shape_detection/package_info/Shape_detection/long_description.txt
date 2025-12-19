@@ -9,6 +9,7 @@ Additional shapes can be detected, given a custom shape class by the user.
 
 In addition to the RANSAC algorithm, the generic Region Growing algorithm is implemented.
 This algorithm can detect shapes in a set of arbitrary items. In particular,
-CGAL provides three instances of the algorithm: detecting lines in a 2D point set,
-detecting planes in a 3D point set, and detecting planes on a polygon mesh.
+CGAL provides several instances of the algorithm: detecting lines and circles in a 2D point set,
+detecting planes, spheres, and cylinders in a 3D point set, detecting planes on a polygon mesh, detecting lines
+in a 2D/3D segment set, and detecting lines on a 2D/3D polyline.
 Other custom instances can be easily added by the user.

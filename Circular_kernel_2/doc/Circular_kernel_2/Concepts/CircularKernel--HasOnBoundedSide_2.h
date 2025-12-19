@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::HasOnBoundedSide_2`
+\cgalRefines{Kernel::HasOnBoundedSide_2}
 
 \sa `CircularKernel::BoundedSide_2`
 \sa `CircularKernel::HasOnUnboundedSide_2`

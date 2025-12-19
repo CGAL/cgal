@@ -12,8 +12,8 @@
 
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 void Straight_skeleton_traits_external_trace( std::string s )
 {
   std::cout << s << std::endl ;
@@ -98,10 +98,13 @@ struct triple
     int sid1 = sid++;
     int sid2 = sid++;
 
-    return CGAL::Construct_ss_trisegment_2(sTraits)(
+    return sTraits.construct_ss_trisegment_2_object()(
              Segment(Point(mP[0].x(),mP[0].y()), Point(mP[1].x(),mP[1].y()), sid0),
+             FT(1),
              Segment(Point(mP[2].x(),mP[2].y()), Point(mP[3].x(),mP[3].y()), sid1),
-             Segment(Point(mP[4].x(),mP[4].y()), Point(mP[5].x(),mP[5].y()), sid2));
+             FT(1),
+             Segment(Point(mP[4].x(),mP[4].y()), Point(mP[5].x(),mP[5].y()), sid2),
+             FT(1));
   }
 
   friend std::ostream& operator<<( std::ostream& os, Point const& aP )

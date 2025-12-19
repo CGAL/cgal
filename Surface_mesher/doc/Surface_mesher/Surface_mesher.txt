@@ -11,6 +11,8 @@ namespace CGAL {
 \image html segmented_head.png
 \image latex segmented_head.png
 
+\deprecated This package is deprecated since the version 6.0 of \cgal. The package \ref PkgMesh3 should be used instead.
+
 \section SurfaceMesher_section_intro Introduction
 
 This package provides a function template
@@ -304,14 +306,14 @@ This \cgal component also provides functions to write the reconstructed surface 
 
 \section Surface_mesherUndocumented Undocumented Features Available in Demos
 
-The Polyhedron demo has a feature that allows to remesh a polyhedral
+The CGAL Lab application has a feature that allows to remesh a polyhedral
 surface, using the 3D Surface Mesh Generator. That has been implemented as
 a special model of `SurfaceMeshTraits_3`, for polyhedra. That traits
 class is not yet documented because its interface and code have not yet
 been stabilized.
 
 The Surface Mesh Generator demo allows to mesh not only gray level images,
-but also segmented images, when voxels are labelled with a domain
+but also segmented images, when voxels are labeled with a domain
 index. Such images are for example the result of a segmentation of 3D
 medical images.
 

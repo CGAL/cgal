@@ -40,7 +40,7 @@ namespace CGAL {
     operator()(P p)
     {
       T h;
-      typename Construct_cartesian_const_iterator_d::result_type pit = construct_it(*p);
+      auto pit = construct_it(*p);
       for (int i = 0; i < dim; ++i, ++pit) {
         h=(*pit);
         if (h < lower[i]) lower[i] = h;
@@ -111,11 +111,7 @@ namespace CGAL {
 
     explicit
     Kd_tree_rectangle(const Kd_tree_rectangle& r)
-    : max_span_coord_(r.max_span_coord_)
-    {
-      lower_ = r.lower_;
-      upper_ = r.upper_;
-    }
+    : lower_(r.lower_), upper_(r.upper_), max_span_coord_(r.max_span_coord_) {}
 
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter>
     void update_from_point_pointers(PointPointerIter begin,
@@ -126,7 +122,7 @@ namespace CGAL {
       if (begin ==end)
         return;
       // initialize with values of first point
-      typename Construct_cartesian_const_iterator_d::result_type bit = construct_it(**begin);
+      auto bit = construct_it(**begin);
 
       for (int i=0; i < D::value; ++i, ++bit) {
         lower_[i]= *bit; upper_[i]=lower_[i];
@@ -288,12 +284,6 @@ namespace CGAL {
     {
       std::fill(coords_, coords_ + 2*dim, FT(0));
     }
-
-    Kd_tree_rectangle()
-      : coords_(0), dim(0), max_span_coord_(-1)
-    {
-}
-
 
     explicit
     Kd_tree_rectangle(const Kd_tree_rectangle& r)

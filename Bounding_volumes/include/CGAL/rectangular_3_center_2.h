@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Rectangular_p_center_traits_2.h>
 #include <algorithm>
@@ -135,7 +135,7 @@ rectangular_3_center_2_type1(
   rad = sdist(v(r, 2), v(r, 0));
   // init to prevent default constructor requirement
   Point bestpoint = *f;
-  // (initialisation avoids warning)
+  // (initialization avoids warning)
   unsigned int bestrun = 0;
 
   // two cases: top-left & bottom-right or top-right & bottom-left
@@ -965,7 +965,7 @@ rectangular_3_center_2_type2(
         (Q_r_empty || op.compute_y_distance(q_r, Q_r) <= op.delta()(*m))) {
       boost::function1<bool,FT>
         greater_delta_m = boost::bind(less< FT >(), op.delta()(*m));
-      CGAL_optimisation_assertion_code(RandomAccessIterator iii =)
+      CGAL_assertion_code(RandomAccessIterator iii =)
         find_if(e,
                 l,
                 boost::bind(logical_and< bool >(),
@@ -973,7 +973,7 @@ rectangular_3_center_2_type2(
                           boost::bind(op.distance(), q_t, _1)),
                      boost::bind(greater_delta_m,
                           boost::bind(op.distance(), q_r, _1))));
-        CGAL_optimisation_assertion(iii == l);
+        CGAL_assertion(iii == l);
     }
     // check whether the points in [f,s) are covered
     {
@@ -985,7 +985,7 @@ rectangular_3_center_2_type2(
                       boost::bind(le_delta_m, boost::bind(op.distance(), q_t, _1)));
       iii = partition(iii, s,
                       boost::bind(le_delta_m, boost::bind(op.distance(), q_r, _1)));
-      CGAL_optimisation_assertion(iii == s);
+      CGAL_assertion(iii == s);
     }
 #endif // CGAL_3COVER_CHECK
 
@@ -1052,7 +1052,7 @@ rectangular_3_center_2_type2(
     }
 
     // step (e) [not enough points in G]
-    CGAL_optimisation_assertion(b1 - (m + 1) >= 5 * cutoff);
+    CGAL_assertion(b1 - (m + 1) >= 5 * cutoff);
 
     // compute the four cutting lines for R
     std::nth_element(m + 1, m + 1 + cutoff, b1, less_x_2);
@@ -1113,7 +1113,7 @@ rectangular_3_center_2_type2(
 
     // now s_b corresponds to the first moment in [s, m+1)
     // where q_t and q_r cover B
-    CGAL_optimisation_assertion_code(bool loopcheck = false;)
+    CGAL_assertion_code(bool loopcheck = false;)
 CGAL_3CENTER_REPEAT_CHECK:
     // place q_t and q_r
     q_t = op.place_x_square(q_t_afap, r, op.delta()(*s_b));
@@ -1142,9 +1142,9 @@ CGAL_3CENTER_REPEAT_CHECK:
         // in degenerate situations it can happen that the number of
         // points in R is too small => decrease radius and check again
         --s_b;
-        CGAL_optimisation_assertion(!loopcheck);
-        CGAL_optimisation_assertion(s != s_b);
-        CGAL_optimisation_assertion_code(loopcheck = true;)
+        CGAL_assertion(!loopcheck);
+        CGAL_assertion(s != s_b);
+        CGAL_assertion_code(loopcheck = true;)
         goto CGAL_3CENTER_REPEAT_CHECK;
       }
       s = b1;
@@ -1166,7 +1166,7 @@ CGAL_3CENTER_REPEAT_CHECK:
     // we still have a covering
 
     if (s_b == s) {
-      CGAL_optimisation_expensive_assertion_code(
+      CGAL_expensive_assertion_code(
         std::vector< Point > tmppts(f, l);
         RandomAccessIterator ii =
           partition(tmppts.begin(), tmppts.end(),
@@ -1174,9 +1174,9 @@ CGAL_3CENTER_REPEAT_CHECK:
         IP tmppos = min_max_element(ii, tmppts.end(),
                                     op.compare_x(), op.compare_y());
         )
-      CGAL_optimisation_expensive_assertion(
+      CGAL_expensive_assertion(
         !op.compare_x()(*tmppos.first, q_t));
-      CGAL_optimisation_expensive_assertion(
+      CGAL_expensive_assertion(
         !op.compare_y()(q_r, *tmppos.second));
 
       // we are done
@@ -1219,7 +1219,7 @@ CGAL_3CENTER_REPEAT_CHECK:
                      [&op, s_b](const Point& p){ return op.delta()(*s_b) != op.delta()(p); });
     rho_max = op.delta()(*s_b);
     q_t_at_rho_max = q_t, q_r_at_rho_max = q_r;
-    CGAL_optimisation_assertion(op.delta()(*next) < op.delta()(*s_b));
+    CGAL_assertion(op.delta()(*next) < op.delta()(*s_b));
     q_t_afap = op.update_x_square(q_t_afap, *s_b);
     q_r_afap = op.update_y_square(q_r_afap, *s_b);
     q_t = op.place_x_square(q_t_afap, r, op.delta()(*next));
@@ -1255,7 +1255,7 @@ CGAL_3CENTER_REPEAT_CHECK:
     }
 
 
-    CGAL_optimisation_assertion(b3 - b1 >= cutoff);
+    CGAL_assertion(b3 - b1 >= cutoff);
     e = b1;
     // adjust Q_t
     if (b1 != b2) {
@@ -1299,7 +1299,7 @@ CGAL_3CENTER_REPEAT_CHECK:
       rho_max = max BOOST_PREVENT_MACRO_SUBSTITUTION (op.compute_x_distance(q_t, Q_t),
                                op.compute_y_distance(q_r, Q_r));
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
-      CGAL_optimisation_assertion(rho_max <= rad);
+      CGAL_assertion(rho_max <= rad);
 #endif // ! CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
       rad = rho_max;
       *o++ = op.construct_corner_square(r, rad / FT(2));
@@ -1307,7 +1307,7 @@ CGAL_3CENTER_REPEAT_CHECK:
       *o++ = op.construct_y_square(q_r, rad / FT(2));
       return o;
     }
-    CGAL_optimisation_assertion(s != e);
+    CGAL_assertion(s != e);
 
     // find the first diameter where covering is possible
     for (;;) {
@@ -1324,7 +1324,7 @@ CGAL_3CENTER_REPEAT_CHECK:
 
       // try the next possible diameter value
       FT try_rho = op.delta()(*t);
-      CGAL_optimisation_assertion(t == s || try_rho < rho_max);
+      CGAL_assertion(t == s || try_rho < rho_max);
       q_t = op.place_x_square(q_t_afap, r, try_rho);
       q_r = op.place_y_square(q_r_afap, r, try_rho);
 
@@ -1370,10 +1370,9 @@ CGAL_3CENTER_REPEAT_CHECK:
   //   - q_r_at_rho_max is the corr. position of q_r.
 
   // try rho_min
-  CGAL_optimisation_assertion(rho_min <= rho_max);
-  CGAL_optimisation_assertion(rho_min >= 0);
+  CGAL_assertion(rho_min <= rho_max);
   FT rad_2 = q_t_q_r_cover_at_rho_min;
-  if (s_at_rho_min != e_at_rho_min) {
+  if (rho_min >= 0 && s_at_rho_min != e_at_rho_min) {
     auto mydist = [&q_t_at_rho_min, &q_r_at_rho_min, &op](const Point& p)
                   { return Min<FT>()( op.distance()(q_t_at_rho_min, p),
                                       op.distance()(q_r_at_rho_min, p)); };
@@ -1384,10 +1383,10 @@ CGAL_3CENTER_REPEAT_CHECK:
                             [&mydist](const Point& p1, const Point& p2)
                             { return mydist(p1) < mydist(p2); })));
   }
-  CGAL_optimisation_assertion(rad_2 == 0 || rad_2 > rho_min);
+  CGAL_assertion(rad_2 == 0 || rad_2 > rho_min);
 
   // if a covering with rho == 0 is possible,
-  // it will be catched in the type1 functions
+  // it will be caught in the type1 functions
   Point q_t, q_r;
   if (rad_2 > rho_max || rho_min == -1) {
     // it is rho_max ...
@@ -1397,7 +1396,7 @@ CGAL_3CENTER_REPEAT_CHECK:
     q_t = q_t_at_rho_min, q_r = q_r_at_rho_min;
 
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
-  CGAL_optimisation_assertion(rad_2 <= rad);
+  CGAL_assertion(rad_2 <= rad);
 #endif // ! CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
   rad = rad_2;
   *o++ = op.construct_corner_square(r, rad / FT(2));
@@ -1414,7 +1413,7 @@ rectangular_3_center_2(
   typename Traits::FT& r,
   Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
   typedef typename Traits::FT                                    FT;
   typedef typename Traits::Point_2                            Point;
   typedef typename Traits::Iso_rectangle_2                Rectangle;

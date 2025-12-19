@@ -20,7 +20,6 @@
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -112,6 +111,11 @@ struct HDS_edge {
                       i.halfedge():i.halfedge()->opposite());
   }
 
+  friend std::ostream& operator<<(std::ostream& os, const HDS_edge& e)
+  {
+    os << e.halfedge_;
+    return os;
+  }
 private:
   Halfedge_handle halfedge_;
 };

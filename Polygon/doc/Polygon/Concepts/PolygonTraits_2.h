@@ -12,12 +12,14 @@ The requirements of `PolygonTraits_2` are a subset of the kernel
 requirements.  We only list the types and methods which are required
 and refer to the description of the kernel concept for details.
 
-\cgalRefines `DefaultConstructible` and `CopyConstructable`
+\cgalRefines{DefaultConstructible,CopyConstructable}
 
-\cgalHasModel The kernels supplied by \cgal are models of `PolygonTraits_2`.
-\cgalHasModel `CGAL::Projection_traits_xy_3<K>`
-\cgalHasModel `CGAL::Projection_traits_yz_3<K>`
-\cgalHasModel `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModelsBegin
+\cgalHasModelsBare{The kernels supplied by \cgal are models of `PolygonTraits_2`}
+\cgalHasModels{CGAL::Projection_traits_xy_3<K>}
+\cgalHasModels{CGAL::Projection_traits_yz_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xz_3<K>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Polygon_2<PolygonTraits_2, Container>`
 

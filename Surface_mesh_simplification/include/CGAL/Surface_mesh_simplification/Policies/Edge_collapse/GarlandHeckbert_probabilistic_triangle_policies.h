@@ -48,7 +48,7 @@ private:
 
   // this is only used when we fall back to probabilistic planes for the discontinuous edges,
   // the actual triangle quadric calculation only uses the normal variance
-  static constexpr FT position_variance_factor = 1;
+  static constexpr FT position_variance_factor = 0.1;
 
   Face_variance_map m_face_variance_map;
 
@@ -61,7 +61,7 @@ public:
   { }
 
   Probabilistic_triangle_quadric_calculator(TriangleMesh& tmesh,
-                                            typename boost::enable_if<std::is_same<Face_variance_map, Default_FVM> >::type* = nullptr)
+                                            std::enable_if_t<std::is_same<Face_variance_map, Default_FVM>::value >* = nullptr)
   {
     // try to initialize the face variance map using the estimated variance
     // parameters are constants defined for this class
@@ -74,6 +74,15 @@ public:
   }
 
 public:
+  template <typename VertexPointMap>
+  Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor /*v*/,
+                                      const TriangleMesh& /*tmesh*/,
+                                      const VertexPointMap /*point_map*/,
+                                      const GeomTraits& /*gt*/) const
+  {
+    return Mat_4::Zero();
+  }
+
   // we don't have a sensible way to construct a triangle quadric
   // from an edge, so we fall back to probabilistic plane quadrics here
   template<typename VertexPointMap>

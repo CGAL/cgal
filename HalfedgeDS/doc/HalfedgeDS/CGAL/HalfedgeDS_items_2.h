@@ -9,7 +9,7 @@ declare all incidences supported by a `HalfedgeDS`. The vertex
 also contains a point of type `Traits::Point_2`, where `Traits`
 is the template argument of the corresponding `HalfedgeDS`.
 
-\cgalModels `HalfedgeDSItems`
+\cgalModels{HalfedgeDSItems}
 
 \sa `CGAL::HalfedgeDS_min_items`
 \sa `CGAL::Polyhedron_items_3`

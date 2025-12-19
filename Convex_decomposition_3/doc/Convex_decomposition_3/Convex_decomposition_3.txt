@@ -18,11 +18,11 @@ Minkowski sums of the convex pieces, and unite the pair-wise sums.
 
 While it is desirable to have a decomposition into a minimum number of
 pieces, this problem is known to be NP-hard \cgalCite{c-cpplb-84}. Our
-implementation decomposes a Nef polyhedron \f$ N\f$ into \f$ O(r^2)\f$ convex
+implementation decomposes a Nef polyhedron \f$ N\f$ into \cgalBigO{r^2} convex
 pieces, where \f$ r\f$ is the number of edges that have two adjacent
 facets that span an angle of more than 180 degrees with respect to the
 interior of the polyhedron. Those edges are also called reflex edges.
-The bound of \f$ O(r^2)\f$ convex pieces is worst-case
+The bound of \cgalBigO{r^2} convex pieces is worst-case
 optimal \cgalCite{c-cpplb-84}.
 
 \cgalFigureBegin{figverticalDecomposition,two_cubes_all_in_one.png}

@@ -182,7 +182,7 @@ The following example shows how to control the model complexity by tuning the we
 \remark
 This example also shows how to reuse the intermediate results from the candidate generation step.
 
-\cgalExample{Polygonal_surface_reconstruction/polyfit_example_model_complexty_control.cpp}
+\cgalExample{Polygonal_surface_reconstruction/polyfit_example_model_complexity_control.cpp}
 
 
 \section secPerformances Performance

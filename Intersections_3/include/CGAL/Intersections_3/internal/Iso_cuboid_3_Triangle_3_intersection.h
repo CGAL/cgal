@@ -67,7 +67,7 @@ void clip_poly_halfspace(
       SP_type inter = k.intersect_3_object()(seg, pl);
       if(inter)
       {
-        Point* p_inter = boost::get<Point>(&*inter);
+        Point* p_inter = std::get_if<Point>(&*inter);
         if(p_inter
            && !(k.equal_3_object()(*p_inter, p1))
            && !(k.equal_3_object()(*p_inter, p2)))
@@ -90,7 +90,7 @@ void clip_poly_halfspace(
       SP_type inter = typename K::Intersect_3()(seg, pl);
       if(inter)
       {
-        Point* p_inter = boost::get<Point>(&*inter);
+        Point* p_inter = std::get_if<Point>(&*inter);
         if(p_inter
            && !(k.equal_3_object()(*p_inter, p1))
            && !(k.equal_3_object()(*p_inter, p2)))

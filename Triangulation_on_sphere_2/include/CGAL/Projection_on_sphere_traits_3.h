@@ -17,8 +17,7 @@
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
 #include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
-
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/number_utils_classes.h>
 
 namespace CGAL {
@@ -38,7 +37,7 @@ private:
   mutable Base_point proj_pt;
 
 public:
-  Point_with_scale() : Base_point() { } // vertex base wants a default constructor
+  Point_with_scale() : Base_point(), cached(false) { } // vertex base wants a default constructor
   Point_with_scale(const Base_point& p) : Base_point(p), cached(false) { }
 
   const Base_point& get_projection(const Base_point& center,

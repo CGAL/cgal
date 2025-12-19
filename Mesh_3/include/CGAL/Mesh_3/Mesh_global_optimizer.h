@@ -32,7 +32,6 @@
 #include <CGAL/Time_stamper.h>
 
 #include <CGAL/iterator.h>
-#include <CGAL/tuple.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
@@ -43,8 +42,6 @@
 #include <vector>
 #include <list>
 #include <limits>
-
-#include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
@@ -68,16 +65,21 @@ template <typename Tr, typename Concurrency_tag>
 class Mesh_global_optimizer_base
 {
 protected:
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
-  typedef typename Gt::Vector_3                             Vector_3;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
+  typedef typename GT::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   // The sizing field info is stored inside the move vector because it is computed
   // when the move is computed. This is because the parallel version uses the threadsafe
   // version of incident_cells (which thus requires points to not be moving yet)
-  typedef std::vector<std::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
-                                                            Moves_vector;
+  struct Move
+  {
+    typename Tr::Vertex_handle vertex_;
+    Vector_3 move_;
+    FT size_;
+  };
+  typedef std::vector<Move>                                 Moves_vector;
   typedef unsigned int                                      Nb_frozen_points_type;
 
   Mesh_global_optimizer_base(const Bbox_3 &, int)
@@ -127,12 +129,18 @@ class Mesh_global_optimizer_base<Tr, Parallel_tag>
 {
 
 protected:
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
-  typedef typename Gt::Vector_3                             Vector_3;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
+  typedef typename GT::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
-  typedef tbb::concurrent_vector<std::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
-                                                            Moves_vector;
+
+  struct Move
+  {
+    typename Tr::Vertex_handle vertex_;
+    Vector_3 move_;
+    FT size_;
+  };
+  typedef tbb::concurrent_vector<Move>                      Moves_vector;
   typedef std::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
@@ -240,7 +248,7 @@ class Mesh_global_optimizer
   using Base::increment_frozen_points;
 
   typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Tr::Geom_traits      GT;
 
   typedef typename Tr::Bare_point       Bare_point;
   typedef typename Tr::Weighted_point   Weighted_point;
@@ -249,8 +257,8 @@ class Mesh_global_optimizer
   typedef typename Tr::Edge             Edge;
   typedef typename Tr::Vertex           Vertex;
 
-  typedef typename Gt::FT               FT;
-  typedef typename Gt::Vector_3         Vector_3;
+  typedef typename GT::FT               FT;
+  typedef typename GT::Vector_3         Vector_3;
 
   typedef typename std::vector<Cell_handle>                      Cell_vector;
   typedef typename std::vector<Vertex_handle>                    Vertex_vector;
@@ -313,19 +321,19 @@ public:
 
 private:
   /**
-   * Returns moves for vertices of set \c moving_vertices
+   * Returns moves for vertices of set `moving_vertices`.
    */
   Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
 
   /**
-   * Returns the move for vertex \c v
+   * Returns the move for vertex `v`.
    * \warning This function should be called only on moving vertices
    *          even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
 
   /**
-   * Updates mesh using moves of \c moves vector. Updates moving_vertices with
+   * Updates mesh using moves of `moves` vector. Updates moving_vertices with
    * the new set of moving vertices after the move.
    */
   void update_mesh(const Moves_vector& moves,
@@ -343,17 +351,17 @@ private:
   bool check_convergence() const;
 
   /**
-   * Returns the average circumradius length of cells incident to \c v
+   * Returns the average circumradius length of cells incident to `v`.
    */
   FT average_circumradius_length(const Vertex_handle& v) const;
 
   /**
-   * Returns the minimum cicumradius length of cells incident to \c v
+   * Returns the minimum cicumradius length of cells incident to `v`.
    */
   FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;
 
   /**
-   * Returns the squared circumradius length of cell \c cell
+   * Returns the squared circumradius length of cell `cell`.
    */
   FT sq_circumradius_length(const Cell_handle& cell,
                             const Vertex_handle& v) const;
@@ -380,7 +388,7 @@ private:
     Moves_vector_        & m_moves;
     bool                   m_do_freeze;
     Vertex_conc_vector   & m_vertices_not_moving_any_more;
-    const Gt             & m_gt;
+    const GT             & m_gt;
 
   public:
     // Constructor
@@ -389,7 +397,7 @@ private:
                  Moves_vector_ &moves,
                  bool do_freeze,
                  Vertex_conc_vector &vertices_not_moving_any_more,
-                 const Gt &gt)
+                 const GT &gt)
     : m_mgo(mgo),
       m_sizing_field(sizing_field),
       m_moves(moves),
@@ -411,8 +419,9 @@ private:
     // operator()
     void operator()(const Vertex_handle& oldv) const
     {
-      typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
-      typename Gt::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
+      typename GT::Construct_point_3 cp = m_gt.construct_point_3_object();
+      typename GT::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
+      typedef typename Moves_vector_::value_type Move;
 
       Vector_3 move = m_mgo.compute_move(oldv);
       if ( CGAL::NULL_VECTOR != move )
@@ -431,7 +440,7 @@ private:
         //note : this is not happening for Lloyd and ODT so it's commented
         //       maybe for a new global optimizer it should be de-commented
 
-        m_moves.push_back(std::make_tuple(oldv, move, size));
+        m_moves.push_back(Move{oldv, move, size});
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -451,13 +460,13 @@ private:
   class Compute_sizing_field_value
   {
     MGO                  & m_mgo;
-    const Gt             & m_gt;
+    const GT             & m_gt;
     Local_list_          & m_local_lists;
 
   public:
     // Constructor
     Compute_sizing_field_value(MGO &mgo,
-                               const Gt &gt,
+                               const GT &gt,
                                Local_list_ &local_lists)
     : m_mgo(mgo),
       m_gt(gt),
@@ -474,7 +483,7 @@ private:
     // operator()
     void operator()(Vertex& v) const
     {
-      typename Gt::Construct_point_3 cp = m_gt.construct_point_3_object();
+      typename GT::Construct_point_3 cp = m_gt.construct_point_3_object();
 
       Vertex_handle vh
         = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
@@ -519,13 +528,13 @@ private:
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
-        const Vertex_handle& v = std::get<0>(m_moves[i]);
-        const Vector_3& move = std::get<1>(m_moves[i]);
+        const Vertex_handle& v = m_moves[i].vertex_;
+        const Vector_3& move = m_moves[i].move_;
 
         // Get size at new position
         if ( MGO::Sizing_field::is_vertex_update_needed )
         {
-          FT size = std::get<2>(m_moves[i]);
+          const FT size = m_moves[i].size_;
 
           // Move point
           bool could_lock_zone;
@@ -802,7 +811,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
 
@@ -827,8 +836,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-    typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
 
     // Get move for each moving vertex
     typename Moving_vertices_set::iterator vit = moving_vertices.begin();
@@ -848,7 +857,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
           size = sizing_field_(new_position, oldv);
         }
 
-        moves.push_back(std::make_tuple(oldv, move, size));
+        moves.push_back({oldv, move, size});
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -879,16 +888,16 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
-  typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename Gt::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
+  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  typename GT::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
 
   Cell_vector incident_cells;
   incident_cells.reserve(64);
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
   }
@@ -947,7 +956,7 @@ update_mesh(const Moves_vector& moves,
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // Apply moves in triangulation
     tbb::parallel_for(tbb::blocked_range<size_t>(0, moves.size()),
@@ -967,14 +976,14 @@ update_mesh(const Moves_vector& moves,
          it != moves.end() ;
          ++it )
     {
-      const Vertex_handle& v = std::get<0>(*it);
-      const Vector_3& move = std::get<1>(*it);
+      const Vertex_handle& v = it->vertex_;
+      const Vector_3& move = it->move_;
       // Get size at new position
       if ( Sizing_field::is_vertex_update_needed )
       {
-        FT size = std::get<2>(*it);
+        const FT size = it->size_;
 
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+#ifdef CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE
         std::cerr << "Moving #" << it - moves.begin()
                   << " addr: " << &*v
                   << " pt: " << tr_.point(v)
@@ -1040,7 +1049,7 @@ fill_sizing_field()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     typedef tbb::enumerable_thread_specific<
       std::vector< std::pair<Bare_point, FT> > > Local_list;
@@ -1061,7 +1070,7 @@ fill_sizing_field()
   else
 #endif //CGAL_LINKED_WITH_TBB
   {
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
     // Fill map with local size
     for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
@@ -1111,7 +1120,7 @@ average_circumradius_length(const Vertex_handle& v) const
   incident_cells.reserve(64);
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
   }
@@ -1195,8 +1204,8 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
   const Weighted_point& position = tr_.point(cell, cell->index(v));

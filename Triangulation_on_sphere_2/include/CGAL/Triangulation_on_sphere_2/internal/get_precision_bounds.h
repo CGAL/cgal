@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Triangulations_on_sphere_2 {
 namespace internal {
 
-// @todo could do something more suble than requiring exact SQRT representation (Root_of_2 etc.)
+// @todo could do something more subtle than requiring exact SQRT representation (Root_of_2 etc.)
 template <typename FT,
           bool has_exact_rep =
             is_same_or_derived<

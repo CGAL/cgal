@@ -5,4 +5,6 @@
 \example Combinatorial_map/map_4_simple_example.cpp
 \example Combinatorial_map/map_3_with_colored_facets.cpp
 \example Combinatorial_map/map_3_dynamic_onmerge.cpp
+\example Combinatorial_map/map_3_index.cpp
+\example Combinatorial_map/map_3_insert.cpp
 */

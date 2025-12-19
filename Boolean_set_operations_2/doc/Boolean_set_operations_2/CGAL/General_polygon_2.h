@@ -7,10 +7,10 @@ namespace CGAL {
 The class `General_polygon_2` models the concept `GeneralPolygon_2`.
 It represents a simple general-polygon. It is parameterized with the type
 `ArrTraits` that models the concept
-`ArrangementDirectionalXMonotoneTraits_2`. The latter is a refinement
-of the concept `ArrangementXMonotoneTraits_2`. In addition to the
-requirements of the concept `ArrangementXMonotoneTraits_2`, a
-model of the concept `ArrangementDirectionalXMonotoneTraits_2` must
+`AosDirectionalXMonotoneTraits_2`. The latter is a refinement
+of the concept `AosXMonotoneTraits_2`. In addition to the
+requirements of the concept `AosXMonotoneTraits_2`, a
+model of the concept `AosDirectionalXMonotoneTraits_2` must
 support the following functions:
 <UL>
 <LI>Given an \f$ x\f$-monotone curve, construct its opposite curve.
@@ -20,7 +20,7 @@ support the following functions:
 This class supports a few convenient operations in addition to the
 requirements that the concept `GeneralPolygon_2` lists.
 
-\cgalModels `GeneralPolygon_2`
+\cgalModels{GeneralPolygon_2}
 
 */
 template< typename ArrTraits >

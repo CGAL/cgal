@@ -84,10 +84,13 @@ struct ExplicitLambda
   CGAL::Object& arr_obj;
   QObject* parent;
 };
+
 } // anonymous namespace
 
-EnvelopeCallbackBase* EnvelopeCallbackBase::create(
-  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
+//
+EnvelopeCallbackBase*
+EnvelopeCallbackBase::create(demo_types::TraitsType tt, CGAL::Object arr_obj,
+                             QObject* parent)
 {
   EnvelopeCallbackBase* res;
   ExplicitLambda explicit_lambda{res, arr_obj, parent};
@@ -95,11 +98,12 @@ EnvelopeCallbackBase* EnvelopeCallbackBase::create(
   return res;
 }
 
+//
 template <typename Arr_>
 EnvelopeCallback<Arr_>::EnvelopeCallback(Arrangement* arr_, QObject* parent) :
     EnvelopeCallbackBase(parent), arr(arr_),
-    lowerEnvelope(new CGAL::Qt::CurveGraphicsItem<Traits>()),
-    upperEnvelope(new CGAL::Qt::CurveGraphicsItem<Traits>()), showLower(false),
+    lowerEnvelope(new CGAL::Qt::CurveGraphicsItem<Traits>(*(arr_->geometry_traits()))),
+    upperEnvelope(new CGAL::Qt::CurveGraphicsItem<Traits>(*(arr_->geometry_traits()))), showLower(false),
     showUpper(false)
 {
   this->lowerEnvelope->hide();
@@ -107,7 +111,7 @@ EnvelopeCallback<Arr_>::EnvelopeCallback(Arrangement* arr_, QObject* parent) :
 }
 
 template < typename Arr_ >
-void EnvelopeCallback<Arr_>::setEnvelopeEdgeColor( const QColor& color )
+void EnvelopeCallback<Arr_>::setEnvelopeEdgeColor(const QColor& color)
 {
   this->lowerEnvelope->setEdgeColor( color );
   this->upperEnvelope->setEdgeColor( color );
@@ -223,7 +227,7 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
   {
     if (!e->is_empty())
     {
-      boost::optional<Point_2> leftPoint, rightPoint;
+      std::optional<Point_2> leftPoint, rightPoint;
       if (e->left())
         leftPoint = e->left()->point();
 

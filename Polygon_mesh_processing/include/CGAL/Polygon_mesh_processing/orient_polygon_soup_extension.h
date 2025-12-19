@@ -15,12 +15,12 @@
 #ifndef CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
 #define CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -159,7 +159,7 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   typedef typename boost::property_traits<PointMap2>::reference PM2_Point_ref;
 
   typedef typename boost::property_traits<PointMap1>::value_type Point_3;
-  CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value));
+  static_assert(std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value);
 
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
   typedef typename K::Triangle_3 Triangle;
@@ -190,8 +190,8 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   }
 
   typedef typename std::vector<Triangle>::const_iterator Iterator;
-  typedef CGAL::AABB_triangle_primitive<K, Iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
+  typedef CGAL::AABB_triangle_primitive_3<K, Iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive> Tree_traits;
 
   CGAL::AABB_tree<Tree_traits> tree(ref_triangles.begin(), ref_triangles.end());
 
@@ -215,8 +215,8 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if(std::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
     tbb::parallel_for(std::size_t(0), faces.size(), std::size_t(1), process_facet);
@@ -309,7 +309,7 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
 
   PointMap point_map = NP_helper::get_const_point_map(points, np2);
 
-  CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap>::value_type>::value));
+  static_assert(std::is_same<Point_3, typename boost::property_traits<PointMap>::value_type>::value);
 
   K k = choose_parameter<K>(get_parameter(np1, internal_np::geom_traits));
 
@@ -326,7 +326,7 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
   };
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
+  typedef CGAL::AABB_traits_3<K, Primitive> Tree_traits;
 
   boost::filter_iterator<Face_predicate, typename GrT::face_iterator>
       begin(is_not_deg, faces(tm_ref).begin(), faces(tm_ref).end()),
@@ -352,10 +352,10 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
   };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  static_assert (!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                 "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if (boost::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
     tbb::parallel_for(std::size_t(0), triangles.size(), std::size_t(1), process_facet);
   else
 #endif

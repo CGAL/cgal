@@ -31,10 +31,11 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
-#include <QGLContext>
+#include <QOpenGLContext>
 #include <QImage>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTextEdit>
@@ -185,6 +186,7 @@ CGAL::QGLViewer::~QGLViewer() {
     helpWidget()->close();
     delete helpWidget_;
   }
+  disconnect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &CGAL::QGLViewer::contextIsDestroyed);
 }
 
 
@@ -194,7 +196,7 @@ This method is automatically called once, before the first call to paintGL().
 
 Overload init() instead of this method to modify viewer specific OpenGL state.
 
-If a 4.3 context could not be set, a ES 2.0 context will be used instead.
+If a 4.3 context could not be set, an ES 2.0 context will be used instead.
  \see `isOpenGL_4_3()`
 */
 CGAL_INLINE_FUNCTION
@@ -217,9 +219,7 @@ void CGAL::QGLViewer::initializeGL() {
 
     QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
     const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
-    qDebug()<<"Using context "
-           <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
-          << rt;
+    qDebug().noquote() <<tr("Using OpenGL context %1.%2 %3").arg(cur_f.majorVersion()).arg(cur_f.minorVersion()).arg(rt);
   }
   else
   {
@@ -254,45 +254,43 @@ void CGAL::QGLViewer::initializeGL() {
   if(!is_linked)
   {
     //Vertex source code
-    const char v_s[] =
+    const char vertex_source[] =
     {
-      "#version 150 \n"
+      "#version 150\n"
       "in vec4 vertex;\n"
       "uniform mat4 mvp_matrix;\n"
       "void main(void)\n"
       "{\n"
-      "   gl_Position = mvp_matrix * vertex; \n"
-      "} \n"
-      "\n"
+      "  gl_Position = mvp_matrix * vertex;\n"
+      "}"
     };
-    const char v_source_comp[] =
+    const char vertex_source_comp[] =
     {
       "attribute highp vec4 vertex;\n"
       "uniform highp mat4 mvp_matrix;\n"
       "void main(void)\n"
       "{\n"
-      "   gl_Position = mvp_matrix * vertex; \n"
-      "} \n"
-      "\n"
+      "  gl_Position = mvp_matrix * vertex;\n"
+      "}"
     };
     //Fragment source code
-    const char f_s[] =
+    const char fragment_source[] =
     {
-      "#version 150 \n"
-      "uniform vec4 color; \n"
-      "out vec4 out_color; \n"
-      "void main(void) { \n"
-      "out_color = color; \n"
-      "} \n"
-      "\n"
+      "#version 150\n"
+      "uniform vec4 color;\n"
+      "out vec4 out_color;\n"
+      "void main(void)\n"
+      "{\n"
+      "  out_color = color;\n"
+      "}"
     };
-    const char f_source_comp[] =
+    const char fragment_source_comp[] =
     {
-      "uniform highp vec4 color; \n"
-      "void main(void) { \n"
-      "gl_FragColor = color; \n"
-      "} \n"
-      "\n"
+      "uniform highp vec4 color;\n"
+      "void main(void)\n"
+      "{\n"
+      "  gl_FragColor = color;\n"
+      "}"
     };
 
     //It is said in the doc that a QOpenGLShader is
@@ -301,154 +299,6 @@ void CGAL::QGLViewer::initializeGL() {
 
     QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
     QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
-    if(is_ogl_4_3)
-    {
-      if(!vertex_shader.compileSourceCode(v_s))
-      {
-        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-      }
-
-      if(!fragment_shader.compileSourceCode(f_s))
-      {
-        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-      }
-    }
-    else
-    {
-      if(!vertex_shader.compileSourceCode(v_source_comp))
-      {
-        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-      }
-
-      if(!fragment_shader.compileSourceCode(f_source_comp))
-      {
-        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-      }
-    }
-    if(!rendering_program.addShader(&vertex_shader))
-    {
-      std::cerr<<"adding vertex shader FAILED"<<std::endl;
-    }
-    if(!rendering_program.addShader(&fragment_shader))
-    {
-      std::cerr<<"adding fragment shader FAILED"<<std::endl;
-    }
-    if(!rendering_program.link())
-    {
-      qDebug() << rendering_program.log();
-    }
-    //Vertex source code
-    const char vertex_source[] =
-    {
-      "#version 150 \n"
-      "in vec4 vertex;\n"
-      "in vec3 normal;\n"
-      "in vec4 colors;\n"
-      "uniform highp mat4 mvp_matrix;\n"
-      "uniform highp mat4 mv_matrix; \n"
-      "out vec4 fP; \n"
-      "out vec3 fN; \n"
-      "out vec4 color; \n"
-      "void main(void)\n"
-      "{\n"
-      "   color = vec4(colors.xyz, 1.0f); \n"
-      "   fP = mv_matrix * vertex; \n"
-      "   fN = mat3(mv_matrix)* normal; \n"
-      "   gl_Position = vec4(mvp_matrix * vertex); \n"
-      "} \n"
-      "\n"
-    };
-    //Vertex source code
-    const char vertex_source_comp[] =
-    {
-
-      "attribute highp vec4 vertex;\n"
-      "attribute highp vec3 normal;\n"
-      "attribute highp vec4 colors;\n"
-      "uniform highp mat4 mvp_matrix;\n"
-      "uniform highp mat4 mv_matrix; \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "varying highp vec4 color; \n"
-      "void main(void)\n"
-      "{\n"
-      "   color = vec4(colors.xyz, 1.0); \n"
-      "   fP = mv_matrix * vertex; \n"
-      "   highp mat3 mv_matrix_3;                 \n"
-      "   mv_matrix_3[0] = mv_matrix[0].xyz;\n"
-      "   mv_matrix_3[1] = mv_matrix[1].xyz;\n"
-      "   mv_matrix_3[2] = mv_matrix[2].xyz;\n"
-      "   fN = mv_matrix_3* normal; \n"
-      "   gl_Position = vec4(mvp_matrix * vertex); \n"
-      "} \n"
-      "\n"
-    };
-    //Fragment source code
-    const char fragment_source[] =
-    {
-      "#version 150 \n"
-      "in vec4 color; \n"
-      "in vec4 fP; \n"
-      "in vec3 fN; \n"
-      " out vec4 out_color; \n"
-      "void main(void) { \n"
-      "   vec4 light_pos = vec4(0.0f, 0.0f, 1.0f, 1.0f);  \n"
-      "   vec4 light_diff = vec4(1.0f, 1.0f, 1.0f, 1.0f); \n"
-      "   vec4 light_spec = vec4(0.0f, 0.0f, 0.0f, 1.0f); \n"
-      "   vec4 light_amb = vec4(0.4f, 0.4f, 0.4f, 0.4f);  \n"
-      "   float spec_power = 51.8f ; \n"
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-      "   vec3 N; \n"
-      "   if(fN == vec3(0.0,0.0,0.0)) \n"
-      "       N = vec3(0.0,0.0,0.0); \n"
-      "   else \n"
-      "       N = normalize(fN); \n"
-      "   L = normalize(L); \n"
-      "   V = normalize(V); \n"
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-
-      "out_color = color*light_amb + diffuse + specular; \n"
-      "out_color = vec4(out_color.xyz, 1.0f); \n"
-      "} \n"
-      "\n"
-    };
-
-    const char fragment_source_comp[] =
-    {
-      "varying highp vec4 color; \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "void main(void) { \n"
-      "   highp vec4 light_pos = vec4(0.0, 0.0, 1.0, 1.0);  \n"
-      "   highp vec4 light_diff = vec4(1.0, 1.0, 1.0, 1.0); \n"
-      "   highp vec4 light_spec = vec4(0.0, 0.0, 0.0, 1.0); \n"
-      "   highp vec4 light_amb = vec4(0.4, 0.4, 0.4, 0.4);  \n"
-      "   highp float spec_power = 51.8 ; \n"
-      "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   highp vec3 V = -fP.xyz; \n"
-      "   highp vec3 N; \n"
-      "   if(fN == vec3(0.0,0.0,0.0)) \n"
-      "       N = vec3(0.0,0.0,0.0); \n"
-      "   else \n"
-      "       N = normalize(fN); \n"
-      "   L = normalize(L); \n"
-      "   V = normalize(V); \n"
-      "   highp vec3 R = reflect(-L, N); \n"
-      "   highp vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-
-      "gl_FragColor = color*light_amb + diffuse + specular; \n"
-      "gl_FragColor = vec4(gl_FragColor.xyz, 1.0); \n"
-      "} \n"
-      "\n"
-    };
-
-    //It is said in the doc that a QOpenGLShader is
-    // only destroyed with the QOpenGLShaderProgram
-    //it has been linked with.
     if(is_ogl_4_3)
     {
       if(!vertex_shader.compileSourceCode(vertex_source))
@@ -473,21 +323,23 @@ void CGAL::QGLViewer::initializeGL() {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
       }
     }
-    if(!rendering_program_light.addShader(&vertex_shader))
+
+    if(!rendering_program.addShader(&vertex_shader))
     {
       std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
-    if(!rendering_program_light.addShader(&fragment_shader))
+    if(!rendering_program.addShader(&fragment_shader))
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
-    rendering_program_light.bindAttributeLocation("colors", 1);//because of MacOs
-    if(!rendering_program_light.link())
+    if(!rendering_program.link())
     {
-      qDebug() << rendering_program_light.log();
+      qDebug() << rendering_program.log();
     }
   }
+
   is_linked = true;
+
   // Give time to glInit to finish and then call setFullScreen().
   if (isFullScreen())
     QTimer::singleShot(100, this, SLOT(delayedFullScreen()));
@@ -502,7 +354,6 @@ camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
-  makeCurrent();
   // Clears screen, set model view matrix...
   preDraw();
   // Used defined method. Default calls draw()
@@ -512,7 +363,6 @@ void CGAL::QGLViewer::paintGL() {
     draw();
   // Add visual hints: axis, camera, grid...
   postDraw();
-  doneCurrent();
   Q_EMIT drawFinished(true);
 }
 
@@ -807,7 +657,7 @@ void CGAL::QGLViewer::setCamera(qglviewer::Camera *const camera) {
 
   camera->setSceneRadius(sceneRadius());
   camera->setSceneCenter(sceneCenter());
-  camera->setScreenWidthAndHeight(width(), height());
+  camera->setScreenWidthAndHeight(width(), height(), devicePixelRatio());
 
   // Disconnect current camera from this viewer.
   disconnect(this->camera()->frame(), SIGNAL(manipulated()), this,
@@ -868,7 +718,6 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawLight(GLenum, qreal ) const {
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::renderText(int x, int y, const QString &str,
                            const QFont &font) {
@@ -890,7 +739,6 @@ void CGAL::QGLViewer::renderText(double x, double y, double z, const QString &st
   const Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
   renderText(int(proj.x), int(proj.y), str, font);
 }
-#endif
 
 /*! Draws \p text at position \p x, \p y (expressed in screen coordinates
 pixels, origin in the upper left corner of the widget).
@@ -1147,7 +995,9 @@ void CGAL::QGLViewer::beginSelection(const QPoint &point)
 {
   makeCurrent();
   glEnable(GL_SCISSOR_TEST);
-  glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
+  glScissor(point.x() * devicePixelRatio(),
+            (camera()->screenHeight() - point.y()) * devicePixelRatio() - 1, 1,
+            1);
 }
 
 /*! This method is called by select() after scene elements were drawn by
@@ -1193,6 +1043,9 @@ static QString mouseButtonsString(::Qt::MouseButtons b) {
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::performClickAction(qglviewer::ClickAction ca, const QMouseEvent *const e) {
+  // the following call is needed to update the pixel ratio
+  camera()->setScreenWidthAndHeight(this->width(), this->height(), this->devicePixelRatio());
+
   // Note: action that need it should call update().
   switch (ca) {
   // # CONNECTION setMouseBinding prevents adding NO_CLICK_ACTION in
@@ -1350,7 +1203,7 @@ CGAL_INLINE_FUNCTION
 void Viewer::mouseMoveEvent(QMouseEvent *e)
 {
 if (myMouseBehavior)
-  // Use e->x() and e->y() as you want...
+  // Use e->position().x() and e->position().y() as you want...
 else
   CGAL::QGLViewer::mouseMoveEvent(e);
 }
@@ -1367,7 +1220,7 @@ else
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
   if (mouseGrabber()) {
-    mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
+    mouseGrabber()->checkIfGrabsMouse(e->position().x(), e->position().y(), camera());
     if (mouseGrabber()->grabsMouse())
       if (mouseGrabberIsAManipulatedCameraFrame_)
         (dynamic_cast<qglviewer::ManipulatedFrame *>(mouseGrabber()))
@@ -1395,7 +1248,7 @@ void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
         manipulatedFrame()->mouseMoveEvent(e, camera());
     else if (hasMouseTracking()) {
       Q_FOREACH (qglviewer::MouseGrabber *mg, qglviewer::MouseGrabber::MouseGrabberPool()) {
-        mg->checkIfGrabsMouse(e->x(), e->y(), camera());
+        mg->checkIfGrabsMouse(e->position().x(), e->position().y(), camera());
         if (mg->grabsMouse()) {
           setMouseGrabber(mg);
           // Check that MouseGrabber is not disabled
@@ -1424,7 +1277,7 @@ void CGAL::QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
           ->qglviewer::ManipulatedFrame::mouseReleaseEvent(e, camera());
     else
       mouseGrabber()->mouseReleaseEvent(e, camera());
-    mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
+    mouseGrabber()->checkIfGrabsMouse(e->position().x(), e->position().y(), camera());
     if (!(mouseGrabber()->grabsMouse()))
       setMouseGrabber(nullptr);
     // update();
@@ -1656,18 +1509,14 @@ QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   return QString();
 }
 
-static QString keyString(unsigned int key) {
-#if QT_VERSION >= 0x040100
-  return QKeySequence(int(key)).toString(QKeySequence::NativeText);
-#else
-  return QString(QKeySequence(key));
-#endif
+static QString keyString(QKeyCombination key) {
+  return QKeySequence(key).toString(QKeySequence::NativeText);
 }
 
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::formatClickActionPrivate(ClickBindingPrivate cbp) {
   bool buttonsBefore = cbp.buttonsBefore != ::Qt::NoButton;
-  QString keyModifierString = keyString(cbp.modifiers + cbp.key);
+  QString keyModifierString = keyString(QKeyCombination(cbp.modifiers, cbp.key));
   if (!keyModifierString.isEmpty()) {
 #ifdef Q_OS_MAC
     // modifiers never has a '+' sign. Add one space to clearly separate
@@ -1913,7 +1762,7 @@ QString CGAL::QGLViewer::mouseString() const {
 /*! Defines a custom keyboard shortcut description, that will be displayed in
 the help() window \c Keyboard tab.
 
-The \p key definition is given as an \c int using Qt enumerated values. Set an
+The \p key definition is given as an \c QKeyCombination using Qt enumerated values. Set an
 empty \p description to remove a shortcut description: \code
 setKeyDescription(::Qt::Key_W, "Toggles wireframe display");
 setKeyDescription(::Qt::CTRL+::Qt::Key_L, "Loads a new scene");
@@ -1925,7 +1774,7 @@ See the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse example</a>
 for illustration and the <a href="../keyboard.html">keyboard page</a> for
 details. */
 CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setKeyDescription(unsigned int key, QString description) {
+void CGAL::QGLViewer::setKeyDescription(QKeyCombination key, QString description) {
   if (description.isEmpty())
     keyDescription_.remove(key);
   else
@@ -2017,17 +1866,15 @@ QString CGAL::QGLViewer::keyboardString() const {
                   "Description",
                   "Description column header in help window mouse tab"));
 
-  QMap<unsigned int, QString> keyDescription;
+  QHash<QKeyCombination, QString> keyDescription;
 
   // 1 - User defined key descriptions
-  for (QMap<unsigned int, QString>::ConstIterator kd = keyDescription_.begin(),
-                                                  kdend = keyDescription_.end();
+  for (auto kd = keyDescription_.begin(), kdend = keyDescription_.end();
        kd != kdend; ++kd)
     keyDescription[kd.key()] = kd.value();
 
   // Add to text in sorted order
-  for (QMap<unsigned int, QString>::ConstIterator kb = keyDescription.begin(),
-                                                  endb = keyDescription.end();
+  for (auto kb = keyDescription.begin(), endb = keyDescription.end();
        kb != endb; ++kb)
     text += tableLine(keyString(kb.key()), kb.value());
 
@@ -2040,18 +1887,15 @@ QString CGAL::QGLViewer::keyboardString() const {
   }
 
   // 3 - KeyboardAction bindings description
-  for (QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator
-           it = keyboardBinding_.begin(),
-           end = keyboardBinding_.end();
+  for (auto it = keyboardBinding_.begin(), end = keyboardBinding_.end();
        it != end; ++it)
-    if ((it.value() != 0) &&
+    if ((it.value() != QKeyCombination{}) &&
         ((!cameraIsInRotateMode()) ||
          ((it.key() != qglviewer::INCREASE_FLYSPEED) && (it.key() != qglviewer::DECREASE_FLYSPEED))))
       keyDescription[it.value()] = keyboardActionDescription_[it.key()];
 
   // Add to text in sorted order
-  for (QMap<unsigned int, QString>::ConstIterator kb2 = keyDescription.begin(),
-                                                  endb2 = keyDescription.end();
+  for (auto kb2 = keyDescription.begin(), endb2 = keyDescription.end();
        kb2 != endb2; ++kb2)
     text += tableLine(keyString(kb2.key()), kb2.value());
 
@@ -2065,15 +1909,15 @@ QString CGAL::QGLViewer::keyboardString() const {
                 .arg(cpks) +
             "</td></tr>\n";
     text += tableLine(
-        keyString(playPathKeyboardModifiers()) + "<i>" +
+        keyString(QKeyCombination(playPathKeyboardModifiers())) + "<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
         CGAL::QGLViewer::tr("Plays path (or resets saved position)"));
     text += tableLine(
-        keyString(addKeyFrameKeyboardModifiers()) + "<i>" +
+        keyString(QKeyCombination(addKeyFrameKeyboardModifiers())) + "<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
         CGAL::QGLViewer::tr("Adds a key frame to path (or defines a position)"));
     text += tableLine(
-        keyString(addKeyFrameKeyboardModifiers()) + "<i>" +
+        keyString(QKeyCombination(addKeyFrameKeyboardModifiers())) + "<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>+<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
         CGAL::QGLViewer::tr("Deletes path (or saved position)"));
@@ -2217,11 +2061,8 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     _first_tick = true;
   }
   const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-  QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
-                                                             .begin(),
-                                                    end =
-                                                        keyboardBinding_.end();
-  const unsigned int target = key | modifiers;
+  auto it = keyboardBinding_.begin(), end = keyboardBinding_.end();
+  const QKeyCombination target{modifiers, key};
   while ((it != end) && (it.value() != target))
     ++it;
 
@@ -2369,7 +2210,7 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::resizeGL(int width, int height) {
   QOpenGLWidget::resizeGL(width, height);
   glViewport(0, 0, GLint(width), GLint(height));
-  camera()->setScreenWidthAndHeight(this->width(), this->height());
+  camera()->setScreenWidthAndHeight(this->width(), this->height(), this->devicePixelRatio());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2384,17 +2225,17 @@ Here are some examples:
 setShortcut(EXIT_VIEWER, ::Qt::Key_Q);
 
 // Alt+M toggles camera mode
-setShortcut(CAMERA_MODE, ::Qt::ALT + ::Qt::Key_M);
+setShortcut(CAMERA_MODE, ::Qt::ALT | ::Qt::Key_M);
 
 // The DISPLAY_FPS action is disabled
 setShortcut(DISPLAY_FPS, 0);
 \endcode
 
 Only one shortcut can be assigned to a given CGAL::QGLViewer::KeyboardAction (new
-bindings replace previous ones). If several KeyboardAction are binded to the
+bindings replace previous ones). If several KeyboardAction are bound to the
 same shortcut, only one of them is active. */
 CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setShortcut(qglviewer::KeyboardAction action, unsigned int key) {
+void CGAL::QGLViewer::setShortcut(qglviewer::KeyboardAction action, QKeyCombination key) {
   keyboardBinding_[action] = key;
 }
 
@@ -2416,11 +2257,11 @@ See the <a href="../keyboard.html">keyboard page</a> for details and default
 values and the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse</a>
 example for a practical illustration. */
 CGAL_INLINE_FUNCTION
-unsigned int CGAL::QGLViewer::shortcut(qglviewer::KeyboardAction action) const {
+QKeyCombination CGAL::QGLViewer::shortcut(qglviewer::KeyboardAction action) const {
   if (keyboardBinding_.contains(action))
     return keyboardBinding_[action];
   else
-    return 0;
+    return {};
 }
 
 
@@ -3100,39 +2941,45 @@ Limitation : One needs to have access to visualHint_ to overload this method.
 Removed from the documentation for this reason. */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawVisualHints() {
+
   // G r i d
-  rendering_program.bind();
-  vaos[GRID].bind();
-  QMatrix4x4 mvpMatrix;
-  double mat[16];
+  GLdouble mat[16];
   camera()->getModelViewProjectionMatrix(mat);
+
+  QMatrix4x4 mvpMatrix;
   for(int i=0; i < 16; i++)
   {
-      mvpMatrix.data()[i] = (float)mat[i];
+    mvpMatrix.data()[i] = float(mat[i]);
   }
+
   QMatrix4x4 mvMatrix;
   for(int i=0; i < 16; i++)
   {
     mvMatrix.data()[i] = float(camera()->orientation().inverse().matrix()[i]);
   }
+
+  rendering_program.bind();
+  vaos[GRID].bind();
   rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
   rendering_program.setUniformValue("color", QColor(::Qt::lightGray));
   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(grid_size));
   vaos[GRID].release();
-  rendering_program.release();
 
-  rendering_program_light.bind();
-  vaos[GRID_AXIS].bind();
+  vaos[GRID_AXIS_X].bind();
+  rendering_program.setUniformValue("color", QColor(::Qt::red));
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glPolygonOffset(0.0f,-0.0f);
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(grid_axis_size/3));
+  vaos[GRID_AXIS_X].release();
 
-  rendering_program_light.setUniformValue("mvp_matrix", mvpMatrix);
-  rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
-  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(g_axis_size/9));
-  vaos[GRID_AXIS].release();
-//  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(3.0f,-3.0f);
+  vaos[GRID_AXIS_Y].bind();
+  rendering_program.setUniformValue("color", QColor(::Qt::green));
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(grid_axis_size/3));
+  vaos[GRID_AXIS_Y].release();
+
   //A x i s
   CGAL::qglviewer::Camera::Type camera_type = camera()->type();
+
   camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
   for(int i=0; i < 16; i++)
   {
@@ -3141,15 +2988,14 @@ void CGAL::QGLViewer::drawVisualHints() {
   mvpMatrix.setToIdentity();
   mvpMatrix.ortho(-1,1,-1,1,-1,1);
   mvpMatrix = mvpMatrix*mvMatrix;
-  rendering_program_light.setUniformValue("mvp_matrix", mvpMatrix);
-  rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
+  rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+
   camera()->setType(camera_type);
-  vaos[AXIS].bind();
+
+  // The viewport and the scissor are changed to fit the upper right corner.
+  // Original values are saved.
   int viewport[4];
   int scissor[4];
-
-  // The viewport and the scissor are changed to fit the upper right
-  // corner. Original values are saved.
   glGetIntegerv(GL_VIEWPORT, viewport);
   glGetIntegerv(GL_SCISSOR_BOX, scissor);
 
@@ -3157,12 +3003,25 @@ void CGAL::QGLViewer::drawVisualHints() {
   int size = 100;
   glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
   glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
-  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 9));
+
+  vaos[AXIS_X].bind();
+  rendering_program.setUniformValue("color", QColor(::Qt::red));
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 3));
+  vaos[AXIS_X].release();
+
+  vaos[AXIS_Y].bind();
+  rendering_program.setUniformValue("color", QColor(::Qt::green));
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 3));
+  vaos[AXIS_Y].release();
+
+  vaos[AXIS_Z].bind();
+  rendering_program.setUniformValue("color", QColor(::Qt::blue));
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 3));
+  vaos[AXIS_Z].release();
+
   // The viewport and the scissor are restored.
   glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
   glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
-  vaos[AXIS].release();
-  rendering_program_light.release();
 
   //P i v o t - P o i n t
   if (visualHint_ & 1)
@@ -3176,30 +3035,39 @@ void CGAL::QGLViewer::drawVisualHints() {
       vertices.push_back(y);
       vertices.push_back(0);
     }
+
     rendering_program.bind();
     vaos[PIVOT_POINT].bind();
     vbos[Pivot_point].bind();
+
     vbos[Pivot_point].allocate(vertices.data(),static_cast<int>(vertices.size()*sizeof(float)));
     rendering_program.enableAttributeArray("vertex");
     rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
     vbos[Pivot_point].release();
+
     mvpMatrix.setToIdentity();
     mvpMatrix.ortho(-1,1,-1,1,-1,1);
-    size=30*devicePixelRatio();
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-    glViewport(GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
-               GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
-    glScissor (GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
-               GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
+
+    const auto point_2d = camera()->projectedCoordinatesOf(camera()->pivotPoint());
+    size = 30 * devicePixelRatio();
+
+    glViewport(GLint(point_2d.x*devicePixelRatio()-size/2),
+               GLint((height() - point_2d.y)*devicePixelRatio()-size/2), size, size);
+    glScissor (GLint(point_2d.x*devicePixelRatio()-size/2),
+               GLint((height() - point_2d.y)*devicePixelRatio()-size/2), size, size);
+
     rendering_program.setUniformValue("color", QColor(::Qt::black));
     glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
     rendering_program.setUniformValue("color", QColor(::Qt::white));
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
     glEnable(GL_DEPTH_TEST);
+
     // The viewport and the scissor are restored.
     glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
     glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
+
     vaos[PIVOT_POINT].release();
     rendering_program.release();
   }
@@ -3227,26 +3095,29 @@ void CGAL::QGLViewer::resetVisualHints() { visualHint_ = 0; }
 ////////////////////////////////////////////////////////////////////////////////
 
 /*! Draws a 3D arrow between the 3D point \p from and the 3D point \p to.
-\p data is filled with the three components of a point, then its normal, and then its color, which makes it filled like this:
-[P1.x-P1.y-P1.z-N1.x-N1.y-N1.z-C1.r-C1.g-C1.b|P2.x-P2.y-P2.z-N2.x-N2.y-N2.z-C2.r-C2.g-C2.b|...]
+\p data is filled with the three components of a point, which makes it filled like this:
+[P1.x-P1.y-P1.z|P2.x-P2.y-P2.z|...]
 */
 CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Vec from,
-                          CGAL::qglviewer::Vec to, CGAL::qglviewer::Vec color,
-                          std::vector<float> &data) {
+void CGAL::QGLViewer::drawArrow(double r, double R, int prec,
+                                const CGAL::qglviewer::Vec& from, const CGAL::qglviewer::Vec& to,
+                                std::vector<float> &data) {
   using std::cos;
   using std::sin;
   using std::acos;
+
   CGAL::qglviewer::Vec temp = to-from;
   QVector3D dir = QVector3D(float(temp.x), float(temp.y), float(temp.z));
+
   QMatrix4x4 mat;
   mat.setToIdentity();
   mat.translate(float(from.x), float(from.y), float(from.z));
   mat.scale(dir.length());
+
   dir.normalize();
-  float angle = 0.0;
+  float angle = 0.f;
   if(std::sqrt((dir.x()*dir.x()+dir.y()*dir.y())) > 1)
-      angle = 90.0f;
+      angle = 90.f;
   else
       angle = float(acos(dir.y()/std::sqrt(dir.lengthSquared()))*180.0/CGAL_PI);
 
@@ -3258,55 +3129,36 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
   const float Rf = static_cast<float>(R);
   for(int d = 0; d<360; d+= 360/prec)
   {
-      float D = (float) (d * CGAL_PI / 180.);
-      float a = (float) std::atan(Rf / 0.33);
-      QVector4D p(0., 1., 0, 1.);
-      QVector4D n(Rf*sin(D), sin(a), Rf*cos(D), 1.);
-      QVector4D pR = mat*p;
-      QVector4D nR = mat*n;
+      float D = float(d * CGAL_PI / 180.);
+//      float a = float(std::atan(Rf / 0.33));
 
       //point A1
+      QVector4D p(0.f, 1.f, 0.f, 1.f);
+      QVector4D pR = mat*p;
+//      QVector4D n(Rf*sin(D), sin(a), Rf*cos(D), 1.f);
+//      QVector4D nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back((float)color.x);
-      data.push_back((float)color.y);
-      data.push_back((float)color.z);
 
       //point B1
       p = QVector4D(Rf*sin(D), 0.66f, Rf* cos(D), 1.f);
-      n = QVector4D(sin(D), sin(a), cos(D), 1.);
       pR = mat*p;
-      nR = mat*n;
+//      n = QVector4D(sin(D), sin(a), cos(D), 1.);
+//      nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back((float)color.x);
-      data.push_back((float)color.y);
-      data.push_back((float)color.z);
+
       //point C1
       D = float((d+360/prec)*CGAL_PI/180.0);
       p = QVector4D(Rf* sin(D), 0.66f, Rf* cos(D), 1.f);
-      n = QVector4D(sin(D), sin(a), cos(D), 1.0);
       pR = mat*p;
-      nR = mat*n;
-
+//      n = QVector4D(sin(D), sin(a), cos(D), 1.f);
+//      nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back((float)color.x);
-      data.push_back((float)color.y);
-      data.push_back((float)color.z);
-
   }
 
   //cylinder
@@ -3315,98 +3167,62 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
   for(int d = 0; d<360; d+= 360/prec)
   {
       //point A1
-      float D = float(d*CGAL_PI/180.0);
+      float D = float(d*CGAL_PI/180.);
       QVector4D p(rf*sin(D), 0.66f, rf*cos(D), 1.f);
-      QVector4D n(sin(D), 0.f, cos(D), 1.f);
       QVector4D pR = mat*p;
-      QVector4D nR = mat*n;
-
+//      QVector4D n(sin(D), 0.f, cos(D), 1.f);
+//      QVector4D nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back(float(color.x));
-      data.push_back(float(color.y));
-      data.push_back(float(color.z));
+
       //point B1
-      p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
-      n = QVector4D(sin(D), 0, cos(D), 1.0);
+      p = QVector4D(rf * sin(D), 0.f, rf*cos(D), 1.f);
       pR = mat*p;
-      nR = mat*n;
-
-
+//      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
+//      nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back(float(color.x));
-      data.push_back(float(color.y));
-      data.push_back(float(color.z));
-        //point C1
-      D = float((d+360/prec)*CGAL_PI/180.0);
-      p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
-      n = QVector4D(sin(D), 0, cos(D), 1.0);
+
+      //point C1
+      D = float((d + 360./prec) * CGAL_PI/180.0);
+      p = QVector4D(rf * sin(D), 0.f, rf*cos(D), 1.f);
       pR = mat*p;
-      nR = mat*n;
+//      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
+//      nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back(float(color.x));
-      data.push_back(float(color.y));
-      data.push_back(float(color.z));
+
       //point A2
-      D = float((d+360/prec)*CGAL_PI/180.0);
-
-      p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
-      n = QVector4D(sin(D), 0, cos(D), 1.0);
+      D = float((d + 360./prec) * CGAL_PI/180.);
+      p = QVector4D(rf * sin(D), 0.f, rf*cos(D), 1.f);
       pR = mat*p;
-      nR = mat*n;
+//      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
+//      nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back(float(color.x));
-      data.push_back(float(color.y));
-      data.push_back(float(color.z));
+
       //point B2
       p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
-      n = QVector4D(sin(D), 0, cos(D), 1.0);
       pR = mat*p;
-      nR = mat*n;
+//      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
+//      nR = mat*n;
       data.push_back(pR.x());
       data.push_back(pR.y());
       data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back(float(color.x));
-      data.push_back(float(color.y));
-      data.push_back(float(color.z));
-      //point C2
-      D = float(d*CGAL_PI/180.0);
-      p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
-      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
-      pR = mat*p;
-      nR = mat*n;
-      data.push_back(pR.x());
-      data.push_back(pR.y());
-      data.push_back(pR.z());
-      data.push_back(nR.x());
-      data.push_back(nR.y());
-      data.push_back(nR.z());
-      data.push_back(float(color.x));
-      data.push_back(float(color.y));
-      data.push_back(float(color.z));
 
+      //point C2
+      D = float(d * CGAL_PI/180.);
+      p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
+      pR = mat*p;
+//      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
+//      nR = mat*n;
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
   }
 }
 
@@ -3418,30 +3234,41 @@ positive X, Y and Z directions in the top right corner of the screen.
 X arrow is red, Y arrow is green and Z arrow is blue.*/
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawAxis(qreal length) {
-  std::vector<float> data;
-  data.resize(0);
-  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(length,0,0),CGAL::qglviewer::Vec(1,0,0), data);
-  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,length,0),CGAL::qglviewer::Vec(0,1,0), data);
-  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,0,length),CGAL::qglviewer::Vec(0,0,1), data);
-  rendering_program_light.bind();
-  vaos[AXIS].bind();
-  vbos[Axis].bind();
-  vbos[Axis].allocate(data.data(), static_cast<int>(data.size() * sizeof(float)));
-  rendering_program_light.enableAttributeArray("vertex");
-  rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
-                                             static_cast<int>(9*sizeof(float)));
+  std::vector<float> axis_x_data, axis_y_data, axis_z_data;
 
-  rendering_program_light.enableAttributeArray("normal");
-  rendering_program_light.setAttributeBuffer("normal",GL_FLOAT,3*sizeof(float),3,
-                                             static_cast<int>(9*sizeof(float)));
+  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(length,0,0), axis_x_data);
+  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,length,0), axis_y_data);
+  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,0,length), axis_z_data);
 
-  rendering_program_light.enableAttributeArray("colors");
-  rendering_program_light.setAttributeBuffer("colors",GL_FLOAT,6*sizeof(float),3,
-                                             static_cast<int>(9*sizeof(float)));
-  vbos[Axis].release();
-  vaos[AXIS].release();
-  axis_size = data.size();
-  rendering_program_light.release();
+  rendering_program.bind();
+
+  vaos[AXIS_X].bind();
+  vbos[Axis_x].bind();
+  vbos[Axis_x].allocate(axis_x_data.data(), static_cast<int>(axis_x_data.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  vbos[Axis_x].release();
+  vaos[AXIS_X].release();
+
+  vaos[AXIS_Y].bind();
+  vbos[Axis_y].bind();
+  vbos[Axis_y].allocate(axis_y_data.data(), static_cast<int>(axis_y_data.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  vbos[Axis_y].release();
+  vaos[AXIS_Y].release();
+
+  vaos[AXIS_Z].bind();
+  vbos[Axis_z].bind();
+  vbos[Axis_z].allocate(axis_z_data.data(), static_cast<int>(axis_z_data.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  vbos[Axis_z].release();
+  vaos[AXIS_Z].release();
+
+  rendering_program.release();
+
+  axis_size = axis_x_data.size(); // == axis_y_data.size() == axis_z_data.size()
 }
 
 /*! Draws a grid in the XY plane, centered on (0,0,0) (defined in the current
@@ -3452,66 +3279,70 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
 
   //The Grid
-  std::vector<float> v_Grid;
+  std::vector<float> grid_data;
   for (int i=0; i<=nbSubdivisions; ++i)
   {
-          const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
-          v_Grid.push_back(pos);
-          v_Grid.push_back(float(-size));
-          v_Grid.push_back(0.f);
+    const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
+    grid_data.push_back(pos);
+    grid_data.push_back(float(-size));
+    grid_data.push_back(0.f);
 
-          v_Grid.push_back(pos);
-          v_Grid.push_back(float(+size));
-          v_Grid.push_back(0.f);
+    grid_data.push_back(pos);
+    grid_data.push_back(float(+size));
+    grid_data.push_back(0.f);
 
-          v_Grid.push_back(float(-size));
-          v_Grid.push_back(pos);
-          v_Grid.push_back(0.f);
+    grid_data.push_back(float(-size));
+    grid_data.push_back(pos);
+    grid_data.push_back(0.f);
 
-          v_Grid.push_back( float(size));
-          v_Grid.push_back( pos);
-          v_Grid.push_back( 0.f);
+    grid_data.push_back(float(size));
+    grid_data.push_back(pos);
+    grid_data.push_back(0.f);
   }
+
   rendering_program.bind();
   vaos[GRID].bind();
   vbos[Grid].bind();
-  vbos[Grid].allocate(v_Grid.data(),static_cast<int>(v_Grid.size()*sizeof(float)));
+  vbos[Grid].allocate(grid_data.data(),static_cast<int>(grid_data.size()*sizeof(float)));
   rendering_program.enableAttributeArray("vertex");
   rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
   vbos[Grid].release();
   vaos[GRID].release();
   rendering_program.release();
-  grid_size = v_Grid.size();
+  grid_size = grid_data.size();
 
   //The Axis
-  std::vector<float> d_axis;
-  d_axis.resize(0);
-  //d_axis is filled by drawArrow always this way : V.x V.y V.z N.x N.y N.z C.r C.g C.b, so it is possible
-  //to use a single buffer with offset and stride
-  drawArrow(0.005*size,0.02*size,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(size,0,0),CGAL::qglviewer::Vec(1,0,0), d_axis);
-  drawArrow(0.005*size,0.02*size,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,size,0),CGAL::qglviewer::Vec(0,1,0), d_axis);
+  std::vector<float> grid_axis_x_data, grid_axis_y_data;
+  grid_axis_x_data.reserve(270); // default subdivision parameter yields this amount
+  grid_axis_y_data.reserve(270);
 
-  rendering_program_light.bind();
-  vaos[GRID_AXIS].bind();
-  vbos[Grid_axis].bind();
-  vbos[Grid_axis].allocate(d_axis.data(), static_cast<int>(d_axis.size() * sizeof(float)));
-  rendering_program_light.enableAttributeArray("vertex");
-  rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
-                                             static_cast<int>(9*sizeof(float)));
+  //axis_data is filled by drawArrow always this way : V.x V.y V.z
+  drawArrow(0.005,0.02,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(size,0,0), grid_axis_x_data);
+  drawArrow(0.005,0.02,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,size,0), grid_axis_y_data);
 
-  rendering_program_light.enableAttributeArray("normal");
-  rendering_program_light.setAttributeBuffer("normal",GL_FLOAT,3*sizeof(float),3,
-                                             static_cast<int>(9*sizeof(float)));
+  rendering_program.bind();
 
-  rendering_program_light.enableAttributeArray("colors");
-  rendering_program_light.setAttributeBuffer("colors",GL_FLOAT,6*sizeof(float),3,
-                                             static_cast<int>(9*sizeof(float)));
-  vbos[Grid_axis].release();
+  // X
+  vaos[GRID_AXIS_X].bind();
+  vbos[Grid_axis_x].bind();
+  vbos[Grid_axis_x].allocate(grid_axis_x_data.data(), static_cast<int>(grid_axis_x_data.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  vbos[Grid_axis_x].release();
+  vaos[GRID_AXIS_X].release();
 
-  vaos[GRID_AXIS].release();
-  rendering_program_light.release();
+  // Y
+  vaos[GRID_AXIS_Y].bind();
+  vbos[Grid_axis_y].bind();
+  vbos[Grid_axis_y].allocate(grid_axis_y_data.data(), static_cast<int>(grid_axis_y_data.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  vbos[Grid_axis_y].release();
+  vaos[GRID_AXIS_Y].release();
 
-  g_axis_size = d_axis.size();
+  rendering_program.release();
+
+  grid_axis_size = grid_axis_x_data.size(); // == grid_axis_y_data.size()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3528,7 +3359,7 @@ void CGAL::QGLViewer::copyBufferToTexture(GLint , GLenum ) {
 Use glBindTexture() to use this texture. Note that this is already done by
 copyBufferToTexture().
 
-Returns \c 0 is copyBufferToTexture() was never called or if the texure was
+Returns \c 0 is copyBufferToTexture() was never called or if the texture was
 deleted using glDeleteTextures() since then. */
 CGAL_INLINE_FUNCTION
 GLuint CGAL::QGLViewer::bufferTextureId() const {
@@ -3542,7 +3373,7 @@ void CGAL::QGLViewer::setOffset(CGAL::qglviewer::Vec offset)
 }
 
 CGAL_INLINE_FUNCTION
-CGAL::qglviewer::Vec CGAL::QGLViewer::offset()const
+const CGAL::qglviewer::Vec& CGAL::QGLViewer::offset() const
 {
   return _offset;
 }
@@ -3565,7 +3396,7 @@ void CGAL::QGLViewer::setSceneCenter(const CGAL::qglviewer::Vec &center) {
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::setSceneBoundingBox(const CGAL::qglviewer::Vec &min,
-                         const CGAL::qglviewer::Vec &max) {
+                                          const CGAL::qglviewer::Vec &max) {
   camera()->setSceneBoundingBox(min + offset(), max + offset());
 }
 
@@ -3577,7 +3408,10 @@ void CGAL::QGLViewer::showEntireScene() {
 
 
 CGAL_INLINE_FUNCTION
-QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  background_color, QSize finalSize, double oversampling, bool expand)
+QImage* CGAL::QGLViewer::takeSnapshot(CGAL::qglviewer::SnapShotBackground background_color,
+                                      QSize finalSize,
+                                      double oversampling,
+                                      bool expand)
 {
   makeCurrent();
   qreal aspectRatio = width() / static_cast<qreal>(height());
@@ -3604,7 +3438,6 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
 
   QSize subSize(int(width()/oversampling), int(height()/oversampling));
   QSize size=QSize(width(), height());
-
 
   qreal newAspectRatio = finalSize.width() / static_cast<qreal>(finalSize.height());
 
@@ -3758,7 +3591,28 @@ void CGAL::QGLViewer::saveSnapshot()
   }
 }
 
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::saveSnapshot(const QString& fileName,
+                                   const qreal finalWidth, const qreal finalHeight,
+                                   const bool expand,
+                                   const double oversampling,
+                                   qglviewer::SnapShotBackground background_color)
+{
+  if(fileName.isEmpty())
+    return;
+
+  QSize finalSize(finalWidth, finalHeight);
+
+  QImage* image = takeSnapshot(qglviewer::SnapShotBackground(background_color),
+                               finalSize, oversampling, expand);
+  if(image)
+  {
+    image->save(fileName);
+    delete image;
+  }
 }
+
+} // namespace CGAL
 
 CGAL_INLINE_FUNCTION
 bool CGAL::QGLViewer::isSharing() const

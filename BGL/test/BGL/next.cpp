@@ -2,7 +2,7 @@
 #include <iostream>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 typedef K::Point_3 Point_3;

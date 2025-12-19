@@ -6,7 +6,9 @@
 The concept `Periodic_3Offset_3` describes a three-dimensional integer vector
 with some specialized access functions and operations.
 
-\cgalHasModel `CGAL::Periodic_3_offset_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_offset_3}
+\cgalHasModelsEnd
 
 \sa `Periodic_3TriangulationTraits_3`
 \sa `Periodic_3DelaunayTriangulationTraits_3`

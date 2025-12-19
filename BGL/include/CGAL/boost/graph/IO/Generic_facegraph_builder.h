@@ -49,10 +49,10 @@ public:
     typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 
     // usually will be true, but might not be the case if using custom type points
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::property_traits<VPM>::value_type>::value));
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::range_value<Point_container>::type>::value));
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::property_traits<VPM>::value_type>::value);
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::range_value<Point_container>::type>::value);
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_normal_map_t, NamedParameters,
@@ -144,8 +144,16 @@ public:
         face[j] = vertices[m_faces[i][j]];
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
-      if(f == boost::graph_traits<Graph>::null_face())
+      if(f == boost::graph_traits<Graph>::null_face()) {
+        if (verbose) {
+          std::cerr << "Error: Failed to add face [" << i << "]\n";
+          std::cerr << "Diagnostic:" << std::endl;
+          CGAL_assertion_code(bool cannot_add = )
+            CGAL::Euler::can_add_face(face, g, true /*verbose*/);
+          CGAL_assertion(!cannot_add);
+        }
         return false;
+      }
 
       if(has_face_colors)
         put(fcm, f, face_colors[i]);

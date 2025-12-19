@@ -19,7 +19,7 @@
 #include <list>
 #include <utility>
 #include <iterator>
-#include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/Partition_2/Partition_vertex_map.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
@@ -147,15 +147,20 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    for (;point_first != point_last; point_first++)
       orig_poly.push_back(*point_first);
 
-   CGAL_partition_precondition(orientation_2(orig_poly.begin(),orig_poly.end(),
-                                             traits) == COUNTERCLOCKWISE);
+   CGAL_precondition(orientation_2(orig_poly.begin(),orig_poly.end(),
+                                   traits) == COUNTERCLOCKWISE);
 
    P_Vertex_map  output_vertex_set(poly_first, poly_last, traits);
 
    if (output_vertex_set.polygons_overlap()) return false;
-
+#ifdef CGAL_PARTITION_CHECK_DEBUG
    int poly_num = 0;
-   for (; poly_first != poly_last; poly_first++, poly_num++)
+   #endif
+   for (; poly_first != poly_last; poly_first++
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+      , poly_num++
+#endif
+   )
    {
       vtx_begin = (*poly_first).vertices_begin();
       vtx_end = (*poly_first).vertices_end();
@@ -163,7 +168,7 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
          std::cout << "Polygon " << poly_num << " is " << std::endl;
          std::cout << *poly_first << std::endl;
 #endif
-      CGAL_partition_assertion (
+      CGAL_assertion (
            orientation_2(vtx_begin, vtx_end, traits) == COUNTERCLOCKWISE);
       if (!is_valid(vtx_begin, vtx_end))
       {

@@ -8,9 +8,7 @@ that is, it writes all non zero terms of the polynomial as
 `std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`
 into the given output iterator.
 
-\cgalRefines \ref Assignable
-\cgalRefines \ref CopyConstructible
-\cgalRefines \ref DefaultConstructible
+\cgalRefines{Assignable,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

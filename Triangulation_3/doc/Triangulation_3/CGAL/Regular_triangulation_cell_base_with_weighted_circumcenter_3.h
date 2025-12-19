@@ -16,11 +16,11 @@ circumcenter.
 \tparam Traits is the geometric traits class and must be a model of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which
-`Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb must
 be a model of `RegularTriangulationCellBase_3`.
 It has the default value `Regular_triangulation_cell_base_3<RT>`.
 
-\cgalModels `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
+\cgalModels{RegularTriangulationCellBaseWithWeightedCircumcenter_3}
 
 \sa `CGAL::Triangulation_cell_base_3`
 \sa `CGAL::Triangulation_cell_base_with_info_3`
@@ -42,9 +42,9 @@ typedef Traits::Weighted_point_3 Point;
 
 As a model of the concept `RegularTriangulationCellBase_3`,
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3`
-provides a `weighted_circumcenter()` member fonction.
+provides a `weighted_circumcenter()` member function.
 
-In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
+In this model, the `weighted_circumcenter()` member function returns the <b>weighted circumcenter</b>
 of the cell.
 This `Point_3` is computed using the `Construct_weighted_circumcenter_3` functor
 of the traits class when this function is first called and its value is stored.

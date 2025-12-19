@@ -17,7 +17,7 @@ typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 typedef Arrangement_2::Vertex_handle                    Vertex_handle;
 typedef Arrangement_2::Halfedge_handle                  Halfedge_handle;
 typedef Arrangement_2::Face_handle                      Face_handle;
-typedef boost::variant<Vertex_handle, Halfedge_handle, Face_handle>
+typedef std::variant<Vertex_handle, Halfedge_handle, Face_handle>
                                                         Zone_result;
 
 #define N_SEGMENTS 3

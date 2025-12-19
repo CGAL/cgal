@@ -17,7 +17,7 @@
 
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/refine_impl.h>
 
@@ -65,7 +65,7 @@ namespace Polygon_mesh_processing {
 
   @return pair of `faces_out` and `vertices_out`
 
-  \pre `is_triangle_mesh(tmesh)`
+  @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
 
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */

@@ -17,7 +17,7 @@
 
 
 #include <CGAL/config.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Dummy_tds_2.h>
 
@@ -129,7 +129,7 @@ typename Triangulation_ds_face_base_2<TDS>::Vertex_handle
 Triangulation_ds_face_base_2<TDS>::
 vertex(int i) const
 {
-  CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_precondition( i == 0 || i == 1 || i == 2);
   return V[i];
 }
 
@@ -169,7 +169,7 @@ index(Vertex_handle v) const
 {
   if (v == V[0]) return 0;
   if (v == V[1]) return 1;
-  CGAL_triangulation_assertion( v == V[2] );
+  CGAL_assertion( v == V[2] );
   return 2;
 }
 
@@ -179,7 +179,7 @@ typename Triangulation_ds_face_base_2<TDS>::Face_handle
 Triangulation_ds_face_base_2<TDS>::
 neighbor(int i) const
 {
-  CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_precondition( i == 0 || i == 1 || i == 2);
   return N[i];
 }
 
@@ -221,7 +221,7 @@ index(Face_handle n) const
 {
   if (n == N[0]) return 0;
   if (n == N[1]) return 1;
-  CGAL_triangulation_assertion( n == N[2] );
+  CGAL_assertion( n == N[2] );
   return 2;
 }
 
@@ -230,7 +230,7 @@ inline void
 Triangulation_ds_face_base_2<TDS> ::
 set_vertex(int i, Vertex_handle v)
 {
-  CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_precondition( i == 0 || i == 1 || i == 2);
   V[i] = v;
 }
 
@@ -239,8 +239,8 @@ inline void
 Triangulation_ds_face_base_2<TDS> ::
 set_neighbor(int i, Face_handle n)
 {
-  CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
-  CGAL_triangulation_precondition( this != n.operator->() );
+  CGAL_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_precondition( this != n.operator->() );
   N[i] = n;
 }
 
@@ -275,9 +275,9 @@ inline void
 Triangulation_ds_face_base_2<TDS> ::
 set_neighbors(Face_handle n0,Face_handle n1, Face_handle n2)
 {
-  CGAL_triangulation_precondition( this != n0.operator->() );
-  CGAL_triangulation_precondition( this != n1.operator->() );
-  CGAL_triangulation_precondition( this != n2.operator->() );
+  CGAL_precondition( this != n0.operator->() );
+  CGAL_precondition( this != n1.operator->() );
+  CGAL_precondition( this != n2.operator->() );
   N[0] = n0;
   N[1] = n1;
   N[2] = n2;
@@ -340,7 +340,7 @@ operator<<(std::ostream &os, const Triangulation_ds_face_base_2<TDS> &)
   return os;
 }
 
-// Specialisation for void.
+// Specialization for void.
 template <>
 class Triangulation_ds_face_base_2<void>
 {

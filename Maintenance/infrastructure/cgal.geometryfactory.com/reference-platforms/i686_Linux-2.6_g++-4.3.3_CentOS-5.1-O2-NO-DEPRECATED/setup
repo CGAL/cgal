@@ -1,5 +1,0 @@
-. $HOME/CGAL/releases-and-testsuites-with-cmake/reference-platforms/common-setup
-
-export CXX=/usr/local/bin/g++43
-export CXXFLAGS="-Wall -m32 -DCGAL_NO_DEPRECATED_CODE"
-export LD_LIBRARY_PATH=/usr/local/gcc43/lib/

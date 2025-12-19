@@ -25,16 +25,17 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4661) // Explicit instantiation will not
-                                //  instatiate template member functions
+                                //  instantiate template member functions
 #endif
 
 
 #include <iostream>
 
 #include <CGAL/_test_types.h>
-#include <CGAL/Cartesian.h>
+
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Cartesian.h>
 
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_delaunay_triangulation_2.h>

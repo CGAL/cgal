@@ -21,12 +21,12 @@ istream& operator>>(istream& is, const D&) { return is; }
 int main() {
   using CGAL::is_streamable;
 
-  CGAL_static_assertion(!is_streamable<A>::value);
-  CGAL_static_assertion(is_streamable<B>::value);
-  CGAL_static_assertion(!is_streamable<C>::value);
-  CGAL_static_assertion(!is_streamable<D>::value);
-  CGAL_static_assertion(is_streamable<int>::value);
-  CGAL_static_assertion(is_streamable<double>::value);
-  CGAL_static_assertion(! (is_streamable<std::pair<int, int> >::value) );
-  CGAL_static_assertion(  (is_streamable<boost::tuple<int, int> >::value) );
+  static_assert(!is_streamable<A>::value);
+  static_assert(is_streamable<B>::value);
+  static_assert(!is_streamable<C>::value);
+  static_assert(!is_streamable<D>::value);
+  static_assert(is_streamable<int>::value);
+  static_assert(is_streamable<double>::value);
+  static_assert(!is_streamable<std::pair<int, int> >::value);
+  static_assert(is_streamable<boost::tuple<int, int> >::value);
 }

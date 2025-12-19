@@ -4,12 +4,15 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_CERTIFIED_NUMERIC_PREDICATES_H
 #define CGAL_CERTIFIED_NUMERIC_PREDICATES_H
+
+#include <CGAL/license/Straight_skeleton_2.h>
+
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Interval_arithmetic.h>

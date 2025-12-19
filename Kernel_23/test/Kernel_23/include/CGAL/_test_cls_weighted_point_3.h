@@ -54,7 +54,7 @@ bool _test_cls_weighted_point_3(const R& )
   CGAL::Weighted_point_3<R> wp6(n1, n2, n3); // with coordinates
   use(wp0); use(wp4); use(wp5);
 
-  // assignement
+  // assignment
   wp1 = wp6;
 
   std::cout << ".";

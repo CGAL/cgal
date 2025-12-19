@@ -1,5 +1,0 @@
-ESBTL_INC_DIR=/home/lrineau/Git/esbtl/trunk/include
-export ESBTL_INC_DIR
-
-EIGEN3_INC_DIR=/home/lrineau/CGAL/eigen3
-export EIGEN3_INC_DIR

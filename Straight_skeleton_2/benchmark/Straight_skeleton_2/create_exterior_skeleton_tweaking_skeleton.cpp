@@ -1,10 +1,8 @@
-#include<vector>
+#include <vector>
 
-#include<boost/shared_ptr.hpp>
-
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_2.h>
-#include<CGAL/create_offset_polygons_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/create_offset_polygons_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
@@ -13,8 +11,8 @@ typedef CGAL::Polygon_2<K>           Polygon_2 ;
 typedef CGAL::Straight_skeleton_2<K> Ss ;
 typedef Ss::Halfedge_const_iterator Halfedge_const_iterator ;
 
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
-typedef boost::shared_ptr<Ss> SsPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
 
@@ -56,7 +54,7 @@ int main()
 
       if ( i->opposite()->vertex()->has_infinite_time() )
       {
-        boost::optional<Point> op=
+        std::optional<Point> op=
           builder.Construct_offset_point(offset , i->opposite());
         if(!op) continue;
         p=*op;
@@ -66,7 +64,7 @@ int main()
 
       if( i->vertex()->has_infinite_time() )
       {
-        boost::optional<Point> op=
+        std::optional<Point> op=
           builder.Construct_offset_point(offset , i);
         if(!op) continue;
         q=*op;

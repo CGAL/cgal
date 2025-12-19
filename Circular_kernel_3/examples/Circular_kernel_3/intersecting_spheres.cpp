@@ -1,10 +1,12 @@
 #include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/Random.h>
 
-typedef CGAL::Exact_spherical_kernel_3         Spherical_k;
+typedef CGAL::Exact_spherical_kernel_3         SK;
 
-typedef CGAL::Point_3<Spherical_k>             Point_3;
-typedef CGAL::Sphere_3<Spherical_k>            Sphere_3;
+typedef CGAL::Point_3<SK>               Point_3;
+typedef CGAL::Sphere_3<SK>              Sphere_3;
+typedef CGAL::Circle_3<SK>              Circle_3;
+typedef CGAL::Circular_arc_point_3<SK>  Circular_arc_point_3;
 
 int main() {
 
@@ -13,8 +15,8 @@ int main() {
   CGAL::Random theRandom(random_seed);
   int count = 0;
 
-  std::cout << "We will compute the approximate probability that 3 spheres wit"
-  << "h radius 1 intersect on a 5x5x5 box, it might take some time." << std::endl;
+  std::cout << "We will compute the approximate probability that 3 spheres with"
+  << " radius 1 intersect on a 5x5x5 box, it might take some time." << std::endl;
 
   for(int i=0; i<10000; i++) {
 
@@ -33,9 +35,9 @@ int main() {
     Sphere_3 s2 = Sphere_3(Point_3(x2,y2,z2), r);
     Sphere_3 s3 = Sphere_3(Point_3(x3,y3,z3), r);
 
-    std::vector< CGAL::Object > intersecs;
+    std::vector< std::variant<Sphere_3, Circle_3, std::pair<Circular_arc_point_3, unsigned> > > intersecs;
     CGAL::intersection(s1, s2, s3, std::back_inserter(intersecs));
-    if(intersecs.size() > 0) count++;
+    if(intersecs.size() > 0) ++count;
   }
 
   std::cout << "The approximate probability that 3 spheres with radius 1"

@@ -333,12 +333,12 @@ public:
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
-                          boost::is_convertible<
+                        std::enable_if_t<
+                          std::is_convertible<
                               typename std::iterator_traits<InputIterator>::value_type,
                               Point
-                          >
-                        >::type* = nullptr)
+                          >::value
+                        >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -479,12 +479,12 @@ private:
 public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
-                          boost::is_convertible<
+                        std::enable_if_t<
+                          std::is_convertible<
                             typename std::iterator_traits<InputIterator>::value_type,
                             std::pair<Point, typename internal::Info_check<
                                                typename Triangulation_data_structure::Vertex>::type>
-                          > >::type* =nullptr)
+                          >::value >* =nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
@@ -493,12 +493,10 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-          typename boost::enable_if<
-            boost::mpl::and_<
-              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >
-          >::type* =nullptr)
+          std::enable_if_t<
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+          >* =nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<
         typename Triangulation_data_structure::Vertex>::type> >(first,last);
@@ -548,7 +546,7 @@ public:
                  OutputIteratorInternalFacets ifit,
                  bool *could_lock_zone = nullptr) const
   {
-    CGAL_triangulation_precondition(dimension() >= 2);
+    CGAL_precondition(dimension() >= 2);
 
     std::vector<Cell_handle> cells;
     cells.reserve(32);
@@ -621,7 +619,7 @@ public:
   vertices_on_conflict_zone_boundary(const Point&p, Cell_handle c,
                                      OutputIterator res) const
   {
-    CGAL_triangulation_precondition(dimension() >= 2);
+    CGAL_precondition(dimension() >= 2);
 
     // Get the facets on the boundary of the hole.
     std::vector<Facet> facets;
@@ -667,7 +665,7 @@ public:
   template < typename InputIterator >
   size_type remove(InputIterator first, InputIterator beyond)
   {
-    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
+    CGAL_precondition(!this->does_repeat_in_range(first, beyond));
     size_type n = number_of_vertices();
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
@@ -794,7 +792,7 @@ protected:
   nearest_vertex(const Point& p, Vertex_handle v, Vertex_handle w) const
   {
     // In case of equality, v is returned.
-    CGAL_triangulation_precondition(v != w);
+    CGAL_precondition(v != w);
 
     if(is_infinite(v))
       return w;
@@ -1076,7 +1074,7 @@ Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert(const Point& p, Cell_handle start, bool *could_lock_zone)
 {
   Locate_type lt;
-  int li, lj;
+  int li = -1, lj = -1;
 
   // Parallel
   if(could_lock_zone)
@@ -1301,7 +1299,7 @@ remove(Vertex_handle v)
   Vertex_remover<Self> remover(tmp);
   Tr_Base::remove(v, remover);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
 }
 
 template < class Gt, class Tds, class Lds >
@@ -1313,7 +1311,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
   Vertex_remover<Self> remover(tmp);
   bool ret = Tr_Base::remove(v, remover, could_lock_zone);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
   return ret;
 }
 
@@ -1327,7 +1325,7 @@ move_if_no_collision(Vertex_handle v, const Point& p)
   Vertex_inserter<Self> inserter(*this);
   Vertex_handle res = Tr_Base::move_if_no_collision(v,p,remover,inserter);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
         return res;
 }
 
@@ -1336,7 +1334,7 @@ typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 move(Vertex_handle v, const Point& p)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
   if(v->point() == p)
     return v;
 
@@ -1356,7 +1354,7 @@ remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
   Vertex_remover<Self> remover(tmp);
   Tr_Base::remove_and_give_new_cells(v,remover,fit);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
 }
 
 template < class Gt, class Tds, class Lds >
@@ -1373,7 +1371,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
     Tr_Base::move_if_no_collision_and_give_new_cells(v,p,
       remover,inserter,fit);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
         return res;
 }
 
@@ -1383,7 +1381,7 @@ Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
                         const Point& p3, const Point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
+  CGAL_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
 
   Oriented_side os =
       geom_traits().side_of_oriented_sphere_3_object()(p0, p1, p2, p3, p);
@@ -1416,7 +1414,7 @@ side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
       return o;
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 
@@ -1427,8 +1425,8 @@ coplanar_side_of_bounded_circle(const Point& p0, const Point& p1,
                                 const Point& p2, const Point& p, bool perturb) const
 {
   // In dim==2, we should even be able to assert orient == POSITIVE.
-  CGAL_triangulation_precondition(coplanar_orientation(p0, p1, p2)
-                                  != COLLINEAR);
+  CGAL_precondition(coplanar_orientation(p0, p1, p2)
+                    != COLLINEAR);
 
   Bounded_side bs =
       geom_traits().coplanar_side_of_bounded_circle_3_object()(p0, p1, p2, p);
@@ -1478,7 +1476,7 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
                Vertex_handle v2, Vertex_handle v3,
                const Point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(dimension() == 3);
+  CGAL_precondition(dimension() == 3);
 
   if(is_infinite(v0))
   {
@@ -1538,13 +1536,13 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   // ON_BOUNDED_SIDE for a point in the open half-plane
   // ON_UNBOUNDED_SIDE elsewhere
 
-  CGAL_triangulation_precondition(dimension() >= 2);
+  CGAL_precondition(dimension() >= 2);
   int i3 = 5;
 
   if(dimension() == 2)
   {
-    CGAL_triangulation_precondition(i == 3);
-    // the triangulation is supposed to be valid, ie the facet
+    CGAL_precondition(i == 3);
+    // the triangulation is supposed to be valid, i.e. the facet
     // with vertices 0 1 2 in this order is positively oriented
     if(! c->has_vertex(infinite_vertex(), i3))
       return coplanar_side_of_bounded_circle(c->vertex(0)->point(),
@@ -1556,8 +1554,8 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
     // is positively oriented
     Vertex_handle v1 = c->vertex(ccw(i3)),
                   v2 = c->vertex(cw(i3));
-    CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
-                                 mirror_vertex(c, i3)->point()) == NEGATIVE);
+    CGAL_assertion(coplanar_orientation(v1->point(), v2->point(),
+                                        mirror_vertex(c, i3)->point()) == NEGATIVE);
     Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
     if(o != COLLINEAR)
         return Bounded_side(o);
@@ -1570,7 +1568,7 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   }
 
   // else dimension == 3
-  CGAL_triangulation_precondition(i >= 0 && i < 4);
+  CGAL_precondition(i >= 0 && i < 4);
   if((! c->has_vertex(infinite_vertex(),i3)) || (i3 != i))
   {
     // finite facet
@@ -1579,10 +1577,10 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition(coplanar(c->vertex(i0)->point(),
-                                               c->vertex(i1)->point(),
-                                               c->vertex(i2)->point(),
-                                               p));
+    CGAL_precondition(coplanar(c->vertex(i0)->point(),
+                               c->vertex(i1)->point(),
+                               c->vertex(i2)->point(),
+                               p));
     return coplanar_side_of_bounded_circle(c->vertex(i0)->point(),
                                             c->vertex(i1)->point(),
                                             c->vertex(i2)->point(),
@@ -1615,7 +1613,7 @@ Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 nearest_vertex_in_cell(const Point& p, Cell_handle c) const
 {
 // Returns the finite vertex of the cell c which is the closest to p.
-  CGAL_triangulation_precondition(dimension() >= 0);
+  CGAL_precondition(dimension() >= 0);
 
   Vertex_handle nearest = nearest_vertex(p, c->vertex(0), c->vertex(1));
   if(dimension() >= 2)
@@ -1690,9 +1688,9 @@ bool
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point& p) const
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
-  CGAL_triangulation_precondition(this->dimension() == 2);
-  CGAL_triangulation_precondition(!this->test_dim_down(v));
+  CGAL_precondition(!this->is_infinite(v));
+  CGAL_precondition(this->dimension() == 2);
+  CGAL_precondition(!this->test_dim_down(v));
   if(v->point() == p)
     return true;
 
@@ -1766,7 +1764,7 @@ bool
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_Gabriel(Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
+  CGAL_precondition(dimension() == 3 && !is_infinite(c,i));
   typename Geom_traits::Side_of_bounded_sphere_3 side_of_bounded_sphere =
     geom_traits().side_of_bounded_sphere_3_object();
 
@@ -1803,7 +1801,7 @@ bool
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_Gabriel(Cell_handle c, int i, int j) const
 {
-  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
+  CGAL_precondition(dimension() == 3 && !is_infinite(c,i,j));
   typename Geom_traits::Side_of_bounded_sphere_3 side_of_bounded_sphere =
     geom_traits().side_of_bounded_sphere_3_object();
 
@@ -1830,8 +1828,8 @@ typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Point
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 dual(Cell_handle c) const
 {
-  CGAL_triangulation_precondition(dimension()==3);
-  CGAL_triangulation_precondition(! is_infinite(c));
+  CGAL_precondition(dimension()==3);
+  CGAL_precondition(! is_infinite(c));
   return c->circumcenter(geom_traits());
 }
 
@@ -1840,12 +1838,12 @@ typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Object
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 dual(Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension()>=2);
-  CGAL_triangulation_precondition(! is_infinite(c,i));
+  CGAL_precondition(dimension()>=2);
+  CGAL_precondition(! is_infinite(c,i));
 
   if(dimension() == 2)
   {
-    CGAL_triangulation_precondition(i == 3);
+    CGAL_precondition(i == 3);
     return construct_object(construct_circumcenter(c->vertex(0)->point(),
                                                    c->vertex(1)->point(),
                                                    c->vertex(2)->point()));
@@ -1890,12 +1888,12 @@ typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Line
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 dual_support(Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension()>=2);
-  CGAL_triangulation_precondition(! is_infinite(c,i));
+  CGAL_precondition(dimension()>=2);
+  CGAL_precondition(! is_infinite(c,i));
 
   if(dimension() == 2)
   {
-    CGAL_triangulation_precondition(i == 3);
+    CGAL_precondition(i == 3);
     return construct_equidistant_line(c->vertex(0)->point(),
                                        c->vertex(1)->point(),
                                        c->vertex(2)->point());
@@ -1916,7 +1914,7 @@ is_valid(bool verbose, int level) const
     if(verbose)
       std::cerr << "invalid data structure" << std::endl;
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -1925,7 +1923,7 @@ is_valid(bool verbose, int level) const
     if(verbose)
       std::cerr << "no infinite vertex" << std::endl;
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -1946,7 +1944,7 @@ is_valid(bool verbose, int level) const
               if(verbose)
                 std::cerr << "non-empty sphere " << std::endl;
 
-              CGAL_triangulation_assertion(false);
+              CGAL_assertion(false);
               return false;
             }
           }
@@ -1972,7 +1970,7 @@ is_valid(bool verbose, int level) const
               if(verbose)
                 std::cerr << "non-empty circle " << std::endl;
 
-              CGAL_triangulation_assertion(false);
+              CGAL_assertion(false);
               return false;
             }
           }
@@ -2009,7 +2007,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
         std::cerr << c->vertex(i)->point() << ", " ;
       std::cerr << std::endl;
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
   switch(dimension())
@@ -2025,7 +2023,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
             if(verbose)
               std::cerr << "non-empty sphere " << std::endl;
 
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
         }
@@ -2043,7 +2041,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
             if(verbose)
               std::cerr << "non-empty circle " << std::endl;
 
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
         }

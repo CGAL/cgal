@@ -64,7 +64,7 @@ public:
   { }
 
   Probabilistic_plane_quadric_calculator(TriangleMesh& tmesh,
-                                         typename boost::enable_if<std::is_same<Face_variance_map, Default_FVM> >::type* = nullptr)
+                                         std::enable_if_t<std::is_same<Face_variance_map, Default_FVM>::value >* = nullptr)
   {
     // try to initialize the face variance map using the estimated variance
     // parameters are constants defined for this class
@@ -74,6 +74,15 @@ public:
   }
 
 public:
+  template <typename VertexPointMap>
+  Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor /*v*/,
+                                      const TriangleMesh& /*tmesh*/,
+                                      const VertexPointMap /*point_map*/,
+                                      const GeomTraits& /*gt*/) const
+  {
+    return Mat_4::Zero();
+  }
+
   template <typename VertexPointMap>
   Mat_4 construct_quadric_from_edge(const halfedge_descriptor he,
                                     const TriangleMesh& tmesh,

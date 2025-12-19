@@ -50,8 +50,8 @@ void test_io(const NT& x){
 }
 
 int main() {
-    CGAL_static_assertion(CGAL::Output_rep<int>::is_specialized == false);
-    CGAL_static_assertion(CGAL::Input_rep<int>::is_specialized == false);
+    static_assert(CGAL::Output_rep<int>::is_specialized == false);
+    static_assert(CGAL::Input_rep<int>::is_specialized == false);
 
     std::cout << "test_io: short "<< std::endl;
     test_io<short>(12);

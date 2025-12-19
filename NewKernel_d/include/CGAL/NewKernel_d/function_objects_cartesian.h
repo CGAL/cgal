@@ -14,9 +14,10 @@
 
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Bbox_d.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/Return_base_tag.h>
@@ -64,8 +65,8 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
         }
 
         // Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
-        // template <class...U,class=typename std::enable_if<std::is_same<Dimension_tag<sizeof...(U)-1>,typename R::Default_ambient_dimension>::value>::type>
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
+        // template <class...U,class=std::enable_if_t<std::is_same<Dimension_tag<sizeof...(U)-1>::value,typename R::Default_ambient_dimension>::value>>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=3)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -159,7 +160,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
                 return R::LA::sign_of_determinant(std::move(m));
         }
 
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=3)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -425,7 +426,7 @@ CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K
 
 #if 0
 namespace CartesianDKernelFunctors {
-template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
+template<class R_,bool=std::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Orientation)
         typedef R_ R;
         typedef typename Get_type<R, Vector_tag>::type Vector;
@@ -463,12 +464,12 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
         //when Point and Vector are distinct types, the dispatch should be made
         //in a way that doesn't instantiate a conversion from Point to Vector
         template<class Iter>
-        typename boost::enable_if<is_iterator_to<Iter,Point>,result_type>::type
+        std::enable_if_t<is_iterator_to<Iter,Point>::value,result_type>
         operator()(Iter const&f, Iter const& e)const{
                 return OP(this->kernel())(f,e);
         }
         template<class Iter>
-        typename boost::enable_if<is_iterator_to<Iter,Vector>,result_type>::type
+        std::enable_if_t<is_iterator_to<Iter,Vector>::value,result_type>
         operator()(Iter const&f, Iter const& e)const{
                 return OV(this->kernel())(f,e);
         }
@@ -586,7 +587,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
             return LA::sign_of_determinant(std::move(m));
         }
 
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=4)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -762,7 +763,7 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
           return enum_cast<Bounded_side> (sos (f, e, p0) * op (f, e));
         }
 
-        template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
+        template <class...U,class=std::enable_if_t<(sizeof...(U)>=4)>>
         result_type operator()(U&&...u) const {
                 return operator()({std::forward<U>(u)...});
         }
@@ -787,7 +788,7 @@ template<class R_> struct Side_of_bounded_circumsphere : private Store_kernel<R_
           typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
           typename Get_functor<R_, Compare_distance_tag>::type cd(this->kernel());
 
-          return enum_cast<Bounded_side>(cd(cc(f, e), *f, p0));
+          return enum_cast<result_type>(cd(cc(f, e), *f, p0));
         }
 };
 }
@@ -1007,6 +1008,28 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Squared_length_tag,(CartesianDKernelFunctors::Squared_length<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Construct_bbox : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Construct_bbox)
+        typedef R_ R;
+        typedef typename R::Dimension Dimension;
+        typedef typename Get_type<R, RT_tag>::type RT;
+        typedef typename Get_type<R, Point_tag>::type Point;
+        typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+
+        typedef Bbox_d<Dimension> result_type;
+        typedef Point argument_type;
+        result_type operator()(Point const&a)const{
+                CI ci(this->kernel());
+                typename Real_embeddable_traits<RT>::To_interval f;
+                return result_type(make_transforming_iterator(ci(a, Begin_tag()), f), make_transforming_iterator(ci(a, End_tag()), f));
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Construct_bbox_tag,(CartesianDKernelFunctors::Construct_bbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Squared_distance_to_origin)
         typedef R_ R;
@@ -1171,6 +1194,26 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Compare_lexicographically_tag,(CartesianDKernelFunctors::Compare_lexicographically<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Compare_squared_distance)
+        typedef R_ R;
+        typedef typename Get_type<R, RT_tag>::type RT;
+        typedef typename Get_type<R, Comparison_result_tag>::type result_type;
+        typedef typename Get_functor<R, Squared_distance_tag>::type CSD;
+
+        template<class V,class W>
+        result_type operator()(V const&a, V const&b, W const&c)const{   //  Point, Point. FT
+                CSD csd(this->kernel());
+                RT sqdist = csd(a,b);
+                return compare(sqdist,c);
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Compare_squared_distance_tag,(CartesianDKernelFunctors::Compare_squared_distance<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Less_lexicographically)
         typedef R_ R;
@@ -1235,6 +1278,36 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 }
 
 CGAL_KD_DEFAULT_FUNCTOR(Equal_points_tag,(CartesianDKernelFunctors::Equal_points<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
+template<class R_> struct Equal_vectors : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Equal_vectors)
+        typedef R_ R;
+        typedef typename Get_type<R, Bool_tag>::type result_type;
+        typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+        // TODO: This is_exact thing should be reengineered.
+        // the goal is to have a way to tell: don't filter this
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
+
+        template<class V,class W>
+        result_type operator()(V const&a, W const&b)const{
+                CI c(this->kernel());
+
+
+                auto a_begin=c(a,Begin_tag());
+                auto b_begin=c(b,Begin_tag());
+                auto a_end=c(a,End_tag());
+
+                result_type res = true;
+                // Is using CGAL::possibly for Uncertain really an optimization?
+                do res = res & (*a_begin++ == *b_begin++);
+                while(a_begin!=a_end && possibly(res));
+                return res;
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Equal_vectors_tag,(CartesianDKernelFunctors::Equal_vectors<K>),(),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Oriented_side : private Store_kernel<R_> {

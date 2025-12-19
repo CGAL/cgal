@@ -5,10 +5,10 @@ Examples for Linear_cell_complex package:
   linear_cell_complex_3_with_colored_vertices.cpp
   linear_cell_complex_4.cpp
 
-  Three "basic" examples, detailled in the user manual.
+  Three "basic" examples, detailed in the user manual.
 
 
-* plane_graph_to_lcc_2.cpp
+* read_plane_graph_in_lcc_2.cpp
 
   Program allowing to transform a planar graph into a 2D linear cell complex.
 

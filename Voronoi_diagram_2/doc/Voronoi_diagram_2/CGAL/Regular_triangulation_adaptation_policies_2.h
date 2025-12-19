@@ -12,7 +12,7 @@ caches the results of the edge and face rejectors and results in a
 Voronoi diagram that has no degenerate features, i.e., no Voronoi
 edges of zero length.
 
-\cgalModels `AdaptationPolicy_2`
+\cgalModels{AdaptationPolicy_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`
@@ -49,7 +49,7 @@ the semantics of a (triangulated) 2D regular triangulation. This policy
 results in a power diagram that has no degenerate features,
 i.e., it has no Voronoi edges of zero length.
 
-\cgalModels `AdaptationPolicy_2`
+\cgalModels{AdaptationPolicy_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`

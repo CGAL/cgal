@@ -29,8 +29,8 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool
-do_intersect(const typename K::Circle_2 & c,
+typename K::Boolean
+do_intersect(const typename K::Circle_2& c,
              const typename K::Line_2& l,
              const K&)
 {
@@ -38,9 +38,9 @@ do_intersect(const typename K::Circle_2 & c,
 }
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Line_2& l,
-             const typename K::Circle_2 & c,
+             const typename K::Circle_2& c,
              const K&)
 {
   return squared_distance(c.center(), l) <= c.squared_radius();
@@ -53,4 +53,4 @@ CGAL_DO_INTERSECT_FUNCTION(Circle_2, Line_2, 2)
 
 } // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_CIRCLE_2_LINE_2_H

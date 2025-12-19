@@ -9,13 +9,13 @@ int main(int argc, char* argv[])
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point_3;
-  typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
-  typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
+  typedef CGAL::Surface_mesh<Point_3> Mesh;
+  typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
   typedef CGAL::Polyhedral_envelope<Kernel> Envelope;
 
   std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
-  Surface_mesh tmesh;
+  Mesh tmesh;
 
   in >> tmesh;
 

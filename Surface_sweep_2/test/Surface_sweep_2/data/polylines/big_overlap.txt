@@ -1,0 +1,30 @@
+# No. of input polylines followed by polylines
+2
+5 0 0  20 0  30 20  40 0  60 0
+6 10 10  25 10  30 20  40 0  50 0  50 -10
+# No. of output polylines followed by polylines
+5
+3 0 0 20 0 25 10
+2 10 10 25 10
+2 50 0 50 -10
+4 25 10 30 20 40 0 50 0
+2 50 0 60 0
+# No. of output points followed by points
+6
+0 0
+10 10
+25 10
+50 -10
+50 0
+60 0
+# No. of intersection points followed by points
+1
+50 0
+# No. of output polylines with overlaps followed by polylines
+6
+3 0 0 20 0 25 10
+2 10 10 25 10
+2 50 0 50 -10
+4 25 10 30 20 40 0 50 0
+4 25 10 30 20 40 0 50 0
+2 50 0 60 0

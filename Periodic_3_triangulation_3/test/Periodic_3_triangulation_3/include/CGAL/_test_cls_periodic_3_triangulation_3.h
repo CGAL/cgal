@@ -31,7 +31,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
                                      const char* covering_test_filename,
                                      bool ex = false,
                                      bool hom = false,
-                                     bool test_input_ouput = true)
+                                     bool test_input_output = true)
 {
   typedef PeriodicTriangulation                  P3T3;
 
@@ -479,10 +479,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   _test_vertex_iterator(PT3_deg);
   _test_vertex_iterator(PT1_deg);
 
-  _test_unique_vertex_iterator(PT3);
-  _test_unique_vertex_iterator(PT1);
-  _test_unique_vertex_iterator(PT3_deg);
-  _test_unique_vertex_iterator(PT1_deg);
+  _test_triangulation_unique_iterator(PT3);
+  _test_triangulation_unique_iterator(PT1);
+  _test_triangulation_unique_iterator(PT3_deg);
+  _test_triangulation_unique_iterator(PT1_deg);
 
   _test_triangulation_iterator(PT3);
   _test_triangulation_iterator(PT1);
@@ -633,7 +633,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
 
 
   // There are problems with the IO of exact number types in binary mode.
-  if(test_input_ouput)
+  if(test_input_output)
   {
     std::cout << "I/O" << std::endl;
     std::cout << "  ASCII" << std::endl;

@@ -1,13 +1,10 @@
-#include <iostream>
-#include <fstream>
-#include <cassert>
-#include <vector>
 
-#include <CGAL/basic.h>
-#include <CGAL/Interval_arithmetic.h>
-#include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
+
+#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/Simple_cartesian.h>
 
 #if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
 #include <CGAL/Exact_algebraic.h>
@@ -16,6 +13,10 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_integer.h>
 
+#include <iostream>
+#include <fstream>
+#include <cassert>
+#include <vector>
 
 typedef CGAL::Simple_cartesian<double>      Double_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<true> >   IT_Kernel;

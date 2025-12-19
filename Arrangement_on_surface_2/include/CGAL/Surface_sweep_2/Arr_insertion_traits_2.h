@@ -18,7 +18,7 @@
 
 /*! \file
  *
- * Defintion of the Arr_insertion_traits_2<Traits,Arrangement> class.
+ * Definition of the Arr_insertion_traits_2<Traits,Arrangement> class.
  */
 
 #include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
@@ -70,7 +70,7 @@ public:
   typedef Tag_false                                   Has_merge_category;
 
 public:
-  /*! Constructor with a traits class. */
+  /*! constructs from a traits class. */
   Arr_insertion_traits_2(const Gt2& tr) : Base(tr) {}
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
@@ -81,7 +81,7 @@ public:
     //! The base operators.
     Base_intersect_2 m_base_intersect;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -98,9 +98,9 @@ public:
                               OutputIterator oi)
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
-      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
 
       Halfedge_handle invalid_he;
@@ -120,13 +120,13 @@ public:
       // X_monotone_curve_2
       for (const auto& xection : xections) {
         const Intersection_point*
-          p_p = boost::get<Intersection_point>(&xection);
+          p_p = std::get_if<Intersection_point>(&xection);
         if (p_p != nullptr) {
-          *oi++ = Intersection_result(xection);
+          *oi++ = Intersection_result(*p_p);
           continue;
         }
         const Base_x_monotone_curve_2* base_cv_p =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(base_cv_p);
 
         // Add halfedge handles to the resulting curve.
@@ -143,7 +143,7 @@ public:
     }
   };
 
-  /*! Obtain a Intersect_2 function object */
+  /*! obtains a Intersect_2 function object */
   Intersect_2 intersect_2_object () const
   { return (Intersect_2(this->m_base_traits->intersect_2_object())); }
 
@@ -153,7 +153,7 @@ public:
     //! The base operator.
     Base_split_2 m_base_split;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -173,7 +173,7 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 function object */
+  /*! obtains a Split_2 function object */
   Split_2 split_2_object() const
   { return (Split_2(this->m_base_traits->split_2_object())); }
 };

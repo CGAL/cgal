@@ -22,10 +22,12 @@ the triangulation.
 this parameter is instantiated by
 `Triangulation_vertex_base_2<Traits>`.
 
-\cgalModels `TriangulationVertexBaseWithInfo_2`
-\cgalModels The parameter `Vb` is a model of some vertex base concept.
+\cgalModelsBareBegin
+\cgalModelsBare{`TriangulationVertexBaseWithInfo_2`}
+\cgalModelsBare{The parameter `Vb` is a model of some vertex base concept.
 `Triangulation_vertex_base_with_info_2` derives from `Vb` and will be a model of the
-same vertex base concept: `TriangulationVertexBase_2`, or `RegularTriangulationVertexBase_2`.
+same vertex base concept: `TriangulationVertexBase_2`, or `RegularTriangulationVertexBase_2`.}
+\cgalModelsBareEnd
 
 \sa `CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>`
 \sa `CGAL::Triangulation_vertex_base_2<Traits,Vb>`

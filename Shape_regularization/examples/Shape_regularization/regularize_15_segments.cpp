@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
   // Angle regularization.
   const FT max_angle_2 = FT(10);
 
-  // Create qp solver, neigbor query, and angle-based regularization model.
+  // Create qp solver, neighbor query, and angle-based regularization model.
   Quadratic_program qp_angles;
   Neighbor_query neighbor_query(segments);
   Angle_regularization angle_regularization(

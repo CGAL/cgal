@@ -27,6 +27,10 @@ do
   pkg=$(basename $pkg_path)
   if [ -f $pkg_path/package_info/$pkg/dependencies ]; then
     mv $pkg_path/package_info/$pkg/dependencies $pkg_path/package_info/$pkg/dependencies.old
+  else
+    if [ -d $pkg_path/package_info/$pkg ]; then
+      touch $pkg_path/package_info/$pkg/dependencies.old
+    fi
   fi
 done
 
@@ -42,11 +46,11 @@ do
   if [ -f "$pkg_path/package_info/$pkg/dependencies" ]; then
     PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies" || true)
     if [ -n "$PKG_DIFF" ]; then
-      TOTAL_RES="Differences in $pkg: $PKG_DIFF are new and not committed.\n $TOTAL_RES"
+      TOTAL_RES="Differences in $pkg:\n$PKG_DIFF\nare new and not committed.\n$TOTAL_RES"
     fi
     PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies" "$pkg_path/package_info/$pkg/dependencies.old" || true)
     if [ -n "$PKG_DIFF" ]; then
-      TOTAL_RES="Differences in $pkg: $PKG_DIFF have disappeared.\n $TOTAL_RES"
+      TOTAL_RES="Differences in $pkg:\n$PKG_DIFF\nhave disappeared.\n$TOTAL_RES"
     fi
     if [ -f $pkg_path/package_info/$pkg/dependencies.old ]; then
       rm $pkg_path/package_info/$pkg/dependencies.old

@@ -129,12 +129,12 @@ private:
   // Wrapper
   struct Power_side_of_power_sphere_for_non_maximal_dim_d
   {
-    boost::optional<Flat_orientation_d>* fop;
+    std::optional<Flat_orientation_d>* fop;
     Construct_flat_orientation_d cfo;
     In_flat_power_side_of_power_sphere_d ifpt;
 
     Power_side_of_power_sphere_for_non_maximal_dim_d(
-      boost::optional<Flat_orientation_d>& x,
+      std::optional<Flat_orientation_d>& x,
       Construct_flat_orientation_d const&y,
       In_flat_power_side_of_power_sphere_d const&z)
     : fop(&x), cfo(y), ifpt(z) {}
@@ -144,7 +144,7 @@ private:
     {
       if(!*fop)
         *fop=cfo(a,b);
-      return ifpt(fop->get(),a,b,p);
+      return ifpt(fop->value(),a,b,p);
     }
   };
 
@@ -652,7 +652,7 @@ Regular_triangulation<Traits, TDS>
   // 2. Find corresponding Facet on boundary of dark zone
   // 3. stitch.
 
-  // 1. Build a facet on the boudary of the light zone:
+  // 1. Build a facet on the boundary of the light zone:
   Full_cell_handle light_s = *simps.begin();
   Facet light_ft(light_s, light_s->index(v));
 

@@ -50,6 +50,11 @@ public:
 
   bool eventFilter(QObject *obj, QEvent *event);
 
+  void setZValue(int v)
+    {
+      z = v;
+    }
+
 protected:
   // protected constructor
   GraphicsViewPolylineInput_non_templated_base(QObject* parent,
@@ -58,12 +63,12 @@ protected:
                                      bool closed = true);
 
 
-  // mousePressEvent returns true iff the event is consummed
+  // mousePressEvent returns true iff the event is consumed
   bool mousePressEvent(QGraphicsSceneMouseEvent *event);
 
   void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
-  // keyPressEvent returns true iff the event is consummed
+  // keyPressEvent returns true iff the event is consumed
   bool keyPressEvent(QKeyEvent *event);
 
   void rubberbands(const QPointF& p);
@@ -80,6 +85,7 @@ private:
   int n_;
   QPointF sp;
   QGraphicsScene *scene_;
+  int z;
 }; // end class GraphicsViewPolylineInput_non_templated_base
 
 template <typename K>

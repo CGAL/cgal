@@ -10,6 +10,8 @@
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
+#include <CGAL/license/Circular_kernel_3.h>
+
 // Partially supported by the IST Programme of the EU as a
 // STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
@@ -18,7 +20,7 @@
 // It's aimed at being included from within a kernel traits class, this
 // way we share more code.
 
-// It is the responsability of the including file to correctly set the 2
+// It is the responsibility of the including file to correctly set the 2
 // macros CGAL_Kernel_pred and CGAL_Kernel_cons.
 // And they are #undefed at the end of this file.
 

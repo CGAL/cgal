@@ -21,7 +21,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Origin.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 
 namespace CGAL {
@@ -78,9 +78,9 @@ public:
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
     Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  bbox.zmax()+bbox.zmin()?-1:1)));
-    boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<true>(query, tree);
+    std::optional<Bounded_side> res = is_inside_ray_tree_traversal<true>(query, tree);
 
-    if(res == boost::none)
+    if(res == std::nullopt)
     {
       CGAL::Random rg(seed); // seed some value for make it easy to debug
       Random_points_on_sphere_3<Point> random_point(1.,rg);
@@ -88,14 +88,14 @@ public:
       do { //retry with a random ray
         query = ray_functor(point, vector_functor(CGAL::ORIGIN,*random_point++));
         res = is_inside_ray_tree_traversal<false>(query, tree);
-      } while (res == boost::none);
+      } while (res == std::nullopt);
     }
     return *res;
   }
 
 private:
   template<bool ray_is_vertical>
-  boost::optional<Bounded_side>
+  std::optional<Bounded_side>
   is_inside_ray_tree_traversal(const Ray& ray, const AABBTree& tree) const
   {
     std::pair<boost::logic::tribool,std::size_t>
@@ -114,7 +114,7 @@ private:
       //otherwise the point is on the facet
       return ON_BOUNDARY;
     }
-    return boost::optional<Bounded_side>(); // indeterminate
+    return std::optional<Bounded_side>(); // indeterminate
   }
 };
 

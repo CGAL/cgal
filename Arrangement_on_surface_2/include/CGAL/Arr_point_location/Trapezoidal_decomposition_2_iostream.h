@@ -64,9 +64,9 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
   if (!t.is_on_bottom_boundary()) out << t.bottom(); else out << "-oo";
   out << ",";
   if (!t.is_on_top_boundary()) out << t.top(); else out << "+oo";
-  out << ",neighbours(" << std::flush;
+  out << ",neighbors(" << std::flush;
 
-  // debug neighbours equivalence relation
+  // debug neighbors equivalence relation
   int max_size=4+1;
   int null_size=2,size=null_size,i,j;
 
@@ -110,7 +110,7 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
       if (pad) out << " ";
       else pad=true;
       out << name[j];
-      // identify neighbours
+      // identify neighbors
       if (traits.is_td_vertex(t) && value[j])
         out << "=" << value[j]->top();
     }
@@ -177,9 +177,9 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
   if (!t.is_on_bottom_boundary()) out << t.bottom(); else out << "-oo";
   out << ",";
   if (!t.is_on_top_boundary()) out << t.top(); else out << "+oo";
-  out << ",neighbours(" << std::flush;
+  out << ",neighbors(" << std::flush;
 
-  // debug neighbours equivalence relation
+  // debug neighbors equivalence relation
   int max_size=4+1;
   int null_size=2,size=null_size,i,j;
 
@@ -221,7 +221,7 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
   for(j=null_size;j<size;j++)
     {
       out << name[j];
-      // identify neighbours
+      // identify neighbors
       if (traits.is_td_vertex(t) && value[j])
         out << "=" << value[j]->top();
       out << " ";

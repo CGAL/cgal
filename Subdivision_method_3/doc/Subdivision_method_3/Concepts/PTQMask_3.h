@@ -8,9 +8,11 @@ policy concept of geometric computations is used in
 
 \image html LoopBorderMask.svg
 
-\cgalRefines `SubdivisionMask_3`
+\cgalRefines{SubdivisionMask_3}
 
-\cgalHasModel `CGAL::Loop_mask_3<PolygonMesh, VertexPointMap>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Loop_mask_3<PolygonMesh, VertexPointMap>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Subdivision_method_3`
 */

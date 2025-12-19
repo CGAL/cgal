@@ -39,7 +39,7 @@ namespace Surface_mesh_parameterization {
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam Parameterizer must be a model of `Parameterizer_3`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
-///         traits of TriangleMesh.
+///         traits of `TriangleMesh`.
 /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
@@ -48,7 +48,7 @@ namespace Surface_mesh_parameterization {
 /// \param mesh a triangulated surface.
 /// \param parameterizer a parameterizer.
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-/// \param uvmap an instanciation of the class `VertexUVmap`.
+/// \param uvmap an instantiation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The mesh border must be mapped onto a convex polygon
@@ -87,7 +87,7 @@ Error_code parameterize(TriangleMesh& mesh,
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
-///         traits of TriangleMesh.
+///         traits of `TriangleMesh`.
 /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
@@ -95,7 +95,7 @@ Error_code parameterize(TriangleMesh& mesh,
 ///
 /// \param mesh a triangulated surface.
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-/// \param uvmap an instanciation of the class `VertexUVmap`.
+/// \param uvmap an instantiation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The vertices must be indexed (vimap must be initialized).

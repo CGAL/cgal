@@ -6,10 +6,12 @@
 \example Spatial_searching/fuzzy_range_query.cpp
 \example Spatial_searching/general_neighbor_searching.cpp
 \example Spatial_searching/iso_rectangle_2_query.cpp
+\example Spatial_searching/iso_rectangle_2_query_projection.cpp
 \example Spatial_searching/nearest_neighbor_searching.cpp
 \example Spatial_searching/searching_with_circular_query.cpp
 \example Spatial_searching/searching_surface_mesh_vertices.cpp
 \example Spatial_searching/searching_polyhedron_vertices.cpp
+\example Spatial_searching/searching_triangulation_vertices.cpp
 \example Spatial_searching/searching_with_point_with_info.cpp
 \example Spatial_searching/searching_with_point_with_info_inplace.cpp
 \example Spatial_searching/searching_with_point_with_info_pmap.cpp

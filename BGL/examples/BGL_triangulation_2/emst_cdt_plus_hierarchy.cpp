@@ -66,7 +66,7 @@ int main(int argc,char* argv[])
                                        vertex_index_map(vertex_index_pmap));
 
 
-  std::cout << "The edges of the Euclidean mimimum spanning tree:" << std::endl;
+  std::cout << "The edges of the Euclidean minimum spanning tree:" << std::endl;
   for(edge_descriptor ed : mst)
   {
     vertex_descriptor svd = source(ed, tr);

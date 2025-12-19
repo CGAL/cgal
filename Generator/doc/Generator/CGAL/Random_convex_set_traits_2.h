@@ -5,7 +5,7 @@ namespace CGAL {
 The class `Random_convex_set_traits_2` serves as a traits class
 for the function `random_convex_set_2()`.
 
-\cgalModels `RandomConvexSetTraits_2`
+\cgalModels{RandomConvexSetTraits_2}
 
 */
 template< typename Kernel >

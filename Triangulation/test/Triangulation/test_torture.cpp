@@ -20,7 +20,7 @@ void test(const int D, const int d, const int N, bool no_transform)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that DC contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename DC::Point Point;
     typedef typename DC::Geom_traits::RT RT;
 

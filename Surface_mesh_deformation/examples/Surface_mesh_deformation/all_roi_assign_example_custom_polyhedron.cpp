@@ -81,7 +81,7 @@ int main()
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
+  for(std::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
     put(vertex_index_map, *vb, counter);
   }
 
@@ -89,14 +89,14 @@ int main()
   Hedge_index_map hedge_index_map(internal_hedge_index_map);
   counter = 0;
   halfedge_iterator eb, ee;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
+  for(std::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
     put(hedge_index_map, *eb, counter);
   }
 
   Surface_mesh_deformation deform_mesh(mesh, vertex_index_map, hedge_index_map);
 
   // Insert the whole mesh as region of interest
-  boost::tie(vb, ve) = vertices(mesh);
+  std::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Insert two control vertices
@@ -112,7 +112,7 @@ int main()
     return 1;
   }
 
-  // Use set_target_position() to set the constained position
+  // Use set_target_position() to set the constrained position
   // of control_1. control_2 remains at the last assigned positions
   Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
@@ -122,7 +122,7 @@ int main()
   // The function deform() can be called several times if the convergence has not been reached yet
   deform_mesh.deform();
 
-  // Set the constained position of control_2
+  // Set the constrained position of control_2
   Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 

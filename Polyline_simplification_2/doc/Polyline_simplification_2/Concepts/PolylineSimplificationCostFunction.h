@@ -10,12 +10,13 @@ sets before and after removal. The smaller the error the lower the
 cost. The algorithm processes vertices in increasing cost order to
 preserve the overall polyline set shape as much as possible
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable}
 
-\cgalHasModel `CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost`
-\cgalHasModel `CGAL::Polyline_simplification_2::Scaled_squared_distance_cost`
-\cgalHasModel `CGAL::Polyline_simplification_2::Squared_distance_cost`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost}
+\cgalHasModels{CGAL::Polyline_simplification_2::Scaled_squared_distance_cost}
+\cgalHasModels{CGAL::Polyline_simplification_2::Squared_distance_cost}
+\cgalHasModelsEnd
 
 */
 
@@ -28,7 +29,7 @@ Given a vertex in constraint iterator `viq` computes `vip=std::prev(viq)` and `v
 
 \param ct The underlying constrained Delaunay triangulation which embeds the polyline constraints
 \param viq The vertex in constraint iterator of the vertex to remove
-\returns The cost for removing `*viq`. The value `boost::none` can be returned to indicate an infinite or uncomputable cost.
+\returns The cost for removing `*viq`. The value `std::nullopt` can be returned to indicate an infinite or uncomputable cost.
 
 \tparam CDT must be `CGAL::Constrained_triangulation_plus_2` with a vertex type that
 is model of `PolylineSimplificationVertexBase_2`. `CDT::Geom_traits` must be model of
@@ -36,7 +37,7 @@ the concept `ConstrainedDelaunayTriangulationTraits_2`.
 
 */
   template <typename CDT>
-  boost::optional<CDT::Geom_traits::FT>
+  std::optional<CDT::Geom_traits::FT>
   operator()(CGAL::Constrained_triangulation_plus_2<CDT> const& ct,
              CGAL::Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator viq) const;}
 

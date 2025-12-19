@@ -3,7 +3,7 @@
 \ingroup PkgApolloniusGraph2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 
 The concept `ApolloniusGraphTraits_2` provides the traits
 requirements for the `Apollonius_graph_2` class. In particular,
@@ -12,8 +12,10 @@ it provides a type `Site_2`, which must be a model of the concept
 constructions for sites and several function object
 types for the predicates.
 
-\cgalHasModel `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
-\cgalHasModel `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
+\cgalHasModels{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>`
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`

@@ -12,19 +12,21 @@ The concept `ProjectionObject` is modeled after the STL
 concept `UnaryFunction`, but takes also care of (const)
 references.
 
-\cgalHasModel CGAL::Identity
-\cgalHasModel CGAL::Dereference
-\cgalHasModel CGAL::Get_address
-\cgalHasModel CGAL::Cast_function_object
-\cgalHasModel CGAL::Project_vertex
-\cgalHasModel CGAL::Project_facet
-\cgalHasModel CGAL::Project_point
-\cgalHasModel CGAL::Project_normal
-\cgalHasModel CGAL::Project_plane
-\cgalHasModel CGAL::Project_next
-\cgalHasModel CGAL::Project_prev
-\cgalHasModel CGAL::Project_next_opposite
-\cgalHasModel CGAL::Project_opposite_prev
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Identity}
+\cgalHasModels{CGAL::Dereference}
+\cgalHasModels{CGAL::Get_address}
+\cgalHasModels{CGAL::Cast_function_object}
+\cgalHasModels{CGAL::Project_vertex}
+\cgalHasModels{CGAL::Project_facet}
+\cgalHasModels{CGAL::Project_point}
+\cgalHasModels{CGAL::Project_normal}
+\cgalHasModels{CGAL::Project_plane}
+\cgalHasModels{CGAL::Project_next}
+\cgalHasModels{CGAL::Project_prev}
+\cgalHasModels{CGAL::Project_next_opposite}
+\cgalHasModels{CGAL::Project_opposite_prev}
+\cgalHasModelsEnd
 
 
 */

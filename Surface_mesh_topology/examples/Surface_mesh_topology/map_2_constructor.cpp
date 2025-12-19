@@ -20,7 +20,7 @@ void construct_map_from_edges()
 
   std::cout<<"Map valid="<<cm.is_valid()<<std::flush;
   cm.display_characteristics(std::cout);
-  std::cout<<"; path lenght="<<p.length()
+  std::cout<<"; path length="<<p.length()
      <<", isclosed? "<<(p.is_closed()?"true":"false")<<std::endl;
 }
 

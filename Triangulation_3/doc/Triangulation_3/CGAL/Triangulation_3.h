@@ -19,7 +19,7 @@ respectively.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point` (as defined below).
+        with `object` being a `Point` (as defined below).
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when
         `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
@@ -1304,6 +1304,26 @@ Finite_vertex_handles finite_vertex_handles() const;
 Points points() const;
 
 /*!
+* returns an array containing the vertices of `e`,
+* in the order of their indices `e.second` and `e.third`
+* in the cell `e.first`.
+*/
+std::array<Vertex_handle, 2> vertices(const Edge& e) const;
+
+/*!
+* returns an array containing the vertices of `f`,
+* in counterclockwise order on the face of `f.first`
+* opposite to vertex `f.first->vertex(f.second)`.
+*/
+std::array<Vertex_handle, 3> vertices(const Facet& f) const;
+
+/*!
+* returns an array containing the vertices of `c`,
+* in the same order as the indices in `c`.
+*/
+std::array<Vertex_handle, 4> vertices(const Cell_handle c) const;
+
+/*!
   returns a range of iterators over the cells intersected by a line segment
 */
 Segment_traverser_cell_handles segment_traverser_cell_handles() const;
@@ -1374,7 +1394,7 @@ The first cell incident to `vt` is the last valid value of the iterator.
 It is followed by `segment_traverser_cells_end()`.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle vs, Vertex_handle vt) const;
 
@@ -1399,7 +1419,7 @@ The optional argument `hint` can reduce the time to construct the iterator
 if it is geometrically close to `ps`.
 
 \pre `ps` and `pt` must be different points.
-\pre  `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
+\pre  `t.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
 */
 Segment_cell_iterator segment_traverser_cells_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
 
@@ -1409,7 +1429,7 @@ returns the past-the-end iterator over the intersected cells.
 This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
 passed the target.
 
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_traverser_cells_end() const;
 
@@ -1450,7 +1470,7 @@ The initial value of the iterator is `vs`.
 The iterator remains valid until `vt` is passed.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs, Vertex_handle vt) const;
 
@@ -1466,7 +1486,7 @@ The iterator remains valid until the first simplex containing `pt` is passed.
 The optional argument `hint` can reduce the time to construct the iterator if it is close to `ps`.
 
 \pre `ps` and `pt` must be different points.
-\pre `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
+\pre `t.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
 */
 Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
 
@@ -1476,7 +1496,7 @@ returns the past-the-end iterator over the intersected simplices.
 This iterator cannot be dereferenced. It indicates when the `Segment_simplex_iterator` has
 passed the target.
 
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_simplex_iterator segment_traverser_simplices_end() const;
 
@@ -1562,7 +1582,8 @@ Cell_handle start, int f) const;
 Copies the `Cell_handle`s of all cells incident to `v` to the output
 iterator `cells`.
 Returns the resulting output iterator.
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() == 3`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1575,7 +1596,8 @@ Returns `true` in case of success. Otherwise, `cells` is emptied and the functio
 returns false. In any case, the locked cells are not unlocked by
 `try_lock_and_get_incident_cells()`, leaving this choice to the user.
 
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() == 3`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 bool
   try_lock_and_get_incident_cells(Vertex_handle v,
@@ -1584,7 +1606,8 @@ bool
 Copies the `Cell_handle`s of all finite cells incident to `v` to the output
 iterator `cells`.
 Returns the resulting output iterator.
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() == 3`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1594,7 +1617,8 @@ finite_incident_cells(Vertex_handle v, OutputIterator cells) const;
 Copies all `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `t.dimension() > 1`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 1`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1604,7 +1628,8 @@ incident_facets(Vertex_handle v, OutputIterator facets) const;
 Copies all finite `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `t.dimension() > 1`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 1`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1613,7 +1638,8 @@ finite_incident_facets(Vertex_handle v, OutputIterator facets) const;
 /*!
 Copies all `Edge`s incident to `v` to the
 output iterator `edges`. Returns the resulting output iterator.
-\pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 0`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1622,7 +1648,8 @@ incident_edges(Vertex_handle v, OutputIterator edges) const;
 /*!
 Copies all finite `Edge`s incident to `v` to the
 output iterator `edges`. Returns the resulting output iterator.
-\pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 0`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1632,7 +1659,7 @@ finite_incident_edges(Vertex_handle v, OutputIterator edges) const;
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the
 output iterator `vertices`. If `t.dimension() < 0`, then do
 nothing. Returns the resulting output iterator.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1642,16 +1669,16 @@ adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 Copies the `Vertex_handle`s of all finite vertices adjacent to `v` to the
 output iterator `vertices`. If `t.dimension() < 0`, then do
 nothing. Returns the resulting output iterator.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
 finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
-Returns the degree of a vertex, that is, the number of incident vertices.
+Returns the degree of `v`, that is, the number of incident vertices.
 The infinite vertex is counted.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 size_type degree(Vertex_handle v) const;
 

@@ -22,7 +22,7 @@ struct Tester {
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-  int operator()(const std::string fname, const std::string out_fname)
+  int operator()(const std::string fname, const std::string /*out_fname*/)
   {
     std::ifstream input(fname);
     using namespace CGAL::parameters;
@@ -52,9 +52,10 @@ struct Tester {
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-    // Output
-    std::ofstream medit_file(out_fname);
-    c3t3.output_to_medit(medit_file);
+//    // Output
+//    std::ofstream medit_file(out_fname);
+//    CGAL::IO::write_MEDIT(medit_file, c3t3);
+
     return EXIT_SUCCESS;
   }
 };

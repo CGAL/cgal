@@ -30,7 +30,7 @@
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -71,6 +71,8 @@ void verify_time_stamps(const C3t3& c3t3, CGAL::Sequential_tag) {
       assert(prev->time_stamp() < cit->time_stamp());
     }
   }
+  assert(tds.vertices().check_timestamps_are_valid());
+  assert(tds.cells().check_timestamps_are_valid());
 }
 
 // Do not verify time stamps in parallel mode
@@ -153,7 +155,7 @@ struct Tester
     // Quality should increase
     C3t3 exude_c3t3(c3t3);
     std::cerr << "Exude...\n";
-    CGAL::exude_mesh_3(exude_c3t3);
+    CGAL::exude_mesh_3(exude_c3t3, CGAL::parameters::time_limit = 0);
     verify_c3t3(exude_c3t3,domain,domain_type,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
     verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
@@ -164,7 +166,7 @@ struct Tester
     // Quality should increase
     C3t3 perturb_c3t3(c3t3);
     std::cerr << "Perturb...\n";
-    CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit=5);
+    CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit =5);
     verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
@@ -333,13 +335,13 @@ struct Tester
           else {
             std::cerr << "\nc1 circumcenter: " << tr.dual(c1);
             std::cerr << "\nc1 is in domain: "
-                      << domain.is_in_domain_object()(tr.dual(c1));
+                      << CGAL::IO::oformat(domain.is_in_domain_object()(tr.dual(c1)));
           }
           if(tr.is_infinite(c2)) std::cerr << "\nc2 is infinite";
           else {
             std::cerr << "\nc2 circumcenter: "<< tr.dual(c2);
             std::cerr << "\nc2 is in domain: "
-                      << domain.is_in_domain_object()(tr.dual(c2));
+                      <<  CGAL::IO::oformat(domain.is_in_domain_object()(tr.dual(c2)));
           }
           std::cerr << std::endl;
           assert(false);
@@ -381,7 +383,7 @@ struct Tester
         continue;
 
       max_sqd = (std::max)(max_sqd,
-        aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
+        CGAL::to_double(aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f)))));
     }
     double hdist = std::sqrt(max_sqd);
     std::cout << "\tHausdorff distance to polyhedron is " << hdist << std::endl;
@@ -399,7 +401,7 @@ struct Tester
     // Parallel
     typedef typename C3t3::Concurrency_tag Concurrency_tag;
 
-    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
       assert(hdist <= reference_value*4.);
     else
 #endif //CGAL_LINKED_WITH_TBB

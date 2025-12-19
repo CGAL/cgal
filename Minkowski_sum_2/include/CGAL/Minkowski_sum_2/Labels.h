@@ -182,7 +182,7 @@ public:
        (label._is_last && _index == 0)));
   }
 
-  /*! Check whether the given label is the succcessor of this label. */
+  /*! Check whether the given label is the successor of this label. */
   bool is_next (const X_curve_label& label) const
   {
     if (_component == 0)

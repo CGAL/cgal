@@ -34,7 +34,7 @@ namespace CGAL {
 /*{\Manpage {SM_io_parser}{Decorator_}{IO of embedded maps}{IO}}*/
 
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
-decorator to provide input and output of a embedded map.  |\Mtype| is
+decorator to provide input and output of an embedded map.  |\Mtype| is
 generic with respect to the |Decorator_| parameter.  |Decorator_| has
 to be a decorator model of our |SM_decorator| concept.}*/
 
@@ -241,9 +241,8 @@ bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  if (!
-     (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
-      v >= 0 && v < vn && f >= 0 && f < fn ))
+  if (! (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
+         v >= 0 && v < vn && f >= 0 && f < fn ))
   {
     std::cerr<<"wrong index in read_edge"<<std::endl;
     in.setstate(std::ios_base::badbit);

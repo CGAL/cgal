@@ -1,6 +1,7 @@
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/read_points.h>
+#include <CGAL/IO/OFF.h>
 
 #include <algorithm>
 #include <fstream>
@@ -16,19 +17,6 @@ typedef Reconstruction::Point                                   Point;
 
 typedef Reconstruction::Facet_const_iterator                   Facet_iterator;
 
-// function for writing the reconstruction output in the off format
-void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
-{
-  std::ofstream output(name.c_str());
-  output << "OFF " << reconstruct.number_of_points() << " "
-         << reconstruct.number_of_facets() << " 0\n";
-
-  std::copy(reconstruct.points_begin(),
-            reconstruct.points_end(),
-            std::ostream_iterator<Point>(output,"\n"));
-  for( Facet_iterator it = reconstruct.facets_begin(); it != reconstruct.facets_end(); ++it )
-      output << "3 " << *it << std::endl;
-}
 
 int main(int argc, char* argv[])
 {
@@ -70,17 +58,21 @@ int main(int argc, char* argv[])
       if (i == 0)
       {
         std::cout << "First reconstruction done." << std::endl;
-        // Write the reconstruction.
-        dump_reconstruction(reconstruct, "reconstruction1.off");
+        CGAL::IO::write_OFF("reconstruction1.off",
+                            reconstruct.points(),
+                            reconstruct.facets(),
+                            CGAL::parameters::stream_precision(17));
       }
       else
       {
         std::cout << "Second reconstruction done." << std::endl;
-        // Write the reconstruction.
-        dump_reconstruction(reconstruct, "reconstruction2.off");
+        CGAL::IO::write_OFF("reconstruction2.off",
+                            reconstruct.points(),
+                            reconstruct.facets(),
+                            CGAL::parameters::stream_precision(17));
       }
     }
 
-    std::cout << "Reconstructions are ready to be examinated in your favorite viewer" << std::endl;
+    std::cout << "Reconstructions are ready to be examined in your favorite viewer" << std::endl;
     return EXIT_SUCCESS;
 }

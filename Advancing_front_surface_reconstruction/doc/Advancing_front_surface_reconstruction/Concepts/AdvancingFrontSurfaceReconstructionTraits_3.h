@@ -9,9 +9,11 @@ used in the class `CGAL::Advancing_front_surface_reconstruction`.
 It defines the geometric objects (points, segments...) forming the triangulation
 together with a few geometric predicates and constructions on these objects.
 
-\cgalRefines `DelaunayTriangulationTraits_3`
+\cgalRefines{DelaunayTriangulationTraits_3}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 */
 class AdvancingFrontSurfaceReconstructionTraits_3
 {

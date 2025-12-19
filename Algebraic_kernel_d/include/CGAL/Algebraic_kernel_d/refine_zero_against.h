@@ -66,7 +66,7 @@ int descartes(Polynomial& p, const Field& low,const Field& high){
 }
 
 /*! \ingroup \NiX_univariate_polynomial_utils
- *  \brief refine isolating interval for \c p w.r.t \c q
+ *  \brief refine isolating interval for \c p w.r.t. \c q
  *
  *  This function refines the interval ]<TT>low</TT>, <TT>high</TT>[
  *  such that it does not contain any zero of \c q different from the

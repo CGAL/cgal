@@ -7,7 +7,7 @@ namespace CGAL {
 An object `b` of the class `Bbox_3` is a bounding
 box in the three-dimensional Euclidean space \f$ \E^3\f$.
 
-\cgalModels `Hashable`
+\cgalModels{Hashable}
 
 \sa `CGAL::Bbox_2`
 
@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*!
-introduces an \em empty bounding box with lower left
+constructs an \em empty bounding box with lower left
 corner point at \f$ (\infty, \infty, \infty) \f$
 and with upper right corner point at
 \f$ (-\infty, -\infty, -\infty) \f$, \f$ \infty \f$ being
@@ -29,7 +29,7 @@ and with upper right corner point at
   Bbox_3();
 
 /*!
-introduces a bounding box `b` with lexicographically
+constructs a bounding box `b` with lexicographically
 smallest corner point at `(xmin, ymin, zmin)`
 and lexicographically largest corner point at
 `(xmax, ymax, zmax)`.
@@ -90,14 +90,14 @@ double zmax() const;
 /*!
 Returns `xmin()` if `i==0` or `ymin()` if `i==1`
 or `zmin()` if `i==2`.
-\pre i>=0 and i<=2
+\pre `i>=0` and `i<=2`
 */
 double min(int i) const;
 
 /*!
 Returns `xmax()` if `i==0` or `ymax()` if `i==1`
 or `zmax()` if `i==2`.
-\pre i>=0 and i<=2
+\pre `i>=0` and `i<=2`
 */
 double max(int i) const;
 
@@ -115,6 +115,13 @@ Bbox_3& operator+=(const Bbox_3 &c);
 dilates the bounding box by a specified number of ULP.
 */
 void dilate(int dist);
+
+/*!
+scales the bounding box by `factor`, while keeping its center fixed.
+\pre `factor > 0`
+*/
+void scale(double factor);
+
 /// @}
 
 }; /* end Bbox_3 */

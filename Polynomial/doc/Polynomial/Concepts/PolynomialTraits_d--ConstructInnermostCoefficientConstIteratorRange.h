@@ -6,9 +6,7 @@
 This `AdaptableUnaryFunction` returns a const iterator range over all
 innermost coefficients of the given polynomial.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

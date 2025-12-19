@@ -22,7 +22,7 @@
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

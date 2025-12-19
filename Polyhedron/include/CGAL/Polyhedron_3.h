@@ -855,6 +855,10 @@ public:
 
     Facet_iterator facets_end() { return hds_.faces_end();}
 
+    // added for convenience
+    Facet_iterator faces_begin() { return hds_.faces_begin();}
+    Facet_iterator faces_end() { return hds_.faces_end();}
+
     Facet_handles facet_handles() {
         return make_prevent_deref_range(facets_begin(), facets_end());
     }
@@ -886,11 +890,15 @@ public:
     Facet_const_iterator facets_begin() const { return hds_.faces_begin();}
     Facet_const_iterator facets_end()   const { return hds_.faces_end();}
 
+    // added for convenience
+    Facet_const_iterator faces_begin() const { return hds_.faces_begin();}
+    Facet_const_iterator faces_end()   const { return hds_.faces_end();}
+
     Facet_const_handles facet_handles() const {
         return make_prevent_deref_range(facets_begin(), facets_end());
     }
 
-    // Auxiliary iterators for convinience
+    // Auxiliary iterators for convenience
     Point_iterator       points_begin()       { return vertices_begin();}
     Point_iterator       points_end()         { return vertices_end();}
 
@@ -1301,8 +1309,8 @@ public:
         // cut the polyhedron into two parts along the cycle (h,i,j).
         // Three copies of the vertices and two new triangles will be
         // created. h,i,j will be incident to the first new triangle. The
-        // returnvalue will be an halfedge iterator denoting the new
-        // halfegdes of the second new triangle which was h beforehand.
+        // returnvalue will be a halfedge iterator denoting the new
+        // halfedges of the second new triangle which was h beforehand.
         // Precondition: h,i,j are distinct, consecutive vertices of the
         // polyhedron and form a cycle: i.e. `h->vertex() == i->opposite()
         // ->vertex()', ..., `j->vertex() == h->opposite()->vertex()'. The
@@ -1352,7 +1360,7 @@ public:
 
     Halfedge_handle join_loop( Halfedge_handle h, Halfedge_handle g) {
         // glues the boundary of two facets together. Both facets and the
-        // vertices of g gets removed. Returns an halfedge iterator for h.
+        // vertices of g gets removed. Returns a halfedge iterator for h.
         // The invariant `join_loop( h, split_loop( h, i, j))' returns h
         // and keeps the polyhedron unchanged. Precondition: `HDS'
         // supports removal of vertices and facets. The facets denoted by
@@ -1448,10 +1456,10 @@ public:
 
     /// Erases the small connected components and the isolated vertices.
     ///
-    /// @commentheading Preconditions:
-    /// supports vertices, halfedges, and removal operation.
     ///
-    /// @commentheading Template Parameters:
+    /// \pre supports vertices, halfedges, and removal operation.
+    ///
+    /// *Parameters*
     /// @param nb_components_to_keep the number of large connected components to keep.
     ///
     /// @return the number of connected components erased (ignoring isolated vertices).
@@ -1465,7 +1473,7 @@ public:
         // removes all vertices, halfedges, and facets.
 
     void erase_all() { clear(); }
-        // equivalent to `clear()'. Depricated.
+        // equivalent to `clear()'. Deprecated.
 
 // Special Operations on Polyhedral Surfaces
 
@@ -1583,7 +1591,7 @@ public:
                      << std::endl;
                 break;
             }
-            // Distinct facets on each side of an halfegde.
+            // Distinct facets on each side of a halfedge.
             valid = valid && ( ! check_tag( Supports_halfedge_face()) ||
                                D.get_face(i) != D.get_face(i->opposite()));
             if ( ! valid) {

@@ -105,7 +105,7 @@ include |<CGAL/Convex_hull_d_to_polyhedron_3.h>|
 template <class R, class Polyhedron_3>
 void convex_hull_d_to_polyhedron_3(
   const Convex_hull_d<R>& C, Polyhedron_3& P)
-/*{\Mfunc converts the convex hull |C| to polyedral surface stored in
+/*{\Mfunc converts the convex hull |C| to polyhedral surface stored in
    |P|.\\ \precond |dim == 3| and |dcur == 3|. }*/
 { typedef Convex_hull_d<R> ChullType;
 

@@ -357,7 +357,7 @@ int writeMincFile( const _image* im, const char *filename,
         strcat(newname, filename + i + 1);
       }
       else
-        sprintf(newname, "#TMP#%s", filename);
+        snprintf(newname,strlen(filename) + 10, "#TMP#%s", filename);
     }
   }
 

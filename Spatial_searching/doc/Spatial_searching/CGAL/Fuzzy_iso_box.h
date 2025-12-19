@@ -16,7 +16,7 @@ as follows:
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`.
 
-\cgalModels `FuzzyQueryItem`
+\cgalModels{FuzzyQueryItem}
 */
 template< typename Traits >
 class Fuzzy_iso_box {

@@ -520,7 +520,7 @@ position `p`. Returns a handle to that vertex.
 \pre The boundary of the union of full cells incident to `f` must be a triangulation of a
 sphere of dimension `tr`.`current_dimension()`).
 */
-Vertex_handle collapse_face(const Point & p, const Face & f);
+Vertex_handle contract_face(const Point & p, const Face & f);
 
 /// @}
 
@@ -556,8 +556,7 @@ Inserts point `p` into the triangulation and returns a handle to the
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
 
-<DL> <DT><B>`ON_VERTEX`</B><DD> The point of the
-p`Vertex` described by `f` is set to `p`.
+<DL> <DT><B>`ON_VERTEX`</B><DD> The triangulation remains unchanged.
 <DT><B>`IN_FACE`</B><DD> The point `p` is inserted in the `Face f`.
 <DT><B>`IN_FACET`</B><DD> The point `p` is inserted in the `Facet ft`.
 <DT><B>Anything else</B><DD> The point `p` is inserted in the triangulation according to the value

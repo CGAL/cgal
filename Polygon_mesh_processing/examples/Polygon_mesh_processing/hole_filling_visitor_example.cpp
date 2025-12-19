@@ -160,23 +160,17 @@ int main(int argc, char* argv[])
        !is_small_hole(h, mesh, max_hole_diam, max_num_hole_edges))
       continue;
 
-    std::vector<face_descriptor>  patch_facets;
-    std::vector<vertex_descriptor> patch_vertices;
     Progress progress(10.0);
     bool success = false;
 
     try {
         success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
             h,
-            std::back_inserter(patch_facets),
-            std::back_inserter(patch_vertices),
             CGAL::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
     }
     catch (const Stop&) {
         std::cout << "We stopped with a timeout" << std::endl;
     }
-    std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
-    std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
     std::cout << "  Is fairing successful: " << success << std::endl;
     ++nb_holes;
   }

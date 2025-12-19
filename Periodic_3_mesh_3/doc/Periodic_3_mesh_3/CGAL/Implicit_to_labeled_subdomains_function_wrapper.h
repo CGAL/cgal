@@ -13,7 +13,7 @@ the subdomain index `2`.
 Note that for the 3D mesh generator [`f(p)=0`] means that p is outside the domain.
 Since this wrapper has values into `{1, 2}`, both the interior and the exterior of
 the periodic domain described by the input implicit function are meshed,
-thus yielding a periodic mesh of the entire canonical cube.
+thus yielding a periodic mesh of the entire canonical cuboid.
 
 \tparam Function provides the definition of the function.
         This parameter stands for a model of the concept `ImplicitFunction`

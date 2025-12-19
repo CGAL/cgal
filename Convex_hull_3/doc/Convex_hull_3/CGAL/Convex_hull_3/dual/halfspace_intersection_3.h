@@ -6,7 +6,7 @@ namespace CGAL {
 \brief computes robustly the intersection of the halfspaces defined by the planes contained in the range [`begin`, `end`) without constructing the dual points. The result is stored in the polyhedron `pm`.
 If `origin` is given then it must be a point strictly inside the polyhedron. If an interior point is not given then it is computed using the function `halfspace_intersection_interior_point_3()` based on solving a linear program and thus is slower.
 
-This version does not construct the dual points explicitely but uses a special traits class for the function `CGAL::convex_hull_3()` to handle predicates on dual points without constructing them.
+This version does not construct the dual points explicitly but uses a special traits class for the function `CGAL::convex_hull_3()` to handle predicates on dual points without constructing them.
 
 Halfspaces are considered as lower halfspaces, that is if the plane equation is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
 
@@ -26,6 +26,6 @@ Halfspaces are considered as lower halfspaces, that is if the plane equation is 
 template <class PlaneIterator, class PolygonMesh>
 void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                PolygonMesh &pm,
-                               boost::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = boost::none);
+                               std::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = std::nullopt);
 
 } /* namespace CGAL */

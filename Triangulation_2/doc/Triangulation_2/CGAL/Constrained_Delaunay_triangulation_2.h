@@ -191,8 +191,6 @@ Inserts the line segment between the points `c.first` and `c.second` as  a const
 /*!
 Inserts the line segment whose endpoints are the vertices `va` and
 `vb` as a constraint in the triangulation.
-\pre `va` != `vb`.
-
 */
 void insert_constraint(Vertex_handle va, Vertex_handle vb);
 
@@ -236,10 +234,11 @@ std::size_t insert_unique_constraints(ConstraintIterator first, ConstraintIterat
 /*!
 Same as above except that each constraint is given as a pair of indices of the points
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
-
+\tparam PointIterator is an `InputIterator` with the value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with `std::pair<Int,Int>`
+where `Int` is an integral type implicitly convertible to `std::size_t`
+\note points are inserted even if they are not endpoint of a constraint.
 \return the number of inserted points.
-\tparam PointIterator is an `InputIterator` with value type `Point`.
-\tparam IndicesIterator is an `InputIterator` with value type `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
@@ -332,7 +331,7 @@ outputs the boundary edges of the conflict zone of point `p` into an output iter
 
 This functions outputs in the container pointed to by `eit`,
 the boundary of the zone in conflict with `p`. The boundary edges
-of the conflict zone are output in counter-clockwise order
+of the conflict zone are output in counterclockwise order
 and each edge is described through the incident face
 which is not in conflict with `p`.
 The function returns the resulting output iterator.

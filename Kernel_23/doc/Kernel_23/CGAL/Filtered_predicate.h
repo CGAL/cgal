@@ -21,7 +21,7 @@ we use the function objects `C2E` and `C2F`, which must be of the form
 \cgalHeading{Example}
 
 The following example defines an efficient and exact version of the
-orientation predicate over three points using the Cartesian representation
+orientation predicate over three points using the %Cartesian representation
 with double coordinates and without reference counting
 (`Simple_cartesian::Point_2`).
 Of course, the orientation predicate can already be found in the kernel, but

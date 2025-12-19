@@ -3,15 +3,15 @@
 #include <CGAL/Object.h>
 #include <CGAL/assertions.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <cassert>
 
 void from_opt_var() {
   int i = 0;
   double j = 0.0;
 
-  boost::optional< boost::variant<int, char, double> > v(23);
+  std::optional< std::variant<int, char, double> > v(23);
   CGAL::Object o = v;
   assert(!o.empty());
   assert(CGAL::assign(i, o));
@@ -23,7 +23,7 @@ void from_opt_var() {
   assert(CGAL::assign(j, o));
   assert(j == 2.0);
   //empty optional
-  boost::optional< boost::variant<int, char, double> > v2;
+  std::optional< std::variant<int, char, double> > v2;
   CGAL::Object o2 = v2;
   assert(o2.empty());
 }
@@ -31,7 +31,7 @@ void from_opt_var() {
 void from_var() {
   int i = 0;
 
-  boost::variant<int, char, double> v(23);
+  std::variant<int, char, double> v(23);
   CGAL::Object o = v;
   assert(!o.empty());
   assert(CGAL::assign(i, o));

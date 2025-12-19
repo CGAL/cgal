@@ -3,7 +3,7 @@
 \cgalConcept
 
 The Delaunay refinement process involved in the
-template functions `make_mesh_3()` and `refine_mesh_3()`
+template functions `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()`
 is guided by a set of elementary refinement criteria
 that concern either mesh tetrahedra or surface facets.
 The refinement criteria for tetrahedra are described
@@ -12,13 +12,17 @@ while the refinement criteria for surface facets
 are described by the concept `MeshFacetCriteria_3`.
 The concept `MeshCriteria_3` encapsulates these concepts.
 
-\cgalHasModel `CGAL::Mesh_criteria_3<Tr>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Mesh_criteria_3<Tr>}
+\cgalHasModelsEnd
 
+\sa `MeshEdgeCriteria_3`
 \sa `MeshFacetCriteria_3`
 \sa `MeshCellCriteria_3`
+\sa `MeshCriteriaWithFeatures_3`
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::refine_mesh_3()`
-\sa `MeshCriteriaWithFeatures_3`
+
 
 */
 

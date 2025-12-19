@@ -21,7 +21,7 @@ example).
 \tparam TriangulationDataStructure_ must be a model of the
 `TriangulationDataStructure` concept.
 
-\cgalModels `TriangulationDSVertex`
+\cgalModels{TriangulationDSVertex}
 
 \cgalHeading{Rebind mechanism}
 

@@ -24,7 +24,7 @@ of the space the triangulation is embedded in.
 
 The representation of \cgal 2D triangulations is based on faces and vertices,
 Edges are only implicitly
-represented trough the adjacency relations between two
+represented through the adjacency relations between two
 faces.
 
 The triangulation data structure can be seen
@@ -72,7 +72,7 @@ the set of maintained faces
 is topologically
 equivalent to a two-dimensional triangulated sphere.
 
-This rules extends to lower dimensional triangulation data structure
+This rule extends to lower dimensional triangulation data structure
 arising in degenerate cases or when the triangulations
 have fewer than three vertices.
 A one dimensional triangulation structure maintains a set of vertices

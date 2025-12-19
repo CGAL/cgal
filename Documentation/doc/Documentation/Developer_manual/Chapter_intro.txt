@@ -169,7 +169,7 @@ complexity are known. Also, the theoretic interest in efficiency for
 realistic inputs, as opposed to worst-case situations, is
 growing \cgalCite{v-ffrim-97}.
 For practical purposes, insight into the constant factors hidden in the
-\f$ O\f$-notation is necessary, especially if there are several competing
+\cgalBigO{~}-notation is necessary, especially if there are several competing
 algorithms.
 
 Therefore, different implementations should be supplied if there is
@@ -225,7 +225,7 @@ functionalities for circles, circular arcs living on a 3D sphere
 
 \cgal currently provides several models for the \cgal 2D and 3D kernel
 concept, and one model for the 2D circular and the 3D spherical kernel
-concepts.. Those are again parameterized and differ in their
+concepts. Those are again parameterized and differ in their
 representation of the geometric objects and the exchangeability of
 the types involved.
 In the first four cases the kernels are parameterized by a number type, which
@@ -233,7 +233,7 @@ is used to store coordinates and which determines the basic arithmetic
 of the kernel primitives.
 
 In the last two cases, the circular and spherical kernel are also
-parametrized by Algebraic Kernels, which, along with Algebraic
+parameterized by Algebraic Kernels, which, along with Algebraic
 Foundations, is the third distinct high level of genericity in
 \cgal. The algebraic foundations in \cgal is a collection of concepts
 representing algebraic structures, and are motivated by well-known

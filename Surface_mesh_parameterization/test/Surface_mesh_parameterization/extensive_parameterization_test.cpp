@@ -78,6 +78,11 @@ typedef boost::graph_traits<SM_Seam_mesh>::halfedge_descriptor    SM_SE_halfedge
 
 int main(int, char**)
 {
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
+  std::cout << "Using SuiteSparse" << std::endl;
+#else
+  std::cout << "Using Eigen3" << std::endl;
+#endif
   std::cout.precision(17);
   CGAL::IO::set_pretty_mode(std::cout);
 

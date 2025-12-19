@@ -65,5 +65,5 @@ pullout_directions
  CastingTraits_2& traits = CastingTraits_2());
 
 } // namespace Single_mold_translational_casting
-} // namesapce Set_movable_separability_2
-} // namesapce CGAL
+} // namespace Set_movable_separability_2
+} // namespace CGAL

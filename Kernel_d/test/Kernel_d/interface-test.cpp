@@ -5,22 +5,12 @@
 #include <CGAL/double.h>
 #include <CGAL/test_macros.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer  RT_;
-typedef leda_rational FT_;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::Gmpz RT_;
-typedef CGAL::Quotient<RT_> FT_;
-#else
-typedef double RT_;
-typedef double FT_;
-#endif
-#endif
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Exact_rational.h>
+
+typedef CGAL::Exact_integer RT_;
+typedef CGAL::Exact_rational FT_;
+
 
 int main()
 { CGAL_KD_SETDTHREAD(2);

@@ -329,6 +329,8 @@ void print_report(const VDA& vda, const Projector& project,
   std::cout << "# of Voronoi cells: " << n_all << std::endl;
   std::cout << "# of Voronoi cells with empty interior: "
             << n_empty << std::endl;
+#else
+  CGAL_USE(n_vert); CGAL_USE(n_all); CGAL_USE(n_empty);
 #endif
 
   std::cout << "is Voronoi diagram valid? "

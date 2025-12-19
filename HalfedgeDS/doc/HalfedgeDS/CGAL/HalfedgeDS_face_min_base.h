@@ -9,7 +9,7 @@ equivalent to `CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_false>`.
 It is empty besides the required type definitions. It can be used for
 deriving own faces.
 
-\cgalModels `HalfedgeDSFace`
+\cgalModels{HalfedgeDSFace}
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

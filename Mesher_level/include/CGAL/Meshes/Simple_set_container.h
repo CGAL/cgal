@@ -27,7 +27,7 @@ namespace CGAL {
       typedef typename Set::size_type size_type;
 
     protected:
-      // --- protected datas ---
+      // --- protected data ---
       Set s;
 
     public:

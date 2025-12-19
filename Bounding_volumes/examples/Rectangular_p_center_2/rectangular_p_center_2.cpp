@@ -19,7 +19,7 @@ typedef CGAL::Ostream_iterator<Point,std::ostream>  OIterator;
 int main()
 {
   int n = 10;
-  int p = 2;
+  int p = 3;
   OIterator cout_ip(std::cout);
   CGAL::IO::set_pretty_mode(std::cout);
 
@@ -31,7 +31,7 @@ int main()
   FT p_radius;
   std::cout << "\n\n" << p << "-centers:\n";
   CGAL::rectangular_p_center_2(
-    points.begin(), points.end(), cout_ip, p_radius, 3);
+    points.begin(), points.end(), cout_ip, p_radius, p);
   std::cout << "\n\n" << p << "-radius = " << p_radius << std::endl;
 
   return 0;

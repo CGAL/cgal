@@ -1,9 +1,10 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
-#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/property_map.h>
 

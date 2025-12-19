@@ -22,7 +22,7 @@ The way the predicates are evaluated is discussed in
 \cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering
 part).
 
-\cgalModels `SegmentDelaunayGraphTraits_2`
+\cgalModels{SegmentDelaunayGraphTraits_2}
 
 \sa `Kernel`
 \sa `SegmentDelaunayGraphTraits_2`
@@ -95,7 +95,7 @@ The way the predicates are evaluated is discussed in
 \cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering
 part).
 
-\cgalModels `SegmentDelaunayGraphTraits_2`
+\cgalModels{SegmentDelaunayGraphTraits_2}
 
 \sa `Kernel`
 \sa `SegmentDelaunayGraphTraits_2`

@@ -14,7 +14,7 @@ of Delaunay triangulations.
 By default, this parameter is instantiated by
 `Triangulation_cell_base_3<Traits>`.
 
-\cgalModels `DelaunayTriangulationCellBase_3`
+\cgalModels{DelaunayTriangulationCellBase_3}
 
 \sa `DelaunayTriangulationCellBase_3`
 \sa `CGAL::Delaunay_triangulation_3`
@@ -35,7 +35,7 @@ typedef Traits::Point_3 Point;
 
 As a model of the concept `DelaunayTriangulationCellBase_3`,
 `Delaunay_triangulation_cell_base_3`
-provides a `circumcenter()` member fonction.
+provides a `circumcenter()` member function.
 */
 
 /// @{

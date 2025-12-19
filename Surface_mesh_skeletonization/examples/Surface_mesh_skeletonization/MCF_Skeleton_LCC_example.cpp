@@ -2,7 +2,7 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
 
 #include <fstream>
@@ -63,7 +63,7 @@ int main()
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-lcc.polylines.txt");
+  output.open("correspondence-lcc.polylines.txt");
   for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, lcc, vd)  << "\n";

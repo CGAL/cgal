@@ -17,14 +17,14 @@
 
 
 /*! \file
- * Defintion of the Td_active_trapezoid<Td_traits> class.
+ * Definition of the Td_active_trapezoid<Td_traits> class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/tuple.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 
 
 #ifdef CGAL_TD_DEBUG
@@ -44,7 +44,7 @@ namespace CGAL {
  * bound the trapezoid from above and below.
  * There exist degenerate trapezoids called infinite trapezoid; this happens
  * when one of the four sides is on the parameter space boundary.
- * Each trapezoid has at most four neighbouring trapezoids.
+ * Each trapezoid has at most four neighboring trapezoids.
  */
 template <class Td_traits_>
 class Td_active_trapezoid : public Handle
@@ -162,15 +162,20 @@ private:
 
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
-  /*! Initialize the trapezoid's neighbours. */
-   inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
-                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
+  /*! Initialize the trapezoid's neighbors. */
+   inline void init_neighbors(std::optional<std::reference_wrapper<Td_map_item>> lb, std::optional<std::reference_wrapper<Td_map_item>> lt,
+                              std::optional<std::reference_wrapper<Td_map_item>> rb, std::optional<std::reference_wrapper<Td_map_item>> rt)
   {
-    set_lb((lb) ? *lb : Td_map_item(0));
-    set_lt((lt) ? *lt : Td_map_item(0));
-    set_rb((rb) ? *rb : Td_map_item(0));
-    set_rt((rt) ? *rt : Td_map_item(0));
+    set_lb((lb) ? lb->get() : Td_map_item(0));
+    set_lt((lt) ? lt->get() : Td_map_item(0));
+    set_rb((rb) ? rb->get() : Td_map_item(0));
+    set_rt((rt) ? rt->get() : Td_map_item(0));
   }
+  /*! \copydoc init_neighbors
+   *  \deprecated please use #init_neighbors */
+   CGAL_DEPRECATED inline void init_neighbours(std::optional<std::reference_wrapper<Td_map_item>> lb, std::optional<std::reference_wrapper<Td_map_item>> lt,
+                                               std::optional<std::reference_wrapper<Td_map_item>> rb, std::optional<std::reference_wrapper<Td_map_item>> rt)
+  { init_neighbors(lb, lt, rb, rt); }
 
   /*! Set the DAG node. */
   inline void set_dag_node(Dag_node* p)
@@ -227,16 +232,16 @@ private:
   }
 
 
-  /*! Set left bottom neighbour. */
+  /*! Set left bottom neighbor. */
   inline void set_lb(const Td_map_item& lb) { ptr()->lb = lb; }
 
-  /*! Set left top neighbour. */
+  /*! Set left top neighbor. */
   inline void set_lt(const Td_map_item& lt) { ptr()->lt = lt; }
 
-  /*! Set right bottom neighbour. */
+  /*! Set right bottom neighbor. */
   inline void set_rb(const Td_map_item& rb) { ptr()->rb = rb; }
 
-  /*! Set right top neighbour. */
+  /*! Set right top neighbor. */
   inline void set_rt(const Td_map_item& rt) { ptr()->rt = rt; }
 
  public:
@@ -248,7 +253,7 @@ private:
   Td_active_trapezoid()
   {
     //define the initial trapezoid: left, right, btm, top are at infinity.
-    // has no neighbours
+    // has no neighbors
     PTR = new Data
       (Traits::empty_vtx_handle(),
        Traits::empty_vtx_handle(),
@@ -262,14 +267,14 @@ private:
   /*! Constructor given Vertex & Halfedge handles. */
   Td_active_trapezoid (Vertex_const_handle l, Vertex_const_handle r,
                   Halfedge_const_handle b, Halfedge_const_handle t,
-                  boost::optional<Td_map_item&> lb = boost::none,
-                  boost::optional<Td_map_item&> lt = boost::none,
-                  boost::optional<Td_map_item&> rb = boost::none,
-                  boost::optional<Td_map_item&> rt = boost::none,
+                  std::optional<std::reference_wrapper<Td_map_item>> lb = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> lt = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> rb = std::nullopt,
+                  std::optional<std::reference_wrapper<Td_map_item>> rt = std::nullopt,
                   Dag_node* node = 0)
   {
-    PTR = new Data (l, r, b, t, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),
-                   (rb) ? *rb : Td_map_item(0), (rt) ? *rt : Td_map_item(0), node);
+    PTR = new Data (l, r, b, t, (lb) ? lb->get() : Td_map_item(0), (lt) ? lt->get() : Td_map_item(0),
+                   (rb) ? rb->get() : Td_map_item(0), (rt) ? rt->get() : Td_map_item(0), node);
     //m_dag_node = node;
   }
 
@@ -392,16 +397,16 @@ private:
             is_on_bottom_boundary() || is_on_top_boundary() );
   }
 
-  /*! Access left bottom neighbour. */
+  /*! Access left bottom neighbor. */
   Td_map_item& lb() const    { return ptr()->lb; }
 
-  /*! Access left top neighbour. */
+  /*! Access left top neighbor. */
   Td_map_item& lt() const    { return ptr()->lt; }
 
-  /*! Access right bottom neighbour. */
+  /*! Access right bottom neighbor. */
   Td_map_item& rb() const    { return ptr()->rb; }
 
-  /*! Access right top neighbour. */
+  /*! Access right top neighbor. */
   Td_map_item& rt() const    { return ptr()->rt; }
 
   /*! Access DAG node. */
@@ -454,14 +459,14 @@ private:
 
     Td_map_item item (*this);
 
-    if (ptr()->rb.which() != 0)
+    if (ptr()->rb.index() != 0)
     {
-      Self tr(boost::get<Self>(rb()));
+      Self tr(std::get<Self>(rb()));
       tr.set_lb(item);
     }
-    if (ptr()->rt.which() != 0)
+    if (ptr()->rt.index() != 0)
     {
-      Self tr(boost::get<Self>(rt()));
+      Self tr(std::get<Self>(rt()));
       tr.set_lt(item);
     }
     CGAL_assertion(is_on_right_boundary() == right.is_on_right_boundary());

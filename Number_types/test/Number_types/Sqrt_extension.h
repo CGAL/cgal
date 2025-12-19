@@ -24,7 +24,7 @@ void convert_to(const NT& x, RT& r){
     typedef CGAL::Coercion_traits<NT,RT> CT;
     typedef typename CT::Type Type;
     CGAL_USE_TYPE(Type);
-    CGAL_static_assertion((::boost::is_same<Type,RT>::value));
+    static_assert(::std::is_same<Type,RT>::value);
     r = typename CT::Cast()(x);
 }
 } //namespace CGAL
@@ -311,7 +311,7 @@ void to_double_test(){
     }
 }
 
-//This test is dedicated to the comaprison of numbers from different extensions
+//This test is dedicated to the comparison of numbers from different extensions
 template <class EXT>
 void test_compare(){
   typedef typename EXT::NT NT;
@@ -427,43 +427,43 @@ void fraction_traits_test(){
     CGAL_USE_TYPE(INT_FT3);
 
     // RAT_FTs decomposable
-    assert((boost::is_same< typename RAT_FT1::Is_fraction,
+    assert((std::is_same< typename RAT_FT1::Is_fraction,
                     CGAL::Tag_true>::value));
-    assert((boost::is_same< typename RAT_FT2::Is_fraction,
+    assert((std::is_same< typename RAT_FT2::Is_fraction,
                     CGAL::Tag_true>::value));
-    assert((boost::is_same< typename RAT_FT3::Is_fraction,
+    assert((std::is_same< typename RAT_FT3::Is_fraction,
                     CGAL::Tag_true>::value));
     // RAT_FTi Numerator_type == INTi_EXT
-    assert((boost::is_same< typename RAT_FT1::Numerator_type,
+    assert((std::is_same< typename RAT_FT1::Numerator_type,
                     INT1_EXT>::value));
-    assert((boost::is_same< typename RAT_FT2::Numerator_type,
+    assert((std::is_same< typename RAT_FT2::Numerator_type,
                     INT2_EXT>::value));
-    assert((boost::is_same< typename RAT_FT3::Numerator_type,
+    assert((std::is_same< typename RAT_FT3::Numerator_type,
                     INT3_EXT>::value));
     // RAT_FTi Denomiantor == INT
-    assert((boost::is_same< typename RAT_FT1::Denominator_type,
+    assert((std::is_same< typename RAT_FT1::Denominator_type,
                     INT>::value));
-    assert((boost::is_same< typename RAT_FT2::Denominator_type,
+    assert((std::is_same< typename RAT_FT2::Denominator_type,
                     INT>::value));
-    assert((boost::is_same< typename RAT_FT3::Denominator_type,
+    assert((std::is_same< typename RAT_FT3::Denominator_type,
                     INT>::value));
 
     // INT_FTs not decomposable
-    assert((boost::is_same< typename INT_FT1::Is_fraction,
+    assert((std::is_same< typename INT_FT1::Is_fraction,
                     CGAL::Tag_false>::value));
-    assert((boost::is_same< typename INT_FT2::Is_fraction,
+    assert((std::is_same< typename INT_FT2::Is_fraction,
                     CGAL::Tag_false>::value));
-    assert((boost::is_same< typename INT_FT2::Is_fraction,
+    assert((std::is_same< typename INT_FT2::Is_fraction,
                     CGAL::Tag_false>::value));
     {
         typedef CGAL::Sqrt_extension<RAT,RAT>   RAT_RAT_EXT;
         typedef CGAL::Fraction_traits<RAT_RAT_EXT> RAT_RAT_FT;
-        assert((boost::is_same< typename RAT_RAT_FT::Is_fraction,
+        assert((std::is_same< typename RAT_RAT_FT::Is_fraction,
                         CGAL::Tag_false>::value));
     }{
         typedef CGAL::Sqrt_extension<INT1_EXT,INT1_EXT> INT_nEXT;
         typedef CGAL::Fraction_traits<INT_nEXT> INT_nEXT_FT;
-        assert((boost::is_same< typename INT_nEXT_FT::Is_fraction,
+        assert((std::is_same< typename INT_nEXT_FT::Is_fraction,
                         CGAL::Tag_false>::value));
     }
 
@@ -522,7 +522,7 @@ void scalar_factor_traits_test(){
             typename SFT::Scalar_factor sfac;
             typename SFT::Scalar_div    sdiv;
 
-            assert( (boost::is_same<Scalar, Integer>::value) );
+            assert( (std::is_same<Scalar, Integer>::value) );
 
             assert((sfac(EXT1(0)))==Integer(0));
             assert((sfac(EXT1(3)))==Integer(3));
@@ -539,7 +539,7 @@ void scalar_factor_traits_test(){
             typename SFT::Scalar_factor sfac;
             typename SFT::Scalar_div    sdiv;
 
-            assert( (boost::is_same<Scalar, Integer>::value) );
+            assert( (std::is_same<Scalar, Integer>::value) );
 
             assert((sfac(EXT2(0)))==Integer(0));
             assert((sfac(EXT2(3)))==Integer(3));
@@ -555,7 +555,7 @@ void scalar_factor_traits_test(){
             typedef typename SFT::Scalar Scalar;
             typename SFT::Scalar_factor sfac;
 
-            assert( (boost::is_same<Scalar, Integer>::value) );
+            assert( (std::is_same<Scalar, Integer>::value) );
 
             assert((sfac(EXT1(0)))                 ==Integer(0));
             assert((sfac(EXT1(9),Integer(15)))     ==Integer(3));
@@ -575,7 +575,7 @@ void test_algebraic_extension_traits(){
     typedef CGAL::Sqrt_extension<RAT1_EXT,INT,ACDE_TAG> RAT2_EXT;
     typedef CGAL::Sqrt_extension<INT1_EXT,INT,ACDE_TAG> INT2_EXT;
 
-    // normalisation factor
+    // normalization factor
     typedef CGAL::Algebraic_extension_traits<RAT1_EXT> RAT1_EXT_ANT;
     typedef CGAL::Algebraic_extension_traits<INT1_EXT> INT1_EXT_ANT;
     typedef CGAL::Algebraic_extension_traits<RAT2_EXT> RAT2_EXT_ANT;
@@ -700,17 +700,17 @@ void test_get_arithmetic_kernel(){
     typedef CGAL::Sqrt_extension<Integer,Integer,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
     CGAL_USE_TYPE(AT_);
-    CGAL_static_assertion((boost::is_same<AT,AT_>::value));
+    static_assert(std::is_same<AT,AT_>::value);
   } {
     typedef CGAL::Sqrt_extension<Rational,Integer,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
     CGAL_USE_TYPE(AT_);
-    CGAL_static_assertion((boost::is_same<AT,AT_>::value));
+    static_assert(std::is_same<AT,AT_>::value);
   } {
     typedef CGAL::Sqrt_extension<Rational,Rational,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
     CGAL_USE_TYPE(AT_);
-    CGAL_static_assertion((boost::is_same<AT,AT_>::value));
+    static_assert(std::is_same<AT,AT_>::value);
   }
 }
 

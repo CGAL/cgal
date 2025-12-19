@@ -26,7 +26,7 @@
 
 #  include <CGAL/basic.h>
 
-#  include <CGAL/Optimisation/assertions.h>
+#  include <CGAL/assertions.h>
 
 #  include <CGAL/Optimisation/basic.h>
 
@@ -110,7 +110,7 @@ public:
 #endif
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
-            CGAL_optimisation_precondition ((d>=0) && all_points_have_dim(d));
+            CGAL_precondition ((d>=0) && all_points_have_dim(d));
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         }
@@ -137,7 +137,7 @@ public:
 #endif
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
-            CGAL_optimisation_precondition ((d>=0) && all_points_have_dim(d));
+            CGAL_precondition ((d>=0) && all_points_have_dim(d));
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         }
@@ -211,13 +211,13 @@ public:
 
     Point center () const
     {
-        CGAL_optimisation_precondition (!is_empty());
+        CGAL_precondition (!is_empty());
         return ms_basis.get_sphere(Rep_tag()).center();
     }
 
     FT squared_radius () const
     {
-        CGAL_optimisation_precondition (!is_empty());
+        CGAL_precondition (!is_empty());
         return ms_basis.get_sphere(Rep_tag()).squared_radius();
     }
 
@@ -227,7 +227,7 @@ public:
         if (d == -1)
            return ON_UNBOUNDED_SIDE;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
            (d == tco.access_dimension_d_object()(p));
            return (Bounded_side
                (-CGAL::sign (ms_basis.get_sphere(Rep_tag()).excess (p))));
@@ -239,7 +239,7 @@ public:
         if (d == -1)
            return false;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
            (d == tco.access_dimension_d_object()(p));
            return (CGAL_NTS is_negative (ms_basis.get_sphere(Rep_tag()).excess (p)));
         }
@@ -250,7 +250,7 @@ public:
         if (d == -1)
            return true;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
           (d == tco.access_dimension_d_object()(p));
            return (CGAL_NTS is_positive (ms_basis.get_sphere(Rep_tag()).excess (p)));
         }
@@ -261,7 +261,7 @@ public:
         if (d == -1)
            return false;
         else {
-          CGAL_optimisation_precondition
+          CGAL_precondition
           (d == tco.access_dimension_d_object()(p));
            return (CGAL_NTS is_zero (ms_basis.get_sphere(Rep_tag()).excess (p)));
         }
@@ -296,7 +296,7 @@ public:
         support_end = points.begin();
         if (points.size()>0) {
             d = tco.access_dimension_d_object() (points.front());
-            CGAL_optimisation_precondition ((d>=0) && all_points_have_dim (d));
+            CGAL_precondition ((d>=0) && all_points_have_dim (d));
             ms_basis.get_sphere(Rep_tag()).set_size (d);
             pivot_ms();
         } else {
@@ -310,7 +310,7 @@ public:
         if (has_on_unbounded_side (p)) {
             if (is_empty()) {
                 d = tco.access_dimension_d_object() (p);
-                CGAL_optimisation_precondition (d>=0);
+                CGAL_precondition (d>=0);
                 ms_basis.get_sphere(Rep_tag()).set_size (d);
             }
             // ensure precondition of pivot_ms

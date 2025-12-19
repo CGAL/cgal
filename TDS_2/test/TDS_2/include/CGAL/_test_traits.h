@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-// Create a mininal traits class
+// Create a minimal traits class
 class Triangulation_test_point {
 public:
   typedef Triangulation_test_point Point;

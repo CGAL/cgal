@@ -19,7 +19,6 @@
 #define CGAL_LINE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
@@ -29,6 +28,7 @@ namespace CGAL {
 template <class R_>
 class Line_3 : public R_::Kernel_base::Line_3
 {
+  typedef typename R_::Boolean               Boolean;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Ray_3                 Ray_3;
@@ -39,7 +39,7 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Line_3                             Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Line_3>::value));
+  static_assert(std::is_same<Self, typename R_::Line_3>::value);
 
 public:
 
@@ -99,7 +99,7 @@ public:
     return R().construct_direction_3_object()(*this);
   }
 
-  bool has_on(const Point_3 &p) const
+  Boolean has_on(const Point_3 &p) const
   {
     return R().has_on_3_object()(*this, p);
     //return has_on_boundary(p);
@@ -107,7 +107,7 @@ public:
 
   Point_3 point() const
   {
-    return R().construct_point_on_3_object()(*this, 0);
+    return R().construct_point_on_3_object()(*this);
   }
 
   Point_3 point(const FT i) const
@@ -130,11 +130,10 @@ public:
     return R().construct_projected_point_3_object()(*this, p);
   }
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);
   }
-
 };
 
 template < class R >

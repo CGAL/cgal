@@ -139,7 +139,7 @@ class SNC_intersection {
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
-    CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
+    // CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
     return point_in_facet_interior( p, f);
   }
 
@@ -159,7 +159,7 @@ class SNC_intersection {
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
-    CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
+    // CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
     return point_in_facet_interior( p, f);
   }
 
@@ -197,7 +197,7 @@ class SNC_intersection {
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
       return outer_bound_pos;
     /* The point p is not in the relative interior of the outer face cycle
-       so it is not necesary to know the possition of p with respect to the
+       so it is not necessary to know the position of p with respect to the
        inner face cycles */
     Halffacet_cycle_const_iterator fe = f->facet_cycles_end();
     ++fc;
@@ -226,7 +226,7 @@ class SNC_intersection {
       if( inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )
         return opposite(inner_bound_pos);
       /* At this point the point p belongs to relative interior of the facet's
-         outer cycle, and its possition is completely known when it belongs
+         outer cycle, and its position is completely known when it belongs
          to the clousure of any inner cycle */
     }
     return CGAL::ON_BOUNDED_SIDE;

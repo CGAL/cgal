@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSegmentDelaunayGraph2Ref
 
-\cgalModels `SegmentDelaunayGraphVertexBase_2`
+\cgalModels{SegmentDelaunayGraphVertexBase_2}
 
 The class `Segment_Delaunay_graph_vertex_base_2` provides a model for the
 `SegmentDelaunayGraphVertexBase_2` concept which is the vertex

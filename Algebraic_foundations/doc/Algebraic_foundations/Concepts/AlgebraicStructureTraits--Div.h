@@ -8,7 +8,7 @@ namespace AlgebraicStructureTraits_{
 `AdaptableBinaryFunction` computes the integral quotient of division
 with remainder.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicStructureTraits`
 \sa `AlgebraicStructureTraits_::Mod`

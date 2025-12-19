@@ -465,7 +465,7 @@ private:
    typedef std::vector<Node_id>                                        Node_ids;
    typedef std::unordered_map<face_descriptor,Node_ids>             On_face_map;
    typedef std::unordered_map<edge_descriptor,Node_ids>             On_edge_map;
-   //to keep the correspondance between node_id and vertex_handle in each mesh
+   //to keep the correspondence between node_id and vertex_handle in each mesh
    typedef internal::Node_id_to_vertex<TriangleMesh,
                                        doing_autorefinement||
                                        handle_non_manifold_features>
@@ -818,7 +818,7 @@ public:
         break;
         case ON_VERTEX:
         {
-          //grab original vertex that is on commom intersection
+          //grab original vertex that is on common intersection
           mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
           Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
           if (node_id_to_vertex.size()<=node_id)
@@ -841,7 +841,7 @@ public:
 
     if ( is_target_coplanar )
     {
-      //grab original vertex that is on commom intersection
+      //grab original vertex that is on common intersection
       mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1));
       Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
       if (node_id_to_vertex.size()<=node_id)
@@ -854,7 +854,7 @@ public:
     }
     else{
       if ( is_source_coplanar ){
-        //grab original vertex that is on commom intersection
+        //grab original vertex that is on common intersection
         halfedge_descriptor h_1_opp=opposite(h_1,tm1);
         mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1_opp));
         Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
@@ -1111,7 +1111,7 @@ public:
       Node_ids& node_ids=it2->second;
       CGAL_assertion( std::set<Node_id>(node_ids.begin(), node_ids.end())
                         .size()==node_ids.size() );
-      //sort nodes along the egde to allow consecutive splits
+      //sort nodes along the edge to allow consecutive splits
       sort_vertices_along_hedge(node_ids,hedge,tm,vpm,nodes);
 
       //save original face and nodes for face of hedge (1)
@@ -1242,6 +1242,97 @@ public:
         edge_to_hedge[std::make_pair( f_indices[1],f_indices[2] )] = h2;
       }
 
+      // handle possible presence of degenerate faces
+      if (const_mesh_ptr && collinear( get(vpm,f_vertices[0]), get(vpm,f_vertices[1]), get(vpm,f_vertices[2]) ) )
+      {
+        Node_ids face_vertex_nids;
+
+        //check if one of the triangle input vertex is also a node
+        for (int ik=0;ik<3;++ik)
+          if ( f_indices[ik]<nb_nodes )
+            face_vertex_nids.push_back(f_indices[ik]);
+
+        // collect nodes on edges (if any)
+        if (it_fb != face_boundaries.end())
+        {
+          Face_boundary& f_boundary=it_fb->second;
+          for (int i=0;i<3;++i)
+            std::copy(f_boundary.node_ids_array[i].begin(),
+                      f_boundary.node_ids_array[i].end(),
+                      std::back_inserter(face_vertex_nids));
+        }
+
+        std::sort(face_vertex_nids.begin(), face_vertex_nids.end());
+        std::vector<std::array<std::pair<halfedge_descriptor,Node_id>,2>> constraints;
+        for(Node_id id : face_vertex_nids)
+        {
+          CGAL_assertion(id < graph_of_constraints.size());
+          const std::vector<Node_id>& neighbors=graph_of_constraints[id];
+          if (!neighbors.empty())
+          {
+            for(Node_id id_n :neighbors)
+            {
+              if (id_n<id) continue;
+              if (std::binary_search(face_vertex_nids.begin(), face_vertex_nids.end(), id_n))
+              {
+                vertex_descriptor vi = node_id_to_vertex.get_vertex(id),
+                                  vn = node_id_to_vertex.get_vertex(id_n);
+                bool is_face_border = false;
+                halfedge_descriptor h;
+
+                std::tie(h, is_face_border) = halfedge(vi,vn, tm);
+                if (is_face_border)
+                {
+                  call_put(marks_on_edges,tm,edge(h,tm),true);
+                  output_builder.set_edge_per_polyline(tm,std::make_pair(id, id_n),h);
+                }
+                else
+                {
+                  halfedge_descriptor hi=halfedge(vi, tm);
+                  while(face(hi, tm) != f)
+                    hi=opposite(next(hi, tm), tm);
+
+                  halfedge_descriptor hn=halfedge(vn, tm);
+                  while(face(hn, tm) != f)
+                    hn=opposite(next(hn, tm), tm);
+                  constraints.emplace_back(make_array(std::make_pair(hi,id),std::make_pair(hn, id_n)));
+                }
+              }
+            }
+          }
+          #ifdef CGAL_COREFINEMENT_DEBUG
+          else
+            std::cout << "X0bis: Found an isolated point" << std::endl;
+          #endif
+        }
+
+        CGAL_assertion(constraints.empty() || it_fb != face_boundaries.end());
+        std::vector<face_descriptor> new_faces;
+        for (const std::array<std::pair<halfedge_descriptor, Node_id>, 2>& a : constraints)
+        {
+          halfedge_descriptor nh = Euler::split_face(a[0].first, a[1].first, tm);
+          new_faces.push_back(face(opposite(nh, tm), tm));
+
+          call_put(marks_on_edges,tm,edge(nh,tm),true);
+          output_builder.set_edge_per_polyline(tm,std::make_pair(a[0].second, a[1].second),nh);
+        }
+
+        // now triangulate new faces
+        if (!new_faces.empty())
+        {
+          new_faces.push_back(f);
+          for(face_descriptor nf : new_faces)
+          {
+            halfedge_descriptor h = halfedge(nf, tm),
+                                nh = next(next(h,tm),tm);
+            while(next(nh, tm)!=h)
+              nh=next(Euler::split_face(h, nh, tm), tm);
+          }
+        }
+
+        continue;
+      }
+
       typename EK::Point_3 p = nodes.to_exact(get(vpm,f_vertices[0])),
                            q = nodes.to_exact(get(vpm,f_vertices[1])),
                            r = nodes.to_exact(get(vpm,f_vertices[2]));
@@ -1347,7 +1438,7 @@ public:
       insert_constrained_edges(node_ids,cdt,id_to_CDT_vh,constrained_edges);
 
       // insert constraints between points that are on the boundary
-      // (not a contrained on the triangle boundary)
+      // (not a constrained on the triangle boundary)
       if (it_fb!=face_boundaries.end()) //is f not a triangle ?
       {
         for (int i=0;i<3;++i)
@@ -1441,6 +1532,12 @@ public:
         }
       }
     }
+  }
+
+  void check_no_duplicates(const INodes& nodes) const
+  {
+    if (const_mesh_ptr == nullptr) // actually only needed for clip
+      nodes.check_no_duplicates();
   }
 
   void finalize(INodes& nodes,

@@ -25,8 +25,9 @@ namespace CGAL {
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-bool lexicographically_xy_smaller(const PointH3<R> &p,
-                                  const PointH3<R> &q)
+typename R::Boolean
+lexicographically_xy_smaller(const PointH3<R> &p,
+                             const PointH3<R> &q)
 {
   typedef typename R::RT RT;
   RT pV = p.hx()*q.hw();
@@ -51,7 +52,7 @@ bool lexicographically_xy_smaller(const PointH3<R> &p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_xy(const PointH3<R>& p, const PointH3<R>& q)
 {
   typedef typename R::RT RT;
@@ -82,7 +83,7 @@ compare_xy(const PointH3<R>& p, const PointH3<R>& q)
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 equal_xy(const PointH3<R> &p, const PointH3<R> &q)
 {
   return   (p.hx() * q.hw() == q.hx() * p.hw() )
@@ -91,7 +92,7 @@ equal_xy(const PointH3<R> &p, const PointH3<R> &q)
 
 template < class R >  // ???  ->   ==
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 equal_xyz(const PointH3<R> &p, const PointH3<R> &q)
 {
   return   (p.hx() * q.hw() == q.hx() * p.hw() )
@@ -101,27 +102,27 @@ equal_xyz(const PointH3<R> &p, const PointH3<R> &q)
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 less_x(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hx() * q.hw() < q.hx() * p.hw() ); }
 
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 less_y(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hy() * q.hw() < q.hy() * p.hw() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 less_z(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hz() * q.hw() < q.hz() * p.hw() ); }
 
 
 
 template <class RT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, RT>::type
 power_side_of_oriented_power_sphereH3(
              const RT &phx, const RT &phy, const RT &phz, const RT &phw, const Quotient<RT> &pwt,
              const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const Quotient<RT> &qwt,

@@ -22,10 +22,10 @@
 
 
 #include <iostream>
+#include <type_traits>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Handle_for.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -46,7 +46,7 @@ class Root_for_circles_2_2 {
   Root_for_circles_2_2(const Root_of_2& r1, const Root_of_2& r2)
     : x_(r1), y_(r2)
   {
-    // When it is an interval this assertion dont compile
+    // When it is an interval this assertion doesn't compile
     //CGAL_assertion((r1.is_rational() || r2.is_rational()) ||
     //               (r1.gamma() == r2.gamma()));
   }

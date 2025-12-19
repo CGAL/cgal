@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationOnSphere2VertexFaceClasses
 
-\cgalModels `TriangulationOnSphereFaceBase_2`
+\cgalModels{TriangulationOnSphereFaceBase_2}
 
 The class `Triangulation_on_sphere_face_base_2` is a model for the concept
 `TriangulationOnSphereFaceBase_2`. It is the default face base class

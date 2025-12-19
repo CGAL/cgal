@@ -7,7 +7,7 @@ A model of `AlgebraicKernel_d_1::ApproximateRelative_1` is an `AdaptableBinaryFu
 approximation of an `AlgebraicKernel_d_1::Algebraic_real_1` value with
 respect to a given relative precision.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicKernel_d_1::ApproximateAbsolute_1`
 

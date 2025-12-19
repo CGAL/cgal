@@ -6,8 +6,10 @@
 /// the detection of non-manifold simplices and the modifications performed to polygons
 /// during the orientation process.
 ///
-/// \cgalRefines `CopyConstructible`
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Default_orientation_visitor`.
+/// \cgalRefines{CopyConstructible}
+/// \cgalHasModelsBegin
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Default_orientation_visitor}
+/// \cgalHasModelsEnd
 
 class PMPPolygonSoupOrientationVisitor{
 public:

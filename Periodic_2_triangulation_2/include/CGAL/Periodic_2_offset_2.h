@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian.h>
 
 namespace CGAL
@@ -71,14 +71,14 @@ public:
   int &operator[](int i)
   {
     if (i == 0) return _offx;
-    CGAL_triangulation_assertion(i == 1);
+    CGAL_assertion(i == 1);
     return _offy;
   }
   /// Return the i-th entry of o.
   int operator[](int i) const
   {
     if (i == 0) return _offx;
-    CGAL_triangulation_assertion(i == 1);
+    CGAL_assertion(i == 1);
     return _offy;
   }
   /// Add o' to o using vector addition.

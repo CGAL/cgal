@@ -1,14 +1,15 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-
 #include <CGAL/number_type_config.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::FT                                                       FT;
@@ -77,7 +78,7 @@ void test_needles_and_caps(const std::string fname)
   const FT eps = std::numeric_limits<FT>::epsilon();
 
   face_iterator fit, fend;
-  boost::tie(fit, fend) = faces(mesh);
+  std::tie(fit, fend) = faces(mesh);
 
   // (0 0 0) -- (1 0 0) -- (1 1 0) (90° cap angle)
   face_descriptor f = *fit;

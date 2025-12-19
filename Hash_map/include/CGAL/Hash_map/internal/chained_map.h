@@ -17,8 +17,11 @@
 #define CGAL_HASH_MAP_INTERNAL_CHAINED_MAP_H
 
 #include <CGAL/memory.h>
+#include <CGAL/assertions.h>
 #include <iostream>
 #include <limits>
+#include <type_traits>
+#include <utility>
 
 namespace CGAL {
 
@@ -42,7 +45,7 @@ class chained_map
 
    chained_map_elem<T>* table;
    chained_map_elem<T>* table_end;
-   chained_map_elem<T>* free;
+   chained_map_elem<T>* freelist;
    std::size_t table_size;
    std::size_t table_size_1;
 
@@ -85,6 +88,10 @@ public:
    chained_map(std::size_t n = default_size, const T& d = T());
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
+   chained_map(chained_map<T, Allocator>&& D)
+     noexcept(std::is_nothrow_move_constructible_v<Allocator> && std::is_nothrow_move_constructible_v<T>);
+   chained_map& operator=(chained_map<T, Allocator>&& D)
+     noexcept(std::is_nothrow_move_assignable_v<Allocator> && std::is_nothrow_move_assignable_v<T>);
 
    void reserve(std::size_t n);
    void clear();
@@ -137,10 +144,10 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
     std::allocator_traits<allocator_type>::construct(alloc,table + i);
   }
 
-  free = table + t;
+  freelist = table + t;
   table_end = table + t + t/2;
 
-  for (Item p = table; p < free; ++p)
+  for (Item p = table; p < freelist; ++p)
   { p->succ = nullptr;
     p->k = nullkey;
   }
@@ -154,10 +161,10 @@ inline void chained_map<T, Allocator>::insert(std::size_t x, T y)
     q->k = x;
     q->i = y;
   } else {
-    free->k = x;
-    free->i = y;
-    free->succ = q->succ;
-    q->succ = free++;
+    freelist->k = x;
+    freelist->i = y;
+    freelist->succ = q->succ;
+    q->succ = freelist++;
   }
 }
 
@@ -207,7 +214,7 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
 
   // index x not present, insert it
 
-  if (free == table_end)   // table full: rehash
+  if (freelist == table_end)   // table full: rehash
   { rehash();
     p = HASH(x);
   }
@@ -218,7 +225,7 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
     return p->i;
   }
 
-  q = free++;
+  q = freelist++;
   q->k = x;
   init_inf(q->i);    // initializes q->i to xdef
   q->succ = p->succ;
@@ -239,13 +246,25 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
 {
   init_table(D.table_size);
 
-  for(Item p = D.table; p < D.free; ++p)
+  for(Item p = D.table; p < D.freelist; ++p)
   { if (p->k != nullkey || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //D.copy_inf(p->i);  // see chapter Implementation
     }
   }
 }
+template <typename T, typename Allocator>
+chained_map<T, Allocator>::chained_map(chained_map<T, Allocator>&& D)
+  noexcept(std::is_nothrow_move_constructible_v<Allocator> && std::is_nothrow_move_constructible_v<T>)
+  : table(std::exchange(D.table, nullptr))
+  , table_end(std::exchange(D.table_end, nullptr))
+  , freelist(std::exchange(D.freelist, nullptr))
+  , table_size(std::exchange(D.table_size, 0))
+  , table_size_1(std::exchange(D.table_size_1, 0))
+  , alloc(std::move(D.alloc))
+  , reserved_size(std::exchange(D.reserved_size, 0))
+  , def(std::move(D.def))
+{}
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_map<T, Allocator>& D)
@@ -254,12 +273,30 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 
   init_table(D.table_size);
 
-  for(Item p = D.table; p < D.free; ++p)
+  for(Item p = D.table; p < D.freelist; ++p)
   { if (p->k != nullkey || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //copy_inf(p->i);    // see chapter Implementation
     }
   }
+  return *this;
+}
+
+template <typename T, typename Allocator>
+chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(chained_map<T, Allocator>&& D)
+  noexcept(std::is_nothrow_move_assignable_v<Allocator> && std::is_nothrow_move_assignable_v<T>)
+{
+  clear();
+
+  table = std::exchange(D.table, nullptr);
+  table_end = std::exchange(D.table_end, nullptr);
+  freelist = std::exchange(D.freelist, nullptr);
+  table_size = std::exchange(D.table_size, 0);
+  table_size_1 = std::exchange(D.table_size_1, 0);
+  alloc = std::move(D.alloc);
+  reserved_size = std::exchange(D.reserved_size, 0);
+  def = std::move(D.def);
+
   return *this;
 }
 
@@ -302,7 +339,7 @@ void chained_map<T, Allocator>::statistics() const
   std::size_t n = 0;
   for (Item p = table; p < table + table_size; ++p)
      if (p ->k != nullkey) ++n;
-  std::size_t used_in_overflow = free - (table + table_size );
+  std::size_t used_in_overflow = freelist - (table + table_size );
   n += used_in_overflow;
   std::cout << "number of entries: " << n << "\n";
   std::cout << "fraction of entries in first position: " <<

@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <CGAL/boost/graph/breadth_first_search.h> // wrapper to suppress a warning
 
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
   // Here we start at an arbitrary vertex
   // Any other vertex could be the starting point
   vertex_iterator vb, ve;
-  boost::tie(vb,ve)=vertices(lcc);
+  std::tie(vb,ve)=vertices(lcc);
   vertex_descriptor  vd = *vb;
 
   std::cout << "We compute distances to " << vd->point() << std::endl;
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
                                         boost::on_tree_edge()))));
 
   // Traverse all vertices and show at what distance they are
-  for(boost::tie(vb,ve)=vertices(lcc); vb!=ve; ++vb)
+  for(std::tie(vb,ve)=vertices(lcc); vb!=ve; ++vb)
   {
     vd = *vb;
     std::cout<<vd->point()<<"  is "<<distance[vd->id()]<<" hops away."<<std::endl;

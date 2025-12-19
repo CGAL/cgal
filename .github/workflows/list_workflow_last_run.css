@@ -1,0 +1,30 @@
+table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 24px;
+    border-spacing: 0;
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+}
+table th {
+    padding: 3px 10px;
+    background-color: white;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid black;
+}
+table td {
+    padding: 3px 10px;
+    border-top: none;
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+}
+
+table tr.odd {
+    background-color: #f0f0f0;
+}
+table tr.even {
+    background-color: #e0e0e0;
+}

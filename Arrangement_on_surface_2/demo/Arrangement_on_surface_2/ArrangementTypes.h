@@ -15,7 +15,6 @@
 
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>

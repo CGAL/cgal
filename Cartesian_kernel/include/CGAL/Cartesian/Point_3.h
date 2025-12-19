@@ -42,11 +42,17 @@ public:
   PointC3(const Origin &)
     : base(NULL_VECTOR) {}
 
-  PointC3(const FT &x, const FT &y, const FT &z)
-    : base(x, y, z) {}
 
-  PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
-    : base(x, y, z, w) {}
+  template <class T1, class T2, class T3>
+  PointC3(T1 &&x, T2 &&y, T3 &&z)
+    : base(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z))
+  {}
+
+  template <class T1, class T2, class T3, class T4>
+  PointC3(T1 &&x, T2 &&y, T3 &&z, T4 &&w)
+    : base(std::forward<T1>(x), std::forward<T2>(y),
+           std::forward<T3>(z), std::forward<T4>(w))
+  {}
 
   friend void swap(Self& a, Self& b)
 #if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
@@ -99,6 +105,15 @@ public:
   Cartesian_const_iterator cartesian_end() const
   {
     return base.cartesian_end();
+  }
+
+  typename R_::Boolean operator==(const PointC3 &p) const
+  {
+      return base == p.base;
+  }
+  typename R_::Boolean operator!=(const PointC3 &p) const
+  {
+      return !(*this == p);
   }
 
   int dimension() const

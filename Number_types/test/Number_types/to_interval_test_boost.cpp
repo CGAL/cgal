@@ -213,7 +213,7 @@ void test_to_interval_tight_rational_1() {
   std::cout << "ref: inf" << std::endl;
   std::cout << std::endl;
 
-  assert(i == std::numeric_limits<double>::max());
+  assert(i == (std::numeric_limits<double>::max)());
   assert(s == std::numeric_limits<double>::infinity());
 
   #endif
@@ -236,8 +236,8 @@ void test_to_interval_tight_rational_1() {
   std::cout << "ref: 0.0 or higher" << std::endl;
   std::cout << std::endl;
 
-  assert(i >= 0.0 && i <= std::numeric_limits<double>::min() * 2.0);
-  assert(s >= 0.0 && s <= std::numeric_limits<double>::min() * 2.0);
+  assert(i >= 0.0 && i <= (std::numeric_limits<double>::min)() * 2.0);
+  assert(s >= 0.0 && s <= (std::numeric_limits<double>::min)() * 2.0);
   assert(i <= s);
 
   #endif
@@ -518,7 +518,7 @@ void test_to_interval_tight_rational_2() {
   std::cout << "ref: inf" << std::endl;
   std::cout << std::endl;
 
-  assert(i == std::numeric_limits<double>::max());
+  assert(i == (std::numeric_limits<double>::max)());
   assert(s == std::numeric_limits<double>::infinity());
 
   #endif
@@ -540,8 +540,8 @@ void test_to_interval_tight_rational_2() {
   std::cout << "ref: 0.0 or higher" << std::endl;
   std::cout << std::endl;
 
-  assert(i >= 0.0 && i <= std::numeric_limits<double>::min() * 2.0);
-  assert(s >= 0.0 && s <= std::numeric_limits<double>::min() * 2.0);
+  assert(i >= 0.0 && i <= (std::numeric_limits<double>::min)() * 2.0);
+  assert(s >= 0.0 && s <= (std::numeric_limits<double>::min)() * 2.0);
   assert(i <= s);
 
   #endif
@@ -785,7 +785,7 @@ void test_to_interval_tight_integer() {
   std::cout << "ref: inf" << std::endl;
   std::cout << std::endl;
 
-  assert(i == std::numeric_limits<double>::max());
+  assert(i == (std::numeric_limits<double>::max)());
   assert(s == std::numeric_limits<double>::infinity());
 
   #endif

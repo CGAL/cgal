@@ -70,13 +70,13 @@ private:
   Are_same_points_2     same_points;
 
 public:
-  typedef typename Enum::Arrangement_type    result_type;
+  typedef typename Enum::Arrangement_type    Arrangement_type;
 
 private:
-  result_type compute_type_C2(const RT& x1, const RT& y1,
-                              const RT& x2, const RT& y2,
-                              const RT& x3, const RT& y3,
-                              const RT& x4, const RT& y4) const
+  Arrangement_type compute_type_C2(const RT& x1, const RT& y1,
+                                   const RT& x2, const RT& y2,
+                                   const RT& x3, const RT& y3,
+                                   const RT& x4, const RT& y4) const
   {
     RT delta = -determinant<RT>(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
 
@@ -88,7 +88,7 @@ private:
     }
   }
 
-  result_type
+  Arrangement_type
   non_parallel_C2(const RT& x1, const RT& y1, const RT& x2, const RT& y2,
                   const RT& x3, const RT& y3, const RT& x4, const RT& y4,
                   const RT& D) const
@@ -159,7 +159,7 @@ private:
   }
 
 
-  result_type
+  Arrangement_type
   parallel_C2(const RT& x1, const RT& y1, const RT& x2, const RT& y2,
               const RT& x3, const RT& y3, const RT& x4, const RT& y4) const
   {
@@ -326,7 +326,7 @@ private:
 
   //------------------------------------------------------------------------
 
-  result_type
+  Arrangement_type
   arrangement_type_same_point(const Site_2& p, const Site_2& q,
                               unsigned int ip, unsigned int iq) const
   {
@@ -368,7 +368,7 @@ private:
     }
   }
 
-  result_type
+  Arrangement_type
   arrangement_type_ss(const Site_2& p, const Site_2& q) const
   {
     bool same_p1q1 = same_points(p.source_site(), q.source_site());
@@ -393,17 +393,17 @@ private:
     Segment_2 s1 = p.segment();
     Segment_2 s2 = q.segment();
 
-    result_type res = compute_type_C2( s1.source().x(), s1.source().y(),
-                                       s1.target().x(), s1.target().y(),
-                                       s2.source().x(), s2.source().y(),
-                                       s2.target().x(), s2.target().y() );
+    Arrangement_type res = compute_type_C2(s1.source().x(), s1.source().y(),
+                                           s1.target().x(), s1.target().y(),
+                                           s2.source().x(), s2.source().y(),
+                                           s2.target().x(), s2.target().y() );
 
     return res;
   }
 
   //--------------------------------------------------------------------
 
-  result_type
+  Arrangement_type
   arrangement_type_ps(const Site_2& p, const Site_2& q) const
   {
     if ( same_points(p, q.source_site()) ) {
@@ -419,7 +419,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  result_type
+  Arrangement_type
   arrangement_type_pp(const Site_2& p, const Site_2& q) const
   {
     if ( same_points(p, q) ) {
@@ -432,10 +432,7 @@ private:
   //--------------------------------------------------------------------
 
 public:
-  typedef Site_2                   argument_type;
-
-
-  result_type
+  Arrangement_type
   operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_defined() && q.is_defined() );

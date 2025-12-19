@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the Default_subcurve class, which is an extended curve
+ * Definition of the Default_subcurve class, which is an extended curve
  * type, referred to as Subcurve, used by the surface-sweep framework.
  *
  * The surface-sweep framework is implemented as a template that is
@@ -59,7 +59,7 @@ namespace Surface_sweep_2 {
  *
  * The information contained in this class is:
  * - two pointers to subcurves that are the originating subcurves in case of
- *   an overlap, otherwise thay are both nullptr.
+ *   an overlap, otherwise they are both nullptr.
  */
 template <typename GeometryTraits_2, typename Event_, typename Allocator_,
           typename Subcurve_>
@@ -104,6 +104,17 @@ protected:
 
 
 public:
+
+  void reset_left_event()
+  {
+    this->set_left_event(static_cast<Event*>(nullptr));
+    if (m_orig_subcurve1)
+    {
+      m_orig_subcurve1->reset_left_event();
+      m_orig_subcurve2->reset_left_event();
+    }
+  }
+
   /*! Get the subcurves that originate an overlap. */
   Subcurve* originating_subcurve1() { return m_orig_subcurve1; }
 
@@ -299,7 +310,7 @@ public:
  *                    structure, and to construct/destroy the elements in that
  *                    memory. The type must meet the requirements of Allocator.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *         overriden it implies that the type is
+ *         overridden it implies that the type is
  *         No_overlap_subcurve
  */
 template <typename GeometryTraits_2, typename Event_,

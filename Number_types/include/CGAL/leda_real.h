@@ -204,6 +204,10 @@ public:
 };
 
 
+inline const leda_real& approx(const leda_real& d) { return d; }
+inline const leda_real& exact(const leda_real& d) { return d; }
+inline int depth(const leda_real&){ return -1; }
+
 
 } //namespace CGAL
 

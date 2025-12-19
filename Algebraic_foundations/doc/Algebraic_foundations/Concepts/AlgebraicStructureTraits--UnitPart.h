@@ -21,7 +21,7 @@ hence the unit-part of a non-zero integer is its sign. For a `Field`, every
 non-zero element is a unit and is its own unit part, its unit normal
 associate being one. The unit part of zero is, by convention, one.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

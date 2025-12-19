@@ -12,9 +12,11 @@ refines the concept `TriangulationVertexBase_2`,
 adding handles to the corresponding vertices in the
 next and previous level triangulations.
 
-\cgalRefines `TriangulationVertexBase_2`
+\cgalRefines{TriangulationVertexBase_2}
 
-\cgalHasModel `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_hierarchy_2<Tr>`
 

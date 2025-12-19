@@ -257,7 +257,7 @@ bool multiplication_test()
 }
 
 // Here we test the specialized functions for IA.
-// They are usually templated in CGAL, but I've overriden them.
+// They are usually templated in CGAL, but I've overridden them.
 
 template < typename IA_nt >
 bool utility_test()

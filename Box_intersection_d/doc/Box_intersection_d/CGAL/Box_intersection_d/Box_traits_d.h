@@ -20,7 +20,7 @@ cases it just uses the pointer type.
                   const-pointer `const B*`, where `B` is a model of the
                   `BoxIntersectionBox_d` concept.
 
-\cgalModels `BoxIntersectionTraits_d`
+\cgalModels{BoxIntersectionTraits_d}
 
 \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
@@ -47,12 +47,12 @@ Box_traits_d();
 
 
 /*!
-\ingroup PkgBoxIntersectionDFunctions
+\ingroup PkgBoxIntersectionDEnums
 */
 enum Setting  { COMPLETE, BIPARTITE };
 
 /*!
-\ingroup PkgBoxIntersectionDFunctions
+\ingroup PkgBoxIntersectionDEnums
 */
 enum Topology { HALF_OPEN, CLOSED };
 

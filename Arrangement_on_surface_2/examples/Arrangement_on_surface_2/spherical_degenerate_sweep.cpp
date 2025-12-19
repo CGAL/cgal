@@ -15,31 +15,30 @@
 
 #include "arr_print.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 
 #if 0
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>  Geom_traits_2;
+using Geom_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>;
 #elif 0
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7> Geom_traits_2;
+using Geom_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7>;
 #else
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>  Geom_traits_2;
+using Geom_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>;
 #endif
 
-typedef Geom_traits_2::Point_2                             Point_2;
-typedef Geom_traits_2::X_monotone_curve_2                  X_monotone_curve_2;
-typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2> Topol_traits_2;
-typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
-                                                           Arrangement_2;
-typedef Arrangement_2::Vertex_handle                       Vertex_handle;
+using Point_2 = Geom_traits_2::Point_2;
+using X_monotone_curve_2 = Geom_traits_2::X_monotone_curve_2;
+using Topol_traits_2 = CGAL::Arr_spherical_topology_traits_2<Geom_traits_2>;
+using Arrangement_2 =
+  CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>;
+using Vertex_handle = Arrangement_2::Vertex_handle;
 
 int main() {
   Geom_traits_2 traits;
-  Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
-  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
-    traits.construct_x_monotone_curve_2_object();
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
 
-  std::vector< Point_2 > points;
-  std::vector< X_monotone_curve_2 > xcvs;
+  std::vector<Point_2> points;
+  std::vector<X_monotone_curve_2> xcvs;
 
   CGAL::IO::set_pretty_mode(std::cout);
 

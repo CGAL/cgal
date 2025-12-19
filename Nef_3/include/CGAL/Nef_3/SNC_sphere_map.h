@@ -24,6 +24,7 @@
 #include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/SNC_list.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <list>
 #undef CGAL_NEF_DEBUG

@@ -64,7 +64,7 @@ namespace Barycentric_coordinates {
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored
 
-    \pre area_2(p0, p1, p2) != 0
+    \pre \link BarycentricTraits_2::Compute_area_2 `area_2`\endlink(p0, p1, p2) != 0
   */
   template<
   typename OutIterator,
@@ -133,7 +133,7 @@ namespace Barycentric_coordinates {
     \return a tuple `std::tuple<GeomTraits::FT, GeomTraits::FT, GeomTraits::FT>`
     with the computed coordinates
 
-    \pre area_2(p0, p1, p2) != 0
+    \pre \link BarycentricTraits_2::Compute_area_2 `area_2`\endlink(p0, p1, p2) != 0
   */
   template<typename GeomTraits>
   std::tuple<
@@ -257,7 +257,7 @@ namespace Barycentric_coordinates {
     /// Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
     /// Computed coordinates are stored in the output iterator `output`.
     template<class OutputIterator>
-    inline boost::optional<OutputIterator> operator()(
+    inline std::optional<OutputIterator> operator()(
       const Point_2 &query_point, OutputIterator output)
     {
       return triangle_coordinates_2(query_point, output);
@@ -298,7 +298,7 @@ namespace Barycentric_coordinates {
     // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
     // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
-    inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(
+    inline std::optional<std::back_insert_iterator<std::vector<FT> > > operator()(
       const Point_2 &query_point, std::vector<FT> &output_vector)
     {
       output_vector.reserve(output_vector.size() + 3);
@@ -347,7 +347,7 @@ namespace Barycentric_coordinates {
 
     // Compute triangle coordinates.
     template<class OutputIterator>
-    boost::optional<OutputIterator> triangle_coordinates_2(
+    std::optional<OutputIterator> triangle_coordinates_2(
       const Point_2 &query_point, OutputIterator &output) {
 
       // Compute some related sub-areas.
@@ -372,7 +372,7 @@ namespace Barycentric_coordinates {
       ++output;
 
       // Output all coordinates.
-      return boost::optional<OutputIterator>(output);
+      return std::optional<OutputIterator>(output);
     }
   };
 

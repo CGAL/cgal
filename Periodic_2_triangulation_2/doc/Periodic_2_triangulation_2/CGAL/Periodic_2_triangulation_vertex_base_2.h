@@ -19,7 +19,7 @@ class to which the additional information for the periodic vertex is
 added and should be a model of `TriangulationDSVertexBase_2`
 
 
-\cgalModels `Periodic_2TriangulationVertexBase_2`
+\cgalModels{Periodic_2TriangulationVertexBase_2}
 
 \sa `CGAL::Periodic_2_triangulation_face_base_2`
 \sa `CGAL::Triangulation_vertex_base_2`

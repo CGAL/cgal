@@ -9,9 +9,10 @@ A concept that describes the set of methods used by the class
 `QP_regularization` to access various data
 required for setting up the the global regularization problem.
 
-\cgalHasModel
-- `Segments::Angle_regularization_2`
-- `Segments::Offset_regularization_2`
+\cgalHasModelsBegin
+\cgalHasModels{Segments::Angle_regularization_2}
+\cgalHasModels{Segments::Offset_regularization_2}
+\cgalHasModelsEnd
 */
 class RegularizationType {
 

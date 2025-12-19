@@ -16,7 +16,7 @@ of `TriangulationFaceBase_2`. By default, this parameter is
 instantiated by
 `Triangulation_face_base_2<Traits>`.
 
-\cgalModels `RegularTriangulationFaceBase_2`
+\cgalModels{RegularTriangulationFaceBase_2}
 
 \sa `RegularTriangulationFaceBase_2`
 \sa `RegularTriangulationTraits_2`

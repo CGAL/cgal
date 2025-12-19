@@ -54,7 +54,7 @@ namespace internal {
 // TODO: Implement array in source code file
 //    extern const signed char floor_log2_4bit[16]; // see src/floor_log2_4bit.C
 
-// Don't define default, results in more convinient compiler messages
+// Don't define default, results in more convenient compiler messages
 template< class Type > class Real_embeddable_extension;
 // {
 // public:
@@ -327,7 +327,7 @@ public:
     long operator()( CORE::BigFloat x ) const {
       CGAL_precondition(!CGAL::zero_in(x));
       x = CGAL::abs(x);
-      return CORE::floorLg(x.m()-x.err())+x.exp()*CORE::CHUNK_BIT;
+      return CORE::floorLg(CORE::BigInt(x.m()-x.err()))+x.exp()*CORE::CHUNK_BIT;
     }
   };
 
@@ -337,7 +337,7 @@ public:
       // (already commented out in EXACUS)...
       //   NiX_precond(!(NiX::in_zero(x) && NiX::singleton(x)));
       x = CGAL::abs(x);
-      return CORE::ceilLg(x.m()+x.err())+x.exp()*CORE::CHUNK_BIT;
+      return CORE::ceilLg(CORE::BigInt(x.m()+x.err()))+x.exp()*CORE::CHUNK_BIT;
     }
   };
 

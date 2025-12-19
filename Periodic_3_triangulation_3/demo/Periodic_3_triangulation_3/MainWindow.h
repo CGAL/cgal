@@ -102,16 +102,11 @@ public:
             this, SLOT(about()));
   }
 
-  ~MainWindow() {
-    delete(ui);
-    delete(s);
-    process->close();
-    delete(process);
-  }
+  ~MainWindow();
 
 public Q_SLOTS:
   void help() {
-    QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath)
+    QString app = QLibraryInfo::path(QLibraryInfo::BinariesPath)
       + QDir::separator();
 #if !defined(Q_OS_MAC)
     app += QString("assistant");
@@ -143,7 +138,12 @@ public Q_SLOTS:
 private:
   void showFileBox(QString title, QString fileName) {
     QFile textFile(fileName);
-    textFile.open(QIODevice::ReadOnly);
+    bool b = textFile.open(QIODevice::ReadOnly);
+    if(!b){
+      QMessageBox::critical(this, tr("Error"),
+          tr("Could not open file %1.").arg(fileName));
+      return;
+    }
     QMessageBox mb(QMessageBox::NoIcon,
         title,
         QTextStream(&textFile).readAll(),

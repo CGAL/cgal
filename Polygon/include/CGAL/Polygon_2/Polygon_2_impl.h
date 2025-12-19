@@ -41,7 +41,6 @@ bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
     return true;
   typedef typename Traits_P::Equal_2 Equal_2;
   typedef typename Traits_P::Point_2 Point_2;
-//  CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));
   if ((x.size() == 0) && (y.size() == 0)) return true;
 
   if (x.size() != y.size()) return false;
@@ -89,6 +88,7 @@ operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 
   if (is) {
     p.erase(p.vertices_begin(),p.vertices_end());
+    p.reserve(n);
     for (int i=0; i<n; i++) {
       if(is >> point){
         p.push_back(point);
@@ -147,6 +147,7 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p)
 {
   typedef typename Polygon_2<Traits_P,Container_P>::Vertex_const_iterator VI;
   Polygon_2<Traits_P,Container_P> result;
+  result.reserve(p.size());
   for (VI i = p.vertices_begin(); i != p.vertices_end(); ++i)
     result.push_back(t(*i));
   return result;

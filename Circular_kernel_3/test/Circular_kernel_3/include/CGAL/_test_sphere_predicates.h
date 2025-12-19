@@ -394,7 +394,7 @@ void _test_has_on_predicate(SK sk) {
 
   std::cout << "Testing has_on(Circular_arc, Circular_arc_point)..." << std::endl;
 
-  // That cover all the cases, since the orientation is setted by default to be the
+  // That cover all the cases, since the orientation is set by default to be the
   // clockwise orientation for a well defined normal vector (read the comments on
   // include/CGAL/Circular_kernel_3/Circular_arc_3.h)
   Root_for_spheres_2_3 rt[10];
@@ -654,7 +654,7 @@ void _test_bounded_side(SK sk) {
     }
   }
 
-  // we dont need to test bounded_side(Circle, Circular_arc_point) because
+  // we don't need to test bounded_side(Circle, Circular_arc_point) because
   // bounded_side(Circle, Circular_arc_point) = bounded_side(Sphere, Circular_arc_point) +
   //         has_on_3(supporting_plane, circular_arc_point) which has already been tested
   std::cout << "Testing bounded_side(Circle, Circular_arc_point)..." << std::endl;

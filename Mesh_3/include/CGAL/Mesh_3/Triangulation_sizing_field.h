@@ -43,18 +43,18 @@ template <typename Tr>
 class Triangulation_sizing_field
 {
   // Types
-  typedef typename Tr::Geom_traits                        Gt;
+  typedef typename Tr::Geom_traits                        GT;
   typedef typename Tr::Bare_point                         Bare_point;
   typedef typename Tr::Weighted_point                     Weighted_point;
-  typedef typename Gt::FT                                 FT;
+  typedef typename GT::FT                                 FT;
 
-  typedef Triangulation_vertex_base_with_info_3<FT, Gt>   Vbb;
-  typedef Regular_triangulation_vertex_base_3<Gt, Vb>     Vb;
-  typedef Triangulation_cell_base_3<Gt>                   Cbb;
+  typedef Triangulation_vertex_base_with_info_3<FT, GT>   Vbb;
+  typedef Regular_triangulation_vertex_base_3<GT, Vb>     Vb;
+  typedef Triangulation_cell_base_3<GT>                   Cbb;
   typedef Regular_triangulation_cell_base_3<
-            Gt, Cbb, Discard_hidden_points>               Cb;
+            GT, Cbb, Discard_hidden_points>               Cb;
   typedef Triangulation_data_structure_3<Vb, Cb>          Tds;
-  typedef Regular_triangulation_3<Gt,Tds>                 Compact_triangulation;
+  typedef Regular_triangulation_3<GT,Tds>                 Compact_triangulation;
   typedef Compact_triangulation                           Ctr;
 
   typedef typename Tr::Vertex_handle                      Vertex_handle;
@@ -73,17 +73,17 @@ public:
   Triangulation_sizing_field(const Tr& tr);
 
   /**
-   * Fill sizing field, using size associated to point in \c value_map.
+   * Fills the sizing field, using size associated to point in `value_map`.
    */
   void fill(const std::map<Weighted_point, FT>& value_map);
 
   /**
-   * Returns size at point \c p.
+   * Returns size at point `p`.
    */
   FT operator()(const Weighted_point& p) const;
 
   /**
-   * Returns size at point \c p. (needed for compatibility)
+   * Returns size at point `p`. (needed for compatibility)
    */
   template <typename Handle>
   FT operator()(const Weighted_point& p, const Handle&) const
@@ -91,20 +91,20 @@ public:
 
 private:
   /**
-   * Returns size at point \c p, by interpolation into tetrahedron.
+   * Returns size at point `p`, by interpolation into tetrahedron.
    */
   FT interpolate_on_cell_vertices(const Weighted_point& p,
                                   const CCell_handle& cell) const;
 
   /**
-   * Returns size at point \c p, by interpolation into facet (\c cell is assumed
+   * Returns size at point `p`, by interpolation into facet (`cell` is assumed
    * to be an infinite cell).
    */
   FT interpolate_on_facet_vertices(const Weighted_point& p,
                                    const CCell_handle& cell) const;
 
   /**
-   * Returns a hint for \c p location.
+   * Returns a hint for `p` location.
    */
   CCell_handle get_hint(const Weighted_point& p) const
   { return last_cell_; }
@@ -181,8 +181,8 @@ typename Triangulation_sizing_field<Tr>::FT
 Triangulation_sizing_field<Tr>::
 interpolate_on_cell_vertices(const Weighted_point& p, const CCell_handle& cell) const
 {
-  typename Gt::Construct_point_3 cp = ctr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_volume_3 volume = ctr_.geom_traits().compute_volume_3_object();
+  typename GT::Construct_point_3 cp = ctr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_volume_3 volume = ctr_.geom_traits().compute_volume_3_object();
 
   // Interpolate value using tet vertices values
   const FT& va = cell->vertex(0)->info();
@@ -217,8 +217,8 @@ typename Triangulation_sizing_field<Tr>::FT
 Triangulation_sizing_field<Tr>::
 interpolate_on_facet_vertices(const Weighted_point& p, const CCell_handle& cell) const
 {
-  typename Gt::Construct_point_3 cp = ctr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_area_3 area = ctr_.geom_traits().compute_area_3_object();
+  typename GT::Construct_point_3 cp = ctr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_area_3 area = ctr_.geom_traits().compute_area_3_object();
 
   // Find infinite vertex and put it in k0
   int k0 = 0;

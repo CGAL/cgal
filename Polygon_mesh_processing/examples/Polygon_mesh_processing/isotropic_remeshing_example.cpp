@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.04;
-  unsigned int nb_iter = 3;
+  unsigned int nb_iter = (argc > 3) ? std::stoi(std::string(argv[3])) : 10;
 
   std::cout << "Split border...";
 
@@ -58,6 +58,8 @@ int main(int argc, char* argv[])
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
                            CGAL::parameters::number_of_iterations(nb_iter)
                                             .protect_constraints(true)); //i.e. protect border, here
+
+  CGAL::IO::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Remeshing done." << std::endl;
 

@@ -19,7 +19,7 @@ running a graph algorithm.
 
 \tparam Refs must be an instantiation of a `HalfedgeDS`.
 
-\cgalModels `HalfedgeDSFace`
+\cgalModels{HalfedgeDSFace}
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

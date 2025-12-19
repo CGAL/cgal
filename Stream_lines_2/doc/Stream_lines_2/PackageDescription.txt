@@ -1,4 +1,4 @@
-/// \defgroup PkgStreamLines2Ref 2D Placement of Streamlines Reference
+/// \defgroup PkgStreamLines2Ref Reference Manual
 /// \defgroup PkgStreamLines2Concepts Concepts
 /// \ingroup PkgStreamLines2Ref
 /*!

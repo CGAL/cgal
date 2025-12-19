@@ -5,11 +5,13 @@
 
 The concept `FixedAlphaShapeCell_3` describes the requirements for the base cell of a alpha shape with a fixed value alpha.
 
-\cgalRefines `DelaunayTriangulationCellBase_3`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
-\cgalRefines `RegularTriangulationCellBase_3`, if the underlying triangulation of the alpha shape is a regular triangulation.
-\cgalRefines `Periodic_3TriangulationDSCellBase_3`, if the underlying triangulation of the alpha shape is a periodic triangulation.
+\cgalRefines{DelaunayTriangulationCellBase_3 if the underlying triangulation of the alpha shape is a Delaunay triangulation,
+  RegularTriangulationCellBase_3 if the underlying triangulation of the alpha shape is a regular triangulation,
+  Periodic_3TriangulationDSCellBase_3 if the underlying triangulation of the alpha shape is a periodic triangulation}
 
-\cgalHasModel `CGAL::Fixed_alpha_shape_cell_base_3` (templated with the appropriate triangulation cell base class).
+\cgalHasModelsBegin
+\cgalHasModelsBare{`CGAL::Fixed_alpha_shape_cell_base_3` (templated with the appropriate triangulation cell base class)}
+\cgalHasModelsEnd
 */
 class FixedAlphaShapeCell_3 {
 public:

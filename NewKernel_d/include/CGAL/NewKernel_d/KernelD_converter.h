@@ -15,15 +15,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/tuple.h>
 #include <CGAL/typeset.h>
+#include <type_traits>
 #include <CGAL/Object.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Default.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
-#include <boost/utility/enable_if.hpp>
-#include <boost/mpl/if.hpp>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/NewKernel_d/Kernel_object_converter.h>
 
@@ -80,12 +80,12 @@ class KernelD_converter_
 
         // Explicit calls to boost::mpl functions to avoid parenthesis
         // warning on some versions of GCC
-        typedef typename boost::mpl::if_ <
+        typedef std::conditional_t <
                           // If Point==Vector, keep only one conversion
-          boost::mpl::or_<boost::mpl::bool_<duplicate::value>,
+                          duplicate::value ||
                           // For iterator objects, the default is make_transforming_iterator
-                          boost::mpl::bool_<(iterator_tag_traits<Tag_>::is_iterator && no_converter::value)> >,
-          Do_not_use,K1_Obj>::type argument_type;
+                          (iterator_tag_traits<Tag_>::is_iterator && no_converter::value),
+          Do_not_use,K1_Obj> argument_type;
         //typedef typename KOC::argument_type K1_Obj;
         //typedef typename KOC::result_type K2_Obj;
         public:
@@ -115,27 +115,33 @@ class KernelD_converter_<Final_,K1,K2,typeset<> > {
 
 
 // TODO: use the intersection of Kn::Object_list.
-template<class K1, class K2, class List_=
-typename typeset_intersection<typename K1::Object_list, typename K2::Object_list>::type
+template<class K1, class K2,
+         class List_= Default,
+         typename NTc = NT_converter<typename Get_type<K1, FT_tag>::type, typename Get_type<K2, FT_tag>::type>
 //typeset<Point_tag>::add<Vector_tag>::type/*::add<Segment_tag>::type*/
 > class KernelD_converter
         : public Store_kernel<K1>, public Store_kernel2<K2>,
-        public KernelD_converter_<KernelD_converter<K1,K2,List_>,K1,K2,List_>
+        public KernelD_converter_<KernelD_converter<K1,K2,List_,NTc>,
+                                                    K1,K2,typename Default::Get<List_,
+                                                              typename typeset_intersection<typename K1::Object_list,
+                                                              typename K2::Object_list>::type>::type>
 {
+        typedef typename Default::Get<List_,
+                      typename typeset_intersection<typename K1::Object_list,
+                                                    typename K2::Object_list>::type>::type List;
         typedef KernelD_converter Self;
         typedef Self Final_;
-        typedef KernelD_converter_<Self,K1,K2,List_> Base;
+        typedef KernelD_converter_<Self,K1,K2,List> Base;
         typedef typename Get_type<K1, FT_tag>::type FT1;
         typedef typename Get_type<K2, FT_tag>::type FT2;
-        typedef NT_converter<FT1, FT2> NTc;
-        NTc c; // TODO: compressed storage as this is likely empty and the converter gets passed around (and stored in iterators)
+        CGAL_NO_UNIQUE_ADDRESS NTc c;
 
         public:
         KernelD_converter(){}
         KernelD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
 
         // For the (not anymore used in CGAL) boost result of, used in transforming_iterator
-        template<class T,int i=is_iterator<T>::value?42:0> struct result:Base::template result<T>{};
+  template<class T,int i=is_iterator<T>::value?42:0> struct result:Base::template result<T>{};
         template<class T> struct result<Final_(T),42> {
                 typedef transforming_iterator<Final_,T> type;
         };
@@ -160,7 +166,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
         { return o; } // Both kernels should have the same, returning a reference should warn if not.
 
         template<class It>
-        transforming_iterator<Final_,typename boost::enable_if<is_iterator<It>,It>::type>
+        transforming_iterator<Final_,std::enable_if_t<is_iterator<It>::value,It>>
         operator()(It const& it) const {
                 return make_transforming_iterator(it,*this);
         }
@@ -177,12 +183,12 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
         Object
         operator()(const Object &obj) const
         {
-                typedef typename internal::Map_taglist_to_typelist<K1,List_>::type Possibilities;
+                typedef typename internal::Map_taglist_to_typelist<K1,List>::type Possibilities;
                 //TODO: add Empty, vector<Point>, etc to the list.
                 return Object_converter<Possibilities>()(obj,*this);
         }
 
-        //TODO: convert boost::variant
+        //TODO: convert std::variant
 
 };
 

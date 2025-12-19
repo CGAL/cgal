@@ -183,13 +183,13 @@ void Viewer::compile_shaders()
         "} \n"
         "\n"
     };
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex, this);
     if(!vertex_shader->compileSourceCode(vertex_source))
     {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
 
-    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment, this);
     if(!fragment_shader->compileSourceCode(fragment_source))
     {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -258,14 +258,14 @@ void Viewer::compile_shaders()
         "} \n"
         "\n"
     };
-    QOpenGLShader *vertex_shader_spheres = new QOpenGLShader(QOpenGLShader::Vertex);
+    QOpenGLShader *vertex_shader_spheres = new QOpenGLShader(QOpenGLShader::Vertex, this);
     if(!vertex_shader_spheres->compileSourceCode(vertex_source_spheres))
     {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
 
 
-    QOpenGLShader *fragment_shader_spheres= new QOpenGLShader(QOpenGLShader::Fragment);
+    QOpenGLShader *fragment_shader_spheres= new QOpenGLShader(QOpenGLShader::Fragment, this);
     if(!fragment_shader_spheres->compileSourceCode(fragment_source_spheres))
     {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -312,7 +312,7 @@ void Viewer::compile_shaders()
 
 
 
-    QOpenGLShader *vertex_shader_cylinders = new QOpenGLShader(QOpenGLShader::Vertex);
+    QOpenGLShader *vertex_shader_cylinders = new QOpenGLShader(QOpenGLShader::Vertex, this);
     if(!vertex_shader_cylinders->compileSourceCode(vertex_source_cylinders))
     {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
@@ -621,7 +621,7 @@ void Viewer::initialize_buffers()
         buffers[7].release();
         vao[7].release();
 
-        //Querry Point
+        //Query Point
         vao[8].bind();
         buffers[8].bind();
         buffers[8].allocate(pos_queryPoint->data(), pos_queryPoint->size()*sizeof(float));
@@ -863,7 +863,7 @@ void Viewer::initialize_buffers()
         }
         vao[16].release();
 
-        //Querry point Sphere
+        //Query point Sphere
         vao[17].bind();
         buffers[8].bind();
         centerLocation[0] = rendering_program_spheres.attributeLocation("center");
@@ -1307,7 +1307,7 @@ void Viewer::draw()
             // draw the rest to-be-inserted vertices
             rendering_program.bind();
             vao[24].bind();
-            color.setRgbF(0.7,0.7,0.7);
+            color.setRgbF(0.7f,0.7f,0.7f);
             rendering_program.setUniformValue(colorLocation[0],color);
             rendering_program.setUniformValue("point_size", 8.0f);
             glDrawArrays(GL_POINTS, 0, incremental_points->size()/3);
@@ -1510,7 +1510,7 @@ void Viewer::draw()
             // draw the rest to-be-inserted vertices
             rendering_program_spheres.bind();
             vao[25].bind();
-            color.setRgbF(0.7,0.7,0.7);
+            color.setRgbF(0.7f,0.7f,0.7f);
             rendering_program_spheres.setUniformValue(colorLocation[1],color);
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_points->size()/3);
             vao[25].release();
@@ -1628,7 +1628,7 @@ void Viewer::draw()
 
 }
 
-void Viewer::drawVertex(const Point_3& p, std::vector<float> *vertices)
+void Viewer::drawVertex(const Point_3& p, Coords_ptr& vertices)
 {
 
     vertices->push_back(p.x()); vertices->push_back(p.y()); vertices->push_back(p.z());
@@ -1636,13 +1636,13 @@ void Viewer::drawVertex(const Point_3& p, std::vector<float> *vertices)
 
 }
 
-void Viewer::drawEdge(const Point_3& from, const Point_3& to, std::vector<float> *vertices)
+void Viewer::drawEdge(const Point_3& from, const Point_3& to, Coords_ptr& vertices)
 {
     vertices->push_back( from.x()); vertices->push_back(from.y()); vertices->push_back(from.z());
     vertices->push_back( to.x()); vertices->push_back(to.y()); vertices->push_back(to.z());
 }
 
-void Viewer::drawFacet(const Triangle_3& t, std::vector<float> *vertices)
+void Viewer::drawFacet(const Triangle_3& t, Coords_ptr& vertices)
 {
     Point_3 p0 = t.vertex(0);
     Point_3 p1 = t.vertex(1);
@@ -1696,9 +1696,9 @@ void Viewer::drawWithNames()
     rendering_program.release();
 
     //read depth and store in map
-    GLfloat depth = 1.0f;
-    glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    if (depth != 1.0)
+    GLfloat depth = 2.0f;
+    depth = read_depth_under_pixel(picking_pos, this, this->camera());
+    if (depth < 2.0f)
     {
       picked_IDs[depth] = i;
     }
@@ -1740,9 +1740,9 @@ void Viewer::drawWithNames()
         rendering_program.release();
 
         //read depth and store in map
-        GLfloat depth = 1.0f;
-        glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        if (depth != 1.0)
+        GLfloat depth = 2.0f;
+        depth = read_depth_under_pixel(picking_pos, this, this->camera());
+        if (depth < 2.0f)
         {
           picked_IDs[depth] = -1;
         }
@@ -2040,7 +2040,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
             } else {
                 displayMessage( tr("No point is selected.") );
             }
-        } else {  /* select multiple points, ie. selection window > 1 */
+        } else {  /* select multiple points, i.e. selection window > 1 */
             // define selection window
             if( m_rectSel.width() < 10 )
                 setSelectRegionWidth( 10 );
@@ -2381,7 +2381,7 @@ void Viewer::toggleIncremental(bool on) {
             }//end-if-pts
             // sorts points in a way that improves space locality
             CGAL::spatial_sort( m_incrementalPts.begin(), m_incrementalPts.end() );
-            // set the current to "hightlight the new point"
+            // set the current to "highlight the new point"
             m_curStep = INIT;
         }/* else resume play */
 
@@ -2472,7 +2472,7 @@ void Viewer::incremental_insert() {
         }//end-for
         // erase existing vertices
         initClean();
-        // set the current to "hightlight the new point"
+        // set the current to "highlight the new point"
         m_curStep = INIT;
     }
 
@@ -2482,7 +2482,7 @@ void Viewer::incremental_insert() {
 }
 
 
-void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
+void Viewer::draw_cylinder(float R, int prec, Coords_ptr& vertices, Coords_ptr& normals)
 {
     vertices->resize(0);
     normals->resize(0);
@@ -2551,7 +2551,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
     }
 }
 
-void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
+void Viewer::draw_sphere(float R, int prec, Coords_ptr& vertices, Coords_ptr& normals)
 {
     vertices->resize(0);
     normals->resize(0);

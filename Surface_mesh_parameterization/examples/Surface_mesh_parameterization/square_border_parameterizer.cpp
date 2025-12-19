@@ -10,8 +10,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/array.hpp>
-
 #include <unordered_set>
 #include <cstdlib>
 #include <iostream>
@@ -28,7 +26,7 @@ typedef boost::graph_traits<PolyMesh>::face_descriptor           face_descriptor
 
 typedef boost::graph_traits<PolyMesh>::vertex_iterator           vertex_iterator;
 
-typedef boost::array<vertex_descriptor, 4>                       Vd_array;
+typedef std::array<vertex_descriptor, 4>                       Vd_array;
 
 typedef CGAL::Unique_hash_map<vertex_descriptor, Point_2>        UV_uhm;
 typedef boost::associative_property_map<UV_uhm>                  UV_pmap;

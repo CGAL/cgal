@@ -19,7 +19,7 @@ typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_c
 typedef CGAL::Barycentric_coordinates::Mean_value_2<Kernel> Mean_value;
 typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
-typedef boost::optional<Vector_insert_iterator> Output_type;
+typedef std::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 
@@ -53,8 +53,8 @@ int main()
     for (Scalar y = step; y < limit; y += step) {
       const Point point(x, y);
 
-      const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
-      const Output_type  mv_result = mean_value_coordinates(point, old_coordinates);
+      /* const Output_type tri_result =  */triangle_coordinates(point, tri_coordinates);
+      /* const Output_type  mv_result =  */mean_value_coordinates(point, old_coordinates);
       CGAL::Barycentric_coordinates::mean_value_coordinates_2(
         vertices, point, std::back_inserter(new_coordinates));
 

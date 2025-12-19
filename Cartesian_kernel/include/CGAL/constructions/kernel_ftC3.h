@@ -142,11 +142,12 @@ centroidC3( const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-FT
+void
 squared_radiusC3(const FT &px, const FT &py, const FT &pz,
-                       const FT &qx, const FT &qy, const FT &qz,
-                       const FT &rx, const FT &ry, const FT &rz,
-                       const FT &sx, const FT &sy, const FT &sz)
+                 const FT &qx, const FT &qy, const FT &qz,
+                 const FT &rx, const FT &ry, const FT &rz,
+                 const FT &sx, const FT &sy, const FT &sz,
+                 FT &num, FT &den)
 {
   // Translate p to origin to simplify the expression.
   FT qpx = qx-px;
@@ -163,29 +164,30 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
 
   FT num_x = determinant(qpy,qpz,qp2,
-                               rpy,rpz,rp2,
-                               spy,spz,sp2);
+                         rpy,rpz,rp2,
+                         spy,spz,sp2);
   FT num_y = determinant(qpx,qpz,qp2,
-                               rpx,rpz,rp2,
-                               spx,spz,sp2);
+                         rpx,rpz,rp2,
+                         spx,spz,sp2);
   FT num_z = determinant(qpx,qpy,qp2,
-                               rpx,rpy,rp2,
-                               spx,spy,sp2);
-  FT den   = determinant(qpx,qpy,qpz,
-                               rpx,rpy,rpz,
-                               spx,spy,spz);
-  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+                         rpx,rpy,rp2,
+                         spx,spy,sp2);
+  FT dden  = determinant(qpx,qpy,qpz,
+                         rpx,rpy,rpz,
+                         spx,spy,spz);
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(dden) );
 
-  return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
+  num = CGAL_NTS square(num_x) + CGAL_NTS square(num_y) + CGAL_NTS square(num_z);
+  den = CGAL_NTS square(2 * dden);
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-FT
+void
 squared_radiusC3(const FT &px, const FT &py, const FT &pz,
-                       const FT &qx, const FT &qy, const FT &qz,
-                       const FT &sx, const FT &sy, const FT &sz)
+                 const FT &qx, const FT &qy, const FT &qz,
+                 const FT &sx, const FT &sy, const FT &sz,
+                 FT &num, FT &den)
 {
   // Translate s to origin to simplify the expression.
   FT psx = px-sx;
@@ -207,14 +209,14 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
            - qs2 * determinant(psx,psy,rsx,rsy);
 
-  FT den   = determinant(psx,psy,psz,
-                               qsx,qsy,qsz,
-                               rsx,rsy,rsz);
+  FT dden  = determinant(psx,psy,psz,
+                         qsx,qsy,qsz,
+                         rsx,rsy,rsz);
 
-  CGAL_kernel_assertion( den != 0 );
+  CGAL_kernel_assertion( dden != 0 );
 
-  return (CGAL_NTS square(num_x) + CGAL_NTS square(num_y)
-        + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
+  num = CGAL_NTS square(num_x) + CGAL_NTS square(num_y) + CGAL_NTS square(num_z);
+  den = CGAL_NTS square(2 * dden);
 }
 
 template <class FT>
@@ -237,6 +239,22 @@ plane_from_pointsC3(const FT &px, const FT &py, const FT &pz,
   pc = rpx*rqy - rqx*rpy;
   pd = - pa*rx - pb*ry - pc*rz;
 }
+
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+plane_from_pointsC3( /* origin */
+                    const FT &qx, const FT &qy, const FT &qz,
+                    const FT &rx, const FT &ry, const FT &rz,
+                    FT &pa, FT &pb, FT &pc /* , zero */ )
+{
+  pa = qy*rz - ry*qz;
+  pb = qz*rx - rz*qx;
+  pc = qx*ry - rx*qy;
+}
+
+
 
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -305,11 +323,13 @@ squared_distanceC3( const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_INLINE
-FT
+void
 squared_radiusC3( const FT &px, const FT &py, const FT &pz,
-                  const FT &qx, const FT &qy, const FT &qz)
+                  const FT &qx, const FT &qy, const FT &qz,
+                  FT &num, FT &den)
 {
-  return squared_distanceC3(px, py, pz, qx, qy, qz) / 4;
+  num = squared_distanceC3(px, py, pz, qx, qy, qz);
+  den = FT(4);
 }
 
 template < class FT >
@@ -427,7 +447,7 @@ determinants_for_circumcenterC3(const FT &px, const FT &py, const FT &pz,
   FT rsy = psz*qsx - psx*qsz;
   FT rsz = psx*qsy - psy*qsx;
 
-  // The following determinants can be developped and simplified.
+  // The following determinants can be developed and simplified.
   //
   // FT num_x = determinant(psy,psz,ps2,
   //                        qsy,qsz,qs2,
@@ -677,7 +697,7 @@ determinants_for_weighted_circumcenterC3(
   FT sy = qpz*rpx - qpx*rpz;
   FT sz = qpx*rpy - qpy*rpx;
 
-  // The following determinants can be developped and simplified.
+// The following determinants can be developed and simplified.
 //
 //  FT num_x = determinant(qpy,qpz,qp2,
 //                         rpy,rpz,rp2,

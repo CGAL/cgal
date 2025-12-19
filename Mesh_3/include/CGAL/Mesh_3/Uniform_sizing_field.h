@@ -27,9 +27,9 @@ namespace Mesh_3 {
 template <typename Tr>
 class Uniform_sizing_field
 {
-  typedef typename Tr::Geom_traits    Gt;
+  typedef typename Tr::Geom_traits    GT;
   typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Gt::FT             FT;
+  typedef typename GT::FT             FT;
 
 public:
   // Vertices of mesh triangulation do not need to be updated

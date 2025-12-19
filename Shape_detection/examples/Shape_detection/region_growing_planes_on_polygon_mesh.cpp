@@ -1,186 +1,98 @@
-// STL includes.
-#include <string>
-#include <vector>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <iterator>
-
-// CGAL includes.
-#include <CGAL/memory.h>
-#include <CGAL/IO/Color.h>
-#include <CGAL/Iterator_range.h>
-#include <CGAL/HalfedgeDS_vector.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#ifdef USE_POLYHEDRON
 #include <CGAL/Polyhedron_3.h>
-
+#else
+#include <CGAL/Surface_mesh.h>
+#endif
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
+#include <CGAL/IO/polygon_mesh_io.h>
+#include "include/utils.h"
 
-// Type declarations.
-using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
-
+// Typedefs.
+using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
-using Color = CGAL::IO::Color;
-
-// Choose the type of a container for a polygon mesh.
-#define USE_SURFACE_MESH
-
-#if defined(USE_SURFACE_MESH)
-
-    using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
-    using Face_range   = typename Polygon_mesh::Face_range;
-
-    using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
-    using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
-    using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
-
+#ifdef USE_POLYHEDRON
+using Polygon_mesh   = CGAL::Polyhedron_3<Kernel>;
 #else
-
-    using Polygon_mesh = CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
-    using Face_range   = typename CGAL::Iterator_range<typename boost::graph_traits<Polygon_mesh>::face_iterator>;
-
-    using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh, Face_range>;
-    using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh, Face_range>;
-    using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query, Face_range>;
-
+using Polygon_mesh   = CGAL::Surface_mesh<Point_3>;
 #endif
 
-using Region  = std::vector<std::size_t>;
-using Regions = std::vector<Region>;
-
-using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-
-using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
+using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
+using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
-  std::cout << std::endl <<
-    "region_growing_on_polygon_mesh example started"
-  << std::endl << std::endl;
-
-  // Load off data either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("meshes/polygon_mesh.off"));
+  // Load data either from a local folder or a user-provided file.
+  const bool is_default_input = argc > 1 ? false : true;
+  const std::string filename = is_default_input ? CGAL::data_file_path("meshes/building.off") : argv[1];
+  std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);
 
-  if (!in) {
-    std::cout <<
-    "Error: cannot read the file polygon_mesh.off!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
+  Polygon_mesh polygon_mesh;
+  if (!CGAL::IO::read_polygon_mesh(filename, polygon_mesh)) {
+    std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
+  const auto& face_range = faces(polygon_mesh);
+  std::cout << "* number of input faces: " << face_range.size() << std::endl;
+  assert(!is_default_input || face_range.size() == 32245);
 
-  Polygon_mesh polygon_mesh;
-  in >> polygon_mesh;
-
-  in.close();
-  const Face_range face_range = faces(polygon_mesh);
-
-  std::cout <<
-    "* polygon mesh with "
-  << face_range.size() <<
-    " faces is loaded"
-  << std::endl;
-
-  // Default parameter values for the data file polygon_mesh.off.
-  const FT          max_distance_to_plane = FT(1);
-  const FT          max_accepted_angle    = FT(45);
-  const std::size_t min_region_size       = 5;
+  // Default parameter values for the data file building.off.
+  const FT          max_distance    = FT(1);
+  const FT          max_angle       = FT(45);
+  const std::size_t min_region_size = 5;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(polygon_mesh);
 
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, polygon_mesh));
-
   Region_type region_type(
     polygon_mesh,
-    max_distance_to_plane, max_accepted_angle, min_region_size,
-    vertex_to_point_map);
+    CGAL::parameters::
+    maximum_distance(max_distance).
+    maximum_angle(max_angle).
+    minimum_region_size(min_region_size));
 
   // Sort face indices.
   Sorting sorting(
-    polygon_mesh, neighbor_query,
-    vertex_to_point_map);
+    polygon_mesh, neighbor_query);
   sorting.sort();
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type,
-    sorting.seed_map());
+    face_range, sorting.ordered(), neighbor_query, region_type);
 
   // Run the algorithm.
-  Regions regions;
+  std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
+  std::cout << "* number of found planes: " << regions.size() << std::endl;
+  assert(!is_default_input || regions.size() == 365);
 
-  // Print the number of found regions.
-  std::cout << "* " << regions.size() <<
-    " regions have been found"
-  << std::endl;
+  const Region_growing::Region_map& map = region_growing.region_map();
 
-  // Save the result in a file only if it is stored in CGAL::Surface_mesh.
-  #if defined(USE_SURFACE_MESH)
-
-    using Face_index = typename Polygon_mesh::Face_index;
-
-    // Save the result to a file in the user-provided path if any.
-    srand(static_cast<unsigned int>(time(nullptr)));
-    if (argc > 2) {
-
-      bool created;
-      typename Polygon_mesh::template Property_map<Face_index, Color> face_color;
-      boost::tie(face_color, created) =
-        polygon_mesh.template add_property_map<Face_index, Color>(
-          "f:color", Color(0, 0, 0));
-
-      if (!created) {
-
-        std::cout << std::endl <<
-          "region_growing_on_polygon_mesh example finished"
-        << std::endl << std::endl;
-
-        return EXIT_FAILURE;
+  for (std::size_t i = 0; i < regions.size(); i++)
+    for (auto& item : regions[i].second) {
+      if (i != get(map, item)) {
+        std::cout << "Region map incorrect" << std::endl;
       }
-
-      const std::string path     = argv[2];
-      const std::string fullpath = path + "regions_polygon_mesh.off";
-
-      std::ofstream out(fullpath);
-
-      // Iterate through all regions.
-      for (const auto& region : regions) {
-
-        // Generate a random color.
-        const Color color(
-          static_cast<unsigned char>(rand() % 256),
-          static_cast<unsigned char>(rand() % 256),
-          static_cast<unsigned char>(rand() % 256));
-
-        // Iterate through all region items.
-        using size_type = typename Polygon_mesh::size_type;
-        for (const auto index : region)
-          face_color[Face_index(static_cast<size_type>(index))] = color;
-      }
-
-      out << polygon_mesh;
-      out.close();
-
-      std::cout <<
-        "* polygon mesh is saved in "
-      << fullpath << std::endl;
     }
 
-  #endif
+  std::vector<typename Region_growing::Item> unassigned;
+  region_growing.unassigned_items(face_range, std::back_inserter(unassigned));
 
-  std::cout << std::endl <<
-    "region_growing_on_polygon_mesh example finished"
-  << std::endl << std::endl;
+  for (auto& item : unassigned) {
+    if (std::size_t(-1) != get(map, item)) {
+      std::cout << "Region map for unassigned incorrect" << std::endl;
+    }
+  }
+
+  // Save regions to a file.
+  const std::string fullpath = (argc > 2 ? argv[2] : "planes_polygon_mesh.ply");
+  utils::save_polygon_mesh_regions(polygon_mesh, regions, fullpath);
 
   return EXIT_SUCCESS;
 }

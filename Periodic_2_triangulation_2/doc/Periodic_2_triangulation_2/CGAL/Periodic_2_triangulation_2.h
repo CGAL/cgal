@@ -55,7 +55,7 @@ optional parameter is given).
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face. Apart from the location,
-insertion takes a time \f$ O(1)\f$.
+insertion takes a time \cgalBigO{1}.
 
 Removal of a vertex is more difficult than in the Euclidean space,
 since the star of a vertex may not be disjoint from the star of a
@@ -100,7 +100,7 @@ public:
     UNIQUE_COVER_DOMAIN
   };
 
-/// The enum `@` is defined by `Periodic_2_triangulation_2` to
+/// The enum `Locate_type` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
 /// `EMPTY` is returned.
@@ -210,7 +210,7 @@ public:
 
   The vertices and faces of the triangulations are accessed through
   `handles`, `iterators` and `circulators`. The handles are %CGAL
-  \ref models "models" of
+  models of
   the concept `Handle` which basically offers the two dereference
   operators and `->`. The iterators and circulators are all
   bidirectional and non-mutable. The circulators and iterators are
@@ -511,6 +511,7 @@ public:
   Converts the current triangulation into the same periodic
   triangulation in the 1-sheeted covering space.
   \pre `is_triangulation_in_1_sheet()`
+
   \cgalAdvancedEnd
   */
   void convert_to_1_sheeted_covering();
@@ -578,7 +579,7 @@ public:
 
   /*!
   Converts the `Periodic_point` `pp` (point-offset pair) to the
-  corresponding `Point` in \f$ \mathbb R^3\f$.
+  corresponding `Point` in \f$ \mathbb R^2\f$.
   */
   Point point(const Periodic_point & pp ) const;
 
@@ -591,6 +592,18 @@ public:
   Converts the `Periodic_triangle` `this` to a `Triangle`.
   */
   Triangle triangle(const Periodic_triangle & t) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(fh,i));`
+  */
+  Point point(Face_handle fh, int i) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(v));`
+  */
+  Point point(Vertex_handle v) const;
 
   /*!
   Equivalent to
@@ -982,6 +995,7 @@ public:
   `f`. Face `f` is modified,
   two new faces are created. If the triangulation contains periodic copies, a point is inserted in all periodic copies.
   \pre The point in vertex `v` lies inside face `f`.
+
   \cgalAdvancedEnd
   */
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
@@ -990,7 +1004,9 @@ public:
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   Removes a vertex of degree three. Two of the incident faces are
-  destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three.
+  destroyed, the third one is modified.
+  \pre Vertex `v` is a vertex with degree three.
+
   \cgalAdvancedEnd
   */
   void remove_degree_3(Vertex_handle v);
@@ -1012,8 +1028,8 @@ public:
   creates a new vertex `v` and use it to star the hole
   whose boundary is described by the sequence of edges
   `[edge_begin, edge_end]`. Returns a handle to the new vertex.
-
   \pre The triangulation is a triangulation of 1 sheet
+
     \cgalAdvancedEnd
   */
   template<class EdgeIt>
@@ -1027,8 +1043,8 @@ public:
   same as above, except that the algorithm
   first recycles faces in the sequence `[face_begin, face_end]`
   and create new ones only when the sequence is exhausted.
-
   \pre The triangulation is a triangulation of 1 sheet
+
   \cgalAdvancedEnd
   */
   template<class EdgeIt, class FaceIt>

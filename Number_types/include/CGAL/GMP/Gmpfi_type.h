@@ -303,7 +303,7 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
         Gmpfi::Precision_type get_precision()const;
         Gmpfi round(Gmpfi::Precision_type)const;
 
-        // arithmetics
+        // arithmetic
 
         Gmpfi operator+()const;
         Gmpfi operator-()const;
@@ -427,7 +427,7 @@ Gmpfi Gmpfi::round(Gmpfi::Precision_type p)const{
         return Gmpfi(*this,p);
 }
 
-// arithmetics
+// arithmetic
 
 inline
 Gmpfi Gmpfi::operator+()const{
