@@ -704,12 +704,14 @@ struct PLY_supported_data_types
                      std::int16_t, std::uint16_t,
                      std::int32_t, std::uint32_t,
                      std::int64_t, std::uint64_t,
+                     std::size_t,
                      float, double> VT_tuple; // value_type of the property map
 
   typedef std::tuple<std::int8_t, std::uint8_t,
                      std::int16_t, std::uint16_t,
                      std::int32_t, std::uint32_t,
                      std::int32_t, std::uint32_t,
+                     std::uint32_t,
                      float, double> ST_tuple; // corresponding PLY type
 
   static constexpr std::size_t data_types_n = std::tuple_size<VT_tuple>::value;
@@ -726,6 +728,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                                                   "short", "ushort",
                                                   "int", "uint",
                                                   "int", "uint", // 64 --> 32
+                                                  "uint", // std::size_t
                                                   "float", "double" };
 
   typedef typename Surface_mesh<Point>::Face_index   FIndex;
