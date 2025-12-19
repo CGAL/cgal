@@ -305,7 +305,7 @@ constraints.
 
 \tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`
 
-\return the number of inserted points..
+\return the number of inserted points.
 */
 template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
@@ -327,10 +327,10 @@ Same as above except that each constraint is given as a pair of indices of the p
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
 
 \tparam PointIterator is an `InputIterator` with value type `Point`.
-\tparam IndicesIterator is an `InputIterator` with value type `std::pair<Int, Int>` where `
-Int` is an integral type implicitly convertible to `std::size_t`
+\tparam IndicesIterator is an `InputIterator` with value type `std::pair<Int, Int>` where
+`Int` is an integral type implicitly convertible to `std::size_t`
 
-\note points are inserted even if they are not endpoint of a constraint.
+\note points are inserted even if they are not an endpoint of a constraint.
 \return the number of inserted points.
 */
 template <class PointIterator, class IndicesIterator>
