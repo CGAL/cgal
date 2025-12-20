@@ -6,9 +6,14 @@ Release date: July 2026
 
 ### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
 
-- Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
-- Made the `Arr_linear_traits_2` a model of the new concept.
-- Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+-   Made the `Arr_linear_traits_2` a model of the new concept.
+-   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+
+### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
+-   This package provides functions to compute various types of generalized barycentric coordinates
+    (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
+    3D polyhedra.
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
