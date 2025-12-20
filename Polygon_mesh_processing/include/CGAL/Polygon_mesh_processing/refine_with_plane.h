@@ -24,9 +24,17 @@
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
+#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+
+namespace internal
+{
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_Does_not_support_CDT2,
+                                  Does_not_support_CDT2,
+                                  false)
+} // internal namespace
 
 #ifndef DOXYGEN_RUNNING
 template <class PolygonMesh>
@@ -73,6 +81,8 @@ struct Orthogonal_cut_plane_traits
   using FT = typename Kernel::FT;
   using Plane_3 = std::pair<int, FT>;
   using Point_3 = typename Kernel::Point_3;
+
+  struct Does_not_support_CDT2{};
 
   struct Oriented_side_3
   {
