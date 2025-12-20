@@ -34,7 +34,7 @@ namespace CGAL {
   `Quotient<Gmpz>` or any other number type modeling \f$\mathbb{Q}\f$.
 
   The second parameter and the third parameter are for future considerations.
-  Neither `Nef_polyhedronItems_3` nor `Nef_polyhedronMarks` is
+  Neither `NefPolyhedronItems_3` nor `Nef_polyhedronMarks` is
   specified, yet. Do not use any other than the default types for these two
   template parameters.
 
@@ -49,8 +49,8 @@ namespace CGAL {
   \sa `CGAL::Polyhedron_3<Traits>`
 
 */
-template< class Nef_polyhedronTraits_3,
-          class Nef_polyhedronItems_3 = CGAL::Default_items<Nef_polyhedronTraits_3>
+template< class NefPolyhedronTraits_3,
+          class NefPolyhedronItems_3 = CGAL::Default_items<NefPolyhedronTraits_3>
           class Nef_polyhedronMarks = bool
           > class Nef_polyhedron_3 {
 public:
@@ -79,7 +79,7 @@ public:
   function `twin()` returns the opposite halfedge.
 
   Looking at the incidence structure on a sphere map, the member function
-  `out_sedge` returns the first outgoing shalfedge, and `incident_sface`
+  `out_sedge()` returns the first outgoing shalfedge, and `incident_sface()`
   returns the incident sface.
 
 \cgalHeading{Creation}
@@ -946,7 +946,7 @@ public:
   }; /* end Volume */
 
 /*!
-  traits class selected for `Nef_polyhedronTraits_3`.
+  traits class selected for `NefPolyhedronTraits_3`.
 */
   typedef unspecified_type Traits;
 
