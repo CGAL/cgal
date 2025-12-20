@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Triangulation_vertex_base_with_info_3` is a model of the concept
 `TriangulationVertexBase_3`, the base vertex of a 3D-triangulation.
 It provides an easy way to add some user defined information in vertices.
-Note that input/output operators discard this additional information.
+Note that input/output stream operators discard this additional information.
 
 \tparam Info is the information the user would like to add
 to a vertex. It has to be `DefaultConstructible` and `Assignable`.

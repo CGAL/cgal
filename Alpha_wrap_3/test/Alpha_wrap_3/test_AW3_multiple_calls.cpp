@@ -52,7 +52,7 @@ void alpha_wrap_triangle_soup(Points& pr,
 
   // AW3
   Oracle oracle;
-  oracle.add_triangle_soup(pr, fr);
+  oracle.add_triangles(pr, fr);
   AW3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
   Mesh wrap;
@@ -65,7 +65,7 @@ void alpha_wrap_triangle_soup(Points& pr,
   assert(AW3::internal::is_valid_wrap(wrap, false /*manifoldness*/));
   assert(AW3::internal::is_outer_wrap_of_triangle_soup(wrap, pr, fr));
   assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
-  assert(AW3::internal::check_edge_length(wrap, alpha));
+  assert(AW3::internal::has_bounded_edge_length(wrap, alpha));
 
   alpha *= 2;
   offset *= 2;
@@ -83,7 +83,7 @@ void alpha_wrap_triangle_soup(Points& pr,
   assert(AW3::internal::is_valid_wrap(wrap_2, false /*manifoldness*/));
   assert(AW3::internal::is_outer_wrap_of_triangle_soup(wrap_2, pr, fr));
   assert(AW3::internal::has_expected_Hausdorff_distance(wrap_2, input_mesh, alpha, offset));
-  assert(AW3::internal::check_edge_length(wrap_2, alpha));
+  assert(AW3::internal::has_bounded_edge_length(wrap_2, alpha));
 }
 
 void alpha_wrap_triangle_soup(const std::string& filename)
