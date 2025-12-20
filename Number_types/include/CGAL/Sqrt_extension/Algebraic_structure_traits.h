@@ -178,7 +178,7 @@ template< class Type >
 class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                 CGAL::Field_with_kth_root_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
-                                      // TODO: Why not Fiel_tag?
+                                      // TODO: Why not Field_tag?
                                       CGAL::Field_with_sqrt_tag > {
   // Nothing new
 };
@@ -187,7 +187,7 @@ template< class Type >
 class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                 CGAL::Field_with_root_of_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
-                                      // TODO: Why not Fiel_tag?
+                                      // TODO: Why not Field_tag?
                                       CGAL::Field_with_sqrt_tag > {
   // Nothing new
 };
