@@ -134,13 +134,17 @@ public:
   Halffacet_const_iterator facets_begin() { return facet_list.begin(); }
   Halffacet_const_iterator facets_end() { return facet_list.end(); }
 
-  void transform(const Aff_transformation_3& t) {
+  void transform(const Aff_transformation_3& t, bool is_even, const Aff_transformation_3& transposed_inverse) {
     if(left_node != nullptr) {
         CGAL_assertion(right_node != nullptr);
-        left_node->transform(t);
-        right_node->transform(t);
-        splitting_plane = splitting_plane.transform(t);
+        left_node->transform(t, is_even, transposed_inverse);
+        right_node->transform(t, is_even, transposed_inverse);
+        splitting_plane = splitting_plane.transform(t, is_even, transposed_inverse);
     }
+  }
+
+  void transform(const Aff_transformation_3& t) {
+      transform(t, t.is_even(), t.transpose().inverse());
   }
 
   void add_facet(Halffacet_handle f, int depth) {
@@ -453,17 +457,20 @@ public:
     V.post_visit(current);
   }
 
-  void transform(const Aff_transformation_3& t) {
+  void transform(const Aff_transformation_3& t, bool is_even, const Aff_transformation_3& transposed_inverse) {
     if(root == nullptr){
       return;
     }
-    root->transform(t);
+    root->transform(t, is_even, transposed_inverse);
 
     BBox_updater bbup;
     visit_k3tree(root, bbup);
     bounding_box = bbup.box();
   }
 
+  void transform(const Aff_transformation_3& t) {
+      transform(t, t.is_even(), t.transpose().inverse());
+  }
 
 #ifdef CODE_DOES_NOT_WORK_WITH_BOTH_KERNELS_AT_THE_SAME_TIME
 template <typename T>

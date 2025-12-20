@@ -70,6 +70,9 @@ public:
   virtual  Plane_3
            transform(const Plane_3&) const = 0;
 
+  virtual  Plane_3
+           transform(const Plane_3&, bool, const Aff_transformation_3&) const = 0;
+
   virtual  Aff_transformation_3
            inverse() const = 0;
 
@@ -133,6 +136,9 @@ public:
 
   virtual  Plane_3
            transform(const Plane_3& pl) const;
+
+  virtual  Plane_3
+           transform(const Plane_3& pl, bool is_even, const Aff_transformation_3& transposed_inverse) const;
 
   virtual  Aff_transformation_3
            inverse() const;
@@ -205,6 +211,10 @@ public:
 
   virtual  Plane_3
            transform(const Plane_3& pl) const
+           { return pl; }
+
+  virtual  Plane_3
+           transform(const Plane_3& pl, bool, const Aff_transformation_3&) const
            { return pl; }
 
   virtual  Aff_transformation_3
@@ -287,6 +297,12 @@ class Scaling_repH3 : public Aff_transformation_rep_baseH3<R>
              transform(const Plane_3 & p) const
              {
                return Plane_3(p.a()*_sf_den, p.b()*_sf_den, p.c()*_sf_den, p.d()*_sf_num);
+             }
+
+    virtual  Plane_3
+             transform(const Plane_3& p, bool, const Aff_transformation_3&) const
+             {
+               return transform(p);
              }
 
     virtual  Aff_transformation_3
@@ -386,6 +402,9 @@ public:
   virtual  Plane_3
            transform(const Plane_3& pl) const;
 
+  virtual  Plane_3
+           transform(const Plane_3& pl, bool is_even, const Aff_transformation_3& transposed_inverse) const;
+
   virtual  Aff_transformation_3
            inverse() const;
 
@@ -470,6 +489,9 @@ public:
 
   Plane_3
   transform(const Plane_3& pl) const;
+
+  Plane_3
+  transform(const Plane_3& pl, bool is_even, const Aff_transformation_3& transposed_inverse) const;
 
   Aff_transformation_3
   inverse()   const;
@@ -577,20 +599,29 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename Aff_transformation_repH3<R>::Plane_3
 Aff_transformation_repH3<R>::
-transform(const typename Aff_transformation_repH3<R>::Plane_3& pl) const
+transform(const typename Aff_transformation_repH3<R>::Plane_3& pl, bool is_even, const typename Aff_transformation_repH3<R>::Aff_transformation_3& transposed_inverse) const
 {
-  if ( is_even() )
+  if ( is_even )
   {
       return Plane_3(
                transform(pl.point() ),
-               transpose().inverse().transform(pl.orthogonal_direction() ));
+               transposed_inverse.transform(pl.orthogonal_direction() ));
   }
   else
   {
      return Plane_3(
                transform(pl.point() ),
-               -(transpose().inverse().transform(pl.orthogonal_direction() )));
+               -(transposed_inverse.transform(pl.orthogonal_direction() )));
   }
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename Aff_transformation_repH3<R>::Plane_3
+Aff_transformation_repH3<R>::
+transform(const typename Aff_transformation_repH3<R>::Plane_3& pl) const
+{
+  return transform(pl, is_even(), transpose().inverse());
 }
 
 template < class R >
@@ -807,6 +838,15 @@ transform(const typename Translation_repH3<R>::Plane_3& pl) const
 
 template < class R >
 inline
+typename Translation_repH3<R>::Plane_3
+Translation_repH3<R>::
+transform(const typename Translation_repH3<R>::Plane_3& pl, bool, const typename Translation_repH3<R>::Aff_transformation_3&) const
+{
+  return transform(pl);
+}
+
+template < class R >
+inline
 typename Translation_repH3<R>::Aff_transformation_3
 Translation_repH3<R>::inverse() const
 { return Aff_transformation_3(TRANSLATION, - tv ); }
@@ -1017,6 +1057,13 @@ typename Aff_transformationH3<R>::Plane_3
 Aff_transformationH3<R>::
 transform(const typename Aff_transformationH3<R>::Plane_3& pl) const
 { return this->Ptr()->transform(pl); }
+
+template < class R >
+inline
+typename Aff_transformationH3<R>::Plane_3
+Aff_transformationH3<R>::
+transform(const typename Aff_transformationH3<R>::Plane_3& pl, bool is_even, const typename Aff_transformationH3<R>::Aff_transformation_3& transposed_inverse) const
+{ return this->Ptr()->transform(pl, is_even, transposed_inverse); }
 
 template < class R >
 inline
