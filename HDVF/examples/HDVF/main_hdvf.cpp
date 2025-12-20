@@ -1,0 +1,266 @@
+// HDVF computation (command line version)
+// --------
+// Computes a "perfect" Hdvf and provides a batch mode to specify arguments
+// For help: hdvf -h
+// --------
+// A. Bac
+// --------
+
+#include <iostream>
+#include <chrono>
+#include <type_traits>
+#include <typeinfo>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Zp.h>
+#include <CGAL/Z2.h>
+#include <CGAL/HDVF/Hdvf_traits_3.h>
+#include <CGAL/HDVF/Simplex.h>
+#include <CGAL/HDVF/Simplicial_chain_complex.h>
+#include <CGAL/HDVF/Cubical_chain_complex.h>
+#include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/HDVF/Hdvf.h>
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/OSM/Sparse_chain.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Cub_object_io.h>
+#include <CGAL/HDVF/Hdvf_tools.h>
+#include "arguments.h"
+
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
+using Kernel = CGAL::Simple_cartesian<double>;
+using Traits = HDVF::Hdvf_traits_3<Kernel>;
+
+// ------- A ring
+// For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
+
+//#define SCALAR 5
+
+// Hdvf computation, output and export
+
+template <typename MeshType, typename Complex>
+void mesh_complex_output(const MeshType& mesh, const Complex& complex, const Options& options)
+{
+    if (options.with_output)
+    {
+        // Mesh
+        std::cout << "----> mesh informations" << std::endl ;
+        mesh.print_infos() ;
+
+        // Complex
+        std::cout << "----> complex informations" << std::endl;
+        std::cout << complex;
+    }
+}
+
+template <typename Complex>
+HDVF::Hdvf<Complex>& HDVF_comput (const Complex& complex, const Options &options)
+{
+    typedef typename Complex::Coefficient_ring Coefficient_ring;
+    HDVF::Hdvf<Complex>& hdvf(*(new HDVF::Hdvf<Complex>(complex, options.HDVF_opt)));
+    std::vector<HDVF::Cell_pair> pairs ;
+    if (!options.random)
+        pairs = hdvf.compute_perfect_hdvf(options.verbose);
+    else
+        pairs = hdvf.compute_rand_perfect_hdvf(options.verbose);
+
+    if (options.with_output)
+    {
+        std::cout << "----> pairs found by computePerfectHDVF" << std::endl ;
+        std::cout << pairs ;
+        std::cout << "----> reduction" << std::endl ;
+        hdvf.write_reduction() ;
+    }
+    if (options.with_export)
+    {
+        std::string file(options.outfile_root+"_reduction.txt") ;
+        std::ofstream out ( file, std::ios::out | std::ios::trunc);
+
+        if ( ! out . good () ) {
+            std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        out << "----> pairs found by computePerfectHDVF" << std::endl ;
+        out << pairs ;
+        out << "----> reduction" << std::endl ;
+        hdvf.write_reduction(out) ;
+
+        out.close() ;
+    }
+    return hdvf ;
+}
+
+template <typename Coefficient_ring>
+void main_code (const Options &options)
+{
+    /// SIMP format
+    if (options.in_format == InputFormat::SIMP)
+    {
+        using Complex = HDVF::Abstract_simplicial_chain_complex<Coefficient_ring>  ;
+        using HDVF_type = HDVF::Hdvf<Complex> ;
+
+        // MeshObject
+        HDVF::Mesh_object_io<Traits> mesh ;
+        mesh.read_simp(options.in_file) ;
+
+        // Complex
+        Complex complex(mesh);
+
+        mesh_complex_output<HDVF::Mesh_object_io<Traits>, Complex>(mesh, complex, options) ;
+
+        // Hdvf computation, export, output
+        HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
+
+        // Export to vtk
+        // None for SIMP format
+    }
+    /// OFF format
+    else if (options.in_format == InputFormat::OFF)
+    {
+        using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring, Traits> ;
+        using HDVF_type = HDVF::Hdvf<Complex> ;
+
+        // MeshObject
+        HDVF::Mesh_object_io<Traits> mesh ;
+        mesh.read_off(options.in_file) ;
+
+        // Complex
+        Complex complex(mesh);
+
+        mesh_complex_output<HDVF::Mesh_object_io<Traits>, Complex>(mesh, complex, options) ;
+
+        // Hdvf computation, export, output
+        HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
+
+        // Loop on operations with vtk export
+        if (options.loop)
+        {
+            auto output_vtk_simp = [options](HDVF_type &hdvf, Complex& complex)
+            {
+                CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
+            } ;
+
+            HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_simp) ;
+        }
+        // Export to vtk
+        else if (options.with_vtk_export)
+        {
+            std::cout << "----> exporting to vtk" << std::endl ;
+            CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
+        }
+    }
+    // CubComplex
+    else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
+    {
+        using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits> ;
+        using HDVF_type = HDVF::Hdvf<Complex> ;
+
+        HDVF::Cub_object_io<Traits> mesh ;
+        typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
+        if (options.primal)
+        {
+            if (options.in_format == InputFormat::PGM)
+                mesh.read_pgm(options.in_file, true) ; // Read with Khalimsky coordinates (for primal)
+            else
+                mesh.read_cub(options.in_file, true) ; // Read with Khalimsky coordinates (for primal)
+        }
+        else // dual
+        {
+            if (options.in_format == InputFormat::PGM)
+                mesh.read_pgm(options.in_file, false) ; // Read with pixel coordinates (for dual)
+            else
+                mesh.read_cub(options.in_file, false) ; // Read with pixel coordinates (for dual)
+            primal_dual = Complex::DUAL ;
+        }
+
+        // Complex
+        Complex complex(mesh, primal_dual);
+
+        mesh_complex_output<HDVF::Cub_object_io<Traits>, Complex>(mesh, complex, options) ;
+
+        // Hdvf computation, export, output
+        HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
+
+        // Loop on operations with vtk export
+        if (options.loop)
+        {
+            auto output_vtk_cub = [options](HDVF_type &hdvf, Complex& complex)
+            {
+                CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
+            } ;
+
+            HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_cub) ;
+        }
+        // Export to vtk
+        else if (options.with_vtk_export)
+        {
+            std::cout << "----> exporting to vtk" << std::endl ;
+            CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
+        }
+    }
+}
+
+// Main
+
+int main(int argc, char **argv)
+{
+    if (argc <= 2)
+        usage() ;
+    else
+    {
+        for (int i=0;i<argc; ++i)
+            std::cout << "arg " << i << " : " << argv[i] << std::endl ;
+
+        Options options(read_arguments_hdvf(argc, argv)) ;
+        std::cout << "options:" << std::endl << options ;
+
+        // TEST
+        std::cout << "TEST" << std::endl ;
+        CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> gamma(4) ;
+        std::cout << "before: " << gamma.is_null() << std::endl ;
+        gamma.set_coefficient(2, 1) ;
+        std::cout << "after: " << gamma.is_null() << std::endl ;
+        gamma.set_coefficient(2, 0) ;
+        std::cout << "after2: " << gamma.is_null() << std::endl ;
+        std::cout << "END TEST" << std::endl ;
+
+        // ----- Definition of the Coefficient_ring
+#ifndef SCALAR
+        if (options.scalar == 0)
+        {
+            using Coefficient_ring = int ;
+            main_code<Coefficient_ring>(options) ;
+        }
+        else if (options.scalar == 2)
+        {
+//            using Coefficient_ring = HDVF::Zp<2,int8_t> ;
+            using Coefficient_ring = CGAL::Z2 ;
+            main_code<Coefficient_ring>(options) ;
+        }
+        else
+        {
+            std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
+        }
+#else
+        typedef CGAL::Zp<SCALAR> Coefficient_ring;
+#endif
+    }
+
+    return 0 ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
