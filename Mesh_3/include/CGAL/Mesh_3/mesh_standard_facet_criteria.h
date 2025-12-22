@@ -537,10 +537,15 @@ private:
 
   typedef Facet_on_same_surface_criterion<Tr,Visitor_> Self;
 
+  bool use_adjacency_check_;
+
 public:
-  /// Constructor
-  Facet_on_same_surface_criterion() {}
-  /// Destructor
+  Facet_on_same_surface_criterion()
+    : use_adjacency_check_(false) {}
+
+  Facet_on_same_surface_criterion(bool use_adj)
+    : use_adjacency_check_(use_adj) {}
+
   virtual ~Facet_on_same_surface_criterion() {}
 
 protected:
@@ -555,7 +560,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -609,10 +614,97 @@ protected:
       }
     }
 
+    if (!use_adjacency_check_)
+      return Is_bad();
+
+    if (!facet_is_adjacent_on_same_patch(tr, f))
+      return Is_bad(Quality(1));
+
     return Is_bad();
   }
 
+  private:
+    bool facet_is_adjacent_on_same_patch(const Tr& tr, const Facet& f) const;
+
 }; // end class Facet_on_same_surface_criterion
+
+template <typename Tr, typename Visitor_>
+bool
+Facet_on_same_surface_criterion<Tr, Visitor_>::
+facet_is_adjacent_on_same_patch(const Tr& tr, const Facet& f) const
+{
+  typedef typename Tr::Cell_handle   Cell_handle;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Vertex::Index Index;
+  typedef typename Tr::Edge          Edge;
+  typedef typename Tr::Facet_circulator Facet_circulator;
+
+  // The facet is identified by (cell, local index)
+  const Cell_handle& ch = f.first;
+  const int i = f.second;
+
+  // Determine the reference surface patch index of the facet
+  Index ref_index = Index();
+  bool ref_index_initialized = false;
+
+  for (int k = 1; k <= 3; ++k)
+  {
+    const Vertex_handle& v = ch->vertex((i + k) & 3);
+    if (v->in_dimension() == 2)
+    {
+      ref_index = v->index();
+      ref_index_initialized = true;
+      break;
+    }
+  }
+
+  // Degenerate case: facet not constrained to a surface patch
+  if (!ref_index_initialized)
+    return true;
+
+  // For the facet to be topologically valid on this patch, all surface facets 
+  // sharing an edge with 'f' must belong to the same patch ID.  
+  for (int edge_local = 0; edge_local < 3; ++edge_local)
+  {
+    const int a = (i + 1 + edge_local) & 3;
+    const int b = (i + 2 + edge_local) & 3;
+
+    Edge edge(ch, a, b);
+
+    Facet_circulator fc = tr.incident_facets(edge);
+    if (fc == Facet_circulator()) 
+      continue;
+
+    Facet_circulator done = fc;
+    do {
+      const typename Tr::Facet neighbor_f = *fc;
+
+      if (neighbor_f == f)
+      {
+        ++fc;
+        continue;
+      }
+
+      if (neighbor_f.first->is_facet_on_surface(neighbor_f.second))
+      {
+        // Check that all surface vertices of the neighboring facet
+        // belong to the same surface patch as the reference one
+        for (int kk = 1; kk <= 3; ++kk)
+        {
+          const Vertex_handle& nv = neighbor_f.first->vertex((neighbor_f.second + kk) & 3);
+          if (nv->in_dimension() == 2 && !(nv->index() == ref_index))
+          {
+            // This facet would connect two distinct surface components.
+            return false;
+          }
+        }
+      }
+      ++fc;
+    } while (fc != done);
+  }
+
+  return true;
+}
 
 
 
