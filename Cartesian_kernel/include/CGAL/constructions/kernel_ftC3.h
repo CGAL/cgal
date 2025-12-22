@@ -883,7 +883,7 @@ radical_axisC3(const RT &px, const RT &py, const RT &pz, const We & /* pw */,
   c = RT(1)*determinant(dqx, dqy, drx, dry);
 }
 
-// function used in critical_squared_radiusC3
+// function used in power_distance_to_power_sphereC3
 // power ( t, tw) with respect to
 // circle orthogonal (p,pw), (q,qw), (r,rw), (s,sw)
 template < class FT>
