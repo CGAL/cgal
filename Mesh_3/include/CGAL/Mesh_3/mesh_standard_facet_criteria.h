@@ -662,8 +662,8 @@ facet_is_adjacent_on_same_patch(const Tr& tr, const Facet& f) const
   if (!ref_index_initialized)
     return true;
 
-  // For the facet to be topologically valid on this patch, all surface facets 
-  // sharing an edge with 'f' must belong to the same patch ID.  
+  // For the facet to be topologically valid on this patch, all surface facets
+  // sharing an edge with 'f' must belong to the same patch ID.
   for (int edge_local = 0; edge_local < 3; ++edge_local)
   {
     const int a = (i + 1 + edge_local) & 3;
@@ -672,7 +672,7 @@ facet_is_adjacent_on_same_patch(const Tr& tr, const Facet& f) const
     Edge edge(ch, a, b);
 
     Facet_circulator fc = tr.incident_facets(edge);
-    if (fc == Facet_circulator()) 
+    if (fc == Facet_circulator())
       continue;
 
     Facet_circulator done = fc;
