@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: CC0-1.0
 ///
 // expected - An implementation of std::expected with extensions
 // Written in 2017 by Sy Brand (tartanllama@gmail.com, @TartanLlama)
