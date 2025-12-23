@@ -3780,9 +3780,9 @@ is_valid(Cell_handle c, bool verbose, int level) const
 {
     if ( ! c->is_valid(verbose, level) )
         return false;
-    if(is_cell(c) == false) {
+    if(cells().is_used(c) == false) {
         if (verbose)
-            std::cerr << "not a cell" << std::endl;
+            std::cerr << "invalid cell " << IO::oformat(c) << std::endl;
         CGAL_assertion(false);
         return false;
     }
