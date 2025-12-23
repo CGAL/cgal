@@ -72,7 +72,7 @@ bool read_wkt_or_fail_stream(std::istream& in,
   return true;
 }
 
-bool get_a_new_line(std::istream& in, std::string& line)
+inline bool get_a_new_line(std::istream& in, std::string& line)
 {
   in >> std::ws; // skip whitespaces
   if(in.good()) {
