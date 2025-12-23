@@ -792,6 +792,13 @@ public:
                            std::list<int>& to_check_added_by,
                            ConstraintChecker constraint_checker = ConstraintChecker{})
   {
+    if (tt.dimension() < 2) {
+      for (Face_handle fh : tt.all_face_handles()) {
+        fh->label() = label;
+      }
+      return;
+    }
+
     // std::cout << "Labeling region with " << label << std::endl;
     std::list<Face_handle> to_check_in_region;
     face->label() = label;
