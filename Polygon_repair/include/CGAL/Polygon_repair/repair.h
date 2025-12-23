@@ -246,7 +246,7 @@ bool is_valid(const Polygon_with_holes_2<Kernel, Container>& polygon)
     try {
       Constraint_id cid = vt.insert_constraint(edge.source(), edge.target());
       outer_hull_constraints.insert(cid);
-    } catch (typename VTr::Intersection_of_constraints_exception ice) {
+    } catch (typename VTr::Intersection_of_constraints_exception&) {
       std::cerr << "Invalid: intersection in outer boundary" << std::endl;
       return false;
     }
@@ -267,7 +267,7 @@ bool is_valid(const Polygon_with_holes_2<Kernel, Container>& polygon)
       try {
         Constraint_id cid = vt.insert_constraint(edge.source(), edge.target());
         hole_constraints.insert(cid);
-      } catch (typename VTr::Intersection_of_constraints_exception ice) {
+      } catch (typename VTr::Intersection_of_constraints_exception&) {
         std::cerr << "Invalid: hole boundary intersects something" << std::endl;
         return false;
       }
@@ -430,7 +430,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon)
       try {
         Constraint_id cid = vt.insert_constraint(edge.source(), edge.target());
         new_constraints.insert(cid);
-      } catch (typename VTr::Intersection_of_constraints_exception ice) {
+      } catch (typename VTr::Intersection_of_constraints_exception&) {
         std::cerr << "Invalid: (partly) overlapping polygons" << std::endl;
         return false;
       }
@@ -441,7 +441,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon)
         try {
           Constraint_id cid = vt.insert_constraint(edge.source(), edge.target());
           new_constraints.insert(cid);
-        } catch (typename VTr::Intersection_of_constraints_exception ice) {
+        } catch (typename VTr::Intersection_of_constraints_exception&) {
           std::cerr << "Invalid: hole boundary intersects something" << std::endl;
           return false;
         }
