@@ -473,8 +473,6 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon)
     constraints.emplace_back(std::move(new_constraints));
   }
 
-  CGAL_assertion(constraints.size() == multipolygon.number_of_polygons_with_holes());
-
   for (std::size_t i=0; i<constraints.size(); ++i) {
     for (auto const face: vt.all_face_handles()) {
       face->label() = 0;
