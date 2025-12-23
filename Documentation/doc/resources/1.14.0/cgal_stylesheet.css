@@ -208,6 +208,14 @@ a.el {
   vertical-align: middle;
 }
 
+@media (prefers-color-scheme: dark) {
+
+  .image > img {
+    border-radius: 1ex;
+    background: white;
+  }
+}
+
 .PkgAuthors {
   font-style: italic;
 }
