@@ -447,7 +447,6 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon)
   for (auto const& polygon : multipolygon.polygons_with_holes()) {
     std::set<Constraint_id> new_constraints;
 
-    // can ignore holes because we know each polygon is valid by itself
     for (auto const& edge: polygon.outer_boundary().edges()) {
       try {
         Constraint_id cid = vt.insert_constraint(edge.source(), edge.target());
