@@ -1,0 +1,12 @@
+[ 12%] Building CXX object CMakeFiles/nef_2_construction.dir/nef_2_construction.cpp.o
+[ 25%] Building CXX object CMakeFiles/nef_2_intersection.dir/nef_2_intersection.cpp.o
+[ 37%] Building CXX object CMakeFiles/nef_2_polylines.dir/nef_2_polylines.cpp.o
+[ 50%] Building CXX object CMakeFiles/nef_2_exploration.dir/nef_2_exploration.cpp.o
+[ 75%] Linking CXX executable nef_2_intersection
+[ 62%] Linking CXX executable nef_2_polylines
+[ 87%] Linking CXX executable nef_2_exploration
+[ 87%] Built target nef_2_polylines
+[ 87%] Built target nef_2_intersection
+[ 87%] Built target nef_2_exploration
+[100%] Linking CXX executable nef_2_construction
+[100%] Built target nef_2_construction

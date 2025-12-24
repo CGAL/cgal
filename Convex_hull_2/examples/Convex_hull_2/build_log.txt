@@ -1,0 +1,28 @@
+[ 11%] Building CXX object CMakeFiles/ch_from_cin_to_cout.dir/ch_from_cin_to_cout.cpp.o
+[ 11%] Building CXX object CMakeFiles/ch_graham_anderson.dir/ch_graham_anderson.cpp.o
+[ 16%] Building CXX object CMakeFiles/ch_delaunay_2.dir/ch_delaunay_2.cpp.o
+[ 22%] Building CXX object CMakeFiles/array_convex_hull_2.dir/array_convex_hull_2.cpp.o
+[ 27%] Linking CXX executable array_convex_hull_2
+[ 38%] Linking CXX executable ch_from_cin_to_cout
+[ 33%] Linking CXX executable ch_graham_anderson
+[ 38%] Built target ch_from_cin_to_cout
+[ 38%] Built target array_convex_hull_2
+[ 38%] Built target ch_graham_anderson
+[ 44%] Building CXX object CMakeFiles/convex_hull_yz.dir/convex_hull_yz.cpp.o
+[ 50%] Building CXX object CMakeFiles/ch_timing.dir/ch_timing.cpp.o
+[ 55%] Building CXX object CMakeFiles/convex_hull_indices_2.dir/convex_hull_indices_2.cpp.o
+[ 61%] Linking CXX executable ch_delaunay_2
+[ 61%] Built target ch_delaunay_2
+[ 66%] Building CXX object CMakeFiles/iostream_convex_hull_2.dir/iostream_convex_hull_2.cpp.o
+c++: fatal error: Terminated signal terminated program cc1plus
+compilation terminated.
+make[2]: *** [CMakeFiles/iostream_convex_hull_2.dir/build.make:76: CMakeFiles/iostream_convex_hull_2.dir/iostream_convex_hull_2.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:335: CMakeFiles/iostream_convex_hull_2.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+[ 72%] Linking CXX executable convex_hull_yz
+[ 77%] Linking CXX executable convex_hull_indices_2
+[ 77%] Built target convex_hull_yz
+[ 83%] Linking CXX executable ch_timing
+[ 83%] Built target convex_hull_indices_2
+[ 83%] Built target ch_timing
+make: *** [Makefile:91: all] Error 2

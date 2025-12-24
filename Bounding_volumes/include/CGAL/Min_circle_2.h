@@ -313,7 +313,7 @@ class Min_circle_2 {
 
                     // shuffle points at random
                     std::vector<Point> v( first, last);
-                    CGAL::cpp98::random_shuffle( v.begin(), v.end(), random);
+                    std::shuffle(v.begin(), v.end(), random);
                     std::copy( v.begin(), v.end(),
                                std::back_inserter( points)); }
                 else

@@ -1,0 +1,60 @@
+[  2%] Building CXX object CMakeFiles/polyhedron2vrml.dir/polyhedron2vrml.cpp.o
+[  5%] Building CXX object CMakeFiles/draw_polyhedron.dir/draw_polyhedron.cpp.o
+[  7%] Building CXX object CMakeFiles/polyhedron_copy.dir/polyhedron_copy.cpp.o
+[ 10%] Building CXX object CMakeFiles/poly_derivation.dir/poly_derivation.cpp.o
+[ 15%] Linking CXX executable polyhedron_copy
+[ 15%] Linking CXX executable polyhedron2vrml
+[ 17%] Linking CXX executable poly_derivation
+[ 17%] Built target poly_derivation
+[ 17%] Built target polyhedron2vrml
+[ 17%] Built target polyhedron_copy
+[ 20%] Building CXX object CMakeFiles/polyhedron_prog_color.dir/polyhedron_prog_color.cpp.o
+[ 22%] Building CXX object CMakeFiles/polyhedron_prog_cut_cube.dir/polyhedron_prog_cut_cube.cpp.o
+[ 25%] Building CXX object CMakeFiles/polyhedron_prog_cube.dir/polyhedron_prog_cube.cpp.o
+[ 27%] Linking CXX executable draw_polyhedron
+[ 27%] Built target draw_polyhedron
+[ 30%] Building CXX object CMakeFiles/polyhedron_prog_incr_builder.dir/polyhedron_prog_incr_builder.cpp.o
+[ 32%] Linking CXX executable polyhedron_prog_color
+[ 35%] Linking CXX executable polyhedron_prog_cube
+[ 35%] Built target polyhedron_prog_cube
+[ 37%] Building CXX object CMakeFiles/polyhedron_prog_normals.dir/polyhedron_prog_normals.cpp.o
+[ 37%] Built target polyhedron_prog_color
+[ 40%] Building CXX object CMakeFiles/polyhedron_prog_off.dir/polyhedron_prog_off.cpp.o
+[ 42%] Linking CXX executable polyhedron_prog_cut_cube
+[ 42%] Built target polyhedron_prog_cut_cube
+[ 45%] Building CXX object CMakeFiles/polyhedron_prog_planes.dir/polyhedron_prog_planes.cpp.o
+[ 47%] Linking CXX executable polyhedron_prog_incr_builder
+[ 47%] Built target polyhedron_prog_incr_builder
+[ 50%] Building CXX object CMakeFiles/polyhedron_prog_simple.dir/polyhedron_prog_simple.cpp.o
+[ 52%] Linking CXX executable polyhedron_prog_off
+[ 52%] Built target polyhedron_prog_off
+[ 55%] Building CXX object CMakeFiles/polyhedron_prog_subdiv.dir/polyhedron_prog_subdiv.cpp.o
+[ 57%] Linking CXX executable polyhedron_prog_normals
+[ 57%] Built target polyhedron_prog_normals
+[ 60%] Building CXX object CMakeFiles/polyhedron_prog_subdiv_with_boundary.dir/polyhedron_prog_subdiv_with_boundary.cpp.o
+[ 62%] Linking CXX executable polyhedron_prog_planes
+[ 62%] Built target polyhedron_prog_planes
+[ 65%] Building CXX object CMakeFiles/polyhedron_prog_tetra.dir/polyhedron_prog_tetra.cpp.o
+[ 67%] Linking CXX executable polyhedron_prog_simple
+[ 67%] Built target polyhedron_prog_simple
+[ 70%] Building CXX object CMakeFiles/polyhedron_prog_traits.dir/polyhedron_prog_traits.cpp.o
+[ 72%] Linking CXX executable polyhedron_prog_subdiv_with_boundary
+[ 75%] Linking CXX executable polyhedron_prog_subdiv
+[ 75%] Built target polyhedron_prog_subdiv_with_boundary
+[ 77%] Building CXX object CMakeFiles/polyhedron_prog_vector.dir/polyhedron_prog_vector.cpp.o
+[ 77%] Built target polyhedron_prog_subdiv
+[ 80%] Building CXX object CMakeFiles/polyhedron_prog_vertex_color.dir/polyhedron_prog_vertex_color.cpp.o
+[ 82%] Linking CXX executable polyhedron_prog_tetra
+[ 82%] Built target polyhedron_prog_tetra
+[ 85%] Building CXX object CMakeFiles/polyhedron_prog_vertex_normal.dir/polyhedron_prog_vertex_normal.cpp.o
+[ 87%] Linking CXX executable polyhedron_prog_traits
+[ 87%] Built target polyhedron_prog_traits
+[ 90%] Building CXX object CMakeFiles/polyhedron_self_intersection.dir/polyhedron_self_intersection.cpp.o
+[ 92%] Linking CXX executable polyhedron_prog_vertex_color
+[ 92%] Built target polyhedron_prog_vertex_color
+[ 95%] Linking CXX executable polyhedron_prog_vector
+[ 95%] Built target polyhedron_prog_vector
+[ 97%] Linking CXX executable polyhedron_prog_vertex_normal
+[ 97%] Built target polyhedron_prog_vertex_normal
+[100%] Linking CXX executable polyhedron_self_intersection
+[100%] Built target polyhedron_self_intersection

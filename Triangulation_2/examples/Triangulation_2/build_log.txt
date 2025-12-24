@@ -1,0 +1,16 @@
+[  1%] Building CXX object CMakeFiles/constrained.dir/constrained.cpp.o
+[  5%] Building CXX object CMakeFiles/colored_face.dir/colored_face.cpp.o
+[  5%] Building CXX object CMakeFiles/adding_handles.dir/adding_handles.cpp.o
+[  7%] Building CXX object CMakeFiles/constrained_hierarchy_plus.dir/constrained_hierarchy_plus.cpp.o
+c++: fatal error: Terminated signal terminated program cc1plus
+compilation terminated.
+make[2]: *** [CMakeFiles/colored_face.dir/build.make:76: CMakeFiles/colored_face.dir/colored_face.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:213: CMakeFiles/colored_face.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+[  9%] Linking CXX executable adding_handles
+[  9%] Built target adding_handles
+[ 11%] Linking CXX executable constrained_hierarchy_plus
+[ 11%] Built target constrained_hierarchy_plus
+[ 13%] Linking CXX executable constrained
+[ 13%] Built target constrained
+make: *** [Makefile:91: all] Error 2
