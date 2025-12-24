@@ -2863,7 +2863,8 @@ private:
 
     std::stack<std::pair<Facet, int>> stack;
     stack.push({border_facet_above, 1});
-    auto erased = remaining_facets_of_border.erase(border_facet_above);
+    CGAL_assertion_code(auto erased =)
+    remaining_facets_of_border.erase(border_facet_above);
     CGAL_assertion(erased > 0);
     while(!stack.empty()) {
       const auto [facet, above_below] = stack.top();
