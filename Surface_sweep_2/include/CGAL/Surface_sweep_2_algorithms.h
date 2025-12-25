@@ -23,81 +23,14 @@
  */
 
 #include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Do_intersect_surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Default_arr_traits.h>
 #include <CGAL/Surface_sweep_2/Intersection_points_visitor.h>
 #include <CGAL/Surface_sweep_2/Subcurves_visitor.h>
 #include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
 
-#include <CGAL/Segment_2.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_circle_segment_traits_2.h>
-#include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-
 namespace CGAL {
-
 namespace Ss2 = Surface_sweep_2;
-
-template <typename Curve>
-struct Default_arr_traits
-{};
-
-template <typename Kernel>
-struct Default_arr_traits<CGAL::Segment_2<Kernel> >
-{
-  typedef CGAL::Arr_segment_traits_2<Kernel>                            Traits;
-};
-
-template <typename Kernel>
-struct Default_arr_traits<CGAL::Arr_segment_2<Kernel> >
-{
-  typedef CGAL::Arr_segment_traits_2<Kernel>                            Traits;
-};
-
-template <typename Kernel>
-struct Default_arr_traits<CGAL::internal::Polycurve_2<
-                            CGAL::Arr_segment_2<Kernel>,
-                            typename Kernel::Point_2>>
-{
-  using Subtraits = CGAL::Arr_segment_traits_2<Kernel>;
-  typedef CGAL::Arr_polyline_traits_2<Subtraits>                        Traits;
-};
-
-template <typename Rat_kernel_, class Alg_kernel_, class Nt_traits_>
-struct Default_arr_traits<CGAL::Conic_arc_2<Rat_kernel_, Alg_kernel_,
-                                            Nt_traits_> >
-{
-  typedef CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>
-                                                                        Traits;
-};
-
-template <typename AlgebraicKernel_d_1>
-class Arr_rational_function_traits_2;
-
-namespace Arr_rational_arc{
-template <typename Algebraic_kernel_>
-class Rational_arc_d_1;
-}
-
-template <typename Algebraic_kernel_>
-struct Default_arr_traits<CGAL::Arr_rational_arc::
-                          Rational_arc_d_1<Algebraic_kernel_> >
-{
-  typedef CGAL::Arr_rational_function_traits_2<Algebraic_kernel_>       Traits;
-};
-
-template <typename Kernel_, bool Filter_>
-struct Default_arr_traits<CGAL::_Circle_segment_2<Kernel_, Filter_> >
-{
-  typedef CGAL::Arr_circle_segment_traits_2<Kernel_, Filter_>           Traits;
-};
-
-template <typename Kernel>
-struct Default_arr_traits<CGAL::Arr_linear_object_2<Kernel> >
-{
-  typedef CGAL::Arr_linear_traits_2<Kernel>                             Traits;
-};
 
 /*! Compute all intersection points induced by a range of input curves.
  * The intersections are calculated using the surface-sweep algorithm.
@@ -115,12 +48,10 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
                                            CurveInputIterator curves_end,
                                            OutputIterator points,
                                            bool report_endpoints,
-                                           Traits &tr)
-{
+                                           Traits& tr) {
   // Define the surface-sweep types:
-  typedef Ss2::Intersection_points_visitor<Traits, OutputIterator>
-                                                                Visitor;
-  typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
+  using Visitor = Ss2::Intersection_points_visitor<Traits, OutputIterator>;
+  using Surface_sweep = Ss2::Surface_sweep_2<Visitor>;
 
   // Perform the sweep and obtain the intersection points.
   Visitor visitor(points, report_endpoints);
@@ -130,18 +61,16 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
   return visitor.output_iterator();
 }
 
+/*!
+ */
 template <typename CurveInputIterator, typename OutputIterator>
 OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
                                            CurveInputIterator curves_end,
                                            OutputIterator points,
-                                           bool report_endpoints = false)
-{
-  typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
-
-  typename Default_arr_traits<Curve>::Traits   traits;
-
-  return compute_intersection_points(curves_begin, curves_end, points,
-                                     report_endpoints, traits);
+                                           bool report_endpoints = false) {
+  using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
+  typename Ss2::Default_arr_traits<Curve>::Traits   traits;
+  return compute_intersection_points(curves_begin, curves_end, points, report_endpoints, traits);
 }
 
 /*! Compute all x-monotone subcurves that are disjoint in their interiors
@@ -159,11 +88,10 @@ template <typename CurveInputIterator, typename OutputIterator, typename Traits>
 OutputIterator compute_subcurves(CurveInputIterator curves_begin,
                                  CurveInputIterator curves_end,
                                  OutputIterator subcurves,
-                                 bool mult_overlaps, Traits& tr)
-{
+                                 bool mult_overlaps, Traits& tr) {
   // Define the surface-sweep types:
-  typedef Ss2::Subcurves_visitor<Traits, OutputIterator>        Visitor;
-  typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
+  using Visitor = Ss2::Subcurves_visitor<Traits, OutputIterator>;
+  using Surface_sweep = Ss2::Surface_sweep_2<Visitor>;
 
   // Perform the sweep and obtain the subcurves.
   Visitor visitor(subcurves, mult_overlaps);
@@ -173,31 +101,28 @@ OutputIterator compute_subcurves(CurveInputIterator curves_begin,
   return visitor.output_iterator();
 }
 
+/*!
+ */
 template <typename CurveInputIterator, typename OutputIterator>
 OutputIterator compute_subcurves(CurveInputIterator curves_begin,
                                  CurveInputIterator curves_end,
                                  OutputIterator subcurves,
-                                 bool mult_overlaps = false)
-{
-  typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
-  typename Default_arr_traits<Curve>::Traits m_traits;
-  return compute_subcurves(curves_begin, curves_end, subcurves, mult_overlaps,
-                           m_traits);
+                                 bool mult_overlaps = false) {
+  using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
+  typename Ss2::Default_arr_traits<Curve>::Traits traits;
+  return compute_subcurves(curves_begin, curves_end, subcurves, mult_overlaps, traits);
 }
 
-/*! Determine if there occurs an intersection between any pair of curves in
- * a given range.
- * \param begin An input iterator for the first curve in the range.
- * \param end A input past-the-end iterator for the range.
+/*! Determine whether any curves in a given range intersect pairwise.
+ * \param begin An input iterator of the the range.
+ * \param end A input past-the-end iterator of the range.
  * \return (true) if any pair of curves intersect; (false) otherwise.
  */
 template <typename CurveInputIterator, typename Traits>
-bool do_curves_intersect(CurveInputIterator curves_begin,
-                         CurveInputIterator curves_end, Traits& tr)
-{
+bool do_curves_intersect(CurveInputIterator curves_begin, CurveInputIterator curves_end, Traits& tr) {
   // Define the surface-sweep types:
-  typedef Ss2::Do_interior_intersect_visitor<Traits>            Visitor;
-  typedef Ss2::Surface_sweep_2<Visitor>                         Surface_sweep;
+  using Visitor = Ss2::Do_interior_intersect_visitor<Traits>;
+  using Surface_sweep = Ss2::Do_intersect_surface_sweep_2<Visitor>;
 
   // Perform the sweep and obtain the subcurves.
   Visitor visitor;
@@ -206,14 +131,13 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
   return visitor.found_intersection();
 }
 
+/*!
+ */
 template <typename CurveInputIterator>
-bool do_curves_intersect(CurveInputIterator curves_begin,
-                         CurveInputIterator curves_end)
-{
-  typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
-
-  typename Default_arr_traits<Curve>::Traits m_traits;
-  return do_curves_intersect(curves_begin, curves_end, m_traits);
+bool do_curves_intersect(CurveInputIterator curves_begin, CurveInputIterator curves_end) {
+  using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
+  typename Ss2::Default_arr_traits<Curve>::Traits traits;
+  return do_curves_intersect(curves_begin, curves_end, traits);
 }
 
 } // namespace CGAL
