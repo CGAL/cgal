@@ -21,6 +21,7 @@
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <memory>
@@ -144,12 +145,61 @@ public:
 #endif
     {
       m_features.push_back (Feature_handle (std::make_unique<Feature>(std::forward<T>(t)...)));
-       m_features.back()->set_name (m_features.back()->name() + "_" + std::to_string(i));
+      m_features.back()->set_name (m_features.back()->name() + "_" + std::to_string(i));
     }
     return m_features.back();
   }
   /// \endcond
 
+
+  /*!
+    \brief instantiates a new multi-dimensional feature and adds it to the set.
+
+    Internally, multi-dimensional features are treated as multiple
+    one-dimensional features through a convertion process
+
+    \tparam Feature type of the feature, inherited from
+    `Feature_base`.
+
+    \param n number of dimensions of the feature.
+
+    \tparam T types of the parameters of the feature's constructor.
+
+    \param t parameters of the feature's constructor.
+
+    \return a list of handles to each dimension of the newly added feature.
+  */
+  template <typename Feature, typename ... T>
+  std::vector<Feature_handle> add_multidimensional_feature(std::size_t n_dims, T&& ... t)
+  {
+    Feature_handle multidim_handle(std::make_unique<Feature>(std::forward<T>(t)...));
+    std::vector<Feature_handle> handles;
+    handles.reserve(n_dims);
+    for (std::size_t i = 0; i < n_dims; ++i) {
+      this->add<Internal::Feature_base_dim>(i, multidim_handle->name(), multidim_handle);
+      handles.push_back(m_features.back());
+    }
+    return handles;
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  template <typename Feature, typename ... T>
+  std::vector<Feature_handle> add_multidimensional_feature_with_scale_id (std::size_t i, std::size_t n_dims, T&& ... t)
+  {
+    if (m_features.capacity() < m_features.size() + n_dims)
+    {
+      m_features.reserve(m_features.size() + n_dims);
+    }
+    Feature_handle multidim_handle(std::make_unique<Feature>(std::forward<T>(t)...));
+    std::vector<Feature_handle> handles;
+    handles.reserve(n_dims);
+    for (std::size_t j = 0; j < n_dims; ++j) {
+      this->add<Internal::Feature_base_dim>(j, multidim_handle->name() + "_" + std::to_string(i) + "_", multidim_handle);
+      handles.push_back(m_features.back());
+    }
+    return handles;
+  }
+  /// \endcond
 
   /*!
     \brief removes a feature.
@@ -168,6 +218,40 @@ public:
         return true;
       }
     return false;
+  }
+
+  /*!
+    \brief removes multiple features.
+
+    \param features the handles to feature type that must be removed.
+
+    \return `true` if all the features were correctly removed, `false` if
+    any handles were not found.
+  */
+  bool remove(std::vector<Feature_handle> features)
+  {
+    std::vector<std::size_t> to_remove;
+    to_remove.reserve(features.size());
+    for (std::size_t j = 0; j < features.size(); ++j)
+      for (std::size_t i = 0; i < m_features.size(); ++i)
+        if (m_features[i] == features[j])
+        {
+          to_remove.push_back(i);
+          break;
+        }
+    if (to_remove.size() != features.size())
+      return false;
+
+    std::sort(to_remove.begin(), to_remove.end());
+    // avoid attempting to remove duplicates
+    std::vector<std::size_t>::iterator last = std::unique(to_remove.begin(), to_remove.end());
+    to_remove.erase(last, to_remove.end());
+
+    // actually remove features
+    for (std::vector<std::size_t>::reverse_iterator it = to_remove.rbegin(); it != to_remove.rend(); ++it)
+      m_features.erase(m_features.begin() + (*it));
+
+    return true;
   }
 
   /*!
