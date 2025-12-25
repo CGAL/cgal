@@ -42,8 +42,7 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
   typedef typename Iterator_traits::difference_type Diff_t;
   typedef Hilbert_sort_2<Kernel, Policy, ConcurrencyTag> Sort;
   boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-  CGAL::cpp98::random_shuffle(begin,end,rng);
+  std::shuffle(begin, end, random);
 
   if (threshold_hilbert==0) threshold_hilbert=4;
   if (threshold_multiscale==0) threshold_multiscale=16;
@@ -65,8 +64,7 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
   typedef typename Iterator_traits::difference_type Diff_t;
   typedef Hilbert_sort_3<Kernel, Policy, ConcurrencyTag> Sort;
   boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-  CGAL::cpp98::random_shuffle(begin,end, rng);
+  std::shuffle(begin, end, random);
 
   if (threshold_hilbert==0) threshold_hilbert=8;
   if (threshold_multiscale==0) threshold_multiscale=64;
@@ -88,8 +86,7 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
   typedef typename Iterator_traits::difference_type Diff_t;
   typedef Hilbert_sort_d<Kernel, Policy> Sort;
   boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-  CGAL::cpp98::random_shuffle(begin,end, rng);
+  std::shuffle(begin, end, random);
 
   if (threshold_hilbert==0) threshold_hilbert=10;
   if (threshold_multiscale==0) threshold_multiscale=500;
