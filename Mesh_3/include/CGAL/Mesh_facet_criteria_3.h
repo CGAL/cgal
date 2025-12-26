@@ -246,11 +246,16 @@ private:
       }
 
       case FACET_VERTICES_ON_SAME_SURFACE_PATCH:
-      case FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK:
-        // @TODO: Implement adjacency check !
       {
-        typedef Mesh_3::Facet_on_same_surface_criterion<Tr,Visitor> Same_surface_criterion;
-        criteria_.add(new Same_surface_criterion());
+        typedef Mesh_3::Facet_on_same_surface_criterion<Tr,Visitor> C;
+        criteria_.add(new C(false)); // NO adjacency check
+        break;
+      }
+
+      case FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK:
+      {
+        typedef Mesh_3::Facet_on_same_surface_criterion<Tr,Visitor> C;
+        criteria_.add(new C(true)); // ENABLE adjacency check
         break;
       }
     }
