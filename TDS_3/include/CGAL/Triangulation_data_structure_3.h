@@ -34,6 +34,7 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
@@ -3747,11 +3748,26 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_valid(Vertex_handle v, bool verbose, int level) const
 {
-  bool result = v->is_valid(verbose,level);
-  result = result && v->cell()->has_vertex(v);
+  bool v_is_valid = v->is_valid(verbose,level);
+  bool has_vertex = v->cell()->has_vertex(v);
+  bool v_is_vertex = vertices().is_used(v);
+  bool vertex_cell_is_cell = cells().is_used(v->cell());
+  bool result = v_is_valid && has_vertex && v_is_vertex && vertex_cell_is_cell;
   if ( ! result ) {
-    if ( verbose )
-      std::cerr << "invalid vertex" << std::endl;
+    if ( verbose ) {
+      std::cerr << "invalid vertex " << IO::oformat(v) << std::endl;
+      if(! v_is_valid)
+        std::cerr << "- vertex not valid" << std::endl;
+      if(! has_vertex)
+        std::cerr << "- vertex->cell() does not have vertex" << std::endl;
+      if(! v_is_vertex)
+        std::cerr << "- not a vertex of the TDS" << std::endl;
+      if(! vertex_cell_is_cell)
+        std::cerr << "- vertex->cell() is not a cell of the TDS" << std::endl;
+      if(!has_vertex || !vertex_cell_is_cell)
+        std::cerr << "vertex->cell(): "
+                  << IO::oformat(v->cell()) << std::endl;
+    }
     CGAL_assertion(false);
   }
   return result;
@@ -3764,6 +3780,12 @@ is_valid(Cell_handle c, bool verbose, int level) const
 {
     if ( ! c->is_valid(verbose, level) )
         return false;
+    if(cells().is_used(c) == false) {
+        if (verbose)
+            std::cerr << "invalid cell " << IO::oformat(c) << std::endl;
+        CGAL_assertion(false);
+        return false;
+    }
 
     switch (dimension()) {
     case -2:
@@ -3942,7 +3964,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
       {
         int i;
         for(i = 0; i < 4; i++) {
-          if ( c->vertex(i) == Vertex_handle() ) {
+          if ( c->vertex(i) == Vertex_handle() || vertices().is_used(c->vertex(i)) == false ) {
             if (verbose)
                 std::cerr << "vertex " << i << " nullptr" << std::endl;
             CGAL_assertion(false);
@@ -3953,7 +3975,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
         for(i = 0; i < 4; i++) {
           Cell_handle n = c->neighbor(i);
-          if ( n == Cell_handle() ) {
+          if ( n == Cell_handle() || cells().is_used(n) == false ) {
             if (verbose)
               std::cerr << "neighbor " << i << " nullptr" << std::endl;
             CGAL_assertion(false);

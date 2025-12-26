@@ -277,8 +277,6 @@ public:
       {
         if (!is_well_oriented(triangulation, cit))
           return ORIENTATION_PROBLEM;
-        if (!triangulation.tds().is_valid(cit, true))
-          return C_PROBLEM;
       }
 
       // check angles
@@ -288,13 +286,6 @@ public:
         if (      curr_max_cos < max_cos_after_collapse  // angles decreased
          && acceptable_max_cos < max_cos_after_collapse) // && angles go below acceptable bound
           return ANGLE_PROBLEM;
-      }
-
-      // check validity of vertices
-      for (Vertex_handle vit : triangulation.finite_vertex_handles())
-      {
-        if (!triangulation.tds().is_valid(vit, true))
-          return V_PROBLEM;
       }
 
       //int si_nb_vh0 = nb_incident_subdomains(vh0, c3t3);
