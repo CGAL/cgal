@@ -418,8 +418,7 @@ private:
       return true;
     }
 
-    CGAL_assertion(false);
-    return false;
+    CGAL_unreachable();
   }
 
   IVertex non_collinear_vertex(const PFace& pface, const IEdge& iedge) const {
