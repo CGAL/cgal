@@ -236,7 +236,6 @@ public:
     typedef std::tuple<std::int8_t, std::uint8_t,
                        std::int16_t , std::uint16_t,
                        std::int32_t , std::uint32_t,
-                       std::int64_t, std:: uint64_t,
                        float, double> Type_tuple;
 
     for(std::size_t j = 0; j < element.number_of_properties(); ++ j)
@@ -663,48 +662,61 @@ struct add_color_map<Point, Simplex, Simplex2, false> {
   }
 };
 
-template <std::size_t s, class Point, typename Simplex, class T, class ... TN>
-void fill_header_impl(std::tuple<T,TN...>,
-                      const char* const type_strings[],
-                      const Surface_mesh<Point>& sm,
-                      const std::string& pname,
-                      std::ostream& os,
-                      std::vector<Abstract_property_printer<Simplex>*>& printers)
+template <typename Point, typename Simplex, typename VT, typename ST>
+bool add_printer(std::size_t cid,
+                 const char* const type_strings[],
+                 const Surface_mesh<Point>& sm,
+                 const std::string& pname,
+                 std::ostream& os,
+                 std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
-  constexpr std::size_t cid = s-std::tuple_size<std::tuple<T,TN...>>::value;
+  // single value (VT)
   {
-    typedef typename Surface_mesh<Point>::template Property_map<Simplex, T>   Pmap;
-    auto pmap  = sm.template property_map<Simplex,T>(pname);
+    typedef typename Surface_mesh<Point>::template Property_map<Simplex, VT> Pmap;
+    auto pmap = sm.template property_map<Simplex, VT>(pname);
     if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(*pmap));
-      return;
+      printers.push_back(new internal::Simple_property_printer<Simplex, Pmap, ST>(*pmap));
+      return true;
     }
   }
+
+  // vector value (std::vector<VT>)
   {
-    typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<T>>   Pmap;
-    auto pmap  = sm.template property_map<Simplex,std::vector<T>>(pname);
+    typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<VT> > Pmap;
+    auto pmap = sm.template property_map<Simplex, std::vector<VT> >(pname);
     if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property list uchar " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(*pmap));
-      return;
+      printers.push_back(new internal::Simple_property_vector_printer<Simplex, Pmap, std::vector<VT>, ST>(*pmap));
+      return true;
     }
   }
-  fill_header_impl<s>(std::tuple<TN...>(),type_strings, sm, pname, os, printers);
+  return false;
 }
 
-template <std::size_t s, class Point, typename Simplex>
-void fill_header_impl(std::tuple<>,
-                      const char* const [],
-                      const Surface_mesh<Point>&,
-                      const std::string&,
-                      std::ostream&,
-                      std::vector<Abstract_property_printer<Simplex>*>&)
-{}
+struct PLY_supported_data_types
+{
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int64_t, std::uint64_t,
+                     std::size_t,
+                     float, double> VT_tuple; // value_type of the property map
+
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int32_t, std::uint32_t,
+                     std::uint32_t,
+                     float, double> ST_tuple; // corresponding PLY type
+
+  static constexpr std::size_t data_types_n = std::tuple_size<VT_tuple>::value;
+  static_assert(data_types_n == std::tuple_size<ST_tuple>::value);
+};
 
 template <typename Point, typename Simplex,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -712,14 +724,12 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                  std::vector<Abstract_property_printer<Simplex>*>& printers,
                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  typedef std::tuple<std::int8_t, std::uint8_t,
-                     std::int16_t , std::uint16_t,
-                     std::int32_t , std::uint32_t,
-                     std::int64_t, std:: uint64_t,
-                     float, double> Type_tuple;
-
-  static constexpr const char* type_strings[] =
-           { "char", "uchar", "short", "ushort","int", "uint", "int", "uint", "float", "double" };
+  static constexpr const char* type_strings[] = { "char", "uchar",
+                                                  "short", "ushort",
+                                                  "int", "uint",
+                                                  "int", "uint", // 64 --> 32
+                                                  "uint", // std::size_t
+                                                  "float", "double" };
 
   typedef typename Surface_mesh<Point>::Face_index   FIndex;
   typedef typename Surface_mesh<Point>::Vertex_index VIndex;
@@ -747,18 +757,17 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
   if (std::is_same<Simplex, FIndex>::value && has_fcolor) {
     os << "property uchar red" << std::endl
-      << "property uchar green" << std::endl
-      << "property uchar blue" << std::endl
-      << "property uchar alpha" << std::endl;
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
     add_color_map<Point, Simplex, FIndex>()(printers, fcm);
   }
 
-  if (std::is_same<Simplex, VIndex>::value && has_vcolor)
-  {
+  if (std::is_same<Simplex, VIndex>::value && has_vcolor) {
     os << "property uchar red" << std::endl
-      << "property uchar green" << std::endl
-      << "property uchar blue" << std::endl
-      << "property uchar alpha" << std::endl;
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
 
     add_color_map<Point, Simplex, VIndex>()(printers, vcm);
   }
@@ -775,8 +784,24 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     if(fill_simplex_specific_header(os, sm, printers, prop[i], np))
       continue;
 
-    fill_header_impl<std::tuple_size<Type_tuple>::value>(Type_tuple(), type_strings, sm, prop[i], os, printers);
+    add_printers_for_all_types(std::make_index_sequence<PLY_supported_data_types::data_types_n>{},
+                               type_strings, sm, prop[i], os, printers);
   }
+}
+
+template <std::size_t... Is, typename PointT, typename Simplex>
+void add_printers_for_all_types(std::index_sequence<Is...>,
+                                const char* const* type_strings,
+                                const Surface_mesh<PointT>& sm,
+                                const std::string& prop_name,
+                                std::ostream& os,
+                                std::vector<Abstract_property_printer<Simplex>*>& printers)
+{
+  // The || ... fold short-circuits exactly like the original lambda
+  (void)(add_printer<PointT, Simplex,
+                      std::tuple_element_t<Is, PLY_supported_data_types::VT_tuple>,
+                      std::tuple_element_t<Is, PLY_supported_data_types::ST_tuple> >(
+                        Is, type_strings, sm, prop_name, os, printers) || ...);
 }
 
 } // namespace internal
@@ -973,6 +998,10 @@ namespace IO {
 ///  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
 ///             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
 ///             of the stream must be set to `BINARY`.
+///
+/// \attention The PLY format does not support 64 bits integer types. Therefore, if a property
+///            of type `std::int64_t` or `std::uint64_t` is found, it is converted to
+///            `std::int32_t` or `std::uint32_t` respectively while writing.
 ///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.

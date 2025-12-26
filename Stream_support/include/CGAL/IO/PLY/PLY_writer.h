@@ -293,7 +293,7 @@ public:
     if(get_mode(stream) == CGAL::IO::ASCII)
     {
       stream << vec.size();
-      for(const ElementType& v : vec)
+      for(const auto& v : vec)
       {
         stream << " " << v;
       }
@@ -302,7 +302,7 @@ public:
     {
       unsigned char size = (unsigned char)(vec.size());
       stream.write(reinterpret_cast<char*>(&size), sizeof(size));
-      for(const ElementType& v : vec)
+      for(const auto& v : vec)
       {
         ElementType t = ElementType(v);
         stream.write(reinterpret_cast<char*>(&t), sizeof(t));
