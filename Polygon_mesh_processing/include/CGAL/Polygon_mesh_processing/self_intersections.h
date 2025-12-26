@@ -50,6 +50,7 @@
 #include <type_traits>
 #include <typeinfo>
 #include <vector>
+#include <random>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -430,8 +431,8 @@ self_intersections_impl(const FaceRange& face_range,
   {
     // We are going to split the range into a number of smaller ranges. To handle
     // smaller trees of roughly the same size, we first apply a random shuffle to the range
-    CGAL::Random rng(seed);
-    CGAL::cpp98::random_shuffle(box_ptr.begin(), box_ptr.end(), rng);
+    std::default_random_engine rng(seed);
+    std::shuffle(box_ptr.begin(), box_ptr.end(), rng);
 
     // Write in a concurrent vector all pairs that intersect
     typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >         Face_pairs;
