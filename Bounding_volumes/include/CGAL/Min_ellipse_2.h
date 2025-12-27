@@ -23,6 +23,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include<random>
 
 namespace CGAL {
 
@@ -339,7 +340,8 @@ class Min_ellipse_2 {
 
                     // shuffle points at random
                     std::vector<Point> v( first, last);
-                    CGAL::cpp98::random_shuffle( v.begin(), v.end(), random);
+                    std::default_random_engine rng(random.get_seed());
+                    std::shuffle( v.begin(), v.end(), rng);
                     std::copy( v.begin(), v.end(),
                                std::back_inserter( points)); }
                 else
