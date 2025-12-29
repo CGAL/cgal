@@ -116,13 +116,13 @@ Draws a theta-graph with k cones
 <li><b>Yao-k-graph:</b>
 Draws a Yao-graph with k cones
 <li><b>Half-theta-k-graph with even cones:</b>
-Draws an half-theta-graph with the even of k cones.
+Draws a half-theta-graph with the even of k cones.
 <li><b>Half-Yao-k-graph with even cones:</b>
-Draws an half-Yao-graph with the even of k cones.
+Draws a half-Yao-graph with the even of k cones.
 <li><b>Half-theta-k-graph with odd cones:</b>
-Draws an half-theta-graph with the odd of k cones.
+Draws a half-theta-graph with the odd of k cones.
 <li><b>Half-Yao-k-graph with odd cones:</b>
-Draws an half-Yao-graph with the odd of k cones.
+Draws a half-Yao-graph with the odd of k cones.
 <li><b>k cones:</b> For each selected point.
 Draws the k cones around the point.
 </ul>

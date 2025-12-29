@@ -74,8 +74,6 @@ public:
   typedef typename Gt2::Split_2                     Base_split_2;
   typedef typename Gt2::Equal_2                     Base_equal_2;
 
-  typedef typename Gt2::Has_do_intersect_category   Has_do_intersect_category;
-
   typedef typename internal::Arr_complete_left_side_category<Gt2>::Category
                                                         Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_category<Gt2>::Category

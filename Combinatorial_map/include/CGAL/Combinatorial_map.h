@@ -255,7 +255,7 @@ namespace CGAL {
         }
       }
 
-      // Create an mapping between darts of the two maps (originals->copies).
+      // Creates a mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
       std::unordered_map<Dart_descriptor_2, Dart_descriptor> local_dartmap;
@@ -572,7 +572,7 @@ namespace CGAL {
       }
     }
 
-    /** Import the given hds which should be a model of an halfedge graph. */
+    /** Import the given hds which should be a model of a halfedge graph. */
     template<class HEG>
     void import_from_halfedge_graph(const HEG& heg,
                                     std::unordered_map
@@ -585,7 +585,7 @@ namespace CGAL {
                                     bool copy_perforated_darts=false,
                                     size_type mark_perforated=INVALID_MARK)
     {
-      // Create an mapping between darts of the two maps (originals->copies).
+      // Creates a mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
       std::unordered_map
@@ -661,7 +661,7 @@ namespace CGAL {
       return is;
     }
 
-    /** Create a new dart and add it to the map.
+    /** Creates a new dart and add it to the map.
      * The marks of the darts are initialized with mmask_marks, i.e. the dart
      * is unmarked for all the marks.
      * @return a Dart_descriptor on the new dart.
@@ -968,7 +968,7 @@ namespace CGAL {
     size_type number_of_used_marks() const
     { return mnb_used_marks; }
 
-    /** Test if a given mark is reserved.
+    /** Tests if a given mark is reserved.
      *  @return true iff the mark is reserved (i.e. in used).
      */
     bool is_reserved(size_type amark) const
@@ -997,14 +997,14 @@ namespace CGAL {
       return number_of_darts() - number_of_marked_darts(amark);
     }
 
-    /** Test if all the darts are unmarked for a given mark.
+    /** Tests if all the darts are unmarked for a given mark.
      * @param amark the mark index.
      * @return true iff all the darts are unmarked for amark.
      */
     bool is_whole_map_unmarked(size_type amark) const
     { return number_of_marked_darts(amark) == 0; }
 
-    /** Test if all the darts are marked for a given mark.
+    /** Tests if all the darts are marked for a given mark.
      * @param amark the mark index.
      * @return true iff all the darts are marked for amark.
      */
@@ -1071,7 +1071,7 @@ namespace CGAL {
       mmask_marks.flip(amark);
     }
 
-    /** Test if a given dart is marked for a given mark.
+    /** Tests if a given dart is marked for a given mark.
      * @param adart the dart to test.
      * @param amark the given mark.
      * @return true iff adart is marked for the mark amark.
@@ -1239,7 +1239,7 @@ namespace CGAL {
     std::size_t orient(size_type amark) const
     { negate_mark(amark); return number_of_darts(); }
 
-    /** Test if this map is without boundary for a given dimension.
+    /** Tests if this map is without boundary for a given dimension.
      * @param i the dimension.
      * @return true iff all the darts are not i-free.
      * @pre 1<=i<=n
@@ -1253,7 +1253,7 @@ namespace CGAL {
       return true;
     }
 
-    /** Test if this map is without boundary for all the dimensions.
+    /** Tests if this map is without boundary for all the dimensions.
      * @return true iff all the darts are non free.
      */
     bool is_without_boundary() const
@@ -1334,7 +1334,7 @@ namespace CGAL {
       return res;
     }
 
-    /** Test if the map is valid.
+    /** Tests if the map is valid.
      * @return true iff the map is valid.
      */
     bool is_valid(bool show_errors=true) const
@@ -1579,7 +1579,7 @@ namespace CGAL {
       return os;
     }
 
-    /// Create a new attribute.
+    /// Creates a new attribute.
     /// @return a descriptor on the new attribute.
     template<unsigned int i, typename ...Args>
     typename Attribute_descriptor<i>::type create_attribute(const Args&... args)
@@ -1988,7 +1988,7 @@ namespace CGAL {
       else unlink_beta_for_involution(adart, i);
     }
 
-    /** Test if it is possible to sew by betai the two given darts
+    /** Tests if it is possible to sew by betai the two given darts
      * @param adart1 the first dart.
      * @param adart2 the second dart.
      * @return true iff \em adart1 can be i-sewn with \em adart2.
@@ -3439,7 +3439,7 @@ namespace CGAL {
     }
 
 
-    /** Test if the connected component of cmap containing dart dh1 is
+    /** Tests if the connected component of cmap containing dart dh1 is
      *  isomorphic to the connected component of map2 containing dart dh2,
      *  starting from dh1 and dh2.
      * @param dh1  initial dart for this map
@@ -3648,7 +3648,7 @@ namespace CGAL {
       return match;
     }
 
-    /** Test if this cmap is isomorphic to map2.
+    /** Tests if this cmap is isomorphic to map2.
      * @pre cmap is connected.
      * @param map2 the second combinatorial map
      * @param testDartInfo Boolean to test the equality of dart info (true)
@@ -3687,7 +3687,7 @@ namespace CGAL {
       return false;
     }
 
-    /** Test if the attributes of this map are automatically updated.
+    /** Tests if the attributes of this map are automatically updated.
      * @return true iff the boolean automatic_attributes_management is set to true.
      */
     bool are_attributes_automatically_managed() const
@@ -3710,13 +3710,13 @@ namespace CGAL {
     void set_automatic_attributes_management_without_correction(bool newval)
     { this->automatic_attributes_management = newval; }
 
-    /** Create an half-edge.
+    /** Creates a halfedge.
      * @return a dart of the new half-edge.
      */
     Dart_descriptor make_half_edge()
     { return create_dart(); }
 
-    /** Create an edge.
+    /** Creates an edge.
      * if closed==true, the edge has no 2-free dart.
      * (note that for CMap there is no difference between true and false, but
      *  this is not the case for GMap)
@@ -3730,7 +3730,7 @@ namespace CGAL {
       return d1;
     }
 
-    /** Create an edge given 2 Attribute_descriptor<0>.
+    /** Creates an edge given 2 Attribute_descriptor<0>.
      * Note that this function can be used only if 0-attributes are non void
      * @param h0 the first vertex descriptor.
      * @param h1 the second vertex descriptor.
@@ -3751,7 +3751,7 @@ namespace CGAL {
       return d1;
     }
 
-    /** Create a combinatorial polygon of length alg
+    /** Creates a combinatorial polygon of length alg
      * (a cycle of alg darts beta1 links together).
      * @return a new dart.
      */
@@ -3772,7 +3772,7 @@ namespace CGAL {
       return start;
     }
 
-    /** Test if a face is a combinatorial polygon of length alg
+    /** Tests if a face is a combinatorial polygon of length alg
      *  (a cycle of alg darts beta1 links together).
      * @param adart an initial dart
      * @return true iff the face containing adart is a polygon of length alg.
@@ -3794,7 +3794,7 @@ namespace CGAL {
       return (nb==alg);
     }
 
-    /** Create a triangle given 3 Attribute_descriptor<0>.
+    /** Creates a triangle given 3 Attribute_descriptor<0>.
      * @param h0 the first descriptor.
      * @param h1 the second descriptor.
      * @param h2 the third descriptor.
@@ -3814,7 +3814,7 @@ namespace CGAL {
       return d1;
     }
 
-    /** Create a quadrangle given 4 Vertex_attribute_descriptor.
+    /** Creates a quadrangle given 4 Vertex_attribute_descriptor.
      * @param h0 the first vertex descriptor.
      * @param h1 the second vertex descriptor.
      * @param h2 the third vertex descriptor.
@@ -3837,7 +3837,7 @@ namespace CGAL {
       return d1;
     }
 
-    /** Create a combinatorial tetrahedron from 4 triangles.
+    /** Creates a combinatorial tetrahedron from 4 triangles.
      * @param d1 a dart onto a first triangle.
      * @param d2 a dart onto a second triangle.
      * @param d3 a dart onto a third triangle.
@@ -3859,9 +3859,9 @@ namespace CGAL {
       return d1;
     }
 
-    /** Test if a volume is a combinatorial tetrahedron.
-     * @param adart an initial dart
-     * @return true iff the volume containing adart is a combinatorial tetrahedron.
+    /** Tests if a volume is a combinatorial tetrahedron.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial tetrahedron.
      */
     bool is_volume_combinatorial_tetrahedron(Dart_const_descriptor d1) const
     {
@@ -3892,7 +3892,7 @@ namespace CGAL {
       return true;
     }
 
-    /** Create a new combinatorial tetrahedron.
+    /** Creates a new combinatorial tetrahedron.
      * @return a new dart.
      */
     Dart_descriptor make_combinatorial_tetrahedron()
@@ -3905,7 +3905,7 @@ namespace CGAL {
       return make_combinatorial_tetrahedron(d1, d2, d3, d4);
     }
 
-    /** Create a combinatorial hexahedron from 6 quadrilaterals.
+    /** Creates a combinatorial hexahedron from 6 quadrilaterals.
      * @param d1 a dart onto a first quadrilateral.
      * @param d2 a dart onto a second quadrilateral.
      * @param d3 a dart onto a third quadrilateral.
@@ -3952,9 +3952,9 @@ namespace CGAL {
       return d1;
     }
 
-    /** Test if a volume is a combinatorial hexahedron.
-     * @param adart an initial dart
-     * @return true iff the volume containing adart is a combinatorial hexahedron.
+    /** Tests if a volume is a combinatorial hexahedron.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial hexahedron.
      */
     bool is_volume_combinatorial_hexahedron(Dart_const_descriptor d1) const
     {
@@ -4004,7 +4004,7 @@ namespace CGAL {
       return true;
     }
 
-    /** Create a new combinatorial hexahedron.
+    /** Creates a new combinatorial hexahedron.
      * @return a new dart.
      */
     Dart_descriptor make_combinatorial_hexahedron()
@@ -4019,7 +4019,362 @@ namespace CGAL {
       return make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
     }
 
-    /** Test if an i-cell can be removed.
+    /** Tests if a volume is a combinatorial prism.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial prism.
+     */
+    bool is_volume_combinatorial_prism(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 1, 2);
+      Dart_const_descriptor d4=beta(d1, 0, 2);
+      Dart_const_descriptor d5=beta(d2, 1, 1, 2);
+
+      if ( d1==null_dart_descriptor || d2==null_dart_descriptor ||
+           d3==null_dart_descriptor || d4==null_dart_descriptor ||
+           d5==null_dart_descriptor ) { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 3) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 3)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d4, d5))
+      { return false; }
+
+      if (beta(d2,0,2)  !=beta(d3,1) ||
+          beta(d2,1,2)  !=beta(d4,0) ||
+          beta(d3,0,2)  !=beta(d4,1) ||
+          beta(d3,1,1,2)!=beta(d5,0) ||
+          beta(d4,1,1,2)!=beta(d5,1)) { return false; }
+
+      return true;
+    }
+
+    /** Creates a combinatorial prism from 2 triangles and 3 squares.
+     * @param d1 a dart onto a first triangle.
+     * @param d2 a dart onto a first square.
+     * @param d3 a dart onto a second square.
+     * @param d4 a dart onto a thirth square.
+     * @param d5 a dart onto a second triangle.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_prism(Dart_descriptor d1,
+                                             Dart_descriptor d2,
+                                             Dart_descriptor d3,
+                                             Dart_descriptor d4,
+                                             Dart_descriptor d5)
+    {
+      // 2-link for first triangle
+      basic_link_beta_for_involution(d1, d2, 2);
+      basic_link_beta_for_involution(beta(d1, 1), d3, 2);
+      basic_link_beta_for_involution(beta(d1, 0), d4, 2);
+
+      // 2-link for quandrangles between them
+      basic_link_beta_for_involution(beta(d2, 0), beta(d3, 1), 2);
+      basic_link_beta_for_involution(beta(d2, 1), beta(d4, 0), 2);
+      basic_link_beta_for_involution(beta(d3, 0), beta(d4, 1), 2);
+
+      // 2-link for second triangle
+      basic_link_beta_for_involution(beta(d2, 1, 1), d5, 2);
+      basic_link_beta_for_involution(beta(d3, 1, 1), beta(d5, 0), 2);
+      basic_link_beta_for_involution(beta(d4, 1, 1), beta(d5, 1), 2);
+
+      return d1;
+    }
+
+    /** Creates a new combinatorial prism.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_prism()
+    {
+      Dart_descriptor d1 = make_combinatorial_polygon(3);
+      Dart_descriptor d2 = make_combinatorial_polygon(4);
+      Dart_descriptor d3 = make_combinatorial_polygon(4);
+      Dart_descriptor d4 = make_combinatorial_polygon(4);
+      Dart_descriptor d5 = make_combinatorial_polygon(3);
+
+      return make_combinatorial_prism( d1, d2, d3, d4, d5);
+    }
+
+    /** Tests if a volume is a combinatorial pyramid.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial pyramid.
+     */
+    bool is_volume_combinatorial_pyramid(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 0, 2);
+      Dart_const_descriptor d4=beta(d1, 1, 1, 2);
+      Dart_const_descriptor d5=beta(d1, 1, 2);
+
+      if (d1==null_dart_descriptor || d2==null_dart_descriptor ||
+          d3==null_dart_descriptor || d4==null_dart_descriptor ||
+          d5==null_dart_descriptor) { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 4) ||
+          !is_face_combinatorial_polygon(d2, 3) ||
+          !is_face_combinatorial_polygon(d3, 3) ||
+          !is_face_combinatorial_polygon(d4, 3) ||
+          !is_face_combinatorial_polygon(d5, 3)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d4, d5))
+      { return false; }
+
+      if (beta(d2,1,2)!=beta(d3,0) ||
+          beta(d2,0,2)!=beta(d5,1) ||
+          beta(d5,0,2)!=beta(d4,1) ||
+          beta(d4,0,2)!=beta(d3,1)) { return false; }
+
+      return true;
+    }
+
+    /** Creates a combinatorial pyramid from 1 square and 4 triangles.
+     * @param d1 a dart onto the square.
+     * @param d2 a dart onto a first triangle.
+     * @param d3 a dart onto a second triangle.
+     * @param d4 a dart onto a thirth triangle.
+     * @param d5 a dart onto a fourth triangle.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_pyramid(Dart_descriptor d1,
+                                               Dart_descriptor d2,
+                                               Dart_descriptor d3,
+                                               Dart_descriptor d4,
+                                               Dart_descriptor d5)
+    {
+      // 2-link for the square
+      basic_link_beta_for_involution(d1, d2, 2);
+      basic_link_beta_for_involution(beta(d1, 1), d5, 2);
+      basic_link_beta_for_involution(beta(d1, 1, 1), d4, 2);
+      basic_link_beta_for_involution(beta(d1, 0), d3, 2);
+
+      // 2-link for first triangle
+      basic_link_beta_for_involution(beta(d2, 1), beta(d3, 0), 2);
+      basic_link_beta_for_involution(beta(d2, 0), beta(d5, 1), 2);
+
+      // 2-link for triangles between them
+      basic_link_beta_for_involution(beta(d5, 0), beta(d4, 1), 2);
+      basic_link_beta_for_involution(beta(d4, 0), beta(d3, 1), 2);
+
+      return d1;
+    }
+
+    /** Creates a new combinatorial pyramid.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_pyramid()
+    {
+      Dart_descriptor d1=make_combinatorial_polygon(4);
+      Dart_descriptor d2=make_combinatorial_polygon(3);
+      Dart_descriptor d3=make_combinatorial_polygon(3);
+      Dart_descriptor d4=make_combinatorial_polygon(3);
+      Dart_descriptor d5=make_combinatorial_polygon(3);
+
+      return make_combinatorial_pyramid(d1, d2, d3, d4, d5);
+    }
+
+    /** Tests if a volume is a combinatorial pentagonal prism.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial pentagonal prism.
+     */
+    bool is_volume_combinatorial_pentagonal_prism(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 1, 2);
+      Dart_const_descriptor d4=beta(d1, 1, 1, 2);
+      Dart_const_descriptor d5=beta(d1, 0, 0, 2);
+      Dart_const_descriptor d6=beta(d1, 0, 2);
+      Dart_const_descriptor d7=beta(d2, 1, 1, 2);
+
+      if (d1==null_dart_descriptor || d2==null_dart_descriptor ||
+          d3==null_dart_descriptor || d4==null_dart_descriptor ||
+          d5==null_dart_descriptor || d6==null_dart_descriptor ||
+          d7==null_dart_descriptor)
+      { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 5) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ||
+          !is_face_combinatorial_polygon(d7, 5)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d1, d6) ||
+          belong_to_same_cell<2,1>(d1, d7) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d2, d6) ||
+          belong_to_same_cell<2,1>(d2, d7) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d3, d6) ||
+          belong_to_same_cell<2,1>(d3, d7) ||
+          belong_to_same_cell<2,1>(d4, d5) ||
+          belong_to_same_cell<2,1>(d4, d6) ||
+          belong_to_same_cell<2,1>(d4, d7) ||
+          belong_to_same_cell<2,1>(d5, d6) ||
+          belong_to_same_cell<2,1>(d5, d7) ||
+          belong_to_same_cell<2,1>(d6, d7))
+      { return false; }
+
+      if (beta(d2,0,2)  !=beta(d3,1) ||
+          beta(d3,0,2)  !=beta(d4,1) ||
+          beta(d4,0,2)  !=beta(d5,1) ||
+          beta(d5,0,2)  !=beta(d6,1) ||
+          beta(d6,0,2)  !=beta(d2,1) ||
+          beta(d3,1,1,2)!=beta(d7,0) ||
+          beta(d4,1,1,2)!=beta(d7,0,0) ||
+          beta(d5,1,1,2)!=beta(d7,1,1) ||
+          beta(d6,1,1,2)!=beta(d7,1)) { return false; }
+
+      return true;
+
+    }
+
+    /** Tests if a volume is a combinatorial hexagonal prism.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial hexagonal prism.
+     */
+    bool is_volume_combinatorial_hexagonal_prism(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 1, 2);
+      Dart_const_descriptor d4=beta(d1, 1, 1, 2);
+      Dart_const_descriptor d5=beta(d1, 1, 1, 1, 2);
+      Dart_const_descriptor d6=beta(d1, 0, 0, 2);
+      Dart_const_descriptor d7=beta(d1, 0, 2);
+      Dart_const_descriptor d8=beta(d2, 1, 1, 2);
+
+      if (d1==null_dart_descriptor || d2==null_dart_descriptor ||
+          d3==null_dart_descriptor || d4==null_dart_descriptor ||
+          d5==null_dart_descriptor || d6==null_dart_descriptor ||
+          d7==null_dart_descriptor || d8==null_dart_descriptor)
+      { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 6) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ||
+          !is_face_combinatorial_polygon(d7, 4) ||
+          !is_face_combinatorial_polygon(d8, 6)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d1, d6) ||
+          belong_to_same_cell<2,1>(d1, d7) ||
+          belong_to_same_cell<2,1>(d1, d8) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d2, d6) ||
+          belong_to_same_cell<2,1>(d2, d7) ||
+          belong_to_same_cell<2,1>(d2, d8) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d3, d6) ||
+          belong_to_same_cell<2,1>(d3, d7) ||
+          belong_to_same_cell<2,1>(d3, d8) ||
+          belong_to_same_cell<2,1>(d4, d5) ||
+          belong_to_same_cell<2,1>(d4, d6) ||
+          belong_to_same_cell<2,1>(d4, d7) ||
+          belong_to_same_cell<2,1>(d4, d8) ||
+          belong_to_same_cell<2,1>(d5, d6) ||
+          belong_to_same_cell<2,1>(d5, d7) ||
+          belong_to_same_cell<2,1>(d5, d8) ||
+          belong_to_same_cell<2,1>(d6, d7) ||
+          belong_to_same_cell<2,1>(d6, d8) ||
+          belong_to_same_cell<2,1>(d7, d8))
+      { return false; }
+
+      if (beta(d2,0,2)  !=beta(d3,1) ||
+          beta(d3,0,2)  !=beta(d4,1) ||
+          beta(d4,0,2)  !=beta(d5,1) ||
+          beta(d5,0,2)  !=beta(d6,1) ||
+          beta(d6,0,2)  !=beta(d7,1) ||
+          beta(d7,0,2)  !=beta(d2,1) ||
+          beta(d3,1,1,2)!=beta(d8,0) ||
+          beta(d4,1,1,2)!=beta(d8,0,0) ||
+          beta(d5,1,1,2)!=beta(d8,0,0,0) ||
+          beta(d6,1,1,2)!=beta(d8,1,1) ||
+          beta(d7,1,1,2)!=beta(d8,1)) { return false; }
+
+      return true;
+    }
+
+    /** Tests if a volume is a combinatorial tetrahedron10.
+     * @param d1 an initial dart
+     * @return true iff the volume containing d1 is a combinatorial tetrahedron10.
+     */
+    bool is_volume_combinatorial_tetrahedron10(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2,0);
+      Dart_const_descriptor d3=beta(d2, 0,2);
+      Dart_const_descriptor d4=beta(d2, 1,1,1,2);
+
+      if(d1==null_dart_descriptor || d2==null_dart_descriptor ||
+         d3==null_dart_descriptor || d4==null_dart_descriptor)
+      { return false; }
+
+      if(!is_face_combinatorial_polygon(d1, 6) ||
+         !is_face_combinatorial_polygon(d2, 6) ||
+         !is_face_combinatorial_polygon(d3, 6) ||
+         !is_face_combinatorial_polygon(d4, 6)) { return false; }
+
+      if(beta(d1, 1,2)!=beta(d1, 2,0) ||
+         beta(d2, 1,2)!=beta(d2, 2,0) ||
+         beta(d3, 1,2)!=beta(d3, 2,0) ||
+         beta(d4, 1,2)!=beta(d4, 2,0)) { return false; }
+
+      // TODO do better with marks (?).
+      if(belong_to_same_cell<2,1>(d1, d2) ||
+         belong_to_same_cell<2,1>(d1, d3) ||
+         belong_to_same_cell<2,1>(d1, d4) ||
+         belong_to_same_cell<2,1>(d2, d3) ||
+         belong_to_same_cell<2,1>(d2, d4) ||
+         belong_to_same_cell<2,1>(d3, d4)) { return false; }
+
+      if(beta(d1,1,1,2)!=beta(d3,0) ||
+         beta(d1,0,2)!=beta(d4,1,1) ||
+         beta(d4,0,2)!=beta(d3,1,1)) { return false; }
+
+      return true;
+    }
+
+    /** Tests if an i-cell can be removed.
      *  An i-cell can be removed if i==dimension or i==dimension-1,
      *     or if there are at most two (i+1)-cell incident to it.
      * @param adart a dart of the i-cell.
@@ -4041,7 +4396,7 @@ namespace CGAL {
         run(*this,adart,update_attributes);
     }
 
-    /** Test if an i-cell can be contracted.
+    /** Tests if an i-cell can be contracted.
      *  An i-cell can be contracted if i==1
      *     or if there are at most two (i-1)-cell incident to it.
      * @param adart a dart of the i-cell.
@@ -4407,7 +4762,7 @@ namespace CGAL {
       return this->template beta<0>(adart1);
     }
 
-    /** Test if an edge can be inserted onto a 2-cell between two given darts.
+    /** Tests if an edge can be inserted onto a 2-cell between two given darts.
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @return true iff an edge can be inserted between adart1 and adart2.
@@ -4443,7 +4798,7 @@ namespace CGAL {
       return generic_insert_cell_1(adart1, adart2, false, update_attributes);
     }
 
-    /** Test if an edge can be inserted between two different 2-cells
+    /** Tests if an edge can be inserted between two different 2-cells
      *   between two given darts.
      * @param adart1 a first dart.
      * @param adart2 a second dart.
@@ -4627,7 +4982,7 @@ namespace CGAL {
       return this->template beta<0>(adart1);
     }
 
-    /** Test if a 2-cell can be inserted onto a given 3-cell along
+    /** Tests if a 2-cell can be inserted onto a given 3-cell along
      * a path of edges.
      * @param afirst iterator on the beginning of the path.
      * @param alast  iterator on the end of the path.
