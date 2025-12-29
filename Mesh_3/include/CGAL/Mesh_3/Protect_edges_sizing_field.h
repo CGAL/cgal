@@ -1112,11 +1112,6 @@ insert_balls_on_edges()
                                              ft.polyline_begin_);
           p_size = (std::min)(p_size,
                               compute_distance(p, other_point) / 3);
-          std::cout << "insert_balls_on_edges()"
-            << "\n\tinsert p = " << p
-            << "\n\tdim = " << 1
-            << "\n\tindex = " << curve_index
-            << std::endl;
           vp = smart_insert_point(p,
                                   CGAL::square(p_size),
                                   1 /*dim*/,
@@ -1400,15 +1395,15 @@ insert_balls(const Vertex_handle& vp,
   // Launch balls
   Polyline_iterator p_loc = domain_.locate_in_polyline(p, vp->in_dimension(), curve_index);
   CGAL_assertion(n == 0 || p_loc == domain_.locate_point(curve_index, p));
-  //Bare_point prev_pt = p;
-  //FT dist_to_prev = pt_dist;
+  Bare_point prev_pt = p;
+  FT dist_to_prev = pt_dist;
 
   for(int i = 1; i <= n; ++i)
   {
     // New point position
     const auto [new_point, polyline_iter]
-      = domain_.construct_point_on_curve(p, curve_index, pt_dist, p_loc);
-     // domain_.construct_point_on_curve(prev_pt, curve_index, dist_to_prev, p_loc);
+     // = domain_.construct_point_on_curve(p, curve_index, pt_dist, p_loc);
+      = domain_.construct_point_on_curve(prev_pt, curve_index, dist_to_prev, p_loc);
 
     //std::cout.precision(17);
     //    std::cout << "new_point: " << new_point << std::endl;
@@ -1442,14 +1437,14 @@ insert_balls(const Vertex_handle& vp,
     norm_step_size = dleft_frac * step_size;
 
     // Increment distance
-    pt_dist += d_signF * norm_step_size;
+    //pt_dist += d_signF * norm_step_size;
 
     // Update distance
-    //dist_to_prev = d_signF* norm_step_size;
-    //pt_dist += dist_to_prev;
+    dist_to_prev = d_signF* norm_step_size;
+    pt_dist += dist_to_prev;
 
-    //prev_pt = new_point;
-    //p_loc = polyline_iter;
+    prev_pt = new_point;
+    p_loc = polyline_iter;
   }
 
   // Insert last edge into c3t3
