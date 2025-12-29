@@ -332,9 +332,6 @@ public:
                               const_iterator start_it) const
   {
     CGAL_assertion(start_it == locate(start_pt));
-#ifdef DEBUG_NAN_POINTS
-    const FT distance_backup = distance;
-#endif
 
     // simplify the problem by moving start_pt to start_it_pt
     const Point_3& start_it_pt = *start_it;
@@ -342,6 +339,10 @@ public:
                                   ? std::prev(start_it)
                                   : start_it;
     CGAL_assertion(locate(start_it_pt) == start_it_pt_it);
+
+    std::ostringstream debug_stream;
+    debug_stream.precision(17);
+    debug_stream << "Distance to cover from " << start_it_pt << " = " << distance << std::endl;
 
     distance += curve_segment_length(start_it_pt, start_pt, CGAL::POSITIVE,
                                      start_it_pt_it, start_it);
@@ -354,9 +355,7 @@ public:
         distance += length();
     }
 
-    std::ostringstream debug_stream;
-    debug_stream.precision(17);
-    debug_stream << "Distance to cover from " << start_it_pt << " = " << distance << std::endl;
+    debug_stream << "Adjusted distance to cover = " << distance << std::endl;
 
     // initialize iterators and walf forward or backward to find the segment
     // containing the point at distance from start_it_pt
@@ -409,7 +408,6 @@ public:
         std::ostringstream oss;
         oss << "Segment of zero length detected in Polyline::point_at()\n";
         oss << "Polyline::point_at(start_pt = " << start_pt
-            << ", distance = " << distance_backup
             << ", *start_it = " << *start_it
             << "): degenerate segment detected (*previous = "
             << *previous << ", *pit = " << *pit << ")";
@@ -431,7 +429,6 @@ public:
     if(v.squared_length() == 0.)
     {
       std::cout << "point_at(start_pt = " << start_pt
-                       << ", distance = " << distance_backup
                        << ", *start_it = " << *start_it
                        << ")" << std::endl;
       std::cout << "\tis_loop() = " << std::boolalpha << is_loop() << std::endl;
@@ -469,8 +466,8 @@ public:
       std::cout << "pit                  = " << *pit << std::endl;
       std::cout << "previous             = " << *previous << std::endl;
       std::cout << "distance             = " << distance << std::endl;
-      std::cout << "distance_backup      = " << distance_backup << std::endl;
       std::cout << "length()             = " << length() << std::endl;
+      std::cout << "loop()               = " << std::boolalpha << is_loop() << std::endl;
       std::cout << debug_stream.str() << std::endl;
     }
 
