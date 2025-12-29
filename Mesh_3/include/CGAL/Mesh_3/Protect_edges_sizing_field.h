@@ -571,6 +571,9 @@ operator()(const bool refine)
             << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
 
+  for(auto v : c3t3_.triangulation().finite_vertex_handles())
+    CGAL_assertion(v->in_dimension() == 0);
+
   // Insert 1-dimensional features
   insert_balls_on_edges();
 #ifdef CGAL_MESH_3_VERBOSE
@@ -670,6 +673,7 @@ insert_corners()
     Vertex_handle v = smart_insert_point(p, w, 0, p_index, Vertex_handle(),
                                          CGAL::Emptyset_iterator()).first;
     CGAL_assertion(v != Vertex_handle());
+    CGAL_assertion(c3t3_.in_dimension(v) == 0);
 
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
     // we need to backup and re-set the 'is_special' marker after.
@@ -793,6 +797,17 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
   bool insert_a_special_ball = false; // will be passed to the function this->insert_point
 
   const Weighted_point wp0 = cwp(p); // with weight 0, used for locate()
+
+#ifdef DEBUG_NAN_POINTS
+  if(bbox_of_domain.has_on_unbounded_side(p))
+  {
+    std::cout << "Warning: Point " << p << " is outside the bounding box of the domain." << std::endl;
+    std::cout << "         Bbox is " << bbox_of_domain << std::endl;
+    debug_dump_c3t3("dump-before-insert-point-outside-bbox.binary.cgal", c3t3_);
+
+    exit(EXIT_FAILURE);
+  }
+#endif
 
   if ( tr.dimension() > 2 )
   {
@@ -1036,10 +1051,36 @@ insert_balls_on_edges()
       Vertex_handle vp,vq;
       if ( ! domain_.is_loop(curve_index) )
       {
-        vp = get_vertex_corner_from_point(p,p_index);
-
         const Bare_point& q = ft.point_t_.first;
         const Index& q_index = ft.point_t_.second;
+
+        typename GT::Construct_weighted_point_3 cwp =
+            c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
+        Vertex_handle tmpvp;
+        Vertex_handle tmpvq;
+        c3t3_.triangulation().is_vertex(cwp(p), tmpvp);
+        c3t3_.triangulation().is_vertex(cwp(q), tmpvq);
+
+        if(tmpvp->in_dimension() != 0) {
+          std::cout << "Error: point p " << p
+            << " on curve #" << curve_index << " is not a corner but should be!"
+                    << std::endl;
+          std::cout << "  vertex info: "
+            << " in_dimension = " << tmpvp->in_dimension()
+            << ", index = " << CGAL::IO::oformat(c3t3_.index(tmpvp)) << std::endl;
+        }
+        if(tmpvq->in_dimension() != 0) {
+          std::cout << "Error: point q " << q << " on curve #" << curve_index << " is not a corner but should be!"
+                    << std::endl;
+          std::cout << "  vertex info: "
+                    << " in_dimension = " << tmpvq->in_dimension()
+                    << ", index = " << CGAL::IO::oformat(c3t3_.index(tmpvq)) << std::endl;
+        }
+
+        CGAL_assertion(tmpvp->in_dimension() == 0);
+        CGAL_assertion(tmpvq->in_dimension() == 0);
+
+        vp = get_vertex_corner_from_point(p, p_index);
         vq = get_vertex_corner_from_point(q, q_index);
       }
       else
@@ -1055,7 +1096,12 @@ insert_balls_on_edges()
           // if 'p' is not a corner, find out a second point 'q' on the
           // curve, "far" from 'p', and limit the radius of the ball of 'p'
           // with the third of the distance from 'p' to 'q'.
-          FT p_size = query_size(p, 1, p_index);
+          FT p_size = query_size(p, 1, curve_index);
+
+          // warning!
+          // p_index is a corner index (corresponding dimension is 0)
+          // not a curve index (corresponding dimension is 1)
+          // curve_index is the correct one here
 
           FT curve_length = domain_.curve_length(curve_index);
 
@@ -1066,13 +1112,18 @@ insert_balls_on_edges()
                                              ft.polyline_begin_);
           p_size = (std::min)(p_size,
                               compute_distance(p, other_point) / 3);
+          std::cout << "insert_balls_on_edges()"
+            << "\n\tinsert p = " << p
+            << "\n\tdim = " << 1
+            << "\n\tindex = " << curve_index
+            << std::endl;
           vp = smart_insert_point(p,
                                   CGAL::square(p_size),
                                   1 /*dim*/,
-                                  p_index,
+                                  curve_index,
                                   Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
-          domain_.set_polyline_iterator(p, p_polyline_iter);
+          domain_.set_polyline_iterator(p, p_polyline_iter, curve_index);
         }
 
         // No 'else' because in that case 'is_vertex(..)' already filled
@@ -1090,9 +1141,9 @@ insert_balls_on_edges()
       }
       set_treated(curve_index);
     }
-    // std::stringstream s;
-    // s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
-    // debug_dump_c3t3(s.str(), c3t3_);
+    std::stringstream s;
+    s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
+    debug_dump_c3t3(s.str(), c3t3_);
   }
 } //end insert_balls_on_edges()
 
@@ -1114,6 +1165,7 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
   c3t3_.triangulation().is_vertex(cwp(p), v);
 
   CGAL_assertion( q_found );
+  CGAL_assertion(v->in_dimension() == 0);
   return v;
 }
 
@@ -1268,7 +1320,7 @@ insert_balls(const Vertex_handle& vp,
                            Vertex_handle(),
                            out);
       const Vertex_handle new_vertex = pair.first;
-      domain_.set_polyline_iterator(new_point, polyline_iter);
+      domain_.set_polyline_iterator(new_point, polyline_iter, curve_index);
 
       if(forced_stop()) return out;
       out = pair.second;
@@ -1347,15 +1399,20 @@ insert_balls(const Vertex_handle& vp,
 
   // Launch balls
   Polyline_iterator p_loc = domain_.locate_in_polyline(p, vp->in_dimension(), curve_index);
-  CGAL_assertion(p_loc == domain_.locate_point(curve_index, p));
-  Bare_point prev_pt = p;
-  FT dist_to_prev = pt_dist;
+  CGAL_assertion(n == 0 || p_loc == domain_.locate_point(curve_index, p));
+  //Bare_point prev_pt = p;
+  //FT dist_to_prev = pt_dist;
 
   for(int i = 1; i <= n; ++i)
   {
     // New point position
-    const auto [new_point, polyline_iter] =
-      domain_.construct_point_on_curve(prev_pt, curve_index, dist_to_prev, p_loc);
+    const auto [new_point, polyline_iter]
+      = domain_.construct_point_on_curve(p, curve_index, pt_dist, p_loc);
+     // domain_.construct_point_on_curve(prev_pt, curve_index, dist_to_prev, p_loc);
+
+    //std::cout.precision(17);
+    //    std::cout << "new_point: " << new_point << std::endl;
+//    std::cout << "polyline_iter at new_point: " << *polyline_iter << std::endl;
 
     // Weight (use as size the min between norm_step_size and linear interpolation)
     const FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
@@ -1365,8 +1422,10 @@ insert_balls(const Vertex_handle& vp,
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
       smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
+    CGAL_assertion(new_vertex->in_dimension() == 1);
+
     out = pair.second;
-    domain_.set_polyline_iterator(new_point, polyline_iter);
+    domain_.set_polyline_iterator(new_point, polyline_iter, curve_index);
 
     // Add edge to c3t3
     if(!c3t3_.is_in_complex(prev, new_vertex)) {
@@ -1374,16 +1433,23 @@ insert_balls(const Vertex_handle& vp,
     }
     prev = new_vertex;
 
+    //std::ostringstream oss;
+    //oss << "new_point-" << i << "-curve-" << curve_index << ".binary.cgal";
+    //debug_dump_c3t3(oss.str(), c3t3_);
+
     // Step size
     step_size += r;
     norm_step_size = dleft_frac * step_size;
 
-    // Update distance
-    dist_to_prev = d_signF* norm_step_size;
-    pt_dist += dist_to_prev;
+    // Increment distance
+    pt_dist += d_signF * norm_step_size;
 
-    prev_pt = new_point;
-    p_loc = polyline_iter;
+    // Update distance
+    //dist_to_prev = d_signF* norm_step_size;
+    //pt_dist += dist_to_prev;
+
+    //prev_pt = new_point;
+    //p_loc = polyline_iter;
   }
 
   // Insert last edge into c3t3
@@ -2242,7 +2308,10 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
        vend = adjacent_vertices.end() ; vit != vend ; ++vit )
   {
     const Vertex_handle& next = vit->first;
-    const Curve_index& curve_index = vit->second;
+    const Curve_index& curve_index = vit->second; // MAY BE A CORNER INDEX
+
+    CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
+    CGAL_assertion(cid == curve_index);
 
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by

@@ -93,6 +93,14 @@ public:
       CGAL_assertion(orientation == NEGATIVE);
       CGAL_assertion(it != points_.begin());
       if(it == (points_.begin() + 1)) {
+        if(!is_loop())
+        {
+          std::cout << "FEATURE POINTS" << std::endl;
+          std::cout.precision(17);
+          for(const auto& p : points_)
+            std::cout << p << std::endl;
+          CGAL_assertion(false);
+        }
         CGAL_assertion(is_loop());
         it = points_.end() - 1;
       } else {
@@ -274,19 +282,24 @@ public:
     }
   }
 
+  Point_3 point(const_iterator it) const
+  {
+    if(it != points_.end())
+      return *it;
+    else
+      return end_point();
+  }
+
   const_iterator previous_segment_source(const_iterator it) const
   {
     CGAL_assertion(it != points_.end());
     if(it == first_segment_source())
     {
       CGAL_assertion(is_loop());
-      it = last_segment_source();
+      return last_segment_source();
     }
     else
-    {
-      --it;
-    }
-    return it;
+      return std::prev(it);
   }
 
   const_iterator next_segment_source(const_iterator it) const
@@ -300,10 +313,7 @@ public:
         return points_.end();
     }
     else
-    {
-      ++it;
-      return it;
-    }
+      return std::next(it);
   }
 
   /// returns a point at geodesic distance `distance` from p along the
@@ -322,65 +332,151 @@ public:
                               const_iterator start_it) const
   {
     CGAL_assertion(start_it == locate(start_pt));
+#ifdef DEBUG_NAN_POINTS
+    const FT distance_backup = distance;
+#endif
 
+    // simplify the problem by moving start_pt to start_it_pt
     const Point_3& start_it_pt = *start_it;
-    const_iterator start_it_locate_pt
-      = (start_it == points_.begin()) ? start_it : std::prev(start_it);
+    const_iterator start_it_pt_it = (start_it != points_.begin())
+                                  ? std::prev(start_it)
+                                  : start_it;
+    CGAL_assertion(locate(start_it_pt) == start_it_pt_it);
 
     distance += curve_segment_length(start_it_pt, start_pt, CGAL::POSITIVE,
-                                     start_it_locate_pt, start_it);
+                                     start_it_pt_it, start_it);
 
-    // If polyline is a loop, ensure that distance is given from start_it
-    if(is_loop())
+    while(CGAL::abs(distance) > length())
     {
-      if(distance < FT(0))         { distance += length(); }
-      else if(distance > length()) { distance -= length(); }
-    }
-    else if(distance < FT(0)) // If polyline is not a loop and distance is < 0, go backward
-    {
-      Point_3 new_start = start_pt;
-      while(distance < FT(0))
-      {
-        start_it = previous_segment_source(start_it);
-        distance += this->distance(new_start, *start_it);
-        new_start = *start_it;
-      }
+      if(distance > FT(0) && distance > length())
+        distance -= length();
+      else if(distance < FT(0) && distance < -length())
+        distance += length();
     }
 
-    CGAL_assertion(distance >= FT(0));
-    CGAL_assertion(distance <= length());
+    std::ostringstream debug_stream;
+    debug_stream.precision(17);
+    debug_stream << "Distance to cover from " << start_it_pt << " = " << distance << std::endl;
 
-    // Initialize iterators
-    const_iterator pit = start_it; // start at start_it, and walk forward
-    const_iterator previous = pit++;
+    // initialize iterators and walf forward or backward to find the segment
+    // containing the point at distance from start_it_pt
+    const CGAL::Sign sgn = CGAL::sign(distance);
 
-    // Iterate to find which segment contains the point we want to construct
-    FT segment_length = this->distance(*previous, *pit);
-    while(distance > segment_length)
+    debug_stream << "Initial start_it = " << &*start_it << ", *start_it = " << *start_it << std::endl;
+
+    const_iterator previous = start_it;
+    const_iterator pit = (sgn == CGAL::POSITIVE)
+                       ? next_segment_source(previous)
+                       : previous_segment_source(previous);
+
+    debug_stream << "Going forward from " << start_it_pt << ", dist = " << distance << std::endl;
+
+    FT segment_length = sgn * this->distance(point(previous), point(pit));
+    bool signed_changed = false;
+
+    while(!signed_changed && CGAL::abs(distance) > CGAL::abs(segment_length))
     {
-      distance -= segment_length;
+      debug_stream << "LOOP : distance = " << distance << std::endl;
+      debug_stream << "\tMoving to next segment,\n\t*pit = " << point(pit) << "\n"
+                                              << "\t*previous = " << point(previous) << "\n"
+                                              << "\tdistance = " << distance << "\n" << std::endl;
+      debug_stream << "\tsegment_length = " << segment_length << std::endl;
 
-      // Increment iterators and update length
-      previous = next_segment_source(previous);
-      pit = next_segment_source(pit);
+      const FT new_distance = distance - segment_length;
+
+      signed_changed = (distance * new_distance < FT(0));
+
+      if(!signed_changed)
+        distance = new_distance; // positive or negative, distance goes closer to 0
+      debug_stream << "\tupdated distance = " << distance << std::endl;
+
+      // increment iterators
+      previous = pit;
+      pit = (sgn == CGAL::POSITIVE)
+          ? next_segment_source(pit)
+          : previous_segment_source(pit);
 
       if(pit == points_.end())
       {
-        CGAL_assertion(distance < this->distance(*previous, end_point()));
-        break; // return {*previous, previous}
+        break; // reached end point
       }
-      else
-        segment_length = this->distance(*previous, *pit);
-    }
+
+      // update segment length
+      segment_length = sgn * this->distance(point(previous), point(pit));
+
+      if(segment_length == FT(0))
+      {
+        std::ostringstream oss;
+        oss << "Segment of zero length detected in Polyline::point_at()\n";
+        oss << "Polyline::point_at(start_pt = " << start_pt
+            << ", distance = " << distance_backup
+            << ", *start_it = " << *start_it
+            << "): degenerate segment detected (*previous = "
+            << *previous << ", *pit = " << *pit << ")";
+        throw std::runtime_error(oss.str().c_str());
+      }
+    };
 
     // return point at distance from current segment source
     using Vector_3 = typename Kernel::Vector_3;
     auto vector = Kernel().construct_vector_3_object();
-    Vector_3 v = (pit != points_.end()) ? vector(*previous, *pit)
-                                        : vector(*previous, end_point());
+    auto scale = Kernel().construct_scaled_vector_3_object();
+    auto translate = Kernel().construct_translated_point_3_object();
 
-    return {(*previous) + (distance / CGAL::sqrt(v.squared_length())) * v,
-             previous};
+    Vector_3 v = (sgn == CGAL::POSITIVE)
+               ? vector(point(previous), point(pit))
+               : vector(point(pit), point(previous));
+
+#ifdef DEBUG_NAN_POINTS
+    if(v.squared_length() == 0.)
+    {
+      std::cout << "point_at(start_pt = " << start_pt
+                       << ", distance = " << distance_backup
+                       << ", *start_it = " << *start_it
+                       << ")" << std::endl;
+      std::cout << "\tis_loop() = " << std::boolalpha << is_loop() << std::endl;
+      std::cout << "\tlength() = " << length() << std::endl;
+
+      std::cout << "\t*previous = " << point(previous) << std::endl;
+      if(pit != points_.end())
+        std::cout << "\t(pit != points_.end()) -- *pit      = " << point(pit) << std::endl;
+      else
+        std::cout << "\t(pit == points_.end()) -- end_point = " << end_point() << std::endl;
+
+      std::cout << "\tfirst point = " << start_point() << std::endl;
+      std::cout << "\tsecond point = " << (*(points_.begin() + 1)) << std::endl;
+      std::cout << "\tlast point  = " << end_point() << std::endl;
+
+      std::cout << "\tdistance  = " << distance << std::endl;
+      std::cout << "\tv.sql()   = " << v.squared_length() << std::endl;
+      std::cout << std::endl;
+      //std::cout << "Debug trace:\n" << debug_stream.str() << std::endl;
+    }
+#endif
+
+    const Vector_3 move = scale(v, distance * 1. / CGAL::sqrt(v.squared_length()));
+    const Point_3 result = translate(*previous, move);
+
+    const_iterator result_iterator = (sgn == CGAL::POSITIVE) ? previous : pit;
+
+    if(result_iterator != locate_point(result))
+    {
+      std::cout.precision(17);
+      std::cout << "ASSERTION result_iterator != locate_point(result)" << std::endl;
+      std::cout << "result               = " << result << std::endl;
+      std::cout << "result_iterator      = " << *result_iterator << std::endl;
+      std::cout << "locate_point(result) = " << *locate_point(result) << std::endl;
+      std::cout << "pit                  = " << *pit << std::endl;
+      std::cout << "previous             = " << *previous << std::endl;
+      std::cout << "distance             = " << distance << std::endl;
+      std::cout << "distance_backup      = " << distance_backup << std::endl;
+      std::cout << "length()             = " << length() << std::endl;
+      std::cout << debug_stream.str() << std::endl;
+    }
+
+    CGAL_assertion(result_iterator == locate_point(result));
+
+    return {result, result_iterator};
   }
 
   const_iterator locate_corner(const Point_3& p) const
@@ -408,7 +504,7 @@ public:
 
     // Locate p & q on polyline
     CGAL_assertion(pit == locate(p));
-    CGAL_assertion(qit == locate(q, true));
+    //CGAL_assertion(qit == locate(q));//, true));
 
     // Points are not located on the same segment
     if ( pit != qit ) { return (pit <= qit); }
@@ -422,7 +518,6 @@ public:
     return are_ordered_along(p, q, locate(p), locate(q, true));
   }
 
-private:
   const_iterator first_segment_source() const
   {
     CGAL_precondition(is_valid());
@@ -435,6 +530,7 @@ private:
     return (points_.end() - 2);
   }
 
+private:
   /// returns an iterator on the starting point of the segment of the
   /// polyline which contains p
   /// if end_point_first is true, then --end is returned instead of begin
