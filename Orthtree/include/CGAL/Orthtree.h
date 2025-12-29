@@ -788,9 +788,6 @@ public:
   /*!
     \brief finds the leaf nodes that intersect with any primitive.
 
-    \note this function requires the function
-    `bool CGAL::do_intersect(QueryType, Traits::Bbox_d)` to be defined.
-
     This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
 
     \tparam Query the primitive class (e.g., sphere, ray)
