@@ -499,8 +499,6 @@ private:
   typedef CGAL::AABB_traits_3<GT,
                               Curves_primitives> AABB_curves_traits;
 
-//  typedef typename Polyline::const_iterator Polyline_const_iterator;
-
   Corners corners_;
   Corners_tmp_incidences corners_tmp_incidences_;
   Corner_index current_corner_index_;
@@ -580,8 +578,19 @@ public:
      return it;
   }
 
-  void set_polyline_iterator(const Point_3& p, Polyline_const_iterator it) const
+  void set_polyline_iterator(const Point_3& p,
+                             Polyline_const_iterator it,
+                             const Curve_index& index) const
   {
+    CGAL_assertion(it != edges_.at(index).points_.end());
+    if(p == *it)
+    {
+      typename Edges::const_iterator eit = edges_.find(index);
+      CGAL_assertion(eit != edges_.end());
+      const Polyline& polyline = eit->second;
+      if(it != polyline.first_segment_source())
+        it = polyline.previous_segment_source(it);
+    }
     vertex_to_polyline_iterator_[p] = it;
   }
 
