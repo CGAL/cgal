@@ -778,17 +778,21 @@ public:
         double dy = (std::max)(bymax - scy, scy - bymin);
         double dz = (std::max)(bzmax - scz, scz - bzmin);
 
+        max1 = (std::max)(dx, (std::max)(dy, dz));
+        double min1 = (std::min)(dx, (std::min)(dy, dz));
+
         dx = square(dx);
         dy = square(dy);
         dz = square(dz);
 
-        max1 = (std::max)(dx, (std::max)(dy, dz));
-        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+        if ((min1 < 3.33558365626356743286e-147) || (max1 > 1.67597599124282389316e+153) ||
+            (ssr < 1.11261183279326296156e-293) || (ssr > 2.80889552322236642288e+306))
+        {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max)((std::max)(ssr, dx), (std::max)(dy, dz));
+        eps = 1.99986535548615559117e-15 * (std::max)((std::max)(ssr, dx), (std::max)(dy, dz));
 
         distance = ssr - dx - dy - dz;
 
