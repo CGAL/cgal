@@ -53,7 +53,7 @@ with basic usage of different barycentric components.
 
 \subsection tetra_example Tetrahedron Coordinates
 
-In this example, we use the global function `tetrahedron_coordinates_in_array()`.
+In this example, we use the global function `tetrahedron_coordinates()`.
 We compute coordinates for the tetrahedron defined by the points (0,0,0), (1,0,0),
 (0,1,0), and (0,0,1). We use points inside, outside and
 at the boundary of the tetrahedron.

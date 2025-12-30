@@ -101,25 +101,25 @@ enum class Edge_case {
     typename GeomTraits>
   typename GeomTraits::Vector_3 get_face_normal(
     const Face& face,
-    const VertexPointMap& vertex_point_map,
+    const VertexPointMap& vpm,
     const TriangleMesh& tmesh,
     const GeomTraits& traits){
 
-    using Point_3 = typename GeomTraits::Point_3;
     using Vector_3 = typename GeomTraits::Vector_3;
     const auto cross_3 = traits.construct_cross_product_vector_3_object();
+    const auto vector_3 = traits.construct_vector_3_object();
 
     const auto hedge = halfedge(face, tmesh);
     const auto vertices = vertices_around_face(hedge, tmesh);
     CGAL_precondition(vertices.size() >= 3);
 
     auto vertex = vertices.begin();
-    const Point_3& point1 = get(vertex_point_map, *vertex); ++vertex;
-    const Point_3& point2 = get(vertex_point_map, *vertex); ++vertex;
-    const Point_3& point3 = get(vertex_point_map, *vertex);
+    auto v0 = *vertex; ++vertex;
+    auto v1 = *vertex; ++vertex;
+    auto v2 = *vertex;
 
-    const Vector_3 u = point2 - point1;
-    const Vector_3 v = point3 - point1;
+    const Vector_3 u = vector_3(get(vpm, v0), get(vpm, v1));
+    const Vector_3 v = vector_3(get(vpm, v0), get(vpm, v2));
     Vector_3 face_normal = cross_3(u, v);
 
     return face_normal;
@@ -133,9 +133,9 @@ enum class Edge_case {
     const GeomTraits& traits){
 
     using FT = typename GeomTraits::FT;
-    const auto& dot_3 = traits.compute_scalar_product_3_object();
-    const auto& cross_3 = traits.construct_cross_product_vector_3_object();
-    const auto& sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
+    const auto dot_3 = traits.compute_scalar_product_3_object();
+    const auto cross_3 = traits.construct_cross_product_vector_3_object();
+    const auto sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
 
     assert(vec_1.squared_length() != FT(0));
     assert(vec_2.squared_length() != FT(0));
@@ -175,6 +175,7 @@ enum class Edge_case {
     const GeomTraits& traits,
     bool use_wp_flag){
 
+    CGAL_USE(traits);
     using FT = typename GeomTraits::FT;
     using Plane_3 = typename GeomTraits::Plane_3;
     using Point_2 = typename GeomTraits::Point_2;

@@ -46,7 +46,7 @@ void test_overloads(){
       vertices[2], vertices[3], query, tetra_coords.begin());
 
     const std::array<FT, 4> tetra_coords_array =
-    CGAL::Barycentric_coordinates::tetrahedron_coordinates_in_array(vertices[0], vertices[1],
+    CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
       vertices[2], vertices[3], query);
 
     assert(CGAL::abs(1-x-y-z - tetra_coords[0]) == FT(0) &&
