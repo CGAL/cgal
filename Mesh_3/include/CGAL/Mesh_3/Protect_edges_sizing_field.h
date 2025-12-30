@@ -571,7 +571,7 @@ operator()(const bool refine)
             << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
 
-  for(auto v : c3t3_.triangulation().finite_vertex_handles())
+  CGAL_assertion_code(for(auto v : c3t3_.triangulation().finite_vertex_handles()))
     CGAL_assertion(v->in_dimension() == 0);
 
   // Insert 1-dimensional features
@@ -1136,9 +1136,9 @@ insert_balls_on_edges()
       }
       set_treated(curve_index);
     }
-    std::stringstream s;
-    s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
-    debug_dump_c3t3(s.str(), c3t3_);
+    //std::stringstream s;
+    //s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
+    //debug_dump_c3t3(s.str(), c3t3_);
   }
 } //end insert_balls_on_edges()
 
