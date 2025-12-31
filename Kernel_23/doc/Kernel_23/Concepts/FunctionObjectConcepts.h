@@ -1297,7 +1297,7 @@ public:
 
 \cgalRefines{AdaptableFunctor}
 
-\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
 
 */
 class CompareWeightedSquaredRadius_3
@@ -3121,7 +3121,7 @@ public:
 \cgalConcept
 
 \sa `CGAL::Weighted_point_3<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
 
 \cgalRefines{AdaptableFunctor}
 
