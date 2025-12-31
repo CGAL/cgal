@@ -88,14 +88,17 @@ namespace tests{
 
   template<typename Kernel>
   void test_barycenter(std::vector<typename Kernel::FT>& coords){
-
     using FT = typename Kernel::FT;
+
+    FT tol = get_tolerance<FT>();
 
     unsigned int num_coords = coords.size();
     assert(num_coords != 0);
 
     for(auto& coord : coords)
-      assert(coord == FT(1.0)/FT(num_coords));
+    {
+      assert(CGAL::abs(coord -  FT(1.0)/FT(num_coords)) < tol);
+    }
   }
 
   template<typename Kernel>
