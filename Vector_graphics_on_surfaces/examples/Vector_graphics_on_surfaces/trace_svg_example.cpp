@@ -1,6 +1,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Vector_graphics_on_surfaces/locally_shortest_path.h>
+#include <CGAL/Vector_graphics_on_surfaces/trace.h>
+#include <CGAL/Vector_graphics_on_surfaces/refine_mesh_along_paths.h>
 #include <CGAL/Vector_graphics_on_surfaces/utils.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>

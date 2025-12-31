@@ -1,4 +1,4 @@
-#include <CGAL/Vector_graphics_on_surfaces/locally_shortest_path.h>
+#include <CGAL/Vector_graphics_on_surfaces/straightest_geodesic.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
