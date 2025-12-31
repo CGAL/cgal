@@ -1199,7 +1199,7 @@ struct Locally_shortest_path_imp
       vert_adj=next_vert_adj;
     }
     auto offset = theta - prev_angle;
-    //moving to radiants
+    //moving to radians
     offset*=CGAL_PI/180.;
     Point_3 prev_vert_adj=get(vpm,target(next(h,mesh),mesh));
 
@@ -1401,11 +1401,11 @@ struct Locally_shortest_path_imp
 
           CGAL_assertion( std::acos(unnorm_cos_theta_2 / std::sqrt((v01*v01) * (v02*v02))) == angles[0]); // will not be true because of rounding
 
-          // normalise the angle to bring them in [0,1]
+          // normalize the angle to bring them in [0,1]
           for (double& angle : angles)
             angle /= acc_angle;
 
-          // compute and normalise the target angle
+          // compute and normalize the target angle
           double target_theta = std::acos(unnorm_cos_theta_1 / std::sqrt((dir*dir) * (v02*v02)));
           if ( dir_ori!=v01_ori ) target_theta = 2 * CGAL_PI - target_theta;
           target_theta /= acc_angle;
@@ -1638,7 +1638,7 @@ struct Locally_shortest_path_imp
                                              PMP::construct_point(prev_p,mesh)));
         curr_tid = adj;
         h_ref=halfedge(curr_tid,mesh);
-        //TODO curr_dir should be normalized everytime (to try to avoid numerical errors)
+        //TODO curr_dir should be normalized every time (to try to avoid numerical errors)
         curr_dir = compute_new_dir(h_ref,h_curr,prev_p.second,curr_p.second,vpm,mesh);
         curr_flat_tid=init_flat_triangle(h_ref,vpm,mesh);
         flat_p= curr_p.second[0]*curr_flat_tid[0]+curr_p.second[1]*curr_flat_tid[1]+curr_p.second[2]*curr_flat_tid[2];
@@ -2372,7 +2372,7 @@ struct Geodesic_circle_impl
                             Stop &&stop, Exit &&exit)
   {
     /*
-      This algorithm uses the heuristic Small Label Fisrt and Large Label Last
+      This algorithm uses the heuristic Small Label First and Large Label Last
       https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
 
       Large Label Last (LLL): When extracting nodes from the queue, pick the
@@ -2469,7 +2469,7 @@ struct Geodesic_circle_impl
                                 Exit &&exit)
   {
     /*
-      This algorithm uses the heuristic Small Label Fisrt and Large Label Last
+      This algorithm uses the heuristic Small Label First and Large Label Last
       https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
 
       Large Label Last (LLL): When extracting nodes from the queue, pick the
@@ -2686,7 +2686,7 @@ struct Geodesic_circle_impl
   }
 
   //compute geodesic distance field from p
-  //TODO: can be easiliy extended to more than one source
+  //TODO: can be easily extended to more than one source
   static
   std::vector<double>
   compute_geodesic_distances(const geodesic_solver& solver,
@@ -2814,7 +2814,7 @@ struct Geodesic_circle_impl
 /*!
  * \ingroup VGSMiscellaneous
  * Geodesic solver class used to store precomputed information of a given mesh for
- * approximate geodesic compution. Those information are computed by the function
+ * approximate geodesic computation. Those information are computed by the function
  * `init_geodesic_dual_solver()`.
  * \tparam FT floating point number type (float or double)
  */
@@ -2830,7 +2830,7 @@ struct Dual_geodesic_solver
 
 /*!
  * \ingroup VGSMiscellaneous
- * fills `solver` for a given mesh `tmesh`. It is the user responsability to
+ * fills `solver` for a given mesh `tmesh`. It is the user responsibility to
  * call again this function if `tmesh` or the points of its vertices are modified.
  * If `solver` was used in a previous call to this function, information will be overwritten.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
@@ -2858,8 +2858,8 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
 
 /*!
  * \ingroup VGSFunctions
- * computes an approximated geodesic shortest path between two locations on a
- * `tmesh`. The points`src` and `tgt` must be on the same connected component.
+ * computes an approximated geodesic shortest path between two locations on
+ * `tmesh`. The points `src` and `tgt` must be on the same connected component.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
  * \tparam EdgeLocationRange a model of `BackInsertionSequence` whose value type `CGAL::Polygon_mesh_processing::Edge_location<FT>`.
@@ -2867,9 +2867,9 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
  * \param tgt target of the path
  * \param tmesh input triangle mesh to compute the path on
  * \param edge_locations contains the path as a sequence of edge locations.
- *                       Two consecutives edges `e_k` and `e_kp1` stored in `edge_locations` are such that
+ *                       Two consecutive edges `e_k` and `e_kp1` stored in `edge_locations` are such that
  *                       `face(halfedge(e_k, tmesh), tmesh) == face(opposite(halfedge(e_kp1, tmesh), tmesh), tmesh))`.
- *                       In parcular, it means that if the path goes through a vertex of `tmesh`, several
+ *                       In particular, it means that if the path goes through a vertex of `tmesh`, several
  *                       edge locations will be reported to maintain this property.
  *                       Additionally, if `src` is in the interior of a face `f`, then the first edge location `e_0`
  *                       of `edge_locations` is such that `f == face(opposite(halfedge(e_0, tmesh), tmesh), tmesh))`.
@@ -3024,7 +3024,7 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
     catch(const internal::Dijkstra_end_exception&)
     {}
 
-  // TODO try stopping dijkstra as soon tgt is out of the queue.
+  // TODO try stopping Dijkstra as soon tgt is out of the queue.
 
 
   std::vector<halfedge_descriptor> initial_path;
@@ -3068,7 +3068,7 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
   CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
 
-  // remove extra halfedges from inital_path and update src/tgt to get a minimal sequence
+  // remove extra halfedges from initial_path and update src/tgt to get a minimal sequence
   // in case src and/or tgt are on a vertex or an edge
 #ifdef CGAL_DEBUG_BSURF
   std::size_t initial_path_size_before = initial_path.size();
@@ -3122,7 +3122,7 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
  * \param control_points control points of the Bézier segment
  * \param num_subdiv the number of iterations of the subdivision algorithm
  * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
- * \return descretization of the Bézier segment as face locations
+ * \return discretization of the Bézier segment as face locations
  * \todo add named parameters
  * \todo do we want to also have a way to return Bézier segments? The output is actually Bézier segments subdivided.
  */
@@ -3671,7 +3671,7 @@ trace_geodesic_label(const CGAL::Polygon_mesh_processing::Face_location<Triangle
  * \tparam TriangleMesh a model of `FaceGraph`
  * \param path a path described as a range of face locations, with the property that
                for two consecutive face locations, there exists a face in `tmesh` containing the two corresponding points.
- * \param tmesh the triangle mesh supporing the path
+ * \param tmesh the triangle mesh supporting the path
  * \todo add named parameters
  * \todo generic range
  */
@@ -3706,7 +3706,7 @@ FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Face_location<Tr
  * \param tgt target of the path
  * \param path a path described as a range of edge locations, with the property that
                for two consecutive edge locations, there exists a face in `tmesh` containing the two corresponding points.
- * \param tmesh the triangle mesh supporing the path
+ * \param tmesh the triangle mesh supporting the path
  * \todo add named parameters
  * \todo generic range
  */
@@ -3753,7 +3753,7 @@ FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<Tr
  *                         For two consecutive face locations, there must exist a face in `tmesh` containing the two corresponding points.
  * \param polygons 2D polygons
  * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
- * \param padding padding applied at the beggining of supporting curve to start the drawing
+ * \param padding padding applied at the beginning of supporting curve to start the drawing
  * \param is_centered is `true`, `padding` is ignored and the bounding box of the polygon is centered on the supporting curve (in 1D)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
  * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
@@ -4635,7 +4635,7 @@ refine_mesh_along_paths(const std::vector<std::vector<CGAL::Polygon_mesh_process
  * \tparam OutputIterator an output iterator accepting points from `tmesh`
  * \param path a path described as a range of face locations, with the property that
                for two consecutive face locations, there exists a face in `tmesh` containing the two corresponding points.
- * \param tmesh the triangle mesh supporing the path
+ * \param tmesh the triangle mesh supporting the path
  * \param poly_out output iterator where points of the polyline are put.
  * \todo add named parameters
  * \todo generic range
@@ -4675,7 +4675,7 @@ convert_path_to_polyline(const std::vector<CGAL::Polygon_mesh_processing::Face_l
  * \param tgt target of the path
  * \param path a path described as a range of edge locations, with the property that
                for two consecutive edge locations, there exists an edge in `tmesh` containing the two corresponding points.
- * \param tmesh the triangle mesh supporing the path
+ * \param tmesh the triangle mesh supporting the path
  * \param poly_out output iterator where points of the polyline are put.
  * \todo add named parameters
  * \todo generic range

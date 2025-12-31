@@ -20,7 +20,7 @@
 \cgalPkgPicture{vgos-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Claudio Mancinelli and Sébastien Loriot}
-\cgalPkgDesc{The package provides functions to draw and manipulate basic geometric primitives such as geodesics curves and Bézier splines
+\cgalPkgDesc{The package provides functions to draw and manipulate basic geometric primitives such as geodesic curves and Bézier splines
              on triangulated surface meshes.}
 \cgalPkgManuals{Chapter_VGoS,PkgVGoS_Ref}
 \cgalPkgSummaryEnd
@@ -45,14 +45,14 @@
 - `CGAL::Vector_graphics_on_surfaces::trace_geodesic_polygon()`
 - `CGAL::Vector_graphics_on_surfaces::trace_geodesic_polygons()`
 - `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label()`
-- `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label_along_curve`
+- `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label_along_curve()`
 - `CGAL::Vector_graphics_on_surfaces::trace_Bezier_curves()`
 - `CGAL::Vector_graphics_on_surfaces::trace_polyline_of_Bezier_curves()`
 
 \cgalCRPSection{Utilities}
 - `CGAL::Vector_graphics_on_surfaces::path_length()`
 - `CGAL::Vector_graphics_on_surfaces::convert_path_to_polyline()`
-- `CGAL::Vector_graphics_on_surfaces::convert_to_polar_coordinates`
+- `CGAL::Vector_graphics_on_surfaces::convert_to_polar_coordinates()`
 
 \cgalCRPSection{Miscellaneous}
 - `CGAL::Vector_graphics_on_surfaces::Bezier_segment`
