@@ -126,16 +126,6 @@ public:
 
   /// @}
 
-  /// \name Assignment
-  /// @{
-
-  /*!
-    \pre <code> other.is_valid() </code>
-  */
-  Triangulation_on_hyperbolic_surface_2& operator=(Triangulation_on_hyperbolic_surface_2 other);
-
-  /// @}
-
   /// \name Access Functions
   /// @{
 
@@ -233,7 +223,18 @@ Vertex_range vertices_range();
 
     Returns, for every triangle \f$ t \f$ of the triangulation, one of the darts of \f$ t \f$ in the combinatorial map of the triangulation, together with a triple \f$ p,q,r \f$ of points in the hyperbolic plane.
     The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
-    If the center parameter is set to true, then one of the vertices of the anchor is translated to the origin \f$ 0 \f$.
+    If the center parameter is set to true, then the first vertex of the given anchor is translated to the origin \f$ 0 \f$.
+
+    \pre <code> is_valid() </code>
+  */
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(Anchor const & anchor, bool center=true) const;
+
+  /*!
+    lifts the triangulation in the hyperbolic plane.
+
+    Returns, for every triangle \f$ t \f$ of the triangulation, one of the darts of \f$ t \f$ in the combinatorial map of the triangulation, together with a triple \f$ p,q,r \f$ of points in the hyperbolic plane.
+    The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
+    If the center parameter is set to true, then the first vertex of the anchor is translated to the origin \f$ 0 \f$.
 
     \pre <code> is_valid() && has_anchor() </code>
   */
