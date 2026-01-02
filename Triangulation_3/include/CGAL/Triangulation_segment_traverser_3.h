@@ -222,14 +222,14 @@ public:
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
      *        \param s the source vertex. This vertex must be initialized and cannot be the infinite vertex.
-     *        \param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
+     *        \param t the target point. This point must be initialized and it cannot be at the same location as `s`.
      *        If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
      */
         Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, const Point& t );
 
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *        \param s the source point. This point must be initialized and it cannot be be at the same location as `t`.
+     *        \param s the source point. This point must be initialized and it cannot be at the same location as `t`.
      *        \param t the target vertex. This vertex must be initialized and cannot be the infinite vertex.
      *        If `tr` has dimension < 3, `s` must lie inside the affine hull of `tr`.
      *        \param hint the starting point to search for `s`.
@@ -240,7 +240,7 @@ public:
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
      *        \param s the source point. This point must be initialized. If `tr` has dimension < 3, `s` must lie inside
      *        the affine hull of `tr`.
-     *        \param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
+     *        \param t the target point. This point must be initialized and it cannot be at the same location as `s`.
      *        If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
      *        \param hint the starting point to search for `s`.
      */
