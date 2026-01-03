@@ -55,7 +55,7 @@ int main()
   // Mesh generation with a custom initialization that places points
   // on the surface of each connected component of the image.
   CGAL::Construct_initial_points_labeled_image<C3t3, Mesh_domain>
-      img_pts_generator(image, domain, CGAL::parameters::verbose(true));
+      img_pts_generator(image, domain );
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       params::initial_points_generator(img_pts_generator));
