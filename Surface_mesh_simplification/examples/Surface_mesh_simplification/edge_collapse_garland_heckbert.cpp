@@ -4,6 +4,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_plane_and_line_policies.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 #include <CGAL/IO/polygon_mesh_io.h>
