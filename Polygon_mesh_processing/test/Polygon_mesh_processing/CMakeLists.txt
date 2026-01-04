@@ -80,6 +80,8 @@ find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("issue7990.cpp")
+  target_link_libraries(issue7990 PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("fairing_test.cpp")
   target_link_libraries(fairing_test PRIVATE CGAL::Eigen3_support)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp")
