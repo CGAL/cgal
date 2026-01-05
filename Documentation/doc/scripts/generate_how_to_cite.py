@@ -244,7 +244,7 @@ def protect_accentuated_letters(authors):
         stderr.write(
             "WARNING: a non-ASCII character has been found in author string "
             "for bibtex (probably a non-handled accentuated letter)."
-            "Check the new package added and update the function "
+            " Check the new package added and update the function "
             "protect_accentuated_letters in "
             "Documentation/scripts/generate_how_to_cite.py\n\n"
         )
@@ -321,18 +321,16 @@ def main():
                             else:
                                 cite_dict[bib] = pkg
                             continue
-                assert len(bib) > 0, "Did you forget a \\cgalPkgBib{} in %r?" % filename
+                assert len(bib) > 0, f"Did you forget a \\cgalPkgBib{{}} in {filename!r}?"
                 assert len(authors) > 0, (
-                    "Did you forget a \\cgalPkgAuthors{} in %r?" % filename
+                    f"Did you forget a \\cgalPkgAuthors{{}} in {filename!r}?"
                 )
                 assert len(anchor) > 0, (
-                    "Did you forget the anchor in \\cgalPkgDescriptionBegin{} in %r?"
-                    % filename
+                    f"Did you forget the anchor in \\cgalPkgDescriptionBegin{{}} in {filename!r}?"
                 )
                 assert not found_double, (
-                    f"""Multiple use of citation name '{bib}' package '{pkg}'
-                    first occurrence package '{cite_dict[bib]}'
-                    """
+                    f"Multiple use of citation name '{bib}' package '{pkg}'\n"
+                    f"first occurrence package '{cite_dict[bib]}'"
                 )
                 result_txt += gen_txt_entry(title, authors, bib, anchor, k)
                 # convert title and author to bibtex format
