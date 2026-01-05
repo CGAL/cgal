@@ -501,7 +501,7 @@ property tags such as `face_index_t` and `vertex_point_t`.
 
 We further add <em>dynamic properties</em> that enable the user
 to add properties to vertices, halfedges, edges, and faces on the fly.
-The lifetime of a dynamic property is bound to the lifetime
+The lifetime of a  is bound to the lifetime
 of the property map: reference counting is used to delete the property
 when no map refers to it.
 
@@ -515,7 +515,12 @@ default is provided it must be default constructible.
 As for ordinary properties, the function `%get()` is overloaded and
 serves for retrieving a property map for a given graph and dynamic
 property tag, as well as for retrieving a value for a given key and
-property map. The default value is provided as third parameter.
+property map. Note that `%get()` only works directly for property tags corresponding
+to internal property maps provided by the graph type. If a graph does
+not store a given property internally (for example
+`boost::vertex_point_t`), users must explicitly attach a dynamic
+property map, such as an associative property map, before accessing it.
+ The default value is provided as third parameter.
 
 The following example shows how to attach a `string` property to vertices and
 a `double` value to the halfedges of a graph.
