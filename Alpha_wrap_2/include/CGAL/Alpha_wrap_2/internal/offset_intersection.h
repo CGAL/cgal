@@ -87,8 +87,6 @@ private:
     std::cout << "Sphere march between " << s << " and " << t << std::endl;
 #endif
 
-    CGAL_precondition(s != t);
-
     Point_2 current_pt = s;
     Point_2 closest_point = dist_oracle.tree.closest_point(current_pt);
     FT current_dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
@@ -136,8 +134,6 @@ private:
                                 const Point_2& t,
                                 Point_2& output_pt)
   {
-    CGAL_precondition(s != t);
-
     // Initial evaluation at s
     Point_2 closest_point = dist_oracle.tree.closest_point(s);
     FT initial_dist = approximate_sqrt(squared_distance(s, closest_point)) - offset;
