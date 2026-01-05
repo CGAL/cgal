@@ -47,6 +47,7 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/iterator.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/tags.h>
 #include <CGAL/Triangulation_utils_3.h>
