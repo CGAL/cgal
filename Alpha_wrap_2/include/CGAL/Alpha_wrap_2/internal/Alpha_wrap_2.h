@@ -46,7 +46,6 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_2.h>
 
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -163,17 +162,11 @@ public:
   using Disk_2 = typename Geom_traits::Disk_2;
   using Iso_rectangle_2 = typename Geom_traits::Iso_rectangle_2;
 
-  using SC = Simple_cartesian<double>;
-  using SC_Point_2 = SC::Point_2;
-  using SC_Vector_2 = SC::Vector_2;
-  using SC_Iso_rectangle_2 = SC::Iso_rectangle_2;
-  using SC2GT = Cartesian_converter<SC, Geom_traits>;
-
   using Seeds = std::vector<Point_2>;
 
 protected:
   Oracle m_oracle;
-  SC_Iso_rectangle_2 m_bbox;
+  CGAL::Bbox_2 m_bbox;
 
   FT m_alpha = FT(-1), m_sq_alpha = FT(-1);
   FT m_offset = FT(-1), m_sq_offset = FT(-1);
@@ -403,31 +396,12 @@ public:
   }
 
   // This function is public only because it is used in the tests
-  SC_Iso_rectangle_2 construct_bbox(const double offset)
+  Bbox_2 construct_bbox(const double offset)
   {
-    // Input axis-aligned bounding box
-    SC_Iso_rectangle_2 bbox = m_oracle.bbox();
-    const SC_Point_2 bbox_centroid = midpoint((bbox.min)(), (bbox.max)());
-
-    // Scale a bit to create the initial points not too close to the input
-    double scaling = 1.2;
-    CGAL::Aff_transformation_2<SC> scale(SCALING, scaling);
-    bbox = SC_Iso_rectangle_2(scale.transform((bbox.min)()), scale.transform((bbox.max)()));
-
-    // Translate bbox back to initial centroid
-    const SC_Point_2 bbox_transformed_centroid = midpoint((bbox.min)(), (bbox.max)());
-    const SC_Vector_2 diff_centroid = bbox_centroid - bbox_transformed_centroid;
-    CGAL::Aff_transformation_2<SC> centroid_translate(TRANSLATION, diff_centroid);
-    bbox = SC_Iso_rectangle_2(centroid_translate.transform((bbox.min)()),
-                           centroid_translate.transform((bbox.max)()));
-
-    // Add the offset
-    SC_Vector_2 offset_ext = std::sqrt(2.) * offset * SC_Vector_2(1, 1);
-    CGAL::Aff_transformation_2<SC> translate_m(TRANSLATION, - offset_ext);
-    CGAL::Aff_transformation_2<SC> translate_M(TRANSLATION,   offset_ext);
-    bbox = SC_Iso_rectangle_2(translate_m.transform((bbox.min)()), translate_M.transform((bbox.max)()));
-
-    return bbox;
+    Bbox_2 bbox = m_oracle.bbox();
+    bbox.scale(1.2);
+    return { bbox.xmin() - offset, bbox.ymin() - offset,
+             bbox.xmax() + offset, bbox.ymax() + offset };
   }
 
 private:
@@ -448,16 +422,28 @@ private:
   // Adjust the bbox & insert its corners to construct the starting triangulation
   void insert_bbox_corners()
   {
-    m_bbox = construct_bbox(CGAL::to_double(m_offset));
-
 #ifdef CGAL_AW2_DEBUG_INITIALIZATION
     std::cout << "Insert Bbox vertices" << std::endl;
 #endif
 
+    // @fixme should the scaled bbox be stored?
+    m_bbox = construct_bbox(CGAL::to_double(m_offset));
+    std::array<std::pair<double, double>, 4> corner_coords
+      = CGAL::make_array(std::make_pair(m_bbox.xmin(), m_bbox.ymin()),
+                         std::make_pair(m_bbox.xmax(), m_bbox.ymin()),
+                         std::make_pair(m_bbox.xmax(), m_bbox.ymax()),
+                         std::make_pair(m_bbox.xmin(), m_bbox.ymax()));
+
+    NT_converter<double, FT> from_double;
+    typename Geom_traits::Construct_point_2 point = geom_traits().construct_point_2_object();
+
     // insert in dt the four corner vertices of the input loose bounding box
     for(int i=0; i<4; ++i)
     {
-      const Point_2 bp = SC2GT()(m_bbox.vertex(i));
+      const FT x = from_double(corner_coords[i].first);
+      const FT y = from_double(corner_coords[i].second);
+
+      const Point_2 bp = point(x, y);
       Vertex_handle bv = m_tr.insert(bp);
 #ifdef CGAL_AW2_DEBUG_INITIALIZATION
       std::cout << "\t" << bp << std::endl;
