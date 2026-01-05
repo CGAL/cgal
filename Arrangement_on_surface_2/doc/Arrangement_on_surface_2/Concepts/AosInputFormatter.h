@@ -142,7 +142,7 @@ public:
    */
   void read_outer_ccbs_begin();
 
-  /*! reads a message indicating the end of  the container of outer CCBs of
+  /*! reads a message indicating the end of the container of outer CCBs of
    * the current face.
    */
   void read_outer_ccbs_end();
