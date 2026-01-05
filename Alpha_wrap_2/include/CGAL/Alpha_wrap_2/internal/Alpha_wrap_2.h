@@ -976,7 +976,7 @@ private:
 
       Vector_2 unit = vector(closest_pt, neighbor_cc);
 
-      unit = scale(unit, m_offset / approximate_sqrt(geom_traits().compute_squared_length_2_object()(unit)));
+      unit = scale(unit, m_offset / approximate_sqrt(geom_traits().compute_squared_distance_2_object()(closest_pt, neighbor_cc)));
       steiner_point = translate(closest_pt, unit);
 
 #ifdef CGAL_AW2_DEBUG_STEINER_COMPUTATION
