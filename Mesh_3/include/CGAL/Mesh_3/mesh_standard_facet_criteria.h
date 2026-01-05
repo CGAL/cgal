@@ -540,10 +540,7 @@ private:
   bool use_adjacency_check_;
 
 public:
-  Facet_on_same_surface_criterion()
-    : use_adjacency_check_(false) {}
-
-  Facet_on_same_surface_criterion(bool use_adj)
+  Facet_on_same_surface_criterion(bool use_adj = false)
     : use_adjacency_check_(use_adj) {}
 
   virtual ~Facet_on_same_surface_criterion() {}
@@ -614,17 +611,14 @@ protected:
       }
     }
 
-    if (!use_adjacency_check_)
-      return Is_bad();
-
-    if (!facet_is_adjacent_on_same_patch(tr, f))
+    if (use_adjacency_check_ && !facet_is_adjacent_on_same_patch(tr, f))
       return Is_bad(Quality(1));
 
     return Is_bad();
   }
 
-  private:
-    bool facet_is_adjacent_on_same_patch(const Tr& tr, const Facet& f) const;
+private:
+  bool facet_is_adjacent_on_same_patch(const Tr& tr, const Facet& f) const;
 
 }; // end class Facet_on_same_surface_criterion
 
