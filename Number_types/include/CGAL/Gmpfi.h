@@ -373,7 +373,9 @@ struct scalar_score_coeff_op<CGAL::Gmpfi> {
 
     // Kept explicit on purpose to avoid accidental implicit conversions
     // from integers, which could fabricate pivot scores.
-    explicit result_type(int c): category(c), tie_breaker(0) {}
+    explicit result_type(int c): category(c), tie_breaker(0) {
+      CGAL_assertion(c == 0);
+    }
     result_type(int c, const CGAL::Gmpfr& t): category(c), tie_breaker(t) {}
 
     // Lexicographical ordering:
@@ -416,8 +418,7 @@ struct scalar_score_coeff_op<CGAL::Gmpfi> {
     // Tie-Breaker: Interval Width
     // Eigen will pick the tightest interval (smallest width) to minimize
     // error propagation.
-    CGAL::Gmpfr width = x.sup() - x.inf();
-    return result_type(cat, -width);
+    return result_type(cat, x.inf() - x.sup());
   }
 };
 
