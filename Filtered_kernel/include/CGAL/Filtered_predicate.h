@@ -13,12 +13,18 @@
 #ifndef CGAL_FILTERED_PREDICATE_H
 #define CGAL_FILTERED_PREDICATE_H
 
-#include <string>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/config.h>
+#include <CGAL/FPU.h>
 #include <CGAL/Interval_nt.h>
-#include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
+#include <CGAL/Uncertain.h>
 
+#if ! defined(CGAL_EPICK_NO_INTERVALS) && defined(CGAL_PROFILE)
+#  include <string>
+#endif
 #include <type_traits>
 
 namespace CGAL {

@@ -14,6 +14,7 @@
 #ifndef CGAL_EXCEPTIONS_H
 #define CGAL_EXCEPTIONS_H
 
+#include <exception>
 #include <stdexcept>
 #include <string>
 

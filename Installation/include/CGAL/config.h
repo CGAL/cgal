@@ -135,6 +135,10 @@
 #  include <CGAL/Testsuite/vc_debug_hook.h>
 #endif
 
+#ifndef CGAL_NO_GDB_AUTOLOAD
+#  include <CGAL/gdb_autoload.h>
+#endif
+
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
 //----------------------------------------------------------------------//
@@ -549,6 +553,11 @@ namespace cpp11{
 #endif // not BOOST_MSVC
 /// @}
 #include <CGAL/license/lgpl.h>
+
+#ifdef __STDC_LIB_EXT1__
+#  define __STDC_WANT_LIB_EXT1__ 1
+#  include <stdlib.h> // for getenv_s
+#endif
 
 //----------------------------------------------------------------------//
 //  Function to define data directory
