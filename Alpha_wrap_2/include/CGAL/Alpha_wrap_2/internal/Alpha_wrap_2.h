@@ -19,19 +19,17 @@
 
 // @fixme yesterday
 // - demo can't wrap from pure drawing
-
-// @todo yesterday
-// - submit feature
+// - Fix initialize_with_cavities(): do not ignore seeds outside the bbox, just don't insert them
+//   in the triangulation. Mirror to 3D.
 
 // @todo
-// - continue adding tests (manifoldness)
-// - Add initialize_with_cavities
+// - Handle degerate inputs?
+// - add remaining tests (manifoldness + cavity)
 // - test multi polygon island representation (use seeds)
 
 // @todo long
 // - add support for .xy, .xyl, .pwn, ... inputs?
 // - bench sorted/unsorted queues
-// - check what could be factorized with AW3 (e.g. oracle base?)
 
 #include <CGAL/license/Alpha_wrap_2.h>
 
