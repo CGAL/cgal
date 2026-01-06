@@ -78,6 +78,71 @@ class Point3Printer(CGALPointPrinterBase):
         super().__init__(val, "Point_3")
 
 
+class UniqueHashMapPrinter:
+    """Pretty printer for CGAL::Unique_hash_map<Key, Data, ...>"""
+
+    class _iter:
+        def __init__(self, m_map):
+            self._table = m_map['table']
+            self._freelist = m_map['freelist']
+            self._table_end = int(m_map['table_end'])
+            try:
+                self._nullkey = (1 << (gdb.lookup_type('size_t').sizeof * 8)) - 1
+            except gdb.error:
+                self._nullkey = (1 << (gdb.lookup_type('unsigned long').sizeof * 8)) - 1
+            self._index = 0
+            self._item = self._table
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            index = self._index
+            self._index += 1
+            if(self._item == self._freelist):
+                raise StopIteration
+            key = self._item['k']
+            if int(key) == self._nullkey:
+                self._item = self._item + 1
+                return self.__next__()
+            elt = self._item.dereference()
+            self._item = self._item + 1
+            return ('[%d]' % index, elt)
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        try:
+            # Get the internal chained_map
+            m_map = self.val['m_map']
+            
+            # Get the size and default value
+            if m_map['table']:
+                table_size = int(m_map['table_size'])
+                default_val = m_map['def']
+                return f"Unique_hash_map<...> with {table_size} buckets (default={default_val})"
+            else:
+                return "Unique_hash_map<...> (empty)"
+        except (KeyError, ValueError, gdb.error) as e:
+            return f"Unique_hash_map<...> <error: {e}>"
+
+    def children(self):
+        try:
+            m_map = self.val['m_map']
+            
+            if not m_map['table']:
+                return iter(())
+
+            return self._iter(m_map)
+
+        except (KeyError, ValueError, gdb.error) as e:
+            return f"Unique_hash_map<...> <error: {e}>"
+
+    def display_hint(self):
+        return 'array'
+
+
 def cgal_lookup_function(val):
     """Lookup function to register CGAL pretty printers"""
     typename = str(val.type.strip_typedefs())
@@ -89,6 +154,10 @@ def cgal_lookup_function(val):
     # Match CGAL::Point_3<R_>
     if re.match(r'^CGAL::Point_3<.*>$', typename):
         return Point3Printer(val)
+
+    # Match CGAL::Unique_hash_map<Key, Data, ...>
+    if re.match(r'^CGAL::Unique_hash_map<.*>$', typename):
+        return UniqueHashMapPrinter(val)
 
     return None
 
