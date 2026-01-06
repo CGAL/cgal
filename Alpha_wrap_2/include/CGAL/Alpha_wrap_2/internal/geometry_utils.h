@@ -19,27 +19,9 @@
 
 #include <CGAL/license/Alpha_wrap_2.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-
 namespace CGAL {
 namespace Alpha_wraps_2 {
 namespace internal {
-
-template <typename K>
-struct Orientation_of_circumcenter
-{
-  typedef typename K::Point_2 Point_2;
-
-  typedef Orientation result_type;
-
-  Orientation operator()(const Point_2& p, const Point_2& q,
-                         const Point_2& ccp, const Point_2& ccq, const Point_2& ccr) const
-  {
-    Point_2 cc = circumcenter(ccp, ccq, ccr);
-    return orientation(p, q, cc);
-  }
-};
 
 template <typename Tr>
 bool
@@ -48,30 +30,19 @@ less_squared_radius_of_min_empty_circle(typename Tr::Geom_traits::FT sq_alpha,
                                         const Tr& tr)
 {
   using Face_handle = typename Tr::Face_handle;
-  using Point = typename Tr::Point;
-
-  using CK = typename Tr::Geom_traits;
-  using Exact_kernel = typename Exact_kernel_selector<CK>::Exact_kernel;
-  using Approximate_kernel = Simple_cartesian<Interval_nt_advanced>;
-  using C2A = Cartesian_converter<CK, Approximate_kernel>;
-  using C2E = typename Exact_kernel_selector<CK>::C2E;
-
-  using Orientation_of_circumcenter = Filtered_predicate<Orientation_of_circumcenter<Exact_kernel>,
-                                                         Orientation_of_circumcenter<Approximate_kernel>,
-                                                         C2E, C2A>;
-
-  Orientation_of_circumcenter orientation_of_circumcenter;
 
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
   std::cout << "Checking for traversability of edge" << std::endl;
 #endif
 
+  auto angle = tr.geom_traits().angle_2_object();
+
   const Face_handle f = e.first;
   const int ic = e.second;
   const Face_handle n = f->neighbor(ic);
 
-  const Point& p1 = tr.point(f, Tr::ccw(ic));
-  const Point& p2 = tr.point(f, Tr::cw(ic));
+  decltype(auto) p1 = tr.point(f, Tr::ccw(ic));
+  decltype(auto) p2 = tr.point(f, Tr::cw(ic));
 
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
   std::cout << "diametrical squared radius: " << squared_radius(p1, p2) << std::endl;
@@ -86,47 +57,52 @@ less_squared_radius_of_min_empty_circle(typename Tr::Geom_traits::FT sq_alpha,
 #endif
     CGAL_assertion(!tr.is_infinite(f));
 
-    Orientation ori = orientation_of_circumcenter(p1, p2,
-                                                  tr.point(f, 0), tr.point(f, 1), tr.point(f, 2));
+    // In 2D, we can use the angle at the opposite corner to determine
+    // if the circumcenter is within the circumcircle.
+    const Angle ang = angle(p2, tr.point(f, ic), p1);
 
-    if(ori == POSITIVE)
+    if(ang != OBTUSE)
     {
-      Comparison_result cr = compare_squared_distance(p1, p2, 4 * sq_alpha);
-      return cr == LARGER;
+      // the neighbor is infinite, the CC is within the facet, thus the dual edge crosses the gate
+      // and the min empty circle is the diametral circle
+      const Comparison_result cr = compare_squared_distance(p1, p2, 4 * sq_alpha);
+      return (cr == LARGER);
     }
     else
     {
-      Comparison_result cr = compare_squared_radius(tr.point(f, 0), tr.point(f, 1), tr.point(f, 2),
-                                                    sq_alpha);
-      return cr == LARGER;
+      const Comparison_result cr = compare_squared_radius(tr.point(f, 0), tr.point(f, 1), tr.point(f, 2),
+                                                          sq_alpha);
+      return (cr == LARGER);
     }
   }
 
   if(tr.is_infinite(f))
   {
-    Orientation ori = orientation_of_circumcenter(p1, p2,
-                                                  tr.point(n, 0), tr.point(n, 1), tr.point(n, 2));
+    const Angle ang = angle(p1, tr.point(n, tr.mirror_index(f, ic)), p2);
 
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
-    std::cout << "Face 'f' is infinite; Orientation: " << ori << std::endl;
+    std::cout << "Face 'f' is infinite; Angle: " << ang << std::endl;
 #endif
 
-    if(ori == NEGATIVE)
+    if(ang != OBTUSE)
     {
-      Comparison_result cr = compare_squared_distance(p1, p2, 4 * sq_alpha);
-      return cr == LARGER;
+      const Comparison_result cr = compare_squared_distance(p1, p2, 4 * sq_alpha);
+      return (cr == LARGER);
     }
     else
     {
-      Comparison_result cr = compare_squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2),
-                                                    sq_alpha);
-      return cr == LARGER;
+      const Comparison_result cr = compare_squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2),
+                                                          sq_alpha);
+      return (cr == LARGER);
     }
   }
 
   // both f and n are finite
-  if(orientation_of_circumcenter(p1, p2, tr.point(f, 0), tr.point(f, 1), tr.point(f, 2)) !=
-     orientation_of_circumcenter(p1, p2, tr.point(n, 0), tr.point(n, 1), tr.point(n, 2)))
+  const Angle ang_f = angle(p2, tr.point(f, ic), p1);
+  const Angle ang_n = angle(p1, tr.point(n, tr.mirror_index(f, ic)), p2);
+  CGAL_assertion(ang_f != OBTUSE || ang_n != OBTUSE);
+
+  if(ang_f != OBTUSE && ang_n != OBTUSE)
   {
     Comparison_result cr = compare_squared_distance(p1, p2, 4 * sq_alpha);
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
@@ -146,8 +122,8 @@ less_squared_radius_of_min_empty_circle(typename Tr::Geom_traits::FT sq_alpha,
                                                                               tr.point(f, 2))
               << " sq alpha " << sq_alpha << std::endl;
     std::cout << "cr = " << cr << std::endl; // @tmp
-    std::cout << "check = " << CGAL::compare(typename Tr::Geom_traits().compute_squared_radius_2_object()(tr.point(f, 0), tr.point(f, 1),
-                        tr.point(f, 2)), sq_alpha) << std::endl;
+    std::cout << "check = " << CGAL::compare(typename Tr::Geom_traits().compute_squared_radius_2_object()(
+                                 tr.point(f, 0), tr.point(f, 1), tr.point(f, 2)), sq_alpha) << std::endl;
 #endif
 
     if(cr != LARGER)
@@ -157,12 +133,12 @@ less_squared_radius_of_min_empty_circle(typename Tr::Geom_traits::FT sq_alpha,
                                 sq_alpha);
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
     std::cout << "dual does not cross the face; CR(n): "
-              << typename Tr::Geom_traits().compute_squared_radius_2_object()(tr.point(n, 0), tr.point(n, 1),
-                                                                              tr.point(n, 2))
+              << typename Tr::Geom_traits().compute_squared_radius_2_object()(
+                   tr.point(n, 0), tr.point(n, 1), tr.point(n, 2))
               << " sq alpha " << sq_alpha << std::endl;
     std::cout << "cr = " << cr << std::endl; // @tmp
-    std::cout << "check = " << CGAL::compare(typename Tr::Geom_traits().compute_squared_radius_2_object()(tr.point(n, 0), tr.point(n, 1),
-    tr.point(n, 2)), sq_alpha) << std::endl;
+    std::cout << "check = " << CGAL::compare(typename Tr::Geom_traits().compute_squared_radius_2_object()(
+                                 tr.point(n, 0), tr.point(n, 1), tr.point(n, 2)), sq_alpha) << std::endl;
 #endif
 
     return cr == LARGER;
@@ -175,21 +151,9 @@ smallest_squared_radius_2(const typename Tr::Edge& e,
                           const Tr& tr)
 {
   using Face_handle = typename Tr::Face_handle;
-  using Point = typename Tr::Point;
   using FT = typename Tr::Geom_traits::FT;
 
-  using CK = typename Tr::Geom_traits;
-  using Exact_kernel = typename Exact_kernel_selector<CK>::Exact_kernel;
-  using Approximate_kernel = Simple_cartesian<Interval_nt_advanced>;
-  using C2A = Cartesian_converter<CK, Approximate_kernel>;
-  using C2E = typename Exact_kernel_selector<CK>::C2E;
-
-  using Orientation_of_circumcenter = Filtered_predicate<Orientation_of_circumcenter<Exact_kernel>,
-                                                         Orientation_of_circumcenter<Approximate_kernel>,
-                                                         C2E, C2A>;
-
-  Orientation_of_circumcenter orientation_of_circumcenter;
-
+  auto angle = tr.geom_traits().angle_2_object();
   auto squared_radius = tr.geom_traits().compute_squared_radius_2_object();
 
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
@@ -202,8 +166,8 @@ smallest_squared_radius_2(const typename Tr::Edge& e,
   const int ic = e.second;
   const Face_handle n = f->neighbor(ic);
 
-  const Point& p1 = tr.point(f, Tr::ccw(ic));
-  const Point& p2 = tr.point(f, Tr::cw(ic));
+  decltype(auto) p1 = tr.point(f, Tr::ccw(ic));
+  decltype(auto) p2 = tr.point(f, Tr::cw(ic));
 
   // This is not actually possible in the context of alpha wrapping, but keeping it for genericity
   // and because it does not cost anything.
@@ -211,9 +175,9 @@ smallest_squared_radius_2(const typename Tr::Edge& e,
   {
     CGAL_assertion(!tr.is_infinite(f));
 
-    Orientation ori = orientation_of_circumcenter(p1, p2,
-                                                  tr.point(f, 0), tr.point(f, 1), tr.point(f, 2));
-    if(ori == POSITIVE)
+    const Angle ang = angle(p2, tr.point(f, ic), p1);
+
+    if(ang != OBTUSE)
       return squared_radius(p1, p2);
     else
       return squared_radius(tr.point(f, 0), tr.point(f, 1), tr.point(f, 2));
@@ -221,22 +185,24 @@ smallest_squared_radius_2(const typename Tr::Edge& e,
 
   if(tr.is_infinite(f))
   {
-    Orientation ori = orientation_of_circumcenter(p1, p2,
-                                                  tr.point(n, 0), tr.point(n, 1), tr.point(n, 2));
+    const Angle ang = angle(p1, tr.point(n, tr.mirror_index(f, ic)), p2);
 
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
-    std::cout << "Face 'f' is infinite; Orientation: " << ori << std::endl;
+    std::cout << "Face 'f' is infinite; Angle: " << ang << std::endl;
 #endif
 
-    if(ori == NEGATIVE)
+    if(ang != OBTUSE)
       return squared_radius(p1, p2);
     else
       return squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2));
   }
 
   // both f and n are finite
-  if(orientation_of_circumcenter(p1, p2, tr.point(f, 0), tr.point(f, 1), tr.point(f, 2)) !=
-     orientation_of_circumcenter(p1, p2, tr.point(n, 0), tr.point(n, 1), tr.point(n, 2)))
+  const Angle ang_f = angle(p2, tr.point(f, ic), p1);
+  const Angle ang_n = angle(p1, tr.point(n, tr.mirror_index(f, ic)), p2);
+  CGAL_assertion(ang_f != OBTUSE || ang_n != OBTUSE);
+
+  if(ang_f != OBTUSE && ang_n != OBTUSE)
   {
 #ifdef CGAL_AW2_DEBUG_TRAVERSABILITY
     std::cout << "dual crosses the face; CR: " << squared_radius(p1, p2) << std::endl;
