@@ -68,7 +68,7 @@ make_las_point_reader(PointMap point_map);
    that can for example be a `std::array<unsigned short,
    4>`). In that case, the second element of the tuple should be a
    functor that constructs the value type of `PropertyMap` from N
-   objects of of type `LAS_property::Tag::type`.
+   objects of type `LAS_property::Tag::type`.
 
    The %LAS standard defines a fixed set of properties accessible
    through the following tag classes:

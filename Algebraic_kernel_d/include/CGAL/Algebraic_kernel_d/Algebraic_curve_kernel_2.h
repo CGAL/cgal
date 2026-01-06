@@ -1806,7 +1806,7 @@ public:
 #if CGAL_AK_ENABLE_DEPRECATED_INTERFACE
 
     /*!
-     * \brief computes the x-critical points of of a curve/a polynomial
+     * \brief computes the x-critical points of a curve/a polynomial
      *
      * An x-critical point (x,y) of \c f (or its induced curve)
      * satisfies f(x,y) = f_y(x,y) = 0,
@@ -1885,7 +1885,7 @@ public:
         x_critical_points_2_object);
 
     /*!
-     * \brief computes the y-critical points of of a curve/a polynomial
+     * \brief computes the y-critical points of a curve/a polynomial
      *
      * An y-critical point (x,y) of \c f (or its induced curve)
      * satisfies f(x,y) = f_x(x,y) = 0,
