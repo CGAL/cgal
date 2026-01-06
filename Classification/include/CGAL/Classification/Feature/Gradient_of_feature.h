@@ -16,9 +16,7 @@
 
 #include <vector>
 
-// Experimental feature, not used officially and not documented yet
-
-/// \cond SKIP_IN_MANUAL
+// Experimental feature
 
 namespace CGAL {
 
@@ -29,7 +27,9 @@ namespace Feature {
   /*!
     \ingroup PkgClassificationFeatures
 
-    TODO
+    \brief Feature that computes the gradient of another feature.
+
+    The gradient is estimated based on the local neighborhood of each item.
   */
 template <typename InputRange, typename ItemMap, typename NeighborQuery>
 class Gradient_of_feature : public Feature_base
@@ -41,7 +41,12 @@ class Gradient_of_feature : public Feature_base
 
 public:
   /*!
-    TODO
+    \brief Constructs the feature.
+
+    \param input the input range.
+    \param map the property map.
+    \param feature the feature whose gradient is computed.
+    \param neighbor_query the neighbor query used to access the local neighborhood.
   */
   Gradient_of_feature (const InputRange& input,
                        ItemMap map,
@@ -53,7 +58,7 @@ public:
     oss << "gradient_of_" << feature->name();
     this->set_name (oss.str());
   }
-  /// \cond SKIP_IN_MANUAL
+  
   virtual float value (std::size_t pt_index)
   {
     std::vector<std::size_t> neighborhood;
@@ -69,7 +74,6 @@ public:
 
     return (m_feature->value (pt_index) - mean / neighborhood.size());
   }
-  /// \endcond
 };
 
 } // namespace Feature
@@ -77,7 +81,5 @@ public:
 } // namespace Classification
 
 } // namespace CGAL
-
-/// \endcond
 
 #endif // CGAL_CLASSIFICATION_GRADIENT_OF_FEATURE_H
