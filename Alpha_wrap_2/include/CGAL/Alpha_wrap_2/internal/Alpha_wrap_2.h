@@ -502,8 +502,6 @@ private:
 
     CGAL_precondition(!m_seeds.empty());
 
-    Iso_rectangle_2 bbox = SC2GT()(m_bbox);
-
     std::vector<Vertex_handle> seed_vs;
     for(const Point_2& seed_p : m_seeds)
     {
@@ -555,8 +553,6 @@ private:
 #ifdef CGAL_AW2_DEBUG_PP
         std::cout << seed_neighbor_p << std::endl;
 #endif
-        if(bbox.has_on_unbounded_side(seed_neighbor_p))
-          continue;
 
         Vertex_handle hex_v = m_tr.insert(seed_neighbor_p, seed_v->face() /*hint*/);
         hex_v->type() = AW2i::Vertex_type::SEED_VERTEX;
