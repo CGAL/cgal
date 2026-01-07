@@ -126,6 +126,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-constraint-hierarchy: debug constraint hierarchy operations
   --debug-geometric-errors: debug geometric error handling
   --debug-polygon-insertion: debug polygon insertion process
+  --debug-restore-faces: debug face restoration process
 
   --use-finite-edges-map: use a hash map for finite edges (default: false)
   --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
@@ -168,6 +169,7 @@ struct CDT_options
   bool        debug_constraint_hierarchy          = false;
   bool        debug_geometric_errors              = false;
   bool        debug_polygon_insertion             = false;
+  bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
@@ -265,6 +267,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       debug_geometric_errors              = true;
     } else if(arg == "--debug-polygon-insertion"sv) {
       debug_polygon_insertion             = true;
+    } else if(arg == "--debug-restore-faces"sv) {
+      debug_restore_faces                  = true;
     } else if(arg == "--use-finite-edges-map"sv) {
       use_finite_edges_map                = true;
     } else if(arg == "--no-use-epeck-for-normals"sv) {
@@ -314,6 +318,7 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);
+  cdt_debug.restore_faces(options.debug_restore_faces);
   cdt_debug.copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
   cdt_debug.use_finite_edges_map(options.use_finite_edges_map);
   cdt_debug.display_statistics(!options.quiet);

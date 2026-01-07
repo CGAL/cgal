@@ -89,6 +89,7 @@ struct Debug_options {
     debug_constraint_hierarchy,
     debug_geometric_errors,
     debug_polygon_insertion,
+    debug_restore_faces,
     display_statistics,
     use_epeck_for_normals,
     use_epeck_for_Steiner_points,
@@ -142,6 +143,9 @@ struct Debug_options {
 
   bool polygon_insertion() const { return flags[static_cast<int>(Flags::debug_polygon_insertion)]; }
   void polygon_insertion(bool b) { flags.set(static_cast<int>(Flags::debug_polygon_insertion), b); }
+
+  bool restore_faces() const { return flags[static_cast<int>(Flags::debug_restore_faces)]; }
+  void restore_faces(bool b) { flags.set(static_cast<int>(Flags::debug_restore_faces), b); }
 
   bool display_statistics() const { return flags[static_cast<int>(Flags::display_statistics)]; }
   void display_statistics(bool b) { flags.set(static_cast<int>(Flags::display_statistics), b); }

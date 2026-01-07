@@ -3947,7 +3947,9 @@ private:
     CDT_2& non_const_cdt_2 = this->non_const_face_cdt_2(face_index);
     const CDT_2& cdt_2 = non_const_cdt_2;
     if constexpr (cdt_3_can_use_cxx20_format())
-      if(this->debug().copy_triangulation_into_hole() || this->debug().verbose_special_cases()) {
+      if(this->debug().copy_triangulation_into_hole() || this->debug().verbose_special_cases() ||
+         this->debug().restore_faces())
+      {
         std::cerr << cdt_3_format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
       }
     for(const auto& edge : cdt_2.finite_edges()) {
