@@ -54,6 +54,28 @@
 namespace CGAL {
 namespace internal {
 
+template <class Base, class User>
+struct Is_valid_compose
+{
+  Is_valid_compose(const Base& base, const User& user)
+    : base(base)
+    , user(user)
+  {}
+
+  template<class Point_3>
+  bool operator()(const std::vector<Point_3>& pts,
+                  int v0, int v1, int v2) const
+  {
+    if (user(pts, v0, v1, v2))
+      return base(pts, v0, v1, v2);
+    return false;
+  }
+
+  const Base& base;
+  const User& user;
+};
+
+
 /************************************************************************
  * Lookup tables
  ************************************************************************/
