@@ -262,8 +262,9 @@ struct Initialization_options
               >
     Generator_ref(Generator&& generator)
       : generator_(std::addressof(generator))
-      , call_( [](void* g, Point_output_function_iterator oit, const int n) {
+      , call_( [](void* g, auto oit, const int n) {
                  using Real_generator = CGAL::cpp20::remove_cvref_t<Generator>;
+                 using Point_output_function_iterator = CGAL::cpp20::remove_cvref_t<decltype(oit)>;
                  auto* real_g = static_cast<Real_generator*>(g);
                  if constexpr (std::is_invocable_v<Real_generator, Point_output_function_iterator>) {
                    if( n < 0 )
