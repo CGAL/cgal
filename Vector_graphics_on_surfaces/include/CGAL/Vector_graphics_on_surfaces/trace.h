@@ -88,6 +88,98 @@ trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<Triang
   return result;
 }
 
+
+/*!
+ *
+ *
+ *  Doc Me
+ *
+ */
+template <class K>
+struct Default_placement
+{
+  using Vector_2 = typename K::Vector_2;
+  using Point_2 = typename K::Point_2;
+  using FT = typename K::FT;
+
+  void register_polygons(const std::vector<std::vector<Point_2>>& polygons)
+  {
+    m_polygons = polygons;
+    m_polygon_bboxes.reserve(polygons.size());
+
+    for (const std::vector<Point_2>& polygon : polygons)
+    {
+      m_polygon_bboxes.push_back( bbox_2(polygon.begin(), polygon.end()) );
+      m_gbox+=m_polygon_bboxes.back();
+    }
+  }
+
+  template <class TriangleMesh, class VPM>
+  CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>
+  operator()(std::size_t pid,
+             const TriangleMesh& tmesh,
+             VPM vpm,
+             const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>& center,
+             const FT& scaling,
+             const Dual_geodesic_solver<typename K::FT>& solver,
+             std::vector<Vector_2>& directions, std::vector<FT>& lens)
+  {
+    using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+    using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    const std::vector<Point_2>& polygon = m_polygons.value().get()[pid];
+
+    Vector_2  initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
+
+    Vector_2 dir( (-m_gbox.xmin()-m_gbox.xmax()+m_polygon_bboxes[pid].xmin()+m_polygon_bboxes[pid].xmax())/2.,
+                  (-m_gbox.ymin()-m_gbox.ymax()+m_polygon_bboxes[pid].ymin()+m_polygon_bboxes[pid].ymax())/2. );
+    std::vector< PMP::Face_location<TriangleMesh, FT> > spath =
+      straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh);
+    PMP::Face_location<TriangleMesh, FT> polygon_center = spath.back();
+
+    // TODO: avoid using the shortest path and directly use the straightest!
+    std::vector<PMP::Edge_location<TriangleMesh, FT>> shortest_path;
+      locally_shortest_path<FT>(center, polygon_center, tmesh, shortest_path, solver);
+
+    // update direction
+    Vector_2 v = initial_dir;
+    for(std::size_t i=0;i<shortest_path.size();++i)
+    {
+      halfedge_descriptor h_curr = halfedge(shortest_path[i].first, tmesh);
+      v = Impl::parallel_transport_f2f(h_curr, v, vpm, tmesh);
+    }
+
+    std::vector<std::pair<FT, FT>> polar_coords =
+      convert_to_polar_coordinates<K>(polygon,
+                                      Point_2((m_polygon_bboxes[pid].xmin()+m_polygon_bboxes[pid].xmax())/2.,
+                                              (m_polygon_bboxes[pid].ymin()+m_polygon_bboxes[pid].ymax())/2.));
+    if (polygon.front()==polygon.back())
+      polar_coords.pop_back();
+
+    double theta = atan2(v.y(),v.x());
+
+    lens.reserve(polar_coords.size());
+    directions.reserve(polar_coords.size());
+
+    for (const std::pair<double, double>& coord : polar_coords)
+    {
+      lens.push_back(scaling * coord.first);
+      directions.emplace_back(std::cos(coord.second+theta), std::sin(coord.second+theta));
+    }
+
+    return polygon_center;
+  }
+
+  std::optional<
+    std::reference_wrapper<
+      const std::vector<std::vector<Point_2>>
+  > > m_polygons;
+
+  std::vector<Bbox_2> m_polygon_bboxes;
+  Bbox_2 m_gbox;
+};
+
 /*!
  * \ingroup VGSFunctions
  * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, where `center` represents the center of the 2D bounding box of the polygons.
@@ -106,30 +198,19 @@ trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<Triang
  * \todo for better rendering we can group polygons to have one center for the same group of polygon (useful for letters that are not simply connected)
  * \todo what if boundary is reached
  */
-template <class K, class TriangleMesh>
+template <class K, class TriangleMesh, class Placement = Default_placement<K> >
 std::vector<std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh,typename K::FT>>>
 trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                         const std::vector<std::vector<typename K::Point_2>>& polygons,
                         const typename K::FT scaling,
                         const TriangleMesh &tmesh,
-                        const Dual_geodesic_solver<typename K::FT>& solver = {})
+                        const Dual_geodesic_solver<typename K::FT>& solver = {},
+                              Placement placement = Placement())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
-
-
-  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
-  std::vector<Bbox_2> polygon_bboxes;
-  polygon_bboxes.reserve(polygons.size());
-  Bbox_2 gbox;
-  for (const std::vector<typename K::Point_2>& polygon : polygons)
-  {
-    polygon_bboxes.push_back( bbox_2(polygon.begin(), polygon.end()) );
-    gbox+=polygon_bboxes.back();
-  }
 
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
   Dual_geodesic_solver<typename K::FT> local_solver;
@@ -140,52 +221,20 @@ trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<Trian
   }
 
   std::vector<std::vector<PMP::Face_location<TriangleMesh,typename K::FT>>> result(polygons.size());
-  typename K::Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
+
+  placement.register_polygons(polygons);
 
   for(std::size_t i=0;i<polygons.size();++i)
   {
-    typename K::Vector_2 dir( (-gbox.xmin()-gbox.xmax()+polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
-                              (-gbox.ymin()-gbox.ymax()+polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2. );
-    std::vector< PMP::Face_location<TriangleMesh, typename K::FT> > spath =
-      straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh);
-    PMP::Face_location<TriangleMesh, typename K::FT> polygon_center = spath.back();
-
-    // TODO: avoid using the shortest path and directly use the straightest!
-    std::vector<PMP::Edge_location<TriangleMesh, typename K::FT>> shortest_path;
-      locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
-
-    // update direction
-    typename K::Vector_2 v = initial_dir;
-    for(std::size_t i=0;i<shortest_path.size();++i)
-    {
-      halfedge_descriptor h_curr = halfedge(shortest_path[i].first, tmesh);
-      v = Impl::parallel_transport_f2f(h_curr, v, vpm, tmesh);
-    }
-
-    std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
-      convert_to_polar_coordinates<K>(polygons[i],
-                                              typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
-                                                                  (polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2.));
-    if (polygons[i].front()==polygons[i].back())
-      polar_coords.pop_back();
-
-    double theta = atan2(v.y(),v.x());
-
     std::vector<typename K::Vector_2> directions;
     std::vector<typename K::FT> lens;
-    lens.reserve(polar_coords.size());
-    directions.reserve(polar_coords.size());
-
-    for (const std::pair<double, double>& coord : polar_coords)
-    {
-      lens.push_back(scaling * coord.first);
-      directions.emplace_back(std::cos(coord.second+theta), std::sin(coord.second+theta));
-    }
+    auto polygon_center = placement(i, tmesh, vpm, center, scaling, *solver_ptr, directions, lens);
     result[i] = trace_geodesic_polygon<K>(polygon_center, directions, lens, tmesh, *solver_ptr);
   }
 
   return result;
 }
+
 
 /*!
  * \ingroup VGSFunctions
