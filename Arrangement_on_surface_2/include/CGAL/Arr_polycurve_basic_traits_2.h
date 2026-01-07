@@ -702,8 +702,8 @@ public:
       const Comparison_result l2r_smaller = SMALLER;
       const Comparison_result l2r_larger = LARGER;
 #else
-      auto cmp_endpints_xy = m_poly_traits.compare_endpoints_xy_2_object();
-      const bool l2r = cmp_endpints_xy(xcv[0]) == SMALLER;
+      auto cmp_endpoints_xy = m_poly_traits.compare_endpoints_xy_2_object();
+      const bool l2r = cmp_endpoints_xy(xcv[0]) == SMALLER;
       const Comparison_result l2r_smaller = l2r ? SMALLER : LARGER;
       const Comparison_result l2r_larger = l2r ? LARGER : SMALLER;
 #endif
