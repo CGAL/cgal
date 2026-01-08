@@ -2194,9 +2194,9 @@ private:
       auto insert_constraint_in_cdt_2 = [&](const auto& va, const auto& vb) {
         if(this->debug().input_faces()) {
           std::cerr << "cdt_2.insert_constraint ("
-                    << tr().point(va->info().vertex_handle_3d)
+                    << IO::oformat(va->info().vertex_handle_3d, with_point_and_info)
                     << " , "
-                    << tr().point(vb->info().vertex_handle_3d)
+                    << IO::oformat(vb->info().vertex_handle_3d, with_point_and_info)
                     << ")\n";
         }
         auto cstr_id = cdt_2.insert_constraint(va, vb);
@@ -3269,7 +3269,7 @@ private:
         std::cerr << "\n";
       }
       std::cerr << "  Vertices:\n";
-      for(const auto& v : original_vertices_of_lower_cavity) {
+      for(const auto& v : std::set(original_vertices_of_lower_cavity.begin(), original_vertices_of_lower_cavity.end())) {
         std::cerr << "    " << IO::oformat(v, with_point_and_info) << "\n";
       }
       std::cerr << "Upper cavity:\n";
@@ -3283,7 +3283,7 @@ private:
         std::cerr << "\n";
       }
       std::cerr << "  Vertices:\n";
-      for(const auto& v : original_vertices_of_upper_cavity) {
+      for(const auto& v : std::set(original_vertices_of_upper_cavity.begin(), original_vertices_of_upper_cavity.end())) {
         std::cerr << "    " << IO::oformat(v, with_point_and_info) << "\n";
       }
     }
@@ -3387,8 +3387,12 @@ private:
       throw Next_region{"missing facet in polygon", fh_region[0]};
     }
 
-    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
-    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_lower_cavity.begin(), cells_of_lower_cavity.end());
+    {
+      std::vector<Cell_handle> all_cells_in_conflict(cells_of_upper_cavity.size() + cells_of_lower_cavity.size());
+      auto it = std::copy(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end(), all_cells_in_conflict.begin());
+      std::copy(cells_of_lower_cavity.begin(), cells_of_lower_cavity.end(), it);
+      insert_in_conflict_visitor.process_cells_in_conflict(all_cells_in_conflict.begin(), all_cells_in_conflict.end());
+    }
 
     if(this->debug().copy_triangulation_into_hole()) {
       std::cerr << "# glu the upper triangulation of the cavity\n";
@@ -3950,6 +3954,7 @@ private:
       if(this->debug().copy_triangulation_into_hole() || this->debug().verbose_special_cases() ||
          this->debug().restore_faces())
       {
+        auto guard_color = CGAL::IO::make_color_guards(CGAL::IO::Ansi_color::Green, std::cerr);
         std::cerr << cdt_3_format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
       }
     for(const auto& edge : cdt_2.finite_edges()) {

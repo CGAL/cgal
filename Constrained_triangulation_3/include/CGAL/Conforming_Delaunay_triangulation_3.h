@@ -52,6 +52,7 @@
 #include <limits>
 #include <optional>
 #include <ostream>
+#include <set>
 #include <sstream>
 #include <stack>
 #include <stdexcept>
@@ -845,6 +846,9 @@ protected:
         std::cerr << "  new vertex " << display_vert(v) << '\n';
       }
       return true;
+    } else if(debug().subconstraints_to_conform()) {
+      std::cerr << "conform_subconstraint>> subconstraint " << display_subcstr(subconstraint)
+                << " is already an edge in the triangulation.\n";
     }
 
     return false;
@@ -1117,9 +1121,16 @@ protected:
     return compute_projected_point_with_threshold(
         start_pt, end_pt, start_pt, end_pt,
         std::forward<LambdaComputer>(lambda_computer),
-        [](auto lambda, const std::optional<Point>&) {
+        [this](auto lambda, const std::optional<Point>&) {
           // Only need lambda for this threshold check
-          return lambda < 0.2 || lambda > 0.8;
+          bool use_midpoint = lambda < 0.2 || lambda > 0.8;
+          if(this->debug().Steiner_points_construction()) {
+            std::cerr << "  lambda = " << lambda << '\n';
+            if(use_midpoint) {
+              std::cerr << "  -> using midpoint instead of projection\n";
+            }
+          }
+          return use_midpoint;
         });
   }
 
@@ -1256,9 +1267,6 @@ protected:
         });
 
     if(debug().Steiner_points_construction()) {
-      const auto vector_a_ref = vector_functor(pa, reference_point);
-      const auto lambda = gt.compute_scalar_product_3_object()(vector_a_ref, vector_ab) / sq_length_functor(vector_ab);
-      std::cerr << "  lambda = " << lambda << '\n';
       std::cerr << "  -> Steiner point: " << result_point << '\n';
     }
     return {exact(result_point), reference_vertex->cell(), reference_vertex};
