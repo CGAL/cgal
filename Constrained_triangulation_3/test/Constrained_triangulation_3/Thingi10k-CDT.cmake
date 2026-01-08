@@ -302,5 +302,5 @@ foreach(thingi_file_name ${thingi10k_max_10k_solid})
   endif()
   get_filename_component(thingi_ID "${thingi_file_name}" NAME_WE)
   CGAL_add_cdt3_test_from_Thingi10k(Thingi10K_${thingi_ID} ${thingi_file_name}
-      TIMEOUT 600 LABELS ${LABELS} ${MY_ONLY_MERGE_FACETS})
+      LABELS ${LABELS} ${MY_ONLY_MERGE_FACETS})
 endforeach()
