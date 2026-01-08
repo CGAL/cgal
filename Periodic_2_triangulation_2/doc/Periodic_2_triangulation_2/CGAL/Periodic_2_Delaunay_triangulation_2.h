@@ -13,7 +13,7 @@ Delaunay triangulation in two-dimensional periodic space.
 \cgalHeading{Parameters}
 
 The class `Periodic_2_Delaunay_triangulation_2` has two template parameters. The first one
-\tparam Traits is the geometric traits, it is to be instantiated by a
+\tparam Traits is the geometric traits, it is to be instantiated with a
 model of the concept `Periodic_2DelaunayTriangulationTraits_2`.
 
 \tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`

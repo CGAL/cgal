@@ -1179,7 +1179,7 @@ data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
 However, it can be used as well for other triangulations
 and the class `Triangulation_hierarchy_2<Tr>` is templated by a parameter
-which is to be instantiated by one of the \cgal triangulation
+which is to be instantiated with one of the \cgal triangulation
 classes.
 
 The class `Triangulation_hierarchy_2<Tr>` inherits from the
@@ -1205,7 +1205,7 @@ triangulations of the next and preceding levels.
 which is a model for the concept
 `TriangulationHierarchyVertexBase_2`.
 This class is templated by a parameter `Vb`
-which is to be instantiated by a model of the concept
+which is to be instantiated with a model of the concept
 `TriangulationVertexBase_2`.
 The class `Triangulation_hierarchy_vertex_base_2<Vb>` inherits
 from its template parameter `Vb`.
@@ -1245,7 +1245,7 @@ which the user can instantiate with his own customized classes.
 
 The most useful flexibility however comes from the fact
 that the triangulation data structure itself has two template
-parameters to be instantiated by
+parameters to be instantiated with
 classes for the vertices and faces of the triangulation.
 Using his own customized classes to instantiate these
 parameters, the user can easily build up a triangulation with additional

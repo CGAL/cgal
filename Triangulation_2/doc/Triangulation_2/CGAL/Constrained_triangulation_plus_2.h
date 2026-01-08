@@ -66,7 +66,7 @@ typedef Tr Triangulation;
 /*!
 The intersection tag as defined in `Tr`.
 */
-  typedef Tr::Intersection_tag Intersection_tag;
+typedef Tr::Intersection_tag Intersection_tag;
 
 /*!
 The identifier of a polyline constraint.
@@ -88,7 +88,6 @@ A range type for iterating over all constraints. The iterator type of
 the range is `Constraint_iterator`.
 */
 typedef unspecified_type Constraints;
-
 
 /*!
 A subconstraint is a pair of vertices that correspond to an `Edge`.
@@ -150,12 +149,12 @@ through a subconstraint.
      */
     Vertices_in_constraint_iterator vertices_begin() const;
 
-  /*!
+    /*!
       returns the past-the-end of the vertices of the enclosing constraint.
      */
     Vertices_in_constraint_iterator vertices_end() const;
 
-  /*!
+    /*!
     returns the iterator `vici`  of the enclosing constraint
     for which `*vici` and `*%std::next(vici)`
     correspond to the two vertices of the subconstraint.
@@ -170,7 +169,7 @@ The value type of this iterator is `Context`.
 typedef unspecified_type Context_iterator;
 
 /*!
-range type for iterating over contexts.
+Range type for iterating over contexts.
 */
 typedef Iterator_range<Context_iterator> Contexts;
 /// @}
@@ -179,7 +178,7 @@ typedef Iterator_range<Context_iterator> Contexts;
 /// @{
 
 /*!
-Introduces an empty triangulation.
+introduces an empty triangulation.
 */
 Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits());
 
@@ -189,9 +188,8 @@ Copy constructor.
 Constrained_triangulation_plus_2(const
 Constrained_triangulation_plus_2& ct);
 
-
 /*!
-Introduces a constrained triangulation
+introduces a constrained triangulation
 from the constraints in the range `[first,last)`.
 \tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 */
@@ -268,7 +266,7 @@ inserts the constraint `c` in the triangulation.
 If the two points are equal the point is inserted but no constraint,
 and a default constructed `Constraint_id` is returned.
 */
-  void push_back(const std::pair<Point,Point>& c);
+void push_back(const std::pair<Point,Point>& c);
 
 /*!
 inserts a constraint whose endpoints are the vertices
@@ -428,8 +426,7 @@ enclosing the subconstraint `(va,vb)`.
 Context context(Vertex_handle va, Vertex_handle vb) const;
 
 /*!
-returns an iterator pointing at the first `Context`
-of the sequence of contexts
+returns an iterator pointing at the first `Context` of the sequence of contexts
 corresponding to the constraints enclosing the subconstraint `(va,vb)`.
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation.
 */
@@ -437,8 +434,7 @@ Context_iterator contexts_begin(Vertex_handle va,
                                 Vertex_handle vb) const;
 
 /*!
-returns an iterator past the end `Context`
-of the sequence of contexts
+returns a past-the-end iterator of the sequence of contexts
 corresponding to the constraints enclosing the subconstraint `(va,vb)`.
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation.
 */
@@ -516,7 +512,7 @@ typedef unspecified_type Points_in_constraint_iterator;
 /*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
-Returns an iterator to the first point on the constraint before any simplification step.
+returns an iterator to the first point on the constraint before any simplification step.
 \cgalAdvancedEnd
 */
 Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
@@ -524,7 +520,7 @@ Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) cons
 /*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
-Returns an iterator past the last point on the constraint before any simplification step.
+returns an iterator past the last point on the constraint before any simplification step.
 \cgalAdvancedEnd
 */
 Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
@@ -532,7 +528,7 @@ Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const 
 /*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
-Removes the vertex at `vicq` from the constraint and the triangulation.
+removes the vertex at `vicq` from the constraint and the triangulation.
 The point of that vertex remains stored in the sequence of original points
 of the constraint until `remove_points_without_corresponding_vertex(Constraint_id)`
 or `remove_points_without_corresponding_vertex()` is called.
@@ -556,7 +552,7 @@ simplify(Vertices_in_constraint_iterator vicq);
 /*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
-Removes the original points that correspond to vertices in the constraint `cid` which have
+removes the original points that correspond to vertices in the constraint `cid` which have
 been removed by the `simplify()` function.
 \cgalAdvancedEnd
 */
@@ -567,7 +563,7 @@ remove_points_without_corresponding_vertex(Constraint_id cid);
 /*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
-Removes all original points that correspond to vertices in the constraints which have
+removes all original points that correspond to vertices in the constraints which have
 been removed by the `simplify()` function.
 \cgalAdvancedEnd
  */
@@ -576,11 +572,10 @@ remove_points_without_corresponding_vertex();
 
 /// @}
 
-
 }; /* end Constrained_triangulation_plus_2 */
 
 /*!
-Writes the triangulation as for `Tr`, then writes one constraint per line, starting with the number
+writes the triangulation as for `Tr`, then writes one constraint per line, starting with the number
 of vertices and the indices of the vertices of the constraint.
 
 \relates Constrained_triangulation_plus_2
@@ -589,14 +584,12 @@ of vertices and the indices of the vertices of the constraint.
 template <typename  Tr>
 std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_plus_2<Tr> &ctp);
 
-
 /*!
-Reads a triangulation from stream `is` and assigns it to the triangulation.
+reads a triangulation from stream `is` and assigns it to the triangulation.
 
 \relates Constrained_triangulation_plus_2
 */
 template <typename  Tr>
 std::istream & operator>>(std::istream& is, Constrained_triangulation_plus_2<Tr> &ctp);
-
 
 } /* end namespace CGAL */

@@ -65,20 +65,30 @@ bool has_degenerated_faces(const TriangleMesh& mesh,
 // Edge length is bounded by twice the circumradius
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
-bool check_edge_length(const TriangleMesh& output_mesh,
-                       const double alpha,
-                       const NamedParameters& np = CGAL::parameters::default_values())
+bool has_bounded_edge_length(const TriangleMesh& wrap,
+                             const double alpha,
+                             const NamedParameters& np = CGAL::parameters::default_values())
 {
-  const auto sq_alpha_bound = 4 * square(alpha);
-  for(auto e : edges(output_mesh))
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  using FT = typename Geom_traits::FT;
+  using VPM = typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type;
+
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(in_np, internal_np::geom_traits));
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, tmesh));
+
+  const FT sq_alpha_bound = 4 * square(alpha);
+  for(auto e : edges(wrap))
   {
-    const auto sqd = Polygon_mesh_processing::squared_edge_length(e, output_mesh, np);
-    if(sqd > sq_alpha_bound) // alpha is the circumradius
+    if(gt.compare_squared_distance(get(vpm, source(e, wrap)),
+                                   get(vpm, target(e, wrap)),
+                                   sq_alpha_bound) == LARGER)
     {
 #ifdef CGAL_AW3_DEBUG
+      const FT sqd = Polygon_mesh_processing::squared_edge_length(e, wrap, np);
       std::cerr << "Error: " << sqd << " greater than " << sq_alpha_bound << std::endl;
-      std::cerr << get(CGAL::vertex_point, output_mesh, source(e, output_mesh)) << std::endl;
-      std::cerr << get(CGAL::vertex_point, output_mesh, target(e, output_mesh)) << std::endl;
+      std::cerr << "source pt: " << get(vpm, source(e, wrap)) << std::endl;
+      std::cerr << "target pt: " << get(vpm, target(e, wrap)) << std::endl;
 #endif
       return false;
     }
@@ -346,13 +356,12 @@ bool is_outer_wrap_of_point_set(const TriangleMesh& wrap,
 
   CGAL::Side_of_triangle_mesh<TriangleMesh, K, OVPM> side_of_wrap(wrap, out_vpm);
 
-  // @speed a single vertex per CC would be sufficient
   for(const auto& p : points)
   {
     if(side_of_wrap(get(in_pm, p)) != CGAL::ON_BOUNDED_SIDE)
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cerr << "Part(s) of the input mesh are outside the wrap: " << get(in_pm, p) << std::endl;
+      std::cerr << "An input point is outside the wrap: " << get(in_pm, p) << std::endl;
 #endif
       return false;
     }
