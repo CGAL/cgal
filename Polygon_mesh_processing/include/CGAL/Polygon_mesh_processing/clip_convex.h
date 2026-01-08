@@ -25,10 +25,70 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+  /**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief clips `pm` by keeping the part that is on the negative side of `plane` (the side opposite to its normal vector).
+  * The input mesh must be convex to guarantee a correct execution and results.
+  *
+  * By default, the clipped part is kept closed. Set the named parameter `clip_volume` to `false` to disable this.
+  *
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  *                      An internal property map for `CGAL::vertex_point_t` must be available.
+  *
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param pm input surface mesh
+  * @param plane plane whose negative side defines the halfspace to intersect `pm` with.
+  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `pm`.
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
+  *                           Note that as there are no mesh associated with `plane`,
+  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
+  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `pm`
+  *                           rather than on its surface (i.e., `pm` will remain closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
+  *
+  *    \cgalParamNBegin{do_not_triangulate_faces}
+  *      \cgalParamDescription{If this parameter is set to `false`, the face added or modified by the algorithm will be triangulated.}
+  *      \cgalParamType{Boolean}
+  *      \cgalParamDefault{`true`}
+  *    \cgalParamNEnd
+  *
+  * \cgalNamedParamsEnd
+  *
+  * @return `true`
+  *
+  * @see `clip()`
+  */
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 clip_convex(PolygonMesh& pm,
+#ifdef DOXYGEN_RUNNING
+            const Plane_3& plane,
+#else
             const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
+#endif
             const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
@@ -45,8 +105,8 @@ clip_convex(PolygonMesh& pm,
 
   // np typedefs
   // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
-  // using Default_visitor = Default_cut_visitor<PolygonMesh>;
-  // using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  using Default_visitor = Default_cut_visitor<PolygonMesh>;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
@@ -64,20 +124,16 @@ clip_convex(PolygonMesh& pm,
   Default_Bbox* default_bbox;
   Bbox bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), default_bbox);
 
-  // Default_visitor default_visitor;
-  // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  Default_visitor default_visitor;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
   // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
+  // config flags
+  bool clip_volume =  choose_parameter(get_parameter(np, internal_np::clip_volume), true);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
-  if (triangulate && !is_triangle_mesh(pm))
-    triangulate = false;
-
-  bool throw_on_self_intersection = choose_parameter(get_parameter(np, internal_np::use_compact_clipper), false);
-  if (throw_on_self_intersection && !is_triangle_mesh(pm))
-    throw_on_self_intersection = false;
 
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
@@ -163,9 +219,12 @@ clip_convex(PolygonMesh& pm,
     //split the first edge
     auto pts = make_sorted_pair(get(vpm, src), get(vpm, trg));
     typename GT::Point_3 ip = intersection_point(plane, pts.first, pts.second);
-    //visitor.before_edge_split(h, pm);
+    visitor.before_edge_split(h, pm);
     h = CGAL::Euler::split_edge(h, pm);
     put(vpm, target(h, pm), ip);
+    // visitor.new_vertex_added(vpm.size()-1, target(h,pm), pm);
+    visitor.edge_split(h, pm);
+    visitor.after_edge_split();
   }
 
   vertex_descriptor v_start = target(h, pm);
@@ -205,20 +264,32 @@ clip_convex(PolygonMesh& pm,
       // Split the edge
       auto pts = make_sorted_pair(get(vpm, source(h,pm)), get(vpm, target(h,pm)));
       typename GT::Point_3 ip = intersection_point(plane, pts.first, pts.second);
-      // visitor.before_edge_split(h, pm);
+      visitor.before_edge_split(h, pm);
       h = CGAL::Euler::split_edge(h, pm);
       put(vpm, target(h, pm), ip);
-      // visitor.new_vertex_added(vid, target(h,pm), pm);
-      // visitor.edge_split(h, pm);
-      // visitor.after_edge_split();
-
+      // visitor.new_vertex_added(vpm.size()-1, target(h,pm), pm);
+      visitor.edge_split(h, pm);
+      visitor.after_edge_split();
     }
 
     // Split the face
+    visitor.before_subface_created(pm);
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
+    visitor.after_subface_created(face(h, pm), pm);
     boundaries.emplace_back(sh);
     boundary_vertices.emplace_back(target(sh, pm));
     set_halfedge(target(sh, pm), sh, pm);
+    visitor.add_retriangulation_edge(sh, pm);
+
+    if (triangulate){
+      halfedge_descriptor sh_opp = opposite(sh, pm);
+      if(!is_triangle(sh_opp, pm)){
+        visitor.before_subface_created(pm);
+        halfedge_descriptor newh = CGAL::Euler::split_face(sh_opp, next(next(sh_opp, pm), pm), pm);
+        visitor.after_subface_created(face(opposite(newh, pm), pm), pm);
+        visitor.add_retriangulation_edge(newh, pm);
+      }
+    }
 
     CGAL_assertion(target(sh, pm) == target(h, pm));
     h = opposite(next(sh,pm), pm);
@@ -317,11 +388,19 @@ clip_convex(PolygonMesh& pm,
   set_next(boundaries.back(), boundaries[0], pm);
 
   // Fill the hole
-  face_descriptor f=pm.add_face();
-  for(auto h: boundaries){
-    set_face(h, f, pm);
+  if (clip_volume){
+    face_descriptor f=pm.add_face();
+    for(auto h: boundaries){
+      set_face(h, f, pm);
+    }
+    set_halfedge(f, boundaries[0], pm);
+    if(triangulate)
+      triangulate_face(f, pm, parameters::vertex_point_map(vpm));
+  } else {
+    for(auto h: boundaries){
+      set_face(h, BGT::null_face(), pm);
+    }
   }
-  set_halfedge(f, boundaries[0], pm);
 
   if( pm.number_of_vertices() < 3) //Degenerate to a segment
     clear(pm);
