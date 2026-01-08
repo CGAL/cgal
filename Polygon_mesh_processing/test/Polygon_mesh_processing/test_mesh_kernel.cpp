@@ -2,7 +2,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
-#include <CGAL/Polygon_mesh_processing/internal/kernel.h>
+#include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
