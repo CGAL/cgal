@@ -38,7 +38,7 @@ namespace CGAL {
 \ingroup PkgConvexDecomposition3Ref
 
 The function `convex_decomposition_3()` inserts additional facets
-into the given `Nef_polyhedron_3` `N`, such that each bounded
+into the given  Nef polyhedron` `N`, such that each bounded
 marked volume (the outer volume is unbounded) is subdivided into convex
 pieces. The modified polyhedron represents a decomposition into
 \cgalBigO{r^2} convex pieces, where \f$ r\f$ is the number of edges that have two
@@ -47,9 +47,11 @@ respect to the interior of the polyhedron.
 
 The worst-case running time of our implementation is
 \cgalBigO{n^2r^4\sqrt[3]{nr^2}\log{(nr)}}, where \f$ n\f$ is the complexity of
-the polyhedron (the complexity of a `Nef_polyhedron_3` is the sum
+the polyhedron (the complexity of a Nef polyhedron is the sum
 of its `Vertices`, `Halfedges` and `SHalfedges`) and \f$ r\f$
 is the number of reflex edges.
+
+@tparam NefPolyhedron_3 an object of type `Nef_polyhedron_3`.
 
 \pre The polyhedron `N` is bounded. Otherwise, the outer volume is ignored.
 
@@ -59,22 +61,22 @@ convex decomposition. If `N` is convex, it is not modified.
 \sa `CGAL::Nef_polyhedron_3<Traits>`
 
 */
-template<typename Nef_polyhedron>
-void convex_decomposition_3(Nef_polyhedron& N)
+template<typename NefPolyhedron_3>
+void convex_decomposition_3(NefPolyhedron_3& N)
 {
-  typedef typename Nef_polyhedron::SNC_structure  SNC_structure;
+  typedef typename NefPolyhedron_3::SNC_structure  SNC_structure;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
-  typedef typename Nef_polyhedron::Point_3            Point_3;
-  typedef typename Nef_polyhedron::Vector_3           Vector_3;
-  typedef typename Nef_polyhedron::Sphere_point   Sphere_point;
-  typedef typename Nef_polyhedron::FT FT;
+  typedef typename NefPolyhedron_3::Point_3            Point_3;
+  typedef typename NefPolyhedron_3::Vector_3           Vector_3;
+  typedef typename NefPolyhedron_3::Sphere_point   Sphere_point;
+  typedef typename NefPolyhedron_3::FT FT;
 
-  typedef typename CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
-  typedef typename CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
-  typedef typename CGAL::Reflex_vertex_searcher<Nef_polyhedron>  Reflex_vertex_searcher;
-  typedef typename CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
-  typedef typename CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
-  typedef typename CGAL::SFace_separator<Nef_polyhedron> SFace_separator;
+  typedef typename CGAL::Single_wall_creator<NefPolyhedron_3>  Single_wall;
+  typedef typename CGAL::YVertical_wall_builder<NefPolyhedron_3> YVertical_wall_builder;
+  typedef typename CGAL::Reflex_vertex_searcher<NefPolyhedron_3>  Reflex_vertex_searcher;
+  typedef typename CGAL::Ray_hit_generator2<NefPolyhedron_3> Ray_hit2;
+  typedef typename CGAL::External_structure_builder<NefPolyhedron_3> External_structure_builder;
+  typedef typename CGAL::SFace_separator<NefPolyhedron_3> SFace_separator;
 
   typedef Compare_halfedges_in_reflex_edge_sorter<Halfedge_handle, std::less<Point_3> >
           Less_edges;
@@ -86,11 +88,11 @@ void convex_decomposition_3(Nef_polyhedron& N)
   typedef typename Positively_sorted_set::const_iterator  Positive_reflex_edge_iterator;
   typedef typename Negatively_sorted_set::const_iterator  Negative_reflex_edge_iterator;
 
-  typedef typename CGAL::Reflex_edge_searcher<Nef_polyhedron, Positively_sorted_set, Negatively_sorted_set>
+  typedef typename CGAL::Reflex_edge_searcher<NefPolyhedron_3, Positively_sorted_set, Negatively_sorted_set>
           Reflex_edge_searcher;
 
-  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<FT>, Negatively_sorted_set> Edge_sorter;
-  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::greater<FT>, Positively_sorted_set> Edge_sorter2;
+  typedef typename CGAL::Edge_sorter<NefPolyhedron_3, std::less<FT>, Negatively_sorted_set> Edge_sorter;
+  typedef typename CGAL::Edge_sorter<NefPolyhedron_3, std::greater<FT>, Positively_sorted_set> Edge_sorter2;
 
   External_structure_builder esb;
   SFace_separator sf_sep;
@@ -176,10 +178,10 @@ void convex_decomposition_3(Nef_polyhedron& N)
 
   N.delegate(esb);
 
-  CGAL_assertion_code(typename Nef_polyhedron::SHalfedge_const_iterator cse);
+  CGAL_assertion_code(typename NefPolyhedron_3::SHalfedge_const_iterator cse);
   CGAL_assertion_code(CGAL_forall_shalfedges(cse, N)
     if(cse->incident_sface()->mark())
-      CGAL_assertion(!CGAL::is_reflex_sedge_in_any_direction<Nef_polyhedron>(cse)));
+      CGAL_assertion(!CGAL::is_reflex_sedge_in_any_direction<NefPolyhedron_3>(cse)));
 }
 
 } //namespace CGAL
