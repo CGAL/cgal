@@ -33,6 +33,7 @@
 #endif
 
 #include <CGAL/Default.h>
+#include <CGAL/Polygon_2_algorithms.h>
 
 #include <unordered_set>
 #include <vector>
@@ -206,36 +207,20 @@ private:
                                       boost::make_function_output_iterator(fc));
   }
 
-  // Checks whether the polygon's border is simple.
+  // Checks whether the polygon's border is simple using sweep line algorithm.
   template <typename VertexUVMap>
   bool is_polygon_simple(const Triangle_mesh& mesh,
                          halfedge_descriptor bhd,
                          const VertexUVMap uvmap) const
   {
-    // @fixme inefficient: use sweep line algorithms instead of brute force
-
-    for(halfedge_descriptor hd_1 : halfedges_around_face(bhd, mesh)) {
-      for(halfedge_descriptor hd_2 : halfedges_around_face(bhd, mesh)) {
-        if(hd_1 == hd_2 || // equality
-           next(hd_1, mesh) == hd_2 || next(hd_2, mesh) == hd_1) // adjacency
-          continue;
-
-        if(CGAL::do_intersect(Segment_2(get(uvmap, source(hd_1, mesh)),
-                                        get(uvmap, target(hd_1, mesh))),
-                              Segment_2(get(uvmap, source(hd_2, mesh)),
-                                        get(uvmap, target(hd_2, mesh))))) {
-#ifdef CGAL_SMP_ARAP_DEBUG
-          std::ofstream out("non-simple.txt"); // polygon lines
-          out << "2 " << get(uvmap, source(hd_1, mesh)) << " 0 "
-                      << get(uvmap, target(hd_1, mesh)) << " 0" << std::endl;
-          out << "2 " << get(uvmap, source(hd_2, mesh)) << " 0 "
-                      << get(uvmap, target(hd_2, mesh)) << " 0" << std::endl;
-#endif
-          return false;
-        }
-      }
+    // Collect border points into a vector
+    std::vector<Point_2> border_points;
+    for(halfedge_descriptor hd : halfedges_around_face(bhd, mesh)) {
+      border_points.push_back(get(uvmap, source(hd, mesh)));
     }
-    return true;
+
+    // Use CGAL's sweep line based is_simple_2 (O(n log n))
+    return CGAL::is_simple_2(border_points.begin(), border_points.end(), Kernel());
   }
 
   // Spread the inside / outside coloring from a Face to its neighbors
