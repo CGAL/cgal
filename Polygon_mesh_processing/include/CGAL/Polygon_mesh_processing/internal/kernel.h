@@ -285,6 +285,42 @@ kernel(const PolygonMesh& pm,
 
 } // end of namespace internal
 
+ /**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
+  * It is represented as a convex mesh and may be empty.
+  *
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  *                      An internal property map for `CGAL::vertex_point_t` must be available.
+  *
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param pm input surface mesh
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
+  *                           Note that as there are no mesh associated with `plane`,
+  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
+  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
+  *   \cgalParamNEnd
+  *
+  * \cgalNamedParamsEnd
+  *
+  * @return A PolygonMesh representing the kernel of the input mesh, which may be empty.
+  */
 template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
 PolygonMesh
@@ -292,6 +328,95 @@ kernel(const PolygonMesh& pm,
        const NamedParameters& np = parameters::default_values())
 {
   return internal::kernel(pm, faces(pm), np);
+}
+
+ /**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief Indicates whether the kernel of the given mesh is empty. The kernel is defined as the set of all points that can see the entire surface of the mesh.
+  *
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  *                      An internal property map for `CGAL::vertex_point_t` must be available.
+  *
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param pm input surface mesh
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *   \cgalParamNEnd
+  *
+  * \cgalNamedParamsEnd
+  *
+  * @return bool
+  */
+template <class PolygonMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+bool is_empty_kernel(const PolygonMesh& pm,
+                     const NamedParameters& np = parameters::default_values())
+{
+  return is_empty(internal::kernel(pm, faces(pm), np));
+}
+
+/**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief Return a point inside the kernel of the given mesh. The kernel is defined as the set of all points that can see the entire surface of the mesh.
+  *
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  *                      An internal property map for `CGAL::vertex_point_t` must be available.
+  *
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param pm input surface mesh
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *   \cgalParamNEnd
+  *
+  * \cgalNamedParamsEnd
+  *
+  * @return `%Point_3`
+  */
+template <class PolygonMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+#ifdef DOXYGEN_RUNNING
+std::optional<Point_3>
+#else
+std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>
+#endif
+kernel_point(const PolygonMesh& pm,
+             const NamedParameters& np = parameters::default_values())
+{
+  using FT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT;
+  using Point_3 = typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3;
+  using Vector_3 = typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3;
+  PolygonMesh k = internal::kernel(pm, faces(pm), np);
+  if(is_empty(k))
+    return std::nullopt;
+
+  auto vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(vertex_point, pm));
+
+  Point_3 centroid(ORIGIN);
+  for(auto v: vertices(pm))
+    centroid += Vector_3(ORIGIN, get(vpm, v));
+  centroid = ORIGIN + (Vector_3(ORIGIN, centroid)/FT(vertices(pm).size()));
+  return centroid;
+
+  //TODO check if the centroid is indeed inside the kernel
 }
 
 
