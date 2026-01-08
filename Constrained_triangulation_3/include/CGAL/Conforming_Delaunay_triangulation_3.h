@@ -340,28 +340,37 @@ protected:
 
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
+      const CGAL::unordered_flat_set<Cell_handle> cells_set(cell_it, end);
+      std::set<std::pair<Vertex_handle, Vertex_handle>> edges_in_conflict;
       auto d = self->tr().dimension();
-      for( ; cell_it != end; ++cell_it )
-        for( int i = 0; i < d; ++i )
-          for( int j = i+1; j <= d; ++j ) {
-            auto v1 = (*cell_it)->vertex(i);
-            auto v2 = (*cell_it)->vertex(j);
+      for( ; cell_it != end; ++cell_it ) {
+        for( int i = 0; i < d; ++i ) {
+          const auto n = (*cell_it)->neighbor(i);
+          if(cells_set.find(n) == cells_set.end()) continue;
+          // here: (c, i) is a facet internal to the conflict region
+          for(int j = 0; j < 3; ++j ) {
+            auto v1 = (*cell_it)->vertex(self->tr().vertex_triple_index(i, j));
+            auto v2 = (*cell_it)->vertex(self->tr().vertex_triple_index(i, self->tr().cw(j)));
             if(self->tr().is_infinite(v1) || self->tr().is_infinite(v2)) continue;
-            if(self->use_finite_edges_map()) {
-              if(v1 > v2) std::swap(v1, v2);
-              auto v1_index = v1->time_stamp();
-              [[maybe_unused]] auto nb_erased = self->all_finite_edges[v1_index].erase(v2);
-              if constexpr (cdt_3_can_use_cxx20_format()) if(self->debug().finite_edges_map() && nb_erased > 0) {
-                std::cerr << cdt_3_format("erasing edge {} {}\n", self->display_vert((std::min)(v1, v2)),
-                                        self->display_vert((std::max)(v1, v2)));
-              }
-            }
-            auto [contexts_begin, contexts_end] =
-              self->constraint_hierarchy.contexts(v1, v2);
-            if(contexts_begin != contexts_end) {
-              self->add_to_subconstraints_to_conform(v1, v2, contexts_begin->id());
-            }
+            edges_in_conflict.insert(CGAL::make_sorted_pair(v1, v2));
           }
+        }
+      }
+      for(auto [v1, v2]: edges_in_conflict) {
+        if(self->use_finite_edges_map()) {
+          auto v1_index = v1->time_stamp();
+          [[maybe_unused]] auto nb_erased = self->all_finite_edges[v1_index].erase(v2);
+          if constexpr (cdt_3_can_use_cxx20_format()) if(self->debug().finite_edges_map() && nb_erased > 0) {
+            std::cerr << cdt_3_format("erasing edge {} {}\n", self->display_vert((std::min)(v1, v2)),
+                                    self->display_vert((std::max)(v1, v2)));
+          }
+        }
+        auto [contexts_begin, contexts_end] =
+          self->constraint_hierarchy.contexts(v1, v2);
+        if(contexts_begin != contexts_end) {
+          self->add_to_subconstraints_to_conform(v1, v2, contexts_begin->id());
+        }
+      }
     }
 
     void after_insertion(Vertex_handle v) const {
