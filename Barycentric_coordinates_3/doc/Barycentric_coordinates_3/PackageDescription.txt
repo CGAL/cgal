@@ -33,7 +33,7 @@ defined for convex simplicial polytopes.}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.1}
+\cgalPkgSince{6.2}
 \cgalPkgBib{abha-gbc}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
