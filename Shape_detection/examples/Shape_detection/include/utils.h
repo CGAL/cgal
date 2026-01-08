@@ -80,9 +80,9 @@ void save_point_regions_2(
     CGAL::make_ply_point_writer(PLY_Point_map()),
     std::make_tuple(
       PLY_Color_map(),
-      CGAL::PLY_property<unsigned char>("red"),
-      CGAL::PLY_property<unsigned char>("green"),
-      CGAL::PLY_property<unsigned char>("blue")));
+      CGAL::IO::PLY_property<unsigned char>("red"),
+      CGAL::IO::PLY_property<unsigned char>("green"),
+      CGAL::IO::PLY_property<unsigned char>("blue")));
   out.close();
 }
 
@@ -125,9 +125,9 @@ void save_point_regions_3(
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
         PLY_Color_map(),
-        CGAL::PLY_property<unsigned char>("red"),
-        CGAL::PLY_property<unsigned char>("green"),
-        CGAL::PLY_property<unsigned char>("blue")));
+        CGAL::IO::PLY_property<unsigned char>("red"),
+        CGAL::IO::PLY_property<unsigned char>("green"),
+        CGAL::IO::PLY_property<unsigned char>("blue")));
   out.close();
 }
 
@@ -173,9 +173,9 @@ void save_segment_regions_2(
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
         PLY_Color_map(),
-        CGAL::PLY_property<unsigned char>("red"),
-        CGAL::PLY_property<unsigned char>("green"),
-        CGAL::PLY_property<unsigned char>("blue")));
+        CGAL::IO::PLY_property<unsigned char>("red"),
+        CGAL::IO::PLY_property<unsigned char>("green"),
+        CGAL::IO::PLY_property<unsigned char>("blue")));
   out.close();
 }
 
@@ -219,9 +219,9 @@ void save_segment_regions_3(
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
         PLY_Color_map(),
-        CGAL::PLY_property<unsigned char>("red"),
-        CGAL::PLY_property<unsigned char>("green"),
-        CGAL::PLY_property<unsigned char>("blue")));
+        CGAL::IO::PLY_property<unsigned char>("red"),
+        CGAL::IO::PLY_property<unsigned char>("green"),
+        CGAL::IO::PLY_property<unsigned char>("blue")));
   out.close();
 }
 
