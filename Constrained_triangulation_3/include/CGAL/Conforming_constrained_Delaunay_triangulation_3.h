@@ -4375,6 +4375,15 @@ public:
                                               {cell, index_v0, index_v1}, triangle_vertices);
         }
 
+        if(this->constraint_hierarchy.is_subconstraint(v0, v1)) {
+          std::stringstream ss;
+          ss.precision(std::cerr.precision());
+          ss << "Error: the constrained edge (" << IO::oformat(v0, with_point_and_info)
+             << ", " << IO::oformat(v1, with_point_and_info)
+             << ") intersects the interior of the polygonal constraint #" << face_index
+             << " region #" << region_index;
+          CGAL_error_msg(ss.str().c_str());
+        }
         intersecting_edges.emplace_back(cell, index_v0, index_v1);
         intersected_triangles.push_back(triangle_vertices);
         cached_value_it->second = true;
