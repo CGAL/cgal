@@ -201,10 +201,10 @@ namespace Barycentric_coordinates {
     // Fields.
     const VertexRange& m_polygon;
     const Computation_policy_2 m_computation_policy;
-    const GeomTraits m_traits;
+    GeomTraits m_traits;
     const PointMap m_point_map;
 
-    const Area_2 m_area_2;
+    Area_2 m_area_2;
 
     Wachspress_weights_2 m_wachspress_weights_2;
 
@@ -421,7 +421,7 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
     OutIterator w_begin,
-    const GeomTraits& traits,
+    GeomTraits& traits,
     const Computation_policy_2 policy =
     Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
@@ -508,7 +508,7 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
     OutIterator c_begin,
-    const GeomTraits& traits,
+    GeomTraits& traits,
     const Computation_policy_2 policy =
     Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
 

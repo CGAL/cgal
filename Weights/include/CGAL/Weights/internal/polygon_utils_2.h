@@ -54,11 +54,11 @@ template<class Point_2,
          class CompareX_2>
 int which_side_in_slab_2(const Point_2& query,
                          const Point_2& low, const Point_2& high,
-                         const Orientation_2& orientation_2,
-                         const CompareX_2& compare_x_2)
+                         Orientation_2& orientation_2,
+                         CompareX_2& compare_x_2)
 {
-  const Comparison_result low_x_comp_res = compare_x_2(query, low);
-  const Comparison_result high_x_comp_res = compare_x_2(query, high);
+  Comparison_result low_x_comp_res = compare_x_2(query, low);
+  Comparison_result high_x_comp_res = compare_x_2(query, high);
 
   if (low_x_comp_res == CGAL::SMALLER) {
     if (high_x_comp_res == CGAL::SMALLER) {
@@ -86,7 +86,7 @@ template<typename VertexRange,
          typename PointMap>
 Edge_case bounded_side_2(const VertexRange& polygon,
                          const typename GeomTraits::Point_2& query,
-                         const GeomTraits& traits,
+                         GeomTraits& traits,
                          const PointMap point_map)
 {
   const auto first = polygon.begin();
@@ -204,7 +204,7 @@ template<typename VertexRange,
          typename GeomTraits,
          typename PointMap>
 bool is_convex_2(const VertexRange& polygon,
-                 const GeomTraits traits,
+                 GeomTraits traits,
                  const PointMap point_map)
 {
   auto first = polygon.begin();

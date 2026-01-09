@@ -63,6 +63,7 @@ public:
   using Geom_traits = GeomTraits;
   using Vertex_point_map = VertexPointMap;
 
+  using Compute_squared_length_3 = typename GeomTraits::Compute_squared_length_3;
   using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
   using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
   using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
@@ -117,6 +118,7 @@ public:
     , m_computation_policy(policy)
     , m_vertex_point_map(vertex_point_map)
     , m_traits(traits)
+    , m_compute_squared_length_3(m_traits.compute_squared_length_3_object())
     , m_construct_vector_3(m_traits.construct_vector_3_object())
     , m_cross_3(m_traits.construct_cross_product_vector_3_object())
     , m_dot_3(m_traits.compute_scalar_product_3_object())
@@ -182,13 +184,14 @@ private:
   const TriangleMesh& m_tmesh;
   const Computation_policy_3 m_computation_policy;
   const VertexPointMap m_vertex_point_map; // use it to map vertex to Point_3
-  const GeomTraits m_traits;
+  GeomTraits m_traits;
 
-  const Construct_vec_3 m_construct_vector_3;
-  const Cross_3 m_cross_3;
-  const Dot_3 m_dot_3;
-  const Sqrt sqrt;
-  const Approximate_angle_3 m_approximate_angle_3;
+  Compute_squared_length_3 m_compute_squared_length_3;
+  Construct_vec_3 m_construct_vector_3;
+  Cross_3 m_cross_3;
+  Dot_3 m_dot_3;
+  Sqrt sqrt;
+  Approximate_angle_3 m_approximate_angle_3;
 
   // Store useful information
   std::vector<FT> m_weights;
@@ -303,6 +306,9 @@ private:
     // Compute weight w_v
     FT weight = FT(0);
 
+    typename Geom_traits::Construct_divided_vector_3 construct_divided_vector_3 =
+      m_traits.construct_divided_vector_3_object();
+
     // Iterate using the circulator
     do{
 
@@ -331,12 +337,12 @@ private:
 
       for(std::size_t i = 0; i < 3; i++){
 
-        assert(query_vertex_vectors[i].squared_length() > 0);
-        unit_vectors[i] = query_vertex_vectors[i]/sqrt(query_vertex_vectors[i].squared_length());
+        assert(m_compute_squared_length_3(query_vertex_vectors[i]) > 0);
+        unit_vectors[i] = construct_divided_vector_3(query_vertex_vectors[i], sqrt(m_compute_squared_length_3(query_vertex_vectors[i])));
 
         m_vectors[i] = m_cross_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
-        assert(m_vectors[i].squared_length() > 0);
-        m_vectors[i] /= sqrt(m_vectors[i].squared_length());
+        assert(m_compute_squared_length_3(m_vectors[i]) > 0);
+        m_vectors[i] /= sqrt(m_compute_squared_length_3(m_vectors[i]));
 
         angles[i] = m_approximate_angle_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
       }
@@ -355,7 +361,7 @@ private:
 
     }while(face_circulator!=face_done);
 
-    const FT vertex_query_squared_len = m_construct_vector_3(vertex_val, query).squared_length();
+    const FT vertex_query_squared_len = m_compute_squared_length_3(m_construct_vector_3(vertex_val, query));
     assert(vertex_query_squared_len != 0);
 
     return weight/sqrt(vertex_query_squared_len);

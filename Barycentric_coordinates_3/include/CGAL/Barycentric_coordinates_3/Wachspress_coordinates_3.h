@@ -19,7 +19,9 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/property_maps.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
@@ -64,6 +66,7 @@ public:
   using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
   using Det_3 = typename GeomTraits::Compute_determinant_3;
   using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
+  using Compute_squared_length_3 = typename GeomTraits::Compute_squared_length_3;
   using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
   /// \endcond
 
@@ -118,6 +121,7 @@ public:
     , m_dot_3(m_traits.compute_scalar_product_3_object())
     , m_det_3(m_traits.compute_determinant_3_object())
     , m_cross_3(m_traits.construct_cross_product_vector_3_object())
+    , m_compute_squared_length_3(m_traits.compute_squared_length_3_object())
     , m_construct_vector_3(m_traits.construct_vector_3_object())
   {
     // Check if polyhedron is strongly convex
@@ -178,12 +182,13 @@ private:
   const TriangleMesh& m_tmesh;
   const Computation_policy_3 m_computation_policy;
   const VertexPointMap m_vertex_point_map; // use it to map vertex to Point_3
-  const GeomTraits m_traits;
+  GeomTraits m_traits;
 
-  const Dot_3 m_dot_3;
-  const Det_3 m_det_3;
-  const Cross_3 m_cross_3;
-  const Construct_vec_3 m_construct_vector_3;
+  Dot_3 m_dot_3;
+  Det_3 m_det_3;
+  Cross_3 m_cross_3;
+  Compute_squared_length_3 m_compute_squared_length_3;
+  Construct_vec_3 m_construct_vector_3;
 
   std::vector<FT> m_weights;
 
@@ -287,14 +292,17 @@ private:
     using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
     halfedge_descriptor first_h = halfedge(vertex, m_tmesh);
 
+    typename Geom_traits::Construct_divided_vector_3 construct_divided_vector_3 =
+      m_traits.construct_divided_vector_3_object();
+
     auto compute_pf_i = [&](halfedge_descriptor h)
     {
       Vector_3 nf = internal::get_face_normal(
         face(h, m_tmesh), m_vertex_point_map, m_tmesh, m_traits);
-      nf = nf / approximate_sqrt(nf.squared_length());
+      nf = construct_divided_vector_3(nf, approximate_sqrt(m_compute_squared_length_3(nf)));
       const FT hfx = m_dot_3(query_vertex, nf);
       CGAL_assertion(hfx != FT(0));
-      return nf/hfx;
+      return construct_divided_vector_3(nf, hfx);
     };
 
     // First face.

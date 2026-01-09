@@ -62,6 +62,7 @@ public:
   using Geom_traits = GeomTraits;
   using Vertex_point_map = VertexPointMap;
 
+  using Compute_squared_length_3 = typename GeomTraits::Compute_squared_length_3;
   using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
   using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
   using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
@@ -116,6 +117,7 @@ public:
     , m_computation_policy(policy)
     , m_vertex_point_map(vertex_point_map)
     , m_traits(traits)
+    , m_compute_squared_length_3(m_traits.compute_squared_length_3_object())
     , m_construct_vector_3(m_traits.construct_vector_3_object())
     , m_cross_3(m_traits.construct_cross_product_vector_3_object())
     , m_dot_3(m_traits.compute_scalar_product_3_object())
@@ -181,12 +183,13 @@ private:
   const TriangleMesh& m_tmesh;
   const Computation_policy_3 m_computation_policy;
   const VertexPointMap m_vertex_point_map; // use it to map vertex to Point_3
-  const GeomTraits m_traits;
+  GeomTraits m_traits;
 
-  const Construct_vec_3 m_construct_vector_3;
-  const Cross_3 m_cross_3;
-  const Dot_3 m_dot_3;
-  const Sqrt sqrt;
+  Compute_squared_length_3 m_compute_squared_length_3;
+  Construct_vec_3 m_construct_vector_3;
+  Cross_3 m_cross_3;
+  Dot_3 m_dot_3;
+  Sqrt sqrt;
 
   std::vector<FT> m_weights;
 
@@ -326,7 +329,7 @@ private:
       const Point_3& point1 = points[1];
 
       const Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
-      const FT edge_length = sqrt(opposite_edge.squared_length());
+      const FT edge_length = sqrt(m_compute_squared_length_3(opposite_edge));
 
       const Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
        m_construct_vector_3(query, point1));

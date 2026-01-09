@@ -142,8 +142,9 @@ namespace internal {
     OutputIterator coordinates,
     const GeomTraits& traits) {
 
-    CGAL_precondition(source != target);
-    if (source == target) {
+    const typename GeomTraits::Equal_2 equal_2 = traits.equal_2_object();
+    CGAL_precondition(!equal_2(source, target));
+    if (equal_2(source, target)) {
       get_default(2, coordinates);
       return coordinates;
     }
@@ -152,16 +153,15 @@ namespace internal {
     using FT = typename GeomTraits::FT;
 
     // Functions.
-    const auto scalar_product_2   = traits.compute_scalar_product_2_object();
-    const auto squared_distance_2 = traits.compute_squared_distance_2_object();
-    const auto construct_vector_2 = traits.construct_vector_2_object();
+    typename GeomTraits::Compute_scalar_product_2 scalar_product_2   = traits.compute_scalar_product_2_object();
+    typename GeomTraits::Compute_squared_distance_2 squared_distance_2 = traits.compute_squared_distance_2_object();
+    typename GeomTraits::Construct_vector_2 construct_vector_2 = traits.construct_vector_2_object();
 
     // Project point onto segment.
     const FT opposite_scalar_product =
     scalar_product_2(construct_vector_2(target, query), construct_vector_2(target, source));
 
     // Compute coordinates.
-    CGAL_assertion(source != target);
     const FT b0 = opposite_scalar_product / squared_distance_2(source, target);
     const FT b1 = FT(1) - b0;
 
@@ -188,7 +188,7 @@ namespace internal {
     using FT = typename GeomTraits::FT;
 
     // Functions.
-    const auto area_2 = traits.compute_area_2_object();
+    typename GeomTraits::Compute_area_2 area_2 = traits.compute_area_2_object();
     const FT total_area = area_2(p0, p1, p2);
 
     CGAL_precondition(total_area != FT(0));
@@ -232,10 +232,10 @@ namespace internal {
 
     using FT = typename GeomTraits::FT;
 
-    const auto cross_product_2 = traits.compute_determinant_2_object();
-    const auto scalar_product_2 = traits.compute_scalar_product_2_object();
-    const auto squared_distance_2 = traits.compute_squared_distance_2_object();
-    const auto construct_vector_2 = traits.construct_vector_2_object();
+    typename GeomTraits::Compute_determinant_2 compute_determinant_2 = traits.compute_determinant_2_object();
+    typename GeomTraits::Compute_scalar_product_2 scalar_product_2 = traits.compute_scalar_product_2_object();
+    typename GeomTraits::Compute_squared_distance_2 squared_distance_2 = traits.compute_squared_distance_2_object();
+    typename GeomTraits::Construct_vector_2 construct_vector_2 = traits.construct_vector_2_object();
 
     CGAL_precondition(polygon.size() >= 3);
     const std::size_t n = polygon.size();
@@ -258,7 +258,7 @@ namespace internal {
       const auto s1 = construct_vector_2(query, p1);
       const auto s2 = construct_vector_2(query, p2);
 
-      const FT A = half * cross_product_2(s1, s2);
+      const FT A = half * compute_determinant_2(s1, s2);
       const FT D = scalar_product_2(s1, s2);
 
       if (CGAL::abs(A) < tolerance && D < FT(0)) {
@@ -281,16 +281,17 @@ namespace internal {
     const GeomTraits& traits,
     const PointMap point_map) {
 
-    const auto collinear_2 = traits.collinear_2_object();
-    const auto collinear_are_ordered_along_line_2 =
+    const typename GeomTraits::Collinear_2 collinear_2 = traits.collinear_2_object();
+    const typename GeomTraits::Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line_2 =
       traits.collinear_are_ordered_along_line_2_object();
+    const typename GeomTraits::Equal_2 equal_2 = traits.equal_2_object();
     CGAL_precondition(polygon.size() >= 3);
 
     const std::size_t n = polygon.size();
     for (std::size_t i = 0; i < n; ++i) {
       const auto& p1 = get(point_map, *(polygon.begin() + i));
 
-      if (p1 == query) {
+      if (equal_2(p1, query)) {
         return std::make_pair(Query_point_location::ON_VERTEX, i);
       }
 

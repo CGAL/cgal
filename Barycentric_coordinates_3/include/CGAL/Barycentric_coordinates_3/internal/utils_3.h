@@ -40,7 +40,7 @@ enum class Edge_case {
 
   template<typename FT>
   FT get_tolerance() {
-    return FT(1.0) / FT(10000000000.0);
+    return 0.000000000001;
   }
 
 // Compute barycentric coordinates in the space.
@@ -54,13 +54,13 @@ enum class Edge_case {
     const typename GeomTraits::Point_3& p3,
     const typename GeomTraits::Point_3& query,
     OutputIterator coordinates,
-    const GeomTraits& traits) {
+    GeomTraits& traits) {
 
     // Number type.
     using FT = typename GeomTraits::FT;
 
     // Functions.
-    const auto volume_3 = traits.compute_volume_3_object();
+    auto volume_3 = traits.compute_volume_3_object();
     const FT total_volume = volume_3(p0, p1, p2, p3);
 
     CGAL_precondition(total_volume != FT(0));
@@ -103,11 +103,11 @@ enum class Edge_case {
     const Face& face,
     const VertexPointMap& vpm,
     const TriangleMesh& tmesh,
-    const GeomTraits& traits){
+    GeomTraits& traits){
 
     using Vector_3 = typename GeomTraits::Vector_3;
-    const auto cross_3 = traits.construct_cross_product_vector_3_object();
-    const auto vector_3 = traits.construct_vector_3_object();
+    auto cross_3 = traits.construct_cross_product_vector_3_object();
+    auto vector_3 = traits.construct_vector_3_object();
 
     const auto hedge = halfedge(face, tmesh);
     const auto vertices = vertices_around_face(hedge, tmesh);
@@ -130,19 +130,20 @@ enum class Edge_case {
   typename GeomTraits::FT cot_dihedral_angle(
     const typename GeomTraits::Vector_3& vec_1,
     const typename GeomTraits::Vector_3& vec_2,
-    const GeomTraits& traits){
+    GeomTraits& traits){
 
     using FT = typename GeomTraits::FT;
-    const auto dot_3 = traits.compute_scalar_product_3_object();
-    const auto cross_3 = traits.construct_cross_product_vector_3_object();
-    const auto sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
+    auto dot_3 = traits.compute_scalar_product_3_object();
+    auto cross_3 = traits.construct_cross_product_vector_3_object();
+    auto squared_length_3 = traits.compute_squared_length_3_object();
+    auto sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
 
-    assert(vec_1.squared_length() != FT(0));
-    assert(vec_2.squared_length() != FT(0));
+    assert(squared_length_3(vec_1) != FT(0));
+    assert(squared_length_3(vec_2) != FT(0));
 
     const FT approximate_dot_3 = dot_3(vec_1, vec_2);
 
-    const FT approximate_cross_3_length = sqrt(cross_3(vec_1, vec_2).squared_length());
+    const FT approximate_cross_3_length = sqrt(squared_length_3(cross_3(vec_1, vec_2)));
 
     assert(approximate_cross_3_length != FT(0));
 
@@ -172,7 +173,7 @@ enum class Edge_case {
     const TriangleMesh& tmesh,
     const typename GeomTraits::Point_3& query,
     OutputIterator coordinates,
-    const GeomTraits& traits,
+    GeomTraits& traits,
     bool use_wp_flag){
 
     CGAL_USE(traits);
@@ -259,14 +260,16 @@ enum class Edge_case {
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
     OutputIterator coordinates,
-    const GeomTraits& traits,
-    const bool use_wp_flag = false){
+    GeomTraits& traits,
+    const bool use_wp_flag = false) {
 
     using Vector_3 = typename GeomTraits::Vector_3;
     using FT = typename GeomTraits::FT;
-    const auto& dot_3 = traits.compute_scalar_product_3_object();
-    const auto& construct_vector_3 = traits.construct_vector_3_object();
-    const auto& sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
+    typename GeomTraits::Compute_scalar_product_3 dot_3 = traits.compute_scalar_product_3_object();
+    typename GeomTraits::Construct_vector_3 construct_vector_3 = traits.construct_vector_3_object();
+    typename GeomTraits::Compute_squared_length_3 squared_length_3 = traits.compute_squared_length_3_object();
+    typename GeomTraits::Construct_divided_vector_3 construct_divided_vector_3 = traits.construct_divided_vector_3_object();
+    const auto sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
 
     // Flags that indicates position of the query point
     bool exterior_flag = false;
@@ -290,7 +293,7 @@ enum class Edge_case {
       // Calculate normals of faces
       Vector_3 face_normal_i = get_face_normal(
         face, vertex_point_map, polygon_mesh, traits);
-      face_normal_i = face_normal_i / sqrt(face_normal_i.squared_length());
+      face_normal_i = construct_divided_vector_3(face_normal_i, sqrt(squared_length_3(face_normal_i)));
 
       // Distance of query to face
       const FT perp_dist_i = dot_3(query_vertex, face_normal_i);
