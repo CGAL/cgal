@@ -77,7 +77,7 @@ void save_point_regions_2(
   CGAL::IO::set_ascii_mode(out);
   CGAL::IO::write_PLY_with_properties(
     out, pwc,
-    CGAL::make_ply_point_writer(PLY_Point_map()),
+    CGAL::IO::make_ply_point_writer(PLY_Point_map()),
     std::make_tuple(
       PLY_Color_map(),
       CGAL::IO::PLY_property<unsigned char>("red"),
@@ -122,7 +122,7 @@ void save_point_regions_3(
   CGAL::IO::set_ascii_mode(out);
   CGAL::IO::write_PLY_with_properties(
     out, pwc,
-    CGAL::make_ply_point_writer(PLY_Point_map()),
+    CGAL::IO::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
         PLY_Color_map(),
         CGAL::IO::PLY_property<unsigned char>("red"),
@@ -170,7 +170,7 @@ void save_segment_regions_2(
   CGAL::IO::set_ascii_mode(out);
   CGAL::IO::write_PLY_with_properties(
     out, pwc,
-    CGAL::make_ply_point_writer(PLY_Point_map()),
+    CGAL::IO::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
         PLY_Color_map(),
         CGAL::IO::PLY_property<unsigned char>("red"),
@@ -216,7 +216,7 @@ void save_segment_regions_3(
   CGAL::IO::set_ascii_mode(out);
   CGAL::IO::write_PLY_with_properties(
     out, pwc,
-    CGAL::make_ply_point_writer(PLY_Point_map()),
+    CGAL::IO::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
         PLY_Color_map(),
         CGAL::IO::PLY_property<unsigned char>("red"),
