@@ -93,6 +93,7 @@
 - `CGAL::Creator_uniform_d<Arg, Result>`
 
 \cgalCRPSection{Utilities}
+- `CGAL::bisect_failures()`
 - `CGAL::Twotuple<T>`
 - `CGAL::Threetuple<T>`
 - `CGAL::Fourtuple<T>`
