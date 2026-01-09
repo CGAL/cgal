@@ -42,16 +42,16 @@ int main(int argc, char **argv)
 
     std::cout << complex;
 
-//    // Build empty HDVF
-    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    // Build empty HDVF with computation restricted to dimension 1
+    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
 
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
     //        hdvf.compute_rand_perfect_hdvf();
 
-    // Output HDVF to console
-    hdvf.write_matrices();
-    hdvf.write_reduction();
+    // Output HDVF to console (restricted to dimension 1 by default)
+    hdvf.write_matrices(std::cout);
+    hdvf.write_reduction(std::cout);
 
     // Output HDVF to vtk
     CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;

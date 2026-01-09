@@ -108,8 +108,9 @@ public:
      *
      * \param K A chain complex (a model of `AbstractChainComplex`)
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
      */
-    Hdvf(const Chain_complex& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf(const Chain_complex& K, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) ;
 
     /*
      * \brief Constructor by copy.
@@ -403,7 +404,7 @@ public:
 
 // Constructor for the Hdvf class
 template<typename ChainComplex>
-Hdvf<ChainComplex>::Hdvf(const ChainComplex& K, int hdvf_opt) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
+Hdvf<ChainComplex>::Hdvf(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt, dimension_restriction) { }
 
 
 

@@ -79,16 +79,26 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, Chain
 {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     typedef Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
-    // Export PSC labelling
+    // Export PSC labelling in any dimension (whatever the dimension restriction)
     std::string outfile(filename+"_PSC.vtk") ;
-    std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
+    std::vector<std::vector<int> > labels = hdvf.psc_labels(-1) ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
 
+    // Range of computed dimensions
+    int min_dim, max_dim;
+    if (hdvf.dimension_restriction() == -1) {
+        min_dim = 0;
+        max_dim = complex.dimension();
+    }
+    else
+        min_dim = max_dim = hdvf.dimension_restriction();
+    
     if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND)
     {
-        // Export generators of all critical cells
+        // Export generators of all critical cells in the computed range
+        // [min_dim, max_dim]
         std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(Homological_discrete_vector_field::CRITICAL)) ;
-        for (int q = 0; q <= complex.dimension(); ++q)
+        for (int q = min_dim; q <= max_dim; ++q)
         {
             for (size_t c : criticals.at(q))
             {
