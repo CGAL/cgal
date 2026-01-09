@@ -35,8 +35,8 @@ int main()
   pv_pairs.clear();
   std::ifstream file("data/simple_ascii.ply");
   CGAL::IO::read_PLY_with_properties<PointVectorPair>(file, boost::function_output_iterator(lambda),
-    CGAL::make_ply_point_reader(Point_map()),
-    CGAL::make_ply_normal_reader(Normal_map()));
+    CGAL::IO::make_ply_point_reader(Point_map()),
+    CGAL::IO::make_ply_normal_reader(Normal_map()));
 
   assert(pv_pairs[0].first == Point_3(1, 1, 1));
   assert(pv_pairs[1].first == Point_3(3, 3, 3));
