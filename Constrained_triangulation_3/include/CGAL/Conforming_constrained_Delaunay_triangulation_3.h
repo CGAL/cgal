@@ -1317,6 +1317,13 @@ private:
   static_assert(CGAL::cdt_3_msvc_2019_or_older() || CGAL::is_nothrow_movable_v<CDT_2>);
 
 protected:
+  struct Null_normal_error : Error_exception {
+    Null_normal_error(std::string msg, std::string file, int line)
+        : Error_exception("CGAL CDT_3", msg, file, line)
+    {
+    }
+  };
+
   struct PLC_error : Error_exception {
     int face_index;
     int region_index;
@@ -2188,6 +2195,12 @@ private:
     if(this->debug().input_faces()) {
       std::cerr << "Polygon #" << polygon_constraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
        dump_face_polygons(vec_of_handles, polygon_constraint_id);
+    }
+
+    if(cdt_2.geom_traits().normal() == CGAL::NULL_VECTOR) {
+      throw Null_normal_error{"cannot build CDT_2 for polygonal constraint #" + std::to_string(polygon_constraint_id) +
+                                  " because its constructed normal vector is null.",
+                              __FILE__, __LINE__};
     }
     // create and fill the 2D triangulation
     {
@@ -4188,6 +4201,11 @@ public:
         std::cerr << "ERROR: Intersection of constraints in face F#" << i << "\n";
         this->face_data[i].skip_face = true;
         dump_face_polygons(build_face_border_handles(face_borders(i)), i);
+      } catch (Null_normal_error& e) {
+        std::cerr << std::string("ERROR: face F#") << std::to_string(i) + " has is degenerated.\n";
+        std::cerr << "  details: " << e.what() << "\n";
+        this->face_data[i].skip_face = true;
+        dump_face_polygons(build_face_border_handles(face_borders(i)), i);
       }
     }
     if(this->debug().input_faces()) {
@@ -4383,10 +4401,13 @@ public:
         if(this->constraint_hierarchy.is_subconstraint(v0, v1)) {
           std::stringstream ss;
           ss.precision(std::cerr.precision());
-          ss << "Error: the constrained edge (" << IO::oformat(v0, with_point_and_info)
+          ss << "Error: detected a self-intersection.\n"
+                 "  The constrained edge (" << IO::oformat(v0, with_point_and_info)
              << ", " << IO::oformat(v1, with_point_and_info)
              << ") intersects the interior of the polygonal constraint #" << face_index
-             << " region #" << region_index;
+             << " (sub-region #" << region_index << ").\n"
+             << "  The input data is either self-intersecting or the input"
+                " refined with Steiner vertices is self-intersecting.\n";
           CGAL_error_msg(ss.str().c_str());
         }
         intersecting_edges.emplace_back(cell, index_v0, index_v1);

@@ -48,7 +48,7 @@ using CDT_3_signed_index = int; // must be signed
          oss << "Constrained Delaunay triangulation could not be restored: " << failed_faces.size()
              << " faces could not be processed:\n";
          for(const CDT_3_signed_index& index : failed_faces) {
-           oss << " " << index << "\n";
+           oss << "  face #" << index << "\n";
          }
          return oss.str();
        }))
