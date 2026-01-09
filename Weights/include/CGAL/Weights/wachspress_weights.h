@@ -186,7 +186,7 @@ public:
     \pre `polygon` is strictly convex
   */
   Wachspress_weights_2(const VertexRange& polygon,
-                       const GeomTraits traits = GeomTraits(),
+                       GeomTraits traits = GeomTraits(),
                        const PointMap point_map = PointMap())
     : m_polygon(polygon),
       m_traits(traits),
@@ -245,10 +245,10 @@ public:
 
 private:
   const VertexRange& m_polygon;
-  const GeomTraits m_traits;
+  GeomTraits m_traits;
   const PointMap m_point_map;
 
-  const Area_2 m_area_2;
+  Area_2 m_area_2;
 
   std::vector<FT> A;
   std::vector<FT> C;
