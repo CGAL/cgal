@@ -28,39 +28,37 @@ std::ostream&
 operator << ( std::ostream& os,
               const Min_circle_2<Traits_>& min_circle)
 {
-    using namespace std;
-
     typedef  typename Min_circle_2<Traits_>::Point  Point;
-    typedef  ostream_iterator<Point>       Os_it;
+    typedef  std::ostream_iterator<Point>       Os_it;
 
     switch ( CGAL::IO::get_mode( os)) {
 
       case CGAL::IO::PRETTY:
-        os << endl;
+        os << std::endl;
         os << "CGAL::Min_circle_2( |P| = " << min_circle.number_of_points()
-           << ", |S| = " << min_circle.number_of_support_points() << endl;
-        os << "  P = {" << endl;
+           << ", |S| = " << min_circle.number_of_support_points() << std::endl;
+        os << "  P = {" << std::endl;
         os << "    ";
-        copy( min_circle.points_begin(), min_circle.points_end(),
+        std::copy( min_circle.points_begin(), min_circle.points_end(),
               Os_it( os, ",\n    "));
-        os << "}" << endl;
-        os << "  S = {" << endl;
+        os << "}" << std::endl;
+        os << "  S = {" << std::endl;
         os << "    ";
-        copy( min_circle.support_points_begin(),
+        std::copy( min_circle.support_points_begin(),
               min_circle.support_points_end(),
               Os_it( os, ",\n    "));
-        os << "}" << endl;
-        os << "  circle = " << min_circle.circle() << endl;
-        os << ")" << endl;
+        os << "}" << std::endl;
+        os << "  circle = " << min_circle.circle() << std::endl;
+        os << ")" << std::endl;
         break;
 
       case CGAL::IO::ASCII:
-        copy( min_circle.points_begin(), min_circle.points_end(),
+        std::copy( min_circle.points_begin(), min_circle.points_end(),
               Os_it( os, "\n"));
         break;
 
       case CGAL::IO::BINARY:
-        copy( min_circle.points_begin(), min_circle.points_end(),
+        std::copy( min_circle.points_begin(), min_circle.points_end(),
               Os_it( os));
         break;
 
@@ -76,19 +74,17 @@ template < class Traits_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
 {
-    using namespace std;
-
     switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
-        cerr << endl;
-        cerr << "Stream must be in ASCII or binary mode" << endl;
+        std::cerr << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII:
       case CGAL::IO::BINARY:
         typedef  typename CGAL::Min_circle_2<Traits_>::Point  Point;
-        typedef  istream_iterator<Point>            Is_it;
+        typedef  std::istream_iterator<Point>            Is_it;
         min_circle.clear();
         min_circle.insert( Is_it( is), Is_it());
         break;
