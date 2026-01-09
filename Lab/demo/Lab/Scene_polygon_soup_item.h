@@ -159,6 +159,7 @@ public:
     {
       IS_PURE_TRIANGLE = 0,
       IS_PURE_QUAD,
+      SELFINTER,
 
       NB_VERTICES,
 

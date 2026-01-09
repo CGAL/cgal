@@ -262,8 +262,12 @@ struct Initialization_options
               >
     Generator_ref(Generator&& generator)
       : generator_(std::addressof(generator))
-      , call_( [](void* g, Point_output_function_iterator oit, const int n) {
+      , call_( [](void* g, auto oit, const int n) {
+                 // `oit` is `auto` so that MSVC 2017 sees that the lambda is name-dependant,
+                 // otherwise it would check both part of the `if constexpr`. With `auto`, the lambda
+                 // expression is a class template and MSVC 2017 cannot miscompile it.
                  using Real_generator = CGAL::cpp20::remove_cvref_t<Generator>;
+                 using Point_output_function_iterator = CGAL::cpp20::remove_cvref_t<decltype(oit)>;
                  auto* real_g = static_cast<Real_generator*>(g);
                  if constexpr (std::is_invocable_v<Real_generator, Point_output_function_iterator>) {
                    if( n < 0 )
