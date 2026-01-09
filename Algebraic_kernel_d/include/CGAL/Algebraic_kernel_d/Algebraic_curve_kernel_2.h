@@ -299,7 +299,7 @@ protected:
     } ;
 
 
-    template<typename T> struct Pair_cannonicalize {
+    template<typename T> struct Pair_canonicalize {
 
         std::pair<T,T> operator() (std::pair<T,T> pair) {
 
@@ -318,7 +318,7 @@ protected:
     typedef CGAL::Cache<Pair_of_polynomial_2,
                         Polynomial_2,
                         Gcd<Polynomial_2>,
-                        Pair_cannonicalize<Polynomial_2>,
+                        Pair_canonicalize<Polynomial_2>,
                         Polynomial_2_compare> Gcd_cache_2;
 
     //!@}
