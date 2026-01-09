@@ -3423,11 +3423,11 @@ public:
     return 2;
   }
 
-  /*! computes a point on an arc with the same \f$x\f$-coordiante as the given
+  /*! computes a point on an arc with the same \f$x\f$-coordinate as the given
    * point.
    * \param p The given point.
    * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
-   * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
+   * \return A point on the arc with the same \f$x\f$-coordinate as `p`.
    */
   Point_2 point_at_x(const X_monotone_curve_2& xcv, const Point_2& p) const {
     // Make sure that p is in the \f$x\f$-range of the arc.
@@ -3605,7 +3605,7 @@ public:
     xcv.set_flag(X_monotone_curve_2::DEGREE_2);
 
     // Compute a midpoint between the source and the target and get the
-    // \f$y\f$-value of the arc at its \f$x\f$-coordiante.
+    // \f$y\f$-value of the arc at its \f$x\f$-coordinate.
     Point_2 p_mid =
       m_alg_kernel->construct_midpoint_2_object()(xcv.source(), xcv.target());
     Algebraic ys[2];
