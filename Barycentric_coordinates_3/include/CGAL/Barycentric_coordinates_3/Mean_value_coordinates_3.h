@@ -342,7 +342,7 @@ private:
 
         m_vectors[i] = m_cross_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
         assert(m_compute_squared_length_3(m_vectors[i]) > 0);
-        m_vectors[i] /= sqrt(m_compute_squared_length_3(m_vectors[i]));
+        m_vectors[i] = construct_divided_vector_3(m_vectors[i], sqrt(m_compute_squared_length_3(m_vectors[i])));
 
         angles[i] = m_approximate_angle_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
       }

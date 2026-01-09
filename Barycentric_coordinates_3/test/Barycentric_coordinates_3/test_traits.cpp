@@ -40,27 +40,21 @@ struct Custom_barycentric_traits
   };
 
   struct Vector_3 {
-    Vector_3 operator/=(FT) { return Vector_3(); }
   };
 
   friend Vector_3 operator*(const int, const Vector_3) {return Vector_3();}
 
   struct Vector_2 {
-    Vector_2 operator/(FT) const { return Vector_2(); }
-    Vector_2 operator/=(FT) { return Vector_2(); }
   };
 
   struct Triangle_2 {
-    Triangle_2(Point_2, Point_2, Point_2) {}
   };
 
   struct Iso_rectangle_2 {
-    Iso_rectangle_2(Point_2, Point_2) {}
   };
 
   struct Plane_3 {
-    Plane_3(Point_3, Point_3, Point_3) {};
-    Point_2 to_2d(Point_3) const {return Point_2();}
+    Plane_3() {};
   };
 
   struct Compare_x_2 {
@@ -91,6 +85,14 @@ struct Custom_barycentric_traits
 
   struct Construct_divided_vector_3 {
     Vector_3 operator()(const Vector_3&, const FT&) { return Vector_3(); }
+  };
+
+  struct Construct_plane_3 {
+    Plane_3 operator()(const Point_3&, const Point_3&, const Point_3&) { return Plane_3(); }
+  };
+
+  struct Construct_projected_xy_point_2 {
+    Point_2 operator()(const Plane_3&, const Point_3&) { return Point_2(); }
   };
 
   struct Compute_determinant_3 {
@@ -155,6 +157,8 @@ struct Custom_barycentric_traits
   Compute_determinant_3 compute_determinant_3_object() const { return Compute_determinant_3(); }
   Compute_volume_3    compute_volume_3_object() const { return Compute_volume_3(); }
   Construct_divided_vector_3 construct_divided_vector_3_object() const { return Construct_divided_vector_3(); }
+  Construct_plane_3   construct_plane_3_object() const { return Construct_plane_3(); }
+  Construct_projected_xy_point_2 construct_projected_xy_point_2_object() const { return Construct_projected_xy_point_2(); }
   Construct_vector_2  construct_vector_2_object() const { return Construct_vector_2(); }
   Construct_vector_3  construct_vector_3_object() const { return Construct_vector_3(); }
   Equal_2            equal_2_object() const { return Equal_2(); }

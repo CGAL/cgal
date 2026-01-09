@@ -192,17 +192,22 @@ enum class Edge_case {
     const auto v0 = *vertex_itr; vertex_itr++;
     const auto v1 = *vertex_itr; vertex_itr++;
     const auto v2 = *vertex_itr;
-    const Plane_3 face_plane(get(vertex_point_map, v0),
+    typename GeomTraits::Construct_plane_3 construct_plane_3 =
+      traits.construct_plane_3_object();
+    const Plane_3 face_plane = construct_plane_3(get(vertex_point_map, v0),
      get(vertex_point_map, v1), get(vertex_point_map, v2));
+
+    typename GeomTraits::Construct_projected_xy_point_2 project_onto_plane =
+      traits.construct_projected_xy_point_2_object();
 
     // Store 2d vertices
     std::vector<Point_2> polygon;
     polygon.reserve(num_sides_face);
     auto polygon_itr = std::back_inserter(polygon);
-    Point_2 query_2 = face_plane.to_2d(query);
+    Point_2 query_2 = project_onto_plane(face_plane, query);
     for(auto v : vertices_face){
 
-      *polygon_itr = face_plane.to_2d(get(vertex_point_map, v));
+      *polygon_itr = project_onto_plane(face_plane, get(vertex_point_map, v));
       polygon_itr++;
     }
 

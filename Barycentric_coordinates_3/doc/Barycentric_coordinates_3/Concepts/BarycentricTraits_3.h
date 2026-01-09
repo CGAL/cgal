@@ -136,7 +136,27 @@ typedef unspecified_type Construct_cross_product_vector_3;
 /*!
   A construction object that must provide the function operator:
 
-  `Vector_3 operator()(Vector_3 v, FT t) const`
+ `Point_2 operator()(Plane_3 h, Point_3 p)`,
+
+  which returns image point of the projection of `p` under an affine transformation,
+  which maps `h` onto the `xy`-plane, with the `z`-coordinate removed.
+*/
+typedef unspecified_type Construct_projected_xy_point_2;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)`,
+
+  which constructs a plane passing through `p`, `q`, and `r` and oriented
+  in a positive sense when seen from the positive side of the plane.
+*/
+typedef unspecified_type Construct_plane_3;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Vector_3 operator()(Vector_3 v, FT t)`
 
   returning the vector `v / t`.
 */
@@ -333,6 +353,15 @@ Construct_cross_product_vector_3 construct_cross_product_vector_3_object();
 
 */
 Construct_divided_vector_3 construct_divided_vector_3_object();
+
+/*!
+
+*/
+Construct_plane_3 construct_plane_3_object();
+/*!
+
+*/
+Construct_projected_xy_point_2 construct_projected_xy_point_2_object();
 
 /*!
 
