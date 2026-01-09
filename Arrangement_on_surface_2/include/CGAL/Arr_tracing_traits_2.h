@@ -434,7 +434,7 @@ public:
     }
   };
 
-  /*! A functor that compares compares the \f$y\f$-coordinates of two
+  /*! A functor that compares the \f$y\f$-coordinates of two
    * \f$x\f$-monotone curves immediately to the left of their intersection
    * point.
    */
@@ -468,7 +468,7 @@ public:
     }
   };
 
-  /*! A functor that compares compares the \f$y\f$-coordinates of two
+  /*! A functor that compares the \f$y\f$-coordinates of two
    * \f$x\f$-monotone curves immediately to the right of their intersection
    * point.
    */
