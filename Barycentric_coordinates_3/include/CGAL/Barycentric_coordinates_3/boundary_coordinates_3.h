@@ -18,86 +18,11 @@
 
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
-#include <CGAL/boost/graph/property_maps.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
-
-/*!
-  \ingroup PkgBarycentricCoordinates3RefFunctions
-
-  \brief computes boundary barycentric coordinates with respect to a closed convex triangle mesh.
-
-  This function computes boundary barycentric coordinates at a given `query` point
-  with respect to the vertices of a convex simplicial polyhedron, that is one
-  coordinate per vertex. The coordinates are stored in a destination range
-  beginning at `oi`.
-
-  If `query` is at the vertex, the corresponding coordinate is set to one, while
-  all other coordinates are zero. If `query` is on the face, the three corresponding
-  coordinates are triangle coordinates, while all other coordinates are set to zero.
-  If `query` is not on the boundary, all the coordinates are set to zero.
-
-  \tparam TriangleMesh
-  must be a model of the concept `FaceListGraph`.
-
-  \tparam GeomTraits
-  a model of `BarycentricTraits_3`
-
-  \tparam OutputIterator
-  a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
-
-  \tparam VertexPointMap
-  a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
-  key type and `GeomTraits::Point_3` as value type
-
-  \param tmesh
-  an instance of `TriangleMesh`
-
-  \param query
-  a query point
-
-  \param oi
-  the beginning of the destination range with the computed coordinates
-
-  \param traits
-  a traits class with geometric objects, predicates, and constructions;
-  the default initialization is provided
-
-  \param vertex_point_map
-  an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
-  the default initialization is provided
-
-  \return an output iterator to the element in the destination range,
-  one past the last coordinate stored + the flag indicating whether the
-  query point belongs to the polyhedron boundary
-
-  \pre boost::num_vertices(`tmesh`) >= 4.
-  \pre CGAL::is_triangle_mesh(`tmesh`).
-  \pre CGAL::is_closed(`tmesh`).
-  \pre CGAL::is_strongly_convex_3(`tmesh`).
-*/
-template<typename TriangleMesh,
-         typename OutputIterator,
-         typename GeomTraits,
-         typename VertexPointMap>
-std::pair<OutputIterator, bool>
-boundary_coordinates_3(const TriangleMesh& tmesh,
-                       const typename GeomTraits::Point_3& query,
-                       OutputIterator oi,
-                       const GeomTraits& traits,
-                       const VertexPointMap vertex_point_map)
-{
-  const auto edge_case = internal::locate_wrt_polyhedron(
-    vertex_point_map, tmesh, query, oi, traits);
-
-  if(edge_case == internal::Edge_case::BOUNDARY)
-    return {oi, true};
-  else{
-    internal::get_default(num_vertices(tmesh), oi);
-    return {oi, false};
-  }
-}
 
 /*!
   \ingroup PkgBarycentricCoordinates3RefFunctions
@@ -118,15 +43,12 @@ boundary_coordinates_3(const TriangleMesh& tmesh,
   must be a model of the concept `FaceListGraph`.
 
   \tparam Point_3
-  a model of `Kernel::Point_3`
+  A model of `GeomTraits::Point_3` with `GeomTraits` being the type of the named parameter `geom_traits`.
 
   \tparam OutputIterator
-  a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
+  must be an output iterator accepting `GeomTraits::FT` with `GeomTraits` being the type of the named parameter `geom_traits`.
 
-  \tparam VertexPointMap
-  a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
-  key type and Point_3 as value type. The default is `property_map_selector<TriangleMesh,
-  CGAL::vertex_point_t>`.
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param tmesh
   an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
@@ -137,13 +59,29 @@ boundary_coordinates_3(const TriangleMesh& tmesh,
   \param oi
   the beginning of the destination range with the computed coordinates
 
-  \param vertex_point_map
-  an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
-  the default initialization is provided
+  \param np
+  an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \return an output iterator to the element in the destination range,
   one past the last coordinate stored + the flag indicating whether the
   query point belongs to the polyhedron boundary
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `TriangleMesh`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `BarycentricTraits_3`}
+      \cgalParamDefault{a \cgal Kernel deduced from the value type of the vertex-point map, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \pre boost::num_vertices(`tmesh`) >= 4.
   \pre CGAL::is_triangle_mesh(`tmesh`)
@@ -153,29 +91,32 @@ boundary_coordinates_3(const TriangleMesh& tmesh,
 template<typename TriangleMesh,
          typename Point_3,
          typename OutputIterator,
-         typename VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
+         typename NamedParameters = parameters::Default_named_parameters>
 std::pair<OutputIterator, bool>
 boundary_coordinates_3(const TriangleMesh& tmesh,
                        const Point_3& query,
                        OutputIterator oi,
-                       const VertexPointMap vertex_point_map)
+                       const NamedParameters& np = parameters::default_values())
 {
-  using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
-  const GeomTraits traits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  static_assert(std::is_same_v<Geom_traits, typename Kernel_traits<Point_3>::Kernel>);
 
-  return boundary_coordinates_3(tmesh, query, oi, traits, vertex_point_map);
-}
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
 
-template<typename TriangleMesh,
-         typename Point_3,
-         typename OutputIterator>
-std::pair<OutputIterator, bool>
-boundary_coordinates_3(const TriangleMesh& tmesh,
-                       const Point_3& query,
-                       OutputIterator oi)
-{
-  return boundary_coordinates_3(tmesh, query, oi,
-   get_const_property_map(CGAL::vertex_point, tmesh));
+  Barycentric_coordinates::internal::Edge_case edge_case;
+
+  if constexpr (std::is_same_v<typename GetGeomTraits<TriangleMesh, NamedParameters>::GT_from_NP, internal_np::Param_not_found>)
+    edge_case = internal::locate_wrt_polyhedron(vpm, tmesh, query, oi, Geom_traits());
+  else
+    edge_case = internal::locate_wrt_polyhedron(vpm, tmesh, query, oi, parameters::get_parameter(np, internal_np::geom_traits));
+
+  if (edge_case == internal::Edge_case::BOUNDARY)
+    return { oi, true };
+  else {
+    internal::get_default(num_vertices(tmesh), oi);
+    return { oi, false };
+  }
 }
 
 }

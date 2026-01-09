@@ -19,7 +19,9 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/property_maps.h>
+#include <CGAL/Named_function_parameters.h>
 
 
 namespace CGAL {
@@ -50,9 +52,7 @@ namespace Barycentric_coordinates {
 template<typename TriangleMesh,
          typename GeomTraits,
          typename VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
-class Mean_value_coordinates_3
-{
-
+class Mean_value_coordinates_3 {
 public:
 
   /// \name Types
@@ -60,7 +60,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   using Triangle_mesh = TriangleMesh;
-  using Geom_Traits = GeomTraits;
+  using Geom_traits = GeomTraits;
   using Vertex_point_map = VertexPointMap;
 
   using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
@@ -368,7 +368,7 @@ private:
   \brief computes 3D mean value barycentric coordinates with respect to a closed triangle mesh.
 
   This function computes 3D mean value coordinates at a given `query` point
-  with respect to the vertices of a `polyhedron` with triangular faces, that is one
+  with respect to the vertices of `tmesh`, that is one
   weight per vertex. The coordinates are stored in a destination range
   beginning at `oi`.
 
@@ -379,14 +379,16 @@ private:
   points, it is easier to use this function. It can also be used when the processing
   time is not a concern.
 
-  \tparam Point_3
-  A model of `Kernel::Point_3`
-
   \tparam TriangleMesh
   must be a model of the concept `FaceListGraph`
 
+  \tparam Point_3
+  A model of `GeomTraits::Point_3` with `GeomTraits` being the type of the named parameter `geom_traits`.
+
   \tparam OutputIterator
-  a model of `OutputIterator` that accepts values of type `Kernel_traits<Point_3>::Kernel::FT`
+  must be an output iterator accepting `GeomTraits::FT` with `GeomTraits` being the type of the named parameter `geom_traits`.
+
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param tmesh
   an instance of `TriangleMesh`
@@ -397,31 +399,59 @@ private:
   \param oi
   the beginning of the destination range with the computed coordinates
 
-  \param policy
-  one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
-  the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
+  \param np
+  an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \return an output iterator to the element in the destination range,
   one past the last coordinates stored
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{computation_policy}
+      \cgalParamDescription{The computation policy for handling points near the boundary of the `tmesh`.}
+      \cgalParamType{`CGAL::Barycentric_coordinates::Computation_policy_3`}
+      \cgalParamDefault{`Computation_policy_3::FAST_WITH_EDGE_CASES`}
+    \cgalParamNEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `TriangleMesh`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `BarycentricTraits_3`}
+      \cgalParamDefault{a \cgal Kernel deduced from the value type of the vertex-point map, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \pre boost::num_vertices(`tmesh`) >= 4.
   \pre CGAL::is_triangle_mesh(`tmesh`)
   \pre CGAL::is_closed(`tmesh`).
 */
-template<typename Point_3,
-         typename TriangleMesh,
-         typename OutputIterator>
+template<typename TriangleMesh,
+         typename Point_3,
+         typename OutputIterator,
+         typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator
 mean_value_coordinates_3(const TriangleMesh& tmesh,
                          const Point_3& query,
                          OutputIterator oi,
-                         const Computation_policy_3 policy =
-                         Computation_policy_3::FAST_WITH_EDGE_CASES)
+                         const NamedParameters& np = parameters::default_values())
 {
-  using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
 
-  Mean_value_coordinates_3<TriangleMesh, Geom_Traits> mean_value(tmesh, policy);
-  return mean_value(query, oi);
+  const Computation_policy_3 policy = parameters::choose_parameter(parameters::get_parameter(np, internal_np::computation_policy), Computation_policy_3::FAST_WITH_EDGE_CASES);
+
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
+
+  if constexpr (std::is_same_v<typename GetGeomTraits<TriangleMesh, NamedParameters>::GT_from_NP, internal_np::Param_not_found>)
+    return Mean_value_coordinates_3<TriangleMesh, Geom_traits, VPM>(tmesh, policy, vpm, Geom_traits())(query, oi);
+  else
+    return Mean_value_coordinates_3<TriangleMesh, Geom_traits, VPM>(tmesh, policy, vpm, parameters::get_parameter(np, internal_np::geom_traits))(query, oi);
 }
 
 } // namespace Barycentric_coordinates

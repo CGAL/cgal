@@ -206,7 +206,8 @@ enum class Edge_case {
     }
 
     // Check convexity
-    CGAL_assertion(is_convex_2(polygon.begin(), polygon.end(), traits));
+    if constexpr (internal_kernel_traits::Has_nested_R<GeomTraits>::value)
+      CGAL_assertion(is_convex_2(polygon.begin(), polygon.end(), traits));
 
     // Store 2d barycentric coordinates
     std::vector<FT> bar_coords_2;
@@ -214,11 +215,11 @@ enum class Edge_case {
 
     // Use wp_2 or triangle coordinates
     if(use_wp_flag){
-      wachspress_coordinates_2(polygon, query_2, std::back_inserter(bar_coords_2));
+      wachspress_coordinates_2(polygon, query_2, std::back_inserter(bar_coords_2), traits);
     }
     else{
       CGAL_assertion(polygon.size() == 3);
-      triangle_coordinates_2(polygon[0], polygon[1], polygon[2], query_2, std::back_inserter(bar_coords_2));
+      triangle_coordinates_2(polygon[0], polygon[1], polygon[2], query_2, std::back_inserter(bar_coords_2), traits);
     }
 
     // Fill coordinates
@@ -295,8 +296,7 @@ enum class Edge_case {
       const FT perp_dist_i = dot_3(query_vertex, face_normal_i);
 
       // Verify location of query point;
-      if(CGAL::abs(perp_dist_i) < tol){
-
+      if(CGAL::abs(perp_dist_i) < tol) {
         if(!boundary_flag)
           boundary_coordinates_3(vertices_face, vertex_point_map, polygon_mesh,
            query, coordinates, traits, use_wp_flag);

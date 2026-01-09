@@ -5,7 +5,6 @@
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT = Kernel::FT;
 using Point_3 =  Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using Computation_policy_3 = CGAL::Barycentric_coordinates::Computation_policy_3;
@@ -26,7 +25,7 @@ int main() {
 
   std::cout << "Computed Wachspress coordinates: " << std::endl << std::endl;
   for(std::size_t i = 0; i < number_of_points; i++) {
-      std::vector<FT> coordinates;
+      std::vector<double> coordinates;
       coordinates.reserve(number_of_vertices);
       wp(points[i], std::back_inserter(coordinates));
 

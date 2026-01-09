@@ -3,7 +3,6 @@
 
 using Kernel = CGAL::Simple_cartesian<double>;
 
-using FT = Kernel::FT;
 using Point_3 = Kernel::Point_3;
 
 int main() {
@@ -15,12 +14,12 @@ int main() {
 
   // Instantiate some interior, boundary, and exterior query points for which we compute coordinates.
   const std::vector<Point_3> queries = {
-    Point_3(0.25f , 0.25f, 0.25f), Point_3(0.3f, 0.2f, 0.3f),         // interior query points
-    Point_3(0.1f, 0.1f, 0.1f), Point_3(0.2f, 0.5f, 0.3f),             // interior query points
-    Point_3(0.0f , 0.0f, 0.5f), Point_3(0.4f, 0.4f, 0.0f),            // boundary query points
-    Point_3(0.0f, 0.4f, 0.4f), Point_3(0.4f, 0.0f, 0.4f),             // boundary query points
-    Point_3(0.5f, 0.5f, 0.5f), Point_3(2.0f, 0.0f, 0.0f),             // exterior query points
-    Point_3(-1.0f, -1.0f, 1.0f), Point_3(0.5f, 0.5f, -2.0f)};         // exterior query point
+    Point_3(0.25 , 0.25, 0.25), Point_3(0.3, 0.2, 0.3),         // interior query points
+    Point_3(0.1, 0.1, 0.1), Point_3(0.2, 0.5, 0.3),             // interior query points
+    Point_3(0.0 , 0.0, 0.5), Point_3(0.4, 0.4, 0.0),            // boundary query points
+    Point_3(0.0, 0.4, 0.4), Point_3(0.4, 0.0, 0.4),             // boundary query points
+    Point_3(0.5, 0.5, 0.5), Point_3(2.0, 0.0, 0.0),             // exterior query points
+    Point_3(-1.0, -1.0, 1.0), Point_3(0.5, 0.5, -2.0)};         // exterior query point
 
   std::cout << std::endl << "tetrahedron coordinates (all queries): " << std::endl
     << std::endl;

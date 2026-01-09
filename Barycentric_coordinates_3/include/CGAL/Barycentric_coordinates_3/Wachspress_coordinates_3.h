@@ -49,10 +49,8 @@ namespace Barycentric_coordinates {
 */
 template<typename TriangleMesh,
          typename GeomTraits,
-         typename VertexPointMap = typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type>
-class Wachspress_coordinates_3
-{
-
+         typename VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
+class Wachspress_coordinates_3 {
 public:
 
   /// \name Types
@@ -60,7 +58,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   using Triangle_mesh = TriangleMesh;
-  using Geom_Traits = GeomTraits;
+  using Geom_traits = GeomTraits;
   using Vertex_point_map = VertexPointMap;
 
   using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
@@ -123,7 +121,9 @@ public:
     , m_construct_vector_3(m_traits.construct_vector_3_object())
   {
     // Check if polyhedron is strongly convex
-    CGAL_assertion(is_strongly_convex_3(m_tmesh, m_traits));
+    if constexpr (internal_kernel_traits::Has_nested_R<GeomTraits>::value)
+      CGAL_assertion(is_strongly_convex_3(m_tmesh, m_traits));
+
     m_weights.resize(vertices(m_tmesh).size());
   }
 
@@ -328,7 +328,7 @@ private:
   \brief computes 3D Wachspress coordinates with respect to a closed convex triangle mesh.
 
   This function computes 3D Wachspress coordinates at a given `query` point
-  with respect to the vertices of a convex polyhedron with triangular faces, that is one
+  with respect to the vertices of `tmesh`, that is one
   coordinate per vertex. The coordinates are stored in a destination range
   beginning at `oi`.
 
@@ -339,14 +339,16 @@ private:
   points, it is easier to use this function. It can also be used when the processing
   time is not a concern.
 
-  \tparam Point_3
-  A model of `Kernel::Point_3`
-
   \tparam TriangleMesh
   must be a model of the concept `FaceListGraph`
 
+  \tparam Point_3
+  A model of `GeomTraits::Point_3` with `GeomTraits` being the type of the named parameter `geom_traits`.
+
   \tparam OutputIterator
-  a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
+  must be an output iterator accepting `GeomTraits::FT` with `GeomTraits` being the type of the named parameter `geom_traits`.
+
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param tmesh
   an instance of `TriangleMesh`
@@ -357,31 +359,61 @@ private:
   \param oi
   the beginning of the destination range with the computed coordinates
 
-  \param policy
-  one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
-  the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
+  \param np
+  an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \return an output iterator to the element in the destination range,
   one past the last coordinate stored
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{computation_policy}
+      \cgalParamDescription{The computation policy for handling points near the boundary of the `tmesh`.}
+      \cgalParamType{`CGAL::Barycentric_coordinates::Computation_policy_3`}
+      \cgalParamDefault{`Computation_policy_3::FAST_WITH_EDGE_CASES`}
+    \cgalParamNEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `TriangleMesh`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `BarycentricTraits_3`}
+      \cgalParamDefault{a \cgal Kernel deduced from the value type of the vertex-point map, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \pre boost::num_vertices(`tmesh`) >= 4.
   \pre CGAL::is_triangle_mesh(`tmesh`).
   \pre CGAL::is_closed(`tmesh`).
   \pre CGAL::is_strongly_convex_3(`tmesh`).
 */
-template<typename Point_3,
-         typename TriangleMesh,
-         typename OutputIterator>
+template<typename TriangleMesh,
+         typename Point_3,
+         typename OutputIterator,
+         typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator
 wachspress_coordinates_3(const TriangleMesh& tmesh,
                          const Point_3& query,
                          OutputIterator oi,
-                         const Computation_policy_3 policy = Computation_policy_3::FAST)
+                         const NamedParameters& np = parameters::default_values())
 {
-  using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  static_assert(std::is_same_v<Geom_traits, typename Kernel_traits<Point_3>::Kernel>);
 
-  Wachspress_coordinates_3<TriangleMesh, Geom_Traits> wachspress(tmesh, policy);
-  return wachspress(query, oi);
+  const Computation_policy_3 policy = parameters::choose_parameter(parameters::get_parameter(np, internal_np::computation_policy), Computation_policy_3::FAST_WITH_EDGE_CASES);
+
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
+
+  if constexpr (std::is_same_v<typename GetGeomTraits<TriangleMesh, NamedParameters>::GT_from_NP, internal_np::Param_not_found>)
+    return Wachspress_coordinates_3<TriangleMesh, Geom_traits, VPM>(tmesh, policy, vpm, Geom_traits())(query, oi);
+  else
+    return Wachspress_coordinates_3<TriangleMesh, Geom_traits, VPM>(tmesh, policy, vpm, parameters::get_parameter(np, internal_np::geom_traits))(query, oi);
 }
 
 } // namespace Barycentric_coordinates

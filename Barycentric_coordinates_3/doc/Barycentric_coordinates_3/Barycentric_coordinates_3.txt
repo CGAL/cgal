@@ -92,7 +92,7 @@ The star-shaped polyhedron used in mean_value_coordinates_3.cpp and the six quer
 
 \cgalExample{Barycentric_coordinates_3/mean_value_coordinates_3.cpp}
 
-\subsection shape_deform_example_3 Shape deformation
+\subsection shape_deform_example_3 Shape Deformation
 
 This example shows how to deform a simple smooth sphere into
 another topologically equivalent shape. To achieve this, we create a box that encloses the

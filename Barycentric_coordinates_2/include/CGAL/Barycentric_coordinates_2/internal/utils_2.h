@@ -154,10 +154,11 @@ namespace internal {
     // Functions.
     const auto scalar_product_2   = traits.compute_scalar_product_2_object();
     const auto squared_distance_2 = traits.compute_squared_distance_2_object();
+    const auto construct_vector_2 = traits.construct_vector_2_object();
 
     // Project point onto segment.
     const FT opposite_scalar_product =
-    scalar_product_2(query - target, source - target);
+    scalar_product_2(construct_vector_2(target, query), construct_vector_2(target, source));
 
     // Compute coordinates.
     CGAL_assertion(source != target);

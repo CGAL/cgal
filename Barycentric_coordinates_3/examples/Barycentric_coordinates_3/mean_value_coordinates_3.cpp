@@ -4,7 +4,6 @@
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT = Kernel::FT;
 using Point_3 =  Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using Computation_policy_3 = CGAL::Barycentric_coordinates::Computation_policy_3;
@@ -24,18 +23,18 @@ int main() {
   CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, concave,
                         CGAL::parameters::do_not_triangulate_faces(false));
 
-  std::vector<FT> coords;
+  std::vector<double> coords;
   std::vector<Point_3> queries {
-    Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1)), Point_3(FT(1)/FT(3), FT(1)/FT(3), FT(2)), // Only points in the kernel
-    Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(1)), Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(2)),
-    Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(1)), Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(2))};
+    Point_3(0.5, 0.5, 1), Point_3(0.33, 0.33, 2), // Only points in the kernel
+    Point_3(1.33, 0.33, 1), Point_3(1.33, 0.33, 2),
+    Point_3(0.33, 1.33, 1), Point_3(0.33, 1.33, 2)};
 
   std::cout << std::endl << "Mean value coordinates : " << std::endl << std::endl;
 
   for (const auto& query : queries) {
     coords.clear();
     CGAL::Barycentric_coordinates::mean_value_coordinates_3(
-      concave, query, std::back_inserter(coords), Computation_policy_3::FAST);
+      concave, query, std::back_inserter(coords), CGAL::parameters::computation_policy(Computation_policy_3::FAST));
 
     // Output mean value coordinates.
     for (std::size_t i = 0; i < coords.size() -1; ++i)

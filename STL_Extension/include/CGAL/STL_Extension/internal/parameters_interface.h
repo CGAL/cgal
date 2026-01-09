@@ -409,3 +409,6 @@ CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
 CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
+
+// List of named parameters used in the package 'Barycentric_coordinates_3'
+CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)

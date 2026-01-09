@@ -6,10 +6,7 @@
 #include <fstream>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-
 using Point_3 =  Kernel::Point_3;
-using FT =  Kernel::FT;
-
 using Surface_mesh =  CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv) {
@@ -42,7 +39,7 @@ int main(int argc, char** argv) {
   CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Surface_mesh, Kernel> mv(quad_cage);
   auto vertex_point_map = get_property_map(CGAL::vertex_point, deformed);
 
-  std::vector<FT> coords;
+  std::vector<double> coords;
   std::vector<Point_3> target_cube{p0_new, p1_new, p2_new, p3_new,
                                    p4_new, p5_new, p6_new, p7_new};
 
