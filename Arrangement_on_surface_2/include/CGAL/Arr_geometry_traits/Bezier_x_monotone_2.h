@@ -403,7 +403,7 @@ private:
 
   /*! computes a y-coordinate of a point on the x-monotone subcurve with a
    * given x-coordinate.
-   * \param x0 The given x-coodinate.
+   * \param x0 The given x-coordinate.
    * \param cache Caches the vertical tangency points and intersection points.
    * \return The y-coordinate.
    */
