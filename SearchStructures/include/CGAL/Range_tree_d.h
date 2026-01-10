@@ -56,26 +56,28 @@ public:
   typedef Tree_node_base<Range_tree_node<C_Data, C_Window, C_Interface> >  Base;
 
   Range_tree_node()
-    : sublayer(0)
+    : sublayer(nullptr)
   {}
 
   Range_tree_node( Range_tree_node    * p_left,
                    Range_tree_node    * p_right,
                    const  Data & v_obj,
                    const  Key  & v_key )
-    : Base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(0)
+    : Base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(nullptr)
   {}
 
   Range_tree_node( Range_tree_node    * p_left,
                    Range_tree_node    * p_right,
                    const  Key  & v_key )
-    : Base(p_left, p_right), key( v_key ), sublayer(0)
+    : Base(p_left, p_right), key( v_key ), sublayer(nullptr)
   {}
 
   virtual ~Range_tree_node()
   {
-    if (sublayer != 0)
-      delete sublayer;
+    if (sublayer != nullptr)
+      if(dynamic_cast<Tree_anchor<C_Data, C_Window> *>(sublayer) == nullptr){
+        delete sublayer;
+      }
   }
 
   Data object;
@@ -124,11 +126,11 @@ protected:
   link_type rightmost(){return right(header);}
   link_type leftmost(){return left(header);}
   link_type root() const {
-    if(header!=0)
+    if(header != nullptr)
       return header->parent_link;
     // return parent(header);
     else
-      return 0;
+      return nullptr;
   }
 
   bool is_less_equal(const Key&  x, const Key&  y) const
@@ -219,28 +221,26 @@ protected:
     {
       sublevel_first = current;
 
-      link_type  vleft = new Range_tree_node2( 0, 0,
+      link_type  vleft = new Range_tree_node2( nullptr, nullptr,
                                   (*current), m_interface.get_key(*current) );
-      //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_assertion( vleft != 0);
+      CGAL_assertion( vleft != nullptr);
 
       ++current;
-      link_type  vright = new Range_tree_node2( 0,0,
+      link_type  vright = new Range_tree_node2( nullptr,nullptr,
                                   (*current), m_interface.get_key(*current) );
-      //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_assertion( vright != 0);
+      CGAL_assertion( vright != nullptr);
       current++;
       sublevel_last = current;
 
       link_type  vparent = new Range_tree_node2( vleft, vright, vleft->key );
-      CGAL_assertion( vparent != 0);
+      CGAL_assertion( vparent != nullptr);
 
       vleft->parent_link = vparent;
       vright->parent_link = vparent;
       leftchild = vleft;
       rightchild = vright;
       prevchild = vparent;
-      if ( leftmostlink == 0)
+      if ( leftmostlink == nullptr)
         leftmostlink = leftchild;
 
       Tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
@@ -257,10 +257,9 @@ protected:
       if(n==1)
       {
         sublevel_first = current;
-        link_type vright = new Range_tree_node2( 0, 0,
+        link_type vright = new Range_tree_node2( nullptr, nullptr,
                                    (*current), m_interface.get_key(*current) );
-        //CGAL_NIL CGAL_NIL first two arguments
-        CGAL_assertion( vright != 0); //CGAL_NIL
+        CGAL_assertion( vright != nullptr);
         current++;
         sublevel_last = current;
         prevchild = vright;
@@ -268,15 +267,14 @@ protected:
       }
       else
       {
-        // recursiv call for the construction. the interval is divided.
+        // recursive call for the construction. the interval is divided.
         T sublevel_left, sublevel_right;
         build_range_tree(n - (int)n/2, leftchild, rightchild,
                          prevchild, leftmostlink, current, last,
                          sublevel_first, sublevel_left);
-        link_type vparent = new Range_tree_node2( prevchild, 0,
+        link_type vparent = new Range_tree_node2( prevchild, nullptr,
                                         rightchild->key );
-        //CGAL_NIL argument
-        CGAL_assertion( vparent != 0);
+        CGAL_assertion( vparent != nullptr);
 
         prevchild->parent_link = vparent;
 
@@ -298,7 +296,7 @@ protected:
 
   void delete_tree(link_type v)
   {
-    if (v->left_link != 0)
+    if (v->left_link != nullptr)
     {
        delete_tree(left(v));
        delete_tree(right(v));
@@ -313,7 +311,7 @@ protected:
   {
     link_type v = root();
 
-    while(v->left_link!=0)
+    while(v->left_link != nullptr)
     {
 //      if(m_interface.comp(m_interface.get_right(key), v->key))
       if(is_less_equal(m_interface.get_right(key), v->key))
@@ -332,7 +330,7 @@ protected:
   void report_subtree(link_type v,
                       T result)
   {
-    if(left(v)!=0)
+    if(left(v) != nullptr)
     {
       report_subtree(left(v), result);
       report_subtree(right(v), result);
@@ -346,13 +344,13 @@ protected:
   {
     link_type leftmost_child_l, rightmost_child_l,  leftmost_child_r,
       rightmost_child_r;
-    if (v->sublayer != 0)
+    if (v->sublayer != nullptr)
     {
       Tree_base<C_Data, C_Window> *T= v->sublayer;
       if(! T->is_valid())
         return false;
     }
-    if(left(v)!=0)
+    if(left(v) != nullptr)
     {
       if(!is_valid(left(v), leftmost_child_l, rightmost_child_l))
         return false;
@@ -379,12 +377,12 @@ public:
 
   // construction of a tree
   Range_tree_d(Range_tree_d const &fact, bool):
-    sublayer_tree(fact.sublayer_tree->clone()), is_built(false), header(0)
+    sublayer_tree(fact.sublayer_tree->clone()), is_built(false), header(nullptr)
   {}
 
   // construction of a tree
   Range_tree_d(Tree_base<C_Data, C_Window> const &fact):
-    sublayer_tree(fact.clone()), is_built(false), header(0)
+    sublayer_tree(fact.clone()), is_built(false), header(nullptr)
   {}
 
   // destruction
@@ -392,12 +390,14 @@ public:
   {
     link_type v=root();
 
-    if (v!=0)
+    if (v != nullptr)
       delete_tree(v);
-    if (header!=0)
+    if (header != nullptr)
       delete header;
-    if (sublayer_tree!=0)
-      delete sublayer_tree;
+    if (sublayer_tree != nullptr)
+      if(dynamic_cast<Tree_anchor<C_Data, C_Window> *>(sublayer_tree) == nullptr){
+        delete sublayer_tree;
+      }
   }
 
 
@@ -409,14 +409,14 @@ public:
 
   bool make_tree(const typename std::list< C_Data>::iterator& beg,
                  const typename std::list< C_Data>::iterator& end,
-                 typename tbt::lit * =0){
+                 typename tbt::lit * = nullptr){
     return make_tree_impl(beg,end);
   }
 
 #ifdef stlvector
   bool make_tree(const typename std::vector< C_Data>::iterator& beg,
                  const typename std::vector< C_Data>::iterator& end,
-                 typename tbt::vbit * =0){
+                 typename tbt::vbit * = nullptr){
     return make_tree_impl(beg,end);
   }
 #endif
@@ -448,7 +448,7 @@ public:
     int n = static_cast<int>(std::distance(first,last));
     dynamic_merge(first, last);
 
-    leftmostlink = 0;
+    leftmostlink = nullptr;
     T sublevel_first, sublevel_last;
 
     build_range_tree(n, leftchild, rightchild, prevchild,
@@ -467,7 +467,7 @@ public:
   std::back_insert_iterator< std::list< C_Data> > window_query
           ( C_Window const &win,
             std::back_insert_iterator< std::list< C_Data> > out,
-            typename tbt::lbit * =0){
+            typename tbt::lbit * = nullptr){
     return window_query_impl(win,out);
   }
 
@@ -475,7 +475,7 @@ public:
   std::back_insert_iterator< std::vector< C_Data> > window_query
           ( C_Window const &win,
             std::back_insert_iterator< std::vector< C_Data> > out,
-            typename tbt::vbit * =0){
+            typename tbt::vbit * = nullptr){
     return window_query_impl(win,out);
   }
 
@@ -489,7 +489,7 @@ public:
 #ifdef ostreamiterator
   std::ostream_iterator< C_Data>  window_query( C_Window const &win,
                      std::ostream_iterator< C_Data> out,
-                     typename tbt::oit *dummy=0){
+                     typename tbt::oit *dummy= nullptr){
     return window_query_impl(win,out);
   }
 #endif
@@ -501,10 +501,10 @@ public:
   {
     if(is_less_equal(m_interface.get_right(win), m_interface.get_left(win)))
        return result;
-    if(root()==0)
+    if(root() == nullptr)
       return result;
     link_type split_node = findSplitNode(win);
-    if(left(split_node)==0)
+    if(left(split_node) == nullptr)
     {
       if(is_inside(win,split_node->object))
         (*result++)=split_node->object;
@@ -513,12 +513,12 @@ public:
     {
       link_type v = (link_type) split_node->left_link;
 
-      while(left(v)!=0)
+      while(left(v) != nullptr)
       {
         if(is_less_equal(m_interface.get_left(win),v->key))
         {
           link_type w = right(v);
-          if(left(w)!=0)
+          if(left(w) != nullptr)
           {
             Tree_base<C_Data, C_Window> *T= (w)->sublayer;
             if(T->is_anchor())
@@ -537,13 +537,13 @@ public:
       if(is_inside(win,v->object))
         (*result++)=v->object;
       v = right(split_node);
-      while(right(v)!=0)
+      while(right(v) != nullptr)
       {
 //        if(is_less_equal(v->key, m_interface.get_right(win))) closed interval
         if(m_interface.comp(v->key, m_interface.get_right(win)))
           //half open interval
         {
-          if(left(left(v))!=0)
+          if(left(left(v)) != nullptr)
           {
             Tree_base<C_Data, C_Window> *T= (left(v))->sublayer;
             if(T->is_anchor())
@@ -571,13 +571,13 @@ public:
 
   std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &win,
                              std::back_insert_iterator< std::list< C_Data> > out,
-                             typename tbt::lbit * =0){
+                             typename tbt::lbit * = nullptr){
     return enclosing_query_impl(win,out);
   }
 
   std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &win,
                              std::back_insert_iterator< std::vector< C_Data> > out,
-                             typename tbt::vbit * =0){
+                             typename tbt::vbit * = nullptr){
     return enclosing_query_impl(win,out);
   }
 
@@ -591,7 +591,7 @@ public:
 #ifdef ostreamiterator
   std::ostream_iterator< C_Data>  enclosing_query( C_Window const &win,
                              std::ostream_iterator< C_Data> out,
-                             typename tbt::oit *dummy=0){
+                             typename tbt::oit *dummy= nullptr){
     return enclosing_query_impl(win,out);
   }
 #endif
@@ -608,7 +608,7 @@ public:
   {
     link_type u,v,w;
     u=v=w=root();
-    if(v!=0)
+    if(v != nullptr)
       return is_valid(u, v, w);
     return true;
   }

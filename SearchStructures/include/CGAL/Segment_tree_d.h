@@ -55,25 +55,27 @@ public:
   typedef Tree_node_base<Segment_tree_node<C_Data, C_Window, C_Interface> >  Base;
 
   Segment_tree_node()
-    : sublayer(0)
+    : sublayer(nullptr)
   {}
 
   Segment_tree_node(const Key& p_left_key,
                     const Key& p_right_key)
-    : left_key(p_left_key), right_key(p_right_key), sublayer(0)
+    : left_key(p_left_key), right_key(p_right_key), sublayer(nullptr)
   {}
 
   Segment_tree_node(Segment_tree_node * p_left,
                     Segment_tree_node * p_right,
                     const Key& p_left_key,
                     const Key& p_right_key)
-    : Base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
+    : Base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(nullptr)
   {}
 
   ~Segment_tree_node(){
     objects.clear();
-    if (sublayer != 0)//(tree_base_type *)
-      delete sublayer;
+    if (sublayer != nullptr)//(tree_base_type *)
+     if(dynamic_cast<Tree_anchor<C_Data, C_Window> *>(sublayer) == nullptr){
+       delete sublayer;
+     }
   }
 };
 
@@ -125,9 +127,9 @@ protected:
   link_type rightmost(){return right(header);}
   link_type leftmost(){return left(header);}
   link_type root() const{
-    if(header!=0)
+    if(header != nullptr)
       return header->parent_link;
-    return 0;
+    return nullptr;
   }
 
   // returns true, if the object lies inside of win
@@ -263,7 +265,7 @@ protected:
        }
        else
        {
-         // recursiv call for the construction. the interval is divided.
+         // recursive call for the construction. the interval is divided.
          build_segment_tree(n - (int)n/2, leftchild, rightchild,
                          prevchild, leftmostlink, index, last, keys);
          link_type vparent = new_Segment_tree_node_t
@@ -304,7 +306,7 @@ protected:
      if(is_less_equal(m_interface.get_right_win(win), v->left_key)
         || is_less_equal(v->right_key,m_interface.get_left_win(win)))
        return result;
-     if (v->sublayer!=0 && (!v->sublayer->is_anchor())) //(tree_base_type *)
+     if (v->sublayer != nullptr && (!v->sublayer->is_anchor())) //(tree_base_type *)
      {
        Tree_base<C_Data, C_Window> *T = v->sublayer;
 
@@ -364,7 +366,7 @@ protected:
      if(is_less_equal(m_interface.get_right_win(win), v->left_key) ||
         is_less_equal(v->right_key,m_interface.get_left_win(win)))
        return result;
-     if (v->sublayer!=0 && (!v->sublayer->is_anchor())) //(tree_base_type *)
+     if (v->sublayer != nullptr && (!v->sublayer->is_anchor())) //(tree_base_type *)
      {
        Tree_base<C_Data, C_Window> *T = v->sublayer;
 
@@ -424,7 +426,7 @@ protected:
 
   bool is_valid(const link_type& v) const // af:was not const reference
   {
-    if (v->sublayer != 0)//(tree_base_type *)
+    if (v->sublayer != nullptr)//(tree_base_type *)
     {
       Tree_base<C_Data, C_Window> *T=v->sublayer;
       if(! T->is_valid())
@@ -480,10 +482,13 @@ public:
     link_type v=root();
     if(v!=CGAL_TREE_BASE_nullptr)
       delete_tree(v);
-    if (header!=0)
+    if (header != nullptr)
       delete_node(header);
-    if(sublayer_tree!=0)
-      delete sublayer_tree;
+    if(sublayer_tree != nullptr){
+      if(dynamic_cast<Tree_anchor<C_Data, C_Window> *>(sublayer_tree) == nullptr){
+        delete sublayer_tree;
+      }
+    }
   }
 
   // clone creates a prototype
@@ -492,14 +497,14 @@ public:
 
   bool make_tree(const typename std::list< C_Data>::iterator& beg,
                 const typename std::list< C_Data>::iterator& end,
-                 typename tbt::lit * =0){
+                 typename tbt::lit * = nullptr){
     return make_tree_impl(beg,end);
   }
 
   #ifdef stlvector
   bool make_tree(const typename std::vector< C_Data>::iterator& beg,
                  const typename std::vector< C_Data>::iterator& end,
-                 typename tbt::vbit * =0){
+                 typename tbt::vbit * = nullptr){
     return make_tree_impl(beg,end);
   }
   #endif
@@ -592,7 +597,7 @@ public:
   std::back_insert_iterator< std::list< C_Data> > window_query
           ( C_Window const &win,
             std::back_insert_iterator< std::list< C_Data> > out,
-            typename tbt::lbit * =0){
+            typename tbt::lbit * = nullptr){
     return window_query_impl(win,out);
   }
 
@@ -600,7 +605,7 @@ public:
   std::back_insert_iterator< std::vector< C_Data> > window_query
           ( C_Window const &win,
             std::back_insert_iterator< std::vector< C_Data> > out,
-            typename tbt::vbit * =0){
+            typename tbt::vbit * = nullptr){
     return window_query_impl(win,out);
   }
   #ifdef carray
@@ -612,7 +617,7 @@ public:
 #ifdef ostreamiterator
   std::ostream_iterator< C_Data>  window_query( C_Window const &win,
                      std::ostream_iterator< C_Data> out,
-                     typename tbt::oit *dummy=0){
+                     typename tbt::oit *dummy= nullptr){
     return window_query_impl(win,out);
   }
 #endif
@@ -622,7 +627,7 @@ public:
   // all elements that ly inside win are inserted into result
   template <class A>
   inline A window_query_impl( C_Window const &win,
-                             A result,typename tbt::lbit * =0)
+                             A result,typename tbt::lbit * = nullptr)
   {
     if(is_less_equal(m_interface.get_right_win(win),
                      m_interface.get_left_win(win)))
@@ -642,14 +647,14 @@ public:
   std::back_insert_iterator< std::list< C_Data> > enclosing_query(
                C_Window const &win,
                std::back_insert_iterator< std::list< C_Data> > out,
-               typename tbt::lbit * =0){
+               typename tbt::lbit * = nullptr){
     return enclosing_query_impl(win,out);
   }
 
   std::back_insert_iterator< std::vector< C_Data> > enclosing_query(
               C_Window const &win,
               std::back_insert_iterator< std::vector< C_Data> > out,
-              typename tbt::vbit * =0){
+              typename tbt::vbit * = nullptr){
     return enclosing_query_impl(win,out);
   }
 
@@ -664,7 +669,7 @@ public:
   std::ostream_iterator< C_Data>
   enclosing_query( C_Window const &win,
                    std::ostream_iterator< C_Data> out,
-                   typename tbt::oit *dummy=0){
+                   typename tbt::oit *dummy= nullptr){
     return enclosing_query_impl(win,out);
   }
 #endif
@@ -675,7 +680,7 @@ public:
   template <class A>
   inline
   A enclosing_query_impl( C_Window const &win,
-                          A result, typename tbt::lbit * =0)
+                          A result, typename tbt::lbit * = nullptr)
   {
     if(is_less_equal(m_interface.get_right_win(win),
                      m_interface.get_left_win(win)))
