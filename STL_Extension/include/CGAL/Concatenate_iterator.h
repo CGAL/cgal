@@ -120,14 +120,14 @@ public:
     } else {
       // O(n) fallback for non-random-access iterators
       Self res(*this);
-      for(difference_type i = 0; i < offset; ++i) { ++res; }
+      for (difference_type i = 0; i < offset; ++i) { ++res; }
       return res;
     }
   }
 
   Self& operator+=(difference_type offset)
   {
-    *this=this->operator+(offset);
+    *this = this->operator+(offset);
     return *this;
   }
 
@@ -153,7 +153,7 @@ public:
     } else {
       // O(n) fallback for non-random-access iterators
       Self res(*this);
-      for(difference_type i = 0; i < offset; ++i) { --res; }
+      for (difference_type i = 0; i < offset; ++i) { --res; }
       return res;
     }
   }
@@ -181,11 +181,10 @@ public:
         return -((other.e1_ - i1_) + (other.i2_ - other.b2_));
       }
     } else {
-      // O(n) fallback for non-random-access iterators
-      difference_type res = 0;
-      Self temp = other;
-      while(temp != *this) { ++res; ++temp; }
-      return res;
+      // operator-(iterator) is only valid for random access iterators
+      // Return 0 as a fallback (undefined behavior for non-random-access)
+      CGAL_assertion_msg(false, "operator-(iterator) requires random access iterators");
+      return difference_type(0);
     }
   }
 

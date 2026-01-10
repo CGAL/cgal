@@ -322,6 +322,11 @@ int main()
     it = it - (-3);
     assert(*it == 11);
 
+    // Test negative differences
+    assert(begin - end == -10);
+    assert((begin + 3) - (begin + 7) == -4);
+    assert((begin + 5) - (begin + 2) == 3);
+
     std::cout << "O(1) operator tests passed!" << std::endl;
   }
 
