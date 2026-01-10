@@ -3,6 +3,7 @@
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Search_traits_d.h>
+#include<cstdlib>
 
 typedef CGAL::Epick_d<CGAL::Dimension_tag<4> > Kernel;
 typedef Kernel::Point_d Point_d;
@@ -13,10 +14,11 @@ typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
-int  main()
+int main(int argc, char* argv[]) 
 {
   const int N = 1000;
-  const unsigned int K = 10;
+  // Use command line argument if provided, otherwise default to 10
+  const unsigned int K = (argc > 1) ? std::atoi(argv[1]) : 10;
 
   Tree tree;
   Random_points_iterator rpit(4,1000.0);
@@ -28,8 +30,9 @@ int  main()
   Iso_box_d query(pp,qq);
 
   Distance tr_dist;
-  Neighbor_search N1(tree, query, 5, 10.0, false); // eps=10.0, nearest=false
+//  Neighbor_search N1(tree, query, 5, 10.0, false); // eps=10.0, nearest=false
 
+  Neighbor_search N1(tree, query, K, 10.0, false);
   std::cout << "For query rectangle = [0.1, 0.2]^4 " << std::endl
             <<  "the " << K << " approximate furthest neighbors are: " << std::endl;
   for (Neighbor_search::iterator it = N1.begin();it != N1.end();it++) {
