@@ -260,7 +260,7 @@ public:
     { ++m_counter2; return m_object(xc1, xc2); }
   };
 
-  /*! A functor that compares compares the \f$y\f$-coordinates of two
+  /*! A functor that compares the \f$y\f$-coordinates of two
    * \f$x\f$-monotone curves immediately to the left of their intersection
    * point.
    */
@@ -281,7 +281,7 @@ public:
     { ++m_counter; return m_object(xc1, xc2, p); }
   };
 
-  /*! A functor that compares compares the \f$y\f$-coordinates of two
+  /*! A functor that compares the \f$y\f$-coordinates of two
    * \f$x\f$-monotone curves immediately to the right of their intersection
    * point.
    */

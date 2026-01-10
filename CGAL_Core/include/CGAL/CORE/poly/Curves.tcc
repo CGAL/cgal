@@ -1394,7 +1394,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
 
 
 //Xintersections(C, D, vI):
-//  returns the list vI of x-ccordinates of possible intersection points.
+//  returns the list vI of x-coordinates of possible intersection points.
 //  Assumes that C & D are quasi-monic.(or generally aligned)
 template <class NT>
 void  Xintersections( Curve<NT>& P ,Curve<NT>& Q, BFVecInterval &vI){

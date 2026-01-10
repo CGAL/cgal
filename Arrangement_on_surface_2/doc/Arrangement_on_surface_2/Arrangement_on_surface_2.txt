@@ -2338,7 +2338,7 @@ Instead of an explicit approach, we use an implicit bounding rectangle
 embedded in the \dcel structure. \cgalFigureRef{aos_fig-unb_dcel}
 shows the arrangement of four lines that subdivide the plane into
 eight unbounded faces and two bounded ones. Notice that in this case
-portions of the the unbounded faces now have outer boundaries (those
+portions of the unbounded faces now have outer boundaries (those
 portions inside the bounding rectangle), and the halfedges along these
 outer CCBs are drawn as arrows. The bounding rectangle is drawn
 dashed. The vertices \f$v_1,v_2,\ldots,v_8\f$, which lie on the
@@ -6294,7 +6294,7 @@ overlay faces.
 The following example shows how to compute the intersection of two
 polygons using the `overlay()` function template. It uses a
 face-extended \dcel type to instantiate the arrangement
-classes. Each face of the the \dcel is extended with a Boolean
+classes. Each face of the \dcel is extended with a Boolean
 flag. A polygon is represented as a <em>marked</em> arrangement face
 (whose flag is set). The example uses an instance of the
 `Arr_face_overlay_traits<ArrR,ArrB,ArrO,OverlayFaceData>` class

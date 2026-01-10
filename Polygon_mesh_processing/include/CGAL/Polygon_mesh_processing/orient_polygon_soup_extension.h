@@ -65,7 +65,7 @@ bool
 duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
                                              PolygonRange& polygons)
 {
-  std::size_t inital_nb_pts = points.size();
+  std::size_t initial_nb_pts = points.size();
   typedef CGAL::Polygon_mesh_processing::internal::
     Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
 
@@ -79,7 +79,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
         orienter.set_edge_marked(i1,i2_and_pids.first,orienter.marked_edges);
   orienter.duplicate_singular_vertices();
 
-  return inital_nb_pts==points.size();
+  return initial_nb_pts==points.size();
 }
 
 /*!
