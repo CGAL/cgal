@@ -144,6 +144,10 @@ namespace CGAL {
       { return idx; }
       size_type index(const_iterator cit) const
       { return cit; }
+      const Dart& operator[] (size_type i) const
+      { return mmap.mdarts[i]; }
+      Dart& operator[] (size_type i)
+      { return mmap.mdarts[i]; }
       bool is_used(size_type i) const
       { return mmap.mdarts.is_used(i); }
       bool owns(size_type i) const
