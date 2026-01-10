@@ -1875,7 +1875,7 @@ public:
   /// @{
 
   /*!
-    returns an approximation of the area of `c`.
+    returns an approximation of the area bounded by `c`.
   */
   double operator()(const Kernel::Circle_3& c);
 
@@ -1992,7 +1992,7 @@ public:
   /// @{
 
   /*!
-    returns the area of `c`, divided by \f$ \pi\f$.
+    returns the area bounded by `c`, divided by \f$ \pi\f$.
   */
   Kernel::FT operator()(const Kernel::Circle_3& c);
 
@@ -3102,7 +3102,7 @@ public:
 
   /*!
   returns the squared radius of the
-  smallest sphere circle to the argument(s).
+  smallest circle to the argument(s).
   */
   Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
                          const Kernel::Weighted_point_2& qw,
