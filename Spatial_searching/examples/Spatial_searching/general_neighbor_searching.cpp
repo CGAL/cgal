@@ -14,7 +14,7 @@ typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   const int N = 1000;
   // Use command line argument if provided, otherwise default to 10
