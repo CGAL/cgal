@@ -4,6 +4,7 @@
 #include <CGAL/Search_traits_2.h>
 #include <list>
 #include <cmath>
+#include<cstdlib>
 
 
 typedef CGAL::Simple_cartesian<double> K;
@@ -12,9 +13,13 @@ typedef CGAL::Search_traits_2<K> TreeTraits;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
-int main()
+int main(int argc, char* argv[])
 {
-  const unsigned int N = 1;
+  //// 1. Allow user to specify N via command line, default to 1
+  const unsigned int N = (argc>1) ? std::atoi(argv[1]) : 1;
+
+  // 2. UX Improvement: Tell the user what is happening
+  std::cout<<" generating data and searching for the "<<N<<" nearest neighbor(s)"<< std::endl;
 
   std::list<Point_d> points;
   points.push_back(Point_d(0,0));
