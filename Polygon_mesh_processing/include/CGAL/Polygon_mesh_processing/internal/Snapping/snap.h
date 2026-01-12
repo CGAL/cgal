@@ -1330,6 +1330,8 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
 #ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
     std::ofstream("results/simplified_A.off") << std::setprecision(17) << tm_A;
 #endif
+
+    internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_A, tolerance_map_A, tolerance_map_A, tm_A, np_A);
   }
 
   if(!is_self_snapping && !is_second_mesh_fixed && simplify_second_mesh)
@@ -1339,6 +1341,8 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
 #ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
     std::ofstream("results/simplified_B.off") << std::setprecision(17) << tm_B;
 #endif
+
+    internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_B, tolerance_map_B, tolerance_map_B, tm_B, np_B);
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1405,6 +1409,11 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << " ///////////// Two one-way vertex-edge snapping (A --> B) " << std::endl;
 #endif
+
+  // Adjust property maps after vertex-vertex snapping
+  internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_A, tolerance_map_A, tolerance_map_A, tm_A, np_A);
+  if (!is_self_snapping && !is_second_mesh_fixed)
+    internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_B, tolerance_map_B, tolerance_map_B, tm_B, np_B);
 
   visitor.start_first_vertex_edge_phase();
 
