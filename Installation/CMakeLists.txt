@@ -433,7 +433,7 @@ if("${CMAKE_CXX_COMPILER}" MATCHES "icl" OR "${CMAKE_CXX_COMPILER}" MATCHES
     )
   else()
     message(
-      STATUS "Using Intel Compiler version 11 or later. Adding -fp-model=strict"
+      STATUS "Using Intel Compiler version 11 or greater. Adding -fp-model=strict"
     )
     if(WIN32)
       uniquely_add_flags(CGAL_CXX_FLAGS "/fp:strict")
@@ -471,7 +471,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     endif()
 
     if("${GCC_VERSION}" MATCHES "^[4-9].")
-      message(STATUS "Using gcc version 4 or later. Adding -frounding-math")
+      message(STATUS "Using gcc version 4 or greater. Adding -frounding-math")
       uniquely_add_flags(CGAL_CXX_FLAGS "-frounding-math")
     endif()
 
