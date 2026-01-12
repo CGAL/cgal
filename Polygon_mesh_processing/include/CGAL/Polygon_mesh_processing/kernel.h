@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2025 GeometryFactory (France).
+// Copyright (c) 2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sebastien Loriot, Léo Valque
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_KERNEL_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_KERNEL_H
@@ -17,10 +17,9 @@
 #include <random>
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
-#include <CGAL/Polygon_mesh_processing/clip.h>
+
 #include <CGAL/Polygon_mesh_processing/clip_convex.h>
-#include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
-#include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
+#include <CGAL/Polygon_mesh_processing/Three_point_cut_plane_traits.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
@@ -30,113 +29,6 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-
-template <class Kernel>
-struct Three_point_cut_plane_traits
-{
-  using FT = typename Kernel::FT;
-  using Point_3 = typename Kernel::Point_3;
-
-  struct Plane_3: public std::array<typename Kernel::Point_3, 3>{
-    using Base = std::array<typename Kernel::Point_3, 3>;
-    using Explicit_plane = typename Kernel::Plane_3;
-
-    Plane_3(const Point_3 &a, const Point_3 &b, const Point_3 &c): Base({a, b, c}){}
-    Plane_3(const std::array<Point_3, 3> &arr): Base(arr){}
-
-    // Warning: it is slow (Planes are constructed each time)
-    bool operator<(const Plane_3 &b) const{
-      Explicit_plane pa = explicit_plane();
-      Explicit_plane pb = b.explicit_plane();
-      Comparison_result res = compare(pa.a(), pb.a());
-      if(res == EQUAL)
-        res = compare(pa.b(), pb.b());
-      if(res == EQUAL)
-        res = compare(pa.c(), pb.c());
-      if(res == EQUAL)
-        res = compare(pa.d(), pb.d());
-      return res == SMALLER;
-    };
-
-    bool operator==(const Plane_3 &b) const{
-      Explicit_plane pa = explicit_plane();
-      Explicit_plane pb = b.explicit_plane();
-      return pa==pb;
-    }
-
-    Explicit_plane explicit_plane() const{
-      return  Explicit_plane((*this)[0], (*this)[1], (*this)[2]);
-    }
-
-  };
-  using Vector_3 = typename Kernel::Vector_3;
-
-  struct Does_not_support_CDT2{};
-
-  struct Oriented_side_3
-  {
-    Oriented_side operator()(const Plane_3& plane, const Point_3& p)  const
-    {
-      return orientation(plane[0], plane[1], plane[2], p);
-    }
-  };
-
-  struct Construct_plane_line_intersection_point_3
-  {
-    Point_3 operator()(const Plane_3& plane, const Point_3& p, const Point_3& q)
-    {
-      typename Kernel::Construct_plane_line_intersection_point_3 construction;
-      return construction(plane[0], plane[1], plane[2], p, q);
-    }
-  };
-
-  struct Construct_orthogonal_vector_3{
-    Vector_3 operator()(const Plane_3& plane)
-    {
-      return typename Kernel::Plane_3(plane[0], plane[1], plane[2]).orthogonal_vector();
-    }
-  };
-
-  struct Compute_squared_distance_3
-  {
-    using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
-    FT operator()(const Plane_3& plane, const Point_3& p)
-    {
-      typename Kernel::Plane_3 pl(plane[0], plane[1], plane[2]);
-      return Compute_scalar_product_3()(Vector_3(ORIGIN, p), pl.orthogonal_vector())+pl.d();
-    }
-  };
-
-  Oriented_side_3 oriented_side_3_object() const
-  {
-    return Oriented_side_3();
-  }
-
-  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const
-  {
-    return Construct_plane_line_intersection_point_3();
-  }
-
-  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const
-  {
-    return Construct_orthogonal_vector_3();
-  }
-
-  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
-
-#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
-// for does self-intersect
-  using Segment_3 = typename Kernel::Segment_3;
-  using Triangle_3 = typename Kernel::Triangle_3;
-  using Construct_segment_3 = typename Kernel::Construct_segment_3;
-  using Construct_triangle_3 =typename  Kernel::Construct_triangle_3;
-  using Do_intersect_3 = typename Kernel::Do_intersect_3;
-  Construct_segment_3 construct_segment_3_object() const { return Construct_segment_3(); }
-  Construct_triangle_3 construct_triangle_3_object() const { return Construct_triangle_3(); }
-  Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
-#endif
-};
-
 namespace internal{
 template <class PolygonMesh,
           class FaceRange,
@@ -173,8 +65,9 @@ kernel(const PolygonMesh& pm,
 
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
+  auto seed = choose_parameter(get_parameter(np, internal_np::random_seed), std::random_device()());
 
-  // To speedup on stupid benchmarks
+  // Immediate exit if the input is not of gender zero to speedup on stupid benchmarks
   // if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
   //   return PolygonMesh();
 
@@ -193,7 +86,7 @@ kernel(const PolygonMesh& pm,
   std::array<vertex_descriptor, 6> bbox_vertices;
   std::array<EPoint_3, 8> corners;
   if(bbox_filtering){
-    // We store the vertices that realized the bbox
+    // We compute and store the vertices that realized the bbox
     struct BBoxEntry {
       std::size_t index;
       std::function<double(const EPoint_3&)> bound;
@@ -228,20 +121,22 @@ kernel(const PolygonMesh& pm,
                                EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
   }
 
+  // Get the planes and eventually shuffle them
   Three_point_cut_plane_traits<EK> kgt;
-
   std::vector<face_descriptor> planes(faces.begin(), faces.end());
   if(shuffle_planes)
-    std::shuffle(planes.begin(), planes.end(), std::default_random_engine());
+    std::shuffle(planes.begin(), planes.end(), std::default_random_engine(seed));
 
-  for(auto f: planes)
-  {
+  // Cut iteratively the temporary kernel by halfspaces
+  for(auto f: planes){
     auto h = halfedge(f, pm);
     Plane_3 plane(to_exact(get(vpm,source(h, pm))),
                   to_exact(get(vpm,target(h, pm))),
                   to_exact(get(vpm,target(next(h, pm), pm))));
 
     if(bbox_filtering){
+      // Early exit if the plane does not cut the bbox of the temporary kernel
+
       // By looking the sign of the plane value, we can check only two corners
       auto pred = kgt.oriented_side_3_object();
       auto eplane = plane.explicit_plane();
@@ -258,7 +153,7 @@ kernel(const PolygonMesh& pm,
       CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i))
         CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
 
-      // update bbox TODO can be smarter
+      // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
       bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
             get(kvpm, bbox_vertices[3]).bbox()+get(kvpm, bbox_vertices[4]).bbox()+get(kvpm, bbox_vertices[5]).bbox();
       corners = CGAL::make_array(EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
@@ -278,6 +173,7 @@ kernel(const PolygonMesh& pm,
     }
   }
 
+  // Convert points of the kernel to the type of the input mesh
   for(vertex_descriptor v : vertices(kernel))
     put(base_vpm, v, from_exact(get(kvpm, v)));
   return kernel;
