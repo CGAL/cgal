@@ -20,7 +20,7 @@ which operates on a set of points and segments.
 Note that this tutorial is not about computational geometry, so we assume you are familiar
 with Delaunay triangulation with and without constraints.
 
-## Tutorial_Delaunay_2   Defining the Type of Triangulation
+\section  Tutorial_Delaunay_2   Defining the Type of %Triangulation
 
 In the example code of this section we use a class template `Delaunay_triangulation_2`
 together with a <em>kernel</em> which provides types for points, segments or triangles, as well as
@@ -31,7 +31,7 @@ So we start with some `#include` and some `using` statements to define types.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-include
 
-## Tutorial_Delaunay_2_Insert Inserting Points
+\section  Tutorial_Delaunay_2_Insert Inserting Points
 
 When we insert a set of points in the triangulation, it generates a set of finite
 vertices corresponding to the points, and the decomposition of the convex hull
@@ -50,7 +50,7 @@ When we insert an individual point we obtained a <em>vertex handle</em> `vh`.
 A handle is a pointer to a vertex object, and no surprise when we write
 `v->point()` into `std::cout` we will see `1 1` on the console.
 
-## Tutorial_Delaunay_2_Enumerate  Enumerating Vertices and Faces
+\section  Tutorial_Delaunay_2_Enumerate  Enumerating Vertices and Faces
 
 Just like the standard containers, the triangulation provides iterators to enumerate
 its elements, that is either all or only the finite vertices and faces.
@@ -60,7 +60,7 @@ vertex, or to compute the area of an infinite face.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-traversal
 
-## Tutorial_Delaunay_2_Navigation About Incidence Relationships
+\section  Tutorial_Delaunay_2_Navigation About Incidence Relationships
 
 We next see how to navigate between vertices and faces.
 For vertex `vh` we can obtain one incident face calling `vh->face()`.
@@ -96,7 +96,7 @@ face opposite to `vh`. And symmetrically, we now obtain the index of
 
 FIGURE
 
-## Tutorial_Delaunay_2_Auto Real Types instead of Auto
+\section  Tutorial_Delaunay_2_Auto Real Types instead of Auto
 
 We saw a lot of `auto` instead of real types. Depending on your
 programming style you may like them or you may prefer writing
@@ -109,7 +109,7 @@ absolutely clear of what type a variable is.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-noauto
 
-## Tutorial_Delaunay_2_Edges Edges
+\section  Tutorial_Delaunay_2_Edges Edges
 
 In a triangulation we also have <em>edges</em>. However, they are just a `std::pair`
 and hold a face handle and an index. No surprise that the index is the one
@@ -123,7 +123,7 @@ not equal.
 The triangulation offers iterators to enumerate all edges,
 and circulators to enumerate the edges incident to a vertex.
 
-## Tutorial_Delaunay_2_Locate Point Location
+\section  Tutorial_Delaunay_2_Locate Point Location
 
 Given a 2D point `p`
 we want to determine where in the triangulation it is. The `locate()` function
@@ -148,7 +148,7 @@ the result of a previous point location query as hint where to start for the cur
 You might have a look at the function `hilbert_sort()` to learn more about what
 we mean with spatial coherence.
 
-## Tutorial_Delaunay_2_Line_face_circulator  Walking Along a Line
+\section  Tutorial_Delaunay_2_Line_face_circulator  Walking Along a Line
 
 Concerning the traversal of a triangulation we finish with the
 <em>line face circulator</em>.   This circulator enables to traverse all faces

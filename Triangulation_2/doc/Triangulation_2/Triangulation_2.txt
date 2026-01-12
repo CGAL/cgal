@@ -39,7 +39,7 @@ explains how the user can benefit from the flexibility
 of \cgal triangulations using customized classes for faces
 and vertices.
 
-<H1>0 Getting Started With Triangulations</H1>
+\section Section_2D_Triangulations_GettingStarted Getting Started With Triangulations
 
 If you encounter \cgal triangulations for the first time, you maybe want to start with the tutorial \ref Tutorial_Triangulation_2.
 
