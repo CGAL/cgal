@@ -1439,6 +1439,7 @@ std::size_t snap_borders(TriangleMesh& tm_A,
                          const NamedParameters_A& np_A = parameters::default_values(),
                          const NamedParameters_B& np_B = parameters::default_values())
 {
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
   typedef typename GetGeomTraits<TriangleMesh>::type                             GT;
@@ -1452,11 +1453,12 @@ std::size_t snap_borders(TriangleMesh& tm_A,
   border_halfedges(tm_A, std::back_inserter(border_vertices_A));
   border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  const FT tol_mx((std::numeric_limits<double>::max)());
+  Constant_property_map<vertex_descriptor, std::size_t> max_tol((std::numeric_limits<double>::max)());
+
   Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_A, tolerance_map_A, tol_mx, tm_A, np_A);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_A, tolerance_map_A, max_tol, tm_A, np_A);
   Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_B);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_B, tolerance_map_B, tol_mx, tm_B, np_B);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_B, tolerance_map_B, max_tol, tm_B, np_B);
 
   return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_A, tm_A, tolerance_map_A,
                                                       border_vertices_B, tm_B, tolerance_map_B,
@@ -1493,6 +1495,7 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
 std::size_t snap_borders(TriangleMesh& tm,
                          const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
   typedef typename GetGeomTraits<TriangleMesh>::type                             GT;
@@ -1504,9 +1507,10 @@ std::size_t snap_borders(TriangleMesh& tm,
   std::vector<halfedge_descriptor> border_vertices;
   border_halfedges(tm, std::back_inserter(border_vertices));
 
-  const FT tol_mx((std::numeric_limits<double>::max)());
+  Constant_property_map<vertex_descriptor, std::size_t> max_tol((std::numeric_limits<double>::max)());
+
   Tolerance_map tolerance_map = get(Vertex_property_tag(), tm);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tolerance_map, tol_mx, tm, np);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tolerance_map, max_tol, tm, np);
 
   return internal::snap_non_conformal<ConcurrencyTag>(border_vertices, tm, tolerance_map,
                                                       border_vertices, tm, tolerance_map,
