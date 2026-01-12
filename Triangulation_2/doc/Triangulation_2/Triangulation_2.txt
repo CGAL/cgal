@@ -23,18 +23,18 @@ available in \cgal:
 - \ref Section_2D_Triangulations_Basic : Basic triangulations
 - \ref Section_2D_Triangulations_Delaunay : Delaunay triangulations
 - \ref Section_2D_Triangulations_Regular : Regular triangulations
-- \ref Section_2D_Triangulations_Constrained: Constrained triangulations
+- \ref Section_2D_Triangulations_Constrained : Constrained triangulations
 - \ref Section_2D_Triangulations_Constrained_Delaunay : Constrained Delaunay triangulations
-- \ref Section_2D_Triangulations_Constrained_Plus
+- \ref Section_2D_Triangulations_Constrained_Plus :
 describes a class which implements a constrained or
 constrained Delaunay triangulation with
 an additional data structure
 to describe how the constraints are refined
 by the edges of the triangulations.
-- \ref Section_2D_Triangulations_Hierarchy
+- \ref Section_2D_Triangulations_Hierarchy :
 describes a hierarchical data structure for
 fast point location queries.
-- \ref Section_2D_Triangulations_Flexibility
+- \ref Section_2D_Triangulations_Flexibility :
 explains how the user can benefit from the flexibility
 of \cgal triangulations using customized classes for faces
 and vertices.
