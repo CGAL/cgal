@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: CC0-1.0
+// Copyright (c) 2017-2025 Sy Brand
 // Copied from
 // https://raw.githubusercontent.com/TartanLlama/expected/1770e3559f2f6ea4a5fb4f577ad22aeb30fbd8e4/include/tl/expected.hpp
 // namespace `tl` renamed to `CGAL::cpp23`
