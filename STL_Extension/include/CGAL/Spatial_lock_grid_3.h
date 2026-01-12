@@ -207,35 +207,11 @@ public:
   {
     // Compute index on grid
     int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_bbox.xmin()) * m_resolution_x);
-    //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    index_x =
-      (index_x < 0 ? /// @TODO: use std::clamp
-        0
-        : (index_x >= m_num_grid_cells_per_axis ?
-            m_num_grid_cells_per_axis - 1
-            : index_x
-          )
-      );
+    index_x = std::clamp(index_x, 0, m_num_grid_cells_per_axis - 1);
     int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_bbox.ymin()) * m_resolution_y);
-    //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    index_y =
-      (index_y < 0 ?
-        0
-        : (index_y >= m_num_grid_cells_per_axis ?
-            m_num_grid_cells_per_axis - 1
-            : index_y
-          )
-      );
+    index_y = std::clamp(index_y, 0, m_num_grid_cells_per_axis - 1);
     int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_bbox.zmin()) * m_resolution_z);
-    //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    index_z =
-      (index_z < 0 ?
-        0
-        : (index_z >= m_num_grid_cells_per_axis ?
-            m_num_grid_cells_per_axis - 1
-            : index_z
-          )
-      );
+    index_z = std::clamp(index_z, 0, m_num_grid_cells_per_axis - 1);
 
     if (lock_radius == 0)
     {
@@ -349,35 +325,11 @@ protected:
   {
     // Compute indices on grid
     int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_bbox.xmin()) * m_resolution_x);
-    //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    index_x =
-      (index_x < 0 ?
-        0
-        : (index_x >= m_num_grid_cells_per_axis ?
-            m_num_grid_cells_per_axis - 1
-            : index_x
-          )
-      );
+    index_x = std::clamp(index_x, 0, m_num_grid_cells_per_axis - 1);
     int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_bbox.ymin()) * m_resolution_y);
-    //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    index_y =
-      (index_y < 0 ?
-        0
-        : (index_y >= m_num_grid_cells_per_axis ?
-            m_num_grid_cells_per_axis - 1
-            : index_y
-          )
-      );
+    index_y = std::clamp(index_y, 0, m_num_grid_cells_per_axis - 1);
     int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_bbox.zmin()) * m_resolution_z);
-    //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    index_z =
-      (index_z < 0 ?
-        0
-        : (index_z >= m_num_grid_cells_per_axis ?
-            m_num_grid_cells_per_axis - 1
-            : index_z
-          )
-      );
+    index_z = std::clamp(index_z, 0, m_num_grid_cells_per_axis - 1);
 
     return
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis

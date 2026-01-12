@@ -11,6 +11,7 @@
 #ifndef CGAL_IO_PLY_PLY_READER_H
 #define CGAL_IO_PLY_PLY_READER_H
 
+#include <CGAL/IO/PLY.h>
 #include <CGAL/Container_helper.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/type_traits/is_iterator.h>
@@ -783,7 +784,7 @@ bool read_PLY_faces(std::istream& in,
 } // namespace PLY
 } // namespace internal
 
-#ifndef CGAL_NO_DEPREACTED_CODE
+#ifndef CGAL_NO_DEPRECATED_CODE
 using IO::PLY_property;
 using IO::make_ply_normal_reader;
 using IO::make_ply_normal_writer;

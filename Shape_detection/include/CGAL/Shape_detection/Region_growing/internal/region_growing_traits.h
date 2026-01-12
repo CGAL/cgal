@@ -30,6 +30,7 @@ namespace internal {
     using Vector = typename GeomTraits::Vector_2;
     using Line = typename GeomTraits::Line_2;
 
+    using Compare_squared_distance = typename GeomTraits::Compare_squared_distance_2;
     using Compute_squared_length = typename GeomTraits::Compute_squared_length_2;
     using Compute_squared_distance = typename GeomTraits::Compute_squared_distance_2;
     using Compute_scalar_product = typename GeomTraits::Compute_scalar_product_2;
@@ -48,6 +49,9 @@ namespace internal {
     decltype(auto) compute_scalar_product_object() const {
       return m_traits.compute_scalar_product_2_object();
     }
+    decltype(auto) compare_squared_distance_object() const {
+      return m_traits.compare_squared_distance_2_object();
+    }
 
     template<typename Region, typename ItemMap>
     decltype(auto) create_line(
@@ -64,6 +68,7 @@ namespace internal {
     using Vector = typename GeomTraits::Vector_3;
     using Line = typename GeomTraits::Line_3;
 
+    using Compare_squared_distance = typename GeomTraits::Compare_squared_distance_3;
     using Compute_squared_length = typename GeomTraits::Compute_squared_length_3;
     using Compute_squared_distance = typename GeomTraits::Compute_squared_distance_3;
     using Compute_scalar_product = typename GeomTraits::Compute_scalar_product_3;
@@ -81,6 +86,9 @@ namespace internal {
     }
     decltype(auto) compute_scalar_product_object() const {
       return m_traits.compute_scalar_product_3_object();
+    }
+    decltype(auto) compare_squared_distance_object() const {
+      return m_traits.compare_squared_distance_3_object();
     }
 
     template<typename Region, typename ItemMap>

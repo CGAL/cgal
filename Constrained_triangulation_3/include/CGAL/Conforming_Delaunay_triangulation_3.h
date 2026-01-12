@@ -132,7 +132,7 @@ private:
 
 namespace internal {
 
-auto& tasks_manager() {
+inline auto& tasks_manager() {
   struct Tasks_manager {
     enum {
       READ_INPUT = 0,

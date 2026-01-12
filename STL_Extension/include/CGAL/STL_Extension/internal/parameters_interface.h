@@ -315,6 +315,7 @@ CGAL_add_named_parameter(item_map_t, item_map, item_map)
 CGAL_add_named_parameter(cosine_of_maximum_angle_t, cosine_of_maximum_angle, cosine_of_maximum_angle)
 CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
 CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
+CGAL_add_named_parameter(least_squares_fitting_t, least_squares_fitting, least_squares_fitting)
 
 // List of named parameters used in Shape_regularization package
 CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
