@@ -94,7 +94,6 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type         VPM;
   typedef typename boost::property_traits<VPM>::value_type                        Point;
-  typedef typename boost::property_traits<VPM>::reference                         Point_ref;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -135,8 +134,8 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
     const vertex_descriptor vs = source(h, tm);
     const vertex_descriptor vt = target(h, tm);
-    const Point_ref ps = get(vpm, vs);
-    const Point_ref pt = get(vpm, vt);
+    decltype(auto) ps = get(vpm, vs);
+    decltype(auto) pt = get(vpm, vt);
 
     // @fixme what if the source vertex is not to be snapped? Tolerance cannot be obtained...
     // and where should the post-collapse vertex be since we can't move the source vertex...
@@ -735,7 +734,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       std::cout << " _______ Multiple splitting points on the same halfedge, sorting..." << std::endl;
 #endif
 
-      const Point_ref hsp = get(vpm_T, source(h_to_split, tm_T));
+      decltype(auto) hsp = get(vpm_T, source(h_to_split, tm_T));
       std::sort(splitters.begin(), splitters.end(),
                 [&](const Vertex_with_new_position& l, const Vertex_with_new_position& r) -> bool
                 {
@@ -788,9 +787,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
       // check if the new faces after split will not be degenerate
       const Point& p0 = new_position;
-      Point_ref p1 = get(vpm_T, source(h_to_split, tm_T));
-      Point_ref p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
-      Point_ref p3 = get(vpm_T, target(h_to_split, tm_T));
+      decltype(auto) p1 = get(vpm_T, source(h_to_split, tm_T));
+      decltype(auto) p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
+      decltype(auto) p3 = get(vpm_T, target(h_to_split, tm_T));
 
       /* Chooses the diagonal that will split the quad in two triangles that maximizes
        * the scalar product of the un-normalized normals of the two triangles.
