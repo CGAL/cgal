@@ -701,7 +701,6 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
 
   typedef typename boost::property_traits<VPMS>::value_type                       Point;
-  typedef typename boost::property_traits<VPMT>::reference                        Point_ref;
 
   typedef typename GeomTraits::Segment_3                                          Segment;
 
