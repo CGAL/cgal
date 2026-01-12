@@ -22,10 +22,9 @@
 #include <CGAL/Polygon_mesh_processing/Three_point_cut_plane_traits.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Exact_integer.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Cartesian_converter.h>
+
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -84,7 +83,6 @@ kernel(const PolygonMesh& pm,
   vertex_descriptor start_vertex = *vertices(pm).begin();
 
   std::array<vertex_descriptor, 6> bbox_vertices;
-  std::array<EPoint_3, 8> corners;
   if(bbox_filtering){
     // We compute and store the vertices that realized the bbox
     struct BBoxEntry {
@@ -111,14 +109,6 @@ kernel(const PolygonMesh& pm,
         }
       }
     }
-    corners = CGAL::make_array(EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
-                               EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
-                               EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                               EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
-                               EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                               EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                               EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                               EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
   }
 
   // Get the planes and eventually shuffle them
@@ -140,10 +130,18 @@ kernel(const PolygonMesh& pm,
       // By looking the sign of the plane value, we can check only two corners
       auto pred = kgt.oriented_side_3_object();
       auto eplane = plane.explicit_plane();
-      std::size_t index = (is_positive(eplane.a())?4:0) + (is_positive(eplane.b())?2:0) + (is_positive(eplane.c())?1:0);
-      if(pred(plane, corners[index]) != ON_POSITIVE_SIDE)
+      // Look extreme corner according to the plane normal
+      EPoint_3 corner( is_positive(eplane.a())?bb3.xmax():bb3.xmin(),
+                       is_positive(eplane.b())?bb3.ymax():bb3.ymin(),
+                       is_positive(eplane.c())?bb3.zmax():bb3.zmin());
+      if(pred(plane, corner) != ON_POSITIVE_SIDE)
         continue;
-      if(pred(plane, corners[7-index]) == ON_POSITIVE_SIDE)
+
+      // Look the opposite corner
+      EPoint_3 opposite_corner( is_positive(eplane.a())?bb3.xmin():bb3.xmax(),
+                                is_positive(eplane.b())?bb3.ymin():bb3.ymax(),
+                                is_positive(eplane.c())?bb3.zmin():bb3.zmax());
+      if(pred(plane, opposite_corner) == ON_POSITIVE_SIDE)
         return PolygonMesh(); // empty
 
       start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
@@ -156,14 +154,6 @@ kernel(const PolygonMesh& pm,
       // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
       bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
             get(kvpm, bbox_vertices[3]).bbox()+get(kvpm, bbox_vertices[4]).bbox()+get(kvpm, bbox_vertices[5]).bbox();
-      corners = CGAL::make_array(EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
-                                 EPoint_3(bb3.xmin(),bb3.ymin(),bb3.zmax()),
-                                 EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmin()),
-                                 EPoint_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
-                                 EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmin()),
-                                 EPoint_3(bb3.xmax(),bb3.ymin(),bb3.zmax()),
-                                 EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmin()),
-                                 EPoint_3(bb3.xmax(),bb3.ymax(),bb3.zmax()));
     }
     else
     {
