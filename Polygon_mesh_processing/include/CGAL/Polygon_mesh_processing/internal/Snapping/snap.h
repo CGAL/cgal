@@ -703,6 +703,8 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
   typedef typename boost::property_traits<VPMS>::value_type                       Point;
   typedef typename boost::property_traits<VPMT>::reference                        Point_ref;
 
+  typedef typename GeomTraits::Segment_3                                          Segment;
+
   typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;
   typedef std::vector<Vertex_with_new_position>                                   Vertices_with_new_position;
   typedef std::pair<const halfedge_descriptor, Vertices_with_new_position>        Edge_and_splitters;
@@ -846,11 +848,17 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
         }
       }
 
+      // reject a move of splitter_v that would create bad (degenerate / inverted) faces
       if(do_split && !is_source_mesh_fixed)
       {
         for(halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
         {
-          if(!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
+          if(is_border(h,tm_S))
+            continue;
+
+          if(collinear(get(vpm_S, source(h,tm_S)),
+                       new_position,
+                       get(vpm_S, target(next(h,tm_S),tm_S))))
           {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
         std::cout << "Reject split (F)" << std::endl;
@@ -858,7 +866,26 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
             do_split = false;
             break;
           }
+
+          decltype(auto) sps = get(vpm_S, source(h, tm_S));
+          decltype(auto) tps = get(vpm_S, target(h, tm_S));
+          decltype(auto) tnps = get(vpm_S, target(next(h, tm_S),tm_S));
+
+          const Vector_3 n_before = CGAL::cross_product(tnps - tps, sps - tps);
+          const Vector_3 n_after = CGAL::cross_product(tnps - new_position, sps - new_position);
+          if (CGAL::angle(n_before, n_after) != CGAL::ACUTE )
+          {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+            std::cout << "Reject split (G)" << std::endl;
+#endif
+            do_split = false;
+            break;
+          }
         }
+
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+        out_snaps << "2 " << get(vpm_S, splitter_v) << " " << new_position << "\n";
+#endif
 
         if(do_split)
           put(vpm_S, splitter_v, new_position);
