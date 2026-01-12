@@ -690,6 +690,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
                         VPMT vpm_T,
                         const GeomTraits& gt,
                         Visitor& visitor,
+                        const bool is_self_snapping,
                         const bool is_source_mesh_fixed) // when snapping is B --> A and the mesh B is fixed
 {
 #ifdef CGAL_PMP_SNAP_DEBUG
@@ -756,7 +757,22 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
       const halfedge_descriptor splitter_h = vnp.first;
       const vertex_descriptor splitter_v = target(splitter_h, tm_S);
-      const Point new_position = is_source_mesh_fixed ? get(vpm_S, splitter_v) : vnp.second;
+
+      Point tentative_new_position = vnp.second;
+
+      if (is_self_snapping)
+      {
+        // in self-snapping, the target edge might have shifted, so recompute the projection
+        // @todo really shouldn't compute the position before here, then
+        // @todo and avoid recomputing it if nothing has moved
+        Segment s { get(vpm_T, source(h_to_split, tm_T)), get(vpm_T, target(h_to_split, tm_T)) };
+        tentative_new_position = gt.construct_projected_point_3_object()(s, tentative_new_position);
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "Tenative snapping position updated to: " << tentative_new_position << std::endl;
+#endif
+      }
+
+      const Point new_position = is_source_mesh_fixed ? get(vpm_S, splitter_v) : tentative_new_position;
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << "With vertex: " << splitter_v << std::endl;
@@ -923,6 +939,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
                                        TriangleMesh& tm_T,
                                        FacePatchMap_T face_patch_map_T,
                                        LockedHalfedgeMap locked_halfedges_T,
+                                       const bool is_self_snapping,
                                        const bool is_source_mesh_fixed,
                                        Visitor& visitor,
                                        const SourceNamedParameters& snp,
@@ -1081,7 +1098,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
     std::cout << "time for find split edges (parallel): " << timer.time() << std::endl;
 #endif
 
-    return split_edges(edges_to_split, tm_S, vpm_S, tm_T, vpm_T, gt, visitor, is_source_mesh_fixed);
+    return split_edges(edges_to_split, tm_S, vpm_S, tm_T, vpm_T, gt, visitor, is_self_snapping, is_source_mesh_fixed);
   }
   else
 #endif // CGAL_LINKED_WITH_TBB
@@ -1112,7 +1129,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
     std::cout << "time for find split edges (sequential): " << timer.time() << std::endl;
 #endif
 
-    return split_edges(edges_to_split, tm_S, vpm_S, tm_T, vpm_T, gt, visitor, is_source_mesh_fixed);
+    return split_edges(edges_to_split, tm_S, vpm_S, tm_T, vpm_T, gt, visitor, is_self_snapping, is_source_mesh_fixed);
   }
 }
 
@@ -1218,6 +1235,8 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   const bool simplify_first_mesh = choose_parameter(get_parameter(np_A, internal_np::do_simplify_border), false);
   const bool simplify_second_mesh = choose_parameter(get_parameter(np_B, internal_np::do_simplify_border), false);
   const bool is_second_mesh_fixed = choose_parameter(get_parameter(np_B, internal_np::do_lock_mesh), false);
+
+  CGAL_precondition(!is_same_mesh || !is_second_mesh_fixed);
 
   internal::Snapping_default_visitor<TriangleMesh> default_visitor;
   Visitor visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
@@ -1365,7 +1384,7 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   snapped_n += internal::snap_non_conformal_one_way<ConcurrencyTag>(
                  halfedge_range_A, tm_A, tolerance_map_A, vertex_patch_map_A, locked_vertices_A,
                  halfedge_range_B, tm_B, face_patch_map_B, locked_halfedges_B,
-                 false /*source is never fixed*/, visitor, np_A, np_B);
+                 is_self_snapping, false /*source is never fixed*/, visitor, np_A, np_B);
 
   visitor.end_first_vertex_edge_phase();
 
@@ -1388,7 +1407,7 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
     snapped_n += internal::snap_non_conformal_one_way<ConcurrencyTag>(
                    halfedge_range_B, tm_B, tolerance_map_B, vertex_patch_map_B, locked_vertices_B,
                    halfedge_range_A, tm_A, face_patch_map_A, locked_halfedges_A,
-                   is_second_mesh_fixed, visitor, np_B, np_A);
+                   is_self_snapping, is_second_mesh_fixed, visitor, np_B, np_A);
 
     visitor.end_second_vertex_edge_phase();
   }
