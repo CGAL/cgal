@@ -64,6 +64,7 @@ public:
 
   using Compute_squared_length_3 = typename GeomTraits::Compute_squared_length_3;
   using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
+  using Construct_scaled_vector_3 = typename GeomTraits::Construct_scaled_vector_3;
   using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
   using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
   using Sqrt = typename internal::Get_sqrt<GeomTraits>::Sqrt;
@@ -119,6 +120,7 @@ public:
     , m_traits(traits)
     , m_compute_squared_length_3(m_traits.compute_squared_length_3_object())
     , m_construct_vector_3(m_traits.construct_vector_3_object())
+    , m_construct_scaled_vector_3(m_traits.construct_scaled_vector_3_object())
     , m_cross_3(m_traits.construct_cross_product_vector_3_object())
     , m_dot_3(m_traits.compute_scalar_product_3_object())
     , sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits))
@@ -187,6 +189,7 @@ private:
 
   Compute_squared_length_3 m_compute_squared_length_3;
   Construct_vec_3 m_construct_vector_3;
+  Construct_scaled_vector_3 m_construct_scaled_vector_3;
   Cross_3 m_cross_3;
   Dot_3 m_dot_3;
   Sqrt sqrt;
@@ -331,8 +334,8 @@ private:
       const Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
       const FT edge_length = sqrt(m_compute_squared_length_3(opposite_edge));
 
-      const Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
-       m_construct_vector_3(query, point1));
+      const Vector_3 normal_query = m_construct_scaled_vector_3(m_cross_3(m_construct_vector_3(query, point2),
+       m_construct_vector_3(query, point1)), vertex_parity);
 
       const Vector_3 face_normal = internal::get_face_normal(
         *face_circulator, m_vertex_point_map, m_tmesh, m_traits);
@@ -376,7 +379,7 @@ private:
   \tparam TriangleMesh
   must be a model of the concept `FaceListGraph`
 
-  \tparam Point_3
+  \tparam Point
   A model of `GeomTraits::Point_3` with `GeomTraits` being the type of the named parameter `geom_traits`.
 
   \tparam OutputIterator
@@ -408,7 +411,7 @@ private:
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
       \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-                     as key type and `%Point_3` as value type}
+                     as key type and `%Point` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `TriangleMesh`.}
@@ -427,17 +430,17 @@ private:
   \pre CGAL::is_strongly_convex_3(`tmesh`).
 */
 template<typename TriangleMesh,
-         typename Point_3,
+         typename Point,
          typename OutputIterator,
          typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator
 discrete_harmonic_coordinates_3(const TriangleMesh& tmesh,
-                                const Point_3& query,
+                                const Point& query,
                                 OutputIterator oi,
                                 const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
-  static_assert(std::is_same_v<Geom_traits, typename Kernel_traits<Point_3>::Kernel>);
+  static_assert(std::is_same_v<Geom_traits, typename Kernel_traits<Point>::Kernel>);
 
   const Computation_policy_3 policy = parameters::choose_parameter(parameters::get_parameter(np, internal_np::computation_policy), Computation_policy_3::FAST_WITH_EDGE_CASES);
 

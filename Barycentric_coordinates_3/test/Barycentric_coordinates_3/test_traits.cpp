@@ -1,4 +1,5 @@
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Barycentric_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
@@ -42,8 +43,6 @@ struct Custom_barycentric_traits
   struct Vector_3 {
   };
 
-  friend Vector_3 operator*(const int, const Vector_3) {return Vector_3();}
-
   struct Vector_2 {
   };
 
@@ -55,6 +54,11 @@ struct Custom_barycentric_traits
 
   struct Plane_3 {
     Plane_3() {};
+  };
+
+  struct Cartesian_const_iterator_3 {
+    FT operator*() { return FT(); }
+    Cartesian_const_iterator_3& operator++() { return *this; }
   };
 
   struct Compare_x_2 {
@@ -79,22 +83,6 @@ struct Custom_barycentric_traits
     FT operator()(const Vector_3&, const Vector_3&) { return FT(); }
   };
 
-  struct Construct_cross_product_vector_3 {
-    Vector_3 operator()(const Vector_3&, const Vector_3&) { return Vector_3(); }
-  };
-
-  struct Construct_divided_vector_3 {
-    Vector_3 operator()(const Vector_3&, const FT&) { return Vector_3(); }
-  };
-
-  struct Construct_plane_3 {
-    Plane_3 operator()(const Point_3&, const Point_3&, const Point_3&) { return Plane_3(); }
-  };
-
-  struct Construct_projected_xy_point_2 {
-    Point_2 operator()(const Plane_3&, const Point_3&) { return Point_2(); }
-  };
-
   struct Compute_determinant_3 {
     FT operator()(const Vector_3&, const Vector_3&, const Vector_3&) { return FT(); }
   };
@@ -115,12 +103,40 @@ struct Custom_barycentric_traits
     FT operator()(const Point_3&, const Point_3&, const Point_3&, const Point_3&) const { return FT(); }
   };
 
+  struct Construct_cartesian_const_iterator_3 {
+    Cartesian_const_iterator_3 operator()(const Point_3&) { return Cartesian_const_iterator_3(); }
+  };
+
+  struct Construct_cross_product_vector_3 {
+    Vector_3 operator()(const Vector_3&, const Vector_3&) { return Vector_3(); }
+  };
+
+  struct Construct_divided_vector_3 {
+    Vector_3 operator()(const Vector_3&, const FT&) { return Vector_3(); }
+  };
+
+  struct Construct_point_3 {
+    Point_3 operator()(const FT&, const FT&, const FT&) const { return Point_3(); }
+  };
+
+  struct Construct_plane_3 {
+    Plane_3 operator()(const Point_3&, const Point_3&, const Point_3&) { return Plane_3(); }
+  };
+
+  struct Construct_projected_xy_point_2 {
+    Point_2 operator()(const Plane_3&, const Point_3&) { return Point_2(); }
+  };
+
+  struct Construct_scaled_vector_3 {
+    Vector_3 operator()(const Vector_3&, const FT&) { return Vector_3(); }
+  };
+
   struct Construct_vector_2 {
-    Vector_2         operator()(const Point_2&, const Point_2&) const { return Vector_2(); }
+    Vector_2 operator()(const Point_2&, const Point_2&) const { return Vector_2(); }
   };
 
   struct Construct_vector_3 {
-    Vector_3         operator()(const Point_3&, const Point_3&) const { return Vector_3(); }
+    Vector_3 operator()(const Point_3&, const Point_3&) const { return Vector_3(); }
   };
 
   struct Collinear_2 {
@@ -143,27 +159,30 @@ struct Custom_barycentric_traits
     bool operator()(const Point_2& p, const Point_2& q) const { return true; }
   };
 
-  Collinear_2     collinear_2_object() const { return Collinear_2(); }
+  Collinear_2 collinear_2_object() const { return Collinear_2(); }
   Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line_2_object() const { return Collinear_are_ordered_along_line_2(); }
-  Compare_x_2       compare_x_2_object() const { return Compare_x_2(); }
-  Compare_y_2       compare_y_2_object() const { return Compare_y_2(); }
+  Compare_x_2 compare_x_2_object() const { return Compare_x_2(); }
+  Compare_y_2 compare_y_2_object() const { return Compare_y_2(); }
   Compute_approximate_angle_3 compute_approximate_angle_3_object() const { return Compute_approximate_angle_3(); }
-  Compute_area_2      compute_area_2_object() const { return Compute_area_2(); }
-  Compute_scalar_product_3    compute_scalar_product_3_object() const { return Compute_scalar_product_3(); }
-  Compute_scalar_product_2    compute_scalar_product_2_object() const { return Compute_scalar_product_2(); }
-  Compute_squared_length_3    compute_squared_length_3_object() const { return Compute_squared_length_3(); }
-  Compute_squared_distance_2  compute_squared_distance_2_object() const { return Compute_squared_distance_2(); }
+  Compute_area_2 compute_area_2_object() const { return Compute_area_2(); }
+  Compute_scalar_product_3 compute_scalar_product_3_object() const { return Compute_scalar_product_3(); }
+  Compute_scalar_product_2 compute_scalar_product_2_object() const { return Compute_scalar_product_2(); }
+  Compute_squared_length_3 compute_squared_length_3_object() const { return Compute_squared_length_3(); }
+  Compute_squared_distance_2 compute_squared_distance_2_object() const { return Compute_squared_distance_2(); }
+  Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3_object() const { return Construct_cartesian_const_iterator_3(); }
   Construct_cross_product_vector_3 construct_cross_product_vector_3_object() const { return Construct_cross_product_vector_3(); }
   Compute_determinant_3 compute_determinant_3_object() const { return Compute_determinant_3(); }
-  Compute_volume_3    compute_volume_3_object() const { return Compute_volume_3(); }
+  Compute_volume_3 compute_volume_3_object() const { return Compute_volume_3(); }
   Construct_divided_vector_3 construct_divided_vector_3_object() const { return Construct_divided_vector_3(); }
-  Construct_plane_3   construct_plane_3_object() const { return Construct_plane_3(); }
+  Construct_point_3 construct_point_3_object() const { return Construct_point_3(); }
+  Construct_plane_3 construct_plane_3_object() const { return Construct_plane_3(); }
   Construct_projected_xy_point_2 construct_projected_xy_point_2_object() const { return Construct_projected_xy_point_2(); }
-  Construct_vector_2  construct_vector_2_object() const { return Construct_vector_2(); }
-  Construct_vector_3  construct_vector_3_object() const { return Construct_vector_3(); }
-  Equal_2            equal_2_object() const { return Equal_2(); }
-  Orientation_2      orientation_2_object() const { return Orientation_2(); }
-  Less_xy_2          less_xy_2_object() const { return Less_xy_2(); }
+  Construct_scaled_vector_3 construct_scaled_vector_3_object() const { return Construct_scaled_vector_3(); }
+  Construct_vector_2 construct_vector_2_object() const { return Construct_vector_2(); }
+  Construct_vector_3 construct_vector_3_object() const { return Construct_vector_3(); }
+  Equal_2 equal_2_object() const { return Equal_2(); }
+  Orientation_2 orientation_2_object() const { return Orientation_2(); }
+  Less_xy_2 less_xy_2_object() const { return Less_xy_2(); }
 
   static Custom_barycentric_traits instance() { return Custom_barycentric_traits(); }
 private:
@@ -228,6 +247,11 @@ int main() {
   CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
   CGAL::Barycentric_coordinates::mean_value_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
 
+  Custom_barycentric_traits::Point_3 p1 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(tetrahedron, coordinates, *tetrahedron.property_map<Mesh::Vertex_index, Custom_barycentric_traits::Point_3>("v:point"), Custom_barycentric_traits::instance());
+  Custom_barycentric_traits::Point_3 p2 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(vertices, coordinates, Custom_barycentric_traits::instance());
+
+  CGAL_USE(p1);
+  CGAL_USE(p2);
 
   return EXIT_SUCCESS;
 }

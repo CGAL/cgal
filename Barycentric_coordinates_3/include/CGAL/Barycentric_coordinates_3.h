@@ -54,13 +54,16 @@ namespace Barycentric_coordinates {
   key type and `GeomTraits::Point_3` as value type.
 
   \tparam GeomTraits
-  a model of `BarycentricTraits_3`
+  a model of `BarycentricTraits_3`, deduced from the value type of `VertexPointMap`, using `CGAL::Kernel_traits`.
 
   \param tmesh
   an instance of `TriangleMesh`
 
   \param coordinates
   barycentric coordinates of the point
+
+  \param geom_traits
+  an instance of `GeomTraits`
 
   \param vpm
   an instance of `VertexPointMap` that maps a vertex from `tmesh` to `GeomTraits::Point_3`
@@ -70,23 +73,32 @@ namespace Barycentric_coordinates {
   \pre `vertices(tmesh).size()` == `coords.size()`
 */
 template<typename TriangleMesh, typename CoordinateRange, typename VertexPointMap, typename GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type>
-typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm) {
+typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm, GeomTraits geom_traits = GeomTraits()) {
   CGAL_precondition(vertices(tmesh).size() == std::distance(std::begin(coordinates), std::end(coordinates)));
   using Point = typename boost::property_traits<VertexPointMap>::value_type;
-  using Kernel = typename CGAL::Kernel_traits<Point>::type;
+  static_assert(std::is_same_v<GeomTraits, typename Kernel_traits<Point>::Kernel>);
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
-  using FT = typename Kernel::FT;
+  using FT = typename GeomTraits::FT;
+  using Construct_cartesian_const_iterator = typename GeomTraits::Construct_cartesian_const_iterator_3;
+  using Cartesian_const_iterator = typename GeomTraits::Cartesian_const_iterator_3;
+  using Construct_point_3 = typename GeomTraits::Construct_point_3;
+
+  Construct_cartesian_const_iterator construct_cci = geom_traits.construct_cartesian_const_iterator_3_object();
 
   std::array<FT, 3> p = { FT(0), FT(0), FT(0) };
-  std::size_t i = 0;
   for (vertex_descriptor v : vertices(tmesh)) {
     const Point& pv = get(vpm, v);
-    for (int c = 0; c < 3; c++)
-      p[c] += pv[c] * (*(std::begin(coordinates) + i));
-    i++;
+    Cartesian_const_iterator cci = construct_cci(pv);
+    p[0] += *cci * (*(std::begin(coordinates)));
+    ++cci;
+    p[1] += *cci * (*(std::begin(coordinates) + 1));
+    ++cci;
+    p[2] += *cci * (*(std::begin(coordinates) + 2));
+    ++cci;
   }
 
-  return Point(p[0], p[1], p[2]);
+  Construct_point_3 construct_point_3 = geom_traits.construct_point_3_object();
+  return construct_point_3(p[0], p[1], p[2]);
 }
 
 
@@ -105,7 +117,7 @@ typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_co
   a range whose iterator is a model of `ForwardIterator` with value type `GeomTraits::FT`
 
   \tparam GeomTraits
-  a model of `BarycentricTraits_3`
+  a model of `BarycentricTraits_3`, deduced from the value type of `PointRange` by default.
 
   \param points
   a range of input points
@@ -113,26 +125,38 @@ typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_co
   \param coordinates
   barycentric coordinates of the point
 
+  \param geom_traits
+  an instance of `GeomTraits`
+
   \return point with type `GeomTraits::Point_3`
 
   \pre `pts.size()` == `coords.size()`
 */
-template<typename PointRange, typename CoordinateRange, typename GeomTraits = typename boost::range_value<PointRange>::type>
-typename boost::range_value<PointRange>::type apply_barycentric_coordinates(const PointRange& points, const CoordinateRange& coordinates) {
+template<typename PointRange, typename CoordinateRange, typename GeomTraits = typename Kernel_traits<typename boost::range_value<PointRange>::type>::Kernel>
+typename boost::range_value<PointRange>::type apply_barycentric_coordinates(const PointRange& points, const CoordinateRange& coordinates, GeomTraits geom_traits = GeomTraits()) {
   CGAL_precondition(std::distance(std::begin(points), std::end(points)) == std::distance(std::begin(coordinates), std::end(coordinates)));
   using Point = typename boost::range_value<PointRange>::type;
-  using Kernel = typename CGAL::Kernel_traits<Point>::type;
-  using FT = typename Kernel::FT;
+  static_assert(std::is_same_v<GeomTraits, typename Kernel_traits<Point>::Kernel>);
+  using FT = typename GeomTraits::FT;
+  using Construct_cartesian_const_iterator = typename GeomTraits::Construct_cartesian_const_iterator_3;
+  using Cartesian_const_iterator = typename GeomTraits::Cartesian_const_iterator_3;
+  using Construct_point_3 = typename GeomTraits::Construct_point_3;
+
+  Construct_cartesian_const_iterator construct_cci = geom_traits.construct_cartesian_const_iterator_3_object();
 
   std::array<FT, 3> p = { FT(0), FT(0), FT(0) };
-  std::size_t i = 0;
   for (const Point& pv : points) {
-    for (int c = 0; c < 3; c++)
-      p[c] += pv[c] * (*(std::begin(coordinates) + i));
-    i++;
+    Cartesian_const_iterator cci = construct_cci(pv);
+    p[0] += *cci * (*(std::begin(coordinates)));
+    ++cci;
+    p[1] += *cci * (*(std::begin(coordinates) + 1));
+    ++cci;
+    p[2] += *cci * (*(std::begin(coordinates) + 2));
+    ++cci;
   }
 
-  return Point(p[0], p[1], p[2]);
+  Construct_point_3 construct_point_3 = geom_traits.construct_point_3_object();
+  return construct_point_3(p[0], p[1], p[2]);
 }
 } // namespace Barycentric_coordinates
 } // namespace CGAL

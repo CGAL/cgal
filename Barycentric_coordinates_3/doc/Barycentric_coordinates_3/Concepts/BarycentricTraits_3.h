@@ -125,6 +125,20 @@ typedef unspecified_type Compute_squared_length_3;
 typedef unspecified_type Compute_volume_3;
 
 /*!
+  A model of `CartesianConstIterator_3`.
+ */
+typedef unspecified_type Cartesian_const_iterator_3;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Cartesian_const_iterator_3 operator() (Point_3 p)`
+
+ 	returns an iterator on the zeroth Cartesian coordinate of p.
+*/
+typedef unspecified_type Construct_cartesian_const_iterator_3;
+
+/*!
   A construction object that must provide the function operator:
 
   `Vector_3 operator(Vector_3 u, Vector_3 v)`
@@ -161,6 +175,24 @@ typedef unspecified_type Construct_plane_3;
   returning the vector `v / t`.
 */
 typedef unspecified_type Construct_divided_vector_3;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Point_3 operator(FT x, FT y, FT z)`
+
+  that returns the point with coordinates `x`, `y` and `z`.
+*/
+typedef unspecified_type Construct_point_3;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Vector_3 operator()(Vector_3 v, FT t)`
+
+  returning the vector `v * t`.
+*/
+typedef unspecified_type Construct_scaled_vector_3;
 
 /*!
   A construction object that must provide the function operator:
@@ -347,6 +379,11 @@ Compare_y_2 compare_y_2_object();
 /*!
 
 */
+Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3_object();
+
+/*!
+
+*/
 Construct_cross_product_vector_3 construct_cross_product_vector_3_object();
 
 /*!
@@ -357,11 +394,22 @@ Construct_divided_vector_3 construct_divided_vector_3_object();
 /*!
 
 */
+Construct_point_3 construct_point_3_object();
+
+/*!
+
+*/
 Construct_plane_3 construct_plane_3_object();
+
 /*!
 
 */
 Construct_projected_xy_point_2 construct_projected_xy_point_2_object();
+
+/*!
+
+*/
+Construct_scaled_vector_3 construct_scaled_vector_3_object();
 
 /*!
 
