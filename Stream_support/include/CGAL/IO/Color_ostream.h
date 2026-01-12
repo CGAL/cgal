@@ -178,10 +178,10 @@ private:
 
 public:
   /**
-   * \brief Construct a color streambuf wrapper.
+   * \brief constructs a color streambuf wrapper.
    *
    * Colors are automatically disabled if the wrapped buffer is not connected
-   * to a color-capable terminal (checked via isatty() and TERM variable).
+   * to a color-capable terminal (checked via `isatty()` and `TERM` variable).
    *
    * \param wrapped_buf The underlying streambuf to wrap
    * \param color The color to apply to the output
@@ -197,7 +197,7 @@ public:
   }
 
   /**
-   * \brief Construct a color streambuf wrapper with multiple colors.
+   * \brief constructs a color streambuf wrapper with multiple colors.
    *
    * Colors are automatically disabled if the wrapped buffer is not connected
    * to a color-capable terminal (checked via isatty() and TERM variable).
