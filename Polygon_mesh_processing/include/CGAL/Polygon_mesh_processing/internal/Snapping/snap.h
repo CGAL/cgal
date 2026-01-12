@@ -1028,7 +1028,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 
     vertices_to_snap.emplace_back(h, tolerance);
 
-    // take the min tolerance for all vertices with at the same position
+    // take the min tolerance for all vertices which are at the same position
     std::pair<Point, FT> entry(get(vpm_S, v), tolerance);
     std::pair<typename std::map<Point, FT>::iterator, bool> is_insert_successful =
       point_tolerance_map.insert(entry);
