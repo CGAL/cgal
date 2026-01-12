@@ -160,14 +160,14 @@ namespace MA_detail {
 
   // The functor necessary to realize access to b
   template <class NT>
-  class B_vector : public CGAL::cpp98::unary_function<int, NT>
+  class B_std::vector : public CGAL::cpp98::unary_function<int, NT>
   {
   public:
     typedef NT result_type;
-    B_vector()
+    B_std::vector()
     {}
 
-    B_vector (int d)
+    B_std::vector (int d)
       : d_ (d), nt_0_ (0), nt_1_ (1)
     {}
 
@@ -215,8 +215,8 @@ public:
   typedef  typename Traits::NT        NT;
 
   // public types
-  typedef  std::vector<Point>         Point_vector;
-  typedef  typename Point_vector::const_iterator
+  typedef  std::std::vector<Point>         Point_std::vector;
+  typedef  typename Point_std::vector::const_iterator
   Point_iterator;
 
 private:
@@ -227,15 +227,15 @@ private:
   <A_matrix,
    boost::counting_iterator<int> >   A_iterator;
 
-  typedef MA_detail::B_vector <NT> B_vector;
+  typedef MA_detail::B_std::vector <NT> B_std::vector;
   typedef  boost::transform_iterator
-  <B_vector,
+  <B_std::vector,
     boost::counting_iterator<int> >  B_iterator;
 
   typedef CGAL::Const_oneset_iterator<CGAL::Comparison_result> R_iterator;
 
-  typedef  std::vector<NT>                                     C_vector;
-  typedef  typename C_vector::const_iterator                   C_iterator;
+  typedef  std::std::vector<NT>                                     C_std::vector;
+  typedef  typename C_std::vector::const_iterator                   C_iterator;
 
   // Program type
   typedef CGAL::Nonnegative_linear_program_from_iterators
@@ -254,15 +254,15 @@ private:
   Basic_variable_index_iterator;
 
   // private types
-  typedef  std::vector<ET>            ET_vector;
+  typedef  std::std::vector<ET>            ET_std::vector;
 
   typedef  QP_access_by_index
-  <typename std::vector<Point>::const_iterator, int> Point_by_index;
+  <typename std::std::vector<Point>::const_iterator, int> Point_by_index;
 
-  typedef  std::vector<int>           Index_vector;
+  typedef  std::std::vector<int>           Index_std::vector;
 
-  typedef  std::vector<NT>            NT_vector;
-  typedef  std::vector<NT_vector>     NT_matrix;
+  typedef  std::std::vector<NT>            NT_std::vector;
+  typedef  std::std::vector<NT_std::vector>     NT_matrix;
 
 
 public:
@@ -274,7 +274,7 @@ public:
   Support_point_iterator;
 
 
-  typedef  typename Index_vector::const_iterator IVCI;
+  typedef  typename Index_std::vector::const_iterator IVCI;
   typedef  CGAL::Join_input_iterator_1<
     IVCI, Point_by_index >
   Inner_support_point_iterator;
@@ -285,7 +285,7 @@ public:
   typedef IVCI Inner_support_point_index_iterator;
   typedef IVCI Outer_support_point_index_iterator;
 
-  typedef  typename ET_vector::const_iterator
+  typedef  typename ET_std::vector::const_iterator
   Coordinate_iterator;
 
 
@@ -507,10 +507,10 @@ private:
   Traits                   tco;       // traits class object
   Access_coordinates_begin_d da_coord; // data accessor
 
-  Point_vector             points;    // input points
+  Point_std::vector             points;    // input points
   int                      d;         // dimension of input points
 
-  ET_vector                center_coords;     // center of small.encl.annulus
+  ET_std::vector                center_coords;     // center of small.encl.annulus
 
   ET                       sqr_i_rad_numer;   // squared inner radius of
   ET                       sqr_o_rad_numer;   // ---"--- outer ----"----
@@ -518,12 +518,12 @@ private:
 
   Solver                   *solver;    // linear programming solver
 
-  Index_vector             inner_indices;
-  Index_vector             outer_indices;
+  Index_std::vector             inner_indices;
+  Index_std::vector             outer_indices;
 
   NT_matrix                a_matrix;  // matrix `A' of dual LP
-  NT_vector                b_vector;  // vector `b' of dual LP
-  NT_vector                c_vector;  // vector `c' of dual LP
+  NT_std::vector                b_std::vector;  // std::vector `b' of dual LP
+  NT_std::vector                c_std::vector;  // std::vector `c' of dual LP
 
 private:
   // squared distance to center * h_p^2 * c_d^2
@@ -618,10 +618,10 @@ private:
       return;
     }
 
-    // set up vector c and solve dual LP
+    // set up std::vector c and solve dual LP
     // the ordering of the constraints is as above; the ordering
     // of the variables is: z_p_j <-> 2 * j, y_p_j <-> 2 * j + 1
-    c_vector.resize( 2*points.size());
+    c_std::vector.resize( 2*points.size());
     for ( int j = 0; j < number_of_points(); ++j) {
       typename Traits::Access_coordinates_begin_d::Coordinate_iterator
         coord_it = da_coord( points[j]);
@@ -629,17 +629,17 @@ private:
       for ( int i = 0; i < d; ++i) {
         sum += NT( coord_it[ i])*NT( coord_it[ i]);
       }
-      c_vector[ 2*j  ] =  sum;
-      c_vector[ 2*j+1] = -sum;
+      c_std::vector[ 2*j  ] =  sum;
+      c_std::vector[ 2*j+1] = -sum;
     }
 
     LP lp (2*static_cast<int>(points.size()), d+2,
            A_iterator ( boost::counting_iterator<int>(0),
                         A_matrix (d, da_coord, points.begin())),
            B_iterator ( boost::counting_iterator<int>(0),
-                        B_vector (d)),
+                        B_std::vector (d)),
            R_iterator (CGAL::EQUAL),
-           c_vector.begin());
+           c_std::vector.begin());
 
     Quadratic_program_options options;
     options.set_pricing_strategy(pricing_strategy(NT()));
@@ -688,12 +688,12 @@ private:
 // =====================
 // I/O operators
 template < class Traits_ >
-std::ostream&
-operator << ( std::ostream& os, const Min_annulus_d<Traits_>& min_annulus);
+std::std::ostream&
+operator << ( std::std::ostream& os, const Min_annulus_d<Traits_>& min_annulus);
 
 template < class Traits_ >
-std::istream&
-operator >> ( std::istream& is,       Min_annulus_d<Traits_>& min_annulus);
+std::std::istream&
+operator >> ( std::std::istream& is,       Min_annulus_d<Traits_>& min_annulus);
 
 // ============================================================================
 
@@ -706,13 +706,13 @@ bool
 Min_annulus_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-  using namespace std;
+  
 
-  CGAL::Verbose_ostream verr( verbose);
-  verr << "CGAL::Min_annulus_d<Traits>::" << endl;
-  verr << "is_valid( true, " << level << "):" << endl;
+  CGAL::Verbose_std::ostream verr( verbose);
+  verr << "CGAL::Min_annulus_d<Traits>::" << std::endl;
+  verr << "is_valid( true, " << level << "):" << std::endl;
   verr << "  |P| = " << number_of_points()
-       << ", |S| = " << number_of_support_points() << endl;
+       << ", |S| = " << number_of_support_points() << std::endl;
 
   // containment check (a)
   // ---------------------
@@ -725,7 +725,7 @@ is_valid( bool verbose, int level) const
                                                 "annulus does not contain all points");
   }
 
-  verr << "passed." << endl;
+  verr << "passed." << std::endl;
 
   // support set check (b)
   // ---------------------
@@ -762,24 +762,24 @@ is_valid( bool verbose, int level) const
   }
   */
 
-  verr << "passed." << endl;
+  verr << "passed." << std::endl;
 
-  verr << "  object is valid!" << endl;
+  verr << "  object is valid!" << std::endl;
   return( true);
 }
 
 // output operator
 template < class Traits_ >
-std::ostream&
-operator << ( std::ostream& os,
+std::std::ostream&
+operator << ( std::std::ostream& os,
               const Min_annulus_d<Traits_>& min_annulus)
 {
-  using namespace std;
+ 
 
   typedef  typename Min_annulus_d<Traits_>::Point  Point;
-  typedef  ostream_iterator<Point>       Os_it;
+  typedef  std::ostream_iterator<Point>       Os_it;
   typedef  typename Traits_::ET          ET;
-  typedef  ostream_iterator<ET>          Et_it;
+  typedef  std::ostream_iterator<ET>          Et_it;
 
   switch ( CGAL::IO::get_mode( os)) {
 
@@ -787,35 +787,35 @@ operator << ( std::ostream& os,
     os << "CGAL::Min_annulus_d( |P| = "
        << min_annulus.number_of_points() << ", |S| = "
        << min_annulus.number_of_inner_support_points() << '+'
-       << min_annulus.number_of_outer_support_points() << endl;
-    os << "  P = {" << endl;
+       << min_annulus.number_of_outer_support_points() << std::endl;
+    os << "  P = {" << std::endl;
     os << "    ";
     copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_i = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_i = {" << std::endl;
     os << "    ";
     copy( min_annulus.inner_support_points_begin(),
           min_annulus.inner_support_points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_o = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_o = {" << std::endl;
     os << "    ";
     copy( min_annulus.outer_support_points_begin(),
           min_annulus.outer_support_points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
+    os << "}" << std::endl;
     os << "  center = ( ";
     copy( min_annulus.center_coordinates_begin(),
           min_annulus.center_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  squared inner radius = "
        << min_annulus.squared_inner_radius_numerator() << " / "
-       << min_annulus.squared_radii_denominator() << endl;
+       << min_annulus.squared_radii_denominator() << std::endl;
     os << "  squared outer radius = "
        << min_annulus.squared_outer_radius_numerator() << " / "
-       << min_annulus.squared_radii_denominator() << endl;
+       << min_annulus.squared_radii_denominator() << std::endl;
     break;
 
   case CGAL::IO::ASCII:
@@ -838,22 +838,22 @@ operator << ( std::ostream& os,
 
 // input operator
 template < class Traits_ >
-std::istream&
-operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
+std::std::istream&
+operator >> ( std::std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 {
-  using namespace std;
+
 
   switch ( CGAL::IO::get_mode( is)) {
 
   case CGAL::IO::PRETTY:
-    cerr << endl;
-    cerr << "Stream must be in ASCII or binary mode" << endl;
+    cerr << std::endl;
+    cerr << "Stream must be in ASCII or binary mode" << std::endl;
     break;
 
   case CGAL::IO::ASCII:
   case CGAL::IO::BINARY:
     typedef  typename CGAL::Min_annulus_d<Traits_>::Point  Point;
-    typedef  istream_iterator<Point>             Is_it;
+    typedef  std::istream_iterator<Point>             Is_it;
     min_annulus.set( Is_it( is), Is_it());
     break;
 
