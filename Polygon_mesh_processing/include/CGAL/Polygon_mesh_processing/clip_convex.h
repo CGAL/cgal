@@ -16,11 +16,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
-#include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
