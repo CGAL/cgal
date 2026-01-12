@@ -388,8 +388,8 @@ public:
   {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "~~~~ intersection with primitive: " << primitive.id() << std::endl;
-    std::cout << get(m_vpm_T, source(primitive.id(), m_tm_T)) << std::endl;
-    std::cout << get(m_vpm_T, target(primitive.id(), m_tm_T)) << std::endl;
+    std::cout << source(primitive.id(), m_tm_T) << " " << get(m_vpm_T, source(primitive.id(), m_tm_T)) << std::endl;
+    std::cout << target(primitive.id(), m_tm_T) << " " << get(m_vpm_T, target(primitive.id(), m_tm_T)) << std::endl;
 #endif
 
     halfedge_descriptor h = halfedge(primitive.id(), m_tm_T);
@@ -713,6 +713,11 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
   visitor.start_vertex_edge_snapping();
 
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+  std::ofstream out_snaps("results/ve_snappable.polylines.txt");
+  out_snaps.precision(17);
+#endif
+
   std::size_t snapped_n = 0;
 
   for(Edge_and_splitters& es : edges_to_split)
@@ -721,9 +726,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
     CGAL_assertion(is_border(h_to_split, tm_T));
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
-                << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
-                << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
+      std::cout << ">>>>>> Splitting " << edge(h_to_split, tm_T) << " |||| "
+                << " Vs " << source(h_to_split, tm_T) << " (" << get(vpm_T, source(h_to_split, tm_T)) << ")"
+                << " --- Vt " << target(h_to_split, tm_T) << " (" << get(vpm_T, target(h_to_split, tm_T)) << ")" << std::endl;
 #endif
 
     Vertices_with_new_position& splitters = es.second;
@@ -736,8 +741,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
       decltype(auto) hsp = get(vpm_T, source(h_to_split, tm_T));
       std::sort(splitters.begin(), splitters.end(),
-                [&](const Vertex_with_new_position& l, const Vertex_with_new_position& r) -> bool
-                {
+                [&](const Vertex_with_new_position& l, const Vertex_with_new_position& r) -> bool {
                   return gt.less_distance_to_point_3_object()(hsp, l.second, r.second);
                 });
     }
@@ -755,7 +759,8 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       const Point new_position = is_source_mesh_fixed ? get(vpm_S, splitter_v) : vnp.second;
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "With point: " << new_position << " (first choice: " << vnp.second << ")" << std::endl;
+      std::cout << "With vertex: " << splitter_v << std::endl;
+      std::cout << "  At position: " << new_position << " (first choice: " << vnp.second << ")" << std::endl;
 #endif
 
       bool do_split = true;
@@ -949,7 +954,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
   const GT gt = choose_parameter<GT>(get_parameter(snp, internal_np::geom_traits));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Gather unique points in source range..." << std::endl;
+  std::cout << "Gather unique points in 'S' range..." << std::endl;
 #endif
 
   typedef std::pair<halfedge_descriptor, FT>                                      Vertex_with_tolerance;
@@ -958,15 +963,18 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
   Vertices_with_tolerance vertices_to_snap;
   vertices_to_snap.reserve(halfedge_range_S.size()); // ensures that iterators stay valid
 
-  // Take the min tolerance for all points that have the same coordinates
   std::map<Point, FT> point_tolerance_map;
 
   for(halfedge_descriptor h : halfedge_range_S)
   {
-    if(get(locked_vertices_S, target(h, tm_S)))
+    if(get(locked_vertices_S, target(h, tm_S))) {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << get(vpm_S, target(h, tm_S)) << " is locked" << std::endl;
+#endif
       continue;
+    }
 
-    // Skip the source vertex if its two incident halfedges are geometrically identical (it means that
+    // Skip the 'S' vertex if its two incident halfedges are geometrically identical (it means that
     // the two halfedges are already stitchable and we don't want this common vertex to be used
     // to split a halfedge somewhere else)
     if(get(vpm_S, source(h, tm_S)) == get(vpm_S, target(next(h, tm_S), tm_S)))
@@ -977,21 +985,24 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 
     vertices_to_snap.emplace_back(h, tolerance);
 
+    // take the min tolerance for all vertices with at the same position
     std::pair<Point, FT> entry(get(vpm_S, v), tolerance);
     std::pair<typename std::map<Point, FT>::iterator, bool> is_insert_successful =
       point_tolerance_map.insert(entry);
     if(!is_insert_successful.second)
       is_insert_successful.first->second = (std::min)(is_insert_successful.first->second, tolerance);
+  }
 
-    #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Non-conformal query: " << v << " (" << get(vpm_S, v) << "), tolerance: " << tolerance << std::endl;
+  for(auto& p : vertices_to_snap) {
+    p.second = point_tolerance_map[get(vpm_S, target(p.first, tm_S))];
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    vertex_descriptor v = target(p.first, tm_S);
+    std::cout << "Non-conformal query: " << v << " (" << get(vpm_S, v) << "), tolerance: " << p.second << std::endl;
 #endif
   }
 
-  for(auto& p : vertices_to_snap)
-    p.second = point_tolerance_map[get(vpm_S, target(p.first, tm_S))];
-
-  // Since primitives are inserted one by one, the shared data cannot be in the constructor of the tree
+  // Since primitives are inserted one by one, the shared data cannot be
+  // in the constructor of the tree
   AABB_Traits aabb_traits;
   aabb_traits.set_shared_data(tm_T, vpm_T);
   AABB_tree aabb_tree(aabb_traits);
@@ -1002,7 +1013,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
     if(get(locked_halfedges_T, h))
     {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << edge(h, tm_T) << " [" << source(h, tm_T) << " - " << target(h, tm_T) << "] is locked and not a valid target" << std::endl;
+      std::cout << edge(h, tm_T) << " [" << source(h, tm_T) << " - " << target(h, tm_T) << "] is locked and not a valid 'T' edge" << std::endl;
 #endif
       continue;
     }
@@ -1010,7 +1021,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
     aabb_tree.insert(Primitive(edge(h, tm_T), tm_T, vpm_T));
   }
 
-  // Now, check which edges of the target range ought to be split by source vertices
+  // Now, check which edges of the 'T' range ought to be split by 'S' vertices
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
   std::cout << "Collect edges to split with " << vertices_to_snap.size() << " vertices" << std::endl;
 #endif

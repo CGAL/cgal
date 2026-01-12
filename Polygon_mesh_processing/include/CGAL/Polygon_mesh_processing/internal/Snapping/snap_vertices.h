@@ -834,6 +834,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     >
   >                                                                            Snapping_pair_container;
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+    std::cout << "Seek snapping pairs (V-V)..." << std::endl;
+#endif
+
   Snapping_pair_container snapping_pairs;
   try
   {
