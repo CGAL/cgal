@@ -24,7 +24,7 @@ void test_overloads() {
   std::vector<Point_3> tetrahedron_coords;
 
   std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
-  CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh, Kernel> dh_tetrahedron(tetrahedron);
+  CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh> dh_tetrahedron(tetrahedron);
 
   const FT step  = FT(1) / FT(10);
   const FT scale = FT(10);

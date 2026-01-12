@@ -15,9 +15,9 @@ using FT = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 using Mesh = typename CGAL::Surface_mesh<Point_3>;
 
-using WPC3 = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel>;
-using MVC3 = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Kernel>;
-using DHC3 = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh, Kernel>;
+using WPC3 = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh>;
+using MVC3 = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh>;
+using DHC3 = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh>;
 
 template <typename COORD>
 void test_overload(){

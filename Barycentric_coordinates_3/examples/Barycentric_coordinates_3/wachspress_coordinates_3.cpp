@@ -8,7 +8,7 @@ using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 =  Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using Computation_policy_3 = CGAL::Barycentric_coordinates::Computation_policy_3;
-using Wachspress = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Surface_mesh, Kernel>;
+using Wachspress = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Surface_mesh>;
 
 int main() {
   CGAL::Random_points_in_sphere_3<Point_3> gen(1.0);

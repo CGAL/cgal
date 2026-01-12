@@ -21,6 +21,7 @@
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/property_maps.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
@@ -40,18 +41,18 @@ namespace Barycentric_coordinates {
   polyhedron with triangular faces. The coordinates are computed analytically.
 
   \tparam TriangleMesh
-  must be a model of the concept `FaceListGraph`
-
-  \tparam GeomTraits
-  a model of `BarycentricTraits_3`
+  must be a model of the concept `FaceListGraph`.
 
   \tparam VertexPointMap
   a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
-  key type and `GeomTraits::Point_3` as value type
+  key type and `GeomTraits::Point_3` as value type.
+
+  \tparam GeomTraits
+  a model of `BarycentricTraits_3`.
 */
 template<typename TriangleMesh,
-         typename GeomTraits,
-         typename VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
+         typename VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type,
+         typename GeomTraits = typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel>
 class Wachspress_coordinates_3 {
 public:
 
@@ -419,9 +420,9 @@ wachspress_coordinates_3(const TriangleMesh& tmesh,
   VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
 
   if constexpr (std::is_same_v<typename GetGeomTraits<TriangleMesh, NamedParameters>::GT_from_NP, internal_np::Param_not_found>)
-    return Wachspress_coordinates_3<TriangleMesh, Geom_traits, VPM>(tmesh, policy, vpm, Geom_traits())(query, oi);
+    return Wachspress_coordinates_3<TriangleMesh, VPM, Geom_traits>(tmesh, policy, vpm, Geom_traits())(query, oi);
   else
-    return Wachspress_coordinates_3<TriangleMesh, Geom_traits, VPM>(tmesh, policy, vpm, parameters::get_parameter(np, internal_np::geom_traits))(query, oi);
+    return Wachspress_coordinates_3<TriangleMesh, VPM, Geom_traits>(tmesh, policy, vpm, parameters::get_parameter(np, internal_np::geom_traits))(query, oi);
 }
 
 } // namespace Barycentric_coordinates

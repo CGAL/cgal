@@ -23,19 +23,19 @@ void test_container(const Mesh& mesh, OuputContainer& coordinates) {
   const Point_3 centroid(h, h, h);
 
   coordinates.clear();
-  BC::Wachspress_coordinates_3<Mesh, Kernel> wp(mesh);
+  BC::Wachspress_coordinates_3<Mesh> wp(mesh);
   wp(centroid, std::back_inserter(coordinates));
   assert(coordinates.front() >= FT(0));
   assert(coordinates.back()  >= FT(0));
 
   coordinates.clear();
-  BC::Discrete_harmonic_coordinates_3<Mesh, Kernel> dh(mesh);
+  BC::Discrete_harmonic_coordinates_3<Mesh> dh(mesh);
   dh(centroid, std::back_inserter(coordinates));
   assert(coordinates.front() >= FT(0));
   assert(coordinates.back()  >= FT(0));
 
   coordinates.clear();
-  BC::Mean_value_coordinates_3<Mesh, Kernel> mv(mesh);
+  BC::Mean_value_coordinates_3<Mesh> mv(mesh);
   mv(centroid, std::back_inserter(coordinates));
   assert(coordinates.front() >= FT(0));
   assert(coordinates.back()  >= FT(0));

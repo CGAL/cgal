@@ -25,7 +25,7 @@ void test_overloads() {
   std::vector<Point_3> sample_points;
 
   std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
-  CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Kernel> mv_tetrahedron(tetrahedron);
+  CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh> mv_tetrahedron(tetrahedron);
   tests::random_points_tetrahedron<Kernel>(tetrahedron_coords, std::back_inserter(sample_points), 1000);
 
   std::vector<FT> mv_coordinates_tetrahedron;
@@ -56,7 +56,6 @@ void test_overloads() {
     CGAL::Barycentric_coordinates::mean_value_coordinates_3(
       tetrahedron, query, std::back_inserter(mv_coordinates_tetrahedron));
   }
-
 }
 
 int main(){

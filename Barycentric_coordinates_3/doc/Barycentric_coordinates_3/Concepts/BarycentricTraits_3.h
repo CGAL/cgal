@@ -134,7 +134,7 @@ typedef unspecified_type Cartesian_const_iterator_3;
 
   `Cartesian_const_iterator_3 operator() (Point_3 p)`
 
- 	returns an iterator on the zeroth Cartesian coordinate of p.
+  returns an iterator on the zeroth Cartesian coordinate of p.
 */
 typedef unspecified_type Construct_cartesian_const_iterator_3;
 

@@ -224,9 +224,9 @@ public:
 
 // Typedefs.
 using Mesh = CGAL::Surface_mesh<Custom_barycentric_traits::Point_3>;
-using MV = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Custom_barycentric_traits>;
-using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Custom_barycentric_traits>;
-using DH = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh, Custom_barycentric_traits>;
+using MV = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh>;
+using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh>;
+using DH = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh>;
 
 int main() {
   Mesh tetrahedron;

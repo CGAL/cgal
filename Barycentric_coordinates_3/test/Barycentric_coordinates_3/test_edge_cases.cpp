@@ -85,9 +85,9 @@ void test_overloads(){
 
   using Point_3 = typename Kernel::Point_3;
   using Mesh = typename CGAL::Surface_mesh<Point_3>;
-  using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel>;
-  using DH = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh, Kernel>;
-  using MV = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Kernel>;
+  using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh>;
+  using DH = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh>;
+  using MV = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh>;
 
   std::cout << "WP test: " << std::endl;
   test_coordinate<Kernel, WP>();

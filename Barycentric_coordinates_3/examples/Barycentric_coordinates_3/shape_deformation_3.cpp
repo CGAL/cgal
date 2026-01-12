@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
   CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, quad_cage,
                         CGAL::parameters::do_not_triangulate_faces(false));
 
-  CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Surface_mesh, Kernel> mv(quad_cage);
+  CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Surface_mesh> mv(quad_cage);
   auto vertex_point_map = get_property_map(CGAL::vertex_point, deformed);
 
   std::vector<double> coords;
