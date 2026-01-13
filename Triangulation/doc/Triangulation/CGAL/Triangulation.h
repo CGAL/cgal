@@ -357,7 +357,7 @@ Full_cell_handle full_cell(const Facet & f) const;
 
 /*!
 Returns the index of the vertex of the full cell
-`c=tr.full_cell(f)` which does not belong to `c`.
+`c=tr.full_cell(f)` which does not belong to `f`.
 */
 int index_of_covertex(const Facet & f) const;
 
