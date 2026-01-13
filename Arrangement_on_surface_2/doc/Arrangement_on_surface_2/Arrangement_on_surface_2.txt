@@ -5262,7 +5262,7 @@ An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
 
-The following examples computes the arrangement depicted in in
+The following examples computes the arrangement depicted in
 \cgalFigureRef{aos_fig-algebraic_curves}. The arrangement is induced
 by four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and
 \f$c_4\f$, of degrees \f$1\f$, \f$2\f$, \f$3\f$, and \f$6\f$,

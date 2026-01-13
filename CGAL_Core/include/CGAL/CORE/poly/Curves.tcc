@@ -862,7 +862,7 @@ void BiPoly<NT>::reverse() {
   }//reverse
 
   //replaceYwithX()
-  //   used used when the coeffX in BiPoly are constants,
+  //   used when the coeffX in BiPoly are constants,
   //   to get the corresponding univariate poly in X
   //   E.g., Y^2+2*Y+9 will be converted to X^2+2*X+9
 template <class NT>

@@ -231,7 +231,7 @@ discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_d
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
   *                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and value type `FT`,
   *                            which is either `geom_traits::FT` if this named parameter is provided,
-  *                            or `kernel::FT` with the kernel deduced from from the point property map of `tmesh`.
+  *                            or `kernel::FT` with the kernel deduced from the point property map of `tmesh`.
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the triangle mesh to which `v` belongs
@@ -429,7 +429,7 @@ discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descr
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
   *                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and value type `FT`,
   *                            which is either `geom_traits::FT` if this named parameter is provided,
-  *                            or `kernel::FT` with the kernel deduced from from the point property map of `tmesh`.
+  *                            or `kernel::FT` with the kernel deduced from the point property map of `tmesh`.
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the triangle mesh to which `v` belongs
