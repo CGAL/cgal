@@ -32,6 +32,8 @@
 #include <CGAL/SMDS_3/internal/indices_management.h>
 #include <CGAL/Mesh_3/internal/Polyline.h>
 
+#include <boost/functional/hash.hpp>
+
 #include <vector>
 #include <set>
 #include <map>
@@ -515,7 +517,27 @@ public:
 private:
   mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
-  mutable std::unordered_map<Point_3, Polyline_const_iterator> vertex_to_polyline_iterator_;
+
+  struct Point_on_curve
+  {
+    Point_3 point;
+    Curve_index curve_index;
+
+    bool operator==(const Point_on_curve& pc) const
+    {
+      return (point == pc.point) && (curve_index == pc.curve_index);
+    }
+    friend std::size_t hash_value(const Point_on_curve& p)
+    {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, p.point);
+      boost::hash_combine(seed, p.curve_index);
+      return seed;
+    }
+  };
+  mutable std::unordered_map<Point_on_curve,
+                             Polyline_const_iterator,
+                             boost::hash<Point_on_curve>> vertex_to_polyline_iterator_;
 
 public:
   const Corners_incidences& corners_incidences_map() const
@@ -567,14 +589,19 @@ public:
                                              const int dim,
                                              const Curve_index& index) const
   {
-     CGAL_assertion(dim < 2);
+    locate_timer.start();
+    CGAL_assertion(dim == 0 || dim == 1);
 
      Polyline_const_iterator it;
      if(dim == 0) // corner
        it = locate_corner(index, p);
      else
-       it = vertex_to_polyline_iterator_.at(p);
-
+     {
+       Point_on_curve pc{p, index};
+       const Polyline_const_iterator pit = vertex_to_polyline_iterator_.at(pc);
+       it = pit;
+     }
+     locate_timer.stop();
      return it;
   }
 
@@ -591,7 +618,11 @@ public:
       if(it != polyline.first_segment_source())
         it = polyline.previous_segment_source(it);
     }
-    vertex_to_polyline_iterator_[p] = it;
+
+    // do not re-insert p, it may change the iterator and index
+    Point_on_curve pc{p, index};
+    CGAL_assertion(vertex_to_polyline_iterator_.find(pc) == vertex_to_polyline_iterator_.end());
+    vertex_to_polyline_iterator_[pc] = it;
   }
 
   void dump_curve(const Curve_index& index, const std::string& prefix) const
