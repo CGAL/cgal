@@ -257,7 +257,7 @@ and 32 GB DDR4 2933MHz memory. The installed operating system was Windows 11.
 \section gbc_3_history History
 
 This package was introduced during GSoC 2021 and implemented by Antonio Gomes
-under the supervision of Dmitry Anisimov.
+under the supervision of Dmitry Anisimov. Sven Oesau finished the final work on API and documentation.
 
 */
 

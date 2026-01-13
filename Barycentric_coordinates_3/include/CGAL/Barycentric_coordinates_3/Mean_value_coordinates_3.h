@@ -107,7 +107,7 @@ public:
     an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
     the default initialization is provided
 
-    \pre boost::num_vertices(`tmesh`) >= 4.
+    \pre num_vertices(`tmesh`) >= 4.
     \pre CGAL::is_triangle_mesh(`tmesh`).
     \pre CGAL::is_closed(`tmesh`).
   */
@@ -434,7 +434,7 @@ private:
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \pre boost::num_vertices(`tmesh`) >= 4.
+  \pre num_vertices(`tmesh`) >= 4.
   \pre CGAL::is_triangle_mesh(`tmesh`)
   \pre CGAL::is_closed(`tmesh`).
 */

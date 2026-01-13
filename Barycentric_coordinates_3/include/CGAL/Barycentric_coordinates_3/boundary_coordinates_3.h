@@ -34,10 +34,10 @@ namespace Barycentric_coordinates {
   coordinate per vertex. The coordinates are stored in a destination range
   beginning at `oi`.
 
-  If `query` is at the vertex, the corresponding coordinate is set to one, while
-  all other coordinates are zero. If `query` is on the face, the three corresponding
-  coordinates are triangle coordinates, while all other coordinates are set to zero.
-  If `query` is not on the boundary, all the coordinates are set to zero.
+  If `query` is at the vertex, the corresponding coordinate is set to 1, while
+  all other coordinates are 0. If `query` is on the face, the three corresponding
+  coordinates are triangle coordinates, while all other coordinates are set to 0.
+  If `query` is not on the boundary, all the coordinates are set to 0.
 
   \tparam TriangleMesh
   must be a model of the concept `FaceListGraph`.
@@ -83,7 +83,7 @@ namespace Barycentric_coordinates {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \pre boost::num_vertices(`tmesh`) >= 4.
+  \pre num_vertices(`tmesh`) >= 4.
   \pre CGAL::is_triangle_mesh(`tmesh`)
   \pre CGAL::is_closed(`tmesh`).
   \pre CGAL::is_strongly_convex_3(`tmesh`).

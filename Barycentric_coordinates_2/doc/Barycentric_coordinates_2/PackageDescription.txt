@@ -55,22 +55,22 @@ coordinates from the Package \ref PkgInterpolation2.}
 - `BarycentricCoordinates_2`
 
 ## Analytic Coordinates ##
-- `Wachspress_coordinates_2<VertexRange, GeomTraits, PointMap>`
-- `Mean_value_coordinates_2<VertexRange, GeomTraits, PointMap>`
-- `Discrete_harmonic_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `CGAL::Barycentric_coordinates::Wachspress_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `CGAL::Barycentric_coordinates::Mean_value_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2<VertexRange, GeomTraits, PointMap>`
 
 ## Harmonic Coordinates ##
-- `Delaunay_domain_2<VertexRange, GeomTraits, PointMap>`
-- `Harmonic_coordinates_2<VertexRange, DiscretizedDomain, GeomTraits, PointMap>`
+- `CGAL::Barycentric_coordinates::Delaunay_domain_2<VertexRange, GeomTraits, PointMap>`
+- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<VertexRange, DiscretizedDomain, GeomTraits, PointMap>`
 
 ## Free Functions ##
-- `segment_coordinates_2()`
-- `triangle_coordinates_2()`
-- `wachspress_weights_2()`
-- `wachspress_coordinates_2()`
-- `mean_value_weights_2()`
-- `mean_value_coordinates_2()`
-- `discrete_harmonic_weights_2()`
-- `discrete_harmonic_coordinates_2()`
-- `boundary_coordinates_2()`
+- `CGAL::Barycentric_coordinates::segment_coordinates_2()`
+- `CGAL::Barycentric_coordinates::triangle_coordinates_2()`
+- `CGAL::Barycentric_coordinates::wachspress_weights_2()`
+- `CGAL::Barycentric_coordinates::wachspress_coordinates_2()`
+- `CGAL::Barycentric_coordinates::mean_value_weights_2()`
+- `CGAL::Barycentric_coordinates::mean_value_coordinates_2()`
+- `CGAL::Barycentric_coordinates::discrete_harmonic_weights_2()`
+- `CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2()`
+- `CGAL::Barycentric_coordinates::boundary_coordinates_2()`
 */
