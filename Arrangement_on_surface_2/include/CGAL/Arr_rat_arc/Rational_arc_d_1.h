@@ -450,7 +450,7 @@ public:
     _info = (_info | IS_DIRECTED_RIGHT);
 
 
-    // Analyze the behaviour of the rational function at x = -oo (the source).
+    // Analyze the behavior of the rational function at x = -oo (the source).
     Algebraic_real_1          y0;
     const Arr_parameter_space inf_s = _analyze_at_minus_infinity(P, Q, y0);
 
@@ -460,7 +460,7 @@ public:
       _info = (_info | SRC_AT_Y_PLUS_INFTY);
     else // if (inf_s == ARR_INTERIOR)
       _ps = Algebraic_point_2();   //the point is a dummy
-    //Analyze the behaviour of the rational function at x = +oo (the target).
+    //Analyze the behavior of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t = _analyze_at_plus_infinity(P, Q, y0);
 
     if (inf_t == ARR_BOTTOM_BOUNDARY)
@@ -548,7 +548,7 @@ public:
     }
     else
     {
-      // The y-coodinate is unbounded, but we can set its sign.
+      // The y-ccoordinate is unbounded, but we can set its sign.
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
       const CGAL::Sign sign_s = (dir_right ? signs.second : signs.first);
 
@@ -649,7 +649,7 @@ public:
     }
     else
     {
-      // The y-coodinate is unbounded, but we can set its sign.
+      // The y-coordinate is unbounded, but we can set its sign.
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
       const CGAL::Sign sign_s =
         ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.second : signs.first;
@@ -671,7 +671,7 @@ public:
     }
     else
     {
-      // The y-coodinate is unbounded, but we can set its sign.
+      // The y-coordinate is unbounded, but we can set its sign.
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_t);
       const CGAL::Sign sign_t =
         ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.first : signs.second;
@@ -949,7 +949,7 @@ public:
 
   Self split_at_pole(const Algebraic_real_1& x0)
   {
-    // Analyze the behaviour of the function near the given pole.
+    // Analyze the behavior of the function near the given pole.
     const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x0);
     const CGAL::Sign    sign_left = signs.first;
     const CGAL::Sign    sign_right = signs.second;

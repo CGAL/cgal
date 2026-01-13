@@ -40,6 +40,6 @@ faces(const FaceListGraph& g);
   This is the case for implementations only marking faces deleted in the face container.
  */
 template <typename FaceListGraph>
-boost::graph_traits<FaceListGraph>::face_size_type
+boost::graph_traits<FaceListGraph>::faces_size_type
 num_faces(const FaceListGraph& g);
 

@@ -294,6 +294,7 @@ public:
   bool is_infinite(const Edge& e) const;
   bool is_infinite(const Edge_circulator& ec) const;
   bool is_infinite(const All_edges_iterator& ei) const;
+  bool is_vertex(Vertex_handle va) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
                int & i) const;
@@ -1099,6 +1100,14 @@ is_infinite(const All_edges_iterator& ei) const
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
+is_vertex(Vertex_handle va) const
+{
+  return _tds.is_vertex(va);
+}
+
+template <class Gt, class Tds >
+inline bool
+Triangulation_2<Gt, Tds>::
 is_edge(Vertex_handle va, Vertex_handle vb) const
 {
   return _tds.is_edge( va, vb);
@@ -1465,7 +1474,7 @@ template <class Gt, class Tds >
 typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point& p, Locate_type lt, Face_handle loc, int li)
-  // insert a point p, whose localisation is known (lt, f, i)
+  // insert a point p, whose localization is known (lt, f, i)
 {
   if(number_of_vertices() == 0) {
     return(insert_first(p));

@@ -91,7 +91,7 @@ enum Mode {ASCII = 0, PRETTY, BINARY};
 \brief Inserts object `c` in the stream `os`. Returns `os`.
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
-as `cout` or `cerr`, as well as to `std::ostringstream`
+as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
 and `std::ofstream`.
 The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 
@@ -152,7 +152,7 @@ typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
 
 The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
 
-If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behaviour*.
+If you don't specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behavior for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behavior*.
 
 Specializations of `Output_rep` should provide the following features:
 
@@ -216,12 +216,25 @@ public:
   }
 };
 
+template <class Func>
+class Output_rep<Func, IO_manip_tag>
+{
+  Func f;
+
+public:
+  Output_rep(Func f) : f(f) {}
+  std::ostream& operator()(std::ostream& os) const
+  {
+    return f(os);
+  }
+};
+
 /*!
   \relates Output_rep
   \brief stream output of the \c Output_rep calls its \c operator().
 
-  \cgal defines output operators for classes that are derived from the class `ostream`.
-  This enables to write to ostreams as `cout` or `cerr`, as well as to `std::ostringstream`
+  \cgal defines output operators for classes that are derived from the class `std::ostream`.
+  This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
   and `std::ofstream`.
   The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 */
@@ -442,7 +455,7 @@ public:
     \brief stream input to the \c Input_rep calls its \c operator().
 
 \brief \cgal defines input operators for classes that are derived
-from the class `istream`. This allows to read from istreams
+from the class `std::istream`. This allows to read from input streams
 as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 */
@@ -1004,12 +1017,53 @@ namespace std {
 template <typename T, typename F, typename CharT>
 struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::basic_string<CharT>>
 {
+  using context = std::basic_format_parse_context<CharT>;
+  using context_iterator = typename context::iterator;
+
+  constexpr context_iterator parse_non_precision_chars(context_iterator it, context_iterator end)
+  {
+    constexpr std::array<CharT, 3> letters = {CharT('A'), CharT('B'), CharT('P')};
+    constexpr std::array<CGAL::IO::Mode, 3> modes = {CGAL::IO::ASCII, CGAL::IO::BINARY, CGAL::IO::PRETTY};
+
+    if(it == end)
+      throw "it != end is a precondition of `parse_non_precision_chars(it, end)`";
+
+    if(*it == CharT('}'))
+      return it;
+    if(*it == CharT('.'))
+      return it;
+
+    for(const auto& letter : letters) {
+      if(*it == letter) {
+        mode = modes[std::addressof(letter) - letters.data()];
+        return ++it;
+      }
+    }
+
+    throw std::format_error(R"(
+formatter for CGAL::Output_rep only support stream mode and precision, like `{:X.6}` where X is
+  - `A` (or missing) for ASCII mode,
+  - `B` for BINARY mode, or
+  - `P` for PRETTY mode
+)");
+  }
+
   constexpr auto parse(std::basic_format_parse_context<CharT>& ctx)
   {
     auto it = ctx.begin();
     const auto end = ctx.end();
-    if(it == end)
-      return it;
+
+    if(it == end) return it;
+
+    {
+      auto next = it;
+      do {
+        next = parse_non_precision_chars(it, end);
+      } while(next != it && (it = next) != end);
+    }
+
+    if(it == end) return it;
+
     if(*it != CharT('.')) {
       if(*it == CharT('}')) return it;
       throw std::format_error("formatter for CGAL::Output_rep only support precision, like `{:.6}`");
@@ -1031,12 +1085,14 @@ struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::bas
   auto format(const CGAL::Output_rep<T, F> &rep, FormatContext& ctx) const
   {
     std::basic_stringstream<CharT> ss;
+    CGAL::IO::set_mode(ss, mode);
     ss.precision(precision);
     ss << rep;
     return std::formatter<std::basic_string<CharT>>::format(ss.str(), ctx);
   }
 
   int precision = 17;
+  CGAL::IO::Mode mode = CGAL::IO::ASCII;
 };
 
 } // namespace std

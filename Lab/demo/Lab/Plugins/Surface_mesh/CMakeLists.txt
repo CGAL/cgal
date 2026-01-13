@@ -11,8 +11,8 @@ if(NOT CGAL_DISABLE_GMP)
     cgal_lab_plugin(parameterization_plugin Parameterization_plugin
                            ${parameterizationUI_FILES})
     target_link_libraries(
-      parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item
-                                     scene_selection_item CGAL::Eigen3_support)
+      parameterization_plugin PRIVATE scene_surface_mesh_item scene_textured_item
+                                      scene_selection_item CGAL::Eigen3_support)
 
     if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
@@ -27,7 +27,7 @@ if(NOT CGAL_DISABLE_GMP)
   qt6_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
   cgal_lab_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin
                          ${segmentationUI_FILES})
-  target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
+  target_link_libraries(mesh_segmentation_plugin PRIVATE scene_surface_mesh_item)
 
   if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(
@@ -37,14 +37,17 @@ if(NOT CGAL_DISABLE_GMP)
 
   qt6_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
   cgal_lab_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
-  target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+  target_link_libraries(mesh_simplification_plugin PRIVATE scene_surface_mesh_item scene_selection_item)
 
   qt6_wrap_ui(shortestPathUI_FILES Shortest_path_widget.ui)
   cgal_lab_plugin(shortest_path_plugin Shortest_path_plugin
                          ${shortestPathUI_FILES})
-  target_link_libraries(
-    shortest_path_plugin PUBLIC scene_surface_mesh_item scene_shortest_path_item
-                                scene_basic_objects)
+  target_link_libraries(shortest_path_plugin
+      PRIVATE
+      scene_surface_mesh_item
+      scene_selection_item
+      scene_shortest_path_item
+      scene_basic_objects)
 
   qt6_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
   cgal_lab_plugin(
@@ -52,7 +55,7 @@ if(NOT CGAL_DISABLE_GMP)
     ${basicUI_FILES} VSA_wrapper.cpp)
   target_link_libraries(
     surface_mesh_approximation_plugin
-    PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_polylines_item)
+    PRIVATE scene_surface_mesh_item scene_polygon_soup_item scene_polylines_item CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require the CGAL_Core library, and will not be compiled.")
 endif()

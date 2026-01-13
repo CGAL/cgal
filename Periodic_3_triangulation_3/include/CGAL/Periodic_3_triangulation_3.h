@@ -870,18 +870,11 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            bool& had_to_use_exact) const
+  Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
     // The function is a different file to be able to be used where there is
     // no triangulation (namely, the domains of Periodic_3_mesh_3).
-    return ::CGAL::P3T3::internal::construct_periodic_point(p, had_to_use_exact, geom_traits());
-  }
-
-  Periodic_point_3 construct_periodic_point(const Point_3& p) const
-  {
-    bool useless = false;
-    return construct_periodic_point(p, useless);
+    return ::CGAL::P3T3::internal::construct_periodic_point(p, geom_traits());
   }
 
   // ---------------------------------------------------------------------------
@@ -1712,11 +1705,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto finite_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   Vertex_iterator finite_vertices_begin() const {
     return _tds.vertices_begin();
   }
   Vertex_iterator finite_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto finite_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   Edge_iterator finite_edges_begin() const {
@@ -1742,11 +1745,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto all_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   All_vertices_iterator all_vertices_begin() const {
     return _tds.vertices_begin();
   }
   All_vertices_iterator all_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto all_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   All_edges_iterator all_edges_begin() const {
@@ -1914,6 +1927,29 @@ public:
 
   Facet mirror_facet(Facet f) const {
     return _tds.mirror_facet(f);
+  }
+
+  /// Vertex ranges defining a simplex
+  static std::array<Vertex_handle, 2> vertices(const Edge& e)
+  {
+    return std::array<Vertex_handle, 2>{
+             e.first->vertex(e.second),
+             e.first->vertex(e.third)};
+  }
+  static std::array<Vertex_handle, 3> vertices(const Facet& f)
+  {
+    return std::array<Vertex_handle, 3>{
+             f.first->vertex(vertex_triple_index(f.second, 0)),
+             f.first->vertex(vertex_triple_index(f.second, 1)),
+             f.first->vertex(vertex_triple_index(f.second, 2))};
+  }
+  static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
+  {
+    return std::array<Vertex_handle, 4>{
+             c->vertex(0),
+             c->vertex(1),
+             c->vertex(2),
+             c->vertex(3)};
   }
 
 private:
@@ -2784,7 +2820,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
   /// Virtual cells, 6 per periodic instance
   Cell_handle cells[3][3][3][6];
 
-  // Initialise vertices:
+  // initialize vertices:
   vir_vertices[0][0][0] = _tds.create_vertex();
   vir_vertices[0][0][0]->set_point(p);
   virtual_vertices_reverse[vir_vertices[0][0][0]] = std::vector<Vertex_handle>();
@@ -2792,7 +2828,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
     for(int j=0; j<_cover[1]; j++) {
       for(int k=0; k<_cover[2]; k++) {
         if((i!=0)||(j!=0)||(k!=0)) {
-          // Initialise virtual vertices out of the domain for debugging
+          // initialize virtual vertices out of the domain for debugging
           vir_vertices[i][j][k] =
             _tds.create_vertex();
           vir_vertices[i][j][k]->set_point(p); //+Offset(i,j,k));
@@ -4414,7 +4450,7 @@ test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
   queue.push_back(std::make_pair(c1,c2));
 
   while(! queue.empty()) {
-    boost::tie(c1,c2) = queue.back();
+    std::tie(c1,c2) = queue.back();
     queue.pop_back();
 
     // Precondition: c1, c2 have been registered as well as their 4 vertices.

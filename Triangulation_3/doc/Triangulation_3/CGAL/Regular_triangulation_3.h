@@ -38,7 +38,7 @@ respectively.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point`.
+        with `object` being a `Point`.
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when
         `TDS::Concurrency_tag` is `Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
@@ -225,7 +225,7 @@ is called and `v` is returned.
 
 If the hole contains interior vertices, each of them is hidden by the insertion
 of `p` and is stored in the new cell which contains it.
-\pre `rt`.`dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, not empty, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`.
+\pre `dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, not empty, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`.
 */
 template <class CellIt>
 Vertex_handle insert_in_hole(const Weighted_point& p,
@@ -320,7 +320,7 @@ of `c` is less than \f$ \pi/2\f$ or if these two spheres do not
 intersect. For an
 infinite cell this means that `p` does not satisfy either of the
 two previous conditions.
-\pre `rt`.`dimension()` \f$ =3\f$.
+\pre `dimension()` \f$ =3\f$.
 */
 Bounded_side
 side_of_power_sphere(Cell_handle c, const Weighted_point & p) const;
@@ -372,7 +372,7 @@ If the point `p` is collinear with the finite edge `e` of
 `ON_BOUNDARY` if \f$ \Pi({p}^{(w)}-{z(e)}^{(w)})=0\f$,
 
 `ON_UNBOUNDED_SIDE` if \f$ \Pi({p}^{(w)}-{z(e)}^{(w)})>0\f$ .
-\pre `rt`.`dimension()` \f$ \geq2\f$.
+\pre `dimension()` \f$ \geq2\f$.
 */
 Bounded_side
 side_of_power_circle(const Facet & f,
@@ -395,7 +395,7 @@ In dimension 1, returns
 `ON_BOUNDARY` if \f$ \Pi({p}^{(w)}-{z(c)}^{(w)})=0\f$,
 
 `ON_UNBOUNDED_SIDE` if \f$ \Pi({p}^{(w)}-{z(c)}^{(w)})>0\f$ .
-\pre `rt`.`dimension()` \f$ = 1\f$.
+\pre `dimension()` \f$ = 1\f$.
 */
 Bounded_side
 side_of_power_segment(Cell_handle c, const Weighted_point & p)
@@ -412,7 +412,7 @@ The default constructed
 handle is returned if the triangulation is empty.
 The optional argument `c` is a hint
 specifying where to start the search.
-\pre `c` is a cell of `rt`.
+\pre `c` is a cell of the regular triangulation.
 
 */
 Vertex_handle nearest_power_vertex(const Bare_point& p,
@@ -461,7 +461,7 @@ Compute the conflicts with `p`.
                           among the internal or boundary facets of the conflict zone, and false otherwise.
 
 \pre  The starting cell (resp.\ facet) `c` must be in conflict with `p`.
-\pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`.
+\pre `dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`.
 
 \return the `Triple` composed of the resulting output iterators.
 
@@ -492,7 +492,7 @@ vertices_in_conflict(const Weighted_point& p, Cell_handle c, OutputIterator res)
 Similar to `find_conflicts()`, but reports the vertices which are on the
 boundary of the conflict zone of `p`, in the output iterator `res`.
 Returns the resulting output iterator.
-\pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is a cell containing `p`.
+\pre `dimension()` \f$ \geq2\f$, and `c` is a cell containing `p`.
 
 */
 template <class OutputIterator>
@@ -505,7 +505,7 @@ the interior of the conflict zone of `p`, in the output iterator
 `res`. The vertices that are on the boundary of the conflict zone are
 not reported.
 Returns the resulting output iterator.
-\pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is a cell containing `p`.
+\pre `dimension()` \f$ \geq2\f$, and `c` is a cell containing `p`.
 
 */
 template <class OutputIterator>
@@ -555,7 +555,7 @@ bool is_Gabriel(Vertex_handle v);
 
 /*!
 Returns the weighted circumcenter of the four vertices of c.
-\pre `rt`.`dimension()`\f$ =3\f$ and `c` is not infinite.
+\pre `dimension()`\f$ =3\f$ and `c` is not infinite.
 */
 Bare_point dual(Cell_handle c) const;
 
@@ -566,7 +566,7 @@ in dimension 3: either a segment, if the two cells incident to `f`
 are finite, or a ray, if one of them is infinite;
 
 in dimension 2: a point.
-\pre `rt`.`dimension()` \f$ \geq2\f$ and `f` is not infinite.
+\pre `dimension()` \f$ \geq2\f$ and `f` is not infinite.
 */
 Object dual(Facet f) const;
 
@@ -576,7 +576,7 @@ same as the previous method for facet `(c,i)`.
 Object dual(Cell_handle c, int i) const;
 
 /*!
-Sends the set of duals to all the facets of `rt` into `os`.
+Writes the set of duals to all the facets of the regular triangulation into `os`.
 */
 template <class Stream> Stream & draw_dual(Stream & os);
 

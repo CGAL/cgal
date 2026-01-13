@@ -808,8 +808,7 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
 
   // Compute the radius of each point = (distance max to k nearest neighbors)/2.
   {
-    int i=0;
-    for (Point_set::iterator it=d->m_points->begin(); it!=d->m_points->end(); ++it, ++i)
+    for (Point_set::iterator it=d->m_points->begin(); it!=d->m_points->end(); ++it)
     {
       Neighbor_search search(tree, d->m_points->point(*it), k+1, 0, true, tr_dist);
       double maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
@@ -850,6 +849,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
+        d->normal_Slider->show();
       }
         QMenu *container = new QMenu(tr("Points Size"));
         QWidgetAction *sliderAction = new QWidgetAction(nullptr);
@@ -861,6 +861,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
+        d->point_Slider->show();
 
         d->actionDeleteSelection = menu->addAction(tr("Delete Selection"));
         d->actionDeleteSelection->setObjectName("actionDeleteSelection");

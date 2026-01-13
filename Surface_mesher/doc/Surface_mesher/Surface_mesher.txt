@@ -313,7 +313,7 @@ class is not yet documented because its interface and code have not yet
 been stabilized.
 
 The Surface Mesh Generator demo allows to mesh not only gray level images,
-but also segmented images, when voxels are labelled with a domain
+but also segmented images, when voxels are labeled with a domain
 index. Such images are for example the result of a segmentation of 3D
 medical images.
 

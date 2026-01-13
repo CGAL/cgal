@@ -1,4 +1,4 @@
-/// \defgroup PkgKernel23Ref 2D and 3D Linear Geometry Kernel Reference
+/// \defgroup PkgKernel23Ref Reference Manual
 
 /// \defgroup PkgKernel23Concepts Concepts
 /// \ingroup PkgKernel23Ref

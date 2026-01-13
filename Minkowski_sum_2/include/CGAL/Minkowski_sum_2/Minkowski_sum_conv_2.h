@@ -611,7 +611,7 @@ private:
         res = f_compare_xy(curr_pt, next_pt);
 
         if (res != EQUAL) {
-          cycle.insert(curr,
+          after_next = cycle.insert(curr,
                        Labeled_segment_2(Segment_2(curr_pt, next_pt),
                                          X_curve_label((res == SMALLER),
                                                        cycle_id,

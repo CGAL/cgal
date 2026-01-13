@@ -24,13 +24,13 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file The basic non-caching segment traits-class for the arrangement
- * package. This traits class handles x-monotone non-intersecting segments.
- * It is a model of the ArrangementBasicTraits_2 concept. The class is
+ * package. This traits class handles \f$x\f$-monotone non-intersecting
+ * segments. It is a model of the AosBasicTraits_2 concept. The class is
  * templated by a kernel and inherits from it all the types and many of the
  * functors required by the concept it models.
  */
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/tags.h>
@@ -41,70 +41,65 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementBasicTraits_2 concept that handles x-monotone
+ * A model of the AosBasicTraits_2 concept that handles \f$x\f$-monotone
  * non-intersecting line segments.
  */
-template <class T_Kernel>
-class Arr_non_caching_segment_basic_traits_2 : public T_Kernel
-{
+template <typename T_Kernel>
+class Arr_non_caching_segment_basic_traits_2 : public T_Kernel {
 public:
-
-  typedef T_Kernel                              Kernel;
-
-  typedef typename Kernel::FT                   FT;
+  using Kernel = T_Kernel;
+  using FT = typename Kernel::FT;
 
 private:
-  typedef Algebraic_structure_traits<FT> AST;
-  typedef typename AST::Is_exact FT_is_exact;
+  using AST = Algebraic_structure_traits<FT>;
+  using FT_is_exact = typename AST::Is_exact;
+
 public:
-
-  typedef Boolean_tag<FT_is_exact::value> Has_exact_division;
-
-  typedef
-  CGAL::Segment_assertions<Arr_non_caching_segment_basic_traits_2<Kernel> >
-                                                Segment_assertions;
+  using Has_exact_division = Boolean_tag<FT_is_exact::value>;
+  using Segment_assertions = CGAL::Segment_assertions<Arr_non_caching_segment_basic_traits_2<Kernel>>;
 
   // Categories:
-  typedef Tag_true                              Has_left_category;
-  typedef Tag_false                             Has_do_intersect_category;
+  using Has_left_category = Tag_true;
 
-  typedef Arr_oblivious_side_tag                Left_side_category;
-  typedef Arr_oblivious_side_tag                Bottom_side_category;
-  typedef Arr_oblivious_side_tag                Top_side_category;
-  typedef Arr_oblivious_side_tag                Right_side_category;
+  using Left_side_category = Arr_oblivious_side_tag;
+  using Bottom_side_category = Arr_oblivious_side_tag;
+  using Top_side_category = Arr_oblivious_side_tag;
+  using Right_side_category = Arr_oblivious_side_tag;
 
-  /*! Default Constructor */
-  Arr_non_caching_segment_basic_traits_2()
-  {}
+  /*! constructs default */
+  Arr_non_caching_segment_basic_traits_2() {}
 
   /// \name Types and functor inherited from the kernel
   //@{
 
   // Traits types:
-  typedef typename Kernel::Point_2                 Point_2;
-  typedef typename Kernel::Segment_2               X_monotone_curve_2;
-  typedef unsigned int                             Multiplicity;
+  using Point_2 = typename Kernel::Point_2;
+  using X_monotone_curve_2 = typename Kernel::Segment_2;
+  using Multiplicity = std::size_t;
 
-  /*! Compare the x-coordinates of two points */
-  typedef typename Kernel::Compare_x_2             Compare_x_2;
+  /*! compares the \f$x\f$-coordinates of two points. */
+  using Compare_x_2 = typename Kernel::Compare_x_2;
 
-  /*! Compare two points lexigoraphically; by x, then by y */
-  typedef typename Kernel::Compare_xy_2            Compare_xy_2;
+  /*! compares two points lexigoraphically; by \f$x\f$, then by \f$y\f$. */
+  using Compare_xy_2 = typename Kernel::Compare_xy_2;
 
-  /*! Obtain the left endpoint of a given segment */
-  typedef typename Kernel::Construct_min_vertex_2  Construct_min_vertex_2;
+  /*! obtains the left endpoint of a given segment. */
+  using Construct_min_vertex_2 = typename Kernel::Construct_min_vertex_2;
 
-  /*! Obtain the right endpoint of a given segment */
-  typedef typename Kernel::Construct_max_vertex_2  Construct_max_vertex_2;
+  /*! obtains the right endpoint of a given segment. */
+  using Construct_max_vertex_2 = typename Kernel::Construct_max_vertex_2;
 
-  /*! Check whether a given segment is vertical */
-  typedef typename Kernel::Is_vertical_2           Is_vertical_2;
+  /*! checks whether a given segment is vertical. */
+  using Is_vertical_2 = typename Kernel::Is_vertical_2;
 
-  /*! Return the location of a given point with respect to an input segment */
-  typedef typename Kernel::Compare_y_at_x_2        Compare_y_at_x_2;
+  /*! returns the location of a given point with respect to an input segment. */
+  using Compare_y_at_x_2 = typename Kernel::Compare_y_at_x_2;
 
-  /*! Check if two segments or if two points are identical */
-  typedef typename Kernel::Equal_2                 Equal_2;
+  /*! checks if two segments or if two points are identical. */
+  using Equal_2 = typename Kernel::Equal_2;
+
+  /*! checks if two segments intersect. */
+  using Do_intersect_2 = typename Kernel::Do_intersect_2;
 
   //@}
 
@@ -116,22 +111,19 @@ public:
    */
   class Compare_y_at_x_left_2 {
   public:
-
-    /*
-     * Compare the y value of two segments immediately to the left of their
-     * intersection point.
+    /* compares the \f$y\f$-value of two segments immediately to the left of
+     * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
      * \param p The intersection point.
-     * \pre The point p lies on both segments, and both of them must be also be
-     *      defined (lexicographically) to its left.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the left of p: SMALLER, LARGER or EQUAL.
+     * \pre The point `p` lies on both segments, and both of them must be also
+     *      be defined (lexicographically) to its left.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
-                                 const Point_2& CGAL_precondition_code(p)) const
-    {
+                                 const Point_2& CGAL_precondition_code(p)) const {
       Kernel kernel;
 
       // The two segments must be defined at q and also to its left.
@@ -143,13 +135,13 @@ public:
         Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
         typename Kernel::Construct_vertex_2 construct_vertex =
           kernel.construct_vertex_2_object();
-        const Point_2 & source1 = construct_vertex(cv1, 0);
-        const Point_2 & target1 = construct_vertex(cv1, 1);
-        const Point_2 & left1 =
+        const Point_2& source1 = construct_vertex(cv1, 0);
+        const Point_2& target1 = construct_vertex(cv1, 1);
+        const Point_2& left1 =
           (kernel.less_xy_2_object()(source1, target1)) ? source1 : target1;
-        const Point_2 & source2 = construct_vertex(cv2, 0);
-        const Point_2 & target2 = construct_vertex(cv2, 1);
-        const Point_2 & left2 =
+        const Point_2& source2 = construct_vertex(cv2, 0);
+        const Point_2& target2 = construct_vertex(cv2, 1);
+        const Point_2& left2 =
           (kernel.less_xy_2_object()(source2, target2)) ? source2 : target2;
         );
 
@@ -164,34 +156,29 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  /*! obtains a `Compare_y_at_x_left_2` functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  {
-    return Compare_y_at_x_left_2();
-  }
+  { return Compare_y_at_x_left_2(); }
 
   /*! \class
    * A functor for comparing two segments to the right of a point.
    */
   class Compare_y_at_x_right_2 {
   public:
-
-    /*!
-     * Compare the y value of two segments immediately to the right of their
-     * intersection point.
+    /*! compares the \f$y\f$-value of two segments immediately to the right of
+     * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
      * \param p The intersection point.
-     * \pre The point p lies on both segments, and both of them must be also be
-     *      defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the right of p: SMALLER, LARGER or EQUAL.
+     * \pre The point `p` lies on both segments, and both of them must be also
+     *      be defined (lexicographically) to its right.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
 
-    Comparison_result operator()(const X_monotone_curve_2 & cv1,
-                                 const X_monotone_curve_2 & cv2,
-                                 const Point_2 & CGAL_precondition_code(p)) const
-    {
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& CGAL_precondition_code(p)) const {
       Kernel kernel;
 
       // The two segments must be defined at q and also to its right.
@@ -203,13 +190,13 @@ public:
         Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
         typename Kernel::Construct_vertex_2 construct_vertex =
           kernel.construct_vertex_2_object();
-        const Point_2 & source1 = construct_vertex(cv1, 0);
-        const Point_2 & target1 = construct_vertex(cv1, 1);
-        const Point_2 & right1 =
+        const Point_2& source1 = construct_vertex(cv1, 0);
+        const Point_2& target1 = construct_vertex(cv1, 1);
+        const Point_2& right1 =
           (kernel.less_xy_2_object()(source1, target1)) ? target1 : source1;
-        const Point_2 & source2 = construct_vertex(cv2, 0);
-        const Point_2 & target2 = construct_vertex(cv2, 1);
-        const Point_2 & right2 =
+        const Point_2& source2 = construct_vertex(cv2, 0);
+        const Point_2& target2 = construct_vertex(cv2, 1);
+        const Point_2& right2 =
           (kernel.less_xy_2_object()(source2, target2)) ? target2 : source2;
         );
 
@@ -222,18 +209,16 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 functor object. */
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  {
-    return Compare_y_at_x_right_2();
-  }
+  { return Compare_y_at_x_right_2(); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                                        Approximate_number_type;
-  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  typedef Approximate_kernel::Point_2                   Approximate_point_2;
+  using Approximate_number_type = double;
+  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+  using Approximate_point_2 = Approximate_kernel::Point_2;
 
   class Approximate_2 {
   protected:
@@ -242,7 +227,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits.
      */
     Approximate_2(const Traits& traits) : m_traits(traits) {}
@@ -250,24 +235,24 @@ public:
     friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
 
   public:
-    /*! Return an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator() (const Point_2& p, int i) const {
       CGAL_precondition (i == 0 || i == 1);
       return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
     }
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const
     { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
 
-    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
@@ -276,30 +261,24 @@ public:
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
       const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
-      auto xs = CGAL::to_double(src.x());
-      auto ys = CGAL::to_double(src.y());
-      auto xt = CGAL::to_double(trg.x());
-      auto yt = CGAL::to_double(trg.y());
-      *oi++ = Approximate_point_2(xs, ys);
-      *oi++ = Approximate_point_2(xt, yt);
+      *oi++ = operator()(src);
+      *oi++ = operator()(trg);
       return oi;
     }
   };
 
-  /*! Get an Approximate_2 functor object. */
+  /*! obtains an Approximate_2 functor object. */
   Approximate_2 approximate_2_object () const { return Approximate_2(*this); }
 
-  typedef typename Kernel::Construct_segment_2    Construct_x_monotone_curve_2;
+  using Construct_x_monotone_curve_2 = typename Kernel::Construct_segment_2;
 
-  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
-  {
-    return (this->construct_segment_2_object());
-  }
+  { return (this->construct_segment_2_object()); }
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

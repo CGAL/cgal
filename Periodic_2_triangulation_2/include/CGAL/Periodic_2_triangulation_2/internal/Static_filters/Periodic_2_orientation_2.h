@@ -92,12 +92,12 @@ public:
   typedef typename Kernel::Iso_rectangle_2        Iso_rectangle_2;
   typedef typename Kernel::Periodic_2_offset_2    Offset_2;
 
+  typedef typename Kernel:: Orientation            Orientation;
+
 public:
   const Iso_rectangle_2 * const _dom;
 
 public:
-  typedef typename Base::result_type  result_type;
-
   Periodic_2_orientation_2(const Iso_rectangle_2 * const dom,
                            const Base& o2b)
     : Base(o2b), _dom(dom)
@@ -106,7 +106,7 @@ public:
   using Base::operator();
 
   /// Normal static orientation test, copied from Orientation_2
-  result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
+  Orientation operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
   {
     CGAL_PROFILER("Periodic_2_orientation_2 calls");
 
@@ -161,7 +161,7 @@ public:
 
 
   /// Static orientation test with offsets
-  result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r,
+  Orientation operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r,
                          const Offset_2 &o_p, const Offset_2 &o_q, const Offset_2 &o_r) const
   {
 

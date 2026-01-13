@@ -26,7 +26,7 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 // If defined, type casting is done statically,
 // reducing type-safety overhead.
@@ -222,14 +222,14 @@ public:
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
      *        \param s the source vertex. This vertex must be initialized and cannot be the infinite vertex.
-     *        \param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
+     *        \param t the target point. This point must be initialized and it cannot be at the same location as `s`.
      *        If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
      */
         Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, const Point& t );
 
     //  constructs an iterator.
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
-     *        \param s the source point. This point must be initialized and it cannot be be at the same location as `t`.
+     *        \param s the source point. This point must be initialized and it cannot be at the same location as `t`.
      *        \param t the target vertex. This vertex must be initialized and cannot be the infinite vertex.
      *        If `tr` has dimension < 3, `s` must lie inside the affine hull of `tr`.
      *        \param hint the starting point to search for `s`.
@@ -240,7 +240,7 @@ public:
     /*  \param tr the triangulation to iterate though. This triangulation must have dimension > 0.
      *        \param s the source point. This point must be initialized. If `tr` has dimension < 3, `s` must lie inside
      *        the affine hull of `tr`.
-     *        \param t the target point. This point must be initialized and it cannot be be at the same location as `s`.
+     *        \param t the target point. This point must be initialized and it cannot be at the same location as `s`.
      *        If `tr` has dimension < 3, `t` must lie inside the affine hull of `tr`.
      *        \param hint the starting point to search for `s`.
      */
@@ -789,8 +789,8 @@ public:
           }
         } else {
           auto facet_opt = shared_facet(get_edge(), e_prev);
-          if(static_cast<bool>(facet_opt)) {
-            _curr_simplex = *facet_opt;
+          if(facet_opt.has_value()) {
+            _curr_simplex = facet_opt.value();
           }
           else {
             _curr_simplex = shared_cell(get_edge(), e_prev);
@@ -1002,7 +1002,7 @@ private:
     return f1 == f2 || triangulation().mirror_facet(f1) == f2;
   }
 
-  boost::optional<Vertex_handle> shared_vertex(const Edge& e1, const Edge& e2) const
+  std::optional<Vertex_handle> shared_vertex(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v1a = e1.first->vertex(e1.second);
     Vertex_handle v1b = e1.first->vertex(e1.third);
@@ -1017,14 +1017,15 @@ private:
       return {};
   }
 
-  boost::optional<Facet> shared_facet(const Edge& e1, const Edge& e2) const
+  std::optional<Facet> shared_facet(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v2a = e2.first->vertex(e2.second);
     Vertex_handle v2b = e2.first->vertex(e2.third);
 
     auto sv_opt = shared_vertex(e1, e2);
-    if(!sv_opt) return {};
-    Vertex_handle sv = *sv_opt;
+    if(!sv_opt.has_value())
+      return {};
+    Vertex_handle sv = sv_opt.value();
     Vertex_handle nsv2 = (sv == v2a) ? v2b : v2a;
 
     typename Tr::Facet_circulator circ
@@ -1091,7 +1092,7 @@ private:
   }
 
   Cell_handle shared_cell(const Edge e1, const Edge e2) const {
-    auto facet = shared_facet(e1, e2.first->vertex(e2.second));
+    Facet facet = shared_facet(e1, e2.first->vertex(e2.second));
     return shared_cell(facet, e2.first->vertex(e2.third));
   }
 

@@ -1,4 +1,4 @@
-/// \defgroup PkgPolynomialRef Polynomial Reference
+/// \defgroup PkgPolynomialRef Reference Manual
 /// \defgroup PkgPolynomialConcepts Concepts
 /// \ingroup PkgPolynomialRef
 
@@ -9,7 +9,6 @@
 /// \ingroup PkgPolynomialRef
 /*!
 \addtogroup PkgPolynomialRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Polynomial,PkgPolynomial}
 \cgalPkgPicture{Polynomial.png}
 \cgalPkgSummaryBegin

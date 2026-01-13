@@ -36,7 +36,7 @@ output_to_tetgen(std::string filename,
   std::cerr << "Output to tetgen:\n";
 #endif
 
-  typedef Medit_pmap_generator<C3T3,rebind,no_patch> Generator;
+  typedef Medit_pmap_generator<C3T3,Renumber_subdomain_indices(rebind),Facet_indices(no_patch)> Generator;
   typedef typename Generator::Cell_pmap Cell_pmap;
   typedef typename Generator::Facet_pmap Facet_pmap;
   typedef typename Generator::Facet_pmap_twice Facet_pmap_twice;

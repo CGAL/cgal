@@ -47,7 +47,7 @@ public:
     QString ext = fileinfo.suffix();
     bool res = true;
     if(ext == "off")
-      CGAL::import_from_polyhedron_3_flux < Scene_lcc_item::LCC > (lcc, ifs);
+      CGAL::polyhedron_3_flux_to_lcc < Scene_lcc_item::LCC > (lcc, ifs);
     else
     {
       res = CGAL::load_combinatorial_map(ifs, lcc);

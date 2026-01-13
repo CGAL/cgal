@@ -65,7 +65,7 @@ template < class PolynomialIterator,
 int gen_agebraic_reals_with_mults( PolynomialIterator           fac,
                                    PolynomialIterator           fac_end,
                                    IntIterator                  mul,
-                                   IntIterator                  CGAL_precondition_code(mul_end),
+                                   IntIterator                  CGAL_assertion_code(mul_end),
                                    AlgebraicRealOutputIterator  oi_root,
                                    IntOutputIterator            oi_mult){
 
@@ -275,12 +275,12 @@ int operator()( const Polynomial&           poly,
                                   facmul.begin(),facmul.end(),
                                   oi_poly);
 
-    int numer_of_real_roots =
+    int number_of_real_roots =
       gen_agebraic_reals_with_mults(sqffac.begin(),sqffac.end(),
                                     facmul.begin(),facmul.end(),
                                     oi_root,
                                     oi_mult);
-    return numer_of_real_roots;
+    return number_of_real_roots;
           }
            };
 

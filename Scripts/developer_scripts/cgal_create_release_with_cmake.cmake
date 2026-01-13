@@ -1,4 +1,4 @@
-#option :
+#options:
 # GIT_REPO the path to the Git repository, default is the current working directory
 # DESTINATION the path where the release is created, default is /tmp
 # PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
@@ -10,7 +10,7 @@
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 find_program(BASH NAMES bash sh)
 function(process_package pkg)
   if(VERBOSE)
@@ -208,10 +208,9 @@ foreach(manpage ${MANPAGES})
   configure_file(${GIT_REPO}/Installation/${manpage} ${release_dir}/${manpage} @ONLY)
 endforeach()
 
-# make an extra copy of examples and demos for the testsuite and generate
-# create_cgal_test_with_cmake for tests, demos, and examples
+# make an extra copy of examples and demos for the testsuite
 if (TESTSUITE)
-  SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from master:%n")
+  SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from main:%n")
   execute_process(
             COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 --format=${FMT_ARG}
             WORKING_DIRECTORY "${release_dir}"
@@ -221,29 +220,12 @@ if (TESTSUITE)
   file(WRITE ${release_dir}/.scm-branch "${OUT_VAR}")
   SET(FMT_ARG "%h %s%n  parents: %p%n")
   execute_process(
-            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log --first-parent --format=${FMT_ARG} cgal/master..
+            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log --first-parent --format=${FMT_ARG} cgal/main..
             WORKING_DIRECTORY "${release_dir}"
             OUTPUT_VARIABLE OUT_VAR
           )
 #append result in .scm-branch
   file(APPEND ${release_dir}/.scm-branch "${OUT_VAR}")
-
-  file(GLOB tests RELATIVE "${release_dir}/test" "${release_dir}/test/*")
-  foreach(d ${tests})
-    if(IS_DIRECTORY "${release_dir}/test/${d}")
-      if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
-        execute_process(
-          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
-          WORKING_DIRECTORY "${release_dir}/test/${d}"
-          RESULT_VARIABLE RESULT_VAR
-          OUTPUT_VARIABLE OUT_VAR
-        )
-        if(NOT "${RESULT_VAR}" STREQUAL "0")
-          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}")
-        endif()
-      endif()
-    endif()
-  endforeach()
 
   file(MAKE_DIRECTORY "${release_dir}/tmp")
   #copy demo/PKG to test/PKG_Demo
@@ -257,17 +239,6 @@ if (TESTSUITE)
         #do the copy in 2 pass since we cannot specify the target name
         file(COPY "${release_dir}/demo/${d}" DESTINATION "${release_dir}/tmp")
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
-        if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
-          execute_process(
-            COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
-            WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
-            RESULT_VARIABLE RESULT_VAR
-            OUTPUT_VARIABLE OUT_VAR
-          )
-          if(NOT "${RESULT_VAR}" STREQUAL "0")
-            message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Demo")
-          endif()
-        endif()
       endif()
     endif()
   endforeach()
@@ -278,17 +249,6 @@ if (TESTSUITE)
       #do the copy in 2 pass since we cannot specify the target name
       file(COPY "${release_dir}/examples/${d}" DESTINATION "${release_dir}/tmp")
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
-      if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
-        execute_process(
-          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
-          WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
-          RESULT_VARIABLE RESULT_VAR
-          OUTPUT_VARIABLE OUT_VAR
-        )
-        if(NOT "${RESULT_VAR}" STREQUAL "0")
-          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Examples")
-        endif()
-      endif()
     endif()
   endforeach()
   file(REMOVE_RECURSE "${release_dir}/tmp")

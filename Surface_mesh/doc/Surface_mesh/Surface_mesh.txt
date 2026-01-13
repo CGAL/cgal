@@ -408,7 +408,7 @@ of points to OpenGL.
 
 We use a \em freelist for removed elements. This mean when a vertex gets removed
 and later `add_vertex` is called, the memory of the removed element is reused.
-This especially means that the n'th inserted element has not necessarily the index `n-1`,
+This especially means that the n-th inserted element has not necessarily the index `n-1`,
 and when iterating over elements they will not be enumerated in the insertion order.
 
 

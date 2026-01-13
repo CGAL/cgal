@@ -330,7 +330,7 @@ template<typename Arithmetic_kernel> void test_routine() {
 #endif
     }
 
-    { // More tests...just analyse some curves and compute their segments
+    { // More tests...just analyze some curves and compute their segments
         Poly_int2 f = from_string<Poly_int2>("P[8(0,P[8(0,24)(1,-8)(2,-162)(3,204)(4,106)(5,-340)(6,240)(7,-72)(8,8)])(1,P[6(0,-60)(1,8)(2,304)(3,-400)(4,148)(5,8)(6,-8)])(2,P[6(0,18)(1,80)(2,-165)(3,-132)(4,367)(5,-212)(6,38)])(3,P[4(0,-30)(1,-136)(2,264)(3,-72)(4,-26)])(4,P[4(0,-15)(1,36)(2,89)(3,-144)(4,49)])(5,P[2(0,30)(1,-24)(2,-6)])(6,P[2(0,-6)(1,-28)(2,22)])(8,P[0(0,3)])]");
         Curve_analysis_2 curve= construct_curve_2(f);
 #if CGAL_ACK_DEBUG_FLAG

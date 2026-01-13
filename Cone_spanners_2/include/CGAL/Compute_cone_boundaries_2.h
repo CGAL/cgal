@@ -115,7 +115,7 @@ public:
 
 #if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 /*
- The specialised functor for computing the directions of cone boundaries exactly
+ The specialized functor for computing the directions of cone boundaries exactly
  with a given cone number and a given initial direction.
 */
 template <>
@@ -137,7 +137,7 @@ public:
 
       The direction of the first ray can be specified by the parameter
       initial_direction, which allows the first ray to start at any direction.
-      The remaining directions are calculated in counter-clockwise order.
+      The remaining directions are calculated in counterclockwise order.
 
       \param cone_number The number of cones
       \param initial_direction The direction of the first ray

@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshTopologyRef Surface Mesh Topology Reference
+/// \defgroup PkgSurfaceMeshTopologyRef Reference Manual
 
 /// \defgroup PkgSurfaceMeshTopologyConcepts Concepts
 /// \ingroup PkgSurfaceMeshTopologyRef

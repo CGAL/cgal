@@ -36,7 +36,7 @@ namespace CGAL
   {
     static bool run(const CMap& amap, typename CMap::Dart_const_descriptor adart)
     {
-      // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
+      // TODO? Optimization for dim-2, and to not test all the darts of the cell?
       bool res = true;
       for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
             res && it.cont(); ++it )
@@ -462,7 +462,7 @@ namespace CGAL
   {
     static bool run(const CMap& amap, typename CMap::Dart_const_descriptor adart)
     {
-      // TODO ? Optimisation possible to not test all the darts of the cell ?
+      // TODO ? Optimization possible to not test all the darts of the cell ?
       bool res = true;
       for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
             res && it.cont(); ++it )

@@ -1,14 +1,15 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Principal_component_analysis_Tests)
 
 find_package(CGAL REQUIRED)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
   return()
@@ -22,5 +23,5 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
   get_filename_component(target ${cppfile} NAME_WE)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

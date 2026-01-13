@@ -57,7 +57,7 @@ private:
     PLY_property_to_point_set_property(Point_set& ps, const std::string& name)
       : m_name(name)
     {
-      boost::tie(m_map, boost::tuples::ignore) = ps.add_property_map(name, Type());
+      m_map = ps.add_property_map(name, Type()).first;
       m_pmap = ps.push_property_map(m_map);
     }
 

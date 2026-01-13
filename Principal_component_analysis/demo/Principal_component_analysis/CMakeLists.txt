@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the PCA demo.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Principal_component_analysis_Demo)
 
 include_directories(./)
@@ -8,8 +8,9 @@ include_directories(./)
 # Find CGAL and CGAL Qt6
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()

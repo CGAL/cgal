@@ -10,7 +10,7 @@ namespace CGAL {
 \section Algebraic_kernel_dIntroduction Introduction
 
 Real solving of polynomials is a fundamental problem with a wide application range.
-This package is targeted at providing black-box implementations of state-of-the-art
+This package provides black-box implementations of
 algorithms to determine, compare, and approximate real roots of univariate polynomials
 and bivariate polynomial systems. Such a black-box is called an *Algebraic Kernel*.
 Since this package is aimed at providing more than one implementation, the interface of
@@ -146,8 +146,8 @@ polynomial is not computed yet.
 This is in particular relevant in relation to the `AlgebraicKernel_d_2`,
 where `AlgebraicKernel_d_1::Algebraic_real_1` is used to represent coordinates of solutions of bivariate systems.
 Hence, the design does
-not allow a direct access to any, seemingly obvious, members of an
-`AlgebraicKernel_d_1::Algebraic_real_1`. Instead there is, e.g.,
+not allow direct access to any, seemingly obvious, members of an
+`AlgebraicKernel_d_1::Algebraic_real_1`. Instead, there is, e.g.,
 `AlgebraicKernel_d_1::Compute_polynomial_1` which emphasizes
 that the requested polynomial may not be computed yet. Similarly,
 there is no way to directly ask for the refinement of the current
@@ -283,41 +283,6 @@ is not stored internally in terms of an `Algebraic_real_1` object.
 Querying such a representation by calling `Compute_y_2` is a
 time-consuming step, and should be avoided for efficiency reasons if possible.
 
-\subsection Algebraic_kernel_dAlgebraicKernelsBasedon Algebraic Kernels Based on RS
-
-The package offers two univariate algebraic kernels that are based on
-the library RS \cgalCite{cgal:r-rs}, namely `Algebraic_kernel_rs_gmpz_d_1`
-and `Algebraic_kernel_rs_gmpq_d_1`. As the names indicate,
-the kernels are based on the library RS \cgalCite{cgal:r-rs} and support univariate
-polynomials over `Gmpz` or `Gmpq`, respectively.
-
-In general we encourage to use `Algebraic_kernel_rs_gmpz_d_1`
-instead of `Algebraic_kernel_rs_gmpq_d_1`. This is caused by
-the fact that the most efficient way to compute operations (such as gcd)
-on polynomials with rational coefficients is to use the corresponding
-implementation for polynomials with integer coefficients. That is,
-the `Algebraic_kernel_rs_gmpq_d_1` is slightly slower due to
-overhead caused by the necessary conversions. However, since this may
-not always be a major issue, the `Algebraic_kernel_rs_gmpq_d_1`
-is provided for convenience.
-
-The core of both kernels is the implementation of the interval Descartes
-algorithm \cgalCite{cgal:rz-jcam-04} of the library RS \cgalCite{cgal:r-rs},
-which is used to isolate the roots of the polynomial.
-The RS library restricts its attention to univariate integer
-polynomials and some substantial gain of efficiency can be made by using a kernel
-that does not follow the generic programming paradigm, by avoiding
-interfaces between layers. Specifically, working with
-only one number type allows to optimize some polynomial operations
-as well as memory handling. The implementation of these kernels
-make heavy use of the \mpfr \cgalCite{cgal:mt-mpfr} and \mpfi \cgalCite{cgal:r-mpfi}
-libraries, and of their \cgal interfaces, `Gmpfr` and `Gmpfi`.
-The algebraic numbers (roots of the polynomials) are represented
-in the two RS kernels by a `Gmpfi` interval and a pointer to
-the polynomial of which they are roots. See \cgalCite{cgal:lpt-wea-09}
-for more details on the implementation, tests of these kernels,
-comparisons with other algebraic kernels and discussions about the
-efficiency.
 
 \section Algebraic_kernel_dExamples Examples
 
@@ -376,12 +341,13 @@ Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors al
 contribution of all authors of the \exacus project,
 particularly the contribution of Arno Eigenwillig, Sebastian Limbach and Pavel Emeliyanenko.
 
-The two univariate kernels that interface the library RS \cgalCite{cgal:r-rs} were
-written by Luis Pe&ntilde;aranda and Sylvain Lazard.
+In 2010, two univariate kernels that interface the library RS \cgalCite{cgal:r-rs} were
+written by Luis Peñaranda and Sylvain Lazard \cgalCite{cgal:2009-ESA}.
 Both models interface the library RS \cgalCite{cgal:r-rs} by Fabrice Rouillier.
 The authors want to thank Fabrice Rouillier and Elias Tsigaridas for
 strong support and many useful discussions that lead to the integration of RS.
+Due to lack of maintenance, these kernels have been removed in 2024.
+
 
 */
 } /* namespace CGAL */
-

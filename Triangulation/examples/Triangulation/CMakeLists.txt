@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Triangulation_Examples)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
@@ -11,8 +11,9 @@ endif()
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 QUIET)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("barycentric_subdivision.cpp")
   create_single_source_cgal_program("delaunay_triangulation.cpp")
@@ -31,7 +32,7 @@ if(TARGET CGAL::Eigen3_support)
     triangulation
     triangulation_data_structure_dynamic
     triangulation_data_structure_static)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 else()
   message("NOTICE: Examples in this directory require Eigen 3.1 (or greater), and will not be compiled.")

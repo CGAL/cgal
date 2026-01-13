@@ -1,4 +1,4 @@
-/// \defgroup PkgPolyhedronRef 3D Polyhedral Surface  Reference
+/// \defgroup PkgPolyhedronRef Reference Manual
 /// \defgroup PkgPolyhedronConcepts Concepts
 /// \ingroup PkgPolyhedronRef
 
@@ -13,7 +13,6 @@
 
 /*!
 \addtogroup PkgPolyhedronRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedron}
 \cgalPkgPicture{Polyhedron-teaser-small.png}
 \cgalPkgSummaryBegin

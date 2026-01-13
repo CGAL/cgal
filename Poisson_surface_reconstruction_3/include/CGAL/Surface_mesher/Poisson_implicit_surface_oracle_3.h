@@ -286,8 +286,8 @@ namespace CGAL {
         Cell_handle c1, c2;
         bool c1_is_inf, c2_is_inf;
 
-        boost::tie(value_at_p1, c1, c1_is_inf) = surface.function().special_func(p1);
-        boost::tie(value_at_p2, c2, c2_is_inf) = surface.function().special_func(p2);
+        std::tie(value_at_p1, c1, c1_is_inf) = surface.function().special_func(p1);
+        std::tie(value_at_p2, c2, c2_is_inf) = surface.function().special_func(p2);
 
         // If both extremities are in the same volume component, returns
         // no intersection.
@@ -320,7 +320,7 @@ namespace CGAL {
           Cell_handle c_at_mid;
           FT value_at_mid;
           bool c_is_inf;
-          boost::tie(value_at_mid, c_at_mid, c_is_inf) = surface.function().special_func(mid);
+          std::tie(value_at_mid, c_at_mid, c_is_inf) = surface.function().special_func(mid);
 
           if ( squared_distance(p1, p2) < squared_distance_bound )
           // If the two points are close, then we must decide

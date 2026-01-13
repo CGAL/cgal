@@ -302,12 +302,11 @@ public:
     typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
                                          ConstPrimitiveIterator beyond) const
     {
-      typename AT::Bounding_box bbox = m_traits.compute_bbox(*first,m_traits.bbm);
-      for(++first; first != beyond; ++first)
-        {
-          bbox = bbox + m_traits.compute_bbox(*first,m_traits.bbm);
-        }
-      return bbox;
+      return std::accumulate(first, beyond,
+        typename AT::Bounding_box{} /* empty bbox */,
+        [this](const typename AT::Bounding_box& bbox, const Primitive& pr) {
+          return bbox + m_traits.compute_bbox(pr, m_traits.bbm);
+        });
     }
 
   };

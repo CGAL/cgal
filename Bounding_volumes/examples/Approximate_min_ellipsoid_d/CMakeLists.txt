@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Approximate_min_ellipsoid_d_Examples)
 
 find_package(CGAL REQUIRED)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 # create a target per cppfile

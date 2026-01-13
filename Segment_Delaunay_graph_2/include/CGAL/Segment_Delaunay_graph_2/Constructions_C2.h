@@ -48,29 +48,28 @@ class Construct_sdg_site_2<Site,Tag_true>
 public:
   typedef Site                             Site_2;
   typedef typename Site_2::Point_2         Point_2;
-  typedef Site_2                           result_type;
 
 public:
-  result_type operator()(const Point_2& p) const {
+  Site_2 operator()(const Point_2& p) const {
     return Site_2(p);
   }
 
-  result_type operator()(const Point_2& p0, const Point_2& p1) const {
+  Site_2 operator()(const Point_2& p0, const Point_2& p1) const {
     return Site_2(p0, p1);
   }
 
-  result_type operator()(const Point_2& p0, const Point_2& p1,
+  Site_2 operator()(const Point_2& p0, const Point_2& p1,
                          const Point_2& q0, const Point_2& q1) const {
     return Site_2(p0, p1, q0, q1);
   }
 
-  result_type operator()(const Point_2& p0, const Point_2& p1,
+  Site_2 operator()(const Point_2& p0, const Point_2& p1,
                          const Point_2& q0, const Point_2& q1,
                          bool b) const {
     return Site_2(p0, p1, q0, q1, b);
   }
 
-  result_type operator()(const Point_2& p0, const Point_2& p1,
+  Site_2 operator()(const Point_2& p0, const Point_2& p1,
                          const Point_2& q0, const Point_2& q1,
                          const Point_2& r0, const Point_2& r1) const {
     return Site_2(p0, p1, q0, q1, r0, r1);
@@ -84,14 +83,13 @@ class Construct_sdg_site_2<Site,Tag_false>
 public:
   typedef Site                             Site_2;
   typedef typename Site_2::Point_2         Point_2;
-  typedef Site_2                           result_type;
 
 public:
-  result_type operator()(const Point_2& p) const {
+  Site_2 operator()(const Point_2& p) const {
     return Site_2(p);
   }
 
-  result_type operator()(const Point_2& p0, const Point_2& p1) const {
+  Site_2 operator()(const Point_2& p0, const Point_2& p1) const {
     return Site_2(p0, p1);
   }
 };
@@ -110,7 +108,6 @@ public:
   typedef typename K::Site_2                Site_2;
   typedef Voronoi_vertex_C2<K,M>            Voronoi_vertex_2;
   typedef typename K::Point_2               Point_2;
-  typedef Point_2                           result_type;
 
 public:
   Point_2 operator()(const Site_2& s1, const Site_2& s2,
@@ -134,7 +131,6 @@ public:
   typedef typename Gt::Site_2                 Site_2;
   typedef Voronoi_vertex_C2<Gt,M>             Voronoi_vertex_2;
   typedef typename Gt::Circle_2               Circle_2;
-  typedef Circle_2                            result_type;
 
 public:
   Circle_2 operator() (const Site_2& s1, const Site_2& s2,
@@ -159,7 +155,6 @@ public:
   typedef typename Gt::Site_2        Site_2;
   typedef typename Gt::Point_2       Point_2;
   typedef typename Gt::Line_2        Line_2;
-  typedef Line_2                     result_type;
 
 private:
   static
@@ -217,7 +212,6 @@ public:
   typedef typename Gt::Ray_2                    Ray_2;
   typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
   typedef typename Gt::Equal_2                  Equal_2;
-  typedef Ray_2                                 result_type;
 
   Ray_2 operator()(const Site_2& p, const Site_2& q,
                    const Site_2& r) const
@@ -268,10 +262,9 @@ public:
   typedef typename Gt::Equal_2                 Equal_2;
 
   typedef CGAL::Object                         Object_2;
-  typedef Object_2                             result_type;
 
-  result_type operator()(const Site_2& p, const Site_2& q,
-                         const Site_2& r, const Site_2& s) const
+  Object_2 operator()(const Site_2& p, const Site_2& q,
+                      const Site_2& r, const Site_2& s) const
   {
     Construct_svd_vertex_2 circumcenter;
     Point_2 vpqr = circumcenter(p, q, r);

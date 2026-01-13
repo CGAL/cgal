@@ -4,8 +4,6 @@
 # MPFR_LIBRARIES_DIR - Directory where the MPFR libraries are located
 # MPFR_LIBRARIES - the MPFR libraries
 
-# TODO: support MacOSX
-
 include(FindPackageHandleStandardArgs)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 
@@ -48,6 +46,9 @@ if (NOT MPFR_in_cache)
   if ( NOT MPFR_INCLUDE_DIR OR NOT MPFR_LIBRARIES_DIR )
     include( MPFRConfig OPTIONAL )
   endif()
+  
+  set(MPFR_DEPENDENCY_INCLUDE_DIR ${GMP_INCLUDE_DIR})
+  set(MPFR_DEPENDENCY_LIBRARIES ${GMP_LIBRARIES})
 
 endif()
 

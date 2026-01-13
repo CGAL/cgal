@@ -4,17 +4,7 @@
 
 #include <iostream>
 
-// work around for old compilers (Apple clang < 11 for example)
-#define HAS_FILESYSTEM 1
-#if defined(__has_include)
-#if !__has_include(<filesystem>)
-#undef HAS_FILESYSTEM
-#define HAS_FILESYSTEM 0
-#endif
-#endif
 
-
-#if HAS_FILESYSTEM
 
 #include <fstream>
 #include <sstream>
@@ -94,12 +84,3 @@ int main() {
   return 0;
 }
 
-#else
-
-int main()
-{
-  std::cout << "Warning: filesystem feature is not present on the system, nothing will be tested\n";
-  return 0;
-}
-
-#endif

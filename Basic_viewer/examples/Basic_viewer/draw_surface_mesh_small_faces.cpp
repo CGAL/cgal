@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
   Mesh::Property_map<face_descriptor, FT> faces_size;
   bool created;
-  boost::tie(faces_size, created)=sm.add_property_map<face_descriptor, FT>("f:size",0.);
+  std::tie(faces_size, created)=sm.add_property_map<face_descriptor, FT>("f:size",0.);
   assert(created);
 
   for(face_descriptor fd : sm.faces())

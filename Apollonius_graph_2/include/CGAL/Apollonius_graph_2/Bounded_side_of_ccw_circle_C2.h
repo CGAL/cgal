@@ -77,7 +77,7 @@ private:
 
 public:
   typedef Voronoi_radius_2<K>       Voronoi_radius;
-  typedef typename K::Bounded_side  Bounded_dide;
+  typedef typename K::Bounded_side  Bounded_side;
 
 public:
   template<class Tag>

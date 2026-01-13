@@ -1,4 +1,4 @@
-// Copyright(c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -1491,7 +1491,7 @@ regularize(Vertex_handle v)
 
   if(dimension() < 1) return;
 
-  //initialise faces_around
+  //initialize faces_around
   if(dimension() == 1) {
     faces_around.push_back(v->face());
     faces_around.push_back(v->face()->neighbor(1- v->face()->index(v)));

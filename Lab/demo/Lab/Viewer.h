@@ -144,15 +144,15 @@ protected:
   void paintEvent(QPaintEvent *)override;
   void paintGL()override;
 
-  //!Defines the behaviour for the mouse press events
+  //!Defines the behavior for the mouse press events
   void mousePressEvent(QMouseEvent*)override;
   void mouseDoubleClickEvent(QMouseEvent*)override;
   void wheelEvent(QWheelEvent *)override;
-  //!Defines the behaviour for the key press events
+  //!Defines the behavior for the key press events
   void keyPressEvent(QKeyEvent*)override;
   //!Deal with context menu events
   void contextMenuEvent(QContextMenuEvent*)override;
-  //!Defines the behaviour for the key release events
+  //!Defines the behavior for the key release events
   void keyReleaseEvent(QKeyEvent *)override;
 
 protected:

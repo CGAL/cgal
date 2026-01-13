@@ -1442,7 +1442,7 @@ Alpha_shape_2<Dt,EACT>::find_alpha_solid() const
   // takes O(#alpha_shape) time
   Type_of_alpha alpha_solid = 0;
 
-  if (number_of_vertices()<3) return alpha_solid;
+  if (dimension()!=2) return alpha_solid;
 
   Finite_vertices_iterator vertex_it;
   // only finite vertices

@@ -33,8 +33,6 @@ public:
   typedef typename Storage_traits::Storage_site_2    Storage_site_2;
   typedef typename Storage_traits::Point_handle      Point_handle;
 
-  typedef Storage_site_2                             result_type;
-
 protected:
   typedef Construct_storage_site_2<Storage_traits>   Base;
   typedef typename Storage_traits::Info              Info;
@@ -42,10 +40,12 @@ protected:
   typedef typename Storage_traits::Merge_info        Merge_info;
 
 public:
+  using Base::operator();
+
   // constructs the point of intersection
   inline
-  result_type operator()(const Storage_site_2& ss0,
-                         const Storage_site_2& ss1) const {
+  Storage_site_2 operator()(const Storage_site_2& ss0,
+                            const Storage_site_2& ss1) const {
     Storage_site_2 ssx = Base::operator()(ss0, ss1);
     Info infox = Merge_info()(ss0.info(), ss1.info());
     ssx.set_info(infox);
@@ -56,16 +56,14 @@ public:
   // endpoints the point of intersection of ss1 and ss0; the boolean
   // determines if the first or segment subsegment is constructed
   inline
-  result_type operator()(const Storage_site_2& ss0,
-                         const Storage_site_2& ss1,
-                         bool first) const {
+  Storage_site_2 operator()(const Storage_site_2& ss0,
+                            const Storage_site_2& ss1,
+                            bool first) const {
     Storage_site_2 s = Base::operator()(ss0, ss1, first);
     Info is = Convert_info()(ss0.info(), ss1.info(), first);
     s.set_info(is);
     return s;
   }
-
-  using Base::operator();
 };
 
 

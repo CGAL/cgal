@@ -67,7 +67,7 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
   {
     const vertex_descriptor vd = target(hd, mesh);
     CGAL::Halfedge_around_target_iterator<PolygonMesh> hit, hend;
-    boost::tie(hit, hend) = CGAL::halfedges_around_target(vd, mesh);
+    std::tie(hit, hend) = CGAL::halfedges_around_target(vd, mesh);
     CGAL_assertion(hit != hend);
 
     FT sq_length = gt.compute_squared_distance_3_object()(get(vpm, source(*hit, mesh)),

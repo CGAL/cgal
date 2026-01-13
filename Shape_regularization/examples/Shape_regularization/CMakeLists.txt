@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Shape_regularization_Examples)
 
@@ -22,18 +22,19 @@ if(TARGET CGAL::OSQP_support)
   foreach(osqp_target ${osqp_targets})
     create_single_source_cgal_program("${osqp_target}.cpp")
     if(TARGET ${osqp_target})
-      target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
+      target_link_libraries(${osqp_target} PRIVATE CGAL::OSQP_support)
     endif()
   endforeach()
 
   # Use Eigen.
-  find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+  find_package(Eigen3 QUIET)
   include(CGAL_Eigen3_support)
+
   if(TARGET CGAL::Eigen3_support)
     message(STATUS "Found Eigen")
 
     create_single_source_cgal_program("regularize_real_data_2.cpp")
-    target_link_libraries(regularize_real_data_2 PUBLIC CGAL::Eigen3_support CGAL::OSQP_support)
+    target_link_libraries(regularize_real_data_2 PRIVATE CGAL::Eigen3_support CGAL::OSQP_support)
   else()
     message(STATUS "NOTICE: Eigen was not found. Eigen examples won't be available.")
   endif()

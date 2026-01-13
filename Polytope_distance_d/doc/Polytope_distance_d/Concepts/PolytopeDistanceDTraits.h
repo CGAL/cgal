@@ -4,7 +4,7 @@
 \cgalConcept
 
 This concept defines the requirements for traits classes of \f$ d\f$-dimensional
-optimisation algorithms.
+optimization algorithms.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Polytope_distance_d_traits_2<K,ET,NT>}
@@ -77,7 +77,7 @@ typedef unspecified_type Construct_point_d;
 
 /*!
 exact number type used to do the exact computations in the
-underlying solver for linear programs. It has to to be a model for
+underlying solver for linear programs. It has to be a model for
 `RingNumberType`. There must be an implicit conversion from
 `RT` to `ET` available.
 */

@@ -57,7 +57,7 @@ class CGAL_Lab_remesh_planar_patches_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::CGAL_Lab_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0" FILE "isotropic_remeshing_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0" FILE "remesh_planar_patches_plugin.json")
 
   typedef Scene_surface_mesh_item::Face_graph Mesh;
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;

@@ -33,9 +33,9 @@ kruskal(const Polyhedron& P)
   vertex_iterator vb, ve;
   int index = 0;
 
-  // boost::tie assigns the first and second element of the std::pair
+  // std::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vb and ve
-  for(boost::tie(vb, ve)=vertices(P); vb!=ve; ++vb){
+  for(std::tie(vb, ve)=vertices(P); vb!=ve; ++vb){
     vertex_index_pmap[*vb]= index++;
   }
 
@@ -59,7 +59,7 @@ kruskal(const Polyhedron& P)
     "      coord Coordinate {\n"
     "        point [ \n";
 
-  for(boost::tie(vb, ve) = vertices(P); vb!=ve; ++vb){
+  for(std::tie(vb, ve) = vertices(P); vb!=ve; ++vb){
     std::cout <<  "        " << (*vb)->point() << "\n";
   }
 

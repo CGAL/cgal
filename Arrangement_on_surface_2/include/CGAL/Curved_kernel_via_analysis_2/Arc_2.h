@@ -571,7 +571,7 @@ public:
                           compare_xy_2_object()(p, q, true) != CGAL::EQUAL);
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(p, -1, c);
-        _check_pt_arcno_and_coprimality(p, -1, c);
+        _check_pt_arcno_and_coprimality(q, -1, c);
         _fix_curve_ends_order();
     }
 
@@ -3302,6 +3302,7 @@ public:
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_in_x_range_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Equal_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_overlap_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_intersect_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Intersect_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Trim_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Split_2);

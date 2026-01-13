@@ -65,7 +65,7 @@ If you want to refer to \cgal manual, please cite the appropriate
 The \cgal Project.
  <em>\cgal User and Reference Manual</em>.
  \cgal Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
-[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;|
+</td><td width="75px">[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;|
 <a href="packages.html">http</a>&nbsp;]
 
 </td>
@@ -73,9 +73,7 @@ The \cgal Project.
 
 
 """
-RESULT_TXT_FOOTER = r"""</td>
-</tr>
-</table><hr>
+RESULT_TXT_FOOTER = r"""</table><hr>
 */
 """
 
@@ -160,7 +158,7 @@ def gen_txt_entry(title, authors, bib, anchor, k):
         + '.\n\
  In <em>\\cgal User and Reference Manual</em>. \\cgal Editorial Board,\n\
   ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.\n\
-[&nbsp;<a href="how_to_cite.html#'
+</td><td width="75px">[&nbsp;<a href="how_to_cite.html#'
         + bib
         + '-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| \n\
 <a href="packages.html#'
@@ -222,6 +220,7 @@ def protect_accentuated_letters(authors):
         .replace("É", r"{\'E}")
         .replace("ä", r"{\"a}")
         .replace("ö", r"{\"o}")
+        .replace("ü", r"{\"u}")
         .replace("ñ", r"{\~n}")
         .replace("ã", r"{\~a}")
         .replace("ë", r"{\"e}")
@@ -230,6 +229,7 @@ def protect_accentuated_letters(authors):
         .replace("ş", r"{\c{s}}")
         .replace("%", "")
         .replace("đ", r"{\-d}")
+        .replace("ï", r"{\"i}")
     )
     try:
         res.encode("ascii")
@@ -277,7 +277,9 @@ def main():
         encoding="utf-8",
     )
     k = 2
+    citeDic = {}
     for line in f:
+        foundDouble=False
         match = pattern.match(line)
         if match:
             pkg = match.group(1)
@@ -303,6 +305,10 @@ def main():
                 match = pattern_bib.match(pkg_line)
                 if match:
                     bib = match.group(1)
+                    if bib in citeDic:
+                        foundDouble=True
+                    else:
+                        citeDic[bib] = pkg
                     continue
             assert len(bib) > 0, "Did you forget a \\cgalPkgBib{} in %r?" % filename
             assert len(authors) > 0, (
@@ -311,6 +317,11 @@ def main():
             assert len(anchor) > 0, (
                 "Did you forget the anchor in \\cgalPkgDescriptionBegin{} in %r?"
                 % filename
+            )
+            assert not foundDouble, (
+                """Multiple use of citation name '{}' package '{}'
+                first occurrence package '{}'
+                """.format(bib,pkg,citeDic[bib])
             )
             result_txt += gen_txt_entry(title, authors, bib, anchor, k)
             # convert title and author to bibtex format

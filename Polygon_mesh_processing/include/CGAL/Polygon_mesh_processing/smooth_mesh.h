@@ -31,7 +31,7 @@ namespace Polygon_mesh_processing {
 * \ingroup PMPDeprecated
 *
 * \deprecated This function is deprecated since \cgal 5.5,
-* `CGAL::angle_and_area_smoothing()` should be used instead.
+* `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()` should be used instead.
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 CGAL_DEPRECATED void smooth_mesh(const FaceRange& faces,

@@ -1,4 +1,4 @@
-/// \defgroup PkgPointSetProcessing3Ref Point Set Processing Reference
+/// \defgroup PkgPointSetProcessing3Ref Reference Manual
 
 /*!
 \defgroup PkgPointSetProcessing3Algorithms Algorithms
@@ -10,29 +10,12 @@ simplification, etc.).
 \defgroup PkgPointSetProcessing3IO I/O Functions
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IOOff I/O (OFF Formats)
-\ingroup PkgPointSetProcessing3Ref
-
-\defgroup PkgPointSetProcessing3IOXyz I/O (XYZ Formats)
-\ingroup PkgPointSetProcessing3Ref
-
-\defgroup PkgPointSetProcessing3IOPly I/O (PLY Format)
-\ingroup PkgPointSetProcessing3Ref
-
-Read and write points (with or without additional properties) in PLY
-format.
-
-\defgroup PkgPointSetProcessing3IOLas I/O (LAS Format)
-\ingroup PkgPointSetProcessing3Ref
-
-Read and write points (with or without additional properties) in LAS
-format.
 
 \addtogroup PkgPointSetProcessing3Ref
 \cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessing3}
 \cgalPkgPicture{point_set_processing_detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu, and Necip Fazil Yildiran}
+\cgalPkgAuthors{Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Sven Oesau, Laurent Saboret, Nader Salman, Shihao Wu, and Necip Fazil Yildiran}
 \cgalPkgDesc{This \cgal component implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devoted to the simplification, outlier removal, smoothing, normal estimation, normal orientation, feature edges estimation and registration.}
 \cgalPkgManuals{Chapter_Point_Set_Processing,PkgPointSetProcessing3Ref}
 \cgalPkgSummaryEnd
@@ -75,6 +58,7 @@ format.
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
+- `CGAL::poisson_eliminate()`
 
 \cgalCRPSection{I/O (All Formats)}
 
@@ -83,14 +67,14 @@ format.
 
 \cgalCRPSection{I/O (XYZ/OFF Formats)}
 
-- \link PkgPointSetProcessing3IOOff OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
-- \link PkgPointSetProcessing3IOXyz XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
+- \link PkgStreamSupportIoFuncsOFF OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
+- \link PkgStreamSupportIoFuncsXYZ XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
 
 \cgalCRPSection{I/O (PLY Format)}
 
-- \link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink
+- \link PkgStreamSupportIoFuncsPLY `CGAL::IO::read_PLY()` \endlink
 - `CGAL::IO::read_PLY_with_properties()`
-- \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink
+- \link PkgStreamSupportIoFuncsPLY `CGAL::IO::write_PLY()` \endlink
 - `CGAL::IO::write_PLY_with_properties()`
 - `CGAL::IO::PLY_property<T>`
 - `CGAL::IO::make_ply_point_reader()`
