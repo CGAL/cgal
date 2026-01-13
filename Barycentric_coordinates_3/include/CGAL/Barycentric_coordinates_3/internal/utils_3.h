@@ -40,7 +40,7 @@ enum class Edge_case {
 
   template<typename FT>
   FT get_tolerance() {
-    return 0.000000000001;
+    return 0.0000000001;
   }
 
 // Compute barycentric coordinates in the space.
