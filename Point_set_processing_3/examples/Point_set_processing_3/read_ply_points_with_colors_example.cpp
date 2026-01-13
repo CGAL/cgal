@@ -29,8 +29,8 @@ int main(int argc, char*argv[])
   std::vector<PNCI> points; // store points
   std::ifstream in(fname);
   if(!CGAL::IO::read_PLY_with_properties(in, std::back_inserter(points),
-                                         CGAL::make_ply_point_reader(Point_map()),
-                                         std::make_pair(Intensity_map(), CGAL::PLY_property<int>("intensity")),
+                                         CGAL::IO::make_ply_point_reader(Point_map()),
+                                         std::make_pair(Intensity_map(), CGAL::IO::PLY_property<int>("intensity")),
                                          std::make_tuple(Color_map(),
                                                          CGAL::Construct_array(),
                                                          CGAL::IO::PLY_property<unsigned char>("red"),

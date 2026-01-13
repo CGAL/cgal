@@ -74,7 +74,7 @@ public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits> Self;
 
   /*! the <span class="textsc">Dcel</span> maintains the incidence
-   * relations between the cells of of the arrangement.
+   * relations between the cells of the arrangement.
    */
   typedef typename Topology_traits::Dcel                Dcel;
 

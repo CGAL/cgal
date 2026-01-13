@@ -72,7 +72,7 @@ public:
   /*! constructs from a traits class. */
   Arr_insertion_traits_2(const Gt2& tr) : Base(tr) {}
 
-  /*! A functor that compares compares the y-coordinates of two x-monotone
+  /*! A functor that compares the y-coordinates of two x-monotone
    * curves immediately to the right of their intersection point.
    */
   class Intersect_2 {

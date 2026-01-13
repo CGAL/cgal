@@ -760,7 +760,7 @@ public:
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(*this); }
 
-  /*! A functor that compares compares the \f$y\f$-coordinates of two linear
+  /*! A functor that compares the \f$y\f$-coordinates of two linear
    * curves immediately to the left of their intersection point.
    */
   class Compare_y_at_x_left_2 {
@@ -811,7 +811,7 @@ public:
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(); }
 
-  /*! A functor that compares compares the \f$y\f$-coordinates of two linear
+  /*! A functor that compares the \f$y\f$-coordinates of two linear
    * curves immediately to the right of their intersection point.
    */
   class Compare_y_at_x_right_2 {
