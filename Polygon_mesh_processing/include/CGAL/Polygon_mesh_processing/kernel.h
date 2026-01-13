@@ -10,13 +10,13 @@
 //
 // Author(s)     : Sebastien Loriot, Léo Valque
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_KERNEL_H
-#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_KERNEL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_KERNEL_H
+#define CGAL_POLYGON_MESH_PROCESSING_KERNEL_H
+
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 #include <algorithm>
 #include <random>
-
-#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
 #include <CGAL/Polygon_mesh_processing/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/Three_point_cut_plane_traits.h>
@@ -365,4 +365,4 @@ kernel_point(const PolygonMesh& pm,
 
 } } // end of CGAL::Polygon_mesh_processing
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_KERNEL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_KERNEL_H
