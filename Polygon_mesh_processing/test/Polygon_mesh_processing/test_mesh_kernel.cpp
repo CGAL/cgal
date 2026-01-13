@@ -182,10 +182,11 @@ void test_exact_kernel(std::string fname)
   EMesh kernel = PMP::kernel(m);
   timer.stop();
 
-  PMP::is_empty_kernel(m);
-  PMP::kernel_point(m);
+  // PMP::is_empty_kernel(m);
+  // PMP::kernel_point(m);
 
   std::ofstream("ekernel.off") << kernel;
+  std::cout << PMP::volume(kernel) << std::endl;
   std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_exact_kernel done in " << timer.time() << "\n";
 }
 
@@ -201,11 +202,12 @@ void test_exact_kernel_with_rounding(std::string fname)
   // round_mesh(m);
   to_integer_mesh(m);
   timer.start();
-  EMesh kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true));
+  EMesh kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true).random_seed(5468));
   // EMesh kernel = PMP::kernel(m);
   timer.stop();
 
   std::ofstream("ekernel.off") << kernel;
+  std::cout << PMP::volume(kernel) << std::endl;
   std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_exact_kernel done in " << timer.time() << "\n";
 
   // timer.reset();
@@ -251,6 +253,6 @@ int main(int argc, char** argv)
   // elementary_test_kernel();
   // test_kernel(filename);
   // test_kernel_with_rounding(filename);
-  // test_exact_kernel(filename);
-  test_exact_kernel_with_rounding(filename);
+  test_exact_kernel(filename);
+  // test_exact_kernel_with_rounding(filename);
 }
