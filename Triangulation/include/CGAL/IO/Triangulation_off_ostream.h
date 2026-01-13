@@ -42,8 +42,8 @@ output_point(std::ostream & os, const Traits &traits, const P & p)
          os.write(reinterpret_cast<const char*>(&d), sizeof(double));
        }
     }
-    else 
-    {      
+    else
+    {
       os << ccd(p, 0);
       for (int i = 1 ; i < dim ; ++i)
        os << " " << CGAL::to_double(ccd(p, i));
@@ -68,13 +68,13 @@ output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
   {
    if (CGAL::IO::is_binary(os))
     {
-       for (int i = 0 ; i < dim ; ++i) 
+       for (int i = 0 ; i < dim ; ++i)
        {
          double d = CGAL::to_double(ccd(p, i));
          os.write(reinterpret_cast<const char*>(&d), sizeof(double));
        }
     }
-    else 
+    else
     {
        os << ccd(p, 0);
        for (int i = 1 ; i < dim ; ++i)
