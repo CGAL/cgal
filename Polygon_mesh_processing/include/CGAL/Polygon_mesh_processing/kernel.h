@@ -196,7 +196,7 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{bbox_filtering}
+  *   \cgalParamNBegin{use_bounding_box_filtering}
   *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
@@ -258,7 +258,7 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{bbox_filtering}
+  *   \cgalParamNBegin{use_bounding_box_filtering}
   *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
@@ -311,7 +311,7 @@ bool is_empty_kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{bbox_filtering}
+  *   \cgalParamNBegin{use_bounding_box_filtering}
   *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
