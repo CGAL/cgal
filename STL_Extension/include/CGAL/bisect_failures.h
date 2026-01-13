@@ -31,7 +31,7 @@ namespace CGAL {
 /**
  * \ingroup PkgSTLExtensionUtilities
  *
- * \brief Bisects input data by iteratively simplifying it to identify the minimal failing case.
+ * \brief bisects input data by iteratively simplifying it to identify the minimal failing case.
  *
  * This debugging utility helps identify minimal test cases when complex input data causes failures.
  * It works by iteratively simplifying the data and testing whether the failure persists,
@@ -51,7 +51,7 @@ namespace CGAL {
  *
  * \param data The input data to bisect
  * \param get_size_fn Function that returns the "size" of the data (e.g., number of elements).
- * \param simplify_fn Function that simplifies the data by removing elements from `[start, end)`.
+ * \param simplify_fn Function that simplifies the data by removing elements with indices in `[start, end)`.
  *                    Should return `true` if simplification succeeded, `false` otherwise.
  * \param run_fn Function that tests the data. Should return 0 (`EXIT_SUCCESS`) on success, non-zero on failure.
  *                May also throw exceptions to indicate failure.
