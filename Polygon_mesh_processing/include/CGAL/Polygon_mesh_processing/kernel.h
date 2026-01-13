@@ -177,7 +177,7 @@ kernel(const PolygonMesh& pm,
   * \brief computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
   * It is represented as a convex mesh and may be empty.
   *
-  * The kernel is computed by intersecting iteratively the half-spaces defines by the faces of the mesh.
+  * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
@@ -197,7 +197,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{bbox_filtering}
-  *     \cgalParamDescription{Enable to use of the bbox of the temporary kernel to compute the intersection of a plane with the temporary kernel. }
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
@@ -258,6 +258,24 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{bbox_filtering}
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{true}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{shuffle_planes}
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel. }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{true}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{random_seed}
+  *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
+  *     \cgalParamType{std::size_t}
+  *     \cgalParamDefault{std::random_device()}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @return bool
@@ -291,6 +309,24 @@ bool is_empty_kernel(const PolygonMesh& pm,
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{bbox_filtering}
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{true}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{shuffle_planes}
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel. }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{true}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{random_seed}
+  *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
+  *     \cgalParamType{std::size_t}
+  *     \cgalParamDefault{std::random_device()}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
