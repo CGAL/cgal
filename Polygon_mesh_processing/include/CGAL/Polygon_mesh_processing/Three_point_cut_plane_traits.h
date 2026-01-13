@@ -13,6 +13,8 @@
 #ifndef CGAL_THREE_POINT_CUT_PLANE_TRAITS_H
 #define CGAL_THREE_POINT_CUT_PLANE_TRAITS_H
 
+#include <CGAL/license/Polygon_mesh_processing/corefinement.h>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
