@@ -1489,7 +1489,7 @@ preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/projec
 used as a reference during the project.
 The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
 
-The specialization`CGAL::Polygon_mesh_processing::clip_convex` of `CGAL::Polygon_mesh_processing::clip` and the kernel functions was implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring-wirxel2025mesh_kernel}.
+The specialization `CGAL::Polygon_mesh_processing::clip_convex` of `CGAL::Polygon_mesh_processing::clip` and the kernel functions was implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring2025meshkernel}.
 
 */
 } /* namespace CGAL */
