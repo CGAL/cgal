@@ -209,8 +209,6 @@ void test_LAS(const std::string& s)
   }
 #endif
 
-#undef CGAL_DEF_INITIALIZE_ID_FUCNTION
-
 #define CGAL_DEF_TEST_POINTS_FUNCTION(TYPE, type)                                                  \
 void test_points_##TYPE(const std::string& s)                                                      \
 {                                                                                                  \
@@ -313,8 +311,6 @@ void test_points_LAS(const std::string& s)
   assert(points_are_equal(ps, ps2));
   }
 #endif
-
-#undef CGAL_DEF_INITIALIZE_ID_FUCNTION
 
 int main()
 {
