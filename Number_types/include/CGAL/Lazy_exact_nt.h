@@ -266,7 +266,7 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 
 // Here we could use a template class for all operations (STL provides
 // function objects plus, minus, multiplies, divides...).  But it would require
-// a template parameter, and GCC 2.95 seems to crash easily with them.
+// a template template parameter, and GCC 2.95 seems to crash easily with them.
 
 // Instead of having nodes only for simple operations, we should use expression templates to build nodes for arbitrary expressions, a*d-b*c should be a single node, that stores a tuple (a,b,c,d) and knows how to update_exact.
 
