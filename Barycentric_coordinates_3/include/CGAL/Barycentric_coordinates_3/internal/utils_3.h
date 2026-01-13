@@ -265,7 +265,7 @@ enum class Edge_case {
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
     OutputIterator coordinates,
-    GeomTraits& traits,
+    const GeomTraits& traits,
     const bool use_wp_flag = false) {
 
     using Vector_3 = typename GeomTraits::Vector_3;

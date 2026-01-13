@@ -74,7 +74,7 @@ namespace Barycentric_coordinates {
 */
 template<typename TriangleMesh, typename CoordinateRange, typename VertexPointMap, typename GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type>
 typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm, GeomTraits geom_traits = GeomTraits()) {
-  CGAL_precondition(vertices(tmesh).size() == std::distance(std::begin(coordinates), std::end(coordinates)));
+  CGAL_precondition(vertices(tmesh).size() == coordinates.size());
   using Point = typename boost::property_traits<VertexPointMap>::value_type;
   static_assert(std::is_same_v<GeomTraits, typename Kernel_traits<Point>::Kernel>);
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;

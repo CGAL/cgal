@@ -1,10 +1,4 @@
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Barycentric_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
-#include "include/utils.h"
+#include <CGAL/Simple_cartesian.h>
 
 struct Custom_barycentric_traits
 {
@@ -62,11 +56,11 @@ struct Custom_barycentric_traits
   };
 
   struct Compare_x_2 {
-    CGAL::Comparison_result operator()(const Point_2& p, const Point_2& q) { return CGAL::EQUAL; }
+    CGAL::Comparison_result operator()(const Point_2&, const Point_2&) { return CGAL::EQUAL; }
   };
 
   struct Compare_y_2 {
-    CGAL::Comparison_result operator()(const Point_2& p, const Point_2& q) { return CGAL::EQUAL; }
+    CGAL::Comparison_result operator()(const Point_2&, const Point_2&) { return CGAL::EQUAL; }
   };
 
   struct Compute_approximate_angle_3 {
@@ -74,9 +68,9 @@ struct Custom_barycentric_traits
   };
 
   struct Compute_area_2 {
-    FT operator()(const Point_2& p, const Point_2& q, const Point_2& r) { return FT(); }
-    FT operator()(const Iso_rectangle_2& r) { return FT(); }
-    FT operator()(const Triangle_2& t) { return FT(); }
+    FT operator()(const Point_2&, const Point_2&, const Point_2&) { return FT(); }
+    FT operator()(const Iso_rectangle_2&) { return FT(); }
+    FT operator()(const Triangle_2&) { return FT(); }
   };
 
   struct Compute_scalar_product_3 {
@@ -148,7 +142,7 @@ struct Custom_barycentric_traits
   };
 
   struct Equal_2 {
-    bool operator()(const Point_2& p, const Point_2& q) const { return true; }
+    bool operator()(const Point_2&, const Point_2&) const { return true; }
   };
 
   struct Orientation_2 {
@@ -156,7 +150,7 @@ struct Custom_barycentric_traits
   };
 
   struct Less_xy_2 {
-    bool operator()(const Point_2& p, const Point_2& q) const { return true; }
+    bool operator()(const Point_2&, const Point_2&) const { return true; }
   };
 
   Collinear_2 collinear_2_object() const { return Collinear_2(); }
@@ -222,6 +216,14 @@ public:
 
 } // namespace CGAL
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Barycentric_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include "include/utils.h"
+
 // Typedefs.
 using Mesh = CGAL::Surface_mesh<Custom_barycentric_traits::Point_3>;
 using MV = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh>;
@@ -229,29 +231,32 @@ using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh>;
 using DH = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh>;
 
 int main() {
-  Mesh tetrahedron;
-  std::vector<Custom_barycentric_traits::Point_3> vertices;
-  std::tie(tetrahedron, vertices) = tests::get_irregular_tetrahedron<Custom_barycentric_traits, Mesh>();
+  if (false) // only test the compilation
+  {
+    Mesh tetrahedron;
+    std::vector<Custom_barycentric_traits::Point_3> vertices;
+    std::tie(tetrahedron, vertices) = tests::get_irregular_tetrahedron<Custom_barycentric_traits, Mesh>();
 
-  std::vector<Custom_barycentric_traits::FT> coordinates;
+    std::vector<Custom_barycentric_traits::FT> coordinates;
 
-  MV mv(tetrahedron, CGAL::Barycentric_coordinates::Computation_policy_3::FAST_WITH_EDGE_CASES, Custom_barycentric_traits::instance());
-  WP wp(tetrahedron, CGAL::Barycentric_coordinates::Computation_policy_3::FAST_WITH_EDGE_CASES, Custom_barycentric_traits::instance());
-  DH dh(tetrahedron, CGAL::Barycentric_coordinates::Computation_policy_3::FAST_WITH_EDGE_CASES, Custom_barycentric_traits::instance());
+    MV mv(tetrahedron, CGAL::Barycentric_coordinates::Computation_policy_3::FAST_WITH_EDGE_CASES, Custom_barycentric_traits::instance());
+    WP wp(tetrahedron, CGAL::Barycentric_coordinates::Computation_policy_3::FAST_WITH_EDGE_CASES, Custom_barycentric_traits::instance());
+    DH dh(tetrahedron, CGAL::Barycentric_coordinates::Computation_policy_3::FAST_WITH_EDGE_CASES, Custom_barycentric_traits::instance());
 
-  mv(Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates));
-  wp(Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates));
-  dh(Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates));
+    mv(Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates));
+    wp(Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates));
+    dh(Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates));
 
-  CGAL::Barycentric_coordinates::wachspress_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
-  CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
-  CGAL::Barycentric_coordinates::mean_value_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
+    CGAL::Barycentric_coordinates::wachspress_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
+    CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
+    CGAL::Barycentric_coordinates::mean_value_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
 
-  Custom_barycentric_traits::Point_3 p1 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(tetrahedron, coordinates, *tetrahedron.property_map<Mesh::Vertex_index, Custom_barycentric_traits::Point_3>("v:point"), Custom_barycentric_traits::instance());
-  Custom_barycentric_traits::Point_3 p2 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(vertices, coordinates, Custom_barycentric_traits::instance());
+    Custom_barycentric_traits::Point_3 p1 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(tetrahedron, coordinates, *tetrahedron.property_map<Mesh::Vertex_index, Custom_barycentric_traits::Point_3>("v:point"), Custom_barycentric_traits::instance());
+    Custom_barycentric_traits::Point_3 p2 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(vertices, coordinates, Custom_barycentric_traits::instance());
 
-  CGAL_USE(p1);
-  CGAL_USE(p2);
+    CGAL_USE(p1);
+    CGAL_USE(p2);
+  }
 
   return EXIT_SUCCESS;
 }
