@@ -16,6 +16,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
@@ -102,7 +104,7 @@ clip_convex(PolygonMesh& pm,
 
   // np typedefs
   // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
-  using Default_visitor = Default_cut_visitor<PolygonMesh>;
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
