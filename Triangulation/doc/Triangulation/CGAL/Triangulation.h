@@ -121,13 +121,13 @@ typedef TriangulationDataStructure_::Face Face;
 /// @{
 
 /*!
-handle to a a vertex
+handle to a vertex
 */
 typedef TriangulationDataStructure_::Vertex_handle
 Vertex_handle;
 
 /*!
-const handle to a a vertex
+const handle to a vertex
 */
 typedef TriangulationDataStructure_::Vertex_const_handle
 Vertex_const_handle;

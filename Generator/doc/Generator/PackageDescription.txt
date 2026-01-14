@@ -25,7 +25,7 @@ analysis.  These include a class for generating random numbers and
 function for selecting random items from a set of objects, generators
 for two-dimensional and three-dimensional points sets, a generator for
 random convex sets and one for simple polygons.  The \stl algorithm
-`std::random_shuffle` is useful with these functions and classes to to
+`std::random_shuffle` is useful with these functions and classes to
 achieve random permutations for otherwise regular generators (
 <I>e.g.</I>, points on a grid or segment).
 

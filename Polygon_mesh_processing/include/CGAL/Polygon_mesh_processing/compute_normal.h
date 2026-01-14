@@ -265,7 +265,7 @@ bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& 
   typedef typename GT::FT                                                     FT;
 
   // We are doing a lot of likely inexact constructions to compute min circles on the sphere and
-  // these degenerate cases often happen (e.g. almost flat surfaces), so we don't want to to the usual
+  // these degenerate cases often happen (e.g. almost flat surfaces), so we don't want to do the usual
   // "switch to the exact kernel" in degenerate cases robustness trick. Rather, use a fixed tolerance
   // to assimilate vectors and scalar products.
   //

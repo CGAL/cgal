@@ -1138,7 +1138,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   CGAL_assertion(!is_border(h, tm));
 
   CGAL_assertion(next(next(opp_h, tm), tm) != opp_h); // not working for a hole made of 2 edges
-  CGAL_assertion(next(next(next(opp_h, tm), tm), tm) != opp_h); // not working for a hole make of 3 edges
+  CGAL_assertion(next(next(next(opp_h, tm), tm), tm) != opp_h); // not working for a hole made of 3 edges
 
   if(CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
   {
