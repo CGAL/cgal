@@ -66,7 +66,7 @@ kernel(const PolygonMesh& pm,
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
   std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), std::random_device()());
 
-  // Immediate exit if the input is not of gender zero to speedup on stupid benchmarks
+  // Immediate exit if the input is not of genus zero to speed up on stupid benchmarks
   // if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
   //   return PolygonMesh();
 
