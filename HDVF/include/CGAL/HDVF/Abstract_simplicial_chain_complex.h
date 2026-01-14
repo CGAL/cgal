@@ -85,8 +85,7 @@ public:
      *
      * \param complex The abstract simplicial chain complex which will be copied.
      */
-    Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex)
-    {
+    Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex) {
         _dim = complex._dim;
         _ind2simp = complex._ind2simp;
         _simp2ind = complex._simp2ind;
@@ -107,8 +106,7 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
      */
-    Column_chain d(size_t id_cell, int q) const
-    {
+    Column_chain d(size_t id_cell, int q) const {
         if ((q > 0) && (q <= _dim))
             return OSM::get_column(_d[q], id_cell);
         else
@@ -127,8 +125,7 @@ public:
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty row chain.
      */
-    Row_chain cod(size_t id_cell, int q) const
-    {
+    Row_chain cod(size_t id_cell, int q) const {
         if ((q < _dim) && (q >= 0))
             return OSM::get_row(_d[q+1], id_cell);
         else
@@ -151,8 +148,7 @@ public:
      *
      * \return Number of cells in dimension `q`. f `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
      */
-    size_t number_of_cells(int q) const
-    {
+    size_t number_of_cells(int q) const {
         if ((q >=0) && (q<=_dim))
             return _nb_cells[q] ;
         else
@@ -164,8 +160,7 @@ public:
      * \exception <Out_of_dimensions> If the dimension `q` is out of the range of dimensions in the complex, throws a `std::runtime_error`.
      * \exception <Out_of_indices> If the cell index `i` is out of the range of cells index in the complex, throws a `std::runtime_error`.
      */
-    const Simplex& index_to_cell (size_t i, int q) const
-    {
+    const Simplex& index_to_cell (size_t i, int q) const {
         if ((q<0) || (q>_dim))
             throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
         if ((i<0) || (i>_nb_cells.at(q)))
@@ -179,8 +174,7 @@ public:
      * \exception <Out_of_dimensions> If the dimension of `simplex` is out of the range of dimensions in the complex, throws a `std::runtime_error`.
      * \exception <Simplex_not_found> If the `simplex` does not exist in the complex, throws a `std::runtime_error`.
      */
-    size_t cell_to_index (const Simplex& simplex) const
-    {
+    size_t cell_to_index (const Simplex& simplex) const {
         const int q(simplex.dimension());
         if ((q<0) || (q>_dim))
             throw std::runtime_error("cell_to_index: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
@@ -198,8 +192,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const std::vector<Column_matrix> & boundary_matrices() const
-    {
+    const std::vector<Column_matrix> & boundary_matrices() const {
         return _d ;
     }
 
@@ -212,8 +205,7 @@ public:
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
-    const Column_matrix & boundary_matrix(int q) const
-    {
+    const Column_matrix & boundary_matrix(int q) const {
         return _d.at(q) ;
     }
 
@@ -234,8 +226,7 @@ public:
      * \exception <Out_of_dimensions> If the dimension `q` is out of the range of dimensions in the complex, throws a `std::runtime_error`.
      * \exception <Out_of_indices> If the cell index `id_cell` is out of the range of cells index in the complex, throws a `std::runtime_error`.
      */
-    std::vector<size_t> bottom_faces(size_t id_cell, int q) const
-    {
+    std::vector<size_t> bottom_faces(size_t id_cell, int q) const {
         if ((q<0) || (q>_dim))
             throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
         if ((id_cell<0) || (id_cell>_nb_cells.at(q)))
@@ -244,8 +235,7 @@ public:
         std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).vertices()) ;
         std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
-        for (size_t vert_id : verts)
-        {
+        for (size_t vert_id : verts) {
             const size_t i(_simp2ind.at(0).at(Simplex(std::vector<size_t>({vert_id})))) ;
             res.push_back(i) ;
         }
@@ -258,15 +248,12 @@ public:
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
      */
     template <typename CoefficientT, int ChainTypeF>
-    Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
-    {
+    Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const {
         typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
-        if (q < dimension())
-        {
+        if (q < dimension()) {
             Column_chain fstar_cofaces(number_of_cells(q+1)) ;
-            for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
-            {
+            for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it) {
                 // Set the cofaces of it->first in dimension dim+1
                 Row_chain cofaces(cod(it->first,q)) ;
                 for (typename Row_chain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
@@ -407,8 +394,7 @@ void Abstract_simplicial_chain_complex<CoefficientRing>::compute_d(int dim) cons
     _d[dim] = Column_matrix(nb_lignes, _nb_cells[dim]);
 
     // Iterate through the cells of dimension dim
-    if (dim>0)
-    {
+    if (dim>0) {
         for (size_t i = 0; i < _nb_cells[dim]; ++i) {
             // Boundary of the i-th simplex of dimension dim
             const Simplex& s = _ind2simp[dim][i];
@@ -464,8 +450,7 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(
 }
 
 template <typename CoefficientRing>
-std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientRing>& complex)
-{
+std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientRing>& complex) {
     return complex.print_complex(out);
 }
 
