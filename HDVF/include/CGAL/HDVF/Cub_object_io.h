@@ -75,10 +75,10 @@ public:
     // Mesh operations
     /** \brief Removes all cells of the list. */
     void clear_cubs() { cubs.clear() ; for (size_t i=0; i<dim; ++i) ncubs[i] = 0 ; }
-    
+
     /** \brief Adds a cell to the list. */
     void add_cub(const IOCubCellType &c) {cubs.push_back(c); ++ncubs[cub_dim(c)] ;}
-    
+
     /** \brief Adds one empty cell of higher dimension all around the complex.
      *
      * The function enlarges the bounding box with 1 cell of higher dimension on each of its sides. Cubs coordinates are shifted accordingly.
@@ -195,9 +195,9 @@ public:
         infile.close();
     }
 
-//    bool write_pgm(const std::string &filename) ;
+    //    bool write_pgm(const std::string &filename) ;
     // TODO...
-    
+
     /** \brief Imports a %CUB file.
      *
      * \param filename Name of the %CUB file (cells are described in Khalimsky coordinates).
@@ -232,7 +232,7 @@ public:
                 }
             }
             std::istringstream is( line );
-            
+
             if (line_number == 1) { // Header 1
                 is >> dim ;
                 if (Traits::Dimension::value != dim) {
@@ -275,7 +275,7 @@ public:
         return true ;
     }
 
-//    bool write_cub(const std::string &filename) ;
+    //    bool write_cub(const std::string &filename) ;
     // TODO
 
     /** \brief Prints synthetic informations related to the object. */

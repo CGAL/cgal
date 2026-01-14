@@ -17,9 +17,9 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 typedef int Coefficient_ring;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
- 
+
 typedef CGAL::Triangulation_3<K>      Triangulation;
- 
+
 typedef Triangulation::Cell_handle    Cell_handle;
 typedef Triangulation::Vertex_handle  Vertex_handle;
 typedef Triangulation::Locate_type    Locate_type;
@@ -38,12 +38,12 @@ int main() {
     L.push_front(Point(0,0,1));
     L.push_front(Point(1,1,1));
     L.push_front(Point(2,2,2));
-   
+
     Triangulation T(L.begin(), L.end());
 
     Triangulation_3_io tri3_io(T);
     Complex complex(tri3_io);
-    
+
     std::cout << "Complex built: " << complex << std::endl;
     Complex::chain_complex_to_vtk(complex, "tmp/complex.vtk");
 

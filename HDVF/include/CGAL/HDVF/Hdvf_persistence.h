@@ -250,7 +250,7 @@ public:
         int dim = this->_K.dimension(); // Get the dimension of the complex K
 
         int min_dim, max_dim;
-        
+
         // Compute min and max dimensions of find_pair_A
         if (this->_dimension_restriction == -1) {
             min_dim = 0;
@@ -260,7 +260,7 @@ public:
             min_dim = max(0, this->_dimension_restriction-1);
             max_dim = min(this->_dimension_restriction,dim-1);
         }
-        
+
         bool found;
         Cell_pair pair;
         std::vector<Cell_pair> res ;
@@ -730,11 +730,11 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
     const int q(c.second), sigma(_K_to_per.at(q).at(c.first))  ;
     // Search for pairing
     found = false;
-    
+
     // Check if the cell belongs to the dimension restriction constraint
     if ((this->_dimension_restriction >=0) && (q != this->_dimension_restriction) && (q != this->_dimension_restriction+1))
         return p;
-    
+
     if (q >= 1)
     {
         // Compute bounded max while iterating over the Sparse_chain
@@ -743,7 +743,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
         std::size_t i ;
         for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
         {
-//            if ((it->first < tmax) && (abs(it->second) == 1)) // possible pairing
+            //            if ((it->first < tmax) && (abs(it->second) == 1)) // possible pairing
             if ((it->first < tmax) && ((it->second == 1) || (it->second == -1)))
             {
                 if (!found) // for first cell met
@@ -780,12 +780,12 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
     const size_t q_current(_f._filtration.at(t_current).second) ; // Get the dimension of the new current cell
     ++_t_dim.at(q_current) ; // Update time in the dimension of the current cell
     const size_t t_dim_current(_t_dim.at(q_current)-1); // Time of the current cell in its dimension
-    
+
     // Test if _dimension_restriction is off (-1) or current dimension in the range of considered dimensions
     if ((this->_dimension_restriction == -1) || ((q_current >= this->_dimension_restriction) && (q_current <= this->_dimension_restriction+1))) {
         _masks.at(q_current).set_on(t_dim_current) ; // Update mask accordingly
         this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
-        
+
         // Search for pairing (between cells of dimension q_current and q_current+1)
         p=find_pair_A(found) ;
         if (found)
@@ -796,7 +796,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
             const size_t ki(_per_to_K.at(q).at(p.sigma)), kj(_per_to_K.at(q+1).at(p.tau)) ;
             Cell ci(ki, q), cj(kj, q+1) ; // cells of the interval - in the K basis
             size_t ti(_f._cell_to_t.at(ci)), tj(_f._cell_to_t.at(cj)) ; // times of the interval
-            
+
             Persistence_interval hole;
             hole.time_birth = ti;
             hole.time_death = tj;
@@ -806,7 +806,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
             hole.cell_death = cj;
             // Add this interval
             _persist.push_back(hole) ;
-            
+
             // If export is on, store export data for significant persistent intervals
             if (_with_export)
             {
@@ -815,8 +815,8 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
                 else
                     export_hdvf_persistence_pair() ;
             }
-            
-            
+
+
             // Prepare for next step
             this->A(p.sigma, p.tau, p.dim) ; // Update the reduction
             if (verbose)

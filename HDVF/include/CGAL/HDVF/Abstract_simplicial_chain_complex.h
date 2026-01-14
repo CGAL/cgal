@@ -170,7 +170,7 @@ public:
             throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
         if ((i<0) || (i>_nb_cells.at(q)))
             throw std::runtime_error("index_to_cell: cell index i ("+std::to_string(i)+") is out the the range of cells index in the complex");
-        
+
         return _ind2simp.at(q).at(i);
     }
 
@@ -184,10 +184,10 @@ public:
         const int q(simplex.dimension());
         if ((q<0) || (q>_dim))
             throw std::runtime_error("cell_to_index: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
-        
+
         if (_simp2ind.at(q).find(simplex) == _simp2ind.at(q).end())
             throw std::runtime_error(": simplex does not exist in the map");
-        
+
         return _simp2ind.at(q).at(simplex);
     }
 
@@ -240,7 +240,7 @@ public:
             throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
         if ((id_cell<0) || (id_cell>_nb_cells.at(q)))
             throw std::runtime_error("index_to_cell: cell index i ("+std::to_string(id_cell)+") is out the the range of cells index in the complex");
-        
+
         std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).vertices()) ;
         std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
@@ -256,7 +256,7 @@ public:
      * \brief Returns the cofaces of a given chain in dimension `q`.
      *
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
-    */
+     */
     template <typename CoefficientT, int ChainTypeF>
     Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
@@ -450,10 +450,10 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(
     for (int q = 0; q <= _dim; ++q) {
         out_stream << "--- dimension " << q << std::endl;
         out_stream << number_of_cells(q) << " cells" << std::endl ;
-                for (size_t j = 0; j < _nb_cells.at(q); ++j) {
-                    Simplex s(this->_ind2simp.at(q).at(j));
-                    out_stream << j << " -> " << s << " -> " << _simp2ind.at(q).at(s) << std::endl;
-                }
+        for (size_t j = 0; j < _nb_cells.at(q); ++j) {
+            Simplex s(this->_ind2simp.at(q).at(j));
+            out_stream << j << " -> " << s << " -> " << _simp2ind.at(q).at(s) << std::endl;
+        }
     }
 
     // Boundary matrices

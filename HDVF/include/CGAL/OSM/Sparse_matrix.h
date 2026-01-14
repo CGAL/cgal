@@ -58,7 +58,7 @@ namespace OSM {
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept, providing the ring used to compute homology.
  \tparam StorageFormat an integer constant encoding the storage format of matrices (`OSM::COLUMN` or `OSM::ROW`).
-*/
+ */
 
 template <typename CoefficientRing, int StorageFormat>
 class Sparse_matrix {
@@ -236,17 +236,17 @@ public:
      * \brief Tests if a SparseMatrix is null.
      *
      * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
-    */
+     */
     bool is_null()
     {
         return (_chainsStates.begin() == _chainsStates.end()) ;
     }
-    
+
     /**
      * \brief Tests if a SparseMatrix is empty.
      *
      * The function return `true` is the SparseMatrix is empty (that is, if the number of columns or rows is null) and `false` otherwise.
-    */
+     */
     bool is_empty()
     {
         return ((_size.first == 0) || (_size.second == 0));
@@ -1324,7 +1324,7 @@ public:
 template <typename _CT, int _CTF>
 Sparse_matrix<_CT, _CTF> operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda){
     Sparse_matrix<_CT, _CTF> newMatrix = matrix;
-     newMatrix *= lambda;
+    newMatrix *= lambda;
 
     return newMatrix;
 }
@@ -1442,7 +1442,7 @@ Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const 
     {
         _CT tmp(first[index] * second) ;
         if (tmp != 0)
-//            column[index] = tmp ;
+            //            column[index] = tmp ;
             column.set_coefficient(index, tmp);
     }
     return column;
@@ -1476,7 +1476,7 @@ Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &first, const Spar
     {
         _CT tmp(first * second[index]) ;
         if (tmp != 0)
-//            row[index] = tmp ;
+            //            row[index] = tmp ;
             row.set_coefficient(index, tmp);
     }
     return row;

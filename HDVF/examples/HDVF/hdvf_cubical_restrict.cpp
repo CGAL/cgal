@@ -49,21 +49,21 @@ int main(int argc, char **argv)
     std::cout << complex;
 
     // Build empty HDVF
-    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
+    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1);
 
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
     //        hdvf.compute_rand_perfect_hdvf();
 
     // Output HDVF to console
-//    hdvf.write_matrices(std::cout);
+    //    hdvf.write_matrices(std::cout);
     hdvf.write_reduction(std::cout);
 
     // Output HDVF to vtk
-    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true);
 
     hdvf.dimension_restriction(2);
-    
-    
+
+
     return 0;
 }

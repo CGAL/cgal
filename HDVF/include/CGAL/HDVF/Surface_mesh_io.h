@@ -62,6 +62,7 @@ private:
 public:
     /** \brief Constructor from a triangular mesh.
      *
+     * Vertices are described by their index; this index must be unique (vertices with similar underlying points and different vertex indices will be considered as different).
      */
     Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io<Traits>(2) {
         typedef typename Traits::Point Point;

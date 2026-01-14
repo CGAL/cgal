@@ -279,6 +279,9 @@ public:
      * \param d The dimension `d` can be positive or negative:
      * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
      * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
+     *
+     * Vertices are described by their index; this index must be unique (vertices with similar underlying points and different vertex indices will be considered as different).
+     *
      * \param vnodes Vector of vertex coordinates.
      * \param vcells Vector of cells (described by a sorted vector of indices)
      * \param sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).

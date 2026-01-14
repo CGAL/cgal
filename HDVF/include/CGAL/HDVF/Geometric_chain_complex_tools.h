@@ -83,7 +83,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, Chain
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels(-1) ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
-
+    
     // Range of computed dimensions
     int min_dim, max_dim;
     if (hdvf.dimension_restriction() == -1) {
@@ -150,7 +150,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
-
+    
     using HDVF_type = Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
     using Persistence_interval = HDVF_type::Persistence_interval;
     
@@ -158,7 +158,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
     std::string out_file_filtration = filename+"_filtration.vtk" ;
     std::vector<std::vector<size_t> > filtr_labels = per_hdvf.filtration().export_filtration();
     ChainComplex::template chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
-
+    
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
     std::ofstream info_file(filename+"_infos.txt") ;
@@ -174,14 +174,14 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
         info_file << std::endl ;
         /* V2 */
         //        info_file << i << " -> " << " --- duration : " << hole.duration() << " -- " << hole << std::endl ;
-
+        
         if (hole.duration()>0) // Export vtk of "finite" holes
         {
             // Build name associated to the ith hole : filename_i
             std::string out_file = filename+"_"+std::to_string(i) ;
             // Export PSC labels to vtk
             ChainComplex::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
-
+            
             // Export homology generators (g)
             if (per_hdvf.hdvf_opts()  & (Homological_discrete_vector_field::OPT_FULL | Homological_discrete_vector_field::OPT_G))
             {
@@ -239,9 +239,9 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
 // Hdvf_duality vtk export
 
 /** \brief Exports all the `HDVF_duality` information of a geometric chain complex to vtk files.
-
+ 
  Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
-
+ 
  \param hdvf Reference to the HDVF exported.
  \param complex Underlying geometric chain complex.
  \param filename Prefix of all generated files.
@@ -257,7 +257,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_duality<ChainComplex> &h
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
-
+    
     if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND)
     {
         // Export generators of all critical cells
@@ -360,10 +360,10 @@ public:
     std::shared_ptr<Chain_complex> L_complex ;
     /** \brief Pointer over a sub chain complex mask encoding a sub complex of `*L_complex`. */
     std::shared_ptr<Sub_chain_complex> K_complex ;
-
+    
     /** \brief Default constructor*/
     Complex_duality_data_t() : L_complex(nullptr), K_complex(nullptr) {}
-
+    
     /** \brief Constructor from a pointer over a chain complex and a sub chain complex mask.
      */
     Complex_duality_data_t(std::shared_ptr<Chain_complex> L, std::shared_ptr<Sub_chain_complex> K) : L_complex(L), K_complex(K) {}
@@ -375,17 +375,17 @@ public:
 
 /*!
  \ingroup PkgHDVFRef
-
-The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
-
-Technically, starting from a Simplicial_chain_complex `K_init`, the method `dualize_complex()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
-- L : complex built out of K_init together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
-- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
-
-\tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
-
-\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
-*/
+ 
+ The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
+ 
+ Technically, starting from a Simplicial_chain_complex `K_init`, the method `dualize_complex()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
+ - L : complex built out of K_init together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
+ - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
+ 
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
+ 
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+ */
 
 template<typename CoefficientRing, typename Traits>
 class Duality_simplicial_complex_tools {
@@ -401,7 +401,7 @@ public:
     typedef Complex_duality_data_t<Chain_complex> Complex_duality_data;
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
-
+    
 private:
     static std::shared_ptr<Sub_chain_complex> compute_sub_chain_complex(const Chain_complex& _K, const Chain_complex &L){
         // Build the Sub_chain_complex_mask encoding K_init inside L
@@ -418,7 +418,7 @@ private:
         }
         return K;
     }
-
+    
 public:
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a set of simplices `mesh_io`.
      *
@@ -438,14 +438,14 @@ public:
      */
     static Complex_duality_data dualize_complex (Mesh_object_io<Traits>& mesh_io, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
-
+        
         std::cerr << "-- Starting dualize_complex" << std::endl;
         std::cerr << "Imported set of simplices" << std::endl;
         std::cout << mesh_io;
-
+        
         // Create a temporary associated complex (to identify simplices of mesh_io)
         Chain_complex* _K = new Chain_complex(mesh_io);
-
+        
         // Closing mesh_object_io by adding the icosphere
         //  Compute a bounding icosphere
         Point center = mesh_io.centroid() ;
@@ -453,12 +453,12 @@ public:
         Icosphere_object_io<Traits> ico(subdiv,center, BB_ratio*r) ;
         std::cerr << "Icosphere generated" << std::endl;
         ico.print_infos() ;
-
+        
         // Add it to the mesh
         mesh_io.push_back(ico) ;
         std::cerr << "Mesh concatenation" << std::endl;
         mesh_io.print_infos() ;
-
+        
         // Write this mesh to an off file for Tetgen
         mesh_io.write_off(out_file_prefix) ;
         //        const std::string tetgen_path(CMAKE_TETGEN_PATH) ;
@@ -466,25 +466,25 @@ public:
         const std::string tetgen_path("/Users/umenohana/Dropbox/G-Mod/TopAlg/code/tetgen1.6.0/build/") ;
         std::string tetgen_command = tetgen_path+"tetgen -pqkcYfe "+out_file_prefix+".off" ;
         system(tetgen_command.c_str()) ;
-
+        
         // Read the mesh built by tetgen for L
         Tet_object_io<Traits> tetL(out_file_prefix) ;
-
+        
         // Build the output data structure
         Complex_duality_data dualized_complex;
         // Build the associated SimpComplex
         dualized_complex.L_complex = std::make_shared<Chain_complex>(tetL) ;
         std::shared_ptr<Chain_complex> L(dualized_complex.L_complex);
         std::cout << "------ L:" << *L;
-
+        
         // Build the Sub_chain_complex_mask encoding K_init inside L
         dualized_complex.K_complex = compute_sub_chain_complex(*_K, *L);
         // Remove the temporary complex
         delete _K;
-
+        
         return dualized_complex;
     }
-
+    
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Surface_mesh`.
      *
      * On the one hand, a `Simplicial_chain_complex` is built from the `Surface_mesh` (let us call it `_K`); on the other hand, this complex is embedded into a larger icosphere and a 3D constrained Delaunay tetraedrization is generated.
@@ -507,48 +507,48 @@ public:
         typedef CGAL::Conforming_constrained_Delaunay_triangulation_3<typename Traits::Kernel, Triangulation> CCDT3;
         std::cerr << "-- Starting dualize_complex" << std::endl;
         std::cerr << "Imported mesh" << std::endl;
-
+        
         // Create a temporary Surfaces_mesh_io (to load the mesh)
         Surface_mesh_io<Triangle_mesh, Traits> K_init_mesh_io(mesh);
         // Create a temporary associated complex (to identify simplices of mesh_io)
         Chain_complex* _K = new Chain_complex(K_init_mesh_io);
         std::cout << "------ _K:" << *_K;
-
+        
         // Closing mesh_object_io by adding the icosphere
         //  Compute a bounding icosphere
         Point center = K_init_mesh_io.centroid() ;
         double r = K_init_mesh_io.radius(center) ;
         Triangle_mesh ico;
         CGAL::make_icosahedron<Triangle_mesh, Point>(ico, center, r*BB_ratio);
-          CGAL::Subdivision_method_3::Loop_subdivision(
-            ico, CGAL::parameters::number_of_iterations(subdiv)
-          );
-
+        CGAL::Subdivision_method_3::Loop_subdivision(
+                                                     ico, CGAL::parameters::number_of_iterations(subdiv)
+                                                     );
+        
         std::cerr << "Icosphere generated" << std::endl;
-
+        
         // Add it to the mesh
         mesh += ico ;
         std::cerr << "Mesh concatenation" << std::endl;
         std::string off_file("tmp/test_bounded.off");
         std::ofstream out (off_file , std::ios::out | std::ios::trunc);
-
+        
         if ( ! out . good () ) {
             std::cerr << "Cannot output dualized mesh to:\n  " << off_file << " - not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << mesh ;
         out.close();
-
+        
         // Generate plc_facet_map
         auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), mesh);
         int cpt(0);
         for  (typename Triangle_mesh::Face_iterator it = mesh.faces_begin(); it!= mesh.faces_end(); ++it){
             plc_facet_map[*it] = cpt++;
         }
-
+        
         // Constrained Delaunay Tetraedrisation preserving plc_facet_map
         auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh, CGAL::parameters::plc_face_id(plc_facet_map));
-
+        
         // Detect refined constrained faces
         std::vector<std::vector<typename Triangulation::Facet > > faces_constr(cpt);
         for (typename Triangulation::Facet f : ccdt.constrained_facets()) {
@@ -562,9 +562,9 @@ public:
             if (faces_constr.at(i).size()>1)
                 std::cout << i << ": " << faces_constr.at(i).size() << std::endl;
         }
-
+        
         Triangulation tri_L = std::move(ccdt).triangulation();
-
+        
         // Build the output object
         Complex_duality_data dualized_complex;
         // Build the associated Triangulation_3_io
@@ -573,7 +573,7 @@ public:
         dualized_complex.L_complex = std::make_shared<Chain_complex>(L_tri_io) ;
         std::shared_ptr<Chain_complex> L(dualized_complex.L_complex);
         std::cout << "------ L:" << *L;
-
+        
         std::vector<std::vector<size_t> > indices(L->dimension()+1);
         for (int q=0; q<=L->dimension(); ++q){
             for (int i=0; i<L->number_of_cells(q); ++i){
@@ -582,16 +582,16 @@ public:
         }
         std::string vtk_file("tmp/test_CDT3.vtk");
         Chain_complex::chain_complex_to_vtk(*L, vtk_file, &indices, "int");
-
+        
         // Build the Sub_chain_complex_mask encoding K_init inside L
         dualized_complex.K_complex = compute_sub_chain_complex(*_K, *L);
         // Remove the temporary complex
         delete _K;
-
+        
         return dualized_complex;
     }
-
-
+    
+    
     /** \brief Exports a chain complex to a Mesh_object_io  */
     static Mesh_object_io<Traits>& export_mesh_object(const Chain_complex& _CC)
     {
@@ -602,7 +602,7 @@ public:
                 const Simplex& s(_CC.index_to_cell(i,q)) ;
                 vcells.push_back(s.vertices()) ;
             }
-
+        
         std::vector<Point> coords;
         for (auto it = _CC.points().begin(); it != _CC.points().end(); ++it)
             coords.push_back(Point(*it));
@@ -617,19 +617,19 @@ public:
 
 /*!
  \ingroup PkgHDVFRef
-
-The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
-
-Starting from a Cubical_chain_complex `K_init`, the method `dualize_complex()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
-- L : complex built of the "full" bounding box of `K_init`
-- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying `K_init` inside `L`
-
-Use the `frame()` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
-
-\tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
-
-\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
-*/
+ 
+ The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
+ 
+ Starting from a Cubical_chain_complex `K_init`, the method `dualize_complex()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
+ - L : complex built of the "full" bounding box of `K_init`
+ - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying `K_init` inside `L`
+ 
+ Use the `frame()` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
+ 
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
+ 
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+ */
 
 template<typename CoefficientRing, typename Traits>
 class Duality_cubical_complex_tools {
@@ -640,11 +640,11 @@ public:
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Type returned by `dualize_complex()`. */
     typedef Complex_duality_data_t<Chain_complex> Complex_duality_data;
-
+    
     // Constructor
     Duality_cubical_complex_tools() {}
-
-
+    
+    
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a cubical complex `K_init`.
      *
      * `L` is the bounding box of `K_init` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `K_init`.
@@ -669,12 +669,12 @@ public:
             (tmp_L.ncubs)[dtmp] += 1 ;
             tmp_L.cubs.push_back(tmpkhal) ;
         }
-
+        
         // Build the output object
         Complex_duality_data dualized_complex;
         dualized_complex.L_complex = std::make_shared<Chain_complex>(tmp_L, Chain_complex::PRIMAL);
         std::shared_ptr<Chain_complex> L(dualized_complex.L_complex) ;
-
+        
         // Build the Sub_chain_complex_mask corresponding to _CC
         dualized_complex.K_complex = std::make_shared<Sub_chain_complex> (Sub_chain_complex(*L, false)) ;
         std::shared_ptr<Sub_chain_complex> K(dualized_complex.K_complex) ;
@@ -690,7 +690,7 @@ public:
         }
         return dualized_complex;
     }
-
+    
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a `Cub_object_io` `K_init`.
      *
      * `L` is the bounding box of `K_init` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `K_init`.
