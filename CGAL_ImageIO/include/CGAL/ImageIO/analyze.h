@@ -10,8 +10,8 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef ANALYZE_H
-#define ANALYZE_H
+#ifndef CGAL_ANALYZE_H
+#define CGAL_ANALYZE_H
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4068 4786 4081 4267 )

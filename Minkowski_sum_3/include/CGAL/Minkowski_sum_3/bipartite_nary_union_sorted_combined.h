@@ -41,7 +41,7 @@ struct L1_sort {
       p0.x() + p0.y() + p0.z() < p1.x() + p1.y() + p1.z();
   }
 };
-#define NARY_SORT L1_sort<Point_3>
+#define CGAL_NARY_SORT L1_sort<Point_3>
 #elif defined CGAL_NEF_NARY_UNION_L2_SORT
 template<typename Point_3>
 struct L2_sort {
@@ -51,7 +51,7 @@ struct L2_sort {
       p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
   }
 };
-#define NARY_SORT L2_sort<Point_3>
+#define CGAL_NARY_SORT L2_sort<Point_3>
 #endif
 
 template<typename Nef_polyhedron>
@@ -95,8 +95,8 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   typedef typename std::list<GMapPoint> GM_list;
   typedef typename GM_list::const_iterator GM_iterator;
   typedef typename std::pair<GM_iterator, GM_iterator> GM_pair;
-#ifdef NARY_SORT
-  typedef typename std::multimap<Point_3, GM_pair, NARY_SORT> PQ;
+#ifdef CGAL_NARY_SORT
+  typedef typename std::multimap<Point_3, GM_pair, CGAL_NARY_SORT> PQ;
 #else
   typedef typename std::multimap<Point_3, GM_pair> PQ;
 #endif
