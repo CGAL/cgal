@@ -482,8 +482,13 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 
 \subsection coref_kernel Kernels
 
-The kernel of a mesh is defined as the set of inside points from which the entire surface of the mesh is visible. It is equivalent to the intersection of the half-spaces defined by all faces of the mesh.
-The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::is_empty_kernel()` outputs respectively the full kernel, a single point inside it or
+\cgalFigureBegin{coref_kernel_figure, kernel.png}
+Mesh kernel: From left to right: (i) The input mesh; (ii) The kernel of the input; (iii) The kernel inside its mesh. All segments between a point of the kernel and a point of the mesh are inside the mesh.
+\cgalFigureEnd
+
+
+As illustrated on \cgalFigureRef{coref_kernel_figure}, the kernel of a mesh is defined as the set of inside points from which the entire surface of the mesh is visible. More formally, a point belongs to the kernel if, for every point on the mesh, the segment connecting them lies entirely inside the mesh. Equivalently, the kernel is the intersection of the half-spaces induced by all faces of the mesh.
+The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::is_kernel_empty()` outputs respectively the full kernel, a single point inside it or
 simply whether the kernel exists.
 
 \subsection coref_ex_subsec Examples

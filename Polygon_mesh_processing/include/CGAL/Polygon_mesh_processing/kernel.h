@@ -174,7 +174,7 @@ kernel(const PolygonMesh& pm,
  /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
+  * \brief Computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
   * It is represented as a convex mesh and may be empty.
   *
   * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
@@ -197,21 +197,21 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel. }
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenario }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
-  *     \cgalParamType{std::size_t}
-  *     \cgalParamDefault{std::random_device()}
+  *     \cgalParamType{unsigned int}
+  *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -259,21 +259,21 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel. }
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenario }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
-  *     \cgalParamType{std::size_t}
-  *     \cgalParamDefault{std::random_device()}
+  *     \cgalParamType{unsigned int}
+  *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -282,7 +282,7 @@ kernel(const PolygonMesh& pm,
   */
 template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
-bool is_empty_kernel(const PolygonMesh& pm,
+bool is_kernel_empty(const PolygonMesh& pm,
                      const NamedParameters& np = parameters::default_values())
 {
   // TODO look if it's faster to compute with the dual instead (specifically in the none empty case)
@@ -312,21 +312,21 @@ bool is_empty_kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it. }
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel. }
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenario }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
-  *     \cgalParamType{std::size_t}
-  *     \cgalParamDefault{std::random_device()}
+  *     \cgalParamType{unsigned int}
+  *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
