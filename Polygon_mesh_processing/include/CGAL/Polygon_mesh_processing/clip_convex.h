@@ -20,6 +20,8 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <boost/property_map/function_property_map.hpp>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
