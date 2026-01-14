@@ -464,6 +464,8 @@ have some options to select whether the clipping should be done at the volume or
 level, and also if the clipper should be considered as compact or not. This is illustrated on
 \cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
 
+The function `CGAL::Polygon_mesh_processing::clip_convex()` is a specialized, faster version of `CGAL::Polygon_mesh_processing::clip()` for convex meshes.
+
 \cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
 Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
 defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
@@ -477,6 +479,17 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 (ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
 (iii) `use_compact_clipper=false`: clipping of the surface mesh with a non-compact halfspace: coplanar faces are not part of the output.
 \cgalFigureEnd
+
+\subsection coref_kernel Kernels
+
+\cgalFigureBegin{coref_kernel_figure, kernel.png}
+Mesh kernel: From left to right: (i) The input mesh; (ii) The kernel of the input; (iii) The kernel inside its mesh. All segments between a point of the kernel and a point of the mesh are inside the mesh.
+\cgalFigureEnd
+
+
+As illustrated on \cgalFigureRef{coref_kernel_figure}, the kernel of a mesh is defined as the set of inside points from which the entire surface of the mesh is visible. More formally, a point belongs to the kernel if, for every point on the mesh, the segment connecting them lies entirely inside the mesh. Equivalently, the kernel is the intersection of the half-spaces induced by all faces of the mesh.
+The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::is_kernel_empty()` outputs respectively the full kernel, a single point inside it or
+simply whether the kernel exists.
 
 \subsection coref_ex_subsec Examples
 
@@ -1480,6 +1493,8 @@ The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
 The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
+
+The specialization `CGAL::Polygon_mesh_processing::clip_convex` of `CGAL::Polygon_mesh_processing::clip` and the kernel functions was implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring2025meshkernel}.
 
 */
 } /* namespace CGAL */
