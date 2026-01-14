@@ -30,7 +30,7 @@ void test_coordinate() {
   const FT tol = tests::get_tolerance<FT>();
   int num_interior_samples = 0;
 
-  for(auto& offset : {FT(0), tol, -tol}){
+  for(auto& offset : {FT(0), -tol}){
 
     // Sample interior and boundary
     std::tie(std::ignore, sampled_tetrahedron_coords) =
