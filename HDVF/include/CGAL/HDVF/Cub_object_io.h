@@ -34,20 +34,27 @@ typedef std::vector<IOCubCellType> IOCubChainType ;
 /*!
  \ingroup PkgHDVFIOClasses
  The class `Cub_object_io` is an intermediate %IO class, used to load binary volumes and produce cubical complexes.
-
  */
 
 template <typename Traits>
 class Cub_object_io
 {
 public:
+    /** \brief Dimension of the complex. */
     int dim = 0 ; // Dimension of the complex
+    /** \brief Number of cubs in each dimension. */
     std::vector<size_t> ncubs ; // Number of cubs in each dimension
+    /** \brief Size of the bounding box along each dimension. */
     std::vector<size_t> N ; // Size of BB along each dimension
+    /** \brief List of cubs in each dimension. */
     std::vector<IOCubCellType> cubs ;
+    /** \brief Khalimsky or coordinates mode.
+     *
+     * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (ie. cells of dimension `dim`).
+     */
     bool khalimsky ;
 
-    /* \brief Default constructor.
+    /** \brief Default constructor.
      *
      * Create an empty Cub_object_io of dimension 3.
      */
@@ -56,7 +63,7 @@ public:
     /**
      * \brief Constructor from a vector of cells.
      *
-     * Cells coordinates are given in Khalimsky coordinates if the boolean `khal` is `true`, and as integer indices of voxels otherwise.
+     * Cells coordinates are given in Khalimsky coordinates if the boolean `khal` is `true`, or as integer coordinates of voxels of dimension `dim` otherwise.
      *
      */
     Cub_object_io(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(std::vector<size_t>(d+1)), N(std::vector<size_t>(d+1)), cubs(vcubs), khalimsky(khal)
@@ -66,8 +73,16 @@ public:
     Cub_object_io(const Cub_object_io &m) : dim(m.dim), ncubs(m.ncubs), N(m.N), cubs(m.cubs), khalimsky(m.khalimsky) {}
 
     // Mesh operations
+    /** \brief Removes all cells of the list. */
     void clear_cubs() { cubs.clear() ; for (size_t i=0; i<dim; ++i) ncubs[i] = 0 ; }
+    
+    /** \brief Adds a cell to the list. */
     void add_cub(const IOCubCellType &c) {cubs.push_back(c); ++ncubs[cub_dim(c)] ;}
+    
+    /** \brief Adds one empty cell of higher dimension all around the complex.
+     *
+     * The function enlarges the bounding box with 1 cell of higher dimension on each of its sides. Cubs coordinates are shifted accordingly.
+     */
     void frame() // Enlarge the bouding box to add 1 voxel around
     {
         // Enlarge the BB along each dimension
@@ -91,7 +106,14 @@ public:
         }
     }
 
-    // PGM
+    /** \brief Imports a %PGM file  (%PGM version 2).
+     *
+     * \param filename Name of the %PGM file.
+     * \param khal If true, Khalimsky coordinates of voxels are stored in `cubs` (for `PRIMAL` construction of a cubical complex), otherwise, integer coordinates of voxels are stored in `cubs`(for `DUAL` construction).
+     *
+     * \exception <File_not_found> If `filename` does not exist, raise a `std::runtime_error` exception.
+     * \exception <Incoherent_dimension> Raises a `std::runtime_error` if dimensions of the `Traits` of the %PGM file do not match.
+     */
     bool read_pgm(const std::string &filename, bool khal = false)
     {
         khalimsky = khal ;
@@ -99,6 +121,7 @@ public:
         std::ifstream infile(filename);
         if(!infile.is_open()) {
             std::cerr << "Warning: cannot open file " << filename << std::endl ;
+            std::runtime_error("read_pgm: file "+filename+" not found");
             // failed to open the file
             return false;
         }
@@ -128,8 +151,8 @@ public:
         dim = sizes.size() ;
         std::cout << "Traits dimension: " << Traits::Dimension::value << std::endl;
         if (Traits::Dimension::value != dim) {
-            std::cerr << "read_pgm error: dimension of Cubical_complex and Traits differ" << std::endl;
-            throw "read_pgm error: dimension of Cubical_complex and Traits differ";
+            std::cerr << "read_pgm error: dimensions of the PGM object and of Traits differ" << std::endl;
+            throw std::runtime_error("read_pgm error: dimensions of the PGM object and of Traits differ");
         }
 
         N = std::vector<size_t>(dim) ;
@@ -172,8 +195,18 @@ public:
         infile.close();
     }
 
-    bool write_pgm(const std::string &filename) ;
-    // CUB
+//    bool write_pgm(const std::string &filename) ;
+    // TODO...
+    
+    /** \brief Imports a %CUB file.
+     *
+     * \param filename Name of the %CUB file (cells are described in Khalimsky coordinates).
+     * \param khalimsky If true, Khalimsky coordinates are loaded in `cubs` (for `PRIMAL` construction of a cubical complex), otherwise, checks that all cells provided are of maximal dimension and load the integer coordinates of voxels in `cubs`(for `DUAL` construction).
+     *
+     * \exception <File_not_found> If `filename` does not exist, raise a `std::runtime_error` exception.
+     * \exception <Incoherent_dimension> Raises a `std::runtime_error` if dimensions of the `Traits` and of the %CUB file do not match.
+     * \exception <Incoherent_cell> A `std::runtime_error` is raised if `khalimsky` is false but a cell of non-maximal dimension is encoutered.
+     */
     bool read_cub(const std::string &filename, bool khalimsky = false)
     {
         // 0 - open input file
@@ -181,6 +214,7 @@ public:
         if(!infile.is_open()) {
             // failed to open the file
             std::cerr << "Warning: file " << filename << " does not exist" << std::endl ;
+            std::runtime_error("read_cub: file "+filename+" not found");
             return false;
         }
         std::size_t line_number = 0;
@@ -198,9 +232,14 @@ public:
                 }
             }
             std::istringstream is( line );
-
-            if (line_number == 1) // Header 1
+            
+            if (line_number == 1) { // Header 1
                 is >> dim ;
+                if (Traits::Dimension::value != dim) {
+                    std::cerr << "read_cub error: dimensions of the CUB object and of the Traits differ" << std::endl;
+                    throw std::runtime_error("read_cub error: dimensions of the CUB object and of the Traits differ");
+                }
+            }
             else if (line_number == 2) // Header 2
             {
                 for (int i=0; i<dim; ++i)
@@ -224,6 +263,8 @@ public:
                         cubs.push_back(cub) ;
                     else
                     {
+                        if (cub_dim(cub) != dim)
+                            std::runtime_error("read_cub: cell of dimension "+std::to_string(cub_dim(cub))+" incompatible with integer coordinates output");
                         size_t ind(khal_to_index(cub)) ;
                         cubs.push_back(index_to_coords(ind, false)) ;
                     }
@@ -234,8 +275,10 @@ public:
         return true ;
     }
 
-    bool write_cub(const std::string &filename) ;
+//    bool write_cub(const std::string &filename) ;
+    // TODO
 
+    /** \brief Prints synthetic informations related to the object. */
     void print_infos (size_t level = 0) const
     {
         std::cout << "Cub_object_io infos - dim : " << dim << ", cubs : " << cubs.size() << std::endl ;
