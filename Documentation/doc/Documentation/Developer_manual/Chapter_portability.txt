@@ -11,7 +11,6 @@ configuration of \cgal that allow you to answer such questions as:
 <UL>
 <LI>Is \em LEDA / \gmp there? (Section  \ref secleda_gmp_support)
 <LI>Which compiler is this? (Section  \ref secwhich_compiler )
-<LI>Does the compiler support feature X? (Section  \ref secworkaround_flags )
 </UL>
 
 Also addressed here are issues related to writing code for
@@ -24,10 +23,6 @@ assume. Especially you may assume that the compiler
 <LI>supports member templates
 <LI>support for <TT>std::iterator_traits</TT>.
 </UL>
-Still, there are many bugs (sometimes known as "features") left in the
-compilers.  Have a look at the list of (non-obsolete) workarounds in
-Section  \ref secworkaround_flags  to get an idea of which "features" are
-still present.
 
 \section secleda_gmp_support Checking for LEDA or GMP support
 
