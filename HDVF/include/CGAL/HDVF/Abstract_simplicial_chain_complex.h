@@ -105,7 +105,7 @@ public:
      * \param id_cell %Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
+     * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
      */
     Column_chain d(size_t id_cell, int q) const
     {
@@ -125,7 +125,7 @@ public:
      * \param id_cell %Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
+     * \return The row-major chain containing the co-boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty row chain.
      */
     Row_chain cod(size_t id_cell, int q) const
     {
@@ -149,7 +149,7 @@ public:
      *
      * \param q Dimension along which the number of cells is returned.
      *
-     * \return Number of cells in dimension q.
+     * \return Number of cells in dimension `q`. f `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
      */
     size_t number_of_cells(int q) const
     {
@@ -159,16 +159,35 @@ public:
             return 0 ;
     }
 
-    /** \brief Returns the simplex of index i in dimension q. */
+    /** \brief Returns the simplex of index i in dimension q.
+     *
+     * \exception <Out_of_dimensions> If the dimension `q` is out of the range of dimensions in the complex, throws a `std::runtime_error`.
+     * \exception <Out_of_indices> If the cell index `i` is out of the range of cells index in the complex, throws a `std::runtime_error`.
+     */
     const Simplex& index_to_cell (size_t i, int q) const
     {
+        if ((q<0) || (q>_dim))
+            throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
+        if ((i<0) || (i>_nb_cells.at(q)))
+            throw std::runtime_error("index_to_cell: cell index i ("+std::to_string(i)+") is out the the range of cells index in the complex");
+        
         return _ind2simp.at(q).at(i);
     }
 
-    /** \brief Returns the index of a given simplex. */
+    /** \brief Returns the index of a given simplex.
+     *
+     * \exception <Out_of_dimensions> If the dimension of `simplex` is out of the range of dimensions in the complex, throws a `std::runtime_error`.
+     * \exception <Simplex_not_found> If the `simplex` does not exist in the complex, throws a `std::runtime_error`.
+     */
     size_t cell_to_index (const Simplex& simplex) const
     {
         const int q(simplex.dimension());
+        if ((q<0) || (q>_dim))
+            throw std::runtime_error("cell_to_index: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
+        
+        if (_simp2ind.at(q).find(simplex) == _simp2ind.at(q).end())
+            throw std::runtime_error(": simplex does not exist in the map");
+        
         return _simp2ind.at(q).at(simplex);
     }
 
@@ -211,9 +230,17 @@ public:
      * \param q Dimension of the cell.
      *
      * \return A vector of 0-simplex indices.
+     *
+     * \exception <Out_of_dimensions> If the dimension `q` is out of the range of dimensions in the complex, throws a `std::runtime_error`.
+     * \exception <Out_of_indices> If the cell index `id_cell` is out of the range of cells index in the complex, throws a `std::runtime_error`.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
+        if ((q<0) || (q>_dim))
+            throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
+        if ((id_cell<0) || (id_cell>_nb_cells.at(q)))
+            throw std::runtime_error("index_to_cell: cell index i ("+std::to_string(id_cell)+") is out the the range of cells index in the complex");
+        
         std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).vertices()) ;
         std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
