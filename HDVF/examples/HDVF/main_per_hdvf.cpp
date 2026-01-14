@@ -96,7 +96,7 @@ HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const 
     if (options.with_output)
     {
         std::cout << "----> perHDVF" << std::endl ;
-        hdvf.print_hdvf_persistence_info(std::cout);
+        hdvf.print_hdvf_persistence_information(std::cout);
         std::cout << "----> reduction" << std::endl ;
         hdvf.write_reduction() ;
         std::cout << "----> persistent diagram" << std::endl ;
@@ -113,7 +113,7 @@ HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const 
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << "----> perHDVF" << std::endl ;
-        hdvf.print_hdvf_persistence_info(out);
+        hdvf.print_hdvf_persistence_information(out);
         out << "----> reduction" << std::endl ;
         hdvf.write_reduction(out) ;
 

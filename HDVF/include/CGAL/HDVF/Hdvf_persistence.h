@@ -229,8 +229,9 @@ public:
      * \param f A filtration (a model of `Filtration`).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
+     * \param dimension_restriction Determines if persistence is computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
      */
-    Hdvf_persistence(const Chain_complex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
+    Hdvf_persistence(const Chain_complex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false, int dimension_restriction = -1) ;
 
     /**
      * \brief Computes a perfect persistent HDVF.
@@ -238,12 +239,28 @@ public:
      * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for A (returned by `find_pair_A()`), and applies the corresponding `A()` operation.
      * By definition of persistent homology, the `IntegralDomainWithoutDivision` of coefficients *must be* a field.
      *
+     * If `dimension_restriction` is a positive parameter (in the HDVF), then persistence is computed only in dimension `dimension_restriction`.
+     *
      * \param verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
      * \returns The vector of all `Cell_pair` paired with A.
      */
     std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false)
     {
+        int dim = this->_K.dimension(); // Get the dimension of the complex K
+
+        int min_dim, max_dim;
+        
+        // Compute min and max dimensions of find_pair_A
+        if (this->_dimension_restriction == -1) {
+            min_dim = 0;
+            max_dim = dim-1;
+        }
+        else {
+            min_dim = max(0, this->_dimension_restriction-1);
+            max_dim = min(this->_dimension_restriction,dim-1);
+        }
+        
         bool found;
         Cell_pair pair;
         std::vector<Cell_pair> res ;
@@ -258,7 +275,7 @@ public:
 
         // Compute "infinite" holes
         std::vector<std::vector<size_t> > criticals(this->psc_flags(CRITICAL)) ;
-        for (int q=0; q < criticals.size(); ++q)
+        for (int q=min_dim; q <= max_dim; ++q)
         {
             for (size_t i : criticals.at(q))
             {
@@ -327,7 +344,7 @@ public:
      *
      * \param out Reference to an output stream.
      */
-    std::ostream& print_hdvf_persistence_info (std::ostream& out)
+    std::ostream& print_hdvf_persistence_information (std::ostream& out)
     {
         out << "Filtration: " << _f << std::endl ;
         out << "_K_to_per and _per_to_K" << std::endl ;
@@ -465,13 +482,15 @@ public:
          */
         iterator(const Hdvf_persistence& per_hdvf, size_t i=0, bool discard_small = true) : _i(i), _per_hdvf(per_hdvf), _discard_small(discard_small)
         {
-            if(_discard_small)
-            {
+            if(_discard_small) {
                 // Iterate only over holes of duration > 0
-                while ((_i<_per_hdvf._persist.size()) && ((_per_hdvf._persist.at(_i)).duration() == 0))
-                {
+                while ((_i<_per_hdvf._persist.size()) && ((_per_hdvf._persist.at(_i)).duration() == 0)) {
                     ++_i ;
                 }
+            }
+            else {
+                // Proceed to next hole
+                ++i;
             }
         }
 
@@ -635,7 +654,7 @@ private:
 
 
 template<typename ChainComplex, typename Degree, typename Filtration_>
-Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
+Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export, int dimension_restriction) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt,dimension_restriction), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dimension()+1, 0) ;
@@ -711,7 +730,11 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
     const int q(c.second), sigma(_K_to_per.at(q).at(c.first))  ;
     // Search for pairing
     found = false;
-
+    
+    // Check if the cell belongs to the dimension restriction constraint
+    if ((this->_dimension_restriction >=0) && (q != this->_dimension_restriction) && (q != this->_dimension_restriction+1))
+        return p;
+    
     if (q >= 1)
     {
         // Compute bounded max while iterating over the Sparse_chain
@@ -748,6 +771,8 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
 template<typename ChainComplex, typename Degree, typename Filtration_>
 Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool& found, bool verbose)
 {
+    Cell_pair p;
+    found = false;
     // Compute next persistent pair
 
     ++_t ; // Step forward in the filtration
@@ -755,55 +780,55 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
     const size_t q_current(_f._filtration.at(t_current).second) ; // Get the dimension of the new current cell
     ++_t_dim.at(q_current) ; // Update time in the dimension of the current cell
     const size_t t_dim_current(_t_dim.at(q_current)-1); // Time of the current cell in its dimension
-    _masks.at(q_current).set_on(t_dim_current) ; // Update mask accordingly
-    this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
-
-    // Search for pairing
-    Cell_pair p(find_pair_A(found)) ;
-    if (found)
-    {
-        // Corresponding persistent interval
-        const int q(p.dim) ;
-        // indices of both cells in the _K basis
-        const size_t ki(_per_to_K.at(q).at(p.sigma)), kj(_per_to_K.at(q+1).at(p.tau)) ;
-        Cell ci(ki, q), cj(kj, q+1) ; // cells of the interval - in the K basis
-        size_t ti(_f._cell_to_t.at(ci)), tj(_f._cell_to_t.at(cj)) ; // times of the interval
-//        FiltrIndexPerInterval interval(ti, tj) ;
-//        CellsPerInterval interval_cells(ci, cj) ;
-//        DegreePerInterval interval_deg(_f._deg.at(ti), _f._deg.at(tj)) ;
-//        Persistence_interval hole(interval, interval_cells, interval_deg) ;
-        Persistence_interval hole;
-        hole.time_birth = ti;
-        hole.time_death = tj;
-        hole.degree_birth = _f._deg.at(ti);
-        hole.degree_death = _f._deg.at(tj);
-        hole.cell_birth = ci;
-        hole.cell_death = cj;
-        // Add this interval
-        _persist.push_back(hole) ;
-
-        // If export is on, store export data for significant persistent intervals
-        if (_with_export)
+    
+    // Test if _dimension_restriction is off (-1) or current dimension in the range of considered dimensions
+    if ((this->_dimension_restriction == -1) || ((q_current >= this->_dimension_restriction) && (q_current <= this->_dimension_restriction+1))) {
+        _masks.at(q_current).set_on(t_dim_current) ; // Update mask accordingly
+        this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
+        
+        // Search for pairing (between cells of dimension q_current and q_current+1)
+        p=find_pair_A(found) ;
+        if (found)
         {
-            if (hole.duration() > 0) /*((interval_deg.second-interval_deg.first)>0)*/
-                export_hdvf_persistence_pair(p) ;
-            else
-                export_hdvf_persistence_pair() ;
-        }
-
-
-        // Prepare for next step
-        this->A(p.sigma, p.tau, p.dim) ; // Update the reduction
-        if (verbose)
-        {
-            std::cout << "A : " << p.sigma << " - " << p.tau << " (dim " << p.dim << ")" << std::endl ;
-            this->write_matrices(std::cout) ;
+            // Corresponding persistent interval
+            const int q(p.dim) ;
+            // indices of both cells in the _K basis
+            const size_t ki(_per_to_K.at(q).at(p.sigma)), kj(_per_to_K.at(q+1).at(p.tau)) ;
+            Cell ci(ki, q), cj(kj, q+1) ; // cells of the interval - in the K basis
+            size_t ti(_f._cell_to_t.at(ci)), tj(_f._cell_to_t.at(cj)) ; // times of the interval
+            
+            Persistence_interval hole;
+            hole.time_birth = ti;
+            hole.time_death = tj;
+            hole.degree_birth = _f._deg.at(ti);
+            hole.degree_death = _f._deg.at(tj);
+            hole.cell_birth = ci;
+            hole.cell_death = cj;
+            // Add this interval
+            _persist.push_back(hole) ;
+            
+            // If export is on, store export data for significant persistent intervals
+            if (_with_export)
+            {
+                if (hole.duration() > 0) /*((interval_deg.second-interval_deg.first)>0)*/
+                    export_hdvf_persistence_pair(p) ;
+                else
+                    export_hdvf_persistence_pair() ;
+            }
+            
+            
+            // Prepare for next step
+            this->A(p.sigma, p.tau, p.dim) ; // Update the reduction
+            if (verbose)
+            {
+                std::cout << "A : " << p.sigma << " - " << p.tau << " (dim " << p.dim << ")" << std::endl ;
+                this->write_matrices(std::cout) ;
+            }
         }
     }
     return p;
 }
 
-// HELP !!!!!
 template<typename ChainComplex, typename Degree, typename Filtration_ >
 std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistence_interval& hole)
 {

@@ -241,6 +241,16 @@ public:
     {
         return (_chainsStates.begin() == _chainsStates.end()) ;
     }
+    
+    /**
+     * \brief Tests if a SparseMatrix is empty.
+     *
+     * The function return `true` is the SparseMatrix is empty (that is, if the number of columns or rows is null) and `false` otherwise.
+    */
+    bool is_empty()
+    {
+        return ((_size.first == 0) || (_size.second == 0));
+    }
 
     /**
      * \defgroup MatrixMatrixComparison Compares two matrices.

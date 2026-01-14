@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
     std::string filename ;
-    if (argc > 2) std::cout << "usage: example_hdvf_cubical pgm_file" << std::endl;
+    if (argc > 2) std::cout << "usage: hdvf_cubical pgm_file" << std::endl;
     else if (argc == 1) filename  = "data/cub_data/Eight_3D.pgm";
     else filename = argv[1];
 

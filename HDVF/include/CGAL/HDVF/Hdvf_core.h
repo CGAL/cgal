@@ -152,13 +152,30 @@ public:
      */
     inline int dimension_restriction() const { return _dimension_restriction; }
     
-    /** \brief Sets the dimension of Hdvf computation.
+    /** \brief Changes the dimension of Hdvf computation.
      *
-     * Set -1 for full computation, ; otherwise, returns the dimension along which the HDVF is computed.
+     * Set -1 for full computation, and a positive value lower than the complex dimension for a computation restricted to dimension `dimension`.
+     *
+     * \param dimension Dimension along which the computation is restricted (-1 for full computation).
      */
-    inline void dimension_restriction(int dimension) const {
+    inline void dimension_restriction(int dimension) {
         if ((dimension>=-1) && (dimension <= _K.dimension())) {
+            // Update dimension restriction
             _dimension_restriction = dimension;
+            // Update _min_dimension and _max_dimension accordingly
+            if (_dimension_restriction == -1) {
+                _min_dimension = 0;
+                _max_dimension = _K.dimension();
+            }
+            else
+                _min_dimension = _max_dimension = _dimension_restriction;
+            // Get necessary boundary matrices
+            int _min_dim = (_dimension_restriction==-1)?0:max(0,_min_dimension-1);
+            int _max_dim = (_dimension_restriction==-1)?_K.dimension():min(_K.dimension(),_max_dimension+1);
+            for (int q = _min_dim; q <= _max_dim; ++q) {
+                if (_DD_col.at(q).is_empty())
+                    _DD_col.at(q) = _K.boundary_matrix(q);
+            }
         }
         else {
             std::cerr << "dimension_restriction () error, provided incoherent argument " << dimension << std::endl;

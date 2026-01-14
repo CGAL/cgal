@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
     std::string filename ;
-    if (argc > 2) std::cout << "usage: example_hdvf_cubical pgm_file" << std::endl;
+    if (argc > 2) std::cout << "usage: hdvf_cubical_restrict pgm_file" << std::endl;
     else if (argc == 1) filename  = "data/data_cubical/Eight_3D.pgm";
     else filename = argv[1];
 
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     mesh.read_pgm(filename, khalimsky_coords);
     mesh.print_infos();
 
-    // Build simplicial chain complex
+    // Build cubical chain complex
     Complex complex(mesh, primal_dual);
 
     std::cout << complex;
@@ -62,5 +62,8 @@ int main(int argc, char **argv)
     // Output HDVF to vtk
     CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
 
+    hdvf.dimension_restriction(2);
+    
+    
     return 0;
 }

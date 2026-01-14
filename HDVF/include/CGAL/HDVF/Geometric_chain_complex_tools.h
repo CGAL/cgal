@@ -153,7 +153,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
 
     using HDVF_type = Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
     using Persistence_interval = HDVF_type::Persistence_interval;
-
+    
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
     std::vector<std::vector<size_t> > filtr_labels = per_hdvf.filtration().export_filtration();
