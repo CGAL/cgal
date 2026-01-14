@@ -174,7 +174,7 @@ kernel(const PolygonMesh& pm,
  /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief Computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
+  * \brief computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
   * It is represented as a convex mesh and may be empty.
   *
   * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
@@ -239,7 +239,7 @@ kernel(const PolygonMesh& pm,
  /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief Indicates whether the kernel of the given mesh is empty. The kernel is defined as the set of all points that can see the entire surface of the mesh.
+  * \brief indicates whether the kernel of the given mesh is empty. The kernel is defined as the set of all points that can see the entire surface of the mesh.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
@@ -265,7 +265,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenario }
+  *     \cgalParamDescription{If set to `true`, the planes are considered in random order to compute the kernel, improving runtime in most cases}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
@@ -292,7 +292,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief Return a point inside the kernel of the given mesh. The kernel is defined as the set of all points that can see the entire surface of the mesh.
+  * \brief returns a point inside the kernel of the given mesh. The kernel is defined as the set of all points that can see the entire surface of the mesh.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
