@@ -41,7 +41,7 @@ namespace Polygon_mesh_processing {
   *
   * @param pm input surface mesh
   * @param plane plane whose negative side defines the halfspace to intersect `pm` with.
-  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `pm`.
+  *              `Plane_3` is the plane type for the same \cgal kernel as the point of the vertex point map of `pm`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
