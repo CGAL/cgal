@@ -216,7 +216,7 @@ kernel(const PolygonMesh& pm,
   *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
-  *                           Note that as there are no mesh associated with `plane`,
+  *                           Note that as there is no mesh associated with `plane`,
   *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
   *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
@@ -331,7 +331,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *
   * \cgalNamedParamsEnd
   *
-  * @return `%Point_3`
+  * @return std::optional<`%Point_3`>
   */
 template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>

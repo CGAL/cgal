@@ -11,12 +11,12 @@
 
 #include <CGAL/Real_timer.h>
 
-using K=CGAL::Exact_predicates_inexact_constructions_kernel;
-using EK=CGAL::Exact_predicates_exact_constructions_kernel;
-using Mesh=CGAL::Surface_mesh<K::Point_3>;
-using EMesh=CGAL::Surface_mesh<EK::Point_3>;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+using Mesh = CGAL::Surface_mesh<K::Point_3>;
+using EMesh = CGAL::Surface_mesh<EK::Point_3>;
 
-namespace PMP=CGAL::Polygon_mesh_processing;
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 template<class Mesh>
 void round_mesh(Mesh &m){
