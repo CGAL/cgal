@@ -443,17 +443,15 @@ class Min_circle_2 {
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
-        using namespace std;
-
         CGAL::Verbose_ostream verr( verbose);
-        verr << endl;
-        verr << "CGAL::Min_circle_2<Traits>::" << endl;
-        verr << "is_valid( true, " << level << "):" << endl;
+        verr << std::endl;
+        verr << "CGAL::Min_circle_2<Traits>::" << std::endl;
+        verr << "is_valid( true, " << level << "):" << std::endl;
         verr << "  |P| = " << number_of_points()
-             << ", |S| = " << number_of_support_points() << endl;
+             << ", |S| = " << number_of_support_points() << std::endl;
 
         // containment check (a)
-        verr << "  a) containment check..." << flush;
+        verr << "  a) containment check..." << std::flush;
         Point_iterator point_iter;
         for ( point_iter  = points_begin();
               point_iter != points_end();
@@ -461,10 +459,10 @@ class Min_circle_2 {
             if ( has_on_unbounded_side( *point_iter))
                 return( CGAL::_optimisation_is_valid_fail( verr,
                             "circle does not contain all points"));
-        verr << "passed." << endl;
+        verr << "passed." << std::endl;
 
         // support set checks (b)+(c)
-        verr << "  b)+c) support set checks..." << flush;
+        verr << "  b)+c) support set checks..." << std::flush;
         switch( number_of_support_points()) {
 
           case 0:
@@ -548,9 +546,9 @@ class Min_circle_2 {
                         "illegal number of support points, \
                          not between 0 and 3."));
         };
-        verr << "passed." << endl;
+        verr << "passed." << std::endl;
 
-        verr << "  object is valid!" << endl;
+        verr << "  object is valid!" << std::endl;
         return( true);
     }
 
