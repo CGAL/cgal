@@ -363,6 +363,10 @@ bool is_flip_a_cap_angle_improvement(typename boost::graph_traits<TriangleMesh>:
   // reject if flipping the edge would create a larger cap angle (2 new faces, 3 angles each)
   auto is_worse_cap = [&](const Point_ref p, const Point_ref q, const Point_ref r)
   {
+    // Note that it is useful to test all angles, including the angle(s) at p1:
+    // it checks the (unlikely since p0p1p2 is a cap at p1) case where
+    // the diagonal post-flip is not in the cone p0p1p2 since then one
+    // the angle would be larger than the angle p0p1p2.
     bool res = (angle_cmp(p, q, r, p0, p1, p2) == CGAL::LARGER ||
                 angle_cmp(q, r, p, p0, p1, p2) == CGAL::LARGER ||
                 angle_cmp(r, p, q, p0, p1, p2) == CGAL::LARGER);
