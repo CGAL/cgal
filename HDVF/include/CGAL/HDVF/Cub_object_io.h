@@ -50,7 +50,7 @@ public:
     std::vector<IOCubCellType> cubs ;
     /** \brief Khalimsky or coordinates mode.
      *
-     * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (ie. cells of dimension `dim`).
+     * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (i.e. cells of dimension `dim`).
      */
     bool khalimsky ;
 

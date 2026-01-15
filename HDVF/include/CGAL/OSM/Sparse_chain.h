@@ -94,7 +94,7 @@ public:
     {}
 
     /**
-     * \brief Creates new empty sparse chain (ie. zero-chain) of given size.
+     * \brief Creates new empty sparse chain (i.e. zero-chain) of given size.
      *
      * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      *

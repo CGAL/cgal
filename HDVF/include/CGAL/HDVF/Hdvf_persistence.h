@@ -97,7 +97,7 @@ public:
         Degree degree_birth, degree_death;
         Cell cell_birth, cell_death;
 
-        /** \brief Computes the (degree) duration of a persistent interval (ie.\ persistent hole)
+        /** \brief Computes the (degree) duration of a persistent interval (i.e.\ persistent hole)
          *
          * By definitions of "default" values, infinite intervals have a duration of -1.
          */
@@ -281,7 +281,7 @@ public:
             {
                 // i : persistence index
                 // encoding of the second "infinite" cell:
-                //  -> equals the first cell (ie. birth = death)
+                //  -> equals the first cell (i.e. birth = death)
                 const Cell_pair p = {i, this->_K.number_of_cells(q+1), q} ;
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const Cell c(ki,q) ;
@@ -638,7 +638,7 @@ private:
      * \brief Find a valid `Cell_pair` for `A()` for persistent homology.
      *
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
-     * (ie.\ such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
+     * (i.e.\ such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
