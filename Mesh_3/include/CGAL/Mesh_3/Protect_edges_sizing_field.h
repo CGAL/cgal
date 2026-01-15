@@ -1396,8 +1396,10 @@ insert_balls(const Vertex_handle& vp,
     out = pair.second;
     domain_.set_polyline_iterator(new_point, polyline_iter, curve_index);
 
+    const bool vertex_was_inserted = (c3t3_.triangulation().number_of_vertices() > nbv);
+
     // Add edge to c3t3
-    if(!c3t3_.is_in_complex(prev, new_vertex)) {
+    if(vertex_was_inserted && !c3t3_.is_in_complex(prev, new_vertex)) {
       c3t3_.add_to_complex(prev, new_vertex, curve_index);
     }
     prev = new_vertex;
