@@ -46,7 +46,8 @@
 #define CGAL_analyze_impl_DT_RGB           128 /* */
 #define CGAL_analyze_impl_DT_ALL           255 /* */
 
-#include <cstring>
+
+namespace CGAL {
 
 struct header_key                       /*      header_key       */
     {                                           /* off + size*/
@@ -858,3 +859,5 @@ int printAnalyzeHeader( const char* name )
 
 
 }
+
+} // namespace CGAL

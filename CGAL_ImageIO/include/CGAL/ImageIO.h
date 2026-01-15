@@ -10,8 +10,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
-#ifndef IMAGEIO_H
-#define IMAGEIO_H
+#ifndef CGAL_IMAGEIO_H
+#define CGAL_IMAGEIO_H
 
 #include <CGAL/config.h>
 #include <CGAL/export/ImageIO.h>
@@ -70,7 +70,7 @@ extern int strncasecmp(const char *s1, const char *s2, size_t n);
 
 
 
-
+namespace CGAL {
 
 
 
@@ -536,7 +536,6 @@ CGAL_IMAGEIO_EXPORT inline float trilinear_interpolation(const _image* image,
   return triLinInterp(image, posx, posy, posz);
 }
 
-namespace CGAL {
 namespace IMAGEIO {
 
 //
@@ -642,7 +641,6 @@ static_evaluate(const _image* image,
 }
 
 } // end namespace IMAGEIO
-} // end namespace CGAL
 
 #define CGAL_IMAGE_IO_CASE(image_ptr,code)                                                 \
   switch(image_ptr->wordKind)                                                              \
@@ -718,8 +716,10 @@ CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const std::size_t i,const
 */
 CGAL_IMAGEIO_EXPORT void convertImageTypeToFloat(_image* image);
 
+} // end namespace CGAL
+
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO_impl.h>
 #endif // CGAL_HEADER_ONLY
 
-#endif // end IMAGEIO_H
+#endif // end CGAL_IMAGEIO_H

@@ -21,6 +21,8 @@
 
 #include <CGAL/ImageIO.h>
 
+namespace CGAL {
+
 /* read analyze format header
 
    return:
@@ -57,6 +59,8 @@ int writeAnalyzeHeader( const _image* im ) ;
     1: success
  */
 int writeAnalyzeData( const _image* im ) ;
+
+} // end namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO/analyze_impl.h>

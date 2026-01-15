@@ -11,13 +11,13 @@
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
 
-#ifndef INR_H
-#define INR_H
+#ifndef CGAL_INR_H
+#define CGAL_INR_H
 
 
 #include <CGAL/ImageIO.h>
 
-
+namespace CGAL {
 
 /** Writes the given inrimage header in an already opened file.
     @param im image descriptor
@@ -47,6 +47,8 @@ int testInrimageHeader(char *magic,const char *filename);
 int writeInrimage(char *basename,_image *im);
 /** creates an return the file format structure associated with the Inrimage file format */
 PTRIMAGE_FORMAT createInrimageFormat();
+
+} // end namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO/inr_impl.h>

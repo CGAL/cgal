@@ -22,6 +22,7 @@
 #include <sstream>
 #include <string.h>
 
+namespace CGAL {
 /* Magic header for inrimages v4 */
 #define INR4_MAGIC "#INRIMAGE-4#{"
 
@@ -503,3 +504,5 @@ PTRIMAGE_FORMAT createInrimageFormat() {
   strcpy(f->realName,"Inrimage");
   return f;
 }
+
+} // namespace CGAL

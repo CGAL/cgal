@@ -15,10 +15,12 @@
 
 #include <CGAL/ImageIO.h>
 
+namespace CGAL {
 /* get a string from a file and discard the ending newline character
    if any */
 char *fgetns(char *str, int n,  _image *im );
 
+}
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO/fgetns_impl.h>
 #endif // CGAL_HEADER_ONLY

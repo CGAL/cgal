@@ -17,7 +17,7 @@
 #endif
 
 #include <string.h>
-
+namespace CGAL {
 /* get a string from a file and discard the ending newline character
    if any */
 CGAL_INLINE_FUNCTION
@@ -31,4 +31,6 @@ char *fgetns(char *str, int n,  _image *im ) {
   std::size_t l = strlen(str);
   if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';
   return ret;
+}
+
 }
