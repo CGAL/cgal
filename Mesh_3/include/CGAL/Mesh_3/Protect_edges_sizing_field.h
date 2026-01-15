@@ -940,8 +940,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
   else // tr.dimension() <= 2
   {
     // change size of existing balls which include p
-    for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
-          end = tr.finite_vertices_end() ; it != end ; ++it )
+    for (Vertex_handle it : tr.finite_vertex_handles())
     {
       const Weighted_point& it_wp = tr.point(it);
       FT sq_d = tr.min_squared_distance(p, cp(it_wp));
@@ -969,8 +968,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     typename Tr::Point nearest_point;
 #endif
 
-    for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
-         end = tr.finite_vertices_end() ; it != end ; ++it )
+    for (Vertex_handle it : tr.finite_vertex_handles())
     {
       const Weighted_point& it_wp = tr.point(it);
       FT sq_d = tr.min_squared_distance(p, cp(it_wp));
@@ -1663,10 +1661,9 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
   // Remove incident edges from complex
-  for ( typename Adjacent_vertices::iterator vit = adjacent_vertices.begin(),
-       vend = adjacent_vertices.end() ; vit != vend ; ++vit )
+  for (const auto& [corner_vertex,_/*curve_id*/] : adjacent_vertices)
   {
-    c3t3_.remove_from_complex(v, vit->first);
+    c3t3_.remove_from_complex(v, corner_vertex);
   }
 
   // Store point data
@@ -1722,11 +1719,10 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   }
 
   // Restore c3t3 edges
-  for ( typename Adjacent_vertices::iterator it = adjacent_vertices.begin(),
-       end = adjacent_vertices.end() ; it != end ; ++it )
+  for(const auto& [corner_vertex, curve_id] : adjacent_vertices)
   {
     // Restore connectivity in c3t3
-    c3t3_.add_to_complex(new_v, it->first, it->second);
+    c3t3_.add_to_complex(new_v, corner_vertex, curve_id);
   }
 
   // Update unchecked vertices
@@ -2272,12 +2268,8 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
   Adjacent_vertices adjacent_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
-  for ( typename Adjacent_vertices::iterator vit = adjacent_vertices.begin(),
-       vend = adjacent_vertices.end() ; vit != vend ; ++vit )
+  for(const auto& [next /*vertex*/, curve_index] : adjacent_vertices)
   {
-    const Vertex_handle& next = vit->first;
-    const Curve_index& curve_index = vit->second; // MAY BE A CORNER INDEX
-
     CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
     CGAL_assertion(cid == curve_index);
 
