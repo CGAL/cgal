@@ -305,6 +305,9 @@ public:
   const_iterator next_segment_source(const_iterator it) const
   {
     CGAL_assertion(it != points_.end());
+    CGAL_assertion_code(if(!is_loop()))
+      CGAL_assertion(it != points_.end() - 1);
+
     if(it == last_segment_source())
     {
       if(is_loop())
