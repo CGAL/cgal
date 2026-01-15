@@ -1059,32 +1059,6 @@ insert_balls_on_edges()
         const Bare_point& q = ft.point_t_.first;
         const Index& q_index = ft.point_t_.second;
 
-        typename GT::Construct_weighted_point_3 cwp =
-            c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
-        Vertex_handle tmpvp;
-        Vertex_handle tmpvq;
-        c3t3_.triangulation().is_vertex(cwp(p), tmpvp);
-        c3t3_.triangulation().is_vertex(cwp(q), tmpvq);
-
-        if(tmpvp->in_dimension() != 0) {
-          std::cout << "Error: point p " << p
-            << " on curve #" << curve_index << " is not a corner but should be!"
-                    << std::endl;
-          std::cout << "  vertex info: "
-            << " in_dimension = " << tmpvp->in_dimension()
-            << ", index = " << CGAL::IO::oformat(c3t3_.index(tmpvp)) << std::endl;
-        }
-        if(tmpvq->in_dimension() != 0) {
-          std::cout << "Error: point q " << q << " on curve #" << curve_index << " is not a corner but should be!"
-                    << std::endl;
-          std::cout << "  vertex info: "
-                    << " in_dimension = " << tmpvq->in_dimension()
-                    << ", index = " << CGAL::IO::oformat(c3t3_.index(tmpvq)) << std::endl;
-        }
-
-        CGAL_assertion(tmpvp->in_dimension() == 0);
-        CGAL_assertion(tmpvq->in_dimension() == 0);
-
         vp = get_vertex_corner_from_point(p, p_index);
         vq = get_vertex_corner_from_point(q, q_index);
       }
