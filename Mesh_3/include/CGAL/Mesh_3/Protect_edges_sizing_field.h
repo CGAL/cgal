@@ -1141,9 +1141,9 @@ insert_balls_on_edges()
       }
       set_treated(curve_index);
     }
-    //std::stringstream s;
-    //s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
-    //debug_dump_c3t3(s.str(), c3t3_);
+    // std::stringstream s;
+    // s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
+    // debug_dump_c3t3(s.str(), c3t3_);
   }
 } //end insert_balls_on_edges()
 
@@ -1407,12 +1407,7 @@ insert_balls(const Vertex_handle& vp,
   {
     // New point position
     const auto [new_point, polyline_iter]
-     // = domain_.construct_point_on_curve(p, curve_index, pt_dist, p_loc);
       = domain_.construct_point_on_curve(prev_pt, curve_index, dist_to_prev, p_loc);
-
-    //std::cout.precision(17);
-    //    std::cout << "new_point: " << new_point << std::endl;
-//    std::cout << "polyline_iter at new_point: " << *polyline_iter << std::endl;
 
     // Weight (use as size the min between norm_step_size and linear interpolation)
     const FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
@@ -1432,10 +1427,6 @@ insert_balls(const Vertex_handle& vp,
       c3t3_.add_to_complex(prev, new_vertex, curve_index);
     }
     prev = new_vertex;
-
-    //std::ostringstream oss;
-    //oss << "new_point-" << i << "-curve-" << curve_index << ".binary.cgal";
-    //debug_dump_c3t3(oss.str(), c3t3_);
 
     // Step size
     step_size += r;
