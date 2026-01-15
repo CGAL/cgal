@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Alexandra Bac
 
-Algebraic topology, introduced more than a century ago, studies topological spaces using algebraic tools derived from them (e.g. groups). Since the 70's and 80's, pioneering works (MacLane, Hilton, Munkres...) paved the way to computational homology, which studies the ``holes'' of an object.
+Algebraic topology, introduced more than a century ago, studies topological spaces using algebraic tools derived from them (e.g. groups). Since the 70's and 80's, pioneering works (MacLane, Hilton, Munkres...) paved the way to computational homology, which studies the "holes" of an object.
 In particular, Munkres introduced an algorithm computing Betti numbers based on the pseudo-diagonalization of boundary matrices (Smith Normal Form).
 
 In the 90's, persistent homology emerged independently through the work of H. Edelsbrunner et al. (North Carolina), P. Frosini et al. (Bologna), and V. Robins (Colorado), extending the study of homology to sequences of complexes (filtrations).
@@ -82,7 +82,7 @@ Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by 
 \subsubsection secHDVFsimplicial_chain_complex Simplicial chain complexes
 
 An **abstract simplicial complex** of dimension \f$d\f$ is built from:
-- a set of vertices identified by an index of type `size_t` (cells of dimension 0 or **0-simplices**)
+- a set of vertices identified by an index of type `std::size_t` (cells of dimension 0 or **0-simplices**)
 - for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or **q-simplices**) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
 
 A **geometric simplicial complex** equips vertices with coordinates in \f$\mathbb R^q\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.
@@ -531,7 +531,7 @@ The ring of coefficients must be a model of the `IntegralDomainWithoutDivision` 
     typedef Zp<p> CoefficientType ;
 \endcode
 with \f$p\f$ a given prime number.
-- the field \f$\mathbb Z/2\mathbb Z\f$ (the class`Zp` can also be used, but `Z2`is optimized for \f$p=2\f$)
+- the field \f$\mathbb Z/2\mathbb Z\f$ (the class`Zp` can also be used, but `Z2` is optimized for \f$p=2\f$)
 \code
     #include <CGAL/HDVF/Z2.h>
     typedef Z2 CoefficientType ;
@@ -601,7 +601,7 @@ The file doesn't need to provide an exhaustive enumeration of simplices (with al
 Example of `simp` file. **Left:** a simplicial complex; **Right:** associated `simp` files describing maximal simplices.
 \cgalFigureEnd
 
-\subsubsection secHDVFcubFile The `.cub` file format
+\subsubsection secHDVFcubFile The CUB file format
 
 The `cub` file format is a very simple text format encoding binary volumes:
 - first line: dimension
@@ -630,8 +630,8 @@ Several HDVF options are available:
 \subsubsection secHDVFcomputePerfect Computing a perfect HDVF automatically
 
 The HDVF obtained is empty (all cells are critical). In order to compute homology/cohomology that is a perfect HDVF, the package provides two methods:
-- `compute_perfect_hdvf` (fastest method:  cells are paired using the A operation by decreasing dimension using the first valid pair)
-- `compute_rand_perfect_hdvf` (slowest: compute all valid pairs for the A operation are select one randomly)
+- `compute_perfect_hdvf()` (fastest method:  cells are paired using the A operation by decreasing dimension using the first valid pair)
+- `compute_rand_perfect_hdvf()` (slowest: compute all valid pairs for the A operation are select one randomly)
 
 \code
     hdvf.compute_perfect_hdvf();
@@ -642,7 +642,7 @@ or
 \endcode
 
 When the ring of coefficients is a field, these methods always produce a perfect HDVF. However for \f$\mathbb Z\f$-(co)homology (without torsion), the existence of complexes admitting no perfect HDVF is still an open question (and the answer is negative for "reasonable" objects, indeed we still have no counter example).
-The method `is_perfect_hdvf` checks if a HDVF is perfect.
+The method `is_perfect_hdvf()` checks if a HDVF is perfect.
 
 \subsubsection secHDVFcomputePerfectA Computing a perfect HDVF with A operations
 
@@ -670,11 +670,11 @@ The package provide a family of methods to search for valid pairings:
 
 \subsection secHDVFoutput Extracting and saving homological/cohomological information
 
-\warning All `vtk` exports are only available for geometric chain complexes (ie.\ `Simplicial_chain_complex` and `Cubical_chain_complex`).
+\warning All `vtk` exports are only available for geometric chain complexes (i.e. `Simplicial_chain_complex` and `Cubical_chain_complex`).
 
 How to extract (co)homological information then? Various solutions and output are available:
 - **HDVF extraction / visualization**:
-    The method `psc_labels` extracts cells flags in any dimensions. The complex annotated with labels can then be exported to `vtk` for visualization. The `vtk` output includes a `Label` property encoding the HDVF PSC_flag (-1 for PRIMARY, 1 for SECONDARY and 0 for CRITICAL cells), and a `CellId` property storing cells indices:
+    The method `psc_labels()` extracts cells flags in any dimensions. The complex annotated with labels can then be exported to `vtk` for visualization. The `vtk` output includes a `Label` property encoding the HDVF PSC_flag (-1 for PRIMARY, 1 for SECONDARY and 0 for CRITICAL cells), and a `CellId` property storing cells indices:
     \code
         // Labels extraction
         vector<vector<int> > labels = hdvf.psc_labels() ;
@@ -706,9 +706,9 @@ How to extract (co)homological information then? Various solutions and output ar
     \endcode
     If `id` is provided, a `Label` integer property is added to the vtk file (0 for the cell `id`, 2 for other cells).
 - **Reduction maps**
-    Matrices of the reduction (\f$F\f$, \f$G\f$, \f$H\f$ and \f$D\f$) can be also obtained using `matrix_f`, `matrix_g`, `matrix_h` and `matrix_dd`.
+    Matrices of the reduction (\f$F\f$, \f$G\f$, \f$H\f$ and \f$D\f$) can be also obtained using `matrix_f()`, `matrix_g()`, `matrix_h()` and `matrix_dd()`.
 - **Automated vtk export**
-    In order to ease `vtk` export, an "automated" method `CGAL::IO::write_VTK` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
+    In order to ease `vtk` export, an "automated" method `CGAL::IO::write_VTK()` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
     \code
             CGAL::IO::write_VTK<CoefficientType, Complex>(hdvf, complex, outfile_root, co_faces) ;
     \endcode
@@ -754,7 +754,7 @@ The following example builds a column major matrix, iterate over its non empty c
 
 All standard linear algebra operators are provided (and optimized according to the matrix/chain types).
 
-\subsubsection secHDVFOSM_format The `.osm` file format
+\subsubsection secHDVFOSM_format The OSM file format
 
 The `.osm` file format is a simple text format to store OSM sparse matrices:
 - Matrix type (0 for COLUMN, 1 for ROW)

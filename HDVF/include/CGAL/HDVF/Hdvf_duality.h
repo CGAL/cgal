@@ -234,7 +234,7 @@ public:
      *
      * \warning Run `compute_perfect_hdvf()` first (to build perfect HDVFs over `K` and `L-K` respectively).
      *
-     * The function computes a random perfect HDVF over remaining critical cells. Each pair of cells inserted with the `A() operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
+     * The function computes a random perfect HDVF over remaining critical cells. Each pair of cells inserted with the `A()` operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
