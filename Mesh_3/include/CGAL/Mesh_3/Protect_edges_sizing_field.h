@@ -1818,6 +1818,9 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
     return out;
   CGAL_assertion(adjacent_vertices.back().second== curve_index);
 
+  if (use_minimal_size() && adjacent_vertices.size() < 2)
+    return out;
+
   // Walk along edge to find the edge piece which is not correctly sampled
   typedef std::list<Vertex_handle> Vertex_list;
   Vertex_list to_repopulate;
