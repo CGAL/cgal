@@ -21,7 +21,7 @@
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/OSM/OSM.h>
-#include <CGAL/HDVF/hdvf_tools.h>
+#include <CGAL/HDVF/Hdvf_tools.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Cub_object_io.h>
 #include "arguments.h"

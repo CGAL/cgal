@@ -45,7 +45,7 @@ struct Hdvf_traits_2 {
 };
 
 template <typename K>
-std::function<typename K::Point_3(const typename K::Point_2&)> Hdvf_traits_2<K>::to_point3 = [](const K::Point_2& p) { return typename K::Point_3(p[0], p[1], 0); };
+std::function<typename K::Point_3(const typename K::Point_2&)> Hdvf_traits_2<K>::to_point3 = [](const typename K::Point_2& p) { return typename K::Point_3(p[0], p[1], 0); };
 
 } /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */

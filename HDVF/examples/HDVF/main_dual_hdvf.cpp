@@ -18,11 +18,10 @@
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
-#include <CGAL/HDVF/hdvf_tools.h>
 #include <CGAL/HDVF/Hdvf_duality.h>
 #include <CGAL/OSM/OSM.h>
 #include <CGAL/HDVF/Sub_sparse_matrix.h>
-#include <CGAL/HDVF/hdvf_tools.h>
+#include <CGAL/HDVF/Hdvf_tools.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Cub_object_io.h>
 #include <CGAL/HDVF/Icosphere_object_io.h>

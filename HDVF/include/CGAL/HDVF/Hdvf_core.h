@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /** \brief HDVF Enum for the label of cells. */
-static enum PSC_flag {
+enum PSC_flag {
     PRIMARY,
     SECONDARY,
     CRITICAL,

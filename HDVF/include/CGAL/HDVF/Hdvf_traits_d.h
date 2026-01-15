@@ -118,7 +118,7 @@ std::function<typename Exact_predicates_inexact_constructions_kernel::Point_3(co
 
 template <typename K>
 std::function<typename Exact_predicates_inexact_constructions_kernel::Point_3(const typename K::Point_d&)> Hdvf_traits_d<K>::default_projection =
-    [](const K::Point_d& p) { return typename Exact_predicates_inexact_constructions_kernel::Point_3(p[0], p[1], p[2]); };
+    [](const typename K::Point_d& p) { return typename Exact_predicates_inexact_constructions_kernel::Point_3(p[0], p[1], p[2]); };
 
 
 
