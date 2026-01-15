@@ -33,10 +33,10 @@ do
                 workflows_check_runs=$(gh api repos/$repo/check-suites/$workflows_checksuite_id/check-runs)
                 workflows_check_runs_id=$(jq -r '.check_runs[0].id' <<< "$workflows_check_runs")
                 workflows_check_runs_annotation=$(gh api repos/$repo/check-runs/$workflows_check_runs_id/annotations)
-                worfklows_annotation_level=$(jq -r '.[].annotation_level' <<< "$workflows_check_runs_annotation" | tr '\n' ' ')
-                if [ "$worfklows_annotation_level" == "" ]
+                workflows_annotation_level=$(jq -r '.[].annotation_level' <<< "$workflows_check_runs_annotation" | tr '\n' ' ')
+                if [ "$workflows_annotation_level" == "" ]
                 then
-                    worfklows_annotation_level+="-"
+                    workflows_annotation_level+="-"
                 fi
                 workflows_event=""
                 for trigger in $(curl --silent https://raw.githubusercontent.com/$repo/$default_branch/$workflows_path | yq '.on' | grep -v '  .*'); do
@@ -47,7 +47,7 @@ do
                     fi
                 done
                 workflows_yml="${workflows_path##*.github/}"
-                echo "| [$repo](https://github.com/$repo) | [$workflows_name](https://github.com/$repo/actions/$workflows_yml) | $workflows_branch | $workflows_event | $workflows_on | [$workflows_status - $workflows_conclusion](https://github.com/$repo/actions/runs/$workflows_run_id) | $workflows_state | ***$worfklows_annotation_level*** | $workflows_start | $(((actualdate - workflows_date) / 86400 )) days"
+                echo "| [$repo](https://github.com/$repo) | [$workflows_name](https://github.com/$repo/actions/$workflows_yml) | $workflows_branch | $workflows_event | $workflows_on | [$workflows_status - $workflows_conclusion](https://github.com/$repo/actions/runs/$workflows_run_id) | $workflows_state | ***$workflows_annotation_level*** | $workflows_start | $(((actualdate - workflows_date) / 86400 )) days"
             fi
         done
     fi

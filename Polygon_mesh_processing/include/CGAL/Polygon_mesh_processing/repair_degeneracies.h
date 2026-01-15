@@ -932,7 +932,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       else // ! CGAL::Euler::does_satisfy_link_condition(e, tmesh)
       {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-        std::cout << "\t Uncollapsable edge!" << std::endl;
+        std::cout << "\t Uncollapsible edge!" << std::endl;
 #endif
         run_cap_check(h);
       }
@@ -2539,7 +2539,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       typename Sorted_point_set::iterator it_pt = std::next(sorted_points.begin()),
                                           it_pt_end = std::prev(sorted_points.end());
 
-      bool non_collapsable = false;
+      bool non_collapsible = false;
       typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
       typename std::vector<halfedge_descriptor>::iterator side_two_it = side_two.begin();
       for(;it_pt!=it_pt_end;++it_pt)
@@ -2554,7 +2554,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           {
             if(source(h, tmesh) == target(*side_two_it, tmesh))
             {
-              non_collapsable = true;
+              non_collapsible = true;
               break;
             }
           }
@@ -2570,18 +2570,18 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           {
             if(source(h, tmesh)==v2)
             {
-              non_collapsable=true;
+              non_collapsible=true;
               break;
             }
           }
         }
 
-        if(non_collapsable) break;
+        if(non_collapsible) break;
         if(target_of_side_one) ++side_one_it;
         if(target_of_side_two) ++side_two_it;
       }
 
-      if(non_collapsable)
+      if(non_collapsible)
       {
         for(face_descriptor f : cc_faces)
           degenerate_face_set.erase(f);

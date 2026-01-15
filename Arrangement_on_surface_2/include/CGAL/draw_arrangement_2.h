@@ -358,7 +358,7 @@ public:
 
   /*! draws a curve using approximate coordinates.
    * Call this member function only of the geometry traits is equipped with
-   * the coordinate-aproximation functionality of a curve.
+   * the coordinate-approximation functionality of a curve.
    * This function must be inlined (e.g., a template) to enable the
    * compiled-time dispatching in the function `draw_curve()`.
    */
