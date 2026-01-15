@@ -75,34 +75,34 @@ int main(int argc, char **argv)
         CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
     }
 
-    /* Example 2 : build a lower star filtration "slicing" the object according to the index of vertices (we can imagine any other filtration that does not depend on the geometry (e.g. color of vertices...)
-     -> AbstractChainComplex in this case
-     */
-    {
-        // --- First: build the function mapping the index of a vertex to its degree (here the index itself)
-        std::function<Degree(size_t)> f = [&complex](size_t i)
-        {
-            return Degree(i) ;
-        } ;
-
-        // -- Second: build the associated lower star filtration
-        FiltrationType filtration(complex, f);
-
-
-        // Build empty persistent HDVF (with vtk export activated)
-        HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
-
-        // Compute a perfect HDVF
-        hdvf.compute_perfect_hdvf();
-
-        // Output HDVF to console
-        hdvf.write_matrices();
-        hdvf.write_reduction();
-        std::cout << hdvf ;
-
-        // Output HDVF to vtk
-        CGAL::IO::write_VTK(hdvf, complex, "tmp/res2", true) ;
-    }
+//    /* Example 2 : build a lower star filtration "slicing" the object according to the index of vertices (we can imagine any other filtration that does not depend on the geometry (e.g. color of vertices...)
+//     -> AbstractChainComplex in this case
+//     */
+//    {
+//        // --- First: build the function mapping the index of a vertex to its degree (here the index itself)
+//        std::function<Degree(size_t)> f = [&complex](size_t i)
+//        {
+//            return Degree(i) ;
+//        } ;
+//
+//        // -- Second: build the associated lower star filtration
+//        FiltrationType filtration(complex, f);
+//
+//
+//        // Build empty persistent HDVF (with vtk export activated)
+//        HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
+//
+//        // Compute a perfect HDVF
+//        hdvf.compute_perfect_hdvf();
+//
+//        // Output HDVF to console
+//        hdvf.write_matrices();
+//        hdvf.write_reduction();
+//        std::cout << hdvf ;
+//
+//        // Output HDVF to vtk
+//        CGAL::IO::write_VTK(hdvf, complex, "tmp/res2", true) ;
+//    }
 
     return 0;
 }

@@ -254,11 +254,11 @@ public:
         // Compute min and max dimensions of find_pair_A
         if (this->_dimension_restriction == -1) {
             min_dim = 0;
-            max_dim = dim-1;
+            max_dim = dim;
         }
         else {
-            min_dim = max(0, this->_dimension_restriction-1);
-            max_dim = min(this->_dimension_restriction,dim-1);
+            min_dim = this->_dimension_restriction;
+            max_dim = this->_dimension_restriction;
         }
 
         bool found;
