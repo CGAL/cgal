@@ -77,7 +77,7 @@ public:
 
   static void print_supported_file_format()
   {
-    CGAL::::printSupportedFileFormat();
+    CGAL::printSupportedFileFormat();
   }
 
   FT operator()(Point p) const
