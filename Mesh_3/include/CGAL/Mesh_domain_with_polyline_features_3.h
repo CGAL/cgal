@@ -525,7 +525,7 @@ private:
 
     bool operator==(const Point_on_curve& pc) const
     {
-      return (point == pc.point) && (curve_index == pc.curve_index);
+      return (curve_index == pc.curve_index) && (point == pc.point);
     }
     friend std::size_t hash_value(const Point_on_curve& p)
     {
