@@ -340,11 +340,10 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
 }
 
 template <typename TriangleMesh, typename VPM, typename Traits>
-bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
-                 const TriangleMesh& tmesh,
-                 const VPM& vpm,
-                 const Traits& gt,
-                 const double cap_threshold)
+bool is_flip_a_cap_angle_improvement(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
+                                     const TriangleMesh& tmesh,
+                                     const VPM& vpm,
+                                     const Traits& gt)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -354,45 +353,51 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 
   const halfedge_descriptor h = halfedge(e, tmesh);
 
-#if 1
   CGAL_USE(gt);
+
   const Point_ref p0 = get(vpm, target(h, tmesh));
   const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
   const Point_ref p2 = get(vpm, source(h, tmesh));
   const Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
 
-  // reject if flipping the edge would create a worse cap
+  // reject if flipping the edge would create a larger cap angle (2 new faces, 3 angles each)
   auto is_worse_cap = [&](const Point_ref p, const Point_ref q, const Point_ref r)
   {
-    internal::Is_cap_angle_over_threshold<Traits> pred;
-    const int res = pred(p, q, r, square(cap_threshold)); // @todo factorize square()
-    if (res == -1)
-      return false;
-    else if (res == 0) {
-      bool worse = CGAL::compare_angle(q, r, p, p0, p1, p2) == CGAL::LARGER;
-      if (worse) {
-        std::cout << "flipping would be worse: " << CGAL::approximate_angle(p0, p1, p2) << " --> " << CGAL::approximate_angle(q, r, p) << std::endl;
-      }
-      return worse;
-    } else if (res == 1) {
-      bool worse = CGAL::compare_angle(r, p, q, p0, p1, p2) == CGAL::LARGER;
-      if (worse) {
-        std::cout << "flipping would be worse: " << CGAL::approximate_angle(p0, p1, p2) << " --> " << CGAL::approximate_angle(r, p, q) << std::endl;
-      }
-      return worse;
-    } else {
-      bool worse = CGAL::compare_angle(p, q, r, p0, p1, p2) == CGAL::LARGER;
-      if (worse) {
-        std::cout << "flipping would be worse: " << CGAL::approximate_angle(p0, p1, p2) << " --> " << CGAL::approximate_angle(p, q, r) << std::endl;
-      }
-      return worse;
+    bool res = (CGAL::compare_angle(p, q, r, p0, p1, p2) == CGAL::LARGER ||
+                CGAL::compare_angle(q, r, p, p0, p1, p2) == CGAL::LARGER ||
+                CGAL::compare_angle(r, p, q, p0, p1, p2) == CGAL::LARGER);
+
+#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+    if (res) {
+      std::cout << "flipping would be worse: "
+                << CGAL::approximate_angle(p0, p1, p2) << " --> "
+                << CGAL::approximate_angle(p, q, r)
+                << CGAL::approximate_angle(q, r, p)
+                << CGAL::approximate_angle(r, p, q) << std::endl;
     }
+#endif
+    return res;
   };
 
-  // @todo maybe something smarter: we know the angle at p1 is large...
-  return !is_worse_cap(p0, p1, p3) && !is_worse_cap(p3, p1, p2);
+  // since the cap angle is at p1, put the vertices in the order such that the first
+  // angle tested is the likely largest (i.e., at p0 / p2)
+  return !is_worse_cap(p3, p0, p1) && !is_worse_cap(p1, p2, p3);
+}
 
-#else
+template <typename TriangleMesh, typename VPM, typename Traits>
+bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
+                 const TriangleMesh& tmesh,
+                 const VPM& vpm,
+                 const Traits& gt)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename boost::property_traits<VPM>::reference                 Point_ref;
+
+  CGAL_precondition(!is_border(e, tmesh));
+
+  const halfedge_descriptor h = halfedge(e, tmesh);
+
   typedef typename Traits:: FT                                            FT;
   typename Traits::Compute_approximate_angle_3 angle = gt.compute_approximate_angle_3_object();
   const Point_ref p0 = get(vpm, target(h, tmesh));
@@ -403,7 +408,6 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
   const FT ap1 = angle(p0,p1,p2);
   const FT ap3 = angle(p2,p3,p0);
   return (ap1 + ap3 > FT(180));
-#endif
 }
 
 template <class TriangleMesh, class VPM, class Traits, class Functor>
@@ -1047,7 +1051,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       if(!halfedge(target(next(h, tmesh), tmesh),
                    target(next(opposite(h, tmesh), tmesh), tmesh), tmesh).second)
       {
-        if(!internal::should_flip(e, tmesh, vpm, gt, cap_threshold))
+        if(!internal::is_flip_a_cap_angle_improvement(e, tmesh, vpm, gt))
         {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Flipping prevented: not the best diagonal" << std::endl;
