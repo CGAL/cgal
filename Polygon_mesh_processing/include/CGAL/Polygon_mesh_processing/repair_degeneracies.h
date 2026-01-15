@@ -351,9 +351,9 @@ bool is_flip_a_cap_angle_improvement(typename boost::graph_traits<TriangleMesh>:
 
   CGAL_precondition(!is_border(e, tmesh));
 
-  const halfedge_descriptor h = halfedge(e, tmesh);
+  typename Traits::Compare_angle_3 angle_cmp = gt.compare_angle_3_object();
 
-  CGAL_USE(gt);
+  const halfedge_descriptor h = halfedge(e, tmesh);
 
   const Point_ref p0 = get(vpm, target(h, tmesh));
   const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
@@ -363,17 +363,18 @@ bool is_flip_a_cap_angle_improvement(typename boost::graph_traits<TriangleMesh>:
   // reject if flipping the edge would create a larger cap angle (2 new faces, 3 angles each)
   auto is_worse_cap = [&](const Point_ref p, const Point_ref q, const Point_ref r)
   {
-    bool res = (CGAL::compare_angle(p, q, r, p0, p1, p2) == CGAL::LARGER ||
-                CGAL::compare_angle(q, r, p, p0, p1, p2) == CGAL::LARGER ||
-                CGAL::compare_angle(r, p, q, p0, p1, p2) == CGAL::LARGER);
+    bool res = (angle_cmp(p, q, r, p0, p1, p2) == CGAL::LARGER ||
+                angle_cmp(q, r, p, p0, p1, p2) == CGAL::LARGER ||
+                angle_cmp(r, p, q, p0, p1, p2) == CGAL::LARGER);
 
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
     if (res) {
+      typename Traits::Compute_approximate_angle_3 angle = gt.compute_approximate_angle_3_object();
       std::cout << "flipping would be worse: "
-                << CGAL::approximate_angle(p0, p1, p2) << " --> "
-                << CGAL::approximate_angle(p, q, r)
-                << CGAL::approximate_angle(q, r, p)
-                << CGAL::approximate_angle(r, p, q) << std::endl;
+                << angle(p0, p1, p2) << " --> "
+                << angle(p, q, r)
+                << angle(q, r, p)
+                << angle(r, p, q) << std::endl;
     }
 #endif
     return res;
