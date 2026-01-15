@@ -318,9 +318,9 @@ bool Filtration_core<ChainComplex, Degree>::is_valid() const
                 if (!valid)
                     std::cout << "face not found" << std::endl ;
                 if (it_face != _cell_to_t.end())
-                    valid = valid & (_cell_to_t[face] < i) ;
+                    valid = valid & (_cell_to_t.at(face) < i) ;
                 if (!valid)
-                    std::cout << "face " << it->first << " at time : " << _cell_to_t[face] << " with i : " << i << std::endl ;
+                    std::cout << "face " << it->first << " at time : " << _cell_to_t.at(face) << " with i : " << i << std::endl ;
             }
         }
         if (!valid)
