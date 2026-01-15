@@ -756,10 +756,15 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   std::cerr << "The weight was " << w << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 
-  c3t3_.set_dimension(v, dim);
+  // Set dimension and index
+  if(lt != Tr::VERTEX)
+  {
+    c3t3_.set_dimension(v, dim);
+    c3t3_.set_index(v, index);
+  }
+
   if(special_ball)
     set_special(v);
-  c3t3_.set_index(v, index);
 
   unchecked_vertices_.insert(v);
 
