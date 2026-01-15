@@ -539,14 +539,58 @@ public:
       //Compute distance to the curve on which p lies
       typedef typename GT::Segment_3                        Segment_3;
       typedef typename GT::Plane_3                          Plane_3;
+      typedef typename GT::Sphere_3                         Sphere_3;
 
-      const auto& [_ /*point is not used*/, prim_id]
+      auto [closest_pt, closest_prim_id]
         = d_ptr->domain.curves_aabb_tree().closest_point_and_primitive(p);
 
-      Segment_3 curr_segment(*prim_id.second, *(prim_id.second + 1));
+      Curve_index closest_curve_id = closest_prim_id.first->first;
+      if(curve_id != closest_curve_id)
+      {
+        // look for another closest point in a tiny sphere
+        // if p coincides with closest_pt,
+        //  radius = of 1% closest_primitive
+        // else //distance must be very small
+        //  radius = 10 * distance(p, closest_pt)
+
+        FT sqr = (p == closest_pt) // p may coincide with closest_pt, on different feature curves
+            ? 0.0001 * CGAL::squared_distance(*closest_prim_id.second, *(closest_prim_id.second + 1))
+            : 100 * CGAL::squared_distance(p, closest_pt);
+
+        bool valid_closest_found = false;
+        while(!valid_closest_found)
+        {
+          std::vector<Input_curves_AABB_tree_primitive_> closest_prims;
+          d_ptr->domain.curves_aabb_tree()
+            .all_intersected_primitives(Sphere_3(closest_pt, sqr),
+                                        std::back_inserter(closest_prims));
+
+          for(const Input_curves_AABB_tree_primitive_& close_prim : closest_prims)
+          {
+            if(curve_id == close_prim.id().first->first)
+            {
+              closest_prim_id = close_prim.id();
+              closest_curve_id = curve_id;
+              valid_closest_found = true;
+              break;
+            }
+          }
+          sqr *= 4; // double radius for next iteration
+        }
+      }
+
+#ifdef CGAL_MESH_3_VERBOSE
+      if(curve_id != closest_curve_id)
+      {
+        std::cout << "Warning: point " << p << " on curve_id = "
+                  << curve_id << " has closest curve_id = " << closest_curve_id
+                  << std::endl;
+      }
+#endif
+
+      Segment_3 curr_segment(*closest_prim_id.second, *(closest_prim_id.second + 1));
       //todo : check segment is not degenerate
       Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
-      Input_curves_AABB_tree_primitive_ curr_prim(prim_id);
 
       // find ppid's polyline iterator
       const auto& polyline = closest_prim_id.first->second;
@@ -574,10 +618,11 @@ public:
       FT sqd_intersection = -1;
       for(Input_curves_AABB_tree_primitive_ prim : prims)
       {
-        if (prim.id() == curr_prim.id())
-          continue;//curr_prim is the closest primitive
+        if (prim.id() == closest_prim_id)//curr_prim.id())
+          continue;//closest_prim_id is the closest primitive
 
-        if (curve_id != prim.id().first->first)
+        if (curve_id != prim.id().first->first
+         || closest_curve_id != prim.id().first->first)
           continue;//don't deal with the same curves as what is done above
 
         const auto int_res = CGAL::intersection(prim.datum(), curr_ortho_plane);
