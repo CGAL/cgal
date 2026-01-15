@@ -43,7 +43,7 @@ get_supporting_curve(std::string filename,
   //Remarks on snapping_tolerance of locate: it is actually a value used as is in barycentric coordinates with no relation to the size of the triangle
   //      and snapping is only done when at least one coordinate is negative (clamping would be a better name, snapping is what I'm doing below).
   //TODO: the following works only if we don't have a lfs smaller than snap_tol
-  double snap_tol = 0.00001;
+  double snap_tol = 0.001;
   for(int i=0; i<nbp; ++i)
   {
     K::Sphere_3 query(polyline[i], snap_tol*snap_tol);
@@ -53,7 +53,7 @@ get_supporting_curve(std::string filename,
     switch (primitives.size())
     {
       case 0:
-        std::cerr <<"ERROR points too far!\n";
+        std::cerr <<"ERROR point " << polyline[i] << " is too far!\n";
         exit(1);
       break;
       case 1:
@@ -130,6 +130,7 @@ get_supporting_curve(std::string filename,
       if (face_locations[i].second[k]<0) face_locations[i].second[k]=0;
   }
 
+#ifndef CGAL_NDEBUG
   // DEBUG code to check that the polyline has correctly been converted to face locations (it's not a path as if vertex is hit we don't have the face continuity property)
   for (int i=0;i<nbp-1; ++i)
   {
@@ -152,7 +153,7 @@ get_supporting_curve(std::string filename,
     }
     CGAL_assertion(OK);
   }
-
+#endif
 
   return face_locations;
 }
@@ -162,11 +163,8 @@ int main(int argc, char** argv)
   std::string filename = (argc > 1) ? std::string(argv[1])
     : CGAL::data_file_path("meshes/elephant.off");
 
-  std::string support_filename = (argc > 2) ? std::string(argv[2])
-    : CGAL::data_file_path("XXXXX");
-
-  std::string filename_poly = (argc > 3) ? std::string(argv[3])
-    : CGAL::data_file_path("XXXXX");
+  std::string support_filename = (argc > 2) ? std::string(argv[2]) : "space_filling.polylines.txt";
+  std::string filename_poly = (argc > 3) ? std::string(argv[3]) : "long.polylines.txt";
 
   std::size_t nb_copies =  atoi(argv[4]);
 
@@ -255,12 +253,28 @@ int main(int argc, char** argv)
   VGoS::init_geodesic_dual_solver(solver, mesh);
 
   // get supporting curve
+#if 0
   std::vector<Face_location> supporting_curve = get_supporting_curve(support_filename, mesh);
   if (supporting_curve.empty()) return 1;
+#else
+  Mesh::Face_index f1 = *std::next(faces(mesh).begin(), 1392);
+  Mesh::Face_index f2 = *std::next(faces(mesh).begin(), 4613);
 
+  Face_location src(f1, CGAL::make_array(0.3,0.3,0.4));
+  Face_location tgt(f2, CGAL::make_array(0.3,0.3,0.4));
+
+  std::vector<Edge_location> edge_locations;
+  VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
+
+  std::vector<Face_location> supporting_curve;
+  supporting_curve.reserve(edge_locations.size()+2);
+  supporting_curve.push_back(src);
+  for (auto el : edge_locations)
+    supporting_curve.push_back(PMP::to_face_location(el, mesh));
+  supporting_curve.push_back(tgt);
+#endif
 
   std::ofstream support_out("support.polylines.txt");
-
   std::vector<K::Point_3> support_poly;
   support_poly.reserve(supporting_curve.size());
   VGoS::convert_path_to_polyline(supporting_curve, mesh, std::back_inserter(support_poly));
@@ -270,18 +284,19 @@ int main(int argc, char** argv)
     support_out << " " << p;
   support_out << "\n";
   support_out.close();
+
   std::cout <<"supporting_curve generated!\n";
 
   // convert polygons to polar coordinates
-  const double expected_height = 0.025; // user parameter for scaling
+  const double expected_height = 0.05; // user parameter for scaling
   const double scaling = expected_height/(gbox.ymax()-gbox.ymin());
-
+  const bool is_centered = true;
 
   std::ofstream out("label_on_curve.polylines.txt");
   out << std::setprecision(17);
 
   std::vector<std::vector<Face_location>> polygons_3;
-  polygons_3 = VGoS::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., false, mesh, solver);
+  polygons_3 = VGoS::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., is_centered, mesh, solver);
 
   for (const auto& polygon_path : polygons_3)
   {

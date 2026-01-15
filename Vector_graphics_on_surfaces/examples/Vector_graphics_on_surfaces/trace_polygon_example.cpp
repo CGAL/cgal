@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     : CGAL::data_file_path("meshes/elephant.off");
 
   std::string filename_poly = (argc > 2) ? std::string(argv[2])
-    : CGAL::data_file_path("XXXXX");
+    : "long.polylines.txt";
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
   // convert polygons to polar coordinates
   typename K::Point_2 center_2((bb2.xmax()+bb2.xmin())/2., (bb2.ymax()+bb2.ymin())/2.);
   double diag = std::sqrt( CGAL::square(bb2.xmin()-bb2.xmax()) + CGAL::square(bb2.xmin()-bb2.xmax()) );
-  const double expected_diag = 0.45; // user parameter for scaling
+  const double expected_diag = 0.7; // user parameter for scaling
   const double scaling = expected_diag/diag;
 
   std::ofstream out("geodesic_polygon.polylines.txt");

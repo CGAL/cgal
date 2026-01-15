@@ -287,8 +287,8 @@ struct Straightest_geodesic_imp
           curr_p.first=curr_tid;
           href=halfedge(curr_tid, mesh);
           CGAL_assertion(start_loc.second[opp_id]==0);
-          std::array<FT, 2> bary2 = CGAL::make_array(start_loc.second[(opp_id+2)%3], start_loc.second[(opp_id+1)%3]); // swap done here
-          int opp_id = h==href?2:(next(href,mesh)==h?0:1);
+          std::array<FT, 2> bary2 = CGAL::make_array(start_loc.second[(opp_id+2 )%3], start_loc.second[(opp_id+1)%3]); // swap done here
+          opp_id = h==href?2:(next(href,mesh)==h?0:1);
           curr_p.second[opp_id]=FT(0);
           curr_p.second[(opp_id+1)%3]=bary2[0];
           curr_p.second[(opp_id+2)%3]=bary2[1];
@@ -305,7 +305,7 @@ struct Straightest_geodesic_imp
           Vector_2 ybase = new_flat_tid_in_curr_basis[1]-new_flat_tid_in_curr_basis[0];
           double cos_theta = ybase * dir / std::sqrt(ybase*ybase) / std::sqrt(dir*dir);
           double theta = std::acos(cos_theta);
-          dir = Vector_2(-std::sin(theta), std::cos(theta));
+          dir = Vector_2(std::sin(theta), std::cos(theta));
 
           curr_flat_tid=init_flat_triangle<K>(halfedge(curr_tid,mesh),vpm,mesh);
           flat_p= curr_p.second[0]*curr_flat_tid[0]+curr_p.second[1]*curr_flat_tid[1]+curr_p.second[2]*curr_flat_tid[2];

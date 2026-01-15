@@ -451,7 +451,7 @@ struct Placement_along_a_curve
   using FT = typename K::FT;
 
   Placement_along_a_curve(const std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>& supporting_curve,
-                          const FT& padding,
+                          const FT& padding, // TODO: add an option to fill the curve (impact scaling)
                           bool is_centered)
     : m_supporting_curve(supporting_curve)
     , m_padding(padding)
