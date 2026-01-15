@@ -1388,6 +1388,7 @@ insert_balls(const Vertex_handle& vp,
     const FT point_weight = current_size * current_size;
 
     // Insert point into c3t3
+    const std::size_t nbv = c3t3_.triangulation().number_of_vertices();
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
       smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
