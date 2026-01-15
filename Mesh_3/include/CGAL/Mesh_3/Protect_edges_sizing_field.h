@@ -1408,12 +1408,9 @@ insert_balls(const Vertex_handle& vp,
     step_size += r;
     norm_step_size = dleft_frac * step_size;
 
-    // Increment distance
-    //pt_dist += d_signF * norm_step_size;
-
-    // Update distance
-    //dist_to_prev = d_signF* norm_step_size;
-    //pt_dist += dist_to_prev;
+    // Update and Increment distance
+    dist_to_prev = d_signF* norm_step_size;
+    pt_dist += dist_to_prev;
 
     prev_pt = new_point;
     p_loc = polyline_iter;
