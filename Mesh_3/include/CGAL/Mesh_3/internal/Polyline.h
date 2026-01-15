@@ -404,22 +404,6 @@ public:
     const Point_3 result = translate(*previous, move);
 
     const_iterator result_iterator = (sgn == CGAL::POSITIVE) ? previous : pit;
-
-    if(result_iterator != locate_point(result))
-    {
-      std::cout.precision(17);
-      std::cout << "ASSERTION result_iterator != locate_point(result)" << std::endl;
-      std::cout << "result               = " << result << std::endl;
-      std::cout << "result_iterator      = " << *result_iterator << std::endl;
-      std::cout << "locate_point(result) = " << *locate_point(result) << std::endl;
-      std::cout << "pit                  = " << *pit << std::endl;
-      std::cout << "previous             = " << *previous << std::endl;
-      std::cout << "distance             = " << distance << std::endl;
-      std::cout << "length()             = " << length() << std::endl;
-      std::cout << "loop()               = " << std::boolalpha << is_loop() << std::endl;
-      std::cout << debug_stream.str() << std::endl;
-    }
-
     CGAL_assertion(result_iterator == locate_point(result));
 
     return {result, result_iterator};
