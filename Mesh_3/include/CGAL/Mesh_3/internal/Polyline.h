@@ -343,10 +343,6 @@ public:
                                   : start_it;
     CGAL_assertion(locate(start_it_pt) == start_it_pt_it);
 
-    std::ostringstream debug_stream;
-    debug_stream.precision(17);
-    debug_stream << "Distance to cover from " << start_it_pt << " = " << distance << std::endl;
-
     distance += curve_segment_length(start_it_pt, start_pt, CGAL::POSITIVE,
                                      start_it_pt_it, start_it);
 
@@ -358,39 +354,26 @@ public:
         distance += length();
     }
 
-    debug_stream << "Adjusted distance to cover = " << distance << std::endl;
-
     // initialize iterators and walf forward or backward to find the segment
     // containing the point at distance from start_it_pt
     const CGAL::Sign sgn = CGAL::sign(distance);
-
-    debug_stream << "Initial start_it = " << &*start_it << ", *start_it = " << *start_it << std::endl;
 
     const_iterator previous = start_it;
     const_iterator pit = (sgn == CGAL::POSITIVE)
                        ? next_segment_source(previous)
                        : previous_segment_source(previous);
 
-    debug_stream << "Going forward from " << start_it_pt << ", dist = " << distance << std::endl;
-
     FT segment_length = sgn * this->distance(point(previous), point(pit));
     bool signed_changed = false;
 
     while(!signed_changed && CGAL::abs(distance) > CGAL::abs(segment_length))
     {
-      debug_stream << "LOOP : distance = " << distance << std::endl;
-      debug_stream << "\tMoving to next segment,\n\t*pit = " << point(pit) << "\n"
-                                              << "\t*previous = " << point(previous) << "\n"
-                                              << "\tdistance = " << distance << "\n" << std::endl;
-      debug_stream << "\tsegment_length = " << segment_length << std::endl;
-
       const FT new_distance = distance - segment_length;
 
       signed_changed = (distance * new_distance < FT(0));
 
       if(!signed_changed)
         distance = new_distance; // positive or negative, distance goes closer to 0
-      debug_stream << "\tupdated distance = " << distance << std::endl;
 
       // increment iterators
       previous = pit;
@@ -405,17 +388,6 @@ public:
 
       // update segment length
       segment_length = sgn * this->distance(point(previous), point(pit));
-
-      if(segment_length == FT(0))
-      {
-        std::ostringstream oss;
-        oss << "Segment of zero length detected in Polyline::point_at()\n";
-        oss << "Polyline::point_at(start_pt = " << start_pt
-            << ", *start_it = " << *start_it
-            << "): degenerate segment detected (*previous = "
-            << *previous << ", *pit = " << *pit << ")";
-        throw std::runtime_error(oss.str().c_str());
-      }
     };
 
     // return point at distance from current segment source
@@ -428,33 +400,7 @@ public:
                ? vector(point(previous), point(pit))
                : vector(point(pit), point(previous));
 
-#ifdef DEBUG_NAN_POINTS
-    if(v.squared_length() == 0.)
-    {
-      std::cout << "point_at(start_pt = " << start_pt
-                       << ", *start_it = " << *start_it
-                       << ")" << std::endl;
-      std::cout << "\tis_loop() = " << std::boolalpha << is_loop() << std::endl;
-      std::cout << "\tlength() = " << length() << std::endl;
-
-      std::cout << "\t*previous = " << point(previous) << std::endl;
-      if(pit != points_.end())
-        std::cout << "\t(pit != points_.end()) -- *pit      = " << point(pit) << std::endl;
-      else
-        std::cout << "\t(pit == points_.end()) -- end_point = " << end_point() << std::endl;
-
-      std::cout << "\tfirst point = " << start_point() << std::endl;
-      std::cout << "\tsecond point = " << (*(points_.begin() + 1)) << std::endl;
-      std::cout << "\tlast point  = " << end_point() << std::endl;
-
-      std::cout << "\tdistance  = " << distance << std::endl;
-      std::cout << "\tv.sql()   = " << v.squared_length() << std::endl;
-      std::cout << std::endl;
-      //std::cout << "Debug trace:\n" << debug_stream.str() << std::endl;
-    }
-#endif
-
-    const Vector_3 move = scale(v, distance * 1. / CGAL::sqrt(v.squared_length()));
+    const Vector_3 move = scale(v, distance * 1. / CGAL::approximate_sqrt(v.squared_length()));
     const Point_3 result = translate(*previous, move);
 
     const_iterator result_iterator = (sgn == CGAL::POSITIVE) ? previous : pit;
