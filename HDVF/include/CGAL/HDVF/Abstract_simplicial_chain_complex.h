@@ -157,8 +157,8 @@ public:
 
     /** \brief Returns the simplex of index i in dimension q.
      *
-     * \exception Out_of_dimensions If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     * \exception Out_of_indices If the cell index `i` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
+     * \exception std::runtime_error If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
+     * \exception std::runtime_error If the cell index `i` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
      */
     const Simplex& index_to_cell (size_t i, int q) const {
         if ((q<0) || (q>_dim))
