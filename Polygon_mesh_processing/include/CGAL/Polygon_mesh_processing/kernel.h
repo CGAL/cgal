@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <random>
 
-#include <CGAL/Polygon_mesh_processing/clip_convex.h>
+#include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/Three_point_cut_plane_traits.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -209,7 +209,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
-  *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
+  *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
   *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd

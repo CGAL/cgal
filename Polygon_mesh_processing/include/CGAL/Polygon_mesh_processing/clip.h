@@ -23,7 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/Polygon_mesh_processing/clip_convex.h>
+#include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
