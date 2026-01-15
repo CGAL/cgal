@@ -112,6 +112,16 @@ struct Orthogonal_cut_plane_traits
     }
   };
 
+  struct Compute_squared_distance_3
+  {
+    FT operator()(const Plane_3& plane, const Point_3& p)
+    {
+      // Signed distance
+      FT sd = p[plane.first] - plane.second;
+      return sd*sd;
+    }
+  };
+
   Oriented_side_3 oriented_side_3_object() const
   {
     return Oriented_side_3();
@@ -132,6 +142,7 @@ struct Orthogonal_cut_plane_traits
   Construct_segment_3 construct_segment_3_object() const { return Construct_segment_3(); }
   Construct_triangle_3 construct_triangle_3_object() const { return Construct_triangle_3(); }
   Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
+  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
 #endif
 };
 #endif

@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
@@ -987,6 +988,12 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
+  *    \cgalParamNBegin{use_convex_specialization}
+  *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+  *      \cgalParamType{Boolean}
+  *      \cgalParamDefault{`false`}
+  *    \cgalParamNEnd
+  *
   *    \cgalParamNBegin{do_not_triangulate_faces}
   *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
   *                            Always `true` if `pm` is not a triangle mesh.}
@@ -1014,6 +1021,12 @@ bool clip(PolygonMesh& pm,
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
+  bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false);
+  if(use_convex_specialization){
+    internal::clip_convex(pm, plane, np);
+    return true;
+  }
+
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -1036,7 +1049,7 @@ bool clip(PolygonMesh& pm,
 
   // config flags
   bool clip_volume =
-    parameters::choose_parameter(parameters::get_parameter(np, internal_np::clip_volume), false);
+    choose_parameter(get_parameter(np, internal_np::clip_volume), false);
   bool use_compact_clipper =
     choose_parameter(get_parameter(np, internal_np::use_compact_clipper), true);
   const bool throw_on_self_intersection =

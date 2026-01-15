@@ -25,66 +25,43 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace internal{
 
+/**
+  * Given a convex mesh and a plane, return an halfedge crossing the plane from a vertex on positive side to a vertex on the plane or the negative side.
+  * Return a null halfedge if the mesh and the plane does not intersect.
+  */
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
-std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, Sign>
-crossing_edge(PolygonMesh& pm,
-            const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
-            const NamedParameters& np = parameters::default_values())
+typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+find_crossing_edge(PolygonMesh& pm,
+                   const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
+                   const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference;
-  using parameters::is_default_parameter;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
-  using face_descriptor = typename BGT::face_descriptor;
-  using edge_descriptor = typename BGT::edge_descriptor;
-  using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   // np typedefs
-  // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
-  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
-  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
 
-  struct Default_Bbox{
-    // Needed to compile with MSVC
-    vertex_descriptor operator[](std::size_t /*i*/){ return vertex_descriptor(); }
-    Default_Bbox operator*(){ return *this; }
-  };
-  using Bbox = typename internal_np::Lookup_named_param_def<internal_np::bounding_box_t, NamedParameters, Default_Bbox*>::type;
-  constexpr bool update_bbox = !std::is_same_v< std::remove_reference_t<Bbox>, Default_Bbox*>;
-
-  Default_Bbox* default_bbox;
-  Bbox bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), default_bbox);
-
-  Default_visitor default_visitor;
-  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
-  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
-
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
-  // config flags
-  bool clip_volume =  choose_parameter(get_parameter(np, internal_np::clip_volume), true);
-  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
-
   auto oriented_side = traits.oriented_side_3_object();
-  auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
   auto sq = traits.compute_squared_distance_3_object();
 
   // ____________________ Find a crossing edge _____________________
 
   vertex_descriptor start = choose_parameter(get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
   vertex_descriptor src = start;
-  FT sp_src = sq(plane, get(vpm, src)); // Not normalized distance
+  FT sp_src = sq(plane, get(vpm, src));
   Sign direction_to_zero = sign(sp_src);
 
   vertex_descriptor trg;
@@ -114,11 +91,9 @@ crossing_edge(PolygonMesh& pm,
       }
       // No intersection with the plane, kernel is either empty or full
       if(is_local_max){
-        if(direction_to_zero==POSITIVE){
+        if(direction_to_zero==POSITIVE)
           clear(pm); // The result is empty
-          // return std::make_pair(BGT::null_halfedge, Sign());
-        }
-        return std::make_pair(BGT::null_halfedge(), Sign());
+        return BGT::null_halfedge();
       }
     } while(!is_crossing_edge);
   } else {
@@ -139,38 +114,36 @@ crossing_edge(PolygonMesh& pm,
         break;
       }
     }
-    // Nothing to clip
+    // Nothing on negative side
     if(no_positive_side)
-      // return start;
-      return std::make_pair(BGT::null_halfedge(), Sign());
+      return BGT::null_halfedge();
   } else if(direction_to_zero==NEGATIVE){
-    // Orient the edge from negative to positive
+    // Orient the edge from positive to negative
     std::swap(src, trg);
   }
 
   CGAL_assertion(oriented_side(plane, get(vpm, src)) == ON_POSITIVE_SIDE);
   CGAL_assertion(oriented_side(plane, get(vpm, trg)) != ON_POSITIVE_SIDE);
 
-  return std::make_pair(halfedge(src, trg, pm).first, sign(sp_trg));
+  return halfedge(src, trg, pm).first;
 }
 
+/**
+  * Given a convex mesh, a plane and an halfedge crossing the plane from positive side, refine the mesh with the plane
+  */
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
 refine_convex_with_plane(PolygonMesh& pm,
             const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-            Sign side_trg,
             const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
-  using parameters::is_default_parameter;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
-  using face_descriptor = typename BGT::face_descriptor;
-  using edge_descriptor = typename BGT::edge_descriptor;
   using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
@@ -203,24 +176,17 @@ refine_convex_with_plane(PolygonMesh& pm,
                               get_property_map(vertex_point, pm));
 
   // config flags
-  bool clip_volume =  choose_parameter(get_parameter(np, internal_np::clip_volume), true);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
 
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
-  auto sq = traits.compute_squared_distance_3_object();
 
   // ____ Cut the convex along the plane by marching along crossing edges starting from the previous edge _____
   std::vector<halfedge_descriptor> boundaries;
-  std::vector<vertex_descriptor> boundary_vertices;
 
-  // halfedge_descriptor h = halfedge(src, trg, pm).first;
-  // vertex_descriptor src = source(h, pm);
-  // side_trg = sign(sp_trg);
-  if(side_trg!=EQUAL)
+  if(oriented_side(plane, get(vpm, target(h,pm)))!=ON_ORIENTED_BOUNDARY)
   {
     //split the first edge
-    // auto pts = make_sorted_pair(get(vpm, src), get(vpm, trg));
     auto pts = make_sorted_pair(get(vpm, source(h, pm)), get(vpm, target(h, pm)));
     typename GT::Point_3 ip = intersection_point(plane, pts.first, pts.second);
     visitor.before_edge_split(h, pm);
@@ -246,7 +212,6 @@ refine_convex_with_plane(PolygonMesh& pm,
       while(side_trg == ON_ORIENTED_BOUNDARY){
         // The edge is along the plane, add it to boundaries
         boundaries.emplace_back(h);
-        // boundary_vertices.emplace_back(target(h, pm));
         set_halfedge(target(h, pm), h, pm);
         h = next(h, pm);
         side_trg=oriented_side(plane, get(vpm, target(h,pm)));
@@ -281,7 +246,6 @@ refine_convex_with_plane(PolygonMesh& pm,
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
     visitor.after_subface_created(face(h, pm), pm);
     boundaries.emplace_back(sh);
-    // boundary_vertices.emplace_back(target(sh, pm));
     set_halfedge(target(sh, pm), sh, pm);
     visitor.add_retriangulation_edge(sh, pm);
 
@@ -308,17 +272,19 @@ refine_convex_with_plane(PolygonMesh& pm,
   return boundaries;
 }
 
+/**
+  * Given a mesh, a cycle of halfedges forming a boundary and a vertex, remove all connected elements to the vertex without crossing the boundary
+  */
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
-remove_in_boundaries_and_fill(PolygonMesh& pm,
-            const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> &boundaries,
-            typename boost::graph_traits<PolygonMesh>::vertex_descriptor inside_vertex,
-            const NamedParameters& np = parameters::default_values())
+remove_bounded_region_and_fill(PolygonMesh& pm,
+                               const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> &boundaries,
+                               typename boost::graph_traits<PolygonMesh>::vertex_descriptor inside_vertex,
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
-  using parameters::is_default_parameter;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
@@ -352,16 +318,13 @@ remove_in_boundaries_and_fill(PolygonMesh& pm,
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
   // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
+  // Used only if do_triangulate_faces or bounding_box check
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
   // config flags
   bool clip_volume =  choose_parameter(get_parameter(np, internal_np::clip_volume), true);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
-
-  auto oriented_side = traits.oriented_side_3_object();
-  auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
-  auto sq = traits.compute_squared_distance_3_object();
 
   // ________________________ Remove the negative side _________________________
   std::vector<vertex_descriptor> vertices_to_remove;
@@ -389,13 +352,12 @@ remove_in_boundaries_and_fill(PolygonMesh& pm,
     halfedge_descriptor h_start = halfedge(f, pm);
     halfedge_descriptor h = h_start;
     do {
-      if(!is_boundary(edge(h, pm))){ // TODO avoid this linear operation
+      if(!is_boundary(edge(h, pm))){
         if(h < opposite(h, pm)) // To avoid multiple assertions of a same edge
           edges_to_remove.push_back(edge(h, pm));
         if(halfedge(target(h, pm), pm) == h && // To avoid multiple assertions of a same vertex
            !std::binary_search(boundary_vertices.begin(), boundary_vertices.end(), target(h, pm)))
           vertices_to_remove.push_back(target(h, pm));
-        // CGAL_assertion(oriented_side(plane, get(vpm, target(h, pm)))!=ON_NEGATIVE_SIDE);
       }
       h = next(h, pm);
     } while (h != h_start);
@@ -440,10 +402,8 @@ remove_in_boundaries_and_fill(PolygonMesh& pm,
     }
   }
 
-  for (vertex_descriptor v : vertices_to_remove){
+  for (vertex_descriptor v : vertices_to_remove)
     remove_vertex(v, pm);
-    // CGAL_assertion(oriented_side(plane, get(vpm, v))==ON_POSITIVE_SIDE);
-  }
   for (edge_descriptor e : edges_to_remove)
     remove_edge(e, pm);
   for (face_descriptor f : faces_to_remove)
@@ -542,13 +502,15 @@ clip_convex(PolygonMesh& pm,
             const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
 #endif
             const NamedParameters& np = parameters::default_values()){
-  auto pair = crossing_edge(pm, plane, np);
-  // if(is_null(pair.first, pm))
-  if(pair.first == boost::graph_traits<PolygonMesh>::null_halfedge())
+  auto he = find_crossing_edge(pm, plane, np);
+  // Early exit
+  if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
-  const auto &boundaries =refine_convex_with_plane(pm, plane, pair.first, pair.second, np);
-  return remove_in_boundaries_and_fill(pm, boundaries, source(pair.first, pm), np);
+  const auto &boundaries =refine_convex_with_plane(pm, plane, he, np);
+  return remove_bounded_region_and_fill(pm, boundaries, source(he, pm), np);
 }
+
+} // end of namespace internal
 
 
 } } // CGAL::Polygon_mesh_processing

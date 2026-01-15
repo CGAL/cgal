@@ -98,6 +98,7 @@ struct Three_point_cut_plane_traits
     using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
     FT operator()(const Plane_3& plane, const Point_3& p)
     {
+      // Not normalized
       typename Kernel::Plane_3 pl(plane[0], plane[1], plane[2]);
       return Compute_scalar_product_3()(Vector_3(ORIGIN, p), pl.orthogonal_vector())+pl.d();
     }
