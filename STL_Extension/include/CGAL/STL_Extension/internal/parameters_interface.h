@@ -181,6 +181,7 @@ CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_r
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 CGAL_add_named_parameter(use_bounding_box_filtering_t, use_bounding_box_filtering, use_bounding_box_filtering)
 CGAL_add_named_parameter(shuffle_planes_t, shuffle_planes, shuffle_planes)
+CGAL_add_named_parameter(use_convex_specialization_t, use_convex_specialization, use_convex_specialization)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
