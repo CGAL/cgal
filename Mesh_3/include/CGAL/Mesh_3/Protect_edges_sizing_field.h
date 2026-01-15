@@ -219,7 +219,11 @@ private:
                              const Weight& w,
                              int dim,
                              const Index& index,
-                             const bool special_ball = false);
+                             const bool special_ball = false,
+                             const Cell_handle ch_locate_p = Cell_handle(),
+                             const typename Tr::Locate_type lt = Tr::OUTSIDE_AFFINE_HULL,
+                             const int li = 0,
+                             const int lj = 0);
 
   /**
    * Inserts `point(p,w)` into the triangulation and set its dimension to `dim` and
@@ -690,7 +694,11 @@ template <typename C3T3, typename MD, typename Sf, typename Df>
 typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
-             const bool special_ball /* = false */)
+             const bool special_ball /* = false */,
+             const Cell_handle ch_p, //result of locate if already known
+             const typename Tr::Locate_type lt_p,
+             const int li_p,
+             const int lj_p)
 {
   using CGAL::Mesh_3::internal::weight_modifier;
 
@@ -719,9 +727,21 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
                : w * weight_modifier;
   const Weighted_point wp = cwp(p, wwm);
 
+  Cell_handle ch;
   typename Tr::Locate_type lt;
   int li, lj;
-  const typename Tr::Cell_handle ch = c3t3_.triangulation().locate(wp, lt, li, lj);
+  if(ch_p == Cell_handle())
+  {
+    ch = c3t3_.triangulation().locate(wp, lt, li, lj);
+  }
+  else
+  {
+    ch = ch_p;
+    lt = lt_p;
+    li = li_p;
+    lj = lj_p;
+  }
+
   Vertex_handle v = c3t3_.triangulation().insert(wp, lt, ch, li, lj);
 
   // If point insertion created a hidden ball, fail
@@ -814,12 +834,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
   }
 #endif
 
-  if ( tr.dimension() > 2 )
+  typename Tr::Locate_type lt;
+  int li, lj;
+  Cell_handle ch = Cell_handle();
+  if(tr.dimension() > 2)
   {
     // Check that new point will not be inside a power sphere
-    typename Tr::Locate_type lt;
-    int li, lj;
-    Cell_handle ch = tr.locate(wp0, lt, li, lj, prev);
+    ch = tr.locate(wp0, lt, li, lj, prev);
 
     Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
     FT sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
@@ -1012,7 +1033,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     w = minimal_weight();
     insert_a_special_ball = true;
   }
-  Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
+  Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball,
+                                 ch, lt, li, lj);
 
   /// @TODO `insert_point` does insert in unchecked_vertices anyway!
   if ( add_handle_to_unchecked ) { unchecked_vertices_.insert(v); }
