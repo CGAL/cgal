@@ -121,7 +121,7 @@ public:
         std::ifstream infile(filename);
         if(!infile.is_open()) {
             std::cerr << "Warning: cannot open file " << filename << std::endl ;
-            std::runtime_error("read_pgm: file "+filename+" not found");
+            throw std::runtime_error("read_pgm: file "+filename+" not found");
             // failed to open the file
             return false;
         }
@@ -214,7 +214,7 @@ public:
         if(!infile.is_open()) {
             // failed to open the file
             std::cerr << "Warning: file " << filename << " does not exist" << std::endl ;
-            std::runtime_error("read_cub: file "+filename+" not found");
+            throw std::runtime_error("read_cub: file "+filename+" not found");
             return false;
         }
         std::size_t line_number = 0;
@@ -264,7 +264,7 @@ public:
                     else
                     {
                         if (cub_dim(cub) != dim)
-                            std::runtime_error("read_cub: cell of dimension "+std::to_string(cub_dim(cub))+" incompatible with integer coordinates output");
+                            throw std::runtime_error("read_cub: cell of dimension "+std::to_string(cub_dim(cub))+" incompatible with integer coordinates output");
                         size_t ind(khal_to_index(cub)) ;
                         cubs.push_back(index_to_coords(ind, false)) ;
                     }
