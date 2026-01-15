@@ -549,7 +549,13 @@ public:
       Input_curves_AABB_tree_primitive_ curr_prim(prim_id);
 
       // find ppid's polyline iterator
-      auto p_polyline_const_it = prim_id.second;
+      const auto& polyline = closest_prim_id.first->second;
+      auto p_polyline_const_it = closest_prim_id.second;
+      if(*p_polyline_const_it == p
+       && p_polyline_const_it != polyline.first_segment_source())
+      {
+        p_polyline_const_it = std::prev(p_polyline_const_it);
+      }
 
       // find intersected primitives
       std::vector<Input_curves_AABB_tree_primitive_> prims;
