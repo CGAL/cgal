@@ -319,6 +319,9 @@ intersection tests and intersection computations
 through a bisection method. This parameter must be instantiated
 with a model of the concept `BisectionGeometricTraits_3`.
 
+\tparam SubdomainIndex is the type of the indices of the subdomains.
+\tparam SurfacePatchIndex is the type of the indices of the surface patches.
+
 \cgalHeading{Labeling Function}
 
 A labeling function `f` must return `0` if the point is not located in any subdomain. The return type of labeling functions is an integer.
