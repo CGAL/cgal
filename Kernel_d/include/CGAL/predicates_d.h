@@ -49,7 +49,7 @@ OutputIterator barycentric_coordinates(
 /*{\Xfunc returns the barycentric coordinates of a point $p \in R^d$ in a
 affine space of dimension $k$ spanned by the points in |tuple [first,last)|.
 \precond value type of |ForwardIterator| is |Point_d<R>|,
-|affinely_independed(first,last)| and
+|affinety_independent(first,last)| and
 |affine_rank(tuple [first,last),p)==k|.}*/
 { typename R::Barycentric_coordinates_d coords;
   return coords(first,last,p,result);

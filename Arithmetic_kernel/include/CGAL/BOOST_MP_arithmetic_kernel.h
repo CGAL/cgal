@@ -29,7 +29,7 @@
 //#include <boost/multiprecision/gmp.hpp>
 //#endif
 
-// FIXME: the could be several kernels based on Boost.Multiprecision.
+// FIXME: there could be several kernels based on Boost.Multiprecision.
 namespace CGAL {
 /** \ingroup CGAL_Arithmetic_kernel
  *  \brief The Boost.Multiprecision set of exact number types

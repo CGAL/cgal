@@ -92,7 +92,40 @@ private:
   ECM m_ecm;
 };
 
-}
+template<typename GeomTraits, typename PolygonMesh, typename VertexToPointMap, typename ECM, typename Least_squares_fitting_tag>
+struct Region_and_Sorting_helper {};
+
+template<typename GeomTraits, typename PolygonMesh, typename VertexToPointMap, typename ECM>
+struct Region_and_Sorting_helper<GeomTraits, PolygonMesh, VertexToPointMap, ECM, Tag_true>
+{
+  using Neighbor_query = One_ring_neighbor_query_with_constraints<PolygonMesh, ECM>;
+  using Plane_Region_type = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, VertexToPointMap>;
+  using Plane_Sorting_type = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, Neighbor_query>;
+
+  using Polyline_graph = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh, VertexToPointMap>;
+  using Segment_map = typename Polyline_graph::Segment_map;
+  using Item = typename Polyline_graph::Item;
+
+  using Line_region = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, Item, Segment_map>;
+  using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, Item, Polyline_graph, Segment_map>;
+};
+
+template<typename GeomTraits, typename PolygonMesh, typename VertexToPointMap, typename ECM>
+struct Region_and_Sorting_helper<GeomTraits, PolygonMesh, VertexToPointMap, ECM, Tag_false>
+{
+  using Neighbor_query = One_ring_neighbor_query_with_constraints<PolygonMesh, ECM>;
+  using Plane_Region_type = CGAL::Shape_detection::Polygon_mesh::Plane_face_region<GeomTraits, PolygonMesh, VertexToPointMap>;
+  using Plane_Sorting_type = CGAL::Shape_detection::Polygon_mesh::Face_area_sorting<GeomTraits, PolygonMesh>;
+
+  using Polyline_graph = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh, VertexToPointMap>;
+  using Segment_map = typename Polyline_graph::Segment_map;
+  using Item = typename Polyline_graph::Item;
+
+  using Line_region = CGAL::Shape_detection::Segment_set::Line_segment_region<GeomTraits, Item, Segment_map>;
+  using Line_sorting = CGAL::Shape_detection::Segment_set::Segment_length_sorting<GeomTraits, Item, Segment_map>;
+};
+
+} // namespace internal
 
 /*!
   \ingroup PkgPolygonMeshProcessingRef
@@ -125,6 +158,13 @@ private:
       \cgalParamDefault{25 degrees}
       \cgalParamExtra{this parameter and `cosine_of_maximum_angle` are exclusive}
     \cgalParamNEnd
+    \cgalParamNBegin{least_squares_fitting}
+      \cgalParamDescription{Refit the plane primitive regularly to the region during the region growing algorithm.
+                            If false, the plane is equal to the support plane of the seed face.}
+      \cgalParamType{`CGAL::Boolean_tag`}
+      \cgalParamDefault{`CGAL::Tag_false()`}
+      \cgalParamExtra{Valid values are CGAL::Tag_true() or CGAL::Tag_false().}
+    \cgalParamNEnd
     \cgalParamNBegin{postprocess_regions}
       \cgalParamDescription{Apply a postprocessing step to the output of the region growing algorithm.}
       \cgalParamType{`bool`}
@@ -156,6 +196,13 @@ private:
       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
     \cgalParamNEnd
+      \cgalParamNBegin{face_normal_map}
+        \cgalParamDescription{a property map associating normal vectors to the faces of `mesh`.}
+        \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+                       as key type and `GT::Vector_3` as value type, `GT` being the type of the parameter `geom_traits`.}
+        \cgalParamDefault{If this parameter is omitted, face normals will be estimated using cross products of vectors created
+                          from consecutive vertices of the face.}
+      \cgalParamNEnd
     \cgalParamNBegin{region_primitive_map}
       \cgalParamDescription{a property map filled by this function and that will contain for each region
                             the plane (or only its orthognonal vector) estimated that approximates it.}
@@ -191,9 +238,16 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                              Static_boolean_property_map<edge_descriptor, false>());
 
-  using Neighbor_query = internal::One_ring_neighbor_query_with_constraints<PolygonMesh, ECM>;
-  using Region_type = RG_PM::Least_squares_plane_fit_region<Traits, PolygonMesh, VPM>;
-  using Sorting = RG_PM::Least_squares_plane_fit_sorting<Traits, PolygonMesh, Neighbor_query, VPM>;
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::least_squares_fitting_t,
+    NamedParameters,
+    Tag_false // default (using Plane_face_region)
+  > ::type Least_squares_fitting;
+
+  using Helper = internal::Region_and_Sorting_helper<Traits, PolygonMesh, VPM, ECM, Least_squares_fitting>;
+  using Neighbor_query = typename Helper::Neighbor_query;
+  using Region_type = typename Helper::Plane_Region_type;
+  using Sorting = typename Helper::Plane_Sorting_type;
   using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type, RegionMap>;
 
   Neighbor_query neighbor_query(mesh, ecm);
@@ -322,6 +376,13 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       \cgalParamDefault{`cos(25 * PI / 180)`}
       \cgalParamExtra{this parameter and `maximum_angle` are exclusive}
     \cgalParamNEnd
+    \cgalParamNBegin{least_squares_fitting}
+      \cgalParamDescription{Refit the line primitive regularly to the region during the region growing algorithm.
+                            If false, the line primitive is equal to the support line of the seed edge.}
+      \cgalParamType{`CGAL::Boolean_tag`}
+      \cgalParamDefault{`CGAL::Tag_false()`}
+      \cgalParamExtra{Valid values are CGAL::Tag_true() or CGAL::Tag_false().}
+    \cgalParamNEnd
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `mesh`}
       \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -378,12 +439,18 @@ detect_corners_of_regions(
   }
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
-  using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh, VPM>;
-  using Segment_map        = typename Polyline_graph::Segment_map;
-  using Item               = typename Polyline_graph::Item;
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::least_squares_fitting_t,
+    NamedParameters,
+    Tag_false // default (using Line_segment_region)
+  > ::type Least_squares_fitting;
 
-  using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Traits, Item, Segment_map>;
-  using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Traits, Item, Polyline_graph, Segment_map>;
+  using Helper = internal::Region_and_Sorting_helper<Traits, PolygonMesh, VPM, Ecm, Least_squares_fitting>;
+
+  using Polyline_graph     = typename Helper::Polyline_graph;
+
+  using Line_region  = typename Helper::Line_region;
+  using Line_sorting = typename Helper::Line_sorting;
   using RG_lines     = CGAL::Shape_detection::Region_growing<Polyline_graph, Line_region>;
 
   // mark as constrained edges at the interface of two regions

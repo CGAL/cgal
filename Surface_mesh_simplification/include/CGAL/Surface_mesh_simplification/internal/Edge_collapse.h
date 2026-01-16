@@ -590,8 +590,6 @@ loop()
 {
   CGAL_SMS_TRACE(0, "Collapsing edges...");
 
-  CGAL_assertion_code(size_type non_collapsable_count = 0);
-
   // Pops and processes each edge from the PQ
 
   std::optional<halfedge_descriptor> opt_h;
@@ -658,8 +656,6 @@ loop()
           }
           else
           {
-            CGAL_assertion_code(++non_collapsable_count);
-
             m_visitor.OnNonCollapsable(profile);
 
             CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (filter)" );
@@ -679,8 +675,6 @@ loop()
       }
       else
       {
-        CGAL_assertion_code(++non_collapsable_count);
-
         m_visitor.OnNonCollapsable(profile);
 
         CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (topology)" );
@@ -829,7 +823,7 @@ is_collapse_topologically_valid(const Profile& profile)
 
           if(!is_face)
           {
-            CGAL_SMS_TRACE(3,"  k=V" << get(m_vim,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge.");
+            CGAL_SMS_TRACE(3,"  k=V" << get(m_vim,k) << " IS NOT in a face with p-q. NON-COLLAPSIBLE edge.");
             res = false;
             break;
           }
@@ -856,7 +850,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_open_triangle(profile.v0_v1()))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSIBLE edge.");
       }
     }
     else if(profile.is_v1_v0_a_border())
@@ -864,7 +858,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_open_triangle(profile.v1_v0()))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSIBLE edge.");
       }
     }
     else
@@ -872,7 +866,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_border(profile.v0(), m_tm) && is_border(profile.v1(), m_tm))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSIBLE edge.");
       }
       else
       {
@@ -883,7 +877,7 @@ is_collapse_topologically_valid(const Profile& profile)
         if(tetra)
         {
           res = false;
-          CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge.");
+          CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSIBLE edge.");
         }
 
         if(next(profile.v0_v1(), m_tm) == opposite(prev(profile.v1_v0(), m_tm), m_tm) &&

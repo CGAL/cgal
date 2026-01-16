@@ -29,12 +29,10 @@
 
 #include <CGAL/export/CORE.h>
 
-#ifdef CGAL_TEST_SUITE
-// disabled for the testsuite to avoid `w`
-#define CGAL_CORE_warning_msg(X ,Y)
-// if (!(X)) CGAL_error_msg(Y)
-#else
+#ifdef CGAL_CORE_DEBUG
 #define CGAL_CORE_warning_msg(X ,Y) CGAL_warning_msg(X ,Y)
+#else
+#define CGAL_CORE_warning_msg(X ,Y)
 #endif
 
 

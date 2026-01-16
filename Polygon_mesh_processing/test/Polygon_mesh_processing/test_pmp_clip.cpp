@@ -427,7 +427,44 @@ void test()
     PMP::clip(tm1, K::Plane_3(0,-1,0,0), params::use_compact_clipper(false).clip_volume(true));
     assert(faces(tm1).size() == 6);
   }
-
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    PMP::triangulate_faces(input);
+    K::Plane_3 plane(0, -1, 0, -1);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true));
+    assert(faces(input).size()==36);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    K::Plane_3 plane(0, -1, 0, -1);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true).do_not_triangulate_faces(true));
+    assert(faces(input).size()==14);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    PMP::triangulate_faces(input);
+    K::Plane_3 plane(0, -1, 0, -2);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true));
+    assert(faces(input).size()==32);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    K::Plane_3 plane(0, -1, 0, -2);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true).do_not_triangulate_faces(true));
+    assert(faces(input).size()==16);
+  }
+  {
+    TriangleMesh input;
+    std::ifstream("data-clip/man_torus.off") >> input;
+    PMP::triangulate_faces(input);
+    K::Plane_3 plane(0, 1, 0, 2);
+    PMP::clip(input, plane, CGAL::parameters::clip_volume(true));
+    assert(faces(input).size()==0);
+  }
   // test special case
   {
     TriangleMesh tm1, tm2;
@@ -555,6 +592,49 @@ void test()
     PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
     assert(vertices(tm1).size()==176);
   }
+
+  // non-simply connected output faces
+  {
+    TriangleMesh tm1;
+
+    CGAL::make_hexahedron(CGAL::Bbox_3(-3.5,-0.5,-0.5, -2.5,0.5,0.5), tm1);
+    PMP::reverse_face_orientations(tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-4,-1,-1, -2,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,-1,-1, 1,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(2,-1,-1, 4,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(5,-1,-1, 7,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,2,-1, 1,4,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(2,2,-1, 4,4,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(5,2,-1, 7,4,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,5,-1, 1,7,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(2,5,-1, 4,7,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(5,5,-1, 7,7,1), tm1);
+
+    PMP::clip(tm1, K::Plane_3(0,0,1,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+
+    assert(vertices(tm1).size()==88);
+    assert(faces(tm1).size()==72);
+  }
+  {
+    TriangleMesh tm1;
+
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,-1,-1, 1,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-3,-3,-3, 3,3,3), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-5,-5,-5, 5,5,5), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-7,-7,-7, 7,7,7), tm1);
+    PMP::reverse_face_orientations(tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-0.5,-0.5,-0.5, 0.5,0.5,0.5), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-2,-2,-2, 2,2,2), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-4,-4,-4, 4,4,4), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-6,-6,-6, 6,6,6), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-8,-8,-8, 8,8,8), tm1);
+
+    PMP::clip(tm1, K::Plane_3(0,0,1,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+    assert(vertices(tm1).size()==72);
+    assert(faces(tm1).size()==79);
+  }
+
+
 }
 
 template <class Mesh>
@@ -867,15 +947,19 @@ void test_new_clip()
     assert(faces(e).size()==5);
     assert(vertices(e).size()==24);
   }
-
   {
     TriangleMesh c;
     std::ifstream("data-clip/c.off") >> c;
     PMP::refine_with_plane(c, K::Plane_3(1,0,0,-2));
     assert(faces(c).size()==2);
     assert(vertices(c).size()==8);
+    c.clear();
+    std::ifstream("data-clip/c.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-2));
+    assert(faces(c).size()==2);
+    assert(vertices(c).size()==8);
   }
-
   {
     TriangleMesh e;
     std::ifstream("data-clip/ee.off") >> e;
@@ -884,7 +968,6 @@ void test_new_clip()
     assert(faces(e).size()==30);
     assert(vertices(e).size()==28);
   }
-
   {
     TriangleMesh c;
     std::ifstream("data-clip/c.off") >> c;
@@ -893,7 +976,82 @@ void test_new_clip()
     assert(faces(c).size()==8);
     assert(vertices(c).size()==9);
   }
+  // tangent case
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_0.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==3);
+    assert(vertices(c).size()==7);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_0.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==3);
+    assert(vertices(c).size()==7);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_1.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==9);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_1.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==9);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-320), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==4);
+    assert(vertices(c).size()==14);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-320), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==4);
+    assert(vertices(c).size()==14);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==1);
+    assert(vertices(c).size()==13);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_2.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-384), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==1);
+    assert(vertices(c).size()==13);
+  }
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/tgt_case_3.off") >> c;
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==18);
+    c.clear();
+    std::ifstream("data-clip/tgt_case_3.off") >> c;
+    PMP::reverse_face_orientations(c);
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-288), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==6);
+    assert(vertices(c).size()==18);
+  }
+  {
+    TriangleMesh c;
+    CGAL::make_quad(K::Point_3(0.,0.,0.),K::Point_3(1.,-1.,0.),K::Point_3(1.,0.,0.),K::Point_3(1.,1.,0.),c);
+    CGAL::make_quad(K::Point_3(0.,0.,0.),K::Point_3(1.,1.,0.),  K::Point_3(2.,2.,0.),K::Point_3(0.,2.,0.),c);
 
+    PMP::refine_with_plane(c, K::Plane_3(1.,0.,0.,-1.), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==3);
+    assert(vertices(c).size()==9);
+    std::ofstream("/tmp/out.off") << c;
+  }
   {
     TriangleMesh ele;
     std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> ele;

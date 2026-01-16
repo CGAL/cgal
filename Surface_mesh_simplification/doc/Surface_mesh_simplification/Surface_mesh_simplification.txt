@@ -188,21 +188,38 @@ face normals). This variance naturally deteriorates the tightness of the result,
 hand it enables creating more uniform triangulations and the approach is more tolerant to noise,
 while still maintaining feature sensitivity.
 
+Another extension of the Garland–Heckbert approach was introduced by Liu et al. \cgalCite{liu2025linequadrics},
+who enhance the classic plane-based quadric error metrics with line quadrics.
+More precisely, line quadrics, which encode the distance to a line, are defined at all input vertices using the supporting lines of the normals.
+These quadrics are then combined with the classic plane quadrics, but with a small weight (0.01 by default).
+This results in more uniform triangulations, while preserving the tightness of the approximation.
+
 \cgalFigureAnchor{SurfaceMeshSimplification_GH}
 <center>
-<img src="sappho.jpg" style="max-width:70%;"/>
+<img src="sappho.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{SurfaceMeshSimplification_GH}
 <a href="https://ten-thousand-models.appspot.com/detail.html?file_id=72286">Sappho's Head</a> model (leftmost, 34882 vertices).
 From left to right, simplified output (1745 vertices) and symmetric Hausdorff distance
-for the four Garland-Heckbert variations: plane (0.217912), probabilistic
-plane (0.256801), triangle (0.268872), and probabilistic triangle (0.490846).
+for the five Garland-Heckbert variations: plane (0.217912), probabilistic
+plane (0.256801), triangle (0.268872), probabilistic triangle (0.490846) and plane and line (0.173344).
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{SurfaceMeshSimplification_GH_octocat}
+<center>
+<img src="octocat.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SurfaceMeshSimplification_GH_octocat}
+<a href="https://ten-thousand-models.appspot.com/detail.html?file_id=32770">Octocat</a> model (top-left, 18944 vertices).
+From top-left to bottom-right, simplified output (1895 vertices) and symmetric Hausdorff distance
+for the five Garland-Heckbert variations: plane (0.19631), probabilistic
+plane (0.59446), triangle (0.377533), probabilistic triangle (0.891286) and plane and line (0.304001).
 \cgalFigureCaptionEnd
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
 The cost strategy used by the algorithm is selected by means of three policies:
-`GetPlacement`, `GetCost`, and `Filter`.
+`GetPlacement`, `GetCost`, and `PlacementFilter`.
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns
@@ -400,8 +417,8 @@ steps of the simplification algorithm.
 
 Each Garland-Heckbert simplification strategy is implemented with a single class that regroups
 both the cost and the placement policies, which must be used together as they share vertex quadric data.
-The classic strategy of using plane-based quadric error metrics is implemented with the class
-`Surface_mesh_simplification::GarlandHeckbert_plane_policies`.
+The state-of-the-art strategy of combining plane and line-based quadric error metrics is implemented with the class
+`Surface_mesh_simplification::GarlandHeckbert_policies`.
 Although both policies must be used together, it is still possible to wrap either policy
 using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`.
 
@@ -419,6 +436,8 @@ Andreas Fabri added the `Surface_mesh_simplification::Bounded_normal_change_plac
 The implementation of the Garland-Heckbert simplification policies is the result of the work
 of Baskın Şenbaşlar (Google Summer of Code 2019), and Julian Komaromy (Google Summer of Code 2021)
 They both were mentored by Mael Rouxel-Labbé, who also contributed to the code and to the documentation.
+
+Léo Valque added the `Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies` functionality in \cgal 6.2.
 
 */
 } /* namespace CGAL */

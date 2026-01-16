@@ -36,7 +36,7 @@ namespace Classification
 
   \tparam FaceGraph model of `FaceGraph`.
 
-  \tparam VertexPointMap model of `ReadablePropertyMap` with with
+  \tparam VertexPointMap model of `ReadablePropertyMap` with
   `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
   and `CGAL::Point_3` as value type.
 */
@@ -89,7 +89,7 @@ public:
 
   \tparam FaceGraph model of `FaceGraph`.
 
-  \tparam VertexPointMap model of `ReadablePropertyMap` with with
+  \tparam VertexPointMap model of `ReadablePropertyMap` with
   `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
   and `CGAL::Point_3` as value type.
 */

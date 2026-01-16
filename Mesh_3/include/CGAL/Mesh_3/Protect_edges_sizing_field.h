@@ -2295,6 +2295,9 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
     CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
     CGAL_assertion(cid == curve_index);
 
+    CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
+    CGAL_assertion(cid == curve_index);
+
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by
     // `analyze_and_repopulate()` walking in the other direction.

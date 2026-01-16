@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
@@ -24,6 +24,7 @@ typedef SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>               
 typedef SMS::GarlandHeckbert_probabilistic_plane_policies<Surface_mesh, Kernel>    Prob_plane;
 typedef SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>               Classic_tri;
 typedef SMS::GarlandHeckbert_probabilistic_triangle_policies<Surface_mesh, Kernel> Prob_tri;
+typedef SMS::GarlandHeckbert_plane_and_line_policies<Surface_mesh, Kernel>         Plane_and_line;
 
 template <typename GHPolicies>
 void collapse_gh(Surface_mesh& mesh,
@@ -37,16 +38,17 @@ void collapse_gh(Surface_mesh& mesh,
 
   typedef typename GHPolicies::Get_cost                                        GH_cost;
   typedef typename GHPolicies::Get_placement                                   GH_placement;
-  typedef SMS::Bounded_normal_change_placement<GH_placement>                   Bounded_GH_placement;
+  typedef SMS::Bounded_normal_change_filter<>                                  Filter;
 
   GHPolicies gh_policies(mesh);
   const GH_cost& gh_cost = gh_policies.get_cost();
   const GH_placement& gh_placement = gh_policies.get_placement();
-  Bounded_GH_placement placement(gh_placement);
+  Filter filter;
 
   int r = SMS::edge_collapse(mesh, stop,
                              CGAL::parameters::get_cost(gh_cost)
-                                              .get_placement(placement));
+                                              .filter(filter)
+                                              .get_placement(gh_placement));
 
   std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
 
@@ -59,7 +61,7 @@ void collapse_gh(Surface_mesh& mesh,
 
 // Usage:
 // ./command [input] [ratio] [policy] [output]
-// policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle)
+// policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle), "pl" (plane and line)
 int main(int argc, char** argv)
 {
   Surface_mesh mesh;
@@ -91,8 +93,10 @@ int main(int argc, char** argv)
     collapse_gh<Classic_tri>(mesh, ratio);
   else if(policy == "pp")
     collapse_gh<Prob_plane>(mesh, ratio);
-  else
+  else if(policy == "pt")
     collapse_gh<Prob_tri>(mesh, ratio);
+  else
+    collapse_gh<Plane_and_line>(mesh, ratio);
 
   CGAL::IO::write_polygon_mesh((argc > 4) ? argv[4] : "out.off", mesh, CGAL::parameters::stream_precision(17));
 

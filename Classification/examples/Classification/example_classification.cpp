@@ -8,7 +8,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/tags.h>
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 #include <CGAL/Real_timer.h>
 
@@ -214,10 +214,10 @@ int main (int argc, char** argv)
   CGAL::IO::write_PLY_with_properties
     (f, CGAL::make_range (boost::counting_iterator<std::size_t>(0),
                           boost::counting_iterator<std::size_t>(pts.size())),
-     CGAL::make_ply_point_writer (CGAL::make_property_map(pts)),
-     std::make_pair(CGAL::make_property_map(red), CGAL::PLY_property<unsigned char>("red")),
-     std::make_pair(CGAL::make_property_map(green), CGAL::PLY_property<unsigned char>("green")),
-     std::make_pair(CGAL::make_property_map(blue), CGAL::PLY_property<unsigned char>("blue")));
+     CGAL::IO::make_ply_point_writer (CGAL::make_property_map(pts)),
+     std::make_pair(CGAL::make_property_map(red), CGAL::IO::PLY_property<unsigned char>("red")),
+     std::make_pair(CGAL::make_property_map(green), CGAL::IO::PLY_property<unsigned char>("green")),
+     std::make_pair(CGAL::make_property_map(blue), CGAL::IO::PLY_property<unsigned char>("blue")));
 
 
   std::cerr << "All done" << std::endl;
