@@ -589,7 +589,6 @@ public:
                                              const int dim,
                                              const Curve_index& index) const
   {
-    locate_timer.start();
     CGAL_assertion(dim == 0 || dim == 1);
 
      Polyline_const_iterator it;
@@ -601,7 +600,6 @@ public:
        const Polyline_const_iterator pit = vertex_to_polyline_iterator_.at(pc);
        it = pit;
      }
-     locate_timer.stop();
      return it;
   }
 
