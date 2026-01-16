@@ -1,7 +1,7 @@
 #define CGAL_USE_OPTI_WITH_BBOX
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/clip.h>
+// #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -95,18 +95,18 @@ void to_integer_mesh(Mesh &m){
   }
 }
 
-void test_traits()
-{
-  Mesh m;
-  std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> m;
+// void test_traits()
+// {
+//   Mesh m;
+//   std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> m;
 
-  std::pair p(0,0.05);
-  using Traits = PMP::Orthogonal_cut_plane_traits<K>;
+//   std::pair p(0,0.05);
+//   using Traits = PMP::Orthogonal_cut_plane_traits<K>;
 
-  PMP::clip(m, p, CGAL::parameters::geom_traits(Traits()));
+//   PMP::clip(m, p, CGAL::parameters::geom_traits(Traits()));
 
-  std::ofstream("clipped.off") << m;
-}
+//   std::ofstream("clipped.off") << m;
+// }
 
 void elementary_test_kernel()
 {
@@ -246,6 +246,41 @@ void test_exact_kernel_with_rounding(std::string fname)
   // std::cout << "test_exact_kernel with concave optim and plane remove duplicates done in " << timer.time() << "\n";
 }
 
+void test_degenerate_kernels(){
+  using P = typename K::Point_3;
+  Mesh m;
+  Mesh kernel;
+
+  // Degenerate to a face
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  make_hexahedron(P(0,0,0).bbox()+P(-1,1,1).bbox(), m);
+  kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(false));
+  CGAL_assertion(kernel.vertices().size()==4);
+
+  // Degenerate to a segment
+  m.clear();
+  kernel.clear();
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  make_hexahedron(P(0,0,-0.5).bbox()+P(-1,-1,0.5).bbox(), m);
+  kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true).random_seed(4062612588).use_bounding_box_filtering(false));
+  CGAL_assertion(kernel.vertices().size()==2);
+  P a = kernel.point(*kernel.vertices().begin());
+  P b = kernel.point(*(++kernel.vertices().begin()));
+  CGAL_assertion((a==P(0,0,0) && b==P(0,0,0.5)) || (b==P(0,0,0) && a==P(0,0,0.5)));
+
+  // Degenerate to a point
+  m.clear();
+  kernel.clear();
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  make_hexahedron(P(0,0,0).bbox()+P(-1,-1,-1).bbox(), m);
+  kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true).random_seed(4062612588).use_bounding_box_filtering(false));
+  std::cout << kernel.vertices().size() << std::endl;
+  CGAL_assertion(kernel.vertices().size()==1);
+  a = kernel.point(*kernel.vertices().begin());
+  CGAL_assertion((a==P(0,0,0)));
+
+}
+
 int main(int argc, char** argv)
 {
   // test_traits();
@@ -253,6 +288,7 @@ int main(int argc, char** argv)
   // elementary_test_kernel();
   // test_kernel(filename);
   // test_kernel_with_rounding(filename);
-  test_exact_kernel(filename);
+  test_degenerate_kernels();
+  // test_exact_kernel(filename);
   // test_exact_kernel_with_rounding(filename);
 }

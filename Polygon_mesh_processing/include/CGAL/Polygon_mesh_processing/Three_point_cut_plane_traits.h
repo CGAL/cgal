@@ -121,6 +121,17 @@ struct Three_point_cut_plane_traits
 
   Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
 
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
+// for does self-intersect
+  using Segment_3 = typename Kernel::Segment_3;
+  using Triangle_3 = typename Kernel::Triangle_3;
+  using Construct_segment_3 = typename Kernel::Construct_segment_3;
+  using Construct_triangle_3 =typename  Kernel::Construct_triangle_3;
+  using Do_intersect_3 = typename Kernel::Do_intersect_3;
+  Construct_segment_3 construct_segment_3_object() const { return Construct_segment_3(); }
+  Construct_triangle_3 construct_triangle_3_object() const { return Construct_triangle_3(); }
+  Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
+#endif
 };
 
 } } // end of CGAL::Polygon_mesh_processing

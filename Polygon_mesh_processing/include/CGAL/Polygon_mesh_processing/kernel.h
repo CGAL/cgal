@@ -73,9 +73,7 @@ kernel(const PolygonMesh& pm,
   // Build the starting cube
   CGAL::Bbox_3 bb3 = bbox(pm, np);
   PolygonMesh kernel;
-  CGAL::make_hexahedron(Point_3(bb3.xmax(),bb3.ymin(),bb3.zmin()), Point_3(bb3.xmax(),bb3.ymax(),bb3.zmin()), Point_3(bb3.xmin(),bb3.ymax(),bb3.zmin()), Point_3(bb3.xmin(),bb3.ymin(),bb3.zmin()),
-                        Point_3(bb3.xmin(),bb3.ymin(),bb3.zmax()), Point_3(bb3.xmax(),bb3.ymin(),bb3.zmax()), Point_3(bb3.xmax(),bb3.ymax(),bb3.zmax()), Point_3(bb3.xmin(),bb3.ymax(),bb3.zmax()),
-                        kernel);
+  make_hexahedron(bb3, kernel);
   auto base_vpm = get_property_map(vertex_point, kernel);
   KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
   for(vertex_descriptor v: vertices(kernel))
@@ -113,10 +111,14 @@ kernel(const PolygonMesh& pm,
 
   // Get the planes and eventually shuffle them
   Three_point_cut_plane_traits<EK> kgt;
+  auto oriented_side = kgt.oriented_side_3_object();
+  auto intersection_point = kgt.construct_plane_line_intersection_point_3_object();
+
   std::vector<face_descriptor> planes(faces.begin(), faces.end());
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine(seed));
 
+    size_t i=0;
   // Cut iteratively the temporary kernel by halfspaces
   for(auto f: planes){
     auto h = halfedge(f, pm);
@@ -124,24 +126,23 @@ kernel(const PolygonMesh& pm,
                   to_exact(get(vpm,target(h, pm))),
                   to_exact(get(vpm,target(next(h, pm), pm))));
 
-    if(bbox_filtering){
+    if(bbox_filtering && vertices(kernel).size() >= 3){
       // Early exit if the plane does not cut the bbox of the temporary kernel
 
       // By looking the sign of the plane value, we can check only two corners
-      auto pred = kgt.oriented_side_3_object();
       auto eplane = plane.explicit_plane();
       // Look extreme corner according to the plane normal
       EPoint_3 corner( is_positive(eplane.a())?bb3.xmax():bb3.xmin(),
                        is_positive(eplane.b())?bb3.ymax():bb3.ymin(),
                        is_positive(eplane.c())?bb3.zmax():bb3.zmin());
-      if(pred(plane, corner) != ON_POSITIVE_SIDE)
+      if(oriented_side(plane, corner) != ON_POSITIVE_SIDE)
         continue;
 
       // Look the opposite corner
       EPoint_3 opposite_corner( is_positive(eplane.a())?bb3.xmin():bb3.xmax(),
                                 is_positive(eplane.b())?bb3.ymin():bb3.ymax(),
                                 is_positive(eplane.c())?bb3.zmin():bb3.zmax());
-      if(pred(plane, opposite_corner) == ON_POSITIVE_SIDE)
+      if(oriented_side(plane, opposite_corner) == ON_POSITIVE_SIDE)
         return PolygonMesh(); // empty
 
       start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
@@ -159,6 +160,7 @@ kernel(const PolygonMesh& pm,
     {
       start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
                                                                   starting_vertex_descriptor(start_vertex));
+      // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm));
       if (is_empty(kernel)) return kernel;
     }
   }
@@ -271,7 +273,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
-  *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
+  *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
   *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
@@ -324,7 +326,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
-  *     \cgalParamDescription{The seed use by the shuffle option (unused elsewhere)}
+  *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
   *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
