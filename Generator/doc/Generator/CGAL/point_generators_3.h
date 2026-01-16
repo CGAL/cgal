@@ -248,7 +248,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_on_segment_3` is an input iterator creating points uniformly
-distributed on a segment. The default `Creator` is
+distributed on a segment. The default for `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
 \cgalModels{InputIterator,PointGenerator}
@@ -297,8 +297,7 @@ typedef const Point_3& reference;
 
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
-distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$),
-i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$.
+distributed on the segment from `p` to `q` (excluding `q`).
 A single random number is needed from `rnd` for each point.
 The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
 */
@@ -859,7 +858,7 @@ The triangle range must be valid and unchanged while the iterator is used. Trian
 in the input point range.
 
 \tparam PointRange a model of the concepts `RandomAccessContainer` with value type begin a point from a \cgal kernel
-\tparam Triangle_3 a model of the concept `RandomAccessContainer` with `value_type` being `std::size_t`.
+\tparam TriangleRange a model of the concept `RandomAccessContainer`, with `value_type` being a model of `RandomAccessContainer` with `std::size_t` as `value_type`.
 
 \cgalModels{InputIterator,PointGenerator}
 
@@ -871,8 +870,8 @@ in the input point range.
 \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
 \sa `CGAL::Random_points_in_triangles_2<Point_2>`
 */
-template< typename PointRange,
-          typename Triangle_3 = std::vector<std::size_t>,
+template <class PointRange,
+          class TriangleRange,
           typename Creator = Creator_uniform_3<
                             typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
                             typename PointRange::value_type> >
@@ -914,17 +913,14 @@ typedef const Point_3& reference;
 /*!
 creates  an input iterator `g` generating points of type `Point_3` uniformly
 distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
-\tparam TriangleRange a model of the concept `RandomAccessContainer` with `value_type` being `std::size_t`.
 */
-template<typename TriangleRange>
-Random_points_in_triangle_soup_3(const TriangleRange& triangles,
-                                 const PointRange& points, Random& rnd = get_default_random() );
+Random_points_in_triangle_soup_3(const PointRange& points, const TriangleRange& triangles, Random& rnd = get_default_random() );
 
 /*!
-returns an input triangle containing the last point generated.
+returns the id in the input range of the triangle containing the last point generated.
 \pre a point must have been generated before calling the function
 */
-const Triangle_3
+std::size_t
 last_item_picked() const;
 
 /// @}
