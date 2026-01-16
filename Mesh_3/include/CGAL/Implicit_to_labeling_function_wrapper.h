@@ -81,63 +81,7 @@ make_implicit_to_labeling_function_wrapper(Function f)
   return Implicit_to_labeling_function_wrapper<Function, BGT>(f);
 }
 
-/**
- * \deprecated
- *
- * @class Implicit_vector_to_labeling_function_wrapper
- *
- * Wraps a set of implicit function [f1,f2,...] to one function F which
- * takes its values into N.
- *
- * Let p be a point.
- * F(p) = 0b000000(f2(p)<0)(f1(p)<0)
- *
- * It can handle at most 8 functions.
- */
-template<class Function_, class BGT>
-class Implicit_vector_to_labeling_function_wrapper
-{
-public:
-  // Types
-  typedef int                       return_type;
-  typedef std::vector<Function_*>   Function_vector;
-  typedef typename BGT::Point_3     Point_3;
 
-  /// Constructor
-  Implicit_vector_to_labeling_function_wrapper(const std::vector<Function_*>& v)
-    : function_vector_(v)
-  {
-    if ( v.size() > 8 )
-    {
-      CGAL_error_msg("We support at most 8 functions !");
-    }
-  }
-
-  // Default copy constructor and assignment operator are ok
-
-  /// Destructor
-  ~Implicit_vector_to_labeling_function_wrapper() {}
-
-  /// Operator ()
-  return_type operator()(const Point_3& p) const
-  {
-    const int nb_func = static_cast<int>(function_vector_.size());
-    char bits = 0;
-    for ( int i = 0 ; i < nb_func ; ++i )
-    {
-      // Insert value into bits : we compute fi(p) and insert result at
-      // bit i of bits
-      bits = char(bits | ( ((*function_vector_[i])(p) < 0) << i ));
-    }
-
-    return ( static_cast<return_type>(bits) );
-  }
-
-private:
-  /// Functions to wrap
-  const Function_vector function_vector_;
-
-};  // end class Implicit_to_labeling_function_wrapper
 
 
   /*!
