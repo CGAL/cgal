@@ -82,14 +82,15 @@ is union of the positive side of all of its facets, usually named the
 `Polyhedral_complex_mesh_domain_3` assumes that for each polyhedral
 surface, the sub-domain indices on both sides are known.
 
-\tparam Polyhedron stands for the type of the input polyhedral surface(s),
-model of `FaceListGraph`.
-
 \tparam IGT stands for a geometric traits class
 providing the types and functors required to implement
 the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
+
+\tparam Polyhedron stands for the type of the input polyhedral surface(s),
+model of `FaceListGraph`.
+
 
 \cgalModels{MeshDomainWithFeatures_3}
 
