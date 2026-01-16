@@ -133,7 +133,6 @@ if(TARGET CGAL::TBB_support)
       "execution   of  test_mesh_capsule_var_distance_bound"
       "execution   of  test_mesh_3_issue_1554"
       "execution   of  test_mesh_3_issue_8773"
-      "execution   of  test_mesh_polyhedral_domain_with_features_deprecated"
       "execution   of  test_mesh_cell_base_3"
       "execution   of  test_remeshing_polyhedron"
       PROPERTY RUN_SERIAL 1)
