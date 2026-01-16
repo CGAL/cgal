@@ -415,7 +415,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   set_next(boundaries.back(), boundaries[0], pm);
 
   // Fill the hole
-  if (clip_volume){
+  if (clip_volume && faces(pm).size()>1){ // If there is only one face, the output is flat does not need to be closed
     face_descriptor f=pm.add_face();
     for(auto h: boundaries){
       set_face(h, f, pm);
@@ -429,9 +429,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     }
   }
 
-  if( pm.number_of_vertices() < 3) //Degenerate to a segment
-    clear(pm);
-  CGAL_assertion(is_valid_polygon_mesh(pm));
+  CGAL_assertion( (vertices(pm).size() < 3) || is_valid_polygon_mesh(pm));
   // std::ofstream("clip.off") << pm;
 
   return *boundary_vertices.begin();
@@ -502,7 +500,142 @@ clip_convex(PolygonMesh& pm,
             const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
 #endif
             const NamedParameters& np = parameters::default_values()){
-  auto he = find_crossing_edge(pm, plane, np);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+
+  // graph typedefs
+  using BGT = boost::graph_traits<PolygonMesh>;
+  using halfedge_descriptor = typename BGT::halfedge_descriptor;
+  using edge_descriptor = typename BGT::edge_descriptor;
+  using vertex_descriptor = typename BGT::vertex_descriptor;
+
+  // np typedefs
+  // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+
+  Default_visitor default_visitor;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, pm));
+
+  // config flags
+  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
+
+  auto oriented_side = traits.oriented_side_3_object();
+  auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
+  if(vertices(pm).size()==1){
+    // Dimension == 0
+    vertex_descriptor v0 = *(vertices(pm).begin());
+    Oriented_side side_v0 = oriented_side(plane, get(vpm, v0));
+    if(side_v0 == ON_POSITIVE_SIDE){ // empty
+      clear(pm);
+      return BGT::null_vertex();
+    }
+    return v0;
+  } else if(vertices(pm).size()==2){
+    // Dimension == 1
+    vertex_descriptor v0 = *(vertices(pm).begin());
+    vertex_descriptor v1 = *(++(vertices(pm).begin()));
+    Oriented_side side_v0 = oriented_side(plane, get(vpm, v0));
+    Oriented_side side_v1 = oriented_side(plane, get(vpm, v1));
+    if(side_v0 == ON_POSITIVE_SIDE){
+      if(side_v1 == ON_POSITIVE_SIDE){ // empty
+      clear(pm);
+      return BGT::null_vertex();
+    }
+      if(side_v1 == ON_NEGATIVE_SIDE){
+        auto ip = intersection_point(plane, get(vpm, v0), get(vpm, v1));
+        put(vpm, v0, ip);
+      } else { // side_v1 == ON_ORIENTED_BOUNDARY
+        remove_vertex(v0, pm); // Degenerate to a point
+      }
+    } else if(side_v1 == ON_POSITIVE_SIDE){
+      if(side_v1 == ON_NEGATIVE_SIDE){
+        auto ip = intersection_point(plane, get(vpm, v0), get(vpm, v1));
+        put(vpm, v1, ip);
+      } else { // side_v0 == ON_ORIENTED_BOUNDARY
+        remove_vertex(v1, pm); // Degenerate to a point
+      }
+    }
+    return v0;
+
+  } else if(faces(pm).size()==1){
+    // Dimension == 2
+    halfedge_descriptor h_start = halfedge(*faces(pm).begin(), pm);
+    // halfedge_descriptor h = next(h_start, pm);
+    halfedge_descriptor h = h_start;
+    halfedge_descriptor src_split = BGT::null_halfedge();
+    halfedge_descriptor split_edge = BGT::null_halfedge();
+
+    std::vector<vertex_descriptor> vertices_to_remove;
+    std::vector<edge_descriptor> edges_to_remove;
+
+    Oriented_side side_src = oriented_side(plane, get(vpm, source(h, pm)));
+    size_t i=0;
+    do {
+      Oriented_side side_trg = oriented_side(plane, get(vpm, target(h, pm)));
+      if(side_src != side_trg && side_src != ON_ORIENTED_BOUNDARY && side_trg != ON_ORIENTED_BOUNDARY){
+        // split edge
+        auto pts = make_sorted_pair(get(vpm, source(h,pm)), get(vpm, target(h,pm)));
+        Point_3 ip = intersection_point(plane, pts.first, pts.second);
+        visitor.before_edge_split(h, pm);
+        if(h == h_start){ // In that case, the split edge become the start
+          h = CGAL::Euler::split_edge(h, pm);
+          h_start = h;
+        } else {
+          h = CGAL::Euler::split_edge(h, pm);
+        }
+        put(vpm, target(h, pm), ip);
+        // visitor.new_vertex_added(vpm.size()-1, target(h,pm), pm);
+        visitor.edge_split(h, pm);
+        visitor.after_edge_split();
+        side_trg = ON_ORIENTED_BOUNDARY;
+      }
+
+      // Memorize the edges targetting the plane
+      if(side_src == ON_POSITIVE_SIDE && side_trg == ON_ORIENTED_BOUNDARY)
+        split_edge = h;
+      else if(side_src == ON_NEGATIVE_SIDE && side_trg == ON_ORIENTED_BOUNDARY)
+        src_split = h;
+
+      // Remove positive side
+      if(side_trg == ON_POSITIVE_SIDE){
+        vertices_to_remove.push_back(target(h, pm));
+        edges_to_remove.push_back(edge(h, pm));
+      }
+
+      h = next(h, pm);
+      side_src = side_trg;
+    } while(h != h_start);
+
+    for(vertex_descriptor v: vertices_to_remove)
+      remove_vertex(v, pm);
+    for(edge_descriptor e: edges_to_remove)
+      remove_edge(e, pm);
+
+    // Close the face if cut
+    if(src_split != BGT::null_halfedge() && split_edge != BGT::null_halfedge()){
+      set_target(opposite(split_edge, pm), target(src_split, pm), pm);
+      set_next(src_split, split_edge, pm);
+      set_next(opposite(split_edge, pm), opposite(src_split, pm), pm);
+      set_halfedge(*faces(pm).begin(), split_edge, pm);
+    }
+
+    CGAL_assertion( (vertices(pm).size() < 3) || is_valid_polygon_mesh(pm));
+    return *vertices(pm).begin();
+  }
+
+  // Dimension == 3
+  halfedge_descriptor he = find_crossing_edge(pm, plane, np);
   // Early exit
   if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
