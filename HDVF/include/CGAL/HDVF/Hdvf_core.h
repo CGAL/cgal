@@ -207,6 +207,20 @@ public:
      * \brief HDVF_core destructor. */
     ~Hdvf_core() { }
 
+    /** \brief Checks if the pair of cells \f$(\gamma, \gamma')\f$, of dimensions q / q+1, is valid for A.
+     *
+     * The pair is valid if \f$\langle \mathrm d(\gamma),\gamma' \rangle\f$ is invertible.
+     *
+     * \param gamma Index of the first cell (dimension `q`).
+     * \param gamma_prime Index of the second cell (dimension `q+1`).
+     * \param q Lower dimension of cells.
+     */
+
+    bool is_valid_pair_for_A(size_t gamma, size_t gamma_prime, int q) {
+        Coefficient_ring coef(OSM::get_coefficient(_DD_col.at(q+1),gamma, gamma_prime));
+        return coef.is_invertible();
+    }
+
     /**
      * \brief Finds a valid Cell_pair of dimension q / q+1 for A.
      *

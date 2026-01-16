@@ -127,6 +127,20 @@ public:
 
     // findPair functions for M
 
+    /** \brief Checks if the pair of cells \f$(\pi, \gamma)\f$, of dimension q, is valid for M.
+     *
+     * The pair is valid if \f$\langle \mathrm f(\pi),\gamma\rangle\f$ is invertible.
+     *
+     * \param pi Index of the first cell (dimension `q`).
+     * \param gamma Index of the second cell (dimension `q+1`).
+     * \param q Dimension of cells.
+     */
+
+    bool is_valid_pair_for_M(size_t pi, size_t gamma, int q) {
+        Coefficient_ring coef(OSM::get_coefficient(this->_F_row.at(q),gamma, pi));
+        return coef.is_invertible();
+    }
+
     /**
      * \brief Finds a valid Cell_pair of dimension q for M.
      *
@@ -173,6 +187,20 @@ public:
 
     // findPair functions for W
 
+    /** \brief Checks if the pair of cells \f$(\sigma, \gamma)\f$, of dimension q, is valid for W.
+     *
+     * The pair is valid if \f$\langle \mathrm g(\gamma),\sigma\rangle\f$ is invertible.
+     *
+     * \param sigma Index of the first cell.
+     * \param gamma Index of the second cell.
+     * \param q Dimension of cells.
+     */
+
+    bool is_valid_pair_for_W(size_t sigma, size_t gamma, int q) {
+        Coefficient_ring coef(OSM::get_coefficient(this->_G_col.at(q),sigma, gamma));
+        return coef.is_invertible();
+    }
+
     /**
      * \brief Finds a valid Cell_pair of dimension q for W.
      *
@@ -217,7 +245,36 @@ public:
      */
     std::vector<Cell_pair> find_pairs_W(int q, bool &found, size_t tau) const;
 
+
+
     // findPair functions for MW
+
+    /** \brief Checks if the pair of cells \f$(\pi, \sigma)\f$, of dimension q, is valid for MW.
+     *
+     * The pair is valid if \f$\langle \parital h(\pi),\sigma\rangle \text{ and } \langle h\partial(\sigma),\pi\rangle\f$ is invertible.
+     *
+     * \param pi Index of the first cell.
+     * \param sigma Index of the second cell.
+     * \param q Dimension of cells.
+     */
+
+    bool is_valid_pair_for_MW(size_t pi, size_t sigma, int q) {
+        Coefficient_ring coef;
+        bool res;
+
+        // Compute <partial h(pi), sigma>
+        Row_chain row_sigma_D(this->_K.cod(sigma,q));
+        Column_chain col_pi_H(OSM::get_column(this->_H_col.at(q), pi));
+        coef = row_sigma_D * col_pi_H;
+        res = coef.is_invertible();
+
+        // Compute <h partial(sigma),pi>
+        Column_chain col_sigma_D(this->_K.d(sigma));
+        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
+        coef = row_pi_H * col_sigma_D;
+        res = res && coef.is_invertible();
+        return res;
+    }
 
     /**
      * \brief Finds a valid Cell_pair of dimension q for MW.
@@ -262,6 +319,20 @@ public:
      * \param tau Cell of dimension `q` to pair.
      */
     std::vector<Cell_pair> find_pairs_MW(int q, bool &found, size_t tau) const;
+
+    /** \brief Checks if the pair of cells \f$(\pi, \sigma)\f$, of dimensions q / q+1, is valid for R.
+     *
+     * The pair is valid if \f$\langle h(\pi),\sigma\rangle\f$ is invertible.
+     *
+     * \param pi Index of the first cell.
+     * \param sigma Index of the second cell.
+     * \param q Lower dimension of cells.
+     */
+
+    bool is_valid_pair_for_R(size_t pi, size_t sigma, int q) {
+        Coefficient_ring coef(OSM::get_coefficient(this->_H_col.at(q),sigma, pi));
+        return coef.is_invertible();
+    }
 
     // Hdvf methods
 

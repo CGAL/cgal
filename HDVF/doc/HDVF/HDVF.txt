@@ -484,7 +484,7 @@ and the operation is valid (ie.\ produces an HDVF) if and only if:
     Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cell \f$\sigma\in S_{q}\f$
     \f\[ MW(X) = \Big(P\backslash\{\pi\}\cup \{\sigma\}, S\backslash\{\sigma\}\cup \{\pi\}, C\Big)\f\]
     and the operation is valid (ie.\ produces an HDVF) if and only if:
-    \f\[ \langle \mathrm dh(\pi),\sigma\rangle \text{ and } \langle h\mathrm d(\sigma),\pi\rangle\text{ are invertible}\f\]
+    \f\[ \langle \partial h(\pi),\sigma\rangle \text{ and } \langle h\partial(\sigma),\pi\rangle\text{ are invertible}\f\]
 
     The MW operation modifies both homology and cohomology generators.
     The following figure illustrates the W operation.

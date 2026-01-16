@@ -810,7 +810,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
             // If export is on, store export data for significant persistent intervals
             if (_with_export)
             {
-                if (hole.duration() > 0) /*((interval_deg.second-interval_deg.first)>0)*/
+                if (hole.duration() > 0)
                     export_hdvf_persistence_pair(p) ;
                 else
                     export_hdvf_persistence_pair() ;
