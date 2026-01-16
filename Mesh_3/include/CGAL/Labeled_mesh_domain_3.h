@@ -47,7 +47,7 @@
 #include <CGAL/Mesh_3/Null_subdomain_index.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
-#include <CGAL/Mesh_3/polylines_to_protect.h>
+#include <CGAL/Mesh_3/polylines_to_protect_in_image.h>
 
 namespace CGAL {
 namespace Mesh_3 {

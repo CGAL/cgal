@@ -36,7 +36,6 @@
 
 
 
-
 #include <stdio.h> /* memcpy */
 #include <string.h> /* memcpy */
 #include <CGAL/ImageIO/typedefs.h>

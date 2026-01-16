@@ -7,9 +7,9 @@ CGAL::Image_3 random_labeled_image(const int number_of_spheres = 50)
   const int dim = 400;
   const int max_radius_of_spheres = 10;
   const int radius_of_big_sphere = 80;
-  _image* image = _createImage(dim, dim, dim, 1,
+  CGAL::_image* image = _createImage(dim, dim, dim, 1,
                                1.f, 1.f, 1.f, 1,
-                               WK_FIXED, SGN_UNSIGNED);
+                               CGAL::WK_FIXED, CGAL::SGN_UNSIGNED);
   unsigned char* ptr = static_cast<unsigned char*>(image->data);
   std::fill(ptr, ptr+dim*dim*dim, '\0');
 
@@ -47,6 +47,6 @@ CGAL::Image_3 random_labeled_image(const int number_of_spheres = 50)
       }
     }
   }
-  _writeImage(image, "random-image.inr");
+  CGAL::_writeImage(image, "random-image.inr");
   return CGAL::Image_3(image);
 }

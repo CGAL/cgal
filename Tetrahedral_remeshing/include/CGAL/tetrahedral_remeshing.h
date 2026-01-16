@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
-#ifndef TETRAHEDRAL_REMESHING_H
-#define TETRAHEDRAL_REMESHING_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_H
+#define CGAL_TETRAHEDRAL_REMESHING_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
@@ -536,4 +536,4 @@ void tetrahedral_isotropic_remeshing(
 
 }//end namespace CGAL
 
-#endif //TETRAHEDRAL_REMESHING_H
+#endif //CGAL_TETRAHEDRAL_REMESHING_H

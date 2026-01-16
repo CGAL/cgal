@@ -40,18 +40,18 @@ std::size_t Raw_image_dialog::image_word_size() const {
     return 1;
 }
 
-WORD_KIND Raw_image_dialog::image_word_kind() const
+CGAL::WORD_KIND Raw_image_dialog::image_word_kind() const
 {
   if(float_bt->isChecked() ||
      double_bt->isChecked())
-    return WK_FLOAT;
+    return CGAL::WK_FLOAT;
   else
-    return WK_FIXED;
+    return CGAL::WK_FIXED;
 }
-SIGN Raw_image_dialog::image_sign() const
+CGAL::SIGN Raw_image_dialog::image_sign() const
 {
   if(signed_bt->isChecked())
-    return SGN_SIGNED;
+    return CGAL::SGN_SIGNED;
   else
-    return SGN_UNSIGNED;
+    return CGAL::SGN_UNSIGNED;
 }

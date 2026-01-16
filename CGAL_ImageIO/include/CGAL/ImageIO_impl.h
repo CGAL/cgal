@@ -43,14 +43,14 @@
    BMP        |  .gif            |     X     |
 */
 #include <CGAL/ImageIO/inr.h>
-#include <CGAL/ImageIO/gif.h>
-#include <CGAL/ImageIO/gis.h>
-#include <CGAL/ImageIO/pnm.h>
-#include <CGAL/ImageIO/bmp.h>
-#include <CGAL/ImageIO/iris.h>
+// #include <CGAL/ImageIO/gif.h>
+// #include <CGAL/ImageIO/gis.h>
+// #include <CGAL/ImageIO/pnm.h>
+// #include <CGAL/ImageIO/bmp.h>
+// #include <CGAL/ImageIO/iris.h>
 #include <CGAL/ImageIO/analyze.h>
 #ifdef MINC_FILES
-#include <CGAL/ImageIO/mincio.h>
+// #include <CGAL/ImageIO/mincio.h>
 #endif
 
 
@@ -59,6 +59,9 @@
 #define ZLIB_MINOR_VERSION (ZLIB_VERNUM-(ZLIB_MAJOR_VERSION <<8))
 #define CGAL_USE_GZFWRITE  ZLIB_MAJOR_VERSION > 0x12 || ((ZLIB_MAJOR_VERSION == 0x12) && (ZLIB_MINOR_VERSION >= 0x90))
 #endif
+
+namespace CGAL {
+
 struct Remove_supported_file_format {
   ~Remove_supported_file_format()
   {
@@ -800,7 +803,7 @@ _image* _readImage_raw(const char *name,
   im->imageFormat = nullptr;
 
   // read file
-  ::_openReadImage(im, name);
+  _openReadImage(im, name);
   if(!im->fd) {
     fprintf(stderr, "_readImage_raw: error: unable to open file \'%s\'\n", name);
     _freeImage(im);
@@ -1575,20 +1578,20 @@ void initSupportedFileFormat()
   if ( get_static_inrimageFormat() == nullptr ) {
     f = createAnalyzeFormat();
     addImageFormatAtEnd( f );
-    f = createBMPFormat();
-    addImageFormatAtEnd( f );
-    f = createGifFormat();
-    addImageFormatAtEnd( f );
-    f = createGisFormat();
-    addImageFormatAtEnd( f );
-    f = createIrisFormat();
-    addImageFormatAtEnd( f );
-    f = createPgmFormat();
-    addImageFormatAtEnd( f );
-    f = createPgmAscIIFormat();
-    addImageFormatAtEnd( f );
-    f = createPpmFormat();
-    addImageFormatAtEnd( f );
+    // f = createBMPFormat();
+    // addImageFormatAtEnd( f );
+    // f = createGifFormat();
+    // addImageFormatAtEnd( f );
+    // f = createGisFormat();
+    // addImageFormatAtEnd( f );
+    // f = createIrisFormat();
+    // addImageFormatAtEnd( f );
+    // f = createPgmFormat();
+    // addImageFormatAtEnd( f );
+    // f = createPgmAscIIFormat();
+    // addImageFormatAtEnd( f );
+    // f = createPpmFormat();
+    // addImageFormatAtEnd( f );
     get_static_inrimageFormat() = createInrimageFormat();
     addImageFormat( get_static_inrimageFormat() );
   }
@@ -1741,3 +1744,4 @@ void convertImageTypeToFloat(_image* image){
   image->wdim = 4;
 }
 
+} // end namespace CGAL
