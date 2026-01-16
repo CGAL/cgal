@@ -21,6 +21,7 @@
 #include <string>
 #include <sstream>
 #include <string.h>
+#include <clocale>
 
 namespace CGAL {
 /* Magic header for inrimages v4 */
@@ -41,7 +42,6 @@ typedef struct {
 } stringListHead;
 /* string list descriptor */
 
-#include <clocale>
 class Set_numeric_locale {
   const char * old_locale;
 public:
