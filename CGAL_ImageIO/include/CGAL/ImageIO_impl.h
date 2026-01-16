@@ -50,7 +50,7 @@
 // #include <CGAL/ImageIO/iris.h>
 #include <CGAL/ImageIO/analyze.h>
 #ifdef MINC_FILES
-#include <CGAL/ImageIO/mincio.h>
+// #include <CGAL/ImageIO/mincio.h>
 #endif
 
 
