@@ -21,6 +21,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
@@ -196,8 +197,12 @@ public:
 
   Iso_rectangle_2 transform(const Aff_transformation_2 &t) const
   {
-    // FIXME : We need a precondition like this!!!
-    // CGAL_kernel_precondition(t.is_axis_preserving());
+    // An iso-rectangle remains axis-aligned if the transformation is
+    // a diagonal matrix (scaling/translation) or anti-diagonal (90/270 degree rotation).
+    CGAL_kernel_precondition(
+        (CGAL::is_zero(t.cartesian(0,1)) && CGAL::is_zero(t.cartesian(1,0))) ||
+        (CGAL::is_zero(t.cartesian(0,0)) && CGAL::is_zero(t.cartesian(1,1)))
+    );
     return Iso_rectangle_2(t.transform(min  BOOST_PREVENT_MACRO_SUBSTITUTION ()),
                            t.transform(max  BOOST_PREVENT_MACRO_SUBSTITUTION ()));
   }
