@@ -50,7 +50,7 @@ option(
 option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
 if(CGAL_ENABLE_TESTING AND NOT POLICY CMP0064)
   message(
-    FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
+    FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 (or greater).
 The variable CGAL_ENABLE_TESTING must be set of OFF.")
 endif()
 if(CGAL_ENABLE_TESTING)
