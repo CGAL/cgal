@@ -91,10 +91,8 @@ public:
     DirectionOutputIterator operator()(const unsigned int cone_number,
                                        const Direction_2& initial_direction,
                                        DirectionOutputIterator result)  {
-        if (cone_number<2) {
-            std::cout << "The number of cones must be larger than 1!" << std::endl;
-            CGAL_assertion(false);
-        }
+
+        CGAL_assertion_msg(cone_number>1, "The number of cones must be larger than 1");
 
         *result++ = initial_direction;
 
