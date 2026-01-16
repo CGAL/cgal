@@ -101,13 +101,13 @@ related to the template parameters of some models of the main concepts:
 The following classes are models of domain concepts
 and their associated classes:
 
-- `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
+- `CGAL::Labeled_mesh_domain_3<BGT,SubdomainIndex,SurfacePatchIndex>`
 - `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
-- `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`
+- `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>`
 
 The following functors are available for feature detection:
 

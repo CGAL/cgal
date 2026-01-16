@@ -111,7 +111,7 @@ unspecified_type manifold_with_boundary();
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type exude(const Named_function_parameters& np = parameters::default_values());
+unspecified_type exude(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -205,7 +205,7 @@ unspecified_type features();
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type lloyd(const Named_function_parameters& np = parameters::default_values());
+unspecified_type lloyd(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -406,7 +406,7 @@ unspecified_type no_perturb();
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type odt(const Named_function_parameters& np = parameters::default_values());
+unspecified_type odt(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -465,7 +465,7 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type perturb(const Named_function_parameters& np = parameters::default_values());
+unspecified_type perturb(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
