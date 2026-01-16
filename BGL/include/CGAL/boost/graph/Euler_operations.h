@@ -1509,7 +1509,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
 
           if ( !lIsFace )
           {
-            // CGAL_ECMS_TRACE(3,"  k=V" << get(Vertex_index_map,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
+            // CGAL_ECMS_TRACE(3,"  k=V" << get(Vertex_index_map,k) << " IS NOT in a face with p-q. NON-COLLAPSIBLE edge." ) ;
             return false ;
           }
           else
@@ -1531,14 +1531,14 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
   {
     if ( is_border(v0,g) && is_border(v1,g) )
     {
-      //CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
+      //CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSIBLE edge." ) ;
       return false ;
     }
     else
     {
       if ( is_tetrahedron(v0_v1,g) )
       {
-        //CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
+        //CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSIBLE edge." ) ;
         return false ;
       }
       if ( next(v0_v1, g) == opposite(prev(v1_v0, g), g) &&
@@ -1676,7 +1676,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
 }
 
 /**
- * collapses an edge in a graph having non-collapsable edges.
+ * collapses an edge in a graph having non-collapsible edges.
  *
  * Let `h` be the halfedge of `e`, and let `v0` and `v1` be the source and target vertices of `h`.
  * Collapses the edge `e` replacing it with `v1`, as described in the other overload
