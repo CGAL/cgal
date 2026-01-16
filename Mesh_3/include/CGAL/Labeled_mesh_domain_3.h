@@ -953,7 +953,7 @@ public:
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  template<typename SubdomainIndex = Null_functor,
+  template<typename SubdomainIndex_ = Null_functor,
            typename NullSubdomainIndex = Null_functor,
            typename ConstructSurfacePatchIndex = Null_functor>
   CGAL_DEPRECATED
@@ -963,7 +963,7 @@ public:
                                 double value_outside=0,
                                 double relative_error_bound = 1e-3,
                                 CGAL::Random* rng = nullptr,
-                                SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
+                                SubdomainIndex_ image_values_to_subdom_indices = SubdomainIndex_(),
                                 NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
                                 ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
   {
@@ -975,7 +975,7 @@ public:
                                                             .construct_surface_patch_index(construct_surface_patch_index_));
   }
 
-  template<typename SubdomainIndex = Null_functor,
+  template<typename SubdomainIndex_ = Null_functor,
            typename NullSubdomainIndex = Null_functor,
            typename ConstructSurfacePatchIndex = Null_functor>
   CGAL_DEPRECATED
@@ -985,7 +985,7 @@ public:
                                    const CGAL::Image_3& weights_ = CGAL::Image_3(),
                                    int value_outside=0,
                                    CGAL::Random* rng = nullptr,
-                                   SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
+                                   SubdomainIndex_ image_values_to_subdom_indices = SubdomainIndex_(),
                                    NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
                                    ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
   {
