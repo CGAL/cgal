@@ -13,6 +13,8 @@
 #ifndef CGAL_MESH_3_POLYLINES_TO_PROTECT_IN_IMAGE_H
 #define CGAL_MESH_3_POLYLINES_TO_PROTECT_IN_IMAGE_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Image_3.h>
 
