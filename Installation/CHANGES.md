@@ -18,7 +18,7 @@ Release date: July 2026
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
 - The old function names are still available but marked as deprecated for backward compatibility.
 
-### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
+### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection)
 
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) that extends the support plane of the seed face without refitting the plane to the region
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Line_segment_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Line__segment__region.html) that extends the support line of the seed segment without refitting the line to the region
@@ -44,6 +44,16 @@ Release date: July 2026
     (`x`-monotone) segments or as a cyclic sequences of (`x`-monotone) polylines, do not accept this third
     parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
     `do_intersect()`.)
+
+### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
+
+- Added new stream formatting capabilities for improved debugging and logging:
+  - [`CGAL::IO::Basic_indenting_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__streambuf.html)
+    and [`CGAL::IO::Basic_indenting_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__stream__guard.html)
+    for automatic indentation of output streams
+  - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html)
+    and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html)
+    for ANSI color support in terminal output
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
@@ -4125,18 +4135,18 @@ CGAL 3.9 offers the following improvements and new functionality :
     `Arrangement_2::Vertex` has been removed. It has been previously
     replaced new function `is_at_open_boundary()`.
 - The tags in the geometry traits that indicate the type of boundary
-    of the embedding surface were replaced by the following new tags:
+  of the embedding surface were replaced by the following new tags:
 
-    ```c++
-    Left_side_category
-    Bottom_side_category
-    Top_side_category
-    Right_side_category
-    ```
+  ```c++
+  Left_side_category
+  Bottom_side_category
+  Top_side_category
+  Right_side_category
+  ```
 
-    It is still possible not to indicate the tags at all. Default values
-    are assumed. This however will produce warning messages, and should
-    be avoided.
+  It is still possible not to indicate the tags at all. Default values
+  are assumed. This however will produce warning messages, and should
+  be avoided.
 
 ## Release 3.8
 
