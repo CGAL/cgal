@@ -50,7 +50,7 @@ namespace CGAL {
 
 */
 template< class Nef_polyhedronTraits_3,
-          class Nef_polyhedronItems_3 = CGAL::Default_items<Nef_polyhedronTraits_3>
+          class Nef_polyhedronItems_3 = CGAL::Default_items<Nef_polyhedronTraits_3>,
           class Nef_polyhedronMarks = bool
           > class Nef_polyhedron_3 {
 public:
@@ -1181,11 +1181,18 @@ public:
                    Boundary b = INCLUDED);
 
 /*!
+\brief Constructor from a polyhedral surface.
 
-  creates a Nef polyhedron, which represents the same point set as
-  the polyhedral surface `P` does.
+This constructor is a function template.
+
+\c Polyhedron must be a model of \c FaceListGraph and \c VertexListGraph.
+
+Creates a Nef polyhedron representing the same point set as the polyhedral
+surface \c P.
 */
-  Nef_polyhedron_3(Polyhedron& P);
+template <class Polyhedron>
+Nef_polyhedron_3(Polyhedron& P);
+
 
 /*!
   creates a Nef polyhedron, which represents the same point set as
