@@ -125,19 +125,17 @@ needs_more_init(C3T3& c3t3, const MeshDomain& domain)
   else // dimension is 3 but it may not be enough
   {
     CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
-    helper.update_restricted_facets();
-
-    if (c3t3.number_of_facets() == 0) {
-      return true;
-    }
-    else
+    for(const auto& f : c3t3.triangulation().finite_facets())
     {
-      helper.update_restricted_cells();
-      if (c3t3.number_of_cells() == 0) {
-        return true;
-      }
+      if(helper.is_restricted_facet(f))
+        return false;
     }
-    return false;
+    for(const auto c : c3t3.triangulation().finite_cell_handles())
+    {
+      if(helper.is_restricted_cell(c))
+        return false;
+    }
+    return true;
   }
 }
 

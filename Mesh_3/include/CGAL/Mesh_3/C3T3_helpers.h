@@ -787,6 +787,8 @@ public:
                                    ForwardIterator last_cell,
                                    Moving_vertices_set& moving_vertices);
 
+  bool is_restricted_facet(const Facet& f);
+  bool is_restricted_cell(const Cell_handle c);
   void update_restricted_facets();
   void update_restricted_cells();
 
@@ -2912,6 +2914,24 @@ update_restricted_facets()
     fit = tr_.finite_facets_begin();
     fit != tr_.finite_facets_end(); ++fit)
     updater(*fit);
+}
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_facet(const Facet& f)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Surface_patch() != updater(f);
+}
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_cell(const Cell_handle cell)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Subdomain() != updater(cell);
 }
 
 template <typename C3T3, typename MD>
