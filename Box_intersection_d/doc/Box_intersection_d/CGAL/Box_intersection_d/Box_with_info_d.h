@@ -4,8 +4,8 @@ namespace Box_intersection_d {
 /*!
 \ingroup PkgBoxIntersectionDClasses
 
-`Box_with_handle_d` is a generic iso-oriented bounding box in dimension \f$ D\f$
-that stores additionally a handle to some underlying geometric object.
+`Box_with_info_d` is a generic iso-oriented bounding box in dimension \f$ D\f$
+that stores additionally a variable to some underlying geometric object.
 It provides in each dimension an interval with lower and upper
 endpoints represented with the number type `NT`. This class is
 designed to work smoothly with the algorithms for intersecting
@@ -17,10 +17,10 @@ need to provide a unique `id`-number. The policy parameter
 \tparam NT number type for the box boundaries, needs to be a model
 of the `Assignable` and the `LessThanComparable` concept.
 \tparam D the dimension of the box.
-\tparam Handle Handle concept, e.g., a pointer, an iterator, or a circulator.
+\tparam Info arbitrary user-defined type.
 \tparam IdPolicy specifies how the `id`-number will be
 provided and can be one of the following types, where
-`ID_FROM_HANDLE` is the default for this parameter:
+`ID_EXPLICIT` is the default for this parameter:
   - `ID_NONE`: no `id`-number is provided. This can be useful
     to have this class as a base class for different
     implementations of `id`-numbers than the ones provided
@@ -40,17 +40,6 @@ the safe default implementation.
     boxes, and the `CGAL::box_self_intersection_d()` algorithm
     creates copies of the boxes that would not have identical
     `id`-numbers.
-  - `ID_FROM_HANDLE`: casts the address of the value of the
-    handle into a `std::ptrdiff_t` to create the
-    `id`-number. Works in many conceivable settings, e.g.,
-    it works with boxes copied by value or by pointer, and
-    the self intersection test. It will not work if there
-    is no one-to-one mapping between boxes and the geometry that
-    is referred to with the handles, i.e., this `id`-number
-    scheme fails if a geometric object creates several boxes with
-    the same handle value. Note that this option is not
-    available for the `CGAL::Box_intersection_d::Box_d` type
-    that does not store a handle.
 
 \cgalModels{BoxIntersectionBox_d}
 
@@ -58,13 +47,13 @@ the safe default implementation.
 \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
-\sa `CGAL::Box_intersection_d::Box_with_info_d<NT, int D, Info, IdPolicy>`
+\sa `CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>`
 \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>`
 \sa `BoxIntersectionTraits_d`
 
 */
-template< typename NT, typename int D, typename Handle, typename IdPolicy >
-class Box_with_handle_d {
+template< typename NT, typename int D, typename Info, typename IdPolicy >
+class Box_with_info_d {
 public:
 
 /// \name Types
@@ -91,36 +80,36 @@ typedef std::size_t ID;
 %Default constructor. No
 particular initialization.
 */
-Box_with_handle_d();
+Box_with_info_d();
 
 /*!
 initializes to the
 complete or the empty space. If empty, all interval starting (end)
-points will be set to positive (negative) infinity, sets handle to \f$ h\f$.
+points will be set to positive (negative) infinity, sets info to \f$ info\f$.
 */
-Box_with_handle_d(bool complete, Handle h);
+Box_with_info_d(bool complete, Info info);
 
 /*!
 initializes
 the box intervals to [`lo[i]`,`hi[i]`], \f$ 0 \leq i < D\f$ and
-sets the handle to \f$ h\f$.
+sets info to \f$ info\f$.
 \pre `lo[i]` \f$ <\f$ `hi[i]` for \f$ 0 \leq i < D\f$.
 */
-Box_with_handle_d(NT lo[D], NT hi[D], Handle h);
+Box_with_info_d(NT lo[D], NT hi[D], Info info);
 
 /*!
 constructs
-from bbox and sets the handle to \f$ h\f$, exists iff \f$ D=2\f$ and `NT`\f$
+from bbox and sets info to \f$ info\f$, exists iff \f$ D=2\f$ and `NT`\f$
 \equiv\f$`double`.
 */
-Box_with_handle_d( const Bbox_2& bbox, Handle h);
+Box_with_info_d( const Bbox_2& bbox, Info info);
 
 /*!
 constructs
-from bbox and sets the handle to \f$ h\f$, exists iff \f$ D=3\f$ and `NT`\f$
+from bbox and sets info to \f$ info\f$, exists iff \f$ D=3\f$ and `NT`\f$
 \equiv\f$`double`.
 */
-Box_with_handle_d( const Bbox_3& bbox, Handle h);
+Box_with_info_d( const Bbox_3& bbox, Info info);
 
 /// @}
 
@@ -146,9 +135,9 @@ void extend(NT point[D]);
 /// @{
 
 /*!
-returns the handle stored in `box`.
+returns the info stored in `box`.
 */
-Handle handle() const;
+Info info() const;
 
 /*!
 returns \f$ D\f$, the dimension of the box.
@@ -187,6 +176,6 @@ const Bbox_3& bbox() const;
 
 /// @}
 
-}; /* end Box_with_handle_d */
+}; /* end Box_with_info_d */
 } /* end namespace Box_intersection_d */
 } /* end namespace CGAL */
