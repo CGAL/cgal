@@ -380,6 +380,97 @@ public:
      */
     void MW(size_t pi, size_t sigma, int q);
 
+    /** \brief Compute \f$z_q\f$ function on a cell of dimension `q`.
+     *
+     * This function was first defined in tri-partitions; formally \f$z_q = \mathrm{Id} - h_{q-1}\circ \partial_q\f$.
+     *
+     * When the HDVF is perfect, \f$z_q(\sigma)\f$ is the canonical cycle associated to \f$\sigma\f$. Intuitively:
+     * - if \f$\sigma\f$ is PRIMARY, \f$z_q(\sigma)\f$ is a chain of SECONDARY cells ; if the HDVF is perfect \f$z_q(\sigma)\f$ is a cycle (the unique cycle containing \f$\sigma\f$ and SECONDARY cells).
+     * - if \f$\sigma\f$ is SECONDARY, this cycle is null
+     * - if \f$\sigma\f$ is CRITICAL, \f$z_q(\sigma)\f$ matches \f$g(\sigma)\f$ ; if the HDVF is perfect \f$z_q(\sigma)\f$ hence provides the homology generator associated to \f$\sigma\f$).
+     *
+     * \param sigma Cell index.
+     * \param q Cell dimension.
+     */
+
+    Column_chain z(size_t sigma, int q) {
+        Column_chain res(this->_K.number_of_cells(q));
+
+        if (this->psc_flag(sigma,q) == SECONDARY)
+            // 0
+            return res;
+        else if (this->psc_flag(sigma,q) == CRITICAL) {
+            // sigma + G * sigma
+            res.set_coefficient(sigma,1);
+            res += OSM::cget_column(this->_G_col.at(q), sigma);
+            return res;
+        }
+        else { // PRIMARY
+            // sigma - hd(sigma)
+            res.set_coefficient(sigma,1);
+            Column_chain col_sigma_D(this->_K.d(sigma,q));
+            res -= this->_H_col.at(q-1) * col_sigma_D;
+            return res;
+        }
+    }
+
+    /** \brief Compute \f$z^q\f$ function on a cell of dimension `q`.
+     *
+     * This function was first defined in tri-partitions; formally \f$z^q = \mathrm{Id} - h_{q}^*\circ \partial_{q+1}^*\f$.
+     *
+     * When the HDVF is perfect, \f$z_q(\sigma)\f$ is the canonical cocycle associated to \f$\sigma\f$. Intuitively:
+     * - if \f$\sigma\f$ is SECONDARY, \f$z^q(\sigma)\f$ is a cochain of PRIMARY cells ; if the HDVF is perfect \f$z^q(\sigma)\f$ is a cocycle (the unique cocycle containing \f$\sigma\f$ and PRIMARY cells).
+     * - if \f$\sigma\f$ is PRIMARY, this cocycle is null
+     * - if \f$\sigma\f$ is CRITICAL, \f$z^q(\sigma)\f$ matches \f$f^*(\sigma)\f$ ; if the HDVF is perfect \f$z^q(\sigma)\f$ hence provides the cohomology generator associated to \f$\sigma\f$).
+     *
+     * \param sigma Cell index.
+     * \param q Cell dimension.
+     */
+
+    Column_chain co_z(size_t sigma, int q) {
+        Row_chain res(this->_K.number_of_cells(q));
+
+        if (this->psc_flag(sigma,q) == PRIMARY)
+            // 0
+            return res.transpose();
+        else if (this->psc_flag(sigma,q) == CRITICAL) {
+            // sigma + F* * sigma
+            res.set_coefficient(sigma,1);
+            res += OSM::cget_row(this->_F_row.at(q), sigma);
+            return res.transpose();
+        }
+        else { // SECONDARY
+            // (sigma - dh(sigma))^*
+            res.set_coefficient(sigma,1);
+            Row_chain row_sigma_D(this->_K.cod(sigma,q));
+            res -=  row_sigma_D * this->_H_col.at(q);
+            return res.transpose();
+        }
+    }
+
+//    Column_chain z(size_t sigma, int q) {
+//        Column_chain col_sigma_D(this->_K.d(sigma));
+//        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
+//        coef = row_pi_H * col_sigma_D;
+//    }
+
+
+//    Coefficient_ring coef;
+//    bool res;
+//
+//    // Compute <partial h(pi), sigma>
+//    Row_chain row_sigma_D(this->_K.cod(sigma,q));
+//    Column_chain col_pi_H(OSM::get_column(this->_H_col.at(q), pi));
+//    coef = row_sigma_D * col_pi_H;
+//    res = coef.is_invertible();
+//
+//    // Compute <h partial(sigma),pi>
+//    Column_chain col_sigma_D(this->_K.d(sigma));
+//    Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
+//    coef = row_pi_H * col_sigma_D;
+//    res = res && coef.is_invertible();
+//    return res;
+
     /**
      * \brief Gets the annotation of a cycle in the homology basis.
      *

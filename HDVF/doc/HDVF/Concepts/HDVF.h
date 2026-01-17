@@ -294,7 +294,7 @@ std::vector<size_t> psc_flags (PSC_flag flag, int q) const;
 /*!
  * \brief Gets the `PSC_flag` of the cell `tau` in dimension `q`.
  */
-PSC_flag psc_flag (int q, size_t tau) const;
+PSC_flag psc_flag (size_t tau, int q) const;
 
 /*!
  * \brief Gets HDVF option.

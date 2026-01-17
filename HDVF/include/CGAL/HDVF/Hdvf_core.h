@@ -370,7 +370,7 @@ public:
      * \param tau Index of the cell.
      * \param q Dimension of the cell.
      */
-    PSC_flag psc_flag (int q, size_t tau) const { return _flag.at(q).at(tau); }
+    PSC_flag psc_flag (size_t tau, int q) const { return _flag.at(q).at(tau); }
 
     /**
      * \brief Gets HDVF computation option.
