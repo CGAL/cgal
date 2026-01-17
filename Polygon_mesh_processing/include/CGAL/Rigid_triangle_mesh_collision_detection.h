@@ -45,7 +45,7 @@ namespace CGAL {
  * Note that the exact predicate framework applies on the meshes after having applied the transformation
  * to the coordinates of the points of the vertices of each mesh.
  *
- * @tparam TriangleMesh a model of `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam TriangleMesh a model of `VertexListGraph`, `HalfedgeListGraph`, and `FaceListGraph`
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with the vertex descriptor of `TriangleMesh` as key type,
  *                        and a point from a CGAL Kernel as value type. %Default is the internal point property map
  *                        of `TriangleMesh` if it exists.

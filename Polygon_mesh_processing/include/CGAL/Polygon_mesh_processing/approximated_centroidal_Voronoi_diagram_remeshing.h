@@ -1309,7 +1309,7 @@ acvd_impl(TriangleMesh& tmesh,
 * Note that there is no guarantee that the output mesh will have the same topology as the input.
 * See \ref acvdrem for more details on the algorithm. This function requires the \eigen library.
 *
-* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+* @tparam TriangleMesh a model of `VertexListGraph` `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param tmesh triangle mesh to be remeshed
