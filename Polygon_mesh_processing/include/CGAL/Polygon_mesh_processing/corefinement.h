@@ -847,6 +847,7 @@ corefine(      TriangleMesh& tm1,
 }
 
 namespace experimental {
+
 /**
  * \ingroup PMP_corefinement_grp
  * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
@@ -940,6 +941,7 @@ autorefine(      TriangleMesh& tm,
 
 /**
  * \ingroup PMP_corefinement_grp
+ *
  * Removes self-intersections in `tm` by \link coref_def_subsec autorefining \endlink `tm`,
  * removing extra patches, and stitching self-intersection edges.
  * Self-intersection edges will be marked as constrained. If an edge that was marked as
@@ -1041,9 +1043,9 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   return ob.all_self_intersection_fixed();
 }
 
-}// end of namespace experimental
-
-} }  // end of namespace CGAL::Polygon_mesh_processing
+} // namespace experimental
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

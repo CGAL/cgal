@@ -16,8 +16,9 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-namespace CGAL{
-namespace Polygon_mesh_processing{
+namespace CGAL {
+namespace Polygon_mesh_processing {
+
 /**
  * \ingroup PMP_misc_grp
  *

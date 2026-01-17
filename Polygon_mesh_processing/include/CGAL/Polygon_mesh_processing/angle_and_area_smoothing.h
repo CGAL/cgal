@@ -49,7 +49,7 @@ namespace Polygon_mesh_processing {
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param tmesh a triangle mesh smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
