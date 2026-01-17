@@ -1,0 +1,31 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Meshing and Remeshing of Polygonal Meshes"
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
+
+EXCLUDE_SYMBOLS += experimental
+
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/remesh_planar_patches.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/triangulate_faces.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/remesh.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/random_perturbation.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/Uniform_sizing_field.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/extrude.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/smooth_shape.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/tangential_relaxation.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/refine.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/fair.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/approximated_centroidal_Voronoi_diagram_remeshing.h
+
+INPUT += ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/surface_Delaunay_remeshing.h
+
+EXAMPLE_PATH += ${CGAL_Polygon_mesh_processing_EXAMPLE_DIR}
+

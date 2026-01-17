@@ -16,13 +16,9 @@ STRIP_FROM_PATH += ${CGAL_Shape_detection_INCLUDE_DIR}
 # macros to be used inside the code
 ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
 
-EXAMPLE_PATH += ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR}
-
 EXCLUDE_SYMBOLS += experimental
 
 HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/mesh_smoothing.png \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-dmax0.040000-0.000000.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-dmin0.040000-0.000000.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-gaussian0.040000-0.000000.jpg \
@@ -33,8 +29,6 @@ HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.040000-0.000000.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.040000-0.002000.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.000000.jpg \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.002000.jpg \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_cheese.png \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_colors.png \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_rg_joint.png
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.002000.jpg
 
+EXAMPLE_PATH += ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR}

@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
- * \ingroup PkgPolygonMeshProcessingRef
+ * \ingroup PMP_slicing_grp
  *
  * refines `pm` by adding new vertices on edges having their incident vertices associated with
  * values respectively larger and smaller than `isovalue` in `value_map`.

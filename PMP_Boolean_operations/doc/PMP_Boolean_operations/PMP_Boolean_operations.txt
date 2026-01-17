@@ -1,0 +1,286 @@
+namespace CGAL {
+/*!
+\mainpage User Manual
+\anchor Chapter_PMPBooleanOperations
+
+\cgalAutoToc
+\authors Sébastien Loriot and Ilker O. Yaz
+
+\cgalFigureAnchor{PMPBoolOPBanner}
+<center>
+<img src="david_bool_op.png" style="max-width:70%;"/>
+</center>
+
+\section Introduction
+
+The computation of mesh Boolean operations is one of the most essential parts
+of the geometry processing toolkit, with numerous applications in CAD and
+computer graphics. As an example, it constitutes the essential operation of Constructive Solid Geometry (CSG).
+
+This \cgal package offers functions to compute the union, intersection, and difference
+of volumes bounded by triangle meshes. The core of the method is the <em>corefinement</em> technique,
+which refines two meshes such that they become conformal.
+This technique is re-used to also propose functions that enable trimming a mesh ("clipping")
+and bisecting a mesh ("splitting") with a plane, a box, or another mesh.
+
+\subsection PMPBoolOpOutline Outline
+
+We begin by introducing the core concepts of this package in \ref coref_def_subsec.
+Mesh Boolean functions and their input requirements are described in \ref coref_bolop_subsec,
+and the guarantees on the output are discussed in \ref coref_valid_subsec.
+Related functions for clipping, splitting, and slicing are documented in \ref coref_clip
+and \ref PMPSlicer.
+
+\section PMPBoolOpDef Core Concepts and Definitions
+
+\subsection PMPBoolOpApproach Approach
+
+\cgal does exact stuff, and handles degeneracies. [TODO]
+
+\subsection coref_def_subsec Definitions
+
+<b>Corefinement</b>: Given two triangulated surface meshes, the <i>corefinement</i> of these two meshes
+consists in refining both meshes such that their intersection polylines form a subset of the edges
+of both refined meshes.
+
+<b>Autorefinement</b>: Given a triangle mesh or a triangle soup, the <i>autorefinement</i>
+consists in refining the mesh/soup such that all intersections between triangles
+form a subset of the edges of the output.
+
+\todo more information on coplanar patches.
+
+\cgalFigureBegin{coref_fig, corefine.png}
+Corefinement of two triangulated surface meshes. (Left) Input meshes; (Right)
+The two input meshes after corefinement. The common edges of the two meshes are
+drawn in green.
+\cgalFigureEnd
+
+\todo below needs manifoldness to be true
+
+<b>Volume bounded by a triangulated surface mesh</b> Given a closed triangulated surface
+mesh, each connected component splits the 3D space into two subspaces. The vertex
+sequence of each face of a component is seen either clockwise or counterclockwise
+from these two subspaces. The subspace that sees the sequence in a clockwise
+(resp. counterclockwise) manner is on the negative (resp. positive) side of the component.
+Given a closed triangulated surface mesh `tm` with no self-intersections,
+the connected components of `tm` divide the 3D space into subspaces.
+We say that `tm` bounds a volume if each
+subspace lies exclusively on the positive (or negative) side of all the
+incident connected components of `tm`. The volume bounded by `tm` is the union
+of all subspaces that are on negative sides of their incident connected components
+of `tm`.
+
+\cgalFigureBegin{boundedvol_fig, bounded_vols.jpg}
+Volumes bounded by a triangulated surface mesh: The figure shows meshes
+representing three nested spheres (three connected components).
+The left side of the picture shows a clipped triangulated surface mesh,
+with the two possible orientations of the faces for which
+a volume is bounded by the mesh.
+The positive and negative sides of each connected component are displayed in
+light and dark blue, respectively. The right part of the picture shows clipped
+tetrahedral meshes of the corresponding bounded volumes.
+\cgalFigureEnd
+
+\section coref_coref_sec Mesh Boolean Operations
+
+\subsection coref_coref_subsec Computing Corefinement and Autorefinement
+
+Corefinement of two triangulated surface meshes can be performed using the function
+`CGAL::Polygon_mesh_processing::corefine()`.
+If constrained edge maps are provided, edges belonging to the
+intersection of the input meshes will be marked as constrained. Additionally,
+if a constrained edge is split during corefinement,
+the resulting sub-edges will also be marked as constrained.
+
+\cgalExample{Polygon_mesh_processing/corefinement_SM.cpp}
+
+The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way
+to refine a triangle soup using the intersections of the triangles from the soup.
+In particular, if some points are duplicated they will be merged.
+
+\cgalExample{Polygon_mesh_processing/soup_autorefinement.cpp}
+
+\subsection coref_bolop_subsec Computing Mesh Boolean Operations
+
+Corefinement of two triangulated surface meshes is a natural basis for computing Boolean operations on volumes.
+Given two triangulated surface meshes, each bounding a volume, the following functions are provided:
+- `CGAL::Polygon_mesh_processing::corefine_and_compute_union()`,
+- `CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()`,
+- `CGAL::Polygon_mesh_processing::corefine_and_compute_difference()`.
+
+respectively compute the union, intersection, and difference of the two volumes.
+
+If several Boolean operations must be computed at the same time,
+the function `CGAL::Polygon_mesh_processing::corefine_and_compute_boolean_operations()`
+should be used as to factorize the corefinement operation, which makes up for the essential
+of the runtime.
+
+The following basic example illustrates how to compute the union of two meshes:
+
+\cgalExample{Polygon_mesh_processing/corefinement_mesh_union.cpp}
+
+\cgalFigureBegin{boolop_fig, bool_op.png}
+Let `C` and `S` be the volumes bounded by the triangulated surface meshes of
+a cube and a sphere, respectively. From left to right, the picture shows
+the triangulated surface meshes bounding the union of `C` and `S`,
+`C` minus `S`, the intersection of `C` and `S`, and `S` minus `C`.
+\cgalFigureEnd
+
+\subsection coref_bolop_input Input Requirements
+
+There are no restrictions on the topology of the input volumes.
+However, certain requirements must be met to ensure that the operation is feasible.
+First, the input meshes must not self-intersect. Second, the operation is only possible if the output
+can be bounded by a manifold triangulated surface mesh.
+In particular, this means that the output volume must not contain regions of zero thickness.
+Mathematically, the intersection with an infinitesimally small ball
+centered at any point of the output volume must be a topological ball. At the surface level, this means
+that no non-manifold vertex or edge is allowed in the output. For example, it
+is not possible to compute the union of two cubes that are disjoint but share an edge.
+If such scenarios arise, consider using the package \ref PkgNef3.
+
+It is possible to update the input so that it contains the result (in-place operation).
+In this case, the entire mesh is not copied; only the region around the
+intersection polyline is modified. However, note that if the Boolean operation is not
+possible, the input mesh will still be corefined.
+
+\subsection coref_valid_subsec Kernel Choice and Output Validity
+
+The corefinement operation (which is also used internally in the Boolean operations) will correctly modify the topology of the input surface mesh
+if the point type used in the point property maps of the input meshes is
+from a \cgal Kernel with exact predicates. If the kernel does not
+provide exact constructions, the embedding of the output surface mesh may
+contain self-intersections. For consecutive operations, it is recommended to use a point property map with points from a kernel with exact
+predicates and exact constructions
+(such as `CGAL::Exact_predicates_exact_constructions_kernel`).
+
+In practice, this means that with exact predicates and inexact constructions,
+edges will be split at each intersection with a triangle but the
+position of the intersection point might create self-intersections due to
+the limited precision of floating point numbers.
+
+For the specific case of `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`,
+the option `apply_iterative_snap_rounding` is a robust heuristic to resolve this issue.
+When set to `true`, it ensures that coordinates are rounded to fit in `double`
+with potential additional subdivisions, preventing self-intersections.
+
+The following table illustrates the strength of the approach over the 10 000 models
+of the <a href="https://ten-thousand-models.appspot.com/">Thingi10k data set</a>,
+demonstrating that naive rounding to floating point types is insufficient and fails
+to eliminate all self-intersections despite autorefinement, whereas the combination of autorefinement
+and iterative snap rounding resolves all of them on all meshes:
+<CENTER>
+<TABLE CELLSPACING=3>
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
+<TR>
+<TD ALIGN=CENTER NOWRAP>Inputs<br>with self-intersections</TD>
+<TD WIDTH=50></TD>  <!-- Spacer column -->
+<TD ALIGN=CENTER NOWRAP>Autorefinement<br>with naive rounding</TD>
+<TD WIDTH=50></TD>  <!-- Spacer column -->
+<TD ALIGN=CENTER NOWRAP>Autorefinement<br>with iterative snap rounding</TD>
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
+<TR>
+<TD ALIGN=CENTER NOWRAP>3870</TD>
+<TD WIDTH=50></TD>  <!-- Spacer column -->
+<TD ALIGN=CENTER NOWRAP>529</TD>
+<TD WIDTH=50></TD>  <!-- Spacer column -->
+<TD ALIGN=CENTER NOWRAP><b>0</b></TD>
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
+</TABLE>
+</CENTER>
+
+\subsection coref_ex_subsec Advanced Examples
+
+\subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
+
+This example is similar to the previous one, but here we
+subtract a volume and update the first input triangulated surface mesh
+(in-place operation). The edges that are on the intersection of the input
+meshes are marked and the region around them is remeshed isotropically
+while preserving the intersection polyline.
+
+\cgalExample{Polygon_mesh_processing/corefinement_difference_remeshed.cpp}
+
+\subsubsection coref_ex_consq_subsec Robustness of Consecutive Operations
+
+This example computes the intersection of two volumes and then performs the
+union of the result with one of the input volumes. This operation is in
+general not possible when using inexact constructions. Instead of using a
+mesh with points from a kernel with exact constructions, the exact points
+are stored as a property of the mesh vertices and can be reused in later operations.
+With this property, it is possible to manipulate a mesh with points having floating point coordinates
+while benefiting from the robustness provided by exact constructions.
+
+\cgalExample{Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp}
+
+\section coref_clip Clipping and Splitting Meshes
+
+The corefinement of two meshes can be also used to provide <em>clipping</em> functionalities
+with a volume bounded by a closed mesh and a clipper. The clipper can be a plane, a box,
+or another closed mesh. For example, in the case of plane clipping,
+the input mesh is corefined with the plane, and all parts of the mesh lying on the negative side
+of the plane are retained.
+Alternatively, one may choose not to discard any part, but simply <em>split</em> the input according to
+a plane, box, or mesh. This operation is called <em>splitting</em>.
+
+The functions implementing these operations are:
+- `CGAL::Polygon_mesh_processing::clip()`,
+- `CGAL::Polygon_mesh_processing::split()`.
+
+Both functions offer options to select whether clipping should be performed at the volume or surface
+level, and whether the clipper should be considered compact. This is illustrated in
+\cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
+
+\cgalFigureAnchor{coref_clip_close_open}
+<center>
+<img src="clip_open_close.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{coref_clip_close_open}
+Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
+defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
+depicted in red); (iii) `clip_volume=true`: clipping of the volume bounded by the surface mesh.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{coref_clip_compact}
+<center>
+<img src="clip_compact.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{coref_clip_compact}
+Clipping a cube with a halfspace: compactivity of the clipper (`clip_volume=false` in both cases).
+From left to right: (i) initial cube and the plane defining the clipping halfspace,
+note that a whole face of the cube (2 triangles) is exactly contained in the plane;
+(ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
+(iii) `use_compact_clipper=false`: clipping of the surface mesh with a non-compact halfspace: coplanar faces are not part of the output.
+\cgalFigureCaptionEnd
+
+\section PMPSlicer Slicer
+
+The `CGAL::Polygon_mesh_slicer` is an operator that intersects a triangle surface
+mesh with a plane. It records the intersection as a set of polylines since the intersection
+can be made of more than one connected component. The degenerate case
+where the intersection is a single point is also handled.
+
+\cgalFigureRef{SlicerFig} shows
+the polylines returned by the slicing operation for a triangle mesh
+and a set of parallel planes.
+
+\cgalFigureBegin{SlicerFig, slicer.jpg}
+Slicing a mesh. A triangle mesh (left) and the polylines computed by the mesh slicer by intersecting
+a set of parallel planes (right).
+\cgalFigureEnd
+
+The example below illustrates how to use the mesh slicer for a given
+triangle mesh and a plane. Two constructors are used in the example
+for pedagogical purposes.
+
+\cgalExample{Polygon_mesh_processing/mesh_slicer_example.cpp}
+
+\section PMPBoolOpHistory Implementation History
+
+Corefinement was introduced in \cgal 4.10 by Sébastien Loriot.
+
+The `apply_iterative_snap_rounding` option for autorefinement was added in \cgal 6.1
+by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
+
+*/
+} /* namespace CGAL */

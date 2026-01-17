@@ -37,14 +37,15 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgPolygonMeshProcessingRef
+ * \ingroup PMP_intersection_grp
+ *
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
  * Meshes are added to an internal set and are referenced using an id assigned when added to the set.
  * Note that the exact predicate framework applies on the meshes after having applied the transformation
  * to the coordinates of the points of the vertices of each mesh.
  *
- * @tparam TriangleMesh a model of `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam TriangleMesh a model of `VertexListGraph`, `HalfedgeListGraph`, and `FaceListGraph`
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with the vertex descriptor of `TriangleMesh` as key type,
  *                        and a point from a CGAL Kernel as value type. %Default is the internal point property map
  *                        of `TriangleMesh` if it exists.

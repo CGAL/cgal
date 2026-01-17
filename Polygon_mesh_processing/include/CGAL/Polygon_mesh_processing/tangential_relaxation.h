@@ -42,7 +42,8 @@ struct Allow_all_moves{
 
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
+*
 * applies an iterative area-based tangential smoothing to the given range of vertices.
 * Each vertex `v` is relocated to its gravity-weighted centroid, and the relocation vector
 * is projected back to the tangent plane to the surface at `v`, iteratively.
@@ -373,7 +374,8 @@ void tangential_relaxation(const VertexRange& vertices,
 }
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
+*
 * applies `tangential_relaxation()` to all the vertices of `tm`.
 */
 template <class TriangleMesh,

@@ -36,7 +36,8 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPolygonMeshProcessingRef
+/// \ingroup PMP_slicing_grp
+///
 /// Function object that computes the intersection of a plane with
 /// a triangulated surface mesh.
 ///

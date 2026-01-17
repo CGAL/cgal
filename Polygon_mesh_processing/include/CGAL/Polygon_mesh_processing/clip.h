@@ -779,7 +779,7 @@ struct Visitor_wrapper_for_triangulate_face
 } // end of internal namespace
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * \brief clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink by `clipper`.
   *
@@ -894,7 +894,7 @@ clip(TriangleMesh& tm,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * \brief clips `pm` by keeping the part that is on the negative side of `plane` (the side opposite to its normal vector).
   *
@@ -1103,7 +1103,7 @@ bool clip(PolygonMesh& pm,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * \brief clips `tm` by keeping the part that is inside `iso_cuboid`.
   *
@@ -1213,7 +1213,7 @@ bool clip(TriangleMesh& tm,
 }
 
 /*!
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * corefines `tm` and `splitter` and duplicates edges in `tm` that are on the intersection with `splitter`.
   *
@@ -1316,7 +1316,7 @@ void split(TriangleMesh& tm,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * splits a polygon mesh with a plane.
   *
@@ -1433,7 +1433,7 @@ void split(PolygonMesh& pm,
 
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * adds intersection edges of `iso_cuboid` and `tm` in `tm` and duplicates those edges.
   *

@@ -57,7 +57,7 @@ bool fair(TriangleMesh& tmesh,
 } //end namespace internal
 
   /*!
-  \ingroup PMP_meshing_grp
+  \ingroup PMP_local_remeshing_grp
 
   @brief fairs a region on a triangle mesh.
 

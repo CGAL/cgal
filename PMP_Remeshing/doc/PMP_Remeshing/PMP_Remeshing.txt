@@ -1,0 +1,346 @@
+namespace CGAL {
+/*!
+\mainpage User Manual
+\anchor Chapter_PMPRemeshing
+
+\cgalAutoToc
+\authors Sébastien Loriot, Jane Tournois, Mael Rouxel-Labbé, Konstantinos Katrioplas, Ivan Pađen, Hossam Saeed, Ilker O. Yaz, and Sébastien Valette
+
+\cgalFigureAnchor{PMPRemeshingBanner}
+<center>
+<img src="pmp-remeshing-banner.png" style="max-width:60%;"/>
+</center>
+
+\section PMPRemeshingIntro Introduction
+
+The number of elements as well as their quality are key factors for the efficiency of algorithms
+involving polygonal meshes: too many elements lead to high computational costs, while poorly-shaped
+elements may lead to numerical instabilities and inaccurate results. Remeshing techniques aim at
+improving the quality of a mesh by modifying its combinatorial structure and geometric embedding.
+
+This package provides a collection of methods and classes to perform meshing and remeshing
+of polygonal meshes. One can distinguish between \e local remeshing algorithms, which work
+on the input using only local modifications (edge splits, collapses, flips, vertex relocations),
+from \e global remeshing algorithms, which construct a new mesh from scratch.
+
+Another important distinction exists between \e combinatorial remeshing algorithms, which
+only modify the combinatorial structure of the mesh (i.e., its connectivity), and \e geometric
+remeshing algorithms, which also modify the position of the mesh vertices.
+
+Selecting the most suitable remeshing algorithm depends on the specific requirements of the application.
+
+For reference, two other \cgal packages provide related functionalities:
+- \ref PkgSurfaceMeshSimplification implements algorithms for reducing the number of mesh elements
+while preserving overall shape and features.
+- \ref PkgSurfaceSubdivisionMethod3 provides subdivision schemes for refining and smoothing polygonal meshes.
+
+\subsection PMPRemeshingOutline Outline
+
+This manual is organized as follows:
+- \ref PMPRemeshingLocal : Local remeshing algorithms, including isotropic remeshing,
+approximated discrete centroidal Voronoi diagram remeshing, and smoothing algorithms.
+- \ref PMPmesh3rem : Global remeshing algorithm based on Delaunay refinement.
+- \ref PMPdecimate : Global remeshing of (almost) planar patches to minimize the number of elements.
+- \ref Extrusion : Extrusion of triangle meshes with boundaries.
+
+\section PMPRemeshingCombi Combinatorial Remeshing
+
+Many algorithms require input meshes in which all faces have the same degree, or are exclusively
+triangles. Triangulating all polygonal faces of a mesh is therefore often necessary.
+
+This package provides the function `CGAL::Polygon_mesh_processing::triangulate_faces()`,
+which triangulates all faces of the input polygon mesh. For each face, an approximated support plane
+is selected, orthogonal to the normal vector computed by `CGAL::Polygon_mesh_processing::compute_face_normal()`. The triangulation is performed by constructing a `CGAL::Constrained_Delaunay_triangulation_2`
+in this plane. This approach is chosen because the constrained Delaunay triangulation maximizes
+the minimum angle among all triangles, given the edges of the face.
+
+\cgalExample{Polygon_mesh_processing/triangulate_faces_example.cpp}
+
+An optional parameter, `visitor`, enables tracking of how faces are subdivided during triangulation.
+The following example demonstrates its usage.
+
+\cgalExample{Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp}
+
+\section PMPRemeshingLocal Local Remeshing
+
+\subsection isorem Isotropic Incremental Remeshing
+
+The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
+ \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
+This algorithm incrementally performs simple operations such as edge splits, edge collapses,
+edge flips, and Laplacian smoothing. All the vertices of the remeshed patch are reprojected
+to the original surface to maintain a good approximation of the input.
+
+A triangulated region of a polygon mesh can be remeshed using the function
+`CGAL::Polygon_mesh_processing::isotropic_remeshing()`, as illustrated
+by \cgalFigureRef{iso_remeshing}. The algorithm has two parameters:
+the sizing field object for the remeshed surface patch, and
+the number of iterations of the abovementioned sequence of operations.
+
+As the number of iterations increases, the mesh tends to be smoother and closer to the target edge length.
+
+\cgalFigureBegin{iso_remeshing, iso_remeshing.png}
+Isotropic remeshing. (a) Triangulated input surface mesh.
+(b) Surface uniformly and entirely remeshed.
+(c) Selection of a range of faces to be remeshed.
+(d) Surface mesh with the selection uniformly remeshed.
+\cgalFigureEnd
+
+The sizing field establishes the local target edge length for the remeshed surface.
+Two sizing fields are provided:
+- `CGAL::Polygon_mesh_processing::Uniform_sizing_field`: all triangle edges are targeted
+to have equal lengths.
+- `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`: triangle edge lengths depend
+on the local curvature -- shorter edges appear in regions with a higher curvature and vice versa.
+The outline of the adaptive sizing field algorithm is available in \cgalCite{dunyach2013curvRemesh}.
+
+The distinction between uniform and adaptive sizing fields is illustrated in \cgalFigureRef{uniform_and_adaptive}.
+
+\cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive.png}
+Sizing fields in isotropic remeshing.
+(a) Uniform sizing field.
+(b) Curvature-based adaptive sizing field.
+\cgalFigureEnd
+
+An additional option allows for the protection (i.e., preservation) of specified polylines.
+In some cases, these polylines may be too long, making it impossible to achieve the desired
+target edge length while maintaining their integrity. This can lead to infinite loops of edge splits
+in incident faces. To avoid this, the function `CGAL::Polygon_mesh_processing::split_long_edges()`
+should be applied to the list of constrained edges prior to remeshing.
+
+The following example demonstrates a complete usage of the isotropic remeshing function.
+
+\cgalExample{Polygon_mesh_processing/isotropic_remeshing_example.cpp}
+
+\subsection acvdrem Approximated Discrete Centroidal Voronoi Diagram (ACVD) Remeshing
+
+This remeshing algorithm employs clustering on polygonal meshes to approximate a Centroidal Voronoi
+Diagram construction. It is inspired by the method presented in \cgalCite{cgal:vc-acvdupmc-04}
+and further developed in \cgalCite{cgal:audette2011approach} and \cgalCite{cgal:vcp-grtmmdvd-08}.
+The algorithm is analogous to Lloyd's algorithm (or k-means), where clusters are initialized
+from randomly selected input vertices and grown to minimize a specific energy function
+until convergence. Upon convergence, output vertices are computed from the vertices of each cluster.
+
+The function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
+accepts a triangle mesh and an expected number of output vertices, updating the mesh with the remeshed
+result. Note that the final vertex count may exceed the input parameter if the mesh is not closed
+or if the specified vertex budget is insufficient to produce a manifold mesh, which may affect
+the uniformity of output triangles. The output mesh is not guaranteed to preserve the input topology;
+for example, small handles contained within a cluster may be omitted.
+
+For meshes with sharp features or corners, quadric error metrics can be used to either move output
+vertices (fast, but may produce poorly shaped triangles) or to incorporate quadric error metrics
+directly into the cluster energy formulation (slower, but yields higher quality triangles).
+Adaptive remeshing based on surface curvature is also supported.
+
+\cgalFigureBegin{acvd_remeshing, acvd_remeshing.png}
+ACVD remeshing.
+From left to right: Input; with default parameters; using adaptive option; using QEM-based energy.
+\cgalFigureEnd
+
+\subsection PMPRemeshingRefineFair Refine and Fair
+
+A surface patch can be refined by inserting new vertices and flipping edges to get a triangulation.
+Using a criterion presented in \cgalCite{liepa2003filling},
+the density of triangles near the boundary of the patch is approximated by the refinement function.
+The validity of the mesh is enforced by flipping edges.
+An edge is flipped only if the opposite edge does not exist in the original mesh
+and if no degenerate triangles are generated.
+
+A region of the surface mesh (e.g., the refined region) can be faired to obtain a tangentially
+continuous and smooth surface patch. The region to be faired is defined as a set of vertices
+to be relocated. The fairing step minimizes a linear bi-Laplacian system with boundary constraints,
+as described in \cgalCite{Botsch2008OnLinearVariational}. Visual results of these steps are shown
+in \cgalFigureRef{Mech_steps} (c and d).
+
+Refinement and fairing functions can be applied to arbitrary regions on a triangle mesh using:
+- `CGAL::Polygon_mesh_processing::refine()`: refines a specified set of facets on a mesh.
+- `CGAL::Polygon_mesh_processing::fair()`: fairs a specified set of vertices on a mesh.
+
+Fairing requires a sparse linear solver; we recommend using \ref thirdpartyEigen 3.2 or later.
+Note that fairing may fail if the set of fixed vertices used as boundary conditions is insufficient
+to solve the linear system.
+
+The following example calls the functions `CGAL::Polygon_mesh_processing::refine()`
+and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the input triangle mesh.
+
+\cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
+
+\subsection PMPRemeshingSmoothing Smoothing
+
+Smoothing of a triangulated mesh region can be performed using algorithms that target
+either mesh smoothing or shape smoothing. Mesh smoothing improves triangle quality
+based on criteria such as angle and area, while shape smoothing is designed to be intrinsic,
+minimizing dependence on discretization and focusing on smoothing the underlying shape.
+
+- Mesh smoothing by angle and area optimization:
+`CGAL::Polygon_mesh_processing::angle_and_area_smoothing()` moves vertices to optimize the geometry
+around each vertex, aiming to equalize angles between incident edges and/or equalize areas of adjacent
+triangles. Border vertices are treated as constrained and remain fixed throughout the procedure.
+No new vertices are inserted. The algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
+Area smoothing alone may produce long and skinny triangles; to mitigate this, an optional step
+of Delaunay-based edge flips can be applied. Area smoothing improves the spatial distribution
+of vertices over the smoothed region.
+
+A simple example is provided below.
+
+\cgalExample{Polygon_mesh_processing/mesh_smoothing_example.cpp}
+
+\cgalFigureAnchor{PMPFigMeshSmoothing}
+<center>
+<img src="mesh_smoothing.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{PMPFigMeshSmoothing}
+Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersections (circled in red).
+For each smoothing combination, 10 iterations were applied. From left to right:
+(a) Input mesh;
+(b) Smoothing based on areas without Delaunay flips;
+(c) Smoothing based on areas with Delaunay flips;
+(d) Smoothing based on angles;
+(e) Smoothing based on angles and areas, with Delaunay flips.
+\cgalFigureCaptionEnd
+
+\cgalFigureBegin{Fig_smooth_stats, smooth_statistics.png}
+Statistics for the various combinations of mesh smoothing.
+\cgalFigureEnd
+
+- Mesh smoothing by tangential relaxation: `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+moves vertices following an area-based Laplacian smoothing scheme, performed
+at each vertex in an estimated tangent plane to the surface.
+The full algorithm is described in \cgalCite{botsch2010PMP}.
+The example \ref Polygon_mesh_processing/tangential_relaxation_example.cpp shows how this
+mesh relaxation function can be used.
+
+\cgalExample{Polygon_mesh_processing/tangential_relaxation_example.cpp}
+
+- Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()` moves vertices towards a weighted
+barycenter of their neighbors along the mean curvature flow. The curvature flow algorithm for shape
+smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and
+Kazhdan et al. \cgalCite{kazhdan2012can}. Vertices are translated along the surface normal at a speed
+proportional to the mean curvature of the region being smoothed. Vertices on sharp corners move faster,
+while those in flat regions remain stationary (zero curvature). To prevent undesirable neck pinches
+(singularities in cylindrical regions), the algorithm slows evolution in such areas.
+The smoothed shape converges toward a sphere while remaining conformally equivalent to its original form.
+
+A simple example is provided below.
+
+\cgalExample{Polygon_mesh_processing/shape_smoothing_example.cpp}
+
+\cgalFigureAnchor{PMPFigShapeSmoothing}
+<center>
+<img src="shape_smoothing.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{PMPFigShapeSmoothing}
+Shape smoothing of the devil model, using mean curvature flow with a time step of `0.05`
+and constraining border vertices (located at the neck, where the mesh is open).
+\cgalFigureCaptionEnd
+
+\section PMPmesh3rem Delaunay-Based Surface Remeshing
+
+The mesh generation algorithm implemented in the \ref PkgMesh3 package can be used to remesh a given
+triangulated surface mesh. This algorithm, based on Delaunay refinement of a restricted Delaunay
+triangulation, produces a triangle surface mesh with guaranteed properties regarding simplex size,
+surface approximation, facet shape, and surface topology. A set of edges from the input mesh
+can be specified as constraints to build and protect polylines features, which are resampled
+while preserving the topology of the input feature graph.
+
+This triangle surface remeshing solution is available in this package via the function
+`CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`. All meshing criteria defined
+for `CGAL::make_mesh_3()` can be used directly, including those for simplex size, facet shape,
+surface approximation, topology, and one-dimensional feature sampling.
+
+An example demonstrating remeshing of a triangulated surface mesh with the Delaunay refinement
+algorithm, while preserving detected sharp edges, is provided below.
+
+\cgalExample{Polygon_mesh_processing/delaunay_remeshing_example.cpp}
+
+\section PMPdecimate Remeshing of (Almost) Planar Patches
+
+When a planar region of a model is described by many triangles, it may be desirable to simplify
+the mesh in this region, reducing the number of elements or even representing the region
+as a single large polygonal face if it forms a simply connected patch.
+
+This can be accomplished using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`,
+which detects planar regions using geometric predicates for coplanarity and collinearity.
+
+\cgalExample{Polygon_mesh_processing/remesh_planar_patches.cpp}
+
+Exact coplanarity and collinearity tests may result in unexpectedly small planar regions due to
+imperfections in the input geometry. To address this, a threshold on the angle between adjacent
+faces (or segments) can be specified, allowing faces to be considered coplanar (or segments collinear)
+within a local tolerance. However, this threshold is only local and does not provide global control,
+which may lead to undesired effects, such as in the case of a densely sampled circular arc
+where all points are eventually found to be nearly collinear.
+
+To overcome this limitation, the function `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`
+is provided. It expects the segmentation into planar patches and corners to be supplied by the user.
+Such segmentation can be obtained using `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`,
+which applies a region growing algorithm to detect planar regions in a mesh using both global
+and local criteria.
+
+Similarly, the function `CGAL::Polygon_mesh_processing::detect_corners_of_regions()` can be used
+to detect corner vertices on the border of the planar regions detected by running the region growing
+algorithm on border segments of the patch.
+
+\cgalExample{Polygon_mesh_processing/remesh_almost_planar_patches.cpp}
+
+\cgalFigureAnchor{decimate_cheese}
+<center>
+<table border=0>
+<tr>
+<td><img src="decimate_cheese.png" style="width:100%;"/></td>
+<td><img src="decimate_colors.png" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{decimate_cheese}
+Remeshing of planar patches in two models: (a) planar patches in the cheese model are retriangulated;
+(b) the remeshed version of this model contains 14 vertices and has not been retriangulated.
+Patch IDs have been assigned to both input and output meshes, enabling an identical color scheme.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{decimate_rg_sphere}
+<center>
+<table border=0>
+<tr>
+<td><img src="decimate_rg_joint.png" style="width:100%;"/></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{decimate_rg_sphere}
+Remeshing of planar patches using region growing for planar patch detection.
+From left to right: input mesh, remeshed version, remeshed version using the same angle threshold
+but larger approximation error.
+\cgalFigureEnd
+
+\section Extrusion
+
+This package provides two functions for extruding triangle meshes with boundaries. The first extrudes
+by offsetting each vertex by a user-provided vector. The second is more general, accepting two
+user-provided functors to extrude "up" and "down". In both cases, boundaries are connected
+by a triangle strip. Note that extrusion may produce self-intersecting surfaces.
+
+The following example demonstrates extrusion in both directions by projecting points
+along the vertex normal. If the `Bottom` function were the identity, this would result
+in a one-sided extrusion.
+
+\cgalExample{Polygon_mesh_processing/extrude.cpp}
+
+\section PMPRemeshingHistory Implementation History
+
+A prototype for mesh and shape smoothing was developed during the 2017 Google Summer of Code
+by Konstantinos Katrioplas, supervised by Jane Tournois. It was finalized by Mael Rouxel-Labbé
+and integrated in \cgal 5.0.
+
+The curvature-based sizing field for isotropic remeshing was added by Ivan Pađen during GSoC 2023,
+supervised by Sébastien Loriot and Jane Tournois.
+
+The ACVD Remeshing method implementation was initiated by Hossam Saeed during GSoC 2023, supervised
+by Sébastien Valette and Sébastien Loriot, who later finalized the work. The implementation is based
+on \cgalCite{cgal:vcp-grtmmdvd-08} and preceding work.
+<a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a>
+was also used as a reference during the project.
+
+*/
+} /* namespace CGAL */

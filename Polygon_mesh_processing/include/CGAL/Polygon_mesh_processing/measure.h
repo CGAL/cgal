@@ -573,7 +573,7 @@ FT
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT
 #endif
-area(FaceRange face_range,
+area(const FaceRange& face_range,
      const TriangleMesh& tmesh,
      const CGAL_NP_CLASS& np = parameters::default_values())
 {

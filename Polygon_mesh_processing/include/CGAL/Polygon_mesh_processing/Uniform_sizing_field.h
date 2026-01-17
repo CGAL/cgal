@@ -24,8 +24,9 @@ namespace CGAL
 namespace Polygon_mesh_processing
 {
 /*!
-* \ingroup PMP_meshing_grp
-* a sizing field describing a uniform target edge length for
+* \ingroup PMP_local_remeshing_grp
+*
+* A sizing field describing a uniform target edge length for
 * `CGAL::Polygon_mesh_processing::isotropic_remeshing()`.
 *
 * Edges longer than 4/3 of the target edge length will be split in half, while

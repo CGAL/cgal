@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
   /*!
-  \ingroup PMP_meshing_grp
+  \ingroup PMP_local_remeshing_grp
 
   @brief refines a region of a triangle mesh.
 

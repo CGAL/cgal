@@ -200,7 +200,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * computes the outward unit vector normal for all faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceGraph`
+* @tparam PolygonMesh a model of `FaceListGraph`
 * @tparam Face_normal_map a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     a model of `Kernel::Vector_3` as value type.
@@ -763,7 +763,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * computes the outward unit vector normal for all vertices of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *                         `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 *                         the return type of `compute_vertex_normal()` as value type.

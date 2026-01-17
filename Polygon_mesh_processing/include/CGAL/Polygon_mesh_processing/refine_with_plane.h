@@ -127,7 +127,7 @@ struct Orthogonal_cut_plane_traits
 #endif
 
 /*!
- *  \ingroup PMP_corefinement_grp
+ *  \ingroup PMP_slicing_grp
  *
  *  refines `pm` by inserting new vertices and new edges at the intersection of `plane` with `pm`.
  *
