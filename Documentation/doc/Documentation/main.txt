@@ -11,7 +11,7 @@ in the form of a C++ library.
 \cgal offers data structures and algorithms like \ref PartTriangulationsAndDelaunayTriangulations "triangulations",
 \ref PartVoronoiDiagrams "Voronoi diagrams", \ref PartPolygons, \ref PartPolyhedra,
 \ref PartArrangements "arrangements of curves", \ref PartMeshing "mesh generation",
-\ref PartGeometryProcessing "geometry processing", \ref PartConvexHullAlgorithms "convex hull algorithms",
+\ref PartPolygonMeshProcessing "geometry processing (polygon meshes)", \ref PartPointSetProcessing "geometry processing (point sets)", \ref PartConvexHullAlgorithms "convex hull algorithms",
 to name just a few.
 
 All these data structures and algorithms operate on geometric objects
