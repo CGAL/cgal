@@ -48,12 +48,12 @@ typedef Info Info;
 /// @{
 
 /*!
-Returns a const reference to the object of type `Info` stored in the face.
+returns a const reference to the object of type `Info` stored in the face.
 */
 const Info& info() const;
 
 /*!
-Returns a reference to the object of type `Info` stored in the face.
+returns a reference to the object of type `Info` stored in the face.
 */
 Info & info();
 
