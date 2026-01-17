@@ -33,7 +33,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
@@ -383,7 +383,8 @@ void isotropic_remeshing(const FaceRange& faces
 }
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
+*
 * @brief splits the edges listed in `edges` into sub-edges
 * that are not longer than the given threshold `max_length`.
 *

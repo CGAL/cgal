@@ -1303,7 +1303,7 @@ acvd_impl(TriangleMesh& tmesh,
 } // namespace internal
 
 /**
-* \ingroup PkgPolygonMeshProcessingRef
+* \ingroup PMP_local_remeshing_grp
 *
 * performs Approximated Centroidal Voronoi Diagram (ACVD) remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 * Note that there is no guarantee that the output mesh will have the same topology as the input.

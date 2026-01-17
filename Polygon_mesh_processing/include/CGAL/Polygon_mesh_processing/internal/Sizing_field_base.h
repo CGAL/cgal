@@ -27,9 +27,9 @@ namespace Polygon_mesh_processing
 namespace internal
 {
 /*!
-* \ingroup PMP_meshing_grp
-* pure virtual class serving as a base for sizing field classes used in isotropic
-* remeshing.
+* \ingroup PMP_local_remeshing_grp
+*
+* A pure virtual class serving as a base for sizing field classes used in isotropic remeshing.
 *
 * \cgalModels{PMPSizingField}
 *

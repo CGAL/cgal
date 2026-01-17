@@ -30,7 +30,7 @@ namespace CGAL {
   namespace Polygon_mesh_processing {
 
     /*!
-    * \ingroup PkgPolygonMeshProcessingRef
+    * \ingroup PMP_misc_grp
     *
     * computes a bounding box of a polygon mesh.
     *
@@ -101,7 +101,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessingRef
+    * \ingroup PMP_misc_grp
     *
     * computes a bounding box of the vertex of a polygon mesh.
     *
@@ -153,7 +153,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessingRef
+    * \ingroup PMP_misc_grp
     *
     * computes a bounding box of an edge of a polygon mesh.
     *
@@ -209,7 +209,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessingRef
+    * \ingroup PMP_misc_grp
     *
     * computes a bounding box of a face of a polygon mesh.
     *
@@ -272,7 +272,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessingRef
+    * \ingroup PMP_misc_grp
     *
     * adds an axis-aligned bounding box to a polygon mesh.
     *

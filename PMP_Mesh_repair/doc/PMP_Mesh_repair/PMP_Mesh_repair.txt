@@ -1,0 +1,292 @@
+namespace CGAL {
+/*!
+\mainpage User Manual
+\anchor Chapter_PMPMeshRepair
+
+\cgalAutoToc
+\authors Sébastien Loriot, Mael Rouxel-Labbé, and Ilker O. Yaz
+
+\image html neptun_head.jpg
+\image latex neptun_head.jpg
+<BR>
+
+\section PMPMeshRepairIntro Introduction
+
+Geometric models, whether acquired through imprecise tools or imperfect processes, frequently
+exhibit defects such as inconsistent orientations, degeneracies, gaps, missing data,
+non-manifold features, or self-intersections.
+
+This \cgal package provides a comprehensive set of functions to detect and address both combinatorial
+and geometric defects. The first part of this documentation focuses on combinatorial repairs,
+with particular attention to orienting and repairing polygon soups—a necessary step to obtain
+a valid combinatorial polygon mesh structure. The second part describes functions
+for geometric repairs, such as removing nearly degenerate faces, or filling holes.
+
+\section PMPOrientation Orientation
+
+This package offers multiple functions to compute consistent face orientations for set of faces
+(Section \ref PMPPolygonSoups) and polygon meshes (see Section \ref OrientingPolygonMeshes).
+
+\subsection PMPPolygonSoups Polygon Soups
+
+When the faces of a polygon mesh are given but the connectivity is unknown,
+this set of faces is called a \e polygon \e soup.
+
+Before running any of the algorithms on a polygon soup,
+one should ensure that the polygons are consistently oriented.
+To do so, this package provides the function
+`CGAL::Polygon_mesh_processing::orient_polygon_soup()`,
+described in \cgalCite{gueziec2001cutting}.
+
+To deal with polygon soups that cannot be converted to a
+combinatorially manifold surface, some points must be duplicated.
+Because a polygon soup does not have any connectivity (each point
+has as many occurrences as the number of polygons it belongs to),
+duplicating one point (or a pair of points)
+amounts to duplicating the polygon to which it belongs.
+The duplicated points are either an endpoint of an edge incident to more
+than two polygons, an endpoint of an edge between
+two polygons with incompatible orientations (during the re-orientation process),
+or more generally a point \a p at which the intersection
+of an infinitesimally small ball centered at \a p
+with the polygons incident to it is not a topological disk.
+
+Once the polygon soup is consistently oriented, possibly with duplicated points, connectivity
+can be recovered and made consistent to build a valid polygon mesh. The function
+`CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+performs this mesh construction step.
+
+\cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
+
+Inversely, a polygon soup can be constructed from a polygon mesh,
+using the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+
+\subsection OrientingPolygonMeshes Polygon Meshes
+
+This package provides functions for orienting faces in a closed polygon mesh:
+
+- `CGAL::Polygon_mesh_processing::orient()` orients each connected component of a closed polygon mesh outward or inward.
+- `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()` orients the connected components of a closed polygon mesh so that they bound a volume (see \ref coref_def_subsec for a precise definition).
+- `CGAL::Polygon_mesh_processing::is_outward_oriented()` checks whether an oriented polygon mesh is oriented such that the normals to all faces point outward from the domain bounded by the mesh.
+- `CGAL::Polygon_mesh_processing::reverse_face_orientations()` reverses the orientation of halfedges around faces, thereby reversing the computed normals (see Section \ref PMPNormalComp).
+- `CGAL::Polygon_mesh_processing::volume_connected_components()` provides information about the 3D arrangement of surface connected components in a triangle mesh, with many named parameter options, making it a generalization of `is_outward_oriented()`.
+- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()` duplicates points and edges to make a soup orientable, without altering face orientations.
+- `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()` orients the triangles of a soup according to a reference mesh.
+- `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()` merges the connected components of a polygon mesh when possible.
+
+The following example demonstrates how to repair and orient a soup to obtain a mesh from a reference:
+
+\cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
+
+\section PMPCombinatorialRepair Combinatorial Repair
+
+\subsection PSRepairing Polygon Soup Repairing
+
+To ensure that a polygon soup can be oriented (see Section \ref PMPPolygonSoups) and transformed
+into a usable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
+and geometrical errors. This package offers the following functions:
+- `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`,
+
+as well as the function `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+which bundles the previous functions and an additional handful of repairing techniques
+to obtain an as-clean-as-possible polygon soup.
+
+\subsection Stitching
+
+When handling polygon meshes, it might happen that a mesh has several edges and vertices that are duplicated.
+For those edges and vertices, the connectivity of the mesh is incomplete, if not considered incorrect.
+
+Stitching the borders of a polygon mesh can be done to fix some of the duplication.
+It consists in two main steps. First, border edges that are geometrically identical but duplicated
+are detected and paired. Then, they are "stitched" together so that edges and vertices duplicates
+are removed from the mesh, and each of these remaining edges is incident to exactly two faces.
+
+The functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()`, `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`,
+and `CGAL::Polygon_mesh_processing::stitch_borders()` can perform such repairing operations: the first two
+functions can be used to stitch halfedges that are part of the same boundary(ies), whereas the third
+function is more generic and can also stitch halfedges that live on different borders.
+
+The input mesh should be manifold; otherwise, stitching may not succeed.
+
+\subsubsection StitchingExample Stitching Example
+
+The following example applies the stitching operation to a simple quad mesh
+with duplicated border edges.
+
+\cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
+
+\subsection PMPManifoldness Polygon Mesh Manifoldness
+Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
+The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` can be used
+to attempt to create a combinatorially manifold surface mesh by splitting any non-manifold vertex
+into as many vertices as there are manifold sheets at this geometric position.
+Note however that the mesh will still not be manifold from a geometric
+point of view, as the positions of the new vertices introduced at a non-manifold vertex are identical
+to the input non-manifold vertex.
+
+\subsubsection FixNMVerticeExample Manifoldness Repair Example
+
+In the following example, a non-manifold configuration is artificially created and
+fixed with the help of the functions described above.
+
+\cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}
+
+\subsection PMPDuplicateVertexBoundaryCycle Duplicated Vertices in Boundary Cycles
+
+Similarly to the problematic configuration described in the previous section, another issue that can be present
+in a polygon mesh is the occurrence of a "pinched" hole, that is the configuration where, when
+starting from a border halfedge and walking the halfedges of this border, a geometric position appears
+more than once (although, with different vertices) before reaching the initial border halfedge again. The functions
+`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()` and
+`CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`, which merge
+vertices at identical positions, can be used to repair this configuration.
+
+\section PMPGeometricRepair Geometric Repair
+
+\subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
+Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
+might not be desirable to have in a mesh. The function
+`CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` enables removing such elements,
+with user-defined parameters to qualify what <i>almost</i> means (`cap_threshold` and `needle_threshold`).
+As some badly shaped elements are inevitable (the triangulation of a long cylinder
+with only vertices on the top and bottom circles for example), extra parameters can be passed
+to prevent the removal of such elements (`collapse_length_threshold` and `flip_triangle_height_threshold`).
+
+\subsection PMPAutoref Self-intersection Resolution (Autorefinement) in Triangle Soups
+Given a soup of triangles, a self-intersection is defined as the intersection of two triangles from the soup
+such that the intersection is not defined by the convex hull of one, two or three shared vertices.
+In other words, it is an intersection that happens in the interior of one of the two triangles, or in the interior
+of one their edges, except if identical points are associated to different vertices of the triangle soup which
+would then also includes overlaps of duplicated points.
+
+The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way to refine a triangle soup
+using the intersections of the triangles from the soup. In particular, if some points are duplicated they will be
+merged. Note that if a kernel with exact predicates but inexact constructions is used, some new self-intersections
+might be introduced due to the rounding of the coordinates of intersection points. The `apply_iterative_snap_rounding` option can be used to resolve this issue.
+When set to `true`, it ensures that the coordinates are rounded to fit in `double` with potential additional subdivisions,
+preventing any self-intersections from occurring.
+
+\if READY_TO_PUBLISH
+
+\subsection DegenerateFaces Removing Degenerate Faces
+
+Some degenerate faces may be part of a given triangle mesh.
+A face is considered \e degenerate if two of its vertices
+share the same location, or more generally if its three vertices are collinear.
+The function `CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
+removes those faces and fixes the connectivity of the newly cleaned up mesh.
+It is also possible to remove isolated vertices from any polygon mesh, using the function
+`CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
+
+\subsubsection RemoveDegenerateExample Example
+
+In the following example, the degenerate faces of a triangle mesh
+are removed, the connectivity is fixed, and the number of removed faces
+is output.
+
+\cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
+\endif
+
+\section PMPHoleFilling Hole Filling
+
+This package provides an algorithm for filling one closed hole that is either in a triangulated surface mesh
+or defined by a sequence of points that describe a polyline.
+The main steps of the algorithm are described in \cgalCite{liepa2003filling} and can be summarized as follows.
+
+First, the largest patch triangulating the boundary of the hole is generated without introducing any new vertex.
+The patch is selected so as to minimize a quality function evaluated for all possible triangular patches.
+The quality function first minimizes the worst dihedral angle between patch triangles,
+then the total surface area of the patch as a tiebreaker.
+Following the suggestions in \cgalCite{zou2013algorithm}, the performance of the algorithm is significantly improved
+by narrowing the search space to faces of a 3D Delaunay triangulation of the hole boundary vertices,
+from all possible patches, while searching for the best patch with respect to the
+aforementioned quality criteria.
+
+For complex hole boundaries, the generated patch may have self-intersections.
+After hole filling, the patch can be refined and faired using the meshing functions
+`CGAL::Polygon_mesh_processing::refine()` and `CGAL::Polygon_mesh_processing::fair()`
+(see Section \ref Chapter_PMPRemeshing).
+
+\cgalFigureBegin{Mech_steps, mech_hole_horz.jpg}
+Results of the main steps of the algorithm.
+From left to right: (a) the hole,
+(b) after triangulation,
+(c) after triangulation and refinement,
+(d) after triangulation, refinement, and fairing.
+\cgalFigureEnd
+
+\subsection HoleFillingAPI API
+
+This package provides four functions for hole filling:
+  - `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()` : given a sequence of points defining the hole, triangulates the hole.
+  - `CGAL::Polygon_mesh_processing::triangulate_hole()` : given a border halfedge on the boundary of the hole on a mesh, triangulates the hole.
+  - `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()` : in addition to `CGAL::Polygon_mesh_processing::triangulate_hole()` the generated patch is refined.
+  - `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` : in addition to `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()` the generated patch is also faired.
+
+\subsection HFExamples Examples
+
+\subsubsection HFExample_1 Triangulate a Polyline
+
+The following example triangulates a hole described by an input polyline.
+
+\cgalExample{Polygon_mesh_processing/triangulate_polyline_example.cpp}
+
+\subsubsection HFExample_2 Hole Filling From the Border of the Hole
+
+If the input polygon mesh contains one or more holes, they can be filled iteratively
+by detecting border edges (edges with only one incident non-null face) after each filling step.
+
+Holes are filled sequentially, and the process stops when no border edge remains.
+
+The example below illustrates this process, where holes are iteratively filled, refined, and faired.
+Optionally, only holes not exceeding a specified diameter or number of edges can be filled.
+This example assumes the mesh is stored in a `CGAL::Surface_mesh` data structure. Analogous examples
+for `CGAL::Polyhedron_3` and other classes are available in the code base.
+
+\cgalExample{Polygon_mesh_processing/hole_filling_example_SM.cpp}
+
+ \cgalFigureBegin{Triangulated_fork, fork.jpg}
+ Holes in the fork model are filled with triangle patches.
+ \cgalFigureEnd
+
+An additional parameter, `visitor`, can be used to track the algorithm's phases,
+enabling users to implement timeouts or monitor progress.
+
+\cgalExample{Polygon_mesh_processing/hole_filling_visitor_example.cpp}
+
+\subsection HFPerformance Performance
+
+The hole filling algorithm has a complexity which depends on the
+number of vertices.  While \cgalCite{liepa2003filling} has a running
+time of \cgalBigO{n^3} , \cgalCite{zou2013algorithm} in most cases has
+running time of \cgalBigO{n \log n}. We benchmarked the function
+`triangulate_refine_and_fair_hole()` for the two meshes below (as well as two
+more meshes with smaller holes). The machine used was a PC running
+Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz.
+The program was compiled with the Visual C++ 2013 compiler with the O2
+option, which maximizes speed.
+
+\cgalFigureBegin{Elephants, elephants-with-holes.png}
+The elephant on the left/right has a hole with 963/7657 vertices.
+\cgalFigureEnd
+
+The following running times were observed:
+
+<center>
+|  # vertices | without Delaunay (sec.) | with Delaunay (sec.)|
+| ----:       | ----:                   | ----:               |
+  565         | 8.5                     | 0.03                |
+  774         | 21                      | 0.035               |
+  967         | 43                      | 0.06                |
+ 7657         | na                      | 0.4                 |
+</center>
+
+\section PMPMeshRepairHistory Implementation History
+
+Functionalities related to mesh and polygon soup repair have been introduced steadily over multiple versions
+since \cgal 4.10, in joint work between Sébastien Loriot and Mael Rouxel-Labbé.
+
+*/
+} /* namespace CGAL */

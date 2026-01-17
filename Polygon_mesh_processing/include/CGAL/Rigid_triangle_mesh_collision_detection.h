@@ -37,7 +37,8 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgPolygonMeshProcessingRef
+ * \ingroup PMP_intersection_grp
+ *
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
  * Meshes are added to an internal set and are referenced using an id assigned when added to the set.

@@ -36,7 +36,8 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Triangulate_faces {
 
-/** \ingroup PMP_meshing_grp
+/** \ingroup PMP_combi_remeshing_grp
+*
 *   %Default new face visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
@@ -261,7 +262,7 @@ public:
 } // namespace internal
 
 /**
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_combi_remeshing_grp
 *
 * triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
 *
@@ -318,7 +319,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 }
 
 /**
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_combi_remeshing_grp
 *
 * triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
 *
@@ -394,7 +395,7 @@ bool triangulate_faces(FaceRange face_range,
 }
 
 /**
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_combi_remeshing_grp
 *
 * triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2.
 *
@@ -454,7 +455,8 @@ bool triangulate_faces(PolygonMesh& pmesh,
 
 namespace Triangulate_polygons {
 
-/** \ingroup PMP_meshing_grp
+/** \ingroup PMP_combi_remeshing_grp
+*
 *   %Default new polygon visitor model of `PMPTriangulateFaceVisitor`.
 *   All its functions have an empty body. This class can be used as a
 *   base class if only some of the functions of the concept require to be
@@ -646,7 +648,7 @@ public:
 } // namespace internal
 
 /**
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_combi_remeshing_grp
 *
 * triangulates all polygons of a polygon soup. This function depends on the package \ref PkgTriangulation2.
 *

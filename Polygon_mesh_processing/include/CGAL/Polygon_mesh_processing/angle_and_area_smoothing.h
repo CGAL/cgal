@@ -29,9 +29,9 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
-* \brief smooths a triangulated region of a polygon mesh.
+* \brief smooths a region of a triangle mesh.
 *
 * This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -322,9 +322,9 @@ void angle_and_area_smoothing(const FaceRange& faces,
 }
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
-* \brief smooths a polygon mesh.
+* \brief smooths a triangle mesh.
 *
 * This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
