@@ -27,15 +27,13 @@
 
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/geometric_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <boost/utility/result_of.hpp>
 
 #include <iostream>
 #include <map>
 #include <vector>
 #include <array>
+#include <random>
 #include <CGAL/array.h>
 
 namespace CGAL {
@@ -91,7 +89,7 @@ public:
  // here is the stack of triangulations which form the hierarchy
   std::array<Tr_Base,maxlevel-1> hierarchy_triangulations;
   std::array<Tr_Base*,maxlevel> hierarchy;
-  boost::rand48  random;
+  std::mt19937  random;
 
 public:
   Triangulation_hierarchy_2(const Geom_traits& traits = Geom_traits());
@@ -769,11 +767,9 @@ int
 Triangulation_hierarchy_2<Tr_>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/double(ratio));
-  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
+  std::geometric_distribution<> proba(1.0/double(ratio));
 
-  return (std::min)(die(), (int)maxlevel)-1;
-
+  return (std::min)(proba(random), (int)maxlevel)-1;
 }
 
 } //namespace CGAL
