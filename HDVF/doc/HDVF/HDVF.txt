@@ -1,0 +1,790 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_HDVF
+
+\cgalAutoToc
+\author Alexandra Bac
+
+Algebraic topology, introduced more than a century ago, studies topological spaces using algebraic tools derived from them (e.g. groups). Since the 70's and 80's, pioneering works (MacLane, Hilton, Munkres...) paved the way to computational homology, which studies the "holes" of an object.
+In particular, Munkres introduced an algorithm computing Betti numbers based on the pseudo-diagonalization of boundary matrices (Smith Normal Form).
+
+In the 90's, persistent homology emerged independently through the work of H. Edelsbrunner et al. (North Carolina), P. Frosini et al. (Bologna), and V. Robins (Colorado), extending the study of homology to sequences of complexes (filtrations).
+This later theory proved to have a wide range of applications in topological data analysis and hence quickly developed and spread in the scientific community.
+In parallel, in the late 80's, R. Forman defined a discrete version of Morse theory for CW-complexes, while F. Sergeraert introduced effective homology theory.
+
+In [AGL, 2017], A. Gonzalez-Lorenzo et al. defined the **homological discrete vector field** (which we refer to as HDVF in the present package), a combinatorial object that generalizes previous approaches.
+Precisely, HDVFs combine discrete Morse and effective homology theory and fully encode homology information (homology groups decomposition, Betti numbers, homology generators) for cellular complexes.
+HDVFs encompass discrete Morse theory, effective homology and Smith Normal form, and: persistent homology can be computed with HDVFs (see [AGL, 2016]), relative homology and Alexander duality (see [AGL, 2025]).
+
+ \cgalFigureBegin{HDVFtwirl,HDVF_twirl.png}
+ HDVF on a twirl model. **Left:** a perfect HDVF over the model; **Middle:** Homology generators associated to this HDVF; **Right:** Corresponding cohomology generators.
+ \cgalFigureEnd
+
+Unlike other main stream state of art approaches and librairies (largely based on persistent homology), HDVFs provide a framework for "geometric" homology and cohomology computation, where holes are not only enumerated, but also "localized" (through homology, cohomology generators, annotations...).
+
+
+
+\section secHDVFdefinitions Overview
+
+The HDVF package is dedicated to homology and cohomology computation for discrete objects and provides tools to compute:
+- basic homological information (such as Betti numbers, ie.\ number of holes per dimension),
+- but also geometric, higher level information (homology and cohomology generators, homology/cohomology annotation, cycles and co-cycles comparison...),
+- moreover HDVFs compute persistent homology (and provide "persistent generators" information) as well as Alexander duality and relative homology.
+
+\section secHDVFHomology Homology/cohomology and related reminders
+
+Homology and cohomology are well know topological invariants which accounts for the holes of an object using commutative groups built from the object. In Mathematics, homology and cohomology can be defined for general Hausdorff topological spaces; we speak then about "singular homology and cohomology". However, such a general definition is not computable and thus, homology/cohomology computation requires a discretization of spaces into cells of various dimensions. Such a discretization is called a **complex**:
+- **simplicial complexes** are intuitively meshes built from vertices, edges, triangles, tetrahedra...
+- **cubical complexes** are built from vertices, edges, squares, cubes...
+- **cellular complexes** are built from vertices, edges, polygons (without holes), polyhedra (without holes)...
+
+Actually, a set of cells is called a complex \f$K\f$ when:
+- it is closed under the "face" operation (ie.\ all the faces of a cell of the complex also belong to the complex)
+- intersections of cells are either empty of they are a proper cell of the complex
+The dimension of \f$K\f$ is the largest dimension of its cells.
+
+ \cgalFigureBegin{HDVFcomplexes,HDVF_cub_simpl_complex.png}
+ Illustration of complexes. **Left:** a simplicial complex of dimension 3; **Right:** A cubical complex of dimension 3.
+ \cgalFigureEnd
+
+ In order to compute homology and cohomology, algebraic objects are built from such "geometric" complexes, namely chain complexes.
+
+\subsection secHDVFChainComplexes Chain complexes
+
+In order to define this algebraic structure, one first need to chose a **ring of coefficients** \f$A\f$  (\f$A\f$ is often taken to be \f$Z\f$ or a \f$\mathbb Z/p\mathbb Z\f$ field).
+
+Given a complex \f$K\f$ of dimension \f$d\f$, a **chain complex** \f$C\f$ is:
+
+\f\[C = \cdots C_{q+1} \xrightarrow{\partial_{q+1}} C_q \xrightarrow{\partial_{q}} C_{q-1} \xrightarrow{\partial_{q-1}} \cdots \to C_1 \xrightarrow{\partial_1} C_0 \xrightarrow{\partial_0 = 0} 0\f\]
+
+
+
+- a sequence of commutative groups, called **chain groups** \f$C_q\f$ for any \f$0\leqslant q \leqslant d\f$ defined as the formal linear combinations of cells with coefficients in \f$A\f$ (or \f$A\f$-module).<br>
+Intuitively, elements of \f$C_q\f$, called **chains** are sums \f$\gamma = \sum_{i=1}^k\lambda_i\cdot \sigma_i\f$ with \f$\lambda_i\in A\f$ and \f$\sigma_i\f$ cells of dimension \f$q\f$, which can be imagined as a set of paths of oriented cells with multiplicity (see \cgalFigureRef{HDVFchain_complexes} where two 1-chains are represented).
+- a sequence of morphisms between chain groups, called **boundary morphisms** \f$\partial_q\,:\, C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
+
+\f\[\partial_q\partial_{q+1} = 0\f\]
+
+Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will see in section \ref secHDVFsimplicial_chain_complex, the boundary of the edge \f$e_{45}\f$ is the 0-chain \f$v_5-v_4\f$ (ordering is given by vertices indices). Hence, on easily gets that \f$\partial_1(\gamma_1)=0\f$ and \f$\partial_1(\gamma_2)=v_8-v_4\f$, which is a very intuitive result.
+
+ \cgalFigureBegin{HDVFchain_complexes,simplicial_complex_chains.png}
+ Examples of chains representation in a simplicial complex (with \f$A = \mathbb Z\f$). **Pink:** representation the 1-chain (of edges) \f$\gamma_1 = e_{24}+e_{46}-e_{26}\f$; **Blue:** representation of the 1-chain \f$\gamma_2 = e_{45}+e_{56}+e_{67}+e_{78}\f$.
+ \cgalFigureEnd
+
+The definition of the boundary operator depends on the underlying complex, it is detailed in next sections for simplicial and cubical complexes respectively.
+
+ <B>Notation</B>
+
+Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by \f$\langle\gamma,\sigma\rangle\f$ the coefficient of \f$\sigma\f$ in \f$\gamma\in C_q\f$.
+
+\subsubsection secHDVFsimplicial_chain_complex Simplicial chain complexes
+
+An **abstract simplicial complex** of dimension \f$d\f$ is built from:
+- a set of vertices identified by an index of type `std::size_t` (cells of dimension 0 or **0-simplices**)
+- for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or **q-simplices**) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
+
+A **geometric simplicial complex** equips vertices with coordinates in \f$\mathbb R^q\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.
+
+Given a simplicial complex (abstract or geometric) \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a **simplicial chain complex** is defined as follows:
+
+- The \f$q\f$-th chain group \f$C_q\f$ is the free \f$A\f$-module generated by \f$q\f$-cells described in the section \ref secHDVFChainComplexes.
+
+- The \f$q\f$-th boundary morphism is defined over the \f$q\f$-simplices (ie.\ the basis) by:
+
+\f\[\partial_q : \begin{array}{rcl}
+C_q & \to & C_{q-1} \\
+\langle v_0,\ldots,v_{q}\rangle & \mapsto & \sum_{i=0}^q (-1)^i\cdot \langle v_0,\ldots,\hat{v_i}, \ldots, v_{q}\rangle \\
+\end{array}
+\f\]
+where \f$\hat{v_i}\f$ means that the \f$i\f$-th vertex has been discarded.
+
+For instance, in our previous example:
+- For the edge \f$\langle 4,5\rangle\f$, we get \f$\partial_1(\langle 4,5\rangle) = \langle 5\rangle - \langle 4\rangle\f$
+- For the triangle \f$\langle 2,4,6\rangle\f$, we get \f$\partial_2(\langle 2,4,6\rangle) = \langle 4,6\rangle - \langle 2,6\rangle + \langle 2,4\rangle\f$
+
+\subsubsection secHDVFcubical_chain_complex Cubical chain complexes
+
+A **cubical complex** of dimension \f$d\f$ is a set of cells defined as cartesian products:
+\f\[\sigma = [n_1,n_1+\delta_1]\times\cdots \times [n_d,n_d+\delta_d]\f\]
+with \f$n_i\in \mathbb N\f$ and \f$\delta_i\in\{0,1\}\f$ for \f$i=1\ldots d\f$.
+The dimension of such a cell is \f$\sum_{i=1}^d \delta_i\f$.
+As stated in previous section, a complex is closed under the "face" operation (if a cell belongs to the complex, so do its faces).
+
+**Khalimsky coordinates** associate to each cell, whatever its dimension, a unique coordinate in \f$\mathbb N^d\f$ defined as:
+\f\[\mathrm{khal}(\sigma) = (2 n_1+\delta_1,\ldots, 2 n_d+\delta_d)\f\]
+The dimension of a cell in this coordinate system is thus the number of odd coordinates.
+
+ \cgalFigureBegin{HDVFcubical_complex_fig,cubical_complex.png}
+ A cubical complex of dimension 3.
+ \cgalFigureEnd
+
+ For instance, in the example above:
+ - \f$v = [2,2] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (4,2,0)\f$ (cell of dimension 0)
+ - \f$e = [0,1] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (1,2,0)\f$ (cell of dimension 1)
+ - \f$f = [2,3] \times [0,1] \times [1,1]\f$ and \f$\mathrm{khal}(\sigma) = (5,1,2)\f$ (cell of dimension 2)
+
+Given a cubical complex \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a **cubical chain complex** is defined as follows:
+- The \f$q\f$-th chain group \f$C_q\f$ is the free \f$A\f$-module generated by \f$q\f$-cells described in the section \ref secHDVFChainComplexes.
+- The \f$q\f$-th boundary morphism is defined over Khalimsky coordinates of cells (ie.\ the basis) as follows:
+\f\[\partial_q(x_1,\ldots,x_d) = \sum_{\substack{i=1\\i\text{ odd}}}^d (-1)^{i+1}\Big((x_1,\ldots, x_i+1,\ldots, x_d) - (x_1,\ldots, x_i-1,\ldots, x_d)\Big)\f]
+
+For instance, in the example above:
+- \f$\partial(e) = (2,2,0)-(0,2,0)\f$
+- \f$\partial(f) = \big((6,1,2)-(4,1,2)\big) - \big((5,2,2)-(5,0,2)\big)\f$
+
+\subsubsection secHDVFcochain Co-chain complex (for cohomology)
+
+In the "mathematical world", singular cohomology is defined on dual groups \f$C^q = C_q^* = \mathrm{Hom}(C_q,A)\f$ with coboundary morphisms: \f$\partial^q\,:\, C^q \to C^{q+1} = \partial_q^*\f$.
+
+However in our discrete setting of finite complexes, a space and its dual can be identified. Hence cohomology can be defined in a more intuitive way:
+
+\f\[C^* = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
+
+- **cochain groups** \f$C^q\f$ for any \f$0\leqslant q \leqslant d\f$ are identified with \f$C_q\f$. Hence chains and cochains are similar.
+- a sequence of morphisms between chain groups, called **coboundary morphisms** \f$\partial^q\,:\,C^q\to C^{q+1}\f$ for any \f$0\leqslant q \leqslant d\f$ with \f$\partial^q = \partial_q^t\f$ (thus, the matrix of the coboundary operator is the transpose of the boundary operator matrix). The coboundary operator "mimicks" algebraically the geometric coboundary (ie.\ cofaces) and satisfies:
+\f\[\partial^q\partial^{q-1} = 0\f\]
+
+The following figure illustrates the coboundary morphism
+
+ \cgalFigureBegin{HDVFcoboundary,simplicial_complex_coboundary.png}
+ Illustration of the coboundary morphism (with \f$A = \mathbb Z\f$) **Pink:** coboundary of vertex \f$v_6\f$ (\f$\partial^0(v_6) = e_{26} + e_{46}+e_{56} - e_{67} - e_{68}\f$); **Blue:** coboundary of edge \f$e_{24}\f$ (\f$\partial^1(e_{24} ) = f_{246} - f_{234}\f$).
+ \cgalFigureEnd
+
+\subsection secHDVFhomology Homology of discrete chain complexes
+
+Homology is a topological invariant characterizing the holes of an object of various dimension. What is a hole?
+- holes of dimension 0 are connected components
+- holes of dimension 1 are tunnels or handles of the object
+- holes of dimension 2 are cavities
+
+ \cgalFigureBegin{HDVFholes_example,holes_example.png}
+ Illustration of the holes of a double torus. **Black:** 1 connected component (dimension 0); **Red:** 4 holes of dimension 1; **Blue** 1 cavity of dimension 2.
+ \cgalFigureEnd
+
+Let us now come back to our simplicial complex example:
+ \cgalFigureBegin{HDVFsimplicial_cycles_example,simplicial_complex_homology.png}
+ Cycles on a simplicial complex. **Blue:** this cycle is the boundary of \f$f_{234}+f_{246}\f$; **Pink:** this cycle is not a boundary.
+ \cgalFigureEnd
+
+This example suggests that holes are delineated by *cycles which are not a boundaries*:
+- **Cycles** of dimension \f$q\f$ are chains in the kernel of \f$\partial_q\f$:
+\f\[Z_q(C) = \ker(\partial_q) \f\]
+- **Boundaries** of dimension \f$q\f$ are chains in the image of \f$\partial_{q+1}\f$
+\f\[B_q(C) = \mathrm{Im}(\partial_{q+1}) \f\]
+- As \f$\partial_{q}\partial_{q+1} = 0\f$, \f$B_q(C)\subseteq Z_q(C)\f$.
+- Hence we can define the quotient \f$Z_q(C)/B_q(C)\f$ which contains exactly "cycles which are not boundaries", ie.\ the \f$q\f$th homology group:
+\f\[H_q(C) = Z_q(C)/B_q(C) \f\]
+
+For finite complexes, these groups are finitely generated and we have the following decomposition (theorem of decomposition of finitely generated groups):
+\f\[H_q(C) = A^{\beta_q}\oplus A/\lambda_1A\oplus \cdots \oplus A/\lambda_k A \f\]
+where:
+- \f$\beta_q\in\mathbb N\f$ is called the **\f$q\f$th Betti number** (giving the number of holes of dimension \f$q\f$);
+- coefficients \f$\lambda_i\f$ are called the **torsion coefficients in dimension \f$q\f$** and satisfy \f$\lambda_i | \lambda_{i+1}\f$.
+
+Let us assume homology groups have no torsion; homology can be computed "at different levels":
+- **level 1:** Computing Betti numbers.
+- **level 2:** Computing \f$\beta_q\f$ cycles generating \f$H_q(C)\f$ called **generators** (hence cycles "delineating" the holes).
+
+Most libraries focus on persistent homology computation for topological data analysis (see section \ref secHDVFpersistent_homology), which is a "level 1" homology computation.
+The **HDVF package is dedicated to a "level 2" homology computation**, which is computationally more complex but provides "geometric" informations about holes (generators, annotations...).
+
+\subsection secHDVFcohomology Cohomology of discrete chain complexes
+
+Starting from a cochain complex:
+
+\f\[C^* = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
+
+one can define:
+- **Cocycles** of dimension \f$q\f$ are (co)chains in the kernel of \f$\partial^q\f$:
+\f\[Z^q(C^*) = \ker(\partial^q) \f\]
+- **Coboundaries** of dimension \f$q\f$ are chains in the image of \f$\partial^{q-1}\f$
+\f\[B^q(C^*) = \mathrm{Im}(\partial^{q-1}) \f\]
+- As \f$\partial^{q}\partial^{q-1} = 0\f$, \f$B^q(C^*)\subseteq Z^q(C^*)\f$.
+- Hence we can define the quotient \f$Z^q(C^*)/B^q(C^*)\f$, ie.\ the \f$q\f$th cohomology group:
+\f\[H^q(C^*) = Z^q(C^*)/B^q(C^*) \f\]
+
+ \cgalFigureBegin{HDVFex_hom_cohom,HDVF_ex_hom_cohom.png}
+ Illustration of homology and cohomology generators for a simple 2D cubical complex \f$C\f$ (computed with HDVFs). **Left:** both generators of \f$H_1(C)\f$; **Middle, right:** both cohomology generators \f$H^1(C)\f$ (for convenience, the dual of cohomology generators has been displayed with bulleted pink lines).
+ \cgalFigureEnd
+
+ \cgalFigureBegin{HDVFex_hom_cohom_cofaces,HDVF_ex_hom_cohom_cofaces.png}
+ Cofaces representation of cohomology generators.
+ \cgalFigureEnd
+
+Figure \cgalFigureRef{HDVFex_hom_cohom} and \cgalFigureRef{HDVFex_hom_cohom_cofaces} illustrate homology and cohomology generators in a simple cubical complex. Actually:
+ - homology generators, intuitively delineate holes;
+ - cohomology generators provide cocycles to open or break the holes (therefore, it is sometimes more convenient to display the cofaces of cohomology generators as in figure \cgalFigureRef{HDVFex_hom_cohom_cofaces}).
+
+Therefore homology and cohomology provide isomorphic (and dual) results. Actually, the following proposition holds in finite dimension:
+\f\[H^q(C^*) \sim H_q(C)\f\]
+
+
+\subsection secHDVFcompHomology Computing homology and cohomology
+
+First results on the computation of discrete homology and cohomology date back to the 80's (see for instance [Munkres]). They are based on a diagonalisation of boundary matrices (called Smith Normal form).
+Nowadays, computational (co)homology approaches can be classified into three branches illustrated in figure \cgalFigureRef{HDVFoverview_comput_hom}.
+
+ \cgalFigureBegin{HDVFoverview_comput_hom,HDVFoverview_comput_hom.png}
+ Overview of approaches in computational homology. HDVFs are in-between discrete Morse theory and effective homology (and they encompass persistent homology, relative homology and tri-partitions).
+ \cgalFigureEnd
+
+\subsubsection secHDVFreduction Effective homology and reductions
+
+Effective homology considers homology computations from a categorical perspective ; its main results are theorems building functors providing a computation of homology for infinite spaces (locally effective spaces) starting from finite ones (effective spaces).
+
+Among the tools of effective homology, **reductions** characterise how to map a (large) chain complex onto a (small) one with isomorphic homology groups. Formally, a reduction from a chain complex \f$C\f$ to a chain complex \f$C'\f$ is a triple of graded maps \f$(f,g,h)\f$:
+\f\[\begin{array}{cccccc}
+\cdots & C_{q+1} & \substack{\xrightarrow{\partial_{q+1}}\\ \xleftarrow[h_{q}]{}} & C_{q} & \substack{\xrightarrow{\partial_{q}}\\ \xleftarrow[h_{q-1}]{}} & \cdots \\
+& f_{q+1}\Big\downarrow \Big\uparrow g_{q+1} & & f_{q}\Big\downarrow \Big\uparrow g_{q} & & \\
+\cdots & C'_{q+1} & \xrightarrow{\partial'_{q+1}} & C'_{q} & \xrightarrow{\partial'_{q}} & \cdots \\
+\end{array}
+\f\]
+such that:
+
+- \f$f\f$ and \f$g\f$ are chain maps (ie.\ commute with \f$\partial\f$ and \f$\partial'\f$)
+- \f$f_q g_q = \mathrm{Id}_{C'_q}\f$ for any \f$q\f$
+- \f$g_q f_q = \mathrm{Id}_{C_q} - \partial_{q+1} h_q - h_q \partial_{q-1}\f$  for any \f$q\f$
+- \f$h_{q+1} h_q = 0\f$, \f$f_{q+1} h_{q} = 0\f$ and \f$h_{q} g_q = 0\f$ for any \f$q\f$
+
+
+\f$C'\f$ is called the **reduced complex** and \f$\partial'\f$ the **reduced boundary**.
+
+Under these assumptions, the homology and cohomology groups of \f$C\f$ and \f$C'\f$ are isomorphic.
+
+A reduction is **perfect** when the reduced boundary is null; then for any \f$q\f$:
+\f\[H_q(C) \sim g(C'_q)\f\]
+in other words, homology groups are isomorphic to the image of the reduced complex by \f$g\f$,
+\f\[H^q(C) \sim f^*(C'_q)\f\]
+and cohomology groups are isomorphic to the image of the reduced complex by \f$f^*\f$.
+
+\subsubsection secHDVFdiscrete_Morse A few words about discrete Morse theory
+
+Discrete Morse theory was introduced by Forman in the 90's as a combinatorial approach for homology computation directly inspired by Morse theory (on compact manifolds).
+He showed that in the discrete context, Morse functions are better defined through their gradient: a vector field defined over the complex connecting cells and one of their co-faces. In this context, gradients of Morse functions can be easily characterized by acyclicity conditions.
+
+More precisely, given a complex \f$K\f$, a **discrete gradient vector field** (called DGVF here after) can be built as follows:
+- consider the Hasse diagram of the complex (connecting cells to their boundary - figure (left))
+
+\subsection secHDVFpersist_hom Persistent homology
+
+\subsection secHDVFrelative_hom Relative homology
+
+\subsection secHDVFAlexander Alexander duality
+
+\section secHDVF The HDVF framework
+
+This section presents a brief introduction to HDVFs, see [AGL, 2016] for more details.
+
+\subsection secHDVFHDVF_definitions Definition of HDVFs
+
+HDVFs are an "in-between" theory:
+- in-between Discrete Morse theory (combinatorial approach) and effective homology (categorical approach)
+- in-between combinatorics and algebra
+but they cannot be reduced to any of these frameworks. As we will see, they provide a bridge in-between them.
+
+Let \f$K\f$ be a complex (simplicial, cubical...) and let \f$(\mathscr C, \partial)\f$ be its associated chain complex.
+
+**Notation** Starting from now on, we will use \f$\mathscr C\f$ for chain complexes and \f$C\f$ for critical cells.
+
+Formally a **HDVF** \f$X=(P,S,C)\f$ is a partition of the cells of \f$K\f$:
+ \f\[K = P\cup S\cup C\f\]
+ with \f$P\f$ primary cells, \f$S\f$ secondary cells and \f$C\f$ critical cells, such that the sub-matrix:
+ \f\[\partial (S)|_P\text{ is invertible.}
+ \f\]
+where \f$\partial (S)|_P\f$ means that the matrix of \f$\partial\f$ is restricted to columns of secondary cells and rows of primary cells.
+
+As stated earlier, this definition is both combinatorial (partition of cells) and algebraic (invertibility of a sub-matrix) but it cannot be simplified or reduced to either of these approaches.
+
+Given such an HDVF \f$X=(P,S,C)\f$, we can define the following associated reduction \f$(f,g,h)\f$:
+
+\f\[\begin{array}{cccccc}
+\cdots & \mathscr C_{q+1} & \substack{\xrightarrow{\partial_{q+1}}\\ \xleftarrow[h_{q}]{}} & \mathscr C_{q} & \substack{\xrightarrow{\partial_{q}}\\ \xleftarrow[h_{q-1}]{}} & \cdots \\
+& f_{q+1}\Big\downarrow \Big\uparrow g_{q+1} & & f_{q}\Big\downarrow \Big\uparrow g_{q} & & \\
+\cdots & C_{q+1} & \xrightarrow{\mathrm d_{q+1}} & C_{q} & \xrightarrow{\mathrm d_{q}} & \cdots \\
+\end{array}
+\f\]
+\f$\mathrm d\f$ is the **reduced boundary** (over critical cells) and the reduction is defined as follows:
+
+- the matrix of \f$h_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ \ \ \ \ P_q \ \ \ \ S_q \ \ \ \  C_q \\
+\begin{array}{c}
+P_{q+1} \\
+S_{q+1} \\
+C_{q+1} \\
+\end{array}
+\begin{array}{|c|c|c|}
+\hline
+0 & 0 & 0 \\
+\hline
+H_q & 0 & 0 \\
+\hline
+0 & 0 & 0 \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with \f\[H_q = (\partial (S_{q+1})|_{P_q})^{-1}\f\].
+
+- the matrix of \f$f_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ P_q \ \ \ \ S_q \ \ \ \  C_q \\
+\begin{array}{c}
+C_q \\
+\end{array}
+\begin{array}{|c|c|c|}
+\hline
+F_q & 0 & \mathrm{Id} \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with
+\f\[ F_q = - \partial(S_{q+1})|_{C_q}\cdot H_q\f\]
+
+- the matrix of \f$g_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ C_q \\
+\begin{array}{c}
+P_q \\
+S_q \\
+C_q \\
+\end{array}
+\begin{array}{|c|}
+\hline
+0 \\
+\hline
+G_q \\
+\hline
+\mathrm{Id} \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with
+\f\[ G_q = - H_{q-1} \cdot \partial(C_{q})|_{P_{q-1}}\f\]
+
+- last, the matrix of the reduced boundary \f$\mathrm d_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ C_q \\
+\begin{array}{c}
+C_{q-1} \\
+\end{array}
+\begin{array}{|c|}
+\hline
+DD_q \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with
+\f\[ D_q = \partial(C_{q})|_{C_{q-1}} + F_{q} \cdot \partial(C_{q})|_{P_{q-1}} = \partial(C_{q})|_{C_{q-1}} + \partial(S_{q})|_{C_{q-1}} \cdot G_q \f\]
+
+Therefore the HDVF "reduces" the complex to a smaller complex over critical cells.
+
+A HDVF is called **perfect** when the reduced boundary is null, then for any \f$q \in \{0\ldots d\}\f$:
+- \f$\beta_q = | C_q |\f$
+- Homology generators of dimension \f$q\f$ are \f$\{g(\sigma) \,;\, \sigma\in C_q \}\f$
+- Cohomology generators of dimension \f$q\f$ are \f$\{f^*(\sigma) \,;\, \sigma\in C_q \}\f$
+
+Hence a perfect HDVF computes homology and provides a rich homological information.
+- when \f$A\f$ is a field, perfect HDVFs always exist and any HDVF can be completed into a perfect HDVF (see \ref secHDVFcomput)
+- when \f$A\f$ is a ring:
+    - if the torsion part is null, we hypothesise that a perfect HDVF always exist
+    - with torsion, we hypothesise that a torsion-perfect HDVF always exist (where the reduced boundary is limited to torsion)
+Both questions are still an open and we have no counter-examples.
+
+Moreover, the reduction provides various informations on cycles and co-cycles:
+- An **annotation** associates to a cycle its decomposition in the basis of homology generators, up to boundaries: <br>
+Given \f$\gamma\in Z_q(\mathscr C)\f$, \f$f(\gamma)\f$ is an annotation of \f$\gamma\f$:
+\f\[\text{if }f(\gamma) = \sum_i \alpha_i\cdot \sigma_i,\ \ \ \sigma_i\in C_q\f\]
+\f\[\text{then }\ \ \ \gamma = \sum_i \alpha_i\cdot g(\sigma_i) + \beta,\ \ \ \beta \in B_q(\mathscr C)\f\]
+- A **co-annotation** associates to a cycle its decomposition in the basis of cohomology generators, up to coboundaries: <br>
+Given \f$\gamma\in Z^q(\mathscr C)\f$, \f$g^*(\gamma)\f$ is a co-annotation of \f$\gamma\f$:
+\f\[\text{if }g^*(\gamma) = \sum_i \alpha_i\cdot \sigma_i,\ \ \ \sigma_i\in C^q\f\]
+\f\[\text{then }\ \ \ \gamma = \sum_i \alpha_i\cdot f^*(\sigma_i) + \beta,\ \ \ \beta \in B^q(\mathscr C)\f\]
+
+Annotations and co-annotations provide convenient tests to decide if to cycles (resp. co-cycles) belong to the same homology (resp. cohomology) class:
+- Two cycles \f$\gamma\f$ and \f$\gamma'\f$ belong to the same homology class if they have the same annotation (ie.\ \f$f(\gamma) = f(\gamma')\f$)
+- Two co-cycles \f$\gamma\f$ and \f$\gamma'\f$ belong to the same cohomology class if they have the same co-annotation (ie.\ \f$g^*(\gamma) = g^*(\gamma')\f$)
+
+Figure \cgalFigureRef{HDVFex_hom_cohom} shows an example of HDVF together with corresponding homology and cohomology generators. In all the package, we use the following colors convention:
+- PRIMARY cells are depicted in green
+- SECONDARY cells are depicted in red
+- CRITICAL cells are depicted in blue
+
+Let us point out that HDVFs can be represented in a "discrete Morse theory" style, with arrows (ie.\ a vector field) pairing a primary and a secondary cell among its co-faces (the vector field associated to a HDVF is not unique). But DGVF are a strict subset of HDVFs:
+- each DGVF is a HDVF (labelling sources of arrows as PRIMARY, targets of arrows as SECONDARY, unpaired cells as CRITICAL always produces an HDVF)
+- but HDVF may produce vector fields with cycles
+
+The following figures show an HDVF and an associated vector field:<br>
+ <img src="HDVF_ex1_A3.png" align="center" width=30%/>
+ <img src="HDVF_ex1_A3_DGVF.png" align="center" width=30%/>
+
+ And the following figure exhibits the vector field representation of a HDVF with a cycle (on the right, the cycle is highlighted in purple):<br>
+  <img src="HDVF_cycle.png" align="center" width=20%/>
+ <img src="HDVF_cycle_highlighted.png" align="center" width=20%/><br>
+ Hence this vector field is a valid HDVF (\f$\partial(S)|_P\f$ is invertible) but it is not a DGVF.
+
+\subsection secHDVFcomput Computing and deforming a HDVF
+
+HDVFs can be computed using previous matrix expression; however, Aldo Gonzalez-Lorenzo has shown that several operations on HDVF can be introduced, not only to built, but also transform HDVFs.
+
+- **A operation** (pairing of two critical cells)<br>
+Given a HDVF \f$X=(P,S,C)\f$, and two CRITICAL cells \f$\gamma_1\in C_q\f$, \f$\gamma_2\in C_{q+1}\f$
+\f\[ A(X) = \Big(P\cup\{\gamma_1\}, S\cup\{\gamma_2\}, C\backslash \{\gamma_1, \gamma_2\}\Big)\f\]
+and the operation is valid (ie.\ produces an HDVF) if and only if:
+\f\[ \langle \mathrm d(\gamma_2),\gamma_1\rangle \text{ is invertible}\f\]
+
+    - Any perfect HDVF can be built by iterating the A operation (with complexity at most \f$\mathscr O(n^3))\f$)
+    - This operation can also complete a HDVF into a perfect HDVF
+
+    Figures below illustrate this operation on a cubical chain complex: (left) an HDVF such that \f$(\gamma_1,\gamma_2)\f$ meet the A condition, (right) the HDVF obtained after \f$A(\gamma_1,\gamma_2)\f$.
+
+<img src="HDVF_ex1_A2_A.png" align="center" width=30%/>
+<img src="HDVF_ex1_A3.png" align="center" width=30%/>
+
+- **R operation** (unpairing of two critical cells)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cells \f$\sigma\in S_{q+1}\f$
+\f\[ R(X) = \Big(P\backslash\{\pi\}, S\backslash\{\sigma\}, C\cup \{\pi, \sigma\}\Big)\f\]
+and the operation is valid (ie.\ produces an HDVF) if and only if:
+\f\[ \langle h(\pi),\sigma\rangle \text{ is invertible}\f\]
+
+    Operations A and R are inverse one another.
+
+- **M operation** (exchange a PRIMARY and a CRITICAL cell)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
+\f\[ M(X) = \Big(P\backslash \{\pi\} \cup\{\gamma\}, S, C\backslash \{\gamma\}\cup \{\pi\}\Big)\f\]
+and the operation is valid (ie.\ produces an HDVF) if and only if:
+\f\[ \langle \mathrm f(\pi),\gamma\rangle \text{ is invertible}\f\]
+
+    The M operation modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator).
+    The following figure illustrates the M operation.
+
+ \cgalFigureBegin{HDVF_M,HDVF_M.png}
+ M operation on a cubical complex \f$K\f$. **Left:** perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma)\f$ meeting the M operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); **Right:** perfect HDVF obtained with \f$M(\pi,\gamma)\f$ and updated generators (associated to \f$\pi\f$ which is now critical).
+ \cgalFigureEnd
+
+ - **W operation** (exchange a SECONDARY and a CRITICAL cell)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a SECONDARY cell \f$\sigma\in S_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
+\f\[ W(X) = \Big(P, S\backslash\{\sigma\}\cup \{\gamma\}, C\backslash \{\gamma\}\cup \{\sigma\}\Big)\f\]
+and the operation is valid (ie.\ produces an HDVF) if and only if:
+\f\[ \langle \mathrm g(\gamma),\sigma\rangle \text{ is invertible}\f\]
+
+    The W operation modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator).
+    The following figure illustrates the W operation.
+
+ \cgalFigureBegin{HDVF_W,HDVF_W.png}
+ W operation on a cubical complex \f$K\f$. **Left:** perfect HDVF over \f$K\f$ with cells \f$(\sigma, \gamma)\f$ meeting the W operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); **Right:** perfect HDVF obtained with \f$W(\pi,\gamma)\f$ and updated generators (associated to \f$\sigma\f$ which is now critical).
+ \cgalFigureEnd
+
+- **MW operation** (exchange a PRIMARY and a SECONDARY cell)<br>
+    Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cell \f$\sigma\in S_{q}\f$
+    \f\[ MW(X) = \Big(P\backslash\{\pi\}\cup \{\sigma\}, S\backslash\{\sigma\}\cup \{\pi\}, C\Big)\f\]
+    and the operation is valid (ie.\ produces an HDVF) if and only if:
+    \f\[ \langle \partial h(\pi),\sigma\rangle \text{ and } \langle h\partial(\sigma),\pi\rangle\text{ are invertible}\f\]
+
+    The MW operation modifies both homology and cohomology generators.
+    The following figure illustrates the W operation.
+
+ \cgalFigureBegin{HDVF_MW,HDVF_MW.png}
+ MW operation on a cubical complex \f$K\f$. **Top:** perfect HDVF over \f$K\f$ with cells \f$(\pi_1, \sigma_1)\f$ and \f$(\pi_2, \sigma_2)\f$ meeting the MW operation condition (blue: homology generators, pink: cohomology generators); **Down, left:** perfect HDVF obtained with \f$MW(\pi_1,\sigma_1)\f$ and updated generators (a cohomology generator is modified); **Down, right:** perfect HDVF obtained with \f$MW(\pi_2,\sigma_2)\f$ and updated generators (a homology generator is modified).
+ \cgalFigureEnd
+
+Recent works by Yann-Situ Gazull [YSG1], [YSG2] proved that (when \f$A\f$ is a field):
+- the space of perfect HDVFs is connected under M, W and MW operations (see [YSG2])
+- homology bases computed by HDVFs and other computational approaches (Smith Normal Form, persistent homology, tripartitions...) can be precisely characterised as **explicit basis** (see [YSG1])
+- any perfect HDVF can be adapted in time \f$\mathscr O(kn^2)\f$ to compute a free set of generators of size \f$k\f$ (e.g. a given basis)
+
+These results will soon be implemented in the HDVF package.
+
+\subsection secHDVFpersistent_homology Persistent homology
+
+\subsection secHDVFreduced_Alexander Relative homology and Alexander duality
+
+\section secHDVFHDVFpackage The HDVF package
+
+This section describes the HDVF package implementing the theory described in previous sections.
+
+In order to compute the homology/cohomology of a discrete object with an HDVF, the process is as follows:
+-# Define the ring of coefficients type
+-# Build a chain complex from one of the models of `AbstractChainComplex` (`Geometric_simplicial_chain_complex`, `Abstract_simplicial_chain_complex` or `Cubical_chain_complex`)
+-# Build a HDVF from this chain complex
+-# Compute a perfect HDVF (fast mode or random mode)
+
+ \cgalFigureBegin{HDVFoverview_HDVF,HDVFoverview_HDVF.png}
+ Overview of homology/cohomology computation with the HDVF package.
+ \cgalFigureEnd
+
+\subsection secHDVFCoefficientType Defining the ring of coefficients
+
+The ring of coefficients must be a model of the `IntegralDomainWithoutDivision` concept:
+- the ring \f$\mathbb Z\f$
+\code
+    typedef int CoefficientType ;
+\endcode
+- a field \f$\mathbb Z/p\mathbb Z\f$
+\code
+    #include <CGAL/HDVF/Zp.h>
+    typedef Zp<p> CoefficientType ;
+\endcode
+with \f$p\f$ a given prime number.
+- the field \f$\mathbb Z/2\mathbb Z\f$ (the class`Zp` can also be used, but `Z2` is optimized for \f$p=2\f$)
+\code
+    #include <CGAL/HDVF/Z2.h>
+    typedef Z2 CoefficientType ;
+\endcode
+
+\subsection secHDVFChainComplex Building a chain complex
+
+The HDVF package provides several chain complexes: `Abstract_simplicial_chain_complex`, `Geometric_simplicial_chain_complex` and `Cubical_chain_complex`.
+
+In order to build such a chain complex, discrete objects are first imported into a temporary combinatorial structure storing input cells. The chain complex is then built from this intermediate structure by adding all the faces of cells and computing the corresponding boundary matrix.
+
+Let us point out that whatever the type of chain complex, cells are indexed along each dimension; hence a cell is identified by an index and a dimension.
+
+- `Abstract_simplicial_chain_complex` (see section \ref secHDVFsimplicial_chain_complex) are built using the `Mesh_object_io` intermediate class from abstract simplices (vertices have no coordinates). Therefore, such complexes are usually computed from `.simp` files (a simple file format enumerating on each line vertices of simplices, see section secHDVFsimpFile):
+    \code
+        using Complex = Abstract_simplicial_chain_complex<CoefficientType> ;
+        Mesh_object_io mesh ;
+        mesh.read_simp(filename);
+        Complex complex(mesh);
+    \endcode
+- `Simplicial_chain_complex` are also built using the `Mesh_object_io` intermediate structure to import mesh files (`.off` format):
+    \code
+        using Complex = Simplicial_chain_complex<CoefficientType> ;
+        Mesh_object_io mesh ;
+        mesh.read_off(filename);
+        Complex complex(mesh);
+    \endcode
+- `Cubical_chain_complex` are built using the `Cub_object_io` intermediate structure by importing either simple `.cub` files (enumerating Khalimsky coordinates of cells, see section \ref secHDVFcubFile) or `.pgm` files.
+    - For `.cub` files enumerating Khalimsky coordinates, cells are imported and their faces are added to produce a proper complex.
+        \code
+            using Complex = Cubical_chain_complex<CoefficientType> ;
+            Cub_object_io mesh ;
+            mesh.read_cub(filename, true);
+            Complex complex(mesh);
+        \endcode
+    - For `.pgm` files (ie.\ for binary images or volumes), two constructions are available for cubical complexes:
+        - PRIMAL, encoding \f$3^d-1\f$-adjacency  (where cells are imported as such, see figure \cgalFigureRef{HDVF_primal_dual}, middle)
+        \code
+            using Complex = Cubical_chain_complex<CoefficientType> ;
+            Cub_object_io mesh ;
+            // Read pgm file (store Khalimsky coordinates)
+            mesh.read_pgm(filename, true);
+            // Build the PRIMAL complex associated
+            Complex complex(mesh, CGAL::Homological_discrete_vector_field::Complex::PRIMAL);
+        \endcode
+        - DUAL, encoding \f$2d\f$-adjacency (where cubes produce vertices... see figure \cgalFigureRef{HDVF_primal_dual} right)
+        \code
+            using Complex = Cubical_chain_complex<CoefficientType> ;
+            Cub_object_io mesh ;
+            // Read pgm file (store voxel coordinates)
+            mesh.read_pgm(filename, false);
+            // Build the DUAL complex associated
+            Complex complex(mesh, CGAL::Homological_discrete_vector_field::Complex::DUAL);
+        \endcode
+
+\cgalFigureBegin{HDVF_primal_dual,HDVF_primal_dual.png}
+Primal and dual constructions of cubical chain complexes from a binary volume. **Left:** a 3D binary volume; **Middle:** PRIMAL cubical (chain) complex associated to the volume; **Right:** DUAL cubical (chain) complex associated to the volume).<br>
+    Figure taken from [AGL, 2016].
+\cgalFigureEnd
+
+\subsubsection secHDVFsimpFile The `.simp` file format
+
+The `simp` file format is a very simple text format listing, encoding simplicial complexes. It enumerates simplices line by line (described by the indices of their vertices).
+The file doesn't need to provide an exhaustive enumeration of simplices (with all their faces), indeed, the simplicial chain complex constructors fill them with faces. Figure \cgalFigureRef{HDVF_simp_file} illustrate the format on a simple simplicial complex.
+
+\cgalFigureBegin{HDVF_simp_file,HDVF_simp_file.png}
+Example of `simp` file. **Left:** a simplicial complex; **Right:** associated `simp` files describing maximal simplices.
+\cgalFigureEnd
+
+\subsubsection secHDVFcubFile The CUB file format
+
+The `cub` file format is a very simple text format encoding binary volumes:
+- first line: dimension
+- second line: size of Khalimsky coordinates of the bounding box along each axis
+- following lines: list of cells in Khalimsky coordinates
+
+The file doesn't need to provide an exhaustive enumeration of cells (with all their faces), indeed, the cubical chain complex constructors fill them with faces. Figure \cgalFigureRef{HDVF_cub_file} illustrate the format on a simple cubical complex.
+
+\cgalFigureBegin{HDVF_cub_file,HDVF_cub_file.png}
+Example of `cub` file. **Left:** a cubical complex; **Right:** associated `cub` files describing maximal cells.
+\cgalFigureEnd
+
+\subsection secHDVFbuild Building and computing a HDVF
+
+An empty HDVF is built from a chain complex:
+\code
+    using HDVF_type = Hdvf<CoefficientType, Complex> ;
+    HDVF_type hdvf(complex, OPT_FULL) ;
+\endcode
+
+Several HDVF options are available:
+- `OPT_D`: fastest option - compute only the reduced boundary \f$\mathrm d\f$ (under this option, HDVFs provide only low level homological information: Betti numbers and critical cells
+- `OPT_F`, `OPT_G`: compute the reduction partially (only \f$f\f$ for cohomology generators or \f$g\f$ for homology generators)
+- `OPT_FULL`: compute the full reduction
+
+\subsubsection secHDVFcomputePerfect Computing a perfect HDVF automatically
+
+The HDVF obtained is empty (all cells are critical). In order to compute homology/cohomology that is a perfect HDVF, the package provides two methods:
+- `compute_perfect_hdvf()` (fastest method:  cells are paired using the A operation by decreasing dimension using the first valid pair)
+- `compute_rand_perfect_hdvf()` (slowest: compute all valid pairs for the A operation are select one randomly)
+
+\code
+    hdvf.compute_perfect_hdvf();
+\endcode
+or
+\code
+    hdvf.compute_rand_perfect_hdvf();
+\endcode
+
+When the ring of coefficients is a field, these methods always produce a perfect HDVF. However for \f$\mathbb Z\f$-(co)homology (without torsion), the existence of complexes admitting no perfect HDVF is still an open question (and the answer is negative for "reasonable" objects, indeed we still have no counter example).
+The method `is_perfect_hdvf()` checks if a HDVF is perfect.
+
+\subsubsection secHDVFcomputePerfectA Computing a perfect HDVF with A operations
+
+For specific applications, HDVFs can be built by iterating the A operation:
+\code
+    hdvf.A(id1, id2, q) ;
+\endcode
+performs a pairing between the cells \f$\gamma_1\f$ (index `id1` in dimension `q`) and \f$\gamma_2\f$ (index `id2` in dimension `q+1`).
+
+The package provide a family of methods to search for valid pairings:
+\code
+    Cell_pair pair;
+    std::vector<Cell_pair> pairs;
+    bool found;
+
+    // Search for the first valid pair in dimension `q`
+    pair = find_pair_A(q, found);
+    // Search for the first cell (of dimension `q-1` or `q+1`) forming a valid pair with tau (index `id`, dimension `q`)
+    pair = find_pair_A(q, found, id);
+    // Search for all valid pairs in dimension `q`
+    pairs = find_pairs_A(q, found);
+    // Search for all cells (of dimension `q-1` or `q+1`) forming a valid pair with tau (index `id`, dimension `q`)
+    pairs = find_pairs_A(q, found, id);
+\endcode
+
+\subsection secHDVFoutput Extracting and saving homological/cohomological information
+
+\warning All `vtk` exports are only available for geometric chain complexes (i.e. `Simplicial_chain_complex` and `Cubical_chain_complex`).
+
+How to extract (co)homological information then? Various solutions and output are available:
+- **HDVF extraction / visualization**:
+    The method `psc_labels()` extracts cells flags in any dimensions. The complex annotated with labels can then be exported to `vtk` for visualization. The `vtk` output includes a `Label` property encoding the HDVF PSC_flag (-1 for PRIMARY, 1 for SECONDARY and 0 for CRITICAL cells), and a `CellId` property storing cells indices:
+    \code
+        // Labels extraction
+        vector<vector<int> > labels = hdvf.psc_labels() ;
+        // VTK export
+        Complex::chain_complex_to_vtk(complex, filename, &labels) ;
+    \endcode
+- **Betti numbers**:
+    For a perfect HDVF, the Betti number in dimension \f$q\f$ equals \f$|C_q|\f$, the number of critical cells.
+    Critical cells can be obtained:
+    - either in all dimensions:
+    \code
+        std::vector<std::vector<size_t> > criticals =  hdvf.psc_flags(CGAL::Homological_discrete_vector_field::CRITICAL);
+    \endcode
+    - or in a given dimension `q`:
+    \code
+        std::vector<size_t> criticals_q = hdvf.psc_flags(CGAL::Homological_discrete_vector_field::CRITICAL, q) ;
+    \endcode
+- **Homology/cohomology generators**
+    Each critical cell \f$\gamma\f$ bears an associated homology generator: \f$g(\gamma)\f$ and cohomology generator: \f$f^*(\gamma)\f$.
+    - Generators associated to \f$\gamma\f$ (index `id`, dimension `q`) can be extracted as column chains (ie.\ column `Sparse_chain`):
+    \code
+        HDVF_type::Column_chain hom_generator(hdvf.homology_chain(id, q)) ;
+        HDVF_type::Column_chain cohom_generator(hdvf.cohomology_chain(id, q)) ;
+    \endcode
+    These chains can be visited as described in section \ref secHDVFmatrixChain.
+    - The HDVF package also provides a vtk exporter for such chains (cells with a non zero coefficient are exported). For instance:
+    \code
+        Complex::chain_to_vtk(complex, filename, hom_generator, q, id) ;
+    \endcode
+    If `id` is provided, a `Label` integer property is added to the vtk file (0 for the cell `id`, 2 for other cells).
+- **Reduction maps**
+    Matrices of the reduction (\f$F\f$, \f$G\f$, \f$H\f$ and \f$D\f$) can be also obtained using `matrix_f()`, `matrix_g()`, `matrix_h()` and `matrix_dd()`.
+- **Automated vtk export**
+    In order to ease `vtk` export, an "automated" method `CGAL::IO::write_VTK()` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
+    \code
+            CGAL::IO::write_VTK<CoefficientType, Complex>(hdvf, complex, outfile_root, co_faces) ;
+    \endcode
+    where `outfile_root` is the root of the `.vtk` file names and `co_faces` is a %Boolean (if `true`, cohomology generators are represented through their cofaces).
+- HDVFs and reductions can also be saved / loaded to `.hdvf` files (a simple text file format described in section \ref secHDVFHDVF_format) with `insert_hdvf_reduction()` and `extract_hdvf_reduction()`.
+
+\subsubsection secHDVFHDVF_format The `.hdvf` file format
+
+The `.hdvf` file format is a simple text format used to save HDVFs. It relies on the `.osm` format described in section \ref secHDVFOSM_format.
+
+\warning The file format does not store the underlying complex, therefore the dimension and the number of cells in each dimension are used to check the coherence of the `.hdvf` file with the underlying complex provided by the user.
+
+- HDVF type (0 for HDVF and reduction, 1 for HDVF only)
+- Dimension of the complex
+- List of the number of cells in each dimension (one dimension by row)
+- HDVF option (OPT_BND | OPT_F | OPT_G | OPT_FULL)
+- List of the flags of cells in each dimension (one dimension by row: -1 for PRIMARY, 1 for SECONDARY, 0 for CRITICAL)
+- According to HDVF option: output F matrices in each dimension (`.osm` format)
+- According to HDVF option: output G matrices in each dimension (`.osm` format)
+- Output H matrices in each dimension (`.osm` format)
+- Output DD matrices in each dimension (`.osm` format)
+
+\subsection secHDVFexHDVF HDVF examples
+
+The following examples exhibit the computation of a perfect HDVF over a simplicial (resp. cubical) chain complex built from a `.off` file (resp. a `.pgm` file). Generators are then exported to `.vtk`.
+\cgalExample{HDVF/hdvf_simplicial.cpp}
+\cgalExample{HDVF/hdvf_cubical.cpp}
+
+\subsection secHDVFmatrixChain A few words about sparse matrices and chains
+
+All maps (boundary operator, \f$f\f$, \f$g\f$, \f$h\f$ and \f$\mathrm d\f$) are stored in sparse matrices and chains are stored in sparse chains.
+The `OSM` library provides an implementation of the `SparseMatrix` and `SparseChain` concepts, that is sparse structures optimized for topological operations (block operations).
+
+The structure is based on a mapped matrix implementation, hence, matrices and chains are either column or row major (`CGAL::OSM::COLUMN` or `CGAL::OSM::ROW` type).
+
+In order to speed up both block operations and iterators (over non empty columns or row according to the type), a **bitboard** structure is used (inherited from chess programming community). Hence, in order to iterate over the major dimension of a matrix, one should actually iterate a bitboard (providing indices of non empty columns / rows). See `Sparse_matrix` documentation for more details.
+
+Iterating over sparse chains them comes to iterate over a map.
+
+The following example builds a column major matrix, iterate over its non empty columns (ie.\ chains) and then iterate over each chain.
+
+\cgalExample{HDVF/matrix_chain.cpp}
+
+All standard linear algebra operators are provided (and optimized according to the matrix/chain types).
+
+\subsubsection secHDVFOSM_format The OSM file format
+
+The `.osm` file format is a simple text format to store OSM sparse matrices:
+- Matrix type (0 for COLUMN, 1 for ROW)
+- Number of rows and number of columns (separated by a space)
+- Number of coefficients
+- List of coefficients (one by row):<br>
+    `id_row  id_col  value`
+
+\subsection secHDVFoperations HDVF operations
+
+\subsection secHDVFannotations HDVFs and annotations
+
+\subsection secHDVFpersistentHom_package HDVFs and persistent homology
+
+\subsection secHDVFAlexander_package HDVFs, Alexander duality and relative homology
+
+
+
+ [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
+
+ [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [PhD]. Aix-Marseille Université; Universidad de Sevilla, 2016.
+
+ [AGL, 2025] Aldo Gonzalez-Lorenzo, Alexandra Bac and Yann-Situ Gazull. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
+
+ [YSG1,  2025] Yann-Situ Gazull, Aldo Gonzalez-Lorenzo and Alexandra Bac. Characterization of the computed homology and cohomology bases. DGMM 2025 (to appear).
+ [YSG1,  2025] Yann-Situ Gazull, Aldo Gonzalez-Lorenzo and Alexandra Bac. Characterization of the computed homology and cohomology bases. DGMM 2025 (to appear).
+
+ [YSG2,  2025] Yann-Situ Gazull, Aldo-Gonzalez-Lorenzo and Alexandra Bac. Space of homological computations: connectivity and paths (submitted to Journal of Applied and Computational Topology).
+
+ [Munkres] J. Munkres. Elements of Algebraic Topology, Addison Wesley Publishing Company, (1984)
+
+*/
+} /* namespace CGAL */
