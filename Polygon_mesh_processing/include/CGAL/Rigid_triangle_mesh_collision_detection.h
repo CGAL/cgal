@@ -30,8 +30,25 @@
 #define CGAL_RMCD_CACHE_BOXES 0
 #endif
 
-#if CGAL_RMCD_CACHE_BOXES
+// Spatial partitioning for broad-phase collision detection
+#ifndef CGAL_RMCD_USE_SPATIAL_PARTITIONING
+#define CGAL_RMCD_USE_SPATIAL_PARTITIONING 1
+#endif
+
+#ifndef CGAL_RMCD_SPATIAL_THRESHOLD
+#define CGAL_RMCD_SPATIAL_THRESHOLD 8  // Use naive for fewer than 8 meshes
+#endif
+
+#if CGAL_RMCD_CACHE_BOXES || CGAL_RMCD_USE_SPATIAL_PARTITIONING
 #include <boost/dynamic_bitset.hpp>
+#endif
+
+#if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+#include <array>
+#include <cmath>
+#include <unordered_set>
+#include <algorithm>
+#include <vector>
 #endif
 
 namespace CGAL {
@@ -95,9 +112,17 @@ class Rigid_triangle_mesh_collision_detection
   std::vector<Traversal_traits> m_traversal_traits;
   std::size_t m_free_id; // position in m_id_pool of the first free element
   std::vector<std::size_t> m_id_pool; // 0-> m_id_pool-1 are valid mesh ids
-#if CGAL_RMCD_CACHE_BOXES
-  boost::dynamic_bitset<> m_bboxes_is_invalid;
-  std::vector<Bbox_3> m_bboxes;
+#if CGAL_RMCD_CACHE_BOXES || CGAL_RMCD_USE_SPATIAL_PARTITIONING
+  mutable boost::dynamic_bitset<> m_bboxes_is_invalid;
+  mutable std::vector<Bbox_3> m_bboxes;
+#endif
+
+#if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+  // Grid-based spatial partitioning for broad-phase culling
+  mutable std::vector<std::vector<std::size_t>> m_grid_cells;
+  mutable Bbox_3 m_world_bbox;
+  mutable std::array<std::size_t, 3> m_grid_dims;
+  mutable bool m_grid_needs_rebuild = false;
 #endif
 
 // internal functions
@@ -112,12 +137,18 @@ class Rigid_triangle_mesh_collision_detection
       m_is_closed.resize(m_free_id);
       m_points_per_cc.resize(m_free_id);
       m_traversal_traits.resize(m_free_id);
-  #if CGAL_RMCD_CACHE_BOXES
+  #if CGAL_RMCD_CACHE_BOXES || CGAL_RMCD_USE_SPATIAL_PARTITIONING
       m_bboxes.resize(m_free_id);
       m_bboxes_is_invalid.resize(m_free_id, true);
   #endif
+  #if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+      m_grid_needs_rebuild = true;
+  #endif
       return m_id_pool.back();
     }
+  #if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+    m_grid_needs_rebuild = true;
+  #endif
     return m_id_pool[m_free_id++];
   }
 
@@ -158,6 +189,158 @@ class Rigid_triangle_mesh_collision_detection
     m_aabb_trees[id_B]->traversal(*m_aabb_trees[id_A], traversal_traits);
     return traversal_traits.is_intersection_found();
   }
+
+#if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+  // Update bboxes for meshes that have changed transformations
+  void update_bboxes_if_needed() const
+  {
+    for (std::size_t k = 0; k < m_free_id; ++k)
+    {
+      std::size_t id = m_id_pool[k];
+      if (m_bboxes_is_invalid.test(id))
+      {
+        m_bboxes[id] = m_traversal_traits[id].get_helper().get_tree_bbox(*m_aabb_trees[id]);
+      }
+    }
+    m_bboxes_is_invalid.reset();
+  }
+
+  // Build grid-based spatial partitioning structure
+  void build_spatial_grid() const
+  {
+    if (m_free_id == 0) {
+      m_grid_needs_rebuild = false;
+      return;
+    }
+
+    // First update all bboxes
+    update_bboxes_if_needed();
+
+    // Compute world bounding box
+    double xmin = (std::numeric_limits<double>::max)();
+    double ymin = (std::numeric_limits<double>::max)();
+    double zmin = (std::numeric_limits<double>::max)();
+    double xmax = (std::numeric_limits<double>::lowest)();
+    double ymax = (std::numeric_limits<double>::lowest)();
+    double zmax = (std::numeric_limits<double>::lowest)();
+
+    for (std::size_t k = 0; k < m_free_id; ++k)
+    {
+      std::size_t id = m_id_pool[k];
+      const Bbox_3& b = m_bboxes[id];
+      xmin = (std::min)(xmin, b.xmin());
+      ymin = (std::min)(ymin, b.ymin());
+      zmin = (std::min)(zmin, b.zmin());
+      xmax = (std::max)(xmax, b.xmax());
+      ymax = (std::max)(ymax, b.ymax());
+      zmax = (std::max)(zmax, b.zmax());
+    }
+
+    // Add small epsilon to avoid edge cases
+    const double eps = 1e-10;
+    m_world_bbox = Bbox_3(xmin - eps, ymin - eps, zmin - eps,
+                          xmax + eps, ymax + eps, zmax + eps);
+
+    // Compute grid dimensions: target ~CGAL_RMCD_SPATIAL_THRESHOLD meshes per cell on average
+    // Grid size = cube_root(n / CGAL_RMCD_SPATIAL_THRESHOLD) in each dimension
+    std::size_t target_cells = (std::max)(std::size_t(1), m_free_id / CGAL_RMCD_SPATIAL_THRESHOLD);
+    std::size_t cells_per_dim = (std::max)(std::size_t(1),
+      static_cast<std::size_t>(std::ceil(std::cbrt(static_cast<double>(target_cells)))));
+
+    m_grid_dims = {cells_per_dim, cells_per_dim, cells_per_dim};
+
+    std::size_t total_cells = m_grid_dims[0] * m_grid_dims[1] * m_grid_dims[2];
+    m_grid_cells.clear();
+    m_grid_cells.resize(total_cells);
+
+    double world_dx = (m_world_bbox.xmax() - m_world_bbox.xmin()) / m_grid_dims[0];
+    double world_dy = (m_world_bbox.ymax() - m_world_bbox.ymin()) / m_grid_dims[1];
+    double world_dz = (m_world_bbox.zmax() - m_world_bbox.zmin()) / m_grid_dims[2];
+
+    // Assign each mesh to the cells its bbox overlaps
+    for (std::size_t k = 0; k < m_free_id; ++k)
+    {
+      std::size_t id = m_id_pool[k];
+      const Bbox_3& b = m_bboxes[id];
+
+      // Compute cell range for this bbox
+      std::size_t ix_min = static_cast<std::size_t>((b.xmin() - m_world_bbox.xmin()) / world_dx);
+      std::size_t iy_min = static_cast<std::size_t>((b.ymin() - m_world_bbox.ymin()) / world_dy);
+      std::size_t iz_min = static_cast<std::size_t>((b.zmin() - m_world_bbox.zmin()) / world_dz);
+      std::size_t ix_max = static_cast<std::size_t>((b.xmax() - m_world_bbox.xmin()) / world_dx);
+      std::size_t iy_max = static_cast<std::size_t>((b.ymax() - m_world_bbox.ymin()) / world_dy);
+      std::size_t iz_max = static_cast<std::size_t>((b.zmax() - m_world_bbox.zmin()) / world_dz);
+
+      // Clamp to valid range
+      ix_min = (std::min)(ix_min, m_grid_dims[0] - 1);
+      iy_min = (std::min)(iy_min, m_grid_dims[1] - 1);
+      iz_min = (std::min)(iz_min, m_grid_dims[2] - 1);
+      ix_max = (std::min)(ix_max, m_grid_dims[0] - 1);
+      iy_max = (std::min)(iy_max, m_grid_dims[1] - 1);
+      iz_max = (std::min)(iz_max, m_grid_dims[2] - 1);
+
+      // Add mesh id to all overlapping cells
+      for (std::size_t ix = ix_min; ix <= ix_max; ++ix)
+        for (std::size_t iy = iy_min; iy <= iy_max; ++iy)
+          for (std::size_t iz = iz_min; iz <= iz_max; ++iz)
+          {
+            std::size_t cell_idx = ix + m_grid_dims[0] * (iy + m_grid_dims[1] * iz);
+            m_grid_cells[cell_idx].push_back(id);
+          }
+    }
+
+    m_grid_needs_rebuild = false;
+  }
+
+  // Get candidate meshes that may intersect with mesh_id using spatial grid
+  std::vector<std::size_t> get_candidate_meshes(std::size_t mesh_id) const
+  {
+    std::vector<std::size_t> candidates;
+    const Bbox_3& b = m_bboxes[mesh_id];
+
+    double world_dx = (m_world_bbox.xmax() - m_world_bbox.xmin()) / m_grid_dims[0];
+    double world_dy = (m_world_bbox.ymax() - m_world_bbox.ymin()) / m_grid_dims[1];
+    double world_dz = (m_world_bbox.zmax() - m_world_bbox.zmin()) / m_grid_dims[2];
+
+    // Compute cell range for this mesh
+    std::size_t ix_min = static_cast<std::size_t>((b.xmin() - m_world_bbox.xmin()) / world_dx);
+    std::size_t iy_min = static_cast<std::size_t>((b.ymin() - m_world_bbox.ymin()) / world_dy);
+    std::size_t iz_min = static_cast<std::size_t>((b.zmin() - m_world_bbox.zmin()) / world_dz);
+    std::size_t ix_max = static_cast<std::size_t>((b.xmax() - m_world_bbox.xmin()) / world_dx);
+    std::size_t iy_max = static_cast<std::size_t>((b.ymax() - m_world_bbox.ymin()) / world_dy);
+    std::size_t iz_max = static_cast<std::size_t>((b.zmax() - m_world_bbox.zmin()) / world_dz);
+
+    // Clamp to valid range
+    ix_min = (std::min)(ix_min, m_grid_dims[0] - 1);
+    iy_min = (std::min)(iy_min, m_grid_dims[1] - 1);
+    iz_min = (std::min)(iz_min, m_grid_dims[2] - 1);
+    ix_max = (std::min)(ix_max, m_grid_dims[0] - 1);
+    iy_max = (std::min)(iy_max, m_grid_dims[1] - 1);
+    iz_max = (std::min)(iz_max, m_grid_dims[2] - 1);
+
+    // Collect all mesh ids from overlapping cells
+    for (std::size_t ix = ix_min; ix <= ix_max; ++ix)
+      for (std::size_t iy = iy_min; iy <= iy_max; ++iy)
+        for (std::size_t iz = iz_min; iz <= iz_max; ++iz)
+        {
+          std::size_t cell_idx = ix + m_grid_dims[0] * (iy + m_grid_dims[1] * iz);
+          for (std::size_t id : m_grid_cells[cell_idx])
+          {
+            if (id != mesh_id)
+              candidates.push_back(id);
+          }
+        }
+
+    if (!candidates.empty())
+    {
+      std::sort(candidates.begin(), candidates.end());
+      auto last = std::unique(candidates.begin(), candidates.end());
+      candidates.erase(last, candidates.end());
+    }
+
+    return candidates;
+  }
+#endif
 
 public:
 #ifdef DOXYGEN_RUNNING
@@ -323,8 +506,11 @@ public:
   {
     CGAL_assertion(m_aabb_trees[mesh_id] != nullptr);
     m_traversal_traits[mesh_id].set_transformation(aff_trans);
-#if CGAL_RMCD_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES || CGAL_RMCD_USE_SPATIAL_PARTITIONING
     m_bboxes_is_invalid.set(mesh_id);
+#endif
+#if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+    m_grid_needs_rebuild = true;
 #endif
   }
 
@@ -359,14 +545,36 @@ public:
 #endif
     std::vector<std::size_t> res;
 
-    // TODO: use a non-naive version
-    for(std::size_t k : ids)
+#if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+    // Use spatial partitioning for broad-phase culling when we have enough meshes
+    if (m_free_id >= CGAL_RMCD_SPATIAL_THRESHOLD)
     {
-      CGAL_assertion(m_aabb_trees[k] != nullptr);
-      if(k==mesh_id) continue;
+      // Build grid if needed (handles bbox updates internally)
+      if (m_grid_needs_rebuild) build_spatial_grid();
 
-      if (does_A_intersect_B(mesh_id, k))
-        res.push_back(k);
+      // Get candidates from spatial grid (broad phase)
+      std::vector<std::size_t> candidates = get_candidate_meshes(mesh_id);
+
+      // Narrow phase: expensive AABB tree intersection only on candidates
+      for(std::size_t k : candidates)
+      {
+        CGAL_assertion(m_aabb_trees[k] != nullptr);
+        if (does_A_intersect_B(mesh_id, k))
+          res.push_back(k);
+      }
+    }
+    else
+#endif
+    {
+      // Naive fallback for small mesh counts
+      for(std::size_t k : ids)
+      {
+        CGAL_assertion(m_aabb_trees[k] != nullptr);
+        if(k==mesh_id) continue;
+
+        if (does_A_intersect_B(mesh_id, k))
+          res.push_back(k);
+      }
     }
     return res;
   }
@@ -413,11 +621,9 @@ public:
 #endif
     std::vector<std::pair<std::size_t, bool> > res;
 
-    // TODO: use a non-naive version
-    for(std::size_t k : ids)
-    {
+    // Lambda to process a single candidate mesh
+    auto process_candidate = [&](std::size_t k) {
       CGAL_assertion(m_aabb_trees[k] != nullptr);
-      if(k==mesh_id) continue;
 
       if (does_A_intersect_B(mesh_id, k))
         res.push_back(std::make_pair(k, false));
@@ -427,7 +633,7 @@ public:
           if ( does_A_contains_a_CC_of_B(mesh_id, k) )
           {
             res.push_back(std::make_pair(k, true));
-            continue;
+            return;
           }
         }
         if (m_is_closed[k])
@@ -435,9 +641,36 @@ public:
           if ( does_A_contains_a_CC_of_B(k, mesh_id) )
           {
             res.push_back(std::make_pair(k, true));
-            continue;
+            return;
           }
         }
+      }
+    };
+
+#if CGAL_RMCD_USE_SPATIAL_PARTITIONING
+    // Use spatial partitioning for broad-phase culling when we have enough meshes
+    if (m_free_id >= CGAL_RMCD_SPATIAL_THRESHOLD)
+    {
+      // Build grid if needed (handles bbox updates internally)
+      if (m_grid_needs_rebuild) build_spatial_grid();
+
+      // Get candidates from spatial grid (broad phase)
+      std::vector<std::size_t> candidates = get_candidate_meshes(mesh_id);
+
+      // Narrow phase: process only candidates
+      for(std::size_t k : candidates)
+      {
+        process_candidate(k);
+      }
+    }
+    else
+#endif
+    {
+      // Naive fallback for small mesh counts
+      for(std::size_t k : ids)
+      {
+        if(k==mesh_id) continue;
+        process_candidate(k);
       }
     }
     return res;
