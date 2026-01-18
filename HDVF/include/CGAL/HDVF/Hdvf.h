@@ -262,13 +262,13 @@ public:
         Coefficient_ring coef;
         bool res;
 
-        // Compute <partial h(pi), sigma>
+        // Compute <partial h(pi), sigma> (coz)
         Row_chain row_sigma_D(this->_K.cod(sigma,q));
-        Column_chain col_pi_H(OSM::get_column(this->_H_col.at(q), pi));
+        const Column_chain& col_pi_H(OSM::cget_column(this->_H_col.at(q), pi));
         coef = row_sigma_D * col_pi_H;
         res = coef.is_invertible();
 
-        // Compute <h partial(sigma),pi>
+        // Compute <h partial(sigma),pi> (z)
         Column_chain col_sigma_D(this->_K.d(sigma));
         Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
         coef = row_pi_H * col_sigma_D;
@@ -448,28 +448,63 @@ public:
         }
     }
 
-//    Column_chain z(size_t sigma, int q) {
-//        Column_chain col_sigma_D(this->_K.d(sigma));
-//        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
-//        coef = row_pi_H * col_sigma_D;
-//    }
+protected:
+    // Compute dh(sigma), hd(sigma) and <dh(sigma), tau> and <hd(sigma),tau>
+    // dh and hd matrices are not stored
+    // So we provide functions to get these values
 
+    /** \brief Computes \f$h_{q-1}\circ \partial_q(\sigma)\f$.
+     *
+     * The \f$h_{q-1}\circ \partial_q\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
+     *
+     * \param sigma Index of the cell
+     * \param q Dimension of the cell
+     */
+    Column_chain hd(size_t sigma, int q) {
+        Column_chain res (this->_H_col.at(q-1) * this->_K.d(sigma,q));
+        return res;
+    }
 
-//    Coefficient_ring coef;
-//    bool res;
-//
-//    // Compute <partial h(pi), sigma>
-//    Row_chain row_sigma_D(this->_K.cod(sigma,q));
-//    Column_chain col_pi_H(OSM::get_column(this->_H_col.at(q), pi));
-//    coef = row_sigma_D * col_pi_H;
-//    res = coef.is_invertible();
-//
-//    // Compute <h partial(sigma),pi>
-//    Column_chain col_sigma_D(this->_K.d(sigma));
-//    Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
-//    coef = row_pi_H * col_sigma_D;
-//    res = res && coef.is_invertible();
-//    return res;
+    /** \brief Computes \f$\langle h_{q-1}\circ \partial_q(\sigma), \tau\rangle\f$.
+     *
+     * The \f$h_{q-1}\circ \partial_q\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
+     *
+     * \param sigma Index of the first cell
+     * \param tau Index of the second cell
+     * \param q Dimension of the cell
+     */
+    Coefficient_ring hd(size_t sigma, size_t tau, int q) {
+        Column_chain col_sigma_D(this->_K.d(sigma));
+        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), tau));
+        return row_pi_H * col_sigma_D;
+    }
+
+    /** \brief Computes \f$h_{q}^*\circ \partial_{q+1}^*\(\sigma)\f$.
+     *
+     * The \f$h_{q}^*\circ \partial_{q+1}^*\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
+     *
+     * \param sigma Index of the cell
+     * \param q Dimension of the cell
+     */
+    Column_chain htdt(size_t sigma, int q) {
+        Row_chain res(this->_K.cod(sigma,q) * this->_H_col.at(q));
+        return res.transpose();
+    }
+
+    /** \brief Computes \f$\langle h_{q}^*\circ \partial_{q+1}^*\(\sigma), \tau\rangle\f$.
+     *
+     * The \f$h_{q}^*\circ \partial_{q+1}^*\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
+     *
+     * \param sigma Index of the first cell
+     * \param tau Index of the second cell
+     * \param q Dimension of the cell
+     */
+    Coefficient_ring htdt(size_t sigma, size_t tau, int q) {
+        Row_chain res(this->_K.cod(sigma,q));
+        const Column_chain& res2(OSM::cget_column(this->_H_col.at(q)), tau);
+        return res*res2;
+    }
+
 
     /**
      * \brief Gets the annotation of a cycle in the homology basis.
