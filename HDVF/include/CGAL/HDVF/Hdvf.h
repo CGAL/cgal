@@ -479,7 +479,7 @@ protected:
         return row_pi_H * col_sigma_D;
     }
 
-    /** \brief Computes \f$h_{q}^*\circ \partial_{q+1}^*\(\sigma)\f$.
+    /** \brief Computes \f$h_{q}^*\circ \partial_{q+1}^*(\sigma)\f$.
      *
      * The \f$h_{q}^*\circ \partial_{q+1}^*\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
      *
@@ -491,7 +491,7 @@ protected:
         return res.transpose();
     }
 
-    /** \brief Computes \f$\langle h_{q}^*\circ \partial_{q+1}^*\(\sigma), \tau\rangle\f$.
+    /** \brief Computes \f$\langle h_{q}^*\circ \partial_{q+1}^*(\sigma), \tau\rangle\f$.
      *
      * The \f$h_{q}^*\circ \partial_{q+1}^*\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
      *
