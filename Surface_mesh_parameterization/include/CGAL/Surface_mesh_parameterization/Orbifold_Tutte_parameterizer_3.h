@@ -121,7 +121,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
 
   // Since the cones are unique, we only need to loop all the vertices once
   TM_vertex_iterator vit, end;
-  boost::tie(vit, end) = vertices(tm);
+  std::tie(vit, end) = vertices(tm);
   for(; vit!=end; ++vit) {
     for(std::size_t i=0; i<cones.size(); ++i) {
       TM_vertex_descriptor vd = *vit;
@@ -154,7 +154,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   int counter = 0;
 
   TM_vertex_iterator vit, end;
-  boost::tie(vit, end) = vertices(tm);
+  std::tie(vit, end) = vertices(tm);
   for(; vit!=end; ++vit)
   {
     TM_vertex_descriptor vd = *vit;
@@ -715,7 +715,7 @@ private:
     // The other parts of M(i,j) and M(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // @fixme unefficient: lengths are computed (and inversed!) twice per edge
+    // @fixme inefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_i_base: - tan(alpha / 2)
     const Point_3& p = pk;

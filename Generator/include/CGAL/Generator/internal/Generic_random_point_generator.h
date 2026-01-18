@@ -105,7 +105,7 @@ void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>:
   );
 
   // generate the points
-  GeneratorOnObject pointCreator(object_from_id_map(ids[target]));
+  GeneratorOnObject pointCreator(object_from_id_map(ids[target]), random);
   this->d_item = *pointCreator;
 }
 

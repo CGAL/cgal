@@ -61,6 +61,7 @@ struct Myitems_3b
 {
 #ifdef USE_COMPACT_CONTAINER_WITH_INDEX
   typedef CGAL::Tag_true Use_index;
+  using Index_type=std::uint32_t;
 #endif
   template <class LCC>
   struct Dart_wrapper

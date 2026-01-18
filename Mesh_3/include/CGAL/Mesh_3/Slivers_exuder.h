@@ -26,34 +26,43 @@
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/functional.h>
-#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/number_type_config.h>
+#include <CGAL/tags.h>
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include <optional>
 #include <algorithm>
-#include <iomanip> // std::setprecision
-#include <iostream> // std::cerr/cout
+#include <cstddef>
+#include <limits>
 #include <map>
-#include <set>
+#include <optional>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
 # define CGAL_PROFILE
 # include <CGAL/Profile_counter.h>
+# include <iostream> // std::cerr/cout
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
+# include <CGAL/Mesh_3/Worksharing_data_structures.h>
 # include <tbb/task_group.h>
+# include <tbb/concurrent_vector.h>
 #endif
 
 
@@ -61,6 +70,9 @@
   #define CGAL_MESH_3_EXUDER_VERBOSE
 #endif
 
+#if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(CGAL_MESH_3_DEBUG_SLIVERS_EXUDER)
+# include <iostream>
+#endif
 
 namespace CGAL {
 
@@ -427,17 +439,9 @@ public: // methods
               << exudation_time << "s ====" << std::endl;
 #endif
 
-#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-    if (ret == BOUND_REACHED)
-    {
-      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
-    }
-    else
-    {
-      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time",
-        (ret == CANT_IMPROVE_ANYMORE ?
-        "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
-    }
+#if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
+ && defined(CGAL_MESH_3_PROFILING)
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
 #endif
 
     return ret;
@@ -1206,7 +1210,7 @@ expand_prestar(const Cell_handle& cell_to_add,
 
         if(! tr_.is_infinite(current_mirror_cell))
         {
-          // if current_mirror_cell is finite, we can re-use the value
+          // if current_mirror_cell is finite, we can reuse the value
           // 'new_power_distance_to_power_sphere'
 
           // Ensure that 'new_power_distance_to_power_sphere' has been initialized
@@ -1295,7 +1299,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
         && pre_star.front()->first < (sq_delta_ * sq_d_v)
         && ! c3t3_.is_in_complex(pre_star.front()->second) )
   {
-    // Store critial radius (pre_star will be modified in expand_prestar)
+    // Store critical radius (pre_star will be modified in expand_prestar)
     FT power_distance_to_power_sphere = pre_star.front()->first;
 
     // expand prestar (insert opposite_cell facets in pre_star)

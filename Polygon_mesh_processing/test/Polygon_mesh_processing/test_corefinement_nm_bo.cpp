@@ -15,7 +15,7 @@ typedef CGAL::Polyhedron_3<K>                                   Poly;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-template<class Mesh>
+template<class Mesh, class ID>
 void test_one(std::string filename1, std::string filename2)
 {
   std::cout << "Running test with " << filename1 << " " << filename2 << "\n";
@@ -40,7 +40,7 @@ void test_one(std::string filename1, std::string filename2)
   {
     std::cout << "  checking " << out_name_prefixes[k] << "\n";
     std::vector<K::Point_3> points;
-    std::vector< std::array<std::size_t, 3> > polygons;
+    std::vector< std::array<ID, 3> > polygons;
     switch(k)
     {
       case 0: visitor.extract_union(points, polygons); break;
@@ -65,8 +65,12 @@ void test_one(std::string filename1, std::string filename2)
 
 void test(std::string filename1, std::string filename2)
 {
-  test_one<SM>(filename1, filename2);
-  test_one<Poly>(filename1, filename2);
+  test_one<SM, std::size_t>(filename1, filename2);
+  test_one<Poly, std::size_t>(filename1, filename2);
+  test_one<SM, int>(filename1, filename2);
+  test_one<Poly, int>(filename1, filename2);
+  test_one<SM, unsigned int>(filename1, filename2);
+  test_one<Poly, unsigned int>(filename1, filename2);
 }
 
 int main(int argc, char* argv[])

@@ -110,11 +110,10 @@ public:
   }
   */
   // NOTE: prior to call this function, id fields should be updated
-  template<class Descriptor, class InputIterator, class IsSelected, class Visitor>
+  template<class Descriptor, class InputIterator, class Visitor>
   void travel(InputIterator begin,
               InputIterator end,
               std::size_t size,
-              const IsSelected& selection,
               Visitor& visitor)
   {
     std::vector<bool> mark(size, false);
@@ -123,28 +122,29 @@ public:
     {
       Descriptor h = *begin;
 
-      if(mark[id(h)] || selection.count(h)) { continue; }
+      if(mark[id(h)])
+        continue;
 
       std::vector<Descriptor> C;
       C.push_back(h);
       mark[id(h)] = true;
       std::size_t current_index = 0;
 
-      bool neigh_to_selection = false;
       while(current_index < C.size()) {
         Descriptor current = C[current_index++];
 
         for(One_ring_iterator<Mesh, Descriptor> circ(current, mesh); circ; ++circ)
         {
           Descriptor nv = circ;
-          neigh_to_selection |= (selection.count(nv)!=0);
-          if(!mark[id(nv)] && !selection.count(nv)) {
+          if(!mark[id(nv)])
+          {
             mark[id(nv)] = true;
             C.push_back(nv);
           }
         }
       }
-      if(neigh_to_selection) { visitor(C); }
+
+      visitor(C);
     }
   }
 };

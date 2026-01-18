@@ -1864,10 +1864,10 @@ private:
   Point_2 face_location_with_normalized_coordinates(const Cone_tree_node* node,
                                                     const Barycentric_coordinates& location) const
   {
-    return construct_barycenter_in_triangle_2(node->layout_face(), localized_coordiate(node, location));
+    return construct_barycenter_in_triangle_2(node->layout_face(), localized_coordinate(node, location));
   }
 
-  Barycentric_coordinates localized_coordiate(const Cone_tree_node* node,
+  Barycentric_coordinates localized_coordinate(const Cone_tree_node* node,
                                               const Barycentric_coordinates& location) const
   {
     return shifted_coordinates(location, node->edge_face_index());
@@ -1918,7 +1918,7 @@ private:
 
     if (closest)
     {
-      return std::make_pair(Node_distance_pair(closest, closestDistance), localized_coordiate(closest, location));
+      return std::make_pair(Node_distance_pair(closest, closestDistance), localized_coordinate(closest, location));
     }
     else
     {
@@ -2134,7 +2134,7 @@ private:
 
           std::cout << "event type: " << event->m_type << " "
                     << " time: " << event->m_distanceEstimate << " ";
-          std::cout << "cancelled? " << event->m_cancelled << " " ;
+          std::cout << "canceled? " << event->m_cancelled << " " ;
 
           if (!event->m_cancelled)
           {
@@ -2200,7 +2200,7 @@ private:
       }
       else if (m_debugOutput)
       {
-        std::cout << "Found cancelled event for node: " << event->m_parent << std::endl;
+        std::cout << "Found canceled event for node: " << event->m_parent << std::endl;
       }
 
       delete event;
@@ -2416,7 +2416,7 @@ public:
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
   the first shortest path query is done.
-  Behaviour is undefined if the source point `it` was already removed.
+  Behavior is undefined if the source point `it` was already removed.
 
   \param it iterator to the source point to be removed
   */

@@ -11,7 +11,7 @@ typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-// a sizing fied that is increasing the size of edge along the y-axis
+// a sizing field that is increasing the size of edge along the y-axis
 // starting at a minimum size at y-max and ending at a maximum size at
 // y-min, with a linear interpolation of sizes in between the two extreme
 // sizing values

@@ -65,7 +65,7 @@ is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
           const FaceGraph& g)
 {
   CGAL::Halfedge_around_target_iterator<FaceGraph> havib, havie;
-  for(boost::tie(havib, havie) = halfedges_around_target(halfedge(vd, g), g); havib != havie; ++havib) {
+  for(std::tie(havib, havie) = halfedges_around_target(halfedge(vd, g), g); havib != havie; ++havib) {
     if(is_border(*havib,g)) {
       typename boost::graph_traits<FaceGraph>::halfedge_descriptor h = *havib;
       return h;
@@ -537,7 +537,7 @@ bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
     return false;
 
   // test for 2-manifoldness
-  // Distinct facets on each side of an halfedge.
+  // Distinct facets on each side of a halfedge.
   for(halfedge_descriptor i : halfedges(g))
   {
     valid = (face(i, g) != face(opposite(i, g), g));

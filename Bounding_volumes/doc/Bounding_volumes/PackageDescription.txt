@@ -1,9 +1,8 @@
-/// \defgroup PkgBoundingVolumesRef Bounding Volumes Reference
+/// \defgroup PkgBoundingVolumesRef Reference Manual
 /// \defgroup PkgBoundingVolumesConcepts Concepts
 /// \ingroup PkgBoundingVolumesRef
 /*!
 \addtogroup PkgBoundingVolumesRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumes}
 \cgalPkgPicture{minCircle.png}
 \cgalPkgSummaryBegin

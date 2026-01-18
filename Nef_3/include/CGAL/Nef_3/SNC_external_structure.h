@@ -473,7 +473,7 @@ public:
     CGAL_forall_iterators(it,M4) {
       //    progress++;
       it->second.sort(Halfedge_key_lt());
-      CGAL_NEF_TRACEN("search opposite  "<<it->first);
+      CGAL_NEF_TRACEN("search opposite (M4)  "<<it->first);
       typename Halfedge_list::iterator itl;
       CGAL_forall_iterators(itl,it->second) {
         Halfedge_handle e1 = itl->e;
@@ -482,7 +482,7 @@ public:
         Halfedge_handle e2 = itl->e;
         CGAL_NEF_TRACEN("    " << e1->source()->point()
                         << " -> " << e2->source()->point());
-        CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+        CGAL_NEF_TRACEN("    " << e1->vector()<<" -> "<<-e2->vector());
         make_twins(e1,e2);
         CGAL_assertion(e1->mark()==e2->mark());
 
@@ -493,7 +493,7 @@ public:
     CGAL_forall_iterators(it,M3) {
       //    progress++;
       it->second.sort(Halfedge_key_lt());
-      CGAL_NEF_TRACEN("search opposite  "<<it->first);
+      CGAL_NEF_TRACEN("search opposite (M3)  "<<it->first);
       typename Halfedge_list::iterator itl;
       CGAL_forall_iterators(itl,it->second) {
         Halfedge_handle e1 = itl->e;
@@ -502,7 +502,7 @@ public:
         Halfedge_handle e2 = itl->e;
         CGAL_NEF_TRACEN("    " << e1->source()->point()
                         << " -> " << e2->source()->point());
-        CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+        CGAL_NEF_TRACEN("    " << e1->vector()<<" -> "<<-e2->vector());
         make_twins(e1,e2);
         CGAL_assertion(e1->mark()==e2->mark());
 
@@ -513,7 +513,7 @@ public:
     CGAL_forall_iterators(it,M2) {
       //    progress++;
       it->second.sort(Halfedge_key_lt());
-      CGAL_NEF_TRACEN("search opposite  "<<it->first);
+      CGAL_NEF_TRACEN("search opposite (M2)  "<<it->first);
       typename Halfedge_list::iterator itl;
       CGAL_forall_iterators(itl,it->second) {
         Halfedge_handle e1 = itl->e;
@@ -522,7 +522,7 @@ public:
         Halfedge_handle e2 = itl->e;
         CGAL_NEF_TRACEN("    " << e1->source()->point()
                         << " -> " << e2->source()->point());
-        CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
+        CGAL_NEF_TRACEN("    " << e1->vector()<<" -> "<<-e2->vector());
         make_twins(e1,e2);
         CGAL_assertion(e1->mark()==e2->mark());
 
@@ -533,7 +533,7 @@ public:
     CGAL_forall_iterators(it,M) {
       //    progress++;
       it->second.sort(Halfedge_key_lt());
-      CGAL_NEF_TRACEN("search opposite  "<<it->first);
+      CGAL_NEF_TRACEN("search opposite (M)  "<<it->first);
       typename Halfedge_list::iterator itl;
       CGAL_forall_iterators(itl,it->second) {
         Halfedge_handle e1 = itl->e;
@@ -542,7 +542,7 @@ public:
         Halfedge_handle e2 = itl->e;
         CGAL_NEF_TRACEN("    " << e1->source()->point()
                         << " -> " << e2->source()->point());
-        CGAL_NEF_TRACEN(e1->vector()<<" -> "<< -e2->vector());
+        CGAL_NEF_TRACEN("    " << e1->vector()<<" -> "<< -e2->vector());
         CGAL_assertion(e1->source()->point() != e2->source()->point());
         CGAL_assertion(e1->mark()==e2->mark());
         make_twins(e1,e2);
@@ -585,10 +585,16 @@ public:
             break;
       } else
 #endif
+        CGAL_assertion_code(bool found = false;)
         CGAL_For_all(cet,cete)
           if ( cet->circle() == ce->circle().opposite() &&
                cet->source()->twin() == ce->source() )
+        {
+            CGAL_assertion_code(found = true;)
             break;
+        }
+
+        CGAL_assertion(found);
 
 #ifdef CGAL_USE_TRACE
       if( cet->circle() != ce->circle().opposite() )
@@ -866,7 +872,7 @@ public:
     Halffacet_handle f;
     CGAL_NEF_TRACEN("get_facet_below");
     if( CGAL::assign(v, o)) {
-      CGAL_NEF_TRACEN("facet below from from vertex...");
+      CGAL_NEF_TRACEN("facet below from vertex...");
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(v->sfaces_begin() == v->sfaces_last());
@@ -875,7 +881,7 @@ public:
       }
     }
     else if( CGAL::assign(e, o)) {
-      CGAL_NEF_TRACEN("facet below from from edge...");
+      CGAL_NEF_TRACEN("facet below from edge...");
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(e->source()->sfaces_begin() == e->source()->sfaces_last());
@@ -884,7 +890,7 @@ public:
       }
     }
     else if( CGAL::assign(f, o)) {
-      CGAL_NEF_TRACEN("facet below from from facet...");
+      CGAL_NEF_TRACEN("facet below from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
     }

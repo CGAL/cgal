@@ -76,7 +76,7 @@
 
 /**
  * If set, the curve and curve pair analysis are using specialized code
- * to analyse conic curves, i.e. curves of degree 2
+ * to analyze conic curves, i.e. curves of degree 2
  */
 #ifndef CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
 #define CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX 0

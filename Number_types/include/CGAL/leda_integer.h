@@ -60,7 +60,7 @@ template <> class Algebraic_structure_traits< leda_integer >
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    // Unfortunately the behaviour of leda has changed here several times
+    // Unfortunately the behavior of leda has changed here several times
     // The following Div_mod is invariant under these changes
     // However, the Div and Mod defined below might be more efficient
     // TODO: recover Div Mod implementation for all leda versions

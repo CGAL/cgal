@@ -1453,7 +1453,7 @@ template < class CK, class OutputIterator >
 // returns extra information, descriptive of the position of the returned
 // xy-monotone arcs on the circle: The output iterator refers to pairs, the
 // first part of which is the object containing the arc and the second part
-// is another pair containing 2 booleans which equavalently describe whether the
+// is another pair containing 2 booleans which equivalently describe whether the
 // returned xy-monotone arc is on the upper part and the left side of the circle
 
 template < typename CK , typename Output_iterator>
@@ -1565,7 +1565,7 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       double ymax = (is_on_upper) ?
         to_interval
         ( CircularFunctors::y_extremal_point<CK>(a.supporting_circle(),false).y() ).second :
-        CGAL::max(left_bb.ymax(),right_bb.ymax());
+        (CGAL::max)(left_bb.ymax(),right_bb.ymax());
       */
       return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);
     }

@@ -99,7 +99,7 @@ public:
    */
   virtual bool is_split_event(Subcurve* sc, Event* event);
 
-  /*! Split the given edge edge.
+  /*! Split the given edge.
    * \param he The edge to split.
    * \param sc The associated subcurve.
    * \param pt The split point.
@@ -108,7 +108,7 @@ public:
   virtual Halfedge_handle split_edge(Halfedge_handle he, Subcurve* sc,
                                      const Point_2& pt);
 
-  /*! Split the given edge edge.
+  /*! Split the given edge.
    * \param he The edge to split.
    * \param sc The associated subcurve.
    * \param v The vertex of the split point.

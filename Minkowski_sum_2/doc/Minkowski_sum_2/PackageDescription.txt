@@ -1,4 +1,4 @@
-/// \defgroup PkgMinkowskiSum2Ref 2D Minkowski Sums Reference
+/// \defgroup PkgMinkowskiSum2Ref Reference Manual
 /// \defgroup PkgMinkowskiSum2Concepts Concepts
 /// \ingroup PkgMinkowskiSum2Ref
 

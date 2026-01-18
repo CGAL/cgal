@@ -151,7 +151,7 @@ private:
  * \tparam MC either a model of the concept `MeshCriteria_3` or a model
  *            of `MeshCriteriaWithFeatures_3` if the domain has exposed features.
  *
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param c3t3 the mesh to be refined that is modified by the refinement process.
  *             As the refinement process only adds points to the triangulation, all
@@ -193,7 +193,7 @@ private:
  *                           Two named parameters control this behavior:
  *                           <UL>
  *                             <LI> `parameters::no_lloyd()`
- *                             <LI> `parameters::lloyd_optimize_mesh_3()`
+ *                             <LI> `parameters::lloyd()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_lloyd()`}
  *   \cgalParamSectionEnd
@@ -355,7 +355,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
                  , mesh_options.pointer_to_stop_atomic_boolean
 #endif
                  );
-  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
+  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix,
+                                          mesh_options.surface_only);
   c3t3.clear_manifold_info();
 
   dump_c3t3(c3t3, mesh_options.dump_after_refine_prefix);
@@ -387,7 +388,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   }
 
   // Perturbation
-  if ( perturb )
+  if ( perturb && !mesh_options.surface_only )
   {
     double perturb_time_limit = refine_time;
 
@@ -403,7 +404,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   }
 
   // Exudation
-  if ( exude )
+  if ( exude  && !mesh_options.surface_only )
   {
     double exude_time_limit = refine_time;
 

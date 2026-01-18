@@ -1,4 +1,4 @@
-/// \defgroup PkgTDS3Ref 3D Triangulation Data Structure Reference
+/// \defgroup PkgTDS3Ref Reference Manual
 
 /// \defgroup PkgTDS3Concepts Concepts
 /// \ingroup PkgTDS3Ref
@@ -10,7 +10,6 @@
 /// \ingroup PkgTDS3Ref
 /*!
 \addtogroup PkgTDS3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Triangulation Data Structure,PkgTDS3}
 \cgalPkgPicture{tds3_small.png}
 \cgalPkgSummaryBegin

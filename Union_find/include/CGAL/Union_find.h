@@ -22,6 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <cstddef>
+#include <iterator>
 
 namespace CGAL {
 
@@ -39,6 +40,7 @@ public:
     typedef R_                                    reference;
     typedef P_                                    pointer;
     typedef std::forward_iterator_tag             iterator_category;
+    typedef std::ptrdiff_t                        difference_type;
 
     UF_forward_iterator() : m_p(0) {}
     UF_forward_iterator(PTR_ p) : m_p(p) {}
@@ -104,6 +106,7 @@ public:
     typedef T                                                value_type;
     typedef T&                                               reference;
     typedef const T&                                         const_reference;
+    typedef std::forward_iterator_tag                        iterator_category;
 
     typedef internal::UF_forward_iterator< pointer, T, T&, T*>  iterator;
     typedef iterator                                         handle;

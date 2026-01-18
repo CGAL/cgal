@@ -4,7 +4,6 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_batched_point_location.h>
 
 #include "arr_inexact_construction_segments.h"

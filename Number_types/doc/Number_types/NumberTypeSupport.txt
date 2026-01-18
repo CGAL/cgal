@@ -16,7 +16,7 @@ requirements, such that they can be successfully used in \cgal code.
 In general they are expected to be a model of an algebraic structure
 concepts and in case they model a subring of the real numbers they are
 also a model of `RealEmbeddable`. For an overview of the algebraic
-structure concepts see Section \ref PkgAlgebraicFoundationsRef.
+structure concepts see the \ref PkgAlgebraicFoundationsAlgebraicStructuresConcepts section.
 
 \section Number_typesBuilt Built-in Number Types
 
@@ -114,6 +114,19 @@ necessary functions to make these classes compliant to the \cgal number type
 requirements.
 
 To use these classes, \gmp and \mpfr must be installed.
+
+
+\section Number_typesBoost Number Types Provided by Boost
+
+\anchor boostnt
+
+Boost provides arbitrary precision integer and rational number types.
+The number types `boost::multiprecision::gmp_int` and `boost::multiprecision::gmp_rational`
+have \gmp as backend, while the number types `boost::multiprecision::cpp_int`
+and `boost::multiprecision::cpp_rational` have a native backend.
+The file <TT>CGAL/boost_mp.h</TT> provides the functions to make
+these classes models of number type concepts.
+
 
 \section Number_typesLEDA Number Types Provided by LEDA
 

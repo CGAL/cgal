@@ -20,19 +20,6 @@ using namespace CGAL::Three;
 
 typedef Tr::Bare_point Bare_point;
 
-struct Compare_to_isovalue {
-  double iso_value;
-  bool less;
-  typedef bool result_type;
-
-  Compare_to_isovalue(double iso_value, bool less)
-    : iso_value(iso_value), less(less) {}
-
-  bool operator()(double x) const {
-    return (x < iso_value) == less;
-  }
-};
-
 Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  const Polylines_container& polylines,
                                  const SMesh* pBoundingMesh,
@@ -45,6 +32,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  const double tet_min_sizing,
                                  const double edge_size,
                                  const double edge_min_size,
+                                 const double edge_distance,
                                  const double tet_shape,
                                  bool protect_features,
                                  bool protect_borders,
@@ -58,6 +46,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   std::cerr << "  angle: " << facet_angle << std::endl
             << "  edge size bound: " << edge_size << std::endl
             << "  edge min size bound: " << edge_min_size << std::endl
+            << "  edge distance bound: " << edge_distance << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << facet_approx << std::endl;
   if (!surface_only)
@@ -108,11 +97,13 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
             "<li>Angle: %1</li>"
             "<li>Edge size bound: %2</li>"
             "<li>Edge min size bound: %3</li>"
-            "<li>Facets size bound: %4</li>"
-            "<li>Approximation bound: %5</li>")
+            "<li>Edge distance bound: %4</li>"
+            "<li>Facets size bound: %5</li>"
+            "<li>Approximation bound: %6</li>")
     .arg(facet_angle)
     .arg(edge_size)
     .arg(edge_min_size)
+    .arg(edge_distance)
     .arg(facet_sizing)
     .arg(facet_approx);
   if (!surface_only)
@@ -129,8 +120,9 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   param.facet_min_sizing = facet_min_sizing;
   param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
-  param.edge_sizing =  edge_size;
+  param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
+  param.edge_distance = edge_distance;
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
@@ -155,6 +147,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
                                  const double tet_min_sizing,
                                  const double edge_size,
                                  const double edge_min_size,
+                                 const double edge_distance,
                                  const double tet_shape,
                                  bool protect_features,
                                  bool protect_borders,
@@ -168,6 +161,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   std::cerr << "  angle: " << facet_angle << std::endl
     << "  edge size bound: " << edge_size << std::endl
     << "  edge min size bound: " << edge_min_size << std::endl
+    << "  edge distance bound: " << edge_distance << std::endl
     << "  facets size bound: " << facet_sizing << std::endl
     << "  approximation bound: " << facet_approx << std::endl;
   if (!surface_only)
@@ -213,11 +207,13 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
       "<li>Angle: %1</li>"
       "<li>Edge size bound: %2</li>"
       "<li>Edge min size bound :%3</li>"
-      "<li>Facets size bound: %4</li>"
-      "<li>Approximation bound: %5</li>")
+      "<li>Edge distance bound: %4</li>"
+      "<li>Facets size bound: %5</li>"
+      "<li>Approximation bound: %6</li>")
     .arg(facet_angle)
     .arg(edge_size)
     .arg(edge_min_size)
+    .arg(edge_distance)
     .arg(facet_sizing)
     .arg(facet_approx);
   if (!surface_only)
@@ -236,6 +232,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
+  param.edge_distance = edge_distance;
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = protect_features;
@@ -261,6 +258,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double tet_min_sizing,
                                  const double edge_size,
                                  const double edge_min_size,
+                                 const double edge_distance,
                                  const double tet_shape,
                                  const int manifold,
                                  const bool surface_only)
@@ -293,6 +291,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
+  param.edge_distance = edge_distance;
   param.manifold = manifold;
   param.detect_connected_components = false; // to avoid random values
                                              // in the debug displays
@@ -324,6 +323,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double tet_min_sizing,
                                  const double edge_size,
                                  const double edge_min_size,
+                                 const double edge_distance,
                                  const double tet_shape,
                                  bool protect_features, //detect_polylines
                                  const bool protect_borders,//polylines on bbox
@@ -342,6 +342,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.protect_features
     = protect_features || protect_borders || !polylines.empty();
   param.detect_connected_components = detect_connected_components;
+  param.iso_value = iso_value;
+  param.inside_is_less = inside_is_less;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_min_sizing = facet_min_sizing;
@@ -352,6 +354,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_min_sizing = tet_min_sizing;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
+  param.edge_distance = edge_distance;
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
@@ -363,11 +366,13 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       "<li>Angle: %1</li>"
       "<li>Edge size bound: %2</li>"
       "<li>Edge min size bound: %3</li>"
-      "<li>Facets size bound: %4</li>"
-      "<li>Approximation bound: %5</li>")
+      "<li>Edge distance bound: %4</li>"
+      "<li>Facets size bound: %5</li>"
+      "<li>Approximation bound: %6</li>")
     .arg(facet_angle)
     .arg(edge_size)
     .arg(edge_min_size)
+    .arg(edge_distance)
     .arg(facet_sizing)
     .arg(facet_approx);
   if (!surface_only)

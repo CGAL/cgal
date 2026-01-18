@@ -21,7 +21,7 @@
 
 #include <CGAL/ImageIO.h>
 
-/* read analyse format header
+/* read analyze format header
 
    return:
    -1: error

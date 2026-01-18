@@ -816,7 +816,7 @@ operator()(Visitor visitor)
 #endif
 
   running_time_.stop();
-  helper_.reset_cache();//in case we re-use caches in another operation
+  helper_.reset_cache();//in case we reuse caches in another operation
                                // after this perturbation
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
@@ -855,16 +855,7 @@ operator()(Visitor visitor)
 
 #if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
  && defined(CGAL_MESH_3_PROFILING)
-  if (ret == BOUND_REACHED)
-  {
-    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", perturbation_time);
-  }
-  else
-  {
-    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time",
-      (ret == CANT_IMPROVE_ANYMORE ?
-      "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
-  }
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", perturbation_time);
 #endif
 
   return ret;
@@ -1294,8 +1285,6 @@ perturb_vertex( PVertex pv
 
   CGAL_assertion(pv.is_perturbable());
 
-  int num_new_vertices_to_treat = 0;
-
   Cell_vector slivers;
   slivers.reserve(8);
   if (!helper_.try_lock_and_get_incident_slivers(
@@ -1358,8 +1347,7 @@ perturb_vertex( PVertex pv
         pv.increment_try_nb();
 
         // update modified vertices
-        num_new_vertices_to_treat +=
-          update_priority_queue(modified_vertices, sliver_bound, visitor, bad_vertices);
+        update_priority_queue(modified_vertices, sliver_bound, visitor, bad_vertices);
       }
       else
       {
@@ -1381,7 +1369,6 @@ perturb_vertex( PVertex pv
       if (pv.is_perturbable())
       {
         enqueue_task(pv, sliver_bound, visitor, bad_vertices);
-        ++num_new_vertices_to_treat;
       }
     }
     else

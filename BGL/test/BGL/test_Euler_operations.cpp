@@ -1,12 +1,15 @@
 
 #include "test_Prefix.h"
-#include <boost/range/distance.hpp>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/generators.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/IO/OFF.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
+
+#include <boost/range/distance.hpp>
 
 template <typename T>
 void
@@ -17,6 +20,7 @@ test_copy_face_graph_nm_umbrella()
   T g;
   Kernel::Point_3 p(0,0,0);
 
+  // make two connected components
   CGAL::make_tetrahedron(p, p, p, p, g);
   CGAL::make_tetrahedron(p, p, p, p, g);
 
@@ -96,7 +100,7 @@ join_face_test()
 
   bool found;
   halfedge_descriptor e;
-  boost::tie(e, found) = halfedge(f.w, f.v, f.m);
+  std::tie(e, found) = halfedge(f.w, f.v, f.m);
   assert(found);
   // manually set the halfedge of f.f1 to the edge that is to be
   // removed to provoke a special case
@@ -107,7 +111,7 @@ join_face_test()
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
 
   CGAL::Halfedge_around_face_iterator<T> begin, end;
-  boost::tie(begin, end) = CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m);
+  std::tie(begin, end) = CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m);
   assert(std::distance(begin, end) == 4);
   for(; begin != end; ++begin)
   {
@@ -118,7 +122,7 @@ join_face_test()
   }
 
   face_iterator fit, fend;
-  for(boost::tie(fit, fend) = faces(f.m); fit != fend; ++fit) {
+  for(std::tie(fit, fend) = faces(f.m); fit != fend; ++fit) {
     assert(*fit == f.f1 || *fit == f.f3);
   }
 
@@ -140,7 +144,7 @@ remove_face_test_1()
   // find the edge between x and y
   bool found;
   halfedge_descriptor e;
-  boost::tie(e, found) = halfedge(f.x, f.y, f.m);
+  std::tie(e, found) = halfedge(f.x, f.y, f.m);
   assert(found);
   assert(face(e, f.m) == f.f3);
 
@@ -155,7 +159,7 @@ remove_face_test_1()
   assert_EQUAL(CGAL::internal::exact_num_vertices(f.m) == 4);
   halfedge_iterator eb, ee;
   int count = 0;
-  for(boost::tie(eb, ee) = halfedges(f.m); eb != ee; ++eb) {
+  for(std::tie(eb, ee) = halfedges(f.m); eb != ee; ++eb) {
     if(face(*eb,f.m) == boost::graph_traits<T>::null_face())
       ++count;
   }
@@ -176,9 +180,9 @@ remove_face_test_2()
   bool found;
   halfedge_descriptor e;
 
-  boost::tie(e, found) = halfedge(f.x, f.w, f.m);
+  std::tie(e, found) = halfedge(f.x, f.w, f.m);
   assert(found);
-  boost::tie(e, found) = halfedge(f.x, f.v, f.m);
+  std::tie(e, found) = halfedge(f.x, f.v, f.m);
   assert(found);
   assert(face(e, f.m) == f.f1);
   CGAL::Euler::remove_face(e,f.m);
@@ -188,7 +192,7 @@ remove_face_test_2()
   assert(CGAL::internal::exact_num_edges(f.m) == 7);
   assert(CGAL::internal::exact_num_vertices(f.m) == 5);
 
-  boost::tie(e, found) = halfedge(f.x, f.w, f.m);
+  std::tie(e, found) = halfedge(f.x, f.w, f.m);
   assert(found);
   assert(face(e,f.m) == boost::graph_traits<T>::null_face());
 
@@ -265,7 +269,7 @@ join_vertex_interior_test()
   halfedge_descriptor e;
 
   bool found;
-  boost::tie(e, found) = halfedge(f.w, f.x, f.m);
+  std::tie(e, found) = halfedge(f.w, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(e,f.m);
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
@@ -288,7 +292,7 @@ join_vertex_exterior_test()
     Surface_fixture_3<T> f;
     halfedge_descriptor e;
     bool found;
-    boost::tie(e, found) = halfedge(f.w, f.y, f.m);
+    std::tie(e, found) = halfedge(f.w, f.y, f.m);
     assert(source(e,f.m) == f.w);
     assert(target(e,f.m) == f.y);
     assert(found);
@@ -306,7 +310,7 @@ join_vertex_exterior_test()
     Surface_fixture_3<T> f;
     halfedge_descriptor e;
     bool found;
-    boost::tie(e, found) = halfedge(f.y, f.w, f.m);
+    std::tie(e, found) = halfedge(f.y, f.w, f.m);
 
     assert(source(e,f.m) == f.y);
     assert(target(e,f.m) == f.w);
@@ -334,9 +338,9 @@ split_vertex()
   Surface_fixture_3<T> f;
   halfedge_descriptor h1, h2;
   bool found;
-  boost::tie(h1, found) = halfedge(f.w, f.y, f.m);
+  std::tie(h1, found) = halfedge(f.w, f.y, f.m);
   assert(found);
-  boost::tie(h2, found) = halfedge(f.z, f.y, f.m);
+  std::tie(h2, found) = halfedge(f.z, f.y, f.m);
   assert(found);
   assert(face(h2, f.m) == Traits::null_face());
 
@@ -357,13 +361,13 @@ split_join_vertex_inverse()
   Surface_fixture_3<T> f;
   halfedge_descriptor h, h1, h2;
   bool found;
-  boost::tie(h, found) = halfedge(f.w, f.x, f.m);
+  std::tie(h, found) = halfedge(f.w, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(h,f.m);
   assert(CGAL::is_valid_polygon_mesh(f.m));
-  boost::tie(h1, found) = halfedge(f.z, f.x, f.m);
+  std::tie(h1, found) = halfedge(f.z, f.x, f.m);
   assert(found);
-  boost::tie(h2, found) = halfedge(f.v, f.x, f.m);
+  std::tie(h2, found) = halfedge(f.v, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(CGAL::Euler::split_vertex(h1, h2,f.m),f.m);
   assert(CGAL::is_valid_polygon_mesh(f.m));
@@ -445,6 +449,67 @@ remove_center_vertex_test()
  assert(CGAL::internal::exact_num_vertices(f.m) == nv-1);
  assert(CGAL::internal::exact_num_faces(f.m) == (nf-deg)+1);
  assert(CGAL::internal::exact_num_halfedges(f.m) == nh-(2*deg));
+}
+
+template <typename T>
+void
+remove_degree_2_vertex_test()
+{
+  CGAL_GRAPH_TRAITS_MEMBERS(T);
+
+  // vertex at .first should be removable, and after removal,
+  // there should .second[0] nv, .second[1] ne, and .second[2] nf
+  // anything not in the map should not be removable
+  std::map<std::size_t, std::array<std::size_t, 3> > removable;
+  removable[0] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[13] = CGAL::make_array<std::size_t>(28, 90, 18);
+  removable[14] = CGAL::make_array<std::size_t>(28, 90, 18);
+  removable[16] = CGAL::make_array<std::size_t>(28, 90, 18);
+  removable[17] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[18] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[21] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[26] = CGAL::make_array<std::size_t>(28, 90, 18);
+
+  auto test = [&removable](const std::size_t hi) // intentional copy of 'm'
+  {
+    T m;
+    const bool ok = CGAL::IO::read_polygon_mesh("data/degree_2_collection.off", m);
+    assert(ok);
+    assert(CGAL::is_valid_polygon_mesh(m));
+
+    auto vim = CGAL::get_initialized_vertex_index_map(m);
+
+    const halfedge_descriptor h = *(std::next(halfedges(m).begin(), hi));
+    const vertex_descriptor v = target(h,  m);
+    auto vid = get(vim, v);
+    if(degree(v, m) != 2)
+    {
+      assert(removable.count(vid) == 0);
+      return;
+    }
+
+    const halfedge_descriptor res = CGAL::Euler::remove_degree_2_vertex(h, m);
+    assert(res != boost::graph_traits<T>::null_halfedge());
+
+    const std::array<std::size_t, 3>& ns = removable.at(vid);
+
+    assert(ns[0] == vertices(m).size());
+    assert(ns[1] == halfedges(m).size());
+    assert(ns[2] == faces(m).size());
+  };
+
+  T m;
+  const bool ok = CGAL::IO::read_polygon_mesh("data/degree_2_collection.off", m);
+  assert(ok);
+  assert(CGAL::is_valid_polygon_mesh(m));
+
+  std::size_t nv = num_vertices(m);
+  std::size_t nh = num_halfedges(m);
+  std::size_t nf = num_faces(m);
+  assert(nv == 29 && nh == 94 && nf == 19);
+
+  for(std::size_t hi=0; hi<num_halfedges(m); ++hi)
+    test(hi);
 }
 
 template <typename T>
@@ -531,7 +596,7 @@ add_faces()
   typedef typename boost::graph_traits<T>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<T>::halfedge_descriptor halfedge_descriptor;
 
-  // read a mesh with bord + test append
+  // read a mesh with border + test append
   {
   T m;
 
@@ -669,6 +734,8 @@ template <typename Graph>
 void
 test_Euler_operations()
 {
+  std::cout << "== Test with Graph: " << typeid(Graph).name() << std::endl;
+
   test_copy_face_graph_nm_umbrella<Graph>();
   test_copy_face_graph_isolated_vertices<Graph>();
   join_face_test<Graph>();
@@ -683,6 +750,7 @@ test_Euler_operations()
   split_face_test<Graph>();
   make_hole_test<Graph>();
   remove_center_vertex_test<Graph>();
+  remove_degree_2_vertex_test<Graph>();
   join_split_inverse<Graph>();
   does_satisfy_link_condition<Graph>();
   test_swap_edges<Graph>();

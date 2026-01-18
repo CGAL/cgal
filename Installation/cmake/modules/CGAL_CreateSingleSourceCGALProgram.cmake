@@ -6,6 +6,19 @@ set(CGAL_CreateSingleSourceCGALProgram_included TRUE)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_add_test.cmake)
 include(CMakeParseArguments)
 
+function(CGAL_check_target_name target_name new_target_var_name)
+  set(cmake_reserved_names all ALL_BUILD help install
+    INSTALL preinstall clean edit_cache
+    rebuild_cache ZERO_CHECK package PACKAGE package_source test RUN_TESTS)
+
+  while(TARGET "${target_name}" OR target_name IN_LIST cmake_reserved_names)
+    message(AUTHOR_WARNING "The executable name ${target_name} is reserved by CMake or already exists. Renaming it to ${target_name}_")
+    set(target_name "${target_name}_")
+  endwhile()
+
+  set(${new_target_var_name} ${target_name} PARENT_SCOPE)
+endfunction()
+
 function(create_single_source_cgal_program firstfile )
   set(options NO_TESTING)
   set(oneValueArgs)
@@ -23,10 +36,6 @@ function(create_single_source_cgal_program firstfile )
 
   if(EXISTS "${firstfile}")
 
-    if(CXX_FEATURES AND NOT COMMAND target_compile_features)
-      message(STATUS "NOTICE: ${exe_name}.cpp requires a CMake version >= 3.1 to detect C++ features, and will not be compiled.")
-      return()
-    endif()
     if(CXX_FEATURES)
       set(MISSING_CXX_FEATURES ${CXX_FEATURES})
       if(CMAKE_CXX_COMPILE_FEATURES)
@@ -46,6 +55,7 @@ function(create_single_source_cgal_program firstfile )
       set( all ${all} ${CMAKE_CURRENT_SOURCE_DIR}/${i} )
     endforeach()
 
+    CGAL_check_target_name(${exe_name} exe_name)
     add_executable(${exe_name} ${all})
     if(CXX_FEATURES)
       target_compile_features(${exe_name} PRIVATE ${CXX_FEATURES})

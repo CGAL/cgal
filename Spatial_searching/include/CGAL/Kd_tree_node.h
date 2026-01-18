@@ -22,7 +22,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/Spatial_searching/internal/Search_helpers.h>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace CGAL {
 

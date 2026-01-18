@@ -352,7 +352,7 @@ void print_statistics() ;
 
 /*!
 checks the
-validity of the data structure. If `throw_exceptions == thrue`
+validity of the data structure. If `throw_exceptions == true`
 then the program throws the following exceptions to inform about the
 problem.
 `chull_has_center_on_wrong_side_of_hull_facet` the

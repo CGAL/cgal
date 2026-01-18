@@ -1,0 +1,161 @@
+
+\page Chapter_Hyperbolic_Surface_Triangulations Triangulations of Hyperbolic Surfaces
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Hyperbolic_Surface_Triangulations
+
+\cgalAutoToc
+\authors Vincent Despré, Loïc Dubois, Marc Pouget and Monique Teillaud
+
+<center>
+<img src="header.svg" style="max-width:80%; width:80%;"/>
+</center>
+
+This package introduces a data structure and algorithms for triangulations of closed orientable hyperbolic surfaces. The triangulation is represented by an enriched CGAL::Combinatorial_map with complex number attributes on edges.
+Such a triangulation can be constructed from a surface given by a convex fundamental domain (see Section \ref Section_Hyperbolic_Surface_Triangulations_domains "Fundamental Domains and Triangulations").  A method is offered that randomly generates such domains for surfaces of genus two. On the other hand, the package works for any genus surface that may be provided by the user either as a fundamental domain or as an already computed triangulation.
+Functionalities are offered such as the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk model of the hyperbolic plane.
+
+For the case of the Bolza surface, which is the most symmetric surface of genus two, we refer the user to the specific package \ref Chapter_2D_Periodic_Hyperbolic_Triangulations "2D Periodic Hyperbolic Triangulations".
+
+
+\section Section_Hyperbolic_Surface_Triangulations_Background Hyperbolic Surfaces
+
+We assume some familiarity with basic notions from covering space theory and from the theory of hyperbolic surfaces. See for instance  \cgalCite{cgal:b-gdg-83}\cgalCite{cgal:b-gscrs-92}.
+The <em>Poincaré disk</em> \f$ \mathbb{D} \f$ is a model of the hyperbolic plane whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
+In this package, every hyperbolic surface \f$ S \f$ is closed (compact and without boundary) and orientable.
+The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space for \f$ S \f$, whose projection map \f$ \pi: \mathbb{D} \to S \f$ is a local isometry.
+For a point \f$ x \in S \f$, the infinite set \f$ \pi^{-1}(x) \f$ consists of lifts of \f$ x \f$, denoted \f$ \widetilde x \f$. This notion extends to paths and triangulations of S  that can be lifted in \f$ \mathbb{D} \f$.
+
+\subsection Section_Hyperbolic_Surface_Triangulations_domains Fundamental Domains and Triangulations
+
+Let \f$ S \f$ be a hyperbolic surface. For representing \f$ S \f$, we cut it into topologically simple pieces.
+For a graph \f$ G \f$ embedded on \f$ S \f$, a face is a  connected component of \f$ S \setminus G \f$.
+A graph \f$ G \f$ embedded on \f$ S \f$ defines a <em>cellular decomposition</em> of \f$ S \f$ if every face is a topological disk.
+In this document, every edge of a graph \f$ G \f$ embedded on \f$ S \f$ is a geodesic on \f$ S \f$.
+We consider two types of cellular decompositions of \f$ S \f$:
+<ul>
+  <li>Decompositions with only one face, and
+  <li>Triangulations.
+</ul>
+
+A  decomposition of \f$ S \f$ that have only one face is a classical representation of the surface.
+Cutting \f$ S \f$ open along the edges of \f$ G \f$ results in a hyperbolic polygon \f$ P \f$ that is a <em>fundamental domain</em> for \f$ S \f$.
+Each edge of \f$ G \f$ is split into a pair of edges in \f$ P \f$.
+Every hyperbolic surface admits a fundamental domain \f$ P \f$ that is <em>convex</em>, meaning that the interior angles of \f$ P \f$ do not exceed \f$ \pi \f$.
+
+A  decomposition defined by the graph \f$ G \f$  is a <em>triangulation</em> of \f$ S \f$ if every face of \f$ G \f$ is a triangle: it is bounded by three edges of \f$ G \f$.
+Observe that this definition allows for triangulations with only one vertex.
+A triangulation of \f$ S \f$ can be obtained from a convex fundamental domain \f$ P \f$ of \f$ S \f$ by triangulating the interior of \f$ P \f$, and by gluing back the boundary edges that are paired in \f$ P \f$.
+The assumption that \f$ P \f$ is convex ensures that the interior of \f$ P \f$ can be triangulated naively by insertion of any maximal set of pairwise interior disjoint arcs of \f$ P \f$.
+
+\subsection Section_Hyperbolic_Surface_Triangulations_generation Generation of Convex Fundamental Domains
+
+In order to perform fast and exact computations with a fundamental domain, every vertex must be a complex number whose type supports fast and exact computations.  Under this constraint, it is still a research problem to generate domains of surfaces of genus greater than two.  In genus two, this package generates fundamental domains whose vertices belong to \f$ \mathbb{Q} + i \mathbb{Q} \f$ (their real and imaginary parts are rational numbers).  The exact generation process can be found in \cgalCite{despre2022experimental}, together with a proof that the surfaces that can be generated in this way are dense in the space of hyperbolic surfaces genus two.
+
+
+\section Subsection_Hyperbolic_Surface_Triangulations_Representation Representation
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Domains Data Structure for Domains
+
+We represent every fundamental domain as a polygon in the Poincaré disk, given by the list of its vertices in counterclockwise order and by the list of its side pairings.
+This package can generate a random convex fundamental domain \f$ P \f$ of a surface of genus two, with eight vertices \f$ z_0, \dots, z_7 \in \mathbb{C} \f$.
+The vertices and the sides are in counterclockwise order, the side between \f$ z_0 \f$ and \f$ z_1 \f$ is \f$ A \f$,  the side between \f$ z_4 \f$ and \f$ z_5 \f$ is \f$ \overline{A} \f$ and so on as on \cgalFigureRef{THS2-octagon}.  The side pairings are \f$ A \f$ with \f$\overline{A} \f$ , \f$ B \f$ with \f$ \overline{B} \f$ , \f$ C \f$ with \f$ \overline{C} \f$ and  \f$ D \f$ with \f$ \overline{D} \f$.
+
+These octagons are symmetric, i.e. \f$ z_i = -z_{i+4} \f$ for every  \f$ i \f$, where indices are modulo eight.
+Such octagons are described in \cgalCite{aigon2005hyperbolic}.
+
+\cgalFigureAnchor{THS2-octagon}
+<center>
+  <img src="octagon.svg" style="max-width:30%; width:30%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{THS2-octagon}
+ Fundamental convex polygonal domain of a genus two surface.
+\cgalFigureCaptionEnd
+
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Triangulations Data Structure for Triangulations
+
+Our representation is edge-based instead of the usual CGAL::TriangulationDataStructure_2 used for instance in the package \ref Chapter_2D_Periodic_Hyperbolic_Triangulations "2D Periodic Hyperbolic Triangulations". This edge-based representation is more intrinsic to the surface and can handle non-simplicial triangulations, for instance a triangulation with only one vertex.
+We represent a triangulation \f$ T \f$ of a hyperbolic surface by an instance of CGAL::Combinatorial_map whose edges have complex number attributes that are cross ratios (defined shortly in the following).
+While the triangulation \f$ T \f$ is unambiguously determined by the combinatorial map and its cross ratios, the internal representation of \f$ T \f$  contains an additional data: the anchor, to be able to lift the triangulation in the Poincaré disk \f$ \mathbb{D} \f$.
+The anchor is a lift \f$ \widetilde t \f$  in \f$ \mathbb{D} \f$ of a triangle of \f$ T \f$. The anchor is represented by the three vertices  \f$ \widetilde v_0, \widetilde v_1, \widetilde v_2 \f$  of \f$ \widetilde t \f$  in \f$ \mathbb{D} \f$, and by the dart in the combinatorial map of \f$ T \f$ corresponding to the oriented edge \f$ v_0v_1 \f$.
+A lift function is provided that computes a lift of each triangle of \f$ T \f$ in the Poincaré disk \f$ \mathbb{D} \f$, it starts from the anchor and then  recursively constructs lifts of neighboring triangles using the cross ratios. See \cgalCite{despre2022experimental} for details.
+
+The attribute of an edge \f$ e \f$ of \f$ T \f$ is the complex number \f$ R_T(e) \in \mathbb{C} \f$  called the <em>cross ratio</em> of \f$ e \f$ in \f$ T \f$, defined as follows.
+Consider the lift \f$ \widetilde T \f$ of \f$ T \f$ in the Poincaré disk \f$ \mathbb{D} \f$.
+In \f$ \widetilde T \f$, let \f$ \widetilde e \f$ be a lift of \f$ e \f$, see \cgalFigureRef{THS2-crossratio}.
+Orient \f$ \widetilde e \f$ arbitrarily, and let \f$ z_0 \in \mathbb{D} \f$ and \f$ z_2 \in \mathbb{D} \f$ be respectively the source and target vertices of \f$ \widetilde e \f$.
+In  \f$ \widetilde T \f$, consider the triangle on the right of \f$ \widetilde e \f$, and let \f$ z_1 \in \mathbb{D} \f$ be the vertex distinct from \f$ z_0 \f$ and \f$ z_2 \f$ of this triangle.
+Similarly, consider the triangle on the left of \f$ \widetilde e \f$, and let \f$ z_3 \in \mathbb{D} \f$ be the vertex distinct from \f$ z_0 \f$ and \f$ z_2 \f$ of this triangle.
+Then \f$ R_T(e) = (z_3-z_1)(z_2-z_0) / ((z_3-z_0)(z_2-z_1)) \f$.
+This definition does not depend on the choice of the lift \f$ \widetilde e \f$, nor on the orientation of \f$ \widetilde e \f$.
+See \cgalCite{despre2022experimental} for details.
+
+\cgalFigureAnchor{THS2-crossratio}
+<center>
+  <img src="crossratio.svg" style="max-width:20%; width:20%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{THS2-crossratio}
+ Computation of the cross ratio of an edge.
+\cgalFigureCaptionEnd
+
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Delaunay Delaunay Flip Algorithm
+
+Let \f$ T \f$ be a triangulation of a hyperbolic surface. An edge \f$ e \f$ of \f$ T \f$ satisfies the <em>Delaunay criterion</em> if the imaginary part of its cross ratio \f$R_T(e)\f$ is non-positive.
+This definition is equivalent to the usual formulation for the triangulation lifted in \f$ \mathbb{D} \f$: there exists a disk containing  \f$ \widetilde e \f$ and that does not contain any other vertices of \f$ \widetilde T \f$ in its interior.
+Then \f$ T \f$ is a <em>Delaunay triangulation</em> if every edge of  \f$ T \f$ satisfies the Delaunay criterion.
+If an edge \f$e \f$ of \f$ T \f$ does not satisfy the Delaunay criterion, then \f$e \f$  is called Delaunay flippable, and then the two triangles incident to \f$ e \f$ form a strictly convex quadrilateral, so \f$ e \f$ can be deleted from \f$ T \f$ and replaced by the other diagonal of the quadrilateral.
+This operation is called a Delaunay <em>flip</em>.
+When a flip occurs, the cross ratios of the involved edges are modified via simple formulas.
+The <em>Delaunay flip algorithm</em> flips edges that do not satisfy the Delaunay until no more edges violate the criterion, with no preference on the order of the flips.
+This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cgalCite{despre2020flipping}.
+
+\section Section_Hyperbolic_Surface_Triangulations_Software_Design Software Design
+
+ The concept `ComplexNumber` describes a complex number type modeled by `CGAL::Complex_number`. Complex numbers are used to encode the cross ratios, for the coefficients of isometries and implicitly to work with points in the Poincaré disk.
+Most classes of the package are templated by the concept `HyperbolicSurfaceTraits_2`. It is a refinement of `HyperbolicDelaunayTriangulationTraits_2` and is modeled by `CGAL::Hyperbolic_surface_traits_2`. It defines the geometric objects (points, segments...) forming the lifted triangulation in the Poincaré disk.
+
+
+The package offers three main classes:
+- `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a hyperbolic surface. It offers functions for the  generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
+
+- `CGAL::Hyperbolic_fundamental_domain_2` represents a convex fundamental domain of a hyperbolic surface.
+
+- `CGAL::Hyperbolic_fundamental_domain_factory_2`  generates random convex fundamental domains of surfaces of genus two.
+
+The secondary class `CGAL::Hyperbolic_isometry_2` defines isometries in the Poincaré disk together with operations to work with them.
+
+
+\section Visualization_Triangulation_lift Visualization of a Triangulation
+
+The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes the lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}). This package contains a demo (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which can be used to display triangulations.
+
+\cgalFigureAnchor{THS2-demo-output}
+<center>
+  <img src="demo-output.png" style="max-width:25%; width:25%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{THS2-demo-output}
+ Lift, in the Poincaré disk, of a Delaunay triangulation of a genus two hyperbolic surface with one vertex.
+\cgalFigureCaptionEnd
+
+
+\section Section_Hyperbolic_Surface_Triangulations_Example Example
+
+The example below generates a convex fundamental domain of a surface of genus two, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, saves and prints the Delaunay triangulation.
+\cgalExample{Triangulation_on_hyperbolic_surface_2/Triangulation_on_hyperbolic_surface_2.cpp}
+
+\section Section_Hyperbolic_Surface_Implementation_History Design and Implementation History
+
+This package implements the Delaunay flip algorithm described in the hyperbolic setting by Vincent Despré, Jean-Marc Schlenker and Monique Teillaud in \cgalCite{despre2020flipping} using the data structure for representing triangulations presented in \cgalCite{despre2022experimental}).
+It also implements the generation of domains described by Vincent Despré, Loïc Dubois, Benedikt Kolbe and Monique Teillaud in \cgalCite{despre2022experimental}, based on results of Aline Aigon-Dupuy, Peter Buser, Michel Cibils, Alfred F Künzle and Frank Steiner \cgalCite{aigon2005hyperbolic}.
+The code and the documentation of the package were written by Loïc Dubois, under regular discussions with Vincent Despré, Marc Pouget and Monique Teillaud.
+The authors acknowledge support from the grants <a href="https://sos.loria.fr/">SoS</a> and <a href="https://perso.math.u-pem.fr/sabourau.stephane/min-max/min-max.html">MIN-MAX</a> of the French National Research Agency ANR.
+
+*/
+} /* namespace CGAL */
+
+\\\\\\\\\\\\

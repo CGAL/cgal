@@ -223,19 +223,6 @@ public:
   {
     return R().construct_point_2_object()(*this,i);
   }
-
-  typename R::Boolean
-  operator==(const Line_2 &l) const
-  {
-    return R().equal_2_object()(*this, l);
-  }
-
-  typename R::Boolean
-  operator!=(const Line_2 &l) const
-  {
-    return !(*this == l);
-  }
-
 };
 
 

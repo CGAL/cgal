@@ -87,14 +87,14 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 
 \brief creates a weighted straight skeleton in the interior of a 2D polygon, possibly with holes.
 
-Range of weights `weights` must be provided in the same order as the contours (i.e., first
+Weights must be provided in the same order as the contours (i.e., first
 the weights of the outer boundary, and then the weights of the holes, if there are any).
 Within each range of weights, the weights must be given in the same order as the vertices of the contour:
 the `i`-th weight in the range is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 
 \tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`),
                    or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
-\tparam InKWeights must be a model of `Range` whose value type is itself a model of `Range` with value type `InK::FT`.
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is itself a model of `SequenceContainer` with value type `InK::FT`.
 \tparam SsK must be a model of `Kernel`.
 
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
@@ -177,7 +177,7 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
 \tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
                    or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
-\tparam InKWeights must be a model of `Range` whose value type is itself a model of `Range` with value type `InK::FT`.
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is itself a model of `SequenceContainer` with value type `InK::FT`.
 
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
       if they differ.

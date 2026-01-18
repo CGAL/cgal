@@ -16,11 +16,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( cache_set var )
     set ( ${var} ${ARGN} CACHE INTERNAL "" )
-    set ( ${var} ${ARGN} CACHE INTERNAL "" )
   endmacro()
 
   macro( typed_cache_set type doc var )
-    set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )
     set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )
   endmacro()
 
@@ -458,51 +456,4 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
 endif()
 
-function(process_CGAL_subdirectory entry subdir type_name)
-  # For example, subdir can be "examples", type_name "example", and entry "Mesh_2"
-  get_filename_component(ENTRY_DIR_NAME "${entry}" NAME)
-
-  if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
-    make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-  endif()
-
-  set(ADD_SUBDIR TRUE)
-
-  if(EXISTS ${entry}/../../dont_submit)
-    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${ENTRY_DIR_NAME}/?\$")
-    if(dont_submit_grep)
-      set(ADD_SUBDIR FALSE)
-    endif()
-    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/${ENTRY_DIR_NAME}/?\$")
-    if(dont_submit_grep)
-      set(ADD_SUBDIR FALSE)
-    endif()
-    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/?\$")
-    if(dont_submit_grep)
-      set(ADD_SUBDIR FALSE)
-    endif()
-  endif()
-
-  if(ADD_SUBDIR)
-    message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
-    if(EXISTS ${entry}/CMakeLists.txt)
-      set(source_dir ${entry})
-      add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
-    else()
-      if(CGAL_CREATE_CMAKE_SCRIPT)
-#        message("bah ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir ${entry}")
-        execute_process(
-          COMMAND bash ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir "${entry}"
-          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
-          RESULT_VARIABLE RESULT_VAR OUTPUT_QUIET)
-        if(NOT RESULT_VAR)
-#          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-          set(source_dir "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-          add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-        endif()
-      endif()
-    endif()
-  else()
-    message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
-  endif()
-endfunction()
+include(${CMAKE_CURRENT_LIST_DIR}/CGALHelpers.cmake)

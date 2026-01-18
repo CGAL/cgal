@@ -1,4 +1,4 @@
-// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
+// Copyright (c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -30,7 +30,7 @@
 using json = nlohmann::ordered_json;
 
 namespace {
-  // use this traits everytime you construct an arrangment!
+  // use this traits every time you construct an arrangement!
   static Geom_traits s_traits;
 
   // Extended DCEL & Arrangement
@@ -40,7 +40,7 @@ namespace {
     Flag(bool init) : v{ init } {}
   };
 
-  // EXTENDED AOS for analysing the arrangement
+  // EXTENDED AOS for analyzing the arrangement
   using Ext_dcel = CGAL::Arr_extended_dcel<Geom_traits, Flag, Flag, Flag>;
   using Ext_topol_traits =
     CGAL::Arr_spherical_topology_traits_2<Geom_traits, Ext_dcel>;
@@ -726,7 +726,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
 
   ////////////////////////////////////////////////////////////////////////////
   // CURVES
-  // define a map from each curve to its position in the arrangment
+  // define a map from each curve to its position in the arrangement
   auto& js_curves = js["curves"] = json::array();
   using Ext_curve = Ext_aos::X_monotone_curve_2;
   std::map<Ext_curve*, std::size_t> curve_pos_map;
@@ -909,7 +909,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
   }
   std::cout << "total num half-edges = " << total_num_half_edges << std::endl;
 
-  // save the arrangment
+  // save the arrangement
   std::ofstream ofile(file_name);
   ofile << js.dump(2);
   ofile.close();

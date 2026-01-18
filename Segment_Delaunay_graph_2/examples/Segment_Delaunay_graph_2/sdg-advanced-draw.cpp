@@ -15,7 +15,7 @@
 #include <vector>
 
 #define SDG_DRAW_DEBUG // debug log
-#define SDG_DRAW_DUMP_FILES // print input / ouput
+#define SDG_DRAW_DUMP_FILES // print input / output
 // #define SINGLE_INPUT_FILE // if not defined, each segment of the input has its own file
 
 #ifdef SDG_DRAW_DUMP_FILES_PP // also print parabolas

@@ -124,7 +124,8 @@ public:
    * @param vpmap the property map with the points associated to the vertices of `tmesh`
    * @param gt an instance of the geometric traits class
    *
-   * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
+   * @pre \link CGAL::is_closed `CGAL::is_closed(tmesh)` \endlink
+   * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
    */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         VertexPointMap vpmap,
@@ -141,7 +142,6 @@ public:
 #endif
   {
     CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
-    CGAL_assertion(CGAL::is_closed(tmesh));
     box = Polygon_mesh_processing::bbox(tmesh, parameters::vertex_point_map(vpmap));
   }
 
@@ -151,7 +151,8 @@ public:
   * @param tmesh the triangulated surface mesh bounding the domain to be tested
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
+  * @pre \link CGAL::is_closed `CGAL::is_closed(tmesh)` \endlink
+  * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
   */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         const GeomTraits& gt=GeomTraits())
@@ -165,12 +166,13 @@ public:
   * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
+  * @pre `tree` contains a set of triangle faces representing a closed surface mesh
   */
   Side_of_triangle_mesh(const AABB_tree& tree,
                         const GeomTraits& gt = GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
+  , tm_ptr(nullptr)
   , own_tree(false)
 #ifdef CGAL_HAS_THREADS
   , atomic_tree_ptr(&tree)
@@ -182,9 +184,37 @@ public:
   }
 
   /**
-  * Constructor moving an instance of Side_of_triangle_mesh to a new memory
+  * Constructor that takes a pre-built \cgal `AABB_tree`
+  * of the triangulated surface mesh primitives, and moves it.
+  *
+  * @param tree a \cgal `AABB_tree` with `AABB_face_graph_triangle_primitive` as `Primitive` type
+  * @param gt an instance of the geometric traits class
+  *
+  * @pre `tree` contains a set of triangle faces representing a closed surface mesh
+  */
+  Side_of_triangle_mesh(AABB_tree&& tree,
+                        const GeomTraits& gt = GeomTraits())
+  : ray_functor(gt.construct_ray_3_object())
+  , vector_functor(gt.construct_vector_3_object())
+  , tm_ptr(nullptr)
+  , own_tree(true)
+#ifdef CGAL_HAS_THREADS
+  , atomic_tree_ptr(new AABB_tree(std::forward<AABB_tree>(tree)))
+#else
+  , tree_ptr(new AABB_tree(std::forward<AABB_tree>(tree)))
+#endif
+  {
+#ifdef CGAL_HAS_THREADS
+    box = atomic_tree_ptr.load()->bbox();
+#else
+    box = tree_ptr->bbox();
+#endif
+  }
+
+  /**
+  * Constructor moving an instance of `Side_of_triangle_mesh` to a new memory
   * location with minimal memory copy.
-  * @param other The instance to be moved
+  * @param other the instance to be moved
   */
   Side_of_triangle_mesh(Side_of_triangle_mesh&& other)
   {
@@ -202,10 +232,10 @@ public:
 
 public:
   /**
-  * Assign operator moving an instance of Side_of_triangle_mesh to this
+  * Assign operator moving an instance of `Side_of_triangle_mesh` to this
   * location with minimal memory copy.
-  * @param other The instance to be moved
-  * @return A reference to this
+  * @param other the instance to be moved
+  * @return a reference to `this`
   */
   Side_of_triangle_mesh& operator=(Side_of_triangle_mesh&& other)
   {
@@ -233,6 +263,8 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
+    CGAL_assertion(tm_ptr == nullptr || CGAL::is_closed(*tm_ptr));
+
     if(point.x() < box.xmin()
        || point.x() > box.xmax()
        || point.y() < box.ymin()
@@ -276,6 +308,8 @@ public:
   template <class K2>
   Bounded_side operator()(const typename K2::Point_3& point, const K2& k2) const
   {
+    CGAL_assertion(tm_ptr == nullptr || CGAL::is_closed(*tm_ptr));
+
     if(point.x() < box.xmin()
        || point.x() > box.xmax()
        || point.y() < box.ymin()

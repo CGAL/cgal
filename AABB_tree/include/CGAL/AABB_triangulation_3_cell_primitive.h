@@ -25,7 +25,7 @@ namespace CGAL
   namespace internal
   {
     template <class GeomTraits, class Iterator>
-    struct Point_from_cell_iterator_proprety_map
+    struct Point_from_cell_iterator_property_map
     {
       //classical typedefs
       typedef Iterator key_type;
@@ -38,7 +38,7 @@ namespace CGAL
       //   typename GeomTraits::Construct_vertex_3()(
       //     *std::declval<key_type&>(), 0)) reference; // fails CGAL Lab!
       typedef boost::readable_property_map_tag category;
-      typedef Point_from_cell_iterator_proprety_map<GeomTraits, Iterator> Self;
+      typedef Point_from_cell_iterator_property_map<GeomTraits, Iterator> Self;
 
       inline friend reference
       get(Self, key_type it)
@@ -49,7 +49,7 @@ namespace CGAL
     };
 
     template <class GeomTraits, class Iterator>
-    struct Tet_from_cell_iterator_proprety_map
+    struct Tet_from_cell_iterator_property_map
     {
       //classical typedefs
       typedef Iterator                           key_type;
@@ -59,7 +59,7 @@ namespace CGAL
 
       inline friend
       value_type
-      get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
+      get(Tet_from_cell_iterator_property_map<GeomTraits, Iterator>, key_type it)
       {
         typename GeomTraits::Construct_point_3 point;
         return value_type(point(it->vertex(0)->point()),
@@ -79,15 +79,15 @@ namespace CGAL
   class AABB_triangulation_3_cell_primitive
 #ifndef DOXYGEN_RUNNING
     : public AABB_primitive<  Handle,
-          internal::Tet_from_cell_iterator_proprety_map<GeomTraits, Handle>,
-          internal::Point_from_cell_iterator_proprety_map<GeomTraits, Handle>,
+          internal::Tet_from_cell_iterator_property_map<GeomTraits, Handle>,
+          internal::Point_from_cell_iterator_property_map<GeomTraits, Handle>,
           Tag_false,
           CacheDatum >
 #endif
   {
     typedef AABB_primitive< Handle,
-          internal::Tet_from_cell_iterator_proprety_map<GeomTraits, Handle>,
-          internal::Point_from_cell_iterator_proprety_map<GeomTraits, Handle>,
+          internal::Tet_from_cell_iterator_property_map<GeomTraits, Handle>,
+          internal::Point_from_cell_iterator_property_map<GeomTraits, Handle>,
           Tag_false,
           CacheDatum > Base;
   public:

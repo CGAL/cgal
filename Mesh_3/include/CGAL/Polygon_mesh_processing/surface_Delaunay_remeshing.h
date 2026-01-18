@@ -293,7 +293,8 @@ surface_Delaunay_remeshing(const TriangleMesh& tmesh,
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       CGAL::parameters::no_perturb(),
-                                      CGAL::parameters::no_exude());
+                                      CGAL::parameters::no_exude(),
+                                      CGAL::parameters::surface_only());
 
   TriangleMeshOut out;
   CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out);

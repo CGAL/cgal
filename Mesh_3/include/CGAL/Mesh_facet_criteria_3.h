@@ -179,6 +179,10 @@ public:
     return topology_;
   }
 
+  /**
+  * @returns the squared value of minimal radius bound if it was set,
+  * and `std::nullopt` otherwise
+  */
   std::optional<FT> squared_min_radius_bound() const {
     if(squared_min_radius_bound_)
       return *squared_min_radius_bound_;

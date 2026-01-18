@@ -113,10 +113,10 @@ public:
 private:
   //! A container of boundary vertices.
   struct Vertex_key_comparer {
-    /*! Construct default */
+    /*! constructs default */
     Vertex_key_comparer() : m_geom_traits(nullptr) {}
 
-    /*! Construct */
+    /*! constructs */
     Vertex_key_comparer(const Gt_adaptor_2* geom_traits) :
       m_geom_traits(geom_traits)
     {}
@@ -165,18 +165,18 @@ public:
   ///! \name Construction methods.
   //@{
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_spherical_topology_traits_2();
 
-  /*! Constructor from a geometry-traits object.
+  /*! constructs from a geometry-traits object.
    * \param traits the traits.
    */
   Arr_spherical_topology_traits_2(const Gt2* traits);
 
-  /*! Destructor */
+  /*! destructs */
   ~Arr_spherical_topology_traits_2();
 
-  /*! Assign the contents of another topology-traits class.
+  /*! assigns the contents of another topology-traits class.
    * \param other the other spherical topology-traits.
    */
   void assign(const Self& other);
@@ -185,65 +185,65 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the DCEL (const version). */
   const Dcel& dcel() const { return (m_dcel); }
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the DCEL (non-const version). */
   Dcel& dcel() { return m_dcel; }
 
-  /*! Determine whether the DCEL reprsenets an empty structure.
+  /*! determines whether the DCEL reprsenets an empty structure.
    * \return true if the dcel reprsenets an empty structure; false otherwise.
    */
   bool is_empty_dcel() const { return (m_dcel.size_of_vertices() == 0); }
 
-  /*! Initialize an empty DCEL structure. */
+  /*! initializes an empty DCEL structure. */
   void init_dcel();
 
-  /*! Make the necessary updates after the DCEL structure have been updated. */
+  /*! makes the necessary updates after the DCEL structure have been updated. */
   void dcel_updated();
 
-  /*! Determine whether the given vertex is concrete.
+  /*! determines whether the given vertex is concrete.
    * \param v the vertex.
    * \return true if v is mapped to a point on the discontinuity arc; false
    * otherwise.
    */
   bool is_concrete_vertex(const Vertex* /* v */) const { return true; }
 
-  /*! Obtain the number of concrete vertices.
+  /*! obtains the number of concrete vertices.
    * \return the number of concrete vertices.
    */
   Size number_of_concrete_vertices() const
   { return (m_dcel.size_of_vertices()); }
 
-  /*! Determine whether the given vertex is valid.
+  /*! determines whether the given vertex is valid.
    * \param v the vertex.
    * \todo why is this needed, and where used?
    */
   bool is_valid_vertex(const Vertex* /* v */) const { return true; }
 
-  /*! Obtain the number of valid vertices. */
+  /*! obtains the number of valid vertices. */
   Size number_of_valid_vertices() const { return (m_dcel.size_of_vertices()); }
 
-  /*! Determine whether the given halfedge is valid. */
+  /*! determines whether the given halfedge is valid. */
   bool is_valid_halfedge(const Halfedge* /* he */) const { return true; }
 
-  /*! Obtain the number of valid halfedges. */
+  /*! obtains the number of valid halfedges. */
   Size number_of_valid_halfedges() const
   { return (m_dcel.size_of_halfedges()); }
 
-  /*! Determine whether the given face is valid. */
+  /*! determine whether the given face is valid. */
   bool is_valid_face(const Face* /* f */) const { return true; }
 
-  /*! Obtain the number of valid faces. */
+  /*! obtains the number of valid faces. */
   Size number_of_valid_faces() const { return m_dcel.size_of_faces(); }
 
-  /*! Obtain the spherical face (const version). */
+  /*! obtains the spherical face (const version). */
   const Face* spherical_face() const { return m_spherical_face; }
 
-  /*! Obtain the spherical face (non-const version). */
+  /*! obtains the spherical face (non-const version). */
   Face* spherical_face() { return m_spherical_face; }
 
-  /*! Obtain the face containing the south pole (const version). */
+  /*! obtains the face containing the south pole (const version). */
   const Face* south_face() const
   {
     if (m_boundary_vertices.empty()) return m_spherical_face;
@@ -251,7 +251,7 @@ public:
     return _face_below_vertex_on_discontinuity(it->second);
   }
 
-  /*! Obtain the face containing the south pole (non-const version). */
+  /*! obtains the face containing the south pole (non-const version). */
   Face* south_face()
   {
     if (m_boundary_vertices.empty()) return m_spherical_face;
@@ -259,19 +259,19 @@ public:
     return _face_below_vertex_on_discontinuity(it->second);
   }
 
-  /*! Obtain the south pole (const version). */
+  /*! obtains the south pole (const version). */
   const Vertex* south_pole() const { return m_south_pole; }
 
-  /*! Obtain the south pole (non-const version). */
+  /*! obtains the south pole (non-const version). */
   Vertex* south_pole() { return m_south_pole; }
 
-  /*! Obtain the north pole (const version). */
+  /*! obtains the north pole (const version). */
   const Vertex* north_pole() const { return m_north_pole; }
 
-  /*! Obtain the north pole (non-const version). */
+  /*! obtains the north pole (non-const version). */
   Vertex* north_pole() { return m_north_pole; }
 
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given point (or return NULL if no such vertex exists).
    */
   Vertex* discontinuity_vertex(const Point_2& pt)
@@ -280,7 +280,7 @@ public:
     return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
 
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given point (or return NULL if no such vertex exists).
    */
   const Vertex* discontinuity_vertex(const Point_2& pt) const
@@ -290,7 +290,7 @@ public:
   }
 
   // TODO remove if all occurrences have been replaced with the new signature that queries for a point
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists).
    */
   Vertex* discontinuity_vertex(const X_monotone_curve_2& xc, Arr_curve_end ind)
@@ -314,7 +314,7 @@ public:
   // defining a type that inherits from the template we need to alias.  However,
   // the non-C++11 code requires the (re)definition of all constructors of the
   // derived class. The non-C++11 code follows the commented out C++11 code.
-  // When we move to C++11 we can use the more elgant code.
+  // When we move to C++11 we can use the more elegant code.
   // Type definition for the construction surface-sweep visitor.
   template <typename Evt, typename Crv>
   struct Construction_helper :
@@ -404,7 +404,7 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*! Receive a notification on the creation of a new boundary vertex that
+  /*! receives a notification on the creation of a new boundary vertex that
    * corresponds to a point.
    * \param v The new boundary vertex.
    * \param p The point.
@@ -416,7 +416,7 @@ public:
                                           Arr_parameter_space ps_x,
                                           Arr_parameter_space ps_y);
 
-  /*! Receive a notification on the creation of a new boundary vertex that
+  /*! receives a notification on the creation of a new boundary vertex that
    * corresponds to a given curve end.
    * \param v The new boundary vertex.
    * \param xc The x-monotone curve.
@@ -430,7 +430,7 @@ public:
                                           Arr_parameter_space ps_x,
                                           Arr_parameter_space ps_y);
 
-  /*! Determines whether the function should decide on swapping the predecssor
+  /*! determines whether the function should decide on swapping the predecssor
    * halfedges that imply two ccb (and whose signs are given here).
    * If true, swap_predecessors will be correctly set. If false,
    * generic way of searching for lexicographically minimal point and checking
@@ -445,8 +445,8 @@ public:
                                    bool& swap_predecessors) const;
 
 
-  /*! Given signs of two ccbs that show up when splitting upon insertion of
-   * curve into two, determine what happens to the face(s).
+  /*! given signs of two ccbs that show up when splitting upon insertion of
+   * curve into two, determines what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
    * \return A pair indicating whether the insertion will cause the face
@@ -464,7 +464,7 @@ public:
     return (std::make_pair(true, true));
   }
 
-  /*! Determine whether a given point lies in the interior of a given face.
+  /*! determines whether a given point lies in the interior of a given face.
    * \param f The face.
    * \param p The query point.
    * \param v The vertex associated with p (if exists).
@@ -473,7 +473,7 @@ public:
    */
   bool is_in_face(const Face* f, const Point_2& p, const Vertex* v) const;
 
-  /*! Compare the relative y-position of a given point and a given edge.
+  /*! compares the relative y-position of a given point and a given edge.
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).
    * \pre p should lie in the x-range of the given edge.
@@ -482,7 +482,7 @@ public:
   Comparison_result compare_y_at_x(const Point_2& p,
                                    const Halfedge* he) const;
 
-  /*! Determine whether a given vertex is associated with a given curve end.
+  /*! determines whether a given vertex is associated with a given curve end.
    * \param v The vertex.
    * \param xc The x-monotone curve.
    * \param ind The curve end.
@@ -495,8 +495,8 @@ public:
                  const X_monotone_curve_2& xc, Arr_curve_end ind,
                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const;
 
-  /*! Given a curve end with boundary conditions and a face that contains the
-   * interior of the curve, find a place for a boundary vertex that will
+  /*! given a curve end with boundary conditions and a face that contains the
+   * interior of the curve, finds a place for a boundary vertex that will
    * represent the curve end along the face boundary.
    * \param f The face.
    * \param xc The x-monotone curve.
@@ -513,7 +513,7 @@ public:
                         Arr_parameter_space ps_x,
                         Arr_parameter_space ps_y);
 
-  /*! Locate the predecessor halfedge for the given curve around a given
+  /*! locates the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
@@ -530,7 +530,7 @@ public:
                                           Arr_parameter_space ps_x,
                                           Arr_parameter_space ps_y) const;
 
-  /*! Locate a DCEL feature that contains the given curve end.
+  /*! locates a DCEL feature that contains the given curve end.
    * \param xc The x-monotone curve.
    * \param ind The curve end.
    * \param ps_x The boundary condition of the curve end in x.
@@ -543,7 +543,7 @@ public:
                    Arr_parameter_space ps_x,
                    Arr_parameter_space ps_y);
 
-  /*! Split a fictitious edge using the given vertex.
+  /*! splits a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
    * \param v The split vertex.
    * \pre e is a fictitious halfedge.
@@ -557,20 +557,20 @@ public:
     return nullptr;
   }
 
-  /*! Determine whether the given face is unbounded.
+  /*! determines whether the given face is unbounded.
    * \param f The face.
    * \return true if f is unbounded; false otherwise.
    * All faces on a sphere are bounded:
    */
   bool is_unbounded(const Face* /* f */) const { return false; }
 
-  /*! Determine whether the given boundary vertex is redundant.
+  /*! determines whether the given boundary vertex is redundant.
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
    */
   bool is_redundant(const Vertex* v) const;
 
-  /*! Erase the given redundant vertex by merging a fictitious edge.
+  /*! erases the given redundant vertex by merging a fictitious edge.
    * The function does not free the vertex v itself.
    * \param v The vertex.
    * \pre v is a redundant vertex.
@@ -579,16 +579,17 @@ public:
   Halfedge* erase_redundant_vertex(Vertex* v);
 
   //! reference_face (const version).
-  /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
-  */
+  /*! returns a reference face of the arrangement.  All reference faces of
+   * arrangements of the same type have a common point.
+   *
+   * \return A pointer to the reference face.
+   */
   const Face* reference_face() const { return spherical_face(); }
 
   //! reference_face (non-const version).
-  /*! The function returns a reference face of the arrangement.
+  /*! returns a reference face of the arrangement.
    * All reference faces of arrangements of the same type have a common point.
+   *
    * \return A pointer to the reference face.
    */
   Face* reference_face() { return spherical_face(); }
@@ -598,7 +599,7 @@ protected:
   /// \name Auxiliary functions.
   //@{
 
-  /*! Obtain the curve associated with a boundary vertex.
+  /*! obtains the curve associated with a boundary vertex.
    * \param v The boundary vertex.
    * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
    *                    ARR_MAX_END if it is induced by the curve's maximal end.
@@ -607,7 +608,7 @@ protected:
    */
   const X_monotone_curve_2& _curve(const Vertex* v, Arr_curve_end& ind) const;
 
-  /*! Return the halfedge, the target vertex of which is given, that is
+  /*! returns the halfedge, the target vertex of which is given, that is
    * the predecessor of a halfedge, the curve of which is given, that is about
    * to be inserted into the dcel.
    */
@@ -615,7 +616,7 @@ protected:
                                                    const X_monotone_curve_2& xc,
                                                    Arr_curve_end ind) const;
 
-  /*! Return the halfedge, the target vertex of which is a given pole,
+  /*! returns the halfedge, the target vertex of which is a given pole,
    * that is the predecessor of a halfedge, the curve of which is given, that
    * is about to be inserted into the dcel.
    */
@@ -623,7 +624,7 @@ protected:
                                 Arr_curve_end ind) const;
 
 
-  /*! Return the face that lies below the given vertex, which lies
+  /*! returns the face that lies below the given vertex, which lies
    * on the line of discontinuity.
    */
   Face* _face_below_vertex_on_discontinuity(Vertex* v) const;

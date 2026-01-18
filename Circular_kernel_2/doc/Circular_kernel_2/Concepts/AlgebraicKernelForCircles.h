@@ -29,7 +29,7 @@ A model of `RingNumberType`.
 typedef unspecified_type RT;
 
 /*!
-A model of `FieldNumberType``<RT>`.
+A model of `FieldNumberType<RT>`.
 */
 typedef unspecified_type FT;
 

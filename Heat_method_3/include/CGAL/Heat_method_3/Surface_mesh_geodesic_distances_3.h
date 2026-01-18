@@ -297,7 +297,7 @@ private:
     }
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     for(face_descriptor f : faces(tm)) {
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
       vertex_descriptor neighbor_two = *(++vbegin);
@@ -350,7 +350,7 @@ private:
     Matrix indexD(dimension,1);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     for(face_descriptor f : faces(tm)) {
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
       vertex_descriptor neighbor_two = *(++vbegin);
@@ -514,7 +514,7 @@ private:
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
     for(face_descriptor f : faces(tm)) {
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
       vertex_descriptor neighbor_two = *(++vbegin);

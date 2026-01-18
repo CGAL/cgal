@@ -552,6 +552,24 @@ size_type number_of_stored_facets() const;
 /// @{
 
 /*!
+Converts the `Periodic_point` `pp` (point-offset pair) to the
+corresponding `Point` in \f$ \mathbb R^3\f$.
+*/
+Point point(const Periodic_point& pp) const;
+
+/*!
+Equivalent to
+the call `t.point(t.periodic_point(v));`
+*/
+Point point(Vertex_handle v) const;
+
+/*!
+Equivalent to
+the call `t.point(t.periodic_point(c,idx));`
+*/
+Point point(Cell_handle c, int idx) const;
+
+/*!
 Returns the periodic point given by vertex `v`. If `t` is
 represented in the 1-sheeted covering space, the offset is always
 zero. Otherwise `v` can correspond to a periodic copy outside
@@ -1258,7 +1276,7 @@ Cell_handle start, int f) const;
 /*!
 Copies the `Cell_handle`s of all cells incident to `v` to the output
 iterator `cells`. Returns the resulting output iterator.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \ref CGAL::Periodic_3_triangulation_3::is_vertex "is_vertex"(`v`)
 */
 template <class OutputIterator>
 OutputIterator
@@ -1268,7 +1286,7 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 Copies the `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \ref CGAL::Periodic_3_triangulation_3::is_vertex "is_vertex"(`v`)
 */
 template <class OutputIterator>
 OutputIterator
@@ -1278,7 +1296,7 @@ incident_facets(Vertex_handle v, OutputIterator facets) const;
 Copies the `Edge`s incident to `v` to the output iterator
 `edges`.
 Returns the resulting output iterator.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \ref CGAL::Periodic_3_triangulation_3::is_vertex "is_vertex"(`v`)
 */
 template <class OutputIterator>
 OutputIterator
@@ -1287,15 +1305,15 @@ incident_edges(Vertex_handle v, OutputIterator edges) const;
 /*!
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the
 output iterator `vertices`. Returns the resulting output iterator.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \ref CGAL::Periodic_3_triangulation_3::is_vertex "is_vertex"(`v`)
 */
 template <class OutputIterator>
 OutputIterator
 adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
-Returns the degree of a vertex, that is, the number of adjacent vertices.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`.
+Returns the degree of `v`, that is, the number of adjacent vertices.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \ref CGAL::Periodic_3_triangulation_3::is_vertex "is_vertex"(`v`)
 */
 size_type degree(Vertex_handle v) const;
 

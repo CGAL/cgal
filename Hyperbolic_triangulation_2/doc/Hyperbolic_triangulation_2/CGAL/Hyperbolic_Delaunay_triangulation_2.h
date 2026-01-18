@@ -200,7 +200,19 @@ public:
     /*!
       Returns the hyperbolic segment formed by the vertices of edge `e`.
     */
-    Hyperbolic_segment hyperbolic_segment (const Edge& e) const;
+    Hyperbolic_segment hyperbolic_segment(const Edge& e) const;
+
+    /*!
+      Returns the hyperbolic point given by the finite vertex `vh`.
+    */
+    Point point(const Vertex_handle vh) const;
+
+    /*!
+      Returns the point given by vertex `i` of face `fh`.
+      \pre `t.dimension()` \f$ \geq0\f$ and \f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
+    */
+    Point point(const Face_handle fh, const int i) const;
+
   ///@}
 
 
@@ -236,7 +248,7 @@ public:
     void remove(Vertex_handle v);
 
     /*!
-      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+      Removes the vertices in the iterator range `[first, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
     */
     template <class VertexRemoveIterator>

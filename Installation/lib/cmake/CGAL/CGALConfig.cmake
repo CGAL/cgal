@@ -196,11 +196,12 @@ endforeach()
 #
 # Define a specific target for basic viewer
 #
-if (NOT TARGET CGAL::CGAL_Basic_viewer)
-  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
-    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
-      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+if (NOT TARGET CGAL::CGAL_Basic_viewer_Qt)
+  add_library(CGAL::CGAL_Basic_viewer_Qt INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer_Qt PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
+  add_library(CGAL::CGAL_Basic_viewer ALIAS CGAL::CGAL_Basic_viewer_Qt)
 endif()
 
 #warning: the order in this list has to match the enum in Exact_type_selector
@@ -214,6 +215,6 @@ if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
       TARGET CGAL
       APPEND PROPERTY
           INTERFACE_COMPILE_DEFINITIONS "CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND=${DEB_VAL}"
-  ) # do not use set_target_properties to avoid overwritting
+  ) # do not use set_target_properties to avoid overwriting
 endif()
 

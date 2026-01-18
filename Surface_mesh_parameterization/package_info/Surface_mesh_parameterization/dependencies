@@ -1,8 +1,6 @@
 Algebraic_foundations
-Arithmetic_kernel
 BGL
 Box_intersection_d
-CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -17,6 +15,7 @@ Kernel_23
 Modular_arithmetic
 Number_types
 Polygon_mesh_processing
+Polygon
 Profiling_tools
 Property_map
 STL_Extension

@@ -31,10 +31,6 @@
 namespace CGAL {
 namespace Shape_detection {
 
-// Forward declaration needed for automatic traits detection without
-// including the deprecated header itself
-template <typename Gt, typename IR, typename IPM, typename INM>
-struct Shape_detection_traits;
 
 namespace internal {
 
@@ -42,9 +38,6 @@ template <typename Traits>
 struct Traits_base { typedef Traits type; };
 template <typename Gt, typename IR, typename IPM, typename INM>
 struct Traits_base<CGAL::Shape_detection::Efficient_RANSAC_traits<Gt,IR,IPM,INM> >
-{ typedef Gt type; };
-template <typename Gt, typename IR, typename IPM, typename INM>
-struct Traits_base<CGAL::Shape_detection::Shape_detection_traits<Gt,IR,IPM,INM> >
 { typedef Gt type; };
 
 template<class Traits>

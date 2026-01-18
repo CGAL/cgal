@@ -591,7 +591,7 @@ namespace CGAL {
         //
         //   (c,d) = find_roots(1.0,-(a+b),a b - h^2)
         //
-        // (See Sven's thesis, code on page 87.)  So it it enclosed in
+        // (See Sven's thesis, code on page 87.)  So it is enclosed in
         // some (rotated) rectangle of side lengths 2*c,2*d, centered
         // at the origin.  Consequently, the circle of radius
         // r=sqrt(c^2+d^2) encloses the ellipse, and we use this to

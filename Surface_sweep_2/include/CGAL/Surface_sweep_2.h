@@ -42,7 +42,7 @@ namespace Surface_sweep_2 {
  *
  * The algorithm is also extended to support the following degenerate cases:
  * - vertical segments
- * - multiple (more then two) curves intersecting at one point
+ * - multiple (more than two) curves intersecting at one point
  * - curves beginning and ending on other curves.
  * - overlapping curves
  *
@@ -62,8 +62,8 @@ namespace Surface_sweep_2 {
  *               are calculated.
  * End
  *
- * Convensions through out the code:
- * In order to make the code as readable as possible, some convensions were
+ * Conventions through out the code:
+ * In order to make the code as readable as possible, some conventions were
  * made in regards to variable naming:
  *
  * xp - is the intersection point between two curves

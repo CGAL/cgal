@@ -7,6 +7,7 @@
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/use.h>
 
 #include <QInputDialog>
 #include <QApplication>
@@ -104,7 +105,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item();
     if (CGAL::IO::read_PLY(in, *sm_item->face_graph(), comments))
     {
-      if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").second)
+      if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").has_value())
       {
         sm_item->setItemIsMulticolor(true);
         sm_item->computeItemColorVectorAutomatically(true);
@@ -132,8 +133,9 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     std::vector<CGAL::IO::Color> fcolors;
     std::vector<CGAL::IO::Color> vcolors;
 
-    if (!(CGAL::IO::read_PLY (in, points, polygons, fcolors, vcolors)))
+    if (!(CGAL::IO::read_PLY (in, points, polygons, comments, fcolors, vcolors)))
     {
+      CGAL_USE(comments);
       QApplication::restoreOverrideCursor();
       ok = false;
       return QList<Scene_item*>();

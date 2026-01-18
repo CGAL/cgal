@@ -112,7 +112,7 @@ assign(const Self& arr)
   }
 
   // Go over the list of halfedges in our arrangement. The curves associated
-  // with these edges sotre pointers to the curves in the original
+  // with these edges store pointers to the curves in the original
   // arrangement, so we now have to modify these pointers, according to the
   // mapping we have just created. While doing so, we also construct the set
   // of edges associated with each (duplicated) curve in our arrangement.

@@ -1,4 +1,4 @@
-/// \defgroup PkgPeriodic4HyperbolicTriangulation2Ref 2D Periodic Hyperbolic Triangulations Reference
+/// \defgroup PkgPeriodic4HyperbolicTriangulation2Ref Reference Manual
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2Concepts Concepts
 /// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref
@@ -54,7 +54,7 @@ Each face gives access to its three incident vertices and to its three adjacent 
 to store additionally three hyperbolic translations. When applied to the three points stored in the vertices of
 the face, these translations produce the canonical representative of the face in the hyperbolic plane.
 
-The three vertices of a face are indexed with 0, 1, and 2 in positive (counter-clockwise) orientation. The
+The three vertices of a face are indexed with 0, 1, and 2 in positive (counterclockwise) orientation. The
 orientation of faces on the Bolza surface is defined as the orientation of their canonical representatives in
 the hyperbolic plane.
 

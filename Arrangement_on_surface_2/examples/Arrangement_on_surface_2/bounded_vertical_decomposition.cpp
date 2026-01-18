@@ -3,7 +3,6 @@
 
 #include <list>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_vertical_decomposition_2.h>
 
 #include "arr_exact_construction_segments.h"

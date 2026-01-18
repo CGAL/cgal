@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <variant>
@@ -1107,7 +1108,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
     std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
     std::cerr << "Coordinates: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
 
-    // Try to to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
+    // Try to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
     // pushing the coordinates over the edge
     internal::snap_coordinates_to_border(coords, snap_tolerance);
   }
@@ -1450,7 +1451,7 @@ void build_AABB_tree(const TriangleMesh& tm,
                        >::value>* = 0)
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
-  boost::tie(ffirst, fbeyond) = faces(tm);
+  std::tie(ffirst, fbeyond) = faces(tm);
   outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
   outTree.build();
 }

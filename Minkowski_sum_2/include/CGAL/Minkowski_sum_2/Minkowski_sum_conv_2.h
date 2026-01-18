@@ -511,7 +511,7 @@ private:
     CGAL_assertion(f_equal(curr_pt, first_pt));
 
     // Before moving un-necessary sub-cycles from the segment list, make sure
-    // the list contains no "cyclic" sub-cylces. We do that by making sure that
+    // the list contains no "cyclic" sub-cycles. We do that by making sure that
     // the first and last segments of the list correspond to traversals of
     // different polygons.
     int steps = static_cast<int>(cycle.size());
@@ -611,7 +611,7 @@ private:
         res = f_compare_xy(curr_pt, next_pt);
 
         if (res != EQUAL) {
-          cycle.insert(curr,
+          after_next = cycle.insert(curr,
                        Labeled_segment_2(Segment_2(curr_pt, next_pt),
                                          X_curve_label((res == SMALLER),
                                                        cycle_id,

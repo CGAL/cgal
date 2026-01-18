@@ -100,7 +100,7 @@ typename boost::lazy_disable_if<
 inline get(CGAL::face_patch_id_t<I>, const Surface_mesh<P> & smesh)
 {
  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template property_map<face_descriptor,I>("f:patch_id").first;
+  return smesh. template property_map<face_descriptor,I>("f:patch_id").value();
 }
 
 
@@ -134,7 +134,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::edge_is_feature_t)
 inline get(CGAL::edge_is_feature_t, const Surface_mesh<P>& smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::edge_descriptor edge_descriptor;
-  return smesh. template property_map<edge_descriptor,bool>("e:is_feature").first;
+  return smesh. template property_map<edge_descriptor,bool>("e:is_feature").value();
 }
 
 
@@ -151,7 +151,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_feature_degree_t)
 inline get(CGAL::vertex_feature_degree_t, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template property_map<vertex_descriptor,int>("v:nfe").first;
+  return smesh. template property_map<vertex_descriptor,int>("v:nfe").value();
 }
 
 template <typename P, typename I>
@@ -173,7 +173,7 @@ typename boost::lazy_disable_if<
   inline get(CGAL::vertex_incident_patches_t<I>, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template property_map<vertex_descriptor,std::set<I> >("v:ip").first;
+  return smesh. template property_map<vertex_descriptor,std::set<I> >("v:ip").value();
 }
 
 } // namespace CGAL

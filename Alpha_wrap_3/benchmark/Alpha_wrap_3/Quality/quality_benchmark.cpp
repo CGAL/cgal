@@ -75,7 +75,7 @@ double mean_min_angle(const Mesh& mesh)
     const Triangle_3 tr = surface_mesh_face_to_triangle(f, mesh);
     std::array<FT, 3> angles = triangle_angles(tr);
 
-    FT min_angle = std::min({angles[0], angles[1], angles[2]});
+    FT min_angle = (std::min)({angles[0], angles[1], angles[2]});
 
     min_angle = min_angle * (180.0 / CGAL_PI);
     mean_min_angle += min_angle;
@@ -93,7 +93,7 @@ double mean_max_angle(const Mesh& mesh)
     const Triangle_3 tr = surface_mesh_face_to_triangle(f, mesh);
     std::array<FT, 3> angles = triangle_angles(tr);
 
-    FT max_angle = std::max({angles[0], angles[1], angles[2]});
+    FT max_angle = (std::max)({angles[0], angles[1], angles[2]});
 
     max_angle = max_angle * (180.0 / CGAL_PI);
     mean_max_angle += max_angle;
@@ -151,8 +151,8 @@ double mean_edge_ratio(const Mesh& mesh,
     FT a = std::sqrt(CGAL::squared_distance(tr[0], tr[1]));
     FT b = std::sqrt(CGAL::squared_distance(tr[1], tr[2]));
     FT c = std::sqrt(CGAL::squared_distance(tr[2], tr[0]));
-    FT min_edge = std::min({a, b, c});
-    FT max_edge = std::max({a, b, c});
+    FT min_edge = (std::min)({a, b, c});
+    FT max_edge = (std::max)({a, b, c});
     FT edge_ratio = max_edge / min_edge;
 
     mean_edge_ratio += edge_ratio;
@@ -181,7 +181,7 @@ double mean_aspect_ratio(const Mesh& mesh,
     FT c = std::sqrt(CGAL::squared_distance(tr[2], tr[0]));
     FT s = 0.5 * (a + b + c);
     FT inscribed_radius = std::sqrt((s * (s - a) * (s - b) * (s - c)) / s);
-    FT max_edge = std::max({a, b, c});
+    FT max_edge = (std::max)({a, b, c});
     FT aspect_ratio = max_edge / inscribed_radius;
     aspect_ratio /= (2. * std::sqrt(3.));  // normalized
     mean_aspect_ratio += aspect_ratio;

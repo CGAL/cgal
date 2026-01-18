@@ -367,7 +367,7 @@ public:
       // case, to find whether a 2d point lies below/above/on a line
       // this test is simply computing the sign of:
       //    (1)    [(y3 - y1)(z2 - z1) - (z3 - z1)(y2 - y1)] * sign(y3 - y1)
-      // abd comparing to 0, where pi = (xi, yi, zi), and p2 is compared to the
+      // and comparing it with 0, where pi = (xi, yi, zi), and p2 is compared to the
       // line formed by p1 and p3 (in the direction p1 -> p3)
       //
       // for general vertical plane, we change (x, y) coordinates to (v, w),
@@ -1037,7 +1037,7 @@ public:
     return std::nullopt;
   }
 
-  // calculate intersection between triangle & point on the same plane plane
+  // calculate intersection between triangle & point on the same plane
   std::optional<Point_3>
   intersection_on_plane_3(const Plane_3& plane,
                           const Xy_monotone_surface_3& triangle,
@@ -1061,7 +1061,7 @@ public:
     else return std::nullopt;
   }
 
-  // calculate intersection between 2 segments on the same vertical plane plane
+  // calculate intersection between 2 segments on the same vertical plane
   std::optional<std::variant<Point_3, Segment_3>>
   intersection_of_segments(const Xy_monotone_surface_3& s1,
                            const Xy_monotone_surface_3& s2) const {

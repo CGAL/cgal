@@ -23,6 +23,7 @@
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
 #include <type_traits>
+#include <cfloat>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -90,11 +91,11 @@ namespace internal {
 \ingroup PkgMesh3MeshClasses
 
 The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It
-provides a bound for the size criterion.
+provides bounds for the size and approximation criteria.
 
 \cgalModels{MeshEdgeCriteria_3}
 
-\sa `MeshCriteria_3`
+\sa `MeshCriteriaWithFeatures_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`
 \sa `MeshDomainField_3`
 */
@@ -121,58 +122,38 @@ public:
 
   /// \name Creation
   /// @{
+
   /*!
   * returns an object to serve as criteria for edges.
   *
   * \param length_bound is an upper bound
   * for the length of the edges which are used to discretize the curves.
+  * It can be a functional or a constant.
   * \param min_length_bound is a desired lower bound
   * for the length of the edges which are used to discretize the curves.
   * Only edges that are longer than this bound will be refined. Using
   * this lower bound can be handy on some domains, but using it may
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
+  * \param distance_bound is an upper bound for the distance from the
+  * edge to the corresponding 1D feature.
+  * It can be a functional or a constant.
   *
   * \note If one parameter is set to 0, then its corresponding criterion is ignored.
-  */
-  Mesh_edge_criteria_3(const FT& length_bound,
-                       const FT& min_length_bound = 0)
-
-    : p_size_(new Mesh_3::internal::Sizing_field_container<
-                Mesh_constant_domain_field_3<GT,Index> ,
-                FT,
-                Point_3,
-                Index>(length_bound))
-    , min_length_bound_(min_length_bound)
-  {}
-
-  // Nb: SFINAE to avoid wrong matches with built-in numerical types
-  // as int.
-
-  /*!
-  * returns an object to serve as criteria for edges.
-  * The behavior and semantic of the argument are the same
-  * as above, except that the `length_bound`
-  * parameter is a functional instead of a constant.
   *
-  * @tparam SizingField a model of `MeshDomainField_3`
+  * @tparam SizingField scalar or model of `MeshDomainField_3`
+  * @tparam DistanceField scalar or model of `MeshDomainField_3`
   */
-  template < typename SizingField >
-  Mesh_edge_criteria_3
-  (
-
-   const SizingField& length_bound,
-   const FT& min_length_bound = 0
-#ifndef DOXYGEN_RUNNING
-    , std::enable_if_t<Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>::value>* = 0
-#endif
-   )
-   : min_length_bound_(min_length_bound)
+  template < typename SizingField, typename DistanceField = FT >
+  Mesh_edge_criteria_3(const SizingField& length_bound,
+                       const FT& min_length_bound = 0,
+                       const DistanceField& distance_bound = FT(0))
+      : min_length_bound_(min_length_bound)
   {
-    p_size_ = new Mesh_3::internal::Sizing_field_container<SizingField,
-                                                           FT,
-                                                           Point_3,
-                                                           Index>(length_bound);
+    init_p_size(length_bound,
+                  Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>());
+    init_distance_bound(distance_bound,
+                  Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());
   }
 
   /// @}
@@ -181,34 +162,100 @@ public:
   Mesh_edge_criteria_3(const Self& rhs)
     : p_size_(rhs.p_size_->clone())
     , min_length_bound_(rhs.min_length_bound_)
+    , distance_bound_(rhs.distance_bound_ == nullptr
+                      ? nullptr
+                      : rhs.distance_bound_->clone())
   {}
 
   /// Destructor
   ~Mesh_edge_criteria_3()
   {
     delete p_size_;
+    if(distance_bound_ != nullptr)
+      delete distance_bound_;
   }
 
   /// Returns size of tuple (p,dim,index)
   FT sizing_field(const Point_3& p, const int dim, const Index& index) const
-  { return (*p_size_)(p,dim,index); }
+  {
+    const FT s = (*p_size_)(p, dim, index);
+    if (min_length_bound_ == FT(0))
+      return s;
+    else
+      return (std::max)(s, min_length_bound_);
+  }
+
+  FT distance_field(const Point_3& p, const int dim, const Index& index) const
+  {
+    if (distance_bound_ == nullptr)
+      return FT(0);
+    return (*distance_bound_)(p,dim,index);
+  }
 
 public:
   const FT& min_length_bound() const
   {
     return min_length_bound_;
   }
+  bool has_distance_field() const
+  {
+    return distance_bound_ != nullptr;
+  }
+
 #endif
 
 private:
   typedef Mesh_3::internal::Sizing_field_interface<FT,Point_3,Index>
     Sizing_field_interface;
 
+  void init_p_size(const FT& length_bound, Tag_false)
+  {
+    p_size_ = new Mesh_3::internal::Sizing_field_container<
+        Mesh_constant_domain_field_3<GT,Index> ,
+        FT,
+        Point_3,
+        Index>(length_bound);
+  }
+
+  template <typename SizingField>
+  void init_p_size(const SizingField& length_bound, Tag_true)
+  {
+    p_size_ = new Mesh_3::internal::Sizing_field_container<
+        SizingField,
+        FT,
+        Point_3,
+        Index>(length_bound);
+  }
+
+  void init_distance_bound(const FT& distance_bound, Tag_false)
+  {
+    if (distance_bound == 0.)
+      distance_bound_ = nullptr;
+    else
+      distance_bound_ = new Mesh_3::internal::Sizing_field_container<
+        Mesh_constant_domain_field_3<GT,Index> ,
+        FT,
+        Point_3,
+        Index>(distance_bound);
+  }
+
+  template <typename DistanceField>
+  void init_distance_bound(const DistanceField& distance_bound, Tag_true)
+  {
+    distance_bound_ = new Mesh_3::internal::Sizing_field_container<
+        DistanceField,
+        FT,
+        Point_3,
+        Index>(distance_bound);
+  }
+
   // A pointer to Sizing_field_interface to handle dynamic wrapping of
-  // real Sizing_field type
+  // real SizingField type
   Sizing_field_interface* p_size_;
   const FT min_length_bound_;
+  Sizing_field_interface* distance_bound_;
 };
+
 
 } // end namespace CGAL
 

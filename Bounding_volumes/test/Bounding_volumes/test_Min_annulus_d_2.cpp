@@ -13,7 +13,7 @@
 //
 // file          : test/Min_annulus_d/test_Min_annulus_d_2.cpp
 // package       : $CGAL_Package: Min_annulus_d $
-// chapter       : Geometric Optimisation
+// chapter       : Geometric Optimization
 //
 // revision      : $Id$
 // revision_date : $Date$

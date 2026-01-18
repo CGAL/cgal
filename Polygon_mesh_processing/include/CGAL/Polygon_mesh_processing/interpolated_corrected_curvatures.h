@@ -622,7 +622,7 @@ void interpolated_corrected_curvatures_one_vertex(
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
+  Vertex_position_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
     get_const_property_map(CGAL::vertex_point, pmesh));
 
   Vertex_normal_map vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
@@ -773,7 +773,7 @@ private:
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
-    vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
+    vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
       get_const_property_map(CGAL::vertex_point, pmesh));
 
     vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
@@ -1000,7 +1000,7 @@ private:
 *
 * computes the interpolated corrected curvatures across the mesh `pmesh`.
 * By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
-* can choose which quantites to compute.
+* can choose which quantities to compute.
 *
 * \note This function depends on the \eigen 3.1 (or later) library.
 *
@@ -1090,7 +1090,7 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 * \ingroup PMP_corrected_curvatures_grp
 * computes the interpolated corrected curvatures at a vertex `v`.
 * By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
-* can choose which quantites to compute.
+* can choose which quantities to compute.
 *
 * \note This function depends on the \eigen 3.1 (or later) library.
 *

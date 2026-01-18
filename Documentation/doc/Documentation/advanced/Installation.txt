@@ -152,11 +152,6 @@ For example:
     cd CGAL-\cgalReleaseNumber/build
     cmake ..
 
-The configuration process not only determines the location of the required dependencies, it also dynamically generates a
-`compiler_config.h` file, which encodes the properties of your system and a special file named
-`CGALConfig.cmake`, which is used to build programs using \cgal. The
-purpose of this file is explained below.
-
 \cgalAdvancedBegin
 CMake keeps the variables that a user can manipulate in a
 so-called <I>CMake cache</I>, a simple text file named
@@ -188,8 +183,8 @@ The binary and source directories do not need to be the same. Thus, you can conf
 distinct directory for each configuration and by running CMake from there. This is known in CMake terminology
 as <I>out-of-source configuration</I>, as opposite to an <I>in-source
 configuration</I>, as showed in the previous sections.
-You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber``/build/debug` and
-`CGAL-\cgalReleaseNumber``/build/release` for two configurations, respectively:
+You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber/build/debug` and
+`CGAL-\cgalReleaseNumber/build/release` for two configurations, respectively:
 
     mkdir CGAL-\cgalReleaseNumber/build/debug
     cd CGAL-\cgalReleaseNumber/build/debug

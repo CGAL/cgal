@@ -1,3 +1,4 @@
+#define CGAL_DISABLE_ROUNDING_MATH_CHECK 1
 #include <iostream>
 #include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
@@ -122,7 +123,7 @@ int main() {
         CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
-        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J< I),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J>=I),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception&);
 

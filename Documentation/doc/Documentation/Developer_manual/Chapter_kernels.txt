@@ -45,7 +45,7 @@ In any way, a package has to work with both representations.
 Since \cgal uses homogeneous representation for affine geometry  and not
 for projective geometry, the homogenizing coordinate  is non zero.
 The cartesian
-representation corresponding to an homogeneous point
+representation corresponding to a homogeneous point
 \f$ (x_0,x_1,...,x_d,w)\f$ is
 \f$ (x_0/w,x_1/w,...,x_d/w)\f$. Hence, homogeneous representation is not unique;
 \f$ (\alpha x,\alpha y,\alpha z,\alpha w)\f$ is an alternative
@@ -92,7 +92,7 @@ the same object with opposite orientation.
 
 For a number of predicates, there are versions that operate on
 the coordinates directly, not on the geometric objects. These
-number-type based predicates ease re-use with non-<em>CGAL</em> types.
+number-type based predicates ease reuse with non-<em>CGAL</em> types.
 
 \section secNewKernelTraits Missing functionality
 
@@ -103,7 +103,7 @@ with a different API, then one should really implement the
 functionality and the others call that one.
 
 Whenever you need a predicate that is not present in the current kernel
-traits, you should first try to re-use the available predicates (you
+traits, you should first try to reuse the available predicates (you
 might rewrite the code or implement the new predicate using existing ones).
 If this is not feasible (especially for efficiency reasons), we have to
 decide on adding the new predicate to the kernel traits.

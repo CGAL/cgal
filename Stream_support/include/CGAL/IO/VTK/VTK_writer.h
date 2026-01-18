@@ -25,6 +25,8 @@ template <class FT>
 void write_vector(std::ostream& os,
                   const std::vector<FT>& vect)
 {
+  if(vect.empty())
+    return;
   const char* buffer = reinterpret_cast<const char*>(&(vect[0]));
   std::size_t size = vect.size()*sizeof(FT);
 

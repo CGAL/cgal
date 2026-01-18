@@ -1,4 +1,4 @@
-/// \defgroup MiscellanyRef Profiling Tools, Hash Map, Union-find, Modifiers Reference
+/// \defgroup MiscellanyRef Reference Manual
 /// \defgroup MiscellanyConcepts Concepts
 /// \ingroup MiscellanyRef
 /*!

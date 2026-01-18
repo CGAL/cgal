@@ -32,7 +32,7 @@ Delaunay
   dual sont effectivement utilisees
 - remplacer les create_face du remove2D par des create_cell et virer 
   les create_face de la tds
-- optimiser remove :
+- optimizer remove :
   - algo d'Olivier si constructions filtrees disponibles (cf Olivier
 	rappel de la reunion a ce sujet)
   - pour la creation de la TDS_2, on devrait pouvoir faire plus simple,

@@ -30,7 +30,6 @@ are needed from `rnd` for each point.
 \sa `CGAL::points_on_segment_2()`
 \sa `CGAL::points_on_square_grid_2()`
 \sa `CGAL::random_selection()`
-\sa `CGAL::random_selection()`
 \sa `std::random_shuffle()`
 
 */
@@ -193,7 +192,7 @@ i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from
 `rnd` for each point.
 
 */
-Random_points_in_disc_2( double r, Random& rnd =
+Random_points_in_disc_2( double r = 1.0, Random& rnd =
 get_default_random());
 
 /// @}
@@ -528,7 +527,7 @@ i.e.\ \f$ |*g| == r\f$. A single random number is needed from
 `rnd` for each point.
 
 */
-Random_points_on_circle_2( double r, Random& rnd =
+Random_points_on_circle_2( double r=1.0, Random& rnd =
 get_default_random());
 
 /// @}

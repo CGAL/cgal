@@ -126,7 +126,7 @@ int main (int argc, char* argv[])
 
   Efficient_ransac ransac;
   ransac.set_input(points);
-  ransac.add_shape_factory<Plane>(); // Only planes are useful for stucturing
+  ransac.add_shape_factory<Plane>(); // Only planes are useful for structuring
 
   // Default RANSAC parameters
   Efficient_ransac::Parameters op;

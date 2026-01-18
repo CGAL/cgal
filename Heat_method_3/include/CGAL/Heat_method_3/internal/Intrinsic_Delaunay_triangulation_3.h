@@ -25,7 +25,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Iterator_range.h>
-#include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
@@ -447,7 +446,7 @@ private:
     for(face_descriptor f : faces(m_intrinsic_tm)) {
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);
       halfedge_descriptor hd = halfedge(f,m_intrinsic_tm);
       if(face(hd,m_intrinsic_tm) != f) {
         hd = opposite(hd,m_intrinsic_tm);

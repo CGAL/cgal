@@ -118,7 +118,7 @@ public:
   //Contains the text and icons of an item in the Geometric Objects view
   QVariant data ( const QModelIndex & index,
                   int role = ::Qt::DisplayRole ) const override;
-  //@returns the type of data correspondind to the role.
+  //@returns the type of data corresponding to the role.
   QVariant headerData ( int section, ::Qt::Orientation orientation,
                         int role = ::Qt::DisplayRole ) const override;
   //@returns the flags for the item at the target index.

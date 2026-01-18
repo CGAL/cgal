@@ -48,27 +48,27 @@ public:
 private:
   Arrangement_2* p_arr;           // The associated arrangement.
 
-  /*! Copy constructor - not supported. */
+  /*! Copy constructor not supported. */
   Aos_observer(const Self&);
 
-  /*! Assignment operator - not supported. */
+  /*! Assignment operator not supported. */
   Self& operator=(const Self&);
 
 public:
   /// \name Construction and destruction functions.
   //@{
 
-  /*! Default constructor. */
+  /*! constructs defaults. */
   Aos_observer() : p_arr(nullptr) {}
 
-  /*! Constructor with an associated arrangement. */
+  /*! constructs with an associated arrangement. */
   Aos_observer(Arrangement_2& arr) : p_arr(&arr)
   {
     // Register the observer object in the arrangement.
     p_arr->_register_observer(this);
   }
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Aos_observer()
   {
     // Unregister the observer object from the arrangement.
@@ -80,13 +80,13 @@ public:
   /// \name Modifying the associated arrangement.
   //@{
 
-  /*! Get the associated arrangement (const version). */
+  /*! obtains the associated arrangement (const version). */
   const Arrangement_2* arrangement() const { return (p_arr); }
 
-  /*! Get the associated arrangement (non-const version). */
+  /*! obtains the associated arrangement (non-const version). */
   Arrangement_2* arrangement() { return (p_arr); }
 
-  /*! Attach the observer to an arrangement.
+  /*! attaches the observer to an arrangement.
    * \pre The observer is not already attached to an arrangement.
    */
   void attach(Arrangement_2& arr)
@@ -110,7 +110,7 @@ public:
     after_attach();
   }
 
-  /*! Detach the observer from the arrangement. */
+  /*! detaches the observer from the arrangement. */
   void detach()
   {
     if (p_arr == nullptr) return;
@@ -519,12 +519,12 @@ public:
    */
   virtual void after_move_isolated_vertex(Vertex_handle /* v */) {}
 
-  /*! Notificaion before the removal of a vertex.
+  /*! Notification before the removal of a vertex.
    * \param v A handle to the vertex to be deleted.
    */
   virtual void before_remove_vertex(Vertex_handle /* v */) {}
 
-  /*! Notificaion after the removal of a vertex. */
+  /*! Notification after the removal of a vertex. */
   virtual void after_remove_vertex() {}
 
   /*! Notification before the removal of an edge.
@@ -532,7 +532,7 @@ public:
    */
   virtual void before_remove_edge(Halfedge_handle /* e */) {}
 
-  /*! Notificaion after the removal of an edge. */
+  /*! Notification after the removal of an edge. */
   virtual void after_remove_edge() {}
 
   /*! Notification before the removal of an outer CCB.
@@ -543,7 +543,7 @@ public:
                                        Ccb_halfedge_circulator /* h */)
   {}
 
-  /*! Notificaion after the removal of an outer CCB.
+  /*! Notification after the removal of an outer CCB.
    * \param f The face that used to own the outer CCB.
    */
   virtual void after_remove_outer_ccb(Face_handle /* f */) {}
@@ -556,7 +556,7 @@ public:
                                        Ccb_halfedge_circulator /* h */)
   {}
 
-  /*! Notificaion after the removal of an inner CCB.
+  /*! Notification after the removal of an inner CCB.
    * \param f The face that used to contain the inner CCB.
    */
   virtual void after_remove_inner_ccb(Face_handle /* f */) {}
@@ -564,7 +564,7 @@ public:
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

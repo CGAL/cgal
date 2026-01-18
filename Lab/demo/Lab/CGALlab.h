@@ -20,7 +20,7 @@ public:
    * Constructor : calls the constructor of QApplication
    */
   CGAL_Lab(int& argc, char **argv,
-                  QString application_name = "Polyhedron_3 demo",
+                  QString application_name = "CGAL Lab",
                   QString main_window_title = "CGAL Lab",
                   QStringList input_keywords = QStringList());
 
@@ -38,7 +38,7 @@ public:
 
   /*! Call `QApplication::exec()` unless the main window is already closed
    */
-  int try_exec();
+  int try_exec(); /// @TODO Rename to `exec_if_main_window_not_closed()`
 }; // end class CGAL_Lab
 
 #endif // LAB_DEMO_H

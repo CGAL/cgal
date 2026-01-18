@@ -169,7 +169,7 @@ whose <I>straight skeleton</I> is to be built.
 
 Each contour must be input in turn starting with the <I>outer contour</I> and following with the holes (if any).
 The order of the holes is unimportant but the outer contour must be entered first.
-The outer contour must be oriented counter-clockwise while holes must be oriented clockwise.
+The outer contour must be oriented counterclockwise while holes must be oriented clockwise.
 
 It is an error to enter more than one outer contour, to enter a hole which is not inside
 the outer contour, to enter a hole that is inside another hole, or to enter a contour which crosses
@@ -190,7 +190,7 @@ Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPoin
 /*!
 defines the <I>weights</I> of the contour last entered through `enter_contour()`.
 
-\tparam InputPointIterator must be a model `InputIterator` whose `value_type` is `FT`.
+\tparam WeightIterator must be a model `InputIterator` whose `value_type` is `FT`.
 
 \pre `std::distance(aBegin,aEnd)` must be equal to the number of vertices of the contour last entered.
 \pre Weights are (strictly) positive.

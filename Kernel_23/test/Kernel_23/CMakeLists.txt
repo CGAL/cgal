@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Kernel_23_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -37,10 +37,10 @@ if(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS)
   # - create a lot of possible combinations, which is expensive to test
   # - create issues because some combinations might be RT-sufficient whereas others will require FT
   #
-  # add_definitions(-DCGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS)
+  # add_compile_definitions(CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS)
 
   create_single_source_cgal_program("atomic_compilation_test.cpp")
-  target_precompile_headers(atomic_compilation_test PUBLIC [["atomic_RT_FT_predicate_headers.h"]])
+  target_precompile_headers(atomic_compilation_test PRIVATE [["atomic_RT_FT_predicate_headers.h"]])
 
   create_single_source_cgal_program("test_RT_or_FT_predicates.cpp")
   target_compile_definitions(test_RT_or_FT_predicates PRIVATE

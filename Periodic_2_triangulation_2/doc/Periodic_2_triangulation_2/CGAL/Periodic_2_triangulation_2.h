@@ -14,7 +14,7 @@ triangulation of a point set in \f$ \mathbb T_c^2\f$.
 has to be instantiated by a model of the concept
 `Periodic_2TriangulationTraits_2`.
 
-\tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`
+\tparam Tds is the triangulation data structure and must be a model of `TriangulationDataStructure_2`
 whose vertex and face are models of `Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
 It defaults to:
 \code
@@ -579,7 +579,7 @@ public:
 
   /*!
   Converts the `Periodic_point` `pp` (point-offset pair) to the
-  corresponding `Point` in \f$ \mathbb R^3\f$.
+  corresponding `Point` in \f$ \mathbb R^2\f$.
   */
   Point point(const Periodic_point & pp ) const;
 
@@ -592,6 +592,18 @@ public:
   Converts the `Periodic_triangle` `this` to a `Triangle`.
   */
   Triangle triangle(const Periodic_triangle & t) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(fh,i));`
+  */
+  Point point(Face_handle fh, int i) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(v));`
+  */
+  Point point(Vertex_handle v) const;
 
   /*!
   Equivalent to

@@ -24,15 +24,17 @@
 #include <CGAL/basic.h>
 
 #include <utility>
-#include <map>
-#include <set>
 #include <vector>
 #include <stack>
 #include <limits>
 
 #include <boost/unordered_set.hpp>
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
@@ -661,7 +663,7 @@ public:
 
   Cell_handles cell_handles() const
   {
-    return make_prevent_deref_range(cells_begin(), cells_end());
+    return { cells_begin(), cells_end() };
   }
 
   Cell_iterator raw_cells_begin() const
@@ -720,7 +722,7 @@ public:
 
   Vertex_handles vertex_handles() const
   {
-    return make_prevent_deref_range(vertices_begin(), vertices_end());
+    return { vertices_begin(), vertices_end() };
   }
 
   // CIRCULATOR METHODS
@@ -802,7 +804,7 @@ private:
   {
         CGAL_precondition(dimension() == 3);
 
-        std::stack<Cell_handle> cell_stack;
+        std::stack<Cell_handle, boost::container::small_vector<Cell_handle, 128>> cell_stack;
         cell_stack.push(d);
         d->tds_data().mark_in_conflict();
         *it.first++ = d;
@@ -828,13 +830,16 @@ private:
         return it;
   }
 
-  template <class IncidentFacetIterator>
+  template <class IncidentFacetIterator, typename CellsContainers>
   void
   incident_cells_3_threadsafe(Vertex_handle v, Cell_handle d,
-                              std::vector<Cell_handle> &cells,
+                              CellsContainers &cells,
                               IncidentFacetIterator facet_it) const
   {
-    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
+    boost::container::flat_set<Cell_handle,
+                               std::less<>,
+                               boost::container::small_vector<Cell_handle, 128>> found_cells;
+    // boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
 
     cells.push_back(d);
     found_cells.insert(d);
@@ -1381,20 +1386,16 @@ public:
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
     incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
     else
     incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      (*cit)->tds_data().clear();
-      visit(*cit);
+      c->tds_data().clear();
+      visit(c);
     }
 
     return visit.result();
@@ -1413,20 +1414,16 @@ public:
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
       incident_cells_3_threadsafe(
         v, v->cell(), tmp_cells, visit.facet_it());
     else
       incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      visit(*cit);
+      visit(c);
     }
 
     return visit.result();
@@ -1738,7 +1735,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
       Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
       int zzz = nnn->index(vvv);
       if (nnn == cur) {
-        // Neighbor relation is reciprocal, ie
+        // Neighbor relation is reciprocal, i.e.
         // the cell we are looking for is not yet created.
         nnn = create_star_3(v, nnn, zz, zzz);
       }
@@ -1796,7 +1793,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
       Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
       int zzz = nnn->index(vvv);
       if (nnn == cur) {
-        // Neighbor relation is reciprocal, ie
+        // Neighbor relation is reciprocal, i.e.
         // the cell we are looking for is not yet created.
         nnn = recursive_create_star_3(v, nnn, zz, zzz,depth+1);
       }
@@ -1857,7 +1854,7 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
         Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
         int zzz = nnn->index(vvv);
         if (nnn == cur) {
-          // Neighbor relation is reciprocal, ie
+          // Neighbor relation is reciprocal, i.e.
           // the cell we are looking for is not yet created.
           //re-run the loop
           adjacency_info_stack.push( iAdjacency_info(zzz,cnew,ii,c,li,prev_ind2) );
@@ -2059,29 +2056,67 @@ is_edge(Vertex_handle u, Vertex_handle v,
         Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
 {
-    CGAL_expensive_precondition( is_vertex(u) && is_vertex(v) );
+  CGAL_expensive_precondition(is_vertex(u) && is_vertex(v));
 
-    if (u==v)
-        return false;
-
-    std::vector<Cell_handle> cells;
-    cells.reserve(64);
-    incident_cells(u, std::back_inserter(cells));
-
-    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
-              cit != cells.end(); ++cit)
-        if ((*cit)->has_vertex(v, j)) {
-            c = *cit;
-            i = c->index(u);
-            return true;
-        }
+  if(u == v)
     return false;
+
+  if(dimension() == 3) {
+    auto d = u->cell();
+    boost::container::small_vector<Cell_handle, 128> cells;
+    cells.emplace_back(d);
+    d->tds_data().mark_in_conflict();
+
+    auto cleanup_tds_data = make_scope_exit([&] {
+      for(auto c : cells) {
+        c->tds_data().clear();
+      }
+    });
+
+    int head = 0;
+    int tail = 1;
+    do {
+      Cell_handle ch = cells[head];
+
+      for(j = 0; j < 4; ++j) { // use parameter j on purpose
+        if(ch->vertex(j) == v) {
+          c = ch;
+          i = ch->index(u);
+          return true;
+        }
+        if(ch->vertex(j) == u)
+          continue;
+        Cell_handle next = ch->neighbor(j);
+        if(!next->tds_data().is_clear())
+          continue;
+        cells.emplace_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+    return false;
+  }
+
+  bool edge_found = false;
+  // try {
+  incident_cells_threadsafe(u, boost::make_function_output_iterator([&](Cell_handle ch) {
+                              if(ch->has_vertex(v, j)) {
+                                c = ch;
+                                i = c->index(u);
+                                // throw true;
+                                edge_found = true;
+                              }
+                            }));
+  // } catch(bool b) {
+  //     result = b;
+  // }
+
+  return edge_found;
 }
 
 template <class Vb, class Cb, class Ct>
-bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-is_edge(Vertex_handle u, Vertex_handle v) const
+bool Triangulation_data_structure_3<Vb, Cb, Ct>::is_edge(Vertex_handle u, Vertex_handle v) const
 {
     Cell_handle c;
     int i, j;
@@ -2308,7 +2343,7 @@ flip( Cell_handle c, int i )
   int in = n->index(c);
 
   // checks that the facet is flippable,
-  // ie the future edge does not already exist
+  // i.e. the future edge does not already exist
   if (is_edge(c->vertex(i), n->vertex(in)))
       return false;
 
@@ -2331,7 +2366,7 @@ flip_flippable(Cell_handle c, int i )
   int in = n->index(c);
 
   // checks that the facet is flippable,
-  // ie the future edge does not already exist
+  // i.e. the future edge does not already exist
   CGAL_expensive_precondition( !is_edge(c->vertex(i),
                                                       n->vertex(in)));
   flip_really(c,i,n,in);
@@ -2393,7 +2428,7 @@ flip( Cell_handle c, int i, int j )
                                    && (number_of_vertices() >= 6) );
   CGAL_expensive_precondition( is_cell(c) );
 
-  // checks that the edge is flippable ie degree 3
+  // checks that the edge is flippable, i.e. degree 3
   int degree = 0;
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
@@ -2443,7 +2478,7 @@ flip_flippable( Cell_handle c, int i, int j )
                                    && (number_of_vertices() >= 6) );
   CGAL_expensive_precondition( is_cell(c) );
 
-  // checks that the edge is flippable ie degree 3
+  // checks that the edge is flippable, i.e. degree 3
   CGAL_precondition_code( int degree = 0; );
   CGAL_precondition_code
     ( Cell_circulator ccir = incident_cells(c,i,j); );
@@ -3573,6 +3608,12 @@ is_valid(bool verbose, int level ) const
       size_type cell_count;
       if ( ! count_cells(cell_count,verbose,level) )
         return false;
+      if( number_of_cells() != cell_count ) {
+        if (verbose)
+          std::cerr << "wrong number of cells" << std::endl;
+        CGAL_assertion(false);
+        return false;
+      }
       size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
           return false;
@@ -3707,11 +3748,26 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_valid(Vertex_handle v, bool verbose, int level) const
 {
-  bool result = v->is_valid(verbose,level);
-  result = result && v->cell()->has_vertex(v);
+  bool v_is_valid = v->is_valid(verbose,level);
+  bool has_vertex = v->cell()->has_vertex(v);
+  bool v_is_vertex = vertices().is_used(v);
+  bool vertex_cell_is_cell = cells().is_used(v->cell());
+  bool result = v_is_valid && has_vertex && v_is_vertex && vertex_cell_is_cell;
   if ( ! result ) {
-    if ( verbose )
-      std::cerr << "invalid vertex" << std::endl;
+    if ( verbose ) {
+      std::cerr << "invalid vertex " << IO::oformat(v) << std::endl;
+      if(! v_is_valid)
+        std::cerr << "- vertex not valid" << std::endl;
+      if(! has_vertex)
+        std::cerr << "- vertex->cell() does not have vertex" << std::endl;
+      if(! v_is_vertex)
+        std::cerr << "- not a vertex of the TDS" << std::endl;
+      if(! vertex_cell_is_cell)
+        std::cerr << "- vertex->cell() is not a cell of the TDS" << std::endl;
+      if(!has_vertex || !vertex_cell_is_cell)
+        std::cerr << "vertex->cell(): "
+                  << IO::oformat(v->cell()) << std::endl;
+    }
     CGAL_assertion(false);
   }
   return result;
@@ -3724,6 +3780,12 @@ is_valid(Cell_handle c, bool verbose, int level) const
 {
     if ( ! c->is_valid(verbose, level) )
         return false;
+    if(cells().is_used(c) == false) {
+        if (verbose)
+            std::cerr << "invalid cell " << IO::oformat(c) << std::endl;
+        CGAL_assertion(false);
+        return false;
+    }
 
     switch (dimension()) {
     case -2:
@@ -3902,7 +3964,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
       {
         int i;
         for(i = 0; i < 4; i++) {
-          if ( c->vertex(i) == Vertex_handle() ) {
+          if ( c->vertex(i) == Vertex_handle() || vertices().is_used(c->vertex(i)) == false ) {
             if (verbose)
                 std::cerr << "vertex " << i << " nullptr" << std::endl;
             CGAL_assertion(false);
@@ -3913,7 +3975,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
         for(i = 0; i < 4; i++) {
           Cell_handle n = c->neighbor(i);
-          if ( n == Cell_handle() ) {
+          if ( n == Cell_handle() || cells().is_used(n) == false ) {
             if (verbose)
               std::cerr << "neighbor " << i << " nullptr" << std::endl;
             CGAL_assertion(false);

@@ -135,7 +135,7 @@ public:
     //! curve has vertical line at this x-coordinate
     mutable bool _m_vertical_line;
 
-    //! decsribes an event
+    //! describes an event
     mutable bool _m_event;
 
     //! number of arcs running down the pole
@@ -273,7 +273,7 @@ public:
 
 
     /*!\brief
-     * constructs a status line at the event with x-coorinate \c x
+     * constructs a status line at the event with x-coordinate \c x
      *
      * \c arcs container defines # of incident arcs to the left and to the
      * right of each intersection point of the curve \c ca with this status
@@ -304,7 +304,7 @@ public:
     }
 
     /*!\brief
-     * constructs a status line at the event with x-coorinate \c x
+     * constructs a status line at the event with x-coordinate \c x
      *
      * arcs and vertical line flag can be set later
      */

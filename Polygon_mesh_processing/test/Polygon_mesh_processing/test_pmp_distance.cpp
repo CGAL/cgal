@@ -22,6 +22,7 @@ struct Custom_traits_Hausdorff
     FT operator+(FT)const{return FT();}
     FT operator*(FT)const{return FT();}
     bool operator<=(FT)const{return false;}
+    bool operator==(FT)const{return false;}
     bool operator>=(FT)const{return false;}
     bool operator!=(FT)const{return false;}
     bool operator<(FT)const{return false;}

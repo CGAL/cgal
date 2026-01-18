@@ -1,9 +1,8 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.15...3.31) # CMake>=3.15 for message(VERBOSE...)
 
-message("== CMake setup ==")
 project(CGAL CXX C)
 export(PACKAGE CGAL)
 
@@ -44,8 +43,6 @@ option(
   "Switch on to start (naive) detection of duplicate source- and headerfiles in packages"
   OFF)
 
-message("== CMake setup (DONE) ==\n")
-
 # Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
 # the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
 # set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
@@ -59,36 +56,6 @@ endif()
 if(CGAL_ENABLE_TESTING)
   enable_testing()
 endif()
-
-#setup prefix path
-file(GLOB BOOST_DIRS "C:/Program Files/boost/*")
-if(NOT BOOST_DIRS)
-  file(GLOB BOOST_DIRS "C:/Program Files/boost*")
-endif()
-if(NOT BOOST_DIRS)
-  file(GLOB BOOST_DIRS "C:/Program Files (x86)/boost/*")
-endif()
-if(NOT BOOST_DIRS)
-  file(GLOB BOOST_DIRS "C:/Program Files (x86)/boost*")
-endif()
-if(NOT BOOST_DIRS)
-  file(GLOB BOOST_DIRS "C:/local/boost*")
-endif()
-if(BOOST_DIRS)
-  list(GET BOOST_DIRS 0 boost_dir)
-  list(APPEND CMAKE_PREFIX_PATH "${boost_dir}")
-endif()#BOOST_DIRS
-
-file(GLOB QT_DIRS "C:/Qt/5")
-if(QT_DIRS)
-  list(GET QT_DIRS 0 qt_dir)
-  file(GLOB COMPS "${qt_dir}/msvc*")
-  if(COMPS)
-    list(GET COMPS 0 COMP)
-    list(APPEND CMAKE_PREFIX_PATH "${COMP}")
-  endif()#COMPS
-endif()#QT_DIRS
-
 
 # and finally start actual build
 add_subdirectory(Installation)

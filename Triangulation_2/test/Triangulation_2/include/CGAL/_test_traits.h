@@ -188,6 +188,19 @@ public:
     }
 };
 
+class Triangulation_test_Compare_xy_2{
+public:
+  typedef Triangulation_test_point  Point;
+  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const
+    {
+      if (p.test_x() < q.test_x()) return CGAL::SMALLER;
+      if (p.test_x() > q.test_x()) return CGAL::LARGER;
+      if (p.test_y() < q.test_y()) return CGAL::SMALLER;
+      if (p.test_y() > q.test_y()) return CGAL::LARGER;
+      else return CGAL::EQUAL;
+    }
+};
+
 class Triangulation_test_Orientation_2
 {
 public:
@@ -416,6 +429,7 @@ public:
   typedef Triangulation_test_Less_y_2       Less_y_2;
   typedef Triangulation_test_Compare_x_2    Compare_x_2;
   typedef Triangulation_test_Compare_y_2    Compare_y_2;
+  typedef Triangulation_test_Compare_xy_2   Compare_xy_2;
   typedef Triangulation_test_Orientation_2  Orientation_2;
   typedef Triangulation_test_Side_of_oriented_circle_2
                                              Side_of_oriented_circle_2;
@@ -449,6 +463,10 @@ public:
   Compare_y_2
   compare_y_2_object() const
     { return Compare_y_2();}
+
+  Compare_xy_2
+  compare_xy_2_object() const
+    { return Compare_xy_2();}
 
   Orientation_2
   orientation_2_object() const

@@ -197,6 +197,14 @@ square_free_factorize(const Polynomial_d& p, OutputIterator oi){
   typedef Polynomial_traits_d<Polynomial_d> PT;
   return typename PT::Square_free_factorize()(p,oi);
 }
+
+template <typename Polynomial_d, typename OutputIterator>  inline
+OutputIterator
+square_free_factorize(const Polynomial_d& p, OutputIterator oi, const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& a){
+  typedef Polynomial_traits_d<Polynomial_d> PT;
+  return typename PT::Square_free_factorize()(p,oi,a);
+}
+
 // MakeSquareFree
 CGAL_UNARY_POLY_FUNCTION(Make_square_free, make_square_free)
 // IsSquareFree

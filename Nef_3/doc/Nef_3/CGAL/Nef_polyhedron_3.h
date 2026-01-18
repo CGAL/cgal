@@ -456,7 +456,7 @@ public:
  An entry item to each boundary cycle can be accessed
   using the iterator range `[sface_cycles_begin(), sface_cycles_end())`.
   Additionally, `Nef_polyhedron_S2` provides the macro
-  `CGAL_forall_sface_cylces_of`. The iterators are of type
+  `CGAL_forall_sface_cycles_of`. The iterators are of type
   `SFace_cycle_const_iterator` and represent either a shalfedge, a shalfloop,
   or a svertex.
 
@@ -1057,12 +1057,12 @@ public:
   typedef unspecified_type SHalfedge_around_facet_const_circulator;
 
 /*!
-  non-mutable iterator over the cylces of a sface.
+  non-mutable iterator over the cycles of a sface.
 */
   typedef unspecified_type SFace_cycle_const_iterator;
 
 /*!
-  non-mutable iterator over the cylces of a halffacet.
+  non-mutable iterator over the cycles of a halffacet.
 */
   typedef unspecified_type Halffacet_cycle_const_iterator;
 

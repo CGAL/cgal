@@ -337,7 +337,7 @@ void angle_and_area_smoothing(const FaceRange& faces,
 *
 * Optionally, the points are reprojected after each iteration.
 *
-* See the overload which takes a face range as additonal parameter for a comprehensive description
+* See the overload which takes a face range as additional parameter for a comprehensive description
 * of the parameters.
 */
 template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>

@@ -4,7 +4,7 @@ FUNDAMENTAL GROUP OF THE TORUS
 We know that the fundamental group of the torus is the direct product ZxZ
 Hence we can choose a path on a circle by choosing an pair of integers
 
-The test generats all groups of four integers (i, j, k, l) between -5 and 5 and the associated paths pij and pkl with two different basepoints
+The test generates all groups of four integers (i, j, k, l) between -5 and 5 and the associated paths pij and pkl with two different basepoints
 Then it verify that
 -> pij is contractible iff i==0 and j==0
 -> pkl is contractible iff k==0 and l==0

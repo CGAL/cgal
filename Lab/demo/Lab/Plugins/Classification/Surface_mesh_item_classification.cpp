@@ -56,10 +56,10 @@ Surface_mesh_item_classification::~Surface_mesh_item_classification()
 
 void Surface_mesh_item_classification::backup_existing_colors_and_add_new()
 {
-  bool has_colors = false;
-  boost::tie (m_color, has_colors) = m_mesh->polyhedron()->property_map<face_descriptor, CGAL::IO::Color>("f:color");
-  if (has_colors)
+  std::optional< Mesh::Property_map<face_descriptor, CGAL::IO::Color>> color_map = m_mesh->polyhedron()->property_map<face_descriptor, CGAL::IO::Color>("f:color");
+  if (color_map.has_value())
   {
+    m_color = color_map.value();
     m_real_color
       = m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::IO::Color>("f:real_color").first;
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))

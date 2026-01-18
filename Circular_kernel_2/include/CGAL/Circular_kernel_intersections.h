@@ -54,13 +54,13 @@ namespace Intersections { \
   } \
 template <class K> \
 inline \
-bool \
+typename K::Boolean \
 do_intersect(const A <K> &c1, const B <K> &c2) \
 { \
   return typename K::Do_intersect_2()(c1, c2); \
 }
 
-// Circle_2 Circle_2 already has its do_intersect
+// Circle_2 already has its do_intersect
 // so it needs only the global intersection
 template < class OutputIterator, class K >
 OutputIterator
@@ -92,17 +92,17 @@ intersection(const Line_2 <K> &c1, const Line_2 <K> &c2, OutputIterator res)
 
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Circular_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Line_arc_2)
-CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Circle_2)
-CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circle_2, Line_arc_2)
+
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Circle_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circle_2, Circular_arc_2)
-CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Circular_arc_2)
-CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Line_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Circular_arc_2)
-CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Line_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Line_2)
+CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Line_arc_2)
+CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Circular_arc_2)
+CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Circle_2)
+CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circle_2, Line_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Line_2)
-
+CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Line_arc_2)
 
 } //namespace CGAL
 

@@ -98,14 +98,14 @@ public:
   bool is_empty() const { return nn.is_empty(); }
 
 private:
-  /*! Copy constructor - not supported. */
+  /*! Copy constructor not supported. */
   Arr_landmarks_generator_base(const Self&);
 
-  /*! Assignment operator - not supported. */
+  /*! Assignment operator not supported. */
   Self& operator=(const Self& );
 
 public:
-  /*! Constructor from an arrangement.
+  /*! constructs from an arrangement.
    * \param arr (in) The arrangement.
    */
   Arr_landmarks_generator_base(const Base_aos& arr) :
@@ -120,7 +120,7 @@ public:
     // inherited class.
   }
 
-  /*! Create the landmarks set (choosing the landmarks) ,
+  /*! creates the landmarks set (choosing the landmarks) ,
    * and saving them in the nearest-neighbor search structure.
    */
   virtual void build_landmark_set() {
@@ -136,7 +136,7 @@ public:
     updated = true;
   }
 
-  /*! clear the set of landmarks.
+  /*! clears the set of landmarks.
    */
   virtual void clear_landmark_set() {
     nn.clear();
@@ -144,7 +144,7 @@ public:
     updated = false;
   }
 
-  /*! Obtain the nearest neighbor (landmark) to the given point.
+  /*! obtains the nearest neighbor (landmark) to the given point.
    * \param p The query point.
    * \param obj Output: The location of the nearest landmark point in the
    *                    arrangement (a vertex, halfedge, or face handle).
@@ -364,7 +364,7 @@ public:
     }
   }
 
-  /*! Notificaion after the removal of a vertex. */
+  /*! Notification after the removal of a vertex. */
   virtual void after_remove_vertex() override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_landmark_set();
@@ -381,7 +381,7 @@ public:
     m_ignore_remove_edge = false;
   }
 
-  /*! Notificaion after the removal of an outer CCB. */
+  /*! Notification after the removal of an outer CCB. */
   virtual void after_remove_outer_ccb(Face_handle) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_landmark_set();
@@ -389,7 +389,7 @@ public:
     }
   }
 
-  /*! Notificaion after the removal of an inner CCB. */
+  /*! Notification after the removal of an inner CCB. */
   virtual void after_remove_inner_ccb(Face_handle) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_landmark_set();
@@ -399,7 +399,7 @@ public:
   //@}
 
 protected:
-  /*! Create the list of landmarks with their location.
+  /*! creates the list of landmarks with their location.
    * This is a pure virtual function, and the class that inherites from
    * this generator must implement it.
    */

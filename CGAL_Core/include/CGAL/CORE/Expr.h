@@ -346,7 +346,11 @@ public:
 
 /// I/O Stream operator<<
 inline std::ostream& operator<<(std::ostream& o, const Expr& e) {
-  o << *(const_cast<ExprRep*>(&e.getRep()));
+  if (o.precision() > 17) {
+    o << *(const_cast<ExprRep*>(&e.getRep()));
+  } else {
+    o << e.doubleValue();
+  }
   return o;
 }
 /// I/O Stream operator>>

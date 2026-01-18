@@ -53,8 +53,8 @@ ou de la face infini
 
 
 - Check if copy constructor and assignment operator of
-  constrained triangulation transfers the contrained marks.
-- Something still tobe done for remove in Constrained
+  constrained triangulation transfers the contained marks.
+- Something still to be done for remove in Constrained
   Delaunay_constrained and  Constrained_triangulation_plus
 - Harmoniser find_conflicts() avec le 3d
 - tester entree vrml

@@ -69,7 +69,7 @@ public:
                 //     the array seq is not used!
                 //     Hence, one must test these special cases
   Polynomial<NT> * seq;      // array of polynomials of length "len+1"
-  Polynomial<NT> g;//GCD of input polynomial P and it's derivative P'
+  Polynomial<NT> g;//GCD of input polynomial P and its derivative P'
   NT cont;//Content of the square-free part of input polynomial P
   //Thus P = g * cont * seq[0]
   static const int N_STOP_ITER = 10000;    // Stop IterE after this many iterations.

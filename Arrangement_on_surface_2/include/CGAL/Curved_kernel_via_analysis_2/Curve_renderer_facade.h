@@ -32,7 +32,7 @@
 // whether to use exact rational arithmetic
 #define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
-// this turns on a signleton curve renderer
+// this turns on a singleton curve renderer
 // (not recommended for multi-threaded applications)
 //#define CGAL_CKVA_USE_STATIC_RENDERER
 

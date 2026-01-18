@@ -469,7 +469,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   // The code above corrects the links for vertices aA/aB to the erased halfedges lOA and lIA.
   // However, any of these vertices (aA/aB) may be one of the twin vertices of a split event.
-  // If that's the case, the erased halfedge may be be linked to a 'couple' of those vertices.
+  // If that's the case, the erased halfedge may be linked to a 'couple' of those vertices.
   // This situation is corrected below:
 
   if ( !lOAV->has_infinite_time() && lOAV != aA && lOAV != aB )
@@ -2037,7 +2037,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
 
 // For weighted skeletons of polygons with holes, one can create non-simply-connected skeleton faces.
 // This is a problem both because it is not a valid HDS, and because we walk skeleton face borders
-// in polygon offseting. We add so-called artificial nodes and bisectors to ensure that faces
+// in polygon offsetting. We add so-called artificial nodes and bisectors to ensure that faces
 // are simply-connected by shooting rays from the topmost vertex of the bisectors of the skeleton
 // of the hole(s).
 template<class Gt, class Ss, class V>
@@ -2104,7 +2104,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
   // For each face with hole(s), create the extra halfedges to bridge the gap between
   // the skeleton face's border and the holes by shooting a ray from a vertex hole to a halfedge
   //   .first is the source of the ray
-  //   .second is th event creating the intersection of the ray with an halfedge
+  //   .second is th event creating the intersection of the ray with a halfedge
 
   // Collect first for all faces, apply later because one might split
   std::vector<std::pair<Halfedge_handle, EventPtr> > artifical_events;
@@ -2317,7 +2317,7 @@ extreme_h /     \                          extreme_h /     \
 
       // This is not a valid triedge because split_h is not a contour halfedge, but we need
       // to know which skeleton bisector the line orthogonal to contour_h interscets.
-      // The pair of identical contour halfedges at e0 and e1 is the marker for artifical vertices
+      // The pair of identical contour halfedges at e0 and e1 is the marker for artificial vertices
       SetVertexTriedge(new_v, artificial_event->triedge());
       SetTrisegment(new_v, artificial_event->trisegment());
 

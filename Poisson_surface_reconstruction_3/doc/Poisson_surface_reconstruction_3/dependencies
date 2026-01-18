@@ -1,9 +1,11 @@
 Manual
 Kernel_23
+BGL
 STL_Extension
+Mesh_3
 Algebraic_foundations
 Circulator
 Stream_support
-Surface_mesher
 Point_set_processing_3
 Solver_interface
+SMDS_3

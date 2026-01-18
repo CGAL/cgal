@@ -30,7 +30,7 @@ int main()
       vh_midpoint = t.insert(Point(0, 0) + midpoint);
       for (int i = 0; i < n; ++i)
         {
-          t.insert(Point(0.3 * sin(i * 1.0 / n * 2 * M_PI), 0.3 * cos(i * 1.0 / n * 2 * M_PI)) + midpoint);
+          t.insert(Point(0.3 * sin(i * 1.0 / n * 2 * CGAL_PI), 0.3 * cos(i * 1.0 / n * 2 * CGAL_PI)) + midpoint);
         }
       t.remove(vh_midpoint);
       assert(t.is_valid(true));

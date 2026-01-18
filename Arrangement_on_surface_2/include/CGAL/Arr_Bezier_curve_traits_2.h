@@ -10,6 +10,7 @@
 // Author(s): Ron Wein     <wein@post.tau.ac.il>
 //            Iddo Hanniel <iddoh@cs.technion.ac.il>
 //            Waqar Khan   <wkhan@mpi-inf.mpg.de>
+//            Efi Fogel    <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
@@ -47,71 +48,55 @@ namespace CGAL {
  * Bounding_traits A traits class for filtering the exact computations.
  *                 By default we use the rational bounding traits.
  */
-template <class RatKernel_, class AlgKernel_, class NtTraits_,
-          class BoundingTraits_ = Bezier_bounding_rational_traits<RatKernel_> >
-class Arr_Bezier_curve_traits_2
-{
+template <typename RatKernel_, typename AlgKernel_, typename NtTraits_,
+          typename BoundingTraits_ = Bezier_bounding_rational_traits<RatKernel_> >
+class Arr_Bezier_curve_traits_2 {
 public:
+  using Rat_kernel = RatKernel_;
+  using Alg_kernel = AlgKernel_;
+  using Nt_traits = NtTraits_;
+  using Bounding_traits = BoundingTraits_;
+  using Self = Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
-  typedef RatKernel_                             Rat_kernel;
-  typedef AlgKernel_                             Alg_kernel;
-  typedef NtTraits_                              Nt_traits;
-  typedef BoundingTraits_                        Bounding_traits;
-  typedef Arr_Bezier_curve_traits_2<Rat_kernel,
-                                    Alg_kernel,
-                                    Nt_traits,
-                                    Bounding_traits>   Self;
+  using Integer = typename Nt_traits::Integer;
+  using Rational = typename Rat_kernel::FT;
+  using Algebraic = typename Alg_kernel::FT;
 
-  typedef typename Nt_traits::Integer            Integer;
-  typedef typename Rat_kernel::FT                Rational;
-  typedef typename Alg_kernel::FT                Algebraic;
-
-  typedef typename Rat_kernel::Point_2           Rat_point_2;
-  typedef typename Alg_kernel::Point_2           Alg_point_2;
+  using Rat_point_2 = typename Rat_kernel::Point_2;
+  using Alg_point_2 = typename Alg_kernel::Point_2;
 
   // Category tags:
-  typedef Tag_true                               Has_left_category;
-  typedef Tag_true                               Has_merge_category;
-  typedef Tag_false                              Has_do_intersect_category;
+  using Has_left_category = Tag_true;
+  using Has_merge_category = Tag_true;
 
-  typedef Arr_oblivious_side_tag                 Left_side_category;
-  typedef Arr_oblivious_side_tag                 Bottom_side_category;
-  typedef Arr_oblivious_side_tag                 Top_side_category;
-  typedef Arr_oblivious_side_tag                 Right_side_category;
+  using Left_side_category = Arr_oblivious_side_tag;
+  using Bottom_side_category = Arr_oblivious_side_tag;
+  using Top_side_category = Arr_oblivious_side_tag;
+  using Right_side_category = Arr_oblivious_side_tag;
 
   // Traits-class types:
-  typedef _Bezier_curve_2<Rat_kernel,
-                          Alg_kernel,
-                          Nt_traits,
-                          Bounding_traits>             Curve_2;
+  using Curve_2 = _Bezier_curve_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
-  typedef _Bezier_x_monotone_2<Rat_kernel,
-                               Alg_kernel,
-                               Nt_traits,
-                               Bounding_traits>        X_monotone_curve_2;
+  using X_monotone_curve_2 = _Bezier_x_monotone_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
-  typedef _Bezier_point_2<Rat_kernel,
-                          Alg_kernel,
-                          Nt_traits,
-                          Bounding_traits>             Point_2;
+  using Point_2 = _Bezier_point_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
-  typedef typename X_monotone_curve_2::Multiplicity    Multiplicity;
-
+  using Multiplicity = typename X_monotone_curve_2::Multiplicity;
 
   // Type definition for the vertical-tangnecy and intersection point cache.
-  typedef _Bezier_cache<Nt_traits>                     Bezier_cache;
+  using Bezier_cache = _Bezier_cache<Nt_traits>;
 
 private:
 
   // Type definition for the bounded intersection points mapping.
-  typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
+  using Intersection_map = typename X_monotone_curve_2::Intersection_map;
 
   // Data members:
-  mutable Bezier_cache * p_cache;         /*!< Caches vertical tangency points
+  mutable Bezier_cache* p_cache;          /*!< Caches vertical tangency points
                                            * and intersection points that have
                                            * been computed in an exact manner.
                                            */
-  mutable Intersection_map * p_inter_map; /*!< Maps curve pairs to their
+  mutable Intersection_map* p_inter_map;  /*!< Maps curve pairs to their
                                            * intersection points.
                                            */
   bool m_owner;                           /*!< Does this instance own its cache
@@ -119,30 +104,26 @@ private:
                                            */
 
 public:
-
   /// \name Construction.
   //@{
 
-  /*! Default constructor. */
-  Arr_Bezier_curve_traits_2 ()
-  {
+  /*! constructs default. */
+  Arr_Bezier_curve_traits_2() {
     p_cache = new Bezier_cache;
     p_inter_map = new Intersection_map;
     m_owner = true;
   }
 
-  /*! Copy constructor. */
-  Arr_Bezier_curve_traits_2 (const Self& tr) :
-    p_cache (tr.p_cache),
-    p_inter_map (tr.p_inter_map),
-    m_owner (false)
+  /*! constructs copy. */
+  Arr_Bezier_curve_traits_2(const Self& tr) :
+    p_cache(tr.p_cache),
+    p_inter_map(tr.p_inter_map),
+    m_owner(false)
   {}
 
-  /*! Assignment operator. */
-  Self& operator= (const Self& tr)
-  {
-    if (this == &tr)
-      return (*this);
+  /*! assigns. */
+  Self& operator= (const Self& tr) {
+    if (this == &tr) return (*this);
 
     p_cache = tr.p_cache;
     p_inter_map = tr.p_inter_map;
@@ -150,11 +131,9 @@ public:
     return (*this);
   }
 
-  /*! Destructor. */
-  ~Arr_Bezier_curve_traits_2 ()
-  {
-    if (m_owner)
-    {
+  /*! destructs. */
+  ~Arr_Bezier_curve_traits_2() {
+    if (m_owner) {
       delete p_cache;
       delete p_inter_map;
     }
@@ -169,161 +148,112 @@ public:
   /*! \class Compare_x_2
    * The Compare_x_2 functor.
    */
-  class Compare_x_2
-  {
+  class Compare_x_2 {
   private:
-    const Bezier_cache   *p_cache;
+    const Bezier_cache* p_cache;
 
   public:
+    /*! constructs. */
+    Compare_x_2(const Bezier_cache* cache) : p_cache (cache) {}
 
-    /*! Constructor. */
-    Compare_x_2 (const Bezier_cache *cache) :
-      p_cache (cache)
-    {}
-
-    /*!
-     * Compare the x-coordinates of two points.
+    /*! compares the x-coordinates of two points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2);
      *         SMALLER if x(p1) < x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
-    {
-      return (p1.compare_x (p2,
-                            const_cast<Bezier_cache&> (*p_cache)));
-    }
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+    { return (p1.compare_x(p2, const_cast<Bezier_cache&> (*p_cache))); }
   };
 
-  /*! Get a Compare_x_2 functor object. */
-  Compare_x_2 compare_x_2_object () const
-  {
-    return (Compare_x_2 (p_cache));
-  }
+  /*! obtains a `Compare_x_2` functor object. */
+  Compare_x_2 compare_x_2_object() const { return (Compare_x_2 (p_cache)); }
 
   /*! \class Compare_xy_2
    * The Compare_xy_2 functor.
    */
-  class Compare_xy_2
-  {
+  class Compare_xy_2 {
   private:
-    const Bezier_cache   *p_cache;
+    const Bezier_cache* p_cache;
 
   public:
+    /*! constructs. */
+    Compare_xy_2(const Bezier_cache* cache) : p_cache (cache) {}
 
-    /*! Constructor. */
-    Compare_xy_2 (const Bezier_cache *cache) :
-      p_cache (cache)
-    {}
-
-    /*!
-     * Compares two points lexigoraphically: by x, then by y.
+    /*! compares two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
      *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
      *         EQUAL if the two points are equal.
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
-    {
-      return (p1.compare_xy (p2,
-                             const_cast<Bezier_cache&> (*p_cache)));
-    }
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+    { return (p1.compare_xy(p2, const_cast<Bezier_cache&> (*p_cache))); }
   };
 
-  /*! Get a Compare_xy_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () const
-  {
-    return (Compare_xy_2 (p_cache));
-  }
+  /*! obtains a `Compare_xy_2` functor object. */
+  Compare_xy_2 compare_xy_2_object() const { return (Compare_xy_2 (p_cache)); }
 
   /*! \class Construct_min_vertex_2
    * The Construct_min_vertex_2 functor.
    */
-  class Construct_min_vertex_2
-  {
+  class Construct_min_vertex_2 {
   public:
-    /*!
-     * Get the left endpoint of the x-monotone curve (segment).
+    /*! obtains the left endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \return The left endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    {
-      return (cv.left());
-    }
+    const Point_2& operator()(const X_monotone_curve_2 & cv) const { return (cv.left()); }
   };
 
-  /*! Get a Construct_min_vertex_2 functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object () const
-  {
-    return Construct_min_vertex_2();
-  }
+  /*! obtains a `Construct_min_vertex_2` functor object. */
+  Construct_min_vertex_2 construct_min_vertex_2_object() const
+  { return Construct_min_vertex_2(); }
 
   /*! \class Construct_max_vertex_2
    * The Construct_max_vertex_2 functor.
    */
-  class Construct_max_vertex_2
-  {
+  class Construct_max_vertex_2 {
   public:
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
+    /*! obtains the right endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \return The right endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    {
-      return (cv.right());
-    }
+    const Point_2& operator()(const X_monotone_curve_2 & cv) const { return (cv.right()); }
   };
 
-  /*! Get a Construct_max_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object () const
-  {
-    return Construct_max_vertex_2();
-  }
+  /*! obtains a `Construct_max_vertex_2` functor object. */
+  Construct_max_vertex_2 construct_max_vertex_2_object() const
+  { return Construct_max_vertex_2(); }
 
   /*! \class Is_vertical_2
    * The Is_vertical_2 functor.
    */
-  class Is_vertical_2
-  {
+  class Is_vertical_2 {
   public:
-    /*!
-     * Check whether the given x-monotone curve is a vertical segment.
+    /*! checks whether the given x-monotone curve is a vertical segment.
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv) const
-    {
-      return (cv.is_vertical());
-    }
+    bool operator()(const X_monotone_curve_2& cv) const { return (cv.is_vertical()); }
   };
 
-  /*! Get an Is_vertical_2 functor object. */
-  Is_vertical_2 is_vertical_2_object () const
-  {
-    return Is_vertical_2();
-  }
+  /*! obtains an `Is_vertical_2` functor object. */
+  Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
   /*! \class Compare_y_at_x_2
    * The Compare_y_at_x_2 functor.
    */
-  class Compare_y_at_x_2
-  {
+  class Compare_y_at_x_2 {
   private:
-    const Bezier_cache   *p_cache;
+    const Bezier_cache* p_cache;
 
   public:
+    /*! constructs. */
+    Compare_y_at_x_2(const Bezier_cache* cache) : p_cache(cache) {}
 
-    /*! Constructor. */
-    Compare_y_at_x_2 (const Bezier_cache *cache) :
-      p_cache (cache)
-    {}
-
-    /*!
-     * Return the location of the given point with respect to the input curve.
+    /*! returns the location of the given point with respect to the input curve.
      * \param cv The curve.
      * \param p The point.
      * \pre p is in the x-range of cv.
@@ -331,37 +261,25 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    Comparison_result operator() (const Point_2& p,
-                                  const X_monotone_curve_2& cv) const
-    {
-      return (cv.point_position (p,
-                                 const_cast<Bezier_cache&> (*p_cache)));
-    }
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& cv) const
+    { return (cv.point_position(p, const_cast<Bezier_cache&>(*p_cache))); }
   };
 
-  /*! Get a Compare_y_at_x_2 functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object () const
-  {
-    return (Compare_y_at_x_2 (p_cache));
-  }
+  /*! obtains a `Compare_y_at_x_2` functor object. */
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return (Compare_y_at_x_2(p_cache)); }
 
   /*! \class Compare_y_at_x_left_2
    * The Compare_y_at_x_left_2 functor.
    */
-  class Compare_y_at_x_left_2
-  {
+  class Compare_y_at_x_left_2 {
   private:
-    const Bezier_cache   *p_cache;
+    const Bezier_cache* p_cache;
 
   public:
+    /*! constructs. */
+    Compare_y_at_x_left_2 (const Bezier_cache* cache) : p_cache(cache) {}
 
-    /*! Constructor. */
-    Compare_y_at_x_left_2 (const Bezier_cache *cache) :
-      p_cache (cache)
-    {}
-
-    /*!
-     * Compares the y value of two x-monotone curves immediately to the left
+    /*! compares the y value of two x-monotone curves immediately to the left
      * of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -371,38 +289,28 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2,
-                                  const Point_2& p) const
-    {
-      return (cv1.compare_to_left (cv2, p,
-                                   const_cast<Bezier_cache&> (*p_cache)));
-    }
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& p) const
+    { return (cv1.compare_to_left(cv2, p, const_cast<Bezier_cache&>(*p_cache))); }
   };
 
-  /*! Get a Compare_y_at_x_left_2 functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
-  {
-    return (Compare_y_at_x_left_2 (p_cache));
-  }
+  /*! obtains a `Compare_y_at_x_left_2` functor object. */
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
+  { return (Compare_y_at_x_left_2(p_cache)); }
 
   /*! \class Compare_y_at_x_right_2
    * The Compare_y_at_x_right_2 functor.
    */
-  class Compare_y_at_x_right_2
-  {
+  class Compare_y_at_x_right_2 {
   private:
-    const Bezier_cache   *p_cache;
+    const Bezier_cache* p_cache;
 
   public:
+    /*! constructs. */
+    Compare_y_at_x_right_2 (const Bezier_cache* cache) : p_cache(cache) {}
 
-    /*! Constructor. */
-    Compare_y_at_x_right_2 (const Bezier_cache *cache) :
-      p_cache (cache)
-    {}
-
-    /*!
-     * Compares the y value of two x-monotone curves immediately to the right
+    /*! compares the y value of two x-monotone curves immediately to the right
      * of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -412,67 +320,84 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  const X_monotone_curve_2& cv2,
-                                  const Point_2& p) const
-    {
-      return (cv1.compare_to_right (cv2, p,
-                                    const_cast<Bezier_cache&> (*p_cache)));
-    }
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& p) const
+    { return (cv1.compare_to_right(cv2, p, const_cast<Bezier_cache&>(*p_cache))); }
   };
 
-  /*! Get a Compare_y_at_x_right_2 functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
-  {
-    return (Compare_y_at_x_right_2 (p_cache));
-  }
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
+  { return (Compare_y_at_x_right_2(p_cache)); }
 
   /*! \class Equal_2
    * The Equal_2 functor.
    */
-  class Equal_2
-  {
+  class Equal_2 {
   private:
-    const Bezier_cache         *p_cache;
+    const Bezier_cache* p_cache;
 
   public:
+    /*! constructs. */
+    Equal_2(const Bezier_cache* cache) : p_cache(cache) {}
 
-    /*! Constructor. */
-    Equal_2 (const Bezier_cache *cache) :
-      p_cache (cache)
-    {}
-
-    /*!
-     * Check if the two x-monotone curves are the same (have the same graph).
+    /*! checks if the two x-monotone curves are the same (have the same graph).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2) const
-    {
-      return (cv1.equals (cv2,
-                          const_cast<Bezier_cache&> (*p_cache)));
-    }
+    bool operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const
+    { return (cv1.equals(cv2, const_cast<Bezier_cache&>(*p_cache))); }
 
-    /*!
-     * Check if the two points are the same.
+    /*! checks if the two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
      */
-    bool operator() (const Point_2& p1, const Point_2& p2) const
-    {
-      return (p1.equals (p2,
-                         const_cast<Bezier_cache&> (*p_cache)));
+    bool operator()(const Point_2& p1, const Point_2& p2) const
+    { return (p1.equals(p2, const_cast<Bezier_cache&>(*p_cache))); }
+  };
+
+  /*! obtains an `Equal_2` functor object. */
+  Equal_2 equal_2_object() const { return (Equal_2(p_cache)); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs.
+     * \param traits The traits.
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     * \todo Reimplement without using Intersect_2 to make robust (and efficient) with inexact constructions.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+      std::vector<Intersection_result> intersections;
+      m_traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersections));
+      auto empty = intersections.empty();
+      intersections.clear();
+      return ! empty;
     }
   };
 
-  /*! Get an Equal_2 functor object. */
-  Equal_2 equal_2_object () const
-  {
-    return (Equal_2 (p_cache));
-  }
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   //@}
 
   //! \name Intersections, subdivisions, and mergings
@@ -486,10 +411,10 @@ public:
     Bezier_cache* p_cache;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Make_x_monotone_2(Bezier_cache* cache) : p_cache(cache) {}
 
-    /*! Subdivide a given Bezier curve into x-monotone subcurves and insert them
+    /*! subdivides a given Bezier curve into x-monotone subcurves and insert them
      * into a given output iterator.
      * \param cv the curve.
      * \param oi an output iterator for the result. Its value type is a variant
@@ -497,31 +422,26 @@ public:
      * \return the past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator() (const Curve_2& B, OutputIterator oi) const
-    {
-      typedef std::variant<Point_2, X_monotone_curve_2>
-                                                Make_x_monotone_result;
-      typedef typename Bounding_traits::Vertical_tangency_point
-                                                Vertical_tangency_point;
+    OutputIterator operator()(const Curve_2& B, OutputIterator oi) const {
+      using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
+      using Vertical_tangency_point = typename Bounding_traits::Vertical_tangency_point;
 
       // Try to compute the bounds of the vertical tangency points.
-      Bounding_traits                           bound_tr;
-      typename Bounding_traits::Control_points  cpts;
-      std::list<Vertical_tangency_point>        vpt_bounds;
+      Bounding_traits bound_tr;
+      typename Bounding_traits::Control_points cpts;
+      std::list<Vertical_tangency_point> vpt_bounds;
 
-      std::copy (B.control_points_begin(), B.control_points_end(),
-                 std::back_inserter(cpts));
+      std::copy(B.control_points_begin(), B.control_points_end(), std::back_inserter(cpts));
 
-      bound_tr.compute_vertical_tangency_points
-        (cpts, std::back_inserter (vpt_bounds));
+      bound_tr.compute_vertical_tangency_points(cpts, std::back_inserter (vpt_bounds));
 
       // Construct Point_2 from bounded tangency points.
-      std::list<Point_2>                            vpts;
-      bool                                          app_ok = true;
+      std::list<Point_2> vpts;
+      bool app_ok = true;
 
       for (auto iter = vpt_bounds.begin(); iter != vpt_bounds.end(); ++iter) {
         const typename Bounding_traits::Bez_point_bound& bound = iter->bound;
-        const typename Bounding_traits::Bez_point_bbox&  bbox = iter->bbox;
+        const typename Bounding_traits::Bez_point_bbox& bbox = iter->bbox;
 
         if (! bound.can_refine) {
           // If we cannot refine the vertical-tangency bound anymore, then
@@ -535,7 +455,7 @@ public:
         Point_2 pt;
 
         if (bound.type == Bounding_traits::Bez_point_bound::RATIONAL_PT) {
-          CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL);
+          CGAL_assertion(CGAL::compare(bound.t_min, bound.t_max) == EQUAL);
           Rational t0 = bound.t_min;
 
           pt = Point_2 (B, t0);
@@ -559,15 +479,13 @@ public:
         // for handling end case of start point == end point.
 
         for (pit = vpts.begin(); pit != vpts.end(); ++pit) {
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, *pit,
-                                                            *p_cache));
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, *pit, *p_cache));
           xid++;
           p0 = *pit;
         }
 
         Point_2    p1(B, xid, Rational(1)); // A rational end point.
-        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
-                                                          *p_cache));
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1, *p_cache));
         return (oi);
       }
 
@@ -575,8 +493,7 @@ public:
       // points in an exact manner. We do this by considering all t-values
       // on B(t) = (X(t), Y(t)), such that X'(t) = 0.
       const typename Bezier_cache::Vertical_tangency_list&
-        vt_list = p_cache->get_vertical_tangencies(B.id(), B.x_polynomial(),
-                                                   B.x_norm());
+        vt_list = p_cache->get_vertical_tangencies(B.id(), B.x_polynomial(), B.x_norm());
 
       // Create the x-monotone subcurves.
       Point_2 p1;
@@ -586,161 +503,125 @@ public:
 
       for (auto it = vt_list.begin(); it != vt_list.end(); ++it) {
         p1 = Point_2(B, *it);
-        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
-                                                          *p_cache));
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1, *p_cache));
         xid++;
         p0 = p1;
       }
 
       // Create the final subcurve.
       p1 = Point_2(B, xid, Rational(1));
-      *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
-                                                        *p_cache));
+      *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1, *p_cache));
       return oi;
     }
   };
 
-  /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return (Make_x_monotone_2 (p_cache)); }
+  /*! obtains a `Make_x_monotone_2` functor object. */
+  Make_x_monotone_2 make_x_monotone_2_object() const { return (Make_x_monotone_2(p_cache)); }
 
   /*! \class Split_2
    * The Split_2 functor.
    */
-  class Split_2
-  {
+  class Split_2 {
   public:
-    /*!
-     * Split a given x-monotone curve at a given point into two sub-curves.
+    /*! splits a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
      * \param p The split point.
      * \param c1 Output: The left resulting subcurve (p is its right endpoint).
      * \param c2 Output: The right resulting subcurve (p is its left endpoint).
      * \pre p lies on cv but is not one of its end-points.
      */
-    void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
-    {
-      cv.split (p, c1, c2);
-      return;
-    }
+    void operator()(const X_monotone_curve_2& cv, const Point_2 & p,
+                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
+    { cv.split(p, c1, c2); }
   };
 
-  /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () const
-  {
-    return Split_2();
-  }
+  /*! obtains a `Split_2` functor object. */
+  Split_2 split_2_object() const { return Split_2(); }
 
   /*! \class Intersect_2
    * The Intersect_2 functor.
    */
-  class Intersect_2
-  {
+  class Intersect_2 {
   private:
-    Bezier_cache         *p_cache;
-    Intersection_map     *p_imap;
+    Bezier_cache* p_cache;
+    Intersection_map* p_imap;
 
   public:
-
-    /*! Constructor. */
-    Intersect_2 (Bezier_cache *cache, Intersection_map *imap) :
-      p_cache (cache),
-      p_imap (imap)
+    /*! constructs. */
+    Intersect_2(Bezier_cache* cache, Intersection_map* imap) :
+      p_cache(cache),
+      p_imap(imap)
     {}
 
-    /*!
-     * Find the intersections of the two given curves and insert them to the
+    /*! finds the intersections of the two given curves and insert them to the
      * given output iterator.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const X_monotone_curve_2& cv1,
-                               const X_monotone_curve_2& cv2,
-                               OutputIterator oi) const
-    {
-      return (cv1.intersect (cv2, *p_imap, *p_cache, oi));
-    }
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              OutputIterator oi) const
+    { return (cv1.intersect(cv2, *p_imap, *p_cache, oi)); }
   };
 
-  /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
-  {
-    return (Intersect_2 (p_cache, p_inter_map));
-  }
+  /*! obtains an `Intersect_2` functor object. */
+  Intersect_2 intersect_2_object() const { return (Intersect_2(p_cache, p_inter_map)); }
 
   /*! \class Are_mergeable_2
    * The Are_mergeable_2 functor.
    */
-  class Are_mergeable_2
-  {
+  class Are_mergeable_2 {
   public:
-    /*!
-     * Check whether it is possible to merge two given x-monotone curves.
+    /*! checks whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are mergeable - if they are supported
      *         by the same line and share a common endpoint; (false) otherwise.
      */
-    bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2) const
-    {
-      return (cv1.can_merge_with (cv2));
-    }
+    bool operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const
+    { return (cv1.can_merge_with (cv2)); }
   };
 
-  /*! Get an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object () const
-  {
-    return Are_mergeable_2();
-  }
+  /*! obtains an `Are_mergeable_2` functor object. */
+  Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(); }
 
   /*! \class Merge_2
    * A functor that merges two x-monotone arcs into one.
    */
-  class Merge_2
-  {
-    typedef Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
-                                      Nt_traits, Bounding_traits>       Traits;
+  class Merge_2 {
+    using Traits = Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
 
-    friend class Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
-                                           Nt_traits, Bounding_traits>;
+    friend class Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
   public:
-    /*!
-     * Merge two given x-monotone curves into a single curve (segment).
+    /*! merges two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
      * \pre The two curves are mergeable.
      */
-    void operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2,
-                     X_monotone_curve_2& c) const
-    {
+    void operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2,
+                    X_monotone_curve_2& c) const {
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
 
-      c = cv1.merge (cv2);
-      return;
+      c = cv1.merge(cv2);
     }
   };
 
-  /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object () const
-  {
-    return Merge_2(this);
-  }
+  /*! obtains a `Merge_2` functor object. */
+  Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.
@@ -749,48 +630,37 @@ public:
   /*! \class Compare_endpoints_xy_2
    * The Compare_endpoints_xy_2 functor.
    */
-  class Compare_endpoints_xy_2
-  {
+  class Compare_endpoints_xy_2 {
   public:
-    /*!
-     * Compare the endpoints of an $x$-monotone curve lexicographically.
+    /*! compares the endpoints of an $x$-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
      * \param cv The curve.
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv) const
-    {
-      if (cv.is_directed_right())
-        return (SMALLER);
-      else
-        return (LARGER);
+    Comparison_result operator() (const X_monotone_curve_2& cv) const {
+      if (cv.is_directed_right()) return (SMALLER);
+      else return (LARGER);
     }
   };
 
-  /*! Get a Compare_endpoints_xy_2 functor object. */
-  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  {
-    return Compare_endpoints_xy_2();
-  }
+  /*! obtains a `Compare_endpoints_xy_2` functor object. */
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const { return Compare_endpoints_xy_2(); }
 
   class Trim_2 {
-    typedef Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
-                                      Nt_traits, Bounding_traits>       Traits;
+    using Traits = Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits, Bounding_traits>;
 
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Trim_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
                                            Nt_traits, Bounding_traits>;
-    /*!\brief
-     * Returns a trimmed version of an arc
-     *
+    /*! returns a trimmed version of an arc
      * \param xcv The arc
      * \param src the new first endpoint
      * \param tgt the new second endpoint
@@ -802,8 +672,7 @@ public:
   public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                   const Point_2& src,
-                                  const Point_2& tgt) const
-    {
+                                  const Point_2& tgt) const {
       // make functor objects
       CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
                              m_traits.compare_y_at_x_2_object());
@@ -816,45 +685,35 @@ public:
       CGAL_precondition(! equal_2(src, tgt));
 
       //check if the orientation conforms to the src and tgt.
-      if( xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER)
-        return (xcv.trim(tgt, src));
-      else if(! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER)
-        return (xcv.trim(tgt, src));
+      if (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) return (xcv.trim(tgt, src));
+      else if (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) return (xcv.trim(tgt, src));
       else return (xcv.trim(src, tgt));
     }
   };
 
-  /*! Obtain a Trim_2 functor object. */
+  /*! obtains a `Trim_2` functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
 
   /*! \class Construct_opposite_2
    * The Construct_opposite_2 functor.
    */
-  class Construct_opposite_2
-  {
+  class Construct_opposite_2 {
   public:
-
-    /*!
-     * Construct an opposite x-monotone curve (with swapped source and target).
+    /*! constructs an opposite x-monotone curve (with swapped source and target).
      * \param cv The curve.
      * \return The opposite curve.
      */
-    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv)
-    {
-      return (cv.flip());
-    }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) { return (cv.flip()); }
   };
 
-  /*! Get a Construct_opposite_2 functor object. */
-  Construct_opposite_2 construct_opposite_2_object() const
-  {
-    return Construct_opposite_2();
-  }
+  /*! obtains a `Construct_opposite_2` functor object. */
+  Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(); }
 
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
+
 #endif

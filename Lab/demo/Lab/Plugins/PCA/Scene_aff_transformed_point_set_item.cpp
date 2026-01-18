@@ -8,7 +8,7 @@
 
 using namespace CGAL::Three;
 
-// const std::size_t limit_fast_drawing = 300000; //arbitraty large value
+// const std::size_t limit_fast_drawing = 300000; //arbitrary large value
 
 Scene_aff_transformed_point_set_item::
 Scene_aff_transformed_point_set_item(Scene_points_with_normal_item* pts_item,

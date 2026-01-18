@@ -105,7 +105,7 @@ private:
 
 public:
 
-  /*! Default constructor. */
+  /*! constructs default. */
   _Bezier_curve_2_rep () :
     _no_self_inter (true),
     p_polyX(nullptr),
@@ -114,7 +114,7 @@ public:
     p_normY(nullptr)
   {}
 
-  /*! Copy constructor (isn't really used). */
+  /*! constructs copy (isn't really used). */
   _Bezier_curve_2_rep (const _Bezier_curve_2_rep& other) :
     _ctrl_pts(other._ctrl_pts),
     _bbox(other._bbox),
@@ -134,8 +134,7 @@ public:
       p_normY = new Integer(*(other.p_normY));
   }
 
-  /*!
-   * Constructor from a given range of control points.
+  /*! constructs from a given range of control points.
    * \param pts_begin An iterator pointing to the first point in the range.
    * \param pts_end A past-the-end iterator for the range.
    * \pre The value-type of the input iterator must be Rat_kernel::Point_2.
@@ -206,7 +205,7 @@ public:
     _no_self_inter = ! bound_tr.may_have_self_intersections (_ctrl_pts);
   }
 
-  /*! Destructor. */
+  /*! destructs. */
   ~_Bezier_curve_2_rep ()
   {
     if (p_polyX != nullptr)
@@ -222,14 +221,14 @@ public:
   /// \name Access the polynomials (lazily evaluated).
   //@{
 
-  /*! Check if the polynomials are already constructed. */
+  /*! checks if the polynomials are already constructed. */
   bool has_polynomials () const
   {
     return (p_polyX != nullptr && p_normX != nullptr &&
             p_polyY != nullptr && p_normY != nullptr);
   }
 
-  /*! Get the polynomial X(t). */
+  /*! obtains the polynomial X(t). */
   const Polynomial& x_polynomial () const
   {
     if (p_polyX == nullptr)
@@ -238,7 +237,7 @@ public:
     return (*p_polyX);
   }
 
-  /*! Get the normalizing factor for X(t). */
+  /*! obtains the normalizing factor for X(t). */
   const Integer& x_norm () const
   {
     if (p_normX == nullptr)
@@ -247,7 +246,7 @@ public:
     return (*p_normX);
   }
 
-  /*! Get the polynomial Y(t). */
+  /*! obtains the polynomial Y(t). */
   const Polynomial& y_polynomial () const
   {
     if (p_polyY == nullptr)
@@ -256,7 +255,7 @@ public:
     return (*p_polyY);
   }
 
-  /*! Get the normalizing factor for Y(t). */
+  /*! obtains the normalizing factor for Y(t). */
   const Integer& y_norm () const
   {
     if (p_normY == nullptr)
@@ -268,14 +267,12 @@ public:
 
 private:
 
-  /*!
-   * Construct the representation of X(t) and Y(t).
+  /*! construct the representation of X(t) and Y(t).
    * The function is declared as "const" as it changes only mutable members.
    */
   void _construct_polynomials () const;
 
-  /*!
-   * Compute the value of n! / (j! k! (n-k-j)!).
+  /*! computes the value of n! / (j! k! (n-k-j)!).
    */
   Integer _choose (int n, int j, int k) const;
 
@@ -324,22 +321,19 @@ public:
 
 public:
 
-  /*!
-   * Default constructor.
+  /*!constructs default.
    */
   _Bezier_curve_2 () :
     Bcv_handle (Bcv_rep())
   {}
 
-  /*!
-   * Copy constructor.
+  /*! constructs copy.
    */
   _Bezier_curve_2 (const Self& bc) :
     Bcv_handle (bc)
   {}
 
-  /*!
-   * Constructor from a given range of control points.
+  /*! constructs from a given range of control points.
    * \param pts_begin An iterator pointing to the first point in the range.
    * \param pts_end A past-the-end iterator for the range.
    * \pre The value-type of the input iterator must be Rat_kernel::Point_2.
@@ -350,8 +344,7 @@ public:
     Bcv_handle (Bcv_rep (pts_begin, pts_end))
   {}
 
-  /*!
-   * Assignment operator.
+  /*! assigns.
    */
   Self& operator= (const Self& bc)
   {
@@ -362,56 +355,49 @@ public:
     return (*this);
   }
 
-  /*!
-   * Get a unique curve ID (based on the actual representation pointer).
+  /*! obtains a unique curve ID (based on the actual representation pointer).
    */
   size_t id () const
   {
     return (reinterpret_cast<size_t> (this->ptr()));
   }
 
-  /*!
-   * Get the polynomial for the x-coordinates of the curve.
+  /*! obtains the polynomial for the x-coordinates of the curve.
    */
   const Polynomial& x_polynomial () const
   {
     return (this->_rep().x_polynomial());
   }
 
-  /*!
-   * Get the normalizing factor for the x-coordinates.
+  /*! obtains the normalizing factor for the x-coordinates.
    */
   const Integer& x_norm () const
   {
     return (this->_rep().x_norm());
   }
 
-  /*!
-   * Get the polynomial for the y-coordinates of the curve.
+  /*! obtains the polynomial for the y-coordinates of the curve.
    */
   const Polynomial& y_polynomial () const
   {
     return (this->_rep().y_polynomial());
   }
 
-  /*!
-   * Get the normalizing factor for the y-coordinates.
+  /*! obtains the normalizing factor for the y-coordinates.
    */
   const Integer& y_norm () const
   {
     return (this->_rep().y_norm());
   }
 
-  /*!
-   * Get the number of control points inducing the Bezier curve.
+  /*! obtains the number of control points inducing the Bezier curve.
    */
   unsigned int number_of_control_points () const
   {
     return static_cast<unsigned int>((this->_rep()._ctrl_pts.size()));
   }
 
-  /*!
-   * Get the i'th control point.
+  /*! obtains the i-th control point.
    * \pre i must be between 0 and n - 1, where n is the number of control
    *      points.
    */
@@ -422,46 +408,40 @@ public:
     return ((this->_rep()._ctrl_pts)[i]);
   }
 
-  /*!
-   * Get an iterator for the first control point.
+  /*! obtains an iterator for the first control point.
    */
   Control_point_iterator control_points_begin () const
   {
     return (this->_rep()._ctrl_pts.begin());
   }
 
-  /*!
-   * Get a past-the-end iterator for control points.
+  /*! obtains a past-the-end iterator for control points.
    */
   Control_point_iterator control_points_end () const
   {
     return (this->_rep()._ctrl_pts.end());
   }
 
-  /*!
-   * Check if both curve handles refer to the same object.
+  /*! checks if both curve handles refer to the same object.
    */
   bool is_same (const Self& bc) const
   {
     return (this->identical (bc));
   }
 
-  /*!
-   * Compute a point of the Bezier curve given a rational t-value.
+  /*! computes a point of the Bezier curve given a rational t-value.
    * \param t The given t-value.
    * \return The point B(t).
    */
   Rat_point_2 operator() (const Rational& t) const;
 
-  /*!
-   * Compute a point of the Bezier curve given an algebraic t-value.
+  /*! computes a point of the Bezier curve given an algebraic t-value.
    * \param t The given t-value.
    * \return The point B(t).
    */
   Alg_point_2 operator() (const Algebraic& t) const;
 
-  /*!
-   * Sample a portion of the curve (for drawing purposes, etc.).
+  /*! samples a portion of the curve (for drawing purposes, etc.).
    * \param t_start The t-value to start with.
    * \param t_end The t-value to end at.
    * \param n_samples The required number of samples.
@@ -507,8 +487,7 @@ public:
     return (oi);
   }
 
-  /*!
-   * Compute all parameter values t such that the x-coordinate of B(t) is x0.
+  /*! computes all parameter values t such that the x-coordinate of B(t) is x0.
    * Note that the function does not return only values between 0 and 1, so
    * the output t-values may belong to the imaginary continuation of the curve.
    * \param x0 The given x-coordinate.
@@ -525,8 +504,7 @@ public:
                              oi));
   }
 
-  /*!
-   * Compute all parameter values t such that the y-coordinate of B(t) is y0.
+  /*! computes all parameter values t such that the y-coordinate of B(t) is y0.
    * Note that the function does not return only values between 0 and 1, so
    * the output t-values may belong to the imaginary continuation of the curve.
    * \param y0 The given y-coordinate.
@@ -542,21 +520,18 @@ public:
                              oi));
   }
 
-  /*!
-   * Check if the two curves have the same support.
+  /*! checks if the two curves have the same support.
    */
   bool has_same_support (const Self& bc) const;
 
-  /*!
-   * Get the bounding box of the curve.
+  /*! obtains the bounding box of the curve.
    */
   const Bbox_2& bbox () const
   {
     return (this->_rep()._bbox);
   }
 
-  /*!
-   * Check if the curve contains not self intersections.
+  /*! checks if the curve contains not self intersections.
    * Note that there may not be any self intersections even if the
    * function returns true (but not vice versa).
    */
@@ -578,8 +553,7 @@ private:
     return (*(this->ptr()));
   }
 
-  /*!
-   * Compute all parameter values t, such that P(t) = val.
+  /*! computes all parameter values t, such that P(t) = val.
    * \param poly The polynomial.
    * \param norm Its normalizing factor.
    * \param val The required value.
@@ -618,8 +592,7 @@ private:
   }
 };
 
-/*!
- * Exporter for Bezier curves.
+/*! exports a Bezier curves.
  */
 template <class Rat_kernel, class Alg_kernel, class Nt_traits,
           class Bounding_traits>
@@ -638,8 +611,7 @@ operator<< (std::ostream& os,
   return (os);
 }
 
-/*!
- * Importer for Bezier curves.
+/*! imports a Bezier curves.
  */
 template <class Rat_kernel, class Alg_kernel, class Nt_traits,
           class Bounding_traits>
@@ -709,7 +681,7 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
     px = pts_begin->x();
     py = pts_begin->y();
 
-    // By simplifying (1 - t)^(n-k) we obtain that the k'th expression of
+    // By simplifying (1 - t)^(n-k) we obtain that the k-th expression of
     // the above sum is given by:
     //
     //     n-k
@@ -800,7 +772,7 @@ typename _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::Rat_point_2
 _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
         (const Rational& t) const
 {
-  // Check for extermal t values (either 0 or 1).
+  // Check for external t values (either 0 or 1).
   const CGAL::Sign   sign_t = CGAL::sign (t);
 
   CGAL_precondition (sign_t != NEGATIVE);
@@ -851,7 +823,7 @@ typename _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::Alg_point_2
 _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
           (const Algebraic& t) const
 {
-  // Check for extermal t values (either 0 or 1).
+  // Check for external t values (either 0 or 1).
   Nt_traits          nt_traits;
   const CGAL::Sign   sign_t = CGAL::sign (t);
 
@@ -947,6 +919,6 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
   return (true);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -26,7 +26,7 @@ is uniquely defined by its coefficients \f$\alpha\f$ and \f$\beta\f$.
 Considering the set of generators \f$\mathcal A = [a, \overline{b}, c, \overline{d}, \overline{a},
 b, \overline{c}, d]\f$ as an alphabet, a translation \f$g\f$ in \f$\mathcal G\f$ can be seen as a
 word on the alphabet \f$\mathcal A\f$. Each letter of this alphabet is represented as an unsigned
-integer from from 0 to 7, and each word (i.e., translation) is a sequence of letters.
+integer from 0 to 7, and each word (i.e., translation) is a sequence of letters.
 */
 
 template <typename FT = CORE::Expr>
@@ -124,7 +124,7 @@ public:
                 Comparison operator.
                  Each translation \f$g\f$ of \f$\mathcal G\f$, when applied to the octagon \f$\mathcal D_O\f$,
                  produces a copy of \f$\mathcal D_O\f$ labeled by the translation \f$g\f$. The copies of
-                 \f$\mathcal D_O\f$ incident to \f$\mathcal D_O\f$ are naturally ordered counter-clockwise around
+                 \f$\mathcal D_O\f$ incident to \f$\mathcal D_O\f$ are naturally ordered counterclockwise around
                  \f$\mathcal D_O\f$. The comparison operator compares two translations based on the ordering
                  of the copies of \f$\mathcal D_O\f$ that they produce. For more details, see Section
                  \ref P4HT2_representation of the User manual.

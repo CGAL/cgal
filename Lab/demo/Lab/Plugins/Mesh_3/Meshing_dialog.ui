@@ -31,7 +31,6 @@
      <property name="font">
       <font>
        <pointsize>15</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -101,6 +100,29 @@
       <string>Sharp features</string>
      </property>
      <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
+      <item row="8" column="0">
+       <widget class="QLabel" name="edgeMinSizingLabel">
+        <property name="text">
+         <string>Edge min size</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="protectLabel">
+        <property name="text">
+         <string>&amp;Protect sharp edges</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>protect</cstring>
+        </property>
+       </widget>
+      </item>
       <item row="7" column="1">
        <widget class="DoubleEdit" name="edgeSizing">
         <property name="text">
@@ -110,6 +132,36 @@
       </item>
       <item row="1" column="1">
        <widget class="QComboBox" name="protectEdges"/>
+      </item>
+      <item row="7" column="2">
+       <widget class="QCheckBox" name="noEdgeSizing">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="edgeApproxLabel">
+        <property name="text">
+         <string>Edge approximation error</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="edgeLabel">
+        <property name="text">
+         <string>Edge &amp;size</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>edgeSizing</cstring>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="sharpEdgesAngleLabel">
@@ -127,10 +179,20 @@
         </property>
        </widget>
       </item>
+      <item row="8" column="1">
+       <widget class="DoubleEdit" name="edgeMinSizing"/>
+      </item>
       <item row="3" column="1">
        <widget class="DoubleEdit" name="sharpEdgesAngle">
         <property name="text">
          <string>60.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QCheckBox" name="noEdgeMinSizing">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -144,54 +206,11 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="protectLabel">
-        <property name="text">
-         <string>&amp;Protect sharp edges</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>protect</cstring>
-        </property>
-       </widget>
+      <item row="9" column="1">
+       <widget class="DoubleEdit" name="edgeApprox"/>
       </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="edgeLabel">
-        <property name="text">
-         <string>Edge &amp;size</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>edgeSizing</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2">
-       <widget class="QCheckBox" name="noEdgeSizing">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="edgeMinSizingLabel">
-        <property name="text">
-         <string>Edge min size</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1">
-       <widget class="DoubleEdit" name="edgeMinSizing"/>
-      </item>
-      <item row="8" column="2">
-       <widget class="QCheckBox" name="noEdgeMinSizing">
+      <item row="9" column="2">
+       <widget class="QCheckBox" name="noEdgeApprox">
         <property name="text">
          <string/>
         </property>
@@ -216,7 +235,7 @@
       <item row="10" column="0" colspan="3">
        <widget class="QFrame" name="advanced">
         <property name="visible">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
