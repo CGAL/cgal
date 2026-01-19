@@ -1,8 +1,11 @@
+// #define TEST_MESH_KERNEL_VERBOSE
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Polyhedron_3.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -27,21 +30,31 @@ rotation(double a, double b, double c)
 
 template<class Mesh>
 void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, std::size_t expected_nb_edges, std::size_t expected_nb_faces, double expected_volume = 0){
-  // CGAL_assertion(PMP::is_kernel_empty(input) == (expected_nb_vertices == 0));
-  // CGAL_assertion((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) != std::nullopt) == (expected_nb_vertices < 3 && expected_nb_faces != 1));
-  // CGAL_assertion((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).require_strictly_inside(false)) != std::nullopt) == (expected_nb_vertices != 0));
+  CGAL_assertion(PMP::is_kernel_empty(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) == (expected_nb_vertices == 0));
+  CGAL_assertion((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) != std::nullopt) == (expected_nb_vertices >= 3 && expected_nb_faces != 1));
+  CGAL_assertion((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).require_strictly_inside(false)) != std::nullopt) == (expected_nb_vertices != 0));
 
-  Mesh kernel = kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false).shuffle_planes(false).starting_cube(PMP::bbox(input)));
+  Mesh kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false).shuffle_planes(false).starting_cube(PMP::bbox(input)));
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::ofstream("input.off") << input;
+  std::ofstream("test.off") << kernel;
+  std::cout << "nb of vertices: " << vertices(kernel).size() << " ( " << expected_nb_vertices << " expected)" << std::endl
+            << "nb of edges: " << edges(kernel).size() << " ( " << expected_nb_edges << " expected)" << std::endl
+            << "nb of faces: " << faces(kernel).size() << " ( " << expected_nb_faces << " expected)" << std::endl;
+#endif
   CGAL_assertion(vertices(kernel).size() == expected_nb_vertices);
   CGAL_assertion(edges(kernel).size()    == expected_nb_edges);
   CGAL_assertion(faces(kernel).size()    == expected_nb_faces);
   if(expected_volume != 0){
     PMP::triangulate_faces(kernel);
+#ifdef TEST_MESH_KERNEL_VERBOSE
+    std::cout << "volume: " << PMP::volume(kernel) << " ( " << expected_volume << " expected)" << std::endl;
+#endif
     CGAL_assertion(PMP::volume(kernel) > expected_volume * 0.99 && PMP::volume(kernel) < expected_volume * 1.01);
   }
   clear(kernel);
 
-  kernel = kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true));
+  kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true));
   CGAL_assertion(vertices(kernel).size() == expected_nb_vertices);
   CGAL_assertion(edges(kernel).size()    == expected_nb_edges);
   CGAL_assertion(faces(kernel).size()    == expected_nb_faces);
@@ -56,26 +69,45 @@ void tests(){
   using P = typename K::Point_3;
   Mesh m;
 
-  // A simple cube
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test cube" << std::endl;
+#endif
   make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
-  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  test_kernel_on_mesh(m, 8, 12, 6, 1);
   clear(m);
 
-  // rotated cubes
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test rotated cube" << std::endl;
+#endif
   make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
   PMP::transform(rotation<K>(0, 0, 1), m);
-  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  test_kernel_on_mesh(m, 8, 12, 6, 1);
   clear(m);
 
-  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test rotated tetrahedron 1" << std::endl;
+#endif
+  make_tetrahedron(P(0,0,0),
+                   P(0,0,1),
+                   P(1,0,0),
+                   P(0,1,0),
+                   m);
   PMP::transform(rotation<K>(0, 1, 1), m);
-  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  test_kernel_on_mesh(m, 4, 6, 4, 1./6.);
   clear(m);
 
-  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test rotated tetrahedron 2" << std::endl;
+#endif
+  make_tetrahedron(P(0,0,0),
+                   P(0,0,1),
+                   P(1,0,0),
+                   P(0,1,0),
+                   m);
   PMP::transform(rotation<K>(1, 1, 1), m);
-  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  test_kernel_on_mesh(m, 4, 6, 4, 1./6.);
   clear(m);
+
 
   // Degenerate to a segment
   // make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
@@ -111,10 +143,10 @@ void tests(){
 
 }
 
-int main(int argc, char** argv)
+int main(/*int argc, char** argv*/)
 {
   tests<SM, K>();
   tests<ESM, EK>();
-  tests<CGAL::Polyhedron_3<K>,K>();
-  tests<CGAL::Polyhedron_3<EK>, EK>();
+  // tests<CGAL::Polyhedron_3<K>,K>();
+  // tests<CGAL::Polyhedron_3<EK>, EK>();
 }

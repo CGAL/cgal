@@ -124,7 +124,6 @@ kernel(const PolygonMesh& pm,
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine(seed));
 
-    size_t i=0;
   // Cut iteratively the temporary kernel by halfspaces
   for(auto f: planes){
     auto h = halfedge(f, pm);
