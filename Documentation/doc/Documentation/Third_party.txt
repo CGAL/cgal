@@ -245,7 +245,7 @@ The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
 \suitesparse is a set of sparse-matrix-related packages written or co-authored by Tim Davis, available at <A HREF="https://github.com/DrTimothyAldenDavis/SuiteSparse">https://github.com/DrTimothyAldenDavis/SuiteSparse</A>.
 
-\suitesparse is used by the Orbifold Tutte Embedding and ARAP parametrization, i.e., in the \ref PkgSurfaceMeshParametrization package.
+\suitesparse is used by the Orbifold Tutte Embedding and ARAP parameterization, i.e., in the \ref PkgSurfaceMeshParameterization package.
 
 \note SuiteSparse on Windows can easily be installed by \code
 vcpkg install suitesparse
