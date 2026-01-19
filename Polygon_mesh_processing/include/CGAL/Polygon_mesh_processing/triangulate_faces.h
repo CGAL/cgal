@@ -45,8 +45,10 @@ namespace Triangulate_faces {
 */
 template<class PolygonMesh>
 struct Default_visitor
+#ifndef DOXYGEN_RUNNING
   : public Hole_filling::Default_visitor
 {
+
   typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
 
@@ -54,6 +56,9 @@ struct Default_visitor
   void after_subface_creations() {}
   void after_subface_created(face_descriptor /*f_new*/) {}
 };
+#else
+;
+#endif
 
 } // namespace Triangulate_faces
 

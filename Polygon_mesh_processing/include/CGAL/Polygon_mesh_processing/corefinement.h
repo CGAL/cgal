@@ -64,7 +64,6 @@ template <class TriangleMesh,
           class VPM1 = typename boost::property_map<TriangleMesh, vertex_point_t>::type,
           class VPM2 = typename boost::property_map<TriangleMesh, vertex_point_t>::type>
 struct Non_manifold_output_visitor
-  : public Default_visitor<TriangleMesh>
 {
 /**
  * constructor where meshes are exactly the same as the one passed a function in \ref PMP_corefinement_grp.
