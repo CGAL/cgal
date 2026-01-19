@@ -468,6 +468,7 @@ namespace Triangulate_polygons {
 *   overridden.
 */
 struct Default_visitor
+#ifndef DOXYGEN_RUNNING
   : public Hole_filling::Default_visitor
 {
   template <typename Polygon>
@@ -478,6 +479,9 @@ struct Default_visitor
 
   void after_subface_creations() {}
 };
+#else
+;
+#endif
 
 } // namespace Triangulate_polygons
 
