@@ -363,12 +363,12 @@ create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
 
 template<class BGT, class Subdomain_index, class Surface_patch_index>
 template <typename Image_word_type,
-          typename FT, typename FT2, typename Functor>
+          typename FT_, typename FT2, typename Functor>
 typename Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::Function_type
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 create_gray_image_wrapper_with_known_word_type
-(const CGAL::Image_3& image,
- const FT& iso_value,
+(const CGAL::Image_3& image ,
+ const FT_& iso_value,
  const Functor& image_values_to_subdomain_indices,
  const FT2& value_outside)
 {
@@ -388,11 +388,11 @@ create_gray_image_wrapper_with_known_word_type
 }
 
 template<class BGT, class Subdomain_index, class Surface_patch_index>
-template <typename FT, typename FT2, typename Functor>
+template <typename FT_, typename FT2, typename Functor>
 typename Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::Function_type
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 create_gray_image_wrapper(const CGAL::Image_3& image,
-                          const FT& iso_value,
+                          const FT_& iso_value,
                           const Functor& image_values_to_subdomain_indices,
                           const FT2& value_outside)
 {
@@ -411,13 +411,13 @@ create_gray_image_wrapper(const CGAL::Image_3& image,
 
 template<class BGT, class Subdomain_index, class Surface_patch_index>
 template <typename Image_word_type,
-          typename FT, typename Functor>
+          typename FT_, typename Functor>
 typename Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::Function_type
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 create_labeled_image_wrapper_with_known_word_type
 (const CGAL::Image_3& image,
  const Functor& image_values_to_subdomain_indices,
- const FT& value_outside)
+ const FT_& value_outside)
 {
   using Mesh_3::internal::Create_labeled_image_values_to_subdomain_indices;
   typedef Create_labeled_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
@@ -435,14 +435,14 @@ create_labeled_image_wrapper_with_known_word_type
 
 template<class BGT, class Subdomain_index, class Surface_patch_index>
 template <typename Image_word_type,
-          typename FT, typename Functor>
+          typename FT_, typename Functor>
 typename Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::Function_type
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 create_weighted_labeled_image_wrapper_with_know_word_type
 (const CGAL::Image_3& image,
  const CGAL::Image_3& weights,
  const Functor& image_values_to_subdomain_indices,
- const FT& value_outside)
+ const FT_& value_outside)
 {
   using Mesh_3::internal::Create_labeled_image_values_to_subdomain_indices;
   typedef Create_labeled_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
@@ -462,12 +462,12 @@ create_weighted_labeled_image_wrapper_with_know_word_type
 }
 
 template<class BGT, class Subdomain_index, class Surface_patch_index>
-template <typename FT, typename Functor>
+template <typename FT_, typename Functor>
 typename Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::Function_type
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 create_labeled_image_wrapper(const CGAL::Image_3& image,
                              const Functor& image_values_to_subdomain_indices,
-                             const FT& value_outside)
+                             const FT_& value_outside)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
      return create_labeled_image_wrapper_with_known_word_type<Word>
@@ -482,13 +482,13 @@ create_labeled_image_wrapper(const CGAL::Image_3& image,
 }
 
 template<class BGT, class Subdomain_index, class Surface_patch_index>
-template <typename FT, typename Functor>
+template <typename FT_, typename Functor>
 typename Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::Function_type
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
 create_weighted_labeled_image_wrapper(const CGAL::Image_3& image,
                                       const CGAL::Image_3& weights,
                                       const Functor& image_values_to_subdomain_indices,
-                                      const FT& value_outside)
+                                      const FT_& value_outside)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
     return create_weighted_labeled_image_wrapper_with_know_word_type<Word>

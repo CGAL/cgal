@@ -1081,31 +1081,31 @@ protected:
   }
 
   template <typename Image_word_type,
-            typename FT, typename FT2, typename Functor>
+            typename FT_, typename FT2, typename Functor>
   static
   Function_type
   create_gray_image_wrapper_with_known_word_type
   (const CGAL::Image_3& image,
-   const FT& iso_value,
+   const FT_& iso_value,
    const Functor& image_values_to_subdomain_indices,
    const FT2& value_outside);
 
-  template <typename FT, typename FT2, typename Functor>
+  template <typename FT_, typename FT2, typename Functor>
   static
   Function_type
   create_gray_image_wrapper(const CGAL::Image_3& image,
-                            const FT& iso_value,
+                            const FT_& iso_value,
                             const Functor& image_values_to_subdomain_indices,
                             const FT2& value_outside);
 
   template <typename Image_word_type,
-            typename FT, typename Functor>
+            typename FT_, typename Functor>
   static
   Function_type
   create_labeled_image_wrapper_with_known_word_type
   (const CGAL::Image_3& image,
    const Functor& image_values_to_subdomain_indices,
-   const FT& value_outside);
+   const FT_& value_outside);
 
   template <typename Image_word_type,
             typename FT, typename Functor>
@@ -1117,20 +1117,20 @@ protected:
    const Functor& image_values_to_subdomain_indices,
    const FT& value_outside);
 
-  template <typename FT, typename Functor>
+  template <typename FT_, typename Functor>
   static
   Function_type
   create_labeled_image_wrapper(const CGAL::Image_3& image,
                                const Functor& image_values_to_subdomain_indices,
-                               const FT& value_outside);
+                               const FT_& value_outside);
 
-  template <typename FT, typename Functor>
+  template <typename FT_, typename Functor>
   static
   Function_type
   create_weighted_labeled_image_wrapper(const CGAL::Image_3& image,
                                         const CGAL::Image_3& weights,
                                         const Functor& image_values_to_subdomain_indices,
-                                        const FT& value_outside);
+                                        const FT_& value_outside);
 
   static
   Construct_surface_patch_index
