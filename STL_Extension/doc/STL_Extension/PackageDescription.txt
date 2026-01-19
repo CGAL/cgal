@@ -32,7 +32,7 @@
 - `CGAL::In_place_list<T,bool>`
 - `CGAL::In_place_list_base<T>`
 
-\cgalCRPSection{Compact Container}
+\cgalCRPSection{Compact %Container}
 - `CGAL::Compact_container<T, Allocator>`
 - `CGAL::Compact_container_traits<T>`
 - `CGAL::Compact_container_base`
