@@ -10,13 +10,13 @@
 #include <string>
 #include <vector>
 
-using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 
-using Mesh = CGAL::Polyhedron_3<Kernel>;
+typedef CGAL::Polyhedron_3<Kernel>                            Mesh;
 
-using Vertex_handle = Mesh::Vertex_handle;
-using Halfedge_handle = Mesh::Halfedge_handle;
-using Facet_handle = Mesh::Facet_handle;
+typedef Mesh::Vertex_handle                                   Vertex_handle;
+typedef Mesh::Halfedge_handle                                 Halfedge_handle;
+typedef Mesh::Facet_handle                                    Facet_handle;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
