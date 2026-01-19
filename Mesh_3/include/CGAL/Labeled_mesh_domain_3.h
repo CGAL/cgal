@@ -437,7 +437,7 @@ public:
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
-   * \tparam Function a type compatible with \ref `Labeling_function`
+   * \tparam Function a type compatible with \ref Labeling_function "`Labeling_function`"
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam BoundingObject either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
