@@ -685,7 +685,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, co
     Sparse_matrix<_CT, COLUMN> matrix(column._upperBound, row._upperBound);
 
     for (std::pair<size_t, _CT> pair : row._chainData) {
-        OSM::set_column(matrix,pair.first,column * pair.second) ;
+        OSM::set_column(matrix, pair.first, column * pair.second) ;
     }
 
     return matrix;
@@ -697,7 +697,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const
     Sparse_matrix<_CT, ROW> matrix(column._upperBound, row._upperBound);
 
     for (std::pair<size_t, _CT> pair : column._chainData) {
-        OSM::set_row(matrix,pair.first,row * pair.second);
+        OSM::set_row(matrix, pair.first, row * pair.second);
     }
 
     return matrix;

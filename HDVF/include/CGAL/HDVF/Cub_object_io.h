@@ -112,6 +112,7 @@ public:
      * \param khal If true, Khalimsky coordinates of voxels are stored in `cubs` (for `PRIMAL` construction of a cubical complex), otherwise, integer coordinates of voxels are stored in `cubs`(for `DUAL` construction).
      *
      * \exception File_not_found If `filename` does not exist, raise a `%std::runtime_error` exception.
+     *
      * \exception Incoherent_dimension Raises a `%std::runtime_error` if dimensions of the `Traits` of the %PGM file do not match.
      */
     bool read_pgm(const std::string &filename, bool khal = false)
@@ -204,7 +205,9 @@ public:
      * \param khalimsky If true, Khalimsky coordinates are loaded in `cubs` (for `PRIMAL` construction of a cubical complex), otherwise, checks that all cells provided are of maximal dimension and load the integer coordinates of voxels in `cubs`(for `DUAL` construction).
      *
      * \exception File_not_found If `filename` does not exist, raise a `%std::runtime_error` exception.
+     *
      * \exception Incoherent_dimension Raises a `%std::runtime_error` if dimensions of the `Traits` and of the %CUB file do not match.
+     *
      * \exception Incoherent_cell A `%std::runtime_error` is raised if `khalimsky` is false but a cell of non-maximal dimension is encoutered.
      */
     bool read_cub(const std::string &filename, bool khalimsky = false)

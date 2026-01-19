@@ -157,8 +157,9 @@ public:
 
     /** \brief Returns the simplex of index i in dimension q.
      *
-     * \exception std::runtime_error If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     * \exception std::runtime_error If the cell index `i` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
+     * \exception Out_of_dimension If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
+     *
+     * \exception Out_of_cells_range If the cell index `i` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
      */
     const Simplex& index_to_cell (size_t i, int q) const {
         if ((q<0) || (q>_dim))
@@ -171,8 +172,9 @@ public:
 
     /** \brief Returns the index of a given simplex.
      *
-     * \exception Out_of_dimensions If the dimension of `simplex` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     * \exception Simplex_not_found If the `simplex` does not exist in the complex, throws a `%std::runtime_error`.
+     * \exception Out_of_dimension  If the dimension of `simplex` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
+     *
+     * \exception Incorrect_simplex If the `simplex` does not exist in the complex, throws a `%std::runtime_error`.
      */
     size_t cell_to_index (const Simplex& simplex) const {
         const int q(simplex.dimension());
@@ -224,7 +226,8 @@ public:
      * \return A vector of 0-simplex indices.
      *
      * \exception Out_of_dimensions If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     * \exception Out_of_indices If the cell index `id_cell` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
+     *
+     * \exception Out_of_cells_range If the cell index `id_cell` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const {
         if ((q<0) || (q>_dim))

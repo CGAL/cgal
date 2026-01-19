@@ -96,10 +96,10 @@ public:
     typedef Hdvf_core<Chain_complex, OSM::Sparse_chain, OSM::Sparse_matrix> Base ;
 
     // Inherited types
-    using Column_chain = Base::Column_chain;
-    using Row_chain = Base::Row_chain;
-    using Column_matrix = Base::Column_matrix;
-    using Row_matrix = Base::Row_matrix;
+    using Column_chain = typename Base::Column_chain;
+    using Row_chain = typename Base::Row_chain;
+    using Column_matrix = typename Base::Column_matrix;
+    using Row_matrix = typename Base::Row_matrix;
 
     /**
      * \brief Default constructor.

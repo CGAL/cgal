@@ -170,8 +170,23 @@ public:
             else
                 _min_dimension = _max_dimension = _dimension_restriction;
             // Get necessary boundary matrices
-            int _min_dim = (_dimension_restriction==-1)?0:max(0,_min_dimension-1);
-            int _max_dim = (_dimension_restriction==-1)?_K.dimension():min(_K.dimension(),_max_dimension+1);
+            int _min_dim, _max_dim;
+            if (_dimension_restriction==-1) {
+                _min_dim = 0;
+                _max_dim = _K.dimension();
+            }
+            else {
+                if (_min_dimension > 0)
+                    _min_dim =  _min_dimension-1;
+                else
+                    _min_dim = 0;
+
+                if (_max_dimension < _K.dimension())
+                    _max_dim = _max_dimension+1;
+                else
+                    _max_dim = _K.dimension();
+            };
+
             for (int q = _min_dim; q <= _max_dim; ++q) {
                 if (_DD_col.at(q).is_empty())
                     _DD_col.at(q) = _K.boundary_matrix(q);
@@ -666,7 +681,7 @@ protected:
 
     /* \brief Display a text progress bar. */
     void progress_bar(size_t i, size_t n) {
-        const size_t step(n/20) ;
+        const size_t step(n>10?n/10:1) ; // TODO
         if ((i%step)==0) {
             const float percentage(float(i)/(n-1)) ;
             const char PBSTR[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" ;
@@ -751,8 +766,23 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
     }
 
     // Populate the DD matrices
-    int tmp_min = (_dimension_restriction==-1)?0:max(_dimension_restriction-1,0);
-    int tmp_max = (_dimension_restriction==-1)?dim:min(_dimension_restriction+1,dim);
+    int tmp_min, tmp_max;
+    if (_dimension_restriction==-1) {
+        tmp_min = 0 ;
+        tmp_max = dim;
+    }
+    else {
+        if (_dimension_restriction > 0)
+            tmp_min = _dimension_restriction-1 ;
+        else
+            tmp_min = 0;
+
+        if (_dimension_restriction<dim)
+            tmp_max = _dimension_restriction+1;
+        else
+            tmp_max = dim;
+    }
+
     _DD_col.resize(_K.dimension()+1) ;
     for (int q=tmp_min; q<=tmp_max; ++q)
         _DD_col.at(q) = _K.boundary_matrix(q) ;
@@ -1086,8 +1116,15 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
         max_dim = dim-1;
     }
     else {
-        min_dim = max(0, _dimension_restriction-1);
-        max_dim = min(_dimension_restriction,dim-1);
+        if (_dimension_restriction > 0)
+            min_dim = _dimension_restriction-1;
+        else
+            min_dim = 0;
+
+        if (_dimension_restriction < dim-1)
+            max_dim = _dimension_restriction;
+        else
+            max_dim = dim-1;
     }
 
     // Loop through decreasing dimensions
@@ -1140,8 +1177,15 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
         max_dim = dim-1;
     }
     else {
-        min_dim = max(0, _dimension_restriction-1);
-        max_dim = min(_dimension_restriction,dim-1);
+        if (_dimension_restriction > 0)
+            min_dim = _dimension_restriction-1;
+        else
+            min_dim = 0;
+
+        if (_dimension_restriction < dim-1)
+            max_dim = _dimension_restriction;
+        else
+            max_dim = dim-1;
     }
 
     // Loop through decreasing dimensions
