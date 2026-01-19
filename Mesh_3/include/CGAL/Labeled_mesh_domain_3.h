@@ -354,7 +354,7 @@ public:
   typedef SubdomainIndex                  Subdomain_index;
   //
 #ifdef DOXYGEN_RUNNING
-  /// \anchor Mesh3LabelingFunction
+  /// \anchor Labeling_function
   /// The type of object that stores the function using type-erasure.
   /// A labeling function `f` must return `0` if the point is not located in any subdomain. The return type of labeling functions is an integer.
 ///
