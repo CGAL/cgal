@@ -322,9 +322,6 @@ with a model of the concept `BisectionGeometricTraits_3`.
 \tparam SubdomainIndex is the type of the indices of the subdomains.
 \tparam SurfacePatchIndex is the type of the indices of the surface patches.
 
-\cgalHeading{ Labeling Function}
-
-
 
 \cgalModels{MeshDomain_3}
 
@@ -354,7 +351,7 @@ public:
   typedef SubdomainIndex                  Subdomain_index;
   //
 #ifdef DOXYGEN_RUNNING
-  /// \anchor Labeling_function
+  /// \anchor Mesh3Labeling_function
   /// The type of object that stores the function using type-erasure.
   /// A labeling function `f` must return `0` if the point is not located in any subdomain. The return type of labeling functions is an integer.
 ///
@@ -437,7 +434,7 @@ public:
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
-   * \tparam Function a type compatible with \ref Labeling_function "`Labeling_function`"
+   * \tparam Function a type compatible with \ref Mesh3Labeling_function "Labeling_function"
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam BoundingObject either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
