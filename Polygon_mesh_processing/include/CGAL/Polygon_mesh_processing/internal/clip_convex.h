@@ -416,7 +416,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   // Fill the hole
   if (clip_volume && faces(pm).size()>1){ // If there is only one face, the output is flat does not need to be closed
-    face_descriptor f=pm.add_face();
+    face_descriptor f=add_face(pm);
     for(auto h: boundaries){
       set_face(h, f, pm);
     }
@@ -429,8 +429,17 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     }
   }
 
-  CGAL_assertion( (vertices(pm).size() < 3) || is_valid_polygon_mesh(pm));
-  // std::ofstream("clip.off") << pm;
+  // Case where the output is degenerated to a segment
+  if(vertices(pm).size() < 3){
+    remove_face(*faces(pm).begin(), pm);
+    for(edge_descriptor e: edges(pm))
+      remove_edge(e, pm);
+    for(vertex_descriptor v: vertices(pm))
+      set_halfedge(v, BGT::null_halfedge(), pm);
+  }
+
+  CGAL_assertion(is_valid_polygon_mesh(pm));
+  // std::ofstream("clipped.off") << pm;
 
   return *boundary_vertices.begin();
 }
@@ -532,6 +541,7 @@ clip_convex(PolygonMesh& pm,
 
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
+
   if(vertices(pm).size()==1){
     // Dimension == 0
     vertex_descriptor v0 = *(vertices(pm).begin());
@@ -541,6 +551,7 @@ clip_convex(PolygonMesh& pm,
       return BGT::null_vertex();
     }
     return v0;
+
   } else if(vertices(pm).size()==2){
     // Dimension == 1
     vertex_descriptor v0 = *(vertices(pm).begin());
@@ -549,9 +560,9 @@ clip_convex(PolygonMesh& pm,
     Oriented_side side_v1 = oriented_side(plane, get(vpm, v1));
     if(side_v0 == ON_POSITIVE_SIDE){
       if(side_v1 == ON_POSITIVE_SIDE){ // empty
-      clear(pm);
-      return BGT::null_vertex();
-    }
+        clear(pm);
+        return BGT::null_vertex();
+      }
       if(side_v1 == ON_NEGATIVE_SIDE){
         auto ip = intersection_point(plane, get(vpm, v0), get(vpm, v1));
         put(vpm, v0, ip);
@@ -559,7 +570,7 @@ clip_convex(PolygonMesh& pm,
         remove_vertex(v0, pm); // Degenerate to a point
       }
     } else if(side_v1 == ON_POSITIVE_SIDE){
-      if(side_v1 == ON_NEGATIVE_SIDE){
+      if(side_v0 == ON_NEGATIVE_SIDE){
         auto ip = intersection_point(plane, get(vpm, v0), get(vpm, v1));
         put(vpm, v1, ip);
       } else { // side_v0 == ON_ORIENTED_BOUNDARY
@@ -630,7 +641,14 @@ clip_convex(PolygonMesh& pm,
       set_halfedge(*faces(pm).begin(), split_edge, pm);
     }
 
-    CGAL_assertion( (vertices(pm).size() < 3) || is_valid_polygon_mesh(pm));
+    if(vertices(pm).size() < 3){
+      remove_face(*faces(pm).begin(), pm);
+      for(edge_descriptor e: edges(pm))
+        remove_edge(e, pm);
+      for(vertex_descriptor v: vertices(pm))
+        set_halfedge(v, BGT::null_halfedge(), pm);
+    }
+    CGAL_assertion(is_valid_polygon_mesh(pm));
     return *vertices(pm).begin();
   }
 

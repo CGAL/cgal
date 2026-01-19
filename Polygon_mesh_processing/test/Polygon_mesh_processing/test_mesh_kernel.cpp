@@ -1,294 +1,120 @@
-#define CGAL_USE_OPTI_WITH_BBOX
-
 #include <CGAL/Surface_mesh.h>
-// #include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Exact_integer.h>
-
-#include <CGAL/Real_timer.h>
+#include <CGAL/Polyhedron_3.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EK = CGAL::Exact_predicates_exact_constructions_kernel;
-using Mesh = CGAL::Surface_mesh<K::Point_3>;
-using EMesh = CGAL::Surface_mesh<EK::Point_3>;
+using SM = CGAL::Surface_mesh<K::Point_3>;
+using ESM = CGAL::Surface_mesh<EK::Point_3>;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-template<class Mesh>
-void round_mesh(Mesh &m){
-  auto exp = [](const double v)
-  {
-    int n;
-    frexp(v, &n);
-    return n;
-  };
-  auto pow_2 = [](const int k)
-  {
-      return (k>=0)?std::pow(2,k):1./std::pow(2,-k);
-  };
+template<class K>
+typename K::Aff_transformation_3
+rotation(double a, double b, double c)
+{
+  double ca = cos(a), cb = cos(b), cc = cos(c);
+  double sa = sin(a), sb = sin(b), sc = sin(c);
 
-  CGAL::Bbox_3 bb;
-  for(auto vh : m.vertices()){
-    bb += m.point(vh).bbox();
-  }
-  size_t grid_size=26;
-  std::array<double, 3> max_abs{(std::max)(-bb.xmin(), bb.xmax()),
-                                (std::max)(-bb.ymin(), bb.ymax()),
-                                (std::max)(-bb.zmin(), bb.zmax())};
-  // Compute scale so that the exponent of max absolute value are 52-1.
-  std::array<double, 3> scale{pow_2(grid_size - exp(max_abs[0]) - 1),
-                              pow_2(grid_size - exp(max_abs[1]) - 1),
-                              pow_2(grid_size - exp(max_abs[2]) - 1)};
-
-  auto round=[&](typename Mesh::Point &p){
-    return typename Mesh::Point(std::ceil((CGAL::to_double(p.x()) * scale[0]) - 0.5) / scale[0],
-                                std::ceil((CGAL::to_double(p.y()) * scale[1]) - 0.5) / scale[1],
-                                std::ceil((CGAL::to_double(p.z()) * scale[2]) - 0.5) / scale[2]);
-  };
-
-  for(auto vh : m.vertices()){
-    auto &p = m.point(vh);
-    p = round(p);
-  }
+  typename K::Aff_transformation_3 aff(cb * cc, cc* sa* sb - ca * sc, ca* cc* sb + sa * sc,
+                                       cb* sc, ca* cc + sa * sb * sc, ca* sb* sc - cc * sa,
+                                       -sb, cb* sa, ca* cb);
+  return aff;
 }
 
 template<class Mesh>
-void to_integer_mesh(Mesh &m){
-  auto exp = [](const double v)
-  {
-    int n;
-    frexp(v, &n);
-    return n;
-  };
-  auto pow_2 = [](const int k)
-  {
-      return (k>=0)?std::pow(2,k):1./std::pow(2,-k);
-  };
+void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, std::size_t expected_nb_edges, std::size_t expected_nb_faces, double expected_volume = 0){
+  // CGAL_assertion(PMP::is_kernel_empty(input) == (expected_nb_vertices == 0));
+  // CGAL_assertion((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) != std::nullopt) == (expected_nb_vertices < 3 && expected_nb_faces != 1));
+  // CGAL_assertion((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).require_strictly_inside(false)) != std::nullopt) == (expected_nb_vertices != 0));
 
-  CGAL::Bbox_3 bb;
-  for(auto vh : m.vertices()){
-    bb += m.point(vh).bbox();
+  Mesh kernel = kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false).shuffle_planes(false).starting_cube(PMP::bbox(input)));
+  CGAL_assertion(vertices(kernel).size() == expected_nb_vertices);
+  CGAL_assertion(edges(kernel).size()    == expected_nb_edges);
+  CGAL_assertion(faces(kernel).size()    == expected_nb_faces);
+  if(expected_volume != 0){
+    PMP::triangulate_faces(kernel);
+    CGAL_assertion(PMP::volume(kernel) > expected_volume * 0.99 && PMP::volume(kernel) < expected_volume * 1.01);
   }
-  size_t grid_size=26;
-  std::array<double, 3> max_abs{(std::max)(-bb.xmin(), bb.xmax()),
-                                (std::max)(-bb.ymin(), bb.ymax()),
-                                (std::max)(-bb.zmin(), bb.zmax())};
-  // Compute scale so that the exponent of max absolute value are 52-1.
-  std::array<double, 3> scale{pow_2(grid_size - exp(max_abs[0]) - 1),
-                              pow_2(grid_size - exp(max_abs[1]) - 1),
-                              pow_2(grid_size - exp(max_abs[2]) - 1)};
+  clear(kernel);
 
-  // auto round=[&](Point_3 &p){
-  auto round=[&](typename Mesh::Point &p){
-    return typename Mesh::Point(std::ceil((CGAL::to_double(p.x()) * scale[0]) - 0.5),
-                                std::ceil((CGAL::to_double(p.y()) * scale[1]) - 0.5),
-                                std::ceil((CGAL::to_double(p.z()) * scale[2]) - 0.5));
-  };
-
-  for(auto vh : m.vertices()){
-    auto &p = m.point(vh);
-    p = round(p);
+  kernel = kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true));
+  CGAL_assertion(vertices(kernel).size() == expected_nb_vertices);
+  CGAL_assertion(edges(kernel).size()    == expected_nb_edges);
+  CGAL_assertion(faces(kernel).size()    == expected_nb_faces);
+  if(expected_volume != 0){
+    PMP::triangulate_faces(kernel);
+    CGAL_assertion(PMP::volume(kernel) > expected_volume * 0.99 && PMP::volume(kernel) < expected_volume * 1.01);
   }
 }
 
-// void test_traits()
-// {
-//   Mesh m;
-//   std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> m;
-
-//   std::pair p(0,0.05);
-//   using Traits = PMP::Orthogonal_cut_plane_traits<K>;
-
-//   PMP::clip(m, p, CGAL::parameters::geom_traits(Traits()));
-
-//   std::ofstream("clipped.off") << m;
-// }
-
-void elementary_test_kernel()
-{
-  using Point_3 = typename EK::Point_3;
-  CGAL::Real_timer timer;
-  EMesh m;
-  // make_hexahedron(Point_3(0, 1, 0), Point_3(0, 1, 1), Point_3(1, 0, 1), Point_3(1, 0, 0),
-  //                 Point_3(0.75, 0.25, 0.25), Point_3(0.25, 0.75, 0.25), Point_3(0.25, 0.75, 0.75), Point_3(0.75, 0.25, 0.75),
-  //                 m);
-  // make_tetrahedron(Point_3(1, 0, 0), Point_3(0, 1, 0), Point_3(0, 0, 1), Point_3(0.5, 0.5, 0.5),
-  //                 m);
-  // make_tetrahedron(Point_3(1, 0, 0), Point_3(1, 1, 0), Point_3(0, 1, 0), Point_3(0, 0, 0),
-  //                 m);
-  make_hexahedron(Point_3(1,0,0), Point_3(1,1,0), Point_3(0,1,0), Point_3(0,0,0),
-                  Point_3(0,0,1), Point_3(1,0,1), Point_3(1,1,1), Point_3(0,1,1),
-                  m);
-
-  timer.start();
-  EMesh kernel = PMP::kernel(m);
-  timer.stop();
-
-  std::ofstream("kernel.off") << kernel;
-  std::cout << "test_kernel done in " << timer.time() << "\n";
-}
-
-
-void test_kernel(std::string fname)
-{
-  CGAL::Real_timer timer;
-  Mesh m;
-  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
-  {
-    std::cerr << "ERROR: cannot read " << fname << "\n";
-    exit(1);
-  }
-
-  timer.start();
-  Mesh kernel = PMP::kernel(m);
-  timer.stop();
-
-  std::ofstream("kernel.off") << kernel;
-  std::cout << "test_kernel done in " << timer.time() << "\n";
-}
-
-void test_kernel_with_rounding(std::string fname)
-{
-  CGAL::Real_timer timer;
-  Mesh m;
-  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
-  {
-    std::cerr << "ERROR: cannot read " << fname << "\n";
-    exit(1);
-  }
-  round_mesh(m);
-  timer.start();
-  Mesh kernel = PMP::kernel(m);
-  timer.stop();
-
-  std::ofstream("kernel.off") << kernel;
-  std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_kernel done in " << timer.time() << "\n";
-}
-
-void test_exact_kernel(std::string fname)
-{
-  CGAL::Real_timer timer;
-  EMesh m;
-  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
-  {
-    std::cerr << "ERROR: cannot read " << fname << "\n";
-    exit(1);
-  }
-  timer.start();
-  EMesh kernel = PMP::kernel(m);
-  timer.stop();
-
-  // PMP::is_empty_kernel(m);
-  // PMP::kernel_point(m);
-
-  std::ofstream("ekernel.off") << kernel;
-  std::cout << PMP::volume(kernel) << std::endl;
-  std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_exact_kernel done in " << timer.time() << "\n";
-}
-
-void test_exact_kernel_with_rounding(std::string fname)
-{
-  CGAL::Real_timer timer;
-  EMesh m;
-  if (!CGAL::IO::read_polygon_mesh(fname, m)|| is_empty(m))
-  {
-    std::cerr << "ERROR: cannot read " << fname << "\n";
-    exit(1);
-  }
-  // round_mesh(m);
-  to_integer_mesh(m);
-  timer.start();
-  EMesh kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true).random_seed(5468));
-  // EMesh kernel = PMP::kernel(m);
-  timer.stop();
-
-  std::ofstream("ekernel.off") << kernel;
-  std::cout << PMP::volume(kernel) << std::endl;
-  std::cout << "nb of vertices: " << vertices(kernel).size() << ", test_exact_kernel done in " << timer.time() << "\n";
-
-  // timer.reset();
-  // timer.start();
-  // PMP::kernel(m, CGAL::parameters::shuffle_planes(true));
-  // timer.stop();
-
-  // std::cout << "test_exact_kernel with shuffle done in " << timer.time() << "\n";
-
-  // timer.reset();
-  // timer.start();
-  // PMP::kernel(m, CGAL::parameters::use_bounding_box_filtering(false));
-  // timer.stop();
-
-  // std::cout << "test_exact_kernel without bbox done in " << timer.time() << "\n";
-
-  // timer.reset();
-  // timer.start();
-  // PMP::kernel(m, CGAL::parameters::remove_duplicate_planes(true));
-  // timer.stop();
-
-  // std::cout << "test_exact_kernel with remove duplicates done in " << timer.time() << "\n";
-
-  // timer.reset();
-  // timer.start();
-  // PMP::kernel(m, CGAL::parameters::look_concave_planes_first(true));
-  // timer.stop();
-
-  // std::cout << "test_exact_kernel with concave optim done in " << timer.time() << "\n";
-
-  // timer.reset();
-  // timer.start();
-  // PMP::kernel(m, CGAL::parameters::look_concave_planes_first(true).remove_duplicate_planes(true));
-  // timer.stop();
-
-  // std::cout << "test_exact_kernel with concave optim and plane remove duplicates done in " << timer.time() << "\n";
-}
-
-void test_degenerate_kernels(){
+template<class Mesh, class K>
+void tests(){
   using P = typename K::Point_3;
   Mesh m;
-  Mesh kernel;
 
-  // Degenerate to a face
+  // A simple cube
   make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
-  make_hexahedron(P(0,0,0).bbox()+P(-1,1,1).bbox(), m);
-  kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(false));
-  CGAL_assertion(kernel.vertices().size()==4);
+  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  clear(m);
+
+  // rotated cubes
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  PMP::transform(rotation<K>(0, 0, 1), m);
+  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  clear(m);
+
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  PMP::transform(rotation<K>(0, 1, 1), m);
+  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  clear(m);
+
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  PMP::transform(rotation<K>(1, 1, 1), m);
+  test_kernel_on_mesh(m, 8, 12, 8, 1);
+  clear(m);
 
   // Degenerate to a segment
-  m.clear();
-  kernel.clear();
-  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
-  make_hexahedron(P(0,0,-0.5).bbox()+P(-1,-1,0.5).bbox(), m);
-  kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true).random_seed(4062612588).use_bounding_box_filtering(false));
-  CGAL_assertion(kernel.vertices().size()==2);
-  P a = kernel.point(*kernel.vertices().begin());
-  P b = kernel.point(*(++kernel.vertices().begin()));
-  CGAL_assertion((a==P(0,0,0) && b==P(0,0,0.5)) || (b==P(0,0,0) && a==P(0,0,0.5)));
+  // make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  // kernel = PMP::internal::kernel(m, faces(m), CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false));
+  // CGAL_assertion(kernel.vertices().size()==8);
+
+  // Degenerate to a face
+  // make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  // make_hexahedron(P(0,0,0).bbox()+P(-1,1,1).bbox(), m);
+  // kernel = PMP::internal::kernel(m, faces(m), CGAL::parameters::allow_non_manifold_non_watertight_input(true));
+  // CGAL_assertion(kernel.vertices().size()==4);
+
+  // Degenerate to a segment
+  // m.clear();
+  // kernel.clear();
+  // make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  // make_hexahedron(P(0,0,-0.5).bbox()+P(-1,-1,0.5).bbox(), m);
+  // kernel = PMP::internal::kernel(m, faces(m), CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false));
+  // CGAL_assertion(kernel.vertices().size()==2);
+  // P a = kernel.point(*kernel.vertices().begin());
+  // P b = kernel.point(*(++kernel.vertices().begin()));
+  // CGAL_assertion((a==P(0,0,0) && b==P(0,0,0.5)) || (b==P(0,0,0) && a==P(0,0,0.5)));
 
   // Degenerate to a point
-  m.clear();
-  kernel.clear();
-  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
-  make_hexahedron(P(0,0,0).bbox()+P(-1,-1,-1).bbox(), m);
-  kernel = PMP::kernel(m, CGAL::parameters::shuffle_planes(true).random_seed(4062612588).use_bounding_box_filtering(false));
-  std::cout << kernel.vertices().size() << std::endl;
-  CGAL_assertion(kernel.vertices().size()==1);
-  a = kernel.point(*kernel.vertices().begin());
-  CGAL_assertion((a==P(0,0,0)));
+  // m.clear();
+  // kernel.clear();
+  // make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  // make_hexahedron(P(0,0,0).bbox()+P(-1,-1,-1).bbox(), m);
+  // kernel = PMP::internal::kernel(m, faces(m), CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false));
+  // CGAL_assertion(kernel.vertices().size()==1);
+  // a = kernel.point(*kernel.vertices().begin());
+  // CGAL_assertion((a==P(0,0,0)));
 
 }
 
 int main(int argc, char** argv)
 {
-  // test_traits();
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  // elementary_test_kernel();
-  // test_kernel(filename);
-  // test_kernel_with_rounding(filename);
-  test_degenerate_kernels();
-  // test_exact_kernel(filename);
-  // test_exact_kernel_with_rounding(filename);
+  tests<SM, K>();
+  tests<ESM, EK>();
+  tests<CGAL::Polyhedron_3<K>,K>();
+  tests<CGAL::Polyhedron_3<EK>, EK>();
 }

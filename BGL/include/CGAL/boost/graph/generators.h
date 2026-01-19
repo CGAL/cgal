@@ -438,7 +438,7 @@ make_hexahedron(const IsoCuboid& c,
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param b the bounding box describing the geometry of the hexahedron
+ * \param bb3 the bounding box describing the geometry of the hexahedron
  * \param g the graph to which the hexahedron will be appended
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *           among the ones listed below

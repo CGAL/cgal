@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <random>
 
+#include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/Three_point_cut_plane_traits.h>
 
@@ -34,7 +35,7 @@ template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
 PolygonMesh
 kernel(const PolygonMesh& pm,
-       const FaceRange& faces,
+       const FaceRange& face_range,
        const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
@@ -44,7 +45,7 @@ kernel(const PolygonMesh& pm,
   using BGT = boost::graph_traits<PolygonMesh>;
   using face_descriptor = typename BGT::face_descriptor;
   // using edge_descriptor = typename BGT::edge_descriptor;
-  // using halfedge_descriptor = typename BGT::halfedge_descriptor;
+  using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -58,20 +59,24 @@ kernel(const PolygonMesh& pm,
 
   using Point_3 = typename GT::Point_3;
   using EPoint_3 = typename EK::Point_3;
+  using EVector_3 = typename EK::Vector_3;
+  using EFT = typename EK::FT;
   using Plane_3 = typename Three_point_cut_plane_traits<EK>::Plane_3;
 
   using KernelPointMap = typename boost::property_map<PolygonMesh, dynamic_vertex_property_t<EPoint_3> >::type;
 
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
+  bool used_to_find_a_point = choose_parameter(get_parameter(np, internal_np::used_to_find_a_point), false);
+  bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_non_manifold_non_watertight_input), false);
   std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), std::random_device()());
 
-  // Immediate exit if the input is not of genus zero to speed up on stupid benchmarks
-  // if (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)
-  //   return PolygonMesh();
+  // Immediate exit if the input is well-formed and not of genus zero
+  if(check_euler_characteristic && (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2))
+    return PolygonMesh();
 
   // Build the starting cube
-  CGAL::Bbox_3 bb3 = bbox(pm, np);
+  CGAL::Bbox_3 bb3 = choose_parameter(get_parameter(np, internal_np::starting_cube), bbox(pm));
   PolygonMesh kernel;
   make_hexahedron(bb3, kernel);
   auto base_vpm = get_property_map(vertex_point, kernel);
@@ -109,12 +114,13 @@ kernel(const PolygonMesh& pm,
     }
   }
 
+
   // Get the planes and eventually shuffle them
   Three_point_cut_plane_traits<EK> kgt;
   auto oriented_side = kgt.oriented_side_3_object();
   auto intersection_point = kgt.construct_plane_line_intersection_point_3_object();
 
-  std::vector<face_descriptor> planes(faces.begin(), faces.end());
+  std::vector<face_descriptor> planes(face_range.begin(), face_range.end());
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine(seed));
 
@@ -125,7 +131,6 @@ kernel(const PolygonMesh& pm,
     Plane_3 plane(to_exact(get(vpm,source(h, pm))),
                   to_exact(get(vpm,target(h, pm))),
                   to_exact(get(vpm,target(next(h, pm), pm))));
-
     if(bbox_filtering && vertices(kernel).size() >= 3){
       // Early exit if the plane does not cut the bbox of the temporary kernel
 
@@ -149,8 +154,8 @@ kernel(const PolygonMesh& pm,
                                                                   bounding_box(&bbox_vertices).starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return kernel;
 
-      CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i))
-        CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
+      // CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i)) // Compile only with Surface_mesh
+        // CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
 
       // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
       bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
@@ -160,9 +165,45 @@ kernel(const PolygonMesh& pm,
     {
       start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
                                                                   starting_vertex_descriptor(start_vertex));
-      // clip(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm));
       if (is_empty(kernel)) return kernel;
     }
+  }
+
+  if(used_to_find_a_point){
+    bool require_strictly_inside = choose_parameter(get_parameter(np, internal_np::require_strictly_inside), true);
+
+    // If we don't want a point on the surface and the kernel is degenerated, do nothing
+    if(require_strictly_inside && ((vertices(kernel).size()<3) || (faces(kernel).size()==1)))
+      return kernel;
+
+    // Get the centroid
+    EPoint_3 centroid(ORIGIN);
+    for(auto v: vertices(kernel))
+      centroid += EVector_3(ORIGIN, get(kvpm, v)) / vertices(kernel).size();
+
+    // Approximate the centroid
+    Point_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+
+    // Check if the approximate_centroid is inside the kernel
+    bool is_valid = true;
+    for(face_descriptor f: faces(kernel)){
+      halfedge_descriptor h = halfedge(f, kernel);
+      Plane_3 plane(get(kvpm,source(h, kernel)),
+                    get(kvpm,target(h, kernel)),
+                    get(kvpm,target(next(h, kernel), kernel)));
+      if(oriented_side(plane, centroid) != ON_NEGATIVE_SIDE){
+        is_valid = false;
+        break;
+      }
+    }
+
+    // If not, refine the centroid position
+    if(!is_valid)
+      centroid.exact();
+
+    // Return the centroid
+    put(base_vpm, *vertices(pm).begin(), from_exact(centroid));
+    return kernel;
   }
 
   // Convert points of the kernel to the type of the input mesh
@@ -180,6 +221,9 @@ kernel(const PolygonMesh& pm,
   * It is represented as a convex mesh and may be empty.
   *
   * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
+  *
+  * The kernel may be degenerate. If the kernel has dimension 2, the output mesh consists of a single face. If the kernel has dimension 0 or 1,
+  * the output mesh contains respectively only one and two isolate vertices.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
@@ -216,6 +260,25 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{starting_cube}
+  *     \cgalParamDescription{
+  *       The bounding box used to compute the kernel. The output is clipped based on this
+  *       box, which must strictly contain the kernel to guarantee a correct result.
+  *     }
+  *     \cgalParamType{`CGAL::Bbox_3`}
+  *     \cgalParamDefault{`CGAL::Polygon_mesh_processing::bbox(pm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
+  *     \cgalParamDescription{
+  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
+  *       and/or to have boundaries. In this case, the kernel may theoretically be
+  *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
+  *     }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{false}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
   *                           Note that as there is no mesh associated with `plane`,
@@ -226,6 +289,8 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
+  *
+  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed, two-manifold, and free of self-intersections in order to ensure a correct result.
   *
   * @return A PolygonMesh representing the kernel of the input mesh, which may be empty.
   */
@@ -278,7 +343,28 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{starting_cube}
+  *     \cgalParamDescription{
+  *       The bounding box used to compute the kernel. The output is clipped based on this
+  *       box, which must strictly contain the kernel to guarantee a correct result.
+  *     }
+  *     \cgalParamType{`CGAL::Bbox_3`}
+  *     \cgalParamDefault{`CGAL::Polygon_mesh_processing::bbox(pm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
+  *     \cgalParamDescription{
+  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
+  *       and/or to have boundaries. In this case, the kernel may theoretically be
+  *       unbounded and the output is clipped by the bounding box provided by the `starting_cube` parameter.
+  *     }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{false}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
+  *
+  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed, two-manifold, and free of self-intersections in order to ensure a correct result.
   *
   * @return bool
   */
@@ -288,7 +374,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
                      const NamedParameters& np = parameters::default_values())
 {
   // TODO look if it's faster to compute with the dual instead (specifically in the none empty case)
-  return is_empty(internal::kernel(pm, faces(pm), np));
+  return is_empty(kernel(pm, np));
 }
 
 /**
@@ -314,7 +400,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario.}
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
@@ -325,13 +411,43 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{starting_cube}
+  *     \cgalParamDescription{
+  *       The bounding box used to compute the kernel. The output is clipped based on this
+  *       box, which must strictly contain the kernel to guarantee a correct result.
+  *     }
+  *     \cgalParamType{`CGAL::Bbox_3`}
+  *     \cgalParamDefault{`CGAL::Polygon_mesh_processing::bbox(pm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
+  *     \cgalParamDescription{
+  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
+  *       and/or to have boundaries. In this case, the kernel may theoretically be
+  *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
+  *     }
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{false}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
   *     \cgalParamDefault{The seed of std::random_device()}
   *   \cgalParamNEnd
   *
+  * \cgalParamNBegin{require_strictly_inside}
+  *   \cgalParamDescription{
+  *     If set to `true`, the returned point is required to lie strictly inside
+  *     the mesh and not on its boundary. If the mesh is degenerate, this requirement
+  *     cannot be satisfied and no point is returned.}
+  *   \cgalParamType{bool}
+  *   \cgalParamDefault{true}
+  * \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
+  *
+  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed, two-manifold, and free of self-intersections in order to ensure a correct result.
   *
   * @return std::optional<`%Point_3`>
   */
@@ -345,23 +461,29 @@ std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_
 kernel_point(const PolygonMesh& pm,
              const NamedParameters& np = parameters::default_values())
 {
-  using FT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT;
-  using Point_3 = typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3;
-  using Vector_3 = typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3;
-  PolygonMesh k = internal::kernel(pm, faces(pm), np);
-  if(is_empty(k))
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using Vector_3 = typename GT::Vector_3;
+
+  bool require_strictly_inside = choose_parameter(get_parameter(np, internal_np::require_strictly_inside), true);
+
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, pm));
+  Three_point_cut_plane_traits<GT> kgt;
+  auto oriented_side = kgt.oriented_side_3_object();
+
+  PolygonMesh k = kernel(pm, np);
+
+  // If the kernel is empty or degenerated with strictly inside option, return empty
+  if(is_empty(k) || (require_strictly_inside && ((vertices(k).size()<3) || (faces(k).size()==1))))
     return std::nullopt;
 
-  auto vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                          get_const_property_map(vertex_point, pm));
-
-  Point_3 centroid(ORIGIN);
-  for(auto v: vertices(pm))
-    centroid += Vector_3(ORIGIN, get(vpm, v));
-  centroid = ORIGIN + (Vector_3(ORIGIN, centroid)/FT(vertices(pm).size()));
-  return centroid;
-
-  //TODO check if the centroid is indeed inside the kernel
+  return std::make_optional(get(get_const_property_map(vertex_point, k), *vertices(k).begin()));
 }
 
 

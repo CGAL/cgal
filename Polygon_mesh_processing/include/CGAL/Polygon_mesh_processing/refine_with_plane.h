@@ -21,6 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
+#include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
@@ -197,6 +198,13 @@ struct Orthogonal_cut_plane_traits
  *      \cgalParamExtra{The function `triangulate_faces()` can be used to triangule faces before calling this function.}
  *    \cgalParamNEnd
  *
+ *    \cgalParamNBegin{use_convex_specialization}
+ *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.
+ *       \warning Map parameters are disabled when this parameter is set to `true`.}
+ *      \cgalParamType{Boolean}
+ *      \cgalParamDefault{`false`}
+ *    \cgalParamNEnd
+ *
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `pm`}
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -271,6 +279,13 @@ void refine_with_plane(PolygonMesh& pm,
 
   auto ecm = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_constrained));
   auto edge_is_marked = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_marked_map));
+
+  bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false);
+  if(use_convex_specialization){
+    halfedge_descriptor he = internal::find_crossing_edge(pm, plane, np);
+    internal::refine_convex_with_plane(pm, plane, np);
+    return;
+  }
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -533,6 +548,7 @@ void refine_with_plane(PolygonMesh& pm,
 
     visitor.after_subface_creations(pm);
   }
+  CGAL_assertion(is_valid_polygon_mesh(pm));
 }
 
 } } // CGAL::Polygon_mesh_processing

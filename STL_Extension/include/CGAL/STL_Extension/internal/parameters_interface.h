@@ -182,6 +182,9 @@ CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 CGAL_add_named_parameter(use_bounding_box_filtering_t, use_bounding_box_filtering, use_bounding_box_filtering)
 CGAL_add_named_parameter(shuffle_planes_t, shuffle_planes, shuffle_planes)
 CGAL_add_named_parameter(use_convex_specialization_t, use_convex_specialization, use_convex_specialization)
+CGAL_add_named_parameter(require_strictly_inside_t, require_strictly_inside, require_strictly_inside)
+CGAL_add_named_parameter(starting_cube_t, starting_cube, starting_cube)
+CGAL_add_named_parameter(allow_non_manifold_non_watertight_input_t, allow_non_manifold_non_watertight_input, allow_non_manifold_non_watertight_input)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -203,9 +206,10 @@ CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
 CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
-CGAL_add_named_parameter(used_for_kernel_t, used_for_kernel, used_for_kernel)
 CGAL_add_named_parameter(bounding_box_t, bounding_box, bounding_box)
 CGAL_add_named_parameter(starting_vertex_descriptor_t, starting_vertex_descriptor, starting_vertex_descriptor)
+CGAL_add_named_parameter(used_to_find_a_point_t, used_to_find_a_point, used_to_find_a_point)
+
 
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)

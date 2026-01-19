@@ -464,8 +464,6 @@ have some options to select whether the clipping should be done at the volume or
 level, and also if the clipper should be considered as compact or not. This is illustrated on
 \cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
 
-The function `CGAL::Polygon_mesh_processing::clip_convex()` is a specialized, faster version of `CGAL::Polygon_mesh_processing::clip()` for convex meshes.
-
 \cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
 Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
 defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
@@ -1494,7 +1492,7 @@ preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/projec
 used as a reference during the project.
 The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
 
-The specialization `CGAL::Polygon_mesh_processing::clip_convex` of `CGAL::Polygon_mesh_processing::clip` and the kernel functions was implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring2025meshkernel}.
+The kernel functions and the convex specialization of `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()` was implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring2025meshkernel}.
 
 */
 } /* namespace CGAL */

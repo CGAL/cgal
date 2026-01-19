@@ -1058,7 +1058,6 @@ bool clip(PolygonMesh& pm,
     choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
   constexpr bool traits_supports_cdt2 = !internal::Has_member_Does_not_support_CDT2<GT>::value;
-  const bool used_for_kernel = choose_parameter(get_parameter(np, internal_np::used_for_kernel), false);
   auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
   auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
 
@@ -1118,17 +1117,12 @@ bool clip(PolygonMesh& pm,
   {
     if (clip_volume)
     {
-      if (!used_for_kernel)
-      {
-        //TODO: add in the traits construct_orthogonal_vector
-        if (triangulate)
-          internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
-        else
-          if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
-            internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
-      }
+      //TODO: add in the traits construct_orthogonal_vector
+      if (triangulate)
+        internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
       else
-        internal::naive_close(pm, visitor);
+        if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
+          internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
     }
   }
   else
