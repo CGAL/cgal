@@ -46,7 +46,7 @@ int main()
 
   // --- PART 3: VERIFY ---
   std::cout << "3. Verifying..." << std::endl;
-  
+
   // Check vertex count
   if (T_write.number_of_vertices() != T_read.number_of_vertices()) {
       std::cerr << "FAILURE: Vertex count mismatch!" << std::endl;
