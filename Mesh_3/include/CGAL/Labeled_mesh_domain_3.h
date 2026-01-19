@@ -322,7 +322,8 @@ with a model of the concept `BisectionGeometricTraits_3`.
 \tparam SubdomainIndex is the type of the indices of the subdomains.
 \tparam SurfacePatchIndex is the type of the indices of the surface patches.
 
-\cgalHeading{Labeling Function}
+\cgalHeading{\anchor Mesh3LabelingFunction  Labeling Function}
+
 
 A labeling function `f` must return `0` if the point is not located in any subdomain. The return type of labeling functions is an integer.
 
@@ -373,14 +374,13 @@ public:
 /// \name Types imported from the geometric traits class
 ///@{
   /// The point type of the geometric traits class
-  /// @todo  this should be BGT  where we have to add Iso_cuboid in the concept
-  typedef typename Geom_traits::Point_3      Point_3;
+  typedef typename BGT::Point_3      Point_3;
   /// The sphere type of the geometric traits class
-  typedef typename Geom_traits::Sphere_3     Sphere_3;
+  typedef typename BGT::Sphere_3     Sphere_3;
   /// The iso-cuboid type of the geometric traits class
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
   /// The number type (a field type) of the geometric traits class
-  typedef typename Geom_traits::FT           FT;
+  typedef typename BGT::FT           FT;
 ///@}
 #else // DOXYGEN_RUNNING
   typedef std::optional<Subdomain_index>  Subdomain;
@@ -435,7 +435,7 @@ public:
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
-   * \tparam Function a type compatible with `Labeling_function`  @todo fix this as this is no longer a template parameter
+   * \tparam Function a type compatible with \ref Mesh3LabelingFunction `Labeling_function`
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam BoundingObject either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
