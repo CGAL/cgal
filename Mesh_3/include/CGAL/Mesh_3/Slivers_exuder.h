@@ -390,7 +390,7 @@ private: // Types
 
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
    *  of Facet (viewed from cells inside the star), ordered by the
-   *  critial_radius of the point with the cell that lies on the facet, at
+   *  critical_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
   typedef CGAL::Double_map<Facet, FT>                       Pre_star;
 
