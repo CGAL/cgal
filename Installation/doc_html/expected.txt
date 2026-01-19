@@ -1,0 +1,53 @@
+<CGAL/tl/expected.hpp>
+
+Overview
+========
+
+CGAL ships its own copy of the header <tl/expected.hpp>, available as
+<CGAL/tl/expected.hpp>. This header provides functionality equivalent
+to std::expected, standardized in C++23.
+
+Shipping this header directly inside CGAL avoids relying on external
+FetchContent mechanisms and simplifies the build configuration.
+
+Purpose
+=======
+
+The expected type allows functions to return either:
+ - a valid value, or
+ - an error object describing why the operation failed.
+
+This approach improves error handling compared to raw error codes or
+exceptions and makes APIs more expressive.
+
+The type is provided under the CGAL::cpp23 namespace.
+
+Example
+=======
+
+#include <CGAL/tl/expected.hpp>
+#include <iostream>
+
+using CGAL::cpp23::expected;
+using CGAL::cpp23::unexpected;
+
+expected<int, std::string> divide(int a, int b)
+{
+  if (b == 0)
+    return unexpected("division by zero");
+  return a / b;
+}
+
+int main()
+{
+  auto r = divide(10, 0);
+  if (!r)
+    std::cout << "Error: " << r.error() << std::endl;
+}
+
+Notes
+=====
+
+- The shipped header is licensed under CC0 1.0 Universal.
+- The interface closely follows std::expected.
+- Useful for error-aware APIs inside CGAL.
