@@ -355,13 +355,11 @@ public:
   /// The type of object that stores the function using type-erasure.
   /// A labeling function `f` must return `0` if the point is not located in any subdomain. The return type of labeling functions is an integer.
 ///
-/// Let `p` be a Point.
+/// Let `p` be a point.
 /// <ul>
 /// <li>`f(p)=0` means that `p` is outside domain.</li>
 /// <li>`f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.</li>
 /// </ul>
-/// `CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
-/// if there are several components to mesh.
 ///
 /// The function type can be any model of the concept `Callable` compatible with the signature
 /// `Subdomain_index(const %Point_3&)`: it can be a function, a function object, a lambda expression...
@@ -434,7 +432,9 @@ public:
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
-   * \tparam Function a type compatible with \ref Mesh3Labeling_function "Labeling_function"
+   * \tparam Function a type compatible with \ref Mesh3Labeling_function "Labeling_function".
+   *   `CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
+   *   if there are several components to mesh.
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam BoundingObject either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
