@@ -313,11 +313,11 @@ protected:
   const Is_a_constrained_edge is_a_constrained_edge;
 
   /** The object predicate that defines the locally conform criteria. */
-  Is_locally_conform is_locally_conform;
+  Is_locally_conform is_locally_conform{};
 
   Vertex_handle va, vb;
 
-  bool imperatively;
+  bool imperatively = false;
 
   /** Object used by the class Refine_edges_visitor */
   //@{
@@ -353,27 +353,13 @@ protected:
     }
   }
 
-  template <typename Constraint_hierarchy_tag>
-  void after_insertion_split_constraint(Vertex_handle /*v1*/, Vertex_handle /*v2*/,
-                                        Vertex_handle /*va*/,
-      Constraint_hierarchy_tag)
-  {
-  }
-
-  void after_insertion_split_constraint(Vertex_handle v1, Vertex_handle v2,
-                                        Vertex_handle va,
-                                        Tag_true)
-  {
-    tr.split_constraint(v1, v2, va);
-  }
-
-public:
+  public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base(Tr& tr_) :
     Container(Is_a_constrained_edge(tr_)),
     tr(tr_), is_a_constrained_edge(tr_),
-    is_locally_conform(), imperatively(false), converter(tr_)
+    converter(tr_)
   {
   }
 
@@ -383,7 +369,7 @@ public:
 
   void set_imperative_refinement(bool b)
   {
-    imperatively = b;
+    imperatively = b; // used in Refine_edges_base_with_clusters
   }
 
   /** \name Functions that this level must declare. */
@@ -524,17 +510,16 @@ public:
       *edges_out++ = std::make_pair(n, ni);
     }
 
-    std::pair<OutputItFaces,OutputItEdges> pit =
-      std::make_pair(faces_out,edges_out);
+    auto pair_out_it = std::make_pair(faces_out,edges_out);
 
     if(f_does_conflict) {
-      pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr::ccw(i),pit);
-      pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr:: cw(i),pit);
+      pair_out_it = triangulation_ref_impl().propagate_conflicts(p,f,Tr::ccw(i),pair_out_it);
+      pair_out_it = triangulation_ref_impl().propagate_conflicts(p,f,Tr:: cw(i),pair_out_it);
     }
 
     if(n_does_conflict) {
-      pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr::ccw(ni),pit);
-      pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr:: cw(ni),pit);
+      pair_out_it = triangulation_ref_impl().propagate_conflicts(p,n,Tr::ccw(ni),pair_out_it);
+      pair_out_it = triangulation_ref_impl().propagate_conflicts(p,n,Tr:: cw(ni),pair_out_it);
     }
     return zone;
   }
@@ -748,8 +733,9 @@ public:
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
 
-    after_insertion_split_constraint(va, vb, v,
-                                     typename Tr::Constraint_hierarchy_tag());
+    if constexpr (Tr::Constraint_hierarchy_tag::value) {
+      tr.split_constraint(va, vb, v);
+    }
 
     if(!is_locally_conform(tr, va, v))
       add_constrained_edge_to_be_conformed(va, v);
