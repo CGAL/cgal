@@ -74,7 +74,7 @@ public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits> Self;
 
   /*! the <span class="textsc">Dcel</span> maintains the incidence
-   * relations between the cells of of the arrangement.
+   * relations between the cells of the arrangement.
    */
   typedef typename Topology_traits::Dcel                Dcel;
 
@@ -120,7 +120,7 @@ public:
      */
     Size degree() const;
 
-    /*! obtains a circulator circulator that allows going over the halfedges
+    /*! obtains a circulator that allows going over the halfedges
      * incident to `v` (that have `v` as their target).
      * The edges are traversed in a clockwise direction around `v`.
      * \pre `v` is <I>not</I> an isolated vertex.

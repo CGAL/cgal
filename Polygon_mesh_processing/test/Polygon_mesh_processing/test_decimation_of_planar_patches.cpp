@@ -29,7 +29,8 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet)
+template<typename Least_squares_fitting_tag>
+void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet, Least_squares_fitting_tag tag)
 {
   std::vector<std::size_t> region_ids(num_faces(sm));
   std::vector<std::size_t> corner_id_map(num_vertices(sm), -1); // corner status of vertices
@@ -42,7 +43,8 @@ void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet)
                                            CGAL::make_random_access_property_map(region_ids),
                                            CGAL::parameters::cosine_of_maximum_angle(cos_th).
                                                              region_primitive_map(normal_map).
-                                                             maximum_distance(frechet));
+                                                             maximum_distance(frechet).
+                                                             least_squares_fitting(tag));
 
   // detect corner vertices on the boundary of planar regions
   std::size_t nb_corners =
@@ -52,7 +54,8 @@ void approximate_remeshing(Surface_mesh& sm, double cos_th, double frechet)
                                    CGAL::make_random_access_property_map(corner_id_map),
                                    CGAL::parameters::cosine_of_maximum_angle(cos_th).
                                                      maximum_distance(frechet).
-                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)).
+                                                     least_squares_fitting(tag));
 
   // run the remeshing algorithm using filled properties
   Surface_mesh out;
@@ -111,9 +114,14 @@ int main()
     assert(CGAL::is_valid_polygon_mesh(sm_out));
 
     PMP::transform(rot, sm);
-    approximate_remeshing(sm, 0.98, 1e-2);
+    Surface_mesh sm_lsq = sm;
+    approximate_remeshing(sm, 0.98, 1e-2, CGAL::Tag_false());
     std::ofstream("cheese_out_rg.off") << sm;
     assert(CGAL::is_valid_polygon_mesh(sm));
+
+    approximate_remeshing(sm_lsq, 0.98, 1e-2, CGAL::Tag_true());
+    std::ofstream("cheese_out_rg_lsq.off") << sm_lsq;
+    assert(CGAL::is_valid_polygon_mesh(sm_lsq));
 }
 
 // testing border non-manifold vertex: not working for now, test kept
@@ -413,7 +421,7 @@ int main()
 
     // call the decimation function
 
-    approximate_remeshing(sm, 0.98, 1e-2);
+    approximate_remeshing(sm, 0.98, 1e-2, CGAL::Tag_false());
     ss=std::stringstream();
     ss << "out_a_rg" << i << ".off";
     std::ofstream out(ss.str().c_str());
@@ -431,7 +439,7 @@ int main()
     CGAL::Subdivision_method_3::Sqrt3_subdivision(sm,
                                                   CGAL::parameters::number_of_iterations(3));
 
-    approximate_remeshing(sm, 0.98, 1e-2);
+    approximate_remeshing(sm, 0.98, 1e-2, CGAL::Tag_false());
     std::ofstream out("sphere_rg.off");
     out << sm;
     std::cout << "output written to sphere_rg.off\n";

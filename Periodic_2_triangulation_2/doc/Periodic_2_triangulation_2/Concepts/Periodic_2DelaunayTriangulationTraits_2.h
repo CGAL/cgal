@@ -48,14 +48,14 @@ public:
   which takes four points \f$ p, q, r, s\f$ as arguments and returns
   `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or,
   `ON_ORIENTED_BOUNDARY` according to the position of points `s`
-  with respect to the oriented circle through through \f$ p,q\f$
+  with respect to the oriented circle through \f$ p,q\f$
   and \f$ r\f$ and
 
   `Oriented_side operator()( Point p, Point q, Point r, Point s, Periodic_2_offset_2 o_p, Periodic_2_offset_2 o_q Periodic_2_offset_2 o_r, Periodic_2_offset_2 o_s)`
   which takes four points \f$ (p, o_p), (q, o_q), (r, o_r), (s, o_s)\f$ as arguments and returns
   `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or,
   `ON_ORIENTED_BOUNDARY` according to the position of points `(s, o_s)`
-  with respect to the oriented circle through through `(p, o_p), (q, o_q)`
+  with respect to the oriented circle through `(p, o_p), (q, o_q)`
   and `(r, o_r)`.
 
   This type is required only if the function
