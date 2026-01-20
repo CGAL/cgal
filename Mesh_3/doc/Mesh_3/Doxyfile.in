@@ -27,7 +27,6 @@ INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/perturb_mesh_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/refine_mesh_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/make_mesh_3.h \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Labeled_mesh_domain_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_criteria_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_constant_domain_field_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_cell_criteria_3.h \
