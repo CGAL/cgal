@@ -16,17 +16,27 @@
 #include <CGAL/license/Mesh_2.h>
 
 
-#include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <CGAL/Mesher_level.h>
-#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
-#include <CGAL/Meshes/Filtered_queue_container.h>
-#include <CGAL/tags.h>
 #include <CGAL/assertions.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Compact_container.h>
+#include <CGAL/enum.h>
+#include <CGAL/functional.h>
+#include <CGAL/Mesher_level_default_implementations.h>
+#include <CGAL/Mesher_level.h>
+#include <CGAL/Meshes/Filtered_queue_container.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/tags.h>
 
-#include <utility>
-#include <iterator>
 #include <boost/iterator/filter_iterator.hpp>
+
+#include <boost/iterator/transform_iterator.hpp>
+#include <iterator>
+#include <limits>
 #include <optional>
+#include <stack>
+#include <type_traits>
+#include <utility>
 
 namespace CGAL {
 

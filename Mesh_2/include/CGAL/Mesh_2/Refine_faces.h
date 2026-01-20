@@ -15,13 +15,27 @@
 
 #include <CGAL/license/Mesh_2.h>
 
-#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
-#include <CGAL/Mesh_2/Face_badness.h>
-#include <CGAL/Double_map.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Double_map.h>
+#include <CGAL/enum.h>
+#include <CGAL/functional.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Mesh_2/Face_badness.h>
+#include <CGAL/Mesher_level_default_implementations.h>
+#include <CGAL/Mesher_level.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
+#include <CGAL/Named_function_parameters.h>
 
-#include <string>
+#include <boost/iterator/transform_iterator.hpp>
+
+#include <iostream>
 #include <sstream>
+#include <string>
+#include <type_traits>
+
 
 namespace CGAL {
 
