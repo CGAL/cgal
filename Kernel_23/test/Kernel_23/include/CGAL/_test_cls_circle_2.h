@@ -165,6 +165,10 @@ _test_cls_circle_2(const R& )
  assert( c8.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
  assert( cc.has_on_boundary( p3 + vy6) );
  assert( cc.has_on_boundary( p3 - vx6) );
+ assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(p0, p1)) );
+ assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(p2, p1)) );
+ assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(p1, p1)) );
+ assert(!c1.has_on_bounded_side(CGAL::Segment_2<R>(p1, p4)) );
 
  std::cout << '.';
 

@@ -31,6 +31,7 @@ class Circle_2 : public R_::Kernel_base::Circle_2
 {
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
+  typedef typename R_::Segment_2             Segment_2;
   typedef typename R_::Kernel_base::Circle_2 RCircle_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
@@ -130,9 +131,18 @@ public:
   }
 
   typename R::Boolean
-  has_on_bounded_side(const Point_2 &p) const
+  has_on_bounded_side(const Point_2& p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
+  }
+
+  typename R::Boolean
+  has_on_bounded_side(const Segment_2& s) const
+  {
+    if ((center() - s.source()).squared_length() > squared_radius())
+      return false;
+
+    return (center() - s.target()).squared_length() <= squared_radius();
   }
 
   typename R::Boolean
