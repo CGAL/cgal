@@ -35,6 +35,7 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
   typedef typename R_::Point_3               Point_3_;
   typedef typename R_::Circle_3              Circle_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+  typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
 
   typedef Sphere_3                           Self;
   static_assert(std::is_same<Self, typename R_::Sphere_3>::value);
@@ -148,6 +149,90 @@ public:
   has_on_bounded_side(const Point_3_ &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
+  }
+
+  typename R::Boolean
+  has_on_bounded_side(const Iso_cuboid_3& c) const
+  {
+    return has_on_bounded_side(
+    (c.min)().x(), (c.min)().y(), (c.min)().z(),
+    (c.max)().x(), (c.max)().y(), (c.max)().z());
+  }
+
+  template<typename BFT>
+  typename R::Boolean has_on_bounded_side(const BFT bxmin, const BFT bymin, const BFT bzmin,
+    const BFT bxmax, const BFT bymax, const BFT bzmax) const
+  {
+    typedef typename R::FT SFT;
+    typedef typename Coercion_traits<SFT, BFT>::Type FT;
+    typedef typename R::Point_3 Point;
+
+    typename Coercion_traits<SFT, BFT>::Cast to_FT;
+
+    FT d = FT(0);
+    FT distance = FT(0);
+    FT sr = squared_radius();
+
+    const Point& c = center();
+
+    if (compare(c.x(), bxmin) == SMALLER)
+    {
+      d = to_FT(bxmax) - to_FT(c.x());
+      d = square(d);
+      if (certainly(d > squared_radius()))
+        return false;
+
+      distance = d;
+    }
+    else if (compare(c.x(), bxmax) == LARGER)
+    {
+      d = to_FT(c.x()) - to_FT(bxmin);
+      d = square(d);
+      if (certainly(d > squared_radius()))
+        return false;
+
+      distance = d;
+    }
+
+    if (compare(c.y(), bymin) == SMALLER)
+    {
+      d = to_FT(bymax) - to_FT(c.y());
+      d = square(d);
+      if (certainly(d > squared_radius()))
+        return false;
+
+      distance += d;
+    }
+    else if (compare(c.y(), bymax) == LARGER)
+    {
+      d = to_FT(c.y()) - to_FT(bymin);
+      d = square(d);
+      if (certainly(d > squared_radius()))
+        return false;
+
+      distance += d;
+    }
+
+    if (compare(c.z(), bzmin) == SMALLER)
+    {
+      d = to_FT(bzmax) - to_FT(c.z());
+      d = square(d);
+      if (certainly(d > squared_radius()))
+        return false;
+
+      distance += d;
+    }
+    else if (compare(c.z(), bzmax) == LARGER)
+    {
+      d = to_FT(c.z()) - to_FT(bzmin);
+      d = square(d);
+      if (certainly(d > squared_radius()))
+        return false;
+
+      distance += d;
+    }
+
+    return (distance <= sr);
   }
 
   typename R::Boolean

@@ -127,6 +127,7 @@ _test_cls_sphere_3(const R& )
  assert( c8.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
  assert( cc.has_on_boundary( p3 + vy6) );
  assert( cc.has_on_boundary( p3 - vx6) );
+ assert( c1.has_on_bounded_side(CGAL::Iso_cuboid_3<R>(CGAL::ORIGIN, p0)) );
 
  std::cout << '.';
 
