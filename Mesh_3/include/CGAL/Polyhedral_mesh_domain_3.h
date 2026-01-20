@@ -126,7 +126,7 @@ It is then recommended to use the parameter `parameters::surface_only()` to spee
 the meshing process.
 
 \tparam Polyhedron stands for the type of the input polyhedral surface(s),
-model of `FaceListGraph`.
+model of `FaceListGraph`.  It must be a triangle mesh.
 
 \tparam IGT stands for a geometric traits class
 providing the types and functors required to implement

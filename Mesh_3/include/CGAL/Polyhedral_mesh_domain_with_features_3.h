@@ -82,7 +82,7 @@ for polyhedral boundary surfaces. This parameter has to be
 instantiated with a model of the concept
 `IntersectionGeometricTraits_3`.
 
-\tparam Polyhedron stands for the type of the input polyhedral surface(s), model of `FaceListGraph`.
+\tparam Polyhedron stands for the type of the input polyhedral surface(s), model of `FaceListGraph`. It must be a triangle mesh.
 
 \cgalModels{MeshDomainWithFeatures_3}
 
