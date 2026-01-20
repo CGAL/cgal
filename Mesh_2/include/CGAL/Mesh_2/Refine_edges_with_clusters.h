@@ -16,10 +16,13 @@
 #include <CGAL/license/Mesh_2.h>
 
 
-#include <CGAL/Mesh_2/Refine_edges.h>
 #include <CGAL/Mesh_2/Clusters.h>
-#include <CGAL/utils.h>
+#include <CGAL/Mesh_2/Refine_edges.h>
+#include <CGAL/Mesher_level.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
+#include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/utils.h>
 
 namespace CGAL {
 
@@ -31,7 +34,7 @@ namespace Mesh_2 {
  *
  * \param Tr is the type of triangulation on which the level acts.
  * \param Is_locally_conform defines the locally conform criterion: Gabriel
- *        or Delaunay. It defaults to the Garbriel criterion.
+ *        or Delaunay. It defaults to the Gabriel criterion.
  * \param Container is the type of container. It defaults to a filtered
  *        queue of `Vertex_handle` pair (see `Filtered_queue_container`).
  */
@@ -207,13 +210,13 @@ public:
 // What Shewchuk says:
 // - If the cluster is not reduced (all segments don't have the same
 // length as [v1,v2]), then split the edge
-// - Else, let rmin be the minimum insertion radius introduced by the
+// - Else, let next_sq_insertion_radius be the minimum insertion radius introduced by the
 // potential split, let T be the triangle whose circumcenter
 // encroaches [v1,v2] and let rg be the length of the shortest edge
-// of T. If rmin >= rg, then split the edge.
+// of T. If next_sq_insertion_radius >= rg, then split the edge.
 
               if( this->imperatively || !ca.is_reduced() ||
-                  ca.rmin >=  sq_r_of_p_parent)
+                  ca.next_sq_insertion_radius >=  sq_r_of_p_parent)
                 this->add_constrained_edge_to_be_conformed(v1,v2);
               else
                 status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;

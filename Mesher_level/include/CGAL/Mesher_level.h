@@ -14,6 +14,7 @@
 #define CGAL_MESHER_LEVEL_H
 
 #include <CGAL/IO/io.h>
+#include <iostream>
 #include <sstream>
 #include <string>
 

@@ -1,4 +1,11 @@
+// #define CGAL_MESH_2_VERBOSE 1
 #define CGAL_MESH_2_DEBUG_REFINEMENT_POINTS 1
+#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS 1
+// #define CGAL_MESH_2_DEBUG_BAD_EDGES 1
+// #define CGAL_MESH_2_DEBUG_BAD_FACES 1
+// #define CGAL_MESH_2_DEBUG_CLUSTERS 1
+// #define CGAL_MESH_2_DEBUG_INSERTIONS 1
+
 // main.cxx -- CGAL triangulation test utility
 //
 // Written by Peter Sadrozinski, started July 2015.
@@ -20,7 +27,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
+#include <cstddef>
+#include <cstdlib>
 #include <fstream>
+#include <iostream>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include <boost/property_map/function_property_map.hpp>
 
 #include <CGAL/IO/write_VTU.h>
@@ -29,14 +44,23 @@
 #include <CGAL/bisect_failures.h>
 
 // triangulation
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
 
 // mesh refinement
-#include <CGAL/Delaunay_mesher_2.h>
-#include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
+
+// IO
+#include <CGAL/IO/io.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/Triangle_2.h>
 
 
 using meshTriKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -83,7 +107,6 @@ auto load(std::string filename) -> Data {
 
   size_t num_points;
   size_t num_constraints;
-
 
   input_file >> num_points;
   data.points.reserve(num_points);
