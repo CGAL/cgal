@@ -37,7 +37,8 @@ PolygonMesh
 kernel(const PolygonMesh& pm,
        const FaceRange& face_range,
        const NamedParameters& np = parameters::default_values(),
-       bool used_to_find_a_point = false)
+       bool used_to_find_a_point = false,
+       std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3> *p = nullptr)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -83,17 +84,17 @@ kernel(const PolygonMesh& pm,
   KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
   for(vertex_descriptor v: vertices(kernel))
     put(kvpm, v, to_exact(get(base_vpm, v)));
-  vertex_descriptor start_vertex = *vertices(pm).begin();
+  vertex_descriptor start_vertex = *vertices(kernel).begin();
 
   std::array<vertex_descriptor, 6> bbox_vertices;
   if(bbox_filtering){
     // We compute and store the vertices that realized the bbox
-    struct BBoxEntry {
+    struct Bbox_entry {
       std::size_t index;
       std::function<double(const EPoint_3&)> bound;
       std::function<double(const Bbox_3&)> value;
     };
-    std::array<BBoxEntry,6> entries {{
+    std::array<Bbox_entry,6> entries {{
         {0, [](const EPoint_3& p){ return to_interval(p.x()).first;  }, [](const Bbox_3& b){ return b.xmin(); }},
         {1, [](const EPoint_3& p){ return to_interval(p.x()).second; }, [](const Bbox_3& b){ return b.xmax(); }},
         {2, [](const EPoint_3& p){ return to_interval(p.y()).first;  }, [](const Bbox_3& b){ return b.ymin(); }},
@@ -129,7 +130,7 @@ kernel(const PolygonMesh& pm,
     Plane_3 plane(to_exact(get(vpm,source(h, pm))),
                   to_exact(get(vpm,target(h, pm))),
                   to_exact(get(vpm,target(next(h, pm), pm))));
-    if(bbox_filtering && vertices(kernel).size() >= 3){
+    if(bbox_filtering && vertices(kernel).size() >= 3 && faces(kernel).size()>1){
       // Early exit if the plane does not cut the bbox of the temporary kernel
 
       // By looking the sign of the plane value, we can check only two corners
@@ -148,12 +149,13 @@ kernel(const PolygonMesh& pm,
       if(oriented_side(plane, opposite_corner) == ON_POSITIVE_SIDE)
         return PolygonMesh(); // empty
 
-      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
-                                                                  bounding_box(&bbox_vertices).starting_vertex_descriptor(start_vertex));
+      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
+                                                                  geom_traits(kgt).
+                                                                  do_not_triangulate_faces(true).
+                                                                  vertex_point_map(kvpm).
+                                                                  bounding_box(&bbox_vertices).
+                                                                  starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return kernel;
-
-      // CGAL_assertion_code(for(std::size_t i=0; i!=6; ++i)) // Compile only with Surface_mesh
-        // CGAL_assertion(kernel.is_valid(bbox_vertices[i]));
 
       // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
       bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
@@ -161,7 +163,10 @@ kernel(const PolygonMesh& pm,
     }
     else
     {
-      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).geom_traits(kgt).do_not_triangulate_faces(true).vertex_point_map(kvpm).
+      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
+                                                                  geom_traits(kgt).
+                                                                  do_not_triangulate_faces(true).
+                                                                  vertex_point_map(kvpm).
                                                                   starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return kernel;
     }
@@ -200,7 +205,7 @@ kernel(const PolygonMesh& pm,
       centroid.exact();
 
     // Return the centroid
-    put(base_vpm, *vertices(pm).begin(), from_exact(centroid));
+    *p = from_exact(centroid);
     return kernel;
   }
 
@@ -221,7 +226,7 @@ kernel(const PolygonMesh& pm,
   * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
   *
   * The kernel may be degenerate. If the kernel has dimension 2, the output mesh consists of a single face. If the kernel has dimension 0 or 1,
-  * the output mesh contains respectively only one and two isolate vertices.
+  * the output mesh contains one or two isolate vertices, respectively.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
@@ -241,13 +246,13 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario.}
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenario }
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenarios.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
@@ -261,7 +266,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNBegin{starting_cube}
   *     \cgalParamDescription{
   *       The bounding box used to compute the kernel. The output is clipped based on this
-  *       box, which must strictly contain the kernel to guarantee a correct result.
+  *       box, which must contain the kernel to guarantee a correct result.
   *     }
   *     \cgalParamType{`CGAL::Bbox_3`}
   *     \cgalParamDefault{`CGAL::Polygon_mesh_processing::bbox(pm)`}
@@ -270,7 +275,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
   *     \cgalParamDescription{
   *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may theoretically be
+  *       and/or to have boundaries. In this case, the kernel may be
   *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
   *     }
   *     \cgalParamType{bool}
@@ -324,13 +329,13 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario.}
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in random order to compute the kernel, improving runtime in most cases}
+  *     \cgalParamDescription{If set to `true`, the planes are considered in random order to compute the kernel, improving runtime in most scenarios.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
@@ -344,7 +349,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNBegin{starting_cube}
   *     \cgalParamDescription{
   *       The bounding box used to compute the kernel. The output is clipped based on this
-  *       box, which must strictly contain the kernel to guarantee a correct result.
+  *       box, which must contain the kernel to guarantee a correct result.
   *     }
   *     \cgalParamType{`CGAL::Bbox_3`}
   *     \cgalParamDefault{`CGAL::Polygon_mesh_processing::bbox(pm)`}
@@ -353,7 +358,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
   *     \cgalParamDescription{
   *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may theoretically be
+  *       and/or to have boundaries. In this case, the kernel may be
   *       unbounded and the output is clipped by the bounding box provided by the `starting_cube` parameter.
   *     }
   *     \cgalParamType{bool}
@@ -398,13 +403,13 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenario }
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios. }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenario }
+  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenarios }
   *     \cgalParamType{bool}
   *     \cgalParamDefault{true}
   *   \cgalParamNEnd
@@ -412,7 +417,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *   \cgalParamNBegin{starting_cube}
   *     \cgalParamDescription{
   *       The bounding box used to compute the kernel. The output is clipped based on this
-  *       box, which must strictly contain the kernel to guarantee a correct result.
+  *       box, which must contain the kernel to guarantee a correct result.
   *     }
   *     \cgalParamType{`CGAL::Bbox_3`}
   *     \cgalParamDefault{`CGAL::Polygon_mesh_processing::bbox(pm)`}
@@ -421,7 +426,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
   *     \cgalParamDescription{
   *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may theoretically be
+  *       and/or to have boundaries. In this case, the kernel may be
   *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
   *     }
   *     \cgalParamType{bool}
@@ -464,13 +469,14 @@ kernel_point(const PolygonMesh& pm,
 
   bool require_strictly_inside = choose_parameter(get_parameter(np, internal_np::require_strictly_inside), true);
 
-  PolygonMesh k = internal::kernel(pm, faces(pm), np, true);
+  std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3> res;
+  PolygonMesh k = internal::kernel(pm, faces(pm), np, true, &res);
 
   // If the kernel is empty or degenerated with strictly inside option, return empty
   if(is_empty(k) || (require_strictly_inside && ((vertices(k).size()<3) || (faces(k).size()==1))))
     return std::nullopt;
 
-  return std::make_optional(get(get_const_property_map(vertex_point, k), *vertices(k).begin()));
+  return res;
 }
 
 

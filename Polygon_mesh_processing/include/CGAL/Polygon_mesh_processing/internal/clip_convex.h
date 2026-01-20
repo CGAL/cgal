@@ -425,7 +425,6 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   }
 
   CGAL_assertion(is_valid_polygon_mesh(pm));
-  // std::ofstream("clipped.off") << pm;
 
   return *boundary_vertices.begin();
 }
