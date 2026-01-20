@@ -351,6 +351,7 @@ private:
         for (int i = 0; i < dim; ++i) {
             cell_index += coords[i] * N[i];
         }
+        return cell_index;
     }
 } ;
 

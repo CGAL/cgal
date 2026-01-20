@@ -40,19 +40,19 @@ namespace Homological_discrete_vector_field {
 //} ;
 
 /** \brief For lower star filtration along x: function mapping coordinates to x */
-std::function<double(const std::vector<double>&)> f_x = [](const std::vector<double>& v)
+inline std::function<double(const std::vector<double>&)> f_x = [](const std::vector<double>& v)
 {
     return (v.at(0)) ;
 } ;
 
 /** \brief For lower star filtration along y: function mapping coordinates to y */
-std::function<double(const std::vector<double>&)> f_y = [](const std::vector<double>& v)
+inline std::function<double(const std::vector<double>&)> f_y = [](const std::vector<double>& v)
 {
     return (v.at(1)) ;
 } ;
 
 /** \brief For lower star filtration along z: function mapping coordinates to z */
-std::function<double(const std::vector<double>&)> f_z = [](const std::vector<double>& v)
+inline std::function<double(const std::vector<double>&)> f_z = [](const std::vector<double>& v)
 {
     return (v.at(2)) ;
 } ;
