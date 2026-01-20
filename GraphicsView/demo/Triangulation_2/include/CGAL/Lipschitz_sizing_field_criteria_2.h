@@ -76,6 +76,12 @@ public:
           return false; // q is big but not *this
       return( sine() < q.sine() );
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const Quality& q)
+    {
+      os << "[sine: " << q.sine() << ", size: " << q.size() << "]";
+      return os;
+    }
   };
 
   class Is_bad : public Base::Is_bad

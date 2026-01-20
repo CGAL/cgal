@@ -46,6 +46,12 @@ typedef unspecified_type Compute_area_2;
 
 /// @}
 
+/*!
+Constructor object. Must provide an operator
+`CGAL::Bbox_2 operator()(Point_2 p);` that constructs the
+bounding box of the point `p`.
+*/
+typedef unspecified_type Construct_bbox_2;
 
 /// \name Access to predicate and constructor objects
 /// @{
@@ -64,8 +70,9 @@ Construct_circumcenter_2 construct_circumcenter_2_object();
 */
 Compute_area_2 compute_area_2_object();
 
-
-
+/*!
+*/
+Construct_bbox_2 construct_bbox_2_object();
 
 
 /// @}

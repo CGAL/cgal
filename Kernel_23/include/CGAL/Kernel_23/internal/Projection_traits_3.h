@@ -90,11 +90,10 @@ struct Projector<R,2>
 template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
-  typedef typename R::Point_3     Point;
-
-  Bbox_2 operator()(const Point& p) const {
+  template <typename T>
+  Bbox_2 operator()(const T& obj) const {
     typename R::Construct_bbox_3 bb;
-    return Projector<R, dim>::bbox(bb(p));
+    return Projector<R, dim>::bbox(bb(obj));
   }
 };
 

@@ -353,8 +353,26 @@ compute_new_bad_faces(Vertex_handle v)
         {
           Quality q;
           Mesh_2::Face_badness badness = is_bad(fc, q);
-          if( badness != Mesh_2::NOT_BAD )
+          if( badness != Mesh_2::NOT_BAD ) {
+            if constexpr (std::is_floating_point_v<FT>) {
+              auto bbox = triangulation_ref_impl().geom_traits().construct_bbox_2_object();
+              auto box = bbox(fc->vertex(0)->point()) + bbox(fc->vertex(1)->point()) + bbox(fc->vertex(2)->point());
+              using boost::math::float_advance;
+              if(box.xmax() <= float_advance(box.xmin(), 4) &&
+                 box.ymax() <= float_advance(box.ymin(), 4))
+              {
+#ifdef CGAL_MESH_2_DEBUG_BAD_FACES
+                std::cerr << "Skipping bad face with too small bbox: "
+                          << IO::oformat(fc->vertex(0), With_point_tag{}) << ", "
+                          << IO::oformat(fc->vertex(1), With_point_tag{}) << ", "
+                          << IO::oformat(fc->vertex(2), With_point_tag{}) << "\n";
+                std::cerr << "Quality: " << IO::oformat(q) << "\n";
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
+                continue;
+              }
+            }
             push_in_bad_faces(fc, q);
+          }
         }
   } while(++fc!=fcbegin);
 }
