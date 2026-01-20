@@ -18,6 +18,7 @@
 #define CGAL_SPHERE_3_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/Coercion_traits.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/representation_tags.h>
@@ -164,10 +165,10 @@ public:
     const BFT bxmax, const BFT bymax, const BFT bzmax) const
   {
     typedef typename R::FT SFT;
-    typedef Coercion_traits<SFT, BFT>::Type FT;
+    typedef typename Coercion_traits<SFT, BFT>::Type FT;
     typedef typename R::Point_3 Point;
 
-    Coercion_traits<SFT, BFT>::Cast to_FT;
+    typename Coercion_traits<SFT, BFT>::Cast to_FT;
 
     FT d = FT(0);
     FT distance = FT(0);
