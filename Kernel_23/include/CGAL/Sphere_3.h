@@ -164,10 +164,10 @@ public:
     const BFT bxmax, const BFT bymax, const BFT bzmax) const
   {
     typedef typename R::FT SFT;
-    typedef typename Coercion_traits<SFT, BFT>::Type FT;
+    typedef Coercion_traits<SFT, BFT>::Type FT;
     typedef typename R::Point_3 Point;
 
-    typename Coercion_traits<SFT, BFT>::Cast to_FT;
+    Coercion_traits<SFT, BFT>::Cast to_FT;
 
     FT d = FT(0);
     FT distance = FT(0);
