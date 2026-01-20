@@ -610,6 +610,24 @@ int main(int argc, char **argv)
         assert(bres3);
     }
 
+    // //////// set_row / set_column
+
+    // set_row in row matrix
+
+    CGAL::OSM::set_row(rowMajor, 0, CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW>(rowMajor.dimensions().second));
+
+    // set_row in column matrix
+
+    CGAL::OSM::set_row(columnMajor, 0, CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW>(columnMajor.dimensions().second));
+
+    // set_column in row matrix
+
+    CGAL::OSM::set_column(rowMajor, 0, CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN>(rowMajor.dimensions().first));
+
+    // set_column in column matrix
+
+    CGAL::OSM::set_column(columnMajor, 0, CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN>(columnMajor.dimensions().first));
+
 //    std::cout << "Multiplication de colonne (col/row dom):" << std::endl << colCol << std::endl << colRow << std::endl << std::endl;
 //    std::cout << "Multiplication de ligne   (col/row dom):" << std::endl << rowCol << std::endl << rowRow << std::endl << std::endl;
 //

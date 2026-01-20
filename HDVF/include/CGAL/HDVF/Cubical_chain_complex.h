@@ -152,38 +152,38 @@ public:
     // Methods of the AbstractChainComplex concept
 
     /**
-     * \brief Returns the boundary of the cell id_cell in dimension q.
+     * \brief Returns the boundary of the cell id_cell in dimension `q`.
      *
-     * Returns a copy of the column-major chain stored in the boundary matrix of dimension q: boundary of the cell id_cell in dimension q.
+     * Returns a copy of the column-major chain stored in the boundary matrix of dimension q: boundary of the cell `id_cell` in dimension `q`. If `q` is out the range of dimensions of the complex cells, returns a null matrix.
      *
      * \param id_cell Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
+     * \return The column-major chain containing the boundary of the cell `id_cell` in dimension `q`.
      */
     Column_chain d(size_t id_cell, int q) const
     {
-        if (q > 0)
+        if ((q > 0) && (q<= _dim))
             return OSM::cget_column(_d[q], id_cell);
         else
             return Column_chain(0) ;
     }
 
     /**
-     * \brief Returns the co-boundary of the cell id_cell in dimension q.
+     * \brief Returns the co-boundary of the cell id_cell in dimension `q`.
      *
-     * Returns a row-major chain containing the co-boundary of the cell id_cell in dimension q (so actually a row of the boundary matrix).
+     * Returns a row-major chain containing the co-boundary of the cell `id_cell` in dimension `q` (so actually a row of the boundary matrix). If `q` is out the range of dimensions of the complex cells, returns a null matrix.
      *
      * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
      *
      * \param id_cell Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
+     * \return The row-major chain containing the co-boundary of the cell `id_cell` in dimension `q`.
      */
     Row_chain cod(size_t id_cell, int q) const
     {
-        if (q < _dim)
+        if ((q < _dim) && (q>=0))
             return OSM::get_row(_d[q+1], id_cell);
         else
             return Row_chain(0) ;
@@ -191,6 +191,8 @@ public:
 
     /**
      * \brief Returns the number of cells in a given dimension.
+     *
+     * If `q` is out the range of dimensions of the complex cells, returns 0.
      *
      * \param q Dimension along which the number of cells is returned.
      *
