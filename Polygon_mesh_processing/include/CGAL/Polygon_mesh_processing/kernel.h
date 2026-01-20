@@ -36,7 +36,8 @@ template <class PolygonMesh,
 PolygonMesh
 kernel(const PolygonMesh& pm,
        const FaceRange& face_range,
-       const NamedParameters& np = parameters::default_values())
+       const NamedParameters& np = parameters::default_values(),
+       bool used_to_find_a_point = false)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -60,14 +61,13 @@ kernel(const PolygonMesh& pm,
   using Point_3 = typename GT::Point_3;
   using EPoint_3 = typename EK::Point_3;
   using EVector_3 = typename EK::Vector_3;
-  using EFT = typename EK::FT;
   using Plane_3 = typename Three_point_cut_plane_traits<EK>::Plane_3;
 
   using KernelPointMap = typename boost::property_map<PolygonMesh, dynamic_vertex_property_t<EPoint_3> >::type;
 
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
-  bool used_to_find_a_point = choose_parameter(get_parameter(np, internal_np::used_to_find_a_point), false);
+  // bool used_to_find_a_point = choose_parameter(get_parameter(np, internal_np::used_to_find_a_point), false);
   bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_non_manifold_non_watertight_input), false);
   std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), std::random_device()());
 
@@ -118,7 +118,6 @@ kernel(const PolygonMesh& pm,
   // Get the planes and eventually shuffle them
   Three_point_cut_plane_traits<EK> kgt;
   auto oriented_side = kgt.oriented_side_3_object();
-  auto intersection_point = kgt.construct_plane_line_intersection_point_3_object();
 
   std::vector<face_descriptor> planes(face_range.begin(), face_range.end());
   if(shuffle_planes)
@@ -463,20 +462,9 @@ kernel_point(const PolygonMesh& pm,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
-
-  using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
-  using Vector_3 = typename GT::Vector_3;
-
   bool require_strictly_inside = choose_parameter(get_parameter(np, internal_np::require_strictly_inside), true);
 
-  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                              get_const_property_map(vertex_point, pm));
-  Three_point_cut_plane_traits<GT> kgt;
-  auto oriented_side = kgt.oriented_side_3_object();
-
-  PolygonMesh k = kernel(pm, np);
+  PolygonMesh k = internal::kernel(pm, faces(pm), np, true);
 
   // If the kernel is empty or degenerated with strictly inside option, return empty
   if(is_empty(k) || (require_strictly_inside && ((vertices(k).size()<3) || (faces(k).size()==1))))

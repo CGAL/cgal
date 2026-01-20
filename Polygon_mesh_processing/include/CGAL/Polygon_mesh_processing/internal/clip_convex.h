@@ -49,7 +49,6 @@ find_crossing_edge(PolygonMesh& pm,
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
@@ -131,10 +130,12 @@ find_crossing_edge(PolygonMesh& pm,
 /**
   * Given a convex mesh, a plane and an halfedge crossing the plane from positive side, refine the mesh with the plane
   */
-template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
+template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>
+// template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
 refine_convex_with_plane(PolygonMesh& pm,
-            const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
+            // const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
+            const Plane_3& plane,
             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
             const NamedParameters& np = parameters::default_values())
 {
@@ -153,20 +154,6 @@ refine_convex_with_plane(PolygonMesh& pm,
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-
-  using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
-
-  struct Default_Bbox{
-    // Needed to compile with MSVC
-    vertex_descriptor operator[](std::size_t /*i*/){ return vertex_descriptor(); }
-    Default_Bbox operator*(){ return *this; }
-  };
-  using Bbox = typename internal_np::Lookup_named_param_def<internal_np::bounding_box_t, NamedParameters, Default_Bbox*>::type;
-  constexpr bool update_bbox = !std::is_same_v< std::remove_reference_t<Bbox>, Default_Bbox*>;
-
-  Default_Bbox* default_bbox;
-  Bbox bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), default_bbox);
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -295,12 +282,11 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   // np typedefs
   // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
-  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
-  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  // using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  // using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
-  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  // GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
 
   struct Default_Bbox{
@@ -314,8 +300,8 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   Default_Bbox* default_bbox;
   Bbox bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), default_bbox);
 
-  Default_visitor default_visitor;
-  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  // Default_visitor default_visitor;
+  // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
   // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   // Used only if do_triangulate_faces or bounding_box check
@@ -444,70 +430,10 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   return *boundary_vertices.begin();
 }
 
-  /**
-  * \ingroup PMP_corefinement_grp
-  *
-  * \brief clips `pm` by keeping the part that is on the negative side of `plane` (the side opposite to its normal vector).
-  * The input mesh must be convex to guarantee a correct execution and results.
-  *
-  * By default, the clipped part is kept closed. Set the named parameter `clip_volume` to `false` to disable this.
-  *
-  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *                      An internal property map for `CGAL::vertex_point_t` must be available.
-  *
-  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  *
-  * @param pm input surface mesh
-  * @param plane plane whose negative side defines the halfspace to intersect `pm` with.
-  *              `Plane_3` is the plane type for the same \cgal kernel as the point of the vertex point map of `pm`.
-  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-  *
-  * \cgalNamedParamsBegin
-  *
-  *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
-  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-  *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{visitor}
-  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
-  *                           Note that as there are no mesh associated with `plane`,
-  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
-  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}
-  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
-  *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{clip_volume}
-  *     \cgalParamDescription{If `true`, the clipping will be done on
-  *                           the volume \link coref_def_subsec bounded \endlink by `pm`
-  *                           rather than on its surface (i.e., `pm` will remain closed).}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`true`}
-  *   \cgalParamNEnd
-  *
-  *    \cgalParamNBegin{do_not_triangulate_faces}
-  *      \cgalParamDescription{If this parameter is set to `false`, the face added or modified by the algorithm will be triangulated.}
-  *      \cgalParamType{Boolean}
-  *      \cgalParamDefault{`true`}
-  *    \cgalParamNEnd
-  *
-  * \cgalNamedParamsEnd
-  *
-  * @return `true`
-  *
-  * @see `clip()`
-  */
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 clip_convex(PolygonMesh& pm,
-#ifdef DOXYGEN_RUNNING
-            const Plane_3& plane,
-#else
             const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
-#endif
             const NamedParameters& np = parameters::default_values()){
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -526,7 +452,6 @@ clip_convex(PolygonMesh& pm,
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
 
   Default_visitor default_visitor;
@@ -537,7 +462,7 @@ clip_convex(PolygonMesh& pm,
                               get_property_map(vertex_point, pm));
 
   // config flags
-  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
+  // bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
 
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
@@ -591,7 +516,6 @@ clip_convex(PolygonMesh& pm,
     std::vector<edge_descriptor> edges_to_remove;
 
     Oriented_side side_src = oriented_side(plane, get(vpm, source(h, pm)));
-    size_t i=0;
     do {
       Oriented_side side_trg = oriented_side(plane, get(vpm, target(h, pm)));
       if(side_src != side_trg && side_src != ON_ORIENTED_BOUNDARY && side_trg != ON_ORIENTED_BOUNDARY){

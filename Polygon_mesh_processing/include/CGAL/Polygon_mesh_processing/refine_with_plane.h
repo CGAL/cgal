@@ -283,7 +283,7 @@ void refine_with_plane(PolygonMesh& pm,
   bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false);
   if(use_convex_specialization){
     halfedge_descriptor he = internal::find_crossing_edge(pm, plane, np);
-    internal::refine_convex_with_plane(pm, plane, np);
+    internal::refine_convex_with_plane(pm, plane, he, np);
     return;
   }
 
