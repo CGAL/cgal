@@ -145,7 +145,7 @@ int bisect_failures(const InputData& data,
 
       const auto start = (std::min)(bucket * nb_to_skip, data_size);
       const auto end = (std::min)(start + nb_to_skip, data_size);
-      std::clog << "  SKIP from " << start << " to " << end << '\n';
+      std::clog << "  SKIP " << (end - start) << " from " << start << " to " << end << '\n';
 
 
       // Try to simplify the data
