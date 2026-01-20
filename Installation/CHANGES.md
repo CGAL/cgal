@@ -4805,7 +4805,7 @@ fixes for this release.
     removed.
 - The deprecated linear kernel functors `Construct_supporting_line_2`
     and `Construct_supporting_line_3` have been removed.
-- `Ambiant_dimension` and `Feature_dimenison` have been added to
+- `Ambiant_dimension` and `Feature_dimension` have been added to
     retrieve the potentially compile-time dimension of a space or of an
     object.
 - `barycenter()` functions have been added.

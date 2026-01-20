@@ -338,7 +338,7 @@ _test_cls_constrained_triangulation(const Triang &)
   T2_2.remove(vha);
   assert(T2_2.is_valid());
 
-  // test Constained_edges_iterator
+  // test Constrained_edges_iterator
   Triang T2_6;
 
   T2_6.insert(Point(0,0));
