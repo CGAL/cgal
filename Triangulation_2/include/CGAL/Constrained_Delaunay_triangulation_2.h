@@ -815,7 +815,7 @@ propagating_flip(Face_handle f,int i, int depth)
   if (!is_flipable(f,i)) return;
 #ifdef CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
   non_recursive_propagating_flip(f,i);
-#else
+#else // not CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
   int max_depth = 100;
   if(depth==max_depth){
     non_recursive_propagating_flip(f,i);
@@ -827,9 +827,9 @@ propagating_flip(Face_handle f,int i, int depth)
   propagating_flip(f,i, depth+1);
   i = ni->index(f->vertex(i));
   propagating_flip(ni,i, depth+1);
-#endif
+#endif // not CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
 }
-#else
+#else // if CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
 template < class Gt, class Tds, class Itag >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
@@ -843,7 +843,7 @@ propagating_flip(Face_handle f,int i)
   i = ni->index(f->vertex(i));
   propagating_flip(ni,i);
 }
-#endif
+#endif // if CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
 
  template < class Gt, class Tds, class Itag >
  void

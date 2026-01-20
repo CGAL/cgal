@@ -766,6 +766,11 @@ protected:
   {
     const Vertex_handle& va = e.first->vertex(tr. cw(e.second));
     const Vertex_handle& vb = e.first->vertex(tr.ccw(e.second));
+#if CGAL_MESH_2_DEBUG_BAD_EDGES
+    std::cerr << "  add_constrained_edge_to_be_conformed("
+              << IO::oformat(va, With_point_tag{}) << ", "
+              << IO::oformat(vb, With_point_tag{}) << ")\n";
+#endif
     this->add_bad_element(std::make_pair(va, vb)); // see the Container
                                                    // base class
   }
@@ -774,6 +779,11 @@ protected:
   void add_constrained_edge_to_be_conformed(const Vertex_handle& va,
                                             const Vertex_handle& vb)
   {
+#if CGAL_MESH_2_DEBUG_BAD_EDGES
+    std::cerr << "  add_constrained_edge_to_be_conformed("
+              << IO::oformat(va, With_point_tag{}) << ", "
+              << IO::oformat(vb, With_point_tag{}) << ")\n";
+#endif
     this->add_bad_element(std::make_pair(va, vb)); // see the Container
                                                    // base class
   }

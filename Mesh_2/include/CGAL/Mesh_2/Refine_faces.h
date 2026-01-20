@@ -178,16 +178,19 @@ public:
   /** Returns the circumcenter of the face. */
   Point refinement_point_impl(const Face_handle& f) const
   {
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-    std::cerr << "refinement_point_impl("
-              << "#" << f->vertex(0)->time_stamp() << ": " << f->vertex(0)->point() << ", "
-              << "#" << f->vertex(1)->time_stamp() << ": " << f->vertex(1)->point() << ", "
-              << "#" << f->vertex(2)->time_stamp() << ": " << f->vertex(2)->point() << ") = ";
     auto p = triangulation_ref_impl().circumcenter(f);
-    std::cerr << p << '\n';
-    return p;
+
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    auto v0 = f->vertex(0);
+    auto v1 = f->vertex(1);
+    auto v2 = f->vertex(2);
+    std::cerr << "refinement_point_impl(Face: "
+              << IO::oformat(v0, With_point_tag{}) << ", "
+              << IO::oformat(v1, With_point_tag{}) << ", "
+              << IO::oformat(v2, With_point_tag{}) << ") = "
+              << p << '\n';
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
-    return triangulation_ref_impl().circumcenter(f);
+    return p;
   }
 
   /** \todo ?? */
@@ -213,6 +216,27 @@ public:
         }
       }
   }
+
+  Vertex_handle insert_impl(const Point& p, Zone& zone)
+  {
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+    std::cerr << "on face, insert(" << p << "): "
+              << zone.boundary_edges.size() << " edges." << std::endl;
+#endif
+    if( zone.locate_type == Tr::VERTEX )
+      return zone.fh->vertex(zone.i);
+    auto v = triangulation_ref_impl().
+      star_hole(p,
+                zone.boundary_edges.begin(),
+                zone.boundary_edges.end(),
+                zone.faces.begin(),
+                zone.faces.end());
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+    std::cerr << " inserted new vertex " << IO::oformat(v, With_point_tag{}) << std::endl;
+#endif // CGAL_MESH_2_DEBUG_INSERTIONS
+    return v;
+  }
+
 
   /** Restore markers in the star of `v`. */
   void after_insertion_impl(const Vertex_handle& v)
@@ -289,9 +313,9 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
 {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "push_in_bad_faces("
-            << fh->vertex(0)->point() << ","
-            << fh->vertex(1)->point() << ","
-            << fh->vertex(2)->point() << ")\n";
+            << IO::oformat(fh->vertex(0), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(1), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(2), With_point_tag{}) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
   CGAL_assertion_code
     (typename Geom_traits::Orientation_2 orientation =
@@ -311,9 +335,9 @@ remove_bad_face(Face_handle fh)
 {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "bad_faces.erase("
-            << fh->vertex(0)->point() << ","
-            << fh->vertex(1)->point() << ","
-            << fh->vertex(2)->point() << ")\n";
+            << IO::oformat(fh->vertex(0), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(1), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(2), With_point_tag{}) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
   bad_faces.erase(fh);
 }

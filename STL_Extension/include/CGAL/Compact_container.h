@@ -1235,7 +1235,7 @@ public:
 };
 
 struct With_offset_tag {
-  int offset = 0;
+  int offset = -1;
 };
 
 struct With_point_tag : public With_offset_tag {
