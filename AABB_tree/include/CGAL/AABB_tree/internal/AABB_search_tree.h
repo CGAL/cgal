@@ -52,6 +52,7 @@ public:
       : m_tree{}
   {
     std::vector<Point_and_primitive_id> points;
+    points.reserve(std::distance(begin, beyond));
     while (begin != beyond) {
       Point_and_primitive_id pp = get_p_and_p(*begin);
       points.emplace_back(pp);

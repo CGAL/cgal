@@ -177,6 +177,9 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
+CGAL_add_named_parameter(number_of_spheres_t, number_of_spheres, number_of_spheres)
+CGAL_add_named_parameter(lambda_t, lambda, lambda)
+CGAL_add_named_parameter(acceleration_structure_t, acceleration_structure, acceleration_structure)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
@@ -410,3 +413,6 @@ CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
 CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
+
+//List of named parameters used in the package 'Variational_medial_axis_sampling'
+CGAL_add_named_parameter(fast_winding_number_beta_t, fast_winding_number_beta, fast_winding_number_beta)

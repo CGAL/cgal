@@ -90,6 +90,18 @@ struct Parallel_if_available_tag {};
 
 /*!
 \ingroup PkgSTLExtensionUtilities
+Tag used for KD-trees.
+*/
+struct KD_tree_tag {};
+
+
+/*!
+\ingroup PkgSTLExtensionUtilities
+Tag used for bounding volume hierarchies.
+*/
+struct BVH_tag {};
+/*!
+\ingroup PkgSTLExtensionUtilities
 
 General tag indicating that non of any other possible tags is valid.
 

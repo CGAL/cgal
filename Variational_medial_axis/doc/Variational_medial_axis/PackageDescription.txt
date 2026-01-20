@@ -1,0 +1,34 @@
+/// \defgroup PkgVMASRef Reference Manual
+
+/// \defgroup PkgVMASTraitsClasses Traits Classes
+/// \ingroup PkgVMASRef
+
+/*!
+\addtogroup PkgVMASRef
+\cgalPkgDescriptionBegin{Dynamic Skeletonization Via Variational Medial Axis Sampling,PkgVMAS}
+\cgalPkgPicture{pkg-vmas.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Qijia Huang}
+\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis}
+\cgalPkgManuals{Chapter_VMAS,PkgVMASRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgDependsOn{\ref PkgAABBTree}
+\cgalPkgBib{cgal:dsvvmas-h}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Functions}
+- `CGAL::extract_variational_medial_skeleton()`
+
+\cgalCRPSection{Classes}
+- `CGAL::Variational_medial_axis_sampling`
+- `CGAL::Medial_skeleton`
+*/
