@@ -16,6 +16,7 @@
 #include <CGAL/license/Mesh_2.h>
 
 
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>
@@ -25,7 +26,7 @@
 #include <utility>
 #include <iterator>
 #include <boost/iterator/filter_iterator.hpp>
-#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -279,8 +280,7 @@ template <
 >
 class Refine_edges_base :
     public Container,
-    public No_private_test_point_conflict,
-    public No_after_no_insertion
+    public No_private_test_point_conflict
 {
 public:
   typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
@@ -291,6 +291,7 @@ public:
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Point Point;
   typedef typename Tr::Geom_traits Geom_traits;
+  typedef typename Geom_traits::FT FT;
 
   typedef Triangulation_mesher_level_traits_2<Tr> Triangulation_traits;
 
@@ -397,7 +398,19 @@ public:
     return tr;
   }
 
-  Zone conflicts_zone_impl(const Point& p, Edge edge)
+  bool is_flippable(Face_handle fh, int i) const
+  {
+    bool result = tr.is_flipable(fh, i);
+#if CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    std::cerr << "  is_flippable("
+              << IO::oformat(fh->vertex(tr.cw(i)), With_point_tag{}) << ", "
+              << IO::oformat(fh->vertex(tr.ccw(i)), With_point_tag{}) << ") = "
+              << (result ? "true" : "false") << std::endl;
+#endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    return result;
+  }
+
+  Zone conflicts_zone_impl(const Point& p, const Edge& edge)
   {
     Zone zone;
 
@@ -407,8 +420,10 @@ public:
     OutputItFaces faces_out(zone.faces);
     OutputItEdges edges_out(zone.boundary_edges);
 
-    const Face_handle& f = edge.first;
-    const int i = edge.second;
+    const auto f = edge.first;
+    const auto i = edge.second;
+    const auto va = f->vertex(Tr::ccw(i));
+    const auto vb = f->vertex(Tr:: cw(i));
 
     zone.fh = triangulation_ref_impl().locate(p, zone.locate_type, zone.i, edge.first);
 
@@ -417,17 +432,85 @@ public:
     const bool f_does_conflict = (zone.locate_type == Tr::EDGE) ||
       triangulation_ref_impl().test_conflict(p, f);
 
-    if(f_does_conflict) {
-       *faces_out++ = f;
-    } else {
-      CGAL_assertion(n == zone.fh);
-    }
-
     const bool n_does_conflict = (zone.locate_type == Tr::EDGE) ||
       triangulation_ref_impl().test_conflict(p, n);
 
-    CGAL_assertion(f_does_conflict ||
-                   n_does_conflict);
+    if(zone.locate_type == Tr::VERTEX) {
+      const auto v = zone.fh->vertex(zone.i);
+      // restore the constrained Delaunay property by edge flips around v
+      { // first: flip edges incident to v
+        auto fh = v->face();
+        const auto start = fh;
+        do {
+          int i = Tr::cw(fh->index(v));
+          CGAL_assertion(fh->vertex(Tr::ccw(i)) == v);
+          auto w = fh->vertex(Tr::cw(i));
+          if(w == va || w == vb) {
+            // do not flip the edges [va, v] and [vb, v]
+            break;
+          }
+          if(is_flippable(fh, i)) {
+            triangulation_ref_impl().flip(fh, i);
+            zone.edges_to_flip.emplace_back(fh, i);
+            fh = fh->neighbor(i);
+            CGAL_assertion(fh->has_vertex(v));
+            i = Tr::cw(fh->index(v));
+          }
+          fh = fh->neighbor(i);
+        } while(fh != start);
+      }
+      // then collect the conflict zone by a BFS, trying to flip edges around v
+      std::stack<Edge> edges_to_flip;
+      auto circ = triangulation_ref_impl().incident_faces(v), done(circ);
+      do {
+        zone.faces.push_back(circ);
+        const int i = circ->index(v);
+        if(is_flippable(circ, i)) {
+          edges_to_flip.emplace(circ, i);
+        } else {
+          zone.boundary_edges.emplace_back(circ, i);
+        }
+      } while(++circ != done);
+
+      while(!edges_to_flip.empty()) {
+        const auto [f, i] = edges_to_flip.top();
+
+        const auto n = f->neighbor(i);
+        zone.faces.push_back(n);
+        triangulation_ref_impl().flip(f, i);
+        zone.edges_to_flip.emplace_back(f, i);
+        if(!is_flippable(f, i)) {
+          edges_to_flip.pop();
+        } else {
+          zone.boundary_edges.emplace_back(f, i);
+        }
+
+        const auto ni = n->index(f->vertex(i));
+        if(is_flippable(n, ni)) {
+          edges_to_flip.emplace(n, ni);
+        } else {
+          zone.boundary_edges.emplace_back(n, ni);
+        }
+      }
+      for(auto [f, i] : make_range(zone.edges_to_flip.rbegin(), zone.edges_to_flip.rend()))
+      {
+        auto new_i = i;
+        for(int k = 0; k < 3 + 8; ++k) {
+          new_i = Tr::ccw(new_i);
+          triangulation_ref_impl().flip(f, new_i);
+        }
+        CGAL_assertion(is_flippable(f, i));
+      }
+      return zone;
+    }
+
+    if(!f_does_conflict && !n_does_conflict) {
+      return zone;
+    }
+
+    if(f_does_conflict) {
+       *faces_out++ = f;
+    }
 
     const int ni = triangulation_ref_impl().tds().mirror_index(f, i);
 
@@ -458,12 +541,39 @@ public:
 
   Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
-    return triangulation_ref_impl().star_hole(p,
-                                              zone.boundary_edges.begin(),
-                                              zone.boundary_edges.end(),
-                                              zone.faces.begin(),
-                                              zone.faces.end()
-                                              );
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+    std::cerr << "on edge, insert(" << p << "): "
+              << zone.boundary_edges.size() << " boundary edges in the zone" << std::endl;
+#endif // CGAL_MESH_2_DEBUG_INSERTIONS
+    if( zone.locate_type == Tr::VERTEX ) {
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+      std::cerr << "insert(p, zone): returned existing vertex "
+                << IO::oformat(zone.fh->vertex(zone.i), With_point_tag{})
+                << std::endl;
+#endif // CGAL_MESH_2_DEBUG_INSERTIONS
+      for(auto [f, i]: zone.edges_to_flip) {
+        CGAL_assertion(is_flippable(f, i));
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+        auto va = f->vertex(Tr::cw(i));
+        auto vb = f->vertex(Tr::ccw(i));
+        std::cerr << "  flipping edge ("
+                  << IO::oformat(va, With_point_tag{}) << ", "
+                  << IO::oformat(vb, With_point_tag{}) << ")\n";
+#endif // CGAL_MESH_2_DEBUG_INSERTIONS
+        triangulation_ref_impl().flip(f, i);
+      }
+      return zone.fh->vertex(zone.i);
+    }
+    auto v = triangulation_ref_impl().star_hole(p,
+                                                zone.boundary_edges.begin(),
+                                                zone.boundary_edges.end(),
+                                                zone.faces.begin(),
+                                                zone.faces.end()
+                                                );
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+    std::cerr << " inserted new vertex " << IO::oformat(v, With_point_tag{}) << std::endl;
+#endif // CGAL_MESH_2_DEBUG_INSERTIONS
+    return v;
   }
 
   /** Scans all constrained edges and put them in the queue if they are
@@ -492,26 +602,74 @@ public:
   */
   Point refinement_point_impl(const Edge& edge)
   {
-    typename Geom_traits::Construct_midpoint_2
-      midpoint = tr.geom_traits().construct_midpoint_2_object();
+    auto midpoint = tr.geom_traits().construct_midpoint_2_object();
 
     va = edge.first->vertex(tr.cw (edge.second));
     vb = edge.first->vertex(tr.ccw(edge.second));
 
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-    std::cerr << "refinement_point_impl("
-              << "#" << va->time_stamp() << ": " << va->point() << ", "
-              << "#" << vb->time_stamp() << ": " << vb->point() << ") = ";
     auto p = midpoint(va->point(), vb->point());
+
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    std::cerr << "refinement_point_impl(Edge: " << IO::oformat(va, With_point_tag{}) << ", "
+              << IO::oformat(vb, With_point_tag{}) << ") = ";
     std::cerr << p << '\n';
+#endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    if constexpr(std::is_floating_point_v<FT>) {
+      Is_locally_conforming_Gabriel<Tr> is_locally_conforming_Gabriel{};
+      constexpr FT max = (std::numeric_limits<FT>::max)();
+      auto ulp = [max](const FT& x) { return std::nextafter(x, max) - x; };
+      auto sq_delta = 16 * CGAL::square((std::min)(ulp(p.x()), ulp(p.y())));
+
+      typename Tr::Segment ab(this->va->point(), this->vb->point());
+      std::optional<FT> min_height_squared;
+      Vertex_handle closest_encroaching_vertex;
+      auto e = edge;
+      for(int i = 0; i < 2; ++i, e = triangulation_ref_impl().mirror_edge(e)) {
+        auto [c, index] = e;
+        if(triangulation_ref_impl().is_infinite(c))
+          continue;
+        auto cp = c->vertex(index)->point();
+        if(is_locally_conforming_Gabriel(triangulation_ref_impl(), c, index, cp))
+          continue;
+        auto height_squared = squared_distance(cp, ab);
+        if(!min_height_squared || height_squared < *min_height_squared) {
+          closest_encroaching_vertex = c->vertex(index);
+          min_height_squared = height_squared;
+        }
+      }
+      if(min_height_squared) {
+        FT edge_length_squared = squared_distance(this->va->point(), this->vb->point());
+        if(*min_height_squared * FT(10000) < edge_length_squared && *min_height_squared < sq_delta) {
+          // the angle is smaller than approx 0.5 degree, and the distance is very small
+          // so we consider that the point is aligned with ab
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+          std::cerr << "return point of existing vertex " << IO::oformat(closest_encroaching_vertex, With_point_tag{})
+                    << std::endl;
+#endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+          return closest_encroaching_vertex->point();
+        }
+      }
+    }
+
     return p;
-#endif // CGAL_MESH_2_DEBUG_BAD_FACES
-    return midpoint(va->point(), vb->point());
   }
 
-  /** Does nothing. */
-  void before_conflicts_impl(const Edge&, const Point&)
+  /** Unmark as constrained. */
+  void before_conflicts_impl(const Edge& e, const Point&)
   {
+    const auto [f, i] = e;
+    const auto [n, ni] = triangulation_ref_impl().mirror_edge(e);
+    f->set_constraint(i, false);
+    n->set_constraint(ni, false);
+  }
+
+  /** Remark as constrained. */
+  void after_no_insertion_impl(const Edge& e, const Point&, const Zone&)
+  {
+    const auto [f, i] = e;
+    const auto [n, ni] = triangulation_ref_impl().mirror_edge(e);
+    f->set_constraint(i, true);
+    n->set_constraint(ni, true);
   }
 
   /**
@@ -540,15 +698,9 @@ public:
     return status;
   }
 
-  /** Unmark as constrained. */
-  void before_insertion_impl(const Edge& e, const Point&,
-                             const Zone&)
+  /** Does nothing. */
+  void before_insertion_impl(const Edge&, const Point&, const Zone&)
   {
-    const Face_handle& f = e.first;
-    const int& i = e.second;
-
-    f->set_constraint(i, false);
-    (f->neighbor(i))->set_constraint(triangulation_ref_impl().tds().mirror_index(f, i), false);
   }
 
   /**

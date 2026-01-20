@@ -208,7 +208,9 @@ public:
       {
         if((*fh_it)->is_in_domain() )
           remove_bad_face(*fh_it);
-        (*fh_it)->set_in_domain(false);
+        if(zone.locate_type != Tr::VERTEX) {
+          (*fh_it)->set_in_domain(false);
+        }
       }
   }
 
@@ -242,6 +244,11 @@ public:
    * be public.
    */
   void compute_new_bad_faces(Vertex_handle v);
+
+  // In the case of locate_type == VERTEX
+  template <typename Face_handles_iterator>
+  void compute_new_bad_faces(Face_handles_iterator begin,
+                             Face_handles_iterator end);
 
   /** Auxiliary function called to erase a face handle from the map. */
   void remove_bad_face(Face_handle fh);
@@ -325,8 +332,25 @@ compute_new_bad_faces(Vertex_handle v)
           if( badness != Mesh_2::NOT_BAD )
             push_in_bad_faces(fc, q);
         }
-    fc++;
-  } while(fc!=fcbegin);
+  } while(++fc!=fcbegin);
+}
+
+template <typename Tr, typename Criteria, typename Previous>
+template <typename Face_handles_iterator>
+void Refine_faces_base<Tr, Criteria, Previous>::
+compute_new_bad_faces(Face_handles_iterator fit,
+                      Face_handles_iterator end)
+{
+  for(; fit != end; ++fit) {
+    if(!triangulation_ref_impl().is_infinite(*fit)) {
+      if((*fit)->is_in_domain()) {
+        Quality q;
+        Mesh_2::Face_badness badness = is_bad(*fit, q);
+        if(badness != Mesh_2::NOT_BAD)
+          push_in_bad_faces(*fit, q);
+      }
+    }
+  }
 }
 
 template <typename Tr, typename Criteria, typename Previous>

@@ -293,7 +293,7 @@ public:
    * @todo Merge with try_to_refine_element().
    */
   template <class Mesh_visitor>
-  bool process_one_element(Mesh_visitor visitor)
+  bool process_one_element(Mesh_visitor& visitor)
   {
     Element e = get_next_element();
 
@@ -324,9 +324,9 @@ public:
 
   template <class Mesh_visitor>
   Mesher_level_conflict_status
-  try_to_refine_element(Element e, Mesh_visitor visitor)
+  try_to_refine_element(Element e, Mesh_visitor& visitor)
   {
-    const Point& p = refinement_point(e);
+    Point p = refinement_point(e);
 
     before_conflicts(e, p, visitor);
 
@@ -346,6 +346,8 @@ public:
     case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
       std::cerr << "rejected (permanent)\n";
       break;
+    default:
+      std::cerr << "rejected (other reason)\n";
     }
 #endif
 

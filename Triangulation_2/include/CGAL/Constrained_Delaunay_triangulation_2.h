@@ -201,7 +201,7 @@ public:
 
   // FLIPS
   bool is_flipable(Face_handle f, int i, bool perturb = true) const;
-  void flip(Face_handle& f, int i);
+  void flip(Face_handle f, int i);
   void flip_around(Vertex_handle va);
   void flip_around(List_vertices & new_vertices);
 #ifndef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
@@ -258,13 +258,13 @@ public:
 
   void insert_constraint(Vertex_handle va, Vertex_handle  vb)
   {
-    ((Ctr*)this)->insert_constraint(va,vb);
+    (static_cast<Ctr*>(this))->insert_constraint(va,vb);
   }
 
   void
   insert_constraint(const Point& a, const Point& b)
   {
-    ((Ctr*)this)->insert_constraint(a,b);
+    (static_cast<Ctr*>(this))->insert_constraint(a,b);
   }
 
   template <class PointIterator>
@@ -717,7 +717,7 @@ is_flipable(Face_handle f, int i, bool perturb /* = true */) const
 template < class Gt, class Tds, class Itag >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-flip (Face_handle& f, int i)
+flip (Face_handle f, int i)
 {
   Face_handle g = f->neighbor(i);
   int j = mirror_index(f,i);
