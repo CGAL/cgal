@@ -21,7 +21,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/OSM/Sparse_chain.h>
 #include <CGAL/OSM/Bitboard.h>
 
 // DEBUG : matrix output for SparseMatrices / no DEBUG : chain output for SparseMatrices
@@ -29,6 +28,11 @@
 
 namespace CGAL {
 namespace OSM {
+
+#ifndef DOXYGEN_RUNNING
+template <typename CoefficientRing, int StorageFormat>
+class Sparse_chain;
+#endif
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -1320,6 +1324,13 @@ public:
         return this->_size;
     }
 };
+
+} } // end of CGAL::OSM namespace
+
+#include <CGAL/OSM/Sparse_matrix.h>
+
+namespace CGAL {
+namespace OSM {
 
 template <typename _CT, int _CTF>
 Sparse_matrix<_CT, _CTF> operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda){

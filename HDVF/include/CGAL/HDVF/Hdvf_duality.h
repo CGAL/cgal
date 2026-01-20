@@ -83,8 +83,8 @@ public:
     typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> Base ;
 
     // Inherited types
-    using Column_chain = Base::Column_chain;
-    using Row_chain = Base::Row_chain;
+    using Column_chain = typename Base::Column_chain;
+    using Row_chain = typename Base::Row_chain;
 
 private:
     // Complex L

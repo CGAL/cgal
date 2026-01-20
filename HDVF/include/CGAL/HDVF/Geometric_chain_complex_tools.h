@@ -142,7 +142,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
 
     using HDVF_type = Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
-    using Persistence_interval = HDVF_type::Persistence_interval;
+    using Persistence_interval = typename HDVF_type::Persistence_interval;
 
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
