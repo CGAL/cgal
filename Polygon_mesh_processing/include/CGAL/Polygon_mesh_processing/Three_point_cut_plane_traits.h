@@ -15,6 +15,9 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/Origin.h>
+#include <CGAL/enum.h>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
