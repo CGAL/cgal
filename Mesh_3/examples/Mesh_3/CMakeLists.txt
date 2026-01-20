@@ -53,7 +53,7 @@ create_single_source_cgal_program("mesh_two_implicit_spheres_with_balls.cpp")
 target_link_libraries(mesh_two_implicit_spheres_with_balls PRIVATE CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_implicit_domains_2.cpp"
-                                  )
+                                  "implicit_functions.cpp")
 target_link_libraries(mesh_implicit_domains_2 PRIVATE CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_cubes_intersection.cpp")
