@@ -20,7 +20,7 @@
 
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
-#include <CGAL/Polygon_mesh_processing/Three_point_cut_plane_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/Three_point_cut_plane_traits.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
@@ -454,7 +454,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   *
   * \cgalNamedParamsEnd
   *
-  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed, two-manifold, and free of self-intersections in order to ensure a correct result.
+  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed and two-manifold in order to ensure a correct result.
   *
   * @return std::optional<`%Point_3`>
   */

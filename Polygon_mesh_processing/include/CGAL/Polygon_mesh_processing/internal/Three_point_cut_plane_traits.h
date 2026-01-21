@@ -21,15 +21,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-/*!
-\ingroup PMP_corefinement_grp
-
-The class `Three_point_cut_plane_traits<Kernel>` is a model of the
-TODO concept. In this traits class, a plane is represented by a triple of non-collinear points.
-
-TODO documented or remains internal?
-
-*/
 template <class Kernel>
 struct Three_point_cut_plane_traits
 {
