@@ -58,32 +58,34 @@ class SFace_base {
   GenPtr         info_;
   // temporary needed:
   Mark           mark_;
+  mutable bool   visited_;
 
  public:
 
-  SFace_base() : center_vertex_(), volume_(), info_(), mark_() {}
+    SFace_base() : center_vertex_(), volume_(), info_(), mark_(), visited_(false) {}
 
     ~SFace_base() {
       CGAL_NEF_TRACEN("  destroying SFace_base item "<<&*this);
     }
 
-    SFace_base(const SFace_base<Refs>& f)
-      { center_vertex_ = f.center_vertex_;
-        volume_ = f.volume_;
-        boundary_entry_objects_ = f.boundary_entry_objects_;
-        info_ = 0;
-        mark_ = f.mark_;
-      }
+    SFace_base(const SFace_base<Refs>& f) :
+      center_vertex_(f.center_vertex_),
+      volume_(f.volume_),
+      boundary_entry_objects_(f.boundary_entry_objects_),
+      info_(0),
+      mark_(f.mark_),
+      visited_(false) {}
 
     SFace_base<Refs>& operator=(const SFace_base<Refs>& f)
-      { if (this == &f) return *this;
-        center_vertex_ = f.center_vertex_;
-        volume_ = f.volume_;
-        boundary_entry_objects_ = f.boundary_entry_objects_;
-        info_ = 0;
-        mark_ = f.mark_;
-        return *this;
-      }
+    { if (this == &f) return *this;
+      center_vertex_ = f.center_vertex_;
+      volume_ = f.volume_;
+      boundary_entry_objects_ = f.boundary_entry_objects_;
+      info_ = 0;
+      mark_ = f.mark_;
+      visited_ = false;
+      return *this;
+    }
 
     SFace_cycle_iterator sface_cycles_begin()
     { return boundary_entry_objects_.begin(); }
@@ -96,6 +98,8 @@ class SFace_base {
 
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
+
+    bool& visited() const { return visited_; }
 
     Vertex_handle& center_vertex() { return center_vertex_; }
     Vertex_const_handle center_vertex() const { return center_vertex_; }
