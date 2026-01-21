@@ -29,7 +29,7 @@ namespace internal{
 
 /**
   * Given a convex mesh and a plane, return an halfedge crossing the plane from a vertex on positive side to a vertex on the plane or the negative side.
-  * Return a null halfedge if the mesh and the plane does not intersect.
+  * Return a null halfedge if the mesh and the plane do not intersect.
   */
 template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 typename boost::graph_traits<PolygonMesh>::halfedge_descriptor

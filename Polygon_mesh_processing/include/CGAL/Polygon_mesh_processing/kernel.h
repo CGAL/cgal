@@ -225,8 +225,7 @@ kernel(const PolygonMesh& pm,
   *
   * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
   *
-  * The kernel may be degenerate. If the kernel has dimension 2, the output mesh consists of a single face. If the kernel has dimension 0 or 1,
-  * the output mesh contains one or two isolate vertices, respectively.
+  * The kernel may be degenerate. If the dimension of the kernel is 2, the output mesh consists of a single face. If the dimension of the kernel is 1, the output mesh contains only two isolated vertices. If the dimension of the kernel is 0, the output mesh contains only a single isolated vertex.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
@@ -260,7 +259,7 @@ kernel(const PolygonMesh& pm,
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
-  *     \cgalParamDefault{The seed of std::random_device()}
+  *     \cgalParamDefault{The seed of `std::random_device()`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{starting_cube}

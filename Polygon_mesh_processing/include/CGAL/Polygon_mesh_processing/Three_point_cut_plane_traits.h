@@ -25,7 +25,7 @@ namespace Polygon_mesh_processing {
 \ingroup PMP_corefinement_grp
 
 The class `Three_point_cut_plane_traits<Kernel>` is a model of the
-TODO concept. This traits class represents planes by three defining points and supports efficient point–plane orientation and plane–line intersection operations.
+TODO concept. In this traits class, a plane is represented by a triple of non-collinear points.
 
 TODO documented or remains internal?
 
