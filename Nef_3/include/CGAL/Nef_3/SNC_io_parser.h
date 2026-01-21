@@ -1643,6 +1643,8 @@ read_vertex(Vertex_handle vh) {
   OK = OK && test_string("}");
   in >> vh->mark();
 
+  vh->update_number_of_items();
+
   return OK;
 }
 
@@ -2201,6 +2203,7 @@ void SNC_io_parser<EW>::add_infi_box() {
     vh->point() = Infi_box::create_extended_point(hx, hy, hz);
     vh->mark() = 1;
     vh->sncp() = this->sncp();
+    vh->update_number_of_items();
   }
 
   int seOff[3] = {0, 1, 3};
