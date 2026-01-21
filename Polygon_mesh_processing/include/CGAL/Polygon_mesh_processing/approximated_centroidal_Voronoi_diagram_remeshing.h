@@ -22,13 +22,13 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #ifdef CGAL_DEBUG_ACVD
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/IO/Color.h>
 #endif
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>

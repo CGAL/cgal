@@ -1,7 +1,6 @@
 //#define CGAL_PMP_SNAP_DEBUG_PP
 //#define CGAL_PMP_SNAP_DEBUG_OUTPUT
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -10,6 +9,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/STL.h>
 

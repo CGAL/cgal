@@ -21,15 +21,14 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
-#include <CGAL/iterator.h>
 
 #include <CGAL/AABB_triangle_primitive_3.h>
-
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
+#include <CGAL/iterator.h>
 
 #include <boost/property_map/property_map.hpp>
 
