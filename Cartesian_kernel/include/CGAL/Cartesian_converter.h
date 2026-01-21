@@ -470,9 +470,9 @@ public:
   typename U2::Aff_transformation_2
   operator()(const typename U1::Aff_transformation_2& a) const
   {
-    return k2.construct_aff_transformation_2_object()(conv(a.m(0,0)), conv(a.m(0,1)), conv(a.m(0,2)),
-                                                      conv(a.m(1,0)), conv(a.m(1,1)), conv(a.m(1,2)),
-                                                      conv(a.m(2,2)));
+    return { conv(a.m(0,0)), conv(a.m(0,1)), conv(a.m(0,2)),
+             conv(a.m(1,0)), conv(a.m(1,1)), conv(a.m(1,2)),
+             conv(a.m(2,2)) };
   }
 
   template <typename U1 = K1, typename U2 = K2,
@@ -481,10 +481,10 @@ public:
   typename U2::Aff_transformation_3
   operator()(const typename U1::Aff_transformation_3& a) const
   {
-    return k2.construct_aff_transformation_3_object()(conv(a.m(0,0)), conv(a.m(0,1)), conv(a.m(0,2)), conv(a.m(0,3)),
-                                                      conv(a.m(1,0)), conv(a.m(1,1)), conv(a.m(1,2)), conv(a.m(1,3)),
-                                                      conv(a.m(2,0)), conv(a.m(2,1)), conv(a.m(2,2)), conv(a.m(2,3)),
-                                                      conv(a.m(3,3)));
+    return { conv(a.m(0,0)), conv(a.m(0,1)), conv(a.m(0,2)), conv(a.m(0,3)),
+             conv(a.m(1,0)), conv(a.m(1,1)), conv(a.m(1,2)), conv(a.m(1,3)),
+             conv(a.m(2,0)), conv(a.m(2,1)), conv(a.m(2,2)), conv(a.m(2,3)),
+             conv(a.m(3,3)) };
   }
 
 private:
