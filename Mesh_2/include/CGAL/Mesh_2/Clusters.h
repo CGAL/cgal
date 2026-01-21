@@ -76,25 +76,22 @@ public:
 
   /**
    * `Cluster` register information about clusters.
-   * A cluster is a set of vertices v_i incident to one vertice
+   * A cluster is a set of vertices v_i adjacent to one vertex
    * v_0, so that angles between segments [v_0, v_i] is less than 60
    * degrees.
    */
   struct Cluster {
-    bool reduced ; /**< Is the cluster reduced? */
+    bool reduced ; ///< Is the cluster reduced?
 
-    /**
-     * Smallest_angle gives the two vertices defining the
-     * smallest angle in the cluster.
-     */
+    /// the two vertices defining the smallest angle in the cluster.
     std::pair<Vertex_handle, Vertex_handle> smallest_angle;
 
-    FT next_sq_insertion_radius; // @fixme: next_sq_insertion_radius has no meaning if reduced=false!!!
+    FT next_sq_insertion_radius; // next_sq_insertion_radius has no meaning if reduced=false
     Squared_length minimum_squared_length;
 
     /**
-     * The following map tells what vertices are in the cluster and if
-     * the corresponding segment has been split once.
+     * The following map tells which vertices are in the cluster and if
+     * the corresponding segment has already been split.
      */
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;
@@ -103,7 +100,7 @@ public:
       return reduced;
     }
 
-    bool is_reduced(const Vertex_handle v) {
+    bool is_reduced(const Vertex_handle v) const {
       return vertices[v];
     }
   };
