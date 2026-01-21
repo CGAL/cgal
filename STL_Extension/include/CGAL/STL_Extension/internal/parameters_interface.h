@@ -180,6 +180,9 @@ CGAL_add_named_parameter(dimension_t, dimension, dimension)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
+CGAL_add_named_parameter(use_upper_DA_bound_t, weak_dihedral_angle, weak_dihedral_angle)
+CGAL_add_named_parameter(weak_dihedral_angle_t, use_upper_DA_bound, use_upper_DA_bound)
+
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
