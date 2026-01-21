@@ -25,6 +25,16 @@
 
 namespace CGAL {
 
+template <typename T, typename = void>
+struct has_mirror_impl : std::false_type {};
+
+// Specialization enabled when the storage policy provides mirror-index support.
+template <typename T>
+struct has_mirror_impl<
+    T,
+    std::void_t<decltype(std::declval<T>().set_mirror_index(0,0))>
+    > : std::true_type {};
+
 template< class TDS = void, typename FullCellStoragePolicy = Default >
 class Triangulation_ds_full_cell
 {
@@ -115,14 +125,52 @@ public:
     int mirror_index(const int i) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
-        return combinatorics_.mirror_index(i);
+
+    #ifdef CGAL_DEBUG
+
+        // Ensure that this function is only called when the storage policy
+        // actually supports mirror indices.
+        if constexpr (!has_mirror_impl<Combinatorics>::value)
+        {
+            CGAL_assertion_msg(false,
+                "mirror_index() called but Full_cell storage policy "
+                "does not support mirror indices");
+        }
+    #endif
+
+        // The compiler will only generate the call
+        // if the storage policy actually has that member function.
+        if constexpr (has_mirror_impl<Combinatorics>::value)
+        {
+            return combinatorics_.mirror_index(i);
+        }
+        else
+        {
+            // unreachable in debug, safe fallback in release
+            return -1;
+        }
     }
 
     // Advanced...
     Vertex_handle mirror_vertex(const int i, const int cur_dim) const /* Concept */
     {
-        CGAL_precondition(0<=i && i<=maximal_dimension());
-        return combinatorics_.mirror_vertex(i, cur_dim);
+    #ifdef CGAL_DEBUG
+        if constexpr (!has_mirror_impl<Combinatorics>::value)
+        {
+            CGAL_assertion_msg(false,
+                "mirror_vertex() called but Full_cell storage policy "
+                "does not support mirror indices");
+        }
+    #endif
+
+        if constexpr (has_mirror_impl<Combinatorics>::value)
+        {
+            return combinatorics_.mirror_vertex(i, cur_dim);
+        }
+        else
+        {
+            return Vertex_handle();
+        }
     }
 
     int index(Full_cell_const_handle s) const /* Concept */
@@ -159,8 +207,21 @@ public:
 
     void set_mirror_index(const int i, const int index) /* Concept */
     {
-        CGAL_precondition(0<=i && i<=maximal_dimension());
-        combinatorics_.set_mirror_index(i, index);
+        CGAL_precondition(0 <= i && i <= maximal_dimension());
+
+    #ifdef CGAL_DEBUG
+        if constexpr (!has_mirror_impl<Combinatorics>::value)
+        {
+            CGAL_assertion_msg(false,
+                "set_mirror_index() called but Full_cell storage policy "
+                "does not support mirror indices");
+        }
+    #endif
+
+        if constexpr (has_mirror_impl<Combinatorics>::value)
+        {
+            combinatorics_.set_mirror_index(i, index);
+        }
     }
 
     bool has_vertex(Vertex_const_handle v) const /* Concept */
