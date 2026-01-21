@@ -62,7 +62,7 @@
 #ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 #  include <CGAL/Filtered_kernel/internal/Static_filters/Do_intersect_3.h>
 #  include <CGAL/Filtered_kernel/internal/Static_filters/Do_intersect_2.h>
-#endif // NOT NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
+#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
 #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Compare_y_at_x_2.h>
@@ -73,6 +73,7 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/Power_side_of_oriented_power_circle_2.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Compare_distance_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Has_on_bounded_side_3.h>
 
 // #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_orientation_3.h>
 // #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_side_of_bounded_circle_3.h>
@@ -129,6 +130,7 @@ public:
   typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
 
   typedef Static_filters_predicates::Compare_distance_3<K_base>             Compare_distance_3;
+  typedef Static_filters_predicates::Has_on_bounded_side_3<K_base>     Has_on_bounded_side_3;
 
   Orientation_2
   orientation_2_object() const
@@ -206,6 +208,10 @@ public:
   Compare_distance_3
   compare_distance_3_object() const
   { return Compare_distance_3();}
+
+  Has_on_bounded_side_3
+  has_on_bounded_side_3_object() const
+  { return Has_on_bounded_side_3(); }
 
   enum { Has_static_filters = true };
 

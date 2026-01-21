@@ -139,10 +139,7 @@ public:
   typename R::Boolean
   has_on_bounded_side(const Segment_2& s) const
   {
-    if ((center() - s.source()).squared_length() > squared_radius())
-      return false;
-
-    return (center() - s.target()).squared_length() <= squared_radius();
+    return R().has_on_bounded_side_2_object()(*this, s);
   }
 
   typename R::Boolean

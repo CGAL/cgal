@@ -175,6 +175,11 @@ bool has_on_bounded_side(const Segment_2<Kernel> &s) const;
 */
 bool has_on_unbounded_side(const Point_2<Kernel>& p) const;
 
+/*!
+returns whether the segment `s` lies on the unbounded side of the circle `c`.
+*/
+bool has_on_unbounded_side(const Segment_2<Kernel>& s) const;
+
 /// @}
 
 /// \name Miscellaneous

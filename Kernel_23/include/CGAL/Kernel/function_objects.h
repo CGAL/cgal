@@ -3548,11 +3548,21 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
+    typedef typename K::Segment_2        Segment_2;
 
   public:
     Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_bounded_side(p); }
+
+    Boolean
+    operator()(const Circle_2& c, const Segment_2& s) const
+    {
+      if ((c.center() - s.source()).squared_length() > c.squared_radius())
+        return false;
+
+      return (c.center() - s.target()).squared_length() <= c.squared_radius();
+    }
 
     Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
@@ -3577,6 +3587,42 @@ namespace CommonKernelFunctors {
     Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.has_on_bounded_side(p); }
+
+    Boolean
+    operator()(const Sphere_3& s, const Iso_cuboid_3& c) const
+    {
+      typedef typename K::FT FT;
+      FT d = FT(0);
+      FT distance = FT(0);
+
+      const Point_3& center = s.center();
+
+      // x
+      d = (std::max)(square(center.x() - c.xmin()), square(center.x() - c.xmax()));
+
+      if (certainly(d > s.squared_radius()))
+        return false;
+
+      distance = d;
+
+      // y
+      d = (std::max)(square(center.y() - c.ymin()), square(center.y() - c.ymax()));
+
+      if (certainly(d > s.squared_radius()))
+        return false;
+
+      distance += d;
+
+      // z
+      d = (std::max)(square(center.z() - c.zmin()), square(center.z() - c.zmax()));
+
+      if (certainly(d > s.squared_radius()))
+        return false;
+
+      distance += d;
+
+      return (distance <= s.squared_radius());
+    }
 
     Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
