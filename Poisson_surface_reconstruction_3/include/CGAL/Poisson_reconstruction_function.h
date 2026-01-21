@@ -316,6 +316,7 @@ private:
     CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
 
     // Inserts points in triangulation
+    m_tr->set_average_spacing(average_spacing);
     m_tr->insert(
       first,beyond,
       point_pmap,
