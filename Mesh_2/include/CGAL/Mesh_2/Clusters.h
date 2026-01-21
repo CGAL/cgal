@@ -100,7 +100,7 @@ public:
       return reduced;
     }
 
-    bool is_reduced(const Vertex_handle v) const {
+    bool is_reduced(const Vertex_handle v) {
       return vertices[v];
     }
   };
