@@ -84,7 +84,9 @@ bool fair(TriangleMesh& tmesh,
   @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param tmesh the triangle mesh with patches to be faired
-  @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
+  @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed).
+         The distance, in number of edges, from each vertex to any border vertex
+         must be at least `fairing_continuity+1` (see \ref bgl_namedparameters "Named Parameters").
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin

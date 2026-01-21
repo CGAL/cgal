@@ -19,7 +19,6 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 #include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
-#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -31,6 +30,13 @@
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
+
+  enum Smoothing_algorithms
+  {
+    TANGENTIAL_RELAXATION = 1,
+    FAIR,
+    SMOOTH_SHAPE
+  };
 
 /*!
 * \ingroup PMP_meshing_grp
@@ -320,6 +326,8 @@ void isotropic_remeshing(const FaceRange& faces
   bool do_collapse = choose_parameter(get_parameter(np, internal_np::do_collapse), true);
   bool do_split = choose_parameter(get_parameter(np, internal_np::do_split), true);
   bool do_flip = choose_parameter(get_parameter(np, internal_np::do_flip), true);
+  Smoothing_algorithms smoothing_algo = choose_parameter(get_parameter(np, internal_np::smoothing_algo),
+                                                         TANGENTIAL_RELAXATION);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -333,15 +341,37 @@ void isotropic_remeshing(const FaceRange& faces
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
+    if (i > 0)
+        smoothing_algo = TANGENTIAL_RELAXATION;
+
     if(do_split)
      remesher.split_long_edges(sizing);
     if(do_collapse)
      remesher.collapse_short_edges(sizing, collapse_constraints);
     if(do_flip)
       remesher.flip_edges_for_valence_and_shape();
-    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
+
+    switch (smoothing_algo)
+    {
+    case FAIR :
+      remesher.fairing_impl(np);
+      break;
+    case SMOOTH_SHAPE :
+      remesher.smooth_shape_impl(nb_laplacian);
+      break;
+    case TANGENTIAL_RELAXATION :
+      remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
+      break;
+    default:
+      std::cerr << "ERROR : this smoothing algorithm does not exist.\n"
+                << "        Tangential Relaxation will be used." << std::endl;
+      remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
+      break;
+    };
+
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << std::endl;
 #endif

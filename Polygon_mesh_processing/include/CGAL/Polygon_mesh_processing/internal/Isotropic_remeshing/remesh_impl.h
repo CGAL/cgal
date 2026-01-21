@@ -23,6 +23,8 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
+#include <CGAL/Polygon_mesh_processing/fair.h>
+#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
@@ -1042,31 +1044,8 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
-      {
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-        std::cout << " using tangential relaxation with weights equal to 1";
-        std::cout << std::endl;
-#endif
-        tangential_relaxation(
-          vertices(mesh_),
-          mesh_,
-          CGAL::parameters::number_of_iterations(nb_iterations)
-            .vertex_point_map(vpmap_)
-            .geom_traits(gt_)
-            .edge_is_constrained_map(constrained_edges_pmap)
-            .vertex_is_constrained_map(constrained_vertices_pmap)
-            .relax_constraints(relax_constraints)
-            .allow_move_functor(shall_move)
-        );
-      }
-      else
-      {
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-        std::cout << " using tangential relaxation weighted with the sizing field";
-        std::cout << std::endl;
-#endif
-        tangential_relaxation(
+      // run tangential_relaxation
+      tangential_relaxation(
           vertices(mesh_),
           mesh_,
           CGAL::parameters::number_of_iterations(nb_iterations)
@@ -1078,7 +1057,6 @@ namespace internal {
             .sizing_function(sizing)
             .allow_move_functor(shall_move)
         );
-      }
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 
@@ -1090,6 +1068,174 @@ namespace internal {
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("4-relaxation.off");
+#endif
+    }
+
+    template<typename VertexSet>
+    void collect_vertices_from_boundaries(const int distance,
+                                          VertexSet& vs)
+    {
+      std::unordered_set<halfedge_descriptor> hs;
+      for (edge_descriptor e : edges(mesh_))
+      {
+        if (is_on_border(e))
+          hs.insert(halfedge(e, mesh_));
+      }
+
+      std::ofstream os("hs0.polylines.txt");
+      for (auto h : hs)
+      {
+        os << get(vpmap_, source(h, mesh_)) << " " << get(vpmap_, target(h, mesh_)) << std::endl;
+      }
+      os.close();
+
+      for (int d = 1; d < distance; ++d)
+      {
+        std::unordered_set<halfedge_descriptor> tmp_hs;
+        for (halfedge_descriptor h : hs)
+        {
+          for (halfedge_descriptor hh : halfedges_around_target(h, mesh_))
+            tmp_hs.insert(hh);
+          for (halfedge_descriptor hh : halfedges_around_source(h, mesh_))
+            tmp_hs.insert(hh);
+        }
+        hs.insert(tmp_hs.begin(), tmp_hs.end());
+      }
+
+      for (halfedge_descriptor h : hs)
+      {
+        vs.insert(source(h, mesh_));
+        vs.insert(target(h, mesh_));
+      }
+    }
+
+
+    // run PMP::fair() on each vertex neighborhood
+    template<typename NamedParameters>
+    void fairing_impl(const NamedParameters& np)
+    {
+      using parameters::get_parameter;
+      using parameters::choose_parameter;
+
+      const unsigned int continuity
+        = choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1);
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "Fairing C^"<< continuity << "...";
+      std::cout << std::endl;
+#endif
+
+      std::unordered_set<vertex_descriptor> neighbors_from_border;
+      collect_vertices_from_boundaries(continuity + 1, neighbors_from_border);
+
+      // property map of constrained vertices for relaxation
+      auto vertex_constraint = [&](const vertex_descriptor v)
+        {
+          return !is_move_allowed(v, false/*fairing of constrained edges is forbidden*/)
+              || neighbors_from_border.find(v) != neighbors_from_border.end();
+        };
+      auto constrained_vertices_pmap
+        = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
+
+      // warning : fairing targetting continuity C^k
+      // needs a (k+1)-ring of vertices
+      // here k = 1, so we need a 2-ring of vertices
+      for(const vertex_descriptor v : vertices(mesh_))
+      {
+        if (get(constrained_vertices_pmap, v))
+          continue;
+
+        std::unordered_set<vertex_descriptor> vertices_for_fairing;
+        for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
+        {
+          const vertex_descriptor vs = source(h, mesh_);
+          if (!get(constrained_vertices_pmap, vs))
+          {
+            vertices_for_fairing.insert(vs);
+          }
+        }
+
+        for (unsigned int c = 0; c < continuity; ++c)
+        {
+          std::unordered_set<vertex_descriptor> tmp_vs;
+          for (vertex_descriptor vs : vertices_for_fairing)
+          {
+            for (halfedge_descriptor hh : halfedges_around_target(vs, mesh_))
+            {
+              const vertex_descriptor vss = source(hh, mesh_);
+              if (!get(constrained_vertices_pmap, vss))
+                tmp_vs.insert(vss);
+            }
+          }
+          vertices_for_fairing.insert(tmp_vs.begin(), tmp_vs.end());
+        }
+        CGAL::Polygon_mesh_processing::fair(mesh_, vertices_for_fairing, np);
+      }
+
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_self_intersections();
+#endif
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "done." << std::endl;
+#endif
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("4-fairing.off");
+#endif
+    }
+
+    void smooth_shape_impl(const unsigned int nb_iterations)
+    {
+      const bool relax_constraints = false;
+      const double smooth_shape_time = 1e-6;
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "Smooth shape...";
+      std::cout << std::endl;
+#endif
+
+      // property map of constrained vertices for relaxation
+      auto vertex_constraint = [&](const vertex_descriptor v)
+        {
+          return !is_move_allowed(v, relax_constraints);
+        };
+      auto constrained_vertices_pmap
+        = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
+
+      std::vector<face_descriptor> faces;
+      for (const vertex_descriptor v : vertices(mesh_))
+      {
+        if (get(constrained_vertices_pmap, v))
+          continue;
+
+        for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
+        {
+          face_descriptor f = face(h, mesh_);
+          if (is_on_patch(f))
+            faces.push_back(f);
+        }
+      }
+      std::sort(faces.begin(), faces.end());
+      auto last = std::unique(faces.begin(), faces.end());
+      faces.erase(last, faces.end());
+      CGAL::Polygon_mesh_processing::smooth_shape(faces,
+                                                  mesh_,
+                                                  smooth_shape_time,
+                                                  parameters::vertex_point_map(vpmap_)
+                                                  .do_scale(false)
+                                                  .vertex_is_constrained_map(constrained_vertices_pmap)
+                                                  .geom_traits(gt_)
+                                                  .number_of_iterations(nb_iterations));
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_self_intersections();
+#endif
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "done." << std::endl;
+#endif
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("4-smooth_shape.off");
 #endif
     }
 
