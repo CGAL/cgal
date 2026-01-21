@@ -180,6 +180,13 @@ CGAL_add_named_parameter(dimension_t, dimension, dimension)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
+// List of named parameters that we use in the package 'Sphere packing'
+CGAL_add_named_parameter(number_of_target_spheres_t, number_of_target_spheres, number_of_target_spheres)
+CGAL_add_named_parameter(iteration_functor_t, iteration_functor, iteration_functor)
+CGAL_add_named_parameter(iterations_between_splits_t, iterations_between_splits, iterations_between_splits)
+CGAL_add_named_parameter(maximum_splits_t, maximum_splits, maximum_splits)
+CGAL_add_named_parameter(initial_grid_resolution_t, initial_grid_resolution, initial_grid_resolution)
+
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
