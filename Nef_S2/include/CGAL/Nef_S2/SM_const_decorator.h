@@ -297,6 +297,8 @@ check_integrity_and_topological_planarity(bool faces) const
 #ifdef CGAL_USE_TRACE
   Object_index<SHalfedge_const_iterator>
     EI(shalfedges_begin(),shalfedges_end(),'e');
+#else
+  CGAL_assertion_code( if( !CGAL::get_use_assertions()) return; )
 #endif
   SVertex_const_handle v;
   CGAL_assertion_code(int iso_vert_num=0);
