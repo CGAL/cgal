@@ -360,7 +360,7 @@ public:
     /**
      * \brief Gets cells with a given `PSC_flag` in any dimension.
      *
-     * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`.
+     * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`. Indices are sorted by increasing value.
      *
      * \param flag PSC_flag to select.
      */
@@ -372,7 +372,7 @@ public:
     /**
      * \brief Gets cells with a given `PSC_flag` in dimension `q`.
      *
-     * The function returns the vector of cells of dimension `q` with a given `PSC_flag`.
+     * The function returns the vector of cells of dimension `q` with a given `PSC_flag`. Indices are sorted by increasing value.
      *
      * \param flag PSC_flag to select.
      * \param q Dimension visited.

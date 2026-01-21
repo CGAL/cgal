@@ -49,7 +49,7 @@ public:
     Zp(const Zp& a) : _i(a._i) {}
 
     /** \brief Returns the value of p. */
-    static T operator() () { return T(p); }
+    T operator() () { return T(p); }
 
     /** \brief Tests if the element is 0. */
     bool is_zero() const { return _i == 0 ; }
