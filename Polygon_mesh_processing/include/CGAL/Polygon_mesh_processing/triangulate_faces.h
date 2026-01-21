@@ -66,29 +66,17 @@ class Triangulate_polygon_mesh_modifier
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
 private:
-  template <typename VPM,
+  template <typename Point,
             typename Visitor,
             typename NamedParameters>
   bool triangulate_face_with_hole_filling(face_descriptor f,
                                           PolygonMesh& pmesh,
-                                          const VPM vpm,
+                                          const std::vector<vertex_descriptor>& border_vertices,
+                                          const std::vector<Point>& hole_points,
                                           Visitor visitor,
                                           const NamedParameters& np)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
-
-    using Point = typename boost::property_traits<VPM>::value_type;
-
-    // gather halfedges around the face
-    std::vector<Point> hole_points;
-    std::vector<vertex_descriptor> border_vertices;
-    CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
-    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
-    {
-      vertex_descriptor v = source(h, pmesh);
-      hole_points.push_back(get(vpm, v));
-      border_vertices.push_back(v);
-    }
 
     // use hole filling
     typedef CGAL::Triple<int, int, int> Face_indices;
@@ -191,17 +179,59 @@ public:
     typename Traits::Construct_cross_product_vector_3 cross_product =
       traits.construct_cross_product_vector_3_object();
 
-    typename boost::graph_traits<PolygonMesh>::degree_size_type  original_size = degree(f, pmesh);
-    if(original_size <= 3)
+    using Point = typename boost::property_traits<VPM>::value_type;
+
+
+    std::vector<Point> hole_points;
+    std::vector<vertex_descriptor> border_vertices;
+    CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      vertex_descriptor v = source(h, pmesh);
+      hole_points.push_back(get(vpm, v));
+      border_vertices.push_back(v);
+    }
+    if(border_vertices.size() <= 3)
       return true;
 
-    if(original_size == 4)
+    using Compatibility_check_builder =
+      typename internal_np::Lookup_named_param_def<internal_np::compatibility_check_builder_t,
+                                                   NamedParameters,
+                                                   Hole_filling::Default_compatibility_check_builder<PolygonMesh> // default
+                                                  >::type;
+    Compatibility_check_builder cc_builder =
+      choose_parameter<Compatibility_check_builder>(get_parameter(np, internal_np::compatibility_check_builder));
+    auto check_face = cc_builder(border_vertices, hole_points);
+
+    if(border_vertices.size() == 4) // TODO: also use is_valid
     {
       std::array<halfedge_descriptor,4> verts;
       verts[0] = halfedge(f, pmesh);
       verts[1] = next(verts[0], pmesh);
       verts[2] = next(verts[1], pmesh);
       verts[3] = next(verts[2], pmesh);
+
+      if ( !check_face(0,1,2) || !check_face(0,2,3) )
+      {
+        if ( !check_face(0,1,3) || !check_face(1,2,3) )
+          return false;
+        visitor.before_subface_creations(f);
+        halfedge_descriptor res = CGAL::Euler::split_face(verts[0], verts[2], pmesh);
+        visitor.after_subface_created(face(res, pmesh));
+        visitor.after_subface_created(face(opposite(res, pmesh), pmesh));
+        visitor.after_subface_creations();
+        return true;
+      }
+      if ( !check_face(0,1,3) || !check_face(1,2,3) )
+      {
+        visitor.before_subface_creations(f);
+        halfedge_descriptor res = CGAL::Euler::split_face(verts[1], verts[3], pmesh);
+        visitor.after_subface_created(face(res, pmesh));
+        visitor.after_subface_created(face(opposite(res, pmesh), pmesh));
+        visitor.after_subface_creations();
+        return true;
+      }
+
       Point_ref p0 = get(vpm, target(verts[0], pmesh));
       Point_ref p1 = get(vpm, target(verts[1], pmesh));
       Point_ref p2 = get(vpm, target(verts[2], pmesh));
@@ -254,7 +284,8 @@ public:
       return true;
     }
 
-    return triangulate_face_with_hole_filling(f, pmesh, vpm, visitor, np);
+    return triangulate_face_with_hole_filling(f, pmesh, border_vertices, hole_points, visitor,
+      np.compatibility_check(check_face));
   }
 }; // class Triangulate_polygon_mesh_modifier
 

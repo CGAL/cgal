@@ -95,7 +95,7 @@ struct Tracer_polyhedron
 };
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
-template<class PolygonMesh, class OutputIterator, class VertexPointMap, class Kernel, class Visitor>
+template<class PolygonMesh, class OutputIterator, class VertexPointMap, class Kernel, class Visitor, class User_is_valid>
 std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area>
 triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
@@ -106,6 +106,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             const bool use_cdt,
             const bool skip_cubic_algorithm,
             Visitor& visitor,
+            const User_is_valid& user_is_valid,
             const typename Kernel::FT max_squared_distance)
 {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
@@ -178,16 +179,18 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
     } while(++circ_vertex != done_vertex);
   }
 
+  using Is_valid_base = CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle;
+  Is_valid_base is_valid_base(existing_edges);
+  CGAL::internal::Is_valid_compose<Is_valid_base, User_is_valid> is_valid(is_valid_base, user_is_valid);
+
 //#define CGAL_USE_WEIGHT_INCOMPLETE
 #ifdef CGAL_USE_WEIGHT_INCOMPLETE
   typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_incomplete<CGAL::internal::Weight_min_max_dihedral_and_area>,
-        CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
+        decltype(is_valid)> WC;
 #else
   typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_min_max_dihedral_and_area,
-        CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
+        decltype(is_valid)> WC;
 #endif
-
-  CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle is_valid(existing_edges);
 
   // fill hole using polyline function, with custom tracer for PolygonMesh
   Tracer_polyhedron<PolygonMesh, OutputIterator> tracer(out, pmesh, P_edges);
