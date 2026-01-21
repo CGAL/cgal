@@ -2636,6 +2636,8 @@ void Scene_surface_mesh_item::fill_flat_vertex_map()
         auto f = [&](auto ffit, auto &v2v) {
           if (ffit.info().is_external)
             return;
+          if (v2v.count(ffit.vertex(0))==0 || v2v.count(ffit.vertex(2))==0 || v2v.count(ffit.vertex(1))==0)
+            return; // intersection in the CDT (new points have no corresponding vertex_index)
           d->flat_vertices_map[v2v[ffit.vertex(0)]].push_back(counter++);
           d->flat_vertices_map[v2v[ffit.vertex(1)]].push_back(counter++);
           d->flat_vertices_map[v2v[ffit.vertex(2)]].push_back(counter++);
