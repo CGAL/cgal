@@ -45,31 +45,31 @@ namespace CGAL {
  * failing data, progressively narrowing down to the minimal case.
  *
  * \tparam InputData The type of input data to bisect (must be copyable and assignable)
- * \tparam GetSizeFn Function object type: `std::size_t GetSizeFn(const InputData& data)`
- * \tparam SimplifyFn Function object type: `bool SimplifyFn(InputData& data, std::size_t start, std::size_t end)`
- * \tparam RunFn Function object type: `int RunFn(const InputData& data)`
- * \tparam SaveFn Function object type: `void SaveFn(const InputData& data, const std::string& filename_prefix)`
+ * \tparam GetSize Function object type, callable with a signature `std::size_t GetSize(const InputData& data)`
+ * \tparam Simplify Function object type, callable with a signature `bool Simplify(InputData& data, std::size_t start, std::size_t end)`
+ * \tparam Run Function object type, callable with a signature `int Run(const InputData& data)`
+ * \tparam Save Function object type, callable with a signature `void Save(const InputData& data, const std::string& filename_prefix)`
  *
  * \param data The input data to bisect
- * \param get_size_fn Function that returns the "size" of the data (e.g., number of elements).
- * \param simplify_fn Function that simplifies the data by removing elements with indices in `[start, end)`.
+ * \param get_size Function that returns the "size" of the data (e.g., number of elements).
+ * \param simplify Function that simplifies the data by removing elements with indices in `[start, end)`.
  *                    Should return `true` if simplification succeeded, `false` otherwise.
- * \param run_fn Function that tests the data. Should return 0 (`EXIT_SUCCESS`) on success, non-zero on failure.
+ * \param run Function that tests the data. Should return 0 (`EXIT_SUCCESS`) on success, non-zero on failure.
  *                May also throw exceptions to indicate failure.
- * \param save_fn Function that saves the data to a file or output. Its second parameter
+ * \param save Function that saves the data to a file or output. Its second parameter
  *                (`filename_prefix`) indicates the context (e.g., "bad", "final_bad", "error", "current")
  *                and can be used to name the output accordingly.
  *
  * \return Exit code: 0 (`EXIT_SUCCESS`) if no failures found, non-zero otherwise
  *
  * The algorithm:
- * 1. Tests the full data first (by a call `run_fn(data)`) to verify if it fails, and captures the
+ * 1. Tests the full data first (by a call `run(data)`) to verify if it fails, and captures the
  *    failure pattern. If the run succeeds, returns `EXIT_SUCCESS` immediately.
  * 2. Starts with a ratio of 0.5 (removing 50% of elements) and divides data into "buckets".
  * 3. For each bucket,
- *    - creates a simplified version of the data by removing that bucket, using `simplify_fn`,
- *    - saves the simplified data using `save_fn` with name "current",
- *    - and tests the simplified version using `run_fn`.
+ *    - creates a simplified version of the data by removing that bucket, using `simplify`,
+ *    - saves the simplified data using `save` with name "current",
+ *    - and tests the simplified version using `run`.
  *
  *    Then:
  *    - If it fails with the same pattern as the original, saves it as "bad" and restarts bisection
@@ -78,10 +78,10 @@ namespace CGAL {
  *    - If it succeeds, continue with the next bucket.
  * 4. After a complete pass with no matching failures found, reduces the ratio by half (0.5 → 0.25 → 0.125...).
  * 5. Repeats until no further simplification is possible (minimal failing case found).
- * 6. Saves the minimal failing case as "final_bad" and return the result of `run_fn` on it.
+ * 6. Saves the minimal failing case as "final_bad" and return the result of `run` on it.
  *
  * \warning CGAL::bisect_failures requires the tested code to be compiled with
- * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined. If `run_fn` fails
+ * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined. If `run` fails
  * with a segmentation fault, This function cannot catch it and will also crash.
  *
  * Here is an example of how to use `CGAL::bisect_failures`:
@@ -89,10 +89,10 @@ namespace CGAL {
  */
 template<typename InputData, typename GetSizeFn, typename SimplifyFn, typename RunFn, typename SaveFn>
 int bisect_failures(const InputData& data,
-                    GetSizeFn get_size_fn,
-                    SimplifyFn simplify_fn,
-                    RunFn run_fn,
-                    SaveFn save_fn)
+                    GetSizeFn get_size,
+                    SimplifyFn simplify,
+                    RunFn run,
+                    SaveFn save)
 {
   // Redirect temporarily cout to cerr, and clog to stdout, for debug output
   auto* old_clog_buf = std::clog.rdbuf();
@@ -104,14 +104,14 @@ int bisect_failures(const InputData& data,
   std::clog.rdbuf(old_cout_buf);
   std::cout.rdbuf(std::cerr.rdbuf());
   // The following code uses std::clog to display its messages, and the user's
-  // code (run_fn) usages of std::cout will go to std::cerr.
+  // code (run) usages of std::cout will go to std::cerr.
 
   auto do_run = [&](InputData current_data) {
     std::optional<Failure_exception> cgal_exc;
     std::optional<std::string> std_exc_msg;
     int exit_code = EXIT_SUCCESS;
     try {
-      exit_code = run_fn(current_data);
+      exit_code = run(current_data);
     } catch(Failure_exception& e) {
       cgal_exc = e;
       std::clog << "    CAUGHT CGAL EXCEPTION: " << e.what() << '\n';
@@ -145,7 +145,7 @@ int bisect_failures(const InputData& data,
 
     std::size_t nb_to_skip = 0;
     for(std::size_t bucket = 0; bucket < nb_buckets;) {
-      const auto data_size = get_size_fn(working_data);
+      const auto data_size = get_size(working_data);
       nb_to_skip = static_cast<std::size_t>(std::round(data_size * ratio));
       if(nb_to_skip < 1) {
         nb_to_skip = 1;
@@ -158,8 +158,8 @@ int bisect_failures(const InputData& data,
 
 
       // Try to simplify the data
-      if(simplify_fn(working_data, start, end)) {
-        const auto new_size = get_size_fn(working_data);
+      if(simplify(working_data, start, end)) {
+        const auto new_size = get_size(working_data);
         std::clog << "    size after simplification: " << new_size << '\n';
 
         if(new_size >= data_size) {
@@ -170,7 +170,7 @@ int bisect_failures(const InputData& data,
         }
 
         // Save current state
-        save_fn(working_data, "current");
+        save(working_data, "current");
 
         auto [cgal_exception, std_exception, this_run_exit_code] = do_run(working_data);
 
@@ -203,8 +203,8 @@ int bisect_failures(const InputData& data,
           exit_code = this_run_exit_code;
         }
         if(same_exception || same_exit_code) {
-            std::clog << "    -> BAD DATA! (size: " << get_size_fn(working_data) << ")\n";
-            save_fn(working_data, "bad");
+            std::clog << "    -> BAD DATA! (size: " << get_size(working_data) << ")\n";
+            save(working_data, "bad");
             bad_data = working_data;
             found_fault_this_pass = true;
             bucket = 0; // Reset to bisect further
@@ -214,10 +214,10 @@ int bisect_failures(const InputData& data,
             // Different type of error - log it but continue
             if(exit_code == EXIT_SUCCESS) exit_code = EXIT_FAILURE;
             std::clog << "    -> ERROR DATA (different error type)\n";
-            save_fn(working_data, "error");
+            save(working_data, "error");
             std::clog << "       go on...\n";
           } else {
-            std::clog << "    -> GOOD DATA :-( (size: " << get_size_fn(working_data) << ")\n";
+            std::clog << "    -> GOOD DATA :-( (size: " << get_size(working_data) << ")\n";
           }
         }
 
@@ -240,10 +240,10 @@ int bisect_failures(const InputData& data,
     }
   }
 
-  if(get_size_fn(bad_data) < get_size_fn(data)) {
-    std::clog << "FINAL BAD DATA: " << get_size_fn(bad_data) << " elements\n";
-    save_fn(bad_data, "final_bad");
-    return run_fn(bad_data);
+  if(get_size(bad_data) < get_size(data)) {
+    std::clog << "FINAL BAD DATA: " << get_size(bad_data) << " elements\n";
+    save(bad_data, "final_bad");
+    return run(bad_data);
   }
 
   return exit_code;
