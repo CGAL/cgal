@@ -16,6 +16,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <boost/property_map/function_property_map.hpp>
@@ -129,13 +131,11 @@ find_crossing_edge(PolygonMesh& pm,
   * Given a convex mesh, a plane and an halfedge crossing the plane from positive side, refine the mesh with the plane
   */
 template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>
-// template <class PolygonMesh, class NamedParameters =  parameters::Default_named_parameters>
 std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
 refine_convex_with_plane(PolygonMesh& pm,
-            // const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
-            const Plane_3& plane,
-            typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-            const NamedParameters& np = parameters::default_values())
+                         const Plane_3& plane,
+                         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                         const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

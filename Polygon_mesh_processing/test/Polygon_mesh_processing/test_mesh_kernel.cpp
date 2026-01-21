@@ -32,7 +32,9 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
   assert((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) != std::nullopt) == (expected_nb_vertices >= 3 && expected_nb_faces != 1));
   assert((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).require_strictly_inside(false)) != std::nullopt) == (expected_nb_vertices != 0));
 
-  Mesh kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false).shuffle_planes(false).starting_cube(PMP::bbox(input)));
+  Mesh kernel;
+  make_hexahedron(PMP::bbox(input), kernel);
+  PMP::kernel(input, kernel, CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false).shuffle_planes(false));
 #ifdef TEST_MESH_KERNEL_VERBOSE
   std::cout << "nb of vertices: " << vertices(kernel).size() << " ( " << expected_nb_vertices << " expected)" << std::endl
             << "nb of edges: " << edges(kernel).size() << " ( " << expected_nb_edges << " expected)" << std::endl
