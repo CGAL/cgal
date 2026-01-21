@@ -31,6 +31,7 @@
 #include <CGAL/Named_function_parameters.h>
 
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/math/special_functions/next.hpp>
 
 #include <iostream>
 #include <sstream>
