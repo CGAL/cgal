@@ -15,14 +15,15 @@
 
 #include <CGAL/license/Mesh_2.h>
 
-#include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/assertions.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Double_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/functional.h>
-#include <CGAL/IO/io.h>
-#include <CGAL/IO/OFF.h>
+#if defined(CGAL_MESH_2_DEBUG_BAD_FACES) || defined(CGAL_MESH_2_DEBUG_REFINEMENT_POINTS) || \
+    defined(CGAL_MESH_2_DEBUG_INSERTIONS)
+#  include <CGAL/IO/io.h>
+#endif
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Mesher_level.h>
