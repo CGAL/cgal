@@ -388,20 +388,24 @@ struct Polygon_soup_orienter
             vertices_to_duplicate.back().second.push_back(other_p_id);
         }
         while(next!=neighbors[0]);
-
         if (next==v_id){
-          /// turn the otherway round
+          /// turn the other way round
           next = neighbors[0];
+          V_ID last_next = next; // store the initial value
           do{
             P_ID other_p_id;
             std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
+            // If the new 'next' is the same as the previous one, break to avoid an infinite loop.
+            if (next == last_next) break;
+            last_next = next;
             visited_polygons.insert(other_p_id);
             if(nb_link_ccs != 1)
               vertices_to_duplicate.back().second.push_back(other_p_id);
           }
           while(true);
         }
+
         if (nb_link_ccs != 1)
           visitor.link_connected_polygons(v_id, vertices_to_duplicate.back().second);
       }
