@@ -139,11 +139,11 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
-          typename PointLocation, typename ZoneVisitor>
+          typename PointLocation, typename ZoneVisitor,
+          typename = std::enable_if_t<std::is_same<PointLocation, int>::value>>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
-            const PointLocation& pl, ZoneVisitor &visitor,
-            std::is_same<int, int>::type)
+            const PointLocation& pl, ZoneVisitor &visitor)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -466,10 +466,10 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
-          typename InputIterator>
+          typename InputIterator,
+          typename = std::enable_if_t<std::is_same<InputIterator, int>::value>>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
-            InputIterator begin, InputIterator end,
-            std::is_same<int, int>::type)
+            InputIterator begin, InputIterator end)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1527,11 +1527,12 @@ zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
-          typename PointLocation>
+          typename PointLocation,
+          typename = std::enable_if_t<std::is_same<PointLocation, int>::value>>
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
              const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, std::is_same<int, int>::type)
+             const PointLocation& pl)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
