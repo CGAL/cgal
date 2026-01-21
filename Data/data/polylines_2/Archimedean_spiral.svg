@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="650"
+   height="600"
+   id="svg6"
+   sodipodi:docname="Archimedean_spiral_only.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.7116667"
+     inkscape:cx="325.41383"
+     inkscape:cy="299.70789"
+     inkscape:window-width="2560"
+     inkscape:window-height="1371"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <path
+     d="m600 275c-4.223 79.009-39.281 151.851-96.707 203.293-54.96 49.233-127.807 76.046-203.293 71.707-70.41-4.047-137.692-35.317-185.616-89.384-44.63-50.352-68.7326-116.88-64.384-185.616 4.0685-64.307 33.0541-125.052 82.062-167.938 45.775-40.0565 105.987-61.4196 167.938-57.062 57.424 4.0391 111.918 30.2252 150.26 74.74 35.4 41.099 54.118 94.972 49.74 150.26-4.044 51.078-27.785 99.125-67.417 132.583-36.566 30.868-84.14 46.803-132.583 42.417-44.456-4.025-86.165-25.142-114.905-60.095-26.331-32.023-39.492-73.305-35.095-114.905 4.011-37.945 22.578-73.277 52.773-97.227 27.447-21.77 62.422-32.19 97.227-27.773 31.535 4.002 60.456 20.086 79.55 45.45 17.382 23.093 24.853 51.814 20.45 79.55-4.05 25.514-17.888 47.849-38.128 61.872-18.49 12.81-40.904 17.569-61.872 13.128-18.977-4.019-34.965-15.285-44.194-30.806-8.271-13.91-10.308-30.03-5.806-44.194 4.021-12.65 12.835-22.208 23.483-26.517 9.49-3.839 19.372-3.026 26.517 1.517 6.417 4.081 9.515 10.507 8.839 16.161-0.634 5.305-4.481 8.839-8.839 8.839"
+     fill="none"
+     stroke="#f00"
+     stroke-width="3"
+     id="path4" />
+</svg>
