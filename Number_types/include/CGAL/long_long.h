@@ -64,6 +64,13 @@ template <> class Real_embeddable_traits< long long int >
           return Interval_nt<true>(x).pair();
         }
     };
+
+    struct Ceil
+    : public CGAL::cpp98::unary_function< Type, double > {
+     public:
+       double operator()( int x ) const
+       { return x; }
+    };
 };
 
 // unsigned long long
@@ -77,6 +84,13 @@ template <> class Real_embeddable_traits< unsigned long long >
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
         }
+    };
+
+    struct Ceil
+    : public CGAL::cpp98::unary_function< Type, double > {
+     public:
+       double operator()( int x ) const
+       { return x; }
     };
 };
 

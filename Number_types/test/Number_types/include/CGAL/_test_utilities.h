@@ -318,6 +318,12 @@ test_utilities(const NT& x)
   CGAL::To_double<NT> tdb;
   if (tdb(one) != 1.0) return false;
 
+  // ceil
+  std::cout << "  ceil()" << std::endl;
+  if (CGAL_NTS ceil(NT(2)) != 2.0) return false;
+  CGAL::Ceil<NT> ce;
+  if (ce(NT(2)) != 2.0) return false;
+
   // to_interval
   std::pair<double, double> I = CGAL_NTS to_interval( NT(2) );
   if ( I.first  > 2.0) return false;

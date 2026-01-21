@@ -31,4 +31,5 @@ int main(){
     CGAL_IS_RET_NULL_FUNCTOR(Compare);
     CGAL_IS_RET_NULL_FUNCTOR(To_double);
     CGAL_IS_RET_NULL_FUNCTOR(To_interval);
+    CGAL_IS_RET_NULL_FUNCTOR(Ceil);
 }
