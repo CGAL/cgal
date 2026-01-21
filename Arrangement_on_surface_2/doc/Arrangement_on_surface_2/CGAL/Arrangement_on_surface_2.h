@@ -120,7 +120,7 @@ public:
      */
     Size degree() const;
 
-    /*! obtains a circulator circulator that allows going over the halfedges
+    /*! obtains a circulator that allows going over the halfedges
      * incident to `v` (that have `v` as their target).
      * The edges are traversed in a clockwise direction around `v`.
      * \pre `v` is <I>not</I> an isolated vertex.

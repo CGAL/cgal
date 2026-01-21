@@ -60,7 +60,7 @@ do_intersect(const A <K> &c1, const B <K> &c2) \
   return typename K::Do_intersect_2()(c1, c2); \
 }
 
-// Circle_2 Circle_2 already has its do_intersect
+// Circle_2 already has its do_intersect
 // so it needs only the global intersection
 template < class OutputIterator, class K >
 OutputIterator

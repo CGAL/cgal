@@ -2273,7 +2273,7 @@ make_canonical(Vertex_triple& t) const
   *
   * returns the cell p lies in
   * starts at cell "start"
-  * returns a cell Cell_handel if lt == CELL
+  * returns a cell Cell_handle if lt == CELL
   * returns a facet (Cell_handle,li) if lt == FACET
   * returns an edge (Cell_handle,li,lj) if lt == EDGE
   * returns a vertex (Cell_handle,li) if lt == VERTEX
