@@ -434,7 +434,6 @@ make_hexahedron(const IsoCuboid& c,
  * aligned with x-axis,
  * in the bottom face of the cubic hexahedron.
  *
- * \tparam Bbox_3 a model of ``
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *

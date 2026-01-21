@@ -35,40 +35,18 @@ struct Three_point_cut_plane_traits
 {
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
+  using Vector_3 = typename Kernel::Vector_3;
 
   struct Plane_3: public std::array<typename Kernel::Point_3, 3>{
     using Base = std::array<typename Kernel::Point_3, 3>;
-    using Explicit_plane = typename Kernel::Plane_3;
 
     Plane_3(const Point_3 &a, const Point_3 &b, const Point_3 &c): Base({a, b, c}){}
     Plane_3(const std::array<Point_3, 3> &arr): Base(arr){}
 
-    // Warning: it is slow (Planes are constructed each time)
-    bool operator<(const Plane_3 &b) const{
-      Explicit_plane pa = explicit_plane();
-      Explicit_plane pb = b.explicit_plane();
-      Comparison_result res = compare(pa.a(), pb.a());
-      if(res == EQUAL)
-        res = compare(pa.b(), pb.b());
-      if(res == EQUAL)
-        res = compare(pa.c(), pb.c());
-      if(res == EQUAL)
-        res = compare(pa.d(), pb.d());
-      return res == SMALLER;
-    };
-
-    bool operator==(const Plane_3 &b) const{
-      Explicit_plane pa = explicit_plane();
-      Explicit_plane pb = b.explicit_plane();
-      return pa==pb;
+    bool is_degenerate() const{
+      return collinear((*this)[0], (*this)[1], (*this)[2]);
     }
-
-    Explicit_plane explicit_plane() const{
-      return  Explicit_plane((*this)[0], (*this)[1], (*this)[2]);
-    }
-
   };
-  using Vector_3 = typename Kernel::Vector_3;
 
   struct Does_not_support_CDT2{};
 

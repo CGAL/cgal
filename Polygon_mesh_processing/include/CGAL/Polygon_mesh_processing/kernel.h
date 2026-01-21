@@ -119,6 +119,7 @@ kernel(const PolygonMesh& pm,
   // Get the planes and eventually shuffle them
   Three_point_cut_plane_traits<EK> kgt;
   auto oriented_side = kgt.oriented_side_3_object();
+  auto orthogonal_vector = kgt.construct_orthogonal_vector_3_object();
 
   std::vector<face_descriptor> planes(face_range.begin(), face_range.end());
   if(shuffle_planes)
@@ -130,22 +131,26 @@ kernel(const PolygonMesh& pm,
     Plane_3 plane(to_exact(get(vpm,source(h, pm))),
                   to_exact(get(vpm,target(h, pm))),
                   to_exact(get(vpm,target(next(h, pm), pm))));
+
+    if(plane.is_degenerate())
+      continue;
+
     if(bbox_filtering && vertices(kernel).size() >= 3 && faces(kernel).size()>1){
       // Early exit if the plane does not cut the bbox of the temporary kernel
 
       // By looking the sign of the plane value, we can check only two corners
-      auto eplane = plane.explicit_plane();
+      EVector_3 normal = orthogonal_vector(plane);
       // Look extreme corner according to the plane normal
-      EPoint_3 corner( is_positive(eplane.a())?bb3.xmax():bb3.xmin(),
-                       is_positive(eplane.b())?bb3.ymax():bb3.ymin(),
-                       is_positive(eplane.c())?bb3.zmax():bb3.zmin());
+      EPoint_3 corner( is_positive(normal.x())?bb3.xmax():bb3.xmin(),
+                       is_positive(normal.y())?bb3.ymax():bb3.ymin(),
+                       is_positive(normal.z())?bb3.zmax():bb3.zmin());
       if(oriented_side(plane, corner) != ON_POSITIVE_SIDE)
         continue;
 
       // Look the opposite corner
-      EPoint_3 opposite_corner( is_positive(eplane.a())?bb3.xmin():bb3.xmax(),
-                                is_positive(eplane.b())?bb3.ymin():bb3.ymax(),
-                                is_positive(eplane.c())?bb3.zmin():bb3.zmax());
+      EPoint_3 opposite_corner( is_positive(normal.x())?bb3.xmin():bb3.xmax(),
+                                is_positive(normal.y())?bb3.ymin():bb3.ymax(),
+                                is_positive(normal.z())?bb3.zmin():bb3.zmax());
       if(oriented_side(plane, opposite_corner) == ON_POSITIVE_SIDE)
         return PolygonMesh(); // empty
 

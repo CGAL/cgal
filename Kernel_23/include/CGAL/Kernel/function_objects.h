@@ -2141,24 +2141,18 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Construct_plane_line_intersection_point_3
   {
-    typedef typename K::FT FT;
+    typedef typename K::Plane_3 Plane;
     typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;
-    typedef typename K::Plane_3 Plane;
-    typedef typename K::Vector_3 Vector;
-
-    typename K::Construct_cross_product_vector_3 construct_cross_product_vector_3;
-    typename K::Compute_scalar_product_3 scalar_product;
-
-    typename K::Construct_line_3 construct_line;
-    typename K::Construct_vector_3 vector;
     typename K::Construct_plane_3 construct_plane;
+    typename K::Construct_line_3 construct_line;
+
   public:
     Point
     operator()(const Point& p1, const Point& p2, const Point& p3,
                const Point& l1, const Point& l2) const
     {
-      Plane plane = construct_plane( p1, p2, p3 );
+      Plane plane = construct_plane(p1, p2, p3);
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
@@ -2166,13 +2160,6 @@ namespace CommonKernelFunctors {
       const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
-
-      // Vector n = construct_cross_product_vector_3( vector(p1, p2), vector(p1, p3));
-      // CGAL_assertion(n!=CGAL::NULL_VECTOR);
-      // Vector l = vector(l1, l2);
-      // CGAL_assertion(l!=CGAL::NULL_VECTOR);
-      // FT t = scalar_product(n, vector(p1,l1)) / scalar_product(n, l);
-      // return l1 + t * l;
     }
 
     Point

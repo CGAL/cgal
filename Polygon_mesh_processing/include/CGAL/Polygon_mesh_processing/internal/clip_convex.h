@@ -16,8 +16,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-#include <CGAL/Polygon_mesh_processing/corefinement.h>
-
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <boost/property_map/function_property_map.hpp>
@@ -270,6 +268,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
                                const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
+  using parameters::is_default_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
@@ -289,16 +288,8 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   using Point_3 = typename GT::Point_3;
 
-  struct Default_Bbox{
-    // Needed to compile with MSVC
-    vertex_descriptor operator[](std::size_t /*i*/){ return vertex_descriptor(); }
-    Default_Bbox operator*(){ return *this; }
-  };
-  using Bbox = typename internal_np::Lookup_named_param_def<internal_np::bounding_box_t, NamedParameters, Default_Bbox*>::type;
-  constexpr bool update_bbox = !std::is_same_v< std::remove_reference_t<Bbox>, Default_Bbox*>;
-
-  Default_Bbox* default_bbox;
-  Bbox bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), default_bbox);
+  bool update_bbox = !is_default_parameter<NamedParameters, internal_np::bounding_box_t>::value;
+  std::array<vertex_descriptor, 6>* bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), nullptr);
 
   // Default_visitor default_visitor;
   // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -349,15 +340,15 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     } while (h != h_start);
   }
 
-  if constexpr(update_bbox){
+  if(update_bbox){
     auto &bbox = *bbox_pointer;
-    struct BBoxEntry {
+    struct BBox_entry {
       std::size_t index;
       std::function<double(const Point_3&)> bound;
       bool take_min;
     };
 
-    std::array<BBoxEntry,6> entries {{
+    std::array<BBox_entry,6> entries {{
         {0, [](const Point_3& p){ return to_interval(p.x()).first;  }, true},  // xmin
         {1, [](const Point_3& p){ return to_interval(p.x()).second; }, false}, // xmax
         {2, [](const Point_3& p){ return to_interval(p.y()).first;  }, true},  // ymin
@@ -565,9 +556,10 @@ clip_convex(PolygonMesh& pm,
     }
 
     if(vertices(pm).size() < 3){
-      remove_face(*faces(pm).begin(), pm);
-      for(edge_descriptor e: edges(pm))
+      edges_to_remove = std::vector<edge_descriptor>(edges(pm).begin(), edges(pm).end());
+      for(edge_descriptor e: edges_to_remove)
         remove_edge(e, pm);
+      remove_face(*faces(pm).begin(), pm);
       for(vertex_descriptor v: vertices(pm))
         set_halfedge(v, BGT::null_halfedge(), pm);
     }
