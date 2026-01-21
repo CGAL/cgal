@@ -31,7 +31,8 @@ namespace CGAL {
 /**
  * \ingroup PkgSTLExtensionUtilities
  *
- * \brief bisects input data by iteratively simplifying it to identify the minimal failing case.
+ * \brief bisects input data by iteratively simplifying it to identify a failing case, from which no
+ *        further elements can be removed while still failing.
  *
  * This debugging utility helps identify minimal test cases when complex input data causes failures.
  * It works by iteratively simplifying the data and testing whether the failure persists,
@@ -59,21 +60,29 @@ namespace CGAL {
  *                (`filename_prefix`) indicates the context (e.g., "bad", "final_bad", "error", "current")
  *                and can be used to name the output accordingly.
  *
- * \return Exit code: 0 (EXIT_SUCCESS) if no failures found, non-zero otherwise
+ * \return Exit code: 0 (`EXIT_SUCCESS`) if no failures found, non-zero otherwise
  *
  * The algorithm:
- * 1. Tests the full data first to verify it fails and capture the failure pattern
- * 2. Starts with a ratio of 0.5 (removing 50% of elements) and divides data into "buckets"
- * 3. For each bucket, creates a simplified version by removing that portion
- * 4. Tests the simplified version with `run_fn`
- * 5. If it fails with the same pattern as the original, saves it as "bad" and restarts bisection with this smaller dataset
- * 6. If it succeeds or fails differently, tries the next bucket
- * 7. After a complete pass with no matching failures found, reduces the ratio by half (0.5 → 0.25 → 0.125...)
- * 8. Repeats until no further simplification is possible (minimal failing case found)
- * 9. Saves the minimal failing case as "final_bad" and returns its exit code
+ * 1. Tests the full data first (by a call `run_fn(data)`) to verify if it fails, and captures the
+ *    failure pattern. If the run succeeds, returns `EXIT_SUCCESS` immediately.
+ * 2. Starts with a ratio of 0.5 (removing 50% of elements) and divides data into "buckets".
+ * 3. For each bucket,
+ *    - creates a simplified version of the data by removing that bucket, using `simplify_fn`,
+ *    - saves the simplified data using `save_fn` with name "current",
+ *    - and tests the simplified version using `run_fn`.
+ *
+ *    Then:
+ *    - If it fails with the same pattern as the original, saves it as "bad" and restarts bisection
+ *       with this smaller dataset and the same ratio.
+ *    - If it fails differently, saves it as "error" and continues with the next bucket.
+ *    - If it succeeds, continue with the next bucket.
+ * 4. After a complete pass with no matching failures found, reduces the ratio by half (0.5 → 0.25 → 0.125...).
+ * 5. Repeats until no further simplification is possible (minimal failing case found).
+ * 6. Saves the minimal failing case as "final_bad" and return the result of `run_fn` on it.
  *
  * \warning CGAL::bisect_failures requires the tested code to be compiled with
- * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined.
+ * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined. If `run_fn` fails
+ * with a segmentation fault, This function cannot catch it and will also crash.
  *
  * Here is an example of how to use `CGAL::bisect_failures`:
  * \snippet STL_Extension/bisect_failures.cpp bisect_failures_snippet
