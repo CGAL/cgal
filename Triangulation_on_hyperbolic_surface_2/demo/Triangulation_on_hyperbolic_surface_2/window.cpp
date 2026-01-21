@@ -17,15 +17,20 @@ DemoWindowItem::DemoWindowItem()
 {
   // Clear
   edges_.clear();
+  dirichlet_edges_.clear();
 
   // Prepare the pens
   poincare_disk_pen_.setStyle(Qt::SolidLine);
-  poincare_disk_pen_.setWidth(8);
+  poincare_disk_pen_.setWidth(4);
   poincare_disk_pen_.setBrush(Qt::black);
 
   edges_pen_.setStyle(Qt::SolidLine);
-  edges_pen_.setWidth(6);
+  edges_pen_.setWidth(4);
   edges_pen_.setBrush(Qt::blue);
+
+  dirichlet_pen_.setStyle(Qt::SolidLine);
+  dirichlet_pen_.setWidth(4);
+  dirichlet_pen_.setBrush(Qt::red);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +39,8 @@ void DemoWindowItem::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem*,
                            QWidget*)
 {
+  painter->setRenderHints(QPainter::Antialiasing);  // for a smoother drawing ;)
+
   // 1. Draw the poincaré disk
   QRectF circle_rect = QRectF(-poincare_disk_radius_in_pixels_-3,
                               -poincare_disk_radius_in_pixels_-3,
@@ -48,6 +55,13 @@ void DemoWindowItem::paint(QPainter *painter,
   painter->setPen(edges_pen_);
   for (std::size_t  i=0; i<edges_.size(); i++) {
     draw_edge(painter, edges_[i].first, edges_[i].second);
+  }
+
+  // 3. Draw the Dirichlet domain, if any
+  painter->setBrush(QBrush());
+  painter->setPen(dirichlet_pen_);
+  for (std::size_t i = 0; i < dirichlet_edges_.size(); i++) {
+    draw_edge(painter, dirichlet_edges_[i].first, dirichlet_edges_[i].second);
   }
 }
 
@@ -82,13 +96,57 @@ void DemoWindowItem::draw_triangulation(Triangulation& triangulation)
   }
 }
 
+void DemoWindowItem::draw_triangulation(Delaunay_triangulation & triangulation, Anchor & anchor)
+{
+  typedef std::vector < std::tuple < typename Delaunay_triangulation::Dart_const_descriptor, Point,
+      Point, Point >> RealizationVector;
+  RealizationVector realized_triangles;
+  realized_triangles = triangulation.lift(anchor);
+
+  Point point_1, point_2, point_3;
+  for (typename RealizationVector::iterator it = realized_triangles.begin(); it != realized_triangles.end(); ++it) {
+    point_1 = std::get < 1 > (*it);
+    point_2 = std::get < 2 > (*it);
+    point_3 = std::get < 3 > (*it);
+
+    edges_.push_back(std::make_pair(point_1, point_2));
+    edges_.push_back(std::make_pair(point_2, point_3));
+    edges_.push_back(std::make_pair(point_3, point_1));
+  }
+}
+
+void DemoWindowItem::draw_triangles(std::vector < Anchor > anchors)
+{
+  for (std::size_t i = 0; i < anchors.size(); i++) {
+    Point p0 = anchors[i].vertices[0];
+    Point p1 = anchors[i].vertices[1];
+    Point p2 = anchors[i].vertices[2];
+
+    edges_.push_back(std::make_pair(p0, p1));
+    edges_.push_back(std::make_pair(p1, p2));
+    edges_.push_back(std::make_pair(p2, p0));
+  }
+}
+
+void DemoWindowItem::draw_Dirichlet(Domain & domain)
+{
+  std::vector < Voronoi_point > vertices = CGAL::Dirichlet_vertices<Traits>(domain);
+  int n = vertices.size();
+  for (int i = 0; i < n; ++i) {
+    Point v0 = Point(CGAL::to_double(vertices[i].x()), CGAL::to_double(vertices[i].y()));
+    Point v1 =
+        Point(CGAL::to_double(vertices[(i + 1) % n].x()), CGAL::to_double(vertices[(i + 1) % n].y()));
+    dirichlet_edges_.push_back(std::make_pair(v0, v1));
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DemoWindowItem::draw_point(QPainter* painter, Point position)
 {
   // First convert the point in doubles, well-scaled
   double point_x = poincare_disk_radius_in_pixels_ * CGAL::to_double(position.x());
-  double point_y = poincare_disk_radius_in_pixels_ * CGAL::to_double(position.y());
+  double point_y = - poincare_disk_radius_in_pixels_ * CGAL::to_double(position.y()); // Take the opposite so that the drawing is not upside down
 
   // Then draw a small circle
   QRectF circle_rect = QRectF(point_x-1, point_y-1, 3, 3);
@@ -100,10 +158,10 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
   // First convert the points coordinates to doubles
 
   double src_x = CGAL::to_double(source.x());
-  double src_y = CGAL::to_double(source.y());
+  double src_y = - CGAL::to_double(source.y()); // Take the opposite so that the drawing is not upside down
 
   double tar_x = CGAL::to_double(target.x());
-  double tar_y = CGAL::to_double(target.y());
+  double tar_y = - CGAL::to_double(target.y()); // Take the opposite so that the drawing is not upside down
 
   // 0. If src and tar are too colinear or too close from each other then draw a line
 
@@ -256,7 +314,7 @@ DemoWindow::DemoWindow() : DemosMainWindow()
   scene_.setSceneRect(-600, -600, 1200, 1200);
   item_ = new DemoWindowItem();
   scene_.addItem(item_);
-  this->graphicsView->scale(0.5, -0.5); // Y-axis inversion
+  this->graphicsView->scale(0.5, 0.5);
 
   setWindowTitle("Hyperbolic surfaces triangulation 2 Demo");
 }
@@ -267,3 +325,58 @@ DemoWindowItem& DemoWindow::item()
 }
 
 void DemoWindow::keyPressEvent(QKeyEvent*) {}
+
+void DemoWindow::on_actionSave_as_SVG_triggered()
+{
+  QString newPath = QFileDialog::getSaveFileName(this, tr("Save SVG"),
+                   path_, tr("SVG files (*.svg)"));
+
+  if (newPath.isEmpty())
+    return;
+
+  path_ = newPath;
+
+  QRectF newSceneRect;
+  QGraphicsScene *tempScene = new QGraphicsScene(scene_.sceneRect());
+  tempScene->setBackgroundBrush(QBrush(Qt::transparent));
+  tempScene->setItemIndexMethod(QGraphicsScene::BspTreeIndex);
+  foreach(QGraphicsItem * item, scene_.items()) {
+    newSceneRect |= item->mapToScene(item->boundingRect()).boundingRect();
+    tempScene->addItem(item);
+  }
+  tempScene->setSceneRect(newSceneRect);
+  tempScene->clearSelection();
+  QSize sceneSize = newSceneRect.size().toSize();
+
+  QSvgGenerator generator;
+  generator.setFileName(path_);
+  generator.setSize(sceneSize);
+  generator.setViewBox(QRect(-3, -3, 2 * sceneSize.width(), 2 * sceneSize.height()));
+  generator.setDescription(QObject::tr("My canvas exported to Svg"));
+  generator.setTitle(path_);
+  QPainter painter;
+  painter.begin(&generator);
+  tempScene->render(&painter);
+  painter.end();
+
+  tempScene->clear();
+  delete tempScene;
+}
+
+void DemoWindow::on_actionSave_as_PNG_triggered()
+{
+  QString newPath = QFileDialog::getSaveFileName(this, tr("Save PNG"),
+                   path_, tr("PNG files (*.png)"));
+
+  if (newPath.isEmpty())
+    return;
+
+  path_ = newPath;
+
+  QImage img(808, 808, QImage::Format_ARGB32_Premultiplied);
+  img.fill(Qt::white);
+  QPainter p(&img);
+  scene_.render(&p);
+  p.end();
+  img.save(path_, "PNG");
+}
