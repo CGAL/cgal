@@ -228,23 +228,28 @@ public:
 
     //fill incidences of corners with curves
     d_ptr->corners_incident_curves.resize(d_ptr->corners.size());
-    for(const typename Corners_indices::value_type& pair : d_ptr->corners_indices) {
-      d_ptr->dt.insert(pair.first);
+    for(const auto& [corner_pt, corner_index] : d_ptr->corners_indices)
+    {
+      d_ptr->dt.insert(corner_pt);
 
       // Fill `corners_incident_curves[corner_id]`
-      Curves_ids& incident_curves = d_ptr->corners_incident_curves[pair.second];
-      d_ptr->domain.get_corner_incident_curves(pair.second,
+      Curves_ids& incident_curves = d_ptr->corners_incident_curves[corner_index];
+      d_ptr->domain.get_corner_incident_curves(corner_index,
                                         std::inserter(incident_curves,
                                                       incident_curves.end()));
-      // For each incident loops, insert a point on the loop, as far as
+      // For each incident loop, insert a point on the loop, as far as
       // possible.
-      for(Curve_index curve_index : incident_curves) {
+      for(Curve_index curve_index : incident_curves)
+      {
         if(domain.is_loop(curve_index)) {
           FT curve_length = d_ptr->domain.curve_length(curve_index);
-          Point_3 other_point =
-            d_ptr->domain.construct_point_on_curve(pair.first,
+          auto loc =
+            d_ptr->domain.locate_corner(curve_index, corner_pt);
+          auto [other_point, _] =
+            d_ptr->domain.construct_point_on_curve(corner_pt,
                                                    curve_index,
-                                                   curve_length / 2);
+                                                   curve_length / 2,
+                                                   loc);
           d_ptr->dt.insert(other_point);
         }
       }
@@ -535,13 +540,18 @@ public:
       typedef typename GT::Segment_3                        Segment_3;
       typedef typename GT::Plane_3                          Plane_3;
 
-      const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
+      const auto& [_ /*point is not used*/, prim_id]
         = d_ptr->domain.curves_aabb_tree().closest_point_and_primitive(p);
 
-      Segment_3 curr_segment(*ppid.second.second, *(ppid.second.second + 1));
+      Segment_3 curr_segment(*prim_id.second, *(prim_id.second + 1));
+      //todo : check segment is not degenerate
       Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
-      Input_curves_AABB_tree_primitive_ curr_prim(ppid.second);
+      Input_curves_AABB_tree_primitive_ curr_prim(prim_id);
 
+      // find ppid's polyline iterator
+      auto p_polyline_const_it = prim_id.second;
+
+      // find intersected primitives
       std::vector<Input_curves_AABB_tree_primitive_> prims;
       d_ptr->domain.curves_aabb_tree().
           all_intersected_primitives(curr_ortho_plane, std::back_inserter(prims));
@@ -569,8 +579,25 @@ public:
         {
           if (const Point_3* pp = std::get_if<Point_3>(&*int_res))
           {
-            FT new_sqd = CGAL::squared_distance(p, *pp);
-            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
+            const Point_3& intersection_point = *pp;
+
+            // recall types from AABB_tree of curves
+            // Map_iterator = map<Curve_index, Polyline>::iterator
+            // Primitive Id = pair<Map_iterator, Polyline_const_iterator>
+            // Primitive Datum = Segment
+
+            // find intersection_point polyline iterator
+            auto pp_polyline_const_it = prim.id().second;
+            if(intersection_point == *pp_polyline_const_it
+            || intersection_point == *std::next(pp_polyline_const_it))
+              continue; // intersection point is an endpoint of the primitive
+
+            const FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p,
+                                                                       intersection_point,
+                                                                       p_polyline_const_it,
+                                                                       pp_polyline_const_it,
+                                                                       curve_id));
+            const FT new_sqd = CGAL::squared_distance(p, intersection_point);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cerr << "Intersection point : Point_3(" << *pp << ") ";
@@ -591,7 +618,7 @@ public:
             if (sqd_intersection == -1 || new_sqd < sqd_intersection)
             {
               sqd_intersection = new_sqd;
-              closest_intersection = *pp;
+              closest_intersection = intersection_point;
               closest_primitive = prim;
             }
           }
