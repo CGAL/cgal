@@ -1,5 +1,5 @@
 #if defined(NDEBUG)
-#  #undef NDEBUG
+#  undef NDEBUG
 #endif
 #if defined(CGAL_NDEBUG)
 #  undef CGAL_NDEBUG
