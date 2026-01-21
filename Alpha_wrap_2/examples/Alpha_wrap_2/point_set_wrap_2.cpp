@@ -39,8 +39,8 @@ int main(int argc, char** argv)
                             point_set_3.index_back_inserter(),
                             CGAL::parameters::point_map(point_set_3.point_push_map())))
   {
-  std::cerr << "Can't read input file " << filename << std::endl;
-  return EXIT_FAILURE;
+    std::cerr << "Can't read input file " << filename << std::endl;
+    return EXIT_FAILURE;
   }
 
   // Project onto the xy plane

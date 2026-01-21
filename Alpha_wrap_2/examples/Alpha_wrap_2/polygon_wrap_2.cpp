@@ -1,5 +1,3 @@
-#define CGAL_AW2_DEBUG_PP // @tmp (here and at other places)
-
 #include "output_helper.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

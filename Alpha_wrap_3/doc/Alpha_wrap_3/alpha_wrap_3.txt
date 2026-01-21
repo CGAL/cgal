@@ -190,7 +190,7 @@ Pink circles depict the empty circle of radius alpha. The output edges (dark blu
 The algorithm is proven to terminate and to produce a 2-manifold triangulated surface mesh
 that strictly encloses the input data.
 The key element to the proof is that we wrap from outside to inside and never allow a cell
-that intersects the input to be flagged inside.
+that intersects the input to be flagged outside.
 Furthermore, both criteria that lead to refinement of the triangulation insert Steiner points
 that are guaranteed to break the cells in need of refinement and reduce the neighbor facets circumradii.
 

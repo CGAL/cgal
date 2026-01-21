@@ -121,7 +121,7 @@ less_squared_radius_of_min_empty_circle(typename Tr::Geom_traits::FT sq_alpha,
               << typename Tr::Geom_traits().compute_squared_radius_2_object()(tr.point(f, 0), tr.point(f, 1),
                                                                               tr.point(f, 2))
               << " sq alpha " << sq_alpha << std::endl;
-    std::cout << "cr = " << cr << std::endl; // @tmp
+    std::cout << "cr = " << cr << std::endl;
     std::cout << "check = " << CGAL::compare(typename Tr::Geom_traits().compute_squared_radius_2_object()(
                                  tr.point(f, 0), tr.point(f, 1), tr.point(f, 2)), sq_alpha) << std::endl;
 #endif
@@ -136,7 +136,7 @@ less_squared_radius_of_min_empty_circle(typename Tr::Geom_traits::FT sq_alpha,
               << typename Tr::Geom_traits().compute_squared_radius_2_object()(
                    tr.point(n, 0), tr.point(n, 1), tr.point(n, 2))
               << " sq alpha " << sq_alpha << std::endl;
-    std::cout << "cr = " << cr << std::endl; // @tmp
+    std::cout << "cr = " << cr << std::endl;
     std::cout << "check = " << CGAL::compare(typename Tr::Geom_traits().compute_squared_radius_2_object()(
                                  tr.point(n, 0), tr.point(n, 1), tr.point(n, 2)), sq_alpha) << std::endl;
 #endif

@@ -1,5 +1,3 @@
-#define CGAL_AW2_DEBUG_PP // @tmp
-
 #include "output_helper.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -48,11 +46,9 @@ int main(int argc, char** argv)
   const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 300.;
 
   CGAL::Bbox_2 bbox;
-  for(const Polyline& ls : mls_in) {
-    for(const Point_2& pt : ls) {
+  for(const Polyline& ls : mls_in)
+    for(const Point_2& pt : ls)
       bbox += pt.bbox();
-    }
-  }
 
   const double diag_length = std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
                                        CGAL::square(bbox.ymax() - bbox.ymin()));

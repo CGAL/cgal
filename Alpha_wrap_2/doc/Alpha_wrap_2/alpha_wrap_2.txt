@@ -135,7 +135,7 @@ two criteria are tested to prevent the wrapping process from colliding with the 
 
 (1) We check for an intersection between the dual Voronoi edge of \f$ e \f$, i.e., the segment between
 the circumcenters of the two incident faces, and the <em>offset surface</em>, defined as the level set
-of unsigned isosurface to the input.
+of unsigned distance field to the input.
 If one or several intersections exists, the first intersection point, along the dual Voronoi edge
 oriented from outside to inside is inserted into the triangulation as a Steiner point.
 
@@ -178,7 +178,7 @@ Pink circles depict the empty circle of radius alpha. The output edges (dark blu
 The algorithm is proven to terminate and to produce a set of 1-manifold, simple polygons
 that strictly enclose the input data.
 The key element to the proof is that we wrap from outside to inside and never allow a face
-that intersects the input to be flagged inside.
+that intersects the input to be flagged outside.
 Furthermore, both criteria that lead to refinement of the triangulation insert Steiner points
 that are guaranteed to break the faces in need of refinement and reduce the neighbor edges' circumradii.
 
@@ -222,9 +222,9 @@ The two parameters of the algorithm impact both the level of detail and complexi
 The main parameter, alpha, controls whether a Delaunay edge is traversable during shrink-wrapping.
 Alpha's main purpose is to control the size
 of the empty balls used during wrapping, and thus to determine which features will appear in the output:
-indeed, a edge is alpha-traversable if its circumradius is larger than alpha; hence, the algorithm
+indeed, an edge is alpha-traversable if its circumradius is larger than alpha; hence, the algorithm
 can only shrink-wrap through straits or holes with diameters larger than alpha.
-A second, less direct consequence is that as long as a edge has a circumradius larger than alpha,
+A second, less direct consequence is that as long as an edge has a circumradius larger than alpha,
 the incident inside face will be visited and possibly refined.
 Therefore, when the algorithm terminates, all edges have a circumradius smaller than alpha.
 This parameter thus also behaves like a sizing criterion on the edges of the output.
@@ -314,7 +314,7 @@ set of 1-manifold, simple polygons.
 Indeed, and even when the input is a zero-area structure such as a single segment,
 the output wrap is a thin domain enclosing the said segment, see \cgalFigureRef{aw2_inputs_fig}.
 
-Users should keep in mind that the wrapping algorithm performs with an the unsigned distance field,
+Users should keep in mind that the wrapping algorithm performs using an unsigned distance field,
 and has no means of determining whether it is acting on both sides of a same input segment.
 It will thus produce two-sided wraps in the case of holes in the input and
 values of alpha smaller than the size of the holes.
