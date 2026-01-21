@@ -20,13 +20,29 @@
 #include <CGAL/exceptions.h>
 #include <CGAL/utility.h>
 
+#include <array>
 #include <cmath>
+#include <cstddef>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <optional>
 #include <string>
+#include <tuple>
 
 namespace CGAL {
+
+/**
+ * \ingroup PkgSTLExtensionUtilities
+ * \brief Enumeration of events during the bisection process
+ * \sa bisect_failures
+ */
+enum Bisection_event {
+  CURRENT_DATA = 0,  ///< Current data being tested
+  BAD_DATA,          ///< Data that reproduces the original failure
+  ERROR_DATA,        ///< Data that causes a different failure
+  FINAL_BAD_DATA     ///< Minimal failing data that cannot be further simplified
+};
 
 /**
  * \ingroup PkgSTLExtensionUtilities
@@ -48,17 +64,17 @@ namespace CGAL {
  * \tparam GetSize Function object type, callable with a signature `std::size_t GetSize(const InputData& data)`
  * \tparam Simplify Function object type, callable with a signature `bool Simplify(InputData& data, std::size_t start, std::size_t end)`
  * \tparam Run Function object type, callable with a signature `int Run(const InputData& data)`
- * \tparam Save Function object type, callable with a signature `void Save(const InputData& data, const std::string& filename_prefix)`
+ * \tparam Notify Function object type, callable with a signature `void Notify(const InputData& data, Bisection_event event)`
  *
  * \param data The input data to bisect
  * \param get_size Function that returns the "size" of the data (e.g., number of elements).
  * \param simplify Function that simplifies the data by removing elements with indices in `[start, end)`.
- *                    Should return `true` if simplification succeeded, `false` otherwise.
+ *                 Should return `true` if simplification succeeded, `false` otherwise.
  * \param run Function that tests the data. Should return 0 (`EXIT_SUCCESS`) on success, non-zero on failure.
- *                May also throw exceptions to indicate failure.
- * \param save Function that saves the data to a file or output. Its second parameter
- *                (`filename_prefix`) indicates the context (e.g., "bad", "final_bad", "error", "current")
- *                and can be used to name the output accordingly.
+ *            May also throw exceptions to indicate failure.
+ * \param notify Function that is called with the data at different stages. It can be used to save
+ *                the data to a file or output. Its second parameter `event`, of type `Bisection_event`,
+ *                can be used to name the output accordingly.
  *
  * \return Exit code: 0 (`EXIT_SUCCESS`) if no failures found, non-zero otherwise
  *
@@ -68,17 +84,17 @@ namespace CGAL {
  * 2. Starts with a ratio of 0.5 (removing 50% of elements) and divides data into "buckets".
  * 3. For each bucket,
  *    - creates a simplified version of the data by removing that bucket, using `simplify`,
- *    - saves the simplified data using `save` with name "current",
- *    - and tests the simplified version using `run`.
+ *    - call `notify(data, CURRENT_DATA)` where `data` is the simplified data,
+ *    - and tests the simplified version by a call `run(data)`.
  *
  *    Then:
- *    - If it fails with the same pattern as the original, saves it as "bad" and restarts bisection
+ *    - If it fails with the same pattern as the original, calls `notify(data, BAD_DATA)` and restarts bisection
  *       with this smaller dataset and the same ratio.
- *    - If it fails differently, saves it as "error" and continues with the next bucket.
+ *    - If it fails differently, calls `notify(data, ERROR_DATA)` and continues with the next bucket.
  *    - If it succeeds, continue with the next bucket.
  * 4. After a complete pass with no matching failures found, reduces the ratio by half (0.5 → 0.25 → 0.125...).
  * 5. Repeats until no further simplification is possible (minimal failing case found).
- * 6. Saves the minimal failing case as "final_bad" and return the result of `run` on it.
+ * 6. Calls `notify(data, FINAL_BAD_DATA)` with the minimal failing case and return the result of `run(data)` on it.
  *
  * \warning CGAL::bisect_failures requires the tested code to be compiled with
  * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined. If `run` fails
@@ -87,13 +103,28 @@ namespace CGAL {
  * Here is an example of how to use `CGAL::bisect_failures`:
  * \snippet STL_Extension/bisect_failures.cpp bisect_failures_snippet
  */
-template<typename InputData, typename GetSizeFn, typename SimplifyFn, typename RunFn, typename SaveFn>
+template<typename InputData, typename GetSize, typename Simplify, typename Run, typename Notify>
 int bisect_failures(const InputData& data,
-                    GetSizeFn get_size,
-                    SimplifyFn simplify,
-                    RunFn run,
-                    SaveFn save)
+                    GetSize get_size,
+                    Simplify simplify,
+                    Run run,
+                    Notify notify)
 {
+  // Wrapper to call `notify` with `Bisection_event` or `std::string` as second argument, for backward compatibility
+  auto notify_wrapper = [&](const InputData& data, Bisection_event event) {
+    if constexpr (std::is_invocable_v<Notify, const InputData&, Bisection_event>) {
+      return notify(data, event);
+    } else {
+      static constexpr std::array<const char* const, 4> event_name = {
+        "current",
+        "bad",
+        "error",
+        "final_bad"
+      };
+      std::string filename_prefix = event_name[static_cast<std::size_t>(event)];
+      return notify(data, filename_prefix);
+    }
+  };
   // Redirect temporarily cout to cerr, and clog to stdout, for debug output
   auto* old_clog_buf = std::clog.rdbuf();
   auto* old_cout_buf = std::cout.rdbuf();
@@ -170,7 +201,7 @@ int bisect_failures(const InputData& data,
         }
 
         // Save current state
-        save(working_data, "current");
+        notify_wrapper(working_data, CURRENT_DATA);
 
         auto [cgal_exception, std_exception, this_run_exit_code] = do_run(working_data);
 
@@ -204,7 +235,7 @@ int bisect_failures(const InputData& data,
         }
         if(same_exception || same_exit_code) {
             std::clog << "    -> BAD DATA! (size: " << get_size(working_data) << ")\n";
-            save(working_data, "bad");
+            notify_wrapper(working_data, BAD_DATA);
             bad_data = working_data;
             found_fault_this_pass = true;
             bucket = 0; // Reset to bisect further
@@ -214,7 +245,7 @@ int bisect_failures(const InputData& data,
             // Different type of error - log it but continue
             if(exit_code == EXIT_SUCCESS) exit_code = EXIT_FAILURE;
             std::clog << "    -> ERROR DATA (different error type)\n";
-            save(working_data, "error");
+            notify_wrapper(working_data, ERROR_DATA);
             std::clog << "       go on...\n";
           } else {
             std::clog << "    -> GOOD DATA :-( (size: " << get_size(working_data) << ")\n";
@@ -242,7 +273,7 @@ int bisect_failures(const InputData& data,
 
   if(get_size(bad_data) < get_size(data)) {
     std::clog << "FINAL BAD DATA: " << get_size(bad_data) << " elements\n";
-    save(bad_data, "final_bad");
+    notify_wrapper(bad_data, FINAL_BAD_DATA);
     return run(bad_data);
   }
 

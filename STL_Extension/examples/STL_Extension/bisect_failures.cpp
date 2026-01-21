@@ -6,15 +6,19 @@
 #if defined(CGAL_NDEBUG)
 #  undef CGAL_NDEBUG
 #endif
-
+#include <CGAL/config.h>
 #include <CGAL/bisect_failures.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
+#include <cstdlib>
 #include <iostream>
+#include <string>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point = Kernel::Point_3;
@@ -63,7 +67,24 @@ int main(int argc, char* argv[]) {
     return CGAL::Polygon_mesh_processing::clip(mesh, mesh_b) ? EXIT_SUCCESS : EXIT_FAILURE;
   };
 
-  auto save = [](const Mesh& m, const std::string& prefix) {
+  auto save = [](const Mesh& m, CGAL::Bisection_event event) {
+    std::string prefix;
+    switch(event) {
+      case CGAL::BAD_DATA:
+        prefix = "bad_data";
+        break;
+      case CGAL::FINAL_BAD_DATA:
+        prefix = "final_bad_data";
+        break;
+      case CGAL::ERROR_DATA:
+        prefix = "error_data";
+        break;
+      case CGAL::CURRENT_DATA:
+        prefix = "current_data";
+        break;
+      default:
+        CGAL_UNREACHABLE();
+    }
     std::string out_filename = prefix + ".off";
     if(!CGAL::IO::write_polygon_mesh(out_filename, m)) {
       std::cerr << "Warning: Could not save mesh to " << out_filename << std::endl;
