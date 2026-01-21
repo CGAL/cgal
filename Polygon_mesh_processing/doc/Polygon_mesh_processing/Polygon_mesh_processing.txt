@@ -486,8 +486,8 @@ Mesh kernel: From left to right: (i) The input mesh; (ii) The kernel of the inpu
 
 
 As illustrated on \cgalFigureRef{coref_kernel_figure}, the kernel of a mesh is defined as the set of inside points from which the entire surface of the mesh is visible. More formally, a point belongs to the kernel if, for every point on the mesh, the segment connecting them lies entirely inside the mesh. Equivalently, the kernel is the intersection of the half-spaces induced by all faces of the mesh.
-The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::is_kernel_empty()` outputs respectively the full kernel, a single point inside it or
-simply whether the kernel exists.
+The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::is_kernel_empty()` output the full kernel, a single point inside it or
+a Boolean indicating whether the kernel exists or not, respectively.
 
 \subsection coref_ex_subsec Examples
 
@@ -1492,7 +1492,7 @@ preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/projec
 used as a reference during the project.
 The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
 
-The kernel functions and the convex specialization of `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()` was implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring2025meshkernel}.
+The kernel functions and the convex specialization of `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()` were implemented in 2025, by Léo Valque, based on the work of Nehring-Wirxel et al. \cgalCite{nehring2025meshkernel}.
 
 */
 } /* namespace CGAL */
