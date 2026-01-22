@@ -612,7 +612,7 @@ protected:
     if constexpr(std::is_floating_point_v<FT>) {
       Is_locally_conforming_Gabriel<Tr> is_locally_conforming_Gabriel{};
       constexpr FT max = (std::numeric_limits<FT>::max)();
-      auto ulp = [max](const FT& x) { return std::nextafter(x, max) - x; };
+      auto ulp = [](const FT& x) { return std::nextafter(x, max) - x; };
       auto sq_delta = 16 * CGAL::square((std::min)(ulp(p.x()), ulp(p.y())));
 
       typename Tr::Segment ab(this->va->point(), this->vb->point());
