@@ -127,7 +127,7 @@ public:
               Polyhedron, IGT_, TriangleAccessor, int, Tag_true > > Base;
 
 private:
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
   typedef Polyhedral_mesh_domain_3<Polyhedron, IGT_, CGAL::Default,
                                    int, Tag_true >       BaseBase;
   typedef Polyhedral_complex_mesh_domain_3<IGT_, Polyhedron>  Self;
@@ -146,7 +146,7 @@ public:
   typedef typename Base::Surface_patch_index  Surface_patch_index;
   typedef typename Base::Subdomain_index      Subdomain_index;
 
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
   typedef typename Base::Ray_3                Ray_3;
   typedef typename Base::Index                Index;
 
@@ -253,7 +253,7 @@ public:
 
   /// @}
 
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
 
   Polyhedral_complex_mesh_domain_3
     (
@@ -319,7 +319,7 @@ public:
     detect_borders(stored_polyhedra, false/*do protect*/);
   }
 
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
   template <typename Surf_p_index>
   void reindex_patches(const std::vector<Surf_p_index>& map);
 
@@ -638,7 +638,7 @@ public:
   /// @endcond
 
 protected:
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
   void initialize_ts(Polyhedron_type& p) const;
 
   void add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& graph);
@@ -656,7 +656,7 @@ protected:
   /// @endcond
 
 protected:
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
   std::vector<Polyhedron> stored_polyhedra;
   std::vector<std::pair<Subdomain_index, Subdomain_index> > patch_indices;
   std::vector<std::size_t> patch_id_to_polyhedron_id;
@@ -676,7 +676,7 @@ private:
 };  // end class Polyhedral_complex_mesh_domain_3
 
 
-///@cond DEVELOPERS
+///@cond CGAL_DOCUMENT_INTERNALS
 template < typename GT_, typename P_, typename TA_>
 void
 Polyhedral_complex_mesh_domain_3<GT_,P_,TA_>::

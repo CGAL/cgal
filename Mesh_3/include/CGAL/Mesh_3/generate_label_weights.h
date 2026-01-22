@@ -146,7 +146,7 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
 
 }//namespace internal
 
-/// @cond INTERNAL
+/// @cond CGAL_DOCUMENT_INTERNALS
 template<typename Image_word_type>
 CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
                                                           const float& sigma)
