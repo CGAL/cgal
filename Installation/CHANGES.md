@@ -49,7 +49,7 @@ Release date: July 2026
 
 - **Breaking change**: Removed the class template `CGAL::Implicit_vector_to_labeling_function_wrapper` as well as
     the constructor of `CGAL::Polyhedral_mesh_domain_with_features_3` that has a filename as parameter,
-    which were deprecated since CGAL-X.Y.
+    which were deprecated since CGAL-4.5.
 - **Breaking change**:  Added the requirement for a nested type `Iso_cuboid_3` to the concept `BisectionGeometricTraits_3`.
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
