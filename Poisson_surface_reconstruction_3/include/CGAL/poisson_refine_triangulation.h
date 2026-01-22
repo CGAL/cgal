@@ -174,6 +174,25 @@ public:
 
 }; // end class Poisson_mesher_level
 
+class Poisson_mesh_visitor
+{
+public:
+  typedef Poisson_mesh_visitor Previous_visitor;
+
+  const Poisson_mesh_visitor& previous_level() const { return *this; }
+
+  template <typename E, typename P> void before_conflicts(E, P) const {}
+
+  template <typename E, typename P, typename Z> void before_insertion(E, P, Z) const {}
+
+  template <typename V> void after_insertion(V v) const
+  {
+    v->type() = 1;
+  }
+
+  template <typename E, typename P, typename Z> void after_no_insertion(E, P, Z) const {}
+}; // end class Null_mesh_visitor
+
 
 /// Delaunay refinement in a loose bounding box
 /// of input point set (break bad tetrahedra, where
@@ -205,8 +224,8 @@ template <typename Tr,
 unsigned int poisson_refine_triangulation(
   Tr& tr,
   double radius_edge_ratio_bound, ///< radius edge ratio bound (>= 1.0)
-  const Sizing_field& sizing_field, ///< sizing field for cell radius bound
-  const Second_sizing_field& second_sizing_field, ///< second sizing field for cell radius bound
+  const Sizing_field& sizing_field, ///< sizing field for cell radius bound, squared
+  const Second_sizing_field& second_sizing_field, ///< second sizing field for cell radius bound, squared
   unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
   Surface& enlarged_bbox) ///< new bounding sphere or box
 {
@@ -227,14 +246,14 @@ unsigned int poisson_refine_triangulation(
   std::size_t nb_vertices = tr.number_of_vertices(); // get former #vertices
 
   // Delaunay refinement
-  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound,
+  Tets_criteria tets_criteria(CGAL::square(radius_edge_ratio_bound),
                               sizing_field,
                               second_sizing_field);
   Oracle oracle;
   Null_mesher_level null_mesher_level;
   Refiner refiner(tr, tets_criteria, max_vertices, enlarged_bbox, oracle, null_mesher_level);
   refiner.scan_triangulation(); // Push bad cells to the queue
-  refiner.refine(Null_mesh_visitor()); // Refine triangulation until queue is empty
+  refiner.refine(Poisson_mesh_visitor()); // Refine triangulation until queue is empty
 
   nb_vertices = tr.number_of_vertices() - nb_vertices;
 
