@@ -28,6 +28,11 @@ public:
 /// @{
 
 /*!
+  `bool` or `Uncertain<bool>`
+ */
+typedef unspecified_type Boolean;
+
+/*!
 A functor object to detect intersections between two geometric objects.
 Provides the following operators:
 
