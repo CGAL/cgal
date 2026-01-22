@@ -654,7 +654,7 @@ public:
             || intersection_point == *std::next(pp_polyline_const_it))
               continue; // intersection point is an endpoint of the primitive
 
-            const FT new_sqd = CGAL::squared_distance(p, intersection_point);
+            const FT new_sqd = squared_distance(p, intersection_point);
             if (new_sqd * 1e10 < sqlen_curr_segment)
             {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
