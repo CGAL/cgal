@@ -220,10 +220,7 @@ private:
                              int dim,
                              const Index& index,
                              const bool special_ball = false,
-                             const Cell_handle ch_locate_p = Cell_handle(),
-                             const typename Tr::Locate_type lt = Tr::OUTSIDE_AFFINE_HULL,
-                             const int li = 0,
-                             const int lj = 0);
+                             const Cell_handle locate_hint = Cell_handle());
 
   /**
    * Inserts `point(p,w)` into the triangulation and set its dimension to `dim` and
@@ -695,10 +692,7 @@ typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
              const bool special_ball /* = false */,
-             const Cell_handle ch_p, //result of locate if already known
-             const typename Tr::Locate_type lt_p,
-             const int li_p,
-             const int lj_p)
+             const Cell_handle ch_locate_hint) //result of locate if already known
 {
   using CGAL::Mesh_3::internal::weight_modifier;
 
@@ -727,26 +721,16 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
                : w * weight_modifier;
   const Weighted_point wp = cwp(p, wwm);
 
-  Cell_handle ch;
   typename Tr::Locate_type lt;
   int li, lj;
-  if(ch_p == Cell_handle())
-  {
-    ch = c3t3_.triangulation().locate(wp, lt, li, lj);
-  }
-  else
-  {
-    ch = ch_p;
-    lt = lt_p;
-    li = li_p;
-    lj = lj_p;
-  }
+  Cell_handle ch = c3t3_.triangulation().locate(wp, lt, li, lj, ch_locate_hint);
+  const bool wp_already_is_a_vertex = (lt == Tr::VERTEX);
 
   Vertex_handle v = c3t3_.triangulation().insert(wp, lt, ch, li, lj);
 
   // If point insertion created a hidden ball, fail
   CGAL_assertion ( Vertex_handle() != v );
-  CGAL_assertion ( lt == Tr::VERTEX ||
+  CGAL_assertion ( wp_already_is_a_vertex ||
                    c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -777,7 +761,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 
   // Set dimension and index
-  if(lt != Tr::VERTEX)
+  if(!wp_already_is_a_vertex)
   {
     c3t3_.set_dimension(v, dim);
     c3t3_.set_index(v, index);
@@ -834,12 +818,12 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
   }
 #endif
 
-  typename Tr::Locate_type lt;
-  int li, lj;
   Cell_handle ch = Cell_handle();
   if(tr.dimension() > 2)
   {
     // Check that new point will not be inside a power sphere
+    typename Tr::Locate_type lt;
+    int li, lj;
     ch = tr.locate(wp0, lt, li, lj, prev);
 
     Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
@@ -954,7 +938,6 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
       CGAL_assertion_code(tr.vertices_inside_conflict_zone(wpp,
                                                            ch,
                                                            std::back_inserter(hidden_vertices)));
-
       CGAL_assertion(hidden_vertices.empty());
     }
   }
@@ -1033,8 +1016,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     w = minimal_weight();
     insert_a_special_ball = true;
   }
-  Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball,
-                                 ch, lt, li, lj);
+
+  Vertex_handle v = insert_point(p, w, dim, index, insert_a_special_ball, ch);
+  CGAL_assertion(v != Vertex_handle());
 
   /// @TODO `insert_point` does insert in unchecked_vertices anyway!
   if ( add_handle_to_unchecked ) { unchecked_vertices_.insert(v); }
@@ -1117,7 +1101,8 @@ insert_balls_on_edges()
                                   curve_index,
                                   Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
-          domain_.set_polyline_iterator(p, p_polyline_iter, curve_index);
+          if(use_minimal_size() && vp != Vertex_handle())
+            domain_.set_polyline_iterator(p, p_polyline_iter, curve_index);
         }
 
         // No 'else' because in that case 'is_vertex(..)' already filled
@@ -1412,6 +1397,8 @@ insert_balls(const Vertex_handle& vp,
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
       smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
+    if(use_minimal_size() && new_vertex == Vertex_handle())
+      continue; // insertion failed, probably hidden by existing ball
     CGAL_assertion(new_vertex->in_dimension() == 1);
 
     out = pair.second;
@@ -1706,6 +1693,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
 
   unchecked_vertices_.erase(v);
   // Change v size
+  Cell_handle insertion_hint = v->cell()->neighbor(v->cell()->index(v));
   c3t3_.triangulation().remove(v);
 
   CGAL_assertion_code(typename GT::Construct_weighted_point_3 cwp =
@@ -1719,7 +1707,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
                                                        ch,
                                                        std::back_inserter(hidden_vertices)));
 
-  Vertex_handle new_v = insert_point(p, w , dim, index, special_ball);
+  Vertex_handle new_v = insert_point(p, w , dim, index, special_ball, insertion_hint);
   CGAL_assertion(hidden_vertices.empty());
 
   CGAL_assertion( (! special_ball) || is_special(new_v) );
@@ -2292,9 +2280,6 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 
   for(const auto& [next /*vertex*/, curve_index] : adjacent_vertices)
   {
-    CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
-    CGAL_assertion(cid == curve_index);
-
     CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
     CGAL_assertion(cid == curve_index);
 
