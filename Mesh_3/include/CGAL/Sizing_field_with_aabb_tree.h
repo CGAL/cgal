@@ -588,7 +588,10 @@ public:
       }
 #endif
 
-      Segment_3 curr_segment(*closest_prim_id.second, *(closest_prim_id.second + 1));
+      const Segment_3 curr_segment(*closest_prim_id.second,
+                                   *(closest_prim_id.second + 1));
+      const FT sqlen_curr_segment = CGAL::squared_distance(curr_segment.source(),
+                                                           curr_segment.target());
       //todo : check segment is not degenerate
       Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
 
@@ -642,21 +645,8 @@ public:
             if(intersection_point == *pp_polyline_const_it
             || intersection_point == *std::next(pp_polyline_const_it))
               continue; // intersection point is an endpoint of the primitive
-
-            const FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p,
-                                                                       intersection_point,
-                                                                       p_polyline_const_it,
-                                                                       pp_polyline_const_it,
-                                                                       curve_id));
             const FT new_sqd = CGAL::squared_distance(p, intersection_point);
-
-#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-            std::cerr << "Intersection point : Point_3(" << *pp << ") ";
-            std::cerr << "\n  new_sqd = " << new_sqd ;
-            std::cerr << "\n  dist = " << dist << "\n";
-#endif
-            if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
-                                                        curr_segment.target()))
+            if (new_sqd * 1e10 < sqlen_curr_segment)
             {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
               std::cerr << "  too close, compared to possible rounding errors, "
@@ -664,6 +654,13 @@ public:
 #endif
               continue;
             }
+
+            const FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p,
+                                                                             intersection_point,
+                                                                             p_polyline_const_it,
+                                                                             pp_polyline_const_it,
+                                                                             curve_id));
+
             if (CGAL_NTS sqrt(new_sqd) > 0.9 * dist)
               continue;
             if (sqd_intersection == -1 || new_sqd < sqd_intersection)
