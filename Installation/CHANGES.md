@@ -1,11 +1,15 @@
 # Release History
 
-### [2D and 3D Linear Geometry Kernel
-- **Breaking change**: Circle_2/Segment_2, Sphere_3/Bbox_3, Sphere_3/Iso_cuboid_3 now do not consider inclusion as intersection. This behavior is consistent with other intersections involving Circle_2 and Sphere_3.
-
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: July 2026
+
+### [2D and 3D Linear Geometry Kernel
+- **Breaking change**: Circle_2/Segment_2, Sphere_3/Bbox_3, Sphere_3/Iso_cuboid_3 now do not consider inclusion as intersection.
+  This behavior is consistent with other intersections involving Circle_2 and Sphere_3.
+  - The former behavior can be achieved by complementing the `do_intersect()` call with:
+  - `Has_on_bounded_side_2::operator(Circle_2, Segment_2)` or
+  - `Has_on_bounded_side_3::operator(Sphere_3, Iso_cuboid_3)`
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
