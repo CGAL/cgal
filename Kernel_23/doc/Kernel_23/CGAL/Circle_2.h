@@ -165,8 +165,14 @@ bool has_on_boundary(const Point_2<Kernel> &p) const;
 bool has_on_bounded_side(const Point_2<Kernel> &p) const;
 
 /*!
-returns whether the segment `s` lies on the bounded side of the circle `c`. The endpoints of the segment
-are allowed to be on the boundary of the circle.
+returns whether the iso_rectangle `i` lies on the bounded side of the circle `c`. The corners of `i`
+are allowed to be on the boundary of `c`.
+*/
+bool has_on_bounded_side(const Iso_rectangle_2<Kernel>& i) const;
+
+/*!
+returns whether the segment `s` lies on the bounded side of the circle `c`. The endpoints of `s`
+are allowed to be on the boundary of `c`.
 */
 bool has_on_bounded_side(const Segment_2<Kernel> &s) const;
 

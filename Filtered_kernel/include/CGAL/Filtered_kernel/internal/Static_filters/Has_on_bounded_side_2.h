@@ -34,6 +34,7 @@ class Has_on_bounded_side_2
   typedef typename K_base::Point_2               Point_2;
   typedef typename K_base::Circle_2              Circle_2;
   typedef typename K_base::Segment_2             Segment_2;
+  typedef typename K_base::Iso_rectangle_2       Iso_rectangle_2;
   typedef typename K_base::Has_on_bounded_side_2 Base;
 
 public:
@@ -159,6 +160,134 @@ public:
     this->operator()(c, s);
   }
 
+  Boolean
+  operator()(const Circle_2& c, const Iso_rectangle_2& r) const
+  {
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+      std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    Get_approx<Point_2> get_approx; // Identity functor for all points
+
+    double cx, cy, csr;
+    double rxmin = r.xmin(), rymin = r.ymin(),
+      rxmax = r.xmax(), rymax = r.ymax();
+
+    if (fit_in_double(get_approx(c.center()).x(), cx) &&
+      fit_in_double(get_approx(c.center()).y(), cy) &&
+      fit_in_double(c.squared_radius(), csr))
+    {
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+      if ((csr < 1.11261183279326254436e-293) || (csr > 2.80889552322236673473e+306)) {
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(c, r);
+      }
+      double distance = 0;
+      double max1 = 0;
+      double double_tmp_result = 0;
+      double eps = 0;
+      if (cx < rxmin)
+      {
+        double bxmax_scx = rxmax - cx;
+        max1 = bxmax_scx;
+
+        distance = square(bxmax_scx);
+        double_tmp_result = (distance - csr);
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(c, r);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(csr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+      else if (cx > rxmax)
+      {
+        double scx_bxmix = cx - rxmin;
+        max1 = scx_bxmix;
+
+        distance = square(scx_bxmix);
+        double_tmp_result = (distance - csr);
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(c, r);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(csr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+
+
+      if (cy < rymin)
+      {
+        double bymax_scy = rymax - cy;
+        if (max1 < bymax_scy) {
+          max1 = bymax_scy;
+        }
+
+        distance += square(bymax_scy);
+        double_tmp_result = (distance - csr);
+
+        if ((max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(c, r);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(csr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+      else if (cy > rymax)
+      {
+        double scy_bymin = cy - rymin;
+        if (max1 < scy_bymin) {
+          max1 = scy_bymin;
+        }
+        distance += square(scy_bymin);
+        double_tmp_result = (distance - csr);
+
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(c, r);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(csr, square(max1));
+
+        if (double_tmp_result > eps) {
+          return false;
+        }
+      }
+
+      // double_tmp_result and eps were growing all the time
+      // no need to test for > eps as done earlier in at least one case
+      if (double_tmp_result < -eps) {
+        return true;
+      }
+      else {
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(c, r);
+      }
+
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+    }
+    return Base::operator()(c, r);
+  }
+
+  Boolean
+  operator()(const Iso_rectangle_2& r, const Circle_2& c) const
+  {
+    this->operator()(c, r);
+  }
 
 }; // end class Has_on_bounded_side_2
 

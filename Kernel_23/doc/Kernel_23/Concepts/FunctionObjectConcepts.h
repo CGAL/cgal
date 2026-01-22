@@ -8100,6 +8100,13 @@ public:
                   const Kernel::Segment_2&s);
 
   /*!
+    returns true iff `i` lies on the bounded side of `c`.
+    The corner points of `i` are allowed to be on the boundary of `c`.
+  */
+  bool operator()(const Kernel::Circle_2&c,
+                  const Kernel::IsoRectangle_2&i);
+
+  /*!
     returns true iff `p` lies on the bounded side of `i`.
   */
   bool operator()(const Kernel::IsoRectangle_2&i,

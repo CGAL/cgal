@@ -3600,6 +3600,32 @@ namespace CommonKernelFunctors {
     { return c.has_on_bounded_side(p); }
 
     Boolean
+    operator()(const Circle_2& c, const Iso_rectangle_2 & r) const
+    {
+      typedef typename K::FT FT;
+      FT d = FT(0);
+      FT distance = FT(0);
+
+      // x
+      d = (std::max)(square(c.center().x() - r.xmin()), square(c.center().x() - r.xmax()));
+
+      if (certainly(d > c.squared_radius()))
+        return false;
+
+      distance = d;
+
+      // y
+      d = (std::max)(square(c.center().y() - r.ymin()), square(c.center().y() - r.ymax()));
+
+      if (certainly(d > c.squared_radius()))
+        return false;
+
+      distance += d;
+
+      return (distance <= c.squared_radius());
+    }
+
+    Boolean
     operator()(const Circle_2& c, const Segment_2& s) const
     {
       if ((c.center() - s.source()).squared_length() > c.squared_radius())

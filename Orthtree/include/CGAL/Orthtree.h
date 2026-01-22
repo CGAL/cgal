@@ -51,6 +51,7 @@ namespace Orthtree_impl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Node_data)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Squared_distance_of_element)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_on_bounded_side)
 
 template <class GT, bool has_data>
 struct Node_data_wrapper;
@@ -126,9 +127,11 @@ public:
 #ifndef DOXYGEN_RUNNING
   static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
   static inline constexpr bool supports_neighbor_search = Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
+  static inline constexpr bool supports_ball_search = Orthtree_impl::has_Has_on_bounded_side<GeomTraits>::value;
 #else
   static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitsWithData` and `false` otherwise.
   static inline constexpr bool supports_neighbor_search = bool_value; ///< `true` if `GeomTraits` is a model of `CollectionPartitioningOrthtreeTraits` and `false` otherwise.
+  static inline constexpr bool supports_ball_search = bool_value; ///< `true` if `GeomTraits` provides a `Has_on_bounded_side` functor and `false` otherwise.
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
@@ -772,7 +775,7 @@ public:
 
     This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
 
-    \tparam Query the primitive class (e.g., sphere, ray)
+    \tparam Query the primitive class (e.g., plane, ray)
     \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
 
     \param query the intersecting primitive.
@@ -783,6 +786,30 @@ public:
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
     return intersected_nodes_recursive(query, root(), output, [](const Query& query, const typename Traits::Bbox_d &box) -> bool {return CGAL::do_intersect(query, box);});
+  }
+
+  /*!
+    \brief finds the leaf nodes that intersect with a ball.
+
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
+    Requires the Traits class to provide the functor via `has_on_bounded_side_object()` with an operator:
+
+    `bool operator()(Traits::Sphere_d, Traits::Bbox_d)`
+
+    `Kernel::HasOnBoundedSide_2` and `Kernel::HasOnBoundedSide_3` are compatible concepts for dimenions 2 and 3.
+
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
+
+    \param center the center of the ball
+    \param squared_radius the squared radius of the ball
+    \param output output iterator.
+
+    \return the output iterator after writing
+   */
+  template <typename OutputIterator>
+  auto intersected_nodes(const Point& center, const FT squared_radius, OutputIterator output) const -> std::enable_if_t<Orthtree::supports_ball_search, OutputIterator> {
+    return intersected_nodes_recursive(Sphere(center, squared_radius), root(), output, [&](const Sphere& query, const typename Traits::Bbox_d& box) -> bool
+      {return CGAL::do_intersect(query, box) || m_traits.has_on_bounded_side_object()(query, box); });
   }
 
   /*!
