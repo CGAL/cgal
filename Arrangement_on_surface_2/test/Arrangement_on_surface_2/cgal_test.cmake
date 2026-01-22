@@ -104,6 +104,7 @@ set(ARE_MERGEABLE 10)
 set(MERGE 11)
 set(ASSERTIONS 12)
 set(CONSTRUCTOR 13)
+set(DO_INTERSECT 14)
 set(COMPARE_X_ON_BOUNDARY 16)
 set(COMPARE_X_NEAR_BOUNDARY 17)
 set(COMPARE_Y_NEAR_BOUNDARY 18)
@@ -162,10 +163,7 @@ function(cgal_arr_2_add_target exe_name source_file)
     set(name ${exe_name}_${suffix})
   endif()
   add_executable(${name} ${source_file})
-  target_link_libraries(${name} CGAL::CGAL)
-  if (TARGET CGAL::CGAL_Core)
-    target_link_libraries(${name} CGAL::CGAL_Core)
-  endif()
+  target_link_libraries(${name} CGAL::CGAL CGAL::CGAL_Core)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${name} )
   separate_arguments(flags UNIX_COMMAND "${TESTSUITE_CXXFLAGS}")
   target_compile_options(${name} PRIVATE ${flags})
@@ -250,6 +248,7 @@ function(execute_commands_old_structure data_dir traits_type_name)
   set(commands_indicator_COMPARE_Y_AT_X_RIGHT 1)
   set(commands_indicator_CONSTRUCTOR 1)
   set(commands_indicator_INTERSECT 1)
+  set(commands_indicator_DO_INTERSECT 1)
   set(commands_indicator_IS_VERTICAL 1)
   set(commands_indicator_MAKE_X_MONOTONE 1)
   set(commands_indicator_MERGE 1)
@@ -308,6 +307,11 @@ function(execute_commands_old_structure data_dir traits_type_name)
       data/${data_dir}/intersect.pt data/${data_dir}/intersect.xcv
       data/empty.zero data/${data_dir}/intersect ${traits_type_name})
   endif()
+  if(commands_indicator_DO_INTERSECT)
+    run_trapped_test(test_traits
+      data/${data_dir}/intersect.pt data/${data_dir}/do_intersect.xcv
+      data/empty.zero data/${data_dir}/do_intersect ${traits_type_name})
+  endif()
   if(commands_indicator_SPLIT)
     run_trapped_test(test_traits
       data/${data_dir}/split.pt data/${data_dir}/split.xcv
@@ -360,6 +364,7 @@ function(execute_commands_new_structure data_dir traits_type_name)
   set(commands_indicator_CONSTRUCT_OPPOSITE 0)
   set(commands_indicator_EQUAL 0)
   set(commands_indicator_INTERSECT 0)
+  set(commands_indicator_DO_INTERSECT 0)
   set(commands_indicator_IS_VERTICAL 0)
   set(commands_indicator_MAKE_X_MONOTONE 0)
   set(commands_indicator_MERGE 0)
@@ -445,6 +450,11 @@ function(execute_commands_new_structure data_dir traits_type_name)
     run_trapped_test(test_traits data/${data_dir}/points
       data/${data_dir}/xcurves data/${data_dir}/curves
       data/${data_dir}/intersect ${traits_type_name})
+  endif()
+  if(commands_indicator_DO_INTERSECT)
+    run_trapped_test(test_traits data/${data_dir}/points
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/do_intersect ${traits_type_name})
   endif()
   if(commands_indicator_SPLIT)
     run_trapped_test(test_traits data/${data_dir}/points
@@ -886,12 +896,13 @@ function(test_segment_traits)
 
   execute_commands_old_structure(segments segment_traits
     APPROXIMATE ARE_MERGEABLE COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR IS_VERTICAL VERTEX)
+    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR IS_VERTICAL VERTEX DO_INTERSECT)
 
-  execute_commands_new_structure( segments segment_traits
+  execute_commands_new_structure(segments segment_traits
     ARE_MERGEABLE
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    IS_VERTICAL)
+    IS_VERTICAL
+    DO_INTERSECT)
 
   run_trapped_test(test_traits
     data/segments/vertex.pt data/segments/xcurves
@@ -912,7 +923,8 @@ function(test_non_caching_segment_traits)
   execute_commands_old_structure(segments non_caching_segment_traits
     APPROXIMATE ARE_MERGEABLE ASSERTIONS
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR COMPARE_Y_AT_X_RIGHT
-    IS_VERTICAL VERTEX)
+    IS_VERTICAL VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(segments segment_traits
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
@@ -928,10 +940,6 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_polycurve_conic_traits)
 #  echo polycurve test starting
-  if(NOT CGAL_Core_FOUND)
-    MESSAGE(STATUS "test_polycurve_conic_traits requires CORE and will not be executed")
-    return()
-  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${POLYCURVE_CONIC_GEOM_TRAITS})
@@ -994,10 +1002,6 @@ endfunction()
 # polycurve bezier traits
 #---------------------------------------------------------------------#
 function(test_polycurve_bezier_traits)
-  if(NOT CGAL_Core_FOUND)
-    MESSAGE(STATUS "test_polycurve_bezier_traits requires CORE and will not be executed")
-    return()
-  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${POLYCURVE_BEZIER_GEOM_TRAITS})
@@ -1040,7 +1044,8 @@ function(test_polyline_traits)
 
   execute_commands_old_structure(polylines polyline_traits
     APPROXIMATE ARE_MERGEABLE
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR)
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    DO_INTERSECT)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1056,7 +1061,8 @@ function(test_non_caching_polyline_traits)
 
   execute_commands_old_structure(polylines non_caching_polyline_traits
     APPROXIMATE ARE_MERGEABLE
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR)
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    DO_INTERSECT)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1073,7 +1079,8 @@ function(test_linear_traits)
   execute_commands_old_structure(linear/segments linear_traits.segments
     APPROXIMATE ARE_MERGEABLE
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
-    IS_VERTICAL VERTEX)
+    IS_VERTICAL VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(linear/segments linear_traits.segments
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
@@ -1086,7 +1093,8 @@ function(test_linear_traits)
   execute_commands_old_structure(linear/rays linear_traits.rays
     APPROXIMATE ARE_MERGEABLE
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
-    IS_VERTICAL VERTEX)
+    IS_VERTICAL VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(linear/rays linear_traits.rays
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
@@ -1110,10 +1118,6 @@ endfunction()
 # conic traits
 #---------------------------------------------------------------------#
 function(test_conic_traits)
-  if(NOT CGAL_Core_FOUND)
-    MESSAGE(STATUS "test_conic_traits requires CORE and will not be executed")
-    return()
-  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${CORE_CONIC_GEOM_TRAITS})
@@ -1123,7 +1127,8 @@ function(test_conic_traits)
 
   execute_commands_old_structure(conics conic_traits
     APPROXIMATE ARE_MERGEABLE COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
-    INTERSECT SPLIT MERGE)
+    INTERSECT SPLIT MERGE
+    DO_INTERSECT)
 
   execute_commands_new_structure(conics conic_traits
     INTERSECT
@@ -1149,7 +1154,8 @@ function(test_line_arc_traits)
   execute_commands_old_structure(circular_lines line_arc_traits
     APPROXIMATE ARE_MERGEABLE ASSERTIONS
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
-    IS_VERTICAL MERGE VERTEX)
+    IS_VERTICAL MERGE VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(circular_lines line_arc_traits
     COMPARE_Y_AT_X
@@ -1178,7 +1184,8 @@ function(test_circular_arc_traits)
   execute_commands_old_structure(circular_arcs circular_arc_traits
     APPROXIMATE ARE_MERGEABLE ASSERTIONS
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
-    IS_VERTICAL MERGE VERTEX)
+    IS_VERTICAL MERGE VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(circular_arcs circular_arc_traits
     COMPARE_Y_AT_X
@@ -1200,7 +1207,8 @@ function(test_circular_line_arc_traits)
   execute_commands_old_structure(circular_line_arcs circular_line_arc_traits
     APPROXIMATE ARE_MERGEABLE ASSERTIONS
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
-    IS_VERTICAL MERGE VERTEX)
+    IS_VERTICAL MERGE VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(circular_line_arcs circular_line_arc_traits
     COMPARE_Y_AT_X
@@ -1225,7 +1233,8 @@ function(test_circle_segments_traits)
   execute_commands_old_structure(circle_segments circle_segments_traits
     APPROXIMATE ARE_MERGEABLE
     COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
-    IS_VERTICAL VERTEX)
+    IS_VERTICAL VERTEX
+    DO_INTERSECT)
 
   execute_commands_new_structure(circle_segments circle_segments_traits
     APPROXIMATE)
@@ -1254,10 +1263,6 @@ endfunction()
 # bezier traits
 #---------------------------------------------------------------------#
 function(test_bezier_traits)
-  if(NOT CGAL_Core_FOUND)
-    MESSAGE(STATUS "test_bezier_traits requires CORE and will not be executed")
-    return()
-  endif()
   set(nt ${CORE_EXPR_NT})
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${BEZIER_GEOM_TRAITS})
@@ -1267,7 +1272,8 @@ function(test_bezier_traits)
 
   execute_commands_old_structure(bezier bezier_traits
     APPROXIMATE ARE_MERGEABLE ASSERTIONS
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR SPLIT)
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR SPLIT
+    DO_INTERSECT)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1285,7 +1291,8 @@ function(test_spherical_arc_traits)
   execute_commands_old_structure(spherical_arcs spherical_arc_traits
     APPROXIMATE ARE_MERGEABLE ASSERTIONS
     COMPARE COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT CONSTRUCTOR
-    MAKE_X_MONOTONE MERGE SPLIT)
+    MAKE_X_MONOTONE MERGE SPLIT
+    DO_INTERSECT)
 
   execute_commands_new_structure(spherical_arcs spherical_arc_traits
     APPROXIMATE
@@ -1301,10 +1308,6 @@ endfunction()
 # rational arc traits
 #---------------------------------------------------------------------#
 function(test_rational_arc_traits)
-  if(NOT CGAL_Core_FOUND)
-    MESSAGE(STATUS "test_rational_arc_traits requires CORE and will not be executed")
-    return()
-  endif()
   set(nt ${CORE_INT_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${RATIONAL_ARC_GEOM_TRAITS})
@@ -1381,11 +1384,6 @@ endfunction()
 # algebraic traits with CORE
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_core)
-  #TODO: Adapt
-  if(NOT CGAL_Core_FOUND)
-    MESSAGE(STATUS "test_algebraic_traits_core requires CORE and will not be executed")
-    return()
-  endif()
   set(nt ${CORE_INT_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})

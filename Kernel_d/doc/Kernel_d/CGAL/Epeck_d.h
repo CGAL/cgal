@@ -75,7 +75,7 @@ public:
 Point_d(double x0, double x1, ...);
 
 /*! introduces a point with coordinate set `[first,end)`.
-    \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
+    \pre If `DimensionTag` is a fixed dimension, it matches `std::distance(first,end)`.
     \tparam ForwardIterator has its value type that is convertible to `double`.
     */
 template<typename ForwardIterator>
@@ -108,7 +108,7 @@ public:
 Vector_d(double x0, double x1, ...);
 
 /*! introduces a vector with coordinate set `[first,end)`.
-    \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
+    \pre If `DimensionTag` is a fixed dimension, it matches `std::distance(first,end)`.
     \tparam ForwardIterator has its value type that is convertible to `double`.
     */
 template<typename ForwardIterator>

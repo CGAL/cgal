@@ -6,13 +6,14 @@ project(Surface_mesh_skeletonization_Tests)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("MCF_Skeleton_test.cpp")
   target_link_libraries(MCF_Skeleton_test PRIVATE CGAL::Eigen3_support)
   create_single_source_cgal_program("skeleton_connectivity_test.cpp")
   target_link_libraries(skeleton_connectivity_test PRIVATE CGAL::Eigen3_support)
 else()
-  message("NOTICE: These tests require the Eigen library (3.2 or greater), and will not be compiled.")
+  message("NOTICE: These tests require the Eigen library 3.2 (or greater), and will not be compiled.")
 endif()

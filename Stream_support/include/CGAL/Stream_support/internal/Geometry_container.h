@@ -12,8 +12,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef GEOMETRY_CONTAINER_H
-#define GEOMETRY_CONTAINER_H
+#ifndef CGAL_STREAM_SUPPORT_INTERNAL_GEOMETRY_CONTAINER_H
+#define CGAL_STREAM_SUPPORT_INTERNAL_GEOMETRY_CONTAINER_H
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 #include <memory>
@@ -112,4 +112,4 @@ struct range_mutable_iterator<CGAL::internal::Geometry_container<T, TAG> >
 { typedef typename range_mutable_iterator<T>::type type; };
 
 }//end boost
-#endif // GEOMETRY_CONTAINER_H
+#endif // CGAL_STREAM_SUPPORT_INTERNAL_GEOMETRY_CONTAINER_H

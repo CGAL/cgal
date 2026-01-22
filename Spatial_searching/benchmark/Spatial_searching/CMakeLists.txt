@@ -8,8 +8,9 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 include_directories(BEFORE "include")
 
-find_package(Eigen3 3.1.91 QUIET) # (requires 3.1.91 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: These benchmarks require Eigen 3.1.91 (or greater), and will not be compiled.")
   return()

@@ -849,9 +849,9 @@ void remove_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be removed.
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param components_to_remove a face range, including one face or more on each component to be removed
 * \param pmesh the polygon mesh

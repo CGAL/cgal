@@ -4295,7 +4295,7 @@ private:
                    NEGATIVE : POSITIVE;
           } else {
             CGAL_SDG_DEBUG(std::cout << "debug vsqrt "
-                << "q has has negative slope" << std::endl; );
+                << "q has negative slope" << std::endl; );
             return cmpx(qother, p.point()) == cmpx(tother, p.point()) ?
                    NEGATIVE : POSITIVE;
           }
