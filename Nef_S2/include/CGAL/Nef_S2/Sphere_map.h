@@ -85,7 +85,7 @@ public:
   at most one |SLoop| pair per sphere map.}*/
 
   typedef typename Items::template SVertex<Self>        SVertex_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>       SVertex;
+  typedef SM_in_place_list<SVertex_base>                SVertex;
   typedef CGAL::In_place_list<SVertex,false>            SVertex_list;
   typedef CGAL_ALLOCATOR(SVertex)                       SVertex_alloc;
   typedef typename SVertex_list::iterator               SVertex_handle;
@@ -94,7 +94,7 @@ public:
   typedef typename SVertex_list::const_iterator         SVertex_const_iterator;
 
   typedef typename Items::template SHalfedge<Self>      SHalfedge_base;
-  typedef SNC_in_place_list_shalfedge<SHalfedge_base>   SHalfedge;
+  typedef SM_in_place_list<SHalfedge_base>              SHalfedge;
   typedef CGAL::In_place_list<SHalfedge,false>          SHalfedge_list;
   typedef CGAL_ALLOCATOR(SHalfedge)                     SHalfedge_alloc;
   typedef typename SHalfedge_list::iterator             SHalfedge_handle;
@@ -103,7 +103,7 @@ public:
   typedef typename SHalfedge_list::const_iterator       SHalfedge_const_iterator;
 
   typedef typename Items::template SFace<Self>          SFace_base;
-  typedef SNC_in_place_list_sface<SFace_base>           SFace;
+  typedef SM_in_place_list<SFace_base>                  SFace;
   typedef CGAL::In_place_list<SFace,false>              SFace_list;
   typedef CGAL_ALLOCATOR(SFace)                         SFace_alloc;
   typedef typename SFace_list::iterator                 SFace_handle;
