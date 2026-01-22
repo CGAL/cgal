@@ -10,3 +10,4 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("c3t3_example.cpp")
 create_single_source_cgal_program("tetrahedron_soup_to_c3t3_example.cpp")
+create_single_source_cgal_program("convert_medit_to_off.cpp")
