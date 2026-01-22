@@ -289,6 +289,14 @@ public:
     }
   }
 
+  auto squared_distance(const Point_3& p,
+                        const Point_3& q) const -> FT
+  {
+    typename Kernel_::Compute_squared_distance_3 sq_dist =
+      Kernel_().compute_squared_distance_3_object();
+    return sq_dist(p, q);
+  }
+
   std::optional<Point_and_primitive_id>
   closest_point_on_surfaces(const Point_3& p,
                             const Patches_ids& patch_ids_to_ignore) const
@@ -362,13 +370,13 @@ public:
         d_ptr->dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
         CGAL_assertion(!vs.empty());
         nearest = d_ptr->dt.point(vs[0]);
-//         std::cerr << "sq_dist = " << CGAL::squared_distance(p, nearest)
+//         std::cerr << "sq_dist = " << squared_distance(p, nearest)
 //                   << std::endl;
         typename Kernel_::Compare_distance_3 compare_dist;
         for (typename std::vector<typename Dt::Vertex_handle>::const_iterator
                it = vs.begin(); it != vs.end(); ++it)
         {
-//           std::cerr << "sq_dist = " << CGAL::squared_distance(p, dt.point(*it))
+//           std::cerr << "sq_dist = " << squared_distance(p, dt.point(*it))
 //                   << std::endl;
           if(compare_dist(p, d_ptr->dt.point(*it), nearest) == CGAL::SMALLER) {
 //             std::cerr << "  nearest!\n";
@@ -380,7 +388,7 @@ public:
         const typename Dt::Vertex_handle vh = d_ptr->dt.nearest_vertex(p, ch);
         nearest = d_ptr->dt.point(vh);
       }
-      const FT dist = CGAL_NTS sqrt(CGAL::squared_distance( nearest, p));
+      const FT dist = CGAL_NTS sqrt(squared_distance( nearest, p));
       // std::cerr << (std::min)(dist / FT(1.5), d_) << "\n";
       result = (std::min)(dist * FT(0.5), result);
 
@@ -400,7 +408,7 @@ public:
           result =
             (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                        CGAL_NTS
-                       sqrt(CGAL::squared_distance(p,
+                       sqrt(squared_distance(p,
                                                    closest_point_and_primitive->first))),
                        result);
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -468,7 +476,7 @@ public:
         result =
           (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS
-                     sqrt(CGAL::squared_distance(p,
+                     sqrt(squared_distance(p,
                                                  closest_point_and_primitive->first))),
                      result);
 
@@ -554,8 +562,8 @@ public:
         //  radius = 10 * distance(p, closest_pt)
 
         FT sqr = (p == closest_pt) // p may coincide with closest_pt, on different feature curves
-            ? 0.0001 * CGAL::squared_distance(*closest_prim_id.second, *(closest_prim_id.second + 1))
-            : 100 * CGAL::squared_distance(p, closest_pt);
+            ? 0.0001 * squared_distance(*closest_prim_id.second, *(closest_prim_id.second + 1))
+            : 100 * squared_distance(p, closest_pt);
 
         bool valid_closest_found = false;
         while(!valid_closest_found)
@@ -648,14 +656,14 @@ public:
                                                                        p_polyline_const_it,
                                                                        pp_polyline_const_it,
                                                                        curve_id));
-            const FT new_sqd = CGAL::squared_distance(p, intersection_point);
+            const FT new_sqd = squared_distance(p, intersection_point);
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
             std::cerr << "Intersection point : Point_3(" << *pp << ") ";
             std::cerr << "\n  new_sqd = " << new_sqd ;
             std::cerr << "\n  dist = " << dist << "\n";
 #endif
-            if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
+            if (new_sqd * 1e10 < squared_distance(curr_segment.source(),
                                                         curr_segment.target()))
             {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -683,7 +691,7 @@ public:
       //compare closest_projection and closest_intersection, and keep the closest
       if (curves_projection_traits.found())
       {
-        FT tmp_sqd = CGAL::squared_distance(p, curves_projection_traits.closest_point());
+        FT tmp_sqd = squared_distance(p, curves_projection_traits.closest_point());
         if (sqd_intersection == -1 || tmp_sqd < sqd_intersection)
         {
           sqd_intersection = tmp_sqd;

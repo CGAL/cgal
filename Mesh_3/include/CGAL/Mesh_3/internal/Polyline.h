@@ -20,8 +20,13 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/enum.h>
 #include <CGAL/iterator.h>
+#include <CGAL/number_utils.h>
 
+#include <iostream>
+#include <optional>
+#include <utility>
 #include <vector>
 
 namespace CGAL {
@@ -30,6 +35,52 @@ namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
 
+template <typename Point_3, typename FT>
+struct Polyline_vertex {
+  Point_3 point;
+  mutable std::optional<FT> length_from_start{std::nullopt};
+  Polyline_vertex(const Point_3& p) : point(p) {}
+  Polyline_vertex(const Point_3& p, FT length) : point(p), length_from_start(length) {}
+
+  operator const Point_3&() const { return point; }
+
+  friend std::ostream& operator<<(std::ostream& os, const Polyline_vertex& pv)
+  {
+    os << pv.point;
+    return os;
+  }
+
+  friend bool operator==(const Polyline_vertex& pv1, const Polyline_vertex& pv2)
+  {
+    return pv1.point == pv2.point;
+  }
+
+  friend bool operator!=(const Polyline_vertex& pv1, const Polyline_vertex& pv2)
+  {
+    return !(pv1 == pv2);
+  }
+
+  friend bool operator==(const Polyline_vertex& pv, const Point_3& p)
+  {
+    return pv.point == p;
+  }
+
+  friend bool operator==(const Point_3& p, const Polyline_vertex& pv)
+  {
+    return pv.point == p;
+  }
+
+  friend bool operator!=(const Polyline_vertex& pv, const Point_3& p)
+  {
+    return !(pv == p);
+  }
+
+  friend bool operator!=(const Point_3& p, const Polyline_vertex& pv)
+  {
+    return !(pv == p);
+  }
+};
+
 template <typename Kernel>
 class Polyline
 {
@@ -37,7 +88,8 @@ class Polyline
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::FT       FT;
 
-  typedef std::vector<Point_3>      Data;
+  typedef Polyline_vertex<Point_3, FT>   Vertex;
+  typedef std::vector<Vertex>      Data;
 
 public:
   typedef typename Data::const_iterator const_iterator;
@@ -195,11 +247,7 @@ public:
 
     const_iterator next_it = this->next(p_it, orientation);
     FT result = distance(p, *next_it);
-    for(const_iterator it = next_it; it != q_it; /* in body */) {
-      next_it = this->next(it, orientation);
-      result += distance(*it, *next_it);
-      it = next_it;
-    } // end loop ]p_it, q_it[
+    result += distance(next_it, q_it, orientation);
     result += distance(*q_it, q);
     return result;
   }
@@ -220,12 +268,14 @@ public:
   {
     if(length_ < 0.)
     {
-      FT result(0);
+      FT result{0};
       const_iterator it = points_.begin();
+      it->length_from_start = result;
       const_iterator previous = it++;
 
       for(const_iterator end = points_.end(); it != end; ++it, ++previous) {
         result += distance(*previous, *it);
+        it->length_from_start = result;
       }
       length_ = result;
     }
@@ -551,6 +601,27 @@ private:
     typename Kernel::Compute_squared_distance_3 sq_distance =
       Kernel().compute_squared_distance_3_object();
     return CGAL::sqrt(sq_distance(p, q));
+  }
+
+  FT distance(const_iterator p_it, const_iterator q_it, CGAL::Orientation orientation) const
+  {
+    FT result;
+    if(p_it->length_from_start && q_it->length_from_start) {
+      if(orientation == POSITIVE) {
+        result = *(q_it->length_from_start) - *(p_it->length_from_start);
+      } else {
+        result = *(p_it->length_from_start) - *(q_it->length_from_start);
+      }
+      return result;
+    } else {
+      result = FT(0);
+      for(const_iterator it = p_it; it != q_it; /* in body */) {
+        auto next_it = this->next(it, orientation);
+        result += distance(*it, *next_it);
+        it = next_it;
+      } // end loop ]p_it, q_it[
+      return result;
+    }
   }
 
   Angle angle(const Point_3& p,
