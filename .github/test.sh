@@ -10,4 +10,4 @@ NB_OF_PLUGINS=${#PLUGINS_ARRAY[@]}
 DEL=$(($NB_OF_PLUGINS / 4))
 cd build
 NUM_PROCS=$(nproc)
-make -j${NUM_PROCS} ${PLUGINS_ARRAY[@]:$(($FACTOR * $DEL)):$((($FACTOR + 1) * $DEL))}
+make -j${NUM_PROCS} ${PLUGINS_ARRAY[@]:$(($FACTOR * $DEL)):$DEL))}

@@ -128,12 +128,15 @@ int bisect_failures(const InputData& data,
   // Redirect temporarily cout to cerr, and clog to stdout, for debug output
   auto* old_clog_buf = std::clog.rdbuf();
   auto* old_cout_buf = std::cout.rdbuf();
+  auto* old_cerr_tie = std::cerr.tie();
   auto _ = make_scope_exit([&]() {
           std::clog.rdbuf(old_clog_buf);
           std::cout.rdbuf(old_cout_buf);
+          std::cerr.tie(old_cerr_tie);
   });
   std::clog.rdbuf(old_cout_buf);
   std::cout.rdbuf(std::cerr.rdbuf());
+  std::cerr.tie(&std::clog);
   // The following code uses std::clog to display its messages, and the user's
   // code (run) usages of std::cout will go to std::cerr.
 
