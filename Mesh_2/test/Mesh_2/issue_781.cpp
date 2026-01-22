@@ -52,7 +52,7 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 
 // mesh refinement
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
@@ -67,7 +67,8 @@ using meshTriKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using meshTriPoint = meshTriKernel::Point_2;
 using meshTriSegment = meshTriKernel::Segment_2;
 
-using meshTriVertexBase = CGAL::Base_with_time_stamp<CGAL::Triangulation_vertex_base_2<meshTriKernel>>;
+using meshTriVertexBase =
+    CGAL::Triangulation_simplex_base_with_time_stamp<CGAL::Triangulation_vertex_base_2<meshTriKernel>>;
 
 using Fbb = CGAL::Constrained_triangulation_face_base_2<meshTriKernel>;
 using meshTriFaceBase = CGAL::Delaunay_mesh_face_base_2<meshTriKernel, Fbb>;
