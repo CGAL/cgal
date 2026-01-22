@@ -63,6 +63,12 @@ kernel(const FaceRange &face_range,
                               get_const_property_map(vertex_point, pm));
   auto vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, kernel));
+
+  using DefaultF2FMap = boost::associative_property_map<std::map<face_descriptor, face_descriptor>>;
+
+  constexpr bool is_face_to_face_map = !parameters::is_default_parameter<NamedParametersOut, internal_np::face_to_face_map_t>::value;
+  auto f2f_map = choose_parameter<DefaultF2FMap>(get_parameter(np_out, internal_np::face_to_face_map));
+
   using Point_3 = typename GT::Point_3;
   using EPoint_3 = typename EK::Point_3;
   using EVector_3 = typename EK::Vector_3;
@@ -73,7 +79,7 @@ kernel(const FaceRange &face_range,
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
   bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_open_input), false) && std::size_t(std::distance(face_range.begin(), face_range.end()))==faces(pm).size();
-  std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), std::random_device()());
+  std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), unsigned(-1));
 
   // Immediate exit if the input is well-formed and not of genus zero
   if(check_euler_characteristic && (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)){
@@ -89,6 +95,9 @@ kernel(const FaceRange &face_range,
     put(kvpm, v, to_exact(get(vpm_out, v)));
   Bbox_3 bb3 = bbox(kernel);
   vertex_descriptor start_vertex = *vertices(kernel).begin();
+  if constexpr(is_face_to_face_map)
+    for(face_descriptor f: faces(kernel))
+      put(f2f_map, f, BGT::null_face());
 
   std::array<vertex_descriptor, 6> bbox_vertices;
   if(bbox_filtering){
@@ -160,12 +169,22 @@ kernel(const FaceRange &face_range,
         return;
       }
 
-      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
-                                                                  geom_traits(kgt).
-                                                                  do_not_triangulate_faces(true).
-                                                                  vertex_point_map(kvpm).
-                                                                  bounding_box(&bbox_vertices).
-                                                                  starting_vertex_descriptor(start_vertex));
+      if constexpr(is_face_to_face_map)
+        start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
+                                                                    geom_traits(kgt).
+                                                                    do_not_triangulate_faces(true).
+                                                                    vertex_point_map(kvpm).
+                                                                    bounding_box(&bbox_vertices).
+                                                                    starting_vertex_descriptor(start_vertex).
+                                                                    face_to_face_map(f2f_map),
+                                                                    f);
+      else
+        start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
+                                                                    geom_traits(kgt).
+                                                                    do_not_triangulate_faces(true).
+                                                                    vertex_point_map(kvpm).
+                                                                    bounding_box(&bbox_vertices).
+                                                                    starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return;
 
       // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
@@ -174,11 +193,20 @@ kernel(const FaceRange &face_range,
     }
     else
     {
-      start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
-                                                                  geom_traits(kgt).
-                                                                  do_not_triangulate_faces(true).
-                                                                  vertex_point_map(kvpm).
-                                                                  starting_vertex_descriptor(start_vertex));
+      if constexpr(is_face_to_face_map)
+        start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
+                                                                    geom_traits(kgt).
+                                                                    do_not_triangulate_faces(true).
+                                                                    vertex_point_map(kvpm).
+                                                                    starting_vertex_descriptor(start_vertex).
+                                                                    face_to_face_map(f2f_map),
+                                                                    f);
+      else
+        start_vertex = clip_convex(kernel, plane, CGAL::parameters::clip_volume(true).
+                                                                    geom_traits(kgt).
+                                                                    do_not_triangulate_faces(true).
+                                                                    vertex_point_map(kvpm).
+                                                                    starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return;
     }
   }
@@ -295,7 +323,7 @@ kernel(const FaceRange &face_range,
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
-  *     \cgalParamDefault{The seed of `std::random_device()`}
+  *     \cgalParamDefault{`unsigned(-1)`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -321,7 +349,7 @@ kernel(const FaceRange &face_range,
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
   *   \cgalParamNBegin{face_to_face_map}
-  *     \cgalParamDescription{a property map storing for each face of the output mesh the face of the input mesh that defined the clipping plane that created it}
+  *     \cgalParamDescription{a property map storing, for each face of the output mesh, a face of the input mesh that defined the clipping plane that created it}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with
   *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
   *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
@@ -415,7 +443,7 @@ kernel(const FaceRange face_range,
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
-  *     \cgalParamDefault{The seed of `std::random_device()`}
+  *     \cgalParamDefault{`unsigned(-1)`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -441,7 +469,7 @@ kernel(const FaceRange face_range,
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
   *   \cgalParamNBegin{face_to_face_map}
-  *     \cgalParamDescription{a property map storing for each face of the output mesh the face of the input mesh that defined the clipping plane that created it}
+  *     \cgalParamDescription{a property map storing, for each face of the output mesh, a face of the input mesh that defined the clipping plane that created it}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with
   *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
   *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}

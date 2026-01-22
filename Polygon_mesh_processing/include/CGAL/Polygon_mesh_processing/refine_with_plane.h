@@ -281,7 +281,10 @@ void refine_with_plane(PolygonMesh& pm,
   auto ecm = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_constrained));
   auto edge_is_marked = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_marked_map));
 
-  bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false);
+  bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false)
+                                   && is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value
+                                   && is_default_parameter<NamedParameters, internal_np::edge_is_marked_map_t>::value
+                                   && is_default_parameter<NamedParameters, internal_np::vertex_oriented_side_map_t>::value;
   if(use_convex_specialization){
     halfedge_descriptor he = internal::find_crossing_edge(pm, plane, np);
     internal::refine_convex_with_plane(pm, plane, he, np);

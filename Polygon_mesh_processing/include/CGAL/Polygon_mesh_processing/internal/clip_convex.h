@@ -265,7 +265,8 @@ typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 remove_bounded_region_and_fill(PolygonMesh& pm,
                                const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> &boundaries,
                                typename boost::graph_traits<PolygonMesh>::vertex_descriptor inside_vertex,
-                               const NamedParameters& np = parameters::default_values())
+                               const NamedParameters& np = parameters::default_values(),
+                               typename boost::graph_traits<PolygonMesh>::face_descriptor plane_fd = boost::graph_traits<PolygonMesh>::null_face())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -398,6 +399,11 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
       set_face(h, f, pm);
     }
     set_halfedge(f, boundaries[0], pm);
+    if constexpr(!parameters::is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value){
+      using Default_f2f_map = boost::associative_property_map<std::map<face_descriptor, face_descriptor>>;
+      auto f2f = choose_parameter<Default_f2f_map>(get_parameter(np, internal_np::face_to_face_map));
+      put(f2f, f, plane_fd);
+    }
     if(triangulate)
       triangulate_face(f, pm, parameters::vertex_point_map(vpm));
   } else {
@@ -424,7 +430,8 @@ template <class PolygonMesh, class NamedParameters =  parameters::Default_named_
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 clip_convex(PolygonMesh& pm,
             const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
-            const NamedParameters& np = parameters::default_values()){
+            const NamedParameters& np = parameters::default_values(),
+            typename boost::graph_traits<PolygonMesh>::face_descriptor plane_fd = boost::graph_traits<PolygonMesh>::null_face()){
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
@@ -573,7 +580,7 @@ clip_convex(PolygonMesh& pm,
   if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
   const auto &boundaries =refine_convex_with_plane(pm, plane, he, np);
-  return remove_bounded_region_and_fill(pm, boundaries, source(he, pm), np);
+  return remove_bounded_region_and_fill(pm, boundaries, source(he, pm), np, plane_fd);
 }
 
 } // end of namespace internal

@@ -32,8 +32,7 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
   assert((PMP::kernel_point(input, CGAL::parameters::allow_open_input(true)) != std::nullopt) == (expected_nb_vertices != 0));
 
   Mesh kernel;
-  make_hexahedron(PMP::bbox(input), kernel);
-  PMP::kernel(faces(input), input, kernel, CGAL::parameters::allow_open_input(true).use_bounding_box_filtering(false).shuffle_planes(false));
+  PMP::kernel(input, kernel, CGAL::parameters::allow_open_input(true));
 #ifdef TEST_MESH_KERNEL_VERBOSE
   std::cout << "nb of vertices: " << vertices(kernel).size() << " ( " << expected_nb_vertices << " expected)" << std::endl
             << "nb of edges: " << edges(kernel).size() << " ( " << expected_nb_edges << " expected)" << std::endl
@@ -51,8 +50,15 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
   }
 
   clear(kernel);
-  PMP::kernel(input, kernel, CGAL::parameters::allow_open_input(true));
-  std::ofstream("input.off") << input; std::ofstream("output.off") << kernel;
+  using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+  // auto f2f_map = boost::make_assiocative_property_map(kernel.template add_property_map<face_descriptor, face_descriptor>("f:f", boost::graph_traits<Mesh>::null_face()));
+  std::map<face_descriptor, face_descriptor> storage;
+  // auto f2f_map
+  boost::associative_property_map< std::map<face_descriptor, face_descriptor> > f2f_map(storage);
+  auto bb = CGAL::Polygon_mesh_processing::bbox(input);
+  bb = CGAL::Bbox_3(bb.xmin()-3,bb.ymin()-3,bb.zmin()-3,bb.xmax()+3,bb.ymax()+3,bb.zmax()+3);
+  make_hexahedron(bb, kernel);
+  PMP::kernel(faces(input), input, kernel, CGAL::parameters::allow_open_input(true).use_bounding_box_filtering(false).shuffle_planes(false), CGAL::parameters::face_to_face_map(f2f_map));
 #ifdef TEST_MESH_KERNEL_VERBOSE
   std::cout << "nb of vertices: " << vertices(kernel).size() << " ( " << expected_nb_vertices << " expected)" << std::endl
             << "nb of edges: " << edges(kernel).size() << " ( " << expected_nb_edges << " expected)" << std::endl
@@ -68,6 +74,8 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
 #endif
     assert(PMP::volume(kernel) > expected_volume * 0.99 && PMP::volume(kernel) < expected_volume * 1.01);
   }
+  // for(auto f: faces(kernel))
+    // assert(get(f2f_map, f) != boost::graph_traits<Mesh>::null_face());
 }
 
 template<class Mesh, class K>
