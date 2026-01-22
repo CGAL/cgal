@@ -23,7 +23,8 @@ int main(int argc, char** argv)
 
   CGAL::Real_timer timer;
   timer.start();
-  Mesh kernel = PMP::kernel(m);
+  Mesh kernel;
+  PMP::kernel(m, kernel);
   timer.stop();
 
   std::cout << "Kernel computation of " << fname << " done in " << timer.time() << std::endl;
