@@ -29,5 +29,7 @@ int main(int argc, char** argv)
   std::cout << "Kernel computation of " << fname << " done in " << timer.time() << std::endl;
   std::cout << "Output containing " << vertices(kernel).size() << " vertices wrote in " << oname << std::endl;
 
-  std::ofstream("kernel.off") << kernel;
+  CGAL::IO::write_polygon_mesh("kernel.off", kernel, CGAL::parameters::stream_precision(17));
+
+  return 0;
 }

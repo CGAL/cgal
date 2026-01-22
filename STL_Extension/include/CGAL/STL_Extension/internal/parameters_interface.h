@@ -183,8 +183,7 @@ CGAL_add_named_parameter(use_bounding_box_filtering_t, use_bounding_box_filterin
 CGAL_add_named_parameter(shuffle_planes_t, shuffle_planes, shuffle_planes)
 CGAL_add_named_parameter(use_convex_specialization_t, use_convex_specialization, use_convex_specialization)
 CGAL_add_named_parameter(faces_range_t, faces_range, faces_range)
-CGAL_add_named_parameter(require_strictly_inside_t, require_strictly_inside, require_strictly_inside)
-CGAL_add_named_parameter(allow_non_manifold_non_watertight_input_t, allow_non_manifold_non_watertight_input, allow_non_manifold_non_watertight_input)
+CGAL_add_named_parameter(allow_open_input_t, allow_open_input, allow_open_input)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

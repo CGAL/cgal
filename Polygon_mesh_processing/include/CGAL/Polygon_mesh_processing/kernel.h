@@ -30,11 +30,13 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal{
-template <class PolygonMesh,
-          class NamedParameters = parameters::Default_named_parameters,
-          class NamedParametersOut = parameters::Default_named_parameters>
+template <typename PolygonMesh,
+          typename FaceRange,
+          typename NamedParameters = parameters::Default_named_parameters,
+          typename NamedParametersOut = parameters::Default_named_parameters>
 void
-kernel(const PolygonMesh& pm,
+kernel(const FaceRange &face_range,
+       const PolygonMesh& pm,
        PolygonMesh& kernel,
        const NamedParameters& np = parameters::default_values(),
        const NamedParametersOut& np_out = parameters::default_values(),
@@ -70,8 +72,7 @@ kernel(const PolygonMesh& pm,
 
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
-  auto faces_range = choose_parameter(get_parameter(np, internal_np::faces_range), faces(pm));
-  bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_non_manifold_non_watertight_input), false);
+  bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_open_input), false) && std::size_t(std::distance(face_range.begin(), face_range.end()))==faces(pm).size();
   std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), std::random_device()());
 
   // Immediate exit if the input is well-formed and not of genus zero
@@ -83,7 +84,7 @@ kernel(const PolygonMesh& pm,
   // Build the starting cube
   KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
   if(is_empty(kernel))
-    make_hexahedron(bbox(pm), kernel);
+    make_hexahedron(bbox(pm), kernel, parameters::vertex_point_map(vpm_out));
   for(vertex_descriptor v: vertices(kernel))
     put(kvpm, v, to_exact(get(vpm_out, v)));
   Bbox_3 bb3 = bbox(kernel);
@@ -124,7 +125,7 @@ kernel(const PolygonMesh& pm,
   auto oriented_side = kgt.oriented_side_3_object();
   auto orthogonal_vector = kgt.construct_orthogonal_vector_3_object();
 
-  std::vector<face_descriptor> planes(faces_range.begin(), faces_range.end());
+  std::vector<face_descriptor> planes(face_range.begin(), face_range.end());
   if(shuffle_planes)
     std::shuffle(planes.begin(), planes.end(), std::default_random_engine(seed));
 
@@ -183,14 +184,6 @@ kernel(const PolygonMesh& pm,
   }
 
   if(used_to_find_a_point){
-    bool require_strictly_inside = choose_parameter(get_parameter(np, internal_np::require_strictly_inside), true);
-
-    // If we don't want a point on the surface and the kernel is degenerated, do nothing
-    if(require_strictly_inside && ((vertices(kernel).size()<3) || (faces(kernel).size()==1))){
-      clear(kernel);
-      return;
-    }
-
     // Get the centroid
     EPoint_3 centroid(ORIGIN);
     for(auto v: vertices(kernel))
@@ -228,28 +221,48 @@ kernel(const PolygonMesh& pm,
 
 } // end of namespace internal
 
- /**
+/**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
-  * It is represented as a convex mesh and may be empty.
+  * \brief computes the kernel of the given faces of a polygon mesh.
   *
-  * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
+  * The kernel is defined as the convex polyhedron that is the intersection
+  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of the input mesh. The kernel may empty or degenerate to a lower-dimensional convex shape.
   *
-  * This operation is performed starting on the `pm_out` provided or a cube englobing the input if `pm_out` is empty.
+  * In the implementation, a starting shape is iteratively clipped by the faces.
+  * By default, the bounding box of the input mesh is used as starting shape.
+  * However, the parameter `out` may be non-empty: In this case, it must be a convex polyhedron and will be used as starting shape.
   *
-  * The kernel may be degenerate. If the dimension of the kernel is 2, the output mesh consists of a single face. If the dimension of the kernel is 1, the output mesh contains only two isolated vertices. If the dimension of the kernel is 0, the output mesh contains only a single isolated vertex.
+  * The algorithm assumes that the input mesh is closed as to perform a quick exit if the genus is non-zero.
+  * This precondition can be relaxed using the named parameter `allow_open_input`.
+  * In that case, the resulting kernel may contain faces of the starting shape.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  * In case of a degenerate kernel:
+  * <ul>
+  *   <li>If the dimension of the kernel is `2` (i.e., the kernel is a convex 3D polygon), the output mesh consists of a single face.</li>
+  *   <li>If the dimension of the kernel is `1` (i.e., the kernel is a line segment), the output mesh consists two isolated vertices.</li>
+  *   <li>If the dimension of the kernel is `0` (i.e., the kernel is a single point), the output mesh contains one isolated vertex.</li>
+  * </ul>
   *
-  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam FaceRange a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
+  * @tparam PolygonMeshIn a model of `VertexListGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam PolygonMeshOut a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  *
+  * @tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
   *
+  * @param face_range the range of faces used
   * @param pm input surface mesh
-  * @param pm_out input surface mesh
+  * @param out output surface mesh
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{allow_open_input}
+  *     \cgalParamDescription{If set to `true`, the input mesh is allowed to have boundaries.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
@@ -259,37 +272,30 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{faces_range}
-  *     \cgalParamDescription{The range of faces to consider when computing the mesh. If not provided, all faces are considered.}
-  *     \cgalParamType{a range of `boost::graph_traits<PolygonMesh>::face_descriptor`}
+  *   \cond SKIP_IN_MANUAL
+  *
+  *   \cgalParamNBegin{use_bounding_box_filtering}
+  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
   *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenarios.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
   *     \cgalParamDefault{The seed of `std::random_device()`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
-  *     \cgalParamDescription{
-  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may be
-  *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
-  *     }
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{false}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -301,94 +307,115 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
   *   \cgalParamNEnd
   *
+  *   \endcond
   * \cgalNamedParamsEnd
   *
   * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `pm_out`}
+  *     \cgalParamDescription{a property map associating points to the vertices of `out`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm_out)`}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, out)`}
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
-  *
+  *   \cgalParamNBegin{face_to_face_map}
+  *     \cgalParamDescription{a property map storing for each face of the output mesh the face of the input mesh that defined the clipping plane that created it}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with
+  *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
+  *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
+  *     \cgalParamDefault{unused}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
-  *
-  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed and two-manifold in order to ensure a correct result.
-  * @pre Unless `pm_out` is empty. `pm_out` is required to be closed, two-manifold and convex to ensure a correct result
   */
-template <class PolygonMesh,
-          class NamedParameters = parameters::Default_named_parameters,
-          class NamedParametersOut = parameters::Default_named_parameters>
+template <typename FaceRange,
+          typename PolygonMesh,
+          typename NamedParameters = parameters::Default_named_parameters,
+          typename NamedParametersOut = parameters::Default_named_parameters>
 void
-kernel(const PolygonMesh& pm,
-       PolygonMesh& pm_out,
+kernel(const FaceRange face_range,
+       const PolygonMesh& pm,
+       PolygonMesh& out,
        const NamedParameters& np = parameters::default_values(),
        const NamedParametersOut& np_out = parameters::default_values())
 {
-  internal::kernel(pm, pm_out, np, np_out);
+  internal::kernel(face_range, pm, out, np, np_out);
 }
 
- /**
+/**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief computes the kernel of the given mesh. The kernel is the set of all points that can see the entire surface of the mesh.
-  * It is represented as a convex mesh and may be empty.
+  * \brief computes the kernel of the given polygon mesh.
   *
-  * The kernel is obtained by iteratively computing the intersection of the half-spaces defined by the faces of the mesh.
+  * The kernel is defined as the convex polyhedron that is the intersection
+  * of all the half-spaces on the negative side of the oriented planes defined by the faces
+  * of the input mesh. The kernel may empty or degenerate to a lower-dimensional convex shape.
   *
-  * The kernel may be degenerate. If the dimension of the kernel is 2, the output mesh consists of a single face. If the dimension of the kernel is 1, the output mesh contains only two isolated vertices. If the dimension of the kernel is 0, the output mesh contains only a single isolated vertex.
+  * In the implementation, a starting shape is iteratively clipped by the faces.
+  * By default, the bounding box of the input mesh is used as starting shape.
+  * However, the parameter `out` may be non-empty: In this case, it must be a convex polyhedron and will be used as starting shape.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *                      An internal property map for `CGAL::vertex_point_t` must be available.
+  * The algorithm assumes that the input mesh is closed as to perform a quick exit if the genus is non-zero.
+  * This precondition can be relaxed using the named parameter `allow_open_input`.
+  * In that case, the resulting kernel may contain faces of the starting shape.
   *
-  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  * In case of a degenerate kernel:
+  * <ul>
+  *   <li>If the dimension of the kernel is `2` (i.e., the kernel is a convex 3D polygon), the output mesh consists of a single face.</li>
+  *   <li>If the dimension of the kernel is `1` (i.e., the kernel is a line segment), the output mesh consists two isolated vertices.</li>
+  *   <li>If the dimension of the kernel is `0` (i.e., the kernel is a single point), the output mesh contains one isolated vertex.</li>
+  * </ul>
+  *
+  * @tparam PolygonMeshIn a model of `VertexListGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam PolygonMeshOut a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  *
+  * @tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pm input surface mesh
+  * @param out output surface mesh
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{allow_open_input}
+  *     \cgalParamDescription{If set to `true`, the input mesh is allowed to have boundaries.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *   \cgalParamNEnd
+  *
+  *   \cond SKIP_IN_MANUAL
   *
   *   \cgalParamNBegin{use_bounding_box_filtering}
   *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{faces_range}
-  *     \cgalParamDescription{The range of faces to consider when computing the mesh. If not provided, all faces are considered.}
-  *     \cgalParamType{a range of `boost::graph_traits<PolygonMesh>::face_descriptor`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{face_normal_map}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
-  *     \cgalParamType{a model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::face_descriptor` as key type and `Vector_3` as value type}
-  *     \cgalParamDefault{true}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{shuffle_planes}
   *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenarios.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{random_seed}
   *     \cgalParamDescription{The seed use by the shuffle option}
   *     \cgalParamType{unsigned int}
   *     \cgalParamDefault{The seed of `std::random_device()`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
-  *     \cgalParamDescription{
-  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may be
-  *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
-  *     }
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{false}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -400,186 +427,142 @@ kernel(const PolygonMesh& pm,
   *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
   *   \cgalParamNEnd
   *
+  *   \endcond
   * \cgalNamedParamsEnd
   *
-  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed, two-manifold, and free of self-intersections in order to ensure a correct result.
-  *
-  * @return A PolygonMesh representing the kernel of the input mesh, which may be empty.
-  */
-template <class PolygonMesh,
-          class NamedParameters = parameters::Default_named_parameters>
-PolygonMesh
-kernel(const PolygonMesh& pm,
-       const NamedParameters& np = parameters::default_values())
-{
-  PolygonMesh kernel;
-  internal::kernel(pm, kernel, np);
-  return kernel;
-}
-
- /**
-  * \ingroup PMP_corefinement_grp
-  *
-  * \brief indicates whether the kernel of the given mesh is empty. The kernel is defined as the set of all points that can see the entire surface of the mesh.
-  *
-  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *
-  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  *
-  * @param pm input surface mesh
-  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamDescription{a property map associating points to the vertices of `out`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, out)`}
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
+  *   \cgalParamNBegin{face_to_face_map}
+  *     \cgalParamDescription{a property map storing for each face of the output mesh the face of the input mesh that defined the clipping plane that created it}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with
+  *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
+  *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
+  *     \cgalParamDefault{unused}
   *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{faces_range}
-  *     \cgalParamDescription{The range of faces to consider when computing the mesh. If not provided, all faces are considered.}
-  *     \cgalParamType{a range of `boost::graph_traits<PolygonMesh>::face_descriptor`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in random order to compute the kernel, improving runtime in most scenarios.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{random_seed}
-  *     \cgalParamDescription{The seed use by the shuffle option}
-  *     \cgalParamType{unsigned int}
-  *     \cgalParamDefault{The seed of std::random_device()}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
-  *     \cgalParamDescription{
-  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may be
-  *       unbounded and the output is clipped by the bounding box provided by the `starting_cube` parameter.
-  *     }
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{false}
-  *   \cgalParamNEnd
-  *
   * \cgalNamedParamsEnd
-  *
-  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed and two-manifold in order to ensure a correct result.
-  *
-  * @return bool
   */
-template <class PolygonMesh,
-          class NamedParameters = parameters::Default_named_parameters>
-bool is_kernel_empty(const PolygonMesh& pm,
-                     const NamedParameters& np = parameters::default_values())
+template <typename PolygonMesh,
+          typename NamedParameters = parameters::Default_named_parameters,
+          typename NamedParametersOut = parameters::Default_named_parameters>
+void
+kernel(const PolygonMesh& pm,
+       PolygonMesh& out,
+       const NamedParameters& np = parameters::default_values(),
+       const NamedParametersOut& np_out = parameters::default_values())
 {
-  return is_empty(kernel(pm, np));
+  kernel(faces(pm), pm, out, np, np_out);
 }
 
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief returns a point inside the kernel of the given mesh. The kernel is defined as the set of all points that can see the entire surface of the mesh.
+  * \brief indicates whether the kernel of the given faces of a polygon mesh is empty.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  * The kernel is defined as the convex polyhedron that is the intersection
+  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of the input mesh.
   *
-  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  *
-  * @param pm input surface mesh
-  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-  *
-  * \cgalNamedParamsBegin
-  *
-  *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
-  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-  *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
-  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{use_bounding_box_filtering}
-  *     \cgalParamDescription{Enables the use of the bounding box of the temporary kernel to compute the intersection of a plane with it, improving runtime in most scenarios. }
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{faces_range}
-  *     \cgalParamDescription{The range of faces to consider when computing the mesh. If not provided, all faces are considered.}
-  *     \cgalParamType{a range of `boost::graph_traits<PolygonMesh>::face_descriptor`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{shuffle_planes}
-  *     \cgalParamDescription{If set to `true`, the planes are considered in a random order to compute the kernel, improving runtime in most scenarios }
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{true}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{allow_non_manifold_non_watertight_input}
-  *     \cgalParamDescription{
-  *       If set to `true`, the input mesh is allowed to be non-manifold at vertices
-  *       and/or to have boundaries. In this case, the kernel may be
-  *       unbounded. The output is clipped by the bounding box provided by the `starting_cube` parameter.
-  *     }
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{false}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{random_seed}
-  *     \cgalParamDescription{The seed use by the shuffle option}
-  *     \cgalParamType{unsigned int}
-  *     \cgalParamDefault{The seed of std::random_device()}
-  *   \cgalParamNEnd
-  *
-  * \cgalParamNBegin{require_strictly_inside}
-  *   \cgalParamDescription{
-  *     If set to `true`, the returned point is required to lie strictly inside
-  *     the mesh and not on its boundary. If the mesh is degenerate, this requirement
-  *     cannot be satisfied and no point is returned.}
-  *   \cgalParamType{bool}
-  *   \cgalParamDefault{true}
-  * \cgalParamNEnd
-  *
-  * \cgalNamedParamsEnd
-  *
-  * @pre Unless the parameter `allow_non_manifold_non_watertight_input` is set to `true`. The input mesh is required to be closed and two-manifold in order to ensure a correct result.
-  *
-  * @return std::optional<`%Point_3`>
+  * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
   */
-template <class PolygonMesh,
-          class NamedParameters = parameters::Default_named_parameters>
+template <typename FaceRange,
+          typename PolygonMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool is_kernel_empty(const FaceRange face_range,
+                     const PolygonMesh& pm,
+                     const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  PolygonMesh k;
+  kernel(face_range, pm, k, np);
+  return is_empty(k);
+}
+
+/**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief indicates whether the kernel of the given polygon mesh is empty.
+  *
+  * The kernel is defined as the convex polyhedron that is the intersection
+  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of the input mesh.
+  *
+  * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
+  */
+template <typename PolygonMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool is_kernel_empty(const PolygonMesh& pm,
+                     const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return is_kernel_empty(faces(pm), pm, np);
+}
+
+/**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief returns a point inside the kernel of the given faces of a polygon mesh.
+  *
+  * The kernel is defined as the convex polyhedron that is the intersection
+  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of the input mesh.
+  *
+  * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
+  *
+  * \return `std::nullopt` if and only if the kernel is empty.
+  */
+template <typename FaceRange,
+          typename PolygonMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 std::optional<Point_3>
 #else
 std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>
 #endif
-kernel_point(const PolygonMesh& pm,
+kernel_point(const FaceRange face_range,
+             const PolygonMesh& pm,
              const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  bool require_strictly_inside = choose_parameter(get_parameter(np, internal_np::require_strictly_inside), true);
-
   std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3> res;
   PolygonMesh k;
-  internal::kernel(pm, k, np, parameters::default_values(), true, &res);
+  internal::kernel(face_range, pm, k, np, parameters::default_values(), true, &res);
 
   // If the kernel is empty or degenerated with strictly inside option, return empty
-  if(is_empty(k) || (require_strictly_inside && ((vertices(k).size()<3) || (faces(k).size()==1))))
+  if(is_empty(k))
     return std::nullopt;
 
   return res;
+}
+
+/**
+  * \ingroup PMP_corefinement_grp
+  *
+  * \brief returns a point inside the kernel of the given polygon mesh.
+  *
+  * The kernel is defined as the convex polyhedron that is the intersection
+  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of the input mesh.
+  *
+  * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
+  *
+  * \return `std::nullopt` if and only if the kernel is empty.
+  */
+template <typename PolygonMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::optional<Point_3>
+#else
+std::optional<typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type::Point_3>
+#endif
+kernel_point(const PolygonMesh& pm,
+             const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return kernel_point(faces(pm), pm, np);
 }
 
 

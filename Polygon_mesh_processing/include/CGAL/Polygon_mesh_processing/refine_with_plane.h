@@ -203,6 +203,7 @@ struct Orthogonal_cut_plane_traits
  *       \warning Map parameters are disabled when this parameter is set to `true`.}
  *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`false`}
+ *      \cgalParamExtra{convex specialization is only used if `edge_is_constrained_map`, `edge_is_marked_map` and `vertex_oriented_side_map` are unused.}
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{vertex_point_map}

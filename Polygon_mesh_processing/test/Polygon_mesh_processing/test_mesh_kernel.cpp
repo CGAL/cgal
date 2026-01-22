@@ -28,13 +28,12 @@ rotation(double a, double b, double c)
 
 template<class Mesh>
 void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, std::size_t expected_nb_edges, std::size_t expected_nb_faces, double expected_volume = 0){
-  assert(PMP::is_kernel_empty(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) == (expected_nb_vertices == 0));
-  assert((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true)) != std::nullopt) == (expected_nb_vertices >= 3 && expected_nb_faces != 1));
-  assert((PMP::kernel_point(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true).require_strictly_inside(false)) != std::nullopt) == (expected_nb_vertices != 0));
+  assert(PMP::is_kernel_empty(input, CGAL::parameters::allow_open_input(true)) == (expected_nb_vertices == 0));
+  assert((PMP::kernel_point(input, CGAL::parameters::allow_open_input(true)) != std::nullopt) == (expected_nb_vertices != 0));
 
   Mesh kernel;
   make_hexahedron(PMP::bbox(input), kernel);
-  PMP::kernel(input, kernel, CGAL::parameters::allow_non_manifold_non_watertight_input(true).use_bounding_box_filtering(false).shuffle_planes(false));
+  PMP::kernel(faces(input), input, kernel, CGAL::parameters::allow_open_input(true).use_bounding_box_filtering(false).shuffle_planes(false));
 #ifdef TEST_MESH_KERNEL_VERBOSE
   std::cout << "nb of vertices: " << vertices(kernel).size() << " ( " << expected_nb_vertices << " expected)" << std::endl
             << "nb of edges: " << edges(kernel).size() << " ( " << expected_nb_edges << " expected)" << std::endl
@@ -52,7 +51,7 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
   }
 
   clear(kernel);
-  kernel = PMP::kernel(input, CGAL::parameters::allow_non_manifold_non_watertight_input(true));
+  PMP::kernel(input, kernel, CGAL::parameters::allow_open_input(true));
   std::ofstream("input.off") << input; std::ofstream("output.off") << kernel;
 #ifdef TEST_MESH_KERNEL_VERBOSE
   std::cout << "nb of vertices: " << vertices(kernel).size() << " ( " << expected_nb_vertices << " expected)" << std::endl
