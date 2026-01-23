@@ -389,6 +389,8 @@ public:
      * - if \f$\sigma\f$ is SECONDARY, this cycle is null
      * - if \f$\sigma\f$ is CRITICAL, \f$z_q(\sigma)\f$ matches \f$g(\sigma)\f$ ; if the HDVF is perfect \f$z_q(\sigma)\f$ hence provides the homology generator associated to \f$\sigma\f$).
      *
+     * Moreover, in `HDVF_persistent`, `z` function provides persistent homology generators.
+     *
      * \param sigma Cell index.
      * \param q Cell dimension.
      */
@@ -422,6 +424,8 @@ public:
      * - if \f$\sigma\f$ is SECONDARY, \f$z^q(\sigma)\f$ is a cochain of PRIMARY cells ; if the HDVF is perfect \f$z^q(\sigma)\f$ is a cocycle (the unique cocycle containing \f$\sigma\f$ and PRIMARY cells).
      * - if \f$\sigma\f$ is PRIMARY, this cocycle is null
      * - if \f$\sigma\f$ is CRITICAL, \f$z^q(\sigma)\f$ matches \f$f^*(\sigma)\f$ ; if the HDVF is perfect \f$z^q(\sigma)\f$ hence provides the cohomology generator associated to \f$\sigma\f$).
+     *
+     * Moreover, in `HDVF_persistent`, `co_z` function provides persistent cohomology generators.
      *
      * \param sigma Cell index.
      * \param q Cell dimension.

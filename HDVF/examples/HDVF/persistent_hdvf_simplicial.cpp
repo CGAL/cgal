@@ -30,32 +30,32 @@ typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
 
 int main(int argc, char **argv)
 {
-    
+
     std::string filename;
     if (argc > 2) std::cout << "usage: persistent_hdvf_simplicial off_file" << std::endl;
     else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
     else filename = argv[1];
-    
+
     // Load cub object
     HDVF::Mesh_object_io<Traits> mesh ;
     mesh.read_off(filename);
-    
+
     mesh.print_infos();
-    
+
     // Build simplicial chain complex
     Complex complex(mesh);
-    
+
     std::cout << complex;
-    
+
     // -- First: Define the filtration function
-    
+
     //    /* ---- Example 1 : build a lower star filtration "slicing" the object according to the "z" coordinate of vertices
     //     -> GeometricChainComplex required in this case
     //     */
     //
     //    Compute_z compute_z = Kernel().compute_z_3_object() ;
     //    std::function<Degree(size_t)> f(HDVF::degree_function<Complex,Point_3>(complex, compute_z));
-    
+
     //    /* ---- Example 2 : build a lower star filtration "slicing" the object according to "x+y" value for each vertex
     //     -> GeometricChainComplex required in this case
     //     */
@@ -66,32 +66,31 @@ int main(int argc, char **argv)
     //        return X[0]+X[1];
     //    } ;
     //    std::function<Degree(size_t)> f(HDVF::degree_function<Complex,Point_3>(complex, sample_f));
-    
+
     /* ---- Example 3 : build a lower star filtration "slicing" the object according to the index of vertices (we can imagine any other filtration that does not depend on the geometry (e.g. color of vertices...)
      -> AbstractChainComplex in this case
      */
-    std::function<Degree(size_t)> f = [&complex](size_t i)
-    {
+    std::function<Degree(size_t)> f = [&complex](size_t i) {
         return Degree(i) ;
     } ;
-    
+
     // -- Second: build the associated lower star filtration
     FiltrationType filtration(complex, f);
-    
-    
+
+
     // Build empty persistent HDVF (with vtk export activated)
     HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
-    
+
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
-    
+
     // Output HDVF to console
     hdvf.write_matrices();
     hdvf.write_reduction();
     std::cout << hdvf ;
-    
+
     // Output HDVF to vtk
     CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
-    
+
     return 0;
 }

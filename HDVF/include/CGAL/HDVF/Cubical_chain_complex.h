@@ -240,9 +240,19 @@ public:
      * \param i "basis index" of a cell.
      * \param q dimension of the cell.
      * \returns Khalimsky coordinates of the cell.
+     *
+     * \exception Incoherent_dimension Raises a `%std::runtime_error` exception if `q` is incoherent with the range of dimensions in the complex.
+     *
+     * \exception Incorrect_index Raises a `%std::invalid_argument` exception if `i` does not belong to the range of cells index in dimension `q`.
      */
     std::vector<size_t> index_to_cell (size_t i, int q) const
     {
+        if ((q<0) || (q > _dim))
+            throw std::runtime_error("index_to_cell: cell dimension "+std::to_string(q)+" incompatible with the complex dimensions");
+
+        if (i >= number_of_cells(q))
+            throw std::invalid_argument("index_to_cell: index "+std::to_string(i)+" out of the range of cell's indices in dimension "+std::to_string(q));
+
         const size_t id_bool(_base2bool.at(q).at(i));
         return bindex_to_cell(id_bool);
     }
@@ -253,15 +263,23 @@ public:
      *
      * \param cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
      * \returns The "basis index" of the cell among \f$q\f$-cells.
+     *
+     * \exception Cell_of_invalid_dimension Raises a `%std::invalid_argument` if the dimension of  Khalimsky coordinates of the `cell` differs from the dimension of the complex.
      */
     size_t cell_to_index (std::vector<size_t> cell) const
     {
+        if (cell.size() != _dim)
+            throw std::invalid_argument("cell_to_index: dimension of Khalimsky coordinates provided  "+std::to_string(cell.size())+" incompatible with a complex of dimension "+std::to_string(_dim));
+
         const size_t id_bool(cell_to_bindex(cell));
         const int q(dimension(cell));
         return (_bool2base.at(q)).at(id_bool);
     }
 
-    /** \brief Returns the dimension of a cell (given in Khalimsky coordinates). */
+    /** \brief Returns the dimension of a cell (given in Khalimsky coordinates).
+     *
+     * \exception Cell_of_invalid_dimension Raises a `%std::invalid_argument` if the dimension of  Khalimsky coordinates of the `cell` differs from the dimension of the complex.
+     */
     int dimension(const std::vector<size_t>& cell) const;
 
     /** \brief Returns Khalimsky coordinates of the cell of Boolean index i.
@@ -270,10 +288,12 @@ public:
      *
      * \param i The "Boolean" index of a cell.
      * \returns Khalimsky coordinates of the cell.
+     *
+     * \exception Index_out_of_range Raises a `%std::invalid_argument` if the index `i` is larger than the Boolean vector encoding the complex.
      */
     std::vector<size_t> bindex_to_cell (size_t i) const {
         if (i > _P[_dim])
-            throw std::invalid_argument("Index exceeds the size of Boolean vector");
+            throw std::invalid_argument("bindex_to_cell: index exceeds the size of Boolean vector");
         std::vector<size_t> khal(_dim);
         for (size_t k = 0; k < _dim; ++k) {
             khal[k] = i % _size_bb[k];
@@ -288,6 +308,10 @@ public:
      *
      * \param cell Khalimsky coordinates of a cell.
      * \returns The "Boolean" index of the cell.
+     *
+     * \exception Cell_invalid_dimension Raises a `%std::invalid_argument` if  the dimension of`cell` does not match the dimension of the complex.
+     *
+     * \exception Index_out_of_range Raises a `%std::out_of_range` error if the cell index computed is out of the range of cells Boolean indices in the complex.
      */
     size_t cell_to_bindex (std::vector<size_t> cell) const {
         if (cell.size() != _dim) {
@@ -327,10 +351,14 @@ public:
      *
      * \param q Dimension of the boundary matrix (ie.\ columns will contain the boundary of dimension q cells).
      *
-     * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
+     * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension `q`.
+     *
+     * \exception Dimension_out_of_range Raises a `%std::out_of_range` exception if `q` is out of the range of the complex dimensions.
      */
     const Column_matrix & boundary_matrix(int q) const
     {
+        if ((q<0) || (q>_dim))
+            throw std::out_of_range("boundary_matrix: dimension q out of range");
         return _d.at(q) ;
     }
 
@@ -344,9 +372,19 @@ public:
      * \param q Dimension of the cell.
      *
      * \return A vector of 0-cell indices.
+     *
+     * \exception Incoherent_dimension Raises a `%std::runtime_error` exception if `q` is incoherent with the range of dimensions in the complex.
+     *
+     * \exception Incorrect_index Raises a `%std::invalid_argument` exception if `id_cell` does not belong to the range of cells index in dimension `q`.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
+        if ((q<0) || (q > _dim))
+            throw std::runtime_error("bottom_faces: cell dimension "+std::to_string(q)+" incompatible with the complex dimensions");
+
+        if (id_cell >= number_of_cells(q))
+            throw std::invalid_argument("bottom_faces: index "+std::to_string(id_cell)+" out of the range of cell's indices in dimension "+std::to_string(q));
+
         // Khalimsky coordinates of the cell
         const std::vector<size_t> coords(bindex_to_cell(_base2bool.at(q).at(id_cell))) ;
         return khal_to_verts(coords) ;
@@ -443,6 +481,7 @@ public:
 
     Point point(size_t i) const
     {
+        
         return _points.at(i);
     }
 
@@ -997,6 +1036,9 @@ void Cubical_chain_complex<CoefficientRing, Traits>::compute_d(int dim)  {
 // dimension implementation
 template<typename CoefficientRing, typename Traits>
 int Cubical_chain_complex<CoefficientRing,Traits>::dimension(const std::vector<size_t>& cell) const {
+    if (cell.size() != _dim)
+        throw std::invalid_argument("dimension: dimension of Khalimsky coordinates provided  "+std::to_string(cell.size())+" incompatible with the complex dimension");
+
     int dimension = 0;
     for (size_t index : cell) {
         if (index % 2 == 1) { // Un index impair indique une dimension plus élevée
