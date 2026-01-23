@@ -693,7 +693,7 @@ public:
   void init_alpha_data_structure(const double alpha_value,
                                  const double offset_value)
   {
-    Oracle oracle = m_wrapper.oracle();
+    Oracle& oracle = m_wrapper.oracle();
     oracle.clear();
 
     std::vector<Segment_2> segments;
