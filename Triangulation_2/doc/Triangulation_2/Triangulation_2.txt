@@ -10,39 +10,38 @@ namespace CGAL {
 \image html tr1dt1.svg
 \image latex tr1dt1.png
 
-This chapter describes the two-dimensional triangulations
-of \cgal.
-Section \ref Section_2D_Triangulations_Definitions recalls the
+This chapter describes the two-dimensional triangulations in the following sections
+- \ref Section_2D_Triangulations_Definitions recalls the
 main definitions about triangulations.
-Section \ref Section_2D_Triangulations_Representation discusses
+- \ref Section_2D_Triangulations_Representation discusses
 the way two-dimensional triangulations are represented in \cgal.
-Section \ref Section_2D_Triangulations_Software_Design presents
+- \ref Section_2D_Triangulations_Software_Design presents
 the overall software
 design of the 2D triangulations package.
 The next sections present the different two dimensional triangulations classes
 available in \cgal:
-basic triangulations (Section \ref Section_2D_Triangulations_Basic),
-Delaunay triangulations
-(Section \ref Section_2D_Triangulations_Delaunay),
-regular triangulations
-(Section \ref Section_2D_Triangulations_Regular),
-constrained triangulations
-(Section \ref Section_2D_Triangulations_Constrained),
-and constrained Delaunay triangulations
-(Section \ref Section_2D_Triangulations_Constrained_Delaunay).
-Section \ref Section_2D_Triangulations_Constrained_Plus
+- \ref Section_2D_Triangulations_Basic : Basic triangulations
+- \ref Section_2D_Triangulations_Delaunay : Delaunay triangulations
+- \ref Section_2D_Triangulations_Regular : Regular triangulations
+- \ref Section_2D_Triangulations_Constrained : Constrained triangulations
+- \ref Section_2D_Triangulations_Constrained_Delaunay : Constrained Delaunay triangulations
+- \ref Section_2D_Triangulations_Constrained_Plus :
 describes a class which implements a constrained or
 constrained Delaunay triangulation with
 an additional data structure
 to describe how the constraints are refined
 by the edges of the triangulations.
-Section \ref Section_2D_Triangulations_Hierarchy
+- \ref Section_2D_Triangulations_Hierarchy :
 describes a hierarchical data structure for
 fast point location queries.
-At last, Section \ref Section_2D_Triangulations_Flexibility
+- \ref Section_2D_Triangulations_Flexibility :
 explains how the user can benefit from the flexibility
 of \cgal triangulations using customized classes for faces
 and vertices.
+
+\section Section_2D_Triangulations_GettingStarted Getting Started With Triangulations
+
+If you encounter \cgal triangulations for the first time, you maybe want to start with the tutorial \ref Tutorial_Triangulation_2.
 
 \section Section_2D_Triangulations_Definitions Definitions
 

@@ -17,6 +17,9 @@ User Manual.
   define what primitives are used by a geometric algorithm, the
   notions of \em concept and \em model.
 
+
+- \subpage Tutorial_Triangulation_2
+
 - \subpage tuto_reconstruction
 
 - \subpage tuto_gis
