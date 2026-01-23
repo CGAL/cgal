@@ -690,9 +690,12 @@ public:
     return Point_2(x,y);
   }
 
-  void init_alpha_data_structure(const double alpha_value,
+  bool init_alpha_data_structure(const double alpha_value,
                                  const double offset_value)
   {
+    if (m_input.empty())
+      return false;
+
     Oracle& oracle = m_wrapper.oracle();
     oracle.clear();
 
@@ -712,7 +715,7 @@ public:
 
     oracle.add_segments(segments);
 
-    m_wrapper.initialize(alpha_value, offset_value, false /*refining*/);
+    return m_wrapper.initialize(alpha_value, offset_value, false /*refining*/);
   }
 
   void alpha_flood_fill(int max_iter = -1)

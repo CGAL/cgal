@@ -181,7 +181,7 @@
   </action>
   <action name="actionAlphaWrap">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Alpha Wrap</string>
@@ -225,7 +225,7 @@
   </action>
   <action name="actionExplodeInput">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Explode Input</string>
@@ -350,7 +350,7 @@
   </action>
   <action name="actionSmoothInput">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Smooth Input</string>

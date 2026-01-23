@@ -233,9 +233,6 @@ void MainWindow::open(QString filename)
   QApplication::restoreOverrideCursor();
   if(!success)
     return;
-  this->actionExplodeInput->setEnabled(true);
-  this->actionSmoothInput->setEnabled(true);
-  this->actionAlphaWrap->setEnabled(true);
   addToRecentFiles(filename);
   update_viewer_camera();
   update();
@@ -301,9 +298,6 @@ void MainWindow::on_actionSaveInput_triggered()
 void MainWindow::on_actionClear_triggered()
 {
   m_scene->clear();
-  this->actionExplodeInput->setEnabled(false);
-  this->actionSmoothInput->setEnabled(false);
-  this->actionAlphaWrap->setEnabled(false);
   resetAction();
   update();
 }
@@ -338,7 +332,6 @@ void MainWindow::on_actionExplodeInput_triggered()
   m_scene->get_wrapper().clear();
   m_scene->explode_input();
   resetAction();
-  update_viewer_camera();
   update();
 }
 
@@ -354,7 +347,8 @@ void MainWindow::on_actionSmoothInput_triggered()
 void MainWindow::on_actionAlphaWrap_triggered()
 {
   AlphaWrapOptions dialog_box_alpha_wrap(this, m_scene->get_alpha(), m_scene->get_offset(),
-                                         m_scene->get_is_alpha_relative(), m_scene->get_is_offset_relative(),
+                                         m_scene->get_is_alpha_relative(),
+                                         m_scene->get_is_offset_relative(),
                                          m_scene->get_is_step_by_step());
   if(dialog_box_alpha_wrap.exec() != QDialog::Accepted)
     return;
@@ -379,16 +373,19 @@ void MainWindow::on_actionAlphaWrap_triggered()
   }
 
   timer.start();
-  m_scene->init_alpha_data_structure(alpha_value, offset_value);
-  if(!dialog_box_alpha_wrap.is_step_by_step()) {
-    m_scene->alpha_flood_fill();
+  if(m_scene->init_alpha_data_structure(alpha_value, offset_value)) {
+    if(!dialog_box_alpha_wrap.is_step_by_step()) {
+      m_scene->alpha_flood_fill();
+    }
+    m_scene->extract_pslg_2_soup();
+    setStepByStepAction(dialog_box_alpha_wrap.is_step_by_step());
+    update_viewer_camera();
+    update();
+    timer.stop();
+    update_stats(m_scene->get_wrapper());
+  } else {
+    timer.stop();
   }
-  timer.stop();
-  m_scene->extract_pslg_2_soup();
-  setStepByStepAction(dialog_box_alpha_wrap.is_step_by_step());
-  update_viewer_camera();
-  update();
-  update_stats(m_scene->get_wrapper());
 }
 
 void MainWindow::on_actionNextStep_triggered()
