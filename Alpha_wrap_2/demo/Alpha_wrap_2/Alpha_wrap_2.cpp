@@ -1,5 +1,3 @@
-// #define CGAL_AW2_DEBUG_PP
-
 #include "Alpha_wrap_2_options.h"
 #include "Screenshot_options.h"
 #include "scene.h"
