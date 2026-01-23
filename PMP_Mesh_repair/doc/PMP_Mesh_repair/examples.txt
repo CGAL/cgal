@@ -10,3 +10,5 @@
 \example Polygon_mesh_processing/cc_compatible_orientations.cpp
 \example Polygon_mesh_processing/orient_polygon_soup_example.cpp
 */
+
+namespace PMP = CGAL::Polygon_mesh_processing;

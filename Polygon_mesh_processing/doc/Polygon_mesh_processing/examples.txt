@@ -1,5 +1,4 @@
 /*!
-
 \example Polygon_mesh_processing/polyhedral_envelope.cpp
 \example Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp
 \example Polygon_mesh_processing/polyhedral_envelope_mesh_containment.cpp
@@ -20,3 +19,5 @@
 \example Polygon_mesh_processing/sample_example.cpp
 \example Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp
 */
+
+namespace PMP = CGAL::Polygon_mesh_processing;

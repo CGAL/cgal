@@ -17,3 +17,5 @@
 \example Polygon_mesh_processing/acvd_remeshing_example.cpp
 
 */
+
+namespace PMP = CGAL::Polygon_mesh_processing;

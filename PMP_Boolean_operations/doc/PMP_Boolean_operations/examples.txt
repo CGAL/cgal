@@ -10,3 +10,5 @@
 \example Polygon_mesh_processing/soup_autorefinement.cpp
 \example Polygon_mesh_processing/snap_polygon_soup.cpp
 */
+
+namespace PMP = CGAL::Polygon_mesh_processing;
