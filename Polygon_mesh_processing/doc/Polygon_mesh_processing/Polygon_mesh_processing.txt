@@ -1479,7 +1479,7 @@ supervision of Sébastien Valette and Sébastien Loriot, who later finalized the
 The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
-The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
+The `apply_iterative_snap_rounding` option for autorefinement was developed by Sylvain Lazard and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 2025.
 
 */
 } /* namespace CGAL */
