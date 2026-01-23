@@ -1,9 +1,5 @@
 /// \defgroup PkgPMPRemeshingRef Reference Manual
 
-/// \defgroup PMP_meshing_grp Meshing
-/// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
-/// \ingroup PkgPMPRemeshingRef
-
 /// \defgroup PMP_combi_remeshing_grp Combinatorial Remeshing
 /// Functions to modify the combinatorial structure of a polygon mesh.
 /// \ingroup PkgPMPRemeshingRef
@@ -18,6 +14,10 @@
 
 /// \defgroup PMP_planar_remeshing_grp Planar Patch Simplification
 /// Functions to simplify planar patches of a polygon mesh.
+/// \ingroup PkgPMPRemeshingRef
+
+/// \defgroup PMP_meshing_grp Meshing
+/// Generic functions to mesh and remesh polygon meshes.
 /// \ingroup PkgPMPRemeshingRef
 
 /*!

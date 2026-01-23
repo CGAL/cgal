@@ -2,49 +2,42 @@
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_predicates_grp Predicates
+/// Classes and functions that answer queries about a polygon mesh or its elements.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_keep_connected_components_grp Connected Components
 /// Two faces are in the same <em>connected component</em> if there is a path
 /// of adjacent faces such that all edges between two consecutive faces of the
 /// path are not marked as constrained.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_corrected_curvatures_grp Corrected Curvature Computation
-/// Functions to compute the corrected curvatures of a polygon mesh.
-/// \ingroup PkgPolygonMeshProcessingRef
-
-/// \defgroup PMP_normal_grp Normal Computation
-/// Functions to compute unit normals for individual/all vertices or faces.
+/// \defgroup PMP_locate_grp Location Functions
+/// Functions to locate points on a mesh, and manipulate such locations.
 /// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_measure_grp Geometric Measure Functions
 /// Functions to compute discrete curvatures, lengths of edges and borders, areas of faces and patches, volumes of closed meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_orientation_grp Orientation Functions
-///  Functions to compute or change the orientation of faces and surfaces.
+/// \defgroup PMP_normal_grp Normal Computation
+/// Functions to compute unit normals for individual/all vertices or faces.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_intersection_grp Intersection Functions
-/// Functions to test if there are self intersections, and to report faces that do intersect.
-/// \ingroup PkgPolygonMeshProcessingRef
-
-/// \defgroup PMP_distance_grp Distance Functions
-/// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
+/// \defgroup PMP_corrected_curvatures_grp Corrected Curvature Computation
+/// Functions to compute the corrected curvatures of a polygon mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_detect_features_grp Feature Detection Functions
 /// Functions to detect sharp edges and surface patches of polygon meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_locate_grp Location Functions
-/// Functions to locate points on a mesh, and manipulate such locations.
+/// \defgroup PMP_distance_grp Distance Functions
+/// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 
-/// \defgroup PMP_predicates_grp Predicates
-/// Classes and functions that answer queries about a polygon mesh or its elements.
-/// \ingroup PkgPolygonMeshProcessingRef
-
-/// \defgroup PMP_IO_grp I/O Functions
+/// \defgroup PMP_intersection_grp Intersection Functions
+/// Functions to test if there are self intersections, and to report faces that do intersect.
 /// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_misc_grp Miscellaneous Functions
