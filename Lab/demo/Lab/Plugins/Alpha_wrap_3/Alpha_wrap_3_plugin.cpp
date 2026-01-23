@@ -738,7 +738,7 @@ public Q_SLOTS:
     if(wrap_points)
       oracle.add_points(points);
 
-    if(!oracle.do_call())
+    if(oracle.empty())
     {
       print_message("Warning: empty input - nothing to wrap");
       QApplication::restoreOverrideCursor();

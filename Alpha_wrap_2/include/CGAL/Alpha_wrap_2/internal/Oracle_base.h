@@ -143,8 +143,7 @@ public:
   BaseOracle& base() { return static_cast<BaseOracle&>(*this); }
   const BaseOracle& base() const { return static_cast<const BaseOracle&>(*this); }
 
-  bool empty() const { return m_tree_ptr->empty(); }
-  bool do_call() const { return (!empty() || base().do_call()); }
+  bool empty() const { return m_tree_ptr->empty() && base().empty(); }
 
   void clear()
   {
@@ -155,14 +154,14 @@ public:
 public:
   typename AABB_tree::Bounding_box bbox() const
   {
-    CGAL_precondition(do_call());
+    CGAL_precondition(!empty());
 
     typename AABB_tree::Bounding_box bb;
 
-    if(base().do_call())
+    if(!base().empty())
       bb += base().bbox();
 
-    if(!empty())
+    if(!m_tree_ptr->empty())
       bb += tree().bbox();
 
     return bb;
@@ -171,12 +170,12 @@ public:
   template <typename T>
   bool do_intersect(const T& t) const
   {
-    CGAL_precondition(do_call());
+    CGAL_precondition(!empty());
 
-    if(base().do_call() && base().do_intersect(t))
+    if(!base().empty() && base().do_intersect(t))
       return true;
 
-    if(!empty())
+    if(!m_tree_ptr->empty())
       return AABB_helper::do_intersect(t, tree());
 
     return false;
@@ -184,11 +183,11 @@ public:
 
   FT squared_distance(const Point_2& p) const
   {
-    CGAL_precondition(do_call());
+    CGAL_precondition(!empty());
 
-    if(base().do_call())
+    if(!base().empty())
     {
-      if(!empty()) // both non empty
+      if(!m_tree_ptr->empty())
       {
         const FT base_sqd = base().squared_distance(p);
         // @speed could do a smarter traversal, no need to search deeper than the current best
@@ -208,11 +207,11 @@ public:
 
   Point_2 closest_point(const Point_2& p) const
   {
-    CGAL_precondition(do_call());
+    CGAL_precondition(!empty());
 
-    if(base().do_call())
+    if(!base().empty())
     {
-      if(!empty()) // both non empty
+      if(!m_tree_ptr->empty())
       {
         const Point_2 base_c = base().closest_point(p);
         // @speed could do a smarter traversal, no need to search deeper than the current best
@@ -235,11 +234,11 @@ public:
                           const FT offset_size,
                           const FT intersection_precision) const
   {
-    CGAL_precondition(do_call());
+    CGAL_precondition(!empty());
 
-    if(base().do_call())
+    if(!base().empty())
     {
-      if(!empty()) // both non empty
+      if(!m_tree_ptr->empty())
       {
         Point_2 base_o;
         bool base_b = base().first_intersection(p, q, base_o, offset_size, intersection_precision);
@@ -318,8 +317,6 @@ public:
   const AABB_tree& tree() const { return *m_tree_ptr; }
 
   bool empty() const { return m_tree_ptr->empty(); }
-  bool do_call() const { return !empty(); }
-
   void clear() { m_tree_ptr->clear(); }
 
 public:
