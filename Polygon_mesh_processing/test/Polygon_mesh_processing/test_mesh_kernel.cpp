@@ -51,9 +51,7 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
 
   clear(kernel);
   using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
-  // auto f2f_map = boost::make_assiocative_property_map(kernel.template add_property_map<face_descriptor, face_descriptor>("f:f", boost::graph_traits<Mesh>::null_face()));
   std::map<face_descriptor, face_descriptor> storage;
-  // auto f2f_map
   boost::associative_property_map< std::map<face_descriptor, face_descriptor> > f2f_map(storage);
   auto bb = CGAL::Polygon_mesh_processing::bbox(input);
   bb = CGAL::Bbox_3(bb.xmin()-3,bb.ymin()-3,bb.zmin()-3,bb.xmax()+3,bb.ymax()+3,bb.zmax()+3);
@@ -67,6 +65,8 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
   assert(vertices(kernel).size() == expected_nb_vertices);
   assert(edges(kernel).size()    == expected_nb_edges);
   assert(faces(kernel).size()    == expected_nb_faces);
+  for(face_descriptor f: faces(kernel))
+    assert(get(f2f_map, f) != boost::graph_traits<Mesh>::null_face());
   if(expected_volume != 0){
     PMP::triangulate_faces(kernel);
 #ifdef TEST_MESH_KERNEL_VERBOSE
@@ -74,8 +74,6 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
 #endif
     assert(PMP::volume(kernel) > expected_volume * 0.99 && PMP::volume(kernel) < expected_volume * 1.01);
   }
-  // for(auto f: faces(kernel))
-    // assert(get(f2f_map, f) != boost::graph_traits<Mesh>::null_face());
 }
 
 template<class Mesh, class K>

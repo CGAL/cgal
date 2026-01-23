@@ -255,20 +255,20 @@ kernel(const FaceRange &face_range,
   * \brief computes the kernel of the given faces of a polygon mesh.
   *
   * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
-  * of the input mesh. The kernel may empty or degenerate to a lower-dimensional convex shape.
+  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
+  * of the input mesh. The kernel may be empty or degenerate to a lower-dimensional convex shape.
   *
   * In the implementation, a starting shape is iteratively clipped by the faces.
   * By default, the bounding box of the input mesh is used as starting shape.
   * However, the parameter `out` may be non-empty: In this case, it must be a convex polyhedron and will be used as starting shape.
   *
-  * The algorithm assumes that the input mesh is closed as to perform a quick exit if the genus is non-zero.
+  * The algorithm assumes that the faces of the input range form a closed surface as to perform a quick exit if the genus is non-zero.
   * This precondition can be relaxed using the named parameter `allow_open_input`.
   * In that case, the resulting kernel may contain faces of the starting shape.
   *
   * In case of a degenerate kernel:
   * <ul>
-  *   <li>If the dimension of the kernel is `2` (i.e., the kernel is a convex 3D polygon), the output mesh consists of a single face.</li>
+  *   <li>If the dimension of the kernel is `2` (i.e., the kernel is a convex polygon in 3D), the output mesh consists of a single face.</li>
   *   <li>If the dimension of the kernel is `1` (i.e., the kernel is a line segment), the output mesh consists two isolated vertices.</li>
   *   <li>If the dimension of the kernel is `0` (i.e., the kernel is a single point), the output mesh contains one isolated vertex.</li>
   * </ul>
@@ -349,7 +349,8 @@ kernel(const FaceRange &face_range,
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
   *   \cgalParamNBegin{face_to_face_map}
-  *     \cgalParamDescription{a property map storing, for each face of the output mesh, a face of the input mesh that defined the clipping plane that created it}
+  *     \cgalParamDescription{a property map storing, for each face of the output mesh, a face of the input mesh that defined the clipping plane that created it
+                              (or `boost::graph_traits<PolygonMeshOut>::%null_face` if the face belongs to the starting shape)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with
   *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
   *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
@@ -377,8 +378,8 @@ kernel(const FaceRange face_range,
   * \brief computes the kernel of the given polygon mesh.
   *
   * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the half-spaces on the negative side of the oriented planes defined by the faces
-  * of the input mesh. The kernel may empty or degenerate to a lower-dimensional convex shape.
+  * of all the halfspaces on the negative side of the oriented planes defined by the faces
+  * of the input mesh. The kernel may be empty or degenerate to a lower-dimensional convex shape.
   *
   * In the implementation, a starting shape is iteratively clipped by the faces.
   * By default, the bounding box of the input mesh is used as starting shape.
@@ -390,7 +391,7 @@ kernel(const FaceRange face_range,
   *
   * In case of a degenerate kernel:
   * <ul>
-  *   <li>If the dimension of the kernel is `2` (i.e., the kernel is a convex 3D polygon), the output mesh consists of a single face.</li>
+  *   <li>If the dimension of the kernel is `2` (i.e., the kernel is a convex polygon in 3D), the output mesh consists of a single face.</li>
   *   <li>If the dimension of the kernel is `1` (i.e., the kernel is a line segment), the output mesh consists two isolated vertices.</li>
   *   <li>If the dimension of the kernel is `0` (i.e., the kernel is a single point), the output mesh contains one isolated vertex.</li>
   * </ul>
@@ -469,7 +470,8 @@ kernel(const FaceRange face_range,
   *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in PolygonMesh. }
   *   \cgalParamNEnd
   *   \cgalParamNBegin{face_to_face_map}
-  *     \cgalParamDescription{a property map storing, for each face of the output mesh, a face of the input mesh that defined the clipping plane that created it}
+  *     \cgalParamDescription{a property map storing, for each face of the output mesh, a face of the input mesh that defined the clipping plane that created it
+                              (or `boost::graph_traits<PolygonMeshOut>::%null_face` if the face belongs to the starting shape)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with
   *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
   *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
@@ -495,7 +497,7 @@ kernel(const PolygonMesh& pm,
   * \brief indicates whether the kernel of the given faces of a polygon mesh is empty.
   *
   * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
   * of the input mesh.
   *
   * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
@@ -518,7 +520,7 @@ bool is_kernel_empty(const FaceRange face_range,
   * \brief indicates whether the kernel of the given polygon mesh is empty.
   *
   * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
   * of the input mesh.
   *
   * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
@@ -537,7 +539,7 @@ bool is_kernel_empty(const PolygonMesh& pm,
   * \brief returns a point inside the kernel of the given faces of a polygon mesh.
   *
   * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
   * of the input mesh.
   *
   * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.
@@ -573,7 +575,7 @@ kernel_point(const FaceRange face_range,
   * \brief returns a point inside the kernel of the given polygon mesh.
   *
   * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the half-spaces on the negative side of the oriented planes defined by a range of faces
+  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
   * of the input mesh.
   *
   * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive desription of the parameters.

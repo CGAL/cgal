@@ -35,7 +35,8 @@ template <class PolygonMesh, class NamedParameters =  parameters::Default_named_
 typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
 find_crossing_edge(PolygonMesh& pm,
                    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
-                   const NamedParameters& np = parameters::default_values())
+                   const NamedParameters& np = parameters::default_values(),
+                   typename boost::graph_traits<PolygonMesh>::face_descriptor plane_fd = boost::graph_traits<PolygonMesh>::null_face())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -43,6 +44,7 @@ find_crossing_edge(PolygonMesh& pm,
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
   using vertex_descriptor = typename BGT::vertex_descriptor;
+  using face_descriptor = typename BGT::face_descriptor;
 
   // np typedefs
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -113,9 +115,24 @@ find_crossing_edge(PolygonMesh& pm,
         break;
       }
     }
+
     // Nothing on negative side
-    if(no_positive_side)
+    if(no_positive_side){
+      if constexpr(!parameters::is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value){
+        // Search a coplanar face
+        for(auto h: halfedges_around_target(trg ,pm)){
+          Oriented_side side_src = oriented_side(plane, get(vpm, source(h, pm)));
+          Oriented_side side_next_target = oriented_side(plane, get(vpm, target(next(h, pm), pm)));
+          if(side_src == ON_ORIENTED_BOUNDARY && side_next_target == ON_ORIENTED_BOUNDARY){
+            // Coplanar face
+            using Default_f2f_map = boost::associative_property_map<std::map<face_descriptor, face_descriptor>>;
+            auto f2f = choose_parameter<Default_f2f_map>(get_parameter(np, internal_np::face_to_face_map));
+            put(f2f, face(h, pm), plane_fd);
+          }
+        }
+      }
       return BGT::null_halfedge();
+    }
   } else if(direction_to_zero==NEGATIVE){
     // Orient the edge from positive to negative
     std::swap(src, trg);
@@ -143,6 +160,7 @@ refine_convex_with_plane(PolygonMesh& pm,
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
+  using face_descriptor = typename BGT::face_descriptor;
   using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
@@ -152,6 +170,10 @@ refine_convex_with_plane(PolygonMesh& pm,
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  using Default_f2f_map = boost::associative_property_map<std::map<face_descriptor, face_descriptor>>;
+  constexpr bool is_f2f_map = !parameters::is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value;
+  auto f2f = choose_parameter<Default_f2f_map>(get_parameter(np, internal_np::face_to_face_map));
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -229,6 +251,9 @@ refine_convex_with_plane(PolygonMesh& pm,
     // Split the face
     visitor.before_subface_created(pm);
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
+    if constexpr(is_f2f_map)
+      put(f2f, face(opposite(sh, pm), pm), get(f2f, face(sh, pm)));
+
     visitor.after_subface_created(face(h, pm), pm);
     boundaries.emplace_back(sh);
     set_halfedge(target(sh, pm), sh, pm);
@@ -575,7 +600,7 @@ clip_convex(PolygonMesh& pm,
   }
 
   // Dimension == 3
-  halfedge_descriptor he = find_crossing_edge(pm, plane, np);
+  halfedge_descriptor he = find_crossing_edge(pm, plane, np, plane_fd);
   // Early exit
   if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
