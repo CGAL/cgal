@@ -80,7 +80,7 @@ bool test(const std::string& filepath,
     PMP::internal::assign_tolerance_with_local_edge_length_bound(border, tol_map, def_tol, mesh);
 
     PMP::internal::snap_non_conformal(border, mesh, tol_map, border, mesh, tol_map, true /*self snapping*/,
-                                      CGAL::parameters::all_default(), CGAL::parameters::all_default());
+                                      CGAL::parameters::default_values(), CGAL::parameters::default_values());
 
     PMP::stitch_boundary_cycle(hd, mesh);
   }
@@ -92,7 +92,7 @@ bool test(const std::string& filepath,
 
   PMP::internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tol_map, def_tol, mesh);
   PMP::internal::snap_non_conformal(border_vertices, mesh, tol_map, border_vertices, mesh, tol_map, true /*self snapping*/,
-                                    CGAL::parameters::all_default(), CGAL::parameters::all_default());
+                                    CGAL::parameters::default_values(), CGAL::parameters::default_values());
   CGAL_assertion(is_valid_polygon_mesh(mesh));
 
   PMP::stitch_borders(mesh);
