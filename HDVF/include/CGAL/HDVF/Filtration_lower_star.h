@@ -24,40 +24,32 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
-/* Standard functions for lower star filtration */
-/* Degree = double */
-
-//std::function<double(size_t)> deg_fun_x = [&complex](size_t i)
+//template<typename P>
+//std::function<double(const P&)> sample_f = [](const P& X)
 //{
-//    std::vector<double> Xi(complex.point(i)) ;
-//    return (Xi.at(0)) ;
-//} ;
+//    // Filtration : (x,y,z) -> degree x+y
+//    return X[0]+X[1];
+//}
 //
-//std::function<double(size_t)> deg_fun_z = [&complex](size_t i)
+//template<typename ChainComplex, typename P>
+//std::function<double(size_t)>  sample_degree_function (const ChainComplex& complex,  const std::function<double(const P&)>& f)
 //{
-//    std::vector<double> Xi(complex.point(i)) ;
-//    return (Xi.at(2)) ;
-//} ;
+//    std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
+//    {
+//        const P& Xi(complex.point(i)) ;
+//        return f(Xi) ;
+//    } ;
+//    return deg_fun_f ;
+//}
 
-/** \brief For lower star filtration along x: function mapping coordinates to x */
-inline std::function<double(const std::vector<double>&)> f_x = [](const std::vector<double>& v)
-{
-    return (v.at(0)) ;
-} ;
+/** \brief Degree function providing a filtration value for all vertices of the complex.
+ *
+ * Given a function mapping a point's coordinates to a degree, `degree_function` returns a function mapping the index of a vertex to the degree associated to its coordinates.
+ *
+ * \param complex The underlying complex of the filtration.
+ * \param f A function mapping a point to a degree value. Standard argument functions are `Kernel::Compute_x_3()`, `Kernel::Compute_y_3()`, `Kernel::Compute_z_3()`.
+ */
 
-/** \brief For lower star filtration along y: function mapping coordinates to y */
-inline std::function<double(const std::vector<double>&)> f_y = [](const std::vector<double>& v)
-{
-    return (v.at(1)) ;
-} ;
-
-/** \brief For lower star filtration along z: function mapping coordinates to z */
-inline std::function<double(const std::vector<double>&)> f_z = [](const std::vector<double>& v)
-{
-    return (v.at(2)) ;
-} ;
-
-/** \brief Degree function from a coordinates to scalar map. */
 template<typename ChainComplex, typename P>
 std::function<double(size_t)>  degree_function (const ChainComplex& complex,  const std::function<double(const P&)>& f)
 {
