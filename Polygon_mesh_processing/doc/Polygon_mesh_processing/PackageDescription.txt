@@ -53,7 +53,7 @@
 \cgalPkgPicture{pmp_icon.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz}
+\cgalPkgAuthors{David Coeurjolly, Jacques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz}
 \cgalPkgDesc{This package provides a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices such as the computation of an edge length,
 to complex geometry processing algorithms such as collision and intersection detection,

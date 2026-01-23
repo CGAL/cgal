@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, Léo Valque, and Ilker %O. Yaz
+\authors David Coeurjolly, Jacques-Olivier Lachaud, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, Léo Valque, and Ilker %O. Yaz
 
 \cgalFigureAnchor{PMPBanner}
 <center>
@@ -647,7 +647,7 @@ is covered by a set of prisms, where each prism is an offset for an input triang
 That is, the implementation in \cgal does not use indirect predicates.
 
 Interpolated corrected curvatures were implemented during GSoC 2022 by Hossam Saeed,
-supervised by David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot.
+supervised by David Coeurjolly, Jacques-Olivier Lachaud, and Sébastien Loriot.
 The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a>
 was also referenced during development.

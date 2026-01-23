@@ -192,7 +192,7 @@ SHalfedge_around_svertex_const_circulator
 
 SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertible to |SVertex_const_handle|,
+The iterator is convertible to |SVertex_const_handle|,
 |SHalfloop_const_handle|, or |SHalfedge_const_handle|.}*/
 { return f->boundary_entry_objects_.begin(); }
 

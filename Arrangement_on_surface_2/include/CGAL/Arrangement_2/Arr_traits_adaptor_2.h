@@ -1691,7 +1691,7 @@ public:
       Comparison_result res_max = compare_x(max_vertex(xcv1), max_vertex(xcv2));
       const X_monotone_curve_2& xcv_right = (res_max == SMALLER) ? xcv1 : xcv2;
 
-      // Compare the x-coordiates of the left end of xcv_left and the right end
+      // Compare the x-coordinates of the left end of xcv_left and the right end
       // of xcv_right.
       Comparison_result res = compare_x(min_vertex(xcv_left), max_vertex(xcv_right));
       return (LARGER != res);
@@ -1840,7 +1840,7 @@ public:
         }
       }
 
-      // Now compare the (finite) x-coordiates of the left end of xcv_left and
+      // Now compare the (finite) x-coordinates of the left end of xcv_left and
       // the right end of xcv_right.
       auto res =
         (by_left == ARR_INTERIOR) ?

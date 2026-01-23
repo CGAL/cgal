@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef CGAL_PROPERTY_CONTAINTER_H
-#define CGAL_PROPERTY_CONTAINTER_H
+#ifndef CGAL_PROPERTY_CONTAINER_H
+#define CGAL_PROPERTY_CONTAINER_H
 
 #include <CGAL/assertions.h>
 
@@ -643,4 +643,4 @@ public:
 
 #endif // DOXYGEN_RUNNING
 
-#endif //CGAL_PROPERTY_CONTAINTER_H
+#endif //CGAL_PROPERTY_CONTAINER_H

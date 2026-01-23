@@ -275,7 +275,7 @@ the state is inactive, nothing happens.
 
 \section IOstreamSupportedFormats Importing and Exporting Data using Standard File Formats
 
-Specific standards have been created to facilite the exchange of data for traditional data structures
+Specific standards have been created to facilitate the exchange of data for traditional data structures
 such as point sets or polygon meshes.
 
 \cgal aims to provide a uniform and consistent approach for Input/Output functions,
