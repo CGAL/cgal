@@ -1,7 +1,7 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
+// This file is part of the ImageIO Library, and has been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
@@ -17,7 +17,7 @@
 #endif
 
 #include <string.h>
-
+namespace CGAL {
 /* get a string from a file and discard the ending newline character
    if any */
 CGAL_INLINE_FUNCTION
@@ -32,3 +32,5 @@ char *fgetns(char *str, int n,  _image *im ) {
   if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';
   return ret;
 }
+
+} // end namespace CGAL

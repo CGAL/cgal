@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
-#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Mesh_3/Labeled_mesh_domain_3_implicit_function.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 
 namespace CGAL {

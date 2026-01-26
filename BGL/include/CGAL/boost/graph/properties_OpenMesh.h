@@ -14,8 +14,8 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#ifndef OPEN_MESH_CLASS
-  #error OPEN_MESH_CLASS is not defined
+#ifndef CGAL_OPEN_MESH_CLASS
+  #error CGAL_OPEN_MESH_CLASS is not defined
 #endif
 
 // note only the properties below are protected by the macro,
@@ -251,9 +251,9 @@ namespace boost {
 
 
 template <typename K>
-struct property_map<OPEN_MESH_CLASS, boost::edge_weight_t >
+struct property_map<CGAL_OPEN_MESH_CLASS, boost::edge_weight_t >
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   typedef CGAL::OM_edge_weight_pmap<Mesh> type;
   typedef CGAL::OM_edge_weight_pmap<Mesh> const_type;
 };
@@ -265,9 +265,9 @@ struct property_map<OPEN_MESH_CLASS, boost::edge_weight_t >
 //
 
 template <typename K>
-struct property_map<OPEN_MESH_CLASS, boost::vertex_index_t >
+struct property_map<CGAL_OPEN_MESH_CLASS, boost::vertex_index_t >
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::vertex_descriptor> type;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::vertex_descriptor> const_type;
 };
@@ -278,9 +278,9 @@ struct property_map<OPEN_MESH_CLASS, boost::vertex_index_t >
 //
 
 template <typename K>
-struct property_map<OPEN_MESH_CLASS, boost::face_index_t >
+struct property_map<CGAL_OPEN_MESH_CLASS, boost::face_index_t >
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor> type;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor> const_type;
 };
@@ -290,9 +290,9 @@ struct property_map<OPEN_MESH_CLASS, boost::face_index_t >
 //
 
 template <typename K>
-struct property_map<OPEN_MESH_CLASS, boost::edge_index_t >
+struct property_map<CGAL_OPEN_MESH_CLASS, boost::edge_index_t >
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::edge_descriptor> type;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::edge_descriptor> const_type;
 };
@@ -302,19 +302,19 @@ struct property_map<OPEN_MESH_CLASS, boost::edge_index_t >
 //
 
 template <typename K>
-struct property_map<OPEN_MESH_CLASS, boost::halfedge_index_t >
+struct property_map<CGAL_OPEN_MESH_CLASS, boost::halfedge_index_t >
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::halfedge_descriptor> type;
   typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::halfedge_descriptor> const_type;
 };
 
 
 template<typename K>
-struct property_map<OPEN_MESH_CLASS, boost::vertex_point_t >
+struct property_map<CGAL_OPEN_MESH_CLASS, boost::vertex_point_t >
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   typedef CGAL::OM_point_pmap<Mesh, P> type;
   typedef type const_type;
 };
@@ -323,22 +323,22 @@ struct property_map<OPEN_MESH_CLASS, boost::vertex_point_t >
 namespace CGAL{
 
 template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, boost::edge_weight_t>
+struct graph_has_property<CGAL_OPEN_MESH_CLASS, boost::edge_weight_t>
   : CGAL::Tag_true{};
 template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, boost::vertex_index_t>
+struct graph_has_property<CGAL_OPEN_MESH_CLASS, boost::vertex_index_t>
   : CGAL::Tag_true{};
 template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, boost::face_index_t>
+struct graph_has_property<CGAL_OPEN_MESH_CLASS, boost::face_index_t>
   : CGAL::Tag_true{};
 template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, boost::edge_index_t>
+struct graph_has_property<CGAL_OPEN_MESH_CLASS, boost::edge_index_t>
   : CGAL::Tag_true{};
 template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, boost::halfedge_index_t>
+struct graph_has_property<CGAL_OPEN_MESH_CLASS, boost::halfedge_index_t>
   : CGAL::Tag_true{};
 template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, boost::vertex_point_t>
+struct graph_has_property<CGAL_OPEN_MESH_CLASS, boost::vertex_point_t>
   : CGAL::Tag_true{};
 } //end CGAL
 
@@ -346,68 +346,68 @@ namespace OpenMesh {
 
 
 template <typename K>
-typename boost::property_map<OPEN_MESH_CLASS, boost::edge_weight_t>::const_type
-get(boost::edge_weight_t, const OPEN_MESH_CLASS& sm)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, boost::edge_weight_t>::const_type
+get(boost::edge_weight_t, const CGAL_OPEN_MESH_CLASS& sm)
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   return CGAL::OM_edge_weight_pmap<Mesh>(sm);
 }
 
 template <typename K>
-typename OPEN_MESH_CLASS::Scalar
-get(boost::edge_weight_t, const OPEN_MESH_CLASS& sm,
-    const typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor& e)
+typename CGAL_OPEN_MESH_CLASS::Scalar
+get(boost::edge_weight_t, const CGAL_OPEN_MESH_CLASS& sm,
+    const typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor& e)
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   return CGAL::OM_edge_weight_pmap<Mesh>(sm)[e];
 }
 
 
 template <typename K>
-CGAL::OM_index_pmap<K, typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor>
-get(const boost::vertex_index_t&, const OPEN_MESH_CLASS&)
+CGAL::OM_index_pmap<K, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor>
+get(const boost::vertex_index_t&, const CGAL_OPEN_MESH_CLASS&)
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   return CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::vertex_descriptor>();
 }
 
 template <typename K>
-typename boost::property_map<OPEN_MESH_CLASS, boost::face_index_t>::const_type
-get(const boost::face_index_t&, const OPEN_MESH_CLASS&)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, boost::face_index_t>::const_type
+get(const boost::face_index_t&, const CGAL_OPEN_MESH_CLASS&)
 {
-  typedef OPEN_MESH_CLASS Mesh;
+  typedef CGAL_OPEN_MESH_CLASS Mesh;
   return CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor>();
 }
 
 template <typename K>
-CGAL::OM_index_pmap<K, typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor>
-get(const boost::edge_index_t&, const OPEN_MESH_CLASS&)
+CGAL::OM_index_pmap<K, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor>
+get(const boost::edge_index_t&, const CGAL_OPEN_MESH_CLASS&)
 {
-  return CGAL::OM_index_pmap<K, typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor>();
+  return CGAL::OM_index_pmap<K, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor>();
 }
 
 template <typename K>
-CGAL::OM_index_pmap<K, typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor>
-get(const boost::halfedge_index_t&, const OPEN_MESH_CLASS&)
+CGAL::OM_index_pmap<K, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor>
+get(const boost::halfedge_index_t&, const CGAL_OPEN_MESH_CLASS&)
 {
-  return CGAL::OM_index_pmap<K, typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor>();
+  return CGAL::OM_index_pmap<K, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor>();
 }
 
 template<typename K>
-CGAL::OM_point_pmap<OPEN_MESH_CLASS,
+CGAL::OM_point_pmap<CGAL_OPEN_MESH_CLASS,
                     typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3>
-get(boost::vertex_point_t, const OPEN_MESH_CLASS& g)
+get(boost::vertex_point_t, const CGAL_OPEN_MESH_CLASS& g)
 {
   typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
-  return CGAL::OM_point_pmap<OPEN_MESH_CLASS, P>(g);
+  return CGAL::OM_point_pmap<CGAL_OPEN_MESH_CLASS, P>(g);
 }
 
 // get for intrinsic properties
 #define CGAL_OM_INTRINSIC_PROPERTY(RET, PROP, TYPE)                     \
   template<typename K>                                              \
   RET                                                                   \
-  get(PROP p, const OPEN_MESH_CLASS& sm,                      \
-      typename boost::graph_traits< OPEN_MESH_CLASS >::TYPE x) \
+  get(PROP p, const CGAL_OPEN_MESH_CLASS& sm,                      \
+      typename boost::graph_traits< CGAL_OPEN_MESH_CLASS >::TYPE x) \
   { return get(get(p, sm), x); }                                        \
 
   CGAL_OM_INTRINSIC_PROPERTY(int, boost::vertex_index_t, vertex_descriptor)
@@ -424,8 +424,8 @@ get(boost::vertex_point_t, const OPEN_MESH_CLASS& g)
 
 template<typename K>
 void
-put(boost::vertex_point_t p, OPEN_MESH_CLASS& g,
-    typename boost::graph_traits< OPEN_MESH_CLASS >::vertex_descriptor vd,
+put(boost::vertex_point_t p, CGAL_OPEN_MESH_CLASS& g,
+    typename boost::graph_traits< CGAL_OPEN_MESH_CLASS >::vertex_descriptor vd,
 #if defined(CGAL_USE_OM_POINTS)
     const typename K::Point& point)
 #else
@@ -443,9 +443,9 @@ put(boost::vertex_point_t p, OPEN_MESH_CLASS& g,
 namespace boost {
 
 template <typename K, typename V>
-struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >
+struct property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >
 {
-  typedef OPEN_MESH_CLASS SM;
+  typedef CGAL_OPEN_MESH_CLASS SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
   typedef CGAL::OM_pmap<SM,vertex_descriptor, V> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
@@ -453,9 +453,9 @@ struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >
 };
 
 template <typename K, typename V>
-struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >
+struct property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >
 {
-  typedef OPEN_MESH_CLASS SM;
+  typedef CGAL_OPEN_MESH_CLASS SM;
   typedef typename boost::graph_traits<SM>::halfedge_descriptor halfedge_descriptor;
   typedef CGAL::OM_pmap<SM,halfedge_descriptor, V> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
@@ -463,9 +463,9 @@ struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >
 };
 
 template <typename K, typename V>
-struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >
+struct property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >
 {
-  typedef OPEN_MESH_CLASS SM;
+  typedef CGAL_OPEN_MESH_CLASS SM;
   typedef typename boost::graph_traits<SM>::edge_descriptor edge_descriptor;
   typedef CGAL::OM_pmap<SM,edge_descriptor, V> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
@@ -473,9 +473,9 @@ struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >
 };
 
 template <typename K, typename V>
-struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >
+struct property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >
 {
-  typedef OPEN_MESH_CLASS SM;
+  typedef CGAL_OPEN_MESH_CLASS SM;
   typedef typename boost::graph_traits<SM>::face_descriptor face_descriptor;
   typedef CGAL::OM_pmap<SM,face_descriptor, V> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
@@ -489,40 +489,40 @@ namespace OpenMesh {
 
 // get function for dynamic properties of mutable graph
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >::type
-get(CGAL::dynamic_vertex_property_t<V>, OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >::type
+get(CGAL::dynamic_vertex_property_t<V>, CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::type DPM;
   return DPM(om, new SMPM(om));
 }
 
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >::type
-get(CGAL::dynamic_halfedge_property_t<V>, OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >::type
+get(CGAL::dynamic_halfedge_property_t<V>, CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::type DPM;
   return DPM(om, new SMPM(om));
 }
 
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >::type
-get(CGAL::dynamic_edge_property_t<V>, OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >::type
+get(CGAL::dynamic_edge_property_t<V>, CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::type DPM;
   return DPM(om, new SMPM(om));
 }
 
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >::type
-get(CGAL::dynamic_face_property_t<V>, OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >::type
+get(CGAL::dynamic_face_property_t<V>, CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::type DPM;
   return DPM(om, new SMPM(om));
@@ -530,48 +530,48 @@ get(CGAL::dynamic_face_property_t<V>, OPEN_MESH_CLASS& om)
 
 // get function for dynamic properties of const graph
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >::const_type
-get(CGAL::dynamic_vertex_property_t<V>, const OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >::const_type
+get(CGAL::dynamic_vertex_property_t<V>, const CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::const_type DPM;
   return DPM(num_vertices(om));
 }
 
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >::const_type
-get(CGAL::dynamic_halfedge_property_t<V>, const OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >::const_type
+get(CGAL::dynamic_halfedge_property_t<V>, const CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::const_type DPM;
   return DPM(num_halfedges(om));
 }
 
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >::const_type
-get(CGAL::dynamic_edge_property_t<V>, const OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >::const_type
+get(CGAL::dynamic_edge_property_t<V>, const CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::const_type DPM;
   return DPM(num_edges(om));
 }
 
 template <typename K, typename V>
-typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >::const_type
-get(CGAL::dynamic_face_property_t<V>, const OPEN_MESH_CLASS& om)
+typename boost::property_map<CGAL_OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >::const_type
+get(CGAL::dynamic_face_property_t<V>, const CGAL_OPEN_MESH_CLASS& om)
 {
-  typedef OPEN_MESH_CLASS OM;
+  typedef CGAL_OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::const_type DPM;
   return DPM(num_faces(om));
 }
 
 // implementation detail: required by Dynamic_property_map_deleter
 template <typename Pmap, typename K>
-void remove_property(Pmap pm, OPEN_MESH_CLASS& om)
+void remove_property(Pmap pm, CGAL_OPEN_MESH_CLASS& om)
 {
   om.remove_property(pm.handle());
 }
 
 } // namespace OpenMesh
 
-#undef OPEN_MESH_CLASS
+#undef CGAL_OPEN_MESH_CLASS

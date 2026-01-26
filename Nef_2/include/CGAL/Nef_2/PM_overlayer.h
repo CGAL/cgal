@@ -340,16 +340,16 @@ public:
   using Base::isolated_vertices_end;
 
   // C++ is really friendly:
-  #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
-  #define USEMARK(t)  Mark& mark(t h) const { return Base::mark(h); }
-  USEMARK(Vertex_handle)
-  USEMARK(Halfedge_handle)
-  USEMARK(Face_handle)
-  USECMARK(Vertex_const_handle)
-  USECMARK(Halfedge_const_handle)
-  USECMARK(Face_const_handle)
-  #undef USEMARK
-  #undef USECMARK
+  #define CGAL_USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
+  #define CGAL_USEMARK(t)  Mark& mark(t h) const { return Base::mark(h); }
+  CGAL_USEMARK(Vertex_handle)
+  CGAL_USEMARK(Halfedge_handle)
+  CGAL_USEMARK(Face_handle)
+  CGAL_USECMARK(Vertex_const_handle)
+  CGAL_USECMARK(Halfedge_const_handle)
+  CGAL_USECMARK(Face_const_handle)
+  #undef CGAL_USEMARK
+  #undef CGAL_USECMARK
 
     enum Creation {POLYGON=0, POLYLINE=1};
 
