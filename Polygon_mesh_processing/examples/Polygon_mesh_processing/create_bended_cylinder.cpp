@@ -35,8 +35,8 @@ int main()
 
   std::vector<Point_3> guide;
 
-  for (int i=0; i<12; ++i)
-    guide.push_back(Point_3(10*std::cos(2*CGAL_PI/25 * i), 0, 10*std::sin(2*CGAL_PI/25 * i)));
+  for (int i=0; i<120; ++i)
+    guide.push_back(Point_3(10*std::cos(2*CGAL_PI/25 * i), double(10*i)/24., 10*std::sin(2*CGAL_PI/25 * i)));
 
   std::ofstream debug("guide.polylines.txt");
   debug << guide.size();
