@@ -116,7 +116,7 @@ Constrained_Delaunay_triangulation_2& cdt1);
 Builds a constrained triangulation with constraints
 in the range `[first,last)` by calling
 `insert_constraints(first, last)`.
-\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
+\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
 */
 template<class ConstraintIterator> Constrained_Delaunay_triangulation_2(
 ConstraintIterator first,
@@ -154,7 +154,7 @@ Vertex_handle push_back(const Point& p);
 /*!
 Inserts the points in the range `[first,last)`.
 Returns the number of inserted points.
-\tparam PointIterator must be an `InputIterator` with the value type `Point`.
+\tparam PointIterator is an `InputIterator` with value type `Point`.
 */
 template < class PointIterator >
 std::ptrdiff_t
@@ -171,7 +171,7 @@ Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is
 only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex.
 \pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`.
 
-\tparam PointWithInfoIterator must be an `InputIterator` with the value type `std::pair<Point,Vertex::Info>`.
+\tparam PointWithInfoIterator is an `InputIterator` with value type `std::pair<Point,Vertex::Info>`.
 */
 template < class PointWithInfoIterator >
 std::ptrdiff_t
@@ -197,7 +197,7 @@ void insert_constraint(Vertex_handle va, Vertex_handle vb);
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
 The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
-\tparam PointIterator must be an `InputIterator` with the value type `Point`.
+\tparam PointIterator is an `InputIterator` with value type `Point`.
 */
 template < class PointIterator>
 void insert_constraint(PointIterator first, PointIterator last, bool close=false);
@@ -213,25 +213,51 @@ Once endpoints have been inserted, the segments are inserted in the order of the
 using the vertex handles of its endpoints.
 
 \return the number of inserted points.
-\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
+\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
 */
 template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
-Same as above except that each constraints is given as a pair of indices of the points
+Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once.
+
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions. Indeed, when an inserted segment is subdivided, the resulting subsegments are slightly
+displaced by numerical error and may therefore intersect the next insertion of the same segment, creating additional vertices at each new insertion.
+
+\return the number of inserted points.
+\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
+*/
+template <class ConstraintIterator>
+std::size_t insert_unique_constraints(ConstraintIterator first, ConstraintIterator last);
+
+/*!
+Same as above except that each constraint is given as a pair of indices of the points
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
 \tparam PointIterator is an `InputIterator` with the value type `Point`.
 \tparam IndicesIterator is an `InputIterator` with `std::pair<Int,Int>`
 where `Int` is an integral type implicitly convertible to `std::size_t`
-\note points are inserted even if they are not endpoint of a constraint.
+\note points are inserted even if they are not an endpoint of a constraint.
 \return the number of inserted points.
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
+/*!
+Same as `insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pairs of points are only considered once.
 
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions. Indeed, when an inserted segment is subdivided, the resulting subsegments are slightly
+displaced by numerical error and may therefore intersect the next insertion of the same segment, creating additional vertices at each new insertion.
+
+\return the number of inserted points.
+\tparam PointIterator is an `InputIterator` with value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with value type `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+*/
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_unique_constraints(PointIterator points_first, PointIterator points_last,
+                                      IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
 Removes vertex v.
@@ -275,8 +301,8 @@ and each edge is described through its incident face
 which is not in conflict with `p`.
 The function returns in a `std::pair` the resulting output iterators.
 
-\tparam OutItFaces is an `OutputIterator` with the value type `Face_handle`.
-\tparam OutItBoundaryEdges is an `OutputIterator` with the value type `Edge`.
+\tparam OutItFaces is an `OutputIterator` with value type `Face_handle`.
+\tparam OutItBoundaryEdges is an `OutputIterator` with value type `Edge`.
 
 \pre `dimension()==2`.
 */
@@ -309,8 +335,7 @@ of the conflict zone are output in counterclockwise order
 and each edge is described through the incident face
 which is not in conflict with `p`.
 The function returns the resulting output iterator.
-\tparam OutputItBoundaryEdges is an `OutputIterator` with
-the value type `Edge`.
+\tparam OutputItBoundaryEdges is an `OutputIterator` with value type `Edge`.
 */
 template <class OutputItBoundaryEdges>
 OutputItBoundaryEdges
