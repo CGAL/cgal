@@ -589,35 +589,35 @@ bool is_tag_present(Tag_wrapper<TagAllowed, TagsAllowed...>, Tag)
     return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
 }
 
-template <class ... TagsAllowed, class T, class Tag>
-constexpr
-bool authorized_options_rec(const Named_function_parameters<T, Tag>&)
-{
-  if constexpr (std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t>)
-    return true;
-  return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
-}
+template<class NP, class ... TagsAllowed>
+struct Authorized_options_rec;
 
 template <class ... TagsAllowed, class T, class Tag, class Base>
-constexpr
-bool authorized_options_rec(const Named_function_parameters<T, Tag, Base>& np)
+struct Authorized_options_rec< Named_function_parameters<T, Tag, Base>, TagsAllowed...>
 {
-  if constexpr (std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t>)
-    return true;
-  if (is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag()))
-    return authorized_options_rec<TagsAllowed...>(static_cast<const Base&>(np));
-  return false;
-}
+  static constexpr bool value =
+    std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t> ||
+    (is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag()) || Authorized_options_rec<Base, TagsAllowed...>::value);
+
+};
+
+template <class ... TagsAllowed, class T, class Tag>
+struct Authorized_options_rec< Named_function_parameters<T, Tag>, TagsAllowed...>
+{
+  static constexpr bool value =
+    std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t> || is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
+};
 
 }// impl namespace
 
-template <class ... TagsAllowed, class Named_function_parameters>
+template <class Named_function_parameters, class ... TagsAllowed>
 constexpr
-bool authorized_options(const Named_function_parameters& np)
+bool authorized_options()
 {
 #ifndef CGAL_DISABLE_NAMED_FUNCTION_PARAMETERS_CHECKS
-  return authorized_parameters_impl::authorized_options_rec
-    <internal_np::all_default_t, TagsAllowed...>(np);
+  using NP = cpp20::remove_cvref_t<Named_function_parameters>;
+  return authorized_parameters_impl::Authorized_options_rec
+    <NP, internal_np::all_default_t, TagsAllowed...>::value;
 #else
   return true;
 #endif
@@ -631,7 +631,7 @@ bool authorized_options(const Named_function_parameters& np)
 #define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...) \
 { \
 using namespace ::CGAL::internal_np; \
-static_assert(::CGAL::parameters::authorized_options<__VA_ARGS__>(np)); \
+static_assert(::CGAL::parameters::authorized_options<decltype(np), __VA_ARGS__>()); \
 }
 #endif
 
