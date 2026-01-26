@@ -505,7 +505,7 @@ kernel(const PolygonMesh& pm,
 template <typename FaceRange,
           typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool has_kernel_empty(const FaceRange face_range,
+bool has_empty_kernel(const FaceRange face_range,
                      const PolygonMesh& pm,
                      const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -527,10 +527,10 @@ bool has_kernel_empty(const FaceRange face_range,
   */
 template <typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool has_kernel_empty(const PolygonMesh& pm,
+bool has_empty_kernel(const PolygonMesh& pm,
                      const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return has_kernel_empty(faces(pm), pm, np);
+  return has_empty_kernel(faces(pm), pm, np);
 }
 
 /**

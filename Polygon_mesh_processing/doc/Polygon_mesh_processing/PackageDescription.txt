@@ -116,7 +116,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`
 - `CGAL::Polygon_mesh_processing::autorefine()`
 - `CGAL::Polygon_mesh_processing::kernel()`
-- `CGAL::Polygon_mesh_processing::has_kernel_empty()`
+- `CGAL::Polygon_mesh_processing::has_empty_kernel()`
 - `CGAL::Polygon_mesh_processing::kernel_point()`
 
 \cgalCRPSection{Meshing Functions}
