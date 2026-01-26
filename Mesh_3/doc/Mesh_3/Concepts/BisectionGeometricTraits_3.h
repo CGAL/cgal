@@ -70,6 +70,11 @@ Sphere type.
 typedef unspecified_type Sphere_3;
 
 /*!
+Iso cuboid type.
+*/
+typedef unspecified_type Iso_cuboid_3;
+
+/*!
 Model of `::Kernel::ComputeScalarProduct_3`.
 
 That function object must provide the operator:

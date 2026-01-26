@@ -244,11 +244,11 @@ protected:
   }
 
   template <typename Function,
-            typename Bounding_object,
+            typename BoundingObject,
             typename Null,
             typename Construct_surface_patch_index>
   Labeled_mesh_domain_3_impl(const Function& f,
-                                     const Bounding_object& bounding,
+                                     const BoundingObject& bounding,
                                      const FT& error_bound,
                                      Construct_surface_patch_index cstr_s_p_i,
                                      Null null,
@@ -319,21 +319,9 @@ intersection tests and intersection computations
 through a bisection method. This parameter must be instantiated
 with a model of the concept `BisectionGeometricTraits_3`.
 
-\cgalHeading{Labeling function}
+\tparam SubdomainIndex is the type of the indices of the subdomains.
+\tparam SurfacePatchIndex is the type of the indices of the surface patches.
 
-A labeling function `f` must return `0` if the point isn't located in any subdomain. The return type of labeling functions is an integer.
-
-Let `p` be a Point.
-<ul>
-<li>`f(p)=0` means that `p` is outside domain.</li>
-<li>`f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.</li>
-</ul>
-`CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
-if there are several components to mesh.
-
-The function type can be any model of the concept `Callable` compatible with the signature
-`Subdomain_index(const %Point_3&)`: it can be a function, a function object, a lambda expression...
-that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
 
 \cgalModels{MeshDomain_3}
 
@@ -342,14 +330,14 @@ that takes a `%Point_3` as argument, and returns a type convertible to `Subdomai
 
 */
 template<class BGT,
-         class Subdomain_index_ = int,
-         class Surface_patch_index_ = std::pair<Subdomain_index_,
-                                                Subdomain_index_> >
+         class SubdomainIndex = int,
+         class SurfacePatchIndex = std::pair<SubdomainIndex,
+                                             SubdomainIndex> >
 class Labeled_mesh_domain_3
 #ifndef DOXYGEN_RUNNING
   : protected details::Labeled_mesh_domain_3_impl<BGT,
-                                                  Subdomain_index_,
-                                                  Surface_patch_index_>
+                                                  SubdomainIndex,
+                                                  SurfacePatchIndex>
 #endif
 {
 public:
@@ -360,29 +348,42 @@ public:
 /// \name Types
 ///@{
   /// The subdomain index of this model of `MeshDomain_3`
-  typedef Subdomain_index_                  Subdomain_index;
+  typedef SubdomainIndex                  Subdomain_index;
   //
 #ifdef DOXYGEN_RUNNING
+  /// \anchor Mesh3Labeling_function
   /// The type of object that stores the function using type-erasure.
+  /// A labeling function `f` must return `0` if the point is not located in any subdomain. The return type of labeling functions is an integer.
+///
+/// Let `p` be a point.
+/// <ul>
+/// <li>`f(p)=0` means that `p` is outside domain.</li>
+/// <li>`f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.</li>
+/// </ul>
+///
+/// The function type can be any model of the concept `Callable` compatible with the signature
+/// `Subdomain_index(const %Point_3&)`: it can be a function, a function object, a lambda expression...
+/// that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
+
   typedef std::function< Subdomain_index(const Point_3 &)> Labeling_function;
 ///@}
 
 /// \name Types imported from the geometric traits class
 ///@{
   /// The point type of the geometric traits class
-  typedef typename Geom_traits::Point_3      Point_3;
+  typedef typename BGT::Point_3      Point_3;
   /// The sphere type of the geometric traits class
-  typedef typename Geom_traits::Sphere_3     Sphere_3;
+  typedef typename BGT::Sphere_3     Sphere_3;
   /// The iso-cuboid type of the geometric traits class
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
   /// The number type (a field type) of the geometric traits class
-  typedef typename Geom_traits::FT           FT;
+  typedef typename BGT::FT           FT;
 ///@}
 #else // DOXYGEN_RUNNING
   typedef std::optional<Subdomain_index>  Subdomain;
 
   // Type of indexes for cells of the input complex
-  typedef Surface_patch_index_                  Surface_patch_index;
+  typedef SurfacePatchIndex                  Surface_patch_index;
   typedef std::optional<Surface_patch_index>  Surface_patch;
 
   // Type of indexes to characterize the lowest dimensional face of the input
@@ -431,9 +432,11 @@ public:
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
-   * \tparam Function a type compatible with `Labeling_function`
+   * \tparam Function a type compatible with \ref Mesh3Labeling_function "Labeling_function".
+   *   `CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
+   *   if there are several components to mesh.
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-   * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
+   * \tparam BoundingObject either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
    *
    * \param function the labeling function
@@ -453,9 +456,9 @@ public:
    * From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
    * \snippet Mesh_3/mesh_implicit_domains_2.cpp Domain creation
    */
-  template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename Function, typename BoundingObject, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Labeled_mesh_domain_3(const Function& function,
-                        const Bounding_object& bounding_object,
+                        const BoundingObject& bounding_object,
                         const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                         , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
@@ -493,12 +496,12 @@ public:
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  template<typename Function, typename Bounding_object>
+  template<typename Function, typename BoundingObject>
 #if !defined(BOOST_MSVC)
   CGAL_DEPRECATED
 #endif // BOOST_MSVC
   Labeled_mesh_domain_3(const Function& function,
-                        const Bounding_object& bounding_object,
+                        const BoundingObject& bounding_object,
                         double error_bound,
                         typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr)
   : Labeled_mesh_domain_3(function,
@@ -873,7 +876,7 @@ public:
    * \tparam Function a type compatible with the signature `FT(Point_3)`: it takes a point as argument,
    *                  and returns a scalar value. That object must be model of `CopyConstructible`
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-   * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
+   * \tparam BoundingObject either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3` which is required to circumscribe
    *                         the surface and to have its center inside the domain.
    *
@@ -900,9 +903,9 @@ public:
    * \snippet Mesh_3/mesh_implicit_sphere_variable_size.cpp Domain creation
    *
    */
-  template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename Function, typename BoundingObject, typename CGAL_NP_TEMPLATE_PARAMETERS>
   static Labeled_mesh_domain_3 create_implicit_mesh_domain(const Function& function,
-                                                           const Bounding_object& bounding_object,
+                                                           const BoundingObject& bounding_object,
                                                            const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                                                            , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
@@ -952,7 +955,7 @@ public:
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-  template<typename SubdomainIndex = Null_functor,
+  template<typename SubdomainIndex_ = Null_functor,
            typename NullSubdomainIndex = Null_functor,
            typename ConstructSurfacePatchIndex = Null_functor>
   CGAL_DEPRECATED
@@ -962,7 +965,7 @@ public:
                                 double value_outside=0,
                                 double relative_error_bound = 1e-3,
                                 CGAL::Random* rng = nullptr,
-                                SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
+                                SubdomainIndex_ image_values_to_subdom_indices = SubdomainIndex_(),
                                 NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
                                 ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
   {
@@ -974,7 +977,7 @@ public:
                                                             .construct_surface_patch_index(construct_surface_patch_index_));
   }
 
-  template<typename SubdomainIndex = Null_functor,
+  template<typename SubdomainIndex_ = Null_functor,
            typename NullSubdomainIndex = Null_functor,
            typename ConstructSurfacePatchIndex = Null_functor>
   CGAL_DEPRECATED
@@ -984,7 +987,7 @@ public:
                                    const CGAL::Image_3& weights_ = CGAL::Image_3(),
                                    int value_outside=0,
                                    CGAL::Random* rng = nullptr,
-                                   SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
+                                   SubdomainIndex_ image_values_to_subdom_indices = SubdomainIndex_(),
                                    NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
                                    ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
   {

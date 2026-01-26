@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 namespace Mesh_3 {
 namespace internal {
 
