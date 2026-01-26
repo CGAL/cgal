@@ -35,9 +35,19 @@ output_point(std::ostream & os, const Traits &traits, const P & p)
   const int dim = traits.point_dimension_d_object()(p);
   if (dim > 0)
   {
-    os << ccd(p, 0);
-    for (int i = 1 ; i < dim ; ++i)
-      os << " " << CGAL::to_double(ccd(p, i));
+    if (CGAL::IO::is_binary(os))
+    {
+       for (int i = 0 ; i < dim ; ++i) {
+         double d = CGAL::to_double(ccd(p, i));
+         os.write(reinterpret_cast<const char*>(&d), sizeof(double));
+       }
+    }
+    else
+    {
+      os << ccd(p, 0);
+      for (int i = 1 ; i < dim ; ++i)
+       os << " " << CGAL::to_double(ccd(p, i));
+    }
   }
   return dim;
 }
@@ -56,9 +66,20 @@ output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
   const int dim = traits.point_dimension_d_object()(p);
   if (dim > 0)
   {
-    output_point(os, traits, p);
-    if (output_weight)
-      os << " " << pt_weight(p);
+   if (CGAL::IO::is_binary(os))
+    {
+       for (int i = 0 ; i < dim ; ++i)
+       {
+         double d = CGAL::to_double(ccd(p, i));
+         os.write(reinterpret_cast<const char*>(&d), sizeof(double));
+       }
+    }
+    else
+    {
+       os << ccd(p, 0);
+       for (int i = 1 ; i < dim ; ++i)
+         os << " " << CGAL::to_double(ccd(p, i));
+    }
   }
   return dim;
 }
@@ -136,6 +157,9 @@ export_triangulation_to_off(std::ostream & os,
   std::size_t n = tr.number_of_vertices();
 
   std::stringstream output;
+
+  // FIX: Copy the Binary/Ascii mode from the main stream 'os' to the temp stream 'output'
+  CGAL::IO::set_mode(output, CGAL::IO::get_mode(os));
 
   // write the vertices
   std::map<Vertex_handle, int> index_of_vertex;
