@@ -5,7 +5,7 @@
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/boost/graph/border.h>
 
 #include <CGAL/IO/OFF.h>
 
@@ -719,13 +719,13 @@ add_faces()
     new_faces.push_back( {v[1], v[13], v[2]} );
 
     std::vector<halfedge_descriptor> border_hedges;
-    CGAL::Polygon_mesh_processing::extract_boundary_cycles(m, std::back_inserter(border_hedges));
+    CGAL::extract_boundary_cycles(m, std::back_inserter(border_hedges));
     assert(border_hedges.size()==2);
 
     CGAL::Euler::add_faces(new_faces, m);
 
     border_hedges.clear();
-    CGAL::Polygon_mesh_processing::extract_boundary_cycles(m, std::back_inserter(border_hedges));
+    CGAL::extract_boundary_cycles(m, std::back_inserter(border_hedges));
     assert(border_hedges.size()==3);
   }
 }

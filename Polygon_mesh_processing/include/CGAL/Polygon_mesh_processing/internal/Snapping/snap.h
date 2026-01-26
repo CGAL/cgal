@@ -25,18 +25,18 @@
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap_vertices.h>
 
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Dynamic_property_map.h>

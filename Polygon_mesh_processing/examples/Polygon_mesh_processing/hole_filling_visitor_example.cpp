@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Real_timer.h>
 
@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
   std::vector<halfedge_descriptor> border_cycles;
 
   // collect one halfedge per boundary cycle
-  PMP::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
+  CGAL::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
 
   for(halfedge_descriptor h : border_cycles)
   {

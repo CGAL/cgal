@@ -21,12 +21,12 @@
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Weights/tangent_weights.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Weights/tangent_weights.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>

@@ -18,15 +18,14 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
-
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/properties.h>
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
@@ -1321,7 +1320,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
 
 /*!
- *  \ingroup PMP_meshing_grp
+ *  \ingroup PMP_planar_remeshing_grp
+ *
  *  generates a new triangle mesh `pm_out` with the minimal number of triangles while preserving the shape of `tm_in`.
  *  In practice, this means that connected components of edge-connected faces belonging to the same plane are
  *  first extracted (each such connected component is called a *patch*). Then, the connected components of
@@ -1514,7 +1514,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
 }
 
 /*!
- *  \ingroup PMP_meshing_grp
+ *  \ingroup PMP_planar_remeshing_grp
+ *
  *  generates a new triangle mesh `pm_out` with the minimal number of triangles from a partition of `tm_in`.
  *  The terminology used here and the global idea is very similar to what is done by `remesh_planar_patches()`
  *  except that here the partition into patches and corner identification is provided by the user.

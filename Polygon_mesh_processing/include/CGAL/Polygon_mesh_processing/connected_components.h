@@ -756,7 +756,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+* \tparam PolygonMesh a model of `VertexListGraph`, `FaceListGraph`, and `MutableFaceGraph`
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and

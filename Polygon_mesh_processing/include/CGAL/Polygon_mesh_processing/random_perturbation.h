@@ -96,7 +96,7 @@ namespace internal {
 } //end namespace internal
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
 * @brief randomly perturbs the locations of non-border vertices of a triangulated surface mesh.
 *
@@ -209,7 +209,7 @@ void random_perturbation(VertexRange vertices
 }
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
 * @brief randomly perturbs the locations of all non-border vertices of a triangulated surface mesh.
 *

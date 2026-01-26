@@ -14,9 +14,11 @@
 
 #include <QApplication>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+
 using namespace CGAL::Three;
+
 typedef Viewer_interface Vi;
 typedef Triangle_container Tc;
 typedef Edge_container Ec;
@@ -641,8 +643,7 @@ void Scene_edit_polyhedron_item_priv::remesh(Mesh* mesh)
       item->id_setter->set_id(f, id++);
 
   std::set<mesh_ed> roi_border;
-  CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
-                                                  boost::make_function_output_iterator(halfedge2edge<Mesh>(g, roi_border)));
+  CGAL::border_halfedges(roi_facets, g, boost::make_function_output_iterator(halfedge2edge<Mesh>(g, roi_border)));
 
   if (automatic_target_length)
   {

@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
@@ -51,9 +51,7 @@ int main(int argc, char* argv[])
   std::cout << "Split border...";
 
     std::vector<edge_descriptor> border;
-    PMP::border_halfedges(faces(mesh),
-      mesh,
-      boost::make_function_output_iterator(halfedge2edge(mesh, border)));
+    CGAL::border_halfedges(faces(mesh), mesh, boost::make_function_output_iterator(halfedge2edge(mesh, border)));
     PMP::split_long_edges(border, target_edge_length, mesh);
 
   std::cout << "done." << std::endl;

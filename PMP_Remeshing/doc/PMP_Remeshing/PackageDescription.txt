@@ -1,0 +1,85 @@
+/// \defgroup PkgPMPRemeshingRef Reference Manual
+
+/// \defgroup PMP_combi_remeshing_grp Combinatorial Remeshing
+/// Functions to modify the combinatorial structure of a polygon mesh.
+/// \ingroup PkgPMPRemeshingRef
+
+/// \defgroup PMP_local_remeshing_grp Local Remeshing Algorithms
+/// Functions to iteratively remesh a polygon mesh using local operations.
+/// \ingroup PkgPMPRemeshingRef
+
+/// \defgroup PMP_global_remeshing_grp Global Remeshing Algorithms
+/// Functions to generate meshes using global approaches that completely overhaul the mesh.
+/// \ingroup PkgPMPRemeshingRef
+
+/// \defgroup PMP_planar_remeshing_grp Planar Patch Simplification
+/// Functions to simplify planar patches of a polygon mesh.
+/// \ingroup PkgPMPRemeshingRef
+
+/// \defgroup PMP_meshing_grp Meshing
+/// Generic functions to mesh and remesh polygon meshes.
+/// \ingroup PkgPMPRemeshingRef
+
+/*!
+\addtogroup PkgPMPRemeshingRef
+
+\cgalPkgDescriptionBegin{Meshing and Remeshing of Polygon Meshes, PkgPMPRemeshing}
+\cgalPkgPicture{pmp-remeshing-icon.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Sébastien Loriot, Jane Tournois, Mael Rouxel-Labbé, Konstantinos Katrioplas, Ivan Pađen, Hossam Saeed, Ilker O. Yaz, and Sébastien Valette}
+\cgalPkgDesc{This package provides a collection of methods and classes to perform
+meshing and remeshing of polygonal meshes, including triangulation of non-triangulated
+meshes, refinement and simplification, as well as optimization and smoothing algorithms.}
+\cgalPkgManuals{Chapter_PMPRemeshing,PkgPMPRemeshingRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.7}
+\cgalPkgDependsOn{documented for each function}
+\cgalPkgBib{cgal:pmp-remesh}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Parameters}
+
+Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
+The page \ref bgl_namedparameters "Named Parameters" describes their usage.
+
+\cgalCRPSection{Combinatorial Remeshing}
+- `CGAL::Polygon_mesh_processing::triangulate_face()`
+- `CGAL::Polygon_mesh_processing::triangulate_faces()`
+- `CGAL::Polygon_mesh_processing::triangulate_polygons()`
+
+\cgalCRPSection{Remeshing (Local Approach)}
+- \link PMP_local_remeshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
+- \link PMP_local_remeshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
+- `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
+- `CGAL::Polygon_mesh_processing::smooth_mesh()` (deprecated)
+- `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()`
+- `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+- `CGAL::Polygon_mesh_processing::smooth_shape()`
+- `CGAL::Polygon_mesh_processing::refine()`
+- `CGAL::Polygon_mesh_processing::fair()`
+- `CGAL::Polygon_mesh_processing::random_perturbation()`
+
+\cgalCRPSection{Global Remeshing}
+- \link PMP_global_remeshing_grp `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()` \endlink
+
+\cgalCRPSection{Planar Patch Simplification}
+- `CGAL::Polygon_mesh_processing::remesh_planar_patches()`
+- `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`
+
+\cgalCRPSection{Mesh Extrusion}
+- `CGAL::Polygon_mesh_processing::extrude_mesh()`
+
+\cgalCRPSection{See Also}
+- `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`
+- \ref PMP_detect_features_grp "Feature Detection Functions"
+
+*/

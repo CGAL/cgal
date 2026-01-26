@@ -22,14 +22,14 @@
 #endif
 
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/circulator.h>

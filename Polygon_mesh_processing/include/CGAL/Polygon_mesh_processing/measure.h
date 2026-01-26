@@ -23,8 +23,8 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/border.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/utils_classes.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
@@ -573,7 +573,7 @@ FT
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT
 #endif
-area(FaceRange face_range,
+area(const FaceRange& face_range,
      const TriangleMesh& tmesh,
      const CGAL_NP_CLASS& np = parameters::default_values())
 {

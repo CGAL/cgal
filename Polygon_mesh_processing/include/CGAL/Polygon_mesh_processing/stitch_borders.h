@@ -16,17 +16,16 @@
 
 #include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/properties.h>
-
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/utility.h>

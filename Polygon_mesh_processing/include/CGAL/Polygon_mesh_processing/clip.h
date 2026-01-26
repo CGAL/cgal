@@ -21,15 +21,14 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
-#include <CGAL/iterator.h>
 
 #include <CGAL/AABB_triangle_primitive_3.h>
-
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
+#include <CGAL/iterator.h>
 
 #include <boost/property_map/property_map.hpp>
 
@@ -779,7 +778,7 @@ struct Visitor_wrapper_for_triangulate_face
 } // end of internal namespace
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * \brief clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink by `clipper`.
   *
@@ -894,7 +893,7 @@ clip(TriangleMesh& tm,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * \brief clips `pm` by keeping the part that is on the negative side of `plane` (the side opposite to its normal vector).
   *
@@ -1103,7 +1102,7 @@ bool clip(PolygonMesh& pm,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * \brief clips `tm` by keeping the part that is inside `iso_cuboid`.
   *
@@ -1213,7 +1212,7 @@ bool clip(TriangleMesh& tm,
 }
 
 /*!
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * corefines `tm` and `splitter` and duplicates edges in `tm` that are on the intersection with `splitter`.
   *
@@ -1316,7 +1315,7 @@ void split(TriangleMesh& tm,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * splits a polygon mesh with a plane.
   *
@@ -1433,7 +1432,7 @@ void split(PolygonMesh& pm,
 
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_clip_grp
   *
   * adds intersection edges of `iso_cuboid` and `tm` in `tm` and duplicates those edges.
   *

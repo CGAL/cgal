@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -37,6 +36,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/box_intersection_d.h>
 #ifdef CGAL_PMP_REPAIR_SI_USE_OBB_IN_COMPACTIFICATION
 #include <CGAL/Optimal_bounding_box/oriented_bounding_box.h>

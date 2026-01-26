@@ -6,6 +6,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 #include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <CGAL/Point_set_3.h>
@@ -16,7 +17,6 @@
 #include <CGAL/Polygon_mesh_processing/locate.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -446,7 +446,7 @@ int main (int argc, char** argv)
 
   // Get all holes
   std::vector<Mesh::Halfedge_index> holes;
-  CGAL::Polygon_mesh_processing::extract_boundary_cycles (dtm_mesh, std::back_inserter (holes));
+  CGAL::extract_boundary_cycles (dtm_mesh, std::back_inserter (holes));
 
   std::cerr << holes.size() << " hole(s) identified" << std::endl;
 

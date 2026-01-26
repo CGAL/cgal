@@ -1,0 +1,14 @@
+/*!
+\example Polygon_mesh_processing/corefinement_SM.cpp
+\example Polygon_mesh_processing/corefinement_mesh_union.cpp
+\example Polygon_mesh_processing/corefinement_difference_remeshed.cpp
+\example Polygon_mesh_processing/corefinement_mesh_union_progress.cpp
+\example Polygon_mesh_processing/corefinement_OM_union.cpp
+\example Polygon_mesh_processing/corefinement_mesh_union_and_intersection.cpp
+\example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
+\example Polygon_mesh_processing/mesh_slicer_example.cpp
+\example Polygon_mesh_processing/soup_autorefinement.cpp
+\example Polygon_mesh_processing/snap_polygon_soup.cpp
+*/
+
+namespace PMP = CGAL::Polygon_mesh_processing;

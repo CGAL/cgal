@@ -17,7 +17,6 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -27,18 +26,18 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_triangle_primitive_3.h>
-
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/iterator.h>
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/properties.h>
-#include <boost/graph/graph_traits.hpp>
 #include <CGAL/tags.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <boost/range.hpp>
 #include <boost/range/join.hpp>
 #include <memory>

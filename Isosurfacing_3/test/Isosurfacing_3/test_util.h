@@ -82,7 +82,7 @@ std::size_t boundary_components(const PolygonMesh& mesh)
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   std::vector<halfedge_descriptor> border_cycles;
 
-  CGAL::Polygon_mesh_processing::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
+  CGAL::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
 
   return border_cycles.size();
 }

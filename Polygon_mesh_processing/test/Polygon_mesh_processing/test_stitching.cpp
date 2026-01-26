@@ -1,8 +1,8 @@
 // #define CGAL_PMP_STITCHING_DEBUG_PP
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/generators.h>

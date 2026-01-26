@@ -1,0 +1,26 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Polygon Mesh Repair"
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
+
+EXCLUDE_SYMBOLS += experimental
+
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/triangulate_hole.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/manifoldness.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/repair_polygon_soup.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/merge_border_vertices.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/manifoldness.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/stitch_borders.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/repair_degeneracies.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/repair.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/orientation.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/orient_polygon_soup.h
+INPUT += ${CGAL_Polygon_mesh_processing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h
+
+EXAMPLE_PATH += ${CGAL_Polygon_mesh_processing_EXAMPLE_DIR}

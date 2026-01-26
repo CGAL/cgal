@@ -16,14 +16,15 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
+
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -127,7 +128,7 @@ struct Orthogonal_cut_plane_traits
 #endif
 
 /*!
- *  \ingroup PMP_corefinement_grp
+ *  \ingroup PMP_slicing_grp
  *
  *  refines `pm` by inserting new vertices and new edges at the intersection of `plane` with `pm`.
  *

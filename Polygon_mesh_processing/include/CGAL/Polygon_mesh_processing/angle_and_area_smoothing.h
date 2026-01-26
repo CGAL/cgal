@@ -29,9 +29,9 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
-* \brief smooths a triangulated region of a polygon mesh.
+* \brief smooths a region of a triangle mesh.
 *
 * This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -49,7 +49,7 @@ namespace Polygon_mesh_processing {
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param tmesh a triangle mesh smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -322,9 +322,9 @@ void angle_and_area_smoothing(const FaceRange& faces,
 }
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
-* \brief smooths a polygon mesh.
+* \brief smooths a triangle mesh.
 *
 * This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.

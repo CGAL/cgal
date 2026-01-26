@@ -673,13 +673,14 @@ user might encounter.
 \cgalCRPSection{Helper Functions}
 - `CGAL::is_border()`
 - `CGAL::is_border_edge()`
+- `CGAL::border_halfedges()`
+- `CGAL::extract_boundary_cycles()`
 - `CGAL::is_bivalent()`
 - `CGAL::is_bivalent_mesh()`
 - `CGAL::is_trivalent()`
 - `CGAL::is_trivalent_mesh()`
 - `CGAL::is_isolated_triangle()`
 - `CGAL::is_closed()`
-
 - `CGAL::is_triangle()`
 - `CGAL::is_triangle_mesh()`
 - `CGAL::is_quad()`

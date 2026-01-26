@@ -1,17 +1,16 @@
 // #define CGAL_PMP_SNAP_DEBUG_PP
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Surface_mesh.h>
-
-#include <CGAL/property_map.h>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/property_map.h>
 
 #include <iostream>
 #include <fstream>
@@ -94,7 +93,7 @@ void test_1()
 
   fg_source_cpy = fg_source;
   std::vector<halfedge_descriptor> border_vertices;
-  PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
+  CGAL::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_big(0.1);
   res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy, tol_map_big,
@@ -111,7 +110,7 @@ void test_1()
 
   fg_source_cpy = fg_source;
   border_vertices.clear();
-  PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
+  CGAL::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_good(0.001);
   res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy, tol_map_good,
@@ -125,7 +124,7 @@ void test_1()
 
   fg_source_cpy = fg_source;
   border_vertices.clear();
-  PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
+  CGAL::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
   res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy,
                                          target_halfedge_range, fg_target,

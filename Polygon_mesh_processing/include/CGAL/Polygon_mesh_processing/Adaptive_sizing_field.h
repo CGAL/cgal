@@ -28,8 +28,9 @@ namespace CGAL
 namespace Polygon_mesh_processing
 {
 /*!
-* \ingroup PMP_meshing_grp
-* a sizing field describing variable target mesh edge lengths for
+* \ingroup PMP_local_remeshing_grp
+*
+* A sizing field describing variable target mesh edge lengths for
 * `CGAL::Polygon_mesh_processing::isotropic_remeshing()`.
 * This adaptive sizing field is a function of local discrete curvatures,
 * computed using the

@@ -8,15 +8,14 @@
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -201,9 +200,7 @@ Main(int argc, const char* argv[])
     std::cout << "Split border...";
     std::set<edge_descriptor> border;
     Constraints_pmap ecmap(&border);
-    PMP::border_halfedges(pre_patch,
-      m,
-      boost::make_function_output_iterator(halfedge2edge(m, border)));
+    CGAL::border_halfedges(pre_patch, m, boost::make_function_output_iterator(halfedge2edge(m, border)));
     PMP::split_long_edges(border, target_edge_length, m
       , CGAL::parameters::edge_is_constrained_map(ecmap));
     std::cout << "done." << std::endl;
