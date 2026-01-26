@@ -48,7 +48,7 @@ class Meshing_thread : public QThread
 public:
   // Constructor / Destructor
   Meshing_thread(Mesh_function_interface* f, Scene_c3t3_item* item);
-  virtual ~Meshing_thread();
+  ~Meshing_thread() override;
 
   // Scene item
   Scene_c3t3_item* item() const { return item_; }
@@ -75,7 +75,7 @@ Q_SIGNALS:
 
 protected:
   // Overload of QThread function
-  virtual void run();
+  void run() override;
 
 private:
   Mesh_function_interface* f_;
