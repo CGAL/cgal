@@ -279,8 +279,8 @@ for pedagogical purposes.
 
 Corefinement was introduced in \cgal 4.10 by Sébastien Loriot.
 
-The `apply_iterative_snap_rounding` option for autorefinement was added in \cgal 6.1
-by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
+The `apply_iterative_snap_rounding` option for autorefinement was developed by Sylvain Lazard
+and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 2025.
 
 */
 } /* namespace CGAL */
