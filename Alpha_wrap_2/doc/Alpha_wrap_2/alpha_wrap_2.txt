@@ -204,7 +204,7 @@ this function takes as input a point set, a polyline soup, or a polygon soup.
 There is no prerequisite on the input connectivity so that it can take inputs
 with islands, self-intersections, or overlaps, as well as combinatorial or geometrical degeneracies.
 
-The underlying traits class must be a model of the `Kernel` concept. It should use
+The underlying traits class must be a model of the `AlphaWrapTraits_2` concept. It should use
 a floating point number type as inexactness is inherent to the algorithm since there is no closed
 form description of new vertices on the offset surface.
 
