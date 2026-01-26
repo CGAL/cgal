@@ -94,8 +94,7 @@ int main(int argc, char* argv[]) {
     }
   };
 
-  // Run bisection to find minimal failing case
-  std::cout << "\n=== Starting bisection to find minimal failing case ===\n" << std::endl;
+  std::cout << "\n=== Starting bisection to find smaller failing case ===\n" << std::endl;
 
   int result = CGAL::bisect_failures(mesh_a, get_size, simplify, run, save);
   //! [bisect_failures_snippet]

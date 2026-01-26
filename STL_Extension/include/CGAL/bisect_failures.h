@@ -35,7 +35,7 @@ namespace CGAL {
 /**
  * \ingroup PkgSTLExtensionUtilities
  * \brief Enumeration of events during the bisection process
- * \sa bisect_failures
+ * \sa bisect_failures()
  */
 enum Bisection_event {
   CURRENT_DATA = 0,  ///< Current data being tested
@@ -50,21 +50,21 @@ enum Bisection_event {
  * \brief bisects input data by iteratively simplifying it to identify a failing case, from which no
  *        further elements can be removed while still failing.
  *
- * This debugging utility helps identify minimal test cases when complex input data causes failures.
+ * This debugging utility helps to reduce the size of test cases when complex input data causes failures.
  * It works by iteratively simplifying the data and testing whether the failure persists,
- * using a bisection-like approach to narrow down to the smallest failing case.
+ * using a bisection-like approach to narrow down to a failing case that can not be further reduced.
  *
  * The algorithm divides the input data into "buckets" and systematically removes each bucket
  * to test if the failure persists. It starts with a coarse granularity (ratio=0.5, removing
  * half the elements) and automatically becomes more fine-grained (dividing ratio by 2) when
  * no fault is found. When a failure is found, it restarts the bisection with the smaller
- * failing data, progressively narrowing down to the minimal case.
+ * failing data.
  *
  * \tparam InputData The type of input data to bisect (must be copyable and assignable)
- * \tparam GetSize Function object type, callable with a signature `std::size_t GetSize(const InputData& data)`
- * \tparam Simplify Function object type, callable with a signature `bool Simplify(InputData& data, std::size_t start, std::size_t end)`
- * \tparam Run Function object type, callable with a signature `int Run(const InputData& data)`
- * \tparam Notify Function object type, callable with a signature `void Notify(const InputData& data, Bisection_event event)`
+ * \tparam GetSize Function object type, model of `Callable` with a signature `std::size_t GetSize(const InputData& data)`
+ * \tparam Simplify Function object type, model of `Callable` with a signature `bool Simplify(InputData& data, std::size_t start, std::size_t end)`
+ * \tparam Run Function object type, model of `Callable` with a signature `int Run(const InputData& data)`
+ * \tparam Notify Function object type, model of `Callable` with a signature `void Notify(const InputData& data, Bisection_event event)`
  *
  * \param data The input data to bisect
  * \param get_size Function that returns the "size" of the data (e.g., number of elements).
@@ -94,13 +94,13 @@ enum Bisection_event {
  *    - If it succeeds, continue with the next bucket.
  * 4. After a complete pass with no matching failures found, reduces the ratio by half (0.5 → 0.25 → 0.125...).
  * 5. Repeats until no further simplification is possible (minimal failing case found).
- * 6. Calls `notify(data, FINAL_BAD_DATA)` with the minimal failing case and return the result of `run(data)` on it.
+ * 6. Calls `notify(min_data, FINAL_BAD_DATA)` with the minimal failing case `min_data` and returns the result of `run(min_data)`.
  *
- * \warning CGAL::bisect_failures requires the tested code to be compiled with
- * assertions enabled. That means NDEBUG and CGAL_NDEBUG should not be defined. If `run` fails
+ * \warning `CGAL::bisect_failures()` requires the tested code to be compiled with
+ * assertions enabled. That means `NDEBUG` and `CGAL_NDEBUG` should not be defined. If `run` fails
  * with a segmentation fault, This function cannot catch it and will also crash.
  *
- * Here is an example of how to use `CGAL::bisect_failures`:
+ * Here is an example of how to use `CGAL::bisect_failures()`:
  * \snippet STL_Extension/bisect_failures.cpp bisect_failures_snippet
  */
 template<typename InputData, typename GetSize, typename Simplify, typename Run, typename Notify>
