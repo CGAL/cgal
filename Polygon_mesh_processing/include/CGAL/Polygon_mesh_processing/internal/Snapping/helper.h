@@ -41,11 +41,12 @@ void vertices_as_halfedges(const VertexRange& vertex_range,
 // but bounded by a percentage of the length of its shortest incident edge
 template <typename HalfedgeRange,
           typename ToleranceMap,
+          typename BaseToleranceMap,
           typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge_range,
-                                                   ToleranceMap& tolerance_map,
-                                                   const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT tolerance,
+                                                   ToleranceMap tolerance_map,
+                                                   const BaseToleranceMap base_tolerance_map,
                                                    PolygonMesh& mesh,
                                                    const NamedParameters& np = parameters::default_values())
 {
@@ -84,11 +85,13 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
         min_sq_dist = sq_length;
     }
 
+    const FT base_tolerance = get(base_tolerance_map, vd);
+
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "tolerance at vd: " << vd << " [" << get(vpm, vd) << "]: min of "
-              << 0.9 * CGAL::approximate_sqrt(min_sq_dist) << " AND " << tolerance << std::endl;
+              << 0.9 * CGAL::approximate_sqrt(min_sq_dist) << " AND " << base_tolerance << std::endl;
 #endif
-    put(tolerance_map, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
+    put(tolerance_map, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), base_tolerance));
   }
 }
 
