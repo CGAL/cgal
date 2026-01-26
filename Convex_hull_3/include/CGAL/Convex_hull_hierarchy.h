@@ -40,9 +40,7 @@ namespace CGAL{
   ///  is optimized for very fast intersection tests.
   ///
   /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of `MutableFaceGraph`.
-  ///         An internal property map for  ` CGAL::vertex_point_t` must be available, from which the point type `Point` is deduced.
-  ///         There is no requirement on `Point`, besides being default constructible and assignable.
-  ///         In typical use cases it will be a 3D point type.
+  ///         An internal property map for  ` CGAL::vertex_point_t` must be available.
 template < class PolygonMesh >
 struct Convex_hull_hierarchy{
   // parameterization of the hierarchy
@@ -53,11 +51,17 @@ struct Convex_hull_hierarchy{
   /// @private
   constexpr static size_t MAXSIZE_FOR_NAIVE_SEARCH = RATIO;
 
-  /// The point type.
-  using Point = typename PolygonMesh::Point;
-
   /// The mesh type.
   using Mesh = PolygonMesh;
+
+  /// @private
+  using VPM = typename boost::property_map<Mesh, CGAL::vertex_point_t>::const_type;
+
+  /// @private
+  using Point_3 = typename boost::property_traits<VPM>::value_type;
+
+  /// @private
+  using GT = typename Kernel_traits<Point_3>::Kernel;
 
   /// @private
   using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
@@ -107,20 +111,11 @@ struct Convex_hull_hierarchy{
   template <typename Graph,
             typename NamedParameters=parameters::Default_named_parameters>
   Convex_hull_hierarchy(Graph &g, const NamedParameters& np = parameters::default_values()){
-    using CGAL::parameters::choose_parameter;
-    using CGAL::parameters::get_parameter;
-
-    typedef typename GetVertexPointMap<Graph, NamedParameters>::type Vpmap;
-    typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
-    auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                get_property_map(vertex_point, g));
-    Vpmap_fct v2p(vpm);
     PolygonMesh ch;
     convex_hull_3(g, ch, np);
     hierarchy_sm.reserve(4);
     hierarchy_sm.push_back(std::move(ch));
-    auto hvpm = get_property_map(vertex_point, hierarchy_sm[0]);
-    init_hierarchy(get_property_map(vertex_point, hierarchy_sm[0]));
+    init_hierarchy();
   };
 
   /**
@@ -148,28 +143,13 @@ struct Convex_hull_hierarchy{
   * @tparam Traits must be a model of the concept ConvexHullTraits_3. For the purposes of checking the postcondition that the convex hull is valid,
   *         `Traits` must also be a model of the concept `IsStronglyConvexTraits_3`. Furthermore, `Traits` must define a type `PolygonMesh` that is a model of `MutableFaceGraph`.
   */
-  template <typename RangeIterator, typename Traits>
-  Convex_hull_hierarchy(RangeIterator begin, RangeIterator end, const Traits &traits){
+  template <typename RangeIterator, typename Traits = Convex_hull_traits_3<GT , Mesh> >
+  Convex_hull_hierarchy(RangeIterator begin, RangeIterator end, const Traits &traits = Traits()){
     PolygonMesh ch;
     convex_hull_3(begin, end, ch, traits);
     hierarchy_sm.reserve(4);
     hierarchy_sm.push_back(std::move(ch));
-    auto vpm = get_property_map(vertex_point, hierarchy_sm[0]);
-    init_hierarchy(vpm, traits);
-    CGAL_assertion(hierarchy_sm.size()!=0);
-  };
-
-  template <typename RangeIterator>
-  Convex_hull_hierarchy(RangeIterator begin, RangeIterator end){
-    using K= typename Kernel_traits<Point>::Kernel;
-    Convex_hull_traits_3< K, Mesh > traits;
-    PolygonMesh ch;
-    convex_hull_3(begin, end, ch, traits);
-    hierarchy_sm.reserve(4);
-    hierarchy_sm.push_back(std::move(ch));
-    auto vpm = get_property_map(vertex_point, hierarchy_sm[0]);
-    init_hierarchy(vpm, traits);
-    CGAL_assertion(hierarchy_sm.size()!=0);
+    init_hierarchy(traits);
   };
 
   ~Convex_hull_hierarchy(){
@@ -180,44 +160,29 @@ struct Convex_hull_hierarchy{
   }
 
   /**
-  * comstruct the furthest point of the convex hull along the direction.
+  * construct the furthest point of the convex hull along the direction.
   *
-  * @tparam NamedParameters: a sequence of named parameters
+  * @tparam `Direction_3` model of `Kernel::Direction_3`. The kernel does not require to be the same than the one using by the Mesh
   *
   * @param dir the direction
-  * @param np an optional sequence of `Named Parameters` among the ones listed below
   *
-  * \cgalNamedParamsBegin
-  *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of the convex hull}
-  *     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
-  *     \cgalParamDefault{If this parameter is omitted, `Point` must be a 3D point type of the same kernel than `dir`}
-  *   \cgalParamNEnd
-  * \cgalNamedParamsEnd
-  *
+  * \return Return a `Point_3` using the same kernel as the direction.
   */
   template <class Direction_3, typename NamedParameters=parameters::Default_named_parameters>
   typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point_3(const Direction_3 &dir, const NamedParameters & np=parameters::default_values) const {
     using CGAL::parameters::choose_parameter;
     using CGAL::parameters::get_parameter;
 
-    using vertex_descriptor= typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
-
-    using GetVertexPointMap = GetVertexPointMap<PolygonMesh, NamedParameters>;
-    using VPM = typename GetVertexPointMap::const_type;
-
-    using GetGeomTraits = GetGeomTraits<PolygonMesh, NamedParameters>;
-    using Mesh_GT= typename GetGeomTraits::type;
     using Default_GT = typename Kernel_traits<Direction_3>::Kernel;
-    using GT=typename internal_np::Lookup_named_param_def <
+    using IGT=typename internal_np::Lookup_named_param_def <
         internal_np::geom_traits_t,
         NamedParameters,
         Default_GT
       > ::type;
-    GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-    using FT= typename GT::FT;
+    IGT gt = choose_parameter<IGT>(get_parameter(np, internal_np::geom_traits));
+    using FT= typename IGT::FT;
 
-    using Default_geom_traits_converter = Cartesian_converter<Mesh_GT, GT>;
+    using Default_geom_traits_converter = Cartesian_converter<GT, IGT>;
     using GTC=typename internal_np::Lookup_named_param_def <
         internal_np::geom_traits_converter_t,
         NamedParameters,
@@ -225,14 +190,11 @@ struct Convex_hull_hierarchy{
       > ::type;
     GTC converter = choose_parameter<GTC>(get_parameter(np, internal_np::geom_traits_converter));
 
-    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                               get_const_property_map(vertex_point, hierarchy_sm[0]));
+    VPM vpm = get_const_property_map(vertex_point, hierarchy_sm[0]);
 
     size_t level=maxlevel();
 
     const PolygonMesh &sm = hierarchy_sm[level];
-    // const V2VMap &base = to_base_maps[level];
-    // const VPM &pm = GetVertexPointMap::get_const_map(np, sm);
 
     vertex_descriptor argmax=*vertices(sm).begin();
     Vector_3 vec=gt.construct_vector_3_object()(ORIGIN, converter(get(vpm, get(to_base_maps[level], argmax))));
@@ -295,8 +257,10 @@ struct Convex_hull_hierarchy{
   }
 
 private:
-  template <typename VPM, typename Traits>
-  void init_hierarchy(const VPM &vpm, const Traits &traits = Traits()){
+  template <typename Traits = Convex_hull_traits_3<GT , Mesh> >
+  void init_hierarchy(const Traits &traits = Traits()){
+    VPM vpm = get_const_property_map(vertex_point, hierarchy_sm[0]);
+
     size_t size=vertices(hierarchy_sm[0]).size();
     size_t level=0;
 
@@ -316,8 +280,8 @@ private:
 
     while(size>MINSIZE_FOR_NEXT_LEVEL){
       // Create a new level
-      std::vector<Point> select_points;
-      std::map<Point, vertex_descriptor> select_vertices;
+      std::vector<Point_3> select_points;
+      std::map<Point_3, vertex_descriptor> select_vertices;
       select_points.reserve(2*size/RATIO);
       PolygonMesh& above_sm=hierarchy_sm[level];
       ++level;
@@ -353,14 +317,6 @@ private:
 
       CGAL_assertion(size!=0);
     }
-  }
-
-  template <typename VPM>
-  void init_hierarchy(const VPM &vpm){
-    using Point_3 = typename VPM::value_type;
-    using K = typename Kernel_traits<Point_3>::Kernel;
-    using Traits = Convex_hull_traits_3< K, Mesh >;
-    init_hierarchy(vpm, Traits());
   }
 
   std::vector< PolygonMesh > hierarchy_sm;
