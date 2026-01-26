@@ -358,7 +358,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   }
 
   Vector_3 averageDirection() const {
-    // PRECONDITION : all vertex are normalized.
+    // PRECONDITION : all vertices (that are unit vectors on the sphere) are normalized.
     switch( this->size() ) {
       case 0 : return Vector_3(1,0,0); break; // An arbitrary one
       case 1 : return this->begin()->north_; break;

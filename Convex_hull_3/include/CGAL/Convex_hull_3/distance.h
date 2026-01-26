@@ -348,6 +348,7 @@ struct Separation_distance_functor{
 * \ingroup PkgConvexHull3Predicates
 *
 * provides a lower bound on the squared distance between the convex hulls of the two point sets.
+* If the convex hulls do intersect, returns zero
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -440,7 +441,7 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *
 * provides a lower bound on the squared distance between the two convex hulls.
 *
-* @tparam PolygonMesh: is a model of `MutableFaceGraph`, more details in `CGAL::Convex_hull_hierarchy`
+* @tparam PolygonMesh: is a model of `FaceGraph`, more details in `CGAL::Convex_hull_hierarchy`
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
