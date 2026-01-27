@@ -202,6 +202,7 @@ typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_graph_3(const Gr
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \return a `Point_3` using the same kernel as the direction.
 */
 template <class Graph, class Direction_3, class NamedParameters>
 Point_3 extreme_point_3(const Graph& g, const Direction_3 &dir, const NamedParameters &np);
@@ -237,6 +238,7 @@ Point_3 extreme_point_3(const Graph& g, const Direction_3 &dir, const NamedParam
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \return a `Point_3` using the same kernel as the direction.
 */
 template <class PointRange, class Direction_3, class NamedParameters>
 Point_3 extreme_point_3(const PointRange& r, const Direction_3 &dir, const NamedParameters &np);
@@ -267,6 +269,7 @@ Point_3 extreme_point_3(const PointRange& r, const Direction_3 &dir, const Named
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \return a `Point_3` using the same kernel as the direction.
 */
 template <class ConvexHullHierarchy, class Direction_3, class NamedParameters>
 Point_3 extreme_point_3(const ConvexHullHierarchy &ch, const Direction_3 &dir, const NamedParameters &np);
