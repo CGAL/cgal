@@ -17,18 +17,9 @@
 #ifndef CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
-// @fixme yesterday
-// - demo can't wrap from pure drawing
-// - Fix initialize_with_cavities(): do not ignore seeds outside the bbox, just don't insert them
-//   in the triangulation. Mirror to 3D.
-
 // @todo
 // - Handle degerate inputs?
-// - add remaining tests (manifoldness + cavity)
-// - test multi polygon island representation (use seeds)
-
-// @todo long
-// - add support for .xy, .xyl, .pwn, ... inputs?
+// - Add a "full triangle" oracle?
 // - bench sorted/unsorted queues
 
 #include <CGAL/license/Alpha_wrap_2.h>
