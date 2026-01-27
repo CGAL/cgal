@@ -340,11 +340,13 @@ bool get_transfo(const typename Kernel::Point_3& p1,
   typename Kernel::Vector_3 axis = CGAL::cross_product(vec1, vec2);
   axis /= CGAL::approximate_sqrt(axis.squared_length());
   //find the angle of the rotation:
-  angle = 180-CGAL::approximate_dihedral_angle(
+  angle = 180+CGAL::approximate_dihedral_angle(
         p2, p2+axis,
         p1, p3);
   angle = split_angle ? angle * CGAL_PI/360.0
                       : angle * CGAL_PI/180;
+
+
 
   get_rotation<Kernel>(angle, axis, rot);
   return true;
