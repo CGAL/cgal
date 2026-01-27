@@ -11,8 +11,8 @@
 // Author(s)     : Samuel Hornus, Sébastien Loriot and Léo Valque
 //
 
-#ifndef CGAL_CONVEX_HULL_3_INTERSECTIONS_H
-#define CGAL_CONVEX_HULL_3_INTERSECTIONS_H
+#ifndef CGAL_CONVEX_HULL_3_DO_INTERSECT_H
+#define CGAL_CONVEX_HULL_3_DO_INTERSECT_H
 
 #include <CGAL/license/Convex_hull_3.h>
 
@@ -705,4 +705,4 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
 
 }} // CGAL::Convex_hull_3 namespace
 
-#endif // CGAL_CONVEX_HULL_3_INTERSECTIONS_H
+#endif // CGAL_CONVEX_HULL_3_DO_INTERSECT_H

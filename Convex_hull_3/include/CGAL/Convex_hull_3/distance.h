@@ -25,7 +25,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Convex_hull_hierarchy.h>
-#include <CGAL/Convex_hull_3/intersections.h>
+#include <CGAL/Convex_hull_3/do_intersect.h>
 #include <CGAL/squared_distance_3.h>
 
 #include <CGAL/IO/helpers.h>

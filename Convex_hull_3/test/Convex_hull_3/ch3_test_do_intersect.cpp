@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -19,7 +18,6 @@
 #include <vector>
 #include <fstream>
 
-// typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt        Epeck_with_sqrt;
 typedef CGAL::Exact_predicates_exact_constructions_kernel        Epeck;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      Epick;
 // typedef CGAL::Simple_cartesian<double>                           Cartesian;
@@ -305,10 +303,9 @@ int main(int argc, char** argv)
 
   std::cout << std::setprecision(17);
 
-  // Test<C>().full_test(r); //Too hard
+  // Test<Cartesian, CGAL::Surface_mesh<Cartesian::Point_3>>().full_test(r); //Too hard
   Test<Epick, CGAL::Surface_mesh<Epick::Point_3> >().full_test(r);
   Test<Epick, CGAL::Polyhedron_3<Epick> >().full_test(r);
-  // Test<Epeck, CGAL::Surface_mesh<Epeck::Point_3> >().full_test(r);
-  // Test<Epeck_with_sqrt>().test_implicit_function(r,10);
+  Test<Epeck, CGAL::Surface_mesh<Epeck::Point_3> >().full_test(r);
   return 0;
 }

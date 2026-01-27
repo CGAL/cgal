@@ -4,7 +4,7 @@
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_3/distance.h>
-#include <CGAL/Convex_hull_3/intersections.h>
+#include <CGAL/Convex_hull_3/do_intersect.h>
 #include <CGAL/Convex_hull_hierarchy.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
