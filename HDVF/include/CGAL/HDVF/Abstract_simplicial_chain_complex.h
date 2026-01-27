@@ -78,6 +78,13 @@ public:
     typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
 
 
+    /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
+    inline bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
+    /** \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    inline bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
+    /** \brief Checks if a simplex `simplex` of dimension `q` belongs to the complex. */
+    inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) == _simp2ind.at(q).end(); }
+
     /**
      * \brief Assignment operator for abstract simplicial chain complexes.
      *
@@ -97,9 +104,9 @@ public:
     // Methods of the AbstractChainComplex concept
 
     /**
-     * \brief Returns the boundary of the cell id_cell in dimension q.
+     * \brief Returns the boundary of the cell `id_cell` in dimension `q`.
      *
-     * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell id_cell in dimension q.
+     * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell `id_cell` in dimension `q`.
      *
      * \param id_cell %Index of the cell.
      * \param q Dimension of the cell.
@@ -107,16 +114,18 @@ public:
      * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
      */
     Column_chain d(size_t id_cell, int q) const {
-        if ((q > 0) && (q <= _dim))
+        if ((q > 0) && (q <= _dim)) {
+            CGAL_precondition(is_valid_cell(id_cell, q));
             return OSM::get_column(_d[q], id_cell);
+        }
         else
             return Column_chain(0) ;
     }
 
     /**
-     * \brief Returns the co-boundary of the cell id_cell in dimension q.
+     * \brief Returns the co-boundary of the cell `id_cell` in dimension `q`.
      *
-     * Returns a row-major chain containing the co-boundary of the cell id_cell in dimension q (so actually a row of the boundary matrix).
+     * Returns a row-major chain containing the co-boundary of the cell `id_cell` in dimension `q` (so actually a row of the boundary matrix).
      *
      * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
      *
@@ -126,8 +135,11 @@ public:
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty row chain.
      */
     Row_chain cod(size_t id_cell, int q) const {
-        if ((q < _dim) && (q >= 0))
+        if ((q < _dim) && (q >= 0)) {
+            CGAL_precondition(is_valid_cell(id_cell, q));
+
             return OSM::get_row(_d[q+1], id_cell);
+        }
         else
             return Row_chain(0) ;
     }
@@ -155,34 +167,18 @@ public:
             return 0 ;
     }
 
-    /** \brief Returns the simplex of index i in dimension q.
-     *
-     * \exception Out_of_dimension If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     *
-     * \exception Out_of_cells_range If the cell index `i` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
-     */
+    /** \brief Returns the simplex of index i in dimension q. */
     const Simplex& index_to_cell (size_t i, int q) const {
-        if ((q<0) || (q>_dim))
-            throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
-        if ((i<0) || (i>_nb_cells.at(q)))
-            throw std::runtime_error("index_to_cell: cell index i ("+std::to_string(i)+") is out the the range of cells index in the complex");
+        CGAL_precondition(is_valid_cell(i,q));
 
         return _ind2simp.at(q).at(i);
     }
 
-    /** \brief Returns the index of a given simplex.
-     *
-     * \exception Out_of_dimension  If the dimension of `simplex` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     *
-     * \exception Incorrect_simplex If the `simplex` does not exist in the complex, throws a `%std::runtime_error`.
-     */
+    /** \brief Returns the index of a given simplex. */
     size_t cell_to_index (const Simplex& simplex) const {
         const int q(simplex.dimension());
-        if ((q<0) || (q>_dim))
-            throw std::runtime_error("cell_to_index: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
 
-        if (_simp2ind.at(q).find(simplex) == _simp2ind.at(q).end())
-            throw std::runtime_error(": simplex does not exist in the map");
+        CGAL_precondition(is_valid_simplex(simplex, q));
 
         return _simp2ind.at(q).at(simplex);
     }
@@ -224,16 +220,9 @@ public:
      * \param q Dimension of the cell.
      *
      * \return A vector of 0-simplex indices.
-     *
-     * \exception Out_of_dimensions If the dimension `q` is out of the range of dimensions in the complex, throws a `%std::runtime_error`.
-     *
-     * \exception Out_of_cells_range If the cell index `id_cell` is out of the range of cells index in the complex, throws a `%std::runtime_error`.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const {
-        if ((q<0) || (q>_dim))
-            throw std::runtime_error("index_to_cell: cell dimension q ("+std::to_string(q)+") is out the the range of dimensions in the complex");
-        if ((id_cell<0) || (id_cell>_nb_cells.at(q)))
-            throw std::runtime_error("index_to_cell: cell index i ("+std::to_string(id_cell)+") is out the the range of cells index in the complex");
+        CGAL_precondition(is_valid_cell(id_cell, q));
 
         std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).vertices()) ;
         std::vector<size_t> res ;
@@ -375,7 +364,11 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
 template<typename CoefficientRing>
 void Abstract_simplicial_chain_complex<CoefficientRing>::insert_simplex(const Simplex& tau) {
     int q = tau.dimension();
+
+    // If the simplex is empty
     if (q == -1) return;
+
+    CGAL_precondition(is_valid_cell_dimension(q));
 
     if (_simp2ind[q].find(tau) == _simp2ind[q].end()) {
         size_t i = _ind2simp[q].size();

@@ -47,7 +47,6 @@ public:
     typedef typename Traits::Point Point ;
     /** \brief Type of vtk export vertex coordinates */
     typedef typename Traits::Point3 Point3 ;
-//    typedef CGAL::Simple_cartesian<double>::Point_3 Point3;
 
 protected:
     /** \brief Vector of vertex coordinates */
@@ -69,8 +68,16 @@ public:
      * \brief Constructor from a Mesh_object_io.
      *
      * Builds a simplicial complex from a Mesh_object_io describing maximal faces and vertex coordinates.
+
+     * \exception Invalid_geometry If the `Mesh_object_io` mesh does not provide the right number of vertices coordinates, throws a `%std::runtime_error` exception.
      */
-    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {} ;
+    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {
+        if (_coords.size() != this->number_of_cells(0))
+        {
+            std::cerr << "Simplicial_chain_complex. Error, wrong number of points provided.\n";
+            throw std::runtime_error("Geometry of points invalid.");
+        }
+    } ;
 
     /**
      * \brief Assignment operator for simplicial complexes.
@@ -100,6 +107,7 @@ public:
      */
     Point point(size_t i) const
     {
+        CGAL_precondition(this->is_valid_cell(i,0));
         const Simplex simpl(this->_ind2simp.at(0).at(i)) ;
         const std::vector<size_t> verts(simpl.vertices()) ;
         const size_t id(*(verts.cbegin())) ;
@@ -124,12 +132,6 @@ public:
     static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
         typedef Simplicial_chain_complex<CoefficientRing,Traits> ChainComplex;
-        if (K._coords.size() != K.number_of_cells(0))
-        {
-            std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
-            throw std::runtime_error("Geometry of points invalid.");
-        }
-
         bool with_scalars = (labels != NULL) ;
 
         // Load out file...
@@ -347,6 +349,50 @@ void Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Simpli
 }
 
 } /* end namespace Homological_discrete_vector_field */
+
+namespace IO {
+/*!
+ * \brief Exports a column chain `chain` to %VTK files.
+ *
+ * Exports cells of `chain` with a non null coefficient to a %VTK file, with a distinguished cell (for instance the underlying critical cell to a generator). Two properties are exported:
+ * - the `Label` property (2 for the distinguished cell, 0 for other cells)
+ * - the `CellId` property containing the "basis" index of the cell.
+ *
+ * \param K Underlying cubical complex.
+ * \param filename Output file name.
+ * \param chain Column chain exported to %VTK.
+ * \param q Dimension of the chain.
+ * \param cellId Index of the distinguished cell.
+ *
+ * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
+ */
+template <typename CoefficientRing, typename Traits>
+void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
+    CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(K, filename, chain, q, cellId);
+}
+
+/**
+ * \brief Exports a simplicial chain complex (plus, optionally, labels) to a %VTK file.
+ *
+ * The method generates legacy text %VTK files. Labels are exported as such in a %VTK property, together with CellID property, containing the index of each cell.
+ *
+ * \tparam CoefficientRing Coefficient ring of the underlying complex `K`.
+ * \tparam Traits Traits class of the underlying complex `K`.
+ * \tparam LabelType Type of labels provided (default: int).
+ *
+ * \param K Simplicial chain complex exported.
+ * \param filename Output file root (output filenames will be built from this root).
+ * \param labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+ * \param label_type_name Typename used in %VTK export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
+ *
+ * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
+ */
+template <typename CoefficientRing, typename Traits, typename LabelType = int>
+static void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+    CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits>chain_complex_to_vtk(K, filename, labels, label_type_name);
+}
+
+} /* end namespace IO */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_SIMPLICIAL_CHAIN_COMPLEX_H

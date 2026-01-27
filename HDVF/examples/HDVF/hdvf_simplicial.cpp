@@ -43,7 +43,10 @@ int main(int argc, char **argv)
     std::cout << complex;
 
 //    // Build empty HDVF
-    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
+    // Without dimension restriction
+    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    // With computation restricted to dimension 1
+//    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
 
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();

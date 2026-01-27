@@ -130,6 +130,15 @@ public:
     /** \brief Type of column-major sparse matrices */
     typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
 
+    /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
+    bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
+    /** \brief Checks if a cell of "basis" index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
+    /** \brief Checks if a cell given in Khalimsky coordinates has the right dimension. */
+    bool is_valid_cell(const std::vector<size_t>& cell ) const { return cell.size() == _dim; }
+    /** \brief Checks if an index belongs to the range of the Boolean vector encoding the complex. */
+    bool is_valid_cell(size_t i) const { return i < _P[_dim]; }
+
     /**
      * \brief Assignment operator for cubical chain complexes.
      *
@@ -161,8 +170,10 @@ public:
      * \return The column-major chain containing the boundary of the cell `id_cell` in dimension `q`.
      */
     Column_chain d(size_t id_cell, int q) const {
-        if ((q > 0) && (q<= _dim))
+        if ((q > 0) && (q<= _dim)) {
+            CGAL_precondition(is_valid_cell(id_cell, q));
             return OSM::cget_column(_d[q], id_cell);
+        }
         else
             return Column_chain(0) ;
     }
@@ -180,8 +191,10 @@ public:
      * \return The row-major chain containing the co-boundary of the cell `id_cell` in dimension `q`.
      */
     Row_chain cod(size_t id_cell, int q) const {
-        if ((q < _dim) && (q>=0))
+        if ((q < _dim) && (q>=0)) {
+            CGAL_precondition(is_valid_cell(id_cell, q));
             return OSM::get_row(_d[q+1], id_cell);
+        }
         else
             return Row_chain(0) ;
     }
@@ -235,18 +248,9 @@ public:
      * \param i "basis index" of a cell.
      * \param q dimension of the cell.
      * \returns Khalimsky coordinates of the cell.
-     *
-     * \exception Incoherent_dimension Raises a `%std::runtime_error` exception if `q` is incoherent with the range of dimensions in the complex.
-     *
-     * \exception Incorrect_index Raises a `%std::invalid_argument` exception if `i` does not belong to the range of cells index in dimension `q`.
      */
     std::vector<size_t> index_to_cell (size_t i, int q) const {
-        if ((q<0) || (q > _dim))
-            throw std::runtime_error("index_to_cell: cell dimension "+std::to_string(q)+" incompatible with the complex dimensions");
-
-        if (i >= number_of_cells(q))
-            throw std::invalid_argument("index_to_cell: index "+std::to_string(i)+" out of the range of cell's indices in dimension "+std::to_string(q));
-
+        CGAL_precondition(is_valid_cell(i, q));
         const size_t id_bool(_base2bool.at(q).at(i));
         return bindex_to_cell(id_bool);
     }
@@ -257,13 +261,9 @@ public:
      *
      * \param cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
      * \returns The "basis index" of the cell among \f$q\f$-cells.
-     *
-     * \exception Cell_of_invalid_dimension Raises a `%std::invalid_argument` if the dimension of  Khalimsky coordinates of the `cell` differs from the dimension of the complex.
      */
     size_t cell_to_index (std::vector<size_t> cell) const {
-        if (cell.size() != _dim)
-            throw std::invalid_argument("cell_to_index: dimension of Khalimsky coordinates provided  "+std::to_string(cell.size())+" incompatible with a complex of dimension "+std::to_string(_dim));
-
+        CGAL_precondition(is_valid_cell(cell));
         const size_t id_bool(cell_to_bindex(cell));
         const int q(dimension(cell));
         return (_bool2base.at(q)).at(id_bool);
@@ -281,12 +281,9 @@ public:
      *
      * \param i The "Boolean" index of a cell.
      * \returns Khalimsky coordinates of the cell.
-     *
-     * \exception Index_out_of_range Raises a `%std::invalid_argument` if the index `i` is larger than the Boolean vector encoding the complex.
      */
     std::vector<size_t> bindex_to_cell (size_t i) const {
-        if (i > _P[_dim])
-            throw std::invalid_argument("bindex_to_cell: index exceeds the size of Boolean vector");
+        CGAL_precondition(is_valid_cell(i));
         std::vector<size_t> khal(_dim);
         for (size_t k = 0; k < _dim; ++k) {
             khal[k] = i % _size_bb[k];
@@ -301,28 +298,16 @@ public:
      *
      * \param cell Khalimsky coordinates of a cell.
      * \returns The "Boolean" index of the cell.
-     *
-     * \exception Cell_invalid_dimension Raises a `%std::invalid_argument` if  the dimension of`cell` does not match the dimension of the complex.
-     *
-     * \exception Index_out_of_range Raises a `%std::out_of_range` error if the cell index computed is out of the range of cells Boolean indices in the complex.
      */
     size_t cell_to_bindex (std::vector<size_t> cell) const {
-        if (cell.size() != _dim) {
-            throw std::invalid_argument("Dimension of cell does not match dimension of the complex");
-        }
-
+        CGAL_precondition(is_valid_cell(cell));
         size_t cell_index = 0;
         for (size_t i = 0; i < _dim; ++i) {
             cell_index += cell[i] * _P[i];
         }
 
-        // verify if cell_index is within bounds of _cells
-        if ((cell_index >= 0) && (cell_index < _P.at(_dim))) {
-            return cell_index;
-        } else {
-            std::cerr << "Invalid cell index in _cells: " << cell_index << std::endl;
-            throw std::out_of_range("Cell index out of bounds in _cells");
-        }
+        CGAL_precondition(is_valid_cell(cell_index));
+        return cell_index;
     }
 
     /**
@@ -344,12 +329,9 @@ public:
      * \param q Dimension of the boundary matrix (ie.\ columns will contain the boundary of dimension q cells).
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension `q`.
-     *
-     * \exception Dimension_out_of_range Raises a `%std::out_of_range` exception if `q` is out of the range of the complex dimensions.
      */
     const Column_matrix & boundary_matrix(int q) const {
-        if ((q<0) || (q>_dim))
-            throw std::out_of_range("boundary_matrix: dimension q out of range");
+        CGAL_precondition(is_valid_cell_dimension(q));
         return _d.at(q) ;
     }
 
@@ -363,17 +345,10 @@ public:
      * \param q Dimension of the cell.
      *
      * \return A vector of 0-cell indices.
-     *
-     * \exception Incoherent_dimension Raises a `%std::runtime_error` exception if `q` is incoherent with the range of dimensions in the complex.
-     *
-     * \exception Incorrect_index Raises a `%std::invalid_argument` exception if `id_cell` does not belong to the range of cells index in dimension `q`.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const {
-        if ((q<0) || (q > _dim))
-            throw std::runtime_error("bottom_faces: cell dimension "+std::to_string(q)+" incompatible with the complex dimensions");
 
-        if (id_cell >= number_of_cells(q))
-            throw std::invalid_argument("bottom_faces: index "+std::to_string(id_cell)+" out of the range of cell's indices in dimension "+std::to_string(q));
+        CGAL_precondition(is_valid_cell(id_cell, q));
 
         // Khalimsky coordinates of the cell
         const std::vector<size_t> coords(bindex_to_cell(_base2bool.at(q).at(id_cell))) ;
@@ -675,12 +650,6 @@ protected:
         return boundary;
     }
 
-    /* \brief Check if a cell (given in Khalimsky coordinates) is valid */
-    bool is_valid_cell(const std::vector<size_t>& cell) const ;
-
-    /* \brief Check if a cell (given by its Boolean index) is valid */
-    bool is_valid_cell(size_t id_cell) const ;
-
     /* \brief Compute vertices of a cell given by its Khalimsky coordinates */
     std::vector<size_t> khal_to_verts(std::vector<size_t> c) const {
         std::vector<std::vector<size_t> > vertices, vertices_tmp ;
@@ -763,47 +732,6 @@ protected:
     int dimension(size_t cell_index) const {
         return dimension(bindex_to_cell(cell_index)) ;
     }
-
-    /* \brief Computes voxel coordinates (in a binary object) from an index in a Boolean vector
-     *
-     * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
-     * Hence we consider a set of cells of maximal dimension vectorized to a Boolean vector.
-     */
-    std::vector<size_t> ind2vox(size_t index, std::vector<size_t> B, size_t max_size) const {
-        if (index > max_size)
-            throw std::invalid_argument("ind2vox : index exceeding size of Boolean vector");
-        std::vector<size_t> coords(_dim);
-        for (size_t k = 0; k < _dim; ++k) {
-            coords[k] = index % B[k];
-            index /= B[k];
-        }
-        return coords;
-    }
-
-    /* \brief Computes an index in a Boolean vector from voxel coordinates (in a binary object)
-     *
-     * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
-     * Hence we consider a set of cells of maximal dimension vectorized to a Boolean vector.
-     */
-    size_t vox2ind(const std::vector<size_t>& base_indices, std::vector<size_t> B, size_t max_size) const {
-        if (base_indices.size() != _dim) {
-            throw std::invalid_argument("Dimension of base_indices does not match _dim");
-        }
-
-        size_t cell_index = 0;
-        for (size_t i = 0; i < _dim; ++i) {
-            cell_index += base_indices[i] * B[i];
-        }
-
-        // Verfiy if cell_index is within bounds of _cells
-        if (cell_index >= 0 && cell_index < max_size)
-            return cell_index;
-        else {
-            std::cerr << "Invalid cell index in _cells: " << cell_index << std::endl;
-            throw std::out_of_range("Invalid cell index in _cells");
-        }
-    }
-
 
     /* \brief Computes the boundary matrix of dimension q */
     void  compute_d(int q) ;
@@ -919,31 +847,10 @@ void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_
 }
 
 
-// is_valid_cell implementation
-template<typename CoefficientRing, typename Traits>
-bool Cubical_chain_complex<CoefficientRing, Traits>::is_valid_cell(const std::vector<size_t>& cell) const {
-    for (size_t i=0; i<_dim; ++i) {
-        if (cell[i] < 0 || cell[i] >= _size_bb[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-template<typename CoefficientRing, typename Traits>
-bool Cubical_chain_complex<CoefficientRing, Traits>::is_valid_cell(size_t id_cell) const {
-    if ((id_cell < 0) || (id_cell > _P[_dim]))
-        return false;
-    else
-        return true;
-}
-
-
 // insert_cell implementation
 template<typename CoefficientRing, typename Traits>
 void Cubical_chain_complex<CoefficientRing, Traits>::insert_cell(size_t cell) {
-    if (!is_valid_cell(cell))
-        throw std::out_of_range("insert_cell: trying to insert cell with invalid index");
+    CGAL_precondition(is_valid_cell(cell));
 
     // verify if the cell has already been visited
     if (_visited_cells.at(cell)) {
@@ -990,8 +897,7 @@ void Cubical_chain_complex<CoefficientRing, Traits>::compute_d(int dim)  {
 // dimension implementation
 template<typename CoefficientRing, typename Traits>
 int Cubical_chain_complex<CoefficientRing,Traits>::dimension(const std::vector<size_t>& cell) const {
-    if (cell.size() != _dim)
-        throw std::invalid_argument("dimension: dimension of Khalimsky coordinates provided  "+std::to_string(cell.size())+" incompatible with the complex dimension");
+    CGAL_precondition(is_valid_cell(cell));
 
     int dimension = 0;
     for (size_t index : cell) {
@@ -1132,6 +1038,50 @@ std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<Coeffici
 }
 
 } /* end namespace Homological_discrete_vector_field */
+
+namespace IO {
+/*!
+ * \brief Exports a column chain `chain` to %VTK files.
+ *
+ * Exports cells of `chain` with a non null coefficient to a %VTK file, with a distinguished cell (for instance the underlying critical cell to a generator). Two properties are exported:
+ * - the `Label` property (2 for the distinguished cell, 0 for other cells)
+ * - the `CellId` property containing the "basis" index of the cell.
+ *
+ * \param K Underlying cubical complex.
+ * \param filename Output file name.
+ * \param chain Column chain exported to %VTK.
+ * \param q Dimension of the chain.
+ * \param cellId Index of the distinguished cell.
+ *
+ * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
+ */
+template <typename CoefficientRing, typename Traits>
+void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
+    CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(K, filename, chain, q, cellId);
+}
+
+/**
+ * \brief Exports a cubical chain  complex (plus, optionally, labels) to a %VTK file.
+ *
+ * The method generates legacy text %VTK files. Labels are exported as such in a %VTK property, together with CellID property, containing the index of each cell.
+ *
+ * \tparam CoefficientRing Coefficient ring of the underlying complex `K`.
+ * \tparam Traits Traits class of the underlying complex `K`.
+ * \tparam LabelType Type of labels provided (default: int).
+ *
+ * \param K Cubical  chain complex exported.
+ * \param filename Output file root (output filenames will be built from this root).
+ * \param labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+ * \param label_type_name Typename used in %VTK export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
+ *
+ * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
+ */
+template <typename CoefficientRing, typename Traits, typename LabelType = int>
+static void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+    CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits>chain_complex_to_vtk(K, filename, labels, label_type_name);
+}
+
+} /* end namespace IO */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H

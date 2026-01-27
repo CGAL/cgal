@@ -49,6 +49,16 @@ typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matr
 
 /// @}
 
+/// \name Verification operations
+/// @{
+
+    /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
+    bool is_valid_cell_dimension(int q);
+    /** \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    bool is_valid_cell(size_t id, int q);
+
+/// @}
+
 /// \name Operators
 /// @{
 
@@ -59,9 +69,9 @@ The operator creates a copy of `complex`.
  */
     AbstractChainComplex& operator= (const AbstractChainComplex& complex);
 
-/// @}
+    @}
 
-/// \name Access functions
+\name Access functions
 /// @{
 
 /*!
