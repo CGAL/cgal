@@ -21,7 +21,7 @@
 #include <string>
 #include <filesystem>
 
-// #define CGAL_AW2_BREAK_ON_TEST_FAILURE
+#define CGAL_AW2_BREAK_ON_TEST_FAILURE
 
 using namespace CGAL::Alpha_wraps_2::internal;
 

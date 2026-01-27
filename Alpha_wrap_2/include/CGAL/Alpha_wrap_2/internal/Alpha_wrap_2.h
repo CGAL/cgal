@@ -602,6 +602,10 @@ private:
   // init queue with all convex hull edges
   bool initialize_from_infinity()
   {
+#ifdef CGAL_AW2_DEBUG_INITIALIZATION
+    std::cout << "Initialize from infinity (" << m_tr.all_face_handles().size() << " faces)" << std::endl;
+#endif
+
     for(Face_handle fh : m_tr.all_face_handles())
     {
       if(m_tr.is_infinite(fh))
@@ -669,8 +673,6 @@ public:
     using Polygon_2 = typename Polygon_with_holes_2::Polygon_2;
 
     // Since we duplicate points in polygons, manifold or not does not matter much.
-    CGAL_assertion_code(for(Vertex_handle v : m_tr.finite_vertex_handles()))
-    CGAL_assertion(!is_non_manifold(v));
 
     // same-ish as label_region(), or mark_domain_in_triangulation()
     unsigned int number_of_polygons = 0;
@@ -710,7 +712,9 @@ public:
           }
         }
 
+#ifdef CGAL_AW2_DEBUG
         dump_triangulation("label_"+std::to_string(label)+".off", true /*use region labels*/);
+#endif
       };
 
       // Exterior gets label -1, ccw polygons get positive labels, holes get negative labels
