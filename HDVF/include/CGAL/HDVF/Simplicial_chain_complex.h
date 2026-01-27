@@ -71,7 +71,7 @@ public:
 
      * \exception Invalid_geometry If the `Mesh_object_io` mesh does not provide the right number of vertices coordinates, throws a `%std::runtime_error` exception.
      */
-    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {
+    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.nodes()) {
         if (_coords.size() != this->number_of_cells(0))
         {
             std::cerr << "Simplicial_chain_complex. Error, wrong number of points provided.\n";

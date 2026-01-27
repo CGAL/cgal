@@ -754,13 +754,13 @@ size_t Cubical_chain_complex<CoefficientRing, Traits>::_id_generator(0) ;
 
 // Constructor implementation
 template<typename CoefficientRing, typename Traits>
-Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++) {
+Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type) : _dim(cub.dimension()), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++) {
     // Initialize _size_bb and _P
     if (type==PRIMAL)
-        _size_bb = cub.N;
+        _size_bb = cub.N();
     else {
         for (int q=0; q<_dim; ++q)
-            _size_bb.at(q) = 2*cub.N.at(q)+1 ;
+            _size_bb.at(q) = 2*cub.N().at(q)+1 ;
     }
 
     for (size_t i = 1; i <= _dim; ++i) {
@@ -789,19 +789,19 @@ Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_
 template<typename CoefficientRing, typename Traits>
 void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type) {
     if (type == PRIMAL) {
-        for (size_t i=0; i<cub.cubs.size(); ++i) {
-            const size_t id(cell_to_bindex(cub.cubs.at(i))) ;
+        for (size_t i=0; i<cub.number_of_cubs(); ++i) {
+            const size_t id(cell_to_bindex(cub.cub(i))) ;
             insert_cell(id);
         }
     }
     else if (type == DUAL) {
         size_t max_size(1) ;
         for (int q=0; q<_dim; ++q)
-            max_size *= cub.N.at(q) ;
+            max_size *= cub.N().at(q) ;
 
         //We iterate over all the voxels via indices
-        for (size_t i=0; i<cub.cubs.size(); ++i) {
-            std::vector<size_t> coords(cub.cubs.at(i)) ;
+        for (size_t i=0; i<cub.number_of_cubs(); ++i) {
+            std::vector<size_t> coords(cub.cub(i)) ;
             // compute the coordinates of the voxel in the dual complex
             for (size_t i=0; i<_dim; ++i)
                 coords.at(i)*=2 ;

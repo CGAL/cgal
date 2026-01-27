@@ -19,8 +19,8 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
-//typedef HDVF::Hdvf_traits_3<Kernel> Traits;
-typedef HDVF::Hdvf_traits_2<Kernel> Traits;
+typedef HDVF::Hdvf_traits_3<Kernel> Traits;
+//typedef HDVF::Hdvf_traits_2<Kernel> Traits;
 
 int main(int argc, char **argv)
 {
@@ -31,6 +31,8 @@ int main(int argc, char **argv)
     if (argc > 2) std::cout << "usage: hdvf_cubical pgm_file" << std::endl;
     else if (argc == 1) filename  = "data/cub_data/Eight_3D.pgm";
     else filename = argv[1];
+
+    std::cout << "Loading file: " << filename << std::endl;
 
     // Choose between PRIMAL and DUAL construction
     const Complex::Cubical_complex_primal_dual primal_dual = Complex::PRIMAL;

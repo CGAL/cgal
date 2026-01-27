@@ -33,7 +33,7 @@ namespace Homological_discrete_vector_field {
 template <typename Traits>
 inline bool Mesh_object_io<Traits>::read_nodes_file(const std::string &filename)
 {
-    nvertices = read_nodes<Traits>(filename, &nodes) ;
+    _nvertices = read_nodes<Traits>(filename, &nodes) ;
     return true;   // @todo error handling
 }
 

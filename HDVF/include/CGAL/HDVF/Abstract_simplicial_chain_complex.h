@@ -342,7 +342,7 @@ template <typename Traits>
 Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
 
-    _dim = std::abs(mesh.dim);
+    _dim = std::abs(mesh.dimension());
 
     // Initialize vectors of simplices and cell counts
     _ind2simp.resize(_dim + 1);
@@ -350,7 +350,7 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
     _nb_cells.resize(_dim + 1, 0);
 
     // Iterate through the mesh cells and add them to the complex
-    for (const auto& cell : mesh.cells) {
+    for (const auto& cell : mesh.cells()) {
         insert_simplex(cell) ;
     }
 
