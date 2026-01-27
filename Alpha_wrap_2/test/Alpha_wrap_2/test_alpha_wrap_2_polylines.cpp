@@ -171,9 +171,9 @@ int main(int argc, char** argv)
         if (argc > 2) {
           const double relative_alpha = std::stod(argv[2]);
           const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 600.;
-          local_result = alpha_wrap_triangle_manifoldness(fname, relative_alpha, relative_offset);
+          local_result = alpha_wrap_polylines(fname, relative_alpha, relative_offset);
         } else {
-          local_result = alpha_wrap_triangle_manifoldness(fname);
+          local_result = alpha_wrap_polylines(fname);
         }
 
         if(!local_result) {
