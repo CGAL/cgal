@@ -128,6 +128,8 @@ public:
 
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
+    m_segments_ptr->reserve(m_segments_ptr->size() + segments.size());
+
     for(const Segment& s : segments)
     {
       if(is_degenerate(s))
@@ -173,6 +175,8 @@ public:
 
     typename Geom_traits::Construct_segment_2 segment = this->m_gt.construct_segment_2_object();
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
+
+    m_segments_ptr->reserve(m_segments_ptr->size() + 3 * triangles.size());
 
     for(const auto& tr : triangles)
     {
@@ -235,6 +239,8 @@ public:
     typename Geom_traits::Construct_segment_2 segment = this->m_gt.construct_segment_2_object();
     typename Geom_traits::Is_degenerate_2 is_degenerate = this->m_gt.is_degenerate_2_object();
 
+    m_segments_ptr->reserve(m_segments_ptr->size() + 3 * faces.size());
+
     for(const Face& f : faces)
     {
       if(f.size() < 2)
@@ -289,6 +295,11 @@ public:
 #endif
       return;
     }
+
+    std::size_t total_size = 0;
+    for (const LineString& ls : mls)
+      total_size += (ls.size() > 0) ? (ls.size() - 1) : 0;
+    m_segments_ptr->reserve(m_segments_ptr->size() + total_size);
 
     for(const LineString& ls : mls)
     {
@@ -355,6 +366,13 @@ public:
 #endif
       return;
     }
+
+    std::size_t total_size = 0;
+    for (const Polygonal_chain& pc : pcs)
+      total_size += (pc.size() > 0) ? (pc.size() - 1) : 0;
+    if(close_pc)
+      total_size += 1;
+    m_segments_ptr->reserve(m_segments_ptr->size() + total_size);
 
     for(const Polygonal_chain& pc : pcs)
     {
@@ -423,6 +441,14 @@ public:
       return;
     }
 
+    std::size_t total_size = 0;
+    for (const Polygon_with_holes_2& polygon : mp.polygons_with_holes()) {
+      total_size += polygon.outer_boundary().size();
+      for (const auto& hole : polygon.holes())
+        total_size += hole.size();
+    }
+    m_segments_ptr->reserve(m_segments_ptr->size() + total_size);
+
     for(const Polygon_with_holes_2& polygon : mp.polygons_with_holes()) {
       for(const Segment& s : polygon.outer_boundary().edges()) {
         if(is_degenerate(s))
@@ -480,6 +506,12 @@ public:
       return;
     }
 
+    std::size_t total_size = pwh.outer_boundary().size();
+    for (const auto& hole : pwh.holes()) {
+      total_size += hole.size();
+    }
+    m_segments_ptr->reserve(m_segments_ptr->size() + total_size);
+
     for(const Segment& s : pwh.outer_boundary().edges()) {
       if(is_degenerate(s))
       {
@@ -535,6 +567,8 @@ public:
 #endif
       return;
     }
+
+    m_segments_ptr->reserve(m_segments_ptr->size() + p.size());
 
     for(const Segment& s : p.edges()) {
       if(is_degenerate(s))
