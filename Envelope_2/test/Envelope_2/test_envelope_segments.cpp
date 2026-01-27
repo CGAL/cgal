@@ -4,10 +4,14 @@
 #include <CGAL/Arr_curve_data_traits_2.h>
 #include <CGAL/Envelope_diagram_1.h>
 #include <CGAL/envelope_2.h>
+#include <CGAL/assertions.h>
 
 #include <list>
 #include <iostream>
 #include <cstring>
+#include <vector>
+#include <cassert>
+#include <fstream>
 
 using std::strcmp;
 
@@ -22,6 +26,7 @@ typedef Segment_traits_2::Curve_2                       Segment_2;
 typedef Traits_2::Curve_2                               Curve_2;
 typedef CGAL::Envelope_diagram_1<Traits_2>              Diagram_1;
 typedef std::list<Curve_2>                              Curve_list;
+typedef Traits_2::X_monotone_curve_2           X_curve;
 
 enum Coord_input_format
 {
@@ -355,5 +360,50 @@ int main (int argc, char *argv[])
       std::cout << "The upper envelope is valid." << std::endl;
     }
   }
+
+  // ============================================================
+  // Regression tests for lower_envelope_x_monotone_2
+  // Vertical-only x-monotone curves
+  // ============================================================
+
+  // Test 1: overlapping vertical segments at same x
+  {
+    std::vector<X_curve> curves;
+    curves.push_back(X_curve(Segment_2(Point_2(0, 0), Point_2(0, 5))));
+    curves.push_back(X_curve(Segment_2(Point_2(0, 2), Point_2(0, 7))));
+
+    std::vector<X_curve> env;
+    CGAL::lower_envelope_x_monotone_2(curves.begin(), curves.end(),
+                                      std::back_inserter(env));
+
+    CGAL_assertion(env.size() == 1);
+  }
+
+  // Test 2: disjoint vertical segments
+  {
+    std::vector<X_curve> curves;
+    curves.push_back(X_curve(Segment_2(Point_2(0, 0), Point_2(0, 5))));
+    curves.push_back(X_curve(Segment_2(Point_2(1, -1), Point_2(1, 3))));
+
+    std::vector<X_curve> env;
+    CGAL::lower_envelope_x_monotone_2(curves.begin(), curves.end(),
+                                      std::back_inserter(env));
+
+    CGAL_assertion(env.size() == 2);
+  }
+
+  // Test 3: duplicate vertical segments
+  {
+    std::vector<X_curve> curves;
+    curves.push_back(X_curve(Segment_2(Point_2(0, 0), Point_2(0, 5))));
+    curves.push_back(X_curve(Segment_2(Point_2(0, 0), Point_2(0, 5))));
+
+    std::vector<X_curve> env;
+    CGAL::lower_envelope_x_monotone_2(curves.begin(), curves.end(),
+                                      std::back_inserter(env));
+
+    CGAL_assertion(env.size() == 1);
+  }
+
   return (0);
 }
