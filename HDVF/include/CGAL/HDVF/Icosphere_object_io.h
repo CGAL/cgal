@@ -26,10 +26,13 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
-/* Class used to build an icosphere embedding a triangular mesh (for Alexander Duality)
+/*!
+ \ingroup PkgHDVFIOClasses
+
+ The class `Icosphere_object_io` is an intermediate %IO class, used to produce a `Mesh_object_io` containing an icosphere (for `Hdvf_duality` with tetgen).
 
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
-*/
+ */
 
 template <typename Traits>
 class Icosphere_object_io : public Mesh_object_io<Traits>
@@ -39,7 +42,7 @@ public:
     using Vector = typename Traits::Vector;
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
-//    using Point = typename Traits::Point;
+    //    using Point = typename Traits::Point;
     Icosphere_object_io(size_t subdivisions, const Point &c = Point({0, 0, 0}), double r=1.) : Mesh_object_io<Traits>(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
@@ -60,7 +63,7 @@ public:
         Point(-X,N,Z), Point(X,N,Z), Point(-X,N,-Z), Point(X,N,-Z),
         Point(N,Z,X), Point(N,Z,-X), Point(N,-Z,X), Point(N,-Z,-X),
         Point(Z,X,N), Point(-Z,X, N), Point(Z,-X,N), Point(-Z,-X, N)
-     };
+    };
 
     inline static const std::vector<Io_cell_type> triangles_ico =
     {
