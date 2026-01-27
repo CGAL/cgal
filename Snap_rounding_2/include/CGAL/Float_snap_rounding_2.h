@@ -15,21 +15,18 @@
 
 #include <CGAL/license/Snap_rounding_2.h>
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
 #include <iostream>
 #endif
 
 #include <CGAL/Surface_sweep_2_algorithms.h>
-
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Float_snap_rounding_traits_2.h>
-
 #include <CGAL/intersection_2.h>
+
 #include <set>
 #include <vector>
 
-#include <CGAL/Named_function_parameters.h>
-
-#include  <CGAL/mutex.h>
 
 namespace CGAL {
 
@@ -110,7 +107,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
     return ori==RIGHT_TURN;
   };
 
-#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
   std::cout << "Input points" << std::endl;
   std::size_t i=0;
   for(const Point_2 &p: pts)
@@ -127,7 +124,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   std::cout << std::endl;
 #endif
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Create the Event Queue" << std::endl;
 #endif
 
@@ -144,11 +141,11 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
     event_queue.emplace_back(pl.back(), li, EVENT_TYPE::REMOVE);
     assert(less_xy_2(pts[pl.front()], pts[pl.back()]));
   }
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Sort the event queue along x direction" << std::endl;
 #endif
   std::sort(event_queue.begin(), event_queue.end(), event_comparator);
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Goes through Event" << std::endl;
 #endif
   // Vector is suboptimal for arbitrary insertion (Actually negligeable in the running time)
@@ -158,7 +155,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   for(std::size_t i=1; i<event_queue.size();++i)
   {
     Event event = event_queue[i];
-#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
     std::cout << ((event.type==EVENT_TYPE::INSERT)?"Insert": "Remove") << " Event at point " << event.pi << " on line "<< event.li << std::endl;
 #endif
     // Find the position of the event along the y direction
@@ -222,7 +219,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
           round_bound_pts.emplace_back(round_bound(pts[new_pi]));
           // We insert it on pl before the last vertex
           pl.insert(pl.end()-1, new_pi);
-#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
           std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
           std::cout << new_pi <<": " << pts[new_pi] << std::endl;
           std::cout << li << ":";
@@ -276,7 +273,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   std::iota(indices.begin(),indices.end(),0);
   std::sort(indices.begin(),indices.end(),sort_pi);
 
-#ifdef DOUBLE_2D_SNAP_FULL_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
   std::cout << "Output points" << std::endl;
   i=0;
   for(const Point_2 &p: pts)
@@ -386,16 +383,16 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
   Construct_rounded_point_2 round = traits.construct_rounded_point_2_object();
 
   snap_rounding_scan(pts, polylines, traits);
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Round" << std::endl;
 #endif
   for(Point_2 &p: pts)
     p=round(p);
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Merging points that are collapsed together" << std::endl;
 #endif
   merge_duplicate_points_in_polylines(pts, polylines, traits);
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
   std::cout << "Subdivide vertical segments with vertices on them" << std::endl;
 #endif
@@ -413,15 +410,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 * TODO Currently compute_subcurves have no visitor to obtain a polyline per input segment, thus
 * currently the output contain one polyline per ubsegment of the arrangement
 *
-* @tparam Concurrency_tag allows choosing whether the algorithm runs in parallel or sequentially.
-* If `CGAL::Parallel_tag` is specified and CGAL is linked with the Intel TBB library, the algorithm will run in parallel.
-* Otherwise, if `CGAL::Sequential_tag` is specified (the default), the algorithm will run sequentially.
 * @tparam InputIterator iterator over a range of `Segment_2`
 * @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
 * \param begin,end the input segment range
 * \param out the output inserter
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{concurrency_tag}
 *     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
@@ -435,6 +431,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
 *   \cgalParamNEnd
+* \cgalNamedParamsEnd
 */
 template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
 OutputContainer double_snap_rounding_2(InputIterator begin,
@@ -474,13 +471,13 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
   for(InputIterator it=begin; it!=end; ++it)
     convert_input.push_back(to_exact(*it));
   std::vector<Segment_2> segs;
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
   std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
   compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Change format to range of points and indexes" << std::endl;
 #endif
   std::set<Point_2> unique_point_set;
@@ -519,7 +516,7 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
   // Main algorithm
   internal::double_snap_rounding_2_disjoint<Concurrency_tag, Traits>(pts, polylines, traits);
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
 #endif
 
@@ -544,9 +541,11 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
 * @tparam InputIterator iterator of a segment range
 * @tparam OutputContainer inserter of a segment range
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
 * \param begin,end the input segment range
 * \param out the output inserter
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{concurrency_tag}
 *     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
@@ -560,6 +559,7 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
 *   \cgalParamNEnd
+* \cgalNamedParamsEnd
 */
 template <class InputIterator , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
 OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
@@ -604,13 +604,13 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
     if(it->source()!=it->target())
       convert_input.push_back(to_exact(*it));
   std::vector<Segment_2> segs;
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
   std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
   compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Change format to range of points and indexes" << std::endl;
 #endif
   std::set<Point_2, Less_xy_2> unique_point_set(less_xy_2);
@@ -650,7 +650,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
   // Main algorithm
   internal::double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
 #endif
 
@@ -678,9 +678,11 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 * @tparam InputIterator iterator of a CGAL::Polygon_2 range
 * @tparam OutputContainer inserter of a CGAL::Polygon_2 range
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
 * \param begin,end the input polygon range
 * \param out the output inserter
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{concurrency_tag}
 *     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
@@ -700,6 +702,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
 *   \cgalParamNEnd
+* \cgalNamedParamsEnd
 * @warning If an input polygon is convex, it might no longer be convex in the output of this function
 */
 template <class InputIterator, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
@@ -738,7 +741,7 @@ void compute_snapped_polygons_2(InputIterator begin,
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Change format to range of points and indexes" << std::endl;
 #endif
   std::vector<Point_2> pts;
@@ -770,7 +773,7 @@ void compute_snapped_polygons_2(InputIterator begin,
   // Main algorithm
   internal::double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
 
-#ifdef DOUBLE_2D_SNAP_VERBOSE
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
 #endif
 
@@ -786,18 +789,19 @@ void compute_snapped_polygons_2(InputIterator begin,
   }
 }
 
-
 /**
 * \ingroup PkgSnapRounding2Ref
 *
 * Given a Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygon.
 * The output is guarantee to be a Polygon but may present pinched section.
 *
-* \tparam Polygon_2 model of CGAL::Polygon_2
-* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* @tparam Polygon_2 model of `CGAL::Polygon_2`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
 * \param P the input polygon
 * \param out the output polygon
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{concurrency_tag}
 *     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
@@ -811,7 +815,8 @@ void compute_snapped_polygons_2(InputIterator begin,
 *     \cgalParamType{double}
 *     \cgalParamDefault{100}
 *   \cgalParamNEnd
-* @warning The convex property is not necessarly preserved
+* \cgalNamedParamsEnd
+* \warning The convex property is not necessarly preserved
 */
 template <class Polygon_2, class NamedParameters = parameters::Default_named_parameters>
 void compute_snapped_polygon_2(const Polygon_2 &P, Polygon_2 &out, const NamedParameters &np = parameters::default_values())
@@ -821,8 +826,6 @@ void compute_snapped_polygon_2(const Polygon_2 &P, Polygon_2 &out, const NamedPa
   compute_snapped_polygons_2(vec.begin(), vec.end(), std::back_inserter(out_vec), np);
   out = out_vec[0];
 }
-
-
 
 } //namespace CGAL
 
