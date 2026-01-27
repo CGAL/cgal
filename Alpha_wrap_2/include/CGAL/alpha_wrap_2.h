@@ -287,7 +287,7 @@ void alpha_wrap_2(const TriangleRange& triangles,
   oracle.add_triangles(triangles);
 
   Wrapper alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, np);
 }
 
 // The convenience overloads are common to all ranges
@@ -369,7 +369,7 @@ void alpha_wrap_2(const CGAL::Polygon_2<Traits_, Container_>& p,
   oracle.add_polygon(p);
 
   Wrapper alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, np);
 }
 
 /*!
@@ -445,7 +445,7 @@ void alpha_wrap_2(const CGAL::Polygon_with_holes_2<Traits_, Container_>& pwh,
   oracle.add_polygon_with_holes(pwh);
 
   Wrapper alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, np);
 }
 
 /*!
@@ -530,7 +530,7 @@ void alpha_wrap_2(const InputMultipolygonWithHoles& multipolygon,
   oracle.add_multipolygon(multipolygon);
 
   Wrapper alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, np);
 }
 
 // The convenience overloads are common to all ranges
@@ -611,7 +611,7 @@ void alpha_wrap_2(const SegmentRange& segments,
   oracle.add_segments(segments);
 
   Wrapper alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, np);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -692,7 +692,7 @@ void alpha_wrap_2(const MultiLineString& multilinestring,
   oracle.add_multilinestring(multilinestring);
 
   Wrapper alpha_wrap_builder(oracle);
-  alpha_wrap_builder(alpha, offset, alpha_wrap);
+  alpha_wrap_builder(alpha, offset, alpha_wrap, np);
 }
 
 // The convenience overloads are common to all ranges
