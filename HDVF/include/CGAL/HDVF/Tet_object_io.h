@@ -29,12 +29,11 @@ namespace Homological_discrete_vector_field {
 
 // Tetgen related
 
-
 template <typename Traits>
 inline bool Mesh_object_io<Traits>::read_nodes_file(const std::string &filename)
 {
-    _nvertices = read_nodes<Traits>(filename, &nodes) ;
-    return true;   // @todo error handling
+    _nvertices = read_nodes<Traits>(filename, &_nodes) ;
+    return true;
 }
 
 // Tetgen
@@ -42,21 +41,30 @@ inline bool Mesh_object_io<Traits>::read_nodes_file(const std::string &filename)
 /* Class used to load tetgen outputs (for Alexander duality).
 
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
-*/
+ */
+
+/*!
+ \ingroup PkgHDVFIOClasses
+
+ The class `Tet_object_io` is an intermediate %IO class, used to load a tetgen triangulation (for `Hdvf_duality`) into a `Mesh_object_io` structure.
+
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+ */
+
 template <typename Traits>
 class Tet_object_io : public Mesh_object_io<Traits>
 {
 public:
     Tet_object_io(const std::string & prefix) : Mesh_object_io<Traits>(), _prefix(prefix)
     {
-        this->dim = -3 ;
+        this->_dim = -3 ;
         add_nodes() ;
         create_nodes() ;
         // If the user wished to keep tetgen indices, insert edges and faces below. Otherwise, they will be created by the Abstract_simplicial_chain_complex constructor
-//        add_edges() ;
-//        add_faces() ;
+        //        add_edges() ;
+        //        add_faces() ;
         add_tets() ;
-        this->ncells = this->cells.size() ;
+        this->_ncells = this->_cells.size() ;
     }
 
     void add_nodes()
@@ -68,12 +76,12 @@ public:
 
     void create_nodes()
     {
-        for (size_t i=0; i<this->nvertices; ++i)
+        for (size_t i=0; i<this->_nvertices; ++i)
         {
             Io_cell_type cell({i}) ;
-            this->cells.push_back(cell) ;
+            this->add_cell(cell, true) ;
         }
-        std::cout << "--- " << this->nvertices << "vert" << std::endl ;
+        std::cout << "--- " << this->_nvertices << "vert" << std::endl ;
     }
 
     void add_edges()

@@ -77,11 +77,11 @@ public:
         if (key.first>key.second)
             std::swap(key.first, key.second);
 
-        auto inserted=lookup.insert({key, this->nodes.size()});
+        auto inserted=lookup.insert({key, this->_nodes.size()});
         if (inserted.second)
         {
-            Point& edge0(this->nodes[first]);
-            Point& edge1(this->nodes[second]);
+            const Point& edge0(this->nodes().at(first));
+            const Point& edge1(this->nodes().at(second));
             Vector v = (edge1 - ORIGIN) + (edge0 - ORIGIN);
             v = v / std::sqrt(v.squared_length());
             this->add_node(ORIGIN + v);
@@ -95,7 +95,7 @@ public:
         Lookup lookup;
         std::vector<Io_cell_type> result ;
 
-        for (Io_cell_type & each:this->cells)
+        for (const Io_cell_type & each:this->cells())
         {
             std::array<Index, 3> mid;
             std::vector<size_t> each_vertex ;
@@ -118,10 +118,12 @@ public:
 
     void rigid_transformation(const Point &c, double r)
     {
-        for (size_t i=0; i<this->nvertices; ++i)
+        for (size_t i=0; i<this->number_of_nodes(); ++i)
         {
-            this->nodes[i] = ORIGIN + (r * (this->nodes[i] - ORIGIN)) ;
-            this->nodes[i] += (c - ORIGIN) ;
+            // Apply rotation
+            this->set_node(i, ORIGIN + (r * (this->nodes()[i] - ORIGIN))) ;
+            // Apply translation
+            this->set_node(i, this->nodes()[i] + (c - ORIGIN)) ;
         }
     }
 };

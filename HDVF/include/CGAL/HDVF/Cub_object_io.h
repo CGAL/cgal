@@ -39,7 +39,7 @@ typedef std::vector<IOCubCellType> IOCubChainType ;
 template <typename Traits>
 class Cub_object_io
 {
-private:
+protected:
     /* \brief Dimension of the complex. */
     int _dim = 0 ; // Dimension of the complex
     /* \brief Number of cubs in each dimension. */
@@ -48,7 +48,7 @@ private:
     std::vector<size_t> _N ; // Size of BB along each dimension
     /* \brief List of cubs in each dimension. */
     std::vector<IOCubCellType> _cubs ;
-
+    
     /** \brief Khalimsky or coordinates mode.
      *
      * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (i.e. cells of dimension `_dim`).
@@ -57,28 +57,28 @@ private:
 public:
     /** \brief Returns the dimension of the complex. */
     int dimension() const { return _dim; }
-
+    
     /** \brief Returns the number of cubs in each dimension. */
     const std::vector<size_t>& number_of_cubs_by_dimension() const { return _ncubs; }
-
+    
     /** \brief Returns the size of the bounding box along each dimension. */
     const std::vector<size_t>& N() const { return _N; }
-
+    
     /** \brief Returns the vector of cubs. */
     const std::vector<IOCubCellType>& cubs() const { return _cubs; }
-
+    
     /** \brief Returns the ith cub. */
     const IOCubCellType& cub(size_t i) const { return _cubs.at(i); }
-
+    
     /** \brief Returns the total number of cubs. */
     size_t number_of_cubs() const { return _cubs.size(); }
-
+    
     /** \brief Default constructor.
      *
      * Create an empty Cub_object_io of dimension 3.
      */
     Cub_object_io() : _dim(3), _ncubs(std::vector<size_t>(4)), _N(std::vector<size_t>(4)), _khalimsky(false) {}
-
+    
     /**
      * \brief Constructor from a vector of cells.
      *
@@ -87,17 +87,17 @@ public:
      */
     Cub_object_io(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : _dim(d), _ncubs(std::vector<size_t>(d+1)), _N(std::vector<size_t>(d+1)), _cubs(vcubs), _khalimsky(khal)
     { check_dimension() ;}
-
+    
     /* \brief Copy constructor. */
     Cub_object_io(const Cub_object_io &m) : _dim(m._dim), _ncubs(m._ncubs), _N(m._N), _cubs(m._cubs), _khalimsky(m._khalimsky) {}
-
+    
     // Mesh operations
     /** \brief Removes all cells of the list. */
     void clear_cubs() { _cubs.clear() ; for (size_t i=0; i<_dim; ++i) _ncubs[i] = 0 ; }
-
+    
     /** \brief Adds a cell to the list. */
     void add_cub(const IOCubCellType &c) {_cubs.push_back(c); ++_ncubs[cub_dim(c)] ;}
-
+    
     /** \brief Adds one empty cell of higher dimension all around the complex.
      *
      * The function enlarges the bounding box with 1 cell of higher dimension on each of its sides. Cubs coordinates are shifted accordingly.
@@ -124,7 +124,7 @@ public:
             }
         }
     }
-
+    
     /** \brief Imports a %PGM file  (%PGM version 2).
      *
      * \param filename Name of the %PGM file.
@@ -147,10 +147,10 @@ public:
             // failed to open the file
             return false;
         }
-
+        
         std::stringstream ss;
         std::string inputLine = "";
-
+        
         // First line : version
         getline(infile,inputLine);
         if(inputLine.compare("P2") != 0) {
@@ -158,17 +158,17 @@ public:
             throw std::runtime_error("Invalid PGM version.");
         }
         else std::cout << "Version : " << inputLine << std::endl;
-
-
+        
+        
         // Second line: dimensions
         getline(infile,inputLine);
         std::vector<size_t> sizes ;
-
+        
         size_t tmp ;
         std::stringstream sseizes (inputLine);
         while (sseizes >> tmp)
             sizes.push_back(tmp) ;
-
+        
         std::cout << "dimensions : " ;
         for (size_t i=0; i<sizes.size(); ++i)
             std::cout << sizes.at(i) << " " ;
@@ -179,26 +179,26 @@ public:
             std::cerr << "read_pgm error: dimensions of the PGM object and of Traits differ" << std::endl;
             throw std::runtime_error("read_pgm error: dimensions of the PGM object and of Traits differ");
         }
-
+        
         _N = std::vector<size_t>(_dim) ;
         for (size_t i=0; i<_dim; ++i)
             _N.at(i) = sizes.at(i) ;
-
+        
         // Throw away next data (255)
-
+        
         getline(infile,inputLine);
-
+        
         // Remainder: data
         // Read by decreasing dimension
         // In order to get : read row, then column, then depth...
-
+        
         // Continue with a stringstream
         ss << infile.rdbuf();
-
+        
         size_t NN = 1 ;
         for (int i=0; i<_dim; ++i)
             NN = NN * _N.at(i) ;
-
+        
         // Following lines : data
         for(size_t i = 0; i < NN; ++i)
         {
@@ -209,20 +209,20 @@ public:
                 ++_ncubs[_dim] ;
             }
         }
-
+        
         if (khal)
         {
             // Change _N to Khalimsky maxima
             for(int i=0; i<_dim; ++i)
                 _N.at(i) = 2*_N.at(i)+1 ;
         }
-
+        
         infile.close();
     }
-
+    
     //    bool write_pgm(const std::string &filename) ;
     // TODO...
-
+    
     /** \brief Imports a %CUB file.
      *
      * \param filename Name of the %CUB file (cells are described in Khalimsky coordinates).
@@ -261,7 +261,7 @@ public:
                 }
             }
             std::istringstream is( line );
-
+            
             if (line_number == 1) { // Header 1
                 is >> _dim ;
                 if (Traits::Dimension::value != _dim) {
@@ -277,7 +277,7 @@ public:
             else // Cub line
             {
                 IOCubCellType cub ;
-
+                
                 size_t v;
                 while ( is >> v )
                     cub.push_back(v);
@@ -287,7 +287,7 @@ public:
                 {
                     // Add this cub to _cubs
                     ++_ncubs[cub_dim(cub)] ;
-
+                    
                     if (khalimsky)
                         _cubs.push_back(cub) ;
                     else
@@ -303,10 +303,10 @@ public:
         infile.close() ;
         return true ;
     }
-
+    
     //    bool write_cub(const std::string &filename) ;
     // TODO
-
+    
     /** \brief Prints synthetic informations related to the object. */
     void print_infos (size_t level = 0) const
     {
@@ -325,7 +325,7 @@ public:
             }
         }
     }
-
+    
 private:
     void check_dimension()
     {
@@ -339,7 +339,7 @@ private:
             _ncubs[_dim] = _cubs.size() ;
         }
     }
-
+    
     inline int cub_dim (IOCubCellType c)
     {
         int q = 0 ;
@@ -350,7 +350,7 @@ private:
         }
         return q ;
     }
-
+    
     inline IOCubCellType index_to_coords(size_t i, bool khalimsky = false)
     {
         IOCubCellType coords ;
@@ -370,7 +370,7 @@ private:
         }
         return coords ;
     }
-
+    
     inline size_t khal_to_index (const IOCubCellType& coords)
     {
         size_t cell_index(0);

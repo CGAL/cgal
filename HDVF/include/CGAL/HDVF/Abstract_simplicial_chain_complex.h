@@ -83,7 +83,7 @@ public:
     /** \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
     inline bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
     /** \brief Checks if a simplex `simplex` of dimension `q` belongs to the complex. */
-    inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) == _simp2ind.at(q).end(); }
+    inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) != _simp2ind.at(q).end(); }
 
     /**
      * \brief Assignment operator for abstract simplicial chain complexes.

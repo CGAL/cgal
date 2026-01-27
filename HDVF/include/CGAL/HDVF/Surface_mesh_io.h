@@ -30,8 +30,8 @@ namespace Homological_discrete_vector_field {
  \ingroup PkgHDVFIOClasses
 
  The class `Surface_mesh_io` is an intermediate %IO class, used to load a triangle mesh and produce simplicial complexes.
-\tparam TriangleMesh a model of `FaceGraph` and `HalfedgeGraph` concepts, e.g., a `CGAL::Surface_mesh`.
-\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+ \tparam TriangleMesh a model of `FaceGraph` and `HalfedgeGraph` concepts, e.g., a `CGAL::Surface_mesh`.
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
 template <typename TriangleMesh, typename Traits>
