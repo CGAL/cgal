@@ -347,8 +347,7 @@ struct Separation_distance_functor{
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the squared distance between the convex hulls of the two point sets.
-* If the convex hulls do intersect, returns zero
+* computes a lower bound on the squared distance between the convex hulls of two point sets, returning zero when the hulls intersect.
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -381,6 +380,8 @@ struct Separation_distance_functor{
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \note The point sets do not need to be in convex position.
+*
 */
 template <class PointRange,
           class NamedParameters_1 = parameters::Default_named_parameters,
@@ -392,7 +393,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the squared distance between the two convex graphs.
+* computes a lower bound on the squared distance between the two convex graphs, returning zero when their hulls intersect.
 *
 * @tparam AdjacencyGraph is a model of `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -428,6 +429,8 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \see `CGAL::Convex_hull_3::do_intersect`
+*
 */
 template <class AdjacencyGraph,
           class NamedParameters_1 = parameters::Default_named_parameters,
@@ -439,9 +442,9 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the squared distance between the two convex hulls.
+* computes a lower bound on the squared distance between the two convex hulls, returning zero when they intersect.
 *
-* @tparam PolygonMesh: is a model of `FaceGraph`, more details in `CGAL::Convex_hull_hierarchy`
+* @tparam ConvexHullHierarchy an instance of `CGAL::Convex_hull_hierarchy`
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -473,11 +476,13 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \see `CGAL::Convex_hull_3::do_intersect`
+*
 */
-template <class PolygonMesh,
+template <class ConvexHullHierarchy,
           class NamedParameters_1 = parameters::Default_named_parameters,
           class NamedParameters_2 = parameters::Default_named_parameters>
-FT separation_distance(const Convex_hull_hierarchy<PolygonMesh>& ch1, const Convex_hull_hierarchy<PolygonMesh>& ch2,
+FT separation_distance(const ConvexHullHierarchy& ch1, const ConvexHullHierarchy& ch2,
                        const NamedParameters_1& np1 = parameters::default_values(),
                        const NamedParameters_2& np2 = parameters::default_values());
 

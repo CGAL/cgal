@@ -86,11 +86,9 @@ struct Convex_hull_hierarchy{
   *
   * @tparam VertexListGraph: a model of `VertexListGraph`
   * @tparam NamedParameters: a sequence of named parameters
-  * @tparam Traits: model of the concept ConvexHullTraits_3. For the purposes of checking the postcondition that the convex hull is valid, Traits must also be a model of the concept IsStronglyConvexTraits_3.
   *
   * @param g the graph
   * @param np an optional sequence of `Named Parameters` among the ones listed below
-  * @param traits an instance of Traits
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -163,13 +161,16 @@ struct Convex_hull_hierarchy{
   * construct the furthest point of the convex hull along the direction.
   *
   * @tparam `Direction_3` model of `Kernel::Direction_3`. The kernel does not require to be the same than the one using by the Mesh
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param dir the direction
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \return Return a `Point_3` using the same kernel as the direction.
   */
-  template <class Direction_3, typename NamedParameters=parameters::Default_named_parameters>
-  typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point_3(const Direction_3 &dir, const NamedParameters & np=parameters::default_values) const {
+  template <typename Direction_3,
+            typename NamedParameters=parameters::Default_named_parameters>
+  typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point_3(const Direction_3 &dir, const NamedParameters &np=parameters::default_values) const {
     using CGAL::parameters::choose_parameter;
     using CGAL::parameters::get_parameter;
 

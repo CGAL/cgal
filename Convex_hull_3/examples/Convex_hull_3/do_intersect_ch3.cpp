@@ -17,6 +17,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 typedef K::Point_3                                               Point_3;
 typedef CGAL::Surface_mesh<Point_3>                              Mesh;
 typedef Mesh::Property_map<Mesh::Vertex_index, Point_3>          PointMap;
+typedef CGAL::Convex_hull_hierarchy<Mesh>                        Convex_hull_hierarchy;
 
 int main(int argc, char* argv[])
 {
@@ -52,12 +53,12 @@ int main(int argc, char* argv[])
                             << " extreme vertices in the input meshes.\n";
 
   // Convex_hull_hierarchy is data structure for very fast intersection test of Convex_hull
-  CGAL::Convex_hull_hierarchy<Mesh> hsm1(sm1);
-  CGAL::Convex_hull_hierarchy<Mesh> hsm2(sm2);
+  Convex_hull_hierarchy hsm1(sm1);
+  Convex_hull_hierarchy hsm2(sm2);
   res = CGAL::Convex_hull_3::do_intersect(hsm1, hsm2);
   std::cout << "do convex hulls intersect? " << std::boolalpha << res << "\n";
 
-  // Separation distance provides the squared distance between the two objects if they do not intersect but it's slower
+  // Separation distance provides the approximate squared distance between the two objects if they do not intersect but it's slower
   K::FT dist = CGAL::Convex_hull_3::separation_distance(hsm1, hsm2);
   std::cout << "Squared distance between convex hulls: " << dist << "\n";
 

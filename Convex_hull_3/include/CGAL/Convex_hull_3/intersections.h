@@ -274,7 +274,7 @@ Point_3 extreme_point_3(const PointRange& r, const Direction_3 &dir, const Named
 *
 * computes the furthest point of the convex hull along the direction.
 *
-* @tparam PolygonMesh: is a model of `MutableFaceGraph` For more details see in  `CGAL::Convex_hull_hierarchy`
+* @tparam ConvexHullHierarchy an instance of `CGAL::Convex_hull_hierarchy`
 * @tparam Direction_3: is a model of CGAL::Direction_3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -302,8 +302,8 @@ Point_3 extreme_point_3(const PointRange& r, const Direction_3 &dir, const Named
 * \cgalNamedParamsEnd
 *
 */
-template <class PolygonMesh, class Direction_3, class NamedParameters>
-Point_3 extreme_point_3(const Convex_hull_hierarchy<PolygonMesh> &ch, const Direction_3 &dir, const NamedParameters &np);
+template <class ConvexHullHierarchy, class Direction_3, class NamedParameters>
+Point_3 extreme_point_3(const ConvexHullHierarchy &ch, const Direction_3 &dir, const NamedParameters &np);
 
 #else
 
@@ -552,7 +552,7 @@ struct Do_intersect_traits<K, K, Converter, true> {
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* checks if the convex hulls of the two point sets intersect or not. The points in a set do not need to be in convex position.
+* checks if the convex hulls of the two point sets intersect or not.
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -584,6 +584,8 @@ struct Do_intersect_traits<K, K, Converter, true> {
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
+* * \note The point sets do not need to be in convex position.
 *
 */
 template <class PointRange,
@@ -645,7 +647,7 @@ bool do_intersect(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *
 * checks if the convex hulls intersect or not.
 *
-* @tparam PolygonMesh: is a model of `MutableFaceGraph`, more details in `CGAL::Convex_hull_hierarchy`
+* @tparam ConvexHullHierarchy an instance of `CGAL::Convex_hull_hierarchy`
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -678,10 +680,10 @@ bool do_intersect(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 * \cgalNamedParamsEnd
 *
 */
-template <class PolygonMesh,
+template <class ConvexHullHierarchy,
           class NamedParameters_1 = parameters::Default_named_parameters,
           class NamedParameters_2 = parameters::Default_named_parameters>
-bool do_intersect(const Convex_hull_hierarchy<PolygonMesh>& ch1, const Convex_hull_hierarchy<PolygonMesh>& ch2,
+bool do_intersect(const ConvexHullHierarchy& ch1, const ConvexHullHierarchy& ch2,
                   const NamedParameters_1& np1 = parameters::default_values(),
                   const NamedParameters_2& np2 = parameters::default_values());
 
