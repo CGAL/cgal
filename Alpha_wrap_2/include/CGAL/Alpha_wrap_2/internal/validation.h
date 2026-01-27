@@ -199,6 +199,7 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
 #ifdef CGAL_AW2_DEBUG
       std::cerr << "Error: Wrap is not simple" << std::endl;
 #endif
+      return false;
     }
   }
   else
@@ -208,6 +209,7 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
 #ifdef CGAL_AW2_DEBUG
       std::cerr << "Error: Wrap is not weakly simple" << std::endl;
 #endif
+      return false;
     }
   }
 
