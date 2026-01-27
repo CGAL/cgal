@@ -62,7 +62,7 @@ void make_conforming_Gabriel_2 (CDT& t)
 \endcode
 
 
-In both cases, the template parameter `CDT` must be instantiated by a
+In both cases, the template parameter `CDT` must be instantiated with a
 constrained Delaunay triangulation class (see Chapter \ref
 Chapter_2D_Triangulations "2D Triangulations").
 
@@ -203,7 +203,7 @@ template<class CDT, class NamedParameters>
 void refine_Delaunay_mesh_2 (CDT &t, NamedParameters np)
 \endcode
 
-The template parameter `CDT` must be instantiated by a constrained
+The template parameter `CDT` must be instantiated with a constrained
 Delaunay triangulation class.
 
 The geometric traits class of `CDT` has to be a

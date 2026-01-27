@@ -14,7 +14,7 @@ include(./thingi10k_max_10k_solid.cmake)
 set(thingi10k_BLACKLIST_WITHOUT_MERGE_FACETS
     #106789.stl
     # At point 4.0163683382116631 -2.094120689431076 0
-    # There is a edge of the input mesh that is infinitely close to a vertex.
+    # There is an edge of the input mesh that is infinitely close to a vertex.
     )
 
 set(thingi10k_FAILED_WITH_MERGE_FACETS

@@ -35,9 +35,6 @@
   \sa `CGAL::Ambient_dimension`
   \sa `CGAL::Feature_dimension`
   \sa `CGAL::Kernel_traits`
-
-  \todo `Kernel::ConstructUnitNormal_3` as no model in the concept
-  \todo `Kernel::CompareSquaredRadius_3` as no model in the concept
 */
 class Kernel {
 public:

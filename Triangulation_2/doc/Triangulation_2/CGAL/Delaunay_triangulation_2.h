@@ -84,13 +84,13 @@ public:
 /// @{
 
 /*!
-default constructor.
+Default constructor.
 */
 Delaunay_triangulation_2(const Traits& gt =
 Traits());
 
 /*!
-copy constructor. All the vertices and faces are duplicated.
+Copy constructor. All the vertices and faces are duplicated.
 */
 Delaunay_triangulation_2(
 const Delaunay_triangulation_2<Traits,Tds> &tr);
@@ -139,7 +139,7 @@ Vertex_handle insert(const Point& p, Locate_type& lt,
 Face_handle loc, int li );
 
 /*!
-equivalent to `insert(p)`.
+Equivalent to `insert(p)`.
 */
 Vertex_handle push_back(const Point& p);
 
@@ -183,7 +183,7 @@ void remove(Vertex_handle v);
 /// @{
 
 /*!
-if there is not already another vertex placed on `p`,
+If there is not already another vertex placed on `p`,
 the triangulation is modified such that the new position of vertex `v`
 is `p`, and `v` is returned. Otherwise, the triangulation is not
 modified and the vertex at point `p` is returned.
@@ -192,7 +192,7 @@ modified and the vertex at point `p` is returned.
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p);
 
 /*!
-same as `move_if_no_collision()`, if there is no collision. Otherwise, `v`
+Same as `move_if_no_collision()`, if there is no collision. Otherwise, `v`
 is deleted and the vertex placed on `p` is returned.
 \pre Vertex `v` must be finite.
 */
@@ -276,7 +276,7 @@ Face_handle start = Face_handle()) const;
 /// @{
 
 /*!
-Returns the center of the circle circumscribed to face `f`.
+returns the center of the circle circumscribed to face `f`.
 \pre `f` is not infinite.
 */
 Point dual(const Face_handle &f) const;
@@ -315,7 +315,7 @@ Stream& draw_dual(Stream & ps);
 /// @{
 
 /*!
-Returns the side of `p` with respect to the circle circumscribing
+returns the side of `p` with respect to the circle circumscribing
 the triangle associated with `f`.
 */
 Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;

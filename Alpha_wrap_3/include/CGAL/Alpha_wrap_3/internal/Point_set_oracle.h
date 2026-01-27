@@ -97,12 +97,22 @@ public:
   { }
 
 public:
+  void clear()
+  {
+    m_points_ptr->clear();
+    Oracle_base::clear();
+  }
+
   // adds a range of points to the oracle
   template <typename PointRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void add_point_set(const PointRange& points,
-                     const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
+  void add_points(const PointRange& points,
+                  const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB tree (points)..." << std::endl;
+#endif
+
     if(points.empty())
     {
 #ifdef CGAL_AW3_DEBUG
@@ -111,23 +121,20 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_points_ptr->size();
     m_points_ptr->insert(std::cend(*m_points_ptr), std::cbegin(points), std::cend(points));
 
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB tree (points)..." << std::endl;
-#endif
-
-    this->tree().insert(std::next(std::cbegin(*m_points_ptr), old_size), std::cend(*m_points_ptr));
+    this->tree().rebuild(std::cbegin(*m_points_ptr), std::cend(*m_points_ptr));
 
     // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
     // it will be done at the first treatment of a facet that needs a Steiner point.
     // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
-
-    CGAL_postcondition(this->tree().size() == m_points_ptr->size());
   }
+
+#ifdef CGAL_AW2_DEBUG
+    std::cout << "PS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
 };
 
 } // namespace internal
