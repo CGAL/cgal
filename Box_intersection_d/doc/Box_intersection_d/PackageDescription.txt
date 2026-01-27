@@ -52,6 +52,7 @@
 
 \cgalCRPSection{Classes}
 - `CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>`
+- `CGAL::Box_intersection_d::Box_with_info_d<NT, int D, Info, IdPolicy>`
 - `CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>`
 - `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>`
 

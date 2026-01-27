@@ -46,6 +46,7 @@ creates copies of the boxes that would not have identical
 \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
+\sa `CGAL::Box_intersection_d::Box_with_info_d<NT, int D, Info, IdPolicy>`
 \sa `CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>`
 \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>`
 \sa `BoxIntersectionTraits_d`

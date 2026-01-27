@@ -47,9 +47,11 @@ void all_pairs( ForwardIter1 p_begin, ForwardIter1 p_end,
     const int last_dim = Traits::dimension() - 1;
     for( ForwardIter1 p = p_begin; p != p_end; ++p ) {
         for( ForwardIter2 i = i_begin; i != i_end; ++i ) {
-            if ((complete_case && Traits::id(*p) >= Traits::id(*i))
-                || Traits::id(*p) == Traits::id(*i))
-                continue;
+            if constexpr(Traits::has_unique_box_traits)
+                if ((complete_case && Traits::id(*p) >= Traits::id(*i))
+                    || Traits::id(*p) == Traits::id(*i))
+                    continue;
+
             for( int dim = 0; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
                     goto no_intersection1;
@@ -107,15 +109,23 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
              p != p_end && Traits::is_lo_less_hi( *p, *i, 0 );
              ++p )
         {
-            if( Traits::id( *p ) == Traits::id( *i ) )
-                continue;
+
+            if constexpr(Traits::has_unique_box_traits)
+                if( Traits::id( *p ) == Traits::id( *i ) )
+                    continue;
+
             for( int dim = 1; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
                     goto no_intersection;
-            if( in_order )
+
+            if constexpr(Traits::has_unique_box_traits){
+                if( in_order )
+                    callback( *p, *i );
+                else
+                    callback( *i, *p );
+            } else {
                 callback( *p, *i );
-            else
-                callback( *i, *p );
+            }
         no_intersection:
             ;
         }
@@ -143,17 +153,22 @@ void modified_two_way_scan(
                  p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
                  ++p )
             {
-                if( Traits::id( *p ) == Traits::id( *i_begin ) )
-                    continue;
+                if constexpr(Traits::has_unique_box_traits)
+                    if( Traits::id( *p ) == Traits::id( *i_begin ) )
+                        continue;
 
                 for( int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p, *i_begin, dim ) )
                         goto no_intersection1;
                 if( Traits::contains_lo_point( *i_begin, *p, last_dim ) ) {
-                    if( in_order )
+                    if constexpr(Traits::has_unique_box_traits){
+                        if( in_order )
+                            callback( *p, *i_begin );
+                        else
+                            callback( *i_begin, *p );
+                    } else {
                         callback( *p, *i_begin );
-                    else
-                        callback( *i_begin, *p );
+                    }
                 }
             no_intersection1:
                 ;
@@ -164,16 +179,21 @@ void modified_two_way_scan(
                  i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
                  ++i )
             {
-                if( Traits::id( *p_begin ) == Traits::id( *i ) )
-                    continue;
+                if constexpr(Traits::has_unique_box_traits)
+                    if( Traits::id( *p_begin ) == Traits::id( *i ) )
+                        continue;
                 for( int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p_begin, *i, dim ) )
                         goto no_intersection2;
                 if( Traits::contains_lo_point( *i, *p_begin, last_dim ) ) {
-                    if( in_order )
+                    if constexpr(Traits::has_unique_box_traits){
+                        if( in_order )
+                            callback( *p_begin, *i );
+                        else
+                            callback( *i, *p_begin );
+                    } else {
                         callback( *p_begin, *i );
-                    else
-                        callback( *i, *p_begin );
+                    }
                 }
             no_intersection2:
                 ;
@@ -383,7 +403,6 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     const T inf = box_limits< T >::inf();
     const T sup = box_limits< T >::sup();
 
-
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
     Counter<int> bla( level );
 
@@ -449,8 +468,10 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         // make two calls for roots of segment tree at next level.
         segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
                       callback, traits, cutoff, dim - 1,  in_order );
-        segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
-                      callback, traits, cutoff, dim - 1, !in_order );
+        // If the two range of box are separated that second calls is not needed
+        if constexpr(Predicate_traits::has_unique_box_traits)
+            segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
+                        callback, traits, cutoff, dim - 1, !in_order );
     }
 
     T mi;
