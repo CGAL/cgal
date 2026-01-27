@@ -31,8 +31,8 @@ namespace Homological_discrete_vector_field {
 
  The class `Triangulation_3_io` is an intermediate %IO class, used to load a `Triangulation_3` and produce simplicial complexes. The class loads the vertices and the cells (i.e. tetrahedra) of the `Triangulation_3` into a `Mesh_object_io`.
 
-\tparam Triangulation3 a model of  `CGAL::Triangulation_3`.
-\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+ \tparam Triangulation3 a model of  `CGAL::Triangulation_3`.
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
 template <typename Triangulation3, typename Traits>
@@ -43,7 +43,7 @@ public:
     typedef typename Triangulation3::Vertex_handle vertex_descriptor ;
     typedef typename Triangulation3::Cell_handle cell_descriptor ;
     typedef typename Triangulation3::Point Point ;
-    
+
 private:
     /* \brief Storage of vertices Io_cell_type <-> Cell_handle permutation.
      *
