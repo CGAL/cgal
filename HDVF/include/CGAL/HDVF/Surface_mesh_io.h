@@ -44,8 +44,7 @@ public:
     typedef typename boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor ;
     typedef typename boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor ;
 private:
-
-    /** \brief Storage of vertices Io_cell_type <-> Vertex_index permutation.
+    /* \brief Storage of vertices Io_cell_type <-> Vertex_index permutation.
      *
      * `_io_cell_to_he_index` maps a Io_cell_type to its associated Halfedge_index in the mesh
      *
