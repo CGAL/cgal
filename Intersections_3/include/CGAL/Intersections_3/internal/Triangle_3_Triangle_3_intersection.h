@@ -317,13 +317,13 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
   std::ofstream("/tmp/t1.polylines.txt") << std::setprecision(17) << to_string(t1) << "\n";
   std::ofstream("/tmp/t2.polylines.txt") << std::setprecision(17) << to_string(t2) << "\n";
 #endif
-  const typename K::Point_3& p1 = t1.vertex(0),
-                             q1 = t1.vertex(1),
-                             r1 = t1.vertex(2);
+  const typename K::Point_3& p1 = t1.vertex(0);
+  const typename K::Point_3& q1 = t1.vertex(1);
+  const typename K::Point_3& r1 = t1.vertex(2);
 
-  const typename K::Point_3& p2 = t2.vertex(0),
-                             q2 = t2.vertex(1),
-                             r2 = t2.vertex(2);
+  const typename K::Point_3& p2 = t2.vertex(0);
+  const typename K::Point_3& q2 = t2.vertex(1);
+  const typename K::Point_3& r2 = t2.vertex(2);
 
   std::list<Point_on_triangle<K>> inter_pts;
   inter_pts.push_back(Point_on_triangle<K>(0,-1));
