@@ -14,6 +14,7 @@
 #ifndef CGAL_CONVEX_HULL_INTERNAL_HELPERS_H
 #define CGAL_CONVEX_HULL_INTERNAL_HELPERS_H
 
+#include <CGAL/IO/helpers.h>
 #include <CGAL/license/Convex_hull_3.h>
 
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT

@@ -24,7 +24,6 @@
 #include <CGAL/Convex_hull_hierarchy.h>
 #include <CGAL/intersections.h>
 
-#include <CGAL/IO/helpers.h>
 #include <CGAL/Convex_hull_3/internal/helpers.h>
 
 #include <CGAL/Container_helper.h>

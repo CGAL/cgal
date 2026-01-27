@@ -28,8 +28,6 @@
 #include <CGAL/Convex_hull_3/internal/helpers.h>
 #include <CGAL/squared_distance_3.h>
 
-#include <CGAL/IO/helpers.h>
-
 #include <CGAL/Container_helper.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/property_map.h>
