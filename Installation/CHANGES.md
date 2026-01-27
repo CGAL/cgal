@@ -18,6 +18,15 @@ Release date: July 2026
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
 - The old function names are still available but marked as deprecated for backward compatibility.
 
+### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
+
+- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) that extends the support plane of the seed face without refitting the plane to the region
+- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Line_segment_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Line__segment__region.html) that extends the support line of the seed segment without refitting the line to the region
+- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) that provides a sorting of faces in descending order of area
+- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Segment_length_sorting`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Segment__length__sorting.html) that provides a sorting of segments in descending order of length
+- Added the named parameter `face_normal_map` to [`CGAL::Shape_detection::Polygon_mesh::Linear_least_squares_fit_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_least__squares__plane__fit__region.html) ,[`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af) to allow the use of face normal property maps instead of calculating the face normals.
+- The [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) are now used as the default in [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af)
+
 ### [Surface Mesh Simplification](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceMeshSimplification)
 
 - Added the class `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`, which provides improved output for `CGAL::Surface_mesh_simplification::edge_collapse()`.
@@ -713,7 +722,7 @@ Release date: June 2022
 
 ### [2D Straight Skeleton and Polygon Offsetting](https://doc.cgal.org/5.5/Manual/packages.html#PkgStraightSkeleton2) (breaking change)
 
-- Fix the output of the function [CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()](https://doc.cgal.org/5.5/Straight_skeleton_2/group__PkgStraightSkeleton2OffsetFunctions.html#gaa159f093e5d6d7fdb62c1660a44f95fe)
+- Fix the output of the function [`CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`](https://doc.cgal.org/5.5/Straight_skeleton_2/group__PkgStraightSkeleton2OffsetFunctions.html#gaa159f093e5d6d7fdb62c1660a44f95fe)
     to not take into account the offset of the outer frame.
 - Fix the computation of the exterior offset of a polygon with holes that was not computing the offset of the holes
 
@@ -1196,7 +1205,7 @@ Release date: September 2020
 
 ### Installation
 
-- The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+- The `CGAL_Core` library no longer requires `Boost.Thread`, even if the g++ compiler is used.
 - The minimal supported version of Boost is now 1.66.0.
 
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
@@ -1551,7 +1560,7 @@ Release date: November 2019
 - Introduced a new face base class, [`Triangulation_face_base_with_id_2`](https://doc.cgal.org/5.0/BGL/classCGAL_1_1Triangulation__face__base__with__id__2.html)
      which enables storing user-defined integer IDs in the face of any 2D triangulation, a precondition to use some
      BGL algorithms.
-- Added range types and functions that return ranges, for example for all vertices, enabling the use of `C++11` `for`-loops.
+- Added range types and functions that return ranges, for example for all vertices, enabling the use of C++11 for-loops.
      See [this new example](https://doc.cgal.org/5.0/Triangulation_2/Triangulation_2_2for_loop_2_8cpp-example.html) for a usage demonstration.
 
 ### [3D Triangulations](https://doc.cgal.org/5.0/Manual/packages.html#PkgTriangulation3)
@@ -2255,7 +2264,7 @@ Release date: September 2017
 ### Surface Mesh
 
 - **Breaking change**:
-    `operator >>(std::istream&,       Surface_mesh&)` no longer clears
+    `operator >>(std::istream&, Surface_mesh&)` no longer clears
     the surface mesh.
 
 ### Triangulated Surface Mesh Parameterization (breaking change)
@@ -2465,7 +2474,7 @@ Release date: May 2017
     they have a valid commercial license for the packages they used.
     This can also be used to make sure only LGPL header files are used.
 - Because of a bug in the g++ compiler about the C++11 keyword
-    `thread_local`, the CGAL\_Core library now always requires
+    `thread_local`, the `CGAL_Core` library now always requires
     `Boost.Thread` if the g++ compiler is used.
 
 ### Generalized Maps (new package)
@@ -2916,7 +2925,7 @@ Release date: October 2015
     3.1, 3.2, and 3.3 are supported.
 - All Qt4 demos have been updated and now require Qt5 to be compiled.
     Qt5 version 5.3 or higher is required. The support for Qt4 is
-    dropped. To compile libCGAL\_Qt5 and demos, you must set the cmake
+    dropped. To compile `libCGAL_Qt5` and demos, you must set the cmake
     or environment variable `Qt5_DIR` to point to the path to the
     directory containing the file `Qt5Config.cmake` created by your Qt5
     installation. If you are using the open source edition it should be
@@ -3002,7 +3011,7 @@ Release date: October 2015
 
 ### dD Geometry Kernel
 
-- Epick\_d gains 3 new functors: `Construct_circumcenter_d`,
+- `Epick_d` gains 3 new functors: `Construct_circumcenter_d`,
     `Compute_squared_radius_d`, `Side_of_bounded_sphere_d`. Those are
     essential for the computation of alpha-shapes.
 
@@ -3442,7 +3451,7 @@ Release date: April 2014
     `is_free`, `highest_nonfree_dimension`, `opposite` and
     `other_extremity`. We also transform the static methods
     `vertex_attribute` and `point` of `Linear_cell_complex` class into
-    non static methods. You can define the CGAL\_CMAP\_DEPRECATED macro
+    non static methods. You can define the `CGAL_CMAP_DEPRECATED` macro
     to keep the old behavior.
 
 ### 2D Arrangements
@@ -3588,7 +3597,7 @@ Release date: October 2013
 
 - Two bug fixes: do not use the 2 least significant bits for cell
     attribute without dart support; share the mark when copying a
-    CMap\_cell\_iterator.
+    `CMap_cell_iterator`.
 - Add a constructor taking a given combinatorial map as argument,
     possibly with different dimension and/or different attributes. This
     allows to transform a combinatorial map.
@@ -3648,15 +3657,15 @@ Release date: October 2013
 - Introduce new data structures and options for speed-up and
     compacity. Note that `Compact_mesh_cell_base_3` and
     `Mesh_vertex_base_3` are now our favored implementations of the
-    concepts MeshCellBase\_3 and MeshVertexBase\_3.
+    concepts `MeshCellBase_3` and `MeshVertexBase_3`.
 - Introduce a new constructor for `Polyhedral_mesh_domain_3` that
     takes a bounding polyhedron to be meshed along with a polyhedral
     surface entirely included in it. This allows the user to mesh a
     polyhedral domain with internal surface(s) which can be
     non-watertight and even non-manifold.
 - Several documentation bug fixes.
-- Provide the ability to plug in custom cell\_base/vertex\_base
-    classes into the Mesh\_triangulation\_3 class.
+- Provide the ability to plug in custom `cell_base`/`vertex_base`
+    classes into the `Mesh_triangulation_3` class.
 
 ### Triangulated Surface Mesh Simplification
 
@@ -3700,7 +3709,7 @@ Release date: October 2013
 
 - Add a `FindTBB` CMake module so that one can easily link with TBB to
     write shared-memory parallel code.
-- Introduce two new tags: Sequential\_tag and Parallel\_tag
+- Introduce two new tags: `Sequential_tag` and `Parallel_tag`
 
 ## Release 4.2
 
@@ -3766,7 +3775,7 @@ Release date: March 2013
 
 ### 2D Voronoi Diagram Adaptor
 
-- Bug-fix: Add ccb() method in face type as documented.
+- Bug-fix: Add `ccb()` method in face type as documented.
 
 ### 3D Minkowski Sum of Polyhedra
 
@@ -3806,7 +3815,7 @@ Release date: October 2012
         on Mac OS X.
 - Improved configuration for essential and optional external third
     party software
-- Added more general script to create CMakeLists.txt files:
+- Added more general script to create `CMakeLists.txt` files:
     `cgal_create_CMakeLists`
 - Availability tests for C++11 features are now performed with the
     help of [Boost.Config](https://www.boost.org/libs/config). A Boost
@@ -3837,9 +3846,9 @@ Release date: October 2012
 
 ### Kernels
 
-- All Kernel functors now support the result\_of protocol.
+- All Kernel functors now support the `result_of` protocol.
 
-### STL\_Extensions for CGAL
+### `STL_Extensions` for CGAL
 
 - The namespace `cpp0x` has been renamed `cpp11`. The old name is
     still available for backward compatibility.
@@ -4023,7 +4032,7 @@ CGAL-4.x series is released under:
     standard versions if available on the platform. Otherwise,
     `boost::next` and `boost::prior` are used.
 
-### Triangulation\_2
+### `Triangulation_2`
 
 - Fix a thread-safety issue in `Delaunay_triangulation_2` remove
     functions. As usual in CGAL, the small overhead introduced for
@@ -4118,10 +4127,12 @@ CGAL 3.9 offers the following improvements and new functionality :
 - The tags in the geometry traits that indicate the type of boundary
     of the embedding surface were replaced by the following new tags:
 
-                 Left_side_category
-                 Bottom_side_category
-                 Top_side_category
-                 Right_side_category
+    ```c++
+    Left_side_category
+    Bottom_side_category
+    Top_side_category
+    Right_side_category
+    ```
 
     It is still possible not to indicate the tags at all. Default values
     are assumed. This however will produce warning messages, and should
@@ -4156,7 +4167,7 @@ CGAL 3.8 offers the following improvements and new functionality :
 
 - Add a way to efficiently insert a range of points with information
     into a 2D Delaunay and regular triangulation.
-- Add member function mirror\_edge taking an edge as parameter.
+- Add member function `mirror_edge` taking an edge as parameter.
 - Fix an infinite loop in constrained triangulation.
 
 ### 3D Triangulations (major new feature added)
@@ -4165,9 +4176,9 @@ CGAL 3.8 offers the following improvements and new functionality :
     into a 3D Delaunay and regular triangulation.
 - Add a member function to remove a cluster of points from a Delaunay
     or regular triangulation.
-- function vertices\_in\_conflict is renamed
-    vertices\_on\_conflict\_zone\_boundary for Delaunay and regular
-    triangulation. Function vertices\_inside\_conflict\_zone is added to
+- function `vertices_in_conflict` is renamed
+    `vertices_on_conflict_zone_boundary` for Delaunay and regular
+    triangulation. Function `vertices_inside_conflict_zone` is added to
     regular triangulation.
 - Structural filtering is now internally used in locate function of
     Delaunay and regular triangulation. It improves average construction
@@ -4176,7 +4187,7 @@ CGAL 3.8 offers the following improvements and new functionality :
 
 ### 3D Alpha Shapes (major new feature added)
 
-- The new class Fixed\_alpha\_shape\_3 provides a robust and faster
+- The new class `Fixed_alpha_shape_3` provides a robust and faster
     way to compute one alpha shape (with a fixed value of alpha).
 
 ### AABB tree
@@ -4188,31 +4199,31 @@ CGAL 3.8 offers the following improvements and new functionality :
 
 - Better handling of 2D points with elevation (3D points projected
     onto trivial planes). More general traits classes
-    (Projection\_traits\_xy\_3,
-    Projection\_traits\_yz\_3,Projection\_traits\_yz\_3) are provided to
+    (`Projection_traits_xy_3`,
+    `Projection_traits_yz_3`,`Projection_traits_yz_3`) are provided to
     work with triangulations, algorithms on polygons, alpha-shapes,
     convex hull algorithm... Usage of former equivalent traits classes
     in different packages is now deprecated.
-- Exact\_predicates\_exact\_constructions\_kernel now better use the
+- `Exact_predicates_exact_constructions_kernel` now better use the
     static filters which leads to performance improvements.
 - Add an overload for the global function angle, taking three 3D
     points.
 - In the 2D and 3D kernel concept, the constant Boolean
-    Has\_filtered\_predicates is now deprecated. It is now required to
-    use Has\_filtered\_predicates\_tag (being either Tag\_true or
-    Tag\_false).
-- Compare\_distance\_2 and Compare\_distance\_3 provide additional
+    `Has_filtered_predicates` is now deprecated. It is now required to
+    use `Has_filtered_predicates_tag` (being either `Tag_true` or
+    `Tag_false`).
+- `Compare_distance_2` and `Compare_distance_3` provide additional
     operators for 3 and 4 elements.
 - Add intersection test and intersection computation capabilities
-    between an object of type Ray\_3 and either an object of type
-    Line\_3, Segment\_3 or Ray\_3.
+    between an object of type `Ray_3` and either an object of type
+    `Line_3`, `Segment_3` or `Ray_3`.
 - Improve intersection test performance between an object of type
-    Bbox\_3 and an object of type Plane\_3 or Triangle\_3 by avoiding
+    `Bbox_3` and an object of type `Plane_3` or `Triangle_3` by avoiding
     arithmetic filter failures.
 
 ### 2D Envelope
 
-- Env\_default\_diagram\_1 is deprecated, Envelope\_diagram\_1 should
+- `Env_default_diagram_1` is deprecated, `Envelope_diagram_1` should
     be used instead.
 
 ### 3D Envelope
@@ -4223,17 +4234,17 @@ CGAL 3.8 offers the following improvements and new functionality :
 
 ### dD Kernel
 
-- Add functor Compute\_coordinate\_d to Kernel\_d concept.
+- Add functor `Compute_coordinate_d` to `Kernel_d` concept.
 
 ### Geometric Object Generators
 
-- CGAL::Random uses boost::rand48 instead of std::rand.
-- Adding to CGAL::Random a way to generate random integers.
+- `CGAL::Random` uses `boost::rand48` instead of `std::rand`.
+- Adding to `CGAL::Random` a way to generate random integers.
 - Adding generators for dD points.
 
 ### Algebraic Foundations
 
-- Algebraic\_structure\_traits now provides an Inverse functor for
+- `Algebraic_structure_traits` now provides an Inverse functor for
     Fields. There is also a new global function inverse.
 
 ### Bounding Volumes
@@ -4255,9 +4266,9 @@ CGAL 3.8 offers the following improvements and new functionality :
 
 ### 2D Arrangements
 
-- Fix a bug in the method insert\_at\_vertices of the Arrangement\_2
+- Fix a bug in the method `insert_at_vertices` of the `Arrangement_2`
     class.
-- Fix several bugs in the traits class Arr\_Bezier\_curve\_traits\_2
+- Fix several bugs in the traits class `Arr_Bezier_curve_traits_2`
     for arrangement of Bezier curves.
 
 ### 2D Minkowski Sums
@@ -4279,9 +4290,9 @@ CGAL 3.7 offers the following improvements and new functionality :
   - Initial support for the option -strict-ansi of the Intel
         Compiler 11. The CGAL libraries compile with that option, and
         most CGAL headers have been fixed. The packages "3D Boolean
-        Operations on Nef Polyhedra" (Nef\_3), "Convex Decomposition of
-        Polyhedra" (Convex\_decomposition\_3), and "3D Minkowski Sum of
-        Polyhedra" (Minkowski\_sum\_3) are known to still fail to
+        Operations on Nef Polyhedra" (`Nef_3`), "Convex Decomposition of
+        Polyhedra" (`Convex_decomposition_3`), and "3D Minkowski Sum of
+        Polyhedra" (`Minkowski_sum_3`) are known to still fail to
         compile with that compiler flag.
   - The Microsoft Windows Visual C++ compiler 2010 (VC10), that was
         experimentally supported by CGAL-3.6.1, is now fully supported.
@@ -4293,7 +4304,7 @@ CGAL 3.7 offers the following improvements and new functionality :
         Boost-style name mangling. Only one variant is now provided by
         the CGAL Windows installer (release, with dynamic runtime).
 - Some demos now require a version of Qt4 &gt;= 4.3.
-- CGAL\_PDB is no longer provided with CGAL. An alternative solution
+- `CGAL_PDB` is no longer provided with CGAL. An alternative solution
     for people interested in reading PDB files is to use ESBTL
     (<https://esbtl.sourceforge.net/>).
 - Fix issues of the CGAL wrappers around the CORE library, on 64 bits
@@ -4301,14 +4312,14 @@ CGAL 3.7 offers the following improvements and new functionality :
 
 ### Arithmetic and Algebra
 
-- New models Algebraic\_kernel\_d\_1 and Algebraic\_kernel\_d\_2 for
+- New models `Algebraic_kernel_d_1` and `Algebraic_kernel_d_2` for
     the corresponding concepts. They provide generic support for various
     coefficient types
 
 ### Arrangements
 
-- A new model Arr\_algebraic\_segment\_traits\_2 of
-    ArrangementTraits\_2 that supports algebraic curves of arbitrary
+- A new model `Arr_algebraic_segment_traits_2` of
+    `ArrangementTraits_2` that supports algebraic curves of arbitrary
     degree in the plane
 
 ### 2D Triangulations
@@ -4318,29 +4329,29 @@ CGAL 3.7 offers the following improvements and new functionality :
     cases.
 - The return type of the template member function insert(It beg, It
     end), taking an iterator range of points, has been changed from int
-    to std::ptrdiff\_t.
-- Classes Triangulation\_euclidean\_traits\_xy\_3,
-    Triangulation\_euclidean\_traits\_yz\_3 and
-    Triangulation\_euclidean\_traits\_xz\_3 are now model of the concept
-    ConstrainedTriangulationTraits\_2. They can be used with and without
+    to `std::ptrdiff_t`.
+- Classes `Triangulation_euclidean_traits_xy_3`,
+    `Triangulation_euclidean_traits_yz_3` and
+    `Triangulation_euclidean_traits_xz_3` are now model of the concept
+    `ConstrainedTriangulationTraits_2`. They can be used with and without
     intersection of constraints.
 - 2D Delaunay and basic triangulations now provide vertex relocation
     by the mean of these two new methods: move and
-    move\_if\_no\_collision. The methods are also available for the
-    hierarchy (Triangulation\_hierarchy\_2).
+    `move_if_no_collision`. The methods are also available for the
+    hierarchy (`Triangulation_hierarchy_2`).
 
 ### 3D Triangulations
 
 - The return type of the template member function insert(It beg, It
     end), taking an iterator range of points, has been changed from int
-    to std::ptrdiff\_t.
+    to `std::ptrdiff_t`.
 - 3D Delaunay triangulations now provide vertex relocation by the mean
-    of these two new methods: move and move\_if\_no\_collision. This
-    works in both Compact\_policy and Fast\_policy.
+    of these two new methods: move and `move_if_no_collision`. This
+    works in both `Compact_policy` and `Fast_policy`.
 
 ### 2D and 3D Alpha Shapes
 
-- The type int in the API has been changed to std::size\_t so that
+- The type int in the API has been changed to `std::size_t` so that
     CGAL can deal with large data sets (64 bit addresses).
 
 ### 2D Mesh Generation
@@ -4357,7 +4368,7 @@ CGAL 3.7 offers the following improvements and new functionality :
     not detected at the surface mesher level will never be discovered by
     chance, owing to the refinement of some tetrahedra, as it could
     happen before. Please note that defining the macro
-    CGAL\_MESH\_3\_USE\_OLD\_SURFACE\_RESTRICTED\_DELAUNAY\_UPDATE
+    `CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE`
     switches back to the old behavior.
 - A demo program is now available.
 
@@ -4367,7 +4378,7 @@ CGAL 3.7 offers the following improvements and new functionality :
 
 ### 2D Range and Neighbor Search
 
-- The type int in the API has been changed to std::size\_t so that
+- The type int in the API has been changed to `std::size_t` so that
     CGAL can deal with large data sets (64 bit addresses).
 
 ## Release 3.6.1
@@ -4393,10 +4404,10 @@ CGAL-3.6:
 ### Polyhedron
 
 - Fix a compilation errors in demo/Polyhedron/:
-- issue with the location of qglobal.h of Qt4 on MacOS X,
-- missing texture.cpp, if TAUCS is used,
+- issue with the location of `qglobal.h` of Qt4 on MacOS X,
+- missing `texture.cpp`, if TAUCS is used,
 - Fix the location of built plugins of demo/Polyhedron/, when CGAL is
-    configured with WITH\_demos=ON
+    configured with `WITH_demos=ON`
 
 ### 3D Periodic Triangulations
 
@@ -4406,7 +4417,7 @@ CGAL-3.6:
 ### 2D Mesh Generation
 
 - Fix a bug that lead to precondition violation.
-- Improve the user manual about the member function is\_in\_domain()
+- Improve the user manual about the member function `is_in_domain()`
     of the Face type.
 - The 2D meshing process is now deterministic (sorting of bad faces no
     longer relies on pointers comparisons).
@@ -4426,13 +4437,13 @@ CGAL-3.6:
 - Fix a bug in `<CGAL/IO/VRML_2_ostream.h>` that generated VRML 2
     files with an invalid syntax for IndexedFaceSet nodes.
 
-### Triangulation\_2
+### `Triangulation_2`
 
-- Add missing Compare\_distance\_2 functor in trait classes
-    Triangulation\_euclidean\_traits\_xy\_3
-    Triangulation\_euclidean\_traits\_yz\_3 and
-    Triangulation\_euclidean\_traits\_xz\_3. This was preventing calling
-    member function nearest\_vertex of Delaunay\_triangulation\_2
+- Add missing `Compare_distance_2` functor in trait classes
+    `Triangulation_euclidean_traits_xy_3`
+    `Triangulation_euclidean_traits_yz_3` and
+    `Triangulation_euclidean_traits_xz_3`. This was preventing calling
+    member function `nearest_vertex` of `Delaunay_triangulation_2`
     instantiated with one of these traits.
 
 ## Release 3.6
@@ -4465,15 +4476,15 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 #### 2D and 3D Geometry Kernel
 
-- Add new do\_intersect() and intersection() overloads:
-  - do\_intersect(Bbox\_3, Bbox\_3/Line\_3/Ray\_3/Segment\_3)
-  - intersection(Triangle\_3, Line\_3/Ray\_3/Segment\_3)
+- Add new `do_intersect()` and `intersection()` overloads:
+  - `do_intersect(Bbox_3, Bbox_3/Line_3/Ray_3/Segment_3)`
+  - `intersection(Triangle_3, Line_3/Ray_3/Segment_3)`
 
 ### Polygons
 
 #### 2D Regularized Boolean Set-Operations
 
-- Fixed General\_polygon\_set\_2::arrangement() to return the proper
+- Fixed `General_polygon_set_2::arrangement()` to return the proper
     type of object.
 
 ### Arrangement
@@ -4481,23 +4492,23 @@ CGAL 3.6 offers the following improvements and new functionality :
 #### 2D Arrangements
 
 - Fixed passing a (const) traits object to the constructor of
-    Arrangement\_2.
-- Introduced Arrangement\_2::fictitious\_face(), which returns the
+    `Arrangement_2`.
+- Introduced `Arrangement_2::fictitious_face()`, which returns the
     fictitious face in case of an unbounded arrangement.
 - Fixed a bug in Bezier-curve handling.
-- Added (back) iterator, number\_of\_holes(), holes\_begin(), and
-    holes\_end() to the default DCEL for backward compatibility.
-- Added (simple) versions of the free overlay() function. It employs
+- Added (back) iterator, `number_of_holes()`, `holes_begin()`, and
+    `holes_end()` to the default DCEL for backward compatibility.
+- Added (simple) versions of the free `overlay()` function. It employs
     the default overlay-traits, which practically does nothing.
 
 ### Polyhedron
 
 - Fix a compilation errors in demo/Polyhedron/:
-  - issue with the location of qglobal.h of Qt4 on MacOS X,
-  - missing texture.cpp, if TAUCS is used,
+  - issue with the location of `qglobal.h` of Qt4 on MacOS X,
+  - missing `texture.cpp`, if TAUCS is used,
 - Fix the location of built plugins of demo/Polyhedron/, when CGAL is
-    configured with WITH\_demos=ON
-- Fix a bug in test\_facet function of the incremental builder: the
+    configured with `WITH_demos=ON`
+- Fix a bug in `test_facet` function of the incremental builder: the
     function did not test if while a new facet makes a vertex manifold,
     no other facet incident to that vertex breaks the manifold property.
 
@@ -4505,24 +4516,24 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 #### 2D/3D Regular Triangulations
 
-- Weighted\_point now has a constructor from Cartesian coordinates.
+- `Weighted_point` now has a constructor from Cartesian coordinates.
 
 #### 3D Triangulations
 
-- Regular\_triangulation\_3 : semi-static floating-point filters are
+- `Regular_triangulation_3` : semi-static floating-point filters are
     now used in its predicates, which can speed up its construction by a
     factor of about 3 when
-    Exact\_predicates\_inexact\_constructions\_kernel is used.
-- The class Regular\_triangulation\_filtered\_traits\_3 is deprecated,
-    the class Regular\_triangulation\_euclidean\_traits\_3 must be used
+    `Exact_predicates_inexact_constructions_kernel` is used.
+- The class `Regular_triangulation_filtered_traits_3` is deprecated,
+    the class `Regular_triangulation_euclidean_traits_3` must be used
     instead. The predicates of that traits will be filtered if the
     kernel given as template parameter of that traits is itself a
     filtered kernel.
-- Triangulation\_hierarchy\_3 is now deprecated, and replaced by a
-    simpler CGAL::Fast\_location policy template parameter of
-    Delaunay\_triangulation\_3.
-- The old version of remove() (enabled with
-    CGAL\_DELAUNAY\_3\_OLD\_REMOVE) has been deleted.
+- `Triangulation_hierarchy_3` is now deprecated, and replaced by a
+    simpler `CGAL::Fast_location` policy template parameter of
+    `Delaunay_triangulation_3`.
+- The old version of `remove()` (enabled with
+    `CGAL_DELAUNAY_3_OLD_REMOVE`) has been deleted.
 
 #### 3D Periodic Triangulations
 
@@ -4534,8 +4545,8 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 #### 3D Alpha shapes
 
-- The class Weighted\_alpha\_shape\_euclidean\_traits\_3 is
-    deprecated, the class Regular\_triangulation\_euclidean\_traits\_3
+- The class `Weighted_alpha_shape_euclidean_traits_3` is
+    deprecated, the class `Regular_triangulation_euclidean_traits_3`
     must be used instead.
 - The package can now be used together with the 3D Periodic
     Triangulation package to compute periodic alpha shapes.
@@ -4552,7 +4563,7 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 - The 2D mesh generator can now be used with a constrained Delaunay
     triangulation with constraints hierarchy
-    (Constrained\_triangulation\_plus\_2).
+    (`Constrained_triangulation_plus_2`).
 - In some cases (refinement of a constrained edge that is on the
     convex hull), the 2D mesh generator from CGAL-3.4 and CGAL-3.5 could
     create invalid triangulations. This bug is now fixed.
@@ -4594,8 +4605,8 @@ This is a bug fix release.
 
 #### AABB tree
 
-- Fix a linker issue in do\_intersect(Bbox\_3,Bbox\_3).
-- Fix compilation issue in do\_intersect(Bbox\_3,Ray\_3) when using
+- Fix a linker issue in `do_intersect(Bbox_3, Bbox_3)`.
+- Fix compilation issue in `do_intersect(Bbox_3, Ray_3)` when using
     the parameters in this order.
 
 #### 3D Mesh Generation
@@ -4621,7 +4632,7 @@ this release.
   - Intel Compiler 11 supported on Linux
 - Fixed ABI incompatibilities when mixing CGAL and Boost Program
     Options on Windows/Visual C++ (the compilation flag
-    -D\_SECURE\_SCL=0 is not longer use in Debug mode).
+    `-D_SECURE_SCL=0` is not longer use in Debug mode).
 
 ### Geometry Kernels
 
@@ -4647,18 +4658,18 @@ this release.
 
 #### 2D Arrangements
 
-- The member function is\_at\_infinity() of Arrangement\_2::Vertex was
-    replaced by the new function is\_at\_open\_boundary(). The former is
+- The member function `is_at_infinity()` of `Arrangement_2::Vertex` was
+    replaced by the new function `is_at_open_boundary()`. The former is
     deprecated. While still supported in version 3.5, It will not be
     supported in future releases. The member functions
-    boundary\_type\_in\_x() and boundary\_type\_in\_y() were permanently
-    replaced by the functions parameter\_space\_in\_x() and
-    parameter\_space\_in\_y(), respectively. The 2 new functions return
-    an enumeration of a new type, namely Arr\_parameter\_space.
+    `boundary_type_in_x()` and `boundary_type_in_y()` were permanently
+    replaced by the functions `parameter_space_in_x()` and
+    `parameter_space_in_y()`, respectively. The 2 new functions return
+    an enumeration of a new type, namely `Arr_parameter_space`.
 - The tags in the geometry traits that indicate the type of boundary
     of the embedding surface were replaced by the following new tags:
-    Arr\_left\_side\_tag Arr\_bottom\_side\_tag Arr\_top\_side\_tag
-    Arr\_right\_side\_tag In addition, the code was change, and now it
+    `Arr_left_side_tag` `Arr_bottom_side_tag` `Arr_top_side_tag`
+    `Arr_right_side_tag` In addition, the code was change, and now it
     is possible not to indicate the tags at all. Default values are
     assumed. This however will produce warning messages, and should be
     avoided.
@@ -4694,7 +4705,7 @@ this release.
 - This package generates 3 dimensional meshes. It computes isotropic
     simplicial meshes for domains or multidomains provided that a domain
     descriptor, able to answer queries from a few different types on the
-    domain, is given. In the current version, Mesh\_3 generate meshes
+    domain, is given. In the current version, Mesh_3 generate meshes
     for domain described through implicit functional, 3D images or
     polyhedral boundaries. The output is a 3D mesh of the domain volume
     and conformal surface meshes for all the boundary and subdividing
@@ -4705,7 +4716,7 @@ this release.
 #### Triangulated Surface Mesh Simplification
 
 - BREAKING API change in the passing of the visitor object.
-- Fixed a bug in the link\_condition test
+- Fixed a bug in the `link_condition` test
 - Added a geometric test to avoid folding of facets
 - Fixed a bug in the handling of overflow in the LindstromTurk
     computations
@@ -4726,7 +4737,7 @@ this release.
 
 ### Support Library
 
-#### CGAL\_ipelets (new package)
+#### `CGAL_ipelets` (new package)
 
 - Object that eases the writing of Ipe's plugins that use CGAL.
     Plugins for CGAL main 2D algorithm are provided as demo.
@@ -4746,7 +4757,7 @@ fixes for this release.
 - Boost version 1.33 at least is now required.
 - CGAL now depends on Boost.Threads, which implies to link against a
     compiled part of Boost.
-- The new macro CGAL\_NO\_DEPRECATED\_CODE can be defined to disable
+- The new macro `CGAL_NO_DEPRECATED_CODE` can be defined to disable
     deprecated code, helping users discover if they rely on code that
     may be removed in subsequent releases.
 - Assertion behavior: It is not possible anymore to set the CONTINUE
@@ -4754,17 +4765,17 @@ fixes for this release.
     assertion behavior are now declared in
     `<CGAL/assertions_behaviour.h>`.
 - Qt3 based demos are still there but the documentation has been
-    removed as the CGAL::Qt\_Widget will be deprecated.
+    removed as the `CGAL::Qt_Widget` will be deprecated.
 - Qt4 based demos use the Qt GraphicsView framework and the
     libQGLViewer.
 
 ### Installation
 
-- install\_cgal has been replaced by CMake.
+- `install_cgal` has been replaced by CMake.
 
 ### Polynomial (new package)
 
-- This package introduces a concept Polynomial\_d, a concept for
+- This package introduces a concept `Polynomial_d`, a concept for
     multivariate polynomials in d variables.
 
 ### Modular Arithmetic (new package)
@@ -4773,9 +4784,9 @@ fixes for this release.
 
 ### Number Types
 
-- the counter Interval\_nt::number\_of\_failures() has been removed,
-    replaced by a profiling counter enabled with CGAL\_PROFILE.
-- Fix of a bug in CORE/Expr.h; as a consequence, the arrangement demo
+- the counter `Interval_nt::number_of_failures()` has been removed,
+    replaced by a profiling counter enabled with `CGAL_PROFILE`.
+- Fix of a bug in `CORE/Expr.h`; as a consequence, the arrangement demo
     works properly when handling arrangements of conics, for example,
     when defining an arc with 5 points.
 
@@ -4787,26 +4798,26 @@ fixes for this release.
 
 ### Linear Kernel
 
-- We recommend that you use the object\_cast() function instead of
-    assign() to extract an object from a CGAL::Object, for efficiency
+- We recommend that you use the `object_cast()` function instead of
+    `assign()` to extract an object from a `CGAL::Object`, for efficiency
     reasons.
 - The Kernel archetypes provided by the 2D/3D linear kernel have been
     removed.
-- The deprecated linear kernel functors Construct\_supporting\_line\_2
-    and Construct\_supporting\_line\_3 have been removed.
-- Ambiant\_dimension and Feature\_dimenison have been added to
+- The deprecated linear kernel functors `Construct_supporting_line_2`
+    and `Construct_supporting_line_3` have been removed.
+- `Ambiant_dimension` and `Feature_dimenison` have been added to
     retrieve the potentially compile-time dimension of a space or of an
     object.
-- barycenter() functions have been added.
-- The geometric object Circle\_3 as well as predicates and
+- `barycenter()` functions have been added.
+- The geometric object `Circle_3` as well as predicates and
     constructions have been added to the kernel
-- The missing intersection/do\_intersect between Line\_3 and Line\_3
+- The missing `intersection`/`do_intersect` between `Line_3` and `Line_3`
     has been added as well.
 
 ### 3D Triangulations
 
-- Removed the deprecated functions Cell:mirror\_index() and
-    Cell::mirror\_vertex().
+- Removed the deprecated functions `Cell::mirror_index()` and
+    `Cell::mirror_vertex()`.
 - Derecursification of two functions that in some cases lead to stack
     overflows
 
@@ -4823,42 +4834,42 @@ fixes for this release.
 
 ### STL Extensions
 
-- The functor adaptors for argument binding and composition (bind\_\*,
-    compose, compose\_shared, swap\_\*, negate, along with the helper
-    functions set\_arity\_\* and Arity class and Arity\_tag typedefs)
+- The functor adaptors for argument binding and composition (`bind_*`,
+    `compose`, `compose_shared`, `swap_*`, `negate`, along with the helper
+    functions `set_arity_*` and `Arity` class and `Arity_tag` typedefs)
     which were provided by `<CGAL/functional.h>` have been removed.
-    Please use the better boost::bind mechanism instead. The concept
+    Please use the better `boost::bind` mechanism instead. The concept
     AdaptableFunctor has been changed accordingly such that only a
-    nested result\_type is required.
-- The accessory classes Twotuple, Threetuple, Fourtuple and Sixtuple
-    are also deprecated (use CGAL::array instead).
-- CGAL::Triple and CGAL::Quadruple are in the process of being
-    replaced by boost::tuple. As a first step, we strongly recommend
-    that you replace the direct access to the data members (.first,
-    .second, .third, .fourth), by the get&lt;i&gt;() member function;
-    and replace the make\_triple and make\_quadruple maker functions by
-    make\_tuple.
+    nested `result_type` is required.
+- The accessory classes `Twotuple`, `Threetuple`, `Fourtuple` and `Sixtuple`
+    are also deprecated (use `CGAL::array` instead).
+- `CGAL::Triple` and `CGAL::Quadruple` are in the process of being
+    replaced by `boost::tuple`. As a first step, we strongly recommend
+    that you replace the direct access to the data members (`.first`,
+    `.second`, `.third`, `.fourth`), by the `get<i>()` member function;
+    and replace the `make_triple` and `make_quadruple` maker functions by
+    `make_tuple`.
     This way, in a further release, we will be able to switch to
-    boost::tuple more easily.
-- The class CGAL::Uncertain&lt;&gt; has been documented. It is
+    `boost::tuple` more easily.
+- The class `CGAL::Uncertain<>` has been documented. It is
     typically used to report uncertain results for predicates using
     interval arithmetic, and other filtering techniques.
 
 ### 2D Arrangements
 
-- Changed the name of the arrangement package from Arrangement\_2 to
-    Arrangement\_on\_surface\_2 to reflect the potential capabilities of
+- Changed the name of the arrangement package from `Arrangement_2` to
+    `Arrangement_on_surface_2` to reflect the potential capabilities of
     the package to construct and maintain arrangements induced by curves
     embedded on two dimensional surfaces in three space. Most of these
     capabilities will become available only in future releases though.
 - Enhanced the geometry traits concept to handle arrangements embedded
     on surfaces. Each geometry-traits class must now define the
-    'Boundary\_category' tag.
-- Fixed a bug in Arr\_polyline\_traits\_2.h, where the operator that
+    '`Boundary_category`' tag.
+- Fixed a bug in `Arr_polyline_traits_2.h`, where the operator that
     compares two curves failed to evaluate the correct result (true)
     when the curves are different, but their graphs are identical.
-- Permanently removed IO/Arr\_postscript\_file\_stream.h and
-    IO/Polyline\_2\_postscript\_file\_stream.h, as they depend on
+- Permanently removed `IO/Arr_postscript_file_stream.h` and
+    `IO/Polyline_2_postscript_file_stream.h`, as they depend on
     obsolete features and LEDA.
 - Fixed several bugs in the arrangement demo and enhanced it. e.g.,
     fixed background color change, allowed vertex coloring , enabled
@@ -4866,10 +4877,10 @@ fixes for this release.
 - Enhanced the arrangement demo with new features, such as allowing
     the abortion of the merge function (de-select), updated the how-to
     description, etc.
-- Replace the functions CGAL::insert\_curve(), CGAL::insert\_curves(),
-    CGAL::insert\_x\_monotone\_curve(), and
-    CGAL::insert\_x\_monotone\_curves() with a single overloaded
-    function CGAL::insert(). The former 4 functions are now deprecated,
+- Replace the functions `CGAL::insert_curve()`, `CGAL::insert_curves()`,
+    `CGAL::insert_x_monotone_curve()`, and
+    `CGAL::insert_x_monotone_curves()` with a single overloaded
+    function `CGAL::insert()`. The former 4 functions are now deprecated,
     and may no longer be supported in future releases.
 
 ### Envelopes of Surfaces in 3D
@@ -4879,15 +4890,15 @@ fixes for this release.
 
 ### 2D Regularized Boolean Set-Operations
 
-- Fixed a bug in connect\_holes() that caused failures when connecting
+- Fixed a bug in `connect_holes()` that caused failures when connecting
     holes touching the outer boundary.
-- Fixed the concept GeneralPolygonSetTraits\_2. Introduced two new
-    concepts GpsTraitsGeneralPolygon\_2 and
-    GpsTraitsGeneralPolygonWithHoles\_2. Fixed the definition of the two
-    nested required types Polygon\_2 and Polygon\_with\_holes\_2 of the
-    GeneralPolygonSetTraits\_2 concept. They must model now the two new
+- Fixed the concept `GeneralPolygonSetTraits_2`. Introduced two new
+    concepts `GpsTraitsGeneralPolygon_2` and
+    `GpsTraitsGeneralPolygonWithHoles_2`. Fixed the definition of the two
+    nested required types `Polygon_2` and `Polygon_with_holes_2` of the
+    `GeneralPolygonSetTraits_2` concept. They must model now the two new
     concepts above.
-- Added a default template parameter to 'General\_polygon\_set\_2' to
+- Added a default template parameter to '`General_polygon_set_2`' to
     allow users to pass their specialized DCEL used to instantiate the
     underlying arrangement.
 - Enhanced the BOP demo to use multiple windows.
@@ -4902,7 +4913,7 @@ fixes for this release.
 - Optimized the approximate offset function (reduced time consumption
     up to a factor of 2 in some cases).
 - Added functionality to compute the offset (or to approximate the
-    offset) of a Polygon\_with\_holes\_2 (and not just of a Polygon\_2).
+    offset) of a `Polygon_with_holes_2` (and not just of a `Polygon_2`).
 - Added the functionality to compute (or to approximate) the inner
     offset of a polygon.
 
@@ -4914,24 +4925,24 @@ This is a bug fix release.
 
 ### General
 
-- Intel C++ 9 was wrongly recognized as unsupported by install\_cgal.
+- Intel C++ 9 was wrongly recognized as unsupported by `install_cgal`.
 - Added autolink (for Visual C++) for the CGALImageIO and CGALPDB
     libraries.
-- Fixed bug in Memory\_sizer when using more than 4GB of memory
+- Fixed bug in `Memory_sizer` when using more than 4GB of memory
     (64bit).
 
 ### Number Types
 
 - Fixed bug in FPU rounding mode macros (affected only the alpha
     architecture).
-- Fixed bug in MP\_Float constructor from double for some particular
+- Fixed bug in `MP_Float` constructor from double for some particular
     values.
-- Fixed bug in to\_double(Lazy\_exact\_nt) sometimes returning NaN.
+- Fixed bug in `to_double(Lazy_exact_nt)` sometimes returning NaN.
 
 ### Kernel
 
-- Fixed forgotten derivation in Circular\_kernel\_2::Has\_on\_2
-- Added some missing functions in Bbox\_3 compared to Bbox\_2.
+- Fixed forgotten derivation in `Circular_kernel_2::Has_on_2`
+- Added some missing functions in `Bbox_3` compared to `Bbox_2`.
 
 ### Skin Surface Meshing
 
@@ -4942,38 +4953,38 @@ This is a bug fix release.
 
 ### Arrangements
 
-- Fixed a bug in the Arrangement\_2 package in dual arrangement
+- Fixed a bug in the `Arrangement_2` package in dual arrangement
     representation for Boost graphs when reporting all halfedges of a
     face.
 - Fixed a bug in the Arrangement sweep-line when using a specific
     polyline configuration.
-- Fixed bug in Arrangement\_2 in walk along a line point location for
+- Fixed bug in `Arrangement_2` in walk along a line point location for
     unbounded curves.
-- Fixed bug in aggregated insertion to Arrangement\_2.
-- Fixed bug in Arrangement\_2 class when inserting an unbounded curve
+- Fixed bug in aggregated insertion to `Arrangement_2`.
+- Fixed bug in `Arrangement_2` class when inserting an unbounded curve
     from an existing vertex.
 - Fixed bug when dealing with a degenerate conic arc in
-    Arr\_conic\_traits\_2 of the Arrangement package, meaning a line
+    `Arr_conic_traits_2` of the Arrangement package, meaning a line
     segment which is part of a degenerate parabola/hyperbola.
 - Fixed bug in the Bezier traits-class: properly handle line segments.
     properly handle comparison near a vertical tangency.
 
 ### 2D Polygon
 
-- Fixed bug in degenerate case of Polygon\_2::is\_convex() for equal
+- Fixed bug in degenerate case of `Polygon_2::is_convex()` for equal
     points.
 
 ### 2D Triangulations
 
-- Fixed bug in Regular\_triangulation\_2.
+- Fixed bug in `Regular_triangulation_2`.
 
 ### 3D Triangulations
 
-- Added a circumcenter() function in the default Cell type parameter
-    Triangulation\_ds\_cell\_base\_3, so that the .dual() member
+- Added a `circumcenter()` function in the default `Cell` type parameter
+    `Triangulation_ds_cell_base_3`, so that the `.dual()` member
     function of Delaunay still work as before, without requiring the
-    explicit use of Triangulation\_cell\_base.
-- Added missing operator-&gt;() to Facet\_circulator.
+    explicit use of `Triangulation_cell_base`.
+- Added missing `operator->()` to `Facet_circulator`.
 
 ### Interpolation
 
@@ -4982,11 +4993,11 @@ This is a bug fix release.
 
 ### 3D Boolean Operations on Nef Polyhedra
 
-- Fixed bug in construction of Nef\_polyhedron\_3 from off-file. Now,
+- Fixed bug in construction of `Nef_polyhedron_3` from off-file. Now,
     always the inner volume is selected.
-- Fixed bug in conversion from Nef\_polyhedron\_3 to Polyhedron\_3.
-    Polyhedron\_3 was not cleared at the beginning.
-- Fixed bug in Nef\_polyhedron\_3 in update of indexes for
+- Fixed bug in conversion from `Nef_polyhedron_3` to `Polyhedron_3`.
+    `Polyhedron_3` was not cleared at the beginning.
+- Fixed bug in `Nef_polyhedron_3` in update of indexes for
     construction of external structure.
 
 ### Third Party Libraries Shipped with CGAL
@@ -5016,9 +5027,9 @@ The following platforms are no longer supported:
 - Intel 8
 
 CGAL now supports Visual C++ "Checked iterators" as well as the debug
-mode of GNU g++'s STL (-D\_GLIBCXX\_DEBUG).
+mode of GNU g++'s STL (`-D_GLIBCXX_DEBUG`).
 
-CGAL now works around the preprocessor macros 'min' and 'max' defined in
+CGAL now works around the preprocessor macros `min` and `max` defined in
 `<windows.h>` which were clashing with min/max functions.
 
 ### Installation
@@ -5043,7 +5054,7 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
     algebraic types (not necessarily embeddable into the reals), and
     number types (embeddable into the reals).
 - Number Types
-    Fixed\_precision\_nt and Filtered\_exact number types have been
+    `Fixed_precision_nt` and `Filtered_exact` number types have been
     removed.
 
 ### Kernels
@@ -5051,10 +5062,10 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
 - 2D Circular Kernel
     Efficiency improved through geometric filtering of predicates,
     introduced with the filtered kernel
-    Filtered\_bbox\_circular\_kernel\_2&lt;.&gt;, and also chosen for
-    the predefined kernel Exact\_circular\_kernel\_2.
+    `Filtered_bbox_circular_kernel_2<.>`, and also chosen for
+    the predefined kernel `Exact_circular_kernel_2`.
 - Linear Kernel
-    Exact\_predicates\_exact\_constructions\_kernel memory and run-time
+    `Exact_predicates_exact_constructions_kernel` memory and run-time
     improvements through usage of lazy geometric constructions instead
     of lazy arithmetic.
 
@@ -5106,7 +5117,7 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
   - Added a traits class that supports Bezier curves.
   - Enhanced the traits class that supports rational functions to
         handle unbounded (as well as bounded) arcs
-  - Added a free function called decompose() that produces the
+  - Added a free function called `decompose()` that produces the
         symbolic vertical decomposition of a given arrangement,
         performing a batched vertical ray-shooting query from all
         arrangement vertices.
@@ -5115,23 +5126,23 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
         hyperbolas.
 - Boolean Set Operations
   - Added the DCEL as a default template parameter to the
-        General\_polygon\_set\_2 and Polygon\_set\_2 classes. This
+        `General_polygon_set_2` and `Polygon_set_2` classes. This
         allows users to extend the DCEL of the underlying arrangement.
-  - Added a function template called connect\_holes() that connects
+  - Added a function template called `connect_holes()` that connects
         the holes in a given polygon with holes, turning it into a
         sequence of points, where the holes are connected to the outer
         boundary using zero-width passages.
-  - Added a non-const function member to General\_polygon\_set\_2
+  - Added a non-const function member to `General_polygon_set_2`
         that obtains the underlying arrangement.
 - 2D and 3D Triangulations
   - The constructors and insert member functions which take an
         iterator range perform spatial sorting in order to speed up the
         insertion.
 - Optimal Distances
-  - Polytope\_distance\_d: has support for homogeneous points;
+  - `Polytope_distance_d`: has support for homogeneous points;
         bugfix in fast exact version.
 - Bounding Volumes
-  - Min\_annulus\_d has support for homogeneous points; bugfix in
+  - `Min_annulus_d` has support for homogeneous points; bugfix in
         fast exact version.
 
 ### Support Library
@@ -5157,7 +5168,7 @@ This is a bug fix release
 
 ### Number Types
 
-- Fix MP\_Float constructor which crashed for some values.
+- Fix `MP_Float` constructor which crashed for some values.
 
 ### Kernel
 
@@ -5165,11 +5176,11 @@ This is a bug fix release
 
 ### Arrangement
 
-- Derived the Arr\_segment\_traits\_2 Arrangement\_2 traits class from
+- Derived the `Arr_segment_traits_2` `Arrangement_2` traits class from
     the parameterized Kernel. This allows the use of this traits class
     in an extended range of applications that require kernel objects and
     operations on these objects beyond the ones required by the
-    Arrangement\_2 class itself.
+    `Arrangement_2` class itself.
 - Fixed a compilation bug in the code that handles overlay of
     arrangements instantiated with different DCEL classes.
 - Fixed a couple of bugs in the implementation of the Trapezoidal RIC
@@ -5177,13 +5188,13 @@ This is a bug fix release
 
 ### Triangulation, Alpha Shapes
 
-- Qualify calls to filter\_iterator with "CGAL::" to avoid overload
-    ambiguities with Boost's filter\_iterator.
+- Qualify calls to `filter_iterator` with `CGAL::` to avoid overload
+    ambiguities with Boost's `filter_iterator`.
 
 ### Surface Mesher
 
 - Fixed a bug in iterators of the class template
-    Surface\_mesh\_complex\_2\_in\_triangulation\_3
+    `Surface_mesh_complex_2_in_triangulation_3`
 
 ### Surface Mesh Parametrisation
 
@@ -5192,8 +5203,8 @@ This is a bug fix release
 ### Kinetic Data Structures
 
 - Fixed problems caused by old versions of gcc being confused by
-    operator! and operator int()
-- Added point removal support to the Active\_objects\_vector
+    `operator!` and `operator int()`
+- Added point removal support to the `Active_objects_vector`
 
 ## Release 3.2
 
@@ -5209,7 +5220,7 @@ The following platforms are no longer supported:
 - SGI Mips Pro
 
 For Visual C++ the installation scripts choose the multi-threaded
-dynamically linked runtime (/MD). Before it was the single-threaded
+dynamically linked runtime (`/MD`). Before it was the single-threaded
 static runtime (/ML).
 
 ### Installation
@@ -5338,7 +5349,7 @@ static runtime (/ML).
     algorithms in the Geometric Optimization chapter has been completely
     rewritten.
 - 3D Triangulation (new functionality)
-    Regular\_triangulation\_3 now offers vertex removal.
+    `Regular_triangulation_3` now offers vertex removal.
 
 ## Release 3.1
 
@@ -5398,7 +5409,7 @@ The following functionality has been added or changed:
     An implementation of Shewchuk's algorithm to construct conforming
     triangulations and 2D meshes.
 - 3D Boolean Operations on Nef Polyhedra (new package)
-    A new class (Nef\_polyhedron\_3) representing 3D Nef polyhedra, a
+    A new class (`Nef_polyhedron_3`) representing 3D Nef polyhedra, a
     boundary representation for cell-complexes bounded by halfspaces
     that supports boolean operations and topological operations in full
     generality including unbounded cells, mixed dimensional cells (e.g.,
@@ -5411,10 +5422,10 @@ The following functionality has been added or changed:
     arbitrary query point. The package further offers functions for
     natural neighbor interpolation.
 - Planar Nef polyhedra embedded on the sphere (new package)
-    A new class (Nef\_polyhedron\_S2) designed and supported mainly to
+    A new class (`Nef_polyhedron_S2`) designed and supported mainly to
     represent sphere neighborhoods around vertices of the three-
     dimensional Nef polyhedra.
-- Box\_intersection\_d (new package)
+- `Box_intersection_d` (new package)
     A new efficient algorithm for finding all intersecting pairs for
     large numbers of iso-oriented boxes, i.e., typically these will be
     bounding boxes of more complicated geometries. Useful for (self-)
@@ -5428,54 +5439,54 @@ The following functionality has been added or changed:
     each vertex is at least half-the-width-of-a-pixel away from any
     non-incident edge. This package supports both methods.
 - 3D Triangulations
-  - Triangulation\_3: added operator==(),removed push\_back() and
-        copy\_triangulation().
-  - Delaunay\_3 : added nearest\_vertex(), move\_point(),
-        vertices\_in\_conflict().
-  - Regular\_3 : added filtered traits class, and
-        nearest\_power\_vertex().
-- Planar\_map and Arrangement\_2
+  - `Triangulation_3`: added `operator==()`, removed `push_back()` and
+        `copy_triangulation()`.
+  - `Delaunay_3` : added `nearest_vertex()`, `move_point()`,
+        `vertices_in_conflict()`.
+  - `Regular_3` : added filtered traits class, and
+        `nearest_power_vertex()`.
+- `Planar_map` and `Arrangement_2`
   - The interface of the two traits functions that compute the
         intersection of two given curves changed. The functions
-        nearest\_intersection\_to\_right() and
-        nearest\_intersection\_to\_left() return an object of type
-        CGAL::Object that represents either an empty intersection, a
+        `nearest_intersection_to_right()` and
+        `nearest_intersection_to_left()` return an object of type
+        `CGAL::Object` that represents either an empty intersection, a
         point, or an overlapping subcurve.
   - Requirements to define two binary tags were added to the traits
-        concept of the Planar\_map as follows: *Has\_left\_category* -
+        concept of the `Planar_map` as follows:*`Has_left_category`* -
         indicates whether the functions
-        curves\_compare\_y\_at\_x\_left() and
-        nearest\_intersection\_to\_left() are implemented in the traits
-        model. *Has\_reflect\_category* - indicates whether the
-        functions point\_reflect\_in\_x\_and\_y() and
-        curve\_reflect\_in\_x\_and\_y() are implemented in the traits
+        `curves_compare_y_at_x_left()` and
+        `nearest_intersection_to_left()` are implemented in the traits
+        model. *`Has_reflect_category`* - indicates whether the
+        functions `point_reflect_in_x_and_y()` and
+        `curve_reflect_in_x_and_y()` are implemented in the traits
         model. They can be used as an alternative to the two function in
         the previous item.
-  - A new constructor of the Segment\_cached\_2 type that represents
-        a segment in the Arr\_segment\_cached\_traits\_2 traits class
+  - A new constructor of the `Segment_cached_2` type that represents
+        a segment in the `Arr_segment_cached_traits_2` traits class
         was introduced. The new constructor accepts the segment
         endpoints as well as the coefficients of the underlying line.
   - A new version of the conic-arc traits, based on CORE version 1.7
         was introduced. This new traits class makes use of CORE's
-        rootOf() operator to compute the intersection points in the
+        `rootOf()` operator to compute the intersection points in the
         arrangement, making its code much simpler and more elegant than
         the previous version. In addition, new constructors for conic
         arcs are provided. The new traits class usually performs about
         30% faster than the version included in CGAL 3.0
   - The traits class that handles continuous piecewise linear
-        curves, namely Arr\_polyline\_traits\_2, was rewritten. The new
+        curves, namely `Arr_polyline_traits_2`, was rewritten. The new
         class is parametrized with a traits class that handles segments,
-        say Segment\_traits. The polyline curve defined within the
-        Arr\_polyline\_traits\_2 class is implemented as a vector of
-        segments of type Segment\_traits::Curve\_2.
-  - A meta traits class, namely Arr\_curve\_data\_traits\_2, that
+        say `Segment_traits`. The polyline curve defined within the
+        `Arr_polyline_traits_2` class is implemented as a vector of
+        segments of type `Segment_traits::Curve_2`.
+  - A meta traits class, namely `Arr_curve_data_traits_2`, that
         extends the curve type of the planar-map with arbitrary
         additional data was introduced. It should be instantiated with a
         regular traits-class and a class that contains all extraneous
         data associated with a curve.
   - The class that represents the trapezoidal-decomposition point
         location strategy was renamed to
-        Pm\_trapezoid\_ric\_point\_location.
+        `Pm_trapezoid_ric_point_location`.
   - The Arrangement demo was rewritten. It covers many more
         features, has a much better graphical user interface, and comes
         with online documentation.
@@ -5483,22 +5494,22 @@ The following functionality has been added or changed:
         vertical segments were fixed. This module is used by the
         aggregate insert method that inserts a collection of curves at
         once.
-- Triangulation\_2
+- `Triangulation_2`
   - added a filtered trait class in the regular triangulation
   - added split and join operations in the triangulation data
         structure class
-- Alpha\_shapes\_3
+- `Alpha_shapes_3`
   - major changes in the implementation of the class
-        Alpha\_shapes\_3.
+        `Alpha_shapes_3`.
   - New implementation results in a true GENERAL mode allowing null
         and negative alpha-values. It also fixed the edges
         classification bug and introduces a classification of vertices.
-- Min\_ellipse\_2
+- `Min_ellipse_2`
   - made access to approximate double representation public
   - fixed bugs in conversion to double representation
   - added `is_circle()` method
   - minor performance improvements
-- Min\_sphere\_of\_spheres\_d:
+- `Min_sphere_of_spheres_d`:
   - The models
         `Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>`,
         `Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>`, and
@@ -5508,12 +5519,12 @@ The following functionality has been added or changed:
         `CGAL::Weighted_point<Point,Weight>`)
   - Internal code cleanup; in particular, implementation details
         don't pollute the namespace CGAL anymore
-- Polyhedron\_3
+- `Polyhedron_3`
   - New Tutorial on CGAL Polyhedron for Subdivision Algorithms with
         interactive demo viewer in source code available.
-  - Added example program for efficient self-intersection test. -
-        Added small helper functions, such as vertex\_degree,
-        facet\_degree, edge\_flip, and is\_closed.
+  - Added example program for efficient self-intersection test.
+  - Added small helper functions, such as `vertex_degree`,
+        `facet_degree`, `edge_flip`, and `is_closed`.
 - Apollonius Graph (Voronoi of Circles)
   - Reduced memory requirements by approximately a factor of two.
 
@@ -5528,7 +5539,7 @@ Here is the list of bug-fixes.
 
 - Fixed wrong include files for output support. Added example.
 
-### Planar\_map
+### `Planar_map`
 
 - Fixed the so called "Walk-along-a-line" point-location strategy to
     correctly handle a degenerate case.
@@ -5536,23 +5547,23 @@ Here is the list of bug-fixes.
 ### 2D Triangulation
 
 - added missing figure in html doc
-- in Line\_face\_circulator\_2.h:
+- in `Line_face_circulator_2.h`:
     Fixed changes made to support handles with a typedef to iterator.
-    The fix concerns operator== and !=.
+    The fix concerns `operator==` and `!=`.
 
-### Alpha\_shapes\_3
+### `Alpha_shapes_3`
 
 - fixed classify member function for edges.
 
 ### Number types
 
-- Lazy\_exact\_nt:
+- `Lazy_exact_nt`:
   - added the possibility to select the relative precision of
-        `to_double()` (by default 1e-5). This should fix reports that
-        some circumcenters computations have poor coordinates, e.g.
-        nan).
+    `to_double()` (by default 1e-5). This should fix reports that
+    some circumcenters computations have poor coordinates, e.g.
+    nan).
   - when exact computation is triggered, the interval is recomputed,
-        this should speed up some kinds of computations.
+    this should speed up some kinds of computations.
 - `to_interval(Quotient<MP_Float>)`: avoid spurious overflows.
 
 ### Kernel
@@ -5590,7 +5601,7 @@ The following platforms are no longer supported:
 
 The following functionality has been added or changed:
 
-**All**
+### All
 
 - The CORE library for exact computations is now distributed as part
     of CGAL as well.
@@ -5599,12 +5610,12 @@ The following functionality has been added or changed:
 
 - 3 typedefs have been added to ease the choice of a robust and fast
     kernel:
-  - Exact\_predicates\_inexact\_constructions\_kernel
-  - Exact\_predicates\_exact\_constructions\_kernel
-  - Exact\_predicates\_exact\_constructions\_kernel\_with\_sqrt
+  - `Exact_predicates_inexact_constructions_kernel`
+  - `Exact_predicates_exact_constructions_kernel`
+  - `Exact_predicates_exact_constructions_kernel_with_sqrt`
 - Progress has been made towards the complete adaptability and
     extensibility of our kernels.
-- New faster Triangle\_3 intersection test routines.
+- New faster `Triangle_3` intersection test routines.
     *(see Erratum)*
 - Added a Kernel concept archetype to check that generic algorithms
     don't use more functionality than they should.
@@ -5638,42 +5649,42 @@ The following functionality has been added or changed:
 - **Kd-tree**
     this package is deprecated, its documentation is removed. It is
     replaced by the Spatial Searching package.
-- Largest\_empty\_rectangle\_2
+- `Largest_empty_rectangle_2`
     Given a set of points P in the plane, the class
-    Largest\_empty\_iso\_rectangle\_2 is a data structure that maintains
+    `Largest_empty_iso_rectangle_2` is a data structure that maintains
     an iso-rectangle with the largest area among all iso-rectangles that
     are inside a given iso-rectangle bounding box, and that do not
     contain any point of the point set P.
 - 2D Triangulation and 3D Triangulation
-  - The classes Triangulation\_data\_structure\_2 (and 3), which
+  - The classes `Triangulation_data_structure_2` (and 3), which
         implements the data structure for 2D triangulation class, now
-        makes use of CGAL::Compact\_container (see Support Library
+        makes use of `CGAL::Compact_container` (see Support Library
         section below).
   - The triangulation classes use a Rebind mechanism to provide the
         full flexibility on Vertex and Face base classes. This means
         that it is possible for the user to derive its own Face of
         Vertex base class, adding a functionality that makes use of
         types defined by the triangulation data structure like
-        Face\_handle or Vertex\_handle.
-  - New classes Triangulation\_vertex\_base\_with\_info\_2 (and 3)
-        and Triangulation\_face\_base\_with\_info\_2 (and 3) to make
+        `Face_handle` or `Vertex_handle`.
+  - New classes `Triangulation_vertex_base_with_info_2` (and 3)
+        and `Triangulation_face_base_with_info_2` (and 3) to make
         easier the customization of base classes in most cases.
 - 2D Triangulation
   - Regular triangulation provides an easy access to hidden points.
-  - The Triangulation\_hierarchy\_2, which provide an efficient
+  - The `Triangulation_hierarchy_2`, which provide an efficient
         location data structure, can now be used with any 2D
         triangulation class plugged in (including Regular
         triangulations).
 - 3D Triangulation
-  - faster vertex removal function in Delaunay\_triangulation\_3.
-  - Delaunay\_triangulation\_3 is now independent of the order of
+  - faster vertex removal function in `Delaunay_triangulation_3`.
+  - `Delaunay_triangulation_3` is now independent of the order of
         insertions of the points (in case of degenerate cosphericity).
-  - Regular\_triangulation\_3 now hides vertices (and updates
+  - `Regular_triangulation_3` now hides vertices (and updates
         itself) when inserting a coinciding point with greater weight.
         This required a new predicate.
-  - deprecated functions: copy\_triangulation(), push\_back(),
-        set\_number\_of\_vertices().
-  - Triangulation\_3 now gives non-const access to the data
+  - deprecated functions: `copy_triangulation()`, `push_back()`,
+        `set_number_of_vertices()`.
+  - `Triangulation_3` now gives non-const access to the data
         structure.
 - Interval Skip List (new package)
     An interval skip list is a data structure for finding all intervals
@@ -5685,8 +5696,8 @@ The following functionality has been added or changed:
     1. New traits hierarchy and interface: The set of requirements was
         made sound and complete. A couple of requirements were
         eliminated, few others were redefined, and some were renamed. A
-        hierarchy of three traits classes for the Planar\_map\_2,
-        Planar\_map\_with\_intersections\_2, and Arrangement\_2 types
+        hierarchy of three traits classes for the `Planar_map_2`,
+        `Planar_map_with_intersections_2`, and `Arrangement_2` types
         was established to include only the necessary requirements at
         each level. It was determined that for the aggregate insertion-
         operation based on a sweep-line algorithm only a subset of the
@@ -5695,124 +5706,124 @@ The following functionality has been added or changed:
 
         The following functions have been renamed:
 
-        - point\_is\_same() renamed to point\_equal()
-        - curve\_is\_same() renamed to curve\_equal()
-        - curve\_is\_in\_x\_range() renamed to point\_in\_x\_range()
-        - curve\_compare\_at\_x() renamed to
-            curves\_compare\_y\_at\_x() Furthermore, a precondition has
+        - `point_is_same()` renamed to `point_equal()`
+        - `curve_is_same()` renamed to `curve_equal()`
+        - `curve_is_in_x_range()` renamed to `point_in_x_range()`
+        - `curve_compare_at_x()` renamed to
+            `curves_compare_y_at_x()` Furthermore, a precondition has
             been added that the reference point is in the x-range of
             both curves.
-        - curve\_compare\_at\_x\_right() renamed to
-            curves\_compare\_y\_at\_x\_to\_right(). Furthermore, a
+        - `curve_compare_at_x_right()` renamed to
+            `curves_compare_y_at_x_to_right()`. Furthermore, a
             precondition has been added that both curves are equal at
             the reference point and defined to its right.
-        - curve\_compare\_at\_x\_left() renamed to
-            curves\_compare\_y\_at\_x\_to\_left(). Furthermore, a
+        - `curve_compare_at_x_left()` renamed to
+            `curves_compare_y_at_x_to_left()`. Furthermore, a
             precondition has been added that both curves are equal at
             the reference point and defined to its right.
-        - curve\_get\_point\_status() renamed to
-            curve\_compare\_y\_at\_x(). Furthermore, a precondition has
+        - `curve_get_point_status()` renamed to
+            `curve_compare_y_at_x()`. Furthermore, a precondition has
             been added that the point is in the x-range of the curve.
-            Consequently, the function now returns a Comparison\_result
+            Consequently, the function now returns a `Comparison_result`
             (instead of a special enum).
-        - make\_x\_monotone() renamed to curve\_make\_x\_monotone()
+        - `make_x_monotone()` renamed to `curve_make_x_monotone()`
             See more details below.
-        - curve\_flip() renamed to curve\_opposite()
+        - `curve_flip()` renamed to `curve_opposite()`
 
         The following functions have been removed:
 
-        - curve\_is\_between\_cw()
-        - point\_to\_left()
-        - point\_to\_right()
-        - is\_x\_monotone()
-        - point\_reflect\_in\_x\_and\_y()
-        - curve\_reflect\_in\_x\_and\_y()
-        - do\_intersect\_to\_right()
-        - do\_intersect\_to\_left()
+        - `curve_is_between_cw()`
+        - `point_to_left()`
+        - `point_to_right()`
+        - `is_x_monotone()`
+        - `point_reflect_in_x_and_y()`
+        - `curve_reflect_in_x_and_y()`
+        - `do_intersect_to_right()`
+        - `do_intersect_to_left()`
 
-        Most functions, are required by the PlanarMapTraits\_2 concept,
-        except for the make\_x\_monotone(),
-        nearest\_intersection\_to\_right(),
-        nearest\_intersection\_to\_left(), curves\_overlap() and
-        curve\_opposite(). PlanarMapWithIntersectionsTraits\_2 requires
-        all these functions, except curve\_opposite(), needed only by
-        the ArrangementTraits\_2 concept.
+        Most functions, are required by the `PlanarMapTraits_2` concept,
+        except for the `make_x_monotone()`,
+        `nearest_intersection_to_right()`,
+        `nearest_intersection_to_left()`, `curves_overlap()` and
+        `curve_opposite()`. `PlanarMapWithIntersectionsTraits_2` requires
+        all these functions, except `curve_opposite()`, needed only by
+        the `ArrangementTraits_2` concept.
 
-        Furthermore, the two functions curve\_compare\_at\_x\_left() and
-        nearest\_intersection\_to\_left() can be omitted, if the two
-        functions point\_reflect\_in\_x() and curve\_reflect\_in\_x()
-        are implemented. Reflection can be avoided, if the two \_left
+        Furthermore, the two functions `curve_compare_at_x_left()` and
+        `nearest_intersection_to_left()` can be omitted, if the two
+        functions `point_reflect_in_x()` and `curve_reflect_in_x()`
+        are implemented. Reflection can be avoided, if the two _left
         functions are supplied.
 
-    2. The type X\_curve\_2 of the PlanarMapWithIntersectionsTraits\_2
-        concept was renamed to X\_monotone\_curve\_2, and the
-        distinction between this type and the Curve\_2 type was made
-        firm. The method is\_x\_monotone() of the
-        PlanarMapWithIntersectionsTraits\_2 concept was removed. The
-        related method curve\_make\_x\_monotone() is now called for each
-        input curve of type Curve\_2 when curves are inserted into a
-        Planar\_map\_with\_intersections\_2 to subdivide the input curve
+    2. The type `X_curve_2` of the `PlanarMapWithIntersectionsTraits_2`
+        concept was renamed to `X_monotone_curve_2`, and the
+        distinction between this type and the `Curve_2` type was made
+        firm. The method `is_x_monotone()` of the
+        `PlanarMapWithIntersectionsTraits_2` concept was removed. The
+        related method `curve_make_x_monotone()` is now called for each
+        input curve of type `Curve_2` when curves are inserted into a
+        `Planar_map_with_intersections_2` to subdivide the input curve
         into x-monotone sub-curves (and in case the curve is already
         x-monotone, this function is responsible for casting it to an
         x-monotone curve).
     3. New and improved traits classes:
-    4. Conic traits - Arr\_conic\_traits\_2 Support finite segments of
+    4. Conic traits - `Arr_conic_traits_2` Support finite segments of
         ellipses, hyperbolas and parabolas, as well as line segments.
         The traits require an exact real number- type, such as
-        leda\_real or CORE::Expr.
-    5. Segment cached traits - Arr\_segment\_cached\_traits\_2 This
+        `leda_real` or CORE::Expr.
+    5. Segment cached traits - `Arr_segment_cached_traits_2` This
         class uses an improved representation for segments that helps
         avoiding cascaded computations, thus achieving faster running
         times. To work properly, an exact rational number-type should be
         used.
-    6. Polyline traits - Arr\_polyline\_traits\_2 The polyline traits
+    6. Polyline traits - `Arr_polyline_traits_2` The polyline traits
         class has been reimplemented to work in a more efficient,
         generic manner. The new class replaces the obsolete
-        Arr\_polyline\_traits class. It is parameterized with a segment
+        `Arr_polyline_traits` class. It is parameterized with a segment
         traits class.
-    7. Hyperbola and segment traits - Arr\_hyper\_segment\_traits\_2
+    7. Hyperbola and segment traits - `Arr_hyper_segment_traits_2`
         Supports line segments and segments of canonical hyperbolas.
         This is the type of curves that arise when projecting segments
         in three-space rotationally around a line onto a plane
         containing the line. Such projections are often useful in
         CAD/CAM problems.
     8. Removed old traits class:
-        - The models of the PlanarMapWithIntersectionsTraits\_2
+        - The models of the `PlanarMapWithIntersectionsTraits_2`
             concept below became obsolete, as the new conic traits,
-            namely Arr\_conic\_traits\_2, supports the same
+            namely `Arr_conic_traits_2`, supports the same
             functionality and is much more efficient.
-            - Arr\_circles\_real\_traits
-            - Arr\_segment\_circle\_traits
+            - `Arr_circles_real_traits`
+            - `Arr_segment_circle_traits`
         - The segment traits class and the new polyline traits class
             were reimplemented using standard CGAL-kernel calls. This
             essentially eliminated the corresponding leda traits
             classes, namely:
-            - Pm\_leda\_segment\_traits\_2
-            - Arr\_leda\_segment\_traits\_2
-            - Arr\_leda\_polyline\_traits
+            - `Pm_leda_segment_traits_2`
+            - `Arr_leda_segment_traits_2`
+            - `Arr_leda_polyline_traits`
 
-            With the use of the Leda\_rat\_kernel new external package
+            With the use of the `Leda_rat_kernel` new external package
             the same functionality can be achieved with less overhead
             and more efficiency.
     9. Sweep Line
-        - The Sweep\_line\_2 package was reimplemented. As a
+        - The `Sweep_line_2` package was reimplemented. As a
             consequence it is much more efficient, its traits is tighter
-            (namely neither the two \_left nor the reflection functions
+            (namely neither the two _left nor the reflection functions
             are required), and its interface has changed a bit.
             1. The following global functions have been removed:
-                - sweep\_to\_produce\_subcurves\_2()
-                - sweep\_to\_produce\_points\_2()
-                - sweep\_to\_construct\_planar\_map\_2()
+                - `sweep_to_produce_subcurves_2()`
+                - `sweep_to_produce_points_2()`
+                - `sweep_to_construct_planar_map_2()`
 
-                Instead, the public methods of the Sweep\_line\_2 class
+                Instead, the public methods of the `Sweep_line_2` class
                 listed below were introduced:
-                - get\_subcurves() - Given a container of curves, this
+                - `get_subcurves()` - Given a container of curves, this
                     function returns a list of curves that are created
                     by intersecting the input curves.
-                - get\_intersection\_points() - Given a range of
+                - `get_intersection_points()` - Given a range of
                     curves, this function returns a list of points that
                     are the intersection points of the curves.
-                - get\_intersecting\_curves() - Given a range of
+                - `get_intersecting_curves()` - Given a range of
                     curves, this function returns an iterator to the
                     beginning of a range that contains the list of
                     curves for each intersection point between any two
@@ -5824,8 +5835,8 @@ The following functionality has been added or changed:
                 sweep-line process to construct the map more
                 efficiently.
         - New interface functions to the
-            Planar\_map\_with\_intersections\_2 class. The
-            Planar\_map\_with\_intersections\_2 class maintains a planar
+            `Planar_map_with_intersections_2` class. The
+            `Planar_map_with_intersections_2` class maintains a planar
             map of input curves that possibly intersect each other and
             are not necessarily x-monotone. If an input curve, or a set
             of input curves, are known to be x-monotone and pairwise
@@ -5851,83 +5862,82 @@ The following functionality has been added or changed:
 
 ### Support Library
 
-- New container class Compact\_container, which (roughly) provides the
-    flexibility of std::list, with the memory compactness of
-    std::vector.
-- Geomview\_stream: added a function gv.draw\_triangles(InputIterator
-    begin, InputIterator end) which draws a set of triangles much more
-    quickly than one by one.
+- New container class `Compact_container`, which (roughly) provides the
+    flexibility of `std::list`, with the memory compactness of
+    `std::vector`.
+- `Geomview_stream`: added a function gv.`draw_triangles(InputIterator begin, InputIterator end)`
+  which draws a set of triangles much more quickly than one by one.
 - Number types:
   - number types are now required to provide a function:
-        std::pair&lt;double, double&gt; to\_interval(const NT &).
+        `std::pair<double, double> to_interval(const NT &)`.
   - number types are now required to provide mixed operators with
         "int".
   - CLN support removed.
-  - faster square() for MP\_Float.
-  - added Gmp\_q.
-- Qt\_widget:
+  - faster `square()` for `MP_Float`.
+  - added `Gmp_q`.
+- `Qt_widget`:
   - New classes:
-    - Qt\_help\_window: provides a simple way to show some helpful
+    - `Qt_help_window`: provides a simple way to show some helpful
             information about a demo as an HTML page.
-    - Qt\_widget\_history: provides basic functionality to
-            manipulate intervals of Qt\_widget class. The current
-            visible area of Qt\_widget is mapped to an interval. Each
-            interval could be stored in the Qt\_widget\_history object.
+    - `Qt_widget_history`: provides basic functionality to
+            manipulate intervals of `Qt_widget` class. The current
+            visible area of `Qt_widget` is mapped to an interval. Each
+            interval could be stored in the `Qt_widget_history` object.
             So you can use this object to navigate in history. It is
-            mostly used by Qt\_widget\_standard\_toolbar.
+            mostly used by `Qt_widget_standard_toolbar`.
   - Changes:
-    - Qt\_widget\_standard\_toolbar: is derived from QToolBar
+    - `Qt_widget_standard_toolbar`: is derived from QToolBar
             class, so pay attention to modify your code, if you used
             this class. Some public methods were introduced to control
             the history object that the toolbar use to navigate.
     - the icons are now part of libCGALQt.
-  - Deprecated members of Qt\_widget:
-    - add\_to\_history(), clear\_history(), back(), forth(): use
-            forward(), back() and clear\_history() of the
-            Qt\_widget\_standard\_toolbar instead.
-    - custom\_redraw(): use redraw\_on\_back() and
-            redraw\_on\_front() instead.
+  - Deprecated members of `Qt_widget`:
+    - `add_to_history()`, `clear_history()`, `back()`, `forth()`: use
+            `forward()`, `back()` and `clear_history()` of the
+            `Qt_widget_standard_toolbar` instead.
+    - `custom_redraw()`: use `redraw_on_back()` and
+            `redraw_on_front()` instead.
   - Optimizations: the output operators of the following classes
         have been optimized:
-    - CGAL::Segment\_2 (now tests for intersection with the
+    - `CGAL::Segment_2` (now tests for intersection with the
             drawing area)
-    - CGAL::Triangle\_2 (now tests for intersection with the
+    - `CGAL::Triangle_2` (now tests for intersection with the
             drawing area)
-    - CGAL::Triangulation\_2 (is optimized for faster display on
+    - `CGAL::Triangulation_2` (is optimized for faster display on
             zooming)
 
 ### Erratum in the Kernel manual
 
 - Intersection test routines
 
-    The documentation of CGAL::do\_intersect should mention, for the 3D
+    The documentation of `CGAL::do_intersect` should mention, for the 3D
     case:
     Also, in three-dimensional space *Type1* can be
 
-  - either *Plane\_3&lt;Kernel&gt;*
-  - or *Triangle\_3&lt;Kernel&gt;*
+  - either *`Plane_3<Kernel>`*
+  - or *`Triangle_3<Kernel>`*
 
     and *Type2* any of
 
-  - *Plane\_3&lt;Kernel&gt;*
-  - *Line\_3&lt;Kernel&gt;*
-  - *Ray\_3&lt;Kernel&gt;*
-  - *Segment\_3&lt;Kernel&gt;*
-  - *Triangle\_3&lt;Kernel&gt;*
+  - *`Plane_3<Kernel>`*
+  - *`Line_3<Kernel>`*
+  - *`Ray_3<Kernel>`*
+  - *`Segment_3<Kernel>`*
+  - *`Triangle_3<Kernel>`*
 
-  In the same way, for *Kernel::DoIntersect\_3*:
+  In the same way, for *`Kernel::DoIntersect_3`*:
   for all pairs *Type1* and *Type2*, where the type *Type1* is
 
-  - either *Kernel::Plane\_3*
-  - or *Kernel::Triangle\_3*
+  - either *`Kernel::Plane_3`*
+  - or *`Kernel::Triangle_3`*
 
     and *Type2* can be any of the following:
 
-  - *Kernel::Plane\_3*
-  - *Kernel::Line\_3*
-  - *Kernel::Ray\_3*
-  - *Kernel::Segment\_3*
-  - *Kernel::Triangle\_3*
+  - *`Kernel::Plane_3`*
+  - *`Kernel::Line_3`*
+  - *`Kernel::Ray_3`*
+  - *`Kernel::Segment_3`*
+  - *`Kernel::Triangle_3`*
 
   Philippe Guigue (INRIA Sophia-Antipolis) should be mentioned as one
   of the authors.
@@ -5950,7 +5960,7 @@ The following functionality has been added or changed:
 
 ### Kernels
 
-- Point\_d has been removed from the 2D and 3D kernels. This type is
+- `Point_d` has been removed from the 2D and 3D kernels. This type is
     now available from the d-dimensional kernel only.
 
 ### Basic Library
@@ -5967,7 +5977,7 @@ The following functionality has been added or changed:
     resulting subcurves or a planar map.
 
 - Planar Maps and Arrangements
-  - New quicker insertion functions of Planar\_map\_2 for cases
+  - New quicker insertion functions of `Planar_map_2` for cases
         where more precomputed information is available regarding the
         position of the inserted curve in the map.
   - New query function for planar maps that determines whether a
@@ -5979,7 +5989,7 @@ The following functionality has been added or changed:
 - Polyhedral Surface
   - new design introduced with release 2.3 now supported by VC7
         compiler
-  - Extended functionality of Polyhedron\_incremental\_builder:
+  - Extended functionality of `Polyhedron_incremental_builder`:
         absolute indexing allows one to add new surfaces to existing
         ones.
 
@@ -5993,7 +6003,7 @@ The following functionality has been added or changed:
         to handle intersecting input constraints. The behavior of
         constrained triangulations with respect to intersection of input
         constraints can be customized using an intersection tag.
-  - A new class Constrained\_triangulation\_plus offers a
+  - A new class `Constrained_triangulation_plus` offers a
         constrained hierarchy on top of a constrained triangulations.
         This additional data structure describes the subdivision of the
         original constraints into edges of the triangulations.
@@ -6002,30 +6012,29 @@ The following functionality has been added or changed:
   - Running time improved by a better and more compact management of
         memory allocation
   - Various improvements and small functionalities added:
-    - Triangulation\_3&lt;GT,Tds&gt;::triangle() returns a
+    - `Triangulation_3<GT,Tds>::triangle()` returns a
             triangle oriented towards the outside of the cell c for
             facet (c,i)
-    - New function insert(Point, Locate\_type, Cell\_handle, int,
-            int) which avoids the location step.
+    - New function `insert(Point, Locate_type, Cell_handle, int, int)` which avoids the location step.
     - New function to get access to cells in conflict in a
-            Delaunay insertion : find\_conflicts() and
-            insert\_in\_hole()
-    - New function TDS::delete\_cells(begin, end).
-    - New functions : degree(v), reorient(),
-            remove\_decrease\_dimension(), remove\_from\_simplex().
+            Delaunay insertion : `find_conflicts()` and
+            `insert_in_hole()`
+    - New function `TDS::delete_cells(begin, end)`.
+    - New functions : `degree(v)`, `reorient()`,
+            `remove_decrease_dimension()`, `remove_from_simplex()`.
   - Changes of interface:
     - vertices and cells are the same for the triangulation data
             structure and the geometric triangulation
-    - the triangulation data structure uses Vertex\_handle (resp
-            Cell\_handle) instead of Vertex\* (resp Cell\*).
-    - incident\_cells() and incident\_vertices() are templated by
+    - the triangulation data structure uses `Vertex_handle` (resp
+            `Cell_handle`) instead of `Vertex*` (resp `Cell*`).
+    - `incident_cells()` and `incident_vertices()` are templated by
             output iterators
     - changes in the iterators and circulators interface:
       - Iterators and circulators are convertible to handles
-                automatically, no need to call "-&gt;handle()" anymore.
-      - Vertex\_iterator split into All\_vertices\_iterator and
-                Finite\_vertices\_iterator (and similar for cells...).
-      - TDS::Edge/Facet iterators now support operator-&gt;.
+                automatically, no need to call `->handle()` anymore.
+      - `Vertex_iterator` split into `All_vertices_iterator` and
+                `Finite_vertices_iterator` (and similar for cells...).
+      - TDS::Edge/Facet iterators now support `operator->`.
 
 - 2D Search structures
     Additional range search operations taking a predicate functor have
@@ -6033,7 +6042,7 @@ The following functionality has been added or changed:
 
 ### Support Library
 
-- Qt\_widget
+- `Qt_widget`
   - We have added a new class for visualization of 2D CGAL objects.
         It is derived from Trolltech's Qt class QWidget and privdes a
         used to scale and pan.
@@ -6041,7 +6050,7 @@ The following functionality has been added or changed:
         shapes, 2D Convex Hull, Largest empty 2D rectangle, Maximum
         k-gon, Minimum ellipse, Minimum 2D quadrilateral, 2D polygon
         partitioning 2D regular and constrained triangulation.
-  - Tutorials are available to help users get used to Qt\_widget
+  - Tutorials are available to help users get used to `Qt_widget`
 
 - Timer
     Fixed Timer class (for user process time) to have no wrap-around
@@ -6080,7 +6089,7 @@ LEDA release that introduces the leda namespace.
         compile (mind that the so-called leda polyline traits does
         compile).
   - On g++ (on Irix 6.5) the segment-circle
-        (Arr\_segment\_circle\_traits\_2) traits does not compile for
+        (`Arr_segment_circle_traits_2`) traits does not compile for
         either of the above packages.
 
 ## Release 2.3
@@ -6186,7 +6195,7 @@ kernels themselves can be used as traits classes in many instances.
     bugs in copying the halfedge data structure (and therefore also
     polyhedral surfaces) have been fixed in both designs. Copying a
     list-based representation is now based on hash maps instead of
-    std::map and is therefore considerably faster.
+    `std::map` and is therefore considerably faster.
 
 - Polyhedral Surface
 
@@ -6223,12 +6232,12 @@ kernels themselves can be used as traits classes in many instances.
   - Additional functionality:
     - dual method for regular triangulations (to build a power
             diagram)
-    - unified names and signatures for various "find\_conflicts()"
+    - unified names and signatures for various "`find_conflicts()`"
             member functions in Delaunay and constrained Delaunay
             triangulation.
-    - As an alternative to the simple insert() member function,
+    - As an alternative to the simple `insert()` member function,
             insertion of points in those triangulation can be performed
-            using the combination of find\_conflicts() and star\_hole()
+            using the combination of `find_conflicts()` and `star_hole()`
             which eventually allows the user to keep track of deleted
             faces.
   - More demos and examples
@@ -6260,7 +6269,7 @@ kernels themselves can be used as traits classes in many instances.
 - The traits requirements for matrix search and minimum quadrilaterals
     have been changed to bring them in line with the CGAL kernels.
 
-- Point\_set\_2
+- `Point_set_2`
   - now independent of LEDA; based on the CGAL Delaunay
         triangulation
   - traits class requirements adapted to new kernel concept.
@@ -6305,17 +6314,17 @@ Additional supported platforms:
 
 The following functionality has been added:
 
-- There is a new, non-reference-counted kernel, Simple\_cartesian.
+- There is a new, non-reference-counted kernel, `Simple_cartesian`.
     Because reference counting is not used, and thus coordinates are
     stored within a class, debugging is easier using this kernel. This
     kernel can also be faster in some cases than the reference-counted
     Cartesian kernel.
 - New optimization algorithms
-  - Min\_annulus\_d - Algorithm for computing the smallest enclosing
+  - `Min_annulus_d` - Algorithm for computing the smallest enclosing
         annulus of points in arbitrary dimension
-  - Polytope\_distance\_d - Algorithm for computing the (squared)
+  - `Polytope_distance_d` - Algorithm for computing the (squared)
         distance between two convex polytopes in arbitrary dimension
-  - Width\_3 - Algorithm for computing the (squared) width of points
+  - `Width_3` - Algorithm for computing the (squared) width of points
         sets in three dimensions
 - 2D Triangulations
   - There are now two triangulation data structures available in
@@ -6367,11 +6376,11 @@ The following functionality has been added:
     triangulations.
 - Triangulations in 3D were added, both Delaunay triangulations and
     regular triangulations.
-- Min\_quadrilateral optimizations have been added. These are
+- `Min_quadrilateral` optimizations have been added. These are
     algorithms to compute the minimum enclosing rectangle/parallelogram
     (arbitrary orientation) and the minimum enclosing strip of a convex
     point set.
-- 2d Point\_set is a package for 2d range search operations, Delaunay
+- 2d `Point_set` is a package for 2d range search operations, Delaunay
     triangulation, nearest neighbor queries. This package works only if
     LEDA is installed.
 - Support for GeoWin visualization library. This also depends on LEDA.

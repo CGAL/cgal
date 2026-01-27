@@ -144,7 +144,7 @@ else()
   message(STATUS "NOTICE: Tests are not using Ceres.")
 endif()
 
-if(CGAL_ENABLE_TESTING)
+if(CGAL_ENABLE_TESTING AND TARGET CGAL::Eigen3_support)
   set_tests_properties(
     "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
     "execution   of  triangulate_hole_Polyhedron_3_test"

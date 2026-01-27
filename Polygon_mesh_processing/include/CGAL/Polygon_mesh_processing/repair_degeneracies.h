@@ -27,7 +27,7 @@
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/IO/OFF.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #endif
 
 #include <boost/algorithm/minmax_element.hpp>
@@ -337,6 +337,56 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
     return ho;
 
   return boost::graph_traits<TriangleMesh>::null_halfedge();
+}
+
+template <typename TriangleMesh, typename VPM, typename Traits>
+bool is_flip_a_cap_angle_improvement(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
+                                     const TriangleMesh& tmesh,
+                                     const VPM& vpm,
+                                     const Traits& gt)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename boost::property_traits<VPM>::reference                 Point_ref;
+
+  CGAL_precondition(!is_border(e, tmesh));
+
+  typename Traits::Compare_angle_3 angle_cmp = gt.compare_angle_3_object();
+
+  const halfedge_descriptor h = halfedge(e, tmesh);
+
+  const Point_ref p0 = get(vpm, target(h, tmesh));
+  const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
+  const Point_ref p2 = get(vpm, source(h, tmesh));
+  const Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
+
+  // reject if flipping the edge would create a larger cap angle (2 new faces, 3 angles each)
+  auto is_worse_cap = [&](const Point_ref p, const Point_ref q, const Point_ref r)
+  {
+    // Note that it is useful to test all angles, including the angle(s) at p1:
+    // it checks the (unlikely since p0p1p2 is a cap at p1) case where
+    // the diagonal post-flip is not in the cone p0p1p2 since then one
+    // the angle would be larger than the angle p0p1p2.
+    bool res = (angle_cmp(p, q, r, p0, p1, p2) == CGAL::LARGER ||
+                angle_cmp(q, r, p, p0, p1, p2) == CGAL::LARGER ||
+                angle_cmp(r, p, q, p0, p1, p2) == CGAL::LARGER);
+
+#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+    if (res) {
+      typename Traits::Compute_approximate_angle_3 angle = gt.compute_approximate_angle_3_object();
+      std::cout << "flipping would be worse: "
+                << angle(p0, p1, p2) << " --> "
+                << angle(p, q, r)
+                << angle(q, r, p)
+                << angle(r, p, q) << std::endl;
+    }
+#endif
+    return res;
+  };
+
+  // since the cap angle is at p1, put the vertices in the order such that the first
+  // angle tested is the likely largest (i.e., at p0 / p2)
+  return !is_worse_cap(p3, p0, p1) && !is_worse_cap(p1, p2, p3);
 }
 
 template <typename TriangleMesh, typename VPM, typename Traits>
@@ -932,7 +982,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       else // ! CGAL::Euler::does_satisfy_link_condition(e, tmesh)
       {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-        std::cout << "\t Uncollapsable edge!" << std::endl;
+        std::cout << "\t Uncollapsible edge!" << std::endl;
 #endif
         run_cap_check(h);
       }
@@ -1012,7 +1062,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       if(!halfedge(target(next(h, tmesh), tmesh),
                    target(next(opposite(h, tmesh), tmesh), tmesh), tmesh).second)
       {
-        if(!internal::should_flip(e, tmesh, vpm, gt))
+        if(!internal::is_flip_a_cap_angle_improvement(e, tmesh, vpm, gt))
         {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Flipping prevented: not the best diagonal" << std::endl;
@@ -1138,7 +1188,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   CGAL_assertion(!is_border(h, tm));
 
   CGAL_assertion(next(next(opp_h, tm), tm) != opp_h); // not working for a hole made of 2 edges
-  CGAL_assertion(next(next(next(opp_h, tm), tm), tm) != opp_h); // not working for a hole make of 3 edges
+  CGAL_assertion(next(next(next(opp_h, tm), tm), tm) != opp_h); // not working for a hole made of 3 edges
 
   if(CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
   {
@@ -2539,7 +2589,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       typename Sorted_point_set::iterator it_pt = std::next(sorted_points.begin()),
                                           it_pt_end = std::prev(sorted_points.end());
 
-      bool non_collapsable = false;
+      bool non_collapsible = false;
       typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
       typename std::vector<halfedge_descriptor>::iterator side_two_it = side_two.begin();
       for(;it_pt!=it_pt_end;++it_pt)
@@ -2554,7 +2604,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           {
             if(source(h, tmesh) == target(*side_two_it, tmesh))
             {
-              non_collapsable = true;
+              non_collapsible = true;
               break;
             }
           }
@@ -2570,18 +2620,18 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           {
             if(source(h, tmesh)==v2)
             {
-              non_collapsable=true;
+              non_collapsible=true;
               break;
             }
           }
         }
 
-        if(non_collapsable) break;
+        if(non_collapsible) break;
         if(target_of_side_one) ++side_one_it;
         if(target_of_side_two) ++side_two_it;
       }
 
-      if(non_collapsable)
+      if(non_collapsible)
       {
         for(face_descriptor f : cc_faces)
           degenerate_face_set.erase(f);

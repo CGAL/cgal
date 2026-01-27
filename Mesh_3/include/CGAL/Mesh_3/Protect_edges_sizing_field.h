@@ -1050,7 +1050,7 @@ insert_balls_on_edges()
           // if 'p' is not a corner, find out a second point 'q' on the
           // curve, "far" from 'p', and limit the radius of the ball of 'p'
           // with the third of the distance from 'p' to 'q'.
-          FT p_size = query_size(p, 1, p_index);
+          FT p_size = query_size(p, 1, curve_index);
 
           FT curve_length = domain_.curve_length(curve_index);
 
@@ -1063,7 +1063,7 @@ insert_balls_on_edges()
           vp = smart_insert_point(p,
                                   CGAL::square(p_size),
                                   1 /*dim*/,
-                                  p_index,
+                                  curve_index,
                                   Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
         }
@@ -1106,6 +1106,7 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
   c3t3_.triangulation().is_vertex(cwp(p), v);
 
   CGAL_assertion( q_found );
+  CGAL_assertion(v->in_dimension() == 0);
   return v;
 }
 
@@ -2189,6 +2190,9 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
   {
     const Vertex_handle& next = vit->first;
     const Curve_index& curve_index = vit->second;
+
+    CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
+    CGAL_assertion(cid == curve_index);
 
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by

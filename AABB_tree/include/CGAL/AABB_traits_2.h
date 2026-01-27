@@ -484,19 +484,19 @@ public:
 
 private:
   /**
-   * @brief Computes bounding box of one primitive
+   * @brief Computes the bounding box of a primitive
    * @param pr the primitive
    * @return the bounding box of the primitive \c pr
    */
   template <typename PM>
-  Bounding_box compute_bbox(const Primitive& pr, const PM&)const
+  Bounding_box compute_bbox(const Primitive& pr, const PM&) const
   {
     return get(bbm, pr.id());
   }
 
-  Bounding_box compute_bbox(const Primitive& pr, const Default&)const
+  Bounding_box compute_bbox(const Primitive& pr, const Default&) const
   {
-    return GeomTraits().construct_bbox_2_object()(internal::Primitive_helper<AT>::get_datum(pr, *this));
+    return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
   }
 
   /// Comparison functions

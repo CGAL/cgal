@@ -2735,7 +2735,7 @@ CGAL::QGLViewer::wheelAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) c
 /*! Returns the MouseHandler (if any) that receives wheel events when the \p
   modifiers and \p key keyboard keys are pressed.
 
-  Returns -1 if no no such binding has been defined using setWheelBinding(). See
+  Returns -1 if no such binding has been defined using setWheelBinding(). See
   also wheelAction().
 */
 CGAL_INLINE_FUNCTION

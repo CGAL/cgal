@@ -6,6 +6,9 @@
 /// \defgroup PkgCombinatorialMapsClasses Classes
 /// \ingroup PkgCombinatorialMapsRef
 
+/// \defgroup PkgCombinatorialMapsRefIO IO Functions for CMap
+/// \ingroup PkgCombinatorialMapsRef
+
 /*!
 \addtogroup PkgCombinatorialMapsRef
 \cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMaps}
@@ -35,6 +38,10 @@
 - `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Cell_attribute_with_id<CMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Generic_map_min_items`
+
+\cgalCRPSubsection{IO Functions for CMap}
+- \link PkgCombinatorialMapsRefIO `std::ostream& operator<< (std::ostream& os, const GenericMap& amap)` \endlink
+- \link PkgCombinatorialMapsRefIO `std::ifstream& operator>> (std::ifstream& is, GenericMap& amap)` \endlink
 
 */
 
