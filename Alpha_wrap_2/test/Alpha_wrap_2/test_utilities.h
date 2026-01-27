@@ -4,6 +4,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/IO/WKT.h>
 #include <CGAL/IO/OBJ.h>
+#include <CGAL/IO/STL.h>
 #include <CGAL/IO/helpers.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
@@ -25,6 +26,7 @@ bool read_polylines(const std::string& filename,
 {
   using Point_2 = typename std::decay<decltype(polylines.front().front())>::type;
   using Kernel = typename CGAL::Kernel_traits<Point_2>::type;
+  using Point_3 = typename Kernel::Point_3;
 
   using Points = std::vector<Point_2>;
   using Multipolygon = CGAL::Multipolygon_with_holes_2<Kernel>;
@@ -40,6 +42,23 @@ bool read_polylines(const std::string& filename,
     Points pts;
     Multipolygon mp;
     return CGAL::IO::read_WKT(in, pts, polylines, mp);
+  }
+  else if (ext == "stl")
+  {
+    std::vector<Point_3> points;
+    std::vector<std::array<std::size_t, 3> > faces;
+    bool success = CGAL::IO::read_STL(in, points, faces);
+    if(!success)
+      return false;
+
+    for(const auto& f : faces) {
+      polylines.emplace_back();
+      polylines.back().emplace_back(points[f[0]][0], points[f[0]][1]);
+      polylines.back().emplace_back(points[f[1]][0], points[f[1]][1]);
+      polylines.back().emplace_back(points[f[2]][0], points[f[2]][1]);
+    }
+
+    return !polylines.empty();
   }
   else if (ext == "obj")
   {
@@ -59,6 +78,7 @@ bool read_polylines(const std::string& filename,
 
     return !polylines.empty();
   }
+
   return false;
 }
 
