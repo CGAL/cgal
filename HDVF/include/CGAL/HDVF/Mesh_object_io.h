@@ -48,8 +48,7 @@ static std::vector<size_t> VTK_types_IO = {1, 3, 5, 10} ;
 
 // ----- Generic -----
 
-inline bool check_sanity_line(const std::string &line, const std::string &file)
-{
+inline bool check_sanity_line(const std::string &line, const std::string &file) {
     // Check that line is sanitized. If not, throw.
     for ( size_t i = 0; i < line.size(); ++ i ) {
         if ( ! ( std::isspace(line[i]) || std::isdigit(line[i]) || (line[i] == '-') || (line[i] == '.') || (line[i] == 'e')) ) {
@@ -84,15 +83,14 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
  */
 
 template <typename Traits>
-inline size_t read_nodes(const std::string &filename, std::vector<typename Traits::Point> *nodes, bool adapt = false)
-{
+inline size_t read_nodes(const std::string &filename, std::vector<typename Traits::Point> *nodes, bool adapt = false) {
     typedef typename Traits::Point Point;
     std::ifstream in_file (filename) ;
     if ( ! in_file . good () ) {
         std::cerr << "Mesh_object_io read_nodes. Fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     // First line is the number of nodes
     size_t nnodes, nnodes_tmp, nodes_dim, padding, d ;
     bool fill;
@@ -138,7 +136,7 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
             is >> x ;
             node.push_back(x) ;
         }
-        
+
         if constexpr (Traits::Dimension::value == 2){
             nodes->push_back(Point(typename Traits::FT(node[0]), typename Traits::FT(node[1]))) ;
         }else if constexpr (Traits::Dimension::value == 3){
@@ -164,9 +162,9 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
 
 /*!
  \ingroup PkgHDVFIOClasses
- 
+
  The class `Mesh_object_io` is an intermediate IO class, used to load triangular/tetraedral meshes and produce simplicial complexes.
- 
+
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
@@ -185,26 +183,25 @@ protected:
     size_t _nvertices, _ncells, _nedges ;
     std::vector<Point> _nodes ; // Coordinates of vertices (optional)
     std::vector<Io_cell_type> _cells ;
-    
+
     // Write vtk file
     template <typename CoefficientRing>
-    void write_vtk(const std::string &filename, const std::vector<Point> &nodes, const std::vector<Io_chain_type> &chains, const std::vector<CoefficientRing> *labels=NULL, const std::string scalar_type="none")
-    {
+    void write_vtk(const std::string &filename, const std::vector<Point> &nodes, const std::vector<Io_chain_type> &chains, const std::vector<CoefficientRing> *labels=NULL, const std::string scalar_type="none") {
         bool with_scalars = (labels != NULL) ;
         // Load ...
         std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-        
+
         if ( !out . good () ) {
             std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
-        
+
         // Header
         out << "# vtk DataFile Version 2.0" << std::endl ;
         out << "generators" << std::endl ;
         out << "ASCII" << std::endl ;
         out << "DATASET  UNSTRUCTURED_GRID" << std::endl ;
-        
+
         // Points
         size_t nnodes = nodes.size() ;
         out << "POINTS " << nnodes << " double" << std::endl ;
@@ -212,7 +209,7 @@ protected:
             out << Traits::to_point3(n);
             out << std::endl ;
         }
-        
+
         // Cells
         // Number of cells : for each chain, each number of vertices for each cell
         // Size : size of a cell defined by d vertices : d+1
@@ -225,21 +222,19 @@ protected:
                 ncells_tot += 1 ;
                 size_cells_tot += (c.size()+1) ;
             }
-            
+
         }
         out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
         // Output cells
         std::vector<size_t> types ;
         std::vector<CoefficientRing> scalars ;
-        for (size_t i = 0; i<chains.size(); ++i)
-        {
+        for (size_t i = 0; i<chains.size(); ++i) {
             const Io_chain_type cc = chains.at(i) ;
-            
-            for (Io_cell_type c : cc)
-            {
+
+            for (Io_cell_type c : cc) {
                 const int d = c.size() ;
                 const size_t cell_type = VTK_types_IO.at(d-1) ;
-                
+
                 out << d << " " ;
                 for (size_t j : c)
                     out << j << " " ;
@@ -249,15 +244,14 @@ protected:
                     scalars.push_back(labels->at(i)) ;
             }
         }
-        
+
         // CELL_TYPES
         out << "CELL_TYPES " << ncells_tot << std::endl ;
         for (size_t t : types)
             out << t << " " ;
         out << std::endl ;
-        
-        if (with_scalars)
-        {
+
+        if (with_scalars) {
             // CELL_TYPES
             out << "CELL_DATA " << ncells_tot << std::endl ;
             out << "SCALARS CriticalCellsId " << scalar_type << " 1" << std::endl ;
@@ -268,7 +262,7 @@ protected:
         }
         out.close() ;
     }
-    
+
 public:
     /** \brief Returns the dimension of the Mesh_object_io.
      *
@@ -277,13 +271,13 @@ public:
      * - if negative: the set of simplicial cells loaded have various dimensions and the dimension of the `Mesh_object_io` is the maximum of these dimensions.
      */
     int dimension() const { return _dim; }
-    
+
     /* \brief Default constructor.
      *
      * Create an empty Mesh_object_io.
      */
     Mesh_object_io(int d = 0) : _dim(d), _nvertices(0), _ncells(0), _nedges(0) {}
-    
+
     /** \brief Constructor from a vector of Point (vertex coordinates) and a vector of simplices.
      *
      * Simplices are described by the list of vertex indices.
@@ -313,11 +307,10 @@ public:
             }
         }
     }
-    
+
     /** \brief Build a Mesh_object_io for the bounding box of diagonal `BB_min` - `BBmax`. */
     Mesh_object_io(const Point &BBmin, const Point &BBmax)
-    : _dim(3), _nvertices(8), _ncells(12), _nedges(0)
-    {
+    : _dim(3), _nvertices(8), _ncells(12), _nedges(0) {
         std::vector points = {BBmin, BBmax} ;
         Bbox ic = bounding_box(points.begin(), points.end()) ;
         _nodes.resize(8) ;
@@ -329,7 +322,7 @@ public:
         _nodes[5] = ic[6] ;
         _nodes[6] = ic[7] ;
         _nodes[7] = ic[4] ;
-        
+
         _cells.resize(12) ;
         _cells[0] = Io_cell_type({0, 1, 4}) ;
         _cells[1] = Io_cell_type({1, 4, 5}) ;
@@ -344,27 +337,27 @@ public:
         _cells[10] = Io_cell_type({4, 5, 6}) ;
         _cells[11] = Io_cell_type({4, 6, 7}) ;
     }
-    
+
     // TODO : check that de dimensions of nodes are consistent...
-    
+
     /** \brief Returns the vector of nodes (ie. vertices coordinates). */
     const std::vector<Point>& nodes() const {
         return _nodes ;
     }
-    
+
     /** \brief Returns the number of nodes (ie. vertices). */
     int number_of_nodes() const { return _nvertices; }
-    
+
     /** \brief Returns the vector of cells. */
     const std::vector<Io_cell_type>& cells() const {
         return _cells;
     }
-    
+
     /** \brief Update the coordinates of a node (ie. vertex). */
     void set_node(size_t i, const Point &P) {
         _nodes[i] = P;
     }
-    
+
     // Mesh operations
     // Add a Mesh_object_io to the current Mesh_object_io
     /** Add a `Mesh_object_io` to the current  `Mesh_object_io`.
@@ -387,23 +380,22 @@ public:
             _cells.push_back(tmp) ;
         }
     }
-    
+
     void add_node(const Point &v) {_nodes.push_back(v); ++_nvertices ;}
-    
+
     void clear_cells() { _cells.clear() ; _ncells = 0 ; }
-    
+
     void clear_nodes() { _nodes.clear() ; _nvertices = 0 ; }
-    
+
     void clear() { clear_nodes() ; clear_cells() ;}
-    
+
     void add_cell(Io_cell_type &c, bool sort_indices = false) {
         if (sort_indices)
             std::sort(c.begin(), c.end());
         _cells.push_back(c); ++_ncells ;
     }
-    
-    size_t cells_of_dim (int q) const
-    {
+
+    size_t cells_of_dim (int q) const {
         size_t n = 0 ;
         for (Io_cell_type c : _cells)
         {
@@ -413,8 +405,7 @@ public:
         return n ;
     }
     // OFF
-    bool read_off(const std::string &filename)
-    {
+    bool read_off(const std::string &filename) {
         _dim = 0 ;
         // 0 - open input file
         std::ifstream infile(filename);
@@ -429,7 +420,7 @@ public:
             return false;
         }
         // todo : check for header == "off"
-        
+
         // 2 - number of vertices, number of faces, number of edges (can be ignored)
         std::string info;
         if (!get_next_uncommented_line(infile, info)) {
@@ -437,9 +428,9 @@ public:
         }
         std::istringstream info_stream;
         info_stream.str(info);
-        
+
         info_stream >> _nvertices >> _ncells >> _nedges;
-        
+
         _nodes.resize(_nvertices) ;
         for(auto i=0; i < _nvertices; ++i) {
             if (!get_next_uncommented_line(infile,info)) {
@@ -450,7 +441,7 @@ public:
             info_stream >> p[0] >> p[1] >> p[2] ;
             _nodes[i] = Point(p[0], p[1], p[2]) ;
         }
-        
+
         // 4 - the actual faces
         _cells.resize(_ncells);
         for(auto i=0; i < _ncells; ++i) {
@@ -473,13 +464,12 @@ public:
             _cells[i] = c ;
             _dim = (c.size()-1>_dim)?c.size()-1:_dim ;
         }
-        
+
         infile.close();
         return true;
     }
-    
-    bool write_off(const std::string &filename) const
-    {
+
+    bool write_off(const std::string &filename) const {
         // 0 - open input file
         std::ofstream outfile(filename);
         if(!outfile.is_open()) {
@@ -510,17 +500,16 @@ public:
         outfile.close() ;
         return true;
     }
-    
+
     // VTK
     void write_to_vtk(const std::string &filename)
     {
         std::vector<Io_chain_type> chains{_cells} ;
         write_vtk<int>(filename, _nodes, chains) ;
     }
-    
+
     // SIMP
-    bool write_simp(const std::string &filename)
-    {
+    bool write_simp(const std::string &filename) {
         // 0 - open input file
         std::ofstream outfile(filename);
         if(!outfile.is_open()) {
@@ -529,8 +518,7 @@ public:
             return false;
         }
         // 1 - write cells
-        for (size_t i=0; i<_ncells; ++i)
-        {
+        for (size_t i=0; i<_ncells; ++i) {
             const Io_cell_type cell = _cells.at(i) ;
             for (size_t c : cell)
                 outfile << c << " " ;
@@ -539,9 +527,8 @@ public:
         outfile.close() ;
         return true;
     }
-    
-    bool read_simp(const std::string &filename)
-    {
+
+    bool read_simp(const std::string &filename) {
         int d = 0 ;
         // 0 - open input file
         std::ifstream infile(filename);
@@ -551,8 +538,7 @@ public:
             return false;
         }
         std::size_t line_number = 0;
-        while ( !(infile.eof()) )
-        {
+        while ( !(infile.eof()) ) {
             ++line_number;
             std::string line;
             getline( infile, line );
@@ -586,30 +572,27 @@ public:
         infile.close() ;
         return true ;
     }
-    
+
     bool read_nodes_file(const std::string &filename) ;
-    
-    std::ostream& print_infos (std::ostream& out_stream = std::cout) const
-    {
+
+    std::ostream& print_infos (std::ostream& out_stream = std::cout) const {
         out_stream << "Mesh_object_io infos - dimension : "<< _dim << ", nodes : " << _nodes.size() << ", cells : " << _cells.size() << std::endl ;
         for (int q = 0; q <= _dim; ++q)
             out_stream << "cells of dimension " << q << " : " << cells_of_dim(q) << std::endl ;
         return out_stream;
     }
-    
-    
+
+
     friend std::ostream& operator<<(std::ostream& out_stream, const Mesh_object_io& mesh_io) {
         return mesh_io.print_infos(out_stream);
     }
-    
+
     // Mesh computations
-    Point centroid() const
-    {
+    Point centroid() const {
         return CGAL::centroid(_nodes.begin(), _nodes.end()) ;
     }
-    
-    double radius(const Point &bary) const
-    {
+
+    double radius(const Point &bary) const {
         double r = 0 ;
         for (Point v : _nodes)
         {
@@ -617,27 +600,21 @@ public:
         }
         return r ;
     }
-    
-    Bbox bbox(double ratio=1.) const
-    {
+
+    Bbox bbox(double ratio=1.) const {
         return bounding_box(_nodes.begin(), _nodes.end()) .bbox();
         // @todo deal with ratio
     }
 private:
-    void check_dimension()
-    {
-        if (_dim > 0) // exact dimension
-        {
-            for (Io_cell_type cell : _cells)
-            {
+    void check_dimension() {
+        if (_dim > 0) { // exact dimension
+            for (Io_cell_type cell : _cells) {
                 if (cell.size() != (_dim+1))
                     throw std::runtime_error("Mesh has a cell of inconsistent dimension") ;
             }
         }
-        else // max dim
-        {
-            for (Io_cell_type cell : _cells)
-            {
+        else { // max dim
+            for (Io_cell_type cell : _cells) {
                 if ((cell.size() > (-_dim+1)))
                     throw std::runtime_error("Mesh has a cell of inconsistent dimension") ;
             }
