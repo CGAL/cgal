@@ -70,7 +70,7 @@ No_intersection_surface_sweep_2(const Gt2* traits, Visitor* visitor) :
 { m_visitor->attach(this); }
 
 //-----------------------------------------------------------------------------
-// Destrcutor.
+// Destructor.
 //
 template <typename Vis>
 No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2()
@@ -402,7 +402,7 @@ void No_intersection_surface_sweep_2<Vis>::_handle_left_curves()
                 { print_event_info(m_currentEvent); });
 
   // Use the status-line to sort all left subcurves incident to the current
-  // event (no geometric comparisons are neede at all).
+  // event (no geometric comparisons are needed at all).
   _sort_left_curves();
 
   // Now the event is updated, with its left subcurved properly sorted, and
@@ -791,7 +791,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
   if (events[index] == Event_queue_iterator())
   {
     // Still look for the curve end in the event queue in case two
-    // point are the the same in the vertex range
+    // points are the same in the vertex range
     m_queueEventLess.set_parameter_space_in_x(ps_x);
     m_queueEventLess.set_parameter_space_in_y(ps_y);
     pair_res = m_queue->find_lower(pt, m_queueEventLess);
@@ -928,7 +928,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
   if (events[index] == Event_queue_iterator())
   {
     // Still look for the curve end in the event queue in case two
-    // point are the the same in the vertex range
+    // points are the same in the vertex range
 
     m_queueEventLess.set_parameter_space_in_x(ps_x);
     m_queueEventLess.set_parameter_space_in_y(ps_y);

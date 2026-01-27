@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
       exit(-1);
     }
 
-  //initalize the in_points container
+  //initialize the in_points container
   double x, y, z;
   std::vector<DPoint> in_points;
   while (inFile >> x) {

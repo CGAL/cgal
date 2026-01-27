@@ -9,10 +9,10 @@ allows to find all members of a set of intervals that overlap a point.
 \cgalHeading{Implementation}
 
 The insertion and deletion of a segment in the interval skip list
-takes expected time \f$ O(\log^2 n)\f$, if the segment endpoints are
+takes expected time \cgalBigO{\log^2 n}, if the segment endpoints are
 chosen from a continuous distribution. A stabbing query takes expected
-time \f$ O(\log n)\f$, and finding all intervals that contain a point
-takes expected time \f$ O(\log n + k)\f$, where \f$ k\f$ is the number of
+time \cgalBigO{\log n}, and finding all intervals that contain a point
+takes expected time \cgalBigO{\log n + k}, where \f$ k\f$ is the number of
 intervals.
 
 The implementation is based on the code developed by Eric N. Hansen.

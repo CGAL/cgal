@@ -9,7 +9,7 @@
 //
 // Author(s) : Andreas Fabri
 //
-// Warning: this file is generated, see include/CGAL/licence/README.md
+// Warning: this file is generated, see include/CGAL/license/README.md
 
 #ifndef CGAL_LICENSE_GRAPHICSVIEW_H
 #define CGAL_LICENSE_GRAPHICSVIEW_H
@@ -39,13 +39,13 @@
 
 #  if defined(CGAL_LICENSE_WARNING)
      CGAL_pragma_warning("\nThe macro CGAL_GRAPHICSVIEW_COMMERCIAL_LICENSE is not defined."
-                          "\nYou use the CGAL CGAL and the Qt Graphics View Framework package under "
+                          "\nYou use CGAL and the Qt Graphics View Framework package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_GRAPHICSVIEW_COMMERCIAL_LICENSE is not defined.\
-            You use the CGAL CGAL and the Qt Graphics View Framework package under the terms of \
+            You use CGAL and the Qt Graphics View Framework package under the terms of \
             the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

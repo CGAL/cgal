@@ -7,7 +7,9 @@ A model of `RealEmbeddableTraits` is associated to a number type
 `Type` and reflects the properties of this type with respect
 to the concept `RealEmbeddable`.
 
-\cgalHasModel `CGAL::Real_embeddable_traits<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Real_embeddable_traits<T>}
+\cgalHasModelsEnd
 */
 
 class RealEmbeddableTraits {
@@ -25,7 +27,7 @@ typedef unspecified_type Type;
 /*!
 Tag indicating whether the associated type is real embeddable.
 
-This is either \link Tag_true `Tag_true`\endlink or \link Tag_false `Tag_false`\endlink.
+This is either \link CGAL::Tag_true `Tag_true`\endlink or \link CGAL::Tag_false `Tag_false`\endlink.
 */
 typedef unspecified_type Is_real_embeddable;
 

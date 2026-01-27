@@ -18,7 +18,7 @@
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utility.h>
@@ -70,15 +70,16 @@ public:
   Shape_smoother(TriangleMesh& mesh,
                  VertexPointMap& vpmap,
                  VertexConstraintMap& vcmap,
-                 const GeomTraits& traits)
+                 const bool scale_volume_after_smoothing = true,
+                 const GeomTraits& traits = GeomTraits())
     :
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),
       vimap_(get(Vertex_local_index(), mesh_)),
-      scale_volume_after_smoothing(true),
+      scale_volume_after_smoothing_(scale_volume_after_smoothing),
       traits_(traits),
-      weight_calculator_(mesh, vpmap)
+      weight_calculator_(mesh_, vpmap_, traits_, false /*no clamping*/, false /*no bounding from below*/)
   { }
 
   template<typename FaceRange>
@@ -101,15 +102,15 @@ public:
         constrained_flags_[get(vimap_, v)] = true;
 
         // scaling things cannot preserve the position of more than a single constrained point
-        if(anchor_point == boost::none)
+        if(anchor_point == std::nullopt)
           anchor_point = get(vpmap_, v);
         else
-          scale_volume_after_smoothing = false;
+          scale_volume_after_smoothing_ = false;
       }
     }
 
     if(!CGAL::is_closed(mesh_))
-      scale_volume_after_smoothing = false;
+      scale_volume_after_smoothing_ = false;
   }
 
   void setup_system(Eigen_matrix& A,
@@ -126,7 +127,7 @@ public:
                     const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz,
                     SparseLinearSolver& solver)
   {
-    FT D;
+    double D;
 
     // calls compute once to factorize with the preconditioner
     if(!solver.factor(A, D))
@@ -177,7 +178,8 @@ public:
         if(is_source_constrained && is_target_constrained)
           continue;
 
-        const FT Lij = weight_calculator_(hi);
+        // Cotangent_weight returns (cot(beta) + cot(gamma)) / 2
+        const FT Lij = FT(2) * weight_calculator_(hi);
 
         const std::size_t i_source = get(vimap_, v_source);
         const std::size_t i_target = get(vimap_, v_target);
@@ -185,14 +187,14 @@ public:
         // note that these constraints create asymmetry in the matrix
         if(!is_source_constrained)
         {
-          stiffness_elements.push_back(Triplet(i_source, i_target, Lij));
-          diag_coeff.insert(std::make_pair(i_source, 0)).first->second -= Lij;
+          stiffness_elements.emplace_back(i_source, i_target, Lij);
+          diag_coeff.emplace(i_source, 0).first->second -= Lij;
         }
 
         if(!is_target_constrained)
         {
-          stiffness_elements.push_back(Triplet(i_target, i_source, Lij));
-          diag_coeff.insert(std::make_pair(i_target, 0)).first->second -= Lij;
+          stiffness_elements.emplace_back(i_target, i_source, Lij);
+          diag_coeff.emplace(i_target, 0).first->second -= Lij;
         }
       }
     }
@@ -200,7 +202,7 @@ public:
     typename std::unordered_map<std::size_t, double>::iterator it = diag_coeff.begin(),
                                                                end = diag_coeff.end();
     for(; it!=end; ++it)
-      stiffness_elements.push_back(Triplet(it->first, it->first, it->second));
+      stiffness_elements.emplace_back(it->first, it->first, it->second);
   }
 
   void update_mesh_no_scaling(const Eigen_vector& Xx, const Eigen_vector& Xy, const Eigen_vector& Xz)
@@ -221,14 +223,14 @@ public:
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
-    if(!scale_volume_after_smoothing)
+    if(!scale_volume_after_smoothing_)
       return update_mesh_no_scaling(Xx, Xy, Xz);
 
     const FT old_vol = volume(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
 
-    // If no vertex is constrained, then the smoothed mesh will simply share the same centroid as the input mesh
+    // If no vertex is constrained, then the smoothed mesh will share the same centroid as the input mesh
     Point pre_smooth_anchor_point;
-    if(anchor_point != boost::none)
+    if(anchor_point != std::nullopt)
       pre_smooth_anchor_point = *anchor_point;
     else
       pre_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
@@ -245,7 +247,7 @@ public:
     }
 
     Point post_smooth_anchor_point;
-    if(anchor_point != boost::none)
+    if(anchor_point != std::nullopt)
       post_smooth_anchor_point = *anchor_point;
     else
       post_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
@@ -361,15 +363,15 @@ private:
   // of volume. We need an anchor point to scale up, either a constrained point or the centroid
   // of the initial mesh if no vertex is constrained. If there is more than a constrained vertex,
   // then no scaling can be done without violating the constraint.
-  bool scale_volume_after_smoothing;
-  boost::optional<Point> anchor_point;
+  bool scale_volume_after_smoothing_;
+  std::optional<Point> anchor_point;
 
   // linear system data
   std::vector<double> diagonal_; // index of vector -> index of vimap_
   std::vector<bool> constrained_flags_;
 
-  const GeomTraits& traits_;
-  const CGAL::Weights::Edge_cotangent_weight<TriangleMesh, VertexPointMap> weight_calculator_;
+  GeomTraits traits_;
+  const CGAL::Weights::Cotangent_weight<TriangleMesh, VertexPointMap, GeomTraits> weight_calculator_;
 };
 
 } // internal

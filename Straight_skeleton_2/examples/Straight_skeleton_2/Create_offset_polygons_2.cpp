@@ -2,9 +2,9 @@
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/create_offset_polygons_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 #include <cassert>
@@ -15,8 +15,8 @@ typedef K::Point_2                   Point ;
 typedef CGAL::Polygon_2<K>           Polygon_2 ;
 typedef CGAL::Straight_skeleton_2<K> Ss ;
 
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
-typedef boost::shared_ptr<Ss> SsPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
 
@@ -37,7 +37,8 @@ int main()
 
   double lOffset = 1 ;
   PolygonPtrVector offset_polygons = CGAL::create_offset_polygons_2<Polygon_2>(lOffset,*ss);
-  print_polygons(offset_polygons);
 
-  return 0;
+  CGAL::Straight_skeletons_2::IO::print_polygons(offset_polygons);
+
+  return EXIT_SUCCESS;
 }

@@ -10,7 +10,7 @@ To optimize distance computations squared distances are used.
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `Search_traits_2<Simple_cartesian<double> >`.
 
-\cgalModels `OrthogonalDistance`
+\cgalModels{OrthogonalDistance}
 
 \sa `OrthogonalDistance`
 \sa `CGAL::Weighted_Minkowski_distance<Traits>`

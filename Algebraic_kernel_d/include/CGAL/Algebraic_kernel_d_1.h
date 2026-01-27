@@ -111,7 +111,7 @@ public:
 
       void operator()( Type& t, int rel_prec ) const {
         // If t is zero, we can refine the interval to
-        //  infinite precission
+        //  infinite precision
         if( CGAL::is_zero( t ) ) {
           t = Type(0);
         } else {

@@ -157,7 +157,7 @@ template<> class Algebraic_structure_traits< short int >
     typedef Tag_true             Is_numerical_sensitive;
 
     // Explicitly defined functors which have no support for implicit
-    //  interoperability. This is nescessary because of the implicit conversion
+    //  interoperability. This is necessary because of the implicit conversion
     //  to int for binary operations between short ints.
     class Integral_division
       : public CGAL::cpp98::binary_function< Type, Type,

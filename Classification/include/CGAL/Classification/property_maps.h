@@ -32,11 +32,11 @@ namespace Classification
   \brief Property map that constructs the center of mass of the face
   of a mesh on-the-fly.
 
-  \cgalModels `ReadablePropertyMap`
+  \cgalModels{ReadablePropertyMap}
 
   \tparam FaceGraph model of `FaceGraph`.
 
-  \tparam VertexPointMap model of `ReadablePropertyMap` with with
+  \tparam VertexPointMap model of `ReadablePropertyMap` with
   `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
   and `CGAL::Point_3` as value type.
 */
@@ -85,11 +85,11 @@ public:
   \brief Property map that constructs a face descriptor with a
   `bbox()` method from a face descriptor.
 
-  \cgalModels `ReadablePropertyMap`
+  \cgalModels{ReadablePropertyMap}
 
   \tparam FaceGraph model of `FaceGraph`.
 
-  \tparam VertexPointMap model of `ReadablePropertyMap` with with
+  \tparam VertexPointMap model of `ReadablePropertyMap` with
   `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
   and `CGAL::Point_3` as value type.
 */

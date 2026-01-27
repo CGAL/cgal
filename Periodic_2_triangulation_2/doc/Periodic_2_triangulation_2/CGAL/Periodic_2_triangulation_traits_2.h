@@ -20,7 +20,7 @@ will be used if the flag `Traits::Has_static_filters` exists and is `true`.
 By default, this holds for `CGAL::Exact_predicates_inexact_constructions_kernel` and
 `CGAL::Exact_predicates_exact_constructions_kernel`.
 
-\cgalModels `Periodic_2TriangulationTraits_2`
+\cgalModels{Periodic_2TriangulationTraits_2}
 
 */
 template< typename Traits, typename Periodic_2Offset_2 >

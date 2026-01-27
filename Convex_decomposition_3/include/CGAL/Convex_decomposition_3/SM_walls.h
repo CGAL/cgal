@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Convex_decomposition_3.h>
 
+#include <CGAL/Nef_S2/SM_decorator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 227

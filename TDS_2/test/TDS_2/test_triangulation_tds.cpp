@@ -45,8 +45,8 @@ int main()
     typedef CGAL::Triangulation_data_structure_2<> Cls1;
   _test_cls_tds_2( Cls1());
 
-  std::cout << "Testing bakward compatibility" << std::endl;
-  std::cout << "Testing Triangulation_defaut_data_structure_2"
+  std::cout << "Testing backward compatibility" << std::endl;
+  std::cout << "Testing Triangulation_default_data_structure_2"
             << std::endl;
   typedef CGAL::_Triangulation_test_traits Gt;
   typedef CGAL::Triangulation_ds_vertex_base_2<> Vb;

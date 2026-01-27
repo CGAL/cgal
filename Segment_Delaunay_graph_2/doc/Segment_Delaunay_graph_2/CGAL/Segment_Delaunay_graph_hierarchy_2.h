@@ -57,10 +57,10 @@ data structure must be a model of the
 `SegmentDelaunayGraphHierarchyVertexBase_2`
 concept. The fourth template parameter defaults to:
 \code
-`CGAL::Triangulation_data_structure_2<
+CGAL::Triangulation_data_structure_2<
           CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<
             CGAL::Segment_Delaunay_graph_vertex_base_2<St>,
-          CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`
+          CGAL::Segment_Delaunay_graph_face_base_2<Gt> >
 \endcode
 
 The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the
@@ -68,9 +68,7 @@ The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the
 the same with its base class. In the sequel only additional types
 and methods defined are documented.
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
-\cgalModels `Assignable`
+\cgalModels{DefaultConstructible,CopyConstructible,Assignable}
 
 \sa `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`

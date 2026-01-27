@@ -86,30 +86,156 @@ _test_unique_vertex_iterator( const Triangulation &T )
     size_type n = 0;
 
     for (Unique_vertex_iterator ovit = T.unique_vertices_begin();
-         ovit != T.unique_vertices_end(); ++ovit)
-        {
-          Vertex_handle vh = ovit; // Test the conversion.
-          n++;
-          const Vertex & v = *ovit; // Test operator*;
-          Cell_handle c = ovit->cell(); // Test operator->;
-          (void) vh;
-          (void) v;
-          (void) c;
-        }
+                                ovit != T.unique_vertices_end(); ++ovit)
+    {
+      Vertex_handle vh = ovit; // Test the conversion.
+      ++n;
+      const Vertex & v = *ovit; // Test operator*;
+      Cell_handle c = ovit->cell(); // Test operator->;
+      (void) vh;
+      (void) v;
+      (void) c;
+    }
     assert( n == T.number_of_vertices() );
 
     // Test Backward-ness of the iterators.
-    n=0;
+    n = 0;
     for (Unique_vertex_iterator ovit = T.unique_vertices_end();
-         ovit != T.unique_vertices_begin(); --ovit)
-        {
-          Vertex_handle vh = ovit; // Test the conversion.
-          (void) vh;
-          n++;
-        }
+                                ovit != T.unique_vertices_begin(); --ovit)
+    {
+      Vertex_handle vh = ovit; // Test the conversion.
+      (void) vh;
+      ++n;
+    }
     assert( n == T.number_of_vertices() );
 
     return n;
+}
+
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_unique_edge_iterator( const Triangulation &T )
+{
+  typedef typename Triangulation::size_type       size_type;
+  typedef typename Triangulation::Edge            Edge;
+  typedef typename Triangulation::Cell_handle     Cell_handle;
+  typedef typename Triangulation::Unique_edge_iterator
+                                                  Unique_edge_iterator;
+
+  size_type n = 0;
+
+  for (Unique_edge_iterator oeit = T.unique_edges_begin();
+                            oeit != T.unique_edges_end(); ++oeit)
+  {
+    ++n;
+    const Edge& e = *oeit; // Test operator*;
+    Cell_handle c = oeit->first; // Test operator->;
+    assert(c != Cell_handle());
+    (void) e;
+    (void) c;
+  }
+  assert( n == T.number_of_edges() );
+
+  // Test Backward-ness of the iterators.
+  n = 0;
+  for (Unique_edge_iterator oeit = T.unique_edges_end();
+                            oeit != T.unique_edges_begin(); --oeit)
+  {
+    ++n;
+  }
+  assert( n == T.number_of_edges() );
+
+  return n;
+}
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_unique_facet_iterator( const Triangulation &T )
+{
+  typedef typename Triangulation::size_type       size_type;
+  typedef typename Triangulation::Facet           Facet;
+  typedef typename Triangulation::Cell_handle     Cell_handle;
+  typedef typename Triangulation::Unique_facet_iterator
+                                                  Unique_facet_iterator;
+
+  size_type n = 0;
+
+  for (Unique_facet_iterator ofit = T.unique_facets_begin();
+                             ofit != T.unique_facets_end(); ++ofit)
+  {
+    ++n;
+    const Facet& f = *ofit; // Test operator*;
+    Cell_handle c = ofit->first; // Test operator->;
+    assert(c != Cell_handle());
+    (void) f;
+    (void) c;
+  }
+  assert( n == T.number_of_facets() );
+
+  // Test Backward-ness of the iterators.
+  n = 0;
+  for (Unique_facet_iterator ofit = T.unique_facets_end();
+                             ofit != T.unique_facets_begin(); --ofit)
+  {
+    ++n;
+  }
+  assert( n == T.number_of_facets() );
+
+  return n;
+}
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_unique_cell_iterator( const Triangulation &T )
+{
+    typedef typename Triangulation::size_type       size_type;
+    typedef typename Triangulation::Cell            Cell;
+    typedef typename Triangulation::Vertex_handle   Vertex_handle;
+    typedef typename Triangulation::Cell_handle     Cell_handle;
+    typedef typename Triangulation::Unique_cell_iterator
+                                                    Unique_cell_iterator;
+
+    size_type n = 0;
+
+    for (Unique_cell_iterator ocit = T.unique_cells_begin();
+                              ocit != T.unique_cells_end(); ++ocit)
+    {
+      Cell_handle ch = ocit; // Test the conversion.
+      n++;
+      const Cell& c = *ocit; // Test operator*;
+      Vertex_handle vh = ocit->vertex(0); // Test operator->;
+      (void) ch;
+      (void) c;
+      (void) vh;
+    }
+    assert( n == T.number_of_cells() );
+
+    // Test Backward-ness of the iterators.
+    n=0;
+    for (Unique_cell_iterator ocit = T.unique_cells_end();
+                              ocit != T.unique_cells_begin(); --ocit)
+    {
+      Cell_handle ch = ocit; // Test the conversion.
+      (void) ch;
+      ++n;
+    }
+    assert( n == T.number_of_cells() );
+
+    return n;
+}
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_triangulation_unique_iterator( const Triangulation &T )
+{
+  typedef typename Triangulation::size_type size_type;
+  const size_type nc = _test_unique_cell_iterator(T);
+  const size_type nf = _test_unique_facet_iterator(T);
+  const size_type ne = _test_unique_edge_iterator(T);
+  const size_type nv = _test_unique_vertex_iterator(T);
+  assert((nv-ne+nf-nc) == 0);
+  return nv-ne+nf-nc;
 }
 
 template < class Triangulation >

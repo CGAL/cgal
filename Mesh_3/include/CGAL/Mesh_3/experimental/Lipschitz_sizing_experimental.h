@@ -17,8 +17,8 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/Mesh_3/experimental/AABB_filtered_projection_traits.h>
 #include <CGAL/Mesh_3/experimental/Facet_patch_id_map.h>
@@ -58,8 +58,8 @@ public:
   typedef typename Kernel::Point_3    Point_3;
 
   typedef typename std::list<Triangle>::iterator        Tr_iterator;
-  typedef CGAL::AABB_triangle_primitive<K, Tr_iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive>               AABB_tr_traits;
+  typedef CGAL::AABB_triangle_primitive_3<K, Tr_iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive>             AABB_tr_traits;
   typedef CGAL::AABB_tree<AABB_tr_traits>               AABB_tree;
 
   typedef typename CGAL::Default::Get<AABBTreeTemplate, AABB_tree>::type Tree;
@@ -104,7 +104,7 @@ private:
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   //help to accelerate aabb_tree queries in m_ptree
-  std::shared_ptr<Kd_tree> m_kd_tree;
+  mutable std::shared_ptr<Kd_tree> m_kd_tree;
 
   Facet_patch_id_map m_facet_patch_id_map;
   const Patches_ids_map& patches_ids_map;
@@ -387,7 +387,7 @@ private:
   }
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-  void kd_tree()
+  void kd_tree() const
   {
     typedef typename MeshDomain::Polyhedron Polyhedron;
     if(m_kd_tree.get() == 0) {

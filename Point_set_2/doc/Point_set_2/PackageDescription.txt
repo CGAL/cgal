@@ -1,4 +1,4 @@
-/// \defgroup PkgPointSet2Ref 2D Range and Neighbor Search Reference
+/// \defgroup PkgPointSet2Ref Reference Manual
 /// \defgroup PkgPointSet2Concepts Concepts
 /// \ingroup PkgPointSet2Ref
 
@@ -10,7 +10,6 @@
 
 /*!
 \addtogroup PkgPointSet2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2}
 \cgalPkgPicture{Point_set_2/fig/point_set.png}
 \cgalPkgSummaryBegin

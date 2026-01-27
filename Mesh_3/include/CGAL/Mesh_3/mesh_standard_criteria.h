@@ -22,7 +22,7 @@
 
 
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 namespace CGAL {
@@ -41,7 +41,7 @@ class Abstract_criterion
 
 public:
   typedef FT Quality;
-  typedef boost::optional<Quality>  Is_bad;
+  typedef std::optional<Quality>  Is_bad;
   typedef typename Visitor_::Handle Handle;
 
   /// Destructor
@@ -81,7 +81,7 @@ protected:
 
 public:
   typedef std::pair<int, typename Criterion::Quality> Quality;
-  typedef boost::optional<Quality>                    Is_bad;
+  typedef std::optional<Quality>                    Is_bad;
 
 
   // Constructor

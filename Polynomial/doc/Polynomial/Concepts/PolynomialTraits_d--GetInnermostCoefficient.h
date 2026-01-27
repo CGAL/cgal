@@ -7,9 +7,7 @@ For the given `PolynomialTraits_d::Polynomial_d` this
 `AdaptableBinaryFunction` returns the coefficient of
 the (multivariate) monomial specified by the given `CGAL::Exponent_vector`.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

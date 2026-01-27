@@ -31,7 +31,7 @@ namespace CGAL {
 
       typedef typename std::deque<Element>::const_iterator const_iterator;
     private:
-      // --- private datas ---
+      // --- private data ---
       std::deque<Element> d;
       Predicate test;
 

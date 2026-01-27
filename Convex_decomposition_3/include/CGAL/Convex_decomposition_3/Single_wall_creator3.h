@@ -14,10 +14,12 @@
 
 #include <CGAL/license/Convex_decomposition_3.h>
 
-
+#include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/Normalizing.h>
+#include <CGAL/Convex_decomposition_3/Ray_hit_generator.h>
 #include <CGAL/Convex_decomposition_3/SM_walls.h>
 
 #undef CGAL_NEF_DEBUG

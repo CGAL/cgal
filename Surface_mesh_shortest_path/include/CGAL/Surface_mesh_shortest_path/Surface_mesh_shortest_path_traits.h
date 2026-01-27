@@ -22,8 +22,6 @@
 #include <ostream>
 #include <cstddef>
 
-#include <boost/array.hpp>
-
 namespace CGAL {
 
 /*!
@@ -36,7 +34,7 @@ as required by the `Surface_mesh_shortest_path` class.
 
 \tparam TriangleMesh A model of `FaceListGraph`
 
-\cgalModels `SurfaceMeshShortestPathTraits`
+\cgalModels{SurfaceMeshShortestPathTraits}
 */
 template <
   class K,
@@ -178,7 +176,7 @@ model which uses an exact Kernel during the unfolding operations to achieve bett
 
 \tparam TriangleMesh triangle mesh type
 
-\cgalModels `SurfaceMeshShortestPathTraits`
+\cgalModels{SurfaceMeshShortestPathTraits}
 */
 template <
   class K,

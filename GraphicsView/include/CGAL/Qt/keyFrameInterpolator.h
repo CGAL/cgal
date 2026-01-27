@@ -290,7 +290,7 @@ private Q_SLOTS:
   }
 
 private:
-  // Copy constructor and opertor= are declared private and undefined
+  // Copy constructor and operator= are declared private and undefined
   // Prevents everyone from trying to use them
   // KeyFrameInterpolator(const KeyFrameInterpolator& kfi);
   // KeyFrameInterpolator& operator=(const KeyFrameInterpolator& kfi);

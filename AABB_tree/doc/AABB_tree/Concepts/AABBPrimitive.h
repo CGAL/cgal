@@ -12,11 +12,15 @@ The concept `AABBPrimitive` describes the requirements for the primitives stored
 
 The `Primitive` type can be, e.g., a wrapper around a `Handle`. Assume for instance that the input objects are the triangle faces of a mesh stored as a `CGAL::Polyhedron_3`. The `Datum` would be a `Triangle_3` and the `Id` would be a polyhedron `Face_handle`. Method `datum()` can return either a `Triangle_3` constructed on the fly from the face handle or a `Triangle_3` stored internally. This provides a way for the user to trade memory for efficiency.
 
-\cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_false,CacheDatum>`
-\cgalHasModel `CGAL::AABB_segment_primitive<Iterator,CacheDatum>`
-\cgalHasModel `CGAL::AABB_triangle_primitive<Iterator,CacheDatum>`
-\cgalHasModel `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_false,CacheDatum>`
-\cgalHasModel `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_false,CacheDatum>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_false,CacheDatum>}
+\cgalHasModels{CGAL::AABB_segment_primitive_2<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_segment_primitive_3<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_triangle_primitive_2<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_triangle_primitive_3<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_false,CacheDatum>}
+\cgalHasModels{CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_false,CacheDatum>}
+\cgalHasModelsEnd
 */
 
 class AABBPrimitive {
@@ -26,7 +30,7 @@ public:
 /// @{
 
 /*!
-3D point type.
+Point type.
 */
 typedef unspecified_type Point;
 
@@ -66,7 +70,7 @@ returns the corresponding identifier. This identifier is only used as a referenc
 Id id();
 
 /*!
-returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
+returns a point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
 */
 Point_reference reference_point();
 

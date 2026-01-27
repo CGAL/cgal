@@ -115,6 +115,14 @@ template <> class Algebraic_structure_traits< CORE::Expr >
         };  */
     };
 
+    class Is_zero
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x ) const {
+          return x.isZero();
+        }
+    };
+
 };
 
 template <> class Real_embeddable_traits< CORE::Expr >
@@ -173,7 +181,11 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 };
 
-} //namespace CGAL
+inline const CORE::Expr& approx(const CORE::Expr& d) { return d; }
+inline const CORE::Expr& exact(const CORE::Expr& d) { return d; }
+inline int depth(const CORE::Expr&){ return -1; }
+
+} // namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_BigInt.h>

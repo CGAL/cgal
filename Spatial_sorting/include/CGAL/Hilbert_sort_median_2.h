@@ -17,8 +17,6 @@
 #include <CGAL/tags.h>
 #include <CGAL/Hilbert_sort_base.h>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_invoke.h>
 #endif
@@ -38,7 +36,7 @@ struct Hilbert_cmp_2<K,x,true>
 {
   typedef typename K::Point_2 Point;
   K k;
-  Hilbert_cmp_2 (const K &_k = K()) : k(_k) {}
+  Hilbert_cmp_2 (const K &_k) : k(_k) {}
   bool operator() (const Point &p, const Point &q) const
   {
     return Hilbert_cmp_2<K,x,false> (k) (q, p);
@@ -51,7 +49,7 @@ struct Hilbert_cmp_2<K,0,false>
 {
   typedef typename K::Point_2 Point;
   K k;
-  Hilbert_cmp_2 (const K &_k = K()) : k(_k) {}
+  Hilbert_cmp_2 (const K &_k) : k(_k) {}
   bool operator() (const Point &p, const Point &q) const
   {
     return k.less_x_2_object() (p, q);
@@ -64,7 +62,7 @@ struct Hilbert_cmp_2<K,1,false>
 {
   typedef typename K::Point_2 Point;
   K k;
-  Hilbert_cmp_2 (const K &_k = K()) : k(_k) {}
+  Hilbert_cmp_2 (const K &_k) : k(_k) {}
   bool operator() (const Point &p, const Point &q) const
   {
     return k.less_y_2_object() (p, q);
@@ -93,7 +91,7 @@ private:
   };
 
 public:
-  Hilbert_sort_median_2 (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+  Hilbert_sort_median_2 (const Kernel &k, std::ptrdiff_t limit = 1)
     : _k(k), _limit (limit)
   {}
 
@@ -157,8 +155,8 @@ public:
 #ifndef CGAL_LINKED_WITH_TBB
     CGAL_USE(begin);
     CGAL_USE(end);
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                               "Parallel_tag is enabled but TBB is unavailable.");
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                   "Parallel_tag is enabled but TBB is unavailable.");
 #else
     const int y = (x + 1) % 2;
     if (std::distance(begin,end) <= _limit)

@@ -178,7 +178,6 @@ template< class Type >
 class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                 CGAL::Field_with_kth_root_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
-                                      // TODO: Why not Fiel_tag?
                                       CGAL::Field_with_sqrt_tag > {
   // Nothing new
 };
@@ -187,7 +186,6 @@ template< class Type >
 class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                 CGAL::Field_with_root_of_tag >
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
-                                      // TODO: Why not Fiel_tag?
                                       CGAL::Field_with_sqrt_tag > {
   // Nothing new
 };
@@ -204,10 +202,10 @@ public:
   typedef Sqrt_extension< COEFF_, ROOT_, ACDE_TAG,FP_TAG > Type;
 
     // Tag_true if COEFF and ROOT are exact
-    typedef typename ::boost::mpl::if_c<
-       bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<ROOT_ >::Is_exact,::CGAL::Tag_true>::value )&&
-       bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>::value )
-           ,::CGAL::Tag_true,::CGAL::Tag_false>::type Is_exact;
+    typedef std::conditional_t<
+       std::is_same_v<typename CGAL::Algebraic_structure_traits<ROOT_ >::Is_exact,::CGAL::Tag_true> &&
+       std::is_same_v<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>
+           ,::CGAL::Tag_true,::CGAL::Tag_false> Is_exact;
 
     typedef typename Algebraic_structure_traits<COEFF_>::Is_numerical_sensitive
     Is_numerical_sensitive;

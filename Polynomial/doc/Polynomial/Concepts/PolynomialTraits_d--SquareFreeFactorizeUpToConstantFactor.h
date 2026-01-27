@@ -19,9 +19,7 @@ This functor is well defined even though
 `PolynomialTraits_d::Innermost_coefficient_type` may not be a
 `UniqueFactorizationDomain`.
 
-\cgalRefines Assignable
-\cgalRefines CopyConstructible
-\cgalRefines DefaultConstructible
+\cgalRefines{Assignable,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

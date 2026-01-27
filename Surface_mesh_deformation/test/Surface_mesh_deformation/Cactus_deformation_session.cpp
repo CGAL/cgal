@@ -58,7 +58,7 @@ void read_handle_difs_and_deform(DeformMesh& deform_mesh, InputIterator begin, I
   CGAL::Timer timer;
 
   //the original behavior of translate was to overwrite the previous
-  //translation. Now that it is cumulative, we need to substract the
+  //translation. Now that it is cumulative, we need to subtract the
   //previous translation vector to mimic the overwrite
   Vector previous(0,0,0);
   for(std::size_t i = 0; i < dif_vector.size(); ++i)

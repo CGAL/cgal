@@ -3,7 +3,7 @@
 \ingroup PkgTriangulation2Concepts
 \cgalConcept
 
-\cgalRefines SpatialSortingTraits_2
+\cgalRefines{SpatialSortingTraits_2}
 
 The concept `TriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
@@ -12,11 +12,13 @@ provides the types of the geometric primitives used in the
 triangulation and some function object types for the required
 predicates on those primitives.
 
-\cgalHasModel All models of `Kernel`.
-\cgalHasModel `CGAL::Projection_traits_3<K>`
-\cgalHasModel `CGAL::Projection_traits_xy_3<K>`
-\cgalHasModel `CGAL::Projection_traits_yz_3<K>`
-\cgalHasModel `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModels{CGAL::Projection_traits_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xy_3<K>}
+\cgalHasModels{CGAL::Projection_traits_yz_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xz_3<K>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_2`
 
@@ -143,6 +145,19 @@ according to the
 typedef unspecified_type Compare_y_2;
 
 /*!
+A function object that lexicographically compares two points by their Cartesian
+coordinates.
+It provides the operator:
+
+`Comparison_result operator()(Point p, Point q)`
+
+which returns
+(`SMALLER, EQUAL` or `LARGER`)
+according to the lexicographical order of points `p` and `q`.
+*/
+typedef unspecified_type Compare_xy_2;
+
+/*!
 A function object to compute the orientation of three points.
 
 Provides the operator:
@@ -165,7 +180,7 @@ Provides the operator:
 which takes four points \f$ p, q, r, s\f$ as arguments and returns
 `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or,
 `ON_ORIENTED_BOUNDARY` according to the position of points `s`
-with respect to the oriented circle through through \f$ p,q\f$
+with respect to the oriented circle through \f$ p,q\f$
 and \f$ r\f$.
 This type is required only if the function
 `side_of_oriented_circle(Face_handle f, Point p)` is
@@ -234,12 +249,27 @@ Construct_triangle_2 construct_triangle_2_object();
 /*!
 
 */
+Less_x_2 less_x_2_object();
+
+/*!
+
+*/
+Less_y_2 less_y_2_object();
+
+/*!
+
+*/
 Compare_x_2 compare_x_2_object();
 
 /*!
 
 */
 Compare_y_2 compare_y_2_object();
+
+/*!
+
+*/
+Compare_xy_2 compare_xy_2_object();
 
 /*!
 

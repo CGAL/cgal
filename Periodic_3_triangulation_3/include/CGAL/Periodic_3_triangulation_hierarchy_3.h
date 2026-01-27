@@ -396,7 +396,7 @@ void
 Periodic_3_triangulation_hierarchy_3<PTr>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   CGAL_expensive_precondition(is_vertex(v));
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
@@ -412,12 +412,12 @@ typename Periodic_3_triangulation_hierarchy_3<PTr>::Vertex_handle
 Periodic_3_triangulation_hierarchy_3<PTr>::
 move_point(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   Vertex_handle old, ret;
 
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    CGAL_triangulation_assertion(hierarchy[l]->is_valid());
+    CGAL_assertion(hierarchy[l]->is_valid());
     Vertex_handle w = hierarchy[l]->move_point(v, p);
     if (l == 0) {
       ret = w;

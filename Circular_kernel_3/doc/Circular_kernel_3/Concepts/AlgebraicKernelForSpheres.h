@@ -7,7 +7,9 @@ The `AlgebraicKernelForSpheres` concept is meant to provide the
 curved kernel with all the algebraic functionalities required for the
 manipulation of spheres, circles, and circular arcs in 3D.
 
-\cgalHasModel CGAL::Algebraic_kernel_for_spheres_2_3
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Algebraic_kernel_for_spheres_2_3}
+\cgalHasModelsEnd
 
 \sa `SphericalKernel`
 \sa `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
@@ -27,7 +29,7 @@ A model of `RingNumberType`.
 typedef unspecified_type RT;
 
 /*!
-A model of `FieldNumberType``<RT>`.
+A model of `FieldNumberType<RT>`.
 */
 typedef unspecified_type FT;
 

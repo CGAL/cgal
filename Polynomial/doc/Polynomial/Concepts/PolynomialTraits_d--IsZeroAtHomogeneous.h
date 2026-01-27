@@ -12,9 +12,7 @@ The polynomial is interpreted as a homogeneous polynomial in all variables.
 For instance the polynomial \f$ p(x_0,x_1) = x_0^2x_1^3+x_1^4\f$ is interpreted as the homogeneous
 polynomial \f$ p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1\f$.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

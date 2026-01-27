@@ -19,7 +19,7 @@ namespace CGAL{
 namespace internal{
 
 // template meta function Innermost_coefficient_type
-// returns the tpye of the innermost coefficient
+// returns the type of the innermost coefficient
 template <class T> struct Innermost_coefficient_type{ typedef T Type; };
 template <class Coefficient_type>
 struct Innermost_coefficient_type<Polynomial<Coefficient_type> >{

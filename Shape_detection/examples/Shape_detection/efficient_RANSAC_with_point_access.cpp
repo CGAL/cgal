@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
   Efficient_ransac::Shape_range::iterator it = shapes.begin();
   while (it != shapes.end()) {
 
-    boost::shared_ptr<Efficient_ransac::Shape> shape = *it;
+    std::shared_ptr<Efficient_ransac::Shape> shape = *it;
 
     // Use Shape_base::info() to print the parameters of the detected shape.
     std::cout << (*it)->info();

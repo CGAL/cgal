@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCircularKernel3AlgebraicClasses
 
-\cgalModels `AlgebraicKernelForSpheres::Polynomial_1_3`
+\cgalModels{AlgebraicKernelForSpheres::Polynomial_1_3}
 
 */
 template< typename RT >

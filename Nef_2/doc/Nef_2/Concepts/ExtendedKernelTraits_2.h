@@ -8,7 +8,7 @@ geometry\cgalFootnote{It is called extended geometry for simplicity,
 though it is not a real geometry in the classical sense}. Let `K` be
 an instance of the data type `ExtendedKernelTraits_2`. The central
 notion of extended geometry are extended points. An extended point
-represents either a standard affine point of the Cartesian plane or a
+represents either a standard affine point of the %Cartesian plane or a
 non-standard point representing the equivalence class of rays where
 two rays are equivalent if one is contained in the other.
 
@@ -38,9 +38,11 @@ functionality for changing between standard affine and extended
 geometry. At the same time it provides extensible geometric primitives
 on the extended geometric objects.
 
-\cgalHasModel `CGAL::Extended_cartesian<FT>`
-\cgalHasModel `CGAL::Extended_homogeneous<RT>`
-\cgalHasModel `CGAL::Filtered_extended_homogeneous<RT>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Extended_cartesian<FT>}
+\cgalHasModels{CGAL::Extended_homogeneous<RT>}
+\cgalHasModels{CGAL::Filtered_extended_homogeneous<RT>}
+\cgalHasModelsEnd
 
 */
 
@@ -189,21 +191,20 @@ returns `true` iff
 bool is_standard(const Point_2& p) ;
 
 /*!
-returns
-the standard point represented by `p`. \pre `K.is_standard(p)`.
+returns the standard point represented by `p`.
+\pre \ref is_standard(const Point_2& p) "is_standard"(`p`).
 */
 Standard_point_2 standard_point(const Point_2& p) ;
 
 /*!
-returns
-the oriented line representing the bundle of rays defining `p`.
-\pre `!K.is_standard(p)`.
+returns the oriented line representing the bundle of rays defining `p`.
+\pre ! \ref is_standard(const Point_2& p) "is_standard"(`p`).
 */
 Standard_line_2 standard_line(const Point_2& p) ;
 
 /*!
-a ray
-defining `p`. \pre `!K.is_standard(p)`.
+a ray defining `p`.
+\pre ! \ref is_standard(const Point_2& p) "is_standard"(`p`).
 */
 Standard_ray_2 standard_ray(const Point_2& p) ;
 
@@ -353,4 +354,3 @@ const char* output_identifier() ;
 /// @}
 
 }; /* end ExtendedKernelTraits_2 */
-

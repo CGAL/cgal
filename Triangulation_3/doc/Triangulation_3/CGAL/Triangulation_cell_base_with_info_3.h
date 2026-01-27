@@ -22,8 +22,7 @@ It must be a model of the `TriangulationCellBase_3` concept.
 It has the default value
 `Triangulation_cell_base_3<TriangulationTraits_3>`.
 
-\cgalModels `TriangulationCellBase_3`
-\cgalModels `TriangulationCellBaseWithInfo_3`
+\cgalModels{TriangulationCellBase_3,TriangulationCellBaseWithInfo_3}
 
 \sa `CGAL::Triangulation_cell_base_3`
 \sa `CGAL::Triangulation_vertex_base_with_info_3`

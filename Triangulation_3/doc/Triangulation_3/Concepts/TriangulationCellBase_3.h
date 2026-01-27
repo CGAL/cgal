@@ -8,10 +8,12 @@ geometric information, so only the requirements of the triangulation data
 structure apply.
 
 
-\cgalRefines `TriangulationDSCellBase_3`
+\cgalRefines{TriangulationDSCellBase_3}
 
-\cgalHasModel `CGAL::Triangulation_cell_base_3`
-\cgalHasModel `CGAL::Triangulation_cell_base_with_info_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_cell_base_3}
+\cgalHasModels{CGAL::Triangulation_cell_base_with_info_3}
+\cgalHasModelsEnd
 
 \sa `TriangulationVertexBase_3`
 

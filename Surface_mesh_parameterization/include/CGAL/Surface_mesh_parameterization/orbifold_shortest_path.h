@@ -20,8 +20,8 @@
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_map.hpp>
 
+#include <unordered_map>
 #include <exception>
 #include <list>
 #include <utility>
@@ -54,7 +54,7 @@ void output_shortest_paths_to_selection_file(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor   edge_descriptor;
 
-  boost::unordered_map<vertex_descriptor, int> index_map;
+  std::unordered_map<vertex_descriptor, int> index_map;
 
   int counter = 0;
   for(vertex_descriptor vd : vertices(mesh)) {
@@ -133,7 +133,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
 
   typedef internal::Stop_at_target_Dijkstra_visitor<TriangleMesh>        Stop_visitor;
 
-  typedef boost::unordered_map<vertex_descriptor, vertex_descriptor>     Pred_umap;
+  typedef std::unordered_map<vertex_descriptor, vertex_descriptor>       Pred_umap;
   typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
 
   Pred_umap predecessor;

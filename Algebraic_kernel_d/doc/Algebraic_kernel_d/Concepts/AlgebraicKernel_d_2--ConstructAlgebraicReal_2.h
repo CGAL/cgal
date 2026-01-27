@@ -5,7 +5,7 @@
 
 Constructs an `AlgebraicKernel_d_2::Algebraic_real_2`.
 
-\cgalRefines `AdaptableFunctor`
+\cgalRefines{AdaptableFunctor}
 
 \sa `AlgebraicKernel_d_1::ConstructAlgebraicReal_1`
 

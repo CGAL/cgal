@@ -10,7 +10,7 @@ The class `Segment_Delaunay_graph_storage_site_with_info_2` is a model for the c
 \tparam STraits must be a model of the `SegmentDelaunayGraphStorageTraits_2` concept.
 \tparam Base must be a model of `SegmentDelaunayGraphStorageSite_2`
 
-\cgalModels `SegmentDelaunayGraphStorageSite_2`
+\cgalModels{SegmentDelaunayGraphStorageSite_2}
 
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>`
 */

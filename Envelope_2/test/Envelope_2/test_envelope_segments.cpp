@@ -35,7 +35,7 @@ enum Coord_input_format
  * \param filename The name of the input file.
  * \param format The coordinate format.
  * \param segs Output: The segments.
- * \return Whether the segments were successfuly read.
+ * \return Whether the segments were successfully read.
  */
 bool read_segments (const char* filename,
                     Coord_input_format format,
@@ -113,7 +113,7 @@ bool find_curve(I begin, I end, const Curve_2& c)
  * Check the envelope of a given set of segments.
  * \param segs The segments.
  * \param diag The diagram.
- * \param is_lower Does the diagram reprsent the lower or the upper envelope.
+ * \param is_lower Does the diagram represent the lower or the upper envelope.
  * \return Whether the diagram structure is correct.
  */
 bool check_envelope (const Curve_list& segs,

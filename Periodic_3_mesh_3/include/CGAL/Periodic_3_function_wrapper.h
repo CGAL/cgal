@@ -18,7 +18,6 @@
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
 #include <boost/type_traits/is_function.hpp>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -42,13 +41,13 @@ public:
 
   /// Operator ()
   return_type operator()(const Point_3& p) const {
-    return f_(P3T3::internal::robust_canonicalize_point(p, gt_));
+    return f_(P3T3::internal::construct_canonical_point(p, gt_));
   }
 
 private:
-  typedef typename boost::mpl::if_<boost::is_function<Function_>,
-                                   Function_*,
-                                   Function_>::type             Stored_function;
+  typedef std::conditional_t<std::is_function_v<Function_>,
+                             Function_*,
+                             Function_>                       Stored_function;
 
   /// Function to wrap
   Stored_function f_;

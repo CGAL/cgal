@@ -22,8 +22,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 template <typename Arr_>
-class VerticalRayShootCallback : public VerticalRayShootCallbackBase
-{
+class VerticalRayShootCallback : public VerticalRayShootCallbackBase {
 public:
   typedef VerticalRayShootCallbackBase Superclass;
   typedef Arr_ Arrangement;
@@ -57,13 +56,12 @@ VerticalRayShootCallbackBase::VerticalRayShootCallbackBase(QObject* parent_) :
 }
 
 // msvc2015 doesn't play well with polymorphic lambdas
-namespace
-{
-struct ExplicitLambda
-{
+namespace {
+
+  //
+struct ExplicitLambda {
   template <typename Arrangement>
-  void operator()(demo_types::TypeHolder<Arrangement>)
-  {
+  void operator()(demo_types::TypeHolder<Arrangement>) {
     Arrangement* arr = nullptr;
     CGAL::assign(arr, arr_obj);
     res = new VerticalRayShootCallback<Arrangement>(arr, parent);
@@ -73,28 +71,30 @@ struct ExplicitLambda
   CGAL::Object& arr_obj;
   QObject* parent;
 };
+
 } // anonymous namespace
 
-VerticalRayShootCallbackBase* VerticalRayShootCallbackBase::create(
-  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
-{
+//
+VerticalRayShootCallbackBase*
+VerticalRayShootCallbackBase::create(demo_types::TraitsType tt,
+                                     CGAL::Object arr_obj, QObject* parent) {
   VerticalRayShootCallbackBase* res;
   ExplicitLambda explicit_lambda{res, arr_obj, parent};
   demo_types::visitArrangementType(tt, explicit_lambda);
   return res;
 }
 
+//
 void VerticalRayShootCallbackBase::setShootingUp(bool isShootingUp)
-{
-  this->shootingUp = isShootingUp;
-}
+{ this->shootingUp = isShootingUp; }
 
+//
 template <typename Arr_>
-VerticalRayShootCallback<Arr_>::VerticalRayShootCallback(
-  Arrangement* arr_, QObject* parent_) :
-    VerticalRayShootCallbackBase(parent_),
-    arr(arr_),
-    highlightedCurves(new CGAL::Qt::CurveGraphicsItem<Traits>())
+VerticalRayShootCallback<Arr_>::
+VerticalRayShootCallback(Arrangement* arr_, QObject* parent_) :
+  VerticalRayShootCallbackBase(parent_),
+  arr(arr_),
+  highlightedCurves(new CGAL::Qt::CurveGraphicsItem<Traits>(*(arr->geometry_traits())))
 {
   this->rayGraphicsItem.setZValue(100);
 
@@ -102,81 +102,75 @@ VerticalRayShootCallback<Arr_>::VerticalRayShootCallback(
   this->highlightedCurves->setVertexColor(this->rayGraphicsItem.color());
   this->highlightedCurves->setZValue(100);
 
-  QObject::connect(
-    this, SIGNAL(modelChanged()), this->highlightedCurves,
-    SLOT(modelChanged()));
-  QObject::connect(
-    this, SIGNAL(modelChanged()), this, SLOT(slotModelChanged()));
+  QObject::connect(this, SIGNAL(modelChanged()), this->highlightedCurves,
+                   SLOT(modelChanged()));
+  QObject::connect(this, SIGNAL(modelChanged()), this, SLOT(slotModelChanged()));
 }
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::setEdgeWidth( int width )
-{
-  this->highlightedCurves->setEdgeWidth( width );
-  this->rayGraphicsItem.setWidth( width );
+void VerticalRayShootCallback<Arr_>::setEdgeWidth(int width) {
+  this->highlightedCurves->setEdgeWidth(width);
+  this->rayGraphicsItem.setWidth(width);
 }
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::setEdgeColor( const QColor& color )
-{
-  this->highlightedCurves->setEdgeColor( color );
-  this->rayGraphicsItem.setColor( color );
+void VerticalRayShootCallback<Arr_>::setEdgeColor(const QColor& color) {
+  this->highlightedCurves->setEdgeColor(color);
+  this->rayGraphicsItem.setColor(color);
 }
 
+//
 template <typename Arr_>
-const QColor& VerticalRayShootCallback<Arr_>::edgeColor( ) const
-{
-  return this->highlightedCurves->edgeColor( );
-}
+const QColor& VerticalRayShootCallback<Arr_>::edgeColor() const
+{ return this->highlightedCurves->edgeColor(); }
 
+//
 template <typename Arr_>
-int VerticalRayShootCallback<Arr_>::edgeWidth( ) const
-{
-  return this->highlightedCurves->edgeWidth( );
-}
+int VerticalRayShootCallback<Arr_>::edgeWidth() const
+{ return this->highlightedCurves->edgeWidth(); }
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::setScene(QGraphicsScene* scene_)
-{
+void VerticalRayShootCallback<Arr_>::setScene(QGraphicsScene* scene_) {
   CGAL::Qt::Callback::setScene(scene_);
   this->highlightedCurves->setScene(scene_);
-  if (scene_)
-  {
+  if (scene_) {
     this->scene->addItem(this->highlightedCurves);
     this->scene->addItem(&this->rayGraphicsItem);
   }
 }
 
+//
 template <typename Arr_>
 void VerticalRayShootCallback<Arr_>::slotModelChanged()
 {
 }
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::reset()
-{
+void VerticalRayShootCallback<Arr_>::reset() {
   this->rayGraphicsItem.reset();
   this->highlightedCurves->clear();
   Q_EMIT modelChanged();
 }
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::mousePressEvent(
-  QGraphicsSceneMouseEvent* event)
-{
-  this->highlightPointLocation(event);
-}
+void VerticalRayShootCallback<Arr_>::
+mousePressEvent(QGraphicsSceneMouseEvent* event)
+{ this->highlightPointLocation(event); }
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::mouseMoveEvent(
-  QGraphicsSceneMouseEvent* /* event */)
-{
-}
+void VerticalRayShootCallback<Arr_>::
+mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */) {}
 
+//
 template <typename Arr_>
-void VerticalRayShootCallback<Arr_>::highlightPointLocation(
-  QGraphicsSceneMouseEvent* event)
-{
+void VerticalRayShootCallback<Arr_>::
+highlightPointLocation(QGraphicsSceneMouseEvent* event) {
   this->highlightedCurves->clear();
   QPointF queryQPt = event->scenePos();
 
@@ -192,25 +186,21 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
 
   QRectF viewportRect = this->viewportRect();
   qreal y2;
-  if (this->shootingUp)
-  { // +y in Qt is towards the bottom
+  if (this->shootingUp) { // +y in Qt is towards the bottom
     y2 = viewportRect.bottom();
   }
-  else
-  {
+  else {
     y2 = viewportRect.top();
   }
   Face_const_handle unboundedFace;
   Halfedge_const_handle halfedge;
   Vertex_const_handle vertex;
-  if (CGAL::assign(unboundedFace, pointLocationResult))
-  {
+  if (CGAL::assign(unboundedFace, pointLocationResult)) {
     this->rayGraphicsItem.setSource(queryQPt);
     this->rayGraphicsItem.setTargetY(y2);
     this->rayGraphicsItem.setIsInfinite(true);
   }
-  else if (CGAL::assign(halfedge, pointLocationResult))
-  {
+  else if (CGAL::assign(halfedge, pointLocationResult)) {
     this->highlightedCurves->insert(halfedge->curve());
 
     // draw a ray from the clicked point to the hit curve
@@ -221,10 +211,8 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
     this->rayGraphicsItem.setTargetY(yApprox);
     this->rayGraphicsItem.setIsInfinite(false);
   }
-  else if (CGAL::assign(vertex, pointLocationResult))
-  {
-    if (!vertex->is_at_open_boundary())
-    {
+  else if (CGAL::assign(vertex, pointLocationResult)) {
+    if (!vertex->is_at_open_boundary()) {
       auto pt = vertex->point();
       this->highlightedCurves->insert(pt);
     }

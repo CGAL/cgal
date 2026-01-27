@@ -20,7 +20,7 @@ algebraic coordinates.
 
 \sa `Hyperbolic_Delaunay_triangulation_CK_traits_2`
 
-\cgalModels `HyperbolicDelaunayTriangulationTraits_2`
+\cgalModels{HyperbolicDelaunayTriangulationTraits_2}
 */
 
 template< class K >
@@ -35,7 +35,7 @@ public:
           typedef Hyperbolic_point_2                                                                       Hyperbolic_Voronoi_point_2;
     typedef unspecified_type                                                                         Circular_arc_2;
     typedef typename K::Segment_2                    Euclidean_segment_2;
-          typedef boost::variant< Circular_arc_2,
+          typedef std::variant< Circular_arc_2,
                             Euclidean_segment_2 >           Hyperbolic_segment_2;
     typedef typename K::Triangle_2                   Hyperbolic_triangle_2;
   /// @}

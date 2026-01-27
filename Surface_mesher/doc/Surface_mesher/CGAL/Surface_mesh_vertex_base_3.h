@@ -17,7 +17,7 @@ class.
 and
 defaults to `Triangulation_vertex_base_3 <Gt>`.
 
-\cgalModels `SurfaceMeshVertexBase_3`
+\cgalModels{SurfaceMeshVertexBase_3}
 
 \sa `SurfaceMeshComplex_2InTriangulation_3`
 \sa `Surface_mesh_complex_2_in_triangulation_3<Tr>`

@@ -15,6 +15,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Lazy.h>
+#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Default.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>
@@ -259,9 +260,9 @@ struct Lazy_cartesian :
     void set_dimension(int dim){ak.set_dimension(dim);ek.set_dimension(dim);}
 
     // For compilers that do not handle [[no_unique_address]]
-    typedef boost::mpl::and_<
-      internal::Do_not_store_kernel<AK_>,
-      internal::Do_not_store_kernel<EK_> > Do_not_store_kernel;
+    typedef std::bool_constant<
+      internal::Do_not_store_kernel<AK_>::value &&
+      internal::Do_not_store_kernel<EK_>::value > Do_not_store_kernel;
 
     typedef typename EK_::Dimension Dimension; // ?
     typedef Lazy_cartesian Self;
@@ -308,24 +309,15 @@ struct Lazy_cartesian :
     template<class T,class D> struct Functor<T,D,Construct_tag> {
             typedef Lazy_construction2<T,Kernel> type;
     };
-    template<class D> struct Functor<Point_dimension_tag,D,Misc_tag> {
-            typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type FA;
+
+    template<class T,class D> struct Functor<T,D,Misc_tag> {
+            typedef typename Get_functor<Approximate_kernel, T>::type FA;
             struct type {
               FA fa;
               type(){}
               type(Kernel const&k):fa(k.approximate_kernel()){}
-              template<class P>
-              int operator()(P const&p)const{return fa(CGAL::approx(p));}
-            };
-    };
-    template<class D> struct Functor<Vector_dimension_tag,D,Misc_tag> {
-            typedef typename Get_functor<Approximate_kernel, Vector_dimension_tag>::type FA;
-            struct type {
-              FA fa;
-              type(){}
-              type(Kernel const&k):fa(k.approximate_kernel()){}
-              template<class V>
-              int operator()(V const&v)const{return fa(CGAL::approx(v));}
+              template<class...P>
+              decltype(auto) operator()(P&&...p)const{return fa(CGAL::approx(std::forward<P>(p))...);}
             };
     };
     template<class D> struct Functor<Linear_base_tag,D,Misc_tag> {

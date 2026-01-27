@@ -62,17 +62,17 @@ public:
   typedef Vector_strategy_id::iterator  Vector_strategy_id_iter;
 
 public:
-  /*! \brief obtains number of type options */
+  /*! obtains number of type options */
   static unsigned int get_number_opts(Type_id &);
 
-  /*! \brief obtains number of strategy options */
+  /*! obtains number of strategy options */
   static unsigned int get_number_opts(Strategy_id &);
 
-  /*! Compare the i-th type option to a given option */
+  /*! compares the i-th type option to a given option */
   static bool compare_opt(unsigned int i, const char * opt, Type_id &)
   { return strcmp(s_type_opts[i], opt) == 0; }
 
-  /*! Compare the i-th strategy option to a given option */
+  /*! compares the i-th strategy option to a given option */
   static bool compare_opt(unsigned int i, const char * opt, Strategy_id &)
   { return strcmp(s_strategy_opts[i], opt) == 0; }
 
@@ -94,19 +94,19 @@ public:
     Input_file_missing_error(std::string & str) : error(str) {}
   };
 
-  /*! Parse the options */
+  /*! parses the options */
   void operator()(int argc, char * argv[]);
 
-  /*! Obtain the verbosity level */
+  /*! obtains the verbosity level */
   unsigned int get_verbose_level() const { return m_verbose_level; }
 
-  /*! Obtain the number of input files */
+  /*! obtains the number of input files */
   unsigned int get_number_files() const { return m_number_files; }
 
-  /*! \brief obtains the base file-name */
+  /*! obtains the base file-name */
   const std::string & get_file_name(unsigned int i) const;
 
-  /*! \brief obtains the full file-name */
+  /*! obtains the full file-name */
   const std::string & get_full_name(unsigned int i) const;
 
   bool get_postscript() const { return m_postscript; }
@@ -117,14 +117,14 @@ public:
   const char * get_strategy_name(Strategy_code id) const
   { return s_strategy_opts[id]; }
 
-  /*! Obtain the window width */
+  /*! obtains the window width */
   unsigned int get_width() const { return m_win_width; }
 
-  /*! Obtain the window height */
+  /*! obtains the window height */
   unsigned int get_height() const { return m_win_height; }
 
   template <class MyId>
-  static void my_validate(boost::any & v,
+  static void my_validate(std::any & v,
                           const std::vector<std::string> & values);
 
 protected:

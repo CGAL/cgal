@@ -12,7 +12,7 @@ typedef CGAL::Double_map<int, int> Map;
 
 int main(int argc, char** argv)
 {
-  unsigned int number_of_elements = 500;
+  int number_of_elements = 500;
 
 #ifdef CGAL_USE_BOOST_BIMAP
   std::cerr << "(Using the \"Boost.Bimap implementation\" of <CGAL/Double_map.h>...)\n\n";
@@ -58,14 +58,14 @@ int main(int argc, char** argv)
   assert(f.empty() && f2.empty());
   /* AUTOMATIC CHECKS */
   std::cerr << "Filling f with " << number_of_elements << " random integers...\n";
-  for(unsigned int n=0; n<number_of_elements; n++)
+  for(int n=0; n<number_of_elements; n++)
   {
     int i=CGAL::get_default_random().get_int(0,1000);
     f.insert(i, i*i);
   }
 
   std::cerr << "Check f.size<=" << number_of_elements << ".\n";
-  assert(f.size()<=number_of_elements);
+  assert(f.size()<=std::size_t(number_of_elements));
 
   std::cerr << "Assignment f2=f...\n";
   f2 = f; // check the assignment
@@ -123,18 +123,18 @@ int main(int argc, char** argv)
   assert(f3.empty());
 
   std::cerr << "Filling f with f(i)=i*i, i=0.." << number_of_elements-1 << "...\n";
-  for(unsigned int n=0; n<number_of_elements; n++)
+  for(int n=0; n<number_of_elements; n++)
   {
     f.insert(n, n*n);
   }
 
   std::cerr << "Check size: "
             << "f.size()=" << f.size() << "\n";
-  assert(f.size()==number_of_elements);
+  assert(f.size()==std::size_t(number_of_elements));
 
   std::cerr << "Emptying f...\n";
   i2=0;
-  unsigned int counter = 0;
+  int counter = 0;
   while(!f.empty())
   {
     int i = f.front()->second;
@@ -152,7 +152,7 @@ int main(int argc, char** argv)
   assert(counter==number_of_elements);
 
   std::cerr << "Filling f with f(i)=i*i, i=0.." << number_of_elements -1 << "...\n";
-  for(unsigned int n=0; n<number_of_elements; n++)
+  for(int n=0; n<number_of_elements; n++)
   {
     f.insert(n, n*n);
   }

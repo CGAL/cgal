@@ -6,11 +6,13 @@
 The concept `AlphaShapeTraits_2` describes the requirements for the geometric traits
 class of the underlying Delaunay triangulation of a basic alpha shape.
 
-\cgalRefines `DelaunayTriangulationTraits_2`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
-\cgalRefines `Periodic_2DelaunayTriangulationTraits_2`, if the underlying triangulation of the alpha shape is a periodic Delaunay triangulation.
+\cgalRefines{DelaunayTriangulationTraits_2 if the underlying triangulation of the alpha shape is a Delaunay triangulation,
+  Periodic_2DelaunayTriangulationTraits_2 if the underlying triangulation of the alpha shape is a periodic Delaunay triangulation}
 
-\cgalHasModel All models of `Kernel`.
-\cgalHasModel Projection traits such as `CGAL::Projection_traits_xy_3<K>`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of `Kernel`}
+\cgalHasModelsBare{Projection traits such as `CGAL::Projection_traits_xy_3<K>`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */

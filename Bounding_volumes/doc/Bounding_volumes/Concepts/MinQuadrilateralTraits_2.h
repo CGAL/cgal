@@ -8,7 +8,9 @@ needed to compute minimum enclosing quadrilaterals of a planar point
 set using the functions `min_rectangle_2()`,
 `min_parallelogram_2()` and `min_strip_2()`.
 
-\cgalHasModel `CGAL::Min_quadrilateral_default_traits_2<K>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Min_quadrilateral_default_traits_2<K>}
+\cgalHasModelsEnd
 
 \sa `CGAL::min_rectangle_2()`
 \sa `CGAL::min_parallelogram_2()`
@@ -72,25 +74,25 @@ typedef unspecified_type Equal_2;
 
 /*!
 a model for
-`Kernel::Less_xy_2`.
+`Kernel::LessXY_2`.
 */
 typedef unspecified_type Less_xy_2;
 
 /*!
 a model for
-`Kernel::Less_yx_2`.
+`Kernel::LessYX_2`.
 */
 typedef unspecified_type Less_yx_2;
 
 /*!
 a model for
-`Kernel::Has_on_negative_side_2`.
+`Kernel::HasOnNegativeSide_2`.
 */
 typedef unspecified_type Has_on_negative_side_2;
 
 /*!
 a model for
-`Kernel::Compare_angle_with_x_axis_2`.
+`Kernel::CompareAngleWithXAxis_2`.
 */
 typedef unspecified_type Compare_angle_with_x_axis_2;
 
@@ -99,7 +101,7 @@ AdaptableFunctor
 `op`:
 `Rectangle_2` \f$ \times\f$ `Rectangle_2` \f$ \rightarrow\f$
 `bool`.
-`op(r1,r2)` returns true, iff the area of \f$ r1\f$ is
+`op(r1,r2)` returns `true`, iff the area of \f$ r1\f$ is
 strictly less than the area of \f$ r2\f$.
 */
 typedef unspecified_type Area_less_rectangle_2;
@@ -110,7 +112,7 @@ AdaptableFunctor
 `Parallelogram_2` \f$ \times\f$
 `Parallelogram_2` \f$ \rightarrow\f$ `bool`.
 
-`op(p1,p2)` returns true, iff the area of \f$ p1\f$ is strictly less
+`op(p1,p2)` returns `true`, iff the area of \f$ p1\f$ is strictly less
 than the area of \f$ p2\f$.
 */
 typedef unspecified_type Area_less_parallelogram_2;
@@ -120,7 +122,7 @@ AdaptableFunctor
 `op`:
 `Strip_2` \f$ \times\f$ `Strip_2` \f$ \rightarrow\f$ `bool`.
 
-`op(s1,s2)` returns true, iff the width of \f$ s1\f$ is strictly less
+`op(s1,s2)` returns `true`, iff the width of \f$ s1\f$ is strictly less
 than the width of \f$ s2\f$.
 */
 typedef unspecified_type Width_less_strip_2;
@@ -141,7 +143,7 @@ typedef unspecified_type Orientation_2;
 
 /*!
 a model for
-`Kernel::Construct_vector_2`.
+`Kernel::ConstructVector_2`.
 */
 typedef unspecified_type Construct_vector_2;
 
@@ -156,25 +158,25 @@ typedef unspecified_type Construct_vector_from_direction_2;
 
 /*!
 a model for
-`Kernel::Construct_perpendicular_vector_2`.
+`Kernel::ConstructPerpendicularVector_2`.
 */
 typedef unspecified_type Construct_perpendicular_vector_2;
 
 /*!
 a model for
-`Kernel::Construct_direction_2`.
+`Kernel::ConstructDirection_2`.
 */
 typedef unspecified_type Construct_direction_2;
 
 /*!
 a model for
-`Kernel::Construct_opposite_direction_2`.
+`Kernel::ConstructOppositeDirection_2`.
 */
 typedef unspecified_type Construct_opposite_direction_2;
 
 /*!
 a model for
-`Kernel::Construct_line_2`.
+`Kernel::ConstructLine_2`.
 */
 typedef unspecified_type Construct_line_2;
 

@@ -31,7 +31,7 @@ namespace ApolloniusGraph_2 {
 
 
 //--------------------------------------------------------------------
-// help functions for the compulation of various quantites
+// help functions for the compulation of various quantities
 
 template < class FT >
 inline FT

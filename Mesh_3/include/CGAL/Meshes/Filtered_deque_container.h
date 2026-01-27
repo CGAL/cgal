@@ -189,7 +189,7 @@ namespace Meshes {
     typedef Element_ Element;
 
   protected:
-    // --- protected datas ---
+    // --- protected data ---
     Container container;
     Predicate test;
 

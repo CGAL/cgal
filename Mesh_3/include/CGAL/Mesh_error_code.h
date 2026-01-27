@@ -14,16 +14,12 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/STL_Extension/internal/mesh_option_classes.h>
+
 #include <string>
 #include <sstream>
 
 namespace CGAL {
-
-enum Mesh_error_code {
-  CGAL_MESH_3_NO_ERROR = 0,
-  CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED,
-  CGAL_MESH_3_STOPPED
-};
 
 inline
 std::string mesh_error_string(const Mesh_error_code& error_code) {

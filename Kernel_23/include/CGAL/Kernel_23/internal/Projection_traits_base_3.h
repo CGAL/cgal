@@ -34,7 +34,6 @@ class Projected_orientation_with_normal_3
   typedef typename Traits::Vector_3 Vector_3;
 public:
   typedef typename K::Orientation Orientation;
-  typedef Orientation result_type;
 
   Projected_orientation_with_normal_3(const Vector_3& normal_)
     : normal(normal_)
@@ -69,7 +68,6 @@ class Projected_side_of_oriented_circle_with_normal_3
 
 public:
   typedef typename K::Oriented_side Oriented_side;
-  typedef Oriented_side result_type;
 
   Projected_side_of_oriented_circle_with_normal_3(const Vector_3& normal_)
     : normal(normal_)
@@ -182,12 +180,12 @@ public:
     CGAL_TIME_PROFILER("Construct Projected_intersect_3")
   }
 
-  boost::optional<boost::variant<Point,Segment> >
+  std::optional<std::variant<Point,Segment> >
   operator()(const Segment& s1, const Segment& s2)
   {
     CGAL_PROFILER("Projected_intersect_3::operator()")
     CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
-    typedef boost::variant<Point, Segment> variant_type;
+    typedef std::variant<Point, Segment> variant_type;
     const Vector_3 u1 = cross_product(s1.to_vector(), normal);
     if(u1 == NULL_VECTOR)
       return K().intersect_3_object()(s1.supporting_line(), s2);
@@ -204,9 +202,9 @@ public:
 #ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "planes_intersection is empty\n";
 #endif
-      return boost::none;
+      return std::nullopt;
     }
-    if(const Line* line = boost::get<Line>(&*planes_intersection))
+    if(const Line* line = std::get_if<Line>(&*planes_intersection))
     {
       // check if the intersection line intersects both segments by
       // checking if a point on the intersection line is between
@@ -222,7 +220,7 @@ public:
 #ifdef CGAL_T2_PTB_3_DEBUG
         std::cerr << "intersection not inside\n";
 #endif
-        return boost::none;
+        return std::nullopt;
       }
       else
       {
@@ -233,14 +231,14 @@ public:
                                                  cross_product(s1.to_vector(),
                                                                s2.to_vector())));
         if(! inter){
-          return boost::none;
+          return std::nullopt;
         }
-        if(const Point* point = boost::get<Point>(&*inter)){
-          return boost::make_optional(variant_type(*point));
+        if(const Point* point = std::get_if<Point>(&*inter)){
+          return std::make_optional(variant_type(*point));
         }
       }
     }
-    if(boost::get<Plane_3>(&*planes_intersection))
+    if(std::get_if<Plane_3>(&*planes_intersection))
     {
 #ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "coplanar supporting lines\n";
@@ -255,50 +253,50 @@ public:
       bool src1_in_s2 = is_inside_segment(s2, s1.source());
       bool tgt1_in_s2 = is_inside_segment(s2, s1.target());
 
-      if (src1_in_s2 && tgt1_in_s2) return boost::make_optional(variant_type(s1));
-      if (src2_in_s1 && tgt2_in_s1) return boost::make_optional(variant_type(s2));
+      if (src1_in_s2 && tgt1_in_s2) return std::make_optional(variant_type(s1));
+      if (src2_in_s1 && tgt2_in_s1) return std::make_optional(variant_type(s2));
 
       if (src1_in_s2)
       {
         if (src2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.source(), s2.source())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.source(), s2.source())));
+            return std::make_optional(variant_type(Segment(s1.source(), s2.source())));
           else
-            return boost::make_optional(variant_type((s1.source())));
+            return std::make_optional(variant_type((s1.source())));
         }
         if (tgt2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.source(), s2.target())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.source(), s2.target())));
+            return std::make_optional(variant_type(Segment(s1.source(), s2.target())));
           else
-            return boost::make_optional(variant_type(s1.source()));
+            return std::make_optional(variant_type(s1.source()));
         }
         // should never get here with a Kernel with exact constructions
-        return boost::make_optional(variant_type(s1.source()));
+        return std::make_optional(variant_type(s1.source()));
       }
       if (tgt1_in_s2)
       {
         if (src2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.target(), s2.source())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.target(), s2.source())));
+            return std::make_optional(variant_type(Segment(s1.target(), s2.source())));
           else
-            return boost::make_optional(variant_type(s1.target()));
+            return std::make_optional(variant_type(s1.target()));
         }
         if (tgt2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.target(), s2.target())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.target(), s2.target())));
+            return std::make_optional(variant_type(Segment(s1.target(), s2.target())));
           else
-            return boost::make_optional(variant_type(s1.target()));
+            return std::make_optional(variant_type(s1.target()));
         }
         // should never get here with a Kernel with exact constructions
-        return boost::make_optional(variant_type(s1.target()));
+        return std::make_optional(variant_type(s1.target()));
       }
-      return boost::none;
+      return std::nullopt;
     }
-    return boost::none;
+    return std::nullopt;
   }
 }; // end class Projected_intersect_3
 
@@ -307,6 +305,7 @@ template <class Traits>
 class Less_along_axis
 {
   // private members
+  typedef typename Traits::Boolean Boolean;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
   Vector_3 base;
@@ -317,9 +316,7 @@ public:
     CGAL_TIME_PROFILER("Construct Less_along_axis")
   }
 
-  typedef bool result_type;
-
-  bool operator() (const Point &p, const Point &q) const {
+  Boolean operator() (const Point &p, const Point &q) const {
     return base * (p - q) < 0;
   }
 }; // end class Less_along_axis
@@ -328,6 +325,7 @@ template <class Traits>
 class Compare_along_axis
 {
   // private members
+  typedef typename Traits::Comparison_result Comparison_result;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
   Vector_3 base;
@@ -338,8 +336,6 @@ public:
     CGAL_TIME_PROFILER("Construct Compare_along_axis")
   }
 
-  typedef Comparison_result result_type;
-
   Comparison_result operator() (const Point &p, const Point &q) const {
     return compare(base * (p - q), 0);
   }
@@ -349,9 +345,13 @@ template <class Traits>
 class Less_xy_along_axis
 {
   // private members
+  typedef typename Traits::Comparison_result Comparison_result;
+  typedef typename Traits::Boolean Boolean;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
+
   Vector_3 base1, base2;
+
 public:
   Less_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
   {
@@ -359,9 +359,7 @@ public:
     CGAL_TIME_PROFILER("Construct Less_xy_along_axis")
   }
 
-  typedef bool result_type;
-
-  bool operator() (const Point &p, const Point &q) const {
+  Boolean operator() (const Point &p, const Point &q) const {
 
     Compare_along_axis<Traits> cx(base1);
     Comparison_result crx = cx(p, q);
@@ -371,6 +369,34 @@ public:
     return ly(p, q);
   }
 }; // end class Less_xy_along_axis
+
+template <class Traits>
+class Compare_xy_along_axis
+{
+  // private members
+  typedef typename Traits::Comparison_result Comparison_result;
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  Vector_3 base1, base2;
+
+public:
+  Compare_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
+  {
+    CGAL_PROFILER("Construct Compare_xy_along_axis")
+    CGAL_TIME_PROFILER("Construct Compare_xy_along_axis")
+  }
+
+  Comparison_result operator()(const Point& p, const Point& q) const
+  {
+    Compare_along_axis<Traits> cx(base1);
+    Comparison_result crx = cx(p, q);
+    if (crx != EQUAL) {
+      return crx;
+    }
+    Compare_along_axis<Traits> cy(base2);
+    return cy(p, q);
+  }
+}; // end class Compare_xy_along_axis
 
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
@@ -418,6 +444,15 @@ public:
   }
 
   typedef Kernel K;
+
+  typedef typename K::Boolean                                Boolean;
+  typedef typename K::Sign                                   Sign;
+  typedef typename K::Comparison_result                      Comparison_result;
+  typedef typename K::Orientation                            Orientation;
+  typedef typename K::Oriented_side                          Oriented_side;
+  typedef typename K::Bounded_side                           Bounded_side;
+  typedef typename K::Angle                                  Angle;
+
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point_2;
   typedef typename K::Segment_3   Segment_2;
@@ -431,6 +466,8 @@ public:
     Compare_along_axis<Self>                                 Compare_x_2;
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Compare_along_axis<Self>                                 Compare_y_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Compare_xy_along_axis<Self>                              Compare_xy_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Less_along_axis<Self>                                    Less_x_2;
@@ -462,6 +499,7 @@ public:
   typedef typename K::Construct_translated_point_3  Construct_translated_point_2;
   typedef typename K::Construct_midpoint_3          Construct_midpoint_2;
   typedef typename K::Construct_circumcenter_3      Construct_circumcenter_2;
+  typedef typename K::Construct_barycenter_3        Construct_barycenter_2;
 
   typedef typename K::Compute_area_3                Compute_area_2;
   typedef typename K::Construct_bbox_3              Construct_bbox_2;
@@ -494,6 +532,12 @@ public:
   compare_y_2_object() const
   {
     return Compare_y_2(this->base2());
+  }
+
+  Compare_xy_2
+  compare_xy_2_object() const
+  {
+    return Compare_xy_2(this->base1(), this->base2());
   }
 
   Orientation_2
@@ -544,6 +588,9 @@ public:
   Construct_circumcenter_2  construct_circumcenter_2_object() const
     {return Construct_circumcenter_2();}
 
+  Construct_barycenter_2  construct_barycenter_2_object() const
+    {return Construct_barycenter_2();}
+
   Construct_translated_point_2  construct_translated_point_2_object() const
     {return Construct_translated_point_2();}
 
@@ -563,7 +610,7 @@ public:
 
   // Special functor, not in the Kernel concept
   class Projection_to_plan {
-    // Remeber: Point_2 is K::Point_3
+    // Remember: Point_2 is K::Point_3
     const Point_2& plane_point;
     const Vector_3& normal;
   public:

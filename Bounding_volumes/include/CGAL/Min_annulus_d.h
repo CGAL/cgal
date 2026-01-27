@@ -325,7 +325,7 @@ public:
 
   Support_point_iterator
   support_points_begin() const {
-    CGAL_optimisation_assertion_msg(number_of_points() >= 2,
+    CGAL_assertion_msg(number_of_points() >= 2,
                                     "support_points_begin: not enough points");
     return Support_point_iterator(
                                   solver->basic_original_variable_indices_begin(),
@@ -334,7 +334,7 @@ public:
 
   Support_point_iterator
   support_points_end() const {
-    CGAL_optimisation_assertion_msg(number_of_points() >= 2,
+    CGAL_assertion_msg(number_of_points() >= 2,
                                     "support_points_begin: not enough points");
     return Support_point_iterator(
                                   solver->basic_original_variable_indices_end(),
@@ -401,27 +401,27 @@ public:
   // NOTE: an implicit conversion from ET to RT must be available!
   Point
   center( ) const
-  { CGAL_optimisation_precondition( ! is_empty());
+  { CGAL_precondition( ! is_empty());
   return tco.construct_point_d_object()( ambient_dimension(),
                                          center_coordinates_begin(),
                                          center_coordinates_end()); }
 
   FT
   squared_inner_radius( ) const
-  { CGAL_optimisation_precondition( ! is_empty());
+  { CGAL_precondition( ! is_empty());
   return FT( squared_inner_radius_numerator()) /
     FT( squared_radii_denominator()); }
 
   FT
   squared_outer_radius( ) const
-  { CGAL_optimisation_precondition( ! is_empty());
+  { CGAL_precondition( ! is_empty());
   return FT( squared_outer_radius_numerator()) /
     FT( squared_radii_denominator()); }
 
   // predicates
   CGAL::Bounded_side
   bounded_side( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
@@ -431,7 +431,7 @@ public:
 
   bool
   has_on_bounded_side( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
@@ -440,7 +440,7 @@ public:
 
   bool
   has_on_boundary( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
@@ -449,7 +449,7 @@ public:
 
   bool
   has_on_unbounded_side( const Point& p) const
-  { CGAL_optimisation_precondition(
+  { CGAL_precondition(
                                    is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
   ET h_p_sqr(da_coord(p)[d]);
@@ -468,14 +468,14 @@ public:
   { if ( points.size() > 0) points.erase( points.begin(), points.end());
   std::copy( first, last, std::back_inserter( points));
   set_dimension();
-  CGAL_optimisation_precondition_msg( check_dimension(),
+  CGAL_precondition_msg( check_dimension(),
                                       "Not all points have the same dimension.");
   compute_min_annulus(); }
 
   void
   insert( const Point& p)
   { if ( is_empty()) d = tco.access_dimension_d_object()( p);
-  CGAL_optimisation_precondition(
+  CGAL_precondition(
                                  tco.access_dimension_d_object()( p) == d);
   points.push_back( p);
   compute_min_annulus(); }
@@ -483,10 +483,10 @@ public:
   template < class InputIterator >
   void
   insert( InputIterator first, InputIterator last)
-  { CGAL_optimisation_precondition_code( std::size_t old_n = points.size());
+  { CGAL_precondition_code( std::size_t old_n = points.size());
   points.insert( points.end(), first, last);
   set_dimension();
-  CGAL_optimisation_precondition_msg( check_dimension( old_n),
+  CGAL_precondition_msg( check_dimension( old_n),
                                       "Not all points have the same dimension.");
   compute_min_annulus(); }
 
@@ -645,7 +645,7 @@ private:
     options.set_pricing_strategy(pricing_strategy(NT()));
     delete solver;
     solver = new Solver(lp, options);
-    CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
+    CGAL_assertion(solver->status() == QP_OPTIMAL);
 
     // compute center and squared radius
     ET sqr_sum = 0;
@@ -706,17 +706,15 @@ bool
 Min_annulus_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-  using namespace std;
-
   CGAL::Verbose_ostream verr( verbose);
-  verr << "CGAL::Min_annulus_d<Traits>::" << endl;
-  verr << "is_valid( true, " << level << "):" << endl;
+  verr << "CGAL::Min_annulus_d<Traits>::" << std::endl;
+  verr << "is_valid( true, " << level << "):" << std::endl;
   verr << "  |P| = " << number_of_points()
-       << ", |S| = " << number_of_support_points() << endl;
+       << ", |S| = " << number_of_support_points() << std::endl;
 
   // containment check (a)
   // ---------------------
-  verr << "  (a) containment check..." << flush;
+  verr << "  (a) containment check..." << std::flush;
 
   Point_iterator  point_it = points_begin();
   for ( ; point_it != points_end(); ++point_it) {
@@ -725,11 +723,11 @@ is_valid( bool verbose, int level) const
                                                 "annulus does not contain all points");
   }
 
-  verr << "passed." << endl;
+  verr << "passed." << std::endl;
 
   // support set check (b)
   // ---------------------
-  verr << "  (b) support set check..." << flush;
+  verr << "  (b) support set check..." << std::flush;
 
   // all inner support points on inner boundary?
   Inner_support_point_iterator  i_pt_it = inner_support_points_begin();
@@ -762,9 +760,9 @@ is_valid( bool verbose, int level) const
   }
   */
 
-  verr << "passed." << endl;
+  verr << "passed." << std::endl;
 
-  verr << "  object is valid!" << endl;
+  verr << "  object is valid!" << std::endl;
   return( true);
 }
 
@@ -774,12 +772,10 @@ std::ostream&
 operator << ( std::ostream& os,
               const Min_annulus_d<Traits_>& min_annulus)
 {
-  using namespace std;
-
   typedef  typename Min_annulus_d<Traits_>::Point  Point;
-  typedef  ostream_iterator<Point>       Os_it;
+  typedef  std::ostream_iterator<Point>       Os_it;
   typedef  typename Traits_::ET          ET;
-  typedef  ostream_iterator<ET>          Et_it;
+  typedef  std::ostream_iterator<ET>          Et_it;
 
   switch ( CGAL::IO::get_mode( os)) {
 
@@ -787,49 +783,49 @@ operator << ( std::ostream& os,
     os << "CGAL::Min_annulus_d( |P| = "
        << min_annulus.number_of_points() << ", |S| = "
        << min_annulus.number_of_inner_support_points() << '+'
-       << min_annulus.number_of_outer_support_points() << endl;
-    os << "  P = {" << endl;
+       << min_annulus.number_of_outer_support_points() << std::endl;
+    os << "  P = {" << std::endl;
     os << "    ";
-    copy( min_annulus.points_begin(), min_annulus.points_end(),
+    std::copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_i = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_i = {" << std::endl;
     os << "    ";
-    copy( min_annulus.inner_support_points_begin(),
+    std::copy( min_annulus.inner_support_points_begin(),
           min_annulus.inner_support_points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_o = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_o = {" << std::endl;
     os << "    ";
-    copy( min_annulus.outer_support_points_begin(),
+    std::copy( min_annulus.outer_support_points_begin(),
           min_annulus.outer_support_points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
+    os << "}" << std::endl;
     os << "  center = ( ";
-    copy( min_annulus.center_coordinates_begin(),
+    std::copy( min_annulus.center_coordinates_begin(),
           min_annulus.center_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  squared inner radius = "
        << min_annulus.squared_inner_radius_numerator() << " / "
-       << min_annulus.squared_radii_denominator() << endl;
+       << min_annulus.squared_radii_denominator() << std::endl;
     os << "  squared outer radius = "
        << min_annulus.squared_outer_radius_numerator() << " / "
-       << min_annulus.squared_radii_denominator() << endl;
+       << min_annulus.squared_radii_denominator() << std::endl;
     break;
 
   case CGAL::IO::ASCII:
-    copy( min_annulus.points_begin(), min_annulus.points_end(),
+    std::copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os, "\n"));
     break;
 
   case CGAL::IO::BINARY:
-    copy( min_annulus.points_begin(), min_annulus.points_end(),
+    std::copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os));
     break;
 
   default:
-    CGAL_optimisation_assertion_msg( false,
+    CGAL_assertion_msg( false,
                                      "CGAL::IO::get_mode( os) invalid!");
     break; }
 
@@ -841,24 +837,22 @@ template < class Traits_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 {
-  using namespace std;
-
   switch ( CGAL::IO::get_mode( is)) {
 
   case CGAL::IO::PRETTY:
-    cerr << endl;
-    cerr << "Stream must be in ASCII or binary mode" << endl;
+    std::cerr << std::endl;
+    std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
     break;
 
   case CGAL::IO::ASCII:
   case CGAL::IO::BINARY:
     typedef  typename CGAL::Min_annulus_d<Traits_>::Point  Point;
-    typedef  istream_iterator<Point>             Is_it;
+    typedef  std::istream_iterator<Point>             Is_it;
     min_annulus.set( Is_it( is), Is_it());
     break;
 
   default:
-    CGAL_optimisation_assertion_msg( false, "CGAL::IO::mode invalid!");
+    CGAL_assertion_msg( false, "CGAL::IO::mode invalid!");
     break; }
 
   return( is);

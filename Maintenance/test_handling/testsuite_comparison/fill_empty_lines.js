@@ -9,7 +9,7 @@
   Output: the arrays, alphabetically sorted, of the same size, filled with
   empty strings.
 
-  Short: Equalizes the sizes of the two inpu arrays by adding empty strings.
+  Short: Equalizes the sizes of the two input arrays by adding empty strings.
 
   Detailed: for each element of the smaller input,
   if base[i] != newtest[i] (not taking the last char into account),

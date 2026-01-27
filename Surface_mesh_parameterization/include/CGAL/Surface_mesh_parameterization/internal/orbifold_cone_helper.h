@@ -21,8 +21,8 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <fstream>
 #include <set>
 #include <sstream>
@@ -93,7 +93,7 @@ bool are_cones_unique(const Cone_container& cones)
   }
 
   typedef typename Cone_container::value_type   Cone;
-  boost::unordered_set<Cone> unique_cones;
+  std::unordered_set<Cone> unique_cones;
 
   unique_cones.insert(cones.begin(), cones.end());
 
@@ -193,7 +193,7 @@ bool check_cone_validity(const SeamMesh& mesh,
     }
     else {
       if(it->second != Duplicated_cone) {
-        std::cerr << "Error: Unknow cone type: " << it->second << std::endl;
+        std::cerr << "Error: Unknown cone type: " << it->second << std::endl;
         return false;
       }
       ++duplicated_cone_counter;
@@ -221,7 +221,7 @@ bool check_cone_validity(const SeamMesh& mesh,
   CGAL_precondition(is_border(bhd, mesh));
 
   // count how many times vertices on a seam appear
-  boost::unordered_map<TM_vertex_descriptor, int> seam_vertices_counter;
+  std::unordered_map<TM_vertex_descriptor, int> seam_vertices_counter;
 
   for(halfedge_descriptor hdaf : halfedges_around_face(bhd, mesh)) {
     CGAL_precondition(mesh.has_on_seam(hdaf));
@@ -229,7 +229,7 @@ bool check_cone_validity(const SeamMesh& mesh,
     TM_vertex_descriptor tm_vdt = target(hdaf, mesh.mesh());
 
     // insert vds
-    std::pair<typename boost::unordered_map<TM_vertex_descriptor, int>::iterator,
+    std::pair<typename std::unordered_map<TM_vertex_descriptor, int>::iterator,
               bool> is_insert_successful =
                       seam_vertices_counter.insert(std::make_pair(tm_vds, 1));
     if(!is_insert_successful.second)
@@ -248,8 +248,8 @@ bool check_cone_validity(const SeamMesh& mesh,
   }
 
   // check for self intersections in the seam
-  typename boost::unordered_map<TM_vertex_descriptor, int>::iterator sit = seam_vertices_counter.begin(),
-                                                                     send = seam_vertices_counter.end();
+  typename std::unordered_map<TM_vertex_descriptor, int>::iterator sit = seam_vertices_counter.begin(),
+                                                                   send = seam_vertices_counter.end();
   for(; sit!=send; ++sit) {
     if(sit->second != 2 && sit->second != 4) {
       std::cerr << sit->second << std::endl;

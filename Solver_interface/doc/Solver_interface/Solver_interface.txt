@@ -125,7 +125,7 @@ This package is the result of the increasing needs for linear solvers
 in \cgal.  The first packages that introduced the solver concepts were
 \ref PkgSurfaceMeshParameterization, \ref PkgPoissonSurfaceReconstruction3
 and \ref PkgJetFitting3.  At that time, these packages were relying
-on \taucs, \lapack, \blas and \opennl. Gaël Guennebaud
+on \taucs, \lapack, \blas and OpenNL. Gaël Guennebaud
 then introduced new models using the \ref thirdpartyEigen library that
 became the only supported models by \cgal.  Later on the packages \ref
 PkgSurfaceMeshSkeletonization and \ref PkgSurfaceMeshDeformation

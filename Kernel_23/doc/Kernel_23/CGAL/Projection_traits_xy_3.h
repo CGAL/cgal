@@ -7,36 +7,37 @@ namespace CGAL {
 The class `Projection_traits_xy_3` is an adapter to apply 2D algorithms to the projections of 3D data on the `xy`-plane.
 
 \cgal provides also predefined geometric traits classes
-`Projection_traits_yz_3<K>` and
-`Projection_traits_xz_3<K>` to
+`Projection_traits_yz_3<Gt>` and
+`Projection_traits_xz_3<Gt>` to
 deal with projections on the
 `zx`- and the `zy`-plane,
 respectively.
 
-\tparam K must be a model of `Kernel`.
+\tparam Gt must be a model of `ProjectionTraitsGeometricTraits_3`
 
 \note Internal constructions (projections) are used in the predicate and
-construction functors of this class. If `K` is a model of `Kernel` providing exact
-constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
+construction functors of this class. If `Gt` is a model of `Kernel` providing exact
+constructions or if `Gt` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
 provides exact predicates.
 
-\cgalModels The class is a model of several 2D triangulation traits class concepts,
-  except that it does not provide the type and constructors
-  required to build the dual Voronoi diagram.
-\cgalModels `PolygonTraits_2`
-\cgalModels `ConvexHullTraits_2`
-\cgalModels `TriangulationTraits_2`
-\cgalModels `DelaunayTriangulationTraits_2`
-\cgalModels `ConstrainedTriangulationTraits_2`
-\cgalModels `ConvexHullTraits_2`
-\cgalModels `DelaunayMeshTraits_2`
-\cgalModels `AnalyticWeightTraits_2`
-\cgalModels `Barycentric_coordinates::BarycentricTraits_2`
+\cgalModelsBareBegin
+\cgalModelsBare{The class is a model of several 2D triangulation traits class concepts,
+  except that it does not provide the type and constructors required to build the dual Voronoi diagram.}
+\cgalModelsBare{`PolygonTraits_2`}
+\cgalModelsBare{`ConvexHullTraits_2`}
+\cgalModelsBare{`TriangulationTraits_2`}
+\cgalModelsBare{`DelaunayTriangulationTraits_2`}
+\cgalModelsBare{`ConstrainedTriangulationTraits_2`}
+\cgalModelsBare{`ConvexHullTraits_2`}
+\cgalModelsBare{`DelaunayMeshTraits_2`}
+\cgalModelsBare{`AnalyticWeightTraits_2`}
+\cgalModelsBare{`Barycentric_coordinates::BarycentricTraits_2`}
+\cgalModelsBareEnd
 
 \sa `CGAL::Projection_traits_3`
 */
-template< typename K >
+template< typename Gt >
 class Projection_traits_xy_3 {
 public:
 
@@ -46,22 +47,22 @@ public:
 /*!
 
 */
-typedef Point_3<K> Point_2;
+typedef Point_3<Gt> Point_2;
 
 /*!
 
 */
-typedef Segment_3<K> Segment_2;
+typedef Segment_3<Gt> Segment_2;
 
 /*!
 
 */
-typedef Triangle_3<K> Triangle_2;
+typedef Triangle_3<Gt> Triangle_2;
 
 /*!
 
 */
-typedef Line_3<K> Line_2;
+typedef Line_3<Gt> Line_2;
 
 /// @}
 
@@ -71,7 +72,7 @@ typedef Line_3<K> Line_2;
 /// constructors required to build the dual Voronoi diagram. The
 /// functors operate on the 2D projection of their arguments. They
 /// come with preconditions that projections of the arguments are
-/// non-degenerate, eg. a line segment does not project on a single
+/// non-degenerate, e.g. a line segment does not project on a single
 /// point, two points do not project on the same point, etc. In the
 /// following, we specify the choice of the `z`-coordinate in case a
 /// new point is constructed.
@@ -81,7 +82,7 @@ typedef Line_3<K> Line_2;
 A construction object.
 Provides the operator :
 
-`boost::optional< boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
+`std::optional< std::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 which returns a 3D object whose projection on the xy-plane
 is the intersection of the projections of `s1` and `s2`.
 If non empty, the returned object is either a segment or a point.

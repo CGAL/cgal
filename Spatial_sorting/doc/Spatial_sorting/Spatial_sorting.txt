@@ -42,18 +42,16 @@ to the unit square \f$ [0,1]^2\f$, such that \f$ f(0)=(0,0)\f$ and \f$ f(1)=(1,0
 in the following way:
 the unit square is subdivided in four such that
 
-<BLOCKQUOTE>
+\par
 \f$ f([0,\frac{1}{4}])=[0,\frac{1}{2}]^2\f$,
 \f$ f([\frac{1}{4},\frac{1}{2}])=[0,\frac{1}{2}]\times[\frac{1}{2},1]\f$,
 \f$ f([\frac{1}{2},\frac{3}{4}])=[\frac{1}{2},1]^2\f$,
 and
 \f$ f([\frac{3}{4},1])=[\frac{1}{2},1]\times[0,\frac{1}{2}].\f$
-
-\f$ f(\frac{1}{4})=(0,\frac{1}{2})\f$
-
+<br>
+\f$ f(\frac{1}{4})=(0,\frac{1}{2})\f$,
 \f$ f(\frac{1}{2})=(\frac{1}{2},\frac{1}{2})\f$, and
 \f$ f(\frac{3}{4})=(1,\frac{1}{2})\f$.
-</BLOCKQUOTE>
 
 Then each square is subdivided in the same way recursively.
 \cgalFigureRef{Spatial_sorting_fig_Hilbert8} illustrates this process.

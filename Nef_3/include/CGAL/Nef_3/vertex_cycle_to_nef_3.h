@@ -28,10 +28,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
 // Nef polyhedra
-#include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/Nef_3/SNC_structure.h>
-#include <CGAL/Nef_3/SNC_constructor.h>
-#include <CGAL/Nef_3/SNC_point_locator.h>
+#include <CGAL/Nef_3/SNC_indexed_items.h>
 
 namespace CGAL {
 

@@ -73,7 +73,7 @@ bool test_cylinder_parameters() {
     if (shapes.size() != 1)
       continue;
 
-    boost::shared_ptr<Cylinder> cyl = boost::dynamic_pointer_cast<Cylinder>((*shapes.first));
+    std::shared_ptr<Cylinder> cyl = std::dynamic_pointer_cast<Cylinder>((*shapes.first));
 
     // Check: shape detected is a cylinder.
     if (!cyl)

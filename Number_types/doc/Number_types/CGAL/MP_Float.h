@@ -18,15 +18,14 @@ limited by the available memory, the exponent is currently represented by a
 (integral valued) `double`, which can overflow in some circumstances. We
 plan to also have a multiprecision exponent to fix this issue.
 
-\cgalModels `EuclideanRing`
-\cgalModels `RealEmbeddable`
+\cgalModels{EuclideanRing,RealEmbeddable}
 
 \cgalHeading{Implementation}
 
 The implementation of `MP_Float` is simple but provides a quadratic
 complexity for multiplications. This can be a problem for large operands.
-For faster implementations of the same functionality with large integral
-values, you may want to consider using `GMP` or `LEDA` instead.
+For faster implementations of the same functionality, if \gmp is available,
+you may want to consider using `Mpzf` or `Gmpzf`.
 
 */
 

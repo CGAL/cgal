@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <type_traits>
 
 namespace CGAL {
@@ -28,11 +28,7 @@ template < class Operation,
 class Cartesian_matrix {
 public:
 
-#if CGAL_CXX17 && __has_cpp_attribute(nodiscard)
   typedef typename std::invoke_result<Operation, typename std::iterator_traits<RandomAccessIC_row>::value_type, typename std::iterator_traits<RandomAccessIC_column>::value_type>::type Value;
-#else
-  typedef typename Operation::result_type           Value;
-#endif
 
   Cartesian_matrix(RandomAccessIC_row r_f,
                    RandomAccessIC_row r_l,
@@ -67,8 +63,8 @@ public:
   Value
   operator()(int r, int c) const
   {
-    CGAL_optimisation_precondition(r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition(c >= 0 && c < number_of_columns());
+    CGAL_precondition(r >= 0 && r < number_of_rows());
+    CGAL_precondition(c >= 0 && c < number_of_columns());
     return op(row_vec[r], column_vec[c]);
   }
 

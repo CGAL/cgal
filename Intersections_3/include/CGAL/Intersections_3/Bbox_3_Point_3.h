@@ -30,8 +30,9 @@
 namespace CGAL {
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_3& box,
-                  const Point_3<K>& p)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& box,
+             const Point_3<K>& p)
 {
   Point_3<K> bl(box.xmin(), box.ymin(), box.zmin()),
              tr(box.xmax(), box.ymax(), box.zmax());
@@ -40,8 +41,9 @@ bool do_intersect(const CGAL::Bbox_3& box,
 }
 
 template<typename K>
-bool do_intersect(const Point_3<K>& a,
-                  const CGAL::Bbox_3& b)
+typename K::Boolean
+do_intersect(const Point_3<K>& a,
+             const CGAL::Bbox_3& b)
 {
   return do_intersect(b,a);
 }

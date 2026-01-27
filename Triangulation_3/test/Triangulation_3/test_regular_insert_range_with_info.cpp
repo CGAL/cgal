@@ -37,9 +37,9 @@ struct Tester
   void test_iterator_on_pair() const
   {
     typedef std::vector<std::pair<Weighted_point, unsigned> >              Container;
-    typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     typename boost::add_const<Container>::type,
-                                     Container>::type                      Cast_type;
+    typedef std::conditional_t<is_const,
+                               std::add_const_t<Container>,
+                               Container>                                  Cast_type;
 
     Container points;
     points.push_back(std::make_pair(Weighted_point(Bare_point(0.160385, 0.599679, 0.374932), -0.118572), 0));
@@ -69,7 +69,7 @@ struct Tester
       // Construct the locking data-structure, using the bounding-box of the points
       typename RT_parallel::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
 
-      // Contruct the triangulation in parallel
+      // Construct the triangulation in parallel
       RT_parallel R(static_cast<Cast_type&>(points).begin(), static_cast<Cast_type&>(points).end(), &locking_ds);
       assert(R.number_of_vertices() == 9);
 
@@ -90,9 +90,9 @@ struct Tester
   void test_zip_iterator() const
   {
     typedef std::vector<Weighted_point>                                   Container;
-    typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     typename boost::add_const<Container>::type,
-                                     Container >::type                    Cast_type;
+    typedef std::conditional_t<is_const,
+                               std::add_const_t<Container>,
+                               Container >                                Cast_type;
 
     Container points;
     points.push_back(Weighted_point(Bare_point(0,0,0),1));
@@ -124,7 +124,7 @@ struct Tester
       // Construct the locking data-structure, using the bounding-box of the points
       typename RT_parallel::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
 
-      // Contruct the triangulation in parallel
+      // Construct the triangulation in parallel
       RT_parallel R(boost::make_zip_iterator(boost::make_tuple(static_cast<Cast_type&>(points).begin(), indices.begin())),
                     boost::make_zip_iterator(boost::make_tuple(static_cast<Cast_type&>(points).end(), indices.end())),
                     &locking_ds);
@@ -156,9 +156,9 @@ struct Tester
   void test_transform_iterator() const
   {
     typedef std::vector< Weighted_point >                                   Container;
-    typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     typename boost::add_const<Container>::type,
-                                     Container >::type                      Cast_type;
+    typedef std::conditional_t<is_const,
+                               std::add_const_t<Container>,
+                               Container >                                  Cast_type;
 
     Container points;
     points.push_back(Weighted_point(Bare_point(0,0,0),1));
@@ -183,7 +183,7 @@ struct Tester
       // Construct the locking data-structure, using the bounding-box of the points
       typename RT_parallel::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
 
-      // Contruct the triangulation in parallel
+      // Construct the triangulation in parallel
       RT_parallel R(boost::make_transform_iterator(static_cast<Cast_type&>(points).begin(), Auto_count()),
                     boost::make_transform_iterator(static_cast<Cast_type&>(points).end(), Auto_count()),
                     &locking_ds);

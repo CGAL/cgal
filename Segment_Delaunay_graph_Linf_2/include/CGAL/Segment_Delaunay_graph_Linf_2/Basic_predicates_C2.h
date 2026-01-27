@@ -1010,7 +1010,7 @@ public:
       // with the ray starting from corner and going to the
       // direction of the center of the infinite box
 
-      // corner has homogenuous coordinates cx, cy, cw
+      // corner has homogeneous coordinates cx, cy, cw
       RT cx, cy, cw;
       compute_intersection_of_lines(lhor, lver, cx, cy, cw);
 

@@ -22,9 +22,9 @@ We provide the operations of the lower dimensional interface `dx()`,
 
 Directions are implemented by arrays of integers as an item type. All
 operations like creation, initialization, tests, inversion, input and
-output on a direction \f$ d\f$ take time \f$ O(d.\mathit{dimension}())\f$.
+output on a direction \f$ d\f$ take time \cgalBigO{d.\mathit{dimension}()}.
 `dimension()`, coordinate access and conversion take constant
-time. The space requirement is \f$ O(d.\mathit{dimension}())\f$.
+time. The space requirement is \cgalBigO{d.\mathit{dimension}()}.
 
 */
 template< typename Kernel >

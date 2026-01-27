@@ -18,7 +18,7 @@ sets</I>, the
 points in \f$ S_P\f$ and \f$ S_Q\f$ are the <I>support points</I>. A pair of support
 sets has size at most \f$ d+2\f$ (by size we mean \f$ |S_P|+|S_Q|\f$). The distance
 between the two polytopes is <I>realized</I> by a pair of points \f$ p\f$ and
-\f$ q\f$ lying in the convex hull of \f$ S_P\f$ and \f$ S_Q\f$, repectively,
+\f$ q\f$ lying in the convex hull of \f$ S_P\f$ and \f$ S_Q\f$, respectively,
 i.e.\ \f$ \sqrt{||p-q||}=pd(P,Q)\f$. In general, neither the support sets nor the
 realizing points are necessarily unique.
 

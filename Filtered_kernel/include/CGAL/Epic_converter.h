@@ -49,7 +49,15 @@ class Epic_converter {
   typedef typename IK::FT IK_FT;
 public:
 
+  std::pair<Origin, bool> operator()(Origin o) const
+  {
+    return std::make_pair(o, true);
+  }
 
+  std::pair<Null_vector, bool> operator()(Null_vector n) const
+  {
+    return std::make_pair(n, true);
+  }
 
   std::pair<double,bool> operator()(const typename IK::FT n) const
   {
@@ -58,7 +66,7 @@ public:
     if(fit_in_double(n,d)){
       return std::make_pair(d,true);
     }
-    return std::make_pair(0,false);
+    return {};
   }
 
   std::pair<Bbox_2,bool> operator()(const Bbox_2 b) const
@@ -78,7 +86,7 @@ public:
     if(fit_in_double(p.x(),x) && fit_in_double(p.y(),y)){
       return std::make_pair(Point_2(x,y),true);
     }
-    return std::make_pair(ORIGIN,false);
+    return {};
   }
 
   std::pair<Vector_2,bool> operator()(const typename IK::Vector_2& v) const
@@ -88,7 +96,7 @@ public:
     if(fit_in_double(v.x(),x) && fit_in_double(v.y(),y)){
       return std::make_pair(Vector_2(x,y),true);
     }
-    return std::make_pair(Vector_2(),false);
+    return {};
   }
 
   std::pair<Direction_2,bool> operator()(const typename IK::Direction_2& d) const
@@ -98,7 +106,7 @@ public:
     if(fit_in_double(d.dx(),x) && fit_in_double(d.dy(),y)){
       return std::make_pair(Direction_2(x,y),true);
     }
-    return std::make_pair(Direction_2(),false);
+    return {};
   }
 
   std::pair<Weighted_point_2,bool> operator()(const typename IK::Weighted_point_2& wp) const
@@ -108,18 +116,18 @@ public:
     if(sp.second && w.second){
       return std::make_pair(Weighted_point_2(sp.first,w.first),true);
     }
-    return std::make_pair(Weighted_point_2(),false);
+    return {};
   }
 
   std::pair<Segment_2,bool> operator()(const typename IK::Segment_2& s) const
   {
     std::pair<Point_2,bool> sp = operator()(s.source());
     if(! sp.second){
-      return std::make_pair(Segment_2(),false);
+      return {};
     }
     std::pair<Point_2,bool> tp = operator()(s.target());
     if(! tp.second){
-      return std::make_pair(Segment_2(),false);
+      return {};
     }
     return std::make_pair(Segment_2(sp.first,tp.first), true);
   }
@@ -130,18 +138,18 @@ public:
     if(a.second && b.second && c.second){
       return std::make_pair(Line_2(a.first, b.first, c.first),true);
     }
-    return std::make_pair(Line_2(), false);
+    return {};
   }
 
   std::pair<Ray_2,bool> operator()(const typename IK::Ray_2& r) const
   {
     std::pair<Point_2,bool> sp = operator()(r.source());
     if(! sp.second){
-      return std::make_pair(Ray_2(),false);
+      return {};
     }
     std::pair<Point_2,bool> tp = operator()(r.second_point());
     if(! tp.second){
-      return std::make_pair(Ray_2(),false);
+      return {};
     }
     return std::make_pair(Ray_2(sp.first,tp.first), true);
   }
@@ -150,15 +158,15 @@ public:
   {
     std::pair<Point_2,bool> v0 = operator()(t.vertex(0));
     if(! v0.second){
-      return std::make_pair(Triangle_2(),false);
+      return {};
     }
     std::pair<Point_2,bool> v1 = operator()(t.vertex(1));
     if(! v1.second){
-      return std::make_pair(Triangle_2(),false);
+      return {};
     }
     std::pair<Point_2,bool> v2 = operator()(t.vertex(2));
     if(! v2.second){
-      return std::make_pair(Triangle_2(),false);
+      return {};
     }
     return std::make_pair(Triangle_2(v0.first,v1.first, v2.first), true);
   }
@@ -170,18 +178,18 @@ public:
     if(c.second && sr.second){
       return std::make_pair(Circle_2(c.first, sr.first, ci.orientation()),true);
     }
-    return std::make_pair(Circle_2(), false);
+    return {};
   }
 
   std::pair<Iso_rectangle_2,bool> operator()(const typename IK::Iso_rectangle_2& ir) const
   {
     std::pair<Point_2,bool> sp = operator()((ir.min)());
     if(! sp.second){
-      return std::make_pair(Iso_rectangle_2(),false);
+      return {};
     }
     std::pair<Point_2,bool> tp = operator()((ir.max)());
     if(! tp.second){
-      return std::make_pair(Iso_rectangle_2(),false);
+      return {};
     }
     return std::make_pair(Iso_rectangle_2(sp.first,tp.first), true);
   }
@@ -191,11 +199,11 @@ public:
   {
     std::pair<Point_3,bool> sp = operator()(li.point());
     if(! sp.second){
-      return std::make_pair(Line_3(),false);
+      return {};
     }
     std::pair<Vector_3,bool> tp = operator()(li.to_vector());
     if(! tp.second){
-      return std::make_pair(Line_3(),false);
+      return {};
     }
     return std::make_pair(Line_3(sp.first,tp.first), true);
   }
@@ -206,22 +214,22 @@ public:
     if(a.second && b.second && c.second && d.second){
       return std::make_pair(Plane_3(a.first, b.first, c.first, d.first),true);
     }
-    return std::make_pair(Plane_3(), false);
+    return {};
   }
 
   std::pair<Triangle_3,bool> operator()(const typename IK::Triangle_3& t) const
   {
     std::pair<Point_3,bool> v0 = operator()(t.vertex(0));
     if(! v0.second){
-      return std::make_pair(Triangle_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> v1 = operator()(t.vertex(1));
     if(! v1.second){
-      return std::make_pair(Triangle_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> v2 = operator()(t.vertex(2));
     if(! v2.second){
-      return std::make_pair(Triangle_3(),false);
+      return {};
     }
     return std::make_pair(Triangle_3(v0.first,v1.first, v2.first), true);
   }
@@ -230,19 +238,19 @@ public:
   {
     std::pair<Point_3,bool> v0 = operator()(t.vertex(0));
     if(! v0.second){
-      return std::make_pair(Tetrahedron_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> v1 = operator()(t.vertex(1));
     if(! v1.second){
-      return std::make_pair(Tetrahedron_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> v2 = operator()(t.vertex(2));
     if(! v2.second){
-      return std::make_pair(Tetrahedron_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> v3 = operator()(t.vertex(3));
     if(! v3.second){
-      return std::make_pair(Tetrahedron_3(),false);
+      return {};
     }
     return std::make_pair(Tetrahedron_3(v0.first,v1.first, v2.first, v3.first), true);
   }
@@ -251,11 +259,11 @@ public:
   {
     std::pair<Point_3,bool> sp = operator()(r.source());
     if(! sp.second){
-      return std::make_pair(Ray_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> tp = operator()(r.second_point());
     if(! tp.second){
-      return std::make_pair(Ray_3(),false);
+      return {};
     }
     return std::make_pair(Ray_3(sp.first,tp.first), true);
   }
@@ -267,7 +275,7 @@ public:
     if(fit_in_double(p.x(),x) && fit_in_double(p.y(),y) && fit_in_double(p.z(),z)){
       return std::make_pair(Point_3(x,y,z),true);
     }
-    return std::make_pair(ORIGIN,false);
+    return {};
   }
 
   std::pair<Vector_3,bool> operator()(const typename IK::Vector_3& v) const
@@ -277,7 +285,7 @@ public:
     if(fit_in_double(v.x(),x) && fit_in_double(v.y(),y) && fit_in_double(v.z(),z)){
       return std::make_pair(Vector_3(x,y,z),true);
     }
-    return std::make_pair(Vector_3(),false);
+    return {};
   }
 
   std::pair<Direction_3,bool> operator()(const typename IK::Direction_3& d) const
@@ -287,18 +295,18 @@ public:
     if(fit_in_double(d.dx(),x) && fit_in_double(d.dy(),y) && fit_in_double(d.dz(),z)){
       return std::make_pair(Direction_3(x,y,z),true);
     }
-    return std::make_pair(Direction_3(),false);
+    return {};
   }
 
   std::pair<Segment_3,bool> operator()(const typename IK::Segment_3& s) const
   {
     std::pair<Point_3,bool> sp = operator()(s.source());
     if(! sp.second){
-      return std::make_pair(Segment_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> tp = operator()(s.target());
     if(! tp.second){
-      return std::make_pair(Segment_3(),false);
+      return {};
     }
     return std::make_pair(Segment_3(sp.first,tp.first), true);
   }
@@ -310,7 +318,7 @@ public:
     if(sp.second && w.second){
       return std::make_pair(Weighted_point_3(sp.first,w.first),true);
     }
-    return std::make_pair(Weighted_point_3(),false);
+    return {};
   }
 
   std::pair<Sphere_3,bool> operator()(const typename IK::Sphere_3& s) const
@@ -320,7 +328,7 @@ public:
     if(c.second && sr.second){
       return std::make_pair(Sphere_3(c.first, sr.first, s.orientation()),true);
     }
-    return std::make_pair(Sphere_3(), false);
+    return {};
   }
 
   std::pair<Circle_3,bool> operator()(const typename IK::Circle_3& ci) const
@@ -330,18 +338,18 @@ public:
     if(c.second && sr.second){
       return std::make_pair(Circle_3(sr.first, c.first),true);
     }
-    return std::make_pair(Circle_3(), false);
+    return {};
   }
 
   std::pair<Iso_cuboid_3,bool> operator()(const typename IK::Iso_cuboid_3& ic) const
   {
     std::pair<Point_3,bool> sp = operator()((ic.min)());
     if(! sp.second){
-      return std::make_pair(Iso_cuboid_3(),false);
+      return {};
     }
     std::pair<Point_3,bool> tp = operator()((ic.max)());
     if(! tp.second){
-      return std::make_pair(Iso_cuboid_3(),false);
+      return {};
     }
     return std::make_pair(Iso_cuboid_3(sp.first,tp.first), true);
   }

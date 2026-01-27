@@ -34,9 +34,9 @@ third parameter be specified. It also accepts the tag `CGAL::Default` as
 third parameter. In both cases, `TriangulationDSFullCell_` defaults to
 `CGAL::Triangulation_ds_full_cell<>`.
 
-\cgalModels `TriangulationDataStructure`. In addition, the class
+\cgalModels{TriangulationDataStructure. In addition, the class
 `Triangulation_data_structure` provides the following types and
-methods.
+methods.}
 
 \sa `Triangulation_ds_vertex`
 \sa `Triangulation_ds_full_cell`
@@ -81,6 +81,7 @@ data structure that only changes the vertex type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure with `Vb2`
 as vertex type.
 \note It can be implemented using a nested template class.
+
 \cgalAdvancedEnd
 */
 template <typename Vb2>
@@ -94,6 +95,7 @@ data structure that only changes the full cell type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure with `Fcb2`
 as full cell type.
 \note It can be implemented using a nested template class.
+
 \cgalAdvancedEnd
 */
 template <typename Fcb2>
@@ -112,8 +114,9 @@ A set `C` of full cells satisfying the same condition as in method
 method creates new full cells from vertex `v` to the boundary of `C`.
 The boundary is recognized by checking the mark of the full cells.
 This method is used by `Triangulation_data_structure::insert_in_hole()`.
-s
+
 \pre same as `TriangulationDataStructure::insert_in_hole()`
+
 \cgalAdvancedEnd
 
 */

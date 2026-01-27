@@ -487,7 +487,7 @@ public:
           sce[1-i] = svc;
           --svc;
           if(svc->circle().oriented_side(sv[0]->point()) == os1) {
-            // sedges are only on one side "
+            // sedges are only on one side
             sce[i] = scb[1-i] = sce[1-i];
             empty_c[1-i] = true;
             done = true;

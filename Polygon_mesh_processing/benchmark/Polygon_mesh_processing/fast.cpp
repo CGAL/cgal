@@ -20,7 +20,7 @@
 
 // `fast` takes an off file and an offset as arguments
 //  If called additionally with 3 more vertex indices it performs the envelope test with the triangle
-//  Otherwise it tests for all vertex triples forming a non-degenerate trianges
+//  Otherwise it tests for all vertex triples forming a non-degenerate triangles
 //  and writes the triple in the file inside.txt or outside.txt
 
 int main(int argc, char* argv[])

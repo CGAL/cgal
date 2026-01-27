@@ -1,32 +1,34 @@
-
 /*!
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  \brief a traversal provides the functions needed to traverse the
-  nodes of an orthtree.
+  \brief Requirements for defining a traversal strategy of an orthtree.
 
-  A traversal is used to iterate on a tree with a user-selected order
-  (e.g. preorder, postorder).
-
-  \cgalHasModel `CGAL::Orthtrees::Preorder_traversal`
-  \cgalHasModel `CGAL::Orthtrees::Postorder_traversal`
-  \cgalHasModel `CGAL::Orthtrees::Leaves_traversal`
-  \cgalHasModel `CGAL::Orthtrees::Level_traversal`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Orthtrees::Preorder_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Postorder_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Leaves_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Level_traversal}
+  \cgalHasModelsEnd
  */
 class OrthtreeTraversal {
 
 public:
 
-  using Node = unspecified_type; ///< A specialization of [CGAL::Orthtree<Traits,PointRange,PointMap>::Node](@ref CGAL::Orthtree::Node)
+  using Node_index = unspecified_type; ///< Index type of the orthtree to be traversed
 
   /*!
-    \brief returns the first node to iterate to, given the root of the Orthtree.
+    \brief constructible from the orthtree it is meant to be used with.
    */
-  Node first (Node root) const;
+  OrthtreeTraversal(const Orthtree& o) const;
 
   /*!
-    \brief returns the next node to iterate to, given the previous node.
+    \brief returns the first node of the traversal.
    */
-  Node next(Node n) const;
+  Node_index first_index() const;
+
+  /*!
+    \brief returns the next node to be traversed given the previous node `n`.
+   */
+  Node_index next(Node_index n) const;
 };

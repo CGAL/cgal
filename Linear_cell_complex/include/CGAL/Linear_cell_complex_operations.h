@@ -48,12 +48,12 @@ namespace CGAL {
    */
   template <class LCC>
   typename LCC::Vector compute_normal_of_cell_2
-  (const LCC& amap, typename LCC::Dart_const_handle adart)
+  (const LCC& amap, typename LCC::Dart_const_descriptor adart)
   {
     typedef typename LCC::Point Point;
     typedef typename LCC::Vector Vector;
 
-    typename LCC::Dart_const_handle start=adart;
+    typename LCC::Dart_const_descriptor start=adart;
     Vector normal(CGAL::NULL_VECTOR);
 
     // We go to the beginning of the face (first dart)
@@ -67,7 +67,7 @@ namespace CGAL {
     adart=start;
     do
     {
-      if (amap.other_extremity(adart)==LCC::null_handle)
+      if (amap.other_extremity(adart)==LCC::null_descriptor)
         adart=start; // To leave the loop, because we know that adart has no next dart
       else
       {
@@ -95,7 +95,7 @@ namespace CGAL {
    */
   template <class LCC>
   typename LCC::Vector compute_normal_of_cell_0
-  (const LCC& amap, typename LCC::Dart_const_handle adart)
+  (const LCC& amap, typename LCC::Dart_const_descriptor adart)
   {
     typedef typename LCC::Vector Vector;
     Vector normal(CGAL::NULL_VECTOR);
@@ -118,10 +118,10 @@ namespace CGAL {
   struct Barycenter_functor
   {
     static typename LCC::Point run(const LCC& amap,
-                                   typename LCC::Dart_const_handle adart)
+                                   typename LCC::Dart_const_descriptor adart)
     {
-      CGAL_static_assertion(0<i && i<=LCC::dimension);
-      CGAL_assertion(adart != LCC::null_handle);
+      static_assert(0<i && i<=LCC::dimension);
+      CGAL_assertion(adart != LCC::null_descriptor);
 
       typename LCC::Vector vec
         (typename LCC::Traits::Construct_vector()(CGAL::ORIGIN,
@@ -149,12 +149,12 @@ namespace CGAL {
   struct Barycenter_functor<LCC, 1, dim>
   {
     static typename LCC::Point run(const LCC& amap,
-                                   typename LCC::Dart_const_handle adart)
+                                   typename LCC::Dart_const_descriptor adart)
     {
-      CGAL_static_assertion(1<=LCC::dimension);
-      CGAL_assertion(adart != LCC::null_handle);
-      typename LCC::Dart_const_handle d2=amap.other_extremity(adart);
-      if (d2==amap.null_handle) return amap.point(adart);
+      static_assert(1<=LCC::dimension);
+      CGAL_assertion(adart != LCC::null_descriptor);
+      typename LCC::Dart_const_descriptor d2=amap.other_extremity(adart);
+      if (d2==amap.null_descriptor) return amap.point(adart);
       return typename LCC::Traits::Construct_midpoint()
         (amap.point(adart),
          amap.point(d2));
@@ -166,13 +166,13 @@ namespace CGAL {
   struct Barycenter_functor<LCC, 2, dim>
   {
     static typename LCC::Point run(const LCC& amap,
-                                   typename LCC::Dart_const_handle adart)
+                                   typename LCC::Dart_const_descriptor adart)
     {
-      CGAL_static_assertion(2<=LCC::dimension);
-      CGAL_assertion(adart != LCC::null_handle);
+      static_assert(2<=LCC::dimension);
+      CGAL_assertion(adart != LCC::null_descriptor);
 
       // We go to the beginning of the face (first dart, case of open face)
-      typename LCC::Dart_const_handle start=adart;
+      typename LCC::Dart_const_descriptor start=adart;
       while ( amap.is_previous_exist(start) && amap.previous(start)!=adart )
         start = amap.previous(start);
 

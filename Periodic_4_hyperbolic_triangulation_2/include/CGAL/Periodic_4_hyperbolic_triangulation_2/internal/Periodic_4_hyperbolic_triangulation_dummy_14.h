@@ -251,7 +251,7 @@ insert_dummy_points(bool rational)
   for(Face_iterator fit = tds().faces_begin(); fit != tds().faces_end(); ++fit)
     this->make_canonical(fit);
 
-  CGAL_triangulation_assertion(is_valid(true));
+  CGAL_assertion(is_valid(true));
 
   return ret;
 }
@@ -260,4 +260,3 @@ insert_dummy_points(bool rational)
 } // namespace CGAL
 
 #endif // CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_14_H
-

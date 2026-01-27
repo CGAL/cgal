@@ -18,7 +18,7 @@ function on the same number of type `Lazy_exact_nt<NT>` might not return
 the same value as the exact representation might have been computed
 between the two calls, thus refining the double approximation. If you
 want to avoid this behavior, you need to first call `exact()`
-(loosing the benefit of the lazyness if done systematically).
+(losing the benefit of the laziness if done systematically).
 
 \tparam NT must be a model of concept `RealEmbeddable`, and at
 least model of concept `IntegralDomainWithoutDivision`.
@@ -26,9 +26,8 @@ least model of concept `IntegralDomainWithoutDivision`.
 Note that some filtering mechanism is available at the predicate level
 using `Filtered_predicate` and `Filtered_kernel`.
 
-\cgalModels `IntegralDomainWithoutDivision` same as `NT`
-\cgalModels `RealEmbeddable`
-\cgalModels `Fraction`, if `NT` is a `Fraction`
+\cgalModels{IntegralDomainWithoutDivision same as `NT`,RealEmbeddable,
+             Fraction, if `NT` is a `Fraction`}
 
 \cgalHeading{Example}
 

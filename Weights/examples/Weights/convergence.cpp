@@ -1,5 +1,4 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weights/authalic_weights.h>
 #include <CGAL/Weights/three_point_family_weights.h>
 
 // Typedefs.

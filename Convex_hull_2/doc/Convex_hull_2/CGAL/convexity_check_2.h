@@ -32,7 +32,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points.
+The algorithm requires \cgalBigO{n} time for a set of \f$ n\f$ input points.
 
 
 
@@ -58,7 +58,6 @@ It returns `true`, iff the point elements in
 form a clockwise-oriented strongly convex polygon.
 
 A set of points is said to be strongly convex
-<A NAME="Index_anchor_76"></A>
 if it consists of only extreme points
 (<I>i.e.</I>, vertices of the convex hull).
 
@@ -81,7 +80,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points.
+The algorithm requires \cgalBigO{n} time for a set of \f$ n\f$ input points.
 
 
 

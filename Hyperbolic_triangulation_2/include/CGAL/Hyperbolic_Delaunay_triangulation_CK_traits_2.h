@@ -20,11 +20,11 @@
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
 #include <CGAL/Circular_kernel_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/determinant.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
@@ -69,48 +69,56 @@ namespace internal {
       Euclidean_line_2* l;
       Circle_2* c;
 
-      if(Circle_2* c_pq = boost::get<Circle_2>(&bis_pq))
+      if(Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq))
       {
-        if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
+        if(Circle_2* c_qr = std::get_if<Circle_2>(&bis_qr))
         {
           typedef typename CK2_Intersection_traits<Traits, Circle_2, Circle_2>::type Intersection_result;
           std::vector< Intersection_result > inters;
           intersection(*c_pq, *c_qr, std::back_inserter(inters));
 
-          CGAL_triangulation_assertion(assign(pair, inters[0]));
+          CGAL_assertion_code(bool ok=)
+          assign(pair, inters[0]);
+          CGAL_assertion(ok);
           if(pair.second == 1)
           {
             if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
               return pair.first;
 
-            CGAL_triangulation_assertion(assign(pair, inters[1]));
+            CGAL_assertion_code(bool ok=)
+            assign(pair, inters[1]);
+            CGAL_assertion(ok);
             return pair.first;
           }
           return pair.first;
         }
 
         // here bis_qr is a line
-        l = boost::get<Euclidean_line_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_qr);
         c = c_pq;
       }
       else
       {
         // here bis_pq is a line, and bis_qr is necessarily a circle
-        l = boost::get<Euclidean_line_2>(&bis_pq);
-        c = boost::get<Circle_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_pq);
+        c = std::get_if<Circle_2>(&bis_qr);
       }
 
       typedef typename CK2_Intersection_traits<Traits, Euclidean_line_2, Circle_2>::type Intersection_result;
       std::vector< Intersection_result > inters;
       intersection(*l, *c, std::back_inserter(inters));
 
-      CGAL_triangulation_assertion(assign(pair,inters[0]));
+      CGAL_assertion_code(bool ok=)
+      assign(pair,inters[0]);
+      CGAL_assertion(ok);
       if(pair.second == 1)
       {
         if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
           return pair.first;
 
-        CGAL_triangulation_assertion(assign(pair, inters[1]));
+        CGAL_assertion_code(bool ok=)
+        assign(pair, inters[1]);
+        CGAL_assertion(ok);
         return pair.first;
       }
       return pair.first;
@@ -157,7 +165,7 @@ namespace internal {
       }
 
       Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-      Circle_2* c = boost::get<Circle_2>(&bis_pq);
+      Circle_2* c = std::get_if<Circle_2>(&bis_pq);
 
       if(_gt.less_y_2_object()(po, c->center()))
         return Circular_arc_2(*c, l_inf, true, l_inf, false);
@@ -177,9 +185,9 @@ namespace internal {
                                     const Hyperbolic_point_2& r,
                                     const Hyperbolic_point_2& s) const
     {
-      CGAL_triangulation_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
+      CGAL_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
                                       (_gt.orientation_2_object()(p, s, q) == ON_POSITIVE_SIDE));
-      CGAL_triangulation_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
+      CGAL_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
                                       (_gt.side_of_oriented_circle_2_object()(p, s, q, r) == ON_NEGATIVE_SIDE));
 
       Construct_circle_or_line_supporting_bisector<Traits>  cclsb(_gt);
@@ -200,7 +208,7 @@ namespace internal {
 
       Euclidean_circle_or_line_2
           bis_pq = cclsb(p, q);
-      Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+      Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
       if(_gt.compare_distance_2_object()(po, p, q) == POSITIVE)
       {
@@ -218,7 +226,7 @@ namespace internal {
                                     const Hyperbolic_point_2& q,
                                     const Hyperbolic_point_2& r) const
     {
-      CGAL_triangulation_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
+      CGAL_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
 
       Construct_circle_or_line_supporting_bisector<Traits>  cclsb(_gt);
       Construct_hyperbolic_circumcenter_CK_2<Traits>        chc(_gt);
@@ -240,18 +248,22 @@ namespace internal {
         intersection(bis_pq, l_inf, std::back_inserter(inters));
         std::pair<Circular_arc_point_2, unsigned> pair;
 
-        CGAL_triangulation_assertion(assign(pair,inters[0]));
-        CGAL_triangulation_assertion(pair.second == 1);
+        CGAL_assertion_code(bool ok=)
+        assign(pair,inters[0]);
+        CGAL_assertion(ok);
+        CGAL_assertion(pair.second == 1);
         if(_gt.less_y_2_object()(p, q))
           return Line_arc_2(bis_pq,a,pair.first);
 
-        CGAL_triangulation_assertion(assign(pair,inters[1]));
-        CGAL_triangulation_assertion(pair.second == 1);
+        CGAL_assertion_code(ok=)
+        assign(pair,inters[1]);
+        CGAL_assertion(ok);
+        CGAL_assertion(pair.second == 1);
         return Line_arc_2(bis_pq,a,pair.first);
       }
 
       Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-      Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+      Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
       Hyperbolic_point_2 approx_a(to_double(a.x()),to_double(a.y()));
 
@@ -261,8 +273,10 @@ namespace internal {
       intersection(*c_pq, l_inf, std::back_inserter(inters));
       std::pair<Circular_arc_point_2, unsigned> pair;
 
-      CGAL_triangulation_assertion(assign(pair,inters[0]));
-      CGAL_triangulation_assertion(pair.second == 1);
+      CGAL_assertion_code(bool ok=)
+      assign(pair,inters[0]);
+      CGAL_assertion(ok);
+      CGAL_assertion(pair.second == 1);
 
       Hyperbolic_point_2 approx_pinf(to_double(pair.first.x()), to_double(pair.first.y()));
       Hyperbolic_point_2 approx_c(to_double(c_pq->center().x()),
@@ -275,7 +289,9 @@ namespace internal {
         return Circular_arc_2(*c_pq, pair.first, a);
       }
 
-      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      CGAL_assertion_code(ok=)
+      assign(pair,inters[1]);
+      CGAL_assertion(ok);
       if(_gt.orientation_2_object()(approx_c,approx_a,approx_pinf) == POSITIVE)
         return Circular_arc_2(*c_pq, pair.first, a);
 
@@ -311,14 +327,14 @@ public:
   typedef typename R::Point_2                                 Hyperbolic_point_2;
   typedef typename R::Circle_2                                Circle_2;
   typedef typename R::Line_2                                  Euclidean_line_2;
-  typedef boost::variant<Circle_2, Euclidean_line_2>          Euclidean_circle_or_line_2;
+  typedef std::variant<Circle_2, Euclidean_line_2>          Euclidean_circle_or_line_2;
 
   typedef typename R::Circular_arc_2                          Circular_arc_2;
   typedef typename R::Line_arc_2                              Line_arc_2;
   typedef typename R::Circular_arc_point_2                    Circular_arc_point_2;
   typedef Circular_arc_point_2                                Hyperbolic_Voronoi_point_2;
   typedef typename R::Segment_2                               Euclidean_segment_2; // only used internally here
-  typedef boost::variant<Circular_arc_2, Line_arc_2>          Hyperbolic_segment_2;
+  typedef std::variant<Circular_arc_2, Line_arc_2>          Hyperbolic_segment_2;
 
   typedef typename R::Triangle_2                              Hyperbolic_triangle_2;
 

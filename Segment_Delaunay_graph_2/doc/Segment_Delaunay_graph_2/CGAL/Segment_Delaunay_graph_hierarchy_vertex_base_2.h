@@ -11,7 +11,7 @@ vertex base required by the
 
 \tparam Vbb must be a model of the `SegmentDelaunayGraphVertexBase_2` concept.
 
-\cgalModels `SegmentDelaunayGraphHierarchyVertexBase_2`
+\cgalModels{SegmentDelaunayGraphHierarchyVertexBase_2}
 
 \sa `SegmentDelaunayGraphVertexBase_2`
 \sa `SegmentDelaunayGraphHierarchyVertexBase_2`

@@ -79,8 +79,8 @@ int main(int argc, char** argv)
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
-  if(argc == 0)
-    assert(points.size() == 434 && polygons.size() == 864);
+  if(argc == 1)
+    assert(points.size() == 4 && polygons.size() == 4);
 
   points.clear();
   polygons.clear();
@@ -128,6 +128,16 @@ int main(int argc, char** argv)
   assert(polygons == pls_backup);
 
   further_tests();
+
+  // issue 6374
+  if(argc == 1)
+  {
+    points.clear();
+    polygons.clear();
+    bool ok = CGAL::IO::read_STL("data/binary-issue-6374.stl", points, polygons, CGAL::parameters::verbose(true));
+    assert(ok);
+    assert(points.size()==8 && polygons.size()==12);
+  }
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;

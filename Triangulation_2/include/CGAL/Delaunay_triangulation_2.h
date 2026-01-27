@@ -88,7 +88,7 @@ public:
   Delaunay_triangulation_2(
          const Delaunay_triangulation_2<Gt,Tds> &tr)
        : Triangulation_2<Gt,Tds>(tr)
-  {   CGAL_triangulation_postcondition(is_valid());  }
+  {   CGAL_postcondition(is_valid());  }
 
   Delaunay_triangulation_2(Delaunay_triangulation_2&&) = default;
   Delaunay_triangulation_2& operator=(const Delaunay_triangulation_2&) = default;
@@ -193,19 +193,18 @@ private:
   void propagating_flip(const Face_handle& f,int i);
 #endif
 
-// auxilliary functions for remove
-  void remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i,int&d,int&maxd);
-  void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i,int d);
-  void remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i,int d);
-  void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
+// auxiliary functions for remove
+  int remove_degree_init(Vertex_handle v, std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree_triangulate(Vertex_handle v, std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i,int d);
+  void remove_degree_d(Vertex_handle v);
+  void remove_degree3(Vertex_handle v, std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree4(Vertex_handle v, std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree5(Vertex_handle v, std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
   void remove_degree5_star(Vertex_handle &v,
                            Face_handle &,Face_handle &,Face_handle &,
                            Face_handle &,Face_handle &,
@@ -213,8 +212,8 @@ private:
                            Vertex_handle&,Vertex_handle&,
                            int,int,int,
                            int,int);
-  void remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
-                      std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree6(Vertex_handle v, std::array<Face_handle, 8> &f,
+                      std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
   void remove_degree6_star   (Vertex_handle &v,
                               Face_handle &,Face_handle &,Face_handle &,
                               Face_handle &,Face_handle &,Face_handle &,
@@ -243,10 +242,10 @@ private:
                               Vertex_handle&,Vertex_handle&,Vertex_handle&,
                               int,int,int,
                               int,int,int);
-  void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
-                      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  bool incircle(int x, int j, int, int l, std::vector<Face_handle> &f,
-                std::vector<Vertex_handle> &w, std::vector<int> &i)
+  void remove_degree7(Vertex_handle v,std::array<Face_handle, 8> &f,
+                      std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  bool incircle(int x, int j, int, int l, std::array<Face_handle, 8> &f,
+                std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
   {
     // k is supposed to be j+1 modulo degree, x is supposed to be finite
     //test if w[x] inside circle w[j]w[k]w[l] (f[j] has vertices w[j]w[k])
@@ -255,21 +254,21 @@ private:
     f[j]->set_vertex(i[j], w[l]); // change vertex v for another one
     return (test_conflict(w[x]->point(), f[j]));
   }
-  void rotate7(int j, std::vector<Vertex_handle> &w,
-         std::vector<Face_handle> &f, std::vector<int> &i);
-  void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-  void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i);
-// end of auxilliary functions for remove
+  void rotate7(int j, std::array<Vertex_handle, 8> &w,
+         std::array<Face_handle, 8> &f, std::array<int, 8> &i);
+  void remove_degree7_star      (Vertex_handle&,int,std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree7_zigzag    (Vertex_handle&,int,std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree7_leftdelta (Vertex_handle&,int,std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree7_rightdelta(Vertex_handle&,int,std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree7_leftfan   (Vertex_handle&,int,std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+  void remove_degree7_rightfan  (Vertex_handle&,int,std::array<Face_handle, 8> &f,
+         std::array<Vertex_handle, 8> &w, std::array<int, 8> &i);
+// end of auxiliary functions for remove
 
   Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
   Vertex_handle nearest_vertex_1D(const Point& p) const;
@@ -300,12 +299,12 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
-         typename boost::enable_if<
-         boost::is_convertible<
-         typename std::iterator_traits<InputIterator>::value_type,
-         Point
-         >
-         >::type* = nullptr)
+         std::enable_if_t<
+           std::is_convertible<
+             typename std::iterator_traits<InputIterator>::value_type,
+             Point
+           >::value
+         >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -358,10 +357,8 @@ private:
       it = indices.begin(), end = indices.end();
       it != end; ++it) {
       v_hint = insert(points[*it], hint);
-      if(v_hint!=Vertex_handle()) {
-        v_hint->info()=infos[*it];
-        hint=v_hint->face();
-      }
+      v_hint->info()=infos[*it];
+      hint=v_hint->face();
     }
 
     return this->number_of_vertices() - n;
@@ -373,11 +370,11 @@ public:
   std::ptrdiff_t
   insert(InputIterator first,
          InputIterator last,
-         typename boost::enable_if<
-           boost::is_convertible<
+         std::enable_if_t<
+           std::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-           > >::type* = nullptr)
+           >::value >* = nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -386,12 +383,10 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-         typename boost::enable_if<
-           boost::mpl::and_<
-             boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-             boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >
-         >::type* = nullptr)
+         std::enable_if_t<
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+         >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -404,7 +399,7 @@ public:
                              OutputItBoundaryEdges eit,
                              Face_handle start = Face_handle()) const
   {
-    CGAL_triangulation_precondition(this->dimension() == 2);
+    CGAL_precondition(this->dimension() == 2);
     int li;
     Locate_type lt;
     Face_handle fh = this->locate(p,lt,li, start);
@@ -422,7 +417,7 @@ public:
         pit = propagate_conflicts(p,fh,2,pit);
         return pit;
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return std::make_pair(fit,eit);
   }
 
@@ -674,7 +669,7 @@ is_valid(bool verbose, int level) const
         result = result && ON_POSITIVE_SIDE !=
             side_of_oriented_circle(it, this->mirror_vertex(it,i)->point(), false);
       }
-      CGAL_triangulation_assertion(result);
+      CGAL_assertion(result);
     }
   }
   return result;
@@ -705,7 +700,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-  CGAL_triangulation_precondition(this->dimension() == 2);
+  CGAL_precondition(this->dimension() == 2);
   f = this->locate(p,f);
 
   typename Geom_traits::Compare_distance_2
@@ -775,8 +770,8 @@ typename Delaunay_triangulation_2<Gt,Tds>::Point
 Delaunay_triangulation_2<Gt,Tds>::
 dual(Face_handle f) const
 {
-  CGAL_triangulation_precondition(this->_tds.is_face(f));
-  CGAL_triangulation_precondition(this->dimension()==2);
+  CGAL_precondition(this->_tds.is_face(f));
+  CGAL_precondition(this->dimension()==2);
   return circumcenter(f);
 }
 
@@ -785,12 +780,12 @@ Object
 Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge &e) const
 {
-  CGAL_triangulation_precondition(this->_tds.is_edge(e.first,e.second));
+  CGAL_precondition(this->_tds.is_edge(e.first,e.second));
 
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
 
-  CGAL_triangulation_precondition (!this->is_infinite(e));
+  CGAL_precondition (!this->is_infinite(e));
   if(this->dimension()== 1) {
     const Point& p = (e.first)->vertex(cw(e.second))->point();
     const Point& q = (e.first)->vertex(ccw(e.second))->point();
@@ -1031,8 +1026,8 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!this->is_infinite(v));
 
   if(this->number_of_vertices() == 1) this->remove_first(v);
   else if(this->number_of_vertices() == 2) this->remove_second(v);
@@ -1049,14 +1044,12 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
         afi++) *fit++ = afi;
   }
   else {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, maxd,30);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Face_handle>, f, maxd);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<int>, i, maxd);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Vertex_handle>, w, maxd);
+    std::array<Face_handle, 8>  f;
+    std::array<int, 8>  i;
+    std::array<Vertex_handle, 8>  w;
 
-    int d;
-    remove_degree_init(v,f,w,i,d,maxd);
-    remove_degree_triangulate(v,f,w,i,d);
+    int degree = remove_degree_init(v,f,w,i);
+    remove_degree_triangulate(v,f,w,i,degree);
     this->delete_vertex(v);
     Face_circulator fc(v[0]),done;
     do *fit++ = fc++; while (fc!=done);
@@ -1069,32 +1062,29 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
 {
-  int d;
-
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!this->is_infinite(v));
 
   if(this->dimension() <= 1) { Triangulation::remove(v); return; }
 
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, maxd,30);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Face_handle>, f, maxd);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<int>, i, maxd);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Vertex_handle>, w, maxd);
+  std::array<Face_handle, 8>  f;
+  std::array<int, 8>  i;
+  std::array<Vertex_handle, 8>  w;
 
-  remove_degree_init(v,f,w,i,d,maxd);
-  if(d == 0) return; //  dim is going down
-  remove_degree_triangulate(v,f,w,i,d);
+  int degree = remove_degree_init(v,f,w,i);
+  if(degree == 0) return; //  dim is going down
+  remove_degree_triangulate(v,f,w,i,degree);
   this->delete_vertex(v);
 }
 
 template < class Gt, class Tds >
-void
+int
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
-                   std::vector<Vertex_handle> &w, std::vector<int> &i,
-                   int &d, int &maxd)
+remove_degree_init(Vertex_handle v, std::array<Face_handle, 8> &f,
+                   std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 {
-  f[0] = v->face();d=0;
+  f[0] = v->face();
+  int d=0;
   do{
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex(ccw(i[d]));
@@ -1108,26 +1098,27 @@ remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
         if(this->test_dim_down(v)) {
           d=0;
           this->tds().remove_dim_down(v);
-          return;
+          return d;
         }
       }
       d=1;
     }
     w[d]->set_face(f[d]->neighbor(i[d]));//do no longer bother about set_face
     ++d;
-    if(d==maxd) { maxd *=2; f.resize(maxd); w.resize(maxd); i.resize(maxd);}
+    if(d > 7) return d;
     f[d] = f[d-1]->neighbor(ccw(i[d-1]));
   } while(f[d]!=f[0]);
   // all vertices finite but possibly w[0]
+  return d;
 }
 
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree_triangulate(Vertex_handle v,
-                          std::vector<Face_handle> &f,
-                          std::vector<Vertex_handle> &w,
-                          std::vector<int> &i,int d)
+                          std::array<Face_handle, 8> &f,
+                          std::array<Vertex_handle, 8> &w,
+                          std::array<int, 8> &i,int d)
 {
   switch (d) {
   case 3:
@@ -1141,16 +1132,14 @@ remove_degree_triangulate(Vertex_handle v,
   case 7:
     remove_degree7(v,f,w,i);    break;
   default:
-    remove_degree_d(v,f,w,i,d);    break;
+    remove_degree_d(v);    break;
   }
 }
 
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
-                std::vector<Vertex_handle> &,
-                std::vector<int> &,int)
+remove_degree_d(Vertex_handle v)
 {
   // removing a degree d vertex, (dim is not going down)
   // this is the old removal procedure that is used now only if d > 7
@@ -1164,8 +1153,8 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &, std::vector<int> &i)
+remove_degree3(Vertex_handle, std::array<Face_handle, 8> &f,
+               std::array<Vertex_handle, 8> &, std::array<int, 8> &i)
 {
   // removing a degree 3 vertex
   // only w[0] can be infinite
@@ -1187,8 +1176,8 @@ remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, std::vector<int> &i)
+remove_degree4(Vertex_handle, std::array<Face_handle, 8> &f,
+               std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 {
   // removing a degree 4 vertex
   // only w[0] can be infinite
@@ -1226,8 +1215,8 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, std::vector<int> &i)
+remove_degree5(Vertex_handle v, std::array<Face_handle, 8> &f,
+               std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 {
   // removing a degree 5 vertex
   // only w[0] can be infinite
@@ -1301,8 +1290,8 @@ Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, std::vector<int> &i)
+remove_degree6(Vertex_handle v, std::array<Face_handle, 8> &f,
+               std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 {
   // removing a degree 6 vertex
   // only w[0] can be infinite
@@ -1534,8 +1523,8 @@ Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond(
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, std::vector<int> &i)
+remove_degree7(Vertex_handle v,std::array<Face_handle, 8> &f,
+               std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 {
   // removing a degree 7 vertex
   // only w[0] can be infinite
@@ -1934,8 +1923,8 @@ remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-rotate7(int j, std::vector<Vertex_handle> &w,
-        std::vector<Face_handle> &f, std::vector<int> &i)
+rotate7(int j, std::array<Vertex_handle, 8> &w,
+        std::array<Face_handle, 8> &f, std::array<int, 8> &i)
 {
   if(j==0) return;
   Face_handle ff=f[0];
@@ -1952,7 +1941,7 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_star   (Vertex_handle &, int j,
-std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
+std::array<Face_handle, 8> &f, std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 { // removing a degree 7 vertex, staring from w[j]
   rotate7(j,w,f,i);
 
@@ -1974,7 +1963,9 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_zigzag (Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+    std::array<Face_handle, 8> &f,
+    std::array<Vertex_handle, 8> &w,
+    std::array<int, 8> &i)
 { // removing a degree 7 vertex, zigzag, w[j] = middle point
 
  rotate7(j,w,f,i);
@@ -2006,7 +1997,7 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftdelta(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::array<Face_handle, 8> &f,std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 { // removing a degree 7 vertex, left delta from w[j]
   rotate7(j,w,f,i);
 
@@ -2035,7 +2026,7 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightdelta(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::array<Face_handle, 8> &f,std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 { // removing a degree 7 vertex, right delta from w[j]
   rotate7(j,w,f,i);
 
@@ -2063,7 +2054,7 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftfan(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::array<Face_handle, 8> &f,std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 { // removing a degree 7 vertex, left fan from w[j]
   rotate7(j,w,f,i);
 
@@ -2089,7 +2080,7 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightfan(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::array<Face_handle, 8> &f,std::array<Vertex_handle, 8> &w, std::array<int, 8> &i)
 { // removing a degree 7 vertex, right fan from w[j]
   rotate7(j,w,f,i);
 
@@ -2119,7 +2110,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 move_if_no_collision(Vertex_handle v, const Point &p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   const int dim = this->dimension();
 
@@ -2167,7 +2158,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
       Face_handle f = v->face();
       int i = f->index(v);
       if(i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
+      CGAL_assertion(f->index(v) == 1);
       Face_handle g= f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
       f->set_neighbor(0,g->neighbor(0));
@@ -2177,7 +2168,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
       Face_handle f_ins = inserted->face();
       i = f_ins->index(inserted);
       if(i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
+      CGAL_assertion(f_ins->index(inserted) == 1);
       Face_handle g_ins = f_ins->neighbor(0);
       f_ins->set_vertex(1, v);
       g_ins->set_vertex(0, v);
@@ -2213,14 +2204,12 @@ move_if_no_collision(Vertex_handle v, const Point &p)
   inserted = insert(p, lt, loc, li);
 
   {
-    int d;
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, maxd,30);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Face_handle>, f, maxd);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<int>, i, maxd);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Vertex_handle>, w, maxd);
+    std::array<Face_handle, 8>  f;
+    std::array<int, 8>  i;
+    std::array<Vertex_handle, 8>  w;
 
-    remove_degree_init(v,f,w,i,d,maxd);
-    remove_degree_triangulate(v,f,w,i,d);
+    int degree = remove_degree_init(v,f,w,i);
+    remove_degree_triangulate(v,f,w,i,degree);
   }
 
   // fixing pointer
@@ -2249,7 +2238,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 move(Vertex_handle v, const Point &p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -2264,9 +2253,9 @@ bool
 Delaunay_triangulation_2<Gt,Tds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
-  CGAL_triangulation_precondition(this->dimension() == 2);
-  CGAL_triangulation_precondition(!this->test_dim_down(v));
+  CGAL_precondition(!this->is_infinite(v));
+  CGAL_precondition(this->dimension() == 2);
+  CGAL_precondition(!this->test_dim_down(v));
   if(v->point() == p) return true;
   Point ant = v->point();
   v->set_point(p);
@@ -2320,7 +2309,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
                                         const Point &p,
                                         OutputItFaces oif)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
 
   const int dim = this->dimension();
@@ -2374,7 +2363,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
       Face_handle f = v->face();
       int i = f->index(v);
       if(i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
+      CGAL_assertion(f->index(v) == 1);
       Face_handle g= f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
       f->set_neighbor(0,g->neighbor(0));
@@ -2385,7 +2374,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
       Face_handle f_ins = inserted->face();
       i = f_ins->index(inserted);
       if(i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
+      CGAL_assertion(f_ins->index(inserted) == 1);
       Face_handle g_ins = f_ins->neighbor(0);
       f_ins->set_vertex(1, v);
       g_ins->set_vertex(0, v);
@@ -2432,14 +2421,11 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
   do { faces_set.insert(fc); } while(++fc != done);
 
   {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, maxd,30);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Face_handle>, f, maxd);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<int>, i, maxd);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Vertex_handle>, w, maxd);
-
-    int d;
-    remove_degree_init(v,f,w,i,d,maxd);
-    remove_degree_triangulate(v,f,w,i,d);
+    std::array<Face_handle, 8>  f;
+    std::array<int, 8>  i;
+    std::array<Vertex_handle, 8>  w;
+    int degree = remove_degree_init(v,f,w,i);
+    remove_degree_triangulate(v,f,w,i,degree);
     this->delete_vertex(v);
     Face_circulator fc(v[0]),done;
     do *oif++ = fc++; while (fc!=done);

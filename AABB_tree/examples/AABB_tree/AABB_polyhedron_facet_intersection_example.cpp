@@ -5,7 +5,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
@@ -17,10 +17,10 @@ typedef K::Segment_3 Segment;
 typedef K::Ray_3 Ray;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef boost::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
-typedef boost::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
+typedef std::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
+typedef std::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
 typedef Tree::Primitive_id Primitive_id;
 
 int main()
@@ -57,7 +57,7 @@ int main()
     if(intersection)
     {
         // gets intersection object
-      const Point* p = boost::get<Point>(&(intersection->first));
+      const Point* p = std::get_if<Point>(&(intersection->first));
       if(p)
         std::cout << "intersection object is a point " << *p << std::endl;
 
@@ -81,7 +81,7 @@ int main()
     if(plane_intersection)
     {
 
-      if(boost::get<Segment>(&(plane_intersection->first)))
+      if(std::get_if<Segment>(&(plane_intersection->first)))
             std::cout << "intersection object is a segment" << std::endl;
     }
 

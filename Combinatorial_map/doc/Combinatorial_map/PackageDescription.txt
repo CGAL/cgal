@@ -1,4 +1,4 @@
-/// \defgroup PkgCombinatorialMapsRef Combinatorial Maps Reference
+/// \defgroup PkgCombinatorialMapsRef Reference Manual
 
 /// \defgroup PkgCombinatorialMapsConcepts Concepts
 /// \ingroup PkgCombinatorialMapsRef
@@ -6,22 +6,8 @@
 /// \defgroup PkgCombinatorialMapsClasses Classes
 /// \ingroup PkgCombinatorialMapsRef
 
-/*! Basic constructions.
-  \code
-  #include <CGAL/Combinatorial_map_constructors.h>
-  \endcode
-*/
-/// \defgroup PkgCombinatorialMapsConstructions Constructions
+/// \defgroup PkgCombinatorialMapsRefIO IO Functions for CMap
 /// \ingroup PkgCombinatorialMapsRef
-
-/*! High-level operations.
-  \code
-  #include <CGAL/Combinatorial_map_operations.h>
-  \endcode
-*/
-/// \defgroup PkgCombinatorialMapsOperations Operations
-/// \ingroup PkgCombinatorialMapsRef
-
 
 /*!
 \addtogroup PkgCombinatorialMapsRef
@@ -53,23 +39,9 @@
 - `CGAL::Cell_attribute_with_id<CMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Generic_map_min_items`
 
-\cgalCRPSection{Global Functions}
-\cgalCRPSubsection{Constructions for Combinatorial Maps}
-- `CGAL::make_edge<CMap>`
-- `CGAL::make_combinatorial_polygon<CMap>`
-- `CGAL::make_combinatorial_tetrahedron<CMap>`
-- `CGAL::make_combinatorial_hexahedron<CMap>`
-
-\cgalCRPSubsection{Operations for Combinatorial Maps}
-- `CGAL::is_removable<CMap,i>`
-- `CGAL::remove_cell<CMap,i>`
-- `CGAL::is_insertable_cell_1_in_cell_2<CMap>`
-- `CGAL::is_insertable_cell_2_in_cell_3<CMap,InputIterator>`
-- `CGAL::insert_cell_0_in_cell_1<CMap>`
-- `CGAL::insert_cell_0_in_cell_2<CMap>`
-- `CGAL::insert_cell_1_in_cell_2<CMap>`
-- `CGAL::insert_dangling_cell_1_in_cell_2<CMap>`
-- `CGAL::insert_cell_2_in_cell_3<CMap,InputIterator>`
+\cgalCRPSubsection{IO Functions for CMap}
+- \link PkgCombinatorialMapsRefIO `std::ostream& operator<< (std::ostream& os, const GenericMap& amap)` \endlink
+- \link PkgCombinatorialMapsRefIO `std::ifstream& operator>> (std::ifstream& is, GenericMap& amap)` \endlink
 
 */
 

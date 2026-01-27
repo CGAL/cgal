@@ -6,7 +6,7 @@ namespace CGAL {
 
 \brief The class `Protect_FPU_rounding` allows to reduce the number of rounding mode changes when evaluating sequences of interval arithmetic operations.
 
-\anchor protect_fpu_rouding
+\anchor protect_fpu_rounding
 
 Floating-point arithmetic, as specified by the IEEE-754 standard, allows to use
 so-called directed rounding for the following arithmetic operations: addition,
@@ -43,7 +43,7 @@ to the correct 64 bit precision, hence providing a similar effect to
 `Set_ieee_double_precision`. This notably affects the `Residue` class.
 
 Note for Visual C++ 64-bit users: due to a compiler bug, the stack unwinding
-process happenning when an exception is thrown does not correctly execute the
+process happening when an exception is thrown does not correctly execute the
 rounding mode restoration when the `Protect_FPU_rounding` object is
 destroyed. Therefore, for this configuration, some explicit code has to be
 added.
@@ -135,12 +135,12 @@ startup process, and this is notably the case of LEDA (at least some versions
 of it). \cgal does not enforce this at startup as it would impact
 computations with long double performed by other codes in the same program.
 
-Note that this property is notably required for proper functionning of the
+Note that this property is notably required for proper functioning of the
 `Residue` class that performs modular arithmetic using efficient
 floating-point operations.
 
 Note concerning Visual C++ 64-bit: due to a compiler bug, the stack unwinding
-process happenning when an exception is thrown does not correctly execute the
+process happening when an exception is thrown does not correctly execute the
 restoring operation when the `Set_ieee_double_precision` object is
 destroyed. Therefore, for this configuration, some explicit code has to be
 added if you care about the state being restored.

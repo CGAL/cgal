@@ -12,8 +12,6 @@
 #ifndef CGAL_COMBINATORIAL_MAP_3_TEST
 #define CGAL_COMBINATORIAL_MAP_3_TEST 1
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
@@ -71,7 +69,7 @@ void createAllBasicCases1()
   Map map;
   Functor functor;
 
-  typename Map::Dart_handle dh, dh2, dh3;
+  typename Map::Dart_descriptor dh, dh2, dh3;
 
   // 1) isolated dart
   dh = map.create_dart();
@@ -195,7 +193,7 @@ void createAllBasicCases2()
   Map map;
   Functor functor;
 
-  typename Map::Dart_handle dh, dh2, dh3, dh4;
+  typename Map::Dart_descriptor dh, dh2, dh3, dh4;
 
   // 1) isolated dart
   dh  = map.create_dart();
@@ -314,7 +312,7 @@ struct InsertVertex
 {
   InsertVertex() : nb(1)
   {};
-  void operator() (Map& map, typename Map::Dart_handle d)
+  void operator() (Map& map, typename Map::Dart_descriptor d)
   {
     std::cout<<"Before: ";
     map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -329,8 +327,8 @@ private:
 template<class Map>
 bool test3D()
 {
-  typedef typename Map::Dart_handle Dart_handle;
-  Dart_handle d,dh,dh2,d1,d2,d3,d4;
+  typedef typename Map::Dart_descriptor Dart_descriptor;
+  Dart_descriptor d,dh,dh2,d1,d2,d3,d4;
   typename Map::size_type mark;
   unsigned int nbc,nb2;
   Map map;
@@ -448,7 +446,6 @@ bool test3D()
 
   cout << "***************************** TEST TRIANGULATION_3 3D DONE."
        << endl;
-
 
   cout << "***************************** TEST ITERATORS 3D:" << endl;
 
@@ -753,7 +750,7 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   {
-    std::vector<Dart_handle> V;
+    std::vector<Dart_descriptor> V;
     {
       for ( typename Map::template Dart_of_cell_range<0,2>::iterator
               it =  map.template darts_of_cell<0,2>(d3).begin();
@@ -761,7 +758,7 @@ bool test3D()
         V.push_back(it);
     }
 
-    typedef typename std::vector<Dart_handle>::iterator vector_it;
+    typedef typename std::vector<Dart_descriptor>::iterator vector_it;
     for ( vector_it it=V.begin(); it!=V.end(); ++it)
       {
         cout << "remove edge15: " << flush; map.template remove_cell<1>(*it);
@@ -846,7 +843,7 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   {
-    std::vector<Dart_handle> V;
+    std::vector<Dart_descriptor> V;
     {
       for ( typename Map::template Dart_of_cell_range<0,2>::iterator it =
               map.template darts_of_cell<0,2>(d3).begin();
@@ -854,7 +851,7 @@ bool test3D()
         V.push_back(it);
     }
 
-    for (typename std::vector<Dart_handle>::iterator it=V.begin(); it!=V.end(); ++it)
+    for (typename std::vector<Dart_descriptor>::iterator it=V.begin(); it!=V.end(); ++it)
       {
         cout << "remove facet13: " << flush; map.template remove_cell<2>(*it);
         map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -1015,6 +1012,17 @@ bool test3D()
   map.insert_cell_1_in_cell_2(d1, map.beta(d1,1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
+
+  d1 = map.make_combinatorial_polygon(4);
+  d2 = map.make_combinatorial_polygon(4);
+  map.insert_cell_1_between_two_cells_2(d1, d2);
+  if(!map.is_valid())
+  {
+    map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+    std::cout<<"ERROR after map.insert_cell_1_between_two_cells_2(d1, d2);"<<std::endl;
+    assert(false);
+    return false;
+  }
   map.clear();
 
   cout << "***************************** TEST INSERT EDGE 3D DONE."
@@ -1071,7 +1079,7 @@ bool test3D()
   cout << "***************************** TEST INSERT FACET 3D:"
        << endl;
 
-  std::vector<Dart_handle> v;
+  std::vector<Dart_descriptor> v;
 
   d1 = map.make_combinatorial_polygon(4);
   v.push_back(d1); v.push_back(map.beta(v[0],1));

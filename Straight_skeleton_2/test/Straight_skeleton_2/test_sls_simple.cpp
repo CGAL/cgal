@@ -7,7 +7,7 @@
 //#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 100
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE 10000000
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
+//#define CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 10000000
 
 void Straight_skeleton_external_trace(std::string m)
@@ -29,15 +29,18 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/draw_straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include "print.h"
+#include <CGAL/Straight_skeleton_2/IO/print.h>
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/draw_polygon_2.h>
+
+#include <CGAL/use.h>
 
 #include <boost/shared_ptr.hpp>
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -53,10 +56,10 @@ void test_API()
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
 
   typedef CGAL::Straight_skeleton_2<EPICK>                           Straight_skeleton_EPICK;
-  typedef boost::shared_ptr<Straight_skeleton_EPICK>                 Straight_skeleton_Ptr_EPICK;
+  typedef std::shared_ptr<Straight_skeleton_EPICK>                 Straight_skeleton_Ptr_EPICK;
 
   typedef CGAL::Straight_skeleton_2<K>                               Straight_skeleton;
-  typedef boost::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
+  typedef std::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
 
   Polygon_2 p;
   Straight_skeleton_Ptr_EPICK ss0 = CGAL::create_interior_straight_skeleton_2(p);
@@ -72,7 +75,7 @@ void test_API()
 }
 
 template <typename K, typename StraightSkeleton>
-bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
+bool is_valid(const std::shared_ptr<StraightSkeleton>& ss)
 {
   typedef typename StraightSkeleton::Traits::Point_2                 Point;
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
@@ -136,7 +139,7 @@ void test_skeleton(const char* filename,
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
 
   typedef CGAL::Straight_skeleton_2<K>                               Straight_skeleton;
-  typedef boost::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
+  typedef std::shared_ptr<Straight_skeleton>                       Straight_skeleton_Ptr;
 
   std::ifstream in(filename);
   assert(in);
@@ -221,9 +224,8 @@ void test_kernel()
 {
 //  CGAL_STSKEL_TRAITS_ENABLE_TRACE
 
-#ifndef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
-  // test_API<K>();
-#endif
+  void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 
   test_skeleton<K>("data/pseudo_split_0.poly", 13, 40, 8);
   test_skeleton<K>("data/pseudo_split_1.poly", 21, 68, 12);

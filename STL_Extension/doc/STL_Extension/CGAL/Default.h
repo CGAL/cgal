@@ -11,7 +11,7 @@ to use the default argument of a template parameter of a class template.
 This can be useful in several cases: (a) when one needs a non-default value for
 another template parameter coming next (since \cpp only supports defaults at
 the end of lists), (b) when the default is actually a complex expression, e.g.
-refering to previous template parameters (in this case, it shortens compiler
+referring to previous template parameters (in this case, it shortens compiler
 error messages and mangled symbol names), (c) when defining the default
 involves circular dependencies of type instantiations (there, it breaks the
 cycle in a nice way).
@@ -26,8 +26,7 @@ same when instantiating it using `Default` instead of the type of the default
 argument, even though their interfaces will otherwise be the same. This may
 have consequences in some cases.
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
+\cgalModels{DefaultConstructible,CopyConstructible}
 
 In order to help the template class writer, `Default` provides a convenient
 way to extract the desired type for a template parameter which may be defaulted

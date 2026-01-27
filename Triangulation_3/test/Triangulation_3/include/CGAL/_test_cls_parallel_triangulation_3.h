@@ -16,7 +16,6 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/mpl/if.hpp>
 
 template <typename Parallel_triangulation,
           typename WeightedTag = typename Parallel_triangulation::Weighted_tag>
@@ -72,7 +71,7 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   // Construct the locking data-structure, using the bounding-box of the points
   typename Cls::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., -1., -1., 1., 1., 1.), 50);
 
-  // Contruct the triangulation in parallel
+  // Construct the triangulation in parallel
   std::cout << "Construction and parallel insertion" << std::endl;
   Cls tr(points.begin(), points.end(), &locking_ds);
   std::cout << "Triangulation has " << tr.number_of_vertices() << " vertices" << std::endl;

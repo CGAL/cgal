@@ -6,7 +6,7 @@ namespace CGAL {
 
 A model of concept `PolynomialTraits_d`
 
-\cgalModels `PolynomialTraits_d`
+\cgalModels{PolynomialTraits_d}
 
 */
 template< typename Polynomial_d >

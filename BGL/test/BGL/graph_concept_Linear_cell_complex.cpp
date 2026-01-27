@@ -21,6 +21,7 @@ typedef LCC::Traits::Point Point_3;
 template<typename Graph>
 void concept_check_polyhedron() {
   boost::function_requires< boost::GraphConcept<LCC> >();
+  boost::function_requires< boost::AdjacencyGraphConcept<LCC> >();
   boost::function_requires< boost::VertexListGraphConcept<LCC> >();
   boost::function_requires< boost::EdgeListGraphConcept<LCC> >();
   boost::function_requires< boost::IncidenceGraphConcept<LCC> >();

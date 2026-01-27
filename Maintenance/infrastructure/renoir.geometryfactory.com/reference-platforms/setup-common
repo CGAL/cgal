@@ -1,7 +1,0 @@
-#source /home/lrineau/infrastructure/reference-platforms/setup-taucs-64bits
-
-source /home/lrineau/infrastructure/reference-platforms/setup-mkl-64bits
-
-source /home/lrineau/CGAL/MPFI-RS/setup-rs
-
-source /home/lrineau/infrastructure/reference-platforms/setup-common-headers-only

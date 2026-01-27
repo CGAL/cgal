@@ -54,7 +54,7 @@ bool _test_cls_weighted_point_2(const R& )
   CGAL::Weighted_point_2<R> wp7(p0, int_w);
   use(wp0); use(wp4); use(wp5);
 
-  // assignement
+  // assignment
   wp1 = wp6;
 
   std::cout << ".";

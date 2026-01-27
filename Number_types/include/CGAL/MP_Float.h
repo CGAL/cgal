@@ -167,7 +167,7 @@ public:
     low = static_cast<limb>(l & mask); //extract low bits from l
     high= static_cast<limb>((l - low) >> sizeof_limb); //extract high bits from l
 
-    CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
+    CGAL_postcondition ( l == low + ( high * (limb2(1) << sizeof_limb) ) );
   }
 
   // Given a limb2, returns the higher limb.
@@ -324,7 +324,7 @@ public:
     return exp + exponent_type(v.size());
   }
 
-  // Rescale the value by some factor (in limbs).  (substract the exponent)
+  // Rescale the value by some factor (in limbs).  (subtract the exponent)
   void rescale(exponent_type scale)
   {
     if (v.size() != 0)
@@ -617,7 +617,7 @@ division(const MP_Float & n, const MP_Float & d)
 
   CGAL_precondition(divisor != 0);
 
-  // Rescale d to have a to_double() value with reasonnable exponent.
+  // Rescale d to have a to_double() value with reasonable exponent.
   exponent_type scale_d = divisor.find_scale();
   divisor.rescale(scale_d);
   const double dd = INTERN_MP_FLOAT::to_double(divisor);
@@ -762,7 +762,7 @@ namespace INTERN_MP_FLOAT {
     while (true) {
       x = x % y;
       if (x == 0) {
-        CGAL_postcondition(internal::divides(y, a) & internal::divides(y, b));
+        CGAL_postcondition(internal::divides(y, a) && internal::divides(y, b));
         y.gcd_normalize();
         return y;
       }

@@ -42,8 +42,7 @@ struct Spherical_sizing_field
   }
 };
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Function
 FT sphere_function (const Point& p)
@@ -52,24 +51,23 @@ FT sphere_function (const Point& p)
 int main()
 {
   /// [Domain creation] (Warning: Sphere_3 constructor uses squared radius !)
-  namespace p = CGAL::parameters;
   Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain
-    (p::function = &sphere_function,
-     p::bounding_object = K::Sphere_3(CGAL::ORIGIN, 2.)
+    (sphere_function, K::Sphere_3(CGAL::ORIGIN, K::FT(2))
      );
   /// [Domain creation]
 
   // Mesh criteria
   Spherical_sizing_field size;
-  Mesh_criteria criteria(facet_angle=30, facet_size=0.1, facet_distance=0.025,
-                         cell_radius_edge_ratio=2, cell_size=size);
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(0.1).facet_distance(0.025).
+                                 cell_radius_edge_ratio(2).cell_size(size));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb());
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

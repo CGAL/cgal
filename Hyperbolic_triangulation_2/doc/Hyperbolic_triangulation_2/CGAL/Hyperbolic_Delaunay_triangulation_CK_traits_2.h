@@ -19,7 +19,7 @@ triangulations and dual objects when the input points have rational coordinates.
 
 \sa `Hyperbolic_Delaunay_triangulation_traits_2`
 
-\cgalModels `HyperbolicDelaunayTriangulationTraits_2`
+\cgalModels{HyperbolicDelaunayTriangulationTraits_2}
 */
 
 template < class K >
@@ -35,7 +35,7 @@ public:
     typedef typename K::Circular_arc_point_2        Hyperbolic_Voronoi_point_2;
     typedef typename K::Circular_arc_2              Circular_arc_2;
     typedef typename K::Line_arc_2                  Line_arc_2;
-    typedef boost::variant<Circular_arc_2,
+    typedef std::variant<Circular_arc_2,
                            Line_arc_2>              Hyperbolic_segment_2;
     typedef typename K::Triangle_2                  Hyperbolic_triangle_2;
   /// @}

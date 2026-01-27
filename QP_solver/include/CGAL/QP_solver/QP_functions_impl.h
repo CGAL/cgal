@@ -36,7 +36,7 @@ namespace QP_functions_detail {
     return true;
   }
 
-  // test whether the row vectors of A that correpsond to equations
+  // test whether the row vectors of A that correspond to equations
   // are linearly independent; this is done using type ET. The value
   // type of LinearInequalitySystem must be convertible to ET
   template <class Ar, class ET>

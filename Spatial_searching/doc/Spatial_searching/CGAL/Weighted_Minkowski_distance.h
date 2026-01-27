@@ -10,10 +10,13 @@ defined by \f$ l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}\f$.
 For the purpose of the distance computations it is more efficient to compute
 the transformed distance \f$ {\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}\f$ instead of the actual distance.
 
+\note As this distance involves the computation of a power it is not
+done exact but with floating point arithmetic.
+
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `Search_traits_2`.
 
-\cgalModels `OrthogonalDistance`
+\cgalModels{OrthogonalDistance}
 
 \sa `OrthogonalDistance`
 \sa `CGAL::Euclidean_distance<Traits>`
@@ -52,7 +55,8 @@ Constructor implementing \f$ l_2\f$ metric for \f$ d\f$-dimensional points.
 Weighted_Minkowski_distance(int d,Traits t=Traits());
 
 /*!
-Constructor implementing the \f$ l_{power}(weights)\f$ metric. \f$ power \leq0\f$ denotes the \f$ l_{\infty}(weights)\f$ metric.
+Constructor implementing the \f$ l_{power}(weights)\f$ metric. `power=0`
+denotes the \f$ l_{\infty}(weights)\f$ metric.
 The values in the iterator range `[wb,we)` are the weight.
 */
 template <class InputIterator>

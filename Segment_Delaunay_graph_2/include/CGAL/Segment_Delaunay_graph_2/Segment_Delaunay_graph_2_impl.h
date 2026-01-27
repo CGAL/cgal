@@ -10,6 +10,10 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
+#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_SDG_2_IMPL_H
+#define CGAL_SEGMENT_DELAUNAY_GRAPH_2_SDG_2_IMPL_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
 
 // class implementation continued
 //=================================
@@ -2118,9 +2122,9 @@ remove_degree_d_vertex(const Vertex_handle& v)
   // here we find a site in the small diagram that serves as a
   // starting point for finding all conflicts.
   // To do that we find the nearest neighbor of t if t is a point;
-  // t is guarranteed to have a conflict with its nearest neighbor
+  // t is guaranteed to have a conflict with its nearest neighbor
   // If t is a segment, then one endpoint of t is enough; t is
-  // guarranteed to have a conflict with the Voronoi edges around
+  // guaranteed to have a conflict with the Voronoi edges around
   // this endpoint
   if ( t.is_point() ) {
     vn = sdg_small.nearest_neighbor( t.point() );
@@ -2541,11 +2545,9 @@ Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 arrangement_type(const Site_2& p, const Site_2& q) const
 {
   typedef typename Geom_traits::Arrangement_type_2  AT2;
-  typedef typename AT2::result_type                 Arrangement_type;
-
   Arrangement_type res = geom_traits().arrangement_type_2_object()(p, q);
 
-  // The valeus that have to be treated are the following:
+  // The values that have to be treated are the following:
   // DISJOINT, TOUCH_1, TOUCH_2, CROSSING, IDENTICAL, INTERIOR,
   // TOUCH_11_INTERIOR_1, TOUCH_12_INTERIOR_1, TOUCH_21_INTERIOR_1 and
   // TOUCH_22_INTERIOR_1.
@@ -2876,7 +2878,7 @@ copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
   // then copy the diagram
   DG::operator=(other);
 
-  // now we have to update the sotrage sites in each vertex of the
+  // now we have to update the storage sites in each vertex of the
   // diagram and also update the
 
   // then update the storage sites for each vertex
@@ -3127,7 +3129,7 @@ Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_output(std::ostream& os, Point_handle_mapper& P,
             bool print_point_container) const
 {
-  // ouput to a file
+  // output to a file
   size_type n = this->_tds.number_of_vertices();
   size_type m = this->_tds.number_of_full_dim_faces();
 
@@ -3325,3 +3327,5 @@ file_input(std::istream& is, bool read_handle_vector,
 } //namespace CGAL
 
 // EOF
+
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_SDG_2_IMPL_H

@@ -30,7 +30,7 @@ int main (int argc, char *argv[])
     std::cerr << "Usage: " << argv[0] << " <file name> <method>"
               << std::endl
               << "method is either:" << std::endl
-              << "    -a for aggragated insertion;" << std::endl
+              << "    -a for aggregated insertion;" << std::endl
               << "    -n for incremental insertion with naive point-location;"
               << std::endl
               << "    -w for incremental insertion with walk point-location."

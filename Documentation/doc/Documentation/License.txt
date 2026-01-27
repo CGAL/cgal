@@ -19,7 +19,7 @@ based on GPLed \cgal data structures, obliges you to distribute the
 source code of your software under the GPL.
 
 The exact license terms can be found at the  Free Software Foundation
-web site: http://www.gnu.org/copyleft/gpl.html.
+web site: https://www.gnu.org/licenses/gpl-3.0.html.
 
 \section licensesLGPL GNU LGPL
 
@@ -29,7 +29,7 @@ In contrast to the GPL, there is no obligation to distribute the source
 code of software you build on top of LGPLed \cgal data structures.
 
 The exact license terms can be found at the Free Software Foundation web site:
-http://www.gnu.org/copyleft/lesser.html.
+https://www.gnu.org/licenses/lgpl-3.0.html.
 
 \section licensesRationale Rationale of the License Choice
 
@@ -46,7 +46,7 @@ The package overview states for each package under which license it is distribut
 
 Users who cannot comply with the Open Source license terms can buy individual
 data structures under various commercial licenses from GeometryFactory:
-http://www.geometryfactory.com/. License fees paid by commercial
+https://www.geometryfactory.com/. License fees paid by commercial
 customers are reinvested in R\&D performed by the \cgal project partners,
 as well as in evolutive maintenance.
 
@@ -66,6 +66,8 @@ To enable checking, users have to define one of the following macros:
 
 The license checking is not a mean to control users as no information
 is collected or transmitted.
+
+\note With `Clang`, paths to CGAL headers shall not be passed with `-isystem` option in order for the warning messages to be emitted.
 
 \section licensesWhere Determining the license of a CGAL file
 

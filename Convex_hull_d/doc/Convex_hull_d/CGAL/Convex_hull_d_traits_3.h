@@ -13,7 +13,7 @@ low-dimensional standard kernel model, e.g. `Homogeneous<RT>` or
 `Cartesian<FT>` for the fixed 3-dimensional usage of
 `Convex_hull_d`.
 
-\cgalModels `ConvexHullTraits_d`
+\cgalModels{ConvexHullTraits_d}
 
 */
 template< typename R >

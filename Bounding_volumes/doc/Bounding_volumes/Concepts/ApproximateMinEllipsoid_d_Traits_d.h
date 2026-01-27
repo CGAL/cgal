@@ -6,13 +6,13 @@
 This concept defines the requirements for traits classes of
 `CGAL::Approximate_min_ellipsoid_d<Traits>`.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>`
-\cgalHasModel `CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>`
-\cgalHasModel `CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>}
+\cgalHasModels{CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>}
+\cgalHasModels{CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Min_ellipse_2<Traits>`
 

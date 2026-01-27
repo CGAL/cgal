@@ -17,9 +17,9 @@ Currently it only supports the insertions of sites.
         models of the concepts `SegmentDelaunayGraphVertexBase_2` and `TriangulationFaceBase_2`, respectively.
         It defaults to:
         \code
-        `CGAL::Triangulation_data_structure_2<
+        CGAL::Triangulation_data_structure_2<
                   CGAL::Segment_Delaunay_graph_vertex_base_2<St>,
-                  CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`
+                  CGAL::Segment_Delaunay_graph_face_base_2<Gt> >
         \endcode
 
 \cgalHeading{Storage}
@@ -35,7 +35,7 @@ A segment Delaunay graph can be seen as a container of faces and
 vertices. Therefore the `Segment_Delaunay_graph_2` class provides several iterators
 and circulators that allow to traverse it (completely or partially).
 
-\cgalModels `DelaunayGraph_2`
+\cgalModels{DelaunayGraph_2}
 
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`

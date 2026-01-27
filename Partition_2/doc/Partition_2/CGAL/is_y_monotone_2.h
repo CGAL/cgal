@@ -22,7 +22,7 @@ type `std::iterator_traits<InputIterator>::%value_type` is defined.
 
 \cgalHeading{Implementation}
 
-This function requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices.
+This function requires \cgalBigO{n} time for a polygon with \f$ n\f$ vertices.
 
 \cgalHeading{Example}
 

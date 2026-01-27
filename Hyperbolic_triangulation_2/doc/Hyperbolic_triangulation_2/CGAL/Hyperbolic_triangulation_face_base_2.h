@@ -14,7 +14,7 @@ offered by \cgal.
 \tparam Fb must be a model of `TriangulationFaceBase_2`. %Defaults to `Triangulation_face_base_2<Gt>`.
 
 
-\cgalModels `HyperbolicTriangulationFaceBase_2`
+\cgalModels{HyperbolicTriangulationFaceBase_2}
 */
 
 

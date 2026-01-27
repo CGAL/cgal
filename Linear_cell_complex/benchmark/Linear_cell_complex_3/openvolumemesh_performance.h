@@ -55,7 +55,7 @@ private:
     const VertexHandle cvh = mesh.edge(_eh).from_vertex();
     const VertexHandle tvh = mesh.edge(_eh).to_vertex();
 
-    const HalfEdgeHandle he = mesh.halfedge_handle(_eh, 0);
+    const HalfEdgeHandle he = mesh.halfedge_descriptor(_eh, 0);
 
     std::set<CellHandle> toBeProcessed;
 
@@ -92,7 +92,7 @@ private:
       HalfFaceHandle curHF = *hfs.begin();
       HalfEdgeHandle curHE = *mesh.halfface(curHF).halfedges().begin();
       curHF = mesh.adjacent_halfface_in_cell(curHF, curHE);
-      curHE = mesh.opposite_halfedge_handle(curHE);
+      curHE = mesh.opposite_halfedge_descriptor(curHE);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
 
       VertexHandle nextVH = mesh.halfedge(curHE).to_vertex();
@@ -214,7 +214,7 @@ private:
     if(!hf0.is_valid())
     {
       // Create face
-      hf0 = mesh.halfface_handle(mesh.add_face(tvs), 0);
+      hf0 = mesh.halfface_descriptor(mesh.add_face(tvs), 0);
     }
 
     tvs[0] = _vs[0];
@@ -226,7 +226,7 @@ private:
     if(!hf1.is_valid())
     {
       // Create face
-      hf1 = mesh.halfface_handle(mesh.add_face(tvs), 0);
+      hf1 = mesh.halfface_descriptor(mesh.add_face(tvs), 0);
     }
 
     tvs[0] = _vs[1];
@@ -238,7 +238,7 @@ private:
     if(!hf2.is_valid())
     {
       // Create face
-      hf2 = mesh.halfface_handle(mesh.add_face(tvs), 0);
+      hf2 = mesh.halfface_descriptor(mesh.add_face(tvs), 0);
     }
 
     tvs[0] = _vs[0];
@@ -250,7 +250,7 @@ private:
     if(!hf3.is_valid())
     {
       // Create face
-      hf3 = mesh.halfface_handle(mesh.add_face(tvs), 0);
+      hf3 = mesh.halfface_descriptor(mesh.add_face(tvs), 0);
     }
 
     if(hf0.is_valid() && hf1.is_valid() &&
@@ -419,7 +419,7 @@ private:
       VertexHandle vh2 = mesh.halfedge(curHE).from_vertex();
 
       curHF = mesh.adjacent_halfface_in_cell(curHF, curHE);
-      curHE = mesh.opposite_halfedge_handle(curHE);
+      curHE = mesh.opposite_halfedge_descriptor(curHE);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
 
       VertexHandle vh3 = mesh.halfedge(curHE).to_vertex();
@@ -427,7 +427,7 @@ private:
       ohf3 = curHF;
 
       curHF = mesh.adjacent_halfface_in_cell(curHF, curHE);
-      curHE = mesh.opposite_halfedge_handle(curHE);
+      curHE = mesh.opposite_halfedge_descriptor(curHE);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
 
@@ -459,27 +459,27 @@ private:
 
       std::vector<HalfFaceHandle> hfs(4);
 
-      hfs[0] = mesh.halfface_handle(fh0, 0);
-      hfs[1] = mesh.halfface_handle(fh1, 0);
-      hfs[2] = mesh.halfface_handle(fh2, 0);
+      hfs[0] = mesh.halfface_descriptor(fh0, 0);
+      hfs[1] = mesh.halfface_descriptor(fh1, 0);
+      hfs[2] = mesh.halfface_descriptor(fh2, 0);
       hfs[3] = ohf0;
       mesh.add_cell(hfs);
 
-      hfs[0] = mesh.halfface_handle(fh3, 0);
-      hfs[1] = mesh.halfface_handle(fh4, 0);
-      hfs[2] = mesh.halfface_handle(fh0, 1);
+      hfs[0] = mesh.halfface_descriptor(fh3, 0);
+      hfs[1] = mesh.halfface_descriptor(fh4, 0);
+      hfs[2] = mesh.halfface_descriptor(fh0, 1);
       hfs[3] = ohf1;
       mesh.add_cell(hfs);
 
-      hfs[0] = mesh.halfface_handle(fh2, 1);
-      hfs[1] = mesh.halfface_handle(fh4, 1);
-      hfs[2] = mesh.halfface_handle(fh5, 0);
+      hfs[0] = mesh.halfface_descriptor(fh2, 1);
+      hfs[1] = mesh.halfface_descriptor(fh4, 1);
+      hfs[2] = mesh.halfface_descriptor(fh5, 0);
       hfs[3] = ohf2;
       mesh.add_cell(hfs);
 
-      hfs[0] = mesh.halfface_handle(fh1, 1);
-      hfs[1] = mesh.halfface_handle(fh3, 1);
-      hfs[2] = mesh.halfface_handle(fh5, 1);
+      hfs[0] = mesh.halfface_descriptor(fh1, 1);
+      hfs[1] = mesh.halfface_descriptor(fh3, 1);
+      hfs[2] = mesh.halfface_descriptor(fh5, 1);
       hfs[3] = ohf3;
       mesh.add_cell(hfs);
     }
@@ -566,7 +566,7 @@ private:
       VertexHandle vh2 = mesh.halfedge(curHE).from_vertex();
 
       curHF = mesh.adjacent_halfface_in_cell(curHF, curHE);
-      curHE = mesh.opposite_halfedge_handle(curHE);
+      curHE = mesh.opposite_halfedge_descriptor(curHE);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
 
       VertexHandle vh3 = mesh.halfedge(curHE).to_vertex();
@@ -574,7 +574,7 @@ private:
       ohf3 = curHF;
 
       curHF = mesh.adjacent_halfface_in_cell(curHF, curHE);
-      curHE = mesh.opposite_halfedge_handle(curHE);
+      curHE = mesh.opposite_halfedge_descriptor(curHE);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
       curHE = mesh.next_halfedge_in_halfface(curHE, curHF);
 
@@ -606,9 +606,9 @@ private:
 
       std::vector<HalfFaceHandle> hfs(4);
 
-      hfs[0] = mesh.halfface_handle(fh0, 0);
-      hfs[1] = mesh.halfface_handle(fh1, 0);
-      hfs[2] = mesh.halfface_handle(fh2, 0);
+      hfs[0] = mesh.halfface_descriptor(fh0, 0);
+      hfs[1] = mesh.halfface_descriptor(fh1, 0);
+      hfs[2] = mesh.halfface_descriptor(fh2, 0);
       hfs[3] = ohf0;
       mesh.add_cell(hfs);
 
@@ -618,21 +618,21 @@ private:
       HalfEdgeHandle t2 = mesh.halfedge(vhc, vh0);
       save.push_back(t2);
 
-      hfs[0] = mesh.halfface_handle(fh3, 0);
-      hfs[1] = mesh.halfface_handle(fh4, 0);
-      hfs[2] = mesh.halfface_handle(fh0, 1);
+      hfs[0] = mesh.halfface_descriptor(fh3, 0);
+      hfs[1] = mesh.halfface_descriptor(fh4, 0);
+      hfs[2] = mesh.halfface_descriptor(fh0, 1);
       hfs[3] = ohf1;
       mesh.add_cell(hfs);
 
-      hfs[0] = mesh.halfface_handle(fh2, 1);
-      hfs[1] = mesh.halfface_handle(fh4, 1);
-      hfs[2] = mesh.halfface_handle(fh5, 0);
+      hfs[0] = mesh.halfface_descriptor(fh2, 1);
+      hfs[1] = mesh.halfface_descriptor(fh4, 1);
+      hfs[2] = mesh.halfface_descriptor(fh5, 0);
       hfs[3] = ohf2;
       mesh.add_cell(hfs);
 
-      hfs[0] = mesh.halfface_handle(fh1, 1);
-      hfs[1] = mesh.halfface_handle(fh3, 1);
-      hfs[2] = mesh.halfface_handle(fh5, 1);
+      hfs[0] = mesh.halfface_descriptor(fh1, 1);
+      hfs[1] = mesh.halfface_descriptor(fh3, 1);
+      hfs[2] = mesh.halfface_descriptor(fh5, 1);
       hfs[3] = ohf3;
       mesh.add_cell(hfs);
     }
@@ -651,7 +651,7 @@ private:
         it != save.end();
         ++it)
     {
-      EdgeHandle eh = mesh.edge_handle(*it);
+      EdgeHandle eh = mesh.edge_descriptor(*it);
       //edge_collapse(eh);
       //++count;
       //std::cout << count << std::endl;

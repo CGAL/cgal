@@ -6,14 +6,16 @@ The concept `RangeSearchTraits` defines the requirements for the template
 parameter of the search classes. This concept also defines requirements to
 range search queries in a model of `SpatialTree`.
 
-\cgalRefines `SearchTraits`
+\cgalRefines{SearchTraits}
 
-\cgalHasModel `CGAL::Cartesian_d<FT>`
-\cgalHasModel `CGAL::Homogeneous_d<RT>`
-\cgalHasModel `CGAL::Epick_d<DimensionTag>`
-\cgalHasModel `CGAL::Epeck_d<DimensionTag>`
-\cgalHasModel `CGAL::Search_traits_2<Kernel>`
-\cgalHasModel `CGAL::Search_traits_3<Kernel>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Cartesian_d<FT>}
+\cgalHasModels{CGAL::Homogeneous_d<RT>}
+\cgalHasModels{CGAL::Epick_d<DimensionTag>}
+\cgalHasModels{CGAL::Epeck_d<DimensionTag>}
+\cgalHasModels{CGAL::Search_traits_2<Kernel>}
+\cgalHasModels{CGAL::Search_traits_3<Kernel>}
+\cgalHasModelsEnd
 
 \sa `SearchTraits`
 \sa `CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>`

@@ -14,7 +14,6 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/iterator.h>
-#include <boost/unordered_set.hpp>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <boost/graph/filtered_graph.hpp>
@@ -23,6 +22,8 @@
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/assertions.h>
+
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -206,13 +207,11 @@ struct Regularization_graph
       prevent_unselection (prevent_unselection)
   {
     labels.reserve(num_faces(fg));
-    std::size_t nb_selected = 0;
     for (fg_face_descriptor fd : faces(fg))
     {
       if (get(is_selected_map,fd))
       {
         labels.push_back(1);
-        ++ nb_selected;
       }
       else
         labels.push_back(0);
@@ -485,7 +484,7 @@ reduce_face_selection(
     \cgalParamNEnd
 
     \cgalParamNBegin{prevent_unselection}
-      \cgalParamDescription{Boolean used to indicate if selection can be only expanded or if it can also be shrinked.}
+      \cgalParamDescription{Boolean used to indicate if selection can be only expanded or if it can also be shrunk.}
       \cgalParamType{`bool`}
       \cgalParamDefault{`false`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
@@ -544,7 +543,7 @@ regularize_face_selection_borders(
                             (face_index_map));
 
   for (mesh_face_descriptor fd : faces(mesh))
-    put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
+    put(is_selected, fd, (graph.labels[get(face_index_map,fd)] != 0));
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -1038,7 +1037,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  boost::unordered_set<vertex_descriptor> vertices_queue;
+  std::unordered_set<vertex_descriptor> vertices_queue;
 
   // collect vertices belonging to at least a triangle that will be removed
   for(face_descriptor fd : faces_to_be_deleted)
@@ -1131,8 +1130,8 @@ int euler_characteristic_of_selection(const FaceRange& face_selection,
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  boost::unordered_set<vertex_descriptor> sel_vertices;
-  boost::unordered_set<edge_descriptor> sel_edges;
+  std::unordered_set<vertex_descriptor> sel_vertices;
+  std::unordered_set<edge_descriptor> sel_edges;
   for(face_descriptor f : face_selection)
   {
     for(halfedge_descriptor h : halfedges_around_face(halfedge(f, pm), pm))

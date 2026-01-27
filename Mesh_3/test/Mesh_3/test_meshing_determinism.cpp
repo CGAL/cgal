@@ -59,6 +59,7 @@ void test()
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.2,
+                         edge_distance = 0.002,
                          facet_angle = 25,
                          facet_size = 0.2,
                          facet_distance = 0.002,
@@ -68,7 +69,10 @@ void test()
   // iterate
   std::vector<std::string> output_c3t3;
   std::vector<std::string> output_surfaces;
-  output_c3t3.reserve(5 * nb_runs);
+
+  const std::size_t nb_operations = 5;
+
+  output_c3t3.reserve(nb_operations * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
@@ -76,7 +80,7 @@ void test()
                                         no_perturb(),
                                         no_exude());
     std::ostringstream oss;
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str()); //[5*i]
     oss.clear();
     Polyhedron out_poly;
@@ -88,7 +92,7 @@ void test()
 
     //LLOYD (1)
     CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+1]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -99,7 +103,7 @@ void test()
 
     //ODT (2)
     CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_odt);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+2]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -110,7 +114,7 @@ void test()
 
     //PERTURB (3)
     CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+3]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -121,7 +125,7 @@ void test()
 
     //EXUDE (4)
     CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
-    c3t3.output_to_medit(oss);
+    CGAL::IO::write_MEDIT(oss, c3t3);
     output_c3t3.push_back(oss.str());//[i*5+4]
     oss.clear();
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
@@ -133,14 +137,16 @@ void test()
     if(i == 0)
       continue;
     //else check
-    for(std::size_t j = 0; j < 5; ++j)
+    for(std::size_t j = 0; j < nb_operations; ++j)
     {
-      if(0 != output_c3t3[5*(i-1)+j].compare(output_c3t3[5*i+j]))
+      std::size_t id1 = nb_operations * (i - 1) + j;
+      std::size_t id2 = nb_operations * i + j;
+      if(0 != output_c3t3[id1].compare(output_c3t3[id2]))
       {
         std::cerr << "Meshing operation " << j << " is not deterministic.\n";
         assert(false);
       }
-      if (0 != output_surfaces[5 * (i - 1) + j].compare(output_surfaces[5 * i + j]))
+      if (0 != output_surfaces[id1].compare(output_surfaces[id2]))
       {
         std::cerr << "Output surface after operation " << j << " is not deterministic.\n";
         assert(false);
@@ -151,8 +157,11 @@ void test()
 
 int main(int, char*[])
 {
+  std::cout << "Sequential test" << std::endl;
   test<CGAL::Sequential_tag>();
+
 #ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "\n\nParallel with 1 thread test" << std::endl;
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test<CGAL::Parallel_tag>();
 #endif

@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Convex_decomposition_3.h>
 
+#include <CGAL/enum.h>
+#include <CGAL/Origin.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 239

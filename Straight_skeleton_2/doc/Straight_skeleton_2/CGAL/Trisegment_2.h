@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-A straight skeleton event is the simultaneous collision of three offseted oriented straight line segments
-`e0*`,`e1*`,`e2*` (`e*` denotes an _offseted_ edge).
+A straight skeleton event is the simultaneous collision of three offsetted oriented straight line segments
+`e0*`,`e1*`,`e2*` (`e*` denotes an _offsetted_ edge).
 
 This record stores the segments corresponding to the INPUT edges `(e0,e1,e2)` whose offsets intersect
 at the event along with their collinearity.
@@ -24,29 +24,42 @@ a trisegment is actually a node in a binary tree.
 
 Since trisegments are tree nodes they must always be handled via the nested smart pointer type `Self_ptr`.
 
-\tparam K_ must be a model of `Kernel`
-\tparam Segment_ must be a model of `Kernel::Segment_2`
+\tparam K must be a model of `Kernel`
+\tparam Segment must be a model of `Kernel::Segment_2`
 
 \note Objects of this type should be constructed using the traits' functor `Construct_ss_trisegment_2`
 (see the concept `StraightSkeletonBuilderTraits_2`).
 
 \sa `PolygonOffsetBuilderTraits_2`
 */
-template< typename K_, typename Segment_ >
+template< typename K, typename Segment >
 class Trisegment_2
 {
 public:
-  typedef boost::intrusive_ptr<Trisegment_2<K_, Segment_> > Self_ptr ;
+  /// the field type
+  typedef typename K::FT FT ;
 
   /// returns `e0`.
-  const Segment_& e0() const;
+  const Segment& e0() const;
 
   /// returns `e1`.
-  const Segment_& e1() const;
+  const Segment& e1() const;
 
   /// returns `e2`.
-  const Segment_& e2() const;
+  const Segment& e2() const;
+
+  /// returns the weight of the edge `e0`.
+  const FT& w0() const;
+
+  /// returns the weight of the edge `e1`.
+  const FT& w1() const;
+
+  /// returns the weight of the edge `e1`.
+  const FT& w2() const;
 
 }; /* end Trisegment_2 */
+
+/// @brief a smart pointer to a `Trisegment_2` object
+using Trisegment_2_ptr = std::shared_ptr<Trisegment_2<K, Segment> > ;
 
 } /* end namespace CGAL */

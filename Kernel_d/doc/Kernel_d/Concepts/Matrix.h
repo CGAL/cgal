@@ -272,7 +272,7 @@ iterator begin();
 an iterator pointing beyond the last entry
 of \f$ M\f$.
 */
-terator end();
+iterator end();
 
 /*!
 an iterator pointing to the first entry
@@ -284,7 +284,7 @@ const_iterator begin() const;
 an iterator pointing beyond the last entry
 of \f$ M\f$.
 */
-const_terator end() const;
+const_iterator end() const;
 
 
 /*!
@@ -325,7 +325,7 @@ Matrix operator-();
 /*!
 Multiplication.
 
-\pre `M.column_dimension() = M1.row_dimension()`
+\pre `M.column_dimension() == M1.row_dimension()`
 */
 Matrix operator*(const Matrix& M1)
 ;
@@ -334,7 +334,7 @@ Matrix operator*(const Matrix& M1)
 Multiplication with
 vector.
 
-\pre `M.column_dimension() = vec.dimension()`
+\pre `M.column_dimension() == vec.dimension()`
 */
 Vector operator*(const Vector& vec) ;
 

@@ -1,0 +1,43 @@
+  name: List workflow last run
+  on:
+    workflow_dispatch:
+    schedule:
+      - cron: "0 10 * * 1"
+  env:
+    GH_TOKEN: ${{ github.token }}
+  jobs:
+    list_workflow:
+      runs-on: ubuntu-latest
+      outputs:
+        messages: ${{ steps.cat_output.outputs.message }}
+      steps:
+        - name: checkout
+          uses: actions/checkout@v4
+        - name: run script
+          run: |
+            chmod +x ./Scripts/developer_scripts/list_cgal_workflows_last_run.sh
+            ./Scripts/developer_scripts/list_cgal_workflows_last_run.sh > output.md
+        - name: convert markdown to html
+          run: |
+            sudo apt-get update && sudo apt-get install -y pandoc
+            pandoc -f markdown -t html --self-contained --css=.github/workflows/list_workflow_last_run.css -o output.html output.md
+        - name: set_output
+          id: cat_output
+          run: |
+            delimiter="$(openssl rand -hex 8)"
+              echo "message<<${delimiter}" >> "${GITHUB_OUTPUT}"
+              echo "Subject:List workflow run \nContent-Type: text/html; charset=\"UTF-8\"\n" >> "${GITHUB_OUTPUT}"
+              echo "<html><body>" >> "${GITHUB_OUTPUT}"
+              cat output.html >> "${GITHUB_OUTPUT}"
+              echo "</body></html>" >> "${GITHUB_OUTPUT}"
+              echo "${delimiter}" >> "${GITHUB_OUTPUT}"
+    call_send_email:
+      needs: list_workflow
+      uses: ./.github/workflows/send_email.yml
+      with:
+        message: ${{needs.list_workflow.outputs.messages}}
+      secrets:
+        email: ${{ secrets.CGAL_SEND_WORKFLOW_LIST_EMAIL_TO }}
+        private_key: ${{ secrets.CGAL_SEND_WORKFLOW_LIST_EMAIL_SSH_PRIVATE_KEY }}
+        user: ${{ secrets.CGAL_SEND_WORKFLOW_LIST_EMAIL_SSH_USER }}
+        host: ${{ secrets.CGAL_SEND_WORKFLOW_LIST_EMAIL_SSH_HOST }}

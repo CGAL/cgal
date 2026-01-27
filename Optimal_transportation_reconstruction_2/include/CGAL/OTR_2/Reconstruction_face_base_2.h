@@ -16,8 +16,9 @@
 
 
 #include <CGAL/OTR_2/Cost.h>
-#include <CGAL/OTR_2/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/Time_stamper.h>
 
 #include <vector>
 
@@ -51,7 +52,7 @@ public:
   typedef typename Traits_::FT    FT;
   typedef OTR_2::Cost<FT>          Cost_;
   typedef OTR_2::Sample<Traits_>   Sample_;
-  typedef std::vector<Sample_*>   Sample_vector;
+  typedef std::vector<int>   Sample_vector;
 
 private:
   Sample_vector m_samples[3];
@@ -62,6 +63,8 @@ private:
   int   m_plan[3];
 
   FT m_relevance[3];
+
+  std::size_t time_stamp_ = std::size_t(-2);
 
 public:
   Reconstruction_face_base_2()
@@ -176,7 +179,7 @@ public:
   const Sample_vector& samples(int edge) const { return m_samples[edge]; }
   Sample_vector& samples(int edge) { return m_samples[edge]; }
 
-  void add_sample(int edge, Sample_* sample)
+  void add_sample(int edge, int sample)
   {
     m_samples[edge].push_back(sample);
   }
@@ -191,6 +194,18 @@ public:
     for (int i = 0; i < 3; ++i)
       clean_samples(i);
   }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
 
 //---------------STRUCT LESS FACE_HANDLE---------------------

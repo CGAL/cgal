@@ -14,7 +14,7 @@ using the items converter `ic` to convert the geometric embedding to the types o
 \sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCV>`
 */
 template <class Target_skeleton, class Source_skeleton, class Items_converter>
-boost::shared_ptr<Target_skeleton>
+std::shared_ptr<Target_skeleton>
 convert_straight_skeleton_2( Source_skeleton const& s,
                              Items_converted const& ic = Items_converter() );
 
@@ -77,7 +77,7 @@ Straight_skeleton_converter_2( const Items_converter& c = Items_converter() );
 /*!
 returns a new straight skeleton data structure with the same combinatorial and geometric data as `s` using the items converter to convert the geometric embeeding to the types of the target traits.
 */
-boost::shared_ptr<Target_skeleton> operator()( const Source_skeleton& s) const;
+std::shared_ptr<Target_skeleton> operator()( const Source_skeleton& s) const;
 
 /// @}
 
@@ -87,7 +87,7 @@ boost::shared_ptr<Target_skeleton> operator()( const Source_skeleton& s) const;
 /*!
 \ingroup PkgStraightSkeleton2Auxiliary
 
-\cgalModels `StraightSkeletonItemsConverter_2`
+\cgalModels{StraightSkeletonItemsConverter_2}
 
 `Straight_skeleton_items_converter_2` is a model of the `StraightSkeletonItemsConverter_2` concept
 

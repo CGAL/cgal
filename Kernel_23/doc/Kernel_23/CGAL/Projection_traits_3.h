@@ -7,7 +7,7 @@ The class `Projection_traits_3` works similarly to the `Projection_traits_xy_3`,
 `Projection_traits_xz_3`, and `Projection_traits_yz_3` traits classes, enabling
 the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
-\tparam K must be a model of `Kernel`
+\tparam GeomTraits must be a model of `ProjectionTraitsGeometricTraits_3`
 
 \note Internal constructions (projections) are used in the predicate and
 construction functors of this class. If `K` is a model of `Kernel` providing exact
@@ -15,18 +15,13 @@ constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
 provides exact predicates.
 
-\cgalModels `TriangulationTraits_2`
-\cgalModels `DelaunayTriangulationTraits_2`
-\cgalModels `ConstrainedTriangulationTraits_2`
-\cgalModels `PolygonTraits_2`
-\cgalModels `ConformingDelaunayTriangulationTraits_2`
-\cgalModels `Barycentric_coordinates::BarycentricTraits_2`
+\cgalModels{TriangulationTraits_2,DelaunayTriangulationTraits_2,ConstrainedTriangulationTraits_2,PolygonTraits_2,ConformingDelaunayTriangulationTraits_2,Barycentric_coordinates::BarycentricTraits_2}
 
 \sa `CGAL::Projection_traits_xy_3`
 \sa `CGAL::Projection_traits_xz_3`
 \sa `CGAL::Projection_traits_yz_3`
 */
-template <class K>
+template <class GeomTraits>
 class Projection_traits_3
 {
 public:
@@ -45,7 +40,7 @@ public:
    *
    * \param normal a vector orthogonal to the projection plane.
    */
-  Projection_traits_3(const typename K::Vector_3& normal);
+  Projection_traits_3(const typename GeomTraits::Vector_3& normal);
 
   ///@}
 };

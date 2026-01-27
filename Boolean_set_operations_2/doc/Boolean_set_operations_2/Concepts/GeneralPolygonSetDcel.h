@@ -9,14 +9,16 @@ It maintains the incidence relation among them. The halfedges are ordered
 in pairs sometimes referred to as twins, such that each halfedge pair
 represent an edge.
 
-A model of the `GeneralPolygonSetDcel` simply refines `ArrangementDcel`,
+A model of the `GeneralPolygonSetDcel` simply refines `AosDcel`,
 the `Halfedge` and `Face` types being models of the concepts
 `GeneralPolygonSetDcelHalfedge` and `GeneralPolygonSetDcelFace`
 respectively
 
-\cgalRefines `ArrangementDcel`
+\cgalRefines{AosDcel}
 
-\cgalHasModel `CGAL::Gps_default_dcel<Traits>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Gps_default_dcel<Traits>}
+\cgalHasModelsEnd
 
 \sa `GeneralPolygonSetDcelFace`
 \sa `GeneralPolygonSetDcelHalfedge`
@@ -26,4 +28,3 @@ respectively
 class GeneralPolygonSetDcel {};
 
 /* end GeneralPolygonSetDcel */
-

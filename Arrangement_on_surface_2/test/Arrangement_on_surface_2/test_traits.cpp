@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
    * and read_xcurve() for construction from "IO_base_test.h"
    *
    * read_point(), read_curve() and read_xcurve() from "IO_base_test.h"
-   * construct the appriopriate point, curve and xcurve using appropriate
+   * construct the appropriate point, curve and xcurve using appropriate
    * GEOM_TRAITS i.e. in this case POLYCURVE_CONIC_GEOM_TRAITS and using
    * overridden functions. Note: these functions only make 1 curve. So if we
    * want a polycurve, it should be taken care of in these function.

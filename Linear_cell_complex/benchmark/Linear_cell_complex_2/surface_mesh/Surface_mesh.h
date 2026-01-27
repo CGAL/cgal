@@ -34,12 +34,12 @@ public: //------------------------------------------------------ topology types
 
     /// Base class for all topology types (internally it is basically an index)
     /// \sa Vertex, Halfedge, Edge, Face
-    class Base_handle
+    class Base_descriptor
     {
     public:
 
         /// constructor
-        explicit Base_handle(int _idx=-1) : idx_(_idx) {}
+        explicit Base_descriptor(int _idx=-1) : idx_(_idx) {}
 
         /// Get the underlying index of this handle
         int idx() const { return idx_; }
@@ -51,17 +51,17 @@ public: //------------------------------------------------------ topology types
         bool is_valid() const { return idx_ != -1; }
 
         /// are two handles equal?
-        bool operator==(const Base_handle& _rhs) const {
+        bool operator==(const Base_descriptor& _rhs) const {
             return idx_ == _rhs.idx_;
         }
 
         /// are two handles different?
-        bool operator!=(const Base_handle& _rhs) const {
+        bool operator!=(const Base_descriptor& _rhs) const {
             return idx_ != _rhs.idx_;
         }
 
         /// compare operator useful for sorting handles
-        bool operator<(const Base_handle& _rhs) const {
+        bool operator<(const Base_descriptor& _rhs) const {
             return idx_ < _rhs.idx_;
         }
 
@@ -77,38 +77,38 @@ public: //------------------------------------------------------ topology types
 
     /// this type represents a vertex (internally it is basically an index)
     ///  \sa Halfedge, Edge, Face
-    struct Vertex : public Base_handle
+    struct Vertex : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Vertex(int _idx=-1) : Base_handle(_idx) {}
+        explicit Vertex(int _idx=-1) : Base_descriptor(_idx) {}
         std::ostream& operator<<(std::ostream& os) const { return os << 'v' << idx(); }
     };
 
 
     /// this type represents a halfedge (internally it is basically an index)
     /// \sa Vertex, Edge, Face
-    struct Halfedge : public Base_handle
+    struct Halfedge : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Halfedge(int _idx=-1) : Base_handle(_idx) {}
+        explicit Halfedge(int _idx=-1) : Base_descriptor(_idx) {}
     };
 
 
     /// this type represents an edge (internally it is basically an index)
     /// \sa Vertex, Halfedge, Face
-    struct Edge : public Base_handle
+    struct Edge : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Edge(int _idx=-1) : Base_handle(_idx) {}
+        explicit Edge(int _idx=-1) : Base_descriptor(_idx) {}
     };
 
 
     /// this type represents a face (internally it is basically an index)
     /// \sa Vertex, Halfedge, Edge
-    struct Face : public Base_handle
+    struct Face : public Base_descriptor
     {
         /// default constructor (with invalid index)
-        explicit Face(int _idx=-1) : Base_handle(_idx) {}
+        explicit Face(int _idx=-1) : Base_descriptor(_idx) {}
     };
 
 
@@ -491,7 +491,7 @@ public: //---------------------------------------------------- circulator types
             return !operator==(rhs);
         }
 
-        /// pre-increment (rotate couter-clockwise)
+        /// pre-increment (rotate counter-clockwise)
         Vertex_around_vertex_circulator& operator++()
         {
             assert(mesh_);
@@ -549,7 +549,7 @@ public: //---------------------------------------------------- circulator types
             return !operator==(rhs);
         }
 
-        /// pre-increment (rotate couter-clockwise)
+        /// pre-increment (rotate counter-clockwise)
         Halfedge_around_vertex_circulator& operator++()
         {
             assert(mesh_);
@@ -705,7 +705,7 @@ public: //---------------------------------------------------- circulator types
     {
     public:
 
-        /// default constructur
+        /// default constructor
         Halfedge_around_face_circulator(const Surface_mesh* m=NULL, Face f=Face())
         : mesh_(m)
         {
@@ -949,19 +949,19 @@ public: //---------------------------------------------- low-level connectivity
     }
 
 
-    /// returns the vertex the halfedge \c h points to
+    /// returns the vertex where the halfedge \c h points to
     Vertex to_vertex(Halfedge h) const
     {
         return hconn_[h].vertex_;
     }
 
-    /// returns the vertex the halfedge \c h emanates from
+    /// returns the vertex where the halfedge \c h emanates from
     Vertex from_vertex(Halfedge h) const
     {
         return to_vertex(opposite_halfedge(h));
     }
 
-    /// sets the vertex the halfedge \c h points to to \c v
+    /// sets the vertex the halfedge \c h points to \c v
     void set_vertex(Halfedge h, Vertex v)
     {
         hconn_[h].vertex_ = v;
@@ -1031,14 +1031,14 @@ public: //---------------------------------------------- low-level connectivity
     }
 
 
-    /// returns the \c i'th halfedge of edge \c e. \c i has to be 0 or 1.
+    /// returns the \c i-th halfedge of edge \c e. \c i has to be 0 or 1.
     Halfedge halfedge(Edge e, unsigned int i) const
     {
         assert(i<=1);
         return Halfedge((e.idx() << 1) + i);
     }
 
-    /// returns the \c i'th vertex of edge \c e. \c i has to be 0 or 1.
+    /// returns the \c i-th vertex of edge \c e. \c i has to be 0 or 1.
     Vertex vertex(Edge e, unsigned int i) const
     {
         assert(i<=1);
@@ -1103,7 +1103,7 @@ public: //--------------------------------------------------- property handling
     {
         return Halfedge_property<T>(hprops_.add<T>(name, t));
     }
-    /** add a edge property of type \c T with name \c name and default value \c t.
+    /** add an edge property of type \c T with name \c name and default value \c t.
      fails if a property named \c name exists already, since the name has to be unique.
      in this case it returns an invalid property */
     template <class T> Edge_property<T> add_edge_property(const std::string& name, const T t=T())

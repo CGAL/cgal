@@ -67,9 +67,11 @@ allocators internally. A default argument is mandatory for
 from the `<CGAL/memory.h>` header file can be used as default
 allocator.
 
-\cgalHasModel CGAL::HalfedgeDS_default
-\cgalHasModel CGAL::HalfedgeDS_list
-\cgalHasModel CGAL::HalfedgeDS_vector
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::HalfedgeDS_default}
+\cgalHasModels{CGAL::HalfedgeDS_list}
+\cgalHasModels{CGAL::HalfedgeDS_vector}
+\cgalHasModelsEnd
 
 \sa `HalfedgeDSItems`
 \sa `CGAL::Polyhedron_3<Traits>`

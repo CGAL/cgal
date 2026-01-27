@@ -5,7 +5,9 @@
 The concept `RandomConvexHullTraits_2` describes the requirements for the traits
 class used by the function `random_convex_hull_in_disc_2()`.
 
-\cgalHasModel \cgal kernels.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 
 \cgalHeading{Operations}
 

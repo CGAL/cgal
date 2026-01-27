@@ -289,6 +289,11 @@ Uncertain<bool> operator!(Uncertain<bool> a)
   return Uncertain<bool>(!a.sup(), !a.inf());
 }
 
+#ifdef __clang__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#  pragma GCC diagnostic ignored "-Wbitwise-instead-of-logical"
+#endif
 inline
 Uncertain<bool> operator|(Uncertain<bool> a, Uncertain<bool> b)
 {
@@ -324,7 +329,9 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 {
   return Uncertain<bool>(a.inf() & b, a.sup() & b);
 }
-
+#ifdef __clang__
+#  pragma GCC diagnostic pop
+#endif
 
 // Equality operators
 
@@ -617,13 +624,22 @@ Uncertain<T> operator*(Uncertain<T> a, T b)
         return a * Uncertain<T>(b);
 }
 
+// SFINAE helper to check if a type is Uncertain
+template <typename T>
+struct Is_Uncertain : std::false_type {};
+
+template <typename T>
+struct Is_Uncertain<Uncertain<T> > : std::true_type {};
+
 // enum_cast overload
 
 template < typename T, typename U >
 inline
-Uncertain<T> enum_cast(Uncertain<U> u)
+T enum_cast(Uncertain<U> u)
 {
-  return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
+  static_assert(CGAL::Is_Uncertain<T>::value, "T must be an Uncertain type");
+  typedef typename T::value_type Tv;
+  return { enum_cast<Tv>(u.inf()), enum_cast<Tv>(u.sup()) };
 }
 
 } //namespace CGAL

@@ -20,7 +20,7 @@ and will serve as a base class for `Triangulation_face_base_2` .
 \cgal provides a default instantiation for this parameter which is
 `Triangulation_ds_face_base_2<>`.
 
-\cgalModels `TriangulationFaceBase_2`
+\cgalModels{TriangulationFaceBase_2}
 
 \sa `CGAL::Triangulation_ds_face_base_2<Tds>`
 \sa `CGAL::Triangulation_vertex_base_2<Traits,Vb>`

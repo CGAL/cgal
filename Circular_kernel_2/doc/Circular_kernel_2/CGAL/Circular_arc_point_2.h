@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCircularKernel2GeometricClasses
 
-\cgalModels `CircularKernel::CircularArcPoint_2`
+\cgalModels{CircularKernel::CircularArcPoint_2}
 
 \sa `CGAL::Circular_arc_2<CircularKernel>`
 \sa `CGAL::Line_arc_2<CircularKernel>`

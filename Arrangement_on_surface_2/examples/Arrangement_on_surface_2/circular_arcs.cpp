@@ -1,6 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/circular_arc.cpp
 // Constructing an arrangement of various circular arcs and line segments.
 
+#include <CGAL/draw_arrangement_2.h>
+
 #include "arr_circular.h"
 #include "arr_print.h"
 
@@ -22,8 +24,7 @@ int main() {
   // Create a line segment (C4) with the same supporting line (y = x), but
   // having one endpoint with irrational coordinates.
   CoordNT sqrt_15 = CoordNT(0, 1, 15); // = sqrt(15)
-  curves.push_back(Curve(s3.supporting_line(),
-                         Point(3, 3), Point(sqrt_15, sqrt_15)));
+  curves.push_back(Curve(s3.supporting_line(), Point(3, 3), Point(sqrt_15, sqrt_15)));
 
   // Create a circular arc (C5) that is the upper half of the circle centered at
   // (1, 1) with squared radius 3. Create the circle with clockwise orientation,
@@ -49,12 +50,12 @@ int main() {
   // Create a circular arc (C7) defined by two endpoints and a midpoint,
   // all having rational coordinates. This arc is the upper right
   // quarter of a circle centered at the origin with radius 5.
-  curves.push_back(Curve(Rational_point(0, 5), Rational_point(3, 4),
-                         Rational_point(5, 0)));
+  curves.push_back(Curve(Rational_point(0, 5), Rational_point(3, 4), Rational_point(5, 0)));
 
   // Construct the arrangement of the curves and print its size.
-  Arrangement  arr;
+  Arrangement arr;
   insert(arr, curves.begin(), curves.end());
   print_arrangement_size(arr);
+  CGAL::draw(arr, "circular_arcs");
   return 0;
 }

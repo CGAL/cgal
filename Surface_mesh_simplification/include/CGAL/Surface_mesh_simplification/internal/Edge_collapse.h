@@ -12,7 +12,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
-
+#include <tuple>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
@@ -127,8 +127,8 @@ public:
   typedef typename Geom_traits::Vector_3                                  Vector;
   typedef typename Geom_traits::Equal_3                                   Equal_3;
 
-  typedef boost::optional<FT>                                             Cost_type;
-  typedef boost::optional<Point>                                          Placement_type;
+  typedef std::optional<FT>                                             Cost_type;
+  typedef std::optional<Point>                                          Placement_type;
 
   struct Compare_id
   {
@@ -149,9 +149,9 @@ public:
 
     bool operator()(const halfedge_descriptor a, const halfedge_descriptor b) const
     {
-      // NOTE: A cost is a boost::optional<> value.
+      // NOTE: A cost is a std::optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
-      // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
+      // In consequence, edges with undefined costs will be promoted to the top of the priority queue and popped out first.
       return m_algorithm->get_data(a).cost() < m_algorithm->get_data(b).cost();
     }
 
@@ -179,7 +179,7 @@ public:
                                                : CGAL_BOOST_PENDING_MUTABLE_QUEUE;
   typedef Modifiable_priority_queue<halfedge_descriptor, Compare_cost, edge_id, hp>     PQ;
 
-  // An Edge_data is associated with EVERY _ edge in the mesh (collapsable or not).
+  // An Edge_data is associated with EVERY _ edge in the mesh (collapsible or not).
   // It contains the edge status wrt the priority queue
   // It also relates the edge with a policy-based cache
   struct Edge_data
@@ -265,12 +265,12 @@ private:
   typename boost::property_traits<Vertex_point_map>::reference
   get_point(const vertex_descriptor v) const { return get(m_vpm, v); }
 
-  boost::tuple<vertex_descriptor, vertex_descriptor> get_vertices(const halfedge_descriptor h) const
+  std::tuple<vertex_descriptor, vertex_descriptor> get_vertices(const halfedge_descriptor h) const
   {
     vertex_descriptor p, q;
     p = source(h, m_tm);
     q = target(h, m_tm);
-    return boost::make_tuple(p, q);
+    return std::make_tuple(p, q);
   }
 
   std::string vertex_to_string(const vertex_descriptor v) const
@@ -282,7 +282,7 @@ private:
   std::string edge_to_string(const halfedge_descriptor h) const
   {
     vertex_descriptor p, q;
-    boost::tie(p,q) = get_vertices(h);
+    std::tie(p,q) = get_vertices(h);
     return boost::str(boost::format("{E%1% %2%->%3%}%4%") % get_edge_id(h) % vertex_to_string(p) % vertex_to_string(q) % (is_border(h, m_tm) ? " (BORDER)" : (is_border(opposite(h, m_tm), m_tm) ? " (~BORDER)": "")));
   }
 
@@ -296,6 +296,8 @@ private:
 
   void insert_in_PQ(const halfedge_descriptor h, Edge_data& data)
   {
+    CGAL_SMS_TRACE(5, "Insert " << edge_to_string(h) << " in PQ");
+
     CGAL_assertion(is_primary_edge(h));
     CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
@@ -333,9 +335,9 @@ private:
     CGAL_expensive_assertion(!mPQ->contains(h));
   }
 
-  boost::optional<halfedge_descriptor> pop_from_PQ()
+  std::optional<halfedge_descriptor> pop_from_PQ()
   {
-    boost::optional<halfedge_descriptor> opt_h = mPQ->extract_top();
+    std::optional<halfedge_descriptor> opt_h = mPQ->extract_top();
     if(opt_h)
     {
       CGAL_assertion(is_primary_edge(*opt_h));
@@ -499,7 +501,7 @@ collect()
     if(is_constrained(h))
     {
       CGAL_assertion_code(++num_not_inserted);
-      continue; // no not insert constrainted edges
+      continue; // no not insert constrained edges
     }
 
     const Profile profile = create_profile(h);
@@ -588,18 +590,37 @@ loop()
 {
   CGAL_SMS_TRACE(0, "Collapsing edges...");
 
-  CGAL_assertion_code(size_type non_collapsable_count = 0);
-
   // Pops and processes each edge from the PQ
 
-  boost::optional<halfedge_descriptor> opt_h;
+  std::optional<halfedge_descriptor> opt_h;
 
+// #define CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
   int i_rm = 0;
 #endif
 
-  while((opt_h = pop_from_PQ()))
+  for(;;)
   {
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
+    if(5 <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)
+    {
+      CGAL_SMS_TRACE_IMPL("== Current queue ==");
+
+      auto mPQ_clone = *mPQ;
+      std::optional<halfedge_descriptor> opt_th;
+      while((opt_th = mPQ_clone.extract_top()))
+      {
+        CGAL_SMS_TRACE_IMPL("\t" + edge_to_string(*opt_th));
+        Cost_type tcost = get_data(*opt_th).cost();
+        if(tcost)
+          CGAL_SMS_TRACE_IMPL("\t" + std::to_string(CGAL::to_double(*tcost)));
+      }
+    }
+#endif
+
+    if(!(opt_h = pop_from_PQ()))
+      break;
+
     CGAL_SMS_TRACE(1, "Popped " << edge_to_string(*opt_h));
     CGAL_assertion(!is_constrained(*opt_h));
 
@@ -630,16 +651,14 @@ loop()
           std::cout << "step " << i_rm << " " << get(m_vpm, source(*h, m_tm))
                                        << " " << get(m_vpm, target(*h, m_tm)) << "\n";
 #endif
-          if(m_should_ignore(profile, placement)!= boost::none){
+          if(m_should_ignore(profile, placement)!= std::nullopt){
             collapse(profile, placement);
           }
           else
           {
-            CGAL_assertion_code(++non_collapsable_count);
-
             m_visitor.OnNonCollapsable(profile);
 
-            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsable" );
+            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (filter)" );
           }
 
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
@@ -656,11 +675,9 @@ loop()
       }
       else
       {
-        CGAL_assertion_code(++non_collapsable_count);
-
         m_visitor.OnNonCollapsable(profile);
 
-        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsable" );
+        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (topology)" );
       }
     }
     else
@@ -696,8 +713,8 @@ is_constrained(const vertex_descriptor v) const
   return false;
 }
 
-// Some edges are NOT collapsable: doing so would break the topological consistency of the mesh.
-// This function returns true if a edge 'p->q' can be collapsed.
+// Some edges are NOT collapsible: doing so would break the topological consistency of the mesh.
+// This function returns true if an edge 'p->q' can be collapsed.
 //
 // An edge p->q can be collapsed iff it satisfies the "link condition"
 // (as described in the "Mesh Optimization" article of Hoppe et al (1993))
@@ -754,7 +771,7 @@ is_collapse_topologically_valid(const Profile& profile)
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   //
-  for(boost::tie(eb1,ee1) = halfedges_around_source(profile.v0(), m_tm); res && eb1 != ee1; ++eb1)
+  for(std::tie(eb1,ee1) = halfedges_around_source(profile.v0(), m_tm); res && eb1 != ee1; ++eb1)
   {
     halfedge_descriptor v0_k = *eb1;
 
@@ -762,7 +779,7 @@ is_collapse_topologically_valid(const Profile& profile)
     {
       vertex_descriptor k = target(v0_k, m_tm);
 
-      for(boost::tie(eb2,ee2) = halfedges_around_source(k, m_tm); res && eb2 != ee2; ++eb2)
+      for(std::tie(eb2,ee2) = halfedges_around_source(k, m_tm); res && eb2 != ee2; ++eb2)
       {
         halfedge_descriptor k_v1 = *eb2;
 
@@ -806,7 +823,7 @@ is_collapse_topologically_valid(const Profile& profile)
 
           if(!is_face)
           {
-            CGAL_SMS_TRACE(3,"  k=V" << get(m_vim,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge.");
+            CGAL_SMS_TRACE(3,"  k=V" << get(m_vim,k) << " IS NOT in a face with p-q. NON-COLLAPSIBLE edge.");
             res = false;
             break;
           }
@@ -823,14 +840,17 @@ is_collapse_topologically_valid(const Profile& profile)
   {
     /// ensure two constrained edges cannot get merged
     if(is_edge_adjacent_to_a_constrained_edge(profile, m_ecm))
+    {
+      CGAL_SMS_TRACE(3,"  edge to collapse is adjacent to a constrained edge.");
       return false;
+    }
 
     if(profile.is_v0_v1_a_border())
     {
       if(is_open_triangle(profile.v0_v1()))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSIBLE edge.");
       }
     }
     else if(profile.is_v1_v0_a_border())
@@ -838,7 +858,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_open_triangle(profile.v1_v0()))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSIBLE edge.");
       }
     }
     else
@@ -846,7 +866,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_border(profile.v0(), m_tm) && is_border(profile.v1(), m_tm))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSIBLE edge.");
       }
       else
       {
@@ -857,7 +877,7 @@ is_collapse_topologically_valid(const Profile& profile)
         if(tetra)
         {
           res = false;
-          CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge.");
+          CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSIBLE edge.");
         }
 
         if(next(profile.v0_v1(), m_tm) == opposite(prev(profile.v1_v0(), m_tm), m_tm) &&
@@ -1183,7 +1203,7 @@ collapse(const Profile& profile,
                       << "(V" << get(m_vim, profile.v0())
                       << "->V" << get(m_vim, profile.v1()) << ")");
 
-  // Perform the actuall collapse.
+  // Perform the actual collapse.
   // This is an external function.
   // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ, PT and QB
   // (PT and QB are removed if they are not null).

@@ -22,7 +22,7 @@
  * Written by
  *       Shubin Zhao (shubinz@cs.nyu.edu) (2001)
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $Id$

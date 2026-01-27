@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCircularKernel3AlgebraicClasses
 
-\cgalModels `AlgebraicKernelForSpheres::PolynomialsForLines_3`
+\cgalModels{AlgebraicKernelForSpheres::PolynomialsForLines_3}
 
 \sa `AlgebraicKernelForSpheres`
 

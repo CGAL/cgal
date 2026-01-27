@@ -98,7 +98,7 @@ namespace CGAL {
       {
         // Here's where we maintain the only instance: (Notice that it
         // gets constructed automatically the first time instance() is
-        // called, and that it gets disposed of (if ever contructed) at
+        // called, and that it gets disposed of (if ever constructed) at
         // program termination.)
         static Logger instance;
         return instance;
@@ -183,7 +183,7 @@ namespace CGAL {
       //   created and started.  Otherwise, the timer with name name is
       //   restarted.
       //
-      // - lapse(name): Retuns the number of seconds which have elapsed
+      // - lapse(name): Returns the number of seconds which have elapsed
       //   since start(name) was called last.
       //   Precondition: start(name) has been called once.
     {
@@ -201,7 +201,7 @@ namespace CGAL {
       {
         // Here's where we maintain the only instance: (Notice that it
         // gets constructed automatically the first time instance() is
-        // called, and that it gets disposed of (if ever contructed) at
+        // called, and that it gets disposed of (if ever constructed) at
         // program termination.)
         static Timer instance;
         return instance;
@@ -255,7 +255,7 @@ namespace CGAL {
 
     class Eps_export_2 {
     // An instance of the following class accepts circles and ellipses
-    // and procudes an Enhanced-PostScript figure.
+    // and produces an Enhanced-PostScript figure.
     public:
       enum Stroke_mode { Solid=0, Solid_filled=1, Dashed=2 };
       enum Label_mode { None, Angle, Random_angle };
@@ -591,7 +591,7 @@ namespace CGAL {
         //
         //   (c,d) = find_roots(1.0,-(a+b),a b - h^2)
         //
-        // (See Sven's thesis, code on page 87.)  So it it enclosed in
+        // (See Sven's thesis, code on page 87.)  So it is enclosed in
         // some (rotated) rectangle of side lengths 2*c,2*d, centered
         // at the origin.  Consequently, the circle of radius
         // r=sqrt(c^2+d^2) encloses the ellipse, and we use this to

@@ -7,9 +7,11 @@ The concept of a <I>kernel with lifting</I> is a small refinement of the
 general kernel concept. It adds 2 functors, the meaning of which would be
 unclear in kernels of fixed dimension.
 
-\cgalRefines `Kernel_d`
-\cgalHasModel `CGAL::Cartesian_d<FieldNumberType>`
-\cgalHasModel `CGAL::Homogeneous_d<RingNumberType>`
+\cgalRefines{Kernel_d}
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Cartesian_d<FieldNumberType>}
+\cgalHasModels{CGAL::Homogeneous_d<RingNumberType>}
+\cgalHasModelsEnd
 */
 class KernelWithLifting_d {
 public:

@@ -33,6 +33,8 @@ namespace CGAL {
 
 namespace METIS {
 
+#ifndef DOXYGEN_RUNNING
+
 template<typename TriangleMesh, typename METIS_options, typename NamedParameters>
 void partition_dual_graph(const TriangleMesh& tm,
                           int nparts,
@@ -59,7 +61,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   // fill the adjacency info
   face_iterator fit, fe;
-  boost::tie(fit, fe) = faces(tm);
+  std::tie(fit, fe) = faces(tm);
   for(int i=0, j=0; fit!=fe; ++fit, ++i)
   {
     eptr[i] = j;
@@ -114,8 +116,8 @@ void partition_dual_graph(const TriangleMesh& tm,
   delete[] eptr;
   delete[] eind;
 
-  std::free(npart);
-  std::free(epart);
+  (std::free)(npart);
+  (std::free)(epart);
 }
 
 template<typename TriangleMesh, typename NamedParameters>
@@ -127,6 +129,8 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
   METIS_SetDefaultOptions(options);
   return partition_dual_graph(tm, nparts, &options, np);
 }
+
+#endif
 
 /// \ingroup PkgBGLPartition
 ///

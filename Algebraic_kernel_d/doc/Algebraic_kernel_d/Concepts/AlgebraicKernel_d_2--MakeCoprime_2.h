@@ -13,7 +13,7 @@ That is, it computes \f$ g, q_1, q_2\f$ such that:
 \f$ c_2 \cdot p_2 = g \cdot q_2\f$ for some constant \f$ c_2\f$,
 such that \f$ q_1\f$ and \f$ q_2\f$ are coprime.
 
-\cgalRefines `AdaptableFunctor` with five arguments
+\cgalRefines{AdaptableQuinaryFunction}
 
 \sa `AlgebraicKernel_d_2::IsCoprime_2`
 

@@ -78,6 +78,11 @@ typedef boost::graph_traits<SM_Seam_mesh>::halfedge_descriptor    SM_SE_halfedge
 
 int main(int, char**)
 {
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
+  std::cout << "Using SuiteSparse" << std::endl;
+#else
+  std::cout << "Using Eigen3" << std::endl;
+#endif
   std::cout.precision(17);
   CGAL::IO::set_pretty_mode(std::cout);
 
@@ -192,7 +197,7 @@ int main(int, char**)
     UV_pmap uvpm = sm.add_property_map<SM_vertex_descriptor, Point_2>("h:uv").first;
 
     // Indices map
-    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    typedef std::unordered_map<SM_vertex_descriptor, int> Indices;
     Indices indices;
     PMP::connected_component(face(opposite(hd, sm), sm), sm,
                              boost::make_function_output_iterator(
@@ -200,8 +205,8 @@ int main(int, char**)
     boost::associative_property_map<Indices> vipm(indices);
 
     // Vertex parameterized map
-    boost::unordered_set<SM_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map<boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+    std::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<std::unordered_set<SM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
     SMP::Barycentric_mapping_parameterizer_3<SMesh> parameterizer;
@@ -246,7 +251,7 @@ int main(int, char**)
                             boost::hash<SM_vertex_descriptor> > > uv_pm(uvhm);
 
     // Indices map
-    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    typedef std::unordered_map<SM_vertex_descriptor, int> Indices;
     Indices indices;
     PMP::connected_component(face(opposite(hd, sm), sm), sm,
                              boost::make_function_output_iterator(
@@ -254,8 +259,8 @@ int main(int, char**)
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized bool pmap
-    boost::unordered_set<SM_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map< boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+    std::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map< std::unordered_set<SM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
     SMP::ARAP_parameterizer_3<SMesh> parameterizer;
@@ -307,7 +312,7 @@ int main(int, char**)
     PM_SE_halfedge_descriptor hd = PMP::longest_border(mesh).first;
 
     // Indices
-    typedef boost::unordered_map<PM_SE_vertex_descriptor, int> Indices;
+    typedef std::unordered_map<PM_SE_vertex_descriptor, int> Indices;
     Indices indices;
     PMP::connected_component(face(opposite(hd, mesh), mesh), mesh,
                              boost::make_function_output_iterator(
@@ -315,8 +320,8 @@ int main(int, char**)
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
-    boost::unordered_set<PM_SE_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map<boost::unordered_set<PM_SE_vertex_descriptor> > vpm(vs);
+    std::unordered_set<PM_SE_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<std::unordered_set<PM_SE_vertex_descriptor> > vpm(vs);
 
     SMP::Discrete_conformal_map_parameterizer_3<PM_Seam_mesh> parameterizer;
 
@@ -372,7 +377,7 @@ int main(int, char**)
     SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh).first;
 
     // Indices
-    typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
+    typedef std::unordered_map<SM_SE_vertex_descriptor, int> Indices;
     Indices indices;
     PMP::connected_component(face(opposite(hd, mesh), mesh), mesh,
                              boost::make_function_output_iterator(
@@ -380,8 +385,8 @@ int main(int, char**)
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
-    boost::unordered_set<SM_SE_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map<boost::unordered_set<SM_SE_vertex_descriptor> > vpm(vs);
+    std::unordered_set<SM_SE_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<std::unordered_set<SM_SE_vertex_descriptor> > vpm(vs);
 
     SMP::Discrete_authalic_parameterizer_3<SM_Seam_mesh> parameterizer;
 
@@ -437,7 +442,7 @@ int main(int, char**)
     }
 
     // Index map of the seam mesh (assuming a single connected component so far)
-    typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
+    typedef std::unordered_map<SM_SE_vertex_descriptor, int> Indices;
     Indices indices;
     boost::associative_property_map<Indices> vimap(indices);
     int counter = 0;
@@ -446,7 +451,7 @@ int main(int, char**)
     }
 
     // Mark the cones in the seam mesh
-    boost::unordered_map<SM_SE_vertex_descriptor, SMP::Cone_type> cmap;
+    std::unordered_map<SM_SE_vertex_descriptor, SMP::Cone_type> cmap;
     SMP::locate_cones(mesh, cone_sm_vds.begin(), cone_sm_vds.end(), cmap);
 
     // The 2D points of the uv parametrisation will be written into this map
@@ -498,7 +503,7 @@ int main(int, char**)
     UV_pmap uvpm = sm.add_property_map<SM_vertex_descriptor, Point_2>("h:uv").first;
 
     // Indices map
-    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    typedef std::unordered_map<SM_vertex_descriptor, int> Indices;
     Indices indices;
     PMP::connected_component(face(opposite(hd, sm), sm), sm,
                              boost::make_function_output_iterator(
@@ -506,8 +511,8 @@ int main(int, char**)
     boost::associative_property_map<Indices> vipm(indices);
 
     // Vertex parameterized map
-    boost::unordered_set<SM_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map<boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+    std::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<std::unordered_set<SM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
     SMP::Iterative_authalic_parameterizer_3<SMesh> parameterizer;

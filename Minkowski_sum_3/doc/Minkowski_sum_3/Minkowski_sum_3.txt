@@ -72,7 +72,7 @@ quadratic number of pieces, which is worst-case optimal. Then up to
 \f$ m\f$ are the complexities of the two input polyhedra (the complexity of
 a `Nef_polyhedron_3` is the sum of its `Vertices`,
 `Halfedges` and `SHalfedges`). In total the operation runs in
-\f$ O(n^3m^3)\f$ time.
+\cgalBigO{n^3m^3} time.
 
 Since the computation of the Minkowski sum takes quite some time, we
 give the running times of some Minkowski sum computations. They were

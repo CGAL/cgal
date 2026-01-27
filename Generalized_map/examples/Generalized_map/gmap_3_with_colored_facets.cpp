@@ -32,15 +32,15 @@ struct Myitem
 };
 
 typedef CGAL::Generalized_map<3,Myitem> GMap_3;
-typedef GMap_3::Dart_handle             Dart_handle;
+typedef GMap_3::Dart_descriptor             Dart_descriptor;
 
 int main()
 {
   GMap_3 gm;
 
   // Create 2 hexahedra.
-  Dart_handle dh1 = gm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor d1 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor d2 = gm.make_combinatorial_hexahedron();
 
   // 1) Create all 2-attributes and associated them to darts.
   for (GMap_3::Dart_range::iterator
@@ -53,18 +53,18 @@ int main()
 
   // 2) Set the color of all facets of the first hexahedron to 7.
   for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator
-         it=gm.one_dart_per_incident_cell<2,3>(dh1).begin(),
-         itend=gm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
+         it=gm.one_dart_per_incident_cell<2,3>(d1).begin(),
+         itend=gm.one_dart_per_incident_cell<2,3>(d1).end(); it!=itend; ++it)
   { gm.info<2>(it)=7; }
 
   // 3) Set the color of all facets of the second hexahedron to 13.
   for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
-         gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
-         itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
+         gm.one_dart_per_incident_cell<2,3>(d2).begin(),
+         itend=gm.one_dart_per_incident_cell<2,3>(d2).end(); it!=itend; ++it)
   { gm.info<2>(it)=13; }
 
   // 4) 3-Sew the two hexahedra along one facet.
-  gm.sew<3>(dh1, dh2);
+  gm.sew<3>(d1, d2);
 
   // 5) Display all the values of 2-attributes.
   for (GMap_3::Attribute_range<2>::type::iterator
@@ -76,7 +76,7 @@ int main()
   std::cout<<std::endl;
 
   // 6) Insert a vertex in the facet between the two hexahedra.
-  gm.insert_cell_0_in_cell_2(dh2);
+  gm.insert_cell_0_in_cell_2(d2);
 
   // 7) Display all the values of 2-attributes.
   for (GMap_3::Attribute_range<2>::type::iterator

@@ -7,7 +7,7 @@ TDS
    and it gives 4 cells back).
 - More compact representation [inspired by a CUJ article for lists] :
   instead of having a cell which stores 4 vertex pointers, it only stores the
-  XOR of them.  And a Cell_handle now additionaly stores the 4 vertex pointers
+  XOR of them.  And a Cell_handle now additionally stores the 4 vertex pointers
   of the cell, the "context".
   One problem is the Cell_iterator : it loses the context, so I think that
   one way to work around this is to write the Cell_iterator as based on the
@@ -32,7 +32,7 @@ Delaunay
   dual sont effectivement utilisees
 - remplacer les create_face du remove2D par des create_cell et virer 
   les create_face de la tds
-- optimiser remove :
+- optimizer remove :
   - algo d'Olivier si constructions filtrees disponibles (cf Olivier
 	rappel de la reunion a ce sujet)
   - pour la creation de la TDS_2, on devrait pouvoir faire plus simple,

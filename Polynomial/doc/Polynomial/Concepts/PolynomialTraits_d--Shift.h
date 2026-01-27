@@ -9,9 +9,7 @@ by the given power of the specified variable.
 This functor is provided for efficiency reasons, since multiplication by some variable
 will in general correspond to a shift of coefficients in the internal representation.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

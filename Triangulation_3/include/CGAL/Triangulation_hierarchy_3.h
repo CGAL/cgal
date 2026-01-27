@@ -29,7 +29,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
 
@@ -48,7 +48,6 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <array>
 #include <CGAL/array.h>
@@ -63,7 +62,7 @@ class Triangulation_hierarchy_3
 {
   // parameterization of the hierarchy
   // maximal number of points is 30^5 = 24 millions !
-  enum { ratio = 30 };
+  enum Ratio : int { ratio = 30 };
   enum { minsize = 20};
   enum { maxlevel = 5};
 
@@ -179,12 +178,12 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
-          typename boost::enable_if<
-            boost::is_convertible<
+          std::enable_if_t<
+            std::is_convertible<
                 typename std::iterator_traits<InputIterator>::value_type,
                 Point
-            >
-          >::type* = nullptr
+            >::value
+          >* = nullptr
   )
 #else
   template < class InputIterator >
@@ -316,11 +315,11 @@ public:
   std::ptrdiff_t
   insert( InputIterator first,
           InputIterator last,
-          typename boost::enable_if<
-            boost::is_convertible<
+          std::enable_if_t<
+            std::is_convertible<
               typename std::iterator_traits<InputIterator>::value_type,
               std::pair<Point,typename internal::Info_check<Vertex>::type>
-            > >::type* =nullptr
+            >::value >* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<Vertex>::type> >(first,last);
@@ -330,12 +329,10 @@ public:
   std::ptrdiff_t
   insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-          typename boost::enable_if<
-            boost::mpl::and_<
-              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
-            >
-          >::type* =nullptr
+          std::enable_if_t<
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
+          >* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<Vertex>::type> >(first,last);
@@ -358,8 +355,8 @@ public:
   template < typename InputIterator >
   size_type remove_cluster(InputIterator first, InputIterator beyond)
   {
-    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
-    CGAL_triangulation_precondition(!this->infinite_vertex_in_range(first, beyond));
+    CGAL_precondition(!this->does_repeat_in_range(first, beyond));
+    CGAL_precondition(!this->infinite_vertex_in_range(first, beyond));
     size_type n = this->number_of_vertices();
     std::vector<Vertex_handle> vo(first, beyond), vc;
     int l=0;
@@ -439,7 +436,7 @@ protected:
 
   struct locs {
       Cell_handle pos;
-      int li, lj;
+      int li = -1, lj = -1;
       Locate_type lt;
   };
 
@@ -507,26 +504,54 @@ is_valid(bool verbose, int level) const
   bool result = true;
 
   // verify correctness of triangulation at all levels
-  for(int i=0; i<maxlevel; ++i)
+  for(int i=0; i<maxlevel; ++i){
         result = result && hierarchy[i]->is_valid(verbose, level);
-
-  // verify that lower level has no down pointers
+        if(verbose && (! result)){
+          std::cerr << "triangulation at level " << i << " invalid" << std::endl;
+        }
+  }
+  // verify that lowest level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
-       end = hierarchy[0]->finite_vertices_end(); it != end; ++it)
+       end = hierarchy[0]->finite_vertices_end(); it != end; ++it){
     result = result && (it->down() == Vertex_handle());
+    if(verbose && (! result)){
+          std::cerr << "lowest level has a down pointer" << std::endl;
+    }
+  }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+  // verify that other levels have down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
          end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
-      result = result && &*(it) == &*(it->down()->up());
+    {
+      result = result && (it->down() != Vertex_handle());
+      if(verbose && (! result)){
+        std::cerr << "missing down pointer" << std::endl;
+      }
+      if(it->down() == Vertex_handle()){
+        return false;
+      }
+      result = result && Vertex_handle(it) == Vertex_handle(it->down()->up());
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with down()" << std::endl;
+      }
+      result = result && Vertex_handle(it)->point() == Vertex_handle(it->down())->point();
+      if(verbose && (! result)){
+          std::cerr << "inconsistent vertex positions" << std::endl;
+      }
+    }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+  // verify that all levels have up pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
          end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
+    {
       result = result && ( it->up() == Vertex_handle() ||
-                &*it == &*(it->up())->down() );
+                Vertex_handle(it) == Vertex_handle(it->up())->down() );
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with up()" << std::endl;
+      }
+    }
 
   return result;
 }
@@ -538,7 +563,7 @@ insert(const Point &p, Cell_handle start)
 {
   int vertex_level = random_level();
   Locate_type lt;
-  int i, j;
+  int i = -1, j = -1;
   // locate using hierarchy
   locs positions[maxlevel];
   locate(p, lt, i, j, positions, start);
@@ -686,7 +711,7 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     hierarchy[l]->remove(v);
@@ -702,8 +727,8 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!is_infinite(v));
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->remove(v);
@@ -719,16 +744,15 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move_if_no_collision(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
-  for (int l = 0; l < maxlevel; ++l) {
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision(v, p);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans = hierarchy[l]->move_if_no_collision(v, p);
-    if(ans != v) return ans;
     if (u == Vertex_handle())
       break;
+    hierarchy[l]->move_if_no_collision(u, p);
     v = u;
   }
   return ans;
@@ -739,7 +763,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -756,17 +780,15 @@ Triangulation_hierarchy_3<Tr>::
 move_if_no_collision_and_give_new_cells(
   Vertex_handle v, const Point & p, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
-  for (int l = 0; l < maxlevel; ++l) {
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision_and_give_new_cells(v, p, fit);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans =
-           hierarchy[l]->move_if_no_collision_and_give_new_cells(v, p, fit);
-    if(ans != v) return ans;
     if (u == Vertex_handle())
       break;
+    hierarchy[l]->move_if_no_collision(u, p);
     v = u;
   }
   return ans;

@@ -33,7 +33,7 @@ namespace internal {
     typedef FGW_dart_iterator_basic_of_all Self;
 
     typedef Map_ Map;
-    typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::Dart_descriptor Dart_descriptor;
     typedef typename Map::size_type size_type;
 
   public:
@@ -44,7 +44,7 @@ namespace internal {
     {}
 
     /// Constructor with a dart in parameter (for end iterator).
-    FGW_dart_iterator_basic_of_all(const Map& amap, Dart_handle /*adart*/):
+    FGW_dart_iterator_basic_of_all(const Map& amap, Dart_descriptor /*adart*/):
       mmap(amap),
       m_it(halfedges(amap.get_fg()).end())
     {}
@@ -61,7 +61,7 @@ namespace internal {
       return *this;
     }
 
-    operator Dart_handle() const
+    operator Dart_descriptor() const
     { return operator*(); }
 
     bool operator==(const Self& other) const
@@ -95,7 +95,7 @@ namespace internal {
     { Self res=*this; operator --(); return res; }
 
 
-    Dart_handle operator*() const
+    Dart_descriptor operator*() const
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
       return *m_it;
@@ -113,22 +113,22 @@ namespace internal {
   public:
     typedef FGW_basis_for_cell_iterator Self;
     typedef Map_ Map;
-    typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::Dart_descriptor Dart_descriptor;
     typedef typename Map::size_type size_type;
 
     /// Main constructor.
-    FGW_basis_for_cell_iterator(const Map& amap, Dart_handle adart):
+    FGW_basis_for_cell_iterator(const Map& amap, Dart_descriptor adart):
       mmap(amap),
       m_firstdart(adart),
       m_curdart(adart)
     {}
 
     /// Constructor with two darts in parameter (for end iterator).
-    FGW_basis_for_cell_iterator(const Map& amap, Dart_handle adart,
-                                Dart_handle /* d2 */):
+    FGW_basis_for_cell_iterator(const Map& amap, Dart_descriptor adart,
+                                Dart_descriptor /* d2 */):
       mmap(amap),
       m_firstdart(adart),
-      m_curdart(Dart_handle())
+      m_curdart(Dart_descriptor())
     {}
 
     bool operator==(const Self& other) const
@@ -138,18 +138,18 @@ namespace internal {
     bool operator!=(const Self& other) const
     { return !(this->operator==(other)); }
 
-    operator Dart_handle() const
+    operator Dart_descriptor() const
     { return operator*(); }
 
-    Dart_handle operator*() const
+    Dart_descriptor operator*() const
     {
-      CGAL_assertion(m_curdart!=Dart_handle());
+      CGAL_assertion(m_curdart!=Dart_descriptor());
       return m_curdart;
     }
 
   protected:
     const Map& mmap;
-    Dart_handle m_firstdart, m_curdart;
+    Dart_descriptor m_firstdart, m_curdart;
   };
 ////////////////////////////////////////////////////////////////////////////////
   template<typename HEG, unsigned int i>
@@ -164,16 +164,16 @@ namespace internal {
     typedef FGW_cell_iterator Self;
     typedef FGW_basis_for_cell_iterator<Map_> Base;
     typedef Map_ Map;
-    typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::Dart_descriptor Dart_descriptor;
     typedef typename Map::size_type size_type;
 
-    FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart),
+    FGW_cell_iterator(const Map& amap, Dart_descriptor adart) : Base(amap, adart),
                                                             m_second_way(false)
     {}
 
     /// Constructor with two darts in parameter (for end iterator).
-    FGW_cell_iterator(const Map& amap, Dart_handle adart,
-                      Dart_handle d2): Base(amap, adart, d2)
+    FGW_cell_iterator(const Map& amap, Dart_descriptor adart,
+                      Dart_descriptor d2): Base(amap, adart, d2)
     {}
 
     /// Prefix ++ operator.
@@ -186,21 +186,21 @@ namespace internal {
           m_second_way=true;
           this->m_curdart=this->mmap.template beta<0>(this->m_firstdart);
           if (this->mmap.template is_free<2>(this->m_curdart))
-          { this->m_curdart=Dart_handle(); }
+          { this->m_curdart=Dart_descriptor(); }
           else { this->m_curdart=this->mmap.template beta<2>(this->m_curdart); }
         }
         else
         {
           this->m_curdart=this->mmap.template beta<2, 1>(this->m_curdart);
           if (this->m_curdart==this->m_firstdart)
-          { this->m_curdart=Dart_handle(); }
+          { this->m_curdart=Dart_descriptor(); }
         }
       }
       else
       {
         this->m_curdart=this->mmap.template beta<0>(this->m_curdart);
         if (this->mmap.template is_free<2>(this->m_curdart))
-        { this->m_curdart=Dart_handle(); }
+        { this->m_curdart=Dart_descriptor(); }
         else { this->m_curdart=this->mmap.template beta<2>(this->m_curdart); }
       }
 
@@ -222,15 +222,15 @@ class FGW_cell_iterator<Map_, 1>: public FGW_basis_for_cell_iterator<Map_>  // E
     typedef FGW_cell_iterator Self;
     typedef FGW_basis_for_cell_iterator<Map_> Base;
     typedef Map_ Map;
-    typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::Dart_descriptor Dart_descriptor;
     typedef typename Map::size_type size_type;
 
-    FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
+    FGW_cell_iterator(const Map& amap, Dart_descriptor adart) : Base(amap, adart)
     {}
 
     /// Constructor with two darts in parameter (for end iterator).
-    FGW_cell_iterator(const Map& amap, Dart_handle adart,
-                      Dart_handle d2): Base(amap, adart, d2)
+    FGW_cell_iterator(const Map& amap, Dart_descriptor adart,
+                      Dart_descriptor d2): Base(amap, adart, d2)
     {}
 
     /// Prefix ++ operator.
@@ -239,11 +239,11 @@ class FGW_cell_iterator<Map_, 1>: public FGW_basis_for_cell_iterator<Map_>  // E
       if (this->m_curdart==this->m_firstdart)
       {
         if (this->mmap.template is_free<2>(this->m_curdart))
-        { this->m_curdart=Dart_handle(); }
+        { this->m_curdart=Dart_descriptor(); }
         else { this->m_curdart=this->mmap.template beta<2>(this->m_curdart); }
       }
       else
-      { this->m_curdart=Dart_handle(); }
+      { this->m_curdart=Dart_descriptor(); }
 
       return *this;
     }
@@ -259,15 +259,15 @@ public:
   typedef FGW_cell_iterator Self;
   typedef FGW_basis_for_cell_iterator<Map_> Base;
   typedef Map_ Map;
-  typedef typename Map::Dart_handle Dart_handle;
+  typedef typename Map::Dart_descriptor Dart_descriptor;
   typedef typename Map::size_type size_type;
 
-  FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
+  FGW_cell_iterator(const Map& amap, Dart_descriptor adart) : Base(amap, adart)
   {}
 
   /// Constructor with two darts in parameter (for end iterator).
-  FGW_cell_iterator(const Map& amap, Dart_handle adart,
-                    Dart_handle d2): Base(amap, adart, d2)
+  FGW_cell_iterator(const Map& amap, Dart_descriptor adart,
+                    Dart_descriptor d2): Base(amap, adart, d2)
   {}
 
   /// Prefix ++ operator.
@@ -275,7 +275,7 @@ public:
   {
     this->m_curdart=this->mmap.template beta<1>(this->m_curdart);
     if (this->m_curdart==this->m_firstdart)
-    { this->m_curdart=Dart_handle(); }
+    { this->m_curdart=Dart_descriptor(); }
 
     return *this;
   }
@@ -291,15 +291,15 @@ public:
   typedef FGW_cell_iterator Self;
   typedef FGW_basis_for_cell_iterator<Map_> Base;
   typedef Map_ Map;
-  typedef typename Map::Dart_handle Dart_handle;
+  typedef typename Map::Dart_descriptor Dart_descriptor;
   typedef typename Map::size_type size_type;
 
-  FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
+  FGW_cell_iterator(const Map& amap, Dart_descriptor adart) : Base(amap, adart)
   { m_mark=this->mmap.get_new_mark(); }
 
   /// Constructor with two darts in parameter (for end iterator).
-  FGW_cell_iterator(const Map& amap, Dart_handle adart,
-                    Dart_handle d2): Base(amap, adart, d2)
+  FGW_cell_iterator(const Map& amap, Dart_descriptor adart,
+                    Dart_descriptor d2): Base(amap, adart, d2)
   { m_mark=this->mmap.get_new_mark(); }
 
   ~FGW_cell_iterator()
@@ -321,7 +321,7 @@ public:
     }
 
     if (m_to_treat.empty())
-    { this->m_curdart=Dart_handle(); }
+    { this->m_curdart=Dart_descriptor(); }
     else
     { this->m_curdart=m_to_treat.top(); m_to_treat.pop(); }
 
@@ -334,7 +334,7 @@ public:
 
 protected:
   typename Map_::size_type m_mark;
-  std::stack<Dart_handle> m_to_treat;
+  std::stack<Dart_descriptor> m_to_treat;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

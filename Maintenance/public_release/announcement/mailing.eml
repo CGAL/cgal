@@ -1,94 +1,71 @@
-Subject: CGAL 5.4 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.5.5, 5.6.2, 6.0, and 6.0.1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce the release 5.4
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the recent releases
+of CGAL versions 5.5.5, 5.6.2, 6.0, and 6.0.1.
 
+## CGAL version 6.0
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 5.3:
+CGAL version 6.0 was released on September 27, 2024. Following the
+discovery of early issues, version 6.0.1 was subsequently released on
+October 22, 2024.
 
+This version is a major release, with many new features and
+improvements.
 
 General changes
 
--   Added the cmake target CGAL::CGAL_Basic_viewer to ease the
-    compilation of programs using the basic viewer-based function
-    CGAL::draw(). This target will define the macro and link with
-    CGAL_Qt5 target when linked with it.
+-   C++17 Requirement: CGAL 6.0 requires a C++17 compatible compiler.
+-   GMP/MPFR Optional: GMP/MPFR are no longer mandatory;
+    Boost.Multiprecision can be used.
+-   Qt6 Demos: All demos are now based on Qt6.
+-   Polyhedral Surface: The demo has been renamed to “CGAL Lab” and
+    moved to its own directory in demo/Lab/.
 
--   The kernel providing exact constructions and exact predicates
-    (CGAL::Exact_predicates_exact_constructions_kernel) is now
-    thread-safe.
-    more details.
+New Packages
 
--   The class Geomview_stream and all the dependent features have
-    been removed from CGAL. Those features were actually no longer
-    supported since CGAL-5.3 but it was not properly announced.
+-   Kinetic Space Partition: Partition of the space from planar input
+    shapes.
+-   Kinetic Surface Reconstruction: Reconstructs surfaces from point
+    clouds.
+-   Basic Viewer: Interactive visualization for various CGAL packages.
+-   Polygon Repair: Algorithms to repair 2D polygons and multipolygons.
 
+Breaking Changes
 
-Shape Regularization (new package)
+-   CMake Changes: UseCGAL.cmake removed; use CGAL::CGAL target instead.
+-   Kernel: Replaced boost::variant with std::variant and
+    boost::optional with std::optional in the intersection functions.
 
--   This package enables to regularize a set of segments and open or
-    closed contours in 2D and a set of planes in 3D such that all input
-    objects are rotated and aligned with respect to the user-specified
-    conditions. In addition, it provides a global regularization
-    framework that can be adjusted for the user needs and any type of
-    geometric objects.
+Enhancements
 
-      https://www.cgal.org/2021/11/16/shape-regularization/
+-   AABB Tree: Now supports 2D and 3D primitives.
 
-      https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization
+See the announcement of CGAL version 6.0.1 for more details:
 
-
-Weights (new package)
-
--   This package provides a simple and unified interface to different
-    types of weights. In particular, it groups all weights into three
-    category: analytic weights including all basic weights which can be
-    computed analytically for a query point with respect to its local
-    neighbors in 2D and 3D; barycentric weights, including all weights
-    which can be computed for a query point with respect to the vertices
-    of a planar polygon; and weighting regions, including all weights
-    which are used to balance other weights.
-
-      https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights
+  https://www.cgal.org/2024/10/22/cgal601/
 
 
-2D Generalized Barycentric Coordinates (major changes)
 
--   Breaking change: The headers Segment_coordinates_2.h and
-    Triangle_coordinates_2.h are renamed to segment_coordinates_2.h and
-    triangle_coordinates_2.h.
--   The classes Segment_coordinates_2 and Triangle_coordinates_2 are
-    deprecated. The free functions compute_segment_coordinates_2() and
-    compute_triangle_coordinates_2() are deprecated as well. Instead,
-    the free functions segment_coordinates_2() and
-    triangle_coordinates_2() should be used.
--   The enums Query_point_location and Type_of_algorithm are deprecated.
-    Instead, the enum Computation_policy_2 should be used.
--   The classes Wachspress_2, Discrete_harmonic_2, Mean_value_2, and
-    Generalized_barycentric_coordinates_2 are deprecated. As
-    consequence, the concept BarycentricCoordinates_2 is deprecated as
-    well. Instead, the classes Wachspress_coordinates_2,
-    Discrete_harmonic_coordinates_2, and Mean_value_coordinates_2 should
-    be used.
--   Added the class Harmonic_coordinates_2 to compute approximate
-    harmonic coordinates in 2D. These coordinates satisfy all properties
-    of barycentric coordinates inside any simple polygon.
--   Added a new concept DiscretizedDomain_2 and a model of this concept
-    called Delaunay_domain_2, which is based on the Mesh 2 package. A
-    model of this concept is required to use Harmonic_coordinates_2.
--   Added free functions to compute Wachspress, discrete harmonic, and
-    mean value coordinates.
--   All free functions and classes are now using ranges and property
-    maps.
+## Bug-fix releases
 
-      https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2
+-   CGAL version 5.5.5 has been published. This is the last bug-fix
+    release for CGAL-5.5.
+-   CGAL version 5.6.2 has been published. This is the second bug-fix
+    release for CGAL-5.6.
+
+These releases include various bug fixes and enhancements. For more details,
+please visit:
+
+  https://www.cgal.org/2024/10/22/cgal555/
+  https://www.cgal.org/2024/10/22/cgal562/
 
 
-See https://www.cgal.org/2022/01/31/cgal54/ for a
-complete list of changes.
+
+The development of CGAL will now focus on the upcoming CGAL-6.1 release,
+planned for late 2025. Bug fixes will continue to be backported to the
+CGAL-5.6.x and CGAL-6.0.x branches.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -123,7 +100,7 @@ Most modules are distributed under the terms of the GPL Open Source
 license (GNU General Public License v3 or later versions).
 If your intended usage does not meet the criteria of the
 aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
+GeometryFactory (https://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its

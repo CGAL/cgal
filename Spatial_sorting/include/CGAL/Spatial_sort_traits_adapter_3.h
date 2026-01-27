@@ -42,7 +42,7 @@ public:
     Compute_x_3(const PointPropertyMap& ppmap, const typename Base_traits::Compute_x_3& base):
       Base_traits::Compute_x_3(base), ppmap_(ppmap){}
     const PointPropertyMap& ppmap_;
-    bool operator()(Arg_type p) const {
+    typename Gt::FT operator()(Arg_type p) const {
       return static_cast<const typename Base_traits::Compute_x_3*>(this)->operator()(get(ppmap_,p));
     }
   };
@@ -53,7 +53,7 @@ public:
     Compute_y_3(const PointPropertyMap& ppmap, const typename Base_traits::Compute_y_3& base):
       Base_traits::Compute_y_3(base), ppmap_(ppmap){}
     const PointPropertyMap& ppmap_;
-    bool operator()(Arg_type p) const {
+    typename Gt::FT operator()(Arg_type p) const {
       return static_cast<const typename Base_traits::Compute_y_3*>(this)->operator()(get(ppmap_,p));
     }
   };
@@ -64,7 +64,7 @@ public:
     Compute_z_3(const PointPropertyMap& ppmap, const typename Base_traits::Compute_z_3& base):
       Base_traits::Compute_z_3(base), ppmap_(ppmap){}
     const PointPropertyMap& ppmap_;
-    bool operator()(Arg_type p) const {
+    typename Gt::FT operator()(Arg_type p) const {
       return static_cast<const typename Base_traits::Compute_z_3*>(this)->operator()(get(ppmap_,p));
     }
   };

@@ -1,19 +1,17 @@
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <boost/config.hpp>
-#include <boost/version.hpp>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/IO/WKT.h>
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <CGAL/IO/WKT.h>
-//typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Projection_traits_xy_3<K> Kernel;
+
 int main(int argc, char* argv[])
 {
-  typedef CGAL::Point_2<Kernel> Point;
+  typedef Kernel::Point_2 Point;
   typedef std::vector<Point> MultiPoint;
 
   typedef std::vector<Point> LineString;
@@ -27,6 +25,7 @@ int main(int argc, char* argv[])
     MultiPoint points;
     MultiLineString polylines;
     MultiPolygon polygons;
+
     CGAL::IO::read_WKT(is, points,polylines,polygons);
 
     for(Point p : points)
@@ -34,8 +33,9 @@ int main(int argc, char* argv[])
     for(LineString ls : polylines)
         for(Point p : ls)
           std::cout<<p<<std::endl;
-    for(Polygon p : polygons)
-      std::cout<<p<<std::endl;
+    for(Polygon p : polygons){
+     std::cout<<p<<std::endl;
+    }
 
   }
   return 0;

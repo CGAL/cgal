@@ -37,10 +37,7 @@ It is a typedef of another number type. Its exact definition depends on
 the availability the third-party libraries \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
-\cgalModels `FieldWithSqrt`
-\cgalModels `RealEmbeddable`
-\cgalModels `Fraction`
-\cgalModels `FromDoubleConstructible`
+\cgalModels{FieldWithSqrt,RealEmbeddable,Fraction,FromDoubleConstructible}
 
 */
 #if DOXYGEN_RUNNING

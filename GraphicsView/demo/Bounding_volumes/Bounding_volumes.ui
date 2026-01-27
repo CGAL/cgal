@@ -197,7 +197,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/min_circle.png</normaloff>icons/min_circle.png</iconset>
+     <normaloff>:/cgal/Actions/icons/min_circle.png</normaloff>:/cgal/Actions/icons/min_circle.png</iconset>
    </property>
    <property name="text">
     <string>Minimum Enclosing &amp;Circle</string>

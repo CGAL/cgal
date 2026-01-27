@@ -25,7 +25,7 @@ template <class PlaneIterator, class PolygonMesh, class Traits>
 void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                  PlaneIterator pend,
                                                  PolygonMesh &pm,
-                                                 boost::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = boost::none,
+                                                 std::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = std::nullopt,
                                                  const Traits & ch_traits = Default_traits);
 
 } /* namespace CGAL */

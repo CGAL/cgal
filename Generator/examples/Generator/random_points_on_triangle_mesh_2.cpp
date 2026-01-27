@@ -44,7 +44,8 @@ int main()
   cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
 
   // Refine the triangulation (and mark the faces as inside/outside)
-  CGAL::refine_Delaunay_mesh_2(cdt, Mesh_2_criteria(0.125, 0.5));
+  Mesh_2_criteria criteria(0.125, 0.5);
+  CGAL::refine_Delaunay_mesh_2(cdt, CGAL::parameters::criteria(criteria));
 
   // Create the generator, input is the Triangulation_2 cdt
   Random_points_in_triangle_mesh_2<Point, CDT> g(cdt);

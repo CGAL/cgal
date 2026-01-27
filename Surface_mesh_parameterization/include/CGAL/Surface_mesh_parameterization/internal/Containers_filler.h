@@ -18,9 +18,9 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 
+#include <unordered_set>
 #include <vector>
 
 namespace CGAL {
@@ -32,7 +32,7 @@ namespace internal {
 // Custom output iterator that fills 'faces' and 'vertices' containers from a mesh
 template<typename TriangleMesh,
          typename Vertex_set =
-             boost::unordered_set<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>,
+             std::unordered_set<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>,
          typename Face_vector =
              std::vector<typename boost::graph_traits<TriangleMesh>::face_descriptor> >
 class Containers_filler
@@ -86,7 +86,7 @@ struct Index_map_filler
     {
       typename Map::iterator it;
       bool new_element;
-      boost::tie(it,new_element) = map->insert(std::make_pair(vd,1));
+      std::tie(it,new_element) = map->insert(std::make_pair(vd,1));
       if(new_element) {
         it->second = index++;
       }

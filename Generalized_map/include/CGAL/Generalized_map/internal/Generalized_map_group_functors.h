@@ -34,7 +34,7 @@
  * GMap_group_attribute_functor<GMap> to group the <i>-attributes of two
  *    given i-cells (except for j-adim). If one i-attribute is nullptr, we set the
  *    darts of its i-cell to the second attribute. If both i-attributes are
- *    non nullptr, we overide all the i-attribute of the second i-cell to the
+ *    non nullptr, we override all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
  * GMap_degroup_attribute_functor_run<GMap> to degroup one i-attributes in two
@@ -62,24 +62,24 @@ struct GMap_group_attribute_functor_of_dart_run
 {
   /// Group the i-attribute of dh1 and dh2.
   static void run(GMap& amap,
-                  typename GMap::Dart_handle dh1,
-                  typename GMap::Dart_handle dh2)
+                  typename GMap::Dart_descriptor dh1,
+                  typename GMap::Dart_descriptor dh2)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg(GMap::Helper::template
+    static_assert( i<=GMap::dimension );
+    static_assert( i!=j );
+    static_assert(GMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "GMap_group_attribute_functor_of_dart_run<i> but "
                               "i-attributes are disabled");
-    typename GMap::template Attribute_handle<i>::type
+    typename GMap::template Attribute_descriptor<i>::type
         a1=amap.template attribute<i>(dh1);
-    typename GMap::template Attribute_handle<i>::type
+    typename GMap::template Attribute_descriptor<i>::type
         a2=amap.template attribute<i>(dh2);
 
     // If the two attributes are equal, nothing to do.
     if ( a1==a2 ) return;
 
-    if ( a1==GMap::null_handle ) amap.template set_dart_attribute<i>(dh1, a2);
+    if ( a1==GMap::null_descriptor ) amap.template set_dart_attribute<i>(dh1, a2);
     else amap.template set_dart_attribute<i>(dh2, a1);
   }
 };
@@ -88,8 +88,8 @@ template<typename GMap, unsigned int i, unsigned int j>
 struct GMap_group_attribute_functor_of_dart_run<GMap, i, j, CGAL::Void>
 {
   static void run(GMap&,
-                  typename GMap::Dart_handle,
-                  typename GMap::Dart_handle)
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor)
   {}
 };
 // Specialization for i=j. Do nothing as j is the dimension to not consider.
@@ -97,8 +97,8 @@ template<typename GMap, unsigned int i, typename T>
 struct GMap_group_attribute_functor_of_dart_run<GMap,i,i,T>
 {
   static void run(GMap&,
-                  typename GMap::Dart_handle,
-                  typename GMap::Dart_handle)
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor)
   {}
 };
 // ************************************************************************
@@ -115,8 +115,8 @@ struct GMap_group_attribute_functor_of_dart
 {
   template <unsigned int i>
   static void run(GMap& amap,
-                  typename GMap::Dart_handle adart1,
-                  typename GMap::Dart_handle adart2)
+                  typename GMap::Dart_descriptor adart1,
+                  typename GMap::Dart_descriptor adart2)
   {
     CGAL::internal::GMap_group_attribute_functor_of_dart_run<GMap,i,j>::
         run(amap,adart1,adart2);
@@ -131,46 +131,56 @@ template<typename GMap, unsigned int i, unsigned int j=GMap::dimension+1,
 struct GMap_group_attribute_functor_run
 {
   static void run(GMap& amap,
-                  typename GMap::Dart_handle adart1,
-                  typename GMap::Dart_handle adart2)
+                  typename GMap::Dart_descriptor adart1,
+                  typename GMap::Dart_descriptor adart2,
+                  bool dart1_deleted=true)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg
+    static_assert( i<=GMap::dimension );
+    static_assert( i!=j );
+    static_assert
         ( GMap::Helper::template Dimension_index<i>::value>=0,
           "GMap_group_attribute_functor_run<i> but i-attributes are disabled" );
-    typename GMap::template Attribute_handle<i>::type
+    typename GMap::template Attribute_descriptor<i>::type
         a1=amap.template attribute<i>(adart1);
-    typename GMap::template Attribute_handle<i>::type
+    typename GMap::template Attribute_descriptor<i>::type
         a2=amap.template attribute<i>(adart2);
 
     // If the two attributes are equal, nothing to do.
-    if ( a1 == a2 ) return;
+    if ( a1 == a2 )
+    {
+      if(a1!=GMap::null_descriptor && dart1_deleted &&
+         amap.template dart_of_attribute<i>(a1)==adart1)
+      { amap.template set_dart_of_attribute<i>(a1, adart2); }
+      return;
+    }
 
-    typename GMap::Dart_handle toSet = amap.null_handle;
+    typename GMap::Dart_descriptor toSet = amap.null_descriptor;
 
     // If the attribute associated to adart1 is nullptr, set it with
     // the attribute associated to adart2 (necessarily != nullptr)
-    if (a1 == GMap::null_handle)
+    if (a1 == GMap::null_descriptor)
     { toSet  = adart1; a1 = a2; }
     else
     {
       toSet = adart2;
-      if (a2 != GMap::null_handle)
+      if (a2 != GMap::null_descriptor)
       {
         CGAL::internal::Call_merge_functor<GMap, i>::run(amap, a1, a2);
       }
     }
     amap.template set_attribute<i>(toSet, a1);
+    if(dart1_deleted && toSet==adart1)
+    { amap.template set_dart_of_attribute<i>(a1, adart2); }
   }
 };
 // Specialization for void attributes.
 template<typename GMap, unsigned int i, unsigned int j>
 struct GMap_group_attribute_functor_run<GMap, i, j, CGAL::Void>
 {
-  static void run( GMap&,
-                   typename GMap::Dart_handle,
-                   typename GMap::Dart_handle )
+  static void run(GMap&,
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor,
+                  bool=true)
   {}
 };
 // Specialization for i=j. Do nothing as j is the dimension to not consider.
@@ -178,8 +188,9 @@ template<typename GMap, unsigned int i, typename T>
 struct GMap_group_attribute_functor_run<GMap,i,i,T>
 {
   static void run(GMap&,
-                  typename GMap::Dart_handle,
-                  typename GMap::Dart_handle)
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor,
+                  bool=true)
   {}
 };
 // ************************************************************************
@@ -196,8 +207,8 @@ struct GMap_group_attribute_functor
 {
   template <unsigned int i>
   static void run(GMap& amap,
-                  typename GMap::Dart_handle adart1,
-                  typename GMap::Dart_handle adart2)
+                  typename GMap::Dart_descriptor adart1,
+                  typename GMap::Dart_descriptor adart2)
   { CGAL::internal::GMap_group_attribute_functor_run<GMap,i,j>::
         run(amap,adart1,adart2); }
 };
@@ -209,25 +220,25 @@ template<typename GMap, unsigned int i, unsigned int j=GMap::dimension+1,
 struct GMap_degroup_attribute_functor_run
 {
   static void run(GMap& amap,
-                  typename GMap::Dart_handle adart1,
-                  typename GMap::Dart_handle adart2)
+                  typename GMap::Dart_descriptor adart1,
+                  typename GMap::Dart_descriptor adart2)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
-    CGAL_static_assertion( i!=j );
-    CGAL_static_assertion_msg
+    static_assert( i<=GMap::dimension );
+    static_assert( i!=j );
+    static_assert
         ( GMap::Helper::template Dimension_index<i>::value>=0,
           "GMap_degroup_attribute_functor_run<i> but i-attributes are disabled" );
 
-    typename GMap::template Attribute_handle<i>::type
+    typename GMap::template Attribute_descriptor<i>::type
         a1=amap.template attribute<i>(adart1);
 
     // If there is no first attribute, nothing to degroup.
-    if ( a1==GMap::null_handle ) return;
+    if ( a1==GMap::null_descriptor ) return;
 
     // If the second attribute is non null and already different from a1,
     // nothing to do.
     if ( a1!=amap.template attribute<i>(adart2) &&
-         amap.template attribute<i>(adart2)!=GMap::null_handle ) return;
+         amap.template attribute<i>(adart2)!=GMap::null_descriptor ) return;
 
     CGAL_assertion( (!CGAL::belong_to_same_cell<GMap,i>
                      (amap, adart1, adart2)) );
@@ -236,7 +247,7 @@ struct GMap_degroup_attribute_functor_run
     // we are sure it belongs to the first i-cell.
     amap.template set_dart_of_attribute<i>(a1, adart1);
 
-    typename GMap::template Attribute_handle<i>::type
+    typename GMap::template Attribute_descriptor<i>::type
       a2 = amap.template copy_attribute<i>(a1);
 
     amap.template set_attribute<i>(adart2, a2);
@@ -248,8 +259,8 @@ template<typename GMap, unsigned int i, unsigned int j>
 struct GMap_degroup_attribute_functor_run<GMap, i, j, CGAL::Void>
 {
   static void run(GMap&,
-                  typename GMap::Dart_handle,
-                  typename GMap::Dart_handle)
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor)
   {}
 };
 // Specialization for i==j.
@@ -257,8 +268,8 @@ template<typename GMap, unsigned int i, typename T>
 struct GMap_degroup_attribute_functor_run<GMap, i, i, T>
 {
   static void run(GMap&,
-                  typename GMap::Dart_handle,
-                  typename GMap::Dart_handle)
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor)
   {}
 };
 // ************************************************************************
@@ -271,29 +282,36 @@ struct GMap_degroup_attribute_functor_run<GMap, i, i, T>
 // process them exactly once.
 template<typename GMap, unsigned int i>
 void GMap_test_split_attribute_functor_one_dart
-( GMap& amap, typename GMap::Dart_handle adart,
-  CGAL::Unique_hash_map<typename GMap::template Attribute_handle<i>::type,
+( GMap& amap, typename GMap::Dart_descriptor adart,
+  CGAL::Unique_hash_map<typename GMap::template Attribute_descriptor<i>::type,
                         unsigned int, typename GMap::Hash_function> &
   found_attributes, typename GMap::size_type mark )
 {
-  CGAL_static_assertion_msg(GMap::Helper::template
+  static_assert(GMap::Helper::template
                             Dimension_index<i>::value>=0,
                             "GMap_test_split_attribute_functor_one_dart<i> but "
                             "i-attributes are disabled");
 
-  typedef typename GMap::template Attribute_handle<i>::type
-      Attribute_handle_i;
+  typedef typename GMap::template Attribute_descriptor<i>::type
+      Attribute_descriptor_i;
 
   // If the current dart has no attribute, or if it is aldready marked,
   // nothing to do.
-  if ( amap.template attribute<i>(adart)==GMap::null_handle ||
+  if ( amap.template attribute<i>(adart)==GMap::null_descriptor ||
        amap.is_marked(adart, mark) )
     return;
 
-  Attribute_handle_i a1 = amap.template attribute<i>(adart);
+  Attribute_descriptor_i a1 = amap.template attribute<i>(adart);
   if ( found_attributes.is_defined(a1) )
   {  // Here the attribute was already present in the hash_map
-    Attribute_handle_i a2 = amap.template
+
+    // We need to call reserve for the cc with index case. Indeed, if the vector
+    // is reallocated, the reference returned by get_attribute<i>(a1) will be
+    // invalidated, and the copy will be wrong. Note that there is no overhead
+    // since the creation of the attribute need one allocation.
+    amap.template attributes<i>().reserve(amap.template attributes<i>().size()+1);
+
+    Attribute_descriptor_i a2 = amap.template
       create_attribute<i>(amap.template get_attribute<i>(a1));
 
     for ( CGAL::GMap_dart_iterator_basic_of_cell<GMap, i>
@@ -329,25 +347,25 @@ struct GMap_test_split_attribute_functor_run
 {
   // modified_darts is the set of modified darts for beta_j
   static void run( GMap& amap,
-                   const std::deque<typename GMap::Dart_handle>
+                   const std::deque<typename GMap::Dart_descriptor>
                    &modified_darts,
                    typename GMap::size_type mark_modified_darts=GMap::INVALID_MARK)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
+    static_assert( i<=GMap::dimension );
     CGAL_assertion( i!=j );
-    CGAL_static_assertion_msg(GMap::Helper::template
+    static_assert(GMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "GMap_test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
 
-    typedef typename GMap::template Attribute_handle<i>::type
-        Attribute_handle_i;
+    typedef typename GMap::template Attribute_descriptor<i>::type
+        Attribute_descriptor_i;
 
-    CGAL::Unique_hash_map<Attribute_handle_i, unsigned int,
+    CGAL::Unique_hash_map<Attribute_descriptor_i, unsigned int,
                           typename GMap::Hash_function> found_attributes;
 
     typename GMap::size_type mark = amap.get_new_mark(); // to mark incident cells.
-    typename std::deque<typename GMap::Dart_handle>::const_iterator
+    typename std::deque<typename GMap::Dart_descriptor>::const_iterator
         it=modified_darts.begin();
     for ( ; it!=modified_darts.end(); ++it )
     {
@@ -370,34 +388,34 @@ struct GMap_test_split_attribute_functor_run
     amap.free_mark(mark);
   }
   static void run( GMap& amap,
-                   const std::deque<typename GMap::Dart_handle>
+                   const std::deque<typename GMap::Dart_descriptor>
                    &modified_darts,
-                   const std::deque<typename GMap::Dart_handle>
+                   const std::deque<typename GMap::Dart_descriptor>
                    &modified_darts2,
                    typename GMap::size_type mark_modified_darts=GMap::INVALID_MARK)
   {
-    CGAL_static_assertion( i<=GMap::dimension );
+    static_assert( i<=GMap::dimension );
     CGAL_assertion( i!=j );
-    CGAL_static_assertion_msg(GMap::Helper::template
+    static_assert(GMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "GMap_test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
 
-    typedef typename GMap::template Attribute_handle<i>::type
-        Attribute_handle_i;
+    typedef typename GMap::template Attribute_descriptor<i>::type
+        Attribute_descriptor_i;
 
-    CGAL::Unique_hash_map<Attribute_handle_i, unsigned int,
+    CGAL::Unique_hash_map<Attribute_descriptor_i, unsigned int,
                           typename GMap::Hash_function> found_attributes;
 
     typename GMap::size_type mark = amap.get_new_mark(); // to mark incident cells.
-    typename std::deque<typename GMap::Dart_handle>::const_iterator
+    typename std::deque<typename GMap::Dart_descriptor>::const_iterator
         it=modified_darts.begin();
     for ( ; it!=modified_darts.end(); ++it )
     {
       CGAL::internal::GMap_test_split_attribute_functor_one_dart<GMap,i>
           (amap, *it, found_attributes, mark);
     }
-    typename std::deque<typename GMap::Dart_handle>::const_iterator
+    typename std::deque<typename GMap::Dart_descriptor>::const_iterator
         it2=modified_darts2.begin();
     for ( ; it2!=modified_darts2.end(); ++it2 )
     {
@@ -432,11 +450,11 @@ struct GMap_test_split_attribute_functor_run
 template<typename GMap, unsigned int i, unsigned int j>
 struct GMap_test_split_attribute_functor_run<GMap, i, j, CGAL::Void>
 {
-  static void run( GMap&, const std::deque<typename GMap::Dart_handle>&,
+  static void run( GMap&, const std::deque<typename GMap::Dart_descriptor>&,
                    typename GMap::size_type=GMap::INVALID_MARK)
   {}
-  static void run( GMap&, const std::deque<typename GMap::Dart_handle>&,
-                   const std::deque<typename GMap::Dart_handle>&,
+  static void run( GMap&, const std::deque<typename GMap::Dart_descriptor>&,
+                   const std::deque<typename GMap::Dart_descriptor>&,
                    typename GMap::size_type=GMap::INVALID_MARK)
   {}
 };
@@ -444,11 +462,11 @@ struct GMap_test_split_attribute_functor_run<GMap, i, j, CGAL::Void>
 template<typename GMap, unsigned int i, typename T>
 struct GMap_test_split_attribute_functor_run<GMap, i, i, T>
 {
-  static void run( GMap&, const std::deque<typename GMap::Dart_handle>&,
+  static void run( GMap&, const std::deque<typename GMap::Dart_descriptor>&,
                    typename GMap::size_type=GMap::INVALID_MARK)
   {}
-  static void run( GMap&, const std::deque<typename GMap::Dart_handle>&,
-                   const std::deque<typename GMap::Dart_handle>&,
+  static void run( GMap&, const std::deque<typename GMap::Dart_descriptor>&,
+                   const std::deque<typename GMap::Dart_descriptor>&,
                    typename GMap::size_type=GMap::INVALID_MARK)
   {}
 };
@@ -457,11 +475,11 @@ struct GMap_test_split_attribute_functor_run<GMap, i, i, T>
 template<typename GMap, typename T>
 struct GMap_test_split_attribute_functor_run<GMap, 1, 0, T>
 {
-  static void run( GMap&, const std::deque<typename GMap::Dart_handle>&,
+  static void run( GMap&, const std::deque<typename GMap::Dart_descriptor>&,
                    typename GMap::size_type=GMap::INVALID_MARK)
   {}
-  static void run( GMap&, const std::deque<typename GMap::Dart_handle>&,
-                   const std::deque<typename GMap::Dart_handle>&,
+  static void run( GMap&, const std::deque<typename GMap::Dart_descriptor>&,
+                   const std::deque<typename GMap::Dart_descriptor>&,
                    typename GMap::size_type=GMap::INVALID_MARK)
   {}
 };
@@ -479,7 +497,7 @@ struct GMap_test_split_attribute_functor
   // it with the new i-cell and call onsplit functors.
   template <unsigned int i>
   static void run( GMap& amap,
-                   const std::deque<typename GMap::Dart_handle>
+                   const std::deque<typename GMap::Dart_descriptor>
                    &modified_darts,
                    typename GMap::size_type mark_modified_darts=GMap::INVALID_MARK)
   {
@@ -488,9 +506,9 @@ struct GMap_test_split_attribute_functor
   }
   template <unsigned int i>
   static void run( GMap& amap,
-                   const std::deque<typename GMap::Dart_handle>
+                   const std::deque<typename GMap::Dart_descriptor>
                    &modified_darts,
-                   const std::deque<typename GMap::Dart_handle>
+                   const std::deque<typename GMap::Dart_descriptor>
                    &modified_darts2,
                    typename GMap::size_type mark_modified_darts=GMap::INVALID_MARK)
   {

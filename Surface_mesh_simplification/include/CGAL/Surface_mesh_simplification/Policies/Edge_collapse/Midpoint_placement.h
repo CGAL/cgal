@@ -29,9 +29,9 @@ public:
   Midpoint_placement() {}
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
+  std::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
-    typedef boost::optional<typename Profile::Point>              result_type;
+    typedef std::optional<typename Profile::Point>              result_type;
     return result_type(profile.geom_traits().construct_midpoint_3_object()(profile.p0(), profile.p1()));
   }
 };

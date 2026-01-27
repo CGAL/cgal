@@ -128,8 +128,7 @@ Polyline number 4:
 The package is supplied with a graphical demo program that opens a window,
 allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
-(see `<CGAL_ROOT>/demo/Snap_rounding_2/demo.cpp`).
+(see `<CGAL_ROOT>/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
 
 */
 } /* namespace CGAL */
-

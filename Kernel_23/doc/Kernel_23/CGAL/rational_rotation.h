@@ -7,7 +7,7 @@ computes integers `sin_num`, `cos_num` and `denom`, such
 that `sin_num`/`denom` approximates the sine of direction
 \f$ (\f$`dirx`,`diry`\f$ )\f$. The difference between the sine and
 the approximating rational is bounded by `eps_num`/`eps_den`.
-\pre `eps_num` \f$ \neq0\f$.
+\pre `eps_num != 0`.
 
 \cgalHeading{Implementation}
 

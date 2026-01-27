@@ -1,4 +1,4 @@
-/// \defgroup PkgHalfedgeDSRef Halfedge Data Structures Reference
+/// \defgroup PkgHalfedgeDSRef Reference Manual
 /// \defgroup PkgHalfedgeDSConcepts Concepts
 /// \ingroup PkgHalfedgeDSRef
 
@@ -19,7 +19,6 @@
 
 /*!
 \addtogroup PkgHalfedgeDSRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHalfedgeDS}
 \cgalPkgPicture{HalfedgeDS/fig/HalfedgeDS-teaser-small.png}
 \cgalPkgSummaryBegin

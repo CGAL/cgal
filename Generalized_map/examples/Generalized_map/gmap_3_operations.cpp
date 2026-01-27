@@ -4,32 +4,32 @@
 #include <cassert>
 
 typedef CGAL::Generalized_map<3> GMap_3;
-typedef GMap_3::Dart_handle      Dart_handle;
+typedef GMap_3::Dart_descriptor      Dart_descriptor;
 
 int main()
 {
   GMap_3 gm;
 
   // Create one combinatorial hexahedron.
-  Dart_handle d1 = gm.make_combinatorial_hexahedron();
+  Dart_descriptor d1 = gm.make_combinatorial_hexahedron();
 
   // Add two edges along two opposite facets.
   gm.insert_cell_1_in_cell_2(d1,gm.alpha<0,1,0>(d1));
   assert( gm.is_valid() );
 
-  Dart_handle d2=gm.alpha<2,1,0,1,2>(d1);
+  Dart_descriptor d2=gm.alpha<2,1,0,1,2>(d1);
   gm.insert_cell_1_in_cell_2(d2,gm.alpha<0,1,0>(d2));
   assert( gm.is_valid() );
 
   // Insert a facet along these two new edges plus two initial edges
   // of the hexahedron.
-  std::vector<Dart_handle> path;
+  std::vector<Dart_descriptor> path;
   path.push_back(gm.alpha<1>(d1));
   path.push_back(gm.alpha<1,0,1,2,1>(d1));
   path.push_back(gm.alpha<1,0>(d2));
   path.push_back(gm.alpha<2,1>(d2));
 
-  Dart_handle d3=gm.insert_cell_2_in_cell_3(path.begin(),path.end());
+  Dart_descriptor d3=gm.insert_cell_2_in_cell_3(path.begin(),path.end());
   assert( gm.is_valid() );
 
   // Display the generalized map characteristics.

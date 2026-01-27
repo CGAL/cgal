@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_VERTICES_H
 #define CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_VERTICES_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
  #ifndef CGAL_PMP_SNAP_DEBUG
@@ -23,7 +23,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/assertions.h>
@@ -99,7 +99,7 @@ struct Snapping_pair
 #ifdef CGAL_LINKED_WITH_TBB
 // Functor that forwards the pair of the two intersecting boxes
 // Note that Box_intersection_d does a lot of copies of the callback functor, but we are passing it
-// with std::ref, so is always refering to the same reporter object (and importantly, the same counter)
+// with std::ref, so is always referring to the same reporter object (and importantly, the same counter)
 template <typename OutputIterator, typename Visitor>
 struct Intersecting_boxes_pairs_parallel_report
 {
@@ -246,7 +246,7 @@ public:
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "squared distance between "
               << va << " [" << get(m_vpm_A, va) << "] and "
-              << vb << " [" << get(m_vpm_B, vb) << "]: " << sq_dist
+              << vb << " [" << get(m_vpm_B, vb) << "]: " << CGAL::squared_distance(get(m_vpm_A, va), get(m_vpm_B, vb))
               << " (tol a/b: " << tol_a << " " << tol_b << ") larger? " << (res == CGAL::LARGER)
               << std::endl;
 #endif
@@ -371,7 +371,7 @@ void find_vertex_vertex_matches_with_kd_tree(Unique_positions& unique_positions_
   tree.insert(unique_positions_Bv.begin(), unique_positions_Bv.end());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   // parallel
@@ -596,7 +596,7 @@ void find_vertex_vertex_matches_with_box_d(const Unique_positions& unique_positi
     boxes_B_ptr.push_back(&b);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else // CGAL_LINKED_WITH_TBB
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -611,7 +611,7 @@ void find_vertex_vertex_matches_with_box_d(const Unique_positions& unique_positi
     // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
     std::function<void(const Box*, const Box*)> callback(std::ref(box_callback));
 
-    // Grab the boxes that are interesecting but don't do any extra filtering (in parallel)
+    // Grab the boxes that are intersecting but don't do any extra filtering (in parallel)
     CGAL::box_intersection_d<CGAL::Parallel_tag>(boxes_A_ptr.begin(), boxes_A_ptr.end(),
                                                  boxes_B_ptr.begin(), boxes_B_ptr.end(),
                                                  callback);
@@ -706,6 +706,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters_A>::type         GT;
   typedef typename GT::FT                                                      FT;
   typedef typename boost::property_traits<VPM_B>::value_type                   Point;
+  typedef typename boost::property_traits<VPM_B>::reference                    Point_ref;
 
   typedef std::vector<halfedge_descriptor>                                     Vertex_container;
   typedef std::pair<Vertex_container, FT>                                      Unique_vertex;
@@ -729,7 +730,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
-  CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
+  static_assert(std::is_same<Point, typename GT::Point_3>::value);
 
   GT gt = choose_parameter<GT>(get_parameter(np_A, internal_np::geom_traits));
   VPM_A vpm_A = choose_parameter(get_parameter(np_A, internal_np::vertex_point),
@@ -738,7 +739,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
                                  get_property_map(vertex_point, tm_B));
 
   internal::Snapping_default_visitor<PolygonMesh> default_visitor;
-  Visitor& visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
+  Visitor visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
 
   visitor.start_vertex_vertex_phase();
   if(visitor.stop())
@@ -754,8 +755,12 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
      is_empty_range(halfedge_range_B.begin(), halfedge_range_B.end()))
     return 0;
 
-  // Vertex-Vertex snapping is performed by identify points which are already equal
-  // and grouping them together so that they are moved together
+  // Vertex-Vertex snapping identifies points which are already equal
+  // and groups them together so that they are moved together
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "(A) Positions" << std::endl;
+#endif
 
   // @todo all range building could be parallel (worth it?)
   Unique_positions unique_positions_A;
@@ -765,7 +770,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     const FT tolerance = get(tolerance_map_A, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Pos (A): " << v << " (" << get(vpm_A, v) << ")" << std::endl;
+    std::cout << "  " << get(vpm_A, v) << std::endl;
 #endif
 
     Vertex_container nvc {{ h }};
@@ -783,6 +788,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     }
   }
 
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "(B) Positions" << std::endl;
+#endif
+
   // same for tm_B (@todo when doing boxes, avoid all that for self snapping + use self_intersection_d)
   Unique_positions unique_positions_B;
   for(halfedge_descriptor h : halfedge_range_B)
@@ -791,7 +800,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     const FT tolerance = get(tolerance_map_B, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Pos (B): " << v << " (" << get(vpm_B, v) << ")" << std::endl;
+    std::cout << "  " << get(vpm_B, v) << std::endl;
 #endif
 
     Vertex_container nvc {{ h }};
@@ -955,8 +964,23 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     {
       if(is_second_mesh_fixed)
       {
+        const Point_ref new_p = get(vpm_B, vb);
         for(const halfedge_descriptor ha : vs_a)
-          put(vpm_A, target(ha, tm_A), get(vpm_B, vb));
+        {
+          bool skip = false;
+          for(halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+          {
+            if(!is_border(haa,tm_A) &&
+               collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+            {
+              skip = true;
+              break;
+            }
+          }
+
+          if(!skip)
+            put(vpm_A, target(ha, tm_A), new_p);
+        }
       }
       else
       {
@@ -972,12 +996,40 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 #endif
 
         for(const halfedge_descriptor ha : vs_a)
-          put(vpm_A, target(ha, tm_A), new_p);
+        {
+          bool skip = false;
+          for(halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+          {
+            if(!is_border(haa,tm_A) &&
+               collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+            {
+              skip = true;
+              break;
+            }
+          }
+
+          if(!skip)
+            put(vpm_A, target(ha, tm_A), new_p);
+        }
 
         for(const halfedge_descriptor hb : vs_b)
-          put(vpm_B, target(hb, tm_B), new_p);
-      }
+        {
+          bool skip = false;
+          for(halfedge_descriptor hbb : halfedges_around_target(hb, tm_B))
+          {
+            if(!is_border(hbb,tm_B) &&
+               collinear(get(vpm_B, source(hbb,tm_B)), new_p, get(vpm_B, target(next(hbb,tm_B),tm_B))))
+            {
+              skip = true;
+              break;
+            }
+          }
 
+          if(!skip)
+            put(vpm_B, target(hb, tm_B), new_p);
+        }
+      }
+      //TODO: the counter shall depend on skip?
       ++counter;
     }
 
@@ -1029,7 +1081,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
         const vertex_descriptor va = target(ha, tm_A);
         const vertex_descriptor vb = target(hb, tm_B);
 
-        // The two folloing halfedges might not be in the range to snap, but it doesn't matter
+        // The two following halfedges might not be in the range to snap, but it doesn't matter
         const halfedge_descriptor nha = next(ha, tm_A);
         const halfedge_descriptor nhb = next(hb, tm_B);
         const bool is_stitchable_left = gt.equal_3_object()(get(vpm_A, source(ha, tm_A)),
@@ -1140,7 +1192,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
 namespace experimental {
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_geometric_repair_grp
 //
 // Attempts to snap the vertices in `halfedge_range_A` and `halfedge_range_B`.
 // A vertex from the first range and a vertex from the second range are only snapped

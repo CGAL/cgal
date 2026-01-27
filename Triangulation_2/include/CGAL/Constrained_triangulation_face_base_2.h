@@ -16,7 +16,7 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
 namespace CGAL {
@@ -109,7 +109,7 @@ inline void
 Constrained_triangulation_face_base_2<Gt,Fb>::
 set_constraint(int i, bool b)
 {
-  CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_precondition( i == 0 || i == 1 || i == 2);
   C[i] = b;
 }
 

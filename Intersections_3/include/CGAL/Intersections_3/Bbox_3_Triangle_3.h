@@ -29,15 +29,17 @@
 namespace CGAL {
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_3& box,
-                  const Triangle_3<K>& tr)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& box,
+             const Triangle_3<K>& tr)
 {
   return K().do_intersect_3_object()(box, tr);
 }
 
 template<typename K>
-bool do_intersect(const Triangle_3<K>& tr,
-                  const CGAL::Bbox_3& box)
+typename K::Boolean
+do_intersect(const Triangle_3<K>& tr,
+             const CGAL::Bbox_3& box)
 {
   return K().do_intersect_3_object()(tr, box);
 }

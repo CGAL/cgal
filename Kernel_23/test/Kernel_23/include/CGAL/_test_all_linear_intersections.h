@@ -1,9 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian_converter.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 template <class T>
-bool is_intersection_empty(const boost::optional<T>& t)
+bool is_intersection_empty(const std::optional<T>& t)
 {
   return bool(t);
 }

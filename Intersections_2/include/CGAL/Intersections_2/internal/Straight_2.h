@@ -14,7 +14,6 @@
 //
 // Author(s)     : Geert-Jan Giezeman
 
-
 #ifndef CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 #define CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 
@@ -346,6 +345,6 @@ collinear_order(typename K::Point_2 const &pt1, typename K::Point_2 const & pt2)
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H

@@ -7,7 +7,7 @@ namespace RealEmbeddableTraits_ {
 
 `AdaptableUnaryFunction`, returns true in case the argument is negative.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `RealEmbeddableTraits`
 

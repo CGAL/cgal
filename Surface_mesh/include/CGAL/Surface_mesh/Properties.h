@@ -20,6 +20,7 @@
 #include <CGAL/property_map.h>
 
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -67,7 +68,7 @@ public:
     /// Return a deep copy of self.
     virtual Base_property_array* clone () const = 0;
 
-    /// Return a empty copy of self.
+    /// Return an empty copy of self.
     virtual Base_property_array* empty_clone () const = 0;
 
     /// Return the type_info of the property
@@ -187,14 +188,14 @@ public:
         return &data_[0];
     }
 
-    /// Access the i'th element. No range check is performed!
+    /// Access the i-th element. No range check is performed!
     reference operator[](std::size_t _idx)
     {
         CGAL_assertion( _idx < data_.size() );
         return data_[_idx];
     }
 
-    /// Const access to the i'th element. No range check is performed!
+    /// Const access to the i-th element. No range check is performed!
     const_reference operator[](std::size_t _idx) const
     {
         CGAL_assertion( _idx < data_.size());
@@ -234,13 +235,18 @@ class Property_container
 public:
 
     // default constructor
-    Property_container() : size_(0), capacity_(0) {}
+    Property_container() = default;
 
     // destructor (deletes all property arrays)
     virtual ~Property_container() { clear(); }
 
     // copy constructor: performs deep copy of property arrays
     Property_container(const Property_container& _rhs) { operator=(_rhs); }
+
+    Property_container(Property_container&& c) noexcept
+    {
+      c.swap(*this);
+    }
 
     // assignment: performs deep copy of property arrays
     Property_container& operator=(const Property_container& _rhs)
@@ -256,6 +262,14 @@ public:
         }
         return *this;
     }
+
+    Property_container& operator=(Property_container&& c) noexcept
+    {
+      Property_container tmp(std::move(c));
+      tmp.swap(*this);
+      return *this;
+    }
+
 
     void transfer(const Property_container& _rhs)
     {
@@ -326,16 +340,16 @@ public:
     };
 
     template <class T>
-    std::pair<typename Get_pmap_type<T>::type, bool>
+    std::optional<typename Get_pmap_type<T>::type>
     get(const std::string& name, std::size_t i) const
     {
       typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
       if (parrays_[i]->name() == name)
         {
           if (Property_array<T>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
-            return std::make_pair (Pmap(array), true);
+            return std::optional(Pmap(array));
         }
-      return std::make_pair(Pmap(), false);
+      return std::nullopt;
     }
 
     // add a property with name \c name and default value \c t
@@ -346,12 +360,9 @@ public:
         typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
         {
-            std::pair<Pmap, bool> out = get<T>(name, i);
-            if (out.second)
-              {
-                out.second = false;
-                return out;
-              }
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
+              return std::make_pair(*out, false);
         }
 
         // otherwise add the property
@@ -363,19 +374,19 @@ public:
     }
 
 
-    // get a property by its name. returns invalid property if it does not exist.
+    // get a property by its name. Returns std::nullopt when it doesn't exist
     template <class T>
-    std::pair<typename Get_pmap_type<T>::type, bool>
+    std::optional<typename Get_pmap_type<T>::type>
     get(const std::string& name) const
     {
         typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
           {
-            std::pair<Pmap, bool> out = get<T>(name, i);
-            if (out.second)
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
               return out;
           }
-        return std::make_pair(Pmap(), false);
+        return std::nullopt;
     }
 
 
@@ -384,11 +395,11 @@ public:
     typename Get_pmap_type<T>::type
     get_or_add(const std::string& name, const T t=T())
     {
-      typename Ref_class::template Get_property_map<Key, T>::type p;
-      bool b;
-      boost::tie(p,b)= get<T>(name);
-        if (!b) p = add<T>(name, t).first;
-        return p;
+      std::optional<typename Get_pmap_type<T>::type> out = get<T>(name);
+      if (out.has_value())
+        return out.value();
+      else
+        return add<T>(name, t).first;
     }
 
 
@@ -495,12 +506,13 @@ public:
     {
       this->parrays_.swap (other.parrays_);
       std::swap(this->size_, other.size_);
+      std::swap(this->capacity_, other.capacity_);
     }
 
 private:
     std::vector<Base_property_array*>  parrays_;
-    size_t  size_;
-    size_t  capacity_;
+    size_t  size_ = 0;
+    size_t  capacity_ = 0;
 };
 
   /// @endcond
@@ -514,7 +526,7 @@ private:
 /// @tparam Key The key type of the property map. It must be a model of `Index`.
 /// @tparam Value The value type of the property.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 template <class I, class T, class CRTP_derived_class>
 class Property_map_base
@@ -524,8 +536,6 @@ class Property_map_base
            CRTP_derived_class>
 /// @endcond
 {
-    typedef void (Property_map_base::*bool_type)() const;
-    void this_type_does_not_support_comparisons() const {}
 public:
     typedef I key_type;
     typedef T value_type;
@@ -554,6 +564,20 @@ public:
 /// @cond CGAL_DOCUMENT_INTERNALS
     Property_map_base(Property_array<T>* p=nullptr) : parray_(p) {}
 
+    Property_map_base(Property_map_base&& pm) noexcept
+      : parray_(std::exchange(pm.parray_, nullptr))
+    {}
+
+    Property_map_base(const Property_map_base& pm)
+      : parray_(pm.parray_)
+    {}
+
+    Property_map_base& operator=(const Property_map_base& pm)
+    {
+      parray_ = pm.parray_;
+      return *this;
+    }
+
     void reset()
     {
         parray_ = nullptr;
@@ -568,11 +592,19 @@ public:
     /// can be used, and \c false otherwise.
   operator bool () const;
 #else
-    operator bool_type() const {
-        return parray_ != nullptr ?
-            &Property_map_base::this_type_does_not_support_comparisons : 0;
+    explicit operator bool() const {
+        return parray_ != nullptr;
     }
 #endif
+
+    bool operator==(const Property_map_base& pm) const {
+      return parray_ == pm.parray_;
+    }
+
+    bool operator!=(const Property_map_base& pm) const {
+      return parray_ != pm.parray_;
+    }
+
     /// Access the property associated with the key \c i.
     reference operator[](const I& i)
     {

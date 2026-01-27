@@ -75,10 +75,7 @@ private:
   }
 
 public:
-  typedef Boolean        result_type;
-  typedef Site_2         argument_type;
-
-  Boolean   operator()(const Site_2& p, const Site_2& q) const
+  Boolean operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
 

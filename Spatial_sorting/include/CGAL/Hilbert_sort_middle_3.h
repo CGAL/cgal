@@ -30,7 +30,7 @@ namespace internal {
         typedef typename K::Point_3 Point;
         K k;
         double value;
-        Fixed_hilbert_cmp_3 (double v, const K &_k = K()) : k(_k),value(v) {}
+        Fixed_hilbert_cmp_3 (double v, const K &_k) : k(_k),value(v) {}
         bool operator() (const Point &p) const
         {
           return ! Fixed_hilbert_cmp_3<K,x,false> (value,k) (p);
@@ -45,7 +45,7 @@ namespace internal {
         typedef typename K::Point_3 Point;
         K k;
         double value;
-        Fixed_hilbert_cmp_3 (double v, const K &_k = K()) : k(_k),value(v) {}
+        Fixed_hilbert_cmp_3 (double v, const K &_k) : k(_k),value(v) {}
         bool operator() (const Point &p) const
         {
           return to_double(k.compute_x_3_object()(p)) < value;
@@ -60,7 +60,7 @@ namespace internal {
         typedef typename K::Point_3 Point;
         K k;
         double value;
-        Fixed_hilbert_cmp_3 (double v, const K &_k = K()) : k(_k),value(v) {}
+        Fixed_hilbert_cmp_3 (double v, const K &_k) : k(_k),value(v) {}
         bool operator() (const Point &p) const
         {
           return to_double(k.compute_y_3_object()(p)) < value;
@@ -75,7 +75,7 @@ namespace internal {
         typedef typename K::Point_3 Point;
         K k;
         double value;
-        Fixed_hilbert_cmp_3 (double v, const K &_k = K()) : k(_k),value(v) {}
+        Fixed_hilbert_cmp_3 (double v, const K &_k) : k(_k),value(v) {}
         bool operator() (const Point &p) const
         {
           return to_double(k.compute_z_3_object()(p)) < value ;
@@ -98,7 +98,7 @@ private:
       { Cmp (double v,const Kernel &k) : internal::Fixed_hilbert_cmp_3<Kernel,x,up> (v,k) {} };
 
 public:
-    Hilbert_sort_middle_3 (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+    Hilbert_sort_middle_3 (const Kernel &k, std::ptrdiff_t limit = 1)
         : _k(k), _limit (limit)
     {}
 
@@ -154,26 +154,25 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
-      K k;
-      double xmin=to_double(k.compute_x_3_object()(*begin)),
-             ymin=to_double(k.compute_y_3_object()(*begin)),
-             zmin=to_double(k.compute_z_3_object()(*begin)),
+      double xmin=to_double(_k.compute_x_3_object()(*begin)),
+             ymin=to_double(_k.compute_y_3_object()(*begin)),
+             zmin=to_double(_k.compute_z_3_object()(*begin)),
                xmax=xmin,
              ymax=ymin,
              zmax=zmin;
       for(RandomAccessIterator it=begin+1; it<end; ++it){
-        if ( to_double(k.compute_x_3_object()(*it)) < xmin)
-          xmin = to_double(k.compute_x_3_object()(*it));
-        if ( to_double(k.compute_y_3_object()(*it)) < ymin)
-          ymin = to_double(k.compute_y_3_object()(*it));
-        if ( to_double(k.compute_z_3_object()(*it)) < zmin)
-          zmin = to_double(k.compute_z_3_object()(*it));
-        if ( to_double(k.compute_x_3_object()(*it)) > xmax)
-          xmax = to_double(k.compute_x_3_object()(*it));
-        if ( to_double(k.compute_y_3_object()(*it)) > ymax)
-          ymax = to_double(k.compute_y_3_object()(*it));
-        if ( to_double(k.compute_z_3_object()(*it)) > zmax)
-          zmax = to_double(k.compute_z_3_object()(*it));
+        if ( to_double(_k.compute_x_3_object()(*it)) < xmin)
+          xmin = to_double(_k.compute_x_3_object()(*it));
+        if ( to_double(_k.compute_y_3_object()(*it)) < ymin)
+          ymin = to_double(_k.compute_y_3_object()(*it));
+        if ( to_double(_k.compute_z_3_object()(*it)) < zmin)
+          zmin = to_double(_k.compute_z_3_object()(*it));
+        if ( to_double(_k.compute_x_3_object()(*it)) > xmax)
+          xmax = to_double(_k.compute_x_3_object()(*it));
+        if ( to_double(_k.compute_y_3_object()(*it)) > ymax)
+          ymax = to_double(_k.compute_y_3_object()(*it));
+        if ( to_double(_k.compute_z_3_object()(*it)) > zmax)
+          zmax = to_double(_k.compute_z_3_object()(*it));
       }
 
       sort <0, false, false, false> (begin, end, xmin,ymin,zmin,xmax,ymax,zmax);

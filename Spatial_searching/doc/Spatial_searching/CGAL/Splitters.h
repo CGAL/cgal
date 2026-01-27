@@ -20,7 +20,7 @@ the concept `SearchTraits`, for example `CGAL::Search_traits_2`.
 \tparam SpatialSeparator must be a model of the concept `SpatialSeparator`.
 It has as default value the type `Plane_separator<Traits::FT>`.
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`
@@ -78,7 +78,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
 the type, `CGAL::Plane_separator<Traits::FT>`.
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`
@@ -125,7 +125,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
 the type, `CGAL::Plane_separator<Traits::FT>`.
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`
@@ -171,7 +171,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
 the type, `CGAL::Plane_separator<Traits::FT>`
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`
@@ -216,7 +216,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
 the type, `CGAL::Plane_separator<Traits::FT>`
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`
@@ -260,7 +260,7 @@ Also, this splitting rule maintains an upper bound on the maximal
 allowed ratio of the longest and shortest side of a rectangle (the
 value of this upper bound is set in the constructor of the fair
 splitting rule). Among the splits that satisfy this bound, it selects
-the one one in which the points have the largest spread. It then
+the one in which the points have the largest spread. It then
 considers the most extreme cuts that would be allowed by the aspect
 ratio bound. This is done by dividing the longest side of the
 rectangle by the aspect ratio bound. If the median cut lies between
@@ -279,7 +279,7 @@ for example `CGAL::Cartesian_d<double>`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
 the type, `CGAL::Plane_separator<Traits::FT>`
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`
@@ -351,7 +351,7 @@ Expects for the first template argument a model of the concept
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
 the type, `CGAL::Plane_separator<Traits::FT>`.
 
-\cgalModels `Splitter`
+\cgalModels{Splitter}
 
 \sa `Splitter`
 \sa `SpatialSeparator`

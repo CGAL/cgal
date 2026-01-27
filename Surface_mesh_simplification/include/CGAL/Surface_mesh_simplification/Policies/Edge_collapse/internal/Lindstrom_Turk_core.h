@@ -18,6 +18,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 #include <CGAL/Cartesian/MatrixC33.h>
+#include <CGAL/internal/robust_cross_product.h>
 
 #include <limits>
 #include <vector>
@@ -55,9 +56,9 @@ public:
   typedef typename Geom_traits::FT                                       FT;
   typedef typename Geom_traits::Vector_3                                 Vector;
 
-  typedef boost::optional<FT>                                            Optional_FT;
-  typedef boost::optional<Point>                                         Optional_point;
-  typedef boost::optional<Vector>                                        Optional_vector;
+  typedef std::optional<FT>                                            Optional_FT;
+  typedef std::optional<Point>                                         Optional_point;
+  typedef std::optional<Vector>                                        Optional_vector;
 
   typedef MatrixC33<Geom_traits>                                         Matrix;
 
@@ -101,6 +102,8 @@ private :
   void extract_triangle_data();
   void extract_boundary_data();
 
+  double maxBb;
+
   void add_boundary_preservation_constraints(const Boundary_data_vector& aBdry);
   void add_volume_preservation_constraints(const Triangle_data_vector& triangles);
   void add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry,
@@ -119,9 +122,40 @@ private :
   const Geom_traits& geom_traits() const { return mProfile.geom_traits(); }
   const TM& surface() const { return mProfile.surface(); }
 
+#ifdef __AVX__
+  static Vector SL_cross_product_avx(const Vector& A, const Vector& B)
+  {
+    const FT ax=A.x(), ay=A.y(), az=A.z();
+    const FT bx=B.x(), by=B.y(), bz=B.z();
+
+    __m256d a = _mm256_set_pd(ay, az, ax, 1.0);
+    __m256d b = _mm256_set_pd(bz, bx, by, 1.0);
+    __m256d c = _mm256_set_pd(az, ax, ay, 1.0);
+    __m256d d = _mm256_set_pd(by, bz, bx, 1.0);
+
+    __m256d s1 = _mm256_sub_pd(b, c);
+    __m256d s2 = _mm256_sub_pd(a, d);
+
+    b = _mm256_mul_pd(a, s1);
+    d = _mm256_mul_pd(c, s2);
+    a = _mm256_add_pd(b, d);
+
+    double res[4];
+    _mm256_storeu_pd(res, a);
+
+//            a  * (b  - c ) + c  * ( a - d);
+//    FT x =  ay * (bz - az) + az * (ay - by);
+//    FT y =  az * (bx - ax) + ax * (az - bz);
+//    FT z =  ax * (by - ay) + ay * (ax - bx);
+
+    return Vector(res[3], res[2], res[1]);
+  }
+#endif
+
+
   static Vector point_cross_product(const Point& a, const Point& b)
   {
-    return cross_product(a-ORIGIN, b-ORIGIN);
+    return robust_cross_product<Geom_traits>(a-ORIGIN, b-ORIGIN);
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
@@ -152,7 +186,7 @@ private :
   static bool is_finite(const Matrix& m) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()); }
 
   template<class T>
-  static boost::optional<T> filter_infinity(const T& n) { return is_finite(n) ? boost::optional<T>(n) : boost::optional<T>(); }
+  static std::optional<T> filter_infinity(const T& n) { return is_finite(n) ? std::optional<T>(n) : std::optional<T>(); }
 
 
 private:
@@ -228,17 +262,21 @@ LindstromTurkCore<TM,K>::
 extract_triangle_data()
 {
   mTriangle_data.reserve(mProfile.triangles().size());
-
+  maxBb = 0.0;
   for(const Triangle& tri : mProfile.triangles())
   {
     const Point_reference p0 = get_point(tri.v0);
     const Point_reference p1 = get_point(tri.v1);
     const Point_reference p2 = get_point(tri.v2);
 
+    maxBb=(std::max)({maxBb,CGAL::abs(p0.x()),CGAL::abs(p0.y()),CGAL::abs(p0.z()),
+                            CGAL::abs(p1.x()),CGAL::abs(p1.y()),CGAL::abs(p1.z()),
+                            CGAL::abs(p2.x()),CGAL::abs(p2.y()),CGAL::abs(p2.z())});
+
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
 
-    Vector lNormalV = cross_product(v01,v02);
+    Vector lNormalV = robust_cross_product<Geom_traits>(v01,v02);
     FT lNormalL = point_cross_product(p0,p1) * (p2 - ORIGIN);
 
     CGAL_SMS_LT_TRACE(1, "  Extracting triangle v" << tri.v0 << "->v" << tri.v1 << "->v" << tri.v2
@@ -246,6 +284,7 @@ extract_triangle_data()
 
     mTriangle_data.push_back(Triangle_data(lNormalV,lNormalL));
   }
+  maxBb *= 2.0; // to avoid numerical problems
 }
 
 template<class TM, class K>
@@ -264,17 +303,18 @@ compute_placement()
   // 'Ai' is a (row) vector and 'bi' a scalar.
   //
   // The vertex is completely determined with 3 such constraints,
-  // so is the solution to the folloing system:
+  // so is the solution to the following system:
   //
   //  A.r0(). * v = b0
   //  A1 * v = b1
   //  A2 * v = b2
   //
-  // Which in matrix form is :  A * v = b
+  // Which in matrix form is:  A * v = b
   //
   // (with 'A' a 3x3 matrix and 'b' a vector)
   //
-  // The member variable mConstrinas contains A and b. Indidivual constraints (Ai,bi) can be added to it.
+  // The member variables mConstraints_A and mConstraints_b contain A and b.
+  // Indidivual constraints (Ai,bi) can be added to it.
   // Once 3 such constraints have been added 'v' is directly solved a:
   //
   //  v = b*inverse(A)
@@ -297,8 +337,8 @@ compute_placement()
   // In that case there is simply no good vertex placement
   if(mConstraints_n == 3)
   {
-    // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
-    boost::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
+    // If the matrix is singular its inverse cannot be computed so an 'absent' value is returned.
+    std::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
       const Matrix& lAi = *lOptional_Ai;
@@ -562,7 +602,10 @@ add_constraint_if_alpha_compatible(const Vector& Ai,
     FT l = CGAL_NTS sqrt(slai);
     CGAL_SMS_LT_TRACE(3, "      l: " << n_to_string(l));
 
-    if(!CGAL_NTS is_zero(l))
+    // Due to double number type, l may have a small value instead of zero (example sum of the face normals of a tetrahedron for volume constraint)
+    // if bi is greater than maxBb, we consider that l is zero
+    CGAL_SMS_LT_TRACE(3, "      error consider: " << (CGAL::abs(bi) / maxBb));
+    if(l > (CGAL::abs(bi) / maxBb))
     {
       Vector Ain = Ai / l;
       FT bin = bi / l;
@@ -737,6 +780,7 @@ add_constraint_from_gradient(const Matrix& H,
     }
       break;
   }
+
 }
 
 } // namespace internal

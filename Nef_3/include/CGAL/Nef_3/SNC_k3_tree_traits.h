@@ -85,7 +85,7 @@ public:
 #else
   Side_of_plane(const Point_3& p, int c) : OnSideMap(unknown_side), coord(c), pop(p) {}
 #endif
-
+  void reserve(std::size_t n) { OnSideMap.reserve(n); }
   Oriented_side operator()(Vertex_handle v);
   Oriented_side operator()(Halfedge_handle e);
   Oriented_side operator()(Halffacet_handle f);
@@ -185,7 +185,7 @@ Comparison_result cr;
 
 /*
    An edge is considered intersecting a plane if its endpoints lie on the
-   plane or if they lie on diferent sides.  Partial tangency is not considered
+   plane or if they lie on different sides.  Partial tangency is not considered
    as intersection, due the fact that a lower dimensional face (the vertex)
    should be already reported as an object intersecting the plane.
  */
@@ -209,9 +209,9 @@ Side_of_plane<SNC_decorator>::operator()(Halfedge_handle e) {
 
 
 /*
-   As for the edges, if a facet is tanget to the plane it is not considered as
-   a interesection since lower dimensional faces, like the edges and vertices
-   where the tangency occurrs, should be reported as the objects intersecting
+   As for the edges, if a facet is tangent to the plane it is not considered as
+   a intersection since lower dimensional faces, like the edges and vertices
+   where the tangency occurs, should be reported as the objects intersecting
    the plane.
    So, an intersection is reported if all vertices of the facet lie on plane,
    for which it is only necessary to check three vertices, or if the facet

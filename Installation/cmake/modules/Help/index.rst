@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CGAL CMake Modules's documentation!
-==============================================
+Welcome to CGAL CMake Modules' documentation!
+=============================================
 
 Contents:
 
@@ -16,7 +16,7 @@ Contents:
    CGAL_SetupBoost
    CGAL_SetupCGALDependencies
    CGAL_SetupCGAL_CoreDependencies
-   CGAL_SetupCGAL_Qt5Dependencies
+   CGAL_SetupCGAL_Qt6Dependencies
    CGAL_SetupCGAL_ImageIODependencies
 
 TODO

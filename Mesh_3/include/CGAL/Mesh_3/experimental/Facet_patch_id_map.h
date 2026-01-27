@@ -18,7 +18,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 namespace CGAL { namespace Mesh_3 {
 

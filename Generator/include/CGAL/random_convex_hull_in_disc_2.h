@@ -154,7 +154,6 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
   typedef typename Traits::Point_2 P;
   typedef typename Traits::FT FT;
   std::size_t simulated_points = 0;
-  std::size_t generated_points = 0;
   P zero(0, 0);
   FT squared_radius = radius * radius;
   typedef typename Traits::Compare_y_2 Compare_y_2;
@@ -170,7 +169,6 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
                             gen);
 
     simulated_points += init;
-    generated_points += init;
 
     Graham_without_sort_2(l, traits);
   } while ((bounded_side_2(l.begin(), l.end(), zero, traits) !=
@@ -223,7 +221,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     boost::variate_generator<
         GEN&, boost::binomial_distribution<long> > bin(gen, dbin);
 
-    // How many points are falling in the small disc and wont be generated:
+    // How many points are falling in the small disc and won't be generated:
     long k_disc = bin();
     simulated_points += k_disc;
 
@@ -232,7 +230,6 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
                                       std::sqrt(to_double(squared_small_radius)), radius,
                                       m, gen);
     l.merge(m, compare_points_angle<P, Traits>());
-    generated_points += nb - k_disc;
     simulated_points += nb - k_disc;
     m.clear();
     Graham_without_sort_2(l, traits);

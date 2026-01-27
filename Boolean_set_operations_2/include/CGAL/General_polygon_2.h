@@ -38,6 +38,7 @@ public:
   typedef std::list<X_monotone_curve_2>              Containter;
   typedef typename Containter::iterator              Curve_iterator;
   typedef typename Containter::const_iterator        Curve_const_iterator;
+  typedef X_monotone_curve_2                         value_type;
 
 protected:
   std::list<X_monotone_curve_2>    m_xcurves;

@@ -1,18 +1,19 @@
-Debian packages for CGAL 4.1 are now available as well. Simply add
+Debian packages for CGAL 6.0 are now available as well. Simply add
 
-  deb ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian squeeze main
-  deb-src ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian squeeze main
+  deb http://debian.cgal.org bullseye main
+  deb-src http://debian.cgal.org bullseye main
 
-  deb ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian wheezy main
-  deb-src ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian wheezy main
+  deb http://debian.cgal.org bookworm main
+  deb-src http://debian.cgal.org bookworm main
 
-to /etc/apt/sources list (you only need the pair of lines corresponding
-to the release you are using). For sid, packages should be available
-from the official Debian repository in a few days. The packages are called
-libcgal10, libcgal-dev, libcgal-qt4-10. libcgal-qt4-dev, libcgal-demo, and
-libcgal-ipelets.
+to /etc/apt/sources.list (you only need the pair of lines
+corresponding to the release you are using) and make sure that the
+package apt-transport-https is installed. For sid/unstable,
+packages are available from the official Debian repository. The
+packages are called libcgal-dev, libcgal-qt6-dev, libcgal-demo,
+and libcgal-ipelets.
 
 In case you want to download the packages manually, have a look at
-ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian/pool/main/c/cgal/
+https://debian.cgal.org/pool/main/c/cgal/ .
 
 See also https://www.cgal.org/FAQ.html#debian_packages .

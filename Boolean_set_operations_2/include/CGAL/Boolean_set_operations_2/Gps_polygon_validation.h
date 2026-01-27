@@ -7,14 +7,13 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
-//                 Boris Kozorovitzky <boriskoz@post.tau.ac.il>
-//                 Guy Zucker <guyzucke@post.tau.ac.il>
+// Author(s) : Baruch Zukerman    <baruchzu@post.tau.ac.il>
+//             Ron Wein           <wein@post.tau.ac.il>
+//             Boris Kozorovitzky <boriskoz@post.tau.ac.il>
+//             Guy Zucker         <guyzucke@post.tau.ac.il>
 
-#ifndef CGAL_BSO_2_GPS_POLYGON_VALIDATION_2_H
-#define CGAL_BSO_2_GPS_POLYGON_VALIDATION_2_H
+#ifndef CGAL_GPS_POLYGON_VALIDATION_2_H
+#define CGAL_GPS_POLYGON_VALIDATION_2_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
@@ -407,7 +406,7 @@ is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
     Vertex_const_handle cver;
     Point_2 second_point;
     if (cmp_endpoints(*next) == SMALLER) {
-      // next curve's minimum is the joint vertex. Look if it's max exists in
+      // next curve's minimum is the joint vertex. Look if its max exists in
       // the arrangement and insert lexicographically
       second_point = max_functor(*next);
       obj = pl.locate(second_point);
@@ -622,7 +621,7 @@ bool are_holes_and_boundary_pairwise_disjoint
                                                         Topology_traits;
   typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits>
                                                         Polygon_set_2;
-  typedef typename Polygon_set_2::Size                  Size;
+  // typedef typename Polygon_set_2::Size                  Size;
   typedef  typename Traits_2::Polygon_2                 Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
   typedef typename Polygon_with_holes_2::Hole_const_iterator
@@ -631,7 +630,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   typedef std::pair<Curve_const_iterator, Curve_const_iterator>
                                                         Cci_pair;
   typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
-  typedef typename Traits_2::Construct_general_polygon_with_holes_2
+  typedef typename Traits_2::Construct_polygon_with_holes_2
     Construct_polygon_with_holes_2;
 
   typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
@@ -639,12 +638,11 @@ bool are_holes_and_boundary_pairwise_disjoint
   typedef typename Polygon_set_2::Arrangement_on_surface_2
                                                         Arrangement_2;
 
-  /* Should be perfored more efficeintly  than using sweep and than
-   * difference().
+  /* Should be perfored more efficiently than using sweep and then difference().
    *
    * Use sweep to find intersections on the interior of curves (not on vertices)
    * and overlapping edges which are not allowed (note that 0/1 dimension
-   * intersections are not detectes by do_intersect() which only returns the
+   * intersections are not detects by do_intersect() which only returns the
    * 2D intersection polygon if exists)
    * Note that using this sweep alone allows for a hole and an edge to share
    * a vertex and intersect (like illegal input pgn_w_overlap_hole.dat in
@@ -677,7 +675,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   Polygon_set_2 gps(traits);
   // check for 2D  intersections of holes (holes must be disjoint except for
   // vertices)
-  Size num_of_holes = 0;
+  // Size num_of_holes = 0;
   // functors for creating a pwh needed for inserting pgns into the arrangement
   // quickly
   Construct_polygon_with_holes_2 construct_pwh_functor =
@@ -686,22 +684,22 @@ bool are_holes_and_boundary_pairwise_disjoint
     Polygon_2 hole(*hoit);
     hole.reverse_orientation();
     /* gps.join() and gps.insert()requires that the polyon insrted is valid,
-     * and therfore hole orientation must be reversed
+     * and therefore the hole orientation must be reversed
      */
     bool intersect = gps.do_intersect(hole);
     if (intersect) return false;
     else {
-      /* to use gps.insert(hole) it is required that the set coponents and the
+      /* to use gps.insert(hole) it is required that the set components and the
        * new holes  do not intersect.
        * because the sweep detects shared edges and the do_intersect query
        * detects 2D intersections we can safely use the insert(pwh) function
        * whose performance is better than the join(pgn)
        */
       Polygon_with_holes_2 empty_pwh = construct_pwh_functor(hole);
-      // traits.Construct_general_polygon_with_holes_2 (hole);
+      // traits.Construct_polygon_with_holes_2 (hole);
       // Polygon_with_holes_2 empty_pwh(hole);
       gps.insert(empty_pwh);
-      num_of_holes++;
+    //  num_of_holes++;
     }
   }
   /* not good - doesn't work if intersection at vertices is legal.
@@ -758,9 +756,9 @@ bool are_holes_and_boundary_pairwise_disjoint
 /* A valid polygon with holes is :
  * 1 - Has empty or closed boundary and all the holes are closed
  * 2 - The PWH is relatively simple polygon (holes are simple...)
- * 3 - Has it's boundary oriented counterclockwise and the holes oriented
+ * 3 - Has its boundary oriented counterclockwise and the holes oriented
  *     clockwise
- * 4 - All the segments (boundry and holes) do not cross or intersect in their
+ * 4 - All the segments (boundary and holes) do not cross or intersect in their
  *     relative interior
  * 5 - The holes are on the interior of the boundary polygon if the boundary
  *     is not empty

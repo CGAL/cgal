@@ -22,8 +22,9 @@
 #include <CGAL/barycenter.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Bbox_3.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -189,10 +190,10 @@ class Ridge_approximation
 
 
   //requirements for the templates TriangleMesh and VertexFTMap or VertexVectorMap
-  CGAL_static_assertion((boost::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value));
-  CGAL_static_assertion((boost::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value));
-  CGAL_static_assertion((boost::is_same<FT, typename VertexFTMap::value_type>::value));
-  CGAL_static_assertion((boost::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
+  static_assert(std::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value);
+  static_assert(std::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value);
+  static_assert(std::is_same<FT, typename VertexFTMap::value_type>::value);
+  static_assert(std::is_same<Vector_3, typename VertexVectorMap::value_type>::value);
 
   typedef std::pair< halfedge_descriptor, FT>    Ridge_halfedge;
   typedef Ridge_halfedge Ridge_halfhedge; // kept for backward compatibility
@@ -335,7 +336,7 @@ Ridge_approximation(const TriangleMesh &p,
 {
   //init the is_visited_map and check that the mesh is a triangular one.
   face_iterator itb,ite;
-  boost::tie(itb,ite) = faces(P);
+  std::tie(itb,ite) = faces(P);
   for(;itb!=ite;itb++) {
     is_visited_map[*itb] = false;
   }
@@ -410,10 +411,10 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, R
 
   //reinit the is_visited_map
   face_iterator itb,ite;
-  boost::tie(itb,ite) = faces(P);
+  std::tie(itb,ite) = faces(P);
   for(;itb!=ite;itb++) is_visited_map[*itb] = false;
 
-  boost::tie(itb,ite) = faces(P);
+  std::tie(itb,ite) = faces(P);
   for(;itb!=ite;itb++)
     {
       face_descriptor f = *itb;

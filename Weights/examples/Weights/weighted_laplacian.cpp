@@ -20,18 +20,18 @@ using HD   = boost::graph_traits<Mesh>::halfedge_descriptor;
 template<typename PointMap>
 FT get_w_ij(const Mesh& mesh, const HD he, const PointMap pmap) {
 
-  const auto v0 = target(he, mesh);
-  const auto v1 = source(he, mesh);
+  const VD v0 = target(he, mesh);
+  const VD v1 = source(he, mesh);
 
   const auto& q  = get(pmap, v0); // query
   const auto& p1 = get(pmap, v1); // neighbor j
 
   if (is_border_edge(he, mesh)) {
-    const auto he_cw = opposite(next(he, mesh), mesh);
-    auto v2 = source(he_cw, mesh);
+    const HD he_cw = opposite(next(he, mesh), mesh);
+    VD v2 = source(he_cw, mesh);
 
     if (is_border_edge(he_cw, mesh)) {
-      const auto he_ccw = prev(opposite(he, mesh), mesh);
+      const HD he_ccw = prev(opposite(he, mesh), mesh);
       v2 = source(he_ccw, mesh);
 
       const auto& p2 = get(pmap, v2); // neighbor jp
@@ -42,10 +42,10 @@ FT get_w_ij(const Mesh& mesh, const HD he, const PointMap pmap) {
     }
   }
 
-  const auto he_cw = opposite(next(he, mesh), mesh);
-  const auto v2 = source(he_cw, mesh);
-  const auto he_ccw = prev(opposite(he, mesh), mesh);
-  const auto v3 = source(he_ccw, mesh);
+  const HD he_cw = opposite(next(he, mesh), mesh);
+  const VD v2 = source(he_cw, mesh);
+  const HD he_ccw = prev(opposite(he, mesh), mesh);
+  const VD v3 = source(he_ccw, mesh);
 
   const auto& p0 = get(pmap, v2); // neighbor jm
   const auto& p2 = get(pmap, v3); // neighbor jp
@@ -56,14 +56,14 @@ template<typename PointMap>
 FT get_w_i(const Mesh& mesh, const VD v_i, const PointMap pmap) {
 
   FT A_i = 0.0;
-  const auto v0 = v_i;
-  const auto init = halfedge(v_i, mesh);
-  for (const auto& he : halfedges_around_target(init, mesh)) {
+  const VD v0 = v_i;
+  const HD init = halfedge(v_i, mesh);
+  for (const HD he : halfedges_around_target(init, mesh)) {
     assert(v0 == target(he, mesh));
     if (is_border(he, mesh)) { continue; }
 
-    const auto v1 = source(he, mesh);
-    const auto v2 = target(next(he, mesh), mesh);
+    const VD v1 = source(he, mesh);
+    const VD v2 = target(next(he, mesh), mesh);
 
     const auto& p = get(pmap, v0);
     const auto& q = get(pmap, v1);
@@ -81,14 +81,14 @@ void set_laplacian_matrix(const Mesh& mesh, Matrix& L) {
 
   // Precompute Voronoi areas.
   std::map<std::size_t, FT> w_i;
-  for (const auto& v_i : vertices(mesh)) {
+  for (const VD v_i : vertices(mesh)) {
     w_i[get(imap, v_i)] = get_w_i(mesh, v_i, pmap);
   }
 
   // Fill the matrix.
-  for (const auto& he : halfedges(mesh)) {
-    const auto vi = source(he, mesh);
-    const auto vj = target(he, mesh);
+  for (const HD he : halfedges(mesh)) {
+    const VD vi = source(he, mesh);
+    const VD vj = target(he, mesh);
 
     const std::size_t i = get(imap, vi);
     const std::size_t j = get(imap, vj);
@@ -106,11 +106,11 @@ int main() {
 
   // Create mesh.
   Mesh mesh;
-  const auto v0 = mesh.add_vertex(Point_3(0, 2, 0));
-  const auto v1 = mesh.add_vertex(Point_3(2, 2, 0));
-  const auto v2 = mesh.add_vertex(Point_3(0, 0, 0));
-  const auto v3 = mesh.add_vertex(Point_3(2, 0, 0));
-  const auto v4 = mesh.add_vertex(Point_3(1, 1, 1));
+  const VD v0 = mesh.add_vertex(Point_3(0, 2, 0));
+  const VD v1 = mesh.add_vertex(Point_3(2, 2, 0));
+  const VD v2 = mesh.add_vertex(Point_3(0, 0, 0));
+  const VD v3 = mesh.add_vertex(Point_3(2, 0, 0));
+  const VD v4 = mesh.add_vertex(Point_3(1, 1, 1));
   mesh.add_face(v0, v2, v4);
   mesh.add_face(v2, v3, v4);
   mesh.add_face(v3, v1, v4);

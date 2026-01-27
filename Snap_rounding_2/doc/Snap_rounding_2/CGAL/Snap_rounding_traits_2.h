@@ -27,7 +27,7 @@ coordinate, the resulting ISR, may be imprecise, and the distance between some
 vertex and a non-incident edge can be slightly less than the guaranteed
 half-the width-of-a-pixel.
 
-\cgalModels `SnapRoundingTraits_2`
+\cgalModels{SnapRoundingTraits_2}
 
 */
 template< typename Kernel >

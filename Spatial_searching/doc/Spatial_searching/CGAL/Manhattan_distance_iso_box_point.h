@@ -13,7 +13,7 @@ and a `d`-dimensional iso-box defined as a `k-d` tree rectangle.
 \tparam Traits must be a model for the concept
 `SearchTraits`, for example `Search_traits_3<Simple_cartesian<double> >`.
 
-\cgalModels `GeneralDistance`
+\cgalModels{GeneralDistance}
 
 \sa `GeneralDistance`
 
@@ -67,7 +67,7 @@ distance between `b` and `p`.
 FT transformed_distance(Query_item b, Point_d p) const;
 
 /*!
-Returns the transformed value of of `d`.
+Returns the transformed value of `d`.
 */
 FT transformed_distance(FT d) const;
 

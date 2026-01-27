@@ -4,7 +4,7 @@
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 #include "dump_to_eps.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cassert>
 #include <fstream>
@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 
-typedef boost::shared_ptr<Polygon_with_holes> Polygon_with_holes_ptr ;
+typedef std::shared_ptr<Polygon_with_holes> Polygon_with_holes_ptr ;
 
 typedef std::vector<Polygon_with_holes_ptr> Polygon_with_holes_ptr_vector ;
 
@@ -39,7 +39,7 @@ int main( int argc, char* argv[] )
       for(Polygon_with_holes::Hole_const_iterator it = input.holes_begin();
           it != input.holes_end();
           ++it){
-        assert(it->is_counterclockwise_oriented());
+        assert(it->is_clockwise_oriented());
       }
 
       double lOffset = 0.25 ;
@@ -75,13 +75,13 @@ int main( int argc, char* argv[] )
   else
   {
     std::cerr << "Computes the interior offset of a polygon with holes and draws the result in an EPS file." << std::endl
+                          << std::endl
+              << "Usage: show_offset_polygon <input_file> [output_eps_file]" << std::endl
               << std::endl
-              << "Usage: show_offset_polygon <intput_file> [offset_distance] [output_eps_file]" << std::endl
-              << std::endl
-              << "       intput_file  Text file describing the input polygon with holes." << std::endl
-              << "         (See inputfile_format.txt for details)" << std::endl
-              << "       offset_distance [default=0.25]." << std::endl
-              << "       output_file     [default='innput_file.offset.eps']" << std::endl ;
+              << "       input_file  Text file describing the input polygon with holes." << std::endl
+              << "         (See input_file_format.txt for details" << std::endl
+              << "         or use input_file_example.txt)" << std::endl
+              << "       output_file     [default='input_file.offset.eps']" << std::endl ;
   }
 
   return 0;

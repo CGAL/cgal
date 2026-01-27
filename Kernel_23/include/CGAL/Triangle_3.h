@@ -18,16 +18,18 @@
 #define CGAL_TRIANGLE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
 template <class R_>
 class Triangle_3 : public R_::Kernel_base::Triangle_3
 {
+  typedef typename R_::Boolean               Boolean;
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
@@ -35,7 +37,7 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Triangle_3                         Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Triangle_3>::value));
+  static_assert(std::is_same<Self, typename R_::Triangle_3>::value);
 
 public:
 
@@ -76,11 +78,10 @@ public:
     return R().construct_supporting_plane_3_object()(*this);
   }
 
-  bool has_on(const Point_3 &p) const
+  Boolean has_on(const Point_3 &p) const
   {
     return R().has_on_3_object()(*this, p);
   }
-
 
   decltype(auto)
   vertex(int i) const
@@ -94,7 +95,7 @@ public:
     return vertex(i);
   }
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);
   }
@@ -105,7 +106,7 @@ public:
     return R().construct_bbox_3_object()(*this);
   }
 
-  FT squared_area() const // TODO : use Qrt
+  decltype(auto) squared_area() const
   {
     return R().compute_squared_area_3_object()(*this);
   }

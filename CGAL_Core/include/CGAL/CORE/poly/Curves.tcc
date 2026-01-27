@@ -16,7 +16,7 @@
  *  Author:  Vikram Sharma and Chee Yap
  *  Date:    April 12, 2004
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -92,7 +92,7 @@ BiPoly<NT>::BiPoly(Polynomial<NT> p, bool flag){
 
   //BiPoly(deg, d[], C[]):
   //        Takes in a list of list of coefficients.
-  //        Each cofficient list represents a polynomial in X
+  //        Each coefficient list represents a polynomial in X
   //
   //  deg - ydeg of the bipoly
   //  d[] - array containing the degrees of each coefficient (i.e., X poly)
@@ -544,7 +544,7 @@ template <class NT>
 int BiPoly<NT>::getXdegree(){
     int deg=-1;
     for(int i=0; i <=ydeg; i++)
-      deg = max(deg, coeffX[i].getTrueDegree());
+      deg = (max)(deg, coeffX[i].getTrueDegree());
     return deg;
   }
 
@@ -862,7 +862,7 @@ void BiPoly<NT>::reverse() {
   }//reverse
 
   //replaceYwithX()
-  //   used used when the coeffX in BiPoly are constants,
+  //   used when the coeffX in BiPoly are constants,
   //   to get the corresponding univariate poly in X
   //   E.g., Y^2+2*Y+9 will be converted to X^2+2*X+9
 template <class NT>
@@ -1101,7 +1101,7 @@ Curve<NT>::Curve(Polynomial<NT> p, bool flag)
 
   //Curve(deg, d[], C[]):
   //        Takes in a list of list of coefficients.
-  //        Each cofficient list represents a polynomial in X
+  //        Each coefficient list represents a polynomial in X
   //
   //  deg - ydeg of the bipoly
   //  d[] - array containing the degrees of each coefficient (i.e., X poly)
@@ -1336,7 +1336,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
     if (!xCurr.isExact()){
       std::ostringstream oss;
       oss << "xCurr has error! xCurr=" << xCurr;
-      core_error(oss.str(), __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, oss.str());
     }
    }//main while loop
 
@@ -1394,7 +1394,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
 
 
 //Xintersections(C, D, vI):
-//  returns the list vI of x-ccordinates of possible intersection points.
+//  returns the list vI of x-coordinates of possible intersection points.
 //  Assumes that C & D are quasi-monic.(or generally aligned)
 template <class NT>
 void  Xintersections( Curve<NT>& P ,Curve<NT>& Q, BFVecInterval &vI){
@@ -1426,4 +1426,3 @@ void showIntervals(char* s, BFVecInterval &vI) {
 /*************************************************************************** */
 // END
 /*************************************************************************** */
-

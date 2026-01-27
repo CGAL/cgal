@@ -19,6 +19,8 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 
+#include <memory> // for std::unique_ptr
+
 using namespace CGAL::Three;
 
 #ifdef demo_framework_EXPORTS
@@ -176,7 +178,7 @@ public:
   //!
   void setVbos(std::vector<Vbo*>);
   //!
-  //! \brief setVbo sets the `vbo_id`th `Vbo` of this container to `vbo`.
+  //! \brief setVbo sets the `vbo_id`-th `Vbo` of this container to `vbo`.
   //! \param vbo_id
   //! \param vbo
   //!
@@ -197,7 +199,7 @@ public:
   //!
   Vao* getVao(Viewer_interface* viewer)const;
   //!
-  //! \brief getVbo returns the `id`th Vbo of this container.
+  //! \brief getVbo returns the `id`-th Vbo of this container.
   //!
   Vbo *getVbo(std::size_t id)const;
   //!
@@ -248,7 +250,7 @@ public:
   //!
 private:
   friend struct D;
-  mutable D* d;
+  std::unique_ptr<D> d;
 }; //end of class Triangle_container
 
 }

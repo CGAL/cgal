@@ -17,13 +17,13 @@ configuration.
 create <B>a single executable</B> for 'source' linked with
 compilations of all other source files
 (`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
-This behaviour is usually needed for (graphical) demos.
+This behavior is usually needed for (graphical) demos.
 
 If the parameter is not given, the script creates <B>one executable for each given
 source file</B>.
 <DT><B>`-c com1:com2:...`</B><DD> Lists components ("com1",
 "com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
-libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
+libraries (i.e.\ "Core", "ImageIO", and "Qt6"). An example is `-c Core`.
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
 "boost2") of \boost to which the executable(s) should be
@@ -31,10 +31,10 @@ linked. Valid options are, for instance, "filesystem" or "program_options".
 
 </DL>
 
-This options should suffice to create `CMakeLists.txt` script
+These options should suffice to create a `CMakeLists.txt` script
 for most directories containing programs. However, in some special
 cases, it might still be required to create the script manually, for
 instance, if some source files/executables need a different linking than
-other source files. The Section \subpage devman_create_and_use_a_cmakelist provides more details.
+other source files. The Section \ref devman_create_and_use_a_cmakelist provides more details.
 
 */

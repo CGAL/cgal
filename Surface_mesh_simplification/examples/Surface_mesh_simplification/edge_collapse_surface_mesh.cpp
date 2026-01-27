@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 
 #include <chrono>
 #include <fstream>
@@ -18,8 +18,7 @@ int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
-  std::ifstream is(filename);
-  if(!is || !(is >> surface_mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, surface_mesh))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;
@@ -33,10 +32,12 @@ int main(int argc, char** argv)
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
+  std::cout << num_vertices(surface_mesh) << " vertices, " << num_edges(surface_mesh) << " edges (BEFORE)" << std::endl;
+
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
   double stop_ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
+  SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
 
   int r = SMS::edge_collapse(surface_mesh, stop);
 

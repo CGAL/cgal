@@ -88,7 +88,7 @@ public:
 
 public:
   Linear_mask_3(Mesh* pmesh)
-    : Base(pmesh, get(vertex_point, pmesh))
+    : Base(pmesh, get(vertex_point, *pmesh))
   { }
 
   Linear_mask_3(Mesh* pmesh, VertexPointMap vpmap)
@@ -117,8 +117,9 @@ public:
     pt = get(this->vpmap, vertex);
   }
 
-  void border_node(halfedge_descriptor edge, Point& ept, Point& /*vpt*/){
+  void border_node(halfedge_descriptor edge, Point& ept, Point& vtp){
     edge_node(edge, ept);
+    vertex_node(target(edge, *(this->pmesh)), vtp);
   }
 };
 
@@ -142,7 +143,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \image html CCBorderMask.svg
 
 
-\cgalModels `PQQMask_3`
+\cgalModels{PQQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 */
@@ -266,7 +267,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \image html LoopBorderMask.png
 \image latex LoopBorderMask.png
 
-\cgalModels `PTQMask_3`
+\cgalModels{PTQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -373,7 +374,6 @@ public:
 /// @}
 };
 
-
 //==========================================================================
 /// The stencil of the Dual-Quadrilateral-Quadrisection
 template <class PolygonMesh,
@@ -429,7 +429,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \image html DSCornerMask.png
 \image latex DSCornerMask.png
 
-\cgalModels `DQQMask_3`
+\cgalModels{DQQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -523,7 +523,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \tparam PolygonMesh must be a model of the concept `MutableFaceGraph`. Additionally all faces must be triangles.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
-\cgalModels `Sqrt3Mask_3`
+\cgalModels{Sqrt3Mask_3}
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -571,12 +571,12 @@ public:
   /// computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `vd`.
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_target_circulator<Mesh> vcir(vertex, *(this->pmesh));
-    const typename boost::graph_traits<Mesh>::degree_size_type n = degree(vertex, *(this->pmesh));
+    const int n = static_cast<int>(degree(vertex, *(this->pmesh)));
 
     const FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/(double)n))/9.0);
 
     Vector cv = ((FT)(1.0-a)) * (get(this->vpmap, vertex) - CGAL::ORIGIN);
-    for (typename boost::graph_traits<Mesh>::degree_size_type i = 1; i <= n; ++i, --vcir) {
+    for (int i = 1; i <= n; ++i, --vcir) {
       cv = cv + (a/FT(n))*(get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)))-CGAL::ORIGIN);
     }
 

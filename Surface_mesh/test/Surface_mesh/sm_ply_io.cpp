@@ -43,5 +43,114 @@ int main()
 //  CGAL::IO::set_binary_mode(out);
   CGAL::IO::write_PLY(out, mesh);
 
+  // extra test for read/write of properties
+  mesh = SMesh();
+  in.close();
+  in.open(CGAL::data_file_path("meshes/colored_tetra.ply"));
+  CGAL::IO::read_PLY(in, mesh);
+  float fvalue=1001;
+  auto v_uvmap = mesh.add_property_map<SMesh::Vertex_index, std::vector<float>>("v:uv").first;
+  auto v_umap = mesh.add_property_map<SMesh::Vertex_index, float>("v:u").first;
+  auto v_vmap = mesh.add_property_map<SMesh::Vertex_index, float>("v:v").first;
+  for (SMesh::Vertex_index v : vertices(mesh))
+  {
+    v_uvmap[v]={fvalue, -fvalue};
+    v_umap[v]=fvalue;
+    v_vmap[v]=-fvalue;
+    ++fvalue;
+  }
+
+  double dvalue=2001;
+  auto f_uvmap = mesh.add_property_map<SMesh::Face_index, std::vector<double>>("f:uv").first;
+  auto f_umap = mesh.add_property_map<SMesh::Face_index, double>("f:u").first;
+  auto f_vmap = mesh.add_property_map<SMesh::Face_index, double>("f:v").first;
+  for (SMesh::Face_index f : faces(mesh))
+  {
+    f_uvmap[f]={dvalue, -dvalue};
+    f_umap[f]=dvalue;
+    f_vmap[f]=-dvalue;
+    ++dvalue;
+  }
+
+  std::size_t uvalue=3001;
+  auto h_uvmap = mesh.add_property_map<SMesh::Halfedge_index, std::vector<std::size_t>>("h:uv").first;
+  auto h_umap = mesh.add_property_map<SMesh::Halfedge_index, std::size_t>("h:u").first;
+  auto h_vmap = mesh.add_property_map<SMesh::Halfedge_index, std::size_t>("h:v").first;
+  for (SMesh::Halfedge_index h : halfedges(mesh))
+  {
+    h_uvmap[h]={uvalue, 2*uvalue};
+    h_umap[h]=uvalue;
+    h_vmap[h]=2*uvalue;
+    ++uvalue;
+  }
+
+  out.close();
+  out.open("out_ascii.ply");
+  CGAL::IO::write_PLY(out, mesh);
+  out.close();
+  out.open("out_binary.ply", std::ios::binary);
+  CGAL::IO::set_binary_mode(out);
+  CGAL::IO::write_PLY(out, mesh);
+  out.close();
+  mesh.clear();
+
+  const std::array<std::string,2> fnames = {"out_ascii.ply", "out_binary.ply"};
+  for (std::string fn : fnames)
+  {
+    std::cout << "Reading " << fn << std::endl;
+    in.close();
+    in.open(fn, std::ios::binary);
+    SMesh mesh_bis;
+    CGAL::IO::read_PLY(in, mesh_bis);
+
+    v_uvmap = mesh_bis.property_map<SMesh::Vertex_index, std::vector<float>>("v:uv").value();
+    v_umap = mesh_bis.property_map<SMesh::Vertex_index, float>("v:u").value();
+    v_vmap = mesh_bis.property_map<SMesh::Vertex_index, float>("v:v").value();
+
+    fvalue=1001;
+    for (SMesh::Vertex_index v : vertices(mesh_bis))
+    {
+      assert(v_uvmap[v].size()==2);
+      assert(v_uvmap[v][0]==fvalue);
+      assert(v_uvmap[v][1]==-fvalue);
+      assert(v_umap[v]==fvalue);
+      assert(v_vmap[v]==-fvalue);
+      ++fvalue;
+    }
+
+    f_uvmap = mesh_bis.property_map<SMesh::Face_index, std::vector<double>>("f:uv").value();
+    f_umap = mesh_bis.property_map<SMesh::Face_index, double>("f:u").value();
+    f_vmap = mesh_bis.property_map<SMesh::Face_index, double>("f:v").value();
+
+    dvalue=2001;
+    for (SMesh::Face_index f : faces(mesh_bis))
+    {
+      assert(f_uvmap[f].size()==2);
+      assert(f_uvmap[f][0]==dvalue);
+      assert(f_uvmap[f][1]==-dvalue);
+      assert(f_umap[f]==dvalue);
+      assert(f_vmap[f]==-dvalue);
+      ++dvalue;
+    }
+
+    assert((mesh_bis.property_map<SMesh::Halfedge_index, std::vector<std::uint32_t>>("h:uv").has_value()));
+    auto h_uvmap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::vector<std::uint32_t>>("h:uv").value();
+    assert((mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:u").has_value()));
+    auto h_umap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:u").value();
+    assert((mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:v").has_value()));
+    auto h_vmap_bis = mesh_bis.property_map<SMesh::Halfedge_index, std::uint32_t>("h:v").value();
+
+    uvalue=3001;
+    for (SMesh::Halfedge_index h : halfedges(mesh_bis))
+    {
+      assert(h_uvmap_bis[h].size()==2);
+      assert(h_uvmap_bis[h][0]==uvalue);
+      assert(h_uvmap_bis[h][1]==2*uvalue);
+      assert(h_umap_bis[h]==uvalue);
+      assert(h_vmap_bis[h]==2*uvalue);
+      ++uvalue;
+    }
+  }
+
   return 0;
 }

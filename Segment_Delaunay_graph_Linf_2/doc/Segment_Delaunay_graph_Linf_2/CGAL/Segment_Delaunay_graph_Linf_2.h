@@ -19,7 +19,7 @@ which must be a model of `SegmentDelaunayGraphDataStructure_2`.
 `DS` defaults to
 `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>, CGAL::Triangulation_face_base_2<Gt> >`.
 
-\cgalModels `DelaunayGraph_2`
+\cgalModels{DelaunayGraph_2}
 
 \sa `SegmentDelaunayGraphLinfTraits_2`
 \sa `SegmentDelaunayGraphDataStructure_2`

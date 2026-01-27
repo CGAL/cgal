@@ -16,7 +16,7 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomain >` is a model of
 - \link AlgebraicStructureTraits::Integral_division `CGAL::Algebraic_structure_traits< IntegralDomain >::Integral_division` \endlink  which is a model of `AlgebraicStructureTraits_::IntegralDivision`
 - \link AlgebraicStructureTraits::Divides `CGAL::Algebraic_structure_traits< IntegralDomain >::Divides` \endlink  which is a model of `AlgebraicStructureTraits_::Divides`
 
-\cgalRefines `IntegralDomainWithoutDivision`
+\cgalRefines{IntegralDomainWithoutDivision}
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`

@@ -95,13 +95,13 @@ linear_solver(const Matrix& A, const Vector& b,
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division((L(i,j)*C(k,k) - C(i,k)*L(k,j)), denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division((C(i,j)*C(k,k) - temp*C(k,j)), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -140,7 +140,7 @@ linear_solver(const Matrix& A, const Vector& b,
       for (j = i + 1; j < rank; j++) {
         h -= C(i,j)*x[var[j]];
       }
-      x[var[i]]= h / C(i,i);
+      x[var[i]]= integral_division(h, C(i,i));
     }
     #ifdef CGAL_LA_SELFTEST
       CGAL_assertion( (M*x).is_zero() );
@@ -156,7 +156,7 @@ linear_solver(const Matrix& A, const Vector& b,
           RT_ h = - C(i,rank + l)*D;
           for ( j= i + 1; j<rank; j++)
             h -= C(i,j)*spanning_vectors(var[j],l);
-          spanning_vectors(var[i],l)= h / C(i,i);
+          spanning_vectors(var[i],l)= integral_division(h, C(i,i));
         }
     #ifdef CGAL_LA_SELFTEST
           /* we check whether the $l$ - th spanning vector is a solution
@@ -241,13 +241,13 @@ determinant(const Matrix& A)
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division(L(i,j)*C(k,k) - C(i,k)*L(k,j), denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division(C(i,j)*C(k,k) - temp*C(k,j), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -355,13 +355,13 @@ determinant(const Matrix& A,
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division(L(i,j)*C(k,k) - C(i,k)*L(k,j), denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division(C(i,j)*C(k,k) - temp*C(k,j), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -551,13 +551,13 @@ independent_columns(const Matrix& A,
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division(L(i,j)*C(k,k) - C(i,k)*L(k,j), denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division(C(i,j)*C(k,k) - temp*C(k,j), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -666,13 +666,13 @@ rank(const Matrix& A)
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division(L(i,j)*C(k,k) - C(i,k)*L(k,j), denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division(C(i,j)*C(k,k) - temp*C(k,j), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -774,13 +774,13 @@ inverse(const Matrix& A, Matrix& inverse,
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division(L(i,j)*C(k,k) - C(i,k)*L(k,j), denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division(C(i,j)*C(k,k) - temp*C(k,j), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -822,7 +822,7 @@ inverse(const Matrix& A, Matrix& inverse,
       h = L (j,i) * D;
       for (int l = j + 1; l<rows; l++)
         h -= C(j,l)*inverse(var[l],i);
-      inverse(var[j],i) = h / C(j,j);
+      inverse(var[j],i) = integral_division(h, C(j,j));
     }
   }
 
@@ -908,13 +908,13 @@ homogeneous_linear_solver(const Matrix &A,
 
       for(i = k + 1; i < rows; i++)
         for (j = 0; j <  rows; j++)  //and all columns of |L|
-          L(i,j) = (L(i,j)*C(k,k) - C(i,k)*L(k,j))/denom;
+          L(i,j) = integral_division(L(i,j)*C(k,k) - C(i,k)*L(k,j),denom);
 
       for(i = k + 1; i < rows; i++) {
         /* the following iteration uses and changes |C(i,k)| */
         RT temp = C(i,k);
         for (j = k; j <= cols; j++)
-          C(i,j) = (C(i,j)*C(k,k) - temp*C(k,j))/denom;
+          C(i,j) = integral_division(C(i,j)*C(k,k) - temp*C(k,j), denom);
       }
       denom = C(k,k);
       #ifdef CGAL_LA_SELFTEST
@@ -949,7 +949,7 @@ homogeneous_linear_solver(const Matrix &A,
     for (j = i + 1; j < rank; j++) {
       h -= C(i,j)*x[var[j]];
     }
-    x[var[i]]= h / C(i,i);
+    x[var[i]]= integral_division(h, C(i,i));
   }
   #ifdef CGAL_LA_SELFTEST
     CGAL_assertion( (M*x).is_zero() );
@@ -965,7 +965,7 @@ homogeneous_linear_solver(const Matrix &A,
         RT_ h = - C(i,rank + l)*D;
         for ( j= i + 1; j<rank; j++)
           h -= C(i,j)*spanning_vectors(var[j],l);
-        spanning_vectors(var[i],l)= h / C(i,i);
+        spanning_vectors(var[i],l)= integral_division(h , C(i,i));
       }
   #ifdef CGAL_LA_SELFTEST
         /* we check whether the $l$ - th spanning vector is a solution

@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
 
-//scale skelton
+//scale skeleton
   for(Skeleton_vertex v : vertices(skeleton))
   {
     Point new_point = skeleton[v].point+to_origin;
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance.cgal");
+  output.open("correspondence.cgal");
   for(Skeleton_vertex v : vertices(skeleton))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";

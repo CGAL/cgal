@@ -28,7 +28,7 @@ The class `Istream_iterator` is an input iterator adaptor for the
 input stream class `Stream` and value type `T`. It is particularly
 useful for classes that are similar but not compatible to `std::istream`.
 
-\cgalModels `InputIterator`
+\cgalModels{InputIterator}
 */
 template <class T, class Stream>
 class Istream_iterator

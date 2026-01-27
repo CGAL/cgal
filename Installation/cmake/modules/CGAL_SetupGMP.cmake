@@ -2,7 +2,7 @@
 # CGAL_SetupGMP
 # -------------
 #
-# The module searchs for the `GMP` and `MPFR` headers and libraries,
+# The module searches for the `GMP` and `MPFR` headers and libraries,
 # by calling
 #
 # .. code-block:: cmake
@@ -21,9 +21,18 @@ set(CGAL_SetupGMP_included TRUE)
 # That is required to find the FindGMP and FindMPFR modules.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR})
 
-find_package(GMP REQUIRED)
-find_package(MPFR REQUIRED)
-find_package(GMPXX QUIET)
+find_package(GMP QUIET)
+find_package(MPFR QUIET)
+
+if (GMP_FOUND)
+  find_package(GMPXX QUIET)
+endif()
+
+if(NOT GMP_FOUND OR NOT MPFR_FOUND)
+  message(STATUS "GMP not found.")
+  set(CGAL_DISABLE_GMP ON)
+  return()
+endif()
 
 if(NOT GMPXX_FOUND)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)

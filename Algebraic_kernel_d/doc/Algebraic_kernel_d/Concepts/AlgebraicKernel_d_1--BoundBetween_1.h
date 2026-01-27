@@ -7,7 +7,7 @@ Computes a number of type
 `AlgebraicKernel_d_1::Bound` in-between two
 `AlgebraicKernel_d_1::Algebraic_real_1` values.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 */
 

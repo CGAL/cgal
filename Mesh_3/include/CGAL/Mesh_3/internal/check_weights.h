@@ -22,7 +22,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
-#include <CGAL/Mesh_3/Has_features.h>
+#include <CGAL/STL_Extension/internal/Has_features.h>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
@@ -33,7 +33,7 @@ template<typename Triangulation, typename MeshDomain>
 bool has_non_protecting_weights(const Triangulation& tr,
                                 const MeshDomain&)
 {
-  const bool with_features = Has_features<MeshDomain>::value;
+  const bool with_features = ::CGAL::internal::Has_features<MeshDomain>::value;
 
   typedef typename Triangulation::FT                FT;
   typedef typename Triangulation::Weighted_point    Weighted_point;

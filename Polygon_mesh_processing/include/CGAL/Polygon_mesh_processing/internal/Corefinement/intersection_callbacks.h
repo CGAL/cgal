@@ -19,6 +19,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <memory>
@@ -69,7 +70,8 @@ public:
 template<class TriangleMesh,
          class VertexPointMapF, class VertexPointMapE,
          class EdgeToFaces,
-         class CoplanarFaceSet>
+         class CoplanarFaceSet,
+         class Visitor>
 class Collect_face_bbox_per_edge_bbox_with_coplanar_handling {
 protected:
   const TriangleMesh& tm_faces;
@@ -78,6 +80,7 @@ protected:
   const VertexPointMapE& vpmap_tme;
   EdgeToFaces& edge_to_faces;
   CoplanarFaceSet& coplanar_faces;
+  const Visitor& visitor;
 
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
@@ -95,13 +98,15 @@ public:
     const VertexPointMapF& vpmap_tmf,
     const VertexPointMapE& vpmap_tme,
     EdgeToFaces& edge_to_faces,
-    CoplanarFaceSet& coplanar_faces)
+    CoplanarFaceSet& coplanar_faces,
+    const Visitor& visitor)
   : tm_faces(tm_faces)
   , tm_edges(tm_edges)
   , vpmap_tmf(vpmap_tmf)
   , vpmap_tme(vpmap_tme)
   , edge_to_faces(edge_to_faces)
   , coplanar_faces(coplanar_faces)
+  , visitor(visitor)
   {}
 
   void operator()( const Box& face_box, const Box& edge_box) const {
@@ -113,6 +118,7 @@ public:
     Point a = get(vpmap_tmf, source(fh, tm_faces));
     Point b = get(vpmap_tmf, target(fh, tm_faces));
     Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+
     /// SHOULD_USE_TRAITS_TAG
     const Orientation abcp = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)));
     const Orientation abcq = orientation(a,b,c, get(vpmap_tme, source(eh, tm_edges)));
@@ -146,10 +152,47 @@ public:
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
   }
 
+  bool is_face_degenerated(halfedge_descriptor fh) const
+  {
+    Point a = get(vpmap_tmf, source(fh, tm_faces));
+    Point b = get(vpmap_tmf, target(fh, tm_faces));
+    Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+
+    return collinear(a, b, c);
+  }
+
+  bool are_edge_faces_degenerated(halfedge_descriptor eh) const
+  {
+    Point a = get(vpmap_tme, source(eh, tm_edges));
+    Point b = get(vpmap_tme, target(eh, tm_edges));
+
+    if(!is_border(eh,tm_edges))
+    {
+      Point c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
+      if (collinear(a, b, c)) return true;
+    }
+
+    eh = opposite(eh, tm_edges);
+    if(!is_border(eh,tm_edges))
+    {
+      Point c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
+      if (collinear(a, b, c)) return true;
+    }
+
+    return false;
+  }
+
+
   void operator()(const Box* face_box_ptr, const Box* edge_box_ptr) const
   {
     operator()(*face_box_ptr, *edge_box_ptr);
   }
+
+  void progress(double d)
+  {
+    visitor.progress_filtering_intersections(d);
+  }
+
 };
 
 template<class TriangleMesh,
@@ -345,6 +388,14 @@ public:
     if (!is_border(h, this->tm_edges))
       tme_collected_faces_ptr->insert( face(h, this->tm_edges) );
     tmf_collected_faces_ptr->insert( face(fb->info(), this->tm_faces) );
+
+    // throw if one of the faces are degenerated
+    if (this->is_face_degenerated(fb->info()) ||
+        this->are_edge_faces_degenerated(h))
+    {
+      throw Self_intersection_exception();
+    }
+
     Base::operator()(fb, eb);
   }
   bool self_intersections_found()

@@ -92,7 +92,7 @@ void check_make_x_monotone(typename GeometryTraits::Curve_2 cv,
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::X_monotone_traits_2   X_monotone_traits_2;
 
-  typedef boost::variant<Point_2, X_monotone_traits_2>
+  typedef std::variant<Point_2, X_monotone_traits_2>
     Make_x_monotone_result;
 
   std::vector<Make_x_monotone_result> objs;

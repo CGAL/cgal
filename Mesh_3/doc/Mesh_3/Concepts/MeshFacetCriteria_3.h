@@ -3,13 +3,15 @@
 \cgalConcept
 
 The Delaunay refinement process involved in the
-template functions `make_mesh_3()` and `refine_mesh_3()`
+template functions `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()`
 is guided by a set of elementary refinement criteria
 that concern either mesh tetrahedra or surface facets.
 The concept `MeshFacetCriteria_3` describes the types that
 handle the refinement criteria for surface facets.
 
-\cgalHasModel `CGAL::Mesh_facet_criteria_3<Tr>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Mesh_facet_criteria_3<Tr>}
+\cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`
 \sa `MeshEdgeCriteria_3`
@@ -55,10 +57,15 @@ the facet is good with regard to the criteria.
 In addition, an object of this type must contain an object of type
 `Facet_quality` if it represents
 a bad facet. `Facet_quality` must be accessible by
-`operator*()`. Note that `boost::optional<Facet_quality>` is
+`operator*()`. Note that `std::optional<Facet_quality>` is
 a natural model of this concept.
 */
 typedef unspecified_type Is_facet_bad;
+
+/*!
+* Numerical type.
+*/
+typedef unspecified_type FT;
 
 /// @}
 
@@ -70,6 +77,12 @@ Returns the `Is_facet_bad` value of the facet `f`, which lives in the triangulat
 The type `Tr` must be identical to the triangulation type used by the mesh generation function.
 */
 Is_facet_bad operator()(const Tr& tr, Facet f);
+
+/**
+* @returns the squared value of minimal radius bound if set,
+* and `std::nullopt` otherwise
+*/
+std::optional<FT> squared_min_radius_bound() const;
 
 /// @}
 

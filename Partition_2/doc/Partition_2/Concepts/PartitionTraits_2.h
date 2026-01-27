@@ -8,7 +8,9 @@ common
 to all traits classes. The concept `PartitionTraits_2` defines this common set of
 requirements.
 
-\cgalHasModel `CGAL::Partition_traits_2<R>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Partition_traits_2<R>}
+\cgalHasModelsEnd
 
 \sa `CGAL::approx_convex_partition_2()`
 \sa `CGAL::greene_approx_convex_partition_2()`
@@ -77,7 +79,7 @@ typedef unspecified_type Orientation_2;
 
 /*!
 Predicate object type that provides
-`CGAL::Comparision_result operator()(Point_2 p, Point_2 q)` to compare
+`CGAL::Comparison_result operator()(Point_2 p, Point_2 q)` to compare
 the \f$ y\f$ values of two points. The operator must return
 `CGAL::SMALLER` if \f$ p_y < q_y\f$, `CGAL::LARGER` if \f$ p_y > q_y\f$ and
 `CGAL::EQUAL` if \f$ p_y = q_y\f$.

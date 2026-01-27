@@ -5,7 +5,9 @@
 The concept `SearchGeomTraits_3` defines the requirements for the template
 parameter of the search traits classes.
 
-\cgalHasModel All models of the concept `Kernel`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 */
 

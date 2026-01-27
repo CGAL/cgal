@@ -2,7 +2,7 @@ Algebraic_foundations
 Apollonius_graph_2
 Arithmetic_kernel
 Arrangement_on_surface_2
-BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2

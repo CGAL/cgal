@@ -55,31 +55,31 @@ struct VTK_type_generator<char> {
 };
 
 template <>
-struct VTK_type_generator<boost::uint8_t> {
+struct VTK_type_generator<std::uint8_t> {
   static const int type = VTK_UNSIGNED_CHAR;
   typedef vtkUnsignedCharArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::int16_t> {
+struct VTK_type_generator<std::int16_t> {
   static const int type = VTK_SHORT;
   typedef vtkShortArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::uint16_t> {
+struct VTK_type_generator<std::uint16_t> {
   static const int type = VTK_UNSIGNED_SHORT;
   typedef vtkUnsignedShortArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::int32_t> {
+struct VTK_type_generator<std::int32_t> {
   static const int type = VTK_INT;
   typedef vtkIntArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::uint32_t> {
+struct VTK_type_generator<std::uint32_t> {
   static const int type = VTK_UNSIGNED_INT;
   typedef vtkUnsignedIntArray ArrayType;
 };

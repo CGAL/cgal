@@ -55,3 +55,17 @@ compare_y_at_x_right 33 30 0 LARGER
 compare_y_at_x_right 32 31 0 LARGER
 compare_y_at_x_right 33 31 0 LARGER
 compare_y_at_x_right 35 31 0 LARGER
+#
+compare_y_at_x_right 36 37 3 LARGER
+compare_y_at_x_right 37 36 3 SMALLER
+compare_y_at_x_right 38 39 3 SMALLER
+compare_y_at_x_right 39 38 3 LARGER
+compare_y_at_x_right 36 39 3 EQUAL
+compare_y_at_x_right 38 37 3 EQUAL
+#
+compare_y_at_x_left 40 41 3 LARGER
+compare_y_at_x_left 41 40 3 SMALLER
+compare_y_at_x_left 42 43 3 SMALLER
+compare_y_at_x_left 43 42 3 LARGER
+compare_y_at_x_left 40 43 3 EQUAL
+compare_y_at_x_left 42 41 3 EQUAL

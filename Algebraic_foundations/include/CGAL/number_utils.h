@@ -21,6 +21,7 @@
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/Kernel/Same_uncertainty.h>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE
@@ -194,21 +195,21 @@ root_of( int k, Input_iterator begin, Input_iterator end ) {
 template< class Number_type >
 inline
 // select a Is_zero functor
-typename boost::mpl::if_c<
- ::boost::is_same< typename Algebraic_structure_traits< Number_type >::Is_zero,
- Null_functor  >::value ,
+typename std::conditional_t<
+ std::is_same_v< typename Algebraic_structure_traits< Number_type >::Is_zero,
+ Null_functor  >,
   typename Real_embeddable_traits< Number_type >::Is_zero,
   typename Algebraic_structure_traits< Number_type >::Is_zero
->::type::result_type
+>::result_type
 is_zero( const Number_type& x ) {
     // We take the Algebraic_structure_traits<>::Is_zero functor by default. If it
     //  is not available, we take the Real_embeddable_traits functor
-    typename ::boost::mpl::if_c<
-        ::boost::is_same<
+    std::conditional_t<
+        std::is_same_v<
              typename Algebraic_structure_traits< Number_type >::Is_zero,
-             Null_functor >::value ,
+             Null_functor > ,
        typename Real_embeddable_traits< Number_type >::Is_zero,
-       typename Algebraic_structure_traits< Number_type >::Is_zero >::type
+       typename Algebraic_structure_traits< Number_type >::Is_zero >
        is_zero;
 return is_zero( x );
 }

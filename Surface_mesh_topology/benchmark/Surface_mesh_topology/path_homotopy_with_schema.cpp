@@ -12,7 +12,7 @@
            <<"into a second path and test that the two paths are homotope."
            <<std::endl
            <<"   -nbdefo D: use D deformations to generate the second path (by default a random number between 10 and 100)."<<std::endl
-           <<"   -nbedges E: generate paths of length E (by default a random number beween 10 and 100)."<<std::endl
+           <<"   -nbedges E: generate paths of length E (by default a random number between 10 and 100)."<<std::endl
            <<"   -nbtests N: do N tests of homotopy (using 2*N random paths) (by default 1)."<<std::endl
            <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."<<std::endl
            <<"   -time: display computation times."<<std::endl
@@ -112,19 +112,19 @@ int main(int argc, char** argv)
   {
     if (i!=0)
     {
-      random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
+      random=CGAL::Random(random.get_int(0, (std::numeric_limits<int>::max)()));
     }
     std::cout<<"Random seed: "<<random.get_seed()<<": ";
 
     if (!withE)
     { E=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                cm.number_of_darts()/10))); }
+                                  (10, (std::max)(std::size_t(11),
+                                                  cm.number_of_darts()/10))); }
 
     if (!withD)
     { D=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                cm.number_of_darts()/10))); }
+                                  (10, (std::max)(std::size_t(11),
+                                                  cm.number_of_darts()/10))); }
 
 
 

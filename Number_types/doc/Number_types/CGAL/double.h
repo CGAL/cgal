@@ -4,11 +4,10 @@
 
 This header provides all necessary functions so the fundamental
 type `double` is a model of the concepts `RealEmbeddable` and
-`Field`. Due to rounding errors and overflow `double` is considered as
+`FieldWithKthRoot`. Due to rounding errors and overflow `double` is considered as
 not exact.
 
-\cgalModels `FieldWithSqrt`
-\cgalModels `RealEmbeddable`
+\cgalModels{FieldWithKthRoot,RealEmbeddable}
 */
 
 

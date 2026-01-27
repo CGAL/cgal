@@ -19,7 +19,6 @@
 #include <list>
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
-#include <CGAL/triangulation_assertions.h>
 
 namespace CGAL {
 

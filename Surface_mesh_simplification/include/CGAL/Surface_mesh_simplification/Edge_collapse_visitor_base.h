@@ -46,9 +46,9 @@ struct Edge_collapse_visitor_base
   void OnStarted(Triangle_mesh&) {}
   void OnFinished(Triangle_mesh&) {}
   void OnStopConditionReached(const Profile&) {}
-  void OnCollected(const Profile&, const boost::optional<FT>&) {}
-  void OnSelected(const Profile&, const boost::optional<FT>&, size_type, size_type) {}
-  void OnCollapsing(const Profile&, const boost::optional<Point>&) {}
+  void OnCollected(const Profile&, const std::optional<FT>&) {}
+  void OnSelected(const Profile&, const std::optional<FT>&, size_type, size_type) {}
+  void OnCollapsing(const Profile&, const std::optional<Point>&) {}
   void OnCollapsed(const Profile&, const vertex_descriptor&) {}
   void OnNonCollapsable(const Profile&) {}
 };

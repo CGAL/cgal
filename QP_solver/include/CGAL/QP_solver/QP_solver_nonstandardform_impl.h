@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_SOLVER_NONSTANDARDFORM_IMPL_H
+#define CGAL_QP_SOLVER_NONSTANDARDFORM_IMPL_H
+
+#include <CGAL/license/QP_solver.h>
+
 namespace CGAL {
 
 // Looks in x_O_v_i which bound is present for variable i and returns
@@ -219,3 +224,5 @@ init_w()
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif // CGAL_QP_SOLVER_NONSTANDARDFORM_IMPL_H

@@ -2,6 +2,7 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
+#include <CGAL/use.h>
 
 #include <cassert>
 #include <iostream>
@@ -183,6 +184,7 @@ int main() {
                               0.f);
         }
     timer_old_implementation.stop();
+    CGAL_USE(sum);
   }
   std::cerr << "max difference = " << max_diff << "\n"
             << "timer new implementation: " << timer_new_implementation.time()
@@ -253,5 +255,3 @@ int main() {
       }
   std::cerr << counter << " tests. OK.";
 }
-
-

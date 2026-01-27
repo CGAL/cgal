@@ -2,143 +2,134 @@
 \input{header}
 \pagestyle{empty}
 \begin{document}
-\psscalebox{1.8}{\arrset{1}%
-  \begin{pspicture}(0,0)(10,7)
-    \psframe*[linecolor=lightyellow](0,0)(1,7)
-    \psframe*[linecolor=lightyellow](9,0)(10,7)
-    \psframe*[linecolor=lightyellow](1,0)(9,1)
-    \psframe*[linecolor=lightyellow](1,6)(9,7)
-    \psframe[linewidth=0.25pt](0,0)(10,7)
+  \begin{tikzpicture}[scale=0.93]
+    \fill[lightyellow](0,0)rectangle(1,7);
+    \fill[lightyellow](9,0)rectangle(10,7);
+    \fill[lightyellow](1,0)rectangle(9,1);
+    \fill[lightyellow](1,6)rectangle(9,7);
+    \draw[line width=0.25pt](0,0)rectangle(10,7);
     %
-    \arrlvertex[225](1,1){bl}{$v_{\mathrm{bl}}$}
-    \arrlvertex[135](1,6){tl}{$v_{\mathrm{tl}}$}
-    \arrlvertex[315](9,1){br}{$v_{\mathrm{br}}$}
-    \arrlvertex[45](9,6){tr}{$v_{\mathrm{tr}}$}
-    \arrv[180](1,2.5){1}
-    \arrv[180](1,4){2}
-    \arrv[180](1,5){3}
-    \arrv[270](5,1){4}
-    \arrv[90](5,6){5}
-    \arrv[0](9,1.5){6}
-    \arrv[0](9,4){7}
-    \arrv[0](9,5.5){8}
+    \arrMainLabeledVertexZ[225](1,1){bl}{$v_{\mathrm{bl}}$}
+    \arrMainLabeledVertexZ[135](1,6){tl}{$v_{\mathrm{tl}}$}
+    \arrMainLabeledVertexZ[315](9,1){br}{$v_{\mathrm{br}}$}
+    \arrMainLabeledVertexZ[45](9,6){tr}{$v_{\mathrm{tr}}$}
+    \arrvZ[180](1,2.5){1}
+    \arrvZ[180](1,4){2}
+    \arrvZ[180](1,5){3}
+    \arrvZ[270](5,1){4}
+    \arrvZ[90](5,6){5}
+    \arrvZ[0](9,1.5){6}
+    \arrvZ[0](9,4){7}
+    \arrvZ[0](9,5.5){8}
     %
-    \arrEmptyIntersectionVertex(1,4)(9,4)(5,1)(5,6){9}
-    \arrEmptyIntersectionVertex(1,4)(9,4)(1,5)(9,1.5){10}
-    \arrEmptyIntersectionVertex(1,5)(9,1.5)(5,1)(5,6){11}
-    \arrEmptyIntersectionVertex(1,5)(9,1.5)(1,2.5)(9,5.5){12}
+    \node[point=white] (9) at (intersection of 2--7 and 4--5) {};
+    \node[point=white] (10) at (intersection of 2--7 and 3--6) {};
+    \node[point=white] (11) at (intersection of 3--6 and 4--5) {};
+    \node[point=white] (12) at (intersection of 3--6 and 1--8) {};
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{bl}{1}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{bl}{1}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepB=1pt]{->}{1}{bl}
+    \draw[dashed,line width=0.5pt](bl)--(1);
+    \draw[halfedge](bl)to(1);
+    \draw[halfedge](1)to(bl);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{1}{2}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{1}{2}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt,nodesepB=2pt]{->}{2}{1}
+    \draw[dashed,line width=0.5pt](1)--(2);
+    \draw[halfedge](1)to(2);
+    \draw[halfedge,shorten >=1pt](2)to(1);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{2}{3}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{2}{3}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=3pt,nodesepB=1pt]{->}{3}{2}
+    \draw[dashed,line width=0.5pt](2)--(3);
+    \draw[halfedge](2)to(3);
+    \draw[halfedge,shorten <=2pt](3)to(2);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{3}{tl}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{3}{tl}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt]{->}{tl}{3}
+    \draw[dashed,line width=0.5pt](3)--(tl);
+    \draw[halfedge](3)to(tl);
+    \draw[halfedge](tl)to(3);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{tl}{5}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{tl}{5}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt,nodesepB=1pt]{->}{5}{tl}
+    \draw[dashed,line width=0.5pt](tl)--(5);
+    \draw[halfedge](tl)to(5);
+    \draw[halfedge](5)to(tl);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{5}{tr}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{5}{tr}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt,nodesepB=1pt]{->}{tr}{5}
+    \draw[dashed,line width=0.5pt](5)--(tr);
+    \draw[halfedge](5)to(tr);
+    \draw[halfedge](tr)to(5);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{tr}{8}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{tr}{8}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepB=1pt]{->}{8}{tr}
+    \draw[dashed,line width=0.5pt](tr)--(8);
+    \draw[halfedge](tr)to(8);
+    \draw[halfedge](8)to(tr);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{8}{7}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{8}{7}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt,nodesepB=2pt]{->}{7}{8}
+    \draw[dashed,line width=0.5pt](8)--(7);
+    \draw[halfedge](8)to(7);
+    \draw[halfedge,shorten >=1pt](7)to(8);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{7}{6}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{7}{6}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=3pt,nodesepB=1pt]{->}{6}{7}
+    \draw[dashed,line width=0.5pt](7)--(6);
+    \draw[halfedge](7)to(6);
+    \draw[halfedge,shorten <=1.8pt](6)to(7);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{6}{br}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{6}{br}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt]{->}{br}{6}
+    \draw[dashed,line width=0.5pt](6)--(br);
+    \draw[halfedge](6)to(br);
+    \draw[halfedge](br)to(6);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{br}{4}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{br}{4}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt,nodesepB=1pt]{->}{4}{br}
+    \draw[dashed,line width=0.5pt](br)--(4);
+    \draw[halfedge](br)to(4);
+    \draw[halfedge](4)to(br);
     %
-    \ncline[linestyle=dashed,linewidth=0.5pt]{4}{bl}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{4}{bl}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=1pt,nodesepB=1pt]{->}{bl}{4}
+    \draw[dashed,line width=0.5pt](4)--(bl);
+    \draw[halfedge](4)to(bl);
+    \draw[halfedge](bl)to(4);
     %
-    %\arredge{3}{10}
-    \ncline[linewidth=0.5pt,linecolor=blue]{3}{10}
-    \ncline[linewidth=0.25pt,offset=3pt]{->}{3}{10}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=12pt,nodesepB=2pt]{->}{10}{3}
-    %\arredge{10}{12}
-    \ncline[linewidth=0.5pt,linecolor=blue]{10}{12}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=6pt]{->}{12}{10}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=16pt,nodesepB=-2pt]{->}{10}{12}
-    %\arredge{12}{11}
-    \ncline[linewidth=0.5pt,linecolor=blue]{12}{11}
-    \ncline[linewidth=0.25pt,offset=3pt]{->}{11}{12}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=6pt,nodesepB=2pt]{->}{12}{11}
-    %\arredge{11}{6}
-    \ncline[linewidth=0.5pt,linecolor=blue]{11}{6}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepB=2pt]{->}{11}{6}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepB=2pt]{->}{6}{11}
+    \draw[edge](3)--(10);
+    \draw[halfedge](3)to(10);
+    \draw[halfedge,shorten <=11pt,shorten >=1.6pt](10)to(3);
+    \draw[edge](10)--(12);
+    \draw[halfedge,shorten <=4pt](12)to(10);
+    \draw[halfedge,shorten <=10pt,shorten >=-1.8pt](10)to(12);
+    \draw[edge](12)--(11);
+    \draw[halfedge](11)to(12);
+    \draw[halfedge,shorten <=4.2pt,shorten >=1.2pt](12)to(11);
+    \draw[edge](11)--(6);
+    \draw[halfedge,shorten >=1.6pt](11)to(6);
+    \draw[halfedge,shorten >=1.6pt](6)to(11);
 
-    %\arredge{1}{12}
-    \ncline[linewidth=0.5pt,linecolor=blue]{1}{12}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=2pt,nodesepB=5pt]{->}{1}{12}
-    \ncline[linewidth=0.25pt,offset=3pt]{->}{12}{1}
-    %\arredge{12}{9}
-    \ncline[linewidth=0.5pt,linecolor=blue]{12}{9}
-    \ncline[linewidth=0.25pt,,offset=3pt,nodesepB=12pt]{->}{12}{9}
-    \ncline[linewidth=0.25pt,,offset=3pt,nodesepA=2pt,nodesepB=5pt]{->}{9}{12}
-    %\arredge{9}{8}
-    \ncline[linewidth=0.5pt,linecolor=blue]{9}{8}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=2pt]{->}{9}{8}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=2pt,nodesepB=12pt]{->}{8}{9}
+    \draw[edge](1)--(12);
+    \draw[halfedge,shorten <=1.4pt,shorten >=4pt](1)to(12);
+    \draw[halfedge](12)to(1);
+    \draw[edge](12)--(9);
+    \draw[halfedge,shorten >=11.6pt](12)to(9);
+    \draw[halfedge,shorten <=2pt,shorten >=3.6pt](9)to(12);
+    \draw[edge](9)--(8);
+    \draw[halfedge,shorten <=1.4pt](9)to(8);
+    \draw[halfedge,shorten <=1.8pt,shorten >=11.8pt](8)to(9);
 
-    \ncline[linewidth=0.5pt,linecolor=blue]{2}{10}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=1pt,nodesepB=10pt]{->}{2}{10}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepB=1pt]{->}{10}{2}
+    \draw[edge](2)--(10);
+    \draw[halfedge,shorten >=10pt](2)to(10);
+    \draw[halfedge](10)to(2);
 
-    \ncline[linewidth=0.5pt,linecolor=blue]{10}{9}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepB=1pt]{->}{10}{9}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=16pt,nodesepB=10pt]{->}{9}{10}
+    \draw[edge](10)--(9);
+    \draw[halfedge](10)to(9);
+    \draw[halfedge,shorten <=13pt,shorten >=9.4pt](9)to(10);
 
-    \ncline[linewidth=0.5pt,linecolor=blue]{9}{7}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=16pt,nodesepB=1pt]{->}{9}{7}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=1pt,nodesepB=1pt]{->}{7}{9}
+    \draw[edge](9)--(7);
+    \draw[halfedge,shorten <=13pt](9)to(7);
+    \draw[halfedge](7)to(9);
 
-    \ncline[linewidth=0.5pt,linecolor=blue]{4}{11}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=1pt]{->}{4}{11}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=2pt,nodesepB=1pt]{->}{11}{4}
+    \draw[edge](4)--(11);
+    \draw[halfedge](4)to(11);
+    \draw[halfedge,shorten <=2pt](11)to(4);
 
-    \ncline[linewidth=0.5pt,linecolor=blue]{11}{9}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=1pt]{->}{9}{11}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=2pt,nodesepB=2pt]{->}{11}{9}
+    \draw[edge](11)--(9);
+    \draw[halfedge](9)to(11);
+    \draw[halfedge,shorten <=2pt,shorten >=1pt](11)to(9);
 
-    \ncline[linewidth=0.5pt,linecolor=blue]{9}{5}
-    \ncline[linewidth=0.25pt,offset=3pt,nodesepA=1pt,nodesepB=1pt]{->}{9}{5}
-    \ncline[linewidth=0.25pt,offset=3pt,,nodesepA=1pt,nodesepB=2pt]{->}{5}{9}
+    \draw[edge](9)--(5);
+    \draw[halfedge](9)to(5);
+    \draw[halfedge,shorten >=1.2pt](5)to(9);
     %
-    \rput(2,6.5){$\tilde{f}$}
-    \rput(6.2,5.2){$f_1$}
-    \rput(8.5,4.4){$f_2$}
-    \rput(8.3,3.4){$f_3$}
-    \rput(6.2,2){$f_4$}
-    \rput(3.8,2){$f_5$}
-    \rput(1.7,3.4){$f_6$}
-    \rput(1.5,4.4){$f_7$}
-    \rput(3.8,5.2){$f_8$}
-  \end{pspicture}
-}
+    \node at(2,6.5){$\tilde{f}$};
+    \node at(6.2,5.2){$f_1$};
+    \node at(8.5,4.4){$f_2$};
+    \node at(8.3,3.4){$f_3$};
+    \node at(6.2,2){$f_4$};
+    \node at(3.8,2){$f_5$};
+    \node at(1.7,3.4){$f_6$};
+    \node at(1.5,4.4){$f_7$};
+    \node at (3.8,5.2){$f_8$};
+  \end{tikzpicture}
 \end{document}

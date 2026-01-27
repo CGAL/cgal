@@ -11,7 +11,7 @@ void test(const int d, const string & type)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that TDS contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename TDS::Vertex_handle Vertex_handle;
     typedef typename TDS::Vertex_iterator Vertex_iterator;
     typedef typename TDS::Full_cell_handle Full_cell_handle;
@@ -104,6 +104,7 @@ void test(const int d, const string & type)
         CGAL::IO::set_binary_mode(fi);
     TDS input_tds(d);
     fi >> input_tds;
+    assert( input_tds.is_valid(true) );
     fi.close();
 
     // TEST Copy Constructor

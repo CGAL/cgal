@@ -190,7 +190,7 @@ public:
     typedef Convex_hull_3::internal::Forward_functor<
               typename Btt::Less_yx_2, PointPropertyMap>                      Less_yx_2;
     typedef Convex_hull_3::internal::Forward_functor<
-              typename Btt::Less_signed_distance_to_line_2, PointPropertyMap> Less_signed_distance_to_line_2;
+              typename Btt::Compare_signed_distance_to_line_2, PointPropertyMap> Compare_signed_distance_to_line_2;
     typedef Convex_hull_3::internal::Forward_functor<
               typename Btt::Left_turn_2, PointPropertyMap>                    Left_turn_2;
 
@@ -219,8 +219,8 @@ public:
     { return Less_xy_2(vpm_, static_cast<const Btt*>(this)->less_xy_2_object()); }
     Less_yx_2 less_yx_2_object() const
     { return Less_yx_2(vpm_, static_cast<const Btt*>(this)->less_yx_2_object()); }
-    Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object() const
-    { return Less_signed_distance_to_line_2(vpm_, static_cast<const Btt*>(this)->Less_signed_distance_to_line_2()); }
+    Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object() const
+    { return Compare_signed_distance_to_line_2(vpm_, static_cast<const Btt*>(this)->Compare_signed_distance_to_line_2()); }
     Less_rotate_ccw_2 less_rotate_ccw_2_object() const
     { return Less_rotate_ccw_2(vpm_, static_cast<const Btt*>(this)->less_rotate_ccw_2_object()); }
     Left_turn_2 left_turn_2_object() const

@@ -6,7 +6,7 @@
 \cgalConcept
 
 The concept `Periodic_2DelaunayTriangulationTraits_2` is the first template parameter of the class
-`Periodic_2_Delaunay_triangulation_2`. It refines the concepts
+`CGAL::Periodic_2_Delaunay_triangulation_2`. It refines the concepts
 `Periodic_2TriangulationTraits_2` and `DelaunayTriangulationTraits_2`.
 It redefines the geometric objects, predicates and constructions to work with
 point-offset pairs. In most cases the offsets will be (0,0) and the
@@ -14,7 +14,7 @@ predicates from `DelaunayTriangulationTraits_2` can be used
 directly. For efficiency reasons we maintain for each functor the
 version without offsets.
 
-\cgalRefines `DelaunayTriangulationTraits_2` and `Periodic_2TriangulationTraits_2`
+\cgalRefines{DelaunayTriangulationTraits_2,Periodic_2TriangulationTraits_2}
 
 In addition to the requirements of the concepts `Periodic_2TriangulationTraits_2`
 and `DelaunayTriangulationTraits_2`,
@@ -27,7 +27,9 @@ dual functions are called. The additional predicate type
 `::Periodic_2DelaunayTriangulationTraits_2::Compare_distance_2` is required if calls to
 `nearest_vertex(..)` are issued.
 
-\cgalHasModel `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>}
+\cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits_2`
 */
@@ -46,14 +48,14 @@ public:
   which takes four points \f$ p, q, r, s\f$ as arguments and returns
   `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or,
   `ON_ORIENTED_BOUNDARY` according to the position of points `s`
-  with respect to the oriented circle through through \f$ p,q\f$
+  with respect to the oriented circle through \f$ p,q\f$
   and \f$ r\f$ and
 
   `Oriented_side operator()( Point p, Point q, Point r, Point s, Periodic_2_offset_2 o_p, Periodic_2_offset_2 o_q Periodic_2_offset_2 o_r, Periodic_2_offset_2 o_s)`
   which takes four points \f$ (p, o_p), (q, o_q), (r, o_r), (s, o_s)\f$ as arguments and returns
   `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or,
   `ON_ORIENTED_BOUNDARY` according to the position of points `(s, o_s)`
-  with respect to the oriented circle through through `(p, o_p), (q, o_q)`
+  with respect to the oriented circle through `(p, o_p), (q, o_q)`
   and `(r, o_r)`.
 
   This type is required only if the function
@@ -123,4 +125,3 @@ public:
 /// @}
 
 }; /* end Periodic_2DelaunayTriangulationTraits_2 */
-

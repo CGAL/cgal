@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <algorithm>
 #include <vector>
 #include <CGAL/Sorted_matrix_search_traits_adaptor.h>
@@ -159,13 +159,13 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   Cell_container active_cells;
 
   // set of input matrices must not be empty:
-  CGAL_optimisation_precondition( f != l);
+  CGAL_precondition( f != l);
 
   // for each input matrix insert a cell into active_cells:
   InputIterator i( f);
   int maxdim( -1);
   while ( i != l) {
-    CGAL_optimisation_expensive_precondition(
+    CGAL_expensive_precondition(
       PaddedMatrix( *i).is_sorted());
     active_cells.push_back( Cell( PaddedMatrix( *i)));
     maxdim = max BOOST_PREVENT_MACRO_SUBSTITUTION ( max BOOST_PREVENT_MACRO_SUBSTITUTION ( (*i).number_of_columns(),
@@ -173,7 +173,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
                   maxdim);
     ++i;
   }
-  CGAL_optimisation_precondition( maxdim > 0);
+  CGAL_precondition( maxdim > 0);
 
 
   // current cell dimension:
@@ -239,7 +239,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
       break;
 
     // there has to be at least one cell left:
-    CGAL_optimisation_assertion( active_cells.size() > 0);
+    CGAL_assertion( active_cells.size() > 0);
 
     // ------------------------------------------------------
     // compute medians of smallest and largest elements:
@@ -285,7 +285,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
                 {
                   return equal_to< Value >()(lower_median, Cell_min< Cell >()(c));
                 });
-    CGAL_optimisation_assertion(lower_median_cell != active_cells.end());
+    CGAL_assertion(lower_median_cell != active_cells.end());
     // ------------------------------------------------------
     // test feasibility of medians and remove cells accordingly:
     Cell_iterator new_end;
@@ -385,8 +385,8 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   } // for (;;)
 
   // there must be only one cell left:
-  CGAL_optimisation_assertion( active_cells.size() == 1);
-  CGAL_optimisation_assertion( ccd == 1);
+  CGAL_assertion( active_cells.size() == 1);
+  CGAL_assertion( ccd == 1);
 
   return ((*active_cells.begin()).min)();
 }

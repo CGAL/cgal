@@ -24,13 +24,13 @@
 namespace CGAL {
 namespace Mesh_3 {
 
-template<typename TriangleAccessor, typename Gt>
+template<typename TriangleAccessor, typename GT>
 class Triangle_accessor_primitive
 {
 public:
   typedef typename TriangleAccessor::Triangle_handle  Id;
-  typedef typename Gt::Triangle_3                     Datum;
-  typedef typename Gt::Point_3                        Point;
+  typedef typename GT::Triangle_3                     Datum;
+  typedef typename GT::Point_3                        Point;
 
   Triangle_accessor_primitive(const Id& h)
     : handle_(h) {}
@@ -55,15 +55,15 @@ private:
   Id handle_;
 };
 
-//template <typename Gt>
-//class Triangle_accessor_primitive<Triangle_accessor<Polyhedron_3<Gt>,Gt>, Gt>
+//template <typename GT>
+//class Triangle_accessor_primitive<Triangle_accessor<Polyhedron_3<GT>,GT>, GT>
 //{
-//  typedef class Triangle_accessor<Polyhedron_3<Gt>,Gt> Triangle_accessor;
+//  typedef class Triangle_accessor<Polyhedron_3<GT>,GT> Triangle_accessor;
 //
 //public:
 //  typedef typename Triangle_accessor::Triangle_iterator Id;
-//  typedef typename Gt::Triangle_3                       Datum;
-//  typedef typename Gt::Point_3                          Point;
+//  typedef typename GT::Triangle_3                       Datum;
+//  typedef typename GT::Point_3                          Point;
 //
 //  Triangle_accessor_primitive(const Id& h)
 //    : handle_(h) {}

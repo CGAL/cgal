@@ -18,17 +18,19 @@
 #define CGAL_SEGMENT_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/kernel_config.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
 template <class R_>
 class Segment_2 : public R_::Kernel_base::Segment_2
 {
+  typedef typename R_::Boolean                Boolean;
   typedef typename R_::RT                     RT;
   typedef typename R_::FT                     FT;
   typedef typename R_::Point_2                Point_2;
@@ -39,7 +41,7 @@ class Segment_2 : public R_::Kernel_base::Segment_2
   typedef typename R_::Kernel_base::Segment_2 RSegment_2;
 
   typedef Segment_2                           Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Segment_2>::value));
+  static_assert(std::is_same<Self, typename R_::Segment_2>::value);
 
 public:
 
@@ -120,31 +122,18 @@ public:
   operator[](int i) const
   { return vertex(i); }
 
-  bool        is_horizontal() const;
-  bool        is_vertical() const;
-  bool        has_on(const Point_2 &p) const;
-  bool        collinear_has_on(const Point_2 &p) const;
+  Boolean is_horizontal() const;
+  Boolean is_vertical() const;
+  Boolean has_on(const Point_2 &p) const;
+  Boolean collinear_has_on(const Point_2 &p) const;
   FT          squared_length() const;
 
-  bool        is_degenerate() const;
+  Boolean is_degenerate() const;
 
   Bbox_2      bbox() const
   {
     return R().construct_bbox_2_object()(*this);
   }
-
-  bool
-  operator==(const Segment_2 &s) const
-  {
-    return R().equal_2_object()(*this, s);
-  }
-
-  bool
-  operator!=(const Segment_2 &s) const
-  {
-    return !(*this == s);
-  }
-
 
   Direction_2
   direction() const
@@ -183,7 +172,7 @@ public:
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-bool
+typename R_::Boolean
 Segment_2<R_>::is_horizontal() const
 {
   return R_().equal_y_2_object()(source(), target());
@@ -192,7 +181,7 @@ Segment_2<R_>::is_horizontal() const
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-bool
+typename R_::Boolean
 Segment_2<R_>::is_vertical() const
 {
   return R_().equal_x_2_object()(source(), target());
@@ -201,7 +190,7 @@ Segment_2<R_>::is_vertical() const
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-bool
+typename R_::Boolean
 Segment_2<R_>::
 has_on(const typename R_::Point_2 &p) const
 {
@@ -210,17 +199,15 @@ has_on(const typename R_::Point_2 &p) const
                                                target());
 }
 
-
 template < class R_ >
 inline
-bool
+typename R_::Boolean
 Segment_2<R_>::
 collinear_has_on(const typename R_::Point_2 &p) const
 {
   return R_().collinear_has_on_2_object()
                (*this, p);
 }
-
 
 template < class R_ >
 CGAL_KERNEL_INLINE
@@ -230,16 +217,13 @@ Segment_2<R_>::squared_length() const
  return R_().compute_squared_length_2_object()(*this);
 }
 
-
 template < class R_ >
 inline
-bool
+typename R_::Boolean
 Segment_2<R_>::is_degenerate() const
 {
   return R().is_degenerate_2_object()(*this);
 }
-
-
 
 template < class R >
 std::ostream &

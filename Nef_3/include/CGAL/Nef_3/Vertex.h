@@ -30,7 +30,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -41,7 +41,7 @@ class Vertex_base {
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
-  typedef boost::any GenPtr;
+  typedef std::any GenPtr;
   #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Point_3 Point_3;
@@ -128,7 +128,7 @@ class Vertex_base {
       Refs*& sncp() { return sncp_; }
 
       /* all sobjects of the local graph are stored in a global list
-         where each vertex has a continous range in each list for its
+         where each vertex has a continuous range in each list for its
          sobjects. All objects of the range [sxxx_begin_,sxxx_last_]
          belong to a vertex. This range is empty iff
          sxxx_begin_ == sxxx_last_ == sncp()->sxxx_end()
@@ -261,8 +261,7 @@ class Vertex_base {
           fend = sfaces_end();
         while (fit != fend) {
           SFace_iterator fdel = fit++;
-          /* TO VERIFY: next statement needs access to a private attribute */
-          sncp()->reset_sm_object_list(fdel->boundary_entry_objects_);
+          sncp()->reset_sm_object_list(fdel->boundary_entry_objects());
           sncp()->delete_sface_only(fdel);
         }
         sfaces_begin_ = sfaces_last_ = sncp()->sfaces_end();

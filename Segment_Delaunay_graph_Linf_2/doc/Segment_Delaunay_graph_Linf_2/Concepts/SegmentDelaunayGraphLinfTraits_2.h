@@ -34,12 +34,14 @@ of the `SegmentDelaunayGraphLinfTraits_2` concept
 with respect to the
 `SegmentDelaunayGraphTraits_2` concept.
 
-\cgalRefines `SegmentDelaunayGraphTraits_2`
+\cgalRefines{SegmentDelaunayGraphTraits_2}
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphSite_2`
 \sa `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>`
@@ -76,7 +78,7 @@ segment Voronoi diagram.
 /*!
 A constructor for the point \f$ v \f$ at which the three \f$ L_{\infty} \f$
 bisectors between the three given sites `s1`, `s2` and `s3` intersect
-and the regions of `s1`, `s2` and `s3` appear in the counter-clockwise order
+and the regions of `s1`, `s2` and `s3` appear in the counterclockwise order
 `s1`, `s2`, `s3` around \f$ v\f$.
 
 Point \f$ v \f$ is equidistant
@@ -114,7 +116,7 @@ of `s1`, `s2`, `s3`. The \f$ L_{\infty} \f$ Voronoi square
 of three sites
 `s1`, `s2`, `s3` is an axis-parallel square which is passing through all three
 sites and touches them in the `s1`, `s2`, `s3`
-order as we walk on the square in the counter-clockwise sense.
+order as we walk on the square in the counterclockwise sense.
 The center of the square is at the intersection of the three
 \f$ L_{\infty} \f$ bisectors of the three sites.
 
@@ -254,7 +256,7 @@ Since CGAL segments have also an orientation, we also orient
 For an <I>oriented</I> segment \f$ s \f$, we orient its
 \f$L_{\infty}\f$-perpendicular lines so that the lines'
 orientation is closest to the following orientation:
-the orientation of \f$ s \f$ rotated <I>counter-clockwise</I> by
+the orientation of \f$ s \f$ rotated <I>counterclockwise</I> by
 \f$ \pi/2 \f$.
 
 Let `s` be a segment and `p` a point contained in its interior.

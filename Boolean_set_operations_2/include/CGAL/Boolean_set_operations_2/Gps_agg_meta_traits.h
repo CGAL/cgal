@@ -7,17 +7,15 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//            Efi Fogel       <efifogel@gmail.com>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel       <efifogel@gmail.com>
 
-#ifndef CGAL_BSO_2_GPS_AGG_META_TRAITS_H
-#define CGAL_BSO_2_GPS_AGG_META_TRAITS_H
+#ifndef CGAL_GPS_AGG_META_TRAITS_H
+#define CGAL_GPS_AGG_META_TRAITS_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
 #include <vector>
-#include <boost/mpl/assert.hpp>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>
 #include <CGAL/Boolean_set_operations_2/Point_with_vertex.h>
@@ -25,18 +23,17 @@
 namespace CGAL {
 
 template <typename Arrangement_>
-class Gps_agg_curve_data : public Curve_with_halfedge<Arrangement_>
-{
+class Gps_agg_curve_data : public Curve_with_halfedge<Arrangement_> {
 protected:
-  typedef Arrangement_                             Arrangement;
-  typedef typename Arrangement::Halfedge_handle    Halfedge_handle;
-  typedef Curve_with_halfedge<Arrangement_>        Base;
+  using Arrangement = Arrangement_;
+  using Halfedge_handle = typename Arrangement::Halfedge_handle;
+  using Base = Curve_with_halfedge<Arrangement_>;
 
   const Arrangement* m_arr; // pointer to the arrangement containing the edge.
-  unsigned int m_bc;        // the boudary counter of the halfedge with the same
+  std::size_t m_bc;         // the boundary counter of the halfedge with the same
                             // direction as the curve
 
-  unsigned int m_twin_bc;   // the boudary counter of the halfedge with the same
+  std::size_t m_twin_bc;    // the boundary counter of the halfedge with the same
                             // direction as the curve
 
 public:
@@ -48,24 +45,24 @@ public:
   {}
 
   Gps_agg_curve_data(const Arrangement* arr, Halfedge_handle he,
-                     unsigned int bc, unsigned int twin_bc) :
+                     std::size_t bc, std::size_t twin_bc) :
     Base(he),
     m_arr(arr),
     m_bc(bc),
     m_twin_bc(twin_bc)
   {}
 
-  unsigned int bc() const { return m_bc; }
+  std::size_t bc() const { return m_bc; }
 
-  unsigned int twin_bc() const { return m_twin_bc; }
+  std::size_t twin_bc() const { return m_twin_bc; }
 
-  unsigned int& bc() { return m_bc; }
+  std::size_t& bc() { return m_bc; }
 
-  unsigned int& twin_bc() { return m_twin_bc; }
+  std::size_t& twin_bc() { return m_twin_bc; }
 
-  void set_bc(unsigned int bc) { m_bc = bc; }
+  void set_bc(std::size_t bc) { m_bc = bc; }
 
-  void set_twin_bc(unsigned int twin_bc) { m_twin_bc = twin_bc; }
+  void set_twin_bc(std::size_t twin_bc) { m_twin_bc = twin_bc; }
 
   const Arrangement* arr() const { return m_arr; }
 };
@@ -74,71 +71,62 @@ template <typename Arrangement_>
 class Gps_agg_meta_traits :
   public Gps_traits_decorator<typename Arrangement_::Traits_adaptor_2,
                               Gps_agg_curve_data<Arrangement_>,
-                              Point_with_vertex<Arrangement_> >
-{
-  typedef Arrangement_                          Arrangement;
-  typedef Arrangement                           Arr;
+                              Point_with_vertex<Arrangement_>> {
+  using Arrangement = Arrangement_;
+  using Arr = Arrangement;
 
-  typedef typename Arr::Traits_adaptor_2        Traits;
-  typedef Traits                                Gt2;
+  using Traits = typename Arr::Traits_adaptor_2;
+  using Gt2 = Traits;
 
-  typedef typename Gt2::X_monotone_curve_2      Base_x_monotone_curve_2;
-  typedef typename Gt2::Point_2                 Base_point_2;
-  typedef typename Gt2::Construct_min_vertex_2  Base_Construct_min_vertex_2;
-  typedef typename Gt2::Construct_max_vertex_2  Base_Construct_max_vertex_2;
-  typedef typename Gt2::Compare_endpoints_xy_2  Base_Compare_endpoints_xy_2;
-  typedef typename Gt2::Compare_xy_2            Base_Compare_xy_2;
-  typedef typename Gt2::Compare_y_at_x_right_2  Base_Compare_y_at_x_right_2;
-  typedef typename Gt2::Compare_y_at_x_2        Base_Compare_y_at_x_2;
-  typedef typename Gt2::Intersect_2             Base_Intersect_2;
-  typedef typename Gt2::Split_2                 Base_Split_2;
+  using Base_x_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Base_point_2 = typename Gt2::Point_2;
+  using Base_Construct_min_vertex_2 = typename Gt2::Construct_min_vertex_2;
+  using Base_Construct_max_vertex_2 = typename Gt2::Construct_max_vertex_2;
+  using Base_Compare_endpoints_xy_2 = typename Gt2::Compare_endpoints_xy_2;
+  using Base_Compare_xy_2 = typename Gt2::Compare_xy_2;
+  using Base_Compare_y_at_x_right_2 = typename Gt2::Compare_y_at_x_right_2;
+  using Base_Compare_y_at_x_2 = typename Gt2::Compare_y_at_x_2;
+  using Base_Intersect_2 = typename Gt2::Intersect_2;
+  using Base_Split_2 = typename Gt2::Split_2;
 
-  typedef typename Gt2::Parameter_space_in_x_2  Base_Parameter_space_in_x_2;
-  typedef typename Gt2::Compare_y_near_boundary_2
-                                                Base_Compare_y_near_boundary_2;
+  using Base_Parameter_space_in_x_2 = typename Gt2::Parameter_space_in_x_2;
+  using Base_Compare_y_near_boundary_2 = typename Gt2::Compare_y_near_boundary_2;
 
-  typedef typename Gt2::Parameter_space_in_y_2  Base_Parameter_space_in_y_2;
-  typedef typename Gt2::Compare_x_near_boundary_2
-                                                Base_Compare_x_near_boundary_2;
+  using Base_Parameter_space_in_y_2 = typename Gt2::Parameter_space_in_y_2;
+  using Base_Compare_x_near_boundary_2 = typename Gt2::Compare_x_near_boundary_2;
 
 public:
-  typedef typename Gt2::Multiplicity            Multiplicity;
-  typedef Gps_agg_curve_data<Arr>               Curve_data;
-  typedef Point_with_vertex<Arr>                Point_data;
+  using Multiplicity = typename Gt2::Multiplicity;
+  using Curve_data = Gps_agg_curve_data<Arr>;
+  using Point_data = Point_with_vertex<Arr>;
 
 private:
-  typedef Gps_agg_meta_traits<Arrangement>                      Self;
-  typedef Gps_traits_decorator<Gt2, Curve_data, Point_data>     Base;
+  using Self = Gps_agg_meta_traits<Arrangement>;
+  using Base = Gps_traits_decorator<Gt2, Curve_data, Point_data>;
 
 public:
-  typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
-  typedef typename Base::Point_2                Point_2;
-  typedef typename Gt2::Has_left_category       Has_left_category;
-  typedef typename Gt2::Has_merge_category      Has_merge_category;
-  typedef typename Gt2::Has_do_intersect_category
-    Has_do_intersect_category;
+  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+  using Point_2 = typename Base::Point_2;
+  using Has_left_category = typename Gt2::Has_left_category;
+  using Has_merge_category = typename Gt2::Has_merge_category;
 
-  typedef typename Arr::Left_side_category      Left_side_category;
-  typedef typename Arr::Bottom_side_category    Bottom_side_category;
-  typedef typename Arr::Top_side_category       Top_side_category;
-  typedef typename Arr::Right_side_category     Right_side_category;
+  using Left_side_category = typename Arr::Left_side_category;
+  using Bottom_side_category = typename Arr::Bottom_side_category;
+  using Top_side_category = typename Arr::Top_side_category;
+  using Right_side_category = typename Arr::Right_side_category;
 
   // a side is either oblivious or open (unbounded)
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Left_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Left_side_category, Arr_open_side_tag> >));
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Bottom_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Bottom_side_category, Arr_open_side_tag> >));
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Top_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Top_side_category, Arr_open_side_tag> >));
-  BOOST_MPL_ASSERT((boost::mpl::or_<
-                    boost::is_same<Right_side_category, Arr_oblivious_side_tag>,
-                    boost::is_same<Right_side_category, Arr_open_side_tag> >));
+  static_assert(std::is_same<Left_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Left_side_category, Arr_open_side_tag>::value);
+  static_assert(std::is_same<Bottom_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Bottom_side_category, Arr_open_side_tag>::value);
+  static_assert(std::is_same<Top_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Top_side_category, Arr_open_side_tag>::value);
+  static_assert(std::is_same<Right_side_category, Arr_oblivious_side_tag>::value ||
+                         std::is_same<Right_side_category, Arr_open_side_tag>::value);
 
-  typedef typename Arr::Halfedge_handle         Halfedge_handle;
-  typedef typename Arr::Vertex_handle           Vertex_handle;
+  using Halfedge_handle = typename Arr::Halfedge_handle;
+  using Vertex_handle = typename Arr::Vertex_handle;
 
   Gps_agg_meta_traits() {}
 
@@ -157,19 +145,13 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2,
-                              OutputIterator oi) const
-    {
+                              OutputIterator oi) const {
       // Check whether the curves are already in the same arrangement, and thus
       // must be interior-disjoint
       if (cv1.data().arr() == cv2.data().arr()) return oi;
 
-      typedef const std::pair<Base_point_2, Multiplicity>
-        Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
-                                                        Intersection_base_result;
-      typedef const std::pair<Point_2, Multiplicity>    Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
+      using Intersection_base_point = const std::pair<Base_point_2, Multiplicity>;
+      using Intersection_base_result = std::variant<Intersection_base_point, Base_x_monotone_curve_2>;
 
       const auto* base_traits = m_traits.m_base_traits;
       auto base_cmp_xy = base_traits->compare_xy_2_object();
@@ -188,19 +170,19 @@ public:
       // the extenede X_monotone_curve_2
       for (const auto& xection : xections) {
         const Intersection_base_point* base_pt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
         if (base_pt != nullptr) {
           Point_2 point_plus(base_pt->first); // the extended point
           *oi++ =
-            Intersection_result(std::make_pair(point_plus, base_pt->second));
+            std::make_pair(point_plus, base_pt->second);
           continue;
         }
 
         const Base_x_monotone_curve_2* overlap_cv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(overlap_cv != nullptr);
-        unsigned int ov_bc;
-        unsigned int ov_twin_bc;
+        std::size_t ov_bc;
+        std::size_t ov_twin_bc;
         if (base_cmp_endpoints(cv1) == base_cmp_endpoints(cv2)) {
           // cv1 and cv2 have the same directions
           ov_bc = cv1.data().bc() + cv2.data().bc();
@@ -219,7 +201,7 @@ public:
 
         Curve_data cv_data(cv1.data().arr(), Halfedge_handle(),
                            ov_bc, ov_twin_bc);
-        *oi++ = Intersection_result(X_monotone_curve_2(*overlap_cv, cv_data));
+        *oi++ = X_monotone_curve_2(*overlap_cv, cv_data);
       }
 
       return oi;
@@ -238,8 +220,7 @@ public:
     Split_2(const Base_Split_2& base) : m_base_split(base) {}
 
     void operator()(const X_monotone_curve_2& cv, const Point_2 & p,
-                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
-    {
+                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const {
       m_base_split(cv.base(), p.base(), c1.base(), c2.base());
       const Curve_data& cv_data = cv.data();
       c1.set_data(Curve_data(cv_data.arr(), Halfedge_handle(), cv_data.bc(),
@@ -267,8 +248,7 @@ public:
      * \param cv The curve.
      * \return The left endpoint.
      */
-    Point_2 operator()(const X_monotone_curve_2 & cv) const
-    {
+    Point_2 operator()(const X_monotone_curve_2 & cv) const {
       if (cv.data().halfedge() == Halfedge_handle())
         return (Point_2(m_base(cv.base())));
 
@@ -280,8 +260,7 @@ public:
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  {
+  Construct_min_vertex_2 construct_min_vertex_2_object() const {
     return Construct_min_vertex_2(this->m_base_traits->
                                   construct_min_vertex_2_object());
   }
@@ -293,15 +272,14 @@ public:
 
   public:
     Construct_max_vertex_2(const Base_Construct_max_vertex_2& base) :
-        m_base(base)
+      m_base(base)
     {}
 
     /*! Obtain the right endpoint of the x-monotone curve (segment).
      * \param cv The curve.
      * \return The right endpoint.
      */
-    Point_2 operator()(const X_monotone_curve_2& cv) const
-    {
+    Point_2 operator()(const X_monotone_curve_2& cv) const {
       if (cv.data().halfedge() == Halfedge_handle())
         return (Point_2(m_base(cv.base())));
 
@@ -312,8 +290,7 @@ public:
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  {
+  Construct_max_vertex_2 construct_max_vertex_2_object() const {
     return Construct_max_vertex_2(this->m_base_traits->
                                   construct_max_vertex_2_object());
   }
@@ -329,8 +306,7 @@ public:
      * \param cv The curve.
      * \return The left endpoint.
      */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    {
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       const Point_data& inf1 = p1.data();
       const Point_data& inf2 = p2.data();
 
@@ -398,8 +374,7 @@ public:
   };
 
   /*! Obtain a Construct_min_vertex_2 functor object. */
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  {
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
     return Compare_y_near_boundary_2(this->m_base_traits->
                                      compare_y_near_boundary_2_object()
     );
@@ -437,8 +412,7 @@ public:
   };
 
   /*! Obtain a Construct_min_vertex_2 functor object. */
-  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  {
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const {
     return Parameter_space_in_y_2(this->m_base_traits->
                                   parameter_space_in_y_2_object());
   }
@@ -470,8 +444,7 @@ public:
   };
 
   /*! Obtain a Construct_min_vertex_2 functor object. */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  {
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
     return Compare_x_near_boundary_2(this->m_base_traits->
                                      compare_x_near_boundary_2_object());
   }

@@ -4,10 +4,8 @@
 #include <CGAL/Surface_mesh_shortest_path.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
-
-#include <boost/lexical_cast.hpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -29,7 +27,7 @@ typedef typename Surface_mesh_shortest_path::Barycentric_coordinates    Barycent
 typedef typename Surface_mesh_shortest_path::Face_location              Face_location;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Triangle_mesh>         AABB_face_graph_primitive;
-typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive>            AABB_face_graph_traits;
+typedef CGAL::AABB_traits_3<Kernel, AABB_face_graph_primitive>            AABB_face_graph_traits;
 typedef CGAL::AABB_tree<AABB_face_graph_traits>                         AABB_tree;
 
 int main(int argc, char** argv)

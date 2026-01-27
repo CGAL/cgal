@@ -53,7 +53,7 @@ void process_point_set(Iterator beg, Iterator end, PointPMap pmap)
   std::sort(beg,end,less);
 }
 
-// We can call it just with points. Then interally we use a property map
+// We can call it just with points. Then internally we use a property map
 // that maps point iterators on points.
 
 template <typename Iterator>

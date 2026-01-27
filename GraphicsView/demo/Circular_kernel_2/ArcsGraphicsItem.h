@@ -16,14 +16,18 @@ namespace Qt {
 template <typename CK>
 class ArcsGraphicsItem : public GraphicsItem
 {
-  std::vector<CGAL::Object>& arcs, &intersections;
   typedef typename CK::Circle_2 Circle_2;
   typedef typename CK::Circular_arc_2 Circular_arc_2;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Line_arc_2 Line_arc_2;
+  typedef std::variant<std::pair<Circular_arc_point_2,unsigned>, Circular_arc_2, Line_arc_2 > Inter_variant;
+  typedef std::variant<Circular_arc_2, Line_arc_2 > Arc_variant;
+
+  std::vector<Arc_variant>& arcs;
+  std::vector<Inter_variant>& intersections;
 
 public:
-  ArcsGraphicsItem(std::vector<CGAL::Object>& arcs_, std::vector<CGAL::Object>& intersections_);
+  ArcsGraphicsItem(std::vector<Arc_variant>& arcs_, std::vector<Inter_variant>& intersections_);
 
   void modelChanged();
 
@@ -68,7 +72,7 @@ protected:
 
 
 template <typename CK>
-ArcsGraphicsItem<CK>::ArcsGraphicsItem(std::vector<CGAL::Object>& arcs_, std::vector<CGAL::Object>& intersections_)
+ArcsGraphicsItem<CK>::ArcsGraphicsItem(std::vector<Arc_variant>& arcs_, std::vector<Inter_variant>& intersections_)
   :  arcs(arcs_), intersections(intersections_), painterostream(nullptr)
 {
   setIntersectionsPen(QPen(::Qt::red, 3.));
@@ -97,33 +101,29 @@ ArcsGraphicsItem<CK>::paint(QPainter *painter,
   painter->setPen(this->inputPen());
   painterostream = PainterOstream<CK>(painter);
 
-  for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+  for(typename std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
     Circular_arc_2 ca;
     Line_arc_2 la;
-    if(assign(ca, *it)){
-      painterostream << ca;
-    } else if(assign(la, *it)){
-      painterostream << la;
+    if(auto ca = std::get_if<Circular_arc_2>(&(*it))){
+      painterostream << *ca;
+    } else if(auto la = std::get_if<Line_arc_2>(&(*it))){
+      painterostream << *la;
     }
   }
 
 
   painter->setPen(this->intersectionsPen());
   painterostream = PainterOstream<CK>(painter);
-  for(std::vector<CGAL::Object>::iterator it = intersections.begin(); it != intersections.end(); ++it){
-    std::pair<Circular_arc_point_2,unsigned> cap_ui;
-    Circular_arc_2 ca;
-    Line_arc_2 la;
-
-    if(assign(cap_ui, *it)){
+  for(typename std::vector<Inter_variant>::iterator it = intersections.begin(); it != intersections.end(); ++it){
+    if(auto cap_ui = std::get_if<std::pair<Circular_arc_point_2,unsigned>>(&*it)){
       QTransform matrix = painter->worldTransform();
       painter->resetTransform();
-      painter->drawPoint(matrix.map(convert(cap_ui.first)));
+      painter->drawPoint(matrix.map(convert(cap_ui->first)));
       painter->setWorldTransform(matrix);
-    }if(assign(ca, *it)){
-      painterostream << ca;
-    } else if(assign(la, *it)){
-      painterostream << la;
+    }if(auto ca = std::get_if<Circular_arc_2>(&(*it))){
+      painterostream << *ca;
+    } else if(auto la = std::get_if<Line_arc_2>(&(*it))){
+      painterostream << *la;
     }
   }
 }
@@ -135,22 +135,22 @@ ArcsGraphicsItem<CK>::updateBoundingBox()
   bounding_rect = QRectF(0,0,100, 100);
   Bbox_2 bb;
   bool initialized = false;
-  for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+  for(typename std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
     Circular_arc_2 ca;
     Line_arc_2 la;
-    if(assign(ca, *it)){
+    if(auto ca = std::get_if<Circular_arc_2>(&(*it))){
       if(initialized){
-        bb = bb + ca.supporting_circle().bbox();
+        bb = bb + ca->supporting_circle().bbox();
       } else {
         initialized = true;
-        bb = ca.supporting_circle().bbox();
+        bb = ca->supporting_circle().bbox();
       }
-    } else if(assign(la, *it)){
+    } else if(auto la = std::get_if<Line_arc_2>(&(*it))){
       if(initialized){
-        bb = bb + la.bbox();
+        bb = bb + la->bbox();
       } else {
         initialized = true;
-        bb = la.bbox();
+        bb = la->bbox();
       }
     }
   }

@@ -13,7 +13,7 @@ Euclidean distance between a \f$ d\f$-dimensional sphere and a
 \tparam Traits must be a model of the concept `SearchTraits`,
 for example `Simple_cartesian_d<double>`.
 
-\cgalModels `GeneralDistance`
+\cgalModels{GeneralDistance}
 
 \sa `GeneralDistance`
 

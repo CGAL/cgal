@@ -1,5 +1,6 @@
 #ifndef CGAL_TESTSUITE_APPROX_EQUAL_H
 #define CGAL_TESTSUITE_APPROX_EQUAL_H
+
 #include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {
@@ -9,6 +10,10 @@ template <typename FT>
 bool approx_equal(FT a, FT b) { return a == b; }
 
 bool approx_equal(double a, double b) {
+  return std::abs(boost::math::float_distance(a, b)) <= 1;
+}
+
+bool approx_equal(float a, float b) {
   return std::abs(boost::math::float_distance(a, b)) <= 1;
 }
 

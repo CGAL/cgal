@@ -86,7 +86,7 @@ public:
       std::cout << "Duplicate point: " << point << std::endl;
   }
 
-  /*! Parse a generic Homogenuous point */
+  /*! Parse a generic Homogeneous point */
   virtual void accept_point_2( std::string x, std::string y, std::string w)
   {
     typedef typename Number_type_traits<Rat_number_type>::FT            FT;

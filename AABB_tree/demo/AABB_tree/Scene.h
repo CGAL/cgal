@@ -1,7 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <QtOpenGL/qgl.h>
 #include <iostream>
 #include <cmath>
 
@@ -10,7 +9,7 @@
 #include "Color_ramp.h"
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -63,11 +62,11 @@ public:
 
 private:
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>         Facet_Primitive;
-    typedef CGAL::AABB_traits<Kernel, Facet_Primitive>                  Facet_Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Facet_Primitive>                  Facet_Traits;
     typedef CGAL::AABB_tree<Facet_Traits>                               Facet_tree;
 
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_Primitive;
-    typedef CGAL::AABB_traits<Kernel, Edge_Primitive>                   Edge_Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Edge_Primitive>                 Edge_Traits;
     typedef CGAL::AABB_tree<Edge_Traits>                                Edge_tree;
 
     typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
@@ -77,7 +76,6 @@ private:
     };
 
 public:
-    QGLContext* context;
     void draw(CGAL::QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
@@ -173,7 +171,7 @@ private:
     void attrib_buffers(CGAL::QGLViewer*);
     void compile_shaders();
     void compute_texture(int, int, Color_ramp, Color_ramp);
-private slots:
+private Q_SLOTS:
     void updateCutPlane();
 
 public:
@@ -255,7 +253,7 @@ public:
 
 
 
-public slots:
+public Q_SLOTS:
     // cutting plane
     void cutting_plane(bool override = false);
     void changed();

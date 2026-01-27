@@ -75,7 +75,7 @@ public:
 
     // represents x-coordinate of event of rational value over interval
     // computed only by demand
-    mutable boost::optional<Algebraic_real_1> _m_x;
+    mutable std::optional<Algebraic_real_1> _m_x;
 
     // for each event point stores a pair of arcnos of the 1st and 2nd curve
     // or -1 if respective curve is not involved
@@ -208,7 +208,7 @@ public:
 
 protected:
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     Status_line_CPA_1(Rep rep) :
         Base(rep) {
@@ -223,7 +223,7 @@ public:
      * returns the x-coordinate of the vertical line (always a finite value).
      */
     Algebraic_real_1 x() const {
-        // unless x-coordiate was explicitly set with _set_x: compute its value
+        // unless x-coordinate was explicitly set with _set_x: compute its value
         if(!this->ptr()->_m_x) {
             this->ptr()->_m_x = (is_event() ?
 #if CGAL_ACK_USE_EXACUS
@@ -331,7 +331,7 @@ public:
                              const typename Curve_pair_analysis_2
                                  ::Curve_analysis_2& c1,
                              const typename Curve_pair_analysis_2
-                                 ::Curve_analysis_2& CGAL_precondition_code(c2)) const
+                                 ::Curve_analysis_2& CGAL_assertion_code(c2)) const
     {
 
         CGAL_precondition(0 <= j && j < number_of_events());

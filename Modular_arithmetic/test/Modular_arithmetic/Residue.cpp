@@ -1,7 +1,7 @@
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 
 /*! \file CGAL/Residue.C
-  test for number type modul
+  test for number type module
 */
 
 #include <CGAL/config.h>

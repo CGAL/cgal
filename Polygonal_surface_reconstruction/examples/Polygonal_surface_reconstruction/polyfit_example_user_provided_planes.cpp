@@ -39,9 +39,9 @@ typedef CGAL::Nth_of_tuple_property_map<2, PNI>                                 
 * the point is not assigned to a plane).
 */
 
-int main()
+int main(int argc, char* argv[])
 {
-    const std::string& input_file(CGAL::data_file_path("points_3/ball.ply"));
+  const std::string input_file = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/ball.ply");
   std::ifstream input_stream(input_file.c_str());
 
   std::vector<PNI> points; // store points
@@ -52,9 +52,9 @@ int main()
 
   if (!CGAL::IO::read_PLY_with_properties(input_stream,
                                           std::back_inserter(points),
-                                          CGAL::make_ply_point_reader(Point_map()),
-                                          CGAL::make_ply_normal_reader(Normal_map()),
-                                          std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
+                                          CGAL::IO::make_ply_point_reader(Point_map()),
+                                          CGAL::IO::make_ply_normal_reader(Normal_map()),
+                                          std::make_pair(Plane_index_map(), CGAL::IO::PLY_property<int>("segment_index"))))
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -89,7 +89,7 @@ int main()
   }
 
   // Saves the mesh model
-    const std::string& output_file("data/ball_result.off");
+    const std::string& output_file("user_provided_planes_result.off");
     if (CGAL::IO::write_OFF(output_file, model))
         std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
     else {

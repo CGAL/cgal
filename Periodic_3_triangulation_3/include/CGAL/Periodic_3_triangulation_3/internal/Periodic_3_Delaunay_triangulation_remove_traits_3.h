@@ -16,7 +16,6 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 namespace CGAL {
@@ -40,14 +39,6 @@ public:
 
   using Base::operator();
 
-  template<typename F>
-  struct result : Base::template result<F> {};
-
-  template<typename F>
-  struct result<F(Point_3)> {
-    typedef const Point_3& type;
-  };
-
   const Point_3& operator()(const Point_3& p) const { return p; }
 };
 
@@ -62,29 +53,27 @@ class Functor_with_point_offset_pair_adaptor
   typedef typename Traits::Point_3       Point;
 
 public:
-  typedef typename Functor::result_type result_type;
-
   Functor_with_point_offset_pair_adaptor(const Functor & functor) : Functor_(functor) { }
 
 public:
   using Functor::operator();
 
-  result_type operator()(const Point& p0, const Point& p1) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1) const {
     return operator()(p0.first, p1.first,
                       p0.second, p1.second);
   }
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2) const {
     return operator()(p0.first, p1.first, p2.first,
                       p0.second, p1.second, p2.second);
   }
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3) const {
     return operator()(p0.first, p1.first, p2.first, p3.first,
                       p0.second, p1.second, p2.second, p3.second);
   }
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3, const Point& p4) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3, const Point& p4) const {
     return operator()(p0.first, p1.first, p2.first, p3.first, p4.first,
                       p0.second, p1.second, p2.second, p3.second, p4.second);
   }

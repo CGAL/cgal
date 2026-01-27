@@ -2273,7 +2273,7 @@ d="M 7879,3504 A 6128 6128  0  0  1  4544  3717 " />
 " style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
 fill:white;"/>
 <!-- Text -->
-<text xml:space="preserve" x="4458" y="4140" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_handle&#62;v1 = {Dart_of_cell_range&#60;0,2&#62;(dh3)}</text>
+<text xml:space="preserve" x="4458" y="4140" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_descriptor&#62;v1 = {Dart_of_cell_range&#60;0,2&#62;(dh3)}</text>
 <!-- Text -->
 <text xml:space="preserve" x="9937" y="2755" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="278" text-anchor="start">dh4</text>
 <!-- Text -->
@@ -2285,7 +2285,7 @@ fill:white;"/>
 <!-- Text -->
 <text xml:space="preserve" x="4866" y="4866" fill="#000000"  font-family="Times,Symbol" font-style="normal" font-weight="normal" font-size="240" text-anchor="start">&#8704;</text>
 <!-- Text -->
-<text xml:space="preserve" x="4582" y="4488" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_handle&#62;v2 = {Dart_of_cell_range&#60;0,2&#62;(dh4)}</text>
+<text xml:space="preserve" x="4582" y="4488" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_descriptor&#62;v2 = {Dart_of_cell_range&#60;0,2&#62;(dh4)}</text>
 <!-- Text -->
 <text xml:space="preserve" x="2551" y="283" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="278" text-anchor="start">dh1</text>
 <!-- Text -->

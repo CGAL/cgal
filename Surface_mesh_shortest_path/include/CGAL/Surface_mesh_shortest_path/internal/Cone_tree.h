@@ -95,15 +95,22 @@ private:
 public:
   Cone_tree_node(const Traits& traits,
                  const Triangle_mesh& g,
-                 const std::size_t treeId)
+                 const halfedge_descriptor entryEdge,
+                 const Triangle_2& layoutFace,
+                 const Point_2& sourceImage,
+                 const FT& pseudoSourceDistance,
+                 const Point_2& windowLeft,
+                 const Point_2& windowRight,
+                 const Node_type nodeType = INTERVAL)
     : m_traits(traits)
     , m_graph(g)
-    , m_sourceImage(Point_2(CGAL::ORIGIN))
-    , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
-    , m_pseudoSourceDistance(0.0)
-    , m_level(0)
-    , m_treeId(treeId)
-    , m_nodeType(ROOT)
+    , m_entryEdge(entryEdge)
+    , m_sourceImage(sourceImage)
+    , m_layoutFace(layoutFace)
+    , m_pseudoSourceDistance(pseudoSourceDistance)
+    , m_windowLeft(windowLeft)
+    , m_windowRight(windowRight)
+    , m_nodeType(nodeType)
     , m_leftChild(nullptr)
     , m_rightChild(nullptr)
     , m_pendingLeftSubtree(nullptr)
@@ -135,27 +142,8 @@ public:
 
   Cone_tree_node(const Traits& traits,
                  const Triangle_mesh& g,
-                 const halfedge_descriptor entryEdge,
-                 const Triangle_2& layoutFace,
-                 const Point_2& sourceImage,
-                 const FT& pseudoSourceDistance,
-                 const Point_2& windowLeft,
-                 const Point_2& windowRight,
-                 const Node_type nodeType = INTERVAL)
-    : m_traits(traits)
-    , m_graph(g)
-    , m_entryEdge(entryEdge)
-    , m_sourceImage(sourceImage)
-    , m_layoutFace(layoutFace)
-    , m_pseudoSourceDistance(pseudoSourceDistance)
-    , m_windowLeft(windowLeft)
-    , m_windowRight(windowRight)
-    , m_nodeType(nodeType)
-    , m_leftChild(nullptr)
-    , m_rightChild(nullptr)
-    , m_pendingLeftSubtree(nullptr)
-    , m_pendingRightSubtree(nullptr)
-    , m_pendingMiddleSubtree(nullptr)
+                 const std::size_t treeId)
+    : Cone_tree_node(traits, g, treeId, Graph_traits::null_halfedge())
   {
   }
 

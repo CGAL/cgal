@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Auxiliary
 
-\cgalModels `StraightSkeletonVertex_2`
+\cgalModels{StraightSkeletonVertex_2}
 
 The class `Straight_skeleton_vertex_base_2` provides a model for the `StraightSkeletonVertex_2` concept
 which is the vertex type required by the `StraightSkeleton_2` concept.
@@ -16,7 +16,7 @@ which is the vertex type required by the `StraightSkeleton_2` concept.
 This class can be used as a base class allowing users of the straight skeleton data structure to decorate
 a vertex with additional data. The concrete vertex class must be given in the `HalfedgeDSItems`
 template parameter of the instantiation of the `HalfedgeDS_default` class used as the model
-for the `Straight_skeleton_2` concept.
+for the `CGAL::Straight_skeleton_2` concept.
 
 \sa `StraightSkeletonFace_2`
 \sa `StraightSkeletonVertex_2`

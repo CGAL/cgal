@@ -13,6 +13,8 @@
 #ifndef CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
 #define CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
 
+#include <CGAL/license/Surface_mesh_deformation.h>
+
 #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>
 #include <CGAL/FPU_extension.h>
 #include <CGAL/Profile_counter.h>
@@ -23,7 +25,7 @@ namespace CGAL {
   /// The internal computation relies on a hybrid system using the solvers `Eigen::SelfAdjointEigenSolver<>`
   /// and `Eigen::JacobiSVD<>` (polar decomposition).
   ///
-  /// \cgalModels `DeformationClosestRotationTraits_3`
+  /// \cgalModels{DeformationClosestRotationTraits_3}
   class Deformation_Eigen_polar_closest_rotation_traits_3 :
     public Deformation_Eigen_closest_rotation_traits_3{
   public:

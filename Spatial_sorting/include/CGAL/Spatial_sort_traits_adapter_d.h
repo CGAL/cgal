@@ -64,7 +64,7 @@ public:
     Compute_coordinate_d(const PointPropertyMap& ppmap, const typename Base_traits::Compute_coordinate_d& base):
       Base_traits::Compute_coordinate_d(base), ppmap_(ppmap){}
     const PointPropertyMap& ppmap_;
-    bool operator()(Arg_type p, int i) const {
+    typename Gt::FT operator()(Arg_type p, int i) const {
       return static_cast<const typename Base_traits::Compute_coordinate_d*>(this)->operator()(get(ppmap_,p), i);
     }
   };

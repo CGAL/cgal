@@ -7,7 +7,7 @@ An object `r` of the data type `Ray_3` is a directed
 straight ray in the three-dimensional Euclidean space \f$ \E^3\f$. It starts
 in a point called the <I>source</I> of `r` and it goes to infinity.
 
-\cgalModels `Kernel::Ray_3`
+\cgalModels{Kernel::Ray_3}
 
 */
 template< typename Kernel >
@@ -20,6 +20,7 @@ public:
 /*!
 introduces a ray `r`
 with source `p` and passing through point `q`.
+\cgalEpicExact
 */
 Ray_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 
@@ -59,13 +60,14 @@ bool operator!=(const Ray_3<Kernel> &h) const;
 
 /*!
 returns the source of `r`
+\cgalEpicExact
 */
 Point_3<Kernel> source() const;
 
 /*!
 returns a point on `r`. `point(0)` is the source.
 `point(i)`, with `i>0`, is different from the
-source. \pre \f$ i \geq0\f$.
+source. \pre `i >= 0`.
 */
 Point_3<Kernel> point(const Kernel::FT i) const;
 

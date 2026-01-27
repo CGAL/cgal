@@ -21,43 +21,43 @@
 namespace CGAL {
 
 template <class R>
-Comparison_result
+typename R::Comparison_result
 compare_distance_to_point(const PointH3<R>& ,
                           const PointH3<R>& ,
                           const PointH3<R>& );
 
 template <class R>
-bool
+typename R::Boolean
 has_larger_distance_to_point(const PointH3<R>& ,
                              const PointH3<R>& ,
                              const PointH3<R>& );
 
 template <class R>
-bool
+typename R::Boolean
 has_smaller_distance_to_point(const PointH3<R>& ,
                               const PointH3<R>& ,
                               const PointH3<R>& );
 
 template <class R>
-Comparison_result
+typename R::Comparison_result
 compare_signed_distance_to_plane(const PlaneH3<R>& ,
                                  const PointH3<R>& ,
                                  const PointH3<R>& );
 
 template <class R>
-bool
+typename R::Boolean
 has_larger_signed_distance_to_plane(const PlaneH3<R>& ,
                                     const PointH3<R>& ,
                                     const PointH3<R>& );
 
 template <class R>
-bool
+typename R::Boolean
 has_smaller_signed_distance_to_plane(const PlaneH3<R>&,
                                      const PointH3<R>& ,
                                      const PointH3<R>& );
 
 template <class R>
-Comparison_result
+typename R::Comparison_result
 compare_signed_distance_to_plane(const PointH3<R>& ,
                                  const PointH3<R>& ,
                                  const PointH3<R>& ,
@@ -65,7 +65,7 @@ compare_signed_distance_to_plane(const PointH3<R>& ,
                                  const PointH3<R>& );
 
 template <class R>
-bool
+typename R::Boolean
 has_larger_signed_distance_to_plane(const PointH3<R>& ,
                                     const PointH3<R>& ,
                                     const PointH3<R>& ,
@@ -73,7 +73,7 @@ has_larger_signed_distance_to_plane(const PointH3<R>& ,
                                     const PointH3<R>& );
 
 template <class R>
-bool
+typename R::Boolean
 has_smaller_signed_distance_to_plane(const PointH3<R>& ,
                                      const PointH3<R>& ,
                                      const PointH3<R>& ,
@@ -82,7 +82,7 @@ has_smaller_signed_distance_to_plane(const PointH3<R>& ,
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_distance_to_point(const PointH3<R>& p,
                           const PointH3<R>& q,
                           const PointH3<R>& r)
@@ -121,7 +121,7 @@ compare_distance_to_point(const PointH3<R>& p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename R::Boolean
 has_larger_distance_to_point(const PointH3<R>& p,
                              const PointH3<R>& q,
                              const PointH3<R>& r)
@@ -157,7 +157,7 @@ has_larger_distance_to_point(const PointH3<R>& p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename R::Boolean
 has_smaller_distance_to_point(const PointH3<R>& p,
                               const PointH3<R>& q,
                               const PointH3<R>& r)
@@ -193,7 +193,7 @@ has_smaller_distance_to_point(const PointH3<R>& p,
 
 template < class R>
 CGAL_KERNEL_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_signed_distance_to_plane(const PlaneH3<R>& pl,
                                  const PointH3<R>& p,
                                  const PointH3<R>& q)
@@ -227,7 +227,7 @@ compare_signed_distance_to_plane(const PlaneH3<R>& pl,
 }
 
 template <class R>
-bool
+typename R::Boolean
 has_larger_signed_distance_to_plane(const PlaneH3<R>& pl,
                                     const PointH3<R>& p,
                                     const PointH3<R>& q )
@@ -257,7 +257,7 @@ has_larger_signed_distance_to_plane(const PlaneH3<R>& pl,
 }
 
 template <class R>
-bool
+typename R::Boolean
 has_smaller_signed_distance_to_plane(const PlaneH3<R>& pl,
                                      const PointH3<R>& p,
                                      const PointH3<R>& q )
@@ -288,7 +288,7 @@ has_smaller_signed_distance_to_plane(const PlaneH3<R>& pl,
 
 template <class R>
 inline
-Comparison_result
+typename R::Comparison_result
 compare_signed_distance_to_plane(const PointH3<R>& p,
                                  const PointH3<R>& q,
                                  const PointH3<R>& r,
@@ -302,7 +302,7 @@ compare_signed_distance_to_plane(const PointH3<R>& p,
 
 template <class R>
 inline
-bool
+typename R::Boolean
 has_larger_signed_distance_to_plane(const PointH3<R>& p,
                                     const PointH3<R>& q,
                                     const PointH3<R>& r,
@@ -313,7 +313,7 @@ has_larger_signed_distance_to_plane(const PointH3<R>& p,
 
 template <class R>
 inline
-bool
+typename R::Boolean
 has_smaller_signed_distance_to_plane(const PointH3<R>& p,
                                      const PointH3<R>& q,
                                      const PointH3<R>& r,

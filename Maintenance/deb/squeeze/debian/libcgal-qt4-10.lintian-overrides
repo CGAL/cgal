@@ -1,1 +1,0 @@
-libcgal-qt4-10: hardening-no-fortify-functions usr/lib/libCGAL_Qt4.so.*

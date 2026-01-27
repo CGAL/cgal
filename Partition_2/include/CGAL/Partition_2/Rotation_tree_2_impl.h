@@ -10,6 +10,11 @@
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
+#ifndef CGAL_PARTITION_2_ROTATION_TREE_2_IMPL_H
+#define CGAL_PARTITION_2_ROTATION_TREE_2_IMPL_H
+
+#include <CGAL/license/Partition_2.h>
+
 #include <iostream>
 
 namespace CGAL {
@@ -130,3 +135,5 @@ std::ostream& operator<<(std::ostream& os, const Rotation_tree_2<Traits>& tree)
 }
 
 }
+
+#endif // CGAL_PARTITION_2_ROTATION_TREE_2_IMPL_H

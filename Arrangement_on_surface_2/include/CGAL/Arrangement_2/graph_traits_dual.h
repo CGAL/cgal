@@ -13,7 +13,7 @@
 //             Sebastien Loriot <sebastien.loriot@cgal.org>
 //             Efi Fogel        <efifogel@gmail.com>
 
-// This file contains the follwoing three parts:
+// This file contains the following three parts:
 // 1. The common base class template of the specialized
 //      Dual<specialized-arrangement> class template.
 //
@@ -24,8 +24,8 @@
 //    the various Boost Graph concepts. There is one macro per required function
 //    template. Each macro accepts the name of a template class, an instance of
 //    which represents an arrangement data structure, e.g., Arrangement_2. The
-//    definitios of the free functions templates for a given arrangement data
-//    strcture must be present when a dual of this data structure is defined.
+//    definitions of the free functions templates for a given arrangement data
+//    structure must be present when a dual of this data structure is defined.
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -88,10 +88,10 @@ protected:
     bool _end;
 
   public:
-    /*! Default constructor. */
+    /*! constructs default. */
     Face_neighbor_iterator() : _end (true) {}
 
-    /*! Constructor.
+    /*! constructs.
      * \param face The face (dual vertex).
      * \param out_edges Do we need the outgoing or the ingoing halfedges.
      * \param start Should we start traversing the edges.
@@ -167,7 +167,7 @@ protected:
     }
 
   private:
-    /*! Check two iterators for equality. */
+    /*! checks two iterators for equality. */
     bool _equal(const Self& it) const
     {
       return (_out == it._out && _face == it._face && ((_end && it._end) ||
@@ -176,7 +176,7 @@ protected:
                 _ccb_curr == it._ccb_curr)));
     }
 
-    /*! Derefernce the current circulator. */
+    /*! dereferences the current circulator. */
     Edge_handle _dereference() const
     {
       if (_out) return (_ccb_curr);
@@ -237,43 +237,43 @@ protected:
 public:
   typedef Face_neighbor_iterator            Incident_edge_iterator;
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Dual_arrangement_on_surface() : p_arr(nullptr) {}
 
-  /*! Constructor from an arrangement. */
+  /*! Constructs from an arrangement. */
   Dual_arrangement_on_surface(const Arrangement& arr) :
     p_arr(const_cast<Arrangement*>(&arr))
   {}
 
-  /*! Obtain the primal arrangement (const version). */
+  /*! obtains the primal arrangement (const version). */
   const Arrangement* arrangement() const { return (p_arr); }
 
-  /*! Obtain the primal arrangement (non-const version). */
+  /*! obtains the primal arrangement (non-const version). */
   Arrangement* arrangement() { return (p_arr); }
 
-  /*! Obtain the number of vertices (face of the primal arrangement). */
+  /*! obtains the number of vertices (face of the primal arrangement). */
   Size number_of_vertices() const { return (p_arr->number_of_faces()); }
 
-  /*! Obtain the begin iterator of the vertices of the dual arrangement
+  /*! obtains the begin iterator of the vertices of the dual arrangement
    * (faces of the primal arrangement).
    */
   Vertex_iterator vertices_begin() const { return (p_arr->faces_begin()); }
 
-  /*! Obtain the pass-the-end iterator of the vertices of the dual arrangement
+  /*! obtains the pass-the-end iterator of the vertices of the dual arrangement
    * (faces of the primal arrangement).
    */
   Vertex_iterator vertices_end() const { return (p_arr->faces_end()); }
 
-  /*! Obtain the number of edges. */
+  /*! obtains the number of edges. */
   Size number_of_edges () const { return (p_arr->number_of_halfedges()); }
 
-  /*! Obtain the begin iterator of the edges of the dual arrangement. */
+  /*! obtains the begin iterator of the edges of the dual arrangement. */
   Edge_iterator edges_begin() const { return (p_arr->halfedges_begin()); }
 
-  /*! Obtain the pass-the-end iterator of the edges of the dual arrangement. */
+  /*! obtains the pass-the-end iterator of the edges of the dual arrangement. */
   Edge_iterator edges_end() const { return (p_arr->halfedges_end()); }
 
-  /*! Obtain the dual vertex-degree (number of edges forming the face boundary).
+  /*! obtains the dual vertex-degree (number of edges forming the face boundary).
    */
   Size degree(Vertex_handle v) const
   {
@@ -289,14 +289,14 @@ public:
     return (deg);
   }
 
-  /*! Traverse the outgoing edges of a given vertex. */
+  /*! traverses the outgoing edges of a given vertex. */
   Incident_edge_iterator out_edges_begin(Vertex_handle v) const
   { return (Incident_edge_iterator (v, true, true)); }
 
   Incident_edge_iterator out_edges_end(Vertex_handle v) const
   { return (Incident_edge_iterator (v, true, false)); }
 
-  /*! Traverse the ingoing edges of a given vertex. */
+  /*! traverses the ingoing edges of a given vertex. */
   Incident_edge_iterator in_edges_begin(Vertex_handle v) const
   { return (Incident_edge_iterator (v, false, true)); }
 
@@ -314,9 +314,9 @@ namespace CGAL {
 /*! \class
  * The common base class template of the specialized
  *   boost::graph_traits<Dual<specialized-arrangement> > class template.
- * The latter serves as a dual adapter for the specialied arrangment, where the
+ * The latter serves as a dual adapter for the specialied arrangement, where the
  * valid arrangement faces correspond to graph verices, and two graph vertices
- * are connected if the two corrsponding faces are adjacent.
+ * are connected if the two corresponding faces are adjacent.
  * We consider the graph as directed. We also allow parallel edges, as two
  * faces may have more than one common edges.
  */
@@ -388,7 +388,7 @@ public:
 // Functions required by the IncidenceGraph concept:
 // -------------------------------------------------
 
-/*! Obtain the out-degree of a vertex in a given dual arrangement.
+/*! obtains the out-degree of a vertex in a given dual arrangement.
  * \param v The vertex.
  * \param darr The dual arrangement.
  * \param Number of halfedges around the boundary of the primal face.
@@ -400,7 +400,7 @@ out_degree(typename boost::graph_traits<Dual<T<T1, T2> > >::vertex_descriptor v,
            const Dual<T<T1, T2> >& darr)                                      \
 { return darr.degree(v); }
 
-/*! Return a range of the out-edges of a vertex given by its descriptor and the
+/*! returns a range of the out-edges of a vertex given by its descriptor and the
  * dual arrangement it belongs to.
  * \param v The vertex.
  * \param darr The dual arrangement.
@@ -414,7 +414,7 @@ out_edges(typename boost::graph_traits<Dual<T<T1, T2> > >::vertex_descriptor v,\
           const Dual<T<T1, T2> >& darr)                                       \
 { return std::make_pair(darr.out_edges_begin(v), darr.out_edges_end(v)); }    \
 
-/*! Obtain the source vertex of a dual arrangement edge.
+/*! obtains the source vertex of a dual arrangement edge.
  * \param e The edge.
  * \param darr The dual arrangement.
  * \return The incident face of e in the primal arrangement.
@@ -426,7 +426,7 @@ source(typename boost::graph_traits<Dual<T<T1, T2> > >::edge_descriptor e,    \
        const Dual<T<T1, T2> >& /* darr */)                                    \
 { return e->face(); }
 
-/*! Obtain the target vertex of a dual arrangement edge.
+/*! obtains the target vertex of a dual arrangement edge.
  * \param e The edge.
  * \param darr The dual arrangement.
  * \return The incident face of the twin of e in the primal arrangement.
@@ -441,7 +441,7 @@ target(typename boost::graph_traits<Dual<T<T1, T2> > >::edge_descriptor e,    \
 // Functions required by the BidirectionalGraph concept:
 // -----------------------------------------------------
 
-/*! Obtain the in-degree of a vertex in a given dual arrangement.
+/*! obtains the in-degree of a vertex in a given dual arrangement.
  * \param v The vertex.
  * \param darr The dual arrangement.
  * \param Number of halfedges around the boundary of the primal face.
@@ -453,7 +453,7 @@ in_degree(typename boost::graph_traits<Dual<T<T1, T2> > >::vertex_descriptor v,\
           const Dual<T<T1, T2> >& darr)                                       \
 { return darr.degree(v); }
 
-/*! Return a range of the in-edges of a vertex given by its descriptor and the
+/*! returns a range of the in-edges of a vertex given by its descriptor and the
  * dual arrangement it belongs to.
  * \param v The vertex.
  * \param darr The dual arrangement.
@@ -467,7 +467,7 @@ in_edges(typename boost::graph_traits<Dual<T<T1, T2> > >::vertex_descriptor v,\
          const Dual<T<T1, T2> >& darr)                                        \
 { return std::make_pair(darr.in_edges_begin(v), darr.in_edges_end(v)); }
 
-/*! Obtain the degree of a vertex in a given dual arrangement.
+/*! obtains the degree of a vertex in a given dual arrangement.
  * \param v The vertex.
  * \param darr The dual arrangement.
  * \param Number of ingoing and outgoing halfedges incident to v.
@@ -482,7 +482,7 @@ degree(typename boost::graph_traits<Dual<T<T1, T2> > >::vertex_descriptor v,  \
 // Functions required by the VertexListGraph concept:
 // --------------------------------------------------
 
-/*! Obtain the number of vertices in the given dual arrangement.
+/*! obtains the number of vertices in the given dual arrangement.
  * \param darr The dual arrangement.
  * \return Number of faces in the primal arrangement.
  */
@@ -492,7 +492,7 @@ typename boost::graph_traits<Dual<T<T1, T2> > >::vertices_size_type           \
 num_vertices(const Dual<T<T1, T2> >& darr)                                    \
 { return darr.number_of_vertices(); }
 
-/*! Obtain the range of vertices of the given dual arrangement.
+/*! obtains the range of vertices of the given dual arrangement.
  * \param darr The dual arrangement.
  * \return A pair of vertex iterators.
  */
@@ -506,7 +506,7 @@ vertices(const Dual<T<T1, T2> >& darr)                                        \
 // Functions required by the EdgeListGraph concept:
 // ------------------------------------------------
 
-/*! Obtain the number of edges in the given dual arrangement.
+/*! obtains the number of edges in the given dual arrangement.
  * \param darr The dual arrangement.
  * \return Number of halfedges in the primal arrangement.
  */
@@ -516,7 +516,7 @@ typename boost::graph_traits<Dual<T<T1, T2> > >::edges_size_type              \
 num_edges(const Dual<T<T1, T2> >& darr)                                       \
 { return darr.number_of_edges(); }
 
-/*! Obtain the range of edges of the given dual arrangement.
+/*! obtains the range of edges of the given dual arrangement.
  * \param darr The dual arrangement.
  * \return A pair of edge iterators.
  */

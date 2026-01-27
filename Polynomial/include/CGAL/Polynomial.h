@@ -34,7 +34,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/mpl/if.hpp>
 #include <CGAL/Flattening_iterator.h>
 
 #include <CGAL/Exponent_vector.h>

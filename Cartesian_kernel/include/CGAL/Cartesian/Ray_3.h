@@ -43,16 +43,16 @@ public:
   RayC3() {}
 
   RayC3(const Point_3 &sp, const Point_3 &secondp)
-    : base(CGAL::make_array(sp, secondp)) {}
+    : base{sp, secondp} {}
 
   RayC3(const Point_3 &sp, const Vector_3 &v)
-    : base(CGAL::make_array(sp, sp + v)) {}
+    : base{sp, sp + v} {}
 
   RayC3(const Point_3 &sp, const Direction_3 &d)
-    : base(CGAL::make_array(sp, sp + d.to_vector())) {}
+    : base{sp, sp + d.to_vector()} {}
 
   RayC3(const Point_3 &sp, const Line_3 &l)
-    : base(CGAL::make_array(sp, sp + l.to_vector())) {}
+    : base{sp, sp + l.to_vector()} {}
 
   typename R::Boolean          operator==(const RayC3 &r) const;
   typename R::Boolean          operator!=(const RayC3 &r) const;

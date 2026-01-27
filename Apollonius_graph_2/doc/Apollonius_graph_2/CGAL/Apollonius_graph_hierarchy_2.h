@@ -56,7 +56,7 @@ public:
 /// @{
 
 /*!
-Creates an hierarchy of Apollonius graphs using `gt` as
+Creates a hierarchy of Apollonius graphs using `gt` as
 geometric traits.
 */
 Apollonius_graph_hierarchy_2(Gt gt=Gt());

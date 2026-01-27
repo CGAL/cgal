@@ -13,12 +13,14 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
+#include <CGAL/internal/robust_cross_product.h>
+
 #include <CGAL/determinant.h>
 #include <CGAL/Null_matrix.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Vector_3.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -131,6 +133,13 @@ public:
     return Vector_3(v*m.r0(), v*m.r1(), v*m.r2());
   }
 
+  friend std::ostream& operator<<(std::ostream & os, const MatrixC33& m)
+{
+  return os << m.r0() << std::endl
+            << m.r1() << std::endl
+            << m.r2() << std::endl;
+}
+
   RT determinant() const
   {
     return CGAL::determinant(r0().x(), r0().y(), r0().z(),
@@ -176,17 +185,19 @@ MatrixC33<R> cofactors_matrix(const MatrixC33<R>& m)
 {
   typedef typename R::RT RT;
 
-  RT c00 =  determinant(m.r1().y(),m.r1().z(),m.r2().y(),m.r2().z());
-  RT c01 = -determinant(m.r1().x(),m.r1().z(),m.r2().x(),m.r2().z());
-  RT c02 =  determinant(m.r1().x(),m.r1().y(),m.r2().x(),m.r2().y());
+  using ::CGAL::Surface_mesh_simplification::internal::diff_of_products;
 
-  RT c10 = -determinant(m.r0().y(),m.r0().z(),m.r2().y(),m.r2().z());
-  RT c11 =  determinant(m.r0().x(),m.r0().z(),m.r2().x(),m.r2().z());
-  RT c12 = -determinant(m.r0().x(),m.r0().y(),m.r2().x(),m.r2().y());
+  RT c00 =  diff_of_products(m.r1().y(), m.r2().z(), m.r2().y(), m.r1().z());
+  RT c01 = -diff_of_products(m.r1().x(), m.r2().z(), m.r2().x(), m.r1().z());
+  RT c02 =  diff_of_products(m.r1().x(), m.r2().y(), m.r2().x(), m.r1().y());
 
-  RT c20 =  determinant(m.r0().y(),m.r0().z(),m.r1().y(),m.r1().z());
-  RT c21 = -determinant(m.r0().x(),m.r0().z(),m.r1().x(),m.r1().z());
-  RT c22 =  determinant(m.r0().x(),m.r0().y(),m.r1().x(),m.r1().y());
+  RT c10 = -diff_of_products(m.r0().y(), m.r2().z(), m.r2().y(), m.r0().z());
+  RT c11 =  diff_of_products(m.r0().x(), m.r2().z(), m.r2().x(), m.r0().z());
+  RT c12 = -diff_of_products(m.r0().x(), m.r2().y(), m.r2().x(), m.r0().y());
+
+  RT c20 =  diff_of_products(m.r0().y(), m.r1().z(), m.r1().y(), m.r0().z());
+  RT c21 = -diff_of_products(m.r0().x(), m.r1().z(), m.r1().x(), m.r0().z());
+  RT c22 =  diff_of_products(m.r0().x(), m.r1().y(), m.r1().x(), m.r0().y());
 
   return MatrixC33<R>(c00,c01,c02,
                       c10,c11,c12,
@@ -200,11 +211,13 @@ MatrixC33<R> adjoint_matrix(const MatrixC33<R>& m)
 }
 
 template<class R>
-boost::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
+std::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
 {
   typedef typename R::RT                                        RT;
   typedef MatrixC33<R>                                          Matrix;
-  typedef boost::optional<Matrix>                               result_type;
+  typedef std::optional<Matrix>                                 result_type;
+
+  using ::CGAL::Surface_mesh_simplification::internal::diff_of_products;
 
   result_type rInverse;
 
@@ -212,17 +225,17 @@ boost::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
 
   if(! CGAL_NTS is_zero(det))
   {
-    RT c00 = (m.r1().y()*m.r2().z() - m.r1().z()*m.r2().y()) / det;
-    RT c01 = (m.r2().y()*m.r0().z() - m.r0().y()*m.r2().z()) / det;
-    RT c02 = (m.r0().y()*m.r1().z() - m.r1().y()*m.r0().z()) / det;
+    RT c00 = diff_of_products(m.r1().y(),m.r2().z(),m.r2().y(),m.r1().z()) / det;
+    RT c01 = diff_of_products(m.r2().y(),m.r0().z(),m.r0().y(),m.r2().z()) / det;
+    RT c02 = diff_of_products(m.r0().y(),m.r1().z(),m.r1().y(),m.r0().z()) / det;
 
-    RT c10 = (m.r1().z()*m.r2().x() - m.r1().x()*m.r2().z()) / det;
-    RT c11 = (m.r0().x()*m.r2().z() - m.r2().x()*m.r0().z()) / det;
-    RT c12 = (m.r1().x()*m.r0().z() - m.r0().x()*m.r1().z()) / det;
+    RT c10 = diff_of_products(m.r2().x(),m.r1().z(),m.r1().x(),m.r2().z()) / det;
+    RT c11 = diff_of_products(m.r0().x(),m.r2().z(),m.r2().x(),m.r0().z()) / det;
+    RT c12 = diff_of_products(m.r1().x(),m.r0().z(),m.r0().x(),m.r1().z()) / det;
 
-    RT c20 = (m.r1().x()*m.r2().y() - m.r2().x()*m.r1().y()) / det;
-    RT c21 = (m.r2().x()*m.r0().y() - m.r0().x()*m.r2().y()) / det;
-    RT c22 = (m.r0().x()*m.r1().y() - m.r0().y()*m.r1().x()) / det;
+    RT c20 = diff_of_products(m.r1().x(),m.r2().y(),m.r2().x(),m.r1().y()) / det;
+    RT c21 = diff_of_products(m.r2().x(),m.r0().y(),m.r0().x(),m.r2().y()) / det;
+    RT c22 = diff_of_products(m.r0().x(),m.r1().y(),m.r1().x(),m.r0().y()) / det;
 
     rInverse = result_type(Matrix(c00,c01,c02,
                                   c10,c11,c12,

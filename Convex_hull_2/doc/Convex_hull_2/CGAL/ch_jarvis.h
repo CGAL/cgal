@@ -9,6 +9,7 @@ The resulting sequence is placed starting at position
 `result`, and the past-the-end iterator for the resulting
 sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
+
 \pre The source range [`first`,`beyond`) does not contain `result`.
 
 The default traits class `Default_traits` is the kernel in which the
@@ -36,22 +37,22 @@ functions that return instances of these types:
 \sa `CGAL::ch_graham_andrew()`
 \sa `CGAL::ch_jarvis_march()`
 \sa `CGAL::ch_melkman()`
+\sa `CGAL::lower_hull_points_2()`
+\sa `CGAL::upper_hull_points_2()`
 \sa `CGAL::convex_hull_2()`
 
 \cgalHeading{Implementation}
 
 This function uses the Jarvis march (gift-wrapping)
-algorithm \cgalCite{j-ichfs-73}. This algorithm requires \f$ O(n h)\f$ time
+algorithm \cgalCite{j-ichfs-73}. This algorithm requires \cgalBigO{n h} time
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points.
-
 
 */
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_jarvis( ForwardIterator first,
-ForwardIterator beyond,
-OutputIterator result,
-const Traits & ch_traits = Default_traits);
+ch_jarvis(ForwardIterator first, ForwardIterator beyond,
+          OutputIterator result,
+          const Traits& ch_traits = Default_traits);
 
 } /* namespace CGAL */
 
@@ -96,7 +97,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 The function uses the Jarvis march (gift-wrapping) algorithm \cgalCite{j-ichfs-73}.
-This algorithm requires \f$ O(n h)\f$ time in the worst
+This algorithm requires \cgalBigO{n h} time in the worst
 case for \f$ n\f$ input points with \f$ h\f$ extreme points
 
 \pre `start_p` and `stop_p` are extreme points with respect to
@@ -106,9 +107,9 @@ is an element of range [`first`,`beyond`).
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_jarvis_march(ForwardIterator first, ForwardIterator beyond,
-const Traits::Point_2& start_p,
-const Traits::Point_2& stop_p,
-OutputIterator result,
-const Traits& ch_traits = Default_traits);
+                const Traits::Point_2& start_p,
+                const Traits::Point_2& stop_p,
+                OutputIterator result,
+                const Traits& ch_traits = Default_traits);
 
 } /* namespace CGAL */

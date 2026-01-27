@@ -27,18 +27,20 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Line_2& line,
-                  const CGAL::Bbox_2& bbox,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Line_2& line,
+             const CGAL::Bbox_2& bbox,
+             const K& k)
 {
   typedef typename K::Iso_rectangle_2                                   Iso_rectangle_2;
   return Intersections::internal::do_intersect(line, Iso_rectangle_2(bbox), k);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_2& bbox,
-                  const typename K::Line_2& line,
-                  const K& k)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_2& bbox,
+             const typename K::Line_2& line,
+             const K& k)
 {
   return Intersections::internal::do_intersect(line, bbox, k);
 }
@@ -47,13 +49,17 @@ bool do_intersect(const CGAL::Bbox_2& bbox,
 } // namespace Intersections
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_2& bbox, const Line_2<K>& line)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_2& bbox,
+             const Line_2<K>& line)
 {
   return K().do_intersect_2_object()(bbox, line);
 }
 
 template<typename K>
-bool do_intersect(const Line_2<K>& line, const CGAL::Bbox_2& bbox)
+typename K::Boolean
+do_intersect(const Line_2<K>& line,
+             const CGAL::Bbox_2& bbox)
 {
   return K().do_intersect_2_object()(line, bbox);
 }

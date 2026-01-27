@@ -23,9 +23,10 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bb,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K& /* k */)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bb,
+             const typename K::Iso_cuboid_3& ic,
+             const K& /* k */)
 {
   // use CGAL::compare to access the Coercion_traits between K::FT and double
   if(compare(bb.xmax(), ic.xmin()) == SMALLER || compare(ic.xmax(), bb.xmin()) == SMALLER)
@@ -38,9 +39,10 @@ bool do_intersect(const CGAL::Bbox_3& bb,
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const CGAL::Bbox_3& bb,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const CGAL::Bbox_3& bb,
+             const K& k)
 {
   return do_intersect(bb, ic, k);
 }

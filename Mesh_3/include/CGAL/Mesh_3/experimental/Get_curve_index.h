@@ -57,14 +57,12 @@ get(Get_curve_index<Primitive>, const typename Primitive::Id id) {
 
 }} // end namespace CGAL::Mesh_3
 
-#include <boost/type_traits/remove_const.hpp>
-
 namespace boost {
   // specialization for using pointers as property maps
   template <typename Primitive>
   struct property_traits<CGAL::Mesh_3::Get_curve_index<Primitive> > {
     typedef typename std::iterator_traits<typename Primitive::Id::first_type>::value_type ConstPair;
-    typedef typename boost::remove_const<typename ConstPair::first_type>::type value_type;
+    typedef std::remove_const_t<typename ConstPair::first_type> value_type;
     typedef value_type& reference;
     typedef typename Primitive::Id key_type;
     typedef readable_property_map_tag category;

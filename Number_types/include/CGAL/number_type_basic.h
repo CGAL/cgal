@@ -23,8 +23,8 @@
 #include <CGAL/basic.h>
 
 // basic tools needed in several files
-#include <boost/type_traits/is_same.hpp>
 #include <functional>
+#include <type_traits>
 
 #include <CGAL/Quotient_fwd.h>
 

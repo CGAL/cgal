@@ -20,11 +20,12 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/global_functions.h>
 
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <boost/utility.hpp>
 
 #include <iterator>
 #include <list>
+#include <type_traits>
 
 // Functions to compute the centroid of N points.
 // Works in 2D and 3D.
@@ -798,7 +799,7 @@ centroid(InputIterator begin,
 // centroid(begin, end, kernel, dim_tag)
 
 // One issue is that it is difficult to separate the 2 overloads with 3 arguments.
-// So we have to resort to an internal internal dispatcher hack.
+// So we have to resort to an internal dispatcher hack.
 // ( Note : Dynamic_dimension_tag is not yet supported, but shouldn't be too hard. )
 
 // computes the centroid of a set of kernel objects
@@ -822,7 +823,7 @@ struct Dispatch_centroid_3
 
 template < typename InputIterator, typename K>
 typename internal::Dispatch_centroid_3<
-  typename boost::enable_if<is_iterator<InputIterator>,InputIterator>::type,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   K,Dynamic_dimension_tag>::result_type
 centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_tag tag)
 {
@@ -831,7 +832,7 @@ centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_t
 
 template < typename InputIterator, typename K, int d >
 typename internal::Dispatch_centroid_3<
-  typename boost::enable_if<is_iterator<InputIterator>,InputIterator>::type,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   K,Dimension_tag<d> >::result_type
 centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<d> tag)
 {
@@ -896,7 +897,7 @@ struct Dispatch_centroid <InputIterator, Dynamic_dimension_tag>
 template < typename InputIterator, typename Kernel_or_dim >
 inline
 typename internal::Dispatch_centroid<
-  typename boost::enable_if<is_iterator<InputIterator>,InputIterator>::type,
+  std::enable_if_t<is_iterator<InputIterator>::value,InputIterator>,
   Kernel_or_dim>::result_type
 centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 {
@@ -905,7 +906,7 @@ centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 }
 
 namespace internal {
-template<class It,bool=is_iterator<It>::value>
+  template<class It,bool=is_iterator<It>::value>
 class Centroid_2args_return_type_helper{};
 
 template<class It>

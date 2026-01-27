@@ -5,13 +5,13 @@
 \ingroup PkgPeriodic4HyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationFaceBase_2`
+\cgalRefines{TriangulationFaceBase_2}
 
 A refinement of the concept `TriangulationFaceBase_2` that adds an interface for hyperbolic translations.
 
 At the base level, a face stores handles to its incident vertices and to its neighboring faces.
 Compare with Section \ref Section_2D_Triangulations_Software_Design of the 2D Triangulations
-package. The vertices and neighbors are indexed counter-clockwise 0, 1, and 2. Neighbor `i` lies
+package. The vertices and neighbors are indexed counterclockwise 0, 1, and 2. Neighbor `i` lies
 opposite to vertex `i`.
 
 For periodic hyperbolic triangulations, the face base class needs to store three hyperbolic
@@ -20,7 +20,9 @@ corresponding vertex produces the canonical representative of the face in the hy
 Hyperbolic translations are represented by a nested type which is provided by the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
-\cgalHasModel `CGAL::Periodic_4_hyperbolic_triangulation_face_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_4_hyperbolic_triangulation_face_base_2}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `Periodic_4HyperbolicTriangulationVertexBase_2`

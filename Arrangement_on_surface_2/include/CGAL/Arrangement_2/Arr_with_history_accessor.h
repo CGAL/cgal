@@ -25,7 +25,7 @@ namespace CGAL {
 /*! \class
  * A class that provides access to some of the internal methods of the
  * Arrangement_on_surface_with_history_2 class.
- * Used mostly by the global functions that operate on arrangments with
+ * Used mostly by the global functions that operate on arrangements with
  * history objects.
  */
 template <class ArrWithHistory_>

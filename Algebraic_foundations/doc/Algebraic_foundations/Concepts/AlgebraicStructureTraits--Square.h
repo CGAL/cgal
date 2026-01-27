@@ -7,7 +7,7 @@ namespace AlgebraicStructureTraits_{
 
 `AdaptableUnaryFunction`, computing the square of the argument.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

@@ -4,11 +4,13 @@
 A CombinationElement can be used as template parameter for the class
 `Combination_enumerator<CombinationElement>`.
 
-\cgalHasModel Any integer type (`char`, `short`, `int`, `long`, etc.)
-\cgalHasModel Pointers
-\cgalHasModel Random access iterators
+\cgalHasModelsBegin
+\cgalHasModelsBare{Any integer type (`char`, `short`, `int`, `long`, etc.)}
+\cgalHasModelsBare{Pointers}
+\cgalHasModelsBare{Random access iterators}
+\cgalHasModelsEnd
 
-\sa `Combination_enumerator<CombinationElement>`
+\sa `CGAL::Combination_enumerator<CombinationElement>`
 
 
 */
@@ -76,8 +78,3 @@ int operator-(const CombinationElement & e2);
 /// @}
 
 }; /* end CombinationElement */
-
-
-
-
-

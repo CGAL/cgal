@@ -134,7 +134,7 @@ A periodic triangulation is said to be `locally valid` iff
 data structure, is `locally valid`
 (see Chapter \ref Chapter_2D_Triangulation_Data_Structure)
 
-<B>(c)</B> Any cell has its vertices ordered according to positive
+<B>(c)</B> Any face has its vertices ordered according to positive
 orientation. See \cgalFigureRef{P2Triangulation2figorient}.
 
 \section P2T2_Delaunay Delaunay Triangulation
@@ -261,10 +261,10 @@ the faces and vertices maintaining incidence and adjacency relations (see
 Chapter \ref Chapter_2D_Triangulation_Data_Structure). In addition, the concepts
 `TriangulationDataStructure_2::Vertex` and `TriangulationDataStructure_2::Face` are extended
 to support periodicity: the vertex and face must be models of
-`Periodic_2TriangulationVertexBase_2` and Periodic_2TriangulationFaceBase_2`.
+`Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
 A model of such concept is `CGAL::Triangulation_data_structure_2`. It is
 parameterized by a vertex base class and a face base class, which gives the
-possibility to customize the vertices and cells used by the triangulation data
+possibility to customize the vertices and faces used by the triangulation data
 structure, and hence by the geometric triangulation using it.
 Basic models of the vertex and face concepts are provided: `CGAL::Periodic_2_triangulation_vertex_base_2`
 and `CGAL::Periodic_2_triangulation_face_base_2`.
@@ -272,7 +272,7 @@ and `CGAL::Periodic_2_triangulation_face_base_2`.
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it does not need to be specified by
 the user unless he wants to use a different triangulation data
-structure or a different vertex or cell base class.
+structure or a different vertex or face base class.
 
 \subsection P2T2FlexDesign Flexibility of the Design
 

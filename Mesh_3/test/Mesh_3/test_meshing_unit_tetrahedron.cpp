@@ -6,9 +6,17 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <sstream>
+
+template <typename Range> class Non_copyable_range_view {
+  Range& r;
+public:
+  Non_copyable_range_view(Range& r) : r(r) {}
+  auto begin() const { return r.begin(); }
+  auto end() const { return r.end(); }
+};
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
@@ -65,6 +73,30 @@ struct Polyhedron_tester : public Tester<K>
                            cell_size = cs);
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+
+    // test initial_points with a tuple-like object
+    using Weighted_point = typename K::Weighted_point_3;
+    using Index = typename Mesh_domain::Index;
+    struct Initial_point
+    {
+      Weighted_point weighted_point;
+      int dimension;
+      Index index;
+    };
+    std::vector<Initial_point> initial_points = { Initial_point{ Weighted_point(.5, .5, .5), 3, Index{}} };
+    c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::initial_points(initial_points));
+
+    // test initial_points with a non-copyable range
+    Non_copyable_range_view initial_points_view{ initial_points };
+    c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::initial_points(initial_points_view));
+
+    // test initial_points_generator with a non-const generator generating tuple-like object
+    auto initial_points_generator = [](auto oit, const int) mutable {
+      *oit++ = Initial_point{ Weighted_point(.5, .5, .5), 3, Index{} };
+      return oit;
+    };
+    c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+        CGAL::parameters::initial_points_generator(initial_points_generator));
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 

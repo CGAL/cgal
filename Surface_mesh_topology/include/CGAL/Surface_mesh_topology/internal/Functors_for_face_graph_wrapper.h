@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /** This file contains the following functors for Face_graph_wrapper:
  * Get_beta<typename HEG, unsigned int i>::
-         operator() (const HEG& heg, Dart_const_handle dh)
+         operator() (const HEG& heg, Dart_const_descriptor dh)
  * Index_from_halfedge_descriptor<Mesh>::run(m, h)
  * Halfedge_descriptor_from_index<Mesh>::run(m, i)
  * Is_index_used<Mesh>::run(m, i)
@@ -37,9 +37,9 @@ namespace internal {
 template<typename HEG, unsigned int i>
 struct Get_beta
 {
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
+  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_descriptor;
 
-  static Dart_const_handle value(const HEG& /*heg*/, Dart_const_handle /*dh*/)
+  static Dart_const_descriptor value(const HEG& /*heg*/, Dart_const_descriptor /*dh*/)
   {
     std::cout<<"ERROR Get_beta<HEG, "<<i<<">"<<std::endl;
     CGAL_assertion(false);
@@ -49,29 +49,29 @@ struct Get_beta
 template<typename HEG>
 struct Get_beta<HEG, 0>
 {
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh)
+  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_descriptor;
+  static Dart_const_descriptor value(const HEG& heg, Dart_const_descriptor dh)
   { return prev(dh, heg); }
 };
 template<typename HEG>
 struct Get_beta<HEG, 1>
 {
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh)
+  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_descriptor;
+  static Dart_const_descriptor value(const HEG& heg, Dart_const_descriptor dh)
   { return next(dh, heg); }
 };
 template<typename HEG>
 struct Get_beta<HEG, 2>
 {
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh)
+  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_descriptor;
+  static Dart_const_descriptor value(const HEG& heg, Dart_const_descriptor dh)
   { return opposite(dh, heg); }
 };
 ////////////////////////////////////////////////////////////////////////////////
 template<typename Mesh>
 struct Index_from_halfedge_descriptor
 {
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -88,7 +88,7 @@ template<typename P>
 struct Index_from_halfedge_descriptor<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -99,7 +99,7 @@ struct Index_from_halfedge_descriptor<CGAL::Surface_mesh<P> >
 template<typename Mesh>
 struct Halfedge_descriptor_from_index
 {
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -115,7 +115,7 @@ template<typename P>
 struct Halfedge_descriptor_from_index<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
@@ -126,7 +126,7 @@ struct Halfedge_descriptor_from_index<CGAL::Surface_mesh<P> >
 template<typename Mesh>
 struct Is_index_used
 {
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
 
   static bool run(const Mesh& m, size_type i)
   { return i<m.size_of_halfedges(); }
@@ -135,7 +135,7 @@ template<typename P>
 struct Is_index_used<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
-  typedef boost::uint32_t size_type;
+  typedef std::uint32_t size_type;
 
   static bool run(const Mesh& m, size_type i)
   { return i<(m.number_of_halfedges()+m.number_of_removed_halfedges()) &&

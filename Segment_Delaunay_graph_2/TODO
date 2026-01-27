@@ -1,6 +1,6 @@
 - For release:
-  * add example that demostrates how to get edge info
-  * remove enumeration type Arrangment_type as an enum type and add small
+  * add example that demonstrates how to get edge info
+  * remove enumeration type Arrangement_type as an enum type and add small
     is_*() methods that query the type
   * add test suites for {insert,remove}_degree_2 in TDS_2
   * add test suites for join_vertices & split_vertex in TDS_2

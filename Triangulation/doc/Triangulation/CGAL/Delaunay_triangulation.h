@@ -125,8 +125,8 @@ value of `lt`:
 <DT><B>`OUTSIDE_AFFINE_HULL`</B><DD> Point
 `p` is inserted so as to increase the current dimension of the Delaunay
 triangulation.
-<DT><B>`ON_VERTEX`</B><DD> The position of the vertex `v` described by `f`
-is set to `p`. `v` is returned. <DT><B>Anything else</B><DD> The point `p`
+<DT><B>`ON_VERTEX`</B><DD> The triangulation remains unchanged.
+<DT><B>Anything else</B><DD> The point `p`
 is inserted. the full cell `c` <I>is assumed</I> to be in conflict
 with `p`.
 </DL>

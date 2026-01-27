@@ -1,0 +1,8 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Kinetic Surface Reconstruction"
+EXTRACT_ALL                =  YES
+WARN_IF_UNDOCUMENTED       =  NO
+
+INPUT += \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Kinetic_surface_reconstruction_3.h \

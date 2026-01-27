@@ -6,12 +6,10 @@
 
 The class `mpq_class` is an exact multiprecision rational number type,
 provided by \gmp.
-CGAL provides the necessary functions to make it compliant to the number type
+This header provides the necessary functions to make it compliant to the number type
 concept.
 
-\cgalModels `Field`
-\cgalModels `RealEmbeddable`
-\cgalModels `Fraction`
+\cgalModels{Field,RealEmbeddable,Fraction}
 
 See the \gmp documentation for additional details.
 
@@ -28,11 +26,10 @@ class mpq_class {
 
 The class `mpz_class` is an exact multiprecision integer number type,
 provided by \gmp.
-CGAL provides the necessary functions to make it compliant to the number type
+This header provides the necessary functions to make it compliant to the number type
 concept.
 
-\cgalModels `EuclideanRing`
-\cgalModels `RealEmbeddable`
+\cgalModels{EuclideanRing,RealEmbeddable}
 
 See the \gmp documentation for additional details.
 

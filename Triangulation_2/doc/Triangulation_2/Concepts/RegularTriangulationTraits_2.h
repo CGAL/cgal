@@ -16,9 +16,11 @@ is the fundamental test to build regular triangulations
 as the `side_of_oriented_circle` test is the fundamental test
 of Delaunay triangulations.
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Regular_triangulation_2`
 

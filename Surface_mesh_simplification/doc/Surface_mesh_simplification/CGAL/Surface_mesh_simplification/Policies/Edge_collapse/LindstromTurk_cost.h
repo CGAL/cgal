@@ -9,7 +9,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `GetCost`
+\cgalModels{GetCost}
 
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 
@@ -36,9 +36,9 @@ LindstromTurk_cost<TriangleMesh>(const FT factor = FT(0.5));
 Returns the cost of collapsing the edge (represented by its profile) considering
 the new `placement` computed for it.
 */
-boost::optional<typename Edge_profile::FT>
+std::optional<typename Edge_profile::FT>
 operator()(const Edge_profile& edge_profile,
-           const boost::optional<typename Edge_profile::Point>& placement) const;
+           const std::optional<typename Edge_profile::Point>& placement) const;
 
 /// @}
 

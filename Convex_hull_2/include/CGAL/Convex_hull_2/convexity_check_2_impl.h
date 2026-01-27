@@ -181,8 +181,6 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
                                   ForwardIterator2 last2,
                                   const Traits& ch_traits )
 {
-  using namespace boost;
-
   typedef  typename Traits::Left_turn_2     Left_turn_2;
 
   ForwardIterator1 iter11;

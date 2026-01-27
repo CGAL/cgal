@@ -220,7 +220,7 @@ namespace CGAL {
       else
         {
           if (m_incident_border->second->first != nullptr)
-            std::cerr << "+++probleme de MAJ du bord <Vertex_base>" << std::endl;
+            std::cerr << "+++issue while updating border <Vertex_base>" << std::endl;
           *m_incident_border->second = elt;
         }
     }

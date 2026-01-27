@@ -114,15 +114,14 @@ struct Identity_functor
  *
  * @tparam InputMesh a model of `FaceListGraph`
  * @tparam OutputMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
- * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor providing
  * \code {.cpp}
  * void operator()(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)
  * \endcode
  *  where `output_v` is the copy of `input_v` from `input` into the bottom part of `output`.
- *
  * @tparam TopFunctor a functor providing a similar `operator()` as `BottomFunctor`.
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  *
  * @param input an open surface mesh to extrude.
  * @param output a surface mesh that will contain the result of the extrusion.
@@ -146,12 +145,12 @@ struct Identity_functor
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `ouput`}
+ *     \cgalParamDescription{a property map associating points to the vertices of `output`}
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<OutputMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, ouput)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, output)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `ouput`.}
+ *                     should be available for the vertices of `output`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
@@ -246,8 +245,8 @@ void extrude_mesh(const InputMesh& input,
  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  *
- * @param input an open surface mesh to extrude.
- * @param output a surface mesh that will contain the result of the extrusion.
+ * @param input an open surface mesh to extrude
+ * @param output a surface mesh that will contain the result of the extrusion
  * @param v the vector defining the direction of the extrusion
  * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -281,11 +280,11 @@ template <class InputMesh,
           class CGAL_NP_TEMPLATE_PARAMETERS_2>
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
-                  #ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_RUNNING
                   Vector_3 v,
-                  #else
+#else
                   typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3 v,
-                  #endif
+#endif
                   const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
                   const CGAL_NP_CLASS_2& np_out = parameters::default_values())
 {
@@ -295,8 +294,7 @@ void extrude_mesh(const InputMesh& input,
 
   extrude_impl::Const_dist_translation<
       typename GetVertexPointMap<OutputMesh, CGAL_NP_CLASS_2>::type,
-      typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3> bot(output_vpm,
-                                                                                v);
+      typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3> bot(output_vpm, v);
   extrude_impl::Identity_functor top;
   extrude_mesh(input, output, bot,top, np_in, np_out);
 }

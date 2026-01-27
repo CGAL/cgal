@@ -29,4 +29,11 @@
 
 #include <CGAL/export/CORE.h>
 
+#ifdef CGAL_CORE_DEBUG
+#define CGAL_CORE_warning_msg(X ,Y) CGAL_warning_msg(X ,Y)
+#else
+#define CGAL_CORE_warning_msg(X ,Y)
+#endif
+
+
 #endif // _CORE_CONFIG_H_

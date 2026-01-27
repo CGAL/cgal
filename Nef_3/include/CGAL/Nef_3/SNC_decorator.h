@@ -36,7 +36,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -157,7 +157,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
-  typedef boost::any GenPtr;
+  typedef std::any GenPtr;
   #endif
 
   SNC_decorator() : Base(), sncp_() {}
@@ -280,6 +280,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     SFace_map linked;
     Shell_volume_setter(const SNCD_& Di)
       : D(Di), linked(false) {}
+    void reserve(Size_type n) { linked.reserve(n); }
     void visit(SFace_handle h) {
       CGAL_NEF_TRACEN(h->center_vertex()->point());
       D.set_volume(h, c);

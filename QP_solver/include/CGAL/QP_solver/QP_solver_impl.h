@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_SOLVER_IMPL_H
+#define CGAL_QP_SOLVER_IMPL_H
+
+#include <CGAL/license/QP_solver.h>
+
 #include <CGAL/QP_solver/Initialization.h>
 #include <CGAL/NT_converter.h>
 
@@ -1024,7 +1029,7 @@ ratio_test_2( Tag_false)
     // where x(mu_j(t_1)) is the current solution of the solver at this point
     // (i.e., at the beginning of ratio step 2).
     //
-    // By subtracting (2) from (1) we can thus eliminate the "unkown" x(0)
+    // By subtracting (2) from (1) we can thus eliminate the "unknown" x(0)
     // (which is cheaper than computing it):
     //
     //    x(mu_j) = x(mu_j(t_1)) + (mu_j-mu_j(t_1)) q_it
@@ -1048,7 +1053,7 @@ ratio_test_2( Tag_false)
     // optimal BEFORE a variable drops to zero.  As delta = mu_j - mu_j(t_1),
     // the latter is precisely the case if delta_min >= -mu_j(t_1).
     //
-    // (Note: please forget the crap identitiy between (2.11) and (2.12); the
+    // (Note: please forget the crap identity between (2.11) and (2.12); the
     // notation is misleading.)
     //
     // Now to the nonstandard-form case.
@@ -2831,7 +2836,7 @@ check_basis_inverse( Tag_true)
     Value_iterator  q_it;
 
 
-    // BG: is this a real check?? How does the special artifical
+    // BG: is this a real check?? How does the special artificial
     // variable come in, e.g.? OK: it comes in through
     // ratio_test_init__A_Cj
     for ( col = 0; col < cols; ++col, ++i_it) {
@@ -3393,3 +3398,5 @@ get_l() const
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_QP_SOLVER_IMPL_H

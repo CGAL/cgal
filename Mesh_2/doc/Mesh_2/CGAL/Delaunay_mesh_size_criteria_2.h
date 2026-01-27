@@ -23,7 +23,7 @@ triangles must be shorter than a bound \f$ S\f$.
 
 \tparam CDT must be a 2D constrained Delaunay triangulation.
 
-\cgalModels `MeshingCriteria_2`
+\cgalModels{MeshingCriteria_2}
 
 
 */

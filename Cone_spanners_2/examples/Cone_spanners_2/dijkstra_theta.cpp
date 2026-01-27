@@ -72,7 +72,7 @@ int main(int argc, char ** argv)
 
   // calculating edge length in Euclidean distance and store them in the edge property
   boost::graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     boost::graph_traits<Graph>::edge_descriptor e = *ei;
     boost::graph_traits<Graph>::vertex_descriptor  u = source(e, g);
     boost::graph_traits<Graph>::vertex_descriptor  v = target(e, g);

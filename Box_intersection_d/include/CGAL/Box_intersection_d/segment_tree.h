@@ -308,6 +308,59 @@ void dump_box_numbers( ForwardIter begin, ForwardIter end, Traits /* traits */ )
     std::cout << std::endl;
 }
 
+
+template<class T>
+class Has_member_report
+{
+private:
+  template<class U, U>
+  class check {};
+
+  template<class C>
+  static auto f(int) -> decltype(std::declval<C>().report(0) == true, char());
+
+  template<class C>
+  static int f(...);
+public:
+  static const bool value = (sizeof(f<T>(0)) == sizeof(char));
+};
+
+template <class T>
+inline constexpr bool Has_member_report_v = Has_member_report<T>::value;
+
+template <typename Callback>
+inline
+std::enable_if_t<Has_member_report<Callback>::value, bool>
+report_impl(Callback callback, int dim)
+{
+  return callback.report(dim);
+}
+
+template <typename Callback>
+inline
+std::enable_if_t<!Has_member_report<Callback>::value, bool>
+report_impl(const Callback&, int)
+{
+  return false;
+}
+
+template <typename Callback>
+inline
+std::enable_if_t<Has_member_report<Callback>::value, void>
+progress_impl(Callback callback, double d)
+{
+  callback.progress(d);
+}
+
+template <typename Callback>
+inline
+std::enable_if_t<!Has_member_report<Callback>::value, void>
+progress_impl(const Callback&, double)
+{}
+
+
+
+
 template< class T >
 struct Counter {
    T& value;
@@ -330,9 +383,11 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     const T inf = box_limits< T >::inf();
     const T sup = box_limits< T >::sup();
 
-#if CGAL_BOX_INTERSECTION_DEBUG
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
+
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
     Counter<int> bla( level );
+
+    #if CGAL_BOX_INTERSECTION_DEBUG
     CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim "
                                           << dim << std::endl )
     CGAL_BOX_INTERSECTION_DUMP("intervals: " )
@@ -356,13 +411,20 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     }
 #endif
 
-    if( p_begin == p_end || i_begin == i_end || lo >= hi )
+    if( p_begin == p_end || i_begin == i_end || lo >= hi ){
+      if(report_impl(callback, dim)){
+          progress_impl(callback, 1.0 / (1 << level));
+        }
         return;
+    }
 
     if( dim == 0 )  {
         CGAL_BOX_INTERSECTION_DUMP( "dim = 0. scanning ... " << std::endl )
         one_way_scan( p_begin, p_end, i_begin, i_end,
                       callback, traits, dim, in_order );
+        if(report_impl(callback,dim)){
+          progress_impl(callback, 1.0 / (1 << level));
+        }
         return;
     }
 
@@ -372,6 +434,9 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         CGAL_BOX_INTERSECTION_DUMP( "scanning ... " << std::endl )
         modified_two_way_scan( p_begin, p_end, i_begin, i_end,
                                callback, traits, dim, in_order );
+        if(report_impl(callback,dim)){
+          progress_impl(callback, 1.0 / (1 << level));
+        }
         return;
     }
 
@@ -398,6 +463,9 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                                      << std::endl )
         modified_two_way_scan( p_begin, p_end, i_span_end, i_end,
                                callback, traits, dim, in_order );
+        if(report_impl(callback,dim)){
+          progress_impl(callback, 1.0 / (1 << level));
+        }
         return;
     }
 

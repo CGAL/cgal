@@ -266,7 +266,7 @@ vertices. A $0$-simplex is a point, a $1$-simplex is a line segment, a
 $2$-simplex is a triangle, a $3$-simplex is a tetrahedron,
 etc.. \emph{The simplices is a concrete simplicial complex must
 satisfy the additional conditions that the points associated with the
-vertices of any simplex are affinely independet and that the
+vertices of any simplex are affinely independent and that the
 intersection of any two simplices is a face of both.} We will write
 simplicial complex instead of concrete simplicial complex in the
 sequel.
@@ -298,7 +298,7 @@ the functions |C.simplex(v)| and |C.index(v)| return a pair $(s,i)$
 such that |v = C.vertex_of(s,i)|.
 
 The class |regl_complex| has a static member |nil_point| of type
-|Point_d|. This point is different (= not indentical) from any user
+|Point_d|. This point is different (= not identical) from any user
 defined point and is the point associated with every vertex of an
 abstract simplicial complex. It simulates the use of |nil| to denote
 an undefined object.
@@ -530,7 +530,7 @@ void associate_point_with_vertex(Vertex_handle v, const Point_d& p)
 { v -> set_point(p); }
 
 void set_neighbor(Simplex_handle s, int i, Simplex_handle s1, int j)
-/*{\Mop sets the neihbor opposite to vertex $i$ of |s| to |s1| and
+/*{\Mop sets the neighbor opposite to vertex $i$ of |s| to |s1| and
         records vertex $j$ of |s1| as the vertex opposite to $i$.}*/
 { s  -> set_neighbor(i,s1);
   s1 -> set_neighbor(j,s);

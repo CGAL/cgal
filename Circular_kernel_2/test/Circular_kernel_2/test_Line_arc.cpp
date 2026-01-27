@@ -27,6 +27,17 @@
 
 #include <CGAL/Random.h>
 
+template <class Expected, class V>
+bool assign_variant(Expected& e, const V& v)
+{
+  if (std::get_if<Expected>(&v) != nullptr)
+  {
+    e = std::get<Expected>(v);
+    return true;
+  }
+  return false;
+}
+
 template <class CK>
 void _test_Line_arc(CK ck)
 {
@@ -87,41 +98,42 @@ void _test_Line_arc(CK ck)
   //////////////Intersection Line_arc Line_arc//////////////////
 
    Intersect_2 theConstruct_intersect_2 = ck.intersect_2_object();
+   typedef std::variant<std::pair<Circular_arc_point_2, unsigned int>, Line_arc_2> Intersection_result;
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_1;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_vertical,
                             std::back_inserter(vector_for_intersection_1));
    std::pair<Circular_arc_point_2, unsigned int> the_pair;
-   assert(assign(the_pair, vector_for_intersection_1[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_1[0]));
    Circular_arc_point_2 first = the_pair.first;
    assert(first.x() == 0);
    assert(first.y() == 0);
 
    Line_arc_2 line_arc_3(Point_2(-1, -2), Point_2(2,1));
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_2;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_3,
                             std::back_inserter(vector_for_intersection_2));
-   assert(assign(the_pair, vector_for_intersection_2[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_2[0]));
    first = the_pair.first;
    assert(first.x() == 1);
    assert(first.y() == 0);
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_3;
    theConstruct_intersect_2(line_arc_vertical,
                             line_arc_3,
                             std::back_inserter(vector_for_intersection_3));
-   assert(assign(the_pair, vector_for_intersection_3[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_3[0]));
    first = the_pair.first;
    assert(first.x() == 0);
    assert(first.y() == -1);
 
    Line_arc_2 line_arc_4(Point_2(20, -2), Point_2(20,10));
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_4;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_4,
@@ -131,14 +143,14 @@ void _test_Line_arc(CK ck)
 
 
    ////////////intersection in overlap///////////////
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_5;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_horizontal,
                             std::back_inserter(vector_for_intersection_5));
    Line_arc_2 line_arc_tmp;
    assert(vector_for_intersection_5.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_5[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_5[0]));
    assert(line_arc_tmp == line_arc_horizontal);
 
    Line_arc_2 line_arc_horizontal2(Line_2(center_circle1, p2_line_horizontal),
@@ -146,25 +158,25 @@ void _test_Line_arc(CK ck)
                         true,
                         circle1,
                         false);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_6;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_horizontal2,
                             std::back_inserter(vector_for_intersection_6));
    assert(vector_for_intersection_6.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_6[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_6[0]));
    assert(line_arc_tmp.source() == line_arc_horizontal.source());
    assert(line_arc_tmp.target() == line_arc_horizontal2.target());
 
 
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_6_reverse;
    theConstruct_intersect_2(line_arc_horizontal2,
                             line_arc_horizontal,
                             std::back_inserter(vector_for_intersection_6_reverse));
    assert(vector_for_intersection_6_reverse.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_6_reverse[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_6_reverse[0]));
    assert(line_arc_tmp.source() == line_arc_horizontal.source());
    assert(line_arc_tmp.target() == line_arc_horizontal2.target());
 
@@ -175,43 +187,43 @@ void _test_Line_arc(CK ck)
                         true,
                         circle1,
                         false);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_7;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_horizontal3,
                             std::back_inserter(vector_for_intersection_7));
    assert(vector_for_intersection_7.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_7[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_7[0]));
    assert(line_arc_tmp.source() == line_arc_horizontal.source());
    assert(line_arc_tmp.target() == line_arc_horizontal3.target());
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_8;
    theConstruct_intersect_2(line_arc_horizontal3,
                             line_arc_horizontal,
                             std::back_inserter(vector_for_intersection_8));
    assert(vector_for_intersection_8.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_8[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_8[0]));
    assert(line_arc_tmp.source() == line_arc_horizontal.source());
    assert(line_arc_tmp.target() == line_arc_horizontal3.target());
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_8_bis_1;
    theConstruct_intersect_2(line_arc_horizontal3,
                             line_arc_horizontal2,
                             std::back_inserter(vector_for_intersection_8_bis_1));
    assert(vector_for_intersection_8_bis_1.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_8_bis_1[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_8_bis_1[0]));
    assert(line_arc_tmp.source() == line_arc_horizontal2.source());
    assert(line_arc_tmp.target() == line_arc_horizontal3.target());
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_8_bis_2;
    theConstruct_intersect_2(line_arc_horizontal2,
                             line_arc_horizontal3,
                             std::back_inserter(vector_for_intersection_8_bis_2));
    assert(vector_for_intersection_8_bis_2.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_8_bis_2[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_8_bis_2[0]));
    assert(line_arc_tmp.source() == line_arc_horizontal2.source());
    assert(line_arc_tmp.target() == line_arc_horizontal3.target());
 
@@ -221,45 +233,45 @@ void _test_Line_arc(CK ck)
                                    true,
                                    circle1,
                                    true);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_9;
    theConstruct_intersect_2(line_arc_horizontal4,
                             line_arc_horizontal,
                             std::back_inserter(vector_for_intersection_9));
    assert(vector_for_intersection_9.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_9[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_9[0]));
    assert(the_pair.second == 1);
    assert(the_pair.first == line_arc_horizontal.source());
 
-    std::vector< CGAL::Object >
+    std::vector< Intersection_result >
      vector_for_intersection_10;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_horizontal4,
                             std::back_inserter(vector_for_intersection_10));
    assert(vector_for_intersection_10.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_10[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_10[0]));
    assert(the_pair.second == 1);
    assert(the_pair.first == line_arc_horizontal.source());
 
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_11;
    theConstruct_intersect_2(Line_arc_2(Point_2(-1, -1),Point_2(2, 2)),
                             Line_arc_2(Point_2(0, 0), Point_2(1, 1)),
                             std::back_inserter(vector_for_intersection_11));
    assert(vector_for_intersection_11.size() == 1);
-   assert(assign(line_arc_tmp, vector_for_intersection_11[0]));
+   assert(assign_variant(line_arc_tmp, vector_for_intersection_11[0]));
    assert(line_arc_tmp == Line_arc_2(Point_2(0, 0), Point_2(1, 1)));
 
 
    //////Split/////////////
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_split_1;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_3,
                             std::back_inserter(vector_for_intersection_split_1));
-   assert(assign(the_pair, vector_for_intersection_split_1[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_split_1[0]));
    Circular_arc_point_2 point_of_split = the_pair.first;
    Split_2 theSplit_2 = ck.split_2_object();
    Line_arc_2 first_part_line_arc_horizontal;
@@ -291,6 +303,8 @@ void _test_intersection_Line_arc_Circle(CK ck)
   typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
   typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
+  typedef std::variant<std::pair<Circular_arc_point_2, unsigned int>, Line_arc_2> Intersection_result;
+
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -368,53 +382,53 @@ void _test_intersection_Line_arc_Circle(CK ck)
                                 false);
 
   ////////test horizontal//////
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_1;
   theConstruct_intersect_2(line_arc_horizontal,
                            circle1,
                            std::back_inserter(vector_for_intersection_1));
   std::pair<Circular_arc_point_2, unsigned int> the_pair;
   assert(vector_for_intersection_1.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_1[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_1[0]));
   Circular_arc_point_2 first = the_pair.first;
   assert(first == line_arc_horizontal.source());
   assert(the_pair.second == 1);
-  assert(assign(the_pair, vector_for_intersection_1[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_1[1]));
   first = the_pair.first;
   assert(first == line_arc_horizontal2.target());
   assert(the_pair.second == 1);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_2;
   theConstruct_intersect_2(line_arc_horizontal,
                            circle2,
                            std::back_inserter(vector_for_intersection_2));
   assert(vector_for_intersection_2.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_2[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_2[0]));
   first = the_pair.first;
   assert(first == line_arc_horizontal.target());
   assert(the_pair.second == 1);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_3;
   theConstruct_intersect_2(line_arc_horizontal2,
                            circle2,
                            std::back_inserter(vector_for_intersection_3));
   assert(vector_for_intersection_3.size() == 0);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_4;
   theConstruct_intersect_2(line_arc_horizontal3,
                            circle2,
                            std::back_inserter(vector_for_intersection_4));
   assert(vector_for_intersection_4.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_4[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_4[0]));
   first = the_pair.first;
   assert(first == line_arc_horizontal3.source());
   assert(the_pair.second == 1);
 
   Line_arc_2 line_arc_aux(p2_high_circle2,p2_high_right_circle2);
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_5;
   theConstruct_intersect_2(Line_arc_2(p2_high_left_circle2,p2_high_right_circle2),
                            circle2,
@@ -424,17 +438,17 @@ void _test_intersection_Line_arc_Circle(CK ck)
                            circle2,
                            std::back_inserter(vector_for_intersection_5));
   assert(vector_for_intersection_5.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_5[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_5[0]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
-  assert(assign(the_pair, vector_for_intersection_5[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_5[1]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
 
   line_arc_aux = Line_arc_2(p2_low_circle2,p2_low_right_circle2);
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_6;
   theConstruct_intersect_2(Line_arc_2(p2_low_left_circle2,p2_low_right_circle2),
                            circle2,
@@ -444,63 +458,63 @@ void _test_intersection_Line_arc_Circle(CK ck)
                            circle2,
                            std::back_inserter(vector_for_intersection_6));
   assert(vector_for_intersection_6.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_6[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_6[0]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
-  assert(assign(the_pair, vector_for_intersection_6[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_6[1]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
 
   ////////test vertical//////
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_7;
   theConstruct_intersect_2(line_arc_vertical,
                            circle1,
                            std::back_inserter(vector_for_intersection_7));
   assert(vector_for_intersection_7.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_7[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_7[0]));
   first = the_pair.first;
   assert(first == line_arc_vertical.source());
   assert(the_pair.second == 1);
-  assert(assign(the_pair, vector_for_intersection_7[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_7[1]));
   first = the_pair.first;
   assert(first == line_arc_vertical2.target());
   assert(the_pair.second == 1);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_8;
   theConstruct_intersect_2(line_arc_vertical,
                            circle2,
                            std::back_inserter(vector_for_intersection_8));
   std::cout << vector_for_intersection_8.size() << std::endl;
   assert(vector_for_intersection_8.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_8[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_8[0]));
   first = the_pair.first;
   assert(first == line_arc_vertical.target());
   assert(the_pair.second == 1);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_9;
   theConstruct_intersect_2(line_arc_vertical2,
                            circle2,
                            std::back_inserter(vector_for_intersection_9));
   assert(vector_for_intersection_9.size() == 0);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_10;
   theConstruct_intersect_2(line_arc_vertical3,
                            circle2,
                            std::back_inserter(vector_for_intersection_10));
   assert(vector_for_intersection_10.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_10[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_10[0]));
   first = the_pair.first;
   assert(first == line_arc_vertical3.source());
   assert(the_pair.second == 1);
 
   line_arc_aux = Line_arc_2(p2_right_circle2,p2_high_right_circle2);
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_11;
   theConstruct_intersect_2(Line_arc_2(p2_low_right_circle2,p2_high_right_circle2),
                             circle2,
@@ -510,17 +524,17 @@ void _test_intersection_Line_arc_Circle(CK ck)
                             circle2,
                             std::back_inserter(vector_for_intersection_11));
   assert(vector_for_intersection_11.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_11[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_11[0]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
-  assert(assign(the_pair, vector_for_intersection_11[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_11[1]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
 
   line_arc_aux = Line_arc_2(p2_left_circle2,p2_high_left_circle2);
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_12;
   theConstruct_intersect_2(Line_arc_2(p2_low_left_circle2,p2_high_left_circle2),
                            circle2,
@@ -530,56 +544,56 @@ void _test_intersection_Line_arc_Circle(CK ck)
                            circle2,
                            std::back_inserter(vector_for_intersection_12));
   assert(vector_for_intersection_12.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_12[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_12[0]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
-  assert(assign(the_pair, vector_for_intersection_12[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_12[1]));
   first = the_pair.first;
   assert(first == line_arc_aux.source());
   assert(the_pair.second == 2);
 
   //test diagonal
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_13;
   theConstruct_intersect_2(line_arc_diagonal,
                            circle1,
                            std::back_inserter(vector_for_intersection_13));
   assert(vector_for_intersection_13.size() == 2);
-  assert(assign(the_pair, vector_for_intersection_13[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_13[0]));
   first = the_pair.first;
   assert(first == line_arc_diagonal.source());
   assert(the_pair.second == 1);
-  assert(assign(the_pair, vector_for_intersection_13[1]));
+  assert(assign_variant(the_pair, vector_for_intersection_13[1]));
   first = the_pair.first;
   assert(first == line_arc_diagonal2.target());
   assert(the_pair.second == 1);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_14;
   theConstruct_intersect_2(line_arc_diagonal,
                            circle2,
                            std::back_inserter(vector_for_intersection_14));
   assert(vector_for_intersection_14.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_14[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_14[0]));
   first = the_pair.first;
   assert(first == line_arc_diagonal.target());
   assert(the_pair.second == 1);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_15;
   theConstruct_intersect_2(line_arc_diagonal2,
                            circle2,
                            std::back_inserter(vector_for_intersection_15));
   assert(vector_for_intersection_15.size() == 0);
 
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
     vector_for_intersection_16;
   theConstruct_intersect_2(line_arc_diagonal3,
                            circle2,
                            std::back_inserter(vector_for_intersection_16));
   assert(vector_for_intersection_16.size() == 1);
-  assert(assign(the_pair, vector_for_intersection_16[0]));
+  assert(assign_variant(the_pair, vector_for_intersection_16[0]));
   first = the_pair.first;
   assert(first == line_arc_diagonal3.source());
   assert(the_pair.second == 1);
@@ -587,42 +601,42 @@ void _test_intersection_Line_arc_Circle(CK ck)
 
   //Diagonal tangent
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_17;
    theConstruct_intersect_2(Line_arc_2(Point_2(-10, -5), Point_2(5, 15)),
                              circle1,
                              std::back_inserter(vector_for_intersection_17));
    assert(vector_for_intersection_17.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_17[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_17[0]));
    assert(the_pair.second == 2);
 
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_18;
    theConstruct_intersect_2(Line_arc_2(Point_2(10, -5), Point_2(-5, 15)),
                              circle1,
                              std::back_inserter(vector_for_intersection_18));
    assert(vector_for_intersection_18.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_18[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_18[0]));
    assert(the_pair.second == 2);
 
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_19;
    theConstruct_intersect_2(Line_arc_2(Point_2(10, 5), Point_2(-5, -15)),
                              circle1,
                              std::back_inserter(vector_for_intersection_19));
    assert(vector_for_intersection_19.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_19[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_19[0]));
    assert(the_pair.second == 2);
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_20;
    theConstruct_intersect_2(Line_arc_2(Point_2(-10, 5), Point_2(5, -15)),
                              circle1,
                              std::back_inserter(vector_for_intersection_20));
    assert(vector_for_intersection_20.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_20[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_20[0]));
    assert(the_pair.second == 2);
 
 }
@@ -638,6 +652,7 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
   typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
   typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
+  typedef std::variant<std::pair<Circular_arc_point_2, unsigned int>, Circular_arc_2> Intersection_result;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -699,58 +714,58 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
                        Line_2(center_circle1,
                               p2_line_vertical),
                        false);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_1;
    theConstruct_intersect_2(line_arc_horizontal3,
                             arc_1,
                             std::back_inserter(vector_for_intersection_1));
    std::pair<Circular_arc_point_2, unsigned int> the_pair;
    assert(vector_for_intersection_1.size() == 2);
-   assert(assign(the_pair, vector_for_intersection_1[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_1[0]));
    Circular_arc_point_2 first = the_pair.first;
    assert(first == line_arc_horizontal3.source());
    assert(the_pair.second == 1);
-   assert(assign(the_pair, vector_for_intersection_1[1]));
+   assert(assign_variant(the_pair, vector_for_intersection_1[1]));
    first = the_pair.first;
    assert(first == line_arc_horizontal3.target());
    assert(the_pair.second == 1);
 
- std::vector< CGAL::Object >
+ std::vector< Intersection_result >
      vector_for_intersection_2;
    theConstruct_intersect_2(line_arc_horizontal,
                             arc_1,
                             std::back_inserter(vector_for_intersection_2));
    assert(vector_for_intersection_2.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_2[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_2[0]));
    first = the_pair.first;
    assert(first == line_arc_horizontal.target());
    assert(the_pair.second == 1);
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_3;
    theConstruct_intersect_2(line_arc_vertical,
                             arc_1,
                             std::back_inserter(vector_for_intersection_3));
    assert(vector_for_intersection_3.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_3[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_3[0]));
    first = the_pair.first;
    assert(first == arc_1.target());
    assert(the_pair.second == 1);
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_4;
    theConstruct_intersect_2(Line_arc_2(Point_2(-10, -5), Point_2(5, 15)),
                             arc_2,
                             std::back_inserter(vector_for_intersection_4));
    assert(vector_for_intersection_4.size() == 0);
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_5;
    theConstruct_intersect_2(Line_arc_2(Point_2(10, -5), Point_2(-5, 15)),
                             arc_2,
                             std::back_inserter(vector_for_intersection_5));
    assert(vector_for_intersection_5.size() == 1);
-   assert(assign(the_pair, vector_for_intersection_5[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_5[0]));
    assert(the_pair.second == 2);
 
    //random
@@ -778,31 +793,31 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
                                false);
 
    Circular_arc_point_2 first2;
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_random1;
    theConstruct_intersect_2(Line_arc_2(Point_2(-p_random1.x(),-p_random1.y()),
                                        p_random1),
                             arc_random_1,
                             std::back_inserter(vector_for_intersection_random1));
    assert(vector_for_intersection_random1.size() > 0);
-   assert(assign(the_pair, vector_for_intersection_random1[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_random1[0]));
    first = the_pair.first;
    assert(the_pair.second == 1);
    assert(first == arc_random_1.source());
 
 
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_random2;
    theConstruct_intersect_2(Line_arc_2(Point_2(-p_random2.x(),-p_random2.y()),p_random2),
                             arc_random_1,
                             std::back_inserter(vector_for_intersection_random2));
    assert(vector_for_intersection_random2.size() > 0);
-   assert(assign(the_pair, vector_for_intersection_random2[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_random2[0]));
    first = the_pair.first;
    assert(the_pair.second == 1);
    if(vector_for_intersection_random2.size() == 2){
-     assert(assign(the_pair, vector_for_intersection_random2[1]));
+     assert(assign_variant(the_pair, vector_for_intersection_random2[1]));
      first2 = the_pair.first;
      assert(the_pair.second == 1);
      assert((first == arc_random_1.target()) || (first2 == arc_random_1.target()));
@@ -825,20 +840,20 @@ void _test_intersection_Line_arc_Circular_arc(CK ck)
                            theRandom.get_int(random_min, random_max));
      } while (p_random4 == center_circle_random1 || (p_random3 == p_random4));
 
-     std::vector< CGAL::Object >
+     std::vector< Intersection_result >
        vector_for_intersection_random3;
      theConstruct_intersect_2(Line_arc_2(p_random3,p_random4),
                               arc_random_1,
                               std::back_inserter(vector_for_intersection_random3));
      for( std::size_t i = 0; i < vector_for_intersection_random3.size(); i++){
-       assert(assign(the_pair, vector_for_intersection_random3[i]));
+       assert(assign_variant(the_pair, vector_for_intersection_random3[i]));
        first = the_pair.first;
-       std::vector<CGAL::Object > objects_x_monotone;
+       std::vector<Intersection_result> objects_x_monotone;
        theMake_x_monotone( arc_random_1, std::back_inserter(objects_x_monotone));
        bool is_on_arc = false;
        for(std::size_t j = 0; j < objects_x_monotone.size(); j++){
          Circular_arc_2 aux;
-         assign(aux, objects_x_monotone[j]);
+         assign_variant(aux, objects_x_monotone[j]);
          if(CGAL::CircularFunctors::has_on<CK>(aux, first)){
            is_on_arc = true;
            break;
@@ -860,6 +875,7 @@ void _test_compare_y_to_right(CK ck)
   typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
   typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
+  typedef std::variant<std::pair<Circular_arc_point_2, unsigned int>, Line_arc_2> Intersection_result;
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -883,13 +899,13 @@ void _test_compare_y_to_right(CK ck)
                                       p2_line_diagonal),
                                circle1,true,
                                circle2,false);
-  std::vector< CGAL::Object >
+  std::vector< Intersection_result >
      vector_for_intersection_1;
    theConstruct_intersect_2(line_arc_horizontal,
                             line_arc_diagonal,
                             std::back_inserter(vector_for_intersection_1));
    std::pair<Circular_arc_point_2, unsigned int> the_pair;
-   assert(assign(the_pair, vector_for_intersection_1[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_1[0]));
    Circular_arc_point_2 first = the_pair.first;
 
    assert(CGAL::CircularFunctors::compare_y_to_right<CK>(line_arc_horizontal,
@@ -934,22 +950,22 @@ void _test_compare_y_to_right(CK ck)
                                              part_low,
                                              line_arc_horizontal_low.source()) == CGAL::SMALLER);
 
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_2;
    theConstruct_intersect_2(part_high,
                             line_arc_diagonal,
                             std::back_inserter(vector_for_intersection_2));
-   assert(assign(the_pair, vector_for_intersection_2[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_2[0]));
    first = the_pair.first;
    assert(CGAL::CircularFunctors::compare_y_to_right<CK>(line_arc_diagonal,
                                                          part_high,
                                                          first) == CGAL::LARGER);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_3;
    theConstruct_intersect_2(part_low,
                             line_arc_diagonal,
                             std::back_inserter(vector_for_intersection_3));
-   assert(assign(the_pair, vector_for_intersection_3[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_3[0]));
    first = the_pair.first;
    assert(CGAL::CircularFunctors::compare_y_to_right<CK>(line_arc_diagonal,
                                                          part_low,
@@ -959,22 +975,22 @@ void _test_compare_y_to_right(CK ck)
                                        p2_line_diagonal2),
                                 circle1,true,
                                 circle2,false);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_4;
    theConstruct_intersect_2(part_high,
                             line_arc_diagonal2,
                             std::back_inserter(vector_for_intersection_4));
-   assert(assign(the_pair, vector_for_intersection_4[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_4[0]));
    first = the_pair.first;
    assert(CGAL::CircularFunctors::compare_y_to_right<CK>(line_arc_diagonal2,
                                                          part_high,
                                                          first) == CGAL::SMALLER);
-   std::vector< CGAL::Object >
+   std::vector< Intersection_result >
      vector_for_intersection_5;
    theConstruct_intersect_2(part_low,
                             line_arc_diagonal2,
                             std::back_inserter(vector_for_intersection_5));
-   assert(assign(the_pair, vector_for_intersection_5[0]));
+   assert(assign_variant(the_pair, vector_for_intersection_5[0]));
    first = the_pair.first;
    assert(CGAL::CircularFunctors::compare_y_to_right<CK>(line_arc_diagonal2,
                                                          part_low,

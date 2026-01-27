@@ -9,7 +9,6 @@
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/IO/WKT.h>
 
 // Qt headers
@@ -38,12 +37,15 @@ typedef CircularKernel::Segment_2                               Segment_2;
 typedef CircularKernel::Line_arc_2                              Line_arc_2;
 typedef CircularKernel::Circular_arc_2                          Circular_arc_2;
 typedef CircularKernel::Circular_arc_point_2                    Circular_arc_point_2;
-
+typedef std::variant<Circular_arc_2, Line_arc_2 >               Arc_variant;
+typedef std::variant<std::pair<Circular_arc_point_2, unsigned>,
+                     Circular_arc_2, Line_arc_2 >               Inter_variant;
 
 typedef CGAL::Qt::ArcsGraphicsItem<CircularKernel>                 ArcsGraphicsItem;
 
 
-typedef std::vector<CGAL::Object>                           ArcContainer;
+typedef std::vector<Arc_variant>                                ArcContainer;
+typedef std::vector<Inter_variant>                              ArcIntersection;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -53,7 +55,7 @@ class MainWindow :
 
 private:
   ArcContainer arcs;
-  ArcContainer intersections;
+  ArcIntersection intersections;
   QGraphicsScene scene;
 
   ArcsGraphicsItem * agi;
@@ -68,7 +70,7 @@ public Q_SLOTS:
 
   virtual void open(QString);
 
-  void processInput(CGAL::Object o);
+  void processInput(Arc_variant o);
 
 
   void on_actionInsertCircularArc_toggled(bool checked);
@@ -107,8 +109,8 @@ MainWindow::MainWindow()
   // the signal/slot mechanism
   cai = new CGAL::Qt::GraphicsViewCircularArcInput<CircularKernel>(this, &scene);
 
-  QObject::connect(cai, SIGNAL(generate(CGAL::Object)),
-                   this, SLOT(processInput(CGAL::Object)));
+  QObject::connect(cai, SIGNAL(generate(Arc_variant)),
+                   this, SLOT(processInput(Arc_variant)));
 
   // Manual handling of actions
   //
@@ -146,33 +148,33 @@ MainWindow::MainWindow()
 
 
 void
-MainWindow::processInput(CGAL::Object o)
+MainWindow::processInput(Arc_variant o)
 {
-  Circular_arc_2 ca;
-  Line_arc_2 la;
+  const Circular_arc_2* ca = nullptr;
+  const Line_arc_2* la = nullptr;
   bool is_circular = false;
 
-  if(assign(ca, o)){
+  if( (ca = std::get_if<Circular_arc_2>(&o)) ){
     is_circular = true;
-  } else if(! assign(la, o)){
+  } else if(! (la = std::get_if<Line_arc_2>(&o))){
     std::cerr << "unknown object" << std::endl;
     return;
   }
 
-  for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+  for(std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
     Circular_arc_2 vca;
     Line_arc_2 vla;
-    if(assign(vca, *it)){
+    if(auto vca = std::get_if<Circular_arc_2>(&(*it))){
       if(is_circular){
-        CGAL::intersection(ca, vca, std::back_inserter(intersections));
+        CGAL::intersection(*ca, *vca, std::back_inserter(intersections));
       } else {
-        CGAL::intersection(la, vca, std::back_inserter(intersections));
+        CGAL::intersection(*la, *vca, std::back_inserter(intersections));
       }
-    } else if(assign(vla, *it)){
+    } else if(auto vla = std::get_if<Line_arc_2>(&(*it))){
       if(is_circular){
-        CGAL::intersection(ca, vla, std::back_inserter(intersections));
+        CGAL::intersection(*ca, *vla, std::back_inserter(intersections));
       } else {
-        CGAL::intersection(la, vla, std::back_inserter(intersections));
+        CGAL::intersection(*la, *vla, std::back_inserter(intersections));
       }
     }
   }
@@ -241,32 +243,30 @@ MainWindow::open(QString fileName)
         {
           Line_arc_2 la(Segment_2(multi_points[0],
                         multi_points[1]));
-          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
-            Circular_arc_2 vca;
-            Line_arc_2 vla;
-            if(assign(vca, *it)){
-              CGAL::intersection(la, vca, std::back_inserter(intersections));
-            } else if(assign(vla, *it)){
-              CGAL::intersection(la, vla, std::back_inserter(intersections));
+          for(std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+            if(auto vca = std::get_if<Circular_arc_2>(&(*it))){
+              CGAL::intersection(la, *vca, std::back_inserter(intersections));
+            } else if(auto vla = std::get_if<Line_arc_2>(&(*it))){
+              CGAL::intersection(la, *vla, std::back_inserter(intersections));
             }
           }
-          arcs.push_back(make_object(la));
+          arcs.push_back(la);
         }
         else if(multi_points.size() == 3)
         {
           Circular_arc_2 ca(multi_points[0],
                             multi_points[1],
                             multi_points[2]);
-          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+          for(std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
             Circular_arc_2 vca;
             Line_arc_2 vla;
-            if(assign(vca, *it)){
-              CGAL::intersection(ca, vca, std::back_inserter(intersections));
-            } else if(assign(vla, *it)){
-              CGAL::intersection(ca, vla, std::back_inserter(intersections));
+            if(auto vca = std::get_if<Circular_arc_2>(&(*it))){
+              CGAL::intersection(ca, *vca, std::back_inserter(intersections));
+            } else if(auto vla = std::get_if<Line_arc_2>(&(*it))){
+              CGAL::intersection(ca, *vla, std::back_inserter(intersections));
             }
           }
-          arcs.push_back(make_object(ca));
+          arcs.push_back(ca);
         }
         else if(multi_points.size()>0)
         {
@@ -285,16 +285,14 @@ MainWindow::open(QString fileName)
           Point_2 q(x,y);
 
           Line_arc_2 la(Segment_2(p,q));
-          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
-            Circular_arc_2 vca;
-            Line_arc_2 vla;
-            if(assign(vca, *it)){
-              CGAL::intersection(la, vca, std::back_inserter(intersections));
-            } else if(assign(vla, *it)){
-              CGAL::intersection(la, vla, std::back_inserter(intersections));
+          for(std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+            if(auto vca = std::get_if<Circular_arc_2>(&(*it))){
+              CGAL::intersection(la, *vca, std::back_inserter(intersections));
+            } else if(auto vla = std::get_if<Line_arc_2>(&(*it))){
+              CGAL::intersection(la, *vla, std::back_inserter(intersections));
             }
           }
-          arcs.push_back(make_object(la));
+          arcs.push_back(la);
         } else if(c == 'c'){
           ifs >> x >> y;
           Point_2 p(x,y);
@@ -303,16 +301,16 @@ MainWindow::open(QString fileName)
           ifs >> x >> y;
           Point_2 r(x,y);
           Circular_arc_2 ca(p,q,r);
-          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+          for(std::vector<Arc_variant>::iterator it = arcs.begin(); it != arcs.end(); ++it){
             Circular_arc_2 vca;
             Line_arc_2 vla;
-            if(assign(vca, *it)){
-              CGAL::intersection(ca, vca, std::back_inserter(intersections));
-            } else if(assign(vla, *it)){
-              CGAL::intersection(ca, vla, std::back_inserter(intersections));
+            if(auto vca = std::get_if<Circular_arc_2>(&(*it))){
+              CGAL::intersection(ca, *vca, std::back_inserter(intersections));
+            } else if(auto vla = std::get_if<Line_arc_2>(&(*it))){
+              CGAL::intersection(ca, *vla, std::back_inserter(intersections));
             }
           }
-          arcs.push_back(make_object(ca));
+          arcs.push_back(ca);
         }
       }
     }
@@ -338,7 +336,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Circular_kernel_2 demo");
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

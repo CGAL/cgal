@@ -22,7 +22,9 @@ namespace CGAL { namespace Mesh_3 {
 
 // backward compatibility with user code
 template <typename MeshDomain>
-using Get_facet_patch_id_sm = Facet_patch_id_map<MeshDomain, typename MeshDomain::AABB_tree>;
+using Get_facet_patch_id_sm
+    = Facet_patch_id_map<MeshDomain,
+                         typename MeshDomain::AABB_tree::Primitive>;
 
 }} // end namespace CGAL::Mesh_3
 

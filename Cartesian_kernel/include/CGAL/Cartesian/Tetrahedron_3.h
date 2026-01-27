@@ -45,7 +45,7 @@ public:
 
   TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
                 const Point_3 &s)
-    : base(CGAL::make_array(p, q, r, s)) {}
+    : base{p, q, r, s} {}
 
   const Point_3 &    vertex(int i) const;
   const Point_3 &    operator[](int i) const;
@@ -143,7 +143,7 @@ oriented_side(const typename TetrahedronC3<R>::Point_3 &p) const
 {
   typename R::Orientation o = orientation();
   if (o != ZERO)
-    return enum_cast<Oriented_side>(bounded_side(p)) * o;
+    return enum_cast<typename R::Oriented_side>(bounded_side(p)) * o;
 
   CGAL_kernel_assertion (!is_degenerate());
   return ON_ORIENTED_BOUNDARY;

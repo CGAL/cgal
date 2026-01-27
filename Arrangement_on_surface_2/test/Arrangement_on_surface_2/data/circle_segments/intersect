@@ -1,6 +1,6 @@
 # Input is based on the curves and points indexes from intersect.pt 
 # intersect.xcv. The first two numbers are the numbers of the input curves
-# to be intersected. After that there is the number of intesections and 
+# to be intersected. After that there is the number of intersections and 
 # 2-3 numbers representing each intersection. Meaning, the input is of the form:
 # intersect <id of 1st x-curve> <id of 2nd x-curve> \
 # <expected number of intersections> [<type of intersection> \

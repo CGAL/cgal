@@ -174,7 +174,7 @@ public:
 
   Default value is (0,1,0), but it is updated by the Camera when this object is
   set as its Camera::frame(). Camera::setOrientation() and
-  Camera::setUpVector()) direclty modify this value and should be used instead.
+  Camera::setUpVector()) directly modify this value and should be used instead.
 */
   Vec sceneUpVector() const { return sceneUpVector_; }
 
@@ -222,7 +222,7 @@ private:
   QTimer flyTimer_;
 
   bool rotatesAroundUpVector_;
-  // Inverse the direction of an horizontal mouse motion. Depends on the
+  // Inverse the direction of a horizontal mouse motion. Depends on the
   // projected screen orientation of the vertical axis when the mouse button is
   // pressed.
   bool constrainedRotationIsReversed_;

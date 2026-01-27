@@ -13,7 +13,7 @@
 
 int main()
 {
-  CGAL::cpp0x::array<int, 3> arr;
+  CGAL::cpp0x::array<int, 3> arr{1, 2, 3};
   std::array<int, 3> arr2;
 
   CGAL::cpp0x::tuple<double, int> tuple;

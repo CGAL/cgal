@@ -36,7 +36,7 @@
 
 #include <CGAL/Mesh_error_code.h>
 
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 #include <CGAL/Mesh_3/Refine_facets_3.h>
 #include <CGAL/Mesh_3/Refine_facets_manifold_base.h>
@@ -63,7 +63,6 @@
 #endif
 
 #include <boost/format.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <string>
 #include <atomic>
 
@@ -235,7 +234,8 @@ public:
   }
 
   /// Launch mesh refinement
-  double refine_mesh(std::string dump_after_refine_surface_prefix = "");
+  double refine_mesh(std::string dump_after_refine_surface_prefix = "",
+                     const bool surface_only = false);
 
   /// Debug
   std::string debug_info() const;
@@ -404,6 +404,13 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
   cells_mesher_.set_stop_pointer(stop_ptr);
   facets_mesher_.set_stop_pointer(stop_ptr);
 #endif
+
+  // First surface mesh could modify c3t3 without notifying cells_mesher
+  // So we have to ensure that no old cell will be left in c3t3
+  // Second, the c3t3 object could have been corrupted since the last call
+  // to `refine_mesh`, for example by inserting new vertices in the
+  // triangulation.
+  r_c3t3_.clear_cells_and_facets_from_c3t3();
 }
 
 
@@ -411,7 +418,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 template<class C3T3, class MC, class MD>
 double
 Mesher_3<C3T3,MC,MD>::
-refine_mesh(std::string dump_after_refine_surface_prefix)
+refine_mesh(std::string dump_after_refine_surface_prefix, const bool surface_only)
 {
   CGAL::Real_timer timer;
   timer.start();
@@ -423,13 +430,6 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   auto scan_cells_task_handle = __itt_string_handle_create("Mesher_3 scan triangulation for bad cells");
   auto refine_volume_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine volume mesh");
 #endif // CGAL_MESH_3_USE_INTEL_ITT
-
-  // First surface mesh could modify c3t3 without notifying cells_mesher
-  // So we have to ensure that no old cell will be left in c3t3
-  // Second, the c3t3 object could have been corrupted since the last call
-  // to `refine_mesh`, for example by inserting new vertices in the
-  // triangulation.
-  r_c3t3_.clear_cells_and_facets_from_c3t3();
 
   const Triangulation& r_tr = r_c3t3_.triangulation();
   CGAL_USE(r_tr);
@@ -461,7 +461,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
 #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_refine_time", facet_ref_time);
 #   endif
 # endif
 #endif
@@ -482,7 +482,12 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
 
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
 
-  if(!forced_stop())
+  if(surface_only)
+  {
+    for(auto cit = r_tr.finite_cells_begin(); cit != r_tr.finite_cells_end(); ++cit)
+      r_c3t3_.remove_from_complex(cit);
+  }
+  else if(!forced_stop())
   {
     // Then scan volume and refine it
     CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
@@ -504,7 +509,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
 #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refine_time", cell_ref_time);
 #   endif
 # endif
 #endif
@@ -568,52 +573,60 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
   std::cerr << std::endl;
 
-  CGAL_triangulation_postcondition(r_tr.is_valid());
+  CGAL_postcondition(r_tr.is_valid());
 
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
   nbsteps = 0;
 
   facets_visitor_.activate();
-  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
-  std::cerr << "Start volume scan...";
-  CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
-  cells_mesher_.scan_triangulation();
-  CGAL_MESH_3_TASK_END(scan_cells_task_handle);
-  refinement_stage = REFINE_ALL;
-  std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
-  std::cerr << std::endl << std::endl;
-  elapsed_time += timer.time();
-  timer.stop(); timer.reset(); timer.start();
 
-  std::cerr << "Refining...\n";
-  std::cerr << "Legend of the following line: "
-            << "(#vertices,#steps," << cells_mesher_.debug_info_header()
-            << ")\n";
-  std::cerr << "(" << r_tr.number_of_vertices() << ","
-            << nbsteps << "," << cells_mesher_.debug_info() << ")";
-
-  CGAL_MESH_3_TASK_BEGIN(refine_volume_mesh_task_handle);
-  while ( ! cells_mesher_.is_algorithm_done()  &&
-          ! forced_stop() )
+  if(surface_only)
   {
-    cells_mesher_.one_step(cells_visitor_);
-    std::cerr
-        << boost::format("\r             \r"
-                     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-        % r_tr.number_of_vertices()
-        % nbsteps % cells_mesher_.debug_info()
-        % (nbsteps / timer.time());
-    ++nbsteps;
+    for(auto cit = r_tr.finite_cells_begin(); cit != r_tr.finite_cells_end(); ++cit)
+      r_c3t3_.remove_from_complex(cit);
   }
-  CGAL_MESH_3_TASK_END(refine_volume_mesh_task_handle);
+  else
+  {
+    std::cerr << "Start volume scan...";
+    CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
+    cells_mesher_.scan_triangulation();
+    CGAL_MESH_3_TASK_END(scan_cells_task_handle);
+    refinement_stage = REFINE_ALL;
+    std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
+    std::cerr << std::endl << std::endl;
+    elapsed_time += timer.time();
+    dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
+    timer.stop(); timer.reset(); timer.start();
+
+    std::cerr << "Refining...\n";
+    std::cerr << "Legend of the following line: "
+              << "(#vertices,#steps," << cells_mesher_.debug_info_header()
+              << ")\n";
+    std::cerr << "(" << r_tr.number_of_vertices() << ","
+              << nbsteps << "," << cells_mesher_.debug_info() << ")";
+
+    CGAL_MESH_3_TASK_BEGIN(refine_volume_mesh_task_handle);
+    while ( ! cells_mesher_.is_algorithm_done()  &&
+            ! forced_stop() )
+    {
+      cells_mesher_.one_step(cells_visitor_);
+      std::cerr
+          << boost::format("\r             \r"
+                       "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+          % r_tr.number_of_vertices()
+          % nbsteps % cells_mesher_.debug_info()
+          % (nbsteps / timer.time());
+      ++nbsteps;
+    }
+    CGAL_MESH_3_TASK_END(refine_volume_mesh_task_handle);
+    std::cerr << std::endl;
+    std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
+  }
+  std::cerr << "Total refining time: " << timer.time() + elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 
-  std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
-  std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
-  std::cerr << std::endl;
-
-  CGAL_triangulation_postcondition(r_tr.is_valid());
+  CGAL_postcondition(r_tr.is_valid());
 #endif
 
   (void)(forced_stop()); // sets *error_code
@@ -652,7 +665,7 @@ initialize()
     defined(CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
 
 #ifndef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // If that macro is defined, then estimated_bbox must be initialized
   {
     Base::set_bbox(r_oracle_.bbox());
@@ -665,7 +678,7 @@ initialize()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
@@ -687,13 +700,16 @@ initialize()
         bbox.xmin() + 0.5*xdelta,
         bbox.ymin() + 0.5*ydelta,
         bbox.zmin() + 0.5*zdelta);
-#  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-      std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
-#  endif
-      Random_points_on_sphere_3<Bare_point> random_point(radius);
+      CGAL::Random rnd(0);
+      Random_points_on_sphere_3<Bare_point> random_point(radius, rnd);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
+#ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES
+                << " points on a far sphere (radius = " << radius << ")...";
+#endif
+
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
                               (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
@@ -744,11 +760,12 @@ initialize()
         bbox.xmin() + 0.5*xdelta,
         bbox.ymin() + 0.5*ydelta,
         bbox.zmin() + 0.5*zdelta);
-# ifdef CGAL_MESH_3_VERBOSE
-      std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
-# endif
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
+# ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES
+                << " points on a far sphere (radius = " << radius << ")...";
+#endif
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
                               (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
@@ -859,7 +876,7 @@ Mesher_3<C3T3,MC,MD>::
 status() const
 {
 #ifdef CGAL_LINKED_WITH_TBB
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value) {
     return Mesher_status(
 #  if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
                          approximate_number_of_vertices(Concurrency_tag()),

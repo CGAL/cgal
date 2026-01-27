@@ -2,19 +2,20 @@
 // Constructing an arrangement of non-intersecting line segments using the
 // predefined kernel with exact predicates.
 
+#include <list>
+#include <fstream>
+#include <chrono>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Timer.h>
-#include <list>
-#include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
-typedef Kernel::FT                                            Number_type;
-typedef CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>  Traits_2;
-typedef Traits_2::Point_2                                     Point_2;
-typedef Traits_2::X_monotone_curve_2                          Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                         Arrangement_2;
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Number_type = Kernel::FT;
+using Traits_2 = CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>;
+using Point_2 = Traits_2::Point_2;
+using Segment_2 = Traits_2::X_monotone_curve_2;
+using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
 
 int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
@@ -39,33 +40,31 @@ int main(int argc, char* argv[]) {
   // <sx_n> <sy_n>  <tx_n> <ty_n>        // source and target of segment #n.
   std::list<Segment_2>  segments;
 
-  unsigned int n;
+  std::size_t n;
   in_file >> n;
-  unsigned int i;
-  for (i = 0; i < n; ++i) {
+  for (std::size_t i = 0; i < n; ++i) {
     double sx, sy, tx, ty;
     in_file >> sx >> sy >> tx >> ty;
-    segments.push_back (Segment_2 (Point_2 (Number_type(sx), Number_type(sy)),
-                                   Point_2 (Number_type(tx), Number_type(ty))));
+    segments.push_back(Segment_2(Point_2 (Number_type(sx), Number_type(sy)),
+                                 Point_2 (Number_type(tx), Number_type(ty))));
   }
   in_file.close();
 
   // Construct the arrangement by aggregately inserting all segments.
   Arrangement_2 arr;
-  CGAL::Timer timer;
 
   std::cout << "Performing aggregated insertion of " << n << " segments.\n";
 
-  timer.start();
+  auto start = std::chrono::system_clock::now();
   insert_non_intersecting_curves (arr, segments.begin(), segments.end());
-  timer.stop();
+  std::chrono::duration<double> secs = std::chrono::system_clock::now() - start;
 
   // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges()
-            << ",  F = " << arr.number_of_faces() << std::endl;
+            << ", E = " << arr.number_of_edges()
+            << ", F = " << arr.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time() << " seconds.\n";
+  std::cout << "Construction took " << secs.count() << " seconds.\n";
 
   return 0;
 }

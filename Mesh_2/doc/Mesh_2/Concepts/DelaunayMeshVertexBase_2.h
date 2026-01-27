@@ -11,9 +11,11 @@ The concept `DelaunayMeshVertexBase_2` refines the concept
 to a `double` marker, that is useful for the mesh optimizers to keep
 the mesh density everywhere while modifying the mesh.
 
-\cgalRefines `TriangulationVertexBase_2`
+\cgalRefines{TriangulationVertexBase_2}
 
-\cgalHasModel `CGAL::Delaunay_mesh_vertex_base_2<Traits, Vb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Delaunay_mesh_vertex_base_2<Traits, Vb>}
+\cgalHasModelsEnd
 
 
 */

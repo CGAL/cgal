@@ -21,7 +21,8 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/is_convertible.h>
-#include <boost/utility/enable_if.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -52,7 +53,7 @@ struct Rational_traits_base<Rational, true>
 {
 private:
     typedef Fraction_traits<Rational> FT;
-    typedef typename FT::Decompose Decomose;
+    typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose Compose;
 
 public:
@@ -60,13 +61,13 @@ public:
 
     RT numerator (const Rational& r) const {
         RT num,den;
-        Decomose()(r,num,den);
+        Decompose()(r,num,den);
         return num;
     }
 
     RT denominator (const Rational& r) const {
         RT num,den;
-        Decomose()(r,num,den);
+        Decompose()(r,num,den);
         return den;
     }
 
@@ -79,11 +80,11 @@ public:
     { return make_rational(x.first, x.second); }
 
     template<class N,class D>
-    Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<is_implicit_convertible<N,RT>::value&&is_implicit_convertible<D,RT>::value,int>::type=0) const
+    Rational make_rational(const N& n, const D& d,std::enable_if_t<is_implicit_convertible<N,RT>::value&&is_implicit_convertible<D,RT>::value,int> = 0) const
     { return Compose()(n,d); }
 
     template<class N,class D>
-    Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<!is_implicit_convertible<N,RT>::value||!is_implicit_convertible<D,RT>::value,int>::type=0) const
+    Rational make_rational(const N& n, const D& d,std::enable_if_t<!is_implicit_convertible<N,RT>::value||!is_implicit_convertible<D,RT>::value,int> = 0) const
     { return n/d; } // Assume that n or d is already a fraction
 };
 }// namespace internal
@@ -92,9 +93,9 @@ public:
 template <class T>
 class Rational_traits
     : public internal::Rational_traits_base<T,
-::boost::is_same<typename Fraction_traits<T>::Is_fraction,Tag_true>::value
+::std::is_same<typename Fraction_traits<T>::Is_fraction,Tag_true>::value
 &&
-::boost::is_same<
+::std::is_same<
 typename Fraction_traits<T>::Numerator_type,
 typename Fraction_traits<T>::Denominator_type
 >::value >

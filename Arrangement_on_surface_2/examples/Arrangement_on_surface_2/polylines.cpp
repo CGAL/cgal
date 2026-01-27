@@ -4,6 +4,8 @@
 #include <vector>
 #include <list>
 
+#include <CGAL/draw_arrangement_2.h>
+
 #include "arr_polylines.h"
 #include "arr_print.h"
 
@@ -43,6 +45,7 @@ int main() {
   insert(arr, pi1);
   insert(arr, pi2);
   insert(arr, pi3);
-  print_arrangement_size(arr);          // print the arrangement size
+  print_arrangement_size(arr); // print the arrangement size
+  CGAL::draw(arr, "polylines");
   return 0;
 }

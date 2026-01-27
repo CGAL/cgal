@@ -18,7 +18,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <iterator>
 #include <functional>
 
@@ -346,8 +346,8 @@ min_rectangle_2(
 {
   typedef Optimisation::Min_quadrilateral_traits_wrapper<BTraits> Traits;
   Traits t(bt);
-  CGAL_optimisation_expensive_precondition(is_convex_2(f, l, t));
-  CGAL_optimisation_expensive_precondition(
+  CGAL_expensive_precondition(is_convex_2(f, l, t));
+  CGAL_expensive_precondition(
     orientation_2(f, l, t) == COUNTERCLOCKWISE);
 
   // check for trivial cases
@@ -376,7 +376,7 @@ min_rectangle_2(
 
   // quadruple of points defining the current rectangle
   ForwardIterator curr[4];
-  // initialised to the points defining the bounding box
+  // initialized to the points defining the bounding box
   convex_bounding_box_2(f, l, curr, t);
 
   // curr[i] can be advanced (cyclically) until it reaches limit[i]
@@ -395,7 +395,7 @@ min_rectangle_2(
 
   int yet_to_finish = 0;
   for (int i1 = 0; i1 < 4; ++i1) {
-    CGAL_optimisation_assertion(limit[i1] != l);
+    CGAL_assertion(limit[i1] != l);
     if (curr[i1] != limit[i1])
       ++yet_to_finish;
   }
@@ -448,7 +448,7 @@ min_parallelogram_2(ForwardIterator f,
 {
   typedef Optimisation::Min_quadrilateral_traits_wrapper<BTraits> Traits;
   Traits t(bt);
-  CGAL_optimisation_expensive_precondition(is_convex_2(f, l, t));
+  CGAL_expensive_precondition(is_convex_2(f, l, t));
 
   // types from the traits class
   typedef typename Traits::Direction_2            Direction_2;
@@ -482,7 +482,7 @@ min_parallelogram_2(ForwardIterator f,
 
   // quadruple of points defining the bounding box
   ForwardIterator curr[4];
-  // initialised to the points defining the bounding box
+  // initialized to the points defining the bounding box
   convex_bounding_box_2(first, l, curr, t);
 
 
@@ -630,7 +630,7 @@ min_strip_2(ForwardIterator f,
 {
   typedef Optimisation::Min_quadrilateral_traits_wrapper<BTraits> Traits;
   Traits t(bt);
-  CGAL_optimisation_expensive_precondition(is_convex_2(f, l, t));
+  CGAL_expensive_precondition(is_convex_2(f, l, t));
 
   // types from the traits class
   typedef typename Traits::Direction_2            Direction_2;
@@ -659,7 +659,7 @@ min_strip_2(ForwardIterator f,
 
   // quadruple of points defining the bounding box
   ForwardIterator curr[4];
-  // initialised to the points defining the bounding box
+  // initialized to the points defining the bounding box
   convex_bounding_box_2(first, l, curr, t);
 
   ForwardIterator low = curr[0];

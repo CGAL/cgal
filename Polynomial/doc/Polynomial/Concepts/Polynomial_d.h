@@ -12,7 +12,7 @@ A model of `Polynomial_d` must be accompanied by a traits class
 Please have a look at the concept `PolynomialTraits_d`, since nearly
 all functionality related to polynomials is provided by the traits.
 
-\cgalRefines `IntegralDomainWithoutDivision`
+\cgalRefines{IntegralDomainWithoutDivision}
 
 The algebraic structure of `Polynomial_d` depends on the
 algebraic structure of `PolynomialTraits_d::Innermost_coefficient_type`:
@@ -32,7 +32,9 @@ coefficient is a `Field` the polynomial is model of `EuclideanRing`.
 \sa `AlgebraicStructureTraits`
 \sa `PolynomialTraits_d`
 
-\cgalHasModel `CGAL::Polynomial<Coeff>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polynomial<Coeff>}
+\cgalHasModelsEnd
 
 */
 

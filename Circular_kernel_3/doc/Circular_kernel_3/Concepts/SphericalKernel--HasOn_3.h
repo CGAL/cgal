@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::HasOn_3`
+\cgalRefines{Kernel::HasOn_3}
 */
 class SphericalKernel::HasOn_3 {
 public:

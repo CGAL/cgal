@@ -28,17 +28,17 @@ int main()
 {
   using namespace CGAL::internal;
 
-  CGAL_static_assertion(!Has_member_id<StructNoId>::value);
-  CGAL_static_assertion(Has_member_id<StructWithId>::value);
-  CGAL_static_assertion(!Has_member_id<Polyhedron::Face>::value);
-  CGAL_static_assertion(Has_member_id<Polyhedron_with_ids::Facet>::value);
-  CGAL_static_assertion(Has_member_id<Polyhedron_with_ids::FBase>::value);
-  CGAL_static_assertion(
+  static_assert(!Has_member_id<StructNoId>::value);
+  static_assert(Has_member_id<StructWithId>::value);
+  static_assert(!Has_member_id<Polyhedron::Face>::value);
+  static_assert(Has_member_id<Polyhedron_with_ids::Facet>::value);
+  static_assert(Has_member_id<Polyhedron_with_ids::FBase>::value);
+  static_assert(
     (Has_member_id<Polyhedron_with_ids::Items::Face_wrapper<Polyhedron_with_ids::HDS, K>::Face>::value));
 
-  CGAL_static_assertion(!Has_member_id<CGAL::Triangulation_face_base_2<K> >::value);
-  CGAL_static_assertion(Has_member_id<CGAL::Triangulation_vertex_base_with_id_2<K> >::value);
-  CGAL_static_assertion(Has_member_id<CGAL::Triangulation_face_base_with_id_2<K> >::value);
+  static_assert(!Has_member_id<CGAL::Triangulation_face_base_2<K> >::value);
+  static_assert(Has_member_id<CGAL::Triangulation_vertex_base_with_id_2<K> >::value);
+  static_assert(Has_member_id<CGAL::Triangulation_face_base_with_id_2<K> >::value);
 
   return 0;
 }

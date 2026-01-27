@@ -16,7 +16,6 @@
 
 #include <map>
 #include <vector>
-#include <utility>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
@@ -143,34 +142,29 @@ void duplicate_terminal_vertices(Graph& graph,
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
-  typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
 
-  vertex_iterator b,e;
-  boost::tie(b,e) = vertices(graph);
-  std::vector<vertex_descriptor> V(b,e);
+  auto [b, e] = vertices(graph);
+  std::vector<vertex_descriptor> V(b, e); // copy vertices, because the graph may change
+  std::vector<edge_descriptor> out_edges_of_v; // used to store the out edges of a vertex
+                                               // created here to avoid allocating it in the loop
   for(vertex_descriptor v : V)
   {
-    typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
-    typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
+    auto orig_v = graph[v];
+    auto deg = degree(v, graph);
     if (deg != 2 || is_terminal(orig_v, orig))
+    {
+      auto [b, e] = out_edges(v, graph);
+      out_edges_of_v.assign(b, e); // same as creating a new vector from the range [b,e)
+      for (unsigned int i = 1; i < out_edges_of_v.size(); ++i)
       {
-        out_edge_iterator b, e;
-        boost::tie(b, e) = out_edges(v, graph);
-        std::vector<edge_descriptor> out_edges_of_v(b, e);
-        for (unsigned int i = 1; i < out_edges_of_v.size(); ++i)
-          {
-            edge_descriptor e = out_edges_of_v[i];
-            typename boost::graph_traits<OrigGraph>::edge_descriptor orig_e =
-              graph[e];
-            vertex_descriptor w = target(e, graph);
-            remove_edge(e, graph);
-            vertex_descriptor vc = add_vertex(graph);
-            graph[vc] = orig_v;
-            const std::pair<edge_descriptor, bool> pair = add_edge(vc, w, graph);
-            graph[pair.first] = orig_e;
-          }
+        edge_descriptor e = out_edges_of_v[i];
+        auto orig_e = graph[e];
+        vertex_descriptor w = target(e, graph);
+        remove_edge(e, graph);
+        vertex_descriptor vc = add_vertex(orig_v, graph);
+        add_edge(vc, w, orig_e, graph);
       }
+    }
   }
 
   // check all vertices are of degree 1 or 2 and that the source
@@ -271,8 +265,7 @@ split_graph_into_polylines(const Graph& graph,
     V2vmap v2vmap;
 
     for(Graph_vertex_descriptor v : make_range(vertices(graph))){
-      vertex_descriptor vc = add_vertex(g_copy);
-      g_copy[vc] = v;
+      vertex_descriptor vc = add_vertex(v, g_copy);
       v2vmap[v] = vc;
     }
 
@@ -281,9 +274,7 @@ split_graph_into_polylines(const Graph& graph,
       Graph_vertex_descriptor vt = target(e,graph);
       CGAL_warning_msg(vs != vt, "ignore self loops");
       if(vs != vt){
-        const std::pair<edge_descriptor, bool> pair =
-          add_edge(v2vmap[vs],v2vmap[vt],g_copy);
-        g_copy[pair.first] = e;
+        add_edge(v2vmap[vs], v2vmap[vt], e, g_copy);
       }
     }
   }

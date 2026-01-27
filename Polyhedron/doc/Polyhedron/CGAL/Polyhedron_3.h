@@ -11,14 +11,14 @@ namespace CGAL {
   \image latex halfedge.png
 
   Vertices represent points in 3d-space. Edges are straight line segments
-  between two endpoints. Facets are planar polygons without holes
-  defined by the circular sequence of halfedges along their boundary.
-  The polyhedral surface itself can have holes. The halfedges
+  between two endpoints. Facets are planar, possibly non-convex, polygons
+  without holes defined by the circular sequence of halfedges along their
+  boundary. The polyhedral surface itself can have holes. The halfedges
   along the boundary of a hole are called <I>border halfedges</I> and
   have no incident facet. An edge is a <I>border edge</I> if one of
   its halfedges is a border halfedge. A surface is <I>closed</I> if it
   contains no border halfedges. A closed surface is a boundary
-  representation for polyhedra in three dimensions. The convention is
+  representation for a polyhedron in three dimensions. The convention is
   that the halfedges are oriented counterclockwise around facets as seen
   from the outside of the polyhedron. An implication is that the
   halfedges are oriented clockwise around the vertices. The notion of
@@ -32,7 +32,7 @@ namespace CGAL {
   always an orientable and oriented 2-manifold with border edges, i.e.,
   the neighborhood of each point on the polyhedral surface is either
   homeomorphic to a disc or to a half disc, except for vertices where
-  many holes and surfaces with boundary can join. Another implication is
+  multiple holes join. Another implication is
   that the smallest representable surface is a triangle (for polyhedral
   surfaces with border edges) or a tetrahedron (for polyhedra). Boundary
   representations of orientable 2-manifolds are closed under Euler

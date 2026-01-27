@@ -1,5 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -10,8 +9,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
 
-#include <boost/unordered_set.hpp>
+#include <boost/functional/hash.hpp>
 
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -36,13 +36,13 @@ public:
   typedef boost::read_write_property_map_tag category;
 
 private:
-  boost::unordered_set<key_type>* m_set_ptr;
+  std::unordered_set<key_type, boost::hash<key_type>>* m_set_ptr;
 
 public:
   Constrained_edges_property_map()
     : m_set_ptr(nullptr)
   {}
-  Constrained_edges_property_map(boost::unordered_set<key_type>* set_)
+  Constrained_edges_property_map(std::unordered_set<key_type, boost::hash<key_type>>* set_)
     : m_set_ptr(set_)
   {}
 
@@ -61,7 +61,6 @@ public:
                         const key_type& k)
   {
     assert(map.m_set_ptr != nullptr);
-    assert(k.first < k.second);
     return map.m_set_ptr->count(k) > 0;
   }
 };
@@ -69,17 +68,21 @@ public:
 void add_edge(Vertex_handle v1,
               Vertex_handle v2,
               const Remeshing_triangulation& tr,
-              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
+              std::unordered_set<std::pair<Vertex_handle, Vertex_handle>,
+                                 boost::hash<std::pair<Vertex_handle, Vertex_handle>>>& constraints)
 {
   Cell_handle c;
   int i, j;
   if(tr.is_edge(v1, v2, c, i, j))
     constraints.insert(std::make_pair(v1, v2));
+  else
+    std::cout << "add_edge() failed because [v1, v2] is not an edge" << std::endl;
 }
 
 void generate_input_cube(const std::size_t& n,
               Remeshing_triangulation& tr,
-              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
+              std::unordered_set<std::pair<Vertex_handle, Vertex_handle>,
+                                 boost::hash<std::pair<Vertex_handle, Vertex_handle>> >& constraints)
 {
   CGAL::Random rng;
 
@@ -114,14 +117,14 @@ void generate_input_cube(const std::size_t& n,
 
   // constrain cube edges
   add_edge(v0, v1, tr, constraints);
-  add_edge(v1, v2, tr, constraints);
+  add_edge(v1, v3, tr, constraints);
   add_edge(v2, v3, tr, constraints);
-  add_edge(v3, v0, tr, constraints);
+  add_edge(v2, v0, tr, constraints);
 
   add_edge(v4, v5, tr, constraints);
-  add_edge(v5, v6, tr, constraints);
+  add_edge(v5, v7, tr, constraints);
   add_edge(v6, v7, tr, constraints);
-  add_edge(v7, v4, tr, constraints);
+  add_edge(v6, v4, tr, constraints);
 
   add_edge(v0, v4, tr, constraints);
   add_edge(v1, v5, tr, constraints);
@@ -139,23 +142,31 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  CGAL::Random rng;
   std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
 
   Remeshing_triangulation tr;
-  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
+  std::unordered_set<std::pair<Vertex_handle, Vertex_handle>,
+                     boost::hash<std::pair<Vertex_handle, Vertex_handle>>> constraints;
   generate_input_cube(1000, tr, constraints);
-
-  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
-  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
 
   set_subdomain(tr, 1);
   assert(tr.is_valid());
+
+  std::ofstream out0("in.mesh");
+  CGAL::IO::write_MEDIT(out0, tr);
+  out0.close();
+
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.05;
+  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
       Constrained_edges_property_map(&constraints))
     .number_of_iterations(nb_iter));
+
+  std::ofstream out("out.mesh");
+  CGAL::IO::write_MEDIT(out, tr);
+  out.close();
 
   return EXIT_SUCCESS;
 }

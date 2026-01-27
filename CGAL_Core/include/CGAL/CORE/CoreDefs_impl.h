@@ -14,7 +14,7 @@
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -42,7 +42,7 @@ namespace CORE {
 
 // Note from 2014: does not seem to be used anywhere, and it is not declared
 // in CoreDefs.h so it is not accessible
-// Left here for compatibilty when CGAL_HEADER_ONLY is not defined
+// Left here for compatibility when CGAL_HEADER_ONLY is not defined
 
 int IOErrorFlag = 0;
 
@@ -87,7 +87,7 @@ extLong defBFsqrtAbsPrec = 54;
 /**
  * Escape Precision
  *   -- we will not compare a number to precision higher than this
- *   -- if this is infinity, there there is no escape precision */
+ *   -- if this is infinity, there is no escape precision */
 extLong EscapePrec  = CORE_posInfty;
 
 /** this flag becomes negative if the EscapePrec is used. */

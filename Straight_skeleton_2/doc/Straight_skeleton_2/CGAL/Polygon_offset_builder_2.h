@@ -70,7 +70,7 @@ For any given input polygon, its offset polygons at a certain distance are compo
 This method returns all such contours in an unspecified order and with no parental relationship
 between them (that is why it is called `construct_offset_contours()` and not `construct_offset_polygons()`).
 
-Those offset contours in the resulting sequence which are oriented counter-clockwise are outer contours
+Those offset contours in the resulting sequence which are oriented counterclockwise are outer contours
 and those oriented clockwise are holes. It is up to the user to match each hole to its parent in order
 to reconstruct the parent-hole relationship of the conceptual output. It is sufficient to test each hole
 against each parent as there won't be a hole inside a hole, a parent inside any other contour,
@@ -91,12 +91,12 @@ or external angle approaches `0`, numerical overflow may prevent some of the pol
 If that happens, the failed contour just won't be added into the resulting sequence.
 
 \tparam OutputIterator must be a model of the <I>OutputIterator</I> category whose `value_type`
-                       is a `boost::shared_ptr` holding the dynamically allocated instances of type `Container`.
+                       is a `std::shared_ptr` holding the dynamically allocated instances of type `Container`.
 
 \param t the offset value
 \param out an output iterator. For each resulting offset contour, a default constructed instance
            of `Container` type, is dynamically allocated and each offset vertex is added to it.
-           A `boost::shared_ptr` holding onto the dynamically allocated container is inserted
+           A `std::shared_ptr` holding onto the dynamically allocated container is inserted
            into the output sequence via the OutputIterator `out`.
 
 \returns an `OutputIterator` past-the-end of the resulting sequence, which contains each offset contour generated.

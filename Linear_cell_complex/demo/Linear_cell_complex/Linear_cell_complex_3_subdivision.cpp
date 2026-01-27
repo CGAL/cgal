@@ -26,9 +26,9 @@ public:
   {
   }
 
-  std::pair<Point_3, Dart_handle> operator  () (Vertex & v) const
+  std::pair<Point_3, Dart_descriptor> operator  () (Vertex & v) const
   {
-    Dart_handle d = v.dart ();
+    Dart_descriptor d = v.dart ();
 
     int degree = 0;
     bool open = false;
@@ -42,7 +42,7 @@ public:
     }
 
     if (open)
-      return make_pair(v.point(), d);
+    { return std::make_pair(v.point(), d); }
 
     LCC::FT alpha = (4.0f - 2.0f *
                      (LCC::FT) cos (2.0f * PI / (LCC::FT) degree)) / 9.0f;
@@ -57,7 +57,7 @@ public:
         * alpha / degree;
     }
 
-    std::pair<Point_3, Dart_handle> res=std::make_pair
+    std::pair<Point_3, Dart_descriptor> res=std::make_pair
       (LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, vec), d);
 
     return res;
@@ -67,22 +67,22 @@ private:
 };
 
 // Flip an edge, work only in 2D and 3D
-Dart_handle
-flip_edge (LCC & m, Dart_handle d)
+Dart_descriptor
+flip_edge (LCC & m, Dart_descriptor d)
 {
   CGAL_assertion ( !m.is_free(d,2) );
   CGAL_assertion ( !m.is_free(d,1) && !m.is_free(d,0) );
   CGAL_assertion ( !m.is_free(m.beta(d,2), 0) && !m.is_free(m.beta(d, 2), 1) );
 
-  if (!m.is_removable<1>(d)) return LCC::null_handle;
+  if (!m.is_removable<1>(d)) return LCC::null_descriptor;
 
-  Dart_handle d1 = m.beta(d,1);
-  Dart_handle d2 = m.beta(d,2,0);
+  Dart_descriptor d1 = m.beta(d,1);
+  Dart_descriptor d2 = m.beta(d,2,0);
 
   CGAL_assertion ( !m.is_free(d1,1) && !m.is_free(d2,0) );
 
-  Dart_handle d3 = m.beta(d1,1);
-  Dart_handle d4 = m.beta(d2, 0);
+  Dart_descriptor d3 = m.beta(d1,1);
+  Dart_descriptor d4 = m.beta(d2, 0);
 
   // We isolated the edge
   m.basic_link_beta_1(m.beta(d,0), m.beta(d,2,1));
@@ -125,7 +125,7 @@ subdivide_lcc_3 (LCC & m)
   m.negate_mark (mark);  // All the old darts are marked in O(1).
 
   // 1) We smoth the old vertices.
-  std::vector <std::pair<Point_3, Dart_handle> > vertices;  // smooth the old vertices
+  std::vector <std::pair<Point_3, Dart_descriptor> > vertices;  // smooth the old vertices
   vertices.reserve (m.number_of_attributes<0> ());  // get intermediate space
   std::transform (m.vertex_attributes().begin (),
                   m.vertex_attributes().end (),
@@ -134,11 +134,10 @@ subdivide_lcc_3 (LCC & m)
 
   // 2) We subdivide each facet.
   m.negate_mark (treated);  // All the darts are marked in O(1).
-  unsigned int nb = 0;
+
   for (LCC::Dart_range::iterator it (m.darts().begin ());
        m.number_of_marked_darts (treated) > 0; ++it)
   {
-    ++nb;
     if (m.is_marked (it, treated))
     {
       // We unmark the darts of the facet to process only once dart/facet.
@@ -153,7 +152,7 @@ subdivide_lcc_3 (LCC & m)
   m.free_mark (treated);
 
   // 3) We update the coordinates of old vertices.
-  for (std::vector<std::pair<Point_3, Dart_handle> >::iterator
+  for (std::vector<std::pair<Point_3, Dart_descriptor> >::iterator
          vit=vertices.begin(); vit!=vertices.end(); ++vit)
   {
     m.point(vit->second)=vit->first;
@@ -161,7 +160,7 @@ subdivide_lcc_3 (LCC & m)
 
   // 4) We flip all the old edges.
   m.negate_mark (mark);  // Now only new darts are marked.
-  Dart_handle d2 =LCC::null_handle;
+  Dart_descriptor d2 =LCC::null_descriptor;
   for (LCC::Dart_range::iterator it (m.darts().begin ());
        it != m.darts().end ();)
   {

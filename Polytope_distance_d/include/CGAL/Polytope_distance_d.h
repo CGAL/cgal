@@ -473,7 +473,7 @@ public:
   // NOTE: an implicit conversion from ET to RT must be available!
   Point
   realizing_point_p( ) const
-  { CGAL_optimisation_precondition( is_finite());
+  { CGAL_precondition( is_finite());
   return tco.construct_point_d_object()
     ( ambient_dimension(),
       realizing_point_p_coordinates_begin(),
@@ -481,7 +481,7 @@ public:
 
   Point
   realizing_point_q( ) const
-  { CGAL_optimisation_precondition( is_finite());
+  { CGAL_precondition( is_finite());
   return tco.construct_point_d_object()
     ( ambient_dimension(),
       realizing_point_q_coordinates_begin(),
@@ -512,7 +512,7 @@ public:
     std::copy( p_first, p_last, std::back_inserter( p_points));
     std::copy( q_first, q_last, std::back_inserter( q_points));
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin(), p_points.end())
        && check_dimension( q_points.begin(), q_points.end()),
        "Not all points have the same dimension.");
@@ -527,7 +527,7 @@ public:
     p_points.clear();
     std::copy( p_first, p_last, std::back_inserter( p_points));
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin(), p_points.end()),
        "Not all points have the same dimension.");
 
@@ -541,7 +541,7 @@ public:
     q_points.clear();
     std::copy( q_first, q_last, std::back_inserter( q_points));
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( q_points.begin(), q_points.end()),
        "Not all points have the same dimension.");
 
@@ -551,7 +551,7 @@ public:
   void
   insert_p( const Point& p)
   {
-    CGAL_optimisation_precondition
+    CGAL_precondition
       ( ( ! is_finite()) ||
         ( tco.access_dimension_d_object()( p) == d));
     p_points.push_back( p);
@@ -562,7 +562,7 @@ public:
   void
   insert_q( const Point& q)
   {
-    CGAL_optimisation_precondition
+    CGAL_precondition
       ( ( ! is_finite()) ||
         ( tco.access_dimension_d_object()( q) == d));
     q_points.push_back( q);
@@ -575,12 +575,12 @@ public:
   insert( InputIterator1 p_first, InputIterator1 p_last,
           InputIterator2 q_first, InputIterator2 q_last)
   {
-    CGAL_optimisation_precondition_code(int old_r = static_cast<int>(p_points.size()));
-    CGAL_optimisation_precondition_code(int old_s = static_cast<int>(q_points.size()));
+    CGAL_precondition_code(int old_r = static_cast<int>(p_points.size()));
+    CGAL_precondition_code(int old_s = static_cast<int>(q_points.size()));
     p_points.insert( p_points.end(), p_first, p_last);
     q_points.insert( q_points.end(), q_first, q_last);
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin()+old_r, p_points.end())
        && check_dimension( q_points.begin()+old_s, q_points.end()),
        "Not all points have the same dimension.");
@@ -591,10 +591,10 @@ public:
   void
   insert_p( InputIterator p_first, InputIterator p_last)
   {
-    CGAL_optimisation_precondition_code(int old_r = static_cast<int>(p_points.size()));
+    CGAL_precondition_code(int old_r = static_cast<int>(p_points.size()));
     p_points.insert( p_points.end(), p_first, p_last);
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( p_points.begin()+old_r, p_points.end()),
        "Not all points have the same dimension.");
     compute_distance();
@@ -604,10 +604,10 @@ public:
   void
   insert_q( InputIterator q_first, InputIterator q_last)
   {
-    CGAL_optimisation_precondition_code( int old_s = static_cast<int>(q_points.size()));
+    CGAL_precondition_code( int old_s = static_cast<int>(q_points.size()));
     q_points.insert( q_points.end(), q_first, q_last);
     set_dimension();
-    CGAL_optimisation_precondition_msg
+    CGAL_precondition_msg
       (check_dimension( q_points.begin()+old_s, q_points.end()),
        "Not all points have the same dimension.");
     compute_distance();
@@ -681,7 +681,7 @@ private:
     // construct program
     int n = 2 * d + static_cast<int>(p_points.size() + q_points.size());
     int m = d + 2;
-    CGAL_optimisation_precondition (p_points.size() > 0);
+    CGAL_precondition (p_points.size() > 0);
     QP qp (n, m,
            A_iterator
            (boost::counting_iterator<int>(0),
@@ -696,7 +696,7 @@ private:
     Quadratic_program_options options;
     options.set_pricing_strategy(pricing_strategy(NT()));
     solver = new Solver(qp, options);
-    CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
+    CGAL_assertion(solver->status() == QP_OPTIMAL);
     // compute support and realizing points
     ET  et_0 = 0;
     int r = static_cast<int>(p_points.size());
@@ -758,28 +758,26 @@ bool
 Polytope_distance_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-  using namespace std;
-
   CGAL::Verbose_ostream verr( verbose);
-  verr << "CGAL::Polytope_distance_d<Traits>::" << endl;
-  verr << "is_valid( true, " << level << "):" << endl;
+  verr << "CGAL::Polytope_distance_d<Traits>::" << std::endl;
+  verr << "is_valid( true, " << level << "):" << std::endl;
   verr << "  |P+Q| = " << number_of_points_p()
        <<          '+' << number_of_points_q()
        <<   ", |S| = " << number_of_support_points_p()
-       <<          '+' << number_of_support_points_q() << endl;
+       <<          '+' << number_of_support_points_q() << std::endl;
 
   if ( is_finite()) {
 
     // compute normal vector
     ET_vector  normal( d), diff( d);
     ET  et_0 = 0, den = p_coords[d];
-    CGAL_optimisation_assertion (den > et_0);
-    CGAL_optimisation_assertion (den == q_coords[d]);
+    CGAL_assertion (den > et_0);
+    CGAL_assertion (den == q_coords[d]);
     int i, j;
     for ( j = 0; j < d; ++j) normal[ j] = p_coords[ j] - q_coords[ j];
 
     // check correctness of computed squared distance
-    verr << "  checking squared_distance..." << flush;
+    verr << "  checking squared_distance..." << std::flush;
     ET sqr_dist_num (0);
     for ( j = 0; j < d; ++j)
       sqr_dist_num += normal[ j] * normal[ j];
@@ -793,7 +791,7 @@ is_valid( bool verbose, int level) const
 
     // check P
     // -------
-    verr << "  checking P..." << flush;
+    verr << "  checking P..." << std::flush;
 
     // check point set
     for ( i = 0; i < number_of_points_p(); ++i) {
@@ -809,11 +807,11 @@ is_valid( bool verbose, int level) const
           ( verr, "polytope P is not separated by its hyperplane");
     }
 
-    verr << "passed." << endl;
+    verr << "passed." << std::endl;
 
     // check Q
     // -------
-    verr << "  checking Q..." << flush;
+    verr << "  checking Q..." << std::flush;
 
     // check point set
     for ( i = 0; i < number_of_points_q(); ++i) {
@@ -829,10 +827,10 @@ is_valid( bool verbose, int level) const
           ( verr, "polytope Q is not separated by its hyperplane");
     }
 
-    verr << "passed." << endl;
+    verr << "passed." << std::endl;
   }
 
-  verr << "  object is valid!" << endl;
+  verr << "  object is valid!" << std::endl;
   return( true);
 }
 
@@ -842,12 +840,10 @@ std::ostream&
 operator << ( std::ostream& os,
               const Polytope_distance_d<Traits_>& poly_dist)
 {
-  using namespace std;
-
   typedef  typename Polytope_distance_d<Traits_>::Point  Point;
-  typedef  ostream_iterator<Point>       Os_it;
+  typedef  std::ostream_iterator<Point>       Os_it;
   typedef  typename Traits_::ET          ET;
-  typedef  ostream_iterator<ET>          Et_it;
+  typedef  std::ostream_iterator<ET>          Et_it;
 
   switch ( CGAL::IO::get_mode( os)) {
 
@@ -856,68 +852,68 @@ operator << ( std::ostream& os,
        << poly_dist.number_of_points_p() << '+'
        << poly_dist.number_of_points_q() << ", |S| = "
        << poly_dist.number_of_support_points_p() << '+'
-       << poly_dist.number_of_support_points_q() << endl;
-    os << "  P = {" << endl;
+       << poly_dist.number_of_support_points_q() << std::endl;
+    os << "  P = {" << std::endl;
     os << "    ";
-    copy( poly_dist.points_p_begin(), poly_dist.points_p_end(),
+    std::copy( poly_dist.points_p_begin(), poly_dist.points_p_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  Q = {" << endl;
+    os << "}" << std::endl;
+    os << "  Q = {" << std::endl;
     os << "    ";
-    copy( poly_dist.points_q_begin(), poly_dist.points_q_end(),
+    std::copy( poly_dist.points_q_begin(), poly_dist.points_q_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_P = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_P = {" << std::endl;
     os << "    ";
-    copy( poly_dist.support_points_p_begin(),
+    std::copy( poly_dist.support_points_p_begin(),
           poly_dist.support_points_p_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_Q = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_Q = {" << std::endl;
     os << "    ";
-    copy( poly_dist.support_points_q_begin(),
+    std::copy( poly_dist.support_points_q_begin(),
           poly_dist.support_points_q_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
+    os << "}" << std::endl;
     os << "  p = ( ";
-    copy( poly_dist.realizing_point_p_coordinates_begin(),
+    std::copy( poly_dist.realizing_point_p_coordinates_begin(),
           poly_dist.realizing_point_p_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  q = ( ";
-    copy( poly_dist.realizing_point_q_coordinates_begin(),
+    std::copy( poly_dist.realizing_point_q_coordinates_begin(),
           poly_dist.realizing_point_q_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  squared distance = "
        << poly_dist.squared_distance_numerator() << " / "
-       << poly_dist.squared_distance_denominator() << endl;
+       << poly_dist.squared_distance_denominator() << std::endl;
     break;
 
   case CGAL::IO::ASCII:
-    os << poly_dist.number_of_points_p() << endl;
-    copy( poly_dist.points_p_begin(),
+    os << poly_dist.number_of_points_p() << std::endl;
+    std::copy( poly_dist.points_p_begin(),
           poly_dist.points_p_end(),
           Os_it( os, "\n"));
-    os << poly_dist.number_of_points_q() << endl;
-    copy( poly_dist.points_q_begin(),
+    os << poly_dist.number_of_points_q() << std::endl;
+    std::copy( poly_dist.points_q_begin(),
           poly_dist.points_q_end(),
           Os_it( os, "\n"));
     break;
 
   case CGAL::IO::BINARY:
-    os << poly_dist.number_of_points_p() << endl;
-    copy( poly_dist.points_p_begin(),
+    os << poly_dist.number_of_points_p() << std::endl;
+    std::copy( poly_dist.points_p_begin(),
           poly_dist.points_p_end(),
           Os_it( os));
-    os << poly_dist.number_of_points_q() << endl;
-    copy( poly_dist.points_q_begin(),
+    os << poly_dist.number_of_points_q() << std::endl;
+    std::copy( poly_dist.points_q_begin(),
           poly_dist.points_q_end(),
           Os_it( os));
     break;
 
   default:
-    CGAL_optimisation_assertion_msg( false,
+    CGAL_assertion_msg( false,
                                      "CGAL::IO::get_mode( os) invalid!");
     break; }
 

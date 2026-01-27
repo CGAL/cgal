@@ -7,10 +7,12 @@ This concept describes the geometric types and predicates required to build
 a regular triangulation. It corresponds to the first template parameter of the class
 `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`.
 
-\cgalRefines `TriangulationTraits`
+\cgalRefines{TriangulationTraits}
 
-\cgalHasModel `CGAL::Epick_d<Dim>`
-\cgalHasModel `CGAL::Epeck_d<Dim>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Epick_d<Dim>}
+\cgalHasModels{CGAL::Epeck_d<Dim>}
+\cgalHasModelsEnd
 
 \sa `TriangulationTraits`
 */

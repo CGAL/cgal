@@ -2,7 +2,7 @@
 \ingroup PkgPeriodic3Mesh3Concepts
 \cgalConcept
 
-\cgalRefines `MeshDomainWithFeatures_3` and `Periodic_3MeshDomain_3`
+\cgalRefines{MeshDomainWithFeatures_3,Periodic_3MeshDomain_3}
 
 The concept `Periodic_3MeshDomainWithFeatures_3` describes the knowledge required on the
 object to be discretized.
@@ -22,8 +22,9 @@ Wrapping any model of `Periodic_3MeshDomain_3` with the class
 `CGAL::Mesh_domain_with_polyline_features_3` gives a model
 of `Periodic_3MeshDomainWithFeatures_3`.
 
-\cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<
-                 CGAL::Labeled_mesh_domain_3<BGT> >`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Mesh_domain_with_polyline_features_3<CGAL::Labeled_mesh_domain_3<BGT> >}
+\cgalHasModelsEnd
 
 \sa `CGAL::Periodic_3_function_wrapper<Function,BGT>`
 
