@@ -39,7 +39,8 @@ public:
    {
      scene = scene_interface;
      mw = mainWindow;
-     QAction* actionKernel = new QAction(tr("Kernel"), mainWindow);
+     QAction* actionKernel = new QAction(tr("Compute Mesh Kernel"), mainWindow);
+     actionKernel->setProperty("subMenuName","Polygon Mesh Processing");
      connect(actionKernel, SIGNAL(triggered()),
              this, SLOT(on_actionKernel_triggered()));
      _actions << actionKernel;
