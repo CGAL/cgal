@@ -55,6 +55,12 @@ template <typename Traits>
 class Tet_object_io : public Mesh_object_io<Traits>
 {
 public:
+    /** Builds a `Tet_object_io` from tetgen files.
+     *
+     * \param prefix Prefix of tetgen files containing the tetrahedral mesh.
+     *
+     * \exception File_not_found If the prefix is incorrect (corresponding tetgen files do not exists), raises a `%std::runtime_error`.
+     */
     Tet_object_io(const std::string & prefix) : Mesh_object_io<Traits>(), _prefix(prefix)
     {
         this->_dim = -3 ;
@@ -67,6 +73,7 @@ public:
         this->_ncells = this->_cells.size() ;
     }
 
+protected:
     void add_nodes()
     {
         const std::string file_node = fnodes_from_prefix(_prefix) ;
@@ -93,7 +100,7 @@ public:
         if ( ! input_file . good () )
         {
             std::cerr << "File " << file_edge << " not found.\n";
-            throw std::runtime_error("File Parsing Error: File ! found");
+            throw std::runtime_error("File Parsing Error: File not found");
         }
         // First line is the number of edges
         std::size_t line_number = 0;
