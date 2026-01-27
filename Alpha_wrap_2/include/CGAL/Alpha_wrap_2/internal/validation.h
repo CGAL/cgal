@@ -139,19 +139,19 @@ bool has_bounded_edge_length(const MultipolygonWithHoles& wrap,
   for (const Polygon_with_holes_2& pwh : wrap.polygons_with_holes()) {
     for (const Segment_2& edge : pwh.outer_boundary().edges()) {
       if (CGAL::compare_squared_distance(edge.source(), edge.target(), sq_alpha_bound) == CGAL::LARGER) {
-        return true;
+        return false;
       }
     }
     for (const Polygon_2& hole : pwh.holes()) {
       for (const Segment_2& edge : hole.edges()) {
         if (CGAL::compare_squared_distance(edge.source(), edge.target(), sq_alpha_bound) == CGAL::LARGER) {
-          return true;
+          return false;
         }
       }
     }
   }
 
-  return false;
+  return true;
 }
 
 // template <typename ConcurrencyTag = CGAL::Sequential_tag,
