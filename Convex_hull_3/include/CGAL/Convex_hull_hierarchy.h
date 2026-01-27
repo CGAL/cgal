@@ -26,12 +26,6 @@
       size_t nb_visited=0;
 #endif
 
-template <typename, typename = void>
-inline constexpr bool has_property_map = false;
-
-template <typename T>
-inline constexpr bool has_property_map<T, std::void_t<typename T::Property_map> > = true;
-
 namespace CGAL{
 
   /// \ingroup PkgConvexHull3Ref
@@ -108,7 +102,7 @@ struct Convex_hull_hierarchy{
   */
   template <typename Graph,
             typename NamedParameters=parameters::Default_named_parameters>
-  Convex_hull_hierarchy(Graph &g, const NamedParameters& np = parameters::default_values()){
+  Convex_hull_hierarchy(const Graph &g, const NamedParameters& np = parameters::default_values()){
     PolygonMesh ch;
     convex_hull_3(g, ch, np);
     hierarchy_sm.reserve(4);
@@ -116,24 +110,6 @@ struct Convex_hull_hierarchy{
     init_hierarchy();
   };
 
-  /**
-  * constructor taking the points in the range `[first, last)`.
-  *
-  * @tparam RangeIterator must be an input iterator with a value type equivalent to `Traits::Point_3`
-  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  * @tparam Traits model of the concept ConvexHullTraits_3. For the purposes of checking the postcondition that the convex hull is valid, Traits must also be a model of the concept IsStronglyConvexTraits_3.
-  *
-  * \cgalNamedParamsBegin
-  *   \cgalParamNBegin{point_map}
-  *     \cgalParamDescription{a property map associating points to the elements of `r`}
-  *     \cgalParamType{a model of `ReadablePropertyMap`}
-  *     \cgalParamDefault{`CGAL::Identity_property_map`}
-  *   \cgalParamNEnd
-  * \cgalNamedParamsEnd
-  *
-  * If the kernel R of the points determined by the value type of `RangeIterator` is a kernel with exact predicates but inexact constructions (in practice we check R::Has_filtered_predicates_tag is Tag_true and R::FT is a floating point type), then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`, and R otherwise.
-  *
-  */
    /**
   * constructor taking the points in the range `[first, last)`.
   *
@@ -158,7 +134,7 @@ struct Convex_hull_hierarchy{
   }
 
   /**
-  * construct the furthest point of the convex hull along the direction.
+  * constructs the furthest point of the convex hull along the direction.
   *
   * @tparam `Direction_3` model of `Kernel::Direction_3`. The kernel does not require to be the same than the one using by the Mesh
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -215,7 +191,7 @@ struct Convex_hull_hierarchy{
         }
       }
 
-      // Go to under level
+      // Go to level below
       if(level>0){
         argmax= get(next_in_hierarchy_maps[level], argmax);
         --level;

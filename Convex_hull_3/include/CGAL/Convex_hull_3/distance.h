@@ -25,7 +25,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Convex_hull_hierarchy.h>
-#include <CGAL/Convex_hull_3/do_intersect.h>
+#include <CGAL/Convex_hull_3/internal/helpers.h>
 #include <CGAL/squared_distance_3.h>
 
 #include <CGAL/IO/helpers.h>
@@ -491,7 +491,7 @@ FT separation_distance(const ConvexHullHierarchy& ch1, const ConvexHullHierarchy
 template <class Convex1, class Convex2,
           class NamedParameters_1 = parameters::Default_named_parameters,
           class NamedParameters_2 = parameters::Default_named_parameters>
-typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type::FT
+typename internal::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type::FT
 separation_distance(const Convex1& c1, const Convex2& c2,
                     const NamedParameters_1& np1 = parameters::default_values(),
                     const NamedParameters_2& np2 = parameters::default_values()){
@@ -500,7 +500,7 @@ separation_distance(const Convex1& c1, const Convex2& c2,
 
   //The function need exact computation to works correctly
   using EPECK=Exact_predicates_exact_constructions_kernel;
-  using GT= typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type;
+  using GT= typename internal::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type;
   // GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
   return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
 }
