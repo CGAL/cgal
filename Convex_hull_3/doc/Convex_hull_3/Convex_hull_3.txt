@@ -154,7 +154,7 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
-\section Convex_hull_3Do_intersect Intersection test of Convex Hulls
+\section Convex_hull_3Do_intersect Intersection Test of Convex Hulls
 
 The `CGAL::Convex_hull_3::do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere \cgalCite{hornus2017convexintersection}.
 Input convex hulls can be provided in three forms: as range of points, as graph model of `AdjacencyGraph` or as instance of the `Convex_hull_hierarchy` class.

@@ -173,8 +173,8 @@ typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_graph_3(const Gr
 *
 * computes the furthest point of the convex graph along the direction `dir`.
 *
-* @tparam Graph: is a model of `AdjacencyGraph`.
-* @tparam Direction_3: is a model of CGAL::Direction_3.
+* @tparam Graph is a model of `VertexListGraph` and `AdjacencyGraph`.
+* @tparam Direction_3 is a model of `Kernel::Direction_3`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param g the convex graph
@@ -211,7 +211,7 @@ Point_3 extreme_point_3(const Graph& g, const Direction_3 &dir, const NamedParam
 *
 * computes the furthest point of the range along the direction.
 *
-* @tparam PointRange is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter ` point_map`.
+* @tparam PointRange is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam Direction_3 is a model of CGAL::Direction_3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -255,12 +255,6 @@ Point_3 extreme_point_3(const PointRange& r, const Direction_3 &dir, const Named
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `chg`}
-*     \cgalParamType{a model of `ReadablePropertyMap`}
-*     \cgalParamDefault{boost::get(CGAL::vertex_point, ch)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `AdjacencyGraph`.}
-*   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
@@ -572,7 +566,7 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 *
 * checks if the two convex graphs intersect or not.
 *
-* @tparam AdjacencyGraph: is a model of `AdjacencyGraph`.
+* @tparam Graph is a model of `VertexListGraph` and `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -588,7 +582,7 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 *     \cgalParamDescription{a property map associating points to the vertices of `g1` (`g2`)}
 *     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
 *     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `AdjacencyGraph`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `Graph`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
@@ -607,10 +601,10 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 * \cgalNamedParamsEnd
 *
 */
-template <class AdjacencyGraph,
+template <class Graph,
           class NamedParameters_1 = parameters::Default_named_parameters,
           class NamedParameters_2 = parameters::Default_named_parameters>
-bool do_intersect(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
+bool do_intersect(const Graph& g1, const Graph& g2,
                   const NamedParameters_1& np1 = parameters::default_values(),
                   const NamedParameters_2& np2 = parameters::default_values());
 

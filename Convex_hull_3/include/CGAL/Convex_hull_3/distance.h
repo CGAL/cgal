@@ -393,7 +393,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *
 * computes a lower bound on the squared distance between the two convex graphs, returning zero when their hulls intersect.
 *
-* @tparam AdjacencyGraph is a model of `AdjacencyGraph`.
+* @tparam Graph is a model of `VertexListGraph` and `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -409,7 +409,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *     \cgalParamDescription{a property map associating points to the vertices of `g1` (`g2`)}
 *     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
 *     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in ` AdjacencyGraph`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `Graph`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
@@ -430,10 +430,10 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 * \see `CGAL::Convex_hull_3::do_intersect`
 *
 */
-template <class AdjacencyGraph,
+template <class Graph,
           class NamedParameters_1 = parameters::Default_named_parameters,
           class NamedParameters_2 = parameters::Default_named_parameters>
-FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
+FT separation_distance(const Graph& g1, const Graph& g2,
                        const NamedParameters_1& np1 = parameters::default_values(),
                        const NamedParameters_2& np2 = parameters::default_values());
 

@@ -31,10 +31,10 @@ namespace CGAL{
   /// \ingroup PkgConvexHull3Ref
   /// This class stores a convex hull with a data structure optimized for finding the extreme point of the convex
   /// hull in a given direction. In particular, this operation is called by `CGAL::Convex_hull_3::do_intersect()` and therefore, this class
-  ///  is optimized for very fast intersection tests.
+  ///  is optimized for fast intersection tests.
   ///
-  /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of `MutableFaceGraph`.
-  ///         An internal property map for  ` CGAL::vertex_point_t` must be available.
+  /// @tparam PolygonMesh The polygon mesh used to construct each level of the hierarchy. Must be a model of `MutableFaceGraph`.
+  ///         An internal property map for ` CGAL::vertex_point_t` must be available, with a value type that is a model of `Kernel::Point_3`.
 template < class PolygonMesh >
 struct Convex_hull_hierarchy{
   // parameterization of the hierarchy
@@ -126,23 +126,16 @@ struct Convex_hull_hierarchy{
     init_hierarchy(traits);
   };
 
-  ~Convex_hull_hierarchy(){
-    to_base_maps.clear();
-    next_in_hierarchy_maps.clear();
-    for(int i=0; i<maxlevel(); ++i)
-      clear(hierarchy_sm[i]);
-  }
-
   /**
   * constructs the furthest point of the convex hull along the direction.
   *
-  * @tparam `Direction_3` model of `Kernel::Direction_3`. The kernel does not require to be the same than the one using by the Mesh
+  * @tparam Direction_3 model of `Kernel::Direction_3`. The kernel does not require to be the same as the one used by the Mesh
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param dir the direction
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
-  * \return Return a `Point_3` using the same kernel as the direction.
+  * \return a `Point_3` using the same kernel as the direction.
   */
   template <typename Direction_3,
             typename NamedParameters=parameters::Default_named_parameters>
@@ -157,10 +150,10 @@ struct Convex_hull_hierarchy{
         Default_GT
       > ::type;
     IGT gt = choose_parameter<IGT>(get_parameter(np, internal_np::geom_traits));
-    using FT= typename IGT::FT;
+    using FT = typename IGT::FT;
 
     using Default_geom_traits_converter = Cartesian_converter<GT, IGT>;
-    using GTC=typename internal_np::Lookup_named_param_def <
+    using GTC = typename internal_np::Lookup_named_param_def <
         internal_np::geom_traits_converter_t,
         NamedParameters,
         Default_geom_traits_converter
@@ -209,8 +202,6 @@ struct Convex_hull_hierarchy{
       bool is_local_max;
       do{
         is_local_max=true;
-        // CGAL_assertion(is_valid(argmax, csm));
-        // CGAL_assertion(is_valid(halfedge(argmax, csm), csm));
         for(vertex_descriptor v: vertices_around_target(argmax ,csm)){
     #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
           ++nb_visited;
