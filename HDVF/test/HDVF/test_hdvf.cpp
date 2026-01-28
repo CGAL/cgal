@@ -103,6 +103,56 @@ int main(int argc, char **argv) {
         assert(test_invalid_R);
     }
 
+    // Test A
+    std::cerr << "---- Test A operation" << std::endl;
+    {
+        HDVF_type hdvfA(complex, HDVF::OPT_FULL);
+        hdvfA.read_hdvf_reduction("data/test_hdvf/test_hdvfR.hdvf");
+
+        bool foundA;
+        std::vector<HDVF::Cell_pair> pairsA(hdvfA.find_pairs_A(1, foundA)), pairsA2;
+        pairsA2.push_back(HDVF::Cell_pair({2,0,1}));
+        bool test_find_pairs_A(pairsA == pairsA2);
+        std::cerr << "-- Test find_pairs_A(1,foundA): " << test_find_pairs_A << std::endl;
+        assert(test_find_pairs_A);
+
+        std::vector<HDVF::Cell_pair> pairsA3(hdvfA.find_pairs_A(2, foundA, 0));
+        bool test_find_pairs_A3(pairsA3 == pairsA2);
+        std::cerr << "-- Test find_pairs_A(2,foundA,0): " << test_find_pairs_A3 << std::endl;
+        assert(test_find_pairs_A3);
+
+        HDVF::Cell_pair cell(hdvfA.find_pair_A(1, foundA)), cell2(HDVF::Cell_pair({2,0,1}));
+        bool test_find_pairs_A4(cell == cell2);
+        std::cerr << "-- Test find_pair_A(1,foundA): " << test_find_pairs_A4 << std::endl;
+        assert(test_find_pairs_A4);
+
+        HDVF::Cell_pair cell3(hdvfA.find_pair_A(2, foundA,0));
+        bool test_find_pairs_A5(cell3 == cell2);
+        std::cerr << "-- Test find_pair_A(2,foundA,0): " << test_find_pairs_A5 << std::endl;
+        assert(test_find_pairs_A5);
+
+        HDVF::Cell_pair pairA(pairsA.at(0)); // Pair 2, 0, 1
+        bool test_valid_A(hdvfA.is_valid_pair_for_A(pairA.sigma, pairA.tau, pairA.dim) == 1);
+        std::cerr << "-- Test is_valid_pair_for_A: " << test_valid_A << std::endl;
+        assert(test_valid_A);
+        // Test operation
+        {
+            hdvfA.A(pairA.sigma, pairA.tau, pairA.dim);
+
+            // Read HDVF after A from .hdvf
+            HDVF_type hdvf3(complex, HDVF::OPT_FULL);
+            hdvf3.read_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf");
+            // Compare
+            bool test_A(hdvfA.compare(hdvf3));
+            std::cerr << "-- Test A operation: " << test_A << std::endl;
+            assert(test_A);
+        }
+
+        bool test_invalid_A(hdvf.is_valid_pair_for_M(8, 6, 1) == 0);
+        std::cerr << "-- Test incorrect is_valid_pair_for_A: " << test_invalid_A << std::endl;
+        assert(test_invalid_A);
+    }
+
     // Test M
     std::cerr << "---- Test M operation" << std::endl;
     {

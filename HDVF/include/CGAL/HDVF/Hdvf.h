@@ -1251,10 +1251,10 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         // Get the coefficient at the intersection of H12 and H21
         Coefficient_ring H11(H12.get_coefficient(pi)); // H11 is the coefficient at row sigma and column pi
 
-        // Assert that H11 is either 1 or -1 (check invertibility)
+        // Assert that H11 is invertible
         if (!H11.is_invertible())
             throw(std::invalid_argument("Invalid arguments for R - cells do not meet the required condition"));
-        Coefficient_ring H11_inv = H11.inverse(); // Inverse of H11 (which is itself for 1 or -1)
+        Coefficient_ring H11_inv = H11.inverse(); // Inverse of H11
 
         // Remove the contributions of pi from H12 and sigma from H21
         H12 /= std::vector<size_t>({pi}); // Remove column pi from H12
@@ -1375,10 +1375,10 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         // Get the coefficient at the intersection of F12 and F21
         const Coefficient_ring F11(F12.get_coefficient(pi)); // F11 is the coefficient at row gamma and column pi
 
-        // Assert that F11 is either 1 or -1 (for invertibility)
+        // Assert that F11 is invertible
         if (! F11.is_invertible())
             throw(std::invalid_argument("Invalid arguments for M - cells do not meet the required condition"));
-        Coefficient_ring F11_inv = F11.inverse(); // Inverse of F11 (which is itself for 1 or -1)
+        Coefficient_ring F11_inv = F11.inverse(); // Inverse of F11
 
         // Remove the contributions of pi from F12 and gamma from F21
         F12 /= std::vector<size_t>({pi}); // Remove column pi from F12
@@ -1495,10 +1495,10 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         // Get the coefficient at the intersection of G12 and G21
         Coefficient_ring G11(G12.get_coefficient(gamma)); // G11 is the coefficient at row sigma and column gamma
 
-        // Assert that G11 is either 1 or -1 (for invertibility)
+        // Assert that G11 is invertible
         if (! G11.is_invertible())
             throw(std::invalid_argument("Invalid arguments for W - cells do not meet the required condition"));
-        Coefficient_ring G11_inv = G11.inverse(); // Inverse of G11 (which is itself for 1 or -1)
+        Coefficient_ring G11_inv = G11.inverse(); // Inverse of G11
 
         // Remove the contributions of gamma from G12 and sigma from G21
         G12 /= std::vector<size_t>({gamma}); // Remove column gamma from G12
@@ -1703,7 +1703,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         Column_chain tmp4(this->_F_row.at(q-1) * projP_d_pi) ;
         tmp4 += projC_d_pi ;
         this->_F_row.at(q-1) -= (tmp4 * xip) * H11q1 ;
-        
+
         // DD_col_q
 
         this->_DD_col.at(q) += (tmp4 * xip) * G11 ;

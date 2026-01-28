@@ -838,7 +838,7 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
     found = false;
     Cell_pair p;
 
-    if ((q<0) || (q>=_K.dimension())) {
+    if (! _K.is_valid_cell_dimension(q)) {
         std::cerr << "find_pair_A called with incoherent dimension " << q << std::endl;
         return p;
     }
@@ -849,7 +849,7 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
 
         // Iterate through the entries of the column
         for (typename Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
-            if ((it->second == 1) || (it->second == -1)) {
+            if ((it->second).is_invertible()) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
                 p.tau = *it_col;
@@ -867,34 +867,34 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
     found = false;
     Cell_pair p ;
 
-    if ((q<0) || (q>=_K.dimension())) {
-        std::cerr << "find_pair_A called with incoherent dimension " << q << std::endl;
-        return p;
-    }
-    if (gamma >= _K.number_of_cells(q)) {
-        std::cerr << "find_pair_A called with incorrect cell index " << gamma << std::endl;
+    if (! _K.is_valid_cell(gamma, q)) {
+        std::cerr << "find_pair_A called with incoherent cell " << std::endl;
         return p;
     }
 
-    // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
-    for (typename Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it) {
-        if ((it->second == 1) || (it->second == -1)) {
-            found = true ;
-            p.sigma = it->first ;
-            p.tau = gamma ;
-            p.dim = q-1 ;
+    if (q>0) {
+        // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
+        const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+        for (typename Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it) {
+            if ((it->second).is_invertible()) {
+                found = true ;
+                p.sigma = it->first ;
+                p.tau = gamma ;
+                p.dim = q-1 ;
+            }
         }
     }
 
-    // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-    Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
-    for (typename Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it) {
-        if ((it->second == 1) || (it->second == -1)) {
-            found = true ;
-            p.sigma = gamma ;
-            p.tau = it->first ;
-            p.dim = q ;
+    if (q < _K.dimension()) {
+        // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
+        Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
+        for (typename Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it) {
+            if ((it->second).is_invertible()) {
+                found = true ;
+                p.sigma = gamma ;
+                p.tau = it->first ;
+                p.dim = q ;
+            }
         }
     }
     return p;
@@ -906,7 +906,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
     std::vector<Cell_pair> pairs;
     found = false ;
 
-    if ((q<0) || (q>=_K.dimension())) {
+    if (! _K.is_valid_cell_dimension(q)) {
         std::cerr << "find_pairs_A called with incoherent dimension " << q << std::endl;
         return pairs;
     }
@@ -918,8 +918,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
 
         // Iterate through the entries of the column
         for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
-            if ((it->second == 1) || (it->second == -1)) {
-                // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
+            if ((it->second).is_invertible()) {
+                // If an entry with an invertible coefficient is found, set the pair and mark as found
                 Cell_pair p;
                 p.sigma = it->first;
                 p.tau = *it_col;
@@ -938,45 +938,42 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
     found = false;
     std::vector<Cell_pair> pairs;
 
-    if ((q<0) || (q>=_K.dimension())) {
-        std::cerr << "find_pairs_A called with incoherent dimension " << q << std::endl;
-        return pairs;
-    }
-    if (gamma >= _K.number_of_cells(q)) {
-        std::cerr << "find_pairs_A called with incorrect cell index " << gamma << std::endl;
+    if (! _K.is_valid_cell(gamma, q)) {
+        std::cerr << "find_pairs_A called with incoherent cell " << std::endl;
         return pairs;
     }
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-    Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
-    for (typename Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it) {
-        //        if (abs(it->second) == 1)
-        if ((it->second == 1) || (it->second == -1)) {
-            found = true ;
-            Cell_pair p ;
-            p.sigma = gamma ;
-            p.tau = it->first ;
-            p.dim = q ;
-            pairs.push_back(p) ;
+    if (q < _K.dimension()) {
+        Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
+        for (typename Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it) {
+            if ((it->second).is_invertible()) {
+                found = true ;
+                Cell_pair p ;
+                p.sigma = gamma ;
+                p.tau = it->first ;
+                p.dim = q ;
+                pairs.push_back(p) ;
+            }
         }
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
-    for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it) {
-        //        if (abs(it->second) == 1)
-        if ((it->second == 1) || (it->second == -1)) {
-            found = true ;
-            Cell_pair p ;
-            p.sigma = it->first ;
-            p.tau = gamma ;
-            p.dim = q-1 ;
-            pairs.push_back(p) ;
+    if (q>0) {
+        const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+        for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it) {
+            //        if (abs(it->second) == 1)
+            if ((it->second).is_invertible()) {
+                found = true ;
+                Cell_pair p ;
+                p.sigma = it->first ;
+                p.tau = gamma ;
+                p.dim = q-1 ;
+                pairs.push_back(p) ;
+            }
         }
     }
     return pairs;
 }
-
-
 
 
 // Method to perform operation A
@@ -994,10 +991,11 @@ void Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::A(size_t tau1, size_t
     const Coefficient_ring D11 = D12.get_coefficient(tau2); // D11 is the coefficient at the intersection of tau2 in D12
 
     // Assert that D11 is either 1 or -1 (check invertibility)
-    assert((D11 == 1) || (D11 == -1)); // !!!!! Test invertibility
+    if (! D11.is_invertible())
+        throw(std::invalid_argument("Invalid arguments for A - cells do not meet the required condition"));
 
-    // Compute the inverse of D11 (which is itself, since D11 is 1 or -1)
-    Coefficient_ring D11_inv = D11;
+    // Compute the inverse of D11
+    Coefficient_ring D11_inv = D11.inverse();
 
     // Perform operations to remove the row and column contributions
     D12 /= std::vector<size_t>({tau2}); // Remove tau2 column from D12
