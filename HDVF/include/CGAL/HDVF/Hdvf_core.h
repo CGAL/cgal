@@ -55,6 +55,10 @@ struct Cell_pair {
     int dim;
 };
 
+inline bool operator==(const Cell_pair& pair1, const Cell_pair& pair2) {
+    return ((pair1.sigma==pair2.sigma) && (pair1.tau==pair2.tau) && (pair1.dim==pair2.dim));
+}
+
 /** \brief Overload of operator<< for Cell_pair type. */
 inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>& pairs) {
     for (const auto& pair : pairs) {
@@ -714,7 +718,7 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
     else
         _min_dimension = _max_dimension = _dimension_restriction;
 
-    std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;
+    //    std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;
     // Hdvf_core options
     _hdvf_opt = hdvf_opt ;
 
@@ -786,7 +790,7 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
     _DD_col.resize(_K.dimension()+1) ;
     for (int q=tmp_min; q<=tmp_max; ++q)
         _DD_col.at(q) = _K.boundary_matrix(q) ;
-    std::cout << "------> End Hdvf_core creation" << std::endl ;
+    //    std::cout << "------> End Hdvf_core creation" << std::endl ;
 }
 
 // Method to print the matrices

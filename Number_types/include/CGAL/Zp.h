@@ -150,7 +150,7 @@ public:
      *
      * Computation is based on iterated squares (complexity \f$\mathcal O(\log n)\f$).
      **/
-    Zp power(size_t n) {
+    Zp power(size_t n) const {
         if (n==0)
             return 1;
         else {
@@ -185,7 +185,7 @@ public:
     }
 
     /** \brief Returns the invertibility of the element. */
-    bool is_invertible() {
+    bool is_invertible() const {
         if (IsPrime)
             return (_i != 0);
         else
@@ -195,7 +195,7 @@ public:
         }
     }
     /** \brief For invertible values, returns the inverse. */
-    Zp inverse() {
+    Zp inverse() const {
         CGAL_precondition(this->is_invertible());
         if ((*this == Zp(1)) || (*this == Zp(-1)))
             return *this;

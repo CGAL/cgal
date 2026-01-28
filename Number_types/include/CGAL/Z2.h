@@ -140,12 +140,12 @@ public:
     }
 
     /** \brief Returns the invertibility of the element. */
-    bool is_invertible() {
+    bool is_invertible() const {
         return (_i != 0);
     }
 
     /** \brief For invertible values, returns the inverse. */
-    Z2 inverse() {
+    Z2 inverse() const {
         CGAL_precondition(this->is_invertible());
         return *this;
     }
