@@ -379,6 +379,7 @@ void Basic_generator_plugin::generateCube()
 
     for(int i=0; i<8; ++i)
     {
+      point_texts[i].replace(',',' ');
       QStringList list = point_texts[i].split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size()!=3){
@@ -420,6 +421,7 @@ void Basic_generator_plugin::generateCube()
   else
   {
     QString text = dock_widget->extremaEdit->text();
+    text.replace(',',' ');
     QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=6){
@@ -471,6 +473,7 @@ void Basic_generator_plugin::generatePrism()
   bool is_closed = dock_widget->prismCheckBox->isChecked();
 
   QString text = dock_widget->prism_lineEdit->text();
+  text.replace(',',' ');
   QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=3){
@@ -518,6 +521,7 @@ void Basic_generator_plugin::generatePyramid()
   bool is_closed = dock_widget->pyramidCheckBox->isChecked();
 
   QString text = dock_widget->pyramid_lineEdit->text();
+  text.replace(',',' ');
   QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=3){
@@ -561,6 +565,7 @@ void Basic_generator_plugin::generateSphere()
 {
   int precision = dock_widget->SphereSpinBox->value();
   QString text = dock_widget->center_radius_lineEdit->text();
+  text.replace(',',' ');
   QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=4){
@@ -611,6 +616,7 @@ void Basic_generator_plugin::generateTetrahedron()
 
     for (int i = 0; i < 4; ++i)
     {
+      point_texts[i].replace(',',' ');
       QStringList list = point_texts[i].split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size() != 3) {
@@ -645,6 +651,7 @@ void Basic_generator_plugin::generateTetrahedron()
   else
   {
       QString text = dock_widget->point_textEdit_2->toPlainText();
+      text.replace(',',' ');
       QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size() != 12) {
@@ -685,6 +692,7 @@ void Basic_generator_plugin::generateTetrahedron()
 void Basic_generator_plugin::generatePoints()
 {
   QString text = dock_widget->point_textEdit->toPlainText();
+  text.replace(',',' ');
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
   QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   int counter = 0;
@@ -740,6 +748,7 @@ void Basic_generator_plugin::generatePoints()
 void Basic_generator_plugin::generateLines()
 {
   QString text = dock_widget->line_textEdit->toPlainText();
+  text.replace(',',' ');
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
 
   auto read_polyline = [&polylines](const QStringList& list, bool is_2d, bool is_closed)
@@ -915,6 +924,7 @@ void Basic_generator_plugin::generateGrid()
   size_type nb_cells[2];
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
+  points_text.replace(',',' ');
 
   QStringList list = points_text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
