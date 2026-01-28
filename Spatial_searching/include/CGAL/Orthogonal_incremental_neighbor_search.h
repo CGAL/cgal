@@ -473,7 +473,7 @@ namespace CGAL {
 
       CGAL_DEPRECATED void Compute_the_next_furthest_neighbour()
       { Compute_the_next_furthest_neighbor(); }
-    }; // class Iterator_implementaion
+    }; // class Iterator_implementation
 
 
 

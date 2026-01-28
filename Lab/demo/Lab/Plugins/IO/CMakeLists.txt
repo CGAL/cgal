@@ -35,6 +35,9 @@ target_link_libraries(off_to_nef_plugin PRIVATE scene_nef_polyhedron_item)
 cgal_lab_plugin(polylines_io_plugin Polylines_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(polylines_io_plugin PRIVATE scene_polylines_item)
 
+cgal_lab_plugin(spheres_io_plugin Spheres_io_plugin KEYWORDS Viewer Mesh_3)
+target_link_libraries(spheres_io_plugin PRIVATE scene_basic_objects)
+
 cgal_lab_plugin(wkt_plugin WKT_io_plugin KEYWORDS Viewer PointSetProcessing Mesh_3)
 target_link_libraries(wkt_plugin PRIVATE scene_polylines_item)
 
@@ -86,7 +89,7 @@ if(VTK_FOUND AND VTK_LIBRARIES)
   CGAL_Lab_target_use_c3t3_type(vtk_plugin)
   set_target_properties(vtk_plugin PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
 else()
-  message(STATUS "NOTICE: the vtk IO plugin needs VTK 9.0 or greater and will not be compiled.")
+  message(STATUS "NOTICE: the vtk IO plugin needs VTK 9.0 (or greater) and will not be compiled.")
 endif()
 cgal_lab_plugin(xyz_plugin XYZ_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(xyz_plugin PRIVATE scene_points_with_normal_item)

@@ -67,8 +67,6 @@ public:
   // Tag definitions:
   typedef typename Base::Has_left_category            Has_left_category;
   typedef typename Base::Has_merge_category           Has_merge_category;
-  typedef typename Base::Has_do_intersect_category
-    Has_do_intersect_category;
 
   typedef typename Base::Left_side_category           Left_side_category;
   typedef typename Base::Bottom_side_category         Bottom_side_category;
@@ -597,6 +595,7 @@ public:
   //
   using Approximate_number_type = typename Base::Approximate_number_type;
   using Approximate_point_2 = typename Base::Approximate_point_2;
+  using Approximate_kernel = typename Base::Approximate_kernel;
 
   class Approximate_2 : public Base::Approximate_2 {
   protected:

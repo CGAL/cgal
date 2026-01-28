@@ -117,14 +117,14 @@ Qt is a cross-platform application and UI framework.
 The component `CGAL_Qt6` is essential to run the \cgal demos and basic viewers.
 It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
-it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
+it from <A HREF="https://contribute.qt-project.org/">`https://contribute.qt-project.org/`</A>.
 
 The exhaustive list of \qt6 components used in demos is:
 `Core`, `Gui`, `Help`, `OpenGL`, `OpenGLWidgets`, `Qml`, `Svg`, `Widgets`,
 `WebSockets`,  `Network`, and `qcollectiongenerator` (with `sqlite` driver plugin).
 
 \subsection thirdpartyEigen Eigen
-<b>Version 3.3.7 or later</b>
+<b>Version 3.3.7 or later (including Eigen3 5.0.0)</b>
 
 \eigen is a `C++` template library for linear algebra. \eigen supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
@@ -138,7 +138,7 @@ Overview</a> page. In order to use Eigen in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::Eigen3_support` provided in `CGAL_Eigen3_support.cmake`.
 
-The \eigen web site is <A HREF="https://eigen.tuxfamily.org/index.php?title=Main_Page">`https://eigen.tuxfamily.org`</A>.
+The \eigen web site is <A HREF="https://libeigen.gitlab.io/">`https://libeigen.gitlab.io/`</A>.
 
 \subsection thirdpartyOpenGR OpenGR
 
@@ -166,17 +166,6 @@ HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/
 Alternatively, version 1.3.1 of \libpointmatcher is supported with version 3.3.7 of Eigen, with some changes to the recipe at
 `https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Compilation.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
 and `NABO_LIBRARY` becomes `libnabo_LIBRARIES` in the "Build libpointmatcher" section.
-
-\subsection thirdpartyLeda LEDA
-<b>Version 6.2 or later</b>
-
-\leda is a library of efficient data structures and
-algorithms. Like \core, \leda offers a real number data type.
-
-In \cgal this library is optional, and its number types can
-be used as an alternative to \gmp, \mpfr, and \core.
-
-Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com">`https://www.algorithmic-solutions.com`</A>.
 
 \subsection thirdpartyMPFI Multiple Precision Floating-point Interval (MPFI)
 <b>Version 1.4 or later</b>
@@ -265,7 +254,7 @@ vcpkg install suitesparse
 \subsection thirdpartyMETIS METIS
 <b>Version 5.1 or later</b>
 
-\metis is a library developed by the <A HREF="http://glaros.dtc.umn.edu/gkhome/">Karypis Lab</A>
+\metis is a library developed by the <A HREF="https://github.com/KarypisLab/">Karypis Lab</A>
 and designed to partition graphs and produce fill-reducing matrix orderings.
 
 \cgal offers wrappers around some of the methods of the \metis library
@@ -274,7 +263,7 @@ to allow the partitioning of graphs that are models of the concepts of the
 and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGL).
 
 More information is available on the METIS library
-at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
+at <A HREF="https://github.com/KarypisLab/METIS">`https://github.com/KarypisLab/METIS`</A>.
 
 \subsection thirdpartyzlib zlib
 

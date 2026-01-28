@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, Léo Valque, and Ilker %O. Yaz
+\authors David Coeurjolly, Jacques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, Léo Valque, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -1468,7 +1468,7 @@ is covered by a set of prisms, where each prism is an offset for an input triang
 That is, the implementation in \cgal does not use indirect predicates.
 
 The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under the
-supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
+supervision of David Coeurjolly, Jacques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
 used as a reference during the project.
 
@@ -1479,7 +1479,7 @@ supervision of Sébastien Valette and Sébastien Loriot, who later finalized the
 The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
-The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
+The `apply_iterative_snap_rounding` option for autorefinement was developed by Sylvain Lazard and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 2025.
 
 */
 } /* namespace CGAL */

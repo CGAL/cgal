@@ -128,7 +128,7 @@ namespace CGAL {
      * @param first iterator over first primitive to insert
      * @param beyond past-the-end iterator
      *
-     * constructs an empty tree followed by a call to `insert(first,last,t...)`.
+     * constructs an empty tree followed by a call to \link insert(InputIterator, InputIterator, T&&...) `insert(first,last,t...)`\endlink.
      * The tree stays empty if the memory allocation is not successful.
      */
     template<typename InputIterator,typename ... T>
@@ -140,7 +140,8 @@ namespace CGAL {
     /// This procedure is called implicitly at the first call to a query member function.
     /// An explicit call to `build()` must be made to ensure that the next call to
     /// a query function will not trigger the construction of the data structure.
-    /// A call to `AABBTraits::set_shared_data(t...)` is made using the internally stored traits.
+    /// A call to \link AABBTraits::set_shared_data `AABBTraits::set_shared_data(t...)`\endlink
+    // is made using the internally stored traits.
     /// This procedure has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.
     template<typename ... T>
@@ -160,16 +161,17 @@ namespace CGAL {
     /// \name Operations
     ///@{
 
-    /// is equivalent to calling `clear()`, `insert(first,last,t...)`, and `build()`
+    /// is equivalent to calling `clear()`, \link insert(InputIterator, InputIterator, T&&...) `insert(first,last,t...)`\endlink,
+    // and `build()`
     template<typename ConstPrimitiveIterator,typename ... T>
     void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T&& ...);
-
 
     /// adds a sequence of primitives to the set of primitives of the AABB tree.
     /// `%InputIterator` is any iterator and the parameter pack `T` contains any types
     /// such that `Primitive` has a constructor with the following signature:
     /// `Primitive(%InputIterator, T...)`. If `Primitive` is a model of the concept
-    /// `AABBPrimitiveWithSharedData`, a call to `AABBTraits::set_shared_data(t...)`
+    /// `AABBPrimitiveWithSharedData`, a call to
+    /// \link AABBTraits::set_shared_data `AABBTraits::set_shared_data(t...)`\endlink
     /// is made using the internally stored traits.
     template<typename InputIterator,typename ... T>
     void insert(InputIterator first, InputIterator beyond,T&& ...);

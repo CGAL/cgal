@@ -14,7 +14,7 @@ triangulation of a point set in \f$ \mathbb T_c^2\f$.
 has to be instantiated by a model of the concept
 `Periodic_2TriangulationTraits_2`.
 
-\tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`
+\tparam Tds is the triangulation data structure and must be a model of `TriangulationDataStructure_2`
 whose vertex and face are models of `Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
 It defaults to:
 \code

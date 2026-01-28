@@ -8,7 +8,7 @@ Examples for Linear_cell_complex package:
   Three "basic" examples, detailed in the user manual.
 
 
-* plane_graph_to_lcc_2.cpp
+* read_plane_graph_in_lcc_2.cpp
 
   Program allowing to transform a planar graph into a 2D linear cell complex.
 

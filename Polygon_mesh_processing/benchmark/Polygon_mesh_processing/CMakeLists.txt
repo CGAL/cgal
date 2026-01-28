@@ -7,16 +7,17 @@ project(Polygon_mesh_processing)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: Benchmarks require Eigen 3.2 (or greater), and will not be compiled")
   return()
 endif()
 
-set(FAST_ENVELOPE_BUILD_DIR "" CACHE PATH "Path to fast-evelope build directory")
+set(FAST_ENVELOPE_BUILD_DIR "" CACHE PATH "Path to fast-envelope build directory")
 if (FAST_ENVELOPE_BUILD_DIR)
-  message(STATUS "Using ${FAST_ENVELOPE_BUILD_DIR} as build directory of fast-evelope")
+  message(STATUS "Using ${FAST_ENVELOPE_BUILD_DIR} as build directory of fast-envelope")
 
   include_directories("${FAST_ENVELOPE_BUILD_DIR}/include")
   link_directories ( "${FAST_ENVELOPE_BUILD_DIR}/lib" "${FAST_ENVELOPE_BUILD_DIR}" "${FAST_ENVELOPE_BUILD_DIR}/tbb")

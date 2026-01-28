@@ -89,7 +89,6 @@ public:
 
   using Has_left_category = typename Base::Has_left_category;
   using Has_merge_category = typename Base::Has_merge_category;
-  using Has_do_intersect_category = typename Base::Has_do_intersect_category;
 
   using Left_side_category =
     typename internal::Arr_complete_left_side_category< Base >::Category;

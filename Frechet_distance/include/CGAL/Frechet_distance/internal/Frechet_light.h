@@ -514,6 +514,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
         // TODO: uncritical for correctness or speed but unelegant coding style: stripping down information added by getInterval
         CInterval temp_interval = FrechetLight::getInterval<IndexType>(
             fixed_curve, fixed, curve, cur);
+
         Interval interval = Interval(temp_interval.begin.getPoint() == cur
                                          ? temp_interval.begin.getFraction()
                                          : 1,

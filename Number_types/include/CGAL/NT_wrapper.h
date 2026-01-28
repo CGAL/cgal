@@ -11,6 +11,11 @@
 #ifndef CGAL_NT_WRAPPER_H
 #define CGAL_NT_WRAPPER_H
 
+
+#include <CGAL/config.h>
+
+#if __cpp_lib_source_location
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Coercion_traits.h>
@@ -24,7 +29,7 @@
 namespace CGAL {
 
 /*
- * This class template `NT_wapper<NT>` is currently undocumented, on purpose.
+ * This class template `NT_wrapper<NT>` is currently undocumented, on purpose.
  *
  * This class template provides a wrapper for number types. It calls a function
  * `f` when a constructor, destructor, or assignment operator is called. This
@@ -183,5 +188,7 @@ struct Wrapped_epeck
 {};
 
 } // namespace CGAL
+
+#endif // __cpp_lib_source_location
 
 #endif // CGAL_NT_WRAPPER_H
