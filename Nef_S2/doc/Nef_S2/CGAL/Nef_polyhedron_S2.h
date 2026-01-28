@@ -38,7 +38,7 @@ template parameters.
 
 As Nef
 polyhedra are the result of forming complements and intersections
-starting from a set `H` of half-spaces that are defined by
+starting from a set `H` of halfspaces that are defined by
 oriented lines in the plane, they can be represented by an attributed
 plane map \f$ M = (V,E,F)\f$. For topological queries within `M` the
 following types and operations allow exploration access to this
@@ -46,7 +46,7 @@ structure.
 
 \cgalHeading{Input and Output}
 
-A Nef polyhedron `N` can be visualized in an open GL window. The
+A Nef polyhedron `N` can be visualized in an OpenGL window. The
 output operator is defined in the file
 `CGAL/IO/Nef_polyhedron_2_Window-stream.h`.
 

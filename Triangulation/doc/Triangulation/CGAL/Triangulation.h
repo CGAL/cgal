@@ -611,7 +611,7 @@ c);
 
 /*!
 Inserts point `p` in the triangulation.
-\pre `p` must lie outside the convex hull of `tr`. The half-space
+\pre `p` must lie outside the convex hull of `tr`. The halfspace
 defined by the infinite full cell `c` must contain `p`.
 */
 Vertex_handle insert_outside_convex_hull(const Point &,

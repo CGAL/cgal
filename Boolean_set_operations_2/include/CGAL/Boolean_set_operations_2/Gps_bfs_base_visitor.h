@@ -54,10 +54,10 @@ public:
   //! discovered_face
   /*! discovered_face is called by Gps_bfs_scanner when it reveals a new face
    * during a BFS scan. In the BFS traversal we are going from old_face to
-   * new_face through the half-edge he.
+   * new_face through the halfedge he.
    * \param old_face The face that was already revealed
    * \param new_face The face that we have just now revealed
-   * \param he The half-edge that is used to traverse between them.
+   * \param he The halfedge that is used to traverse between them.
    */
   void discovered_face(Face_iterator old_face,
                        Face_iterator new_face,

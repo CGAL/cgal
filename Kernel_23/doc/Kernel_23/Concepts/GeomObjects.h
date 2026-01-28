@@ -313,7 +313,7 @@ public:
   \ingroup PkgKernel23ConceptsGeomObject
   \cgalConcept
 
-  A type representing planes (and half-spaces) in three dimensions.
+  A type representing planes (and halfspaces) in three dimensions.
 
   \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 

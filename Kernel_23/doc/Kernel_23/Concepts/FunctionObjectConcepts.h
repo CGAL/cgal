@@ -8192,7 +8192,7 @@ public:
 
   /*!
     returns true iff `p` lies on the negative side of `l`
-    (`l` is considered a half-space).
+    (`l` is considered a halfspace).
   */
   bool operator()(const Kernel::Line_2&l,
                   const Kernel::Point_2&p);
@@ -8227,7 +8227,7 @@ public:
 
   /*!
     returns true iff `p` lies on the negative side of `h`
-    (`h` is considered a half-space).
+    (`h` is considered a halfspace).
   */
   bool operator()(const Kernel::Plane_3&h,
                   const Kernel::Point_3&p);
@@ -8274,7 +8274,7 @@ public:
 
   /*!
     returns true iff `p` lies on the positive side of `l`
-    (`l` is considered a half-space).
+    (`l` is considered a halfspace).
   */
   bool operator()(const Kernel::Line_2&l,
                   const Kernel::Point_2&p);
@@ -8309,7 +8309,7 @@ public:
 
   /*!
     returns true iff `p` lies on the positive side of `h`
-    (`h` is considered a half-space).
+    (`h` is considered a halfspace).
   */
   bool operator()(const Kernel::Plane_3&h,
                   const Kernel::Point_3&p);

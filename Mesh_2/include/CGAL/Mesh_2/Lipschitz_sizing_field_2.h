@@ -221,7 +221,7 @@ protected:
           }
         poles.push_back(*maxp);
 
-        // find the farthest voronoi vertex from this point in the other half-plane
+        // find the farthest voronoi vertex from this point in the other halfplane
         typename std::list<Point>::iterator maxp2 = vv.begin();
         for (typename std::list<Point>::iterator pi = vv.begin(); pi != vv.end(); pi++)
           {

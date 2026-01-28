@@ -3329,7 +3329,7 @@ public:
     //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
     //
     // We store the equation of this line in the extra data structure and also
-    // the sign (side of half-plane) our arc occupies with respect to the line.
+    // the sign (side of halfplane) our arc occupies with respect to the line.
     // We use it to make sure that the two endpoints are located on the same
     // branch of the hyperbola.
     auto a = cos_phi;

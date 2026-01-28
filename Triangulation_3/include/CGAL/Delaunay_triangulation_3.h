@@ -1533,7 +1533,7 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   // in dimension 2, for an infinite facet
   // in this case, returns ON_BOUNDARY if the point lies on the
   // finite edge (endpoints included)
-  // ON_BOUNDED_SIDE for a point in the open half-plane
+  // ON_BOUNDED_SIDE for a point in the open halfplane
   // ON_UNBOUNDED_SIDE elsewhere
 
   CGAL_precondition(dimension() >= 2);

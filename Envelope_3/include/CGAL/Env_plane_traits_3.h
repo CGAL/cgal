@@ -375,7 +375,7 @@ public:
         return o;
       }
 
-      // s is half-plane
+      // s is halfplane
       const Kernel& kernel = m_traits;
       const Point_2& p1 = kernel.construct_point_on_2_object()(s.line(), 0);
       const Point_2& p2 = kernel.construct_point_on_2_object()(s.line(), 1);
