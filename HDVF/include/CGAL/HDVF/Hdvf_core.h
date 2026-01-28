@@ -982,7 +982,7 @@ void Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::A(size_t tau1, size_t
     //----------------------------------------------- Submatrices of D ----------------------------------------------------
 
     // Output operation details to the console
-    //    cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << endl;
+    std::cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << std::endl;
 
     // Extract submatrices from _DD_col
     Row_chain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1

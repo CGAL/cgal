@@ -146,6 +146,23 @@ public:
         return (a._i != b._i);
     }
 
+    /** \brief Computes the nth power of the element.
+     *
+     * Computation is based on iterated squares (complexity \f$\mathcal O(\log n)\f$).
+     **/
+    Zp power(size_t n) {
+        if (n==0)
+            return 1;
+        else {
+            if (n%2) // odd power
+                return (*this) * power(n-1);
+            else { // even power
+                Zp res(power(n/2));
+                return res * res ;
+            }
+        }
+    }
+
     /** \brief Absolute value. */
     friend Zp  abs(const Zp& a)
     {
@@ -177,10 +194,21 @@ public:
             return (std::gcd(_i,p) == 1);
         }
     }
+    /** \brief For invertible values, returns the inverse. */
+    Zp inverse() {
+        CGAL_precondition(this->is_invertible());
+        if ((*this == Zp(1)) || (*this == Zp(-1)))
+            return *this;
+
+        // Compute inverse using little Fermat's theorem
+        // x^(p-1) = 1 [p]
+        // thus x^(-1) = x^(p-2)
+        return power(p-2);
+    }
 };
 
 
-// Specialization for p being not a prime number
+// Specialization for p not being a prime number
 template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, false> >
   : public Algebraic_structure_traits_base< Zp<p, T, false>, Integral_domain_without_division_tag >  {
   public:
@@ -198,7 +226,7 @@ template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, false> >
   };
 
 
-  // Specialization for p being not a prime number
+  // Specialization for p being prime number
   template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, true> >
   : public Algebraic_structure_traits_base< Zp<p, T, true>, Field_tag >  {
   public:

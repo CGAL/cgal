@@ -138,6 +138,17 @@ public:
         a = Z2(tmp) ;
         return (in) ;
     }
+
+    /** \brief Returns the invertibility of the element. */
+    bool is_invertible() {
+        return (_i != 0);
+    }
+
+    /** \brief For invertible values, returns the inverse. */
+    Z2 inverse() {
+        CGAL_precondition(this->is_invertible());
+        return *this;
+    }
 };
 
 

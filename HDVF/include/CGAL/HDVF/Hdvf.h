@@ -32,12 +32,12 @@ namespace Homological_discrete_vector_field {
 
  But besides construction operations and methods (using the `A()` operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair()" functions. These operations change the %HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
 
-- `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a `PRIMARY`/`SECONDARY` pair into a pair of `CRITICAL` cells)
-- `M()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
-- `W()` operation exchanges a `SECONDARY` \f$\sigma\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
-- `MW()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `SECONDARY` cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
+ - `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a `PRIMARY`/`SECONDARY` pair into a pair of `CRITICAL` cells)
+ - `M()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
+ - `W()` operation exchanges a `SECONDARY` \f$\sigma\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
+ - `MW()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `SECONDARY` cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
 
-Using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
+ Using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
 
  Let us consider the following simple cubical complex and a perfect HDVF (top) together with the three corresponding homology generators (bottom, highlighted in pink):
 
@@ -76,9 +76,9 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  Therefore, `are_same_cycles` will return `true` for \f$\alpha\f$  and \f$g(\sigma)\f$,  but `false` for \f$\beta\f$  and \f$g(\sigma)\f$.
  \cgalFigureEnd
 
-\cgalModels{HDVF}
+ \cgalModels{HDVF}
 
-\tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  */
 
 template<typename ChainComplex>
@@ -104,7 +104,7 @@ public:
     /**
      * \brief Default constructor.
      *
-     * Builds an" empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
+     * Builds an "empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
      * \param K A chain complex (a model of `AbstractChainComplex`)
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
@@ -344,6 +344,10 @@ public:
      * \param pi First cell of the pair (dimension `q`)
      * \param sigma Second cell of the pair (dimension `q+1`)
      * \param q Dimension of the pair
+     *
+     * \exception Invalid_arguments If \f$\langle h(\pi), \sigma \rangle\f$  is not invertible, raises a `%std::invalid_argument` exception.
+     *
+     * \exception Incorrect_hdvf_options Operations can be computed only under HDVF_FULL options, raises a `%std::runtime_error` exception otherwise.
      */
     void R(size_t pi, size_t sigma, int q);
 
@@ -355,6 +359,12 @@ public:
      * \param pi First cell of the pair (dimension `q`)
      * \param gamma Second cell of the pair (dimension `q`)
      * \param q Dimension of the pair
+     *
+     * \exception Invalid_operation If `q` is the dimension of the complex, `M`operation is not valid and the method raises a `%std::runtime_error` exception.
+     *
+     * \exception Invalid_arguments If \f$\langle f(\pi), \gamma \rangle\f$  is not invertible, raises a `%std::invalid_argument` exception.
+     *
+     * \exception Incorrect_hdvf_options Operations can be computed only under HDVF_FULL options, raises a `%std::runtime_error` exception otherwise.
      */
     void M(size_t pi, size_t gamma, int q);
 
@@ -366,6 +376,12 @@ public:
      * \param sigma First cell of the pair (dimension `q`)
      * \param gamma Second cell of the pair (dimension `q`)
      * \param q Dimension of the pair
+     *
+     * \exception Invalid_operation If `q` is 0, `W`operation is not valid and the method raises a `%std::runtime_error` exception.
+     *
+     * \exception Invalid_arguments If \f$\langle g(\gamma), \sigma \rangle\f$ is not invertible, raises a `%std::invalid_argument` exception.
+     *
+     * \exception Incorrect_hdvf_options Operations can be computed only under HDVF_FULL options, raises a `%std::runtime_error` exception otherwise.
      */
     void W(size_t sigma, size_t gamma, int q);
 
@@ -377,6 +393,12 @@ public:
      * \param pi First cell of the pair (dimension `q`)
      * \param sigma Second cell of the pair (dimension `q`)
      * \param q Dimension of the pair
+     *
+     * \exception Invalid_operation If `q` is 0 or the dimension of the complex, `M`operation is not valid and the method raises a `%std::runtime_error` exception.
+     *
+     * \exception Invalid_arguments If \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ or \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ are not invertible, raises a `%std::invalid argument` exception.
+     *
+     * \exception Incorrect_hdvf_options Operations can be computed only under HDVF_FULL options, raises a `%std::runtime_error` exception otherwise.
      */
     void MW(size_t pi, size_t sigma, int q);
 
@@ -521,13 +543,15 @@ protected:
      *
      * \param chain The cycle to annotate in the homology basis.
      * \param dim Dimension of the cycle.
+     *
+     * \exception Invalid_argument If the `chain` provided is not a cycle, raises a `%std::invalid_argument` exception.
      */
     Column_chain get_annotation(Column_chain chain, int dim) const
     {
         // Check that the chain is a cycle (must belong to the kernel of the boundary operator)
         Column_chain bnd(this->_DD_col.at(dim) * chain) ;
         if (!bnd.is_null())
-            throw("get_annotation: the chain provided is not a cycle");
+            throw(std::invalid_argument("get_annotation: the chain provided is not a cycle"));
 
         // Compute the annotation
         return (this->_F_row.at(dim) * chain + this->projection(chain, CRITICAL, 1)) ;
@@ -544,13 +568,15 @@ protected:
      *
      * \param chain The co-cycle to annotate in the homology basis.
      * \param dim Dimension of the co-cycle.
+     *
+     * \exception Invalid_argument If the `chain` provided is not a co-cycle, raises a `%std::invalid_argument` exception.
      */
     Row_chain get_coannotation(Row_chain chain, int dim) const
     {
         // Check that the chain is a co-cycle (must belong to the kernel of the boundary operator)
         Row_chain bnd(chain * this->_DD_col.at(dim+1)) ;
         if (!bnd.is_null())
-            throw("get_coannotation: the chain provided is not a co-cycle");
+            throw(std::invalid_argument("get_coannotation: the chain provided is not a co-cycle"));
 
         // Compute the co-annotation
         return (chain * this->_G_col.at(dim) + this->projection(chain, CRITICAL, 1)) ;
@@ -565,6 +591,8 @@ protected:
      * \param chain1 First cycle.
      * \param chain2 Second cycle.
      * \param dim Dimension of both cycles.
+     *
+     * \exception Invalid_argument If `chain1` or `chain2` are not cycles, raises a `%std::invalid_argument` exception.
      */
     bool are_same_cycles (Column_chain chain1, Column_chain chain2, int dim)
     {
@@ -588,6 +616,8 @@ protected:
      * \param chain1 First co-cycle.
      * \param chain2 Second co-cycle.
      * \param dim Dimension of both co-cycles.
+     *
+     * \exception Invalid_argument If `chain1` or `chain2` are not co-cycle, raises a `%std::invalid_argument` exception.
      */
     bool are_same_cocycles (Row_chain chain1, Row_chain chain2, int dim)
     {
@@ -1221,11 +1251,14 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         Column_chain H21 = OSM::get_column(this->_H_col[q], pi); // H21 is the column chain from this->_H_col[q] at index pi
 
         // Get the coefficient at the intersection of H12 and H21
-        Coefficient_ring H11(H12[pi]); // H11 is the coefficient at row sigma and column pi
+        Coefficient_ring H11(H12.get_coefficient(pi)); // H11 is the coefficient at row sigma and column pi
 
         // Assert that H11 is either 1 or -1 (check invertibility)
-        assert((H11 == 1) || (H11 == -1)); // !!!!! Test invertibility
-        Coefficient_ring H11_inv = H11; // Inverse of H11 (which is itself for 1 or -1)
+        if (!H11.is_invertible())
+            throw(std::invalid_argument("Invalid arguments for R - cells do not meet the required condition"));
+        //        assert((H11 == 1) || (H11 == -1)); // !!!!! Test invertibility
+        //        Coefficient_ring H11_inv = H11; // Inverse of H11 (which is itself for 1 or -1)
+        Coefficient_ring H11_inv = H11.inverse(); // Inverse of H11 (which is itself for 1 or -1)
 
         // Remove the contributions of pi from H12 and sigma from H21
         H12 /= std::vector<size_t>({pi}); // Remove column pi from H12
@@ -1279,7 +1312,7 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         OSM::set_column(this->_DD_col[q + 1], sigma, F11 * H11_inv);
 
         // Set the coefficient at (pi, sigma) in this->_DD_col to H11_inv
-        this->_DD_col[q + 1].set_coefficient(pi, sigma, H11_inv);
+        OSM::set_coefficient(this->_DD_col[q + 1], pi, sigma, H11_inv);
 
         // Update this->_H_col[q]
         // Subtract the product of (H21 * H12) and H11_inv from this->_H_col[q]
@@ -1319,8 +1352,10 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         ++this->_nb_C.at(q+1) ;
         --this->_nb_S.at(q+1) ;
     }
-    else
-        std::cout << "!!! R impossible with partial reduction options" << std::endl;
+    else {
+        std::cerr << "R operation available only with HDVF_FULL option" << std::endl;
+        throw(std::runtime_error("R operation available only with HDVF_FULL option"));
+    }
 }
 
 // Method to perform operation M
@@ -1332,10 +1367,10 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
     if (this->_hdvf_opt & OPT_FULL)
     {
         // Output the operation details to the console
-        std::cout << "M_" << q << "(" << pi << "," << gamma << ")" << std::endl;
+        std::cout << "M of " << q << "(" << pi << "," << gamma << ")" << std::endl;
 
         if (q == this->_K.dimension())
-            throw("M operation in max dimension !!!") ;
+            throw(std::runtime_error("Operation M invalid in maximum dimension")) ;
 
         // Extract row and column chains from this->_F_row
         Row_chain F12(OSM::get_row(this->_F_row[q], gamma)); // F12 is the row chain from this->_F_row[q] at index gamma
@@ -1436,8 +1471,10 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         this->_flag[q][pi] = CRITICAL; // Set the PSC_flag of pi in dimension q to PRIMARY
         this->_flag[q][gamma] = PRIMARY; // Set the PSC_flag of gamma in dimension q to CRITICAL
     }
-    else
-        std::cout << "!!! M impossible with partial reduction options" << std::endl;
+    else {
+        std::cerr << "M operation available only with HDVF_FULL option" << std::endl;
+        throw(std::runtime_error("M operation available only with HDVF_FULL option"));
+    }
 }
 
 // Method to perform operation W
@@ -1449,10 +1486,10 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
     if (this->_hdvf_opt & OPT_FULL)
     {
         // Output the operation details to the console
-        std::cout << "W_" << q << "(" << sigma << "," << gamma << ")" << std::endl;
+        std::cout << "W of " << q << "(" << sigma << "," << gamma << ")" << std::endl;
 
         if (q == 0)
-            throw("W operation in dimension 0 !!!") ;
+            throw(std::runtime_error("W operation in dimension 0")) ;
 
         // Extract row and column chains from this->_G_col
         Row_chain G12(OSM::get_row(this->_G_col[q], sigma)); // G12 is the row chain from this->_G_col[q] at index sigma
@@ -1557,8 +1594,10 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         this->_flag[q][gamma] = SECONDARY; // Set the PSC_flag of gamma in dimension q to SECONDARY
         this->_flag[q][sigma] = CRITICAL; // Set the PSC_flag of sigma in dimension q to CRITICAL
     }
-    else
-        std::cout << "!!! W impossible with partial reduction options" << std::endl;
+    else {
+        std::cerr << "W operation available only with HDVF_FULL option" << std::endl;
+        throw(std::runtime_error("W operation available only with HDVF_FULL option"));
+    }
 }
 
 // Method to perform operation MW
@@ -1570,12 +1609,12 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
     if (this->_hdvf_opt & OPT_FULL)
     {
         // Output the operation details to the console
-        std::cout << "MW_" << q << "(" << pi << "," << sigma << ")" << std::endl;
+        std::cout << "MW of " << q << "(" << pi << "," << sigma << ")" << std::endl;
 
         if (q <= 0)
-            throw("MW operation in dimension 0 !!!") ;
+            throw(std::runtime_error("MW operation in dimension 0")) ;
         if (q >= this->_K.dimension())
-            throw("MW operation in maximal dimension !!!") ;
+            throw(std::runtime_error("MW operation in maximal dimension")) ;
 
         // In order to compute xi and xi', extract sub-matrices of H_q, H_q-1 and compute d(pi) and cod(sigma)
 
@@ -1675,8 +1714,10 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         this->_flag[q][pi] = SECONDARY; // Set the PSC_flag of gamma in dimension q to SECONDARY
         this->_flag[q][sigma] = PRIMARY; // Set the PSC_flag of sigma in dimension q to PRIMARY
     }
-    else
-        std::cout << "!!! MW impossible with partial reduction options" << std::endl;
+    else {
+        std::cerr << "W operation available only with HDVF_FULL option" << std::endl;
+        throw(std::runtime_error("W operation available only with HDVF_FULL option"));
+    }
 }
 
 } /* end namespace Homological_discrete_vector_field */

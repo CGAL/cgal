@@ -55,6 +55,29 @@ int main(int argc, char **argv)
         assert(comp_row) ;
     }
 
+    std::cerr << "-- Tests Spare_matrices get_coefficient" << std::endl ;
+
+    {
+        Column_matrix MC(3,4);
+        CGAL::OSM::set_coefficient(MC, 0, 1, 1) ;
+        bool comp_non_zero(CGAL::OSM::get_coefficient(MC,0,1) == 1);
+        std::cerr << "Column_matrix get_coefficient on non zero coefficient: " << comp_non_zero << std::endl ;
+        assert(comp_non_zero) ;
+        bool comp_zero(CGAL::OSM::get_coefficient(MC,0,2) == 0);
+        std::cerr << "Column_matrix get_coefficient on zero coefficient: " << comp_zero << std::endl ;
+        assert(comp_zero) ;
+    }
+    {
+        Row_matrix MR(3,4);
+        CGAL::OSM::set_coefficient(MR, 0, 1, 1) ;
+        bool comp_non_zero(CGAL::OSM::get_coefficient(MR,0,1) == 1);
+        std::cerr << "Row_matrix get_coefficient on non zero coefficient: " << comp_non_zero << std::endl ;
+        assert(comp_non_zero) ;
+        bool comp_zero(CGAL::OSM::get_coefficient(MR,0,2) == 0);
+        std::cerr << "Row_matrix get_coefficient on zero coefficient: " << comp_zero << std::endl ;
+        assert(comp_zero) ;
+    }
+
     std::cerr << "-- Tests Sparse_matrices operations" << std::endl ;
 
     Column_chain a(4);

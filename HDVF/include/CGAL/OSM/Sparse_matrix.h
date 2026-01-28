@@ -1835,7 +1835,7 @@ inline void set_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j
 template <typename _CT, int _CTF>
 inline _CT get_coefficient(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
-    matrix.get_coefficient(i, j);
+    return matrix.get_coefficient(i, j);
 }
 
 template <typename _CT, int _CTF>
