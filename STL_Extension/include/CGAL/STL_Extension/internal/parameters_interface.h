@@ -179,6 +179,13 @@ CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
+CGAL_add_named_parameter(maximum_number_of_voxels_t, maximum_number_of_voxels, maximum_number_of_voxels)
+CGAL_add_named_parameter(maximum_depth_t, maximum_depth, maximum_depth)
+CGAL_add_named_parameter(refitting_t, refitting, refitting)
+CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
+CGAL_add_named_parameter(maximum_number_of_convex_volumes_t, maximum_number_of_convex_volumes, maximum_number_of_convex_volumes)
+CGAL_add_named_parameter(split_at_concavity_t, split_at_concavity, split_at_concavity)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
