@@ -131,7 +131,6 @@ template<typename GeomTraits>
 class Compare_distance_3 {
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Boolean Boolean;
 
   /// Bounding box type.
   typedef typename CGAL::Bbox_3 Bounding_box;
@@ -163,8 +162,8 @@ public:
       CGAL::LARGER;
   }
 
-  Boolean do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
-    const Bounding_box& box) const
+  auto do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
+    const Bounding_box& box) const -> decltype(std::declval<typename GeomTraits::FT>()<=std::declval<typename GeomTraits::FT>())
   {
     typedef typename GeomTraits::FT       FT;
     typedef typename GeomTraits::Point_3  Point;
@@ -488,7 +487,7 @@ class AABB_tree;
 ///
 /// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits_3,
 /// and provide the geometric types as well as the intersection tests and computations.
-/// \tparam Primitive provide the type of primitives stored in the AABB_tree.
+/// \tparam AABBPrimitive provide the type of primitives stored in the AABB_tree.
 ///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
 ///
 /// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,

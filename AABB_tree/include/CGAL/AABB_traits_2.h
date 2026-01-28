@@ -158,8 +158,8 @@ public:
       CGAL::LARGER;
   }
 
-  typename GeomTraits::Boolean do_intersect_circle_iso_rectangle_2(const typename GeomTraits::Circle_2& circle,
-    const typename GeomTraits::Iso_rectangle_2& rec) const
+  auto do_intersect_circle_iso_rectangle_2(const typename GeomTraits::Circle_2& circle,
+    const typename GeomTraits::Iso_rectangle_2& rec) const -> decltype(std::declval<typename GeomTraits::FT>() <= std::declval<typename GeomTraits::FT>())
   {
     typedef typename GeomTraits::FT       FT;
     typedef typename GeomTraits::Point_2  Point;
@@ -381,6 +381,35 @@ public:
 // forward declaration
 template< typename AABBTraits>
 class AABB_tree;
+
+
+/// This traits class handles any type of 2D geometric
+/// primitives provided that the proper intersection tests and
+/// constructions are implemented. It handles points, rays, lines and
+/// segments as query types for intersection detection and
+/// computations, and it handles points as query type for distance
+/// queries.
+///
+/// \cgalModels{AABBTraits,AABBRayIntersectionTraits}
+///
+/// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits_2,
+/// and provide the geometric types as well as the intersection tests and computations.
+/// \tparam AABBPrimitive provide the type of primitives stored in the AABB_tree.
+///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
+///
+/// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
+///                 and as value type a `Bounding_box`.
+///                 If the type is `Default` the `Datum` must have the
+///                 member function `bbox()` that returns the bounding box of the primitive.
+///
+/// If the argument `GeomTraits` is a model of the concept \ref
+/// AABBRayIntersectionGeomTraits_2, this class is also a model of \ref
+/// AABBRayIntersectionTraits.
+///
+/// \sa `AABBTraits`
+/// \sa `AABB_tree`
+/// \sa `AABBPrimitive`
+/// \sa `AABBPrimitiveWithSharedData`
 
 template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
 class AABB_traits_2

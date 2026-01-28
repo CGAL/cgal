@@ -3609,7 +3609,7 @@ namespace CommonKernelFunctors {
       // x
       d = (std::max)(square(c.center().x() - r.xmin()), square(c.center().x() - r.xmax()));
 
-      if (certainly(d > c.squared_radius()))
+      if (certainly(d >= c.squared_radius()))
         return false;
 
       distance = d;
@@ -3617,21 +3617,21 @@ namespace CommonKernelFunctors {
       // y
       d = (std::max)(square(c.center().y() - r.ymin()), square(c.center().y() - r.ymax()));
 
-      if (certainly(d > c.squared_radius()))
+      if (certainly(d >= c.squared_radius()))
         return false;
 
       distance += d;
 
-      return (distance <= c.squared_radius());
+      return (distance < c.squared_radius());
     }
 
     Boolean
     operator()(const Circle_2& c, const Segment_2& s) const
     {
-      if ((c.center() - s.source()).squared_length() > c.squared_radius())
+      if ((c.center() - s.source()).squared_length() >= c.squared_radius())
         return false;
 
-      return (c.center() - s.target()).squared_length() <= c.squared_radius();
+      return (c.center() - s.target()).squared_length() < c.squared_radius();
     }
 
     Boolean
@@ -3670,7 +3670,7 @@ namespace CommonKernelFunctors {
       // x
       d = (std::max)(square(center.x() - c.xmin()), square(center.x() - c.xmax()));
 
-      if (certainly(d > s.squared_radius()))
+      if (certainly(d >= s.squared_radius()))
         return false;
 
       distance = d;
@@ -3678,7 +3678,7 @@ namespace CommonKernelFunctors {
       // y
       d = (std::max)(square(center.y() - c.ymin()), square(center.y() - c.ymax()));
 
-      if (certainly(d > s.squared_radius()))
+      if (certainly(d >= s.squared_radius()))
         return false;
 
       distance += d;
@@ -3686,12 +3686,12 @@ namespace CommonKernelFunctors {
       // z
       d = (std::max)(square(center.z() - c.zmin()), square(center.z() - c.zmax()));
 
-      if (certainly(d > s.squared_radius()))
+      if (certainly(d >= s.squared_radius()))
         return false;
 
       distance += d;
 
-      return (distance <= s.squared_radius());
+      return (distance < s.squared_radius());
     }
 
     Boolean
