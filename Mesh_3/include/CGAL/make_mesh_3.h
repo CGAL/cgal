@@ -617,7 +617,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     parameters::internal::Features_options features_param = choose_parameter(get_parameter(np, internal_np::features_options_param), parameters::features(domain).v);
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
-    parameters::internal::Surface_options surface_options_param = choose_parameter(get_parameter(np, internal_np::surface_only_param), parameters::surface_only().v);
+    parameters::internal::Surface_options surface_options_param = choose_parameter(get_parameter(np, internal_np::surface_only_param), parameters::internal::Surface_options{false});
 
     // range of initial points
     using Initial_point = std::pair<typename MeshDomain::Point_3, typename MeshDomain::Index>;
