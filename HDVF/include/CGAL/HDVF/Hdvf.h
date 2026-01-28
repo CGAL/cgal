@@ -647,16 +647,13 @@ Hdvf<ChainComplex>::Hdvf(const ChainComplex& K, int hdvf_opt, int dimension_rest
 // \brief find a valid Cell_pair for M in dimension q
 
 template<typename ChainComplex>
-Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found) const
-{
+Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found) const {
     found = false;
     Cell_pair p;
 
-    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL)) {
         // Search for +-1 in _F - iterate over rows
-        for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); (it_row != this->_F_row[q].end() && !found); ++it_row)
-        {
+        for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); (it_row != this->_F_row[q].end() && !found); ++it_row) {
             const Row_chain &row(OSM::cget_row(this->_F_row[q],*it_row));
 
             // Iterate through the entries of the row
@@ -677,24 +674,19 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found) const
 // find a valid Cell_pair containing tau for M in dimension q
 
 template<typename ChainComplex>
-Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const
-{
+Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const {
     found = false;
     Cell_pair p;
     if (this->_flag.at(q).at(tau) == SECONDARY)
         return p ; // Empty / found false
 
-    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL)) {
         // If tau is primary, search for gamma such that <f(tau),gamma>=+-1
-        if (this->_flag.at(q).at(tau) == PRIMARY)
-        {
+        if (this->_flag.at(q).at(tau) == PRIMARY) {
             // Get the column of tau
             const Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
-            for (typename Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
-            {
-                if ((it->second).is_invertible())
-                {
+            for (typename Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it) {
+                if ((it->second).is_invertible()) {
                     p.sigma = tau ;
                     p.tau = it->first ;
                     p.dim = q ;
@@ -703,14 +695,11 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const
             }
         }
         // If tau is critical, search for pi such that <f(pi),tau>=+-1
-        if (this->_flag.at(q).at(tau) == CRITICAL)
-        {
+        if (this->_flag.at(q).at(tau) == CRITICAL) {
             // Search along the row of tau
             const Row_chain& row(OSM::cget_row(this->_F_row.at(q), tau)) ;
-            for (typename Row_chain::const_iterator it = row.cbegin(); (it != row.cend() && !found); ++it)
-            {
-                if ((it->second).is_invertible())
-                {
+            for (typename Row_chain::const_iterator it = row.cbegin(); (it != row.cend() && !found); ++it) {
+                if ((it->second).is_invertible()) {
                     p.sigma = it->first ; // primary cell
                     p.tau = tau ; // critical cell
                     p.dim = q ;
@@ -724,15 +713,12 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const
 
 // find all the valid Cell_pair for M in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found) const
-{
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found) const {
     found = false;
     std::vector<Cell_pair> pairs;
-    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL)) {
         // Search for +-1 in _F - iterate over rows
-        for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); it_row != this->_F_row[q].end() ; ++it_row)
-        {
+        for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); it_row != this->_F_row[q].end() ; ++it_row) {
             const Row_chain &row(OSM::cget_row(this->_F_row[q],*it_row));
 
             // Iterate through the entries of the row
@@ -754,24 +740,19 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found) cons
 
 // find all the valid Cell_pair containing tau for M in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size_t tau) const
-{
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size_t tau) const {
     found = false;
     std::vector<Cell_pair> pairs;
     if (this->_flag.at(q).at(tau) == SECONDARY)
         return pairs ; // Empty / found false
 
-    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL)) {
         // If tau is primary, search for gamma such that <f(tau),gamma>=+-1
-        if (this->_flag.at(q).at(tau) == PRIMARY)
-        {
+        if (this->_flag.at(q).at(tau) == PRIMARY) {
             // Get the column of tau
             const Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
-            for (typename Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
-            {
-                if ((it->second).is_invertible())
-                {
+            for (typename Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it) {
+                if ((it->second).is_invertible()) {
                     Cell_pair p ;
                     p.sigma = tau ;
                     p.tau = it->first ;
@@ -782,13 +763,10 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size
             }
         }
         // If tau is critical, search for pi such that <f(pi),tau>=+-1
-        if (this->_flag.at(q).at(tau) == CRITICAL)
-        {
+        if (this->_flag.at(q).at(tau) == CRITICAL) {
             const Row_chain& row(OSM::get_row(this->_F_row.at(q), tau)) ;
-            for (typename Row_chain::const_iterator it = row.cbegin(); it != row.cend(); ++it)
-            {
-                if ((it->second).is_invertible())
-                {
+            for (typename Row_chain::const_iterator it = row.cbegin(); it != row.cend(); ++it) {
+                if ((it->second).is_invertible()) {
                     Cell_pair p ;
                     p.sigma = it->first ; // primary cell
                     p.tau = tau ; // critical cell
@@ -809,16 +787,13 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size
 
 // find a valid Cell_pair for W in dimension q
 template<typename ChainComplex>
-Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found) const
-{
+Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found) const {
     found = false;
     Cell_pair p;
 
-    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL)) {
         // Search for +-1 in _G - iterate over cols
-        for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); (it_col != this->_F_row[q].end() && !found); ++it_col)
-        {
+        for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); (it_col != this->_F_row[q].end() && !found); ++it_col) {
             const Column_chain &col(this->_G_col[q][*it_col]);
 
             // Iterate through the entries of the col
@@ -838,22 +813,17 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found) const
 
 // find a valid Cell_pair containing tau for W in dimension q
 template<typename ChainComplex>
-Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const
-{
+Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const {
     found = false;
     Cell_pair p;
     if (this->_flag.at(q).at(tau) == PRIMARY)
         return p ; // Empty / found false
 
-    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL)) {
         // If tau is primary, search for gamma such that <g(gamma),tau>=+-1
-        if (this->_flag.at(q).at(tau) == SECONDARY)
-        {
-            for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); (it_col != this->_G_col.at(q).end() && !found); ++it_col)
-            {
-                if (OSM::get_coefficient(this->_G_col.at(q), tau, *it_col).is_invertible())
-                {
+        if (this->_flag.at(q).at(tau) == SECONDARY) {
+            for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); (it_col != this->_G_col.at(q).end() && !found); ++it_col) {
+                if (OSM::get_coefficient(this->_G_col.at(q), tau, *it_col).is_invertible()) {
                     p.sigma = tau ; // secondary cell
                     p.tau = *it_col ; // critical cell
                     p.dim = q ;
@@ -862,13 +832,10 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const
             }
         }
         // If tau is critical, search for sigma such that <g(tau),sigma>=+-1
-        if (this->_flag.at(q).at(tau) == CRITICAL)
-        {
+        if (this->_flag.at(q).at(tau) == CRITICAL) {
             Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
-            for (typename Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
-            {
-                if ((it->second).is_invertible())
-                {
+            for (typename Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it) {
+                if ((it->second).is_invertible()) {
                     p.sigma = it->first ; // secondary cell
                     p.tau = tau ; // critical cell
                     p.dim = q ;
@@ -882,16 +849,13 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const
 
 // find all the valid Cell_pair for W in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found) const
-{
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found) const {
     found = false;
     std::vector<Cell_pair> pairs;
 
-    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL)) {
         // Search for +-1 in _G - iterate over cols
-        for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); it_col != this->_F_row[q].end(); ++it_col)
-        {
+        for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); it_col != this->_F_row[q].end(); ++it_col) {
             const Column_chain &col = this->_G_col[q][*it_col];
 
             // Iterate through the entries of the col
@@ -913,22 +877,17 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found) cons
 
 // find all the valid Cell_pair containing tau for W in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size_t tau) const
-{
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size_t tau) const {
     found = false;
     std::vector<Cell_pair> pairs;
     if (this->_flag.at(q).at(tau) == PRIMARY)
         return pairs ; // Empty / found false
 
-    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
-    {
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL)) {
         // If tau is primary, search for gamma such that <g(gamma),tau>=+-1
-        if (this->_flag.at(q).at(tau) == SECONDARY)
-        {
-            for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); it_col != this->_G_col.at(q).end(); ++it_col)
-            {
-                if ((get_coefficient(this->_G_col.at(q), tau, *it_col)).is_invertible())
-                {
+        if (this->_flag.at(q).at(tau) == SECONDARY) {
+            for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); it_col != this->_G_col.at(q).end(); ++it_col) {
+                if ((get_coefficient(this->_G_col.at(q), tau, *it_col)).is_invertible()) {
                     Cell_pair p ;
                     p.sigma = tau ; // secondary cell
                     p.tau = *it_col ; // critical cell
@@ -938,13 +897,10 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size
             }
         }
         // If tau is critical, search for sigma such that <g(tau),sigma>=+-1
-        if (this->_flag.at(q).at(tau) == CRITICAL)
-        {
+        if (this->_flag.at(q).at(tau) == CRITICAL) {
             Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
-            for (typename Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
-            {
-                if ((it->second).is_invertible())
-                {
+            for (typename Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it) {
+                if ((it->second).is_invertible()) {
                     Cell_pair p ;
                     p.sigma = it->first ; // secondary cell
                     p.tau = tau ; // critical cell
@@ -965,26 +921,21 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size
 
 // find a valid Cell_pair for MW in dimension q
 template<typename ChainComplex>
-Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const
-{
+Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const {
     found = false;
     Cell_pair p;
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // pi and sigma must at least satisfy that col pi of H_q and row sigma of H_q-1 are non zero
         // iterate on H_q and H_q-1 accordingly
-        for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi)
-        {
+        for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi) {
             const size_t pi = *it_pi ;
             Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
             Column_chain d_pi = this->_K.d(pi, q) ;
             Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
-            for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
-            {
+            for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma) {
                 Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.is_null())
-                {
+                if (!H11q1.is_null()) {
                     Row_chain cod_sigma = this->_K.cod(sigma, q) ;
                     Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
 
@@ -993,8 +944,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
-                    if (found)
-                    {
+                    if (found) {
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
                         p.dim = q ;
@@ -1008,19 +958,16 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const
 
 // find a valid Cell_pair containing tau for MW in dimension q
 template<typename ChainComplex>
-Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
-{
+Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const {
     found = false;
     Cell_pair p;
 
     if (this->_flag.at(q).at(tau) == CRITICAL)
         return p ; // Empty / found false
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // If tau is primary (rename pi), search for a valid sigma
-        if (this->_flag.at(q).at(tau) == PRIMARY)
-        {
+        if (this->_flag.at(q).at(tau) == PRIMARY) {
             const size_t pi(tau) ;
             // Col pi of H_q and proj_P(d(pi)) must at least be non empty
             Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
@@ -1031,22 +978,18 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                 return p ;
 
             // Search for sigma with col_sigma(H_q-1) non empty
-            for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
-            {
+            for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma) {
                 Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.is_null())
-                {
+                if (!H11q1.is_null()) {
                     // and proj_S(cod(sigma)) non empty
                     Row_chain cod_sigma = this->_K.cod(sigma, q) ;
                     Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-                    if (!projS_cod_sigma.is_null())
-                    {
+                    if (!projS_cod_sigma.is_null()) {
                         // test xi and xip
                         const Coefficient_ring xi = projS_cod_sigma * H11 ;
                         const Coefficient_ring xip = H11q1 * projP_d_pi ;
                         found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
-                        if (found)
-                        {
+                        if (found) {
                             p.sigma = pi ; // primary cell
                             p.tau = sigma ; // critical cell
                             p.dim = q ;
@@ -1055,8 +998,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                 }
             }
         }
-        else // cell is secondary
-        {
+        else { // cell is secondary
             // cout << "secondary" << endl ;
             const size_t sigma(tau) ;
             // Row sigma of H_q-1 and proj_S(cod(sigma)) must at least be non empty
@@ -1067,22 +1009,19 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                 return p ;
 
             // Search for pi with col pi of H_q non empty
-            for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi)
-            {
+            for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi) {
                 const size_t pi(*it_pi) ;
 
                 Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
                 Column_chain d_pi = this->_K.d(pi, q) ;
                 Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
                 // proj_P of d(pi) must also be non empty
-                if (!projP_d_pi.is_null())
-                {
+                if (!projP_d_pi.is_null()) {
                     // test xi and xip
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
-                    if (found)
-                    {
+                    if (found) {
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
                         p.dim = q ;
@@ -1096,26 +1035,21 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
 
 // find all the valid Cell_pair for MW in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) const
-{
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) const {
     found = false;
     std::vector<Cell_pair> pairs;
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // pi and sigma must at least satisfy that col pi of H_q and row sigma of H_q-1 are non zero
         // iterate on H_q and H_q-1 accordingly
-        for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi)
-        {
+        for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi) {
             const size_t pi = *it_pi ;
             Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
             Column_chain d_pi = this->_K.d(pi, q) ;
             Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
-            for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
-            {
+            for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma) {
                 Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.is_null())
-                {
+                if (!H11q1.is_null()) {
                     Row_chain cod_sigma = this->_K.cod(sigma, q) ;
                     Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
 
@@ -1124,8 +1058,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) con
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
-                    if (found)
-                    {
+                    if (found) {
                         Cell_pair p;
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
@@ -1142,18 +1075,15 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) con
 
 // find all the valid Cell_pair containing tau for MW in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, size_t tau) const
-{
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, size_t tau) const {
     found = false;
     std::vector<Cell_pair> pairs;
     if (this->_flag.at(q).at(tau) == CRITICAL)
         return pairs ; // Empty / found false
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // If tau is primary (rename pi), search for a valid sigma
-        if (this->_flag.at(q).at(tau) == PRIMARY)
-        {
+        if (this->_flag.at(q).at(tau) == PRIMARY) {
             const size_t pi(tau) ;
             // Col pi of H_q and proj_P(d(pi)) must at least be non empty
             Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
@@ -1164,22 +1094,18 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                 return pairs ;
 
             // Search for sigma with col_sigma(H_q-1) non empty
-            for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
-            {
+            for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma) {
                 Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.is_null())
-                {
+                if (!H11q1.is_null()) {
                     // and proj_S(cod(sigma)) non empty
                     Row_chain cod_sigma = this->_K.cod(sigma, q) ;
                     Row_chain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-                    if (!projS_cod_sigma.is_null())
-                    {
+                    if (!projS_cod_sigma.is_null()) {
                         // test xi and xip
                         const Coefficient_ring xi = projS_cod_sigma * H11 ;
                         const Coefficient_ring xip = H11q1 * projP_d_pi ;
                         found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
-                        if (found)
-                        {
+                        if (found) {
                             Cell_pair p ;
                             p.sigma = pi ; // primary cell
                             p.tau = sigma ; // critical cell
@@ -1190,8 +1116,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                 }
             }
         }
-        else // cell is secondary
-        {
+        else { // cell is secondary
             // cout << "secondary" << endl ;
             const size_t sigma(tau) ;
             // Row sigma of H_q-1 and proj_S(cod(sigma)) must at least be non empty
@@ -1202,22 +1127,19 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                 return pairs ;
 
             // Search for pi with col pi of H_q non empty
-            for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi)
-            {
+            for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi) {
                 const size_t pi(*it_pi) ;
 
                 Column_chain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
                 Column_chain d_pi = this->_K.d(pi, q) ;
                 Column_chain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
                 // proj_P of d(pi) must also be non empty
-                if (!projP_d_pi.is_null())
-                {
+                if (!projP_d_pi.is_null()) {
                     // test xi and xip
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
-                    if (found)
-                    {
+                    if (found) {
                         Cell_pair p ;
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
@@ -1239,8 +1161,7 @@ template<typename ChainComplex>
 void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
     //----------------------------------------------- Submatrices of H ----------------------------------------------------
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // Output operation details to the console
         std::cout << "R of " << pi << "(dim " << q << ") / " << sigma << "(dim " << q + 1 << ")" << std::endl;
 
@@ -1360,8 +1281,7 @@ template<typename ChainComplex>
 void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
     //----------------------------------------------- Submatrices of F ----------------------------------------------------
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // Output the operation details to the console
         std::cout << "M of " << q << "(" << pi << "," << gamma << ")" << std::endl;
 
@@ -1446,8 +1366,7 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         OSM::set_row(this->_DD_col[q + 1], pi, D11 * F11_inv); // Set the row pi in this->_DD_col[q + 1]
 
         // Update this->_G_col (for dimension q) and this->_DD_col (for dimension q)
-        if (q>0)
-        {
+        if (q>0) {
             // Extract boundary chain and project it
             Column_chain c = this->_K.d(pi, q); // Boundary of pi in dimension q
             Column_chain projection_p(this->projection(c, PRIMARY, q-1)); // Project boundary chain to PRIMARY
@@ -1480,8 +1399,7 @@ template<typename ChainComplex>
 void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // Output the operation details to the console
         std::cout << "W of " << q << "(" << sigma << "," << gamma << ")" << std::endl;
 
@@ -1571,8 +1489,7 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         OSM::set_column(this->_DD_col[q], sigma, D11_q * G11_inv) ;
 
         // Update this->_F_row (for dimension q) and this->_DD_col (for dimension q+1)
-        if (q < this->_K.dimension())
-        {
+        if (q < this->_K.dimension()) {
             // Extract boundary chain and project it
             Row_chain c = this->_K.cod(sigma, q); // Boundary of sigma in dimension q
             Row_chain projection_s(this->projection(c, SECONDARY, q+1)); // Project boundary chain to SECONDARY
@@ -1604,8 +1521,7 @@ template<typename ChainComplex>
 void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
 
-    if (this->_hdvf_opt & OPT_FULL)
-    {
+    if (this->_hdvf_opt & OPT_FULL) {
         // Output the operation details to the console
         std::cout << "MW of " << q << "(" << pi << "," << sigma << ")" << std::endl;
 
