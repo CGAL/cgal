@@ -180,13 +180,13 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
                                    --build-config "$<CONFIG>"
                                    --output-on-failure
                                    ${extra_ctest_args})
-  set_property(TEST "test_____${test_name}" APPEND PROPERTY DEPENDS "config___${test_name}")
   set_property(TEST "test_____${test_name}" APPEND PROPERTY ENVIRONMENT CTEST_NO_TESTS_ACTION=error)
 
   set_property(TEST "setup____${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_fixture")
+  set_property(TEST "config___${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_fixture")
+  set_property(TEST "config___${test_name}" APPEND PROPERTY DEPENDS "setup___${test_name}")
   set_property(TEST "cleanup__${test_name}" APPEND PROPERTY FIXTURES_CLEANUP "${test_name}_fixture")
-  set_property(TEST "config___${test_name}"
-                    "test_____${test_name}"
+  set_property(TEST "test_____${test_name}"
               APPEND PROPERTY FIXTURES_REQUIRED ${arg_FIXTURES_REQUIRED})
 
   set_property(TEST "setup____${test_name}"
