@@ -29,7 +29,8 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal{
+namespace internal {
+
 template <typename PolygonMesh,
           typename FaceRange,
           typename NamedParameters = parameters::Default_named_parameters,
@@ -129,7 +130,7 @@ kernel(const FaceRange &face_range,
   }
 
 
-  // Get the planes and eventually shuffle them
+  // Get the planes and possibly shuffle them
   Three_point_cut_plane_traits<EK> kgt;
   auto oriented_side = kgt.oriented_side_3_object();
   auto orthogonal_vector = kgt.construct_orthogonal_vector_3_object();
@@ -275,7 +276,7 @@ kernel(const FaceRange &face_range,
   *
   * @tparam FaceRange a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
   * @tparam PolygonMeshIn a model of `VertexListGraph`, `HalfedgeListGraph` and `FaceListGraph`
-  * @tparam PolygonMeshOut a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam PolygonMeshOut a model of `MutableFaceGraph`, `VertexListGraph` and `FaceListGraph`
   *
   * @tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
