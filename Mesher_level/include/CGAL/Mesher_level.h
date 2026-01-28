@@ -13,6 +13,9 @@
 #ifndef CGAL_MESHER_LEVEL_H
 #define CGAL_MESHER_LEVEL_H
 
+#include <CGAL/IO/io.h>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 namespace CGAL {
@@ -291,7 +294,7 @@ public:
    * @todo Merge with try_to_refine_element().
    */
   template <class Mesh_visitor>
-  bool process_one_element(Mesh_visitor visitor)
+  bool process_one_element(Mesh_visitor& visitor)
   {
     Element e = get_next_element();
 
@@ -305,9 +308,9 @@ public:
 
   template <class Mesh_visitor>
   Mesher_level_conflict_status
-  try_to_refine_element(Element e, Mesh_visitor visitor)
+  try_to_refine_element(Element e, Mesh_visitor& visitor)
   {
-    const Point& p = refinement_point(e);
+    Point p = refinement_point(e);
 
     before_conflicts(e, p, visitor);
 
@@ -327,16 +330,36 @@ public:
     case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
       std::cerr << "rejected (permanent)\n";
       break;
+    default:
+      std::cerr << "rejected (other reason)\n";
     }
 #endif
 
     if(result == NO_CONFLICT)
     {
+      auto geom = triangulation().geometry(e);
+
       before_insertion(e, p, zone, visitor);
 
       Vertex_handle v = insert(p, zone);
 
       after_insertion(v, visitor);
+
+      if(false == no_longer_element_to_refine() &&
+         geom == triangulation().geometry(get_next_element()) &&
+         p == refinement_point(get_next_element()))
+      {
+        std::stringstream ss;
+        ss.precision(std::cerr.precision());
+        IO::set_mode(ss, IO::get_mode(std::cerr));
+        ss << "Mesher_level::process_one_element(): "
+          << "the element is not in conflict with its refinement point!\n";
+        ss << "  element geometry: " << triangulation().geometry(e) << '\n';
+        ss << "  refinement point: " << refinement_point(e) << '\n';
+        ss << "Stopping the meshing algorithm to avoid an infinite loop.\n";
+        CGAL_error_msg(ss.str().c_str());
+      }
+
 
       return NO_CONFLICT;
     }

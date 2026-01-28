@@ -10,6 +10,11 @@ Release date: July 2026
 - Made the `Arr_linear_traits_2` a model of the new concept.
 - Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
 
+### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh2)
+
+- The implementation is more robust to degenerate inputs, such as polygons with microscopic edges, or nearly colinear points.
+- **Breaking change**: The concept [`DelaunayMeshTraits_2`](https://doc.cgal.org/6.2/Mesh_2/classDelaunayMeshTraits__2.html) now requires the functor `Construct_bbox_2`.
+
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
 - **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
@@ -18,7 +23,7 @@ Release date: July 2026
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
 - The old function names are still available but marked as deprecated for backward compatibility.
 
-### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
+### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection)
 
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) that extends the support plane of the seed face without refitting the plane to the region
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Line_segment_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Line__segment__region.html) that extends the support line of the seed segment without refitting the line to the region
@@ -991,8 +996,7 @@ Release date: July 2021
   - Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
   - Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
 
-A comprehensive list of the supported file formats is available in the Stream_support package
-[here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats);
+A comprehensive list of the supported file formats is available in [the Stream_support package here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats);
 inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html)
 can be used to find out which CGAL data structures can be used given a specific file format.
 

@@ -879,6 +879,11 @@ public:
     return v->point();
   }
 
+  auto geometry(Cell_handle c) const { return tetrahedron(c); }
+  auto geometry(const Facet& f) const { return triangle(f); }
+  auto geometry(const Edge& e) const { return segment(e); }
+  auto geometry(Vertex_handle v) const { return point(v); }
+
   // TEST IF INFINITE FEATURES
   bool is_infinite(const Vertex_handle v) const { return v == infinite_vertex(); }
   bool is_infinite(const Cell_handle c) const
