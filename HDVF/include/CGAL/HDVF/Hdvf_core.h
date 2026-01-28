@@ -1,0 +1,1452 @@
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+
+#ifndef CGAL_HDVF_HDVF_CORE_H
+#define CGAL_HDVF_HDVF_CORE_H
+
+#include <CGAL/license/HDVF.h>
+
+#include <vector>
+#include <cassert>
+#include <iostream>
+#include <random>
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/OSM/Bitboard.h>
+
+namespace CGAL {
+namespace Homological_discrete_vector_field {
+
+/** \brief HDVF Enum for the label of cells. */
+enum PSC_flag {
+    PRIMARY,
+    SECONDARY,
+    CRITICAL,
+    NONE // For duality and persistence
+};
+
+/** \brief HDVF option (compute only reduced boundary). */
+const int OPT_BND = 0b0001;
+/** \brief HDVF option (compute only reduced boundary and f). */
+const int OPT_F = 0b0010;
+/** \brief HDVF option (compute only reduced boundary and g). */
+const int OPT_G = 0b0100;
+/** \brief HDVF option (compute full reduction). */
+const int OPT_FULL = 0b1000;
+
+
+/** \brief Structure to represent data for HDVF operations (pairs of cells).
+ *
+ * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
+ */
+struct Cell_pair {
+    /// Index of the first cell
+    size_t sigma;
+    /// Index of the second cell
+    size_t tau;
+    /// Dimension of cells: `dim`/`dim`+1 for A and R, `dim`/`dim` for other operations
+    int dim;
+};
+
+inline bool operator==(const Cell_pair& pair1, const Cell_pair& pair2) {
+    return ((pair1.sigma==pair2.sigma) && (pair1.tau==pair2.tau) && (pair1.dim==pair2.dim));
+}
+
+/** \brief Overload of operator<< for Cell_pair type. */
+inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>& pairs) {
+    for (const auto& pair : pairs) {
+        out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
+    }
+    return out ;
+}
+
+/*!
+ \ingroup PkgHDVFRef
+
+ The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short). The ring of coefficients for homology computation must be a model of `IntegralDomainWithoutDivision`.
+
+ An enumeration `PSC_flag` is defined in the `Homological_discrete_vector_field` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE `PSC_flag` is used in child classes (such as `Hdvf_duality`) when computing relative homology on a sub-complex.
+ The `PSC_flag` of each cell is stored in an appropriate structure and getters are provided to access to this information.
+
+ The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
+
+ The class provides perfect HDVF construction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs by pairing iteratively critical cells through the `A()` operation.
+
+ If the user wishes to build an HDVF using other criteria, several `find_pair_A()` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
+
+ Homology/cohomology generators are actually algebraic objects, namely chains. Methods `homology_chain()` and `cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients.
+
+
+ \cgalModels{HDVF}
+
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+ \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Sparse_chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
+ \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::Sparse_matrix`), providing the type of sparse matrices used.
+ */
+
+
+template<typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix>
+class Hdvf_core {
+public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+
+    /*!
+     Type of column-major chains
+     */
+    typedef ChainType<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+
+    /*!
+     Type of row-major chains
+     */
+    typedef ChainType<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
+
+    /*!
+     Type of column-major sparse matrices
+     */
+    typedef SparseMatrixType<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+
+    /*!
+     Type of row-major sparse matrices
+     */
+    typedef SparseMatrixType<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
+
+protected:
+    /* \brief Flags of the cells.
+     * _flag.at(q) contains the flags of cells of dimension q
+     */
+    std::vector<std::vector<PSC_flag>> _flag;
+    /* \brief Number of `PRIMARY` cells. */
+    std::vector<size_t> _nb_P;
+    /* \brief Number of `SECONDARY` cells. */
+    std::vector<size_t> _nb_S;
+    /* \brief Number of `CRITICAL` cells. */
+    std::vector<size_t> _nb_C;
+    /* \brief Row matrices for f. */
+    std::vector<Row_matrix> _F_row;
+    /* \brief Column matrices for g. */
+    std::vector<Column_matrix> _G_col;
+    /* \brief Column matrices for h. */
+    std::vector<Column_matrix> _H_col;
+    /* \brief Column matrices for reduced boundary. */
+    std::vector<Column_matrix> _DD_col;
+
+    /* \brief Reference to the underlying complex. */
+    const ChainComplex& _K;
+
+    /* \brief Hdvf_core options for computation (computation of partial reduction). */
+    int _hdvf_opt;
+
+    /* \brief Restriction of HDVF computation to a single dimension. */
+    int _dimension_restriction;
+    int _min_dimension;
+    int _max_dimension;
+
+public:
+    /** \brief Returns the dimension of Hdvf computation.
+     *
+     * If HDVF computation is full, returns -1; otherwise, returns the dimension along which the HDVF is computed.
+     */
+    inline int dimension_restriction() const { return _dimension_restriction; }
+
+    /** \brief Changes the dimension of Hdvf computation.
+     *
+     * Set -1 for full computation, and a positive value lower than the complex dimension for a computation restricted to dimension `dimension`.
+     *
+     * \param dimension Dimension along which the computation is restricted (-1 for full computation).
+     */
+    inline void dimension_restriction(int dimension) {
+        if ((dimension>=-1) && (dimension <= _K.dimension())) {
+            // Update dimension restriction
+            _dimension_restriction = dimension;
+            // Update _min_dimension and _max_dimension accordingly
+            if (_dimension_restriction == -1) {
+                _min_dimension = 0;
+                _max_dimension = _K.dimension();
+            }
+            else
+                _min_dimension = _max_dimension = _dimension_restriction;
+            // Get necessary boundary matrices
+            int _min_dim, _max_dim;
+            if (_dimension_restriction==-1) {
+                _min_dim = 0;
+                _max_dim = _K.dimension();
+            }
+            else {
+                if (_min_dimension > 0)
+                    _min_dim =  _min_dimension-1;
+                else
+                    _min_dim = 0;
+
+                if (_max_dimension < _K.dimension())
+                    _max_dim = _max_dimension+1;
+                else
+                    _max_dim = _K.dimension();
+            };
+
+            for (int q = _min_dim; q <= _max_dim; ++q) {
+                if (_DD_col.at(q).is_empty())
+                    _DD_col.at(q) = _K.boundary_matrix(q);
+            }
+        }
+        else {
+            std::cerr << "dimension_restriction () error, provided incoherent argument " << dimension << std::endl;
+        }
+    }
+
+public:
+    /**
+     * \brief Constructor from a chain complex.
+     *
+     * Builds an "empty" HDVF_core associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
+     *
+     * \param K A chain complex (a model of `AbstractChainComplex`)
+     * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
+     */
+    Hdvf_core(const ChainComplex& K, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) ;
+
+    /*
+     * \brief Constructor by copy.
+     *
+     * Builds a HDVF by copy from another, including options.
+     *
+     * \param hdvf An initial HDVF.
+     */
+    Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt), _dimension_restriction(hdvf._dimension_restriction), _min_dimension(hdvf._min_dimension), _max_dimension(hdvf._max_dimension) { }
+
+    /*
+     * \brief HDVF_core destructor. */
+    ~Hdvf_core() { }
+
+    /** \brief Checks if the pair of cells \f$(\gamma, \gamma')\f$, of dimensions q / q+1, is valid for A.
+     *
+     * The pair is valid if \f$\langle \mathrm d(\gamma),\gamma' \rangle\f$ is invertible.
+     *
+     * \param gamma Index of the first cell (dimension `q`).
+     * \param gamma_prime Index of the second cell (dimension `q+1`).
+     * \param q Lower dimension of cells.
+     */
+
+    bool is_valid_pair_for_A(size_t gamma, size_t gamma_prime, int q) {
+        Coefficient_ring coef(OSM::get_coefficient(_DD_col.at(q+1),gamma, gamma_prime));
+        return coef.is_invertible();
+    }
+
+    /**
+     * \brief Finds a valid Cell_pair of dimension q / q+1 for A.
+     *
+     * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`.
+     *
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     */
+    virtual Cell_pair find_pair_A(int q, bool &found) const;
+
+    /**
+     * \brief Finds a valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
+     *
+     * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`. If the cell index is incorrect (larger than the number of cells in the dimension), `found` is set to `false`.
+     *
+     * \param q Dimension of the cell `gamma`.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param gamma Index of a cell to pair.
+     */
+    virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
+
+    /**
+     * \brief Finds *all* valid Cell_pair of dimension q / q+1 for A.
+     *
+     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
+     * It returns a vector of such pairs.
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false` and the function returns an empty vector.
+     *
+     * \param q Lower dimension of the pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     */
+    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
+
+    /**
+     * \brief Finds *all* valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
+     *
+     * The function searches all `CRITICAL` cells \f$\gamma'\f$ such that one of the following conditions holds:
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     * It returns a vector of such pairs.
+     *
+     * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`. If the cell index is incorrect (larger than the number of cells in the dimension), `found` is set to `false`. In both cases, the function returns an empty vector.
+     *
+     * \param q Dimension of the cell `gamma`.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param gamma Index of a cell to pair.
+     */
+    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
+
+    /**
+     * \brief A operation: pairs critical cells.
+     *
+     * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes `PRIMARY`, \f$\gamma_2\f$ becomes `SECONDARY`. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param gamma1 First cell of the pair (dimension `q`)
+     * \param gamma2 Second cell of the pair (dimension `q+1`)
+     * \param q Dimension of the pair
+     */
+    void A(size_t gamma1, size_t gamma2, int q);
+
+    /**
+     * \brief Computes a perfect HDVF.
+     *
+     * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A`()) and applies the corresponding `A()` operation.
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+     * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
+     *
+     * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
+     *
+     * \param verbose If this parameter is `true`, all intermediate reductions are printed out.
+     *
+     * \return The vector of all `Cell_pair` paired with A.
+     */
+    std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false);
+
+    /**
+     * \brief Computes a random perfect HDVF.
+     *
+     * As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
+     *
+     * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
+     *
+     * \warning This method is slower that `compute_perfect_hdvf()` (finding out all possible valid pairs requires additional time).
+     *
+     * \param verbose If this  parameter is `true`, all intermediate reductions are printed out.
+     *
+     * \return The vector of all pairs of cells used for apply A.
+     */
+    std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
+
+    /**
+     * \brief Tests if a HDVF is perfect.
+     *
+     * The function returns `true` if the HDVF is perfect, that is, if the reduced boundary matrix is null and `false` otherwise. The functions tests all dimensions if `dimension_restriction` is -1 (default value) and tests only dimension `dimension_restriction` otherwise.
+     *
+     *\param dimension_restriction If positive, restricts the test to a single dimension , if -1 is provided, all dimensions are tested, if -2 is provided (default) test is carried out according to the HDVF dimension restriction value.
+     */
+    bool is_perfect_hdvf(int dimension_restriction = -2) {
+        bool res = true ;
+
+        if (dimension_restriction == -2)
+            dimension_restriction = _dimension_restriction;
+
+        int q = (dimension_restriction==-1)?0:_min_dimension, max_dim = (dimension_restriction==-1)?_K.dimension():_max_dimension ;
+        while ((q<=max_dim) && res) {
+            res = res && _DD_col.at(q).is_null() ;
+            ++q;
+        }
+        return res ;
+    }
+
+    // Hdvf_core getters
+
+    /**
+     * \brief Gets cells with a given `PSC_flag` in any dimension.
+     *
+     * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`. Indices are sorted by increasing value.
+     *
+     * \param flag PSC_flag to select.
+     */
+
+    // !!! Why should it be virtual for duality?????
+
+    virtual std::vector<std::vector<size_t> > psc_flags (PSC_flag flag) const ;
+
+    /**
+     * \brief Gets cells with a given `PSC_flag` in dimension `q`.
+     *
+     * The function returns the vector of cells of dimension `q` with a given `PSC_flag`. Indices are sorted by increasing value.
+     *
+     * \param flag PSC_flag to select.
+     * \param q Dimension visited.
+     */
+    virtual std::vector<size_t> psc_flags (PSC_flag flag, int q) const ;
+
+    /*!
+     * \brief Gets the PSC_flag of the cell `tau` in dimension `q`.
+     *
+     * \param tau Index of the cell.
+     * \param q Dimension of the cell.
+     */
+    PSC_flag psc_flag (size_t tau, int q) const { return _flag.at(q).at(tau); }
+
+    /**
+     * \brief Gets HDVF computation option.
+     */
+    int hdvf_opts () const { return _hdvf_opt ; }
+
+    /**
+     * \brief Gets the row-major matrix of \f$f\f$ (from the reduction associated to the HDVF).
+     */
+    const Row_matrix& matrix_f (int q) const { return _F_row.at(q); }
+
+    /**
+     * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
+     */
+    const Column_matrix& matrix_g (int q) const { return _G_col.at(q); }
+
+    /**
+     * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
+     */
+    const Column_matrix& matrix_h (int q) const { return _H_col.at(q); }
+
+    /**
+     * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
+     */
+    const Column_matrix& matrix_dd (int q) const { return _DD_col.at(q); }
+
+    /**
+     * \brief Writes the matrices of the reduction.
+     *
+     * Writes the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
+     *
+     * If `dimension_restriction` is -1, writes matrices in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \param out Output stream (by default, writes the complex to `std::cout`).
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs matrices in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    std::ostream& write_matrices(std::ostream &out = std::cout, int dimension_restriction = -2) const;
+
+    /**
+     * \brief Writes the homology and cohomology reduction information.
+     *
+     * Writes \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
+     *
+     * If `dimension_restriction` is -1, writes the reduction in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \param out Output stream (by default, writes the complex to `std::cout`).
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    std::ostream& write_reduction(std::ostream &out = std::cout, int dimension_restriction = -2) const;
+
+
+    /**
+     * \brief Exports primary/secondary/critical integers encoding labels (in particular for vtk export)
+     *
+     * The method exports the labels of cells.
+     *
+     * If `dimension_restriction` is -1, exports the labels of cells in any dimensions. If `dimension_restriction` is positive, exports only flags of dimension `dimension_restriction` (cells of other dimensions are labeled as 2 for`NONE`  flag). If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \return A vector containing, for each dimension, the vector of labels by cell index.
+     *
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs labels in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    virtual std::vector<std::vector<int> > psc_labels (int dimension_restriction = -2) const {
+        if (dimension_restriction == -2)
+            dimension_restriction = _dimension_restriction;
+
+        std::vector<std::vector<int> > labels(_K.dimension()+1) ;
+        for (int q=0; q<=_K.dimension(); ++q) {
+            for (size_t i = 0; i<_K.number_of_cells(q); ++i) {
+                if ((dimension_restriction==-1) || (q==dimension_restriction)) {
+                    if (_flag.at(q).at(i) == PRIMARY)
+                        labels.at(q).push_back(-1) ;
+                    else if (_flag.at(q).at(i) == SECONDARY)
+                        labels.at(q).push_back(1) ;
+                    else if (_flag.at(q).at(i) == CRITICAL)
+                        labels.at(q).push_back(0) ;
+                    else // NONE
+                        labels.at(q).push_back(2) ;
+                }
+                else
+                    labels.at(q).push_back(2) ;
+            }
+        }
+        return labels ;
+    }
+
+    /**
+     * \brief Gets homology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     *
+     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
+     *
+     * \return A column-major chain.
+     */
+    virtual Column_chain homology_chain (size_t cell_index, int q) const {
+        if ((q<0) || (q>_K.dimension()))
+            throw "Error : homology_chain with dim out of range" ;
+        if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+            Column_chain g_cell(OSM::get_column(_G_col.at(q), cell_index)) ;
+            // Add 1 to the cell
+            g_cell.set_coefficient(cell_index, 1) ;
+            return g_cell ;
+        }
+        else
+            throw "Error : trying to export g_chain without proper Hdvf_core option" ;
+    }
+
+    /**
+     * \brief Gets cohomology generators associated to `cell_index` (critical cell) of dimension  `q` (used by vtk export).
+     *
+     * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
+     *
+     * \param cell_index Index of the (critical) cell.
+     * \param dim Dimension of the (critical) cell.
+     *
+     * \return A column-major chain.
+     */
+    virtual Column_chain cohomology_chain (size_t cell_index, int dim) const {
+        if ((dim<0) || (dim>_K.dimension()))
+            throw "Error : cohomology_chain with dim out of range" ;
+        if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+            Row_chain fstar_cell(OSM::get_row(_F_row.at(dim), cell_index)) ;
+            // Add 1 to the cell
+            fstar_cell.set_coefficient(cell_index, 1) ;
+
+            return fstar_cell.transpose() ;
+
+        }
+        else
+            throw "Error : trying to export fstar_chain without proper Hdvf_core option" ;
+    }
+
+    /**
+     * \brief Writes a HDVF together with the associated reduction (f, g, h, d matrices)
+     *
+     * Writes a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param out Output stream.
+     */
+    std::ostream& write_hdvf_reduction(std::ostream& out) ;
+
+    /**
+     * \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
+     *
+     * Writes a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param filename Output file name.
+     */
+    void write_hdvf_reduction(std::string filename) {
+        std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
+        if ( ! out_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        write_hdvf_reduction(out_file) ;
+
+        out_file.close();
+    }
+
+    /**
+     * \brief Loads a HDVF together with the associated reduction (f, g, h, d matrices)
+     *
+     * Load a HDVF and its reduction from a stream in `hdvf` file format, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param in_stream Input stream.
+     */
+    std::istream& read_hdvf_reduction(std::istream& in_stream) ;
+
+    /**
+     * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
+     *
+     * Load a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param filename Input file name.
+     */
+    void read_hdvf_reduction(std::string filename) {
+        std::ifstream in_file (filename);
+        if ( ! in_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        read_hdvf_reduction(in_file);
+
+        in_file.close();
+    }
+
+    /** \brief Compares the HDVF with another HDVF over the same underlying complex.
+     *
+     * \param other Other HDVF to compare.
+     * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
+     */
+
+    bool compare(const Hdvf_core& other, bool full_compare = false) {
+        bool res;
+        int d = _flag.size(), d_other = other._flag.size();
+        res = (d == d_other);
+        if (!res) {
+            std::cerr <<"HDVF compare: dimensions differ" << std::endl;
+            return false;
+        }
+        // Compare flags in each dimension
+        for (int q=0; res && (q<_K.dimension()); ++q)
+            res = res && (_flag.at(q) == other._flag.at(q)) ;
+        if (!res) {
+            std::cerr <<"HDVF compare: flags differ" << std::endl;
+            return false;
+        }
+
+        // Check if full_compare is required
+        if (!full_compare)
+            return res;
+
+        // ----- Only for full_compare
+        // F
+        if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+            for (int q=0; res && (q<_K.dimension()); ++q)
+                res = res && (_F_row.at(q) == other._F_row.at(q));
+            if (!res) {
+                std::cerr <<"HDVF compare: F matrices differ" << std::endl;
+                return false;
+            }
+        }
+        // G
+        if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+            for (int q=0; res && (q<_K.dimension()); ++q)
+                res = res && (_G_col.at(q) == other._G_col.at(q));
+            if (!res) {
+                std::cerr <<"HDVF compare: G matrices differ" << std::endl;
+                return false;
+            }
+        }
+        // H
+        for (int q=0; res && (q<_K.dimension()); ++q)
+            res = res && (_H_col.at(q) == other._H_col.at(q));
+        if (!res) {
+            std::cerr <<"HDVF compare: H matrices differ" << std::endl;
+            return false;
+        }
+        // DD
+        for (int q=0; res && (q<_K.dimension()); ++q)
+            res = res && (_DD_col.at(q) == other._DD_col.at(q));
+        if (!res) {
+            std::cerr <<"HDVF compare: DD matrices differ" << std::endl;
+            return false;
+        }
+        return res;
+    }
+
+    /** \brief Comparison operator.
+     *
+     * Compares the HDVF with `other` HDVF (fast comparison testing only HDVF flags).
+     */
+    bool operator==(const Hdvf_core& other) {
+        return compare(other, true);
+    }
+
+protected:
+    /* \brief Project a chain onto a given PSC_flag
+     * The methods cancels all the coefficients of the chain of dimension `q` that do not correspond to`PSC_flag`. This is actually an implementation of the projection operator onto the sub A-module generated by cells of PSC_flag `flag`.
+     *
+     * \param chain The chain projected.
+     * \param flag The PSC_flag onto which the chain is projected.
+     * \param q Dimension of the chain
+     *
+     * \result Returns a copy of `chain` where only coefficients of cells of PSC_flag `flag` are kept (all other coefficients are cancelled).
+     */
+    template<int StorageFormat>
+    ChainType<Coefficient_ring, StorageFormat> projection(const ChainType<Coefficient_ring, StorageFormat>& chain, PSC_flag flag, int q) const {
+        // Create a new chain to store the result
+        // Better to initialize 'result' directly with the correct size and iterate over it
+        ChainType<Coefficient_ring, StorageFormat> result(chain);
+
+        // Iterate over each element of the chain
+        std::vector<size_t> tmp ;
+        for (typename ChainType<Coefficient_ring, StorageFormat>::const_iterator it = result.cbegin(); it != result.cend(); ++it) {
+            size_t cell_index = it->first;
+            Coefficient_ring value = it->second;
+
+            // Check the PSC_flag of the corresponding cell
+            if (_flag[q][cell_index] != flag) {
+                // Mark for cancellation
+                tmp.push_back(cell_index) ;
+
+            }
+        }
+        // Cancel all coefficients of tmp
+        result /= tmp ;
+        return result;
+    }
+
+    /* \brief Display a text progress bar. */
+    void progress_bar(size_t i, size_t n) {
+        const size_t step(n>10?n/10:1) ; // TODO
+        if ((i%step)==0) {
+            const float percentage(float(i)/(n-1)) ;
+            const char PBSTR[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" ;
+            const size_t PBWIDTH(60) ;
+            size_t val = (size_t) (percentage * 100);
+            size_t lpad = (size_t) (percentage * PBWIDTH);
+            size_t rpad = PBWIDTH - lpad;
+            printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+            fflush(stdout);
+        }
+        if (i==(n-1))
+            std::cout << std::endl ;
+    }
+
+};
+
+// Constructor for the Hdvf_core class
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : _K(K), _dimension_restriction(dimension_restriction) {
+    // Get the dimension of the simplicial complex
+    int dim = _K.dimension();
+
+    // Compute mminimum and maximum dimensions of computation according to the value of `_dimension_restriction`
+    if ((_dimension_restriction < 0) || (_dimension_restriction > dim))
+        _dimension_restriction = -1;
+    if (_dimension_restriction == -1) {
+        _min_dimension = 0;
+        _max_dimension = dim;
+    }
+    else
+        _min_dimension = _max_dimension = _dimension_restriction;
+
+    //    std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;
+    // Hdvf_core options
+    _hdvf_opt = hdvf_opt ;
+
+    // Resize the _DD_col vector to hold dim+1 elements
+    _DD_col.resize(dim + 1);
+
+    // Resize the _F_row vector to hold dim+1 elements
+    if (_hdvf_opt & (OPT_FULL | OPT_F))
+        _F_row.resize(dim + 1);
+
+    // Resize the _G_col vector to hold dim+1 elements
+    if (_hdvf_opt & (OPT_FULL | OPT_G))
+        _G_col.resize(dim + 1);
+
+    // Resize the _H_col vector to hold dim+1 elements
+    if (_hdvf_opt & OPT_FULL)
+        _H_col.resize(dim + 1);
+
+    // Resize _flag and count vectors to hold dim+1 elements
+    _flag.resize(dim + 1);
+    _nb_P.resize(dim + 1);
+    _nb_S.resize(dim + 1);
+    _nb_C.resize(dim + 1);
+
+    // Initialize matrices and counters
+
+    for (int q = 0; q <= dim; q++) {
+        // Initialize _F_row[q] as a row matrix with dimensions (dim(q) x dim(q))
+        if (_hdvf_opt & (OPT_FULL | OPT_F))
+            _F_row[q] = Row_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
+
+        // Initialize _G_col[q] as a column matrix with dimensions (dim(q) x dim(q))
+        if (_hdvf_opt & (OPT_FULL | OPT_G))
+            _G_col[q] = Column_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
+
+        // Initialize _H_col[q] as a column matrix with dimensions (dim(q+1) x dim(q))
+        if (_hdvf_opt & OPT_FULL)
+            _H_col[q] = Column_matrix(_K.number_of_cells(q + 1), _K.number_of_cells(q));
+
+        // Initialize the counters for PRIMARY, SECONDARY, and CRITICAL cells
+        _nb_P[q] = 0;
+        _nb_S[q] = 0;
+        _nb_C[q] = _K.number_of_cells(q);
+    }
+
+    // Initialize the flags for each dimension to CRITICAL
+    for (int q = 0; q <= dim; q++) {
+        _flag[q] = std::vector<PSC_flag>(_K.number_of_cells(q), CRITICAL);
+    }
+
+    // Populate the DD matrices
+    int tmp_min, tmp_max;
+    if (_dimension_restriction==-1) {
+        tmp_min = 0 ;
+        tmp_max = dim;
+    }
+    else {
+        if (_dimension_restriction > 0)
+            tmp_min = _dimension_restriction-1 ;
+        else
+            tmp_min = 0;
+
+        if (_dimension_restriction<dim)
+            tmp_max = _dimension_restriction+1;
+        else
+            tmp_max = dim;
+    }
+
+    _DD_col.resize(_K.dimension()+1) ;
+    for (int q=tmp_min; q<=tmp_max; ++q)
+        _DD_col.at(q) = _K.boundary_matrix(q) ;
+    //    std::cout << "------> End Hdvf_core creation" << std::endl ;
+}
+
+// Method to print the matrices
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_matrices(std::ostream& out, int dimension_restriction) const {
+    if (dimension_restriction == -2)
+        dimension_restriction = _dimension_restriction;
+
+    int min_dim = (dimension_restriction==-1)?0:_min_dimension;
+    int max_dim = (dimension_restriction==-1)?_K.dimension():_max_dimension;
+    // Iterate through each dimension and print the corresponding matrices
+    for (int q = min_dim; q <= max_dim; ++q) {
+        out << "------- Dimension " << q << std::endl;
+
+        out << "Matrices _DD_col:" << std::endl;
+        out << _DD_col[q] << std::endl;
+
+        if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+            out << "Matrices _F_row:" << std::endl;
+            out << _F_row[q] << std::endl;
+        }
+
+        if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+            out << "Matrices _G_col:" << std::endl;
+            out << _G_col[q] << std::endl;
+        }
+
+        if (_hdvf_opt & OPT_FULL) {
+            out << "Matrices _H_col:" << std::endl;
+            out << _H_col[q] << std::endl;
+        }
+    }
+    return out ;
+}
+
+
+// Methods to find a pair of cells for A in dimension q
+//  -> <d(cell2),cell1> = +- 1 with cell1, cell2 critical
+// First version: returns a pair of dimensions q / q+1
+// Second version: returns all the pairs containing sigma
+
+// find a valid Cell_pair for A in dimension q
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found) const {
+    found = false;
+    Cell_pair p;
+
+    if (! _K.is_valid_cell_dimension(q)) {
+        std::cerr << "find_pair_A called with incoherent dimension " << q << std::endl;
+        return p;
+    }
+
+    // Iterate through columns of _DD_col[q+1]
+    for (OSM::Bitboard::iterator it_col = _DD_col[q+1].begin(); (it_col != _DD_col[q+1].end() && !found); ++it_col) {
+        const Column_chain& col(OSM::cget_column(_DD_col[q+1], *it_col)) ;
+
+        // Iterate through the entries of the column
+        for (typename Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+            if ((it->second).is_invertible()) {
+                // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
+                p.sigma = it->first;
+                p.tau = *it_col;
+                p.dim = q;
+                found = true;
+            }
+        }
+    }
+    return p;
+}
+
+// find a valid Cell_pair containing tau for A in dimension q
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, size_t gamma) const {
+    found = false;
+    Cell_pair p ;
+
+    if (! _K.is_valid_cell(gamma, q)) {
+        std::cerr << "find_pair_A called with incoherent cell " << std::endl;
+        return p;
+    }
+
+    if (q>0) {
+        // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
+        const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+        for (typename Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it) {
+            if ((it->second).is_invertible()) {
+                found = true ;
+                p.sigma = it->first ;
+                p.tau = gamma ;
+                p.dim = q-1 ;
+            }
+        }
+    }
+
+    if (q < _K.dimension()) {
+        // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
+        Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
+        for (typename Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it) {
+            if ((it->second).is_invertible()) {
+                found = true ;
+                p.sigma = gamma ;
+                p.tau = it->first ;
+                p.dim = q ;
+            }
+        }
+    }
+    return p;
+}
+
+// find all the valid PairCells for A in dimension q
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found) const {
+    std::vector<Cell_pair> pairs;
+    found = false ;
+
+    if (! _K.is_valid_cell_dimension(q)) {
+        std::cerr << "find_pairs_A called with incoherent dimension " << q << std::endl;
+        return pairs;
+    }
+
+    // Iterate through columns of _DD_col[q+1]
+    for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
+    {
+        const Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+
+        // Iterate through the entries of the column
+        for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
+            if ((it->second).is_invertible()) {
+                // If an entry with an invertible coefficient is found, set the pair and mark as found
+                Cell_pair p;
+                p.sigma = it->first;
+                p.tau = *it_col;
+                p.dim = q;
+                pairs.push_back(p) ;
+                found = true;
+            }
+        }
+    }
+    return pairs;
+}
+
+// find all the valid Cell_pair containing gamma for A in dimension q
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, size_t gamma) const {
+    found = false;
+    std::vector<Cell_pair> pairs;
+
+    if (! _K.is_valid_cell(gamma, q)) {
+        std::cerr << "find_pairs_A called with incoherent cell " << std::endl;
+        return pairs;
+    }
+
+    // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
+    if (q < _K.dimension()) {
+        Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
+        for (typename Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it) {
+            if ((it->second).is_invertible()) {
+                found = true ;
+                Cell_pair p ;
+                p.sigma = gamma ;
+                p.tau = it->first ;
+                p.dim = q ;
+                pairs.push_back(p) ;
+            }
+        }
+    }
+    // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
+    if (q>0) {
+        const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+        for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it) {
+            //        if (abs(it->second) == 1)
+            if ((it->second).is_invertible()) {
+                found = true ;
+                Cell_pair p ;
+                p.sigma = it->first ;
+                p.tau = gamma ;
+                p.dim = q-1 ;
+                pairs.push_back(p) ;
+            }
+        }
+    }
+    return pairs;
+}
+
+
+// Method to perform operation A
+// tau1 is in dimension q, tau2 is in dimension q+1
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+void Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::A(size_t tau1, size_t tau2, int q) {
+    //----------------------------------------------- Submatrices of D ----------------------------------------------------
+
+    // Output operation details to the console
+    std::cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << std::endl;
+
+    // Extract submatrices from _DD_col
+    Row_chain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
+    Column_chain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
+    const Coefficient_ring D11 = D12.get_coefficient(tau2); // D11 is the coefficient at the intersection of tau2 in D12
+
+    // Assert that D11 is either 1 or -1 (check invertibility)
+    if (! D11.is_invertible())
+        throw(std::invalid_argument("Invalid arguments for A - cells do not meet the required condition"));
+
+    // Compute the inverse of D11
+    Coefficient_ring D11_inv = D11.inverse();
+
+    // Perform operations to remove the row and column contributions
+    D12 /= std::vector<size_t>({tau2}); // Remove tau2 column from D12
+    D21 /= std::vector<size_t>({tau1}); // Remove tau1 row from D21
+
+    // Delete rows and columns from _DD_col
+    remove_row(_DD_col[q + 1], tau1); // Remove row tau1 from _DD_col[q+1]
+    remove_column(_DD_col[q + 1], tau2); // Remove column tau2 from _DD_col[q+1]
+
+    //---------------------------------------------- Submatrices of F -----------------------------------------------------
+
+    Row_chain F11 ;
+    Column_chain G11 ;
+    if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+        // Extract the relevant submatrix from _F_row
+        F11 = OSM::get_row(_F_row.at(q),tau1); // F11 is a row chain from _F_row[q] at index tau1
+
+        // Delete the row tau1 from _F_row
+        remove_row(_F_row[q], tau1);
+    }
+
+    //--------------------------------------------- Submatrices of G ------------------------------------------------------
+
+    if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+        // Extract the relevant submatrix from _G_col
+        G11 = OSM::get_column(_G_col.at(q + 1),tau2); // G11 is a column chain from _G_col[q+1] at index tau2
+
+        // Delete the column tau2 from _G_col
+        remove_column(_G_col[q + 1], tau2);
+    }
+
+    //--------------------------------------------- Update matrices -------------------------------------------------------
+
+    // ---- Update _F_row
+
+    if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+        // Update _F_row[q]
+        // Subtract the product of (D21 * D11_inv) and F11 from _F_row[q]
+        // Note: % operator returns a row matrix, so be careful with operations
+        _F_row[q] -= (D21 * D11_inv) % F11;
+
+        // Set the column tau1 of _F_row[q] to (D21 * (-D11_inv))
+        OSM::set_column(_F_row[q], tau1, D21 * (-D11_inv));
+
+        // Remove the row tau2 from _F_row[q+1]
+        remove_row(_F_row[q + 1], tau2);
+    }
+
+    // ---- Update _G_col
+
+    if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+        // Update _G_col[q + 1]
+        // Subtract the product of (G11 * D11_inv) and D12 from _G_col[q+1]
+        _G_col[q + 1] -= (G11 * D11_inv) * D12;
+
+        // Set the row tau2 of _G_col[q + 1] to (D12 * (-D11_inv))
+        OSM::set_row(_G_col[q + 1], tau2, D12 * (-D11_inv));
+
+        // Remove the column tau1 from _G_col[q]
+        remove_column(_G_col[q], tau1);
+    }
+
+    // ---- Update _H_col
+
+    if (_hdvf_opt & OPT_FULL) {
+        // Update _H_col[q]
+        // Compute the temporary matrix product G11 * F11
+        Column_matrix tmp = G11 * F11;
+
+        // Add the product of tmp and D11_inv to _H_col[q]
+        _H_col[q] += (tmp) * D11_inv;
+
+        // Set the row tau2 of _H_col[q] to (F11 * D11_inv)
+        OSM::set_row(_H_col[q], tau2, F11 * D11_inv);
+
+        // Set the column tau1 of _H_col[q] to (G11 * D11_inv)
+        OSM::set_column(_H_col[q], tau1, G11 * D11_inv);
+
+        // Set the coefficient at (tau2, tau1) in _H_col[q] to D11_inv
+        set_coefficient(_H_col[q], tau2, tau1, D11_inv);
+    }
+
+    // ---- Update _DD_col
+
+    // Update _DD_col
+    _DD_col[q + 1] -= (D21 * D12) * D11_inv;
+
+    // Remove columns and rows from _DD_col as necessary
+    if (q > 0) {
+        remove_column(_DD_col[q], tau1); // Remove column tau1 from _DD_col[q]
+    }
+    if (q + 2 <= _K.dimension()) {
+        remove_row(_DD_col[q + 2], tau2); // Remove row tau2 from _DD_col[q+2]
+    }
+
+    // Update flags
+    _flag[q][tau1] = PRIMARY; // Set the PSC_flag of tau1 in dimension q to PRIMARY
+    --_nb_C.at(q) ;
+    ++_nb_P.at(q) ;
+    _flag[q + 1][tau2] = SECONDARY; // Set the PSC_flag of tau2 in dimension q+1 to SECONDARY
+    --_nb_C.at(q+1) ;
+    ++_nb_S.at(q+1) ;
+
+    // -----------------------------------------------------------------------------------------------------------------------
+}
+
+
+// Method to compute a perfect Hdvf_core
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::compute_perfect_hdvf(bool verbose) {
+    std::vector<Cell_pair> pair_list; // Vector to store the list of pairs
+    bool trouve = false; // Flag to indicate whether a pair was found
+    int dim = _K.dimension(); // Get the dimension of the complex K
+
+    int min_dim, max_dim;
+
+    // Compute min and max dimensions of find_pair_A
+    if (_dimension_restriction == -1) {
+        min_dim = 0;
+        max_dim = dim-1;
+    }
+    else {
+        if (_dimension_restriction > 0)
+            min_dim = _dimension_restriction-1;
+        else
+            min_dim = 0;
+
+        if (_dimension_restriction < dim-1)
+            max_dim = _dimension_restriction;
+        else
+            max_dim = dim-1;
+    }
+
+    // Loop through decreasing dimensions
+    for (int q = max_dim; q >= min_dim; --q) {
+        std::cout << std::endl << "-> pairing cells of dimension " << q  << " / " << q+1 << std::endl ;
+
+        // Find a pair of cells in dimension q
+        Cell_pair pair = find_pair_A(q, trouve);
+
+        // While a pair is found
+        while (trouve) {
+            progress_bar(_K.number_of_cells(q)-_nb_C.at(q), _K.number_of_cells(q)) ;
+            // Add the found pair to the list
+            pair_list.push_back(pair);
+
+            // Perform operation A with the found pair
+            A(pair.sigma, pair.tau, q);
+            if (verbose) {
+                std::cout << "A : " << pair.sigma << " - " << pair.tau << " (dim " << pair.dim << ")" << std::endl ;
+                write_matrices(std::cout) ;
+            }
+
+            // Find another pair of cells in dimension q
+            pair = find_pair_A(q, trouve);
+        }
+        std::cout << std::endl;
+    }
+
+    // Return the list of pairs found
+    return pair_list;
+}
+
+// Method to compute a random perfect Hdvf_core
+// Returns a vector of Cell_pair objects representing the pairs found
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::compute_rand_perfect_hdvf(bool verbose) {
+    std::vector<Cell_pair> pair_list; // Vector to store the list of pairs
+    bool trouve = false; // Flag to indicate whether a pair was found
+    int dim = _K.dimension(); // Get the dimension of the complex K
+
+    // Init random generator
+    std::random_device dev;
+    std::mt19937 rng(dev()); // Random
+
+    int min_dim, max_dim;
+
+    // Compute min and max dimensions of find_pair_A
+    if (_dimension_restriction == -1) {
+        min_dim = 0;
+        max_dim = dim-1;
+    }
+    else {
+        if (_dimension_restriction > 0)
+            min_dim = _dimension_restriction-1;
+        else
+            min_dim = 0;
+
+        if (_dimension_restriction < dim-1)
+            max_dim = _dimension_restriction;
+        else
+            max_dim = dim-1;
+    }
+
+    // Loop through decreasing dimensions
+    for (int q = max_dim; q >= min_dim; --q) {
+        std::cout << "-> pairing cells of dimension " << q << std::endl ;
+        // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
+
+        std::vector<Cell_pair> pairs = find_pairs_A(q, trouve);
+
+        Cell_pair pair ;
+
+        // While a pair is found
+        while (trouve) {
+            // Add one of the pairs (randomly) to the list
+            {
+                // Pickup a random cell sigma
+                std::uniform_int_distribution<std::mt19937::result_type> rand_dist(0,pairs.size()-1);
+                size_t i(rand_dist(rng)) ;
+                pair = pairs.at(i) ;
+            }
+            pair_list.push_back(pair);
+
+            // Perform operation A with the chosen pair
+            A(pair.sigma, pair.tau, pair.dim);
+            if (verbose) {
+                std::cout << "A : " << pair.sigma << " - " << pair.tau << " (dim " << pair.dim << ")" << std::endl ;
+                write_matrices(std::cout) ;
+            }
+
+            // Compute possible pairings
+            pairs = find_pairs_A(q, trouve);
+        }
+        std::cout << std::endl;
+    }
+    // Return the list of pairs found
+    return pair_list;
+}
+
+// Method to get cells if with a given psc_flags (P,S,C) for each dimension
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<std::vector<size_t> > Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::psc_flags (PSC_flag flag) const {
+    std::vector<std::vector<size_t> > res(_K.dimension()+1) ;
+    for (int q=0; q<=_K.dimension(); ++q) {
+        for (size_t i=0; i<_K.number_of_cells(q); ++i) {
+            if (_flag.at(q).at(i) == flag)
+                res.at(q).push_back(i) ;
+        }
+    }
+    return res ;
+}
+
+// Method to get cells with a given PSC_flag (P,S,C) for a given dimension
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<size_t> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::psc_flags (PSC_flag flag, int q) const {
+    std::vector<size_t> res ;
+    if ((q>=0) && (q<=_K.dimension())) {
+        for (size_t i=0; i<_K.number_of_cells(q); ++i) {
+            if (_flag.at(q).at(i) == flag)
+                res.push_back(i) ;
+        }
+    }
+    return res ;
+}
+
+// Method to print the current state of the reduction
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduction(std::ostream& out, int dimension_restriction) const {
+    if (dimension_restriction == -2)
+        dimension_restriction = _dimension_restriction;
+
+    int min_dim = (dimension_restriction==-1)?0:_min_dimension;
+    int max_dim = (dimension_restriction==-1)?_K.dimension():_max_dimension;
+    // Print PSC
+    out << "----- flags of cells:" << std::endl;
+    for (int q = min_dim; q <= max_dim; ++q) {
+        out << "--- dim " << q << std::endl;
+        for (size_t i = 0; i < _K.number_of_cells(q); ++i) {
+            const int flag(_flag.at(q).at(i)) ;
+            if (flag == PRIMARY)
+                out << i << " -> P" << std::endl ;
+            else if (flag == SECONDARY)
+                out << i << " -> S" << std::endl ;
+            else
+                out << i << " -> C" << std::endl ;
+        }
+        out << std::endl;
+    }
+
+    // Print critical cells
+    out << "----- critical cells:" << std::endl;
+    std::vector<std::vector<size_t> > critical(psc_flags(CRITICAL)) ;
+    for (int q = min_dim; q <= max_dim; ++q) {
+        out << "--- dim " << q << std::endl;
+        for (size_t i = 0; i < critical.at(q).size(); ++i) {
+            out << critical.at(q).at(i) << " ";
+        }
+        out << std::endl;
+    }
+
+    if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+        // Print matrices g
+        out << "----- g:" << std::endl;
+        for (int q = min_dim; q <= max_dim; ++q) {
+            out << "--- dim " << q << std::endl;
+            for (size_t i = 0; i < critical.at(q).size(); ++i) {
+                const size_t id(critical.at(q).at(i)) ;
+                out << "g(" << id << ") = (" << id << ")";
+                // Iterate over the ith column of _G_col
+                Column_chain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
+                for (typename Column_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
+                    out << " + " << it_col->second << ".(" << it_col->first << ") + ";
+                }
+                out << std::endl;
+            }
+        }
+    }
+
+    if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+        // Print matrices f*
+        out << "----- f*:" << std::endl;
+        for (int q = min_dim; q <= max_dim; ++q) {
+            out << "--- dim " << q << std::endl;
+            for (size_t i = 0; i < critical.at(q).size(); ++i) {
+                const size_t id(critical.at(q).at(i)) ;
+                out << "f*(" << id << ") = (" << id << ")";
+                // Iterate over the ith row of _F_row
+                Row_chain row(OSM::get_row(_F_row.at(q), id)) ; // TODO cget
+                for (typename Row_chain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
+                    out << " + " << it_row->second << ".(" << it_row->first << ") + ";
+                }
+                out << std::endl;
+            }
+        }
+    }
+    return out ;
+}
+
+// Save HDVF and reduction
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction(std::ostream& out) {
+    // HDVF save type
+    // 0: HDVF and reduction
+    // 1: HDVF only
+    out << 0 << std::endl ;
+    // Dimension
+    out << _K.dimension() << std::endl ;
+    // Number of cells in each dimension
+    for (int q=0; q<=_K.dimension(); ++q)
+        out << _K.number_of_cells(q) << " " ;
+    out << std::endl ;
+    // HDVF option
+    //
+    out << _hdvf_opt << std::endl;
+    // Flags
+    // P : -1 / S : 1 / C : 0
+    // Each dimension written on a row
+    for (int q=0; q<=_K.dimension(); ++q) {
+        for (int i=0; i<_K.number_of_cells(q); ++i) {
+            if (_flag.at(q).at(i) == PRIMARY)
+                out << -1 << " " ;
+            else if (_flag.at(q).at(i) == SECONDARY)
+                out << 1 << " " ;
+            else // CRITICAL
+                out << 0 << " " ;
+        }
+        out << std::endl ;
+    }
+    // F
+    if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+        for (int q=0; q<=_K.dimension(); ++q)
+            OSM::write_matrix(_F_row.at(q), out) ;
+    }
+    // G
+    if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+        for (int q=0; q<=_K.dimension(); ++q)
+            OSM::write_matrix(_G_col.at(q), out) ;
+    }
+    // H
+    for (int q=0; q<=_K.dimension(); ++q)
+        OSM::write_matrix(_H_col.at(q), out) ;
+    // DD
+    for (int q=0; q<=_K.dimension(); ++q)
+        OSM::write_matrix(_DD_col.at(q), out) ;
+    return out;
+}
+
+// Save HDVF and reduction
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_reduction(std::istream& in_stream) {
+    // Load and check HDVF save type
+    int type ;
+    in_stream >> type ;
+    if (type != 0) {
+        std::cerr << "read_hdvf_reduction error: trying to load a pure HDVF file..." << std::endl ;
+        throw ("read_hdvf_reduction error: trying to load a pure HDVF file...");
+    }
+
+    // Load and check dimension
+    int d ;
+    in_stream >> d ;
+    if (d != _K.dimension()) {
+        std::cerr << "read_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
+        throw ("read_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex");
+    }
+    // Load and check number of cells
+    int nb ;
+    for (int q=0; q<=_K.dimension(); ++q) {
+        in_stream >> nb ;
+        if (nb != _K.number_of_cells(q)) {
+            std::string mess("read_hdvf_reduction error: incoherent number of cells in dimension ");
+            mess += std::to_string(q);
+            std::cerr << mess << std::endl ;
+            throw (mess);
+        }
+    }
+    // Load HDVF opt
+    in_stream >> _hdvf_opt ;
+    // Load flags
+    int flag ;
+    for (int q=0; q<=_K.dimension(); ++q) {
+        for (int i=0; i<_K.number_of_cells(q); ++i) {
+            in_stream >> flag ;
+            if (flag == -1) {
+                _flag.at(q).at(i) = PRIMARY ;
+                ++_nb_P.at(q);
+            }
+            else if (flag == 1) {
+                _flag.at(q).at(i) = SECONDARY ;
+                ++_nb_S.at(q);
+            }
+            else {
+                _flag.at(q).at(i) = CRITICAL ;
+                ++_nb_C.at(q);
+            }
+        }
+    }
+    // Load reduction matrices
+    // F
+    if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+        for (int q=0; q<=_K.dimension(); ++q)
+            OSM::read_matrix(_F_row.at(q), in_stream) ;
+    }
+    // G
+    if (_hdvf_opt & (OPT_FULL | OPT_G)) {
+        for (int q=0; q<=_K.dimension(); ++q)
+            OSM::read_matrix(_G_col.at(q), in_stream) ;
+    }
+    // H
+    for (int q=0; q<=_K.dimension(); ++q) {
+        OSM::read_matrix(_H_col.at(q), in_stream) ;
+    }
+    // DD
+    for (int q=0; q<=_K.dimension(); ++q) {
+        OSM::read_matrix(_DD_col.at(q), in_stream) ;
+    }
+    return in_stream ;
+}
+
+} /* end namespace Homological_discrete_vector_field */
+} /* end namespace CGAL */
+
+#endif // CGAL_HDVF_HDVF_CORE_H
