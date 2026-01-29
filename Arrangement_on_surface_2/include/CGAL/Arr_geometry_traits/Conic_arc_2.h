@@ -1173,7 +1173,7 @@ protected:
     //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
     //
     // We store the equation of this line in the extra data structure and also
-    // the sign (side of half-plane) our arc occupies with respect to the line.
+    // the sign (side of halfplane) our arc occupies with respect to the line.
     m_extra_data = new Extra_data;
 
     m_extra_data->a = cos_phi;
