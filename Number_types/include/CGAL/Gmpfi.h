@@ -20,6 +20,8 @@
 #include <CGAL/mpfi_coercion_traits.h>
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
+#include <CGAL/Gmpfr.h>
+#include <utility>
 
 namespace CGAL{
 
@@ -350,6 +352,84 @@ namespace Eigen {
     };
   };
 }
+
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+namespace internal {
+
+template<>
+struct scalar_score_coeff_op<CGAL::Gmpfi> {
+
+  struct result_type {
+    int category;            // 0 = Exact Zero
+                             // 1 = Interval contains Zero
+                             // 2 = Definitely Non-Zero
+
+    // It is used to prefer tighter intervals when categories match.
+    CGAL::Gmpfr tie_breaker;
+
+    // Default constructor required by Eigen internals.
+    result_type(): category(0), tie_breaker(0) {}
+
+    // Kept explicit on purpose to avoid accidental implicit conversions
+    // from integers, which could fabricate pivot scores.
+    explicit result_type(int c): category(c), tie_breaker(0) {
+      CGAL_assertion(c == 0);
+    }
+    result_type(int c, const CGAL::Gmpfr& t): category(c), tie_breaker(t) {}
+
+    // Lexicographical ordering:
+    //  - higher category is always better
+    //  - for equal categories, tighter interval is better
+    bool operator<(const result_type& o) const {
+      if (category != o.category)
+        return category < o.category;
+      return tie_breaker < o.tie_breaker;
+    }
+    bool operator==(const result_type& o) const {
+      return category == o.category && tie_breaker == o.tie_breaker;
+    }
+    bool operator!=(const result_type& o) const {
+      return !(*this == o);
+    }
+    bool operator>(const result_type& o) const {
+      return o < *this;
+    }
+    bool operator<=(const result_type& o) const {
+      return !(*this > o);
+    }
+    bool operator>=(const result_type& o) const {
+      return !(*this < o);
+    }
+  };
+
+  result_type operator()(const CGAL::Gmpfi& x) const {
+
+    // Case 0: Exact Zero [0, 0]
+    // This is the worst possible pivot
+    if (x.inf() == 0 && x.sup() == 0) {
+      return result_type(0, CGAL::Gmpfr(0));
+    }
+
+    // Category 1 or 2 depending on whether the interval contains zero.
+    bool contains_zero = (x.inf() <= 0) && (x.sup() >= 0);
+    int cat = contains_zero ? 1 : 2;
+
+    // Tie-Breaker: Interval Width
+    // Eigen will pick the tightest interval (smallest width) to minimize
+    // error propagation.
+    return result_type(cat, x.inf() - x.sup());
+  }
+};
+
+template<>
+struct functor_traits<scalar_score_coeff_op<CGAL::Gmpfi> > {
+  enum { Cost = 10, PacketAccess = false };
+};
+
+}
+}
+#endif
 
 #include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
