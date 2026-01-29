@@ -548,6 +548,7 @@ public:
       typedef typename GT::Segment_3                        Segment_3;
       typedef typename GT::Plane_3                          Plane_3;
       typedef typename GT::Sphere_3                         Sphere_3;
+      typedef typename GT::Vector_3                         Vector_3;
 
       auto [closest_pt, closest_prim_id]
         = d_ptr->domain.curves_aabb_tree().closest_point_and_primitive(p);
@@ -596,13 +597,6 @@ public:
       }
 #endif
 
-      const Segment_3 curr_segment(*closest_prim_id.second,
-                                   *(closest_prim_id.second + 1));
-      const FT sqlen_curr_segment = CGAL::squared_distance(curr_segment.source(),
-                                                           curr_segment.target());
-      //todo : check segment is not degenerate
-      Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
-
       // find ppid's polyline iterator
       const auto& polyline = closest_prim_id.first->second;
       auto p_polyline_const_it = closest_prim_id.second;
@@ -612,10 +606,40 @@ public:
         p_polyline_const_it = std::prev(p_polyline_const_it);
       }
 
+      const Segment_3 curr_segment(*closest_prim_id.second,
+                                   *(closest_prim_id.second + 1));
+      const FT sqlen_curr_segment = CGAL::squared_distance(curr_segment.source(),
+                                                           curr_segment.target());
+      //todo : check segment is not degenerate
+      auto plane = GT().construct_plane_3_object();
+      auto base_vector = GT().construct_base_vector_3_object();
+      auto scale = GT().construct_scaled_vector_3_object();
+      auto sqlen = GT().compute_squared_length_3_object();
+      auto triangle = GT().construct_triangle_3_object();
+      auto translate = GT().construct_translated_point_3_object();
+      auto opp = GT().construct_opposite_vector_3_object();
+
+      const Vector_3& curr_normal = curr_segment.to_vector();
+      const Plane_3 curr_ortho_plane = plane(p, curr_normal);
+      Vector_3 base1 = base_vector(curr_ortho_plane, 1);
+      Vector_3 base2 = base_vector(curr_ortho_plane, 2);
+      scale(base1, 2.* result / CGAL::approximate_sqrt(sqlen(base1)));
+      scale(base2, 2.* result / CGAL::approximate_sqrt(sqlen(base2)));
+
+      const Point_3 pright = translate(p, base2);
+      const Point_3 pleft = translate(p, opp(base2));
+      const Point_3 ptop = translate(p, base1);
+      const Point_3 pbottom = translate(p, opp(base1));
+      const auto tr1 = triangle(pleft, ptop, pright);
+      const auto tr2 = triangle(pleft, pright, pbottom);
+
       // find intersected primitives
       std::vector<Input_curves_AABB_tree_primitive_> prims;
       d_ptr->domain.curves_aabb_tree().
-          all_intersected_primitives(curr_ortho_plane, std::back_inserter(prims));
+          all_intersected_primitives(tr1, std::back_inserter(prims));
+      d_ptr->domain.curves_aabb_tree().
+          all_intersected_primitives(tr2, std::back_inserter(prims));
+
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       std::cerr << std::endl;
