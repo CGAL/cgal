@@ -351,16 +351,19 @@ struct Construct_initial_points_labeled_image
         }
       }
     };
-    for(;;)
+
+
+    auto nb_of_points_before = nb_of_points;
+    do
     {
-      auto nb_of_points_before = nb_of_points;
+      nb_of_points_before = nb_of_points;
       std::for_each(seeds.begin(), seeds.end(), treat_seed);
-      if(nb_of_points_before == nb_of_points || rejected_seeds.empty())
-        break;
+
       // retry to initialize the rejected seeds
       seeds = std::move(rejected_seeds);
       rejected_seeds.clear();
     }
+    while(nb_of_points_before != nb_of_points && !seeds.empty());
 
     if(verbose_) {
       std::cout << "  " << nb_of_points << " initial points were constructed." << std::endl;
