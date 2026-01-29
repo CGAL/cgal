@@ -13,6 +13,8 @@
 #ifndef CGAL_VARIANT_OUTPUT_ITERATOR_H
 #define CGAL_VARIANT_OUTPUT_ITERATOR_H
 
+#include <CGAL/license/Surface_sweep_2.h>
+
 /* A compatible output iterator that accepts a std::variant and dispatches its
  * alternatives to different sinks via a visitor.
  *
