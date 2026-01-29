@@ -429,6 +429,50 @@ make_hexahedron(const IsoCuboid& c,
 
 /**
  * \ingroup PkgBGLGeneratorFct
+ * \brief creates an isolated hexahedron equivalent to `bb3`, and adds it to the graph `g`.
+ * \returns the halfedge that has the target vertex associated with point `(bb3.xmin(), bb3.ymin(), bb3.zmin())`,
+ * aligned with x-axis,
+ * in the bottom face of the hexahedron.
+ *
+ * \tparam Graph a model of `MutableFaceGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param bb3 the bounding box describing the geometry of the hexahedron
+ * \param g the graph to which the hexahedron will be appended
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *           among the ones listed below
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{do_not_triangulate_faces}
+ *     \cgalParamDescription{a Boolean used to specify whether the hexadron's faces
+ *       should be triangulated or not.
+ *       The default value is `true`, and faces are not triangulated.}
+ *     \cgalParamDefault{true}
+ *   \cgalParamNEnd
+ *  \cgalParamNBegin{geom_traits}
+ *    \cgalParamDescription{an instance of a geometric traits class model of `Kernel`.}
+ *  \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ **/
+template<typename Graph,
+         typename NamedParameters = parameters::Default_named_parameters>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_hexahedron(const Bbox_3& bb3,
+                Graph& g,
+                const NamedParameters& np = parameters::default_values())
+{
+  using GT = typename GetGeomTraits<Graph, NamedParameters>::type;
+  GT gt = parameters::choose_parameter<GT>(
+            parameters::get_parameter(np, internal_np::geom_traits));
+  typename GT::Construct_point_3 p = gt.construct_point_3_object();
+
+  return make_hexahedron(p(bb3.xmax(),bb3.ymin(),bb3.zmin()), p(bb3.xmax(),bb3.ymax(),bb3.zmin()), p(bb3.xmin(),bb3.ymax(),bb3.zmin()), p(bb3.xmin(),bb3.ymin(),bb3.zmin()),
+                         p(bb3.xmin(),bb3.ymin(),bb3.zmax()), p(bb3.xmax(),bb3.ymin(),bb3.zmax()), p(bb3.xmax(),bb3.ymax(),bb3.zmax()), p(bb3.xmin(),bb3.ymax(),bb3.zmax()),
+                         g,
+                         np);
+}
+
+/**
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png

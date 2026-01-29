@@ -370,7 +370,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 template <typename FaceRange,
           typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
-bool triangulate_faces(FaceRange face_range,
+bool triangulate_faces(const FaceRange& face_range,
                        PolygonMesh& pmesh,
                        const NamedParameters& np = parameters::default_values())
 {
