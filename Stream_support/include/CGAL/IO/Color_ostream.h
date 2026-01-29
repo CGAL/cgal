@@ -21,12 +21,14 @@
 
 #include <CGAL/config.h>
 
+#include <array>
 #include <cstdlib> // for std::getenv
 #include <ios>
 #include <optional>
 #include <streambuf>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -41,7 +43,6 @@
 #endif
 
 #if defined(__STDC_LIB_EXT1__) || defined(_WIN32)
-#  include <array>
 #  include <stdlib.h> // for getenv_s
 #  define CGAL_USE_GETENV_S 1
 #endif
@@ -155,22 +156,29 @@ private:
 #endif
   }
 
-  /** \brief Generate ANSI escape sequence for a color. */
-  static string make_color_code(Ansi_color color) {
+  /** \brief Generate ANSI escape sequence for the set of colors. */
+  template <std::size_t N>
+  static string make_color_code(std::array<Ansi_color, N> colors) {
     string code;
+    if(colors.empty()) {
+      return code;
+    }
     code += char_type('\033');
     code += char_type('[');
-    int color_value = static_cast<int>(color);
-    // Convert integer to string
-    if(color_value == 0) {
-      code += char_type('0');
-    } else {
-      string digits;
-      while(color_value > 0) {
-        digits = char_type('0' + (color_value % 10)) + digits;
-        color_value /= 10;
+    for(std::size_t i = 0; i < N; ++i) {
+      if(i > 0) code += char_type(';');
+      int color_value = static_cast<int>(colors[i]);
+      // Convert integer to string
+      if(color_value == 0) {
+        code += char_type('0');
+      } else {
+        string digits;
+        while(color_value > 0) {
+          digits = char_type('0' + (color_value % 10)) + digits;
+          color_value /= 10;
+        }
+        code += digits;
       }
-      code += digits;
     }
     code += char_type('m');
     return code;
@@ -178,59 +186,25 @@ private:
 
 public:
   /**
-   * \brief constructs a color streambuf wrapper.
+   * \brief constructs a color streambuf wrapper with one or more colors.
    *
    * Colors are automatically disabled if the wrapped buffer is not connected
-   * to a color-capable terminal (checked via `isatty()` and `TERM` variable).
+   * to a color-capable terminal (checked via `isatty()` and `TERM` variable),
+   * or if the `NO_COLOR` environment variable is set and non-empty.
    *
+   * \tparam AnsiColors Variadic list of `Ansi_color` values
    * \param wrapped_buf The underlying streambuf to wrap
-   * \param color The color to apply to the output
+   * \param colors One or more colors to combine (e.g., `Ansi_color::Bold`, `Ansi_color::Red`)
    */
+  template <typename ...AnsiColors>
   explicit
   Basic_color_streambuf(streambuf_type& wrapped_buf,
-                        Ansi_color color = Ansi_color::Reset)
+                        AnsiColors... colors)
       : wrapped_buf_(&wrapped_buf)
-      , color_code_(make_color_code(color))
+      , color_code_(make_color_code(std::array<Ansi_color, sizeof...(colors)>{colors...}))
       , at_line_start_(true)
       , colors_enabled_(detect_color_support(&wrapped_buf))
   {
-  }
-
-  /**
-   * \brief constructs a color streambuf wrapper with multiple colors.
-   *
-   * Colors are automatically disabled if the wrapped buffer is not connected
-   * to a color-capable terminal (checked via isatty() and TERM variable).
-   *
-   * \param wrapped_buf The underlying streambuf to wrap
-   * \param colors Vector of colors to combine (e.g., bold + red)
-   */
-  Basic_color_streambuf(streambuf_type& wrapped_buf,
-                        const std::vector<Ansi_color>& colors)
-      : wrapped_buf_(&wrapped_buf)
-      , at_line_start_(true)
-      , colors_enabled_(detect_color_support(&wrapped_buf))
-  {
-    if(!colors.empty()) {
-      color_code_ += char_type('\033');
-      color_code_ += char_type('[');
-      for(std::size_t i = 0; i < colors.size(); ++i) {
-        if(i > 0) color_code_ += char_type(';');
-        int color_value = static_cast<int>(colors[i]);
-        // Convert integer to string
-        if(color_value == 0) {
-          color_code_ += char_type('0');
-        } else {
-          string digits;
-          while(color_value > 0) {
-            digits = char_type('0' + (color_value % 10)) + digits;
-            color_value /= 10;
-          }
-          color_code_ += digits;
-        }
-      }
-      color_code_ += char_type('m');
-    }
   }
 
   // Non-copyable
@@ -264,7 +238,7 @@ public:
   ~Basic_color_streambuf() noexcept {
     if(wrapped_buf_) {
       if(colors_enabled_ && !color_code_.empty() && !at_line_start_) {
-        string reset_code = make_color_code(Ansi_color::Reset);
+        string reset_code = make_color_code(std::array<Ansi_color, 1>{Ansi_color::Reset});
         (void)put_a_string(reset_code);
       }
       wrapped_buf_->pubsync();
@@ -279,8 +253,8 @@ public:
    *
    * \param color_code The new color code to apply
    */
-  void set_color_code(const string& color_code) {
-    color_code_ = color_code;
+  void set_color_code(string color_code) {
+    color_code_ = std::move(color_code);
   }
 
   /** \brief checks if colors are enabled for this streambuf. */
@@ -365,7 +339,7 @@ protected:
     if(to_char_type(ch) == char_type('\n')) {
       // Output reset code before newline (if colors enabled)
       if(colors_enabled_ && !color_code_.empty()) {
-        string reset_code = make_color_code(Ansi_color::Reset);
+        string reset_code = make_color_code(std::array<Ansi_color, 1>{Ansi_color::Reset});
         if(!put_a_string(reset_code)) {
           return eof();
         }
@@ -469,37 +443,22 @@ private:
 
 public:
   /**
-   * \brief constructs and installs a color streambuf on the given stream.
+   * \brief constructs and installs a color streambuf with one or more colors.
    *
+   * \tparam AnsiColors Variadic list of \ref Ansi_color values
    * \param stream The stream to modify
-   * \param color The color to apply to the output
+   * \param colors One or more colors to combine (e.g., \c Ansi_color::Bold, \c Ansi_color::Red)
    */
-  explicit Basic_color_stream_guard(StreamT& stream,
-                                    Ansi_color color)
-      : stream_(stream)
-      , original_buf_(stream.rdbuf())
-      , color_buf_(*original_buf_, color)
-  {
-    if(auto old_buf = dynamic_cast<streambuf_type*>(original_buf_)) {
-      original_color_code_ = old_buf->color_code();
-      // For nested colors, we keep the current buffer but note the original color
-    } else {
-      stream.rdbuf(&color_buf_);
-    }
-  }
-
-  /**
-   * \brief constructs and installs a color streambuf with multiple colors.
-   *
-   * \param stream The stream to modify
-   * \param colors Vector of colors to combine (e.g., bold + red)
-   */
+  template <typename... AnsiColors>
+  explicit
   Basic_color_stream_guard(StreamT& stream,
-                           const std::vector<Ansi_color>& colors)
+                           AnsiColors... colors)
       : stream_(stream)
       , original_buf_(stream.rdbuf())
-      , color_buf_(*original_buf_, colors)
+      , color_buf_(*original_buf_, colors...)
   {
+    static_assert((std::is_same<AnsiColors, Ansi_color>::value && ...),
+                  "Basic_color_stream_guard expects Ansi_color arguments");
     if(auto old_buf = dynamic_cast<streambuf_type*>(original_buf_)) {
       original_color_code_ = old_buf->color_code();
     } else {
@@ -581,18 +540,31 @@ auto make_color_guards(Ansi_color color, Streams&... streams) {
  * \brief creates color guards for multiple streams with multiple colors.
  *
  * This overload allows specifying multiple colors to combine (e.g., bold + red).
+ * Colors are specified first, followed by the streams to colorize.
  *
  * \tparam Streams The stream types (deduced from arguments)
- * \param colors Vector of colors to combine
+ * \param colors Initializer list of colors to combine
  * \param streams The streams to apply colors to
- * \return A tuple of Basic_color_stream_guard objects
+ * \return A tuple of `Basic_color_stream_guard` objects
  *
  * \sa Basic_color_stream_guard
+ *
+ * Example usage:
+ * \code
+ * auto guards = CGAL::IO::make_color_guards(
+ *   {CGAL::IO::Ansi_color::Bold, CGAL::IO::Ansi_color::Red},
+ *   std::cout, std::cerr);
+ * std::cout << "Bold red output\n";
+ * \endcode
  */
 template <typename... Streams>
-auto make_color_guards(const std::vector<Ansi_color>& colors, Streams&... streams) {
-  return std::make_tuple(Basic_color_stream_guard<Streams>(streams, colors)...);
+auto make_color_guards(std::initializer_list<Ansi_color> colors, Streams&... streams) {
+  std::vector<Ansi_color> color_vec(colors);
+  return std::apply([&streams...](const auto&... c) {
+    return std::make_tuple(Basic_color_stream_guard<Streams>(streams, c...)...);
+  }, std::apply([](const auto&... c) { return std::make_tuple(c...); }, color_vec));
 }
+
 
 /**
  * \ingroup PkgStreamSupportRef
