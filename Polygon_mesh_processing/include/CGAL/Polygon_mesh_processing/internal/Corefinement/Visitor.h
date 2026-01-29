@@ -514,6 +514,7 @@ private:
   EdgeMarkMapBind marks_on_edges;
   bool input_with_coplanar_faces;
   TriangleMesh* const_mesh_ptr;
+  bool mark_inter_edges;
 
   template <class Ecm1, class Ecm2>
   void call_put(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
@@ -543,13 +544,14 @@ private:
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
-    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm, TriangleMesh* const_mesh_ptr=nullptr)
+    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm, TriangleMesh* const_mesh_ptr, bool mark_inter_edges)
     : number_coplanar_vertices(0)
     , user_visitor(uv)
     , output_builder(o)
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
     , const_mesh_ptr(const_mesh_ptr)
+    , mark_inter_edges(mark_inter_edges)
   {}
 
 
@@ -1283,7 +1285,8 @@ public:
                 std::tie(h, is_face_border) = halfedge(vi,vn, tm);
                 if (is_face_border)
                 {
-                  call_put(marks_on_edges,tm,edge(h,tm),true);
+                  if (mark_inter_edges)
+                    call_put(marks_on_edges,tm,edge(h,tm),true);
                   output_builder.set_edge_per_polyline(tm,std::make_pair(id, id_n),h);
                 }
                 else
@@ -1312,8 +1315,8 @@ public:
         {
           halfedge_descriptor nh = Euler::split_face(a[0].first, a[1].first, tm);
           new_faces.push_back(face(opposite(nh, tm), tm));
-
-          call_put(marks_on_edges,tm,edge(nh,tm),true);
+          if (mark_inter_edges)
+            call_put(marks_on_edges,tm,edge(nh,tm),true);
           output_builder.set_edge_per_polyline(tm,std::make_pair(a[0].second, a[1].second),nh);
         }
 
@@ -1517,7 +1520,8 @@ public:
         //is defined as one of them defines an adjacent face
         //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
         if( it_poly_hedge!=edge_to_hedge.end() ){
-          call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+          if (mark_inter_edges)
+            call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
           output_builder.set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
         }
         else{
@@ -1527,7 +1531,8 @@ public:
           it_poly_hedge=edge_to_hedge.find(opposite_pair);
           CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
-          call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+          if (mark_inter_edges)
+            call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
           output_builder.set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
         }
       }
@@ -1630,7 +1635,8 @@ public:
               }
               if (did_break) continue;
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
-              call_put(marks_on_edges,tm,edge(hedge,tm),true);
+              if (mark_inter_edges)
+                call_put(marks_on_edges,tm,edge(hedge,tm),true);
               output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
