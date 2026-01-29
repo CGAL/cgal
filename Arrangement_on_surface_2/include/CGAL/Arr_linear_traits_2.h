@@ -35,6 +35,7 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include "CGAL/number_utils.h"
+#include <CGAL/Arrangement_2/do_segments_intersect.h>
 
 namespace CGAL {
 
@@ -933,40 +934,150 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   private:
-    template <typename T>
-    bool do_intersect(const T& t, const X_monotone_curve_2& xcv2) const {
+    bool do_intersect_open(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+      std::list<Intersection_result> intersections;
+      m_traits.intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
+
+      // If the closed curves do not intersect, so do the open curves
+      if (intersections.empty()) return false;
+
+      // If the intersection is an overlap, return true
+      auto cmp_xy = m_traits.compare_xy_2_object();
+      const Intersection_point* p_first_p = std::get_if<Intersection_point>(&(intersections.front()));
+      if (! p_first_p) return true;
+
+      auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
+      auto ctr_max_vertex = m_traits.construct_max_vertex_2_object();
+
+      // If the first intersection point of the closed curves is not an endpoint of the first curve, return true
+      bool min1_intersect = false;
+      if (xcv1.has_left()) {
+        const auto& min_p1 = ctr_min_vertex(xcv1);
+        if (cmp_xy(min_p1, p_first_p->first) == EQUAL) min1_intersect = true;
+      }
+      bool max1_intersect = false;
+      if (xcv1.has_right()) {
+        const auto& max_p1 = ctr_max_vertex(xcv1);
+        if (cmp_xy(max_p1, p_first_p->first) == EQUAL) max1_intersect = true;
+      }
+      if (! min1_intersect && ! max1_intersect) return true;
+
+      // If the first intersection point of the closed curves is not an endpoint of the second curve, return true
+      bool min2_intersect = false;
+      if (xcv2.has_left()) {
+        const auto& min_p2 = ctr_min_vertex(xcv2);
+        if (cmp_xy(min_p2, p_first_p->first) == EQUAL) min2_intersect = true;
+      }
+      bool max2_intersect = false;
+      if (xcv2.has_right()) {
+        const auto& max_p2 = ctr_max_vertex(xcv2);
+        if (cmp_xy(max_p2, p_first_p->first) == EQUAL) max2_intersect = true;
+      }
+      if (! min2_intersect && ! max2_intersect) return true;
+
+      // There is one intersection and it is an endpoint; return false
+      return false;
+    }
+
+    //! Line---ray
+    bool do_intersect(const Line_2& line1, const Ray_2& ray2, bool /* closed */ = true) const {
+      const Kernel& kernel = m_traits;
+      return kernel.do_intersect_2_object()(line1, ray2);
+    }
+
+    //! Line---seg
+    bool do_intersect(const Line_2& line1, const Segment_2& seg2, bool /* closed */ = true) const {
+      const Kernel& kernel = m_traits;
+      return kernel.do_intersect_2_object()(line1, seg2);
+    }
+
+    //! ray---ray
+    bool do_intersect(const Ray_2& ray1, const Ray_2& ray2, bool closed = true) const {
+      //! \todo Optimize to enable the use of EPIC
+      const Kernel& kernel = m_traits;
+      if (closed) return kernel.do_intersect_2_object()(ray1, ray2);
+      return do_intersect_open(ray1, ray2);
+   }
+
+    //! ray---segment
+    bool do_intersect(const Ray_2& ray1, const Segment_2& seg2, bool closed = true) const {
+      //! \todo Optimize to enable the use of EPIC
+      const Kernel& kernel = m_traits;
+      if (closed) return kernel.do_intersect_2_object()(ray1, seg2);
+      return do_intersect_open(ray1, seg2);
+   }
+
+    //! segment---segment
+    bool do_intersect(const Segment_2& seg1, const Segment_2& seg2, bool closed = true) const
+    { return Aos_2::internal::do_segment_intersect(seg1, seg2, closed, m_traits); }
+
+    //
+    bool do_intersect(Line_2& line1, const X_monotone_curve_2& xcv2, bool closed = true) const {
       const Kernel& kernel = m_traits;
       if (xcv2.is_segment()) {
-        Segment_2 seg2(xcv2.source(), xcv2.target());
-        return kernel.do_intersect_2_object()(t, seg2);
+        Segment_2 seg2 = xcv2.segment();
+        return do_intersect(line1, seg2, closed);
       }
       if (xcv2.is_line()) {
-        Line_2 line2(xcv2.source(), xcv2.target());
-        return kernel.do_intersect_2_object()(t, line2);
+        Line_2 line2 = xcv2.line();
+        return kernel.do_intersect_2_object()(line1, line2);
       }
       CGAL_assertion(xcv2.is_ray());
-      Ray_2 ray2(xcv2.source(), xcv2.target());
-      return kernel.do_intersect_2_object()(t, ray2);
+      Ray_2 ray2 = xcv2.ray();
+      return do_intersect(line1, ray2, closed);
+    }
+
+    //
+    bool do_intersect(Ray_2& ray1, const X_monotone_curve_2& xcv2, bool closed = true) const {
+      if (xcv2.is_segment()) {
+        Segment_2 seg2 = xcv2.segment();
+        return do_intersect(ray1, seg2, closed);
+      }
+      if (xcv2.is_line()) {
+        Line_2 line2 = xcv2.line();
+        return do_intersect(line2, ray1, closed);
+      }
+      CGAL_assertion(xcv2.is_ray());
+      Ray_2 ray2 = xcv2.ray();
+      return do_intersect(ray1, ray2, closed);
+    }
+
+    //
+    bool do_intersect(Segment_2& seg1, const X_monotone_curve_2& xcv2, bool closed = true) const {
+      if (xcv2.is_segment()) {
+        Segment_2 seg2 = xcv2.segment();
+        return do_intersect(seg1, seg2, closed);
+      }
+      if (xcv2.is_line()) {
+        Line_2 line2 = xcv2.line();
+        return do_intersect(line2, seg1, closed);
+      }
+      CGAL_assertion(xcv2.is_ray());
+      Ray_2 ray2 = xcv2.ray();
+      return do_intersect(ray2, seg1, closed);
     }
 
   public:
     /*! determines whether two given \f$x\f$-monotone curves intersect.
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
+     * \patam closed indicates whether the curves are closed or open.
      * \return a boolean flag indicating whether the curves intersect.
      */
-    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const {
       if (xcv1.is_segment()) {
-        Segment_2 seg1(xcv1.source(), xcv1.target());
-        return this->do_intersect(seg1, xcv2);
+        Segment_2 seg1 = xcv1.segment();
+        return this->do_intersect(seg1, xcv2, closed);
       }
       if (xcv1.is_line()) {
-        Line_2 line1(xcv1.source(), xcv1.target());
-        return this->do_intersect(line1, xcv2);
+        Line_2 line1 = xcv1.line();
+        return this->do_intersect(line1, xcv2, closed);
       }
       CGAL_assertion(xcv1.is_ray());
-      Ray_2 ray1(xcv1.source(), xcv1.target());
-      return this->do_intersect(ray1, xcv2);
+      Ray_2 ray1 = xcv1.ray();
+      return this->do_intersect(ray1, xcv2, closed);
     }
   };
 

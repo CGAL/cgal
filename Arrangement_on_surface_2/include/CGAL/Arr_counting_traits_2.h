@@ -56,6 +56,7 @@ public:
     COMPARE_Y_AT_X_RIGHT_2_OP,
     MAKE_X_MONOTONE_2_OP,
     SPLIT_2_OP,
+    DO_INTERSECT_2_OP,
     INTERSECT_2_OP,
     ARE_MERGEABLE_2_OP,
     MERGE_2_OP,
@@ -342,6 +343,22 @@ public:
     void operator()(const X_monotone_curve_2& xc, const Point_2& p,
                     X_monotone_curve_2& xc1, X_monotone_curve_2& xc2) const
     { ++m_counter; m_object(xc, p, xc1, xc2); }
+  };
+
+  /*! A functor that determines whether two \f$x\f$-monotone curves intersect. */
+  class Do_intersect_2 {
+  private:
+    typename Base::Do_intersect_2 m_object;
+    std::size_t& m_counter;
+
+  public:
+    /*! constructs */
+    Do_intersect_2(const Base& base, std::size_t& counter) :
+      m_object(base.do_intersect_2_object()), m_counter(counter) {}
+
+    /*! operates */
+    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, bool closed = true) const
+    { ++m_counter; return m_object(xc1, xc2, closed); }
   };
 
   /*! A functor that computes intersections between \f$x\f$-monotone curves. */
@@ -715,10 +732,8 @@ public:
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(*this, m_counters[COMPARE_Y_AT_X_2_OP]); }
 
-  Equal_2 equal_2_object() const {
-    return Equal_2(*this, m_counters[EQUAL_2_POINTS_OP],
-                   m_counters[EQUAL_2_CURVES_OP]);
-  }
+  Equal_2 equal_2_object() const
+  { return Equal_2(*this, m_counters[EQUAL_2_POINTS_OP], m_counters[EQUAL_2_CURVES_OP]); }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(*this, m_counters[COMPARE_Y_AT_X_LEFT_2_OP]); }
@@ -731,6 +746,9 @@ public:
 
   Split_2 split_2_object() const
   { return Split_2(*this, m_counters[SPLIT_2_OP]); }
+
+  Do_intersect_2 do_intersect_2_object() const
+  { return Do_intersect_2(*this, m_counters[DO_INTERSECT_2_OP]); }
 
   Intersect_2 intersect_2_object() const
   { return Intersect_2(*this, m_counters[INTERSECT_2_OP]); }
@@ -767,14 +785,11 @@ public:
                                     m_counters[IS_ON_X_IDENTIFICATION_CURVE_2_OP]);
   }
 
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const {
-    return Compare_y_on_boundary_2(*this, m_counters[COMPARE_Y_ON_BOUNDARY_2_OP]);
-  }
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
+  { return Compare_y_on_boundary_2(*this, m_counters[COMPARE_Y_ON_BOUNDARY_2_OP]); }
 
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
-    return Compare_y_near_boundary_2(*this,
-                                     m_counters[COMPARE_Y_NEAR_BOUNDARY_2_OP]);
-  }
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
+  { return Compare_y_near_boundary_2(*this, m_counters[COMPARE_Y_NEAR_BOUNDARY_2_OP]); }
 
   // bottom-top
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const {
@@ -790,17 +805,14 @@ public:
   }
 
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
-    return
-      Compare_x_on_boundary_2(*this,
-                              m_counters[COMPARE_X_ON_BOUNDARY_2_POINTS_OP],
-                              m_counters[COMPARE_X_ON_BOUNDARY_2_POINT_CURVE_END_OP],
-                              m_counters[COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP]);
+    return Compare_x_on_boundary_2(*this,
+                                   m_counters[COMPARE_X_ON_BOUNDARY_2_POINTS_OP],
+                                   m_counters[COMPARE_X_ON_BOUNDARY_2_POINT_CURVE_END_OP],
+                                   m_counters[COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP]);
   }
 
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
-    return Compare_x_near_boundary_2(*this,
-                                     m_counters[COMPARE_X_NEAR_BOUNDARY_2_OP]);
-  }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(*this, m_counters[COMPARE_X_NEAR_BOUNDARY_2_OP]); }
 
   //@}
 
@@ -837,6 +849,7 @@ private:
     "COMPARE_Y_AT_X_RIGHT_2_OP",
     "MAKE_X_MONOTONE_2_OP",
     "SPLIT_2_OP",
+    "DO_INTERSECT_2_OP",
     "INTERSECT_2_OP",
     "ARE_MERGEABLE_2_OP",
     "MERGE_2_OP",
@@ -875,6 +888,7 @@ private:
     has_compare_y_at_x_right_2<Base>::value,
     has_make_x_monotone_2<Base>::value,
     has_split_2<Base>::value,
+    has_do_intersect_2<Base>::value,
     has_intersect_2<Base>::value,
     has_are_mergeable_2<Base>::value,
     has_merge_2<Base>::value,

@@ -1,0 +1,3 @@
+Performing aggregated insertion of 3099 segments.
+V = 3078, E = 3099, F = 39
+Construction took 0.0187426 seconds.

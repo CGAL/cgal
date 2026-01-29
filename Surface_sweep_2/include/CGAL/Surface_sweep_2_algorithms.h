@@ -8,9 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//            Efi Fogel       <efif@post.tau.ac.il>
-//            (based on old version by Tali Zvi)
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel       <efif@post.tau.ac.il>
+//             (based on old version by Tali Zvi)
 
 #ifndef CGAL_SURFACE_SWEEP_2_ALGORITHMS_H
 #define CGAL_SURFACE_SWEEP_2_ALGORITHMS_H
@@ -27,9 +27,54 @@
 #include <CGAL/Surface_sweep_2/Default_arr_traits.h>
 #include <CGAL/Surface_sweep_2/Intersection_points_visitor.h>
 #include <CGAL/Surface_sweep_2/Subcurves_visitor.h>
-#include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
+#include <CGAL/Surface_sweep_2/Do_intersect_visitor.h>
+#include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
 
 namespace CGAL {
+namespace Surface_sweep_2 {
+
+/*! Determine whether any curves in a given range intersect pairwise.
+ * \param begin An input iterator of the the range.
+ * \param end A input past-the-end iterator of the range.
+ * \return (true) if any pair of curves intersect; (false) otherwise.
+ */
+template <typename CurveInputIterator, typename Traits>
+bool do_intersect(CurveInputIterator begin, CurveInputIterator end, bool closed, Traits& traits) {
+  // If the curves are not \f$x\f$-monotone, subdivide them into \f$x\f$-monotone curves.
+  using Visitor = Do_intersect_visitor<Traits>;
+  using Surface_sweep = Do_intersect_surface_sweep_2<Visitor>;
+
+  Visitor visitor;
+  Surface_sweep surface_sweep(&traits, &visitor, closed);
+
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using value_type = typename std::iterator_traits<CurveInputIterator>::value_type;
+  if constexpr (std::is_same_v<value_type, X_monotone_curve_2>) {
+    surface_sweep.do_intersect_sweep(begin, end);
+    return visitor.do_intersect();
+  }
+  else {
+    using Point_2 = typename Traits::Point_2;
+    std::vector<X_monotone_curve_2> xcurves;
+    std::vector<Point_2> points;
+    xcurves.reserve(std::distance(begin, end));
+    make_x_monotone(begin, end, std::back_inserter(xcurves), std::back_inserter(points), traits);
+    surface_sweep.do_intersect_sweep(xcurves.begin(), xcurves.end(), points.begin(), points.end());
+    return visitor.do_intersect();
+  }
+}
+
+/*!
+ */
+template <typename CurveInputIterator>
+bool do_intersect(CurveInputIterator begin, CurveInputIterator end, bool closed = true) {
+  using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
+  typename Default_arr_traits<Curve>::Traits traits;
+  return do_intersect(begin, end, closed, traits);
+}
+
+} // namespace Surface_sweep_2
+
 namespace Ss2 = Surface_sweep_2;
 
 /*! Compute all intersection points induced by a range of input curves.
@@ -44,33 +89,41 @@ namespace Ss2 = Surface_sweep_2;
  *      value-type of OutputIterator is Traits::Point_2.
  */
 template <typename CurveInputIterator, typename OutputIterator, typename Traits>
-OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
-                                           CurveInputIterator curves_end,
-                                           OutputIterator points,
-                                           bool report_endpoints,
-                                           Traits& tr) {
+OutputIterator compute_intersection_points(CurveInputIterator begin, CurveInputIterator end,
+                                           OutputIterator points, bool report_endpoints, Traits& traits) {
   // Define the surface-sweep types:
   using Visitor = Ss2::Intersection_points_visitor<Traits, OutputIterator>;
   using Surface_sweep = Ss2::Surface_sweep_2<Visitor>;
 
   // Perform the sweep and obtain the intersection points.
   Visitor visitor(points, report_endpoints);
-  Surface_sweep surface_sweep(&tr, &visitor);
-  visitor.sweep(curves_begin, curves_end);
+  Surface_sweep surface_sweep(&traits, &visitor);
 
-  return visitor.output_iterator();
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using value_type = typename std::iterator_traits<CurveInputIterator>::value_type;
+  if constexpr (std::is_same_v<value_type, X_monotone_curve_2>) {
+    surface_sweep.sweep(begin, end);
+    return visitor.output_iterator();
+  }
+  else {
+    using Point_2 = typename Traits::Point_2;
+    std::vector<X_monotone_curve_2> xcurves;
+    std::vector<Point_2> points;
+    xcurves.reserve(std::distance(begin, end));
+    Ss2::make_x_monotone(begin, end, std::back_inserter(xcurves), std::back_inserter(points), traits);
+    surface_sweep.sweep(xcurves.begin(), xcurves.end(), points.begin(), points.end());
+    return visitor.output_iterator();
+  }
 }
 
 /*!
  */
 template <typename CurveInputIterator, typename OutputIterator>
-OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
-                                           CurveInputIterator curves_end,
-                                           OutputIterator points,
-                                           bool report_endpoints = false) {
+OutputIterator compute_intersection_points(CurveInputIterator begin, CurveInputIterator end,
+                                           OutputIterator points, bool report_endpoints = false) {
   using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
-  typename Ss2::Default_arr_traits<Curve>::Traits   traits;
-  return compute_intersection_points(curves_begin, curves_end, points, report_endpoints, traits);
+  typename Ss2::Default_arr_traits<Curve>::Traits traits;
+  return compute_intersection_points(begin, end, points, report_endpoints, traits);
 }
 
 /*! Compute all x-monotone subcurves that are disjoint in their interiors
@@ -85,32 +138,41 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
  *      value-type of OutputIterator is Traits::X_monotone_curve_2.
  */
 template <typename CurveInputIterator, typename OutputIterator, typename Traits>
-OutputIterator compute_subcurves(CurveInputIterator curves_begin,
-                                 CurveInputIterator curves_end,
-                                 OutputIterator subcurves,
-                                 bool mult_overlaps, Traits& tr) {
+OutputIterator compute_subcurves(CurveInputIterator begin, CurveInputIterator end,
+                                 OutputIterator subcurves, bool mult_overlaps, Traits& traits) {
   // Define the surface-sweep types:
   using Visitor = Ss2::Subcurves_visitor<Traits, OutputIterator>;
   using Surface_sweep = Ss2::Surface_sweep_2<Visitor>;
 
   // Perform the sweep and obtain the subcurves.
   Visitor visitor(subcurves, mult_overlaps);
-  Surface_sweep surface_sweep(&tr, &visitor);
-  visitor.sweep(curves_begin, curves_end);
+  Surface_sweep surface_sweep(&traits, &visitor);
 
-  return visitor.output_iterator();
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using value_type = typename std::iterator_traits<CurveInputIterator>::value_type;
+  if constexpr (std::is_same_v<value_type, X_monotone_curve_2>) {
+    surface_sweep.sweep(begin, end);
+    return visitor.output_iterator();
+  }
+  else {
+    using Point_2 = typename Traits::Point_2;
+    std::vector<X_monotone_curve_2> xcurves;
+    std::vector<Point_2> points;
+    xcurves.reserve(std::distance(begin, end));
+    Ss2::make_x_monotone(begin, end, std::back_inserter(xcurves), std::back_inserter(points), traits);
+    surface_sweep.sweep(xcurves.begin(), xcurves.end(), points.begin(), points.end());
+    return visitor.output_iterator();
+  }
 }
 
 /*!
  */
 template <typename CurveInputIterator, typename OutputIterator>
-OutputIterator compute_subcurves(CurveInputIterator curves_begin,
-                                 CurveInputIterator curves_end,
-                                 OutputIterator subcurves,
-                                 bool mult_overlaps = false) {
+OutputIterator compute_subcurves(CurveInputIterator begin, CurveInputIterator end,
+                                 OutputIterator subcurves, bool mult_overlaps = false) {
   using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
   typename Ss2::Default_arr_traits<Curve>::Traits traits;
-  return compute_subcurves(curves_begin, curves_end, subcurves, mult_overlaps, traits);
+  return compute_subcurves(begin, end, subcurves, mult_overlaps, traits);
 }
 
 /*! Determine whether any curves in a given range intersect pairwise.
@@ -119,26 +181,16 @@ OutputIterator compute_subcurves(CurveInputIterator curves_begin,
  * \return (true) if any pair of curves intersect; (false) otherwise.
  */
 template <typename CurveInputIterator, typename Traits>
-bool do_curves_intersect(CurveInputIterator curves_begin, CurveInputIterator curves_end, Traits& tr) {
-  // Define the surface-sweep types:
-  using Visitor = Ss2::Do_interior_intersect_visitor<Traits>;
-  using Surface_sweep = Ss2::Do_intersect_surface_sweep_2<Visitor>;
-
-  // Perform the sweep and obtain the subcurves.
-  Visitor visitor;
-  Surface_sweep surface_sweep(&tr, &visitor);
-  visitor.sweep(curves_begin, curves_end);
-  return visitor.found_intersection();
-}
+CGAL_DEPRECATED
+bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end, Traits& traits)
+{ return Ss2::do_intersect(begin, end, false, traits); }
 
 /*!
  */
 template <typename CurveInputIterator>
-bool do_curves_intersect(CurveInputIterator curves_begin, CurveInputIterator curves_end) {
-  using Curve = typename std::iterator_traits<CurveInputIterator>::value_type;
-  typename Ss2::Default_arr_traits<Curve>::Traits traits;
-  return do_curves_intersect(curves_begin, curves_end, traits);
-}
+CGAL_DEPRECATED
+bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end)
+{ return Ss2::do_intersect(begin, end, false); }
 
 } // namespace CGAL
 

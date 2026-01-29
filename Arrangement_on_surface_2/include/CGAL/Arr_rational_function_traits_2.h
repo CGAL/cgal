@@ -697,14 +697,50 @@ public:
      * \return a boolean flag indicating whether the curves intersect.
      * \todo Reimplement without using Intersect_2 to make robust (and efficient) with EPIC.
      */
-    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const {
       using Intersection_point = std::pair<Point_2, Multiplicity>;
       using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
       std::vector<Intersection_result> intersections;
       m_traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersections));
       auto empty = intersections.empty();
       intersections.clear();
-      return ! empty;
+      if (closed) return ! empty;
+
+      // Check whether the open curves intersect
+
+      // If the closed curves do not intersect, so do the open curves
+      if (intersections.empty()) return false;
+
+      // If there are more than 2 intersections, return true
+      if (intersections.size() > 2) return true;
+
+      // If the intersection is an overlap, return true
+      auto cmp_xy = m_traits.compare_xy_2_object();
+      const Intersection_point* p_first_p = std::get_if<Intersection_point>(&(intersections.front()));
+      if (! p_first_p) return true;
+
+      auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
+      auto ctr_max_vertex = m_traits.construct_max_vertex_2_object();
+
+      // If the first intersection point of the closed curves is not an endpoint of the first curve, return true
+      const auto& min_p1 = ctr_min_vertex(xcv1);
+      const auto& max_p1 = ctr_max_vertex(xcv1);
+      if ((cmp_xy(min_p1, p_first_p->first) != EQUAL) && (cmp_xy(max_p1, p_first_p->first) != EQUAL)) return true;
+
+      // If the first intersection point of the closed curves is not an endpoint of the second curve, return true
+      const auto& min_p2 = ctr_min_vertex(xcv2);
+      const auto& max_p2 = ctr_max_vertex(xcv2);
+      if ((cmp_xy(min_p2, p_first_p->first) != EQUAL) && (cmp_xy(max_p2, p_first_p->first) != EQUAL)) return true;
+
+      // If there is only one intersection, it is an endpoint; return false
+      if (intersections.size() == 1) return false;
+
+      // repeat the above for the last point
+      const Intersection_point* p_last_p = std::get_if<Intersection_point>(&(intersections.back()));
+      if (! p_last_p) return true;
+      if ((cmp_xy(min_p1, p_last_p->first) != EQUAL) && (cmp_xy(max_p1, p_last_p->first) != EQUAL)) return true;
+      if ((cmp_xy(min_p2, p_last_p->first) != EQUAL) && (cmp_xy(max_p2, p_last_p->first) != EQUAL)) return true;
+      return false;
     }
   };
 

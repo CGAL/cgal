@@ -3308,7 +3308,12 @@ see Section \ref aos_sssec-tr_landmarks_concept.
 <DD> Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ that
   share a common minimal (left) endpoint \f$p\f$, determines whether
   \f$c_1\f$ is above or below \f$c_2\f$ immediately to the right of
-  \f$p\f$, or whether the two curves overlap there.  </DL>
+  \f$p\f$, or whether the two curves overlap there.
+
+<DT>\link AosBasicTraits_2::Do_intersect_2 <B>`Do_intersect_2`</B>\endlink:
+<DD> Determines whether two given \f$x\f$-monotone curves intersect.
+  An input flag determines whether the curve are closed or open.
+</DL>
 
 Every model of the concept `AosBasicTraits_2` needs to define
 a nested type named \link AosBasicTraits_2::Has_left_category

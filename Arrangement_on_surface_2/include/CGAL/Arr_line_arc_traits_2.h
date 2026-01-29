@@ -77,7 +77,6 @@ public:
   using Construct_max_vertex_2 = typename CircularKernel::Construct_circular_max_vertex_2;
   using Is_vertical_2 = typename CircularKernel::Is_vertical_2;
   using Intersect_2 = typename CircularKernel::Intersect_2;
-  using Do_intersect_2 = typename CircularKernel::Do_intersect_2;
 
   Compare_x_2 compare_x_2_object() const { return ck.compare_x_2_object(); }
 
@@ -94,8 +93,6 @@ public:
   Split_2 split_2_object() const { return ck.split_2_object(); }
 
   Intersect_2 intersect_2_object() const { return ck.intersect_2_object(); }
-
-  Do_intersect_2 do_intersect_2_object() const { return ck.do_intersect_2_object(); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const { return ck.construct_circular_min_vertex_2_object(); }
 
@@ -114,8 +111,31 @@ public:
     }
   };
 
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(); }
+
+  //! A functor for detecting intersections between \f$x\f$-monotone curves.
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_line_arc_traits_2<CircularKernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_line_arc_traits_2<CircularKernel>;
+
+  public:
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const {
+      return m_traits.ck.do_intersect_2_object()(xcv1, xcv2);
+    }
+  };
+
+  //! obtains a `Do_intersect` object
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
 };
 
 } // namespace CGAL

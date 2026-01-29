@@ -34,6 +34,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include <CGAL/Arrangement_2/do_segments_intersect.h>
 
 namespace CGAL {
 
@@ -552,72 +553,15 @@ public:
 
     friend class Arr_segment_traits_2<Kernel>;
 
-    // Specialized do_intersect with many tests skipped because at
-    // this point, we already know which point is left / right for
-    // both segments
-    bool do_intersect(const Point_2& A1, const Point_2& A2,
-                      const Point_2& B1, const Point_2& B2) const {
-      const Kernel& kernel = m_traits;
-      auto compare_xy = kernel.compare_xy_2_object();
-      namespace interx = CGAL::Intersections::internal;
-
-      switch(make_certain(compare_xy(A1,B1))) {
-       case SMALLER:
-        switch(make_certain(compare_xy(A2,B1))) {
-         case SMALLER: return false;
-         case EQUAL: return true;
-         default: // LARGER
-          switch(make_certain(compare_xy(A2,B2))) {
-           case SMALLER:
-            return interx::seg_seg_do_intersect_crossing(A1,A2,B1,B2, kernel);
-           case EQUAL: return true;
-           default: // LARGER
-            return interx::seg_seg_do_intersect_contained(A1,A2,B1,B2, kernel);
-          }
-        }
-       case EQUAL: return true;
-       default: // LARGER
-        switch(make_certain(compare_xy(B2,A1))) {
-         case SMALLER: return false;
-         case EQUAL: return true;
-         default: // LARGER
-          switch(make_certain(compare_xy(B2,A2))) {
-           case SMALLER:
-            return interx::seg_seg_do_intersect_crossing(B1,B2,A1,A2, kernel);
-           case EQUAL: return true;
-           default: // LARGER
-            return interx::seg_seg_do_intersect_contained(B1,B2,A1,A2, kernel);
-          }
-        }
-      }
-      CGAL_error();     // never reached
-      return false;
-    }
-
-    /*! determines whether the bounding boxes of two segments overlap
-     */
-    bool do_bboxes_overlap(const X_monotone_curve_2& cv1,
-                           const X_monotone_curve_2& cv2) const {
-      const Kernel& kernel = m_traits;
-      auto construct_bbox = kernel.construct_bbox_2_object();
-      auto bbox1 = construct_bbox(cv1.source()) + construct_bbox(cv1.target());
-      auto bbox2 = construct_bbox(cv2.source()) + construct_bbox(cv2.target());
-      return CGAL::do_overlap(bbox1, bbox2);
-    }
-
   public:
     /*! determines whether two given \f$x\f$-monotone curves intersect.
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
+     * \param closed indicates whether the curves are closed.
      * \return a boolean flag indicating whether the curves intersect.
      */
-    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
-      // Early ending with Bbox overlapping test
-      if (! do_bboxes_overlap(xcv1, xcv2)) return false;
-
-      // Early ending with specialized do_intersect
-      return do_intersect(xcv1.left(), xcv1.right(), xcv2.left(), xcv2.right());
-    }
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const
+    { return Aos_2::internal::do_segment_intersect(xcv1, xcv2, closed, m_traits); }
   };
 
   /*! obtains a `Do_intersect_2` functor object. */

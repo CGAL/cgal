@@ -1,0 +1,6 @@
+Inserting curve (-5)*y + (3*x + (-2))
+Inserting curve 3*y^2 + (x^2 + (-10))
+Inserting curve (x + 1)*y^2 + (x^2)
+Inserting curve y^6 + ((-1)*x^3)*y^3 + (x^6 + (-12))
+The arrangement size:
+   |V| = 14,  |E| = 21,  |F| = 9

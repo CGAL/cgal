@@ -1558,6 +1558,49 @@ public:
       return kernel.counterclockwise_in_between_2_object()(p, l, r);
     }
 
+    /*!
+     */
+    bool do_intersect_open(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+      std::list<Intersection_result> intersections;
+      m_traits.intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
+
+      // If the closed curves do not intersect, so do the open curves
+      if (intersections.empty()) return false;
+
+      // If there are more than 2 intersections, return true
+      if (intersections.size() > 2) return true;
+
+      // If the intersection is an overlap, return true
+      auto cmp_xy = m_traits.compare_xy_2_object();
+      const Intersection_point* p_first_p = std::get_if<Intersection_point>(&(intersections.front()));
+      if (! p_first_p) return true;
+
+      auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
+      auto ctr_max_vertex = m_traits.construct_max_vertex_2_object();
+
+      // If the first intersection point of the closed curves is not an endpoint of the first curve, return true
+      const auto& min_p1 = ctr_min_vertex(xcv1);
+      const auto& max_p1 = ctr_max_vertex(xcv1);
+      if ((cmp_xy(min_p1, p_first_p->first) != EQUAL) && (cmp_xy(max_p1, p_first_p->first) != EQUAL)) return true;
+
+      // If the first intersection point of the closed curves is not an endpoint of the second curve, return true
+      const auto& min_p2 = ctr_min_vertex(xcv2);
+      const auto& max_p2 = ctr_max_vertex(xcv2);
+      if ((cmp_xy(min_p2, p_first_p->first) != EQUAL) && (cmp_xy(max_p2, p_first_p->first) != EQUAL)) return true;
+
+      // If there is only one intersection, it is an endpoint; return false
+      if (intersections.size() == 1) return false;
+
+      // repeat the above for the last point
+      const Intersection_point* p_last_p = std::get_if<Intersection_point>(&(intersections.back()));
+      if (! p_last_p) return true;
+      if ((cmp_xy(min_p1, p_last_p->first) != EQUAL) && (cmp_xy(max_p1, p_last_p->first) != EQUAL)) return true;
+      if ((cmp_xy(min_p2, p_last_p->first) != EQUAL) && (cmp_xy(max_p2, p_last_p->first) != EQUAL)) return true;
+      return false;
+    }
+
   protected:
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
@@ -1577,27 +1620,29 @@ public:
      * \param xcv2 the second curve.
      * \return a boolean flag indicating whether the curves intersect.
      */
-    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const {
-      CGAL_precondition(! xc1.is_degenerate());
-      CGAL_precondition(! xc2.is_degenerate());
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const {
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
+
+      if (! closed) return do_intersect_open(xcv1, xcv2);
 
       const Kernel& kernel = m_traits;
 
       auto equal_3 = kernel.equal_3_object();
-      const Direction_3& normal1 = xc1.normal();
-      const Direction_3& normal2 = xc2.normal();
+      const Direction_3& normal1 = xcv1.normal();
+      const Direction_3& normal2 = xcv2.normal();
 
       Direction_3 opposite_normal1 = kernel.construct_opposite_direction_3_object()(normal1);
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
-        if (xc1.is_vertical()) {
+        if (xcv1.is_vertical()) {
           // Both arcs are vertical
           bool res = kernel.equal_3_object()(normal1, normal2);
-          if ((! res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
-              (res && (xc1.is_directed_right() != xc2.is_directed_right()))) {
-            if (xc1.left().is_min_boundary() && xc2.left().is_min_boundary()) return true;
-            if (xc1.right().is_max_boundary() && xc2.right().is_max_boundary()) return true;
+          if ((! res && (xcv1.is_directed_right() == xcv2.is_directed_right())) ||
+              (res && (xcv1.is_directed_right() != xcv2.is_directed_right()))) {
+            if (xcv1.left().is_min_boundary() && xcv2.left().is_min_boundary()) return true;
+            if (xcv1.right().is_max_boundary() && xcv2.right().is_max_boundary()) return true;
             return false;
           }
 
@@ -1609,15 +1654,15 @@ public:
 
       // The following is suspicious; it may introduce instability for inexact kernels
       auto cross_prod = kernel.construct_cross_product_vector_3_object();
-      Vector_3 v = cross_prod(xc1.normal().vector(), xc2.normal().vector());
+      Vector_3 v = cross_prod(xcv1.normal().vector(), xcv2.normal().vector());
 
       // Observe that xc1 and xc2 may share two endpoints.
       Point_2 ed = m_traits.construct_point_2_object()(v.direction());
-      if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) return true;
+      if (is_in_between(ed, xcv1) && is_in_between(ed, xcv2)) return true;
 
       Vector_3 vo(kernel.construct_opposite_vector_3_object()(v));
       Point_2 edo = m_traits.construct_point_2_object()(vo.direction());
-      if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) return true;
+      if (is_in_between(edo, xcv1) && is_in_between(edo, xcv2)) return true;
 
       return false;
     }
