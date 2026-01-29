@@ -158,11 +158,11 @@ bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, Topo
     if (std::is_same<typename Agt2::Bottom_side_category, Arr_contracted_side_tag>::value) {
       surface_sweep.sweep(xcvs.begin(), xcvs.end());
       xcvs.clear();
-      return visitor.found_intersection();
+      return visitor.do_intersect();
     }
     surface_sweep.indexed_sweep(xcvs, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2));
     xcvs.clear();
-    return visitor.found_intersection();
+    return visitor.do_intersect();
   }
 
   // Prepare a vector of extended points that represent all isolated vertices
@@ -192,13 +192,13 @@ bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, Topo
     surface_sweep.sweep(xcvs.begin(), xcvs.end(), pts_vec.begin(), pts_vec.end());
     xcvs.clear();
     pts_vec.clear();
-    return visitor.found_intersection();
+    return visitor.do_intersect();
   }
   surface_sweep.indexed_sweep(xcvs, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2),
                               pts_vec.begin(), pts_vec.end());
   xcvs.clear();
   pts_vec.clear();
-  return visitor.found_intersection();
+  return visitor.do_intersect();
 }
 
 /*! Compute the (simple) overlay of two input arrangements.

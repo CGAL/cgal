@@ -37,6 +37,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include <CGAL/Arrangement_2/do_segments_intersect.h>
 
 namespace CGAL {
 
@@ -97,9 +98,6 @@ public:
 
   /*! checks if two segments or if two points are identical. */
   using Equal_2 = typename Kernel::Equal_2;
-
-  /*! checks if two segments intersect. */
-  using Do_intersect_2 = typename Kernel::Do_intersect_2;
 
   //@}
 
@@ -212,6 +210,38 @@ public:
   /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_non_caching_segment_basic_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param closed indicates whether the curves are closed.
+     * \return a boolean flag indicating whether the curves intersect.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const
+    { return Aos_2::internal::do_segment_intersect(xcv1, xcv2, closed, m_traits); }
+  };
+
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
+
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.

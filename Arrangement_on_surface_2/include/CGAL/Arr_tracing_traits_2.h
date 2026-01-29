@@ -54,6 +54,7 @@ public:
 
     MAKE_X_MONOTONE_2_OP,
     SPLIT_2_OP,
+    DO_INTERSECT_2_OP,
     INTERSECT_2_OP,
 
     ARE_MERGEABLE_2_OP,
@@ -117,6 +118,9 @@ private:
 
   bool split_op() const
   { return (0 != (m_flags & (0x1ull << SPLIT_2_OP))); }
+
+  bool do_intersect_op() const
+  { return (0 != (m_flags & (0x1ull << DO_INTERSECT_2_OP))); }
 
   bool intersect_op() const
   { return (0 != (m_flags & (0x1ull << INTERSECT_2_OP))); }
@@ -588,6 +592,39 @@ public:
       m_object(xcv, p, xcv1, xcv2);
       std::cout << "  result xcv1: " << xcv1 << std::endl
                 << "         xcv2: " << xcv2 << std::endl;
+    }
+  };
+
+  /*! A functor that determines whether two \f$x\f$-monotone curves intersect.
+   */
+  class Do_intersect_2 {
+  private:
+    typename Base::Do_intersect_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Do_intersect_2(const Base& base, bool enabled = true) :
+      m_object(base.do_intersect_2_object()), m_enabled(enabled) {}
+
+    /*! determines whether two given curves intersect
+     * a given output iterator.
+     * \param xcv1 the first curve.
+     * \param xcv2 the ssecond curve.
+     * \param closed indicates whether the curves are closed
+     * \return `true` if `xc1` and `xc2` are closed and intersect or if `xc1` and `xc2` are open and intersect
+     * in at least one of their interiors, and `false` otherwise.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const {
+      if (! m_enabled) return m_object(xcv1, xcv2, closed);
+
+      std::cout << "do_intersect" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl
+                << "  closed: " << closed << std::endl;
+      auto res = m_object(xcv1, xcv2, closed);
+      std::cout << "  result: " << res << std::endl;
+      return res;
     }
   };
 
@@ -1214,6 +1251,9 @@ public:
 
   Split_2 split_2_object() const
   { return Split_2(*this, split_op()); }
+
+  Do_intersect_2 do_intersect_2_object() const
+  { return Do_intersect_2(*this, do_intersect_op()); }
 
   Intersect_2 intersect_2_object() const
   { return Intersect_2(*this, intersect_op()); }

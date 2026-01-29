@@ -530,12 +530,12 @@ public:
      * \param xcv2 the second curve.
      * \return true if xcv1 and xcv2 intersect false otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed = true) const {
       // The function is implemented based on the Has_do_intersect category.
       // If the category indicates that "do_intersect" is available, it calls
       // the function with same name defined in the base class. Otherwise, it
       // uses the intersection construction to implement this predicate.
-      return _do_intersect_imp(xcv1, xcv2, has_intersect_2<Base>::value);
+      return _do_intersect_imp(xcv1, xcv2, closed, has_intersect_2<Base>());
     }
 
   protected:
@@ -556,19 +556,57 @@ public:
 
     /*! Implementation of the operator() in case the HasDoIntersect tag is true.
      */
-    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, std::true_type) const {
+    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed,
+                           std::true_type) const {
       const Base* base = m_self;
-      return (base->do_intersect_2_object()(xcv1, xcv2));
+      return (base->do_intersect_2_object()(xcv1, xcv2, closed));
     }
 
     /*! Implementation of the operator() in case the HasDoIntersect tag is false.
      */
-    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, std::false_type) const {
+    bool _do_intersect_imp(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, bool closed,
+                           std::false_type) const {
       using Intersection_point = std::pair<Point_2, Multiplicity>;
       using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
       std::list<Intersection_result> intersections;
       m_self->intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
-      return ! intersections.empty();
+      if (closed) return ! intersections.empty();
+
+      // Check whether the open curves intersect
+
+      // If the closed curves do not intersect, so do the open curves
+      if (intersections.empty()) return false;
+
+      // If there are more than 2 intersections, return true
+      if (intersections.size() > 2) return true;
+
+      // If the intersection is an overlap, return true
+      auto cmp_xy = m_self->compare_xy_2_object();
+      const Intersection_point* p_first_p = std::get_if<Intersection_point>(&(intersections.front()));
+      if (! p_first_p) return true;
+
+      auto ctr_min_vertex = m_self->construct_min_vertex_2_object();
+      auto ctr_max_vertex = m_self->construct_max_vertex_2_object();
+
+      // If the first intersection point of the closed curves is not an endpoint of the first curve, return true
+      const auto& min_p1 = ctr_min_vertex(xcv1);
+      const auto& max_p1 = ctr_max_vertex(xcv1);
+      if ((cmp_xy(min_p1, p_first_p->first) != EQUAL) && (cmp_xy(max_p1, p_first_p->first) != EQUAL)) return true;
+
+      // If the first intersection point of the closed curves is not an endpoint of the second curve, return true
+      const auto& min_p2 = ctr_min_vertex(xcv2);
+      const auto& max_p2 = ctr_max_vertex(xcv2);
+      if ((cmp_xy(min_p2, p_first_p->first) != EQUAL) && (cmp_xy(max_p2, p_first_p->first) != EQUAL)) return true;
+
+      // If there is only one intersection, it is an endpoint; return false
+      if (intersections.size() == 1) return false;
+
+      // repeat the above for the last point
+      const Intersection_point* p_last_p = std::get_if<Intersection_point>(&(intersections.back()));
+      if (! p_last_p) return true;
+      if ((cmp_xy(min_p1, p_last_p->first) != EQUAL) && (cmp_xy(max_p1, p_last_p->first) != EQUAL)) return true;
+      if ((cmp_xy(min_p2, p_last_p->first) != EQUAL) && (cmp_xy(max_p2, p_last_p->first) != EQUAL)) return true;
+      return false;
     }
   };
 

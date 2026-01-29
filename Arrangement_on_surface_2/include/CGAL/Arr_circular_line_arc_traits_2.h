@@ -233,8 +233,7 @@ class Do_intersect_2 {
 public:
   using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
 
-  bool operator()(const std::variant< Arc1, Arc2>& c1,
-                  const std::variant< Arc1, Arc2>& c2) const {
+  bool operator()(const std::variant< Arc1, Arc2>& c1, const std::variant< Arc1, Arc2>& c2, bool closed = true) const {
     if (const Arc1* arc1 = std::get_if<Arc1>(&c1)) {
       if (const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
         return CircularKernel().do_intersect_2_object()(*arc1, *arc2);

@@ -1,0 +1,7 @@
+Vertex (0 0) :  feature below: NONE   feature above: NONE
+Vertex (2 0) :  feature below: NONE   feature above: [0 0 3 3]
+Vertex (3 3) :  feature below: [2 0 4 2]   feature above: NONE
+Vertex (4 2) :  feature below: NONE   feature above: NONE
+Vertex (5 3) :  feature below: [4 2 6 0]   feature above: NONE
+Vertex (6 0) :  feature below: NONE   feature above: [5 3 8 0]
+Vertex (8 0) :  feature below: NONE   feature above: NONE
