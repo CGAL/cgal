@@ -10,7 +10,10 @@ optimization algorithms using the \f$ d\f$-dimensional \cgal kernel.
 
 \tparam K must be a model for `Kernel`.
 
-\tparam ET NT must be models for `RingNumberType`. Their default is  `K::RT`.
+\tparam ET must be models for `RingNumberType`. The default is  `K::RT`.
+
+\tparam NT must be models for `RingNumberType`. The default is  `K::RT`.
+
 
 
 \cgalModels{PolytopeDistanceDTraits}
