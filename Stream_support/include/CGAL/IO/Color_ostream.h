@@ -461,6 +461,7 @@ public:
                   "Basic_color_stream_guard expects Ansi_color arguments");
     if(auto old_buf = dynamic_cast<streambuf_type*>(original_buf_)) {
       original_color_code_ = old_buf->color_code();
+      old_buf->set_color_code(color_buf_.color_code());
     } else {
       stream.rdbuf(&color_buf_);
     }

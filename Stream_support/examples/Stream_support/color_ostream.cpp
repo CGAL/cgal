@@ -132,14 +132,14 @@ void demonstrate_nested_colors() {
 
     {
       CGAL::IO::Color_stream_guard inner(std::cout, CGAL::IO::Ansi_color::Red);
-      std::cout << "Inner scope: red text\n";
+      std::cout << "  Inner scope: red text\n";
 
       {
         CGAL::IO::Color_stream_guard innermost(std::cout, CGAL::IO::Ansi_color::Green);
-        std::cout << "Innermost scope: green text\n";
+        std::cout << "    Innermost scope: green text\n";
       }
 
-      std::cout << "Back to inner scope: red text\n";
+      std::cout << "  Back to inner scope: red text\n";
     }
 
     std::cout << "Back to outer scope: blue text\n";
