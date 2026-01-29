@@ -75,6 +75,8 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/Compare_distance_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Has_on_bounded_side_2.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Has_on_bounded_side_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Has_on_unbounded_side_2.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Has_on_unbounded_side_3.h>
 
 // #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_orientation_3.h>
 // #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_side_of_bounded_circle_3.h>
@@ -133,6 +135,8 @@ public:
   typedef Static_filters_predicates::Compare_distance_3<K_base>             Compare_distance_3;
   typedef Static_filters_predicates::Has_on_bounded_side_2<K_base>          Has_on_bounded_side_2;
   typedef Static_filters_predicates::Has_on_bounded_side_3<K_base>          Has_on_bounded_side_3;
+  typedef Static_filters_predicates::Has_on_unbounded_side_2<K_base>        Has_on_unbounded_side_2;
+  typedef Static_filters_predicates::Has_on_unbounded_side_3<K_base>        Has_on_unbounded_side_3;
 
   Orientation_2
   orientation_2_object() const
@@ -211,13 +215,21 @@ public:
   compare_distance_3_object() const
   { return Compare_distance_3();}
 
+  Has_on_bounded_side_2
+  has_on_bounded_side_2_object() const
+  { return Has_on_bounded_side_2(); }
+
   Has_on_bounded_side_3
   has_on_bounded_side_3_object() const
   { return Has_on_bounded_side_3(); }
 
-  Has_on_bounded_side_2
-  has_on_bounded_side_2_object() const
-  { return Has_on_bounded_side_2(); }
+  Has_on_unbounded_side_2
+  has_on_unbounded_side_2_object() const
+  { return Has_on_unbounded_side_2(); }
+
+  Has_on_unbounded_side_3
+  has_on_unbounded_side_3_object() const
+  { return Has_on_unbounded_side_3(); }
 
   enum { Has_static_filters = true };
 

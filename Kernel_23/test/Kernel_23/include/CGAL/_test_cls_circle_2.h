@@ -165,12 +165,14 @@ _test_cls_circle_2(const R& )
  assert( c8.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
  assert( cc.has_on_boundary( p3 + vy6) );
  assert( cc.has_on_boundary( p3 - vx6) );
- assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(p0, p1)) );
- assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(p2, p1)) );
+ assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(CGAL::Point_2<R>(2, 2), CGAL::Point_2<R>(4, 0))) );
  assert( c1.has_on_bounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(3, 0), CGAL::Point_2<R>(2, 2))) );
  assert(!c1.has_on_bounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-3, 0), CGAL::Point_2<R>(2, 2))) );
- assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(p1, p1)) );
- assert(!c1.has_on_bounded_side(CGAL::Segment_2<R>(p1, p4)) );
+ assert( c1.has_on_bounded_side(CGAL::Segment_2<R>(CGAL::Point_2<R>(4, 0), CGAL::Point_2<R>(4, 0))) );
+ assert(!c1.has_on_bounded_side(CGAL::Segment_2<R>(p1, p1)));
+ assert(!c1.has_on_unbounded_side(CGAL::Segment_2<R>(p1, p1)));
+ assert( c1.has_on_unbounded_side(CGAL::Segment_2<R>(CGAL::Point_2<R>(4, -2), CGAL::Point_2<R>(5, -2))));
+ assert(!c1.has_on_unbounded_side(CGAL::Segment_2<R>(p0, CGAL::Point_2<R>(5, -2))));
 
  std::cout << '.';
 

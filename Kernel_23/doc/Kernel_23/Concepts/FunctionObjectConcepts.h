@@ -8377,6 +8377,20 @@ public:
   bool operator()(const Kernel::Circle_2&c,
                   const Kernel::Point_2&p);
 
+
+  /*!
+    returns true iff `i` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Iso_rectangle_2& i);
+
+
+  /*!
+    returns true iff `s` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Segment_2& s);
+
   /*!
     returns true iff `p` lies on the unbounded side of `i`.
   */
@@ -8420,6 +8434,12 @@ public:
   */
   bool operator()(const Kernel::Sphere_3&s,
                   const Kernel::Point_3&p);
+
+  /*!
+    returns true iff `c` lies on the unbounded side of `s`.
+  */
+  bool operator()(const Kernel::Sphere_3& s,
+                  const Kernel::Iso_cuboid_3& c);
 
   /*!
     returns true iff `p` lies on the unbounded side of `t`.

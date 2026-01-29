@@ -11,8 +11,8 @@
 // Author(s)     : Sven Oesau
 
 
-#ifndef CGAL_INTERNAL_STATIC_FILTERS_HAS_ON_BOUNDED_SIDE_3_H
-#define CGAL_INTERNAL_STATIC_FILTERS_HAS_ON_BOUNDED_SIDE_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_HAS_ON_UNBOUNDED_SIDE_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_HAS_ON_UNBOUNDED_SIDE_3_H
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
@@ -27,14 +27,14 @@ namespace Static_filters_predicates {
 
 
 template < typename K_base >
-class Has_on_bounded_side_3
-  : public K_base::Has_on_bounded_side_3
+class Has_on_unbounded_side_3
+  : public K_base::Has_on_unbounded_side_3
 {
-  typedef typename K_base::Boolean               Boolean;
-  typedef typename K_base::Point_3               Point_3;
-  typedef typename K_base::Sphere_3              Sphere_3;
-  typedef typename K_base::Iso_cuboid_3          Iso_cuboid_3;
-  typedef typename K_base::Has_on_bounded_side_3 Base;
+  typedef typename K_base::Boolean                 Boolean;
+  typedef typename K_base::Point_3                 Point_3;
+  typedef typename K_base::Sphere_3                Sphere_3;
+  typedef typename K_base::Iso_cuboid_3            Iso_cuboid_3;
+  typedef typename K_base::Has_on_unbounded_side_3 Base;
 
 public:
   using Base::operator();
@@ -69,10 +69,10 @@ public:
       double eps = 0;
       if (scx < bxmin)
       {
-        double bxmax_scx = bxmax - scx;
-        max1 = bxmax_scx;
+        double bxmin_scx = bxmin - scx;
+        max1 = bxmin_scx;
 
-        distance = square(bxmax_scx);
+        distance = square(bxmin_scx);
         double_tmp_result = (distance - ssr);
 
         if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
@@ -83,15 +83,15 @@ public:
         eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
         if (double_tmp_result > eps) {
-          return false;
+          return true;
         }
       }
       else if (scx > bxmax)
       {
-        double scx_bxmin = scx - bxmin;
-        max1 = scx_bxmin;
+        double scx_bxmax = scx - bxmax;
+        max1 = scx_bxmax;
 
-        distance = square(scx_bxmin);
+        distance = square(scx_bxmax);
         double_tmp_result = (distance - ssr);
 
         if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
@@ -102,100 +102,110 @@ public:
         eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
         if (double_tmp_result > eps) {
-          return false;
+          return true;
+        }
+      }
+      else
+      {
+        double scx_bxmin = scx - bxmin;
+        double bxmax_scx = bxmax - scx;
+        max1 = (std::min)(scx_bxmin, bxmax_scx);
+
+        distance = square(max1);
+        double_tmp_result = (distance - ssr);
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
       }
 
 
       if (scy < bymin)
       {
-        double bymax_scy = bymax - scy;
-        if (max1 < bymax_scy) {
-          max1 = bymax_scy;
+        double bymin_scy = bymin - scy;
+        if (max1 < bymin_scy) {
+          max1 = bymin_scy;
         }
 
-        distance += square(bymax_scy);
-        double_tmp_result = (distance - ssr);
-
-        if ((max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153))) {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
-        }
-
-        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
-
-        if (double_tmp_result > eps) {
-          return false;
-        }
+        distance += square(bymin_scy);
       }
       else if (scy > bymax)
       {
+        double scy_bymax = scy - bymax;
+        if (max1 < scy_bymax) {
+          max1 = scy_bymax;
+        }
+        distance += square(scy_bymax);
+      }
+      else {
         double scy_bymin = scy - bymin;
-        if (max1 < scy_bymin) {
-          max1 = scy_bymin;
-        }
-        distance += square(scy_bymin);
-        double_tmp_result = (distance - ssr);
-
-        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
+        double bymax_scy = bymax - scy;
+        double d = (std::min)(scy_bymin, bymax_scy);
+        if (max1 < d) {
+          max1 = d;
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+        distance += square(d);
+      }
 
-        if (double_tmp_result > eps) {
-          return false;
-        }
+      double_tmp_result = (distance - ssr);
+
+      if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s, b);
+      }
+
+      eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+      if (double_tmp_result > eps) {
+        return true;
       }
 
 
       if (scz < bzmin)
       {
-        double bzmax_scz = bzmax - scz;
-        if (max1 < bzmax_scz) {
-          max1 = bzmax_scz;
+        double bzmin_scz = bzmin - scz;
+        if (max1 < bzmin_scz) {
+          max1 = bzmin_scz;
         }
-        distance += square(bzmax_scz);
-        double_tmp_result = (distance - ssr);
-
-        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
-        }
-
-        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
-
-        if (double_tmp_result > eps) {
-          return false;
-        }
+        distance += square(bzmin_scz);
       }
       else if (scz > bzmax)
       {
+        double scz_bzmax = scz - bzmax;
+        if (max1 < scz_bzmax) {
+          max1 = scz_bzmax;
+        }
+
+        distance += square(scz_bzmax);
+      }
+      else
+      {
         double scz_bzmin = scz - bzmin;
-        if (max1 < scz_bzmin) {
-          max1 = scz_bzmin;
+        double bzmax_scz = bzmax - scz;
+        double d = (std::min)(scz_bzmin, bzmax_scz);
+
+        if (max1 < d) {
+          max1 = d;
         }
 
-        distance += square(scz_bzmin);
-        double_tmp_result = (distance - ssr);
-
-        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
-        }
-
-        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
-
-        if (double_tmp_result > eps) {
-          return false;
-        }
+        distance += square(d);
       }
 
-      // double_tmp_result and eps were growing all the time
-      // no need to test for > eps as done earlier in at least one case
-      if (double_tmp_result < -eps) {
+      double_tmp_result = (distance - ssr);
+      if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s, b);
+      }
+
+      eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+      if (double_tmp_result > eps) {
         return true;
+      }
+      else if (double_tmp_result <= -eps) {
+        return false;
       }
       else {
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
@@ -214,7 +224,7 @@ public:
   }
 
 
-}; // end class Has_on_bounded_side_3
+}; // end class Has_on_unbounded_side_3
 
 } // end namespace Static_filters_predicates
 
@@ -222,4 +232,4 @@ public:
 
 } // end namespace CGAL
 
-#endif  // CGAL_INTERNAL_STATIC_FILTERS_HAS_ON_BOUNDED_SIDE_3_H
+#endif  // CGAL_INTERNAL_STATIC_FILTERS_HAS_ON_UNBOUNDED_SIDE_3_H

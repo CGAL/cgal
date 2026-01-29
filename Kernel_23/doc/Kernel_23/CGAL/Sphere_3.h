@@ -186,8 +186,7 @@ bool has_on_boundary(const Point_3<Kernel> &p) const;
 bool has_on_bounded_side(const Point_3<Kernel> &p) const;
 
 /*!
-returns whether the Iso_cuboid_3 `b` lies on the bounded side of the sphere `c`.
-The corner points of `b` are allowed to be on the boundary of `c`.
+
 */
 bool has_on_bounded_side(const Iso_cuboid_3<Kernel> &b) const
 
@@ -195,6 +194,11 @@ bool has_on_bounded_side(const Iso_cuboid_3<Kernel> &b) const
 
 */
 bool has_on_unbounded_side(const Point_3<Kernel> &p) const;
+
+/*!
+
+*/
+bool has_on_unbounded_side(const Iso_cuboid_3<Kernel>& b) const
 
 /*!
 

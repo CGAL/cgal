@@ -165,6 +165,12 @@ public:
   }
 
   typename R::Boolean
+  has_on_unbounded_side(const Iso_cuboid_3& c) const
+  {
+    return R().has_on_unbounded_side_3_object()(*this, c);
+  }
+
+  typename R::Boolean
   has_on_negative_side(const Point_3_ &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
