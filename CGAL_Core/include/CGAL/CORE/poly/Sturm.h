@@ -861,12 +861,12 @@ std::cout << "In newtonRefine, input J=" << J.first
 
     //N is number of times Newton is called without checking
     // whether the result is still in the interval or not
-    #define NO_STEPS 2
-    // REMARK: NO_STEPS=1 is incorrect, as it may lead to
+    #define CORE_NO_STEPS 2
+    // REMARK: CORE_NO_STEPS=1 is incorrect, as it may lead to
     //      linear convergence (it is somewhat similar to Dekker-Brent's
     //      idea of guaranteeing that bisection does not
     //            destroy the superlinear convergence of Newton.
-    int N = NO_STEPS;
+    int N = CORE_NO_STEPS;
 
     BigFloat x, del, olddel, temp;
     unsigned long err;
@@ -961,7 +961,7 @@ std::cout << "In newtonRefine, input J=" << J.first
         old_width = old_width.div2(); // update width
 
         // reduce value of N:
-        N = core_max(N-1, NO_STEPS);   // N must be at least NO_STEPS
+        N = core_max(N-1, CORE_NO_STEPS);   // N must be at least CORE_NO_STEPS
       }
     }//MAIN WHILE LOOP
 

@@ -1000,20 +1000,20 @@ is_valid(bool verbose, int level) const
 
   bool result(true);
 
-#define DEBUGVALIDHIER true
+#define CGAL_DEBUGVALIDHIER true
 
 #include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
 
-//#undef DEBUGVALIDHIER
+//#undef CGAL_DEBUGVALIDHIER
 
-#ifdef DEBUGVALIDHIER
+#ifdef CGAL_DEBUGVALIDHIER
   std::cout << "debug hierarchy is_valid entering"
     << " level=" << level << std::endl;
 #endif
 
   //verify correctness of triangulation at all levels
   for(unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
-#ifdef DEBUGVALIDHIER
+#ifdef CGAL_DEBUGVALIDHIER
     std::cout << "debug hierarchy is_valid level " << i << std::endl;
 #endif
     if ( verbose ) {
@@ -1021,7 +1021,7 @@ is_valid(bool verbose, int level) const
     }
     bool is_valid_level = hierarchy[i]->is_valid(verbose, level);
 
-#ifdef DEBUGVALIDHIER
+#ifdef CGAL_DEBUGVALIDHIER
     std::cout << "debug level=" << i
       << " validity=" << is_valid_level << std::endl;
 #endif
@@ -1045,7 +1045,7 @@ is_valid(bool verbose, int level) const
       result = result && ( it->down()->up() == vit );
     }
   }
-#ifdef DEBUGVALIDHIER
+#ifdef CGAL_DEBUGVALIDHIER
   std::cout << "debug hierarchy is_valid returns " << result << std::endl;
 #endif
   return result;

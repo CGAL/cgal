@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_ORTHTREE_TRAITS_BASE_H
-#define ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#ifndef CGAL_ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#define CGAL_ORTHTREE_ORTHTREE_TRAITS_BASE_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -171,4 +171,4 @@ struct Orthtree_traits_base<GeomTraits, 3> {
 
 }
 
-#endif //ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#endif //CGAL_ORTHTREE_ORTHTREE_TRAITS_BASE_H

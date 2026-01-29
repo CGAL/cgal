@@ -35,8 +35,8 @@
 namespace CGAL {
 
 // Return the comparison result of the halfedge's source and target vertices.
-#ifndef HE_COMP_RES
-#define HE_COMP_RES(he) (((he)->direction() == ARR_LEFT_TO_RIGHT) ? SMALLER : LARGER)
+#ifndef CGAL_HE_COMP_RES
+#define CGAL_HE_COMP_RES(he) (((he)->direction() == ARR_LEFT_TO_RIGHT) ? SMALLER : LARGER)
 #endif
 
 // this class does the resolving of edge and face in the divide & conquer
@@ -446,9 +446,9 @@ public:
     const X_monotone_curve_2& original_cv = edge->curve();
 
     // we want to work on the halfedge going from left to right
-    // we use HE_COMP_RES so this code can compile both with Arr_2
+    // we use CGAL_HE_COMP_RES so this code can compile both with Arr_2
     // and with Aos_2.
-    if (HE_COMP_RES(edge) != SMALLER) edge = edge->twin();
+    if (CGAL_HE_COMP_RES(edge) != SMALLER) edge = edge->twin();
 
     Vertex_handle original_src = edge->source();
     Vertex_handle original_trg = edge->target();
@@ -816,9 +816,9 @@ protected:
       const X_monotone_curve_2& cv = (*he)->curve();
 
       // a face is always to the left of its halfedge
-      // we use HE_COMP_RES so this code can compile both with Arr_2
+      // we use CGAL_HE_COMP_RES so this code can compile both with Arr_2
       // and with Aos_2.
-      if (HE_COMP_RES(*he) == SMALLER) {
+      if (CGAL_HE_COMP_RES(*he) == SMALLER) {
         res = m_traits->compare_z_at_xy_above_3_object()(cv,surf1,surf2);
         if (type == ENVELOPE_UPPER) res = CGAL::opposite(res);
       }
@@ -1364,7 +1364,7 @@ protected:
           //to_accessor.create_vertex(hh->target()->point());
           copied_prev_he =
             to_accessor.insert_in_face_interior_ex(inside_face,
-                                                   current_cv, (HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                   current_cv, (CGAL_HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                    copied_source,
                                                    copied_target);
 
@@ -1402,7 +1402,7 @@ protected:
             copied_new_he = to_accessor.insert_from_vertex_ex
               (copied_prev_he,
                current_cv,
-               (HE_COMP_RES(hh) == CGAL::SMALLER ?
+               (CGAL_HE_COMP_RES(hh) == CGAL::SMALLER ?
                 ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                copied_target);
 
@@ -1445,7 +1445,7 @@ protected:
                 bool dummy_swapped_predecessors = false;
                 copied_new_he = to_accessor.insert_at_vertices_ex
                   (copied_prev_he,
-                   current_cv, (HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                   current_cv, (CGAL_HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                    copied_prev_v2->next(),
                    new_face,
                    dummy_swapped_predecessors);
@@ -1479,7 +1479,7 @@ protected:
               bool dummy_swapped_predecessors = false;
               copied_new_he =
                 to_accessor.insert_at_vertices_ex(copied_prev_v2,
-                                                  current_cv, (HE_COMP_RES(hh->twin()) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                  current_cv, (CGAL_HE_COMP_RES(hh->twin()) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                   copied_prev_he->next(),
                                                   new_face,
                                                   dummy_swapped_predecessors);
@@ -2076,7 +2076,7 @@ protected:
         Face_handle big_face = map_faces[he->face()];
         Halfedge_handle new_he =
           big_arr_accessor.insert_in_face_interior_ex(big_face,
-                                                      he->curve(), (HE_COMP_RES(he) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                      he->curve(), (CGAL_HE_COMP_RES(he) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                       big_v1, big_v2);
 
         // update mapping of new edge
@@ -2102,7 +2102,7 @@ protected:
         bool dummy_swapped_predecessors = false;
         Halfedge_handle new_he =
           big_arr_accessor.insert_at_vertices_ex(big_prev1,
-                                                 he->curve(), (HE_COMP_RES(he) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                 he->curve(), (CGAL_HE_COMP_RES(he) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                  big_prev2->next(),
                                                  new_face,
                                                  dummy_swapped_predecessors);
@@ -2145,7 +2145,7 @@ protected:
         Halfedge_handle new_he;
         if (! v1_is_new) {
           new_he = big_arr_accessor.insert_from_vertex_ex(big_prev,
-                                                          he->curve(), (HE_COMP_RES(he) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                          he->curve(), (CGAL_HE_COMP_RES(he) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                           big_v2);
 
           // update mapping of new edge
@@ -2156,7 +2156,7 @@ protected:
         else {
           new_he =
             big_arr_accessor.insert_from_vertex_ex(big_prev,
-                                                   he->curve(), (HE_COMP_RES(he->twin()) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                   he->curve(), (CGAL_HE_COMP_RES(he->twin()) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                    big_v1);
 
           // update mapping of new edge
@@ -2892,7 +2892,7 @@ protected:
   Envelope_type type;
 };
 
-#undef HE_COMP_RES
+#undef CGAL_HE_COMP_RES
 
 } //namespace CGAL
 

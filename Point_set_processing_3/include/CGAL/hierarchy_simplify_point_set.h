@@ -10,8 +10,8 @@
 // Author(s) : Simon Giraudot, Pierre Alliez
 
 
-#ifndef HIERARCHY_SIMPLIFY_POINT_SET_H
-#define HIERARCHY_SIMPLIFY_POINT_SET_H
+#ifndef CGAL_HIERARCHY_SIMPLIFY_POINT_SET_H
+#define CGAL_HIERARCHY_SIMPLIFY_POINT_SET_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
@@ -377,4 +377,4 @@ namespace CGAL {
 
 #include <CGAL/enable_warnings.h>
 
-#endif // HIERARCHY_SIMPLIFY_POINT_SET_H
+#endif // CGAL_HIERARCHY_SIMPLIFY_POINT_SET_H

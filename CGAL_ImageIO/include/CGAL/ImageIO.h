@@ -10,8 +10,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
-#ifndef IMAGEIO_H
-#define IMAGEIO_H
+#ifndef CGAL_IMAGEIO_H
+#define CGAL_IMAGEIO_H
 
 #include <CGAL/config.h>
 #include <CGAL/export/ImageIO.h>
@@ -70,7 +70,7 @@ extern int strncasecmp(const char *s1, const char *s2, size_t n);
 
 
 
-
+namespace CGAL {
 
 
 
@@ -536,7 +536,6 @@ CGAL_IMAGEIO_EXPORT inline float trilinear_interpolation(const _image* image,
   return triLinInterp(image, posx, posy, posz);
 }
 
-namespace CGAL {
 namespace IMAGEIO {
 
 //
@@ -642,21 +641,20 @@ static_evaluate(const _image* image,
 }
 
 } // end namespace IMAGEIO
-} // end namespace CGAL
 
 #define CGAL_IMAGE_IO_CASE(image_ptr,code)                                                 \
   switch(image_ptr->wordKind)                                                              \
   {                                                                                        \
-  case WK_FLOAT:                                                                           \
+  case CGAL::WK_FLOAT:                                                                           \
     switch(image_ptr->wdim)                                                                \
     {                                                                                      \
     case 4: {                                                                              \
-      typedef CGAL::IMAGEIO::Word_type_generator<WK_FLOAT, SGN_UNKNOWN, 4>::type Word;     \
+      typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FLOAT, CGAL::SGN_UNKNOWN, 4>::type Word;     \
       code;                                                                                \
       break;                                                                               \
     }                                                                                      \
     case 8: {                                                                              \
-      typedef CGAL::IMAGEIO::Word_type_generator<WK_FLOAT, SGN_UNKNOWN, 8>::type Word;     \
+      typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FLOAT, CGAL::SGN_UNKNOWN, 8>::type Word;     \
       code;                                                                                \
       break;                                                                               \
     }                                                                                      \
@@ -664,41 +662,41 @@ static_evaluate(const _image* image,
       break;                                                                               \
     }                                                                                      \
     break;                                                                                 \
-  case WK_FIXED:                                                                           \
+  case CGAL::WK_FIXED:                                                                           \
     switch(image_ptr->wdim)                                                                \
     {                                                                                      \
     case 2: {                                                                              \
-      if(image_ptr->sign == SGN_SIGNED) {                                                  \
-        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_SIGNED, 2>::type Word;    \
+      if(image_ptr->sign == CGAL::SGN_SIGNED) {                                                  \
+        typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FIXED, CGAL::SGN_SIGNED, 2>::type Word;    \
         code;                                                                              \
         break;                                                                             \
       }                                                                                    \
       else {                                                                               \
-        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, 2>::type Word;  \
+        typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FIXED, CGAL::SGN_UNSIGNED, 2>::type Word;  \
         code;                                                                              \
         break;                                                                             \
       }                                                                                    \
     }                                                                                      \
     case 1: {                                                                              \
-      if(image_ptr->sign == SGN_SIGNED) {                                                  \
-        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_SIGNED, 1>::type Word;    \
+      if(image_ptr->sign == CGAL::SGN_SIGNED) {                                                  \
+        typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FIXED, CGAL::SGN_SIGNED, 1>::type Word;    \
         code;                                                                              \
         break;                                                                             \
       }                                                                                    \
       else {                                                                               \
-        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, 1>::type Word;  \
+        typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FIXED, CGAL::SGN_UNSIGNED, 1>::type Word;  \
         code;                                                                              \
         break;                                                                             \
       }                                                                                    \
     }                                                                                      \
     case 4: {                                                                              \
-      if(image_ptr->sign == SGN_SIGNED) {                                                  \
-        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_SIGNED, 4>::type Word;    \
+      if(image_ptr->sign == CGAL::SGN_SIGNED) {                                                  \
+        typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FIXED, CGAL::SGN_SIGNED, 4>::type Word;    \
         code;                                                                              \
         break;                                                                             \
       }                                                                                    \
       else {                                                                               \
-        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>::type Word;  \
+        typedef CGAL::IMAGEIO::Word_type_generator<CGAL::WK_FIXED, CGAL::SGN_UNSIGNED, 4>::type Word;  \
         code;                                                                              \
         break;                                                                             \
       }                                                                                    \
@@ -718,8 +716,10 @@ CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const std::size_t i,const
 */
 CGAL_IMAGEIO_EXPORT void convertImageTypeToFloat(_image* image);
 
+} // end namespace CGAL
+
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO_impl.h>
 #endif // CGAL_HEADER_ONLY
 
-#endif // end IMAGEIO_H
+#endif // end CGAL_IMAGEIO_H
