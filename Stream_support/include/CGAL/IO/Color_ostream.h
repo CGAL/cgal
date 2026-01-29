@@ -24,13 +24,17 @@
 #include <array>
 #include <cstdlib> // for std::getenv
 #include <ios>
+#include <iostream>
+#include <locale>
 #include <optional>
+#include <ostream>
+#include <stdio.h> // for stdout, stderr
 #include <streambuf>
 #include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
-#include <vector>
+
 
 #ifdef _WIN32
 #  include <io.h>
@@ -516,54 +520,19 @@ using Color_wstream_guard = Basic_color_stream_guard<std::wostream>;
  * and their original streambufs will be automatically restored when the guards
  * go out of scope. The guards are returned in a tuple.
  *
+ * \tparam colors Non-type template parameters specifying the colors to combine
  * \tparam Streams The stream types (deduced from arguments)
- * \param color The color to apply
- * \param streams The streams to apply colors to
- * \return A tuple of Basic_color_stream_guard objects
- *
- * \sa Basic_color_stream_guard
- *
- * Example usage:
- * \code
- * auto guards = CGAL::IO::make_color_guards(CGAL::IO::Ansi_color::Red, std::cout, std::cerr);
- * std::cout << "Red output\n";
- * std::cerr << "Red error\n";
- * \endcode
- */
-template <typename... Streams>
-auto make_color_guards(Ansi_color color, Streams&... streams) {
-  return std::make_tuple(Basic_color_stream_guard<Streams>(streams, color)...);
-}
-
-/**
- * \ingroup PkgStreamSupportRef
- *
- * \brief creates color guards for multiple streams with multiple colors.
- *
- * This overload allows specifying multiple colors to combine (e.g., bold + red).
- * Colors are specified first, followed by the streams to colorize.
- *
- * \tparam Streams The stream types (deduced from arguments)
- * \param colors Initializer list of colors to combine
  * \param streams The streams to apply colors to
  * \return A tuple of `Basic_color_stream_guard` objects
  *
  * \sa Basic_color_stream_guard
  *
  * Example usage:
- * \code
- * auto guards = CGAL::IO::make_color_guards(
- *   {CGAL::IO::Ansi_color::Bold, CGAL::IO::Ansi_color::Red},
- *   std::cout, std::cerr);
- * std::cout << "Bold red output\n";
- * \endcode
+ * \snippet Stream_support/color_ostream.cpp make_color_guards
  */
-template <typename... Streams>
-auto make_color_guards(std::initializer_list<Ansi_color> colors, Streams&... streams) {
-  std::vector<Ansi_color> color_vec(colors);
-  return std::apply([&streams...](const auto&... c) {
-    return std::make_tuple(Basic_color_stream_guard<Streams>(streams, c...)...);
-  }, std::apply([](const auto&... c) { return std::make_tuple(c...); }, color_vec));
+template <Ansi_color... colors, typename... Streams>
+auto make_color_guards(Streams&... streams) {
+  return std::make_tuple(Basic_color_stream_guard<Streams>(streams, colors...)...);
 }
 
 

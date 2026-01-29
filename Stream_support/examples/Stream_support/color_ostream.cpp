@@ -192,7 +192,7 @@ void demonstrate_multiple_streams() {
   // Apply colors to both streams simultaneously
   {
     std::cout << "\nWith make_color_guards (Red):\n";
-    auto guards = CGAL::IO::make_color_guards(CGAL::IO::Ansi_color::Red, std::cout, std::cerr);
+    auto guards = CGAL::IO::make_color_guards<CGAL::IO::Ansi_color::Red>(std::cout, std::cerr);
 
     std::cout << "Red text on cout\n";
     std::cerr << "Red text on cerr\n";
@@ -205,9 +205,10 @@ void demonstrate_multiple_streams() {
   // Using combined colors with multiple streams
   {
     std::cout << "\nBold green on multiple streams:\n";
-    auto guards = CGAL::IO::make_color_guards(
-      std::vector{CGAL::IO::Ansi_color::Bold, CGAL::IO::Ansi_color::Green},
-      std::cout, std::clog);
+    //! [make_color_guards]
+    auto guards =
+        CGAL::IO::make_color_guards<CGAL::IO::Ansi_color::Bold, CGAL::IO::Ansi_color::Green>(std::cout, std::clog);
+    //! [make_color_guards]
 
     std::cout << "cout: Bold green output\n";
     std::clog << "clog: Bold green log message\n";
