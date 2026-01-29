@@ -4,6 +4,14 @@
 
 Release date: July 2026
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.2/Manual/packages.html#PkgKernel23)
+- **Breaking change**: Circle_2/Segment_2, Sphere_3/Bbox_3, Sphere_3/Iso_cuboid_3 now do not consider inclusion as intersection.
+  This behavior is consistent with other intersections involving Circle_2 and Sphere_3.
+  - The former behavior of `do_intersect()` can be reproduced with:
+  - `!Has_on_unbounded_side_2::operator(Circle_2, Segment_2)` or
+  - `!Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2)` or
+  - `!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`
+
 ### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
 
 - Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
@@ -17,6 +25,9 @@ Release date: July 2026
   - `import_from_polyhedron_3()` → `polyhedron_3_to_lcc()`
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
 - The old function names are still available but marked as deprecated for backward compatibility.
+
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.2/Manual/packages.html#PkgOrthtree)
+- added function `intersected_nodes()` with an intersection functor and a convenience overload for a ball query.
 
 ### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
 

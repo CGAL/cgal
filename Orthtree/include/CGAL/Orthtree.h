@@ -51,6 +51,7 @@ namespace Orthtree_impl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Node_data)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Squared_distance_of_element)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_on_bounded_side)
 
 template <class GT, bool has_data>
 struct Node_data_wrapper;
@@ -126,9 +127,11 @@ public:
 #ifndef DOXYGEN_RUNNING
   static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
   static inline constexpr bool supports_neighbor_search = Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
+  static inline constexpr bool supports_ball_search = Orthtree_impl::has_Has_on_bounded_side<GeomTraits>::value;
 #else
   static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitsWithData` and `false` otherwise.
   static inline constexpr bool supports_neighbor_search = bool_value; ///< `true` if `GeomTraits` is a model of `CollectionPartitioningOrthtreeTraits` and `false` otherwise.
+  static inline constexpr bool supports_ball_search = bool_value; ///< `true` if `GeomTraits` provides a `Has_on_bounded_side` functor and `false` otherwise.
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
@@ -772,7 +775,7 @@ public:
 
     This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
 
-    \tparam Query the primitive class (e.g., sphere, ray)
+    \tparam Query the primitive class (e.g., plane, ray)
     \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
 
     \param query the intersecting primitive.
@@ -782,7 +785,52 @@ public:
    */
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
-    return intersected_nodes_recursive(query, root(), output);
+    return intersected_nodes_recursive(query, root(), output, [](const Query& query, const typename Traits::Bbox_d &box) -> bool {return CGAL::do_intersect(query, box);});
+  }
+
+  /*!
+    \brief finds the leaf nodes that intersect with a ball.
+
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
+    Requires the Traits class to provide the functor via `has_on_bounded_side_object()` with an operator:
+
+    `bool operator()(Traits::Sphere_d, Traits::Bbox_d)`
+
+    `Kernel::HasOnBoundedSide_2` and `Kernel::HasOnBoundedSide_3` are compatible concepts for dimenions 2 and 3.
+
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
+
+    \param center the center of the ball
+    \param squared_radius the squared radius of the ball
+    \param output output iterator.
+
+    \return the output iterator after writing
+   */
+  template <typename OutputIterator>
+  auto intersected_nodes(const Point& center, const FT squared_radius, OutputIterator output) const -> std::enable_if_t<Orthtree::supports_ball_search, OutputIterator> {
+    return intersected_nodes_recursive(Sphere(center, squared_radius), root(), output, [&](const Sphere& query, const typename Traits::Bbox_d& box) -> bool
+      {return CGAL::do_intersect(query, box) || m_traits.has_on_bounded_side_object()(query, box); });
+  }
+
+  /*!
+    \brief finds the leaf nodes that intersect with any primitive.
+
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
+
+    \tparam Query the primitive class (e.g., sphere, ray)
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
+    \tparam IntersectionFunctor a functor that is invoked on each node while traversing the tree to determine
+            intersection must be of type `bool(const Query&, const Traits::Bbox_d&)`
+
+    \param query the intersecting primitive.
+    \param output output iterator.
+    \param func the intersection functor.
+
+    \return the output iterator after writing
+   */
+  template <typename Query, typename OutputIterator, typename IntersectionFunctor>
+  OutputIterator intersected_nodes(const Query& query, OutputIterator output, IntersectionFunctor &func) const {
+    return intersected_nodes_recursive(query, root(), output, func);
   }
 
   /// @}
@@ -1276,21 +1324,12 @@ private: // functions :
     return recursive_descendant(child(node, i), remaining_indices...);
   }
 
-  bool do_intersect(Node_index n, const Sphere& sphere) const {
-
-    // Create a bounding box from the node
-    Bbox node_box = bbox(n);
-
-    // Check for intersection between the node and the sphere
-    return CGAL::do_intersect(node_box, sphere);
-  }
-
-  template <typename Query, typename Node_output_iterator>
+  template <typename Query, typename Node_output_iterator, typename IntersectionFunctor>
   Node_output_iterator intersected_nodes_recursive(const Query& query, Node_index node,
-                                                   Node_output_iterator output) const {
+                                                   Node_output_iterator output, IntersectionFunctor func) const {
 
     // Check if the current node intersects with the query
-    if (CGAL::do_intersect(query, bbox(node))) {
+    if (func(query, bbox(node))) {
 
       // if this node is a leaf, then it's considered an intersecting node
       if (is_leaf(node)) {
@@ -1300,7 +1339,7 @@ private: // functions :
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < degree; ++i) {
-        intersected_nodes_recursive(query, child(node, i), output);
+        intersected_nodes_recursive(query, child(node, i), output, func);
       }
     }
     return output;
@@ -1357,10 +1396,11 @@ private: // functions :
 
       struct Node_index_with_distance {
         Node_index index;
-        FT distance;
+        FT distance_center;
+        FT distance_box;
 
-        Node_index_with_distance(const Node_index& index, FT distance) :
-          index(index), distance(distance) {}
+        Node_index_with_distance(const Node_index& index, FT distance_center, FT distance_box) :
+          index(index), distance_center(distance_center), distance_box(distance_box) {}
       };
 
       // Recursive case: the node has children
@@ -1369,36 +1409,46 @@ private: // functions :
       std::vector<Node_index_with_distance> children_with_distances;
       children_with_distances.reserve(Self::degree);
 
+      Bbox_dimensions node_size = m_side_per_depth[depth(node) + 1];
+
+      for (FT &d : node_size)
+        d /= 2.0;
+
       // Fill the list with child nodes
       for (int i = 0; i < Self::degree; ++i) {
         auto child_node = child(node, i);
 
-        FT squared_distance = 0;
+        FT squared_distance_to_center = 0;
+        FT squared_distance_to_box = 0;
         Point c = m_traits.construct_center_d_object()(search_bounds);
         Point b = barycenter(child_node);
+        std::size_t idx = 0;
         for (const auto r : cartesian_range(c, b)) {
           FT d = (get<0>(r) - get<1>(r));
-          squared_distance += d * d;
+          squared_distance_to_center += d * d;
+          if (CGAL::abs(d) > node_size[idx])
+            squared_distance_to_box += CGAL::square(CGAL::abs(d) - node_size[idx]);
+          idx++;
         }
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(
           child_node,
-          squared_distance
+          squared_distance_to_center,
+          squared_distance_to_box
         );
       }
 
       // Sort the children by their distance from the search point
       std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto& left, auto& right) {
-        return left.distance < right.distance;
+        return left.distance_center < right.distance_center;
         });
 
       // Loop over the children
       for (auto child_with_distance : children_with_distances) {
 
         // Check whether the bounding box of the child intersects with the search bounds
-        if (CGAL::do_intersect(bbox(child_with_distance.index), search_bounds)) {
-
+        if (child_with_distance.distance_box < m_traits.compute_squared_radius_d_object()(search_bounds)) {
           // Recursively invoke this function
           nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results, k);
         }

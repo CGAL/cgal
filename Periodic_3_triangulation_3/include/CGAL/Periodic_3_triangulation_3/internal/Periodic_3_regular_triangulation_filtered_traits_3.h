@@ -34,6 +34,7 @@ template <typename K_, typename Off_>
 class Periodic_3_regular_triangulation_filtered_traits_base_3
   : public Periodic_3_regular_triangulation_traits_base_3<K_, Off_>
 {
+public:
   typedef Periodic_3_regular_triangulation_traits_base_3<K_, Off_>  Base;
   typedef K_                                                        Kernel;
 

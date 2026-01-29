@@ -18,6 +18,7 @@
 #define CGAL_SPHERE_3_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/Coercion_traits.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/representation_tags.h>
@@ -35,6 +36,7 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
   typedef typename R_::Point_3               Point_3_;
   typedef typename R_::Circle_3              Circle_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+  typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
 
   typedef Sphere_3                           Self;
   static_assert(std::is_same<Self, typename R_::Sphere_3>::value);
@@ -151,9 +153,21 @@ public:
   }
 
   typename R::Boolean
+  has_on_bounded_side(const Iso_cuboid_3& c) const
+  {
+    return R().has_on_bounded_side_3_object()(*this, c);
+  }
+
+  typename R::Boolean
   has_on_unbounded_side(const Point_3_ &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
+  }
+
+  typename R::Boolean
+  has_on_unbounded_side(const Iso_cuboid_3& c) const
+  {
+    return R().has_on_unbounded_side_3_object()(*this, c);
   }
 
   typename R::Boolean

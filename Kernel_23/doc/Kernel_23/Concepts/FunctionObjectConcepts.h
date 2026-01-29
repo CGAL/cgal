@@ -1875,7 +1875,7 @@ public:
   /// @{
 
   /*!
-    returns an approximation of the area of `c`.
+    returns an approximation of the area bounded by `c`.
   */
   double operator()(const Kernel::Circle_3& c);
 
@@ -1992,7 +1992,7 @@ public:
   /// @{
 
   /*!
-    returns the area of `c`, divided by \f$ \pi\f$.
+    returns the area bounded by `c`, divided by \f$ \pi\f$.
   */
   Kernel::FT operator()(const Kernel::Circle_3& c);
 
@@ -3102,7 +3102,7 @@ public:
 
   /*!
   returns the squared radius of the
-  smallest sphere circle to the argument(s).
+  smallest circle to the argument(s).
   */
   Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
                          const Kernel::Weighted_point_2& qw,
@@ -8073,6 +8073,7 @@ public:
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
   \sa `CGAL::Triangle_2<Kernel>`
+  \sa `CGAL::Segment_2<Kernel>`
   \sa `::Kernel::HasOnUnboundedSide_2`
   \sa `::Kernel::HasOnBoundary_2`
   \sa `::Kernel::BoundedSide_2`
@@ -8090,6 +8091,18 @@ public:
   */
   bool operator()(const Kernel::Circle_2&c,
                   const Kernel::Point_2&p);
+
+  /*!
+    returns true iff `s` lies on the bounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2&c,
+                  const Kernel::Segment_2&s);
+
+  /*!
+    returns true iff `i` lies on the bounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2&c,
+                  const Kernel::Iso_rectangle_2&i);
 
   /*!
     returns true iff `p` lies on the bounded side of `i`.
@@ -8133,6 +8146,12 @@ public:
   */
   bool operator()(const Kernel::Sphere_3&s,
                   const Kernel::Point_3&p);
+
+  /*!
+    returns true iff `i` lies on the bounded side of `s`.
+  */
+  bool operator()(const Kernel::Sphere_3& s,
+                  const Kernel::Iso_cuboid_3& i);
 
   /*!
     returns true iff `p` lies on the bounded side of `t`.
@@ -8358,6 +8377,20 @@ public:
   bool operator()(const Kernel::Circle_2&c,
                   const Kernel::Point_2&p);
 
+
+  /*!
+    returns true iff `i` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Iso_rectangle_2& i);
+
+
+  /*!
+    returns true iff `s` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Segment_2& s);
+
   /*!
     returns true iff `p` lies on the unbounded side of `i`.
   */
@@ -8401,6 +8434,12 @@ public:
   */
   bool operator()(const Kernel::Sphere_3&s,
                   const Kernel::Point_3&p);
+
+  /*!
+    returns true iff `c` lies on the unbounded side of `s`.
+  */
+  bool operator()(const Kernel::Sphere_3& s,
+                  const Kernel::Iso_cuboid_3& c);
 
   /*!
     returns true iff `p` lies on the unbounded side of `t`.
