@@ -429,10 +429,10 @@ make_hexahedron(const IsoCuboid& c,
 
 /**
  * \ingroup PkgBGLGeneratorFct
- * \brief creates the isolated cubic hexahedron defined by `bb3`, and adds it to the graph `g`.
+ * \brief creates an isolated hexahedron equivalent to `bb3`, and adds it to the graph `g`.
  * \returns the halfedge that has the target vertex associated with point `(bb3.xmin(), bb3.ymin(), bb3.zmin())`,
  * aligned with x-axis,
- * in the bottom face of the cubic hexahedron.
+ * in the bottom face of the hexahedron.
  *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
