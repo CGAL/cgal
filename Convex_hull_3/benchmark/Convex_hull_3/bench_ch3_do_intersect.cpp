@@ -9,6 +9,7 @@
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_hierarchy.h>
+#include <CGAL/Convex_hull_3/do_intersect.h>
 #include <CGAL/Convex_hull_3/distance.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -59,64 +60,50 @@ private:
     return P( std::cos(a)*std::cos(b), std::sin(a)*std::cos(b), std::sin(b));
   }
 
-  void Tet_tet(int N)
+  void test_Tet(std::vector< PR > &a, std::vector< PR > &b)
   {
-    std::cout << "Tetrahedron likely to intersect" << std::endl;
     std::cout << "Do intersect of package Intersection_3" << std::endl;
     CGAL::Real_timer t;
     t.start();
-    for(int i=0; i<N; ++i)
-    {
-      P p0 = random_point();
-      P p1 = random_point();
-      P p2 = random_point();
-      P p3 = random_point();
-
-      P q0 = random_point();
-      P q1 = random_point();
-      P q2 = random_point();
-      P q3 = random_point();
-
-      // CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
-    }
+    for(std::size_t i=0; i<a.size(); ++i)
+      CGAL::do_intersect(Tet(a[i][0], a[i][1], a[i][2], a[i][3]), Tet(b[i][0], b[i][1], b[i][2], b[i][3]));
     t.stop();
     std::cout << t.time() << " sec" << std::endl;
 
-    std::cout << "Do intersect of Convex Hull" << std::endl;
+    std::cout << "Do intersect of Convex_hull" << std::endl;
     t.reset();
     t.start();
-    for(int i=0; i<N; ++i)
-    {
-      PR a({random_point(), random_point(), random_point(), random_point()});
-      PR b({random_point(), random_point(), random_point(), random_point()});
-
-      // CGAL::Convex_hull_3::do_intersect(a, b);
-    }
+    for(std::size_t i=0; i<a.size(); ++i)
+      CGAL::Convex_hull_3::do_intersect(a[i], b[i]);
     t.stop();
-    std::cout << t.time() << " sec" << std::endl << std::endl;
-    nb_visited=0;
+    std::cout << t.time() << " sec" << std::endl;
 
-    std::cout << "Separation distance of Convex Hull" << std::endl;
+    std::cout << "Separation distance of Convex_hull" << std::endl;
     t.reset();
     t.start();
-    for(int i=0; i<N; ++i)
-    {
-      PR a({random_point(), random_point(), random_point(), random_point()});
-      PR b({random_point(), random_point(), random_point(), random_point()});
-
-      CGAL::Convex_hull_3::separation_distance(a, b);
-    }
+    for(std::size_t i=0; i<a.size(); ++i)
+      CGAL::Convex_hull_3::separation_distance(a[i], b[i]);
     t.stop();
     std::cout << t.time() << " sec" << std::endl << std::endl;
+  }
 
+  void Tet_tet(int N)
+  {
+    std::cout << "Tetrahedron likely to intersect" << std::endl;
+    std::vector<PR> a;
+    std::vector<PR> b;
+    for(int i=0; i<N; ++i)
+      a.push_back(PR({random_point(), random_point(), random_point(), random_point()}));
+    for(int i=0; i<N; ++i)
+      b.push_back(PR({random_point(), random_point(), random_point(), random_point()}));
+    test_Tet(a, b);
   }
 
   void Tet_mirror(int N)
   {
     std::cout << "Tetrahedrons closed" << std::endl;
-    std::cout << "Do intersect of package Intersection_3" << std::endl;
-    CGAL::Real_timer t;
-    t.start();
+    std::vector<PR> a;
+    std::vector<PR> b;
     for(int i=0; i<N; ++i)
     {
       P p0 = random_point();
@@ -145,58 +132,17 @@ private:
       if(q3.x() < q3.y())
         q3 = P(-q3.x(), -q3.y(), -q3.z());
 
-      CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
+      a.push_back(PR({p0,p1,p2,p3}));
+      b.push_back(PR({q0,q1,q2,q3}));
     }
-    t.stop();
-    std::cout << t.time() << " sec" << std::endl;
-
-    std::cout << "Do intersect of Convex Hull" << std::endl;
-    t.reset();
-    t.start();
-    for(int i=0; i<N; ++i)
-    {
-      P p0 = random_point();
-      if(p0.x() > p0.y())
-        p0 = P(-p0.x(), -p0.y(), -p0.z());
-      P p1 = random_point();
-      if(p1.x() > p1.y())
-        p1 = P(-p1.x(), -p1.y(), -p1.z());
-      P p2 = random_point();
-      if(p2.x() > p2.y())
-        p2 = P(-p2.x(), -p2.y(), -p2.z());
-      P p3 = random_point();
-      if(p3.x() > p3.y())
-        p3 = P(-p3.x(), -p3.y(), -p3.z());
-
-      P q0 = random_point();
-      if(q0.x() < q0.y())
-        q0 = P(-q0.x(), -q0.y(), -q0.z());
-      P q1 = random_point();
-      if(q1.x() < q1.y())
-        q1 = P(-q1.x(), -q1.y(), -q1.z());
-      P q2 = random_point();
-      if(q2.x() < q2.y())
-        q2 = P(-q2.x(), -q2.y(), -q2.z());
-      P q3 = random_point();
-      if(q3.x() < q3.y())
-        q3 = P(-q3.x(), -q3.y(), -q3.z());
-
-      PR a({p0,p1,p2,p3});
-      PR b({q0,q1,q2,q3});
-
-      CGAL::Convex_hull_3::do_intersect(a, b);
-    }
-    t.stop();
-    std::cout << t.time() << " sec" << std::endl << std::endl;
-
+    test_Tet(a, b);
   }
 
   void Tet_stretched(int N)
   {
     std::cout << "Tetrahedrons streched" << std::endl;
-    std::cout << "Do intersect of package Intersection_3" << std::endl;
-    CGAL::Real_timer t;
-    t.start();
+    std::vector<PR> a;
+    std::vector<PR> b;
     for(int i=0; i<N; ++i)
     {
       P p0 = random_point()+V(-1,1,0);
@@ -209,32 +155,17 @@ private:
       P q2 = random_point()+V(1,1,0);
       P q3 = random_point()+V(1,1,0);
 
-      CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
+      a.push_back(PR({p0,p1,p2,p3}));
+      b.push_back(PR({q0,q1,q2,q3}));
     }
-    t.stop();
-    std::cout << t.time() << " sec" << std::endl;
-
-    std::cout << "Do intersect of Convex Hull" << std::endl;
-    t.reset();
-    t.start();
-    for(int i=0; i<N; ++i)
-    {
-      PR a({random_point()+V(-1,1,0),  random_point()+V(-1,1,0),  random_point()+V(1,-1,0), random_point()+V(1,-1,0)});
-      PR b({random_point()+V(-1,-1,0), random_point()+V(-1,-1,0), random_point()+V(1,1,0),  random_point()+V(1,1,0)});
-
-      CGAL::Convex_hull_3::do_intersect(a, b);
-    }
-    t.stop();
-    std::cout << t.time() << " sec" << std::endl << std::endl;
-
+    test_Tet(a, b);
   }
 
   void Tet_shift(int N)
   {
     std::cout << "Tetrahedrons that do not intersect" << std::endl;
-    std::cout << "Do intersect of package Intersection_3" << std::endl;
-    CGAL::Real_timer t;
-    t.start();
+    std::vector<PR> a;
+    std::vector<PR> b;
     for(int i=0; i<N; ++i)
     {
       P p0 = random_point();
@@ -247,23 +178,10 @@ private:
       P q2 = random_point()+V(1,1,1);
       P q3 = random_point()+V(1,1,1);
 
-      CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
+      a.push_back(PR({p0,p1,p2,p3}));
+      b.push_back(PR({q0,q1,q2,q3}));
     }
-    t.stop();
-    std::cout << t.time() << " sec" << std::endl;
-
-    std::cout << "Do intersect of Convex Hull" << std::endl;
-    t.reset();
-    t.start();
-    for(int i=0; i<N; ++i)
-    {
-      PR a({random_point(), random_point(), random_point(), random_point()});
-      PR b({random_point()+V(1,1,1), random_point()+V(1,1,1), random_point()+V(1,1,1), random_point()+V(1,1,1)});
-
-      CGAL::Convex_hull_3::do_intersect(a, b);
-    }
-    t.stop();
-    std::cout << t.time() << " sec\n" << std::endl;
+    test_Tet(a, b);
 
   }
 
