@@ -213,7 +213,8 @@ struct Construct_initial_points_labeled_image
       std::cout << "Construct initial points..." << std::endl;
     }
     int nb_of_points = 0;
-    for(const Seed seed : seeds)
+    Seeds rejected_seeds;
+    auto treat_seed = [&](const Seed& seed)
     {
       const Point_3 seed_point = get_point(seed.i, seed.j, seed.k);
       Cell_handle seed_cell = tr.locate(cwp(seed_point));
@@ -228,10 +229,12 @@ struct Construct_initial_points_labeled_image
           : domain_.is_in_domain_object()(
               seed_cell->weighted_circumcenter(tr.geom_traits()));
 
-      if ( seed_label != std::nullopt
-        && seed_cell_label != std::nullopt
-        && *seed_label == *seed_cell_label)
-          continue; //this means the connected component has already been initialized
+      if(seed_label != std::nullopt && seed_cell_label != std::nullopt &&
+         *seed_label == *seed_cell_label)
+      {
+        rejected_seeds.push_back(seed);
+        return; // this means the connected component has already been initialized
+      }
 
       const double radius = double(seed.radius + 1)* max_v;
       CGAL::Random_points_on_sphere_3<Point_3> points_on_sphere_3(radius);
@@ -347,7 +350,21 @@ struct Construct_initial_points_labeled_image
           ++nb_of_points;
         }
       }
+    };
+
+
+    auto nb_of_points_before = nb_of_points;
+    do
+    {
+      nb_of_points_before = nb_of_points;
+      std::for_each(seeds.begin(), seeds.end(), treat_seed);
+
+      // retry to initialize the rejected seeds
+      seeds = std::move(rejected_seeds);
+      rejected_seeds.clear();
     }
+    while(nb_of_points_before != nb_of_points && !seeds.empty());
+
     if(verbose_) {
       std::cout << "  " << nb_of_points << " initial points were constructed." << std::endl;
     }
