@@ -18,3 +18,7 @@ create_single_source_cgal_program( "off2wav.cpp" )
 create_single_source_cgal_program( "off_bbox.cpp" )
 create_single_source_cgal_program( "off_glue.cpp" )
 create_single_source_cgal_program( "off_transform.cpp" )
+
+create_single_source_cgal_program( "indenting_ostream.cpp" )
+create_single_source_cgal_program( "color_ostream.cpp" )
+
