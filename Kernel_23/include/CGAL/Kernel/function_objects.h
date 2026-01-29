@@ -3870,7 +3870,7 @@ namespace CommonKernelFunctors {
       FT d = FT(0);
       FT distance = FT(0);
 
-      const Point_3& center = c.center();
+      const Point_2& center = c.center();
 
       // x
       d = (std::min)(square(center.x() - r.xmin()), square(center.x() - r.xmax()));
