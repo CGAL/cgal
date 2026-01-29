@@ -486,7 +486,7 @@ Mesh kernel: From left to right: (i) The input mesh; (ii) The kernel of the inpu
 
 
 As illustrated on \cgalFigureRef{coref_kernel_figure}, the kernel of a mesh is defined as the set of points from which the entire surface of the mesh is visible. More formally, a point belongs to the kernel if,
-for every point on the mesh, the segment connecting them lies entirely inside the mesh. Equivalently, the kernel is the intersection of all the half-spaces on the negative side of the oriented planes defined by
+for every point on the mesh, the segment connecting them lies inside the mesh. Equivalently, the kernel is the intersection of all the half-spaces on the negative side of the oriented planes defined by
 the faces of the mesh. The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::has_empty_kernel()` output the full kernel, a single point inside it or
 a Boolean indicating whether the kernel exists or not, respectively.
 

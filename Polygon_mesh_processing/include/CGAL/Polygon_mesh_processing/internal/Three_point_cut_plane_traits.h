@@ -20,6 +20,7 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace internal {
 
 template <class Kernel>
 struct Three_point_cut_plane_traits
@@ -106,6 +107,6 @@ struct Three_point_cut_plane_traits
 #endif
 };
 
-} } // end of CGAL::Polygon_mesh_processing
+} } } // end of CGAL::Polygon_mesh_processing
 
 #endif // CGAL_THREE_POINT_CUT_PLANE_TRAITS_H

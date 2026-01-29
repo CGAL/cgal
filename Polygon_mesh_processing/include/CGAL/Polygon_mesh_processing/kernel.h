@@ -35,7 +35,7 @@ template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 void
-kernel(const FaceRange &face_range,
+kernel(const FaceRange& face_range,
        const PolygonMesh& pm,
        PolygonMesh& kernel,
        const NamedParameters& np = parameters::default_values(),
@@ -64,7 +64,7 @@ kernel(const FaceRange &face_range,
   auto vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, kernel));
 
-  using DefaultF2FMap = boost::associative_property_map<std::map<face_descriptor, face_descriptor>>;
+  using DefaultF2FMap = Constant_property_map<face_descriptor, face_descriptor>;
 
   constexpr bool is_face_to_face_map = !parameters::is_default_parameter<NamedParametersOut, internal_np::face_to_face_map_t>::value;
   auto f2f_map = choose_parameter<DefaultF2FMap>(get_parameter(np_out, internal_np::face_to_face_map));
@@ -79,7 +79,7 @@ kernel(const FaceRange &face_range,
   bool bbox_filtering = choose_parameter(get_parameter(np, internal_np::use_bounding_box_filtering), true);
   bool shuffle_planes = choose_parameter(get_parameter(np, internal_np::shuffle_planes), true);
   bool check_euler_characteristic = !choose_parameter(get_parameter(np, internal_np::allow_open_input), false) && std::size_t(std::distance(face_range.begin(), face_range.end()))==faces(pm).size();
-  std::size_t seed = choose_parameter(get_parameter(np, internal_np::random_seed), unsigned(-1));
+  unsigned seed = choose_parameter(get_parameter(np, internal_np::random_seed), unsigned(-1));
 
   // Immediate exit if the input is well-formed and not of genus zero
   if(check_euler_characteristic && (vertices(pm).size() - edges(pm).size() + faces(pm).size() != 2)){
@@ -274,10 +274,10 @@ kernel(const FaceRange &face_range,
   * </ul>
   *
   * @tparam FaceRange a model of `ConstRange` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
-  * @tparam PolygonMeshIn a model of `VertexListGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam PolygonMesh a model of `VertexListGraph`, `HalfedgeListGraph` and `FaceListGraph`
   * @tparam PolygonMeshOut a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
   *
-  * @tparam NamedParametersIn a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param face_range the range of faces used
@@ -363,7 +363,7 @@ template <typename FaceRange,
           typename NamedParameters = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 void
-kernel(const FaceRange face_range,
+kernel(const FaceRange& face_range,
        const PolygonMesh& pm,
        PolygonMesh& out,
        const NamedParameters& np = parameters::default_values(),
@@ -505,7 +505,7 @@ kernel(const PolygonMesh& pm,
 template <typename FaceRange,
           typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool has_empty_kernel(const FaceRange face_range,
+bool has_empty_kernel(const FaceRange& face_range,
                      const PolygonMesh& pm,
                      const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -554,7 +554,7 @@ std::optional<Point_3>
 #else
 std::optional<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>
 #endif
-kernel_point(const FaceRange face_range,
+kernel_point(const FaceRange& face_range,
              const PolygonMesh& pm,
              const NamedParameters& np = parameters::default_values())
 {
