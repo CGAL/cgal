@@ -354,7 +354,7 @@ kernel(const FaceRange& face_range,
                               (or `boost::graph_traits<PolygonMeshOut>::%null_face` if the face belongs to the starting shape)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with
   *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
-  *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
+  *                   `boost::graph_traits<PolygonMesh>::%face_descriptor` as value type}
   *     \cgalParamDefault{unused}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
@@ -475,7 +475,7 @@ kernel(const FaceRange& face_range,
                               (or `boost::graph_traits<PolygonMeshOut>::%null_face` if the face belongs to the starting shape)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with
   *                   `boost::graph_traits<PolygonMeshOut>::%face_descriptor` as key type and
-  *                   `boost::graph_traits<PolygonMeshIn>::%face_descriptor` as value type}
+  *                   `boost::graph_traits<PolygonMesh>::%face_descriptor` as value type}
   *     \cgalParamDefault{unused}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
