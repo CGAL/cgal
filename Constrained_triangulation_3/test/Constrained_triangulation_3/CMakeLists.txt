@@ -10,11 +10,10 @@ create_single_source_cgal_program(test_ccdt_remeshing.cpp)
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
-include(CGAL_setup_tl-excepted)
 # CDT_3: C++20 for structured bindings
 add_library(CDT_3_dependencies INTERFACE)
 target_compile_features(CDT_3_dependencies INTERFACE cxx_std_20)
-target_link_libraries(CDT_3_dependencies INTERFACE CGAL::CGAL CGAL::Data CGAL::Eigen3_support tl::expected)
+target_link_libraries(CDT_3_dependencies INTERFACE CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
 
 create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_EDG_file.cpp")
 target_link_libraries(cdt_test_insert_constrained_edge_from_EDG_file PRIVATE CDT_3_dependencies)

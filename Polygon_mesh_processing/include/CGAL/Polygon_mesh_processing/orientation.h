@@ -485,7 +485,7 @@ void orient(TriangleMesh& tm,
  * \ingroup PMP_orientation_grp
  * Enumeration type used to indicate the status of a set of faces
  * classified by the function `volume_connected_components()`.
- * The set of faces defines either a volume connected connected component
+ * The set of faces defines either a volume connected component
  * in the case of `VALID_VOLUME` or a surface connected component otherwise.
  */
 enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume

@@ -358,7 +358,7 @@ public:
 
   /*! draws a curve using approximate coordinates.
    * Call this member function only of the geometry traits is equipped with
-   * the coordinate-aproximation functionality of a curve.
+   * the coordinate-approximation functionality of a curve.
    * This function must be inlined (e.g., a template) to enable the
    * compiled-time dispatching in the function `draw_curve()`.
    */
@@ -588,7 +588,7 @@ private:
 
 #ifdef CGAL_USE_BASIC_VIEWER
 //!
-void draw_unimplemented() {
+inline void draw_unimplemented() {
   CGAL_error_msg("Geometry traits type of arrangement is required to support approximation of Point_2 and "
                  "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization.");
 }

@@ -222,7 +222,7 @@ typedef ... Face_handle;
 
 Then, here is the vertex class with its nested
 `Rebind_TDS` template class and its template parameter
-set by default to an an internal type faking a triangulation data
+set by default to an internal type faking a triangulation data
 structure.
 
 \code{.cpp}

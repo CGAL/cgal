@@ -147,7 +147,7 @@ void main()
         Template classes Block and DBlock
         Implement adding and deleting items of the same type in blocks.
 
-        If there there are many items then using Block or DBlock
+        If there are many items then using Block or DBlock
         is more efficient than using 'new' and 'delete' both in terms
         of memory and time since
         (1) On some systems there is some minimum amount of memory

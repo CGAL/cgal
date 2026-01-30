@@ -879,7 +879,7 @@ case_1_2_1:
                                                      p01 - p00);
                 }
               } else {
-                // Else diagonal case case 2-2
+                // Else diagonal case 2-2
                 // Same as the case with 4 colors
                 CGAL_assertion(square[0][0].domain==square[1][1].domain);
                 CGAL_assertion(square[1][0].domain==square[0][1].domain);

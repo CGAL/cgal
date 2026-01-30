@@ -105,7 +105,7 @@ public:
         CGAL::read(is, i);
       }
       if(!is) return is;
-      c.face_id[li] = i;
+      c->ccdt_3_data().set_face_constraint_index(li, i);
     }
     return is;
   }

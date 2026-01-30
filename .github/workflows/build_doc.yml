@@ -81,7 +81,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ( context.payload.input && context.payload.inputs.doc_version ) {
+            if ( context.payload.inputs && context.payload.inputs.doc_version ) {
               return context.payload.inputs.doc_version
             }
             const body = context.payload.comment.body
@@ -106,6 +106,12 @@ jobs:
       doc_version: ${{ needs.pre_build_checks.outputs.doc_version }}
     if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build || false) }}
     steps:
+
+      - name: Display environment variables
+        run: |
+          echo "pr_number=${{ env.pr_number }}"
+          echo "doc_version=${{ env.doc_version }}"
+          echo "force_build=${{ env.force_build }}"
 
       - name: Emoji-comment
         if: github.event_name == 'issue_comment'
@@ -213,7 +219,7 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: address
             });
 
@@ -230,6 +236,6 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: msg
             });

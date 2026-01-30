@@ -2338,7 +2338,7 @@ Instead of an explicit approach, we use an implicit bounding rectangle
 embedded in the \dcel structure. \cgalFigureRef{aos_fig-unb_dcel}
 shows the arrangement of four lines that subdivide the plane into
 eight unbounded faces and two bounded ones. Notice that in this case
-portions of the the unbounded faces now have outer boundaries (those
+portions of the unbounded faces now have outer boundaries (those
 portions inside the bounding rectangle), and the halfedges along these
 outer CCBs are drawn as arrows. The bounding rectangle is drawn
 dashed. The vertices \f$v_1,v_2,\ldots,v_8\f$, which lie on the
@@ -2798,7 +2798,7 @@ are supported by the framework.
 \cgalFigureCaptionEnd
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection aos_ssec-curved_surfaces-parameteric Parametric Surfaces
+\subsection aos_ssec-curved_surfaces-parametric Parametric Surfaces
 <!-- ----------------------------------------------------------------------- -->
 
 We use \f$\overline{\mathbb{R}}\f$ to denote the compactified real line
@@ -5262,7 +5262,7 @@ An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
 
-The following examples computes the arrangement depicted in in
+The following examples computes the arrangement depicted in
 \cgalFigureRef{aos_fig-algebraic_curves}. The arrangement is induced
 by four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and
 \f$c_4\f$, of degrees \f$1\f$, \f$2\f$, \f$3\f$, and \f$6\f$,
@@ -6294,7 +6294,7 @@ overlay faces.
 The following example shows how to compute the intersection of two
 polygons using the `overlay()` function template. It uses a
 face-extended \dcel type to instantiate the arrangement
-classes. Each face of the the \dcel is extended with a Boolean
+classes. Each face of the \dcel is extended with a Boolean
 flag. A polygon is represented as a <em>marked</em> arrangement face
 (whose flag is set). The example uses an instance of the
 `Arr_face_overlay_traits<ArrR,ArrB,ArrO,OverlayFaceData>` class
@@ -6683,7 +6683,7 @@ auxiliary function `locate_point()` defined in the header file
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
 
 <!-- ----------------------------------------------------------------------- -->
-\cgalFigureBegin{aos_fig-edge_manipulation_curve_hostory,edge_manipulation_curve_history.png}
+\cgalFigureBegin{aos_fig-edge_manipulation_curve_history,edge_manipulation_curve_history.png}
 An arrangement with history of nine circles as constructed in \ref
 Arrangement_on_surface_2/edge_manipulation_curve_history.cpp. Note the
 vertical tangency points of \f$c_0\f$, marked as dark dots, which
@@ -6697,7 +6697,7 @@ The following example demonstrates the usage of the free
 `remove_curve()` function. We construct an arrangement of nine
 circles, while keeping a handle to each inserted circle. We then
 remove the large circle \f$c_0\f$, which induces \f$18\f$ edges, as
-depicted in \cgalFigureRef{aos_fig-edge_manipulation_curve_hostory}.
+depicted in \cgalFigureRef{aos_fig-edge_manipulation_curve_history}.
 The example also shows how to use the \link
 Arrangement_with_history_2::split_edge() `split_edge()`\endlink and
 \link Arrangement_with_history_2::merge_edge() `merge_edge()`\endlink

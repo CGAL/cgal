@@ -1,21 +1,22 @@
-// Copyright (c) 2017  Geometry Factory
-// All rights reserved.
+// Copyright (c) 2017  GeometryFactory
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
-#ifndef CGAL_POINT_SET_PROCESSING_READ_LAS_POINTS_H
-#define CGAL_POINT_SET_PROCESSING_READ_LAS_POINTS_H
+#ifndef CGAL_IO_LAS_READ_LAS_POINTS_H
+#define CGAL_IO_LAS_READ_LAS_POINTS_H
 
-#include <CGAL/license/Point_set_processing_3.h>
+#ifdef CGAL_LINKED_WITH_LASLIB
 
 #include <CGAL/config.h>
 
+#include <CGAL/IO/LAS/Las_property.h>
+#include <CGAL/IO/LAS.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Kernel_traits.h>
@@ -58,89 +59,6 @@
 namespace CGAL {
 
 namespace IO {
-
-/// \cond SKIP_IN_MANUAL
-namespace LAS_property {
-namespace Id {
-
-enum Id
-{
-  X,
-  Y,
-  Z,
-  Intensity,
-  Return_number,
-  Number_of_returns,
-  Scan_direction_flag,
-  Edge_of_flight_line,
-  Classification,
-  Synthetic_flag,
-  Keypoint_flag,
-  Withheld_flag,
-  Scan_angle,
-  User_data,
-  Point_source_ID,
-  Deleted_flag,
-  GPS_time,
-  R,
-  G,
-  B,
-  I
-};
-
-} // namespace Id
-
-template <typename T, Id::Id id>
-struct Base
-{
-  typedef T type;
-};
-
-typedef Base<double, Id::X> X;
-typedef Base<double, Id::Y> Y;
-typedef Base<double, Id::Z> Z;
-typedef Base<unsigned short, Id::Intensity> Intensity;
-typedef Base<unsigned char, Id::Return_number> Return_number;
-typedef Base<unsigned char, Id::Number_of_returns> Number_of_returns;
-typedef Base<unsigned char, Id::Scan_direction_flag> Scan_direction_flag;
-typedef Base<unsigned char, Id::Edge_of_flight_line> Edge_of_flight_line;
-typedef Base<unsigned char, Id::Classification> Classification;
-typedef Base<unsigned char, Id::Synthetic_flag> Synthetic_flag;
-typedef Base<unsigned char, Id::Keypoint_flag> Keypoint_flag;
-typedef Base<unsigned char, Id::Withheld_flag> Withheld_flag;
-typedef Base<float, Id::Scan_angle> Scan_angle;
-typedef Base<unsigned char, Id::User_data> User_data;
-typedef Base<unsigned short, Id::Point_source_ID> Point_source_ID;
-typedef Base<unsigned int, Id::Deleted_flag> Deleted_flag;
-typedef Base<double, Id::GPS_time> GPS_time;
-typedef Base<unsigned short, Id::R> R;
-typedef Base<unsigned short, Id::G> G;
-typedef Base<unsigned short, Id::B> B;
-typedef Base<unsigned short, Id::I> I;
-}
-/// \endcond
-
-/**
-   \ingroup PkgPointSetProcessing3IOLas
-
-   generates a %LAS property handler to read 3D points. Points are
-   constructed from the input the using 3 %LAS properties
-   `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
-
-   \tparam PointMap the property map used to store points.
-
-   \sa `read_LAS_with_properties()`
-   \sa \ref IOStreamLAS
-*/
-template <typename PointMap>
-std::tuple<PointMap,
-           typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-           LAS_property::X, LAS_property::Y, LAS_property::Z >
-make_las_point_reader(PointMap point_map)
-{
-  return std::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
-                          LAS_property::X(), LAS_property::Y(), LAS_property::Z());
-}
 
 /// \cond SKIP_IN_MANUAL
 
@@ -309,69 +227,10 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
 } // namespace LAS
 } // namespace internal
 
+
 /// \endcond
 
-/**
-   \ingroup PkgPointSetProcessing3IOLas
-
-   \brief reads user-selected points properties from a .las or .laz stream.
-   Potential additional properties are ignored.
-
-   Properties are handled through a variadic list of property
-   handlers. A `PropertyHandler` can either be:
-
-   - A `std::pair<PropertyMap, LAS_property::Tag >` if the user wants to
-   read a %LAS property as a scalar value `LAS_property::Tag::type` (for
-   example, storing an `int` %LAS property into an `int` variable).
-
-   - A `std::tuple<PropertyMap, Constructor,
-   LAS_property::Tag...>` if the user wants to use one or several
-   %LAS properties to construct a complex object (for example,
-   storing 4 `unsigned short` %LAS properties into a %Color object
-   that can for example be a `std::array<unsigned short,
-   4>`). In that case, the second element of the tuple should be a
-   functor that constructs the value type of `PropertyMap` from N
-   objects of of type `LAS_property::Tag::type`.
-
-   The %LAS standard defines a fixed set of properties accessible
-   through the following tag classes:
-
-   - `LAS_property::X` with type `double`
-   - `LAS_property::Y` with type `double`
-   - `LAS_property::Z` with type `double`
-   - `LAS_property::Intensity` with type `unsigned short`
-   - `LAS_property::Return_number` with type `unsigned char`
-   - `LAS_property::Number_of_returns` with type `unsigned char`
-   - `LAS_property::Scan_direction_flag` with type `unsigned char`
-   - `LAS_property::Edge_of_flight_line` with type `unsigned char`
-   - `LAS_property::Classification` with type `unsigned char`
-   - `LAS_property::Synthetic_flag` with type `unsigned char`
-   - `LAS_property::Keypoint_flag` with type `unsigned char`
-   - `LAS_property::Withheld_flag` with type `unsigned char`
-   - `LAS_property::Scan_angle` with type `double`
-   - `LAS_property::User_data` with type `unsigned char`
-   - `LAS_property::Point_source_ID` with type `unsigned short`
-   - `LAS_property::Deleted_flag` with type `unsigned int`
-   - `LAS_property::GPS_time` with type `double`
-   - `LAS_property::R` with type `unsigned short`
-   - `LAS_property::G` with type `unsigned short`
-   - `LAS_property::B` with type `unsigned short`
-   - `LAS_property::I` with type `unsigned short`
-
-   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
-
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
-   It can be omitted if the default is fine.
-   \tparam PointOutputIterator iterator over output points.
-   \tparam PropertyHandler handlers to recover properties.
-
-   \returns `true` if reading was successful, `false` otherwise.
-
-   \sa `make_las_point_reader()`
-
-   \sa \ref IOStreamLAS
-*/
+// documentation in ../LAS.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename ... PropertyHandler>
@@ -420,49 +279,13 @@ bool read_LAS_with_properties(std::istream& is,
 
 /// \endcond
 
-/**
-   \ingroup PkgPointSetProcessing3IOLas
-
-   \brief reads points (position only) using the \ref IOStreamLAS.
-
-   Potential additional properties are ignored.
-
-   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
-
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
-   It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param is input stream
-   \param output output iterator over points
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if reading was successful, `false` otherwise.
-
-   \sa `read_LAS_with_properties()`
-*/
+// documentation in ../LAS.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool read_LAS(std::istream& is,
               PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values())
+              const CGAL_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -486,47 +309,13 @@ bool read_LAS(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np =
 
 /// \endcond
 
-/**
-   \ingroup PkgPointSetProcessing3IOLas
-
-   \brief reads points (position only) using the \ref IOStreamLAS.
-
-   Potential additional properties are ignored.
-
-   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
-   It can be omitted when the default is fine.
-   \tparam PointOutputIterator iterator over output points.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
-   \param filename name of the input file
-   \param output output iterator over points
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-   \cgalNamedParamsBegin
-     \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the point range}
-       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
-       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
-     \cgalParamNEnd
-
-     \cgalParamNBegin{geom_traits}
-       \cgalParamDescription{an instance of a geometric traits class}
-       \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-     \cgalParamNEnd
-   \cgalNamedParamsEnd
-
-   \returns `true` if reading was successful, `false` otherwise.
-
-   \sa `read_LAS_with_properties()`
-*/
+// documentation in ../LAS.h
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 bool read_LAS(const std::string& filename,
               PointOutputIterator output,
-              const CGAL_NP_CLASS& np = parameters::default_values())
+              const CGAL_NP_CLASS& np)
 {
   std::ifstream is(filename, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
@@ -549,4 +338,5 @@ bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_NP_CLA
 
 } // namespace CGAL
 
-#endif // CGAL_POINT_SET_PROCESSING_READ_LAS_POINTS_H
+#endif // CGAL_LINKED_WITH_LASLIB
+#endif // CGAL_IO_LAS_READ_LAS_POINTS_H

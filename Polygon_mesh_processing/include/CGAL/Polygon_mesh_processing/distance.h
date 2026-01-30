@@ -2554,7 +2554,7 @@ double bounded_error_Hausdorff_distance(const TriangleMesh1& tm1,
 /**
  * \ingroup PMP_distance_grp
  *
- * returns the the symmetric Hausdorff distance, that is
+ * returns the symmetric Hausdorff distance, that is
  * the maximum of `bounded_error_Hausdorff_distance(tm1, tm2, error_bound, np1, np2)`
  * and `bounded_error_Hausdorff_distance(tm2, tm1, error_bound, np2, np1)`.
  *

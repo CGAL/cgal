@@ -72,7 +72,7 @@ bool read_wkt_or_fail_stream(std::istream& in,
   return true;
 }
 
-bool get_a_new_line(std::istream& in, std::string& line)
+inline bool get_a_new_line(std::istream& in, std::string& line)
 {
   in >> std::ws; // skip whitespaces
   if(in.good()) {
@@ -364,12 +364,12 @@ std::ostream& write_polygon_WKT(std::ostream& out,
 //!\see `CGAL::Point_3`
 template<typename LineString>
 std::ostream& write_linestring_WKT(std::ostream& out,
-                                   LineString ls)
+                                   const LineString& ls)
 {
   if(!out.good())
     return out;
 
-  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(ls);
+  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(const_cast<LineString&>(ls));
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -386,12 +386,12 @@ std::ostream& write_linestring_WKT(std::ostream& out,
 //!\see `CGAL::Point_2`
 template<typename MultiPoint>
 std::ostream& write_multi_point_WKT(std::ostream& out,
-                                    MultiPoint& mp)
+                                    const MultiPoint& mp)
 {
   if(!out.good())
     return out;
 
-  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
+  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(const_cast<MultiPoint&>(mp));
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -407,19 +407,19 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
 //!\see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
 std::ostream& write_multi_polygon_WKT(std::ostream& out,
-                                      MultiPolygon& polygons)
+                                      const MultiPolygon& polygons)
 {
   if(!out.good())
     return out;
 
-  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
+  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(const_cast<MultiPolygon&>(polygons));
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
 
 template<typename Kernel, typename Container>
 std::ostream& write_multi_polygon_WKT(std::ostream& out,
-                                      Multipolygon_with_holes_2<Kernel,Container>& mp)
+                                      const Multipolygon_with_holes_2<Kernel,Container>& mp)
 {
   return write_multi_polygon_WKT(out, mp.polygons_with_holes());
 }
@@ -435,7 +435,7 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
 //! \see `CGAL::IO::write_linestring_WKT()`
 template<typename MultiLineString>
 std::ostream& write_multi_linestring_WKT(std::ostream& out,
-                                         MultiLineString& mls)
+                                         const MultiLineString& mls)
 {
   if(!out.good())
     return out;
@@ -444,9 +444,9 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
   typedef CGAL::internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
 
   std::vector<LineString> pr_range;
-  for(PointRange& pr : mls)
+  for(const PointRange& pr : mls)
   {
-    LineString ls(pr);
+    LineString ls(const_cast<PointRange&>(pr));
     pr_range.push_back(ls);
   }
 
