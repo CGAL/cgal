@@ -160,7 +160,6 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
   else()
     set(_recursive_call_extra_args)
   endif()
-  list(APPEND arg_FIXTURES_REQUIRED "${test_name}_fixture")
   set(build_dir "${CMAKE_BINARY_DIR}/CGAL_cmake_test_suite/build-${test_name}")
   get_filename_component(cgal_dir "${cgal_config_path}" DIRECTORY)
   if(arg_TEST_EXAMPLES)
@@ -182,12 +181,17 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
                                    ${extra_ctest_args})
   set_property(TEST "test_____${test_name}" APPEND PROPERTY ENVIRONMENT CTEST_NO_TESTS_ACTION=error)
 
-  set_property(TEST "setup____${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_fixture")
-  set_property(TEST "config___${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_fixture")
+  set_property(TEST "setup____${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_build_directory")
+  set_property(TEST "config___${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_build_directory")
   set_property(TEST "config___${test_name}" APPEND PROPERTY DEPENDS "setup___${test_name}")
-  set_property(TEST "cleanup__${test_name}" APPEND PROPERTY FIXTURES_CLEANUP "${test_name}_fixture")
+  set_property(TEST "cleanup__${test_name}" APPEND PROPERTY FIXTURES_CLEANUP "${test_name}_build_directory")
   set_property(TEST "test_____${test_name}"
-              APPEND PROPERTY FIXTURES_REQUIRED ${arg_FIXTURES_REQUIRED})
+              APPEND PROPERTY FIXTURES_REQUIRED "${test_name}_build_directory")
+
+  if(arg_FIXTURES_REQUIRED)
+    set_property(TEST "config___${test_name}"
+                APPEND PROPERTY FIXTURES_REQUIRED ${arg_FIXTURES_REQUIRED})
+  endif()
 
   set_property(TEST "setup____${test_name}"
                     "cleanup__${test_name}"
@@ -212,18 +216,18 @@ endfunction()
 # Adds config and install tests for a CGAL installation
 ##
 function(test_CGAL_installation test_name install_prefix build_dir)
-  add_test(NAME config_${test_name}
+  add_test(NAME "config_${test_name}"
     COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON"
                                                        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
                                                        "-DCGAL_INSTALL_LIB_DIR=lib"
                                                        -S "${CGAL_SOURCE_DIR}" -B "${build_dir}")
-  add_test(NAME install_${test_name}
+  add_test(NAME "install_${test_name}"
     COMMAND ${CMAKE_COMMAND} --install "${build_dir}" --config "$<CONFIG>")
-  set_property(TEST install_${test_name} APPEND PROPERTY DEPENDS config_${test_name})
-  set_property(TEST install_${test_name}
-                    config_${test_name}
+  set_property(TEST "install_${test_name}" APPEND PROPERTY DEPENDS "config_${test_name}")
+  set_property(TEST "install_${test_name}"
+                    "config_${test_name}"
                APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-  set_property(TEST install_${test_name} APPEND PROPERTY FIXTURES_SETUP install_${test_name}_fixture)
+  set_property(TEST "config_${test_name}" "install_${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_installation_directory")
 endfunction()
 
 CGAL_add_config_file_test(
@@ -251,7 +255,7 @@ CGAL_add_config_file_test(
   test_config_file_non_standard_install_lib_cmake
   "${CMAKE_BINARY_DIR}/test_config_file"
   "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake"
-  FIXTURES_REQUIRED install_non_standard_cgal_fixture
+  FIXTURES_REQUIRED non_standard_cgal_installation_directory
 )
 
 if(CGAL_Qt6_FOUND)
@@ -267,7 +271,7 @@ if(CGAL_Qt6_FOUND)
     test_config_file_non_standard_install_lib_cmake_with_qt
     "${CMAKE_BINARY_DIR}/test_config_file_qt"
     "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_install_qt/lib/cmake/CGAL/CGALConfig.cmake"
-    FIXTURES_REQUIRED install_non_standard_cgal_qt_fixture
+    FIXTURES_REQUIRED non_standard_cgal_qt_installation_directory
   )
 endif()#CGAL_Qt6_FOUND
 
@@ -275,5 +279,5 @@ CGAL_add_config_file_test(
   test_config_file_non_standard
   "${CMAKE_BINARY_DIR}/test_config_file"
   "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_build/CGALConfig.cmake"
-  FIXTURES_REQUIRED install_non_standard_cgal_fixture
+  FIXTURES_REQUIRED non_standard_cgal_installation_directory
 )
