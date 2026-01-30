@@ -1,7 +1,7 @@
 if(CGAL_CDT_3_NO_THINGI10K)
   return()
 endif()
-find_path(THINGI10K_DATA_DIR NAME 132423.stl
+find_path(THINGI10K_DATA_DIR NAMES 132423.stl 132423.off
   HINTS ENV HOME
   PATH_SUFFIXES Downloads/Thingi10K/raw_meshes
   NO_DEFAULT_PATH
@@ -277,8 +277,18 @@ function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
      )
 endfunction()
 
-foreach(thingi_file_name ${thingi10k_max_10k_solid})
+list(GET thingi10k_max_10k_solid 0 first_thingi_file)
+message(STATUS "Thingi10k data directory: ${THINGI10K_DATA_DIR}")
+if(EXISTS "${THINGI10K_DATA_DIR}/${first_thingi_file}")
+  set(THINGI10K_DATA_SET ${thingi10k_max_10k_solid})
+else()
+  file(GLOB THINGI10K_DATA_SET RELATIVE "${THINGI10K_DATA_DIR}"
+  "${THINGI10K_DATA_DIR}/*.off")
+  list(GET THINGI10K_DATA_SET 0 first_thingi_file)
+  message(STATUS "First Thingi10k file found: ${first_thingi_file}")
+endif()
 
+foreach(thingi_file_name ${THINGI10K_DATA_SET})
   if(thingi_file_name IN_LIST thingi10k_BLACKLIST_WITHOUT_MERGE_FACETS)
     set(MY_ONLY_MERGE_FACETS ONLY_MERGE_FACETS)
 
@@ -302,5 +312,5 @@ foreach(thingi_file_name ${thingi10k_max_10k_solid})
   endif()
   get_filename_component(thingi_ID "${thingi_file_name}" NAME_WE)
   CGAL_add_cdt3_test_from_Thingi10k(Thingi10K_${thingi_ID} ${thingi_file_name}
-      TIMEOUT 600 LABELS ${LABELS} ${MY_ONLY_MERGE_FACETS})
+      LABELS ${LABELS} ${MY_ONLY_MERGE_FACETS})
 endforeach()

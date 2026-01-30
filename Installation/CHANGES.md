@@ -47,6 +47,16 @@ Release date: July 2026
     parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
     `do_intersect()`.)
 
+### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
+
+- Added new stream formatting capabilities for improved debugging and logging:
+  - [`CGAL::IO::Basic_indenting_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__streambuf.html)
+    and [`CGAL::IO::Basic_indenting_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__stream__guard.html)
+    for automatic indentation of output streams
+  - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html)
+    and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html)
+    for ANSI color support in terminal output
+
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
 Release date: Sept 2025
@@ -4127,18 +4137,18 @@ CGAL 3.9 offers the following improvements and new functionality :
     `Arrangement_2::Vertex` has been removed. It has been previously
     replaced new function `is_at_open_boundary()`.
 - The tags in the geometry traits that indicate the type of boundary
-    of the embedding surface were replaced by the following new tags:
+  of the embedding surface were replaced by the following new tags:
 
-    ```c++
-    Left_side_category
-    Bottom_side_category
-    Top_side_category
-    Right_side_category
-    ```
+  ```c++
+  Left_side_category
+  Bottom_side_category
+  Top_side_category
+  Right_side_category
+  ```
 
-    It is still possible not to indicate the tags at all. Default values
-    are assumed. This however will produce warning messages, and should
-    be avoided.
+  It is still possible not to indicate the tags at all. Default values
+  are assumed. This however will produce warning messages, and should
+  be avoided.
 
 ## Release 3.8
 

@@ -102,6 +102,10 @@ int main()
                          .face_index_map(std::reference_wrapper<const B>(b))
   );
 
+  // test that, in case of duplicates, the last parameter value is kept
+  auto np = params::visitor(1).visitor(2);
+  assert(params::get_parameter(np, inp::visitor) == 2);
+
   auto d = CGAL::parameters::default_values();
   static_assert(std::is_same<decltype(d),CGAL::parameters::Default_named_parameters>::value);
 #ifndef CGAL_NO_DEPRECATED_CODE

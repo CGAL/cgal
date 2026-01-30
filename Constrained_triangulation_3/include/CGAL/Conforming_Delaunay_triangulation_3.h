@@ -16,10 +16,22 @@
 
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
+#include <CGAL/enum.h>
+#include <CGAL/functional.h>
+#include <CGAL/kernel_assertions.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/type_traits.h>
+#include <CGAL/unordered_flat_map.h>
 #include <CGAL/unordered_flat_set.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
@@ -30,8 +42,24 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include <fstream>
+#include <algorithm>
+#include <array>
 #include <bitset>
+#include <fstream>
+#include <functional>
+#include <ios>
+#include <iostream>
+#include <limits>
+#include <optional>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <stdexcept>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #ifndef DOXYGEN_RUNNING
 
@@ -46,13 +74,13 @@ namespace CDT_3 {
 struct Debug_options {
   enum class Flags {
     Steiner_points = 0,
+    Steiner_points_construction,
     conforming,
     input_faces,
     missing_region,
     regions,
     copy_triangulation_into_hole,
     validity,
-    use_older_cavity_algorithm,
     debug_finite_edges_map,
     use_finite_edges_map,
     debug_subconstraints_to_conform,
@@ -62,9 +90,14 @@ struct Debug_options {
     debug_constraint_hierarchy,
     debug_geometric_errors,
     debug_polygon_insertion,
+    debug_restore_faces,
     display_statistics,
+    use_epeck_for_normals,
+    use_epeck_for_Steiner_points,
     nb_of_flags
   };
+  bool Steiner_points_construction() const { return flags[static_cast<int>(Flags::Steiner_points_construction)]; }
+  void Steiner_points_construction(bool b) { flags.set(static_cast<int>(Flags::Steiner_points_construction), b); }
 
   bool Steiner_points() const { return flags[static_cast<int>(Flags::Steiner_points)]; }
   void Steiner_points(bool b) { flags.set(static_cast<int>(Flags::Steiner_points), b); }
@@ -84,9 +117,6 @@ struct Debug_options {
   bool validity() const { return flags[static_cast<int>(Flags::validity)]; }
   void validity(bool b) { flags.set(static_cast<int>(Flags::validity), b); }
 
-  bool use_older_cavity_algorithm() const { return flags[static_cast<int>(Flags::use_older_cavity_algorithm)]; }
-  bool use_newer_cavity_algorithm() const { return !flags[static_cast<int>(Flags::use_older_cavity_algorithm)]; }
-  void use_older_cavity_algorithm(bool b) { flags.set(static_cast<int>(Flags::use_older_cavity_algorithm), b); }
 
   bool finite_edges_map() const { return flags[static_cast<int>(Flags::debug_finite_edges_map)]; }
   void finite_edges_map(bool b) { flags.set(static_cast<int>(Flags::debug_finite_edges_map), b); }
@@ -115,8 +145,17 @@ struct Debug_options {
   bool polygon_insertion() const { return flags[static_cast<int>(Flags::debug_polygon_insertion)]; }
   void polygon_insertion(bool b) { flags.set(static_cast<int>(Flags::debug_polygon_insertion), b); }
 
+  bool restore_faces() const { return flags[static_cast<int>(Flags::debug_restore_faces)]; }
+  void restore_faces(bool b) { flags.set(static_cast<int>(Flags::debug_restore_faces), b); }
+
   bool display_statistics() const { return flags[static_cast<int>(Flags::display_statistics)]; }
   void display_statistics(bool b) { flags.set(static_cast<int>(Flags::display_statistics), b); }
+
+  bool use_epeck_for_normals() const { return flags[static_cast<int>(Flags::use_epeck_for_normals)]; }
+  void use_epeck_for_normals(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_normals), b); }
+
+  bool use_epeck_for_Steiner_points() const { return flags[static_cast<int>(Flags::use_epeck_for_Steiner_points)]; }
+  void use_epeck_for_Steiner_points(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_Steiner_points), b); }
 
   double segment_vertex_epsilon() const { return segment_vertex_epsilon_; }
   void set_segment_vertex_epsilon(double eps) { segment_vertex_epsilon_ = eps; }
@@ -301,28 +340,37 @@ protected:
 
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
+      const CGAL::unordered_flat_set<Cell_handle> cells_set(cell_it, end);
+      std::set<std::pair<Vertex_handle, Vertex_handle>> edges_in_conflict;
       auto d = self->tr().dimension();
-      for( ; cell_it != end; ++cell_it )
-        for( int i = 0; i < d; ++i )
-          for( int j = i+1; j <= d; ++j ) {
-            auto v1 = (*cell_it)->vertex(i);
-            auto v2 = (*cell_it)->vertex(j);
+      for( ; cell_it != end; ++cell_it ) {
+        for( int i = 0; i < d; ++i ) {
+          const auto n = (*cell_it)->neighbor(i);
+          if(cells_set.find(n) == cells_set.end()) continue;
+          // here: (c, i) is a facet internal to the conflict region
+          for(int j = 0; j < 3; ++j ) {
+            auto v1 = (*cell_it)->vertex(self->tr().vertex_triple_index(i, j));
+            auto v2 = (*cell_it)->vertex(self->tr().vertex_triple_index(i, self->tr().cw(j)));
             if(self->tr().is_infinite(v1) || self->tr().is_infinite(v2)) continue;
-            if(self->use_finite_edges_map()) {
-              if(v1 > v2) std::swap(v1, v2);
-              auto v1_index = v1->time_stamp();
-              [[maybe_unused]] auto nb_erased = self->all_finite_edges[v1_index].erase(v2);
-              if constexpr (cdt_3_can_use_cxx20_format()) if(self->debug().finite_edges_map() && nb_erased > 0) {
-                std::cerr << cdt_3_format("erasing edge {} {}\n", self->display_vert((std::min)(v1, v2)),
-                                        self->display_vert((std::max)(v1, v2)));
-              }
-            }
-            auto [contexts_begin, contexts_end] =
-              self->constraint_hierarchy.contexts(v1, v2);
-            if(contexts_begin != contexts_end) {
-              self->add_to_subconstraints_to_conform(v1, v2, contexts_begin->id());
-            }
+            edges_in_conflict.insert(CGAL::make_sorted_pair(v1, v2));
           }
+        }
+      }
+      for(auto [v1, v2]: edges_in_conflict) {
+        if(self->use_finite_edges_map()) {
+          auto v1_index = v1->time_stamp();
+          [[maybe_unused]] auto nb_erased = self->all_finite_edges[v1_index].erase(v2);
+          if constexpr (cdt_3_can_use_cxx20_format()) if(self->debug().finite_edges_map() && nb_erased > 0) {
+            std::cerr << cdt_3_format("erasing edge {} {}\n", self->display_vert((std::min)(v1, v2)),
+                                    self->display_vert((std::max)(v1, v2)));
+          }
+        }
+        auto [contexts_begin, contexts_end] =
+          self->constraint_hierarchy.contexts(v1, v2);
+        if(contexts_begin != contexts_end) {
+          self->add_to_subconstraints_to_conform(v1, v2, contexts_begin->id());
+        }
+      }
     }
 
     void after_insertion(Vertex_handle v) const {
@@ -518,9 +566,6 @@ public:
   const CDT_3::Debug_options& debug() const { return debug_options_; }
 
   // Backward compatibility wrappers (deprecated, use debug().method() instead)
-  bool use_older_cavity_algorithm() const { return debug_options_.use_older_cavity_algorithm(); }
-  bool use_newer_cavity_algorithm() const { return debug_options_.use_newer_cavity_algorithm(); }
-  void use_older_cavity_algorithm(bool b) { debug_options_.use_older_cavity_algorithm(b); }
   bool use_finite_edges_map() const { return update_all_finite_edges_ && debug_options_.use_finite_edges_map_flag(); }
   void use_finite_edges_map(bool b) { debug_options_.use_finite_edges_map(b); }
 
@@ -757,11 +802,29 @@ protected:
     Locate_type lt;
     int li, lj;
     const Cell_handle c = tr().locate(steiner_pt, lt, li, lj, hint);
+    if(lt == T_3::VERTEX) {
+      auto other_v = c->vertex(li);
+      const auto [c_va, c_vb] = constraint_extremities(constraint);
+      std::stringstream ss;
+      ss.precision(std::cerr.precision());
+      ss << "insert_Steiner_point_on_subconstraint: Steiner point coincides with an existing vertex\n";
+      ss << "  -> Steiner point: " << steiner_pt << '\n';
+      ss << "     on constraint: " << display_vert(c_va) << "  -  " << display_vert(c_vb) << '\n';
+      ss << "  -> existing vertex: " << IO::oformat(other_v, with_point_and_info) << '\n';
+      if(other_v->ccdt_3_data().number_of_incident_constraints() > 0) {
+        const auto c_id = other_v->ccdt_3_data().constrained_polyline_id(*this);
+        const auto [c_va, c_vb] = constraint_extremities(c_id);
+        ss << "     which is on constraint: " << display_vert(c_va) << " - " << display_vert(c_vb) << '\n';
+        ss << "  Possible cause: two input segments are too close to each other\n";
+      } else if(other_v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::INPUT_VERTEX) {
+        ss << "     which is an input vertex.\n";
+        ss << "  Possible cause: an input segment is too close to an input vertex\n";
+      }
+      throw std::runtime_error(std::move(ss).str());
+    }
     const Vertex_handle v = visitor.insert_in_triangulation(steiner_pt, lt, c, li, lj);
     v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
-    if(lt != T_3::VERTEX) {
-      v->ccdt_3_data().set_on_constraint(constraint);
-    }
+    v->ccdt_3_data().set_on_constraint(constraint);
     constraint_hierarchy.add_Steiner(va, vb, v);
     visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v);
     add_to_subconstraints_to_conform(va, v, constraint);
@@ -792,6 +855,9 @@ protected:
         std::cerr << "  new vertex " << display_vert(v) << '\n';
       }
       return true;
+    } else if(debug().subconstraints_to_conform()) {
+      std::cerr << "conform_subconstraint>> subconstraint " << display_subcstr(subconstraint)
+                << " is already an edge in the triangulation.\n";
     }
 
     return false;
@@ -967,6 +1033,116 @@ protected:
     return vector_of_encroaching_vertices;
   }
 
+  template <typename T, typename = void> struct has_exact_member_function : std::false_type
+  {};
+
+  template <typename T>
+  struct has_exact_member_function<T, std::void_t<decltype(std::declval<T>().exact())>> : std::true_type
+  {};
+
+  template <typename T> static decltype(auto) exact(T&& obj) {
+    if constexpr(has_exact_member_function<T>::value) {
+      obj.exact();
+    }
+    return std::forward<T>(obj);
+  }
+
+  // Helper to compute a projected point with optional exact kernel and custom threshold check
+  // lambda_computer receives (kernel, converter) and returns the lambda parameter for projection
+  // use_midpoint_check receives (lambda, std::optional<Point>) and returns true if midpoint should be used instead
+  //   - First call with std::nullopt allows checking lambda before computing projection
+  //   - Second call with actual projected point allows distance-based checks
+  template<typename LambdaComputer, typename MidpointCheck>
+  Point compute_projected_point_with_threshold(const Point& start_pt, const Point& end_pt,
+                                                const Point& midpoint_start, const Point& midpoint_end,
+                                                LambdaComputer&& lambda_computer,
+                                                MidpointCheck&& use_midpoint_check) const
+  {
+    auto& gt = tr().geom_traits();
+    auto vector_functor = gt.construct_vector_3_object();
+    auto midpoint_functor = gt.construct_midpoint_3_object();
+    auto scaled_vector_functor = gt.construct_scaled_vector_3_object();
+    auto translate_functor = gt.construct_translated_point_3_object();
+
+    if constexpr (!Algebraic_structure_traits<typename T_3::Geom_traits::FT>::Is_exact::value) {
+      if(debug().use_epeck_for_Steiner_points()) {
+        using Epeck_ft = internal::Exact_field_selector<double>::Type;
+        using Exact_kernel = Simple_cartesian<Epeck_ft>;
+        Exact_kernel exact_kernel;
+        Cartesian_converter<Exact_kernel, Geom_traits> back_from_exact;
+        Cartesian_converter<Geom_traits, Exact_kernel> to_exact;
+
+        auto&& exact_vector = exact_kernel.construct_vector_3_object();
+        auto&& exact_midpoint = exact_kernel.construct_midpoint_3_object();
+        auto&& exact_scaled_vector = exact_kernel.construct_scaled_vector_3_object();
+        auto&& exact_translate = exact_kernel.construct_translated_point_3_object();
+
+        auto lambda = lambda_computer(exact_kernel, to_exact);
+
+        auto exact_midpoint_point_fct = [&]() {
+          const auto midpoint_start_exact = to_exact(midpoint_start);
+          const auto midpoint_end_exact = to_exact(midpoint_end);
+          auto exact_result = exact_midpoint(midpoint_start_exact, midpoint_end_exact);
+          this->exact(exact_result);
+          return back_from_exact(exact_result);
+        };
+
+        // Check threshold before computing projection
+        if(use_midpoint_check(lambda, std::nullopt)) {
+          return exact_midpoint_point_fct();
+        }
+
+        // Only convert projection points when needed
+        const auto start_pt_exact = to_exact(start_pt);
+        const auto end_pt_exact = to_exact(end_pt);
+        const auto vector_exact = exact_vector(start_pt_exact, end_pt_exact);
+        auto projected_exact = exact_translate(start_pt_exact, exact_scaled_vector(vector_exact, lambda));
+        this->exact(projected_exact);
+        const auto projected_approx = back_from_exact(projected_exact);
+
+        // Second threshold check with actual projected point if needed
+        if(use_midpoint_check(lambda, projected_approx)) {
+          return exact_midpoint_point_fct();
+        }
+
+        return projected_approx;
+      }
+    }
+    auto lambda = lambda_computer(gt, CGAL::cpp20::identity{});
+
+    // Check threshold before computing projection
+    if(use_midpoint_check(lambda, std::nullopt)) {
+      return exact(midpoint_functor(midpoint_start, midpoint_end));
+    }
+
+    const auto vector_ab = vector_functor(start_pt, end_pt);
+    const auto projected_pt = translate_functor(start_pt, scaled_vector_functor(vector_ab, lambda));
+
+    // Second threshold check with actual projected point if needed
+    return exact(use_midpoint_check(lambda, projected_pt) ? midpoint_functor(midpoint_start, midpoint_end) : projected_pt);
+  }
+
+  // Convenience wrapper for simple lambda-based threshold (lambda < 0.2 || lambda > 0.8)
+  template<typename LambdaComputer>
+  Point compute_projected_point(const Point& start_pt, const Point& end_pt,
+                                LambdaComputer&& lambda_computer) const
+  {
+    return compute_projected_point_with_threshold(
+        start_pt, end_pt, start_pt, end_pt,
+        std::forward<LambdaComputer>(lambda_computer),
+        [this](auto lambda, const std::optional<Point>&) {
+          // Only need lambda for this threshold check
+          bool use_midpoint = lambda < 0.2 || lambda > 0.8;
+          if(this->debug().Steiner_points_construction()) {
+            std::cerr << "  lambda = " << lambda << '\n';
+            if(use_midpoint) {
+              std::cerr << "  -> using midpoint instead of projection\n";
+            }
+          }
+          return use_midpoint;
+        });
+  }
+
   Construct_Steiner_point_return_type
   construct_Steiner_point(Constrained_polyline_id constrained_polyline_id, Subconstraint subconstraint)
   {
@@ -974,10 +1150,7 @@ protected:
     auto compare_angle_functor = gt.compare_angle_3_object();
     auto vector_functor = gt.construct_vector_3_object();
     auto midpoint_functor = gt.construct_midpoint_3_object();
-    auto scaled_vector_functor = gt.construct_scaled_vector_3_object();
     auto sq_length_functor = gt.compute_squared_length_3_object();
-    auto sc_product_functor = gt.compute_scalar_product_3_object();
-    auto translate_functor = gt.construct_translated_point_3_object();
 
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
@@ -989,10 +1162,10 @@ protected:
 
     if(this->dimension() < 2) {
       std::cerr << "dim < 2: midpoint\n";
-      return {midpoint_functor(pa, pb), va->cell(), va};
+      return {exact(midpoint_functor(pa, pb)), va->cell(), va};
     }
 
-    if(debug().encroaching_vertices()) {
+    if(debug().Steiner_points_construction()) {
       std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
                 << display_vert(vb) << " )\n";
     }
@@ -1008,10 +1181,10 @@ protected:
                                        pa, this->tr().point(v2), pb) == SMALLER;
         });
     CGAL_assertion(reference_vertex_it != vector_of_encroaching_vertices.end());
-#if CGAL_CDT_3_DEBUG_CONFORMING
-    std::cerr << "  -> reference point: " << display_vert(*reference_vertex_it)
-              << '\n';
-#endif // CGAL_CDT_3_DEBUG_CONFORMING
+    if(debug().Steiner_points_construction()) {
+      std::cerr << "  -> reference point: " << display_vert(*reference_vertex_it)
+          << '\n';
+    }
     const auto reference_vertex = *reference_vertex_it;
     const auto& reference_point = tr().point(reference_vertex);
 
@@ -1021,32 +1194,43 @@ protected:
       CGAL_assertion(reference_vertex->ccdt_3_data().number_of_incident_constraints() == 1);
       const auto ref_constrained_polyline_id = reference_vertex->ccdt_3_data().constrained_polyline_id(*this);
       const auto [ref_va, ref_vb] = constraint_extremities(ref_constrained_polyline_id);
-#if CGAL_CDT_3_DEBUG_CONFORMING
-      std::cerr << "  reference point is on constraint: " << display_vert(ref_va)
+      if(debug().Steiner_points_construction()) {
+        std::cerr << "  reference point is on constraint: " << display_vert(ref_va)
                 << "    " << display_vert(ref_vb) << '\n'
                 << "  original constraint:              " << display_vert(orig_va)
                 << "    " << display_vert(orig_vb) << '\n';
-#endif // CGAL_CDT_3_DEBUG_CONFORMING
+      }
       const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
       const auto length_ab = CGAL::approximate_sqrt(sq_length_functor(vector_ab));
-      auto return_orig_result_point =
-          [&](auto lambda, Point orig_pa, Point orig_pb)
-              -> Construct_Steiner_point_return_type
-          {
-            const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
-            const auto inter_point = translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
-            const auto dist_a_result = CGAL::approximate_sqrt(sq_length_functor(vector_functor(pa, inter_point)));
-            const auto ratio = dist_a_result / length_ab;
-            const auto result_point = (ratio < 0.2 || ratio > 0.8)
-                                          ? midpoint_functor(pa, pb)
-                                          : inter_point;
+      auto return_orig_result_point = [&](auto lambda_val, Point orig_pa_param,
+                                          Point orig_pb_param) -> Construct_Steiner_point_return_type {
+        // Compute projected point with distance-based ratio threshold check
+        const auto result_point = compute_projected_point_with_threshold(
+            orig_pa_param, orig_pb_param,                         // Projection segment
+            pa, pb,                                               // Midpoint segment
+            [lambda_val](auto&&, auto&&) { return lambda_val; },  // Lambda computer
+            [&](auto, const std::optional<Point>& projected_pt) { // Threshold check based on distance ratio
+              // If projected_pt is not computed yet (std::nullopt), can't check, so return false
+              if(!projected_pt)
+                return false;
 
-#if CGAL_CDT_3_DEBUG_CONFORMING
-            std::cerr << "  ref ratio = " << ratio << '\n';
-            std::cerr << "  -> Steiner point: " << result_point << '\n';
-#endif // CGAL_CDT_3_DEBUG_CONFORMING
-            return {result_point, reference_vertex->cell(), reference_vertex};
-          };
+              const auto dist_a_result = CGAL::approximate_sqrt(sq_length_functor(vector_functor(pa, *projected_pt)));
+              const auto ratio = dist_a_result / length_ab;
+              bool use_midpoint = ratio < 0.2 || ratio > 0.8;
+              if(debug().Steiner_points_construction()) {
+                std::cerr << "  ref ratio = " << ratio << '\n';
+                if(use_midpoint) {
+                  std::cerr << "  -> using midpoint instead of projection\n";
+                }
+              }
+              return use_midpoint;
+            });
+
+        if(debug().Steiner_points_construction()) {
+          std::cerr << "  -> Steiner point: " << result_point << '\n';
+        }
+        return {exact(result_point), reference_vertex->cell(), reference_vertex};
+      };
 
       const auto length_orig_ab = CGAL::approximate_sqrt(sq_length_functor(vector_orig_ab));
       if(ref_va == orig_va || ref_vb == orig_va) {
@@ -1071,17 +1255,30 @@ protected:
       }
     }
     // compute the projection of the reference point
-    const auto vector_a_ref = vector_functor(pa, reference_point);
-    const auto lambda = sc_product_functor(vector_a_ref, vector_ab) / sq_length_functor(vector_ab);
-    const auto result_point = (lambda < 0.2 || lambda > 0.8)
-                                  ? midpoint_functor(pa, pb)
-                                  : translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
-#if CGAL_CDT_3_DEBUG_CONFORMING
-    std::cerr << "  lambda = " << lambda << '\n';
-    std::cerr << "  -> Steiner point: " << result_point << '\n';
-#endif // CGAL_CDT_3_DEBUG_CONFORMING
-    return {result_point, reference_vertex->cell(), reference_vertex};
+    const auto result_point = compute_projected_point(
+        pa, pb,
+        [&](auto&& kernel, auto&& converter) -> typename CGAL::cpp20::remove_cvref_t<decltype(kernel)>::FT{
+          auto&& vec_func = kernel.construct_vector_3_object();
+          auto&& sc_prod_func = kernel.compute_scalar_product_3_object();
+          auto&& sq_len_func = kernel.compute_squared_length_3_object();
+
+          const auto pa_converted = converter(pa);
+          const auto pb_converted = converter(pb);
+          const auto ref_pt_converted = converter(reference_point);
+
+          const auto vector_ab = vec_func(pa_converted, pb_converted);
+          const auto vector_a_ref = vec_func(pa_converted, ref_pt_converted);
+          const auto denum = CGAL::approximate_sqrt(sq_len_func(vector_ab));
+          const auto num = sc_prod_func(vector_a_ref, vector_ab);
+          auto result = num / denum;
+          return result;
+        });
+
+    if(debug().Steiner_points_construction()) {
+      std::cerr << "  -> Steiner point: " << result_point << '\n';
+    }
+    return {exact(result_point), reference_vertex->cell(), reference_vertex};
   }
 
 protected:
