@@ -1161,12 +1161,13 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
 // pi is in dimension q, sigma is in dimension q+1
 template<typename ChainComplex>
 void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
-    //----------------------------------------------- Submatrices of H ----------------------------------------------------
-
     if (this->_hdvf_opt & OPT_FULL) {
+        CGAL_precondition(this->_K.is_valid_cell(pi, q));
+        CGAL_precondition(this->_K.is_valid_cell(sigma, q+1));
         // Output operation details to the console
         std::cout << "R of " << pi << "(dim " << q << ") / " << sigma << "(dim " << q + 1 << ")" << std::endl;
 
+        //----------------------------------------------- Submatrices of H ----------------------------------------------------
         // Extract the relevant row and column chains from this->_H_col
         Row_chain H12 = OSM::get_row(this->_H_col[q], sigma); // H12 is the row chain from this->_H_col[q] at index sigma
         Column_chain H21 = OSM::get_column(this->_H_col[q], pi); // H21 is the column chain from this->_H_col[q] at index pi
@@ -1281,15 +1282,17 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
 // pi is in dimension q, gamma is in dimension q
 template<typename ChainComplex>
 void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
-    //----------------------------------------------- Submatrices of F ----------------------------------------------------
-
     if (this->_hdvf_opt & OPT_FULL) {
+        CGAL_precondition(this->_K.is_valid_cell(pi, q));
+        CGAL_precondition(this->_K.is_valid_cell(gamma, q));
+
         // Output the operation details to the console
         std::cout << "M of " << q << "(" << pi << "," << gamma << ")" << std::endl;
 
         if (q == this->_K.dimension())
             throw(std::runtime_error("Operation M invalid in maximum dimension")) ;
 
+        //----------------------------------------------- Submatrices of F ----------------------------------------------------
         // Extract row and column chains from this->_F_row
         Row_chain F12(OSM::get_row(this->_F_row[q], gamma)); // F12 is the row chain from this->_F_row[q] at index gamma
         Column_chain F21(OSM::get_column(this->_F_row[q], pi)); // F21 is the column chain from this->_F_row[q] at index pi
@@ -1399,15 +1402,17 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
 // gamma is in dimension q, sigma is in dimension q
 template<typename ChainComplex>
 void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
-    //----------------------------------------------- Submatrices of G ----------------------------------------------------
-
     if (this->_hdvf_opt & OPT_FULL) {
+        CGAL_precondition(this->_K.is_valid_cell(sigma, q));
+        CGAL_precondition(this->_K.is_valid_cell(gamma, q));
+
         // Output the operation details to the console
         std::cout << "W of " << q << "(" << sigma << "," << gamma << ")" << std::endl;
 
         if (q == 0)
             throw(std::runtime_error("W operation in dimension 0")) ;
 
+        //----------------------------------------------- Submatrices of G ----------------------------------------------------
         // Extract row and column chains from this->_G_col
         Row_chain G12(OSM::get_row(this->_G_col[q], sigma)); // G12 is the row chain from this->_G_col[q] at index sigma
         Column_chain G21(OSM::get_column(this->_G_col[q], gamma)); // G21 is the column chain from this->_G_col[q] at index gamma
@@ -1521,9 +1526,9 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
 // gamma is in dimension q, sigma is in dimension q
 template<typename ChainComplex>
 void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
-    //----------------------------------------------- Submatrices of G ----------------------------------------------------
-
     if (this->_hdvf_opt & OPT_FULL) {
+        CGAL_precondition(this->_K.is_valid_cell(pi, q));
+        CGAL_precondition(this->_K.is_valid_cell(sigma, q));
         // Output the operation details to the console
         std::cout << "MW of " << q << "(" << pi << "," << sigma << ")" << std::endl;
 
@@ -1532,6 +1537,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         if (q >= this->_K.dimension())
             throw(std::runtime_error("MW operation in maximal dimension")) ;
 
+        //----------------------------------------------- Submatrices ----------------------------------------------------
         // In order to compute xi and xi', extract sub-matrices of H_q, H_q-1 and compute d(pi) and cod(sigma)
 
         // H_q extractions
