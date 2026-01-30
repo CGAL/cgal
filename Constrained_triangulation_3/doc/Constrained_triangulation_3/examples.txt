@@ -45,4 +45,5 @@ construct the constrained Delaunay triangulation after preprocessing by autorefi
 \example Constrained_triangulation_3/ccdt_3_fimap_region_growing.cpp
 \example Constrained_triangulation_3/ccdt_3_from_soup_fimap.cpp
 \example Constrained_triangulation_3/ccdt_3_preprocessing.cpp
+\example Constrained_triangulation_3/ccdt_3_with_info.cpp
 */
