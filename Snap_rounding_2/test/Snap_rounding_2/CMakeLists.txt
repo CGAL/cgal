@@ -7,6 +7,8 @@ project(Snap_rounding_2_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program(test_snap_rounding_2.cpp NO_TESTING)
+create_single_source_cgal_program(test_float_snap_rounding_2.cpp)
+create_single_source_cgal_program(test_float_snap_rounding_2_concept.cpp)
 
 function(add_Snap_rounding_tests name)
   set(data_dir "data")

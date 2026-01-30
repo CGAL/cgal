@@ -198,7 +198,7 @@ protected:
 
   /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that
-   * already exits in the intersection point) and insert the curves to the
+   * already exists in the intersection point) and insert the curves to the
    * event.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
