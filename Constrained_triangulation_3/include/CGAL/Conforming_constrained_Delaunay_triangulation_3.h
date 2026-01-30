@@ -4818,7 +4818,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     int next_odd_subdomain = 1;
 
     // Function to flood-fill a connected component with a given subdomain index
-    auto flood_component = [&tr, &border](typename Tr::Cell_handle start, int subdomain_index) {
+    auto flood_component = [&border](typename Tr::Cell_handle start, int subdomain_index) {
       if(start->subdomain_index() != -1)
         return;
 
