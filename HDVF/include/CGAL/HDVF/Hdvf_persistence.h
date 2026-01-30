@@ -405,11 +405,12 @@ public:
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
      * \returns A column-major chain.
+     *
+     * \exception Invalid_hdvf_option If the HDVF option is neither `OPT_FULL` nor `OPT_G` raises a `%std::runtime_error`.
      */
     Column_chain homology_chain (size_t cell_index, int q) const
     {
-        if ((q<0) || (q>this->_K.dimension()))
-            throw "Error : homology_chain with dim out of range" ;
+        CGAL_precondition(this->_K.is_valid_cell(cell_index, q));
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -427,7 +428,7 @@ public:
             return g_cell_K ;
         }
         else
-            throw "Error : trying to export g_chain without proper HDVF option" ;
+            throw std::runtime_error("Cannot export homology generators without proper HDVF option") ;
     }
 
     /**
@@ -436,11 +437,12 @@ public:
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
      * \returns A column-major chain.
+     *
+     * \exception Invalid_hdvf_option If the HDVF option is neither `OPT_FULL` nor `OPT_F` raises a `%std::runtime_error`.
      */
     Column_chain cohomology_chain (size_t cell_index, int q) const
     {
-        if ((q<0) || (q>this->_K.dimension()))
-            throw "Error : homology_chain with dim out of range" ;
+        CGAL_precondition(this->_K.is_valid_cell(cell_index, q));
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -459,7 +461,7 @@ public:
             return fstar_cell_K ;
         }
         else
-            throw "Error : trying to export f_star_chain without proper HDVF option" ;
+            throw std::runtime_error("Cannot export cohomology generators without proper HDVF option") ;
     }
 
     /*! \brief Iterator over (finite) persistent intervals.
@@ -743,8 +745,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
         std::size_t i ;
         for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
         {
-            //            if ((it->first < tmax) && (abs(it->second) == 1)) // possible pairing
-            if ((it->first < tmax) && ((it->second == 1) || (it->second == -1)))
+            if ((it->first < tmax) && (it->second).is_invertible())
             {
                 if (!found) // for first cell met
                 {
