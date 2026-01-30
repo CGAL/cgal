@@ -13,9 +13,6 @@
 #include <boost/unordered_map.hpp>
 #include <unordered_map>
 
-#include <boost/random/random_number_generator.hpp>
-#include <boost/random/linear_congruential.hpp>
-
 typedef CGAL::Simple_cartesian<int>  Kernel;
 struct Point_3 : Kernel::Point_3 {
   using Kernel::Point_3::operator=;

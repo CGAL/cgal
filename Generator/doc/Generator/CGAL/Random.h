@@ -23,7 +23,7 @@ the same time, even if a fixed seed has been chosen.
 
 \cgalHeading{Implementation}
 
-We use the boost random library function `boost::rand48()` to generate the random
+We use the standard library function `std::mt19937()` to generate the random
 numbers.
 
 \sa `CGAL::get_default_random()`

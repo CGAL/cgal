@@ -15,24 +15,22 @@
 
 #include <CGAL/license/Stream_lines_2.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/assertions.h>
 
 #include <queue>
 #include <cmath>
 #include <fstream>
 #include <iostream>
-
-#include <CGAL/squared_distance_2.h>
-
-#include <CGAL/assertions.h>
+#include <random>
+#include <memory>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/uniform_real.hpp> // undocumented class
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <memory>
+
 
 namespace CGAL {
 
@@ -255,17 +253,15 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
   seed_point = Point_2((max_x+min_x)/2.0,(max_y+min_y)/2.0);
   // the first chosen point can be not valid
 
-  boost::rand48 rng;
+  std::mt19937 rng;
 
   boost::uniform_real<> ur_x(min_x, max_x);
   boost::uniform_real<> ur_y(min_y, max_y);
-  boost::variate_generator<boost::rand48&, boost::uniform_real<> > die_x(rng, ur_x);
-  boost::variate_generator<boost::rand48&, boost::uniform_real<> > die_y(rng, ur_y);
 
   while(!vector_field_2.is_in_domain(seed_point))
     {
       // std::cout << "searching valid seed point..\n";
-      seed_point = Point_2(die_x(), die_y());
+      seed_point = Point_2(ur_x(rng), ur_y(rng));
     }
   // std::cout << seed_point << " first seed point\n";
   // std::cout << "creating the placement..\n";

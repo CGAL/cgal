@@ -21,13 +21,10 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/geometric_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
 #include <cstddef>
 #include <map>
 #include <vector>
+#include <random>
 
 namespace CGAL {
 
@@ -68,7 +65,7 @@ public:
 private:
   // here is the stack of triangulations which form the hierarchy
   PTr_Base*  hierarchy[maxlevel];
-  boost::rand48 random;
+  std::mt19937 random;
   int level_mult_cover;
 
 public:
@@ -523,10 +520,8 @@ random_level()
        && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
     ++level_mult_cover;
 
-  boost::geometric_distribution<> proba(1.0/static_cast<double>(ratio));
-  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
-      die(random, proba);
-  return (std::min)(die()-1, level_mult_cover);
+  std::geometric_distribution<> proba(1.0/static_cast<double>(ratio));
+  return (std::min)(proba(random)-1, level_mult_cover);
 }
 
 } //namespace CGAL

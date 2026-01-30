@@ -270,7 +270,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
 void
 MainWindow::on_actionGeneratePolytopeInDisc_triggered()
 {
-    boost::mt19937 gen;
+    std::mt19937 gen;
     gen.seed(time(nullptr));
     std::vector<Point_2> points;
     QRectF rect = CGAL::Qt::viewportsBbox(&scene);
