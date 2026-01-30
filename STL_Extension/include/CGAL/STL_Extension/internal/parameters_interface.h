@@ -71,6 +71,7 @@ CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_
 
 // List of named parameters used in the package 'Polygon Mesh Processing'
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
+CGAL_add_named_parameter(geom_traits_converter_t, geom_traits_converter, geom_traits_converter)
 CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, vertex_incident_patches_map)
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)
@@ -248,6 +249,9 @@ CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_
 
 // List of named parameters used in Optimal_bounding_box package
 CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
+
+// List of named parameters used in Convex_hull_3 package
+CGAL_add_named_parameter(compute_convex_hull_t, compute_convex_hull, compute_convex_hull)
 
 // meshing parameters
 CGAL_add_named_parameter(boundary_subdivision_ratio_t, boundary_subdivision_ratio, boundary_subdivision_ratio)
