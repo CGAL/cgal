@@ -420,6 +420,7 @@ public:
      */
 
     Column_chain z(size_t sigma, int q) {
+        CGAL_precondition(this->_K.is_valid_cell(sigma, q));
         Column_chain res(this->_K.number_of_cells(q));
 
         if (this->psc_flag(sigma,q) == SECONDARY)
@@ -456,6 +457,7 @@ public:
      */
 
     Column_chain co_z(size_t sigma, int q) {
+        CGAL_precondition(this->_K.is_valid_cell(sigma, q));
         Row_chain res(this->_K.number_of_cells(q));
 
         if (this->psc_flag(sigma,q) == PRIMARY)
@@ -601,9 +603,9 @@ protected:
         // Check if both chains are cycles (must belong to the kernel of the boundary operator)
         Column_chain bnd1(this->_DD_col.at(dim) * chain1), bnd2(this->_DD_col.at(dim) * chain2) ;
         if (!bnd1.is_null())
-            throw("get_annotation: chain1 is not a cycle");
+            throw(std::invalid_argument("get_annotation: chain1 is not a cycle"));
         if (!bnd2.is_null())
-            throw("get_annotation: chain2 is not a cycle");
+            throw(std::invalid_argument("get_annotation: chain2 is not a cycle"));
 
         Column_chain annot1(get_annotation(chain1, dim)), annot2(get_annotation(chain2, dim)) ;
         return annot1 == annot2 ;
@@ -626,9 +628,9 @@ protected:
         // Check if both chains are cocycles (must belong to the kernel of the boundary^* operator)
         Row_chain cobnd1(chain1 * this->_DD_col.at(dim)), cobnd2(chain2 * this->_DD_col.at(dim)) ;
         if (!cobnd1.is_null())
-            throw("get_coannotation: chain1 is not a co-cycle");
+            throw(std::invalid_argument("get_coannotation: chain1 is not a co-cycle"));
         if (!cobnd2.is_null())
-            throw("get_coannotation: chain2 is not a co-cycle");
+            throw(std::invalid_argument("get_coannotation: chain2 is not a co-cycle"));
 
         Row_chain coannot1(get_coannotation(chain1, dim)), coannot2(get_coannotation(chain2, dim)) ;
         return coannot1 == coannot2 ;
@@ -1625,7 +1627,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         OSM::set_row(this->_G_col.at(q), pi, xip_inv * G11) ;
 
         // F_q-1 // note: F_q-1 is not be modified if the Hdvf is perfect
-
+        
         Column_chain tmp4(this->_F_row.at(q-1) * projP_d_pi) ;
         tmp4 += projC_d_pi ;
         this->_F_row.at(q-1) -= (tmp4 * xip_inv) * H11q1 ;
