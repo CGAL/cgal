@@ -16,9 +16,11 @@
 #include <CGAL/license/GraphicsView.h>
 
 
+#include <QtMath>
 #include <QPointF>
 #include <QLineF>
 #include <QRectF>
+#include <QPainterPath>
 #include <QPolygonF>
 #include <list>
 
@@ -182,6 +184,52 @@ public:
     for(int i = 0; i < qp.size(); i++){
       p.push_back(operator()(qp[i]));
     }
+  }
+
+  template < typename T >
+  QPainterPath operator()(const typename CGAL::General_polygon_2< T > &pgn) const
+  {
+    typedef typename CGAL::General_polygon_2< T > CGAL_Polygon_2;
+    typedef typename CGAL_Polygon_2::Curve_const_iterator        CGAL_Curve_const_iterator;
+    typedef typename CGAL_Polygon_2::X_monotone_curve_2          CGAL_X_monotone_curve_2;
+
+    QPainterPath result;
+
+    CGAL_Curve_const_iterator current = pgn.curves_begin();
+    CGAL_Curve_const_iterator end = pgn.curves_end();
+
+    result.moveTo(QPointF(CGAL::to_double(current->source().x()),
+                          CGAL::to_double(current->source().y())));
+
+    do {
+      const CGAL_X_monotone_curve_2 &curve = *current;
+      const QPointF target = QPointF(CGAL::to_double(curve.target().x()),
+                                     CGAL::to_double(curve.target().y()));
+
+      if (curve.is_linear()) {
+        result.lineTo(target);
+      }
+      else if (curve.is_circular()) {
+        const bool isClockwise = (curve.supporting_circle().orientation() == CGAL::CLOCKWISE);
+        const QRectF rect = operator()(curve.supporting_circle().bbox());
+        const QPointF center = QPointF(CGAL::to_double(curve.supporting_circle().center().x()),
+                                       CGAL::to_double(curve.supporting_circle().center().y()));
+        const QPointF source = QPointF(CGAL::to_double(curve.source().x()),
+                                       CGAL::to_double(curve.source().y()));
+        const QPointF p1 = source - center;
+        const QPointF p2 = target - center;
+        const double asource = qAtan2(p1.y(), p1.x());
+        const double atarget = qAtan2(p2.y(), p2.x());
+        double aspan = atarget - asource;
+        if (aspan < -CGAL_PI || (qFuzzyCompare(aspan, -CGAL_PI) && !isClockwise))
+            aspan += 2.0*CGAL_PI;
+        else if (aspan > CGAL_PI || (qFuzzyCompare(aspan, CGAL_PI) && isClockwise))
+            aspan -= 2.0*CGAL_PI;
+        result.arcTo(rect.normalized(), qRadiansToDegrees(-asource), qRadiansToDegrees(-aspan));
+      }
+    } while (++current != end);
+
+    return result;
   }
 
 };
