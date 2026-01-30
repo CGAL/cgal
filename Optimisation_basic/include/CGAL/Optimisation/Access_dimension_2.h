@@ -21,13 +21,6 @@
 
 namespace CGAL {
 
-// Class declaration
-// =================
-template < class R_ >
-class Access_dimension_2;
-
-// Class interface
-// ===============
 template < class R_ >
 class Access_dimension_2 {
   public:
@@ -46,7 +39,7 @@ class Access_dimension_2 {
     Access_dimension_2( ) { }
 
     // operations
-    int  operator() ( const Point& p) const { return p.dimension(); }
+    int  operator() ( const Point& ) const { return 2; }
 };
 
 } //namespace CGAL
