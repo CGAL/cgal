@@ -35,32 +35,16 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  //This will contain the extreme vertices
-  std::vector<Mesh::Vertex_index> extreme_vertices1, extreme_vertices2;
-
   //call the function with the traits adapter for vertices
-  CGAL::extreme_points_3(vertices(sm1), std::back_inserter(extreme_vertices1),
-                         CGAL::make_extreme_points_traits_adapter(sm1.points()));
-  CGAL::extreme_points_3(vertices(sm2), std::back_inserter(extreme_vertices2),
-                         CGAL::make_extreme_points_traits_adapter(sm2.points()));
-  bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
+  bool res = CGAL::Convex_hull_3::do_intersect(vertices(sm1), vertices(sm2),
                                                CGAL::parameters::point_map(sm1.points()),
                                                CGAL::parameters::point_map(sm2.points()));
 
-  //print the number of extreme vertices
-  std::cout << "There are " << extreme_vertices1.size() << " and "
-                            << extreme_vertices2.size()
-                            << " extreme vertices in the input meshes.\n";
-
-  // Convex_hull_hierarchy is data structure for very fast intersection test of Convex_hull
+  // Convex_hull_hierarchy is data structure for fast intersection test of Convex_hull
   Convex_hull_hierarchy hsm1(sm1);
   Convex_hull_hierarchy hsm2(sm2);
   res = CGAL::Convex_hull_3::do_intersect(hsm1, hsm2);
   std::cout << "do convex hulls intersect? " << std::boolalpha << res << "\n";
-
-  // Separation distance provides the approximate squared distance between the two objects if they do not intersect but it's slower
-  K::FT dist = CGAL::Convex_hull_3::separation_distance(hsm1, hsm2);
-  std::cout << "Squared distance between convex hulls: " << dist << "\n";
 
 
   return 0;

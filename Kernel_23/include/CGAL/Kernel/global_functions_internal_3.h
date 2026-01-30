@@ -553,6 +553,30 @@ compare_lexicographically_xyz(const typename K::Point_3 &p,
 template < class K >
 inline
 typename K::Comparison_result
+compare_scalar_product(const typename K::Vector_3 &a,
+                       const typename K::Vector_3 &b,
+                       const typename K::FT &sp,
+                       const K &k)
+{
+  return k.compare_scalar_product()(a, b, sp);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_scalar_product(const typename K::Vector_3 &a,
+                       const typename K::Vector_3 &b,
+                       const typename K::Vector_3 &c,
+                       const typename K::Vector_3 &d,
+                       const K &k)
+{
+  return k.compare_scalar_product(a, b, c, d);
+}
+
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_signed_distance_to_plane(const typename K::Plane_3 &h,
                                  const typename K::Point_3 &p,
                                  const typename K::Point_3 &q,

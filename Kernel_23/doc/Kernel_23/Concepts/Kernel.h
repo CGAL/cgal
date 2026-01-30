@@ -1466,6 +1466,11 @@ public:
   typedef unspecified_type Less_signed_distance_to_plane_3;
 
   /*!
+    a model of `Kernel::CompareScalarProduct_3`
+  */
+  typedef unspecified_type CompareScalarProduct_3;
+
+  /*!
     a model of `Kernel::LessDistanceToPoint_3`
   */
   typedef unspecified_type Less_distance_to_point_3;

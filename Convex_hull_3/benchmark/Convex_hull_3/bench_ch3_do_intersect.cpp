@@ -82,7 +82,7 @@ private:
     t.reset();
     t.start();
     for(std::size_t i=0; i<a.size(); ++i)
-      CGAL::Convex_hull_3::separation_distance(a[i], b[i]);
+      CGAL::Convex_hull_3::experimental::separation_distance(a[i], b[i]);
     t.stop();
     std::cout << t.time() << " sec" << std::endl << std::endl;
   }
@@ -214,15 +214,16 @@ private:
       hulls.push_back(std::move(hull));
     }
     t.stop();
-    std::cout << "  " << t.time() << " sec" << std::endl;
+    std::cout << "  " << t.time()/N << " sec" << std::endl;
     t.reset();
 
     std::cout << "Construct hierarchy of convex hulls" << std::endl;
     t.start();
     for(int i=0; i<N; ++i)
-      hulls_hierarchy.emplace_back(hulls[i]);
+      hulls_hierarchy.emplace_back(hulls[i], CGAL::parameters::compute_convex_hull(false));
     t.stop();
-    std::cout << "  " << t.time() << " sec" << std::endl;
+    double time_build = t.time()/N;
+    std::cout << "  " << t.time()/N << " sec" << std::endl;
     t.reset();
 
     std::cout << "Do intersect with RangePoints" << std::endl;
@@ -232,7 +233,7 @@ private:
       for(int j=i+1; j<N; ++j)
         CGAL::Convex_hull_3::do_intersect(points_ranges[i], points_ranges[j]);
     t.stop();
-    std::cout << "  Number points read per test: " << double(nb_visited)/nb_tests << std::endl;
+
     std::cout << "  " << t.time()/nb_tests << " sec per test" << std::endl;
     t.reset();
 
@@ -243,7 +244,7 @@ private:
       for(int j=i+1; j<N; ++j)
         CGAL::Convex_hull_3::do_intersect(hulls[i], hulls[j]);
     t.stop();
-    std::cout << "  Number points read per test: " << double(nb_visited)/nb_tests << std::endl;
+    double time_without_hierarchy = t.time()/nb_tests;
     std::cout << "  " << t.time()/nb_tests << " sec per test" << std::endl;
     t.reset();
 
@@ -255,10 +256,8 @@ private:
         CGAL::Convex_hull_3::do_intersect(hulls_hierarchy[i], hulls_hierarchy[j]);
     t.stop();
 
-    std::cout << "  Number points read per test: ";
-    std::cout << double(nb_visited)/nb_tests << " ";
-    std::cout << std::endl;
     std::cout << "  " << t.time()/nb_tests << " sec per test" << std::endl;
+    std::cout << "     " << time_build / (time_without_hierarchy - t.time()/nb_tests) << " ratio tests/build";
     t.reset();
     std::cout << std::endl;
   }

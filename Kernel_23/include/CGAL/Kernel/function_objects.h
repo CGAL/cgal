@@ -188,6 +188,29 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compare_scalar_product_3
+  {
+    typedef typename K::Comparison_result  Comparison_result;
+    typedef typename K::Vector_3           Vector_3;
+    typedef typename K::FT                 FT;
+  public:
+    Comparison_result
+    operator()(const Vector_3& u, const Vector_3& v, const FT& sp) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      return CGAL::compare(scalar_product(u,v), sp);
+    }
+
+    Comparison_result
+    operator()(const Vector_3& u, const Vector_3& v,
+               const Vector_3& w, const Vector_3& x) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      return CGAL::compare(scalar_product(u,v), scalar_product(w,x));
+    }
+  };
+
+  template <typename K>
   class Compare_angle_3
   {
     typedef typename K::Comparison_result  Comparison_result;

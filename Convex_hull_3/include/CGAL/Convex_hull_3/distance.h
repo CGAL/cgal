@@ -43,6 +43,13 @@
 
 namespace CGAL {
 namespace Convex_hull_3 {
+namespace experimental {
+
+/*
+Note: The function is not stable with EPICK (possible infinite loops), It needs to be rewritten by moving all constructions inside predicates and by defining objects (Vector_3, Direction_3,...) are defined directly from the input points.
+For instance, Vector_3 should be defined by two points and Direction_3 by 3 vectors (i.e 6 points) if the simplex size is 3 or 4.
+Currently the function simply switches to EPECK and is considered experimental.
+*/
 
 namespace predicates_impl {
 
@@ -82,7 +89,7 @@ Vector_3 triangle_dir_to_origin(boost::container::small_vector<Vector_3, 4>& sim
   Vector_3 n=cross(ca, bc);
   assert(n!=NULL_VECTOR);
 
-  FT ratio_ab=dot(ab, -a)/ab.squared_length();
+  // FT ratio_ab=dot(ab, -a)/ab.squared_length();
   FT ratio_ca=dot(ca, -c);
   FT ratio_cb=dot(-bc, -c);
 
@@ -127,6 +134,7 @@ Vector_3 tetrahedron_dir_to_origin(boost::container::small_vector<Vector_3, 4>& 
   const typename K::Construct_cross_product_vector_3 cross=k.construct_cross_product_vector_3_object();
   const typename K::Compute_scalar_product_3 dot=k.compute_scalar_product_3_object();
   const typename K::Orientation_3 orientation = k.orientation_3_object();
+  const typename K::Collinear_3 collinear = k.collinear_3_object();
 
   Vector_3 &a=simplex[0];
   Vector_3 &b=simplex[1];
@@ -305,7 +313,7 @@ struct Separation_distance_functor{
       Vector_3 dir=dir_to_origin<K>(simplex, k);
       if(dir==NULL_VECTOR) return 0;
 
-      Vector_3 sp = extreme_point_3(a, dir.direction(), np1) - extreme_point_3(b, -dir.direction(), np2);
+      Vector_3 sp = Convex_hull_3::internal::extreme_point_3_wrapper(a, dir.direction(), np1) - Convex_hull_3::internal::extreme_point_3_wrapper(b, -dir.direction(), np2);
       if(sp==NULL_VECTOR) return 0;
       if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return 0;
 
@@ -316,8 +324,8 @@ struct Separation_distance_functor{
 
       simplex.push_back(sp);
       //If the simplex is degenerated, the algorithm has terminate
-      if( (simplex.size()==4 && orientation(simplex[1]-simplex[0],simplex[2]-simplex[0],simplex[3]-simplex[0])==COPLANAR) ||
-          (simplex.size()==3 && (cross(simplex[2]-simplex[0], simplex[1]-simplex[0])==NULL_VECTOR)) ||
+      if( (simplex.size()==4 && orientation(ORIGIN+simplex[0],ORIGIN+simplex[1],ORIGIN+simplex[2],ORIGIN+simplex[3])==COPLANAR) ||
+          (simplex.size()==3 && collinear(ORIGIN+simplex[0], ORIGIN+simplex[1], ORIGIN+simplex[2])) ||
           (simplex.size()==2 && (simplex[0]==simplex[1])) )
       {
         simplex.pop_back();
@@ -452,12 +460,6 @@ FT separation_distance(const Graph& g1, const Graph& g2,
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `ch1` (`ch2`)}
-*     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
-*     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `IncidenceGraph`.}
-*   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
@@ -504,6 +506,8 @@ separation_distance(const Convex1& c1, const Convex2& c2,
 }
 
 #endif
+
+} // end of experimental
 
 }} // CGAL::Convex_hull_3 namespace
 

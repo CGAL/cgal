@@ -475,6 +475,27 @@ compare_lexicographically(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
+compare_scalar_product(const Vector_3<K> &a,
+                       const Vector_3<K> &b,
+                       const typename K::FT &sp)
+{
+  return internal::compare_scalar_product(a, b, sp, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_scalar_product(const Vector_3<K> &a,
+                       const Vector_3<K> &b,
+                       const Vector_3<K> &c,
+                       const Vector_3<K> &d)
+{
+  return internal::compare_scalar_product(a, b, c, d, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_signed_distance_to_plane(const Plane_3<K> &h,
                                  const Point_3<K> &p,
                                  const Point_3<K> &q)

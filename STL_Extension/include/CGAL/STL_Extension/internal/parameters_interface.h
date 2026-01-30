@@ -250,6 +250,9 @@ CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_
 // List of named parameters used in Optimal_bounding_box package
 CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
 
+// List of named parameters used in Convex_hull_3 package
+CGAL_add_named_parameter(compute_convex_hull_t, compute_convex_hull, compute_convex_hull)
+
 // meshing parameters
 CGAL_add_named_parameter(boundary_subdivision_ratio_t, boundary_subdivision_ratio, boundary_subdivision_ratio)
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)

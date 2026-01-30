@@ -156,17 +156,10 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \section Convex_hull_3Do_intersect Intersection Test of Convex Hulls
 
-The `CGAL::Convex_hull_3::do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere \cgalCite{hornus2017convexintersection}.
-Input convex hulls can be provided in three forms: as range of points, as graph model of `AdjacencyGraph` or as instance of the `Convex_hull_hierarchy` class.
+`CGAL::Convex_hull_3::do_intersect()` determines whether two convex hulls intersect or not.
+Input hulls can be provided in three forms: as range of points, as graph model of `Vertex_list_graph` and `AdjacencyGraph` or as instance of the `Convex_hull_hierarchy` class.
 
-The algorithm accesses the convex hulls using the `CGAL::extreme_point_3()` function, which returns the point on the hull that is furthest in a specified direction.
-The `Convex_hull_hierarchy` class is a data structure that represents a convex hull and is optimized for efficient `CGAL::extreme_point_3()` queries,
-which in turn makes `CGAL::Convex_hull_3::do_intersect()` particularly fast when using this representation.
-
-The computational complexities of `extreme_point_3()` and consequently `do_intersect()` depend on the input type:  \f$O(n)\f$ for a range of point,
-\f$O(\sqrt{n})\f$ on average for a graph and \f$O(\log{n})\f$ on average for a Convex_hull_hierarchy.
-
-A `Convex_hull_hierarchy` can be constructed from either a range of points or a mesh. During construction, it is assumed that the resulting convex hull is non-degenerate.
+When many intersection queries are required, a `CGAL::Convex_hull_hierarchy` can be constructed to accelerate intersection tests, particularly when the convex hull has a large number of vertices (see `CGAL::Convex_hull_hierarchy` for more details).
 
 \subsection Do_intersectExample Example
 The following program reads points from two input files, computes their convex hulls with `Convex_hull_hierarchy` and prints if they intersect or not.

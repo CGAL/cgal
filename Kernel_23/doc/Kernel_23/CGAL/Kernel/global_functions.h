@@ -862,6 +862,45 @@ const CGAL::Point_3<Kernel>& t);
 
 /// @}
 
+/// \defgroup compare_scalar_product_grp CGAL::compare_scalar_product()
+/// \ingroup kernel_global_function
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
+/// @{
+
+/*!
+returns `CGAL::LARGER`
+iff the scalar product of `u` and
+`v` is larger than the scalar product of `w` and `x`, `CGAL::SMALLER`, iff it is smaller,
+and `CGAL::EQUAL` iff both are equal.
+*/
+template <typename Kernel>
+Comparison_result
+compare_scalar_product(const CGAL::Vector_3<Kernel> &u,
+                       const CGAL::Vector_3<Kernel> &v,
+                       const CGAL::FT<Kernel> &sp);
+
+/*!
+returns `CGAL::LARGER`
+iff the scalar product of `u` and
+`v` is larger than the scalar product `sp`, `CGAL::SMALLER`, iff it is smaller,
+and `CGAL::EQUAL` iff both are equal.
+*/
+template <typename Kernel>
+Comparison_result
+compare_scalar_product(const CGAL::Vector_3<Kernel> &u,
+                       const CGAL::Vector_3<Kernel> &v,
+                       const CGAL::Vector_3<Kernel> &w,
+                       const CGAL::Vector_3<Kernel> &x);
+
+/// @}
 
 
 /// \defgroup compare_slopes_grp CGAL::compare_slope()

@@ -8,7 +8,7 @@
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 
-// #include <CGAL/Convex_hull_3/intersections.h>
+#include <CGAL/Convex_hull_3/do_intersect.h>
 #include <CGAL/Convex_hull_3/distance.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_hierarchy.h>
@@ -27,7 +27,7 @@ struct Sphere{
   typedef typename K::FT FT;
   typedef typename K::Point_3 P;
 
-  //do_intersect deduce Kernel from iterator type of the object, this an astuce for kernel deduction
+  // do_intersect deduce Kernel from iterator type of the object, this an astuce for kernel deduction
   typedef typename std::vector<P>::iterator iterator;
 
   FT r;
@@ -57,12 +57,13 @@ struct Test{
     assert(CGAL::Convex_hull_3::do_intersect(vec_b, vec_a)==result);
 
     if(CGAL::is_zero(true_distance)){
-      assert((CGAL::Convex_hull_3::separation_distance(vec_a, vec_b)==0)==result);
-      assert((CGAL::Convex_hull_3::separation_distance(vec_b, vec_a)==0)==result);
+      assert((CGAL::Convex_hull_3::experimental::separation_distance(vec_a, vec_b)==0)==result);
+      assert((CGAL::Convex_hull_3::experimental::separation_distance(vec_b, vec_a)==0)==result);
     } else {
-      assert(CGAL::Convex_hull_3::separation_distance(vec_a, vec_b)==true_distance);
-      assert(CGAL::Convex_hull_3::separation_distance(vec_b, vec_a)==true_distance);
+      assert(CGAL::Convex_hull_3::experimental::separation_distance(vec_a, vec_b)==true_distance);
+      assert(CGAL::Convex_hull_3::experimental::separation_distance(vec_b, vec_a)==true_distance);
     }
+
 
     Mesh sm_a, sm_b;
     CGAL::convex_hull_3(vec_a.begin(), vec_a.end(), sm_a);
@@ -71,8 +72,8 @@ struct Test{
     assert(CGAL::Convex_hull_3::do_intersect(sm_b, sm_a)==result);
 
     if(!CGAL::is_zero(true_distance)){
-      assert(CGAL::Convex_hull_3::separation_distance(sm_a, sm_b)==true_distance);
-      assert(CGAL::Convex_hull_3::separation_distance(sm_b, sm_a)==true_distance);
+      assert(CGAL::Convex_hull_3::experimental::separation_distance(sm_a, sm_b)==true_distance);
+      assert(CGAL::Convex_hull_3::experimental::separation_distance(sm_b, sm_a)==true_distance);
     }
 
     CGAL::Convex_hull_hierarchy<Mesh> hsm_a(vec_a.begin(),vec_a.end()), hsm_b(vec_b.begin(),vec_b.end());
@@ -98,7 +99,6 @@ struct Test{
     if constexpr(!std::is_same_v<Mesh, CGAL::Surface_mesh<P> >)
       return;
 
-    using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
     using SM1 = CGAL::Surface_mesh<size_t>;
 
     SM1 sm_a_pm, sm_b_pm;
