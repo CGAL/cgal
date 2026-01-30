@@ -1,0 +1,4 @@
+This package contains the documentation of the Polygon_mesh_processing functions
+that perform meshing and remeshing of 3D surface meshes.
+
+The implementations are located in the `Polygon_mesh_processing` package.

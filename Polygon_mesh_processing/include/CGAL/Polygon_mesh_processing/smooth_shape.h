@@ -34,7 +34,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_local_remeshing_grp
 *
 * @brief smooths the overall shape of the mesh by using the mean curvature flow.
 *

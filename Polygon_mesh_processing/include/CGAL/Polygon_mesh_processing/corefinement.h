@@ -52,7 +52,7 @@ struct Default_visitor;
 /** \ingroup PMP_corefinement_grp
  * \cgalModels{PMPCorefinementVisitor}
  * A model of `PMPCorefinementVisitor` that enables extracting non-manifold
- * outputs from a corefinement-based Boolean Operations (\ref PMP_corefinement_grp).
+ * outputs from a corefinement-based Boolean Operations (\ref PMP_boolop_grp).
  *
  * \tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * \tparam VPM1 a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -64,7 +64,6 @@ template <class TriangleMesh,
           class VPM1 = typename boost::property_map<TriangleMesh, vertex_point_t>::type,
           class VPM2 = typename boost::property_map<TriangleMesh, vertex_point_t>::type>
 struct Non_manifold_output_visitor
-  : public Default_visitor<TriangleMesh>
 {
 /**
  * constructor where meshes are exactly the same as the one passed a function in \ref PMP_corefinement_grp.
@@ -134,7 +133,7 @@ struct Non_manifold_output_visitor
 #endif
 
 #ifdef DOXYGEN_RUNNING
-/** \ingroup PMP_corefinement_grp
+/** \ingroup PMP_boolop_grp
  *  Integer identifiers to refer to a particular Boolean operation in the function `corefine_and_compute_boolean_operations()`.
  */
 enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
@@ -153,7 +152,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
       parameters::choose_parameter<Ecm_out_##I>(parameters::get_parameter(std::get<I>(nps_out), internal_np::edge_is_constrained));
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_boolop_grp
   *
   * \link coref_def_subsec corefines \endlink `tm1` and `tm2` and for each triangle mesh `tm_out` passed
   * as an optional in `output` different from `std::nullopt`, the triangulated surface mesh
@@ -506,7 +505,8 @@ corefine_and_compute_boolean_operations(
 
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_boolop_grp
+  *
   * \link coref_def_subsec corefines \endlink `tm1` and `tm2` and
   * puts in `tm_out` a triangulated surface mesh \link coref_def_subsec bounding \endlink the union of the volumes
   * bounded by `tm1` and `tm2`.
@@ -623,7 +623,7 @@ corefine_and_compute_union(      TriangleMesh& tm1,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_boolop_grp
   * \link coref_def_subsec corefines \endlink `tm1` and `tm2` and
   * puts in `tm_out` a triangulated surface mesh \link coref_def_subsec bounding \endlink
   * the intersection of the volumes bounded by `tm1` and `tm2`.
@@ -655,7 +655,7 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
 }
 
 /**
-  * \ingroup PMP_corefinement_grp
+  * \ingroup PMP_boolop_grp
   * \link coref_def_subsec corefines \endlink `tm1` and `tm2` and
   * puts in `tm_out` a triangulated surface mesh \link coref_def_subsec bounding \endlink
   * the volume bounded by `tm1` minus the volume bounded by `tm2`.
@@ -688,7 +688,8 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 }
 
 /**
- * \ingroup PMP_corefinement_grp
+ * \ingroup PMP_boolop_grp
+ *
  * \link coref_def_subsec corefines \endlink `tm1` and `tm2`. For each input
  * triangulated surface mesh, if a constrained edge is provided, intersection
  * edges will be marked as constrained. If an edge that was marked as
@@ -845,6 +846,7 @@ corefine(      TriangleMesh& tm1,
 }
 
 namespace experimental {
+
 /**
  * \ingroup PMP_corefinement_grp
  * \link coref_def_subsec autorefines \endlink `tm`. Refines a triangle mesh
@@ -938,6 +940,7 @@ autorefine(      TriangleMesh& tm,
 
 /**
  * \ingroup PMP_corefinement_grp
+ *
  * Removes self-intersections in `tm` by \link coref_def_subsec autorefining \endlink `tm`,
  * removing extra patches, and stitching self-intersection edges.
  * Self-intersection edges will be marked as constrained. If an edge that was marked as
@@ -1039,9 +1042,9 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   return ob.all_self_intersection_fixed();
 }
 
-}// end of namespace experimental
-
-} }  // end of namespace CGAL::Polygon_mesh_processing
+} // namespace experimental
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

@@ -1,0 +1,4 @@
+This package provides a collection of methods and classes for polygon mesh
+processing, ranging from basic operations on simplices such as the computation
+of an edge length, to complex geometry processing algorithms such as collision
+and intersection detection, computation of distances between meshes, and more.

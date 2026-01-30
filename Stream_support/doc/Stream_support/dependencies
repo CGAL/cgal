@@ -12,6 +12,7 @@ Point_set_3
 Point_set_processing_3
 Polygon
 Polygon_mesh_processing
+PMP_Mesh_repair
 Polyhedron
 Property_map
 SMDS_3

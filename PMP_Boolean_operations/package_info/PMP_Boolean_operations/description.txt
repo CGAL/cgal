@@ -1,0 +1,6 @@
+This package contains the documentation of the Polygon_mesh_processing functions
+that perform Boolean operations on triangulated surface meshes;
+clipping and splitting of meshes using planes, boxes, or other meshes;
+and slicing of meshes with planes.
+
+The implementations are located in the `Polygon_mesh_processing` package.

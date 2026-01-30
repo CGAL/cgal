@@ -128,7 +128,8 @@ struct Region_and_Sorting_helper<GeomTraits, PolygonMesh, VertexToPointMap, ECM,
 } // namespace internal
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
+  \ingroup PMP_detect_features_grp
+
   \brief applies a region growing algorithm to fit planes on faces of a mesh.
 
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
@@ -327,8 +328,9 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
 }
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
-    \brief detects the corners on the boundary of almost planar regions by applying the region growing algorithm fitting lines on segment edges of a partition of a mesh.
+  \ingroup PMP_detect_features_grp
+
+  \brief detects the corners on the boundary of almost planar regions by applying the region growing algorithm fitting lines on segment edges of a partition of a mesh.
 
     More precisely, a corner on the boundary of a region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.

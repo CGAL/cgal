@@ -110,7 +110,7 @@ ALIASES                = "cgal=%CGAL" \
                          "cpp=C++" \
                          "cpp11=C++11" \
                          "CC=C++" \
-                         "cgalExample{1}=<br><b>File</b> \ref \1 \include \1" \
+                         "cgalExample{1}=<b>Example: </b> \ref \1 \n<details><summary>Show / Hide</summary> \include \1 </details>" \
                          "cgalFigureAnchor{1}=\anchor fig__\1" \
                          "cgalFigureRef{1}=\ref fig__\1" \
                          "cgalFigureBegin{2}=\anchor fig__\1 \n \image html \2 \n \image latex \2 \"\" width=15cm \n \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \latexonly \n \endlatexonly \n \ref fig__\1" \
