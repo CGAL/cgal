@@ -39,7 +39,7 @@ typedef to `K::Rep_tag`.
 typedef unspecified_type Rep_tag;
 
 /*!
-the ring type`.
+the ring type.
 */
 typedef K::RT RT;
 
