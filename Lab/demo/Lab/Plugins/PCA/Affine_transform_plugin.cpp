@@ -728,7 +728,7 @@ end()
       endPolygonMesh(transform_matrix);
     break;
     default:
-      CGAL_assertion(false);
+      CGAL_unreachable();
   }
 
   dockWidget->hide();

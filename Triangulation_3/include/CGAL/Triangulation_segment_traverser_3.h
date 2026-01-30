@@ -944,9 +944,7 @@ private:
     default:
       CGAL_unreachable();
     }
-    //should not be reached
     CGAL_unreachable();
-    return false;
   }
 
   bool cell_has_edge(const Cell_handle ch, const Edge& e) const
@@ -1057,7 +1055,7 @@ private:
     } while (++circ != end);
 
     std::cerr << "There is no facet shared by e and v" << std::endl;
-    CGAL_unreachable();
+    CGAL_assertion(false);
     return Facet(Cell_handle(), 0);
   }
 
@@ -1074,7 +1072,7 @@ private:
     } while (++circ != end);
 
     std::cerr << "There is no cell shared by e and v" << std::endl;
-    CGAL_unreachable();
+    CGAL_assertion(false);
     return Cell_handle();
   }
 

@@ -251,8 +251,7 @@ private:
   Vertex_handle
   nearest_vertex_dispatch(const Point&, Face_handle, Tag_true) const
   {
-    CGAL_assertion(false);
-    return Vertex_handle();
+    CGAL_unreachable();
   }
 
   void  locate_in_all(const Point& p,

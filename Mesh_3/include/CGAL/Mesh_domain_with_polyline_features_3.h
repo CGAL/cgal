@@ -976,12 +976,7 @@ Mesh_domain_with_polyline_features_3<MD_>::
 point_corner_index(const Point_3& p) const
 {
   typename Corners::const_iterator p_index_it = corners_.find(p);
-  if ( p_index_it == corners_.end() )
-  {
-    CGAL_assertion(false);
-    return Index();
-  }
-
+  CGAL_assertion( p_index_it != corners_.end());
   return p_index_it->second;
 }
 

@@ -605,10 +605,9 @@ public:
     case CGAL_TD_VERTEX:
       return TD_VERTEX;
     default:
-       CGAL_assertion(false);
-       return TD_TRAPEZOID;
+       CGAL_unreachable();
     }
-    }
+  }
 
   /*! Access trapezoid type flag. */
   CGAL_TD_INLINE unsigned char type_flag() const

@@ -1665,13 +1665,8 @@ public:
             const Polynomial_2& f = ca1.polynomial_2();
             const Polynomial_2& g = ca2.polynomial_2();
 
-            if(f == g) {
-              // both curves are equal, but have different representations!
-              // std::cout <<"f: " << f <<std::endl;
-              // std::cout <<"g: " << g <<std::endl;
-              CGAL_assertion(false);
-              return false;
-            }
+            CGAL_assertion_msg(f != g, "both curves are equal, but have different representations!");
+
             Gcd_cache_2& gcd_cache = _m_kernel->gcd_cache_2();
             typedef typename Curve_analysis_2::size_type size_type;
             Polynomial_2 gcd = gcd_cache(std::make_pair(f,g));

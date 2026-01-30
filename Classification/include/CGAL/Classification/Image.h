@@ -46,7 +46,7 @@ public:
   // https://github.com/boostorg/core/issues/148
   Image(const Image&)
   {
-      CGAL_assertion(false);
+      CGAL_unreachable();
   }
 
   Image () : m_width(0), m_height(0), m_depth(0)

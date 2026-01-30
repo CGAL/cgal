@@ -1252,9 +1252,7 @@ void Scene::cutting_plane(bool override)
             return;
         }
 
-        // Should not be here
-        std::cerr << "Unknown cut_plane type" << std::endl;
-        CGAL_assertion(false);
+        CGAL_unreachable();
     }
 }
 

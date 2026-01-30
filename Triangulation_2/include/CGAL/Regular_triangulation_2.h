@@ -640,8 +640,7 @@ public:
         }
         return  make_triple(fit, eit, vit);
     }
-    CGAL_assertion(false);
-    return make_triple(fit, eit, vit);
+    CGAL_unreachable();
   }
 
   template <class OutputItFaces, class OutputItBoundaryEdges>

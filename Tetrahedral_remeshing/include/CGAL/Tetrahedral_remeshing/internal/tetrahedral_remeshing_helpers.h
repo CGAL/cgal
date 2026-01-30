@@ -844,7 +844,7 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
   case -1://far points from concurrent Mesh_3
     break;
   default:
-    CGAL_assertion(false);
+    CGAL_unreachable();
   }
 }
 

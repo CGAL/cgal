@@ -890,7 +890,7 @@ private:
                 break;
             }
             default:{
-              CGAL_assertion(false); // !!! Never reached
+              CGAL_unreachable();
             }
             }
         }
