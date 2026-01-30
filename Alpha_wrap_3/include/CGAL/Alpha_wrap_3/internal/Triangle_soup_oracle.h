@@ -130,6 +130,10 @@ public:
 
     using Face = typename boost::range_value<FaceRange>::type;
 
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB Tree (" << faces.size() << " faces)..." << std::endl;
+#endif
+
     if(points.empty() || faces.empty())
     {
 #ifdef CGAL_AW3_DEBUG
@@ -137,10 +141,6 @@ public:
 #endif
       return;
     }
-
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB Tree (triangles)..." << std::endl;
-#endif
 
     PPM pm = choose_parameter<PPM>(get_parameter(np, internal_np::point_map));
     static_assert(std::is_same<typename boost::property_traits<PPM>::value_type, Point_3>::value);
@@ -181,15 +181,19 @@ public:
     this->tree().accelerate_distance_queries();
 
 #ifdef CGAL_AW3_DEBUG
-    std::cout << "Tree: " << this->tree().size() << " primitives (" << faces.size() << " faces in input)" << std::endl;
+    std::cout << "TS Tree: " << this->tree().size() << " primitives" << std::endl;
 #endif
   }
 
   template <typename TriangleRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void add_triangle_soup(const TriangleRange& triangles,
-                         const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
+  void add_triangles(const TriangleRange& triangles,
+                     const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB Tree (" << triangles.size() << " triangles)..." << std::endl;
+#endif
+
     if(triangles.empty())
     {
 #ifdef CGAL_AW3_DEBUG
@@ -197,10 +201,6 @@ public:
 #endif
       return;
     }
-
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB Tree (triangles)..." << std::endl;
-#endif
 
     typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
 
@@ -218,6 +218,9 @@ public:
 
       Splitter_base::split_and_insert_datum(tr, this->tree(), this->geom_traits());
     }
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "TS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
   }
 };
 

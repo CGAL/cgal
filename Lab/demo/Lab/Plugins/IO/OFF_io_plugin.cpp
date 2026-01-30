@@ -1,5 +1,6 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
+#include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Three.h>
@@ -214,19 +215,47 @@ CGAL_Lab_off_plugin::load_obj(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return nullptr;
   }
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
-  item->setName(fileinfo.completeBaseName());
-  if(item->load_obj(in))
-    return item;
+
+  Scene_surface_mesh_item* mesh_item = new Scene_surface_mesh_item();
+  mesh_item->setName(fileinfo.completeBaseName());
+  if(mesh_item->load_obj(in))
+    return mesh_item;
+
+  in.clear();
+  in.seekg(0, std::ios::beg);
+
   //if not polygonmesh load in soup
   std::vector<Point_3> points;
+  std::vector<std::vector<std::size_t> > polylines;
   std::vector<std::vector<std::size_t> > polygons;
-  if(CGAL::IO::read_OBJ(in, points, polygons))
-  {
+  if(!CGAL::IO::internal::read_OBJ(in, points, polylines, polygons,
+                                   CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                                   true /*verbose*/)) {
+    return nullptr;
+  }
+
+  if(!polygons.empty()) {
     Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
     soup_item->load(points, polygons);
     return soup_item;
   }
+
+  if(!polylines.empty()) {
+    std::list<std::vector<Point_3> > item_polylines;
+    for(const std::vector<std::size_t>& pl : polylines) {
+      std::vector<Point_3> item_pl;
+      item_pl.reserve(pl.size());
+      for(const std::size_t& pi : pl) {
+        item_pl.push_back(points[pi]);
+      }
+      item_polylines.push_back(std::move(item_pl));
+    }
+    Scene_polylines_item* polyline_item = new Scene_polylines_item;
+    polyline_item->polylines = item_polylines;
+    std::cout << "Number of polylines in item: " << polyline_item->polylines.size() << std::endl;
+    return polyline_item;
+  }
+
   return nullptr;
 }
 

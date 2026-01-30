@@ -204,7 +204,6 @@ is copied.
 Constrained_triangulation_2(const
 Constrained_triangulation_2& ct1);
 
-
 /// @}
 
 /// \name Queries
@@ -231,7 +230,6 @@ type.
 template<class OutputItEdges>
 OutputItEdges incident_constraints(Vertex_handle v,
 OutputItEdges out) const;
-
 
 /*!
 returns an iterator that enumerates the constrained edges.
@@ -275,7 +273,6 @@ Equivalent to `insert(p)`.
 */
 Vertex_handle push_back(const Point& p);
 
-
 /*!
 inserts points `a` and `b` in this order, and inserts the line segment `ab` as a
 constraint. Removes the faces crossed by segment `ab` and creates new
@@ -289,13 +286,11 @@ void insert_constraint(Point a, Point b);
 /*!
 Equivalent to `insert(c.first, c.second)`.
 */
-  void push_back(const std::pair<Point,Point>& c);
+void push_back(const std::pair<Point,Point>& c);
 
 /*!
-inserts the line segment `s` whose endpoints are the vertices
-`va` and
-`vb` as a constraint. The triangles intersected by `s`
-are removed and new ones are created.
+inserts the line segment `s` whose endpoints are the vertices `va` and `vb` as a constraint.
+The triangles intersected by `s` are removed and new ones are created.
 */
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb);
 
@@ -306,8 +301,6 @@ The polyline is considered as a polygon if the first and last point are equal or
 */
 template < class PointIterator>
 void insert_constraint(PointIterator first, PointIterator last, bool close=false);
-
-
 
 /*!
 removes a vertex `v`.

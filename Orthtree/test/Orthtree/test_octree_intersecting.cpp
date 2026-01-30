@@ -43,11 +43,34 @@ int main(void) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     // Set the search point
-    auto query = Point{1, 1, 1};
+    auto query = Point{ 1, 1, 1 };
 
     // Get a list of nodes intersected
     std::vector<Octree::Node_index> nodes{};
+
     octree.intersected_nodes(query, std::back_inserter(nodes));
+
+    // A point should only intersect one node
+    assert(1 == nodes.size());
+
+    // That node should be the node leaf that contains the point
+    assert(octree.locate(Point(1, 1, 1)) == nodes[0]);
+  }
+
+  // Intersection with a point using a lambda function (not particularly useful)
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    // Set the search point
+    auto query = Point{ 1, 1, 1 };
+
+    // Get a list of nodes intersected
+    std::vector<Octree::Node_index> nodes{};
+
+    auto func = [&](const Point& p, const Octree::Bbox& bbox) -> bool {
+      return CGAL::do_intersect(bbox, p);
+      };
+
+    octree.intersected_nodes(query, std::back_inserter(nodes), func);
 
     // A point should only intersect one node
     assert(1 == nodes.size());

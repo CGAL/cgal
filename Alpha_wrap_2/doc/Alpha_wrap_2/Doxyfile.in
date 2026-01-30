@@ -1,0 +1,17 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Alpha Wrapping"
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true
+
+HTML_EXTRA_FILES       = ${CGAL_PACKAGE_DOC_DIR}/fig/aw2_banner.png \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw2_segment_soup.png \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw2_pencil.png \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw2_steps.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw2_double_sided.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw2_alpha_croc.png \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_sharp_feature.jpg \
+                         ${CGAL_PACKAGE_DOC_DIR}/fig/aw3_alpha_offset_bike.jpg
