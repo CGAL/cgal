@@ -346,6 +346,8 @@ Adaptive_remeshing_sizing_field<Tr>
 create_adaptive_remeshing_sizing_field(const Tr& tr,
   const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, edge_is_constrained_t, facet_is_constrained_t, cell_selector_t);
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
