@@ -290,7 +290,7 @@ public:
 
   template <typename T>
   I_Filtered_iterator (T* p) :
-    nt (pointer(p)),
+    nt (reinterpret_cast<pointer>(p)),
     iend (nt)
   {}
 
@@ -314,7 +314,7 @@ public:
   template <typename P>
   I_Filtered_iterator& operator= (const P* p)
   {
-    nt = pointer(p);
+    nt = reinterpret_cast<pointer>(p);
     iend =nt;
     return *this;
   }
@@ -455,7 +455,7 @@ public:
 
   template <typename T>
   I_Filtered_const_iterator (T* p) :
-    nt (pointer(p)),
+    nt (reinterpret_cast<pointer>(p)),
     iend (nt)
   {}
 
@@ -488,7 +488,7 @@ public:
   template <typename P>
   I_Filtered_const_iterator& operator= (const P* p)
   {
-    nt = pointer(p);
+    nt = reinterpret_cast<pointer>(p);
     iend =nt;
     return *this;
   }
