@@ -1627,7 +1627,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         OSM::set_row(this->_G_col.at(q), pi, xip_inv * G11) ;
 
         // F_q-1 // note: F_q-1 is not be modified if the Hdvf is perfect
-        
+
         Column_chain tmp4(this->_F_row.at(q-1) * projP_d_pi) ;
         tmp4 += projC_d_pi ;
         this->_F_row.at(q-1) -= (tmp4 * xip_inv) * H11q1 ;

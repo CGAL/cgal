@@ -14,7 +14,7 @@
 #include <CGAL/HDVF/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 
-#define BUILD_TEST_DATA
+//#define BUILD_TEST_DATA
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
