@@ -228,23 +228,28 @@ public:
 
     //fill incidences of corners with curves
     d_ptr->corners_incident_curves.resize(d_ptr->corners.size());
-    for(const typename Corners_indices::value_type& pair : d_ptr->corners_indices) {
-      d_ptr->dt.insert(pair.first);
+    for(const auto& [corner_pt, corner_index] : d_ptr->corners_indices)
+    {
+      d_ptr->dt.insert(corner_pt);
 
       // Fill `corners_incident_curves[corner_id]`
-      Curves_ids& incident_curves = d_ptr->corners_incident_curves[pair.second];
-      d_ptr->domain.get_corner_incident_curves(pair.second,
+      Curves_ids& incident_curves = d_ptr->corners_incident_curves[corner_index];
+      d_ptr->domain.get_corner_incident_curves(corner_index,
                                         std::inserter(incident_curves,
                                                       incident_curves.end()));
-      // For each incident loops, insert a point on the loop, as far as
+      // For each incident loop, insert a point on the loop, as far as
       // possible.
-      for(Curve_index curve_index : incident_curves) {
+      for(Curve_index curve_index : incident_curves)
+      {
         if(domain.is_loop(curve_index)) {
           FT curve_length = d_ptr->domain.curve_length(curve_index);
-          Point_3 other_point =
-            d_ptr->domain.construct_point_on_curve(pair.first,
+          auto loc =
+            d_ptr->domain.locate_corner(curve_index, corner_pt);
+          auto [other_point, _] =
+            d_ptr->domain.construct_point_on_curve(corner_pt,
                                                    curve_index,
-                                                   curve_length / 2);
+                                                   curve_length / 2,
+                                                   loc);
           d_ptr->dt.insert(other_point);
         }
       }
@@ -282,6 +287,14 @@ public:
                                 curve_incident_patches.end());
       }
     }
+  }
+
+  auto squared_distance(const Point_3& p,
+                        const Point_3& q) const -> FT
+  {
+    typename Kernel_::Compute_squared_distance_3 sq_dist =
+      Kernel_().compute_squared_distance_3_object();
+    return sq_dist(p, q);
   }
 
   std::optional<Point_and_primitive_id>
@@ -357,13 +370,13 @@ public:
         d_ptr->dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
         CGAL_assertion(!vs.empty());
         nearest = d_ptr->dt.point(vs[0]);
-//         std::cerr << "sq_dist = " << CGAL::squared_distance(p, nearest)
+//         std::cerr << "sq_dist = " << squared_distance(p, nearest)
 //                   << std::endl;
         typename Kernel_::Compare_distance_3 compare_dist;
         for (typename std::vector<typename Dt::Vertex_handle>::const_iterator
                it = vs.begin(); it != vs.end(); ++it)
         {
-//           std::cerr << "sq_dist = " << CGAL::squared_distance(p, dt.point(*it))
+//           std::cerr << "sq_dist = " << squared_distance(p, dt.point(*it))
 //                   << std::endl;
           if(compare_dist(p, d_ptr->dt.point(*it), nearest) == CGAL::SMALLER) {
 //             std::cerr << "  nearest!\n";
@@ -375,7 +388,7 @@ public:
         const typename Dt::Vertex_handle vh = d_ptr->dt.nearest_vertex(p, ch);
         nearest = d_ptr->dt.point(vh);
       }
-      const FT dist = CGAL_NTS sqrt(CGAL::squared_distance( nearest, p));
+      const FT dist = CGAL_NTS sqrt(squared_distance( nearest, p));
       // std::cerr << (std::min)(dist / FT(1.5), d_) << "\n";
       result = (std::min)(dist * FT(0.5), result);
 
@@ -395,7 +408,7 @@ public:
           result =
             (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                        CGAL_NTS
-                       sqrt(CGAL::squared_distance(p,
+                       sqrt(squared_distance(p,
                                                    closest_point_and_primitive->first))),
                        result);
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -463,7 +476,7 @@ public:
         result =
           (std::min)(FT(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS
-                     sqrt(CGAL::squared_distance(p,
+                     sqrt(squared_distance(p,
                                                  closest_point_and_primitive->first))),
                      result);
 
@@ -534,17 +547,99 @@ public:
       //Compute distance to the curve on which p lies
       typedef typename GT::Segment_3                        Segment_3;
       typedef typename GT::Plane_3                          Plane_3;
+      typedef typename GT::Sphere_3                         Sphere_3;
+      typedef typename GT::Vector_3                         Vector_3;
 
-      const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
+      auto [closest_pt, closest_prim_id]
         = d_ptr->domain.curves_aabb_tree().closest_point_and_primitive(p);
 
-      Segment_3 curr_segment(*ppid.second.second, *(ppid.second.second + 1));
-      Plane_3 curr_ortho_plane(p, curr_segment.to_vector()/*normal*/);
-      Input_curves_AABB_tree_primitive_ curr_prim(ppid.second);
+      Curve_index closest_curve_id = closest_prim_id.first->first;
+      if(curve_id != closest_curve_id)
+      {
+        // look for another closest point in a tiny sphere
+        // if p coincides with closest_pt,
+        //  radius = of 1% closest_primitive
+        // else //distance must be very small
+        //  radius = 10 * distance(p, closest_pt)
 
+        FT sqr = (p == closest_pt) // p may coincide with closest_pt, on different feature curves
+            ? 0.0001 * squared_distance(*closest_prim_id.second, *(closest_prim_id.second + 1))
+            : 100 * squared_distance(p, closest_pt);
+
+        bool valid_closest_found = false;
+        while(!valid_closest_found)
+        {
+          std::vector<Input_curves_AABB_tree_primitive_> closest_prims;
+          d_ptr->domain.curves_aabb_tree()
+            .all_intersected_primitives(Sphere_3(closest_pt, sqr),
+                                        std::back_inserter(closest_prims));
+
+          for(const Input_curves_AABB_tree_primitive_& close_prim : closest_prims)
+          {
+            if(curve_id == close_prim.id().first->first)
+            {
+              closest_prim_id = close_prim.id();
+              closest_curve_id = curve_id;
+              valid_closest_found = true;
+              break;
+            }
+          }
+          sqr *= 4; // double radius for next iteration
+        }
+      }
+
+#ifdef CGAL_MESH_3_VERBOSE
+      if(curve_id != closest_curve_id)
+      {
+        std::cout << "Warning: point " << p << " on curve_id = "
+                  << curve_id << " has closest curve_id = " << closest_curve_id
+                  << std::endl;
+      }
+#endif
+
+      // find ppid's polyline iterator
+      const auto& polyline = closest_prim_id.first->second;
+      auto p_polyline_const_it = closest_prim_id.second;
+      if(*p_polyline_const_it == p
+       && p_polyline_const_it != polyline.first_segment_source())
+      {
+        p_polyline_const_it = std::prev(p_polyline_const_it);
+      }
+
+      const Segment_3 curr_segment(*closest_prim_id.second,
+                                   *(closest_prim_id.second + 1));
+      const FT sqlen_curr_segment = CGAL::squared_distance(curr_segment.source(),
+                                                           curr_segment.target());
+      //todo : check segment is not degenerate
+      auto plane = GT().construct_plane_3_object();
+      auto base_vector = GT().construct_base_vector_3_object();
+      auto scale = GT().construct_scaled_vector_3_object();
+      auto sqlen = GT().compute_squared_length_3_object();
+      auto triangle = GT().construct_triangle_3_object();
+      auto translate = GT().construct_translated_point_3_object();
+      auto opp = GT().construct_opposite_vector_3_object();
+
+      const Vector_3& curr_normal = curr_segment.to_vector();
+      const Plane_3 curr_ortho_plane = plane(p, curr_normal);
+      Vector_3 base1 = base_vector(curr_ortho_plane, 1);
+      Vector_3 base2 = base_vector(curr_ortho_plane, 2);
+      scale(base1, 2.* result / CGAL::approximate_sqrt(sqlen(base1)));
+      scale(base2, 2.* result / CGAL::approximate_sqrt(sqlen(base2)));
+
+      const Point_3 pright = translate(p, base2);
+      const Point_3 pleft = translate(p, opp(base2));
+      const Point_3 ptop = translate(p, base1);
+      const Point_3 pbottom = translate(p, opp(base1));
+      const auto tr1 = triangle(pleft, ptop, pright);
+      const auto tr2 = triangle(pleft, pright, pbottom);
+
+      // find intersected primitives
       std::vector<Input_curves_AABB_tree_primitive_> prims;
       d_ptr->domain.curves_aabb_tree().
-          all_intersected_primitives(curr_ortho_plane, std::back_inserter(prims));
+          all_intersected_primitives(tr1, std::back_inserter(prims));
+      d_ptr->domain.curves_aabb_tree().
+          all_intersected_primitives(tr2, std::back_inserter(prims));
+
 
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       std::cerr << std::endl;
@@ -558,10 +653,11 @@ public:
       FT sqd_intersection = -1;
       for(Input_curves_AABB_tree_primitive_ prim : prims)
       {
-        if (prim.id() == curr_prim.id())
-          continue;//curr_prim is the closest primitive
+        if (prim.id() == closest_prim_id)//curr_prim.id())
+          continue;//closest_prim_id is the closest primitive
 
-        if (curve_id != prim.id().first->first)
+        if (curve_id != prim.id().first->first
+         || closest_curve_id != prim.id().first->first)
           continue;//don't deal with the same curves as what is done above
 
         const auto int_res = CGAL::intersection(prim.datum(), curr_ortho_plane);
@@ -569,16 +665,21 @@ public:
         {
           if (const Point_3* pp = std::get_if<Point_3>(&*int_res))
           {
-            FT new_sqd = CGAL::squared_distance(p, *pp);
-            FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p, *pp, curve_id));
+            const Point_3& intersection_point = *pp;
 
-#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-            std::cerr << "Intersection point : Point_3(" << *pp << ") ";
-            std::cerr << "\n  new_sqd = " << new_sqd ;
-            std::cerr << "\n  dist = " << dist << "\n";
-#endif
-            if (new_sqd * 1e10 < CGAL::squared_distance(curr_segment.source(),
-                                                        curr_segment.target()))
+            // recall types from AABB_tree of curves
+            // Map_iterator = map<Curve_index, Polyline>::iterator
+            // Primitive Id = pair<Map_iterator, Polyline_const_iterator>
+            // Primitive Datum = Segment
+
+            // find intersection_point polyline iterator
+            auto pp_polyline_const_it = prim.id().second;
+            if(intersection_point == *pp_polyline_const_it
+            || intersection_point == *std::next(pp_polyline_const_it))
+              continue; // intersection point is an endpoint of the primitive
+
+            const FT new_sqd = squared_distance(p, intersection_point);
+            if (new_sqd * 1e10 < sqlen_curr_segment)
             {
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
               std::cerr << "  too close, compared to possible rounding errors, "
@@ -586,12 +687,25 @@ public:
 #endif
               continue;
             }
+
+            const FT dist = CGAL::abs(d_ptr->domain.signed_geodesic_distance(p,
+                                                                       intersection_point,
+                                                                       p_polyline_const_it,
+                                                                       pp_polyline_const_it,
+                                                                       curve_id));
+
+#ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
+            std::cerr << "Intersection point : Point_3(" << *pp << ") ";
+            std::cerr << "\n  new_sqd = " << new_sqd ;
+            std::cerr << "\n  dist = " << dist << "\n";
+#endif
+
             if (CGAL_NTS sqrt(new_sqd) > 0.9 * dist)
               continue;
             if (sqd_intersection == -1 || new_sqd < sqd_intersection)
             {
               sqd_intersection = new_sqd;
-              closest_intersection = *pp;
+              closest_intersection = intersection_point;
               closest_primitive = prim;
             }
           }
@@ -605,7 +719,7 @@ public:
       //compare closest_projection and closest_intersection, and keep the closest
       if (curves_projection_traits.found())
       {
-        FT tmp_sqd = CGAL::squared_distance(p, curves_projection_traits.closest_point());
+        FT tmp_sqd = squared_distance(p, curves_projection_traits.closest_point());
         if (sqd_intersection == -1 || tmp_sqd < sqd_intersection)
         {
           sqd_intersection = tmp_sqd;

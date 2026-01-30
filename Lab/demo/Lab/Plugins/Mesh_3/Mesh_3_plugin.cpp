@@ -1,5 +1,6 @@
 #include "config.h"
 #include "config_mesh_3.h"
+#include <qelapsedtimer.h>
 
 #ifdef CGAL_LAB_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
@@ -267,6 +268,7 @@ private:
   CGAL::Mesh_facet_topology facet_topology;
   bool protect_features;
   bool protect_borders;
+  QElapsedTimer timer_;
 
   struct Polyhedral_mesh_items {
     Polyhedral_mesh_items() noexcept
@@ -923,7 +925,7 @@ launch_thread(Meshing_thread* mesh_thread)
   // -----------------------------------
   message_box_ = new QMessageBox(QMessageBox::NoIcon,
                                  "Meshing",
-                                 "Mesh generation in progress...",
+                                 tr("Meshing \"%1\" in progress...<br>(%2 seconds)").arg(source_item_name_).arg(0),
                                  QMessageBox::Cancel,
                                  mw);
 
@@ -938,6 +940,7 @@ launch_thread(Meshing_thread* mesh_thread)
     QApplication::restoreOverrideCursor(); // restores cursor set in mesh_thread stop() function
   });
 
+  timer_.start();
   message_box_->open();
 
   // -----------------------------------
@@ -961,7 +964,8 @@ Mesh_3_plugin::
 status_report(QString str)
 {
   if ( nullptr == message_box_ ) { return; }
-
+  message_box_->setText(
+      tr("Meshing \"%1\" in progress...<br>(%2 seconds)").arg(source_item_name_).arg(timer_.elapsed()/1000));
   message_box_->setInformativeText(str);
 }
 
