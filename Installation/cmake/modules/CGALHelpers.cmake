@@ -64,7 +64,7 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
 
   else()
 
-    file(GLOB list CONFIGURE_DEPENDS "${subdir_name}/*")
+    file(GLOB list CONFIGURE_DEPENDS "*")
 
   endif()
 
