@@ -246,11 +246,11 @@ int main(int argc, char **argv) {
             hdvf2.W(pairW.sigma, pairW.tau, pairW.dim);
 #ifdef BUILD_TEST_DATA
             // Save HDVF to .hdvf file
-            hdvf2.write_hdvf_reduction("data/test_hdvf/test_hdvfM.hdvf") ;
+            hdvf2.write_hdvf_reduction("data/test_hdvf/test_hdvfW.hdvf") ;
 #endif
             // Read HDVF after R from .hdvf
             HDVF_type hdvf3(complex, HDVF::OPT_FULL);
-            hdvf3.read_hdvf_reduction("data/test_hdvf/test_hdvfM.hdvf");
+            hdvf3.read_hdvf_reduction("data/test_hdvf/test_hdvfW.hdvf");
             // Compare
             bool test_W(hdvf2.compare(hdvf3));
             std::cerr << "-- Test W operation: " << test_W << std::endl;
@@ -260,6 +260,64 @@ int main(int argc, char **argv) {
         bool test_invalid_W(hdvf.is_valid_pair_for_W(1, 7, 1) == 0);
         std::cerr << "-- Test incorrect is_valid_pair_for_W: " << test_invalid_W << std::endl;
         assert(test_invalid_W);
+    }
+
+    // Test MW
+    std::cerr << "---- Test MW operation" << std::endl;
+    {
+        bool foundMW;
+        std::vector<HDVF::Cell_pair> pairsMW(hdvf.find_pairs_MW(1, foundMW)), pairsMW2;
+        pairsMW2.push_back(HDVF::Cell_pair({2,0,1}));
+        pairsMW2.push_back(HDVF::Cell_pair({2,1,1}));
+        pairsMW2.push_back(HDVF::Cell_pair({5,3,1}));
+        pairsMW2.push_back(HDVF::Cell_pair({5,4,1}));
+        bool test_find_pairs_MW(pairsMW == pairsMW2);
+        std::cerr << "-- Test find_pairs_MW(1,foundMW): " << test_find_pairs_MW << std::endl;
+        assert(test_find_pairs_MW);
+
+        std::vector<HDVF::Cell_pair> pairsMW3(hdvf.find_pairs_MW(1, foundMW, 2)), pairsMW3_res;
+        pairsMW3_res.push_back(HDVF::Cell_pair({2,0,1}));
+        pairsMW3_res.push_back(HDVF::Cell_pair({2,1,1}));
+        bool test_find_pairs_MW3(pairsMW3 == pairsMW3_res);
+        std::cerr << "-- Test find_pairs_MW(1,foundMW,2): " << test_find_pairs_MW3 << std::endl;
+        assert(test_find_pairs_MW3);
+
+        HDVF::Cell_pair cell(hdvf.find_pair_MW(1, foundMW)), cell2(HDVF::Cell_pair({2,0,1}));
+        bool test_find_pairs_MW4(cell == cell2);
+        std::cerr << "-- Test find_pair_MW(1,foundMW): " << test_find_pairs_MW4 << std::endl;
+        assert(test_find_pairs_MW4);
+
+        HDVF::Cell_pair cell3(hdvf.find_pair_MW(1, foundMW,2));
+        bool test_find_pairs_MW5(cell3 == cell2);
+        std::cerr << "-- Test find_pair_MW(1,foundM,2): " << test_find_pairs_MW5 << std::endl;
+        assert(test_find_pairs_MW5);
+
+        HDVF::Cell_pair pairMW(pairsMW.at(0)); // Pair 2, 0, 1
+        bool test_valid_MW(hdvf.is_valid_pair_for_MW(pairMW.sigma, pairMW.tau, pairMW.dim) == 1);
+        std::cerr << "-- Test is_valid_pair_for_MW: " << test_valid_MW << std::endl;
+        assert(test_valid_MW);
+        // Test operation
+        {
+            // Read HDVF from .hdvf
+            HDVF_type hdvf2(complex, HDVF::OPT_FULL);
+            hdvf2.read_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf");
+            hdvf2.MW(pairMW.sigma, pairMW.tau, pairMW.dim);
+#ifdef BUILD_TEST_DATA
+            // Save HDVF to .hdvf file
+            hdvf2.write_hdvf_reduction("data/test_hdvf/test_hdvfMW.hdvf") ;
+#endif
+            // Read HDVF after R from .hdvf
+            HDVF_type hdvf3(complex, HDVF::OPT_FULL);
+            hdvf3.read_hdvf_reduction("data/test_hdvf/test_hdvfMW.hdvf");
+            // Compare
+            bool test_MW(hdvf2.compare(hdvf3));
+            std::cerr << "-- Test MW operation: " << test_MW << std::endl;
+            assert(test_MW);
+        }
+
+        bool test_invalid_MW(hdvf.is_valid_pair_for_W(2, 1, 1) == 0);
+        std::cerr << "-- Test incorrect is_valid_pair_for_MW: " << test_invalid_MW << std::endl;
+        assert(test_invalid_MW);
     }
 
     //    // Test z

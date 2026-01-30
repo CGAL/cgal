@@ -264,13 +264,15 @@ public:
 
         // Compute <partial h(pi), sigma> (coz)
         Row_chain row_sigma_D(this->_K.cod(sigma,q));
+        row_sigma_D = this->projection(row_sigma_D, SECONDARY, q+1);
         const Column_chain& col_pi_H(OSM::cget_column(this->_H_col.at(q), pi));
         coef = row_sigma_D * col_pi_H;
         res = coef.is_invertible();
 
         // Compute <h partial(sigma),pi> (z)
-        Column_chain col_sigma_D(this->_K.d(sigma));
-        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), pi));
+        Column_chain col_sigma_D(this->_K.d(pi,q));
+        col_sigma_D = this->projection(col_sigma_D, PRIMARY, q-1);
+        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), sigma));
         coef = row_pi_H * col_sigma_D;
         res = res && coef.is_invertible();
         return res;
@@ -394,7 +396,7 @@ public:
      * \param sigma Second cell of the pair (dimension `q`)
      * \param q Dimension of the pair
      *
-     * \exception Invalid_operation If `q` is 0 or the dimension of the complex, `M`operation is not valid and the method raises a `%std::runtime_error` exception.
+     * \exception Invalid_operation If `q` is 0 or the dimension of the complex, `MW`operation is not valid and the method raises a `%std::runtime_error` exception.
      *
      * \exception Invalid_arguments If \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ or \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ are not invertible, raises a `%std::invalid argument` exception.
      *
@@ -943,7 +945,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const {
 
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
+                    found = (xi.is_invertible() && xip.is_invertible()) ;
                     if (found) {
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
@@ -988,7 +990,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                         // test xi and xip
                         const Coefficient_ring xi = projS_cod_sigma * H11 ;
                         const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                        found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
+                        found = (xi.is_invertible() && xip.is_invertible()) ;
                         if (found) {
                             p.sigma = pi ; // primary cell
                             p.tau = sigma ; // critical cell
@@ -1020,7 +1022,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                     // test xi and xip
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
+                    found = (xi.is_invertible() && xip.is_invertible()) ;
                     if (found) {
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
@@ -1057,7 +1059,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) con
 
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
+                    found = (xi.is_invertible() && xip.is_invertible()) ;
                     if (found) {
                         Cell_pair p;
                         p.sigma = pi ; // primary cell
@@ -1104,7 +1106,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                         // test xi and xip
                         const Coefficient_ring xi = projS_cod_sigma * H11 ;
                         const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                        found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
+                        found = (xi.is_invertible() && xip.is_invertible()) ;
                         if (found) {
                             Cell_pair p ;
                             p.sigma = pi ; // primary cell
@@ -1138,7 +1140,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                     // test xi and xip
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
+                    found = (xi.is_invertible() && xip.is_invertible()) ;
                     if (found) {
                         Cell_pair p ;
                         p.sigma = pi ; // primary cell
@@ -1561,10 +1563,12 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         Coefficient_ring xi = projS_cod_sigma * H11 ;
         Coefficient_ring xip = H11q1 * projP_d_pi ;
 
-        if (abs(xi) != 1)
+        if (! xi.is_invertible())
             throw "MW impossible, xi non invertible" ;
-        if (abs(xip) != 1)
+        if (! xip.is_invertible())
             throw "MW impossible, xi' non invertible" ;
+
+        Coefficient_ring xi_inv = xi.inverse(), xip_inv = xip.inverse();
 
         // F_q extraction
 
@@ -1584,45 +1588,45 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         Row_chain tmp1 = projS_cod_sigma * this->_H_col.at(q) ;
 
-        this->_H_col.at(q) -= (H11 * xi) * tmp1 ;
-        OSM::set_column(this->_H_col.at(q), sigma, H11 * xi) ;
+        this->_H_col.at(q) -= (H11 * xi_inv) * tmp1 ;
+        OSM::set_column(this->_H_col.at(q), sigma, H11 * xi_inv) ;
 
         // F_q
 
-        this->_F_row.at(q) += (F11 * xi) * tmp1 ;
-        OSM::set_column(this->_F_row.at(q), sigma, F11 * (-xi)) ;
+        this->_F_row.at(q) += (F11 * xi_inv) * tmp1 ;
+        OSM::set_column(this->_F_row.at(q), sigma, F11 * (-xi_inv)) ;
 
         // G_q+1 // note: G_q+1 is not be modified if the Hdvf is perfect
 
         Row_chain tmp2(projS_cod_sigma * this->_G_col.at(q+1)) ;
         tmp2 += projC_cod_sigma ;
-        this->_G_col.at(q+1) -= (H11 * xi) * tmp2 ;
+        this->_G_col.at(q+1) -= (H11 * xi_inv) * tmp2 ;
 
         // DD_col_q+1 / DD_row_q
 
-        this->_DD_col.at(q+1) -= (F11 * xi) * tmp2 ;
+        this->_DD_col.at(q+1) -= (F11 * xi_inv) * tmp2 ;
 
         // H_q-1
 
         Column_chain tmp3(this->_H_col.at(q-1) * projP_d_pi) ;
 
-        this->_H_col.at(q-1) -= (tmp3 * xip) * H11q1 ;
-        OSM::set_row(this->_H_col.at(q-1), pi, xip * H11q1) ;
+        this->_H_col.at(q-1) -= (tmp3 * xip_inv) * H11q1 ;
+        OSM::set_row(this->_H_col.at(q-1), pi, xip_inv * H11q1) ;
 
         // G_q
 
-        this->_G_col.at(q) -= (tmp3 * xip) * G11 ;
-        OSM::set_row(this->_G_col.at(q), pi, xip * G11) ;
+        this->_G_col.at(q) -= (tmp3 * xip_inv) * G11 ;
+        OSM::set_row(this->_G_col.at(q), pi, xip_inv * G11) ;
 
         // F_q-1 // note: F_q-1 is not be modified if the Hdvf is perfect
 
         Column_chain tmp4(this->_F_row.at(q-1) * projP_d_pi) ;
         tmp4 += projC_d_pi ;
-        this->_F_row.at(q-1) -= (tmp4 * xip) * H11q1 ;
+        this->_F_row.at(q-1) -= (tmp4 * xip_inv) * H11q1 ;
 
         // DD_col_q
 
-        this->_DD_col.at(q) += (tmp4 * xip) * G11 ;
+        this->_DD_col.at(q) += (tmp4 * xip_inv) * G11 ;
 
         // Update flags
         this->_flag[q][pi] = SECONDARY; // Set the PSC_flag of gamma in dimension q to SECONDARY
