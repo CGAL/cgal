@@ -284,7 +284,7 @@ The function
 is used to detect self-intersections,
 but it requires the input mesh to be triangulated. Therefore, the input mesh must first be triangulated
 using
-\link CGAL::Polygon_mesh_processing::triangulate_faces(FaceRange,PolygonMesh&,const NamedParameters&) `CGAL::Polygon_mesh_processing::triangulate_faces()`\endlink
+\link CGAL::Polygon_mesh_processing::triangulate_faces(const FaceRange&,PolygonMesh&,const NamedParameters&) `CGAL::Polygon_mesh_processing::triangulate_faces()`\endlink
 before performing the self-intersection check.
 
 If self-intersections are found, the triangulated mesh is converted into a triangle soup, which is then

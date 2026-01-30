@@ -478,6 +478,18 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 (iii) `use_compact_clipper=false`: clipping of the surface mesh with a non-compact halfspace: coplanar faces are not part of the output.
 \cgalFigureEnd
 
+\subsection coref_kernel Mesh kernels
+
+\cgalFigureBegin{coref_kernel_figure, kernel.png}
+Mesh kernel: From left to right: (i) The input mesh; (ii) The kernel of the input; (iii) The kernel inside its mesh. All segments between a point of the kernel and a point of the mesh are inside the mesh.
+\cgalFigureEnd
+
+
+As illustrated on \cgalFigureRef{coref_kernel_figure}, the kernel of a mesh is defined as the set of points from which the entire surface of the mesh is visible. More formally, a point belongs to the kernel if,
+for every point on the mesh, the segment connecting them lies inside the mesh. Equivalently, the kernel is the intersection of all the half-spaces on the negative side of the oriented planes defined by
+the faces of the mesh. The functions `CGAL::Polygon_mesh_processing::kernel()`, `CGAL::Polygon_mesh_processing::kernel_point()` and `CGAL::Polygon_mesh_processing::has_empty_kernel()` output the full kernel, a single point inside it or
+a Boolean indicating whether the kernel exists or not, respectively.
+
 \subsection coref_ex_subsec Examples
 
 \subsubsection coref_ex_union_subsec Computing the Union of Two Volumes
@@ -1480,6 +1492,8 @@ The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
 The `apply_iterative_snap_rounding` option for autorefinement was developed by Sylvain Lazard and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 2025.
+
+The kernel functions and the convex specialization of `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()` were implemented in 2025, by Léo Valque, inspired by the work of Sorgente et al. \cgalCite{sorgente2022polyhedron}.
 
 */
 } /* namespace CGAL */
