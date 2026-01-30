@@ -60,6 +60,11 @@ public:
     return d;
   }
 
+  virtual Plane_3 transform(const Plane_3 &p, bool, const Aff_transformation_3&) const
+  {
+      return transform(p);
+  }
+
   virtual Plane_3  transform(const Plane_3 &p) const
   {
     // direction ( which is (p.a(), p.b(), p.c())) does not change
