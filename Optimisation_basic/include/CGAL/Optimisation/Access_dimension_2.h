@@ -39,7 +39,7 @@ class Access_dimension_2 {
     Access_dimension_2( ) { }
 
     // operations
-    int  operator() ( const Point& p) const { return 2; }
+    int  operator() ( const Point& ) const { return 2; }
 };
 
 } //namespace CGAL
