@@ -3,6 +3,9 @@ project(test_configuration)
 find_package(CGAL COMPONENTS Qt6)
 add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
+message(NOTICE "Found CGAL version: ${CGAL_VERSION}")
+message(NOTICE "CGAL_DIR is set to: ${CGAL_DIR}")
+
 get_filename_component(CGAL_DIR_PATH "${CGAL_DIR}/CMakeConfig.cmake" DIRECTORY)
 get_filename_component(CGAL_GIVEN_DIR_PATH "${CGAL_GIVEN_DIR}/CMakeConfig.cmake" DIRECTORY)
 
