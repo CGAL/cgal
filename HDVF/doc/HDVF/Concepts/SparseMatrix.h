@@ -3,11 +3,15 @@
 \cgalConcept
 
 The concept `SparseMatrix` describes the requirements for sparse matrices optimized for topological computations.
-Traditionally, sparse matrices data structures encode non zero coefficients of (sparse) matrices in order to optimize either matrices memory footprint, or linear algebra operations (which usually comes to optimize iterators over non zero coefficients and access to coefficients). However, topological operations require slightly different features:
+Traditionally, sparse matrices data structures encode non zero coefficients of (sparse) matrices in order to optimize
+either matrices memory footprint, or linear algebra operations (which usually comes to optimize iterators over non zero coefficients
+and access to coefficients). However, topological operations require slightly different features:
+
  - fast access to row or columns of matrices (which are actually the images under the application encoded by the matrix)
  - fast block operations (especially along row or columns)
 
- The `SparseMatrix` concept describes requirements for such sparse matrix. It relies on the model of `SparseChain` which encodes sparse row or column vectors. Matrices are either column major or row major (hence they either store column sparse chains or row sparse chains).
+ The `SparseMatrix` concept describes requirements for such sparse matrix. It relies on the model of `SparseChain`
+ which encodes sparse row or column vectors. Matrices are either column major or row major (hence they either store column sparse chains or row sparse chains).
 
  The following constants, called `StorageFormat`, encode the major direction of both sparse chains and sparse matrices.
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),

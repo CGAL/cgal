@@ -30,22 +30,22 @@ public:
 /*!
 Type of coefficients ring used to compute homology, model of `IntegralDomainWithoutDivision`
  */
-typedef CoefficientRing Coefficient_ring;
+typedef unspecified_type Coefficient_ring;
 
 /*!
  Type of column-major chains (returned by the boundary operator)
  */
-typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
+typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains (returned by the co-boundary operator)
  */
-typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
+typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)
  */
-typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
+typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
 /// @}
 
@@ -88,7 +88,8 @@ size_t number_of_cells(int q);
 /*!
 \brief Returns all boundary matrices.
 
-The function returns constant reference to a vector of column-major sparse matrices. The `q`-th element of this vector is the matrix of \f$\partial_q\f$, which gives the boundary of cells of dimension `q`(as a linear combination of `q`-1 cells).
+The function returns constant reference to a vector of column-major sparse matrices. The `q`-th element of this vector is the matrix of \f$\partial_q\f$,
+which gives the boundary of cells of dimension `q`(as a linear combination of `q`-1 cells).
 
  */
 const vector<Column_matrix> & boundary_matrices() const;
@@ -103,7 +104,8 @@ const Column_matrix & boundary_matrix(int q) const;
 /*!
  \brief Returns the boundary of the cell of index `id_cell` in dimension `q`.
 
-This boundary is a finite linear combination of cells of dimension `q`-1. It is encoded as a column-major chain (which maps each cell with a non-zero coefficient to this coefficient). This boundary  is thus the `id_cell`-th column of the boundary matrix in dimension `q`.
+This boundary is a finite linear combination of cells of dimension `q-1`. It is encoded as a column-major chain (which maps each cell with a non-zero coefficient to this coefficient).
+This boundary  is thus the `id_cell`-th column of the boundary matrix in dimension `q`.
 
 */
 Column_chain d(size_t id_cell, int q);
@@ -112,7 +114,8 @@ Column_chain d(size_t id_cell, int q);
 /*!
  \brief Returns the co-boundary of the cell of index `id_cell` in dimension `q`.
 
-This boundary is a finite linear combination of cells of dimension `q`+1. It is encoded as a row-major chain (which maps each cell with a non-zero coefficient to this coefficient). This co-boundary  is thus the `id_cell`-th row of the boundary matrix in dimension `q`+1.
+This boundary is a finite linear combination of cells of dimension `q+1`. It is encoded as a row-major chain (which maps each cell with a non-zero coefficient to this coefficient).
+This co-boundary  is thus the `id_cell`-th row of the boundary matrix in dimension `q`+1.
 */
 Row_chain cod(size_t id_cell, int q);
 

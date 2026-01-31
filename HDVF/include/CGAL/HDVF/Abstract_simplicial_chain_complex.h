@@ -111,7 +111,7 @@ public:
      * \param id_cell %Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
+     * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is  not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty column chain.
      */
     Column_chain d(size_t id_cell, int q) const {
         if ((q > 0) && (q <= _dim)) {
@@ -132,7 +132,7 @@ public:
      * \param id_cell %Index of the cell.
      * \param q Dimension of the cell.
      *
-     * \return The row-major chain containing the co-boundary of the cell id_cell in dimension `q`. If `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty row chain.
+     * \return The row-major chain containing the co-boundary of the cell id_cell in dimension `q`. If `q` is not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty row chain.
      */
     Row_chain cod(size_t id_cell, int q) const {
         if ((q < _dim) && (q >= 0)) {
@@ -158,7 +158,7 @@ public:
      *
      * \param q Dimension along which the number of cells is returned.
      *
-     * \return Number of cells in dimension `q`. f `q` is out \f$[0,d]\f$ with \f$d\f$ the dimension of the complex, the function returns an empty column chain.
+     * \return Number of cells in dimension `q`. If `q` is not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty column chain.
      */
     size_t number_of_cells(int q) const {
         if ((q >=0) && (q<=_dim))

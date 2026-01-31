@@ -32,7 +32,7 @@ public:
     typedef unspecified_type Coefficient_ring;
 
     /*!
-     * \brief Matrix and chain storage format (either CGAL::OSM::ROW or CGAL::OSM::COLUMN).
+     * \brief %Matrix and chain storage format (either CGAL::OSM::ROW or CGAL::OSM::COLUMN).
      */
     typedef int Storage_format;
 
@@ -92,7 +92,7 @@ public:
     size_t dimension() const;
 
     /*!
-     * \brief Iterator to the beginning of the chain.
+     * \brief %Iterator to the beginning of the chain.
      *
      * The function returns an iterator to the first non zero index.
      */

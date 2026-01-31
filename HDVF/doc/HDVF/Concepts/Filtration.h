@@ -117,19 +117,19 @@ public:
 
         /*!
          * \brief Equality check.
-         * \returns True if the indices are equal.
+         * \returns `true` if the indices are equal.
          */
         friend bool operator== (const iterator& a, const iterator& b);
 
         /*!
          * \brief Inequality check.
-         * \returns True if the indices are different.
+         * \returns `true` if the indices are different.
          */
         friend bool operator!= (const iterator& a, const iterator& b);
     };
 
     /*!
-     * \brief Iterator to the beginning of the filtration.
+     * \brief %Iterator to the beginning of the filtration.
      */
     iterator begin();
 
