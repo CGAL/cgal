@@ -1,0 +1,335 @@
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+
+#ifndef CGAL_HDVF_FILTRATION_CORE_H
+#define CGAL_HDVF_FILTRATION_CORE_H
+
+#include <CGAL/license/HDVF.h>
+
+#include <vector>
+#include <map>
+#include <cassert>
+#include <iostream>
+#include <random>
+#include <functional>
+
+#include <CGAL/OSM/Sparse_matrix.h>
+#include <CGAL/OSM/Sparse_chain.h>
+
+namespace CGAL {
+namespace Homological_discrete_vector_field {
+
+
+/*! \brief Type for indexing uniquely a cell.
+ * - First element of the pair: index of the cell.
+ * - Second element of the pair: dimension of the cell.
+ */
+typedef std::pair<std::size_t, int> Cell ;
+
+
+
+/*!
+ \ingroup PkgHDVFRef
+
+ The class `Filtration_core` implements data structures and methods required by the `Filtration` concept.
+
+ By definition, a filtration over a chain complex `K` is a sequence of sub complexes \f$\{K_t\,;\, t\in[d_1, \ldots, d_N]\}\f$, where \f$d_i\f$ are scalars, such that:
+
+ - \f$\forall d\leqslant d'\f$, \f$K_d\subseteq K_{d'}\f$.
+ - \f$|K_{d_{i+1}}| = |K_{d_{i}}|+1\f$.
+    - As a consequence, any cell \f$\sigma\in K\f$, is "added" at a given *time* \f$i\f$ and the corresponding \f$d_i\f$ is called its *degree* (denoted by \f$\mathrm{deg}(\sigma)\f$).
+ - \f$K_{d_1}\f$ is an empty complex.
+ - \f$K_{d_N} = K\f$.
+ - For any cell \f$\sigma\in K\f$, if \f$\tau\f$ is a proper face of \f$\sigma\f$, then \f$\mathrm{deg}(\tau)\leqslant \mathrm{deg}(\sigma)\f$.
+
+ In consequence, a filtration associated to a complex `K`:
+ - maps each cell to a scalar called its degree
+ - orders the cells of `K` (each cell has a unique index along the filtration called *time* along the filtration) such that:
+    - the index of a cell is larger that the indices of its faces,
+    - the degree map is increasing along the filtration.
+
+ The class `Filtration_core` provides elementary constructors and methods used in derived filtrations.
+
+ \cgalModels{Filtration}
+
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
+ \tparam Degree the scalar type of degrees (a model of the `RealEmbeddable` concept).
+ */
+
+
+template <typename ChainComplex, typename Degree>
+class Filtration_core
+{
+public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+
+    /*! \brief Type of value returned by the iterator.
+     */
+    typedef struct {
+        Cell cell_dim ;
+        Degree degree ;
+        size_t time;
+    } Filtration_iter_value ;
+
+protected:
+    /** \brief Constant reference to the underlying chain complex. */
+    const ChainComplex& _K ;
+    /** \brief Vector of cells of the filtration (full ordering of cells). */
+    std::vector<Cell> _filtration ;
+    /** \brief Vector of degrees of cells along the filtration. */
+    std::vector<Degree> _deg ;
+
+    /** \brief Map from cells to their index in the filtration. */
+    std::map<Cell,std::size_t> _cell_to_t ;
+
+    /*!
+     Type of column-major sparse matrices
+     */
+    typedef CGAL::OSM::Sparse_matrix<Coefficient_ring,CGAL::OSM::COLUMN> Column_matrix ;
+
+    /*!
+     Type of row-major sparse matrices
+     */
+    typedef CGAL::OSM::Sparse_matrix<Coefficient_ring,CGAL::OSM::ROW> Row_matrix ;
+    /*!
+     Type of column-major chains
+     */
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::COLUMN> Column_chain ;
+
+    /*!
+     Type of row-major chains
+     */
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::ROW> Row_chain ;
+public:
+    /*! \brief Constructor of an empty filtration with an underlying chain complex.
+     *
+     *\param K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
+     */
+    Filtration_core(const ChainComplex& K) : _K(K)
+    {}
+
+    /*! \brief Constructor from a vector of cells (ordering of cells) and an associated vector of degrees.
+     *
+     * The constructor check that the filtration is valid (a cell is introduced in the filtration after its faces and the degree vector is increasing) and throw an exception if not.
+     * \param K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
+     * \param filtration An ordering of the cells of `K` encoded as a vector of its cells.
+     * \param deg The (increasing) vector of cell degrees.
+     */
+    Filtration_core(const ChainComplex& K, const std::vector<Cell>& filtration, const std::vector<Degree>& deg) : _K(K), _filtration(filtration), _deg(deg)
+    {
+        if (!is_valid())
+            throw ("Invalid filtration, Filtration_core constructor failed");
+    }
+
+    /**
+     * \brief Constructor by copy.
+     *
+     * Builds a `Filtration_core` by copy from another.
+     *
+     * \param f An initial `Filtration_core`.
+     */
+    Filtration_core(const Filtration_core& f) : _K(f._K), _filtration(f._filtration), _cell_to_t(f._cell_to_t) {}
+
+    /** \brief Iterator over a filtration.
+     *
+     * Iterate the cells of the filtration by increasing index (and hence increasing degree).
+     */
+    struct iterator
+    {
+        // Iterator tags
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = Filtration_iter_value;
+
+        /** \brief Iterator constructor
+         *
+         * \param f Constant reference on the `Filtration_core` iterated.
+         * \param i The initial index.
+         */
+        iterator(const Filtration_core& f, std::size_t i=0) : _i(i), _f(f) {}
+
+        /*! \brief Iterator dereference
+         *
+         * \returns A `Filtration_iter_value` structure containing the information of the current cell and its degree.
+         */
+        value_type operator*() const
+        {
+            Filtration_iter_value res ;
+            res.cell_dim = _f._filtration.at(_i) ;
+            res.degree = _f._deg.at(_i) ;
+            res.time = _i;
+            return res ;
+        }
+
+        /*!
+         * \brief Prefix incrementation. Moves to next cell in the filtration.
+         *
+         * \returns The reference to the current iterator.
+         */
+        iterator& operator++()
+        {
+            ++_i;
+            return *this;
+        }
+
+        /*!
+         * \brief Postfix incrementation. Moves to next cell in the filtration.
+         * \returns The pre-incremented iterator.
+         */
+        iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+        /*!
+         * \brief Equality check.
+         * \returns True if the indices are equal.
+         */
+        friend bool operator== (const iterator& a, const iterator& b)  { return a._i == b._i; };
+
+        /*!
+         * \brief Inequality check.
+         * \returns True if the indices are different.
+         */
+        friend bool operator!= (const iterator& a, const iterator& b)  { return a._i != b._i; };
+
+    private:
+        std::size_t _i ; // Index along _persist
+        const Filtration_core& _f ; // Filtration_core iterated
+    };
+
+    /**
+     * \brief Iterator to the beginning of the filtration.
+     *
+     * \return The iterator to the beginning of the filtration.
+     */
+    iterator begin() { return iterator(*this, 0) ; }
+
+    /**
+     * \brief Iterator past-the-end of the filtration.
+     *
+     * \return The iterator past-the-end of the filtration.
+     */
+    iterator end() { return iterator(*this, _filtration.size()) ; }
+
+    // getters
+    /*! \brief Gets the filtration size.
+     */
+    std::size_t size () const { return _filtration.size();}
+
+    /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
+     */
+    Cell cell_index_dimension (std::size_t i) const { return _filtration.at(i); }
+
+    /*! \brief Gets the degree of the `i`th element of the filtration.
+     */
+    Degree degree (std::size_t i) const { return _deg.at(i); }
+
+    // Output filtration
+    /*! \brief Overload of the `<<`operator for filtrations.
+     */
+    friend std::ostream & operator<<(std::ostream & out, const Filtration_core &f)
+    {
+        const std::size_t N(f._filtration.size()) ;
+        for (std::size_t i=0; i<N; ++i)
+            // Filtration_core
+        {
+            out << i << " -> (" << f._filtration.at(i).first << "- dim " << f._filtration.at(i).second << " , " << f._deg.at(i) << ") " << std::endl ;
+        }
+        return out ;
+    }
+
+    /**
+     * \brief Exports the filtration time indices.
+     *
+     * The method exports the time index of every cells in each dimension.
+     *
+     * \returns A vector containing, for each dimension, the vector of labels by cell index.
+     */
+    std::vector<std::vector<std::size_t> > export_filtration () const
+    {
+        std::vector<std::vector<std::size_t> > labels(_K.dimension()+1) ;
+        for (int q=0; q<=this->_K.dimension(); ++q)
+        {
+            for (std::size_t i = 0; i<this->_K.number_of_cells(q); ++i)
+            {
+                const Cell cell(i,q) ;
+                const std::size_t t(_cell_to_t.at(cell));
+                labels.at(q).push_back(t) ;
+            }
+        }
+        return labels ;
+    }
+
+    /*! \brief Checks if a filtration is valid.
+     * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
+     * \returns `true` if the filtration is valid, `false` otherwise
+     */
+    bool is_valid() const ;
+
+protected:
+    /* \brief Sets _cell_to_t from the initial vector o cells. */
+    void build_filtration_structure() ;
+
+    /* Friend class: Hdvf_persistence. */
+    template <typename ComplexT, typename DegT, typename FiltrT>
+    friend class Hdvf_persistence ;
+};
+
+template <typename ChainComplex, typename Degree>
+void Filtration_core<ChainComplex, Degree>::build_filtration_structure()
+{
+    for (std::size_t i = 0; i<_filtration.size(); ++i)
+    {
+        const Cell c(_filtration.at(i)) ;
+        // c : filtration index i, index in the basis reordered by filtration : j
+        _cell_to_t[c] = i ;
+    }
+}
+
+template <typename ChainComplex, typename Degree>
+bool Filtration_core<ChainComplex, Degree>::is_valid() const
+{
+    bool valid = true ;
+    for (std::size_t i=0; i<_filtration.size() && valid; ++i)
+    {
+        if (i>0)
+            valid = valid & (_deg.at(i) >= _deg.at(i-1)) ;
+        Cell c(_filtration.at(i)) ;
+        std::cout << i << " -> " << c.first << " dim "<< c.second << std::endl ;
+        const int q = c.second ;
+        if (q>0)
+        {
+            Column_chain dc = _K.d(c.first, q) ;
+            std::cout << "bnd : " << dc << std::endl ;
+            for (typename Column_chain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
+            {
+                // Faces of c
+                const Cell face(it->first,q-1) ;
+                // Check if the face c belongs to the filtration
+                auto it_face(_cell_to_t.find(face)) ;
+                valid = valid & (it_face != _cell_to_t.end()) ;
+                if (!valid)
+                    std::cout << "face not found" << std::endl ;
+                if (it_face != _cell_to_t.end())
+                    valid = valid & (_cell_to_t.at(face) < i) ;
+                if (!valid)
+                    std::cout << "face " << it->first << " at time : " << _cell_to_t.at(face) << " with i : " << i << std::endl ;
+            }
+        }
+        if (!valid)
+            std::cout << "check failed : " << i << std::endl ;
+    }
+    return valid ;
+}
+
+} /* end namespace Homological_discrete_vector_field */
+} /* end namespace CGAL */
+
+#endif // CGAL_HDVF_FILTRATION_CORE_H

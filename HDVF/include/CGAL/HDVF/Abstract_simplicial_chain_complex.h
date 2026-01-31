@@ -1,0 +1,456 @@
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+
+#ifndef CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H
+#define CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H
+
+#include <CGAL/license/HDVF.h>
+
+#include <vector>
+#include <map>
+#include <cmath>
+#include <CGAL/HDVF/Simplex.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/OSM/OSM.h>
+
+namespace CGAL {
+namespace Homological_discrete_vector_field {
+
+/*!
+ \ingroup PkgHDVFRef
+
+ The class `Abstract_simplicial_chain_complex` represents (topological) chain complexes associated to abstract simplicial complexes.
+
+ An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that: all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
+
+ <img src="simplicial_complex.png" align="center" width=45%/>
+
+ A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$, vertex indices **must be sorted**). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
+
+ The boundary map of the complex is computed by the constructor of the class using the standard formula:
+ \f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
+ where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
+
+ Let us also point out that cells are indexed along each dimension, thus each simplex is uniquely determined by its dimension and its index in this dimension.
+
+ \cgalModels{AbstractChainComplex}
+
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
+ */
+
+
+template<typename CoefficientRing>
+class Abstract_simplicial_chain_complex {
+public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef CoefficientRing Coefficient_ring;
+
+    /**
+     * \brief %Default constructor (empty simplicial complex of dimension `q`).
+     *
+     * Builds an empty abstract simplicial complex of dimension `q`.
+     */
+    Abstract_simplicial_chain_complex(int q = 0) ;
+
+    /**
+     * \brief Constructor from a `Mesh_object_io`.
+     *
+     * Builds the abstract simplicial complex associated to a triangular mesh (i.e. performs the down closure of cells and set the boundary matrices in any dimension).
+     *
+     * \param mesh A `Mesh_object_io` containing a triangular mesh.
+     */
+    template <typename Traits>
+    Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh);
+
+    /** \brief Type of column-major chains */
+    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
+    /** \brief Type of row-major chains */
+    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
+    /** \brief Type of column-major sparse matrices */
+    typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
+
+
+    /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
+    inline bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
+    /** \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    inline bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
+    /** \brief Checks if a simplex `simplex` of dimension `q` belongs to the complex. */
+    inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) != _simp2ind.at(q).end(); }
+
+    /**
+     * \brief Assignment operator for abstract simplicial chain complexes.
+     *
+     * Stores a copy of an abstract simplicial chain complex in `*this`.
+     *
+     * \param complex The abstract simplicial chain complex which will be copied.
+     */
+    Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex) {
+        _dim = complex._dim;
+        _ind2simp = complex._ind2simp;
+        _simp2ind = complex._simp2ind;
+        _nb_cells = complex._nb_cells;
+        _d = complex._d;
+        return *this ;
+    }
+
+    // Methods of the AbstractChainComplex concept
+
+    /**
+     * \brief Returns the boundary of the cell `id_cell` in dimension `q`.
+     *
+     * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell `id_cell` in dimension `q`.
+     *
+     * \param id_cell %Index of the cell.
+     * \param q Dimension of the cell.
+     *
+     * \return The column-major chain containing the boundary of the cell id_cell in dimension `q`. If `q` is  not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty column chain.
+     */
+    Column_chain d(size_t id_cell, int q) const {
+        if ((q > 0) && (q <= _dim)) {
+            CGAL_precondition(is_valid_cell(id_cell, q));
+            return OSM::get_column(_d[q], id_cell);
+        }
+        else
+            return Column_chain(0) ;
+    }
+
+    /**
+     * \brief Returns the co-boundary of the cell `id_cell` in dimension `q`.
+     *
+     * Returns a row-major chain containing the co-boundary of the cell `id_cell` in dimension `q` (so actually a row of the boundary matrix).
+     *
+     * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
+     *
+     * \param id_cell %Index of the cell.
+     * \param q Dimension of the cell.
+     *
+     * \return The row-major chain containing the co-boundary of the cell id_cell in dimension `q`. If `q` is not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty row chain.
+     */
+    Row_chain cod(size_t id_cell, int q) const {
+        if ((q < _dim) && (q >= 0)) {
+            CGAL_precondition(is_valid_cell(id_cell, q));
+
+            return OSM::get_row(_d[q+1], id_cell);
+        }
+        else
+            return Row_chain(0) ;
+    }
+
+    /**
+     * \brief Returns the dimension of the complex.
+     *
+     * Returns the dimension of the simplicial complex (i.e. largest dimension of cells).
+     *
+     * \return The dimension of the complex.
+     */
+    int dimension() const { return _dim ;}
+
+    /**
+     * \brief Returns the number of cells in a given dimension.
+     *
+     * \param q Dimension along which the number of cells is returned.
+     *
+     * \return Number of cells in dimension `q`. If `q` is not in the interval `[0,d]` with `d` the dimension of the complex, the function returns an empty column chain.
+     */
+    size_t number_of_cells(int q) const {
+        if ((q >=0) && (q<=_dim))
+            return _nb_cells[q] ;
+        else
+            return 0 ;
+    }
+
+    /** \brief Returns the simplex of index i in dimension q. */
+    const Simplex& index_to_cell (size_t i, int q) const {
+        CGAL_precondition(is_valid_cell(i,q));
+
+        return _ind2simp.at(q).at(i);
+    }
+
+    /** \brief Returns the index of a given simplex. */
+    size_t cell_to_index (const Simplex& simplex) const {
+        const int q(simplex.dimension());
+
+        CGAL_precondition(is_valid_simplex(simplex, q));
+
+        return _simp2ind.at(q).at(simplex);
+    }
+
+    /**
+     * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
+     *
+     * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
+     *
+     * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
+     */
+    const std::vector<Column_matrix> & boundary_matrices() const {
+        return _d ;
+    }
+
+    /**
+     * \brief Returns a copy of the dim-th boundary matrix (i.e.\ column-major matrix of \f$\partial_q\f$).
+     *
+     * It is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
+     *
+     * \param q Dimension of the boundary matrix (i.e. columns will contain the boundary of dimension q cells).
+     *
+     * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
+     */
+    const Column_matrix & boundary_matrix(int q) const {
+        return _d.at(q) ;
+    }
+
+    /**
+     * \brief Returns 0-simplex indices included in the cell with index id_cell of dimension q.
+     *
+     * Returns the 0-simplex indices included in the cell with index id_cell of dimension q.
+     *
+     * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
+     *  id0: 3, id1 : 2, id2: 1
+     * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
+     *
+     * \param id_cell %Index of the cell.
+     * \param q Dimension of the cell.
+     *
+     * \return A vector of 0-simplex indices.
+     */
+    std::vector<size_t> bottom_faces(size_t id_cell, int q) const {
+        CGAL_precondition(is_valid_cell(id_cell, q));
+
+        std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).vertices()) ;
+        std::vector<size_t> res ;
+        // For each vertex in verts, compute the corresponding dimension 0 cell
+        for (size_t vert_id : verts) {
+            const size_t i(_simp2ind.at(0).at(Simplex(std::vector<size_t>({vert_id})))) ;
+            res.push_back(i) ;
+        }
+        return res ;
+    }
+
+    /*!
+     * \brief Returns the cofaces of a given chain in dimension `q`.
+     *
+     * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
+     */
+    template <typename CoefficientT, int ChainTypeF>
+    Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const {
+        typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
+        // Compute the cofaces
+        if (q < dimension()) {
+            Column_chain fstar_cofaces(number_of_cells(q+1)) ;
+            for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it) {
+                // Set the cofaces of it->first in dimension dim+1
+                Row_chain cofaces(cod(it->first,q)) ;
+                for (typename Row_chain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
+                    fstar_cofaces.set_coefficient(it2->first, 1) ;
+            }
+            return fstar_cofaces ;
+        }
+        else
+            return Column_chain(0) ;
+    }
+
+protected:
+    /*
+     * \brief Prints informations on the complex.
+     *
+     * Displays the number of cells in each dimension and the boundary matrix in each dimension.
+     */
+    std::ostream& print_complex(std::ostream& out = std::cout) const;
+public:
+    /**
+     * \brief Prints informations on the complex.
+     *
+     * Displays the number of cells in each dimension and the boundary matrix in each dimension.
+     */
+    template <typename _CT>
+    friend std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<_CT>& complex);
+
+    /** \brief Get (unique) object Id.
+     * For comparison of constant references to the complex.
+     */
+    size_t get_id () const { return _complex_id; }
+
+protected:
+    /* \brief Dimension of the complex */
+    int _dim;
+    /* \brief Vector of simplices along each dimension: _ind2simp.at(q) contains the vector of all simplices of dimension q */
+    std::vector<std::vector<Simplex> > _ind2simp ;
+    /* \brief Vector of maps associating indices to simplices in each dimension: _simp2ind.at(q) maps q-simplices to their index in _ind2simp  */
+    std::vector<std::map<Simplex, size_t> > _simp2ind ;
+    /* \brief Vector of number of cells in each dimension */
+    std::vector<size_t> _nb_cells ;
+    /* \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
+    mutable std::vector<Column_matrix>  _d;  // Boundary matrices
+
+    // Protected methods
+
+    /*
+     * \brief Method filling the matrix _d.at(q), i.e. computing the boundaries of cells of dimension q.
+     *
+     * Compute the boundary with the standard simplicial complex definition:
+     * \f[\partial (\{v_0,\ldots,v_q\}) = \sum_{i=0}^q (-1)^q \{v_0,\ldots, \hat{v_i},\ldots,v_q\}\f]
+     *
+     * \param q Dimension considered for computation.
+     */
+    void  compute_d(int q) const;
+
+    /*
+     * \brief Method inserting a simplex (and its faces if necessary) into the abstract simplicial complex.
+     *
+     * The method (recursively) inserts the simplex into `_ind2simp` and `_simp2ind` and its faces. If the simplex is already present, the method does nothing.
+     *
+     * \warning `insert_simplex()` does not update the boundary matrix.
+     *
+     * \param tau The simplex inserted.
+     */
+    void insert_simplex(const Simplex& tau);
+
+private:
+    /* \brief Static counter for objects ids.
+     * Initialized to 0.
+     */
+    static size_t _id_generator ; // Initialisation 0
+    /* \brief Unique object id (for comparison of constant references to the complex). */
+    const size_t _complex_id ;
+};
+
+// Initialization of _id_generator
+template <typename CoefficientRing>
+size_t Abstract_simplicial_chain_complex<CoefficientRing>::_id_generator(0);
+
+//constructors
+template<typename CoefficientRing>
+Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(int q) : _dim(q), _complex_id(_id_generator++) {
+    // Initialize vectors of Simplices and cell counts
+    _ind2simp.resize(_dim + 1);
+    _simp2ind.resize(_dim + 1);
+    _nb_cells.resize(_dim + 1, 0);
+    // Initialize boundary matrix
+    _d.resize(_dim+1);
+}
+
+template<typename CoefficientRing>
+template <typename Traits>
+Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : _complex_id(_id_generator++) {
+    // Initialize attributes
+
+    _dim = std::abs(mesh.dimension());
+
+    // Initialize vectors of simplices and cell counts
+    _ind2simp.resize(_dim + 1);
+    _simp2ind.resize(_dim + 1);
+    _nb_cells.resize(_dim + 1, 0);
+
+    // Iterate through the mesh cells and add them to the complex
+    for (const auto& cell : mesh.cells()) {
+        insert_simplex(cell) ;
+    }
+
+    _d.resize(_dim+1);
+    for (int dim = 0; dim <= _dim; ++dim) {
+        compute_d(dim);
+    }
+}
+
+// Recursive insertion method
+template<typename CoefficientRing>
+void Abstract_simplicial_chain_complex<CoefficientRing>::insert_simplex(const Simplex& tau) {
+    int q = tau.dimension();
+
+    // If the simplex is empty
+    if (q == -1) return;
+
+    CGAL_precondition(is_valid_cell_dimension(q));
+
+    if (_simp2ind[q].find(tau) == _simp2ind[q].end()) {
+        size_t i = _ind2simp[q].size();
+        _ind2simp[q].push_back(tau);
+        _simp2ind[q][tau] = i;
+        _nb_cells[q]++;
+
+        std::vector<Simplex> bord = tau.boundary();
+        for (const auto& sigma : bord) {
+            insert_simplex(sigma);
+        }
+    }
+}
+
+// compute _d boundary matrix
+template<typename CoefficientRing>
+void Abstract_simplicial_chain_complex<CoefficientRing>::compute_d(int dim) const {
+    size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
+    _d[dim] = Column_matrix(nb_lignes, _nb_cells[dim]);
+
+    // Iterate through the cells of dimension dim
+    if (dim>0) {
+        for (size_t i = 0; i < _nb_cells[dim]; ++i) {
+            // Boundary of the i-th simplex of dimension dim
+            const Simplex& s = _ind2simp[dim][i];
+            std::vector<Simplex> bord = s.boundary();
+
+            // Create a chain with the correct size
+            Column_chain chain(nb_lignes);
+
+            // For each element of the boundary
+            for (size_t j = 0; j < bord.size(); ++j) {
+                auto it = _simp2ind[dim - 1].find(bord[j]); // Find the index of Simplex j
+                if (it != _simp2ind[dim - 1].end()) { // If Simplex j is found
+                    size_t ind_j = it->second; // Retrieve the index of Simplex j
+                    chain.set_coefficient(ind_j, (j % 2 == 0) ? 1 : -1);
+                }
+                else
+                    throw "compute_d boundary simplex not found!";
+            }
+
+            // Insert the chain into the corresponding column of the delta matrix
+            OSM::set_column(_d[dim], i, chain);
+        }
+    }
+}
+
+// Method to display the complex's information
+template<typename CoefficientRing>
+std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(std::ostream& out_stream) const {
+    out_stream << "Complex dimension: " << _dim << std::endl;
+
+    // Total number of cells
+    size_t nb_total_cells = 0;
+    for (size_t i = 0; i <= _dim; ++i) {
+        nb_total_cells += _nb_cells[i];
+    }
+    out_stream << "Total number of cells: " << nb_total_cells << std::endl;
+
+    // Cells per dimension
+    for (int q = 0; q <= _dim; ++q) {
+        out_stream << "--- dimension " << q << std::endl;
+        out_stream << number_of_cells(q) << " cells" << std::endl ;
+        for (size_t j = 0; j < _nb_cells.at(q); ++j) {
+            Simplex s(this->_ind2simp.at(q).at(j));
+            out_stream << j << " -> " << s << " -> " << _simp2ind.at(q).at(s) << std::endl;
+        }
+    }
+
+    // Boundary matrices
+    out_stream << "---------------------------" << std::endl << "Boundary matrices" << std::endl;
+    for (int q = 1; q <= _dim; ++q)
+        out_stream << "_d[" << q << "] : " << _d[q].dimensions().first << "x" << _d[q].dimensions().second << std::endl <<  _d[q] << std::endl;
+    return out_stream ;
+}
+
+template <typename CoefficientRing>
+std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientRing>& complex) {
+    return complex.print_complex(out);
+}
+
+} /* end namespace Homological_discrete_vector_field */
+} /* end namespace CGAL */
+
+#endif // CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H

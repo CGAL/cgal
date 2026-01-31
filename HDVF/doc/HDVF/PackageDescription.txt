@@ -1,0 +1,47 @@
+// PRETTY HDVF should equal the project title in Doxyfile.in
+
+/// \defgroup PkgHDVFRef Homological Discrete Vector Fields Reference
+/// \defgroup PkgHDVFConcepts Concepts
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFAlgorithmClasses Sparse Matrices and Vectors
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFTraitsClasses Traits Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFIOClasses IO Classes
+/// \ingroup PkgHDVFRef
+
+
+/*!
+\addtogroup PkgHDVFRef
+\cgalPkgDescriptionBegin{Homological Discrete Vector Fields, PkgHDVF}
+\cgalPkgPicture{HDVF-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Alexandra Bac}
+\cgalPkgDesc{
+The package provides an implementation of Homological Discrete %Vector Fields, a framework computing homology and cohomology information (Betti numbers, generators, annotation functions...) for discrete objects (including persistent homology, Alexander duality isomorphism and reduced homology).}
+\cgalPkgManuals{Chapter_HDVF,PkgHDVFRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{cgal:b-hdvf}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `AbstractChainComplex`
+
+\cgalCRPSection{Classes}
+- `CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex`
+
+
+*/
