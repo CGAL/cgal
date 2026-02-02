@@ -62,6 +62,10 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
 
     file(GLOB list CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/../../*/${subdir_name}/*")
 
+  elseif(CGAL_SOURCE_DIR AND EXISTS "${CGAL_SOURCE_DIR}/${subdir_name}")
+
+    file(GLOB list CONFIGURE_DEPENDS "${CGAL_SOURCE_DIR}/${subdir_name}/*")
+
   else()
 
     file(GLOB list CONFIGURE_DEPENDS "*")
