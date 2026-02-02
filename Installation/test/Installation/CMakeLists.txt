@@ -188,7 +188,7 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
   if(arg_FIXTURES_REQUIRED)
     set_property(TEST "config___${test_name}" "test_____${test_name}"
                 APPEND PROPERTY FIXTURES_REQUIRED "${arg_FIXTURES_REQUIRED}")
-    message(NOTICE "Tests 'config___${test_name}' and 'test_____${test_name}' require fixtures: ${arg_FIXTURES_REQUIRED}")
+    message(DEBUG "Tests 'config___${test_name}' and 'test_____${test_name}' require fixtures: ${arg_FIXTURES_REQUIRED}")
   endif()
 
   set_property(TEST "cleanup__${test_name}"
