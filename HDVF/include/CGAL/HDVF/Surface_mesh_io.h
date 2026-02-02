@@ -66,15 +66,15 @@ public:
     Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io<Traits>(2) {
         typedef typename Traits::Point Point;
 
-        this->nvertices = num_vertices(mesh);
-        this->ncells = num_vertices(mesh) + num_edges(mesh) + num_faces(mesh) ;
+        this->_nvertices = num_vertices(mesh);
+        this->_ncells = num_vertices(mesh) + num_edges(mesh) + num_faces(mesh) ;
         _he_index_to_io_cell.resize(3);
 
         auto vpm = get(CGAL::vertex_point, mesh);
         // Load nodes
         for (vertex_descriptor v : vertices(mesh)) {
             Point p(get(vpm,v));
-            this->nodes.push_back(p);
+            this->_nodes.push_back(p);
         }
         // Load vertices
         size_t tmp_index(0);
@@ -82,7 +82,7 @@ public:
             // Corresponding Io_cell_type
             Io_cell_type tmp_io_cell({tmp_index});
             // Add to cells
-            this->cells.push_back(tmp_io_cell);
+            this->_cells.push_back(tmp_io_cell);
             // Associated he
             halfedge_descriptor vertex_he(halfedge(v,mesh));
             // Store the permutation
@@ -118,7 +118,7 @@ public:
             }
             std::sort(tmp_cell.begin(), tmp_cell.end());
             // Add to cells
-            this->cells.push_back(tmp_cell);
+            this->_cells.push_back(tmp_cell);
             // Set the permutation
             _io_cell_to_he_index[tmp_cell] = edge_he;
             _he_index_to_io_cell.at(1)[edge_he] = tmp_cell;
@@ -145,7 +145,7 @@ public:
             assert(cpt_verts == 3);
             std::sort(tmp_cell.begin(), tmp_cell.end());
             // Add to cells
-            this->cells.push_back(tmp_cell);
+            this->_cells.push_back(tmp_cell);
             // Set the permutation
             _io_cell_to_he_index[tmp_cell] = face_he;
             _he_index_to_io_cell.at(2)[face_he] = tmp_cell;

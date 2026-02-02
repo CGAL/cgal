@@ -31,7 +31,7 @@ using HDVF_type = HDVF::Hdvf<Complex> ;
 int main(int argc, char **argv) {
     std::string filename;
     if (argc > 2) {
-        std::cerr << "usage: test_hdvf_core [off_file]" << std::endl;
+        std::cerr << "usage: test_hdvf [off_file]" << std::endl;
     }
     else if (argc == 1) filename = "data/three_triangles.off" ;
     else filename = argv[1] ;

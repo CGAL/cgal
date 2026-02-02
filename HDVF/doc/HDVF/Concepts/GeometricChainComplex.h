@@ -21,7 +21,7 @@ public:
 /// @{
 
 /*!
- Type of coordinates (the vector size is free, hence coordinates can be any dimension).
+ Type of points.
  */
 typedef unspecified_type Point ;
 /// @}

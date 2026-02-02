@@ -56,7 +56,7 @@ public:
     typedef int Storage_format;
 
     /*!
-     * \brief A data structure storing indices of non empty chains.
+     * \brief A range of indices of non empty chains.
      */
     typedef unspecified_type Non_zero_chain_indices;
 
@@ -187,7 +187,7 @@ public:
     /**
      * \brief Adds a matrix and assign.
      *
-     * Adds each coefficient of the matrix together and stores the result in `this`.
+     * Adds each coefficient of the matrix stores the result in `this`.
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     friend SparseMatrix& operator+=(SparseMatrix &matrix, const SparseMatrix &other);
@@ -204,15 +204,15 @@ public:
     /**
      * \brief Subtracts a matrix and assign.
      *
-     * Subtracts each coefficient of the matrix together and stores the result in `matrix`.
+     * Subtracts each coefficient of the matrix and stores the result in `matrix`.
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     SparseMatrix& operator-=(SparseMatrix &matrix, const SparseMatrix &other);
 
     /**
-     * \brief Subtracts two matrices together.
+     * \brief Subtracts two matrices from each other.
      *
-     * Subtracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
+     * Subtracts each coefficient of the matrices from each other and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     friend SparseMatrix operator-(const SparseMatrix &first, const SparseMatrix &second);
@@ -248,7 +248,7 @@ public:
     /**
      * \brief Multiplies a matrix and assign.
      *
-     * Multiply each coefficient of the matrix together and stores the result in `matrix`.
+     * Computes the product with a matrix and stores the result in `matrix`.
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     friend SparseMatrix& operator*=(SparseMatrix &matrix, const SparseMatrix &other);
