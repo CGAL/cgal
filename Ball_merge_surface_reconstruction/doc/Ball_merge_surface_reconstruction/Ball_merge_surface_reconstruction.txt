@@ -8,18 +8,26 @@ namespace CGAL {
 \author Amal Dev Parakkat, Stefan Ohrhallinger, Elmar Eisemann, Pooran Memari
 
 
-This \cgal component implements a surface reconstruction method that takes an unoriented set of 3D points as input and computes a piecewise linear approximation of the sampled surface. In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points) into interior and exterior and returns the interface between them.
+This \cgal package implements a surface reconstruction method that takes an unoriented set of 3D points as input
+and computes a piecewise linear approximation of the sampled surface.
+In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points)
+into interior and exterior and returns the interface between them.
 
-The detailed description of the algorithm can be seen in \cgalCite{parakkat2024ballmerge}.
+The detailed description of the algorithm can be found in \cgalCite{parakkat2024ballmerge}.
+\cgal only provides the global variant the algorithm as described in the article.
 
 
 \section secBMSRdefinitions Definitions
 
-The method is built upon the fact that whenever a discrete set of sample points approximates a continuous surface, the Voronoi balls (interior/exterior) intersect along the boundary with a ratio inversely proportional to the sampling density (similar to the observation of Amenta et al. \cgalCite{ack-pcubm-01}). Based on this, we define an \em intersection \em ratio  between adjacent Voronoi balls as follows:
+The method is built upon the fact that whenever a discrete set of sample points approximates a continuous surface,
+the Voronoi balls (interior/exterior) intersect along the boundary with a ratio inversely proportional to the sampling density
+(similar to the observation of Amenta et al. \cgalCite{ack-pcubm-01}).
+Based on this, we define an \em intersection \em ratio  between adjacent Voronoi balls as follows:
 
 \f$ ir(B_0,B_1) = max((r_0+r_1-d)/r_0,(r_0+r_1-d)/r_1) \f$
 
-Where \f$ B_0 \f$ and \f$ B_1 \f$ are two adjacent Voronoi balls with radius \f$ r_0 \f$ and \f$ r_1 \f$ respectively, and \f$ d \f$ is the distance between it's circumcenters.
+Where \f$ B_0 \f$ and \f$ B_1 \f$ are two adjacent Voronoi balls with radius \f$ r_0 \f$ and \f$ r_1 \f$ respectively,
+and \f$ d \f$ is the distance between it's circumcenters.
 
 Using this ratio, we can say that if the intersection ratio between two adjacent Voronoi balls is small,
 they likely correspond to a pair of interior and exterior balls sharing a thin overlapping region along the underlying surface
@@ -31,8 +39,6 @@ while \f$ \mathrm{BallMerge}(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains 
 \cgalFigureBegin{figBMSRillus,BMSRIllustration.png}
 Top: The interior (red) and exterior (green) medial balls of a point set with decreasing point density from l.t.r. Bottom: Corresponding \f$ \delta \f$-merged components on Delaunay triangulation.
 \cgalFigureEnd
-
-\cgal provides the global variant of the ball merge algorithm as described in \cgalCite{parakkat2024ballmerge}.
 
 `ball_merge_surface_reconstruction()`: Given a threshold \f$ \delta \f$, two Delaunay simplices are called \f$ \delta\f$-merged either
 if their corresponding Voronoi balls are adjacent with an intersection ratio \f$ > \delta \f$ or if there exists another Delaunay simplex,
@@ -50,7 +56,7 @@ If there are some significant gaps in the data, the internal flooding algorithm 
 
 The output is of the form of two triangle soups. It features the two largest components extracted from the flooding algorithm.
 One of them is always a manifold surface mesh, while the second might feature some non-manifold edges.
-The function `is_polygon_soup_a_polygon_mesh()` can be used to test them.
+The function `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()` can be used to test them.
 
 \subsection secBMSRPar Parameter Settings
 
