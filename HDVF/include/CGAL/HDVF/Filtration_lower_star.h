@@ -104,10 +104,6 @@ public:
     typedef ChainComplex Chain_complex;
     /*!
      * \brief Copy constructor.
-     *
-     * Builds a filtration by copy from another.
-     *
-     * \param f An initial lower star filtration.
      */
     Filtration_lower_star(const Filtration_lower_star& f) : Filtration_parent(f) {}
 

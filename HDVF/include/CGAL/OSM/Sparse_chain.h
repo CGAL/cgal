@@ -107,28 +107,18 @@ public:
 
 
     /**
-     * \brief Creates new SparseChain by copy.
-     *
-     * Copy constructor, initialize a sparse chain from an existing sparse chain.
+     * \brief Copy constructor.
      *
      * \pre The chains have the same `CoefficientRing` and `StorageFormat`.
-
-     * \param otherToCopy The chain to copy.
      */
     Sparse_chain(const Sparse_chain &otherToCopy)
        : _upperBound(otherToCopy._upperBound),  _chainData(otherToCopy._chainData)
     {}
 
     /**
-     * \brief Assigns to other chain.
+     * \brief Assignment.
      *
-     * Assign to other chain coefficient-wise, equivalent to copying it.
-     *
-     * \pre The chains have the same coefficent type.
-     *
-     * \warning Chains must have the same `CoefficientRing`.
-     *
-     * \param otherToCopy The chain we want to copy.
+     * \pre Chains must have the same `CoefficientRing`.
      */
     Sparse_chain& operator=(const Sparse_chain &otherToCopy) {
         _upperBound = otherToCopy._upperBound;

@@ -140,11 +140,7 @@ public:
     bool is_valid_cell(size_t i) const { return i < _P[_dim]; }
 
     /**
-     * \brief Assignment operator for cubical chain complexes.
-     *
-     * Stores a copy of an cubical chain complex in *this.
-     *
-     * \param complex The cubical chain complex which will be copied.
+     * \brief Assignment
      */
     Cubical_chain_complex& operator=(const Cubical_chain_complex& complex) {
         _dim = complex._dim;

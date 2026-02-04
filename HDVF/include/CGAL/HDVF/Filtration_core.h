@@ -131,11 +131,7 @@ public:
     }
 
     /**
-     * \brief Constructor by copy.
-     *
-     * Builds a `Filtration_core` by copy from another.
-     *
-     * \param f An initial `Filtration_core`.
+     * \brief Copy constructor.
      */
     Filtration_core(const Filtration_core& f) : _K(f._K), _filtration(f._filtration), _cell_to_t(f._cell_to_t) {}
 
@@ -189,13 +185,13 @@ public:
 
         /*!
          * \brief Equality check.
-         * \returns True if the indices are equal.
+         * \returns `true` if the indices are equal.
          */
         friend bool operator== (const iterator& a, const iterator& b)  { return a._i == b._i; };
 
         /*!
          * \brief Inequality check.
-         * \returns True if the indices are different.
+         * \returns `true` if the indices are different.
          */
         friend bool operator!= (const iterator& a, const iterator& b)  { return a._i != b._i; };
 

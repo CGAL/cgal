@@ -86,11 +86,7 @@ public:
     inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) != _simp2ind.at(q).end(); }
 
     /**
-     * \brief Assignment operator for abstract simplicial chain complexes.
-     *
-     * Stores a copy of an abstract simplicial chain complex in `*this`.
-     *
-     * \param complex The abstract simplicial chain complex which will be copied.
+     * \brief Assignment
      */
     Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex) {
         _dim = complex._dim;

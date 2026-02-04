@@ -102,8 +102,6 @@ public:
     using Row_matrix = typename Base::Row_matrix;
 
     /**
-     * \brief Default constructor.
-     *
      * Builds an "empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
      * \param K A chain complex (a model of `AbstractChainComplex`)
@@ -113,16 +111,12 @@ public:
     Hdvf(const Chain_complex& K, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) ;
 
     /*
-     * \brief Constructor by copy.
-     *
-     * Builds a HDVF by copy from another, including options.
-     *
-     * \param hdvf An initial HDVF.
+     * \brief Copy constructor.
      */
     Hdvf(const Hdvf& hdvf) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
 
     /*
-     * \brief HDVF destructor. */
+     * \brief Destructor. */
     ~Hdvf() { }
 
     // findPair functions for M
@@ -543,7 +537,7 @@ protected:
      * If the annotation has a single non zero coefficient for a given critical cell \f$\sigma\f$, then the cycle belongs to the class of the homology generator \f$g(\sigma)\f$.
      *
      * \warning Will raise an error is the chain provided is not a cycle.
-     * \warning The HDVF must be perfect.
+     * \pre The `HDVF` must be perfect.
      *
      * \param chain The cycle to annotate in the homology basis.
      * \param dim Dimension of the cycle.
