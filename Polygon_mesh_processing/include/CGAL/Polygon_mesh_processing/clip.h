@@ -786,7 +786,7 @@ struct Visitor_wrapper_for_triangulate_face
   * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
+  * \attention In the current implementation, `clipper` will be modified (refined with the intersection with `tm`) unless the named parameter `do_not_modify` is set to `true`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(clipper)` \endlink
@@ -969,12 +969,19 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
-  *    \cgalParamNBegin{do_not_triangulate_faces}
-  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
-  *                            Always `true` if `pm` is not a triangle mesh.}
-  *      \cgalParamType{Boolean}
-  *      \cgalParamDefault{`false`}
-  *    \cgalParamNEnd
+  *   \cgalParamNBegin{do_not_triangulate_faces}
+  *     \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                           Always `true` if `pm` is not a triangle mesh.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
   *
@@ -994,7 +1001,7 @@ bool clip(PolygonMesh& pm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference     ;
+  using parameters::get_parameter_reference;
 
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
@@ -1049,7 +1056,7 @@ bool clip(PolygonMesh& pm,
     clip_volume=false;
 
   if (clip_volume && !is_closed(pm)) clip_volume=false;
-  if (clip_volume && !use_compact_clipper) use_compact_clipper=true;
+  if (clip_volume && use_compact_clipper) use_compact_clipper=false;
 
   CGAL_precondition(!clip_volume || !triangulate || does_bound_a_volume(pm));
 
@@ -1118,6 +1125,13 @@ bool clip(PolygonMesh& pm,
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
@@ -1154,6 +1168,13 @@ bool clip(PolygonMesh& pm,
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -1344,6 +1365,14 @@ void split(TriangleMesh& tm,
   *      \cgalParamType{Boolean}
   *      \cgalParamDefault{`false`}
   *    \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @see `clip()`
@@ -1465,6 +1494,13 @@ void split(PolygonMesh& pm,
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd

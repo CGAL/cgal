@@ -76,8 +76,9 @@ create_single_source_cgal_program("issue_8730.cpp")
 create_single_source_cgal_program("issue_7164.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("fairing_test.cpp")
   target_link_libraries(fairing_test PRIVATE CGAL::Eigen3_support)
@@ -143,7 +144,7 @@ else()
   message(STATUS "NOTICE: Tests are not using Ceres.")
 endif()
 
-if(CGAL_ENABLE_TESTING)
+if(CGAL_ENABLE_TESTING AND TARGET CGAL::Eigen3_support)
   set_tests_properties(
     "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
     "execution   of  triangulate_hole_Polyhedron_3_test"

@@ -26,34 +26,43 @@
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/functional.h>
-#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/number_type_config.h>
+#include <CGAL/tags.h>
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include <optional>
 #include <algorithm>
-#include <iomanip> // std::setprecision
-#include <iostream> // std::cerr/cout
+#include <cstddef>
+#include <limits>
 #include <map>
-#include <set>
+#include <optional>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
 # define CGAL_PROFILE
 # include <CGAL/Profile_counter.h>
+# include <iostream> // std::cerr/cout
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
+# include <CGAL/Mesh_3/Worksharing_data_structures.h>
 # include <tbb/task_group.h>
+# include <tbb/concurrent_vector.h>
 #endif
 
 
@@ -61,6 +70,9 @@
   #define CGAL_MESH_3_EXUDER_VERBOSE
 #endif
 
+#if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(CGAL_MESH_3_DEBUG_SLIVERS_EXUDER)
+# include <iostream>
+#endif
 
 namespace CGAL {
 
@@ -378,7 +390,7 @@ private: // Types
 
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
    *  of Facet (viewed from cells inside the star), ordered by the
-   *  critial_radius of the point with the cell that lies on the facet, at
+   *  critical_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
   typedef CGAL::Double_map<Facet, FT>                       Pre_star;
 

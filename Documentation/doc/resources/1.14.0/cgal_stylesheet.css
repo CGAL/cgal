@@ -109,11 +109,6 @@ dl {
   padding-right: 20px;
 }
 
-.tparams .paramname {
-  font-weight: bold;
-  vertical-align: top;
-}
-
 h1 {
   font-size: 180%;
 }
@@ -167,9 +162,6 @@ h2 {
   margin-right: 2px;
 }
 
-h1.groupheader {
-  font-size: 150%;
-}
 
 /* enable this to make sections more alike */
 /* h2.groupheader { */
@@ -206,6 +198,14 @@ a.el {
   display: inline-block;
   padding: 5px;
   vertical-align: middle;
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .image > img {
+    border-radius: 1ex;
+    background: white;
+  }
 }
 
 .PkgAuthors {
@@ -267,9 +267,6 @@ span.footnoteContent div {
 
 /* footnote support end */
 
-dl {
-  padding: 0 0 0 0;
-}
 
 dl.section,
 dl.hasModels,

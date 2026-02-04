@@ -550,14 +550,14 @@ bool orient_polygon_soup(PointRange& points,
     Default_orientation_visitor//default
   > ::type Visitor;
   Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
-  std::size_t inital_nb_pts = points.size();
+  std::size_t initial_nb_pts = points.size();
   internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor>
       orienter(points, polygons, visitor);
   orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();
 
-  return inital_nb_pts==points.size();
+  return initial_nb_pts==points.size();
 }
 
 } }//end namespace CGAL::Polygon_mesh_processing

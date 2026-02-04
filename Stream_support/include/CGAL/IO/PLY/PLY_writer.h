@@ -12,6 +12,7 @@
 #define CGAL_IO_PLY_PLY_WRITER_H
 
 #include <CGAL/IO/io.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 namespace IO {
@@ -292,7 +293,7 @@ public:
     if(get_mode(stream) == CGAL::IO::ASCII)
     {
       stream << vec.size();
-      for(const ElementType& v : vec)
+      for(const auto& v : vec)
       {
         stream << " " << v;
       }
@@ -301,7 +302,7 @@ public:
     {
       unsigned char size = (unsigned char)(vec.size());
       stream.write(reinterpret_cast<char*>(&size), sizeof(size));
-      for(const ElementType& v : vec)
+      for(const auto& v : vec)
       {
         ElementType t = ElementType(v);
         stream.write(reinterpret_cast<char*>(&t), sizeof(t));

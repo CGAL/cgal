@@ -53,7 +53,7 @@ int main(int argc, char** argv)
   std::cout << std::setprecision(17) <<
    "\"Hausdorff_distance_output_to_input_(divide_by_bbox_diag)\": \"" << PMP::max_distance_to_triangle_mesh<CGAL::Parallel_if_available_tag>(input_points, sm) / diag_length << "\",\n" <<
    "\"Closed_output\": \"" << (CGAL::is_closed(sm)?"True":"False") << "\",\n" <<
-   "\"Ouput_bound_a_volume\": \"" << (PMP::does_bound_a_volume(sm)?"True":"False") << "\"\n}"
+   "\"Output_bound_a_volume\": \"" << (PMP::does_bound_a_volume(sm)?"True":"False") << "\"\n}"
   << std::endl;
 
   return 0;

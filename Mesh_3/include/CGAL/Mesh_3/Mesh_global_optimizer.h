@@ -304,7 +304,7 @@ public:
   /**
    * Launch optimization process
    *
-   * @param nb_interations maximum number of iterations
+   * @param nb_iterations maximum number of iterations
    */
   Mesh_optimization_return_code operator()(int nb_iterations,
                                            Visitor v = Visitor());

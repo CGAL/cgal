@@ -1,4 +1,3 @@
-
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
@@ -8,6 +7,8 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <boost/container/small_vector.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -166,6 +167,15 @@ void test(const char* fname, std::size_t nb_vertices_after_autorefine, std::size
 //  CGAL::IO::write_polygon_soup("/tmp/debug.off", points, triangles);
 }
 
+template <class Triangle, class Tag>
+void test_triangle_container(Tag tag)
+{
+  std::vector<K::Point_3> points;
+  std::vector< Triangle > triangles;
+  CGAL::IO::read_polygon_soup(CGAL::data_file_path("meshes/elephant.off"), points, triangles);
+  PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::concurrency_tag(tag));
+}
+
 int main(int argc, const char** argv)
 {
   // file nb_polylines total_nb_points nb_vertices_after_autorefine all_fixed nb_vertices_after_fix triple_intersection
@@ -174,8 +184,14 @@ int main(int argc, const char** argv)
     test_coref_based(argv[1+9*i], atoi(argv[1+9*i+1]), atoi(argv[1+9*i+2]),
                      atoi(argv[1+9*i+3]), atoi(argv[1+9*i+4])==0?false:true, atoi(argv[1+9*i+5]), atoi(argv[1+9*i+6])==0?false:true);
     test(argv[1+9*i], atoi(argv[1+9*i+7]), atoi(argv[1+9*i+8]), CGAL::Sequential_tag());
+    test_triangle_container<std::vector<std::size_t> >(CGAL::Sequential_tag());
+    test_triangle_container<std::array<std::size_t,3>>(CGAL::Sequential_tag());
+    test_triangle_container<boost::container::small_vector<std::size_t, 3>>(CGAL::Sequential_tag());
 #ifdef CGAL_LINKED_WITH_TBB
     test(argv[1+9*i], atoi(argv[1+9*i+7]), atoi(argv[1+9*i+8]), CGAL::Parallel_tag());
+    test_triangle_container<std::vector<std::size_t> >(CGAL::Parallel_tag());
+    test_triangle_container<std::array<std::size_t,3>>(CGAL::Parallel_tag());
+    test_triangle_container<boost::container::small_vector<std::size_t, 3>>(CGAL::Parallel_tag());
 #endif
   }
 }

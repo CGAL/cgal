@@ -59,7 +59,7 @@ The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
-The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
+The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time a homotopy test is called.
 
 Each combinatorial curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object in this class behaves as a list. This list is initially empty and the halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides four ways for extending a nonempty path.
 - Simply push the next halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function. One can also specify if this halfedge should have its direction flipped so as to satisfy the condition of a `Path_on_surface` (see the description of \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()" below) This can be done even when the path is empty,
@@ -121,7 +121,7 @@ Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the 
 
 - \ref Surface_mesh_topology::Curves_on_surface_topology::are_homotopic_with_fixed_endpoints "are_homotopic_with_fixed_endpoints"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
 
-A common first step in the homotopy test algorithms is to simplify the input combinatorial surface. This preprocessing step is done once and for all for a given mesh, the first time an homotopy test is called. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_topology::Curves_on_surface_topology`. It has 2 vertices and \f$2g\f$ quadrilaterals where \f$g\f$ is the genus of
+A common first step in the homotopy test algorithms is to simplify the input combinatorial surface. This preprocessing step is done once and for all for a given mesh, the first time a homotopy test is called. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_topology::Curves_on_surface_topology`. It has 2 vertices and \f$2g\f$ quadrilaterals where \f$g\f$ is the genus of
 the input surface. This is otherwise independent of the size of input surface,
 \note The user must not modify the input surface as long as homotopy tests are performed with this `Surface_mesh_topology::Curves_on_surface_topology`.
 
@@ -188,7 +188,7 @@ The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU
 
 \subsection SMTopology_bench1 Combinatorial Surface Topology Computation Time
 
-The first time an homotopy test is called, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
+The first time a homotopy test is called, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
 
 For this benchmark, we computed 38 `Surface_mesh_topology::Curves_on_surface_topology` objects for different input surfaces with different number of darts (between 8,000 and 30,000,000). We show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface.
 

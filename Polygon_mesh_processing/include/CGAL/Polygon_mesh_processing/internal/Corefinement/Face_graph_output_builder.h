@@ -2071,7 +2071,7 @@ public:
     std::cout << "\n";
 #endif
 
-    //backup an halfedge per polyline
+    //backup a halfedge per polyline
     std::vector <halfedge_descriptor> tm1_polylines, tm2_polylines;
     std::vector<std::size_t> polyline_lengths;
 

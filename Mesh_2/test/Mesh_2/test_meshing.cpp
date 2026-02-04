@@ -59,7 +59,7 @@ struct Tester2 {
     std::ifstream poly_file("fish-and-rectangle.poly");
     CGAL::IO::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
     assert(cdt.is_valid());
-    const size_type inititial_number_of_vertices = cdt.number_of_vertices();
+    const size_type initial_number_of_vertices = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of seeds: " << seeds.size() << "\n\n";
 
@@ -159,7 +159,7 @@ struct Tester2 {
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of steps: " << step << "\n\n";
 
-    assert( step + inititial_number_of_vertices >= number_of_vertices3 );
+    assert( step + initial_number_of_vertices >= number_of_vertices3 );
     assert( number_of_vertices3 == number_of_vertices2 );
 
     cdt = cdt2;
@@ -179,7 +179,7 @@ struct Tester2 {
               << "\nNumber of steps: " << step << "\n\n";
 
     assert( number_of_vertices4 == number_of_vertices2 );
-    assert( number_of_vertices4 == step + inititial_number_of_vertices );
+    assert( number_of_vertices4 == step + initial_number_of_vertices );
 
     std::cerr << "Test the undocumented function:"
               << "  refine_Delaunay_mesh_2_without_edge_refinement\n"

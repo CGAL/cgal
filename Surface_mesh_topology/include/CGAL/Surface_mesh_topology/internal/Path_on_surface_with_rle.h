@@ -447,7 +447,7 @@ public:
   }
 
   /// Add the given dart at the end of this path.
-  /// @pre can_be_pushed(dh)
+  /// @pre \link can_be_pushed `can_be_pushed(dh)`\endlink
   void push_back(Dart_const_descriptor dh, bool update_isclosed=true)
   {
     CGAL_assertion(dh!=Map::null_descriptor);
@@ -1463,7 +1463,7 @@ public:
     it1=merge_modified_flats_when_possible(modified_flats);
   }
 
-  /// Right push the path, if all all l-shape are pushed, otherwise only one.
+  /// Right push the path, if all l-shape are pushed, otherwise only one.
   /// @return true iff the path was pushed
   bool right_push(bool all=true)
   {

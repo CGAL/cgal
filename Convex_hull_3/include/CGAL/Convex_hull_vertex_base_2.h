@@ -19,6 +19,8 @@
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/Time_stamper.h>
 
 #include <iostream>
 
@@ -38,6 +40,7 @@ public:
 private:
   int _info = 0;
   Point _p;
+  std::size_t time_stamp_ = std::size_t(-2);
 
 public:
   template < typename TDS2 >
@@ -65,6 +68,18 @@ public:
 
   const int& info() const { return _info; }
   int&       info()       { return _info; }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
 
 template <typename GT, typename Vb>

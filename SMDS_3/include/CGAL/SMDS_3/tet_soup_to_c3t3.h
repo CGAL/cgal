@@ -566,6 +566,7 @@ bool build_triangulation_from_file(std::istream& is,
 {
   using Point_3 = typename Tr::Point;
   using Subdomain_index = typename Tr::Cell::Subdomain_index;
+  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
 
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
@@ -576,7 +577,7 @@ bool build_triangulation_from_file(std::istream& is,
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
-  boost::unordered_map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
 
   int dim;
   int nv, nf, ntet, ref;
@@ -632,7 +633,7 @@ bool build_triangulation_from_file(std::istream& is,
     if(line.find("Triangles") != std::string::npos)
     {
       bool has_negative_surface_patch_ids = false;
-      typename Tr::Cell::Surface_patch_index max_surface_patch_id = 0;
+      Surface_patch_index max_surface_patch_id{0};
       is >> nf;
 
       if(verbose)
@@ -641,7 +642,7 @@ bool build_triangulation_from_file(std::istream& is,
       for(int i=0; i<nf; ++i)
       {
         int n[3];
-        typename Tr::Cell::Surface_patch_index surface_patch_id;
+        Surface_patch_index surface_patch_id;
         if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
         {
           if(verbose)

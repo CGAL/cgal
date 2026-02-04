@@ -131,7 +131,7 @@ public:
   {
   }
 
-  static auto display_id(const T* pt, int)
+  static auto display_id(const T* pt, int = 0)
   {
     return static_cast<const void*>(pt);
   }

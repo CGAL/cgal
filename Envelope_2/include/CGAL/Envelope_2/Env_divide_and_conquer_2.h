@@ -170,8 +170,8 @@ protected:
   /* Merge two minimization (or maximization) diagrams.
    * \param d1 The first diagram,
    *           representing the envelope of the curve set C1.
-   * \param d1 The first diagram,
-   *           representing the envelope of the curve set C1.
+   * \param d2 The second diagram,
+   *           representing the envelope of the curve set C2.
    * \param out_d Output: The merged diagram, representing the envelope of
    *                      the union of C1 and C2.
    */

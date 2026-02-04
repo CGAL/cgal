@@ -6,7 +6,7 @@
   var current_version_local = 'main'
   var all_versions = [
     'main',
-    '6.1-beta2',
+    '6.1',
     '6.0.2',
     'latest',
     '5.6.3',
@@ -36,7 +36,7 @@
 
       let first_element = top_elt.childNodes[0];
       let new_div = document.createElement("p");
-      new_div.innerHTML = '⚠️ This documentation corresponds to the <a style="font-familly: monospace;" href="https://github.com/CGAL/cgal/tree/main">main</a> development branch of CGAL. It might diverge from the official releases.';
+      new_div.innerHTML = '⚠️ This documentation corresponds to the <a style="font-family: monospace;" href="https://github.com/CGAL/cgal/tree/main">main</a> development branch of CGAL. It might diverge from the official releases.';
       new_div.style.cssText = "background-color: #ff9800; margin: 1ex auto 1ex 1em; padding: 1ex; border-radius: 1ex; display: inline-block;"
       let OK = top_elt.insertBefore(new_div, first_element);
     }

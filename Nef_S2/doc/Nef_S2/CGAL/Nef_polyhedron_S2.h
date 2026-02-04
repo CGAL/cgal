@@ -475,7 +475,7 @@ illustrate the incidences of an sface. An sface is described
 by its boundaries. An entry item to each boundary cycle can be accessed
 using the iterator range (`sface_cycles_begin()`/`sface_cycles_end()`).
 Additionally, `Nef_polyhedron_S2` provides the macro
-`CGAL_forall_sface_cylces_of`. The iterators are of type
+`CGAL_forall_sface_cycles_of`. The iterators are of type
 `SFace_cycle_const_iterator` and represent either a shalfedge, a shalfloop,
 or a svertex.
 

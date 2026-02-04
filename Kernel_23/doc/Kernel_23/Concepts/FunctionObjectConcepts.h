@@ -778,6 +778,20 @@ public:
                                const K::Point_3& a2,
                                const K::Point_3& b2,
                                const K::Point_3& c2);
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ between the normals
+  of the triangles \f$ (a1, b1, c1)\f$ and \f$ (a2, b2, c2)\f$, and \f$ \theta_2\f$ is
+  the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
+  \pre `a1!=b1 && c1!=b1` && `a2!=b2 && c2!=b2`.
+  */
+  Comparison_result operator()(const K::Point_3& a1,
+                               const K::Point_3& b1,
+                               const K::Point_3& c1,
+                               const K::Point_3& a2,
+                               const K::Point_3& b2,
+                               const K::Point_3& c2,
+                               const K::FT& cosine);
 
   /*!
   compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
@@ -1207,6 +1221,15 @@ public:
   Comparison_result operator()(const Type1& obj1,
                                const Type2& obj2,
                                const Kernel::FT&d2);
+  /*!
+    compares the squared distance between the plane constructed from points `p`, `q`, and `r`
+    and `query` to the value `sqd`.
+  */
+  Comparison_result operator()(const Kernel::Point_3& p,
+                               const Kernel::Point_3& q,
+                               const Kernel::Point_3& r,
+                               const Kernel::Point_3& query,
+                               const Kernel::FT& sqd);
 
   /// @}
 
@@ -1274,7 +1297,7 @@ public:
 
 \cgalRefines{AdaptableFunctor}
 
-\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
 
 */
 class CompareWeightedSquaredRadius_3
@@ -3098,7 +3121,7 @@ public:
 \cgalConcept
 
 \sa `CGAL::Weighted_point_3<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
 
 \cgalRefines{AdaptableFunctor}
 
