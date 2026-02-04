@@ -337,7 +337,7 @@ public:
     /** \brief Pointer over a sub chain complex mask encoding a sub complex of `*L_complex`. */
     std::shared_ptr<Sub_chain_complex> K_complex ;
 
-    /** \brief Default constructor*/
+    /** \brief %Default constructor*/
     Complex_duality_data_t() : L_complex(nullptr), K_complex(nullptr) {}
 
     /** \brief Constructor from a pointer over a chain complex and a sub chain complex mask.
@@ -375,7 +375,7 @@ public:
     typedef CGAL::Surface_mesh<typename Traits::Kernel::Point_3> Triangle_mesh;
     /** \brief Type returned by `dualize_complex()`. */
     typedef Complex_duality_data_t<Chain_complex> Complex_duality_data;
-    /** \brief Default constructor. */
+    /** \brief %Default constructor. */
     Duality_simplicial_complex_tools() {}
 
 private:

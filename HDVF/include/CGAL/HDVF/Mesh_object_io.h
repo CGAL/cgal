@@ -272,13 +272,13 @@ public:
      */
     int dimension() const { return _dim; }
 
-    /* \brief Default constructor.
+    /* \brief %Default constructor.
      *
-     * Create an empty Mesh_object_io.
+     * Create an empty `Mesh_object_io`.
      */
     Mesh_object_io(int d = 0) : _dim(d), _nvertices(0), _ncells(0), _nedges(0) {}
 
-    /** \brief Constructor from a vector of Point (vertex coordinates) and a vector of simplices.
+    /** \brief Constructor from a vector of points (vertex coordinates) and a vector of simplices.
      *
      * Simplices are described by the list of vertex indices.
      *

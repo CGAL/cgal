@@ -73,9 +73,9 @@ public:
     /** \brief Returns the total number of cubs. */
     size_t number_of_cubs() const { return _cubs.size(); }
 
-    /** \brief Default constructor.
+    /** \brief %Default constructor.
      *
-     * Create an empty Cub_object_io of dimension 3.
+     * Create an empty `Cub_object_io` of dimension 3.
      */
     Cub_object_io() : _dim(3), _ncubs(std::vector<size_t>(4)), _N(std::vector<size_t>(4)), _khalimsky(false) {}
 

@@ -99,14 +99,12 @@ public:
     enum Cubical_complex_primal_dual {PRIMAL, DUAL};
 
     /**
-     * \brief Default constructor (empty cubical complex).
-     *
-     * Builds an empty cubical complex.
+     * \brief %Default constructor (empty cubical complex).
      */
     Cubical_chain_complex() : _complex_id(_id_generator++) {} ;
 
     /**
-     * \brief Constructor from a Cub_object_io (builds PRIMAL or DUAL associated complex depending on `type`).
+     * \brief Constructor from a `Cub_object_io` (builds `PRIMAL` or `DUAL` associated complex depending on `type`).
      *
      * Builds the cubical complex associated to a a set of cells (vertices, edges, squares, cubes...), ie.\ performs the down closure of cells and set the boundary matrices in any dimension. Given a set of cells:
      *

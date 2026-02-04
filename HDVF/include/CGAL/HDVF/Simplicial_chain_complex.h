@@ -60,10 +60,10 @@ private:
 public:
 
     /**
-     * \brief Default constructor: builds an empty  simplicial complex.
+     * \brief %Default constructor: builds an empty simplicial complex.
      */
     Simplicial_chain_complex() {} ;
-    // Constructor from a simplicial complex stored in a .simp file and read into a MeshObject
+
     /**
      * \brief Constructor from a Mesh_object_io.
      *
