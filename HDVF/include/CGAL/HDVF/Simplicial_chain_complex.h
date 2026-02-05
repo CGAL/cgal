@@ -60,10 +60,10 @@ private:
 public:
 
     /**
-     * \brief Default constructor: builds an empty  simplicial complex.
+     * \brief %Default constructor: builds an empty simplicial complex.
      */
     Simplicial_chain_complex() {} ;
-    // Constructor from a simplicial complex stored in a .simp file and read into a MeshObject
+
     /**
      * \brief Constructor from a Mesh_object_io.
      *
@@ -80,11 +80,7 @@ public:
     } ;
 
     /**
-     * \brief Assignment operator for simplicial complexes.
-     *
-     * Stores a copy of a simplicial complex in *this.
-     *
-     * \param complex The simplicial complex which will be copied.
+     * \brief Assignment
      */
     Simplicial_chain_complex& operator= (const Simplicial_chain_complex& complex)
     {
@@ -101,7 +97,7 @@ public:
 
     /** \brief Gets the coordinates of the ith dimension-0 simplex
 
-     * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is build from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
+     * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      */

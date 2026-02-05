@@ -214,16 +214,12 @@ public:
     Hdvf_core(const ChainComplex& K, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) ;
 
     /*
-     * \brief Constructor by copy.
-     *
-     * Builds a HDVF by copy from another, including options.
-     *
-     * \param hdvf An initial HDVF.
+     * \brief Copy constructor.
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt), _dimension_restriction(hdvf._dimension_restriction), _min_dimension(hdvf._min_dimension), _max_dimension(hdvf._max_dimension) { }
 
     /*
-     * \brief HDVF_core destructor. */
+     * \brief Destructor. */
     ~Hdvf_core() { }
 
     /** \brief Checks if the pair of cells \f$(\gamma, \gamma')\f$, of dimensions q / q+1, is valid for A.

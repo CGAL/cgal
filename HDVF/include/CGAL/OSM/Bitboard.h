@@ -123,7 +123,7 @@ public:
 
         /**
          * \brief Iterator dereference.
-         * \returns A no-null index on the billboard or past-the-end index.
+         * \returns A not-null index on the billboard or past-the-end index.
          */
         const std::size_t operator*() const { return index; }
 
@@ -132,7 +132,7 @@ public:
          * \returns The reference to the current iterator.
          */
         iterator& operator++() {
-            // The iterator rely on bit manipulation that are quite fast on the CPU.
+            // The iterator relies on bit manipulation that are quite fast on the CPU.
             //
             // The main ideas come from the chess programming community that deals with 8x8 sparse matrices.
             // The LSB1 (Less Significant Bit On) is given by X & -X.
@@ -165,13 +165,13 @@ public:
 
         /**
          * \brief Equality check.
-         * \returns True if the indices are equal.
+         * \returns `true` if the indices are equal.
          */
         friend bool operator==(const iterator &a, const iterator &b) { return a.index == b.index; }
 
         /**
          * \brief Inequality check.
-         * \returns True if the indices are different.
+         * \returns `true` if the indices are different.
          */
         friend bool operator!=(const iterator &a, const iterator &b) { return a.index != b.index; }
 
@@ -222,7 +222,7 @@ public:
 
         /**
          * \brief Iterator dereference.
-         * \returns A no-null index on the billboard or past-the-end index.
+         * \returns A not-null index on the billboard or past-the-end index.
          */
         const std::size_t operator*() const { return index; }
 
@@ -231,7 +231,7 @@ public:
          * \returns The reference to the current iterator.
          */
         reverse_iterator& operator++() {
-            // The reverse iterator rely on bit manipulation that are quite fast on the CPU.
+            // The reverse iterator relies on bit manipulation that are quite fast on the CPU.
             //
             // The main ideas come from the chess programming community that deals with 8x8 sparse matrices.
             // The MSB1 (Most Significant Bit On) is computed using De Bruijn Multiplication.
@@ -295,13 +295,13 @@ public:
 
         /**
          * \brief Equality check.
-         * \returns True if the indices are equal.
+         * \returns `true` if the indices are equal.
          */
         friend bool operator==(const reverse_iterator &a, const reverse_iterator &b) { return a.index == b.index; }
 
         /**
          * \brief Inequality check.
-         * \returns True if the indices are different.
+         * \returns `true` if the indices are different.
          */
         friend bool operator!=(const reverse_iterator &a, const reverse_iterator &b) { return a.index != b.index; }
 
@@ -350,9 +350,7 @@ public:
 
 
     /**
-     * \brief Bitboard assign operator. Initialize bitboard with given bitboard.
-     *
-     * \param _bitboard The bitboard to copy.
+     * \brief Assignment.
      */
     Bitboard& operator=(const Bitboard &_bitboard) {
         this->boards = _bitboard.boards;

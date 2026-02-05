@@ -110,9 +110,7 @@ private:
 
     /** \brief Comparison operator.
      *
-     * Compare the object with another simplex according to the lexicographical order on vertex indices sets.
-     *
-     * \param other Compare `this` with `other` (returns  `this < other`).
+     * Compare the object with another simplex according to the lexicographical order on vertex indices.
      */
     bool operator<(const Simplex& other) const {
         return _vertices < other._vertices;

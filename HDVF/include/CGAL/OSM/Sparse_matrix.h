@@ -118,7 +118,7 @@ protected:
 
 public:
     /**
-     * \brief Default constructor (empty new `Sparse_matrix` object).
+     * \brief %Default constructor.
      *
      * Create an empty matrix of type `StorageFormat` with coefficients of type `CoefficientRing`.
      * The default matrix size is 0x0.
@@ -132,7 +132,7 @@ public:
     /**
      * \brief Constructor with given rows/columns sizes.
      *
-     * Create a new empty Sparse_matrix object of type `StorageFormat` with coefficients of type `CoefficientRing` and a given size along rows/columns.
+     * Create a new empty `Sparse_matrix` object of type `StorageFormat` with coefficients of type `CoefficientRing` and a given size along rows/columns.
      *
      * \param rowCount The number of rows to preallocate.
      * \param columnCount The number of columns to preallocate.
@@ -202,15 +202,11 @@ public:
     }
 
     /**
-     * \brief Assigns to other matrix.
+     * \brief Assignment.
      *
      * Assign to other matrix coefficient-wise, equivalent to copying it.
      *
      * \pre The matrices must have the same type.
-     *
-     * \param otherToCopy The matrix we want to copy.
-     *
-     * \return The reference to the modified matrix.
      */
     Sparse_matrix& operator=(const Sparse_matrix& otherToCopy)
     {

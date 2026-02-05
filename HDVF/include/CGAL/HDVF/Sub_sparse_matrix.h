@@ -52,9 +52,9 @@ protected:
 
 public:
     /**
-     * \brief Default constructor of a new `Sub_sparse_matrix` (with given rows/columns sizes and mask set to `full`).
+     * \brief Constructor with given rows/columns sizes and mask set to `full`.
      *
-     * Default constructor. Constructor with sizes, initialize an empty Sub_sparse_matrix of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns. The constructor sets the mask to `full`.
+     * Constructor with sizes, initializes an empty `Sub_sparse_matrix` of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns. The constructor sets the mask to `full`.
      *
      * \param rowCount The number of rows to preallocate (default 0).
      * \param columnCount The number of columns to preallocate (default 0).
@@ -81,19 +81,11 @@ public:
     {
     }
 
-    /** \brief Copy constructor from another `Sub_sparse_matrix`.
-     *
-     * Create a new empty `Sub_sparse_matrix` from another of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns and a given mask.
-     *
-     * \param otherToCopy `Sub_sparse_matrix` copied into `this`.
+    /** \brief Copy constructor.
      */
     Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientRing, StorageFormat>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
 
-    /** \brief Copy constructor from `Sparse_matrix`.
-     *
-     * Create a new `Sub_sparse_matrix` from a `Sparse_matrix` object (with the same `StorageFormat`). Create a "full" mask.
-     *
-     * \param otherToCopy The matrix copied.
+    /** \brief Copy constructor.
      */
     Sub_sparse_matrix(const Sparse_matrix<CoefficientRing,StorageFormat>& otherToCopy) : Sparse_matrix<CoefficientRing, StorageFormat>(otherToCopy)
     {
@@ -156,15 +148,7 @@ public:
     inline void complement() { _subChains.bit_not() ; }
 
     /**
-     * \brief Assigns to other `Sub_sparse_matrix`.
-     *
-     * Assign to other matrix coefficient-wise, and copy the bitboard.
-     *
-     * \pre The matrices must have the same type.
-     *
-     * \param otherToCopy The matrix we want to copy.
-     *
-     * \return The reference to the modified matrix.
+     * \brief Assignment.
      */
     inline Sub_sparse_matrix& operator=(const Sub_sparse_matrix &otherToCopy)
     {

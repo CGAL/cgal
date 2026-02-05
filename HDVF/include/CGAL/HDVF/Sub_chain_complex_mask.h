@@ -180,11 +180,7 @@ public:
     }
 
     /**
-     * \brief Constructor by copy.
-     *
-     * Builds a `Sub_chain_complex_mask` by copy from another.
-     *
-     * \param otherToCopy An initial `Sub_chain_complex_mask`.
+     * \brief Copy constructor.
      */
     Sub_chain_complex_mask(const Sub_chain_complex_mask& otherToCopy) : _K(otherToCopy._K)
     {
@@ -194,11 +190,9 @@ public:
         _sub = otherToCopy._sub ;
     }
 
-    /** \brief Assignment operator
+    /** \brief Assignment
      *
      * \warning The operator argument must provide a sub chain complex mask over the *same underlying chain complex*. It not so, the assignment will throw an exception.
-     *
-     * \param otherToCopy A `Sub_chain_complex_mask` copied into `this` (`otherToCopy` and `this` must have the same underlying chain complex).
      */
     Sub_chain_complex_mask& operator= (const Sub_chain_complex_mask& otherToCopy)
     {
