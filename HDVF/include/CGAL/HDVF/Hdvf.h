@@ -491,8 +491,20 @@ protected:
      * \param q Dimension of the cell
      */
     Column_chain hd(size_t sigma, int q) {
-        Column_chain res (this->_H_col.at(q-1) * this->_K.d(sigma,q));
-        return res;
+        PSC_flag flag(this->psc_flag(sigma,q));
+        if (flag == PRIMARY) {
+            Column_chain dsigma(this->_K.d(sigma,q));
+            dsigma = this->projection(dsigma,PRIMARY,q-1);
+            return this->_H_col.at(q-1) * dsigma;
+        }
+        else if (flag == SECONDARY) {
+            Column_chain res(this->_K.number_of_cells(q));
+            res.set_coefficient(sigma, 1);
+            return res;
+        }
+        else { // CRITICAL
+            return OSM::cget_column(this->_G_col.at(q), sigma);
+        }
     }
 
     /** \brief Computes \f$\langle h_{q-1}\circ \partial_q(\sigma), \tau\rangle\f$.
@@ -504,35 +516,67 @@ protected:
      * \param q Dimension of the cell
      */
     Coefficient_ring hd(size_t sigma, size_t tau, int q) {
-        Column_chain col_sigma_D(this->_K.d(sigma));
-        Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), tau));
-        return row_pi_H * col_sigma_D;
+        PSC_flag flag(this->psc_flag(sigma,q));
+        PSC_flag flag_tau(this->psc_flag(tau, q));
+        if ((flag_tau == PRIMARY) || (flag_tau == CRITICAL)) // tau PRIMARY, CRITICAL
+            return Column_chain(this->_K.number_of_cells(q));
+        else { // tau SECONDARY
+            // Check the flag of sigma
+            if (flag == PRIMARY) {
+                // PRIMARY
+                Row_chain H_tau(OSM::get_row(this->_H_col.at(q-1)));
+                Column_chain dsigma(this->_K.d(sigma,q));
+                dsigma = this->projection(dsigma,PRIMARY,q-1);
+                return H_tau * dsigma;
+            }
+            else if (flag == SECONDARY) {
+                // SECONDARY
+                Column_chain res(this->_K.number_of_cells(q));
+                if (sigma == tau)
+                    res.set_coefficient(sigma, 1);
+                return res;
+            }
+            else // CRITICAL
+                return OSM::get_coefficient(this->_G_col.at(q), tau, sigma);
+        }
     }
 
-    /** \brief Computes \f$h_{q}^*\circ \partial_{q+1}^*(\sigma)\f$.
+    /** \brief Computes \f$\partial_{q+1}\circ  h_{q}(\sigma)\f$.
      *
-     * The \f$h_{q}^*\circ \partial_{q+1}^*\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
+     * The \f$\partial_{q+1}\circ  h_{q}(\sigma)\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
      *
      * \param sigma Index of the cell
      * \param q Dimension of the cell
      */
-    Column_chain htdt(size_t sigma, int q) {
-        Row_chain res(this->_K.cod(sigma,q) * this->_H_col.at(q));
-        return res.transpose();
+    Column_chain dh(size_t sigma, int q) {
+        PSC_flag flag(this->psc_flag(sigma,q));
+        if (flag == PRIMARY) {
+            const Column_chain& hsigma(CGAL::OSM::cget_column(this->_H_col.at(q), sigma));
+            return this->_K.boundary_matrix(q+1) * hsigma;
+        }
+        else {
+            Column_chain res(this->_K.number_of_cells(q));
+            return res;
+        }
     }
 
-    /** \brief Computes \f$\langle h_{q}^*\circ \partial_{q+1}^*(\sigma), \tau\rangle\f$.
+    /** \brief Computes \f$\langle \partial_{q+1}\circ  h_{q}(\sigma), \tau\rangle\f$.
      *
-     * The \f$h_{q}^*\circ \partial_{q+1}^*\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
+     * The \f$\partial_{q+1}\circ  h_{q}\f$ function is used both in MW operation and in tri-partitions. As the matrix is not stored in the reduction, we provide methods to compute if efficiently.
      *
      * \param sigma Index of the first cell
      * \param tau Index of the second cell
      * \param q Dimension of the cell
      */
-    Coefficient_ring htdt(size_t sigma, size_t tau, int q) {
-        Row_chain res(this->_K.cod(sigma,q));
-        const Column_chain& res2(OSM::cget_column(this->_H_col.at(q)), tau);
-        return res*res2;
+    Coefficient_ring dh(size_t sigma, size_t tau, int q) {
+        PSC_flag flag(this->psc_flag(sigma,q));
+        if (flag == PRIMARY) {
+            Row_chain res(this->_K.cod(sigma,q));
+            const Column_chain& res2(OSM::cget_column(this->_H_col.at(q)), tau);
+            return res*res2;
+        }
+        else
+            return 0;
     }
 
 

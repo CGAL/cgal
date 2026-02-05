@@ -71,7 +71,7 @@ The operator creates a copy of `complex`.
 
     @}
 
-\name Access functions
+/// \name Access functions
 /// @{
 
 /*!

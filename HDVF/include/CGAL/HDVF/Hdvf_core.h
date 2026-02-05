@@ -383,6 +383,22 @@ public:
      */
     virtual std::vector<size_t> psc_flags (PSC_flag flag, int q) const ;
 
+    /**
+     * \brief Gets the`PSC_flag` of all cells in dimension `q`.
+     *
+     * The function returns the vector of `PSC_flag` of cells of dimension `q`.
+     *
+     * \param q Dimension visited.
+     */
+    virtual const std::vector<PSC_flag>& psc_flags (int q) const { return _flag.at(q); }
+
+    /**
+     * \brief Gets the`PSC_flag` of all cells.
+     *
+     * The function returns a vector which qth element contains the vector of `PSC_flag` of cells of dimension `q`.
+     */
+    virtual const std::vector<std::vector<PSC_flag> >& psc_flags () const { return _flag; }
+
     /*!
      * \brief Gets the PSC_flag of the cell `tau` in dimension `q`.
      *

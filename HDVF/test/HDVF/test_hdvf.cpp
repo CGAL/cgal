@@ -28,6 +28,15 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
 using HDVF_type = HDVF::Hdvf<Complex> ;
 
+template<typename ChainComplex>
+class Hdvf_ext : public HDVF::Hdvf<ChainComplex> {
+public:
+    using HDVF::Hdvf<ChainComplex>::hd;
+    using HDVF::Hdvf<ChainComplex>::dh;
+    using Base = HDVF::Hdvf<ChainComplex>;
+    Hdvf_ext(const typename Base::Chain_complex& K, int hdvf_opt = Base::OPT_FULL, int dimension_restriction = -1) : Base::Hdvf(K, hdvf_opt, dimension_restriction) {}
+};
+
 int main(int argc, char **argv) {
     std::string filename;
     if (argc > 2) {
@@ -54,7 +63,6 @@ int main(int argc, char **argv) {
 
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
-    //        hdvf.compute_rand_perfect_hdvf();
     std::cerr << std::endl;
 
 #ifdef BUILD_TEST_DATA
@@ -343,6 +351,46 @@ int main(int argc, char **argv) {
     //    std::vector<size_t> secondary(hdvf.psc_flags(HDVF::SECONDARY,1));
     //    HDVF_type::Column_chain test_co_z_s(hdvf.co_z(secondary.at(0),1));
     //    CGAL::IO::write_VTK(complex, "tmp/co_z_secondary.vtk", test_co_z_s, 1);
+    {
+        std::cerr << "---- Test hd and dh operations" << std::endl;
+        using HDVF_type_ext = Hdvf_ext<Complex> ;
+        HDVF_type_ext hdvf(complex, HDVF::OPT_FULL);
+        hdvf.read_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf");
+        {
+            HDVF_type_ext::Column_chain reshd2(hdvf.hd(2,1)), reshd2_sol(complex.number_of_cells(1)) ;
+            reshd2_sol.set_coefficient(1, 1);
+            reshd2_sol.set_coefficient(0, 4);
+            bool test_valid_hd(reshd2 == reshd2_sol);
+            std::cerr << "-- Test hd PRIMARY (2,1): " << test_valid_hd << std::endl;
+            assert(test_valid_hd);
+        }
+        {
+            HDVF_type_ext::Column_chain reshd0(hdvf.hd(0,1)), reshd0_sol(complex.number_of_cells(1)) ;
+            reshd0_sol.set_coefficient(0, 1);
+            bool test_valid_hd(reshd0 == reshd0_sol);
+            std::cerr << "-- Test hd SECONDARY (0,1): " << test_valid_hd << std::endl;
+            assert(test_valid_hd);
+        }
+        {
+            HDVF_type_ext::Column_chain reshd7(hdvf.hd(7,1)), reshd7_sol(complex.number_of_cells(1)) ;
+            reshd7_sol.set_coefficient(6, 4);
+            reshd7_sol.set_coefficient(3, 1);
+            reshd7_sol.set_coefficient(4, 4);
+            reshd7_sol.set_coefficient(0, 4);
+            bool test_valid_hd(reshd7 == reshd7_sol);
+            std::cerr << "-- Test hd CRITICAL (7,1): " << test_valid_hd << std::endl;
+            assert(test_valid_hd);
+        }
+        {
+            HDVF_type_ext::Column_chain resdh2(hdvf.dh(2,1)), resdh2_sol(complex.number_of_cells(1)) ;
+            resdh2_sol.set_coefficient(0, 1);
+            resdh2_sol.set_coefficient(1, 4);
+            resdh2_sol.set_coefficient(2, 1);
+            bool test_valid_dh(resdh2 == resdh2_sol);
+            std::cerr << "-- Test dh PRIMARY (2,1): " << test_valid_dh << std::endl;
+            assert(test_valid_dh);
+        }
+    }
 
     return 0;
 }

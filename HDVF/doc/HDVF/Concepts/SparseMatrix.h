@@ -1,11 +1,11 @@
 /*!
-\ingroup PkgHDVFConcepts
-\cgalConcept
+ \ingroup PkgHDVFConcepts
+ \cgalConcept
 
-The concept `SparseMatrix` describes the requirements for sparse matrices optimized for topological computations.
-Traditionally, sparse matrices data structures encode non zero coefficients of (sparse) matrices in order to optimize
-either matrices memory footprint, or linear algebra operations (which usually comes to optimize iterators over non zero coefficients
-and access to coefficients). However, topological operations require slightly different features:
+ The concept `SparseMatrix` describes the requirements for sparse matrices optimized for topological computations.
+ Traditionally, sparse matrices data structures encode non zero coefficients of (sparse) matrices in order to optimize
+ either matrices memory footprint, or linear algebra operations (which usually comes to optimize iterators over non zero coefficients
+ and access to coefficients). However, topological operations require slightly different features:
 
  - fast access to row or columns of matrices (which are actually the images under the application encoded by the matrix)
  - fast block operations (especially along row or columns)
@@ -31,13 +31,13 @@ and access to coefficients). However, topological operations require slightly di
  - A column-major representation of \f$A\f$ is: \f$[0\mapsto c_0, 2\mapsto c_2]\f$ with the column-chains: \f$c_0 = [0\mapsto 1, 1\mapsto -1]\f$ and \f$c_2 = [1\mapsto 2, 2\mapsto 1]\f$.
  - A row-major representation of \f$A\f$ is: \f$[0\mapsto c_0, 1\mapsto c_1, 2\mapsto c_2]\f$ with the row-chains: \f$c_0 = [0\mapsto 1]\f$ and \f$c_1 = [0\mapsto -1, 2\mapsto 2]\f$ and \f$c_2 = [2\mapsto 1]\f$.
 
-\cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<IntegralDomainWithoutDivision, StorageFormat>`}
-\cgalHasModelsEnd
+ \cgalHasModelsBegin
+ \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<IntegralDomainWithoutDivision, StorageFormat>`}
+ \cgalHasModelsEnd
 
  \sa `IntegralDomainWithoutDivision`
  \sa `SparseChain`
-*/
+ */
 
 class SparseMatrix {
 
@@ -120,7 +120,7 @@ public:
      * \brief Tests if a sparse matrix is null.
      *
      * The function returns `true` if the sparse matrix is null (that is, empty) and `false` otherwise.
-    */
+     */
     bool is_null();
 
     /**
