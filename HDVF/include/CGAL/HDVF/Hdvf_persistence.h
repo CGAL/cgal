@@ -599,7 +599,8 @@ private:
         {
             Column_chain chain_sigma(homology_chain(p.sigma, p.dim)) ;
             Column_chain chain_tau ;
-            if (p.tau != this->_K.number_of_cells(p.dim+1)) // Check if the second cell is "finite"
+//            if (p.tau != this->_K.number_of_cells(p.dim+1)) // Check if the second cell is "finite"
+            if (p.tau != p.sigma) // Check if the second cell is "finite"
                 chain_tau = homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<Column_chain,Column_chain>(chain_sigma, chain_tau)) ;
         }
