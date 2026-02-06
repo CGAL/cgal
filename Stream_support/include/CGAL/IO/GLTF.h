@@ -35,7 +35,7 @@ namespace IO {
 ///                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
 ///                      convertible to `std::size_t`
 ///
-/// \param fname the path to the input file
+/// \param filename the path to the input file
 /// \param points points of the soup of polygons
 /// \param polygons a range of polygons. Each element in it describes a polygon
 ///        using the indices of the points in `points`.
