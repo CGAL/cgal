@@ -576,8 +576,8 @@ public:
   }
 
   static bool is_edge_inside_facet(const FacetSPtr& facet,
-                                const EdgeSPtr& edge,
-                                bool handle_degree_1_as_ray)
+                                   const EdgeSPtr& edge,
+                                   bool handle_degree_1_as_ray)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(edge);

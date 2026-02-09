@@ -122,8 +122,8 @@ bool assign_cardinal_weights(const char* weights_filename,
   // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
 
-  std::cout << "ZERO SPEED ENABLED" << std::endl;
-  eps_weight = 0;
+  // std::cout << "WARNING: ZERO SPEED ENABLED" << std::endl;
+  // eps_weight = 0;
 
   if(x1_val == 0) { CGAL_SS3_TRACE_V(16, "x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
   if(x2_val == 0) { CGAL_SS3_TRACE_V(16, "x2_val to eps weight " << eps_weight); x2_val = eps_weight; }

@@ -132,7 +132,7 @@ function process_file_single_function {
     # Compare
 
     OUTPUT=${OUTPUT_DIRECTORY}/${FULL_ID}/result_1.obj
-    CMD="./compare_outputs ${OUTPUT} ${OC_OUTPUT}"
+    CMD="./compare_outputs ${OUTPUT} ${OC_OUTPUT} ${OUTPUT_DIRECTORY}/${FULL_ID}"
     LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_comparison.txt
 
     echo "---- Calling:"

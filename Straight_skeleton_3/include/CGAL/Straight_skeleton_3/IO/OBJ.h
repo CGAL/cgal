@@ -59,11 +59,14 @@ namespace IO {
  * so we triangulate facets in this case.
  */
 template <typename GeomTraits,
-          typename NamedParameters>
-static bool write_OBJ(const std::string& filename,
-                      std::shared_ptr<internal::HDS::Polyhedron<GeomTraits> > polyhedron,
-                      const NamedParameters& np)
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(const std::string& filename,
+               std::shared_ptr<internal::HDS::Polyhedron<GeomTraits> > polyhedron,
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
 
@@ -296,9 +299,9 @@ static bool write_OBJ(const std::string& filename,
  */
 template <typename GeomTraits,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-static bool write_OBJ(const std::string& filename,
-                      std::shared_ptr<Straight_skeleton_3<GeomTraits> > skeleton,
-                      const CGAL_NP_CLASS& np = parameters::default_values())
+bool write_OBJ(const std::string& filename,
+               std::shared_ptr<Straight_skeleton_3<GeomTraits> > skeleton,
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;

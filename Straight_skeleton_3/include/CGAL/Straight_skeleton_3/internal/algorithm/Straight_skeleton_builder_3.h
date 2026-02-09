@@ -18,16 +18,6 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_STRAIGHT_SKELETON_BUILDER_3_H
 
 // @fixme yesterday:
-// - perturbation depth-limit without hardcoded digit size values
-// - queue correctness assertion failures (362913? doublebox_n? verworrtakelt_n?)
-// - 57419 (perturbation failure)
-// - 168077 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 80084 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 67817 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 100638 polyhedron->is_consistent()
-// - 55583 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 153956 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 500087
 
 // @fixme:
 // - handle save times at event time: merge vertices with equal position in output
@@ -56,41 +46,39 @@
 //   event of any edge of the facet (probably not worth it, though)
 // - get rid of the exact construction requirement? At least if we do not have to split high-degree
 //   vertices, it should be possible, but that would require writing filtered predicates like SLS2's.
-// - lighter & faster polyhedron data structures
 // - splitting high degree vertices in reasonable time with plane arrangements
 // - CT3 based contact event detection
+// - lighter & faster polyhedron data structures
 
 // @todo: cleaning
 // - document `OBJ::save(skeleton)`
 // - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
 
 // @todo
-// - Deal with almost coplanar faces having almost equal weight because the weight is based on the normal
-// - Move polyhedron_ if there is the skeleton is not being built
 // - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
 // - Add tests; doc figures
-// - Do not accept non manifold inputs, non-triangulated inputs (clarify doc)
+// - Do not accept non-manifold inputs, non-triangulated inputs (clarify doc)
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
 
 // @todo later:
-// - Improve the visitor
 // - if checking perturbation fails because of self-intersections, use a smaller epsilon
 // - perform facet merging using CGAL's region growing and remesh_planar_faces() (?)
-// - re-enable the option to translate and scale (?)
 // - check for overly shared objects, redundant function calls (plane normalization, for example)
-
-// @todo latest:
-// - get rid of all the shared ptr stuff, we only need to zombie the elements and use IDs
-// - use traits' functors
 // - write a sanitization algorithm without perturbation, something akin to: apply_rand_plane_tilts_V3(p, eps=0),
 //   which only ensures that points are on supporting planes, but does NOT perturb the planes.
+// - use traits' functors
+// - get rid of all the shared ptr stuff, we only need to zombie the elements and use IDs
+
+// @todo latest:
+// - Move polyhedron_ if the skeleton is not being built
+// - re-enable the option to translate and scale (?)
 
 // ----
 
 /*
   As to not waste energy building the skeleton if we do not care about it.
 */
-// #define CGAL_SS3_NO_SKELETON_DS
+#define CGAL_SS3_NO_SKELETON_DS
 
 /*
   Some events can be detected from multime elements. Reduce that to a single element.
@@ -437,7 +425,11 @@ public:
 // #define CGAL_SS3_ACUTE_WEIGHTS
 // #define CGAL_SS3_MERGING_WEIGHTS
 // #define CGAL_SS3_PERFORMANCE_WEIGHTS
-#if defined(CGAL_SS3_ACUTE_WEIGHTS) || defined(CGAL_SS3_MERGING_WEIGHTS) || defined(CGAL_SS3_PERFORMANCE_WEIGHTS)
+// #define CGAL_SS3_TICKET_20_WEIGHTS
+#if defined(CGAL_SS3_ACUTE_WEIGHTS) || \
+    defined(CGAL_SS3_MERGING_WEIGHTS) || \
+    defined(CGAL_SS3_PERFORMANCE_WEIGHTS) || \
+    defined(CGAL_SS3_TICKET_20_WEIGHTS)
 # ifdef CGAL_SS3_ACUTE_WEIGHTS
     const FT x_speed = 20;
     const FT y_speed = 20;
@@ -452,6 +444,11 @@ public:
     const FT x_speed = 5;
     const FT y_speed = 5;
     const FT z_speed = 2;
+    const FT other_speed = 5;
+# elif defined (CGAL_SS3_TICKET_20_WEIGHTS)
+    const FT x_speed = 5;
+    const FT y_speed = 5;
+    const FT z_speed = 1e-10;
     const FT other_speed = 5;
 # else
 #  error
@@ -568,7 +565,7 @@ public:
 #ifdef CGAL_SS3_DUMP_FILES
       IO::write_OBJ("results/event_" + std::to_string(event_id) + ".obj", polyhedron,
                     parameters::do_not_triangulate_faces(true));
-      IO::write_OBJ("results/event_" + std::to_string(event_id) + "_triangulated.obj",
+      IO::write_OBJ("results/event_" + std::to_string(event_id) + "_triangulated.obj", polyhedron,
                     parameters::do_not_triangulate_faces(false));
 #endif
 
@@ -3465,7 +3462,7 @@ public:
     collect_vanish_events(polyhedron, current_time, time_future_bound, queue);
 
     CGAL_assertion_code(for (const EdgeSPtr& edge : polyhedron->edges()))
-    CGAL_assertion_code(Hds_utils::get_vanish_time(edge);) // check is_known within skeledgedata
+    CGAL_assertion_code(Hds_utils::get_vanish_time(edge);)
 
     // --- Contact Event
     collect_vertex_events(polyhedron, current_time, time_future_bound, queue);
