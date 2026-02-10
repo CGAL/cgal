@@ -78,6 +78,7 @@ public:
   using Self = Iterator_project<I,Fct,D1,D2,D3,D4>;
   using Iterator = I; // base iterator
   using pointer = typename Base::pointer;
+  using difference_type = typename Base::difference_type;
 
   // CREATION
   // --------

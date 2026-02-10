@@ -91,11 +91,6 @@ public:
   using Tr_Base::geom_traits;
 
 private:
-  // parameterization of the hierarchy
-  // maximal number of points is 30^5 = 24 millions !
-  static constexpr double ratio = 30.0;
-  static constexpr size_type minsize = 20;
-  static constexpr int maxlevel = 5;
 
   void init_hierarchy() {
     hierarchy[0] = this;
