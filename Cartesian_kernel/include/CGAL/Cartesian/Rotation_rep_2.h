@@ -66,35 +66,35 @@ public:
     cosinus_ = cos_num/denom;
   }
 
-  Point_2      transform(const Point_2 &p) const
+  Point_2      transform(const Point_2 &p) const override
   {
     return Point_2(cosinus_ * p.x() - sinus_ * p.y(),
                    sinus_ * p.x() + cosinus_ * p.y());
   }
 
-  Vector_2     transform(const Vector_2 &v) const
+  Vector_2     transform(const Vector_2 &v) const override
   {
     return Vector_2(cosinus_ * v.x() - sinus_ * v.y(),
                     sinus_ * v.x() + cosinus_ * v.y());
   }
 
-  Direction_2  transform(const Direction_2 &d) const
+  Direction_2  transform(const Direction_2 &d) const override
   {
     return Direction_2(cosinus_ * d.dx() - sinus_ * d.dy(),
                        sinus_ * d.dx() + cosinus_ * d.dy());
   }
 
-  Aff_transformation_2 inverse() const
+  Aff_transformation_2 inverse() const override
   {
     return Aff_transformation_2(ROTATION, - sinus_, cosinus_, FT(1));
   }
 
-  Aff_transformation_2 operator*(const Aff_t_base &t) const
+  Aff_transformation_2 operator*(const Aff_t_base &t) const override
   {
     return t.compose(*this);
   }
 
-  Aff_transformation_2 compose(const Translation &t) const
+  Aff_transformation_2 compose(const Translation &t) const override
   {
     return Aff_transformation_2(cosinus_,
                                 -sinus_,
@@ -104,14 +104,14 @@ public:
                                 t.translationvector_.y());
   }
 
-  Aff_transformation_2 compose(const Rotation &t) const
+  Aff_transformation_2 compose(const Rotation &t) const override
   {
     return Aff_transformation_2(ROTATION,
                                 t.sinus_*cosinus_ + t.cosinus_*sinus_,
                                 t.cosinus_*cosinus_-t.sinus_*sinus_ );
   }
 
-  Aff_transformation_2 compose(const Scaling &t) const
+  Aff_transformation_2 compose(const Scaling &t) const override
   {
     return Aff_transformation_2(t.scalefactor_*cosinus_,
                                 t.scalefactor_*-sinus_,
@@ -119,7 +119,7 @@ public:
                                 t.scalefactor_*cosinus_);
   }
 
-  Aff_transformation_2 compose(const Reflection &r) const
+  Aff_transformation_2 compose(const Reflection &r) const override
   {
     return Aff_transformation_2(
           r.cosinus_*cosinus_+r.sinus_*sinus_,
@@ -130,7 +130,7 @@ public:
           , r.t23());
   }
 
-  Aff_transformation_2 compose(const Transformation &t) const
+  Aff_transformation_2 compose(const Transformation &t) const override
   {
     return Aff_transformation_2(cosinus_*t.t11 + sinus_*t.t12,
                                 -sinus_*t.t11 + cosinus_*t.t12,
@@ -140,17 +140,17 @@ public:
                                 t.t23);
   }
 
-  bool is_even() const
+  bool is_even() const override
   {
     return true;
   }
 
-  bool is_rotation() const
+  bool is_rotation() const override
   {
     return true;
   }
 
-  FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     switch (i)
     {
@@ -176,7 +176,7 @@ public:
     return FT(0);
   }
 
-  std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os << "Aff_transformationC2(" << sinus_ << ", " << cosinus_ <<  ")";
     return os;

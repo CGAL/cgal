@@ -102,7 +102,7 @@ friend class Reflection_repC2<R>;
       t21(m21), t22(m22), t23(m23)
   {}
 
-  Point_2 transform(const Point_2& p) const
+  Point_2 transform(const Point_2& p) const override
   {
     typename R::Construct_point_2 construct_point_2;
     return construct_point_2(t11 * p.x() + t12 * p.y() + t13,
@@ -110,14 +110,14 @@ friend class Reflection_repC2<R>;
   }
 
   // note that a vector is not translated
-  Vector_2 transform(const Vector_2& v) const
+  Vector_2 transform(const Vector_2& v) const override
   {
     return Vector_2(t11 * v.x() + t12 * v.y(),
                     t21 * v.x() + t22 * v.y());
   }
 
   // note that a direction is not translated
-  Direction_2 transform(const Direction_2& dir) const
+  Direction_2 transform(const Direction_2& dir) const override
   {
     return Direction_2(t11 * dir.dx() + t12 * dir.dy(),
                        t21 * dir.dx() + t22 * dir.dy());
@@ -125,20 +125,20 @@ friend class Reflection_repC2<R>;
 
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented later...
-  Aff_transformation_2 inverse() const;
-  Aff_transformation_2 operator*(const Aff_t_base &t) const;
-  Aff_transformation_2 compose(const Self &t) const;
-  Aff_transformation_2 compose(const Translation_repC2<R> &t) const;
-  Aff_transformation_2 compose(const Rotation_repC2<R> &t) const;
-  Aff_transformation_2 compose(const Scaling_repC2<R> &t) const;
-  Aff_transformation_2 compose(const Reflection_repC2<R> &t) const;
+  Aff_transformation_2 inverse() const override;
+  Aff_transformation_2 operator*(const Aff_t_base &t) const override;
+  Aff_transformation_2 compose(const Self &t) const override;
+  Aff_transformation_2 compose(const Translation_repC2<R> &t) const override;
+  Aff_transformation_2 compose(const Rotation_repC2<R> &t) const override;
+  Aff_transformation_2 compose(const Scaling_repC2<R> &t) const override;
+  Aff_transformation_2 compose(const Reflection_repC2<R> &t) const override;
 
-  bool is_even() const
+  bool is_even() const override
   {
     return sign_of_determinant(t11, t12, t21, t22) == POSITIVE;
   }
 
-  FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     switch (i)
     {
@@ -164,7 +164,7 @@ friend class Reflection_repC2<R>;
     return FT(0);
   }
 
-  std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os <<"Aff_transformationC2(" <<t11<<" "<<t12<<" "<<t13<<std::endl;
     os <<"                     " <<t21<<" "<<t22<<" "<<t23<<")";
