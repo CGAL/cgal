@@ -166,7 +166,7 @@ namespace CGAL {
   of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
 
   Those two last template parameters default to `int`, so that they can be ignored
-  if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
+  if the domain used for mesh generation does not include 0 and 1-dimensional features (i.e
   is only a model of the concept `MeshDomain_3`).
 
   \cgalModels{MeshComplexWithFeatures_3InTriangulation_3}
@@ -801,7 +801,7 @@ public:
   }
 
   /**
-   * returns true if \p v is a 0-dimensionnal feature in the complex
+   * returns true if \p v is a 0-dimensional feature in the complex
    */
   bool is_in_complex(const Vertex_handle& v) const
   {
@@ -1114,8 +1114,7 @@ public:
   }
 
   /// returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
-  Facets_in_complex_iterator
-    facets_in_complex_begin(const Surface_patch_index& index) const
+  Facets_in_complex_iterator facets_in_complex_begin(const Surface_patch_index& index) const
   {
     return CGAL::filter_iterator(tr_.finite_facets_end(),
       Facet_iterator_not_in_complex(*this, index),

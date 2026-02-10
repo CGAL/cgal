@@ -392,7 +392,7 @@ namespace CGAL {
   private:
     void run(const double desired_eps)
       // Runs Khachiyans algorithm, provided the points added so far
-      // are non-degnerate.  On return, the variable x will be a
+      // are non-degenerate.  On return, the variable x will be a
       // solution to program (D) for the points P such that the
       // relaxed optimality conditions (*) hold.
       //

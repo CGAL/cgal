@@ -50,7 +50,7 @@ public:
 
   virtual void append(const Property_array_base<Index>& other) = 0;
 
-  virtual void reserve(std::size_t n) = 0;
+  virtual void resize(std::size_t n) = 0;
 
   virtual void shrink_to_fit() = 0;
 
@@ -89,7 +89,6 @@ public:
   Property_array(const std::vector<bool>& active_indices, const T& default_value) :
     m_data(), m_active_indices(active_indices), m_default_value(default_value) {
 
-    m_data.reserve(active_indices.capacity());
     m_data.resize(active_indices.size(), m_default_value);
   }
 
@@ -124,7 +123,7 @@ public:
     m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
   }
 
-  virtual void reserve(std::size_t n) override {
+  virtual void resize(std::size_t n) override {
     CGAL_precondition(m_active_indices.size() == n);
     m_data.resize(n, m_default_value);
   };
@@ -249,6 +248,7 @@ class Property_container {
 
   std::multimap<std::string, std::shared_ptr<Property_array_base<Index>>> m_properties;
   std::vector<bool> m_active_indices{};
+  bool m_has_deleted_elements = false;
 
 public:
 
@@ -259,6 +259,7 @@ public:
 
   Property_container(const Property_container<Index>& other) {
     m_active_indices = other.m_active_indices;
+    m_has_deleted_elements = other.m_has_deleted_elements;
 
     for (auto [name, array] : other.m_properties) {
       // todo: this could probably be made faster using emplace_hint
@@ -274,6 +275,7 @@ public:
   // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(const Property_container<Index>& other) {
     m_active_indices = other.m_active_indices;
+    m_has_deleted_elements = other.m_has_deleted_elements;
 
     for (auto [name, array] : other.m_properties) {
       // search if property already exists
@@ -296,6 +298,7 @@ public:
   // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(Property_container<Index>&& other) {
     m_active_indices = std::move(other.m_active_indices);
+    m_has_deleted_elements = other.m_has_deleted_elements;
 
     for (auto [name, array] : other.m_properties) {
       // search if property already exists
@@ -313,7 +316,7 @@ public:
     }
 
     // The moved-from property map should retain all of its properties, but contain 0 elements
-    other.reserve(0);
+    other.resize(0);
     return *this;
   }
 
@@ -442,16 +445,15 @@ public:
   }*/
 
 public:
-
-  void reserve(std::size_t n) {
-    m_active_indices.resize(n);
-    for (auto [name, array]: m_properties)
-      array->reserve(n);
-  }
-
   void resize(std::size_t n) {
-    reserve(n);
+
+    m_active_indices.resize(n);
+    for (auto [name, array] : m_properties)
+      array->resize(n);
+
     std::fill(m_active_indices.begin(), m_active_indices.end(), true);
+
+    m_has_deleted_elements = false;
   }
 
   [[nodiscard]] std::size_t size() const { return std::count(m_active_indices.begin(), m_active_indices.end(), true); }
@@ -461,14 +463,20 @@ public:
   Index emplace_back() {
 
     // Expand the storage and return the last element
-    reserve(capacity() + 1);
-    m_active_indices.back() = true;
+    m_active_indices.push_back(true);
+
+    for (auto [name, array] : m_properties)
+      array->resize(capacity());
+
     auto first_new_index = Index(capacity() - 1);
     reset(first_new_index);
     return first_new_index;
   }
 
   Index emplace() {
+
+    if (!m_has_deleted_elements)
+      return emplace_back();
 
     // If there are empty slots, return the index of one of them and mark it as full
     auto first_unused = std::find(m_active_indices.begin(), m_active_indices.end(), false);
@@ -479,19 +487,26 @@ public:
       return index;
     }
 
+    m_has_deleted_elements = false;
+
     return emplace_back();
   }
 
   Index emplace_group_back(std::size_t n) {
 
     // Expand the storage and return the start of the new region
-    reserve(capacity() + n);
-    for (auto it = m_active_indices.end() - n; it < m_active_indices.end(); ++it)
-      *it = true;
+    m_active_indices.resize(capacity() + n, true);
+
+    for (auto [name, array] : m_properties)
+      array->resize(capacity());
+
     return Index(capacity() - n);
   }
 
   Index emplace_group(std::size_t n) {
+
+    if (!m_has_deleted_elements)
+      return emplace_group_back(n);
 
     auto search_start = m_active_indices.begin();
     while (search_start != m_active_indices.end()) {
@@ -545,6 +560,7 @@ public:
 
   void erase(Index i) {
     m_active_indices[i] = false;
+    m_has_deleted_elements = true;
     for (auto [name, array]: m_properties)
       array->reset(i);
   }
@@ -607,7 +623,7 @@ public:
       if (it != range.second)
         array->append(*it->second.get());
       else
-        array->reserve(m_active_indices.size());
+        array->resize(m_active_indices.size());
     }
   }
 

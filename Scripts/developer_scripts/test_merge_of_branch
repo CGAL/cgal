@@ -146,9 +146,9 @@ fi
 
 # check minimal version is the first instruction in cmake scripts
 echo '.. Checking if all CMakeLists.txt starts with cmake_minimum_required...'
-cmr_tests=$(for i in ^build*/test/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^\s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
-cmr_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
-cmr_demo=$(for i in ^build*/demo/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_tests=$(for i in ^build*/test/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(grep -Ev "^\s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(grep -Ev "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_demo=$(for i in ^build*/demo/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(grep -Ev "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
 
 if [ -n "${cmr_tests}" ]; then
   echo "CMakeLists in test with issues:"

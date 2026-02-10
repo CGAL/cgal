@@ -23,10 +23,8 @@
 #include <CGAL/IO/VTK.h>
 #include <CGAL/IO/GOCAD.h>
 
-#include <algorithm>
 #include <iostream>
 #include <string>
-#include <vector>
 
 namespace CGAL {
 
@@ -144,6 +142,12 @@ bool read_polygon_soup(const std::string& fname,
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of concept `Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}

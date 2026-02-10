@@ -47,8 +47,6 @@ public:
   //@{
 
   using Has_left_category = typename Subcurve_traits_2::Has_left_category;
-  using Has_do_intersect_category =
-    typename Subcurve_traits_2::Has_do_intersect_category;
 
   using Left_side_category = typename Subcurve_traits_2::Left_side_category;
   using Bottom_side_category = typename Subcurve_traits_2::Bottom_side_category;
@@ -131,8 +129,7 @@ public:
    * curve which is either strongly \f$x\f$-monotone or vertical. Again,
    * the polycurve is without degenerated subcurves.
    */
-  using X_monotone_curve_2 =
-    internal::X_monotone_polycurve_2<X_monotone_subcurve_2, Point_2>;
+  using X_monotone_curve_2 = internal::X_monotone_polycurve_2<X_monotone_subcurve_2, Point_2>;
   using Size = typename X_monotone_curve_2::Size;
   using size_type = typename X_monotone_curve_2::size_type;
 
@@ -705,8 +702,8 @@ public:
       const Comparison_result l2r_smaller = SMALLER;
       const Comparison_result l2r_larger = LARGER;
 #else
-      auto cmp_endpints_xy = m_poly_traits.compare_endpoints_xy_2_object();
-      const bool l2r = cmp_endpints_xy(xcv[0]) == SMALLER;
+      auto cmp_endpoints_xy = m_poly_traits.compare_endpoints_xy_2_object();
+      const bool l2r = cmp_endpoints_xy(xcv[0]) == SMALLER;
       const Comparison_result l2r_smaller = l2r ? SMALLER : LARGER;
       const Comparison_result l2r_larger = l2r ? LARGER : SMALLER;
 #endif
@@ -1090,6 +1087,106 @@ public:
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(*this); }
 
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+
+    //! The traits (in case it has state).
+    const Polycurve_basic_traits_2& m_poly_traits;
+
+    friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+
+    /*! constructs */
+    Do_intersect_2(const Polycurve_basic_traits_2& traits) :
+      m_poly_traits(traits)
+    {}
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
+      auto cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
+      auto do_intersect = geom_traits->do_intersect_2_object();
+      auto cmp_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto cmp_xy = m_poly_traits.compare_xy_2_object();
+
+      Comparison_result dir1 = cmp_endpts(xcv1[0]);
+      Comparison_result dir2 = cmp_endpts(xcv2[0]);
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      const bool consistent = (dir1 == dir2);
+      CGAL_assertion(consistent);
+#endif
+
+      const std::size_t n1 = xcv1.number_of_subcurves();
+      const std::size_t n2 = xcv2.number_of_subcurves();
+
+      std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
+      std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
+
+      auto left_res = cmp_xy(xcv1[i1], ARR_MIN_END, xcv2[i2], ARR_MIN_END);
+      if (left_res == SMALLER) {
+        // cv1's left endpoint is to the left of xcv2's left endpoint.
+        // Locate the index i1 of the subcurve in xcv1 which contains cv2's
+        // left endpoint.
+        i1 = m_poly_traits.locate_impl(xcv1, xcv2[i2], ARR_MIN_END, All_sides_oblivious_category());
+        if (i1 == Polycurve_basic_traits_2::INVALID_INDEX) return false;
+        if (cmp_y_at_x(xcv2[i2], ARR_MIN_END, xcv1[i1]) == EQUAL) return true;
+      }
+      else if (left_res == LARGER) {
+        // cv1's left endpoint is to the right of cv2's left endpoint.
+        // Locate the index i2 of the subcurve in cv2 which contains cv1's
+        // left endpoint.
+        i2 = m_poly_traits.locate_impl(xcv2, xcv1[i1], ARR_MIN_END, All_sides_oblivious_category());
+        if (i2 == Polycurve_basic_traits_2::INVALID_INDEX) return false;
+        if (cmp_y_at_x(xcv1[i1], ARR_MIN_END, xcv2[i2]) == EQUAL) return true;
+      }
+      else {
+        CGAL_assertion(left_res == EQUAL);
+        return true;
+      }
+
+      do {
+        // std::cout << "i1, i2 = " << i1 <<", " << i2 << std::endl;
+        auto res = do_intersect(xcv1[i1], xcv2[i2]);
+        if (res) return res;
+
+        // Advance the indices
+        auto right_res = cmp_xy(xcv1[i1], ARR_MAX_END, xcv2[i2], ARR_MAX_END);
+        if (right_res != LARGER) {
+          if (dir1 == SMALLER) {
+            ++i1;
+            if (i1 == n1) break;
+          }
+          else {
+            if (i1 != 0) --i1;
+            else break;
+          }
+        }
+        if (right_res != SMALLER) {
+          if (dir2 == SMALLER) {
+            ++i2;
+            if (i2 == n2) break;
+          }
+          else {
+            if (i2 != 0) --i2;
+            else break;
+          }
+        }
+      } while (true);
+
+      return false;
+    }
+  };
+
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   ///@}
 
   /// \name Types and functors defined here, required by the
@@ -1115,6 +1212,7 @@ public:
     using Approximate_number_type = void;
     using Approximate_point_2 = void;
     using Approximate_2 = void;
+    using Approximate_kernel = void;
   };
 
   template <typename T>
@@ -1123,6 +1221,7 @@ public:
     using Approximate_number_type = typename T::Approximate_number_type;
     using Approximate_2 = typename T::Approximate_2;
     using Approximate_point_2 = typename T::Approximate_point_2;
+    using Approximate_kernel = typename T::Approximate_kernel;
   };
 
   using Approximate_number_type =
@@ -1131,6 +1230,8 @@ public:
     typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
   using Approximate_point_2 =
     typename has_approximate_2<Subcurve_traits_2>::Approximate_point_2;
+  using Approximate_kernel =
+    typename has_approximate_2<Subcurve_traits_2>::Approximate_kernel;
 
   /*! obtains an Approximate_2 functor object. */
   Approximate_2 approximate_2_object_impl(std::false_type) const

@@ -193,8 +193,6 @@ operator<(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_
 
 template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
-  : public Bidirectional_circulator_base<typename Tds_::Facet,
-                                         std::ptrdiff_t, std::size_t>
 {
   // circulates on facets around a given edge
 
@@ -208,6 +206,14 @@ class Triangulation_ds_facet_circulator_3
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
 public:
+  struct Proxy_Facet;
+  typedef Bidirectional_circulator_tag iterator_category;
+  typedef Facet                        value_type;
+  typedef std::ptrdiff_t               difference_type;
+  typedef Proxy_Facet                  pointer;
+  typedef Facet                        reference;
+  typedef std::size_t                  size_type;
+
 
   Triangulation_ds_facet_circulator_3()
     : _s(), _t(), pos()

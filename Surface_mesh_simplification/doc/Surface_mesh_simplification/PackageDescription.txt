@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshSimplificationRef Triangulated Surface Mesh Simplification Reference
+/// \defgroup PkgSurfaceMeshSimplificationRef Reference Manual
 /// \defgroup PkgSurfaceMeshSimplificationConcepts Concepts
 /// \ingroup PkgSurfaceMeshSimplificationRef
 /*!
@@ -49,7 +49,8 @@
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_probabilistic_plane_policies<TriangleMesh, GeomTraits>`
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits>`
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_probabilistic_triangle_policies<TriangleMesh, GeomTraits>`
-- `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>` (deprecated)
+- `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies<TriangleMesh, GeomTraits>`
+- `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
 
 \cgalCRPSection{Policy Enhancements}
 - `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`

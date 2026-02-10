@@ -60,6 +60,12 @@ template < class Tr >
 class Triangulation_hierarchy_3
   : public Tr
 {
+  // parameterization of the hierarchy
+  // maximal number of points is 30^5 = 24 millions !
+  enum Ratio : int { ratio = 30 };
+  enum { minsize = 20};
+  enum { maxlevel = 5};
+
 public:
   typedef Tr                                   Tr_Base;
   typedef Fast_location                        Location_policy;
@@ -499,16 +505,16 @@ is_valid(bool verbose, int level) const
           std::cerr << "triangulation at level " << i << " invalid" << std::endl;
         }
   }
-  // verify that lower level has no down pointers
+  // verify that lowest level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
        end = hierarchy[0]->finite_vertices_end(); it != end; ++it){
     result = result && (it->down() == Vertex_handle());
     if(verbose && (! result)){
-          std::cerr << "lower level has a down pointer" << std::endl;
+          std::cerr << "lowest level has a down pointer" << std::endl;
     }
   }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+  // verify that other levels have down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
          end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
@@ -524,9 +530,13 @@ is_valid(bool verbose, int level) const
       if(verbose && (! result)){
           std::cerr << "wrong reciprocal link with down()" << std::endl;
       }
+      result = result && Vertex_handle(it)->point() == Vertex_handle(it->down())->point();
+      if(verbose && (! result)){
+          std::cerr << "inconsistent vertex positions" << std::endl;
+      }
     }
 
-  // verify that other levels has up pointer and reciprocal link is fine
+  // verify that all levels have up pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
          end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
@@ -765,17 +775,15 @@ Triangulation_hierarchy_3<Tr>::
 move_if_no_collision_and_give_new_cells(
   Vertex_handle v, const Point & p, OutputItCells fit)
 {
-  CGAL_precondition(!is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
-  for (int l = 0; l < maxlevel; ++l) {
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision_and_give_new_cells(v, p, fit);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans =
-           hierarchy[l]->move_if_no_collision_and_give_new_cells(v, p, fit);
-    if(ans != v) return ans;
     if (u == Vertex_handle())
       break;
+    hierarchy[l]->move_if_no_collision(u, p);
     v = u;
   }
   return ans;

@@ -19,13 +19,15 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: All examples require the Eigen3 library, and will not be compiled.")
   return()
 endif()
 
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(VTK 9.0
              COMPONENTS ImagingGeneral IOImage
              QUIET)
@@ -170,6 +172,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PRIVATE CGAL::Eigen3_support)
 
+    set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
     find_package(ITK NAMES ITK InsightToolkit
                      QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)

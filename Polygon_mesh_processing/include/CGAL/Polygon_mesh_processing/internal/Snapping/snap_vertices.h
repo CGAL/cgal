@@ -246,7 +246,7 @@ public:
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "squared distance between "
               << va << " [" << get(m_vpm_A, va) << "] and "
-              << vb << " [" << get(m_vpm_B, vb) << "]: " << sq_dist
+              << vb << " [" << get(m_vpm_B, vb) << "]: " << CGAL::squared_distance(get(m_vpm_A, va), get(m_vpm_B, vb))
               << " (tol a/b: " << tol_a << " " << tol_b << ") larger? " << (res == CGAL::LARGER)
               << std::endl;
 #endif
@@ -755,8 +755,12 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
      is_empty_range(halfedge_range_B.begin(), halfedge_range_B.end()))
     return 0;
 
-  // Vertex-Vertex snapping is performed by identify points which are already equal
-  // and grouping them together so that they are moved together
+  // Vertex-Vertex snapping identifies points which are already equal
+  // and groups them together so that they are moved together
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "(A) Positions" << std::endl;
+#endif
 
   // @todo all range building could be parallel (worth it?)
   Unique_positions unique_positions_A;
@@ -766,7 +770,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     const FT tolerance = get(tolerance_map_A, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Pos (A): " << v << " (" << get(vpm_A, v) << ")" << std::endl;
+    std::cout << "  " << get(vpm_A, v) << std::endl;
 #endif
 
     Vertex_container nvc {{ h }};
@@ -784,6 +788,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     }
   }
 
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "(B) Positions" << std::endl;
+#endif
+
   // same for tm_B (@todo when doing boxes, avoid all that for self snapping + use self_intersection_d)
   Unique_positions unique_positions_B;
   for(halfedge_descriptor h : halfedge_range_B)
@@ -792,7 +800,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     const FT tolerance = get(tolerance_map_B, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Pos (B): " << v << " (" << get(vpm_B, v) << ")" << std::endl;
+    std::cout << "  " << get(vpm_B, v) << std::endl;
 #endif
 
     Vertex_container nvc {{ h }};
@@ -825,6 +833,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
         BOOST_MULTI_INDEX_MEMBER(Snapping_pair, FT, sq_dist)>
     >
   >                                                                            Snapping_pair_container;
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+    std::cout << "Seek snapping pairs (V-V)..." << std::endl;
+#endif
 
   Snapping_pair_container snapping_pairs;
   try
@@ -1271,12 +1283,13 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           const CGAL_NP_CLASS_1& np_A=parameters::default_values(),
                           const CGAL_NP_CLASS_2& np_B=parameters::default_values())
 {
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS_1>::type              GT;
-  typedef typename GT::FT                                                             FT;
-  typedef CGAL::dynamic_vertex_property_t<FT>                                         Vertex_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS_1>::type               GT;
+  typedef typename GT::FT                                                          FT;
+  typedef CGAL::dynamic_vertex_property_t<FT>                                      Vertex_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type     Tolerance_map;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor             vertex_descriptor;
 
-  const FT max_tol((std::numeric_limits<double>::max)());
+  Constant_property_map<vertex_descriptor, FT> max_tol((std::numeric_limits<double>::max)());
 
   Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
   internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_A, tolerance_map_A, max_tol, tm_A, np_A);

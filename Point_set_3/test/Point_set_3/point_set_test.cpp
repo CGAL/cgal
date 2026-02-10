@@ -28,7 +28,7 @@ void test (bool expr, const char* msg)
     ++ nb_success;
 }
 
-bool copy_and_assignement()
+bool copy_and_assignment()
 {
   Point_set ps1;
   ps1.add_property_map("prop", int(3));
@@ -150,7 +150,7 @@ int main (int, char**)
   std::unordered_set<Point_set::Index> std_hash;
   boost::unordered_set<Point_set::Index> boost_hash;
 
-  test(copy_and_assignement(), "copy and assignement");
+  test(copy_and_assignment(), "copy and assignment");
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
 

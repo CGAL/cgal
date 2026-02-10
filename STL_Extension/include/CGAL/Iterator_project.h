@@ -20,6 +20,7 @@
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
+#include <CGAL/config.h>
 #include <iterator>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 
@@ -105,8 +106,48 @@ public:
     return fct(*nt);
   }
 
+  // AF: Added in this PR
   pointer ptr() const {
     return this->operator->();
+  }
+  // OPERATIONS Random Access Category
+  // ---------------------------------
+
+  Self& operator+=( difference_type n) {
+    nt += n;
+    return *this;
+  }
+  Self  operator+( difference_type n) const {
+    Self tmp = *this;
+    return tmp += n;
+  }
+  Self& operator-=( difference_type n) {
+    return operator+=( -n);
+  }
+  Self  operator-( difference_type n) const {
+    Self tmp = *this;
+    return tmp += -n;
+  }
+
+#if defined(BOOST_MSVC)
+  difference_type operator- (const Self& i) const {
+    return nt - i.nt;
+  }
+#else
+
+template <typename It>
+  std::enable_if_t<std::is_convertible_v<iterator_category, std::random_access_iterator_tag>
+                   && std::is_convertible_v<const It&, const Self&>,
+                   difference_type>
+  operator- (const It& i) const {
+    return nt - i.nt;
+  }
+#endif
+
+  reference operator[]( difference_type n) const {
+    Self tmp = *this;
+    tmp += n;
+    return tmp.operator*();
   }
 };
 

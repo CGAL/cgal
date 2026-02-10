@@ -11,7 +11,7 @@ A refinement of the concept `TriangulationFaceBase_2` that adds an interface for
 
 At the base level, a face stores handles to its incident vertices and to its neighboring faces.
 Compare with Section \ref Section_2D_Triangulations_Software_Design of the 2D Triangulations
-package. The vertices and neighbors are indexed counter-clockwise 0, 1, and 2. Neighbor `i` lies
+package. The vertices and neighbors are indexed counterclockwise 0, 1, and 2. Neighbor `i` lies
 opposite to vertex `i`.
 
 For periodic hyperbolic triangulations, the face base class needs to store three hyperbolic

@@ -7,17 +7,17 @@ namespace CGAL {
 The class `Projection_traits_xy_3` is an adapter to apply 2D algorithms to the projections of 3D data on the `xy`-plane.
 
 \cgal provides also predefined geometric traits classes
-`Projection_traits_yz_3<K>` and
-`Projection_traits_xz_3<K>` to
+`Projection_traits_yz_3<Gt>` and
+`Projection_traits_xz_3<Gt>` to
 deal with projections on the
 `zx`- and the `zy`-plane,
 respectively.
 
-\tparam K must be a model of `Kernel`.
+\tparam Gt must be a model of `ProjectionTraitsGeometricTraits_3`
 
 \note Internal constructions (projections) are used in the predicate and
-construction functors of this class. If `K` is a model of `Kernel` providing exact
-constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
+construction functors of this class. If `Gt` is a model of `Kernel` providing exact
+constructions or if `Gt` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
 provides exact predicates.
 
@@ -37,7 +37,7 @@ provides exact predicates.
 
 \sa `CGAL::Projection_traits_3`
 */
-template< typename K >
+template< typename Gt >
 class Projection_traits_xy_3 {
 public:
 
@@ -47,22 +47,22 @@ public:
 /*!
 
 */
-typedef Point_3<K> Point_2;
+typedef Point_3<Gt> Point_2;
 
 /*!
 
 */
-typedef Segment_3<K> Segment_2;
+typedef Segment_3<Gt> Segment_2;
 
 /*!
 
 */
-typedef Triangle_3<K> Triangle_2;
+typedef Triangle_3<Gt> Triangle_2;
 
 /*!
 
 */
-typedef Line_3<K> Line_2;
+typedef Line_3<Gt> Line_2;
 
 /// @}
 

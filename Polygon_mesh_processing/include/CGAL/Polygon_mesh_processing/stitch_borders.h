@@ -106,9 +106,9 @@ struct Default_halfedges_keeper
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
 
-  halfedge_descriptor operator()(const halfedge_descriptor h1, const halfedge_descriptor h2) const
+  halfedge_descriptor operator()(const halfedge_descriptor h1, const halfedge_descriptor) const
   {
-    return (h1 < h2) ? h1 : h2; // Arbitrary preference
+    return h1;
   }
 };
 
@@ -1025,9 +1025,9 @@ std::size_t zip_boundary_cycle(typename boost::graph_traits<PolygonMesh>::halfed
     if(!hedges_to_stitch.empty())
     {
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
-      std::cout << hedges_to_stitch.size() " halfedge pairs to stitch on border containing:\n"
-                << edge(h, pmesh) << "\n\t" << source(h, pmesh) << "\t(" << get(vpm, source(h, pmesh)) << ")"
-                                  << "\n\t" << target(h, pmesh) << "\t(" << get(vpm, target(h, pmesh)) << ")" << std::endl;
+      std::cout << hedges_to_stitch.size() << " halfedge pairs to stitch on border containing:\n"
+                << edge(bh, pmesh) << "\n\t" << source(bh, pmesh) << "\t(" << get(vpm, source(bh, pmesh)) << ")"
+                                  << "\n\t" << target(bh, pmesh) << "\t(" << get(vpm, target(bh, pmesh)) << ")" << std::endl;
 #endif
 
       std::size_t local_stitches = internal::stitch_halfedge_range(hedges_to_stitch, cycle_halfedges,
@@ -1279,6 +1279,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 *         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`,
 *         model of `Range`.
 *         Its iterator type is `InputIterator`.
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param pmesh the polygon mesh to be modified by stitching
 * \param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
@@ -1305,10 +1306,11 @@ template <typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(PolygonMesh& pmesh,
                            const HalfedgePairsRange& hedge_pairs_to_stitch,
-                           const CGAL_NP_CLASS& np = parameters::default_values(),
-                           std::enable_if_t<
-                             boost::has_range_iterator<HalfedgePairsRange>::value
-                           >* = 0)
+                           const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                           , std::enable_if_t<boost::has_range_iterator<HalfedgePairsRange>::value>* = 0
+#endif
+                          )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1369,12 +1371,12 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
                                                          std::back_inserter(to_stitch), np);
   res += stitch_halfedge_range(to_stitch, to_consider, pmesh, vpm, cycle_maintainer);
 
+  const auto& new_representatives = cycle_maintainer.cycle_representatives();
+
 #ifdef CGAL_PMP_STITCHING_DEBUG
   std::cout << "------- Stitched " << res << " halfedge pairs after cycles & general" << std::endl;
   std::cout << "------- Stitch cycles (#2)... (" << new_representatives.size() << " cycle(s))" << std::endl;
 #endif
-
-  const auto& new_representatives = cycle_maintainer.cycle_representatives();
 
   // Don't care about keeping track of the sub-cycles as this is the last pass
   internal::Dummy_cycle_rep_maintainer<PolygonMesh> dummy_cycle_maintainer(pmesh);
@@ -1398,7 +1400,6 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2`, respectively.
 ///
-/// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 /// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///

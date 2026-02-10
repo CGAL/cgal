@@ -4,7 +4,10 @@ Linear_cell_complex
 Nef_3
 Periodic_2_triangulation_2
 Point_set_3
+Point_set_processing_3
+Poisson_surface_reconstruction_3
 Polygon
+Polygon_mesh_processing
 Polyhedron
 Straight_skeleton_2
 Surface_mesh

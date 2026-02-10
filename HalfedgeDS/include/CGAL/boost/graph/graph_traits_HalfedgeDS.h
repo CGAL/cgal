@@ -110,6 +110,11 @@ struct HDS_edge {
     return hash_value((std::min)(i.halfedge(), i.halfedge()->opposite()));
   }
 
+  friend std::ostream& operator<<(std::ostream& os, const HDS_edge& e)
+  {
+    os << e.halfedge_;
+    return os;
+  }
 private:
   Halfedge_handle halfedge_;
 };

@@ -284,9 +284,9 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   // (for example when there is a tangency between surfaces and is shared)
   if (h2 == graph_traits::null_halfedge()) return true;
 
-  const Point_3& p = get(vpm, source(h, tm));
-  const Point_3& q = get(vpm, target(h, tm));
-  const Point_3& r = get(vpm, source(h2, tm));
+  const Point_3 p = get(vpm, source(h, tm));
+  const Point_3 q = get(vpm, target(h, tm));
+  const Point_3 r = get(vpm, source(h2, tm));
 
   if (coplanar_cos_threshold==-1)
     return !collinear(p, q, r);
@@ -838,7 +838,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   }
 
   std::vector< boost::container::small_vector<std::size_t,3> > faces;
-  bool remeshing_failed = decimate_impl<Kernel>(tm_in,
+  bool decimate_success = decimate_impl<Kernel>(tm_in,
                                                 nb_corners_and_nb_cc,
                                                 vertex_corner_id,
                                                 edge_is_constrained,
@@ -864,7 +864,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
                                            polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
-  return remeshing_failed;
+  return decimate_success;
 }
 
 template <typename vertex_descriptor,
@@ -1041,7 +1041,6 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::graph_traits<Triangle_mesh> graph_traits;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
 
@@ -1079,21 +1078,10 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   {
     Triangle_mesh& tm = *tm_ptr;
     mesh_has_non_manifold_vertices[mesh_id] = has_non_manifold_vertices(tm);
-    vertex_shared_maps.push_back( get(CGAL::dynamic_vertex_property_t<bool>(), tm) );
-    for(vertex_descriptor v : vertices(tm))
-      put(vertex_shared_maps.back(), v, false);
-
-    edge_is_constrained_maps.push_back( get(CGAL::dynamic_edge_property_t<bool>(), tm) );
-    for(edge_descriptor e : edges(tm))
-      put(edge_is_constrained_maps.back(), e, false);
-
-    vertex_corner_id_maps.push_back( get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm) );
-    for(vertex_descriptor v : vertices(tm))
-      put(vertex_corner_id_maps.back(), v, Planar_segmentation::init_id());
-
-    face_cc_ids_maps.push_back( get(CGAL::dynamic_face_property_t<std::size_t>(), tm) );
-    for(face_descriptor f : faces(tm))
-      put(face_cc_ids_maps.back(), f, -1);
+    vertex_shared_maps.push_back( get(CGAL::dynamic_vertex_property_t<bool>(), tm, false) );
+    edge_is_constrained_maps.push_back( get(CGAL::dynamic_edge_property_t<bool>(), tm, false) );
+    vertex_corner_id_maps.push_back( get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm, Planar_segmentation::init_id()) );
+    face_cc_ids_maps.push_back( get(CGAL::dynamic_face_property_t<std::size_t>(), tm, -1) );
     ++mesh_id;
   }
 
@@ -1686,7 +1674,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
 
   for(Mesh_descriptor& md : meshes)
     vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, true, do_not_triangulate_faces);
+  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, false, do_not_triangulate_faces);
 }
 
 template <class TriangleMesh>

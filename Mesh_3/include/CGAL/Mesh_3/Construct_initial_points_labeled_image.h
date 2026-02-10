@@ -19,6 +19,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <CGAL/Image_3.h>
 
@@ -99,16 +100,32 @@ struct Construct_initial_points_labeled_image
 {
   const CGAL::Image_3& image_;
   const MeshDomain& domain_;
+  const bool verbose_;
 
   /*!
   * Constructs a functor for generating initial points in labeled images.
   * @param image the labeled image that defines the mesh domain
   * @param domain the mesh domain
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{verbose}
+  *     \cgalParamDescription{if `true`, information about the connected components
+  *                           detected in the image are printed out during the
+  *                           initial points generation process.}
+  *     \cgalParamType{`bool`}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   */
+
+  template <typename NamedParameters = parameters::Default_named_parameters>
   Construct_initial_points_labeled_image(const CGAL::Image_3& image,
-                                         const MeshDomain& domain)
+                                         const MeshDomain& domain,
+                                         NamedParameters np = parameters::default_values())
     : image_(image)
     , domain_(domain)
+    , verbose_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false))
   { }
 
   /*!
@@ -119,6 +136,8 @@ struct Construct_initial_points_labeled_image
   * - a `Weighted_point_3` for the point
   * - an `int` for the minimal dimension of the subcomplexes on which the point lies
   * - a `MeshDomain::Index` for the corresponding subcomplex index
+  * @param pts output iterator to store the constructed points
+  * @param n number of points to be constructed per connected component
   */
   template <typename OutputIterator>
   OutputIterator operator()(OutputIterator pts, const int n = 20) const
@@ -181,15 +200,21 @@ struct Construct_initial_points_labeled_image
 
     Seeds seeds;
     Mesh_3::internal::Get_point<Point_3> get_point(&image_);
-    std::cout << "Searching for connected components..." << std::endl;
+    if(verbose_) {
+      std::cout << "Searching for connected components..." << std::endl;
+    }
     CGAL_IMAGE_IO_CASE(image_.image(), search_for_connected_components_in_labeled_image(image_,
                                                      std::back_inserter(seeds),
                                                      CGAL::Emptyset_iterator(),
                                                      transform,
                                                      Word()));
-    std::cout << "  " << seeds.size() << " components were found." << std::endl;
-    std::cout << "Construct initial points..." << std::endl;
-    for(const Seed seed : seeds)
+    if(verbose_) {
+      std::cout << "  " << seeds.size() << " components were found." << std::endl;
+      std::cout << "Construct initial points..." << std::endl;
+    }
+    int nb_of_points = 0;
+    Seeds rejected_seeds;
+    auto treat_seed = [&](const Seed& seed)
     {
       const Point_3 seed_point = get_point(seed.i, seed.j, seed.k);
       Cell_handle seed_cell = tr.locate(cwp(seed_point));
@@ -204,10 +229,12 @@ struct Construct_initial_points_labeled_image
           : domain_.is_in_domain_object()(
               seed_cell->weighted_circumcenter(tr.geom_traits()));
 
-      if ( seed_label != std::nullopt
-        && seed_cell_label != std::nullopt
-        && *seed_label == *seed_cell_label)
-          continue; //this means the connected component has already been initialized
+      if(seed_label != std::nullopt && seed_cell_label != std::nullopt &&
+         *seed_label == *seed_cell_label)
+      {
+        rejected_seeds.push_back(seed);
+        return; // this means the connected component has already been initialized
+      }
 
       const double radius = double(seed.radius + 1)* max_v;
       CGAL::Random_points_on_sphere_3<Point_3> points_on_sphere_3(radius);
@@ -320,8 +347,26 @@ struct Construct_initial_points_labeled_image
           c3t3.set_index(v, intersect_index);
 
           *pts++ = std::make_pair(pi, intersect_index); // dimension 2 by construction, points are on surface
+          ++nb_of_points;
         }
       }
+    };
+
+
+    auto nb_of_points_before = nb_of_points;
+    do
+    {
+      nb_of_points_before = nb_of_points;
+      std::for_each(seeds.begin(), seeds.end(), treat_seed);
+
+      // retry to initialize the rejected seeds
+      seeds = std::move(rejected_seeds);
+      rejected_seeds.clear();
+    }
+    while(nb_of_points_before != nb_of_points && !seeds.empty());
+
+    if(verbose_) {
+      std::cout << "  " << nb_of_points << " initial points were constructed." << std::endl;
     }
     return pts;
   }

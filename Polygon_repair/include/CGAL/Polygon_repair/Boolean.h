@@ -28,13 +28,14 @@
 
 #include <boost/property_map/property_map.hpp>
 
+#ifndef DOXYGEN_RUNNING
 namespace CGAL {
 namespace Polygon_repair {
 
 /*!
 \ingroup PkgTriangulation2Miscellaneous
 
-\tparam Kernel must be
+\tparam Kernel must be model of `ConstrainedDelaunayTriangulationTraits_2`
 */
 
 template <typename Kernel, typename Container_>
@@ -322,7 +323,7 @@ public:
   // @todo taken from Polygon_repair and adapted; might be factorized
 
 /*!
-performs the Boolean operation applying `fct` and returns the result as a multipolygon with holes.
+performs the %Boolean operation applying `fct` and returns the result as a multipolygon with holes.
 
 \tparam Fct must have the operator `bool operator()(bool, bool)`.
 */
@@ -378,7 +379,7 @@ performs the Boolean operation applying `fct` and returns the result as a multip
 
 
 /*!
-access to the underlying constrained triangulation.
+gives access to the underlying constrained triangulation.
 */
   const CDTplus&
   triangulation() const
@@ -393,4 +394,5 @@ access to the underlying constrained triangulation.
 } // namespace Polygon_repair
 } //namespace CGAL
 
+#endif // DOXYGEN_RUNNING
 #endif // CGAL_POLYGON_REPAIR_BOOLEAN_H

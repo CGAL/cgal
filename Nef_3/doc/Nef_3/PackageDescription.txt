@@ -1,4 +1,4 @@
-/// \defgroup PkgNef3Ref 3D Boolean Operations on  Nef Polyhedra Reference
+/// \defgroup PkgNef3Ref Reference Manual
 ///
 /// \defgroup PkgNef3IOFunctions I/O Functions
 /// \ingroup PkgNef3Ref

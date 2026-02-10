@@ -32,7 +32,7 @@
 
 #include <boost/math/constants/constants.hpp>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
@@ -59,37 +59,35 @@ namespace CGAL {
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class Arr_conic_traits_2 {
 public:
-  typedef RatKernel                       Rat_kernel;
-  typedef AlgKernel                       Alg_kernel;
-  typedef NtTraits                        Nt_traits;
+  using Rat_kernel = RatKernel;
+  using Alg_kernel = AlgKernel;
+  using Nt_traits = NtTraits;
 
-  typedef typename Rat_kernel::FT         Rational;
-  typedef typename Rat_kernel::Point_2    Rat_point_2;
-  typedef typename Rat_kernel::Segment_2  Rat_segment_2;
-  typedef typename Rat_kernel::Line_2     Rat_line_2;
-  typedef typename Rat_kernel::Circle_2   Rat_circle_2;
+  using Rational = typename Rat_kernel::FT;
+  using Rat_point_2 = typename Rat_kernel::Point_2;
+  using Rat_segment_2 = typename Rat_kernel::Segment_2;
+  using Rat_line_2 = typename Rat_kernel::Line_2;
+  using Rat_circle_2 = typename Rat_kernel::Circle_2;
 
-  typedef typename Alg_kernel::FT         Algebraic;
-  typedef typename Alg_kernel::Point_2    Alg_point_2;
+  using Algebraic = typename Alg_kernel::FT;
+  using Alg_point_2 = typename Alg_kernel::Point_2;
 
-  typedef typename Nt_traits::Integer     Integer;
+  using Integer = typename Nt_traits::Integer;
 
   // Category tags:
-  typedef Tag_true                        Has_left_category;
-  typedef Tag_true                        Has_merge_category;
-  typedef Tag_false                       Has_do_intersect_category;
-  //typedef std::true_type                Has_line_segment_constructor;
+  using Has_left_category = Tag_true;
+  using Has_merge_category = Tag_true;
 
-  typedef Arr_oblivious_side_tag          Left_side_category;
-  typedef Arr_oblivious_side_tag          Bottom_side_category;
-  typedef Arr_oblivious_side_tag          Top_side_category;
-  typedef Arr_oblivious_side_tag          Right_side_category;
+  using Left_side_category = Arr_oblivious_side_tag;
+  using Bottom_side_category = Arr_oblivious_side_tag;
+  using Top_side_category = Arr_oblivious_side_tag;
+  using Right_side_category = Arr_oblivious_side_tag;
 
   // Traits objects:
-  typedef Conic_arc_2<Rat_kernel, Alg_kernel, Nt_traits>  Curve_2;
-  typedef Conic_x_monotone_arc_2<Curve_2>                 X_monotone_curve_2;
-  typedef Conic_point_2<Alg_kernel>                       Point_2;
-  typedef size_t                                          Multiplicity;
+  using Curve_2 = Conic_arc_2<Rat_kernel, Alg_kernel, Nt_traits>;
+  using X_monotone_curve_2 = Conic_x_monotone_arc_2<Curve_2>;
+  using Point_2 = Conic_point_2<Alg_kernel>;
+  using Multiplicity = std::size_t;
 
 private:
   // Type definition for the intersection points mapping.
@@ -101,21 +99,18 @@ private:
   struct Less_conic_pair {
     bool operator()(const Conic_pair& cp1, const Conic_pair& cp2) const {
       // Compare the pairs of IDs lexicographically.
-      return ((cp1.first < cp2.first) ||
-              ((cp1.first == cp2.first) && (cp1.second < cp2.second)));
+      return ((cp1.first < cp2.first) || ((cp1.first == cp2.first) && (cp1.second < cp2.second)));
     }
   };
 
-  typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-  typedef std::list<Intersection_point>             Intersection_list;
-  typedef std::map<Conic_pair, Intersection_list, Less_conic_pair>
-                                                    Intersection_map;
-  typedef typename Intersection_map::iterator       Intersection_map_iterator;
+  using Intersection_point = std::pair<Point_2, Multiplicity>;
+  using Intersection_list = std::list<Intersection_point>;
+  using Intersection_map = std::map<Conic_pair, Intersection_list, Less_conic_pair>;
+  using Intersection_map_iterator = typename Intersection_map::iterator;
 
-
-  typedef std::shared_ptr<Rat_kernel>               Shared_rat_kernel;
-  typedef std::shared_ptr<Alg_kernel>               Shared_alg_kernel;
-  typedef std::shared_ptr<Nt_traits>                Shared_nt_traits;
+  using Shared_rat_kernel = std::shared_ptr<Rat_kernel>;
+  using Shared_alg_kernel = std::shared_ptr<Alg_kernel>;
+  using Shared_nt_traits = std::shared_ptr<Nt_traits>;
 
   const Shared_rat_kernel m_rat_kernel;
   const Shared_alg_kernel m_alg_kernel;
@@ -127,10 +122,10 @@ private:
 public:
   /*! constructs default.
    */
-  Arr_conic_traits_2()
-   : m_rat_kernel(std::make_shared<Rat_kernel>()),
-     m_alg_kernel(std::make_shared<Alg_kernel>()),
-     m_nt_traits(std::make_shared<Nt_traits>())
+  Arr_conic_traits_2() :
+    m_rat_kernel(std::make_shared<Rat_kernel>()),
+    m_alg_kernel(std::make_shared<Alg_kernel>()),
+    m_nt_traits(std::make_shared<Nt_traits>())
   {}
 
   /*! constructs from resources.
@@ -232,13 +227,11 @@ public:
      * \param cv The arc.
      * \return The left endpoint.
      */
-    const Point_2& operator()(const X_monotone_curve_2& xcv) const
-    { return xcv.left(); }
+    const Point_2& operator()(const X_monotone_curve_2& xcv) const { return xcv.left(); }
   };
 
   /*! obtains a `Construct_min_vertex_2` functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(); }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(); }
 
   class Construct_max_vertex_2 {
   public:
@@ -246,13 +239,11 @@ public:
      * \param cv The arc.
      * \return The right endpoint.
      */
-    const Point_2& operator()(const X_monotone_curve_2& xcv) const
-    { return xcv.right(); }
+    const Point_2& operator()(const X_monotone_curve_2& xcv) const { return xcv.right(); }
   };
 
   /*! obtains a Construct_max_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(); }
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(); }
 
   class Is_vertical_2 {
   public:
@@ -330,8 +321,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_2` functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(*this); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(*this); }
 
   class Compare_y_at_x_left_2 {
   protected:
@@ -360,12 +350,10 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
-                                 const Point_2& p) const
-    {
+                                 const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
-      CGAL_precondition(m_traits.contains_point(xcv1, p) &&
-                        m_traits.contains_point(xcv2, p));
+      CGAL_precondition(m_traits.contains_point(xcv1, p) && m_traits.contains_point(xcv2, p));
 
       CGAL_precondition_code(const auto ker = m_traits.m_alg_kernel);
       CGAL_precondition(ker->compare_xy_2_object()(p, xcv1.left()) == LARGER &&
@@ -395,11 +383,9 @@ public:
       // In case one arc is facing upwards and another facing downwards, it is
       // clear that the one facing upward is above the one facing downwards.
       if (m_traits.has_same_supporting_conic(xcv1, xcv2)) {
-        if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) &&
-            xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
+        if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) && xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
           return LARGER;
-        else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) &&
-                 xcv2.test_flag(X_monotone_curve_2::FACING_UP))
+        else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) && xcv2.test_flag(X_monotone_curve_2::FACING_UP))
           return SMALLER;
 
         // In this case the two arcs overlap.
@@ -423,8 +409,7 @@ public:
       if (! is_vertical_slope1 && ! is_vertical_slope2) {
         // The two derivatives at p are well-defined: use them to determine
         // which arc is above the other (the one with a larger slope is below).
-        Comparison_result slope_res = CGAL::compare(slope2_numer*slope1_denom,
-                                                    slope1_numer*slope2_denom);
+        Comparison_result slope_res = CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
 
         if (slope_res != EQUAL) return slope_res;
 
@@ -432,8 +417,7 @@ public:
         xcv1.derive_by_x_at(p, 2, slope1_numer, slope1_denom);
         xcv2.derive_by_x_at(p, 2, slope2_numer, slope2_denom);
 
-        slope_res = CGAL::compare(slope1_numer*slope2_denom,
-                                  slope2_numer*slope1_denom);
+        slope_res = CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
 
         if (slope_res != EQUAL) return (slope_res);
 
@@ -441,8 +425,7 @@ public:
         xcv1.derive_by_x_at(p, 3, slope1_numer, slope1_denom);
         xcv2.derive_by_x_at(p, 3, slope2_numer, slope2_denom);
 
-        slope_res = CGAL::compare(slope2_numer*slope1_denom,
-                                  slope1_numer*slope2_denom);
+        slope_res = CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
 
         // \todo Handle higher-order derivatives:
         CGAL_assertion(slope_res != EQUAL);
@@ -454,34 +437,29 @@ public:
         // facing upwards or downwards and decide accordingly.
         CGAL_assertion(xcv1.facing_mask() != 0);
 
-        return (xcv1.test_flag(X_monotone_curve_2::FACING_UP)) ?
-          LARGER : SMALLER;
+        return (xcv1.test_flag(X_monotone_curve_2::FACING_UP)) ? LARGER : SMALLER;
       }
       else if (! is_vertical_slope1) {
         // The second arc has a vertical slope at p_int: check whether it is
         // facing upwards or downwards and decide accordingly.
         CGAL_assertion(xcv2.facing_mask() != 0);
 
-        return (xcv2.test_flag(X_monotone_curve_2::FACING_UP)) ?
-          SMALLER : LARGER;
+        return (xcv2.test_flag(X_monotone_curve_2::FACING_UP)) ? SMALLER : LARGER;
       }
 
       // The two arcs have vertical slopes at p_int:
       // First check whether one is facing up and one down. In this case the
       // comparison result is trivial.
-      if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) &&
-          xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
+      if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) && xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
         return LARGER;
-      else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) &&
-               xcv2.test_flag(X_monotone_curve_2::FACING_UP))
+      else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) && xcv2.test_flag(X_monotone_curve_2::FACING_UP))
         return SMALLER;
 
       // Compute the second-order derivative by \f$y\f$ and act according to it.
       xcv1.derive_by_y_at(p, 2, slope1_numer, slope1_denom);
       xcv2.derive_by_y_at(p, 2, slope2_numer, slope2_denom);
 
-      Comparison_result slope_res =
-        CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
+      Comparison_result slope_res = CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
 
       // If necessary, use the third-order derivative by \f$y\f$.
       if (slope_res == EQUAL) {
@@ -489,16 +467,14 @@ public:
         xcv1.derive_by_y_at(p, 3, slope1_numer, slope1_denom);
         xcv2.derive_by_y_at(p, 3, slope2_numer, slope2_denom);
 
-        slope_res =
-          CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
+        slope_res = CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
       }
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
 
       // Check whether both are facing up.
-      if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) &&
-          xcv2.test_flag(X_monotone_curve_2::FACING_UP))
+      if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) && xcv2.test_flag(X_monotone_curve_2::FACING_UP))
         return ((slope_res == LARGER) ? SMALLER : LARGER);
 
       // Both are facing down.
@@ -508,8 +484,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_left_2` functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(*this); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(*this); }
 
   class Compare_y_at_x_right_2 {
   protected:
@@ -538,16 +513,13 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
-                                 const Point_2& p) const
-    {
+                                 const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
-      CGAL_precondition(m_traits.contains_point(xcv1, p) &&
-                        m_traits.contains_point(xcv2, p));
+      CGAL_precondition(m_traits.contains_point(xcv1, p) && m_traits.contains_point(xcv2, p));
       CGAL_precondition_code(const auto ker = m_traits.m_alg_kernel);
       CGAL_precondition_code(auto cmp_xy = ker->compare_xy_2_object());
-      CGAL_precondition(cmp_xy(p, xcv1.right()) == SMALLER &&
-                        cmp_xy(p, xcv2.right()) == SMALLER);
+      CGAL_precondition(cmp_xy(p, xcv1.right()) == SMALLER && cmp_xy(p, xcv2.right()) == SMALLER);
 
       // If one of the curves is vertical, it is above the other one.
       if (xcv1.is_vertical()) return (xcv2.is_vertical()) ? EQUAL : LARGER;
@@ -573,11 +545,9 @@ public:
     // In case one arc is facing upwards and another facing downwards, it is
     // clear that the one facing upward is above the one facing downwards.
     if (m_traits.has_same_supporting_conic(xcv1, xcv2)) {
-      if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) &&
-          xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
+      if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) && xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
         return LARGER;
-      else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) &&
-               xcv2.test_flag(X_monotone_curve_2::FACING_UP))
+      else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) && xcv2.test_flag(X_monotone_curve_2::FACING_UP))
         return SMALLER;
 
       // In this case the two arcs overlap.
@@ -609,8 +579,7 @@ public:
       xcv1.derive_by_x_at(p, 2, slope1_numer, slope1_denom);
       xcv2.derive_by_x_at(p, 2, slope2_numer, slope2_denom);
 
-      slope_res =
-        CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+      slope_res = CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
 
       if (slope_res != EQUAL) return (slope_res);
 
@@ -618,8 +587,7 @@ public:
       xcv1.derive_by_x_at(p, 3, slope1_numer, slope1_denom);
       xcv2.derive_by_x_at(p, 3, slope2_numer, slope2_denom);
 
-      slope_res =
-        CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+      slope_res = CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
 
       // \todo Handle higher-order derivatives:
       CGAL_assertion(slope_res != EQUAL);
@@ -644,17 +612,16 @@ public:
     // The two arcs have vertical slopes at p_int:
     // First check whether one is facing up and one down. In this case the
     // comparison result is trivial.
-    if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) &&
-        xcv2.test_flag(X_monotone_curve_2::FACING_DOWN)) return LARGER;
-    else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) &&
-             xcv2.test_flag(X_monotone_curve_2::FACING_UP)) return SMALLER;
+    if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) && xcv2.test_flag(X_monotone_curve_2::FACING_DOWN))
+      return LARGER;
+    else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) && xcv2.test_flag(X_monotone_curve_2::FACING_UP))
+      return SMALLER;
 
     // Compute the second-order derivative by \f$y\f$ and act according to it.
     xcv1.derive_by_y_at(p, 2, slope1_numer, slope1_denom);
     xcv2.derive_by_y_at(p, 2, slope2_numer, slope2_denom);
 
-    Comparison_result slope_res =
-      CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
+    Comparison_result slope_res = CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
 
     // If necessary, use the third-order derivative by \f$y\f$.
     if (slope_res == EQUAL) {
@@ -662,15 +629,13 @@ public:
       xcv1.derive_by_y_at(p, 3, slope1_numer, slope1_denom);
       xcv2.derive_by_y_at(p, 3, slope2_numer, slope2_denom);
 
-      slope_res =
-        CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
+      slope_res = CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
     }
 
     // \todo Handle higher-order derivatives:
     CGAL_assertion(slope_res != EQUAL);
 
-    if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) &&
-        xcv2.test_flag(X_monotone_curve_2::FACING_UP))
+    if (xcv1.test_flag(X_monotone_curve_2::FACING_UP) && xcv2.test_flag(X_monotone_curve_2::FACING_UP))
       return (slope_res == LARGER) ? SMALLER : LARGER;  // both are facing up
     return slope_res;                                   // both are facing down
   }
@@ -678,8 +643,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_right_2` functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(*this); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(*this); }
 
   class Equal_2 {
   protected:
@@ -703,8 +667,7 @@ public:
      * \return `true` if the two curves are the same; `false` otherwise.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const
-    {
+                    const X_monotone_curve_2& xcv2) const {
       if (&xcv1 == &xcv2) return true;
       return equals(xcv1, xcv2);
     }
@@ -735,26 +698,60 @@ public:
       // Check that the arc endpoints are the same.
       if (xcv1.orientation() == COLLINEAR) {
         CGAL_assertion(xcv2.orientation() == COLLINEAR);
-        return((eq(xcv1.source(), xcv2.source()) &&
-                eq(xcv1.target(), xcv2.target())) ||
-               (eq(xcv1.source(), xcv2.target()) &&
-                eq(xcv1.target(), xcv2.source())));
+        return((eq(xcv1.source(), xcv2.source()) && eq(xcv1.target(), xcv2.target())) ||
+               (eq(xcv1.source(), xcv2.target()) && eq(xcv1.target(), xcv2.source())));
       }
 
       if (xcv1.orientation() == xcv2.m_orient) {
         // Same orientation - the source and target points must be the same.
-        return (eq(xcv1.source(), xcv2.source()) &&
-                eq(xcv1.target(), xcv2.target()));
+        return (eq(xcv1.source(), xcv2.source()) && eq(xcv1.target(), xcv2.target()));
       }
 
       // Reverse orientation - the source and target points must be swapped.
-      return (eq(xcv1.source(), xcv2.target()) &&
-              eq(xcv1.target(), xcv2.source()));
+      return (eq(xcv1.source(), xcv2.target()) && eq(xcv1.target(), xcv2.source()));
     }
   };
 
   /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  protected:
+    using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs.
+     * \param traits The traits.
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return a boolean flag indicating whether the curves intersect.
+     * \todo Reimplement without using Intersect_2 to make robust (and efficient) with inexact constructionss.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+      std::vector<Intersection_result> intersections;
+      m_traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersections));
+      auto empty = intersections.empty();
+      intersections.clear();
+      return ! empty;
+    }
+  };
+
+  /*! obtains a `Do_intersect_2` functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   //@}
 
   /// \name Functor definitions to handle boundaries
@@ -787,13 +784,11 @@ public:
      * \param p The point.
      * \return the parameter space at `p`.
      */
-    Arr_parameter_space operator()(const Point_2 ) const
-    { return ARR_INTERIOR; }
+    Arr_parameter_space operator()(const Point_2 ) const { return ARR_INTERIOR; }
   };
 
   /*! obtains a `Parameter_space_in_x_2` function object */
-  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const { return Parameter_space_in_x_2(); }
 
   /*! A function object that obtains the parameter space of a geometric
    * entity along the \f$y\f$-axis
@@ -832,8 +827,7 @@ public:
   };
 
   /*! obtains a `Parameter_space_in_y_2` function object */
-  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(); }
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const { return Parameter_space_in_y_2(); }
 
   //@}
 
@@ -918,29 +912,19 @@ public:
           auto start_pos = cmp_y_at_x_2(cv.source(), line);
           auto order_vpts = ker->compare_x_2_object()(vtan_ps[0], vtan_ps[1]);
 
-          CGAL_assertion((start_pos != EQUAL) &&
-                         (cmp_y_at_x_2(cv.target(), line) == start_pos));
+          CGAL_assertion((start_pos != EQUAL) && (cmp_y_at_x_2(cv.target(), line) == start_pos));
           CGAL_assertion(order_vpts != EQUAL);
 
-          if (((cv.orientation() == COUNTERCLOCKWISE) &&
-               (start_pos == order_vpts)) ||
-              ((cv.orientation() == CLOCKWISE) && (start_pos != order_vpts)))
-          {
+          if (((cv.orientation() == COUNTERCLOCKWISE) && (start_pos == order_vpts)) ||
+              ((cv.orientation() == CLOCKWISE) && (start_pos != order_vpts))) {
             ind_first = 1;
             ind_second = 0;
           }
 
           // Split the arc into three \f$x\f$-monotone sub-curves.
-          *oi++ = ctr_xcv(cv, cv.source(),
-                          vtan_ps[ind_first],
-                          conic_id);
-
-          *oi++ = ctr_xcv(cv, vtan_ps[ind_first],
-                          vtan_ps[ind_second],
-                          conic_id);
-
-          *oi++ = ctr_xcv(cv, vtan_ps[ind_second],
-                          cv.target(), conic_id);
+          *oi++ = ctr_xcv(cv, cv.source(), vtan_ps[ind_first], conic_id);
+          *oi++ = ctr_xcv(cv, vtan_ps[ind_first], vtan_ps[ind_second], conic_id);
+          *oi++ = ctr_xcv(cv, vtan_ps[ind_second], cv.target(), conic_id);
         }
       }
 
@@ -949,8 +933,7 @@ public:
   };
 
   /*! obtains a `Make_x_monotone_2` functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(*this); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(*this); }
 
   class Split_2 {
   protected:
@@ -989,8 +972,7 @@ public:
                X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
       // Make sure that p lies on the interior of the arc.
       CGAL_precondition_code(auto eq = m_traits.m_alg_kernel->equal_2_object());
-      CGAL_precondition(m_traits.contains_point(xcv, p) &&
-                        ! eq(p, xcv.source()) && ! eq(p, xcv.target()));
+      CGAL_precondition(m_traits.contains_point(xcv, p) && ! eq(p, xcv.source()) && ! eq(p, xcv.target()));
 
       // Make copies of the current arc.
       xcv1 = xcv;
@@ -1101,8 +1083,7 @@ public:
       else if (m_traits.is_between_endpoints(xcv2, xcv1.source()) &&
                m_traits.is_between_endpoints(xcv2, xcv1.target()) &&
                (m_traits.is_strictly_between_endpoints(xcv2, xcv1.source()) ||
-                m_traits.is_strictly_between_endpoints(xcv2, xcv1.target())))
-      {
+                m_traits.is_strictly_between_endpoints(xcv2, xcv1.target()))) {
         // Case 4 - *this:     +----------->
         //            arc:   +================>
         overlap = xcv1;
@@ -1126,10 +1107,8 @@ public:
         return;
       }
 
-      const int deg1 =
-        (xcv1.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
-      const int deg2 =
-        (xcv2.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
+      const int deg1 = (xcv1.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
+      const int deg2 = (xcv2.degree_mask() == X_monotone_curve_2::degree_1_mask()) ? 1 : 2;
       const auto nt_traits = m_traits.m_nt_traits;
       Algebraic xs[4];
       int n_xs = 0;
@@ -1143,15 +1122,12 @@ public:
           // point.
           const auto* extra_data1 = xcv1.extra_data();
           const auto* extra_data2 = xcv2.extra_data();
-          Algebraic denom =
-            extra_data1->a * extra_data2->b - extra_data1->b * extra_data2->a;
+          Algebraic denom = extra_data1->a * extra_data2->b - extra_data1->b * extra_data2->a;
           if (CGAL::sign (denom) != CGAL::ZERO) {
-            xs[0] = (extra_data1->b * extra_data2->c -
-                     extra_data1->c * extra_data2->b) / denom;
+            xs[0] = (extra_data1->b * extra_data2->c - extra_data1->c * extra_data2->b) / denom;
             n_xs = 1;
 
-            ys[0] = (extra_data1->c * extra_data2->a -
-                     extra_data1->a * extra_data2->c) / denom;
+            ys[0] = (extra_data1->c * extra_data2->a - extra_data1->a * extra_data2->c) / denom;
             n_ys = 1;
           }
         }
@@ -1284,9 +1260,7 @@ public:
 
       for (i = 0; i < n_xs; ++i) {
         for (j = 0; j < n_ys; ++j) {
-          if (xcv1.is_on_supporting_conic(xs[i], ys[j]) &&
-              xcv2.is_on_supporting_conic(xs[i], ys[j]))
-          {
+          if (xcv1.is_on_supporting_conic(xs[i], ys[j]) && xcv2.is_on_supporting_conic(xs[i], ys[j])) {
             // Create the intersection point and set its generating conics.
             Point_2 ip(xs[i], ys[j]);
 
@@ -1314,8 +1288,7 @@ public:
     OutputIterator intersect(const X_monotone_curve_2& xcv1,
                              const X_monotone_curve_2& xcv2,
                              Intersection_map& inter_map,
-                             OutputIterator oi) const
-    {
+                             OutputIterator oi) const {
       if (m_traits.has_same_supporting_conic(xcv1, xcv2)) {
         // Check for overlaps between the two arcs.
         X_monotone_curve_2 overlap;
@@ -1392,8 +1365,7 @@ public:
       // both \f$x\f$-monotone arcs.
       for (auto iter = inter_list.begin(); iter != inter_list.end(); ++iter) {
         if (m_traits.is_between_endpoints(xcv1, (*iter).first) &&
-            m_traits.is_between_endpoints(xcv2, (*iter).first))
-        {
+            m_traits.is_between_endpoints(xcv2, (*iter).first)) {
           *oi++ = *iter;
         }
       }
@@ -1452,8 +1424,7 @@ public:
   };
 
   /*! obtains an `Are_mergeable_2` functor object. */
-  Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(*this); }
+  Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(*this); }
 
   /*! \class Merge_2
    * A functor that merges two \f$x\f$-monotone arcs into one.
@@ -1481,8 +1452,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2,
-                    X_monotone_curve_2& xcv) const
-    {
+                    X_monotone_curve_2& xcv) const {
       CGAL_precondition(m_traits.are_mergeable_2_object()(xcv2, xcv1));
       xcv = xcv1;
       merge(xcv, xcv2);
@@ -1523,11 +1493,11 @@ public:
    * point-location strategy and the drawing function.
    */
   //@{
-  typedef double                                        Approximate_number_type;
-  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  typedef Approximate_kernel::Point_2                   Approximate_point_2;
+  using Approximate_number_type = double;
+  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+  using Approximate_point_2 = Approximate_kernel::Point_2;
 
-  class Approximate_curve_length_2 {
+  class Approximate_length_2 {
   protected:
     using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
@@ -1537,7 +1507,7 @@ public:
     /*! constructs
      * \param traits the traits.
      */
-    Approximate_curve_length_2(const Traits& traits) : m_traits(traits) {}
+    Approximate_length_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
@@ -1557,7 +1527,7 @@ public:
   private:
     /*! obtains the segment length.
      */
-    double segment_length(const X_monotone_curve_2& xcv) {
+    double segment_length(const X_monotone_curve_2& xcv) const {
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& minv = min_vertex(xcv);
@@ -1597,7 +1567,7 @@ public:
 
     /*! obtains the parabolic arc length.
      */
-    double parabola_length(const X_monotone_curve_2& xcv) {
+    double parabola_length(const X_monotone_curve_2& xcv) const {
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
       double xs_t, ys_t, xt_t, yt_t;
@@ -1617,7 +1587,7 @@ public:
       return d;
     }
 
-    double ellipse_length(const X_monotone_curve_2& xcv) {
+    double ellipse_length(const X_monotone_curve_2& xcv) const {
       double r_m, t_m, s_m, u_m, v_m, w_m;
       double cost, sint;
       double xs_t, ys_t, xt_t, yt_t;
@@ -1638,7 +1608,7 @@ public:
       return d;
     }
 
-    double hyperbola_length(const X_monotone_curve_2& /* xcv */) {
+    double hyperbola_length(const X_monotone_curve_2& /* xcv */) const {
       CGAL_error_msg("Not implemented yet!");
       double l(0.0);
       return l;
@@ -1824,12 +1794,9 @@ public:
 
       *oi++ = Approximate_point_2(xs, ys);
       add_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
-                 [&](double tm, double& xm, double& ym) {
-                   elliptic_point(a, b, tm, xm, ym);
-                 },
-                 [&](double xc, double& yc, double& x, double& y) {
-                   transform_point(xc, yc, cost, sint, cx, cy, x, y);
-                 });
+                 [&](double tm, double& xm, double& ym) { elliptic_point(a, b, tm, xm, ym); },
+                 [&](double xc, double& yc, double& x, double& y)
+                 { transform_point(xc, yc, cost, sint, cx, cy, x, y); });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
@@ -1901,8 +1868,7 @@ public:
     template <typename OutputIterator>
     OutputIterator approximate_parabola(const X_monotone_curve_2& xcv,
                                         double error, OutputIterator oi,
-                                        bool l2r = true)
-      const {
+                                        bool l2r = true) const {
       // std::cout << "PARABOLA\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
@@ -1934,12 +1900,9 @@ public:
 
       *oi++ = Approximate_point_2(xs, ys);
       add_parabolic_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
-                           [&](double tm, double& xm, double& ym) {
-                             parabolic_point(a, tm, xm, ym);
-                           },
-                           [&](double xc, double& yc, double& x, double& y) {
-                             transform_point(xc, yc, cost, sint, cx, cy, x, y);
-                           });
+                           [&](double tm, double& xm, double& ym) { parabolic_point(a, tm, xm, ym); },
+                           [&](double xc, double& yc, double& x, double& y)
+                           { transform_point(xc, yc, cost, sint, cx, cy, x, y); });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
@@ -2035,12 +1998,9 @@ public:
       // std::cout << "a, b: " << a << "," << b << std::endl;
       *oi++ = Approximate_point_2(xs, ys);
       add_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
-                 [&](double tm, double& xm, double& ym) {
-                   hyperbolic_point(a, b, tm, xm, ym);
-                 },
-                 [&](double xc, double& yc, double& x, double& y) {
-                   transform_point(xc, yc, cost, sint, cx, cy, x, y);
-                 });
+                 [&](double tm, double& xm, double& ym) { hyperbolic_point(a, b, tm, xm, ym); },
+                 [&](double xc, double& yc, double& x, double& y)
+                 { transform_point(xc, yc, cost, sint, cx, cy, x, y); });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
@@ -2104,8 +2064,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Curve_2& cv,
                                   const Point_2& source, const Point_2& target,
-                                  const Conic_id& id) const
-    {
+                                  const Conic_id& id) const {
       // Set the two endpoints.
       X_monotone_curve_2 xcv(cv, id);
       xcv.set_source(source);
@@ -2122,8 +2081,7 @@ public:
      * \return A segment connecting `source` and `target`.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target)
-      const
-    {
+      const {
       X_monotone_curve_2 xcv;
 
       // Set the basic properties.
@@ -2157,8 +2115,7 @@ public:
     X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
                                   const Algebraic& c,
                                   const Point_2& source, const Point_2& target)
-      const
-    {
+      const {
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
       Comparison_result res = cmp_xy(source, target);
       CGAL_precondition(res != EQUAL);
@@ -2205,7 +2162,6 @@ public:
       auto res = m_traits.horizontal_tangency_points(cv, htan_ps);
       return (res == 0);
     }
-
   };
 
   /*! obtains a `Construct_x_monotone_curve_2` functor object. */
@@ -2238,8 +2194,7 @@ public:
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w)
-      const
-    {
+      const {
       // Ensure that the given curve is an ellipse (4rs - t^2 is positive).
       CGAL_precondition(CGAL::sign(4*r*s - t*t) == POSITIVE);
 
@@ -2343,8 +2298,7 @@ public:
       rat_coeffs[2] = 0;
       rat_coeffs[3] = -two*D*Nx;
       rat_coeffs[4] = -two*D*Ny;
-      rat_coeffs[5] =
-        Nx*Nx + Ny*Ny - ((D*x2 - Nx)*(D*x2 - Nx) + (D*y2 - Ny)*(D*y2 - Ny));
+      rat_coeffs[5] = Nx*Nx + Ny*Ny - ((D*x2 - Nx)*(D*x2 - Nx) + (D*y2 - Ny)*(D*y2 - Ny));
 
       // Determine the orientation: If the mid-point forms a left-turn with
       // the source and the target points, the orientation is positive (going
@@ -2425,13 +2379,11 @@ public:
 
       if (turn == LEFT_TURN) {
         arc.set_orientation(COUNTERCLOCKWISE);
-        CGAL_precondition(orient_f(p1, p3, p5) == LEFT_TURN &&
-                          orient_f(p1, p4, p5) == LEFT_TURN);
+        CGAL_precondition(orient_f(p1, p3, p5) == LEFT_TURN && orient_f(p1, p4, p5) == LEFT_TURN);
       }
       else {
         arc.set_orientation(CLOCKWISE);
-        CGAL_precondition(orient_f(p1, p3, p5) != LEFT_TURN &&
-                          orient_f(p1, p4, p5) != LEFT_TURN);
+        CGAL_precondition(orient_f(p1, p3, p5) != LEFT_TURN && orient_f(p1, p4, p5) != LEFT_TURN);
       }
 
       // Set the arc properties (no need to compute the orientation).
@@ -2445,8 +2397,7 @@ public:
 
       if (! m_traits.is_strictly_between_endpoints(arc, mp2) ||
           ! m_traits.is_strictly_between_endpoints(arc, mp3) ||
-          ! m_traits.is_strictly_between_endpoints(arc, mp4))
-      {
+          ! m_traits.is_strictly_between_endpoints(arc, mp4)) {
         arc.reset_flags();            // invalid arc
         return arc;
       }
@@ -2512,8 +2463,7 @@ public:
         aux_rat_coeffs[4] = (k == 1) ? v_1 : v_2;
         aux_rat_coeffs[5] = (k == 1) ? w_1 : w_2;
 
-        nt_traits->convert_coefficients(aux_rat_coeffs, aux_rat_coeffs + 6,
-                                        aux_coeffs);
+        nt_traits->convert_coefficients(aux_rat_coeffs, aux_rat_coeffs + 6, aux_coeffs);
 
         int deg_aux = ((CGAL::sign(aux_coeffs[0]) == ZERO) &&
                        (CGAL::sign(aux_coeffs[1]) == ZERO) &&
@@ -2735,8 +2685,7 @@ public:
     Curve_2 operator()(const Rat_circle_2& circ, Orientation orient,
                        const Point_2& source, const Point_2& target) const {
       // Make sure that the source and the target are not the same.
-      CGAL_precondition_code(auto cmp_xy =
-                               m_traits.m_alg_kernel->compare_xy_2_object());
+      CGAL_precondition_code(auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
       CGAL_precondition(orient != COLLINEAR);
 
@@ -2810,8 +2759,7 @@ public:
   };
 
   /*! obtains a `Compare_endpoints_xy_2` functor object. */
-  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  { return Compare_endpoints_xy_2(); }
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const { return Compare_endpoints_xy_2(); }
 
   class Construct_opposite_2 {
   public:
@@ -2824,8 +2772,7 @@ public:
   };
 
   /*! obtains a `Construct_opposite_2` functor object. */
-  Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(); }
+  Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(); }
 
   class Trim_2 {
   protected:
@@ -2853,8 +2800,7 @@ public:
      * \pre both points must be interior and must lie on \c cv
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& src, const Point_2& tgt) const
-    {
+                                  const Point_2& src, const Point_2& tgt) const {
       // make functor objects
       CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
                              m_traits.compare_y_at_x_2_object());
@@ -2908,10 +2854,8 @@ public:
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
       auto res = cmp_xy(ps, pt);
       CGAL_assertion(res != EQUAL);
-      if ((xcv.test_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT) &&
-           (res == LARGER)) ||
-          (! xcv.test_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT) &&
-           (res == SMALLER))) {
+      if ((xcv.test_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT) && (res == LARGER)) ||
+          (! xcv.test_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT) && (res == SMALLER))) {
         set_source(pt);
         set_target(ps);
       }
@@ -3084,16 +3028,14 @@ public:
     const auto& target = cv.target();
     // Make sure both endpoint lie on the supporting conic.
     if (! is_on_supporting_conic(cv, source) ||
-        ! is_on_supporting_conic(cv, target))
-    {
+        ! is_on_supporting_conic(cv, target)) {
       cv.reset_flags();            // invalid arc
       return;
     }
 
     // Check whether we have a degree 2 curve.
     if ((CGAL::sign(r) != ZERO) || (CGAL::sign(s) != ZERO) ||
-        (CGAL::sign(t) != ZERO))
-    {
+        (CGAL::sign(t) != ZERO)) {
       if (cv.orientation() == COLLINEAR) {
         // Make sure the midpoint is on the line pair (thus making sure that
         // the two points are not taken from different lines).
@@ -3105,8 +3047,7 @@ public:
                         m_nt_traits->convert(u)) * p_mid.x() +
                        (m_nt_traits->convert(s)*p_mid.y() +
                         m_nt_traits->convert(v)) * p_mid.y() +
-                       m_nt_traits->convert(w)) != ZERO)
-        {
+                       m_nt_traits->convert(w)) != ZERO) {
           cv.reset_flags();    // invalid arc
           return;
         }
@@ -3388,7 +3329,7 @@ public:
     //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
     //
     // We store the equation of this line in the extra data structure and also
-    // the sign (side of half-plane) our arc occupies with respect to the line.
+    // the sign (side of halfplane) our arc occupies with respect to the line.
     // We use it to make sure that the two endpoints are located on the same
     // branch of the hyperbola.
     auto a = cos_phi;
@@ -3482,11 +3423,11 @@ public:
     return 2;
   }
 
-  /*! computes a point on an arc with the same \f$x\f$-coordiante as the given
+  /*! computes a point on an arc with the same \f$x\f$-coordinate as the given
    * point.
    * \param p The given point.
    * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
-   * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
+   * \return A point on the arc with the same \f$x\f$-coordinate as `p`.
    */
   Point_2 point_at_x(const X_monotone_curve_2& xcv, const Point_2& p) const {
     // Make sure that p is in the \f$x\f$-range of the arc.
@@ -3645,8 +3586,7 @@ public:
       // Compute the degree of the underlying conic.
       if ((CGAL::sign(xcv.r()) != ZERO) ||
           (CGAL::sign(xcv.s()) != ZERO) ||
-          (CGAL::sign(xcv.t()) != ZERO))
-      {
+          (CGAL::sign(xcv.t()) != ZERO)) {
         xcv.set_flag(X_monotone_curve_2::DEGREE_2);
         xcv.set_flag(X_monotone_curve_2::IS_SPECIAL_SEGMENT);
       }
@@ -3665,7 +3605,7 @@ public:
     xcv.set_flag(X_monotone_curve_2::DEGREE_2);
 
     // Compute a midpoint between the source and the target and get the
-    // \f$y\f$-value of the arc at its \f$x\f$-coordiante.
+    // \f$y\f$-value of the arc at its \f$x\f$-coordinate.
     Point_2 p_mid =
       m_alg_kernel->construct_midpoint_2_object()(xcv.source(), xcv.target());
     Algebraic ys[2];
@@ -3856,8 +3796,7 @@ public:
         for (int j = 0; j < n_ys; ++j) {
           if (CGAL::compare(m_nt_traits->convert(Integer(two*s)) * ys[j],
                             -(m_nt_traits->convert(t) * xs[i] +
-                              m_nt_traits->convert(v))) == EQUAL)
-          {
+                              m_nt_traits->convert(v))) == EQUAL) {
             ps[n++] = Point_2(xs[i], ys[j]);
             break;
           }
@@ -4128,8 +4067,7 @@ public:
                            double& xs_t, double& ys_t, double& ts,
                            double& xt_t, double& yt_t, double& tt,
                            double& a, double& b, double& cx, double& cy,
-                           bool l2r = true)
-    const {
+                           bool l2r = true) const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
     const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
@@ -4206,8 +4144,7 @@ public:
                              double& xs_t, double& ys_t, double& ts,
                              double& xt_t, double& yt_t, double& tt,
                              double& a, double& b, double& cx, double& cy,
-                             bool l2r = true)
-    const {
+                             bool l2r = true) const {
     auto min_vertex = construct_min_vertex_2_object();
     auto max_vertex = construct_max_vertex_2_object();
     const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);

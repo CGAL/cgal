@@ -177,13 +177,16 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
-
+CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
+CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 CGAL_add_named_parameter(filter_t, filter, filter)
 CGAL_add_named_parameter(use_relaxed_order_t, use_relaxed_order, use_relaxed_order)
+CGAL_add_named_parameter(line_policies_weight_t, line_policies_weight, line_policies_weight)
+CGAL_add_named_parameter(discontinuity_multiplier_t, discontinuity_multiplier, discontinuity_multiplier)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
@@ -192,6 +195,7 @@ CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
 CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
 CGAL_add_named_parameter(algorithm_t, algorithm, algorithm)
 CGAL_add_named_parameter(use_smoothing_t, use_smoothing, use_smoothing)
+CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
@@ -311,6 +315,7 @@ CGAL_add_named_parameter(item_map_t, item_map, item_map)
 CGAL_add_named_parameter(cosine_of_maximum_angle_t, cosine_of_maximum_angle, cosine_of_maximum_angle)
 CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
 CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
+CGAL_add_named_parameter(least_squares_fitting_t, least_squares_fitting, least_squares_fitting)
 
 // List of named parameters used in Shape_regularization package
 CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
@@ -365,6 +370,7 @@ CGAL_add_named_parameter_with_compatibility(do_reset_c3t3_t, do_reset_c3t3, do_r
 CGAL_add_named_parameter_with_compatibility(mesh_param_t, mesh_param, mesh_options)
 CGAL_add_named_parameter_with_compatibility(manifold_param_t, manifold_param, manifold_option)
 CGAL_add_named_parameter_with_compatibility(features_option_param_t,features_options_param,features_options)
+CGAL_add_named_parameter_with_compatibility(surface_only_param_t,surface_only_param,surface_only_option)
 CGAL_add_named_parameter_with_compatibility(initial_points_generator_param_t,initial_points_generator_param,initial_points_generator)
 CGAL_add_named_parameter_with_compatibility(initial_points_param_t,initial_points_param,initial_points)
 
@@ -401,3 +407,10 @@ CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_no
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+// List of named parameters used in the package 'Constrained_triangulation_3'
+CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
+CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
+
+// List of named parameters used in the package 'Barycentric_coordinates_3'
+CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)

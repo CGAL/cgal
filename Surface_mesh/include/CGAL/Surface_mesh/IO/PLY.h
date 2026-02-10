@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/IO/PLY.h>
 
@@ -169,10 +170,7 @@ public:
     const std::string& name = property->name();
     if(name == "vertex1" || name == "vertex2")
       return true;
-#ifndef CGAL_NO_DEPRECATED_CODE
-    if(name == "v0" || name == "v1")
-      return true;
-#endif
+
     return false;
   }
 
@@ -238,7 +236,6 @@ public:
     typedef std::tuple<std::int8_t, std::uint8_t,
                        std::int16_t , std::uint16_t,
                        std::int32_t , std::uint32_t,
-                       std::int64_t, std:: uint64_t,
                        float, double> Type_tuple;
 
     for(std::size_t j = 0; j < element.number_of_properties(); ++ j)
@@ -423,44 +420,77 @@ public:
   }
 };
 
-template <typename Point>
+template <typename Point, typename NamedParameter>
 bool fill_simplex_specific_header(std::ostream& os,
                                   const Surface_mesh<Point>& sm,
                                   std::vector<Abstract_property_printer<
                                     typename Surface_mesh<Point>::Vertex_index>*>& printers,
-                                  const std::string& prop)
+                                  const std::string& prop,
+                                  const NamedParameter& np)
 {
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+
   typedef Surface_mesh<Point>                                     SMesh;
   typedef typename SMesh::Vertex_index                            VIndex;
   typedef typename Kernel_traits<Point>::Kernel                   Kernel;
   typedef typename Kernel::FT                                     FT;
   typedef typename Kernel::Vector_3                               Vector;
-  typedef typename SMesh::template Property_map<VIndex, Point>    Point_map;
+
+  typedef typename GetVertexPointMap<SMesh, NamedParameter>::const_type Point_map;
   typedef typename SMesh::template Property_map<VIndex, Vector>   Vector_map;
   typedef typename SMesh::template Property_map<VIndex, Color>    Vcolor_map;
 
+  Point_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                   get_const_property_map(CGAL::vertex_point, sm));
   if(prop == "v:connectivity" || prop == "v:removed")
     return true;
 
   if(prop == "v:point")
   {
-    if(std::is_same<FT, float>::value)
+    if constexpr(std::is_same<FT, float>::value)
     {
       os << "property float x" << std::endl
          << "property float y" << std::endl
          << "property float z" << std::endl;
+      printers.push_back(new Property_printer<VIndex, Point_map>(vpm));
     }
     else
     {
       os << "property double x" << std::endl
          << "property double y" << std::endl
          << "property double z" << std::endl;
+      auto fvpm = CGAL::make_cartesian_converter_property_map<Epick::Point_3>(vpm);
+      printers.push_back(new Property_printer<VIndex, decltype(fvpm)>(fvpm));
     }
-    printers.push_back(new Property_printer<VIndex, Point_map>(sm.points()));
+
     return true;
   }
 
-  if(prop == "v:normal")
+  if constexpr (!parameters::is_default_parameter<NamedParameter, internal_np::vertex_normal_map_t>::value)
+  {
+    auto vnm = get_parameter(np, internal_np::vertex_normal_map);
+    typedef decltype(vnm) Normal_map;
+    typedef typename Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
+    if constexpr (std::is_same<FloatDouble, float>::value)
+    {
+      os << "property float nx" << std::endl
+         << "property float ny" << std::endl
+         << "property float nz" << std::endl;
+      printers.push_back(new Property_printer<VIndex, Normal_map>(vnm));
+    }
+    else
+    {
+      os << "property double nx" << std::endl
+         << "property double ny" << std::endl
+         << "property double nz" << std::endl;
+      auto fvnm = CGAL::make_cartesian_converter_property_map<Epick::Vector_3>(vnm);
+      printers.push_back(new Property_printer<VIndex, decltype(fvnm)>(fvnm));
+    }
+    return true;
+  }
+
+  else if(prop == "v:normal")
   {
     auto pmap = sm.template property_map<VIndex, Vector>(prop);
     if(pmap.has_value())
@@ -470,14 +500,16 @@ bool fill_simplex_specific_header(std::ostream& os,
         os << "property float nx" << std::endl
            << "property float ny" << std::endl
            << "property float nz" << std::endl;
+        printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
       }
       else
       {
         os << "property double nx" << std::endl
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
+        auto fvnm = CGAL::make_cartesian_converter_property_map<Epick::Vector_3>(*pmap);
+        printers.push_back(new Property_printer<VIndex, decltype(fvnm)>(fvnm));
       }
-      printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
       return true;
     }
   }
@@ -500,12 +532,13 @@ bool fill_simplex_specific_header(std::ostream& os,
   return false;
 }
 
-template <typename Point>
+template <typename Point, typename NamedParameter>
 bool fill_simplex_specific_header(std::ostream& os,
                                   const Surface_mesh<Point>& sm,
                                   std::vector<Abstract_property_printer<
                                   typename Surface_mesh<Point>::Face_index>*>& printers,
-                                  const std::string& prop)
+                                  const std::string& prop,
+                                  const NamedParameter&)
 {
   typedef typename Surface_mesh<Point>::Face_index                            FIndex;
   typedef CGAL::IO::Color Color;
@@ -531,12 +564,13 @@ bool fill_simplex_specific_header(std::ostream& os,
   return false;
 }
 
-template <typename Point>
+template <typename Point, typename NamedParameter>
 bool fill_simplex_specific_header(std::ostream&,
                                   const Surface_mesh<Point>& ,
                                   std::vector<Abstract_property_printer<
                                   typename Surface_mesh<Point>::Edge_index>*>& ,
-                                  const std::string& prop)
+                                  const std::string& prop,
+                                  const NamedParameter&)
 {
   if(prop == "e:removed")
     return true;
@@ -544,12 +578,13 @@ bool fill_simplex_specific_header(std::ostream&,
   return false;
 }
 
-template <typename Point>
+template <typename Point, typename NamedParameter>
 bool fill_simplex_specific_header(std::ostream&,
                                   const Surface_mesh<Point>& ,
                                   std::vector<Abstract_property_printer<
                                   typename Surface_mesh<Point>::Halfedge_index>*>& ,
-                                  const std::string& prop)
+                                  const std::string& prop,
+                                  const NamedParameter&)
 {
   if(prop == "h:connectivity")
     return true;
@@ -627,48 +662,61 @@ struct add_color_map<Point, Simplex, Simplex2, false> {
   }
 };
 
-template <std::size_t s, class Point, typename Simplex, class T, class ... TN>
-void fill_header_impl(std::tuple<T,TN...>,
-                      const char* const type_strings[],
-                      const Surface_mesh<Point>& sm,
-                      const std::string& pname,
-                      std::ostream& os,
-                      std::vector<Abstract_property_printer<Simplex>*>& printers)
+template <typename Point, typename Simplex, typename VT, typename ST>
+bool add_printer(std::size_t cid,
+                 const char* const type_strings[],
+                 const Surface_mesh<Point>& sm,
+                 const std::string& pname,
+                 std::ostream& os,
+                 std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
-  constexpr std::size_t cid = s-std::tuple_size<std::tuple<T,TN...>>::value;
+  // single value (VT)
   {
-    typedef typename Surface_mesh<Point>::template Property_map<Simplex, T>   Pmap;
-    auto pmap  = sm.template property_map<Simplex,T>(pname);
+    typedef typename Surface_mesh<Point>::template Property_map<Simplex, VT> Pmap;
+    auto pmap = sm.template property_map<Simplex, VT>(pname);
     if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(*pmap));
-      return;
+      printers.push_back(new internal::Simple_property_printer<Simplex, Pmap, ST>(*pmap));
+      return true;
     }
   }
+
+  // vector value (std::vector<VT>)
   {
-    typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<T>>   Pmap;
-    auto pmap  = sm.template property_map<Simplex,std::vector<T>>(pname);
+    typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<VT> > Pmap;
+    auto pmap = sm.template property_map<Simplex, std::vector<VT> >(pname);
     if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property list uchar " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(*pmap));
-      return;
+      printers.push_back(new internal::Simple_property_vector_printer<Simplex, Pmap, std::vector<VT>, ST>(*pmap));
+      return true;
     }
   }
-  fill_header_impl<s>(std::tuple<TN...>(),type_strings, sm, pname, os, printers);
+  return false;
 }
 
-template <std::size_t s, class Point, typename Simplex>
-void fill_header_impl(std::tuple<>,
-                      const char* const [],
-                      const Surface_mesh<Point>&,
-                      const std::string&,
-                      std::ostream&,
-                      std::vector<Abstract_property_printer<Simplex>*>&)
-{}
+struct PLY_supported_data_types
+{
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int64_t, std::uint64_t,
+                     std::size_t,
+                     float, double> VT_tuple; // value_type of the property map
+
+  typedef std::tuple<std::int8_t, std::uint8_t,
+                     std::int16_t, std::uint16_t,
+                     std::int32_t, std::uint32_t,
+                     std::int32_t, std::uint32_t,
+                     std::uint32_t,
+                     float, double> ST_tuple; // corresponding PLY type
+
+  static constexpr std::size_t data_types_n = std::tuple_size<VT_tuple>::value;
+  static_assert(data_types_n == std::tuple_size<ST_tuple>::value);
+};
 
 template <typename Point, typename Simplex,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -676,14 +724,12 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
                  std::vector<Abstract_property_printer<Simplex>*>& printers,
                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  typedef std::tuple<std::int8_t, std::uint8_t,
-                     std::int16_t , std::uint16_t,
-                     std::int32_t , std::uint32_t,
-                     std::int64_t, std:: uint64_t,
-                     float, double> Type_tuple;
-
-  static constexpr const char* type_strings[] =
-           { "char", "uchar", "short", "ushort","int", "uint", "int", "uint", "float", "double" };
+  static constexpr const char* type_strings[] = { "char", "uchar",
+                                                  "short", "ushort",
+                                                  "int", "uint",
+                                                  "int", "uint", // 64 --> 32
+                                                  "uint", // std::size_t
+                                                  "float", "double" };
 
   typedef typename Surface_mesh<Point>::Face_index   FIndex;
   typedef typename Surface_mesh<Point>::Vertex_index VIndex;
@@ -711,18 +757,17 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
   if (std::is_same<Simplex, FIndex>::value && has_fcolor) {
     os << "property uchar red" << std::endl
-      << "property uchar green" << std::endl
-      << "property uchar blue" << std::endl
-      << "property uchar alpha" << std::endl;
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
     add_color_map<Point, Simplex, FIndex>()(printers, fcm);
   }
 
-  if (std::is_same<Simplex, VIndex>::value && has_vcolor)
-  {
+  if (std::is_same<Simplex, VIndex>::value && has_vcolor) {
     os << "property uchar red" << std::endl
-      << "property uchar green" << std::endl
-      << "property uchar blue" << std::endl
-      << "property uchar alpha" << std::endl;
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
 
     add_color_map<Point, Simplex, VIndex>()(printers, vcm);
   }
@@ -736,11 +781,27 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
     if (has_fcolor && prop[i] == "f:color")
       continue;
 
-    if(fill_simplex_specific_header(os, sm, printers, prop[i]))
+    if(fill_simplex_specific_header(os, sm, printers, prop[i], np))
       continue;
 
-    fill_header_impl<std::tuple_size<Type_tuple>::value>(Type_tuple(), type_strings, sm, prop[i], os, printers);
+    add_printers_for_all_types(std::make_index_sequence<PLY_supported_data_types::data_types_n>{},
+                               type_strings, sm, prop[i], os, printers);
   }
+}
+
+template <std::size_t... Is, typename PointT, typename Simplex>
+void add_printers_for_all_types(std::index_sequence<Is...>,
+                                const char* const* type_strings,
+                                const Surface_mesh<PointT>& sm,
+                                const std::string& prop_name,
+                                std::ostream& os,
+                                std::vector<Abstract_property_printer<Simplex>*>& printers)
+{
+  // The || ... fold short-circuits exactly like the original lambda
+  (void)(add_printer<PointT, Simplex,
+                      std::tuple_element_t<Is, PLY_supported_data_types::VT_tuple>,
+                      std::tuple_element_t<Is, PLY_supported_data_types::ST_tuple> >(
+                        Is, type_strings, sm, prop_name, os, printers) || ...);
 }
 
 } // namespace internal
@@ -776,20 +837,36 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 /// \param comments a string used to store the potential comments found in the PLY header.
 ///        Each line starting by "comment " in the header is appended to the `comments` string
 ///        (without the "comment " word).
-/// \param verbose whether extra information is printed when an incident occurs during reading
+/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{verbose}
+///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
 ///
 /// \pre The data in the stream must represent a two-manifold. If this is not the case
 ///      the `failbit` of `is` is set and the mesh cleared.
 ///
 /// \returns `true` if reading was successful, `false` otherwise.
 ///
-template <typename P>
+template <typename P, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
               std::string& comments,
-              bool verbose = true)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename Surface_mesh<P>::size_type size_type;
+
+  // not yet supported: this function only uses the Surface_mesh's internal pmaps
+  // to make it work, it'd be sufficient to modify Surface_mesh_filler's maps
+  // static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value);
+  // static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value);
+  // static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value);
+
+  const bool verbose = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::verbose), true);
 
   if(!is.good())
   {
@@ -877,6 +954,18 @@ bool read_PLY(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+// for backward compatibility
+template <typename P>
+bool read_PLY(std::istream& is,
+              Surface_mesh<P>& sm,
+              std::string& comments,
+              bool verbose)
+{
+  return read_PLY(is, sm, comments, CGAL::parameters::verbose(verbose));
+}
+#endif
+
 template <typename P>
 bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
 {
@@ -888,21 +977,7 @@ bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename P>
-CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
-{
-  return IO::read_PLY(is, sm, comments);
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
@@ -924,6 +999,10 @@ namespace IO {
 ///             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
 ///             of the stream must be set to `BINARY`.
 ///
+/// \attention The PLY format does not support 64 bits integer types. Therefore, if a property
+///            of type `std::int64_t` or `std::uint64_t` is found, it is converted to
+///            `std::int32_t` or `std::uint32_t` respectively while writing.
+///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.
 ///               In typical use cases it will be a 2D or 3D point type.
@@ -944,6 +1023,7 @@ namespace IO {
 /// \cgalNamedParamsEnd
 ///
 /// \returns `true` if writing was successful, `false` otherwise.
+
 template <typename P,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
@@ -1154,26 +1234,6 @@ bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_NP_CLASS&
 /// \endcond
 
 } // namespace IO
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-
-template <typename P>
-CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments)
-{
-  return IO::write_PLY(os, sm, comments);
-}
-
-template <typename P>
-CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm)
-{
-  return write_PLY(os, sm, "");
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

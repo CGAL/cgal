@@ -509,7 +509,7 @@ public:
 
     \tparam Traversal a model of `OrthtreeTraversal`
 
-    \param args Arguments to to pass to the traversal's constructor, excluding the first (always an orthtree reference)
+    \param args Arguments to pass to the traversal's constructor, excluding the first (always an orthtree reference)
 
     \return a `ForwardRange` over the node indices of the tree
    */

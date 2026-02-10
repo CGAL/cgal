@@ -45,9 +45,226 @@
 
 #include <CGAL/Polygon_mesh_processing/refine_with_plane.h>
 
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Projection_traits_3.h>
+#include <CGAL/mark_domain_in_triangulation.h>
+#include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <boost/iterator/transform_iterator.hpp>
+#endif
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
+
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
+template <class Traits,
+          class TriangleMesh,
+          class VertexPointMap,
+          class Visitor>
+void close_and_triangulate(TriangleMesh& tm, VertexPointMap vpm, typename Traits::Vector_3 plane_normal, Visitor& visitor)
+{
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using P_traits = Projection_traits_3<Traits>;
+  using Vb = Triangulation_vertex_base_with_info_2<vertex_descriptor, P_traits>;
+  using Fb = CGAL::Delaunay_mesh_face_base_2<P_traits>;
+  using TDS = Triangulation_data_structure_2<Vb, Fb>;
+  using Itag = No_constraint_intersection_tag;
+  using CDT = Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>;
+
+  P_traits p_traits(plane_normal);
+
+  std::vector<std::pair<typename Traits::Point_3, vertex_descriptor>> points;
+  std::vector<std::pair<vertex_descriptor, vertex_descriptor>> csts;
+
+  halfedge_descriptor href = boost::graph_traits<TriangleMesh>::null_halfedge ();
+  bool first=true;
+
+  for (halfedge_descriptor h : halfedges(tm))
+  {
+    if (is_border(h, tm))
+    {
+      if (first)
+      {
+        href=h;
+        first=false;
+      }
+      vertex_descriptor src = source(h, tm), tgt = target(h, tm);
+      points.emplace_back(get(vpm, tgt), tgt);
+      csts.emplace_back(src, tgt);
+    }
+  }
+
+  if (points.empty()) return;
+
+  CDT cdt(p_traits);
+  cdt.insert(points.begin(), points.end());
+
+  // TODO: in case of degenerate edges, we don't triangulate but it's kind of an issue on our side
+  if (cdt.number_of_vertices()!=points.size()) return;
+
+
+  typedef CGAL::dynamic_vertex_property_t<typename CDT::Vertex_handle> V_tag;
+  typename boost::property_map<TriangleMesh, V_tag>::type v2v = get(V_tag(), tm);
+  for (auto vh : cdt.finite_vertex_handles())
+    put(v2v, vh->info(), vh);
+
+  for (auto vv : csts)
+    cdt.insert_constraint(get(v2v, vv.first), get(v2v, vv.second));
+
+  mark_domain_in_triangulation(cdt);
+
+  typename CDT::Edge edge_ref;
+  CGAL_assertion_code(bool OK =)
+  cdt.is_edge(get(v2v, csts[0].first), get(v2v, csts[0].second), edge_ref.first, edge_ref.second);
+  CGAL_assertion(OK);
+
+  if (!edge_ref.first->is_in_domain()) edge_ref = cdt.mirror_edge(edge_ref);
+  CGAL_assertion(edge_ref.first->is_in_domain());
+
+  bool flip_ori = ( edge_ref.first->vertex( (edge_ref.second+1)%3 )->info() != source(href, tm) );
+
+  CGAL_assertion(
+    ( !flip_ori &&
+      edge_ref.first->vertex( (edge_ref.second+1)%3 )->info() == source(href, tm) &&
+      edge_ref.first->vertex( (edge_ref.second+2)%3 )->info() == target(href, tm) )
+    ||
+    ( flip_ori &&
+      edge_ref.first->vertex( (edge_ref.second+2)%3 )->info() == source(href, tm) &&
+      edge_ref.first->vertex( (edge_ref.second+1)%3 )->info() == target(href, tm) )
+  );
+
+  for (auto fh : cdt.finite_face_handles())
+  {
+    if (!fh->is_in_domain()) continue;
+
+    std::array<vertex_descriptor,3> vrts = make_array(fh->vertex(0)->info(),
+                                                      fh->vertex(1)->info(),
+                                                      fh->vertex(2)->info());
+    if (flip_ori) std::swap(vrts[0], vrts[1]);
+
+    CGAL_assertion(Euler::can_add_face(vrts, tm));
+    visitor.before_face_copy(boost::graph_traits<TriangleMesh>::null_face(), tm, tm);
+    face_descriptor f = Euler::add_face(vrts, tm);
+    visitor.after_face_copy(boost::graph_traits<TriangleMesh>::null_face(), tm, f, tm);
+  }
+}
+
+template <class Traits,
+          class PolygonMesh,
+          class VertexPointMap,
+          class Visitor>
+bool close(PolygonMesh& pm, VertexPointMap vpm, typename Traits::Vector_3 plane_normal, Visitor& visitor)
+{
+  //using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  // using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using Point_3 = typename Traits::Point_3;
+  using P_traits = Projection_traits_3<Traits>;
+
+  std::vector< std::vector<Point_3> > polygons;
+  std::vector< halfedge_descriptor > border_cycles;
+  std::vector< Bbox_3 > bboxes;
+
+  typedef CGAL::dynamic_halfedge_property_t<bool> H_tag;
+  typename boost::property_map<PolygonMesh, H_tag>::type
+    is_hedge_selected = get(H_tag(), pm, false);
+
+  for (halfedge_descriptor h : halfedges(pm))
+  {
+    if (is_border(h, pm) && get(is_hedge_selected, h)==false)
+    {
+      border_cycles.push_back(h);
+      polygons.emplace_back();
+      bboxes.emplace_back();
+      for (halfedge_descriptor he : CGAL::halfedges_around_face(h, pm))
+      {
+        put(is_hedge_selected, he, true);
+        polygons.back().push_back(get(vpm, target(he, pm)));
+        bboxes.back()+=polygons.back().back().bbox();
+      }
+    }
+  }
+
+  if (bboxes.empty()) return true;
+
+  Bbox_3 gbox;
+  for (const Bbox_3& bb : bboxes)
+    gbox+=bb;
+
+  // arrange polygons
+  int axis = 0;
+  if ((gbox.ymax()-gbox.ymin()) > (gbox.xmax()-gbox.xmin())) axis=1;
+  if ((gbox.zmax()-gbox.zmin()) > ((gbox.max)(axis)-(gbox.min)(axis))) axis=2;
+
+  std::vector<std::size_t> poly_ids(polygons.size());
+  std::iota(poly_ids.begin(), poly_ids.end(), 0);
+
+  std::sort(poly_ids.begin(), poly_ids.end(),
+            [&bboxes, axis](std::size_t i, std::size_t j)
+            {
+              return (bboxes[i].min)(axis) < (bboxes[j].min)(axis);
+            });
+
+
+  std::vector<std::size_t> simply_connected_faces;
+  std::vector<bool> handled(poly_ids.size(), false);
+
+  P_traits ptraits(plane_normal);
+
+
+  for (std::size_t pid=0; pid<poly_ids.size()-1; ++pid)
+  {
+    std::size_t curr_poly_id = poly_ids[pid];
+
+    if (handled[curr_poly_id]) continue;
+
+    std::vector<std::size_t> nested;
+    for (std::size_t npid=pid+1; npid<poly_ids.size(); ++npid)
+    {
+      std::size_t next_poly_id = poly_ids[npid];
+
+      if (do_overlap(bboxes[curr_poly_id], bboxes[next_poly_id]))
+      {
+        //TODO: what about tanjencies?
+        //TODO: check orientation for predicate
+        if (bounded_side_2(polygons[curr_poly_id].begin(), polygons[curr_poly_id].end(),
+                           polygons[next_poly_id].front(), ptraits) == ON_BOUNDED_SIDE)
+        {
+          nested.push_back(next_poly_id);
+          handled[next_poly_id]=true;
+        }
+      }
+      else
+        break; // no further overlaps
+    }
+
+    handled[curr_poly_id] = true;
+
+    if (nested.empty())
+      simply_connected_faces.push_back(curr_poly_id);
+  }
+
+  if (!handled[poly_ids.back()])
+    simply_connected_faces.push_back(poly_ids.back());
+
+  for (std::size_t id : simply_connected_faces)
+  {
+    halfedge_descriptor h = border_cycles[id];
+    visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+    Euler::fill_hole(h, pm);
+    visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
+  }
+
+  return simply_connected_faces.size()==poly_ids.size();
+}
+
+#endif
+
 
 template <class Plane_3,
           class TriangleMesh,
@@ -569,7 +786,7 @@ struct Visitor_wrapper_for_triangulate_face
   * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
+  * \attention In the current implementation, `clipper` will be modified (refined with the intersection with `tm`) unless the named parameter `do_not_modify` is set to `true`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(clipper)` \endlink
@@ -752,12 +969,19 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
-  *    \cgalParamNBegin{do_not_triangulate_faces}
-  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
-  *                            Always `true` if `pm` is not a triangle mesh.}
-  *      \cgalParamType{Boolean}
-  *      \cgalParamDefault{`false`}
-  *    \cgalParamNEnd
+  *   \cgalParamNBegin{do_not_triangulate_faces}
+  *     \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                           Always `true` if `pm` is not a triangle mesh.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
   *
@@ -777,7 +1001,7 @@ bool clip(PolygonMesh& pm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference     ;
+  using parameters::get_parameter_reference;
 
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
@@ -791,7 +1015,7 @@ bool clip(PolygonMesh& pm,
   Default_visitor default_visitor;
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
-  constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::concurrency_tag_t,
@@ -832,7 +1056,9 @@ bool clip(PolygonMesh& pm,
     clip_volume=false;
 
   if (clip_volume && !is_closed(pm)) clip_volume=false;
-  if (clip_volume && !use_compact_clipper) use_compact_clipper=true;
+  if (clip_volume && use_compact_clipper) use_compact_clipper=false;
+
+  CGAL_precondition(!clip_volume || !triangulate || does_bound_a_volume(pm));
 
   auto fcc = get(dynamic_face_property_t<std::size_t>(), pm);
 
@@ -865,35 +1091,12 @@ bool clip(PolygonMesh& pm,
 
   if (clip_volume)
   {
-    std::vector<halfedge_descriptor> borders;
-    extract_boundary_cycles(pm, std::back_inserter(borders));
-
-    for (halfedge_descriptor h : borders)
-    {
-#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
-      if (triangulate)
-      {
-        Euler::fill_hole(h, pm); // visitor call done in the triangulation visitor
-        if constexpr (!has_visitor)
-        {
-          triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits));
-        }
-        else
-        {
-          using Base_visitor = std::remove_cv_t<std::remove_reference_t<Visitor_ref>>;
-          internal::Visitor_wrapper_for_triangulate_face<PolygonMesh, Base_visitor> visitor_wrapper(pm, visitor);
-          triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits).visitor(visitor_wrapper));
-        }
-      }
-      else
-#endif
-      {
-        visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
-        Euler::fill_hole(h, pm);
-        visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
-      }
-
-    }
+    //TODO: add in the traits construct_orthogonal_vector
+    if (triangulate)
+      internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+    else
+      if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
+        internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
   }
 
   return true;
@@ -922,6 +1125,13 @@ bool clip(PolygonMesh& pm,
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
@@ -958,6 +1168,13 @@ bool clip(PolygonMesh& pm,
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
@@ -1148,6 +1365,14 @@ void split(TriangleMesh& tm,
   *      \cgalParamType{Boolean}
   *      \cgalParamDefault{`false`}
   *    \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @see `clip()`
@@ -1269,6 +1494,13 @@ void split(PolygonMesh& pm,
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   *
   * \cgalNamedParamsEnd
