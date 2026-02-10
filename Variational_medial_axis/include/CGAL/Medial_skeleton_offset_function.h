@@ -150,7 +150,7 @@ private:
     return sphere_distance(p, c, r);
   }
 
-  // Evaluate the minimum distrance from point p to the medial cone defined by two spheres (c1,r1) and (c2,r2)
+  // Evaluate the minimum distance from point p to the medial cone defined by two spheres (c1,r1) and (c2,r2)
   FT eval_cone(const Point_3& c1, const Point_3& c2, const FT r1, const FT r2, const Point_3& p) const {
 
     FT dmin = (std::numeric_limits<FT>::max)();
