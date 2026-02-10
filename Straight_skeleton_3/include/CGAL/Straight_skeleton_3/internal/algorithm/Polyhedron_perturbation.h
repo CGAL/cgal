@@ -21,6 +21,7 @@
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Random.h>
@@ -58,8 +59,9 @@ private:
 
 private:
   using Kernel_wrapper = kernel::Kernel_wrapper<GeomTraits>;
-  using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
   using Hds_utils = algorithm::Hds_utils<GeomTraits>;
+  using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
+  using Self_intersection = algorithm::Self_intersection<GeomTraits>;
 
 private:
   struct Size_shenanigans
@@ -180,6 +182,60 @@ public:
       }
     }
     return result;
+  }
+
+  static bool is_triangle_polyhedron(const PolyhedronSPtr& polyhedron)
+  {
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      if (facet->vertices().size() != 3) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static void rand_move_points(const PolyhedronSPtr& polyhedron)
+  {
+    CGAL_SS3_TRANSF_TRACE_V(4, "Moving points randomly...");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    double range = 0.001;
+    ConfigurationSPtr config = Configuration::get_instance();
+    if (config->is_loaded()) {
+      double value = config->get_double("main", "perturbation_epsilon");
+      if (value != 0.0) {
+        range = value;
+      }
+    }
+
+    CGAL_SS3_TRANSF_TRACE("Points will be moved randomly...");
+    CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon =" << range);
+
+    // If we are applying a random point perturbation, the mesh must be a triangle mesh.
+    // Otherwise, points will no longer be on the supporting planes of their incident facets.
+    CGAL_warning(is_triangle_polyhedron(polyhedron));
+
+    for (const VertexSPtr& vertex : polyhedron->vertices()) {
+      const Point_3& p = vertex->point();
+      const std::array<double, 3> v_r = rand_vec(-range, range);
+      // since it's random, move to doubles to get static filters and avoid DAGs
+      double rx = CGAL::to_double(p.x()) + v_r[0];
+      double ry = CGAL::to_double(p.y()) + v_r[1];
+      double rz = CGAL::to_double(p.z()) + v_r[2];
+      vertex->set_point(Point_3{rx, ry, rz});
+    }
+
+    // recompute normalized planes to ensure points are on the supporting planes
+    polyhedron->init_planes();
+    Transformation::normalize_facet_planes(polyhedron);
+    CGAL_assertion_code(bool success =)
+      Transformation::reset_points(polyhedron);
+    CGAL_assertion(success);
+    CGAL_postcondition(polyhedron && polyhedron->is_consistent());
+
+#ifdef CGAL_SS3_DUMP_FILES
+    IO::write_OBJ("results/rand_moved.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
   }
 
   /**
@@ -430,7 +486,7 @@ public:
     // @todo could restrict to only high-degree vertices in facets that have 2 high-degree vertices
     for (VertexSPtr vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
-      std::array<double, 3> v_r = rand_vec(-range, range);
+      const std::array<double, 3> v_r = rand_vec(-range, range);
 
       double px = CGAL::to_double(p.x()) + v_r[0];
       double py = CGAL::to_double(p.y()) + v_r[1];
@@ -440,7 +496,7 @@ public:
     }
 
     for (FacetSPtr facet : polyhedron->facets()) {
-        perturbPlaneCoefficientsHighDegrees(facet, range);
+      perturbPlaneCoefficientsHighDegrees(facet, range);
     }
   }
 
@@ -1344,6 +1400,45 @@ public:
 
     CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
     CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->get_plane()));
+  }
+
+  // Perturbation to ensure generic configuration.
+  // We always need to ensure that points are exactly on the planes of their incident facets.
+  static void apply_rand_perturbation(PolyhedronSPtr& polyhedron)
+  {
+    // if the input is all triangles, simply perturb points directly
+    if (is_triangle_polyhedron(polyhedron))
+      return rand_move_points(polyhedron);
+
+    // Generic approach
+    Transformation::normalize_facet_planes(polyhedron);
+
+    bool safe_mode = true;
+    ConfigurationSPtr config = Configuration::get_instance();
+    if (config->is_loaded()) {
+      if ((config->contains("Preprocessing", "check_degenerate_configuration") &&
+          !config->get_Boolean("Preprocessing", "check_degenerate_configuration"))) {
+        safe_mode = false;
+      }
+    }
+
+    PolyhedronSPtr p_mem = polyhedron->clone();
+
+    apply_rand_plane_tilts_V3(polyhedron);
+
+    if (safe_mode) {
+      for (;;) {
+        if (do_all_plane_pairs_intersect(polyhedron) &&
+            do_all_plane_triplets_intersect(polyhedron) &&
+            !Self_intersection::has_self_intersecting_surface(polyhedron)) {
+          CGAL_SS3_TRACE("Found a good perturbation");
+          break;
+        }
+
+        polyhedron = p_mem->clone();
+        apply_rand_plane_tilts_V3(polyhedron);
+      }
+    }
   }
 };
 

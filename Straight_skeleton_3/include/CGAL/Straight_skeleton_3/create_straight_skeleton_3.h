@@ -16,7 +16,6 @@
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Straight_skeleton_builder_3.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_perturbation.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 
@@ -50,9 +49,7 @@ construct_skeleton(const TriangleMesh& tmesh,
   using Polyhedron = SS3i::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using Transformation = SS3i::algorithm::Polyhedron_transformation<Geom_traits>;
   using Perturbation = SS3i::algorithm::Polyhedron_perturbation<Geom_traits>;
-  using Self_intersection = SS3i::algorithm::Self_intersection<Geom_traits>;
   using Straight_skeleton_builder_3 = SS3i::algorithm::Straight_skeleton_builder_3<Geom_traits>;
   using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
 
@@ -100,40 +97,12 @@ construct_skeleton(const TriangleMesh& tmesh,
   // borders and disconnected facet connected components
   PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np.outward_offsetting(outwards));
   CGAL_SS3_DEBUG_SPTR(p);
-  Transformation::normalize_facet_planes(p);
 
   CGAL_SS3_TRACE("Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
-  // Perturbation to ensure generic configuration
-  bool safe_mode = true;
-  if (config->is_loaded()) {
-    if ((config->contains("Preprocessing", "check_degenerate_configuration") &&
-         !config->get_Boolean("Preprocessing", "check_degenerate_configuration"))) {
-      safe_mode = false;
-    }
-  }
-
-  PolyhedronSPtr p_mem = p->clone();
-
-  // We always need to ensure that points are exactly on the planes of their incident facets
-  Perturbation::apply_rand_plane_tilts_V3(p);
-
-  if (safe_mode) {
-    for (;;) {
-      if (Perturbation::do_all_plane_pairs_intersect(p) &&
-          Perturbation::do_all_plane_triplets_intersect(p) &&
-          !Self_intersection::has_self_intersecting_surface(p)) {
-        CGAL_SS3_TRACE("Found a good perturbation");
-        break;
-      }
-
-      p = p_mem->clone();
-      Perturbation::apply_rand_plane_tilts_V3(p);
-    }
-  }
+  Perturbation::apply_rand_perturbation(p);
 
   CGAL_SS3_TRACE("Post perturbation: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
-
 
   using Default_visitor = SS3i::algorithm::Default_mesh_offset_visitor<Geom_traits>;
   using Visitor = typename internal_np::Lookup_named_param_def<internal_np::visitor_t,
