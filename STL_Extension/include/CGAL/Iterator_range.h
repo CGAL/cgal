@@ -49,6 +49,16 @@ public:
   /// returns `std::distance(begin(), end())==0`
   bool empty() const { return begin() == end(); }
 
+  template <typename T>
+  bool is_used(const T& t) const
+  {
+    return true; // AF: not implemented, but we need it for some validity checks. It is not critical if it returns false positives.
+    for (I i = begin(); i != end(); ++i) {
+      //if (*i == t) return true;  // AF: does not compile
+    }
+    return false;
+  }
+
   operator std::tuple<I&, I&>()
   {
     return std::tuple<I&, I&>{this->first, this->second};

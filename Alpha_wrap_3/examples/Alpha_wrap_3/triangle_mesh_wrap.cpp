@@ -1,3 +1,5 @@
+#define INDEX_STORAGE 1
+
 #include "output_helper.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

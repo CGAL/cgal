@@ -1126,7 +1126,7 @@ namespace CGAL {
     }
   }; // end class Indexed_container
 
-  template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
+  template <typename Vb = Vertex<>, typename Cb = Cell<>, typename ConcurrencyTag = Sequential_tag>
   struct Indexed_storage
   {
 
@@ -1176,6 +1176,11 @@ namespace CGAL {
     using Vertex_handle = Index_handle<Vertex, Vertex_index, Self>;
     using cell_descriptor = Cell_index;
     using vertex_descriptor = Vertex_index;
+
+    std::pair<Cell_handle,int> facet_with_handle(std::pair<cell_descriptor, int> f) const
+    {
+      return {cell_handle(f.first), f.second};
+    }
 
     Cell_handle cell_handle(cell_descriptor index) const
     {
@@ -1322,6 +1327,13 @@ namespace CGAL {
         }
       }
       return {nd, ni};
+    }
+
+    std::pair<Cell_handle, int>
+    mirror_facet(Cell_handle ch, int i) const
+    {
+      std::pair<Cell_index, int> f = mirror_facet(ch.index(), i);
+      return {cell_handle(f.first), f.second};
     }
 
     std::pair<Cell_index, int>

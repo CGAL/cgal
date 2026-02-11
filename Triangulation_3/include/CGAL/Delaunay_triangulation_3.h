@@ -576,14 +576,14 @@ public:
     for(const auto& f: facets)
     {
       tds().tds_data(tds().neighbor(f.first, f.second)).clear();
-      *bfit++ = f;
+      *bfit++ = tds().facet_with_handle(f);
     }
 
     // Reset the conflict flag in the conflict cells.
     for(auto cd : cells)
     {
       tds().tds_data(cd).clear();
-      *cit++ = cd;
+      *cit++ = tds().cell_handle(cd);
     }
     return make_triple(bfit, cit, ifit);
   }

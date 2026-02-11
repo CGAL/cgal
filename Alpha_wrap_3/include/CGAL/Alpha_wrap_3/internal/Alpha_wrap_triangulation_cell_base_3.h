@@ -15,6 +15,7 @@
 #include <CGAL/license/Alpha_wrap_3.h>
 
 #include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/TDS_3/Indexed_storage.h>
 
 namespace CGAL {
 namespace Alpha_wraps_3 {
@@ -123,6 +124,61 @@ public:
   std::size_t time_stamp() const { return time_stamp_; }
   void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
 };
+
+
+template <typename GT,
+            typename Cb = CellWithCircumcenter<GT>>
+  class Cell4Alpha_wrap_3
+  : public Cb
+  {
+    public:
+    using Cb::Cb; // inherit constructors
+    using Point = typename GT::Point_3;
+    using TDS = typename Cb::Triangulation_data_structure;
+    using Vertex_handle = typename TDS::Vertex_handle;
+    using Cell_handle = typename TDS::Cell_handle;
+
+    struct Storage : public Cb::Storage {
+      Cell_label m_label = Cell_label::INSIDE;
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      unsigned int m_erase_counter;
+#endif
+    };
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+      using Other = Cell4Alpha_wrap_3<GT, Cb2>;
+    };
+    auto&& storage() {
+      return this->tds()->cell_storage()[this->index()];
+    }
+
+    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
+
+  public:
+  Cell_label label() const { return storage().m_label; }
+  void set_label(const Cell_label label) { storage().m_label = label; }
+  bool is_inside() const { return storage().m_label == Cell_label::INSIDE; }
+  bool is_outside() const { return storage().m_label == Cell_label::OUTSIDE; }
+
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+  unsigned int erase_counter() const
+  {
+    return storage().m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    storage().m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++storage().m_erase_counter;
+  }
+#endif
+  };
+
+
 
 } // namespace internal
 } // namespace Alpha_wraps_3

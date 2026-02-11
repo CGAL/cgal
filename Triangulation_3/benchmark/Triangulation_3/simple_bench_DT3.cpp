@@ -1,3 +1,4 @@
+#define INDEX_STORAGE 1
 //#define CGAL_PROFILE
 //#define CGAL_USE_SSE2_FABS
 //#define CGAL_USE_SSE2_MAX

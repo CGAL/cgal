@@ -64,6 +64,9 @@
 
 namespace CGAL {
 
+template <typename Vb, typename Cb, class ConcurrencyTag>
+struct Indexed_storage;
+
 template < class Vb, class Cb, class Concurrency_tag, class StorageTag>
 class Triangulation_data_structure_3;
 
@@ -202,6 +205,11 @@ public:
   Cell_data& tds_data(Cell_handle ch) const
   {
     return ch->tds_data();
+  }
+
+  std::pair<Cell_handle,int> facet_with_handle(std::pair<cell_descriptor, int> f) const
+  {
+    return f;
   }
 
   Cell_handle cell_handle(cell_descriptor cd) const
@@ -1835,7 +1843,8 @@ public:
 
   Facet mirror_facet(Facet f) const
   {
-    return mirror_facet(f.first, f.second);
+    Cell_handle c = f.first;
+    return mirror_facet(c, f.second);
   }
 
   bool is_small_hole(std::size_t s)
