@@ -137,7 +137,7 @@ public:
 #else
 
 template <typename It>
-  std::enable_if_t<std::is_convertible_v<iterator_category, std::random_access_iterator_tag>
+  std::enable_if_t<std::is_convertible_v<typename It::iterator_category, std::random_access_iterator_tag>
                    && std::is_convertible_v<const It&, const Self&>,
                    difference_type>
   operator- (const It& i) const {
