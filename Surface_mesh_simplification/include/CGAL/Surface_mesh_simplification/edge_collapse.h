@@ -87,6 +87,11 @@ int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
                   const NamedParameters& np = parameters::default_values())
 {
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, vertex_point_t, geom_traits_t, halfedge_index_t, get_cost_policy_t,
+                                             get_placement_policy_t, filter_t, edge_is_constrained_t,
+                                             visitor_t, vertex_index_t, use_relaxed_order_t);
+
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
