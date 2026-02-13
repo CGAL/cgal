@@ -151,10 +151,10 @@ template <typename GT,
       using Other = Cell4Alpha_wrap_3<GT, Cb2>;
     };
     auto&& storage() {
-      return this->tds()->cell_storage()[this->index()];
+      return this->tds()->cell_storage()[this->idx()];
     }
 
-    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
+    auto&& storage() const { return this->tds()->cell_storage()[this->idx()]; }
 
   public:
   Cell_label label() const { return storage().m_label; }

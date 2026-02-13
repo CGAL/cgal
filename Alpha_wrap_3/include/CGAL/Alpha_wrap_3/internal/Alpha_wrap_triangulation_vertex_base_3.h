@@ -87,10 +87,10 @@ class Vertex4Alpha_wrap_3
       using Other = Vertex4Alpha_wrap_3<GT,Vb2>;
     };
     auto&& storage() {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
-    auto&& storage() const { return this->tds()->vertex_storage()[this->index()]; }
+    auto&& storage() const { return this->tds()->vertex_storage()[this->idx()]; }
 
   public:
 
