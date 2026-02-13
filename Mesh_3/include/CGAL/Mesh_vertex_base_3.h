@@ -346,7 +346,7 @@ struct MeshVertex_3
   : public Vb
 {
 
-  using Vb::Vb; 
+  using Vb::Vb;
   typedef typename Vb::Vertex_handle  Vertex_handle;
 
   // Types
@@ -534,7 +534,11 @@ friend std::istream& operator>>(std::istream &is, MeshVertex_3& v)
 template<class GT,
          class Indices_tuple,
          class Index,
+#ifdef INDEX_STORAGE
+         class Vb = VertexWithWeightedPoint<GT> >
+#else
          class Vb = Regular_triangulation_vertex_base_3<GT> >
+#endif
 struct Mesh_vertex_generator_3 {
 #ifdef DOXYGEN_RUNNING
   using Triangulation_data_structure = unspecified_type;

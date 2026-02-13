@@ -307,6 +307,7 @@ namespace internal { namespace TDS_3{
     using Vertex_handle = Triangulation_data_structure::Vertex_handle;
     using Cell_handle = Triangulation_data_structure::Cell_handle;
 
+    struct Storage{};
     template <typename TDS2>
     struct Rebind_TDS { using Other = Cell<TDS2>; };
   };

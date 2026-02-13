@@ -186,8 +186,14 @@ private:
                                   typename MD::Index> >::type;
   using Concurrency_tag =
       typename Default::Get<ConcurrencyTag, Sequential_tag>::type;
+#ifdef INDEX_STORAGE
+  using Tds_type_tag = CGAL::Index_tag;
+#else
+ using Tds_type_tag =CGAL::Handle_tag;
+#endif
+
   struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
-                                                     Concurrency_tag> {};
+                                                     Concurrency_tag,Tds_type_tag> {};
   using Triangulation =
       Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
 
