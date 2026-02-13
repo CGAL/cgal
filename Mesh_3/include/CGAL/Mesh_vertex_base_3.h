@@ -384,11 +384,11 @@ struct MeshVertex_3
 
     auto&& storage()
     {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     auto&& storage() const
-    { return this->tds()->vertex_storage()[this->index()]; }
+    { return this->tds()->vertex_storage()[this->Vb::idx()]; }
 
     template < typename TDS2 >
     struct Rebind_TDS {

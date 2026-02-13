@@ -909,7 +909,7 @@ public:
     CGAL_precondition(! is_infinite(c->vertex(i)));
 
     if constexpr (Tds::is_index_based) {
-      auto v_idx = tds().cell_storage()[c.index()].ivertices[i];
+      auto v_idx = tds().cell_storage()[c.idx()].ivertices[i];
       return tds().vertex_storage()[v_idx].point;
     } else {
       return c->vertex(i)->point();
@@ -940,7 +940,7 @@ public:
     CGAL_precondition(! is_infinite(v));
 
     if constexpr (Tds::is_index_based) {
-      return tds().vertex_storage()[v.index()].point;
+      return tds().vertex_storage()[v.idx()].point;
     } else {
       return v->point();
     }

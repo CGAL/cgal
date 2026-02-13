@@ -97,7 +97,7 @@ namespace internal { namespace TDS_3{
     };
 
     Cell()
-      : tds_(nullptr), index_(Cell_handle().index())
+      : tds_(nullptr), index_(Cell_handle().idx())
     {}
 
     Cell(TDS_3* tds_, Cell_index index)
@@ -132,17 +132,17 @@ namespace internal { namespace TDS_3{
       return (tds_ == other.tds()) ? (index_ < other.index_) : (tds_ < other.tds());
     }
 
-    Cell_index index() const
+    Cell_index idx() const
     {
       return index_;
     }
 
     decltype(auto) storage() {
-      return tds()->cell_storage()[index()];
+      return tds()->cell_storage()[idx()];
     }
 
     decltype(auto) storage() const {
-      return tds()->cell_storage()[index()];
+      return tds()->cell_storage()[idx()];
     }
 
     Vertex_handle vertex(int i) const
@@ -154,7 +154,7 @@ namespace internal { namespace TDS_3{
     int index(Vertex_handle v) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (v.index() == storage().ivertices[i]) {
+        if (v.idx() == storage().ivertices[i]) {
           return i;
         }
       }
@@ -174,7 +174,7 @@ namespace internal { namespace TDS_3{
     bool has_vertex(Vertex_handle v) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (v.index() == storage().ivertices[i]) {
+        if (v.idx() == storage().ivertices[i]) {
           return true;
         }
       }
@@ -184,7 +184,7 @@ namespace internal { namespace TDS_3{
     bool has_vertex(Vertex_handle v, int & i) const
     {
       for (i = 0; i < 4; ++i) {
-        if (v.index() == storage().ivertices[i]) {
+        if (v.idx() == storage().ivertices[i]) {
           return true;
         }
       }
@@ -200,7 +200,7 @@ namespace internal { namespace TDS_3{
     int index(Cell_handle n) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (n.index() == storage().ineighbors[i]) {
+        if (n.idx() == storage().ineighbors[i]) {
           return i;
         }
       }
@@ -210,7 +210,7 @@ namespace internal { namespace TDS_3{
     bool has_neighbor(Cell_handle n) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (n.index() == storage().ineighbors[i]) {
+        if (n.idx() == storage().ineighbors[i]) {
           return true;
         }
       }
@@ -220,7 +220,7 @@ namespace internal { namespace TDS_3{
     bool has_neighbor(Cell_handle n, int & i) const
     {
       for (i = 0; i < 4; ++i) {
-        if (n.index() == storage().ineighbors[i]) {
+        if (n.idx() == storage().ineighbors[i]) {
           return true;
         }
       }
@@ -229,32 +229,32 @@ namespace internal { namespace TDS_3{
 
     void set_vertex(int i, Vertex_handle v)
     {
-      storage().ivertices[i] = v.index();
+      storage().ivertices[i] = v.idx();
     }
 
     void set_neighbor(int i, Cell_handle n)
     {
-      storage().ineighbors[i] = n.index();
+      storage().ineighbors[i] = n.idx();
     }
 
     void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
     {
-      CGAL_assertion(tds()->dimension() < 3 || v0.index() != Vertex_index(Vertex_index::invalid_index));
-      CGAL_assertion(tds()->dimension() < 3 || v1.index() != Vertex_index(Vertex_index::invalid_index));
-      CGAL_assertion(tds()->dimension() < 3 || v2.index() != Vertex_index(Vertex_index::invalid_index));
-      CGAL_assertion(tds()->dimension() < 3 || v3.index() != Vertex_index(Vertex_index::invalid_index));
-      storage().ivertices[0] = v0.index();
-      storage().ivertices[1] = v1.index();
-      storage().ivertices[2] = v2.index();
-      storage().ivertices[3] = v3.index();
+      CGAL_assertion(tds()->dimension() < 3 || v0.idx() != Vertex_index(Vertex_index::invalid_index));
+      CGAL_assertion(tds()->dimension() < 3 || v1.idx() != Vertex_index(Vertex_index::invalid_index));
+      CGAL_assertion(tds()->dimension() < 3 || v2.idx() != Vertex_index(Vertex_index::invalid_index));
+      CGAL_assertion(tds()->dimension() < 3 || v3.idx() != Vertex_index(Vertex_index::invalid_index));
+      storage().ivertices[0] = v0.idx();
+      storage().ivertices[1] = v1.idx();
+      storage().ivertices[2] = v2.idx();
+      storage().ivertices[3] = v3.idx();
     }
 
     void set_neighbors(Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
     {
-      storage().ineighbors[0] = n0.index();
-      storage().ineighbors[1] = n1.index();
-      storage().ineighbors[2] = n2.index();
-      storage().ineighbors[3] = n3.index();
+      storage().ineighbors[0] = n0.idx();
+      storage().ineighbors[1] = n1.idx();
+      storage().ineighbors[2] = n2.idx();
+      storage().ineighbors[3] = n3.idx();
     }
 
     // CHECKING
@@ -265,11 +265,11 @@ namespace internal { namespace TDS_3{
     }
 
     TDS_data& tds_data() {
-      return tds()->cell_tds_data_pmap()[index()];
+      return tds()->cell_tds_data_pmap()[idx()];
     }
 
     const TDS_data& tds_data() const {
-      return tds()->cell_tds_data_pmap()[index()];
+      return tds()->cell_tds_data_pmap()[idx()];
     }
 
     template <typename TDS>
@@ -351,17 +351,17 @@ namespace internal { namespace TDS_3{
       return (tds() == other.tds()) ? (index_ < other.index_) : (tds() < other.tds());
     }
 
-    Vertex_index index() const
+    Vertex_index idx() const
     {
       return index_;
     }
 
     decltype(auto) storage() {
-      return tds()->vertex_storage()[index()];
+      return tds()->vertex_storage()[idx()];
     }
 
     decltype(auto) storage() const {
-      return tds()->vertex_storage()[index()];
+      return tds()->vertex_storage()[idx()];
     }
 
     Cell_handle cell() const
@@ -371,7 +371,7 @@ namespace internal { namespace TDS_3{
 
     void set_cell(Cell_handle c)
     {
-      storage().icell = c.index();
+      storage().icell = c.idx();
     }
 
     bool is_valid(bool = false, int = 0) const
@@ -421,16 +421,16 @@ namespace internal { namespace TDS_3{
     };
 
     decltype(auto) storage() {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     decltype(auto) storage() const {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     const Point& point() const
     {
-      CGAL_assertion(this->tds()->is_removed(this->index()) == false);
+      CGAL_assertion(this->tds()->is_removed(this->idx()) == false);
       return storage().point;
     }
 
@@ -474,11 +474,11 @@ namespace internal { namespace TDS_3{
     };
 
     decltype(auto) storage() {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     decltype(auto) storage() const {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     const Point& point() const
@@ -529,11 +529,11 @@ namespace internal { namespace TDS_3{
     };
 
     decltype(auto) storage() {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     decltype(auto) storage() const {
-      return this->tds()->vertex_storage()[this->index()];
+      return this->tds()->vertex_storage()[this->idx()];
     }
 
     Vertex_handle up()   const { return storage().up; }
@@ -702,7 +702,7 @@ namespace internal { namespace TDS_3{
       return Proxy{this->operator*()};
     }
 
-    Index_type index() const {
+    Index_type idx() const {
       return Index_type{idx_};
     }
 
@@ -713,7 +713,7 @@ namespace internal { namespace TDS_3{
     bool operator==(const Index_handle& other) const {
       CGAL_assertion(container() == nullptr || other.container() == nullptr ||
                      container() == other.container());
-      return index() == other.index();
+      return idx() == other.idx();
     }
 
     bool operator!=(const Index_handle& other) const {
@@ -721,7 +721,7 @@ namespace internal { namespace TDS_3{
     }
 
     bool operator<(const Index_handle& other) const {
-      return (container() == other.container()) ? (index() < other.index()) : (container() < other.container());
+      return (container() == other.container()) ? (idx() < other.idx()) : (container() < other.container());
     }
 
     bool operator==( std::nullptr_t ) const {
@@ -734,11 +734,11 @@ namespace internal { namespace TDS_3{
 
     friend std::ostream& operator<<(std::ostream& os, const Index_handle& h)
     {
-      return os << "#" << h.index();
+      return os << "#" << h.idx();
     }
 
     friend std::size_t hash_value(const Index_handle& h) {
-      return static_cast<std::size_t>(h.index().id());
+      return static_cast<std::size_t>(h.idx().id());
     }
 
   private:
@@ -1091,7 +1091,7 @@ namespace CGAL {
         ss << idx << " (new)\n";
 #endif
       }
-      Time_stamper::restore_timestamp(&elt, elt.index().id());
+      Time_stamper::restore_timestamp(&elt, elt.idx().id());
 #if CGAL_DEBUG_INDEXED_CONTAINER
       std::cerr << ss.str();
 #endif
@@ -1196,13 +1196,13 @@ namespace CGAL {
     cell_descriptor to_cell_descriptor(Cell_handle ch) const
     {
       CGAL_assertion(ch.container() == this);
-      return ch.index();
+      return ch.idx();
     }
 
     vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
     {
       CGAL_assertion(vh.container() == this);
-      return vh.index();
+      return vh.idx();
     }
 
     using Facet = std::pair<Cell_handle, int>;
@@ -1292,7 +1292,7 @@ namespace CGAL {
 
     Cell_data& tds_data(Cell_handle ch) const
     {
-      return tds_data(ch.index());
+      return tds_data(ch.idx());
     }
 
     Vertex_index vertex(Cell_index ci, int i) const
@@ -1333,7 +1333,7 @@ namespace CGAL {
     std::pair<Cell_handle, int>
     mirror_facet(Cell_handle ch, int i) const
     {
-      std::pair<Cell_index, int> f = mirror_facet(ch.index(), i);
+      std::pair<Cell_index, int> f = mirror_facet(ch.idx(), i);
       return {cell_handle(f.first), f.second};
     }
 
@@ -1415,11 +1415,11 @@ namespace CGAL {
                             Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle c = create_cell();
-      auto& storage = cell_storage()[c.index()];
-      storage.ivertices[0] = v0.index();
-      storage.ivertices[1] = v1.index();
-      storage.ivertices[2] = v2.index();
-      storage.ivertices[3] = v3.index();
+      auto& storage = cell_storage()[c.idx()];
+      storage.ivertices[0] = v0.idx();
+      storage.ivertices[1] = v1.idx();
+      storage.ivertices[2] = v2.idx();
+      storage.ivertices[3] = v3.idx();
       storage.ineighbors[0] = Cell_index::invalid();
       storage.ineighbors[1] = Cell_index::invalid();
       storage.ineighbors[2] = Cell_index::invalid();
@@ -1433,15 +1433,15 @@ namespace CGAL {
                             Cell_handle n2, Cell_handle n3)
     {
       Cell_handle c = create_cell();
-      auto& storage = cell_storage()[c.index()];
-      storage.ivertices[0] = v0.index();
-      storage.ivertices[1] = v1.index();
-      storage.ivertices[2] = v2.index();
-      storage.ivertices[3] = v3.index();
-      storage.ineighbors[0] = n0.index();
-      storage.ineighbors[1] = n1.index();
-      storage.ineighbors[2] = n2.index();
-      storage.ineighbors[3] = n3.index();
+      auto& storage = cell_storage()[c.idx()];
+      storage.ivertices[0] = v0.idx();
+      storage.ivertices[1] = v1.idx();
+      storage.ivertices[2] = v2.idx();
+      storage.ivertices[3] = v3.idx();
+      storage.ineighbors[0] = n0.idx();
+      storage.ineighbors[1] = n1.idx();
+      storage.ineighbors[2] = n2.idx();
+      storage.ineighbors[3] = n3.idx();
       return c;
     }
 
@@ -1460,12 +1460,12 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      vertex_container().remove(vh.index(), this);
+      vertex_container().remove(vh.idx(), this);
     }
 
     void delete_cell(Cell_handle ch)
     {
-      cell_container().remove(ch.index(), this);
+      cell_container().remove(ch.idx(), this);
     }
 
     void delete_vertex(Vertex_index vi)
@@ -1533,12 +1533,12 @@ namespace CGAL {
 
     bool is_vertex(Vertex_handle v) const
     {
-      return this == v->tds() && is_valid_vertex_index(v->index());
+      return this == v->tds() && is_valid_vertex_index(v->idx());
     }
 
     bool is_valid_cell_handle(Cell_handle c) const
     {
-      return this == c->tds()  && is_valid_cell_index(c->index());
+      return this == c->tds()  && is_valid_cell_index(c->idx());
     }
 
     bool is_cell( Cell_handle c ) const
@@ -1636,8 +1636,8 @@ namespace CGAL {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
       CGAL_assertion(c0 != c1);
-      cell_container().storage_[c0.index()].ineighbors[i0] = c1.index();
-      cell_container().storage_[c1.index()].ineighbors[i1] = c0.index();
+      cell_container().storage_[c0.idx()].ineighbors[i0] = c1.idx();
+      cell_container().storage_[c1.idx()].ineighbors[i1] = c0.idx();
     }
 
     void set_adjacency(Cell_index ci0, int i0,
@@ -1657,7 +1657,7 @@ namespace CGAL {
 
     void set_vertex_cell(Vertex_handle v, Cell_handle c)
     {
-      vertex_storage()[v.index()].icell = c.index();
+      vertex_storage()[v.idx()].icell = c.idx();
     }
 
     bool has_garbage() const { return vertex_container().has_garbage() || cell_container().has_garbage(); }
@@ -1930,11 +1930,11 @@ namespace CGAL {
 
     auto&& storage()
     {
-      return this->tds()->cell_storage()[this->index()];
+      return this->tds()->cell_storage()[this->idx()];
     }
 
     auto&& storage() const
-    { return this->tds()->cell_storage()[this->index()]; }
+    { return this->tds()->cell_storage()[this->idx()]; }
 
     template < typename TDS2 >
     struct Rebind_TDS {
@@ -2018,10 +2018,10 @@ namespace CGAL {
     };
 
     auto&& storage() {
-      return this->tds()->cell_storage()[this->index()];
+      return this->tds()->cell_storage()[this->idx()];
     }
 
-    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
+    auto&& storage() const { return this->tds()->cell_storage()[this->idx()]; }
 
     void hide_point(const Point& p)
     {

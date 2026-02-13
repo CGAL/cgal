@@ -768,7 +768,7 @@ template< class Point_3,
           class Surface_patch_index_,
           class Index_,
           class TDS_,
-          class Cb = Cell<>>
+          class Cb = Cell<TDS_>>
   class CompactMeshCell_3
   : public Cb
   {
@@ -837,11 +837,11 @@ template< class Point_3,
 
     auto&& storage()
     {
-      return this->tds()->cell_storage()[this->index()];
+      return this->tds()->cell_storage()[this->idx()];
     }
 
     auto&& storage() const
-    { return this->tds()->cell_storage()[this->index()]; }
+    { return this->tds()->cell_storage()[this->idx()]; }
 
     template < typename TDS2 >
     struct Rebind_TDS {
