@@ -13,6 +13,7 @@
 #define CGAL_ITERATOR_RANGE_H
 
 #include <CGAL/tuple.h>
+#include <CGAL/Time_stamper.h>
 #include <utility>
 #include <boost/foreach.hpp>
 
@@ -42,6 +43,8 @@ public:
 
   I begin() const { return this->first; }
   I end() const { return this->second; }
+
+  typedef Time_stamper<typename std::iterator_traits<I>::value_type> Time_stamper_impl;
 
   /// returns `std::distance(begin(), end())`
   std::size_t size() const { return static_cast<std::size_t>(std::distance(begin(), end())); }
