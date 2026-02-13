@@ -685,6 +685,8 @@ namespace internal { namespace TDS_3{
     using value_type = Element;
     using reference = Element;
     using pointer = Proxy;
+    using difference_type = std::ptrdiff_t;                     // AF: added so that make_mesh_3() compiles
+    using  iterator_category = std::random_access_iterator_tag; // AF: added so that make_mesh_3() compiles
 
     Index_handle() = default;
 

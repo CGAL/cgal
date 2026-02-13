@@ -1462,13 +1462,13 @@ protected:
 #endif
     do
     {
-      auto cd = cell_stack.top();
+      cell_descriptor cd = cell_stack.top();
       cell_stack.pop();
 
       // For each neighbor cell
       for(int i=0; i<dimension()+1; ++i)
       {
-        auto test = tds().neighbor(cd, i);
+        cell_descriptor test = tds().neighbor(cd, i);
 
         // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ

@@ -364,7 +364,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   c3t3.clear_manifold_info();
 
   dump_c3t3(c3t3, mesh_options.dump_after_refine_prefix);
-
+#if 0 // AF:   only mesh for now
   // Odt
   if ( odt )
   {
@@ -421,6 +421,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
 
     dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
   }
+#endif
 }
 #endif // DOXYGEN_RUNNING
 } // end namespace CGAL
