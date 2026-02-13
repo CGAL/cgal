@@ -27,6 +27,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/TDS_3/Indexed_storage.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
@@ -758,6 +759,332 @@ public:
   };
 };
 
+
+
+
+template< class Point_3,
+          class Weighted_point_3,
+          class Subdomain_index_,
+          class Surface_patch_index_,
+          class Index_,
+          class TDS_,
+          class Cb = Cell<>>
+  class CompactMeshCell_3
+  : public Cb
+  {
+    public:
+    using Cb::Cb; // inherit constructors
+    using TDS = TDS_;
+    using Vertex_handle = typename TDS::Vertex_handle;
+    using Cell_handle = typename TDS::Cell_handle;
+
+  typedef typename TDS::Vertex         Vertex;
+  typedef typename TDS::Cell           Cell;
+  typedef typename TDS::Cell_data      TDS_data;
+
+
+  // Index Type
+  typedef Subdomain_index_      Subdomain_index;
+  typedef Surface_patch_index_  Surface_patch_index;
+  typedef Index_                Index;
+
+  typedef Weighted_point_3      Point;
+
+  typedef Point*                            Point_container;
+  typedef Point*                            Point_iterator;
+  typedef const Point*                      Point_const_iterator;
+
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+  typedef unsigned int              Erase_counter_type;
+#endif
+    struct Storage : public Cb::Storage {
+      char bits_;
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+  Erase_counter_type                m_erase_counter;
+#endif
+      mutable Point_3* weighted_circumcenter_;
+      /// Stores surface_index for each facet of the cell
+  std::array<Surface_patch_index, 4> surface_index_table_ = {};
+  /// Stores surface center of each facet of the cell
+  std::array<Point_3, 4> surface_center_table_ = {};
+  /// Stores surface center index of each facet of the cell
+
+  std::array<Cell_handle, 4> N;
+  std::array<Vertex_handle, 4> V;
+
+#ifdef CGAL_INTRUSIVE_LIST
+  Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
+#endif
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
+
+  std::array<Index, 4> surface_center_index_table_ = {};
+  /// Stores visited facets (4 first bits)
+
+  //  Point_container _hidden;
+
+  double sliver_value_ = 0.;
+
+  // The index of the cell of the input complex that contains me
+  Subdomain_index subdomain_index_ = {};
+
+  TDS_data      _tds_data;
+  mutable bool sliver_cache_validity_ = false;
+
+    };
+
+    auto&& storage()
+    {
+      return this->tds()->cell_storage()[this->index()];
+    }
+
+    auto&& storage() const
+    { return this->tds()->cell_storage()[this->index()]; }
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+      using Other = CompactMeshCell_3<Point_3,
+          Weighted_point_3,
+          Subdomain_index_,
+          Surface_patch_index_,
+          Index_,
+          TDS_,
+          Cb2>;
+    };
+
+
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return storage().m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    storage().m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++storage().m_erase_counter;
+  }
+#endif
+
+/// Marks `facet` as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    storage().bits_ |= char(1 << facet);
+  }
+
+  /// Marks `facet` as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    storage().bits_ = char(storage().bits_ & (15 & ~(1 << facet)));
+  }
+
+  /// Returns `true` if `facet` is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (storage().bits_ & (1 << facet)) != 0 );
+  }
+
+  /// Precondition weighted_circumcenter_ == nullptr
+  void try_to_set_circumcenter(Point_3 *cc) const
+  {
+    CGAL_precondition(storage().weighted_circumcenter_ == nullptr);
+    storage().weighted_circumcenter_ = cc;
+  }
+
+void invalidate_weighted_circumcenter_cache() const
+  {
+    if (!internal_tbb::is_null(storage().weighted_circumcenter_)) {
+      internal_tbb::delete_circumcenter(storage().weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(storage().weighted_circumcenter_, nullptr);
+    }
+  }
+
+  // AF todo   copy constructor/destructor
+
+  Point_iterator hidden_points_begin() const { return hidden_points_end(); }
+  Point_iterator hidden_points_end() const { return nullptr; }
+  void hide_point (const Point&) const { }
+
+// We must override the functions that modify the vertices.
+  // And if the point inside a vertex is modified, we fail,
+  // but there's not much we can do for this now.
+  void set_vertex(int i, Vertex_handle v)
+  {
+    CGAL_precondition( i >= 0 && i <= 3);
+    invalidate_weighted_circumcenter_cache();
+    Cb::set_vertex(i, v);
+  }
+
+  void set_vertices()
+  {
+    invalidate_weighted_circumcenter_cache();
+    Cb::set_vertices();
+  }
+
+  void set_vertices(Vertex_handle v0, Vertex_handle v1,
+                    Vertex_handle v2, Vertex_handle v3)
+  {
+    invalidate_weighted_circumcenter_cache();
+    Cb::set_vertices(v0, v1, v2, v3);
+  }
+
+  template<typename GT_>
+  const Point_3& weighted_circumcenter(const GT_& gt) const
+  {
+    static_assert(std::is_same<Point_3,
+      typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
+    if (internal_tbb::is_null(storage().weighted_circumcenter_)) {
+      this->try_to_set_circumcenter(
+        new Point_3(gt.construct_weighted_circumcenter_3_object()
+                        (this->vertex(0)->point(),
+                         this->vertex(1)->point(),
+                         this->vertex(2)->point(),
+                         this->vertex(3)->point())));
+    } else {
+      CGAL_expensive_assertion(gt.construct_weighted_circumcenter_3_object()
+                                (this->vertex(0)->point(),
+                                 this->vertex(1)->point(),
+                                 this->vertex(2)->point(),
+                                 this->vertex(3)->point()) == *storage().weighted_circumcenter_);
+    }
+    return *storage().weighted_circumcenter_;
+  }
+
+  // Returns the index of the cell of the input complex that contains the cell
+  Subdomain_index subdomain_index() const { return storage().subdomain_index_; }
+
+  // Sets the index of the cell of the input complex that contains the cell
+  void set_subdomain_index(const Subdomain_index& index)
+  { storage().subdomain_index_ = index; }
+
+  void set_sliver_value(double value)
+  {
+    storage().sliver_cache_validity_ = true;
+    storage().sliver_value_ = value;
+  }
+
+  double sliver_value() const
+  {
+    CGAL_assertion(is_cache_valid());
+    return storage().sliver_value_;
+  }
+
+  bool is_cache_valid() const { return storage().sliver_cache_validity_; }
+  void reset_cache_validity() const { storage().sliver_cache_validity_ = false;  }
+
+  /// Set surface index of `facet` to `index`
+  void set_surface_patch_index(const int facet, const Surface_patch_index& index)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    storage().surface_index_table_[facet] = index;
+  }
+
+  /// Returns surface index of facet `facet`
+  Surface_patch_index surface_patch_index(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return storage().surface_index_table_[facet];
+  }
+
+  /// Sets surface center of `facet` to `point`
+  void set_facet_surface_center(const int facet, const Point_3& point)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    storage().surface_center_table_[facet] = point;
+  }
+
+  /// Returns surface center of `facet`
+  Point_3 get_facet_surface_center(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return storage().surface_center_table_[facet];
+  }
+
+  /// Sets surface center index of `facet` to `index`
+  void set_facet_surface_center_index(const int facet, const Index& index)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    storage().surface_center_index_table_[facet] = index;
+  }
+
+  /// Returns surface center of `facet`
+  Index get_facet_surface_center_index(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return storage().surface_center_index_table_[facet];
+  }
+
+  /// Returns true if facet lies on a surface patch
+  bool is_facet_on_surface(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( !( Surface_patch_index() == storage().surface_index_table_[facet] ));
+  }
+static
+  std::string io_signature()
+  {
+    return "todo";
+  }
+
+#ifdef CGAL_INTRUSIVE_LIST
+public:
+  Cell_handle next_intrusive() const { return next_intrusive_; }
+  void set_next_intrusive(Cell_handle c)
+  {
+    next_intrusive_ = c;
+  }
+
+  Cell_handle previous_intrusive() const { return previous_intrusive_; }
+  void set_previous_intrusive(Cell_handle c)
+  {
+    previous_intrusive_ = c;
+  }
+#endif // CGAL_INTRUSIVE_LIST
+
+/// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return storage().time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    storage().time_stamp_ = ts;
+  }
+  ///@}
+
+
+  friend std::istream& operator>>(std::istream &is, CompactMeshCell_3 &c)
+  {
+    assert(false); // not implemented
+    return is;
+  }
+
+  friend
+  std::ostream& operator<<(std::ostream &os, const CompactMeshCell_3 &c)
+  {
+    assert(false); // not implemented
+    return os;
+  }
+
+  };
+
+
+
+
+
+
 template <typename GT,
   typename Subdomain_index,
   typename Surface_patch_index,
@@ -774,12 +1101,21 @@ public:
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
   struct Rebind_TDS {
+#if INDEX_STORAGE
+    typedef CompactMeshCell_3<typename GT::Point_3,
+                                typename GT::Weighted_point_3,
+                                Subdomain_index,
+                                Surface_patch_index,
+                                Index,
+                                TDS2> Other;
+#else
     typedef Compact_mesh_cell_3<typename GT::Point_3,
                                 typename GT::Weighted_point_3,
                                 Subdomain_index,
                                 Surface_patch_index,
                                 Index,
                                 TDS2> Other;
+#endif
   };
 };
 
