@@ -52,6 +52,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/STL_Extension/internal/info_check.h>
@@ -1423,7 +1424,7 @@ protected:
     cell_stack.push(tds().to_cell_descriptor(d));
     d->tds_data().mark_in_conflict();
 
-    *it.second++ = tds().to_cell_descriptor(d);
+    *it.second++ = d; // = tds().to_cell_descriptor(d);
 
     auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
       if(!this_facet_must_be_in_the_cz || !the_facet_is_in_its_cz) return;
@@ -4108,11 +4109,17 @@ insert_in_conflict(const Point& p,
       // Parallel
       if(could_lock_zone)
       {
-
+        auto cell_back = std::back_inserter(cells);
+        auto cells_out = boost::make_function_output_iterator(
+          [&](auto c) mutable {
+            // transform on the fly, then insert
+            *cell_back = tds().to_cell_descriptor(c);
+          }
+        );
         find_conflicts(c,
                        tester,
                        make_triple(std::back_inserter(facets),
-                                   std::back_inserter(cells),
+                                   cells_out,
                                    Emptyset_iterator()),
                        could_lock_zone);
 
