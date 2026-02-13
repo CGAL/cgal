@@ -46,6 +46,11 @@ public:
 
   typedef Time_stamper<typename std::iterator_traits<I>::value_type> Time_stamper_impl;
 
+  static iterator s_iterator_to(const typename std::iterator_traits<I>::value_type&  value) {
+    assert false; // AF: not even sure that we can implement that correctly
+    return I();
+  }
+
   /// returns `std::distance(begin(), end())`
   std::size_t size() const { return static_cast<std::size_t>(std::distance(begin(), end())); }
 
