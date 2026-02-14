@@ -1550,11 +1550,17 @@ protected:
 
     std::vector<cell_descriptor> cells;
     cells.reserve(32);
+    auto cell_back = std::back_inserter(cells);
+    auto cells_out = boost::make_function_output_iterator(
+        [&](Cell_handle c) mutable {
+          // transform on the fly, then insert
+          *cell_back = tds().to_cell_descriptor(c);
+        }
+      );
+    Facet facet;
 
-    std::pair<cell_descriptor, int> facet;
-
-    auto triple = make_triple(Oneset_iterator<std::pair<cell_descriptor, int>>(facet),
-                                              std::back_inserter(cells),
+    auto triple = make_triple(Oneset_iterator<Facet>(facet),
+                                              cells_out,
                                               Emptyset_iterator());
 
     // Find the cells in conflict
@@ -1568,7 +1574,7 @@ protected:
     }
     // Create the new cells and delete the old.
     return tds()._insert_in_hole(cells.begin(), cells.end(),
-                                 tds().cell_handle(facet.first), facet.second);
+                                 facet.first, facet.second);
   }
 
 private:

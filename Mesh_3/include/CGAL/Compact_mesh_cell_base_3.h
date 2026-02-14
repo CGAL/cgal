@@ -808,19 +808,18 @@ template< class Point_3,
       mutable Point_3* weighted_circumcenter_;
       /// Stores surface_index for each facet of the cell
   std::array<Surface_patch_index, 4> surface_index_table_ = {};
+
   /// Stores surface center of each facet of the cell
   std::array<Point_3, 4> surface_center_table_ = {};
-  /// Stores surface center index of each facet of the cell
 
-  std::array<Cell_handle, 4> N;
-  std::array<Vertex_handle, 4> V;
+  /// Stores surface center index of each facet of the cell
+  std::array<Index, 4> surface_center_index_table_ = {};
 
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
 #endif
   std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
-  std::array<Index, 4> surface_center_index_table_ = {};
   /// Stores visited facets (4 first bits)
 
   //  Point_container _hidden;
