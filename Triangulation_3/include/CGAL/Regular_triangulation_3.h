@@ -682,14 +682,7 @@ public:
       Conflict_tester_2 tester(p, this);
       if(! tester(c))
         return make_triple(bfit, cit, ifit);
-/*
-auto cells_out = boost::make_function_output_iterator(
-        [&](Cell_handle c) mutable {
-          // transform on the fly, then insert
-          *cell_back = tds().to_cell_descriptor(c);
-        }
-      );
-*/
+
       ifit = Tr_Base::find_conflicts(c, tester,
                                      make_triple(std::back_inserter(facets),
                                                 std::back_inserter(cells),
@@ -704,7 +697,7 @@ auto cells_out = boost::make_function_output_iterator(
       Conflict_tester_3 tester(p, this);
       if(! tester(c))
         return make_triple(bfit, cit, ifit);
-/*
+
       ifit = Tr_Base::find_conflicts(c, tester,
                                      make_triple(std::back_inserter(facets),
                                                  std::back_inserter(cells),
@@ -712,7 +705,7 @@ auto cells_out = boost::make_function_output_iterator(
                                      could_lock_zone,
                                      this_facet_must_be_in_the_cz,
                                      the_facet_is_in_its_cz).third;
-                                     */
+
     }
 
     // Reset the conflict flag on the boundary.
