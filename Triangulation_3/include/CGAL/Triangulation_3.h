@@ -1393,8 +1393,8 @@ protected:
   find_conflicts(Cell_handle d,
                  const Conflict_test& tester,
                  Triple<OutputIteratorBoundaryFacets,
-                 OutputIteratorCells,
-                 OutputIteratorInternalFacets> it,
+                        OutputIteratorCells,
+                        OutputIteratorInternalFacets> it,
                  bool *could_lock_zone = nullptr,
                  const Facet *this_facet_must_be_in_the_cz = nullptr,
                  bool *the_facet_is_in_its_cz = nullptr) const
@@ -1481,7 +1481,7 @@ protected:
 
           if(cd < test)
           {
-            *it.third++ = std::make_pair(cd, i);
+            *it.third++ = std::make_pair(tds().cell_handle(cd), i);
           }
           continue; // test was already in conflict.
         }
@@ -1516,12 +1516,12 @@ protected:
 
             if(cd < test)
             {
-              *it.third++ = std::make_pair(cd, i);
+              *it.third++ = std::make_pair(tds().cell_handle(cd), i);
             }
 
             cell_stack.push(test);
             tds().tds_data(test).mark_in_conflict();
-            *it.second++ = test;
+            *it.second++ = tds().cell_handle(test);
             continue;
           }
 
@@ -1531,7 +1531,7 @@ protected:
         // Is it the facet where're looking for?
         check_this_boundary_facet_must_be_in_the_cz(cd, i);
 
-        *it.first++ = std::make_pair(cd, i);
+        *it.first++ = std::make_pair(tds().cell_handle(cd), i);
       }
     }
     while(!cell_stack.empty());
@@ -4107,18 +4107,24 @@ insert_in_conflict(const Point& p,
       boost::container::small_vector<std::pair<cell_descriptor, int>,32> facets;
       auto cell_back = std::back_inserter(cells);
       auto cells_out = boost::make_function_output_iterator(
-        [&](auto c) mutable {
+        [&](Cell_handle c) mutable {
           // transform on the fly, then insert
           *cell_back = tds().to_cell_descriptor(c);
         }
       );
-
+      auto facets_back = std::back_inserter(facets);
+      auto facets_out = boost::make_function_output_iterator(
+        [&](const Facet& f) mutable {
+          // transform on the fly, then insert
+          *facets_back = std::make_pair(tds().to_cell_descriptor(f.first), f.second);
+        }
+      );
       // Parallel
       if(could_lock_zone)
       {
         find_conflicts(c,
                        tester,
-                       make_triple(std::back_inserter(facets),
+                       make_triple(facets_out,
                                    cells_out,
                                    Emptyset_iterator()),
                        could_lock_zone);
@@ -4142,7 +4148,7 @@ insert_in_conflict(const Point& p,
       {
         find_conflicts(c,
                        tester,
-                        make_triple(std::back_inserter(facets),
+                        make_triple(facets_out,
                                     cells_out,
                                     Emptyset_iterator()));
       }
@@ -4185,24 +4191,25 @@ insert_in_conflict(const Point& p,
       // First, find the conflict region.
       std::vector<cell_descriptor> cells;
       cells.reserve(32);
-      std::pair<cell_descriptor, int> facet;
+      Facet facet;
       auto cell_back = std::back_inserter(cells);
       auto cells_out = boost::make_function_output_iterator(
-        [&](auto c) mutable {
+        [&](Cell_handle c) mutable {
           // transform on the fly, then insert
           *cell_back = tds().to_cell_descriptor(c);
         });
 
-      find_conflicts(c, tester, make_triple(Oneset_iterator<std::pair<cell_descriptor, int>>(facet),
+      find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
                                             cells_out,
                                             Emptyset_iterator()));
+
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cell_handle_iterator(cells.begin()), cell_handle_iterator(cells.end()));
 
       Vertex_handle v = _insert_in_hole(p, cells.begin(), cells.end(),
-                                        tds().cell_handle(facet.first), facet.second);
+                                        facet.first, facet.second);
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);

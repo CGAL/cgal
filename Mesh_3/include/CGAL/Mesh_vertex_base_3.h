@@ -360,8 +360,8 @@ struct MeshVertex_3
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
     Erase_counter_type                m_erase_counter;
 #endif
-    std::size_t number_of_incident_facets_;
-    std::size_t number_of_components_; // number of components in the adjacency
+    std::size_t number_of_incident_facets_ = 0;
+    std::size_t number_of_components_ = 0; // number of components in the adjacency
     // graph of incident facets (in complex)
 
 
@@ -369,12 +369,12 @@ struct MeshVertex_3
     // that contains me
     Index index_;
     // Stores info needed by optimizers
-    FT meshing_info_;
+    FT meshing_info_ = 0;
 
     // Dimension of the lowest dimensional face of the input 3D complex
     // that contains me. Negative values are a marker for special vertices.
-    short dimension_;
-    bool cache_validity;
+    short dimension_ = -1;
+    bool cache_validity = false;
 #ifdef CGAL_INTRUSIVE_LIST
     Vertex_handle next_intrusive_;
     Vertex_handle previous_intrusive_;
