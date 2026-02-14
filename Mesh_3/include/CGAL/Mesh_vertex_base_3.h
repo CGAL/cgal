@@ -345,7 +345,6 @@ template <class GT,
 struct MeshVertex_3
   : public Vb
 {
-
   using Vb::Vb;
   typedef typename Vb::Vertex_handle  Vertex_handle;
 
@@ -353,7 +352,7 @@ struct MeshVertex_3
   typedef Index_                      Index;
   typedef typename GT::FT             FT;
   typedef typename Vb::Point          Point;
-  typedef unsigned int              Erase_counter_type;
+  typedef unsigned int                Erase_counter_type;
 
   struct Storage : public Vb::Storage {
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -362,7 +361,7 @@ struct MeshVertex_3
 #endif
     std::size_t number_of_incident_facets_ = 0;
     std::size_t number_of_components_ = 0; // number of components in the adjacency
-    // graph of incident facets (in complex)
+                                         // graph of incident facets (in complex)
 
 
     // Index of the lowest dimensional face of the input 3D complex
@@ -382,25 +381,25 @@ struct MeshVertex_3
     std::size_t time_stamp_ = std::size_t(-2);
   };
 
-    auto&& storage()
-    {
-      return this->tds()->vertex_storage()[this->idx()];
-    }
+  auto&& storage()
+  {
+    return this->tds()->vertex_storage()[this->idx()];
+  }
 
-    auto&& storage() const
-    { return this->tds()->vertex_storage()[this->Vb::idx()]; }
+  auto&& storage() const
+  { return this->tds()->vertex_storage()[this->Vb::idx()]; }
 
-    template < typename TDS2 >
-    struct Rebind_TDS {
-      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
-      using Other = MeshVertex_3<GT,
-          Indices_tuple,
-          Index_,
-          Vb2>;
-    };
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+    using Other = MeshVertex_3<GT,
+                               Indices_tuple,
+                               Index_,
+                               Vb2>;
+  };
 
 
-    #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
 public:
