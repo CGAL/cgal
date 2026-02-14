@@ -873,6 +873,14 @@ template< class Point_3,
   }
 #endif
 
+  ~CompactMeshCell_3()
+  {
+    if(!internal_tbb::is_null(storage().weighted_circumcenter_)){
+      internal_tbb::delete_circumcenter(storage().weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(storage().weighted_circumcenter_, nullptr);
+    }
+  }
+
 /// Marks `facet` as visited
   void set_facet_visited (const int facet)
   {
