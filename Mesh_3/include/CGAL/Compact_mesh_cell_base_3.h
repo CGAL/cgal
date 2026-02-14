@@ -800,12 +800,12 @@ template< class Point_3,
   typedef unsigned int              Erase_counter_type;
 #endif
     struct Storage : public Cb::Storage {
-      char bits_;
+      char bits_ = 0;
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
   Erase_counter_type                m_erase_counter;
 #endif
-      mutable Point_3* weighted_circumcenter_;
+      mutable Point_3* weighted_circumcenter_ = nullptr;
       /// Stores surface_index for each facet of the cell
   std::array<Surface_patch_index, 4> surface_index_table_ = {};
 
