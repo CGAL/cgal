@@ -554,21 +554,34 @@ public:
     cells.reserve(32);
     std::vector<std::pair<cell_descriptor, int>> facets;
     facets.reserve(64);
-
+    auto cell_back = std::back_inserter(cells);
+    auto cells_out = boost::make_function_output_iterator(
+        [&](Cell_handle c) mutable {
+          // transform on the fly, then insert
+          *cell_back = tds().to_cell_descriptor(c);
+        }
+      );
+    auto facets_back = std::back_inserter(facets);
+    auto facets_out = boost::make_function_output_iterator(
+        [&](const Facet& f) mutable {
+          // transform on the fly, then insert
+          *facets_back = std::make_pair(tds().to_cell_descriptor(f.first), f.second);
+        }
+      );
     if(dimension() == 2)
     {
       Conflict_tester_2 tester(p, this);
       ifit = Tr_Base::find_conflicts(c, tester,
-                                     make_triple(std::back_inserter(facets),
-                                                 std::back_inserter(cells),
+                                     make_triple(facets_out,
+                                                 cells_out,
                                                  ifit), could_lock_zone).third;
     }
     else
     {
       Conflict_tester_3 tester(p, this);
       ifit = Tr_Base::find_conflicts(c, tester,
-                                     make_triple(std::back_inserter(facets),
-                                                 std::back_inserter(cells),
+                                     make_triple(facets_out,
+                                                 cells_out,
                                                  ifit), could_lock_zone).third;
     }
 
