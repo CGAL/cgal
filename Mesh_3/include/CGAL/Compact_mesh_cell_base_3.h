@@ -349,6 +349,11 @@ public:
 
   // ACCESS FUNCTIONS
 
+  std::size_t size() const
+  {
+    return sizeof(*this);
+  }
+
   Vertex_handle vertex(int i) const
   {
     CGAL_precondition( i >= 0 && i <= 3 );
@@ -815,9 +820,9 @@ class CompactMeshCell_3
     std::array<Index, 4> surface_center_index_table_ = {};
 
 #ifdef CGAL_INTRUSIVE_LIST
-    Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
+    Cell_index next_intrusive_ = {}, previous_intrusive_ = {};
 #endif
-    std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
+    //  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
     /// Stores visited facets (4 first bits)
 
@@ -830,7 +835,6 @@ class CompactMeshCell_3
 
     TDS_data      _tds_data;
     mutable bool sliver_cache_validity_ = false;
-
     char bits_ = 0;
 
   };
@@ -1047,18 +1051,27 @@ static
     return "todo";
   }
 
+
 #ifdef CGAL_INTRUSIVE_LIST
 public:
-  Cell_handle next_intrusive() const { return next_intrusive_; }
-  void set_next_intrusive(Cell_handle c)
+  Cell_handle next_intrusive() const
   {
-    next_intrusive_ = c;
+    return Cell_handle(tds(), storage().next_intrusive_);
   }
 
-  Cell_handle previous_intrusive() const { return previous_intrusive_; }
+  void set_next_intrusive(Cell_handle c)
+  {
+    storage().next_intrusive_ = c.idx();
+  }
+
+  Cell_handle previous_intrusive() const
+  {
+    return Cell_handle(tds(), storage().previous_intrusive_);
+  }
+
   void set_previous_intrusive(Cell_handle c)
   {
-    previous_intrusive_ = c;
+    storage().previous_intrusive_ = c.idx();
   }
 #endif // CGAL_INTRUSIVE_LIST
 
@@ -1067,13 +1080,18 @@ public:
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
-    return storage().time_stamp_;
+    return idx(); // storage().time_stamp_;
   }
-  void set_time_stamp(const std::size_t& ts) {
-    storage().time_stamp_ = ts;
+  void set_time_stamp(const std::size_t& ) {
+    // storage().time_stamp_ = ts;
   }
   ///@}
 
+
+  std::size_t size() const
+  {
+    return sizeof(Storage);
+  }
 
   friend std::istream& operator>>(std::istream &is, CompactMeshCell_3 &c)
   {

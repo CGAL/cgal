@@ -134,6 +134,11 @@ public:
 
   // Default copy constructor and assignment operator are ok
 
+  std::size_t size() const
+  {
+    return sizeof(*this);
+  }
+
   // Returns the dimension of the lowest dimensional face of the input 3D
   // complex that contains the vertex
   int in_dimension() const {
@@ -375,10 +380,10 @@ struct MeshVertex_3
     short dimension_ = -1;
     bool cache_validity = false;
 #ifdef CGAL_INTRUSIVE_LIST
-    Vertex_handle next_intrusive_;
-    Vertex_handle previous_intrusive_;
+    Vertex_index next_intrusive_;
+    Vertex_index previous_intrusive_;
 #endif
-    std::size_t time_stamp_ = std::size_t(-2);
+    // std::size_t time_stamp_ = std::size_t(-2);
   };
 
   auto&& storage()
@@ -455,16 +460,24 @@ public:
   void set_meshing_info(const FT& value) { storage().meshing_info_ = value; }
 
 #ifdef CGAL_INTRUSIVE_LIST
-  Vertex_handle next_intrusive() const { return storage().next_intrusive_; }
-  void set_next_intrusive(Vertex_handle v)
+  Vertex_handle next_intrusive() const
   {
-    storage().next_intrusive_ = v;
+    return Vertex_handle(tds(), storage().next_intrusive_);
   }
 
-  Vertex_handle previous_intrusive() const { return previous_intrusive_; }
+  void set_next_intrusive(Vertex_handle v)
+  {
+    storage().next_intrusive_ = v.idx();
+  }
+
+  Vertex_handle previous_intrusive() const
+  {
+    return Vertex_handle(tds(), storage().previous_intrusive_);
+  }
+
   void set_previous_intrusive(Vertex_handle v)
   {
-    storage().previous_intrusive_ = v;
+    storage().previous_intrusive_ = v.idx;
   }
 #endif
 
@@ -473,10 +486,10 @@ public:
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
-    return storage().time_stamp_;
+    return idx().idx(); // storage().time_stamp_;
   }
-  void set_time_stamp(const std::size_t& ts) {
-    storage().time_stamp_ = ts;
+  void set_time_stamp(const std::size_t& ) {
+    //storage().time_stamp_ = ts;
   }
   ///@}
 
@@ -513,6 +526,11 @@ public:
     return "tbd";
   }
 
+
+  std::size_t size() const
+  {
+    return sizeof(Storage);
+  }
 
 friend std::istream& operator>>(std::istream &is, MeshVertex_3& v)
   {
