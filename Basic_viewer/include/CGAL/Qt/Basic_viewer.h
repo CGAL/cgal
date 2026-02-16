@@ -1479,21 +1479,27 @@ protected:
   {
     if(!m_scene.empty())
     {
-      auto& bbox=m_scene.bounding_box();
-      double d=is_two_dimensional()
-              ?2.5
-              : CGAL::sqrt(CGAL::squared_distance
-                           (Local_point(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-                            Local_point(bbox.xmax(), bbox.ymax(), bbox.zmax())));
-      // std::cout<<"Length of the diagonal: "<<d<<std::endl;
-      // std::cout<<"width: "<< this->width() <<std::endl;
-      // std::cout<<"height: "<< this->height() <<std::endl;
-
+      CGAL::Bbox_3 bbox = m_scene.bbox();
+      double bbox_diagonal = CGAL::sqrt(
+        CGAL::squared_distance(
+         Local_point(bbox.xmin(),bbox.ymin(),bbox.zmin()),
+         Local_point(bbox.xmax(),bbox.ymax(),bbox.zmax())
+        )
+      );
+      int viewport_size = std::min(this->width(),this->height());
+      double d=(bbox_diagonal/viewport_size)*2.5;
       m_size_vertices=1.5*d;
       m_size_edges=d;
-      m_size_rays=m_size_edges;
-      m_size_lines=m_size_edges;
-      m_size_normals=d/3;
+      m_size_rays=d;
+      m_size_lines=d;
+      m_size_normals=d/3.0;
+      m_height_factor_normals=0.02;
+    } else {
+      m_size_vertices=1.0;
+      m_size_edges=1.0;
+      m_size_rays=1.0;
+      m_size_lines=1.0;
+      m_size_normals=0.5;
       m_height_factor_normals=0.02;
     }
   }
