@@ -455,23 +455,23 @@ protected:
   {
     const Facet mirror = mirror_facet(f);
 
-    f.first->set_facet_surface_center(f.second, p);
-    mirror.first->set_facet_surface_center(mirror.second, p);
+    r_c3t3_.set_surface_center(f.first, f.second, p);
+    r_c3t3_.set_surface_center(mirror.first, mirror.second, p);
 
-    f.first->set_facet_surface_center_index(f.second,index);
-    mirror.first->set_facet_surface_center_index(mirror.second,index);
+    r_c3t3_.set_surface_center_index(f.first, f.second, index);
+    r_c3t3_.set_surface_center_index(mirror.first, mirror.second, index);
   }
 
   /// Returns facet surface center of `f`.
-  Bare_point get_facet_surface_center(const Facet& f) const
+  decltype(auto) get_facet_surface_center(const Facet& f) const
   {
-    return f.first->get_facet_surface_center(f.second);
+    return r_c3t3_.surface_center(f.first, f.second);
   }
 
   /// Returns index of surface center of facet `f`.
   Index get_facet_surface_center_index(const Facet& f) const
   {
-    return f.first->get_facet_surface_center_index(f.second);
+    return r_c3t3_.surface_center_index(f.first, f.second);
   }
 
   /// Sets `f` to surface facets, with index `index`.

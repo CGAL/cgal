@@ -290,8 +290,7 @@ private:
       // calling a function 'get_closest_point(p, q)' that simply returns q
       // for a non-periodic triangulation, and checks all possible offsets for
       // periodic triangulations
-      points.push_back(tr.get_closest_point(cp(position),
-                                            cell->get_facet_surface_center(i)));
+      points.push_back(tr.get_closest_point(cp(position), c3t3.surface_center(cell, i)));
     }
 
     return points;

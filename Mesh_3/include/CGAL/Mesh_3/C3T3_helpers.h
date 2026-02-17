@@ -1237,9 +1237,9 @@ private:
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
           // Update facet surface center
-          Bare_point surface_center = std::get<0>(intersection);
-          facet.first->set_facet_surface_center(facet.second, surface_center);
-          facet_m.first->set_facet_surface_center(facet_m.second, surface_center);
+          const Bare_point& surface_center = std::get<0>(intersection);
+          c3t3_.set_surface_center(facet.first, facet.second, surface_center);
+          c3t3_.set_surface_center(facet_m.first, facet_m.second, surface_center);
         }
       }
 
@@ -3480,7 +3480,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        Default_diagonalize_traits<double, 3>());
 
   // The surface center of a facet might have an offset in periodic triangulations
-  const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
+  const Bare_point& ref_facet_scp = c3t3_.surface_center(ref_facet.first, ref_facet.second);
   const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);
   return std::make_pair(plane, ref_point);
 }

@@ -136,7 +136,7 @@ private:
     typename GT::Compute_weight_3 cw = this->r_tr_.geom_traits().compute_weight_3_object();
     typename GT::Construct_point_3 cp = this->r_tr_.geom_traits().construct_point_3_object();
 
-    const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
+    const Bare_point& fcenter = this->r_c3t3_.surface_center(f.first, f.second);
     const Weighted_point& wp = this->r_tr_.point(v);
 
     return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - cw(wp);

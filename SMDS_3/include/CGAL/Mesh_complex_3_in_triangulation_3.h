@@ -735,10 +735,8 @@ public:
         Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
         if (is_in_complex(mirror_facet))
         {
-          set_surface_patch_index(c, i,
-            surface_patch_index(mirror_facet));
-          c->set_facet_surface_center(i,
-            mirror_facet.first->get_facet_surface_center(mirror_facet.second));
+          set_surface_patch_index(c, i, surface_patch_index(mirror_facet));
+          set_surface_center(c, i, surface_center(mirror_facet.first, mirror_facet.second));
         }
       }
       /*int i_inf;
@@ -746,10 +744,7 @@ public:
       {
         Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
         if (is_in_complex(mirror_facet))
-        {
-          set_surface_patch_index(c, i_inf,
-                                  surface_patch_index(mirror_facet));
-        }
+          set_surface_patch_index(c, i_inf, surface_patch_index(mirror_facet));
       }*/
     }
   }
