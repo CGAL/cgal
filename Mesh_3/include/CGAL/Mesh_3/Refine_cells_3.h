@@ -961,6 +961,17 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
+  // @tmp
+  // Remove the cell's facets from the complex
+  // Do *not* call the C3T3's remove_from_complex() because the information
+  // on the opposite facet should not be cleared for boundary facets
+  auto cit = zone.cells.begin();
+  for ( ; cit != zone.cells.end() ; ++cit )
+  {
+    for (int i = 0 ; i < 4 ; ++i)
+      r_c3t3_.set_surface_patch_index(*cit, i, Subdomain_index());
+  }
+
   // TODO: look at this
   if( zone.locate_type == Tr::VERTEX )
   {
