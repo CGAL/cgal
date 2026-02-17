@@ -1732,6 +1732,29 @@ private:
 
   mutable Edge_facet_counter edge_facet_counter_;
 
+  struct Facet_hash
+  {
+    std::size_t operator()(const Facet& f) const
+    {
+      std::size_t seed = 0;
+      Hash_handles_with_or_without_timestamps cell_hasher;
+      boost::hash_combine(seed, cell_hasher(f.first));
+      boost::hash_combine(seed, f.second);
+      return seed;
+    }
+  };
+
+public:
+  struct Surface_facet_info
+  {
+    Bare_point center_;
+    Surface_patch_index patch_index_;
+    Index center_index_;
+  };
+
+  mutable std::unordered_map<Facet, Surface_facet_info, Facet_hash> surface_facet_info_;
+
+private:
   typename Number_of_elements<Concurrency_tag>::type number_of_facets_;
   typename Number_of_elements<Concurrency_tag>::type number_of_cells_;
 
