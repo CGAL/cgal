@@ -26,23 +26,24 @@ namespace CGAL {
 namespace Mesh_3 {
 
 
-template <typename Tr>
+template <typename C3T3>
 class Cell_criteria_visitor_with_balls
-  : public Criterion_visitor<Tr, typename Tr::Cell_handle>
+  : public Criterion_visitor<C3T3, typename C3T3::Triangulation::Cell_handle>
 {
-  typedef Criterion_visitor<Tr, typename Tr::Cell_handle> Base;
+  typedef Criterion_visitor<C3T3, typename C3T3::Triangulation::Cell_handle> Base;
   typedef Cell_criteria_visitor_with_balls<Tr> Self;
 
 public:
-  typedef Abstract_criterion<Tr, Self> Criterion;
-  typedef Mesh_3::Cell_radius_criterion<Tr, Self> Cell_radius_criterion;
-  typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self> Cell_radius_edge_criterion;
+  typedef Abstract_criterion<C3T3, Self> Criterion;
+  typedef Mesh_3::Cell_radius_criterion<C3T3, Self> Cell_radius_criterion;
+  typedef Mesh_3::Cell_radius_edge_criterion<C3T3, Self> Cell_radius_edge_criterion;
 
   typedef typename Base::Quality Cell_quality;
   typedef typename Base::Is_bad  Is_cell_bad;
   typedef typename Base::Handle  Handle;
   typedef Handle Cell_handle;
 
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
   typedef typename Tr::Geom_traits     GT;
@@ -56,9 +57,11 @@ public:
   typedef typename Tr::Vertex_handle Vertex_handle;
 
   // Constructor
-  Cell_criteria_visitor_with_balls(const Tr& tr, const Cell_handle& ch)
+  Cell_criteria_visitor_with_balls(const C3T3& c3t3, const Cell_handle& ch)
     : Base(tr, ch)
   {
+    const Tr& tr = c3t3.triangulation();
+
     typename GT::Compare_weighted_squared_radius_3 compare_sq_radius =
       tr.geom_traits().compare_weighted_squared_radius_3_object();
     typename GT::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =

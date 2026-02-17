@@ -33,11 +33,13 @@ namespace Mesh_3 {
 /**
  * @class Abstract_criterion
  */
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Abstract_criterion
 {
+  typedef Abstract_criterion<C3T3, Visitor_> Self;
+
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Geom_traits::FT FT;
-  typedef Abstract_criterion<Tr,Visitor_> Self;
 
 public:
   typedef FT Quality;
@@ -48,36 +50,36 @@ public:
   virtual ~Abstract_criterion() {}
 
   void accept(Visitor_& v) const { do_accept(v); }
-  Is_bad is_bad(const Tr& tr, const Handle& h) const { return do_is_bad(tr, h); }
+  Is_bad is_bad(const C3T3& c3t3, const Handle& h) const { return do_is_bad(c3t3, h); }
   Self* clone() const { return do_clone(); }
 
 protected:
   virtual void do_accept(Visitor_& v) const = 0;
-  virtual Is_bad do_is_bad(const Tr& tr, const Handle& h) const = 0;
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Handle& h) const = 0;
   virtual Self* do_clone() const = 0;
 
 };  // end class Abstract_criterion
 
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 inline
-Abstract_criterion<Tr,Visitor_>*
-new_clone(const Abstract_criterion<Tr,Visitor_>& criterion)
+Abstract_criterion<C3T3,Visitor_>*
+new_clone(const Abstract_criterion<C3T3,Visitor_>& criterion)
 {
   return criterion.clone();
 }
 
 
 
-template <typename Tr, typename Handle_>
+template <typename C3T3, typename Handle_>
 class Criterion_visitor
 {
-  typedef Criterion_visitor<Tr, Handle_> Self;
+  typedef Criterion_visitor<C3T3, Handle_> Self;
 public:
   typedef Handle_ Handle;
 
 protected:
-  typedef Abstract_criterion<Tr, Self> Criterion;
+  typedef Abstract_criterion<C3T3, Self> Criterion;
 
 public:
   typedef std::pair<int, typename Criterion::Quality> Quality;
@@ -85,8 +87,8 @@ public:
 
 
   // Constructor
-  Criterion_visitor(const Tr& tr, const Handle_& h)
-    : tr_(tr)
+  Criterion_visitor(const C3T3& c3t3, const Handle_& h)
+    : c3t3_(c3t3)
     , handle_(h)
     , is_bad_()
     , criterion_counter_(0) {}
@@ -116,11 +118,11 @@ protected:
   }
 
   template<typename Derived>
-  void do_visit(const Abstract_criterion<Tr, Derived>& criterion)
+  void do_visit(const Abstract_criterion<C3T3, Derived>& criterion)
   {
-    typedef typename Abstract_criterion<Tr, Derived>::Is_bad Is_bad;
+    typedef typename Abstract_criterion<C3T3, Derived>::Is_bad Is_bad;
 
-    const Is_bad is_bad = criterion.is_bad(tr_, handle_);
+    const Is_bad is_bad = criterion.is_bad(c3t3_, handle_);
     if ( is_bad )
       is_bad_ = std::make_pair(criterion_counter_, *is_bad);
 
@@ -128,7 +130,7 @@ protected:
   }
 
 private:
-  const Tr& tr_;
+  const C3T3& c3t3_;
   Handle_ handle_;
   Is_bad is_bad_;
   int criterion_counter_;
@@ -137,12 +139,12 @@ private:
 
 
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Criteria
 {
-  typedef Criteria<Tr, Visitor_> Self;
+  typedef Criteria<C3T3, Visitor_> Self;
 
-  typedef Abstract_criterion<Tr,Visitor_> Criterion;
+  typedef Abstract_criterion<C3T3, Visitor_> Criterion;
   typedef boost::ptr_vector<Criterion> Criterion_vector;
   typedef typename Visitor_::Quality Quality;
   typedef typename Visitor_::Is_bad  Is_bad;
@@ -164,10 +166,10 @@ public:
     criterion_vector_.push_back(criterion);
   }
 
-  Is_bad operator()(const Tr& tr,
+  Is_bad operator()(const C3T3& c3t3,
                     const typename Visitor_::Handle& h) const
   {
-    Visitor_ visitor(tr, h);
+    Visitor_ visitor(c3t3, h);
 
     typename Criterion_vector::const_iterator it = criterion_vector_.begin();
     for (  ; it != criterion_vector_.end() ; ++it )

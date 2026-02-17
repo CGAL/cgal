@@ -50,19 +50,20 @@ namespace details {
 
 
 // Aspect_ratio Criterion class
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Aspect_ratio_criterion :
-  public Mesh_3::Abstract_criterion<Tr, Visitor_>
+  public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Aspect_ratio_criterion<Tr,Visitor_> Self;
+  typedef Aspect_ratio_criterion<C3T3,Visitor_> Self;
 
 public:
   // Nb: the default bound of the criterion is such that the criterion
@@ -97,9 +98,9 @@ protected:
     }
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (f.first->is_facet_on_surface(f.second));
+    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits      GT;
@@ -110,6 +111,8 @@ protected:
     typedef typename GT::Compute_squared_distance_3 Distance;
     typedef typename GT::Construct_point_3          Construct_point_3;
     typedef typename GT::Construct_triangle_3       Construct_triangle_3;
+
+    const Tr& tr = c3t3.triangulation();
 
     Area area = tr.geom_traits().compute_squared_area_3_object();
     Distance distance = tr.geom_traits().compute_squared_distance_3_object();
@@ -152,24 +155,25 @@ private:
 
 
 // Curvature_adapted size Criterion class
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Curvature_size_criterion :
-  public Mesh_3::Abstract_criterion<Tr, Visitor_>
+  public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {};
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Uniform_curvature_size_criterion :
-  public Curvature_size_criterion<Tr, Visitor_>
+  public Curvature_size_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Uniform_curvature_size_criterion<Tr,Visitor_> Self;
+  typedef Uniform_curvature_size_criterion<C3T3,Visitor_> Self;
 
 public:
   // Nb: the default bound of the criterion is such that the criterion
@@ -188,14 +192,16 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion(f.first->is_facet_on_surface(f.second));
+    CGAL_assertion(c3t3.is_in_complex(f.first, f.second));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits    GT;
     typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Bare_point Bare_point;
+
+    const Tr& tr = c3t3.triangulation();
 
     typename GT::Construct_weighted_circumcenter_3 weighted_circumcenter =
         tr.geom_traits().construct_weighted_circumcenter_3_object();
@@ -205,7 +211,7 @@ protected:
     const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
 
     const Bare_point c = weighted_circumcenter(p1,p2,p3);
-    const Bare_point& center = f.first->get_facet_surface_center(f.second);
+    const Bare_point& center = c3t3.surface_center(f.first, f.second);
 
     const FT sq_dist = tr.min_squared_distance(c, center);
 
@@ -227,20 +233,21 @@ private:
 };  // end Uniform_curvature_size_criterion
 
 // Variable size Criterion class
-template <typename Tr, typename Visitor_, typename SizingField>
+template <typename C3T3, typename Visitor_, typename SizingField>
 class Variable_curvature_size_criterion :
-  public Curvature_size_criterion<Tr, Visitor_>
+  public Curvature_size_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet            Facet;
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Variable_curvature_size_criterion<Tr,Visitor_,SizingField> Self;
+  typedef Variable_curvature_size_criterion<C3T3,Visitor_,SizingField> Self;
   typedef SizingField Sizing_field;
 
 public:
@@ -260,13 +267,15 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (f.first->is_facet_on_surface(f.second));
+    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
 
     typedef typename Tr::Geom_traits    GT;
     typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Bare_point Bare_point;
+
+    const Tr& tr = c3t3.triangulation();
 
     typename GT::Construct_weighted_circumcenter_3 weighted_circumcenter =
       tr.geom_traits().construct_weighted_circumcenter_3_object();
@@ -276,8 +285,8 @@ protected:
     const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
 
     const Bare_point c = weighted_circumcenter(p1,p2,p3);
-    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
-    const Index& index = f.first->get_facet_surface_center_index(f.second);
+    const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
+    const Index& index = c3t3.surface_center_index(f.first, f.second);
 
     const FT sq_dist = tr.min_squared_distance(c, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
@@ -302,27 +311,28 @@ private:
 };  // end Variable_curvature_size_criterion
 
 // Size Criterion base class
-template < typename Tr, typename Visitor_ >
+template < typename C3T3, typename Visitor_ >
 class Facet_size_criterion :
-  public Mesh_3::Abstract_criterion<Tr, Visitor_>
+  public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
 };
 
 // Variable size Criterion class
-template <typename Tr, typename Visitor_, typename SizingField>
+template <typename C3T3, typename Visitor_, typename SizingField>
 class Variable_size_criterion :
-  public Facet_size_criterion<Tr, Visitor_>
+  public Facet_size_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet            Facet;
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Variable_size_criterion<Tr,Visitor_,SizingField> Self;
+  typedef Variable_size_criterion<C3T3,Visitor_,SizingField> Self;
   typedef SizingField Sizing_field;
 
 public:
@@ -342,20 +352,22 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (f.first->is_facet_on_surface(f.second));
+    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
 
     typedef typename Tr::Geom_traits    GT;
     typedef typename Tr::Bare_point     Bare_point;
     typedef typename Tr::Weighted_point Weighted_point;
 
+    const Tr& tr = c3t3.triangulation();
+
     typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
     const Bare_point& p1 = cp(wp1);
-    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
-    const Index& index = f.first->get_facet_surface_center_index(f.second);
+    const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
+    const Index& index = c3t3.surface_center_index(f.first, f.second);
 
     const FT sq_radius = tr.min_squared_distance(p1, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
@@ -381,19 +393,20 @@ private:
 
 
 // Uniform size Criterion class
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Uniform_size_criterion :
-  public Facet_size_criterion<Tr, Visitor_>
+  public Facet_size_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Uniform_size_criterion<Tr,Visitor_> Self;
+  typedef Uniform_size_criterion<C3T3,Visitor_> Self;
 
 public:
   // Nb: the default bound of the criterion is such that the criterion
@@ -421,20 +434,22 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (f.first->is_facet_on_surface(f.second));
+    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits        GT;
     typedef typename Tr::Bare_point         Bare_point;
     typedef typename Tr::Weighted_point     Weighted_point;
 
+    const Tr& tr = c3t3.triangulation();
+
     typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
     const Bare_point p1 = cp(wp1);
-    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
+    const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
 
     const FT sq_radius = tr.min_squared_distance(p1, ball_center);
 
@@ -466,18 +481,19 @@ private:
 
 
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Facet_on_surface_criterion :
-  public Mesh_3::Abstract_criterion<Tr, Visitor_>
+  public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Facet_on_surface_criterion<Tr,Visitor_> Self;
+  typedef Facet_on_surface_criterion<C3T3,Visitor_> Self;
 
 public:
   /// Constructor
@@ -497,7 +513,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& /*c3t3*/, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
@@ -524,18 +540,19 @@ protected:
 }; // end class Facet_on_surface_criterion
 
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Facet_on_same_surface_criterion :
-public Mesh_3::Abstract_criterion<Tr, Visitor_>
+public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Facet_on_same_surface_criterion<Tr,Visitor_> Self;
+  typedef Facet_on_same_surface_criterion<C3T3,Visitor_> Self;
 
 public:
   /// Constructor
@@ -555,7 +572,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
+  virtual Is_bad do_is_bad(const C3T3& /*c3t3*/, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -616,15 +633,15 @@ protected:
 
 
 
-template <typename Tr>
+template <typename C3T3>
 class Facet_criterion_visitor
-  : public Mesh_3::Criterion_visitor<Tr, typename Tr::Facet>
+  : public Mesh_3::Criterion_visitor<C3T3, typename C3T3::Triangulation::Facet>
 {
-  typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
-  typedef Facet_criterion_visitor<Tr> Self;
+  typedef Mesh_3::Criterion_visitor<C3T3, typename C3T3::Triangulation::Facet> Base;
+  typedef Facet_criterion_visitor<C3T3> Self;
 
 public:
-  typedef Mesh_3::Abstract_criterion<Tr, Self> Criterion;
+  typedef Mesh_3::Abstract_criterion<C3T3, Self> Criterion;
   typedef typename Base::Quality Facet_quality;
   typedef typename Base::Is_bad  Is_facet_bad;
   typedef typename Base::Handle Handle;
@@ -645,16 +662,19 @@ public:
 };  // end class Facet_criterion_visitor
 
 
-
-template <typename Tr>
+template <typename C3T3>
 class Facet_criterion_visitor_with_features
-  : public Mesh_3::Criterion_visitor<Tr, typename Tr::Facet>
+  : public Mesh_3::Criterion_visitor<C3T3, typename C3T3::Triangulation::Facet>
 {
-  typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
-  typedef Facet_criterion_visitor_with_features<Tr> Self;
+  typedef Mesh_3::Criterion_visitor<C3T3, typename C3T3::Triangulation::Facet> Base;
+  typedef Facet_criterion_visitor_with_features<C3T3> Self;
 
-  typedef typename Tr::Geom_traits  GT;
-  typedef typename GT::FT           FT;
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Cell_handle    Cell_handle;
+
+  typedef typename Tr::Geom_traits    GT;
+  typedef typename GT::FT             FT;
 
 public:
   typedef typename Base::Quality  Facet_quality;
@@ -663,8 +683,8 @@ public:
   typedef Handle                  Facet;
 
   // Constructor
-  Facet_criterion_visitor_with_features(const Tr& tr, const Facet& fh)
-    : Base(tr, fh)
+  Facet_criterion_visitor_with_features(const C3T3& c3t3, const Facet& fh)
+    : Base(c3t3, fh)
     , wp_nb_(0)
     , do_spheres_intersect_(false)
     , ratio_(0.)
@@ -672,9 +692,7 @@ public:
     , angle_ratio_(0.5*0.5*4.)
     , size_ratio_(0.4*0.4*4.)
   {
-    typedef typename Tr::Geom_traits    GT;
-    typedef typename Tr::Weighted_point Weighted_point;
-    typedef typename Tr::Cell_handle    Cell_handle;
+    const Tr& tr = c3t3.triangulation();
 
     typename GT::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
       tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
@@ -748,8 +766,8 @@ public:
   }
 
   // visit functions
-  template<typename T, typename V>
-  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Abstract_criterion<C3T3_, V>& criterion)
   {
     if ( 3 == wp_nb_ && do_spheres_intersect_ )
     {
@@ -760,8 +778,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Curvature_size_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Curvature_size_criterion<C3T3_, V>& criterion)
   {
     if (   ratio_ < approx_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_ ) )
@@ -773,8 +791,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Aspect_ratio_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Aspect_ratio_criterion<C3T3_, V>& criterion)
   {
     if (   ratio_ < angle_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -786,8 +804,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Facet_size_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Facet_size_criterion<C3T3_, V>& criterion)
   {
     if (   ratio_ < size_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -807,18 +825,19 @@ private:
   FT angle_ratio_;
   FT size_ratio_;
 
-};  // end class Facet_criterion_visitor
+};  // end class Facet_criterion_visitor_with_features
 
 
-template <typename Tr>
+template <typename C3T3>
 class Facet_criterion_visitor_with_radius_lower_bound
-  : public Facet_criterion_visitor_with_features<Tr>
+  : public Facet_criterion_visitor_with_features<C3T3>
 {
-  typedef Facet_criterion_visitor_with_features<Tr> Base;
-  typedef Facet_criterion_visitor_with_radius_lower_bound<Tr> Self;
+  typedef Facet_criterion_visitor_with_features<C3T3> Base;
+  typedef Facet_criterion_visitor_with_radius_lower_bound<C3T3> Self;
 
-  typedef typename Tr::Geom_traits  GT;
-  typedef typename GT::FT           FT;
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename Tr::Geom_traits     GT;
+  typedef typename GT::FT              FT;
 
 public:
   typedef typename Base::Quality  Facet_quality;
@@ -827,8 +846,8 @@ public:
   typedef Handle                  Facet;
 
   // Constructor
-  Facet_criterion_visitor_with_radius_lower_bound(const Tr& tr, const Facet& fh)
-    : Base(tr, fh)
+  Facet_criterion_visitor_with_radius_lower_bound(const C3T3& c3t3, const Facet& fh)
+    : Base(c3t3, fh)
     , dont_go_further_(false)
   {}
 
@@ -855,14 +874,14 @@ public:
     Base::visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Abstract_criterion<C3T3_, V>& criterion)
   {
     Base::visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Uniform_size_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Uniform_size_criterion<C3T3_, V>& criterion)
   {
     Base::visit(criterion);
 
@@ -872,8 +891,6 @@ public:
 
 private:
   bool dont_go_further_;
-
-
 };// end class Facet_criterion_visitor_with_radius_lower_bound
 
 

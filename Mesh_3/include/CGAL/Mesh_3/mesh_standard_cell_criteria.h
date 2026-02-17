@@ -34,18 +34,19 @@ namespace CGAL {
 namespace Mesh_3 {
 
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Cell_radius_edge_criterion
-  : public Abstract_criterion<Tr,Visitor_>
+  : public Abstract_criterion<C3T3, Visitor_>
 {
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;
 
-  typedef Abstract_criterion<Tr,Visitor_> Base;
+  typedef Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Cell_radius_edge_criterion<Tr, Visitor_> Self;
+  typedef Cell_radius_edge_criterion<C3T3, Visitor_> Self;
 
 public:
   // Constructor
@@ -69,7 +70,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits    Geom_traits;
     typedef typename Tr::Bare_point     Bare_point;
@@ -78,6 +79,8 @@ protected:
     typedef typename Geom_traits::Compute_squared_distance_3 Distance;
     typedef typename Geom_traits::Compute_squared_radius_3   Radius;
     typedef typename Geom_traits::Construct_point_3          Construct_point_3;
+
+    const Tr& tr = c3t3.triangulation();
 
     Distance distance = tr.geom_traits().compute_squared_distance_3_object();
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
@@ -121,24 +124,25 @@ private:
 
 
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Cell_size_criterion
-  : public Abstract_criterion<Tr, Visitor_>
+  : public Abstract_criterion<C3T3, Visitor_>
 {
 };
 
-template <typename Tr, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class Cell_uniform_size_criterion
-  : public Cell_size_criterion<Tr, Visitor_>
+  : public Cell_size_criterion<C3T3, Visitor_>
 {
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;
 
-  typedef Abstract_criterion<Tr, Visitor_> Base;
+  typedef Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Cell_uniform_size_criterion<Tr, Visitor_> Self;
+  typedef Cell_uniform_size_criterion<C3T3, Visitor_> Self;
 
 public:
   // Constructor
@@ -168,7 +172,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits     Geom_traits;
     typedef typename Tr::Bare_point      Bare_point;
@@ -176,6 +180,9 @@ protected:
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Construct_point_3        Construct_point_3;
+
+    const Tr& tr = c3t3.triangulation();
+
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
     Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
@@ -217,19 +224,20 @@ private:
 };  // end class Cell_uniform_size_criterion
 
 
-template <typename Tr, typename Visitor_, typename SizingField>
+template <typename C3T3, typename Visitor_, typename SizingField>
 class Cell_variable_size_criterion
-: public Cell_size_criterion<Tr, Visitor_>
+: public Cell_size_criterion<C3T3, Visitor_>
 {
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
 
-  typedef Abstract_criterion<Tr, Visitor_> Base;
+  typedef Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Cell_variable_size_criterion<Tr, Visitor_, SizingField> Self;
+  typedef Cell_variable_size_criterion<C3T3, Visitor_, SizingField> Self;
   typedef SizingField Sizing_field;
 
 public:
@@ -252,7 +260,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const C3T3& c3t3, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits      Geom_traits;
     typedef typename Tr::Bare_point       Bare_point;
@@ -260,6 +268,9 @@ protected:
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Construct_point_3        Construct_point_3;
+
+    const Tr& tr = c3t3.triangulation();
+
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
     Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
@@ -295,20 +306,19 @@ private:
 
 /// New cell criterion that disallows a cell to have points on different
 /// surfaces, if they are all of dimension 2.
-template <typename C3t3_, typename Visitor_>
+template <typename C3T3, typename Visitor_>
 class No_bridge_cell_criterion
-  : public Abstract_criterion<typename C3t3_::Triangulation, Visitor_>
+  : public Abstract_criterion<C3T3, Visitor_>
 {
-  typedef C3t3_ C3t3;
-  typedef typename C3t3::Triangulation Tr;
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;
 
-  typedef Abstract_criterion<Tr,Visitor_> Base;
+  typedef Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef No_bridge_cell_criterion<C3t3, Visitor_> Self;
+  typedef No_bridge_cell_criterion<C3T3, Visitor_> Self;
 
 public:
   // Constructor
@@ -331,7 +341,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /*tr*/, const Cell_handle& ch) const
+  virtual Is_bad do_is_bad(const C3T3& /*c3t3*/, const Cell_handle& ch) const
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -346,7 +356,7 @@ protected:
        vs->in_dimension() != 2)
       return Is_bad();
 
-    typedef typename C3t3::Index Index;
+    typedef typename C3T3::Index Index;
     const Index& vp_index = vp->index();
 
     if(vq->index() != vp_index ||
@@ -359,15 +369,15 @@ protected:
 };  // end class No_bridge_cell_criterion
 
 
-template <typename Tr>
+template <typename C3T3>
 class Cell_criterion_visitor
-  : public Criterion_visitor<Tr, typename Tr::Cell_handle>
+  : public Criterion_visitor<C3T3, typename C3T3::Triangulation::Cell_handle>
 {
-  typedef Criterion_visitor<Tr, typename Tr::Cell_handle> Base;
-  typedef Cell_criterion_visitor<Tr> Self;
+  typedef Criterion_visitor<C3T3, typename C3T3::Triangulation::Cell_handle> Base;
+  typedef Cell_criterion_visitor<C3T3> Self;
 
 public:
-  typedef Abstract_criterion<Tr, Self> Criterion;
+  typedef Abstract_criterion<C3T3, Self> Criterion;
   typedef typename Base::Quality Cell_quality;
   typedef typename Base::Is_bad  Is_cell_bad;
   typedef typename Base::Handle Handle;
@@ -388,13 +398,14 @@ public:
 };  // end class Cell_criterion_visitor
 
 
-template <typename Tr>
+template <typename C3T3>
 class Cell_criteria_visitor_with_features
-  : public Criterion_visitor<Tr, typename Tr::Cell_handle>
+  : public Criterion_visitor<C3T3, typename C3T3::Triangulation::Cell_handle>
 {
-  typedef Criterion_visitor<Tr, typename Tr::Cell_handle> Base;
-  typedef Cell_criteria_visitor_with_features<Tr> Self;
+  typedef Criterion_visitor<C3T3, typename C3T3::Triangulation::Cell_handle> Base;
+  typedef Cell_criteria_visitor_with_features<C3T3> Self;
 
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Geom_traits    GT;
   typedef typename GT::FT             FT;
   typedef typename Tr::Weighted_point Weighted_point;
@@ -407,13 +418,15 @@ public:
   typedef Handle                  Cell_handle;
 
   // Constructor
-  Cell_criteria_visitor_with_features(const Tr& tr, const Cell_handle& ch)
-    : Base(tr, ch)
+  Cell_criteria_visitor_with_features(const C3T3& c3t3, const Cell_handle& ch)
+    : Base(c3t3, ch)
     , wp_nb_(0)
     , do_spheres_intersect_(false)
     , ratio_(0)
     , size_ratio_(0.5*0.5*4.)
   {
+    const Tr& tr = c3t3.triangulation();
+
     typename GT::Compare_weighted_squared_radius_3 compare =
       tr.geom_traits().compare_weighted_squared_radius_3_object();
     typename GT::Compute_weight_3 cw =
@@ -513,8 +526,8 @@ public:
   ~Cell_criteria_visitor_with_features() {}
 
   // visit functions
-  template<typename T, typename V>
-  void visit(const Mesh_3::Cell_size_criterion<T,V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Cell_size_criterion<C3T3_, V>& criterion)
   {
     if (   ratio_ < size_ratio_
         && (do_spheres_intersect_ || 1 == wp_nb_) )
@@ -526,8 +539,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Cell_radius_edge_criterion<T,V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Cell_radius_edge_criterion<C3T3_, V>& criterion)
   {
     if (   (wp_nb_ >= 2 && do_spheres_intersect_)
         || 1 == wp_nb_ )
@@ -539,8 +552,8 @@ public:
     Base::do_visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Abstract_criterion<T,V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Abstract_criterion<C3T3_, V>& criterion)
   {
     Base::do_visit(criterion);
   }
@@ -553,13 +566,14 @@ private:
 };  // end class Cell_criteria_visitor_with_features
 
 
-template<typename Tr>
+template<typename C3T3>
 class Cell_criterion_visitor_with_radius_lower_bound
-  : public Cell_criteria_visitor_with_features<Tr>
+  : public Cell_criteria_visitor_with_features<C3T3>
 {
-  typedef Cell_criteria_visitor_with_features<Tr> Base;
-  typedef Cell_criterion_visitor_with_radius_lower_bound<Tr> Self;
+  typedef Cell_criteria_visitor_with_features<C3T3> Base;
+  typedef Cell_criterion_visitor_with_radius_lower_bound<C3T3> Self;
 
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Geom_traits    GT;
   typedef typename GT::FT             FT;
 
@@ -570,9 +584,9 @@ public:
   typedef Handle                  Cell_handle;
 
   // Constructor
-  Cell_criterion_visitor_with_radius_lower_bound(const Tr& tr,
+  Cell_criterion_visitor_with_radius_lower_bound(const C3T3& c3t3,
                                                 const Cell_handle& ch)
-    : Base(tr, ch)
+    : Base(c3t3, ch)
     , dont_go_further_(false)
   {}
 
@@ -581,7 +595,7 @@ public:
     if (dont_go_further_)
       return Is_cell_bad();
     else
-    return Base::is_bad();
+      return Base::is_bad();
   }
 
   bool go_further() const
@@ -599,14 +613,14 @@ public:
     Base::visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Abstract_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Abstract_criterion<C3T3_, V>& criterion)
   {
     Base::visit(criterion);
   }
 
-  template<typename T, typename V>
-  void visit(const Mesh_3::Cell_uniform_size_criterion<T, V>& criterion)
+  template<typename C3T3_, typename V>
+  void visit(const Mesh_3::Cell_uniform_size_criterion<C3T3_, V>& criterion)
   {
     Base::visit(criterion);
 

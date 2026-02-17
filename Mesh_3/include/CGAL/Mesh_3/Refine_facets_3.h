@@ -1608,7 +1608,7 @@ treat_new_facet(Facet& facet)
     set_facet_on_surface(facet, surface_index);
 
     // Insert facet into refinement queue if needed
-    const Is_facet_bad is_facet_bad = r_criteria_(r_tr_, facet);
+    const Is_facet_bad is_facet_bad = r_criteria_(r_c3t3_, facet);
 
     if ( is_facet_bad )
     {
