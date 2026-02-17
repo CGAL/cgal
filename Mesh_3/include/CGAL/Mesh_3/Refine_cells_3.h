@@ -899,17 +899,39 @@ update_star_self(const Vertex_handle& vertex)
     const Cell_handle& neighbor_cell = mirror_f.first;
     const int& neighb_k = mirror_f.second;
 
-    if ( neighbor_cell->is_facet_on_surface(neighb_k) )
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    const bool cond_new = r_c3t3_.is_in_complex(neighbor_cell, neighb_k);
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    const bool cond_old =neighbor_cell->is_facet_on_surface(neighb_k);
+
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    if (cond_old != cond_new) {
+      std::cerr << "new cond = " << cond_new << std::endl;
+      std::cerr << "new cond = " << cond_new << std::endl;
+      std::exit(1);
+    }
+# endif
+
+    if (cond_old)
+#else
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    if (cond_new)
+# else
+    std::exit(1);
+# endif
+#endif
+
     {
       // Facet(*cell_it,k) is on surface
-      (*cell_it)->set_surface_patch_index(
-        k,neighbor_cell->surface_patch_index(neighb_k));
-
-      (*cell_it)->set_facet_surface_center(
-        k,neighbor_cell->get_facet_surface_center(neighb_k));
-
-      (*cell_it)->set_facet_surface_center_index(
-        k,neighbor_cell->get_facet_surface_center_index(neighb_k));
+      r_c3t3_.set_surface_patch_index(*cell_it, k, r_c3t3_.surface_patch_index(neighbor_cell, neighb_k));
+      r_c3t3_.set_surface_center(*cell_it, k, r_c3t3_.surface_center(neighbor_cell, neighb_k));
+      r_c3t3_.set_surface_center_index(*cell_it, k, r_c3t3_.surface_center_index(neighbor_cell, neighb_k));
+    }
+    else
+    {
+      r_c3t3_.set_surface_patch_index(*cell_it, k, Subdomain_index());
     }
 
     // Set subdomain index
