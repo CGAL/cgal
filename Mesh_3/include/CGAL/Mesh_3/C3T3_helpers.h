@@ -1404,6 +1404,7 @@ private:
   private:
     void backup_finite_cell(const Cell_handle& c)
     {
+#ifndef CGAL_MESH_3_USE_C3T3_MAPS
       if(c->is_cache_valid())
         sliver_value_ = c->sliver_value();
       else
@@ -1421,11 +1422,15 @@ private:
       //are lost by 'backup' and 'restore',
       //because all cells are changing during the move
       //they are not used in update_mesh functions involving a Sliver_criterion
+#else
+      std::exit(1);
+#endif
     }
 
     void backup_infinite_cell(const Cell_handle& c,
                               const C3T3& c3t3)
     {
+#ifndef CGAL_MESH_3_USE_C3T3_MAPS
       for (int ii = 0; ii < 4; ++ii)
       {
         if (c3t3.triangulation().is_infinite(c->vertex(ii)))
@@ -1436,6 +1441,9 @@ private:
           break;
         }
       }
+#else
+      std::exit(1);
+#endif
     }
 
   public:
@@ -1482,6 +1490,7 @@ private:
                  const IndexMap& index_map,//new_to_old_indices
                  C3T3& c3t3)
     {
+#ifndef CGAL_MESH_3_USE_C3T3_MAPS
       if(sliver_value_ > 0.)
         c->set_sliver_value(sliver_value_);
 
@@ -1512,11 +1521,15 @@ private:
         const Facet mirror = c3t3.triangulation().mirror_facet(Facet(c, i));
         mirror.first->set_facet_surface_center(mirror.second, facet_surface_center_[old_i]);
       }
+#else
+      std::exit(1);
+#endif
     }
 
     void restore_infinite_cell(Cell_handle c,
                                C3T3& c3t3)
     {
+#ifndef CGAL_MESH_3_USE_C3T3_MAPS
       c3t3.remove_from_complex(c);//infinite
       for (unsigned int i = 0; i < 4; ++i)
       {
@@ -1534,6 +1547,9 @@ private:
           return;
         }
       }
+#else
+      std::exit(1);
+#endif
     }
 
   private:

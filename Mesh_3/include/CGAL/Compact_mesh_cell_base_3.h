@@ -767,7 +767,7 @@ public:
             {
               read(is, i2);
             }
-          c.set_surface_patch_index(i, i2);
+          // c.set_surface_patch_index(i, i2); // @tmp
         }
     }
     return is;
@@ -780,13 +780,13 @@ public:
       os << c.subdomain_index();
     else
       write(os, c.subdomain_index());
-    for(int i = 0; i < 4; ++i)
-      {
-        if(IO::is_ascii(os))
-          os << ' ' << IO::oformat(c.surface_patch_index(i));
-        else
-          write(os, c.surface_patch_index(i));
-      }
+    // for(int i = 0; i < 4; ++i) // @tmp
+    //   {
+    //     if(IO::is_ascii(os))
+    //       os << ' ' << IO::oformat(c.surface_patch_index(i));
+    //     else
+    //       write(os, c.surface_patch_index(i));
+    //   }
     return os;
   }
 
