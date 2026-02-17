@@ -484,10 +484,45 @@ public:
   /** sets the surface index of facet(\p cell, \p i) to \p index
   */
   void set_surface_patch_index(const Cell_handle& cell,
-    const int i,
-    const Surface_patch_index& index) const
+                               const int i,
+                               const Surface_patch_index& index) const
   {
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    // std::cout << "set " << &*(cell) << " " << i << " to " << index << " (new)" << std::endl;
+    surface_facet_info_[Facet(cell, i)].patch_index_ = index;
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
     cell->set_surface_patch_index(i, index);
+#endif
+  }
+  /** sets the surface center of facet(\p cell, \p i) to \p p
+  */
+  void set_surface_center(const Cell_handle& cell,
+                          const int i,
+                          const Bare_point& p) const
+  {
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    surface_facet_info_[Facet(cell, i)].center_ = p;
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    cell->set_facet_surface_center(i, p);
+#endif
+  }
+  /** sets the surface center index of facet(\p cell, \p i) to \p index
+  */
+  void set_surface_center_index(const Cell_handle& cell,
+                                const int i,
+                                const Index& index) const
+  {
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    surface_facet_info_[Facet(cell, i)].center_index_ = index;
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    cell->set_facet_surface_center_index(i, index);
+#endif
   }
   /** sets the subdomain index of cell \p cell to \p index
   */
@@ -528,7 +563,94 @@ public:
   Surface_patch_index surface_patch_index(const Cell_handle& cell,
                                           const int i) const
   {
-    return cell->surface_patch_index(i);
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    Surface_patch_index res_new = surface_facet_info_[Facet(cell, i)].patch_index_;
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    Surface_patch_index res_old = cell->surface_patch_index(i);
+
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    if (res_new != res_old) {
+      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+      std::cerr << "new res = " << res_new << std::endl;
+      std::cerr << "old res = " << res_old << std::endl;
+      CGAL_assertion(false);
+      std::exit(1);
+    }
+# endif
+    return res_old;
+#else
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    return res_new;
+# endif
+#endif
+    CGAL_assertion(false);
+    std::exit(1);
+  }
+  /** returns the surface center of facet(\p cell, \p i)
+  */
+  decltype(auto) surface_center(const Cell_handle& cell,
+                                const int i) const
+  {
+    CGAL_precondition(is_in_complex(cell, i));
+
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    const auto& res_new = surface_facet_info_[Facet(cell, i)].center_;
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    const auto res_old = cell->get_facet_surface_center(i);
+
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    if (res_new != res_old) {
+      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+      std::cerr << "new res = " << res_new << std::endl;
+      std::cerr << "old res = " << res_old << std::endl;
+      CGAL_assertion(false);
+      std::exit(1);
+    }
+# endif
+    return res_old;
+#else
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    return res_new;
+# endif
+#endif
+    CGAL_assertion(false);
+    std::exit(1);
+  }
+  /** returns the surface center index of facet(\p cell, \p i)
+  */
+  Index surface_center_index(const Cell_handle& cell,
+                             const int i) const
+  {
+    CGAL_precondition(is_in_complex(cell, i));
+
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    const auto& res_new = surface_facet_info_[Facet(cell, i)].center_index_;
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    const auto res_old = cell->get_facet_surface_center_index(i);
+
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    if (res_new != res_old) {
+      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+      std::cerr << "new res = " << res_new << std::endl;
+      std::cerr << "old res = " << res_old << std::endl;
+      CGAL_assertion(false);
+      std::exit(1);
+    }
+# endif
+    return res_old;
+#else
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    return res_new;
+# endif
+#endif
+    CGAL_assertion(false);
+    std::exit(1);
   }
   /** returns the dimension of the lowest dimensional face of the input 3D
   * complex that contains the vertex
@@ -782,7 +904,34 @@ public:
   */
   bool is_in_complex(const Cell_handle& cell, const int i) const
   {
-    return (cell->is_facet_on_surface(i));
+#ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    auto it = surface_facet_info_.find(Facet(cell, i));
+    bool res_new = (it != surface_facet_info_.end() && it->second.patch_index_ != Subdomain_index());
+#endif
+
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+    const bool res_old = cell->is_facet_on_surface(i);
+
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    if (res_new != res_old) {
+      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
+      std::cerr << &*cell << " " << i << std::endl;
+      std::cerr << "new res = " << res_new << std::endl;
+      std::cerr << "patch index (new) = " << it->second.patch_index_ << std::endl;
+      std::cerr << "old res = " << res_old << std::endl;
+      std::cerr << "patch index (old) = " << cell->surface_patch_index(i) << std::endl;
+      CGAL_assertion(false);
+      std::exit(1);
+    }
+# endif
+    return res_old;
+#else
+# ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    return res_new;
+# endif
+#endif
+    CGAL_assertion(false);
+    std::exit(1);
   }
   /**
    * returns true if edge \p e belongs to the 1D complex
