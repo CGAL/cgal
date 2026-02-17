@@ -858,10 +858,18 @@ template<typename T3,
          typename CurveIndex,
          typename NamedParameters = parameters::Default_named_parameters>
 void write_MEDIT(std::ostream& os,
-  const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
-  const NamedParameters& np = parameters::default_values())
+                 const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
+                 const NamedParameters& np = parameters::default_values())
 {
-  return write_MEDIT(os, c3t3.triangulation(), np);
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);;
+  bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
+  bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
+  bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
+
+  output_to_medit(os, c3t3, renumber_subdomain_indices, show_patches, all_v, all_c);
 }
 
 /**
