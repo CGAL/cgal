@@ -262,6 +262,7 @@ private:
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Lock_data_structure Lock_data_structure;
   typedef typename MeshDomain::Subdomain_index  Subdomain_index;
+  typedef typename MeshDomain::Surface_patch_index  Surface_patch_index;
   typedef typename MeshDomain::Index  Index;
   typedef typename Criteria::Is_cell_bad Is_cell_bad;
 
@@ -931,7 +932,7 @@ update_star_self(const Vertex_handle& vertex)
     }
     else
     {
-      r_c3t3_.set_surface_patch_index(*cell_it, k, Subdomain_index());
+      r_c3t3_.set_surface_patch_index(*cell_it, k, Surface_patch_index());
     }
 
     // Set subdomain index
@@ -991,7 +992,7 @@ insert_impl(const Weighted_point& point,
   for ( ; cit != zone.cells.end() ; ++cit )
   {
     for (int i = 0 ; i < 4 ; ++i)
-      r_c3t3_.set_surface_patch_index(*cit, i, Subdomain_index());
+      r_c3t3_.set_surface_patch_index(*cit, i, Surface_patch_index());
   }
 
   // TODO: look at this
