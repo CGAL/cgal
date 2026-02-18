@@ -726,6 +726,10 @@ namespace internal { namespace TDS_3{
       return (container() == other.container()) ? (idx() < other.idx()) : (container() < other.container());
     }
 
+    bool operator>(const Index_handle& other) const {
+      return other < *this;
+    }
+
     bool operator==( std::nullptr_t ) const {
       return cont_ == nullptr && idx_ == Index_type::invalid_index;
     }

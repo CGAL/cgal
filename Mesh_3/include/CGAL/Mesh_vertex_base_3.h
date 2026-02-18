@@ -477,7 +477,7 @@ public:
 
   void set_previous_intrusive(Vertex_handle v)
   {
-    storage().previous_intrusive_ = v.idx;
+    storage().previous_intrusive_ = v.idx();
   }
 #endif
 
