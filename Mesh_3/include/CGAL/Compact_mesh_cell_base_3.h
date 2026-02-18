@@ -349,14 +349,15 @@ public:
   {}
 
   Compact_mesh_cell_3(const Compact_mesh_cell_3& rhs)
-    : N(rhs.N)
+    :
+      sliver_value_(rhs.sliver_value_)
+    , time_stamp_(rhs.time_stamp_)
+    , N(rhs.N)
     , V(rhs.V)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
-    , time_stamp_(rhs.time_stamp_)
-    , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_)
 #ifndef CGAL_MESH_3_NO_SLIVER_CACHE
     , sliver_cache_validity_(false)

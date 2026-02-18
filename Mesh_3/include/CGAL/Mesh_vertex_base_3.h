@@ -120,13 +120,13 @@ public:
   // Constructor
   Mesh_vertex_3()
     : Vb()
-    , index_()
-    , meshing_info_(0)
-    , dimension_(-1)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
 #endif //CGAL_INTRUSIVE_LIST
+    , meshing_info_(0)
+    , index_()
+    , dimension_(-1)
   {}
 
   // Default copy constructor and assignment operator are ok

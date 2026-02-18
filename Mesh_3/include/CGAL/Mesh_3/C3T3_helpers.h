@@ -1402,7 +1402,7 @@ private:
     }
 
   private:
-    void backup_finite_cell(const Cell_handle& c)
+    void backup_finite_cell(const Cell_handle& /*c*/)
     {
 #ifndef CGAL_MESH_3_USE_C3T3_MAPS
       if(c->is_cache_valid())
@@ -1427,8 +1427,8 @@ private:
 #endif
     }
 
-    void backup_infinite_cell(const Cell_handle& c,
-                              const C3T3& c3t3)
+    void backup_infinite_cell(const Cell_handle& /*c*/,
+                              const C3T3& /*c3t3*/)
     {
 #ifndef CGAL_MESH_3_USE_C3T3_MAPS
       for (int ii = 0; ii < 4; ++ii)
@@ -1486,9 +1486,9 @@ private:
   private:
     typedef std::array<std::size_t, 4> IndexMap;
 
-    void restore(Cell_handle c,
-                 const IndexMap& index_map,//new_to_old_indices
-                 C3T3& c3t3)
+    void restore(Cell_handle /*c*/,
+                 const IndexMap& /*index_map*/,//new_to_old_indices
+                 C3T3& /*c3t3*/)
     {
 #ifndef CGAL_MESH_3_USE_C3T3_MAPS
       if(sliver_value_ > 0.)
@@ -1526,8 +1526,8 @@ private:
 #endif
     }
 
-    void restore_infinite_cell(Cell_handle c,
-                               C3T3& c3t3)
+    void restore_infinite_cell(Cell_handle /*c*/,
+                               C3T3& /*c3t3*/)
     {
 #ifndef CGAL_MESH_3_USE_C3T3_MAPS
       c3t3.remove_from_complex(c);//infinite
