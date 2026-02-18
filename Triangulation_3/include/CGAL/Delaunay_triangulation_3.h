@@ -1851,7 +1851,7 @@ dual(Cell_handle c) const
   CGAL_precondition(! is_infinite(c));
   if constexpr (Tds::has_property_maps) {
     if(this->circumcenter_pmap) {
-      auto& opt_point = this->circumcenter_pmap[c->index()];
+      auto& opt_point = this->circumcenter_pmap[c->idx()];
       if(opt_point.has_value())
         return *opt_point;
       else {
