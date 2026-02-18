@@ -490,7 +490,10 @@ public:
   {
 #ifdef CGAL_MESH_3_USE_C3T3_MAPS
     // std::cout << "set " << &*(cell) << " " << i << " to " << index << " (new)" << std::endl;
-    surface_facet_info_[Facet(cell, i)].patch_index_ = index;
+    if (index == Surface_patch_index())
+      surface_facet_info_.erase(Facet(cell, i));
+    else
+      surface_facet_info_[Facet(cell, i)].patch_index_ = index;
 #endif
 
 #ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
