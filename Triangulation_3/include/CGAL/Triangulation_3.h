@@ -570,12 +570,7 @@ private:
   typedef Project_point<Vertex>                               Proj_point;
 
 public:
-  typedef Iterator_project<Finite_vertices_iterator,
-  Proj_point,
-  const Point&,
-  const Point*,
-  std::ptrdiff_t,
-  std::bidirectional_iterator_tag>   Point_iterator;
+  typedef Iterator_project<Finite_vertices_iterator, Proj_point>   Point_iterator;
 
 
   typedef Iterator_range<Point_iterator> Points;
