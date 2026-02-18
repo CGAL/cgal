@@ -16,11 +16,12 @@
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
 
-#include "CGAL/type_traits.h"
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
 #include <CGAL/config.h>
+#include <CGAL/type_traits.h>
+
 #include <iterator>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 
@@ -114,7 +115,8 @@ public:
   // OPERATIONS Random Access Category
   // ---------------------------------
 
-  Self& operator+=( difference_type n) {
+  template <typename T = I>
+  auto operator+=( difference_type n) -> decltype(std::declval<T&>() += n, std::declval<Self&>()) {
     nt += n;
     return *this;
   }
