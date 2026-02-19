@@ -17,23 +17,23 @@ int main(int argc, char **argv)
 {
     Column_chain c1(5), c2(5), c3(5);
     Row_chain r1(5), r2(5), r3(5) ;
-
+    
     c1.set_coefficient(0, 1);
     c1.set_coefficient(2, -1);
     c2.set_coefficient(0, -1);
     c2.set_coefficient(1, 1);
     c3.set_coefficient(2, -1);
     c3.set_coefficient(0, 1);
-
+    
     r1.set_coefficient(0, 1);
     r1.set_coefficient(2, -1);
     r2.set_coefficient(0, -1);
     r2.set_coefficient(1, 1);
     r3.set_coefficient(2, -1);
     r3.set_coefficient(0, 1);
-
+    
     std::cerr << "-- Test Sparse_chain operator==" << std::endl;
-
+    
     {
         std::cerr << "----> Column chains" << std::endl;
         bool comp_true(c1==c3) ;
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         std::cerr << "Compare different row chains: " << comp_false << std::endl ;
         assert(!comp_false) ;
     }
-
+    
     std::cerr << "-- Test Sparse_chain operator+" << std::endl;
     {
         std::cerr << "----> Column chains" << std::endl;
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
         std::cerr << "Compare r1+r2 with invalid size chain: " << comp_false << std::endl ;
         assert(!comp_false) ;
     }
-
+    
     std::cerr << "-- Test Sparse_chain operator-" << std::endl;
     {
         std::cerr << "----> Column chains" << std::endl;
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
         std::cerr << "Test r1-r2: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-
+    
     std::cerr << "-- Test Sparse_chain operator* (coefficient*chain)" << std::endl;
     {
         std::cerr << "----> Column chains" << std::endl;
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
         std::cerr << "Test 3*r1: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-
+    
     std::cerr << "-- Test Sparse_chain operator* (chain*coefficient)" << std::endl;
     {
         std::cerr << "----> Column chains" << std::endl;
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
         std::cerr << "Test r1*3: " << comp_true << std::endl ;
         assert(comp_true) ;
     }
-
+    
     std::cerr << "-- Test Sparse_chain operator/" << std::endl;
     {
         std::cerr << "----> Column chains" << std::endl;
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
         std::cerr << "Test res2 == res/{1,2}: " << comp_true2 << std::endl ;
         assert(comp_true2) ;
     }
-
+    
     {
         std::cerr << "----> Row chains" << std::endl;
         Row_chain res(r1), res2(5);
@@ -171,12 +171,12 @@ int main(int argc, char **argv)
         std::cerr << "Test res2 == res/{1,2}: " << comp_true2 << std::endl ;
         assert(comp_true2) ;
     }
-
+    
     {
         std::cerr << "----> Read/write chains" << std::endl;
         Column_chain cc1;
         Row_chain rr1;
-
+        
         // Column
         CGAL::OSM::write_chain(c1, "tmp/column_chain.osm");
         CGAL::OSM::read_chain(cc1, "tmp/column_chain.osm");
@@ -189,11 +189,11 @@ int main(int argc, char **argv)
         bool comp_true2(r1==rr1) ;
         std::cerr << "Test write/read for row chain: " << comp_true2 << std::endl ;
         assert(comp_true2) ;
-
+        
     }
-
     
-
+    
+    
     return 0;
 }
 

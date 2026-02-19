@@ -651,20 +651,20 @@ int main(int argc, char **argv)
 
     CGAL::OSM::set_column(columnMajor, 0, CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN>(columnMajor.dimensions().first));
 
-//    std::cout << "Multiplication de colonne (col/row dom):" << std::endl << colCol << std::endl << colRow << std::endl << std::endl;
-//    std::cout << "Multiplication de ligne   (col/row dom):" << std::endl << rowCol << std::endl << rowRow << std::endl << std::endl;
-//
-//    cout << "-------- Test parcours (init par set_coefficient)" << endl ;
-//    OSM::SparseMatrix<int, OSM::COLUMN> Mtest(10, 10) ;
-//    Mtest.set_coefficient(1, 2, 1) ;
-//    Mtest.set_coefficient(3, 2, 1) ;
-//    Mtest.set_coefficient(1, 4, 1) ;
-//    Mtest.set_coefficient(2, 5, 1) ;
-//    for (OSM::Bitboard::iterator it  = Mtest.begin(); it != Mtest.end(); ++it)
-//    {
-//        cout << "col : " << *it << endl ;
-//    }
-//
+    //    std::cout << "Multiplication de colonne (col/row dom):" << std::endl << colCol << std::endl << colRow << std::endl << std::endl;
+    //    std::cout << "Multiplication de ligne   (col/row dom):" << std::endl << rowCol << std::endl << rowRow << std::endl << std::endl;
+    //
+    //    cout << "-------- Test parcours (init par set_coefficient)" << endl ;
+    //    OSM::SparseMatrix<int, OSM::COLUMN> Mtest(10, 10) ;
+    //    Mtest.set_coefficient(1, 2, 1) ;
+    //    Mtest.set_coefficient(3, 2, 1) ;
+    //    Mtest.set_coefficient(1, 4, 1) ;
+    //    Mtest.set_coefficient(2, 5, 1) ;
+    //    for (OSM::Bitboard::iterator it  = Mtest.begin(); it != Mtest.end(); ++it)
+    //    {
+    //        cout << "col : " << *it << endl ;
+    //    }
+    //
     return 0;
 }
 

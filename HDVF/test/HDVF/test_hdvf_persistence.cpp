@@ -44,49 +44,49 @@ int main(int argc, char **argv) {
     }
     else if (argc == 1) filename = "data/four_triangles.obj" ;
     else filename = argv[1] ;
-
+    
     // Load mesh object
     Surface_mesh sm;
     CGAL::IO::read_polygon_mesh(filename, sm);
     HDVF::Surface_mesh_io<Surface_mesh,Traits> mesh(sm) ;
-
+    
     mesh.print_infos();
-
+    
     // Build simplicial chain complex
     Complex complex(mesh);
-
+    
     std::cout << complex;
-
+    
     // -- First: Define the filtration function
     std::function<Degree(size_t)> f(HDVF::degree_function<Complex,Point_3>(complex, sample_f));
-
-
+    
+    
     // -- Second: build the associated lower star filtration
     FiltrationType filtration(complex, f);
-
-
+    
+    
     // Build empty persistent HDVF (with vtk export activated)
     HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
-
+    
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
-
+    
 #ifdef BUILD_TEST_DATA
     // Write HDVF_persistence to a .hdvf file
     hdvf.write_hdvf_reduction("data/hdvf_persist.hdvf");
 #endif
-
+    
     HDVF_type hdvf2(complex, filtration, HDVF::OPT_FULL, true);
     hdvf2.read_hdvf_reduction("data/hdvf_persist.hdvf");
-
+    
     // Output HDVF to vtk
     CGAL::IO::write_VTK(hdvf2, complex, "tmp/res2", true) ;
-
+    
     // Compare
     bool test_rw(hdvf.compare(hdvf2));
     std::cerr << "-- Compare write/read HDVF_persistence: " << test_rw << std::endl;
     assert(test_rw);
-
+    
     return 0;
 }
 
