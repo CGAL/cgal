@@ -540,7 +540,7 @@ public:
      *
      * \param out Output stream.
      */
-    std::ostream& write_hdvf_reduction(std::ostream& out) ;
+    std::ostream& write_hdvf_reduction(std::ostream& out) const ;
 
     /**
      * \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
@@ -549,7 +549,7 @@ public:
      *
      * \param filename Output file name.
      */
-    void write_hdvf_reduction(std::string filename) {
+    void write_hdvf_reduction(std::string filename) const {
         std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
         if ( ! out_file . good () ) {
             std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
@@ -597,7 +597,7 @@ public:
      * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
      */
 
-    bool compare(const Hdvf_core& other, bool full_compare = false) {
+    bool compare(const Hdvf_core& other, bool full_compare = false) const {
         bool res;
         int d = _flag.size(), d_other = other._flag.size();
         res = (d == d_other);
@@ -1339,7 +1339,7 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduct
 
 // Save HDVF and reduction
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction(std::ostream& out) {
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction(std::ostream& out) const {
     // HDVF save type
     // 0: HDVF and reduction
     // 1: HDVF only

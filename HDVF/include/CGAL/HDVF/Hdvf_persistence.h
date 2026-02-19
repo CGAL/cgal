@@ -127,6 +127,15 @@ public:
             }
             return out_stream ;
         }
+
+/** \brief Comparison operator.
+ *
+ * Compares with `other` `Persistence_interval` (for numerical stability, only integer `time_birth` and `time_death` are compared. Corresponding degrees are equal as soon as both `Persistence_interval` relate to the same filtration.
+ */
+        inline bool operator== (const Persistence_interval& other) const {
+            return (time_birth == other.time_birth) &&
+            (time_death == other.time_death);
+        }
     };
 
     // Matrices types
@@ -309,11 +318,11 @@ public:
     /** \brief Gets the "with_export" %Boolean flag.
      *  If the flag is `true`, homology/cohomology generators and corresponding PSC labels are exported for each persistent interval of positive duration.
      */
-    bool with_export () { return _with_export ; }
+    bool with_export () const { return _with_export ; }
 
     /** \brief Get a constant reference on the filtration
      */
-    const Filtration& filtration() { return _f; }
+    const Filtration& filtration() const { return _f; }
 
     /** \brief Overload of `operator<<()` for `Hdvf_persistence`.
      *
@@ -583,6 +592,86 @@ public:
      */
     iterator end() { return iterator(*this, _persist.size()) ; }
 
+    /**
+     * \brief Writes a HDVF_persistence together with the associated reduction (f, g, h, d matrices)
+     *
+     * Writes a `HDVF_persistence` to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param out Output stream.
+     */
+    std::ostream& write_hdvf_reduction(std::ostream& out) const ;
+
+    /**
+     * \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
+     *
+     * Writes a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param filename Output file name.
+     */
+    void write_hdvf_reduction(std::string filename) const {
+        std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
+        if ( ! out_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        write_hdvf_reduction(out_file) ;
+
+        out_file.close();
+    }
+
+    /**
+     * \brief Reads a HDVF_persistent together with the associated reduction (f, g, h, d matrices)
+     *
+     * Reads a `HDVF_persistence` from a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param in Input stream.
+     */
+    std::istream& read_hdvf_reduction(std::istream& in) ;
+
+    /**
+     * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
+     *
+     * Load a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param filename Input file name.
+     */
+    void read_hdvf_reduction(std::string filename) {
+        std::ifstream in_file (filename);
+        if ( ! in_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        read_hdvf_reduction(in_file);
+
+        in_file.close();
+    }
+
+    /** \brief Compares the HDVF with another HDVF over the same underlying complex and filtration.
+     *
+     * \param other Other HDVF to compare.
+     * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
+     */
+
+    bool compare(const Hdvf_persistence& other, bool full_compare = false) const {
+        // Compare Hdvf_core structure of *this and other
+        bool res(Base::compare(other, full_compare));
+        if (!res)
+            return res;
+        // Compare persistence data
+        res = (_K_to_per == other._K_to_per);
+        res = res && (_persist == other._persist);
+
+        if (_with_export){
+            res = res && (_export_labels == other._export_labels);
+            res = res && (_export_g == other._export_g);
+            res = res && (_export_fstar == other._export_fstar);
+        }
+        return res;
+    }
+
 private:
     /* \brief Export current persistent pair informations.
      *
@@ -599,8 +688,8 @@ private:
         {
             Column_chain chain_sigma(homology_chain(p.sigma, p.dim)) ;
             Column_chain chain_tau ;
-//            if (p.tau != this->_K.number_of_cells(p.dim+1)) // Check if the second cell is "finite"
-            if (p.tau != p.sigma) // Check if the second cell is "finite"
+            if (p.tau != this->_K.number_of_cells(p.dim+1)) // Check if the second cell is "finite"
+                //            if (p.tau != p.sigma) // Check if the second cell is "finite"
                 chain_tau = homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<Column_chain,Column_chain>(chain_sigma, chain_tau)) ;
         }
@@ -832,8 +921,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
 }
 
 template<typename ChainComplex, typename Degree, typename Filtration_ >
-std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistence_interval& hole)
-{
+std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistence_interval& hole) {
     typedef Hdvf_persistence<ChainComplex, Degree, Filtration_> Base;
     // time (cell, dim) -> time (cell, dim) / degree duration
 
@@ -848,6 +936,157 @@ std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persiste
         out_stream << "inf]" << std::endl ;
     }
     return out_stream ;
+}
+
+// Save HDVF and reduction
+template<typename ChainComplex, typename Degree, typename Filtration_ >
+std::ostream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::write_hdvf_reduction(std::ostream& out) const {
+    // Call parent method
+    Base::write_hdvf_reduction(out);
+    // Write persistence data
+    // ---- with export
+    out << _with_export << std::endl;
+    // ---- _K_to_per permutation
+    for (int q=0; q<=this->_K.dimension(); ++q) {
+        for (int i=0; i<this->_K.number_of_cells(q); ++i) {
+            out << _K_to_per.at(q).at(i) << " " ;
+        }
+        out << std::endl;
+    }
+    // ---- _persist
+    // size
+    out << _persist.size() << std::endl;
+    // list of persistent intervals (one by line)
+    for (Persistence_interval inter : _persist) {
+        out << inter.time_birth << " " << inter.time_death << " " << inter.degree_birth << " " << inter.degree_death << " ";
+        out << inter.cell_birth.first << " " << inter.cell_birth.second << " ";
+        out << inter.cell_death.first << " " << inter.cell_death.second << std::endl;
+    }
+    if (_with_export) {
+        // Number of persistant intervals informations exported
+        size_t cpt(0);
+        for (int i=0; i<_export_labels.size(); ++i) {
+            if (_export_labels.at(i).size() > 0)
+                ++cpt;
+        }
+        out << cpt << std::endl;
+        // For each persistent interval information
+        for (int i=0; i<_export_labels.size(); ++i) {
+            if (_export_labels.at(i).size() > 0) {
+                // -> index
+                out << i << std::endl;
+                // _export_labels
+                for (int q=0; q<=this->_K.dimension(); ++q) {
+                    for (int label : _export_labels.at(i).at(q))
+                        out << label << " ";
+                    out << std::endl ;
+                }
+                // _export_g pair of chains
+                if (this->_hdvf_opt & (OPT_FULL | OPT_G)) {
+                    OSM::write_chain(_export_g.at(i).first, out);
+                    OSM::write_chain(_export_g.at(i).second, out);
+                }
+                // _export_fstar pair of chains
+                if (this->_hdvf_opt & (OPT_FULL | OPT_F)) {
+                    OSM::write_chain(_export_fstar.at(i).first, out);
+                    OSM::write_chain(_export_fstar.at(i).second, out);
+                }
+            }
+        }
+    }
+    return out;
+}
+
+// Save HDVF and reduction
+template<typename ChainComplex, typename Degree, typename Filtration_ >
+std::istream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::read_hdvf_reduction(std::istream& in) {
+    // Call parent method
+    Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction(in);
+    // Write persistence data
+    // ---- with export
+    in >> _with_export;
+    // ---- _K_to_per and _per_to_K permutations
+    _K_to_per.clear();
+    _per_to_K.clear();
+    _K_to_per.resize(this->_K.dimension()+1);
+    _per_to_K.resize(this->_K.dimension()+1);
+    for (int q=0; q<=this->_K.dimension(); ++q) {
+        _K_to_per.at(q).resize(this->_K.number_of_cells(q));
+        _per_to_K.at(q).resize(this->_K.number_of_cells(q));
+        for (int i=0; i<this->_K.number_of_cells(q); ++i) {
+            int cell;
+            in >> cell;
+            _K_to_per.at(q).at(i) = cell;
+            _per_to_K.at(q).at(cell) = i ;
+        }
+    }
+    // ---- _persist
+    // size
+    int nb_persist;
+    in >> nb_persist;
+    _persist.clear();
+    _persist.resize(nb_persist);
+    _t = nb_persist;
+    _t_dim.resize(this->_K.dimension()+1);
+    for (int q=0; q<=this->_K.dimension(); ++q)
+        _t_dim.at(q) = this->_K.number_of_cells(q);
+    _masks.resize(this->_K.dimension()+1);
+    for (int q=0; q<=this->_K.dimension(); ++q) {
+        for (int j=0; j<this->_K.number_of_cells(q); ++j)
+            _masks.at(q).set_on(j);
+    }
+    // list of persistent intervals (one by line)
+    for (int i=0; i<nb_persist; ++i) {
+        Persistence_interval inter;
+        in >> inter.time_birth >> inter.time_death >> inter.degree_birth >> inter.degree_death;
+        in >> inter.cell_birth.first >> inter.cell_birth.second;
+        in >> inter.cell_death.first >> inter.cell_death.second;
+        _persist.at(i) = inter;
+    }
+
+    if (_with_export) {
+        // Number of persistant intervals informations exported (>0 duration)
+        size_t cpt;
+        in >> cpt;
+        // Resizes
+        _export_labels.clear();
+        _export_labels.resize(nb_persist);
+        if (this->_hdvf_opt & (OPT_FULL | OPT_G)) {
+            _export_g.clear();
+            _export_g.resize(nb_persist);
+        }
+        if (this->_hdvf_opt & (OPT_FULL | OPT_F)) {
+            _export_fstar.clear();
+            _export_fstar.resize(nb_persist);
+        }
+
+        // For each persistent interval exported information (with >0 duration)
+        for (int i_per=0; i_per<cpt; ++i_per) {
+            int i;
+            // -> index
+            in >> i;
+            // _export_labels.at(i)
+            _export_labels.at(i).resize(this->_K.dimension()+1);
+            for (int q=0; q<=this->_K.dimension(); ++q) {
+                int label;
+                for (int j = 0; j<this->_K.number_of_cells(q); ++j) {
+                    in >> label;
+                    _export_labels.at(i).at(q).push_back(label);
+                }
+            }
+            // _export_g pair of chains
+            if (this->_hdvf_opt & (OPT_FULL | OPT_G)) {
+                OSM::read_chain(_export_g.at(i).first, in);
+                OSM::read_chain(_export_g.at(i).second, in);
+            }
+            // _export_fstar pair of chains
+            if (this->_hdvf_opt & (OPT_FULL | OPT_F)) {
+                OSM::read_chain(_export_fstar.at(i).first, in);
+                OSM::read_chain(_export_fstar.at(i).second, in);
+            }
+        }
+    }
+    return in;
 }
 
 } /* end namespace Homological_discrete_vector_field */

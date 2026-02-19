@@ -157,6 +157,48 @@ public:
         return stream;
     }
 
+    /** \relates Sparse_chain
+     *
+     * \defgroup WriteChain Writes chain to an output stream or a file.
+     * \ingroup PkgHDVFAlgorithmClasses
+     * @brief  Write a sparse chain to an output stream or a file using the `.osm` file format.
+     *
+     * Output a sparse chain  (the chain can be reloaded using `read_chain`).
+     *
+     * @{
+     */
+
+    /** \relates Sparse_chain
+     *
+     * \brief Writes a sparse chain to a stream.
+     */
+    template <typename _CT, int _SF>
+    friend std::ostream& write_chain (const Sparse_chain<_CT, _SF>& chain, std::ostream& out);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Writes a sparse chain to a file.
+     */
+    template <typename _CT, int _SF>
+    friend void write_chain (const Sparse_chain<_CT, _SF>& chain, std::string filename);
+
+    /**
+     * \relates Sparse_chain
+     *
+     * \brief Reads a sparse chain from a stream.
+    */
+   template <typename _CT, int _SF>
+   friend std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in);
+
+   /** \relates Sparse_chain
+    *
+    * \brief Reads a sparse chain from a file.
+    */
+   template <typename _CT, int _SF>
+   friend void read_chain (Sparse_chain<_CT, _SF>& chain, std::string filename);
+
+    /** @} */
+
     /**
      * \brief Adds two chains.
      *
@@ -792,6 +834,82 @@ Sparse_chain<_CT, _CTF> operator*(const Sparse_chain<_CT, _CTF> &chain, const _C
     newChain *= lambda;
 
     return newChain;
+}
+
+template <typename _CT, int _SF>
+std::ostream& write_chain (const Sparse_chain<_CT, _SF>& chain, std::ostream& out) {
+    using Chain_type = Sparse_chain<_CT, _SF>;
+    // Chain type : 0 for (COLUMN), 1 for (ROW)
+    if (_SF == COLUMN)
+        out << "0" << std::endl ;
+    else // ROW
+        out << "1" << std::endl ;
+    // Dimension of the basis
+    out << chain.dimension() << std::endl;
+    // Number of non zero coefficients
+    out << chain._chainData.size() << std::endl;
+    // List of coefficients (1 by line: index coefficient)
+    for(typename Chain_type::const_iterator it = chain.begin(); it != chain.end(); ++it) {
+        out << it->first << " " << it->second << std::endl;
+    }
+    return out;
+}
+
+
+template <typename _CT, int _SF>
+void write_chain (Sparse_chain<_CT, _SF> chain, std::string filename) {
+    std::ofstream out ( filename, std::ios::out | std::ios::trunc);
+    if ( not out . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+
+    CGAL::OSM::write_chain(chain, out) ;
+
+    out.close();
+}
+
+template <typename _CT, int _SF>
+std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in) {
+    using Chain_type = Sparse_chain<_CT, _SF>;
+
+    // Read and check type
+    int type ;
+    in >> type;
+    int storage_format ;
+    if (((type == 0) &&(_SF == ROW)) || ((type==1)&&(_SF == COLUMN))) {
+        std::cerr << "read_chain with incompatible storage format" << std::endl;
+        throw std::runtime_error("read_chain with incompatible storage format");
+    }
+    chain.nullify();
+    // Read and set the dimension
+    in >> chain._upperBound;
+
+    // Read the number of non zero coefficients
+    size_t ncoefs;
+    in >> ncoefs;
+    // Read coefs
+    size_t index;
+    _CT val;
+    for (int i=0; i<ncoefs; ++i) {
+        in >> index >> val;
+        chain.set_coefficient(index, val);
+    }
+    return in;
+}
+
+
+template <typename _CT, int _SF>
+void read_chain (Sparse_chain<_CT, _SF>& chain, std::string filename) {
+    std::ifstream in ( filename );
+    if ( not in . good () ) {
+        std::cerr << "In fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+
+    CGAL::OSM::read_chain(chain, in) ;
+
+    in.close();
 }
 
 } /* end namespace OSM */
