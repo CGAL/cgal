@@ -128,10 +128,10 @@ public:
             return out_stream ;
         }
 
-/** \brief Comparison operator.
- *
- * Compares with `other` `Persistence_interval` (for numerical stability, only integer `time_birth` and `time_death` are compared. Corresponding degrees are equal as soon as both `Persistence_interval` relate to the same filtration.
- */
+        /** \brief Comparison operator.
+         *
+         * Compares with `other` `Persistence_interval` (for numerical stability, only integer `time_birth` and `time_death` are compared. Corresponding degrees are equal as soon as both `Persistence_interval` relate to the same filtration.
+         */
         inline bool operator== (const Persistence_interval& other) const {
             return (time_birth == other.time_birth) &&
             (time_death == other.time_death);
