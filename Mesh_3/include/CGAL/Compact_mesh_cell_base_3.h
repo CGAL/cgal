@@ -150,9 +150,10 @@ public:
     weighted_circumcenter_ = cc;
   }
 
-private:
-  char bits_;
+protected:
+  mutable Point_3* weighted_circumcenter_;
 
+private:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
@@ -160,8 +161,7 @@ private:
   Erase_counter_type                m_erase_counter;
 #endif
 
-protected:
-  mutable Point_3* weighted_circumcenter_;
+char bits_;
 };
 
 
@@ -234,14 +234,15 @@ public:
       delete cc;
   }
 
+protected:
+  mutable std::atomic<Point_3*> weighted_circumcenter_;
+
 private:
   typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
+
   /// Stores visited facets (4 first bits)
   std::atomic<char> bits_;
-
-protected:
-  mutable std::atomic<Point_3*> weighted_circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB
@@ -257,61 +258,10 @@ template< class Point_3,
           class Index_,
           class TDS>
 class Compact_mesh_cell_3
-#ifndef CGAL_MESH_3_NO_COMPACT_BASE_BASE
   : public Compact_mesh_cell_base_3_base<Point_3, typename TDS::Concurrency_tag>
-#endif
 {
-#ifndef CGAL_MESH_3_NO_COMPACT_BASE_BASE
   typedef Compact_mesh_cell_base_3_base<Point_3,typename TDS::Concurrency_tag> Base;
   using Base::weighted_circumcenter_;
-#else
-public:
-# if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
-  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-
-  // Erase counter (cf. Compact_container)
-  unsigned int erase_counter() const
-  {
-    return this->m_erase_counter;
-  }
-  void set_erase_counter(unsigned int c)
-  {
-    this->m_erase_counter = c;
-  }
-  void increment_erase_counter()
-  {
-    ++this->m_erase_counter;
-  }
-# endif
-
-  /// Marks `facet` as visited
-  void set_facet_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet <4);
-    bits_ |= char(1 << facet);
-  }
-
-  /// Marks `facet` as not visited
-  void reset_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    bits_ = char(bits_ & (15 & ~(1 << facet)));
-  }
-
-  /// Returns `true` if `facet` is marked as visited
-  bool is_facet_visited (const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return ( (bits_ & (1 << facet)) != 0 );
-  }
-
-  /// Precondition weighted_circumcenter_ == nullptr
-  void try_to_set_circumcenter(Point_3 *cc) const
-  {
-    CGAL_precondition(weighted_circumcenter_ == nullptr);
-    weighted_circumcenter_ = cc;
-  }
-#endif // CGAL_MESH_3_NO_COMPACT_BASE_BASE
 
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -349,16 +299,15 @@ public:
   {}
 
   Compact_mesh_cell_3(const Compact_mesh_cell_3& rhs)
-    :
-      sliver_value_(rhs.sliver_value_)
-    , time_stamp_(rhs.time_stamp_)
+    : subdomain_index_(rhs.subdomain_index_)
     , N(rhs.N)
     , V(rhs.V)
-#ifdef CGAL_INTRUSIVE_LIST
+    #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
-    , subdomain_index_(rhs.subdomain_index_)
+    , time_stamp_(rhs.time_stamp_)
+    , sliver_value_(rhs.sliver_value_)
 #ifndef CGAL_MESH_3_NO_SLIVER_CACHE
     , sliver_cache_validity_(false)
 #endif
@@ -695,46 +644,31 @@ public:
   ///@}
 
 private:
+  // tds_data (1 byte) and subdomain index (4, usually) are at the top of the class members
+  // to use the tail padding from the base_base class (usually 8+1, or 8+4+1 with lazy queues)
+  TDS_data      _tds_data;
+
+  // The index of the cell of the input complex that contains me
+  Subdomain_index subdomain_index_ = {};
+
+  std::array<Cell_handle, 4> N;
+  std::array<Vertex_handle, 4> V;
+
+#ifdef CGAL_INTRUSIVE_LIST
+  Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
+#endif
+
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
+
 #ifdef CGAL_MESH_3_NO_SLIVER_CACHE
   double sliver_value_ = -2.;
 #else
   double sliver_value_ = 0.;
 #endif
 
-  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
-
-  std::array<Cell_handle, 4> N;
-  std::array<Vertex_handle, 4> V;
-
-  //  Point_container _hidden;
-
-#ifdef CGAL_MESH_3_NO_COMPACT_BASE_BASE
-  mutable Point_3* weighted_circumcenter_ = nullptr;
-#endif
-
-#ifdef CGAL_INTRUSIVE_LIST
-  Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
-#endif
-
-  // The index of the cell of the input complex that contains me
-  Subdomain_index subdomain_index_ = {};
-
-#ifdef CGAL_MESH_3_NO_COMPACT_BASE_BASE
-  /// Stores visited facets (4 first bits)
-  char bits_ = 0;
-#endif
-
-  TDS_data      _tds_data;
-
   // -- Below is unused --
 
-#ifdef CGAL_MESH_3_NO_COMPACT_BASE_BASE
-# if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
-  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-  typedef unsigned int              Erase_counter_type;
-  Erase_counter_type                m_erase_counter;
-# endif
-#endif // CGAL_MESH_3_NO_COMPACT_BASE_BASE
+  //  Point_container _hidden;
 
 #ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
   /// Stores surface_index for each facet of the cell
