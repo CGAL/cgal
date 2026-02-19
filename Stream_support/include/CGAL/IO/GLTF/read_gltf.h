@@ -28,11 +28,17 @@
 #include <vector>
 #include <limits>
 
-// You must have tinygltf.h in your include path
+// Include the tinygltf single-header implementation exactly once.
+// The implementation macros are undefined afterwards so that a second include
+// of tiny_gltf.h (e.g. through write_gltf.h) skips the implementation section
+// and avoids redefinition errors with the stb libraries.
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
+#undef TINYGLTF_IMPLEMENTATION
+#undef STB_IMAGE_IMPLEMENTATION
+#undef STB_IMAGE_WRITE_IMPLEMENTATION
 
 namespace CGAL {
 namespace IO {
