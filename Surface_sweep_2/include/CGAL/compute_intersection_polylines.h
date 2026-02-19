@@ -28,18 +28,28 @@ namespace Surface_sweep_2 {
 /*! Subdivide a sequence of input segments according to their pairwise intersections.
  * Each segment is subdivided into sub-segments, referred to as polylines.
  */
-template <typename InputIterator, typename Points_, typename Polylines_, typename Traits_>
+template <typename InputIterator, typename Points_, typename Polylines_, typename Base_traits_>
 void compute_intersection_polylines(InputIterator begin, InputIterator end, Points_& points, Polylines_& polylines,
-                                    Traits_& traits) {
-  using Traits = Traits_;
+                                    Base_traits_& base_traits) {
+  using Traits = Arr_curve_data_traits_2<Base_traits_, std::size_t>;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
   using Points = Points_;
   using Polylines = Polylines_;
   using Visitor = Intersection_polylines_visitor<Traits, Points, Polylines>;
   using Surface_sweep = Surface_sweep_2<Visitor>;
 
+  // TODO currently polylines is forced to have [] access
+
+  std::vector<X_monotone_curve_2> curves;
+  curves.reserve(std::distance(begin, end));
+  std::size_t i=0;
+  for(auto it=begin; it!=end; ++it)
+    curves.emplace_back(*it, i++);
+
+  Traits traits(base_traits);
   Visitor visitor(points, polylines);
   Surface_sweep surface_sweep(&traits, &visitor);
-  visitor.sweep(begin, end);
+  visitor.sweep(curves.begin(), curves.end());
 }
 
 } // namespace Surface_sweep_2

@@ -45,16 +45,19 @@ int main(int argc, char* argv[]) {
   using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
   using Point = Kernel::Point_2;
   using Segment = Kernel::Segment_2;
-  using Base_traits = CGAL::Arr_segment_traits_2<Kernel>;
-  using Traits = CGAL::Arr_curve_data_traits_2<Base_traits, std::size_t>;
+  using Traits = CGAL::Arr_segment_traits_2<Kernel>;
   using X_monotone_curve_2 = Traits::X_monotone_curve_2;
   using Polyline = std::vector<std::size_t>;
 
+
   std::vector<X_monotone_curve_2> segments = {
-    X_monotone_curve_2(Segment(Point(1, 5), Point(8, 5)), 0),
-    X_monotone_curve_2(Segment(Point(1, 1), Point(8, 8)), 1),
-    X_monotone_curve_2(Segment(Point(3, 1), Point(3, 8)), 2),
-    X_monotone_curve_2(Segment(Point(8, 5), Point(8, 8)), 3)
+    X_monotone_curve_2(Segment(Point(1, 1), Point(8, 8))),
+    X_monotone_curve_2(Segment(Point(3, 1), Point(3, 8))),
+    X_monotone_curve_2(Segment(Point(8, 5), Point(8, 8))),
+    X_monotone_curve_2(Segment(Point(1, 5), Point(8, 5))),
+    X_monotone_curve_2(Segment(Point(1, 5), Point(5, 5))),
+    X_monotone_curve_2(Segment(Point(3, 5), Point(8, 5))),
+    X_monotone_curve_2(Segment(Point(0, 5), Point(3, 5)))
   };
 
   std::vector<Point> points;
@@ -62,6 +65,9 @@ int main(int argc, char* argv[]) {
   Traits traits;
   CGAL::Surface_sweep_2::compute_intersection_polylines(segments.begin(), segments.end(), points, polylines, traits);
   std::size_t i = 0;
+  for (auto& p : points) {
+    std::cout << p << std::endl;
+  }
   for (auto& polyline : polylines) {
     std::cout << "Polyline " << i++ << ": ";
     for (auto id : polyline) std::cout << id << " ";
@@ -79,12 +85,12 @@ int main(int argc, char* argv[]) {
   CGAL::Graphics_scene scene;
   CGAL::Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle> gso;
 
+  i=0;
   gso.draw_face = [](const Arrangement&, Face_const_handle) { return false; };
 
   gso.colored_edge = [](const Arrangement&, Edge_const_handle) -> bool { return true; };
   gso.edge_color = [&](const Arrangement& arr, Edge_const_handle eh) -> CGAL::IO::Color {
-    auto id = eh->curve().data();
-    double h = (static_cast<double>(id) * 360.0) / segments.size();
+    double h = (static_cast<double>(i++) * 360.0) / segments.size();
     double s = 0.8;
     double v = 0.95;
     auto [r, g, b] = hsv_to_rgb(h, s, v);
