@@ -1404,7 +1404,7 @@ private:
   private:
     void backup_finite_cell(const Cell_handle& /*c*/)
     {
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       if(c->is_cache_valid())
         sliver_value_ = c->sliver_value();
       else
@@ -1430,7 +1430,7 @@ private:
     void backup_infinite_cell(const Cell_handle& /*c*/,
                               const C3T3& /*c3t3*/)
     {
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       for (int ii = 0; ii < 4; ++ii)
       {
         if (c3t3.triangulation().is_infinite(c->vertex(ii)))
@@ -1490,7 +1490,7 @@ private:
                  const IndexMap& /*index_map*/,//new_to_old_indices
                  C3T3& /*c3t3*/)
     {
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       if(sliver_value_ > 0.)
         c->set_sliver_value(sliver_value_);
 
@@ -1529,7 +1529,7 @@ private:
     void restore_infinite_cell(Cell_handle /*c*/,
                                C3T3& /*c3t3*/)
     {
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       c3t3.remove_from_complex(c);//infinite
       for (unsigned int i = 0; i < 4; ++i)
       {
