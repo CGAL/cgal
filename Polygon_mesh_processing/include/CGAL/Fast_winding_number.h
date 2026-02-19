@@ -1,4 +1,4 @@
-// Copyright (c) 2025 GeometryFactory (France).
+// Copyright (c) 2025, 2026 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Qijia Huang
+// Author(s)     : Qijia Huang, Léo Valque
 
 #ifndef CGAL_FAST_WINDING_NUMBER_H
 #define CGAL_FAST_WINDING_NUMBER_H
@@ -71,15 +71,12 @@ struct Tensor3
 // For more information about the derivation of the coefficients,
 // please refer to the original paper: Fast Winding Numbers for Soups and Clouds of Points
 // by Barill et al., Siggraph 2018
-template <class TriangleMesh, class GeomTraits = Default, int ORDER = 3> struct Fast_winding_number_Coeff;
+template <class GeomTraits, int ORDER = 3> struct Fast_winding_number_Coeff;
 
-template <class TriangleMesh, class GeomTraits>
-struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 1>
+template <class GeomTraits>
+struct Fast_winding_number_Coeff<GeomTraits, 1>
 {
-  using GT = typename Default::Get<
-      GeomTraits,
-      typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
+  using GT = GeomTraits;
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
@@ -90,13 +87,10 @@ struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 1>
   Vector_3 weighted_normal = Vector_3(0, 0, 0);
 };
 
-template <class TriangleMesh, class GeomTraits>
-struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 2>
+template <class GeomTraits>
+struct Fast_winding_number_Coeff< GeomTraits, 2>
 {
-  using GT = typename Default::Get<
-      GeomTraits,
-      typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
+  using GT = GeomTraits;
   using FT = typename GT::FT;
   using Vec3 = Eigen::Matrix<FT, 3, 1>;
   using Mat3 = Eigen::Matrix<FT, 3, 3>;
@@ -115,13 +109,10 @@ struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 2>
   Mat3 Q = Mat3::Zero();
 };
 
-template <class TriangleMesh, class GeomTraits>
-struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 3>
+template <class GeomTraits>
+struct Fast_winding_number_Coeff<GeomTraits, 3>
 {
-  using GT = typename Default::Get<
-      GeomTraits,
-      typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
+  using GT = GeomTraits;
   using FT = typename GT::FT;
   using Vec3 = Eigen::Matrix<FT, 3, 1>;
   using Mat3 = Eigen::Matrix<FT, 3, 3>;
@@ -190,31 +181,27 @@ struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 3>
  * \endcode
  *
  */
-template <class TriangleMesh,
+template <class PointRange,
+          class TriangleRange,
           class FaceNormalMap,
           class FaceAreaMap,
           class FaceCentroidMap,
           class Tree,
-          int ORDER = 3,
-          class GeomTraits = Default,
-          class VertexPointMap = Default>
+          int ORDER = 3>
 class Fast_winding_number
 {
-  using VPM = typename Default::Get<VertexPointMap,
-                                    typename boost::property_map<TriangleMesh, vertex_point_t>::const_type>::type;
-  using GT = typename Default::Get<
-      GeomTraits,
-      typename Kernel_traits<typename boost::property_traits<
-          typename boost::property_map<TriangleMesh, vertex_point_t>::type>::value_type>::Kernel>::type;
+  // TODO rewrite to take a triangle soup instead of a mesh
+  using Point_3 = typename PointRange::value_type;
+  using GT = typename Kernel_traits<Point_3>::Kernel;
   using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
+  using Plane_3 = typename GT::Plane_3;
+  using Triangle_3 = typename GT::Triangle_3;
   using Cross_product_vector_3 = typename GT::Construct_cross_product_vector_3;
   using Scalar_product_3 = typename GT::Compute_scalar_product_3;
-  using Coeff = Fast_winding_number_Coeff<TriangleMesh, GeomTraits, ORDER>;
-  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
-  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using Coeff = Fast_winding_number_Coeff<GT, ORDER>;
+  using face_descriptor = std::size_t;
   using Node = CGAL::AABB_node<typename Tree::AABB_traits>;
   using Vec3 = Eigen::Matrix<FT, 3, 1>;
   using Mat3 = Eigen::Matrix<FT, 3, 3>;
@@ -257,30 +244,65 @@ public:
    * \cgalNamedParamsEnd
    */
   template <class NamedParameters = parameters::Default_named_parameters>
-  Fast_winding_number(const TriangleMesh& tmesh,
-                      const FaceNormalMap& fnm,
-                      const FaceAreaMap& fam,
-                      const FaceCentroidMap& fcm,
+  Fast_winding_number(const PointRange& points,
+                      const TriangleRange& triangles,
+                      // const FaceAreaMap& fam,
+                      // const FaceNormalMap& fnm,
+                      // const FaceCentroidMap& fcm,
                       Tree& tree,
                       const NamedParameters& np = parameters::default_values()
                       )
-      : tmesh_(tmesh)
-      , fnm_(fnm)
-      , fam_(fam)
-      , fcm_(fcm)
+      : points_(points)
+      , triangles_(triangles)
+      // , fnm_(fnm)
+      // , fam_(fam)
+      // , fcm_(fcm)
       , tree_(tree)
       {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                            get_const_property_map(CGAL::vertex_point, tmesh));
     beta_ = choose_parameter(get_parameter(np, internal_np::fast_winding_number_beta), FT(2.0));
+    compute_normals();
+    compute_areas();
+    compute_centroids();
     std::size_t nb_nodes = tree_.nb_node();
     node_radius_.resize(nb_nodes, FT(0));
     coeffs_.resize(nb_nodes);
     precompute_coeffs();
   }
   ///@}
+
+  void compute_normals(){
+    fnm_ = boost::make_assoc_property_map(fnm_storage);
+    for(std::size_t i=0; i<triangles_.size(); ++i){
+      const auto &p0 = points_[triangles_[i][0]];
+      const auto &p1 = points_[triangles_[i][1]];
+      const auto &p2 = points_[triangles_[i][2]];
+      Vector_3 vec = Plane_3(p0, p1, p2).orthogonal_vector();
+      vec /= CGAL::approximate_sqrt(vec.squared_length());
+      put(fnm_, i, vec);
+    }
+  }
+
+  void compute_centroids(){
+    fcm_ = boost::make_assoc_property_map(fcm_storage);
+    for(std::size_t i=0; i<triangles_.size(); ++i){
+      const auto &p0 = points_[triangles_[i][0]];
+      const auto &p1 = points_[triangles_[i][1]];
+      const auto &p2 = points_[triangles_[i][2]];
+      put(fcm_, i, ORIGIN+(((p0-ORIGIN)+(p1-ORIGIN)+(p2-ORIGIN))/3));
+    }
+  }
+
+  void compute_areas(){
+    fam_ = boost::make_assoc_property_map(fam_storage);
+    for(std::size_t i=0; i<triangles_.size(); ++i){
+      const auto &p0 = points_[triangles_[i][0]];
+      const auto &p1 = points_[triangles_[i][1]];
+      const auto &p2 = points_[triangles_[i][2]];
+      put(fam_, i, CGAL::approximate_sqrt(Triangle_3(p0, p1, p2).squared_area()));
+    }
+  }
 
   /**
    *
@@ -297,19 +319,22 @@ public:
    * \cgalNamedParamsBegin
    *  \cgalParamNBegin{fast_winding_number_beta}
    *   \cgalParamDescription{The parameter to control the accuracy/speed trade-off of the fast winding number
-   *  evaluation. little values lead to more accurate results, but slower evaluation.}
-   *  \cgalParamType{FT}
-   *  \cgalParamDefault{FT(2.0)}
-   * \cgalParamExtra{The range of this parameter is (0,+inf).}
+   *     evaluation. little values lead to more accurate results, but slower evaluation.}
+   *   \cgalParamType{FT}
+   *   \cgalParamDefault{FT(2.0)}
+   *   \cgalParamExtra{The range of this parameter is (0,+inf).}
+   *  \cgalParamNEnd
+   * \cgalNamedParamsEnd
    *
    * @return the fast winding number of `p`
    */
   template <class NamedParameters = parameters::Default_named_parameters>
-  FT fast_winding_number(const Point_3& p, const NamedParameters& np = parameters::default_values())  {
+  FT fast_winding_number(const Point_3& p, const NamedParameters& np = parameters::default_values(), const face_descriptor fd = std::size_t(-1))  {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    beta_ = choose_parameter(get_parameter(np, internal_np::fast_winding_number_beta), FT(2.0));
-
+    // beta_ = choose_parameter(get_parameter(np, internal_np::fast_winding_number_beta), FT(2.0));
+    beta_ = FT(2.0);
+    // std::cout << fd << std::endl;
     FT winding_number = FT(0);
     const Node* root = tree_.root_node();
     std::size_t nb_prim = tree_.size();
@@ -329,13 +354,27 @@ public:
         switch(nb_prim) {
         case 2: {
           // leaf node
-          winding_number += solid_angle_leaf(node, p);
+          FT w = FT(0);
+          face_descriptor f1 = node->left_data().id();
+          if(f1 != fd)
+            w += solid_angle(p, f1);
+          // else
+          //   std::cout << "t1 " << solid_angle(p, f1) / (FT(4) * CGAL_PI) << std::endl;
+          face_descriptor f2 = node->right_data().id();
+          if(f2 != fd)
+            w += solid_angle(p, f2);
+          // else
+            // std::cout << "t2 " << solid_angle(p, f2) / (FT(4) * CGAL_PI) << std::endl;
+          winding_number += w / (4 * CGAL_PI);
         } break;
         case 3: {
           // partial leaf node
           for(auto it = prim_it; it < prim_it + nb_prim; ++it) {
             face_descriptor f = it->id();
-            winding_number += solid_angle(p, f) / (FT(4) * CGAL_PI);
+            if(f != fd)
+              winding_number += solid_angle(p, f) / (FT(4) * CGAL_PI);
+            // else
+            // std::cout << "t3 " << solid_angle(p, f) / (FT(4) * CGAL_PI) << std::endl;
           }
 
         } break;
@@ -352,16 +391,27 @@ public:
     return winding_number;
   }
 
+  // Computes the winding number of face
+  // template <class NamedParameters = parameters::Default_named_parameters>
+  FT fast_winding_number(const face_descriptor fd)  {
+    // auto fcm = get_parameter(np, internal_np::face_centroid_map);
+    // We ignore the contribution of the face itself and reduce by 0.5, thus the winding number of face on the surface is 0
+    return fast_winding_number(get(fcm_, fd), parameters::default_values(), fd) - FT(0.5);
+  }
+
+  bool is_inside(const face_descriptor fd) { return fast_winding_number(fd) > FT(0.5); }
+
   /**
    * \brief computes the exact winding number of a given query point `p` and the input mesh.
    *
    * @param p the query point
    * @return the exact winding number of `p`
    */
-  FT exact_winding_number(const Point_3& p) const {
+  FT exact_winding_number(const Point_3& p, const face_descriptor fd = std::size_t(-1)) const {
     FT winding_number = FT(0);
-    for(face_descriptor f : faces(tmesh_)) {
-      winding_number += solid_angle(p, f);
+    for(face_descriptor f = 0; f != triangles_.size(); ++f) {
+      if(f != fd)
+        winding_number += solid_angle(p, f);
     }
     return winding_number / (FT(4) * CGAL_PI);
   }
@@ -373,6 +423,10 @@ public:
    * @return `true` if `p` is inside the input mesh, `false` otherwise.
    */
   bool is_inside(const Point_3& p) { return fast_winding_number(p) > FT(0.5); }
+
+  bool is_inside(const Point_3& p, face_descriptor fd) {
+    FT wn = fast_winding_number(p, parameters::default_values(), fd)-FT(0.5);
+    return wn > FT(0.5); }
 
 private:
   std::size_t node_id(const Node* node) const { return std::size_t(node - tree_.root_node()); }
@@ -424,8 +478,8 @@ private:
         const Point_3& centroid = get(fcm_, f);
         Vector_3 R = centroid - coeff.weighted_centroid;
 
-        for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
-          const Point_3& pv = get(vpm_, v);
+        for(std::size_t vi: triangles_[f]) {
+          const Point_3& pv = points_[vi];
           max_norm_sq = (std::max)(max_norm_sq, (pv - coeff.weighted_centroid).squared_length());
         }
         if constexpr(ORDER < 3)
@@ -433,8 +487,8 @@ private:
         else {
           Vector_3 iv[3];
           int i = 0;
-          for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
-            const Point_3& pv = get(vpm_, v);
+          for(std::size_t vi: triangles_[f]) {
+            const Point_3& pv = points_[vi];
             iv[i] = Vector_3(pv.x(), pv.y(), pv.z());
             ++i;
           }
@@ -473,8 +527,9 @@ private:
   FT solid_angle(const Point_3& p, const face_descriptor& f) const {
     Vector_3 iv[3];
     int i = 0;
-    for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
-      iv[i] = get(vpm_, v) - p;
+    for(std::size_t vi: triangles_[f]) {
+      const Point_3& pv = points_[vi];
+      iv[i] = pv - p;
       ++i;
     }
     FT l[3];
@@ -541,11 +596,14 @@ private:
   }
 
 private:
-  const TriangleMesh& tmesh_;
-  const FaceNormalMap& fnm_;
-  const FaceAreaMap& fam_;
-  const FaceCentroidMap& fcm_;
-  VPM vpm_;
+  const PointRange& points_;
+  const TriangleRange& triangles_;
+  std::map<std::size_t, Vector_3> fnm_storage;
+  std::map<std::size_t, FT> fam_storage;
+  std::map<std::size_t, Point_3> fcm_storage;
+  FaceNormalMap fnm_;
+  FaceAreaMap fam_;
+  FaceCentroidMap fcm_;
 
   std::vector<FT> node_radius_;
   std::vector<Coeff> coeffs_;
