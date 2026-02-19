@@ -1,4 +1,4 @@
-// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011,2026 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -26,6 +26,7 @@
 #include <CGAL/Surface_sweep_2/Intersection_points_visitor.h>
 #include <CGAL/Surface_sweep_2/Subcurves_visitor.h>
 #include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
+#include <CGAL/Surface_sweep_2/Intersection_polylines_visitor.h>
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -34,6 +35,7 @@
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_curve_data_traits_2.h>
 
 namespace CGAL {
 
@@ -149,7 +151,7 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
  * The subcurves are calculated using the surface-sweep algorithm.
  * \param begin An input iterator for the first curve in the range.
  * \param end A input past-the-end iterator for the range.
- * \param points Output: An output iterator for the subcurve.
+ * \param subcurves Output: An output iterator for the subcurve.
  * \param mult_overlaps If (true), the overlapping subcurve will be reported
  *                      multiple times.
  * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
@@ -214,6 +216,57 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
 
   typename Default_arr_traits<Curve>::Traits m_traits;
   return do_curves_intersect(curves_begin, curves_end, m_traits);
+}
+
+/*! Subdivide a range of input curves according to their pairwise intersections.
+ * Each curve is subdivided into sub-curves, referred to as polylines.
+ *
+ * \param begin An input iterator for the first curve in the range.
+ * \param end A input past-the-end iterator for the range.
+ * \param output_points A range that will be populated with all vertices induced by the input curves (their endpoints and intersection points).
+ * \param output_polylines A range that will be populated with index sequence referring to
+ *   `output_points`. Each sequence corresponds to one input curve and
+ *   describes the polyline obtained after subdividing the curve at
+ *   intersection points.
+ * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
+ *      value-type of OutputIterator is Traits::X_monotone_curve_2.
+ */
+template <typename CurveInputIterator, typename PointsRange, typename PolylinesRange, typename Traits>
+void compute_intersection_polylines(CurveInputIterator curves_begin,
+                                    CurveInputIterator curves_end,
+                                    PointsRange& output_points,
+                                    PolylinesRange& output_polylines,
+                                    Traits& traits)
+{
+  using Internal_traits = Arr_curve_data_traits_2<Traits, std::size_t>;
+  using X_monotone_curve_2 = typename Internal_traits::X_monotone_curve_2;
+  using Visitor = Ss2::Intersection_polylines_visitor<Internal_traits, PointsRange, PolylinesRange>;
+  using Surface_sweep = Ss2::Surface_sweep_2<Visitor>;
+
+  // TODO currently polylines is forced to have [] access
+
+  std::vector<X_monotone_curve_2> curves;
+  curves.reserve(std::distance(curves_begin, curves_end));
+  std::size_t i=0;
+  for(auto it=curves_begin; it!=curves_end; ++it)
+    curves.emplace_back(*it, i++);
+
+  Internal_traits internal_traits(traits);
+  Visitor visitor(output_points, output_polylines);
+  Surface_sweep surface_sweep(&internal_traits, &visitor);
+  visitor.sweep(curves.begin(), curves.end());
+}
+
+template <typename CurveInputIterator, typename PointsRange, typename PolylinesRange>
+void compute_intersection_polylines(CurveInputIterator curves_begin,
+                                    CurveInputIterator curves_end,
+                                    PointsRange& output_points,
+                                    PolylinesRange& output_polylines)
+{
+  typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
+
+  typename Default_arr_traits<Curve>::Traits m_traits;
+  return compute_intersection_polylines(curves_begin, curves_end, output_points, output_polylines, m_traits);
 }
 
 } // namespace CGAL

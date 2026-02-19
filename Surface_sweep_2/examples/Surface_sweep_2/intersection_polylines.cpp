@@ -4,7 +4,7 @@
 #include <CGAL/Arr_curve_data_traits_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Basic_viewer.h>
-#include <CGAL/compute_intersection_polylines.h>
+#include <CGAL/Surface_sweep_2_algorithms.h>
 #include <CGAL/draw_arrangement_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Graphics_scene_options.h>
@@ -62,8 +62,7 @@ int main(int argc, char* argv[]) {
 
   std::vector<Point> points;
   std::vector<Polyline> polylines;
-  Traits traits;
-  CGAL::Surface_sweep_2::compute_intersection_polylines(segments.begin(), segments.end(), points, polylines, traits);
+  CGAL::compute_intersection_polylines(segments.begin(), segments.end(), points, polylines);
   std::size_t i = 0;
   for (auto& p : points) {
     std::cout << p << std::endl;
@@ -80,7 +79,7 @@ int main(int argc, char* argv[]) {
   using Edge_const_handle = Arrangement::Halfedge_const_handle;
   using Face_const_handle = Arrangement::Face_const_handle;
 
-  Arrangement arr(&traits);
+  Arrangement arr;
   CGAL::insert(arr, segments.begin(), segments.end());
   CGAL::Graphics_scene scene;
   CGAL::Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle> gso;
