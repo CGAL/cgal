@@ -86,7 +86,6 @@ bool read_GLTF(const std::string& filename,
             }
 
             // --- 1. Get VERTICES ---
-            const float* position_buffer = nullptr;
             size_t vertex_count = 0;
             size_t position_stride = 0;
 
@@ -94,7 +93,7 @@ bool read_GLTF(const std::string& filename,
             auto pos_it = primitive.attributes.find("POSITION");
             if (pos_it == primitive.attributes.end()) {
                 if (verbose) std::cerr << "Primitive has no POSITION attribute." << std::endl;
-                continue; // Skip this primitive if it has no vertex positions
+                continue;
             }
 
             const tinygltf::Accessor& accessor = model.accessors[pos_it->second];
@@ -105,74 +104,61 @@ bool read_GLTF(const std::string& filename,
                 continue;
             }
 
-            if (accessor.bufferView < 0) {
-                if (verbose) std::cerr << "POSITION accessor has no bufferView." << std::endl;
-                continue;
-            }
-
-            if (size_t(accessor.bufferView) >= model.bufferViews.size()) {
-                if (verbose) std::cerr << "Invalid bufferView index." << std::endl;
+            if (accessor.bufferView < 0 || size_t(accessor.bufferView) >= model.bufferViews.size()) {
+                if (verbose) std::cerr << "Invalid or missing bufferView for POSITION." << std::endl;
                 continue;
             }
 
             const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-
             if (size_t(bufferView.buffer) >= model.buffers.size()) {
                 if (verbose) std::cerr << "Invalid buffer index." << std::endl;
                 continue;
             }
 
             const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
-
             vertex_count = accessor.count;
-
-            // Calculate total offset
             size_t total_offset = bufferView.byteOffset + accessor.byteOffset;
-
-            // Bounds check
-            if (total_offset >= buffer.data.size()) {
-                if (verbose) std::cerr << "Buffer offset out of bounds." << std::endl;
-                continue;
-            }
-
-            position_buffer = reinterpret_cast<const float*>(&buffer.data[total_offset]);
 
             // Get the stride (bytes between consecutive vertices)
             position_stride = accessor.ByteStride(bufferView);
-
-            // Validate stride
+            
+            // Validate and default stride based on component type
             if (position_stride == 0) {
-                position_stride = sizeof(float) * 3; // tightly packed VEC3
+                if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_DOUBLE) {
+                    position_stride = sizeof(double) * 3;
+                } else {
+                    position_stride = sizeof(float) * 3;
+                }
             }
 
-            if (position_stride < sizeof(float) * 3) {
-                if (verbose) std::cerr << "Invalid stride: too small for VEC3." << std::endl;
-                continue;
-            }
-
-            // Remember the number of points we had before adding new ones.
+            // Pointer to the start of the data
+            const unsigned char* base_ptr = &buffer.data[total_offset];
             size_t vertex_offset = points.size();
 
-            // Add the vertices from this primitive to our global points container
+            // Add the vertices from this primitive
             for (size_t i = 0; i < vertex_count; ++i) {
-                // Check bounds before access
-                size_t byte_offset = i * position_stride;
-                if (total_offset + byte_offset + sizeof(float) * 3 > buffer.data.size()) {
-                    if (verbose) std::cerr << "Vertex data out of bounds at index " << i << std::endl;
+                const unsigned char* element_ptr = base_ptr + (i * position_stride);
+                
+                // Bounds check
+                if (element_ptr + (accessor.componentType == TINYGLTF_COMPONENT_TYPE_DOUBLE ? sizeof(double)*3 : sizeof(float)*3) > buffer.data.data() + buffer.data.size()) {
+                    if (verbose) std::cerr << "Vertex data out of bounds." << std::endl;
                     return false;
                 }
 
-                if (position_stride == sizeof(float) * 3) {
-                    // Tightly packed
-                    points.push_back(Point(position_buffer[i * 3 + 0],
-                                          position_buffer[i * 3 + 1],
-                                          position_buffer[i * 3 + 2]));
-                } else {
-                    // Handle strided data
-                    const unsigned char* byte_ptr =
-                        reinterpret_cast<const unsigned char*>(position_buffer) + byte_offset;
-                    const float* float_ptr = reinterpret_cast<const float*>(byte_ptr);
-                    points.push_back(Point(float_ptr[0], float_ptr[1], float_ptr[2]));
+                if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
+                    const float* f_ptr = reinterpret_cast<const float*>(element_ptr);
+                    points.push_back(Point(static_cast<double>(f_ptr[0]), 
+                                          static_cast<double>(f_ptr[1]), 
+                                          static_cast<double>(f_ptr[2])));
+                } 
+                else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_DOUBLE) {
+                    // This path ensures bit-perfect identity for high-precision data
+                    const double* d_ptr = reinterpret_cast<const double*>(element_ptr);
+                    points.push_back(Point(d_ptr[0], d_ptr[1], d_ptr[2]));
+                }
+                else {
+                    if (verbose) std::cerr << "Unsupported component type for POSITION." << std::endl;
+                    return false;
                 }
             }
 

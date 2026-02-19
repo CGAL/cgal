@@ -34,6 +34,7 @@ file(
   GLOB cppfiles
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+include_directories(../../include)
 foreach(cppfile ${cppfiles})
   if("${cppfile}" STREQUAL "test_3mf_to_sm.cpp")
     if(3MF_LIBRARIES

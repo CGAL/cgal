@@ -51,7 +51,8 @@ int main() {
     std::cout << "→ Number of vertices: " << points.size() << std::endl;
     std::cout << "→ Number of faces: " << polygons.size() << std::endl;
 
-    std::cout << "\nSample vertices:\n";
+    std::cout << "\nSample vertices (Full Precision):\n";
+    std::cout << std::setprecision(17);
     for (size_t i = 0; i < std::min(points.size(), size_t(5)); ++i) {
         std::cout << "  " << points[i] << std::endl;
     }
