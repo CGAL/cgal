@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2026 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,9 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+//
+// Author(s): Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_SURFACE_SWEEP_2_INTERSECTION_POLYLINES_VISITOR_H
 #define CGAL_SURFACE_SWEEP_2_INTERSECTION_POLYLINES_VISITOR_H
@@ -88,33 +87,22 @@ public:
     auto id = m_points.size();
     m_points.push_back(event->point());
 
-    if (! event->has_right_curves() && event->has_left_curves()) {
-      for (auto it = event->left_curves_begin(); it != event->left_curves_end(); ++it) {
-        const auto* sc = *it;
-        m_polylines[sc->last_curve().data()].push_back(id);
-      }
-      return true;
-    }
-
-    if (! event->has_left_curves() && event->has_right_curves()) {
-      for (auto it = event->right_curves_begin(); it != event->right_curves_end(); ++it) {
-        const auto* sc = *it;
-        m_polylines[sc->last_curve().data()].push_back(id);
-      }
-      return true;
-    }
-
-    std::unordered_set<std::size_t> cids;
     for (auto it = event->left_curves_begin(); it != event->left_curves_end(); ++it) {
-      const auto* sc = *it;
-      cids.insert(sc->last_curve().data());
+      Subcurve *sc = *it;
+      std::vector<Subcurve*> leaves;
+      sc->all_leaves(std::back_inserter(leaves));
+      for(auto l: leaves)
+        m_polylines[l->last_curve().data()].push_back(id);
     }
+
     for (auto it = event->right_curves_begin(); it != event->right_curves_end(); ++it) {
-      const auto* sc = *it;
-      cids.insert(sc->last_curve().data());
+      Subcurve *sc = *it;
+      std::vector<Subcurve*> leaves;
+      sc->all_leaves(std::back_inserter(leaves));
+      for(auto l: leaves)
+        if(m_polylines[l->last_curve().data()].empty() || m_polylines[l->last_curve().data()].back() != id) // Maybe already by left curves
+          m_polylines[l->last_curve().data()].push_back(id);
     }
-    for (auto cid : cids) m_polylines[cid].push_back(id);
-    cids.clear();
 
     return true;
   }
