@@ -2050,16 +2050,16 @@ private:
           fit != facets.end() ;
           ++fit )
     {
-      if ( c3t3_.is_in_complex(*fit) )
-      {
+      Surface_patch_index pid = c3t3_.surface_patch_index(*fit);
+      const bool facet_in_complex = (pid != Surface_patch_index());
+      if ( facet_in_complex )
         surface_facets.push_back(*fit);
-      }
+
       const Surface_patch sp = checker(*fit,
                                        false, /* do not update c3t3 */
                                        true); /* update surface centers */
       // false means "do not update the c3t3"
-      if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
-           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == *sp) ) )
+      if ( facet_in_complex != (bool)sp || ((bool)sp && !(pid == *sp) ) )
         return false;
     }
 
@@ -2400,7 +2400,8 @@ private:
       m_updater(facet);
 
       // Update m_vertex_to_proj
-      if ( m_c3t3.is_in_complex(facet) )
+      Surface_patch_index pid = m_c3t3.surface_patch_index(facet);
+      if ( pid != Surface_patch_index() ) // // is facet in complex
       {
         // Iterate on vertices
         int k = facet.second;
@@ -2409,8 +2410,7 @@ private:
           const Vertex_handle& v = facet.first->vertex((k+i)&3);
           if ( m_c3t3.in_dimension(v) > 2 )
           {
-            std::pair<Vertex_handle, Surface_patch_index> p
-              = std::make_pair(v, m_c3t3.surface_patch_index(facet));
+            std::pair<Vertex_handle, Surface_patch_index> p = std::make_pair(v, pid);
             m_c3t3_helpers.lock_vertex_to_proj();
             m_vertex_to_proj.insert(p);
             m_c3t3_helpers.unlock_vertex_to_proj();
@@ -2876,7 +2876,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
       updater(*fit);
 
       // Update vertex_to_proj
-      if ( c3t3_.is_in_complex(*fit) )
+      Surface_patch_index pid = c3t3_.surface_patch_index(*fit);
+      if ( pid != Surface_patch_index() ) // is facet in complex
       {
         // Iterate on vertices
         int k = fit->second;
@@ -2884,10 +2885,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
         {
           const Vertex_handle& v = fit->first->vertex((k+i)&3);
           if ( c3t3_.in_dimension(v) > 2 )
-          {
-            vertex_to_proj.insert(
-              std::make_pair(v, c3t3_.surface_patch_index(*fit)));
-          }
+            vertex_to_proj.emplace(v, pid);
         }
       }
     }
@@ -3956,9 +3954,9 @@ get_surface_boundary(const Vertex_handle& moving_vertex,
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    if ( c3t3_.is_in_complex(*fit) )
+    const Surface_patch_index surface_index = c3t3_.surface_patch_index(*fit);
+    if ( surface_index != Surface_patch_index() ) // is facet in complex
     {
-      const Surface_patch_index surface_index = c3t3_.surface_patch_index(*fit);
       const int k = fit->second;
       Vertex_handle v1 = fit->first->vertex((k+1)&3);
       Vertex_handle v2 = fit->first->vertex((k+2)&3);

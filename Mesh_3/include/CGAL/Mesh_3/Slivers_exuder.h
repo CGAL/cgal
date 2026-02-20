@@ -1367,9 +1367,10 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    if ( c3t3_.is_in_complex(*fit) )
+    Facet f = *fit;
+    Surface_patch_index pid = c3t3_.surface_patch_index(f);
+    if ( pid != Surface_patch_index() )
     {
-      Facet f = *fit;
       Vertex_handle v1 = f.first->vertex((f.second+1)%4);
       Vertex_handle v2 = f.first->vertex((f.second+2)%4);
       Vertex_handle v3 = f.first->vertex((f.second+3)%4);
@@ -1381,22 +1382,13 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
 
       for(std::size_t i = 0; i < 3; ++i)
       {
-        Ordered_edge oe = edges[i];
-        typename Umbrella::iterator uit = umbrella.find(oe);
-        if(uit == umbrella.end()) //umbrella does not contain oe yet
-        {
-          umbrella.insert(std::make_pair(oe,
-            std::make_pair(c3t3_.surface_patch_index(f), 1)));
-        }
-        else //umbrella already contains oe. Increment counter or return
-        {
-          std::size_t count = (*uit).second.second;
-          if(count == 2) //there will be more than 3 after insertion
-            return std::nullopt; //non-manifold configuration
-
-          umbrella.insert(uit,
-            std::make_pair(oe,
-              std::make_pair(c3t3_.surface_patch_index(f), count + 1)));
+        const Ordered_edge& oe = edges[i];
+        auto result = umbrella.emplace(oe, std::make_pair(pid, 1));
+        if(!result.second) { // already existed
+          auto& value = result.first->second;
+          if(value.second == 2) // there will be more than 3 after insertion
+            return std::nullopt; // non-manifold configuration
+          ++value.second;
         }
       }
     }
