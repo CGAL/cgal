@@ -14,7 +14,7 @@
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
-#define BUILD_TEST_DATA
+//#define BUILD_TEST_DATA
 
 //typedef int Coefficient_ring;
 //typedef CGAL::Z2 Coefficient_ring;
@@ -73,14 +73,11 @@ int main(int argc, char **argv) {
 
 #ifdef BUILD_TEST_DATA
     // Write HDVF_persistence to a .hdvf file
-    hdvf.write_hdvf_reduction("data/hdvf_persist.hdvf");
+    hdvf.write_hdvf_reduction("data/test_hdvf_persistence/hdvf_persist.hdvf");
 #endif
 
     HDVF_type hdvf2(complex, filtration, HDVF::OPT_FULL, true);
-    hdvf2.read_hdvf_reduction("data/hdvf_persist.hdvf");
-
-    // Output HDVF to vtk
-    CGAL::IO::write_VTK(hdvf2, complex, "tmp/res2", true) ;
+    hdvf2.read_hdvf_reduction("data/test_hdvf_persistence/hdvf_persist.hdvf");
 
     // Compare
     bool test_rw(hdvf.compare(hdvf2));

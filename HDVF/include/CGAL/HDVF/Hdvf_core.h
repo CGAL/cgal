@@ -533,6 +533,13 @@ public:
             throw "Error : trying to export fstar_chain without proper Hdvf_core option" ;
     }
 
+protected:
+    /* \brief Main code for saving a HDVF_core (except prefix)
+     */
+    std::ostream& write_hdvf_reduction_main(std::ostream& out) const ;
+
+public:
+
     /**
      * \brief Writes a HDVF together with the associated reduction (f, g, h, d matrices)
      *
@@ -563,6 +570,13 @@ public:
         out_file.close();
     }
 
+protected:
+    /* \brief Main code for reading a HDVF_core (except prefix)
+     */
+    std::istream& read_hdvf_reduction_main(std::istream& in_stream);
+
+public:
+
     /**
      * \brief Loads a HDVF together with the associated reduction (f, g, h, d matrices)
      *
@@ -570,6 +584,14 @@ public:
      * \warning The underlying complex is not stored in the file!
      *
      * \param in_stream Input stream.
+     *
+     * \exception Incompatible_prefix If the prefix of the stored HDVF is not 'HDVF_core' raises a `%std::runtime_error`.
+     *
+     * \exception Incompatible_type If the type of the stored HDVF is not 0 (HDVF and reduction storage) raises a `%std::runtime_error`.
+     *
+     * \exception Incompatible_dimension If the dimension of the HDVF stored does not match the dimension of the underlying complex, raises a `%std::runtime_error`.
+     *
+     * \exception Incoherent_number_of_cells If the number of cells loaded in a given dimension does not match that of the underlying complex, raises a `std::runtime_error`.
      */
     std::istream& read_hdvf_reduction(std::istream& in_stream) ;
 
@@ -1341,9 +1363,20 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduct
     return out ;
 }
 
-// Save HDVF and reduction
+// Save HDVF and reduction: save prefix and run main code
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
 std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction(std::ostream& out) const {
+    // HDVF prefix
+    // For Hdvf_core:       #HDVF_core
+    // For Hdvf_persistence:       #HDVF_persistence
+    // For Hdvf_duality:       #HDVF_duality
+    out << "#HDVF_core" << std::endl;
+    return write_hdvf_reduction_main(out);
+}
+
+// Save HDVF and reduction main code
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction_main(std::ostream& out) const {
     // HDVF save type
     // 0: HDVF and reduction
     // 1: HDVF only
@@ -1390,33 +1423,50 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_r
     return out;
 }
 
-// Save HDVF and reduction
+// Read HDVF and reduction: check prefix and call main code
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
 std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_reduction(std::istream& in_stream) {
+    // Load and check HDVF prefix
+    // For Hdvf_core:       #HDVF_core
+    // For Hdvf_persistence:       #HDVF_persistence
+    // For Hdvf_duality:       #HDVF_duality
+    std::string prefix;
+    in_stream >> prefix;
+    if (prefix.compare("#HDVF_core")) {
+        std::cerr << "try to load a HDVF with incompatible prefix" << std::endl ;
+        throw (std::runtime_error("try to load a HDVF with incompatible prefix"));
+    }
+
+    return read_hdvf_reduction_main(in_stream);
+}
+
+// Read HDVF and reduction main code
+template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_reduction_main(std::istream& in_stream) {
     // Load and check HDVF save type
     int type ;
     in_stream >> type ;
     if (type != 0) {
-        std::cerr << "read_hdvf_reduction error: trying to load a pure HDVF file..." << std::endl ;
-        throw ("read_hdvf_reduction error: trying to load a pure HDVF file...");
+        std::cerr << "try to load a pure HDVF file" << std::endl ;
+        throw (std::runtime_error("try to load a pure HDVF file"));
     }
 
     // Load and check dimension
     int d ;
     in_stream >> d ;
     if (d != _K.dimension()) {
-        std::cerr << "read_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
-        throw ("read_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex");
+        std::cerr << "dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
+        throw (std::runtime_error("dimension loaded incompatible with the dimension of the underlying complex"));
     }
     // Load and check number of cells
     int nb ;
     for (int q=0; q<=_K.dimension(); ++q) {
         in_stream >> nb ;
         if (nb != _K.number_of_cells(q)) {
-            std::string mess("read_hdvf_reduction error: incoherent number of cells in dimension ");
+            std::string mess("incoherent number of cells in dimension ");
             mess += std::to_string(q);
             std::cerr << mess << std::endl ;
-            throw (mess);
+            throw (std::runtime_error(mess));
         }
     }
     // Load HDVF opt
@@ -1461,6 +1511,7 @@ std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_re
     }
     return in_stream ;
 }
+
 
 } /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */

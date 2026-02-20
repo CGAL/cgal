@@ -942,8 +942,10 @@ std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persiste
 // Save HDVF and reduction
 template<typename ChainComplex, typename Degree, typename Filtration_ >
 std::ostream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::write_hdvf_reduction(std::ostream& out) const {
-    // Call parent method
-    Base::write_hdvf_reduction(out);
+    // Write HDVF prefix type
+    out << "#HDVF_persistence" << std::endl;
+    // Call parent method main code
+    Base::write_hdvf_reduction_main(out);
     // Write persistence data
     // ---- with export
     out << _with_export << std::endl;
@@ -1001,8 +1003,19 @@ std::ostream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::write_hdvf_re
 // Save HDVF and reduction
 template<typename ChainComplex, typename Degree, typename Filtration_ >
 std::istream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::read_hdvf_reduction(std::istream& in) {
+    // Load and check HDVF prefix
+    // For Hdvf_core:       #HDVF_core
+    // For Hdvf_persistence:       #HDVF_persistence
+    // For Hdvf_duality:       #HDVF_duality
+    std::string prefix;
+    in >> prefix;
+    if (prefix.compare("#HDVF_persistence")) {
+        std::cerr << "try to load a HDVF with incompatible prefix" << std::endl ;
+        throw (std::runtime_error("try to load a HDVF with incompatible prefix"));
+    }
+
     // Call parent method
-    Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction(in);
+    Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction_main(in);
     // Write persistence data
     // ---- with export
     in >> _with_export;
