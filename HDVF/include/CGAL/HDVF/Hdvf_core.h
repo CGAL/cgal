@@ -548,6 +548,8 @@ public:
      * Writes a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param filename Output file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
      */
     void write_hdvf_reduction(std::string filename) const {
         std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
@@ -578,6 +580,8 @@ public:
      * \warning The underlying complex is not stored in the file!
      *
      * \param filename Input file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
      */
     void read_hdvf_reduction(std::string filename) {
         std::ifstream in_file (filename);
