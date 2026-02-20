@@ -100,7 +100,7 @@ protected:
 
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
+    CGAL_assertion (c3t3.is_in_complex(f));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits      GT;
@@ -194,7 +194,7 @@ protected:
 
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion(c3t3.is_in_complex(f.first, f.second));
+    CGAL_assertion (c3t3.is_in_complex(f));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits    GT;
@@ -269,7 +269,7 @@ protected:
 
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
+    CGAL_assertion (c3t3.is_in_complex(f));
 
     typedef typename Tr::Geom_traits    GT;
     typedef typename Tr::Weighted_point Weighted_point;
@@ -354,7 +354,7 @@ protected:
 
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
+    CGAL_assertion (c3t3.is_in_complex(f));
 
     typedef typename Tr::Geom_traits    GT;
     typedef typename Tr::Bare_point     Bare_point;
@@ -436,7 +436,7 @@ protected:
 
   virtual Is_bad do_is_bad(const C3T3& c3t3, const Facet& f) const
   {
-    CGAL_assertion (c3t3.is_in_complex(f.first, f.second));
+    CGAL_assertion (c3t3.is_in_complex(f));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits        GT;
