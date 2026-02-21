@@ -1,4 +1,5 @@
 //#define CGAL_PMP_REMESHING_VERBOSE
+//#define CGAL_DUMP_REMESHING_STEPS
 //#define CGAL_PMP_REMESHING_DEBUG
 //#define CGAL_PMP_REMESHING_VERY_VERBOSE
 //#define CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -385,6 +386,21 @@ public Q_SLOTS:
         return;
       }
 
+      auto string2smoother = [=](const QString& algo)->PMP::Smoothing_algorithms
+        {
+          qsizetype index = smoothing_algorithms_.indexOf(algo);
+          switch (index)
+          {
+          case 2:
+            return PMP::SMOOTH_SHAPE;
+          case 1:
+            return PMP::FAIR;
+          case 0:
+          default:
+            return PMP::TANGENTIAL_RELAXATION;//default
+          };
+        };
+
       int edge_sizing_type = ui.edgeSizing_type_combo_box->currentIndex();
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
@@ -393,6 +409,7 @@ public Q_SLOTS:
       double min_length = ui.minEdgeLength_edit->value();
       double max_length = ui.maxEdgeLength_edit->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
+      PMP::Smoothing_algorithms smoother = string2smoother(ui.smoother_combobox->currentText());
       unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_features = ui.smooth1D_checkbox->isChecked();
@@ -499,6 +516,7 @@ public Q_SLOTS:
                      , CGAL::parameters::number_of_iterations(nb_iter)
                      .protect_constraints(protect)
                      .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .smoothing_algo(smoother)
                      .relax_constraints(smooth_features)
                      .number_of_relaxation_steps(nb_smooth)
                      .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
@@ -510,6 +528,7 @@ public Q_SLOTS:
                      , CGAL::parameters::number_of_iterations(nb_iter)
                      .protect_constraints(protect)
                      .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .smoothing_algo(smoother)
                      .relax_constraints(smooth_features)
                      .number_of_relaxation_steps(nb_smooth)
                      .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
@@ -530,6 +549,7 @@ public Q_SLOTS:
                      , CGAL::parameters::number_of_iterations(nb_iter)
                      .protect_constraints(protect)
                      .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .smoothing_algo(smoother)
                      .relax_constraints(smooth_features)
                      .number_of_relaxation_steps(nb_smooth)
                      .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
@@ -541,6 +561,7 @@ public Q_SLOTS:
                      , CGAL::parameters::number_of_iterations(nb_iter)
                      .protect_constraints(protect)
                      .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .smoothing_algo(smoother)
                      .relax_constraints(smooth_features)
                      .number_of_relaxation_steps(nb_smooth)
                      .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
@@ -1267,6 +1288,43 @@ public Q_SLOTS:
     }
   }
 
+  void on_smoother_combobox_changed(int index)
+  {
+    if (index == 0) //TANGENTIAL_RELAXATION
+    {
+      ui.protect_label->setEnabled(true);
+      ui.protect_checkbox->setEnabled(true);
+      ui.protect_checkbox->setChecked(false);
+      ui.protect_checkbox->setCheckable(true);
+
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setCheckable(true);
+      ui.smooth1D_checkbox->setChecked(true);
+    }
+    else if (index == 1) //FAIR
+    {
+      ui.protect_label->setDisabled(true);
+      ui.protect_checkbox->setEnabled(false);
+      ui.protect_checkbox->setChecked(true);
+      ui.protect_checkbox->setCheckable(false);
+
+      ui.smooth1D_label->setDisabled(true);
+      ui.smooth1D_checkbox->setDisabled(true);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else //index == 2, SMOOTH_SHAPE
+    {
+      ui.protect_label->setDisabled(true);
+      ui.protect_checkbox->setEnabled(false);
+      ui.protect_checkbox->setChecked(true);
+      ui.protect_checkbox->setCheckable(false);
+
+      ui.smooth1D_label->setDisabled(true);
+      ui.smooth1D_checkbox->setDisabled(true);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+  }
+
   void update_after_curvSmooth_click()
   {
     if (ui.curvSmooth_checkbox->isChecked())
@@ -1302,6 +1360,8 @@ public:
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_splitEdgesOnly_click()));
     connect(ui.edgeSizing_type_combo_box, SIGNAL(currentIndexChanged(int)),
       this, SLOT(on_edgeSizing_type_combo_box_changed(int)));
+    connect(ui.smoother_combobox, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(on_smoother_combobox_changed(int)));
     connect(ui.curvSmooth_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_curvSmooth_click()));
 
     //Set default parameters
@@ -1340,6 +1400,8 @@ public:
     specific_info = "Default is 50% of it\n";
     ui.maxEdgeLength_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
 
+    ui.smoother_combobox->insertItems(0, smoothing_algorithms_);
+    on_smoother_combobox_changed(0);
     ui.nbIterations_spinbox->setSingleStep(1);
     ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
     ui.nbIterations_spinbox->setValue(1);
@@ -1364,6 +1426,8 @@ public:
 private:
   QAction* actionIsotropicRemeshing_;
   Ui::Isotropic_remeshing_dialog ui;
+
+  const QStringList smoothing_algorithms_ = {"Tangential Relaxation", "Fair", "Smooth Shape"};
 }; // end CGAL_Lab_isotropic_remeshing_plugin
 
 #include "Isotropic_remeshing_plugin.moc"
