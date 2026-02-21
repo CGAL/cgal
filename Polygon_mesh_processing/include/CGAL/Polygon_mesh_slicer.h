@@ -36,6 +36,41 @@
 
 namespace CGAL {
 
+
+template<class TriangleMesh, class VertexPointMap, class Traits>
+struct Default_output_functor
+{
+  Default_output_functor(TriangleMesh& tmesh, VertexPointMap vpm, const typename Traits::Plane_3& plane, const Traits& traits)
+    : m_tmesh(tmesh)
+    , m_vpm(vpm)
+    , m_plane(plane)
+    , m_intersect_3( traits.intersect_3_object() )
+  {}
+
+  typedef typename Traits::Point_3 value_type;
+  TriangleMesh& m_tmesh;
+  VertexPointMap m_vpm;
+  const typename Traits::Plane_3& m_plane;
+  typename Traits::Intersect_3 m_intersect_3;
+
+  value_type operator()(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v) const
+  {
+    return get(m_vpm, v);
+  }
+
+  value_type operator()(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed) const
+  {
+    typename Traits::Segment_3 s(
+      get(m_vpm, source(ed, m_tmesh)),
+      get(m_vpm,target(ed, m_tmesh))
+    );
+    const auto inter = m_intersect_3(m_plane, s);
+    CGAL_assertion(inter.has_value());
+    const value_type* pt_ptr = std::get_if<value_type>(&(*inter));
+    return *pt_ptr;
+  }
+};
+
 /// \ingroup PkgPolygonMeshProcessingRef
 /// Function object that computes the intersection of a plane with
 /// a triangulated surface mesh.
@@ -74,17 +109,10 @@ namespace CGAL {
 /// \todo `_object()` functions must also be provided
 template<class TriangleMesh,
   class Traits,
-  class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
-  class AABBTree = AABB_tree<
-                       AABB_traits_3<Traits,
-                         AABB_halfedge_graph_segment_primitive<TriangleMesh,
-                                                                std::conditional_t<
-                                                                  std::is_same_v<
-                                                                    VertexPointMap,
-                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >,
-                                                                  Default,
-                                                                  VertexPointMap>>>>,
-  bool UseParallelPlaneOptimization=true>
+  class VertexPointMap_ = Default,
+  class AABBTree_ = Default,
+  bool UseParallelPlaneOptimization=true,
+  template <class TM, class VPM, class T> class OutputFunctor = Default_output_functor>
 class Polygon_mesh_slicer
 {
 /// Polygon_mesh typedefs
@@ -100,6 +128,15 @@ class Polygon_mesh_slicer
   typedef typename Traits::Point_3                                      Point_3;
   typedef typename Traits::FT                                                FT;
 
+
+// AABB-tree type
+  typedef typename Default::Get<VertexPointMap_,
+                                typename boost::property_map< TriangleMesh, vertex_point_t>::type>::type VertexPointMap;
+  typedef typename Default::Get<AABBTree_,
+                                ::CGAL::AABB_tree<
+                                    AABB_traits_3<Traits,
+                                                AABB_halfedge_graph_segment_primitive<TriangleMesh, VertexPointMap> > > >::type AABBTree;
+
 /// typedefs for internal graph to get connectivity of the polylines
   typedef std::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
   typedef boost::adjacency_list <
@@ -111,6 +148,9 @@ class Polygon_mesh_slicer
   typedef std::pair<AL_vertex_descriptor, AL_vertex_descriptor>  AL_vertex_pair;
   typedef std::map<vertex_descriptor, AL_vertex_descriptor>        Vertices_map;
   typedef std::pair<const vertex_descriptor,AL_vertex_descriptor>   Vertex_pair;
+
+
+
 /// Traversal traits
   typedef Polygon_mesh_slicer_::Traversal_traits<
     AL_graph,
@@ -142,14 +182,15 @@ class Polygon_mesh_slicer
 
   typedef std::map< halfedge_descriptor, AL_vertex_pair, Compare_face > AL_edge_map;
 
-  template <class OutputIterator, class Traits_>
+  template <class OutputIterator, class Traits_, class Output_functor>
   struct Polyline_visitor{
     AL_graph& al_graph;
     TriangleMesh& m_tmesh;
     const Plane_3& m_plane;
     VertexPointMap m_vpmap;
-    typename Traits_::Intersect_3 intersect_3;
     OutputIterator out;
+    Output_functor output_functor;
+
     std::pair<AL_vertex_descriptor, AL_vertex_descriptor> nodes_for_orient;
 
     Polyline_visitor( TriangleMesh& tmesh,
@@ -162,11 +203,11 @@ class Polygon_mesh_slicer
       , m_tmesh(tmesh)
       , m_plane(plane)
       , m_vpmap(vpmap)
-      , intersect_3( traits.intersect_3_object() )
       , out(out)
+      , output_functor(tmesh, vpmap, plane, traits)
     {}
 
-    std::vector< Point_3 > current_poly;
+    std::vector< typename Output_functor::value_type > current_poly;
 
     // returns true iff the polyline is not correctly oriented
     // Using the first edge is oriented such that the normal induced by the face
@@ -263,23 +304,7 @@ class Polygon_mesh_slicer
         if (current_poly.size()==1)
           nodes_for_orient.second=node_id;
 
-      AL_vertex_info v = al_graph[node_id];
-      if (const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&v) )
-      {
-        current_poly.push_back( get(m_vpmap, *vd_ptr) );
-      }
-      else
-      {
-        edge_descriptor ed = std::get<edge_descriptor>(v);
-        Segment_3 s(
-          get(m_vpmap, source(ed, m_tmesh)),
-          get(m_vpmap,target(ed, m_tmesh))
-        );
-        const auto inter = intersect_3(m_plane, s);
-        CGAL_assertion(inter != std::nullopt);
-        const Point_3* pt_ptr = std::get_if<Point_3>(&(*inter));
-        current_poly.push_back( *pt_ptr );
-      }
+      current_poly.push_back( std::visit(output_functor, al_graph[node_id]) );
     }
 
     void end_polyline()
@@ -628,16 +653,18 @@ public:
     // putting them in the output iterator
     if (!UseParallelPlaneOptimization || app_info.first==-1)
     {
-      Polyline_visitor<OutputIterator, Traits> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);
+      typedef OutputFunctor<TriangleMesh, VertexPointMap, Traits> Output_functor;
+      Polyline_visitor<OutputIterator, Traits, Output_functor> visitor(m_tmesh, al_graph, plane, m_vpmap, m_traits, out);
       split_graph_into_polylines(al_graph, visitor);
       return visitor.out;
     }
     else
     {
       typedef Polygon_mesh_slicer_::Axis_parallel_plane_traits<Traits> App_traits;
+      typedef OutputFunctor<TriangleMesh, VertexPointMap, App_traits> Output_functor;
       App_traits app_traits(app_info.first, app_info.second, m_traits);
 
-      Polyline_visitor<OutputIterator, App_traits> visitor
+      Polyline_visitor<OutputIterator, App_traits, Output_functor> visitor
         (m_tmesh, al_graph, plane, m_vpmap, app_traits, out);
       split_graph_into_polylines(al_graph, visitor);
       return visitor.out;
