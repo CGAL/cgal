@@ -19,7 +19,7 @@ def add_license_include_in_file(package_name, fname):
 
   #match only file under a GPL license
   with codecs.open(fname, encoding='utf-8') as f:
-    if not any(re.search("SPDX-License-Identifier" ":".*[ (]GPL", line) for line in f):
+    if not any(re.search("SPDX-License-Identifier:.*[ (]GPL", line) for line in f):
       return # include directive already there
 
 
