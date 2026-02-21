@@ -63,6 +63,11 @@ foreach(cppfile ${cppfiles})
         endif()
       else()
         create_single_source_cgal_program("${cppfile}")
+        if("${cppfile}" STREQUAL "test_GLTF.cpp")
+          target_sources(test_GLTF PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../include/CGAL/IO/GLTF/tiny_gltf_impl.cpp
+          )
+        endif()
       endif()
     endif()
   endif()

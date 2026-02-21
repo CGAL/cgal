@@ -3,8 +3,10 @@
 #ifndef CGAL_IO_GLTF_WRITE_GLTF_H
 #define CGAL_IO_GLTF_WRITE_GLTF_H
 
-// Must be included after read_gltf.h (which pulls in tiny_gltf.h with TINYGLTF_IMPLEMENTATION).
-#include "tiny_gltf.h"
+// Note: tinygltf implementation is compiled once in tiny_gltf_impl.cpp.
+// This header only needs the tinygltf declarations.
+
+#include <CGAL/IO/GLTF/tiny_gltf.h>
 
 #include <CGAL/IO/helpers.h>
 #include <CGAL/Named_function_parameters.h>
