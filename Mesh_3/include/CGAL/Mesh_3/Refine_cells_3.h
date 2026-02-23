@@ -897,33 +897,24 @@ update_star_self(const Vertex_handle& vertex)
     // Restore surface
     const int& k = (*cell_it)->index(vertex);
     const Facet mirror_f = mirror_facet(*cell_it,k);
-    const Cell_handle& neighbor_cell = mirror_f.first;
-    const int& neighb_k = mirror_f.second;
 
 #ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    const bool cond_new = r_c3t3_.is_in_complex(neighbor_cell, neighb_k);
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
-    const bool cond_old =neighbor_cell->is_facet_on_surface(neighb_k);
+    if (r_c3t3_.is_in_complex(mirror_f)) // @todo here and below is 2 map looks up which should only be one.
+      r_c3t3_.set_surface_info(*cell_it, k, r_c3t3_.surface_info(mirror_f));
+#else // CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL has to be defined
+    const Cell_handle& neighbor_cell = mirror_f.first;
+    const int& neighb_k = mirror_f.second;
+    const bool cond_old = neighbor_cell->is_facet_on_surface(neighb_k);
 
 # ifdef CGAL_MESH_3_USE_C3T3_MAPS
+    const bool cond_new = r_c3t3_.surface_patch_index(mirror_f);
     if (cond_old != cond_new) {
-      std::cerr << "new cond = " << cond_new << std::endl;
       std::cerr << "new cond = " << cond_new << std::endl;
       std::exit(1);
     }
 # endif
 
     if (cond_old)
-#else
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    if (cond_new)
-# else
-    std::exit(1);
-# endif
-#endif
-
     {
       // Facet(*cell_it,k) is on surface
       r_c3t3_.set_surface_patch_index(*cell_it, k, r_c3t3_.surface_patch_index(neighbor_cell, neighb_k));
@@ -934,6 +925,7 @@ update_star_self(const Vertex_handle& vertex)
     {
       r_c3t3_.set_surface_patch_index(*cell_it, k, Surface_patch_index());
     }
+#endif
 
     // Set subdomain index
     set_cell_in_domain(*cell_it, cells_subdomain);

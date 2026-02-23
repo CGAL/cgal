@@ -312,9 +312,16 @@ public:
               << get_facet_surface_center(facet) << std::endl;
 #endif
 
-    CGAL_assertion (this->is_facet_on_surface(facet));
+    CGAL_precondition(this->is_facet_on_surface(facet));
+
+#ifndef CGAL_MESH_3_USE_C3T3_MAPS
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
+#else
+    const auto& [surface_index, center_index, center] = this->r_c3t3_.surface_info(facet);
+    this->set_last_vertex_index(center_index);
+    return center;
+#endif
   }
 
   Facet get_next_element_impl()
@@ -448,20 +455,6 @@ protected:
     f.first->set_facet_visited(f.second);
   }
 
-  /// Sets the facet `f` and its mirrored facet's surface centers to `p`.
-  void set_facet_surface_center(const Facet& f,
-                                const Bare_point& p,
-                                const Index& index) const
-  {
-    const Facet mirror = mirror_facet(f);
-
-    r_c3t3_.set_surface_center(f.first, f.second, p);
-    r_c3t3_.set_surface_center(mirror.first, mirror.second, p);
-
-    r_c3t3_.set_surface_center_index(f.first, f.second, index);
-    r_c3t3_.set_surface_center_index(mirror.first, mirror.second, index);
-  }
-
   /// Returns facet surface center of `f`.
   decltype(auto) get_facet_surface_center(const Facet& f) const
   {
@@ -476,9 +469,26 @@ protected:
 
   /// Sets `f` to surface facets, with index `index`.
   void set_facet_on_surface(const Facet& f,
-                            const Surface_patch_index& index)
+                            const Surface_patch_index& surface_index,
+                            const Index& center_index,
+                            const Bare_point& center)
   {
-    r_c3t3_.add_to_complex(f, index);
+    r_c3t3_.add_to_complex(f, surface_index);
+
+    const Facet mirror = mirror_facet(f);
+
+#ifndef CGAL_MESH_3_USE_C3T3_MAPS
+    r_c3t3_.set_surface_center(f.first, f.second, center);
+    r_c3t3_.set_surface_center(mirror.first, mirror.second, center);
+
+    r_c3t3_.set_surface_center_index(f.first, f.second, center_index);
+    r_c3t3_.set_surface_center_index(mirror.first, mirror.second, center_index);
+#else
+    // awkward: add it *after* add_to_complex() because otherwise the surface index is set up,
+    // and add_to_complex() will do nothing...
+    r_c3t3_.set_surface_info(f, {surface_index, center_index, center});
+    r_c3t3_.set_surface_info(mirror, {surface_index, center_index, center});
+#endif
   }
 
   /// Returns index of facet `f`.
@@ -622,11 +632,11 @@ protected:
   void treat_new_facet(Facet& facet);
 
   /**
-   * Computes simultaneously `is_facet_on_surface` and `facet_surface_center`.
-   * @param facet The input facet
-   * @return `true` if `facet` is on surface, `false` otherwise
+   * checks whether the facet is on the surface or not, and if it is, computes
+   * the surface patch index, the surface center, and the surface center index.
    */
-  void compute_facet_properties(const Facet& facet, Facet_properties& fp,
+  void compute_facet_properties(const Facet& facet,
+                                Facet_properties& fp,
                                 bool force_exact = false ) const;
 
 protected:
@@ -1195,8 +1205,7 @@ number_of_bad_elements_impl()
       //const Bare_point& surface_center = std::get<2>(*properties);
 
       // Facet is on surface: set facet properties
-      //set_facet_surface_center(facet, surface_center, surface_center_index);
-      //set_facet_on_surface(facet, surface_index);
+      // set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
 
       const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(this->r_tr_, facet);
       if ( is_facet_bad )
@@ -1375,11 +1384,9 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const auto& [surface_index, surface_center_index, surface_center] = *properties;
-
         // Facet is on surface: set facet properties
-        this->set_facet_surface_center(facet, surface_center, surface_center_index);
-        this->set_facet_on_surface(facet, surface_index);
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
+        this->set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
       }
       else
       {
@@ -1435,11 +1442,9 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const auto& [surface_index, surface_center_index, surface_center] = *properties;
-
         // Facet is on surface: set facet properties
-        this->set_facet_surface_center(facet, surface_center, surface_center_index);
-        this->set_facet_on_surface(facet, surface_index);
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
+        this->set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
       }
       else
       {
@@ -1601,11 +1606,9 @@ treat_new_facet(Facet& facet)
   compute_facet_properties(facet, properties);
   if ( properties )
   {
-    const auto& [surface_index, surface_center_index, surface_center] = *properties;
-
     // Facet is on surface: set facet properties
-    set_facet_surface_center(facet, surface_center, surface_center_index);
-    set_facet_on_surface(facet, surface_index);
+    const auto& [surface_index, surface_center_index, surface_center] = *properties;
+    set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
 
     // Insert facet into refinement queue if needed
     const Is_facet_bad is_facet_bad = r_criteria_(r_c3t3_, facet);

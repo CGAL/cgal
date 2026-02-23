@@ -1383,6 +1383,8 @@ private:
 
   class Cell_data_backup
   {
+    typedef std::array<std::size_t, 4> IndexMap;
+
   public:
     Cell_data_backup(const C3T3& c3t3,
                      const Cell_handle& c,
@@ -1395,28 +1397,27 @@ private:
       if(do_backup)
       {
         if (!c3t3.triangulation().is_infinite(c))
-          backup_finite_cell(c);
+          backup_finite_cell(c, c3t3);
         else
           backup_infinite_cell(c, c3t3);
       }
     }
 
   private:
-    void backup_finite_cell(const Cell_handle& /*c*/)
+    void backup_finite_cell(const Cell_handle& c,
+                            const C3T3& c3t3)
     {
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       if(c->is_cache_valid())
         sliver_value_ = c->sliver_value();
       else
         sliver_value_ = 0.;
 
+#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       subdomain_index_ = c->subdomain_index();
       for(std::size_t i = 0; i < 4; ++i)
       {
         const int ii = static_cast<int>(i);//avoid warnings
-        surface_index_table_[i] = c->surface_patch_index(ii);
-        facet_surface_center_[i] = c->get_facet_surface_center(ii);
-        surface_center_index_table_[i] = c->get_facet_surface_center_index(ii);
+        surface_prop_table_[i] = c3t3.surface_info(Facet(c, ii));
       }
       //note c->next_intrusive() and c->previous_intrusive()
       //are lost by 'backup' and 'restore',
@@ -1427,23 +1428,11 @@ private:
 #endif
     }
 
-    void backup_infinite_cell(const Cell_handle& /*c*/,
-                              const C3T3& /*c3t3*/)
+    void backup_infinite_cell(const Cell_handle& c,
+                              const C3T3& c3t3)
     {
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
-      for (int ii = 0; ii < 4; ++ii)
-      {
-        if (c3t3.triangulation().is_infinite(c->vertex(ii)))
-        {
-          surface_index_table_[0] = c->surface_patch_index(ii);
-          facet_surface_center_[0] = c->get_facet_surface_center(ii);
-          surface_center_index_table_[0] = c->get_facet_surface_center_index(ii);
-          break;
-        }
-      }
-#else
-      std::exit(1);
-#endif
+      int infinite_index = c->index(c3t3.triangulation().infinite_vertex());
+      surface_prop_table_[0] = c3t3.surface_info(Facet(c, infinite_index));
     }
 
   public:
@@ -1484,13 +1473,10 @@ private:
     }
 
   private:
-    typedef std::array<std::size_t, 4> IndexMap;
-
-    void restore(Cell_handle /*c*/,
-                 const IndexMap& /*index_map*/,//new_to_old_indices
-                 C3T3& /*c3t3*/)
+    void restore(Cell_handle c,
+                 const IndexMap& index_map,//new_to_old_indices
+                 C3T3& c3t3)
     {
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       if(sliver_value_ > 0.)
         c->set_sliver_value(sliver_value_);
 
@@ -1509,60 +1495,48 @@ private:
 
       for(int i = 0; i < 4; ++i)
       {
+        Facet f(c, i);
         std::size_t old_i = index_map.at(static_cast<std::size_t>(i));
-        Surface_patch_index index = surface_index_table_[old_i];
+        Surface_patch_index index = surface_prop_table_[old_i].surface_index_;
         //add_to_complex sets the index, and updates the facet counter
         if(!( Surface_patch_index() == index ))
-          c3t3.add_to_complex(Facet(c, i), index);
+          c3t3.add_to_complex(f, index);
         else
-          c3t3.remove_from_complex(Facet(c,i));
+          c3t3.remove_from_complex(f);
 
-        c->set_facet_surface_center(i, facet_surface_center_[old_i]);
-        const Facet mirror = c3t3.triangulation().mirror_facet(Facet(c, i));
-        mirror.first->set_facet_surface_center(mirror.second, facet_surface_center_[old_i]);
+        c3t3.set_surface_info(f, surface_prop_table_[old_i]);
+        const Facet mirror = c3t3.triangulation().mirror_facet(f);
+        c3t3.set_surface_info(mirror, surface_prop_table_[old_i]);
       }
-#else
-      std::exit(1);
-#endif
     }
 
-    void restore_infinite_cell(Cell_handle /*c*/,
-                               C3T3& /*c3t3*/)
+    void restore_infinite_cell(Cell_handle c,
+                               C3T3& c3t3)
     {
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       c3t3.remove_from_complex(c);//infinite
-      for (unsigned int i = 0; i < 4; ++i)
-      {
-        if (!c3t3.triangulation().is_infinite(Facet(c,i)))
-        {
-          Surface_patch_index index = surface_index_table_[0];
-          if (!( Surface_patch_index() == index ))
-            c3t3.add_to_complex(Facet(c, i), index);
-          else
-            c3t3.remove_from_complex(Facet(c, i));
 
-          c->set_facet_surface_center(i, facet_surface_center_[0]);
-          const Facet mirror = c3t3.triangulation().mirror_facet(Facet(c, i));
-          mirror.first->set_facet_surface_center(mirror.second, facet_surface_center_[0]);
-          return;
-        }
-      }
-#else
-      std::exit(1);
-#endif
+      const int i = c->index(c3t3.triangulation().infinite_vertex());
+      Facet f(c, i);
+
+      Surface_patch_index index = surface_prop_table_[0].surface_index_;
+      if (!( Surface_patch_index() == index ))
+        c3t3.add_to_complex(f, index);
+      else
+        c3t3.remove_from_complex(f);
+
+      c3t3.set_surface_info(f, surface_prop_table_[0]);
+      const Facet mirror = c3t3.triangulation().mirror_facet(f);
+      c3t3.set_surface_info(mirror, surface_prop_table_[0]);
     }
 
   private:
-    typedef typename Tr::Cell::Subdomain_index Subdomain_index;
-    typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
-    typedef typename Tr::Cell::Index Index;
+    typedef typename C3T3::Subdomain_index Subdomain_index;
+    typedef typename C3T3::Facet_prop Facet_prop;
 
     Cell_from_ids cell_ids_;
     FT sliver_value_;
     Subdomain_index subdomain_index_;
-    std::array<Surface_patch_index, 4> surface_index_table_;
-    std::array<Bare_point, 4> facet_surface_center_;
-    std::array<Index, 4> surface_center_index_table_;
+    std::array<Facet_prop, 4> surface_prop_table_;
   };
 
 private:
