@@ -300,7 +300,7 @@ public:
   }
 
   /// Gets the point to insert from the element to refine
-  Bare_point refinement_point_impl(const Facet& facet) const
+  decltype(auto) refinement_point_impl(const Facet& facet) const
   {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
@@ -844,7 +844,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Bare_point circumcenter_impl(const Facet& facet) const
+  decltype(auto) circumcenter_impl(const Facet& facet) const
   {
     return get_facet_surface_center(facet);
   }
