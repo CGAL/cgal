@@ -126,7 +126,7 @@ public:
      *
      *  \exception If the flags provided are incoherent (or do not define an HDVF), raises a `%std::invalid_argument`.
      */
-    Hdvf_core(const std::vector<std::vector<PSC_flag> >& flags, bool build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core(flags, build_reduction, hdvf_opt, dimension_restriction) {}
+    Hdvf(const std::vector<std::vector<PSC_flag> >& flags, bool build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(flags, build_reduction, hdvf_opt, dimension_restriction) {}
 
     /*
      * \brief Destructor. */
