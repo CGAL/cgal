@@ -93,10 +93,7 @@ public:
                           ): cone_number(k), cones_choice(cones_selected), rays(std::vector<Direction_2>(k))
 
     {
-        if (k<2) {
-            std::cout << "The number of cones must be larger than 1!" << std::endl;
-            CGAL_assertion(false);
-        }
+        CGAL_assertion_msg(k>1, "The number of cones must be larger than 1");
 
         /* Initialize a functor, specialization will happen here depending on the kernel type to
          compute the cone boundaries either exactly or inexactly */

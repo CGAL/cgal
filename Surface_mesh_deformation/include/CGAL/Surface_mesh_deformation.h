@@ -556,6 +556,7 @@ public:
     erase_control_vertex(vd); // also erase from being control
 
     typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
+    CGAL_assertion_msg(it != roi.end(), "inconsistency between is_roi_map, and roi vector");
     if(it != roi.end())
     {
       is_roi_map[id(vd)] = false;
@@ -564,8 +565,6 @@ public:
       need_preprocess_both();
       return true;
     }
-
-    CGAL_assertion(false); // inconsistency between is_roi_map, and roi vector!
     return false;
   }
 

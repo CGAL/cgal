@@ -737,7 +737,6 @@ homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT0;
 }
 
 template < class R >
@@ -895,7 +894,6 @@ Translation_repH3<R>::homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT0;
 }
 
 template < class R >

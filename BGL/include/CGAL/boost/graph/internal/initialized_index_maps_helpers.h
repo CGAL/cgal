@@ -80,13 +80,6 @@ bool is_index_map_valid(const CGAL::internal_np::face_index_t, FaceIndexProperty
   return is_index_map_valid(face_index_map, num_faces(g), faces(g));
 }
 
-template <typename PropertyTag, typename IndexPropertyMap, typename Graph>
-void initialize_index_map(const PropertyTag, IndexPropertyMap, const Graph&)
-{
-  // Unknown parameter; should never be here.
-  CGAL_assertion(false);
-}
-
 template <typename IndexPropertyMap,
           typename Graph,
           bool is_writable = CGAL::internal::Is_writable_property_map<IndexPropertyMap>::value>
@@ -120,12 +113,6 @@ struct Index_map_initializer
       put(face_index_map, fd, i++);
   }
 
-  template <typename PropertyTag>
-  void operator()(const PropertyTag, IndexPropertyMap, const Graph&)
-  {
-    // Unknown parameter; should never be here.
-    CGAL_assertion(false);
-  }
 };
 
 template <typename IndexPropertyMap, typename Graph>
