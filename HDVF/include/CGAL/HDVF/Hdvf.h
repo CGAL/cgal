@@ -115,6 +115,19 @@ public:
      */
     Hdvf(const Hdvf& hdvf) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
 
+    /** \brief Constructor from the PRIMARY/SECONDARY/CRITICAL labels.
+     *
+     * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
+     *
+     * \param labels Vector of PSC labels along each dimensions.
+     * \param build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
+     * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
+     *
+     *  \exception If the flags provided are incoherent (or do not define an HDVF), raises a `%std::invalid_argument`.
+     */
+    Hdvf_core(const std::vector<std::vector<PSC_flag> >& flags, bool build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core(flags, build_reduction, hdvf_opt, dimension_restriction) {}
+
     /*
      * \brief Destructor. */
     ~Hdvf() { }

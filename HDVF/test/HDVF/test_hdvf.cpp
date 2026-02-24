@@ -81,6 +81,15 @@ int main(int argc, char **argv) {
         assert(test_true);
     }
 
+    {
+        // Test copy constructor
+        HDVF_type hdvf2(hdvf);
+        // Compare
+        bool test_true(hdvf.compare(hdvf2));
+        std::cerr << "-- Test HDVF copy constructor: " << test_true << std::endl;
+        assert(test_true);
+    }
+
     // Test R
     std::cerr << "---- Test R operation" << std::endl;
     {

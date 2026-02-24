@@ -95,6 +95,9 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
 template<typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix>
 class Hdvf_core {
 public:
+    /*! \brief Type of the underlying chain complex. */
+    typedef ChainComplex Chain_complex;
+
     /*! \brief Type of coefficients used to compute homology. */
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
@@ -218,9 +221,56 @@ public:
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt), _dimension_restriction(hdvf._dimension_restriction), _min_dimension(hdvf._min_dimension), _max_dimension(hdvf._max_dimension) { }
 
+    /** \brief Constructor from the PRIMARY/SECONDARY/CRITICAL labels.
+     *
+     * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
+     *
+     * \param labels Vector of PSC labels along each dimensions.
+     * \param build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
+     * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
+     *
+     *  \exception If the flags provided are incoherent (or do not define an HDVF), raises a `%std::invalid_argument`.
+     */
+    Hdvf_core(const std::vector<std::vector<PSC_flag> >& flags, bool build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : _flag(flags), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
+        // Compute the number of cells of each flag in any dimension
+        for (int q=0; q<=_K.dimension(); ++q) {
+            for (PSC_flag flag : _flag) {
+                if (flag == PRIMARY) ++_nb_P.at(q);
+                else if (flag == SECONDARY) ++_nb_S.at(q);
+                else ++_nb_C.at(q);
+            }
+        }
+        // Check the combinatorial coherence of flags
+        if (!combinatorially_coherent()) {
+            std::cerr << "flags provided are not combinatorially coherent" << std::endl;
+            throw std::invalid_argument("flags provided are not combinatorially coherent");
+        }
+
+        // Build the reduction
+        if (build_reduction) {
+            std::cerr << "TODO" << std::endl;
+            throw std::invalid_argument("TODO");
+        }
+    }
+
     /*
      * \brief Destructor. */
     ~Hdvf_core() { }
+
+    /** \brief Check the "combinatorial" coherence of a HDVF \f$X(P,S,C)\f$.
+     *
+     * Checks if for any dimension, \f$|S_q| = |P_{q-1}|\f$.
+     */
+    bool combinatorially_coherent() {
+        bool res((_nb_S.at(0) == 0) && (_nb_P.at(_K.dimension()) == 0));
+        int q=1;
+        while (res && (q<=_K.dimension())) {
+            if (_nb_S.at(q) != _nb_P.at(q-1))
+                res = false;
+        }
+        return res;
+    }
 
     /** \brief Checks if the pair of cells \f$(\gamma, \gamma')\f$, of dimensions q / q+1, is valid for A.
      *
@@ -427,6 +477,44 @@ public:
      * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
      */
     const Column_matrix& matrix_dd (int q) const { return _DD_col.at(q); }
+
+    /**
+     \brief Gets a constant reference over the underlying chain complex.
+     */
+    const Chain_complex& complex () { return _K; }
+
+    /**
+     * \brief Writes the PSC flags of cells along each dimension.
+     *
+     * Writes \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
+     *
+     * If `dimension_restriction` is -1, writes the reduction in any dimensions. If `dimension_restriction` is positive, restricts output to `dimension_restriction`. If `dimension_restriction` is -2 (default value), uses the HDVF dimension restriction value.
+     *
+     * \param out Output stream (by default, writes the complex to `std::cout`).
+     * \param dimension_restriction If positive, restricts the output to a single dimension, if -1, outputs reductions in any dimensions, if -2 (default value) uses the HDVF dimension restriction value.
+     */
+    std::ostream& write_flags(std::ostream &out = std::cout, int dimension_restriction = -2) const {
+        if (dimension_restriction == -2)
+            dimension_restriction = _dimension_restriction;
+
+        int min_dim = (dimension_restriction==-1)?0:_min_dimension;
+        int max_dim = (dimension_restriction==-1)?_K.dimension():_max_dimension;
+        // Print PSC
+        out << "----- flags of cells:" << std::endl;
+        for (int q = min_dim; q <= max_dim; ++q) {
+            out << "--- dim " << q << std::endl;
+            for (size_t i = 0; i < _K.number_of_cells(q); ++i) {
+                const int flag(_flag.at(q).at(i)) ;
+                if (flag == PRIMARY)
+                    out << i << " -> P" << std::endl ;
+                else if (flag == SECONDARY)
+                    out << i << " -> S" << std::endl ;
+                else
+                    out << i << " -> C" << std::endl ;
+            }
+            out << std::endl;
+        }
+    }
 
     /**
      * \brief Writes the matrices of the reduction.
@@ -1298,21 +1386,6 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduct
 
     int min_dim = (dimension_restriction==-1)?0:_min_dimension;
     int max_dim = (dimension_restriction==-1)?_K.dimension():_max_dimension;
-    // Print PSC
-    out << "----- flags of cells:" << std::endl;
-    for (int q = min_dim; q <= max_dim; ++q) {
-        out << "--- dim " << q << std::endl;
-        for (size_t i = 0; i < _K.number_of_cells(q); ++i) {
-            const int flag(_flag.at(q).at(i)) ;
-            if (flag == PRIMARY)
-                out << i << " -> P" << std::endl ;
-            else if (flag == SECONDARY)
-                out << i << " -> S" << std::endl ;
-            else
-                out << i << " -> C" << std::endl ;
-        }
-        out << std::endl;
-    }
 
     // Print critical cells
     out << "----- critical cells:" << std::endl;
