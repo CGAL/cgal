@@ -514,6 +514,7 @@ public:
             }
             out << std::endl;
         }
+        return out;
     }
 
     /**

@@ -23,7 +23,8 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 int main(int argc, char **argv)
 {
 #if 1
-    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+//    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+    using Complex = HDVF::Abstract_simplicial_chain_complex<Coefficient_ring> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
     std::string filename ;
@@ -33,7 +34,8 @@ int main(int argc, char **argv)
 
     // Load cub object
     HDVF::Mesh_object_io<Traits> mesh ;
-    mesh.read_off(filename);
+//    mesh.read_off(filename);
+    mesh.read_simp(filename);
 
     mesh.print_infos();
 
@@ -49,15 +51,16 @@ int main(int argc, char **argv)
 //    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
 
     // Compute a perfect HDVF
-    hdvf.compute_perfect_hdvf();
-    //        hdvf.compute_rand_perfect_hdvf();
+//    hdvf.compute_perfect_hdvf();
+    hdvf.compute_rand_perfect_hdvf();
 
     // Output HDVF to console
+    hdvf.write_flags();
     hdvf.write_matrices();
     hdvf.write_reduction();
 
     // Output HDVF to vtk
-    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
+//    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
 
     // Save HDVF to .hdvf file
     hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
