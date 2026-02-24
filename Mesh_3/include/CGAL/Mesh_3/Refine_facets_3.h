@@ -43,12 +43,12 @@
 #include <CGAL/Object.h>
 
 #include <boost/format.hpp>
-#include <optional>
 #include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
-#include <sstream>
 #include <atomic>
+#include <optional>
+#include <sstream>
 
 namespace CGAL {
 
@@ -1093,7 +1093,7 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain_index        Subdomain_index;
-  typedef std::optional<Subdomain_index>    Subdomain;
+  typedef std::optional<Subdomain_index>      Subdomain;
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
   int count = 0, count_num_bad_surface_facets = 0;
@@ -1889,8 +1889,6 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
   return ( (facet == source_facet) || (other_side == source_facet) );
 }
 
-
-
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 void
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
@@ -1907,11 +1905,8 @@ after_insertion_handle_incident_facet(Facet& facet)
   treat_new_facet(facet);
 }
 
-
-}  // end namespace Mesh_3
-
-
-}  // end namespace CGAL
+} // namespace Mesh_3
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
