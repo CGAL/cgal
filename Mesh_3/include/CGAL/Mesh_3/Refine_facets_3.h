@@ -169,12 +169,12 @@ public:
 
 #else
 
-  Facet
+  const Facet&
   from_facet_to_refinement_queue_element(const Facet &facet,
                                          const Facet &mirror) const
   {
     // Returns canonical facet
-    return (facet < mirror) ? facet : mirror;
+    return (facet.first < mirror.first) ? facet : mirror;
   }
 
 public:
@@ -435,12 +435,11 @@ protected:
   };
   typedef typename std::optional<Facet_prop> Facet_properties;
 
-
   /// Returns canonical facet of facet
-  Facet canonical_facet(const Facet& facet) const
+  Facet canonical_facet(const Facet& f) const
   {
-    const Facet mirror = mirror_facet(facet);
-    return ( (facet < mirror)?facet:mirror );
+    Cell_handle n = f.first->neighbor(f.second);
+    return (f.first < n) ? f : Facet(n, n->index(f.first));
   }
 
   /// Returns true if `f` has already been visited.

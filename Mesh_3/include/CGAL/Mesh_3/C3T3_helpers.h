@@ -988,11 +988,7 @@ private:
     Facet canonical_facet(const Cell_handle& c, const int i) const
     {
       Cell_handle n = c->neighbor(i);
-      if(c < n){
-        return Facet(c,i);
-      }else{
-        return Facet(n,n->index(c));
-      }
+      return (c < n) ? Facet(c, i) : Facet(n, n->index(c));
     }
 
   private:
