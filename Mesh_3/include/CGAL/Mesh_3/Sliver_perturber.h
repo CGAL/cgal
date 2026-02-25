@@ -1059,9 +1059,6 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   return bad_vertices.empty();
 }
 
-
-#ifdef CGAL_FASTER_BUILD_QUEUE
-
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
 Sliver_perturber<C3T3,Md,Sc,V_>::
@@ -1121,40 +1118,6 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   return pqueue_size;
 }
-
-#else // not CGAL_FASTER_BUILD_QUEUE
-
-template <typename C3T3, typename Md, typename Sc, typename V_>
-int
-Sliver_perturber<C3T3,Md,Sc,V_>::
-build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
-{
-  CGAL_precondition(pqueue.empty());
-
-#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Real_timer timer;
-  timer.start();
-  std::cerr << "Build pqueue...";
-#endif
-
-  int pqueue_size = 0;
-
-  for ( typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-       vit != tr_.finite_vertices_end() ;
-       ++vit )
-  {
-    PVertex pv = make_pvertex(vit, sliver_bound, get_pvertex_id(vit));
-    pqueue_size += update_priority_queue(pv, pqueue);
-  }
-
-#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  std::cerr << "done (" << pqueue_size << " vertices inserted in "
-            << timer.time() << "s)\n";
-#endif
-
-  return pqueue_size;
-}
-#endif // not CGAL_FASTER_BUILD_QUEUE
 
 
 template <typename C3T3, typename Md, typename Sc, typename V_>
