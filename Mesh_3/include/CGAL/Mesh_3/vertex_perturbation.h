@@ -1383,14 +1383,7 @@ private:
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 
-        std::size_t nois;
-#ifdef CGAL_NEW_INCIDENT_SLIVERS
-        nois  = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
-#else
-        std::vector<Cell_handle> new_slivers =
-          helper.incident_slivers(moving_vertex, criterion, sliver_bound);
-        nois = new_slivers.size();
-#endif
+        std::size_t nois = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
 
         // If sliver number has decreased, we won
         if(nois < slivers.size() )

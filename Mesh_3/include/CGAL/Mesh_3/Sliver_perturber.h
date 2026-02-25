@@ -962,14 +962,9 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       CGAL_assertion(pv.is_perturbable());
 
       // Get pvertex slivers list
-# ifdef CGAL_NEW_INCIDENT_SLIVERS
       Cell_vector slivers;
-      helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound,
-                                 std::back_inserter(slivers));
-# else
-      Cell_vector slivers =
-        helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
-# endif
+      helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound,
+                               std::back_inserter(slivers));
 
       CGAL_assertion(slivers.size() == pv.sliver_nb());
 
@@ -1426,13 +1421,8 @@ void
 Sliver_perturber<C3T3,Md,Sc,V_>::
 update_pvertex(PVertex& pv, const FT& sliver_bound) const
 {
-#ifdef CGAL_NEW_INCIDENT_SLIVERS
   Cell_vector slivers;
-  helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound, std::back_inserter(slivers));
-#else
-  Cell_vector slivers =
-    helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
-#endif
+  helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound, std::back_inserter(slivers));
 
   pv.set_sliver_nb(static_cast<unsigned int>(slivers.size()));
   pv.set_min_value(helper_.min_sliver_value(slivers, sliver_criterion_));

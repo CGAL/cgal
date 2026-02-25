@@ -880,14 +880,6 @@ public:
                    const FT& sliver_bound,
                    OutputIterator out) const;
 
-
-  template <typename SliverCriterion, typename OutputIterator>
-  OutputIterator
-  new_incident_slivers(const Vertex_handle& v,
-                   const SliverCriterion& criterion,
-                   const FT& sliver_bound,
-                   OutputIterator out) const;
-
   /**
    * Returns the sliver (wrt `criterion` and `sliver_bound`) incident to `v`
    */
@@ -899,17 +891,6 @@ public:
   {
     Cell_vector slivers;
     incident_slivers(v, criterion, sliver_bound, std::back_inserter(slivers));
-    return slivers;
-  }
-
-  template <typename SliverCriterion>
-  Cell_vector
-  new_incident_slivers(const Vertex_handle& v,
-                   const SliverCriterion& criterion,
-                   const FT& sliver_bound) const
-  {
-    Cell_vector slivers;
-    new_incident_slivers(v, criterion, sliver_bound, std::back_inserter(slivers));
     return slivers;
   }
 
@@ -3606,7 +3587,6 @@ try_lock_and_get_incident_slivers(const Vertex_handle& v,
   return try_lock_and_get_incident_cells(v, slivers, i_s);
 }
 
-
 template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 OutputIterator
@@ -3615,28 +3595,6 @@ incident_slivers(const Vertex_handle& v,
                  const SliverCriterion& criterion,
                  const FT& sliver_bound,
                  OutputIterator out) const
-{
-  typedef SliverCriterion Sc;
-
-  std::vector<Cell_handle> incident_cells_;
-  tr_.incident_cells(v, std::back_inserter(incident_cells_));
-
-  std::remove_copy_if(incident_cells_.begin(),
-                      incident_cells_.end(),
-                      out,
-                      std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
-
-  return out;
-}
-
-template <typename C3T3, typename MD>
-template <typename SliverCriterion, typename OutputIterator>
-OutputIterator
-C3T3_helpers<C3T3,MD>::
-new_incident_slivers(const Vertex_handle& v,
-                     const SliverCriterion& criterion,
-                     const FT& sliver_bound,
-                     OutputIterator out) const
 {
   typedef SliverCriterion Sc;
   typedef Filter<OutputIterator,Cell_handle,Is_sliver<Sc> > F;
