@@ -505,7 +505,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     f.first->set_surface_patch_index(f.second, index);
 #endif
   }
@@ -537,7 +537,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     f.first->set_facet_surface_center(f.second, p);
 #endif
   }
@@ -569,7 +569,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     f.first->set_facet_surface_center_index(f.second, index);
 #endif
   }
@@ -659,7 +659,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     Surface_patch_index res_old = f.first->surface_patch_index(f.second);
 
 # ifdef CGAL_MESH_3_USE_C3T3_MAPS
@@ -713,7 +713,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     const auto res_old = f.first->get_facet_surface_center(f.second);
 
 # ifdef CGAL_MESH_3_USE_C3T3_MAPS
@@ -767,7 +767,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     const Index res_old = f.first->get_facet_surface_center_index(f.second);
 
 # ifdef CGAL_MESH_3_USE_C3T3_MAPS
@@ -1081,7 +1081,7 @@ public:
     }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     const bool res_old = f.first->is_facet_on_surface(f.second);
 
 # ifdef CGAL_MESH_3_USE_C3T3_MAPS

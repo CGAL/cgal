@@ -312,7 +312,7 @@ public:
     , sliver_cache_validity_(false)
 #endif
   {
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
       surface_center_table_[i]= rhs.surface_center_table_[i];
@@ -538,7 +538,7 @@ public:
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
 #endif
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
   /// Set surface index of `facet` to `index`
   void set_surface_patch_index(const int facet, const Surface_patch_index& index)
   {
@@ -670,7 +670,7 @@ private:
 
   //  Point_container _hidden;
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
+#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
   /// Stores surface_index for each facet of the cell
   std::array<Surface_patch_index, 4> surface_index_table_ = {};
   /// Stores surface center of each facet of the cell

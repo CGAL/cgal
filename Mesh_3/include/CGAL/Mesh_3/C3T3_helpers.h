@@ -1412,7 +1412,6 @@ private:
       else
         sliver_value_ = 0.;
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL
       subdomain_index_ = c->subdomain_index();
       for(std::size_t i = 0; i < 4; ++i)
       {
@@ -1423,9 +1422,6 @@ private:
       //are lost by 'backup' and 'restore',
       //because all cells are changing during the move
       //they are not used in update_mesh functions involving a Sliver_criterion
-#else
-      std::exit(1);
-#endif
     }
 
     void backup_infinite_cell(const Cell_handle& c,

@@ -901,7 +901,7 @@ update_star_self(const Vertex_handle& vertex)
 #ifdef CGAL_MESH_3_USE_C3T3_MAPS
     if (r_c3t3_.is_in_complex(mirror_f)) // @todo here and below is 2 map looks up which should only be one.
       r_c3t3_.set_surface_info(*cell_it, k, r_c3t3_.surface_info(mirror_f));
-#else // CGAL_MESH_3_DO_NOT_STORE_SURFACE_INFO_IN_CELL has to be defined
+#else // CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL has to be defined
     const Cell_handle& neighbor_cell = mirror_f.first;
     const int& neighb_k = mirror_f.second;
     const bool cond_old = neighbor_cell->is_facet_on_surface(neighb_k);
