@@ -1070,14 +1070,14 @@ public:
     {
       typename Surface_facet_info::const_accessor accessor;
       if (surface_facet_info_.find(accessor, f))
-        res_new = accessor->second.surface_index_ != Surface_patch_index();
+        res_new = !(accessor->second.surface_index_ == Surface_patch_index());
     }
     else
 # endif
     {
       auto it = surface_facet_info_.find(f);
       if (it != surface_facet_info_.end())
-        res_new = (it->second.surface_index_ != Surface_patch_index());
+        res_new = !(it->second.surface_index_ == Surface_patch_index());
     }
 #endif
 

@@ -1369,7 +1369,7 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
   {
     Facet f = *fit;
     Surface_patch_index pid = c3t3_.surface_patch_index(f);
-    if ( pid != Surface_patch_index() )
+    if ( !(pid == Surface_patch_index()) )
     {
       Vertex_handle v1 = f.first->vertex((f.second+1)%4);
       Vertex_handle v2 = f.first->vertex((f.second+2)%4);

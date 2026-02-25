@@ -2025,7 +2025,7 @@ private:
           ++fit )
     {
       Surface_patch_index pid = c3t3_.surface_patch_index(*fit);
-      const bool facet_in_complex = (pid != Surface_patch_index());
+      const bool facet_in_complex = !(pid == Surface_patch_index());
       if ( facet_in_complex )
         surface_facets.push_back(*fit);
 
@@ -2375,7 +2375,7 @@ private:
 
       // Update m_vertex_to_proj
       Surface_patch_index pid = m_c3t3.surface_patch_index(facet);
-      if ( pid != Surface_patch_index() ) // // is facet in complex
+      if ( !(pid == Surface_patch_index()) ) // // is facet in complex
       {
         // Iterate on vertices
         int k = facet.second;
@@ -2851,7 +2851,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
 
       // Update vertex_to_proj
       Surface_patch_index pid = c3t3_.surface_patch_index(*fit);
-      if ( pid != Surface_patch_index() ) // is facet in complex
+      if ( !(pid == Surface_patch_index()) ) // is facet in complex
       {
         // Iterate on vertices
         int k = fit->second;
@@ -3929,7 +3929,7 @@ get_surface_boundary(const Vertex_handle& moving_vertex,
   for ( ; fit != facets.end() ; ++fit )
   {
     const Surface_patch_index surface_index = c3t3_.surface_patch_index(*fit);
-    if ( surface_index != Surface_patch_index() ) // is facet in complex
+    if ( !(surface_index == Surface_patch_index()) ) // is facet in complex
     {
       const int k = fit->second;
       Vertex_handle v1 = fit->first->vertex((k+1)&3);

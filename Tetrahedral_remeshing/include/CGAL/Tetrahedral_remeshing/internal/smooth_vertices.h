@@ -833,7 +833,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       continue;
     const Surface_patch_index si = incident_surface_patches[0];
 
-    CGAL_assertion(si != Surface_patch_index());
+    CGAL_assertion(!(si == Surface_patch_index()));
     CGAL_expensive_assertion_code(auto siv = surface_patch_index(v, c3t3));
     CGAL_expensive_assertion(si == siv);
 

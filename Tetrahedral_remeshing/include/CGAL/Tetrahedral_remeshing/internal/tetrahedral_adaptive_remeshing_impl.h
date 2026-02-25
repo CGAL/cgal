@@ -555,7 +555,7 @@ private:
     for (Cell_handle cit : tr().finite_cell_handles())
     {
       const Subdomain_index cid = cit->subdomain_index();
-      if (cid > max_index && cid != Subdomain_index())
+      if (cid > max_index && !(cid == Subdomain_index()))
         max_index = cid;
     }
     return max_index;

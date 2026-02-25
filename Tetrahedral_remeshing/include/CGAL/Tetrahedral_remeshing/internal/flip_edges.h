@@ -1478,7 +1478,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     return NOT_FLIPPABLE;
 #endif
     Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh4));
-    CGAL_assertion(patch != Surface_patch_index());
+    CGAL_assertion(!(patch == Surface_patch_index()));
     CGAL_assertion(c3t3.is_in_complex(ch0, ch0->index(vh4)));
     c3t3.remove_from_complex(ch0, ch0->index(vh4));
     CGAL_assertion(c3t3.is_in_complex(ch3, ch3->index(vh4)));
