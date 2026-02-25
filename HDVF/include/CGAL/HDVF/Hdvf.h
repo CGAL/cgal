@@ -119,7 +119,7 @@ public:
      *
      * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
      *
-     * \param labels Vector of PSC labels along each dimensions.
+     * \param flags Vector of PSC labels along each dimensions.
      * \param build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
@@ -361,6 +361,15 @@ public:
     void R(size_t pi, size_t sigma, int q);
 
     /**
+     * \brief R operation (cancels a A operation).
+     *
+     * A pair of cells \f$(\pi, \sigma)\f$ of respective dimension q and q+1, with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, is valid for R if \f$\langle h(\pi), \sigma \rangle\f$ is invertible. After the R operation, \f$\pi\f$ and \f$\sigma\f$ become `CRITICAL`. The R method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param p Argument `Cell_pair` containing \f$\pi\f$, \f$\sigma\f$ and the dimension of the pair.
+     */
+    void R(const Cell_pair& p) { R(p.sigma, p.tau, p.dim); };
+
+    /**
      * \brief M operation.
      *
      * A pair of cells \f$(\pi, \gamma)\f$ of dimension q, with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, is valid for M if \f$\langle f(\pi), \gamma \rangle\f$ is invertible. After the M operation, \f$\pi\f$ becomes `CRITICAL` and \f$\gamma\f$ become `PRIMARY`. The M method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
@@ -376,6 +385,15 @@ public:
      * \exception Incorrect_hdvf_options Operations can be computed only under HDVF_FULL options, raises a `%std::runtime_error` exception otherwise.
      */
     void M(size_t pi, size_t gamma, int q);
+
+    /**
+     * \brief M operation.
+     *
+     * A pair of cells \f$(\pi, \gamma)\f$ of dimension q, with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, is valid for M if \f$\langle f(\pi), \gamma \rangle\f$ is invertible. After the M operation, \f$\pi\f$ becomes `CRITICAL` and \f$\gamma\f$ become `PRIMARY`. The M method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param p Argument `Cell_pair` containing \f$\pi\f$, \f$\gamma\f$ and the dimension of the pair.
+     */
+    void M(const Cell_pair& p) { M(p.sigma, p.tau, p.dim); }
 
     /**
      * \brief W operation.
@@ -395,6 +413,15 @@ public:
     void W(size_t sigma, size_t gamma, int q);
 
     /**
+     * \brief W operation.
+     *
+     * A pair of cells \f$(\sigma, \gamma)\f$ of dimension q, with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL`, is valid for W if \f$\langle g(\gamma), \sigma \rangle\f$ is invertible. After the W operation, \f$\sigma\f$ becomes `CRITICAL` and \f$\gamma\f$ become `SECONDARY`. The W method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param p Argument `Cell_pair` containing \f$\sigma\f$, \f$\gamma\f$ and the dimension of the pair.
+     */
+    void W(const Cell_pair& p) { W(p.sigma, p.tau, p.dim); };
+
+    /**
      * \brief MW operation.
      *
      * A pair of cells \f$(\pi, \sigma)\f$ of dimension q, with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, is valid for MW if \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ is invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ is invertible. After the MW operation, \f$\pi\f$ becomes `SECONDARY` and \f$\sigma\f$ become `PRIMARY`. The MW method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
@@ -410,6 +437,15 @@ public:
      * \exception Incorrect_hdvf_options Operations can be computed only under HDVF_FULL options, raises a `%std::runtime_error` exception otherwise.
      */
     void MW(size_t pi, size_t sigma, int q);
+
+    /**
+     * \brief MW operation.
+     *
+     * A pair of cells \f$(\pi, \sigma)\f$ of dimension q, with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, is valid for MW if \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ is invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ is invertible. After the MW operation, \f$\pi\f$ becomes `SECONDARY` and \f$\sigma\f$ become `PRIMARY`. The MW method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param p Argument `Cell_pair` containing \f$\pi\f$, \f$\sigma\f$ and the dimension of the pair.
+     */
+    void MW(const Cell_pair& p) { MW(p.sigma, p.tau, p.dim); };
 
     /** \brief Compute \f$z_q\f$ function on a cell of dimension `q`.
      *

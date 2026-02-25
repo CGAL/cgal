@@ -5,7 +5,7 @@
 #include <CGAL/Zp.h>
 #include <CGAL/Z2.h>
 #include <CGAL/HDVF/Hdvf_traits_3.h>
-#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Surface_mesh_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
 #include <CGAL/HDVF/Hdvf.h>
@@ -20,11 +20,12 @@ typedef CGAL::Zp<5, char, true> Coefficient_ring;
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
+typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+
 int main(int argc, char **argv)
 {
 #if 1
-//    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
-    using Complex = HDVF::Abstract_simplicial_chain_complex<Coefficient_ring> ;
+    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
     std::string filename ;
@@ -32,10 +33,10 @@ int main(int argc, char **argv)
     else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
     else filename = argv[1];
 
-    // Load cub object
-    HDVF::Mesh_object_io<Traits> mesh ;
-//    mesh.read_off(filename);
-    mesh.read_simp(filename);
+    // Load Surface_mesh object and create Surface_mesh_io
+    Surface_mesh sm;
+    CGAL::IO::read_polygon_mesh(filename, sm);
+    HDVF::Surface_mesh_io<Surface_mesh,Traits> mesh(sm) ;
 
     mesh.print_infos();
 
@@ -44,23 +45,22 @@ int main(int argc, char **argv)
 
     std::cout << complex;
 
-//    // Build empty HDVF
+    //    // Build empty HDVF
     // Without dimension restriction
-    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    //    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
     // With computation restricted to dimension 1
-//    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
+    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
 
     // Compute a perfect HDVF
-//    hdvf.compute_perfect_hdvf();
-    hdvf.compute_rand_perfect_hdvf();
+    hdvf.compute_perfect_hdvf();
+//    hdvf.compute_rand_perfect_hdvf();
 
     // Output HDVF to console
-    hdvf.write_flags();
-    hdvf.write_matrices();
-    hdvf.write_reduction();
+    hdvf.write_flags(std::cout, -1);
+    hdvf.write_reduction(std::cout, -1);
 
     // Output HDVF to vtk
-//    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
 
     // Save HDVF to .hdvf file
     hdvf.write_hdvf_reduction("tmp/test.hdvf") ;

@@ -225,7 +225,7 @@ public:
      *
      * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
      *
-     * \param labels Vector of PSC labels along each dimensions.
+     * \param flags Vector of PSC labels along each dimensions.
      * \param build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
@@ -352,6 +352,15 @@ public:
      * \param q Dimension of the pair
      */
     void A(size_t gamma1, size_t gamma2, int q);
+
+    /**
+     * \brief A operation: pairs critical cells.
+     *
+     * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes `PRIMARY`, \f$\gamma_2\f$ becomes `SECONDARY`. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param p Argument `Cell_pair` containing \f$\gamma_1\f$, \f$\gamma_2\f$ and the dimension of the pair.
+     */
+    void A(const Cell_pair& p) { A(p.sigma, p.tau, p.dim); }
 
     /**
      * \brief Computes a perfect HDVF.
