@@ -42,7 +42,7 @@ and a sizing field which may be a uniform or variable field.
 \cgalModels{MeshCellCriteria_3}
 
 \sa `MeshCriteria_3`
-\sa `CGAL::Mesh_criteria_3<Tr>`
+\sa `CGAL::Mesh_criteria_3`
 \sa `CGAL::make_mesh_3()`
 */
 template <typename C3T3

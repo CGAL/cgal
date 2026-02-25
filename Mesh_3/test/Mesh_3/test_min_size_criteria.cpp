@@ -41,7 +41,7 @@ public:
     using FT             = typename Tr::Geom_traits::FT;
     using Bare_point     = typename Tr::Bare_point;
 
-    using Mesh_criteria  = CGAL::Mesh_criteria_3<Tr>;
+    using Mesh_criteria  = CGAL::Mesh_criteria_3<C3t3>;
     using Facet_criteria = typename Mesh_criteria::Facet_criteria;
     using Cell_criteria  = typename Mesh_criteria::Cell_criteria;
 

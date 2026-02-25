@@ -145,17 +145,17 @@ and `C3T3::Triangulation` its nested triangulation type.
 
 \code{.cpp}
 
-// Create a Mesh_criteria_3<Tr> object with all cell and facet parameters set
-Mesh_criteria_3<Tr> criteria (parameters::facet_angle(30).
-                              parameters::facet_size(1).
-                              parameters::facet_distance(0.1).
-                              parameters::cell_radius_edge_ratio(2).
-                              parameters::cell_size(1.5));
+// Create a Mesh_criteria_3 object with all cell and facet parameters set
+Mesh_criteria_3<C3t3> criteria (parameters::facet_angle(30).
+                                parameters::facet_size(1).
+                                parameters::facet_distance(0.1).
+                                parameters::cell_radius_edge_ratio(2).
+                                parameters::cell_size(1.5));
 
-// Create a Mesh_criteria_3<Tr> object with size ignored (note that the order changed)
-Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio(2).
-                              parameters::facet_angle(30).
-                              parameters::facet_distance(0.1));
+// Create a Mesh_criteria_3<C3t3> object with size ignored (note that the order changed)
+Mesh_criteria_3<C3t3> criteria (parameters::cell_radius_edge_ratio(2).
+                                parameters::facet_angle(30).
+                                parameters::facet_distance(0.1));
 
 \endcode
 

@@ -38,7 +38,7 @@ struct Tester
   typedef typename CGAL::Mesh_triangulation_3<Mesh_traits>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
   typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
   typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
 
@@ -220,8 +220,8 @@ struct Tester
 
     Cell_criteria cell_criteria(radius_edge,radius);
 
-    Is_bad b1 = cell_criteria(tr, cell1);
-    Is_bad b2 = cell_criteria(tr, cell2);
+    Is_bad b1 = cell_criteria(c3t3_, cell1);
+    Is_bad b2 = cell_criteria(c3t3_, cell2);
 
     std::cerr << "\t[Radius bound: " << radius
               << " - Radius-edge bound: " << radius_edge
@@ -267,8 +267,8 @@ struct Tester
 
       Facet_criteria criteria(angle, radius, distance);
 
-      Is_bad b1 = criteria(tr, f1);
-      Is_bad b2 = criteria(tr, f2);
+      Is_bad b1 = criteria(c3t3_, f1);
+      Is_bad b2 = criteria(c3t3_, f2);
 
       std::cerr << "\t[Angle bound: " << angle
                 << " - Radius bound: " << radius

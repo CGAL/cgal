@@ -96,7 +96,7 @@ provides bounds for the size and approximation criteria.
 \cgalModels{MeshEdgeCriteria_3}
 
 \sa `MeshCriteriaWithFeatures_3`
-\sa `CGAL::Mesh_criteria_3<Tr>`
+\sa `CGAL::Mesh_criteria_3`
 \sa `MeshDomainField_3`
 */
 template < typename C3T3 >

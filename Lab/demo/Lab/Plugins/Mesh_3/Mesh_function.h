@@ -118,7 +118,7 @@ private:
   typedef C3t3::Vertex_handle                       Vertex_handle;
 
   typedef C3t3::Triangulation                       Tr;
-  typedef CGAL::Mesh_criteria_3<Tr>                 Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3>                 Mesh_criteria;
   typedef Mesh_criteria::Edge_criteria              Edge_criteria;
   typedef Mesh_criteria::Facet_criteria             Facet_criteria;
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;

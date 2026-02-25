@@ -70,7 +70,7 @@ typedef CGAL::Mesh_criteria_3<LTr> LMesh_criteria;
 typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 
 struct Counter {

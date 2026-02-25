@@ -45,7 +45,7 @@ void test()
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Mesh Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;

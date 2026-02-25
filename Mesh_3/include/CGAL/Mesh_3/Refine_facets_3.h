@@ -1146,7 +1146,7 @@ number_of_bad_elements_impl()
             const Facet f1(c, i);
             if (this->is_facet_on_surface(f1))
             {
-              std::cerr << "*** f1 is " << (this->r_criteria_(this->r_tr_, f1) ? "bad" : "good") << std::endl;
+              std::cerr << "*** f1 is " << (this->r_criteria_(this->r_c3t3_, f1) ? "bad" : "good") << std::endl;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
               c->mark = i;
@@ -1164,7 +1164,7 @@ number_of_bad_elements_impl()
             const Facet f2(c, i);
             if (this->is_facet_on_surface(f2))
             {
-              std::cerr << "*** f2 is " << (this->r_criteria_(this->r_tr_, f2) ? "bad" : "good") << std::endl;
+              std::cerr << "*** f2 is " << (this->r_criteria_(this->r_c3t3_, f2) ? "bad" : "good") << std::endl;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
               mc->mark = i;
@@ -1207,7 +1207,7 @@ number_of_bad_elements_impl()
       // Facet is on surface: set facet properties
       // set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
 
-      const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(this->r_tr_, facet);
+      const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(this->r_c3t3_, facet);
       if ( is_facet_bad )
       {
         ++count;

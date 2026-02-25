@@ -35,7 +35,7 @@ public:
       Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-    typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+    typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
 
