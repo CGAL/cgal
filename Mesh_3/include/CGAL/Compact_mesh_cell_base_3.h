@@ -161,7 +161,7 @@ private:
   Erase_counter_type                m_erase_counter;
 #endif
 
-char bits_;
+  char bits_;
 };
 
 

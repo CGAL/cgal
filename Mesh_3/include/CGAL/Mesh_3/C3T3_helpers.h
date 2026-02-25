@@ -680,7 +680,7 @@ public:
   // -----------------------------------
   // Public interface
   // -----------------------------------
-  typedef std::optional<Vertex_handle>              Update_mesh;
+  typedef std::optional<Vertex_handle>                Update_mesh;
 
   using Base::try_lock_point;
   using Base::try_lock_vertex;
@@ -2122,7 +2122,7 @@ private:
 
   template <typename CellForwardIterator>
   void reset_sliver_cache(CellForwardIterator cells_begin,
-                            CellForwardIterator cells_end) const
+                          CellForwardIterator cells_end) const
   {
     while(cells_begin != cells_end) {
       (*cells_begin)->reset_cache_validity();
