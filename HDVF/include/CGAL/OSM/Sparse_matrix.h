@@ -37,6 +37,48 @@ class Sparse_chain;
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
+The class `Full_lu` implements
+
+ \tparam Sparse_matrix Type of the argument Sparse_matrix.
+ */
+template <typename SparseMatrix>
+class Full_lu {
+public:
+    /** \brief Type of the argument Sparse_matrix. */
+    typedef SparseMatrix Sparse_matrix;
+    /** \brief Type of underlying coefficient ring. */
+    typedef Sparse_matrix::Coefficient_ring Coefficient_ring;
+
+protected:
+    /* \brief Type of row matrices used internally. */
+    using Row_matrix = OSM::Sparse_matrix<Coefficient_ring, ROW>;
+    // Inner representation of the decomposition
+    Row_matrix _P, _Q, _L, _U;
+    // Storage format of initial matrix
+    int _storage_format;
+    // Size of square matrices
+    size_t _n;
+
+private:
+    std::pair<size_t, size_t> choose_pivot(const Row_matrix& U, size_t k) const;
+
+public:
+    /** \brief Constructor from a Sparse_matrix.
+     *
+     * \param A Sparse_matrix to decompose.
+     *
+     * \exception Invalid_matrix If the matrix `A`is not square, raises a `%std::invalid_argument`.
+     */
+    Full_lu(const Sparse_matrix& A);
+
+    /** \brief Performs a full LU decomposition over an `IntegralDomainWithoutDivision` coefficient ring. */
+    bool lu() ;
+};
+
+
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+
  The class `Sparse_matrix` implements the concept `SparseMatrix`, that is, sparse matrices optimized for topological computations. It provides standard linear algebra operators and fast iterators and block operations (set, get and nullify) which are required to implement efficiently HDVFs.
 
  The implementation is based on mapped sparse matrices. Hence matrices of the `Sparse_matrix` class are either column of row major (the `StorageFormat` parameter determines this storage format). A column-major (resp. row-major) `Sparse_matrix` is a vector of `Sparse_chain` which encode columns (res. rows). Moreover, in order to efficiently iterate over non empty columns (resp. rows) the `Bitboard` data structure implements the concept `SparseMatrix::NonZeroChainIndices`. A bitboard is basically a bucket of bits recording the indices of non empty chains. However, this data structure has been designed in order to efficiently remove or add indices, as well as  provide efficient iterators to visit non empty chains.
@@ -201,6 +243,20 @@ public:
         }
     }
 
+    /** \brief Sets an identity matrix.
+     *
+     * \param nrows Number of rows of the matrix.
+     * \param ncols Number of columns of the matrix.
+     */
+    void eye (size_t nrows, size_t  ncols) {
+        *this = Sparse_matrix(nrows, ncols);
+        size_t nmin((nrows< ncols)?nrows:ncols);
+        Sparse_matrix res(nrows, ncols);
+        for (int i=0; i<nmin; ++i)
+            set_coefficient(i, i, 1);
+        return res;
+    }
+
     /**
      * \brief Assignment.
      *
@@ -251,6 +307,9 @@ public:
     {
         return ((_size.first == 0) || (_size.second == 0));
     }
+
+    /** \brief Returns the storage format of the matrix. */
+    int storage_format() const { return StorageFormat; }
 
     /**
      * \defgroup MatrixMatrixComparison Compares two matrices.
@@ -1182,15 +1241,14 @@ public:
      * \param matrix Reference on the matrix to modify.
      * \param index The index to remove.
      *
-     * \return The modified matrix representing the result.
+     * \return A reference over the modified matrix.
      */
     template <typename _CT, int _CTF>
     friend Sparse_matrix<_CT, _CTF>& remove_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
 
 protected:
     // Protected version of remove_row
-    Sparse_matrix& remove_row(size_t index)
-    {
+    Sparse_matrix& remove_row(size_t index) {
         std::vector<size_t> tmp_id{index};
         if (StorageFormat == OSM::ROW) {
             (*this) /= tmp_id;
@@ -1218,10 +1276,58 @@ public:
      * \param matrix Reference on the matrix to modify.
      * \param index The index to remove.
      *
-     * \return The modified matrix representing the result.
+     * \return A reference over the modified matrix.
      */
     template <typename _CT, int _CTF>
     friend Sparse_matrix<_CT, _CTF>& remove_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
+
+protected:
+    Sparse_matrix& swap_rows(size_t i, size_t j) {
+        Sparse_chain<Coefficient_ring,ROW> ri(get_row(*this, i)), rj(get_row(*this, j));
+        set_row(*this, i, rj);
+        set_row(*this, j, ri);
+        return *this;
+    }
+
+public:
+    /** \relates Sparse_matrix
+     *
+     * \brief Swaps rows in a matrix.
+     *
+     * Swaps rows at indices `i` and `j` whatever the `StorageFormat` of the matrix. For row matrices, the operation runs in constant time, while it entails a traversal of the matrix for column matrices.
+     *
+     * \param matrix Reference on the matrix to modify.
+     * \param i Index of the first row.
+     * \param j Index of the second row.
+     *
+     * \return A reference over the modified matrix.
+     */
+    template <typename _CT, int _CTF>
+    friend Sparse_matrix<_CT, _CTF>& swap_rows(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
+
+protected:
+    Sparse_matrix& swap_columns(size_t i, size_t j) {
+        Sparse_chain<Coefficient_ring, COLUMN> ci(get_column(*this, i)), cj(get_column(*this, j));
+        set_column(*this, i, cj);
+        set_column(*this, j, ci);
+        return *this;
+    }
+
+public:
+    /** \relates Sparse_matrix
+     *
+     * \brief Swaps columns in a matrix.
+     *
+     * Swaps columns at indices `i` and `j` whatever the `StorageFormat` of the matrix. For column matrices, the operation runs in constant time, while it entails a traversal of the matrix for row matrices.
+     *
+     * \param matrix Reference on the matrix to modify.
+     * \param i Index of the first column.
+     * \param j Index of the second column.
+     *
+     * \return A reference over the modified matrix.
+     */
+    template <typename _CT, int _CTF>
+    friend Sparse_matrix<_CT, _CTF>& swap_columns(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
 
 protected:
     // Protected version of remove_coefficient
@@ -1299,7 +1405,7 @@ public:
      *
      * \return A new matrix where the `StorageFormat` has been swapped between COLUMN and ROW and data chains have been transposed.
      */
-    Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
+    Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() const {
         Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transposed(this->_size.second, this->_size.first);
 
         for (size_t index : this->_chainsStates) {
@@ -1841,15 +1947,23 @@ inline Sparse_matrix<_CT, _CTF>& remove_column(Sparse_matrix<_CT, _CTF>& matrix,
 }
 
 template <typename _CT, int _CTF>
-inline Sparse_matrix<_CT, _CTF>& remove_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
-{
+inline Sparse_matrix<_CT, _CTF>& remove_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index) {
     return matrix.remove_row(index);
 }
 
 template <typename _CT, int _CTF>
-inline Sparse_matrix<_CT, _CTF>& remove_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
-{
+inline Sparse_matrix<_CT, _CTF>& remove_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j) {
     return matrix.remove_coefficient(i, j);
+}
+
+template <typename _CT, int _CTF>
+inline Sparse_matrix<_CT, _CTF>& swap_rows(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j) {
+    return matrix.swap_rows(i,j);
+}
+
+template <typename _CT, int _CTF>
+inline Sparse_matrix<_CT, _CTF>& swap_columns(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j) {
+    return matrix.swap_columns(i,j);
 }
 
 template <typename _CT>
@@ -2086,6 +2200,44 @@ template <typename _CT>
 bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other)
 {
     return false;
+}
+
+template <typename SparseMatrix>
+Full_lu<SparseMatrix>::Full_lu(const Sparse_matrix& A) {
+    _storage_format = A.storage_format();
+    // Checks that A is square
+    size_t nrows(A.dimensions().first), ncols(A.dimensions().second);
+    if (nrows != ncols) {
+        std::cerr << "Full_lu: matrix must be square" << std::endl;
+        throw std::invalid_argument("Full_lu: matrix must be square");
+    }
+    _n = nrows;
+    // Init of protected data members
+    _P.eye(_n, _n);
+    _Q.eye(_n, _n);
+    _L.eye(_n, _n);
+    // Algorithm is performed by row (over A^t if A is COLUMN major)
+    if (_storage_format == ROW)
+        _U = Row_matrix(A);
+    else
+        _U = Row_matrix(A.transpose());
+}
+
+template <typename SparseMatrix>
+std::pair<size_t, size_t> Full_lu<SparseMatrix>::choose_pivot(const typename Full_lu<SparseMatrix>::Row_matrix& U, size_t k) const {
+    return std::pair<size_t, size_t>(k,k);
+}
+
+template <typename SparseMatrix>
+bool Full_lu<SparseMatrix>::lu() {
+    // Gaussian elimination
+    for(int k=0; k<_n-1; ++k) {
+        // Get pivot
+        std::pair<size_t, size_t> pivot(choose_pivot(_U,k));
+        size_t i(pivot.first), j(pivot.second);
+        // Update _U accordingly
+
+    }
 }
 
 } /* end namespace OSM */

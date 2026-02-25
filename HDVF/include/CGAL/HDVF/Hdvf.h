@@ -1688,7 +1688,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         // F_q
 
-        this->_F_row.at(q) += (F11 * xi_inv) * tmp1 ;
+        this->_F_row.at(q) -= (F11 * xi_inv) * tmp1 ;
         OSM::set_column(this->_F_row.at(q), sigma, F11 * (-xi_inv)) ;
 
         // G_q+1 // note: G_q+1 is not be modified if the Hdvf is perfect

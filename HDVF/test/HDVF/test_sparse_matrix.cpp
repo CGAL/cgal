@@ -12,7 +12,6 @@ typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
 typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
-
 int main(int argc, char **argv)
 {
     std::cerr << "-- Test Sparse_matrices read/write" << std::endl;
@@ -665,6 +664,29 @@ int main(int argc, char **argv)
     //        cout << "col : " << *it << endl ;
     //    }
     //
+
+    // Test Full_LU
+
+    typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> SM_col;
+    SM_col A(5, 5);
+    CGAL::OSM::set_coefficient(A, 0, 0, -1);
+    CGAL::OSM::set_coefficient(A, 1, 0, 1);
+    CGAL::OSM::set_coefficient(A, 1, 1, -1);
+    CGAL::OSM::set_coefficient(A, 2, 1, 1);
+    CGAL::OSM::set_coefficient(A, 2, 2, -1);
+    CGAL::OSM::set_coefficient(A, 2, 4, -1);
+    CGAL::OSM::set_coefficient(A, 3, 3, 1);
+    CGAL::OSM::set_coefficient(A, 3, 4, 1);
+    CGAL::OSM::set_coefficient(A, 4, 2, 1);
+
+    std::cout << A << std::endl;
+
+    CGAL::OSM::swap_rows(A, 0, 1);
+    CGAL::OSM::swap_columns(A, 0, 1);
+
+    CGAL::OSM::Full_lu<SM_col> lu(A);
+    lu.lu();
+
     return 0;
 }
 

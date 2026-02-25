@@ -635,7 +635,7 @@ public:
      *
      * \return A new chain where the `StorageFormat` is changed.
      */
-    Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
+    Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() const {
         Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> chain;
 
         chain._upperBound = this->_upperBound;
