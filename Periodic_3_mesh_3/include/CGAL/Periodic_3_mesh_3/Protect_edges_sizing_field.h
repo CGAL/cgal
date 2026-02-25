@@ -553,9 +553,6 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , nonlinear_growth_of_balls(false)
   , vertex_handle_to_full_space_position()
 {
-#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
-  set_nonlinear_growth_of_balls();
-#endif
 }
 
 

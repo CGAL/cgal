@@ -538,9 +538,6 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , stop_ptr_(stop_ptr)
 #endif
 {
-#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
-  set_nonlinear_growth_of_balls();
-#endif
 }
 
 
