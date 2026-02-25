@@ -69,7 +69,7 @@ minimum_dihedral_angle(
   min_quotient = (CGAL::min)(min_quotient,
                              sp(v02,v02) / (a_012 * a_023));
   min_quotient = (CGAL::min)(min_quotient,
-                             (v03*v03) / (a_013 * a_023));
+                             sp(v03,v03) / (a_013 * a_023));
   min_quotient = (CGAL::min)(min_quotient,
                              sp(v12,v12) / (a_012 * a_123));
   min_quotient = (CGAL::min)(min_quotient,
