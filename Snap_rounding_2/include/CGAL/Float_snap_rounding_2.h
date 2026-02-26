@@ -475,43 +475,18 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
   std::cout << "Solved intersections" << std::endl;
   std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
-  compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
-
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Change format to range of points and indexes" << std::endl;
-#endif
-  std::set<Point_2> unique_point_set;
-  std::map<Point_2, int> point_to_index;
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
+  compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
 
-  // Transform range of the segments in the range of points and polyline of indexes
-  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
-  {
-    const Point_2& p1 = it->source();
-    const Point_2& p2 = it->target();
-
-    if (unique_point_set.find(p1) == unique_point_set.end()) {
-      unique_point_set.insert(p1);
-      pts.push_back(p1);
-      point_to_index[p1] = pts.size() - 1;
-    }
-    if (unique_point_set.find(p2) == unique_point_set.end()) {
-      unique_point_set.insert(p2);
-      pts.push_back(p2);
-      point_to_index[p2] = pts.size() - 1;
-    }
-  }
-
-  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
-  {
-    std::size_t index1 = point_to_index[it->source()];
-    std::size_t index2 = point_to_index[it->target()];
-    if(Less_xy_2()(it->source(), it->target()))
-      polylines.push_back({index1, index2});
-    else
-      polylines.push_back({index2, index1});
-  }
+  std::vector< std::vector< std::size_t> > polylines_bis;
+  for(auto &pl: polylines)
+    for(std::size_t i=0; i<pl.size()-1; ++i)
+      polylines_bis.emplace_back(std::vector< std::size_t>({pl[i], pl[i+1]}));
+  std::sort(polylines_bis.begin(), polylines_bis.begin(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0])?a[1]<b[1]:a[0]<b[0]; });
+  auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
+  polylines_bis.erase(new_end, polylines_bis.end());
+  std::swap(polylines, polylines_bis);
 
   // Main algorithm
   internal::double_snap_rounding_2_disjoint<Concurrency_tag, Traits>(pts, polylines, traits);
@@ -608,44 +583,18 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
   std::cout << "Solved intersections" << std::endl;
   std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
-  compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
-
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Change format to range of points and indexes" << std::endl;
-#endif
-  std::set<Point_2, Less_xy_2> unique_point_set(less_xy_2);
-  std::map<Point_2, std::size_t> point_to_index;
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
+  compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
 
-  // Transform range of the segments in the range of points and polyline of indexes
-  for(SegmentRangeIterator it=segs.begin(); it!=segs.end(); ++it)
-  {
-    const Point_2& p1 = it->source();
-    const Point_2& p2 = it->target();
-
-    if (unique_point_set.find(p1) == unique_point_set.end()) {
-      unique_point_set.insert(p1);
-      pts.push_back(p1);
-      point_to_index[p1] = pts.size() - 1;
-    }
-    if (unique_point_set.find(p2) == unique_point_set.end()) {
-      unique_point_set.insert(p2);
-      pts.push_back(p2);
-      point_to_index[p2] = pts.size() - 1;
-    }
-  }
-
-  for(SegmentRangeIterator it=segs.begin(); it!=segs.end(); ++it)
-  {
-    std::size_t index1 = point_to_index[it->source()];
-    std::size_t index2 = point_to_index[it->target()];
-    if(less_xy_2(it->source(), it->target()))
-      polylines.push_back({index1, index2});
-    else
-      polylines.push_back({index2, index1});
-  }
-
+  std::vector< std::vector< std::size_t> > polylines_bis;
+  for(auto &pl: polylines)
+    for(std::size_t i=0; i<pl.size()-1; ++i)
+      polylines_bis.emplace_back(std::vector< std::size_t>({pl[i], pl[i+1]}));
+  std::sort(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0])?a[1]<b[1]:a[0]<b[0]; });
+  auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
+  polylines_bis.erase(new_end, polylines_bis.end());
+  std::swap(polylines, polylines_bis);
 
   // Main algorithm
   internal::double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
