@@ -255,7 +255,7 @@ The first template parameter of the triangulation class
 `Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `TriangulationTraits_3`. It must define the types of the geometric objects
-(points, segments, triangles and tetrahedra) forming the triangulation together
+(points, segments, triangles, and tetrahedra) forming the triangulation together
 with a few geometric predicates on these objects: orientation in space,
 orientation in case of coplanar points, order of collinear points.
 

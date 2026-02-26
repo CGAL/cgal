@@ -23,6 +23,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
 #include <CGAL/STL_Extension/internal/Has_features.h>
+
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
