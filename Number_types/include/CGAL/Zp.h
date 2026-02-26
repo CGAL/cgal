@@ -60,6 +60,11 @@ public:
         return *this;
     }
 
+/** \brief Comparison operator. */
+    bool operator< (const Zp& a) {
+        return (_i < a._i);
+    }
+
     /** \brief Unary operator+ */
     friend Zp operator+ (const Zp& a)
     {
