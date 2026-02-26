@@ -965,7 +965,7 @@ public:
 
     for (Facet f :this->facets_in_complex())
     {
-          for (int i = 1; i < 4; ++i)
+      for (int i = 1; i < 4; ++i)
       {
         Vertex_handle vi = f.first->vertex((f.second + i) % 4);
         vi->set_meshing_info(vi->meshing_info() + 1);

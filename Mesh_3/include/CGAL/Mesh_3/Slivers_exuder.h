@@ -18,9 +18,9 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
@@ -36,11 +36,10 @@
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
-
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-
 #include <CGAL/number_type_config.h>
 #include <CGAL/tags.h>
+
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 

@@ -32,7 +32,6 @@
 namespace CGAL {
 
 namespace Mesh_3 {
-
 namespace details {
 
   template<typename K>
@@ -46,8 +45,6 @@ namespace details {
   }
 
 } // end namespace details
-
-
 
 // Aspect_ratio Criterion class
 template <typename C3T3, typename Visitor_>

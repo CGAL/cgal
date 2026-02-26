@@ -79,6 +79,7 @@ public:
                                         CGAL::parameters::no_perturb());
 
     const Tr& tr = c3t3.triangulation();
+
     typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     typename GT::Compute_squared_radius_3 sq_radius = tr.geom_traits().compute_squared_radius_3_object();
 
@@ -105,7 +106,7 @@ public:
       max_sq_cell_radius = (std::max)(max_sq_cell_radius, sqr);
     }
 
-    const std::size_t nbv = c3t3.triangulation().number_of_vertices();
+    const std::size_t nbv = tr.number_of_vertices();
     std::cout << "C3t3 initial = " << nbv << std::endl;
 
     //new criteria with really small facet_size and cell_size
@@ -123,7 +124,7 @@ public:
                         CGAL::parameters::no_perturb(),
                         CGAL::parameters::no_exude());
 
-    const std::size_t nbv2 = c3t3.triangulation().number_of_vertices();
+    const std::size_t nbv2 = tr.number_of_vertices();
     std::cout << "C3t3 after refinement = " << nbv2 << std::endl;
 
     assert(nbv == nbv2);

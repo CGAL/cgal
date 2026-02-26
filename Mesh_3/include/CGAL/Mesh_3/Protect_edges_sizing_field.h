@@ -800,13 +800,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
     std::cerr << "Nearest power vertex of (" << p << ") is "
-              << &*nearest_vh << " (" << c3t3_.triangulation().point(nearest_vh) << ") "
+              << &*nearest_vh << " (" << tr.point(nearest_vh) << ") "
               << "at distance: " << sq_d << std::endl;
 #endif
 
     // if sq_d < nearest_vh's weight
     while ( ! is_special(nearest_vh) &&
-            cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
+            cwsr(tr.point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       CGAL_assertion( use_minimal_size() || sq_d > 0);
 
@@ -830,7 +830,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     }
 
     if( is_special(nearest_vh) &&
-        cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
+        cwsr(tr.point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       w = minimal_weight_;
       insert_a_special_ball = true;
@@ -856,7 +856,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
       for(int i=0, d=tr.dimension(); i<=d; ++i)
       {
         const Vertex_handle v = cit->vertex(i);
-        if(c3t3_.triangulation().is_infinite(v))
+        if(tr.is_infinite(v))
           continue;
         if(!vertices_in_conflict_zone_set.insert(v).second)
           continue;
@@ -866,7 +866,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
         if(use_minimal_size() && sq_d < minimal_weight()) {
           insert_a_special_ball = true;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-          nearest_point = c3t3_.triangulation().point(v);
+          nearest_point = tr.point(v);
 #endif
           min_sq_d = minimal_weight();
           if(! is_special(v))
@@ -880,7 +880,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
           if(sq_d < min_sq_d)
           {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-            nearest_point = c3t3_.triangulation().point(v);
+            nearest_point = tr.point(v);
 #endif
             min_sq_d = sq_d;
           }
@@ -951,7 +951,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-        nearest_point = c3t3_.triangulation().point(it);
+        nearest_point = tr.point(it);
 #endif
       }
     }

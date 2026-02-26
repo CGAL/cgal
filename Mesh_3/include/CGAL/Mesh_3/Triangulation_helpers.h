@@ -393,7 +393,7 @@ inside_protecting_balls(const Tr& tr,
 
   if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
   {
-    typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     const Point& nvwp = tr.point(nv);
     // 'true' if the distance between 'p' and 'nv' is smaller or equal than the weight of 'nv'
     return (cwsr(nvwp , - tr.min_squared_distance(p, cp(nvwp))) != CGAL::LARGER);
@@ -528,7 +528,6 @@ Triangulation_helpers<Tr>::
 well_oriented(const Tr& tr,
               const Cell_vector& cells_tos) const
 {
-  typedef typename Tr::Geom_traits GT;
   typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
   typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
@@ -574,7 +573,6 @@ well_oriented(const Tr& tr,
               const Cell_vector& cells_tos,
               const Point_getter& pg) const
 {
-  typedef typename Tr::Geom_traits GT;
   typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
   typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
@@ -602,10 +600,7 @@ well_oriented(const Tr& tr,
   return true;
 }
 
-
-
-} // end namespace Mesh_3
-
-} //namespace CGAL
+} // namespace Mesh_3
+} // namespace CGAL
 
 #endif // CGAL_MESH_3_TRIANGULATION_HELPERS_H

@@ -1602,7 +1602,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
   std::cerr << "locate returns: " << &*ch << " lt: " << lt << " lilj: " << li << " " << lj << std::endl;
   for(int i=0; i<4; ++i)
-    std::cerr << " -> " << c3t3_.triangulation().point(ch, i) << std::endl;
+    std::cerr << " -> " << tr.point(ch, i) << std::endl;
 #endif
 
   if(lt == Tr::VERTEX)
@@ -1627,12 +1627,12 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       // Note that incident_cells = finite_incident_cells for P3DT3
       std::vector<Cell_handle> finite_incident_cells;
       finite_incident_cells.reserve(64);
-      c3t3_.triangulation().incident_cells(v, std::back_inserter(finite_incident_cells));
+      tr.incident_cells(v, std::back_inserter(finite_incident_cells));
 
       Tr_helpers tr_helpers;
       const FT nearest_sq_dist = tr_helpers.template get_sq_distance_to_closest_vertex
                                    <CGAL_NTS internal::Has_member_visited<typename Dt::Vertex> >(
-                                     c3t3_.triangulation(), v, finite_incident_cells);
+                                     tr, v, finite_incident_cells);
 
       CGAL_assertion(nearest_sq_dist > 0.);
 
@@ -1641,9 +1641,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       Vector_3 rnd_direction(1., 0., 0.); // arbitrary direction
 
       typename Gt::Construct_translated_point_3 translate =
-        c3t3_.triangulation().geom_traits().construct_translated_point_3_object();
+        tr.geom_traits().construct_translated_point_3_object();
       typename Gt::Construct_point_3 cp =
-        c3t3_.triangulation().geom_traits().construct_point_3_object();
+        tr.geom_traits().construct_point_3_object();
 
       // small perturbation
       close_pt = cwp(translate(cp(close_pt), 1e-5 * CGAL::sqrt(nearest_sq_dist) * rnd_direction));
@@ -1678,7 +1678,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
   std::cerr << "Nearest power vertex of (" << p << ") is "
-            << &*nearest_vh << " (" << c3t3_.triangulation().point(nearest_vh) << ") "
+            << &*nearest_vh << " (" << tr.point(nearest_vh) << ") "
             << "at distance: " << sq_d << std::endl;
 
   Index nearest_vh_index = c3t3_.index(nearest_vh);
@@ -1689,7 +1689,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
   // This will never happen for a dummy point
   while(! is_special(nearest_vh) &&
-        cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER)
+        cwsr(tr.point(nearest_vh), - sq_d) == CGAL::SMALLER)
   {
     CGAL_assertion(minimal_size_ > 0 || sq_d > 0);
 
@@ -1713,7 +1713,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   }
 
   if(is_special(nearest_vh) &&
-     cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER)
+     cwsr(tr.point(nearest_vh), - sq_d) == CGAL::SMALLER)
   {
     w = minimal_weight_;
     insert_a_special_ball = true;
@@ -1794,7 +1794,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     std::cerr << "smart_insert_point: weight " << w
               << " reduced to " << min_sq_distance
               << "\n (near existing point: "
-              << c3t3_.triangulation().point(nearest_vertex) << ")\n";
+              << tr.point(nearest_vertex) << ")\n";
 
     Index nearest_vertex_index = c3t3_.index(nearest_vertex);
     i = std::get_if<int>(&nearest_vertex_index);
@@ -1865,8 +1865,8 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #endif
     }
 
-    CGAL_expensive_postcondition(c3t3_.triangulation().tds().is_valid());
-    CGAL_expensive_postcondition(c3t3_.triangulation().is_valid());
+    CGAL_expensive_postcondition(tr.tds().is_valid());
+    CGAL_expensive_postcondition(tr.is_valid());
     CGAL_expensive_postcondition(c3t3_.is_valid());
   }
 #endif
