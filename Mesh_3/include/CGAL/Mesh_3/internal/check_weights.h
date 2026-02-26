@@ -35,7 +35,7 @@ bool has_non_protecting_weights(const Triangulation& tr,
 {
   const bool with_features = ::CGAL::internal::Has_features<MeshDomain>::value;
 
-  typedef typename Triangulation::FT                FT;
+  typedef typename Triangulation::Geom_traits::FT   FT;
   typedef typename Triangulation::Weighted_point    Weighted_point;
 
   typename Triangulation::Geom_traits::Compare_weighted_squared_radius_3 cwsr =
