@@ -36,6 +36,7 @@ public:
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
       Concurrency_tag>::type;
     using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
+    using Th = CGAL::Mesh_3::Triangulation_helpers<Tr>;
 
     using GT             = typename Tr::Geom_traits;
     using FT             = typename Tr::Geom_traits::FT;
@@ -91,7 +92,7 @@ public:
       const Bare_point p1 = cp(tr.point(f.first, (f.second + 1) & 3));
       const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
 
-      const FT sqr = tr.min_squared_distance(p1, ball_center);
+      const FT sqr = Th().min_squared_distance(tr, p1, ball_center);
       max_sq_facet_radius = (std::max)(max_sq_facet_radius, sqr);
     }
 

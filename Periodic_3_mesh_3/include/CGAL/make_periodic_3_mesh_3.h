@@ -233,11 +233,10 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
  * \tparam C3T3 is required to be a model of
  * the concept `MeshComplex_3InTriangulation_3`. This is the return type.
  * The type `C3T3` is in particular required to provide a nested type
- * `C3T3::Triangulation` for the 3D triangulation
- * embedding the mesh. The vertex and cell base classes of the
- * triangulation `C3T3::Triangulation` are required to be models of the
- * concepts `MeshVertexBase_3` and `MeshCellBase_3`
- * respectively.
+ * `C3T3::Triangulation` for the 3D triangulation embedding the mesh.
+ * This type must be a `CGAL::Periodic_3_mesh_triangulation_3` whose
+ * vertex and cell base classes are be models of the
+ * concepts `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
  *
  * \tparam MD is required to be a model of
  * the concept `MeshDomain_3`, or of the refined concept

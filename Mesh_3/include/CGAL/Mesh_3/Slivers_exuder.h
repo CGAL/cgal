@@ -354,6 +354,8 @@ private: // Types
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_>     Self;
 
   typedef typename C3T3::Triangulation                       Tr;
+  typedef Triangulation_helpers<Tr>                          Th;
+
   typedef typename Tr::Weighted_point                        Weighted_point;
   typedef typename Tr::Bare_point                            Bare_point;
   typedef typename Tr::Cell_handle                           Cell_handle;
@@ -1105,7 +1107,7 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     const Cell_handle opposite_cell = opposite_facet.first;
     const int index_in_opposite = opposite_cell->index(c);
     FT power_distance_to_power_sphere =
-      tr_.compute_power_distance_to_power_sphere(opposite_facet.first, index_in_opposite);
+      Th().compute_power_distance_to_power_sphere(tr_, opposite_facet.first, index_in_opposite);
     pre_star.insert(f, power_distance_to_power_sphere);
   }
 }
@@ -1181,7 +1183,7 @@ expand_prestar(const Cell_handle& cell_to_add,
       if ( ! tr_.is_infinite(current_mirror_cell) )
       {
         new_power_distance_to_power_sphere =
-          tr_.compute_power_distance_to_power_sphere(current_mirror_cell, pumped_vertex);
+          Th().compute_power_distance_to_power_sphere(tr_, current_mirror_cell, pumped_vertex);
 
         pre_star.insert(current_facet, new_power_distance_to_power_sphere);
 
@@ -1223,7 +1225,7 @@ expand_prestar(const Cell_handle& cell_to_add,
           // We can't use 'new_power_distance_to_power_sphere' because 'current_mirror_cell'
           // is infinite. So we compute the power distance to 'cell_to_add' instead.
           CGAL_assertion(!tr_.is_infinite(cell_to_add));
-          new_weight += tr_.compute_power_distance_to_power_sphere(cell_to_add, pumped_vertex);
+          new_weight += Th().compute_power_distance_to_power_sphere(tr_, cell_to_add, pumped_vertex);
           curr_f = current_facet;
         }
 

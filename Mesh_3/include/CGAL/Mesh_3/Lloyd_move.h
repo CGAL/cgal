@@ -20,8 +20,10 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/Time_stamper.h>
 #include <CGAL/convex_hull_2.h>
@@ -44,6 +46,7 @@ template <typename C3T3,
 class Lloyd_move
 {
   typedef typename C3T3::Triangulation                        Tr;
+  typedef Triangulation_helpers<Tr>                           Th;
   typedef typename Tr::Geom_traits                            GT;
 
   typedef typename Tr::Vertex_handle                          Vertex_handle;
@@ -290,7 +293,7 @@ private:
       // calling a function 'get_closest_point(p, q)' that simply returns q
       // for a non-periodic triangulation, and checks all possible offsets for
       // periodic triangulations
-      points.push_back(tr.get_closest_point(cp(position), c3t3.surface_center(cell, i)));
+      points.push_back(Th().get_closest_point(tr, cp(position), c3t3.surface_center(cell, i)));
     }
 
     return points;

@@ -3298,7 +3298,7 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
                           const Weighted_point& new_position) const
 {
   // Change vertex position
-  tr_.set_point(old_vertex, move, new_position);
+  Th().set_point(tr_, old_vertex, move, new_position);
   CGAL_expensive_postcondition(tr_.is_valid());
   return old_vertex;
 }
@@ -3408,7 +3408,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
       if(ref_facet.first == Cell_handle())
         ref_facet = f;
 
-      const Triangle ct = tr_.get_incident_triangle(f, v);
+      const Triangle ct = Th().get_incident_triangle(tr_, f, v);
       triangles.push_back(ct);
     }
   }
@@ -3430,7 +3430,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // The surface center of a facet might have an offset in periodic triangulations
   const Bare_point& ref_facet_scp = c3t3_.surface_center(ref_facet.first, ref_facet.second);
-  const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);
+  const Bare_point& ref_point = Th().get_closest_point(tr_, cp(position), ref_facet_scp);
   return std::make_pair(plane, ref_point);
 }
 

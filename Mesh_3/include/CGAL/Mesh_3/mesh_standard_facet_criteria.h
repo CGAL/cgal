@@ -21,16 +21,16 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/number_utils.h> // for to_double
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+
+#include <CGAL/number_utils.h> // for to_double
+
 #include <cmath>
 
-
 namespace CGAL {
-
 namespace Mesh_3 {
 namespace details {
 
@@ -163,6 +163,8 @@ class Uniform_curvature_size_criterion :
 {
 private:
   typedef typename C3T3::Triangulation Tr;
+  typedef Triangulation_helpers<Tr> Th;
+
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
 
@@ -210,7 +212,7 @@ protected:
     const Bare_point c = weighted_circumcenter(p1,p2,p3);
     const Bare_point& center = c3t3.surface_center(f.first, f.second);
 
-    const FT sq_dist = tr.min_squared_distance(c, center);
+    const FT sq_dist = Th().min_squared_distance(tr, c, center);
 
     if ( sq_dist > B_ )
     {
@@ -236,6 +238,8 @@ class Variable_curvature_size_criterion :
 {
 private:
   typedef typename C3T3::Triangulation Tr;
+  typedef Triangulation_helpers<Tr> Th;
+
   typedef typename Tr::Facet            Facet;
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
@@ -285,7 +289,7 @@ protected:
     const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
     const Index& index = c3t3.surface_center_index(f.first, f.second);
 
-    const FT sq_dist = tr.min_squared_distance(c, ball_center);
+    const FT sq_dist = Th().min_squared_distance(tr, c, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
 
     CGAL_assertion(sq_bound > FT(0));
@@ -321,6 +325,8 @@ class Variable_size_criterion :
 {
 private:
   typedef typename C3T3::Triangulation Tr;
+  typedef Triangulation_helpers<Tr> Th;
+
   typedef typename Tr::Facet            Facet;
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
@@ -366,7 +372,7 @@ protected:
     const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
     const Index& index = c3t3.surface_center_index(f.first, f.second);
 
-    const FT sq_radius = tr.min_squared_distance(p1, ball_center);
+    const FT sq_radius = Th().min_squared_distance(tr, p1, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
     CGAL_assertion(sq_bound > FT(0));
 
@@ -396,6 +402,8 @@ class Uniform_size_criterion :
 {
 private:
   typedef typename C3T3::Triangulation Tr;
+  typedef Triangulation_helpers<Tr> Th;
+
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
 
@@ -448,7 +456,7 @@ protected:
     const Bare_point p1 = cp(wp1);
     const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
 
-    const FT sq_radius = tr.min_squared_distance(p1, ball_center);
+    const FT sq_radius = Th().min_squared_distance(tr, p1, ball_center);
 
     if (!is_lower_bound() && sq_radius > B_ )
     {

@@ -71,6 +71,8 @@ public:
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
 
 protected:
+  typedef Triangulation_helpers<Tr>                              Th;
+
   typedef typename Tr::Geom_traits                               GT;
   typedef typename GT::FT                                        FT;
 
@@ -139,7 +141,7 @@ private:
     const Bare_point& fcenter = this->r_c3t3_.surface_center(f.first, f.second);
     const Weighted_point& wp = this->r_tr_.point(v);
 
-    return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - cw(wp);
+    return Th().min_squared_distance(this->r_tr_, fcenter, cp(wp)) - cw(wp);
   }
 
   std::pair<Facet, FT>

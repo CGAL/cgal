@@ -45,85 +45,7 @@ public:
   typedef type                                                Type;
 };  // end struct Mesh_geom_traits_generator
 
-} // end namespace details
-
-template<class Gt_, class Tds_>
-class Mesh_3_regular_triangulation_3_wrapper
-  : public Regular_triangulation_3<Gt_, Tds_>
-{
-public:
-  typedef Regular_triangulation_3<Gt_, Tds_>                  Base;
-
-  typedef typename Base::Geom_traits                          Geom_traits;
-
-  typedef typename Geom_traits::FT                            FT;
-  typedef typename Base::Bare_point                           Bare_point;
-  typedef typename Base::Weighted_point                       Weighted_point;
-  typedef typename Base::Triangle                             Triangle;
-
-  typedef typename Base::Vertex_handle                        Vertex_handle;
-  typedef typename Base::Facet                                Facet;
-  typedef typename Base::Cell_handle                          Cell_handle;
-
-  typedef typename Geom_traits::Vector_3                      Vector;
-
-  using Base::geom_traits;
-  using Base::point;
-  using Base::triangle;
-
-  static std::string io_signature() { return Get_io_signature<Base>()(); }
-
-  // The undocumented, straightforward functions below are required for Mesh_3
-  // because of Periodic_3_mesh_3: they are functions for which both triangulations
-  // have fundamentally different implementations (usually, Periodic_3_mesh_3
-  // does not know the offset of a point and must brute-force check for all
-  // possibilities). To enable Periodic_3_mesh_3 to use Mesh_3's files,
-  // each mesh triangulation implements its own version.
-
-  const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
-  {
-    return q;
-  }
-
-  Triangle get_incident_triangle(const Facet& f, const Vertex_handle) const
-  {
-    return triangle(f);
-  }
-
-  void set_point(const Vertex_handle v,
-                 const Vector& /*move*/,
-                 const Weighted_point& new_position)
-  {
-    v->set_point(new_position);
-  }
-
-  FT compute_power_distance_to_power_sphere(const Cell_handle c,
-                                            const Vertex_handle v) const
-  {
-    typedef typename Geom_traits::Compute_power_distance_to_power_sphere_3 Critical_radius;
-
-    Critical_radius critical_radius =
-        geom_traits().compute_power_distance_to_power_sphere_3_object();
-
-    return critical_radius(point(c, 0), point(c, 1), point(c, 2), point(c, 3), point(v));
-  }
-
-  // \pre c->neighbor(i) is finite
-  FT compute_power_distance_to_power_sphere(const Cell_handle c, const int i) const
-  {
-    Cell_handle nc = c->neighbor(i);
-    CGAL_precondition(!this->is_infinite(nc));
-    Vertex_handle v = nc->vertex(nc->index(c));
-
-    return compute_power_distance_to_power_sphere(c, v);
-  }
-
-  typename Geom_traits::FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
-  {
-    return geom_traits().compute_squared_distance_3_object()(p, q);
-  }
-};
-
+} // namespace details
 
 /*!
 \ingroup PkgMesh3MeshClasses
@@ -188,8 +110,7 @@ private:
       typename Default::Get<ConcurrencyTag, Sequential_tag>::type;
   struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
                                                      Concurrency_tag> {};
-  using Triangulation =
-      Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
+  using Triangulation = Regular_triangulation_3<Geom_traits, Tds>;
 
 public:
 #ifndef DOXYGEN_RUNNING
@@ -201,8 +122,8 @@ public:
 
   /*!
   The triangulation type to be used for the 3D triangulation embedding the mesh.
-  This type is a wrapper around the type `CGAL::Regular_triangulation_3`, whose vertex
-  and cell base classes are respectively `VertexBase` and `CellBase`.
+  This type is a `Regular_triangulation_3` type whose vertex and cell base classes are respectively
+  `VertexBase` and `CellBase`.
   */
   typedef unspecified_type type;
 

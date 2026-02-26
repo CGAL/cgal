@@ -25,6 +25,7 @@
 
 #include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -34,18 +35,32 @@
 #include <vector>
 #include <type_traits>
 
-
 namespace CGAL {
-
 namespace Mesh_3 {
+namespace internal {
 
-template<typename Tr>
+// Trait to detect if Tr has a nested type Periodic_tag
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_periodic_tag, Periodic_tag, false)
+
+template <typename Tr>
+struct Get_periodic_tag
+{
+  typedef typename boost::mpl::if_c<Has_periodic_tag<Tr>::value,
+                                    typename Tr::Periodic_tag,
+                                    CGAL::Tag_false>::type type;
+};
+
+} // namespace internal
+
+template <typename Tr,
+          typename IsPeriodicTriangulation = typename internal::Get_periodic_tag<Tr>::type>
 class Triangulation_helpers
 {
   typedef typename Tr::Geom_traits              GT;
 
   typedef typename GT::FT                       FT;
   typedef typename GT::Vector_3                 Vector_3;
+  typedef typename GT::Triangle_3               Triangle_3;
 
   // If `Tr` is not a triangulation that has defined Bare_point,
   // use Point_3 as defined in the traits class.
@@ -55,6 +70,8 @@ class Triangulation_helpers
     boost::mpl::identity<typename GT::Point_3>
   >::type                                       Bare_point;
 
+  typedef typename GT::Weighted_point_3         Weighted_point_3;
+
   // 'Point' is either a bare point or a weighted point, depending on the triangulation.
   // Since 'Triangulation_helpers' can be templated by an unweighted triangulation,
   // this is one of the rare cases where we use 'Point'.
@@ -62,6 +79,7 @@ class Triangulation_helpers
 
   typedef typename Tr::Vertex                   Vertex;
   typedef typename Tr::Vertex_handle            Vertex_handle;
+  typedef typename Tr::Facet                    Facet;
   typedef typename Tr::Cell                     Cell;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Tr::Cell_iterator            Cell_iterator;
@@ -153,6 +171,66 @@ public:
                                        const Cell_vector& incident_cells,
                                        typename std::enable_if_t<!Tag::value>* = nullptr) const;
 
+  // The undocumented, straightforward functions below are required for Mesh_3
+  // because of Periodic_3_mesh_3: they are functions for which both triangulations
+  // have fundamentally different implementations (usually, Periodic_3_mesh_3
+  // does not know the offset of a point and must brute-force check for all
+  // possibilities). To enable Periodic_3_mesh_3 to use Mesh_3's files,
+  // each mesh triangulation implements its own version.
+
+  const Bare_point& get_closest_point(const Tr& /*tr*/,
+                                      const Bare_point& /*p*/,
+                                      const Bare_point& q) const
+  {
+    return q;
+  }
+
+  Triangle_3 get_incident_triangle(const Tr& tr,
+                                   const Facet& f,
+                                   const Vertex_handle) const
+  {
+    return tr.triangle(f);
+  }
+
+  void set_point(const Tr& /*tr*/,
+                 const Vertex_handle v,
+                 const Vector_3& /*move*/,
+                 const Weighted_point_3& new_position) const
+  {
+    v->set_point(new_position);
+  }
+
+  FT compute_power_distance_to_power_sphere(const Tr& tr,
+                                            const Cell_handle c,
+                                            const Vertex_handle v) const
+  {
+    typedef typename GT::Compute_power_distance_to_power_sphere_3 Critical_radius;
+
+    Critical_radius critical_radius =
+      tr.geom_traits().compute_power_distance_to_power_sphere_3_object();
+
+    return critical_radius(tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3), tr.point(v));
+  }
+
+  // \pre c->neighbor(i) is finite
+  FT compute_power_distance_to_power_sphere(const Tr& tr,
+                                            const Cell_handle c,
+                                            const int i) const
+  {
+    Cell_handle nc = c->neighbor(i);
+    CGAL_precondition(!tr.is_infinite(nc));
+    Vertex_handle v = nc->vertex(nc->index(c));
+
+    return compute_power_distance_to_power_sphere(tr, c, v);
+  }
+
+  typename GT::FT min_squared_distance(const Tr& tr,
+                                       const Bare_point& p,
+                                       const Bare_point& q) const
+  {
+    return tr.geom_traits().compute_squared_distance_3_object()(p, q);
+  }
+
 private:
   /**
    * Returns `true` if `v` is well_oriented on each cell of `cell_tos`.
@@ -166,9 +244,9 @@ private:
                      const Point_getter& pg) const;
 };
 
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 no_topological_change(Tr& tr,
                       const Vertex_handle v0,
                       const Vector_3& move,
@@ -196,12 +274,12 @@ no_topological_change(Tr& tr,
   const Point fp = tr.point(v0);
 
   // move the point
-  tr.set_point(v0, move, p);
+  set_point(tr, v0, move, p);
 
   if(!well_oriented(tr, cells_tos))
   {
     // Reset (restore) v0
-    tr.set_point(v0, cov(move), fp);
+    set_point(tr, v0, cov(move), fp);
     return false;
   }
 
@@ -247,14 +325,14 @@ no_topological_change(Tr& tr,
   }
 
   // Reset (restore) v0
-  tr.set_point(v0, cov(move), fp);
+  set_point(tr, v0, cov(move), fp);
 
   return np;
 }
 
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 no_topological_change__without_set_point(
   const Tr& tr,
   const Vertex_handle v0,
@@ -345,9 +423,9 @@ no_topological_change__without_set_point(
 }
 
 
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 no_topological_change(Tr& tr,
                       const Vertex_handle v0,
                       const Vector_3& move,
@@ -359,9 +437,9 @@ no_topological_change(Tr& tr,
   return no_topological_change(tr, v0, move, p, cells_tos);
 }
 
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 no_topological_change__without_set_point(
                       const Tr& tr,
                       const Vertex_handle v0,
@@ -374,9 +452,9 @@ no_topological_change__without_set_point(
 }
 
 
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 inside_protecting_balls(const Tr& tr,
                         const Vertex_handle v,
                         const Bare_point& p) const
@@ -396,7 +474,7 @@ inside_protecting_balls(const Tr& tr,
     typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     const Point& nvwp = tr.point(nv);
     // 'true' if the distance between 'p' and 'nv' is smaller or equal than the weight of 'nv'
-    return (cwsr(nvwp , - tr.min_squared_distance(p, cp(nvwp))) != CGAL::LARGER);
+    return (cwsr(nvwp , - min_squared_distance(tr, p, cp(nvwp))) != CGAL::LARGER);
   }
 
   return false;
@@ -404,10 +482,10 @@ inside_protecting_balls(const Tr& tr,
 
 /// Return the squared distance from vh to its closest vertex
 /// if `Has_visited_for_vertex_extractor` is `true`
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 template<typename Tag>
-typename Triangulation_helpers<Tr>::FT
-Triangulation_helpers<Tr>::
+typename Triangulation_helpers<Tr, IsPeriodicTriangulation>::FT
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
                                   const Cell_vector& incident_cells,
@@ -417,7 +495,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
 
   typedef std::vector<Vertex_handle>              Vertex_container;
 
-  // There is no need to use tr.min_squared_distance() here because we are computing
+  // There is no need to use Th::min_squared_distance() here because we are computing
   // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
@@ -463,10 +541,10 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
 
 /// Return the squared distance from vh to its closest vertex
 /// if `Has_visited_for_vertex_extractor` is `false`
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 template<typename Tag>
-typename Triangulation_helpers<Tr>::FT
-Triangulation_helpers<Tr>::
+typename Triangulation_helpers<Tr, IsPeriodicTriangulation>::FT
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
                                   const Cell_vector& incident_cells,
@@ -478,7 +556,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   typedef boost::unordered_set<Vertex_handle, Hash_fct>      Vertex_container;
   typedef typename Vertex_container::iterator                VC_it;
 
-  // There is no need to use tr.min_squared_distance() here because we are computing
+  // There is no need to use Th::min_squared_distance() here because we are computing
   // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
@@ -522,9 +600,9 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
 
 /// This function well_oriented is called by no_topological_change after the
 /// position of the vertex has been (tentatively) modified.
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 well_oriented(const Tr& tr,
               const Cell_vector& cells_tos) const
 {
@@ -566,9 +644,9 @@ well_oriented(const Tr& tr,
 /// Another version for the parallel version
 /// Here, the set_point is not done before, but we use a Point_getter instance
 /// to get the point of a vertex.
-template<typename Tr>
+template<typename Tr, typename IsPeriodicTriangulation>
 bool
-Triangulation_helpers<Tr>::
+Triangulation_helpers<Tr, IsPeriodicTriangulation>::
 well_oriented(const Tr& tr,
               const Cell_vector& cells_tos,
               const Point_getter& pg) const
