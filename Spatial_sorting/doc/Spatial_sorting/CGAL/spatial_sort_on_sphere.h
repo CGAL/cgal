@@ -33,7 +33,7 @@ Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_
 \cgalHeading{Implementation}
 
 Creates an instance of `Multiscale_sort<Hilbert_sort_on_sphere_3>`
-where `Hilbert_sort_on_sphere_3` is an Hilbert sorting on the sphere object,
+where `Hilbert_sort_on_sphere_3` is a Hilbert sorting on the sphere object,
 and calls its `operator()`.
 
 The `threshold_hilbert` is the minimal size of a point set to be

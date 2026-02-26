@@ -1,0 +1,32 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_MaximalEmptySpheres
+
+\cgalAutoToc
+\author Max Kohlbrenner and Marc Alexa
+
+This chapter describes the ...
+
+\section sec_MES_Definitions Definitions
+
+Section on definitions here ...
+
+\section sec_MES_xamples Examples
+
+\subsection subsec_MES_FirstExample First Example
+
+The following example shows ...
+
+\cgalExample{Maximal_empty_spheres/maximal_empty_spheres_3.cpp }
+
+\cgalFigureBegin{figMES-1,MES-small.png}
+Left: ...
+\cgalFigureEnd
+
+
+\subsection subsec_MES_Implementation Implementation History
+
+*/
+} /* namespace CGAL */
