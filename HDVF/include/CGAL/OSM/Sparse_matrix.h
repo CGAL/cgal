@@ -376,7 +376,6 @@ public:
     void eye (size_t nrows, size_t  ncols) {
         *this = Sparse_matrix(nrows, ncols);
         size_t nmin((nrows< ncols)?nrows:ncols);
-        Sparse_matrix res(nrows, ncols);
         for (int i=0; i<nmin; ++i)
             set_coefficient(i, i, 1);
     }
