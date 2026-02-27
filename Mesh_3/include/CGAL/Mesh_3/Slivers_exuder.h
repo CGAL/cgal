@@ -1368,7 +1368,7 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    Facet f = *fit;
+    const Facet f = *fit;
     Surface_patch_index pid = c3t3_.surface_patch_index(f);
     if ( !(pid == Surface_patch_index()) )
     {

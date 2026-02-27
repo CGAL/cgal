@@ -315,6 +315,8 @@ public:
     tr_.swap(rhs.tr_);
     swapper(rhs.number_of_cells_, number_of_cells_);
 
+    surface_facet_info_.swap(rhs.surface_facet_info_);
+
     edges_.swap(rhs.edges_);
     corners_.swap(rhs.corners_);
     far_vertices_.swap(rhs.far_vertices_);
@@ -2036,6 +2038,72 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     }
     CGAL_assertion(far_vertices_.size() == rhs.far_vertices_.size());
   }
+
+  for (const auto& e : rhs.surface_facet_info_)
+  {
+    auto get_this_vertex = [&](const Cell_handle& rhs_c, const int rhs_o) -> Vertex_handle {
+      if (rhs.triangulation().is_infinite(rhs_c->vertex(rhs_o))) {
+        return this->triangulation().infinite_vertex();
+      } else {
+        const auto& rhs_p = rhs.triangulation().point(rhs_c, rhs_o);
+        Vertex_handle this_vh;
+        CGAL_assertion_code(bool found =)
+        this->triangulation().is_vertex(rhs_p, this_vh);
+        CGAL_assertion(found);
+        return this_vh;
+      }
+    };
+
+    // Find the corresponding facet in 'this'
+    const Facet& rhs_facet = e.first;
+    const Cell_handle& rhs_c = rhs_facet.first;
+    const int rhs_i = rhs_facet.second;
+
+    Vertex_handle rhs_nv[5];
+    rhs_nv[0] = get_this_vertex(rhs_c, rhs_i);
+    rhs_nv[1] = get_this_vertex(rhs_c, (rhs_i + 1) % 4);
+    rhs_nv[2] = get_this_vertex(rhs_c, (rhs_i + 2) % 4);
+    rhs_nv[3] = get_this_vertex(rhs_c, (rhs_i + 3) % 4);
+
+    Cell_handle rhs_n = rhs_c->neighbor(rhs_i);
+    rhs_nv[4] = get_this_vertex(rhs_n, rhs_n->index(rhs_c));
+
+    Cell_handle this_cell;
+    CGAL_assertion_code(bool found =)
+    this->triangulation().is_cell(rhs_nv[0], rhs_nv[1], rhs_nv[2], rhs_nv[3], this_cell);
+    CGAL_assertion(found);
+
+    Cell_handle this_n;
+    CGAL_assertion_code(found =)
+    this->triangulation().is_cell(rhs_nv[1], rhs_nv[2], rhs_nv[3], rhs_nv[4], this_n);
+    CGAL_assertion(found);
+
+    const int this_opp = this_cell->index(this_n);
+    const Facet this_facet(this_cell, this_opp);
+
+    // std::cout << "from rhs:\n";
+    // std::cout << "  facet: " << rhs.triangulation().point(rhs_c, (rhs_i + 1) % 4) << ", "
+    //                          << rhs.triangulation().point(rhs_c, (rhs_i + 2) % 4) << ", "
+    //                          << rhs.triangulation().point(rhs_c, (rhs_i + 3) % 4) << "\n";
+    // std::cout << "to this:\n";
+    // std::cout << "  facet: " << this->triangulation().point(this_cell, (this_opp + 1) % 4) << ", "
+    //                          << this->triangulation().point(this_cell, (this_opp + 2) % 4) << ", "
+    //                          << this->triangulation().point(this_cell, (this_opp + 3) % 4) << "\n";
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    {
+      typename Surface_facet_info::accessor accessor;
+      surface_facet_info_.insert(accessor, this_facet);
+      accessor->second = e.second;
+    }
+    else
+#endif
+    {
+      surface_facet_info_[this_facet] = e.second;
+    }
+  }
+  CGAL_postcondition(surface_facet_info_.size() == rhs.surface_facet_info_.size());
 }
 
 template <typename Tr, typename CI_, typename CSI_>
@@ -2044,6 +2112,7 @@ Mesh_complex_3_in_triangulation_3(Self&& rhs)
   : Base()
   , tr_(std::move(rhs.tr_))
   , edge_facet_counter_(std::move(rhs.edge_facet_counter_))
+  , surface_facet_info_(std::move(rhs.surface_facet_info_))
   , manifold_info_initialized_(std::exchange(rhs.manifold_info_initialized_, false))
   , edges_(std::move(rhs.edges_))
   , corners_(std::move(rhs.corners_))
