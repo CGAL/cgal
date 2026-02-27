@@ -561,7 +561,7 @@ public:
   }
 
   /// Returns surface center of `facet`
-  Point_3 get_facet_surface_center(const int facet) const
+  const Point_3& get_facet_surface_center(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_center_table_[facet];
