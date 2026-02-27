@@ -589,14 +589,14 @@ public:
     for(const auto& f: facets)
     {
       tds().tds_data(tds().neighbor(f.first, f.second)).clear();
-      *bfit++ = tds().facet_with_handle(f);
+      *bfit++ = f;
     }
 
     // Reset the conflict flag in the conflict cells.
     for(auto cd : cells)
     {
       tds().tds_data(cd).clear();
-      *cit++ = tds().cell_handle(cd);
+      *cit++ = cd;
     }
     return make_triple(bfit, cit, ifit);
   }

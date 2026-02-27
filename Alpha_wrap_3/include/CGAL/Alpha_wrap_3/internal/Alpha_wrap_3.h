@@ -1316,8 +1316,16 @@ private:
         boundary_facets.reserve(32);
         conflict_zone.reserve(32);
 
+        auto facets_back = std::back_inserter(boundary_facets);
+        auto facets_out = boost::make_function_output_iterator(
+        [&](const Facet& f) mutable {
+          // transform on the fly, then insert
+          *facets_back = std::make_pair(m_tr.tds().to_cell_descriptor(f.first), f.second);
+        }
+      );
+
         m_tr.find_conflicts(steiner_point, conflict_cell,
-                            std::back_inserter(boundary_facets),
+                            std::back_inserter(facets_out),
                             std::back_inserter(conflict_zone));
 
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
