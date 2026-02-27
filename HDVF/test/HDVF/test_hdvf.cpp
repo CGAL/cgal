@@ -401,6 +401,13 @@ int main(int argc, char **argv) {
         }
     }
 
+    {
+        HDVF_type hdvf(complex, HDVF::OPT_FULL);
+        hdvf.compute_rand_perfect_hdvf();
+        std::cout << "-------------" << std::endl;
+        HDVF_type hdvf2(complex, hdvf.psc_flags(), true, HDVF::OPT_FULL); // HDVF created from flags
+        std::cout << "equality between hdvf and reconstruction from flags: " << (hdvf == hdvf2) << std::endl;
+    }
     return 0;
 }
 

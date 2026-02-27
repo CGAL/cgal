@@ -24,7 +24,7 @@
 #include <CGAL/OSM/Bitboard.h>
 
 // DEBUG : matrix output for SparseMatrices / no DEBUG : chain output for SparseMatrices
-//#define DEBUG
+#define DEBUG
 
 namespace CGAL {
 namespace OSM {
@@ -100,18 +100,18 @@ public:
         }
     }
 
-//protected:
+protected:
     // Solves UX = B where U is an upper matrix and B a Sparse_matrix
     // Pre: the matrix U must be invertible (over the Coefficient_ring)
     Sparse_matrix backward_substitution_U(const Row_matrix& U, const Sparse_matrix& B) {
         Row_matrix X(B.dimensions());
         // Init X_n
         Coefficient_ring un1n1_inv(get_coefficient(U,_n-1,_n-1).inverse());
-        set_row(X, _n-1, cget_row(B, _n-1)*un1n1_inv);
+        set_row(X, _n-1, get_row(B, _n-1)*un1n1_inv);
         // Backward compute rows of X
         for (int i=_n-2; i>=0; --i) {
             Coefficient_ring uii_inv(get_coefficient(U,i,i).inverse());
-            Row_chain Xi(cget_row(B, i)*uii_inv);
+            Row_chain Xi(get_row(B, i)*uii_inv);
             for (int j=i+1; j<_n; ++j) {
                 Xi -= cget_row(X,j) * get_coefficient(U, i, j) * uii_inv;
             }
@@ -126,11 +126,11 @@ public:
         Row_matrix X(B.dimensions());
         // Init X_0
         Coefficient_ring l00_inv(get_coefficient(L,0,0).inverse());
-        set_row(X, 0, cget_row(B, 0)*l00_inv);
+        set_row(X, 0, get_row(B, 0)*l00_inv);
         // Forward compute rows of X
         for (int i=1; i<_n; ++i) {
             Coefficient_ring lii_inv(get_coefficient(L,i,i).inverse());
-            Row_chain Xi(cget_row(B, i)*lii_inv);
+            Row_chain Xi(get_row(B, i)*lii_inv);
             for (int j=0; j<i; ++j) {
                 Xi -= cget_row(X,j) * get_coefficient(L, i, j) * lii_inv;
             }
@@ -1032,6 +1032,26 @@ public:
      * \return The chain stored at given index.
      */
     Matrix_chain operator[](size_t index) const {
+        if (StorageFormat == COLUMN && index >= _size.second) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
+        }
+        if (StorageFormat == ROW && index >= _size.first) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_size.first) + ".");
+        }
+
+        return _chains[index];
+    }
+
+    /**
+     * \brief Gets the value of a chain from a const matrix.
+     *
+     * \warning The matrix will perform boundary check.
+     *
+     * \param index The chain index.
+     *
+     * \return The chain stored at given index.
+     */
+    Matrix_chain chain(size_t index) const {
         if (StorageFormat == COLUMN && index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
@@ -2408,7 +2428,7 @@ size_t Full_lu<SparseMatrix>::compute() {
             // Update _P accordingly
             swap_rows(_P, i, k);
             // Update _Q accordingly
-            swap_rows(_Q, j, k);
+            swap_columns(_Q, j, k);
             Coefficient_ring ukk_inv(get_coefficient(_U, k, k).inverse());
             for (int j=k+1; j<_n; ++j) {
                 Coefficient_ring ljk(get_coefficient(_U, j, k)*ukk_inv);

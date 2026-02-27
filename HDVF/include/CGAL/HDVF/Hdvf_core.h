@@ -226,16 +226,19 @@ public:
      * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
      *
      * \param flags Vector of PSC labels along each dimensions.
-     * \param build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
+     * \param with_build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
      *
      *  \exception If the flags provided are incoherent (or do not define an HDVF), raises a `%std::invalid_argument`.
      */
-    Hdvf_core(const std::vector<std::vector<PSC_flag> >& flags, bool build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : _flag(flags), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
+    Hdvf_core(const ChainComplex& K, const std::vector<std::vector<PSC_flag> >& flags, bool with_build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : _flag(flags), _K(K), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
+        _nb_P.resize(_K.dimension()+1);
+        _nb_S.resize(_K.dimension()+1);
+        _nb_C.resize(_K.dimension()+1);
         // Compute the number of cells of each flag in any dimension
         for (int q=0; q<=_K.dimension(); ++q) {
-            for (PSC_flag flag : _flag) {
+            for (PSC_flag flag : _flag.at(q)) {
                 if (flag == PRIMARY) ++_nb_P.at(q);
                 else if (flag == SECONDARY) ++_nb_S.at(q);
                 else ++_nb_C.at(q);
@@ -248,9 +251,8 @@ public:
         }
 
         // Build the reduction
-        if (build_reduction) {
-            std::cerr << "TODO" << std::endl;
-            throw std::invalid_argument("TODO");
+        if (with_build_reduction) {
+            build_reduction();
         }
     }
 
@@ -258,6 +260,201 @@ public:
      * \brief Destructor. */
     ~Hdvf_core() { }
 
+protected:
+    template<typename MatrixType>
+    struct Sub_matrix_data {
+        MatrixType matrix;
+        std::vector<size_t> basis_rows, basis_cols;
+        std::map<size_t, size_t> map_rows, map_cols;
+        void print() {
+            std::cout << "rows basis: " << std::endl;
+            for (size_t i=0; i<basis_rows.size(); ++i)
+                std::cout << i << " -> " << basis_rows.at(i) << " -> " << map_rows.at(basis_rows.at(i)) << std::endl;
+            std::cout << "cols basis: " << std::endl;
+            for (size_t i=0; i<basis_cols.size(); ++i)
+                std::cout << i << " -> " << basis_cols.at(i) << " -> " << map_cols.at(basis_cols.at(i)) << std::endl;
+        }
+    };
+
+    // Extract M(flag_cols)|flag_rows (dimension q_row, q_col for rows and cols respectively)
+    // Row version
+    Sub_matrix_data<OSM::Sparse_matrix<Coefficient_ring, OSM::ROW> > extract_sub(const OSM::Sparse_matrix<Coefficient_ring, OSM::ROW>& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
+        using Matrix_type = OSM::Sparse_matrix<Coefficient_ring, OSM::ROW>;
+        using Chain_type = OSM::Sparse_chain<Coefficient_ring, OSM::ROW>;
+        using Sub_data_type = Sub_matrix_data<Matrix_type>;
+        // Create the sub matrix
+        Matrix_type res(number_of_cells_by_flag(flag_rows, q_rows), number_of_cells_by_flag(flag_cols, q_cols));
+        Sub_data_type sub;
+        sub.basis_rows.resize(number_of_cells_by_flag(flag_rows, q_rows));
+        sub.basis_cols.resize(number_of_cells_by_flag(flag_cols, q_cols));
+        sub.matrix = Matrix_type(number_of_cells_by_flag(flag_rows, q_rows), number_of_cells_by_flag(flag_cols, q_cols));
+        // Extract the bases
+        size_t i(0), j(0);
+        for (size_t k=0; k<_flag.at(q_rows).size(); ++k) {
+            if (_flag.at(q_rows).at(k) == flag_rows) {
+                sub.basis_rows.at(i) = k;
+                sub.map_rows[k]=i++;
+            }
+        }
+        assert(i == number_of_cells_by_flag(flag_rows, q_rows));
+        for (size_t k=0; k<_flag.at(q_cols).size(); ++k) {
+            if (_flag.at(q_cols).at(k) == flag_cols) {
+                sub.basis_cols.at(j) = k;
+                sub.map_cols[k]=j++;
+            }
+        }
+        assert(j == number_of_cells_by_flag(flag_cols, q_cols));
+        // extract sub matrix
+        for (typename OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it) {
+            if (_flag.at(q_rows).at(*it) == flag_rows) { // the row has the right flag
+                const size_t i(sub.map_rows(*it));
+                // Add the sub_row (with flag flag_cols) to the sub matrix at row i
+                const Chain_type& row(OSM::cget_row(M, *it));
+                for (typename Chain_type::const_iterator it_row = row.cbegin(); it_row != row.end(); ++it_row) {
+                    const size_t k(it_row->first);
+                    if (_flag.at(q_cols).at(k) == flag_cols) { // extract the element
+                        const size_t j(sub.map_cols.at(k));
+                        OSM::set_coefficient(sub.matrix, i, j, it_row->second);
+                    }
+                }
+            }
+        }
+        return sub;
+    }
+    // Column version
+    Sub_matrix_data<OSM::Sparse_matrix<Coefficient_ring, OSM::COLUMN> > extract_sub(const OSM::Sparse_matrix<Coefficient_ring, OSM::COLUMN>& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
+        using Matrix_type = OSM::Sparse_matrix<Coefficient_ring, OSM::COLUMN>;
+        using Chain_type = OSM::Sparse_chain<Coefficient_ring, OSM::COLUMN>;
+        using Sub_data_type = Sub_matrix_data<Matrix_type>;
+        // Create the sub matrix
+        Matrix_type res(number_of_cells_by_flag(flag_rows, q_rows), number_of_cells_by_flag(flag_cols, q_cols));
+        Sub_data_type sub;
+        sub.basis_rows.resize(number_of_cells_by_flag(flag_rows, q_rows));
+        sub.basis_cols.resize(number_of_cells_by_flag(flag_cols, q_cols));
+        sub.matrix = Matrix_type(number_of_cells_by_flag(flag_rows, q_rows), number_of_cells_by_flag(flag_cols, q_cols));
+        // Extract the bases
+        size_t i(0), j(0);
+        for (size_t k=0; k<_flag.at(q_rows).size(); ++k) {
+            if (_flag.at(q_rows).at(k) == flag_rows) {
+                sub.basis_rows.at(i) = k;
+                sub.map_rows[k]=i++;
+            }
+        }
+        assert(i == number_of_cells_by_flag(flag_rows, q_rows));
+        for (size_t k=0; k<_flag.at(q_cols).size(); ++k) {
+            if (_flag.at(q_cols).at(k) == flag_cols) {
+                sub.basis_cols.at(j) = k;
+                sub.map_cols[k]=j++;
+            }
+        }
+        assert(j == number_of_cells_by_flag(flag_cols, q_cols));
+        // extract sub matrix
+        for (typename OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it) {
+            if (_flag.at(q_cols).at(*it) == flag_cols) { // the column has the right flag
+                const size_t j(sub.map_cols.at(*it));
+                // Add the sub_cols (with flag flag_rows) to the sub matrix at column j
+                const Chain_type& col(OSM::cget_column(M, *it));
+                for (typename Chain_type::const_iterator it_col = col.cbegin(); it_col != col.end(); ++it_col) {
+                    const size_t k(it_col->first);
+                    if (_flag.at(q_rows).at(k) == flag_rows) { // extract the element
+                        const size_t i(sub.map_rows.at(k));
+                        OSM::set_coefficient(sub.matrix, i, j, it_col->second);
+                    }
+                }
+            }
+        }
+        return sub;
+    }
+
+    // Fill a submatrix of M
+    template <typename MatrixType>
+    void fill_sub(MatrixType& M, const Sub_matrix_data<MatrixType>& sub, int q_row, int q_col) {
+        using Matrix_type = MatrixType;
+
+        // visit the sub matrix and copy corresponding coefficients (to the right indices)
+        // set all coefficients (to empty required coefficients)
+        for (size_t i=0; i<sub.matrix.dimensions().first; ++i) {
+            for (size_t j=0; j<sub.matrix.dimensions().second; ++j) {
+                OSM::set_coefficient(M, sub.basis_rows.at(i), sub.basis_cols.at(j), OSM::get_coefficient(sub.matrix, i, j));
+            }
+        }
+    }
+
+    template <typename MatrixType>
+    void restrict_matrix(MatrixType& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
+        using Matrix_type = MatrixType;
+        using Chain_type = Matrix_type::Matrix_chain;
+        PSC_flag flag1(flag_cols), flag2(flag_rows);
+        int q1(q_cols), q2(q_rows);
+        if (M.storage_format() == OSM::ROW) {
+            flag1 = flag_rows;
+            flag2 = flag_cols;
+            q1 = q_rows;
+            q2 = q_cols;
+        }
+
+        // Visit first dimension, remove chains with the wrong flag and visit others
+        for(typename OSM::Bitboard::iterator it1 = M.begin(); it1 != M.end(); ++it1) {
+            if (_flag.at(q1).at(*it1) == flag1) { // Visit
+                const Chain_type chain(M.chain(*it1));
+                for(typename Chain_type::const_iterator it2 = chain.cbegin(); it2 != chain.cend(); ++it2) {
+                    if (_flag.at(q2).at(it2->first) != flag2) { // Delete coefficient
+                        if (M.storage_format() == OSM::COLUMN)
+                            OSM::remove_coefficient(M, it2->first, *it1);
+                        else
+                            OSM::remove_coefficient(M, *it1, it2->first);
+                    }
+                }
+            }
+            else { // Delete chain
+                if (M.storage_format() == OSM::COLUMN)
+                    OSM::remove_column(M, *it1);
+                else
+                    OSM::remove_row(M, *it1);
+            }
+        }
+    }
+
+
+    void build_reduction() {
+        // Clean the reduction if exists
+        init_internals();
+        // Compute H_q
+        for (int q=1; q<=_K.dimension(); ++q) {
+            Sub_matrix_data<Column_matrix> sub(extract_sub(_K.boundary_matrix(q), q-1, q, PRIMARY, SECONDARY));
+            OSM::Full_lu<Column_matrix> lu(sub.matrix);
+            lu.compute();
+            Sub_matrix_data<Column_matrix> sub2;
+            sub2.matrix = lu.inverse();
+            sub2.basis_rows = sub.basis_cols;
+            sub2.basis_cols = sub.basis_rows;
+            sub2.map_rows = sub.map_cols;
+            sub2.map_cols = sub.map_rows;
+            fill_sub(_H_col.at(q-1), sub2, q, q-1);
+        }
+        // Compute F_q
+        for (int q=0; q<_K.dimension(); ++q) {
+            if (_hdvf_opt & (OPT_FULL | OPT_F)) {
+                Column_matrix dSC(_K.boundary_matrix(q+1));
+                restrict_matrix(dSC, q, q+1, CRITICAL, SECONDARY);
+                _F_row.at(q) = -dSC*_H_col.at(q);
+            }
+        }
+        // Compute G_q, DD_q
+        for (int q=1; q<=_K.dimension(); ++q) {
+            Column_matrix dCP(_K.boundary_matrix(q));
+            restrict_matrix(dCP, q-1, q, PRIMARY, CRITICAL);
+            if (_hdvf_opt & (OPT_FULL | OPT_G))
+                _G_col.at(q) = -_H_col.at(q-1)*dCP;
+
+            Column_matrix dCC(_K.boundary_matrix(q));
+            restrict_matrix(dCC, q-1, q, CRITICAL, CRITICAL);
+            _DD_col.at(q) = dCC + _F_row.at(q-1)*dCP;
+        }
+
+    }
+
+public:
     /** \brief Check the "combinatorial" coherence of a HDVF \f$X(P,S,C)\f$.
      *
      * Checks if for any dimension, \f$|S_q| = |P_{q-1}|\f$.
@@ -268,6 +465,7 @@ public:
         while (res && (q<=_K.dimension())) {
             if (_nb_S.at(q) != _nb_P.at(q-1))
                 res = false;
+            ++q;
         }
         return res;
     }
@@ -425,6 +623,13 @@ public:
      */
 
     // !!! Why should it be virtual for duality?????
+
+    /** Gets the number of cells with a given flag in dimension `q`.*/
+    size_t number_of_cells_by_flag(PSC_flag flag, int q) const {
+        if (flag == PRIMARY) return _nb_P.at(q);
+        else if (flag == SECONDARY) return _nb_S.at(q);
+        else return _nb_C.at(q);
+    }
 
     virtual std::vector<std::vector<size_t> > psc_flags (PSC_flag flag) const ;
 
@@ -836,42 +1041,84 @@ protected:
             std::cout << std::endl ;
     }
 
+private:
+    void init_internals() {
+        int dim(_K.dimension());
+
+        // Compute mminimum and maximum dimensions of computation according to the value of `_dimension_restriction`
+        if ((_dimension_restriction < 0) || (_dimension_restriction > dim))
+            _dimension_restriction = -1;
+        if (_dimension_restriction == -1) {
+            _min_dimension = 0;
+            _max_dimension = dim;
+        }
+        else
+            _min_dimension = _max_dimension = _dimension_restriction;
+        
+        // Resize the _DD_col vector to hold dim+1 elements
+        _DD_col.resize(dim + 1);
+
+        // Resize the _F_row vector to hold dim+1 elements
+        if (_hdvf_opt & (OPT_FULL | OPT_F))
+            _F_row.resize(dim + 1);
+
+        // Resize the _G_col vector to hold dim+1 elements
+        if (_hdvf_opt & (OPT_FULL | OPT_G))
+            _G_col.resize(dim + 1);
+
+        // Resize the _H_col vector to hold dim+1 elements
+        if (_hdvf_opt & OPT_FULL)
+            _H_col.resize(dim + 1);
+
+        // Initialize matrices and counters
+
+        for (int q = 0; q <= dim; q++) {
+            // Initialize _F_row[q] as a row matrix with dimensions (dim(q) x dim(q))
+            if (_hdvf_opt & (OPT_FULL | OPT_F))
+                _F_row[q] = Row_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
+
+            // Initialize _G_col[q] as a column matrix with dimensions (dim(q) x dim(q))
+            if (_hdvf_opt & (OPT_FULL | OPT_G))
+                _G_col[q] = Column_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
+
+            // Initialize _H_col[q] as a column matrix with dimensions (dim(q+1) x dim(q))
+            if (_hdvf_opt & OPT_FULL)
+                _H_col[q] = Column_matrix(_K.number_of_cells(q + 1), _K.number_of_cells(q));
+        }
+
+        // Populate the DD matrices
+        int tmp_min, tmp_max;
+        if (_dimension_restriction==-1) {
+            tmp_min = 0 ;
+            tmp_max = dim;
+        }
+        else {
+            if (_dimension_restriction > 0)
+                tmp_min = _dimension_restriction-1 ;
+            else
+                tmp_min = 0;
+
+            if (_dimension_restriction<dim)
+                tmp_max = _dimension_restriction+1;
+            else
+                tmp_max = dim;
+        }
+
+        _DD_col.resize(_K.dimension()+1) ;
+        for (int q=tmp_min; q<=tmp_max; ++q)
+            _DD_col.at(q) = _K.boundary_matrix(q) ;
+    }
+
 };
+
 
 // Constructor for the Hdvf_core class
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : _K(K), _dimension_restriction(dimension_restriction) {
+Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : _K(K), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
     // Get the dimension of the simplicial complex
     int dim = _K.dimension();
 
-    // Compute mminimum and maximum dimensions of computation according to the value of `_dimension_restriction`
-    if ((_dimension_restriction < 0) || (_dimension_restriction > dim))
-        _dimension_restriction = -1;
-    if (_dimension_restriction == -1) {
-        _min_dimension = 0;
-        _max_dimension = dim;
-    }
-    else
-        _min_dimension = _max_dimension = _dimension_restriction;
-
-    //    std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;
-    // Hdvf_core options
-    _hdvf_opt = hdvf_opt ;
-
-    // Resize the _DD_col vector to hold dim+1 elements
-    _DD_col.resize(dim + 1);
-
-    // Resize the _F_row vector to hold dim+1 elements
-    if (_hdvf_opt & (OPT_FULL | OPT_F))
-        _F_row.resize(dim + 1);
-
-    // Resize the _G_col vector to hold dim+1 elements
-    if (_hdvf_opt & (OPT_FULL | OPT_G))
-        _G_col.resize(dim + 1);
-
-    // Resize the _H_col vector to hold dim+1 elements
-    if (_hdvf_opt & OPT_FULL)
-        _H_col.resize(dim + 1);
+    init_internals();
 
     // Resize _flag and count vectors to hold dim+1 elements
     _flag.resize(dim + 1);
@@ -879,53 +1126,14 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
     _nb_S.resize(dim + 1);
     _nb_C.resize(dim + 1);
 
-    // Initialize matrices and counters
-
+    // Initialize the flags for each dimension to CRITICAL
     for (int q = 0; q <= dim; q++) {
-        // Initialize _F_row[q] as a row matrix with dimensions (dim(q) x dim(q))
-        if (_hdvf_opt & (OPT_FULL | OPT_F))
-            _F_row[q] = Row_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
-
-        // Initialize _G_col[q] as a column matrix with dimensions (dim(q) x dim(q))
-        if (_hdvf_opt & (OPT_FULL | OPT_G))
-            _G_col[q] = Column_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
-
-        // Initialize _H_col[q] as a column matrix with dimensions (dim(q+1) x dim(q))
-        if (_hdvf_opt & OPT_FULL)
-            _H_col[q] = Column_matrix(_K.number_of_cells(q + 1), _K.number_of_cells(q));
-
         // Initialize the counters for PRIMARY, SECONDARY, and CRITICAL cells
         _nb_P[q] = 0;
         _nb_S[q] = 0;
         _nb_C[q] = _K.number_of_cells(q);
-    }
-
-    // Initialize the flags for each dimension to CRITICAL
-    for (int q = 0; q <= dim; q++) {
         _flag[q] = std::vector<PSC_flag>(_K.number_of_cells(q), CRITICAL);
     }
-
-    // Populate the DD matrices
-    int tmp_min, tmp_max;
-    if (_dimension_restriction==-1) {
-        tmp_min = 0 ;
-        tmp_max = dim;
-    }
-    else {
-        if (_dimension_restriction > 0)
-            tmp_min = _dimension_restriction-1 ;
-        else
-            tmp_min = 0;
-
-        if (_dimension_restriction<dim)
-            tmp_max = _dimension_restriction+1;
-        else
-            tmp_max = dim;
-    }
-
-    _DD_col.resize(_K.dimension()+1) ;
-    for (int q=tmp_min; q<=tmp_max; ++q)
-        _DD_col.at(q) = _K.boundary_matrix(q) ;
     //    std::cout << "------> End Hdvf_core creation" << std::endl ;
 }
 

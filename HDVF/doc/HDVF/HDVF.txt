@@ -380,7 +380,7 @@ DD_q \\
 \end{array}
 \f\]
 with
-\f\[ D_q = \partial(C_{q})|_{C_{q-1}} + F_{q} \cdot \partial(C_{q})|_{P_{q-1}} = \partial(C_{q})|_{C_{q-1}} + \partial(S_{q})|_{C_{q-1}} \cdot G_q \f\]
+\f\[ D_q = \partial(C_{q})|_{C_{q-1}} + F_{q-1} \cdot \partial(C_{q})|_{P_{q-1}} = \partial(C_{q})|_{C_{q-1}} + \partial(S_{q})|_{C_{q-1}} \cdot G_q \f\]
 
 Therefore the HDVF "reduces" the complex to a smaller complex over critical cells.
 

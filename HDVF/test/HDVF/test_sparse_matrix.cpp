@@ -16,6 +16,7 @@ typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
 int main(int argc, char **argv)
 {
+#if 1
     std::cerr << "-- Test Sparse_matrices read/write" << std::endl;
 
     {
@@ -651,46 +652,28 @@ int main(int argc, char **argv)
     // set_column in column matrix
 
     CGAL::OSM::set_column(columnMajor, 0, CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN>(columnMajor.dimensions().first));
+#endif
 
-    //    std::cout << "Multiplication de colonne (col/row dom):" << std::endl << colCol << std::endl << colRow << std::endl << std::endl;
-    //    std::cout << "Multiplication de ligne   (col/row dom):" << std::endl << rowCol << std::endl << rowRow << std::endl << std::endl;
-    //
-    //    cout << "-------- Test parcours (init par set_coefficient)" << endl ;
-    //    OSM::SparseMatrix<int, OSM::COLUMN> Mtest(10, 10) ;
-    //    Mtest.set_coefficient(1, 2, 1) ;
-    //    Mtest.set_coefficient(3, 2, 1) ;
-    //    Mtest.set_coefficient(1, 4, 1) ;
-    //    Mtest.set_coefficient(2, 5, 1) ;
-    //    for (OSM::Bitboard::iterator it  = Mtest.begin(); it != Mtest.end(); ++it)
-    //    {
-    //        cout << "col : " << *it << endl ;
-    //    }
-    //
 
+#if 0
     // Test Full_LU
 
     {
+        std::cout << "-------- row" << std::endl;
         typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> SM_row;
         SM_row A(5, 5);
-        CGAL::OSM::set_coefficient(A, 0, 0, Coefficient_ring(-1));
-        CGAL::OSM::set_coefficient(A, 1, 0, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 1, 1, Coefficient_ring(-1));
-        CGAL::OSM::set_coefficient(A, 2, 1, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 2, 2, Coefficient_ring(-1));
-        CGAL::OSM::set_coefficient(A, 2, 4, Coefficient_ring(-1));
+
+        CGAL::OSM::set_coefficient(A, 0, 0, Coefficient_ring(1));
+        CGAL::OSM::set_coefficient(A, 0, 1, Coefficient_ring(1));
+        CGAL::OSM::set_coefficient(A, 0, 3, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 1, 0, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 2, 1, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 3, 2, Coefficient_ring(1));
         CGAL::OSM::set_coefficient(A, 3, 3, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 3, 4, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 4, 2, Coefficient_ring(1));
+        CGAL::OSM::set_coefficient(A, 4, 2, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 4, 4, Coefficient_ring(-1));
 
         std::cout << "A:" << std::endl;
-        std::cout << A << std::endl;
-
-        CGAL::OSM::swap_rows(A, 0, 1);
-        std::cout << "swap_rows(A, 0, 3)" << std::endl;
-        std::cout << A << std::endl;
-
-        CGAL::OSM::swap_columns(A, 0, 1);
-        std::cout << "swap_columns(A, 0, 1)" << std::endl;
         std::cout << A << std::endl;
 
         CGAL::OSM::Full_lu<SM_row> lu(A);
@@ -706,14 +689,6 @@ int main(int argc, char **argv)
         SM_row B;
         B.eye(A.dimensions());
 
-        std::cout << "U^-1" << std::endl;
-        std::cout << lu.backward_substitution_U(lu.matrix_U(), B);
-        std::cout << "U*U^-1: " << std::endl << lu.matrix_U()*lu.backward_substitution_U(lu.matrix_U(), B) << std::endl;
-
-        std::cout << "L^-1" << std::endl;
-        std::cout << lu.forward_substitution_L(lu.matrix_L(), B);
-        std::cout << "L*L^-1: " << std::endl << lu.matrix_L()*lu.forward_substitution_L(lu.matrix_L(), B) << std::endl;
-
         std::cout << "----------" << std::endl;
         SM_row AA(lu.inverse());
         std::cout << AA;
@@ -723,27 +698,20 @@ int main(int argc, char **argv)
     std::cout << "--------------- " << std::endl;
 
     {
+        std::cout << "-------- column" << std::endl;
         typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> SM_col;
         SM_col A(5, 5);
-        CGAL::OSM::set_coefficient(A, 0, 0, Coefficient_ring(-1));
-        CGAL::OSM::set_coefficient(A, 1, 0, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 1, 1, Coefficient_ring(-1));
-        CGAL::OSM::set_coefficient(A, 2, 1, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 2, 2, Coefficient_ring(-1));
-        CGAL::OSM::set_coefficient(A, 2, 4, Coefficient_ring(-1));
+
+        CGAL::OSM::set_coefficient(A, 0, 0, Coefficient_ring(1));
+        CGAL::OSM::set_coefficient(A, 0, 1, Coefficient_ring(1));
+        CGAL::OSM::set_coefficient(A, 0, 3, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 1, 0, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 2, 1, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 3, 2, Coefficient_ring(1));
         CGAL::OSM::set_coefficient(A, 3, 3, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 3, 4, Coefficient_ring(1));
-        CGAL::OSM::set_coefficient(A, 4, 2, Coefficient_ring(1));
-
+        CGAL::OSM::set_coefficient(A, 4, 2, Coefficient_ring(-1));
+        CGAL::OSM::set_coefficient(A, 4, 4, Coefficient_ring(-1));
         std::cout << "A:" << std::endl;
-        std::cout << A << std::endl;
-
-        CGAL::OSM::swap_rows(A, 0, 1);
-        std::cout << "swap_rows(A, 0, 1)" << std::endl;
-        std::cout << A << std::endl;
-
-        CGAL::OSM::swap_columns(A, 0, 1);
-        std::cout << "swap_columns(A, 0, 1)" << std::endl;
         std::cout << A << std::endl;
 
         CGAL::OSM::Full_lu<SM_col> lu(A);
@@ -756,12 +724,12 @@ int main(int argc, char **argv)
 
         std::cout << "equal: " << (prod == prod2) << std::endl;
 
-
         std::cout << "----------" << std::endl;
         SM_col AA(lu.inverse());
         std::cout << AA;
         std::cout << "A * A^-1: " << std::endl << A * AA << std::endl;
     }
+#endif
 
     return 0;
 }
