@@ -85,8 +85,8 @@ struct Tester
 
   void init_facet(const Facet& f, const Bare_point& p) const
   {
-    f.first->set_surface_patch_index(f.second,Surface_patch_index(0,1));
-    f.first->set_facet_surface_center(f.second,p);
+    c3t3_.set_surface_patch_index(f, Surface_patch_index(0,1));
+    c3t3_.set_surface_center(f, p);
 
     for ( int i=0; i<4 ; ++i )
     {

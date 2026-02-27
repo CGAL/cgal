@@ -483,14 +483,13 @@ public:
   {
     // std::cout << "set " << &*(cell) << " " << i << " to " << index << " (new)" << std::endl;
 
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
     if (index == Surface_patch_index())
     {
       surface_facet_info_.erase(f);
     }
     else
     {
-# ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
       if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
       {
         typename Surface_facet_info::accessor accessor;
@@ -498,16 +497,11 @@ public:
         accessor->second.surface_index_ = index;
       }
       else
-# endif
+#endif
       {
         surface_facet_info_[f].surface_index_ = index;
       }
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    f.first->set_surface_patch_index(f.second, index);
-#endif
   }
 
   /** sets the surface index of facet(\p cell, \p i) to \p index
@@ -522,8 +516,7 @@ public:
   void set_surface_center(const Facet& f,
                           const Bare_point& p) const
   {
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
-# ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::accessor accessor;
@@ -531,15 +524,10 @@ public:
       accessor->second.center_ = p;
     }
     else
-# endif
+#endif
     {
       surface_facet_info_[f].center_ = p;
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    f.first->set_facet_surface_center(f.second, p);
-#endif
   }
 
   /** sets the surface center of facet(\p cell, \p i) to \p p
@@ -554,8 +542,7 @@ public:
   void set_surface_center_index(const Facet& f,
                                 const Index& index) const
   {
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
-# ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::accessor accessor;
@@ -563,15 +550,10 @@ public:
       accessor->second.center_index_ = index;
     }
     else
-# endif
+#endif
     {
       surface_facet_info_[f].center_index_ = index;
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    f.first->set_facet_surface_center_index(f.second, index);
-#endif
   }
 
   /** sets the surface center index of facet(\p cell, \p i) to \p index
@@ -586,25 +568,28 @@ public:
   void set_surface_info(const Facet& f,
                         const Facet_prop& info) const
   {
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
-    std::exit(1);
-#else
-# ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if (info.surface_index_ == Surface_patch_index())
     {
-      typename Surface_facet_info::accessor accessor;
-      surface_facet_info_.insert(accessor, f);
-      accessor->second = info;
+      surface_facet_info_.erase(f);
     }
     else
-# endif
     {
-      surface_facet_info_[f] = info;
-    }
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::accessor accessor;
+        surface_facet_info_.insert(accessor, f);
+        accessor->second = info;
+      }
+      else
 #endif
+      {
+        surface_facet_info_[f] = info;
+      }
+    }
   }
 
-  void set_surface_info(Cell_handle cell, int i,
+  void set_surface_info(const Cell_handle& cell, int i,
                         const Facet_prop& info) const
   {
     return set_surface_info(Facet(cell, i), info);
@@ -641,44 +626,21 @@ public:
   */
   Surface_patch_index surface_patch_index(const Facet& f) const
   {
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    Surface_patch_index res_new {};
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
       if (surface_facet_info_.find(accessor, f))
-        res_new = accessor->second.surface_index_;
+        return accessor->second.surface_index_;
     }
     else
-# endif
+#endif
     {
       auto it = surface_facet_info_.find(f);
       if (it != surface_facet_info_.end())
-        res_new = it->second.surface_index_;
+        return it->second.surface_index_;
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    Surface_patch_index res_old = f.first->surface_patch_index(f.second);
-
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    if (res_new != res_old) {
-      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-      std::cerr << "new res = " << res_new << std::endl;
-      std::cerr << "old res = " << res_old << std::endl;
-      CGAL_assertion(false);
-      std::exit(1);
-    }
-# endif
-    return res_old;
-#else
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    return res_new;
-# endif
-#endif
-    CGAL_assertion(false);
-    std::exit(1);
+    return Surface_patch_index();
   }
 
   /** returns the surface index of facet(\p cell, \p i)
@@ -693,8 +655,6 @@ public:
   {
     CGAL_precondition(is_in_complex(f));
 
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    Bare_point res_new; // return directly when the comparison code is gone
 # ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
@@ -702,37 +662,15 @@ public:
       CGAL_assume_code(bool found =)
       surface_facet_info_.find(accessor, f);
       CGAL_assume(found);
-      res_new = accessor->second.center_;
+      return accessor->second.center_;
     }
     else
-# endif
+#endif
     {
       auto it = surface_facet_info_.find(f);
       CGAL_assume(it != surface_facet_info_.end());
-      res_new = it->second.center_;
+      return it->second.center_;
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    const auto res_old = f.first->get_facet_surface_center(f.second);
-
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    if (res_new != res_old) {
-      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-      std::cerr << "new res = " << res_new << std::endl;
-      std::cerr << "old res = " << res_old << std::endl;
-      CGAL_assertion(false);
-      std::exit(1);
-    }
-# endif
-    return res_old;
-#else
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    return res_new;
-# endif
-#endif
-    CGAL_assertion(false);
-    std::exit(1);
   }
 
   /** returns the surface center of facet(\p cell, \p i)
@@ -747,8 +685,6 @@ public:
   {
     CGAL_precondition(is_in_complex(f));
 
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    Index res_new; // return directly when the comparison code is gone
 # ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
@@ -756,37 +692,15 @@ public:
       CGAL_assume_code(bool found =)
       surface_facet_info_.find(accessor, f);
       CGAL_assume(found);
-      res_new = accessor->second.center_index_;
+      return accessor->second.center_index_;
     }
     else
-# endif
+#endif
     {
       auto it = surface_facet_info_.find(f);
       CGAL_assume(it != surface_facet_info_.end());
-      res_new = it->second.center_index_;
+      return it->second.center_index_;
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    const Index res_old = f.first->get_facet_surface_center_index(f.second);
-
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    if (res_new != res_old) {
-      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-      std::cerr << "new res = " << res_new << std::endl;
-      std::cerr << "old res = " << res_old << std::endl;
-      CGAL_assertion(false);
-      std::exit(1);
-    }
-# endif
-    return res_old;
-#else
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    return res_new;
-# endif
-#endif
-    CGAL_assertion(false);
-    std::exit(1);
   }
 
   /** returns the surface center index of facet(\p cell, \p i)
@@ -797,12 +711,9 @@ public:
     return surface_center_index(Facet(cell, i));
   }
 
-  const Facet_prop& surface_info(const Facet& f) const
+  decltype(auto) surface_info(const Facet& f) const
   {
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
-    std::exit(1);
-#else
-# ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
@@ -812,13 +723,12 @@ public:
       return accessor->second;
     }
     else
-# endif
+#endif
     {
       auto it = surface_facet_info_.find(f);
       CGAL_assume(it != surface_facet_info_.end());
       return it->second;
     }
-#endif
   }
 
   /** returns the dimension of the lowest dimensional face of the input 3D
@@ -1061,47 +971,21 @@ public:
   */
   bool is_in_complex(const Facet& f) const
   {
-#ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    // if we always erase when trying to insert a default constructed Subdomain_index,
-    // we
-    bool res_new = false;
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
       if (surface_facet_info_.find(accessor, f))
-        res_new = !(accessor->second.surface_index_ == Surface_patch_index());
+        return !(accessor->second.surface_index_ == Surface_patch_index());
     }
     else
-# endif
+#endif
     {
       auto it = surface_facet_info_.find(f);
       if (it != surface_facet_info_.end())
-        res_new = !(it->second.surface_index_ == Surface_patch_index());
+        return !(it->second.surface_index_ == Surface_patch_index());
     }
-#endif
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    const bool res_old = f.first->is_facet_on_surface(f.second);
-
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    if (res_new != res_old) {
-      std::cerr << __FILE__ << " " << __LINE__ << std::endl;
-      std::cerr << &*(f.first) << " " << f.second << std::endl;
-      std::cerr << "new res = " << res_new << std::endl;
-      std::cerr << "old res = " << res_old << std::endl;
-      CGAL_assertion(false);
-      std::exit(1);
-    }
-# endif
-    return res_old;
-#else
-# ifdef CGAL_MESH_3_USE_C3T3_MAPS
-    return res_new;
-# endif
-#endif
-    CGAL_assertion(false);
-    std::exit(1);
+    return false;
   }
 
   /** returns true if facet (\p cell, \p i) belongs to the 2D complex

@@ -210,7 +210,7 @@ protected:
     const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
 
     const Bare_point c = weighted_circumcenter(p1,p2,p3);
-    const Bare_point& center = c3t3.surface_center(f.first, f.second);
+    const Bare_point& center = c3t3.surface_center(f);
 
     const FT sq_dist = Th().min_squared_distance(tr, c, center);
 
@@ -286,8 +286,10 @@ protected:
     const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
 
     const Bare_point c = weighted_circumcenter(p1,p2,p3);
-    const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
-    const Index& index = c3t3.surface_center_index(f.first, f.second);
+
+    // @todo use surface_info()
+    const Bare_point& ball_center = c3t3.surface_center(f);
+    const Index& index = c3t3.surface_center_index(f);
 
     const FT sq_dist = Th().min_squared_distance(tr, c, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
@@ -369,8 +371,8 @@ protected:
 
     const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
     const Bare_point& p1 = cp(wp1);
-    const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
-    const Index& index = c3t3.surface_center_index(f.first, f.second);
+    const Bare_point& ball_center = c3t3.surface_center(f);
+    const Index& index = c3t3.surface_center_index(f);
 
     const FT sq_radius = Th().min_squared_distance(tr, p1, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
@@ -454,7 +456,7 @@ protected:
 
     const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
     const Bare_point p1 = cp(wp1);
-    const Bare_point& ball_center = c3t3.surface_center(f.first, f.second);
+    const Bare_point& ball_center = c3t3.surface_center(f);
 
     const FT sq_radius = Th().min_squared_distance(tr, p1, ball_center);
 

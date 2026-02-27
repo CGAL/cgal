@@ -314,14 +314,9 @@ public:
 
     CGAL_precondition(this->is_facet_on_surface(facet));
 
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
-    this->set_last_vertex_index(get_facet_surface_center_index(facet));
-    return get_facet_surface_center(facet);
-#else
     const auto& [surface_index, center_index, center] = this->r_c3t3_.surface_info(facet);
     this->set_last_vertex_index(center_index);
     return center;
-#endif
   }
 
   Facet get_next_element_impl()
@@ -476,18 +471,10 @@ protected:
 
     const Facet mirror = mirror_facet(f);
 
-#ifndef CGAL_MESH_3_USE_C3T3_MAPS
-    r_c3t3_.set_surface_center(f.first, f.second, center);
-    r_c3t3_.set_surface_center(mirror.first, mirror.second, center);
-
-    r_c3t3_.set_surface_center_index(f.first, f.second, center_index);
-    r_c3t3_.set_surface_center_index(mirror.first, mirror.second, center_index);
-#else
-    // awkward: add it *after* add_to_complex() because otherwise the surface index is set up,
-    // and add_to_complex() will do nothing...
+    // a little awkward: these are performed after add_to_complex() because otherwise
+    // the surface index is set up, and add_to_complex() will do nothing...
     r_c3t3_.set_surface_info(f, {surface_index, center_index, center});
     r_c3t3_.set_surface_info(mirror, {surface_index, center_index, center});
-#endif
   }
 
   /// Returns index of facet `f`.
