@@ -788,7 +788,7 @@ void write_MEDIT(std::ostream& os,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);;
+  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);
   bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
   bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
   bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
