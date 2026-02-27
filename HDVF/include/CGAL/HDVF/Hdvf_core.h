@@ -1054,7 +1054,7 @@ private:
         }
         else
             _min_dimension = _max_dimension = _dimension_restriction;
-        
+
         // Resize the _DD_col vector to hold dim+1 elements
         _DD_col.resize(dim + 1);
 
