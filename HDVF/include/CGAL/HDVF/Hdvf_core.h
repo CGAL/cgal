@@ -265,7 +265,7 @@ protected:
     struct Sub_matrix_data {
         MatrixType matrix;
         std::vector<size_t> basis_rows, basis_cols;
-        std::map<size_t, size_t> map_rows, map_cols;
+        std::unordered_map<size_t, size_t> map_rows, map_cols;
         void print() {
             std::cout << "rows basis: " << std::endl;
             for (size_t i=0; i<basis_rows.size(); ++i)
@@ -383,7 +383,7 @@ protected:
     template <typename MatrixType>
     void restrict_matrix(MatrixType& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
         using Matrix_type = MatrixType;
-        using Chain_type = Matrix_type::Matrix_chain;
+        using Chain_type = typename Matrix_type::Matrix_chain;
         PSC_flag flag1(flag_cols), flag2(flag_rows);
         int q1(q_cols), q2(q_rows);
         if (M.storage_format() == OSM::ROW) {
