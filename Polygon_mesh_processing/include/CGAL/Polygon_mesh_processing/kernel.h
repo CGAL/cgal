@@ -466,9 +466,25 @@ kernel_point(const FaceRange& face_range,
   PolygonMesh k;
   internal::kernel(face_range, pm, k, np, parameters::default_values(), true, &res);
 
-  // If the kernel is empty or degenerated with strictly inside option, return empty
+  // If the kernel is empty, return empty
   if(is_empty(k))
     return std::nullopt;
+
+  // If res was not set (degenerate kernel: dim < 3), compute centroid from vertices directly
+  if(!res.has_value()){
+    using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+    using Point_3 = typename GT::Point_3;
+    auto vpm_k = get_property_map(vertex_point, k);
+    // Compute centroid as average of vertex positions
+    auto it = vertices(k).begin();
+    Point_3 c = get(vpm_k, *it);
+    std::size_t n = 1;
+    for(++it; it != vertices(k).end(); ++it, ++n)
+      c = Point_3(c.x() + get(vpm_k, *it).x(),
+                  c.y() + get(vpm_k, *it).y(),
+                  c.z() + get(vpm_k, *it).z());
+    res = Point_3(c.x() / n, c.y() / n, c.z() / n);
+  }
 
   return res;
 }

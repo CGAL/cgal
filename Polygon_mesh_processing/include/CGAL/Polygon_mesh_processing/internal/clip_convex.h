@@ -56,7 +56,7 @@ find_crossing_edge(PolygonMesh& pm,
                               get_property_map(vertex_point, pm));
 
   auto oriented_side = traits.oriented_side_3_object();
-  auto sq = traits.compute_squared_distance_3_object();
+  auto sq = traits.compute_signed_distance_3_object();
 
   // ____________________ Find a crossing edge _____________________
 
@@ -74,7 +74,6 @@ find_crossing_edge(PolygonMesh& pm,
       bool is_local_max=true;
       for(auto v: vertices_around_target(src ,pm)){
         sp_trg = sq(plane, get(vpm, v));
-        CGAL_assertion(sq(plane, get(vpm, v)) == sp_trg);
         // Check if v in the direction to the plane
         if(compare(sp_src, sp_trg)==direction_to_zero){
           if(sign(sp_trg)!=direction_to_zero){
@@ -515,6 +514,7 @@ clip_convex(PolygonMesh& pm,
         put(vpm, v0, ip);
       } else { // side_v1 == ON_ORIENTED_BOUNDARY
         remove_vertex(v0, pm); // Degenerate to a point
+        return v1; // v0 was removed; v1 is the surviving vertex
       }
     } else if(side_v1 == ON_POSITIVE_SIDE){
       if(side_v0 == ON_NEGATIVE_SIDE){
@@ -522,6 +522,7 @@ clip_convex(PolygonMesh& pm,
         put(vpm, v1, ip);
       } else { // side_v0 == ON_ORIENTED_BOUNDARY
         remove_vertex(v1, pm); // Degenerate to a point
+        // v0 survives; fall through to return v0
       }
     }
     return v0;

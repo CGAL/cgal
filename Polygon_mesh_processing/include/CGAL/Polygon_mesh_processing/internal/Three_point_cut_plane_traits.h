@@ -66,7 +66,9 @@ struct Three_point_cut_plane_traits
     }
   };
 
-  struct Compute_squared_distance_3
+  // Computes the signed plane equation value at p: dot(Op, n) + d.
+  // Note: this is proportional to the signed distance, NOT the squared distance.
+  struct Compute_signed_distance_3
   {
     using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
     FT operator()(const Plane_3& plane, const Point_3& p)
@@ -92,7 +94,7 @@ struct Three_point_cut_plane_traits
     return Construct_orthogonal_vector_3();
   }
 
-  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
+  Compute_signed_distance_3 compute_signed_distance_3_object() const { return Compute_signed_distance_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect
