@@ -2757,7 +2757,6 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
 {
   typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   typename GT::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
-  typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   Update_c3t3 updater(domain_,c3t3_);
 
