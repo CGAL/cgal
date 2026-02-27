@@ -1539,7 +1539,7 @@ public:
     }
 
     // From here all incident edges (in complex) are REGULAR or BOUNDARY.
-    const std::size_t nb_components = union_find_of_incident_facets(v);
+    const int nb_components = union_find_of_incident_facets(v);
     if (nb_components > 1) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
@@ -1780,7 +1780,7 @@ private:
       end = triangulation().finite_vertices_end();
       vit != end; ++vit)
     {
-      vit->set_c2t3_cache(0, (std::numeric_limits<size_type>::max)());
+      vit->set_c2t3_cache(0, -1);
     }
 
     edge_facet_counter_.clear();
@@ -1813,7 +1813,7 @@ private:
           }
 
           const std::size_t n = edge_va->cached_number_of_incident_facets();
-          edge_va->set_c2t3_cache(n + 1, (std::numeric_limits<size_type>::max)());
+          edge_va->set_c2t3_cache(n + 1, -1);
         }
       }
     }
@@ -1822,12 +1822,12 @@ private:
 
   /// Extract the subset `F` of facets of the complex incident to `v` and
   /// return the number of connected component of the adjacency graph of `F`.
-  std::size_t union_find_of_incident_facets(const Vertex_handle v) const
+  int union_find_of_incident_facets(const Vertex_handle v) const
   {
     if (v->is_c2t3_cache_valid())
     {
-      const std::size_t n = v->cached_number_of_components();
-      if (n != (std::numeric_limits<size_type>::max)()) return n;
+      const int n = v->cached_number_of_components();
+      if (n != -1) return n;
     }
 
     Union_find<Facet> facets;
@@ -1875,10 +1875,11 @@ private:
         }
       }
     }
-    const std::size_t nb_components = facets.number_of_sets();
 
-    const std::size_t n = v->cached_number_of_incident_facets();
+    const int n = v->cached_number_of_incident_facets();
+    const int nb_components = facets.number_of_sets();
     v->set_c2t3_cache(n, nb_components);
+
     return nb_components;
   }
 
@@ -2185,8 +2186,8 @@ add_to_complex(const Cell_handle& cell,
           ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
         }
 
-        const std::size_t n = edge_va->cached_number_of_incident_facets();
-        const std::size_t m = edge_va->cached_number_of_components();
+        const int n = edge_va->cached_number_of_incident_facets();
+        const int m = edge_va->cached_number_of_components();
         edge_va->set_c2t3_cache(n + 1, m);
       }
       const int dimension_plus_1 = tr_.dimension() + 1;

@@ -187,34 +187,34 @@ public:
   std::size_t time_stamp() const {
     return time_stamp_;
   }
-  void set_time_stamp(const std::size_t& ts) {
+  void set_time_stamp(const std::size_t ts) {
     time_stamp_ = ts;
   }
   ///@}
 
   bool is_c2t3_cache_valid() const {
-    return number_of_incident_facets_ != std::size_t(-2) &&
-           number_of_components_ != std::size_t(-2);
+    return number_of_incident_facets_ != -1 &&
+           number_of_components_ != -1;
   }
 
   void invalidate_c2t3_cache()
   {
-    number_of_incident_facets_ = std::size_t(-2);
-    number_of_components_ = std::size_t(-2);
+    number_of_incident_facets_ = -1;
+    number_of_components_ = -1;
   }
 
-  void set_c2t3_cache(const std::size_t i, const std::size_t j)
+  void set_c2t3_cache(const int i, const int j)
   {
     number_of_incident_facets_ = i;
     number_of_components_ = j;
   }
 
-  std::size_t cached_number_of_incident_facets() const
+  int cached_number_of_incident_facets() const
   {
     return number_of_incident_facets_;
   }
 
-  std::size_t cached_number_of_components() const
+  int cached_number_of_components() const
   {
     return number_of_components_;
   }
@@ -234,10 +234,7 @@ private:
   Vertex_handle previous_intrusive_;
 #endif
 
-  std::size_t time_stamp_ = std::size_t(-2);
-  std::size_t number_of_incident_facets_ = std::size_t(-2);
-  std::size_t number_of_components_ = std::size_t(-2); // number of components in the adjacency
-  // graph of incident facets (in complex)
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
   // Stores info needed by optimizers
   FT meshing_info_;
@@ -249,6 +246,10 @@ private:
   // Dimension of the lowest dimensional face of the input 3D complex
   // that contains me. Negative values are a marker for special vertices.
   short dimension_;
+
+  int number_of_incident_facets_ = -1;
+  int number_of_components_ = -1; // number of components in the adjacency
+  // graph of incident facets (in complex)
 
 public:
   friend std::istream& operator>>(std::istream &is, Mesh_vertex_3& v)

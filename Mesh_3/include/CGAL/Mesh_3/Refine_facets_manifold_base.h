@@ -160,7 +160,7 @@ private:
     typename std::vector<Facet>::iterator fit = facets.begin();
     while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
     CGAL_assertion(fit!=facets.end());
-    CGAL_assertion_code(std::size_t facet_counter = 1);
+    CGAL_assertion_code(int facet_counter = 1);
 
     Facet biggest_facet = *fit++;
     FT biggest_sq_dist = compute_sq_distance_to_facet_center(biggest_facet, v);
@@ -189,8 +189,7 @@ private:
       ++fit;
       while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
     }
-    CGAL_assertion(v->cached_number_of_incident_facets() ==
-                   facet_counter);
+    CGAL_assertion(v->cached_number_of_incident_facets() == facet_counter);
     CGAL_assertion(this->r_c3t3_.is_in_complex(biggest_facet));
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "Biggest facet squared radius: "
