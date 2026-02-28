@@ -1383,6 +1383,8 @@ private:
         const int ii = static_cast<int>(i);//avoid warnings
         if (c3t3.is_in_complex(Facet(c, ii)))
           surface_prop_table_[i] = c3t3.surface_info(Facet(c, ii));
+        else
+          surface_prop_table_[i] = {};
       }
       //note c->next_intrusive() and c->previous_intrusive()
       //are lost by 'backup' and 'restore',
@@ -1396,6 +1398,8 @@ private:
       int infinite_index = c->index(c3t3.triangulation().infinite_vertex());
       if (c3t3.is_in_complex(Facet(c, infinite_index)))
         surface_prop_table_[0] = c3t3.surface_info(Facet(c, infinite_index));
+      else
+        surface_prop_table_[0] = {};
     }
 
   public:
