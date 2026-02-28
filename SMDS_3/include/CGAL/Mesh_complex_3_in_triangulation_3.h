@@ -1509,7 +1509,7 @@ public:
   Face_status face_status(const Vertex_handle v) const
   {
     if (!manifold_info_initialized_) init_manifold_info();
-    const std::size_t n = v->cached_number_of_incident_facets();
+    const int n = v->cached_number_of_incident_facets();
 
     if (n == 0) return NOT_IN_COMPLEX;
 
@@ -1814,7 +1814,7 @@ private:
             ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
           }
 
-          const std::size_t n = edge_va->cached_number_of_incident_facets();
+          const int n = edge_va->cached_number_of_incident_facets();
           edge_va->set_c2t3_cache(n + 1, -1);
         }
       }
@@ -2307,9 +2307,9 @@ remove_from_complex(const Facet& facet)
           --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
         }
 
-        const std::size_t n = edge_va->cached_number_of_incident_facets();
+        const int n = edge_va->cached_number_of_incident_facets();
         CGAL_assertion(n > 0);
-        const std::size_t m = edge_va->cached_number_of_components();
+        const int m = edge_va->cached_number_of_components();
         edge_va->set_c2t3_cache(n - 1, m);
       }
       const int dimension_plus_1 = tr_.dimension() + 1;
