@@ -27,6 +27,11 @@ void naive_test(int k, const std::string& fname,
                 int& nb_inter, int& nb_no_inter, int& nb_include)
 {
   std::ifstream input(fname);
+  if (!input)
+  {
+    std::cerr << "Error: Cannot open file " << fname << std::endl;
+    return;
+  }
   Surface_mesh tm, tm2;
   input >> tm;
   copy_face_graph(tm, tm2);
@@ -91,6 +96,11 @@ void test_no_collision(int k, const std::string &fname,
                        int& nb_inter, int& nb_no_inter, int& nb_include)
 {
   std::ifstream input(fname);
+  if (!input)
+  {
+    std::cerr << "Error: Cannot open file " << fname << std::endl;
+    return;
+  }
   Surface_mesh tm, tm2;
   input >> tm;
   copy_face_graph(tm, tm2);
