@@ -175,6 +175,8 @@ public:
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_line.shaders())
       delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_face_edges.shaders())
+      delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_face.shaders())
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_clipping_plane.shaders())
@@ -722,7 +724,7 @@ public:
       rendering_program_face.release();
     }
 
-   if (m_draw_faces && m_draw_edges)
+   if (m_draw_edges)
     {
 
       // reference: https://stackoverflow.com/questions/37780345/opengl-how-to-create-order-independent-transparency
@@ -753,6 +755,9 @@ public:
         rendering_program_face_edges.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
         rendering_program_face_edges.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face_edges.setUniformValue("u_PointPlane", plane_point);
+        rendering_program_face_edges.setUniformValue("u_EdgeSize", static_cast<GLfloat>(m_size_edges));
+		rendering_program_face_edges.setUniformValue("u_DrawFaces", static_cast<GLint>(m_draw_faces));
+
 
         vao[VAO_FACES].bind();
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));

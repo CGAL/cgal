@@ -880,11 +880,13 @@ in highp   vec4 g_vs_fP[]; // view space position
 in highp   vec4 g_ls_fP[]; // local space position
 in highp   vec3 gN[];
 in mediump vec4 gColor[];
+in float gEdgeSize[];
 
 out highp   vec4 vs_fP; // view space position
 out highp   vec4 ls_fP; // local space position
 out highp   vec3 fN;
 out mediump vec4 fColor;
+out float fEdgeSize;
 
 noperspective out vec3 GEdgeDistance;
 uniform mat4 u_Vp; // Viewport matrix
@@ -912,6 +914,7 @@ fN= gN[0];
 vs_fP = g_vs_fP[0];
 ls_fP = g_ls_fP[0];
 fColor = gColor[0];
+fEdgeSize = gEdgeSize[0];
 gl_Position = gl_in[0].gl_Position;
 EmitVertex();
 GEdgeDistance = vec3( 0, hb, 0 );
@@ -919,6 +922,7 @@ fN= gN[1];
 vs_fP = g_vs_fP[1];
 ls_fP = g_ls_fP[1];
 fColor = gColor[1];
+fEdgeSize = gEdgeSize[1];
 gl_Position = gl_in[1].gl_Position;
 EmitVertex();
 GEdgeDistance = vec3( 0, 0, hc );
@@ -926,6 +930,7 @@ fN= gN[2];
 vs_fP = g_vs_fP[2];
 ls_fP = g_ls_fP[2];
 fColor = gColor[2];
+fEdgeSize = gEdgeSize[2];
 gl_Position = gl_in[2].gl_Position;
 EmitVertex();
 EndPrimitive();
@@ -942,10 +947,11 @@ out highp   vec4 g_vs_fP; // view space position
 out highp   vec4 g_ls_fP; // local space position
 out highp   vec3 gN;
 out mediump vec4 gColor;
+out float gEdgeSize;
 
 uniform highp   mat4  u_Mvp;
 uniform highp   mat4  u_Mv;
-uniform mediump float u_PointSize;
+uniform mediump float u_EdgeSize;
 uniform mediump vec3  u_DefaultColor;
 uniform         bool  u_UseDefaultColor;
 
@@ -965,7 +971,9 @@ void main(void)
   gN = mat3(u_Mv)* a_Normal;
 
   gl_Position = u_Mvp * pos;
-  gl_PointSize = u_PointSize;
+  float distance = gl_Position.w;
+  gEdgeSize = u_EdgeSize / distance;
+  gl_PointSize = u_EdgeSize;
 }
 )DELIM";
 const char FRAGMENT_SOURCE_COLOR_EDGES[]=R"DELIM(
@@ -974,6 +982,7 @@ in highp   vec4 vs_fP;
 in highp   vec4 ls_fP;
 in highp   vec3 fN;
 in mediump vec4 fColor;
+in float fEdgeSize;
 
 out mediump vec4 out_color;
 
@@ -987,13 +996,14 @@ uniform highp   vec4  u_ClipPlane;
 uniform highp   vec4  u_PointPlane;
 uniform mediump float u_RenderingMode;
 uniform mediump float u_RenderingTransparency;
+uniform bool u_DrawFaces;
 
 noperspective in vec3 GEdgeDistance;
 
 void main(void)
 {
 
-	float Line_Width = 2.0;
+	float Line_Width = fEdgeSize;
 	vec4 Line_Color = vec4(0.0, 0.0, 0.0, 1.0);
 
   highp vec3 L = u_LightPos.xyz - vs_fP.xyz;
@@ -1027,11 +1037,19 @@ void main(void)
 
 	float d = min( GEdgeDistance.x, GEdgeDistance.y );
 	d = min( d, GEdgeDistance.z );
+        if (u_DrawFaces){
 	float mixVal = smoothstep( Line_Width - 1, Line_Width + 1, d );
-        if (mixVal >= 0.99999f)
-          discard;
 	// Mix the surface color with the line color
 	out_color = mix( Line_Color, out_color, mixVal );
+        }
+        else{
+          if (d < Line_Width) {
+            out_color = Line_Color;
+          }
+          else {
+            discard;
+          }
+        }
 }
 )DELIM";
 /* const char vertex_source_clipping_plane_comp[]=R"DELIM(
