@@ -576,11 +576,10 @@ output_to_medit(std::ostream& os,
     auto [c, index] = f;
     // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
     if (print_each_facet_twice) {
-      auto mirror_facet = tr.mirror_facet(f);
-      [[maybe_unused]] auto [c2, _] = mirror_facet;
+      auto n = c->neighbor(index);
       // NOTE: We mirror a facet when needed to make it consistent with Use_cell_indices_pmap.
-      if (get(cell_pmap, c) > get(cell_pmap, c2)) {
-        f = mirror_facet;
+      if (get(cell_pmap, c) > get(cell_pmap, n)) {
+        f = {n, n->index(c)};
       }
     }
 
