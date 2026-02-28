@@ -103,6 +103,7 @@ ALIASES                = "cgal=%CGAL" \
                          "unix=Unix" \
                          "api=API" \
                          "vtk=VTK" \
+                         "itk=ITK" \
                          "visualstudio=Visual Studio" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \

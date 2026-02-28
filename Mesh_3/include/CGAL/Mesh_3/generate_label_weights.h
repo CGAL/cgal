@@ -146,7 +146,7 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
 
 }//namespace internal
 
-/// @cond INTERNAL
+/// @cond CGAL_DOCUMENT_INTERNALS
 template<typename Image_word_type>
 CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
                                                           const float& sigma)
@@ -296,12 +296,12 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 * voxel of `image`, to make the output mesh surfaces smoother.
 * The weights image is generated using the algorithm described by Stalling et al
 * in \cgalCite{stalling1998weighted}.
-* The [Insight toolkit](https://itk.org/) is needed to compile this function.
+* The \itk library is needed to compile this function.
 *
 * @param image the input labeled image from which the weights image is computed.
 *   Both will then be used to construct a `Labeled_mesh_domain_3`.
 * @param sigma the standard deviation parameter of the internal Gaussian filter,
-*   measured in real-world distances. The size of a voxel (e.g. shortest length
+*   measured in real-world distances. The size of a voxel (e.g., shortest length
 *   or longest length) usually is a good value for this parameter.
 *   Note that if `sigma` is too small, the "stair-effect" of meshing from
 *   a voxel image can appear. On the other side, if `sigma` is too large,

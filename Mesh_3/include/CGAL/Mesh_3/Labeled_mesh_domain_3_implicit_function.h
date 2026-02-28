@@ -913,7 +913,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     else
     {
       // Get a new random point into sphere as center of object
-      // It may be necessary if the center of the domain is empty, e.g. torus
+      // It may be necessary if the center of the domain is empty, e.g., torus
       // In general case, it is good for input point dispersion
       ++random_point_in_sphere;
       center_pt = translate(*random_point_in_sphere, sphere_translation);

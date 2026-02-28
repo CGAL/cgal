@@ -245,7 +245,7 @@ The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
 \suitesparse is a set of sparse-matrix-related packages written or co-authored by Tim Davis, available at <A HREF="https://github.com/DrTimothyAldenDavis/SuiteSparse">https://github.com/DrTimothyAldenDavis/SuiteSparse</A>.
 
-\suitesparse is used by the Orbifold Tutte Embedding and ARAP parametrization, i.e., in the surface parametrization package.
+\suitesparse is used by the Orbifold Tutte Embedding and ARAP parameterization, i.e., in the \ref PkgSurfaceMeshParameterization package.
 
 \note SuiteSparse on Windows can easily be installed by \code
 vcpkg install suitesparse
@@ -269,7 +269,7 @@ at <A HREF="https://github.com/KarypisLab/METIS">`https://github.com/KarypisLab/
 
 \zlib is a data compression library, and is essential for the component libCGAL_ImageIO.
 
-In \cgal, this library is used in the examples of the \ref PkgSurfaceMesher3 package.
+In \cgal, this library is used in the examples of the \ref PkgMesh3 package.
 
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="https://www.zlib.net/">`https://www.zlib.net/`</A>.
@@ -319,4 +319,16 @@ In order to use \osqp in \cgal programs, the executables should be linked with t
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
+
+\subsection thirdpartyVTK VTK
+
+\vtk is the Visualization Toolkit.
+In \cgal, this library is used in some examples of the \ref PkgMesh3 package.
+The \vtk web site is <A HREF="https://vtk.org/">`https://vtk.org`</A>.
+
+\subsection thirdpartyITK ITK
+
+\itk is the Insight Toolkit.
+In \cgal, this library is used in some examples of the \ref PkgMesh3 package.
+The \itk web site is <A HREF="https://itk.org/">`https://itk.org`</A>.
 */

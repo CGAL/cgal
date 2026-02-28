@@ -57,6 +57,13 @@ Release date: July 2026
     parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
     `do_intersect()`.)
 
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh3)
+
+- **Breaking change**: Removed the class template `CGAL::Implicit_vector_to_labeling_function_wrapper` as well as
+    the constructor of `CGAL::Polyhedral_mesh_domain_with_features_3` that has a filename as parameter,
+    which were deprecated since CGAL-4.5.
+- **Breaking change**:  Added the requirement for a nested type `Iso_cuboid_3` to the concept `BisectionGeometricTraits_3`.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing)
 - Add function `CGAL::Polygon_mesh_processing::kernel()`, to compute the kernel of a polygon mesh.
 - Add function `CGAL::Polygon_mesh_processing::is_empty_kernel()`, to indicate if the kernel of a polygon mesh is empty.
@@ -65,7 +72,7 @@ Release date: July 2026
 
 ### [2D Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulation2)
 
-- Add the function `insert_unique_constraints()` to the class `Constrained_Delaunay_triangulation_2` identical to the function `insert_constraints()` except that it removes duplicated constraints before inserting them in the triangulation.
+- Add the function `insert_unique_constraints()` to the class `CGAL::Constrained_Delaunay_triangulation_2` identical to the function `insert_constraints()` except that it removes duplicated constraints before inserting them in the triangulation.
 
 ### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
 
