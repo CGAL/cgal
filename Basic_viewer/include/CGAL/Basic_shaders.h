@@ -1007,8 +1007,8 @@ noperspective in vec3 GEdgeDistance;
 void main(void)
 {
 
-	float Line_Width = fEdgeSize;
-	vec4 Line_Color = vec4(0.0, 0.0, 0.0, 1.0);
+  float Line_Width = fEdgeSize;
+  vec4 Line_Color = vec4(0.0, 0.0, 0.0, 1.0);
 
   highp vec3 L = u_LightPos.xyz - vs_fP.xyz;
   highp vec3 V = -vs_fP.xyz;
@@ -1039,21 +1039,21 @@ void main(void)
   out_color = u_RenderingMode < 1 ? (diffuse + ambient) :
                       vec4(diffuse.rgb + ambient.rgb, u_RenderingMode);
 
-	float d = min( GEdgeDistance.x, GEdgeDistance.y );
-	d = min( d, GEdgeDistance.z );
-        if (u_DrawFaces){
-	float mixVal = smoothstep( Line_Width - 1, Line_Width + 1, d );
-	// Mix the surface color with the line color
-	out_color = mix( Line_Color, out_color, mixVal );
-        }
-        else{
-          if (d < Line_Width) {
-            out_color = Line_Color;
-          }
-          else {
-            discard;
-          }
-        }
+  float d = min( GEdgeDistance.x, GEdgeDistance.y );
+  d = min( d, GEdgeDistance.z );
+  if (u_DrawFaces){
+    float mixVal = smoothstep( Line_Width - 1, Line_Width + 1, d );
+    // Mix the surface color with the line color
+    out_color = mix( Line_Color, out_color, mixVal );
+  }
+  else{
+    if (d < Line_Width) {
+      out_color = Line_Color;
+    }
+    else {
+      discard;
+    }
+  }
 }
 )DELIM";
 /* const char vertex_source_clipping_plane_comp[]=R"DELIM(

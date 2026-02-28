@@ -756,7 +756,7 @@ public:
         rendering_program_face_edges.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face_edges.setUniformValue("u_PointPlane", plane_point);
         rendering_program_face_edges.setUniformValue("u_EdgeSize", static_cast<GLfloat>(m_size_edges));
-		rendering_program_face_edges.setUniformValue("u_DrawFaces", static_cast<GLint>(m_draw_faces));
+        rendering_program_face_edges.setUniformValue("u_DrawFaces", static_cast<GLint>(m_draw_faces));
 
 
         vao[VAO_FACES].bind();
