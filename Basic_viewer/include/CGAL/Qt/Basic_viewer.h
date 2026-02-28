@@ -461,7 +461,7 @@ public:
 
         rendering_program_cylinder.release();
       }
-      else
+      /*else
       {
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
 
@@ -513,7 +513,7 @@ public:
         }
 
         rendering_program_line.release();
-      }
+      }*/
     }
 
     if(m_draw_rays)
@@ -619,7 +619,7 @@ public:
       glPolygonOffset(0.1f, 0.9f);
     }
 
-    if (m_draw_faces)
+    if (m_draw_faces && !m_draw_edges)
     {
 
       // reference: https://stackoverflow.com/questions/37780345/opengl-how-to-create-order-independent-transparency
@@ -720,6 +720,109 @@ public:
         glPolygonOffset(offset_factor, offset_units);
 
       rendering_program_face.release();
+    }
+
+   if (m_draw_faces && m_draw_edges)
+    {
+
+      // reference: https://stackoverflow.com/questions/37780345/opengl-how-to-create-order-independent-transparency
+      // rendering_mode == -1: draw all as solid;
+      // rendering_mode == 0: draw solid only;
+      // rendering_mode == 1: draw transparent only;
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode)
+      {
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.0, 2.0);
+        glDepthFunc(GL_LESS);
+
+        rendering_program_face_edges.bind();
+        if (m_use_default_color)
+        {
+          auto face_edges_color = m_scene.get_default_color_face();
+          color = QVector3D((double)face_edges_color.red()/(double)255,
+                            (double)face_edges_color.green()/(double)255,
+                            (double)face_edges_color.blue()/(double)255);
+          rendering_program_face_edges.setUniformValue("u_DefaultColor", color);
+          rendering_program_face_edges.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+        }
+        else
+        {
+          rendering_program_face_edges.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
+        }
+        rendering_program_face_edges.setUniformValue("u_RenderingMode", rendering_mode);
+        rendering_program_face_edges.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
+        rendering_program_face_edges.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_face_edges.setUniformValue("u_PointPlane", plane_point);
+
+        vao[VAO_FACES].bind();
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        glDisable(GL_POLYGON_OFFSET_FILL);
+      };
+
+      auto renderer_clipping_plane = [this](bool clipping_plane_rendering) {
+        if (!isOpenGL_4_3()) return;
+        if (!clipping_plane_rendering) return;
+        // render clipping plane here
+        rendering_program_clipping_plane.bind();
+        vao[VAO_CLIPPING_PLANE].bind();
+        glLineWidth(0.1f);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>((m_array_for_clipping_plane.size()/3)));
+        glLineWidth(1.0f);
+        vao[VAO_CLIPPING_PLANE].release();
+        rendering_program_clipping_plane.release();
+      };
+
+      enum {
+        DRAW_SOLID_ALL = -1, // draw all mesh in solid mode
+        DRAW_SOLID_HALF, // draw only the mesh inside the clipping plane as solid
+        DRAW_TRANSPARENT_HALF // draw only the mesh outside the clipping plane as transparent
+      };
+
+      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
+      {
+        // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
+        // Before rendering all transparent objects, disable z-testing first.
+
+        // 1. draw solid first
+        renderer(DRAW_SOLID_HALF);
+
+        // 2. draw transparent layer second with back face culling to avoid messy triangles
+        glDepthMask(false); //disable z-testing
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CW);
+        renderer(DRAW_TRANSPARENT_HALF);
+
+        // 3. draw solid again without culling and blend to make sure the solid mesh is visible
+        glDepthMask(true); //enable z-testing
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_BLEND);
+        renderer(DRAW_SOLID_HALF);
+
+        // 4. render clipping plane here
+        renderer_clipping_plane(clipping_plane_rendering);
+      }
+      else if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
+               m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      {
+        // 1. draw solid HALF
+        renderer(DRAW_SOLID_HALF);
+
+        // 2. render clipping plane here
+        renderer_clipping_plane(clipping_plane_rendering);
+      }
+      else
+      {
+        // 1. draw solid FOR ALL
+        renderer(DRAW_SOLID_ALL);
+      }
+
+      if (is_two_dimensional())
+        glPolygonOffset(offset_factor, offset_units);
+
+      rendering_program_face_edges.release();
     }
 
     if (m_draw_normals)
@@ -911,6 +1014,36 @@ protected:
     { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
     if(!rendering_program_face.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
+
+    {
+      QOpenGLShader *geometry_shader_edges = new QOpenGLShader(QOpenGLShader::Geometry);
+
+      if(!geometry_shader_edges->compileSourceCode(GEOMETRY_SOURCE_EDGE))
+        { std::cerr<<"Compiling geometry source FAILED"<<std::endl; }
+
+
+      if(!rendering_program_face_edges.addShader(geometry_shader_edges))
+      { std::cerr<<"adding geometry shader FAILED"<<std::endl; }
+      source_ = VERTEX_SOURCE_COLOR_EDGES;
+
+      QOpenGLShader *vertex_shader_face_edges = new QOpenGLShader(QOpenGLShader::Vertex);
+      if(!vertex_shader_face_edges->compileSourceCode(source_))
+      { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
+
+      source_ = FRAGMENT_SOURCE_COLOR_EDGES;
+
+      QOpenGLShader *fragment_shader_face_edges= new QOpenGLShader(QOpenGLShader::Fragment);
+      if(!fragment_shader_face_edges->compileSourceCode(source_))
+      { std::cerr<<"Compiling fragment source FAILED"<<std::endl; }
+
+      if(!rendering_program_face_edges.addShader(vertex_shader_face_edges))
+      { std::cerr<<"adding vertex shader FAILED"<<std::endl; }
+      if(!rendering_program_face_edges.addShader(fragment_shader_face_edges))
+      { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
+      if(!rendering_program_face_edges.link())
+      { std::cerr<<"linking Program FAILED"<<std::endl; }
+
+    }
 
     if (isOpenGL_4_3())
     {
@@ -1265,6 +1398,7 @@ protected:
   {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
+    QMatrix4x4 vpMatrix;
     double mat[16];
     viewer->camera()->getModelViewProjectionMatrix(mat);
     for(unsigned int i=0; i < 16; i++)
@@ -1276,6 +1410,16 @@ protected:
     {
       mvMatrix.data()[i] = (float)mat[i];
     }
+    double matv[16]={
+      this->width()/2.0, 0.0, 0.0, this->width()/2.0,
+      0.0, this->height()/2.0, 0.0, this->height()/2.0,
+      0.0, 0.0, 1.0 / 2.0, 1.0 / 2.0,
+      0.0, 0.0, 0.0, 1.0
+    };
+    for (unsigned int i=0; i < 16; i++)
+      vpMatrix.data()[i] = (float)matv[i];
+
+
     // define material
     QVector4D diffuse( 0.9f,
                        0.9f,
@@ -1319,6 +1463,32 @@ protected:
     rendering_program_face.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program_face.setUniformValue(mvLocation, mvMatrix);
     rendering_program_face.release();
+
+    //face_edges
+      rendering_program_face_edges.bind();
+      mvpLocation = rendering_program_face_edges.uniformLocation("u_Mvp");
+      mvLocation = rendering_program_face_edges.uniformLocation("u_Mv");
+    int lightLocation_edges[5];
+      int vpLocation = rendering_program_face_edges.uniformLocation("u_Vp");
+      lightLocation_edges[0] = rendering_program_face_edges.uniformLocation("u_LightPos");
+      lightLocation_edges[1] = rendering_program_face_edges.uniformLocation("u_LightDiff");
+      lightLocation_edges[2] = rendering_program_face_edges.uniformLocation("u_LightSpec");
+      lightLocation_edges[3] = rendering_program_face_edges.uniformLocation("u_LightAmb");
+      lightLocation_edges[4] = rendering_program_face_edges.uniformLocation("u_SpecPower");
+
+      rendering_program_face_edges.setUniformValue(lightLocation_edges[0], position);
+      rendering_program_face_edges.setUniformValue(lightLocation_edges[1], diffuse);
+      rendering_program_face_edges.setUniformValue(lightLocation_edges[2], specular);
+      rendering_program_face_edges.setUniformValue(lightLocation_edges[3], m_ambient_color);
+      rendering_program_face_edges.setUniformValue(lightLocation_edges[4], shininess);
+      rendering_program_face_edges.setUniformValue(mvpLocation, mvpMatrix);
+      rendering_program_face_edges.setUniformValue(mvLocation, mvMatrix);
+      rendering_program_face_edges.setUniformValue(vpLocation,vpMatrix);
+      rendering_program_face_edges.release();
+
+
+
+
 
     rendering_program_p_l.bind();
     mvpLocation = rendering_program_p_l.uniformLocation("u_Mvp");
@@ -1931,6 +2101,7 @@ protected:
   QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
 
   QOpenGLShaderProgram rendering_program_face;
+  QOpenGLShaderProgram rendering_program_face_edges;
   QOpenGLShaderProgram rendering_program_p_l;
   QOpenGLShaderProgram rendering_program_line;
   QOpenGLShaderProgram rendering_program_clipping_plane;

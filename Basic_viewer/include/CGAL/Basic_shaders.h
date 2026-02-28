@@ -871,7 +871,169 @@ void main(void)
   gl_FragColor = fColor;
 }
 )DELIM";
+const char GEOMETRY_SOURCE_EDGE[]=R"DELIM(
+#version 150
+layout( triangles ) in;
+layout( triangle_strip, max_vertices = 3 ) out;
 
+in highp   vec4 g_vs_fP[]; // view space position
+in highp   vec4 g_ls_fP[]; // local space position
+in highp   vec3 gN[];
+in mediump vec4 gColor[];
+
+out highp   vec4 vs_fP; // view space position
+out highp   vec4 ls_fP; // local space position
+out highp   vec3 fN;
+out mediump vec4 fColor;
+
+noperspective out vec3 GEdgeDistance;
+uniform mat4 u_Vp; // Viewport matrix
+void main()
+{
+// Transform each vertex into viewport space
+vec3 p0 = vec3(u_Vp * (gl_in[0].gl_Position /
+gl_in[0].gl_Position.w));
+vec3 p1 = vec3(u_Vp * (gl_in[1].gl_Position /
+gl_in[1].gl_Position.w));
+vec3 p2 = vec3(u_Vp * (gl_in[2].gl_Position /
+gl_in[2].gl_Position.w));
+// Find the altitudes (ha, hb and hc)
+float a = length(p1 - p2);
+float b = length(p2 - p0);
+float c = length(p1 - p0);
+float alpha = acos( (b*b + c*c - a*a) / (2.0*b*c) );
+float beta = acos( (a*a + c*c - b*b) / (2.0*a*c) );
+float ha = abs( c * sin( beta ) );
+float hb = abs( c * sin( alpha ) );
+float hc = abs( b * sin( alpha ) );
+// Send the triangle along with the edge distances
+GEdgeDistance = vec3( ha, 0, 0 );
+fN= gN[0];
+vs_fP = g_vs_fP[0];
+ls_fP = g_ls_fP[0];
+fColor = gColor[0];
+gl_Position = gl_in[0].gl_Position;
+EmitVertex();
+GEdgeDistance = vec3( 0, hb, 0 );
+fN= gN[1];
+vs_fP = g_vs_fP[1];
+ls_fP = g_ls_fP[1];
+fColor = gColor[1];
+gl_Position = gl_in[1].gl_Position;
+EmitVertex();
+GEdgeDistance = vec3( 0, 0, hc );
+fN= gN[2];
+vs_fP = g_vs_fP[2];
+ls_fP = g_ls_fP[2];
+fColor = gColor[2];
+gl_Position = gl_in[2].gl_Position;
+EmitVertex();
+EndPrimitive();
+}
+)DELIM";
+
+const char VERTEX_SOURCE_COLOR_EDGES[]=R"DELIM(
+#version 150
+in highp   vec3 a_Pos;
+in highp   vec3 a_Normal;
+in mediump vec3 a_Color;
+
+out highp   vec4 g_vs_fP; // view space position
+out highp   vec4 g_ls_fP; // local space position
+out highp   vec3 gN;
+out mediump vec4 gColor;
+
+uniform highp   mat4  u_Mvp;
+uniform highp   mat4  u_Mv;
+uniform mediump float u_PointSize;
+uniform mediump vec3  u_DefaultColor;
+uniform         bool  u_UseDefaultColor;
+
+void main(void)
+{
+  gColor = vec4(a_Color, 1.0);
+  if (u_UseDefaultColor)
+  {
+    gColor = vec4(u_DefaultColor, 1.0);
+  }
+
+  vec4 pos = vec4(a_Pos, 1.0);
+
+  g_ls_fP = pos;
+  g_vs_fP = u_Mv * pos;
+
+  gN = mat3(u_Mv)* a_Normal;
+
+  gl_Position = u_Mvp * pos;
+  gl_PointSize = u_PointSize;
+}
+)DELIM";
+const char FRAGMENT_SOURCE_COLOR_EDGES[]=R"DELIM(
+#version 150
+in highp   vec4 vs_fP;
+in highp   vec4 ls_fP;
+in highp   vec3 fN;
+in mediump vec4 fColor;
+
+out mediump vec4 out_color;
+
+uniform highp   vec4  u_LightPos;
+uniform mediump vec4  u_LightDiff;
+uniform mediump vec4  u_LightSpec;
+uniform mediump vec4  u_LightAmb;
+uniform mediump float u_SpecPower;
+
+uniform highp   vec4  u_ClipPlane;
+uniform highp   vec4  u_PointPlane;
+uniform mediump float u_RenderingMode;
+uniform mediump float u_RenderingTransparency;
+
+noperspective in vec3 GEdgeDistance;
+
+void main(void)
+{
+
+	float Line_Width = 2.0;
+	vec4 Line_Color = vec4(0.0, 0.0, 0.0, 1.0);
+
+  highp vec3 L = u_LightPos.xyz - vs_fP.xyz;
+  highp vec3 V = -vs_fP.xyz;
+
+  highp vec3 a_Normal = normalize(fN);
+  L = normalize(L);
+  V = normalize(V);
+
+  highp vec3 R = reflect(-L, a_Normal);
+  highp vec4 diffuse = vec4(max(dot(a_Normal,L), 0.0) * u_LightDiff.rgb * fColor.rgb, 1.0);
+  highp vec4 ambient = vec4(u_LightAmb.rgb * fColor.rgb, 1.0);
+  highp vec4 specular = pow(max(dot(R,V), 0.0), u_SpecPower) * u_LightSpec;
+
+  // onPlane == 1: inside clipping plane, should be solid;
+  // onPlane == -1: outside clipping plane, should be transparent;
+  // onPlane == 0: on clipping plane, whatever;
+  float onPlane = sign(dot((ls_fP.xyz-u_PointPlane.xyz), u_ClipPlane.xyz));
+
+  // rendering_mode == -1: draw all solid;
+  // rendering_mode == 0: draw solid only;
+  // rendering_mode == 1: draw transparent only;
+  if (u_RenderingMode == (onPlane+1)/2) {
+    // discard other than the corresponding half when rendering
+    discard;
+  }
+
+  // draw corresponding part
+  out_color = u_RenderingMode < 1 ? (diffuse + ambient) :
+                      vec4(diffuse.rgb + ambient.rgb, u_RenderingMode);
+
+	float d = min( GEdgeDistance.x, GEdgeDistance.y );
+	d = min( d, GEdgeDistance.z );
+	float mixVal = smoothstep( Line_Width - 1, Line_Width + 1, d );
+        if (mixVal >= 0.99999f)
+          discard;
+	// Mix the surface color with the line color
+	out_color = mix( Line_Color, out_color, mixVal );
+}
+)DELIM";
 /* const char vertex_source_clipping_plane_comp[]=R"DELIM(
 attribute highp vec4 vertex;
 
