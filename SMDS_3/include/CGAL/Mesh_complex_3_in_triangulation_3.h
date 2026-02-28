@@ -200,8 +200,10 @@ public:
 /// @{
   typedef Tr                                            Triangulation;
   typedef typename Tr::size_type                        size_type;
-  typedef typename Tr::Bare_point                       Bare_point;
+
+  typedef typename Tr::Geom_traits::Point_3             Bare_point;
   typedef typename Tr::Point                            Point;
+
   typedef typename Tr::Edge                             Edge;
   typedef typename Tr::Facet                            Facet;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
