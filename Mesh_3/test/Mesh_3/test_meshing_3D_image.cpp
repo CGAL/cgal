@@ -90,5 +90,7 @@ int main()
   test_epic_p.image();
 #endif
 
+  std::cout << "Done" << std::endl;
+
   return EXIT_SUCCESS;
 }

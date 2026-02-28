@@ -85,5 +85,7 @@ int main()
   CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
+  std::cout << "Done" << std::endl;
+
   return EXIT_SUCCESS;
 }

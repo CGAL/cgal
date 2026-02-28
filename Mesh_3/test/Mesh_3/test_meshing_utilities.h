@@ -208,14 +208,20 @@ struct Tester
     //-------------------------------------------------------
     // Verifications
     //-------------------------------------------------------
-    std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex() << "\n";
-    std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex() << "\n";
-    std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices() << "\n";
+    std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex() << " ";
+    std::cerr << "[expected: " << min_cells_expected << " - " << max_cells_expected << "]\n";
+    std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex() << " ";
+    std::cerr << "[expected: " << min_facets_expected << " - " << max_facets_expected << "]\n";
+    std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices() << " ";
+    std::cerr << "[expected: " << min_vertices_expected << " - " << max_vertices_expected << "]\n";
 
     std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(),
                                             c3t3.facets_in_complex_end()) );
     std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(),
-                                            c3t3.cells_in_complex_end()) );
+                                           c3t3.cells_in_complex_end()) );
+
+    std::cout << "dist_facets " << dist_facets << std::endl;
+    std::cout << "dist_cells " << dist_cells << std::endl;
 
     assert(min_vertices_expected <= c3t3.triangulation().number_of_vertices());
     assert(max_vertices_expected >= c3t3.triangulation().number_of_vertices());
