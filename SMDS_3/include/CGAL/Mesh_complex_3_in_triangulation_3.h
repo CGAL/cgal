@@ -802,6 +802,20 @@ public:
   {
     Triangulation& tr = triangulation();
 
+    std::vector<Cell_handle> old_cells;
+    old_cells.reserve(32);
+    tr.incident_cells(v, std::back_inserter(old_cells));
+
+    for (const Cell_handle& c : old_cells)
+    {
+      remove_from_complex(c);
+      for (int i = 0; i < 4; ++i) {
+        // Do *not* call the C3T3's remove_from_complex() because the information
+        // on the opposite facet must not be cleared for boundary facets.
+        set_surface_patch_index(c, i, Surface_patch_index());
+      }
+    }
+
     std::vector<Cell_handle> new_cells;
     new_cells.reserve(32);
     tr.remove_and_give_new_cells(v, std::back_inserter(new_cells));
