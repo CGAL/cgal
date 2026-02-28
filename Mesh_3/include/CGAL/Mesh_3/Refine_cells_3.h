@@ -951,10 +951,9 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
-  // @tmp
-  // Remove the cell's facets from the complex
+  // Remove the cell's facets from the complex (and from the hash map).
   // Do *not* call the C3T3's remove_from_complex() because the information
-  // on the opposite facet should not be cleared for boundary facets
+  // on the opposite facet must not be cleared for boundary facets.
   auto cit = zone.cells.begin();
   for ( ; cit != zone.cells.end() ; ++cit )
   {

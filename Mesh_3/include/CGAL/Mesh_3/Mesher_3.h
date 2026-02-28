@@ -627,9 +627,9 @@ refine_mesh(std::string dump_after_refine_surface_prefix, const bool surface_onl
   std::cerr << std::endl;
 
   // memory footprint of r_c3t3_.surface_facet_info_
-  std::cout << "final surfacic element map size:" << std::endl;
-  std::cout << "  surface facet info: " << r_c3t3_.surface_facet_info_.size() << std::endl;
-  std::cout << "  surface facet info size in bytes: "
+  std::cout << "final surface info map size:" << std::endl;
+  std::cout << "  surface facet size: " << r_c3t3_.surface_facet_info_.size() << std::endl;
+  std::cout << "  surface facet mem footprint bytes: "
             << r_c3t3_.surface_facet_info_.size() * sizeof(typename C3T3::Surface_facet_info) << std::endl;
 
   CGAL_postcondition(r_tr.is_valid());
