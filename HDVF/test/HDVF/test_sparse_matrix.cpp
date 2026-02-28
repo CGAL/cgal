@@ -6,6 +6,7 @@
 #include <cassert>
 #include <CGAL/OSM/OSM.h>
 #include <CGAL/Zp.h>
+#include <CGAL/OSM/Full_lu.h>
 
 //typedef int Coefficient_ring;
 typedef CGAL::Zp<5, char, true> Coefficient_ring;
@@ -655,7 +656,7 @@ int main(int argc, char **argv)
 #endif
 
 
-#if 0
+#if 1
     // Test Full_LU
 
     {
@@ -690,9 +691,14 @@ int main(int argc, char **argv)
         B.eye(A.dimensions());
 
         std::cout << "----------" << std::endl;
-        SM_row AA(lu.inverse());
-        std::cout << AA;
-        std::cout << "A * A^-1: " << std::endl << A * AA << std::endl;
+        std::cout << "det: " << lu.determinant() << std::endl;
+        bool is_inv(lu.is_invertible());
+        std::cout << "inv: " << is_inv << std::endl;
+        if (is_inv) {
+            SM_row AA(lu.inverse());
+            std::cout << AA;
+            std::cout << "A * A^-1: " << std::endl << A * AA << std::endl;
+        }
     }
 
     std::cout << "--------------- " << std::endl;
@@ -725,9 +731,14 @@ int main(int argc, char **argv)
         std::cout << "equal: " << (prod == prod2) << std::endl;
 
         std::cout << "----------" << std::endl;
-        SM_col AA(lu.inverse());
-        std::cout << AA;
-        std::cout << "A * A^-1: " << std::endl << A * AA << std::endl;
+        std::cout << "det: " << lu.determinant() << std::endl;
+        bool is_inv(lu.is_invertible());
+        std::cout << "inv: " << is_inv << std::endl;
+        if (is_inv) {
+            SM_col AA(lu.inverse());
+            std::cout << AA;
+            std::cout << "A * A^-1: " << std::endl << A * AA << std::endl;
+        }
     }
 #endif
 

@@ -12,6 +12,7 @@
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
 #include <CGAL/HDVF/Hdvf.h>
+#include <CGAL/OSM/Full_lu.h>
 #include <CGAL/OSM/OSM.h>
 
 //#define BUILD_TEST_DATA

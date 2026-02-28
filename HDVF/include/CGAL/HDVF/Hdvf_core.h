@@ -20,6 +20,7 @@
 #include <random>
 #include <CGAL/OSM/OSM.h>
 #include <CGAL/OSM/Bitboard.h>
+#include <CGAL/OSM/Full_lu.h>
 
 namespace CGAL {
 namespace Homological_discrete_vector_field {
