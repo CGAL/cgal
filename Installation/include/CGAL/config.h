@@ -359,17 +359,33 @@ using std::max;
 #endif
 
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
-#ifdef CGAL_CXX23
+//
+// CGAL_ASSUME(EX) tells the compiler that EX is true, as an optimisation hint.
+//   - [[assume(EX)]] (C++23): does not evaluate EX, but on GCC it enables
+//     fewer optimizations than __builtin_unreachable() and is often ignored.
+//   - __builtin_assume(EX) (Clang/ICC): does not evaluate EX, zero-cost hint.
+//   - if(!(EX)){__builtin_unreachable();} (GCC): evaluates EX, but enables
+//     stronger optimizations on GCC.
+//   - __assume(EX) (MSVC): does not evaluate EX.
+//
+// GCC is excluded from the C++23 [[assume]] path because __builtin_unreachable()
+// provides strictly stronger optimizations there.
+#if defined(CGAL_CXX23) && !(defined(__GNUC__) && !defined(__clang__))
+// C++23: [[assume(EX)]] does not evaluate EX.
+// Not used on GCC where __builtin_unreachable() is more effective.
 #  define CGAL_ASSUME(EX) [[ assume(EX) ]]
 #  define CGAL_UNREACHABLE() std::unreachable()
+#elif __has_builtin(__builtin_assume)
+// Clang/ICC: __builtin_assume(EX) does not evaluate EX, zero-cost hint.
+#  define CGAL_ASSUME(EX) __builtin_assume(EX)
+#  define CGAL_UNREACHABLE() __builtin_unreachable()
 #elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
-// Call a builtin of the compiler to pass a hint to the compiler
-// From g++ 4.5, there exists a __builtin_unreachable()
-// Also in LLVM/clang
+// GCC: __builtin_unreachable() enables stronger optimizations than [[assume]].
+// Note: this form evaluates EX at runtime.
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
 #  define CGAL_UNREACHABLE() __builtin_unreachable()
 #elif defined(_MSC_VER)
-// MSVC has __assume
+// MSVC: __assume(EX) does not evaluate EX.
 #  define CGAL_ASSUME(EX) __assume(EX)
 #  define CGAL_UNREACHABLE() __assume(0)
 #endif
