@@ -1303,7 +1303,12 @@ const Lazy_exact_nt<ET> & y){
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
-{ return os << CGAL_NTS to_double(a); }
+{
+  // Output the exact value so that operator>> can reconstruct the same number.
+  // Using to_double() (as was done before issue #135 was fixed) loses precision
+  // and breaks round-trip save/load of exact kernel coordinates.
+  return os << a.exact();
+}
 
 template <typename ET>
 std::istream &
