@@ -163,6 +163,10 @@ protected:
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
 
+  // Optional continuous implicit function for value-interpolating root finding.
+  // Empty for label-only domains (image, multi-material). Set by create_implicit_mesh_domain.
+  typedef std::function<FT(const Point_3&)> Continuous_function_type;
+
   template <typename Function,
             typename Bounding_object,
             typename Null,
@@ -172,8 +176,10 @@ protected:
                                      const FT& error_bound,
                                      Construct_surface_patch_index cstr_s_p_i,
                                      Null null,
-                                     CGAL::Random* p_rng)
+                                     CGAL::Random* p_rng,
+                                     Continuous_function_type continuous_f = Continuous_function_type())
     : function_(f)
+    , continuous_function_(std::move(continuous_f))
     , bbox_(iso_cuboid(bounding))
     , cstr_s_p_index(cstr_s_p_i)
     , null(null)
@@ -186,6 +192,8 @@ protected:
   // The function which answers subdomain queries
   typedef std::function<Subdomain_index(const Point_3&)> Function_type;
   Function_type function_;
+  // Optional continuous function for Illinois method root finding
+  Continuous_function_type continuous_function_;
   // The bounding box
   const Iso_cuboid_3 bbox_;
 
@@ -284,7 +292,8 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
-                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::continuous_function_param), typename Impl_details::Continuous_function_type()))
   {}
 ///@}
 
@@ -295,7 +304,10 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
-                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr),
+                parameters::choose_parameter(
+                  parameters::get_parameter(np, internal_np::continuous_function_param),
+                  typename Impl_details::Continuous_function_type()))
   {}
 
   // Overload handling parameters passed with operator=
@@ -383,6 +395,9 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    // Capture the original continuous function for Illinois method root finding.
+    // The labeling wrapper only returns integer labels; we need continuous values for interpolation.
+    typename Impl_details::Continuous_function_type continuous_f(function);
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
             (p::function = make_implicit_to_labeling_function_wrapper<BGT>(function),
@@ -392,7 +407,8 @@ public:
              p::null_subdomain_index =
                      create_null_subdomain_index(null_subdomain_index_),
              p::construct_surface_patch_index =
-                     create_construct_surface_patch_index(construct_surface_patch_index_));
+                     create_construct_surface_patch_index(construct_surface_patch_index_),
+             p::continuous_function = continuous_f);
   }
 /// @}
 
@@ -609,11 +625,15 @@ public:
 
   private:
     /*
-     * Returns a point in the intersection of `[a,b]` with the surface
-     *  `a` must be the source point, and `b` the out point. It is important
+     * Returns a point in the intersection of `[a,b]` with the surface.
+     * `a` must be the source point, and `b` the out point. It is important
      * because it drives bisection cuts.
      * Indeed, the returned point is the first intersection of `[a,b]`
      * with a subdomain surface.
+     *
+     * When a continuous implicit function is available (set by
+     * create_implicit_mesh_domain), uses the Illinois method (modified regula
+     * falsi) for superlinear convergence. Falls back to bisection otherwise.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
     {
@@ -626,12 +646,10 @@ public:
       // Non const points
       Point_3 p1 = a;
       Point_3 p2 = b;
-      Point_3 mid = midpoint(p1, p2);
 
       // Cannot be const: those values are modified below.
       Subdomain_index value_at_p1 = r_domain_.function_(p1);
       Subdomain_index value_at_p2 = r_domain_.function_(p2);
-      Subdomain_index value_at_mid = r_domain_.function_(mid);
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
@@ -644,8 +662,14 @@ public:
         return Intersection();
       }
 
-      // Else lets find a point (by bisection)
-      // Bisection ends when the point is near than error bound from surface
+      // Use Illinois method when continuous function is available
+      if(r_domain_.continuous_function_)
+        return illinois_intersection(p1, p2, value_at_p1, value_at_p2, squared_distance);
+
+      // Bisection fallback for label-only domains (image, multi-material)
+      Point_3 mid = midpoint(p1, p2);
+      Subdomain_index value_at_mid = r_domain_.function_(mid);
+
       while(true)
       {
         // If the two points are enough close, then we return midpoint
@@ -659,7 +683,6 @@ public:
           return Intersection(mid, index, 2);
         }
 
-        // Else we must go on
         // Here we consider that p1(a) is the source point. Thus, we keep p1 and
         // change p2 if f(p1)!=f(p2).
         // That allows us to find the first intersection from a of [a,b] with
@@ -679,6 +702,99 @@ public:
         mid = midpoint(p1, p2);
         value_at_mid = r_domain_.function_(mid);
       }
+    }
+
+    /*
+     * Illinois method (modified regula falsi) for root finding on the
+     * continuous implicit function. Converges superlinearly
+     * vs bisection's linear convergence.
+     *
+     * Uses the same spatial convergence criterion as bisection
+     * (squared_distance < squared_error_bound) and the same source-priority
+     * bracketing logic. Final result uses linear interpolation for a
+     * better point estimate than midpoint.
+     *
+     * Follows the pattern of Poisson_mesh_domain_3::Construct_intersection
+     * which also uses continuous values + interpolation.
+     */
+    Intersection illinois_intersection(Point_3 p1, Point_3 p2,
+                                       Subdomain_index label1, Subdomain_index label2,
+                                       const typename BGT::Compute_squared_distance_3& squared_distance) const
+    {
+      FT f1 = r_domain_.continuous_function_(p1);
+      FT f2 = r_domain_.continuous_function_(p2);
+
+      // Illinois forcing: tracks which side was retained last iteration.
+      // 0 = first iteration, -1 = p2 was replaced, +1 = p1 was replaced.
+      int side = 0;
+
+      const int max_iterations = 100;
+      for(int iter = 0; iter < max_iterations; ++iter)
+      {
+        // Same spatial convergence criterion as bisection
+        if(squared_distance(p1, p2) < r_domain_.squared_error_bound_)
+        {
+          // Final linear interpolation for best estimate (cf. Poisson_mesh_domain_3)
+          Point_3 result = (f1 == f2)
+            ? Point_3(CGAL::ORIGIN + FT(0.5) * ((p1 - CGAL::ORIGIN) + (p2 - CGAL::ORIGIN)))
+            : Point_3(CGAL::ORIGIN + ((f2 * (p1 - CGAL::ORIGIN)) - (f1 * (p2 - CGAL::ORIGIN))) / (f2 - f1));
+          const Surface_patch_index sp_index =
+            r_domain_.make_surface_index(label1, label2);
+          const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+          return Intersection(result, index, 2);
+        }
+
+        // Regula falsi: interpolate where f crosses zero.
+        // The exact-zero check handles the degenerate case (identical function
+        // values after Illinois forcing). The clamp below handles the near-zero
+        // denominator case for floating-point FT, bounding t to [0.01, 0.99]
+        // so a wildly inaccurate quotient still produces a safe step.
+        FT denom = f2 - f1;
+        FT t;
+        if(denom == FT(0))
+          t = FT(0.5);
+        else
+          t = f2 / denom;  // weight toward p1
+
+        // Clamp to [0.01, 0.99] for guaranteed progress
+        if(t < FT(0.01)) t = FT(0.01);
+        if(t > FT(0.99)) t = FT(0.99);
+
+        Point_3 mid = Point_3(CGAL::ORIGIN
+                               + (FT(1) - t) * (p2 - CGAL::ORIGIN)
+                               + t * (p1 - CGAL::ORIGIN));
+        FT f_mid = r_domain_.continuous_function_(mid);
+
+        // Get label via the labeling function to respect the existing
+        // threshold convention (decoupled from continuous function)
+        Subdomain_index label_mid = r_domain_.function_(mid);
+
+        // Narrow bracket (same source-priority logic as bisection)
+        if(label1 != label_mid &&
+           !(r_domain_.null(label1) && r_domain_.null(label_mid)))
+        {
+          // Label changed between p1 and mid: narrow from the far side
+          if(side == -1) f1 /= FT(2);  // Illinois forcing
+          p2 = mid; f2 = f_mid; label2 = label_mid;
+          side = -1;
+        }
+        else
+        {
+          // Same label as p1: advance past mid
+          if(side == 1) f2 /= FT(2);   // Illinois forcing
+          p1 = mid; f1 = f_mid; label1 = label_mid;
+          side = 1;
+        }
+      }
+
+      // Safety fallback (should not reach here with clamped steps)
+      Point_3 result = (f1 == f2)
+        ? Point_3(CGAL::ORIGIN + FT(0.5) * ((p1 - CGAL::ORIGIN) + (p2 - CGAL::ORIGIN)))
+        : Point_3(CGAL::ORIGIN + ((f2 * (p1 - CGAL::ORIGIN)) - (f1 * (p2 - CGAL::ORIGIN))) / (f2 - f1));
+      const Surface_patch_index sp_index =
+        r_domain_.make_surface_index(label1, label2);
+      const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+      return Intersection(result, index, 2);
     }
 
     // Clips  `query` to a segment `s`, and call `operator()(s)`

@@ -409,6 +409,7 @@ CGAL_add_named_parameter_with_compatibility(cell_min_size_param_t, cell_min_size
 
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
+CGAL_add_named_parameter_with_compatibility(continuous_function_param_t, continuous_function_param, continuous_function)
 
 // List of named parameters used in the package ' 3D Surface Subdivision Methods'
 CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
