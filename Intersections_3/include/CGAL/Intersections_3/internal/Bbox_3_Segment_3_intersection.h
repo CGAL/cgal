@@ -18,8 +18,10 @@
 #define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SEGMENT_3_INTERSECTION_H
 
 #include <CGAL/Intersection_traits_3.h>
+#include <CGAL/Intersections_3/internal/Iso_cuboid_3_Segment_3_intersection.h>
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/number_utils.h>
 
 #include <optional>
@@ -174,22 +176,20 @@ template <class K>
 typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
 intersection(const typename K::Segment_3& seg,
              const Bbox_3& box,
-             const K&)
+             const K& k)
 {
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
+  // Delegate to the Iso_cuboid_3/Segment_3 intersection which uses exact
+  // kernel arithmetic throughout, avoiding the to_double() precision loss
+  // that the old intersection_bl() helper suffered from (issue #7124).
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type result_type;
+  typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::variant_type variant_type;
 
-  const Point_3& linepoint = seg.source();
-  const Vector_3& diffvec = seg.target() - linepoint;
-
-  return intersection_bl<K>(box,
-                            CGAL::to_double(linepoint.x()),
-                            CGAL::to_double(linepoint.y()),
-                            CGAL::to_double(linepoint.z()),
-                            CGAL::to_double(diffvec.x()),
-                            CGAL::to_double(diffvec.y()),
-                            CGAL::to_double(diffvec.z()),
-                            false, false);
+  auto res = internal::intersection(seg, Iso_cuboid_3(box), k);
+  if(!res) return result_type();
+  return std::visit([](auto&& v) -> result_type {
+    return result_type(variant_type(std::forward<decltype(v)>(v)));
+  }, *res);
 }
 
 template <class K>
