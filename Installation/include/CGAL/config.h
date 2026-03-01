@@ -359,7 +359,10 @@ using std::max;
 #endif
 
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
-#ifdef CGAL_CXX23
+// GCC is excluded from the C++23 [[assume]] path: there [[assume(EX)]] does not
+// evaluate EX, which enables a much more restricted set of optimizations than
+// __builtin_unreachable() and is often simply ignored.
+#if defined(CGAL_CXX23) && !(defined(__GNUC__) && !defined(__clang__))
 #  define CGAL_ASSUME(EX) [[ assume(EX) ]]
 #  define CGAL_UNREACHABLE() std::unreachable()
 #elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
