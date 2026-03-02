@@ -17,6 +17,7 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 
+#include <CGAL/Default.h>
 #include <CGAL/license/TDS_3.h>
 
 #include <CGAL/disable_warnings.h>
@@ -29,6 +30,7 @@
 #include <iostream>
 #include <istream>
 #include <limits>
+#include <memory_resource>
 #include <ostream>
 #include <stack>
 #include <utility>
@@ -50,8 +52,11 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/tags.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/unordered_flat_map.h>
 #include <CGAL/utility.h>
 
 #include <CGAL/Concurrent_compact_container.h>
@@ -74,7 +79,74 @@
 
 namespace CGAL {
 
-// TODO : noms : Vb != Vertex_base : clarifier.
+namespace TDS_3 {
+
+namespace internal {
+
+  template <typename Handle>
+  using handle_value_t = CGAL::cpp20::remove_cvref_t<decltype(*std::declval<Handle>())>;
+
+  template <typename Vertex_handle, bool has_visited_data_member = false>
+  class Visited_vertex {
+    using Hash = CGAL::Hash_handles_with_or_without_timestamps;
+    using Equal = std::equal_to<Vertex_handle>;
+    using Allocator =  std::pmr::polymorphic_allocator<Vertex_handle>;
+
+    std::array<Vertex_handle, 192> visited_vertices_buffer;
+    std::pmr::monotonic_buffer_resource buffer_resource{visited_vertices_buffer.data(),
+                                                        visited_vertices_buffer.size() * sizeof(Vertex_handle)};
+    std::pmr::polymorphic_allocator<Vertex_handle> allocator{&buffer_resource};
+    CGAL::unordered_flat_set<Vertex_handle, Hash, Equal, Allocator> visited_vertices{allocator};
+  public:
+    void reserve(std::size_t n) {
+      visited_vertices.reserve(n);
+    }
+
+    bool operator()(const Vertex_handle vh) {
+      return visited_vertices.insert(vh).second == false;
+    }
+  };
+
+  template <typename Vertex_handle>
+  class Visited_vertex<Vertex_handle, true> {
+    boost::container::small_vector<Vertex_handle, 192> visited_vertices;
+
+  public:
+    void reserve(std::size_t) {}
+
+    bool operator()(const Vertex_handle vh) {
+      bool already_visited = vh->visited_for_vertex_extractor;
+      if(!already_visited) {
+        vh->visited_for_vertex_extractor = true;
+        visited_vertices.push_back(vh);
+      }
+      return already_visited;
+    }
+
+    ~Visited_vertex() {
+      for(auto vh : visited_vertices) {
+        vh->visited_for_vertex_extractor = false;
+      }
+    }
+  };
+
+  template <typename Vertex_handle>
+  using Has_member_visited_tag =
+      CGAL::Boolean_tag<CGAL::internal::Has_member_visited<internal::handle_value_t<Vertex_handle>>::value>;
+
+  template <typename Tag, typename Vertex_handle>
+  using Tag_or_has_member_visited_tag_t =
+      typename CGAL::Default::template Lazy_get<Tag,
+                                                Has_member_visited_tag<Vertex_handle>
+                                                >::type;
+
+} // end namespace internal
+
+template <typename Vertex_handle, typename Tag = CGAL::Default>
+using Visited_vertex =
+    internal::Visited_vertex<Vertex_handle,
+                             internal::Tag_or_has_member_visited_tag_t<Tag, Vertex_handle>::value>;
+} // end namespace TDS_3
 
 template < class Vb = Triangulation_ds_vertex_base_3<>,
            class Cb = Triangulation_ds_cell_base_3<>,
@@ -1009,16 +1081,15 @@ public:
     }
   };
 
-  template<class Treatment, class OutputIterator, class Filter, bool hasVisited>
-  class Vertex_extractor;
-
         // Visitor for visit_incident_cells:
         // outputs the result of Treatment applied to the vertices
-  template<class Treatment, class OutputIterator, class Filter>
-  class Vertex_extractor<Treatment,OutputIterator,Filter,false> {
+  template<class Treatment, class OutputIterator, class Filter,
+           class Has_member_visited_tag = CGAL::Default>
+  class Vertex_extractor {
     Vertex_handle v;
 
-    boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
+    using Visited_functor = TDS_3::Visited_vertex<Vertex_handle, Has_member_visited_tag>;
+    Visited_functor visited{};
 
     Treatment treat;
     const Tds* t;
@@ -1027,7 +1098,7 @@ public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
     v(_v), treat(_output), t(_t), filter(_filter)
     {
-      tmp_vertices.reserve(64);
+      visited.reserve(64);
     }
 
     void operator()(Cell_handle c) {
@@ -1036,10 +1107,9 @@ public:
         if(filter(w))
           continue;
         if (w != v) {
-          if(tmp_vertices.insert(w).second) {
+          if(!visited(w)) {
             treat(c, v, j);
           }
-
         }
       }
     }
@@ -1050,61 +1120,6 @@ public:
       return treat.result();
     }
   };
-
-  template<class Treatment, class OutputIterator, class Filter>
-  class Vertex_extractor<Treatment,OutputIterator,Filter,true> {
-    Vertex_handle v;
-    std::vector<Vertex_handle> tmp_vertices;
-
-    Treatment treat;
-    const Tds* t;
-    Filter filter;
-  public:
-    Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
-    v(_v), treat(_output), t(_t), filter(_filter) {
-      tmp_vertices.reserve(64);
-    }
-
-    void operator()(Cell_handle c) {
-      for (int j=0; j<= t->dimension(); ++j) {
-        Vertex_handle w = c->vertex(j);
-        if(filter(w))
-          continue;
-        if (w != v){
-
-          if(! w->visited_for_vertex_extractor){
-            w->visited_for_vertex_extractor = true;
-            tmp_vertices.push_back(w);
-            treat(c, v, j);
-          }
-        }
-      }
-    }
-
-    // Implement the rule-of-five, to please the diagnostic
-    // `cppcoreguidelines-special-member-functions` of clang-tidy.
-    // Instead of defaulting those special member functions, let's
-    // delete them, to prevent any misuse.
-    Vertex_extractor(const Vertex_extractor&) = delete;
-    Vertex_extractor(Vertex_extractor&&) = delete;
-    Vertex_extractor& operator=(const Vertex_extractor&) = delete;
-    Vertex_extractor& operator=(Vertex_extractor&&) = delete;
-
-    ~Vertex_extractor()
-    {
-      for(std::size_t i=0; i < tmp_vertices.size(); ++i){
-        tmp_vertices[i]->visited_for_vertex_extractor = false;
-      }
-    }
-
-
-    CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
-    OutputIterator result() {
-      return treat.result();
-    }
-  };
-
-
 
   // Treatment for Vertex_extractor:
   // outputs the vertices
@@ -1247,10 +1262,9 @@ public:
     if (dimension() == 1) {
       return incident_edges_1d(v, edges, f);
     }
-    return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
-                                                 OutputIterator, Filter,
-                                                 internal::Has_member_visited<Vertex>::value>,
-    OutputIterator>(v, edges, f);
+    using Extractor = Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
+                                       OutputIterator, Filter>;
+    return visit_incident_cells<Extractor, OutputIterator>(v, edges, f);
   }
 
   template <class Filter, class OutputIterator>
@@ -1266,11 +1280,11 @@ public:
     if (dimension() == 1) {
       return incident_edges_1d(v, edges, f);
     }
-    return visit_incident_cells_threadsafe<
+    using Extractor =
       Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
                        OutputIterator, Filter,
-                       false>,
-      OutputIterator>(v, edges, f);
+                       Tag_false>;
+    return visit_incident_cells_threadsafe<Extractor, OutputIterator>(v, edges, f);
   }
 
   template <class OutputIterator>
@@ -1319,10 +1333,9 @@ public:
       if(!f(v2)) *vertices++ = v2;
       return vertices;
     }
-    return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,
-                                OutputIterator, Filter,
-                                internal::Has_member_visited<Vertex>::value>,
-    OutputIterator>(v, vertices, f);
+    using Extractor = Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,
+                                       OutputIterator, Filter>;
+    return visit_incident_cells<Extractor, OutputIterator>(v, vertices, f);
   }
 
   // old name - kept for backwards compatibility but not documented
@@ -1381,10 +1394,9 @@ public:
       if (!f(v2)) *vertices++ = v2;
       return vertices;
     }
-    return visit_incident_cells_threadsafe<
-      Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, OutputIterator, Filter,
-                       false>,
-      OutputIterator>(v, vertices, f);
+    using Extractor = Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, OutputIterator, Filter,
+                                       Tag_false>;
+    return visit_incident_cells_threadsafe<Extractor, OutputIterator>(v, vertices, f);
   }
 
   template <class Visitor, class OutputIterator, class Filter>
@@ -1514,15 +1526,9 @@ public:
     CGAL_expensive_precondition( is_vertex(v) );
     CGAL_expensive_precondition( is_valid() );
 
-    return
-      visit_incident_cells
-      <
-        Vertex_extractor<Vertex_feeder_treatment<OutputVertexIterator>,
-                         OutputVertexIterator,
-                         VertexFilter,
-                         internal::Has_member_visited<Vertex>::value>,
-        OutputVertexIterator
-      >(v, vertices, cells, f);
+    using Extractor = Vertex_extractor<Vertex_feeder_treatment<OutputVertexIterator>,
+                                       OutputVertexIterator, VertexFilter>;
+    return visit_incident_cells<Extractor, OutputVertexIterator>(v, vertices, cells, f);
   }
 
   // For dimension 3 only
@@ -1597,6 +1603,29 @@ public:
   Vertex_range & vertices() {return _vertices;}
   Vertex_range & vertices() const
   { return const_cast<Tds*>(this)->_vertices; }
+
+  /// Vertex ranges defining a simplex
+  static std::array<Vertex_handle, 2> vertices(const Edge& e)
+  {
+    return std::array<Vertex_handle, 2>{
+             e.first->vertex(e.second),
+             e.first->vertex(e.third)};
+  }
+  static std::array<Vertex_handle, 3> vertices(const Facet& f)
+  {
+    return std::array<Vertex_handle, 3>{
+             f.first->vertex(vertex_triple_index(f.second, 0)),
+             f.first->vertex(vertex_triple_index(f.second, 1)),
+             f.first->vertex(vertex_triple_index(f.second, 2))};
+  }
+  static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
+  {
+    return std::array<Vertex_handle, 4>{
+             c->vertex(0),
+             c->vertex(1),
+             c->vertex(2),
+             c->vertex(3)};
+  }
 
   bool is_small_hole(std::size_t s)
   {

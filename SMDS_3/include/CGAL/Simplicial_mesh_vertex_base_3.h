@@ -26,10 +26,18 @@
 
 #include <CGAL/SMDS_3/internal/indices_management.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/tags.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/variant.h>
 #include <CGAL/Has_timestamp.h>
 
 
+#include <cstddef>
+#include <istream>
+#include <ostream>
+#include <string>
 #include <tuple>
 
 namespace CGAL {
@@ -143,7 +151,7 @@ public:
   // that contains the vertex
   void set_dimension(const int dimension) {
     CGAL_assertion(dimension < 4);
-    dimension_ = short(dimension);
+    dimension_ = static_cast<short>(dimension);
   }
 
   // Returns the index of the lowest dimensional face of the input 3D complex

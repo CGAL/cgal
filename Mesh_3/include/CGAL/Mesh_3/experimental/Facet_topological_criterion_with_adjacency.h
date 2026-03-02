@@ -27,7 +27,7 @@ class Facet_topological_criterion_with_adjacency :
 public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
 private:
-  typedef typename C3T3::Triangualtion Tr;
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
 
   typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;

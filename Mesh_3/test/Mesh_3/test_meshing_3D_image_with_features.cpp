@@ -82,7 +82,7 @@ struct Image_tester : public Tester<K_e_i>
 
     // Verify
     this->verify_c3t3_volume(c3t3, volume * 0.95, volume * 1.05);
-    this->verify(c3t3, domain, criteria, Bissection_tag());
+    this->verify(c3t3, domain, criteria, Bisection_tag());
 
     typedef typename Mesh_domain::Surface_patch_index Patch_id;
     static_assert(CGAL::Output_rep<Patch_id>::is_specialized);

@@ -19,8 +19,10 @@
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <iterator>
-#include <optional>
 #include <type_traits>
+#ifndef CGAL_NO_ATOMIC
+#  include <atomic>
+#endif
 
 namespace CGAL {
 

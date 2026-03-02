@@ -13,6 +13,9 @@
 #define CGAL_TIME_STAMPER_H
 
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/assertions.h>
+#include <cstddef>
+#include <iterator>
 #include <string>
 
 namespace CGAL {

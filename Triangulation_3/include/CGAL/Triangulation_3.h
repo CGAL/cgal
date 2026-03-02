@@ -1930,24 +1930,15 @@ public:
   /// Vertex ranges defining a simplex
   static std::array<Vertex_handle, 2> vertices(const Edge& e)
   {
-    return std::array<Vertex_handle, 2>{
-             e.first->vertex(e.second),
-             e.first->vertex(e.third)};
+    return Tds::vertices(e);
   }
   static std::array<Vertex_handle, 3> vertices(const Facet& f)
   {
-    return std::array<Vertex_handle, 3>{
-             f.first->vertex(vertex_triple_index(f.second, 0)),
-             f.first->vertex(vertex_triple_index(f.second, 1)),
-             f.first->vertex(vertex_triple_index(f.second, 2))};
+    return Tds::vertices(f);
   }
   static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
   {
-    return std::array<Vertex_handle, 4>{
-             c->vertex(0),
-             c->vertex(1),
-             c->vertex(2),
-             c->vertex(3)};
+    return Tds::vertices(c);
   }
 
   // cells around an edge

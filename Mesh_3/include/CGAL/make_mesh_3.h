@@ -30,7 +30,7 @@
 
 #include <boost/mpl/has_xxx.hpp>
 #include <type_traits>
-
+#include <algorithm>
 #include <atomic>
 
 namespace CGAL {
@@ -119,25 +119,18 @@ needs_more_init(C3T3& c3t3, const MeshDomain& domain)
 {
   // If c3t3 initialization is not sufficient (may happen if
   // the user has not specified enough points ), add some surface points
-
-  if (c3t3.triangulation().dimension() != 3)
+  auto& tr = c3t3.triangulation();
+  if (tr.dimension() != 3)
     return true;
-  else // dimension is 3 but it may not be enough
-  {
+  else // Dimension is 3 but it may not be enough.
+  {    // Check that at least one facet *and* one cell are in restricted Delaunay triangulation
+       // otherwise return true to trigger the search for more initial points.
     CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
-    helper.update_restricted_facets();
-
-    if (c3t3.number_of_facets() == 0) {
-      return true;
-    }
-    else
-    {
-      helper.update_restricted_cells();
-      if (c3t3.number_of_cells() == 0) {
-        return true;
-      }
-    }
-    return false;
+    return std::none_of(tr.finite_facets_begin(), tr.finite_facets_end(),
+                       [&helper](const auto& f){ return helper.is_restricted_facet(f); })
+           ||
+           std::none_of(tr.finite_cell_handles().begin(), tr.finite_cell_handles().end(),
+                       [&helper](const auto& ch){ return helper.is_restricted_cell(ch); });
   }
 }
 
@@ -234,7 +227,7 @@ void init_c3t3_with_features(C3T3& c3t3,
                     domain,
                     Sizing_field(criteria.edge_criteria_object()),
                     criteria.edge_criteria_object().min_length_bound(),
-                    CGAL::Mesh_3::NoDistanceFunction(),
+                    CGAL::Default{},
                     maximal_number_of_vertices,
                     pointer_to_error_code
 #ifndef CGAL_NO_ATOMIC
@@ -282,7 +275,7 @@ struct C3t3_initializer_base
 template < typename C3T3,
            typename MeshDomain,
            typename MeshCriteria,
-           bool MeshDomainHasHasFeatures,
+           bool MeshDomainHasHasFeatures = ::CGAL::internal::has_Has_features<MeshDomain>::value,
            typename HasFeatures = int>
 struct C3t3_initializer {};
 
@@ -696,9 +689,7 @@ void make_mesh_3_impl(C3T3& c3t3,
   Mesh_3::internal::C3t3_initializer<
     C3T3,
     MeshDomain,
-    MeshCriteria,
-    ::CGAL::internal::has_Has_features<MeshDomain>::value,
-    int>()(c3t3,
+    MeshCriteria>()(c3t3,
            domain,
            criteria,
            with_features,

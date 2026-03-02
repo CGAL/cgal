@@ -213,8 +213,6 @@ struct Tester
   {
     typedef typename Cell_criteria::Is_cell_bad Is_bad;
 
-    const Tr& tr = c3t3_.triangulation();
-
     Cell_handle cell1 = cell_handle(c1_);
     Cell_handle cell2 = cell_handle(c2_);
 
@@ -259,8 +257,6 @@ struct Tester
                   const bool compare_facets = false) const
     {
       typedef typename Facet_criteria::Is_facet_bad Is_bad;
-
-      const Tr& tr = c3t3_.triangulation();
 
       Facet f1 = facet_handle(f1_);
       Facet f2 = facet_handle(f2_);

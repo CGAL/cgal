@@ -98,17 +98,17 @@ class Mesh_function
 public:
   Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p);
 
-  ~Mesh_function();
+  ~Mesh_function() override;
 
   // Launch
-  virtual void launch();
+  void launch() override;
 
   // Stop
-  virtual void stop();
+  void stop() override;
 
   // Logs
-  virtual QStringList parameters_log() const;
-  virtual QString status(double time_period) const;
+  QStringList parameters_log() const override;
+  QString status(double time_period) const override;
 
 private:
   typedef typename Domain::Point_3                  Point_3;
@@ -438,7 +438,7 @@ template < typename D_, typename Tag >
 void
 Mesh_function<D_,Tag>::
 tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
-  typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
+  typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<C3t3,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
   if(((int(c.facet_criteria_object().topology()) &

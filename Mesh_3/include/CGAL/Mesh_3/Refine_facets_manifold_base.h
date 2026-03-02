@@ -18,6 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_facet_topology.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
@@ -28,7 +29,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <set>
 #include <vector>
 #include <atomic>
 
@@ -344,7 +344,7 @@ public:
     , m_squared_facet_min_size(criteria.squared_min_radius_bound())
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
-    std::cerr << "CONS: Refine_facets_manifold_base";
+    std::cerr << "CONS: Refine_facets_manifold_base(mesh_topology = " << mesh_topology << ")";
     if(m_with_manifold_criterion) {
       if(m_with_boundary)
         std::cerr << " (with boundaries)\n";
