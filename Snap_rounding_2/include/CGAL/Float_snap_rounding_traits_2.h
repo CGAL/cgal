@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Snap_rounding_2.h>
 
-#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_segment_traits_with_point_map_2.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
@@ -39,9 +39,9 @@ to the \cgal kernel-concept, such as `Cartesian<Gmpq>`.
 \cgalModels{SnapRoundingTraits_2}
 
 */
-template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel>
-struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
-  typedef Arr_segment_traits_2<Exact_Kernel> Base;
+template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<Exact_Kernel> >
+struct Float_snap_rounding_traits_2: BaseTraits{
+  typedef BaseTraits Base;
 
   typedef Exact_Kernel Exact_type;
 

@@ -24,6 +24,8 @@
 #include <CGAL/Float_snap_rounding_traits_2.h>
 #include <CGAL/intersection_2.h>
 
+#include <CGAL/Arr_segment_traits_with_point_map_2.h>
+
 #include <set>
 #include <vector>
 
@@ -487,6 +489,15 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
   auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
   polylines_bis.erase(new_end, polylines_bis.end());
   std::swap(polylines, polylines_bis);
+
+
+  auto traits_with_pm = make_arr_segments_traits_with_point_map(boost::make_iterator_property_map(pts.begin(), boost::identity_property_map{}),
+                                                                [&](auto pm, Point_2 p){pts.push_back(p); return pts.size()-1;});
+  using Traits_with_pm = decltype(traits_with_pm);
+  std::vector< typename Traits_with_pm::X_monotone_curve_2 > curves;
+  for(auto &pl: polylines)
+    curves.emplace_back(pl[0], pl[1]);
+  do_curves_intersect(curves.begin(), curves.end(), traits_with_pm);
 
   // Main algorithm
   internal::double_snap_rounding_2_disjoint<Concurrency_tag, Traits>(pts, polylines, traits);
