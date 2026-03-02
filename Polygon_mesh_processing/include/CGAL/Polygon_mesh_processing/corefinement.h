@@ -476,7 +476,11 @@ corefine_and_compute_boolean_operations(
 
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
+  const bool mark_inter_edges =
+    choose_parameter(get_parameter(np1, internal_np::constrain_intersection_edges), true);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
+  if (!choose_parameter(get_parameter(np1, internal_np::constrain_intersection_edges), true))
+    ob.do_not_mark_intersection_edges();
 
   // special case used for clipping open meshes
   if (choose_parameter(get_parameter(np1, internal_np::use_bool_op_to_clip_surface), false))
@@ -491,7 +495,7 @@ corefine_and_compute_boolean_operations(
   }
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in, nullptr, mark_inter_edges));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
 
@@ -808,10 +812,16 @@ corefine(      TriangleMesh& tm1,
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
 
+  const bool mark_inter_edges =
+    choose_parameter(get_parameter(np1, internal_np::constrain_intersection_edges), true);
+
   if (&tm1==&tm2)
   {
-    Corefinement::mark_all_edges(tm1, ecm1);
-    Corefinement::mark_all_edges(tm2, ecm2);
+    if (!mark_inter_edges)
+    {
+      Corefinement::mark_all_edges(tm1, ecm1);
+      Corefinement::mark_all_edges(tm2, ecm2);
+    }
     return;
   }
 
@@ -835,7 +845,7 @@ corefine(      TriangleMesh& tm1,
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr), const_mesh_ptr);
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr, mark_inter_edges), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
@@ -914,7 +924,8 @@ autorefine(      TriangleMesh& tm,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm;
   Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
-
+  const bool mark_inter_edges =
+    choose_parameter(get_parameter(np, internal_np::constrain_intersection_edges), true);
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
@@ -931,7 +942,7 @@ autorefine(      TriangleMesh& tm,
   Ob ob;
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,ecm,nullptr,mark_inter_edges) );
 
   functor(CGAL::Emptyset_iterator(), true);
 }
@@ -1011,7 +1022,8 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm;
   Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
-
+  const bool mark_inter_edges =
+    choose_parameter(get_parameter(np, internal_np::constrain_intersection_edges), true);
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
@@ -1032,7 +1044,7 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   Ob ob(tm, vpm, fid_map, ecm);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,ecm,nullptr,mark_inter_edges) );
 
   functor(CGAL::Emptyset_iterator(), true);
 
