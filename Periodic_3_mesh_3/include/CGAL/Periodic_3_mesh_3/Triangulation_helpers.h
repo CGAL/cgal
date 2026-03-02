@@ -20,7 +20,7 @@
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
-
+#include <CGAL/Periodic_3_triangulation_3/internal/canonicalize_helper.h>
 #include <boost/mpl/identity.hpp>
 
 namespace CGAL {
