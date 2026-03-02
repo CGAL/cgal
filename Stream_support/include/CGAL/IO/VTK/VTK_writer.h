@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_VTK_WRITER_H
 #define CGAL_IO_VTK_WRITER_H
 
-#include <fstream>
+#include <cstddef>
 #include <iostream>
 #include <vector>
 

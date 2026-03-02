@@ -1310,7 +1310,7 @@ bool remove_vertex
  * arrangement. More precisely, this function finds the arrangement vertices,
  * edges ,and faces that the given \f$x\f$-monotone curve intersects, and
  * inserts them in the order they are discovered when traversing the
- * \f$x\f$-monotone curve from left to right into an output contaiuner given
+ * \f$x\f$-monotone curve from left to right into an output container given
  * through an output iterator. An object in the resulting zone is represented by
  * a discriminated union container that holds a vertex handle, halfedge handle,
  * or a face handle.

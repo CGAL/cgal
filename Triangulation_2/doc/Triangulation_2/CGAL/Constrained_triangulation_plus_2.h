@@ -303,7 +303,7 @@ using the vertex handles of its endpoints.
 In case the constraints are degenerate the points are inserted, but no
 constraints.
 
-\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
+\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`
 
 \return the number of inserted points.
 */
@@ -311,18 +311,45 @@ template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
+Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once.
+
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions.
+
+\return the number of inserted points.
+\tparam ConstraintIterator is an `InputIterator` with value type `std::pair<Point,Point>` or `Segment`.
+*/
+template <class ConstraintIterator>
+std::size_t insert_unique_constraints(ConstraintIterator first, ConstraintIterator last);
+
+/*!
 Same as above except that each constraint is given as a pair of indices of the points
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
-\tparam PointIterator is an `InputIterator` with the value type `Point`.
-\tparam IndicesIterator is an `InputIterator` with `std::pair<Int,
-Int>` where `Int` is an integral type implicitly convertible to
-`std::size_t`
-\note points are inserted even if they are not endpoint of a constraint.
+
+\tparam PointIterator is an `InputIterator` with value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with value type `std::pair<Int, Int>` where
+`Int` is an integral type implicitly convertible to `std::size_t`
+
+\note points are inserted even if they are not an endpoint of a constraint.
 \return the number of inserted points.
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
                                IndicesIterator indices_first, IndicesIterator indices_last);
+
+/*!
+Same as `insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pair of points are only considered once.
+
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions.
+
+\return the number of inserted points.
+\tparam PointIterator is an `InputIterator` with value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with value type `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+*/
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_unique_constraints(PointIterator points_first, PointIterator points_last,
+                                      IndicesIterator indices_first, IndicesIterator indices_last);
 
 
 /*!

@@ -934,7 +934,7 @@ pump_vertices(FT sliver_criterion_limit,
       Cell_handle c = this->extract_cell_handle_from_queue_value(front);
       FT q = this->extract_cell_quality_from_queue_value(front);
       unsigned int ec = this->extract_erase_counter_from_queue_value(front);
-      // Low quality first (i.e. low value of q)
+      // Low quality first (i.e., low value of q)
       enqueue_task<pump_vertices_on_surfaces>(c, ec, q);
     }
 
@@ -963,7 +963,7 @@ pump_vertices(FT sliver_criterion_limit,
       Queue_value_type front = *(this->cells_queue_front());
       Cell_handle c = this->extract_cell_handle_from_queue_value(front);
 
-      // Low quality first (i.e. low value of cell quality)
+      // Low quality first (i.e., low value of cell quality)
       bool vertex_pumped = false;
       for( int i = 0; i < 4; ++i )
       {

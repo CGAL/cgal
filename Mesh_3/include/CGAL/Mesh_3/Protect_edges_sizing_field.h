@@ -340,7 +340,7 @@ private:
                   const CGAL::Orientation orientation,
                   ErasedVeOutIt out) const;
 
-  /// Returns the next vertex along edge, i.e the vertex after `start`, following
+  /// Returns the next vertex along edge, i.e., the vertex after `start`, following
   /// the direction from `previous` to `start`.
   /// \pre (previous,start) is in c3t3
   /// \pre `c3t3.curve_index(start, previous) == curve_index`
@@ -371,7 +371,7 @@ private:
                                        const CGAL::Orientation orientation,
                                        ErasedVeOutIt out);
 
-  /// Checks if the size of `v2` is compatible (i.e. greater) with the linear
+  /// Checks if the size of `v2` is compatible (i.e., greater) with the linear
   /// interpolation of the sizes of `v1` and `v3`.
   bool is_sizing_field_correct(const Vertex_handle& v1,
                                const Vertex_handle& v2,
@@ -2121,7 +2121,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
     InputIterator previous = ch_stack.top();
     ch_stack.pop();
 
-    // If (prevprev, prev, current) is ok, then go one step forward, i.e. check
+    // If (prevprev, prev, current) is ok, then go one step forward, i.e., check
     // (prevprevprev, prevprev, current)
     while (   !ch_stack.empty()
            && is_sizing_field_correct(*ch_stack.top(),*previous,*current,

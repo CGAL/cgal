@@ -42,7 +42,7 @@
 
 namespace CGAL {
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 namespace Mesh_3 {
 namespace internal {
 
@@ -585,7 +585,7 @@ public:
   /// \name Operations
   /// @{
 
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
 
   /// adds a 0-dimensional feature in the domain.
   Corner_index add_corner(const Point_3& p);
@@ -645,7 +645,7 @@ public:
   add_features(InputIterator first, InputIterator end)
   { add_features(first, end, CGAL::Emptyset_iterator()); }
 
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
 
   /// Undocumented function, kept for backward-compatibility with existing code
   template <typename InputIterator>
@@ -784,7 +784,7 @@ public:
   Corner_index corner_index(const Index& index) const
   { return Mesh_3::internal::get_index<Corner_index>(index); }
 
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
 #ifndef CGAL_NO_DEPRECATED_CODE
   CGAL_DEPRECATED_MSG("deprecated: use curve_index() instead")
   Curve_index curve_segment_index(const Index& index) const {
@@ -861,7 +861,7 @@ private:
   Edges_incidences edges_incidences_;
 
 public:
-  /// @cond DEVELOPERS
+  /// @cond CGAL_DOCUMENT_INTERNALS
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
 
 private:
@@ -1030,7 +1030,7 @@ construct_point_on_curve(const Point_3& starting_point,
 }
 
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 template <class MD_>
 typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1109,7 +1109,7 @@ add_features(InputIterator first, InputIterator end,
   return indices_out;
 }
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 namespace details {
 
 template <typename PolylineWithContext>
@@ -1179,7 +1179,7 @@ add_features_and_incidences(InputIterator first, InputIterator end,
   return indices_out;
 }
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 template <class MD_>
 typename Mesh_domain_with_polyline_features_3<MD_>::FT
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1291,7 +1291,7 @@ get_corner_incident_curves(Corner_index id,
 }
 /// @endcond
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 namespace Mesh_3 {
 namespace internal {
 
@@ -1362,7 +1362,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 } // end namespace Mesh_3
 /// @endcond
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 template <class MD_>
 void
 Mesh_domain_with_polyline_features_3<MD_>::
@@ -1426,7 +1426,7 @@ compute_corners_incidences()
   }
 }
 
-/// @cond DEVELOPERS
+/// @cond CGAL_DOCUMENT_INTERNALS
 template <class MD_>
 const typename Mesh_domain_with_polyline_features_3<MD_>::Surface_patch_index_set&
 Mesh_domain_with_polyline_features_3<MD_>::

@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
@@ -264,6 +265,24 @@ bool close(PolygonMesh& pm, VertexPointMap vpm, typename Traits::Vector_3 plane_
 }
 
 #endif
+
+template <class PolygonMesh,
+          class Visitor>
+void naive_close(PolygonMesh& pm, Visitor& visitor)
+{
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+
+  std::vector< halfedge_descriptor > border_cycles;
+  extract_boundary_cycles(pm, std::back_inserter(border_cycles));
+  std::vector< Bbox_3 > bboxes;
+
+  for (halfedge_descriptor h : border_cycles)
+  {
+    visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+    Euler::fill_hole(h, pm);
+    visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
+  }
+}
 
 
 template <class Plane_3,
@@ -969,11 +988,17 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
+  *    \cgalParamNBegin{use_convex_specialization}
+  *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+  *      \cgalParamType{Boolean}
+  *      \cgalParamDefault{`false`}
+  *    \cgalParamNEnd
+  *
   *   \cgalParamNBegin{do_not_triangulate_faces}
-  *     \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
-  *                           Always `true` if `pm` is not a triangle mesh.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
+  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                            Always `true` if `pm` is not a triangle mesh.}
+  *      \cgalParamType{Boolean}
+  *      \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{geom_traits}
@@ -1003,6 +1028,12 @@ bool clip(PolygonMesh& pm,
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
 
+  bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false);
+  if(use_convex_specialization){
+    internal::clip_convex(pm, plane, np);
+    return true;
+  }
+
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -1025,7 +1056,7 @@ bool clip(PolygonMesh& pm,
 
   // config flags
   bool clip_volume =
-    parameters::choose_parameter(parameters::get_parameter(np, internal_np::clip_volume), false);
+    choose_parameter(get_parameter(np, internal_np::clip_volume), false);
   bool use_compact_clipper =
     choose_parameter(get_parameter(np, internal_np::use_compact_clipper), true);
   const bool throw_on_self_intersection =
@@ -1033,11 +1064,12 @@ bool clip(PolygonMesh& pm,
   const bool allow_self_intersections =
     choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
-
+  constexpr bool traits_supports_cdt2 = !internal::Has_member_Does_not_support_CDT2<GT>::value;
   auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
   auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
+  auto construct_orthogonal_vector = traits.construct_orthogonal_vector_3_object();
 
-  if (triangulate && !is_triangle_mesh(pm))
+  if (traits_supports_cdt2 && triangulate && !is_triangle_mesh(pm))
     triangulate = false;
 
   refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
@@ -1089,15 +1121,19 @@ bool clip(PolygonMesh& pm,
 
   remove_connected_components(pm, ccs_to_remove, fcc);
 
-  if (clip_volume)
+  if constexpr (traits_supports_cdt2)
   {
-    //TODO: add in the traits construct_orthogonal_vector
-    if (triangulate)
-      internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
-    else
-      if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
-        internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+    if (clip_volume)
+    {
+      if (triangulate)
+        internal::close_and_triangulate<GT>(pm, vpm, construct_orthogonal_vector(plane), visitor);
+      else if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
+        internal::close_and_triangulate<GT>(pm, vpm, construct_orthogonal_vector(plane), visitor);
+    }
   }
+  else
+    if (clip_volume)
+      internal::naive_close(pm, visitor);
 
   return true;
 }

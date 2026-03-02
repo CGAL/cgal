@@ -179,6 +179,11 @@ CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
+CGAL_add_named_parameter(use_bounding_box_filtering_t, use_bounding_box_filtering, use_bounding_box_filtering)
+CGAL_add_named_parameter(shuffle_planes_t, shuffle_planes, shuffle_planes)
+CGAL_add_named_parameter(use_convex_specialization_t, use_convex_specialization, use_convex_specialization)
+CGAL_add_named_parameter(faces_range_t, faces_range, faces_range)
+CGAL_add_named_parameter(allow_open_input_t, allow_open_input, allow_open_input)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -200,6 +205,10 @@ CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
 CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
+CGAL_add_named_parameter(bounding_box_t, bounding_box, bounding_box)
+CGAL_add_named_parameter(starting_vertex_descriptor_t, starting_vertex_descriptor, starting_vertex_descriptor)
+CGAL_add_named_parameter(used_to_find_a_point_t, used_to_find_a_point, used_to_find_a_point)
+
 
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
@@ -370,6 +379,7 @@ CGAL_add_named_parameter_with_compatibility(do_reset_c3t3_t, do_reset_c3t3, do_r
 CGAL_add_named_parameter_with_compatibility(mesh_param_t, mesh_param, mesh_options)
 CGAL_add_named_parameter_with_compatibility(manifold_param_t, manifold_param, manifold_option)
 CGAL_add_named_parameter_with_compatibility(features_option_param_t,features_options_param,features_options)
+CGAL_add_named_parameter_with_compatibility(surface_only_param_t,surface_only_param,surface_only_option)
 CGAL_add_named_parameter_with_compatibility(initial_points_generator_param_t,initial_points_generator_param,initial_points_generator)
 CGAL_add_named_parameter_with_compatibility(initial_points_param_t,initial_points_param,initial_points)
 
@@ -410,3 +420,6 @@ CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
 CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
+
+// List of named parameters used in the package 'Barycentric_coordinates_3'
+CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)

@@ -584,7 +584,7 @@ both in term of time and memory.
 \addtogroup PkgBGLPartition
 
 Methods to split a mesh into subdomains, using the library
-<a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a> or a graphcut
+<a href="https://github.com/KarypisLab/METIS">METIS</a> or a graphcut
 implementation.
 */
 

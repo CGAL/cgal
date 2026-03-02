@@ -123,6 +123,9 @@ target_link_libraries(triangulate_facets_plugin PRIVATE scene_surface_mesh_item 
 cgal_lab_plugin(corefinement_plugin Corefinement_plugin KEYWORDS PMP)
 target_link_libraries(corefinement_plugin PRIVATE scene_surface_mesh_item)
 
+cgal_lab_plugin(kernel_plugin Kernel_plugin)
+target_link_libraries(kernel_plugin PRIVATE scene_surface_mesh_item)
+
 cgal_lab_plugin(surface_intersection_plugin Surface_intersection_plugin
                        KEYWORDS PMP)
 target_link_libraries(

@@ -201,7 +201,7 @@ public:
 
   // FLIPS
   bool is_flipable(Face_handle f, int i, bool perturb = true) const;
-  void flip(Face_handle& f, int i);
+  void flip(Face_handle f, int i);
   void flip_around(Vertex_handle va);
   void flip_around(List_vertices & new_vertices);
 #ifndef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
@@ -258,13 +258,13 @@ public:
 
   void insert_constraint(Vertex_handle va, Vertex_handle  vb)
   {
-    ((Ctr*)this)->insert_constraint(va,vb);
+    (static_cast<Ctr*>(this))->insert_constraint(va,vb);
   }
 
   void
   insert_constraint(const Point& a, const Point& b)
   {
-    ((Ctr*)this)->insert_constraint(a,b);
+    (static_cast<Ctr*>(this))->insert_constraint(a,b);
   }
 
   template <class PointIterator>
@@ -449,7 +449,7 @@ public:
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 
-  template <class PointIterator, class IndicesIterator>
+  template <class PointIterator, class IndicesIterator, bool check_duplicates = false>
   std::size_t insert_constraints(PointIterator points_first,
                                  PointIterator points_beyond,
                                  IndicesIterator indices_first,
@@ -459,15 +459,33 @@ public:
       return insert(points_first, points_beyond);
     }
     std::vector<Point> points(points_first, points_beyond);
-    return internal::insert_constraints(*this,points, indices_first, indices_beyond);
+    return internal::insert_constraints<CDt,IndicesIterator,check_duplicates>(*this, points, indices_first, indices_beyond);
   }
 
 
- template <class ConstraintIterator>
+  template <class ConstraintIterator, bool check_duplicates = false>
   std::size_t insert_constraints(ConstraintIterator first,
                                  ConstraintIterator beyond)
   {
-    return internal::insert_constraints(*this,first,beyond);
+    return internal::insert_constraints<CDt,ConstraintIterator,check_duplicates>(*this, first, beyond);
+  }
+
+  template <class PointIterator, class IndicesIterator>
+  std::size_t insert_unique_constraints(PointIterator points_first,
+                                        PointIterator points_beyond,
+                                        IndicesIterator indices_first,
+                                        IndicesIterator indices_beyond)
+  {
+    std::vector<Point> points(points_first, points_beyond);
+    return internal::insert_constraints<CDt,IndicesIterator,true>(*this, points, indices_first, indices_beyond);
+  }
+
+
+  template <class ConstraintIterator>
+  std::size_t insert_unique_constraints(ConstraintIterator first,
+                                        ConstraintIterator beyond)
+  {
+    return internal::insert_constraints<CDt,ConstraintIterator,true>(*this, first, beyond);
   }
 
 
@@ -717,7 +735,7 @@ is_flipable(Face_handle f, int i, bool perturb /* = true */) const
 template < class Gt, class Tds, class Itag >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-flip (Face_handle& f, int i)
+flip (Face_handle f, int i)
 {
   Face_handle g = f->neighbor(i);
   int j = mirror_index(f,i);
@@ -815,7 +833,7 @@ propagating_flip(Face_handle f,int i, int depth)
   if (!is_flipable(f,i)) return;
 #ifdef CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
   non_recursive_propagating_flip(f,i);
-#else
+#else // not CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
   int max_depth = 100;
   if(depth==max_depth){
     non_recursive_propagating_flip(f,i);
@@ -827,9 +845,9 @@ propagating_flip(Face_handle f,int i, int depth)
   propagating_flip(f,i, depth+1);
   i = ni->index(f->vertex(i));
   propagating_flip(ni,i, depth+1);
-#endif
+#endif // not CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
 }
-#else
+#else // if CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
 template < class Gt, class Tds, class Itag >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
@@ -843,7 +861,7 @@ propagating_flip(Face_handle f,int i)
   i = ni->index(f->vertex(i));
   propagating_flip(ni,i);
 }
-#endif
+#endif // if CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
 
  template < class Gt, class Tds, class Itag >
  void

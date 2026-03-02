@@ -59,6 +59,7 @@ create_single_source_cgal_program("isotropic_remeshing_with_allow_move.cpp")
 create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("soup_autorefinement.cpp")
 create_single_source_cgal_program("snap_polygon_soup.cpp")
+create_single_source_cgal_program("mesh_kernel_example.cpp")
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)

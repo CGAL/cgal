@@ -21,12 +21,20 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
+#include <CGAL/Polygon_mesh_processing/internal/clip_convex.h>
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
+#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace internal {
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_Does_not_support_CDT2,
+                                  Does_not_support_CDT2,
+                                  false)
+} // internal namespace
 
 #ifndef DOXYGEN_RUNNING
 template <class PolygonMesh>
@@ -74,6 +82,8 @@ struct Orthogonal_cut_plane_traits
   using Plane_3 = std::pair<int, FT>;
   using Point_3 = typename Kernel::Point_3;
 
+  struct Does_not_support_CDT2{};
+
   struct Oriented_side_3
   {
     Oriented_side operator()(const Plane_3& plane, const Point_3& p)  const
@@ -102,6 +112,16 @@ struct Orthogonal_cut_plane_traits
     }
   };
 
+  struct Compute_squared_distance_3
+  {
+    FT operator()(const Plane_3& plane, const Point_3& p)
+    {
+      // Signed distance
+      FT sd = p[plane.first] - plane.second;
+      return sd*sd;
+    }
+  };
+
   Oriented_side_3 oriented_side_3_object() const
   {
     return Oriented_side_3();
@@ -110,6 +130,11 @@ struct Orthogonal_cut_plane_traits
   Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const
   {
     return Construct_plane_line_intersection_point_3();
+  }
+
+  Compute_squared_distance_3 compute_squared_distance_3_object() const
+  {
+    return Compute_squared_distance_3();
   }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
@@ -170,6 +195,13 @@ struct Orthogonal_cut_plane_traits
  *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`true`}
  *      \cgalParamExtra{The function `triangulate_faces()` can be used to triangule faces before calling this function.}
+ *    \cgalParamNEnd
+ *
+ *    \cgalParamNBegin{use_convex_specialization}
+ *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+ *      \cgalParamType{Boolean}
+ *      \cgalParamDefault{`false`}
+ *      \cgalParamExtra{convex specialization is only used if `edge_is_constrained_map`, `edge_is_marked_map` and `vertex_oriented_side_map` are unused.}
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{vertex_point_map}
@@ -246,6 +278,16 @@ void refine_with_plane(PolygonMesh& pm,
 
   auto ecm = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_constrained));
   auto edge_is_marked = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_marked_map));
+
+  bool use_convex_specialization = choose_parameter(get_parameter(np, internal_np::use_convex_specialization), false)
+                                   && is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value
+                                   && is_default_parameter<NamedParameters, internal_np::edge_is_marked_map_t>::value
+                                   && is_default_parameter<NamedParameters, internal_np::vertex_oriented_side_map_t>::value;
+  if(use_convex_specialization){
+    halfedge_descriptor he = internal::find_crossing_edge(pm, plane, np);
+    internal::refine_convex_with_plane(pm, plane, he, np);
+    return;
+  }
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -562,6 +604,7 @@ void refine_with_plane(PolygonMesh& pm,
 
     visitor.after_subface_creations(pm);
   }
+  CGAL_assertion(is_valid_polygon_mesh(pm));
 }
 
 } } // CGAL::Polygon_mesh_processing

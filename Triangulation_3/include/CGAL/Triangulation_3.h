@@ -26,6 +26,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -878,6 +879,11 @@ public:
     CGAL_precondition(! is_infinite(v));
     return v->point();
   }
+
+  auto geometry(Cell_handle c) const { return tetrahedron(c); }
+  auto geometry(const Facet& f) const { return triangle(f); }
+  auto geometry(const Edge& e) const { return segment(e); }
+  auto geometry(Vertex_handle v) const { return point(v); }
 
   // TEST IF INFINITE FEATURES
   bool is_infinite(const Vertex_handle v) const { return v == infinite_vertex(); }

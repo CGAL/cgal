@@ -27,12 +27,14 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 
-#include <set>
-#include <map>
-#include <stack>
-#include <vector>
+#include <array>
 #include <algorithm>
-#include <iostream>
+#include <cstddef>
+#include <iterator>
+#include <set>
+#include <stack>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 

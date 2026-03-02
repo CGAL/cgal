@@ -1554,7 +1554,7 @@ private:
 private:
   void init_manifold_info() const
   {
-    for (typename Tr::All_vertices_iterator
+    for (typename Tr::Finite_vertices_iterator
       vit = triangulation().finite_vertices_begin(),
       end = triangulation().finite_vertices_end();
       vit != end; ++vit)
