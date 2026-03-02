@@ -16,7 +16,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
-
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Named_function_parameters.h>
