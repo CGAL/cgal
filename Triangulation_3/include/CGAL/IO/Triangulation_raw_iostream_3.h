@@ -29,11 +29,11 @@ namespace IO {
 
 namespace internal {
 
-template < class GT, class Tds_, class Lds_ >
-bool construct_vertices_map(const Triangulation_3<GT, Tds_, Lds_>& tr,
-                            Unique_hash_map<typename Triangulation_3<GT, Tds_>::Vertex_handle, std::size_t>& vertices_map)
+template < class Tr_ >
+bool construct_vertices_map(const Tr_& tr,
+                            Unique_hash_map<typename Tr_::Vertex_handle, std::size_t>& vertices_map)
 {
-  typedef Triangulation_3<GT, Tds_>               Triangulation;
+  typedef Tr_                                     Triangulation;
   typedef typename Triangulation::size_type       size_type;
   typedef typename Triangulation::Vertex_iterator Vertex_iterator;
 
@@ -49,8 +49,8 @@ bool construct_vertices_map(const Triangulation_3<GT, Tds_, Lds_>& tr,
   return true;
 }
 
-template < class GT, class Tds_, class Lds_ >
-bool write_header(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
+template < class Tr_ >
+bool write_header(std::ostream& os, const Tr_& tr)
 {
   // Writes:
   // - the dimension
@@ -65,8 +65,8 @@ bool write_header(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
   return (bool)os;
 }
 
-template < class GT, class Tds_, class Lds_ >
-bool read_header(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr)
+template < class Tr_ >
+bool read_header(std::istream& is, Tr_& tr)
 {
   // Reads:
   // - the dimension
@@ -85,13 +85,13 @@ bool read_header(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr)
   return (bool)is;
 }
 
-template < class GT, class Tds_, class Lds_ >
-bool write_vertices(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
+template < class Tr_ >
+bool write_vertices(std::ostream& os, const Tr_& tr)
 {
   // Writes:
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
-  typedef Triangulation_3<GT, Tds_>               Triangulation;
+  typedef Tr_                                     Triangulation;
   typedef typename Triangulation::size_type       size_type;
   typedef typename Triangulation::Vertex_iterator Vertex_iterator;
 
@@ -238,9 +238,9 @@ bool write_cell_info(std::ostream& os, Iterator start, const Iterator& end)
   return (bool)os;
 }
 
-template < class GT, class Tds_, class Lds_ >
-bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr,
-                 const Unique_hash_map<typename Triangulation_3<GT, Tds_>::Vertex_handle, std::size_t>& vertices_map)
+template < class Tr_ >
+bool write_cells(std::ostream& os, const Tr_& tr,
+                 const Unique_hash_map<typename Tr_::Vertex_handle, std::size_t>& vertices_map)
 {
   // Writes:
   // [Call to Tds_::print_cells]
@@ -251,7 +251,7 @@ bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr,
   // [Cells other info]
   // - when dimension < 3 : the same with faces of maximal dimension
 
-  typedef Triangulation_3<GT, Tds_>              Triangulation;
+  typedef Tr_                                    Triangulation;
   typedef typename Triangulation::Cell_iterator  Cell_iterator;
   typedef typename Triangulation::Edge_iterator  Edge_iterator;
   typedef typename Triangulation::Facet_iterator Facet_iterator;
@@ -371,9 +371,9 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
 } // end namespace internal
 
 
-template < class GT, class Tds_, class Lds_ >
-bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr,
-                            Unique_hash_map<typename Triangulation_3<GT, Tds_>::Vertex_handle, std::size_t>& vertices_map)
+template < class Tr_ >
+bool export_triangulation_3(std::ostream& os, const Tr_& tr,
+                            Unique_hash_map<typename Tr_::Vertex_handle, std::size_t>& vertices_map)
 {
   // Writes:
   // [Header]
@@ -396,10 +396,10 @@ bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds_, Ld
       && internal::write_cells(os, tr, vertices_map);
 }
 
-template < class GT, class Tds_, class Lds_ >
-bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
+template < class Tr_ >
+bool export_triangulation_3(std::ostream& os, const Tr_& tr)
 {
-  Unique_hash_map<typename Triangulation_3<GT, Tds_>::Vertex_handle, std::size_t> vertices_map;
+  Unique_hash_map<typename Tr_::Vertex_handle, std::size_t> vertices_map;
   return export_triangulation_3(os, tr, vertices_map);
 }
 
