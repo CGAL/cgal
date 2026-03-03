@@ -2332,7 +2332,7 @@ public:
   template <typename Tr_src,
             typename ConvertVertex,
             typename ConvertCell>
-  std::istream& file_input(std::istream& is, std::vector< Vertex_handle >& vertices_handles,
+  std::istream& file_input(std::istream& is, std::vector< Vertex_handle >& vertices,
                            ConvertVertex convert_vertex = ConvertVertex(),
                            ConvertCell convert_cell = ConvertCell())
   {
@@ -2349,9 +2349,9 @@ public:
     // If this is used for a TDS, the vertices are processed from 0 to n.
     // Else, we make V[0] the infinite vertex and work from 1 to n+1.
 
-    if (!CGAL::IO::import_triangulation_3<GT, Tds_, Lock_data_structure_,
+    if (!CGAL::IO::import_triangulation_3<Triangulation_3,
                                           Tr_src, ConvertVertex, ConvertCell>
-                                         (is, *this, vertices_handles, convert_vertex, convert_cell))
+                                         (is, *this, vertices, convert_vertex, convert_cell))
       is.setstate(std::ios_base::failbit);
     return is;
   }
@@ -2364,8 +2364,8 @@ public:
                            ConvertVertex convert_vertex = ConvertVertex(),
                            ConvertCell convert_cell = ConvertCell())
   {
-    std::vector< Vertex_handle > vertices_handles;
-    file_input<Tr_src, ConvertVertex, ConvertCell>(is, vertices_handles, convert_vertex, convert_cell);
+    std::vector< Vertex_handle > vertices;
+    file_input<Tr_src, ConvertVertex, ConvertCell>(is, vertices, convert_vertex, convert_cell);
     return is;
   }
 };
