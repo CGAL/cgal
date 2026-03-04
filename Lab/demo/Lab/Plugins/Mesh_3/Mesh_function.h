@@ -409,10 +409,8 @@ launch()
                        0,
                        &stop_);
 
-#ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;
   t.start();
-#endif
 
 #if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mesher_->initialize();
@@ -430,7 +428,8 @@ launch()
 
   // Ensure c3t3 is ok (useful if process has been stop by the user)
   mesher_->fix_c3t3();
-  std::cerr<<"Done."<<std::endl;
+  t.stop();
+  std::cerr<<"Done. (in " << t.time() << " seconds, wall-clock)" << std::endl;
 }
 
 
