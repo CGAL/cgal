@@ -1,5 +1,7 @@
 
 // #define CGAL_DOUBLE_2D_SNAP_VERBOSE
+#define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Float_snap_rounding_traits_2.h>

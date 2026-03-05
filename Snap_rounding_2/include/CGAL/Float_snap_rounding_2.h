@@ -171,11 +171,6 @@ public:
   /*!
    */
   bool after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */) {
-    auto point_at_x = traits.construct_point_at_x_on_segment_2_object();
-
-    auto csq_dist_2 = traits.compare_squared_distance_2_object();
-    auto round_bound = traits.compute_squared_round_bound_2_object();
-
     if (! event->is_closed()) return true;
     if (! event->has_left_curves() && ! event->has_right_curves()) return true;
 
