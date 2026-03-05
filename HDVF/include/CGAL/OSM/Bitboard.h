@@ -107,10 +107,6 @@ public:
          * \param _index The initial index.
          * \param _size The bitboard size.
          * \param _boards The reference to the bitboards.
-         *
-         * \author Fedyna K.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         iterator(const std::size_t _index, const std::size_t _size, const std::vector<std::uint64_t> &_boards):
         index(_index),

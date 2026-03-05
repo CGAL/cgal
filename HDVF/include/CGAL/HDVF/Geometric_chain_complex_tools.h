@@ -75,7 +75,7 @@ namespace IO {
  */
 
 template <typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
+void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf, const ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     typedef Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
     // Export PSC labelling in any dimension (whatever the dimension restriction)
@@ -136,7 +136,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, Chain
  */
 
 template <typename ChainComplex, typename Degree, typename FiltrationType>
-void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &per_hdvf, ChainComplex &complex, std::string filename = "per", bool co_faces = false) {
+void write_VTK (const Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &per_hdvf, const ChainComplex &complex, std::string filename = "per", bool co_faces = false) {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
@@ -233,7 +233,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
  */
 
 template <typename ChainComplex, typename VertexIdType = size_t>
-void write_VTK (Homological_discrete_vector_field::Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
+void write_VTK (const Homological_discrete_vector_field::Hdvf_duality<ChainComplex> &hdvf, const ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     typedef Homological_discrete_vector_field::Hdvf_duality<ChainComplex> HDVF_parent;
     // Export PSC labelling
