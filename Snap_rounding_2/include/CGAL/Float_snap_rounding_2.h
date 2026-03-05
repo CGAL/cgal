@@ -24,13 +24,13 @@
 #include <CGAL/Float_snap_rounding_traits_2.h>
 #include <CGAL/intersection_2.h>
 
-#include <CGAL/Arr_segment_traits_with_point_map_2.h>
 #include <CGAL/internal/Wrap_float_snap_rounding_traits_2.h>
 
 #include <boost/property_map/function_property_map.hpp>
 
 #include <set>
 #include <vector>
+#include <type_traits>
 
 
 namespace CGAL {
@@ -100,7 +100,7 @@ protected:
     bound *= 4;
 
     if(possibly(csq_dist_2(p, seg, bound) != LARGER)){
-      // if constexpr (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename G2t::Exact_type>)
+      // if constexpr (std::is_same_v<CGAL::Exact_predicates_exact_constructions_kernel, typename G2t::Exact_type>){
       if(true){
         internal::Evaluate<FT> evaluate;
         // We refine the pts to reduce the rounding shift and check again
@@ -617,12 +617,6 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 *     \cgalParamDefault{CGAL::Sequential_tag}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{compute_intersections}
-*     \cgalParamDescription{Enable intersection computation between the polygons before performing snapping.}
-*     \cgalParamType{boolean}
-*     \cgalParamDefault{false}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
@@ -632,87 +626,80 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 * @warning If an input polygon is convex, it might no longer be convex in the output of this function
 */
 template <class InputIterator, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void compute_snapped_polygons_2(InputIterator begin,
-                                InputIterator end,
+void compute_snapped_polygons_2(InputIterator  begin,
+                                InputIterator  end,
                                 OutputIterator out,
                                 const NamedParameters &np = parameters::default_values())
 {
-  // using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
-  //                                                             NamedParameters,
-  //                                                             Sequential_tag>::type;
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
+                                                              NamedParameters,
+                                                              Sequential_tag>::type;
 
-  // using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
-  // using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
-  // using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
-  // using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-  //                                                             NamedParameters,
-  //                                                             DefaultTraits>::type;
+  using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
+  using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
+  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+  using Point_2 = typename Traits::Point_2;
 
-  // using Less_xy_2 = typename Traits::Less_xy_2;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  // using Point_2 = typename Traits::Point_2;
-  // using I2E = typename Traits::Converter_to_exact;
-  // using E2O = typename Traits::Converter_from_exact;
+  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
-  // using parameters::choose_parameter;
-  // using parameters::get_parameter;
+  auto from_exact= traits.converter_from_exact_object();
 
-//   Polygon_2 P=*begin;
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Change format to range of points and indexes" << std::endl;
+#endif
+  std::vector< typename InputKernel::Segment_2 > input_segments;
+  std::vector< Point_2 > pts;
+  std::vector< std::vector< std::size_t> > polylines;
 
-//   const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
-//   const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersections), false);
+  // Store the indexes of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygin i
+  std::vector< std::size_t > polygon_indexes;
 
-//   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
+  polygon_indexes.reserve(std::distance(begin, end));
+  for(InputIterator it=begin; it!=end; ++it){
+    polygon_indexes.push_back(input_segments.size());
+    const Polygon_2 &P = *it;
+    for(std::size_t i=0; i<P.size()-1; ++i)
+      input_segments.emplace_back(P[i], P[i+1]);
+  }
+  polygon_indexes.push_back(input_segments.size());
 
-//   I2E to_exact=traits.converter_to_exact_object();
-//   E2O from_exact=traits.converter_from_exact_object();
+  // Main algorithm
+  internal::double_snap_rounding_2_impl<Concurrency_tag>(input_segments.begin(), input_segments.end(), pts, polylines, traits);
 
-// #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-//   std::cout << "Change format to range of points and indexes" << std::endl;
-// #endif
-//   std::vector<Point_2> pts;
-//   std::vector< std::vector< std::size_t> > polylines;
-//   std::vector<std::size_t> polygon_index;
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Build output" << std::endl;
+#endif
 
-//   if(compute_intersections){
-//     // TODO Need to compute_subcurves that output polylines to track the polygons
-//     assert(0);
-//   } else {
-//     // Index of the segments that introduced a new polygon
-//     polygon_index.reserve(std::distance(begin, end));
-//     for(InputIterator it=begin; it!=end; ++it){
-//       std::size_t index_start=polylines.size();
-//       polygon_index.push_back(polylines.size());
-//       for(const typename Polygon_2::Point_2 &p: it->vertices())
-//         pts.push_back(to_exact(p));
-//       for(std::size_t i=0; i<P.size()-1; ++i)
-//         if(less_xy_2(pts[i], pts[i+1]))
-//           polylines.push_back({i, i+1});
-//         else
-//           polylines.push_back({i+1, i});
-//       polylines.push_back({pts.size()-1,index_start});
-//       assert(pts.size()==polylines.size());
-//     }
-//     polygon_index.push_back(polylines.size());
-//   }
+  // Reassemble the polygons
+  for(std::size_t polygon_idx = 0; polygon_idx != polygon_indexes.size()-1; ++polygon_idx){
+    Polygon_2 P;
+    std::size_t idx_start = polygon_indexes[polygon_idx];
+    std::size_t idx_end = polygon_indexes[polygon_idx+1];
+    std::size_t last_insert;
+    for(std::size_t pl_idx = idx_start; pl_idx != idx_end; ++pl_idx){
+      auto &pl = polylines[pl_idx];
+      // Add the first element
+      if(pl_idx == idx_start)
+        P.push_back(from_exact(pts[pl.front()]));
 
-//   // Main algorithm
-//   internal::double_snap_rounding_2_impl<Concurrency_tag>(pts, polylines, traits);
+      // Add the element in forward direction
+      if(pl_idx == idx_start || last_insert == pl.front())
+        for(std::size_t i = 1; i != pl.size(); ++i)
+          P.push_back(from_exact(pts[pl[i]]));
 
-// #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-//   std::cout << "Build output" << std::endl;
-// #endif
-
-//   // Output a range of segments while removing duplicate ones
-//   for(std::size_t input_ind=0; input_ind<std::size_t(std::distance(begin,end)); ++input_ind){
-//     for(std::size_t pl_ind=polygon_index[input_ind]; pl_ind<polygon_index[input_ind+1]; ++pl_ind){
-//       std::vector<std::size_t> &poly = polylines[pl_ind];
-//       Polygon_2 P;
-//       for(std::size_t i=1; i<poly.size(); ++i)
-//         P.push_back(from_exact(pts[poly[i]]));
-//     }
-//     *out++=P;
-//   }
+      // Add the element in backward direction
+      else
+        for(std::size_t i = pl.size(); i != 0; --i)
+          P.push_back(from_exact(pts[pl[i-1]]));
+    }
+    *out++=P;
+  }
 }
 
 /**

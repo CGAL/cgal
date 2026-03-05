@@ -13,6 +13,8 @@
 #ifndef CGAL_ARR_SEGMENT_TRAITS_WITH_POINT_MAP_2_H
 #define CGAL_ARR_SEGMENT_TRAITS_WITH_POINT_MAP_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 #include <CGAL/Arr_segment_traits_2.h>
 #include <boost/property_map/property_map.hpp>
 
