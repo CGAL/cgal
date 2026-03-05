@@ -163,7 +163,7 @@ public:
    /**
    * @brief returns whether the facet `facet` is bad or not.
    *
-   * @param tr the triangulation within which `facet` lives
+   * @param c3t3 the mesh complex within which `facet` lives
    * @param facet the facet
    */
   Is_facet_bad operator()(const C3T3& c3t3, const Facet& facet) const

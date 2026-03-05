@@ -150,7 +150,7 @@ public:
 
   /**
    * @brief returns whether the cell `cell` is bad or not.
-   * @param tr the triangulation within which `cell` lives
+   * @param c3t3 the mesh complex within which `cell` lives
    * @param cell the cell
    */
   Is_cell_bad operator()(const C3T3& c3t3, const Cell_handle& cell) const
