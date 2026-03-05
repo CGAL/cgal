@@ -25,6 +25,9 @@
 #include <CGAL/intersection_2.h>
 
 #include <CGAL/Arr_segment_traits_with_point_map_2.h>
+#include <CGAL/internal/Wrap_float_snap_rounding_traits_2.h>
+
+#include <boost/property_map/function_property_map.hpp>
 
 #include <set>
 #include <vector>
@@ -32,82 +35,200 @@
 
 namespace CGAL {
 
-namespace internal{
+  namespace internal{
+
+template <typename GeometryTraits_2, typename Points_, typename Polylines_, typename Allocator_ = CGAL_ALLOCATOR(int)>
+class Snap_rounding_visitor :
+    public Ss2::Default_visitor<Snap_rounding_visitor<GeometryTraits_2, Points_, Polylines_, Allocator_>,
+                                GeometryTraits_2, Allocator_> {
+public:
+  using Geometry_traits_2 = GeometryTraits_2;
+  using Points = Points_;
+  using Polylines = Polylines_;
+  using Allocator = Allocator_;
+
+  using P_idx = std::size_t;
+  using L_idx = std::size_t;
+  using Polyline = typename Polylines::value_type;
+
+private:
+  using Gt2 = Geometry_traits_2;
+  using Self = Snap_rounding_visitor<Gt2, Points, Polylines, Allocator>;
+  using Base = Ss2::Default_visitor<Self, Gt2, Allocator>;
+
+public:
+  using Event = typename Base::Event;
+  using Subcurve = typename Base::Subcurve;
+  using Status_line_iterator = typename Subcurve::Status_line_iterator;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
+  using Surface_sweep_2 = typename Base::Surface_sweep_2;
+  using FT = typename Gt2::FT;
+
+  using Base_segment_2 = typename Gt2::Base_segment_2;
+
+protected:
+  Gt2 traits;
+  Points& m_points;
+  const Polylines& m_polylines;
+  Polylines& m_out;
+  std::vector< double >& round_bound_pts;
+
+public:
+  Snap_rounding_visitor(Gt2 &traits_, Points& points, Polylines& polylines, Polylines& out, std::vector< double >& rb_pts) :
+    traits(traits_),
+    m_points(points),
+    m_polylines(polylines),
+    m_out(out),
+    round_bound_pts(rb_pts)
+  {}
+
+  /*!
+   */
+  template <typename CurveIterator>
+  void sweep(CurveIterator begin, CurveIterator end) {
+    m_out.resize(m_polylines.size());
+    Surface_sweep_2* sl = this->surface_sweep();
+    sl->sweep(begin, end);
+  }
+
+  /*!
+   */
+  bool after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */) {
+    auto point_at_x = traits.construct_point_at_x_on_segment_2_object();
+
+    auto csq_dist_2 = traits.compare_squared_distance_2_object();
+    auto round_bound = traits.compute_squared_round_bound_2_object();
+
+    if (! event->is_closed()) return true;
+    if (! event->has_left_curves() && ! event->has_right_curves()) return true;
+
+    auto pi = event->point().idx;
+    Surface_sweep_2* sl = this->surface_sweep();
+
+    // Insert the point in the output
+    for (auto it = event->left_curves_begin(); it != event->left_curves_end(); ++it) {
+      Subcurve *sc = *it;
+      std::vector<Subcurve*> leaves;
+      sc->all_leaves(std::back_inserter(leaves));
+      for(auto l: leaves)
+        m_out[l->last_curve().first.first].push_back(pi);
+    }
+
+    for (auto it = event->right_curves_begin(); it != event->right_curves_end(); ++it) {
+      Subcurve *sc = *it;
+      std::vector<Subcurve*> leaves;
+      sc->all_leaves(std::back_inserter(leaves));
+      for(auto l: leaves)
+        if(m_out[l->last_curve().first.first].empty() || m_out[l->last_curve().first.first].back() != pi) // Maybe already by left curves
+          m_out[l->last_curve().first.first].push_back(pi);
+    }
+
+    // Subdivide close segments
+    auto close_event=[&](std::size_t &pi, Subcurve *sc){
+      L_idx li = sc->last_curve().first.first;
+      std::size_t i = sc->last_curve().first.second;
+
+      P_idx src = m_polylines[li][i];
+      P_idx trg = m_polylines[li][i+1];
+      // If the curves already contains the point, continue
+      if(!m_out[li].empty() && m_out[li].back() == pi)
+        return true;
+
+      const auto &p = m_points[pi];
+      const auto &pl = m_polylines[li];
+      Base_segment_2 seg = Base_segment_2(m_points[pl.front()], m_points[pl.back()]); //get the input segment
+
+      // (A+B)^2 <= 4*max(A^2,B^2)
+      double bound = round_bound_pts[pi];
+      bound = (std::max)(bound, round_bound_pts[src]);
+      bound = (std::max)(bound, round_bound_pts[trg]);
+      bound*=4;
+
+      if(possibly(csq_dist_2(p, seg, bound) != LARGER)){
+        // if constexpr (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename G2t::Exact_type>)
+        if(true){
+          internal::Evaluate<FT> evaluate;
+          // We refine the pts to reduce the rounding shift and check again
+          evaluate(m_points[pi]);
+          evaluate(m_points[m_out[li].back()]);
+          // The two following call of exact act on seg variables since they appear in its DAG
+          evaluate(m_points[src]);
+          evaluate(m_points[trg]);
+          // Update the bounds
+          round_bound_pts[pi]=round_bound(m_points[pi]); // TODO round_boudnd of end segment
+          round_bound_pts[m_out[li].back()]=round_bound(m_points[m_out[li].back()]);
+          round_bound_pts[src]=round_bound(m_points[src]);
+          round_bound_pts[trg]=round_bound(m_points[trg]);
+          bound = round_bound_pts[pi];
+          bound = (std::max)(bound, round_bound_pts[m_out[li].back()]);
+          bound = (std::max)(bound, round_bound_pts[src]);
+          bound = (std::max)(bound, round_bound_pts[trg]);
+          bound*=4;
+
+          // Check if the point and the segment are still too closed for a safe rounding
+          if(csq_dist_2(p, seg, bound) == LARGER)
+            return false;
+        }
+
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
+        std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
+        std::cout << new_pi <<": " << pts[new_pi] << std::endl;
+        std::cout << li << ":";
+        for(std::size_t i: pl)
+          std::cout << " " << i;
+        std::cout << std::endl;
+#endif
+
+        // Check if segment was not already subdivided by another point
+        if(m_points[pl.back()].x() == m_points[pi].x())
+          return false;
+
+        // Create a point on seg at the same x coordinate than p
+        m_points.push_back(point_at_x(seg, m_points[pi].x()));
+        round_bound_pts.push_back(round_bound(m_points.back()));
+        std::size_t new_pi=m_points.size()-1;
+        // We insert it on the output
+        m_out[li].push_back(new_pi);
+        pi = new_pi;
+        return true;
+      }
+      return false;
+    };
+
+    // Look above segments and creates a point if there too close for a safe rounding
+    auto pi_above = pi;
+    auto above = iter;
+    while(above != sl->status_line_end() && close_event(pi_above,*above))
+      ++above;
+
+    // same with below segments
+    auto below = iter;
+    if(below != sl->status_line_begin()){
+      --below;
+      while(close_event(pi,*below)){
+        if(below == sl->status_line_begin())
+          break;
+        --below;
+      }
+    }
+
+    return true;
+  }
+
+  const Points& points() const { return m_points; }
+  Points& points() { return m_points; }
+
+  const Polylines& polylines() const { return m_polylines; }
+  // Polylines& polylines() { return m_polylines; }
+};
+
   /*
   Scan the vertices from left to right while maintening the y order of the segments.
   Subdivide the segments if there are too close to a vertex
   */
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
-void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits &traits){
-  using Point_2   = typename Traits::Point_2;
-  using Segment_2 = typename Traits::Segment_2;
-
-  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
-
-  using Less_xy_2 = typename Traits::Less_xy_2;
-  using Less_y_2 = typename Traits::Less_y_2;
-  using Construct_segment_2 = typename Traits::Construct_segment_2;
-  using Construct_point_at_x_on_segment_2 = typename Traits::Construct_point_at_x_on_segment_2;
-
-  using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
-  using Compute_squared_round_bound_2 = typename Traits::Compute_squared_round_bound_2;
-
-  Less_xy_2 less_xy_2 = traits.less_xy_2_object();
-  Less_y_2 less_y_2 = traits.less_y_2_object();
-  Construct_segment_2 segment_2 = traits.construct_segment_2_object();
-  Construct_point_at_x_on_segment_2 point_at_x = traits.construct_point_at_x_on_segment_2_object();
-
-  Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
-  Compute_squared_round_bound_2 round_bound = traits.compute_squared_round_bound_2_object();
-
-  // Precompute round bounds for points
-  std::vector<double> round_bound_pts;
-  round_bound_pts.reserve(pts.size());
-  for(std::size_t i=0; i<pts.size(); ++i)
-    round_bound_pts.emplace_back(round_bound(pts[i]));
-
-  enum class EVENT_TYPE{INSERT, MIDDLE, REMOVE};
-  struct Event{
-    Event(std::size_t pi_, std::size_t li_, EVENT_TYPE t_):pi(pi_),li(li_),type(t_){}
-    std::size_t pi;
-    std::size_t li;
-    EVENT_TYPE type;
-  };
-
-  auto event_comparator=[&](Event a, Event b){
-    const Point_2 &pa=pts[a.pi];
-    const Point_2 &pb=pts[b.pi];
-
-    // We sort event lexicographically
-    if(a.pi!=b.pi)
-      return less_xy_2(pa,pb);
-
-    // If two events use the same point, we place remove event first for a smaller y_order range
-    if(a.type != b.type)
-      return a.type > b.type;
-    // Only to have a complete order
-    return a.li < b.li;
-  };
-
-  auto pi_below_li=[&](std::size_t li, std::pair<std::size_t, std::size_t> pair_pi_li){
-    std::size_t ind_pi_support = pair_pi_li.second;
-    std::size_t pi = pair_pi_li.first;
-    if(ind_pi_support==li) return false;
-
-    const Polyline &pl=polylines[li];
-
-    Orientation ori=COLLINEAR;
-    if(pl.front()!=pi && pl.back()!=pi)
-      ori=orientation(pts[pl.front()], pts[pl.back()], pts[pi]);
-    // When collinear, pick an other vertex of the line of pi to decide
-    if(ori==COLLINEAR){
-      const Polyline &pi_support = polylines[ind_pi_support];
-      std::size_t other_point = (pi_support.front()!=pi) ? pi_support.front() : pi_support.back();
-      ori=orientation(pts[pl.front()], pts[pl.back()], pts[other_point]);
-      assert(ori!=COLLINEAR);
-    }
-    return ori==RIGHT_TURN;
-  };
+template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
+void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
 
 #ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
   std::cout << "Input points" << std::endl;
@@ -126,145 +247,47 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   std::cout << std::endl;
 #endif
 
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Create the Event Queue" << std::endl;
-#endif
-
-  // Input polylines are supposed going from left to right
-  std::vector<Event> event_queue;
-  event_queue.reserve(2*polylines.size());
-  for(std::size_t li=0; li<polylines.size(); ++li){
-    Polyline &pl=polylines[li];
-    event_queue.emplace_back(pl.front(), li, EVENT_TYPE::INSERT);
-    for(std::size_t pi=1; pi<pl.size()-1; ++pi){
-      event_queue.emplace_back(pl[pi], li, EVENT_TYPE::MIDDLE);
-      assert(less_xy_2(pts[pl[pi-1]], pts[pl[pi]]));
+// Wrap the traits with something supporting the data structure pts, polylines
+  struct Key{
+    Key(){}
+    Key(std::size_t f, std::size_t s, std::size_t i):first(f), second(s), idx(i){};
+    bool operator==(Key b) const{
+      return idx==b.idx;
     }
-    event_queue.emplace_back(pl.back(), li, EVENT_TYPE::REMOVE);
-    assert(less_xy_2(pts[pl.front()], pts[pl.back()]));
-  }
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Sort the event queue along x direction" << std::endl;
-#endif
-  std::sort(event_queue.begin(), event_queue.end(), event_comparator);
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Goes through Event" << std::endl;
-#endif
-  // Vector is suboptimal for arbitrary insertion (Actually negligeable in the running time)
-  // Track order of the lines along y along the events
-  std::vector< std::size_t > y_order;
-  y_order.push_back(event_queue[0].li);
-  for(std::size_t i=1; i<event_queue.size();++i)
-  {
-    Event event = event_queue[i];
-#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
-    std::cout << ((event.type==EVENT_TYPE::INSERT)?"Insert": "Remove") << " Event at point " << event.pi << " on line "<< event.li << std::endl;
-#endif
-    // Find the position of the event along the y direction
-    std::vector<std::size_t>::iterator pos_it = y_order.begin();
-    if(!y_order.empty())
-      pos_it = std::lower_bound(y_order.begin(), y_order.end(), std::pair<std::size_t, std::size_t>(event.pi, event.li), pi_below_li);
-    if(event.type==EVENT_TYPE::REMOVE){
-      assert(*pos_it==event.li);
-      pos_it = y_order.erase(pos_it);
-    }
+    std::size_t first;
+    std::size_t second;
+    std::size_t idx;
+  };
+  auto get = [&](const Key &idx){ return pts[idx.idx]; };
+  auto wrap_traits = make_wrap_float_snap_rounding_traits_2(traits, boost::make_function_property_map<Key>(get),[](){});
 
-    if(!y_order.empty()){
-      auto close_event=[&](std::size_t pi, std::size_t li){
-        if((pi==polylines[li].front()) || (pi==polylines[li].back()))
-          return true;
+  auto round_bound = traits.compute_squared_round_bound_2_object();
 
-        const Point_2 &p = pts[pi];
-        Polyline &pl=polylines[li];
-        Segment_2 seg=segment_2(pts[pl.front()], pts[pl.back()]);
+  using Wrap_traits = decltype(wrap_traits);
+  using X_monotone_curve_2 = typename Wrap_traits::X_monotone_curve_2;
+  using Visitor = Snap_rounding_visitor<Wrap_traits, PointsRange, PolylinesRange>;
+  using Surface_sweep = Ss2::No_intersection_surface_sweep_2<Visitor>;
 
-        // (A+B)^2 <= 4*max(A^2,B^2)
-        double bound=round_bound_pts[pi];
-        bound = (std::max)(bound, round_bound_pts[pl.front()]);
-        bound = (std::max)(bound, round_bound_pts[pl.back()]);
-        bound*=4;
+  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylinesRange::iterator>::value_type>;
 
-        if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER))
-        {
-          if constexpr (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename Traits::Exact_type>)
-          {
-            internal::Evaluate<typename Traits::FT> evaluate;
-            // We refine the pts to reduce the rounding shift and check again
-            evaluate(pts[pi]);
-            evaluate(pts[pl[pl.size()-2]]);
-            // The two following call of exact act on seg variables since they appear in its DAG
-            evaluate(pts[pl.back()]);
-            evaluate(pts[pl.front()]);
-            // Update the bounds
-            round_bound_pts[pi]=round_bound(pts[pi]);
-            round_bound_pts[pl[pl.size()-2]]=round_bound(pts[pl[pl.size()-2]]);
-            round_bound_pts[pl.back()]=round_bound(pts[pl.back()]);
-            round_bound_pts[pl.front()]=round_bound(pts[pl.front()]);
-            bound=round_bound_pts[pi];
-            bound = (std::max)(bound, round_bound_pts[pl[pl.size()-2]]);
-            bound = (std::max)(bound, round_bound_pts[pl.back()]);
-            bound*=4;
+  // auto less_xy_2 = traits.less_xy_2_object();
+  auto less_y_2 = traits.less_y_2_object();
 
-            // Check if the point and the segment are still too closed for a safe rounding
-            if(csq_dist_2(p, seg, bound)==CGAL::LARGER)
-              return false;
-          }
+  std::vector< double > round_bound_pts;
+  round_bound_pts.reserve(pts.size());
+  for(std::size_t i=0; i!=pts.size(); ++i)
+    round_bound_pts.push_back(round_bound(pts[i]));
 
-          // Check if segment was not already subdivided by another point
-          for(std::size_t i: pl)
-            if(pts[i].x()==pts[pi].x())
-              return false;
+  // Create the curves
+  std::vector<X_monotone_curve_2> curves;
+  for(std::size_t j=0; j!=polylines.size(); ++j)
+    for(std::size_t i=0; i!=polylines[j].size()-1; ++i)
+      curves.emplace_back(Key(j, i, polylines[j][i]), Key(j, i+1, polylines[j][i+1]));
 
-          // Create a point on seg at the same x coordinate than p
-          pts.push_back(point_at_x(seg, pts[event.pi].x()));
-          std::size_t new_pi=pts.size()-1;
-          round_bound_pts.emplace_back(round_bound(pts[new_pi]));
-          // We insert it on pl before the last vertex
-          pl.insert(pl.end()-1, new_pi);
-#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
-          std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
-          std::cout << new_pi <<": " << pts[new_pi] << std::endl;
-          std::cout << li << ":";
-          for(std::size_t i: pl)
-            std::cout << " " << i;
-          std::cout << std::endl;
-#endif
-          return true;
-        }
-        return false;
-      };
-
-      if(event.pi != event_queue[i-1].pi)
-      {
-        // Look above segments and creates a point if there too close for a safe rounding
-        auto above = pos_it;
-        std::size_t pi=event.pi;
-        while(above!=y_order.end() && close_event(pi,*above)){
-          if((pi!=polylines[*above].front()) && (pi!=polylines[*above].back()))
-            pi=pts.size()-1;
-          ++above;
-        }
-
-        // same with below segments
-        auto below = pos_it;
-        pi=event.pi;
-        if(below!=y_order.begin()){
-          --below;
-          while(close_event(pi,*(below))){
-            if(below==y_order.begin())
-              break;
-            if((pi!=polylines[*below].front()) && (pi!=polylines[*below].back()))
-              pi=pts.size()-1;
-            --below;
-          }
-        }
-      }
-    }
-
-    if(event.type==EVENT_TYPE::INSERT){
-      y_order.insert(pos_it, event.li);
-    }
-  }
+  std::vector< Polyline > out;
+  Visitor visitor(wrap_traits, pts, polylines, out, round_bound_pts);
+  Surface_sweep surface_sweep(&wrap_traits, &visitor);
+  visitor.sweep(curves.begin(), curves.end());
 
   // We sort the point by y to ensure the order of the point is preserved
   // Round value of y coordinates are indirectly modified in the case of a filter failure
@@ -275,6 +298,7 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   std::iota(indices.begin(),indices.end(),0);
   std::sort(indices.begin(),indices.end(),sort_pi);
 
+  std::swap(polylines, out);
 #ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
   std::cout << "Output points" << std::endl;
   i=0;
@@ -291,13 +315,14 @@ void snap_rounding_scan(PointsRange &pts, PolylineRange &polylines, const Traits
   }
   std::cout << std::endl;
 #endif
+  return;
 }
 
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
-void merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
+template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
+void merge_duplicate_points_in_polylines(PointsRange &pts, PolylinesRange &polylines, const Traits &traits)
 {
   using Point_2 = typename Traits::Point_2;
-  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
+  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylinesRange::iterator>::value_type>;
 
   using Less_xy_2 = typename Traits::Less_xy_2;
   using Equal_2 = typename Traits::Equal_2;
@@ -333,10 +358,10 @@ void merge_duplicate_points_in_polylines(PointsRange &pts, PolylineRange &polyli
 }
 
 // Some points may have collapsed on a vertical segment, we subdivide these vertical segments accordingly
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
-void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
+template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
+void snap_post_process(PointsRange &pts, PolylinesRange &polylines, const Traits &traits)
 {
-  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
+  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylinesRange::iterator>::value_type>;
   using Less_xy_2 = typename Traits::Less_xy_2;
 
   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
@@ -348,6 +373,7 @@ void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits 
   std::vector< std::size_t > p_sort_by_x(pts.size());
   std::iota(p_sort_by_x.begin(), p_sort_by_x.end(), 0);
   std::sort(p_sort_by_x.begin(), p_sort_by_x.end(), Less_indexes_xy_2);
+
   for(Polyline &poly: polylines){
     std::vector<std::size_t> updated_polyline;
     updated_polyline.push_back(poly.front());
@@ -376,13 +402,34 @@ void snap_post_process(PointsRange &pts, PolylineRange &polylines, const Traits 
   }
 }
 
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
-void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
-{
-  using Point_2   = typename Traits::Point_2;
-  using Construct_rounded_point_2    = typename Traits::Construct_rounded_point_2;
+template <class Concurrency_tag=Sequential_tag, class InputIterator, class Traits, class PointsRange , class PolylinesRange>
+void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
+  using Point_2 = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
 
-  Construct_rounded_point_2 round = traits.construct_rounded_point_2_object();
+  auto to_exact   = traits.converter_to_exact_object();
+  // auto from_exact = traits.converter_from_exact_object();
+  auto round      = traits.construct_rounded_point_2_object();
+
+  std::vector< Segment_2 > convert_input;
+  for(InputIterator it=begin; it!=end; ++it)
+    if(it->source()!=it->target())
+      convert_input.push_back(to_exact(*it));
+  std::vector<Segment_2> segs;
+#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Solved intersections" << std::endl;
+  std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
+#endif
+  compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
+
+  std::vector< std::vector< std::size_t> > polylines_bis;
+  for(auto &pl: polylines)
+    for(std::size_t i=0; i<pl.size()-1; ++i)
+      polylines_bis.emplace_back(std::vector< std::size_t>({pl[i], pl[i+1]}));
+  std::sort(polylines_bis.begin(), polylines_bis.begin(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0])?a[1]<b[1]:a[0]<b[0]; });
+  auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
+  polylines_bis.erase(new_end, polylines_bis.end());
+  std::swap(polylines, polylines_bis);
 
   snap_rounding_scan(pts, polylines, traits);
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
@@ -436,7 +483,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 * \cgalNamedParamsEnd
 */
 template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-OutputContainer double_snap_rounding_2(InputIterator begin,
+OutputContainer double_snap_rounding_2(InputIterator    begin,
                                        InputIterator    end,
                                        OutputContainer  out,
                                        const NamedParameters &np = parameters::default_values())
@@ -454,53 +501,19 @@ OutputContainer double_snap_rounding_2(InputIterator begin,
                                                               DefaultTraits>::type;
 
   using Point_2 = typename Traits::Point_2;
-  using Segment_2 = typename Traits::Segment_2;
-  using I2E = typename Traits::Converter_to_exact;
-  using E2O = typename Traits::Converter_from_exact;
-  using VectorIterator = typename std::vector<Segment_2>::iterator;
-
-  using Less_xy_2 = typename Traits::Less_xy_2;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
-  I2E to_exact=traits.converter_to_exact_object();
-  E2O from_exact=traits.converter_from_exact_object();
-
-  std::vector<Segment_2> convert_input;
-  for(InputIterator it=begin; it!=end; ++it)
-    convert_input.push_back(to_exact(*it));
-  std::vector<Segment_2> segs;
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Solved intersections" << std::endl;
-  std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
-#endif
-  std::vector<Point_2> pts;
-  std::vector< std::vector< std::size_t> > polylines;
-  compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
-
-  std::vector< std::vector< std::size_t> > polylines_bis;
-  for(auto &pl: polylines)
-    for(std::size_t i=0; i<pl.size()-1; ++i)
-      polylines_bis.emplace_back(std::vector< std::size_t>({pl[i], pl[i+1]}));
-  std::sort(polylines_bis.begin(), polylines_bis.begin(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0])?a[1]<b[1]:a[0]<b[0]; });
-  auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
-  polylines_bis.erase(new_end, polylines_bis.end());
-  std::swap(polylines, polylines_bis);
-
-
-  auto traits_with_pm = make_arr_segments_traits_with_point_map(boost::make_iterator_property_map(pts.begin(), boost::identity_property_map{}),
-                                                                [&](auto pm, Point_2 p){pts.push_back(p); return pts.size()-1;});
-  using Traits_with_pm = decltype(traits_with_pm);
-  std::vector< typename Traits_with_pm::X_monotone_curve_2 > curves;
-  for(auto &pl: polylines)
-    curves.emplace_back(pl[0], pl[1]);
-  do_curves_intersect(curves.begin(), curves.end(), traits_with_pm);
+  // auto to_exact=   traits.converter_to_exact_object();
+  auto from_exact= traits.converter_from_exact_object();
 
   // Main algorithm
-  internal::double_snap_rounding_2_disjoint<Concurrency_tag, Traits>(pts, polylines, traits);
+  std::vector<Point_2> pts;
+  std::vector< std::vector< std::size_t> > polylines;
+  internal::double_snap_rounding_2_impl<Concurrency_tag>(begin, end, pts, polylines, traits);
 
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -564,51 +577,20 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
                                                               DefaultTraits>::type;
 
   using Point_2 = typename Traits::Point_2;
-  using Segment_2 = typename Traits::Segment_2;
-  using I2E = typename Traits::Converter_to_exact;
-  using E2O = typename Traits::Converter_from_exact;
-
-  using SegmentRange = std::vector<Segment_2>;
-  using SegmentRangeIterator = typename SegmentRange::iterator;
-
-  using Less_xy_2 = typename Traits::Less_xy_2;
-  using Construct_segment_2 = typename Traits::Construct_segment_2;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
-  I2E to_exact=traits.converter_to_exact_object();
-  E2O from_exact=traits.converter_from_exact_object();
-
-  Less_xy_2 less_xy_2 = traits.less_xy_2_object();
-  Construct_segment_2 segment_2 = traits.construct_segment_2_object();
-
-  std::vector<Segment_2> convert_input;
-  for(InputIterator it=begin; it!=end; ++it)
-    if(it->source()!=it->target())
-      convert_input.push_back(to_exact(*it));
-  std::vector<Segment_2> segs;
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Solved intersections" << std::endl;
-  std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
-#endif
-  std::vector<Point_2> pts;
-  std::vector< std::vector< std::size_t> > polylines;
-  compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
-
-  std::vector< std::vector< std::size_t> > polylines_bis;
-  for(auto &pl: polylines)
-    for(std::size_t i=0; i<pl.size()-1; ++i)
-      polylines_bis.emplace_back(std::vector< std::size_t>({pl[i], pl[i+1]}));
-  std::sort(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0])?a[1]<b[1]:a[0]<b[0]; });
-  auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
-  polylines_bis.erase(new_end, polylines_bis.end());
-  std::swap(polylines, polylines_bis);
+  // auto to_exact=   traits.converter_to_exact_object();
+  auto from_exact= traits.converter_from_exact_object();
+  auto segment_2 = traits.construct_segment_2_object();
 
   // Main algorithm
-  internal::double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
+  std::vector<Point_2> pts;
+  std::vector< std::vector< std::size_t> > polylines;
+  internal::double_snap_rounding_2_impl<Concurrency_tag>(begin, end, pts, polylines, traits);
 
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -671,82 +653,82 @@ void compute_snapped_polygons_2(InputIterator begin,
                                 OutputIterator out,
                                 const NamedParameters &np = parameters::default_values())
 {
-  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
-                                                              NamedParameters,
-                                                              Sequential_tag>::type;
+  // using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
+  //                                                             NamedParameters,
+  //                                                             Sequential_tag>::type;
 
-  using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
-  using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
-  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
-  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                              NamedParameters,
-                                                              DefaultTraits>::type;
+  // using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
+  // using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
+  // using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  // using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+  //                                                             NamedParameters,
+  //                                                             DefaultTraits>::type;
 
-  using Less_xy_2 = typename Traits::Less_xy_2;
+  // using Less_xy_2 = typename Traits::Less_xy_2;
 
-  using Point_2 = typename Traits::Point_2;
-  using I2E = typename Traits::Converter_to_exact;
-  using E2O = typename Traits::Converter_from_exact;
+  // using Point_2 = typename Traits::Point_2;
+  // using I2E = typename Traits::Converter_to_exact;
+  // using E2O = typename Traits::Converter_from_exact;
 
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
+  // using parameters::choose_parameter;
+  // using parameters::get_parameter;
 
-  Polygon_2 P=*begin;
+//   Polygon_2 P=*begin;
 
-  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
-  const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersections), false);
+//   const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+//   const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::compute_intersections), false);
 
-  Less_xy_2 less_xy_2 = traits.less_xy_2_object();
+//   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
 
-  I2E to_exact=traits.converter_to_exact_object();
-  E2O from_exact=traits.converter_from_exact_object();
+//   I2E to_exact=traits.converter_to_exact_object();
+//   E2O from_exact=traits.converter_from_exact_object();
 
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Change format to range of points and indexes" << std::endl;
-#endif
-  std::vector<Point_2> pts;
-  std::vector< std::vector< std::size_t> > polylines;
-  std::vector<std::size_t> polygon_index;
+// #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
+//   std::cout << "Change format to range of points and indexes" << std::endl;
+// #endif
+//   std::vector<Point_2> pts;
+//   std::vector< std::vector< std::size_t> > polylines;
+//   std::vector<std::size_t> polygon_index;
 
-  if(compute_intersections){
-    // TODO Need to compute_subcurves that output polylines to track the polygons
-    assert(0);
-  } else {
-    // Index of the segments that introduced a new polygon
-    polygon_index.reserve(std::distance(begin, end));
-    for(InputIterator it=begin; it!=end; ++it){
-      std::size_t index_start=polylines.size();
-      polygon_index.push_back(polylines.size());
-      for(const typename Polygon_2::Point_2 &p: it->vertices())
-        pts.push_back(to_exact(p));
-      for(std::size_t i=0; i<P.size()-1; ++i)
-        if(less_xy_2(pts[i], pts[i+1]))
-          polylines.push_back({i, i+1});
-        else
-          polylines.push_back({i+1, i});
-      polylines.push_back({pts.size()-1,index_start});
-      assert(pts.size()==polylines.size());
-    }
-    polygon_index.push_back(polylines.size());
-  }
+//   if(compute_intersections){
+//     // TODO Need to compute_subcurves that output polylines to track the polygons
+//     assert(0);
+//   } else {
+//     // Index of the segments that introduced a new polygon
+//     polygon_index.reserve(std::distance(begin, end));
+//     for(InputIterator it=begin; it!=end; ++it){
+//       std::size_t index_start=polylines.size();
+//       polygon_index.push_back(polylines.size());
+//       for(const typename Polygon_2::Point_2 &p: it->vertices())
+//         pts.push_back(to_exact(p));
+//       for(std::size_t i=0; i<P.size()-1; ++i)
+//         if(less_xy_2(pts[i], pts[i+1]))
+//           polylines.push_back({i, i+1});
+//         else
+//           polylines.push_back({i+1, i});
+//       polylines.push_back({pts.size()-1,index_start});
+//       assert(pts.size()==polylines.size());
+//     }
+//     polygon_index.push_back(polylines.size());
+//   }
 
-  // Main algorithm
-  internal::double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
+//   // Main algorithm
+//   internal::double_snap_rounding_2_impl<Concurrency_tag>(pts, polylines, traits);
 
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Build output" << std::endl;
-#endif
+// #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
+//   std::cout << "Build output" << std::endl;
+// #endif
 
-  // Output a range of segments while removing duplicate ones
-  for(std::size_t input_ind=0; input_ind<std::size_t(std::distance(begin,end)); ++input_ind){
-    for(std::size_t pl_ind=polygon_index[input_ind]; pl_ind<polygon_index[input_ind+1]; ++pl_ind){
-      std::vector<std::size_t> &poly = polylines[pl_ind];
-      Polygon_2 P;
-      for(std::size_t i=1; i<poly.size(); ++i)
-        P.push_back(from_exact(pts[poly[i]]));
-    }
-    *out++=P;
-  }
+//   // Output a range of segments while removing duplicate ones
+//   for(std::size_t input_ind=0; input_ind<std::size_t(std::distance(begin,end)); ++input_ind){
+//     for(std::size_t pl_ind=polygon_index[input_ind]; pl_ind<polygon_index[input_ind+1]; ++pl_ind){
+//       std::vector<std::size_t> &poly = polylines[pl_ind];
+//       Polygon_2 P;
+//       for(std::size_t i=1; i<poly.size(); ++i)
+//         P.push_back(from_exact(pts[poly[i]]));
+//     }
+//     *out++=P;
+//   }
 }
 
 /**
