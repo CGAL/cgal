@@ -998,7 +998,7 @@ public:
   bool is_Gabriel(Vertex_handle v) const;
 
   // Dual functions
-  Bare_point dual(Cell_handle c) const;
+  decltype(auto) dual(Cell_handle c) const;
   Object dual(Cell_handle c, int i) const;
   Object dual(const Facet& facet) const;
 
@@ -1751,7 +1751,7 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
 }
 
 template < class Gt, class Tds, class Lds >
-typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
+decltype(auto)
 Regular_triangulation_3<Gt,Tds,Lds>::
 dual(Cell_handle c) const
 {
@@ -1764,7 +1764,7 @@ dual(Cell_handle c) const
 template < class Gt, class Tds, class Lds >
 void
 Regular_triangulation_3<Gt,Tds,Lds>::
-dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const
+dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point& q) const
 {
   Cell_handle n = c->neighbor(i);
   CGAL_assertion(! is_infinite(c) && ! is_infinite(n));
@@ -1947,8 +1947,8 @@ dual(Cell_handle c, int i) const
   if(! is_infinite(c) && ! is_infinite(n))
   {
     // dual is a segment
-    Bare_point bp = dual(c);
-    Bare_point np = dual(n);
+    const auto& bp = dual(c);
+    const auto& np = dual(n);
     return construct_object(construct_segment(bp, np));
   }
 
