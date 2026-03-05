@@ -35,7 +35,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -390,7 +389,7 @@ private: // Types
 
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
    *  of Facet (viewed from cells inside the star), ordered by the
-   *  critial_radius of the point with the cell that lies on the facet, at
+   *  critical_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
   typedef CGAL::Double_map<Facet, FT>                       Pre_star;
 
@@ -403,7 +402,7 @@ private: // Types
   typedef Visitor_                                          Visitor;
 
   // Helper (for 'get_sq_distance_to_closest_vertex')
-  typedef Triangulation_helpers<Tr>                         Tr_helpers;
+  typedef Triangulation_helpers<Tr>                         Helpers;
 
   using Base::get_lock_data_structure;
 
@@ -934,7 +933,7 @@ pump_vertices(FT sliver_criterion_limit,
       Cell_handle c = this->extract_cell_handle_from_queue_value(front);
       FT q = this->extract_cell_quality_from_queue_value(front);
       unsigned int ec = this->extract_erase_counter_from_queue_value(front);
-      // Low quality first (i.e. low value of q)
+      // Low quality first (i.e., low value of q)
       enqueue_task<pump_vertices_on_surfaces>(c, ec, q);
     }
 
@@ -963,7 +962,7 @@ pump_vertices(FT sliver_criterion_limit,
       Queue_value_type front = *(this->cells_queue_front());
       Cell_handle c = this->extract_cell_handle_from_queue_value(front);
 
-      // Low quality first (i.e. low value of cell quality)
+      // Low quality first (i.e., low value of cell quality)
       bool vertex_pumped = false;
       for( int i = 0; i < 4; ++i )
       {
@@ -1285,9 +1284,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
   FT worst_criterion_value = get_min_value(criterion_values);
   FT best_weight = 0;
 
-  FT sq_d_v = Tr_helpers().template get_sq_distance_to_closest_vertex
-                <CGAL_NTS internal::Has_member_visited<typename Tr::Vertex> >(
-                  c3t3_.triangulation(), v, incident_cells);
+  FT sq_d_v = Helpers::get_sq_distance_to_closest_vertex(c3t3_.triangulation(), v, incident_cells);
 
   // If that boolean is set to false, it means that a facet in the complex
   // is about to be flipped. In that case, the pumping is stopped.

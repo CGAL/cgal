@@ -21,6 +21,10 @@
 
 #include <CGAL/export/CGAL.h>
 
+#if __has_include(<version>)
+#  include <version>
+#endif
+
 // #include <CGAL/assertions_behaviour.h> // for backward compatibility
 
 #ifdef NDEBUG

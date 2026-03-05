@@ -116,7 +116,7 @@ power tests on weighted points.
 
 \tparam Tds  must be a model of `TriangulationDataStructure_2`.
 The face base of a regular triangulation has to be a model of the concept
-`RegularTriangulationFaceBase_2`. while
+`RegularTriangulationFaceBase_2`, while
 the vertex base class has to be a model
 of `RegularTriangulationVertexBase_2`.
 \cgal provides a default

@@ -3,7 +3,6 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 CGAL_Core
-CGAL_ImageIO
 Cartesian_kernel
 Circulator
 Convex_hull_2
@@ -23,9 +22,9 @@ Mesh_3
 Mesher_level
 Modular_arithmetic
 Number_types
+PMP_Mesh_repair
 Point_set_processing_3
 Poisson_surface_reconstruction_3
-Polygon_mesh_processing
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools

@@ -491,7 +491,7 @@ public: //---------------------------------------------------- circulator types
             return !operator==(rhs);
         }
 
-        /// pre-increment (rotate couter-clockwise)
+        /// pre-increment (rotate counter-clockwise)
         Vertex_around_vertex_circulator& operator++()
         {
             assert(mesh_);
@@ -549,7 +549,7 @@ public: //---------------------------------------------------- circulator types
             return !operator==(rhs);
         }
 
-        /// pre-increment (rotate couter-clockwise)
+        /// pre-increment (rotate counter-clockwise)
         Halfedge_around_vertex_circulator& operator++()
         {
             assert(mesh_);

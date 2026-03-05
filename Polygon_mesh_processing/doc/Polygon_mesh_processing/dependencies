@@ -5,6 +5,9 @@ BGL
 Circulator
 Generator
 Kernel_23
+PMP_Boolean_operations
+PMP_Remeshing
+PMP_Mesh_repair
 Property_map
 Polyhedron
 Solver_interface

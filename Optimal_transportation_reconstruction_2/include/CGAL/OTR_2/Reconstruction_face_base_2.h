@@ -16,10 +16,14 @@
 
 
 #include <CGAL/OTR_2/Cost.h>
+#include <CGAL/OTR_2/Sample.h>
+#include <CGAL/tags.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/Time_stamper.h>
 
+#include <cstddef>
+#include <utility>
 #include <vector>
 
 /// \cond SKIP_IN_MANUAL
@@ -64,7 +68,7 @@ private:
 
   FT m_relevance[3];
 
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
 public:
   Reconstruction_face_base_2()

@@ -3711,7 +3711,7 @@ namespace CGAL {
     { this->automatic_attributes_management = newval; }
 
     /** Creates a halfedge.
-     * @return a dart of the new half-edge.
+     * @return a dart of the new halfedge.
      */
     Dart_descriptor make_half_edge()
     { return create_dart(); }

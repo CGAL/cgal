@@ -23,14 +23,15 @@
 #include <QDoubleSpinBox>
 #include <QCheckBox>
 
-#include <map>
-
-#include <boost/graph/adjacency_list.hpp>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+
+#include <boost/graph/adjacency_list.hpp>
+
+#include <map>
 
 #include <Scene.h>
 typedef Scene_surface_mesh_item Scene_face_graph_item;
@@ -874,7 +875,7 @@ public Q_SLOTS:
       }
       const Face_graph& poly = *selection_item->polyhedron();
       std::vector<Scene_polyhedron_selection_item::fg_halfedge_descriptor> boundary_edges;
-      CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
+      CGAL::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
       for(Scene_polyhedron_selection_item::fg_halfedge_descriptor h : boundary_edges)
       {
         selection_item->selected_edges.insert(edge(h, poly));

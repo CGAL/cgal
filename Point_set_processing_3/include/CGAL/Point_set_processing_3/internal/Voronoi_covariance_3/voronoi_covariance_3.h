@@ -144,7 +144,7 @@ namespace CGAL {
                     std::list<Vertex_handle> vertices;
                     dt.incident_vertices(v,std::back_inserter(vertices));
 
-                    // construct intersection of half-planes using the convex hull function
+                    // construct intersection of halfplanes using the convex hull function
                     std::list<Plane> planes;
                     for(typename std::list<Vertex_handle>::iterator it = vertices.begin();
                         it != vertices.end(); ++it)
@@ -155,7 +155,7 @@ namespace CGAL {
                         planes.push_back (Plane(CGAL::ORIGIN+p, p));
                     }
 
-                    // add half-planes defining the sphere discretization
+                    // add halfplanes defining the sphere discretization
                     sphere(std::back_inserter(planes));
 
                     Polyhedron P;

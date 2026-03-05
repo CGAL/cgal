@@ -2,7 +2,7 @@
 /// \cgalConcept
 ///
 /// The concept `PMPTriangulateFaceVisitor` defines the requirements for the visitor
-/// used in \link PMP_meshing_grp triangulation-related functions \endlink to track
+/// used in \link PMP_combi_remeshing_grp triangulation-related functions \endlink to track
 /// the creation of new faces.
 ///
 /// \cgalRefines{CopyConstructible}

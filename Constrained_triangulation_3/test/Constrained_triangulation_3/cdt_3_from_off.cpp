@@ -1,19 +1,34 @@
 #ifdef _MSC_VER
-#pragma warning(disable: 4455)
+#  pragma warning(disable: 4455)
 #endif
 
+#include <CGAL/config.h>
+
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/enum.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Random.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/use.h>
 #include <CGAL/utility.h>
+
+#include <CGAL/bisect_failures.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -22,12 +37,24 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <algorithm>
+#include <array>
 #include <cassert>
 #include <chrono>
-#include <exception>
+#include <cstddef>
+#include <cstdlib>
 #include <fstream>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <stack>
 #include <string_view>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #if __has_include(<version>)
@@ -35,7 +62,7 @@
 #endif
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-#include <ranges>
+#  include <ranges>
 #endif
 
 #if CGAL_CDT_3_USE_EPECK
@@ -68,9 +95,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
   --merge-facets/--no-merge-facets: merge facets into patches (set by default)
   --merge-facets-old: merge facets using the old method
-  --use-new-cavity-algorithm/--use-old-cavity-algorithm: use new or old cavity algorithm (default: new)
-  --failure-expression <expression>: expression to detect bad meshratio)
-  --ratio <double>: ratio of faces to remove (default: 0.1), if --failure-expression is used
+  --bisect: bisect failures
   --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
   --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
   --coplanar-polygon-max-angle <double>: max angle for coplanar polygons (default: 1)
@@ -85,6 +110,9 @@ Usage: cdt_3_from_off [options] input.off output.off
   --read-mesh-with-operator: read the mesh with operator>>
   --reject-self-intersections: reject self-intersecting polygon soups
   --no-is-valid: do not call is_valid checks
+
+  --debug-Steiner-points: debug Steiner point insertion
+  --debug-Steiner-points-construction: debug Steiner point construction
   --debug-input-faces: debug input faces
   --debug-missing-regions: debug missing regions
   --debug-regions: debug regions
@@ -98,7 +126,11 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-constraint-hierarchy: debug constraint hierarchy operations
   --debug-geometric-errors: debug geometric error handling
   --debug-polygon-insertion: debug polygon insertion process
+  --debug-restore-faces: debug face restoration process
+
   --use-finite-edges-map: use a hash map for finite edges (default: false)
+  --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
+  --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
 
   --verbose/-V: verbose (can be used several times)
   --quiet: do not print anything
@@ -122,11 +154,12 @@ struct CDT_options
   bool        reject_self_intersections           = false;
   bool        repair_mesh                         = true;
   bool        read_mesh_with_operator             = false;
+  bool        debug_Steiner_points                = false;
+  bool        debug_Steiner_points_construction   = false;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
   bool        debug_copy_triangulation_into_hole  = false;
-  bool        use_new_cavity_algorithm            = true;
   bool        debug_validity                      = false;
   bool        debug_finite_edges_map              = false;
   bool        debug_subconstraints_to_conform     = false;
@@ -136,14 +169,16 @@ struct CDT_options
   bool        debug_constraint_hierarchy          = false;
   bool        debug_geometric_errors              = false;
   bool        debug_polygon_insertion             = false;
+  bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
+  bool        use_epeck_for_normals               = false;
+  bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
-  double      ratio                               = 0.1;
+  bool        bisect_failures                     = false;
   double      vertex_vertex_epsilon               = 0.; // 1e-14;
   double      segment_vertex_epsilon              = 0.; // 1e-14;
   double      coplanar_polygon_max_angle          = 5.1;
   double      coplanar_polygon_max_distance       = 1e-6;
-  std::string failure_assertion_expression        {};
   std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename                     {"dump.off"};
   std::string dump_patches_after_merge_filename   {};
@@ -171,10 +206,6 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       merge_facets                        = true;
     } else if(arg == "--no-merge-facets"sv) {
       merge_facets                        = false;
-    } else if(arg == "--use-new-cavity-algorithm"sv) {
-      use_new_cavity_algorithm            = true;
-    } else if(arg == "--use-old-cavity-algorithm"sv) {
-      use_new_cavity_algorithm            = false;
     } else if(arg == "--reject-self-intersections"sv) {
       reject_self_intersections           = true;
     } else if(arg == "--no-repair"sv) {
@@ -184,10 +215,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
     } else if(arg == "--merge-facets-old"sv) {
       merge_facets                        = true;
       merge_facets_old_method             = true;
-    } else if(arg == "--failure-expression"sv) {
-      failure_assertion_expression        = get_next_arg_or_error_out();
-    } else if(arg == "--ratio"sv) {
-      ratio                               = std::stod(get_next_arg_or_error_out());
+    } else if(arg == "--bisect"sv) {
+      bisect_failures                     = true;
     } else if(arg == "--dump-patches-after-merge"sv) {
       dump_patches_after_merge_filename   = get_next_arg_or_error_out();
     } else if(arg == "--dump-patches-borders-prefix"sv) {
@@ -208,6 +237,10 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       quiet                               = true;
     } else if(arg == "--no-is-valid"sv) {
       call_is_valid                       = false;
+    } else if(arg == "--debug-Steiner-points"sv) {
+      debug_Steiner_points                = true;
+    } else if(arg == "--debug-Steiner-points-construction"sv) {
+      debug_Steiner_points_construction   = true;
     } else if(arg == "--debug-input-faces"sv) {
       debug_input_faces                   = true;
     } else if(arg == "--debug-missing-regions"sv) {
@@ -234,8 +267,18 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       debug_geometric_errors              = true;
     } else if(arg == "--debug-polygon-insertion"sv) {
       debug_polygon_insertion             = true;
+    } else if(arg == "--debug-restore-faces"sv) {
+      debug_restore_faces                  = true;
     } else if(arg == "--use-finite-edges-map"sv) {
       use_finite_edges_map                = true;
+    } else if(arg == "--no-use-epeck-for-normals"sv) {
+      use_epeck_for_normals               = false;
+    } else if(arg == "--no-use-epeck-for-Steiner-points"sv) {
+      use_epeck_for_Steiner_points        = false;
+    } else if(arg == "--use-epeck-for-normals"sv) {
+      use_epeck_for_normals               = true;
+    } else if(arg == "--use-epeck-for-Steiner-points"sv) {
+      use_epeck_for_Steiner_points        = true;
     } else if(arg == "--verbose"sv || arg == "-V"sv) {
       ++verbose_level;
     } else if(arg == "--help"sv || arg == "-h"sv) {
@@ -261,7 +304,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 
 CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   CGAL::CDT_3::Debug_options cdt_debug;
-  cdt_debug.Steiner_points(options.verbose_level > 0);
+  cdt_debug.Steiner_points(options.debug_Steiner_points || options.verbose_level > 0);
+  cdt_debug.Steiner_points_construction(options.debug_Steiner_points_construction);
   cdt_debug.input_faces(options.debug_input_faces);
   cdt_debug.missing_region(options.verbose_level > 1 || options.debug_missing_regions);
   cdt_debug.regions(options.debug_regions);
@@ -274,10 +318,12 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);
+  cdt_debug.restore_faces(options.debug_restore_faces);
   cdt_debug.copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
-  cdt_debug.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt_debug.use_finite_edges_map(options.use_finite_edges_map);
   cdt_debug.display_statistics(!options.quiet);
+  cdt_debug.use_epeck_for_normals(options.use_epeck_for_normals);
+  cdt_debug.use_epeck_for_Steiner_points(options.use_epeck_for_Steiner_points);
   cdt_debug.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
   cdt_debug.set_vertex_vertex_epsilon(options.vertex_vertex_epsilon);
 
@@ -682,88 +728,58 @@ int go(Mesh mesh, CDT_options options) {
 }
 
 int bisect_errors(Mesh mesh, CDT_options options) {
-  auto nb_buckets = static_cast<int>(std::floor(1 / options.ratio)) + 1;
-  std::cerr << "RATIO: " << options.ratio << '\n';
+  // Lambda to get the size (number of faces) of the mesh
+  auto get_size = [](const Mesh& m) -> std::size_t {
+    return m.number_of_faces();
+  };
 
-  const Mesh orig_mesh{mesh};
-  Mesh bad_mesh{mesh};
+  // Lambda to simplify the mesh by removing faces in the range [start, end)
+  auto simplify = [](Mesh& m, std::size_t start, std::size_t end) -> bool {
+    // Remove faces from end-1 down to start (reverse order to maintain indices)
+    auto face_begin = m.faces().begin();
+    std::advance(face_begin, start);
+    auto face_end = face_begin;
+    std::advance(face_end, end - start);
 
-  int exit_code = EXIT_SUCCESS;
-
-  for(int bucket = 0; bucket < nb_buckets;) {
-    const auto nb_faces = mesh.number_of_faces();
-    auto nb_to_skip = static_cast<int>(std::round(nb_faces * options.ratio));
-    if(nb_to_skip < 1) {
-      nb_to_skip = 1;
-      nb_buckets = nb_faces;
+    for(auto it = face_end; it != face_begin; ) {
+      --it;
+      CGAL::Euler::remove_face(halfedge(*it, m), m);
     }
-    if(bucket == 0) {
-      std::cerr << "NB BUCKETS: " << nb_buckets << '\n';
+
+    std::stringstream ss;
+    ss.precision(17);
+    ss << m;
+    ss.seekg(0);
+    Mesh simplified_mesh;
+    ss >> simplified_mesh;
+    m = std::move(simplified_mesh);
+
+    return m.is_valid(true);
+    return true;
+  };
+
+  // Lambda to run the test on the mesh
+  auto run_test = [&options](const Mesh& m) -> int {
+    return go(m, options);
+  };
+
+  // Lambda to save the mesh to a file
+  auto save_mesh = [](const Mesh& m, const std::string& prefix) {
+    static int count = 0;
+    auto filename = prefix + "_mesh";
+    if(prefix == "bad") {
+      ++count;
+      filename += "_";
+      filename += std::to_string(count) + ".off";
+    } else {
+      filename += ".off";
     }
+    std::ofstream out(filename);
+    out.precision(17);
+    out << m;
+  };
 
-    auto simplify = [&](Mesh& m) {
-      std::cerr << "nb_to_skip: " << nb_to_skip << '\n';
-      std::cerr << "bucket: " << bucket << '\n';
-      const auto start = (std::min)(bucket * nb_to_skip, static_cast<int>(m.number_of_faces()));
-      const auto end = (std::min)(start + nb_to_skip, static_cast<int>(m.number_of_faces()));
-      std::cerr << "SKIP from " << start << " to " << end << '\n';
-      for(auto i = end - 1; i >= start; --i) {
-        const auto f = m.faces().begin() + i;
-        CGAL::Euler::remove_face(halfedge(*f, m), m);
-      }
-      assert(m.is_valid(true));
-      std::cerr << "number of faces: " << m.number_of_faces() << '\n';
-      if(m.number_of_faces() >= nb_faces) {
-        std::cerr << "ERROR: could not simplify mesh\n";
-        return false;
-      }
-      return true;
-    };
-
-    if(simplify(mesh)) {
-      std::ofstream current("current_mesh.off");
-      current.precision(17);
-      current << mesh;
-      current.close();
-
-      try {
-        auto code = go(mesh, options);
-        if(code != EXIT_SUCCESS) {
-          exit_code = code;
-        }
-      } catch(std::exception& e) {
-        std::cerr << "CAUGHT EXCEPTION: " << e.what() << '\n';
-        if(std::string(e.what()).find(options.failure_assertion_expression) != std::string::npos) {
-          exit_code = EXIT_FAILURE;
-          std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
-          std::ofstream bad("bad_mesh.off");
-          bad.precision(17);
-          bad << mesh;
-          bad_mesh = mesh;
-          bucket = 0;
-          continue;
-        } else {
-          exit_code = EXIT_FAILURE;
-          std::cerr << "ERROR MESH: " << e.what() << '\n';
-          std::ofstream error("error_mesh.off");
-          error.precision(17);
-          error << mesh;
-          std::cerr << "go on...\n";
-        }
-      }
-      std::cerr << "GOOD MESH :-( " << mesh.number_of_faces() << " faces\n";
-    }
-    mesh = bad_mesh;
-    ++bucket;
-  }
-  if(bad_mesh.number_of_faces() < orig_mesh.number_of_faces()) {
-    std::cerr << "FINAL BAD MESH: " << bad_mesh.number_of_faces() << " faces\n";
-    std::ofstream final_bad("final_bad_mesh.off");
-    final_bad.precision(17);
-    final_bad << bad_mesh;
-    return go(bad_mesh, options);
-  }
-  return exit_code;
+  return CGAL::bisect_failures(mesh, get_size, simplify, run_test, save_mesh);
 }
 
 int main(int argc, char* argv[]) {
@@ -831,7 +847,7 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  if(!options.failure_assertion_expression.empty()) {
+  if(options.bisect_failures) {
     return bisect_errors(std::move(*read_mesh_result.polygon_mesh), options);
   }
 

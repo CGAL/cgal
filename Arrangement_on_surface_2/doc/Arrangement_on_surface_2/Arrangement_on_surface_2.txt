@@ -2850,7 +2850,7 @@ right sides) are <em>identified</em> if
 \f$x \in X \f$. The curve \f$x \mapsto \phi_S(x,y_{\rm min})\f$ is
 called an <em>identification curve</em>.
 
-Rectangles, strips, quadrants, half-planes, and planes can be modeled
+Rectangles, strips, quadrants, halfplanes, and planes can be modeled
 with \f$\phi_S\f$ being the identity mapping. For example,
 \f$\Phi_S(x, y) = (x, y, 0)\f$ with \f$X = Y =(-\infty, +\infty)\f$
 parameterizes a plane. Surfaces such as paraboloids can be

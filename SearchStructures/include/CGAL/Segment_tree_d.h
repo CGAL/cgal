@@ -515,7 +515,7 @@ public:
    }
   #endif
 
-  // the tree is build according to Data [first,last)
+  // the tree is built according to Data [first,last)
   template<class A>
   inline
   bool make_tree_impl(const A& first, const A& last)
