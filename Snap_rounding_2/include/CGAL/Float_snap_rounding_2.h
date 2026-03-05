@@ -69,25 +69,101 @@ public:
 
 protected:
   Gt2 traits;
-  Points& m_points;
-  const Polylines& m_polylines;
-  Polylines& m_out;
-  std::vector< double >& round_bound_pts;
+  Points& points;
+  const Polylines& input_polylines;
+  Polylines& output_polylines;
+  std::vector< double >& round_bounds;
+
+  // If pi is closed enough to sc, subdivide sc in the output and return true
+  bool is_pi_closed_to_sc_and_subdivide(P_idx pi, Subcurve* sc){
+    auto point_at_x = traits.construct_point_at_x_on_segment_2_object();
+    auto csq_dist_2 = traits.compare_squared_distance_2_object();
+    auto round_bound = traits.compute_squared_round_bound_2_object();
+
+    L_idx li = sc->last_curve().first.first;
+    std::size_t i = sc->last_curve().first.second;
+
+    P_idx src = input_polylines[li][i];
+    P_idx trg = input_polylines[li][i+1];
+    // Skip if this polyline already ends with the event point
+    if(!output_polylines[li].empty() && output_polylines[li].back() == pi)
+      return true;
+
+    const auto &p = points[pi];
+    const auto &pl = input_polylines[li];
+    Base_segment_2 seg = Base_segment_2(points[pl.front()], points[pl.back()]); //get the input segment
+
+    // (A+B)^2 <= 4*max(A^2,B^2)
+    double bound = (std::max)({ round_bounds[pi],
+                                round_bounds[src],
+                                round_bounds[trg] });
+    bound *= 4;
+
+    if(possibly(csq_dist_2(p, seg, bound) != LARGER)){
+      // if constexpr (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename G2t::Exact_type>)
+      if(true){
+        internal::Evaluate<FT> evaluate;
+        // We refine the pts to reduce the rounding shift and check again
+        evaluate(points[pi]);
+        evaluate(points[output_polylines[li].back()]);
+        // The two following call of exact act on seg variables since they appear in its DAG
+        evaluate(points[src]);
+        evaluate(points[trg]);
+        // Update the bounds
+        round_bounds[pi]  = round_bound(points[pi]);
+        round_bounds[output_polylines[li].back()] = round_bound(points[output_polylines[li].back()]);
+        round_bounds[src] = round_bound(points[src]);
+        round_bounds[trg] = round_bound(points[trg]);
+        bound = (std::max)({ round_bounds[pi],
+                              round_bounds[output_polylines[li].back()],
+                              round_bounds[src],
+                              round_bounds[trg] });
+        bound *= 4;
+
+        // Check if the point and the segment are still too closed for a safe rounding
+        if(csq_dist_2(p, seg, bound) == LARGER)
+          return false;
+      }
+
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
+      std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
+      std::cout << new_pi <<": " << pts[new_pi] << std::endl;
+      std::cout << li << ":";
+      for(std::size_t i: pl)
+        std::cout << " " << i;
+      std::cout << std::endl;
+#endif
+
+      // Check if segment was not already subdivided by another point
+      if(points[pl.back()].x() == points[pi].x())
+        return false;
+
+      // Create a point on seg at the same x coordinate than p
+      points.push_back(point_at_x(seg, points[pi].x()));
+      round_bounds.push_back(round_bound(points.back()));
+      P_idx new_pi=points.size()-1;
+      // We insert it on the output
+      output_polylines[li].push_back(new_pi);
+      pi = new_pi;
+      return true;
+    }
+    return false;
+  }
 
 public:
-  Snap_rounding_visitor(Gt2 &traits_, Points& points, Polylines& polylines, Polylines& out, std::vector< double >& rb_pts) :
+  Snap_rounding_visitor(Gt2 &traits_, Points& points_, Polylines& in, Polylines& out, std::vector< double >& bounds) :
     traits(traits_),
-    m_points(points),
-    m_polylines(polylines),
-    m_out(out),
-    round_bound_pts(rb_pts)
+    points(points_),
+    input_polylines(in),
+    output_polylines(out),
+    round_bounds(bounds)
   {}
 
   /*!
    */
   template <typename CurveIterator>
   void sweep(CurveIterator begin, CurveIterator end) {
-    m_out.resize(m_polylines.size());
+    output_polylines.resize(input_polylines.size());
     Surface_sweep_2* sl = this->surface_sweep();
     sl->sweep(begin, end);
   }
@@ -112,7 +188,7 @@ public:
       std::vector<Subcurve*> leaves;
       sc->all_leaves(std::back_inserter(leaves));
       for(auto l: leaves)
-        m_out[l->last_curve().first.first].push_back(pi);
+        output_polylines[l->last_curve().first.first].push_back(pi);
     }
 
     for (auto it = event->right_curves_begin(); it != event->right_curves_end(); ++it) {
@@ -120,93 +196,21 @@ public:
       std::vector<Subcurve*> leaves;
       sc->all_leaves(std::back_inserter(leaves));
       for(auto l: leaves)
-        if(m_out[l->last_curve().first.first].empty() || m_out[l->last_curve().first.first].back() != pi) // Maybe already by left curves
-          m_out[l->last_curve().first.first].push_back(pi);
+        if(output_polylines[l->last_curve().first.first].empty() || output_polylines[l->last_curve().first.first].back() != pi) // Maybe already by left curves
+          output_polylines[l->last_curve().first.first].push_back(pi);
     }
-
-    // Subdivide close segments
-    auto close_event=[&](std::size_t &pi, Subcurve *sc){
-      L_idx li = sc->last_curve().first.first;
-      std::size_t i = sc->last_curve().first.second;
-
-      P_idx src = m_polylines[li][i];
-      P_idx trg = m_polylines[li][i+1];
-      // If the curves already contains the point, continue
-      if(!m_out[li].empty() && m_out[li].back() == pi)
-        return true;
-
-      const auto &p = m_points[pi];
-      const auto &pl = m_polylines[li];
-      Base_segment_2 seg = Base_segment_2(m_points[pl.front()], m_points[pl.back()]); //get the input segment
-
-      // (A+B)^2 <= 4*max(A^2,B^2)
-      double bound = round_bound_pts[pi];
-      bound = (std::max)(bound, round_bound_pts[src]);
-      bound = (std::max)(bound, round_bound_pts[trg]);
-      bound*=4;
-
-      if(possibly(csq_dist_2(p, seg, bound) != LARGER)){
-        // if constexpr (std::is_same_v<Exact_predicates_exact_constructions_kernel, typename G2t::Exact_type>)
-        if(true){
-          internal::Evaluate<FT> evaluate;
-          // We refine the pts to reduce the rounding shift and check again
-          evaluate(m_points[pi]);
-          evaluate(m_points[m_out[li].back()]);
-          // The two following call of exact act on seg variables since they appear in its DAG
-          evaluate(m_points[src]);
-          evaluate(m_points[trg]);
-          // Update the bounds
-          round_bound_pts[pi]=round_bound(m_points[pi]); // TODO round_boudnd of end segment
-          round_bound_pts[m_out[li].back()]=round_bound(m_points[m_out[li].back()]);
-          round_bound_pts[src]=round_bound(m_points[src]);
-          round_bound_pts[trg]=round_bound(m_points[trg]);
-          bound = round_bound_pts[pi];
-          bound = (std::max)(bound, round_bound_pts[m_out[li].back()]);
-          bound = (std::max)(bound, round_bound_pts[src]);
-          bound = (std::max)(bound, round_bound_pts[trg]);
-          bound*=4;
-
-          // Check if the point and the segment are still too closed for a safe rounding
-          if(csq_dist_2(p, seg, bound) == LARGER)
-            return false;
-        }
-
-#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
-        std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
-        std::cout << new_pi <<": " << pts[new_pi] << std::endl;
-        std::cout << li << ":";
-        for(std::size_t i: pl)
-          std::cout << " " << i;
-        std::cout << std::endl;
-#endif
-
-        // Check if segment was not already subdivided by another point
-        if(m_points[pl.back()].x() == m_points[pi].x())
-          return false;
-
-        // Create a point on seg at the same x coordinate than p
-        m_points.push_back(point_at_x(seg, m_points[pi].x()));
-        round_bound_pts.push_back(round_bound(m_points.back()));
-        std::size_t new_pi=m_points.size()-1;
-        // We insert it on the output
-        m_out[li].push_back(new_pi);
-        pi = new_pi;
-        return true;
-      }
-      return false;
-    };
 
     // Look above segments and creates a point if there too close for a safe rounding
     auto pi_above = pi;
     auto above = iter;
-    while(above != sl->status_line_end() && close_event(pi_above,*above))
+    while(above != sl->status_line_end() && is_pi_closed_to_sc_and_subdivide(pi_above, *above))
       ++above;
 
     // same with below segments
     auto below = iter;
     if(below != sl->status_line_begin()){
       --below;
-      while(close_event(pi,*below)){
+      while(is_pi_closed_to_sc_and_subdivide(pi, *below)){
         if(below == sl->status_line_begin())
           break;
         --below;
@@ -215,18 +219,12 @@ public:
 
     return true;
   }
-
-  const Points& points() const { return m_points; }
-  Points& points() { return m_points; }
-
-  const Polylines& polylines() const { return m_polylines; }
-  // Polylines& polylines() { return m_polylines; }
 };
 
-  /*
-  Scan the vertices from left to right while maintening the y order of the segments.
-  Subdivide the segments if there are too close to a vertex
-  */
+/*
+Scan the vertices from left to right while maintening the status line order of the segments.
+Subdivide the segments if there are too close to a vertex
+*/
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
 void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
 
@@ -421,15 +419,6 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
   std::cout << "do intersect? " << do_curves_intersect(convert_input.begin(), convert_input.end()) << std::endl;
 #endif
   compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
-
-  std::vector< std::vector< std::size_t> > polylines_bis;
-  for(auto &pl: polylines)
-    for(std::size_t i=0; i<pl.size()-1; ++i)
-      polylines_bis.emplace_back(std::vector< std::size_t>({pl[i], pl[i+1]}));
-  std::sort(polylines_bis.begin(), polylines_bis.begin(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0])?a[1]<b[1]:a[0]<b[0]; });
-  auto new_end = std::unique(polylines_bis.begin(), polylines_bis.end(), [](const std::vector<std::size_t> &a, const std::vector<std::size_t> &b){ return (a[0]==b[0]) && (a[1]==b[1]); });
-  polylines_bis.erase(new_end, polylines_bis.end());
-  std::swap(polylines, polylines_bis);
 
   snap_rounding_scan(pts, polylines, traits);
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE

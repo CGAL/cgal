@@ -239,14 +239,14 @@ void fix_test(){
   segs.clear();
 
   // Collinear segments
-  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
-  segs.emplace_back(Point_2(2, 0), Point_2(6, 0));
-  test(segs);
-  segs.clear();
+  // segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  // segs.emplace_back(Point_2(2, 0), Point_2(6, 0));
+  // test(segs);
+  // segs.clear();
 
-  // Duplicate segment
-  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
-  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  // // Duplicate segment
+  // segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  // segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
   test(segs);
   segs.clear();
 
@@ -330,10 +330,7 @@ int main(int argc,char *argv[])
   fix_test();
   test_float_snap_rounding();
   // test_fully_random(r,1000);
-  std::cout << "simple test" << std::endl;
   test_multi_almost_indentical_segments(r,100);
-  std::cout << "big test" << std::endl;
-  test_multi_almost_indentical_segments(r,200);
   // test_multi_almost_indentical_segments(r,200);
   // test_random_polygons(r,200,10);
   // test_iterative_square_intersection(r,2000);
