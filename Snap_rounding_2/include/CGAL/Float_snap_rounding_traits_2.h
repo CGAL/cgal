@@ -92,25 +92,12 @@ struct Float_snap_rounding_traits_2: BaseTraits{
     }
   };
 
-  Converter_to_exact converter_to_exact_object() const{
-    return Converter_to_exact();
-  }
+  Converter_to_exact converter_to_exact_object() const{ return Converter_to_exact(); }
+  Converter_from_exact converter_from_exact_object() const{ return Converter_from_exact(); }
 
-  Converter_from_exact converter_from_exact_object() const{
-    return Converter_from_exact();
-  }
-
-  Compute_squared_round_bound_2 compute_squared_round_bound_2_object() const{
-    return Compute_squared_round_bound_2();
-  }
-
-  Construct_rounded_point_2 construct_rounded_point_2_object() const{
-    return Construct_rounded_point_2();
-  }
-
-  Construct_point_at_x_on_segment_2 construct_point_at_x_on_segment_2_object() const{
-    return Construct_point_at_x_on_segment_2();
-  }
+  Compute_squared_round_bound_2 compute_squared_round_bound_2_object() const{ return Compute_squared_round_bound_2(); }
+  Construct_rounded_point_2 construct_rounded_point_2_object() const{ return Construct_rounded_point_2(); }
+  Construct_point_at_x_on_segment_2 construct_point_at_x_on_segment_2_object() const{ return Construct_point_at_x_on_segment_2(); }
 };
 
 } //namespace CGAL

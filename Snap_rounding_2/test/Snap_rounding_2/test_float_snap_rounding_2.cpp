@@ -1,5 +1,4 @@
 
-// #define CGAL_DOUBLE_2D_SNAP_VERBOSE
 #define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -331,9 +330,9 @@ int main(int argc,char *argv[])
   std::cout << std::setprecision(17);
   fix_test();
   test_float_snap_rounding();
-  // test_fully_random(r,1000);
-  test_multi_almost_indentical_segments(r,100);
-  // test_multi_almost_indentical_segments(r,200);
+  test_fully_random(r,1000);
+  // test_multi_almost_indentical_segments(r,100);
+  test_multi_almost_indentical_segments(r,200);
   // test_random_polygons(r,200,10);
   // test_iterative_square_intersection(r,2000);
   return(0);

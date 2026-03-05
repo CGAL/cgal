@@ -234,7 +234,7 @@ public:
 
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
-                                 const Point_2& CGAL_assertion_code(p)) const {
+                                 const Point_2& p) const {
       return traits->base.compare_y_at_x_right_2_object()(traits->to_base(cv1), traits->to_base(cv2), traits->to_base(p));
     }
   };
@@ -247,7 +247,7 @@ public:
 
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
-                                 const Point_2& CGAL_assertion_code(p)) const {
+                                 const Point_2& p) const {
       return traits->base.compare_y_at_x_left_2_object()(traits->to_base(cv1), traits->to_base(cv2), traits->to_base(p));
     }
   };
