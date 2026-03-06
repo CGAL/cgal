@@ -75,7 +75,7 @@ protected:
   std::vector< double >& round_bounds;
 
   // If pi is closed enough to sc, subdivide sc in the output and return true
-  bool is_pi_closed_to_sc_and_subdivide(P_idx pi, Subcurve* sc){
+  bool is_pi_closed_to_sc_and_subdivide(P_idx &pi, Subcurve* sc){
     auto point_at_x = traits.construct_point_at_x_on_segment_2_object();
     auto csq_dist_2 = traits.compare_squared_distance_2_object();
     auto round_bound = traits.compute_squared_round_bound_2_object();
