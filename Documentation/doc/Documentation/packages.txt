@@ -111,9 +111,12 @@
 \package_listing{Kinetic_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
-\cgalPackageSection{PartGeometryProcessing,Geometry Processing}
+\cgalPackageSection{PartPolygonMeshProcessing,Polygon Mesh Processing}
 
 \package_listing{Polygon_mesh_processing}
+\package_listing{PMP_Boolean_operations}
+\package_listing{PMP_Remeshing}
+\package_listing{PMP_Mesh_repair}
 \package_listing{Subdivision_method_3}
 \package_listing{Surface_mesh_segmentation}
 \package_listing{Surface_mesh_simplification}
@@ -122,6 +125,11 @@
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
 \package_listing{Surface_mesh_approximation}
+\package_listing{Heat_method_3}
+\package_listing{Surface_mesh_topology}
+
+\cgalPackageSection{PartPointSetProcessing,Point Set Processing}
+
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_3}
@@ -130,8 +138,6 @@
 \package_listing{Shape_regularization}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
-\package_listing{Heat_method_3}
-\package_listing{Surface_mesh_topology}
 
 \cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 

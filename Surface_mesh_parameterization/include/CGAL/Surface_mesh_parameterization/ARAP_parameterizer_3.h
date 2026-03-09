@@ -370,8 +370,7 @@ private:
   {
     Error_code status;
 
-    unsigned int number_of_borders =
-                         CGAL::Polygon_mesh_processing::number_of_borders(mesh);
+    unsigned int number_of_borders = CGAL::number_of_borders(mesh);
     if(number_of_borders == 0) {
       status = ERROR_BORDER_TOO_SHORT;
       return status;

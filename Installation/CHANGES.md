@@ -4,16 +4,34 @@
 
 Release date: July 2026
 
+### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
+-   This package provides functions to compute various types of generalized barycentric coordinates
+    (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
+    3D polyhedra.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing) (major changes)
+
+-   The "Polygon Mesh Processing" package has been reorganized into several packages.
+    "Polygon Mesh Processing" retains the core functionalities, while advanced and specialized features
+    have been moved to dedicated packages:
+  - [Boolean Operations On Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPBooleanOperations): algorithms for Boolean operations on polygon meshes;
+    clipping, splitting, and slicing with planes, boxes, or other meshes; and kernel computations.
+  - [Meshing and Remeshing of Polygon Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPRemeshing): algorithms for meshing and remeshing, such as triangulation, refinement, simplification, optimization, and smoothing.
+  - [Polygon Mesh Repair](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPMeshRepair): tools for detecting and correcting combinatorial and geometric defects in polygon meshes and polygon soups, including face orientation, hole filling, removal of degeneracies, and boundary stitching.
+   This does not induce any breaking change and is fully transparent: header includes such as
+   `#include <CGAL/Polygon_mesh_processing/XXX.h>` do not need to be changed and will include
+   the appropriate header from the new packages.
+
 ### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
 -   Made the `Arr_linear_traits_2` a model of the new concept.
 -   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
 
-### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
--   This package provides functions to compute various types of generalized barycentric coordinates
-    (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
-    3D polyhedra.
+### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh2)
+
+- The implementation is more robust to degenerate inputs, such as polygons with microscopic edges, or nearly collinear points.
+- **Breaking change**: The concept [`DelaunayMeshTraits_2`](https://doc.cgal.org/6.2/Mesh_2/classDelaunayMeshTraits__2.html) now requires the functor `Construct_bbox_2`.
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
@@ -52,9 +70,50 @@ Release date: July 2026
     parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
     `do_intersect()`.)
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing)
+-   **Breaking change**: The header `CGAL/Polygon_mesh_processing/border.h` has been deprecated and its content
+    ([`CGAL::border_halfedges()`]() and [`CGAL::extract_boundary_cycles()`]()) have been moved to
+    the new header [`CGAL/boost/graph/border.h`]().
+-   Added function `CGAL::Polygon_mesh_processing::kernel()`, to compute the kernel of a polygon mesh.
+-   Added function `CGAL::Polygon_mesh_processing::is_empty_kernel()`, to indicate if the kernel of a polygon mesh is empty.
+-   Added function `CGAL::Polygon_mesh_processing::kernel_point()`, to compute a single point inside the kernel of a polygon mesh.
+-   Added `use_convex_specialization` parameter to `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()`.
+
+### [Polygon Mesh Processing (Boolean Operations on Meshes)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPBooleanOperations)
+-   Added function `CGAL::Polygon_mesh_processing::kernel()`, to compute the kernel of a polygon mesh.
+-   Added function `CGAL::Polygon_mesh_processing::is_empty_kernel()`, to indicate if the kernel of a polygon mesh is empty.
+-   Added function `CGAL::Polygon_mesh_processing::kernel_point()`, to compute a single point inside the kernel of a polygon mesh.
+-   Added `use_convex_specialization` parameter to `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()`.
+-   The function [`CGAL::Polygon_mesh_processing::surface_intersection()`](), which can be used to
+    compute the polylines that represent the intersection between two polyhedral surfaces has been
+    renamed to [`CGAL::Polygon_mesh_processing::intersection_polylines()`]().
+
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh3)
+
+-   **Breaking change**: Removed the class template `CGAL::Implicit_vector_to_labeling_function_wrapper` as well as
+    the constructor of `CGAL::Polyhedral_mesh_domain_with_features_3` that has a filename as parameter,
+    which were deprecated since CGAL-4.5.
+-   **Breaking change**:  Added the requirement for a nested type `Iso_cuboid_3` to the concept `BisectionGeometricTraits_3`.
+
 ### [2D Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulation2)
 
-- Add the function `insert_unique_constraints()` to the class `Constrained_Delaunay_triangulation_2` identical to the function `insert_constraints()` except that it removes duplicated constraints before inserting them in the triangulation.
+- Add the function `insert_unique_constraints()` to the class `CGAL::Constrained_Delaunay_triangulation_2` identical to the function `insert_constraints()` except that it removes duplicated constraints before inserting them in the triangulation.
+
+### [STL Extension](https://doc.cgal.org/6.2/Manual/packages.html#PkgSTLExtension)
+
+- Added new debugging utility for finding minimal failing test cases:
+  - [`CGAL::bisect_failures`](https://doc.cgal.org/6.2/STL_Extension/group__PkgSTLExtensionUtilities.html)
+    template function that uses bisection to isolate minimal failing subsets from complex input data
+
+### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
+
+- Added new stream formatting capabilities for improved debugging and logging:
+  - [`CGAL::IO::Basic_indenting_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__streambuf.html)
+    and [`CGAL::IO::Basic_indenting_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__stream__guard.html)
+    for automatic indentation of output streams
+  - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html)
+    and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html)
+    for ANSI color support in terminal output
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
@@ -1002,8 +1061,7 @@ Release date: July 2021
   - Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
   - Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
 
-A comprehensive list of the supported file formats is available in the Stream_support package
-[here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats);
+A comprehensive list of the supported file formats is available in [the Stream_support package here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats);
 inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html)
 can be used to find out which CGAL data structures can be used given a specific file format.
 
@@ -2240,7 +2298,7 @@ Release date: April 2018
     METIS functions `METIS_PartMeshNodal` and `METIS_PartMeshDual` are
     offered.
 
-    [METIS library]: http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
+    [METIS library]: https://github.com/KarypisLab/METIS
 
 ## Release 4.11
 
@@ -4136,18 +4194,18 @@ CGAL 3.9 offers the following improvements and new functionality :
     `Arrangement_2::Vertex` has been removed. It has been previously
     replaced new function `is_at_open_boundary()`.
 - The tags in the geometry traits that indicate the type of boundary
-    of the embedding surface were replaced by the following new tags:
+  of the embedding surface were replaced by the following new tags:
 
-    ```c++
-    Left_side_category
-    Bottom_side_category
-    Top_side_category
-    Right_side_category
-    ```
+  ```c++
+  Left_side_category
+  Bottom_side_category
+  Top_side_category
+  Right_side_category
+  ```
 
-    It is still possible not to indicate the tags at all. Default values
-    are assumed. This however will produce warning messages, and should
-    be avoided.
+  It is still possible not to indicate the tags at all. Default values
+  are assumed. This however will produce warning messages, and should
+  be avoided.
 
 ## Release 3.8
 

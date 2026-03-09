@@ -747,7 +747,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * generates points on `tm` and outputs them to `out`; the sampling method
  * is selected using named parameters.
  *
- * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
+ * @tparam TriangleMesh a model of the concepts VertexListGraph, `EdgeListGraph`, and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
  *  the value type of the point type associated to the mesh `tm`, i.e., the value type of the vertex

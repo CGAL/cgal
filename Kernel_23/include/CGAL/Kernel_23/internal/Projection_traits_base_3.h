@@ -535,6 +535,7 @@ public:
 
   typedef typename K::Compute_area_3                Compute_area_2;
   typedef typename K::Construct_bbox_3              Construct_bbox_2;
+  typedef typename K::Do_intersect_3                Do_intersect_2; // for do_intersect(bbox_2, segment_2)
 
   Less_x_2
   less_x_2_object() const
@@ -644,6 +645,9 @@ public:
 
   Construct_bbox_2  construct_bbox_2_object() const
     {return Construct_bbox_2();}
+
+  Do_intersect_2 do_intersect_2_object() const
+    {return Do_intersect_2();}
 
 
   // Special functor, not in the Kernel concept

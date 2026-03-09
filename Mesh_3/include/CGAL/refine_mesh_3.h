@@ -338,7 +338,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
 
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
-  // Reset c3t3 (i.e. remove weights) if needed
+  // Reset c3t3 (i.e., remove weights) if needed
   if ( reset_c3t3 )
   {
     C3T3 tmp_c3t3;

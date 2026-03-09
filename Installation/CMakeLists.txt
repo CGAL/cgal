@@ -1209,7 +1209,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
     add_executable(check_headers_linked_twice
                    ${CGAL_BINARY_DIR}/test_headers.cpp
                    ${CGAL_BINARY_DIR}/test_headers2.cpp)
-    target_link_libraries(check_headers_linked_twice PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 VTK::IOImage Qt6::Widgets)
+    target_link_libraries(check_headers_linked_twice PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
+    if(VTK_FOUND)
+      target_link_libraries(check_headers_linked_twice PRIVATE VTK::IOImage)
+    endif()
     target_compile_options(check_headers_linked_twice PRIVATE ${compile_options} ${include_options})
 
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})

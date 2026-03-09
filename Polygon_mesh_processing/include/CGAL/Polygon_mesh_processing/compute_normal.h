@@ -200,8 +200,8 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * computes the outward unit vector normal for all faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceGraph`
-* @tparam Face_normal_map a model of `WritablePropertyMap` with
+* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam FaceNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     a model of `Kernel::Vector_3` as value type.
 *
@@ -233,9 +233,9 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * @see `compute_face_normal()`
 */
-template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters = parameters::Default_named_parameters>
+template <typename PolygonMesh, typename FaceNormalMap, typename NamedParameters = parameters::Default_named_parameters>
 void compute_face_normals(const PolygonMesh& pmesh,
-                          Face_normal_map face_normals,
+                          FaceNormalMap face_normals,
                           const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
@@ -763,7 +763,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * computes the outward unit vector normal for all vertices of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *                         `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 *                         the return type of `compute_vertex_normal()` as value type.
@@ -857,7 +857,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
 *
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 *    a model of `Kernel::Vector_3` as value type.

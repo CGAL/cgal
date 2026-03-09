@@ -41,9 +41,11 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
+template <typename PointRange, typename PolylinRange, typename PolygonRange,
+          typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
+              PolylinRange& polylines,
               PolygonRange& polygons,
               VertexNormalOutputIterator,
               VertexTextureOutputIterator,
@@ -149,10 +151,67 @@ bool read_OBJ(std::istream& is,
         }
       }
 
+      if(polygons.back().empty())
+      {
+        if(verbose)
+          std::cerr << "error: empty 'f' line." << std::endl;
+        return false;
+      }
+
       if(iss.bad())
       {
         if(verbose)
           std::cerr << "error while reading OBJ face." << std::endl;
+        return false;
+      }
+    }
+    else if(s == "l")
+    {
+      int i;
+      polylines.emplace_back();
+      while(iss >> i)
+      {
+        if (i == 0)
+        {
+          if(verbose)
+            std::cerr << "error: vertex index of polyline cannot be 0" << std::endl;
+          return false;
+        }
+        else if(i < 1)
+        {
+          const std::size_t n = polylines.back().size();
+          ::CGAL::internal::resize(polylines.back(), n + 1);
+          polylines.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
+          if(i < mini)
+            mini = i;
+        }
+        else
+        {
+          const std::size_t n = polylines.back().size();
+          ::CGAL::internal::resize(polylines.back(), n + 1);
+          polylines.back()[n] = i - 1;
+          if(i-1 > maxi)
+            maxi = i-1;
+        }
+
+        // skip to the next vertex, tolerant about whitespace
+        if (!std::isspace(iss.peek())) {
+          std::string ignoreme;
+          iss >> ignoreme;
+        }
+      }
+
+      if(iss.bad())
+      {
+        if(verbose)
+          std::cerr << "error while reading OBJ polyline." << std::endl;
+        return false;
+      }
+
+      if(polylines.back().empty())
+      {
+        if(verbose)
+          std::cerr << "error: empty 'f' line." << std::endl;
         return false;
       }
     }
@@ -190,7 +249,7 @@ bool read_OBJ(std::istream& is,
   if(tex_found && verbose)
     std::cout << "NOTE: textures were found in this file, but were discarded." << std::endl;
 
-  if(points.empty() || polygons.empty())
+  if(points.empty() || (polygons.empty() && polylines.empty()))
   {
     if(verbose)
       std::cerr << "warning: empty file?" << std::endl;
@@ -205,6 +264,18 @@ bool read_OBJ(std::istream& is,
   }
 
   return !is.bad();
+}
+
+template <typename PointRange, typename PolylinRange, typename PolygonRange>
+bool read_OBJ(std::istream& is,
+              PointRange& points,
+              PolylinRange& polylines,
+              PolygonRange& polygons,
+              const bool verbose = false)
+{
+  return read_OBJ(is, points, polylines, polygons,
+                  CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                  verbose);
 }
 
 } // namespace internal
@@ -250,9 +321,13 @@ bool read_OBJ(std::istream& is,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  return internal::read_OBJ(is, points, polygons,
-                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-                            verbose);
+  std::vector<std::vector<std::size_t> > unused_polylines;
+  bool success = internal::read_OBJ(is, points, unused_polylines, polygons,
+                                    CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                                    verbose);
+
+  // we want an item with only polylines to return 'false' in this function
+  return (success && !polygons.empty());
 }
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ

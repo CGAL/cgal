@@ -183,6 +183,8 @@ protected:
     , squared_error_bound_(squared_error_bound(bbox_,error_bound))
   {}
 
+  Labeled_mesh_domain_3_impl(const Labeled_mesh_domain_3_impl&) = default;
+
   // The function which answers subdomain queries
   typedef std::function<Subdomain_index(const Point_3&)> Function_type;
   Function_type function_;
@@ -273,6 +275,8 @@ public:
   typedef typename BGT::FT FT;
   typedef BGT Geom_traits;
   using Impl_details::construct_pair_functor;
+
+  Labeled_mesh_domain_3(const Labeled_mesh_domain_3&) = default;
 
   template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Labeled_mesh_domain_3(const Function& function,
@@ -913,7 +917,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     else
     {
       // Get a new random point into sphere as center of object
-      // It may be necessary if the center of the domain is empty, e.g. torus
+      // It may be necessary if the center of the domain is empty, e.g., torus
       // In general case, it is good for input point dispersion
       ++random_point_in_sphere;
       center_pt = translate(*random_point_in_sphere, sphere_translation);

@@ -20,6 +20,9 @@ Kernel_23
 Kernel_d
 Modular_arithmetic
 Number_types
+PMP_Boolean_operations
+PMP_Mesh_repair
+PMP_Remeshing
 Polygon
 Polygon_mesh_processing
 Principal_component_analysis_LGPL

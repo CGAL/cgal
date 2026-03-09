@@ -17,69 +17,69 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include<set>
-#include<vector>
-
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/vector_property_map.hpp>
-
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/Container_helper.h>
-
 #include <CGAL/boost/graph/Dual.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/tuple.h>
 
-#include <CGAL/boost/graph/named_params_helper.h>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/property_map/vector_property_map.hpp>
+
+#include <iostream>
+#include <set>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
 namespace internal {
 
-  struct MoreSecond
+struct MoreSecond
+{
+  template <typename T1, typename T2>
+  bool operator()(const std::pair<T1, T2>& a, const std::pair<T1, T2>& b) const {
+    return a.second > b.second;
+  }
+};
+
+// A property map
+template <typename G>
+struct No_constraint {
+  friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
   {
-    template <typename T1, typename T2>
-    bool operator()(const std::pair<T1, T2>& a, const std::pair<T1, T2>& b) const {
-      return a.second > b.second;
+    return false;
+  }
+};
+
+// A functor
+template <typename G, typename EdgeConstraintMap = No_constraint<G> >
+struct No_border {
+  No_border()
+  {}
+
+  No_border(const G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
+    : g(&g), ecm(ecm)
+  {}
+
+  bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
+    if (!is_border(e, *g)){
+      return !get(ecm, e);
     }
-  };
+    return false;
+  }
 
-    // A property map
-    template <typename G>
-    struct No_constraint {
-      friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
-      {
-        return false;
-      }
-    };
-
-    // A functor
-    template <typename G, typename EdgeConstraintMap = No_constraint<G> >
-    struct No_border {
-      No_border()
-      {}
-
-      No_border(const G & g, EdgeConstraintMap ecm = EdgeConstraintMap())
-        : g(&g), ecm(ecm)
-      {}
-
-      bool operator()(typename boost::graph_traits<G>::edge_descriptor e) const {
-        if (!is_border(e, *g)){
-          return !get(ecm, e);
-        }
-        return false;
-      }
-
-      const G* g;
-      EdgeConstraintMap ecm;
-    };
+  const G* g;
+  EdgeConstraintMap ecm;
+};
 
 } // namespace internal
 
@@ -271,7 +271,7 @@ namespace internal {
 //  * A property map for `CGAL::face_index_t` must be either available as an internal property map
 //  * to `pmesh` or provided as one of the \ref bgl_namedparameters "Named Parameters".
 //  *
-//  * \tparam PolygonMesh a model of `FaceGraph`
+//  * \tparam PolygonMesh a model of `FaceListGraph`
 //  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //  *
 //  * \param pmesh the polygon mesh
@@ -316,7 +316,9 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh,
 /*!
  * \ingroup PMP_keep_connected_components_grp
  *
- * \brief removes the small connected components and all isolated vertices.
+ * \brief removes all but a user-defined number of connected components.
+ *
+ * All isolated vertices are also removed.
  *
  * Keep the `nb_components_to_keep` largest connected components, where the size of a connected
  * component is computed as the sum of the individual sizes of all the faces of the connected component.
@@ -602,8 +604,6 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   return num - res;
 }
 
-
-
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
@@ -756,7 +756,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+* \tparam PolygonMesh a model of `VertexListGraph`, `FaceListGraph`, and `MutableFaceGraph`
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -796,7 +796,7 @@ void keep_connected_components(PolygonMesh& pmesh
 * \ingroup PMP_keep_connected_components_grp
 *
 * removes in `pmesh` the connected components designated by theirs ids
-* in `components_to_remove` as well as all isolated vertices.
+* in `components_to_remove`, as well as all isolated vertices.
 * The connected component id of a face is given by `fcm`.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
@@ -1039,7 +1039,7 @@ void split_connected_components_impl(FIMap fim,
   }
 }
 
-}//internal
+} // namespace internal
 
 /*!
  * \ingroup PMP_keep_connected_components_grp

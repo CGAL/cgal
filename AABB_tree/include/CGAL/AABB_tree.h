@@ -218,7 +218,7 @@ namespace CGAL {
 
   private:
     template <typename ... T>
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>,T ... ){}
+    void set_primitive_data_impl(CGAL::Boolean_tag<false>,const T& ... ){}
     template <typename ... T>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T&& ... t)
     {m_traits.set_shared_data(std::forward<T>(t)...);}

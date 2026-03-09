@@ -83,7 +83,7 @@ struct Get_point
  * and constructs points on the surface of each of them.
  * Its goal is to initialize each component, each of them corresponding
  * to a subdomain.
- * It ensures that each component will be initialized, i.e. represented
+ * It ensures that each component will be initialized, i.e., represented
  * by at least one cell of the triangulation.
  *
  * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`

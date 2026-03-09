@@ -125,8 +125,8 @@ struct Apply_approx_sqrt
     return approximate_sqrt( static_cast<const Functor&>(*this)(t) );
   }
 };
-} //namespace internal
 
-}//namesape CGAL
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H

@@ -26,9 +26,16 @@
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
+#include <CGAL/Time_stamper.h>
+
+#include <cstddef>
+#include <istream>
+#include <ostream>
+#include <string>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
@@ -203,6 +210,17 @@ public:
 #endif
   {}
 
+  Mesh_cell_base_3(const Mesh_cell_base_3& rhs)
+    : Base(rhs)
+    , subdomain_index_(rhs.subdomain_index_)
+    , sliver_value_(rhs.sliver_value_)
+    , sliver_cache_validity_(rhs.sliver_cache_validity_)
+#ifdef CGAL_INTRUSIVE_LIST
+    , next_intrusive_(rhs.next_intrusive_)
+    , previous_intrusive_(rhs.previous_intrusive_)
+#endif
+  {}
+
   // Default copy constructor and assignment operator are ok
 
   // Returns the index of the cell of the input complex that contains the cell
@@ -273,7 +291,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
 };  // end class Mesh_cell_base_3
 
