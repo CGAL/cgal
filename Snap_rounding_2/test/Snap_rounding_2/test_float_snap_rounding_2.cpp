@@ -102,10 +102,6 @@ void test(const std::vector<Segment_2> &segs){
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
-  // if(CGAL::do_curves_intersect(out.begin(), out.end())){
-  //   for(auto &s: out)
-  //     std::cout << s << std::endl;
-  // }
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
   Polyline_range_2 output_list;
@@ -237,14 +233,14 @@ void fix_test(){
   segs.clear();
 
   // Collinear segments
-  // segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
-  // segs.emplace_back(Point_2(2, 0), Point_2(6, 0));
-  // test(segs);
-  // segs.clear();
+  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  segs.emplace_back(Point_2(2, 0), Point_2(6, 0));
+  test(segs);
+  segs.clear();
 
-  // // Duplicate segment
-  // segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
-  // segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  // Duplicate segment
+  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
+  segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
   test(segs);
   segs.clear();
 
@@ -326,8 +322,8 @@ int main(int argc,char *argv[])
   std::cout << std::setprecision(17);
   fix_test();
   test_float_snap_rounding();
-  test_fully_random(r,1000);
-  test_multi_almost_indentical_segments(r,200);
+  // test_fully_random(r,1000);
+  // test_multi_almost_indentical_segments(r,200);
   // test_random_polygons(r,200,10);
   // test_iterative_square_intersection(r,2000);
   return(0);

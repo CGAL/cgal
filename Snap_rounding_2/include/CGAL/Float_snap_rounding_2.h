@@ -35,7 +35,7 @@
 
 namespace CGAL {
 
-  namespace internal{
+namespace internal{
 
 template <typename GeometryTraits_2, typename Points_, typename Polylines_, typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Snap_rounding_visitor :
@@ -80,18 +80,16 @@ protected:
     auto csq_dist_2 = traits.compare_squared_distance_2_object();
     auto round_bound = traits.compute_squared_round_bound_2_object();
 
-    L_idx li = sc->last_curve().first.first;
-    std::size_t i = sc->last_curve().first.second;
-
-    P_idx src = input_polylines[li][i];
-    P_idx trg = input_polylines[li][i+1];
+    L_idx li = sc->last_curve().polylines[0].first; // One polyline containing the segment to compute using input values
+    P_idx src = sc->last_curve().src;
+    P_idx trg = sc->last_curve().trg;
     // Skip if this polyline already ends with the event point
     if(!output_polylines[li].empty() && output_polylines[li].back() == pi)
       return true;
 
     const auto &p = points[pi];
     const auto &pl = input_polylines[li];
-    Base_segment_2 seg = Base_segment_2(points[pl.front()], points[pl.back()]); //get the input segment
+    Base_segment_2 seg = Base_segment_2(points[pl.front()], points[pl.back()]); //get an input segment
 
     // (A+B)^2 <= 4*max(A^2,B^2)
     double bound = (std::max)({ round_bounds[pi],
@@ -125,26 +123,24 @@ protected:
           return false;
       }
 
-#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
-      std::cout << "Create point " << new_pi << " on " << li << " due to proximity with " << pi << "_____________________________" << std::endl;
-      std::cout << new_pi <<": " << pts[new_pi] << std::endl;
-      std::cout << li << ":";
-      for(std::size_t i: pl)
-        std::cout << " " << i;
-      std::cout << std::endl;
-#endif
-
-      // Check if segment was not already subdivided by another point
-      if(points[pl.back()].x() == points[pi].x())
+      // Check if the segment was not already subdivided by another point
+      if(points[output_polylines[li].back()].x() == points[pi].x())
         return false;
 
       // Create a point on seg at the same x coordinate than p
       points.push_back(point_at_x(seg, points[pi].x()));
       round_bounds.push_back(round_bound(points.back()));
       P_idx new_pi=points.size()-1;
-      // We insert it on the output
-      output_polylines[li].push_back(new_pi);
-      pi = new_pi;
+      pi = new_pi; // Store the new_points in pi to check its proximity with the above (or below) segment.
+
+      for(auto l: sc->last_curve().polylines){
+        CGAL_assertion(points[output_polylines[l.first].back()].x() != points[pi].x());
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
+        std::cout << "Create point " << new_pi << " on " << l.first << " due to proximity with " << pi << "_____________________________" << std::endl;
+#endif
+        // We insert it on the output
+        output_polylines[l.first].push_back(new_pi);
+      }
       return true;
     }
     return false;
@@ -174,25 +170,21 @@ public:
     if (! event->is_closed()) return true;
     if (! event->has_left_curves() && ! event->has_right_curves()) return true;
 
-    auto pi = event->point().idx;
+    auto pi = event->point();
     Surface_sweep_2* sl = this->surface_sweep();
 
     // Insert the point in the output
     for (auto it = event->left_curves_begin(); it != event->left_curves_end(); ++it) {
-      Subcurve *sc = *it;
-      std::vector<Subcurve*> leaves;
-      sc->all_leaves(std::back_inserter(leaves));
-      for(auto l: leaves)
-        output_polylines[l->last_curve().first.first].push_back(pi);
+      const Subcurve *sc = *it;
+      for(auto l: sc->last_curve().polylines)
+        output_polylines[l.first].push_back(pi);
     }
 
     for (auto it = event->right_curves_begin(); it != event->right_curves_end(); ++it) {
-      Subcurve *sc = *it;
-      std::vector<Subcurve*> leaves;
-      sc->all_leaves(std::back_inserter(leaves));
-      for(auto l: leaves)
-        if(output_polylines[l->last_curve().first.first].empty() || output_polylines[l->last_curve().first.first].back() != pi) // Maybe already by left curves
-          output_polylines[l->last_curve().first.first].push_back(pi);
+      const Subcurve *sc = *it;
+      for(auto l: sc->last_curve().polylines)
+        if(output_polylines[l.first].empty() || output_polylines[l.first].back() != pi) // Maybe already by left curves
+          output_polylines[l.first].push_back(pi);
     }
 
     // Look above segments and creates a point if there too close for a safe rounding
@@ -223,36 +215,9 @@ Subdivide the segments if there are too close to a vertex
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
 void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
 
-#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
-  std::cout << "Input points" << std::endl;
-  std::size_t i=0;
-  for(const Point_2 &p: pts)
-    std::cout << i++ << ": " << p << std::endl;
-  std::cout << std::endl;
-  std::cout << "Input polylines" << std::endl;
-  i=0;
-  for(const Polyline &pl: polylines){
-    std::cout << i++ << ":";
-    for(std::size_t pi: pl)
-      std::cout << " " << pi;
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;
-#endif
-
 // Wrap the traits with something supporting the data structure pts, polylines
-  struct Key{
-    Key(){}
-    Key(std::size_t f, std::size_t s, std::size_t i):first(f), second(s), idx(i){};
-    bool operator==(Key b) const{
-      return idx==b.idx;
-    }
-    std::size_t first;
-    std::size_t second;
-    std::size_t idx;
-  };
-  auto get = [&](const Key &idx){ return pts[idx.idx]; };
-  auto wrap_traits = make_wrap_float_snap_rounding_traits_2(traits, boost::make_function_property_map<Key>(get),[](){});
+  auto get = [&](const std::size_t &idx){ return pts[idx]; };
+  auto wrap_traits = make_wrap_float_snap_rounding_traits_2(traits, boost::make_function_property_map<std::size_t>(get),[](){});
 
   auto round_bound = traits.compute_squared_round_bound_2_object();
 
@@ -272,11 +237,14 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
     round_bound_pts.push_back(round_bound(pts[i]));
 
   // Create the curves
-  std::vector<X_monotone_curve_2> curves;
+  std::set<X_monotone_curve_2> curves;
   for(std::size_t j=0; j!=polylines.size(); ++j)
-    for(std::size_t i=0; i!=polylines[j].size()-1; ++i)
-      curves.emplace_back(Key(j, i, polylines[j][i]), Key(j, i+1, polylines[j][i+1]));
-
+    for(std::size_t i=0; i!=polylines[j].size()-1; ++i){
+      std::size_t src = polylines[j][i];
+      std::size_t trg = polylines[j][i+1];
+      auto it = curves.emplace(X_monotone_curve_2(src, trg)).first;
+      it->add_polyline(j, i);
+    }
   std::vector< Polyline > out;
   Visitor visitor(wrap_traits, pts, polylines, out, round_bound_pts);
   Surface_sweep surface_sweep(&wrap_traits, &visitor);
@@ -292,22 +260,6 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
   std::sort(indices.begin(),indices.end(),sort_pi);
 
   std::swap(polylines, out);
-#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
-  std::cout << "Output points" << std::endl;
-  i=0;
-  for(const Point_2 &p: pts)
-    std::cout << i++ << ": " << p << std::endl;
-  std::cout << std::endl;
-  std::cout << "Output polylines" << std::endl;
-  i=0;
-  for(const Polyline &pl: polylines){
-    std::cout << i++ << ":";
-    for(std::size_t pi: pl)
-      std::cout << " " << pi;
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;
-#endif
   return;
 }
 
@@ -415,6 +367,23 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 #endif
   compute_intersection_polylines(convert_input.begin(), convert_input.end(), pts, polylines);
 
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
+  std::cout << "Input points" << std::endl;
+  std::size_t i=0;
+  for(const auto &p: pts)
+    std::cout << i++ << ": " << p << std::endl;
+  std::cout << std::endl;
+  std::cout << "Input polylines" << std::endl;
+  i=0;
+  for(const auto &pl: polylines){
+    std::cout << i++ << ":";
+    for(std::size_t pi: pl)
+      std::cout << " " << pi;
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+#endif
+
   snap_rounding_scan(pts, polylines, traits);
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Round" << std::endl;
@@ -430,6 +399,25 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
   std::cout << "Subdivide vertical segments with vertices on them" << std::endl;
 #endif
   snap_post_process(pts, polylines, traits);
+
+#ifdef CGAL_DOUBLE_2D_SNAP_FULL_VERBOSE
+  {
+    std::cout << "Output points" << std::endl;
+    std::size_t i=0;
+    for(const auto &p: pts)
+      std::cout << i++ << ": " << p << std::endl;
+    std::cout << std::endl;
+    std::cout << "Output polylines" << std::endl;
+    i=0;
+    for(const auto &pl: polylines){
+      std::cout << i++ << ":";
+      for(std::size_t pi: pl)
+        std::cout << " " << pi;
+      std::cout << std::endl;
+    }
+    std::cout << std::endl;
+  }
+#endif
 }
 
 } // end of namespace internal
@@ -439,9 +427,6 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 *
 * Subdivides and rounded a set of segments so that they are pairwise disjoint in their interiors.
 * The output is a range of polyline with each polyline corresponding to an input segment.
-*
-* TODO Currently compute_subcurves have no visitor to obtain a polyline per input segment, thus
-* currently the output contain one polyline per ubsegment of the arrangement
 *
 * @tparam InputIterator iterator over a range of `Segment_2`
 * @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.

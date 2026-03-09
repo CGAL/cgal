@@ -18,6 +18,7 @@
 #include <CGAL/license/Snap_rounding_2.h>
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL::internal {
 
@@ -32,7 +33,27 @@ public:
   using FT             = typename Base::FT;
 
   using Point_2 = typename boost::property_traits<PointPropertyMap>::key_type;
-  using Segment_2 = std::pair<Point_2, Point_2>;
+  // using Segment_2 = std::pair<Point_2, Point_2>;
+  struct Segment_2 {
+    Segment_2(){}
+    Segment_2(Point_2 a, Point_2 b): src(a), trg(b){}
+    Segment_2 operator=(const Segment_2 &s){
+      src = s.src;
+      trg = s.trg;
+      polylines = s.polylines;
+      return *this;
+    }
+    bool operator<(const Segment_2 &s) const {
+      return (src == s.src) ? trg < s.trg: src < s.src;
+    }
+    void add_polyline(std::size_t li, std::size_t i) const {
+      polylines.emplace_back(li, i);
+    }
+
+    Point_2 src;
+    Point_2 trg;
+    mutable boost::container::small_vector<std::pair<std::size_t, std::size_t>, 1> polylines; // Indexes of all overlapping polylines and the vertices of these polylines correspondant to the starting vertex of the segment
+  };
   using X_monotone_curve_2 = Segment_2;
   using Curve_2 = X_monotone_curve_2;
 
@@ -50,7 +71,7 @@ private:
   }
 
   Base_segment_2 to_base(const Segment_2& s) const {
-    return Base_segment_2(to_base(s.first), to_base(s.second));
+    return Base_segment_2(to_base(s.src), to_base(s.trg));
   }
 
   Point_2 from_base(const Base_point_2& p) const {
@@ -77,7 +98,7 @@ public:
 
     Point_2 operator()(const X_monotone_curve_2& cv) const{
       auto cmp = traits->compare_xy_2_object();
-      return (cmp(cv.first, cv.second) == SMALLER) ? cv.first : cv.second;
+      return (cmp(cv.src, cv.trg) == SMALLER) ? cv.src : cv.trg;
     }
   };
   Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(this); }
@@ -89,7 +110,7 @@ public:
 
     Point_2 operator()(const X_monotone_curve_2& cv) const{
       auto cmp = traits->compare_xy_2_object();
-      return (cmp(cv.first, cv.second) == LARGER) ? cv.first : cv.second;
+      return (cmp(cv.src, cv.trg) == LARGER) ? cv.src : cv.trg;
     }
   };
   Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(this); }
