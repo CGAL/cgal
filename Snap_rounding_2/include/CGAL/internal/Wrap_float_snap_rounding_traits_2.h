@@ -22,7 +22,7 @@
 
 namespace CGAL::internal {
 
-template<typename FloatSnapRoundingTraits, typename PointPropertyMap, typename PointInserter = void*>
+template<typename FloatSnapRoundingTraits, typename PointPropertyMap, typename PointInserter>
 class Wrap_float_snap_rounding_traits_2 : public FloatSnapRoundingTraits
 {
 public:
@@ -37,23 +37,24 @@ public:
   struct Segment_2 {
     Segment_2(){}
     Segment_2(Point_2 a, Point_2 b): src(a), trg(b){}
-    Segment_2(const Segment_2 &s) : src(s.src), trg(s.trg), polylines(s.polylines){}
-    Segment_2 operator=(const Segment_2 &s){
+    Segment_2(const Segment_2 &s) : src(s.src), trg(s.trg), polyline_indices(s.polyline_indices){}
+    Segment_2& operator=(const Segment_2 &s){
       src = s.src;
       trg = s.trg;
-      polylines = s.polylines;
+      polyline_indices = s.polyline_indices;
       return *this;
     }
     bool operator<(const Segment_2 &s) const {
       return (src == s.src) ? trg < s.trg: src < s.src;
     }
-    void add_polyline(std::size_t li, std::size_t i) const {
-      polylines.emplace_back(li, i);
+    void add_polyline(std::size_t pl_idx) const {
+      polyline_indices.emplace_back(pl_idx);
     }
 
     Point_2 src;
     Point_2 trg;
-    mutable boost::container::small_vector<std::pair<std::size_t, std::size_t>, 1> polylines; // Indexes of all overlapping polylines and the vertices of these polylines correspondant to the starting vertex of the segment
+    mutable boost::container::small_vector< std::size_t, 1> polyline_indices; // Indices of all overlapping polylines on the segment
+                                                                              // Made mutable to be fullfill by a set
   };
   using X_monotone_curve_2 = Segment_2;
   using Curve_2 = X_monotone_curve_2;
@@ -73,10 +74,6 @@ private:
 
   Base_segment_2 to_base(const Segment_2& s) const {
     return Base_segment_2(to_base(s.src), to_base(s.trg));
-  }
-
-  Point_2 from_base(const Base_point_2& p) const {
-    return put(point_map, p);
   }
 
 public:
@@ -183,8 +180,8 @@ public:
 
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const {
-      return ((*this)(cv1.first, cv2.first) && (*this)(cv1.second, cv2.second)) ||
-             ((*this)(cv1.first, cv2.second) && (*this)(cv1.second, cv2.first));
+      return ((*this)(cv1.src, cv2.src) && (*this)(cv1.trg, cv2.trg)) ||
+             ((*this)(cv1.src, cv2.trg) && (*this)(cv1.trg, cv2.src));
     }
 
     bool operator()(const Point_2& p1, const Point_2& p2) const {
@@ -205,10 +202,10 @@ public:
                     X_monotone_curve_2& cv1,
                     X_monotone_curve_2& cv2) const
     {
-      cv1.first = traits->construct_min_vertex_2_object()(cv);
-      cv1.second = p;
-      cv2.first = p;
-      cv2.second = traits->construct_max_vertex_2_object()(cv);
+      cv1.src = traits->construct_min_vertex_2_object()(cv);
+      cv1.trg= p;
+      cv2.src = p;
+      cv2.trg = traits->construct_max_vertex_2_object()(cv);
     }
   };
   Split_2 split_2_object() const { return Split_2(this); }

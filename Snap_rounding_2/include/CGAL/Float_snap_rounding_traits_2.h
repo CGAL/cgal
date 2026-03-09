@@ -15,14 +15,13 @@
 
 #include <CGAL/license/Snap_rounding_2.h>
 
-#include <CGAL/Arr_segment_traits_with_point_map_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
+#include <type_traits>
 
 #include <CGAL/Named_function_parameters.h>
-
-#include  <CGAL/mutex.h>
 
 namespace CGAL {
 
@@ -41,22 +40,23 @@ to the \cgal kernel-concept, such as `Cartesian<Gmpq>`.
 */
 template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<Exact_Kernel> >
 struct Float_snap_rounding_traits_2: BaseTraits{
-  typedef BaseTraits Base;
+  using Base = BaseTraits;
 
-  typedef Exact_Kernel Exact_type;
+  using FT = typename Base::FT;
+  using Point_2   = typename Base::Point_2;
+  using Segment_2 = typename Base::Segment_2;
 
-  typedef typename Base::FT        FT;
-  typedef typename Base::Point_2   Point_2;
-  typedef typename Base::Segment_2 Segment_2;
+  using Less_xy_2 = typename Base::Less_xy_2;
+  using Less_y_2  = typename Base::Less_y_2;
+  using Equal_2   = typename Base::Equal_2;
 
-  typedef typename Base::Less_xy_2 Less_xy_2;
-  typedef typename Base::Less_y_2  Less_y_2;
-  typedef typename Base::Equal_2   Equal_2;
+  using Construct_point_2   = typename Base::Construct_point_2;
+  using Construct_source_2  = typename Base::Construct_source_2;
+  using Construct_target_2  = typename Base::Construct_target_2;
+  using Construct_segment_2 = typename Base::Construct_segment_2;
 
-  typedef typename Base::Construct_point_2   Construct_point_2;
-  typedef typename Base::Construct_source_2  Construct_source_2;
-  typedef typename Base::Construct_target_2  Construct_target_2;
-  typedef typename Base::Construct_segment_2 Construct_segment_2;
+  using Evaluation_tag = Tag_true;
+  using Evaluate = internal::Evaluate<FT>;
 
   typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_to_exact;
   typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_from_exact;
@@ -85,6 +85,15 @@ struct Float_snap_rounding_traits_2: BaseTraits{
     }
   };
 
+  struct Evaluation{
+    double operator()(const FT &x) const{
+      return to_double(x);
+    }
+    Point_2 operator()(const Point_2 &p) const{
+      return Point_2((*this)(p.x()),(*this)(p.y()));
+    }
+  };
+
   struct Construct_point_at_x_on_segment_2{
     Point_2 operator()(const Segment_2 &seg, const FT &x) const{
       FT y= (seg.supporting_line().y_at_x(x));
@@ -92,6 +101,7 @@ struct Float_snap_rounding_traits_2: BaseTraits{
     }
   };
 
+  Evaluate evaluate_object() const{ return Evaluate(); }
   Converter_to_exact converter_to_exact_object() const{ return Converter_to_exact(); }
   Converter_from_exact converter_from_exact_object() const{ return Converter_from_exact(); }
 
