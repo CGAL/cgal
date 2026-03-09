@@ -1318,15 +1318,22 @@ private:
 
         auto facets_back = std::back_inserter(boundary_facets);
         auto facets_out = boost::make_function_output_iterator(
-        [&](const Facet& f) mutable {
+          [&](const auto& f) mutable {
           // transform on the fly, then insert
-          *facets_back = std::make_pair(m_tr.tds().to_cell_descriptor(f.first), f.second);
-        }
-      );
+          *facets_back = std::make_pair(m_tr.tds().cell_handle(f.first), f.second);
+          }
+        );
+
+        auto cell_back = std::back_inserter(conflict_zone);
+        auto cells_out = boost::make_function_output_iterator(
+          [&](const auto& c) mutable {
+            // transform on the fly, then insert
+            *cell_back = m_tr.tds().cell_handle(c);
+          });
 
         m_tr.find_conflicts(steiner_point, conflict_cell,
-                            std::back_inserter(facets_out),
-                            std::back_inserter(conflict_zone));
+                            facets_out,
+                            cells_out);
 
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
         // Purge the queue of facets that will be deleted/modified by the Steiner point insertion,
