@@ -37,6 +37,7 @@ public:
   struct Segment_2 {
     Segment_2(){}
     Segment_2(Point_2 a, Point_2 b): src(a), trg(b){}
+    Segment_2(const Segment_2 &s) : src(s.src), trg(s.trg), polylines(s.polylines){}
     Segment_2 operator=(const Segment_2 &s){
       src = s.src;
       trg = s.trg;

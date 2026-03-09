@@ -127,6 +127,30 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
   test(segs);
 }
 
+void test_polygons(){
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  std::cout << "Test polygons" << std::endl;
+#endif
+  std::vector<Polygon_2> polygons;
+  Polygon_2 a;
+  a.push_back(Point_2(0,0));
+  a.push_back(Point_2(3,0));
+  a.push_back(Point_2(0,3));
+  Polygon_2 b;
+  b.push_back(Point_2(1,1));
+  b.push_back(Point_2(1,3));
+  b.push_back(Point_2(3,1));
+  polygons.push_back(a);
+  polygons.push_back(b);
+
+  std::vector<Polygon_2> out;
+  CGAL::compute_snapped_polygons_2(polygons.begin(), polygons.end(), std::back_inserter(out));
+
+  assert(out.size() == 2);
+  assert(out[0].size() == 5);
+  assert(out[1].size() == 5);
+}
+
 void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "Test random polygons" << std::endl;
@@ -146,6 +170,19 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
   for(const Polygon_2 &poly: out)
     for(size_t i=1; i<poly.size(); ++i)
       segs.emplace_back(poly[i-1],poly[i]);
+  std::sort(segs.begin(), segs.end(), [](const Segment_2& a, const Segment_2 &b){
+                                        auto cmp = Kernel().less_xy_2_object();
+                                        auto a1 = a.source();
+                                        auto a2 = a.target();
+                                        if(!cmp(a1, a2))
+                                          std::swap(a1, a2);
+                                        auto b1 = b.source();
+                                        auto b2 = b.target();
+                                        if(!cmp(b1, b2))
+                                          std::swap(b1, b2);
+                                        return (a1==b1) ? cmp(a2,b2) : cmp(a1,b1);
+                                      });
+  std::unique(segs.begin(), segs.end());
   assert(!CGAL::do_curves_intersect(segs.begin(), segs.end()));
 }
 
@@ -185,6 +222,7 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
 
   for(size_t i=0; i<nb_iterations; ++i){
     out_intersection.clear();
+    // std::cout << scene << std::endl;
     CGAL::intersection(random_rotated_square(), scene, std::back_inserter(out_intersection));
     assert(out_intersection.size()==1 && out_intersection[0].number_of_holes()==0);
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
@@ -322,9 +360,10 @@ int main(int argc,char *argv[])
   std::cout << std::setprecision(17);
   fix_test();
   test_float_snap_rounding();
-  // test_fully_random(r,1000);
-  // test_multi_almost_indentical_segments(r,200);
-  // test_random_polygons(r,200,10);
-  // test_iterative_square_intersection(r,2000);
+  test_fully_random(r,1000);
+  test_multi_almost_indentical_segments(r,200);
+  test_polygons();
+  test_random_polygons(r,100,20);
+  // test_iterative_square_intersection(r, 2000); // Quite slow
   return(0);
 }

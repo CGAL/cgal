@@ -651,6 +651,7 @@ void compute_snapped_polygons_2(InputIterator  begin,
     const Polygon_2 &P = *it;
     for(std::size_t i=0; i<P.size()-1; ++i)
       input_segments.emplace_back(P[i], P[i+1]);
+    input_segments.emplace_back(P[P.size()-1], P[0]);
   }
   polygon_indexes.push_back(input_segments.size());
 
@@ -669,19 +670,26 @@ void compute_snapped_polygons_2(InputIterator  begin,
     std::size_t last_insert;
     for(std::size_t pl_idx = idx_start; pl_idx != idx_end; ++pl_idx){
       auto &pl = polylines[pl_idx];
-      // Add the first element
+      // The first element is not add, it is identical to the last
+
+      bool go_forward;
       if(pl_idx == idx_start)
-        P.push_back(from_exact(pts[pl.front()]));
+        go_forward = (pl.back() == polylines[pl_idx+1].front()) || (pl.back() == polylines[pl_idx+1].back());
+      else
+        go_forward = (last_insert == pl.front());
 
       // Add the element in forward direction
-      if(pl_idx == idx_start || last_insert == pl.front())
+      if(go_forward){
         for(std::size_t i = 1; i != pl.size(); ++i)
           P.push_back(from_exact(pts[pl[i]]));
+        last_insert = pl.back();
 
       // Add the element in backward direction
-      else
-        for(std::size_t i = pl.size(); i != 0; --i)
+      } else {
+        for(std::size_t i = pl.size()-1; i != 0; --i)
           P.push_back(from_exact(pts[pl[i-1]]));
+        last_insert = pl.front();
+      }
     }
     *out++=P;
   }
