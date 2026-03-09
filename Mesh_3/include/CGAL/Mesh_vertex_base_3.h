@@ -473,7 +473,7 @@ public:
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive() const
   {
-    return Vertex_handle(tds(), storage().next_intrusive_);
+    return Vertex_handle(this->tds(), storage().next_intrusive_);
   }
 
   void set_next_intrusive(Vertex_handle v)
@@ -483,7 +483,7 @@ public:
 
   Vertex_handle previous_intrusive() const
   {
-    return Vertex_handle(tds(), storage().previous_intrusive_);
+    return Vertex_handle(this->tds(), storage().previous_intrusive_);
   }
 
   void set_previous_intrusive(Vertex_handle v)
@@ -497,7 +497,7 @@ public:
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
-    return idx().idx(); // storage().time_stamp_;
+    return this->idx().idx(); // storage().time_stamp_;
   }
   void set_time_stamp(const std::size_t& ) {
     //storage().time_stamp_ = ts;

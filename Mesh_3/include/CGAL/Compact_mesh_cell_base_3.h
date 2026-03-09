@@ -1065,7 +1065,7 @@ static
 public:
   Cell_handle next_intrusive() const
   {
-    return Cell_handle(tds(), storage().next_intrusive_);
+    return Cell_handle(this->tds(), storage().next_intrusive_);
   }
 
   void set_next_intrusive(Cell_handle c)
@@ -1075,7 +1075,7 @@ public:
 
   Cell_handle previous_intrusive() const
   {
-    return Cell_handle(tds(), storage().previous_intrusive_);
+    return Cell_handle(this->tds(), storage().previous_intrusive_);
   }
 
   void set_previous_intrusive(Cell_handle c)
@@ -1089,7 +1089,7 @@ public:
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
-    return idx(); // storage().time_stamp_;
+    return this->idx(); // storage().time_stamp_;
   }
   void set_time_stamp(const std::size_t& ) {
     // storage().time_stamp_ = ts;
