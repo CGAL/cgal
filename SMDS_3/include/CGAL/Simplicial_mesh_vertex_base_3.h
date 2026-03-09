@@ -208,8 +208,8 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
-private:
 
+private:
   int number_of_incident_facets_ = 0;
   int number_of_components_ = 0; // number of components in the adjacency
   // graph of incident facets (in complex)

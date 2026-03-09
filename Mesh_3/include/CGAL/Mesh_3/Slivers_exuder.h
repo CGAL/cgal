@@ -1455,12 +1455,11 @@ restore_cells_and_boundary_facets(
     if ( !( it->second.second == Subdomain_index() ) )
       c3t3_.add_to_complex(*cit, it->second.second);
 
-    // if the new cell is in the domain, and it criterion value is less that
+    // if the new cell is in the domain, and its criterion value is less that
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
       FT criterion_value = sliver_criteria_(*cit);
-
       if( criterion_value < sliver_criteria_.sliver_bound() )
         add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
     }
@@ -1655,7 +1654,7 @@ check_pre_star(const Pre_star& pre_star,
       if(! tr_.is_infinite(opposite_facet.first) )
       {
         pre_star2.insert(
-          *fit, tr_.compute_power_distance_to_power_sphere(opposite_facet.first, v));
+          *fit, Th().compute_power_distance_to_power_sphere(tr_, opposite_facet.first, v));
       }
     }
 
@@ -1784,8 +1783,8 @@ template <typename C3T3, typename SC, typename V_>
 bool
 Slivers_exuder<C3T3,SC,V_>::
 check_ratios(const Sliver_values& criterion_values,
-                  const Weighted_point& wp,
-                  const Vertex_handle& vh) const
+             const Weighted_point& wp,
+             const Vertex_handle& vh) const
 {
   Cell_vector deleted_cells;
   Facet_vector internal_facets;

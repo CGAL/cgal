@@ -422,7 +422,7 @@ protected:
 template < typename C3T3,
            typename MeshDomain,
            typename SliverCriterion = Mesh_3::Min_dihedral_angle_criterion
-                                  <typename C3T3::Triangulation::Geom_traits>,
+                                  <typename C3T3::Triangulation>,
            typename Visitor_ = Null_perturber_visitor<C3T3> >
 class Sliver_perturber
 : public Sliver_perturber_base<typename C3T3::Triangulation,

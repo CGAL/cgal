@@ -608,8 +608,8 @@ protected:
 template <typename C3T3,
           typename MeshDomain>
 class C3T3_helpers
-: public C3T3_helpers_base<typename C3T3::Triangulation,
-                           typename C3T3::Concurrency_tag>
+  : public C3T3_helpers_base<typename C3T3::Triangulation,
+                             typename C3T3::Concurrency_tag>
 {
   // -----------------------------------
   // Private types
