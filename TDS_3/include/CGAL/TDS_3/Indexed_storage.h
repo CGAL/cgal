@@ -876,10 +876,10 @@ namespace CGAL {
   }; // end class Index_iterator
 
   template <class I, class T, class ConcurrencyTag = Sequential_tag>
-  struct Index_property_map
-      : Properties::Property_map_base<I, T, Index_property_map<I, T, ConcurrencyTag>, ConcurrencyTag>
+  struct Indexed_storage_property_map
+      : Properties::Property_map_base<I, T, Indexed_storage_property_map<I, T, ConcurrencyTag>, ConcurrencyTag>
   {
-    using Base = Properties::Property_map_base<I, T, Index_property_map<I, T, ConcurrencyTag>, ConcurrencyTag>;
+    using Base = Properties::Property_map_base<I, T, Indexed_storage_property_map<I, T, ConcurrencyTag>, ConcurrencyTag>;
 
     using Base::Base;
   };
@@ -887,7 +887,7 @@ namespace CGAL {
   template <class I, class T, class ConcurrencyTag = Sequential_tag>
   using Property_map = std::conditional_t<internal::TDS_3::use_experimental_properties,
                                           Properties::Experimental::Property_array_handle<I, T>,
-                                          Index_property_map<I, T, ConcurrencyTag>>;
+                                          Indexed_storage_property_map<I, T, ConcurrencyTag>>;
 
   struct Vertex_index: public Index<Vertex_index>
   {
