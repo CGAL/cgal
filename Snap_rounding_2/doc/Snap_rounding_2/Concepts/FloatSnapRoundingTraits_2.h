@@ -77,7 +77,18 @@ models the concept `Kernel::Equal_2`.
 typedef unspecified_type Equal_2;
 
 /*!
-models the concept `FSRTraits_2::ConstructRoundPoint_2`.
+An instance of `CGAL::Boolean_tag`. If its value is `true`, `FSRTraits_2::Evaluate` is used to compute the exact values of coordinates.
+If its value is `false` then `FSRTraits_2::Evaluate` is not used and may be omitted.
+*/
+typedef unspecified_type Evaluation_tag;
+
+/*!
+models the concept `FSRTraits_2::Evaluate`.
+*/
+typedef unspecified_type Evaluate;
+
+/*!
+models the concept `FSRTraits_2::ConstructRoundedPoint_2`.
 */
 typedef unspecified_type Construct_rounded_point_2;
 
@@ -161,7 +172,7 @@ namespace FSRTraits_2{
   \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Construct_rounded_point_2 `Float_snap_rounding_traits_2::Construct_rounded_point_2` \endlink}
   \cgalHasModelsEnd
 */
-class ConstructRoundPoint_2
+class ConstructRoundedPoint_2
 {
   public:
 
@@ -186,6 +197,24 @@ class ComputeSquaredRoundBound_2
   Given a point, compute an upper bound of the squared distance between its exact coordinates and its rounded coordinates
   */
   double operator()(Point_2 p);
+};
+
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsEnd
+*/
+class Evaluate
+{
+  public:
+
+  /*!
+  Given a point, evaluate its exact value. For example, for a point from EPECK, this consists of computing its rational coordinates. A subsequent call to ConstructRoundedPoint_2 will then use a higher precision.
+  */
+  void operator()(Point_2 p);
 };
 
 /*!
