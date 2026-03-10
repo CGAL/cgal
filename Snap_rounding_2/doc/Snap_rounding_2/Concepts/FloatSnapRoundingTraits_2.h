@@ -221,8 +221,8 @@ class ComputeSquaredRoundBound_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Double_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
   \cgalHasModelsEnd
 */
 class Evaluate
