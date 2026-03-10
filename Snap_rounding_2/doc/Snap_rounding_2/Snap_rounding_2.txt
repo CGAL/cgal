@@ -101,34 +101,6 @@ tiled with one-unit square pixels.
 
 \cgalExample{Snap_rounding_2/snap_rounding.cpp}
 
-This program generates four polylines, one for each input segment. The exact
-output follows:
-
-\verbatim
-Polyline number 1:
-(0/4:0/4)
-(12/4:12/4)
-(20/4:20/4)
-(28/4:28/4)
-(40/4:40/4)
-Polyline number 2:
-(0/4:40/4)
-(12/4:28/4)
-(20/4:20/4)
-(28/4:12/4)
-(40/4:0/4)
-Polyline number 3:
-(12/4:0/4)
-(12/4:12/4)
-(12/4:28/4)
-(12/4:40/4)
-Polyline number 4:
-(28/4:0/4)
-(28/4:12/4)
-(28/4:28/4)
-(28/4:40/4)
-\endverbatim
-
 The package is supplied with a graphical demo program that opens a window,
 allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
