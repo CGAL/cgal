@@ -97,10 +97,20 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
 #endif
   CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out));
-  std::vector<Segment_2> out2(out.begin(), out.end());
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
+#endif
+  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  out.clear();
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  t.reset();
+  t.start();
+#endif
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(CGAL::Float_snap_rounding_traits_2<Kernel>()));
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  t.stop();
+  std::cout << "Formal snap size with float: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2

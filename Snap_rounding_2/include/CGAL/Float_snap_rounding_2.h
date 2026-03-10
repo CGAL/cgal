@@ -439,7 +439,7 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
@@ -456,7 +456,7 @@ OutputContainer double_snap_rounding_2(InputIterator    begin,
   using Polyline = std::remove_cv_t<typename OutputContainer::container_type::value_type>;
 
   using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
-  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
   using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                               NamedParameters,
                                                               DefaultTraits>::type;
@@ -517,7 +517,7 @@ OutputContainer double_snap_rounding_2(InputIterator    begin,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
@@ -532,7 +532,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
                                                               Sequential_tag>::type;
 
   using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
-  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
   using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                               NamedParameters,
                                                               DefaultTraits>::type;
@@ -597,7 +597,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `Float_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 * @warning If an input polygon is convex, it might no longer be convex in the output of this function
@@ -614,7 +614,7 @@ void compute_snapped_polygons_2(InputIterator  begin,
 
   using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
   using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
-  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
   using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                               NamedParameters,
                                                               DefaultTraits>::type;
