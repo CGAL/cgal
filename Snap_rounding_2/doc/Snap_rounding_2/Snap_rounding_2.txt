@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_2D_Snap_Rounding
 \anchor chapterSnapRounding
 \cgalAutoToc
-\author Eli Packer
+\author Eli Packer, Leo Valque
 
 \section Snap_rounding_2Introduction Introduction
 
@@ -23,6 +23,10 @@ details and experimental results are given in \cgalCite{cgal:hp-isr-02}.
 \cgalFigureBegin{figsr1,sr1.png}
 An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 \cgalFigureEnd
+
+Float Snap Rounding is a variant of Snap Rounding for converting arbitrary-precision arrangements of segment into another representation,
+typically using floating-point coordinates. Float Snap Rounding provides the same guarantees as standard Snap Rounding. By default, Float Snap Rounding
+rounds on double preserving all input coordinates. Other representations can be used by supplying a model of FloatSnapRoundingTraits.
 
 \section Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
 
@@ -129,6 +133,47 @@ The package is supplied with a graphical demo program that opens a window,
 allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
 (see `<CGAL_ROOT>/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
+
+\section Float_snap_rounding Float Snap Rounding 2
+
+Given an arrangement of segments whose vertices are represented with arbitrary-precision coordinates, the `double_snap_rounding_2()`
+function outputs one polyline for each input segment with rounded coordinates. The function ensures that the resulting polylines do
+not intersect and provide the same topological guarantee as the Snap Rounding algorithm.
+
+The algorithm proceeds as follows. First, the segments are subdivided exactly
+at their (potential) intersection points. Then the vertices are processed from left to right. Whenever
+a vertex lies too close to a segment, that segment is subdivided at the \f$x\f$-coordinate of the vertex.
+Finally, the vertices are rounded.
+
+The function `double_snap_rounding_2()` outputs the result as a range of polylines, one for each input
+segment. The functions `compute_snapped_subcurves_2()` and `compute_snapped_polygons_2()` perform the
+same algorithm but provide different output formats. The function `compute_snapped_subcurves_2()`
+outputs the result as a range of segments, whereas `compute_snapped_polygons_2()` takes a range of
+polygons as input and outputs a range of polygons.
+
+The following example snapped a non-trivial instance of five segments.
+
+\cgalExample{Snap_rounding_2/float_snap_rounding.cpp}
+
+The algorithm runs in approximately \f$O(n \log n + k)\f$, where \f$n\f$ is the number of input segments
+and \f$k\f$ is the number of vertices created during the process. In the worst case, the number of created
+vertices is \f$O(n^3)\f$, or \f$O(n^2)\f$ if the input segments are free of intersections.
+
+\section Float_snap_rounding_Traits Float Snap Rounding Traits
+
+The algorithm uses a traits class that models the concept `FloatSnapRoundingTraits_2`. By default,
+the traits class `Double_snap_rounding_traits_2`, which rounds coordinates to double precision floating point,
+is used. The package also provides `Float_snap_rounding_traits_2`, which rounds coordinates to
+single precision floating point. Other traits classes can be used to round to different representations as long as
+the rounding operation preserve the order of vertices along the \f$x\f$ and \f$y\f$ directions.
+See `FloatSnapRoundingTraits_2` for more details.
+
+\section Snap_rounding_history Implementation History
+
+Snap Rounding 2 and Iterative Snap Rounding was introduced by Eli Packer in 2001.
+
+Float Snap Rounding 2 was introduced by Léo Valque in 2026.
+
 
 */
 } /* namespace CGAL */

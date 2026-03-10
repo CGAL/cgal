@@ -95,7 +95,7 @@ typedef unspecified_type Construct_rounded_point_2;
 /*!
 models the concept `FSRTraits_2::ComputeSquaredRoundBound_2`.
 */
-typedef unspecified_type Squared_round_bound_2;
+typedef unspecified_type Compute_squared_round_bound_2;
 
 /*!
 models the concept `FSRTraits_2::ConverterToExact`.
@@ -145,7 +145,12 @@ Construct_rounded_point_2 construct_rounded_point_2_object();
 /*!
 
 */
-Squared_round_bound_2 squared_round_bound_2_object();
+Compute_squared_round_bound_2 compute_squared_round_bound_2_object();
+
+/*!
+
+*/
+Evaluate evaluate_object();
 
 /*!
 
@@ -156,6 +161,11 @@ Converter_to_exact converter_to_exact_object();
 
 */
 Converter_from_exact converter_from_exact_object();
+
+/*!
+
+*/
+Equal_2 equal_2_object();
 
 
 /// @}
@@ -177,7 +187,13 @@ class ConstructRoundedPoint_2
   public:
 
   /*!
-  Given a point, construct its rounded version
+  Given a point, constructs a point whose coordinates are rounded.
+
+  \warning To guarantee a valid result, the order of the coordinates of two
+  points `p` and `q` must be preserved:
+  p.x() < q.x() implies rounded(p.x()) <= rounded(q.x())
+  (and similarly for the y coordinate).
+  \note If `Evaluation_tag` is true, the algorithms sort the vertices and call `Evaluate` when two vertices are likely to not respect this condition.
   */
   Point_2 operator()(Point_2 p);
 };
@@ -186,7 +202,8 @@ class ConstructRoundedPoint_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
   \cgalHasModelsEnd
 */
 class ComputeSquaredRoundBound_2
@@ -194,7 +211,7 @@ class ComputeSquaredRoundBound_2
   public:
 
   /*!
-  Given a point, compute an upper bound of the squared distance between its exact coordinates and its rounded coordinates
+  Given a point, computes an upper bound of the squared distance between its exact coordinates and its rounded coordinates
   */
   double operator()(Point_2 p);
 };
@@ -205,6 +222,7 @@ class ComputeSquaredRoundBound_2
   \cgalConcept
   \cgalHasModelsBegin
   \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Float_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Squared_round_bound_2 `Double_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
   \cgalHasModelsEnd
 */
 class Evaluate
@@ -212,7 +230,7 @@ class Evaluate
   public:
 
   /*!
-  Given a point, evaluate its exact value. For example, for a point from EPECK, this consists of computing its rational coordinates. A subsequent call to ConstructRoundedPoint_2 will then use a higher precision.
+  Given a point, evaluates its exact value. For example, for a point from EPECK, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
   */
   void operator()(Point_2 p);
 };
@@ -221,7 +239,8 @@ class Evaluate
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_to_exact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_to_exact `Float_snap_rounding_traits_2::r_to_exact` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_to_exact `Double_snap_rounding_traits_2::Converter_to_exact` \endlink}
   \cgalHasModelsEnd
 */
 class ConverterToExact
@@ -240,7 +259,8 @@ class ConverterToExact
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_from_exact `Float_snap_rounding_traits_2::Convertex_to_exact` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_from_exact `Float_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsBare{\link FloatSnapRoundingTraits_2::Converter_from_exact `Double_snap_rounding_traits_2::Converter_to_exact` \endlink}
   \cgalHasModelsEnd
 */
 class ConverterFromExact
@@ -257,4 +277,4 @@ class ConverterFromExact
 
 
 
-} /* end of namespace SRTraits_2 */
+} /* end of namespace FSRTraits_2 */

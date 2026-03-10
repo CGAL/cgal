@@ -86,7 +86,7 @@ struct Float_snap_rounding_traits_base_2: BaseTraits{
 }
 
 /*!
-\ingroup PkgSnapRounding2Ref
+\ingroup PkgFloatSnapRounding2Ref
 
 The class `Double_snap_rounding_traits_2<Kernel>` is a model of the
 `FloatSnapRoundingTraits_2` concept. The points are rounded on double-precisiong floating point coordinates.
@@ -132,7 +132,7 @@ struct Double_snap_rounding_traits_2: internal::Float_snap_rounding_traits_base_
 };
 
 /*!
-\ingroup PkgSnapRounding2Ref
+\ingroup PkgFloatSnapRounding2Ref
 
 The class Float_snap_rounding_traits_2<Kernel> is a model of the FloatSnapRoundingTraits_2 concept. It is identical to Double_snap_rounding_traits_2<Kernel>,
 except that points are rounded to single-precision floating-point coordinates.

@@ -415,7 +415,7 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 } // end of namespace internal
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup PkgFloatSnapRounding2Ref
 *
 * Subdivides and rounded a set of segments so that they are pairwise disjoint in their interiors.
 * The output is a range of polyline with each polyline corresponding to an input segment.
@@ -429,13 +429,6 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{concurrency_tag}
-*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
-*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
-*     \cgalParamType{CGAL::Concurrency_tag}
-*     \cgalParamDefault{CGAL::Sequential_tag}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
@@ -492,7 +485,7 @@ OutputContainer double_snap_rounding_2(InputIterator    begin,
 }
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup PkgFloatSnapRounding2Ref
 *
 * Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
 *
@@ -507,13 +500,6 @@ OutputContainer double_snap_rounding_2(InputIterator    begin,
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{concurrency_tag}
-*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
-*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
-*     \cgalParamType{CGAL::Concurrency_tag}
-*     \cgalParamDefault{CGAL::Sequential_tag}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
@@ -571,7 +557,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 }
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup PkgFloatSnapRounding2Ref
 *
 * Given a range of `Polygon_2`, compute rounded polygons such that their segments are either equal either disjoint in their interior, as induced by the input polygons.
 * The polygons are intended to be non-intersecting, unless the named parameter `compute_intersections` is set to `true`.
@@ -587,13 +573,6 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{concurrency_tag}
-*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
-*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
-*     \cgalParamType{CGAL::Concurrency_tag}
-*     \cgalParamDefault{CGAL::Sequential_tag}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
@@ -688,7 +667,7 @@ void compute_snapped_polygons_2(InputIterator  begin,
 }
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup PkgFloatSnapRounding2Ref
 *
 * Given a Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygon.
 * The output is guarantee to be a Polygon but may present pinched section.
@@ -701,13 +680,6 @@ void compute_snapped_polygons_2(InputIterator  begin,
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{concurrency_tag}
-*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
-*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
-*     \cgalParamType{CGAL::Concurrency_tag}
-*     \cgalParamDefault{CGAL::Sequential_tag}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{a multiplier of the error value for boundary edges to preserve the boundaries}
 *     \cgalParamType{double}

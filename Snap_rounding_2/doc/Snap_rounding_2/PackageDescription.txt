@@ -1,13 +1,42 @@
-/// \defgroup PkgSnapRounding2Ref Reference Manual
+/// \defgroup PkgSnapRounding2Ref_ Reference Manual
 /// \defgroup PkgSnapRounding2Concepts Concepts
 /// \ingroup PkgSnapRounding2Ref
+
+/// \defgroup PkgSnapRounding2Ref Snap Rounding and Iterative Snap Rounding
+/// Functions of standard Snap Rounding algorithm.
+/// \ingroup PkgSnapRounding2Ref_
+
+/// \defgroup PkgFloatSnapRounding2Ref Float Snap Rounding
+/// Functions of Float Snap Rounding algorithm
+/// \ingroup PkgSnapRounding2Ref_
+
 /*!
-\addtogroup PkgSnapRounding2Ref
+\addtogroup PkgSnapRounding2Ref_
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Eli Packer}
-\cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a fixed-precision representation. In the study of robust geometric computing, it can be classified as a finite precision approximation technique. Iterated Snap Rounding is a modification of Snap Rounding in which each vertex is at least half-the-width-of-a-pixel away from any non-incident edge. This package supports both methods.}
+\cgalPkgAuthor{Eli Packer, Leo Valque}
+\cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a smaller precision representation. This package supports methods to converting into fixed-precision or floating-point representation.}
+\cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref_}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
+\cgalPkgBib{cgal:p-sr2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Snap Rounding,snap_rounding_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+*/
+
+/*!
+\addtogroup PkgFloatSnapRounding2Ref
+\cgalPkgDescriptionBegin{2D Snap Rounding,PkgFloatSnapRounding2}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Leo Valque}
+\cgalPkgDesc{Float Snap Rounding is a variant of Snap Rounding for converting arbitrary-precision arrangements of segment into another representation,
+typically using floating-point coordinates.}
 \cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
