@@ -22,7 +22,7 @@
 
 namespace CGAL::internal {
 
-template<typename FloatSnapRoundingTraits, typename PointPropertyMap, typename PointInserter>
+template<typename FloatSnapRoundingTraits, typename PointPropertyMap>
 class Wrap_float_snap_rounding_traits_2 : public FloatSnapRoundingTraits
 {
 public:
@@ -60,12 +60,11 @@ public:
   using Curve_2 = X_monotone_curve_2;
 
 private:
-  Base base;
+  const Base &base;
   mutable PointPropertyMap point_map;
-  PointInserter insert;
 
 public:
-  Wrap_float_snap_rounding_traits_2(FloatSnapRoundingTraits &traits, PointPropertyMap pm, PointInserter inserter): base(traits), point_map(pm), insert(inserter){}
+  Wrap_float_snap_rounding_traits_2(const FloatSnapRoundingTraits &traits, PointPropertyMap pm): base(traits), point_map(pm){}
 
 private:
   Base_point_2 to_base(const Point_2& p) const {
@@ -211,10 +210,10 @@ public:
   Split_2 split_2_object() const { return Split_2(this); }
 };
 
-template<typename FloatSnapRoundingTraits, typename PointPropertyMap, typename PointInserter>
-Wrap_float_snap_rounding_traits_2<FloatSnapRoundingTraits, PointPropertyMap, PointInserter>
-make_wrap_float_snap_rounding_traits_2(FloatSnapRoundingTraits& traits, PointPropertyMap pm, PointInserter inserter){
-  return Wrap_float_snap_rounding_traits_2<FloatSnapRoundingTraits, PointPropertyMap, PointInserter>(traits, pm, inserter);
+template<typename FloatSnapRoundingTraits, typename PointPropertyMap>
+Wrap_float_snap_rounding_traits_2<FloatSnapRoundingTraits, PointPropertyMap>
+make_wrap_float_snap_rounding_traits_2(FloatSnapRoundingTraits& traits, PointPropertyMap pm){
+  return Wrap_float_snap_rounding_traits_2<FloatSnapRoundingTraits, PointPropertyMap>(traits, pm);
 }
 
 } // namespace CGAL::internal

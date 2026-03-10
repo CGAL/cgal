@@ -182,7 +182,8 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
                                           std::swap(b1, b2);
                                         return (a1==b1) ? cmp(a2,b2) : cmp(a1,b1);
                                       });
-  std::unique(segs.begin(), segs.end());
+  auto it = std::unique(segs.begin(), segs.end());
+  segs.erase(it, segs.end());
   assert(!CGAL::do_curves_intersect(segs.begin(), segs.end()));
 }
 

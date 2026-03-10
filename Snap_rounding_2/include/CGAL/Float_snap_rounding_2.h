@@ -66,7 +66,7 @@ public:
   using Base_segment_2 = typename Gt2::Base_segment_2;
 
 protected:
-  Gt2 traits;
+  Gt2& traits;
   Points& points;
   const Polylines& input_polylines;
   Polylines& output_polylines;
@@ -214,7 +214,7 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
 
   // Wrap the traits so they operate on point indices stored in `pts`.
   auto get = [&](const std::size_t &idx){ return pts[idx]; };
-  auto wrap_traits = make_wrap_float_snap_rounding_traits_2(traits, boost::make_function_property_map<std::size_t>(get),[](){});
+  auto wrap_traits = make_wrap_float_snap_rounding_traits_2(traits, boost::make_function_property_map<std::size_t>(get));
 
   auto round_bound = traits.compute_squared_round_bound_2_object();
 
@@ -225,7 +225,6 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylinesRange::iterator>::value_type>;
 
-  // auto less_xy_2 = traits.less_xy_2_object();
   auto less_y_2 = traits.less_y_2_object();
 
   std::vector< double > round_bounds;
