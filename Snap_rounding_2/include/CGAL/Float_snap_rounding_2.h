@@ -209,7 +209,7 @@ public:
 Scan the vertices from left to right while maintaining the status line ordering of the segments.
 Segments that are too close to a vertex are subdivided.
 */
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
+template <class Traits, class PointsRange , class PolylinesRange>
 void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
 
   // Wrap the traits so they operate on point indices stored in `pts`.
@@ -259,7 +259,7 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
   return;
 }
 
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
+template <class Traits, class PointsRange , class PolylinesRange>
 void merge_duplicate_points_in_polylines(PointsRange &pts, PolylinesRange &polylines, const Traits &traits)
 {
   using Point_2 = typename Traits::Point_2;
@@ -297,7 +297,7 @@ void merge_duplicate_points_in_polylines(PointsRange &pts, PolylinesRange &polyl
 }
 
 // Some points may have collapsed on a vertical segment, we subdivide these vertical segments accordingly
-template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylinesRange>
+template <class Traits, class PointsRange , class PolylinesRange>
 void snap_post_process(PointsRange &pts, PolylinesRange &polylines, const Traits &traits)
 {
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylinesRange::iterator>::value_type>;
@@ -341,7 +341,7 @@ void snap_post_process(PointsRange &pts, PolylinesRange &polylines, const Traits
   }
 }
 
-template <class Concurrency_tag=Sequential_tag, class InputIterator, class Traits, class PointsRange , class PolylinesRange>
+template <class InputIterator, class Traits, class PointsRange , class PolylinesRange>
 void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -417,11 +417,11 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 /**
 * \ingroup PkgFloatSnapRounding2Ref
 *
-* Subdivides and rounded a set of segments so that they are pairwise disjoint in their interiors.
-* The output is a range of polyline with each polyline corresponding to an input segment.
+* Subdivides and rounds a set of segments so that they are pairwise disjoint in their interiors.
+* The output is a range of polylines, where each polyline corresponding to an input segment.
 *
-* @tparam InputIterator iterator over a range of `Segment_2`
-* @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam InputIterator an iterator over a range of `Segment_2`
+* @tparam OutputInserter an inserter for a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param begin,end the input segment range
@@ -436,17 +436,13 @@ void double_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsR
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-OutputContainer double_snap_rounding_2(InputIterator    begin,
+template <class InputIterator , class OutputInserter, class NamedParameters = parameters::Default_named_parameters>
+OutputInserter double_snap_rounding_2(InputIterator    begin,
                                        InputIterator    end,
-                                       OutputContainer  out,
+                                       OutputInserter  out,
                                        const NamedParameters &np = parameters::default_values())
 {
-  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
-                                                              NamedParameters,
-                                                              Sequential_tag>::type;
-
-  using Polyline = std::remove_cv_t<typename OutputContainer::container_type::value_type>;
+  using Polyline = std::remove_cv_t<typename OutputInserter::container_type::value_type>;
 
   using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
   using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
@@ -467,7 +463,7 @@ OutputContainer double_snap_rounding_2(InputIterator    begin,
   // Main algorithm
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
-  internal::double_snap_rounding_2_impl<Concurrency_tag>(begin, end, pts, polylines, traits);
+  internal::double_snap_rounding_2_impl(begin, end, pts, polylines, traits);
 
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -487,12 +483,10 @@ OutputContainer double_snap_rounding_2(InputIterator    begin,
 /**
 * \ingroup PkgFloatSnapRounding2Ref
 *
-* Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+* Given a range of segments, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
 *
-* @tparam Concurrency_tag That template parameter enables to choose whether the algorithm is to be run in
-* parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
-* @tparam InputIterator iterator of a segment range
-* @tparam OutputContainer inserter of a segment range
+* @tparam InputIterator an iterator of a segment range
+* @tparam OutputIterator an inserter of a segment range
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param begin,end the input segment range
@@ -513,10 +507,6 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
                                            OutputIterator    out,
                                            const NamedParameters &np = parameters::default_values())
 {
-  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
-                                                              NamedParameters,
-                                                              Sequential_tag>::type;
-
   using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
   using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
   using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
@@ -537,7 +527,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
   // Main algorithm
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
-  internal::double_snap_rounding_2_impl<Concurrency_tag>(begin, end, pts, polylines, traits);
+  internal::double_snap_rounding_2_impl(begin, end, pts, polylines, traits);
 
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -559,16 +549,16 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 /**
 * \ingroup PkgFloatSnapRounding2Ref
 *
-* Given a range of `Polygon_2`, compute rounded polygons such that their segments are either equal either disjoint in their interior, as induced by the input polygons.
+* Given a range of `Polygon_2`, computes rounded polygons such that their segments are either equal or disjoint in their interiors, as induced by the input polygons.
 * The polygons are intended to be non-intersecting, unless the named parameter `compute_intersections` is set to `true`.
-* Any polygon is guaranteed to remain a Polygon in the output but may present pinched section or/and common vertices or segments with
+* Rach input polygon is guaranteed to remain a Polygon in the output but may present pinched sections or/and common vertices or segments with
 * other polygons.
 *
-* @tparam InputIterator iterator of a CGAL::Polygon_2 range
-* @tparam OutputContainer inserter of a CGAL::Polygon_2 range
+* @tparam InputIterator an iterator of a `CGAL::Polygon_2` range
+* @tparam OutputIterator an inserter of a `CGAL::Polygon_2` range
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* \param begin,end the input polygon range
+* \param begin,end the range of input polygons
 * \param out the output inserter
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -587,10 +577,6 @@ void compute_snapped_polygons_2(InputIterator  begin,
                                 OutputIterator out,
                                 const NamedParameters &np = parameters::default_values())
 {
-  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
-                                                              NamedParameters,
-                                                              Sequential_tag>::type;
-
   using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
   using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
   using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
@@ -627,7 +613,7 @@ void compute_snapped_polygons_2(InputIterator  begin,
   polygon_indexes.push_back(input_segments.size());
 
   // Main algorithm
-  internal::double_snap_rounding_2_impl<Concurrency_tag>(input_segments.begin(), input_segments.end(), pts, polylines, traits);
+  internal::double_snap_rounding_2_impl(input_segments.begin(), input_segments.end(), pts, polylines, traits);
 
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -670,7 +656,7 @@ void compute_snapped_polygons_2(InputIterator  begin,
 * \ingroup PkgFloatSnapRounding2Ref
 *
 * Given a Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygon.
-* The output is guarantee to be a Polygon but may present pinched section.
+* The output is guarantee to be a polygon but may present pinched section.
 *
 * @tparam Polygon_2 model of `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -681,9 +667,9 @@ void compute_snapped_polygons_2(InputIterator  begin,
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{a multiplier of the error value for boundary edges to preserve the boundaries}
-*     \cgalParamType{double}
-*     \cgalParamDefault{100}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `FloatSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 * \warning The convex property is not necessarly preserved
