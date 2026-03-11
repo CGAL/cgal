@@ -28,7 +28,7 @@ int main()
 
   // Compute the polylines corresponding to the output rounded on simple-precision floats
   std::vector< Polyline_2 > polylines;
-  CGAL::double_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(polylines), CGAL::parameters::traits(CGAL::Float_snap_rounding_traits()));
+  CGAL::double_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(polylines), CGAL::parameters::geom_traits(CGAL::Float_snap_rounding_traits_2<Kernel>()));
 
   return 0;
 }

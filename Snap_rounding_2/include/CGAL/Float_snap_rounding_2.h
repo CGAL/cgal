@@ -144,7 +144,7 @@ protected:
   }
 
 public:
-  Snap_rounding_visitor(Gt2 &traits_, Points& points_, Polylines& in, Polylines& out, std::vector< double >& bounds) :
+  Snap_rounding_visitor(Gt2 &traits_, Points& points_, const Polylines& in, Polylines& out, std::vector< double >& bounds) :
     traits(traits_),
     points(points_),
     input_polylines(in),
@@ -218,7 +218,7 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
 
   auto round_bound = traits.compute_squared_round_bound_2_object();
 
-  using Wrap_traits = decltype(wrap_traits);
+  using Wrap_traits = std::remove_cv_t<std::remove_reference_t<decltype(wrap_traits)>>;;
   using X_monotone_curve_2 = typename Wrap_traits::X_monotone_curve_2;
   using Visitor = Snap_rounding_visitor<Wrap_traits, PointsRange, PolylinesRange>;
   using Surface_sweep = Ss2::No_intersection_surface_sweep_2<Visitor>;
