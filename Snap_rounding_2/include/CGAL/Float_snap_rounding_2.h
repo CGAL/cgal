@@ -416,11 +416,11 @@ void float_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsRa
 /**
 * \ingroup PkgFloatSnapRounding2Ref
 *
-* Subdivides and rounds a set of segments so that they are pairwise disjoint in their interiors.
-* The output is a range of polylines, where each polyline corresponding to an input segment.
+* subdivides and rounds a set of segments so that they are pairwise disjoint in their interiors.
+* The output is a range of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam InputIterator an iterator over a range of `Segment_2`
-* @tparam OutputInserter an inserter for a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam OutputIterator an inserter for a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param begin,end the input segment range
@@ -435,13 +435,13 @@ void float_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsRa
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template <class InputIterator , class OutputInserter, class NamedParameters = parameters::Default_named_parameters>
-OutputInserter float_snap_rounding_2(InputIterator    begin,
+template <class InputIterator , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator float_snap_rounding_2(InputIterator    begin,
                                       InputIterator    end,
-                                      OutputInserter   out,
+                                      OutputIterator   out,
                                       const NamedParameters &np = parameters::default_values())
 {
-  using Polyline = std::remove_cv_t<typename OutputInserter::container_type::value_type>;
+  using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
 
   using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
   using DefaultTraits = Double_snap_rounding_traits_2<InputKernel>;
@@ -598,7 +598,7 @@ void compute_snapped_polygons_2(InputIterator  begin,
   std::vector< Point_2 > pts;
   std::vector< std::vector< std::size_t> > polylines;
 
-  // Store the indexes of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygin i
+  // Store the indexes of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygon i
   std::vector< std::size_t > polygon_indexes;
 
   polygon_indexes.reserve(std::distance(begin, end));

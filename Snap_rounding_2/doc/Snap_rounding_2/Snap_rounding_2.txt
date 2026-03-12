@@ -157,7 +157,7 @@ The result of our test is resume in the next table:
 | 100 Almost identical Segments | 0.016s | 0.025s | 1.37s | 0.452s | 2.00s |
 | 150 Almost identical Segments | 0.032s | 0.064 | 5.11s | 1.48s | 7.41s |
 | 200 Almost identical Segments | 0.057s | 0.125s | – | 3.48s | – |
-| 350 Almost identical Segments | 0.186s | 0.548s | – | – | – |
+| 400 Almost identical Segments | 0.216s | 0.641s | – | 38.5s | – |
 
 \subsection FSR_comp Snap Rounding Complexity
 The algorithm runs in approximately \f$O(n \log n + k)\f$, where \f$n\f$ is the number of input segments
