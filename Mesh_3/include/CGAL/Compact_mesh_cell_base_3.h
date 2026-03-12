@@ -310,7 +310,7 @@ public:
     : subdomain_index_(rhs.subdomain_index_)
     , N(rhs.N)
     , V(rhs.V)
-    #ifdef CGAL_INTRUSIVE_LIST
+#ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif

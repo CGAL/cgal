@@ -135,7 +135,6 @@ void test()
       std::stringstream oss;
       CGAL::IO::write_MEDIT(oss, c3t3);
       output_c3t3.push_back(oss.str());//[i*5+3]
-      std::cout << "oss " << oss.str() << std::endl;
 
       std::stringstream oss_p;
       Polyhedron out_poly;
