@@ -28,7 +28,8 @@ Float Snap Rounding is a variant of Snap Rounding for converting arbitrary-preci
 typically using floating-point coordinates. Float Snap Rounding provides the same guarantees as standard Snap Rounding. By default, Float Snap Rounding
 rounds to double preserving all input coordinates. Other representations can be used by supplying a model of `FloatSnapRoundingTraits_2`.
 
-\section Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
+\section Snap_rouding Snap Rounding and Iterated Snap Rounding
+\subsection Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
 
 Given a finite collection \f$ \Sc\f$ of segments in the plane, the
 arrangement of \f$ \Sc\f$ denoted \f$ \Ac(\Sc)\f$ is the subdivision of the plane
@@ -60,7 +61,7 @@ we operate differently, as this repeated application of SR would have
 resulted in an efficient overall process. The algorithmic details are
 given in \cgalCite{cgal:hp-isr-02}.
 
-\section Snap_rounding_2Terms Terms and Software Design
+\subsection Snap_rounding_2Terms Terms and Software Design
 
 Our package supports both schemes, implementing the algorithm
 described in \cgalCite{cgal:hp-isr-02}.
@@ -92,7 +93,7 @@ this concept.
 An arrangement of segments before (a), after SR (b) and ISR (c) (hot pixels are shaded).
 \cgalFigureEnd
 
-\section Snap_rounding_2Four Four Line Segment Example
+\subsection Snap_rounding_2Four Four Line Segment Example
 
 The following example generates an ISR representation
 of an arrangement of four line segments. In particular it produces
@@ -107,7 +108,7 @@ snap-rounding procedures, and displays the result onto the same window
 (see `<CGAL_ROOT>/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
 
 \section Float_snap_rounding Float Snap Rounding 2
-
+\subsection FSR_algorithm Float Snap Rounding Algorithm
 Given an arrangement of segments whose vertices are represented with arbitrary-precision coordinates, the `float_snap_rounding_2()`
 function outputs one polyline for each input segment with rounded coordinates. The function ensures that the resulting polylines do
 not intersect and provide the same topological guarantee as the Snap Rounding algorithm \cgalCite{valque2024snaprounding}.
@@ -127,15 +128,43 @@ same algorithm but provide different input and/or output formats. The function `
 outputs the result as a range of segments, whereas `compute_snapped_polygons_2()` takes a range of
 polygons as input and outputs a range of polygons.
 
+\subsection FSR_example Float Snap Rounding Example
 The following example snaps a non-trivial instance of five segments.
 
 \cgalExample{Snap_rounding_2/float_snap_rounding.cpp}
 
+\subsection FSR_Perf Snap Rounding Performance
+We evaluate the different methods on two tests:
+In the first test, the segment endpoints are chosen uniformly and independantly in the unit box.
+In the second test, we generate perturbed copies of a given segment. This experiment is repeated several times using different input segments.
+
+First with segments whose endpoints are randomly and independantly chosen in the unit box.
+Second with perturbated copy of a given segment, we perform this test several times with different input segments.
+The two pixel sizes for snap rounding are chosen so that the rounding shift is of the same order of magnitude as the rounding induced by using respectively double or float coordinates.
+The first test is standard but typically exhibits few, if any, rounding issues.
+The second test is deliberately designed to be difficult, as it produces a large number of rounding issues when rounding is performed naively.
+In these settings, float snap rounding significantly outperforms standard snap rounding and remains in the same order of magnitude than computing the intersections without snap.
+The result of our test is resume in the next table:
+
+@brief Average running times of snap rounding methods
+
+| Test Case | Computing intersection<br> (Unsafe rounding) | Float snap rounding<br> (double precision) | Float snap rounding<br> (simple precision)  | Snap rounding <br>(pixel size \f$10^{-15}\f$ ) | Snap rounding <br>(pixel size \f$10^{-7}\f$) |
+|-----------|-------|-------|-------|-------|-------|
+| 500 Random Segments | 0.103s | 0.233s | 0.208s | 6.91s | 4.25s |
+| 1000 Random Segments | 0.379s | 1.36s | 1.23s | 1m 0s | 53.3s |
+| 2000 Random Segments | 1.45s | 4.95s | 5.22s | – | – |
+| 4000 Random Segments| 6.15s | 29.2s | 31.5s | – | – |
+| 100 Almost identical Segments | 0.016s | 0.025s | 1.37s | 0.452s | 2.00s |
+| 150 Almost identical Segments | 0.032s | 0.064 | 5.11s | 1.48s | 7.41s |
+| 200 Almost identical Segments | 0.057s | 0.125s | – | 3.48s | – |
+| 350 Almost identical Segments | 0.186s | 0.548s | – | – | – |
+
+\subsection FSR_comp Snap Rounding Complexity
 The algorithm runs in approximately \f$O(n \log n + k)\f$, where \f$n\f$ is the number of input segments
 and \f$k\f$ is the number of vertices created during the process. In the worst case, the number of created
 vertices is \f$O(n^3)\f$, or \f$O(n^2)\f$ if the input segments are free of intersections.
 
-\section Float_snap_rounding_Traits Float Snap Rounding Traits
+\subsection Float_snap_rounding_Traits Float Snap Rounding Traits
 
 The algorithm uses a traits class that models the concept `FloatSnapRoundingTraits_2`. By default,
 the traits class `Double_snap_rounding_traits_2`, which rounds coordinates to double precision floating point,

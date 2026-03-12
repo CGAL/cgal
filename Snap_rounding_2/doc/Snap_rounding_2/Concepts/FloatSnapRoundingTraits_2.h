@@ -6,7 +6,7 @@
 The concept `FloatSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
 an instance of the `Traits` template-parameter of
 the free functions
-\ref CGAL::double_snap_rounding_2() `CGAL::double_snap_rounding_2<InputIterator,OutputContainer,NamedParameter>()`,
+\ref CGAL::float_snap_rounding_2() `CGAL::float_snap_rounding_2<InputIterator,OutputIterator,NamedParameter>()`,
 \ref CGAL::compute_snapped_subcurves_2() `CGAL::compute_snapped_subcurves_2<InputIterator,OutputIterator,NamedParameter>()`,
 \ref CGAL::compute_snapped_polygons_2() `CGAL::compute_snapped_polygons_2<InputIterator,OutputIterator,NamedParameter>()`.
 The list includes the nested types of the geometric primitives used in this class and
