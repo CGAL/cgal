@@ -761,7 +761,7 @@ operator()(Visitor visitor)
     sliver_criterion_.set_sliver_bound(sliver_criterion_.get_default_value());
 
   // Reset sliver value cache
-  helper_.reset_cache();
+  helper_.reset_sliver_cache(sliver_criterion_);
 
   // Init time counter
   if (running_time_.is_running())
@@ -778,7 +778,6 @@ operator()(Visitor visitor)
 
   // Initialize vertices ids
   initialize_vertices_id();
-
 
 #if defined(CGAL_MESH_3_PERTURBER_VERBOSE) \
  || defined(CGAL_MESH_3_PROFILING)
@@ -816,8 +815,9 @@ operator()(Visitor visitor)
 #endif
 
   running_time_.stop();
-  helper_.reset_cache();//in case we reuse caches in another operation
-                               // after this perturbation
+
+  // in case we reuse caches in another operation after this perturbation
+  helper_.reset_sliver_cache(sliver_criterion_);
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   std::cerr << std::endl
@@ -1078,15 +1078,13 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>   M;
 
   M vpm;
-  for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
-       cit != tr_.finite_cells_end() ;
-       ++cit )
+  for (Cell_handle ch : c3t3_.cells_in_complex())
   {
-    if(helper_.is_sliver(cit, sliver_criterion_, sliver_bound))
+    const double d = sliver_criterion_(ch);
+    if(d < sliver_bound)
     {
-      double d = cit->sliver_value();
       for(int i=0; i< 4; i++){
-        Vertex_handle vh = cit->vertex(i);
+        Vertex_handle vh = ch->vertex(i);
         PVertex& pv = vpm[vh];
         if(pv.sliver_nb() ==0)
         {

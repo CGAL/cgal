@@ -681,9 +681,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const FT value = sliver_criteria_(cit);
-
-      if( value < sliver_criteria_.sliver_bound() )
+      if (sliver_criteria_.is_sliver(cit))
         return false;
     }
 
@@ -1092,9 +1090,9 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     const Facet opposite_facet = tr_.mirror_facet(f);
 
     // Sliver criterion values initialization
-    if( c3t3_.is_in_complex(c) )
-    {
-      criterion_values[f] = sliver_criteria_(c);
+    if( c3t3_.is_in_complex(c) ) {
+      if (sliver_criteria_.is_sliver(c))
+        criterion_values[f] = sliver_criteria_(c);
     }
 
     // Pre_star initialization
@@ -1239,7 +1237,7 @@ expand_prestar(const Cell_handle& cell_to_add,
         Tetrahedron_3 tet = tr_.tetrahedron(curr_f, ncr_pwp);
 
         FT new_value = sliver_criteria_(tet);
-        criterion_values.insert(std::make_pair(current_facet, new_value));
+        criterion_values.emplace(current_facet, new_value);
       }
     }
   }
@@ -1565,6 +1563,10 @@ update_mesh(const Weighted_point& new_point,
   // Delete old cells from queue (they aren't in the triangulation anymore)
   this->delete_cells_from_queue(deleted_cells);
 
+  // Purge the cache
+  for (const Cell_handle& dc : deleted_cells)
+    sliver_criteria_.reset_cache(dc);
+
   // Delete old cells & facets from c3t3
   remove_from_c3t3(deleted_cells.begin(),deleted_cells.end());
   remove_from_c3t3(boundary_facets.begin(),boundary_facets.end());
@@ -1816,6 +1818,9 @@ check_ratios(const Sliver_values& criterion_values,
 
     Tetrahedron_3 tet = tr_.tetrahedron(*it, wp);
     FT ratio = sliver_criteria_(tet);
+    if (ratio > sliver_criteria_.sliver_bound())
+      continue;
+
     expected_ratios.push_back(ratio);
 
     bool found = false;

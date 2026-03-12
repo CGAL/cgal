@@ -315,9 +315,11 @@ public:
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
     , time_stamp_(rhs.time_stamp_)
+#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
     , sliver_value_(rhs.sliver_value_)
-#ifndef CGAL_MESH_3_NO_SLIVER_CACHE
+# ifndef CGAL_MESH_3_NO_SLIVER_CACHE
     , sliver_cache_validity_(false)
+# endif
 #endif
   {
 #ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
@@ -524,6 +526,7 @@ public:
   void set_subdomain_index(const Subdomain_index& index)
   { subdomain_index_ = index; }
 
+#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
   void set_sliver_value(double value)
   {
 #ifndef CGAL_MESH_3_NO_SLIVER_CACHE
@@ -545,6 +548,7 @@ public:
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
 #endif
+#endif // CGAL_MESH_3_NO_SLIVER_VALUE
 
 #ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
   /// Set surface index of `facet` to `index`
@@ -668,10 +672,12 @@ private:
 
   std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
-#ifdef CGAL_MESH_3_NO_SLIVER_CACHE
+#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
+# ifdef CGAL_MESH_3_NO_SLIVER_CACHE
   double sliver_value_ = -2.;
-#else
+# else
   double sliver_value_ = 0.;
+# endif
 #endif
 
   // -- Below is unused --
@@ -687,8 +693,10 @@ private:
   std::array<Index, 4> surface_center_index_table_ = {};
 #endif
 
-#ifndef CGAL_MESH_3_NO_SLIVER_CACHE
+#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
+# ifndef CGAL_MESH_3_NO_SLIVER_CACHE
   mutable bool sliver_cache_validity_ = false;
+# endif
 #endif
 
 public:
