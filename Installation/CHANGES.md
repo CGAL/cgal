@@ -99,6 +99,12 @@ Release date: July 2026
 
 - Add the function `insert_unique_constraints()` to the class `CGAL::Constrained_Delaunay_triangulation_2` identical to the function `insert_constraints()` except that it removes duplicated constraints before inserting them in the triangulation.
 
+### [STL Extension](https://doc.cgal.org/6.2/Manual/packages.html#PkgSTLExtension)
+
+- Added new debugging utility for finding minimal failing test cases:
+  - [`CGAL::bisect_failures`](https://doc.cgal.org/6.2/STL_Extension/group__PkgSTLExtensionUtilities.html)
+    template function that uses bisection to isolate minimal failing subsets from complex input data
+
 ### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
 
 - Added new stream formatting capabilities for improved debugging and logging:
@@ -108,6 +114,10 @@ Release date: July 2026
   - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html)
     and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html)
     for ANSI color support in terminal output
+
+### [Intersecting Sequences of dD Iso-oriented Boxes](https://doc.cgal.org/6.2/Manual/packages.html#PkgBoxIntersectionD)
+- The function `CGAL::box_intersection_d()` now accepts ranges with different box types.
+- Add the box type `CGAL::Box_with_info<FT, dim, Info>`, which stores a variable of type `Info` accessible via `info()`.
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
@@ -5494,7 +5504,7 @@ The following functionality has been added or changed:
     bounding boxes of more complicated geometries. Useful for (self-)
     intersection tests of surfaces etc.
 - 2D Snap Rounding (new package)
-    Snap Rounding is a well known method for converting
+    Snap Rounding is a well-known method for converting
     arbitrary-precision arrangements of segments into a fixed-precision
     representation. In the study of robust geometric computing, it can
     be classified as a finite precision approximation technique.
