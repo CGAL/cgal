@@ -361,7 +361,7 @@ void test_float_snap_rounding(){
   segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
-  double_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(out));
+  float_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(out));
 }
 
 int main(int argc,char *argv[])
