@@ -10,6 +10,7 @@
 #include <CGAL/Float_snap_rounding_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel                     Epeck;
+typedef CGAL::Float_snap_rounding_traits_2<Epeck, Epeck>                      Epeck_Traits;
 typedef CGAL::Cartesian<CGAL::Exact_rational>                                 Rational_Kernel;
 typedef CGAL::Float_snap_rounding_traits_2<Rational_Kernel, Rational_Kernel>  Rational_Traits;
 
@@ -37,7 +38,7 @@ struct Test{
 
 int main(/*int argc,char *argv[]*/)
 {
-  Test<Epeck>().fix_test();
+  Test<Epeck_Traits>().fix_test();
   Test<Rational_Traits>().fix_test();
   return(0);
 }

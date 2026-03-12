@@ -211,21 +211,20 @@ Segments that are too close to a vertex are subdivided.
 */
 template <class Traits, class PointsRange , class PolylinesRange>
 void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Traits &traits){
+  auto round_bound = traits.compute_squared_round_bound_2_object();
+  auto less_y_2 = traits.less_y_2_object();
 
   // Wrap the traits so they operate on point indices stored in `pts`.
   auto get = [&](const std::size_t &idx){ return pts[idx]; };
-  auto wrap_traits = make_wrap_float_snap_rounding_traits_2(traits, boost::make_function_property_map<std::size_t>(get));
+  auto pm = boost::make_function_property_map<std::size_t>(get);
+  using Wrap_traits = Wrap_float_snap_rounding_traits_2<Traits, decltype(pm)>;
+  Wrap_traits wrap_traits(traits, pm);
 
-  auto round_bound = traits.compute_squared_round_bound_2_object();
-
-  using Wrap_traits = std::remove_cv_t<std::remove_reference_t<decltype(wrap_traits)>>;;
   using X_monotone_curve_2 = typename Wrap_traits::X_monotone_curve_2;
   using Visitor = Snap_rounding_visitor<Wrap_traits, PointsRange, PolylinesRange>;
   using Surface_sweep = Ss2::No_intersection_surface_sweep_2<Visitor>;
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylinesRange::iterator>::value_type>;
-
-  auto less_y_2 = traits.less_y_2_object();
 
   std::vector< double > round_bounds;
   round_bounds.reserve(pts.size());
