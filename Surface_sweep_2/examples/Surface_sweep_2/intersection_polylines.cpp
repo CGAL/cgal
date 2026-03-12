@@ -41,7 +41,7 @@ std::tuple<unsigned char, unsigned char, unsigned char> hsv_to_rgb(double h, dou
 
 /*!
  */
-int main(int argc, char* argv[]) {
+int main() {
   using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
   using Point = Kernel::Point_2;
   using Segment = Kernel::Segment_2;
