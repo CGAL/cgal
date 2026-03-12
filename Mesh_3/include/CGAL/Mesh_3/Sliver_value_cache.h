@@ -13,6 +13,8 @@
 #ifndef CGAL_MESH_3_SLIVER_VALUE_CACHE_H
 #define CGAL_MESH_3_SLIVER_VALUE_CACHE_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/Time_stamper.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
