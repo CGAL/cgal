@@ -1,60 +1,55 @@
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Float_snap_rounding_2.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Random.h>
+#include <CGAL/IO/OBJ.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epick;
-typedef Kernel::Segment_2                                       Segment_2;
-typedef Kernel::Point_2                                         Point_2;
-typedef Kernel::FT                                              FT;
-typedef std::vector<Point_2 >                                   Polyline_2;
+#include <CGAL/Real_timer.h>
 
-int main(int argc, char *argv[])
+using K = CGAL::Exact_predicates_exact_constructions_kernel;
+
+using FT = K::FT;
+using Point_2 = K::Point_2;
+using Segment_2 = K::Segment_2;
+
+struct Obj_data {
+  std::vector<Point_2> points;
+  std::vector<std::vector<std::size_t> > polylines;
+};
+
+static int run_mesh(const Obj_data& data)
 {
   std::vector< Segment_2 > segs;
+  std::vector< Segment_2 > out;
 
-  if(argc>1){
-    std::cout << "Read segments in " << argv[1] << std::endl;
-    std::ifstream in(argv[1]);
+  for(const std::vector<std::size_t>& id_pl : data.polylines)
+    for(std::size_t pid = 1; pid < id_pl.size(); ++pid)
+      segs.emplace_back(data.points[id_pl[pid - 1]], data.points[id_pl[pid]]);
 
-    int n;
-    in >> n;
-    segs.reserve(n);
-    for (int i=0; i<n; ++i)
-    {
-      double x1,x2,y1,y2;
-      in >> x1 >> y1 >> x2 >> y2;
-      if(Point_2(x1,y1)!=Point_2(x2,y2))
-        segs.emplace_back(Point_2(x1, y1), Point_2(x2, y2));
-    }
-  } else {
-    std::cout << "No data provided" << std::endl;
-    return 0;
-  }
-
-  std::cout << "Computes the intersections and snaps the segments" << std::endl;
-  std::vector< Segment_2> out;
+  CGAL::Real_timer t;
+  t.start();
   CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out));
-  std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
-  std::cout << "Size of the output: " << out.size() << std::endl;
+  t.stop();
+  std::cout << "Running time: " << t.time() << std::endl;
+  std::cout << "Input_size: "<< segs.size() << " , Output size: " << out.size() << "s" << std::endl;
+  std::cout << "Do output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << "\n" << std::endl;
+  return EXIT_SUCCESS;
+}
 
-  std::string out_path=(argc>2)?argv[2]:"out.segs";
-  std::cout << "Write the outputs in " << out_path << std::endl;
-  std::ofstream outf(out_path);
-  CGAL::Random r;
+int main(int argc, char*argv[] )
+{
+  std::cerr.precision(17);
+  std::cout.precision(17);
+  std::clog.precision(17);
+  std::ifstream in(argc > 1 ? argv[1] : "mini.obj");
+  if(!in)
+    return EXIT_FAILURE;
 
-  outf << std::setprecision(17);
-  outf << out.size() << std::endl;
-  for (auto &seg: out)
-  {
-    double x1 = CGAL::to_double(seg.source().x());
-    double y1 = CGAL::to_double(seg.source().y());
-    double x2 = CGAL::to_double(seg.target().x());
-    double y2 = CGAL::to_double(seg.target().y());
-    outf << x1 << " " << y1 << " " << x2 << " " << y2 << std::endl;
-  }
+  Obj_data data;
+  std::vector<std::vector<std::size_t> > unused_id_polygons;
+  bool success = CGAL::IO::internal::read_OBJ(in, data.points, data.polylines, unused_id_polygons);
+  if(!success)
+    return EXIT_FAILURE;
 
-  return 0;
+  std::cout << argv[1] << std::endl;
+  return run_mesh(data);
 }
