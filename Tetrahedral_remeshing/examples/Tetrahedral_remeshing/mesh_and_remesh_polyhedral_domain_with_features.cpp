@@ -1,3 +1,8 @@
+#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
+#define CGAL_DUMP_REMESHING_STEPS
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -95,7 +100,7 @@ int main(int argc, char* argv[])
   CGAL::tetrahedral_isotropic_remeshing(tr, size,
     number_of_iterations(nb_iter)
     .edge_is_constrained_map(constraints_pmap)
-    .cell_is_selected_map(CGAL::sliver_selection_property_map(tr, 4. /*min dihedral angle*/)));
+    .cell_is_selected_map(CGAL::sliver_selection_property_map(tr, 3. /*min dihedral angle*/)));
 
   std::ofstream out("out_remeshed.mesh");
   CGAL::IO::write_MEDIT(out, tr);
