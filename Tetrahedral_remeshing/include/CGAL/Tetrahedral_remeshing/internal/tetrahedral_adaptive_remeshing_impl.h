@@ -298,7 +298,7 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "99-postprocess");
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    mindh = 180.;
+    double mindh = 180.;
     for (Cell_handle cit : tr().finite_cell_handles())
     {
       if (m_c3t3.is_in_complex(cit))
