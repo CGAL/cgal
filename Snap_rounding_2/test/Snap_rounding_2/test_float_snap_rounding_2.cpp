@@ -1,6 +1,3 @@
-#define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
-// #define COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Float_snap_rounding_traits_2.h>
@@ -42,12 +39,6 @@ typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
 #include <CGAL/Snap_rounding_2.h>
 typedef CGAL::Snap_rounding_traits_2<Kernel>                     SnapTraits;
 #endif
-
-double total_time_naive = 0;
-double total_time_float = 0;
-double total_time_double = 0;
-double total_time_int_double = 0;
-double total_time_int_float = 0;
 
 //Biggest double with ulp smaller than one
 const double maxFloat = std::pow(2,23);
@@ -101,7 +92,6 @@ void test(const std::vector<Segment_2> &segs){
   compute_subcurves_and_naive_snap(segs.begin(), segs.end(), out);
   t.stop();
   std::cout << "Naive snap size: " << out.size() << " ,running time: " << t.time() << " and output do intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) <<std::endl;
-  total_time_naive += t.time();
   out.clear();
   t.reset();
   t.start();
@@ -110,7 +100,6 @@ void test(const std::vector<Segment_2> &segs){
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
-  total_time_double += t.time();
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   out.clear();
@@ -122,7 +111,6 @@ void test(const std::vector<Segment_2> &segs){
   // CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
-  total_time_float += t.time();
   std::cout << "Formal snap size with float: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
@@ -132,15 +120,7 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
   CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), output_list, 1./maxDouble);
   t.stop();
-  total_time_int_double += t.time();
   std::cout << "Running time with integer 2D snap (scaled at 10^15): " << t.time() << std::endl;
-  output_list.clear();
-  t.reset();
-  t.start();
-  // CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), output_list, 1./maxFloat);
-  t.stop();
-  total_time_int_float += t.time();
-  std::cout << "Running time with integer 2D snap (scaled at 10^7): " << t.time() << std::endl;
 #endif
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   std::cout << "\n";
@@ -390,22 +370,16 @@ int main(int argc,char *argv[])
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
-  // fix_test();
-  // test_float_snap_rounding();
-  // test_polygons();
+  fix_test();
+  test_float_snap_rounding();
+  test_polygons();
 
-  // test_fully_random(r,1000);
-  // test_multi_almost_indentical_segments(r,80);
-  // test_random_polygons(r,10,50);
+  test_fully_random(r,300);
+  test_multi_almost_indentical_segments(r,80);
+  test_random_polygons(r,10,50);
 
   // Heavy test
-  test_multi_almost_indentical_segments(r,600);
-  std::cout << total_time_naive << std::endl;
-  std::cout << total_time_double << std::endl;
-  std::cout << total_time_float << std::endl;
-  std::cout << total_time_int_double << std::endl;
-  std::cout << total_time_int_float << std::endl;
-
+  // test_multi_almost_indentical_segments(r,250);
   // test_random_polygons(r,100,20);
   // test_iterative_square_intersection(r, 2000); // Quite slow
   return(0);
