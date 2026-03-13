@@ -215,9 +215,17 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
   auto less_y_2 = traits.less_y_2_object();
 
   // Wrap the traits so they operate on point indices stored in `pts`.
-  auto get = [&](const std::size_t &idx){ return pts[idx]; };
-  auto pm = boost::make_function_property_map<std::size_t>(get);
-  using Wrap_traits = Wrap_float_snap_rounding_traits_2<Traits, decltype(pm)>;
+  using Base_point_2 = typename Traits::Point_2;
+  struct Get_point
+  {
+    const std::vector<Base_point_2>* pts;
+    Base_point_2 operator()(const std::size_t& idx) const { return (*pts)[idx]; }
+  };
+  using PMap = boost::function_property_map<Get_point, std::size_t, Base_point_2>;
+  using Wrap_traits = Wrap_float_snap_rounding_traits_2<Traits, PMap>;
+
+  Get_point get{&pts};
+  PMap pm(get);
   Wrap_traits wrap_traits(traits, pm);
 
   using X_monotone_curve_2 = typename Wrap_traits::X_monotone_curve_2;
