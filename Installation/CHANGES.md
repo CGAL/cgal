@@ -4,6 +4,14 @@
 
 Release date: July 2026
 
+### [2D Triangulations on Hyperbolic Surfaces](https://doc.cgal.org/6.2/Manual/packages.html#PkgHyperbolicSurfaceTriangulation2)
+
+- Added
+  [CGAL::Delaunay_triangulation_on_hyperbolic_surface_2](https://doc.cgal.org/6.2/Triangulation_on_hyperbolic_surface_2/classCGAL_1_1Delaunay__triangulation__on__hyperbolic__surface__2.html).
+  Functionalities include point location, point insertion, and the
+  computation of an epsilon-net of the hyperbolic surface, which is a set of
+  well-distributed points on the surface controlled by the parameter epsilon.
+
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
 - **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
