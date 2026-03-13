@@ -218,13 +218,13 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
   using Base_point_2 = typename Traits::Point_2;
   struct Get_point
   {
-    const std::vector<Base_point_2>* pts;
-    Base_point_2 operator()(const std::size_t& idx) const { return (*pts)[idx]; }
+    const std::vector<Base_point_2>& pts;
+    Base_point_2 operator()(const std::size_t& idx) const { return pts[idx]; }
   };
   using PMap = boost::function_property_map<Get_point, std::size_t, Base_point_2>;
   using Wrap_traits = Wrap_float_snap_rounding_traits_2<Traits, PMap>;
 
-  Get_point get{&pts};
+  Get_point get{pts};
   PMap pm(get);
   Wrap_traits wrap_traits(traits, pm);
 
