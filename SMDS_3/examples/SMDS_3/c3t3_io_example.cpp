@@ -11,6 +11,8 @@
 #include <CGAL/tags.h>
 
 #include <CGAL/IO/C3t3_io.h>
+#include <CGAL/IO/File_medit.h>
+
 #include <fstream>
 
 
@@ -36,23 +38,38 @@ int main(int argc, char* argv[])
   std::cout.precision(17);
   std::cerr.precision(17);
 
+  std::string medit_elephant = (argc > 1)
+                             ? std::string(argv[1])
+                             : CGAL::data_file_path("meshes/elephant.mesh");
+
+  Triangulation tr;
+  std::ifstream is(medit_elephant, std::ios_base::in);
+  if(!CGAL::IO::read_MEDIT(is, tr)) {
+    std::cerr << "Failed to read " << medit_elephant << std::endl;
+    return EXIT_FAILURE;
+  }
+
   std::string filename = (argc > 1) ? std::string(argv[1])
                        : CGAL::data_file_path("meshes/elephant.c3t3.cgal");
 
   C3t3 c3t3;
+  c3t3.set_triangulation(tr);
 
-  std::ifstream is(filename, std::ios_base::binary);
-  if(!CGAL::IO::load_c3t3(is, c3t3))
-  {
-    std::cerr << "Failed to read" << std::endl;
-    return EXIT_FAILURE;
-  }
+  const bool binary = false;
+  std::ofstream os("after_load.c3t3.cgal");
+  CGAL::IO::save_c3t3(os, c3t3, false);
+  os.close();
+
+
+//  std::ifstream is(filename, std::ios_base::binary);
+//  if(!CGAL::IO::load_c3t3(is, c3t3))
+//  {
+//    std::cerr << "Failed to read" << std::endl;
+//    return EXIT_FAILURE;
+//  }
 
   // [do something]
 
-  std::ofstream os("after_load.c3t3.cgal", std::ios_base::binary);
-  CGAL::IO::save_c3t3(os, c3t3);
-  os.close();
 
   std::cout << "Done" << std::endl;
   return EXIT_SUCCESS;

@@ -1949,6 +1949,10 @@ public:
              c->vertex(2),
              c->vertex(3)};
   }
+  static std::array<Vertex_handle, 1> vertices(const Vertex_handle v)
+  {
+    return std::array<Vertex_handle, 1>{v};
+  }
 
   // cells around an edge
   Cell_circulator incident_cells(const Edge& e) const
