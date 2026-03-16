@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `FloatSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
-an instance of the `Traits` template-parameter of
+an instance of the `Traits` template parameter of
 the free functions
 \ref CGAL::float_snap_rounding_2() `CGAL::float_snap_rounding_2<InputIterator,OutputIterator,NamedParameter>()`,
 \ref CGAL::compute_snapped_subcurves_2() `CGAL::compute_snapped_subcurves_2<InputIterator,OutputIterator,NamedParameter>()`,
@@ -193,7 +193,7 @@ class ConstructRoundedPoint_2
   points `p` and `q` must be preserved:
   p.x() < q.x() implies rounded(p.x()) <= rounded(q.x())
   (and similarly for the y coordinate).
-  \note If `Evaluation_tag` is true, the algorithms sort the vertices and call `Evaluate` when two vertices are likely to not respect this condition.
+  \note If `Evaluation_tag` is `true`, the algorithms sort the vertices and call `Evaluate` when two vertices are likely to not respect this condition.
   */
   Point_2 operator()(Point_2 p);
 };

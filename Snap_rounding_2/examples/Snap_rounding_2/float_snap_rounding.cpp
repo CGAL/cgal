@@ -26,7 +26,7 @@ int main()
   std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
   std::cout << "Size of the output: " << out.size() << std::endl;
 
-  // Compute the polylines corresponding to the output rounded on simple-precision floats
+  // Compute the polylines corresponding to the output rounded on single precision floats
   std::vector< Polyline_2 > polylines;
   CGAL::float_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(polylines), CGAL::parameters::geom_traits(CGAL::Float_snap_rounding_traits_2<Kernel>()));
 

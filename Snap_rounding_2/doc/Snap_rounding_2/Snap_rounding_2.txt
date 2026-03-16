@@ -24,9 +24,9 @@ details and experimental results are given in \cgalCite{cgal:hp-isr-02}.
 An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 \cgalFigureEnd
 
-Float Snap Rounding is a variant of Snap Rounding for converting arbitrary-precision arrangements of segment into another representation,
+Float Snap Rounding is a variant of Snap Rounding for converting arbitrary-precision arrangements of segments into another representation,
 typically using floating-point coordinates. Float Snap Rounding provides the same guarantees as standard Snap Rounding. By default, Float Snap Rounding
-rounds to double preserving all input coordinates. Other representations can be used by supplying a model of `FloatSnapRoundingTraits_2`.
+rounds to `double` preserving all input coordinates. Other representations can be used by supplying a model of `FloatSnapRoundingTraits_2`.
 
 \section Snap_rouding Snap Rounding and Iterated Snap Rounding
 \subsection Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
@@ -113,7 +113,7 @@ Given an arrangement of segments whose vertices are represented with arbitrary-p
 function outputs one polyline for each input segment with rounded coordinates. The function ensures that the resulting polylines do
 not intersect and provide the same topological guarantee as the Snap Rounding algorithm \cgalCite{valque2024snaprounding}.
 
-The algorithm is illustrated on the figure \cgalFigureRef{fig_float_snap} and proceeds as follows. First, the segments are subdivided exactly
+The algorithm is illustrated in the Figure \cgalFigureRef{fig_float_snap} and proceeds as follows. First, the segments are subdivided exactly
 at their (potential) intersection points. Then the vertices are processed from left to right. Whenever
 a vertex lies too close to a segment, that segment is subdivided at the \f$x\f$-coordinate of the vertex.
 Finally, the vertices are rounded.
@@ -138,7 +138,7 @@ We evaluate the different methods on two tests:
 In the first test, the segment endpoints are chosen uniformly and independantly in the unit box.
 In the second test, we generate perturbed copies of a given segment. This experiment is repeated several times using different input segments.
 
-First with segments whose endpoints are randomly and independantly chosen in the unit box.
+First with segments whose endpoints are randomly and independently chosen in the unit box.
 Second with perturbated copy of a given segment, we perform this test several times with different input segments.
 The two pixel sizes for snap rounding are chosen so that the rounding shift is of the same order of magnitude as the rounding induced by using respectively double or float coordinates.
 The first test is standard but typically exhibits few, if any, rounding issues.
