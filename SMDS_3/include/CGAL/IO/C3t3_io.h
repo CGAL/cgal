@@ -93,12 +93,10 @@ save_c3t3(std::ostream& os
   {
     std::visit([&](auto& ppty)
     {
-      os << "# " << ppty.name() << " "
+      os << "# " << ppty.type() << " "
                  << std::to_string(ppty.number_of_simplices(c3t3)) << " "
                  << std::to_string(ppty.number_of_elements()) << " "
-                 << ppty.type();
-      if(!binary)
-        os << "\n";
+                 << ppty.name() << "\n";
 
       using S = typename std::decay_t<decltype(ppty)>::key_type;
       for(const S& c : internal::get_simplex_range<S>(c3t3))
@@ -115,32 +113,32 @@ save_c3t3(std::ostream& os
     }, pp);
   }
 
-  ////// property name "cell:ppty"
   ////// property type (e.g. int, double, std::string)
+  ////// property name "cell:ppty"
   ////// for each cell: index + value of "cell::ppty",
   //////                in the same order as cells are written
 
   // write facets properties, matched by names in `properties`
   //// # facets
   //// for each property "facet:ppty" in `properties`:
-  ////// property name "facet:ppty"
   ////// property type (e.g. int, double, std::string)
+  ////// property name "facet:ppty"
   ////// for each facet: value of "facet::ppty",
   //////                in the same order as facets from the iterator
 
   // write edges properties, matched by names in `properties`
   //// # edges
   //// for each property "edge:ppty" in `properties`:
-  ////// property name "edge:ppty"
   ////// property type (e.g. int, double, std::string)
+  ////// property name "edge:ppty"
   ////// for each edge: index + value of "edge::ppty",
   //////                in the same order as edges from the iterator
 
   // write vertices properties, matched by names in `properties`
   //// # vertices
   //// for each property "vertex:ppty" in `properties`:
-  ////// property name "vertex:ppty"
   ////// property type (e.g. int, double, std::string)
+  ////// property name "vertex:ppty"
   ////// for each vertex: index + value of "vertex::ppty",
   //////                in the same order as vertices from the iterator
 
