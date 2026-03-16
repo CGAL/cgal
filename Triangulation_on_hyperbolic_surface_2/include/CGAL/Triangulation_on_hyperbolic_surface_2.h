@@ -154,7 +154,6 @@ protected:
   Combinatorial_map_with_cross_ratios combinatorial_map_;
   bool has_anchor_ = false;
   Anchor anchor_;
-  // std::optional<Anchor> anchor_ = std::nullopt;
 
   Dart_descriptor pick_edge_to_flip();
   Dart_const_descriptor pick_edge_to_flip() const;
