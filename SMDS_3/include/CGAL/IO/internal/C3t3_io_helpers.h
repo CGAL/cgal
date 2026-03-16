@@ -25,6 +25,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
+#include <cstdint>
 
 
 namespace CGAL {
@@ -93,15 +94,35 @@ namespace internal {
   //////////////////////
   // WRITE PROPERTIES //
   //////////////////////
+  // portable type names for properties
   template <typename T>
-  std::string type_to_string(){ return "unknown"; }
+  std::string type_to_string()           { return "unknown"; }
   template <>
-  std::string type_to_string<double>() { return "double";}
+  std::string type_to_string<int8_t>()   { return "int8_t"; }
   template <>
-  std::string type_to_string<float>() { return "float"; }
+  std::string type_to_string<uint8_t>()  { return "uint8_t"; }
   template <>
-  std::string type_to_string<int>() { return "int"; }
+  std::string type_to_string<int16_t>()  { return "int16_t"; }
+  template <>
+  std::string type_to_string<uint16_t>() { return "uint16_t"; }
+  template <>
+  std::string type_to_string<int32_t>()  { return "int32_t"; }
+  template <>
+  std::string type_to_string<uint32_t>() { return "uint32_t"; }
+  template <>
+  std::string type_to_string<int64_t>()  { return "int64_t"; }
+  template <>
+  std::string type_to_string<uint64_t>() { return "uint64_t"; }
 
+  // in c++23, <stdfloat> will define
+  // std::float16_t
+  // std::float32_t
+  // std::float64_t
+  // std::float128_t
+  template <>
+  std::string type_to_string<float>() { return "float32_t"; }
+  template <>
+  std::string type_to_string<double>() { return "float64_t"; }
 
   template <typename C3t3>
   class Subdomain_index_property
