@@ -243,13 +243,13 @@ namespace internal {
   template <typename Simplex, typename C3t3>
   auto get_simplex_range(const C3t3& c3t3)
   {
-    if constexpr(std::is_same<Simplex, typename C3t3::Cell_handle>::value)
+    if constexpr(std::is_same_v<Simplex, typename C3t3::Cell_handle>)
       return c3t3.triangulation().all_cell_handles();
-    else if constexpr(std::is_same<Simplex, typename C3t3::Facet>::value)
+    else if constexpr(std::is_same_v<Simplex, typename C3t3::Facet>)
       return c3t3.triangulation().all_facets();
-    else if constexpr(std::is_same<Simplex, typename C3t3::Edge>::value)
+    else if constexpr(std::is_same_v<Simplex, typename C3t3::Edge>)
       return c3t3.triangulation().all_edges();
-    else if constexpr(std::is_same<Simplex, typename C3t3::Vertex_handle>::value)
+    else if constexpr(std::is_same_v<Simplex, typename C3t3::Vertex_handle>)
       return c3t3.triangulation().all_vertex_handles();
     else
       CGAL_assertion(false);
