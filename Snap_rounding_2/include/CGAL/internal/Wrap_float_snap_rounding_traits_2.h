@@ -23,7 +23,7 @@
 namespace CGAL::internal {
 
 template<typename FloatSnapRoundingTraits, typename PointPropertyMap>
-class Wrap_float_snap_rounding_traits_2 : public FloatSnapRoundingTraits
+class Wrap_float_snap_rounding_traits_2
 {
 public:
   using Base = FloatSnapRoundingTraits;
@@ -31,6 +31,17 @@ public:
   using Base_point_2   = typename Base::Point_2;
   using Base_segment_2 = typename Base::Segment_2;
   using FT             = typename Base::FT;
+
+  using Evaluation_tag = typename Base::Evaluation_tag;
+
+  using Multiplicity = typename Base::Multiplicity;
+  using Has_left_category = typename Base::Has_left_category;
+  using Has_merge_category = typename Base::Has_merge_category;
+
+  using Left_side_category = typename Base::Left_side_category;
+  using Bottom_side_category = typename Base::Bottom_side_category;
+  using Top_side_category = typename Base::Top_side_category;
+  using Right_side_category = typename Base::Right_side_category;
 
   using Point_2 = typename boost::property_traits<PointPropertyMap>::key_type;
   // using Segment_2 = std::pair<Point_2, Point_2>;
@@ -207,6 +218,22 @@ public:
     }
   };
   Split_2 split_2_object() const { return Split_2(this); }
+
+  using Evaluate                          = typename Base::Evaluate;
+  using Converter_to_exact                = typename Base::Converter_to_exact ;
+  using Converter_from_exact              = typename Base::Converter_from_exact;
+  using Construct_point_at_x_on_segment_2 = typename Base::Construct_point_at_x_on_segment_2;
+  using Compute_squared_round_bound_2     = typename Base::Compute_squared_round_bound_2;
+  using Construct_rounded_point_2         = typename Base::Construct_rounded_point_2;
+  using Compare_squared_distance_2        = typename Base::Compare_squared_distance_2;
+
+  Evaluate evaluate_object() const{ return base.evaluate_object(); }
+  Converter_to_exact converter_to_exact_object() const{ return base.converter_to_exact_object(); }
+  Converter_from_exact converter_from_exact_object() const{ return base.converter_from_exact_object(); }
+  Construct_point_at_x_on_segment_2 construct_point_at_x_on_segment_2_object() const{ return base.construct_point_at_x_on_segment_2_object(); }
+  Compute_squared_round_bound_2 compute_squared_round_bound_2_object() const{ return base.compute_squared_round_bound_2_object(); }
+  Construct_rounded_point_2 construct_rounded_point_2_object() const{ return base.construct_rounded_point_2_object(); }
+  Compare_squared_distance_2 compare_squared_distance_2_object() const{ return base.compare_squared_distance_2_object(); }
 };
 
 template<typename FloatSnapRoundingTraits, typename PointPropertyMap>

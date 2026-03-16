@@ -88,7 +88,7 @@ int main() {
   gso.draw_face = [](const Arrangement&, Face_const_handle) { return false; };
 
   gso.colored_edge = [](const Arrangement&, Edge_const_handle) -> bool { return true; };
-  gso.edge_color = [&](const Arrangement& arr, Edge_const_handle eh) -> CGAL::IO::Color {
+  gso.edge_color = [&](const Arrangement&, Edge_const_handle) -> CGAL::IO::Color {
     double h = (static_cast<double>(i++) * 360.0) / segments.size();
     double s = 0.8;
     double v = 0.95;
@@ -98,7 +98,7 @@ int main() {
 
   gso.draw_vertex = [](const Arrangement&, Vertex_const_handle) { return true; }; //! \todo ignored?
   gso.colored_vertex = [](const Arrangement&, Vertex_const_handle) -> bool { return true; };
-  gso.vertex_color = [](const Arrangement&, Vertex_const_handle vh) -> CGAL::IO::Color { return CGAL::IO::black(); };
+  gso.vertex_color = [](const Arrangement&, Vertex_const_handle) -> CGAL::IO::Color { return CGAL::IO::black(); };
 
   CGAL::draw(arr, gso, "Arrangement");
   return 0;

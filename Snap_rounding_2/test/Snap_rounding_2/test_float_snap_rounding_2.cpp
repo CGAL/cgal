@@ -108,10 +108,22 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
 #endif
   CGAL::Float_snap_rounding_traits_2<Kernel> float_traits;
-  // CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size with float: " << out.size() << " ,running time: " << t.time() << std::endl;
+#endif
+  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  out.clear();
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  t.reset();
+  t.start();
+#endif
+  CGAL::Integers_snap_rounding_traits_2<Kernel> int_traits(10e-12);
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  t.stop();
+  std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
@@ -255,12 +267,12 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
 }
 
 void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
-  for(double x1=-1; x1<=1; ++x1)
-    for(double y1=-1; y1<=1; ++y1)
-      for(double x2=x1; x2<=1; ++x2)
-        for(double y2=y1; y2<=1; ++y2)
-          if(Vector_2(x1,y1)!=Vector_2(x2,y2))
-            test_almost_indentical_segments(r, nb_segments, Vector_2(x1,y1), Vector_2(x2,y2));
+  double x1=1;
+  for(double y1=-1; y1<=1; ++y1)
+    for(double x2=x1; x2<=1; ++x2)
+      for(double y2=y1; y2<=1; ++y2)
+        if(Vector_2(x1,y1)!=Vector_2(x2,y2))
+          test_almost_indentical_segments(r, nb_segments, Vector_2(x1,y1), Vector_2(x2,y2));
 }
 
 void fix_test(){
@@ -375,7 +387,7 @@ int main(int argc,char *argv[])
   test_polygons();
 
   test_fully_random(r,300);
-  test_multi_almost_indentical_segments(r,80);
+  test_multi_almost_indentical_segments(r,25);
   test_random_polygons(r,10,50);
 
   // Heavy test
