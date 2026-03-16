@@ -6,9 +6,9 @@
 The concept `FloatSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
 an instance of the `Traits` template parameter of
 the free functions
-\ref CGAL::float_snap_rounding_2() `CGAL::float_snap_rounding_2<InputIterator,OutputIterator,NamedParameter>()`,
-\ref CGAL::compute_snapped_subcurves_2() `CGAL::compute_snapped_subcurves_2<InputIterator,OutputIterator,NamedParameter>()`,
-\ref CGAL::compute_snapped_polygons_2() `CGAL::compute_snapped_polygons_2<InputIterator,OutputIterator,NamedParameter>()`.
+\ref CGAL::float_snap_rounding_2() `CGAL::float_snap_rounding_2<InputIterator,OutputIterator,NamedParameters>()`,
+\ref CGAL::compute_snapped_subcurves_2() `CGAL::compute_snapped_subcurves_2<InputIterator,OutputIterator,NamedParameters>()`,
+\ref CGAL::compute_snapped_polygons_2() `CGAL::compute_snapped_polygons_2<InputIterator,OutputIterator,NamedParameters>()`.
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
 
@@ -112,59 +112,16 @@ typedef unspecified_type Converter_from_exact;
 /// \name Accessing Functor Objects
 /// @{
 
-/*!
-
-*/
 Construct_source_2 construct_source_2_object();
-
-/*!
-
-*/
 Construct_target_2 construct_target_2_object();
-
-/*!
-
-*/
 Construct_segment_2 construct_segment_2_object();
-
-/*!
-
-*/
 Less_xy_2 less_xy_2_object();
-
-/*!
-
-*/
 Less_y_2 less_y_2_object();
-
-/*!
-
-*/
 Construct_rounded_point_2 construct_rounded_point_2_object();
-
-/*!
-
-*/
 Compute_squared_round_bound_2 compute_squared_round_bound_2_object();
-
-/*!
-
-*/
 Evaluate evaluate_object();
-
-/*!
-
-*/
 Converter_to_exact converter_to_exact_object();
-
-/*!
-
-*/
 Converter_from_exact converter_from_exact_object();
-
-/*!
-
-*/
 Equal_2 equal_2_object();
 
 
@@ -230,7 +187,7 @@ class Evaluate
   public:
 
   /*!
-  Given a point, evaluates its exact value. For example, for a point using `CGAL::Lazy_exact<CGAL::Rational>`, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
+  Given a point, evaluates its exact value. For example, for a point using `CGAL::Lazy_exact<CGAL::Eaxct_rational>`, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
   */
   void operator()(Point_2 p);
 };

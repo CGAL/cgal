@@ -113,7 +113,7 @@ Given an arrangement of segments whose vertices are represented with arbitrary-p
 function outputs one polyline for each input segment with rounded coordinates. The function ensures that the resulting polylines do
 not intersect and provide the same topological guarantee as the Snap Rounding algorithm \cgalCite{valque2024snaprounding}.
 
-The algorithm is illustrated in the Figure \cgalFigureRef{fig_float_snap} and proceeds as follows. First, the segments are subdivided exactly
+The algorithm is illustrated in Figure \cgalFigureRef{fig_float_snap} and proceeds as follows. First, the segments are subdivided exactly
 at their (potential) intersection points. Then the vertices are processed from left to right. Whenever
 a vertex lies too close to a segment, that segment is subdivided at the \f$x\f$-coordinate of the vertex.
 Finally, the vertices are rounded.
@@ -168,8 +168,8 @@ vertices is \f$O(n^3)\f$, or \f$O(n^2)\f$ if the input segments are free of inte
 
 The algorithm uses a traits class that models the concept `FloatSnapRoundingTraits_2`. By default,
 the traits class `Double_snap_rounding_traits_2`, which rounds coordinates to double precision floating point,
-is used. The package also provides `Float_snap_rounding_traits_2`, which rounds coordinates to
-single precision floating point. Other traits classes can be used to round to different representations as long as
+is used. The package also provides `Float_snap_rounding_traits_2` and `Integers_snap_rounding_traits_2`, which rounds coordinates to
+single precision floating point and integers, respectively. Other traits classes can be used to round to different representations as long as
 the rounding operation preserves the order of vertices along the \f$x\f$ and \f$y\f$ directions.
 See `FloatSnapRoundingTraits_2` for more details.
 
