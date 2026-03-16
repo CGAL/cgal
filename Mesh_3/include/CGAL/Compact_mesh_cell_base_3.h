@@ -109,7 +109,9 @@ protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0)
   {
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
     internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
+#endif
   }
 
 public:
@@ -152,15 +154,19 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
   /// Precondition weighted_circumcenter_ == nullptr
   void try_to_set_circumcenter(Point_3 *cc) const
   {
     CGAL_precondition(weighted_circumcenter_ == nullptr);
     weighted_circumcenter_ = cc;
   }
+#endif
 
 protected:
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
   mutable Point_3* weighted_circumcenter_;
+#endif
 
 private:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -184,7 +190,9 @@ protected:
   Compact_mesh_cell_base_3_base()
   {
     bits_ = 0;
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
     weighted_circumcenter_ = nullptr;
+#endif
   }
 
 public:
@@ -234,6 +242,7 @@ public:
     return ( (bits_ & char(1 << facet)) != 0 );
   }
 
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
   /// If the circumcenter is already set (weighted_circumcenter_ != nullptr),
   /// this function "deletes" cc
   void try_to_set_circumcenter(Point_3 *cc) const
@@ -242,9 +251,12 @@ public:
     if (!weighted_circumcenter_.compare_exchange_strong(base_test, cc))
       delete cc;
   }
+#endif
 
 protected:
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
   mutable std::atomic<Point_3*> weighted_circumcenter_;
+#endif
 
 private:
   typedef std::atomic<unsigned int> Erase_counter_type;
@@ -269,7 +281,10 @@ class Compact_mesh_cell_3
   : public Compact_mesh_cell_base_3_base<Point_3, typename TDS::Concurrency_tag>
 {
   typedef Compact_mesh_cell_base_3_base<Point_3,typename TDS::Concurrency_tag> Base;
+
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
   using Base::weighted_circumcenter_;
+#endif
 
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -295,10 +310,12 @@ public:
 public:
   void invalidate_weighted_circumcenter_cache() const
   {
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
     if (!internal_tbb::is_null(weighted_circumcenter_)) {
       internal_tbb::delete_circumcenter(weighted_circumcenter_);
       internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
+#endif
   }
 
 public:
@@ -355,10 +372,12 @@ public:
 
   ~Compact_mesh_cell_3()
   {
+#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
     if(!internal_tbb::is_null(weighted_circumcenter_)){
       internal_tbb::delete_circumcenter(weighted_circumcenter_);
       internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
+#endif
   }
 
   // ACCESS FUNCTIONS
@@ -498,8 +517,15 @@ public:
   }
 
   template<typename GT_>
-  const Point_3& weighted_circumcenter(const GT_& gt) const
+  decltype(auto) weighted_circumcenter(const GT_& gt) const
   {
+#ifdef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
+    return gt.construct_weighted_circumcenter_3_object()
+                        (this->vertex(0)->point(),
+                         this->vertex(1)->point(),
+                         this->vertex(2)->point(),
+                         this->vertex(3)->point());
+#else
     static_assert(std::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
     if (internal_tbb::is_null(weighted_circumcenter_)) {
@@ -517,6 +543,7 @@ public:
                                  this->vertex(3)->point()) == *weighted_circumcenter_);
     }
     return *weighted_circumcenter_;
+#endif
   }
 
   // Returns the index of the cell of the input complex that contains the cell
