@@ -40,7 +40,7 @@ public:
   virtual ~Property() = default;
   virtual std::string name() const = 0;
   // nb elements per simplex (3 for coordinates, 1 for index)
-  virtual int number_of_elements() const = 0;
+  virtual int number_of_components() const = 0;
   virtual std::string type() const = 0;
   // nb simplices (cells, facets, edges, vertices) for which the property is defined
   virtual int number_of_simplices(const C3t3&) const = 0;
@@ -110,9 +110,9 @@ namespace internal {
   public:
     using key_type   = typename C3t3::Cell_handle;
     using value_type = typename C3t3::Subdomain_index;
-    std::string name()       const { return "cell:subdomain_index"; }
-    int number_of_elements() const { return 1; }
-    std::string type()       const { return type_to_string<value_type>(); }
+    std::string name()         const { return "cell:subdomain_index"; }
+    int number_of_components() const { return 1; }
+    std::string type()         const { return type_to_string<value_type>(); }
     int number_of_simplices(const C3t3& c3t3) const
     {
       return c3t3.number_of_cells_in_complex();
@@ -134,9 +134,9 @@ namespace internal {
   public:
     using key_type = typename C3t3::Facet;
     using value_type = typename C3t3::Surface_patch_index;
-    std::string name() const { return "facet:surface_patch_index"; }
-    int number_of_elements() const { return 1; }
-    std::string type() const { return type_to_string<value_type>(); }
+    std::string name()         const { return "facet:surface_patch_index"; }
+    int number_of_components() const { return 1; }
+    std::string type()         const { return type_to_string<value_type>(); }
     int number_of_simplices(const C3t3& c3t3) const
     {
       return c3t3.number_of_facets_in_complex();
@@ -158,9 +158,9 @@ namespace internal {
   public:
     using key_type = typename C3t3::Edge;
     using value_type = typename C3t3::Curve_index;
-    std::string name()       const { return "edge:curve_index"; }
-    int number_of_elements() const { return 1; }
-    std::string type()       const { return type_to_string<value_type>(); }
+    std::string name()         const { return "edge:curve_index"; }
+    int number_of_components() const { return 1; }
+    std::string type()         const { return type_to_string<value_type>(); }
     int number_of_simplices(const C3t3& c3t3) const
     {
       return c3t3.number_of_edges_in_complex();
@@ -182,9 +182,9 @@ namespace internal {
   public:
     using key_type = typename C3t3::Vertex_handle;
     using value_type = typename C3t3::Corner_index;
-    std::string name()       const { return "vertex:corner_index"; }
-    int number_of_elements() const { return 1; }
-    std::string type()       const { return type_to_string<value_type>(); }
+    std::string name()         const { return "vertex:corner_index"; }
+    int number_of_components() const { return 1; }
+    std::string type()         const { return type_to_string<value_type>(); }
     int number_of_simplices(const C3t3& c3t3) const
     {
       return c3t3.number_of_vertices_in_complex();

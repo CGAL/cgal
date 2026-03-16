@@ -95,7 +95,7 @@ save_c3t3(std::ostream& os
     {
       os << "# " << ppty.type() << " "
                  << std::to_string(ppty.number_of_simplices(c3t3)) << " "
-                 << std::to_string(ppty.number_of_elements()) << " "
+                 << std::to_string(ppty.number_of_components()) << " "
                  << ppty.name() << "\n";
 
       using S = typename std::decay_t<decltype(ppty)>::key_type;
