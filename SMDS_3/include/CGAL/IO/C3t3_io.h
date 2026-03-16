@@ -83,7 +83,7 @@ save_c3t3(std::ostream& os
   // write cells
   //// #cells
   os << "Cells" << "\n";
-  os << tr.number_of_cells() << "\n";
+  //// write the nb of cells, and
   //// for each cell: 4 vertex indices
   tr.tds().print_cells(os, vertices);
 
