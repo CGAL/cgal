@@ -489,7 +489,7 @@ stored in the vertex record.)
 The following example program shows a simple algorithm for calculating
 facet normals for a polyhedron using the \bgl API. A
 <a href="https://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
-is used to to store the calculated normals instead of changing the Polyhedron items class.
+is used to store the calculated normals instead of changing the Polyhedron items class.
 
 \cgalExample{BGL_polyhedron_3/normals.cpp}
 

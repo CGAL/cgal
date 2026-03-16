@@ -364,7 +364,7 @@ Tests whether `(u,v)` is an edge of the triangulation data structure.
 bool is_edge(Vertex_handle u, Vertex_handle v) const;
 
 /*!
-Tests whether `(c,i)` is a facet of of the triangulation data structure.
+Tests whether `(c,i)` is a facet of the triangulation data structure.
 Answers `false` when `dimension()` \f$ <2\f$ .
 \pre \f$ i \in\{0,1,2,3\}\f$
 */

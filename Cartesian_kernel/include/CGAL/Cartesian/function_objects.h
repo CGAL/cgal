@@ -3240,7 +3240,7 @@ public:
     typedef typename K::Vector_2   Vector_2;
 
   public:
-    Vector_2
+    [[nodiscard]] Vector_2
     operator()( const Vector_2& v, const FT& c) const
     {
       return Vector_2(c * v.x(), c * v.y());
@@ -3254,7 +3254,7 @@ public:
     typedef typename K::Vector_2   Vector_2;
 
   public:
-    Vector_2
+    [[nodiscard]] Vector_2
     operator()( const Vector_2& v, const FT& c) const
     {
       return Vector_2(v.x()/c, v.y()/c);
@@ -3268,7 +3268,7 @@ public:
     typedef typename K::Vector_3   Vector_3;
 
   public:
-    Vector_3
+    [[nodiscard]] Vector_3
     operator()( const Vector_3& v, const FT& c) const
     {
       return Vector_3(v.x()/c, v.y()/c, v.z()/c);
@@ -3282,7 +3282,7 @@ public:
     typedef typename K::Vector_3   Vector_3;
 
   public:
-    Vector_3
+    [[nodiscard]] Vector_3
     operator()( const Vector_3& w, const FT& c) const
     {
       return Vector_3(c * w.x(), c * w.y(), c * w.z());
@@ -3296,14 +3296,14 @@ public:
     typedef typename K::Vector_2  Vector_2;
 
   public:
-    Point_2
+    [[nodiscard]] Point_2
     operator()( const Point_2& p, const Vector_2& v) const
     {
       typename K::Construct_point_2 construct_point_2;
       return construct_point_2(p.x() + v.x(), p.y() + v.y());
     }
 
-    Point_2
+    [[nodiscard]] Point_2
     operator()( const Origin& , const Vector_2& v) const
     {
       typename K::Construct_point_2 construct_point_2;
@@ -3318,14 +3318,14 @@ public:
     typedef typename K::Vector_3  Vector_3;
 
   public:
-    Point_3
+    [[nodiscard]] Point_3
     operator()( const Point_3& p, const Vector_3& v) const
     {
       typename K::Construct_point_3 construct_point_3;
       return construct_point_3(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
     }
 
-    Point_3
+    [[nodiscard]] Point_3
     operator()( const Origin& , const Vector_3& v) const
     {
       typename K::Construct_point_3 construct_point_3;

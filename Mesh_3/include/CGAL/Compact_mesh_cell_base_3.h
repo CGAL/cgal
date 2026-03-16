@@ -22,11 +22,20 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/Time_stamper.h>
+
+#include <array>
+#include <cstddef>
+#include <istream>
+#include <ostream>
+#include <string>
+#include <type_traits>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>

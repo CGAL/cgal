@@ -73,10 +73,10 @@ public:
       return( sine() < q.sine() );
     }
 
-    std::ostream& operator<<(std::ostream& out) const
+    friend std::ostream& operator<<(std::ostream& out, const Quality& q)
     {
-      return out << "(size=" << size()
-                 << ", sine=" << sine() << ")";
+      return out << "(size=" << q.size()
+                 << ", sine=" << q.sine() << ")";
     }
   };
 

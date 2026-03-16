@@ -1696,13 +1696,13 @@ public:
     /// \name Low-Level Connectivity
     ///@{
 
-    /// returns the vertex the halfedge `h` points to.
+    /// returns the vertex where the halfedge `h` points to.
     Vertex_index target(Halfedge_index h) const
     {
         return hconn_[h].vertex_;
     }
 
-    /// sets the vertex the halfedge `h` points to to `v`.
+    /// sets the vertex where the halfedge `h` points to `v`.
     void set_target(Halfedge_index h, Vertex_index v)
     {
         hconn_[h].vertex_ = v;

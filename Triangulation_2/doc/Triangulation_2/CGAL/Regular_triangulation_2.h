@@ -116,7 +116,7 @@ power tests on weighted points.
 
 \tparam Tds  must be a model of `TriangulationDataStructure_2`.
 The face base of a regular triangulation has to be a model of the concept
-`RegularTriangulationFaceBase_2`. while
+`RegularTriangulationFaceBase_2`, while
 the vertex base class has to be a model
 of `RegularTriangulationVertexBase_2`.
 \cgal provides a default
@@ -214,7 +214,7 @@ Regular_triangulation_2 ( InputIterator first, InputIterator last, Traits gt = T
 inserts weighted point `p` in the regular triangulation.
 If the point `p` does not appear as a vertex of the triangulation,
 the returned vertex is a hidden vertex.
-If given the parameter `f` is used as an hint
+If given the parameter `f` is used as a hint
 for the place to start the location process of point `p`.
 */
 Vertex_handle insert(const Weighted_point& p, Face_handle f=Face_handle());

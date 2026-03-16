@@ -883,7 +883,7 @@ radical_axisC3(const RT &px, const RT &py, const RT &pz, const We & /* pw */,
   c = RT(1)*determinant(dqx, dqy, drx, dry);
 }
 
-// function used in critical_squared_radiusC3
+// function used in power_distance_to_power_sphereC3
 // power ( t, tw) with respect to
 // circle orthogonal (p,pw), (q,qw), (r,rw), (s,sw)
 template < class FT>
@@ -948,7 +948,10 @@ power_distance_to_power_sphereC3(const FT &px, const FT &py, const FT &pz, const
                                         sx, sy, sz, sw,
                                         tx, ty, tz, FT(1));
 
-  return -ff0/(ff1 - ff0);
+  if(is_zero(ff0))
+    return FT(0);
+  else
+    return -ff0/(ff1 - ff0);
 }
 
  // I will use this to test if the radial axis of three spheres

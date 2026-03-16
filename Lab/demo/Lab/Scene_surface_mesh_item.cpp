@@ -1563,7 +1563,7 @@ bool
 Scene_surface_mesh_item::load_obj(std::istream& in)
 {
   typedef SMesh::Point Point;
-  bool failed = !CGAL::IO::read_OBJ(in, *(d->smesh_));
+  bool failed = !CGAL::IO::read_OBJ(in, *(d->smesh_), CGAL::parameters::verbose(true));
   if(failed)
   {
     in.clear();

@@ -14,7 +14,9 @@
 
 #include <CGAL/license/Alpha_wrap_3.h>
 
+#include <CGAL/Time_stamper.h>
 #include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
+#include <cstddef>
 
 namespace CGAL {
 namespace Alpha_wraps_3 {
@@ -97,7 +99,7 @@ template <typename Cb>
 class Cell_base_with_timestamp
   : public Cb
 {
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
 public:
   using Has_timestamp = CGAL::Tag_true;

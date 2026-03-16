@@ -200,10 +200,10 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * computes the outward unit vector normal for all faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceGraph`
-* @tparam Face_normal_map a model of `WritablePropertyMap` with
+* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam FaceNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-    `Kernel::Vector_3` as value type.
+    a model of `Kernel::Vector_3` as value type.
 *
 * @param pmesh the polygon mesh
 * @param face_normals the property map in which the normals are written
@@ -233,9 +233,9 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * @see `compute_face_normal()`
 */
-template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters = parameters::Default_named_parameters>
+template <typename PolygonMesh, typename FaceNormalMap, typename NamedParameters = parameters::Default_named_parameters>
 void compute_face_normals(const PolygonMesh& pmesh,
-                          Face_normal_map face_normals,
+                          FaceNormalMap face_normals,
                           const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
@@ -265,7 +265,7 @@ bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& 
   typedef typename GT::FT                                                     FT;
 
   // We are doing a lot of likely inexact constructions to compute min circles on the sphere and
-  // these degenerate cases often happen (e.g. almost flat surfaces), so we don't want to to the usual
+  // these degenerate cases often happen (e.g. almost flat surfaces), so we don't want to do the usual
   // "switch to the exact kernel" in degenerate cases robustness trick. Rather, use a fixed tolerance
   // to assimilate vectors and scalar products.
   //
@@ -640,6 +640,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 *       computed at all vertices of the graph.
 *
 * @tparam PolygonMesh a model of `FaceGraph`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param v the vertex whose normal is computed
 * @param pmesh the polygon mesh containing `v`
@@ -762,10 +763,11 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * computes the outward unit vector normal for all vertices of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *                         `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 *                         the return type of `compute_vertex_normal()` as value type.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the normals are written
@@ -855,13 +857,13 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
 *
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-*    `Kernel::Vector_3` as value type.
+*    a model of `Kernel::Vector_3` as value type.
 * @tparam FaceNormalMap a model of `ReadWritePropertyMap` with
 *    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-*    `Kernel::Vector_3` as value type.
+*    a model of `Kernel::Vector_3` as value type.
 *
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the vertex normals are written
