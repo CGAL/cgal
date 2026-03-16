@@ -128,7 +128,7 @@ protected:
       points.push_back(point_at_x(seg, points[pi].x()));
       round_bounds.push_back(round_bound(points.back()));
       P_idx new_pi=points.size()-1;
-      pi = new_pi; // Store the new_points in 'pi'so that it can be tested against neighbouring segments
+      pi = new_pi; // Store the new_points in pi so that it can be tested against neighboring segments
 
       for(auto l_idx: sc->last_curve().polyline_indices){
         CGAL_assertion(points[output_polylines[l_idx].back()].x() != points[pi].x());
@@ -391,7 +391,7 @@ void float_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsRa
 #endif
   merge_duplicate_points_in_polylines(pts, polylines, traits);
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
+  // The algorithm prevents a vertex that goes through a segment but a vertex may lie on a horizontal/vertical segment after rounding
   std::cout << "Subdivide vertical segments with vertices on them" << std::endl;
 #endif
   snap_post_process(pts, polylines, traits);
@@ -555,7 +555,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 * \ingroup PkgFloatSnapRounding2Ref
 *
 * Given a range of `Polygon_2`, computes rounded polygons such that their segments are either equal or disjoint in their interiors, as induced by the input polygons.
-* Each input polygon is guaranteed to remain a Polygon in the output but may present pinched sections or/and common vertices or segments with
+* Each input polygon is guaranteed to remain a polygon in the output but may present pinched sections or/and common vertices or segments with
 * other polygons.
 *
 * @tparam InputIterator an iterator of a `CGAL::Polygon_2` range
