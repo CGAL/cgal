@@ -40,9 +40,12 @@ int main(int argc, char*argv[] )
   std::cerr.precision(17);
   std::cout.precision(17);
   std::clog.precision(17);
-  std::ifstream in(argc > 1 ? argv[1] : "mini.obj");
-  if(!in)
-    return EXIT_FAILURE;
+  std::string path = argc > 1 ? argv[1] : "mini.obj";
+  std::ifstream in(path);
+  if(!in){
+    std::cout << "File not found: " << path << std::endl;
+    return 0;
+  }
 
   Obj_data data;
   std::vector<std::vector<std::size_t> > unused_id_polygons;
