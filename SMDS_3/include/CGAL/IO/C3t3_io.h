@@ -73,7 +73,8 @@ save_c3t3(std::ostream& os
   //// points coordinates, in the same order as vertices are written
   CGAL::Unique_hash_map<Vertex_handle, std::size_t> vertices;
   std::size_t i = 0;
-  for(const auto v : tr.all_vertex_handles())
+  vertices[tr.infinite_vertex()] = i++;
+  for(const auto v : tr.finite_vertex_handles())
   {
     vertices[v] = i++;
     os << v->point() << "\n";
