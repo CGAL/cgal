@@ -152,8 +152,6 @@ public:
     round_bounds(bounds)
   {}
 
-  /*!
-   */
   template <typename CurveIterator>
   void sweep(CurveIterator begin, CurveIterator end) {
     output_polylines.resize(input_polylines.size());
@@ -161,8 +159,6 @@ public:
     sl->sweep(begin, end);
   }
 
-  /*!
-   */
   bool after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */) {
     if (! event->is_closed()) return true;
     if (! event->has_left_curves() && ! event->has_right_curves()) return true;
@@ -276,13 +272,13 @@ void merge_duplicate_points_in_polylines(PointsRange &pts, PolylinesRange &polyl
   using Equal_2 = typename Traits::Equal_2;
   Equal_2 equal = traits.equal_2_object();
 
-  auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
+  auto Less_indices_xy_2=[&](std::size_t i, std::size_t j){
     return Less_xy_2()(pts[i], pts[j]);
   };
 
   std::vector< std::size_t > unique_points(pts.size());
   std::iota(unique_points.begin(), unique_points.end(), 0);
-  std::sort(unique_points.begin(), unique_points.end(), Less_indexes_xy_2);
+  std::sort(unique_points.begin(), unique_points.end(), Less_indices_xy_2);
   std::vector<Point_2> new_pts;
   std::vector<std::size_t> old_to_new_index(pts.size());
   for(std::size_t i=0; i!=pts.size(); ++i){
@@ -294,10 +290,11 @@ void merge_duplicate_points_in_polylines(PointsRange &pts, PolylinesRange &polyl
   std::swap(pts, new_pts);
   for (Polyline& polyline : polylines) {
     std::vector<std::size_t> updated_polyline;
+    updated_polyline.reserve(polylines.size()); // Potentially more than is necessary
     for (std::size_t i=0; i<polyline.size(); ++i) {
-        std::size_t new_pi=old_to_new_index[polyline[i]];
-        if(i==0 || (new_pi!=updated_polyline[updated_polyline.size()-1]))
-          updated_polyline.push_back(new_pi);
+      std::size_t new_pi=old_to_new_index[polyline[i]];
+      if(i==0 || (new_pi!=updated_polyline[updated_polyline.size()-1]))
+        updated_polyline.push_back(new_pi);
     }
     std::swap(polyline, updated_polyline);
   }
@@ -312,13 +309,13 @@ void snap_post_process(PointsRange &pts, PolylinesRange &polylines, const Traits
 
   Less_xy_2 less_xy_2 = traits.less_xy_2_object();
 
-  auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
+  auto Less_indices_xy_2=[&](std::size_t i, std::size_t j){
     return less_xy_2(pts[i], pts[j]);
   };
 
   std::vector< std::size_t > p_sort_by_x(pts.size());
   std::iota(p_sort_by_x.begin(), p_sort_by_x.end(), 0);
-  std::sort(p_sort_by_x.begin(), p_sort_by_x.end(), Less_indexes_xy_2);
+  std::sort(p_sort_by_x.begin(), p_sort_by_x.end(), Less_indices_xy_2);
 
   for(Polyline &poly: polylines){
     std::vector<std::size_t> updated_polyline;
@@ -327,7 +324,7 @@ void snap_post_process(PointsRange &pts, PolylinesRange &polylines, const Traits
       if(pts[poly[i-1]].x()==pts[poly[i]].x()){
         std::vector< std::size_t >::iterator start, end;
         // Get all vertices between the two endpoints along x order
-        if(Less_indexes_xy_2(poly[i-1],poly[i])){
+        if(Less_indices_xy_2(poly[i-1],poly[i])){
           start=std::upper_bound(p_sort_by_x.begin(), p_sort_by_x.end(), poly[i-1]);
           end=std::lower_bound(p_sort_by_x.begin(), p_sort_by_x.end(), poly[i]);
           for(auto it=start; it!=end; ++it){
@@ -600,24 +597,24 @@ void compute_snapped_polygons_2(InputIterator  begin,
   auto from_exact= traits.converter_from_exact_object();
 
 #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Change format to range of points and indexes" << std::endl;
+  std::cout << "Change format to range of points and indices" << std::endl;
 #endif
   std::vector< typename InputKernel::Segment_2 > input_segments;
   std::vector< Point_2 > pts;
   std::vector< std::vector< std::size_t> > polylines;
 
-  // Store the indexes of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygon i
-  std::vector< std::size_t > polygon_indexes;
+  // Store the indices of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygon i
+  std::vector< std::size_t > polygon_indices;
 
-  polygon_indexes.reserve(std::distance(begin, end));
+  polygon_indices.reserve(std::distance(begin, end));
   for(InputIterator it=begin; it!=end; ++it){
-    polygon_indexes.push_back(input_segments.size());
+    polygon_indices.push_back(input_segments.size());
     const Polygon_2 &P = *it;
     for(std::size_t i=0; i<P.size()-1; ++i)
       input_segments.emplace_back(P[i], P[i+1]);
     input_segments.emplace_back(P[P.size()-1], P[0]);
   }
-  polygon_indexes.push_back(input_segments.size());
+  polygon_indices.push_back(input_segments.size());
 
   // Main algorithm
   internal::float_snap_rounding_2_impl(input_segments.begin(), input_segments.end(), pts, polylines, traits);
@@ -627,10 +624,10 @@ void compute_snapped_polygons_2(InputIterator  begin,
 #endif
 
   // Reassemble the polygons
-  for(std::size_t polygon_idx = 0; polygon_idx != polygon_indexes.size()-1; ++polygon_idx){
+  for(std::size_t polygon_idx = 0; polygon_idx != polygon_indices.size()-1; ++polygon_idx){
     Polygon_2 P;
-    std::size_t idx_start = polygon_indexes[polygon_idx];
-    std::size_t idx_end = polygon_indexes[polygon_idx+1];
+    std::size_t idx_start = polygon_indices[polygon_idx];
+    std::size_t idx_end = polygon_indices[polygon_idx+1];
     std::size_t last_insert;
     for(std::size_t pl_idx = idx_start; pl_idx != idx_end; ++pl_idx){
       auto &pl = polylines[pl_idx];

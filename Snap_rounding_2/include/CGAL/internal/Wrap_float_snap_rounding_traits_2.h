@@ -127,7 +127,6 @@ public:
   public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
-      // Wrap the segment with a variant.
       *oi++ = cv;
       return oi;
     }

@@ -140,11 +140,11 @@ In the second test, we generate perturbed copies of a given segment. This experi
 
 First with segments whose endpoints are randomly and independantly chosen in the unit box.
 Second with perturbated copy of a given segment, we perform this test several times with different input segments.
-The two pixel sizes for snap rounding are chosen so that the rounding shift is of the same order of magnitude as the rounding induced by using respectively double or float coordinates.
+The two pixel sizes for snap rounding are chosen so that the rounding shift is of the same order of magnitude as the rounding induced by using `double` or `float` coordinates.
 The first test is standard but typically exhibits few, if any, rounding issues.
 The second test is deliberately designed to be difficult, as it produces a large number of rounding issues when rounding is performed naively.
 In these settings, float snap rounding significantly outperforms standard snap rounding and remains in the same order of magnitude than computing the intersections without snap.
-The result of our test is resume in the next table:
+The result of our test is summarized in the next table:
 
 @brief Average running times of snap rounding methods
 

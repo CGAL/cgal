@@ -154,8 +154,8 @@ OutputIterator compute_intersection_points(CurveInputIterator curves_begin,
  * \param subcurves Output: An output iterator for the subcurve.
  * \param mult_overlaps If (true), the overlapping subcurve will be reported
  *                      multiple times.
- * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
- *      value-type of OutputIterator is Traits::X_monotone_curve_2.
+ * \pre The value-type of `CurveInputIterator` is `Traits::Curve_2`, and the
+ *      value-type of `OutputIterator` is `Traits::X_monotone_curve_2`.
  */
 template <typename CurveInputIterator, typename OutputIterator, typename Traits>
 OutputIterator compute_subcurves(CurveInputIterator curves_begin,
@@ -228,8 +228,8 @@ bool do_curves_intersect(CurveInputIterator curves_begin,
  *   `output_points`. Each sequence corresponds to one input curve and
  *   describes the polyline obtained after subdividing the curve at
  *   intersection points.
- * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
- *      value-type of OutputIterator is Traits::X_monotone_curve_2.
+ * \pre The value-type of `CurveInputIterator` is `Traits::Curve_2`, and the
+ *      value-type of `OutputIterator` is `Traits::X_monotone_curve_2`.
  */
 template <typename CurveInputIterator, typename PointsRange, typename PolylinesRange, typename Traits>
 void compute_intersection_polylines(CurveInputIterator curves_begin,

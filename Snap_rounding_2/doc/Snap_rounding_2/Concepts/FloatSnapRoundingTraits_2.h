@@ -191,7 +191,7 @@ class ConstructRoundedPoint_2
 
   \warning To guarantee a valid result, the order of the coordinates of two
   points `p` and `q` must be preserved:
-  p.x() < q.x() implies rounded(p.x()) <= rounded(q.x())
+  \f$p.x() < q.x()\f$ implies \f$rounded(p.x()) \leq rounded(q.x()) \f$
   (and similarly for the y coordinate).
   \note If `Evaluation_tag` is true, the algorithms sort the vertices and call `Evaluate` when two vertices are likely to not respect this condition.
   */
@@ -230,7 +230,7 @@ class Evaluate
   public:
 
   /*!
-  Given a point, evaluates its exact value. For example, for a point from EPECK, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
+  Given a point, evaluates its exact value. For example, for a point using `CGAL::Lazy_exact<CGAL::Rational>`, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
   */
   void operator()(Point_2 p);
 };
@@ -249,9 +249,12 @@ class ConverterToExact
   typedef unspecified_type InputPoint_2;
   typedef unspecified_type InputSegment_2;
   /*!
-  Convert input points (i.e. segments) into points (i.e. segments) of the type of the traits
+  Convert input points into points of the type of the traits
   */
   Point_2 operator()(InputPoint_2 p);
+  /*!
+  Convert input segments into segments of the type of the traits
+  */
   Segment_2 operator()(InputSegment_2 p);
 };
 

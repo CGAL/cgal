@@ -57,7 +57,7 @@ Point_2 random_point(CGAL::Random& r, double m = -1, double M = 1)
   return Point_2(FT(r.get_double(m, M)), FT(r.get_double(m, M)));
 }
 
-Point_2 random_noise_point(CGAL::Random& r, double m, double M, Vector_2 v)
+Point_2 random_noise_point(CGAL::Random& r, double m, double M, const Vector_2 &v)
 {
   return Point_2(FT(r.get_double(m, M) + CGAL::to_double(v.x())), FT(r.get_double(m, M)  + CGAL::to_double(v.y())));
 }

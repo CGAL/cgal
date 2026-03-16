@@ -25,20 +25,6 @@
 
 namespace CGAL {
 
-/*!
-\ingroup PkgSnapRounding2Ref
-
-The class `Float_snap_rounding_traits_2<Kernel>` is a model of the
-`FloatSnapRoundingTraits_2` concept, and is the only traits class supplied
-with the package.
-This class should be instantiated with a kernel with points and segments that are convertible to
-`Exact_predicates_exact_constructions_kernel`, the user must specified to used another exact geometric kernel that conforms
-to the \cgal kernel-concept, such as `Cartesian<Gmpq>`.
-
-\cgalModels{SnapRoundingTraits_2}
-
-*/
-
 namespace internal {
 template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<Exact_Kernel> >
 struct Float_snap_rounding_traits_base_2: BaseTraits{
@@ -134,7 +120,7 @@ struct Double_snap_rounding_traits_2: internal::Float_snap_rounding_traits_base_
 /*!
 \ingroup PkgFloatSnapRounding2Ref
 
-The class Float_snap_rounding_traits_2<Kernel> is a model of the FloatSnapRoundingTraits_2 concept. It is identical to Double_snap_rounding_traits_2<Kernel>,
+The class `Float_snap_rounding_traits_2<Kernel>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<Kernel>`,
 except that points are rounded to single-precision floating-point coordinates.
 
 \cgalModels{SnapRoundingTraits_2}
