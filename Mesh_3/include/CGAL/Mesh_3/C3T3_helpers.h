@@ -1416,14 +1416,14 @@ private:
         std::size_t old_i = index_map.at(static_cast<std::size_t>(i));
         Surface_patch_index index = surface_prop_table_[old_i].surface_index_;
         //add_to_complex sets the index, and updates the facet counter
-        if(!( Surface_patch_index() == index ))
+        if(!( Surface_patch_index() == index )) {
           c3t3.add_to_complex(f, index);
-        else
+          c3t3.set_surface_info(f, surface_prop_table_[old_i]);
+          const Facet mirror = c3t3.triangulation().mirror_facet(f);
+          c3t3.set_surface_info(mirror, surface_prop_table_[old_i]);
+        } else {
           c3t3.remove_from_complex(f);
-
-        c3t3.set_surface_info(f, surface_prop_table_[old_i]);
-        const Facet mirror = c3t3.triangulation().mirror_facet(f);
-        c3t3.set_surface_info(mirror, surface_prop_table_[old_i]);
+        }
       }
     }
 
@@ -1436,14 +1436,14 @@ private:
       Facet f(c, i);
 
       Surface_patch_index index = surface_prop_table_[0].surface_index_;
-      if (!( Surface_patch_index() == index ))
+      if (!( Surface_patch_index() == index )) {
         c3t3.add_to_complex(f, index);
-      else
+        c3t3.set_surface_info(f, surface_prop_table_[0]);
+        const Facet mirror = c3t3.triangulation().mirror_facet(f);
+        c3t3.set_surface_info(mirror, surface_prop_table_[0]);
+      } else {
         c3t3.remove_from_complex(f);
-
-      c3t3.set_surface_info(f, surface_prop_table_[0]);
-      const Facet mirror = c3t3.triangulation().mirror_facet(f);
-      c3t3.set_surface_info(mirror, surface_prop_table_[0]);
+      }
     }
 
   private:
