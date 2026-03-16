@@ -83,7 +83,7 @@ std::istream& operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_s
   extracts the Delaunay triangulation from a stream.
 
   The format of the input is the same as the format of the output of
-  the '<<' operator for Delaunay_triangulation_on_hyperbolic_surface_2.
+  the '<<' operator for `Delaunay_triangulation_on_hyperbolic_surface_2`.
 */
 std::ostream& operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
 

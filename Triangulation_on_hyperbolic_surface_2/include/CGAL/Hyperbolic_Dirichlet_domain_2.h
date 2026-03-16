@@ -60,9 +60,9 @@ unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
         Dart_const_descriptor invaded = triangulation.const_opposite(invader);
 
         // get the positions of the vertices of the invader's triangle
-        Point a = positions[triangulation.const_ccw(invader)];
-        Point b = positions[triangulation.const_cw(invader)];
-        Point c = positions[invader];
+        const Point& a = positions[triangulation.const_ccw(invader)];
+        const Point& b = positions[triangulation.const_cw(invader)];
+        const Point& c = positions[invader];
         Complex cross_ratio = triangulation.get_cross_ratio(invader);
 
         // retieve the positions of the invaded's triangle
@@ -97,7 +97,7 @@ std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hype
 
     std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realized_triangles = unfold<Traits>(triangulation);
     std::vector<Voronoi_point> dirichlet_vertices;
-
+    dirichlet_vertices;.reserve(realized_triangles.size());
     Traits gt;
     typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
     for (std::tuple<Dart_const_descriptor, Point, Point, Point>& triangle : realized_triangles){
