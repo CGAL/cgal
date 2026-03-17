@@ -122,7 +122,6 @@ struct Tester
                   CGAL::parameters::no_perturb(),
                   CGAL::parameters::no_reset_c3t3());
 
-#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
     // Using adjacencies instead of calling oracle to update restricted
     // Delaunay of the surface during the refinement of the volume
     // does not ensure that refinement is idempotent
@@ -142,7 +141,6 @@ struct Tester
     f = c3t3.number_of_facets_in_complex();
     c = c3t3.number_of_cells_in_complex();
     assert ( n < 11 );
-#endif
 
     verify_c3t3(c3t3,domain,domain_type,v,v,f,f,c,c);
     verify_c3t3_hausdorff_distance(c3t3, domain, domain_type, hdist);

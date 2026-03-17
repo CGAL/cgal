@@ -47,10 +47,6 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/assertions.h>
 
-#ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
-#include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
-#endif
-
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Real_timer.h>
 
@@ -202,17 +198,8 @@ public:
       Cells_level,
       Null_mesh_visitor>                            Facets_visitor;
 
-#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
   /// Cells visitor : it just need to know previous level
   typedef Null_mesh_visitor_level<Facets_visitor>   Cells_visitor;
-#else
-  /// Cells visitor : to update surface (restore restricted Delaunay)
-  /// when refining cells
-  typedef Surface_mesher::Visitor<
-      Triangulation,
-      Facets_level,
-      Facets_visitor>                               Cells_visitor;
-#endif
 
   /// Constructor
   Mesher_3(C3T3&               c3t3,
@@ -384,11 +371,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                 )
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
-#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 , cells_visitor_(facets_visitor_)
-#else
-, cells_visitor_(&facets_mesher_, &facets_visitor_)
-#endif
 , r_c3t3_(c3t3)
 , maximal_number_of_vertices_(maximal_number_of_vertices)
 , error_code_(error_code)

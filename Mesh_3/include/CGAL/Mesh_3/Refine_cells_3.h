@@ -412,11 +412,7 @@ public:
 
   // Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
-#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
   { update_star_self(v); }
-#else
-  { update_star(v); }
-#endif
 
   // Insertion implementation ; returns the inserted vertex
   Vertex_handle insert_impl(const Weighted_point& p, const Zone& zone);
