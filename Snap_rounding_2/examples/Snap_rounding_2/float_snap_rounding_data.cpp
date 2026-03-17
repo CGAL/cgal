@@ -44,7 +44,7 @@ int main(int argc, char*argv[] )
   std::ifstream in(path);
   if(!in){
     std::cout << "File not found: " << path << std::endl;
-    return 0;
+    return EXIT_FAILURE;
   }
 
   Obj_data data;

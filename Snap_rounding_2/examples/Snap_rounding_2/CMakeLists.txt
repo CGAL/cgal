@@ -14,11 +14,4 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
-
-find_package(TBB QUIET)
-include(CGAL_TBB_support)
-if(TARGET CGAL::TBB_support)
-  target_link_libraries(float_snap_rounding PRIVATE CGAL::TBB_support)
-else()
-  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
-endif()
+set_property(TARGET float_snap_rounding_data PROPERTY LABELS "NO_TESTING")
