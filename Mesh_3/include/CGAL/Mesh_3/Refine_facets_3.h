@@ -468,19 +468,15 @@ protected:
                             const Bare_point& center)
   {
     r_c3t3_.add_to_complex(f, surface_index);
-
-    const Facet mirror = mirror_facet(f);
-
-    // a little awkward: these are performed after add_to_complex() because otherwise
-    // the surface index is set up, and add_to_complex() will do nothing...
+    // a little awkward: this is performed after add_to_complex() because otherwise
+    // the surface index is set up, and add_to_complex() does nothing...
     r_c3t3_.set_surface_info(f, {surface_index, center_index, center});
-    r_c3t3_.set_surface_info(mirror, {surface_index, center_index, center});
   }
 
   /// Returns index of facet `f`.
   Surface_patch_index get_facet_surface_index(const Facet& f) const
   {
-    return r_c3t3_.surface_patch_index(f.first, f.second);
+    return r_c3t3_.surface_patch_index(f);
   }
 
   /// Sets index and dimension of vertex `v`.

@@ -1177,7 +1177,6 @@ private:
 
       if(update_surface_center)
       {
-        Facet facet_m = c3t3_.triangulation().mirror_facet(facet);
         if(surface)
         {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1187,7 +1186,6 @@ private:
           // Update facet surface center
           const Bare_point& surface_center = std::get<0>(intersection);
           c3t3_.set_surface_center(facet.first, facet.second, surface_center);
-          c3t3_.set_surface_center(facet_m.first, facet_m.second, surface_center);
         }
       }
 
@@ -1419,8 +1417,6 @@ private:
         if(!( Surface_patch_index() == index )) {
           c3t3.add_to_complex(f, index);
           c3t3.set_surface_info(f, surface_prop_table_[old_i]);
-          const Facet mirror = c3t3.triangulation().mirror_facet(f);
-          c3t3.set_surface_info(mirror, surface_prop_table_[old_i]);
         } else {
           c3t3.remove_from_complex(f);
         }
@@ -1439,8 +1435,6 @@ private:
       if (!( Surface_patch_index() == index )) {
         c3t3.add_to_complex(f, index);
         c3t3.set_surface_info(f, surface_prop_table_[0]);
-        const Facet mirror = c3t3.triangulation().mirror_facet(f);
-        c3t3.set_surface_info(mirror, surface_prop_table_[0]);
       } else {
         c3t3.remove_from_complex(f);
       }

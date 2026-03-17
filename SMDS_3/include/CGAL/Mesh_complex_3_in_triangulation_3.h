@@ -92,7 +92,7 @@ struct Hash_map_of_pairs_type<CGAL::Parallel_tag, PairKey, Value>
       template <typename Tr>
       class C3t3_helper_class
       {
-      protected:
+      public:
         typedef typename Tr::Vertex_handle Vertex_handle;
         typedef typename Tr::Cell_handle   Cell_handle;
         typedef typename Tr::Facet         Facet;
@@ -116,9 +116,14 @@ struct Hash_map_of_pairs_type<CGAL::Parallel_tag, PairKey, Value>
           return make_ordered_pair(e.first->vertex(e.second),
             e.first->vertex(e.third));
         }
+
         Facet canonical_facet(Cell_handle c, int i) const {
           Cell_handle c2 = c->neighbor(i);
           return (c2 < c) ? std::make_pair(c2, c2->index(c)) : std::make_pair(c, i);
+        }
+
+        Facet canonical_facet(const Facet& f) const {
+          return canonical_facet(f.first, f.second);
         }
       }; // end class template C3t3_helper_class
 
@@ -483,13 +488,14 @@ public:
   /** sets the surface index of facet \p f to \p index
   */
   void set_surface_patch_index(const Facet& f,
-                               const Surface_patch_index& index) const
+                               const Surface_patch_index& index,
+                               const bool do_canonicalize = true) const
   {
-    // std::cout << "set " << &*(cell) << " " << i << " to " << index << " (new)" << std::endl;
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
 
     if (index == Surface_patch_index())
     {
-      surface_facet_info_.erase(f);
+      surface_facet_info_.erase(cf);
     }
     else
     {
@@ -497,13 +503,13 @@ public:
       if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
       {
         typename Surface_facet_info::accessor accessor;
-        surface_facet_info_.insert(accessor, f);
+        surface_facet_info_.insert(accessor, cf);
         accessor->second.surface_index_ = index;
       }
       else
 #endif
       {
-        surface_facet_info_[f].surface_index_ = index;
+        surface_facet_info_[cf].surface_index_ = index;
       }
     }
   }
@@ -512,25 +518,28 @@ public:
   */
   void set_surface_patch_index(const Cell_handle& cell,
                                const int i,
-                               const Surface_patch_index& index) const
+                               const Surface_patch_index& index,
+                               const bool do_canonicalize = true) const
   {
-    return set_surface_patch_index(Facet(cell, i), index);
+    return set_surface_patch_index(Facet(cell, i), index, do_canonicalize);
   }
 
   void set_surface_center(const Facet& f,
-                          const Bare_point& p) const
+                          const Bare_point& p,
+                          const bool do_canonicalize = true) const
   {
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::accessor accessor;
-      surface_facet_info_.insert(accessor, f);
+      surface_facet_info_.insert(accessor, cf);
       accessor->second.center_ = p;
     }
     else
 #endif
     {
-      surface_facet_info_[f].center_ = p;
+      surface_facet_info_[cf].center_ = p;
     }
   }
 
@@ -538,25 +547,28 @@ public:
   */
   void set_surface_center(const Cell_handle& cell,
                           const int i,
-                          const Bare_point& p) const
+                          const Bare_point& p,
+                          const bool do_canonicalize = true) const
   {
-    return set_surface_center(Facet(cell, i), p);
+    return set_surface_center(Facet(cell, i), p, do_canonicalize);
   }
 
   void set_surface_center_index(const Facet& f,
-                                const Index& index) const
+                                const Index& index,
+                                const bool do_canonicalize = true) const
   {
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::accessor accessor;
-      surface_facet_info_.insert(accessor, f);
+      surface_facet_info_.insert(accessor, cf);
       accessor->second.center_index_ = index;
     }
     else
 #endif
     {
-      surface_facet_info_[f].center_index_ = index;
+      surface_facet_info_[cf].center_index_ = index;
     }
   }
 
@@ -564,17 +576,20 @@ public:
   */
   void set_surface_center_index(const Cell_handle& cell,
                                 const int i,
-                                const Index& index) const
+                                const Index& index,
+                               const bool do_canonicalize = true) const
   {
-    return set_surface_center_index(Facet(cell, i), index);
+    return set_surface_center_index(Facet(cell, i), index, do_canonicalize);
   }
 
   void set_surface_info(const Facet& f,
-                        const Facet_prop& info) const
+                        const Facet_prop& info,
+                        const bool do_canonicalize = true) const
   {
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
     if (info.surface_index_ == Surface_patch_index())
     {
-      surface_facet_info_.erase(f);
+      surface_facet_info_.erase(cf);
     }
     else
     {
@@ -582,21 +597,22 @@ public:
       if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
       {
         typename Surface_facet_info::accessor accessor;
-        surface_facet_info_.insert(accessor, f);
+        surface_facet_info_.insert(accessor, cf);
         accessor->second = info;
       }
       else
 #endif
       {
-        surface_facet_info_[f] = info;
+        surface_facet_info_[cf] = info;
       }
     }
   }
 
   void set_surface_info(const Cell_handle& cell, int i,
-                        const Facet_prop& info) const
+                        const Facet_prop& info,
+                        const bool do_canonicalize = true) const
   {
-    return set_surface_info(Facet(cell, i), info);
+    return set_surface_info(Facet(cell, i), info, do_canonicalize);
   }
 
   /** sets the subdomain index of cell \p cell to \p index
@@ -628,19 +644,21 @@ public:
   }
   /** returns the surface index of facet \p f
   */
-  Surface_patch_index surface_patch_index(const Facet& f) const
+  Surface_patch_index surface_patch_index(const Facet& f,
+                                          const bool do_canonicalize = true) const
   {
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
-      if (surface_facet_info_.find(accessor, f))
+      if (surface_facet_info_.find(accessor, cf))
         return accessor->second.surface_index_;
     }
     else
 #endif
     {
-      auto it = surface_facet_info_.find(f);
+      auto it = surface_facet_info_.find(cf);
       if (it != surface_facet_info_.end())
         return it->second.surface_index_;
     }
@@ -650,28 +668,31 @@ public:
   /** returns the surface index of facet(\p cell, \p i)
   */
   Surface_patch_index surface_patch_index(const Cell_handle& cell,
-                                          const int i) const
+                                          const int i,
+                                          const bool do_canonicalize = true) const
   {
-    return surface_patch_index(Facet(cell, i));
+    return surface_patch_index(Facet(cell, i), do_canonicalize);
   }
 
-  decltype(auto) surface_center(const Facet& f) const
+  decltype(auto) surface_center(const Facet& f,
+                                const bool do_canonicalize = true) const
   {
-    CGAL_precondition(is_in_complex(f));
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
+    CGAL_precondition(is_in_complex(cf));
 
 # ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
       CGAL_assume_code(bool found =)
-      surface_facet_info_.find(accessor, f);
+      surface_facet_info_.find(accessor, cf);
       CGAL_assume(found);
       return accessor->second.center_;
     }
     else
 #endif
     {
-      auto it = surface_facet_info_.find(f);
+      auto it = surface_facet_info_.find(cf);
       CGAL_assume(it != surface_facet_info_.end());
       return it->second.center_;
     }
@@ -680,28 +701,31 @@ public:
   /** returns the surface center of facet(\p cell, \p i)
   */
   decltype(auto) surface_center(const Cell_handle& cell,
-                                const int i) const
+                                const int i,
+                                const bool do_canonicalize = true) const
   {
-    return surface_center(Facet(cell, i));
+    return surface_center(Facet(cell, i), do_canonicalize);
   }
 
-  Index surface_center_index(const Facet& f) const
+  Index surface_center_index(const Facet& f,
+                             const bool do_canonicalize = true) const
   {
-    CGAL_precondition(is_in_complex(f));
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
+    CGAL_precondition(is_in_complex(cf));
 
 # ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
       CGAL_assume_code(bool found =)
-      surface_facet_info_.find(accessor, f);
+      surface_facet_info_.find(accessor, cf);
       CGAL_assume(found);
       return accessor->second.center_index_;
     }
     else
 #endif
     {
-      auto it = surface_facet_info_.find(f);
+      auto it = surface_facet_info_.find(cf);
       CGAL_assume(it != surface_facet_info_.end());
       return it->second.center_index_;
     }
@@ -710,26 +734,29 @@ public:
   /** returns the surface center index of facet(\p cell, \p i)
   */
   Index surface_center_index(const Cell_handle& cell,
-                             const int i) const
+                             const int i,
+                             const bool do_canonicalize = true) const
   {
-    return surface_center_index(Facet(cell, i));
+    return surface_center_index(Facet(cell, i), do_canonicalize);
   }
 
-  decltype(auto) surface_info(const Facet& f) const
+  decltype(auto) surface_info(const Facet& f,
+                              const bool do_canonicalize = true) const
   {
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
       CGAL_assume_code(bool found =)
-      surface_facet_info_.find(accessor, f);
+      surface_facet_info_.find(accessor, cf);
       CGAL_assume(found);
       return accessor->second;
     }
     else
 #endif
     {
-      auto it = surface_facet_info_.find(f);
+      auto it = surface_facet_info_.find(cf);
       CGAL_assume(it != surface_facet_info_.end());
       return it->second;
     }
@@ -808,41 +835,29 @@ public:
     old_cells.reserve(32);
     tr.incident_cells(v, std::back_inserter(old_cells));
 
+    // The vertex 'v' is isolated from the complex, but the facets opposite to it in the incident
+    // cells may be in the complex and their surface info must be preserved.
+    std::unordered_map<Facet, Facet_prop, SMDS_3::details::Pair_hash> boundary_facet_infos;
+
     for (const Cell_handle& c : old_cells)
     {
-      remove_from_complex(c);
-      for (int i = 0; i < 4; ++i) {
-        // Do *not* call the C3T3's remove_from_complex() because the information
-        // on the opposite facet must not be cleared for boundary facets.
-        set_surface_patch_index(c, i, Surface_patch_index());
-      }
+      const Facet f(c, c->index(v));
+      if (!is_in_complex(f))
+        continue;
+      boundary_facet_infos[tr.mirror_facet(f)] = surface_info(f);
+      remove_from_complex(f);
     }
 
     std::vector<Cell_handle> new_cells;
     new_cells.reserve(32);
     tr.remove_and_give_new_cells(v, std::back_inserter(new_cells));
 
-    typename std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
-    typename std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
-    for (; nc_it != nc_it_end; ++nc_it)
+    for (const auto& e : boundary_facet_infos)
     {
-      Cell_handle c = *nc_it;
-      for (int i = 0; i < 4; ++i)
-      {
-        Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
-        if (is_in_complex(mirror_facet))
-        {
-          set_surface_patch_index(c, i, surface_patch_index(mirror_facet));
-          set_surface_center(c, i, surface_center(mirror_facet.first, mirror_facet.second));
-        }
-      }
-      /*int i_inf;
-      if (c->has_vertex(tr.infinite_vertex(), i_inf))
-      {
-        Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
-        if (is_in_complex(mirror_facet))
-          set_surface_patch_index(c, i_inf, surface_patch_index(mirror_facet));
-      }*/
+      const Facet& nf = e.first;
+      CGAL_assertion(is_in_complex(nf));
+      add_to_complex(nf, e.second.surface_index_);
+      set_surface_info(nf, e.second);
     }
   }
 
@@ -987,19 +1002,21 @@ public:
   }
   /** returns true if facet \p f belongs to the 2D complex
   */
-  bool is_in_complex(const Facet& f) const
+  bool is_in_complex(const Facet& f,
+                     const bool do_canonicalize = true) const
   {
+    const Facet cf = do_canonicalize ? this->canonical_facet(f) : f;
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::const_accessor accessor;
-      if (surface_facet_info_.find(accessor, f))
+      if (surface_facet_info_.find(accessor, cf))
         return !(accessor->second.surface_index_ == Surface_patch_index());
     }
     else
 #endif
     {
-      auto it = surface_facet_info_.find(f);
+      auto it = surface_facet_info_.find(cf);
       if (it != surface_facet_info_.end())
         return !(it->second.surface_index_ == Surface_patch_index());
     }
@@ -1696,11 +1713,7 @@ public:
          ++fit)
     {
       const auto& facet = *fit;
-      set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
-      if (this->triangulation().dimension() > 2) {
-        const Facet& mirror = tr_.mirror_facet(facet);
-        set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
-      }
+      set_surface_patch_index(facet, Surface_patch_index());
     }
     this->number_of_facets_ = 0;
 
@@ -2096,6 +2109,7 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
 
     const int this_opp = this_cell->index(this_n);
     const Facet this_facet(this_cell, this_opp);
+    const Facet this_canonical_facet = this->canonical_facet(this_facet);
 
     // std::cout << "from rhs:\n";
     // std::cout << "  facet: " << rhs.triangulation().point(rhs_c, (rhs_i + 1) % 4) << ", "
@@ -2110,13 +2124,13 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       typename Surface_facet_info::accessor accessor;
-      surface_facet_info_.insert(accessor, this_facet);
+      surface_facet_info_.insert(accessor, this_canonical_facet);
       accessor->second = e.second;
     }
     else
 #endif
     {
-      surface_facet_info_[this_facet] = e.second;
+      surface_facet_info_[this_canonical_facet] = e.second;
     }
   }
   CGAL_postcondition(surface_facet_info_.size() == rhs.surface_facet_info_.size());
@@ -2247,9 +2261,7 @@ add_to_complex(const Cell_handle& cell,
 
   if (!is_in_complex(cell, i))
   {
-    Facet mirror = tr_.mirror_facet(std::make_pair(cell, i));
     set_surface_patch_index(cell, i, index);
-    set_surface_patch_index(mirror.first, mirror.second, index);
     ++number_of_facets_;
     if (manifold_info_initialized_) {
       for (int j = 0; j < 3; ++j)
@@ -2297,9 +2309,7 @@ remove_from_complex(const Facet& facet)
 {
   if (is_in_complex(facet))
   {
-    Facet mirror = tr_.mirror_facet(facet);
-    set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
-    set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+    set_surface_patch_index(facet, Surface_patch_index());
     --number_of_facets_;
     if (manifold_info_initialized_) {
       const Cell_handle cell = facet.first;

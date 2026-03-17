@@ -898,9 +898,27 @@ update_star_self(const Vertex_handle& vertex)
     const int& k = (*cell_it)->index(vertex);
     const Facet mirror_f = mirror_facet(*cell_it,k);
 
-    // @todo here and below is 2 map looks up which could be only one.
-    if (r_c3t3_.is_in_complex(mirror_f))
-      r_c3t3_.set_surface_info(*cell_it, k, r_c3t3_.surface_info(mirror_f));
+    CGAL_assertion(!r_c3t3_.is_in_complex(Facet(*cell_it, k), false /*do not canonicalize*/));
+
+    // See also the function insert_impl: if a facet is a surface facet, we mark its opposite facet
+    // before insertion regardless of canonicality because the boundary facet is destroyed but
+    // but not the opposite facet. Now, after the insertion, we must restore that the canonical
+    // facet is marked if the facet is a surface facet.
+    if ( r_c3t3_.is_in_complex(mirror_f, false /*do not canonicalize*/) )
+    {
+      // Avoid duplicating information.
+      const Facet canonical_f = r_c3t3_.canonical_facet(*cell_it, k);
+      if (canonical_f != mirror_f)
+      {
+        const auto& sf = r_c3t3_.surface_info(mirror_f, false /*do not canonicalize*/);
+        r_c3t3_.set_surface_info(canonical_f, sf);
+        r_c3t3_.set_surface_patch_index(mirror_f, Surface_patch_index(), false /*do not canonicalize*/);
+      }
+      CGAL_postcondition(r_c3t3_.is_in_complex(*cell_it,k));
+      CGAL_postcondition(r_c3t3_.is_in_complex(mirror_f));
+      CGAL_postcondition(r_c3t3_.is_in_complex(canonical_f, false));
+      CGAL_postcondition(!r_c3t3_.is_in_complex(r_c3t3_.triangulation().mirror_facet(canonical_f), false));
+    }
 
     // Set subdomain index
     set_cell_in_domain(*cell_it, cells_subdomain);
@@ -951,14 +969,33 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 insert_impl(const Weighted_point& point,
             const Zone& zone)
 {
-  // Remove the cell's facets from the complex (and from the hash map).
-  // Do *not* call the C3T3's remove_from_complex() because the information
-  // on the opposite facet must not be cleared for boundary facets.
-  auto cit = zone.cells.begin();
-  for ( ; cit != zone.cells.end() ; ++cit )
+  // The block below shouldn't be needed because it would be an encroachment?
+  auto ifit = zone.internal_facets.begin();
+  for ( ; ifit != zone.internal_facets.end() ; ++ifit )
+    r_c3t3_.remove_from_complex(*ifit);
+
+  // Surface facet info must be preserved throughout the insertion of the new vertex,
+  // but boundary facets of the conflict zone are destroyed.
+  // So we temporarily mark the opposite facet (which is not destroyed) regardless of canonicality,
+  // and we will check post-insertion if we have marked twice
+  auto bfit = zone.boundary_facets.begin();
+  for ( ; bfit != zone.boundary_facets.end() ; ++bfit )
   {
-    for (int i = 0 ; i < 4 ; ++i)
-      r_c3t3_.set_surface_patch_index(*cit, i, Surface_patch_index());
+    // @todo three map accesses for bfit...
+    if (r_c3t3_.is_in_complex(*bfit)) {
+      const Facet mirror_f = mirror_facet(*bfit);
+      CGAL_assertion(*bfit != mirror_f);
+
+      const auto& sf = r_c3t3_.surface_info(*bfit);
+
+      r_c3t3_.set_surface_info(mirror_f, sf, false /*do not canonicalize*/);
+      CGAL_postcondition(r_c3t3_.is_in_complex(*bfit));
+      CGAL_postcondition(r_c3t3_.is_in_complex(mirror_f, false /*do not canonicalize*/));
+
+      r_c3t3_.set_surface_patch_index(*bfit, Surface_patch_index(), false /*do not canonicalize*/);
+      CGAL_postcondition(!r_c3t3_.is_in_complex(*bfit, false /*do not canonicalize*/));
+      CGAL_postcondition(r_c3t3_.is_in_complex(mirror_f, false /*do not canonicalize*/));
+    }
   }
 
   // TODO: look at this
