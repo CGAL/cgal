@@ -9015,6 +9015,45 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \cgalRefines{AdaptableTernaryFunction}
+
+  \sa `compare_scalar_product_grp`
+
+*/
+class CompareScalarProduct_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+  returns `CGAL::LARGER` iff the scalar product of `u` and `v` is larger than the scalar product `sp`,
+  `CGAL::SMALLER`, iff it is smaller,
+  and `CGAL::EQUAL` iff both are equal.
+*/
+  Comparison_result operator()(const Kernel::Vector_3 &u,
+                               const Kernel::Vector_3 &v,
+                               const Kernel::FT &sp);
+
+  /*!
+    returns `CGAL::LARGER` iff the scalar product of `u` and `v` is larger than the scalar product of `w` and `x`,
+    `CGAL::SMALLER`, iff it is smaller,
+    and `CGAL::EQUAL` iff both are equal.
+  */
+  Comparison_result operator()(const Kernel::Vector_3 &u,
+                               const Kernel::Vector_3 &v,
+                               const Kernel::Vector_3 &w,
+                               const Kernel::Vector_3 &x);
+
+  /// @}
+
+}; /* end Kernel::CompareScalarProduct_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
   \cgalRefines{AdaptableBinaryFunction}
 
   \sa `lexicographically_xyz_smaller_grp`

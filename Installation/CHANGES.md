@@ -119,6 +119,12 @@ Release date: July 2026
 - The function `CGAL::box_intersection_d()` now accepts ranges with different box types.
 - Add the box type `CGAL::Box_with_info<FT, dim, Info>`, which stores a variable of type `Info` accessible via `info()`.
 
+### [3D Convex hull](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexHull3)
+
+-   Added the functions `Convex_hull::do_intersect()` to the package `Convex_hull_3`, which enable testing the intersection of two convex hulls.
+-   Added the functions `extreme_point_3()` to the package `Convex_hull_3`, which return the farthest point of a convex hull in a given direction.
+-   Added the class `Convex_hull_hierarchy` to the package `Convex_hull_3`, which represents a convex hull and is optimized for use with the above functions.
+
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
 Release date: Sept 2025
