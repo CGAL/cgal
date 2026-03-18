@@ -52,14 +52,14 @@ public:
     Vertex_property(const Point_3& point) : point(point) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<IkFT, IkFT> >;
+  using Kinetic_interval = std::vector<std::pair<IkFT, IkFT> >;// barycentric coordinate and intersection time.
 
   struct Edge_property {
     std::size_t line;
     std::size_t order;
     std::map<std::size_t, std::pair<std::size_t, std::size_t> > faces; // For each intersecting support plane there is one pair of adjacent faces (or less if the edge is on the bbox)
     std::set<std::size_t> planes;
-    std::map<std::size_t, Kinetic_interval> intervals; // Maps support plane index to the kinetic interval. std::pair<FT, FT> is the barycentric coordinate and intersection time.
+    std::map<std::size_t, std::pair<std::size_t, std::size_t> > vertices; // Maps support plane to a pair of vertices. (Can't be just one, can't be more than two)
     Edge_property() : line(std::size_t(-1)), order(edge_counter++) { }
 
     Edge_property(const Edge_property& e) = default;
@@ -68,15 +68,12 @@ public:
       line = other.line;
       faces = other.faces;
       planes = other.planes;
-      intervals = other.intervals;
 
       return *this;
     }
   private:
     static std::size_t edge_counter;
   };
-
-  using Kinetic_interval_iterator = typename std::map<std::size_t, Kinetic_interval>::const_iterator;
 
   using Graph = boost::adjacency_list<
     boost::setS, boost::vecS, boost::undirectedS,
@@ -127,13 +124,13 @@ public:
 private:
   Graph m_graph;
   std::vector<Line_3> m_lines;
+  std::vector<std::vector<std::pair<IkFT, Vertex_descriptor> > > m_vertices_on_line;
   std::size_t m_nb_lines_on_bbox;
   std::map<Point_3, Vertex_descriptor> m_map_points;
   std::map<std::vector<std::size_t>, Vertex_descriptor> m_map_vertices;
   std::vector<Face_property> m_ifaces;
 
   std::vector<bool> m_initial_part_of_partition;
-  std::vector<std::map<std::size_t, Kinetic_interval> > m_initial_intervals;
 
 public:
   Intersection_graph() :
@@ -144,6 +141,39 @@ public:
     m_graph.clear();
     m_map_points.clear();
     m_map_vertices.clear();
+  }
+
+  void set_vertices_on_line(std::size_t line_idx, const std::vector<std::pair<IkFT, Vertex_descriptor> >&& vertices) {
+    CGAL_assertion(line_idx < m_lines.size());
+    m_vertices_on_line.resize(m_lines.size());
+    m_vertices_on_line[line_idx] = vertices;
+  }
+
+  const std::vector<std::pair<IkFT, Vertex_descriptor> >& vertices_on_line(std::size_t line_idx) const {
+    CGAL_assertion(line_idx < m_lines.size());
+    return m_vertices_on_line[line_idx];
+  }
+
+  Edge_descriptor locate_edge_on_line(std::size_t line_idx, IkFT u) const {
+    CGAL_assertion(line_idx < m_lines.size());
+    const std::vector<std::pair<IkFT, Vertex_descriptor> > &v = m_vertices_on_line[line_idx];
+    if (u < v[0].first || v.back().first < u)
+      return null_iedge();
+    int low = 0, high = v.size() - 1;
+    while (low < high - 1) {
+      int mid = (low + high)>>1;
+      // Equality should not happen as it is to be used for moving vertices
+      if (u < v[mid].first)
+        high = mid;
+      else
+        low = mid;
+    }
+
+    return edge(v[low].second, v[high].second);
+  }
+
+  const std::set<std::size_t>& planes_on_line(std::size_t line_idx) const {
+    return m_graph[boost::edge(m_vertices_on_line[line_idx][0].second, m_vertices_on_line[line_idx][1].second, m_graph).first].planes;
   }
 
   std::size_t number_of_vertices() const {
@@ -171,7 +201,7 @@ public:
     return m_lines.size() - 1;
   }
 
-  std::size_t nb_lines() const { return m_lines.size(); }
+  std::size_t number_of_lines() const { return m_lines.size(); }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
     const auto pair = m_map_points.insert(std::make_pair(point, Vertex_descriptor()));
@@ -242,6 +272,27 @@ public:
       pair = it->second;
   }
 
+  Face_descriptor get_other_face(std::size_t sp_idx, const Edge_descriptor& edge, Face_descriptor face) const {
+    auto it = m_graph[edge].faces.find(sp_idx);
+    if (it != m_graph[edge].faces.end())
+      return (it->second.first == face) ? it->second.second : it->second.first;
+    else return null_iface();
+  }
+
+  Vertex_descriptor vertex(const std::set<std::size_t> planes) const {
+    auto it = m_map_vertices.find(std::vector<std::size_t>(planes.begin(), planes.end()));
+    if (it != m_map_vertices.end())
+      return it->second;
+    return null_ivertex();
+  }
+
+  Vertex_descriptor vertex(const Point_3& point) const {
+    auto it = m_map_points.find(point);
+    if (it != m_map_points.end())
+      return it->second;
+    return null_ivertex();
+  }
+
   const Face_property& face(Face_descriptor idx) const {
     CGAL_assertion(idx < m_ifaces.size());
     return m_ifaces[idx];
@@ -253,6 +304,10 @@ public:
   }
 
   const Edge_property& edge(Edge_descriptor idx) const {
+    return m_graph[idx];
+  }
+
+  Edge_property& edge(Edge_descriptor idx) {
     return m_graph[idx];
   }
 
@@ -285,28 +340,14 @@ public:
   }
 
   void initialization_done() {
-    auto e = edges();
-    m_initial_intervals.resize(e.size());
-
-    std::size_t idx = 0;
-    for (const auto& edge : e)
-      m_initial_intervals[idx++] = m_graph[edge].intervals;
-
     m_initial_part_of_partition.resize(m_ifaces.size());
-    for (idx = 0; idx < m_ifaces.size(); idx++)
+    for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
       m_initial_part_of_partition[idx] = m_ifaces[idx].part_of_partition;
   }
 
   void reset_to_initialization() {
-    auto e = edges();
-    CGAL_assertion(e.size() == m_initial_intervals.size());
-    std::size_t idx = 0;
-
-    for (auto edge : e)
-      m_graph[edge].intervals = m_initial_intervals[idx++];
-
     CGAL_assertion(m_ifaces.size() == m_initial_part_of_partition.size());
-    for (idx = 0; idx < m_ifaces.size(); idx++)
+    for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
       m_ifaces[idx].part_of_partition = m_initial_part_of_partition[idx];
   }
 
@@ -362,6 +403,13 @@ public:
     return boost::target(edge, m_graph);
   }
 
+  const Vertex_descriptor other(const Edge_descriptor& edge, const Vertex_descriptor &vertex) const {
+    if (boost::target(edge, m_graph) == vertex)
+      return boost::source(edge, m_graph);
+    else
+      return boost::target(edge, m_graph);
+  }
+
   bool is_edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
     return boost::edge(source, target, m_graph).second;
   }
@@ -380,13 +428,6 @@ public:
 
   std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) {
     return m_graph[edge].planes;
-  }
-
-  const std::pair<Kinetic_interval_iterator, Kinetic_interval_iterator> kinetic_intervals(const Edge_descriptor& edge) {
-    return std::pair<Kinetic_interval_iterator, Kinetic_interval_iterator>(m_graph[edge].intervals.begin(), m_graph[edge].intervals.end());
-  }
-  Kinetic_interval& kinetic_interval(const Edge_descriptor& edge, std::size_t sp_idx) {
-    return m_graph[edge].intervals[sp_idx];
   }
 
   const Point_3& point_3(const Vertex_descriptor& vertex) const {

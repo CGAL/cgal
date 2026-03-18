@@ -17,14 +17,10 @@
 
 // CGAL includes.
 #include <CGAL/Timer.h>
-//#include <CGAL/optimal_bounding_box.h>
-//#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/min_quadrilateral_2.h>
-//#include <CGAL/Aff_transformation_2.h>
-//#include <boost/optional/optional_io.hpp>
 
 // Internal includes.
 #include <CGAL/KSP/utils.h>
@@ -59,9 +55,15 @@ private:
   using Line_2 = typename Kernel::Line_2;
   using Transform_3 = CGAL::Aff_transformation_3<Kernel>;
   using Direction_2 = typename Kernel::Direction_2;
+  using IkPoint_2 = typename Intersection_kernel::Point_2;
+  using IkPoint_3 = typename Intersection_kernel::Point_3;
+  using IkVector_2 = typename Intersection_kernel::Vector_2;
+  using IkLine_2 = typename Intersection_kernel::Line_2;
+  using IkFT = typename Intersection_kernel::FT;
 
   using Data_structure = KSP_3::internal::Data_structure<Kernel, Intersection_kernel>;
   using Support_plane = typename Data_structure::Support_plane;
+  using Vertex = typename Support_plane::Vertex;
   using IEdge = typename Data_structure::IEdge;
   using IFace = typename Data_structure::IFace;
   using Face_property = typename Data_structure::Intersection_graph::Face_property;
@@ -74,7 +76,6 @@ private:
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
   using Bbox_3 = CGAL::Bbox_3;
-  //using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
   using Parameters = KSP::internal::Parameters_3<FT>;
 
@@ -103,27 +104,32 @@ public:
     if (m_parameters.verbose)
       std::cout << "* intersecting input polygons ... ";
 
+    double t1 = timer.time();
+
     // Fills in the ivertices on support plane intersections inside the bbox.
-    make_polygons_intersection_free();
-
-    // Generation of ifaces
-    create_ifaces();
-
-    // Splitting the input polygons along intersection lines.
-    initial_polygon_iedge_intersections();
-
-    create_bbox_meshes();
-
-    // Starting from here the intersection graph is const, it won't change anymore.
-    if (m_parameters.verbose)
-      std::cout << "done" << std::endl;
+    create_internal_vertices();
+    double t2 = timer.time();
 
     if (m_parameters.debug)
       KSP_3::internal::dump(m_data, m_data.prefix() + "intersected");
 
+    // Generation of ifaces
+    create_ifaces();
+    double t3 = timer.time();
+
+    // Splitting the input polygons along intersection lines.
+    initial_polygon_splitting();
+
+    double t4 = timer.time();
+
+    create_bbox_meshes();
+
+    double t5 = timer.time();
+    // Starting from here the intersection graph is const, it won't change anymore.
+    if (m_parameters.verbose)
+      std::cout << "done" << std::endl;
+
     CGAL_assertion(m_data.check_bbox());
-    //m_data.set_limit_lines();
-    m_data.precompute_iedge_data();
 
     m_data.initialization_done();
 
@@ -133,7 +139,13 @@ public:
     }
 
     if (m_parameters.verbose) {
-      std::cout << "v: " << m_data.igraph().number_of_vertices() << " f: " << m_data.igraph().number_of_faces() << std::endl;
+      double t6 = timer.time();
+      std::cout << "inserting polygons: " << t1 << std::endl;
+      std::cout << "internal vertices:  " << (t2 - t1) << std::endl;
+      std::cout << "creating ifaces:    " << (t3 - t2) << std::endl;
+      std::cout << "polygon splitting:  " << (t4 - t3) << std::endl;
+      std::cout << "bbox meshes:        " << (t5 - t4) << std::endl;
+      std::cout << "finishing up:       " << (t6 - t5) << std::endl;
     }
   }
 
@@ -226,7 +238,7 @@ private:
 
     std::vector<std::pair<IEdge, Direction_2> > connected;
     m_data.get_and_sort_all_connected_iedges(sp_idx, m_data.target(edge), connected);
-    //if (connected.size() <= 2) ivertex is on bbox edge
+
     std::size_t inext = static_cast<std::size_t>(-1), iprev = static_cast<std::size_t>(-1);
     for (std::size_t idx = 0; idx < connected.size(); idx++) {
       if (connected[idx].first == edge) {
@@ -244,12 +256,12 @@ private:
 
   void create_ifaces() {
     for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
-      const IEdge_set& uiedges = m_data.support_plane(sp_idx).unique_iedges();
+      const IEdge_set& iedges = m_data.support_plane(sp_idx).iedges();
 
       // Special case bbox without splits
-      if (sp_idx < 6 && uiedges.size() == 4) {
+      if (sp_idx < 6 && iedges.size() == 4) {
         // Get first edge
-        IEdge first = *uiedges.begin();
+        IEdge first = *iedges.begin();
         IEdge edge = first;
         IVertex s = m_data.source(edge);
         IVertex t = m_data.target(edge);
@@ -297,13 +309,8 @@ private:
       }
 
       bool all_on_bbox = true;
-      for (auto edge : uiedges) {
+      for (auto edge : iedges) {
         bool on_edge = m_data.igraph().iedge_is_on_bbox(edge);
-        //if (m_data.igraph().iedge_is_on_bbox(edge))
-        //  continue;
-        //
-        //Note the number of bbox lines during creation and skip all those.
-
         // If non-bbox support plane is treated, skip all edges on bbox as they only have one face.
         if (sp_idx >= 6 && on_edge)
           continue;
@@ -365,245 +372,434 @@ private:
       // Special case if the input polygon only intersects with the bbox.
       if (all_on_bbox) {
         IEdge next, prev;
-        get_prev_next(sp_idx, *uiedges.begin(), prev, next);
-        add_iface_from_iedge(sp_idx, *uiedges.begin(), prev, true);
+        get_prev_next(sp_idx, *iedges.begin(), prev, next);
+        add_iface_from_iedge(sp_idx, *iedges.begin(), prev, true);
       }
     }
   }
 
-  void initial_polygon_iedge_intersections() {
-    To_exact to_exact;
+  template<typename IndexRange>
+  void export_poly(const IndexRange& poly, const std::string& filename) const {
+    std::ofstream out(filename);
+    out << (poly.size() + 1);
+    for (const auto& i : poly) {
+      const auto& v = m_data.kinetic_vertices()[i];
+      out << " " << CGAL::to_double(v.p0.x()) << " " << CGAL::to_double(v.p0.y()) << " 0";
+    }
+    out << " " << CGAL::to_double(m_data.kinetic_vertices()[poly.front()].p0.x()) << " " << CGAL::to_double(m_data.kinetic_vertices()[poly.front()].p0.y()) << " 0" << std::endl;
+
+    out.close();
+  }
+
+  template<typename IndexRange>
+  void export_poly_front(const IndexRange& poly, const std::string& filename) const {
+    std::ofstream out(filename);
+
+    out << (poly.size() + 1);
+    for (const auto& i : poly) {
+      const auto& v = m_data.kinetic_vertices()[i];
+      out << " " << CGAL::to_double(v.p0.x() + (0.1 * v.v.x())) << " " << CGAL::to_double(v.p0.y() + (0.1 * v.v.y())) << " 0";
+    }
+    const auto& v = m_data.kinetic_vertices()[poly.front()];
+    out << " " << CGAL::to_double(v.p0.x() + (0.1 * v.v.x())) << " " << CGAL::to_double(v.p0.y() + (0.1 * v.v.y())) << " 0" << std::endl;
+
+    for (const auto& i : poly) {
+      const auto& v = m_data.kinetic_vertices()[i];
+      out << "2";
+      out << " " << CGAL::to_double(v.p0.x()) << " " << CGAL::to_double(v.p0.y()) << " 0";
+      out << " " << CGAL::to_double(v.p0.x() + (0.1 * v.v.x())) << " " << CGAL::to_double(v.p0.y() + (0.1 * v.v.y())) << " 0" << std::endl;
+    }
+    out.close();
+  }
+
+  template<typename IndexRange>
+  void export_poly_line(const IndexRange& poly, const IkLine_2 &l, const std::string& filename) const {
+    std::ofstream out(filename);
+    FT fmin = FLT_MAX, fmax = -FLT_MAX;
     From_exact from_exact;
+    Vector_2 dir = from_exact(l.to_vector() * (FT(1.0) / CGAL::approximate_sqrt(l.to_vector().squared_length())));
 
-    for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
-      bool polygons_assigned = false;
+    std::vector<Vertex> &vts = m_data.kinetic_vertices();
+
+    for (const auto& i : poly) {
+      const auto& v = vts[i];
+      FT t = dir * from_exact((v.p0 - l.point()));
+      fmin = (std::min)(fmin, t);
+      fmax = (std::max)(fmax, t);
+    }
+    FT fspan = fmax - fmin;
+    fmin -= fspan * 0.2;
+    fmax += fspan * 0.2;
+
+    out << 2 << " " << CGAL::to_double(l.point().x() + fmin * dir.x()) << " " << CGAL::to_double(l.point().y() + fmin * dir.y()) << " 0";
+    out << " " << CGAL::to_double(l.point().x() + fmax * dir.x()) << " " << CGAL::to_double(l.point().y() + fmax * dir.y()) << " 0";
+    out << std::endl;
+
+    out << (poly.size() + 1);
+    for (const auto& i : poly) {
+      const auto& v = vts[i];
+      out << " " << CGAL::to_double(v.p0.x()) << " " << CGAL::to_double(v.p0.y()) << " 0";
+    }
+    out << " " << CGAL::to_double(vts[poly.front()].p0.x()) << " " << CGAL::to_double(vts[poly.front()].p0.y()) << " 0" << std::endl;
+
+    out << (poly.size() + 1);
+    for (const auto& i : poly) {
+      const auto& v = vts[i];
+      out << " " << CGAL::to_double(v.p0.x() + (0.1 * v.v.x())) << " " << CGAL::to_double(v.p0.y() + (0.1 * v.v.y())) << " 0";
+    }
+    const auto& v = vts[poly.front()];
+    out << " " << CGAL::to_double(v.p0.x() + (0.1 * v.v.x())) << " " << CGAL::to_double(v.p0.y() + (0.1 * v.v.y())) << " 0" << std::endl;
+
+    for (const auto& i : poly) {
+      const auto& v = vts[i];
+      out << "2";
+      out << " " << CGAL::to_double(v.p0.x()) << " " << CGAL::to_double(v.p0.y()) << " 0";
+      out << " " << CGAL::to_double(v.p0.x() + (0.1 * v.v.x())) << " " << CGAL::to_double(v.p0.y() + (0.1 * v.v.y())) << " 0" << std::endl;
+    }
+
+    out.close();
+  }
+
+  void initial_polygon_splitting() {
+    using Vertex = typename Support_plane::Vertex;
+    using Polygon = std::list<std::size_t>;
+    using Polygons = std::vector<Polygon>;
+    std::vector<Vertex> &vts = m_data.kinetic_vertices();
+    std::vector<CGAL::Oriented_side> sign;
+    sign.reserve(25);
+    std::size_t counter = 0;
+    for (std::size_t sp_idx = 6; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
       Support_plane& sp = m_data.support_plane(sp_idx);
-      if (sp.is_bbox())
-        continue;
+      Polygons polygons(1);
+      polygons[0].resize(sp.data().exact_vertices.size());
+      std::iota(polygons[0].begin(), polygons[0].end(), vts.size());
 
-      sp.mesh().clear_without_removing_property_maps();
+      vts.reserve(vts.size() + sp.data().exact_vertices.size());
 
-      std::map<std::size_t, std::vector<IEdge> > line2edges;
-      // Get all iedges, sort into lines and test intersection per line?
-      for (const IEdge& edge : sp.unique_iedges()) {
+      // get initial polygon for support plane
+      for (std::size_t v = 0; v < sp.data().exact_vertices.size(); v++)
+        vts.emplace_back(sp_idx, sp.data().exact_vertices[v], sp.data().original_rays[v].to_vector());
 
-        if (m_data.is_bbox_iedge(edge))
+      for (auto it = polygons[0].begin(); it != polygons[0].end();it++)
+        auto next = (std::next(it) == polygons[0].end()) ? polygons[0].begin() : std::next(it);
+
+      //export_poly(polygons[0], m_data.prefix() + std::to_string(sp_idx) + "_intial_polygon.polylines.txt");
+
+      for (auto [line_idx, line] : sp.data().lines) {
+        // Skip lines on the bounding box, they won't split the polygon.
+        if (m_data.igraph().line_is_on_bbox(line_idx))
           continue;
 
-        std::size_t line = m_data.igraph().line(edge);
+        std::size_t num_polys = polygons.size();
+        for (std::size_t i = 0; i < num_polys; i++) {
+          Polygon& poly = polygons[i];
+          sign.clear();
+          sign.reserve(poly.size());
+          std::list<std::size_t> pos_side;
+          if (m_data.split_polygon(poly, line_idx, pos_side))
+            polygons.emplace_back(std::move(pos_side));
 
-        line2edges[line].push_back(edge);
-      }
-
-      for (auto pair : line2edges) {
-        // Get line
-        //Line_2 l(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))),sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
-
-        typename Intersection_kernel::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
-        typename Intersection_kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
-        typename Intersection_kernel::Line_2 exact_line(a, b);
-
-        typename Intersection_kernel::Vector_2 ldir = exact_line.to_vector();
-        ldir = (typename Intersection_kernel::FT(1.0) / CGAL::approximate_sqrt(ldir * ldir)) * ldir;
-        Vector_2 dir = from_exact(ldir);
-
-        std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
-        std::vector<IEdge> crossing_iedges;
-        typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();
-        typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();
-        FT min_speed = (std::numeric_limits<double>::max)(), max_speed = -(std::numeric_limits<double>::max)();
-        CGAL::Oriented_side last_side = exact_line.oriented_side(sp.data().exact_vertices.back());
-        Point_2 minp, maxp;
-        typename Intersection_kernel::Point_2 eminp, emaxp;
-
-        // Map polygon to line and get min&max projection
-        for (std::size_t v = 0; v < sp.data().original_vertices.size(); v++) {
-          CGAL::Oriented_side s = exact_line.oriented_side(sp.data().exact_vertices[v]);
-          if (last_side != s) {
-            // Fetch former point to add segment.
-            auto eprev = sp.data().exact_vertices[(v + sp.data().exact_vertices.size() - 1) % sp.data().exact_vertices.size()];
-            const Vector_2 edge_dir = sp.original_edge_direction((v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size(), v);
-
-            typename Intersection_kernel::Segment_2 seg(eprev, sp.data().exact_vertices[v]);
-            const auto result = CGAL::intersection(seg, exact_line);
-
-            typename Intersection_kernel::Point_2 intersection;
-
-            if (result && CGAL::assign(intersection, result)) {
-              typename Intersection_kernel::FT eproj = (intersection - exact_line.point()) * ldir;
-
-              if (eproj < emin) {
-                eminp = intersection;
-                emin = eproj;
-                minp = from_exact(intersection);
-                FT p = dir * edge_dir;
-                min_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / p;
-              }
-              if (emax < eproj) {
-                emaxp = intersection;
-                emax = eproj;
-                maxp = from_exact(intersection);
-                typename Intersection_kernel::FT p = dir * edge_dir;
-                max_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
-              }
-            }
-            else std::cout << "crossing segment does not intersect line" << std::endl;
-            crossing_polygon_segments.push_back(seg);
-          }
-
-          last_side = s;
-        }
-
-        // Is there any intersection?
-        // As the polygon is convex there can only be one line segment on the inside of the polygon
-        if (emin < emax) {
-          m_data.support_plane(sp_idx).set_crossed_line(pair.first);
-          // Collect crossing edges by overlapping min/max barycentric coordinates on line
-          for (IEdge e : pair.second) {
-            std::pair<IFace, IFace> faces;
-            m_data.igraph().get_faces(sp_idx, e, faces);
-            IVertex lower = m_data.source(e);
-            IVertex upper = m_data.target(e);
-            if (lower > upper) {
-              IVertex tmp = upper;
-              upper = lower;
-              lower = tmp;
-            }
-            typename Intersection_kernel::FT s = (sp.to_2d(m_data.point_3(lower)) - exact_line.point()) * ldir;
-            typename Intersection_kernel::FT t = (sp.to_2d(m_data.point_3(upper)) - exact_line.point()) * ldir;
-
-            if (s < t) {
-              if (s < emax && emin < t) {
-                std::pair<IFace, IFace> faces;
-                m_data.igraph().get_faces(sp_idx, e, faces);
-
-                polygons_assigned = true;
-
-                if (!m_data.igraph().face(faces.first).part_of_partition) {
-                  auto pface = m_data.add_iface_to_mesh(sp_idx, faces.first);
-                  sp.data().initial_ifaces.push_back(faces.first);
-                  sp.set_initial(pface.second);
-                }
-
-                if (!m_data.igraph().face(faces.second).part_of_partition) {
-                  auto pface = m_data.add_iface_to_mesh(sp_idx, faces.second);
-                  sp.data().initial_ifaces.push_back(faces.second);
-                  sp.set_initial(pface.second);
-                }
-
-                typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, sp_idx);
-                crossing_iedges.push_back(e);
-                if (emin > s || std::isinf(CGAL::to_double(min_speed))) {
-                  typename Intersection_kernel::FT bary_edge_exact = (emin - s) / (t - s);
-                  FT bary_edge = from_exact((emin - s) / (t - s));
-                  CGAL_assertion(bary_edge_exact >= 0);
-                  FT time = CGAL::abs(from_exact(s - emin) / min_speed);
-                  kinetic_interval.push_back(std::pair<FT, FT>(0, time)); // border barycentric coordinate
-                  kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
-                }
-                else {
-                  kinetic_interval.push_back(std::pair<FT, FT>(0, 0));
-                }
-
-                if (t > emax || std::isinf(CGAL::to_double(max_speed))) {
-                  typename Intersection_kernel::FT bary_edge_exact = (emax - s) / (t - s);
-                  FT bary_edge = from_exact((emax - s) / (t - s));
-                  CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
-                  FT time = CGAL::abs(from_exact(emax - t) / max_speed);
-                  kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
-                  kinetic_interval.push_back(std::pair<FT, FT>(1, time)); // border barycentric coordinate
-                }
-                else
-                  kinetic_interval.push_back(std::pair<FT, FT>(1, 0));
-              }
-            }
-            else if (t < emax && emin < s) {
-              std::pair<IFace, IFace> faces;
-              m_data.igraph().get_faces(sp_idx, e, faces);
-
-              polygons_assigned = true;
-
-              if (!m_data.igraph().face(faces.first).part_of_partition) {
-                auto pface = m_data.add_iface_to_mesh(sp_idx, faces.first);
-                sp.data().initial_ifaces.push_back(faces.first);
-                sp.set_initial(pface.second);
-              }
-
-              if (!m_data.igraph().face(faces.second).part_of_partition) {
-                auto pface = m_data.add_iface_to_mesh(sp_idx, faces.second);
-                sp.data().initial_ifaces.push_back(faces.second);
-                sp.set_initial(pface.second);
-              }
-
-              typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, sp_idx);
-              crossing_iedges.push_back(e);
-              if (s > emax) {
-                typename Intersection_kernel::FT bary_edge_exact = (s - emax) / (s - t);
-                FT bary_edge = from_exact((s - emax) / (s - t));
-                CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
-                FT time = CGAL::abs(from_exact(emax - s) / max_speed);
-                kinetic_interval.push_back(std::pair<FT, FT>(0, time)); // border barycentric coordinate
-                kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
-              }
-              else
-                kinetic_interval.push_back(std::pair<FT, FT>(0, 0));
-
-              if (emin > t) {
-                typename Intersection_kernel::FT bary_edge_exact = (s - emin) / (s - t);
-                FT bary_edge = from_exact(bary_edge_exact);
-                CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
-                FT time = CGAL::abs(from_exact(t - emin) / min_speed);
-                kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
-                kinetic_interval.push_back(std::pair<FT, FT>(1, time)); // border barycentric coordinate
-              }
-              else
-                kinetic_interval.push_back(std::pair<FT, FT>(1, 0));
-            }
-          }
+          counter++;
         }
       }
 
-      // If no faces have been assigned, the input polygon lies completely inside a face.
-      // Every IFace is checked whether the polygon, or just a single vertex, lies inside.
-      // The implementation takes advantage of the IFace being convex.
-      if (!polygons_assigned) {
-        IFace face = IFace(-1);
-        for (auto& f : sp.ifaces()) {
-          Face_property& fp = m_data.igraph().face(f);
+      // Identify which polygon belongs to which face
+      // Starting by mapping fixed vertices and constrained edges to faces.
 
-          typename Intersection_kernel::Point_2 p = to_exact(sp.data().centroid);
-          bool outside = false;
+      for (Polygon& poly : polygons) {
+        bool has_moving = false;
+        IFace face(-1);
+        std::set<std::size_t> faces;
+        std::vector<IVertex> ivertices;
+        for (std::size_t idx : poly) {
+          Vertex &v = vts[idx];
+          if (v.moving)
+            has_moving = true;
 
-          // poly, vertices and edges in IFace are oriented ccw
-          for (std::size_t i = 0; i < fp.pts.size(); i++) {
-            typename Intersection_kernel::Vector_2 ts = fp.pts[(i + fp.pts.size() - 1) % fp.pts.size()] - p;
-            typename Intersection_kernel::Vector_2 tt = fp.pts[i] - p;
+          if (v.constraints.size() == 1) {
+            IVertex s(-1), t(-1);
+            m_data.get_iedge(v, *v.constraints.begin(), s, t);
+            v.constraint_edge = m_data.igraph().edge(s, t);
+            v.itarget = t;
 
-            bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
-            if (!ccw) {
-              outside = true;
-              break;
+            typename Intersection_kernel::Line_3 line = m_data.igraph().line(*v.constraints.begin());
+            IkFT u = line.to_vector() * (sp.to_3d(v.p0) - line.point());
+            IEdge e = m_data.igraph().null_iedge();
+            const auto vertices = m_data.igraph().vertices_on_line(*v.constraints.begin());
+
+            for (std::size_t i = 1; i < vertices.size(); i++) {
+              if (u < vertices[i].first) {
+                e = m_data.igraph().edge(vertices[i].second, vertices[i - 1].second);
+                break;
+              }
             }
-          }
-          if (!outside) {
-            if (face == IFace(-1))
-              face = f;
+
+            CGAL_assertion(v.constraint_edge == e);
+
+            std::pair<std::size_t, std::size_t> p1(idx, -1);
+
+            auto pair = m_data.igraph().edge(e).vertices.insert(std::make_pair(sp_idx, p1));
+
+            // In case of paired vertices, only add one of them
+            if (!pair.second && pair.first->second.first != v.other)
+              pair.first->second.second = idx;
+
+            if (face != IFace(-1))
+              continue;
+
+            if (e != m_data.igraph().null_iedge()) {
+              const std::pair<std::size_t, std::size_t>& neighbors = m_data.igraph().edge(e).faces.find(sp_idx)->second;
+              if (faces.empty()) {
+                faces.insert(neighbors.first);
+                faces.insert(neighbors.second);
+              }
+              else {
+                auto fit = faces.find(neighbors.first);
+                auto sit = faces.find(neighbors.second);
+                if (fit != faces.end() && sit == faces.end())
+                  face = IFace(*fit);
+                else if (fit == faces.end() && sit != faces.end())
+                  face = IFace(*sit);
+                else if (fit != faces.end() && sit != faces.end()) {
+                  if (faces.size() > 2) {
+                    faces.clear();
+                    faces.insert(neighbors.first);
+                    faces.insert(neighbors.second);
+                  }
+                }
+                else if (fit == faces.end() && sit == faces.end()) {
+                  CGAL_assertion(false);
+                }
+              }
+            }
+          } // end if (!v.constraints.empty())
+
+          if (!v.moving) {
+            std::set<std::size_t> planes;
+            for (std::size_t c : v.constraints) {
+              std::set<std::size_t> intersected_planes = m_data.igraph().planes_on_line(c);
+              planes.insert(intersected_planes.begin(), intersected_planes.end());
+            }
+
+            v.ivertex = m_data.igraph().vertex(planes);
+            if (v.ivertex == IVertex(-1))
+              v.ivertex = m_data.igraph().vertex(sp.to_3d(v.p0));
+
+            if (v.ivertex == IVertex(-1)) {
+              std::cout << "vertex not found: " << sp_idx << " " << idx << std::endl;
+              continue;
+            }
+
+            if (face != IFace(-1))
+              continue;
+
+            std::set<std::size_t> faces_from_constraint_1;
+            std::set<std::size_t> faces_from_constraint_2;
+            for (auto e : m_data.incident_iedges(v.ivertex)) {
+              // Filter edges that are not in this bbox face
+              const auto iplanes = m_data.intersected_planes(e);
+
+              if (iplanes.find(sp_idx) == iplanes.end())
+                continue;
+
+              if (*v.constraints.begin() == m_data.igraph().edge(e).line) {
+                const std::pair<std::size_t, std::size_t>& neighbors = m_data.igraph().edge(e).faces.find(sp_idx)->second;
+
+                faces_from_constraint_1.insert(neighbors.first);
+                faces_from_constraint_1.insert(neighbors.second);
+              }
+              else if (*(++v.constraints.begin()) == m_data.igraph().edge(e).line) {
+                const std::pair<std::size_t, std::size_t>& neighbors = m_data.igraph().edge(e).faces.find(sp_idx)->second;
+
+                faces_from_constraint_2.insert(neighbors.first);
+                faces_from_constraint_2.insert(neighbors.second);
+              }
+            }
+
+            // create intersection
+            std::set<std::size_t> faces_from_vertex;
+            std::set_intersection(faces_from_constraint_1.begin(), faces_from_constraint_1.end(),
+                                  faces_from_constraint_2.begin(), faces_from_constraint_2.end(),
+                                  std::inserter(faces_from_vertex, faces_from_vertex.begin()));
+
+            if (faces.empty())
+              std::swap(faces, faces_from_vertex);
             else {
-              std::cout << "Two faces found for " << sp_idx << " sp, f1 " << face << " f2 " << f << std::endl;
+              std::set<std::size_t> tmp;
+              std::set_intersection(faces.begin(), faces.end(), faces_from_vertex.begin(), faces_from_vertex.end(), std::inserter(tmp, tmp.begin()));
+              std::swap(faces, tmp);
+              if (faces.empty())
+                std::cout << "iface could not be retrieved from stationary vertex " << sp_idx << std::endl;
+              else
+                if (faces.size() == 1)
+                  face = *faces.begin();
+            }
+          } // end of moving
+        } // end of vertex
+
+        // Again treat fixed vertices to add them to the two iedges
+        for (auto it = poly.begin();it != poly.end();++it) {
+          Vertex& v = vts[*it];
+          if (!v.moving) {
+            Vertex& prev = vts[it == poly.begin() ? *std::prev(poly.end()) : *std::prev(it)];
+            Vertex& next = vts[std::next(it) == poly.end() ? *poly.begin() : *std::next(it)];
+
+            CGAL_assertion(v.constraints.size() == 2);
+            CGAL_assertion(!prev.constraints.empty());
+            CGAL_assertion(!next.constraints.empty());
+
+            if (prev.moving)
+              v.constraint_edge = prev.constraint_edge;
+            else
+              v.constraint_edge = m_data.igraph().edge(prev.ivertex, v.ivertex);
+
+            if (next.moving)
+              v.other_constraint_edge = next.constraint_edge;
+            else
+              v.other_constraint_edge = m_data.igraph().edge(v.ivertex, next.ivertex);
+
+            CGAL_assertion(v.other_constraint_edge != m_data.igraph().null_iedge());
+            CGAL_assertion(v.constraint_edge != m_data.igraph().null_iedge());
+
+            std::pair<std::size_t, std::size_t> p1(*it, -1);
+
+            auto pair = m_data.igraph().edge(v.constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
+
+            // Already exists? Then fill in the second spot.
+            if (!pair.second && pair.first->second.second == -1)
+              pair.first->second.second = *it;
+
+            auto pair2 = m_data.igraph().edge(v.other_constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
+
+            // Already exists? Then fill in the second spot.
+            if (!pair.second && pair.first->second.second == -1)
+              pair.first->second.second = *it;
+          }
+        }
+
+        if (face == IFace(-1)) {
+          // Check which face contains the barycenter of the polygon
+          auto v2p = [&vts](const std::size_t i) -> IkPoint_2 {return vts[i].p0;};
+          IkPoint_2 c = CGAL::centroid(boost::make_transform_iterator(poly.begin(), v2p), boost::make_transform_iterator(poly.end(), v2p));
+
+          if (faces.empty()) {
+            // if faces not set, all need to be tested
+            face = m_data.locate_iface(sp_idx, c);
+            //std::cout << "face located by point location: " << face << std::endl;
+          }
+          else {
+            for (std::size_t f : faces) {
+              if (m_data.inside_iface(sp, c, f)) {
+                face = f;
+//                 if (m_parameters.debug)
+//                   std::cout << "face located by checking all: " << face << std::endl;
+                break;
+              }
             }
           }
         }
-        if (face != IFace(-1)) {
-          if (!m_data.igraph().face(face).part_of_partition) {
-            auto pface = m_data.add_iface_to_mesh(sp_idx, face);
-            sp.data().initial_ifaces.push_back(face);
-            sp.set_initial(pface.second);
+
+        CGAL_assertion(face != IFace(-1));
+
+        for (std::size_t i : poly) {
+          From_exact from_exact;
+          vts[i].face = face;
+          if (vts[i].constraints.empty()) {
+            if (!m_data.inside_iface(sp_idx, vts[i].p0, face)) {
+              std::ofstream out(m_data.prefix() + "_outside_face_" + std::to_string(face) + "_" + std::to_string(sp_idx) + ".polylines.txt");
+              const auto &pts = m_data.igraph().face(face).pts;
+              out << (pts.size() + 1);
+              for (const auto &p : pts) {
+                Point_2 v = from_exact(p);
+                out << " " << v.x() << " " << v.y() << " 0";
+              }
+              Point_2 v = from_exact(pts[0]);
+              out << " " << v.x() << " " << v.y() << " 0" << std::endl;
+              out.close();
+              CGAL_assertion(false);
+            }
           }
         }
-        else
-          std::cout << "No IFace found for sp " << sp_idx << std::endl;
+
+        CGAL_assertion_code(auto res = ) sp.data().polygons.insert(std::make_pair(face, std::move(poly)));
+        CGAL_assertion(res.second);
+        sp.link_property_maps();
+        m_data.init_border(face, true);
+        sp.data().initial_ifaces.push_back(face);
+
+        for (std::size_t i : poly) {
+          vts[i].face = face;
+          if (vts[i].constraints.empty())
+          {CGAL_assertion(m_data.inside_iface(sp_idx, vts[i].p0, face));}
+        }
+
+        if(has_moving)
+          sp.active_polygons++;
+      } // end of poly
+
+      for (std::size_t i = 0; i < m_data.igraph().number_of_lines(); i++) {
+        const auto& line = m_data.igraph().line(i);
+        const auto dir = line.to_vector();
+        if (CGAL::is_zero(sp.data().exact_plane.orthogonal_vector() * dir)) {
+          const std::vector<std::pair<IkFT, IVertex>>& vol = m_data.igraph().vertices_on_line(i);
+          sp.data().lines.insert(std::make_pair(i, IkLine_2(sp.to_2d(m_data.igraph().point_3(vol[0].second)), sp.to_2d(m_data.igraph().point_3(vol.back().second))))).first;
+        }
       }
-    }
+    } // end of support plane
+
+    // Check proper edge linking
+    CGAL_assertion_code(
+    for (std::size_t sp_idx = 6; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
+      Support_plane& sp = m_data.support_plane(sp_idx);
+      for (auto [face, poly] : sp.data().polygons) {
+        CGAL_assertion(face != IFace(-1));
+        for (std::size_t i : poly) {
+          CGAL_assertion(vts[i].face == face);
+          if (!vts[i].moving) {
+            CGAL_assertion(vts[i].ivertex != IVertex(-1));
+            CGAL_assertion(vts[i].constraints.size() >= 2);
+            CGAL_assertion(vts[i].other != std::size_t(-1));
+          }
+          else if (!vts[i].constraints.empty()) {
+            CGAL_assertion(vts[i].constraints.size() == 1);
+            CGAL_assertion(vts[i].constraint_edge != m_data.igraph().null_iedge());
+            CGAL_assertion(vts[i].other != std::size_t(-1));
+            auto it = m_data.igraph().edge(vts[i].constraint_edge).vertices.find(vts[i].sp_idx);
+            CGAL_assertion(it != m_data.igraph().edge(vts[i].constraint_edge).vertices.end());
+            Vertex& v1 = vts[it->second.first];
+            Vertex& v2 = vts[it->second.second];
+            if (!v1.moving && !v2.moving) {
+              CGAL_assertion(std::size_t(-1) != v2.ivertex);
+              CGAL_assertion(v1.ivertex != std::size_t(-1));
+              CGAL_assertion(v1.ivertex != v2.ivertex);
+              IEdge e = v1.constraint_edge;
+              std::size_t line_idx = m_data.igraph().edge(e).line;
+              if (std::find(v2.constraints.begin(), v2.constraints.end(), line_idx) == v2.constraints.end())
+                e = v1.other_constraint_edge;
+              line_idx = m_data.igraph().edge(e).line;
+              CGAL_assertion(std::find(v2.constraints.begin(), v2.constraints.end(), line_idx) != v2.constraints.end());
+              CGAL_assertion(line_idx != std::size_t(-1));
+              IkFT u1 = m_data.get_u_on_line(v1.ivertex, line_idx);
+              IkFT u2 = m_data.get_u_on_line(v2.ivertex, line_idx);
+              CGAL_assertion(u1 != u2);
+            }
+            else if (v1.moving && v2.moving) {
+              CGAL_assertion(CGAL::is_negative(v1.v * v2.v)); // pointing in different directions
+              CGAL_assertion(CGAL::is_zero(v1.v.x() * v2.v.y() - v1.v.y() * v2.v.x())); // collinear
+            }
+            else {
+              if (v1.moving) {
+                CGAL_assertion(CGAL::is_negative((v2.p0 - v1.p0) * v1.v));
+              }
+              else {
+                CGAL_assertion(v2.moving);
+                CGAL_assertion(CGAL::is_negative((v1.p0 - v2.p0) * v2.v));
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
   void bounding_box_to_polygons(const std::array<typename Intersection_kernel::Point_3, 8>& bbox, std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) const {
@@ -643,6 +839,19 @@ private:
     m_input_planes.resize(write);
     input_polygons.resize(write);
     add_input_polygons();
+
+    // Order vertices on lines
+
+    std::vector<std::set<IVertex>> line2vertices(m_data.igraph().number_of_lines());
+    for (IEdge &e : m_data.igraph().edges()) {
+      std::size_t line_idx = m_data.igraph().edge(e).line;
+      CGAL_assertion(line_idx < m_data.igraph().number_of_lines());
+      line2vertices[line_idx].insert(m_data.igraph().source(e));
+      line2vertices[line_idx].insert(m_data.igraph().target(e));
+    }
+
+    for (std::size_t line_idx = 0; line_idx < m_data.igraph().number_of_lines(); line_idx++)
+      m_data.set_vertices_on_line(line2vertices[line_idx], line_idx);
   }
 
   void add_bbox_faces(const std::vector< std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) {
@@ -693,6 +902,43 @@ private:
     CGAL_assertion(polygon_2.size() == polygon_3.size());
   }
 
+  void restrict_to_bbox(const std::size_t support_plane_idx, std::vector<typename Intersection_kernel::Point_2>& polygon_2) {
+    Support_plane &sp = m_data.support_plane(support_plane_idx);
+    std::set<std::size_t> line_idx;
+
+
+    for (const auto &e : sp.data().iedges) {
+      line_idx.insert(m_data.igraph().edge(e).line);
+    }
+
+    std::vector<IkLine_2> lines;
+    lines.reserve(line_idx.size());
+    for (std::size_t l : line_idx) {
+      const typename Intersection_kernel::Line_3 &line = m_data.igraph().line(l);
+      lines.push_back(sp.to_2d(line));
+    }
+
+    IkPoint_2 c = CGAL::centroid(polygon_2.begin(), polygon_2.end(), CGAL::Dimension_tag<0>());
+    std::vector<CGAL::Oriented_side> signs;
+    signs.resize(lines.size());
+
+    for (std::size_t i = 0;i<lines.size();i++) {
+      signs[i] = lines[i].oriented_side(c);
+      CGAL_assertion(signs[i] != CGAL::ON_BOUNDARY);
+    }
+
+    for (typename Intersection_kernel::Point_2 &p : polygon_2) {
+      for (std::size_t i = 0; i < lines.size(); i++) {
+        Oriented_side s = lines[i].oriented_side(p);
+        if (s != signs[i]) {
+          // In case of a point outside or directly on the bounding box, move it on the inside.
+          p = c + ((lines[i].projection(p) - c) * 0.999);
+          CGAL_assertion(lines[i].oriented_side(p) == signs[i]);
+        }
+      }
+    }
+  }
+
   void preprocess_polygons(std::map< std::size_t, std::pair<std::vector<typename Intersection_kernel::Point_2>, std::vector<std::size_t> > >& polygons) {
     std::size_t input_index = 0;
     std::vector<typename Intersection_kernel::Point_2> polygon_2;
@@ -703,6 +949,7 @@ private:
       std::tie(support_plane_idx, is_added) = m_data.add_support_plane(m_input_polygons[i], false, m_input_planes[i]);
       CGAL_assertion(support_plane_idx != std::size_t(-1));
       convert_polygon(support_plane_idx, m_input_polygons[i], polygon_2);
+      restrict_to_bbox(support_plane_idx, polygon_2);
 
       if (is_added) {
         input_indices.clear();
@@ -775,7 +1022,7 @@ private:
     }
   }
 
-  void make_polygons_intersection_free() {
+  void create_internal_vertices() {
     // First, create all transverse intersection lines.
     using Map_p2vv = std::map<std::set<std::size_t>, std::pair<IVertex, IVertex> >;
     Map_p2vv map_p2vv;
@@ -794,18 +1041,25 @@ private:
       }
     }
 
+    std::unordered_map<std::set<std::size_t>, IVertex, boost::hash<std::set<std::size_t>>> internal_v;
+
     // Then, intersect these lines to find internal intersection vertices.
     using Pair_pv = std::pair< std::set<std::size_t>, std::vector<IVertex> >;
+
     std::vector<Pair_pv> todo;
-    for (auto it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++it_a) {
+    for (Map_p2vv::iterator it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++it_a) {
       const auto& set_a = it_a->first;
 
       todo.push_back(std::make_pair(set_a, std::vector<IVertex>()));
       auto& crossed_vertices = todo.back().second;
       crossed_vertices.push_back(it_a->second.first);
 
-      std::set<std::set<std::size_t>> done;
-      for (auto it_b = map_p2vv.begin(); it_b != map_p2vv.end(); ++it_b) {
+      std::unordered_set<std::set<std::size_t>, boost::hash<std::set<std::size_t>>> done;
+
+      for (Map_p2vv::iterator it_b = map_p2vv.begin(); it_b != map_p2vv.end(); ++it_b) {
+        if (it_a == it_b)
+          continue;
+
         const auto& set_b = it_b->first;
 
         std::size_t common_plane_idx = std::size_t(-1);
@@ -823,18 +1077,26 @@ private:
         if (common_plane_idx != std::size_t(-1)) {
           auto union_set = set_a;
           union_set.insert(set_b.begin(), set_b.end());
-          if (!done.insert(union_set).second) {
+          if (!done.insert(union_set).second)
             continue;
+
+          IVertex v;
+          auto it = internal_v.find(union_set);
+          if (it != internal_v.end())
+            v = it->second;
+          else {
+            std::size_t other_b = ((*set_b.begin()) == common_plane_idx) ? *(++set_b.begin()) : *set_b.begin();
+
+            typename Intersection_kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
+            typename Intersection_kernel::Point_3 point;
+            if (!intersection(seg_a, m_data.support_plane(other_b).exact_plane(), point))
+              continue;
+
+            v = m_data.add_ivertex(point, union_set);
+            internal_v[union_set] = v;
           }
 
-          typename Intersection_kernel::Point_2 point;
-          typename Intersection_kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
-          typename Intersection_kernel::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
-          if (!intersection(m_data.support_plane(common_plane_idx).to_2d(seg_a), m_data.support_plane(common_plane_idx).to_2d(seg_b), point))
-            continue;
-
-          crossed_vertices.push_back(
-            m_data.add_ivertex(m_data.support_plane(common_plane_idx).to_3d(point), union_set));
+          crossed_vertices.push_back(v);
         }
       }
       crossed_vertices.push_back(it_a->second.second);

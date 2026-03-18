@@ -42,7 +42,7 @@
 
 #include <CGAL/KSP_3/Data_structure.h>
 #include <CGAL/KSP_3/Initializer.h>
-#include <CGAL/KSP_3/Propagation.h>
+#include <CGAL/KSP_3/Vertex_propagation.h>
 #include <CGAL/KSP_3/Finalizer.h>
 
 #include <CGAL/Octree.h>
@@ -134,7 +134,7 @@ private:
   using To_exact = typename CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
 
   using Initializer = KSP_3::internal::Initializer<Kernel, Intersection_kernel>;
-  using Propagation = KSP_3::internal::Propagation<Kernel, Intersection_kernel>;
+  using Propagation = KSP_3::internal::Vertex_propagation<Kernel, Intersection_kernel>;
   using Finalizer   = KSP_3::internal::Finalizer<Kernel, Intersection_kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
@@ -594,11 +594,11 @@ public:
         return;
       }
 
-      if (k == 0) { // for k = 0, we skip propagation
-        std::cout << "k needs to be a positive number" << std::endl;
-
-        return;
-      }
+//       if (k == 0) { // for k = 0, we skip propagation
+//         std::cout << "k needs to be a positive number" << std::endl;
+//
+//         return;
+//       }
 
       if (m_parameters.verbose) {
         std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
@@ -612,6 +612,7 @@ public:
       partition_time += timer.time();
 
       if (m_parameters.verbose) {
+        std::cout << "events in partition " << idx << ": " << propagation.handled_events << std::endl;
         std::cout << "* propagation finished" << std::endl;
       }
 
@@ -625,20 +626,6 @@ public:
         if (!partition.m_data->support_plane(i).mesh().is_valid(true))
           std::cout << i << ". support has an invalid mesh!" << std::endl;
 
-      for (std::size_t i = 6; i < partition.m_data->number_of_support_planes(); i++) {
-        bool initial = false;
-        typename Data_structure::Support_plane& sp = partition.m_data->support_plane(i);
-
-        for (const auto& f : sp.mesh().faces())
-          if (sp.is_initial(f)) {
-            initial = true;
-            break;
-          }
-
-        if (!initial)
-          std::cout << i << " sp has no initial face before" << std::endl;
-      }
-
       Finalizer finalizer(*partition.m_data, m_parameters);
 
       if (m_parameters.verbose)
@@ -646,20 +633,6 @@ public:
 
       finalizer.create_polyhedra();
       finalization_time += timer.time();
-
-      for (std::size_t i = 6; i < partition.m_data->number_of_support_planes(); i++) {
-        bool initial = false;
-        typename Data_structure::Support_plane& sp = partition.m_data->support_plane(i);
-
-        for (const auto& f : sp.mesh().faces())
-          if (sp.is_initial(f)) {
-            initial = true;
-            break;
-          }
-
-        if (!initial)
-          std::cout << i << " sp has no initial face" << std::endl;
-      }
 
       if (m_parameters.verbose)
         std::cout << idx << ". partition with " << partition.input_polygons.size() << " input polygons split into " << partition.m_data->number_of_volumes() << " volumes" << std::endl;
@@ -818,13 +791,12 @@ public:
       ib.add_vertex(to_lcc(vtx[i]));
 
     std::size_t num_faces = 0;
-    //std::size_t num_vols = 0;
-    //std::size_t num_vtx = 0;
 
     typename LCC::Dart_descriptor d;
 
     std::vector<bool> used_vertices(mapped_vertices.size(), false);
     std::vector<bool> added_volumes(number_of_volumes(), false);
+
     std::deque<std::size_t> queue;
     queue.push_back(0);
     while (!queue.empty()) {
@@ -842,26 +814,10 @@ public:
       added_volumes[v] = true;
 
       ib.begin_surface();
-      //std::cout << v << " inserting:";
-      //num_vols++;
+
       faces(v, std::back_inserter(faces_of_volume));
 
       typename Intersection_kernel::Point_3 centroid = to_exact(m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid);
-
-      /*
-            std::ofstream vout3(std::to_string(v) + ".xyz");
-            vout3.precision(20);
-            vout3 << " " << m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid << std::endl;
-            vout3 << std::endl;
-            vout3.close();*/
-
-            // How to order faces accordingly?
-            // First take faces of adjacent volumes and collect all added edges
-            // Then pick from the remaining faces and take those which have already inserted edges
-            // Repeat the last step until all are done.
-      //       std::set<std::pair<std::size_t, std::size_t> > edges;
-      //       for (std::size_t j=0;)
-            // Try easy way and remove cells, I did not add after every loop?
 
       for (std::size_t j = 0; j < faces_of_volume.size(); j++) {
         vertex_indices(faces_of_volume[j], std::back_inserter(vtx_of_face));
@@ -873,13 +829,8 @@ public:
         if (pair.second != static_cast<int>(v) && pair.second >= 0 && !added_volumes[pair.second])
           queue.push_back(pair.second);
 
-        //auto vertex_range = m_data.pvertices_of_pface(vol.pfaces[i]);
         ib.begin_facet();
         num_faces++;
-
-        //std::cout << "(";
-
-        //Sub_partition& p = m_partition_nodes[faces_of_volume[j].first];
 
         typename Intersection_kernel::Vector_3 norm;
         std::size_t i = 0;
@@ -896,51 +847,17 @@ public:
         norm = norm * len;
 
         bool outwards_oriented = (vtx[mapped_vertices[vtx_of_face[0]]] - centroid) * norm < 0;
-        //outward[std::make_pair(v, j)] = outwards_oriented;
 
         if (!outwards_oriented)
           std::reverse(vtx_of_face.begin(), vtx_of_face.end());
 
-        /*
-                auto p1 = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face[0]], mapped_vertices[vtx_of_face[1]]), std::make_pair(v, j)));
-                if (!p1.second) {
-                  std::size_t first = mapped_vertices[vtx_of_face[0]];
-                  std::size_t second = mapped_vertices[vtx_of_face[1]];
-                  auto p = edge_to_volface[std::make_pair(first, second)];
-                  auto o1 = outward[p];
-                  auto o2 = outward[std::make_pair(v, j)];
-                }
-
-                for (std::size_t k = 1; k < vtx_of_face.size() - 1; k++) {
-                  auto p = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face[k]], mapped_vertices[vtx_of_face[k + 1]]), std::make_pair(v, j)));
-                  if (!p.second) {
-                    std::size_t first = mapped_vertices[vtx_of_face[k]];
-                    std::size_t second = mapped_vertices[vtx_of_face[k + 1]];
-                    auto p = edge_to_volface[std::make_pair(first, second)];
-                    auto o1 = outward[p];
-                    auto o2 = outward[std::make_pair(v, j)];
-                  }
-                }
-
-                auto p2 = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face.back()], mapped_vertices[vtx_of_face[0]]), std::make_pair(v, j)));
-                if (!p2.second) {
-                  std::size_t first = mapped_vertices[vtx_of_face.back()];
-                  std::size_t second = mapped_vertices[vtx_of_face[0]];
-                  auto p = edge_to_volface[std::make_pair(first, second)];
-                  auto o1 = outward[p];
-                  auto o2 = outward[std::make_pair(v, j)];
-                }*/
-
         for (const Index& v : vtx_of_face) {
           ib.add_vertex_to_facet(static_cast<typename LCC::size_type>(mapped_vertices[v]));
-          //std::cout << " " << mapped_vertices[v];
           if (!used_vertices[mapped_vertices[v]]) {
             used_vertices[mapped_vertices[v]] = true;
-            //num_vtx++;
           }
         }
 
-        //std::cout << ")";
         auto face_dart = ib.end_facet(); // returns a dart to the face
         if (lcc.template attribute<2>(face_dart) == lcc.null_descriptor) {
           lcc.template set_attribute<2>(face_dart, lcc.template create_attribute<2>());
@@ -952,6 +869,7 @@ public:
           // 2. face originates from octree splitting (and does not have an input plane)
           // 3. face lies on the bbox
           int ip = static_cast<int>(m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(sp).data().actual_input_polygon);
+
           if (ip != -1)
             lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(m_partition_nodes[faces_of_volume[j].first].input_polygons[ip]);
           else {
@@ -962,7 +880,9 @@ public:
             else
               lcc.template info<2>(face_dart).input_polygon_index = static_cast<Face_support>(n.second);
           }
+
           lcc.template info<2>(face_dart).part_of_initial_polygon = m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second];
+
           lcc.template info<2>(face_dart).plane = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second]).exact_plane();
         }
         else {
@@ -2275,11 +2195,12 @@ private:
 
     if (m_parameters.reorient_bbox) {
       m_transform = to_exact(get_obb2abb(m_input_polygons));
+      auto trans = from_exact(m_transform);
 
       for (const auto& p : m_input_polygons) {
         std::size_t idx = m_points.size();
         for (const Point_3& pt : p)
-          m_points.push_back(from_exact(m_transform.transform(to_exact(pt))));
+          m_points.push_back(trans.transform(pt));
 
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
@@ -2343,10 +2264,12 @@ private:
         }
 
         m_partition_nodes[idx].clipped_polygons.resize(polys.size());
+        auto inv_non_exact = from_exact(inv);
         for (std::size_t i = 0; i < polys.size(); i++) {
           m_partition_nodes[idx].clipped_polygons[i].resize(polys[i].second.size());
-          for (std::size_t j = 0; j < polys[i].second.size(); j++)
-            m_partition_nodes[idx].clipped_polygons[i][j] = from_exact(inv.transform(to_exact(polys[i].second[j])));
+          for (std::size_t j = 0; j < polys[i].second.size(); j++) {
+            m_partition_nodes[idx].clipped_polygons[i][j] = inv_non_exact.transform(polys[i].second[j]);
+          }
         }
 
         // set node index

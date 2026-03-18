@@ -34,6 +34,68 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
+namespace CGAL {
+template<class F>
+struct Output_rep< ::std::array<unsigned char, 3>, F > {
+  const ::std::array<unsigned char, 3>& c;
+  static const bool is_specialized = true;
+  Output_rep(const ::std::array<unsigned char, 3>& c) : c(c) {}
+  std::ostream& operator()(std::ostream& out) const {
+    if (IO::is_ascii(out)) {
+      out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
+    }
+    else { out.write(reinterpret_cast<const char*>(&c), sizeof(c)); }
+    return out;
+  }
+};
+
+
+template<typename Kernel, typename Region, typename Point_map>
+void save_point_regions_3(
+  const Region& regions,
+  const std::string fullpath,
+  const Point_map point_map = Point_map()) {
+
+  using Point_3 = typename Kernel::Point_3;
+  using Color = std::array<unsigned char, 3>;
+  using Point_with_color = std::pair<Point_3, Color>;
+  using PLY_Point_map = CGAL::First_of_pair_property_map<Point_with_color>;
+  using PLY_Color_map = CGAL::Second_of_pair_property_map<Point_with_color>;
+
+  std::vector<Point_with_color> pwc;
+  srand(static_cast<unsigned int>(time(NULL)));
+
+  // Iterate through all regions.
+  for (const auto& region : regions) {
+
+    // Generate a random color.
+    const Color color =
+      CGAL::make_array(
+        static_cast<unsigned char>(rand() % 256),
+        static_cast<unsigned char>(rand() % 256),
+        static_cast<unsigned char>(rand() % 256));
+
+    // Iterate through all region items.
+    for (const auto item : region.second) {
+      const auto& point = get(point_map, item);
+      pwc.push_back(std::make_pair(point, color));
+    }
+  }
+
+  std::ofstream out(fullpath);
+  CGAL::IO::set_ascii_mode(out);
+  CGAL::IO::write_PLY_with_properties(
+    out, pwc,
+    CGAL::IO::make_ply_point_writer(PLY_Point_map()),
+    std::make_tuple(
+      PLY_Color_map(),
+      CGAL::IO::PLY_property<unsigned char>("red"),
+      CGAL::IO::PLY_property<unsigned char>("green"),
+      CGAL::IO::PLY_property<unsigned char>("blue")));
+  out.close();
+}
+} // namespace CGAL
+
 namespace CGAL
 {
 /*!
@@ -198,6 +260,80 @@ public:
     CGAL_assertion(m_polygons.size() == m_region_map.size());
 
     return m_polygons.size();
+  }
+
+  template<typename Regions, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  std::size_t insert_planar_shapes(const Regions &regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
+    m_regions.clear();
+    m_regions.reserve(regions.size());
+
+    for (const auto& region : regions) {
+      CGAL_assertion(region.second.size() > 0);
+      m_regions.push_back(region);
+    }
+
+    // Merge coplanar regions
+    for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
+      for (std::size_t j = i + 1; j < m_regions.size(); j++) {
+        if (m_regions[i].first == m_regions[j].first || m_regions[i].first.opposite() == m_regions[j].first) {
+          std::move(m_regions[j].second.begin(), m_regions[j].second.end(), std::back_inserter(m_regions[i].second));
+          m_regions.erase(m_regions.begin() + j);
+          j--;
+        }
+      }
+    }
+
+    // Estimate ground plane by finding a low mostly horizontal plane
+    std::vector<std::size_t> candidates;
+    FT low_z_peak = (std::numeric_limits<FT>::max)();
+    FT bbox_min[] = { (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)() };
+    FT bbox_max[] = { -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)() };
+    for (const auto& p : m_points) {
+      const auto& point = get(m_point_map, p);
+      for (int i = 0; i < 3; i++) {
+        bbox_min[i] = (std::min)(point[i], bbox_min[i]);
+        bbox_max[i] = (std::max)(point[i], bbox_max[i]);
+      }
+    }
+
+    FT bbox_center[] = { 0.5 * (bbox_min[0] + bbox_max[0]), 0.5 * (bbox_min[1] + bbox_max[1]), 0.5 * (bbox_min[2] + bbox_max[2]) };
+
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+      Vector_3 d = m_regions[i].first.orthogonal_vector();
+      if (abs(d.z()) > 0.98) {
+        candidates.push_back(i);
+        FT z = m_regions[i].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+        low_z_peak = (std::min<FT>)(z, low_z_peak);
+      }
+    }
+
+    m_ground_polygon_index = -1;
+
+    std::vector<Plane_3> pl;
+    for (const auto& p : m_regions) {
+      bool exists = false;
+      for (std::size_t i = 0; i < pl.size(); i++)
+        if (pl[i] == p.first || pl[i].opposite() == p.first)
+          exists = true;
+
+      if (!exists)
+        pl.push_back(p.first);
+    }
+
+    for (const auto& pair : m_regions) {
+      Indices region;
+      for (auto& i : pair.second)
+        region.push_back(i);
+      m_planar_regions.push_back(region);
+
+      const std::size_t shape_idx = add_convex_hull_shape(region, pair.first);
+      CGAL_assertion(shape_idx != std::size_t(-1));
+      m_region_map[shape_idx] = region;
+    }
+    CGAL_assertion(m_planar_regions.size() == m_regions.size());
+
+    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
+    return m_planar_regions.size();
   }
 
   /*!
@@ -388,10 +524,13 @@ public:
     FT partition_time, finalization_time, conformal_time;
     m_kinetic_partition.partition(k, partition_time, finalization_time, conformal_time);
 
-    if (m_verbose)
-      std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes" << std::endl;
-
     m_kinetic_partition.get_linear_cell_complex(m_lcc);
+
+    if (m_verbose) {
+      std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes " << std::endl;
+      std::cout << "LCC with " << m_lcc.template one_dart_per_cell<3>().size() << " volumes " << m_lcc.template one_dart_per_cell<2>().size() << " faces " << m_lcc.template one_dart_per_cell<0>().size() << " vertices " << std::endl;
+    }
+    std::cout << "LCC with " << m_lcc.template one_dart_per_cell<3>().size() << " volumes " << m_lcc.template one_dart_per_cell<2>().size() << " faces " << m_lcc.template one_dart_per_cell<0>().size() << " vertices " << std::endl;
 
     setup_energyterms();
   }
@@ -530,9 +669,47 @@ public:
       }
     }
 
+    //eliminate outside face cost
+    for (std::size_t i = 0;i<m_face_neighbors_lcc.size();i++) {
+      if (m_face_neighbors_lcc[i].first < 6 || m_face_neighbors_lcc[i].second < 6)
+        m_face_area_lcc[i] = FT(0);
+    }
+
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
 
     reconstructed_model_polylist_lcc(pit, polyit, lambda);
+  }
+
+  void write_detected_shapes(const std::string& fullpath) {
+    std::ofstream out(fullpath);
+    out << "num_points: " << m_points.size() << std::endl;
+    out << std::setprecision(17);
+    for (const auto idx : m_points) {
+      const Point_3& p = get(m_point_map, idx);
+      out << p << std::endl;
+    }
+
+    out << std::endl << "num_normals: " << m_points.size() << std::endl;
+    for (const auto idx : m_points) {
+      const Vector_3& n = get(m_normal_map, idx);
+      out << n << std::endl;
+    }
+
+    out << std::endl << "num_groups: " << m_regions.size() << std::endl;
+    for (const auto& region : m_regions) {
+      out << std::endl << "group_parameters: " << region.first << std::endl;
+      out << "group_num_points: " << region.second.size() << std::endl;
+      bool first = true;
+      for (const auto idx : region.second) {
+        if (first) {
+          out << idx;
+          first = false;
+        }
+        else out << " " << idx;
+      }
+      out << std::endl;
+    }
+    out.close();
   }
 
 private:
@@ -1847,6 +2024,10 @@ private:
       m_points, m_sorting->ordered(), *m_neighbor_query, region_type);
     region_growing.detect(std::back_inserter(m_regions));
 
+    std::cout << "Detected " << m_regions.size() << " planar regions." << std::endl;
+
+    //save_point_regions_3<Kernel>(m_regions, "regions_before_reg_" + std::to_string(m_regions.size()) + "_.ply", m_point_map);
+
     std::size_t unassigned = 0;
     region_growing.unassigned_items(m_points, boost::make_function_output_iterator([&](const auto&) { ++unassigned; }));
 
@@ -1896,6 +2077,8 @@ private:
         }
       }
     }
+
+    //save_point_regions_3<Kernel>(m_regions, "regions_after_reg_" + std::to_string(m_regions.size()) + "_.ply", m_point_map);
 
     // Estimate ground plane by finding a low mostly horizontal plane
     std::vector<std::size_t> candidates;
@@ -1985,7 +2168,7 @@ private:
 
     num_shapes = m_planar_regions.size();
 
-    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices);
+    //m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, CGAL::parameters::debug(m_debug).verbose(m_verbose));
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
@@ -1999,8 +2182,14 @@ private:
     std::vector<Point_2> pts2d;
     pts2d.reserve(pts.size());
 
-    for (const Point_3& p : pts)
+    FT dist = 0;
+
+    for (const Point_3& p : pts) {
       pts2d.push_back(inexact_pl.to_2d(p));
+      dist += CGAL::sqrt((inexact_pl.projection(p) - p).squared_length());
+    }
+
+    dist /= pts.size();
 
     // Iterate over all faces of the lcc
     for (Dart& d : m_lcc.template one_dart_per_cell<2>()) {
@@ -2009,10 +2198,8 @@ private:
         continue;
 
       // No filtering of points per partition
-
       face_to_points.push_back(std::make_pair(m_lcc.dart_descriptor(d), std::vector<std::size_t>()));
 
-//      auto& info = m_lcc.template info<2>(m_lcc.dart_descriptor(d));
 
       std::vector<Point_2> vts2d;
       vts2d.reserve(m_lcc.template one_dart_per_incident_cell<0, 2>(m_lcc.dart_descriptor(d)).size());
