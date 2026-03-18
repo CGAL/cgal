@@ -425,7 +425,7 @@ void float_snap_rounding_2_impl(InputIterator begin, InputIterator end, PointsRa
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam InputIterator an iterator over a range of `Segment_2`
-* @tparam OutputIterator model of OutputIterator holding `Polyline` for patch border. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam OutputIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param begin,end the input segment range
@@ -490,7 +490,7 @@ OutputIterator float_snap_rounding_2(InputIterator    begin,
 * Given a range of segments, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
 *
 * @tparam InputIterator an iterator of a range whose value type is model of `Kernel::Segment_2`
-* @tparam OutputIterator model of OutputIterator holding `Kernel::Segment_2` for patch border.
+* @tparam OutputIterator model of OutputIterator holding `Kernel::Segment_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param begin,end the input segment range
@@ -559,7 +559,7 @@ OutputIterator compute_snapped_subcurves_2(InputIterator     begin,
 * other polygons.
 *
 * @tparam InputIterator an iterator of a `CGAL::Polygon_2` range
-* @tparam OutputIterator a model of OutputIterator holding `CGAL::Polygon_2` for patch border
+* @tparam OutputIterator a model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param begin,end the range of input polygons

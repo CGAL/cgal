@@ -72,16 +72,16 @@ double double_ceil(const NT &x){
 /*!
 \ingroup PkgFloatSnapRounding2Ref
 
-The class `Double_snap_rounding_traits_2<Input_Kernel, Exact_Kernel, BaseTraits>`
+The class `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`
 is a model of the `FloatSnapRoundingTraits_2` concept. It provides the traits
 required to perform snap rounding where the resulting points are represented
 using double precision floating-point coordinates.
 
-The template parameter `Input_Kernel` specifies the kernel used for the input
+The template parameter `InputKernel` specifies the kernel used for the input
 geometric objects. These objects must be convertible to the types defined by
-`Exact_Kernel`.
+`ExactKernel`.
 
-The template parameter `Exact_Kernel` defines the exact kernel used internally
+The template parameter `ExactKernel` defines the exact kernel used internally
 to perform robust geometric computations. By default, it is set to
 `CGAL::Exact_predicates_exact_constructions_kernel`. Advanced users may provide
 another exact kernel that models the CGAL kernel concept, such as
@@ -89,11 +89,11 @@ another exact kernel that models the CGAL kernel concept, such as
 
 The template parameter `BaseTraits` specifies the underlying arrangement traits
 class used for segment handling. By default, it is
-`Arr_segment_traits_2<Exact_Kernel>`.
+`Arr_segment_traits_2<ExactKernel>`.
 
 \cgalModels{SnapRoundingTraits_2}
 */
-template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<Exact_Kernel> >
+template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Double_snap_rounding_traits_2: BaseTraits{
   using Base = BaseTraits;
 
@@ -114,8 +114,8 @@ struct Double_snap_rounding_traits_2: BaseTraits{
   using Evaluation_tag = Tag_true;
   using Evaluate = internal::Evaluate<FT>;
 
-  typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_to_exact;
-  typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_from_exact;
+  typedef Cartesian_converter<InputKernel, ExactKernel> Converter_to_exact;
+  typedef Cartesian_converter<ExactKernel, InputKernel> Converter_from_exact;
 
   struct Evaluation{
     void operator()(const Point_2 &p) const{
@@ -164,12 +164,12 @@ struct Double_snap_rounding_traits_2: BaseTraits{
 /*!
 \ingroup PkgFloatSnapRounding2Ref
 
-The class `Float_snap_rounding_traits_2<Input_Kernel, Exact_Kernel, BaseTraits>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<Input_Kernel, Exact_Kernel, BaseTraits>`,
+The class `Float_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
 except that points are rounded to single-precision floating-point coordinates.
 
 \cgalModels{SnapRoundingTraits_2}
 */
-template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<Exact_Kernel> >
+template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Float_snap_rounding_traits_2: BaseTraits{
   using Base = BaseTraits;
 
@@ -190,8 +190,8 @@ struct Float_snap_rounding_traits_2: BaseTraits{
   using Evaluation_tag = Tag_true;
   using Evaluate = internal::Evaluate<FT>;
 
-  typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_to_exact;
-  typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_from_exact;
+  typedef Cartesian_converter<InputKernel, ExactKernel> Converter_to_exact;
+  typedef Cartesian_converter<ExactKernel, InputKernel> Converter_from_exact;
 
   struct Evaluation{
     void operator()(const Point_2 &p) const{
@@ -241,13 +241,13 @@ struct Float_snap_rounding_traits_2: BaseTraits{
 /*!
 \ingroup PkgFloatSnapRounding2Ref
 
-The class `Integers_snap_rounding_traits_2<Input_Kernel, Exact_Kernel, BaseTraits>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<Input_Kernel, Exact_Kernel, BaseTraits>`,
+The class `Integers_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
 except that points are rounded to the closest point with integer coordinates.
 
 \cgalModels{SnapRoundingTraits_2}
 */
-template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<Exact_Kernel> >
-struct Integers_snap_rounding_traits_2: BaseTraits{
+template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
+struct Integer_snap_rounding_traits_2: BaseTraits{
   using Base = BaseTraits;
 
   using FT = typename Base::FT;
@@ -267,11 +267,11 @@ struct Integers_snap_rounding_traits_2: BaseTraits{
   using Evaluation_tag = Tag_true;
   using Evaluate = internal::Evaluate<FT>;
 
-  typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_to_exact;
-  typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_from_exact;
+  typedef Cartesian_converter<InputKernel, ExactKernel> Converter_to_exact;
+  typedef Cartesian_converter<ExactKernel, InputKernel> Converter_from_exact;
 
-  Integers_snap_rounding_traits_2(): m_pixel_size(1.0){}
-  Integers_snap_rounding_traits_2(double pixel_size): m_pixel_size(pixel_size){}
+  Integer_snap_rounding_traits_2(): m_pixel_size(1.0){}
+  Integer_snap_rounding_traits_2(double pixel_size): m_pixel_size(pixel_size){}
 
   struct Evaluation{
     void operator()(const Point_2 &p) const{
