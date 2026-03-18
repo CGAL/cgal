@@ -119,7 +119,7 @@ void test(const std::vector<Segment_2> &segs){
   t.reset();
   t.start();
 #endif
-  CGAL::Integers_snap_rounding_traits_2<Kernel> int_traits(10e-12);
+  CGAL::Integer_snap_rounding_traits_2<Kernel> int_traits(10e-12);
   CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
