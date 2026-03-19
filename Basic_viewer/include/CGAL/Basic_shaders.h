@@ -725,7 +725,6 @@ in VS_OUT {
 out mediump vec4 fColor;
 out highp   vec4 ls_fP;
 
-uniform mediump float u_PointSize;
 uniform mediump vec2  u_Viewport;
 uniform highp   mat4  u_Mvp;
 
@@ -744,7 +743,7 @@ void main(void)
   vec2 p0 = ToScreenSpace(gl_in[0].gl_Position);
   vec2 p1 = ToScreenSpace(gl_in[1].gl_Position);
   vec2 v0 = normalize(p1 - p0);
-  vec2 n0 = vec2(-v0.y, v0.x) * u_PointSize * 0.5;
+  vec2 n0 = normalize(vec2(-v0.y, v0.x)) ;
 
   // line start
   gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
