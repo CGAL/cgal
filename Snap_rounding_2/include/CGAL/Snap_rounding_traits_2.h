@@ -22,11 +22,12 @@
 #include <list>
 
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Vertical_slabs_snap_rounding_traits_2.h>
 
 namespace CGAL {
 
 template<class Base_kernel>
-class Snap_rounding_traits_2 :
+class Hot_pixel_snap_rounding_traits_2 :
   public CGAL::Arr_segment_traits_2<Base_kernel> {
 
 public: // otherwise Segment_data cannot access the types
@@ -212,6 +213,11 @@ public:
   }
 
 };
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<class Kernel>
+CGAL_DEPRECATED class Snap_rounding_traits_2: Hot_pixel_snap_rounding_traits_2<Kernel>;
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } //namespace CGAL
 

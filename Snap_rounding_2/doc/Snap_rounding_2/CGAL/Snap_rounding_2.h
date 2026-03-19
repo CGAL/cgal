@@ -1,6 +1,8 @@
 namespace CGAL {
 
 /*!
+\deprecated Historical API of `CGAL::snap_rounding_2()`, use newer API of `CGAL::snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()`
+
 \ingroup PkgSnapRounding2Ref
 
 \tparam Traits must be a model of `SnapRoundingTraits_2`.
@@ -120,7 +122,7 @@ snap_rounding_2(
 InputIterator begin,
 InputIterator end,
 OutputContainer& output_container,
-typename Traits::FT pixel_size,
+typename Traits::NT pixel_size,
 bool do_isr = true,
 bool int_output = true,
 unsigned int number_of_kd_trees = 1);

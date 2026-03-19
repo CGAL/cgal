@@ -10,8 +10,8 @@
 //
 // author(s)     : Léo Valque
 
-#ifndef CGAL_FLOAT_SNAP_ROUNDING_TRAITS_2_H
-#define CGAL_FLOAT_SNAP_ROUNDING_TRAITS_2_H
+#ifndef CGAL_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
+#define CGAL_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
 
 #include <CGAL/license/Snap_rounding_2.h>
 
@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-namespace internal::float_snap_rounding_impl {
+namespace internal::vertical_slabs_snap_rounding_impl {
 
 // Duplicate from PMP::triangle_soup_snap_rounding to avoid dependancies. TODO Factorize
 
@@ -70,10 +70,10 @@ double double_ceil(const NT &x){
 }
 
 /*!
-\ingroup PkgFloatSnapRounding2Ref
+\ingroup PkgSnapRounding2Ref
 
-The class `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`
-is a model of the `FloatSnapRoundingTraits_2` concept. It provides the traits
+The class `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`
+is a model of the `VerticalSlabsSnapRoundingTraits_2` concept. It provides the traits
 required to perform snap rounding where the resulting points are represented
 using double precision floating-point coordinates.
 
@@ -91,10 +91,10 @@ The template parameter `BaseTraits` specifies the underlying arrangement traits
 class used for segment handling. By default, it is
 `Arr_segment_traits_2<ExactKernel>`.
 
-\cgalModels{SnapRoundingTraits_2}
+\cgalModels{VerticalSlabsSnapRoundingTraits_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
-struct Double_snap_rounding_traits_2: BaseTraits{
+struct Double_grid_snap_rounding_traits_2: BaseTraits{
   using Base = BaseTraits;
 
   using FT = typename Base::FT;
@@ -162,15 +162,15 @@ struct Double_snap_rounding_traits_2: BaseTraits{
 };
 
 /*!
-\ingroup PkgFloatSnapRounding2Ref
+\ingroup PkgSnapRounding2Ref
 
-The class `Float_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
+The class `Float_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `VerticalSlabsSnapRoundingTraits_2` concept. It is identical to `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
 except that points are rounded to single-precision floating-point coordinates.
 
-\cgalModels{SnapRoundingTraits_2}
+\cgalModels{VerticalSlabsSnapRoundingTraits_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
-struct Float_snap_rounding_traits_2: BaseTraits{
+struct Float_grid_snap_rounding_traits_2: BaseTraits{
   using Base = BaseTraits;
 
   using FT = typename Base::FT;
@@ -239,15 +239,15 @@ struct Float_snap_rounding_traits_2: BaseTraits{
 };
 
 /*!
-\ingroup PkgFloatSnapRounding2Ref
+\ingroup PkgSnapRounding2Ref
 
-The class `Integers_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `FloatSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
+The class `Integer_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `VerticalSlabsSnapRoundingTraits_2` concept. It is identical to `Double_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
 except that points are rounded to the closest point with integer coordinates.
 
 \cgalModels{SnapRoundingTraits_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
-struct Integer_snap_rounding_traits_2: BaseTraits{
+struct Integer_grid_snap_rounding_traits_2: BaseTraits{
   using Base = BaseTraits;
 
   using FT = typename Base::FT;
@@ -270,8 +270,8 @@ struct Integer_snap_rounding_traits_2: BaseTraits{
   typedef Cartesian_converter<InputKernel, ExactKernel> Converter_to_exact;
   typedef Cartesian_converter<ExactKernel, InputKernel> Converter_from_exact;
 
-  Integer_snap_rounding_traits_2(): m_pixel_size(1.0){}
-  Integer_snap_rounding_traits_2(double pixel_size): m_pixel_size(pixel_size){}
+  Integer_grid_snap_rounding_traits_2(): m_pixel_size(1.0){}
+  Integer_grid_snap_rounding_traits_2(double pixel_size): m_pixel_size(pixel_size){}
 
   struct Evaluation{
     void operator()(const Point_2 &p) const{
@@ -309,7 +309,7 @@ struct Integer_snap_rounding_traits_2: BaseTraits{
     Construct_rounded_point_2(double pixel_size): m_pixel_size(pixel_size){}
 
     Target_FT operator()(const FT &x) const{
-      return internal::float_snap_rounding_impl::double_ceil((x / m_pixel_size) - 0.5) * m_pixel_size;
+      return internal::vertical_slabs_snap_rounding_impl::double_ceil((x / m_pixel_size) - 0.5) * m_pixel_size;
     }
     Point_2 operator()(const Point_2 &p) const{
       return Point_2((*this)(p.x()),(*this)(p.y()));

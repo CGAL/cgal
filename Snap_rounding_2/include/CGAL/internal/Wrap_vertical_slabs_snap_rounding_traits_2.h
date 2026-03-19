@@ -12,8 +12,8 @@
 
 #include <CGAL/license/Snap_rounding_2.h>
 
-#ifndef CGAL_WRAP_FLOAT_SNAP_ROUNDING_TRAITS_2_H
-#define CGAL_WRAP_FLOAT_SNAP_ROUNDING_TRAITS_2_H
+#ifndef CGAL_WRAP_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
+#define CGAL_WRAP_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
 
 #include <CGAL/license/Snap_rounding_2.h>
 
@@ -22,11 +22,12 @@
 
 namespace CGAL::internal {
 
-template<typename FloatSnapRoundingTraits, typename PointPropertyMap>
-class Wrap_float_snap_rounding_traits_2
+template<typename VerticalSlabsSnapRoundingTraits, typename PointPropertyMap>
+class Wrap_vertical_slabs_snap_rounding_traits_2
 {
 public:
-  using Base = FloatSnapRoundingTraits;
+  using Base = VerticalSlabsSnapRoundingTraits;
+  using Self = Wrap_vertical_slabs_snap_rounding_traits_2<Base, PointPropertyMap>;
 
   using Base_point_2   = typename Base::Point_2;
   using Base_segment_2 = typename Base::Segment_2;
@@ -75,7 +76,7 @@ private:
   mutable PointPropertyMap point_map;
 
 public:
-  Wrap_float_snap_rounding_traits_2(const FloatSnapRoundingTraits &traits, PointPropertyMap pm): base(traits), point_map(pm){}
+  Wrap_vertical_slabs_snap_rounding_traits_2(const Base &traits, PointPropertyMap pm): base(traits), point_map(pm){}
 
 private:
   Base_point_2 to_base(const Point_2& p) const {
@@ -88,9 +89,9 @@ private:
 
 public:
   class Compare_xy_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Compare_xy_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_) {}
+    Compare_xy_2(const Self* traits_) : traits(traits_) {}
 
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const{
       if(p1==p2) return EQUAL;
@@ -100,9 +101,9 @@ public:
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(this); }
 
   class Construct_min_vertex_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Construct_min_vertex_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_) {}
+    Construct_min_vertex_2(const Self* traits_) : traits(traits_) {}
 
     Point_2 operator()(const X_monotone_curve_2& cv) const{
       auto cmp = traits->compare_xy_2_object();
@@ -112,9 +113,9 @@ public:
   Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(this); }
 
   class Construct_max_vertex_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Construct_max_vertex_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_) {}
+    Construct_max_vertex_2(const Self* traits_) : traits(traits_) {}
 
     Point_2 operator()(const X_monotone_curve_2& cv) const{
       auto cmp = traits->compare_xy_2_object();
@@ -124,9 +125,9 @@ public:
   Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(this); }
 
   class Is_vertical_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Is_vertical_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_) {}
+    Is_vertical_2(const Self* traits_) : traits(traits_) {}
 
     bool operator()(const X_monotone_curve_2& cv) const{
       return traits->base.is_vertical_2_object()(traits->to_base(cv));
@@ -145,9 +146,9 @@ public:
   Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(); }
 
   class Compare_y_at_x_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Compare_y_at_x_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_){}
+    Compare_y_at_x_2(const Self* traits_) : traits(traits_){}
 
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& cv) const {
@@ -157,9 +158,9 @@ public:
   Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(this); }
 
   class Compare_y_at_x_right_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Compare_y_at_x_right_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_){}
+    Compare_y_at_x_right_2(const Self* traits_) : traits(traits_){}
 
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
@@ -170,9 +171,9 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(this); }
 
   class Compare_y_at_x_left_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Compare_y_at_x_left_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_){}
+    Compare_y_at_x_left_2(const Self* traits_) : traits(traits_){}
 
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
@@ -183,9 +184,9 @@ public:
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(this); }
 
   class Equal_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Equal_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_){}
+    Equal_2(const Self* traits_) : traits(traits_){}
 
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const {
@@ -202,9 +203,9 @@ public:
   Equal_2 equal_2_object() const { return Equal_2(this); }
 
   class Split_2 {
-    const Wrap_float_snap_rounding_traits_2* traits;
+    const Self* traits;
   public:
-    Split_2(const Wrap_float_snap_rounding_traits_2* traits_) : traits(traits_){}
+    Split_2(const Self* traits_) : traits(traits_){}
 
     void operator()(const X_monotone_curve_2& cv,
                     const Point_2& p,
@@ -236,10 +237,10 @@ public:
   Compare_squared_distance_2 compare_squared_distance_2_object() const{ return base.compare_squared_distance_2_object(); }
 };
 
-template<typename FloatSnapRoundingTraits, typename PointPropertyMap>
-Wrap_float_snap_rounding_traits_2<FloatSnapRoundingTraits, PointPropertyMap>
-make_wrap_float_snap_rounding_traits_2(FloatSnapRoundingTraits& traits, PointPropertyMap pm){
-  return Wrap_float_snap_rounding_traits_2<FloatSnapRoundingTraits, PointPropertyMap>(traits, pm);
+template<typename Traits, typename PointPropertyMap>
+Wrap_vertical_slabs_snap_rounding_traits_2<Traits, PointPropertyMap>
+make_wrap_vertical_slabs_snap_rounding_traits_2(Traits& traits, PointPropertyMap pm){
+  return Wrap_vertical_slabs_snap_rounding_traits_2<Traits, PointPropertyMap>(traits, pm);
 }
 
 } // namespace CGAL::internal

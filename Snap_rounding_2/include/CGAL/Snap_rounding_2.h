@@ -30,8 +30,11 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/tss.h>
 
+#include<CGAL/Vertical_slabs_snap_rounding.h>
+
 namespace CGAL {
 
+namespace internal {
 enum SEG_Direction {SEG_UP_RIGHT,SEG_UP_LEFT,SEG_DOWN_RIGHT,SEG_DOWN_LEFT,
                 SEG_UP,SEG_DOWN,SEG_LEFT,SEG_RIGHT,SEG_POINT_SEG};
 
@@ -739,13 +742,13 @@ iterate(OutputContainer & output_container,
 
 /*! */
 template<class Traits, class InputIterator, class OutputContainer>
-void snap_rounding_2(InputIterator begin,
-                     InputIterator end,
-                     OutputContainer & output_container,
-                     typename Traits::NT pixel_size,
-                     bool do_isr = true,
-                     bool int_output = true,
-                     unsigned int number_of_kd_trees = 1)
+void hot_pixel_snap_rounding_2(InputIterator begin,
+                               InputIterator end,
+                               OutputContainer & output_container,
+                               typename Traits::NT pixel_size,
+                               bool do_isr = true,
+                               bool int_output = true,
+                               unsigned int number_of_kd_trees = 1)
 {
 #ifdef CGAL_SR_DEBUG
   number_of_false_hp = 0;
@@ -783,6 +786,84 @@ void snap_rounding_2(InputIterator begin,
 #endif
 
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+/*! */
+template<class Traits, class InputIterator, class OutputContainer>
+CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
+                                     InputIterator end,
+                                     OutputContainer & output_container,
+                                     typename Traits::NT pixel_size,
+                                     bool do_isr = true,
+                                     bool int_output = true,
+                                     unsigned int number_of_kd_trees = 1)
+{
+  internal::hot_pixel_snap_rounding_2<Traits>(begin, end, output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
+}
+#endif
+
+/**
+* \ingroup PkgSnapRounding2Ref
+*
+* subdivides and rounds a set of segments so that they are equal or pairwise disjoint in their interiors.
+* The output is a range of polylines, where each polyline corresponds to an input segment.
+* Given a range of segments, using traditional hot pixel snap rounding algorithm, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+*
+* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
+* @tparam OutputIterator model of OutputIterator holding `Kernel::Segment_2`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param segments the input segment range
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{pixel_size}
+*     \cgalParamDescription{The size of the pixel. The plane will be tiled with square pixels of that width such that the origin is the center of a pixel.}
+*     \cgalParamType{`GT::FT`}
+*     \cgalParamDefault{FT(1.)}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `SnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Snap_rounding_traits_2`}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*/
+template <class SegmentRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+void hot_pixel_snap_rounding_2(const SegmentRange &segments,
+                               OutputIterator& out,
+                               const NamedParameters &np = parameters::default_values())
+{
+  using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+
+  using Kernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename SegmentRange::iterator>::value_type>>::Kernel;
+  using DefaultTraits = Snap_rounding_traits_2<Kernel>;
+  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+
+  using Polyline = typename std::iterator_traits<OutputIterator>::value_type;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  std::vector< Polyline > output_container;
+  auto pixel_size = choose_parameter(get_parameter(np, internal_np::pixel_size), 1.);
+  bool do_isr = choose_parameter(get_parameter(np, internal_np::do_iterative_snap_rounding), true);
+  bool int_output = true;
+  unsigned int number_of_kd_trees = 1;
+
+  internal::hot_pixel_snap_rounding_2<Traits>(segments.begin(), segments.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
+
+  for(auto &pl: output_container)
+    *out++ = std::move(pl);
+}
+
+
+
+
+} // namespace internal
 
 } //namespace CGAL
 

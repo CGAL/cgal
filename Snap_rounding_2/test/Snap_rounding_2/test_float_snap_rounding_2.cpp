@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Float_snap_rounding_traits_2.h>
-#include <CGAL/Float_snap_rounding_2.h>
+#include <CGAL/Vertical_slabs_snap_rounding_traits_2.h>
+#include <CGAL/Vertical_slabs_snap_rounding_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
 
@@ -10,7 +10,7 @@
 #include <CGAL/Random.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-typedef CGAL::Float_snap_rounding_traits_2<Kernel>              Traits_2;
+typedef CGAL::Float_grid_snap_rounding_traits_2<Kernel>         Traits_2;
 typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
 typedef Kernel::Vector_2                                        Vector_2;
@@ -25,7 +25,7 @@ typedef CGAL::Polygon_2<Kernel>                                 Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>                      Polygon_with_holes_2;
 typedef std::vector<Polygon_with_holes_2>                       Pwh_vec_2;
 
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
 #include <CGAL/Real_timer.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
@@ -37,7 +37,7 @@ typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
 #ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
 #include <CGAL/Snap_rounding_traits_2.h>
 #include <CGAL/Snap_rounding_2.h>
-typedef CGAL::Snap_rounding_traits_2<Kernel>                     SnapTraits;
+typedef CGAL::Snap_rounding_traits_2<Kernel>                    SnapTraits;
 #endif
 
 //Biggest double with ulp smaller than one
@@ -62,7 +62,7 @@ Point_2 random_noise_point(CGAL::Random& r, double m, double M, const Vector_2 &
   return Point_2(FT(r.get_double(m, M) + CGAL::to_double(v.x())), FT(r.get_double(m, M)  + CGAL::to_double(v.y())));
 }
 
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
 template<class Iterator, class OutRange>
 void compute_subcurves_and_naive_snap(Iterator begin, Iterator end, OutRange &out){
   EK_to_IK to_inexact;
@@ -85,7 +85,7 @@ void compute_subcurves_and_naive_snap(Iterator begin, Iterator end, OutRange &ou
 
 void test(const std::vector<Segment_2> &segs){
   std::vector<Segment_2> out;
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   CGAL::Real_timer t;
   std::cout << "Input size: " << segs.size() << std::endl;
   t.start();
@@ -96,32 +96,32 @@ void test(const std::vector<Segment_2> &segs){
   t.reset();
   t.start();
 #endif
-  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out));
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  CGAL::compute_snapped_subcurves_2(segs, std::back_inserter(out));
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   out.clear();
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.reset();
   t.start();
 #endif
-  CGAL::Float_snap_rounding_traits_2<Kernel> float_traits;
-  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  CGAL::Float_grid_snap_rounding_traits_2<Kernel> float_traits;
+  CGAL::compute_snapped_subcurves_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size with float: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   out.clear();
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.reset();
   t.start();
 #endif
-  CGAL::Integer_snap_rounding_traits_2<Kernel> int_traits(10e-12);
-  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+  CGAL::Integer_grid_snap_rounding_traits_2<Kernel> int_traits(10e-12);
+  CGAL::compute_snapped_subcurves_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
@@ -134,13 +134,13 @@ void test(const std::vector<Segment_2> &segs){
   t.stop();
   std::cout << "Running time with integer 2D snap (scaled at 10^15): " << t.time() << std::endl;
 #endif
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "\n";
 #endif
 }
 
 void test_fully_random(CGAL::Random &r, size_t nb_segments){
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test fully random" << std::endl;
 #endif
   std::vector<Segment_2> segs;
@@ -151,7 +151,7 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
 }
 
 void test_polygons(){
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test polygons" << std::endl;
 #endif
   std::vector<Polygon_2> polygons;
@@ -175,7 +175,7 @@ void test_polygons(){
 }
 
 void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test random polygons" << std::endl;
 #endif
   std::vector<Polygon_2> polygons;
@@ -212,7 +212,7 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
 
 void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector_2 source, Vector_2 target){
   // Difficult test
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test with almost identical segments from " << source << " to " << target << std::endl;
 #endif
   std::vector<Segment_2> segs;
@@ -227,7 +227,7 @@ void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector
 void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
   auto random_rotated_square=[&](){
     double theta=r.get_double(0, CGAL_PI/2);
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
     std::cout << "Angle: " << theta << std::endl;
 #endif
     FT cos_t(std::cos(theta));
@@ -249,12 +249,12 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
     // std::cout << scene << std::endl;
     CGAL::intersection(random_rotated_square(), scene, std::back_inserter(out_intersection));
     assert(out_intersection.size()==1 && out_intersection[0].number_of_holes()==0);
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
     CGAL::Real_timer t;
     t.start();
 #endif
     compute_snapped_polygon_2(out_intersection[0].outer_boundary(), snap_scene);
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
     t.stop();
     std::cout << "Iteration " << i << std::endl;
     std::cout << "Polygon size: " << out_intersection[0].outer_boundary().size()
@@ -276,7 +276,7 @@ void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
 }
 
 void fix_test(){
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Fix tests" << std::endl;
 #endif
   std::vector< Segment_2 > segs;
@@ -358,7 +358,7 @@ void fix_test(){
 }
 
 void test_float_snap_rounding(){
-#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test the other API" << std::endl;
 #endif
 
@@ -373,7 +373,7 @@ void test_float_snap_rounding(){
   segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
-  float_snap_rounding_2(segs.begin(), segs.end(), std::back_inserter(out));
+  vertical_slabs_snap_rounding_2(segs, std::back_inserter(out));
 }
 
 int main(int argc,char *argv[])
