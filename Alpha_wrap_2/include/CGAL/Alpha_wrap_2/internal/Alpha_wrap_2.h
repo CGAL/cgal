@@ -18,7 +18,7 @@
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
 // @todo
-// - Handle degerate inputs?
+// - Handle degenerate inputs?
 // - Add a "full triangle" oracle?
 // - bench sorted/unsorted queues
 
@@ -666,7 +666,7 @@ public:
     std::cout << "> Extract wrap..." << std::endl;
     std::cout << m_tr.number_of_vertices() << " vertices, "
               << m_tr.number_of_faces() << " faces" << std::endl;
-    dump_triangulation("pre_labelling.off");
+    dump_triangulation("pre_labeling.off");
 #endif
 
     using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
@@ -718,7 +718,7 @@ public:
       };
 
       // Exterior gets label -1, ccw polygons get positive labels, holes get negative labels
-      std::stack<std::pair<Face_handle, int> > to_check; // 'int' is the label of the neighbhoring cell
+      std::stack<std::pair<Face_handle, int> > to_check; // 'int' is the label of the neighboring cell
       label_region(m_tr.infinite_face(), -1, to_check);
 
       // Label region of front element to_check list

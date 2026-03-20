@@ -30,7 +30,7 @@ namespace internal {
 
 enum class Steiner_status
 {
-  UNKONWN = 0,
+  UNKNOWN = 0,
   NO_STEINER_POINT,
   RULE_1,
   RULE_2
