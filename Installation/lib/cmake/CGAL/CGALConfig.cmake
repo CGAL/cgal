@@ -7,7 +7,15 @@ set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
 
 set(CGAL_LIBRARIES CGAL)
 
-get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+# Resolve symlinks before extracting the directory so that the subsequent
+# DIRECTORY walk produces a correct CGAL_ROOT (e.g. /lib -> /usr/lib on
+# Arch Linux).  See https://github.com/CGAL/cgal/issues/8521
+if(NOT CMAKE_VERSION VERSION_LESS 3.19)
+  file(REAL_PATH "${CMAKE_CURRENT_LIST_FILE}" _cgal_config_realpath)
+else()
+  get_filename_component(_cgal_config_realpath "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
+endif()
+get_filename_component(CGAL_CONFIG_DIR "${_cgal_config_realpath}" DIRECTORY)
 
 function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
