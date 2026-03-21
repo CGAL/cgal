@@ -31,9 +31,18 @@ endif()
 
 typed_cache_set( BOOL ${CGAL_DONT_OVERRIDE_CMAKE_FLAGS_DESCRIPTION} CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE )
 
-uniquely_add_flags( CMAKE_CXX_FLAGS           ${CGAL_CXX_FLAGS}           )
-uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS ${CGAL_SHARED_LINKER_FLAGS} )
-uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS    ${CGAL_EXE_LINKER_FLAGS}    )
+uniquely_add_flags( CMAKE_CXX_FLAGS                   ${CGAL_CXX_FLAGS}                   )
+uniquely_add_flags( CMAKE_CXX_FLAGS_RELEASE           ${CGAL_CXX_FLAGS_RELEASE}           )
+uniquely_add_flags( CMAKE_CXX_FLAGS_DEBUG             ${CGAL_CXX_FLAGS_DEBUG}             )
+uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS         ${CGAL_MODULE_LINKER_FLAGS}         )
+uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS_RELEASE ${CGAL_MODULE_LINKER_FLAGS_RELEASE} )
+uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS_DEBUG   ${CGAL_MODULE_LINKER_FLAGS_DEBUG}   )
+uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS         ${CGAL_SHARED_LINKER_FLAGS}         )
+uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS_RELEASE ${CGAL_SHARED_LINKER_FLAGS_RELEASE} )
+uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS_DEBUG   ${CGAL_SHARED_LINKER_FLAGS_DEBUG}   )
+uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS            ${CGAL_EXE_LINKER_FLAGS}            )
+uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS_RELEASE    ${CGAL_EXE_LINKER_FLAGS_RELEASE}    )
+uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS_DEBUG      ${CGAL_EXE_LINKER_FLAGS_DEBUG}      )
 
 # Set a default build type if none is given
 if ( NOT CMAKE_BUILD_TYPE )
