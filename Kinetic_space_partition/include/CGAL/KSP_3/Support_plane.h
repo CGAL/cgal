@@ -104,7 +104,7 @@ public:
   };
 
   struct Vertex {
-    Vertex() : sp_idx(std::size_t(-1)), idx(std::size_t(-1)), queued_events(0) {}
+    Vertex() : sp_idx(std::size_t(-1)), queued_events(0) {}
     Vertex(std::size_t sp_idx, const typename Intersection_kernel::Point_2& p0, const typename Intersection_kernel::Vector_2& v, typename Intersection_kernel::FT t_init = 0)
       : sp_idx(sp_idx), p0(p0), v(v), t_init(t_init), moving(true), other(-1), constraints(), k(0),
       face(std::size_t(-1)), ivertex(-1), itarget(-1), constraint_edge(IVertex(-1), IVertex(-1), nullptr), other_constraint_edge(IVertex(-1), IVertex(-1), nullptr), queued_events(0) {
@@ -117,8 +117,8 @@ public:
       p0 = event.p;
       ivertex = itarget;
 
-      std::swap(known_intersections, std::unordered_map<std::size_t, Cached_event>());
-      std::swap(cached_events, std::list<Cached_event>());
+      known_intersections.clear();
+      cached_events.clear();
       queued_events = 0;
     }
 
@@ -163,7 +163,7 @@ public:
     F_bool_map f_initial_map;
     V_original_map v_original_map;
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
-    std::unordered_map<std::size_t, typename Intersection_kernel::Line_2> lines;
+    std::unordered_map<std::size_t, typename Intersection_kernel::Line_2> lines, bbox_lines;
     std::set<IFace> ifaces; // All ifaces in the support plane
     std::vector<IFace> initial_ifaces; // IFaces which intersect with the input polygon and are thus part of the mesh before the propagation starts.
     std::vector<Face_index> initial_pfaces;
@@ -216,14 +216,15 @@ public:
     m_data->angle_tolerance = 0;
     m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
-    std::vector<Point_2> points;
+    std::vector<IkPoint_2> points;
     points.reserve(polygon.size());
     for (const auto& point : polygon) {
       points.push_back(to_2d(point));
     }
     CGAL_assertion(points.size() == polygon.size());
 
-    m_data->centroid = CGAL::centroid(points.begin(), points.end(), CGAL::Dimension_tag<0>());
+    m_data->ikcentroid = CGAL::centroid(points.begin(), points.end(), CGAL::Dimension_tag<0>());
+    m_data->centroid = from_exact(m_data->ikcentroid);
 
     add_property_maps();
   }
@@ -522,6 +523,7 @@ public:
       m_data->original_rays[i] = typename Intersection_kernel::Ray_2(point, directions[dir_vec[i].first]);
     }
 
+    CGAL_assertion_code(
     for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
       for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
         if (j < i)
@@ -529,7 +531,7 @@ public:
         if (j > i)
           CGAL_assertion(m_data->original_directions[i] < m_data->original_directions[j]);
       }
-    }
+    });
   }
 
   bool has_crossed_line(std::size_t line) const {

@@ -445,6 +445,7 @@ public:
 
   void intersect_with_bbox(const std::size_t sp_idx) {
     if (is_bbox_support_plane(sp_idx)) return;
+    Support_plane &sp = support_plane(sp_idx);
 
     typename Intersection_kernel::FT bbox_center_x = 0, bbox_center_y = 0, bbox_center_z = 0;
     for (std::size_t i = 0; i < 8; i++) {
@@ -459,7 +460,6 @@ public:
     // Intersect current plane with all bbox iedges.
     IkPoint_3 point;
     Point_3 p1;
-    const auto& sp = support_plane(sp_idx);
     const auto& plane = sp.exact_plane();
 
     using IEdge_vec = std::vector<IEdge>;
@@ -631,9 +631,19 @@ public:
 
       m_intersection_graph.intersected_planes(new_iedge).insert(common_bbox_plane_idx);
       CGAL_assertion(map_lines_idx.find(common_bbox_plane_idx) != map_lines_idx.end());
-      m_intersection_graph.set_line(new_iedge, map_lines_idx.at(common_bbox_plane_idx));
-      support_plane(sp_idx).iedges().insert(new_iedge);
+      std::size_t line_idx = map_lines_idx.at(common_bbox_plane_idx);
+      m_intersection_graph.set_line(new_iedge, line_idx);
+      sp.iedges().insert(new_iedge);
       support_plane(common_bbox_plane_idx).iedges().insert(new_iedge);
+      auto it = sp.data().bbox_lines.find(line_idx);
+      if (it == sp.data().bbox_lines.end()) {
+        const typename Intersection_kernel::Line_3 &l3 = m_intersection_graph.line(line_idx);
+        const typename Intersection_kernel::Point_2 p1 = sp.exact_plane().to_2d(l3.point());
+        const typename Intersection_kernel::Point_2 p2 = sp.exact_plane().to_2d(l3.point() + l3.to_vector());
+        IkLine_2 line = IkLine_2(p1, p2);
+        sp.data().bbox_lines[line_idx] = line;
+        sp.data().lines[line_idx] = line;
+      }
 
       // No further treatment necessary for exact intersections at vertices of edges.
 
@@ -713,7 +723,7 @@ public:
   }
 
   template<typename Pair>
-  void preprocess(std::vector<Pair>& points, const FT min_dist = 0, const FT min_angle = FT(10)) const {
+  void preprocess(std::vector<Pair>& points, const FT min_dist = 0, const FT min_angle = FT(0)) const {
     remove_equal_points(points, min_dist);
 
     remove_collinear_points(points, min_angle);

@@ -141,8 +141,10 @@ private:
   using Timer        = CGAL::Real_timer;
   using Parameters = KSP::internal::Parameters_3<FT>;
 
-  using Octree = CGAL::Orthtree<CGAL::Orthtree_traits_polygons<Kernel> >;
+  using Octree = CGAL::Orthtree<CGAL::Orthtree_traits_polygons<Intersection_kernel> >;
   using Octree_node = typename Octree::Node_index;
+  //using Octree = CGAL::Orthtree<CGAL::Orthtree_traits_polygons<Kernel> >;
+  //using Octree_node = typename Octree::Node_index;
 
   struct VI
   {
@@ -209,7 +211,7 @@ private:
     std::array<typename Intersection_kernel::Point_3, 8> bbox;
     std::vector<typename Intersection_kernel::Plane_3> m_bbox_planes;
     std::vector<std::size_t> input_polygons;
-    std::vector<std::vector<Point_3> > clipped_polygons;
+    std::vector<std::vector<typename Intersection_kernel::Point_3> > clipped_polygons;
     std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
     std::size_t parent;
     std::vector<std::size_t> children;
@@ -399,6 +401,8 @@ public:
 
     static_assert(std::is_same_v<typename NP_helper::Geom_traits, Kernel>);
 
+    bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), m_parameters.verbose);
+
     PointMap point_map = NP_helper::get_point_map(np);
 
     To_exact to_exact;
@@ -421,7 +425,8 @@ public:
       bool skip = false;
       for (std::size_t i = 0; i < m_input_planes.size(); i++) {
         if (m_input_planes[i] == exact_pl) {
-          std::cout << i << ". input polygon is coplanar to " << (p + offset) << ". input polygon" << std::endl;
+          if (verbose)
+            std::cout << i << ". input polygon is coplanar to " << (p + offset) << ". input polygon" << std::endl;
           skip = true;
           break;
         }
@@ -533,6 +538,7 @@ public:
 
     split_octree();
     m_partitions.resize(m_partition_nodes.size());
+    std::cout << m_partition_nodes.size() << " nodes" << std::endl;
     std::iota(m_partitions.begin(), m_partitions.end(), 0);
 
     for (std::size_t idx : m_partitions) {
@@ -2193,14 +2199,19 @@ private:
     To_exact to_exact;
     From_exact from_exact;
 
+    std::vector<typename Intersection_kernel::Point_3> pts;
+    pts.reserve(count);
+
     if (m_parameters.reorient_bbox) {
       m_transform = to_exact(get_obb2abb(m_input_polygons));
       auto trans = from_exact(m_transform);
 
       for (const auto& p : m_input_polygons) {
         std::size_t idx = m_points.size();
-        for (const Point_3& pt : p)
+        for (const Point_3& pt : p) {
           m_points.push_back(trans.transform(pt));
+          pts.push_back(m_transform.transform(to_exact(pt)));
+        }
 
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
@@ -2212,12 +2223,14 @@ private:
       for (const auto& p : m_input_polygons) {
         std::size_t idx = m_points.size();
         std::copy(p.begin(), p.end(), std::back_inserter(m_points));
+        for (const auto &pt : p)
+          pts.push_back(to_exact(pt));
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
       }
     }
 
-    m_octree = std::make_unique<Octree>(CGAL::Orthtree_traits_polygons<Kernel>(m_points, m_polygons, m_parameters.bbox_dilation_ratio));
+    m_octree = std::make_unique<Octree>(CGAL::Orthtree_traits_polygons<Intersection_kernel>(pts, m_polygons, m_parameters.bbox_dilation_ratio));
     m_octree->refine(m_parameters.max_octree_depth, m_parameters.max_octree_node_size);
 
     std::size_t leaf_count = 0;
@@ -2241,7 +2254,7 @@ private:
     for (typename Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree)))
       if (m_octree->is_leaf(node)) {
         // Creating bounding box
-        CGAL::Iso_cuboid_3<Kernel> box = m_octree->bbox(node);
+        CGAL::Iso_cuboid_3<Intersection_kernel> box = m_octree->bbox(node);
         m_partition_nodes[idx].bbox[0] = typename Intersection_kernel::Point_3(box.xmin(), box.ymin(), box.zmin());
         m_partition_nodes[idx].bbox[1] = typename Intersection_kernel::Point_3(box.xmax(), box.ymin(), box.zmin());
         m_partition_nodes[idx].bbox[2] = typename Intersection_kernel::Point_3(box.xmax(), box.ymax(), box.zmin());
@@ -2264,11 +2277,12 @@ private:
         }
 
         m_partition_nodes[idx].clipped_polygons.resize(polys.size());
-        auto inv_non_exact = from_exact(inv);
+        //auto inv_non_exact = from_exact(inv);
         for (std::size_t i = 0; i < polys.size(); i++) {
           m_partition_nodes[idx].clipped_polygons[i].resize(polys[i].second.size());
           for (std::size_t j = 0; j < polys[i].second.size(); j++) {
-            m_partition_nodes[idx].clipped_polygons[i][j] = inv_non_exact.transform(polys[i].second[j]);
+            m_partition_nodes[idx].clipped_polygons[i][j] = inv.transform(polys[i].second[j]);
+            CGAL_assertion(!box.has_on_unbounded_side(m_partition_nodes[idx].clipped_polygons[i][j]));
           }
         }
 

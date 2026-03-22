@@ -2168,7 +2168,7 @@ private:
 
     num_shapes = m_planar_regions.size();
 
-    //m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, CGAL::parameters::debug(m_debug).verbose(m_verbose));
+    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {

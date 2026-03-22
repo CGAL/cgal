@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Kinetic_surface_reconstruction_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
@@ -9,6 +10,9 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/bounding_box.h>
 #include <sstream>
+#include <filesystem>
+#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
@@ -18,6 +22,7 @@ using FT = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
 using Segment_3 = typename Kernel::Segment_3;
+using Plane_3 = typename Kernel::Plane_3;
 
 using Point_set = CGAL::Point_set_3<Point_3>;
 using Point_map = typename Point_set::Point_map;
@@ -84,6 +89,218 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_bool_parameter("-verbose", parameters.verbose);
 }
 
+void trim(std::string &str) {
+  str.erase(str.find_last_not_of(" ") + 1);
+  str.erase(0, str.find_first_not_of(" "));
+}
+
+std::size_t load_planes(const std::string &filename, Point_set &ps, std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> &regions) {
+  std::ifstream in(filename);
+  if (!in.is_open())
+    return 0;
+
+  ps.clear();
+  regions.clear();
+
+  // scan points
+  int lineNumber = 0; // line counter
+  std::string line; // line buffer
+  std::istringstream iss;
+
+  while (line.empty()) {
+    if (!getline(in, line))
+      return 0;
+    trim(line);
+  }
+
+  std::size_t num_points = 0;
+  iss.str(line);
+
+  if (!(iss >> std::string("num_points:") >> num_points))
+    return 0;
+
+  ps.reserve(num_points);
+  lineNumber = 0;
+  while (getline(in, line)) {
+    trim(line);
+    if (line.length() == 0 || line[0] == '#')
+      continue;
+
+    FT x, y, z;
+    iss.clear();
+    iss.str(line);
+    if (iss >> CGAL::IO::iformat(x) >> CGAL::IO::iformat(y) >> CGAL::IO::iformat(z)) {
+      Point_3 point(x, y, z);
+      ps.insert(point);
+      lineNumber++;
+      if (lineNumber == num_points)
+        break;
+    }
+  }
+
+  line.clear();
+  while (line.empty()) {
+    if (!getline(in, line))
+      return 0;
+    trim(line);
+  }
+
+  iss.str(line);
+  std::size_t num_colors = 0;
+
+  // Check for colors
+  auto it = line.find("num_colors:");
+  if (it != std::string::npos) {
+    lineNumber = 0;
+    while (getline(in, line)) {
+      trim(line);
+      if (line.length() == 0 || line[0] == '#')
+        continue;
+      lineNumber++;
+      if (lineNumber == num_points)
+        break;
+    }
+
+    line.clear();
+    while (line.empty()) {
+      if (!getline(in, line))
+        return 0;
+      trim(line);
+    }
+  }
+
+  iss.clear();
+  iss.str(line);
+
+  std::size_t num_normals = 0;
+  if (!(iss >> std::string("num_normals:") >> num_normals))
+    return 0;
+
+  lineNumber = 0;
+  while (getline(in, line)) {
+    trim(line);
+    if (line.length() == 0 || line[0] == '#')
+      continue;
+
+    FT nx, ny, nz;
+    iss.clear();
+    iss.str(line);
+    if (iss >> CGAL::IO::iformat(nx) >> CGAL::IO::iformat(ny) >> CGAL::IO::iformat(nz)) {
+      Vector_3 normal(nx, ny, nz);
+      ps.normal(lineNumber) = normal;
+      lineNumber++;
+      if (lineNumber == num_points)
+        break;
+    }
+  }
+
+  std::size_t num_groups = 0;
+
+  line.clear();
+  while (line.empty()) {
+    if (!getline(in, line))
+      return 0;
+    trim(line);
+  }
+
+  if (line.empty())
+    return 0;
+
+  iss.clear();
+  iss.str(line);
+  if (!(iss >> std::string("num_groups:") >> num_groups))
+    return 0;
+
+  bool check = true;
+
+  std::size_t group_counter = 0;
+  regions.reserve(num_groups);
+  while (group_counter < num_groups) {
+    FT a = 0, b = 0, c = 0, d = 0;
+    Plane_3 plane;
+    int red = 0, green = 0, blue = 0;
+    std::size_t group_num_points = 0;
+    std::string s;
+
+    while (getline(in, line)) {
+      trim(line);
+      if (line.length() == 0 || line[0] == '#')
+        continue;
+
+      iss.clear();
+      iss.str(line);
+
+      std::vector<std::string> token;
+      for (std::string t; iss >> t; ) token.push_back(t);
+
+      if (token[0] == "group_parameters:" && token.size() == 5) {
+        a = std::stod(token[1]);
+        b = std::stod(token[2]);
+        c = std::stod(token[3]);
+        d = std::stod(token[4]);
+        if (c < 0) {
+          a = -a;
+          b = -b;
+          c = -c;
+          d = -d;
+        }
+        FT l = a * a + b * b + c * c;
+        if (abs(l) < 0.9 || abs(l) > 1.1)
+          std::cout << "warning: plane normal of region " << group_counter << " is not normalized " << l << std::endl;
+        plane = Plane_3(a, b, c, d);
+        continue;
+      }
+
+      if (token[0] == "group_color:" && token.size() == 4) {
+        red = std::stod(token[1]);
+        green = std::stod(token[2]);
+        blue = std::stod(token[3]);
+        continue;
+      }
+
+      if (token[0] == "group_num_points:" && token.size() == 2) {
+        group_num_points = std::stod(token[1]);
+        continue;
+      }
+
+      if (line[0] >= '0' && line[0] <= '9') {
+        // Indices are coming, check if al necessary parameters are set.
+        if (group_num_points == 0 || (a * a + b * b + c * c) == 0) {
+          std::cout << "skipping region " << group_counter << " due to missing parameters" << std::endl;
+          break;
+        }
+
+        regions.push_back(std::make_pair(Plane_3(a, b, c, d), std::vector<typename Point_set::Index>()));
+        std::size_t idx = 0;
+
+        regions.back().second.reserve(group_num_points);
+
+        for (const std::string& s : token)
+          regions.back().second.push_back(static_cast<typename Point_set::Index>(std::stoi(s)));
+
+        std::vector<Point_3> pts;
+        for (auto idx : regions.back().second)
+          pts.push_back(ps.point(idx));
+
+        Plane_3 pl;
+        CGAL::linear_least_squares_fitting_3(pts.begin(), pts.end(), pl, CGAL::Dimension_tag<0>());
+        if (pl.c() < 0) {
+          pl = Plane_3(-pl.a(), -pl.b(), -pl.c(), -pl.d());
+        }
+        regions.back().first = pl;
+
+        group_counter++;
+
+        if (regions.back().second.size() != group_num_points)
+          std::cout << "warning: region " << group_counter << " has inconsistent number of points " << group_num_points << " " << regions.back().second.size() << std::endl;
+        break;
+      }
+    }
+  }
+
+  return group_counter;
+}
+
 int main(const int argc, const char** argv) {
   // Parameters.
   std::cout.precision(20);
@@ -98,12 +315,23 @@ int main(const int argc, const char** argv) {
   parse_terminal(parser, parameters);
 
   // If no input data is provided, use input from data directory.
-  if (parameters.data.empty())
-    parameters.data = CGAL::data_file_path("points_3/building.ply");
+//   if (parameters.data.empty())
+//     parameters.data = CGAL::data_file_path("points_3/building.ply");
+
+  Point_set point_set;
+  std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
+  //load_planes("GF-test/saddle_point_cloud.vg", point_set, regions);
+  std::string vg_file = parameters.data + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg";
+  std::ifstream in(vg_file);
+  //if (std::filesystem::exists(vg_file))
+    //load_planes(vg_file, point_set, regions);
+    //load_planes("C:/dev/cgal/Kinetic_surface_reconstruction/examples/Kinetic_surface_reconstruction/2026-01-15-105002/hyper2sven_0_0_0.vg", point_set, regions);
+    //load_planes("C:/dev/cgal/Kinetic_surface_reconstruction/examples/Kinetic_surface_reconstruction/GF-test/saddle_point_cloud.vg", point_set, regions);
 
   // Input.
-  Point_set point_set(parameters.with_normals);
-  CGAL::IO::read_point_set(parameters.data, point_set);
+
+  if (regions.empty() && !parameters.data.empty())
+    CGAL::IO::read_point_set(parameters.data, point_set);
 
   if (point_set.size() == 0) {
     std::cout << "input file not found or empty!" << std::endl;
@@ -162,16 +390,23 @@ int main(const int argc, const char** argv) {
     .regularize_orthogonality(parameters.regorthogonal)
     .regularize_axis_symmetry(parameters.regsymmetric)
     .angle_tolerance(parameters.angle_tolerance)
-    .maximum_offset(parameters.maximum_offset);
+    .maximum_offset(parameters.maximum_offset)
+    .bbox_dilation_ratio(1.1);
 
   // Algorithm.
   KSR ksr(point_set, param);
 
   Timer timer;
   timer.start();
-  std::size_t num_shapes = ksr.detect_planar_shapes(param);
 
-  std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
+  if (regions.empty()) {
+    std::size_t num_shapes = ksr.detect_planar_shapes(param);
+    std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
+    //std::cout << "writing shapes to: " << (parameters.data + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg") << std::endl;
+    //ksr.write_detected_shapes(parameters.data + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg");
+  }
+  else
+    ksr.insert_planar_shapes(regions, param);
 
   FT after_shape_detection = timer.time();
 
