@@ -10,7 +10,6 @@
 #include <CGAL/Random.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-typedef CGAL::Float_grid_snap_rounding_traits_2<Kernel>         Traits_2;
 typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
 typedef Kernel::Vector_2                                        Vector_2;
@@ -96,7 +95,7 @@ void test(const std::vector<Segment_2> &segs){
   t.reset();
   t.start();
 #endif
-  CGAL::compute_snapped_subcurves_2(segs, std::back_inserter(out));
+  CGAL::vertical_slabs_snap_rounding_2(segs, std::back_inserter(out));
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
@@ -108,7 +107,7 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
 #endif
   CGAL::Float_grid_snap_rounding_traits_2<Kernel> float_traits;
-  CGAL::compute_snapped_subcurves_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
+  CGAL::vertical_slabs_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size with float: " << out.size() << " ,running time: " << t.time() << std::endl;
@@ -120,7 +119,7 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
 #endif
   CGAL::Integer_grid_snap_rounding_traits_2<Kernel> int_traits(10e-12);
-  CGAL::compute_snapped_subcurves_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
+  CGAL::vertical_slabs_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
@@ -167,7 +166,7 @@ void test_polygons(){
   polygons.push_back(b);
 
   std::vector<Polygon_2> out;
-  CGAL::compute_snapped_polygons_2(polygons.begin(), polygons.end(), std::back_inserter(out));
+  CGAL::vertical_slabs_snap_rounding_2(polygons, std::back_inserter(out));
 
   assert(out.size() == 2);
   assert(out[0].size() == 5);
@@ -187,7 +186,7 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
   }
 
   std::vector<Polygon_2> out;
-  CGAL::compute_snapped_polygons_2(polygons.begin(), polygons.end(), std::back_inserter(out));
+  CGAL::vertical_slabs_snap_rounding_2(polygons, std::back_inserter(out));
 
   std::vector<Segment_2> segs;
   for(const Polygon_2 &poly: out)
@@ -253,7 +252,10 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
     CGAL::Real_timer t;
     t.start();
 #endif
-    compute_snapped_polygon_2(out_intersection[0].outer_boundary(), snap_scene);
+    std::array< Polygon_2, 1> input = {out_intersection[0].outer_boundary()};
+    std::vector< Polygon_2 > snap_scene_container;
+    vertical_slabs_snap_rounding_2(input, std::back_inserter(snap_scene_container));
+    snap_scene = snap_scene_container[0];
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
     t.stop();
     std::cout << "Iteration " << i << std::endl;
@@ -357,7 +359,7 @@ void fix_test(){
   segs.clear();
 }
 
-void test_float_snap_rounding(){
+void test_polyline_api(){
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test the other API" << std::endl;
 #endif
@@ -383,7 +385,7 @@ int main(int argc,char *argv[])
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
   fix_test();
-  test_float_snap_rounding();
+  test_polyline_api();
   test_polygons();
 
   test_fully_random(r,300);

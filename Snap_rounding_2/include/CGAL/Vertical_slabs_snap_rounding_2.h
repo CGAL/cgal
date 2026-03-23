@@ -28,13 +28,15 @@
 
 #include <boost/property_map/function_property_map.hpp>
 
+#include <CGAL/Polygon_2.h>
+
 #include <set>
 #include <vector>
 
 
 namespace CGAL {
 
-namespace internal{
+namespace internal {
 
 template <typename GeometryTraits_2, typename Points_, typename Polylines_, typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Snap_rounding_visitor :
@@ -416,178 +418,12 @@ void vertical_slabs_snap_rounding_2_impl(const SegmentRange &segments, PointsRan
 #endif
 }
 
-} // end of namespace internal
-
-/**
-* \ingroup PkgSnapRounding2Ref
-*
-* subdivides and rounds a set of segments so that they are pairwise disjoint in their interiors.
-* The output is a range of polylines, where each polyline corresponds to an input segment.
-*
-* @tparam SegmentRange a range of whose value type is model of `Kernel::Segment_2`
-* @tparam OutputIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* \param segments the input segment range
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `VerticalSlabsSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*/
-template <class SegmentRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange &segments,
-                                              OutputIterator   out,
-                                              const NamedParameters &np = parameters::default_values())
+template <class PolygonRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator vertical_slabs_snap_rounding_2_polygon(PolygonRange  &polygons,
+                                                      OutputIterator out,
+                                                      const NamedParameters &np = parameters::default_values())
 {
-  using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
-
-  using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename SegmentRange::iterator>::value_type>>::Kernel;
-  using DefaultTraits = Double_grid_snap_rounding_traits_2<InputKernel>;
-  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                              NamedParameters,
-                                                              DefaultTraits>::type;
-
-  using Point_2 = typename Traits::Point_2;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
-
-  // auto to_exact=   traits.converter_to_exact_object();
-  auto from_exact= traits.converter_from_exact_object();
-
-  // Main algorithm
-  std::vector<Point_2> pts;
-  std::vector< std::vector< std::size_t> > polylines;
-  internal::vertical_slabs_snap_rounding_2_impl(segments, pts, polylines, traits);
-
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Build output" << std::endl;
-#endif
-
-  // Output polylines
-  for(auto &poly: polylines){
-    Polyline new_line;
-    for(std::size_t pi: poly)
-      new_line.push_back(from_exact(pts[pi]));
-    *out++ = new_line;
-  }
-
-  return out;
-}
-
-template <class SegmentRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator snap_rounding_2(const SegmentRange &segments,
-                               OutputIterator   out,
-                               const NamedParameters &np = parameters::default_values())
-{
-  return vertical_slabs_snap_rounding_2(segments, out, np);
-}
-
-/**
-* \ingroup PkgSnapRounding2Ref
-*
-* Given a range of segments, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
-*
-* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
-* @tparam OutputIterator model of OutputIterator holding `Kernel::Segment_2`
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* \param segments the input segment range
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `VerticalSlabsSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2`}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*/
-template <class SegmentRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator compute_snapped_subcurves_2(const SegmentRange& segments,
-                                           OutputIterator    out,
-                                           const NamedParameters &np = parameters::default_values())
-{
-  using InputSegment = std::remove_cv_t<typename std::iterator_traits<typename SegmentRange::iterator>::value_type>;
-  using InputKernel = typename Kernel_traits<InputSegment>::Kernel;
-  using DefaultTraits = Double_grid_snap_rounding_traits_2<InputKernel>;
-  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                              NamedParameters,
-                                                              DefaultTraits>::type;
-
-  using Point_2 = typename Traits::Point_2;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
-
-  // auto to_exact=   traits.converter_to_exact_object();
-  auto from_exact= traits.converter_from_exact_object();
-  auto segment_2 = traits.construct_segment_2_object();
-
-  // Main algorithm
-  std::vector<Point_2> pts;
-  std::vector< std::vector< std::size_t> > polylines;
-  internal::vertical_slabs_snap_rounding_2_impl(segments, pts, polylines, traits);
-
-#ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
-  std::cout << "Build output" << std::endl;
-#endif
-
-  // Output a range of segments while removing duplicate ones
-  std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
-  for(auto &poly: polylines)
-    for(std::size_t i=1; i<poly.size(); ++i)
-      set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
-  for(auto &pair: set_out_segs){
-    *out++=from_exact(segment_2(pts[pair.first], pts[pair.second]));
-    CGAL_assertion(pts[pair.first]!=pts[pair.second]);
-  }
-
-  return out;
-}
-
-/**
-* \ingroup PkgSnapRounding2Ref
-*
-* Given a range of `Polygon_2`, computes rounded polygons such that their segments are either equal or disjoint in their interiors, as induced by the input polygons.
-* Each input polygon is guaranteed to remain a polygon in the output but may present pinched sections or/and common vertices or segments with
-* other polygons.
-*
-* @tparam InputIterator an iterator of a `CGAL::Polygon_2` range
-* @tparam OutputIterator a model of OutputIterator holding `CGAL::Polygon_2`
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* \param begin,end the range of input polygons
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `VerticalSlabsSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-* @warning an input convex polygon might no longer be convex after rounding.
-*/
-template <class InputIterator, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void compute_snapped_polygons_2(InputIterator  begin,
-                                InputIterator  end,
-                                OutputIterator out,
-                                const NamedParameters &np = parameters::default_values())
-{
-  using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
+  using Polygon_2 = typename std::iterator_traits<typename PolygonRange::iterator>::value_type;
   using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
   using DefaultTraits = Double_grid_snap_rounding_traits_2<InputKernel>;
   using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
@@ -612,10 +448,9 @@ void compute_snapped_polygons_2(InputIterator  begin,
   // Store the indices of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygon i
   std::vector< std::size_t > polygon_indices;
 
-  polygon_indices.reserve(std::distance(begin, end));
-  for(InputIterator it=begin; it!=end; ++it){
+  polygon_indices.reserve(std::distance(polygons.begin(), polygons.end()));
+  for(const Polygon_2 &P: polygons){
     polygon_indices.push_back(input_segments.size());
-    const Polygon_2 &P = *it;
     for(std::size_t i=0; i<P.size()-1; ++i)
       input_segments.emplace_back(P[i], P[i+1]);
     input_segments.emplace_back(P[P.size()-1], P[0]);
@@ -660,20 +495,175 @@ void compute_snapped_polygons_2(InputIterator  begin,
     }
     *out++=P;
   }
+  return out;
 }
+
+} // end of namespace internal
+
+#if DOXYGEN_RUNNING
+/**
+* \ingroup PkgSnapRounding2Ref
+*
+* subdivides and rounds a set of segments so that they are pairwise disjoint in their interiors.
+* The output is a range of polylines, where each polyline corresponds to an input segment.
+*
+* @tparam SegmentRange a range of whose value type is model of `Kernel::Segment_2`
+* @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param segments the input segment range
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `VerticalSlabsSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*/
+template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange &segments,
+                                              OutputPolylineIterator   out,
+                                              const NamedParameters &np = parameters::default_values());
 
 /**
 * \ingroup PkgSnapRounding2Ref
 *
-* calls `CGAL::compute_snapped_polygons_2()` with a single input polygon
+* Given a range of segments, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+*
+* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
+* @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param segments the input segment range
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `VerticalSlabsSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2`}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
 */
-template <class Polygon_2, class NamedParameters = parameters::Default_named_parameters>
-void compute_snapped_polygon_2(const Polygon_2 &P, Polygon_2 &out, const NamedParameters &np = parameters::default_values())
+template <class SegmentRange , class OutputSegmentIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange& segments,
+                                              OutputSegmentIterator    out,
+                                              const NamedParameters &np = parameters::default_values());
+
+/**
+* \ingroup PkgSnapRounding2Ref
+*
+* Given a range of `Polygon_2`, computes rounded polygons such that their segments are either equal or disjoint in their interiors, as induced by the input polygons.
+* Each output polygon in the output are free of self intersections but may present pinched sections or/and common vertices or segments with
+* other polygons.
+*
+* @tparam PolygonRange a range of `CGAL::Polygon_2`
+* @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param begin,end the range of input polygons
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `VerticalSlabsSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+* @warning an input convex polygon might no longer be convex after rounding.
+*/
+template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputPolygonIterator vertical_slabs_snap_rounding_2(PolygonRange  &polygons,
+                                                     OutputPolygonIterator out,
+                                                     const NamedParameters &np = parameters::default_values());
+
+#else
+
+namespace internal{
+
+template <class T>
+inline constexpr bool is_instance_of_Polygon_2 = false;
+
+template <class K, class C>
+inline constexpr bool is_instance_of_Polygon_2< CGAL::Polygon_2<K, C> > = true;
+
+}
+
+template <class InputRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator vertical_slabs_snap_rounding_2(const InputRange &inputs,
+                                              OutputIterator   out,
+                                              const NamedParameters &np = parameters::default_values())
 {
-  std::array<Polygon_2, 1> vec({P});
-  std::vector<Polygon_2> out_vec;
-  compute_snapped_polygons_2(vec.begin(), vec.end(), std::back_inserter(out_vec), np);
-  out = out_vec[0];
+  using Input = std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>;
+
+  if constexpr(internal::is_instance_of_Polygon_2< Input >){
+    return internal::vertical_slabs_snap_rounding_2_polygon(inputs, out, np);
+  } else {
+    // using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+    using OutputType = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+
+    using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>>::Kernel;
+    using DefaultTraits = Double_grid_snap_rounding_traits_2<InputKernel>;
+    using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                                NamedParameters,
+                                                                DefaultTraits>::type;
+
+    using Point_2 = typename Traits::Point_2;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
+
+    // auto to_exact=   traits.converter_to_exact_object();
+    auto from_exact= traits.converter_from_exact_object();
+
+    // Main algorithm
+    std::vector<Point_2> pts;
+    std::vector< std::vector< std::size_t> > polylines;
+    internal::vertical_slabs_snap_rounding_2_impl(inputs, pts, polylines, traits);
+
+  #ifdef CGAL_DOUBLE_2D_SNAP_VERBOSE
+    std::cout << "Build output" << std::endl;
+  #endif
+
+    if constexpr(std::is_same_v<OutputType, Input>){
+      // Output Segments while removing duplicate ones
+      auto segment_2 = traits.construct_segment_2_object();
+      std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
+      for(auto &poly: polylines)
+        for(std::size_t i=1; i<poly.size(); ++i)
+          set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
+      for(auto &pair: set_out_segs){
+        *out++=from_exact(segment_2(pts[pair.first], pts[pair.second]));
+        CGAL_assertion(pts[pair.first]!=pts[pair.second]);
+      }
+    } else {
+      // Output polylines
+      for(auto &poly: polylines){
+        OutputType new_line;
+        for(std::size_t pi: poly)
+          new_line.push_back(from_exact(pts[pi]));
+        *out++ = new_line;
+      }
+    }
+    return out;
+ }
+}
+#endif
+
+template <class SegmentRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator snap_rounding_2(const SegmentRange &segments,
+                               OutputIterator   out,
+                               const NamedParameters &np = parameters::default_values())
+{
+  return vertical_slabs_snap_rounding_2(segments, out, np);
 }
 
 } //namespace CGAL
