@@ -211,6 +211,58 @@ private:
       }
     }
   }
+
+  bool sphere_marching_search(const Point_3& s,
+                              const Point_3& t,
+                              Point_3& output_pt)
+  {
+#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+    std::cout << "Sphere march between " << s << " and " << t << std::endl;
+#endif
+
+    CGAL_precondition(s != t);
+
+    Point_3 current_pt = s;
+    Point_3 closest_point = dist_oracle.tree.closest_point(current_pt);
+    FT current_dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+
+    const FT sq_seg_length = squared_distance(s, t);
+    const FT seg_length = approximate_sqrt(sq_seg_length);
+    if(is_zero(seg_length))
+    {
+      closest_point = dist_oracle.tree.closest_point(t);
+      current_dist = approximate_sqrt(squared_distance(t, closest_point)) - offset;
+      output_pt = t;
+      return (CGAL::abs(current_dist) < precision);
+    }
+
+    const Vector_3 seg_unit_v = (t - s) / seg_length;
+
+    for(;;)
+    {
+#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+      std::cout << "current point " << current_pt << std::endl;
+      std::cout << "current dist " << current_dist << std::endl;
+#endif
+
+      if(CGAL::abs(current_dist) < precision)
+      {
+        output_pt = current_pt;
+        return true;
+      }
+
+      // use the previous closest point as a hint: it's an upper bound
+      current_pt = current_pt + (current_dist * seg_unit_v);
+
+      if(squared_distance(s, current_pt) > sq_seg_length)
+        return false;
+
+      closest_point = dist_oracle.tree.closest_point(current_pt, closest_point /*hint*/);
+      current_dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+    }
+
+    return false;
+  }
 };
 
 } // namespace internal

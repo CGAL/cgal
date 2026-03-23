@@ -1030,7 +1030,7 @@ private:
       if (edges_only_)
       {
         std::vector<halfedge_descriptor> border;
-        CGAL::Polygon_mesh_processing::border_halfedges(
+        CGAL::border_halfedges(
           faces(*poly_item->polyhedron())
           , *poly_item->polyhedron()
           , std::back_inserter(border));

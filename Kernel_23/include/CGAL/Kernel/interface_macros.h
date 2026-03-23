@@ -114,6 +114,8 @@ CGAL_Kernel_pred(Compare_power_distance_3,
                  compare_power_distance_3_object)
 CGAL_Kernel_pred(Compare_signed_distance_to_line_2,
                  compare_signed_distance_to_line_2_object)
+CGAL_Kernel_pred(Compare_scalar_product_3,
+                 compare_scalar_product_3_object)
 CGAL_Kernel_pred(Compare_slope_2,
                  compare_slope_2_object)
 CGAL_Kernel_pred(Compare_slope_3,
@@ -122,6 +124,8 @@ CGAL_Kernel_pred(Compare_squared_distance_2,
                  compare_squared_distance_2_object)
 CGAL_Kernel_pred(Compare_squared_distance_3,
                  compare_squared_distance_3_object)
+CGAL_Kernel_pred(Compare_squared_radius_2,
+                 compare_squared_radius_2_object)
 CGAL_Kernel_pred(Compare_squared_radius_3,
                  compare_squared_radius_3_object)
 CGAL_Kernel_pred(Compare_weighted_squared_radius_3,

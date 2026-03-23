@@ -659,6 +659,16 @@ test_new_3(const R& rep)
   tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);
   tmp34ab = CGAL::compare_distance(p1, p2, p3);
 
+typename R::Compare_scalar_product_3 compare_sp
+        = rep.compare_scalar_product_3_object();
+  tmp34ab = compare_sp(v3,v4,FT(1));
+  tmp34ab = compare_sp(v3,v4,v3,v4);
+  tmp34ab = compare_sp(v3,v4,v5,v3+v4);
+
+  tmp34ab = CGAL::compare_scalar_product(v3,v4,v3,v4);
+  tmp34ab = CGAL::compare_scalar_product(v3,v4,FT(1));
+  tmp34ab = CGAL::compare_scalar_product(v3,v4,v5,v3+v4);
+
   typename R::Compare_power_distance_3 compare_power_dist
         = rep.compare_power_distance_3_object();
   tmp34ab = compare_power_dist(p1, wp2, wp3);

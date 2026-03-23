@@ -152,7 +152,7 @@ public:
     //! @see addText(TextItem*)
     void removeText(TextItem* textItem);
     //!Removes a TextItemList from TextRenderer::textItems
-    //! //! @attention the memory of the TextItems is not de-allocated.
+    //! @attention the memory of the TextItems is not de-allocated.
     void removeTextList(TextListItem*);
     //!The local TextListItem.
     QList<TextItem*> getLocalTextItems(){return local_textItems;}

@@ -4,6 +4,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Polygon_mesh_processing/manifoldness.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -74,6 +75,13 @@ int main()
 
   My_mesh_5 poly5;
   CGAL::convex_hull_3(points.begin(), points.end(), poly5);
+
+
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(poly1, CGAL::Emptyset_iterator());
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(poly2, CGAL::Emptyset_iterator());
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(poly3, CGAL::Emptyset_iterator());
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(poly4, CGAL::Emptyset_iterator());
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(poly5, CGAL::Emptyset_iterator());
 
   return 0;
 }

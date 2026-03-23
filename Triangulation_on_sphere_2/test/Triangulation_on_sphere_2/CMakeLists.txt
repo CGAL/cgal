@@ -12,14 +12,11 @@ create_single_source_cgal_program( "test_dtos_projection_traits.cpp" )
 create_single_source_cgal_program( "test_dtos_traits.cpp" )
 create_single_source_cgal_program( "issue_8200.cpp" )
 
-if (CGAL_Core_FOUND OR LEDA_FOUND)
-  create_single_source_cgal_program( "test_dtos_degenerate_cases.cpp" )
-else()
-  message("NOTICE: Some tests require CGAL_Core (or LEDA), and will not be compiled.")
-endif()
+create_single_source_cgal_program( "test_dtos_degenerate_cases.cpp" )
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "test_dtos_dual.cpp" )
   target_link_libraries(test_dtos_dual PRIVATE CGAL::Eigen3_support)

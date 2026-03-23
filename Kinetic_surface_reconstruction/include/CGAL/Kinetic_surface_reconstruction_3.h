@@ -1365,8 +1365,8 @@ private:
         CGAL_assertion_code(auto it =) va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
         CGAL_assertion(it.second || it.first->first == polygons[i][j]);
 
-        vertices.back()->info().i = i;
-        vertices.back()->info().j = j;
+        vertices.back()->info().i = static_cast<int>(i);
+        vertices.back()->info().j = static_cast<int>(j);
         vertices.back()->info().p = pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])));
         vertices.back()->info().dh = polygons[i][j];
 

@@ -12,13 +12,21 @@
 #ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/assertions.h>
+#include <CGAL/enum.h>
 #include <CGAL/tags.h>
 
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
+
+#include <array>
+#include <limits>
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 
@@ -88,11 +96,10 @@ struct Projector<R,2>
 template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
-  typedef typename R::Point_3     Point;
-
-  Bbox_2 operator()(const Point& p) const {
+  template <typename T>
+  Bbox_2 operator()(const T& obj) const {
     typename R::Construct_bbox_3 bb;
-    return Projector<R, dim>::bbox(bb(p));
+    return Projector<R, dim>::bbox(bb(obj));
   }
 };
 
@@ -535,6 +542,20 @@ public:
     Ray_2 pra(project(ra.source()), project(ra.point(1)));
     Ray_2 prb(project(rb.source()), project(rb.point(1)));
     return CGAL::do_intersect(pra, prb);
+  }
+
+  template <typename T> bool operator()(const Bbox_2& bbox, const T& obj) const {
+    static constexpr double infinity = std::numeric_limits<double>::infinity();
+    std::array<double, 3> bbox_min = {-infinity, -infinity, -infinity};
+    std::array<double, 3> bbox_max = {infinity, infinity, infinity};
+
+    using Proj = Projector<R, dim>;
+    bbox_min[Proj::x_index] = bbox.xmin();
+    bbox_min[Proj::y_index] = bbox.ymin();
+    bbox_max[Proj::x_index] = bbox.xmax();
+    bbox_max[Proj::y_index] = bbox.ymax();
+    Bbox_3 bbox3(bbox_min[0], bbox_min[1], bbox_min[2], bbox_max[0], bbox_max[1], bbox_max[2]);
+    return do_intersect(bbox3, obj);
   }
 };
 

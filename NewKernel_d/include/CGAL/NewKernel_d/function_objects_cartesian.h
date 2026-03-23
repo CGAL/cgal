@@ -1280,6 +1280,36 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Equal_points_tag,(CartesianDKernelFunctors::Equal_points<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Equal_vectors : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Equal_vectors)
+        typedef R_ R;
+        typedef typename Get_type<R, Bool_tag>::type result_type;
+        typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+        // TODO: This is_exact thing should be reengineered.
+        // the goal is to have a way to tell: don't filter this
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
+
+        template<class V,class W>
+        result_type operator()(V const&a, W const&b)const{
+                CI c(this->kernel());
+
+
+                auto a_begin=c(a,Begin_tag());
+                auto b_begin=c(b,Begin_tag());
+                auto a_end=c(a,End_tag());
+
+                result_type res = true;
+                // Is using CGAL::possibly for Uncertain really an optimization?
+                do res = res & (*a_begin++ == *b_begin++);
+                while(a_begin!=a_end && possibly(res));
+                return res;
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Equal_vectors_tag,(CartesianDKernelFunctors::Equal_vectors<K>),(),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Oriented_side : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Oriented_side)
         typedef R_ R;

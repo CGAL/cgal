@@ -52,7 +52,11 @@ void detect(Polygon_mesh &mesh, FT max_distance, FT max_angle, std::size_t min_r
   // Run the algorithm.
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
-  std::cout << regions.size() << " regions found" << std::endl;
+
+  std::vector<typename Region_growing::Item> unassigned;
+  region_growing.unassigned_items(faces(mesh), std::back_inserter(unassigned));
+
+  std::cout << regions.size() << " regions found with " << unassigned.size() << " unassigned faces" << std::endl;
 
   const typename Region_growing::Region_map& map = region_growing.region_map();
 
@@ -62,9 +66,6 @@ void detect(Polygon_mesh &mesh, FT max_distance, FT max_angle, std::size_t min_r
         std::cout << "Region map incorrect" << std::endl;
       }
     }
-
-  std::vector<typename Region_growing::Item> unassigned;
-  region_growing.unassigned_items(faces(mesh), std::back_inserter(unassigned));
 
   for (auto& item : unassigned) {
     if (std::size_t(-1) != get(map, item)) {
@@ -79,7 +80,8 @@ void detect(Polygon_mesh &mesh, FT max_distance, FT max_angle, std::size_t min_r
 int main(int argc, char *argv[]) {
 
   // Load data either from a local folder or a user-provided file.
-  const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/building.off") : argv[1];
+  const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/step.off") : argv[1];
+  std::cout << filename << std::endl;
   std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);
 
@@ -92,9 +94,9 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
 
   // Default parameter values for the data file building.off.
-  const FT          max_distance    = FT(1);
-  const FT          max_angle       = FT(45);
-  const std::size_t min_region_size = 5;
+  const FT          max_distance    = FT(10);
+  const FT          max_angle       = FT(90);
+  const std::size_t min_region_size = 1;
 
   std::cout << "Region growing with Least_squares_plane_fit_region: ";
   detect<LS_region_type, LS_sorting>(polygon_mesh, max_distance, max_angle, min_region_size, "least_squares_planes_polygon_mesh.ply");

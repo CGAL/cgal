@@ -892,8 +892,8 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                  sdistx(*(shf - 1), bottom) <= FT(2) * d.r))))
     #else
           if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
-              ((!d.is_x_greater_y() ||
-               (shl == Citerator(share.end()) ||
+              (!d.is_x_greater_y() ||
+               ((shl == Citerator(share.end()) ||
                 sdistx(share.back(), bottom) <= FT(2) * d.r) &&
                (shf == Citerator(share.begin()) ||
                 sdistx(*(shf - 1), bottom) <= FT(2) * d.r))))

@@ -162,15 +162,6 @@ namespace CGAL {
     {
     public:
 
-        // Workaround for a bug in g++4.4 in ADL for function next:
-        // we provide the types needed for std::iterator_traits<Surface_mesh::halfedge_index>,
-        // although this descriptor is not an iterator.
-        typedef void iterator_category;
-        typedef void value_type;
-        typedef void difference_type;
-        typedef void pointer;
-        typedef void reference;
-
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
@@ -1696,13 +1687,13 @@ public:
     /// \name Low-Level Connectivity
     ///@{
 
-    /// returns the vertex the halfedge `h` points to.
+    /// returns the vertex where the halfedge `h` points to.
     Vertex_index target(Halfedge_index h) const
     {
         return hconn_[h].vertex_;
     }
 
-    /// sets the vertex the halfedge `h` points to to `v`.
+    /// sets the vertex where the halfedge `h` points to `v`.
     void set_target(Halfedge_index h, Vertex_index v)
     {
         hconn_[h].vertex_ = v;
@@ -2256,7 +2247,7 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   ///
-  /// This operator calls `write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2268,7 +2259,7 @@ private: //------------------------------------------------------- private data
   /// Extracts the surface mesh from an input stream in OFF
   /// and appends it to the surface mesh `sm`.
   ///
-  /// This operator calls `read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
@@ -2680,8 +2671,12 @@ collect_garbage(Visitor &visitor)
     for (i=0; i<nH; ++i)
     {
         h = Halfedge_index(i);
-        set_target(h, vmap[target(h)]);
-        set_next(h, hmap[next(h)]);
+        if(target(h) != null_vertex()){
+          set_target(h, vmap[target(h)]);
+        }
+        if(next(h) != null_halfedge()){
+          set_next(h, hmap[next(h)]);
+        }
         if (!is_border(h))
             set_face(h, fmap[face(h)]);
     }
@@ -2691,7 +2686,8 @@ collect_garbage(Visitor &visitor)
     for (i=0; i<nF; ++i)
     {
         f = Face_index(i);
-        set_halfedge(f, hmap[halfedge(f)]);
+        if( halfedge(f) != null_halfedge())
+          set_halfedge(f, hmap[halfedge(f)]);
     }
 
     //apply visitor before invalidating the maps

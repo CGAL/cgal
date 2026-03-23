@@ -72,9 +72,7 @@ constructs a line from two points.
 typedef unspecified_type Construct_line_2;
 
 /*!
-A function object whose
-`operator()` computes the squared distance between
-a line and a point.
+A function object whose `operator()` computes the squared distance between a line and a point.
 
 `RT operator()(Line_2 l, Point_2 p);` Returns the squared distance
 between `p` and `l`.
@@ -82,8 +80,7 @@ between `p` and `l`.
 typedef unspecified_type Compute_squared_distance_2;
 
 /*!
-A function object whose
-`operator()` computes the bounding box of a point.
+A function object whose `operator()` computes the bounding box of a point.
 
 `CGAL::Bbox_2 operator()(Point_2 p);` Returns the bounding box of `p`.
 The result type is `CGAL::Bbox_2` (even for projection traits classes).
@@ -101,14 +98,12 @@ typedef unspecified_type Compute_bounding_box_2;
 Intersect_2 intersect_2_object();
 
 /*!
-required when
-the intersection tag is `CGAL::Exact_predicates_tag`.
+Required when the intersection tag is `CGAL::Exact_predicates_tag`.
 */
 Construct_line_2 construct_line_2_object();
 
 /*!
-required when
-the intersection tag is `CGAL::Exact_predicates_tag`.
+Required when the intersection tag is `CGAL::Exact_predicates_tag`.
 */
 Compute_squared_distance_2
 compute_squared_distance_2_object();

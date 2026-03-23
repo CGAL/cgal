@@ -172,15 +172,15 @@ intersection between an object of type `Segment_3`, `Ray_3` or
 `Intersection operator()(Ray_3 r)`
 
 `Intersection operator()(Line_3 l)`
-\pre do_intersect_surface(s/r/l) == true
+
+\pre `do_intersect_surface_object(s/r/l)` == `true`
 */
 typedef unspecified_type Construct_intersection;
 
 /// @}
 
-/// \name Bounding box
-/// Since CGAL-4.8, a model of `MeshDomain_3` must provide a function
-/// providing a bounding box of the domain.
+/// \name Bounding Box
+
 /// @{
 
 /// Returns a bounding box of the domain
