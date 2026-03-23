@@ -3015,6 +3015,14 @@ namespace CommonKernelFunctors {
       typename K::Construct_point_2 construct_point_2;
       return construct_point_2(a + scaled_vector(d, proj));
     }
+
+    const typename K::Point_2&
+    operator()(const typename K::Point_2& point,
+               const typename K::Point_2&,
+               const K&)
+    {
+      return point;
+    }
   };
 
   template <typename K>
@@ -3615,6 +3623,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
+    typedef typename K::Segment_2        Segment_2;
 
   public:
     Boolean
@@ -3799,11 +3808,53 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
+    typedef typename K::Segment_2        Segment_2;
 
   public:
     Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_unbounded_side(p); }
+
+    Needs_FT<Boolean>
+    operator()(const Circle_2& c, const Segment_2& s) const {
+      if (!c.has_on_unbounded_side(s.source()))
+        return Boolean(false);
+      if (!c.has_on_unbounded_side(s.target()))
+        return Boolean(false);
+      return K().compare_squared_distance_2_object()(c.center(), s, c.squared_radius()).value == LARGER;;
+    }
+
+    Boolean
+    operator()(const Circle_2& c, const Iso_rectangle_2& r) const
+    {
+      typedef typename K::FT FT;
+      FT d = FT(0);
+      FT distance = FT(0);
+
+      const Point_2& center = c.center();
+
+      if ((center.x() >= r.xmin()) && (center.x() <= r.xmax()) &&
+        (center.y() >= r.ymin()) && (center.y() <= r.ymax()))
+        return false;
+
+      // x
+      d = (std::min)(square(center.x() - r.xmin()), square(center.x() - r.xmax()));
+
+      if (certainly(d > c.squared_radius()))
+        return true;
+
+      distance = d;
+
+      // y
+      d = (std::min)(square(center.y() - r.ymin()), square(center.y() - r.ymax()));
+
+      if (certainly(d > c.squared_radius()))
+        return true;
+
+      distance += d;
+
+      return (distance > c.squared_radius());
+    }
 
     Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
@@ -3831,6 +3882,47 @@ namespace CommonKernelFunctors {
     Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.has_on_unbounded_side(p); }
+
+    Boolean
+    operator()(const Sphere_3& s, const Iso_cuboid_3& c) const
+    {
+      typedef typename K::FT FT;
+      FT d = FT(0);
+      FT distance = FT(0);
+
+      const Point_3& center = s.center();
+
+      if ((center.x() >= c.xmin()) && (center.x() <= c.xmax()) &&
+        (center.y() >= c.ymin()) && (center.y() <= c.ymax()) &&
+        (center.z() >= c.zmin()) && (center.z() <= c.zmax()))
+        return false;
+
+      // x
+      d = (std::min)(square(center.x() - c.xmin()), square(center.x() - c.xmax()));
+
+      if (certainly(d > s.squared_radius()))
+        return true;
+
+      distance = d;
+
+      // y
+      d = (std::min)(square(center.y() - c.ymin()), square(center.y() - c.ymax()));
+
+      if (certainly(d > s.squared_radius()))
+        return true;
+
+      distance += d;
+
+      // z
+      d = (std::min)(square(center.z() - c.zmin()), square(center.z() - c.zmax()));
+
+      if (certainly(d > s.squared_radius()))
+        return true;
+
+      distance += d;
+
+      return (distance > s.squared_radius());
+    }
 
     Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
@@ -4160,15 +4252,25 @@ public:
   typedef typename K::Point_2                  Point_2;
   typedef typename K::FT                       FT;
 
-  Point_2 operator() (const Weighted_point_2 & p,
-                          const Weighted_point_2 & q,
-                          const Weighted_point_2 & r) const
+  Point_2 operator()(const Weighted_point_2& p,
+                     const Weighted_point_2& q,
+                     const Weighted_point_2& r) const
   {
     CGAL_kernel_precondition( ! collinear(p.point(), q.point(), r.point()) );
     FT x,y;
     weighted_circumcenterC2(p.x(),p.y(),p.weight(),
                             q.x(),q.y(),q.weight(),
                             r.x(),r.y(),r.weight(),x,y);
+    return Point_2(x,y);
+  }
+
+  Point_2 operator()(const Weighted_point_2& p,
+                     const Weighted_point_2& q) const
+  {
+    CGAL_kernel_precondition( ! equal(p.point(), q.point()) );
+    FT x,y;
+    weighted_circumcenterC2(p.x(),p.y(),p.weight(),
+                            q.x(),q.y(),q.weight(),x,y);
     return Point_2(x,y);
   }
 };

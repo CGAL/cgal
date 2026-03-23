@@ -20,7 +20,7 @@ namespace params = CGAL::parameters;
 // One could perform Boolean operations directly on inexact meshes as an exact computation
 // is done internally. However, if we want to perform consecutive Boolean operations,
 // we can avoid multiple conversions and possible precision issues by maintaining
-// explicitely the exact points in the meshes.
+// explicitly the exact points in the meshes.
 
 struct Exact_vertex_point_map
 {
