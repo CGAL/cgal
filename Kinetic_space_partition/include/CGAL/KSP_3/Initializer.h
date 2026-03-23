@@ -1132,7 +1132,7 @@ private:
 
     for (std::size_t i = 0;i<lines.size();i++) {
       signs[i] = lines[i].oriented_side(c);
-      CGAL_assertion(signs[i] != CGAL::ON_BOUNDARY);
+      CGAL_assertion(signs[i] != CGAL::ON_ORIENTED_BOUNDARY);
     }
 
 /*
@@ -1182,15 +1182,15 @@ private:
         //IkFT d2 = CGAL::squared_distance(lines[i], p);
         IkFT d = lines[i].a() * p.x() + lines[i].b() * p.y() + lines[i].c();
         IkFT l = CGAL::approximate_sqrt(square(lines[i].a()) + square(lines[i].b()));
-        if (signs[i] == CGAL::SMALLER) {
+        if (signs[i] == CGAL::ON_NEGATIVE_SIDE) {
           if (d > -tol2 * l)
             refit.push_back(i);
         }
-        else if (signs[i] == CGAL::LARGER)
+        else if (signs[i] == CGAL::ON_POSITIVE_SIDE)
           if (d < tol2 * l)
             refit.push_back(i);
 
-        if (s != signs[i] && s != CGAL::ON_BOUNDARY)
+        if (s != signs[i] && s != CGAL::ON_ORIENTED_BOUNDARY)
           refit2.push_back(i);
       }
       if (!refit.empty()) {

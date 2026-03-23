@@ -96,8 +96,8 @@ public:
     Vertex_event() : vertex(-1), other(-1), time(-1), crossed_edge(Intersection_graph::null_iedge()), destination(Intersection_graph::null_ivertex()) {}
     Vertex_event(Cached_event& ce, std::size_t v) : vertex(v), other(-1), time(ce.t), u(ce.u), p(ce.p), crossed_edge(ce.e), destination(ce.d) {}
     std::size_t vertex, other;
-    typename Intersection_kernel::FT time;
-    typename Intersection_kernel::FT u;
+    IkFT time;
+    IkFT u;
     IkPoint_2 p;
     IEdge crossed_edge;
     IVertex destination; // Target ivertex for constrained vertices.
@@ -105,7 +105,7 @@ public:
 
   struct Vertex {
     Vertex() : sp_idx(std::size_t(-1)), queued_events(0) {}
-    Vertex(std::size_t sp_idx, const typename Intersection_kernel::Point_2& p0, const typename Intersection_kernel::Vector_2& v, typename Intersection_kernel::FT t_init = 0)
+    Vertex(std::size_t sp_idx, const IkPoint_2& p0, const IkVector_2& v, IkFT t_init = 0)
       : sp_idx(sp_idx), p0(p0), v(v), t_init(t_init), moving(true), other(-1), constraints(), k(0),
       face(std::size_t(-1)), ivertex(-1), itarget(-1), constraint_edge(IVertex(-1), IVertex(-1), nullptr), other_constraint_edge(IVertex(-1), IVertex(-1), nullptr), queued_events(0) {
     }
@@ -123,10 +123,10 @@ public:
     }
 
     std::size_t sp_idx;
-    typename Intersection_kernel::Point_2 p0;
-    typename Intersection_kernel::Vector_2 v;
-    typename Intersection_kernel::FT t_init;
-    typename IVertex ivertex, itarget;
+    IkPoint_2 p0;
+    IkVector_2 v;
+    IkFT t_init;
+    IVertex ivertex, itarget;
     bool moving;
     int k;
     std::size_t face;
