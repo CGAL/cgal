@@ -204,7 +204,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
     results.push_back(result_t);
   }
 
-  CGAL_SS3_TRACE("Offset mesh(es) constructed");
   return true;
 }
 

@@ -74,19 +74,19 @@ construct_skeleton(const TriangleMesh& tmesh,
 
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
-  // check that all times are of the same sign (ignoring zeros)
+  // check that all times are of the same sign
   for (const FT& time : save_times) {
     if (CGAL::is_zero(time)) {
-      CGAL_SS3_TRACE_V(1, "Error: time should be non-zero");
+      CGAL_SS3_TRACE_V(1, "Error: save time should be non-zero");
       return { };
     } else if (CGAL::is_positive(time) != outwards) {
-      CGAL_SS3_TRACE_V(1, "Error: times must all be positive or all negative.");
+      CGAL_SS3_TRACE_V(1, "Error: save times must be all positive or all negative.");
       return { };
     }
   }
 
   // The underlying implementation always shrinks the mesh, so for outwards offsetting,
-  // we reverse the face orientations, whether the mesh was outward oriented or not.
+  // we reverse the face orientations (whether the mesh was outward oriented or not).
   if (outwards) {
     for (FT& t : save_times) {
       t = -t;

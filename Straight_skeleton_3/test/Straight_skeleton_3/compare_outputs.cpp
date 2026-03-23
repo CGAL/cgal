@@ -31,8 +31,8 @@ using IK = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 // Kernel used in testing operations
 // using K = CGAL::Exact_predicates_exact_constructions_kernel;
-// using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using K = CGAL::Single_precision_epick;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+//using K = CGAL::Single_precision_epick;
 
 template <typename Mesh>
 bool has_degenerate_faces(const Mesh& mesh)

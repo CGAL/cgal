@@ -33,7 +33,7 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace internal {
 
-unsigned int verbosity_level = 4;
+static unsigned int verbosity_level = 4;
 std::ostream* trace_stream = &std::cout;
 
 void set_verbosity_level(const unsigned int l) { verbosity_level = l; }
@@ -46,12 +46,12 @@ void set_log_stream(std::ostream& out) { trace_stream = &out; }
 #define CGAL_SS3_TRACE_STREAM *(CGAL::Straight_skeletons_3::internal::trace_stream)
 
 /* just a helper for code location */
-#define CGAL_SS3_TRACE_LOC *(CGAL::Straight_skeletons_3::internal::trace_stream) << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
+#define CGAL_SS3_TRACE_LOC *trace_stream << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
 #define CGAL_SS3_ENABLE_TRACE // generic
 // #define CGAL_SS3_TRAITS_ENABLE_TRACE // traits & kernel
 #define CGAL_SS3_HDS_ENABLE_TRACE // Polyhedron and related classes
-#define CGAL_SS3_SKEL_DS_ENABLE_TRACE // Skeleton and related classes
+// #define CGAL_SS3_SKEL_DS_ENABLE_TRACE // Skeleton and related classes
 #define CGAL_SS3_IO_ENABLE_TRACE // DB, IO, ...
 #define CGAL_SS3_TRANSF_ENABLE_TRACE // Polyhedron transformation (facet merging, perturbations, etc.)
 #define CGAL_SS3_SPLITTER_ENABLE_TRACE // vertex splitters

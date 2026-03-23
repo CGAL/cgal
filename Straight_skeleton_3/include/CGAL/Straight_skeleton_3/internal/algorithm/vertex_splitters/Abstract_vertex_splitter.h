@@ -69,6 +69,10 @@ public:
     bool result = false;
     PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
     result = Transformation::shift_facets_deg1(polyhedron_cpy, -1.0);
+#ifdef CGAL_SS3_DUMP_FILES
+    static unsigned int id = -1;
+    IO::write_OBJ("results/shift_"+std::to_string(++id)+".obj", polyhedron_cpy, parameters::do_not_triangulate_faces(true));
+#endif
     result = result && !Self_intersection::has_self_intersecting_surface(polyhedron_cpy);
     return result;
   }

@@ -55,23 +55,23 @@
 // - clean up all the code related to local queue updates (horrible variable names, duplicates, etc.)
 
 // @todo
-// - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
 // - Add tests; doc figures
 // - Do not accept non-manifold inputs, non-triangulated inputs (clarify doc)
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
 
 // @todo later:
-// - if checking perturbation fails because of self-intersections, use a smaller epsilon
-// - perform facet merging using CGAL's region growing and remesh_planar_faces() (?)
-// - check for overly shared objects, redundant function calls (plane normalization, for example)
-// - write a sanitization algorithm without perturbation, something akin to: apply_rand_plane_tilts_V3(p, eps=0),
+// - If a perturbation fails because of self-intersections, restart with a smaller epsilon
+// - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
+// - Perform facet merging using CGAL's region growing and remesh_planar_faces() ?
+// - Check for overly shared objects, redundant function calls (plane normalization, for example)
+// - Write a sanitization algorithm without perturbation, something akin to: apply_rand_plane_tilts_V3(p, eps=0),
 //   which only ensures that points are on supporting planes, but does NOT perturb the planes.
-// - use traits' functors
-// - get rid of all the shared ptr stuff, we only need to zombie the elements and use IDs
+// - Get rid of all the shared ptr stuff, we only need to zombie the elements and use IDs
+// - Move polyhedron_ if the skeleton is not being built
+// - Re-enable the option to translate and scale (?)
 
 // @todo latest:
-// - Move polyhedron_ if the skeleton is not being built
-// - re-enable the option to translate and scale (?)
+// - Use traits' functors
 
 // ----
 
@@ -81,9 +81,9 @@
 #define CGAL_SS3_NO_SKELETON_DS
 
 /*
-  Some events can be detected from multime elements. Reduce that to a single element.
+  Some events can be detected from multime elements. Reduce that to a single "canonical" element.
   Not used when adding local elements to the queue because we might encounter
-  only *some* representatives in the subset, excludin the canonical one.
+  only *some* representatives in the subset, excluding the canonical one.
 */
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
 

@@ -869,7 +869,7 @@ public:
       double z = CGAL::to_double(p.z()) + v_r[2];
 #endif
       Point_3 p_nudged { x, y, z };
-      // CGAL_SS3_TRANSF_TRACE("base nudge: " << x << " " << y << " " << z);
+      CGAL_SS3_TRANSF_TRACE("base nudge: " << x << " " << y << " " << z);
 
       Point_3 p_new;
 
