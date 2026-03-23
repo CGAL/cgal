@@ -13,6 +13,7 @@
 #define CGAL_CONFORMING_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 
 #include <CGAL/IO/Color_ostream.h>
+#include <CGAL/IO/io_tags.h>
 #include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
@@ -583,20 +584,19 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
   }
 
   std::ostream& operator()(std::ostream& out) const {
-    out << Time_stamper::display_id(this->it.operator->(), offset);
-    if(this->it.operator->() != nullptr) {
-      out << (this->it->ccdt_3_data().is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
-          << (this->it->ccdt_3_data().is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
-          << "= " << this->it->point();
-      if(this->it->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_BORDER)) out << " (region border)";
-      if(this->it->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_INSIDE)) out << " (inside region)";
-      if(this->it->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY)) out << " (cavity vertex)";
-      if(this->it->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY_ABOVE)) out << " (vertex above)";
-      if(this->it->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY_BELOW)) out << " (vertex below)";
-      return out;
-    }
-    else
-      return out;
+    auto v_ptr = this->it.operator->();
+    out << Time_stamper::display_id(v_ptr, offset);
+    if(v_ptr == nullptr) return out;
+
+    out << (v_ptr->ccdt_3_data().is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
+        << (v_ptr->ccdt_3_data().is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
+        << "= " << v_ptr->point();
+    if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_BORDER)) out << " (region border)";
+    if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_INSIDE)) out << " (inside region)";
+    if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY)) out << " (cavity vertex)";
+    if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY_ABOVE)) out << " (vertex above)";
+    if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY_BELOW)) out << " (vertex below)";
+    return out;
   }
 };
 
@@ -646,6 +646,8 @@ private:
 
 public:
   using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
+  using Facet = typename Triangulation::Facet;
 
 #ifndef DOXYGEN_RUNNING
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
@@ -1085,22 +1087,22 @@ public:
    *        \link TriangulationDataStructure_3::Facet `Triangulation::Facet`\endlink,
    *        as defined by its triangulation data structure.
    */
-  bool is_facet_constrained(const typename Triangulation::Facet& f) const {
+  bool is_facet_constrained(const Facet& f) const {
     return cdt_impl.is_facet_constrained(f);
   }
 
   /*!
    * \brief same as `is_facet_constrained(f)` with `f` being `Triangulation::Facet(ch, index)`.
    */
-  bool is_facet_constrained(typename Triangulation::Cell_handle ch, int index) const {
-    return cdt_impl.is_facet_constrained(typename Triangulation::Facet(ch, index));
+  bool is_facet_constrained(Cell_handle ch, int index) const {
+    return cdt_impl.is_facet_constrained(Facet(ch, index));
   }
 
   /*!
    * @brief same as `face_constraint_index(f)` with `f` being `Triangulation::Facet(ch, index)`.
    * @pre \link Conforming_constrained_Delaunay_triangulation_3::is_facet_constrained `is_facet_constrained`\endlink(`f`)
    */
-  CDT_3_signed_index face_constraint_index(typename Triangulation::Cell_handle ch, int i) const
+  CDT_3_signed_index face_constraint_index(Cell_handle ch, int i) const
   {
     return ch->ccdt_3_data().face_constraint_index(i);
   }
@@ -1110,7 +1112,7 @@ public:
    * facet \p f
    * @pre \link Conforming_constrained_Delaunay_triangulation_3::is_facet_constrained `is_facet_constrained`\endlink(`f`)
    */
-  CDT_3_signed_index face_constraint_index(const typename Triangulation::Facet& f) const
+  CDT_3_signed_index face_constraint_index(const Facet& f) const
   {
     return face_constraint_index(f.first, f.second);
   }
@@ -1205,6 +1207,28 @@ public:
   template<typename CDT, typename FacetRange>
   void write_facets(std::ostream& out, const CDT& cdt, FacetRange&& facets) const {
     cdt_impl.write_facets(out, cdt, std::forward<FacetRange>(facets));
+  }
+
+  auto statistics(std::string prefix = "") const {
+    using Stats_array = std::array<std::size_t, static_cast<std::size_t>(CDT_3_vertex_type::nb_of_types)>;
+    return IO::oformat([this, prefix=std::move(prefix)](std::ostream& out) -> auto& {
+      out << prefix << "Number of vertices: " << triangulation().number_of_vertices() << "\n";
+      out << prefix << "Number of cells: " << triangulation().number_of_cells() << "\n";
+
+      auto nb = [nb_vertices_by_type = Stats_array{}](CDT_3_vertex_type type) mutable -> auto& {
+        return nb_vertices_by_type[static_cast<std::size_t>(type)];
+      };
+
+      for(auto v: triangulation().finite_vertex_handles()) {
+        ++nb(v->ccdt_3_data().vertex_type());
+      }
+      out << prefix << "Number of vertices by type:\n";
+      out << prefix << "  - " << nb(CDT_3_vertex_type::INPUT_VERTEX) << " input vertices\n";
+      out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_ON_EDGE) << " Steiner vertices on edges\n";
+      out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_FACE) << " Steiner vertices in faces\n";
+      out << prefix << "  - " << nb(CDT_3_vertex_type::FREE) << " free vertices\n";
+      return out;
+    }, IO_manip_tag{});
   }
 };
 

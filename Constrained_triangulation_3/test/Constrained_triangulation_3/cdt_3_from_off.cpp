@@ -714,7 +714,7 @@ int go(Mesh mesh, CDT_options options) {
     auto timing = std::chrono::high_resolution_clock::now() - build_start;
     std::cout << "[timings] built CDT from mesh in "
               << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
-    std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
+    std::cout << cdt.statistics() << "\n\n";
   }
 
   // Validation: check conforming status and validity
