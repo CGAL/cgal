@@ -37,7 +37,7 @@ public:
 /*!
 
 */
-    typedef Partition_traits_2<R,PMap> Self;
+    typedef Partition_traits_2<R,PMap,Container_> Self;
 
 /*!
 
