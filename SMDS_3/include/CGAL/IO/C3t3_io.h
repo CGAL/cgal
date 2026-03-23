@@ -64,6 +64,8 @@ save_c3t3(std::ostream& os
   const Tr& tr = c3t3.triangulation();
 
   os << "CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
+  if(binary)
+    os << "binary";
   internal::set_binary(os, binary);
 
   // write points
@@ -173,18 +175,18 @@ save_c3t3(std::ostream& os
  *
  * @sa `CGAL::IO::save_c3t3()`
  */
-template <class C3t3,
-          typename Properties>
+template <class C3t3> //, typename Properties>
 bool load_c3t3(std::istream& is
              , C3t3& c3t3
-             , const bool binary
-             , const Properties& properties)
+             , const bool binary)
 {
   using Tr = typename C3t3::Triangulation;
   using Cell_handle = typename Tr::Cell_handle;
   using Facet = typename Tr::Facet;
   using Edge = typename Tr::Edge;
   using Vertex_handle = typename Tr::Vertex_handle;
+  using FT = typename Tr::Geom_traits::FT;
+  using Point = typename Tr::Point;
 
   std::string s;
   if(!(is >> s))
@@ -207,112 +209,118 @@ bool load_c3t3(std::istream& is
   tr.tds().clear();
   tr.infinite_vertex() = tr.tds().create_vertex();
 
-    std::size_t n;
-  int d;
-  if(IO::is_ascii(is)) {
-    is >> d >> n;
-  } else {
-    read(is, d);
-    read(is, n);
+//  // todo : fix reading header
+//  std::size_t n;
+//  int d;
+//  if(IO::is_ascii(is)) {
+//    is >> d >> n;
+//  } else {
+//    read(is, d);
+//    read(is, n);
+//  }
+//  if(!is)
+//    return false;
+
+  std::string str;
+  do {
+    is >> str;
   }
-  if(!is)
-    return false;
+  while(str.compare("Vertices") != 0);
+  std::size_t n;
+  is >> n;
 
   // read points
+  int d = 3;//todo : save/load dimension
   std::vector<Vertex_handle> vertices;
-  if(d > 3 || d < -2 || (n + 1) > vertices.max_size()) {
-    is.setstate(std::ios_base::failbit);
-    return false;
-  }
+//  if(d > 3 || d < -2 || (n + 1) > vertices.max_size()) {
+//    is.setstate(std::ios_base::failbit);
+//    return false;
+//  }
   tr.tds().set_dimension(d);
   vertices.resize(n + 1);
   vertices[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
   for(std::size_t i = 1; i <= n; i++) {
     vertices[i] = tr.tds().create_vertex();
-    if(!(is >> *vertices[i]))
+    FT x, y, z;//todo : deal with weight w
+    if(!(is >> x >> y >> z))
       return false;
+    vertices[i]->set_point(Point(x, y, z));
   }
 
   // read cells and fill the TDS
   std::vector<Cell_handle> cells;
-  std::size_t m;
-  tr.tds().read_cells(is, vertices, m, cells);
+  do {
+    is >> str;
+  } while(str.compare("Cells") != 0);
+
+  tr.tds().read_cells(is, vertices, n, cells);
 
   // go to properties
-  s.clear();
   do
   {
+    s.clear();
     if(!bin)
     {
       while(s.empty() && !is.eof()) // skip empty lines
         std::getline(is, s);
+      if(is.eof())
+      {
+        c3t3.rescan_after_load_of_triangulation();
+        return true;
+      }
     }
 
+    std::string ppty_value_type;
+    std::size_t nb_simplices;
+    std::size_t nb_components_per_simplex;
     std::string ppty_name;
-    int nb_elements;
-    int nb_values_per_element;
-    std::string ppty_type;
-    if(IO::is_ascii(is))
+    std::istringstream iss(s);
+    if(!internal::read_property_header(iss,
+          ppty_value_type, nb_simplices, nb_components_per_simplex, ppty_name))
     {
-      std::istringstream iss(s);
-      std::string hash;
-      if(!(iss >> hash >> ppty_name >> nb_elements >> nb_values_per_element >> ppty_type)
-        || hash != "#")
-        return false;
-    }
-    else
-    {
-      if(!(is >> ppty_name >> nb_elements >> nb_values_per_element >> ppty_type))
-        return false;
+      std::cerr << "load_c3t3(): expected property header, got \"" << s << "\"\n";
+      return false;
     }
 
-  //  // todo : read the type of the property,
-  //  //        and use it to read the value of the property
-    if(internal::is_cell_property(ppty_name))
+    const std::string simplex_type_str = ppty_name.substr(0, ppty_name.find(':'));
+    const auto simplex_type = internal::parse_simplex_type(simplex_type_str);
+    const auto value_type = internal::parse_value_type(ppty_value_type);
+
+    // read all simplices
+    for(int i = 0; i < nb_simplices; ++i)
     {
-      ;//internal::read_cell_property(is, tr, ppty.substr(6));
-    }
-    else if(internal::is_facet_property(ppty_name))
-    {
-      ;//internal::read_facet_property(is, tr, ppty.substr(6));
-    }
-    else if(internal::is_edge_property(ppty_name))
-    {
-      ;//internal::read_edge_property(is, tr, ppty.substr(5));
-    }
-    else if(internal::is_vertex_property(ppty_name))
-    {
-      ;//internal::read_vertex_property(is, tr, ppty.substr(7));
-    }
-    else
-    {
-      std::cerr << "load_c3t3(): unknown property name \"" << ppty_name << "\"\n";
-      return false;
+      const auto [simplex_indices, ppty_values]
+        = internal::read_simplex_and_values(simplex_type,
+                                            value_type,
+                                            nb_components_per_simplex,
+                                            is);
+      internal::apply_property(simplex_indices, ppty_name, ppty_values,
+                               vertices, c3t3);
     }
   }
   while(!is.eof());
 
   c3t3.rescan_after_load_of_triangulation();
 
-  return !is.fail();
+  return true;
 }
 
-template <class C3t3>
-bool load_c3t3(std::istream& is
-             , C3t3& c3t3
-             , const bool binary = false)
-{
-  using P = std::variant<internal::Subdomain_index_property<C3t3>,
-                         internal::Surface_patch_index_property<C3t3>,
-                         internal::Curve_index_property<C3t3>,
-                         internal::Corner_index_property<C3t3>>;
-  std::vector<P> c3t3_properties{internal::Subdomain_index_property<C3t3>(),
-                                 internal::Surface_patch_index_property<C3t3>(),
-                                 internal::Curve_index_property<C3t3>(),
-                                 internal::Corner_index_property<C3t3>()};
-  return load_c3t3(is, c3t3, binary, c3t3_properties);
-}
+//template <class C3t3>
+//bool load_c3t3(std::istream& is
+//             , C3t3& c3t3
+//             , const bool binary = false)
+//{
+//  using P = std::variant<internal::Subdomain_index_property<C3t3>,
+//                         internal::Surface_patch_index_property<C3t3>,
+//                         internal::Curve_index_property<C3t3>,
+//                         internal::Corner_index_property<C3t3>>;
+//  std::vector<P> c3t3_properties{internal::Subdomain_index_property<C3t3>(),
+//                                 internal::Surface_patch_index_property<C3t3>(),
+//                                 internal::Curve_index_property<C3t3>(),
+//                                 internal::Corner_index_property<C3t3>()};
+//  return load_c3t3(is, c3t3, binary, c3t3_properties);
+//}
 
 
 

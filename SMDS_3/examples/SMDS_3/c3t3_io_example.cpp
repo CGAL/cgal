@@ -61,12 +61,12 @@ int main(int argc, char* argv[])
   os.close();
 
 
-//  std::ifstream is(filename, std::ios_base::binary);
-//  if(!CGAL::IO::load_c3t3(is, c3t3))
-//  {
-//    std::cerr << "Failed to read" << std::endl;
-//    return EXIT_FAILURE;
-//  }
+  std::ifstream is2("after_load.c3t3.cgal");
+  if(!CGAL::IO::load_c3t3(is2, c3t3, false))
+  {
+    std::cerr << "Failed to read" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // [do something]
 

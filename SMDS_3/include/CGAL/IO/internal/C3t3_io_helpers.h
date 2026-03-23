@@ -19,6 +19,8 @@
 
 #include <CGAL/SMDS_3/io_signature.h>
 
+#include <boost/container/small_vector.hpp>
+
 #include <iostream>
 #include <string>
 #include <limits>
@@ -225,40 +227,233 @@ namespace internal {
   //////////////////////
   // READ PROPERTIES ///
   //////////////////////
-  template <typename Tr>
-  void read_cell_property(std::istream& is,
-                          Tr& tr,
-                          const std::string& ppty_name)
+
+  bool read_property_header(std::istream& is,
+                            std::string& type,
+                            std::size_t& nb_simplices,
+                            std::size_t& nb_components_per_simplex,
+                            std::string& ppty_name)
   {
-    std::cout << "read_cell_property(): property name = " << ppty_name << "\n";
-    //todo
+    std::string hash;
+    if(IO::is_ascii(is))
+    {
+      if(!(is >> hash >> type >> nb_simplices >> nb_components_per_simplex >> ppty_name)
+        || hash != "#")
+        return false;
+    }
+    else
+    { //todo : deal with end of line in binary mode
+      if(!(is >> hash >> type >> nb_simplices >> nb_components_per_simplex >> ppty_name))
+        return false;
+    }
+    return true;
   }
 
-  template <typename Tr>
-  void read_facet_property(std::istream& is,
-                           Tr& tr,
-                           const std::string& ppty_name)
+  enum class NumberType { int8, int16, int32, int64, uint8, uint16, uint32, uint64, float32, float64, unknown = 100 };
+  using NumberTypeVariant = std::variant<int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t, float, double>;
+
+  enum class SimplexType { vertex = 1, edge, facet, cell, unknown = 100};
+  std::size_t number_of_vertices(const SimplexType& st)
   {
-    std::cout << "read_facet_property(): property name = " << ppty_name << "\n";
-    // todo
+    return static_cast<std::size_t>(st);
   }
 
-  template <typename Tr>
-  void read_edge_property(std::istream& is,
-                          Tr& tr,
-                          const std::string& ppty_name)
+  NumberType parse_value_type(const std::string& s)
   {
-    std::cout << "read_edge_property(): property name = " << ppty_name << "\n";
-    // todo
+    if(s == "int8_t")         return NumberType::int8;
+    else if(s == "int16_t")   return NumberType::int16;
+    else if(s == "int32_t")   return NumberType::int32;
+    else if(s == "int64_t")   return NumberType::int64;
+    else if(s == "uint8_t")   return NumberType::uint8;
+    else if(s == "uint16_t")  return NumberType::uint16;
+    else if(s == "uint32_t")  return NumberType::uint32;
+    else if(s == "uint64_t")  return NumberType::uint64;
+    else if(s == "float32_t") return NumberType::float32;
+    else if(s == "float64_t") return NumberType::float64;
+
+    CGAL_assertion(false);
+    return NumberType::unknown;
   }
 
-  template <typename Tr>
-  void read_vertex_property(std::istream& is,
-                            Tr& tr,
-                            const std::string& ppty_name)
+  SimplexType parse_simplex_type(const std::string& s)
   {
-    std::cout << "read_vertex_property(): property name = " << ppty_name << "\n";
-    // todo
+    if(s == "vertex")     return SimplexType::vertex;
+    else if(s == "edge")  return SimplexType::edge;
+    else if(s == "facet") return SimplexType::facet;
+    else if(s == "cell")  return SimplexType::cell;
+
+    CGAL_assertion(false);
+    return SimplexType::unknown;
+  }
+
+  template<typename V>
+  NumberTypeVariant read_property_value(std::istream& is)
+  {
+    V value;
+    is >> value;
+    return value;
+  }
+
+  NumberTypeVariant read_by_number_type(const NumberType& nt,
+                                        std::istream& is)
+  {
+    switch(nt)
+    {
+      case NumberType::int8:
+        return read_property_value<int8_t>(is);
+      case NumberType::int16:
+        return read_property_value<int16_t>(is);
+      case NumberType::int32:
+        return read_property_value<int32_t>(is);
+      case NumberType::int64:
+        return read_property_value<int64_t>(is);
+      case NumberType::uint8:
+        return read_property_value<uint8_t>(is);
+      case NumberType::uint16:
+        return read_property_value<uint16_t>(is);
+      case NumberType::uint32:
+        return read_property_value<uint32_t>(is);
+      case NumberType::uint64:
+        return read_property_value<uint64_t>(is);
+      case NumberType::float32:
+        return read_property_value<float>(is);
+      case NumberType::float64:
+        return read_property_value<double>(is);
+    };
+    std::cerr << "Unknown number type " << std::endl;
+    CGAL_assertion(false);
+    return NumberTypeVariant();
+  }
+
+  auto
+  read_simplex_and_values(const SimplexType& st,
+                          const NumberType& nt,
+                          const std::size_t& nb_components,
+                          std::istream& is)
+  {
+    const std::size_t nb_indices = number_of_vertices(st);
+    std::vector<std::size_t> indices(nb_indices);
+    for(std::size_t i = 0; i < nb_indices; ++i)
+    {
+      std::size_t index;
+      is >> index;
+      indices[i] = index;
+    }
+
+    std::vector<NumberTypeVariant> values(nb_components);
+    for(std::size_t i = 0; i < nb_components; ++i)
+      values[i] = read_by_number_type(nt, is);
+
+    return std::make_pair(indices, values);
+  }
+
+  template<typename C3t3>
+  void get_vertex_and_apply_property(const std::size_t& i,
+                                     const NumberTypeVariant& value,
+                                     const std::string& ppty_name,
+                                     const std::vector<typename C3t3::Vertex_handle>& vertices,
+                                     C3t3 &c3t3)
+  {
+    using Corner_index = typename C3t3::Corner_index;
+    typename C3t3::Vertex_handle v = vertices[i];
+
+    if(ppty_name == "vertex:corner_index" && !c3t3.is_in_complex(v))
+      c3t3.add_to_complex(v, std::get<Corner_index>(value));
+  }
+  template <typename C3t3>
+  void get_edge_and_apply_property(const std::vector<std::size_t>& indices,
+                                     const NumberTypeVariant& value,
+                                     const std::string& ppty_name,
+                                     const std::vector<typename C3t3::Vertex_handle>& vertices,
+                                     C3t3& c3t3)
+  {
+    CGAL_assertion(indices.size() == 2);
+    using Curve_index = typename C3t3::Curve_index;
+    const typename C3t3::Vertex_handle v0 = vertices[indices[0]],
+                                       v1 = vertices[indices[1]];
+
+    if(ppty_name == "edge:curve_index" && !c3t3.is_in_complex(v0, v1))
+      c3t3.add_to_complex(v0, v1, std::get<Curve_index>(value));
+  }
+
+  template <typename C3t3>
+  void get_facet_and_apply_property(const std::vector<std::size_t>& indices,
+                                     const NumberTypeVariant& value,
+                                     const std::string& ppty_name,
+                                     const std::vector<typename C3t3::Vertex_handle>& vertices,
+                                     C3t3& c3t3)
+  {
+    CGAL_assertion(indices.size() == 3);
+    using Surface_patch_index = typename C3t3::Surface_patch_index;
+    using Cell_handle = typename C3t3::Cell_handle;
+
+    const typename C3t3::Vertex_handle v0 = vertices[indices[0]],
+                                       v1 = vertices[indices[1]],
+                                       v2 = vertices[indices[2]];
+
+    Cell_handle ch;
+    int i, j, k;
+    CGAL_assertion_code(bool ok =)
+    c3t3.triangulation().is_facet(vertices[indices[0]],
+                                  vertices[indices[1]],
+                                  vertices[indices[2]],
+                                  ch, i, j, k);
+    const int findex = 6 - i - j - k;
+    CGAL_assertion(ok);
+
+    if(ppty_name == "facet:surface_patch_index" && !c3t3.is_in_complex(ch, findex))
+      c3t3.add_to_complex(ch, findex, std::get<Surface_patch_index>(value));
+  }
+  template <typename C3t3>
+  void get_cell_and_apply_property(const std::vector<std::size_t>& indices,
+                                     const NumberTypeVariant& value,
+                                     const std::string& ppty_name,
+                                     const std::vector<typename C3t3::Vertex_handle>& vertices,
+                                     C3t3& c3t3)
+  {
+    using Subdomain_index = typename C3t3::Subdomain_index;
+    using Cell_handle = typename C3t3::Cell_handle;
+
+    Cell_handle ch;
+    CGAL_assertion_code(bool ok =)
+    c3t3.triangulation().is_cell(vertices[indices[0]],
+                                 vertices[indices[1]],
+                                 vertices[indices[2]],
+                                 vertices[indices[3]],
+                                 ch);
+    CGAL_assertion(ok);
+
+    if(ppty_name == "cell:subdomain_index" && !c3t3.is_in_complex(ch))
+      c3t3.add_to_complex(ch, std::get<Subdomain_index>(value));
+  }
+
+  template<typename C3t3>
+  void apply_property(const std::vector<std::size_t>& simplex_indices,
+                      const std::string& ppty_name,
+                      const std::vector<NumberTypeVariant>& ppty_values,
+                      const std::vector<typename C3t3::Vertex_handle>& vertices,
+                      C3t3& c3t3)
+  {
+    const NumberTypeVariant ppty_value = ppty_values[0];
+    //todo : deal with more than 1 ppty value
+    switch(simplex_indices.size())
+    {
+    case 1:
+      get_vertex_and_apply_property(simplex_indices[0], ppty_value, ppty_name, vertices, c3t3);
+      break;
+    case 2:
+      get_edge_and_apply_property(simplex_indices, ppty_value, ppty_name, vertices, c3t3);
+      break;
+    case 3:
+      get_facet_and_apply_property(simplex_indices, ppty_value, ppty_name, vertices, c3t3);
+      break;
+    case 4:
+      get_cell_and_apply_property(simplex_indices, ppty_value, ppty_name, vertices, c3t3);
+      break;
+    default:
+      std::cerr << "Error : simplex_indices has size "
+                << simplex_indices.size() << std::endl;
+    };
   }
 
   template <typename Simplex, typename C3t3>
