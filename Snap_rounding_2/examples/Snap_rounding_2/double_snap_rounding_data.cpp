@@ -1,6 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/snap_rounding_2.h>
+#include <CGAL/Snap_rounding_2.h>
 #include <CGAL/IO/OBJ.h>
 
 #include <CGAL/Real_timer.h>
@@ -27,7 +27,7 @@ static int run_mesh(const Obj_data& data)
 
   CGAL::Real_timer t;
   t.start();
-  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out));
+  CGAL::snap_rounding_2(segs, std::back_inserter(out));
   t.stop();
   std::cout << "Running time: " << t.time() << std::endl;
   std::cout << "Input_size: "<< segs.size() << " , Output size: " << out.size() << "s" << std::endl;

@@ -11,8 +11,8 @@
 // author(s)     : Eli Packer <elip@post.tau.ac.il>,
 //                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
-#ifndef CGAL_SNAP_ROUNDING_2_TRAITS_H
-#define CGAL_SNAP_ROUNDING_2_TRAITS_H
+#ifndef CGAL_HOT_PIXEL_SNAP_ROUNDING_2_TRAITS_H
+#define CGAL_HOT_PIXEL_SNAP_ROUNDING_2_TRAITS_H
 
 #include <CGAL/license/Snap_rounding_2.h>
 
@@ -109,7 +109,7 @@ public:
   /*! Functor */
   class Minkowski_sum_with_pixel_2 {
   private:
-    typedef Snap_rounding_traits_2<Base_kernel>         Traits;
+    typedef Hot_pixel_snap_rounding_traits_2<Base_kernel>         Traits;
     typedef std::list<Point_2>                          Point_list;
 
 
@@ -179,7 +179,7 @@ public:
       points_list.push_back(ms6);
     }
 
-    friend class Snap_rounding_traits_2<Base_kernel>;
+    friend class Hot_pixel_snap_rounding_traits_2<Base_kernel>;
   };
 
   /*! */
@@ -213,11 +213,6 @@ public:
   }
 
 };
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template<class Kernel>
-CGAL_DEPRECATED class Snap_rounding_traits_2: Hot_pixel_snap_rounding_traits_2<Kernel>;
-#endif // CGAL_NO_DEPRECATED_CODE
 
 } //namespace CGAL
 

@@ -9,32 +9,32 @@ typedef CGAL::Cartesian<Number_type>             Kernel;
 typedef CGAL::Snap_rounding_traits_2<Kernel>     Traits;
 typedef Kernel::Segment_2                        Segment_2;
 typedef Kernel::Point_2                          Point_2;
-typedef std::list<Segment_2>                     Segment_list_2;
-typedef std::list<Point_2>                       Polyline_2;
-typedef std::list<Polyline_2>                    Polyline_list_2;
+typedef std::vector<Segment_2>                   Segment_range_2;
+typedef std::vector<Point_2>                     Polyline_2;
+typedef std::vector<Polyline_2>                  Polyline_range_2;
 
 int main()
 {
-  Segment_list_2 seg_list;
-  Polyline_list_2 output_list;
+  Segment_range_2 segs;
+  Polyline_range_2 output;
 
-  seg_list.push_back(Segment_2(Point_2(0, 0), Point_2(10, 10)));
-  seg_list.push_back(Segment_2(Point_2(0, 10), Point_2(10, 0)));
-  seg_list.push_back(Segment_2(Point_2(3, 0), Point_2(3, 10)));
-  seg_list.push_back(Segment_2(Point_2(7, 0), Point_2(7, 10)));
+  segs.push_back(Segment_2(Point_2(0, 0), Point_2(10, 10)));
+  segs.push_back(Segment_2(Point_2(0, 10), Point_2(10, 0)));
+  segs.push_back(Segment_2(Point_2(3, 0), Point_2(3, 10)));
+  segs.push_back(Segment_2(Point_2(7, 0), Point_2(7, 10)));
 
   // Generate an iterated snap-rounding representation, where the centers of
   // the hot pixels bear their original coordinates, using 5 kd trees:
-  CGAL::snap_rounding_2<Traits,Segment_list_2::const_iterator,Polyline_list_2>
-    (seg_list.begin(), seg_list.end(), output_list, 1.0, true, false, 5);
+  // CGAL::snap_rounding_2<Traits,Segment_list_2::const_iterator,Polyline_list_2>
+  //   (seg_list.begin(), seg_list.end(), output_list, 1.0, true, false, 5);
 
+  CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(output));
   int counter = 0;
-  Polyline_list_2::const_iterator iter1;
-  for (iter1 = output_list.begin(); iter1 != output_list.end(); ++iter1) {
+  for (const Polyline_2 &pl: output) {
     std::cout << "Polyline number " << ++counter << ":\n";
     Polyline_2::const_iterator iter2;
-    for (iter2 = iter1->begin(); iter2 != iter1->end(); ++iter2)
-      std::cout << "    (" << iter2->x() << ":" << iter2->y() << ")\n";
+    for (const Point_2 &p: pl)
+      std::cout << "    (" << p.x() << ":" << p.y() << ")\n";
   }
 
   return(0);

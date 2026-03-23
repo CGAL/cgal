@@ -6,13 +6,13 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>
 
-#include <CGAL/Float_snap_rounding_traits_2.h>
-#include <CGAL/Float_snap_rounding_2.h>
+#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Snap_rounding_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel                     Epeck;
-typedef CGAL::Float_snap_rounding_traits_2<Epeck, Epeck>                      Epeck_Traits;
-typedef CGAL::Cartesian<CGAL::Exact_rational>                                 Rational_Kernel;
-typedef CGAL::Float_snap_rounding_traits_2<Rational_Kernel, Rational_Kernel>  Rational_Traits;
+typedef CGAL::Exact_predicates_exact_constructions_kernel                           Epeck;
+typedef CGAL::Double_grid_snap_rounding_traits_2<Epeck, Epeck>                      Epeck_Traits;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                                       Rational_Kernel;
+typedef CGAL::Double_grid_snap_rounding_traits_2<Rational_Kernel, Rational_Kernel>  Rational_Traits;
 
 template<class Traits>
 struct Test{
@@ -31,7 +31,7 @@ struct Test{
     segs.emplace_back(Point_2(1,2), Point_2(3,0));
     std::vector<Segment_2> out;
     Traits traits;
-    CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), std::back_inserter(out), CGAL::parameters::geom_traits(traits));
+    CGAL::vertical_slabs_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(traits));
     assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   }
 };

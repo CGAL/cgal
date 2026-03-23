@@ -10,8 +10,8 @@
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
 
-#ifndef CGAL_SNAP_ROUNDING_2_H
-#define CGAL_SNAP_ROUNDING_2_H
+#ifndef CGAL_HOT_PIXEL_SNAP_ROUNDING_2_H
+#define CGAL_HOT_PIXEL_SNAP_ROUNDING_2_H
 
 #include <CGAL/license/Snap_rounding_2.h>
 
@@ -30,7 +30,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/tss.h>
 
-#include<CGAL/Vertical_slabs_snap_rounding.h>
+#include<CGAL/Hot_pixel_snap_rounding_traits_2.h>
 
 namespace CGAL {
 
@@ -72,7 +72,7 @@ private:
   typedef typename Traits::FT           NT;
   typedef typename Traits::Segment_2    Segment_2;
   typedef typename Traits::Point_2      Point_2;
-  typedef CGAL::Segment_data<Traits>          Segment_data;
+  typedef CGAL::internal::Segment_data<Traits>          Segment_data;
 
 private:
   // p is the center of the hot pixel
@@ -116,7 +116,7 @@ public:
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
 struct Hot_pixel_auclidian_cmp {
-  typedef CGAL::Hot_pixel<Traits_>    Hot_pixel;
+  typedef CGAL::internal::Hot_pixel<Traits_>    Hot_pixel;
 
   Traits_ m_gt;
 
@@ -127,7 +127,7 @@ struct Hot_pixel_auclidian_cmp {
 // certain segment intersect
 template<class Traits_>
 struct Hot_pixel_dir_cmp {
-  typedef CGAL::Hot_pixel<Traits_>    Hot_pixel;
+  typedef CGAL::internal::Hot_pixel<Traits_>    Hot_pixel;
 
   Traits_ m_gt;
 
@@ -139,18 +139,18 @@ int number_of_false_hp;
 #endif
 
 template<class Traits_,class OutputContainer>
-class Snap_rounding_2 {
+class Hot_pixel_snap_rounding_2 {
 private:
-  typedef Traits_                                       Traits;
-  typedef typename Traits::FT                           NT;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename OutputContainer::value_type          Polyline_type;
-  typedef CGAL::Hot_pixel<Traits_>                      Hot_pixel;
-  typedef CGAL::Segment_data<Traits>                    Segment_data;
-  typedef CGAL::Multiple_kd_tree<Traits,Hot_pixel *>    Multiple_kd_tree;
-  typedef std::list<Segment_data>                       Segment_data_list;
-  typedef CGAL::Hot_pixel_dir_cmp<Traits>               Hot_pixel_dir_cmp;
-  typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
+  typedef Traits_                                               Traits;
+  typedef typename Traits::FT                                   NT;
+  typedef typename Traits::X_monotone_curve_2                   X_monotone_curve_2;
+  typedef typename OutputContainer::value_type                  Polyline_type;
+  typedef CGAL::internal::Hot_pixel<Traits_>                    Hot_pixel;
+  typedef CGAL::internal::Segment_data<Traits>                  Segment_data;
+  typedef CGAL::internal::Multiple_kd_tree<Traits,Hot_pixel *>  Multiple_kd_tree;
+  typedef std::list<Segment_data>                               Segment_data_list;
+  typedef CGAL::internal::Hot_pixel_dir_cmp<Traits>             Hot_pixel_dir_cmp;
+  typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>              Hot_pixel_set;
 
 public:
   // friend class Segment_data<Traits>;
@@ -525,7 +525,7 @@ bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
 
 /*! */
 template<class Traits,class OutputContainer>
-void Snap_rounding_2<Traits,OutputContainer>::
+void Hot_pixel_snap_rounding_2<Traits,OutputContainer>::
 find_hot_pixels_and_create_kd_trees(NT pixel_size,
                                     unsigned int number_of_kd_trees,
                                     std::list<Segment_data> & seg_list,
@@ -579,7 +579,7 @@ find_hot_pixels_and_create_kd_trees(NT pixel_size,
 
 /*! */
 template<class Traits_,class OutputContainer>
-void Snap_rounding_2<Traits_,OutputContainer>::
+void Hot_pixel_snap_rounding_2<Traits_,OutputContainer>::
 find_intersected_hot_pixels(Segment_data & seg,
                             std::set<Hot_pixel *,
                             Hot_pixel_dir_cmp> & hot_pixels_intersected_set,
@@ -618,7 +618,7 @@ find_intersected_hot_pixels(Segment_data & seg,
 
 /*! */
 template<class Traits_,class OutputContainer>
-void Snap_rounding_2<Traits_,OutputContainer>::
+void Hot_pixel_snap_rounding_2<Traits_,OutputContainer>::
 reroute_sr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
            & inp_hot_pixels_intersected_set,
            Polyline_type & seg_output,
@@ -638,7 +638,7 @@ reroute_sr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
 
 /*! */
 template<class Traits_,class OutputContainer>
-void Snap_rounding_2<Traits_,OutputContainer>::
+void Hot_pixel_snap_rounding_2<Traits_,OutputContainer>::
 reroute_isr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
             & inp_hot_pixels_intersected_set,
             Polyline_type & seg_output,
@@ -687,7 +687,7 @@ reroute_isr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
 
 /*! */
 template<class Traits_, class OutputContainer>
-void Snap_rounding_2<Traits_,OutputContainer>::
+void Hot_pixel_snap_rounding_2<Traits_,OutputContainer>::
 iterate(OutputContainer & output_container,
         NT pixel_size,
         bool int_output, bool do_isr,
@@ -754,9 +754,9 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
   number_of_false_hp = 0;
 #endif
 
-  typedef CGAL::Hot_pixel<Traits>                     Hot_pixel;
-  typedef CGAL::Segment_data<Traits>                  Segment_data;
-  typedef CGAL::Multiple_kd_tree<Traits,Hot_pixel *>  Multiple_kd_tree;
+  typedef CGAL::internal::Hot_pixel<Traits>                     Hot_pixel;
+  typedef CGAL::internal::Segment_data<Traits>                  Segment_data;
+  typedef CGAL::internal::Multiple_kd_tree<Traits,Hot_pixel *>  Multiple_kd_tree;
   typedef std::list<Segment_data>                     Segment_data_list;
 
   Segment_data_list seg_list;
@@ -769,7 +769,7 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
     ++begin;
   }
 
-  Snap_rounding_2<Traits,OutputContainer> s;
+  Hot_pixel_snap_rounding_2<Traits,OutputContainer> s;
 
   s.find_hot_pixels_and_create_kd_trees(pixel_size, number_of_kd_trees,
                                         seg_list, &mul_kd_tree);
@@ -787,20 +787,7 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-/*! */
-template<class Traits, class InputIterator, class OutputContainer>
-CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
-                                     InputIterator end,
-                                     OutputContainer & output_container,
-                                     typename Traits::NT pixel_size,
-                                     bool do_isr = true,
-                                     bool int_output = true,
-                                     unsigned int number_of_kd_trees = 1)
-{
-  internal::hot_pixel_snap_rounding_2<Traits>(begin, end, output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
-}
-#endif
+} // namespace internal
 
 /**
 * \ingroup PkgSnapRounding2Ref
@@ -831,19 +818,17 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 * \cgalNamedParamsEnd
 */
 template <class SegmentRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void hot_pixel_snap_rounding_2(const SegmentRange &segments,
-                               OutputIterator& out,
-                               const NamedParameters &np = parameters::default_values())
+OutputIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
+                                         OutputIterator out,
+                                         const NamedParameters &np = parameters::default_values())
 {
   using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
 
   using Kernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename SegmentRange::iterator>::value_type>>::Kernel;
-  using DefaultTraits = Snap_rounding_traits_2<Kernel>;
+  using DefaultTraits = Hot_pixel_snap_rounding_traits_2<Kernel>;
   using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                               NamedParameters,
                                                               DefaultTraits>::type;
-
-  using Polyline = typename std::iterator_traits<OutputIterator>::value_type;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -858,12 +843,9 @@ void hot_pixel_snap_rounding_2(const SegmentRange &segments,
 
   for(auto &pl: output_container)
     *out++ = std::move(pl);
+
+  return out;
 }
-
-
-
-
-} // namespace internal
 
 } //namespace CGAL
 

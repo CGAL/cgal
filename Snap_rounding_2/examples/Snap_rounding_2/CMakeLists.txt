@@ -14,4 +14,4 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
-set_property(TARGET float_snap_rounding_data PROPERTY LABELS "NO_TESTING")
+set_property(TARGET double_snap_rounding_data PROPERTY LABELS "NO_TESTING")

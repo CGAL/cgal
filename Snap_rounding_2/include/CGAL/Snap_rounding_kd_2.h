@@ -96,8 +96,6 @@ public:
 
 }; // Search_traits_kd_tree_2
 
-} // namespace internal
-
 /////////////////////
 /////////////////////
 //Multiple_kd_tree
@@ -586,6 +584,8 @@ public:
       result_list.push_back(my_point_iter->object);
   }
 };
+
+} // namespace internal
 
 } //namespace CGAL
 
