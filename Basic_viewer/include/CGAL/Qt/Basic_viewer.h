@@ -936,29 +936,6 @@ protected:
 
     }
 
-    // source_ = isOpenGL_4_3()
-    //         ? VERTEX_SOURCE_CLIPPING_PLANE
-    //         : vertex_source_clipping_plane_comp;
-
-    // QOpenGLShader *vertex_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Vertex);
-    // if (!vertex_shader_clipping_plane->compileSourceCode(source_))
-    // { std::cerr << "Compiling vertex source for clipping plane FAILED" << std::endl; }
-
-    // source_ = isOpenGL_4_3()
-    //         ? FRAGMENT_SOURCE_CLIPPING_PLANE
-    //         : fragment_source_clipping_plane_comp;
-
-    // QOpenGLShader *fragment_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Fragment);
-    // if (!fragment_shader_clipping_plane->compileSourceCode(source_))
-    // { std::cerr << "Compiling fragment source for clipping plane FAILED" << std::endl; }
-
-    // if (!rendering_program_clipping_plane.addShader(vertex_shader_clipping_plane))
-    // { std::cerr << "Adding vertex shader for clipping plane FAILED" << std::endl;}
-    // if (!rendering_program_clipping_plane.addShader(fragment_shader_clipping_plane))
-    // { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
-    // if (!rendering_program_clipping_plane.link())
-    // { std::cerr << "Linking Program for clipping plane FAILED" << std::endl; }
-
     // Sphere shader
     if (isOpenGL_4_3())
     {
@@ -986,7 +963,7 @@ protected:
       if (!rendering_program_sphere.addShader(geometry_shader_sphere))
       { std::cerr << "Adding geometry shader for sphere FAILED" << std::endl;}
       if (!rendering_program_sphere.addShader(fragment_shader_sphere))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for sphere FAILED" << std::endl; }
       if (!rendering_program_sphere.link())
       { std::cerr << "Linking Program for sphere FAILED" << std::endl; }
     }
@@ -994,7 +971,6 @@ protected:
     // Cylinder shader
     if (isOpenGL_4_3())
     {
-      // clipping plane shader
       source_ = VERTEX_SOURCE_SHAPE;
 
       QOpenGLShader *vertex_shader_cylinder = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -1019,7 +995,7 @@ protected:
       if (!rendering_program_cylinder.addShader(geometry_shader_cylinder))
       { std::cerr << "Adding geometry shader for cylinder FAILED" << std::endl;}
       if (!rendering_program_cylinder.addShader(fragment_shader_cylinder))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for cylinder FAILED" << std::endl; }
       if (!rendering_program_cylinder.link())
       { std::cerr << "Linking Program for cylinder FAILED" << std::endl; }
     }
@@ -1051,12 +1027,12 @@ protected:
       if (!rendering_program_normal.addShader(geometry_shader_normal))
       { std::cerr << "Adding geometry shader for normal FAILED" << std::endl;}
       if (!rendering_program_normal.addShader(fragment_shader_normal))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for normal FAILED" << std::endl; }
       if (!rendering_program_normal.link())
       { std::cerr << "Linking Program for normal FAILED" << std::endl; }
     }
 
-    // Normal shader
+    // Triangle shader
     if (isOpenGL_4_3())
     {
       source_ = VERTEX_SOURCE_TRIANGLE;
@@ -1083,7 +1059,7 @@ protected:
       if (!rendering_program_triangle.addShader(geometry_shader_triangle))
       { std::cerr << "Adding geometry shader for triangle FAILED" << std::endl;}
       if (!rendering_program_triangle.addShader(fragment_shader_triangle))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for triangle FAILED" << std::endl; }
       if (!rendering_program_triangle.link())
       { std::cerr << "Linking Program for triangle FAILED" << std::endl; }
     }
