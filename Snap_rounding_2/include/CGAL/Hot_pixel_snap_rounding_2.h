@@ -789,6 +789,8 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 
 } // namespace internal
 
+#if DOXYGEN_RUNNING
+
 /**
 * \ingroup PkgSnapRounding2Ref
 *
@@ -846,6 +848,78 @@ OutputIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
 
   return out;
 }
+
+# else
+
+template <class InputRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
+                                              OutputIterator   out,
+                                              const NamedParameters &np = parameters::default_values())
+{
+  using Input = std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>;
+
+  if constexpr(internal::is_instance_of_Polygon_2< Input >){
+    // return internal::vertical_slabs_snap_rounding_2_polygon(inputs, out, np);
+    assert(0);
+    return out;
+  } else {
+    using OutputType = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+
+    using Kernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>>::Kernel;
+    using DefaultTraits = Hot_pixel_snap_rounding_traits_2<Kernel>;
+    using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+
+    using Point_2 = typename Traits::Point_2;
+    using Segment_2 = typename Traits::Segment_2;
+    using Polyline = std::vector< Point_2 >;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    std::vector< Polyline > output_container;
+    auto pixel_size = choose_parameter(get_parameter(np, internal_np::pixel_size), 1.);
+    bool do_isr = choose_parameter(get_parameter(np, internal_np::do_iterative_snap_rounding), true);
+    bool int_output = true;
+    unsigned int number_of_kd_trees = 1;
+
+    internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
+
+    if constexpr(std::is_same_v<OutputType, Input>){
+      // Output Segments while removing duplicate ones
+
+      // Build a set with lexicographic order of the segments
+      auto comp = Traits().compare_xy_2_object();
+      auto less = Traits().less_xy_2_object();
+      auto pred = [&](const Segment_2 &a, const Segment_2 &b){
+        auto res = comp(a.source(), b.source());
+        if(res != EQUAL)
+          return res == SMALLER;
+        return less(a.target(), b.target());
+      };
+      std::set< Segment_2, decltype(pred) > set_out_segs(pred);
+
+      for(auto &poly: output_container)
+        for(std::size_t i=1; i<poly.size(); ++i)
+          if(less(poly[i-1], poly[i]))
+            set_out_segs.emplace(poly[i-1], poly[i]);
+          else
+            set_out_segs.emplace(poly[i], poly[i-1]);
+      for(auto &s: set_out_segs){
+        *out++ = s;
+      }
+    } else {
+      // Output polylines
+      for(auto &pl: output_container)
+        *out++ = std::move(pl);
+    }
+    return out;
+ }
+}
+
+#endif
+
 
 } //namespace CGAL
 

@@ -6,7 +6,8 @@ project(Snap_rounding_2_Tests)
 
 find_package(CGAL REQUIRED)
 
-create_single_source_cgal_program(test_snap_rounding_2.cpp NO_TESTING)
+create_single_source_cgal_program(test_hot_pixels_snap_rounding_2.cpp NO_TESTING)
+create_single_source_cgal_program(test_snap_rounding_2.cpp)
 create_single_source_cgal_program(test_vertical_slabs_snap_rounding.cpp)
 create_single_source_cgal_program(test_vertical_slabs_snap_rounding_concept.cpp)
 
@@ -38,6 +39,6 @@ function(add_Snap_rounding_tests name)
 endfunction(add_Snap_rounding_tests)
 
 if(CGAL_ENABLE_TESTING)
-  cgal_add_compilation_test(test_snap_rounding_2)
-  add_snap_rounding_tests(test_snap_rounding_2)
+  cgal_add_compilation_test(test_hot_pixels_snap_rounding_2)
+  add_snap_rounding_tests(test_hot_pixels_snap_rounding_2)
 endif()

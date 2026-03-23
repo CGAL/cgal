@@ -565,7 +565,7 @@ OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange& segments,
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* \param begin,end the range of input polygons
+* \param polygons the range of input polygons
 * \param out the output inserter
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -657,14 +657,6 @@ OutputIterator vertical_slabs_snap_rounding_2(const InputRange &inputs,
  }
 }
 #endif
-
-template <class SegmentRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator snap_rounding_2(const SegmentRange &segments,
-                               OutputIterator   out,
-                               const NamedParameters &np = parameters::default_values())
-{
-  return vertical_slabs_snap_rounding_2(segments, out, np);
-}
 
 } //namespace CGAL
 
