@@ -208,7 +208,6 @@ void CGAL::QGLViewer::initializeGL() {
     context()->format().setOption(QSurfaceFormat::DebugContext);
     if ( !context()->isValid()
          || format.majorVersion() < 4
-         || (format.majorVersion() == 4 && format.minorVersion() < 3)
          || QCoreApplication::arguments().contains(QStringLiteral("--old")))
 
     {
