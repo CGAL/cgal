@@ -72,7 +72,10 @@ namespace CGAL {
 namespace CDT_3 {
 
 struct Debug_options {
-  enum class Flags {
+  enum class Flag;
+  bool get(Flag f) const { return flags[static_cast<int>(f)]; }
+  auto get(Flag f)  { return flags[static_cast<int>(f)]; }
+  enum class Flag {
     Steiner_points = 0,
     Steiner_points_construction,
     conforming,
@@ -96,66 +99,68 @@ struct Debug_options {
     use_epeck_for_Steiner_points,
     nb_of_flags
   };
-  bool Steiner_points_construction() const { return flags[static_cast<int>(Flags::Steiner_points_construction)]; }
-  void Steiner_points_construction(bool b) { flags.set(static_cast<int>(Flags::Steiner_points_construction), b); }
 
-  bool Steiner_points() const { return flags[static_cast<int>(Flags::Steiner_points)]; }
-  void Steiner_points(bool b) { flags.set(static_cast<int>(Flags::Steiner_points), b); }
+  using Flags = std::bitset<static_cast<int>(Flag::nb_of_flags)>;
 
-  bool input_faces() const { return flags[static_cast<int>(Flags::input_faces)]; }
-  void input_faces(bool b) { flags.set(static_cast<int>(Flags::input_faces), b); }
+  bool Steiner_points_construction() const { return get(Flag::Steiner_points_construction); }
+  void Steiner_points_construction(bool b) { get(Flag::Steiner_points_construction) = b; }
 
-  bool missing_region() const { return flags[static_cast<int>(Flags::missing_region)]; }
-  void missing_region(bool b) { flags.set(static_cast<int>(Flags::missing_region), b); }
+  bool Steiner_points() const { return get(Flag::Steiner_points); }
+  void Steiner_points(bool b) { get(Flag::Steiner_points) = b; }
 
-  bool regions() const { return flags[static_cast<int>(Flags::regions)]; }
-  void regions(bool b) { flags.set(static_cast<int>(Flags::regions), b); }
+  bool input_faces() const { return get(Flag::input_faces); }
+  void input_faces(bool b) { get(Flag::input_faces) = b; }
 
-  bool copy_triangulation_into_hole() const { return flags[static_cast<int>(Flags::copy_triangulation_into_hole)]; }
-  void copy_triangulation_into_hole(bool b) { flags.set(static_cast<int>(Flags::copy_triangulation_into_hole), b); }
+  bool missing_region() const { return get(Flag::missing_region); }
+  void missing_region(bool b) { get(Flag::missing_region) = b; }
 
-  bool validity() const { return flags[static_cast<int>(Flags::validity)]; }
-  void validity(bool b) { flags.set(static_cast<int>(Flags::validity), b); }
+  bool regions() const { return get(Flag::regions); }
+  void regions(bool b) { get(Flag::regions) = b; }
 
+  bool copy_triangulation_into_hole() const { return get(Flag::copy_triangulation_into_hole); }
+  void copy_triangulation_into_hole(bool b) { get(Flag::copy_triangulation_into_hole) = b; }
 
-  bool finite_edges_map() const { return flags[static_cast<int>(Flags::debug_finite_edges_map)]; }
-  void finite_edges_map(bool b) { flags.set(static_cast<int>(Flags::debug_finite_edges_map), b); }
+  bool validity() const { return get(Flag::validity); }
+  void validity(bool b) { get(Flag::validity) = b; }
 
-  bool subconstraints_to_conform() const { return flags[static_cast<int>(Flags::debug_subconstraints_to_conform)]; }
-  void subconstraints_to_conform(bool b) { flags.set(static_cast<int>(Flags::debug_subconstraints_to_conform), b); }
+  bool finite_edges_map() const { return get(Flag::debug_finite_edges_map); }
+  void finite_edges_map(bool b) { get(Flag::debug_finite_edges_map) = b; }
 
-  bool use_finite_edges_map_flag() const { return flags[static_cast<int>(Flags::use_finite_edges_map)]; }
-  void use_finite_edges_map(bool b) { flags.set(static_cast<int>(Flags::use_finite_edges_map), b); }
+  bool subconstraints_to_conform() const { return get(Flag::debug_subconstraints_to_conform); }
+  void subconstraints_to_conform(bool b) { get(Flag::debug_subconstraints_to_conform) = b; }
 
-  bool verbose_special_cases() const { return flags[static_cast<int>(Flags::verbose_special_cases)]; }
-  void verbose_special_cases(bool b) { flags.set(static_cast<int>(Flags::verbose_special_cases), b); }
+  bool use_finite_edges_map_flag() const { return get(Flag::use_finite_edges_map); }
+  void use_finite_edges_map(bool b) { get(Flag::use_finite_edges_map) = b; }
 
-  bool encroaching_vertices() const { return flags[static_cast<int>(Flags::debug_encroaching_vertices)]; }
-  void encroaching_vertices(bool b) { flags.set(static_cast<int>(Flags::debug_encroaching_vertices), b); }
+  bool verbose_special_cases() const { return get(Flag::verbose_special_cases); }
+  void verbose_special_cases(bool b) { get(Flag::verbose_special_cases) = b; }
 
-  bool conforming_validation() const { return flags[static_cast<int>(Flags::debug_conforming_validation)]; }
-  void conforming_validation(bool b) { flags.set(static_cast<int>(Flags::debug_conforming_validation), b); }
+  bool encroaching_vertices() const { return get(Flag::debug_encroaching_vertices); }
+  void encroaching_vertices(bool b) { get(Flag::debug_encroaching_vertices) = b; }
 
-  bool constraint_hierarchy() const { return flags[static_cast<int>(Flags::debug_constraint_hierarchy)]; }
-  void constraint_hierarchy(bool b) { flags.set(static_cast<int>(Flags::debug_constraint_hierarchy), b); }
+  bool conforming_validation() const { return get(Flag::debug_conforming_validation); }
+  void conforming_validation(bool b) { get(Flag::debug_conforming_validation) = b; }
 
-  bool geometric_errors() const { return flags[static_cast<int>(Flags::debug_geometric_errors)]; }
-  void geometric_errors(bool b) { flags.set(static_cast<int>(Flags::debug_geometric_errors), b); }
+  bool constraint_hierarchy() const { return get(Flag::debug_constraint_hierarchy); }
+  void constraint_hierarchy(bool b) { get(Flag::debug_constraint_hierarchy) = b; }
 
-  bool polygon_insertion() const { return flags[static_cast<int>(Flags::debug_polygon_insertion)]; }
-  void polygon_insertion(bool b) { flags.set(static_cast<int>(Flags::debug_polygon_insertion), b); }
+  bool geometric_errors() const { return get(Flag::debug_geometric_errors); }
+  void geometric_errors(bool b) { get(Flag::debug_geometric_errors) = b; }
 
-  bool restore_faces() const { return flags[static_cast<int>(Flags::debug_restore_faces)]; }
-  void restore_faces(bool b) { flags.set(static_cast<int>(Flags::debug_restore_faces), b); }
+  bool polygon_insertion() const { return get(Flag::debug_polygon_insertion); }
+  void polygon_insertion(bool b) { get(Flag::debug_polygon_insertion) = b; }
 
-  bool display_statistics() const { return flags[static_cast<int>(Flags::display_statistics)]; }
-  void display_statistics(bool b) { flags.set(static_cast<int>(Flags::display_statistics), b); }
+  bool restore_faces() const { return get(Flag::debug_restore_faces); }
+  void restore_faces(bool b) { get(Flag::debug_restore_faces) = b; }
 
-  bool use_epeck_for_normals() const { return flags[static_cast<int>(Flags::use_epeck_for_normals)]; }
-  void use_epeck_for_normals(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_normals), b); }
+  bool display_statistics() const { return get(Flag::display_statistics); }
+  void display_statistics(bool b) { get(Flag::display_statistics) = b; }
 
-  bool use_epeck_for_Steiner_points() const { return flags[static_cast<int>(Flags::use_epeck_for_Steiner_points)]; }
-  void use_epeck_for_Steiner_points(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_Steiner_points), b); }
+  bool use_epeck_for_normals() const { return get(Flag::use_epeck_for_normals); }
+  void use_epeck_for_normals(bool b) { get(Flag::use_epeck_for_normals) = b; }
+
+  bool use_epeck_for_Steiner_points() const { return get(Flag::use_epeck_for_Steiner_points); }
+  void use_epeck_for_Steiner_points(bool b) { get(Flag::use_epeck_for_Steiner_points) = b; }
 
   double segment_vertex_epsilon() const { return segment_vertex_epsilon_; }
   void set_segment_vertex_epsilon(double eps) { segment_vertex_epsilon_ = eps; }
@@ -164,7 +169,7 @@ struct Debug_options {
   void set_vertex_vertex_epsilon(double eps) { vertex_vertex_epsilon_ = eps; }
 
 private:
-  std::bitset<static_cast<int>(Flags::nb_of_flags)> flags{};
+  Flags flags{};
   double segment_vertex_epsilon_ = 0.0;
   double vertex_vertex_epsilon_  = 0.0;
 }; // end struct Debug_options
