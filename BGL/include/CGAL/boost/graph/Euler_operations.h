@@ -316,7 +316,7 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 /**
  * splits the halfedge `h` and afterwards:
  * - calls `split_face()` with `prev(h, g)` and `next(h, g)`, if `h` is not a border halfedge
- * - calls `split_face()` with `opposite(h, g)` and `next(next(h, g), g)`, if `oppiste(h, g)`
+ * - calls `split_face()` with `opposite(h, g)` and `next(next(h, g), g)`, if `opposite(h, g)`
  *   is not a border halfedge
  *
  * \tparam Graph must be a `MutableFaceGraph`

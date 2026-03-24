@@ -36,6 +36,10 @@
 #include <vector>
 
 namespace CGAL {
+
+template <typename GeomTraits>
+class Straight_skeleton_3;
+
 namespace Straight_skeletons_3 {
 
 namespace internal {
@@ -45,19 +49,12 @@ template <typename GeomTraits>
 class Polyhedron;
 
 } // namespace HDS
-
-namespace SDS {
-
-template <typename GeomTraits>
-class Straight_skeleton_3;
-
-} // namespace SDS
 } // namespace internal
 
 namespace IO {
 
 /*
- * It is impossible for an .obj file to store holes inside a facet,
+ * It is impossible for an `.obj` file to store holes inside a facet,
  * so we triangulate facets in this case.
  */
 template <typename GeomTraits,
