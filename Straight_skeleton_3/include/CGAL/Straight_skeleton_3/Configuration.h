@@ -72,7 +72,8 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  *                              considered coplanar and may be merged.
  * - **`perturbation_epsilon`:** Positive floating-point value used to create the pertubation to ensure
  *                               general position. The value is used to nudge the coordinates of the planes.
- * - **`check_degenerate_configuration`:** Boolean to enable or disable checking if the result of the *                                         perturbation mechanism is indeed a valid polyhedron (and try again
+ * - **`check_degenerate_configuration`:** Boolean to enable or disable checking if the result of the
+ *                                         perturbation mechanism is indeed a valid polyhedron (and try again
  *                                         in the extremely unlikely event that the perturbation
  *                                         created a degenerate configuration).
  *
