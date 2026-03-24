@@ -72,14 +72,34 @@ struct Null_functor {
 Tag used to disable concurrency.
 For example, it may be used by a user to request the sequential version of an algorithm.
 */
-struct Sequential_tag {};
+struct Sequential_tag {
+
+/// \name Constants
+/// @{
+/*!
+`false`. Indicates that this tag represents sequential execution.
+*/
+static constexpr bool is_parallel;
+/// @}
+
+};
 
 /*!
 \ingroup PkgSTLExtensionUtilities
 Tag used to enable concurrency.
 For example, it may be used by a user to request the parallel version of an algorithm.
 */
-struct Parallel_tag {};
+struct Parallel_tag {
+
+/// \name Constants
+/// @{
+/*!
+`true`. Indicates that this tag represents parallel execution.
+*/
+static constexpr bool is_parallel;
+/// @}
+
+};
 
 /*!
 \ingroup PkgSTLExtensionUtilities
