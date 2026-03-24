@@ -197,7 +197,7 @@ public:
     Sub_chain_complex_mask& operator= (const Sub_chain_complex_mask& otherToCopy)
     {
         // Check that otherToCopy and current mask share the same chain complex
-        if (_K.get_id() != otherToCopy._K.get_id() )
+        if (_K.id() != otherToCopy._K.id() )
             throw("Error, operator= can only copy mask over the same chain complex.");
 
         // Perform assignment

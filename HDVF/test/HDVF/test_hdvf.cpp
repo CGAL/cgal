@@ -91,6 +91,16 @@ int main(int argc, char **argv) {
         assert(test_true);
     }
 
+    {
+        // Test operator=
+        HDVF_type hdvf2(complex, HDVF::OPT_FULL);
+        hdvf2 = hdvf;
+        // Compare
+        bool test_true(hdvf.compare(hdvf2));
+        std::cerr << "-- Test HDVF operator=: " << test_true << std::endl;
+        assert(test_true);
+    }
+
     // Test R
     std::cerr << "---- Test R operation" << std::endl;
     {

@@ -410,7 +410,7 @@ public:
     /** \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.
      */
-    size_t get_id () const { return _complex_id; }
+    size_t id () const { return _complex_id; }
 
 protected:
     /* Compute the point associated to the ith 0-cell */

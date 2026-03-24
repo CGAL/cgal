@@ -115,18 +115,29 @@ public:
      */
     Hdvf(const Hdvf& hdvf) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
 
+    /**
+     * \brief Affectation operator.
+     *
+     * \exception Invalid_underlying_complex If `hdvf` does not share the same underlying complex, raises a `%std::runtime_error`.
+     */
+    Hdvf& operator=(const Hdvf& hdvf) {
+        Base::operator=(hdvf);
+        return *this;
+    }
+
     /** \brief Constructor from the PRIMARY/SECONDARY/CRITICAL labels.
      *
-     * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
+     * If `with_build_reduction` is `false` check the combinatorial coherence of labels. If `with_build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
      *
+     * \param K A chain complex (a model of `AbstractChainComplex`)
      * \param flags Vector of PSC labels along each dimensions.
-     * \param build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
+     * \param with_build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
      *
      *  \exception If the flags provided are incoherent (or do not define an HDVF), raises a `%std::invalid_argument`.
      */
-    Hdvf(const ChainComplex& K, const std::vector<std::vector<PSC_flag> >& flags, bool build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, flags, build_reduction, hdvf_opt, dimension_restriction) {}
+    Hdvf(const ChainComplex& K, const std::vector<std::vector<PSC_flag> >& flags, bool with_build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, flags, with_build_reduction, hdvf_opt, dimension_restriction) {}
 
     /*
      * \brief Destructor. */

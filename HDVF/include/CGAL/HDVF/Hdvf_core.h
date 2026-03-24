@@ -222,10 +222,35 @@ public:
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt), _dimension_restriction(hdvf._dimension_restriction), _min_dimension(hdvf._min_dimension), _max_dimension(hdvf._max_dimension) { }
 
+    /**
+     * \brief Affectation operator.
+     *
+     * \exception Invalid_underlying_complex If `hdvf` does not share the same underlying complex, raises a `%std::runtime_error`.
+     */
+    Hdvf_core& operator=(const Hdvf_core& hdvf) {
+        if (_K.id() != hdvf._K.id()) {
+            throw std::runtime_error("Affectation of Hdvf_core only over the same complex");
+        }
+        _flag = hdvf._flag;
+        _nb_P = hdvf._nb_P;
+        _nb_S = hdvf._nb_S;
+        _nb_C = hdvf._nb_C;
+        _F_row = hdvf._F_row;
+        _G_col = hdvf._G_col;
+        _H_col = hdvf._H_col;
+        _DD_col = hdvf._DD_col;
+        _hdvf_opt = hdvf._hdvf_opt;
+        _dimension_restriction = hdvf._dimension_restriction;
+        _min_dimension = hdvf._min_dimension;
+        _max_dimension = hdvf._max_dimension;
+        return *this;
+    }
+
     /** \brief Constructor from the PRIMARY/SECONDARY/CRITICAL labels.
      *
-     * If `build_reduction` is `false` check the combinatorial coherence of labels. If `build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
+     * If `with_build_reduction` is `false` check the combinatorial coherence of labels. If `with_build_reduction` is `true` checks that labels describe a valid HDVF (ie. \f$\partial(S)\_P\f$ is invertible).
      *
+     * \param K A chain complex (a model of `AbstractChainComplex`)
      * \param flags Vector of PSC labels along each dimensions.
      * \param with_build_reduction If `false`, loads labels without building the reduction, if `true` builds the reduction (\f$\mathscr O(n^3)\f$).
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
@@ -615,6 +640,18 @@ public:
 
     // Hdvf_core getters
 
+    /** \brief Gets the number of cells with a given flag in dimension `q`.
+     *
+     * \param flag `PSC_flag` tested.
+     * \param q Dimension along which the number of cells is returned.
+     */
+    size_t number_of_cells_by_flag(PSC_flag flag, int q) const {
+        if (flag == PRIMARY) return _nb_P.at(q);
+        else if (flag == SECONDARY) return _nb_S.at(q);
+        else return _nb_C.at(q);
+    }
+
+    // !!! Why should it be virtual for duality?????
     /**
      * \brief Gets cells with a given `PSC_flag` in any dimension.
      *
@@ -622,16 +659,6 @@ public:
      *
      * \param flag PSC_flag to select.
      */
-
-    // !!! Why should it be virtual for duality?????
-
-    /** Gets the number of cells with a given flag in dimension `q`.*/
-    size_t number_of_cells_by_flag(PSC_flag flag, int q) const {
-        if (flag == PRIMARY) return _nb_P.at(q);
-        else if (flag == SECONDARY) return _nb_S.at(q);
-        else return _nb_C.at(q);
-    }
-
     virtual std::vector<std::vector<size_t> > psc_flags (PSC_flag flag) const ;
 
     /**

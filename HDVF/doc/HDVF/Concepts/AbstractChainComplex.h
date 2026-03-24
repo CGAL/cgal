@@ -79,6 +79,11 @@ Returns the dimension of the complex, that is, the largest dimension of cells.
  */
 int dimension();
 
+/** \brief Get (unique) object Id.
+ * For comparison of constant references to the complex.
+ */
+size_t id () const;
+
 /*!
 Returns the number of cells of dimension `q`.
 If `q` is negative of larger than the dimension of the complex, returns 0.
