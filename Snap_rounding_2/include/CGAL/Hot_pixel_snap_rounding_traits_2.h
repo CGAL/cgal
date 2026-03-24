@@ -32,8 +32,7 @@ namespace CGAL {
 *  The class `Hot_pixel_snap_rounding_traits_2<Kernel>` is a model of the
 * `HotPixelSnapRoundingTraits_2` concept.
 * This class should be instantiated with an exact geometric kernel that conforms
-* to the \cgal kernel-concept, such as the
-* `Exact_predicates_exact_constructions_kernel`, or `Cartesian<Gmpq>`.
+* to the \cgal kernel-concept that is model of the concept `Kernel`.
 *
 * This geometric kernel must provide an (arbitrary-precision) rational number type
 * (`FT`), `Point_2`, `Segment_2` and `Iso_rectangle_2`.

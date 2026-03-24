@@ -217,7 +217,7 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 *
 * \brief subdivides and rounds a range of polygons so that their boundary segments are pairwise disjoint in their interiors.
 *
-* Each polygon in the output are free of self intersections but may present pinched sections or/and common vertices or segments with
+* Each polygon in the output is free of self intersections but may present pinched sections or/and common vertices or segments with
 * other polygons.
 *
 * calls the function `CGAL::vertical_slabs_snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()` depending if
@@ -238,7 +238,7 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 *     \cgalParamDefault{an instance of `Double_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
-* @warning an input convex polygon might no longer be convex after rounding.
+* @warning an convex input polygon might no longer be convex after rounding.
 */
 template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
 OutputPolygonIterator snap_rounding_2(PolygonRange  &polygons,

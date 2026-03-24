@@ -39,6 +39,6 @@ function(add_Snap_rounding_tests name)
 endfunction(add_Snap_rounding_tests)
 
 if(CGAL_ENABLE_TESTING)
-  cgal_add_compilation_test(test_hot_pixels_snap_rounding_2)
-  add_snap_rounding_tests(test_hot_pixels_snap_rounding_2)
+  cgal_add_compilation_test(test_hot_pixel_snap_rounding_2)
+  add_snap_rounding_tests(test_hot_pixel_snap_rounding_2)
 endif()
