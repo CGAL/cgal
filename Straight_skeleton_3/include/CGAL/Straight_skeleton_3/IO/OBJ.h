@@ -17,6 +17,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_IO_OBJ_H
 #define CGAL_STRAIGHT_SKELETON_3_IO_OBJ_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>

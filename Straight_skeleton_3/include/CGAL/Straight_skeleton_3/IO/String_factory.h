@@ -17,6 +17,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_IO_STRING_FACTORY_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_IO_STRING_FACTORY_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <boost/date_time/local_time/local_time.hpp>
 
 #include <sstream>

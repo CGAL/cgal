@@ -17,6 +17,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_IO_STRINGFUNCS_H
 #define CGAL_STRAIGHT_SKELETON_3_IO_STRINGFUNCS_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <cstddef>
 #include <string>
 #include <vector>
