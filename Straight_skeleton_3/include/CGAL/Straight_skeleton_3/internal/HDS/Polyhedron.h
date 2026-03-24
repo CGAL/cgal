@@ -17,6 +17,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_INTERNAL_HDS_POLYHEDRON_H
 #define CGAL_STRAIGHT_SKELETON_INTERNAL_HDS_POLYHEDRON_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/weak_find.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>

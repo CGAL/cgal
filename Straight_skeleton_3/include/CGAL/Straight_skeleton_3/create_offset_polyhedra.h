@@ -11,6 +11,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_CREATE_OFFSET_POLYHEDRA_H
 #define CGAL_STRAIGHT_SKELETON_CREATE_OFFSET_POLYHEDRA_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>

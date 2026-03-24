@@ -11,6 +11,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_WEAK_FIND_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_WEAK_FIND_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <algorithm>
 #include <iterator>
 #include <memory>

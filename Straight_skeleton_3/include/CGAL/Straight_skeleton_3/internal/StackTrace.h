@@ -14,8 +14,10 @@
  * date   2012-02-28
  */
 
-#ifndef UTIL_STACKTRACE_H
-#define UTIL_STACKTRACE_H
+#ifndef CGAL_STRAIGHT_SKELETON_3_UTIL_STACKTRACE_H
+#define CGAL_STRAIGHT_SKELETON_3_UTIL_STACKTRACE_H
+
+#include <CGAL/license/Straight_skeleton_3.h>
 
 #ifdef __linux__
 #include <execinfo.h>
@@ -81,4 +83,4 @@ void StackTrace::print(std::ostream& os) {
 } // namespace Straight_skeletons_3
 } // namespace CGAL
 
-#endif /* UTIL_STACKTRACE_H */
+#endif /* CGAL_STRAIGHT_SKELETON_3_UTIL_STACKTRACE_H */

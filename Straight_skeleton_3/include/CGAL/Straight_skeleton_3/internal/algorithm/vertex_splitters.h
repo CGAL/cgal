@@ -11,6 +11,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_VERTEX_SPLITTERS_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_VERTEX_SPLITTERS_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Abstract_vertex_splitter.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Combinatorial_vertex_splitter.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Convex_vertex_splitter.h>

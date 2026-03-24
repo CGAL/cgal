@@ -11,6 +11,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_EVENTS_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_EVENTS_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Const_time_event.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Save_event.h>

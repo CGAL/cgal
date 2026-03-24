@@ -17,6 +17,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_FLIP_VERTEX_EVENT_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_FLIP_VERTEX_EVENT_H
 
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>

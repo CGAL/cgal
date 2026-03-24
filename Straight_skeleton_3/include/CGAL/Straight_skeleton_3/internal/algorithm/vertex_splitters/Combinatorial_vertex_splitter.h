@@ -17,6 +17,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_COMBINATORIAL_VERTEX_SPLITTER_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_COMBINATORIAL_VERTEX_SPLITTER_H
 
+
+#include <CGAL/license/Straight_skeleton_3.h>
+
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 
