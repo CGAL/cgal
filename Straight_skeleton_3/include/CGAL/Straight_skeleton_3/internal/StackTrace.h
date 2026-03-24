@@ -37,11 +37,11 @@ public:
   static void print(std::ostream& os);
 };
 
-StackTrace::~StackTrace() {
+inline StackTrace::~StackTrace() {
     // intentionally does nothing
 }
 
-std::string StackTrace::demangle(const std::string& symbol_mangled)
+inline std::string StackTrace::demangle(const std::string& symbol_mangled)
 {
   std::string result;
 #ifdef __linux__
@@ -66,7 +66,7 @@ std::string StackTrace::demangle(const std::string& symbol_mangled)
   return result;
 }
 
-void StackTrace::print(std::ostream& os) {
+inline void StackTrace::print(std::ostream& os) {
 #ifdef __linux__
   const int size = 100;
   void* buffer[size];

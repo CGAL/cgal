@@ -36,7 +36,7 @@ public:
     static std::vector<std::string> split(const std::string& str, const std::string& delimiter, bool keep_empty);
 };
 
-bool StringFuncs::startsWith(const std::string& str, const std::string& prefix) {
+inline bool StringFuncs::startsWith(const std::string& str, const std::string& prefix) {
     size_t len_str = str.length();
     size_t len_prefix = prefix.length();
     if (len_prefix > len_str) {
@@ -45,7 +45,7 @@ bool StringFuncs::startsWith(const std::string& str, const std::string& prefix) 
     return (0 == str.compare(0, len_prefix, prefix));
 }
 
-bool StringFuncs::endsWith(const std::string& str, const std::string& suffix) {
+inline bool StringFuncs::endsWith(const std::string& str, const std::string& suffix) {
     size_t len_str = str.length();
     size_t len_suffix = suffix.length();
     if (len_suffix > len_str) {
@@ -54,7 +54,7 @@ bool StringFuncs::endsWith(const std::string& str, const std::string& suffix) {
     return (0 == str.compare(len_str-len_suffix, len_suffix, suffix));
 }
 
-std::string StringFuncs::trim(const std::string& str) {
+inline std::string StringFuncs::trim(const std::string& str) {
     std::string result;
     unsigned int length = str.length();
     for (int i = str.length()-1; i >= 0; i--) {
@@ -79,7 +79,7 @@ std::string StringFuncs::trim(const std::string& str) {
     return result;
 }
 
-std::vector<std::string> StringFuncs::split(const std::string& str, const std::string& delim, bool keep_empty) {
+inline std::vector<std::string> StringFuncs::split(const std::string& str, const std::string& delim, bool keep_empty) {
     std::vector<std::string> result;
     std::string element;
     std::size_t pos = 0;

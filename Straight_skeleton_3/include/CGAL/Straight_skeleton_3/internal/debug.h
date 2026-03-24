@@ -38,8 +38,8 @@ namespace internal {
 static unsigned int verbosity_level = 4;
 std::ostream* trace_stream = &std::cout;
 
-void set_verbosity_level(const unsigned int l) { verbosity_level = l; }
-void set_log_stream(std::ostream& out) { trace_stream = &out; }
+inline void set_verbosity_level(const unsigned int l) { verbosity_level = l; }
+inline void set_log_stream(std::ostream& out) { trace_stream = &out; }
 
 } // namespace internal
 } // namespace Straight_skeletons_3
