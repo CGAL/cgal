@@ -344,7 +344,7 @@ public:
         continue;
       }
 
-      FT sq_dist_to_closest = std::numeric_limits<double>::max();
+      FT sq_dist_to_closest = (std::numeric_limits<double>::max)();
       EdgeSPtr closest_edge;
 
       auto treat_edge = [&](const EdgeSPtr& target_edge, const auto& edge_geometry) -> void

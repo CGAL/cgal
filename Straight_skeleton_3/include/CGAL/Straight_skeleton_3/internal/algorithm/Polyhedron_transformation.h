@@ -107,7 +107,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     FT p_min[3];
     for (unsigned int i = 0; i < 3; ++i) {
-      p_min[i] = std::numeric_limits<double>::max();
+      p_min[i] = (std::numeric_limits<double>::max)();
     }
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
@@ -125,7 +125,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     FT p_max[3];
     for (unsigned int i = 0; i < 3; ++i) {
-      p_max[i] = -std::numeric_limits<double>::max();
+      p_max[i] = -(std::numeric_limits<double>::max)();
     }
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
@@ -208,7 +208,7 @@ public:
     Vector_3 v_size_curr = v_box_max_curr - v_box_min_curr;
     Vector_3 v_center_curr = 0.5 * (v_box_min_curr + v_box_max_curr);
 
-    FT scale_factor = std::numeric_limits<double>::max(); // do not put FT
+    FT scale_factor = (std::numeric_limits<double>::max)(); // do not put FT
     for (unsigned int i = 0; i < 3; ++i) {
       FT s = (*v_size)[i]/(*v_size_curr)[i];
       if (scale_factor > s) {
