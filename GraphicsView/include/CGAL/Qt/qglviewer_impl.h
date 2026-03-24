@@ -152,6 +152,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   is_sharing = false;
   is_linked = false;
   shared_context = nullptr;
+  is_ogl_4_3 = false;
   _first_tick  = true;
 }
 
@@ -206,7 +207,8 @@ void CGAL::QGLViewer::initializeGL() {
     QSurfaceFormat format = context()->format();
     context()->format().setOption(QSurfaceFormat::DebugContext);
     if ( !context()->isValid()
-         || format.majorVersion() != 4
+         || format.majorVersion() < 4
+         || (format.majorVersion() == 4 && format.minorVersion() < 3)
          || QCoreApplication::arguments().contains(QStringLiteral("--old")))
 
     {

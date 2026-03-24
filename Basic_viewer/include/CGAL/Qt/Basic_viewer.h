@@ -836,6 +836,9 @@ public:
 protected:
   void compile_shaders()
   {
+    if (!isOpenGL_4_3())
+    { std::cerr<<"CGAL Basic_viewer: OpenGL < 4.3 detected, using compatibility shaders"<<std::endl; }
+
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
     rendering_program_line.removeAllShaders();
