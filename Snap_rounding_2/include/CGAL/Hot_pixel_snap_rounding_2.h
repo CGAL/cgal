@@ -31,6 +31,7 @@
 #include <CGAL/tss.h>
 
 #include<CGAL/Hot_pixel_snap_rounding_traits_2.h>
+#include <CGAL/internal/Snap_rounding_helpers.h>
 
 namespace CGAL {
 

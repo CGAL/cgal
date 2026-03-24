@@ -10,8 +10,6 @@
 //
 // author(s)     : Léo Valque
 
-#include <CGAL/license/Snap_rounding_2.h>
-
 #ifndef CGAL_WRAP_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
 #define CGAL_WRAP_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
 

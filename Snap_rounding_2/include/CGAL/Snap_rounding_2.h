@@ -109,7 +109,7 @@ in a two-dimensional kd-tree which stores the centers of hot
 pixels. Since \f$ B(M(s))\f$ in general is larger than \f$ M(s)\f$, we still
 need to filter out the hot pixels which do not intersect \f$ s\f$.
 
-While this approach is easy to implement with CGAL, it may incur
+While this approach is easy to implement with \cgal, it may incur
 considerable overhead since the area of \f$ B(M(s))\f$ may be much larger
 than the area of \f$ M(s)\f$, possibly resulting in many redundant hot pixels
 to filter out. Our heuristic solution, which we describe next, is to

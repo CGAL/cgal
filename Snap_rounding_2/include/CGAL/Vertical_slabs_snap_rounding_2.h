@@ -29,6 +29,7 @@
 #include <boost/property_map/function_property_map.hpp>
 
 #include <CGAL/Polygon_2.h>
+#include <CGAL/internal/Snap_rounding_helpers.h>
 
 #include <set>
 #include <vector>
@@ -588,16 +589,6 @@ OutputPolygonIterator vertical_slabs_snap_rounding_2(PolygonRange  &polygons,
                                                      const NamedParameters &np = parameters::default_values());
 
 #else
-
-namespace internal{
-
-template <class T>
-inline constexpr bool is_instance_of_Polygon_2 = false;
-
-template <class K, class C>
-inline constexpr bool is_instance_of_Polygon_2< CGAL::Polygon_2<K, C> > = true;
-
-}
 
 template <class InputRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
 OutputIterator vertical_slabs_snap_rounding_2(const InputRange &inputs,
