@@ -504,7 +504,8 @@ OutputIterator vertical_slabs_snap_rounding_2_polygon(PolygonRange  &polygons,
 /**
 * \ingroup PkgSnapRounding2Ref
 *
-* subdivides and rounds a set of segments so that they are pairwise disjoint in their interiors.
+* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
+*
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam SegmentRange a range of whose value type is model of `Kernel::Segment_2`
@@ -524,14 +525,16 @@ OutputIterator vertical_slabs_snap_rounding_2_polygon(PolygonRange  &polygons,
 * \cgalNamedParamsEnd
 */
 template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange &segments,
-                                              OutputPolylineIterator   out,
-                                              const NamedParameters &np = parameters::default_values());
+OutputPolylineIterator vertical_slabs_snap_rounding_2(const SegmentRange &segments,
+                                                      OutputPolylineIterator   out,
+                                                      const NamedParameters &np = parameters::default_values());
 
 /**
 * \ingroup PkgSnapRounding2Ref
 *
-* Given a range of segments, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
+*
+* The output is a range of segments.
 *
 * @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
 * @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
@@ -550,15 +553,16 @@ OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange &segments,
 * \cgalNamedParamsEnd
 */
 template <class SegmentRange , class OutputSegmentIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator vertical_slabs_snap_rounding_2(const SegmentRange& segments,
-                                              OutputSegmentIterator    out,
-                                              const NamedParameters &np = parameters::default_values());
+OutputSegmentIterator vertical_slabs_snap_rounding_2(const SegmentRange& segments,
+                                                     OutputSegmentIterator    out,
+                                                     const NamedParameters &np = parameters::default_values());
 
 /**
 * \ingroup PkgSnapRounding2Ref
 *
-* Given a range of `Polygon_2`, computes rounded polygons such that their segments are either equal or disjoint in their interiors, as induced by the input polygons.
-* Each output polygon in the output are free of self intersections but may present pinched sections or/and common vertices or segments with
+* \brief subdivides and rounds a range of polygons so that their boundary segments are pairwise disjoint in their interiors.
+*
+* Each polygon in the output are free of self intersections but may present pinched sections or/and common vertices or segments with
 * other polygons.
 *
 * @tparam PolygonRange a range of `CGAL::Polygon_2`

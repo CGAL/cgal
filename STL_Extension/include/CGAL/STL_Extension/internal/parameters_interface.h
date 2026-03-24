@@ -429,6 +429,7 @@ CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 CGAL_add_named_parameter(pixel_size_t, pixel_size, pixel_size)
 CGAL_add_named_parameter(compute_intersections_t, compute_intersections, compute_intersections)
 CGAL_add_named_parameter(do_iterative_snap_rounding_t, do_iterative_snap_rounding, do_iterative_snap_rounding)
+CGAL_add_named_parameter(use_grid_coordinates_t, use_grid_coordinates, use_grid_coordinates)
 
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)

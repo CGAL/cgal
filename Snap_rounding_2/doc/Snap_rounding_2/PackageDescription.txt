@@ -1,23 +1,15 @@
-/// \defgroup PkgSnapRounding2Ref_ Reference Manual
+/// \defgroup PkgSnapRounding2Ref Reference Manual
 /// \defgroup PkgSnapRounding2Concepts Concepts
 /// \ingroup PkgSnapRounding2Ref
 
-/// \defgroup PkgSnapRounding2Ref Snap Rounding and Iterative Snap Rounding
-/// Functions of standard Snap Rounding algorithm.
-/// \ingroup PkgSnapRounding2Ref_
-
-/// \defgroup PkgFloatSnapRounding2Ref Float Snap Rounding
-/// Functions of Float Snap Rounding algorithm
-/// \ingroup PkgSnapRounding2Ref_
-
 /*!
-\addtogroup PkgSnapRounding2Ref_
+\addtogroup PkgSnapRounding2Ref
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Eli Packer, Leo Valque}
-\cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a smaller precision representation. This package supports methods to converting into fixed-precision or floating-point representation.}
-\cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref_}
+\cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a smaller precision representation. This package supports methods to converting into various including fixed-precision or floating-point representation.}
+\cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
@@ -27,6 +19,24 @@
 \cgalPkgDemo{2D Snap Rounding,snap_rounding_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Parameters}
+
+Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
+The page \ref bgl_namedparameters "Named Parameters" describes their usage.
+
+\cgalCRPSection{Snap Rounding Functions}
+- `CGAL::snap_rounding_2()`
+- `CGAL::vertical_slabs_snap_rounding_2()`
+- `CGAL::hot_pixel_snap_rounding_2()`
+
+\cgalCRPSection{Snap Rounding Traits}
+- `CGAL::Hot_pixel_snap_rounding_traits_2`
+- `CGAL::Double_grid_snap_rounding_traits_2`
+- `CGAL::Float_grid_snap_rounding_traits_2`
+- `CGAL::Integer_grid_snap_rounding_traits_2`
 
 */
 

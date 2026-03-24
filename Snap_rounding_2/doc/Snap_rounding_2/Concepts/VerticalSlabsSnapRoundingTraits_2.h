@@ -15,6 +15,7 @@ some function object types for the required predicates on those primitives.
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Double_grid_snap_rounding_traits_2<Kernel>}
 \cgalHasModels{CGAL::Float_grid_snap_rounding_traits_2<Kernel>}
+\cgalHasModels{CGAL::Integer_grid_snap_rounding_traits_2<Kernel>}
 \cgalHasModelsEnd
 */
 

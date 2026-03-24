@@ -9,4 +9,7 @@ WARN_IF_UNDOCUMENTED       =  false
 
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Vertical_slabs_snap_rounding_2.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Vertical_slabs_snap_rounding_traits_2.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Hot_pixel_snap_rounding_2.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Hot_pixel_snap_rounding_2.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Hot_pixel_snap_rounding_traits_2.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Snap_rounding_2.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Snap_rounding_traits_2.h

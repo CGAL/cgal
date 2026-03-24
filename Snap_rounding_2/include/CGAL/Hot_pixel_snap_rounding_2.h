@@ -794,12 +794,12 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 /**
 * \ingroup PkgSnapRounding2Ref
 *
-* subdivides and rounds a set of segments so that they are equal or pairwise disjoint in their interiors.
-* The output is a range of polylines, where each polyline corresponds to an input segment.
-* Given a range of segments, using traditional hot pixel snap rounding algorithm, computes rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
-* @tparam OutputIterator model of OutputIterator holding `Kernel::Segment_2`
+* The output is a range of polylines, where each polyline corresponds to an input segment.
+*
+* @tparam SegmentRange a range of whose value type is model of `Kernel::Segment_2`
+* @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -812,42 +812,118 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{FT(1.)}
 *   \cgalParamNEnd
+*   \cgalParamNBegin{do_iterative_snap_rounding}
+*     \cgalParamDescription{determines whether to apply Iterative Snap Rounding, see the user manual for more details.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{use_grid_coordinates}
+*     \cgalParamDescription{If set to true, the output coordinates are expressed in the integer grid (pixel indices).
+*                           Otherwise, they are given in the input coordinate system.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `SnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `Snap_rounding_traits_2`}
+*     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template <class SegmentRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
-                                         OutputIterator out,
-                                         const NamedParameters &np = parameters::default_values())
-{
-  using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputPolylineIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
+                                                 OutputPolylineIterator   out,
+                                                 const NamedParameters &np = parameters::default_values());
 
-  using Kernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename SegmentRange::iterator>::value_type>>::Kernel;
-  using DefaultTraits = Hot_pixel_snap_rounding_traits_2<Kernel>;
-  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                              NamedParameters,
-                                                              DefaultTraits>::type;
+/**
+* \ingroup PkgSnapRounding2Ref
+*
+* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
+*
+* The output is a range of segments.
+*
+* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
+* @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param segments the input segment range
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{pixel_size}
+*     \cgalParamDescription{The size of the pixel. The plane will be tiled with square pixels of that width such that the origin is the center of a pixel.}
+*     \cgalParamType{`GT::FT`}
+*     \cgalParamDefault{FT(1.)}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{do_iterative_snap_rounding}
+*     \cgalParamDescription{determines whether to apply Iterative Snap Rounding, see the user manual for more details.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{use_grid_coordinates}
+*     \cgalParamDescription{If set to true, the output coordinates are expressed in the integer grid (pixel indices).
+*                           Otherwise, they are given in the input coordinate system.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*/
+template <class SegmentRange , class OutputSegmentIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
+                                                OutputSegmentIterator    out,
+                                                const NamedParameters &np = parameters::default_values());
 
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  std::vector< Polyline > output_container;
-  auto pixel_size = choose_parameter(get_parameter(np, internal_np::pixel_size), 1.);
-  bool do_isr = choose_parameter(get_parameter(np, internal_np::do_iterative_snap_rounding), true);
-  bool int_output = true;
-  unsigned int number_of_kd_trees = 1;
-
-  internal::hot_pixel_snap_rounding_2<Traits>(segments.begin(), segments.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
-
-  for(auto &pl: output_container)
-    *out++ = std::move(pl);
-
-  return out;
-}
+/**
+* \ingroup PkgSnapRounding2Ref
+*
+* \brief subdivides and rounds a range of polygons so that their boundary segments are pairwise disjoint in their interiors.
+*
+* Each polygon in the output are free of self intersections but may present pinched sections or/and common vertices or segments with
+* other polygons.
+*
+* @tparam PolygonRange a range of `CGAL::Polygon_2`
+* @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* \param polygons the range of input polygons
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{pixel_size}
+*     \cgalParamDescription{The size of the pixel. The plane will be tiled with square pixels of that width such that the origin is the center of a pixel.}
+*     \cgalParamType{`GT::FT`}
+*     \cgalParamDefault{FT(1.)}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{do_iterative_snap_rounding}
+*     \cgalParamDescription{determines whether to apply Iterative Snap Rounding, see the user manual for more details.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{use_grid_coordinates}
+*     \cgalParamDescription{If set to true, the output coordinates are expressed in the integer grid (pixel indices).
+*                           Otherwise, they are given in the input coordinate system.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+* @warning an input convex polygon might no longer be convex after rounding.
+*/
+template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputPolygonIterator hot_pixel_snap_rounding_2(PolygonRange  &polygons,
+                                                OutputPolygonIterator out,
+                                                const NamedParameters &np = parameters::default_values());
 
 # else
 
@@ -881,7 +957,7 @@ OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
     std::vector< Polyline > output_container;
     auto pixel_size = choose_parameter(get_parameter(np, internal_np::pixel_size), 1.);
     bool do_isr = choose_parameter(get_parameter(np, internal_np::do_iterative_snap_rounding), true);
-    bool int_output = true;
+    bool int_output = choose_parameter(get_parameter(np, internal_np::use_grid_coordinates), true);
     unsigned int number_of_kd_trees = 1;
 
     internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
