@@ -714,8 +714,6 @@ const char GEOMETRY_SOURCE_LINE_WIDTH[]=R"DELIM(
 layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-in mediump vec4 g_Color[];
-
 in VS_OUT {
   mediump float pointSize;
   mediump vec4 color;
@@ -774,9 +772,9 @@ void main(void)
 //  compatibility shaders
 
 const char VERTEX_SOURCE_COLOR_COMP[]=R"DELIM(
-attribute highp   vec3 a_Pos;
-attribute highp   vec3 a_Normal;
-attribute mediump vec3 a_Color;
+varying highp   vec3 a_Pos;
+varying highp   vec3 a_Normal;
+varying mediump vec3 a_Color;
 
 varying highp   vec4 vs_fP; // view space position
 varying highp   vec3 fN;
@@ -793,7 +791,11 @@ void main(void)
   vec4 pos = vec4(a_Pos, 1.0);
 
   vs_fP = u_Mv * pos;
-  fN = mat3(u_Mv) * a_Normal;
+  highp mat3 mv_matrix_3;
+  mv_matrix_3[0] = mv_matrix[0].xyz;
+  mv_matrix_3[1] = mv_matrix[1].xyz;
+  mv_matrix_3[2] = mv_matrix[2].xyz;
+  fN = mv_matrix_3* a_Normal;
 
   fColor = vec4(a_Color, 1.0);
   if (u_UseDefaultColor)
@@ -836,8 +838,8 @@ void main(void)
 )DELIM";
 
 const char VERTEX_SOURCE_P_L_COMP[]=R"DELIM(
-attribute highp   vec3 a_Pos;
-attribute mediump vec3 a_Color;
+varying highp   vec3 a_Pos;
+varying mediump vec3 a_Color;
 
 varying mediump vec4 fColor;
 
