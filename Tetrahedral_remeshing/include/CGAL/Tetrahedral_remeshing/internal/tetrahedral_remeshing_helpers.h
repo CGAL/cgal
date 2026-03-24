@@ -272,7 +272,7 @@ struct Dihedral_angle_cosine
   }
 };
 
-Dihedral_angle_cosine cosine_of_90_degrees()
+inline Dihedral_angle_cosine cosine_of_90_degrees()
 {
   return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
 }

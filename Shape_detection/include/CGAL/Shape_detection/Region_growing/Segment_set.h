@@ -26,5 +26,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Segment_set/Least_squares_line_fit_region.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set/Least_squares_line_fit_sorting.h>
+#include <CGAL/Shape_detection/Region_growing/Segment_set/Line_segment_region.h>
+#include <CGAL/Shape_detection/Region_growing/Segment_set/Segment_length_sorting.h>
 
 #endif // CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_H

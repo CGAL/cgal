@@ -2,10 +2,12 @@ AABB_tree 3D Fast Intersection and Distance Computation
 Advancing_front_surface_reconstruction Advancing Front Surface Reconstruction
 Alpha_shapes_2 2D Alpha Shapes
 Alpha_shapes_3 3D Alpha Shapes
+Alpha_wrap_2 2D Alpha Wrapping
 Alpha_wrap_3 3D Alpha Wrapping
 Apollonius_graph_2 2D Apollonius Graphs (Delaunay Graphs of Disks)
 Arrangement_on_surface_2 2D Arrangements
 Barycentric_coordinates_2 2D Generalized Barycentric Coordinates
+Barycentric_coordinates_3 3D Generalized Barycentric Coordinates
 Boolean_set_operations_2 2D Regularized Boolean Set-Operations
 Bounding_volumes Bounding Volumes
 Box_intersection_d Intersecting Sequences of dD Iso-oriented Boxes

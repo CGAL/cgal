@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   auto cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(mesh);
   static_assert(std::is_same_v<decltype(cdt), CDT>);
   CDT cdt2(mesh);
-  const auto nb_cstr_facets = cdt2.number_of_constrained_facets();
+  [[maybe_unused]] const auto nb_cstr_facets = cdt2.number_of_constrained_facets();
 
   assert(cdt.triangulation().number_of_vertices() == cdt2.triangulation().number_of_vertices());
   assert(cdt.number_of_constrained_facets() == cdt2.number_of_constrained_facets());

@@ -13,7 +13,7 @@ namespace CGAL {
 
 Assume we are given a set \f$ S\f$ of points in 2D or 3D and we would like to
 have something like "the shape formed by these points". This is
-quite a vague notion and there are probably many possible
+quite a vague notion, and there are probably many possible
 interpretations, the \f$ \alpha\f$-shape being one of them. Alpha shapes
 can be used for shape reconstruction from a dense unorganized set of
 data points. Indeed, an \f$ \alpha\f$-shape is demarcated by a frontier,
@@ -27,7 +27,7 @@ these sphere-formed ice-cream spoons, we carve out all parts of the
 ice-cream block we can reach without bumping into chocolate pieces,
 thereby even carving out holes in the inside (e.g. parts not reachable
 by simply moving the spoon from the outside). We will eventually end
-up with a (not necessarily convex) object bounded by caps, arcs and
+up with a (not necessarily convex) object bounded by caps, arcs, and
 points. If we now straighten all "round" faces to triangles and line
 segments, we have an intuitive description of what is called the
 \f$ \alpha\f$-shape of \f$ S\f$. The drawing above provides an example
@@ -98,7 +98,7 @@ the \f$ \alpha\f$-values where the \f$ \alpha\f$-shape changes.
 
 It provides iterators to enumerate the vertices and edges that are in
 the \f$ \alpha\f$-shape, and functions that allow to classify vertices,
-edges and faces with respect to the \f$ \alpha\f$-shape. They can be in
+edges, and faces with respect to the \f$ \alpha\f$-shape. They can be in
 the interior of a face that belongs or does not belong to the \f$ \alpha\f$-shape.
 They can be singular/regular, that is, they can be on the boundary of the \f$ \alpha\f$-shape,
 but not incident/incident to a triangle of the \f$ \alpha\f$-complex.

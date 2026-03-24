@@ -13,7 +13,7 @@ hacks that create what you see.
 
 ### Package Overview ###
 
-The package overview is build by having a special command that is
+The package overview is built by having a special command that is
 filtered by the python script `pkglist_filter.py`.
 
 A command has to be of the form `\package_listing{PKG_NAME}`, where

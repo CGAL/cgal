@@ -21,9 +21,10 @@ endif()
 # Activate Parallelism in Mesh_3
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
-# Find Eigen3 (requires 3.1.0 or greater)
-find_package(Eigen3 3.1.0 QUIET)
+# Find Eigen3
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3
   create_single_source_cgal_program("poisson_reconstruction_example.cpp")

@@ -26,7 +26,7 @@ function(add_Snap_rounding_tests name)
       TEST "${test_name}_compare_results"
       APPEND
       PROPERTY DEPENDS "${test_name}")
-    if(POLICY CMP0066) # CMake 3.7 or later
+    if(POLICY CMP0066) # CMake 3.7 (or greater)
       set_property(TEST "${test_name}" PROPERTY FIXTURES_SETUP
                                                 "${test_name}_compare_results")
       set_property(TEST "${test_name}_compare_results" APPEND

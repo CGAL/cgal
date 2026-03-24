@@ -358,7 +358,7 @@ public:
 
   /*! draws a curve using approximate coordinates.
    * Call this member function only of the geometry traits is equipped with
-   * the coordinate-aproximation functionality of a curve.
+   * the coordinate-approximation functionality of a curve.
    * This function must be inlined (e.g., a template) to enable the
    * compiled-time dispatching in the function `draw_curve()`.
    */
@@ -588,7 +588,7 @@ private:
 
 #ifdef CGAL_USE_BASIC_VIEWER
 //!
-void draw_unimplemented() {
+inline void draw_unimplemented() {
   CGAL_error_msg("Geometry traits type of arrangement is required to support approximation of Point_2 and "
                  "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization.");
 }
@@ -709,7 +709,7 @@ void draw(const Arrangement& arr, const GSOptions& gso, Args&&... args) {
  * \param arr the arrangement to be drawn
  * \param gso graphics scene options
  * \param title title of the viewer window
- * \param initial_bbox parameter space bounding box to be shown intially. If empty, the approximate bounding box of the
+ * \param initial_bbox parameter space bounding box to be shown initially. If empty, the approximate bounding box of the
  * arrangement is used. For arrangements induced by unbounded curves, the default initial bounding box is computed from
  * vertex coordinates.
  */
@@ -744,7 +744,7 @@ void draw(const Arrangement& arr,
  * \tparam Arrangement
  * \param arr the arrangement to be drawn
  * \param title title of the viewer window
- * \param initial_bbox parameter space bounding box to be shown intially. If empty, the approximate bounding box of the
+ * \param initial_bbox parameter space bounding box to be shown initially. If empty, the approximate bounding box of the
  * arrangement is used. For arrangements induced by unbounded curves, the default initial bounding box is computed from
  * vertex coordinates.
  */

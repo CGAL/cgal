@@ -367,7 +367,7 @@ as shown in \cgalFigureRef{figex_bgl},
 then use the \bgl Dijkstra's shortest-paths algorithm to compute
 the graph distance of all vertices from the leftmost vertex in the
 arrangement \f$ v_0\f$. Note the usage of the `Arr_vertex_index_map` and
-the `Arr_vertex_property_map` classes. The latter one, instantiated by
+the `Arr_vertex_property_map` classes. The latter one, instantiated with
 the type `double` is used to map vertices to their distances from \f$ v_0\f$.
 
 \cgalExample{BGL_arrangement_2/primal.cpp}
@@ -489,7 +489,7 @@ stored in the vertex record.)
 The following example program shows a simple algorithm for calculating
 facet normals for a polyhedron using the \bgl API. A
 <a href="https://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
-is used to to store the calculated normals instead of changing the Polyhedron items class.
+is used to store the calculated normals instead of changing the Polyhedron items class.
 
 \cgalExample{BGL_polyhedron_3/normals.cpp}
 

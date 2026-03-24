@@ -19,7 +19,7 @@ This tutorial is for the \cgal newbie, who knows \CC and has
 a basic knowledge of geometric algorithms. The first section
 shows how to define a point and segment class, and how to
 apply geometric predicates on them. The section further raises
-the awareness that that there are serious issues when using
+the awareness that there are serious issues when using
 floating point numbers for coordinates. In the second section,
 you will meet a typical \cgal function, which computes a 2D convex hull.
 The third section shows what we mean with a \em Traits class,

@@ -962,7 +962,7 @@ private:
   ///  - assign a ros id to vertices inside ros + ros-boundary
   ///  - reinitialize rotation matrices, if a vertex is previously ros, use its previous matrix, otherwise set zero
   ///  - reinitialize original, and solution,
-  ///      + if a vertex is previously roi, then use its original position in old_origional, else use point().
+  ///      + if a vertex is previously roi, then use its original position in old_original, else use point().
   ///        In both case we are using "original position" of the vertex.
   ///      + same for solution (it is required to prevent jumping effects)
   void region_of_solution()

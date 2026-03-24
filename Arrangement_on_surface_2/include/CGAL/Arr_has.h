@@ -127,6 +127,15 @@ struct has_intersect_2 : std::false_type {};
 template <typename T>
 struct has_intersect_2<T, std::void_t<typename T::Intersect_2>> : std::true_type {};
 
+// Do_intersect_2
+// Helper trait to check for the presence of nested Do_intersect_2
+template <typename, typename = std::void_t<>>
+struct has_do_intersect_2 : std::false_type {};
+
+// Specialization if the nested type Do_intersect_2 exists
+template <typename T>
+struct has_do_intersect_2<T, std::void_t<typename T::Do_intersect_2>> : std::true_type {};
+
 // Are_mergeable_2
 // Helper trait to check for the presence of nested Are_mergeable_2
 template <typename, typename = std::void_t<>>
