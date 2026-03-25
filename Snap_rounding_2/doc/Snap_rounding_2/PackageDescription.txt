@@ -7,7 +7,7 @@
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Eli Packer, Leo Valque}
+\cgalPkgAuthors{Eli Packer, Leo Valque}
 \cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a smaller precision representation. This package supports methods to converting into various including fixed-precision or floating-point representation.}
 \cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref}
 \cgalPkgSummaryEnd

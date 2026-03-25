@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_2D_Snap_Rounding
 \anchor chapterSnapRounding
 \cgalAutoToc
-\author Eli Packer, Leo Valque
+\authors Eli Packer, Leo Valque
 
 \section Snap_rounding_2Introduction Introduction
 
@@ -22,7 +22,7 @@ details and experimental results are given in \cgalCite{cgal:hp-isr-02}.
 
 Vertical Slab Snap Rounding is an alternative method for converting
 arbitrary-precision arrangements of segments into another
-representation. Its main advantages are improved performance and support a wider range of rounding schemes, including rounding to floating-point representations.
+representation. Its main advantages are improved performance and support of a wider range of rounding schemes, including rounding to floating-point representations.
 It provides the same guarantees as Hot Pixel Snap Rounding \cgalCite{valque2024snaprounding}.
 
 Both methods share a similar API and can be invoked through the `CGAL::snap_rounding_2()` function. The specific method used depends on the traits class provided;
@@ -32,8 +32,8 @@ by default, the function uses `CGAL::Double_grid_snap_rounding_traits_2` selecti
 An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 \cgalFigureEnd
 
-\section Snap_rouding (Hot Pixel) Snap Rounding and Iterated Snap Rounding
-\subsection Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
+\section Snap_rounding Hot Pixel Snap Rounding and Iterated Snap Rounding
+\subsection Snap_rounding_2What What is Hot Pixel Snap Rounding/Iterated Snap Rounding
 
 Given a finite collection \f$ \Sc\f$ of segments in the plane, the
 arrangement of \f$ \Sc\f$ denoted \f$ \Ac(\Sc)\f$ is the subdivision of the plane
@@ -111,7 +111,7 @@ allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
 (see `<CGAL_ROOT>/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
 
-\section Vertical_slab_snap_rounding Vertical Slab Snap Rounding 2
+\section Vertical_slab_snap_rounding Vertical Slab Snap Rounding
 \subsection VSSR_algorithm Vertical Slab Snap Rounding Algorithm
 
 Vertical Slab Snap Rounding is an alternative method for converting
@@ -151,7 +151,7 @@ The result of our test is summarized in the next table:
 
 @brief Average running times of snap rounding methods
 
-| Test Case | Computing intersection<br> (Unsafe rounding) | Vertical slab SR <br> (double) | Vertical Slab <br> (float)  | Hot pixel SR <br>(pixel size \f$10^{-15}\f$ ) | Hot pixel SR <br>(pixel size \f$10^{-7}\f$) |
+| Test Case | Computing intersection<br> (Unsafe rounding) | Vertical slab SR <br> (double) | Vertical Slab SR <br> (float)  | Hot pixel SR <br>(pixel size \f$10^{-15}\f$ ) | Hot pixel SR <br>(pixel size \f$10^{-7}\f$) |
 |-----------|-------|-------|-------|-------|-------|
 | 500 Random Segments | 0.103s | 0.233s | 0.208s | 6.91s | 4.25s |
 | 1000 Random Segments | 0.379s | 1.36s | 1.23s | 1m 0s | 53.3s |
