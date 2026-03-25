@@ -22,7 +22,6 @@
 #include <list>
 
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Vertical_slabs_snap_rounding_traits_2.h>
 
 namespace CGAL {
 

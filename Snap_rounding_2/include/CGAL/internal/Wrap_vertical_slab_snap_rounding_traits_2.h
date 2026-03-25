@@ -10,8 +10,8 @@
 //
 // author(s)     : Léo Valque
 
-#ifndef CGAL_WRAP_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
-#define CGAL_WRAP_VERTICAL_SLABS_SNAP_ROUNDING_TRAITS_2_H
+#ifndef CGAL_WRAP_VERTICAL_SLAB_SNAP_ROUNDING_TRAITS_2_H
+#define CGAL_WRAP_VERTICAL_SLAB_SNAP_ROUNDING_TRAITS_2_H
 
 #include <CGAL/license/Snap_rounding_2.h>
 
@@ -20,12 +20,12 @@
 
 namespace CGAL::internal {
 
-template<typename VerticalSlabsSnapRoundingTraits, typename PointPropertyMap>
-class Wrap_vertical_slabs_snap_rounding_traits_2
+template<typename VerticalSlabSnapRoundingTraits, typename PointPropertyMap>
+class Wrap_vertical_slab_snap_rounding_traits_2
 {
 public:
-  using Base = VerticalSlabsSnapRoundingTraits;
-  using Self = Wrap_vertical_slabs_snap_rounding_traits_2<Base, PointPropertyMap>;
+  using Base = VerticalSlabSnapRoundingTraits;
+  using Self = Wrap_vertical_slab_snap_rounding_traits_2<Base, PointPropertyMap>;
 
   using Base_point_2   = typename Base::Point_2;
   using Base_segment_2 = typename Base::Segment_2;
@@ -74,7 +74,7 @@ private:
   mutable PointPropertyMap point_map;
 
 public:
-  Wrap_vertical_slabs_snap_rounding_traits_2(const Base &traits, PointPropertyMap pm): base(traits), point_map(pm){}
+  Wrap_vertical_slab_snap_rounding_traits_2(const Base &traits, PointPropertyMap pm): base(traits), point_map(pm){}
 
 private:
   Base_point_2 to_base(const Point_2& p) const {
@@ -236,9 +236,9 @@ public:
 };
 
 template<typename Traits, typename PointPropertyMap>
-Wrap_vertical_slabs_snap_rounding_traits_2<Traits, PointPropertyMap>
-make_wrap_vertical_slabs_snap_rounding_traits_2(Traits& traits, PointPropertyMap pm){
-  return Wrap_vertical_slabs_snap_rounding_traits_2<Traits, PointPropertyMap>(traits, pm);
+Wrap_vertical_slab_snap_rounding_traits_2<Traits, PointPropertyMap>
+make_wrap_vertical_slab_snap_rounding_traits_2(Traits& traits, PointPropertyMap pm){
+  return Wrap_vertical_slab_snap_rounding_traits_2<Traits, PointPropertyMap>(traits, pm);
 }
 
 } // namespace CGAL::internal

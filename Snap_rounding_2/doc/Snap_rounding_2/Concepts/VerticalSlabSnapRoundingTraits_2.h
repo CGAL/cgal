@@ -3,9 +3,9 @@
 \ingroup PkgSnapRounding2Concepts
 \cgalConcept
 
-The concept `VerticalSlabsSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
-an instance of the Traits template parameter of
-the free function `CGAL::vertical_slabs_snap_rounding_2()`
+The concept `VerticalSlabSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
+an instance of the `geom_traits` parameter of
+the free function `CGAL::vertical_slab_snap_rounding_2()`
 and the functions derived from it.
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
@@ -19,7 +19,7 @@ some function object types for the required predicates on those primitives.
 \cgalHasModelsEnd
 */
 
-class VerticalSlabsSnapRoundingTraits_2 {
+class VerticalSlabSnapRoundingTraits_2 {
 public:
 
 /// \name Types
@@ -127,7 +127,7 @@ Equal_2 equal_2_object();
 
 /// @}
 
-}; /* end VerticalSlabsSnapRoundingTraits_2 */
+}; /* end VerticalSlabSnapRoundingTraits_2 */
 
 
 namespace VSSRTraits_2{
@@ -136,7 +136,7 @@ namespace VSSRTraits_2{
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Construct_rounded_point_2 `Float_grid_snap_rounding_traits_2::Construct_rounded_point_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Construct_rounded_point_2 `Float_grid_snap_rounding_traits_2::Construct_rounded_point_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructRoundedPoint_2
@@ -159,8 +159,8 @@ class ConstructRoundedPoint_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_grid_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_grid_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_grid_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
   \cgalHasModelsEnd
 */
 class ComputeSquaredRoundBound_2
@@ -178,8 +178,8 @@ class ComputeSquaredRoundBound_2
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_grid_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_grid_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_grid_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
   \cgalHasModelsEnd
 */
 class Evaluate
@@ -196,8 +196,8 @@ class Evaluate
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Converter_to_exact `Float_grid_snap_rounding_traits_2::r_to_exact` \endlink}
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Converter_to_exact `Double_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_to_exact `Float_grid_snap_rounding_traits_2::r_to_exact` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_to_exact `Double_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
   \cgalHasModelsEnd
 */
 class ConverterToExact
@@ -219,8 +219,8 @@ class ConverterToExact
   \ingroup PkgSnapRounding2Concepts
   \cgalConcept
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Converter_from_exact `Float_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
-  \cgalHasModelsBare{\link VerticalSlabsSnapRoundingTraits_2::Converter_from_exact `Double_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_from_exact `Float_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_from_exact `Double_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
   \cgalHasModelsEnd
 */
 class ConverterFromExact

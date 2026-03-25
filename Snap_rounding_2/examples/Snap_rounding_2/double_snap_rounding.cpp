@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Snap_rounding_2.h>
-#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/snap_rounding_2.h>
+#include <CGAL/Double_grid_snap_rounding_traits_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
 typedef Kernel::Segment_2                                       Segment_2;
@@ -23,13 +23,9 @@ int main()
 
   // Compute the snapped subcurves and check if they do intersect
   std::vector< Segment_2 > out;
-  CGAL::snap_rounding_2(segs, std::back_inserter(out));
+  CGAL::snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(CGAL::Double_grid_snap_rounding_traits_2<Kernel>()));
   std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
   std::cout << "Size of the output: " << out.size() << std::endl;
-
-  // Compute the polylines corresponding to the output rounded on single precision floats
-  std::vector< Polyline_2 > polylines;
-  CGAL::snap_rounding_2(segs, std::back_inserter(polylines), CGAL::parameters::geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
 
   return 0;
 }

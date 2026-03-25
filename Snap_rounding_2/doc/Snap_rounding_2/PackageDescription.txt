@@ -29,7 +29,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 
 \cgalCRPSection{Snap Rounding Functions}
 - `CGAL::snap_rounding_2()`
-- `CGAL::vertical_slabs_snap_rounding_2()`
+- `CGAL::vertical_slab_snap_rounding_2()`
 - `CGAL::hot_pixel_snap_rounding_2()`
 
 \cgalCRPSection{Snap Rounding Traits}

@@ -1,5 +1,9 @@
+#include <CGAL/Hot_pixel_snap_rounding_traits_2.h>
 #include <CGAL/Snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_2.h>
+#include <CGAL/Double_grid_snap_rounding_traits_2.h>
+#include <CGAL/Float_grid_snap_rounding_traits_2.h>
+#include <CGAL/Integer_grid_snap_rounding_traits_2.h>
+#include <CGAL/snap_rounding_2.h>
 #include <cstdlib>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

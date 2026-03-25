@@ -6,8 +6,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>
 
-#include <CGAL/Snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_2.h>
+#include <CGAL/Double_grid_snap_rounding_traits_2.h>
+#include <CGAL/vertical_slab_snap_rounding_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel                           Epeck;
 typedef CGAL::Double_grid_snap_rounding_traits_2<Epeck, Epeck>                      Epeck_Traits;
@@ -31,7 +31,7 @@ struct Test{
     segs.emplace_back(Point_2(1,2), Point_2(3,0));
     std::vector<Segment_2> out;
     Traits traits;
-    CGAL::vertical_slabs_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(traits));
+    CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(traits));
     assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
   }
 };

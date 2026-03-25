@@ -8,8 +8,8 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program(test_hot_pixel_snap_rounding_2.cpp NO_TESTING)
 create_single_source_cgal_program(test_snap_rounding_2.cpp)
-create_single_source_cgal_program(test_vertical_slabs_snap_rounding.cpp)
-create_single_source_cgal_program(test_vertical_slabs_snap_rounding_concept.cpp)
+create_single_source_cgal_program(test_vertical_slab_snap_rounding.cpp)
+create_single_source_cgal_program(test_vertical_slab_snap_rounding_concept.cpp)
 
 function(add_Snap_rounding_tests name)
   set(data_dir "data")

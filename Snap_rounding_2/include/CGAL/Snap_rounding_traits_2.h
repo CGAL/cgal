@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Snap_rounding_2.h>
 
-#include <CGAL/Vertical_slabs_snap_rounding_traits_2.h>
 #include <CGAL/Hot_pixel_snap_rounding_traits_2.h>
 
 namespace CGAL {

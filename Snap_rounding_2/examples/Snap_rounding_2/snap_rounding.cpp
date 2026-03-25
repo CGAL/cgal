@@ -1,12 +1,10 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_2.h>
+#include <CGAL/hot_pixel_snap_rounding_2.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>           Number_type;
 typedef CGAL::Cartesian<Number_type>             Kernel;
-typedef CGAL::Snap_rounding_traits_2<Kernel>     Traits;
 typedef Kernel::Segment_2                        Segment_2;
 typedef Kernel::Point_2                          Point_2;
 typedef std::vector<Segment_2>                   Segment_range_2;
@@ -24,10 +22,7 @@ int main()
   segs.push_back(Segment_2(Point_2(7, 0), Point_2(7, 10)));
 
   // Generate an iterated snap-rounding representation, where the centers of
-  // the hot pixels bear their original coordinates, using 5 kd trees:
-  // CGAL::snap_rounding_2<Traits,Segment_list_2::const_iterator,Polyline_list_2>
-  //   (seg_list.begin(), seg_list.end(), output_list, 1.0, true, false, 5);
-
+  // the hot pixels bear their original coordinates
   CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(output));
   int counter = 0;
   for (const Polyline_2 &pl: output) {

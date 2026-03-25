@@ -22,6 +22,7 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
+#include <CGAL/Named_function_parameters.h>
 #include <list>
 #include <set>
 #include <CGAL/Snap_rounding_kd_2.h>
@@ -885,8 +886,8 @@ OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
 *
 * \brief subdivides and rounds a range of polygons so that their boundary segments are pairwise disjoint in their interiors.
 *
-* Each polygon in the output are free of self intersections but may present pinched sections or/and common vertices or segments with
-* other polygons.
+* If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
+* Each output polygon is free of self-intersections but may present pinched sections.
 *
 * @tparam PolygonRange a range of `CGAL::Polygon_2`
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
@@ -919,7 +920,7 @@ OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
 *     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
-* @warning an input convex polygon might no longer be convex after rounding.
+* @warning a convex input polygon might no longer be convex after rounding.
 */
 template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
 OutputPolygonIterator hot_pixel_snap_rounding_2(PolygonRange  &polygons,
@@ -936,7 +937,8 @@ OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
   using Input = std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>;
 
   if constexpr(internal::is_instance_of_Polygon_2< Input >){
-    // return internal::vertical_slabs_snap_rounding_2_polygon(inputs, out, np);
+    // return internal::hot_pixel_snap_rounding_2_polygon(inputs, out, np);
+    // TODO
     assert(0);
     return out;
   } else {
