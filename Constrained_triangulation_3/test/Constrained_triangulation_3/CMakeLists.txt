@@ -10,6 +10,8 @@ create_single_source_cgal_program(test_ccdt_remeshing.cpp)
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
+set(CMAKE_CXX_SCAN_FOR_MODULES FALSE)
+
 # CDT_3: C++20 for structured bindings
 add_library(CDT_3_dependencies INTERFACE)
 target_compile_features(CDT_3_dependencies INTERFACE cxx_std_20)

@@ -17,6 +17,7 @@
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/enum.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Named_function_parameters.h>
@@ -54,6 +55,7 @@
 #include <stack>
 #include <string_view>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -62,20 +64,19 @@
 #endif
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#  define CGAL_CDT_3_CAN_USE_CXX20_RANGES 1
 #  include <ranges>
 #endif
 
-#if CGAL_CDT_3_USE_EPECK
+#ifndef CGAL_CDT_3_USE_EPECK
+#  define CGAL_CDT_3_USE_EPECK 0
+#endif
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+namespace CGAL::CDT_3::test::cdt_3_from_off {
 
-using K = CGAL::Exact_predicates_exact_constructions_kernel;
-
-#else // use Epick
-
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-
-#endif // use Epick
+using K = std::conditional_t<CGAL_CDT_3_USE_EPECK == 0,
+                             CGAL::Exact_predicates_inexact_constructions_kernel,
+                             CGAL::Exact_predicates_exact_constructions_kernel>;
 
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
 using Point = K::Point_3;
@@ -85,6 +86,18 @@ using Mesh = CGAL::Surface_mesh<Point>;
 using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
 using edge_descriptor   = boost::graph_traits<Mesh>::edge_descriptor;
 using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
+
+template <typename Rep, typename Period>
+auto milliseconds(std::chrono::duration<Rep, Period> duration) {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+};
+
+template <typename Clock, typename Duration>
+auto milliseconds_since(std::chrono::time_point<Clock, Duration> start_time) {
+  return milliseconds(Clock::now() - start_time);
+};
+
+using clock = std::chrono::high_resolution_clock;
 
 void help(std::ostream& out) {
   out << R"!!!!!(
@@ -420,11 +433,11 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
     {
       std::ofstream dump(options.output_filename);
       dump.precision(17);
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CDT_3_CAN_USE_CXX20_RANGES
       cdt.write_facets(dump, cdt.triangulation(), std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_facet_constrained(f);
       }));
-#else
+#else // If C++20 ranges are not available, we use boost::make_filter_iterator to filter the facets.
       auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
       const auto& tr = cdt.triangulation();
       auto it_begin = tr.finite_facets_begin();
@@ -432,7 +445,7 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
       auto filtered_it_begin = boost::make_filter_iterator(is_facet_constrained,it_begin, it_end);
       auto filtered_it_end = boost::make_filter_iterator(is_facet_constrained,it_end, it_end);
       cdt.write_facets(dump, tr, CGAL::make_range(filtered_it_begin, filtered_it_end));
-#endif
+#endif // CGAL_CDT_3_CAN_USE_CXX20_RANGES
     }
   };
 }
@@ -585,7 +598,7 @@ Borders_of_patches maybe_merge_facets(
 
   {
     auto _ = CGAL::CDT_3_MERGE_FACETS_TASK_guard();
-    auto start_time = std::chrono::high_resolution_clock::now();
+    auto start_time = clock::now();
 
     if(options.merge_facets_old_method) {
       number_of_patches = merge_facets_old_method(mesh, pmaps, number_of_patches);
@@ -596,9 +609,8 @@ Borders_of_patches maybe_merge_facets(
     }
     patch_edges = extract_patch_edges(mesh, pmaps, number_of_patches);
     if (!options.quiet) {
-      auto timing = std::chrono::high_resolution_clock::now() - start_time;
       std::cout << "[timings] found " << number_of_patches << " patches in "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
+                << milliseconds_since(start_time) << " ms\n";
     }
   }
 
@@ -705,15 +717,14 @@ int go(Mesh mesh, CDT_options options) {
   // Build CDT directly from the polygon mesh using the official API
   CDT cdt;
   auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
-  auto build_start = std::chrono::high_resolution_clock::now();
+  auto build_start = clock::now();
   cdt = CDT{std::invoke([&]() {
     auto np = CGAL::parameters::debug(cdt_debug).visitor(std::ref(dump_mesh_with_steiner_points));
     return options.merge_facets ? CDT(mesh, np.plc_face_id(pmaps.patch_id_map)) : CDT(mesh, np);
   })};
   if(!options.quiet) {
-    auto timing = std::chrono::high_resolution_clock::now() - build_start;
     std::cout << "[timings] built CDT from mesh in "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
+              << milliseconds_since(build_start) << " ms\n";
     std::cout << cdt.statistics() << "\n\n";
   }
 
@@ -782,7 +793,10 @@ int bisect_errors(Mesh mesh, CDT_options options) {
   return CGAL::bisect_failures(mesh, get_size, simplify, run_test, save_mesh);
 }
 
+} // end of namespaces CGAL::CDT_3::test::cdt_3_from_off
+
 int main(int argc, char* argv[]) {
+  using namespace CGAL::CDT_3::test::cdt_3_from_off;
   std::cerr.precision(17);
   std::cout.precision(17);
   CGAL::get_default_random() = CGAL::Random(42);
@@ -794,7 +808,7 @@ int main(int argc, char* argv[]) {
   }
 
   CGAL::CDT_3_read_polygon_mesh_output<Mesh> read_mesh_result;
-  auto start_time = std::chrono::high_resolution_clock::now();
+  auto start_time = clock::now();
   {
     auto _ = CGAL::CDT_3_READ_INPUT_TASK_guard();
 
@@ -821,8 +835,9 @@ int main(int argc, char* argv[]) {
       return EXIT_FAILURE;
     }
     if(!options.quiet) {
-      std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+      std::cout << "[timings] read mesh \"" << options.input_filename << "\" in "
+                << milliseconds_since(start_time)
+                << " ms\n";
       std::cout << "Number of vertices: " << read_mesh_result.polygon_mesh->number_of_vertices() << '\n';
       std::cout << "Number of edges: " << read_mesh_result.polygon_mesh->number_of_edges() << '\n';
       std::cout << "Number of faces: " << read_mesh_result.polygon_mesh->number_of_faces() << "\n\n";
@@ -853,8 +868,7 @@ int main(int argc, char* argv[]) {
 
   auto exit_code = go(std::move(*read_mesh_result.polygon_mesh), options);
   if(!options.quiet) {
-    std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    std::cout << "[timings] total time: " << milliseconds_since(start_time) << " ms\n";
     if(exit_code != 0) std::cout << "ERROR with exit code " << exit_code << '\n';
   }
   return exit_code;
