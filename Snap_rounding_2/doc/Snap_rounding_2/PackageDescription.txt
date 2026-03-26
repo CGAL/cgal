@@ -38,5 +38,9 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Float_grid_snap_rounding_traits_2`
 - `CGAL::Integer_grid_snap_rounding_traits_2`
 
+\cgalCRPSection{Snap Rounding Concepts}
+- `CGAL::Hot_pixel_snap_rounding_traits_2`
+- `CGAL::Vertical_slab_snap_rounding_2`
+
 */
 
