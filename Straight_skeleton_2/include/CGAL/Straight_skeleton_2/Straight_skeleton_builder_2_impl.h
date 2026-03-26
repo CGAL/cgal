@@ -102,7 +102,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode,
 
   Triedge lTriedge = GetVertexTriedge(aLNode) & GetVertexTriedge(aRNode) ;
 
-  if ( lTriedge.is_valid() && lTriedge != aPrevEventTriedge )
+  if ( lTriedge.is_valid() && lTriedge.is_skeleton() && lTriedge != aPrevEventTriedge )
   {
     Trisegment_2_ptr lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
 
