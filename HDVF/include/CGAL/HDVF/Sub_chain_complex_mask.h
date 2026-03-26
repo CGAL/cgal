@@ -54,7 +54,7 @@ protected:
     /** \brief Vector of bitboards coding masks in each dimension. */
     std::vector<OSM::Bitboard> _sub ;
     /** \brief Number of cells in the mask in each dimension. */
-    std::vector<int> _nb_cells ;
+    std::vector<size_t> _nb_cells ;
     /** \brief Constant reference to the underlying complex. */
     const ChainComplex& _K ;
     /** \brief Is full sub_complex.
@@ -255,7 +255,7 @@ public:
      *
      * Returns a constant reference to the vector of bitboards in each dimension.
      */
-    inline const std::vector<OSM::Bitboard>& get_bitboard() const
+    inline const std::vector<OSM::Bitboard>& get_bitboards() const
     {
         return _sub ;
     }
@@ -264,6 +264,18 @@ public:
     inline const OSM::Bitboard& get_bitboard(int q) const
     {
         return _sub.at(q) ;
+    }
+
+    /** \brief Sets the bitboard of the sub chain complex in dimension q. */
+    inline void set_bitboard(const OSM::Bitboard& bb, int q)
+    {
+        _sub.at(q) = bb ;
+    }
+
+    /** \brief Sets all bits to 1. */
+    inline void set_full() {
+        for (int q=0; q<=_dim; ++q)
+            _sub.at(q) = OSM::Bitboard(_sub.at(q).size(), false);
     }
 
     /** \brief Screens a sequence of `OSM::Sub_sparse_matrix` (in each dimension).
@@ -310,6 +322,20 @@ public:
         for (int q = 0; q <= sub._dim; ++q)
             out << "dim " << q << " : " << sub._sub.at(q) << std::endl ;
         return out ;
+    }
+
+    /** \brief Comparison operator.
+     *
+     * \param other Other Sub_chain_complex_mask to compare.
+     */
+    bool operator==(const Sub_chain_complex_mask& other) const {
+        bool res(_dim == other._dim);
+        for (int q=0; res &&(q<=_dim); ++q) {
+            // Compare number of cells
+            res = res && (_nb_cells.at(q) == other._nb_cells.at(q));
+            // Compare _sub
+            res = res && (_sub.at(q) == other._sub.at(q));
+        }
     }
 };
 

@@ -590,7 +590,7 @@ public:
     iterator end() { return iterator(*this, _persist.size()) ; }
 
     /**
-     * \brief Writes a HDVF_persistence together with the associated reduction (f, g, h, d matrices)
+     * \brief Writes a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
      *
      * Writes a `HDVF_persistence` to a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
@@ -599,9 +599,9 @@ public:
     std::ostream& write_hdvf_reduction(std::ostream& out) const ;
 
     /**
-     * \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
+     * \brief Writes a `HDVF_persistence` together with the associated reduction to a file (f, g, h, d matrices).
      *
-     * Writes a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
+     * Writes a `HDVF_persistence` to a file in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param filename Output file name.
      *
@@ -620,7 +620,7 @@ public:
     }
 
     /**
-     * \brief Reads a HDVF_persistent together with the associated reduction (f, g, h, d matrices)
+     * \brief Reads a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
      *
      * Reads a `HDVF_persistence` from a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
@@ -629,9 +629,9 @@ public:
     std::istream& read_hdvf_reduction(std::istream& in) ;
 
     /**
-     * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
+     * \brief Loads a `HDVF_persistence` together with the associated reduction from a file (f, g, h, d matrices)
      *
-     * Load a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * Load a `HDVF_persistence` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      *
      * \param filename Input file name.
@@ -650,9 +650,9 @@ public:
         in_file.close();
     }
 
-    /** \brief Compares the HDVF with another HDVF over the same underlying complex and filtration.
+    /** \brief Compares the `HDVF_persistence` with another `HDVF_persistence` over the same underlying complex and filtration.
      *
-     * \param other Other HDVF to compare.
+     * \param other Other `HDVF_persistence` to compare.
      * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
      */
 
@@ -1016,7 +1016,7 @@ std::istream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::read_hdvf_red
 
     // Call parent method
     Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction_main(in);
-    // Write persistence data
+    // Read persistence data
     // ---- with export
     in >> _with_export;
     // ---- _K_to_per and _per_to_K permutations

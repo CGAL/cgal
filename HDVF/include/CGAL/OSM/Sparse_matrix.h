@@ -24,7 +24,7 @@
 #include <CGAL/OSM/Bitboard.h>
 
 // DEBUG : matrix output for SparseMatrices / no DEBUG : chain output for SparseMatrices
-#define DEBUG
+//#define DEBUG
 
 namespace CGAL {
 namespace OSM {

@@ -23,6 +23,8 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/HDVF/Sub_sparse_matrix.h>
 
+//#define DEBUG
+
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
@@ -89,7 +91,6 @@ public:
 private:
     // Complex L
     const ChainComplex& _L ;
-    const int _hdvf_opt ;
     // Subcomplex K
     // _KCC is the Sub_chain_complex_mask describing the subcomplex K
     // _subCC is the Sub_chain_complex_mask describing the current subcomplex (K, L-K or remaining critical cells for pairing)
@@ -112,6 +113,15 @@ public:
      */
     Hdvf_duality(const Chain_complex& L, Sub_chain_complex_mask<Chain_complex>& K, int hdvf_opt = OPT_FULL) ;
 
+protected:
+    /*
+     * \brief Hdvf_duality copy constructor
+     *
+     * \param other `Hdvf_duality` to copy.
+     */
+    Hdvf_duality(const Hdvf_duality& other) : Base(other), _L(other._L), _KCC(other._KCC), _subCC(other._subCC), _critical_K(other._critical_K), _critical_L_K(other._critical_L_K) {}
+
+public:
     /**
      * \brief Finds a valid cell pair of dimension q / q+1 for A *in the current sub chain complex*.
      *
@@ -182,7 +192,7 @@ public:
 
     /** \brief Returns the value of the current sub chain complex mask.
      */
-    Sub_chain_complex_mask<ChainComplex> get_current_mask()
+    Sub_chain_complex_mask<ChainComplex> get_current_mask() const
     {
         return _subCC;
     }
@@ -289,6 +299,67 @@ public:
     }
 
     /**
+     * \brief Writes a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
+     *
+     * Writes a `HDVF_duality` to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param out Output stream.
+     */
+    std::ostream& write_hdvf_reduction(std::ostream& out) const ;
+
+    /**
+     * \brief Writes a `Hdvf_duality` together with the associated reduction to a file (f, g, h, d matrices).
+     *
+     * Writes a `Hdvf_duality` to a file in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param filename Output file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
+     */
+    void write_hdvf_reduction(std::string filename) const {
+        std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
+        if ( ! out_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        write_hdvf_reduction(out_file) ;
+
+        out_file.close();
+    }
+
+    /**
+     * \brief Reads a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
+     *
+     * Reads a `Hdvf_duality` from a stream in `hdvf` file format (a simple text file format, see for a specification).
+     *
+     * \param in Input stream.
+     */
+    std::istream& read_hdvf_reduction(std::istream& in) ;
+
+    /**
+     * \brief Loads a `Hdvf_duality` together with the associated reduction from a file (f, g, h, d matrices)
+     *
+     * Load a `Hdvf_duality` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
+     *
+     * \param filename Input file name.
+     *
+     * \exception File_not_found If the file `filename` cannot be opened, raises a `%std::runtime_error`.
+     */
+    void read_hdvf_reduction(std::string filename) {
+        std::ifstream in_file (filename);
+        if ( ! in_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        read_hdvf_reduction(in_file);
+
+        in_file.close();
+    }
+
+    /**
      * \brief Prints the homology and cohomology reduction information for the current such chain complex.
      *
      * Prints \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
@@ -310,7 +381,7 @@ public:
             out << std::endl;
         }
 
-        if (_hdvf_opt & (OPT_FULL | OPT_G))
+        if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Print matrices g
             out << "----- g:" << std::endl;
@@ -330,7 +401,7 @@ public:
             }
         }
 
-        if (_hdvf_opt & (OPT_FULL | OPT_F))
+        if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
             // Print matrices f*
             out << "----- f*:" << std::endl;
@@ -497,12 +568,30 @@ public:
             return fstar_cell_sub ;
         }
     }
+
+    /** \brief Compares the `HDVF_duality` with another `HDVF_duality` over the same underlying complex and sub-complex.
+     *
+     * \param other Other `HDVF_duality` to compare.
+     * \param full_compare Turns on "in depth" HDVF comparison (reduction matrices).
+     */
+
+    bool compare(const Hdvf_duality& other, bool full_compare = false) const {
+        // Compare Hdvf_core structure of *this and other
+        bool res(Base::compare(other, full_compare));
+        if (!res)
+            return res;
+        // Compare duality data
+        res = (_KCC == other._KCC);
+        res = res && (_critical_K == other._critical_K);
+        res = res && (_critical_L_K == other._critical_L_K);
+        return res;
+    }
 } ;
 
 // Constructor
 template<typename ChainComplex>
 Hdvf_duality<ChainComplex>::Hdvf_duality(const ChainComplex& L, Sub_chain_complex_mask<ChainComplex>& K, int hdvf_opt) :
-Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
+Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _KCC(K), _subCC(K) {}
 
 // find a valid Cell_pair for A in dimension q
 template<typename ChainComplex>
@@ -519,7 +608,7 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found) const
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
         for (typename Base::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
-            if (_subCC.get_bit(q, it->first) && (abs(it->second) == 1)) {
+            if (_subCC.get_bit(q, it->first) && ((it->second).is_invertible())) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
                 p.tau = *it_col;
@@ -546,7 +635,7 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found, size_t tau
     const typename Base::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
     for (typename Base::Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
-        if (_subCC.get_bit(q-1, it->first) && abs(it->second) == 1)
+        if (_subCC.get_bit(q-1, it->first) && (it->second).is_invertible())
         {
             found = true ;
             p.sigma = it->first ;
@@ -586,7 +675,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
 
         // Iterate through the entries of the column
         for (typename Base::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
-            if (_subCC.get_bit(q, it->first) && ((it->second == 1) || (it->second == -1))) {
+            if (_subCC.get_bit(q, it->first) && ((it->second).is_invertible())) {
                 // If an entry of _subCC with coefficient 1 or -1 is found, set the pair and mark as found
                 Cell_pair p;
                 p.sigma = it->first;
@@ -615,7 +704,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
     typename Base::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
     for (typename Base::Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
-        if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
+        if (_subCC.get_bit(q+1, it->first) && ((it->second).is_invertible()))
         {
             found = true ;
             Cell_pair p ;
@@ -647,24 +736,32 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
 template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool verbose)
 {
+#ifdef DEBUG
     std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
+#endif
     // Set _subCC to K
     _subCC = _KCC ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<Cell_pair> tmp = Base::compute_perfect_hdvf(verbose) ;
+#ifdef DEBUG
     std::cout << tmp.size() << " cells paired" << std::endl ;
+#endif
     _critical_K = psc_flags(CRITICAL) ;
 
+#ifdef DEBUG
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
+#endif
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     std::vector<Cell_pair> tmp2 = Base::compute_perfect_hdvf(verbose) ;
+#ifdef DEBUG
     std::cout << tmp2.size() << " cells paired" << std::endl ;
+#endif
     _critical_L_K = psc_flags(CRITICAL) ;
 
     // Return the vector of paired cells
@@ -676,24 +773,32 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
 template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(bool verbose)
 {
+#ifdef DEBUG
     std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
+#endif
     // Set _subCC to K
     _subCC = _KCC ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<Cell_pair> tmp = Base::compute_rand_perfect_hdvf(verbose) ;
+#ifdef DEBUG
     std::cout << tmp.size() << " cells paired" << std::endl ;
+#endif
     _critical_K = psc_flags(CRITICAL) ;
 
+#ifdef DEBUG
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
+#endif
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     std::vector<Cell_pair> tmp2 = Base::compute_rand_perfect_hdvf(verbose) ;
+#ifdef DEBUG
     std::cout << tmp2.size() << " cells paired" << std::endl ;
+#endif
     _critical_L_K = psc_flags(CRITICAL) ;
 
     // Return the vector of paired cells
@@ -706,14 +811,18 @@ template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
-
+#ifdef DEBUG
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
+#endif
+
+    // Copy the HDVF before computing the pairing -> otherwise we loose it...
+    Hdvf_duality<ChainComplex> hdvf_tmp(*this);
 
     // Create a full Sub_chain_complex_mask
-    _subCC = Sub_chain_complex_mask<ChainComplex>(_L) ;
-    _subCC.screen_matrices(this->_DD_col);
-    // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<Cell_pair> pairing = Base::compute_perfect_hdvf() ;
+    hdvf_tmp._subCC = Sub_chain_complex_mask<ChainComplex>(hdvf_tmp._L) ;
+    hdvf_tmp._subCC.screen_matrices(this->_DD_col);
+
+    std::vector<Cell_pair> pairing = hdvf_tmp.Base::compute_perfect_hdvf() ;
     return pairing ;
 }
 
@@ -722,14 +831,17 @@ template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
-
+#ifdef DEBUG
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
+#endif
 
+    // Copy the HDVF before computing the pairing -> otherwise we loose it...
+    Hdvf_duality<ChainComplex> hdvf_tmp(*this);
     // Create a full Sub_chain_complex_mask
-    _subCC = Sub_chain_complex_mask<ChainComplex>(_L) ;
-    _subCC.screen_matrices(this->_DD_col);
+    hdvf_tmp._subCC = Sub_chain_complex_mask<ChainComplex>(hdvf_tmp._L) ;
+    hdvf_tmp._subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<Cell_pair> pairing = Base::compute_rand_perfect_hdvf() ;
+    std::vector<Cell_pair> pairing = hdvf_tmp.Base::compute_rand_perfect_hdvf() ;
     return pairing ;
 }
 
@@ -760,6 +872,64 @@ std::vector<size_t> Hdvf_duality<ChainComplex>::psc_flags (PSC_flag flag, int q)
             res.push_back(i) ;
     }
     return res ;
+}
+
+// Save HDVF and reduction
+template<typename ChainComplex>
+std::ostream& Hdvf_duality<ChainComplex>::write_hdvf_reduction(std::ostream& out) const {
+    // Write HDVF prefix type
+    out << "#HDVF_duality" << std::endl;
+    // Call parent method main code
+    Base::write_hdvf_reduction_main(out);
+    // Write duality data
+    // ---- _KCC
+    for (int q=0; q<=this->_K.dimension(); ++q) {
+        out << _KCC.get_bitboard(q) << std::endl;
+    }
+    return out;
+}
+
+// Save HDVF and reduction
+template<typename ChainComplex>
+std::istream& Hdvf_duality<ChainComplex>::read_hdvf_reduction(std::istream& in) {
+    // Load and check HDVF prefix
+    // For Hdvf_core:       #HDVF_core
+    // For Hdvf_persistence:       #HDVF_persistence
+    // For Hdvf_duality:       #HDVF_duality
+    std::string prefix;
+    in >> prefix;
+    if (prefix.compare("#HDVF_duality")) {
+        std::cerr << "try to load a HDVF with incompatible prefix" << std::endl ;
+        throw (std::runtime_error("try to load a HDVF with incompatible prefix"));
+    }
+
+    // Call parent method
+    Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction_main(in);
+    // Read duality data
+    // ---- _KCC
+    // Init bitboards _KCC
+    for (int q=0; q<=this->_K.dimension(); ++q) {
+        OSM::Bitboard bb(this->_K.number_of_cells(q));
+        in >> bb;
+        _KCC.set_bitboard(bb,q);
+    }
+    // Restore _critical_K and _critical_L_K
+    _subCC.set_full();
+    _critical_K.clear();
+    _critical_L_K.clear();
+    _critical_K.resize(this->_K.dimension()+1);
+    _critical_L_K.resize(this->_K.dimension()+1);
+    for (int q=0; q<=this->_K.dimension(); ++q) {
+        std::vector<size_t> criticals = this->psc_flags(CRITICAL,q);
+        for (size_t cell : criticals) {
+            if (_KCC.get_bit(q,cell)) // cell is critical in _K
+                _critical_K.at(q).push_back(cell);
+            else
+                _critical_L_K.at(q).push_back(cell);
+        }
+    }
+    _subCC = _KCC;
+    return in;
 }
 
 } /* end namespace Homological_discrete_vector_field */

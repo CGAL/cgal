@@ -370,7 +370,7 @@ public:
     }
 
     /**
-     * \brief Bitwise NOT of a bitboard.
+     * \brief Bitwise NOT of a Bitboard.
      *
      * \param _bitboard The argument bitboard.
      * \returns A new bitboard which is the result of the NOT.
@@ -414,11 +414,11 @@ public:
     reverse_iterator reverse_end() const { return reverse_iterator(size_t_maxvalue, _size, boards); }
 
     /**
-     * \brief Stream operator that displays all bits.
+     * \brief Stream operator that displaying a `Bitboard`.
      *
-     * \param[in,out] _stream The stream to edit.
+     * \param _stream The stream to edit.
      * \param _bitboard The bitboard to display.
-     * \returns The edited stream.
+     * \return The edited stream.
      */
     friend std::ostream& operator<<(std::ostream &_stream, const Bitboard &_bitboard) {
         // Cheat for speed, iterate through all non-null indices and fill the in-between with zeros.
@@ -427,9 +427,33 @@ public:
             _stream << std::string(index - last - 1, '0') << "1";
             last = index;
         }
-        // Add the leading zeros.
+        // Add the ending zeros.
         _stream << std::string(_bitboard._size - last - 1, '0');
 
+        return _stream;
+    }
+
+    /**
+     * \brief Stream operator reading  a `Bitboard`.
+     *
+     * \param _stream The stream to read.
+     * \param _bitboard The bitboard where bits are loaded.
+     * \return The edited stream.
+     *
+     * \exception Invalid_bit If the stream does not provide enough 0/1 characters, raises a `std::runtime_error`.
+     */
+    friend std::istream& operator>>(std::istream &_stream, Bitboard &_bitboard) {
+        _bitboard = Bitboard(_bitboard.size()); // Erase _bitboard
+        // Read bits
+        for (int i=0; i<_bitboard.size(); ++i) {
+            char c ;
+            _stream >> c;
+            if ((c != '0') && (c != '1')) {
+                throw std::runtime_error("Cannot load Bitboard from stream: invalid bit read");
+            }
+            if (c == '1')
+                _bitboard.set_on(i);
+        }
         return _stream;
     }
 
@@ -664,6 +688,11 @@ public:
         boards[boardIndex] &= ~bit;
     }
 
+    /**
+     * \brief Tests if a given bit ins on.
+     *
+     * \param _index The bit position.
+     */
     bool is_on(const std::size_t &_index) const {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
@@ -671,7 +700,21 @@ public:
         return (boards[boardIndex] & bit) != 0;
     }
 
+    /**
+     * \brief Returns the size of the `Bitboard`.
+     */
     size_t size() const { return _size ; }
+
+    /** \brief Comparison operator.
+     *
+     * \param other Other `Bitboard` to compare.
+     */
+    bool operator==(const Bitboard& other) const {
+        bool res(_size == other._size);
+        for (int i=0; res &&(i<boards.size()); ++i)
+            res = res && (boards.at(i) == other.boards.at(i));
+        return res;
+    }
 };
 
 } /* end namespace OSM */
