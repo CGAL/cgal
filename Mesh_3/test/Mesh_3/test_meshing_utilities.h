@@ -326,11 +326,11 @@ struct Tester
         assert(index.first != index.second);
         Cell_handle c1 = f.first;
         Cell_handle c2 = f.first->neighbor(f.second);
-        if( c1->subdomain_index() == c2->subdomain_index() )
+        if( c3t3.subdomain_index(c1) == c3t3.subdomain_index(c2) )
         {
           std::cerr << "ERROR:"
-                    << "\nc1->subdomain_index(): " << c1->subdomain_index()
-                    << "\nc2->subdomain_index(): " << c2->subdomain_index()
+                    << "\nc3t3.subdomain_index(c1): " << c3t3.subdomain_index(c1)
+                    << "\nc3t3.subdomain_index(c2): " << c3t3.subdomain_index(c2)
                     << "\nc3t3.surface_patch_index(f).first:  " << index.first
                     << "\nc3t3.surface_patch_index(f).second: " << index.second;
           if(tr.is_infinite(c1)) std::cerr << "\nc1 is infinite";

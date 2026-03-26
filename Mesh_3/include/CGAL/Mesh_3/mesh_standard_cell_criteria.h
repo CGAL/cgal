@@ -285,7 +285,7 @@ protected:
 
     const FT size = sq_radius(p, q, r, s);
     const FT sq_bound = CGAL::square( size_(tr.dual(ch), 3,
-                                            Index(ch->subdomain_index())) );
+                                            Index(c3t3.subdomain_index(ch))) );
 
     if ( size > sq_bound )
     {

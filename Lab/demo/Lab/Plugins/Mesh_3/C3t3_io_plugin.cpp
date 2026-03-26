@@ -449,9 +449,9 @@ update_c3t3(C3t3& c3t3)
   c3t3.rescan_after_load_of_triangulation(); //fix counters for facets and cells
   for (Cell_handle cit : c3t3.triangulation().finite_cell_handles())
   {
-    CGAL_assertion(cit->subdomain_index() >= 0);
-    if (cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
-      c3t3.add_to_complex(cit, cit->subdomain_index());
+    CGAL_assertion(c3t3.subdomain_index(cit) >= 0);
+    if (c3t3.subdomain_index(cit) != C3t3::Triangulation::Cell::Subdomain_index())
+      c3t3.add_to_complex(cit, c3t3.subdomain_index(cit));
 
     for (int i = 0; i < 4; ++i)
     {
@@ -469,11 +469,11 @@ update_c3t3(C3t3& c3t3)
       Cell_handle nc = c->neighbor(fit.second);
 
       // By definition, Subdomain_index() is supposed to be the id of the exterior
-      if (c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
-          nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
+      if (c3t3.subdomain_index(c) != C3t3::Triangulation::Cell::Subdomain_index() &&
+          c3t3.subdomain_index(nc) == C3t3::Triangulation::Cell::Subdomain_index())
       {
         // Color the border facet with the index of its cell
-        c3t3.add_to_complex(c, fit.second, c->subdomain_index());
+        c3t3.add_to_complex(c, fit.second, c3t3.subdomain_index(c));
       }
     }
   }

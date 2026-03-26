@@ -388,9 +388,9 @@ public:
   Bare_point refinement_point_impl(const Cell_handle& cell) const
   {
     this->set_last_vertex_index(
-      r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
+      r_oracle_.index_from_subdomain_index(r_c3t3_.subdomain_index(cell)) );
 
-    //    last_vertex_index_ = Index(cell->subdomain_index());
+    //    last_vertex_index_ = Index(r_c3t3_.subdomain_index(cell));
     // NB : dual() is optimized when the cell base class has circumcenter()
     return r_tr_.dual(cell);
   }

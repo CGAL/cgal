@@ -51,7 +51,7 @@ int main()
 
   // Init cell
   tr.dual(ch);
-  ch->set_subdomain_index(sub_index);
+  c3t3.set_subdomain_index(ch, sub_index);
 
   // Init facet
   Tr::Bare_point facet_circum =

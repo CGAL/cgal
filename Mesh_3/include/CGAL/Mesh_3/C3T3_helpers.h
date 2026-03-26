@@ -1320,7 +1320,7 @@ private:
     {
       sliver_value_ = criterion.is_sliver(c) ? criterion(c) : 0.;
 
-      subdomain_index_ = c->subdomain_index();
+      subdomain_index_ = c3t3.subdomain_index(c);
       for(std::size_t i = 0; i < 4; ++i)
       {
         const int ii = static_cast<int>(i);//avoid warnings
