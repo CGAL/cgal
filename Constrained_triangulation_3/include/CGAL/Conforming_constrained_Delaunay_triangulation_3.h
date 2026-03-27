@@ -1274,37 +1274,46 @@ protected:
     move_one_Steiner_vertex_to_the_volume(v);
   }
 
-  template <typename CellsWithPartitionRange>
-  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const CellsWithPartitionRange& cells) const {
+  template <typename Offsets, typename Facets>
+  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const Offsets& component_offsets, const Facets& facets) const {
     using Point_3 = typename Traits::Point_3;
-    std::vector<Point_3> points;
-    std::vector<std::array<std::size_t, 3>> triangles;
-    std::vector<int> triangle_partition_ids;
-    std::size_t vertex_index = 0;
-    for(auto [c, partition_id] : cells) {
-      for(int i = 0; i < 4; ++i) {
-        if(c->vertex(i) == v) {
-          std::array<std::size_t, 3> triangle;
-          std::iota(triangle.begin(), triangle.end(), vertex_index);
-          vertex_index += 3;
-          triangles.push_back(triangle);
-          triangle_partition_ids.push_back(partition_id);
-        } else {
-          points.push_back(c->vertex(i)->point());
-        }
-      }
-    }
     using Mesh = CGAL::Surface_mesh<Point_3>;
-    Mesh link_mesh;
     using face_descriptor = typename Mesh::Face_index;
-    std::vector<std::pair<std::size_t, face_descriptor>> triangle_index_to_face_descriptor;
-
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, link_mesh,
-      CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
+    Mesh link_mesh;
     auto [patch_id_map, _] = link_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
-    for(auto [triangle_index, fd] : triangle_index_to_face_descriptor) {
-      put(patch_id_map, fd, triangle_partition_ids[triangle_index]);
-    }
+    for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
+      std::vector<Point_3> points;
+      std::vector<std::array<std::size_t, 3>> triangles;
+      std::size_t vertex_index = 0;
+      Mesh component_mesh;
+      for(std::size_t facet_id = component_offsets[component_index - 1],
+                           end = component_offsets[component_index];
+          facet_id < end; ++facet_id)
+      {
+        const auto& [cell, facet_index, _] = facets[facet_id];
+        for(int i = 0; i < 3; ++i) {
+          points.push_back(cell->vertex(Triangulation::vertex_triple_index(facet_index, i))->point());
+        } // end for each vertex of the facet
+        // swap the orientation: our facets are oriented toward the center of the star component
+        // but we want them to be oriented outward
+        triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
+        vertex_index += 3;
+      } // end for each facet in the component
+      CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
+
+      std::vector<std::pair<std::size_t, face_descriptor>> triangle_index_to_face_descriptor;
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh,
+        CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
+
+      std::vector<face_descriptor> new_faces;
+      auto out_it = boost::make_function_output_iterator(
+          [&new_faces](std::pair<face_descriptor, face_descriptor> fd_pair) { new_faces.push_back(fd_pair.second); });
+      CGAL::copy_face_graph(component_mesh, link_mesh, CGAL::parameters::face_to_face_output_iterator(out_it));
+      for(auto fd : new_faces) {
+        put(patch_id_map, fd, static_cast<int>(component_index));
+      }
+    } // end for each component
+
     std::stringstream filename;
     filename << "dump_link_mesh_vertex" << IO::oformat(v, With_offset_tag{}) << ".ply";
     std::ofstream out(filename.str());
@@ -1386,18 +1395,7 @@ protected:
     } while(queue_head != facets_of_star_components.size());
 
     { // DEBUG, DO NOT COMMIT as it is
-      boost::container::small_vector<std::pair<Cell_handle, unsigned>, 128> cells;
-      for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
-        for(std::size_t i = component_offsets[component_index - 1], end = component_offsets[component_index]; i < end;
-            ++i)
-        {
-          const auto& [cell, facet_index, facet_type] = facets_of_star_components[i];
-          if(facet_type == Type_of_facet::OPPOSITE) {
-            cells.emplace_back(cell, facet_index);
-          }
-        }
-      }
-      dump_link_mesh_of_vertex_to_ply(v, cells); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
+      dump_link_mesh_of_vertex_to_ply(v, component_offsets, facets_of_star_components); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
     }
 
     std::cerr << "  " << "nb of components: " << component_offsets.size() - 1 << '\n';
