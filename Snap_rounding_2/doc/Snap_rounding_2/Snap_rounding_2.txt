@@ -92,7 +92,7 @@ Both algorithms can be invoked through the `CGAL::snap_rounding_2()` function.
 By default, the Vertical Slab Snap Rounding algorithm to double precision is used. The other method or other rounding schemes can be used depending on the traits class provided (see section \cgalSectionRef{Float_snap_rounding_Traits}).
 Both methods can be accessed directly threw `CGAL::vertical_slab_snap_rounding_2()` and `CGAL::hot_pixel_snap_rounding_2` and share a similar API.
 
-The following example snaps on integers using Hot Pixel SR a instance of five segments.
+The following example snaps on integers using Hot Pixel SR a instance of four segments.
 
 \cgalExample{Snap_rounding_2/snap_rounding_to_integer.cpp}
 
@@ -104,7 +104,7 @@ The following example generates an Iterated SR representation
 of an arrangement of four line segments and outputs the resulting polylines in a plane
 tiled with one-unit square pixels.
 
-\cgalExample{Snap_rounding_2/iterated_snap_rounding.cpp}
+\cgalExample{Snap_rounding_2/iterative_snap_rounding.cpp}
 
 The package is supplied with a graphical demo program that opens a window,
 allows the user to edit segments dynamically, applies a selected

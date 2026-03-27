@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/snap_rounding_2.h>
+#include <CGAL/Snap_rounding_2.h>
 #include <CGAL/Double_grid_snap_rounding_traits_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
@@ -21,7 +21,7 @@ int main()
   segs.emplace_back(Point_2(0, 2-e/2), Point_2(-2+e, -4));
   segs.emplace_back(Point_2(-2, 2), Point_2(2, 2));
 
-  // Compute the snapped subcurves and check if they do intersect
+  // Compute the snapped subsegments and check if they do intersect
   std::vector< Segment_2 > out;
   CGAL::snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(CGAL::Double_grid_snap_rounding_traits_2<Kernel>()));
   std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;

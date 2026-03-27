@@ -1,6 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/snap_rounding_2.h>
+#include <CGAL/Snap_rounding_2.h>
 #include <CGAL/IO/OBJ.h>
 
 #include <CGAL/Real_timer.h>
