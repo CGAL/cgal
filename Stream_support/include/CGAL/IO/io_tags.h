@@ -18,7 +18,6 @@
 #ifndef CGAL_IO_TAGS_H
 #define CGAL_IO_TAGS_H
 
-#include <cstddef>
 #include <CGAL/config.h>
 
 namespace CGAL {
@@ -52,6 +51,7 @@ template<> struct Io_traits<double> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<long double> { typedef io_Read_write Io_tag; };
 
 struct IO_manip_tag{};
+struct Pretty_tag{};
 
 } //namespace CGAL
 

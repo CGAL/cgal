@@ -18,6 +18,8 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <CGAL/config.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/IO/io_tags.h>
@@ -27,12 +29,15 @@
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/tags.h>
 
-#include <cstdio>
 #include <cctype>
+#include <cstddef>
 #include <string>
 #include <locale>
 #include <iostream>
 #include <optional>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 #include <variant>
 
 namespace CGAL {
@@ -81,424 +86,6 @@ is in `ASCII` mode.
 \sa `CGAL::IO::is_pretty()`
 */
 enum Mode {ASCII = 0, PRETTY, BINARY};
-
-} // namespace IO
-
-#ifdef DOXYGEN_RUNNING
-/*!
-\ingroup IOstreamOperators
-
-\brief Inserts object `c` in the stream `os`. Returns `os`.
-\cgal defines output operators for classes that are derived
-from the class `ostream`. This allows to write to ostreams
-as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
-and `std::ofstream`.
-The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
-
-\sa `CGAL::IO::set_mode()`
-\sa `CGAL::IO::set_ascii_mode()`
-\sa `CGAL::IO::set_binary_mode()`
-\sa `CGAL::IO::set_pretty_mode()`
-\sa `CGAL::IO::get_mode()`
-\sa `CGAL::IO::is_ascii()`
-\sa `CGAL::IO::is_binary()`
-\sa `CGAL::IO::is_pretty()`
-*/
-ostream& operator<<(ostream& os, Class c);
-
-/*!
-\ingroup IOstreamOperators
-
-\brief \cgal defines input operators for classes that are derived
-from the class `istream`. This allows to read from istreams
-as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
-The input operator is defined for all classes in the \cgal `Kernel`.
-
-\sa `CGAL::IO::set_mode()`
-\sa `CGAL::IO::set_ascii_mode()`
-\sa `CGAL::IO::set_binary_mode()`
-\sa `CGAL::IO::set_pretty_mode()`
-\sa `CGAL::IO::get_mode()`
-\sa `CGAL::IO::is_ascii()`
-\sa `CGAL::IO::is_binary()`
-\sa `CGAL::IO::is_pretty()`
-*/
-istream& operator>>(istream& is, Class c);
-#endif
-
-template <typename Dummy>
-struct IO_rep_is_specialized_aux
-{
-  static const bool is_specialized = true;
-};
-
-template< class Dummy >
-const bool IO_rep_is_specialized_aux<Dummy>::is_specialized;
-
-template <typename Dummy>
-struct IO_rep_is_not_specialized_aux
-{
-  static const bool is_specialized = false;
-};
-
-template< class Dummy >
-const bool IO_rep_is_not_specialized_aux<Dummy>::is_specialized;
-
-typedef IO_rep_is_specialized_aux<void> IO_rep_is_specialized;
-typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
-
-/*!
-\ingroup PkgStreamSupportRef
-
-The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
-
-If you don't specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behavior for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behavior*.
-
-Specializations of `Output_rep` should provide the following features:
-
-\code{.cpp}
-
-template< class F >
-struct Output_rep< Some_type, F > {
-  static const bool is_specialized = true;
-  Output_rep( const Some_type& t );
-  std::ostream& operator()( std::ostream& os ) const;
-};
-
-\endcode
-
-You can also specialize for a formatting tag `F`.
-
-The constant `is_specialized` can be tested by meta-programming tools to
-verify that a given type can be used with `oformat()`. Its value has to be
-`true` in a specialization of `Output_rep`. When there is no specialization
-for a type, the class template `Output_rep` defines `is_specialized` to the
-default value `false`.
-*/
-template <class T, class F = ::CGAL::Null_tag >
-class Output_rep
-  : public IO_rep_is_not_specialized
-{
-  const T& t;
-
-public:
-  //! initialize with a const reference to \a t.
-  Output_rep( const T& tt, F = {}) : t(tt) {}
-  //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& os) const { return (os << t); }
-};
-
-template <class T, class F>
-class Output_rep<std::optional<T>, F>
-{
-  const std::optional<T>& t;
-
-public:
-  Output_rep( const std::optional<T>& tt) : t(tt) {}
-  std::ostream& operator()( std::ostream& os) const
-  {
-    if (t==std::nullopt) return (os << "--");
-    return (os << t.value());
-  }
-};
-
-template <class ... T, class F>
-class Output_rep<std::variant<T...>, F>
-{
-   const std::variant<T...>& t;
-
-public:
-  Output_rep( const std::variant<T...>& tt) : t(tt) {}
-  std::ostream& operator()( std::ostream& os) const
-  {
-    std::visit([&os](auto&& v) { os << v; }, t);
-    return os;
-  }
-};
-
-template <class Func>
-class Output_rep<Func, IO_manip_tag>
-{
-  Func f;
-
-public:
-  Output_rep(Func f) : f(f) {}
-  std::ostream& operator()(std::ostream& os) const
-  {
-    return f(os);
-  }
-};
-
-/*!
-  \relates Output_rep
-  \brief stream output of the \c Output_rep calls its \c operator().
-
-  \cgal defines output operators for classes that are derived from the class `std::ostream`.
-  This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
-  and `std::ofstream`.
-  The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
-*/
-template <class T, class F>
-std::ostream& operator<<( std::ostream& os, Output_rep<T,F> rep) { return rep(os); }
-
-namespace IO {
-
-/*!
-\ingroup PkgStreamSupportRef
-
-Convenience function to construct an output representation (`Output_rep`) for type `T`.
-
-Generic IO for type `T`.
-*/
-template <class T>
-Output_rep<T> oformat(const T& t) { return Output_rep<T>(t); }
-
-/*!
-\ingroup PkgStreamSupportRef
-
-Convenience function to construct an output representation (`Output_rep`) for type `T`.
-
-Generic IO for type `T` with formatting tag.
-*/
-template <class T, class F>
-Output_rep<T,F> oformat( const T& t, F format) {
-  if constexpr (std::is_constructible_v<Output_rep<T,F>, const T&, F>)
-    return Output_rep<T,F>(t, format);
-  else
-    return Output_rep<T,F>(t);
-}
-
-} // namespace IO
-
-/*!
-\ingroup PkgStreamSupportRef
-
-The definition of `Input_rep` is completely symmetric to `Output_rep`.
-*/
-template <class T>
-class Input_rep
-  : public IO_rep_is_not_specialized
-{
-  T& t;
-
-public:
-  //! initialize with a reference to \a t.
-  Input_rep( T& tt) : t(tt) {}
-
-  //! perform the input, calls \c operator\>\> by default.
-  std::istream& operator()( std::istream& is) const { return (is >> t); }
-};
-
-template <class T>
-class Input_rep<std::optional<T>>
-{
-  std::optional<T>& t;
-
-public:
-  //! initialize with a reference to \a t.
-  Input_rep( std::optional<T>& tt) : t(tt) {}
-
-  //! perform the input, calls \c operator\>\> by default.
-  std::istream& operator()( std::istream& is) const {
-    T v;
-    if(is >> v) t = v;
-    return is;
-  }
-};
-
-#if CGAL_FORCE_IFORMAT_DOUBLE || \
-  ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
-
-template <>
-class Input_rep<double>
-  : public IO_rep_is_specialized
-{
-  double& t;
-
-public:
-  //! initialize with a reference to \a t.
-  Input_rep( double& tt) : t(tt) {}
-
-  std::istream& operator()( std::istream& is) const
-  {
-    typedef std::istream istream;
-    typedef istream::char_type char_type;
-    typedef istream::int_type int_type;
-    typedef istream::traits_type traits_type;
-
-    std::string buffer;
-    buffer.reserve(32);
-
-    char_type c;
-    do
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-        return is;
-
-      c = static_cast<char_type>(i);
-    }
-    while (std::isspace(c));
-
-    if(c == '-')
-    {
-      buffer += '-';
-    }
-    else if(c != '+')
-    {
-      is.unget();
-    }
-
-    for(;;)
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-      {
-        is.clear(is.rdstate() & ~std::ios_base::failbit);
-        break;
-      }
-
-      c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
-      {
-        buffer += c;
-      }
-      else
-      {
-        is.unget();
-        break;
-      }
-    }
-
-    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1)
-    {
-      // if a 'buffer' does not contain a double, set the fail bit.
-      is.setstate(std::ios_base::failbit);
-    }
-
-    return is;
-  }
-};
-
-template <>
-class Input_rep<float>
-{
-  float& t;
-
-public:
-  //! initialize with a reference to \a t.
-  Input_rep( float& tt) : t(tt) {}
-
-  std::istream& operator()( std::istream& is) const
-  {
-    typedef std::istream istream;
-    typedef istream::char_type char_type;
-    typedef istream::int_type int_type;
-    typedef istream::traits_type traits_type;
-
-    std::string buffer;
-    buffer.reserve(32);
-
-    char_type c;
-    do
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-        return is;
-
-      c = static_cast<char_type>(i);
-    }
-    while (std::isspace(c));
-
-    if(c == '-')
-    {
-      buffer += '-';
-    }
-    else if(c != '+')
-    {
-      is.unget();
-    }
-
-    for(;;)
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-      {
-        is.clear(is.rdstate() & ~std::ios_base::failbit);
-        break;
-      }
-
-      c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
-      {
-        buffer += c;
-      }
-      else
-      {
-        is.unget();
-        break;
-      }
-    }
-
-    if(sscanf_s(buffer.c_str(), "%f", &t) != 1)
-    {
-      // if a 'buffer' does not contain a double, set the fail bit.
-      is.setstate(std::ios_base::failbit);
-    }
-
-    return is;
-  }
-};
-#endif
-
-/*! \relates Input_rep
-    \brief stream input to the \c Input_rep calls its \c operator().
-
-\brief \cgal defines input operators for classes that are derived
-from the class `std::istream`. This allows to read from input streams
-as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
-The input operator is defined for all classes in the \cgal `Kernel`.
-*/
-template <class T>
-std::istream& operator>>( std::istream& is, Input_rep<T> rep) { return rep(is); }
-
-namespace IO {
-
-/*!
-\ingroup PkgStreamSupportRef
-
-The definition of this function is completely symmetric to `oformat()`.
-*/
-template <class T>
-Input_rep<T> iformat( T& t) { return Input_rep<T>(t); }
-
-} // namespace IO
-
-template <class T, class F = Null_tag >
-class Benchmark_rep
-{
-  const T& t;
-
-public:
-  //! initialize with a const reference to \a t.
-  Benchmark_rep( const T& tt) : t(tt) {}
-  //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& os) const { return os << t; }
-
-  // static function to get the benchmark name
-  static std::string get_benchmark_name() { return ""; }
-};
-
-template <class T, class F>
-std::ostream& operator<<( std::ostream& os, Benchmark_rep<T,F> rep) { return rep(os); }
-
-namespace IO {
-
-template <class T>
-Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
-
-template <class T, class F>
-Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -656,6 +243,455 @@ inline bool is_binary(std::ios& s) { return s.iword(Static::get_mode()) == BINAR
 
 } // namespace IO
 
+#ifdef DOXYGEN_RUNNING
+/*!
+\ingroup IOstreamOperators
+
+\brief Inserts object `c` in the stream `os`. Returns `os`.
+\cgal defines output operators for classes that are derived
+from the class `ostream`. This allows to write to ostreams
+as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
+and `std::ofstream`.
+The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
+
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
+*/
+ostream& operator<<(ostream& os, Class c);
+
+/*!
+\ingroup IOstreamOperators
+
+\brief \cgal defines input operators for classes that are derived
+from the class `istream`. This allows to read from istreams
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
+
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
+*/
+istream& operator>>(istream& is, Class c);
+#endif
+
+template <typename Dummy>
+struct IO_rep_is_specialized_aux
+{
+  static const bool is_specialized = true;
+};
+
+template< class Dummy >
+const bool IO_rep_is_specialized_aux<Dummy>::is_specialized;
+
+template <typename Dummy>
+struct IO_rep_is_not_specialized_aux
+{
+  static const bool is_specialized = false;
+};
+
+template< class Dummy >
+const bool IO_rep_is_not_specialized_aux<Dummy>::is_specialized;
+
+typedef IO_rep_is_specialized_aux<void> IO_rep_is_specialized;
+typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
+
+/*!
+\ingroup PkgStreamSupportRef
+
+The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
+
+If you don't specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behavior for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behavior*.
+
+Specializations of `Output_rep` should provide the following features:
+
+\code{.cpp}
+
+template< class F >
+struct Output_rep< Some_type, F > {
+  static const bool is_specialized = true;
+  Output_rep( const Some_type& t );
+  std::ostream& operator()( std::ostream& os ) const;
+};
+
+\endcode
+
+You can also specialize for a formatting tag `F`.
+
+The constant `is_specialized` can be tested by meta-programming tools to
+verify that a given type can be used with `oformat()`. Its value has to be
+`true` in a specialization of `Output_rep`. When there is no specialization
+for a type, the class template `Output_rep` defines `is_specialized` to the
+default value `false`.
+*/
+template <class T, class F = ::CGAL::Null_tag, class Enable = void>
+class Output_rep
+  : public IO_rep_is_not_specialized
+{
+  const T& t;
+
+public:
+  //! initialize with a const reference to \a t.
+  Output_rep( const T& tt, F = {}) : t(tt) {}
+  //! perform the output, calls \c operator\<\< by default.
+  std::ostream& operator()( std::ostream& os) const { return (os << t); }
+};
+
+namespace IO {
+/*!
+\ingroup PkgStreamSupportRef
+
+Convenience function to construct an output representation (`Output_rep`) for type `T`.
+
+Generic IO for type `T`.
+*/
+template <class T>
+Output_rep<T> oformat(const T& t) { return Output_rep<T>(t); }
+
+/*!
+\ingroup PkgStreamSupportRef
+
+Convenience function to construct an output representation (`Output_rep`) for type `T`.
+
+Generic IO for type `T` with formatting tag.
+*/
+template <class T, class F>
+Output_rep<T,F> oformat( const T& t, F format) {
+  if constexpr (std::is_constructible_v<Output_rep<T,F>, const T&, F&&>)
+    return Output_rep<T,F>(t, std::move(format));
+  else
+    return Output_rep<T,F>(t);
+}
+
+} // namespace IO
+
+template <class T, class F>
+class Output_rep<std::optional<T>, F>
+{
+  const std::optional<T>& t;
+  CGAL_NO_UNIQUE_ADDRESS F format;
+
+public:
+  Output_rep( const std::optional<T>& tt, F format = {}) : t(tt), format(std::move(format)) {}
+  std::ostream& operator()( std::ostream& os) const
+  {
+    if (t==std::nullopt) return (os << "--");
+    return (os << IO::oformat(t.value(), format));
+  }
+};
+
+template <class ... T, class F>
+class Output_rep<std::variant<T...>, F>
+{
+   const std::variant<T...>& t;
+   CGAL_NO_UNIQUE_ADDRESS F format;
+
+public:
+  Output_rep( const std::variant<T...>& tt, F format = {}) : t(tt), format(std::move(format)) {}
+  std::ostream& operator()( std::ostream& os) const
+  {
+    std::visit([&os, this](auto&& v) { os << IO::oformat(v, format); }, t);
+    return os;
+  }
+};
+
+template <class T, class F>
+class Output_rep<T, F, std::void_t<typename std::tuple_size<T>::type>>
+    : public IO_rep_is_specialized
+{
+  const T& value;
+  CGAL_NO_UNIQUE_ADDRESS F format;
+
+public:
+  Output_rep( const T& value, F format = {}) : value(value), format(std::move(format)) {}
+
+  std::ostream& operator()( std::ostream& os) const {
+    const auto mode = IO::get_mode(os);
+    const bool is_pretty = std::is_same_v<F, CGAL::Pretty_tag> || mode == IO::PRETTY;
+    const char* sep = (mode == IO::BINARY) ? "" : (is_pretty ? ", " : " ");
+    if(is_pretty) os << "(";
+    print_tuple_impl(os, sep, std::make_index_sequence<std::tuple_size<T>::value>{});
+    if(is_pretty) os << ")";
+    return os;
+  }
+
+protected:
+  template <std::size_t... I>
+  std::ostream& print_tuple_impl(std::ostream& os, const char* sep, std::index_sequence<I...>) const
+  {
+    ((os << (I == 0 ? "" : sep) << IO::oformat(std::get<I>(value), format)), ...);
+    return os;
+  }
+
+};
+
+template <class Func>
+class Output_rep<Func, IO_manip_tag>
+{
+  Func f;
+
+public:
+  Output_rep(Func f) : f(f) {}
+  std::ostream& operator()(std::ostream& os) const
+  {
+    return f(os);
+  }
+};
+
+/*!
+  \relates Output_rep
+  \brief stream output of the \c Output_rep calls its \c operator().
+
+  \cgal defines output operators for classes that are derived from the class `std::ostream`.
+  This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
+  and `std::ofstream`.
+  The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
+*/
+template <class T, class F>
+std::ostream& operator<<( std::ostream& os, Output_rep<T,F> rep) { return rep(os); }
+
+/*!
+\ingroup PkgStreamSupportRef
+
+The definition of `Input_rep` is completely symmetric to `Output_rep`.
+*/
+template <class T>
+class Input_rep
+  : public IO_rep_is_not_specialized
+{
+  T& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( T& tt) : t(tt) {}
+
+  //! perform the input, calls \c operator\>\> by default.
+  std::istream& operator()( std::istream& is) const { return (is >> t); }
+};
+
+/*! \relates Input_rep
+    \brief stream input to the \c Input_rep calls its \c operator().
+
+\brief \cgal defines input operators for classes that are derived
+from the class `std::istream`. This allows to read from input streams
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
+*/
+template <class T>
+std::istream& operator>>( std::istream& is, Input_rep<T> rep) { return rep(is); }
+
+namespace IO {
+
+/*!
+\ingroup PkgStreamSupportRef
+
+The definition of this function is completely symmetric to `oformat()`.
+*/
+template <class T>
+Input_rep<T> iformat( T& t) { return Input_rep<T>(t); }
+
+} // namespace IO
+
+template <class T>
+class Input_rep<std::optional<T>>
+{
+  std::optional<T>& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( std::optional<T>& tt) : t(tt) {}
+
+  //! perform the input, calls \c operator\>\> by default.
+  std::istream& operator()( std::istream& is) const {
+    T v;
+    if(is >> IO::iformat(v)) t = v;
+    return is;
+  }
+};
+
+#if CGAL_FORCE_IFORMAT_DOUBLE || \
+  ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+
+template <>
+class Input_rep<double>
+  : public IO_rep_is_specialized
+{
+  double& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( double& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
+    std::string buffer;
+    buffer.reserve(32);
+
+    char_type c;
+    do
+    {
+      const int_type i = is.get();
+      if(i == traits_type::eof())
+        return is;
+
+      c = static_cast<char_type>(i);
+    }
+    while (std::isspace(c));
+
+    if(c == '-')
+    {
+      buffer += '-';
+    }
+    else if(c != '+')
+    {
+      is.unget();
+    }
+
+    for(;;)
+    {
+      const int_type i = is.get();
+      if(i == traits_type::eof())
+      {
+        is.clear(is.rdstate() & ~std::ios_base::failbit);
+        break;
+      }
+
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
+      {
+        buffer += c;
+      }
+      else
+      {
+        is.unget();
+        break;
+      }
+    }
+
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1)
+    {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
+
+    return is;
+  }
+};
+
+template <>
+class Input_rep<float>
+{
+  float& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( float& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
+    std::string buffer;
+    buffer.reserve(32);
+
+    char_type c;
+    do
+    {
+      const int_type i = is.get();
+      if(i == traits_type::eof())
+        return is;
+
+      c = static_cast<char_type>(i);
+    }
+    while (std::isspace(c));
+
+    if(c == '-')
+    {
+      buffer += '-';
+    }
+    else if(c != '+')
+    {
+      is.unget();
+    }
+
+    for(;;)
+    {
+      const int_type i = is.get();
+      if(i == traits_type::eof())
+      {
+        is.clear(is.rdstate() & ~std::ios_base::failbit);
+        break;
+      }
+
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
+      {
+        buffer += c;
+      }
+      else
+      {
+        is.unget();
+        break;
+      }
+    }
+
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1)
+    {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
+
+    return is;
+  }
+};
+#endif
+
+template <class T, class F = Null_tag >
+class Benchmark_rep
+{
+  const T& t;
+
+public:
+  //! initialize with a const reference to \a t.
+  Benchmark_rep( const T& tt) : t(tt) {}
+  //! perform the output, calls \c operator\<\< by default.
+  std::ostream& operator()( std::ostream& os) const { return os << t; }
+
+  // static function to get the benchmark name
+  static std::string get_benchmark_name() { return ""; }
+};
+
+template <class T, class F>
+std::ostream& operator<<( std::ostream& os, Benchmark_rep<T,F> rep) { return rep(os); }
+
+namespace IO {
+
+template <class T>
+Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
+
+template <class T, class F>
+Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
+
+} // namespace IO
+
 template < class T >
 inline void write(std::ostream& os, const T& t, const io_Read_write&)
 {
@@ -735,10 +771,10 @@ inline std::istream &operator>>(std::istream &is, Color& col)
   {
     case ASCII :
       is >> ir >> ig >> ib >> ia;
-      r = (unsigned char)ir;
-      g = (unsigned char)ig;
-      b = (unsigned char)ib;
-      a = (unsigned char)ia;
+      r = static_cast<unsigned char>(ir);
+      g = static_cast<unsigned char>(ig);
+      b = static_cast<unsigned char>(ib);
+      a = static_cast<unsigned char>(ia);
       break;
     case BINARY :
       read(is, r);
