@@ -856,7 +856,6 @@ public:
     for (const auto& e : boundary_facet_infos)
     {
       const Facet& nf = e.first;
-      CGAL_assertion(is_in_complex(nf));
       add_to_complex(nf, e.second.surface_index_);
       set_surface_info(nf, e.second);
     }
