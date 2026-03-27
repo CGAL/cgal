@@ -1,3 +1,6 @@
+#define BENCH_AND_VERBOSE_SNAP_ROUNDING_2
+#define COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Float_grid_snap_rounding_traits_2.h>
@@ -390,9 +393,11 @@ int main(int argc,char *argv[])
   test_polyline_api();
   test_polygons();
 
-  test_fully_random(r,300);
-  test_multi_almost_indentical_segments(r,25);
-  test_random_polygons(r,10,50);
+  test_fully_random(r,500);
+  test_fully_random(r,1000);  // test_multi_almost_indentical_segments(r,25);
+  test_fully_random(r,1500);
+  test_fully_random(r,2000);
+  // test_random_polygons(r,10,50);
 
   // Heavy test
   // test_multi_almost_indentical_segments(r,250);
