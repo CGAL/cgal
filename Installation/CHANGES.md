@@ -4,16 +4,47 @@
 
 Release date: July 2026
 
-### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
-
--   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
--   Made the `Arr_linear_traits_2` a model of the new concept.
--   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+### [2D Alpha Wrapping (new package)](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2)
+- This component takes a polygon soup, a 2D segment soup, and/or a 2D point set as input,
+  and generates a valid (watertight, intersection-free and 1-manifold) multi-polygon that
+  strictly encloses the input. The algorithm proceeds by shrink-wrapping
+  and refining a 2D Delaunay triangulation starting from a loose bounding box of the input.
+  Two user-defined parameters, alpha and offset, offer control over the maximum size
+  of cavities where the shrink-wrapping process can enter, and the tightness
+  of the final polygon(s) to the input, respectively. Once combined, these parameters
+  provide a means to trade fidelity to the input for complexity of the output.
 
 ### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
 -   This package provides functions to compute various types of generalized barycentric coordinates
     (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
     3D polyhedra.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing) (major changes)
+
+-   The "Polygon Mesh Processing" package has been reorganized into several packages.
+    "Polygon Mesh Processing" retains the core functionalities, while advanced and specialized features
+    have been moved to dedicated packages:
+  - [Boolean Operations On Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPBooleanOperations): algorithms for Boolean operations on polygon meshes;
+    clipping, splitting, and slicing with planes, boxes, or other meshes; and kernel computations.
+  - [Meshing and Remeshing of Polygon Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPRemeshing): algorithms for meshing and remeshing, such as triangulation, refinement, simplification, optimization, and smoothing.
+  - [Polygon Mesh Repair](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPMeshRepair): tools for detecting and correcting combinatorial and geometric defects in polygon meshes and polygon soups, including face orientation, hole filling, removal of degeneracies, and boundary stitching.
+   This does not induce any breaking change and is fully transparent: header includes such as
+   `#include <CGAL/Polygon_mesh_processing/XXX.h>` do not need to be changed and will include
+   the appropriate header from the new packages.
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.2/Manual/packages.html#PkgKernel23)
+- **Breaking change**: Circle_2/Segment_2, Sphere_3/Bbox_3, Sphere_3/Iso_cuboid_3 now do not consider inclusion as intersection.
+  This behavior is consistent with other intersections involving Circle_2 and Sphere_3.
+  - The former behavior of `do_intersect()` can be reproduced with:
+  - `!Has_on_unbounded_side_2::operator(Circle_2, Segment_2)` or
+  - `!Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2)` or
+  - `!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`
+
+### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+-   Made the `Arr_linear_traits_2` a model of the new concept.
+-   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh2)
 
@@ -22,13 +53,16 @@ Release date: July 2026
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
-- **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - **New functions**: Two functions are added `CGAL::IO::read_VTK<LCC>()` and `CGAL::IO::write_VTK<LCC>()` adding the ability to read and write .vtk files (legacy ASCII) for 3D `Linear_cell_complex` (dimension 3, ambient dimension 3). These functions support per-vertex and per-volume scalar fields and handle various VTK cell types.
   - `import_from_plane_graph()` → `read_plane_graph_in_lcc()`
   - `import_from_polyhedron_3()` → `polyhedron_3_to_lcc()`
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
   - The old function names are still available but marked as deprecated for backward compatibility.
 
-- **New functions**: Two functions are added `CGAL::IO::read_VTK<LCC>()` and `CGAL::IO::write_VTK<LCC>()` adding the ability to read and write .vtk files (legacy ASCII) for 3D `Linear_cell_complex` (dimension 3, ambient dimension 3). These functions support per-vertex and per-volume scalar fields and handle various VTK cell types.
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.2/Manual/packages.html#PkgOrthtree)
+
+  - added function `intersected_nodes()` with an intersection functor and a convenience overload for a ball query.
 
 ### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection)
 
@@ -57,22 +91,40 @@ Release date: July 2026
     parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned only for
     `do_intersect()`.)
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing)
+-   **Breaking change**: The header `CGAL/Polygon_mesh_processing/border.h` has been deprecated and its content
+    ([`CGAL::border_halfedges()`]() and [`CGAL::extract_boundary_cycles()`]()) have been moved to
+    the new header [`CGAL/boost/graph/border.h`]().
+-   Added function `CGAL::Polygon_mesh_processing::kernel()`, to compute the kernel of a polygon mesh.
+-   Added function `CGAL::Polygon_mesh_processing::is_empty_kernel()`, to indicate if the kernel of a polygon mesh is empty.
+-   Added function `CGAL::Polygon_mesh_processing::kernel_point()`, to compute a single point inside the kernel of a polygon mesh.
+-   Added `use_convex_specialization` parameter to `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()`.
+
+### [Polygon Mesh Processing (Boolean Operations on Meshes)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPBooleanOperations)
+-   Added function `CGAL::Polygon_mesh_processing::kernel()`, to compute the kernel of a polygon mesh.
+-   Added function `CGAL::Polygon_mesh_processing::is_empty_kernel()`, to indicate if the kernel of a polygon mesh is empty.
+-   Added function `CGAL::Polygon_mesh_processing::kernel_point()`, to compute a single point inside the kernel of a polygon mesh.
+-   Added `use_convex_specialization` parameter to `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()`.
+-   The function [`CGAL::Polygon_mesh_processing::surface_intersection()`](), which can be used to
+    compute the polylines that represent the intersection between two polyhedral surfaces has been
+    renamed to [`CGAL::Polygon_mesh_processing::intersection_polylines()`]().
+
 ### [Tetrahedral Mesh Generation](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh3)
 
-- **Breaking change**: Removed the class template `CGAL::Implicit_vector_to_labeling_function_wrapper` as well as
+-   **Breaking change**: Removed the class template `CGAL::Implicit_vector_to_labeling_function_wrapper` as well as
     the constructor of `CGAL::Polyhedral_mesh_domain_with_features_3` that has a filename as parameter,
     which were deprecated since CGAL-4.5.
-- **Breaking change**:  Added the requirement for a nested type `Iso_cuboid_3` to the concept `BisectionGeometricTraits_3`.
-
-### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing)
-- Add function `CGAL::Polygon_mesh_processing::kernel()`, to compute the kernel of a polygon mesh.
-- Add function `CGAL::Polygon_mesh_processing::is_empty_kernel()`, to indicate if the kernel of a polygon mesh is empty.
-- Add function `CGAL::Polygon_mesh_processing::kernel_point()`, to compute a single point inside the kernel of a polygon mesh.
-- Add `use_convex_specialization` parameter to `CGAL::Polygon_mesh_processing::clip()` and `CGAL::Polygon_mesh_processing::refine_with_plane()`.
+-   **Breaking change**:  Added the requirement for a nested type `Iso_cuboid_3` to the concept `BisectionGeometricTraits_3`.
 
 ### [2D Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulation2)
 
 - Add the function `insert_unique_constraints()` to the class `CGAL::Constrained_Delaunay_triangulation_2` identical to the function `insert_constraints()` except that it removes duplicated constraints before inserting them in the triangulation.
+
+### [STL Extension](https://doc.cgal.org/6.2/Manual/packages.html#PkgSTLExtension)
+
+- Added new debugging utility for finding minimal failing test cases:
+  - [`CGAL::bisect_failures`](https://doc.cgal.org/6.2/STL_Extension/group__PkgSTLExtensionUtilities.html)
+    template function that uses bisection to isolate minimal failing subsets from complex input data
 
 ### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
 
@@ -83,6 +135,19 @@ Release date: July 2026
   - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html)
     and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html)
     for ANSI color support in terminal output
+
+### [Intersecting Sequences of dD Iso-oriented Boxes](https://doc.cgal.org/6.2/Manual/packages.html#PkgBoxIntersectionD)
+- The function `CGAL::box_intersection_d()` now accepts ranges with different box types.
+- Add the box type `CGAL::Box_with_info<FT, dim, Info>`, which stores a variable of type `Info` accessible via `info()`.
+
+### [3D Convex hull](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexHull3)
+
+-   Added the functions `Convex_hull::do_intersect()` to the package `Convex_hull_3`, which enable testing the intersection of two convex hulls.
+-   Added the functions `extreme_point_3()` to the package `Convex_hull_3`, which return the farthest point of a convex hull in a given direction.
+-   Added the class `Convex_hull_hierarchy` to the package `Convex_hull_3`, which represents a convex hull and is optimized for use with the above functions.
+
+### Geometric Object Generators
+- Add the function `point_and_support()` to several generators to get the last point generated point and the support element containing it. Affected generators are `Random_points_in_triangles_2`, `Random_points_in_triangles_3`, `Random_points_in_triangle_mesh_3`, `Random_points_in_tetrahedral_mesh_boundary_3`, `Random_points_in_tetrahedral_mesh_3`, `Random_points_in_triangle_soup_3`, and `Random_points_on_graph_edges_3`.
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
@@ -5469,7 +5534,7 @@ The following functionality has been added or changed:
     bounding boxes of more complicated geometries. Useful for (self-)
     intersection tests of surfaces etc.
 - 2D Snap Rounding (new package)
-    Snap Rounding is a well known method for converting
+    Snap Rounding is a well-known method for converting
     arbitrary-precision arrangements of segments into a fixed-precision
     representation. In the study of robust geometric computing, it can
     be classified as a finite precision approximation technique.

@@ -71,6 +71,7 @@ CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_
 
 // List of named parameters used in the package 'Polygon Mesh Processing'
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
+CGAL_add_named_parameter(geom_traits_converter_t, geom_traits_converter, geom_traits_converter)
 CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, vertex_incident_patches_map)
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)
@@ -258,6 +259,9 @@ CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_
 // List of named parameters used in Optimal_bounding_box package
 CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
 
+// List of named parameters used in Convex_hull_3 package
+CGAL_add_named_parameter(compute_convex_hull_t, compute_convex_hull, compute_convex_hull)
+
 // meshing parameters
 CGAL_add_named_parameter(boundary_subdivision_ratio_t, boundary_subdivision_ratio, boundary_subdivision_ratio)
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
@@ -279,11 +283,12 @@ CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 CGAL_add_named_parameter(nb_flip_smooth_iterations_t, nb_flip_smooth_iterations, nb_flip_smooth_iterations)
 
-// List of named parameters used in Alpha_wrap_3
+// List of named parameters used in Alpha_wrap_23
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
 CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
 CGAL_add_named_parameter(refine_triangulation_t, refine_triangulation, refine_triangulation)
 CGAL_add_named_parameter(keep_inner_connected_components_t, keep_inner_connected_components, keep_inner_connected_components)
+CGAL_add_named_parameter(close_chains_t, close_chains, close_chains)
 
 // SMDS_3 parameters
 CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
@@ -348,6 +353,9 @@ CGAL_add_named_parameter_with_compatibility(convergence_ratio_t, convergence_rat
 CGAL_add_named_parameter_with_compatibility(vertex_freeze_bound_t, vertex_freeze_bound, freeze_bound)
 CGAL_add_named_parameter_with_compatibility(i_seed_begin_iterator_t, i_seed_begin_iterator, seeds_begin)
 CGAL_add_named_parameter_with_compatibility(i_seed_end_iterator_t, i_seed_end_iterator, seeds_end)
+
+// List of named parameters used in Triangulation packages
+CGAL_add_named_parameter(ignore_infinite_faces_t, ignore_infinite_faces, ignore_infinite_faces)
 
 //List of named parameters used in exude_mesh_3.h
 CGAL_add_named_parameter_with_compatibility(lower_sliver_bound_t,lower_sliver_bound,sliver_bound)

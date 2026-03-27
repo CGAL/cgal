@@ -787,6 +787,8 @@ public:
                                    ForwardIterator last_cell,
                                    Moving_vertices_set& moving_vertices);
 
+  bool is_restricted_facet(const Facet& f);
+  bool is_restricted_cell(const Cell_handle c);
   void update_restricted_facets();
   void update_restricted_cells();
 
@@ -2915,6 +2917,24 @@ update_restricted_facets()
 }
 
 template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_facet(const Facet& f)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Surface_patch() != updater(f);
+}
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_cell(const Cell_handle cell)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Subdomain() != updater(cell);
+}
+
+template <typename C3T3, typename MD>
 void
 C3T3_helpers<C3T3, MD>::
 update_restricted_cells()
@@ -3207,6 +3227,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   reset_sliver_cache(removal_conflict_cells);
   reset_circumcenter_cache(insertion_conflict_cells);
   reset_sliver_cache(insertion_conflict_cells);
+
+  if(insertion_conflict_boundary.empty())
+    return old_vertex; // new_location is a vertex already
 
   Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
                                 insertion_conflict_boundary[0],

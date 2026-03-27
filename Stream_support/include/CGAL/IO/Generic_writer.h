@@ -35,12 +35,15 @@ public:
   Generic_writer(Stream& os) : m_os(os) { }
   Generic_writer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
-  template <typename PointRange, typename PolygonRange, typename NamedParameters>
+  template <typename PointRange, typename PolygonRange, typename PolylineRange,
+            typename NamedParameters>
   bool operator()(const PointRange& points,
                   const PolygonRange& polygons,
+                  const PolylineRange& polylines,
                   const NamedParameters& np = parameters::default_values())
   {
-    typedef typename boost::range_value<PolygonRange>::type                   Poly;
+    typedef typename boost::range_value<PolygonRange>::type                   Polygon;
+    typedef typename boost::range_value<PolylineRange>::type                  Polyline;
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -66,7 +69,7 @@ public:
     m_writer.write_facet_header();
     for(std::size_t i=0, end=polygons.size(); i<end; ++i)
     {
-      const Poly& polygon = polygons[i];
+      const Polygon& polygon = polygons[i];
       const std::size_t size = polygon.size();
 
       m_writer.write_facet_begin(size);
@@ -74,9 +77,31 @@ public:
         m_writer.write_facet_vertex_index(polygon[j]);
       m_writer.write_facet_end();
     }
+
+    m_writer.write_polyline_header(polylines.size());
+    for (std::size_t i=0, end=polylines.size(); i<end; ++i)
+    {
+      const Polyline& polyline = polylines[i];
+      const std::size_t size = polyline.size();
+
+      m_writer.write_polyline_begin(size);
+      for(std::size_t j=0; j<size; ++j)
+        m_writer.write_polyline_vertex_index(polyline[j]);
+      m_writer.write_polyline_end();
+    }
+
     m_writer.write_footer();
 
     return m_os.good();
+  }
+
+  template <typename PointRange, typename PolygonRange, typename NamedParameters>
+  bool operator()(const PointRange& points,
+                  const PolygonRange& polygons,
+                  const NamedParameters& np = parameters::default_values())
+  {
+    std::vector<std::vector<std::size_t> > unused_polylines;
+    return this->operator()(points, polygons, unused_polylines, np);
   }
 
 protected:

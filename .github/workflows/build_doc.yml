@@ -19,9 +19,9 @@ on:
 
   issue_comment:
     types: [created]
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 env:
   author_association: ${{ github.event.comment.author_association }}

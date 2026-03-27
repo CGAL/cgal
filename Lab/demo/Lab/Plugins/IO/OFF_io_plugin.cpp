@@ -233,7 +233,7 @@ CGAL_Lab_off_plugin::load_obj(QFileInfo fileinfo) {
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > polylines;
   std::vector<std::vector<std::size_t> > polygons;
-  if(!CGAL::IO::internal::read_OBJ(in, points, polylines, polygons,
+  if(!CGAL::IO::internal::read_OBJ(in, points, polygons, polylines,
                                    CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
                                    true /*verbose*/)) {
     return nullptr;

@@ -15,17 +15,13 @@
 // File Description :
 //******************************************************************************
 
-// -----------------------------------------------------------------------------
-// Note: this file was forked for Periodic_3_mesh_3 (with the same name) due to
-// periodic requiring noticeable changes. Bug fixes / changes should be mirrored.
-// -----------------------------------------------------------------------------
-
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/config.h>
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/SMDS_3/io_signature.h>
@@ -33,42 +29,57 @@
 #  include <CGAL/IO/File_binary_mesh_3.h>
 #endif
 #include <CGAL/SMDS_3/utilities.h>
-#include <CGAL/Mesh_3/Triangulation_helpers.h>
-#include <CGAL/iterator.h>
-#include <CGAL/Mesh_error_code.h>
 #if CGAL_MESH_3_PROTECTION_DEBUG
 #  include <CGAL/Mesh_3/Dump_c3t3.h>
 #endif
 
-#include <CGAL/enum.h>
-#include <CGAL/Time_stamper.h>
-#include <CGAL/STL_Extension/internal/Has_member_visited.h>
-#include <CGAL/iterator.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-
+#include <CGAL/assertions.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Default.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/enum.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Mesh_error_code.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/STL_Extension/internal/mesh_option_classes.h>
+#include <CGAL/tags.h>
+#include <CGAL/Time_stamper.h>
+#include <CGAL/unordered_flat_map.h>
+#include <CGAL/unordered_flat_set.h>
+#include <CGAL/use.h>
 
+#include <boost/container_hash/hash.hpp>
+#include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
-#include <optional>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
 #include <algorithm>
+#ifndef CGAL_NO_ATOMIC
+#  include <atomic>
+#endif
 #include <cmath>
+#include <cstddef>
 #include <fstream>
+#include <ios>
+#include <iostream>
 #include <iterator>
 #include <list>
-#include <sstream>
+#include <optional>
+#include <ostream>
 #include <set>
+#include <sstream>
 #include <stack>
 #include <string>
+#include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
-#include <atomic>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -105,11 +116,27 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
   out << c3t3;
 }
 
-struct NoDistanceFunction {
-  template <typename Bare_point, typename Index>
-  double operator()(const Bare_point&, int, const Index&) const
-  { return 0.; }
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Get_curves_output_type);
+
+template <typename MD, bool has_Get_curves_output_type = has_Get_curves_output_type<MD>::value>
+struct Mesh_domain_get_curves_output_type {
+  typedef typename MD::Get_curves_output_type type;
 };
+
+template <typename MD>
+struct Mesh_domain_get_curves_output_type<MD, false> {
+  using Point_3 = typename MD::Point_3;
+  using Index = typename MD::Index;
+  using P_Index = std::pair<Point_3, Index>;
+
+  using Curve_index = typename MD::Curve_index;
+
+  using type = std::tuple<Curve_index, P_Index, P_Index>;
+};
+
+template <typename MD>
+using Mesh_domain_get_curves_output_type_t = typename Mesh_domain_get_curves_output_type<MD>::type;
+
 
 template<typename C3T3,
          typename MeshDomain,
@@ -118,7 +145,6 @@ template<typename C3T3,
 class Protect_edges_sizing_field
   : public CGAL::SMDS_3::internal::Debug_messages_tools
 {
-
   typedef Protect_edges_sizing_field          Self;
 
 public:
@@ -139,8 +165,7 @@ public:
   typedef typename MeshDomain::Corner_index         Corner_index;
   typedef typename MeshDomain::Index                Index;
 
-  using Distance_Function =
-    typename CGAL::Default::Get<DistanceFunction, NoDistanceFunction>::type;
+  using Distance_Function = DistanceFunction;
 
 private:
   typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
@@ -192,8 +217,8 @@ private:
   typedef std::vector<Vertex_handle>                         Vertex_vector;
   typedef std::vector<std::pair<Vertex_handle,Curve_index> > Adjacent_vertices;
 
-  typedef CGAL::Hash_handles_with_or_without_timestamps      Hash_fct;
-  typedef boost::unordered_set<Vertex_handle, Hash_fct>      Vertex_set;
+  typedef CGAL::Hash_handles_with_or_without_timestamps      Hash_vh;
+  typedef CGAL::unordered_flat_set<Vertex_handle, Hash_vh>   Vertex_set;
 
 private:
   /// Insert corners of the mesh.
@@ -205,10 +230,6 @@ private:
   /// Refine balls.
   void refine_balls();
 
-  /// Return the vertex which corresponds to the corner located at point `p`.
-  Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
-                                             const Index& p_index) const;
-
   /// Inserts `point(p,w)` into the triangulation and set its dimension to `dim`
   /// and its index to `index`.
   /// The handle of the newly created vertex is returned.
@@ -216,7 +237,8 @@ private:
                              const Weight& w,
                              int dim,
                              const Index& index,
-                             const bool special_ball = false);
+                             const bool special_ball = false,
+                             const Cell_handle locate_hint = Cell_handle());
 
   /**
    * Inserts `point(p,w)` into the triangulation and set its dimension to `dim` and
@@ -234,7 +256,7 @@ private:
                      Weight w,
                      int dim,
                      const Index& index,
-                     Vertex_handle prev,
+                     Vertex_handle locate_hint_vh,
                      ErasedVeOutIt out);
 
   /// Inserts balls between the points identified by the handles `vp` and `vq`
@@ -400,11 +422,8 @@ private:
   /// Computes the Euclidean distance between the bare points of `va` and `vb`.
   FT compute_distance(const Vertex_handle& va, const Vertex_handle& vb) const
   {
-    typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-      c3t3_.triangulation().geom_traits().construct_point_3_object();
-
-    const Weighted_point& wpa = c3t3_.triangulation().point(va);
-    const Weighted_point& wpb = c3t3_.triangulation().point(vb);
+    const Weighted_point& wpa = point(va);
+    const Weighted_point& wpb = point(vb);
 
     return compute_distance(cp(wpa), cp(wpb));
   }
@@ -412,17 +431,13 @@ private:
   /// Computes the Euclidean distance between the bare points `p` and `q`.
   FT compute_distance(const Bare_point& p, const Bare_point& q) const
   {
-    return CGAL::sqrt(c3t3_.triangulation().geom_traits().
-                        compute_squared_distance_3_object()(p,q));
+    return CGAL::sqrt(sq_distance(p,q));
   }
 
   /// Returns the radius of the ball of vertex `v`.
   FT get_radius(const Vertex_handle& v) const
   {
-    typename GT::Compute_weight_3 cw =
-      c3t3_.triangulation().geom_traits().compute_weight_3_object();
-
-    const Weighted_point& v_wp = c3t3_.triangulation().point(v);
+    const Weighted_point& v_wp = point(v);
     return CGAL::sqrt(cw(v_wp));
   }
 
@@ -471,8 +486,11 @@ private:
   /// Query the sizing field for edge distance and return its value at the point `p`
   FT query_distance(const Bare_point& p, int dim, const Index& index) const
   {
-    FT ed = query_field(p, dim, index, edge_distance_);
-    return ed;
+    if constexpr (use_distance_field()) {
+      return query_field(p, dim, index, edge_distance_);
+    } else {
+      return FT(0);
+    }
   }
 
   bool use_minimal_size() const
@@ -486,21 +504,323 @@ private:
     else
       return Weight(0);
   }
-  bool use_distance_field() const
+  static constexpr bool use_distance_field()
   {
-    return use_edge_distance_;
+    return ! std::is_same_v<DistanceFunction, CGAL::Default>;
+  }
+
+  auto& tr() {
+    return c3t3_.triangulation();
+  }
+
+  const auto& tr() const {
+    return c3t3_.triangulation();
+  }
+
+  const auto& domain() const {
+    return domain_;
+  }
+
+  const auto& geom_traits() const {
+    return c3t3_.triangulation().geom_traits();
+  }
+
+  const auto& point(Vertex_handle vh) const {
+    return c3t3_.triangulation().point(vh);
+  }
+
+protected:
+
+  using get_curve_output_type = Mesh_domain_get_curves_output_type_t<MeshDomain>;
+  using Curve_info = std::tuple_element_t<1, get_curve_output_type>;
+
+  static constexpr API_version api_version =
+      std::tuple_size_v<Curve_info> == 2 ? API_version::v1 : API_version::v2;
+
+  using Position_on_curve = std::conditional_t<api_version == API_version::v1,
+                                               Void,
+                                               std::tuple_element_t<3, Curve_info>>;
+
+  using Corner_and_curve_index = std::pair<Corner_index, Curve_index>;
+  using Corner_and_curve_index_hash =boost::hash<Corner_and_curve_index>;
+
+  using Corners_positions_on_incident_curves =
+      std::conditional_t<api_version == API_version::v1,
+                         Void,
+                         CGAL::unordered_flat_map<Corner_and_curve_index,
+                                                  Position_on_curve,
+                                                  Corner_and_curve_index_hash>
+                         >;
+
+  struct Point_on_curve
+  {
+    Bare_point point;
+    Curve_index curve_index;
+
+    bool operator==(const Point_on_curve& pc) const
+    {
+      return (curve_index == pc.curve_index) && (point == pc.point);
+    }
+    friend std::size_t hash_value(const Point_on_curve& p)
+    {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, p.point);
+      boost::hash_combine(seed, p.curve_index);
+      return seed;
+    }
+  };
+  using Point_on_curve_to_position =
+      std::conditional_t<api_version == API_version::v1,
+                         Void,
+                         CGAL::unordered_flat_map<Point_on_curve,
+                                                  Position_on_curve,
+                                                  boost::hash<Point_on_curve>>
+                         >;
+
+  Self& api() { return *this; }
+  const Self& api() const { return *this; }
+
+  auto index_from_corner_index(Corner_index index) const {
+    return domain().index_from_corner_index(index);
+  }
+
+  auto corner_index(Index index) const {
+    return domain().corner_index(index);
+  }
+
+  auto index_from_curve_index(Curve_index index) const {
+    return domain().index_from_curve_index(index);
+  }
+
+  auto curve_index(Index index) const {
+    return domain().curve_index(index);
+  }
+
+  bool is_loop(Curve_index curve_index) const {
+    return domain().is_loop(curve_index);
+  }
+
+  auto curve_length(Curve_index curve_index) const {
+    return domain().curve_length(curve_index);
+  }
+
+  template <typename Output_iterator>
+  auto get_corners(Output_iterator out_it) const {
+    return domain().get_corners(out_it);
+  }
+
+  using Feature_tuple = Mesh_domain_get_curves_output_type_t<MeshDomain>;
+
+  template <typename It>
+  static auto convert_iterator(It it) {
+    if constexpr (api_version == API_version::v1) {
+      auto convert_tuple = [](const Feature_tuple& feature) {
+        const auto& [curve_index, pair1, pair2] = feature;
+        const auto& [p1, index1] = pair1;
+        const auto& [p2, index2] = pair2;
+        return std::make_tuple(curve_index,
+                               std::make_tuple(p1, 0, index1, Void{}),
+                               std::make_tuple(p2, 0, index2, Void{}));
+      };
+      return boost::make_transform_iterator(it, convert_tuple);
+    } else {
+      return it;
+    }
+  }
+
+  struct Range_of_curves {
+    std::vector<Feature_tuple> input_features_;
+
+    auto begin() const { return convert_iterator(input_features_.cbegin()); }
+    auto end() const { return convert_iterator(input_features_.cend()); }
+  };
+
+  Range_of_curves get_curves() const {
+    Range_of_curves range_of_curves;
+    domain().get_curves(std::back_inserter(range_of_curves.input_features_));
+
+    return range_of_curves;
+  }
+
+  auto construct_point_on_curve(const Bare_point& p,
+                                const Curve_index& curve_index,
+                                const FT distance,
+                                [[maybe_unused]] Position_on_curve position_on_curve) const
+  {
+    if constexpr(api_version == API_version::v2) {
+      return domain().construct_point_on_curve(p, curve_index, distance, position_on_curve);
+    } else {
+      return std::make_pair(domain().construct_point_on_curve(p, curve_index, distance), Void{});
+    }
+  }
+
+  auto curve_segment_length(const Bare_point& p1,
+                            const Bare_point& p2,
+                            [[maybe_unused]] Position_on_curve pos1,
+                            [[maybe_unused]] Position_on_curve pos2,
+                            const Curve_index& curve_index,
+                            const CGAL::Orientation orientation) const {
+    if constexpr(api_version == API_version::v2) {
+      return domain().curve_segment_length(p1, p2, pos1, pos2, curve_index, orientation);
+    } else {
+      return domain().curve_segment_length(p1, p2, curve_index, orientation);
+    }
+  }
+
+  auto distance_sign_along_loop(const Bare_point& start_p,
+                                const Bare_point& next_p,
+                                const Bare_point& next_along_curve_p,
+                                const Curve_index& curve_index,
+                                [[maybe_unused]] Position_on_curve start_pos,
+                                [[maybe_unused]] Position_on_curve next_pos,
+                                [[maybe_unused]] Position_on_curve next_along_curve_pos) const {
+    if constexpr(api_version == API_version::v2) {
+      return domain().distance_sign_along_loop(start_p, next_p, next_along_curve_p, curve_index, start_pos, next_pos,
+                                               next_along_curve_pos);
+    } else {
+      return domain().distance_sign_along_loop(start_p, next_p, next_along_curve_p, curve_index);
+    }
+  }
+
+  auto distance_sign(const Bare_point& start_p,
+                     const Bare_point& next_p,
+                     const Curve_index& curve_index,
+                     [[maybe_unused]] Position_on_curve start_pos,
+                     [[maybe_unused]] Position_on_curve next_pos) const {
+    if constexpr(api_version == API_version::v2) {
+      return domain().distance_sign(start_p, next_p, curve_index, start_pos, next_pos);
+    } else {
+      return domain().distance_sign(start_p, next_p, curve_index);
+    }
+  }
+
+  auto is_curve_segment_covered(const Curve_index& curve_index,
+                                const Orientation orientation,
+                                const Bare_point& p1,
+                                const Bare_point& p2,
+                                const Weight& w1,
+                                const Weight& w2,
+                                [[maybe_unused]] Position_on_curve pos1,
+                                [[maybe_unused]] Position_on_curve pos2) const {
+    if constexpr(api_version == API_version::v2) {
+      return domain().is_curve_segment_covered(curve_index, orientation, p1, p2, w1, w2, pos1, pos2);
+    } else {
+      return domain().is_curve_segment_covered(curve_index, orientation, p1, p2, w1, w2);
+    }
+  }
+
+  void register_new_corner(Corner_index corner_index, Vertex_handle v) {
+    this->corner_vertices_[corner_index] = v;
+  }
+
+  void register_curve_corner([[maybe_unused]] const Curve_index& curve_index,
+                             [[maybe_unused]] const Index& p_index,
+                             [[maybe_unused]] Position_on_curve position_on_curve,
+                             [[maybe_unused]] Position_on_curve start_position)
+  {
+    if constexpr(api_version == API_version::v2) {
+      auto key = Corner_and_curve_index(domain().corner_index(p_index), curve_index);
+#if CGAL_MESH_3_PROTECTION_DEBUG & 128
+      std::cerr << "Register corner #" << key.first
+                << " on curve " << curve_index
+                << " with position_on_curve=" << (position_on_curve - start_position) << "\n"
+                << "  vp: " << IO::oformat(corner_vertices_.at(key.first), With_point_tag{}) << "\n";
+#endif
+      [[maybe_unused]] auto [_, inserted] = corners_on_curves_.try_emplace(key, position_on_curve);
+      CGAL_assertion(true == inserted);
+    }
+  }
+
+  auto position_on_curve([[maybe_unused]] const Vertex_handle& v,
+                          [[maybe_unused]] const Curve_index& curve_index) const
+  {
+    if constexpr(api_version == API_version::v2) {
+      auto in_dimension = v->in_dimension();
+      if(in_dimension == 0) {
+        auto corner_index = domain().corner_index(v->index());
+        auto pos = corners_on_curves_.find(Corner_and_curve_index(corner_index, curve_index));
+        CGAL_assertion_msg(pos != corners_on_curves_.end(),
+                           std::invoke([&] {
+                             std::stringstream ss;
+                             ss.copyfmt(std::cerr);
+                             ss << "position_on_curve(v=" << IO::oformat(v, With_point_tag{})
+                                << " (corner index: " << corner_index
+                                << ", curve_index=" << curve_index << "): v is a corner but its position is not found!";
+                             return ss.str();
+                           }).c_str());
+        return pos->second;
+      }
+      auto bare_point = cp(point(v));
+       Point_on_curve pc{bare_point, curve_index};
+       return points_on_curves_positions_.at(pc);
+    } else {
+      return Void{};
+    }
+  }
+
+  auto signed_geodesic_distance(const Bare_point& pa,
+                                const Bare_point& pb,
+                                [[maybe_unused]] Position_on_curve pa_pos,
+                                [[maybe_unused]] Position_on_curve pb_pos,
+                                const Curve_index& curve_index) const
+  {
+    if constexpr(api_version == API_version::v2) {
+      return domain().signed_geodesic_distance(pa, pb, pa_pos, pb_pos, curve_index);
+    } else {
+      return domain().signed_geodesic_distance(pa, pb, curve_index);
+    }
+  }
+
+  template <typename ErasedVeOutIt>
+  auto smart_insert_on_curve(const Bare_point& p,
+                             Weight w,
+                             Curve_index curve_idx,
+                             Position_on_curve pos,
+                             Vertex_handle locate_hint_vh,
+                             ErasedVeOutIt out)
+  {
+    auto index = domain().index_from_curve_index(curve_idx);
+    auto pair = this->smart_insert_point(p, w, 1, index, locate_hint_vh, out);
+    if constexpr(api_version == API_version::v2) {
+      Point_on_curve pc{p, curve_idx};
+      [[maybe_unused]] auto [_, inserted] = points_on_curves_positions_.try_emplace(pc, pos);
+      CGAL_assertion(true == inserted);
+    }
+    return pair;
+  }
+
+
+  auto remove(Vertex_handle v, Curve_index curve_index) {
+    if constexpr(api_version == API_version::v2) {
+      Point_on_curve pc{cp(point(v)), curve_index};
+      [[maybe_unused]] auto nb = points_on_curves_positions_.erase(pc);
+      CGAL_assertion(nb == 1);
+    }
+    return tr().remove(v);
   }
 
 private:
   C3T3& c3t3_;
+  CGAL_NO_UNIQUE_ADDRESS typename GT::Compute_squared_distance_3 sq_distance =
+    geom_traits().compute_squared_distance_3_object();
+  CGAL_NO_UNIQUE_ADDRESS typename GT::Compare_weighted_squared_radius_3 cwsr =
+    geom_traits().compare_weighted_squared_radius_3_object();
+  CGAL_NO_UNIQUE_ADDRESS typename GT::Construct_point_3 cp =
+    geom_traits().construct_point_3_object();
+  CGAL_NO_UNIQUE_ADDRESS typename GT::Construct_weighted_point_3 cwp =
+    geom_traits().construct_weighted_point_3_object();
+  CGAL_NO_UNIQUE_ADDRESS typename GT::Compute_weight_3 cw =
+    geom_traits().compute_weight_3_object();
   const MeshDomain& domain_;
   SizingFunction size_;
   const FT minimal_size_;
   const Weight minimal_weight_;
-  const Distance_Function edge_distance_;
-  const bool use_edge_distance_;
+  CGAL_NO_UNIQUE_ADDRESS const Distance_Function edge_distance_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
+  CGAL::unordered_flat_map<Corner_index, Vertex_handle> corner_vertices_;
+  CGAL_NO_UNIQUE_ADDRESS Corners_positions_on_incident_curves corners_on_curves_;
+  CGAL_NO_UNIQUE_ADDRESS Point_on_curve_to_position points_on_curves_positions_;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
   const std::size_t maximal_number_of_vertices_;
@@ -529,7 +849,6 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , minimal_size_(minimal_size)
   , minimal_weight_(CGAL::square(minimal_size))
   , edge_distance_(edge_distance)
-  , use_edge_distance_(!std::is_same_v<Distance_Function, NoDistanceFunction>)
   , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
   , maximal_number_of_vertices_(maximal_number_of_vertices)
@@ -549,6 +868,9 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 operator()(const bool refine)
 {
+  // TODO: that caching of iterators should not be the responsibility of the
+  // domain, but of the Protect_edges_sizing_field class. -- LR, 2026-02-16
+
   // This class is only meant to be used with non-periodic triangulations
   CGAL_assertion(!(std::is_same_v<typename Tr::Periodic_tag, CGAL::Tag_true>));
 
@@ -563,14 +885,19 @@ operator()(const bool refine)
   insert_corners();
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "insert_corners() done. Nb of points in triangulation: "
-            << c3t3_.triangulation().number_of_vertices() << std::endl;
+            << tr().number_of_vertices() << std::endl;
 #endif
+
+  CGAL_assertion_msg(std::all_of(tr().finite_vertex_handles().begin(),
+                                 tr().finite_vertex_handles().end(),
+                                 [](const auto& v) { return v->in_dimension() == 0; }),
+                     "All finite vertices must be 0-dimensional after insert_corners().");
 
   // Insert 1-dimensional features
   insert_balls_on_edges();
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "insert_balls_on_edges() done. Nb of points in triangulation: "
-            << c3t3_.triangulation().number_of_vertices() << std::endl;
+            << tr().number_of_vertices() << std::endl;
 #endif
 
   // Solve problems
@@ -579,7 +906,7 @@ operator()(const bool refine)
     refine_balls();
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
-              << c3t3_.triangulation().number_of_vertices() << std::endl;
+              << tr().number_of_vertices() << std::endl;
 #endif
     CGAL_assertion(use_minimal_size() || c3t3_.is_valid());
  }
@@ -598,9 +925,11 @@ Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_corners()
 {
   // Iterate on domain corners
-  typedef std::vector< std::pair<Corner_index, Bare_point> > Initial_corners;
+  using Initial_corner = std::pair<Corner_index, Bare_point>;
+  using Initial_corners = std::vector<Initial_corner>;
+
   Initial_corners corners;
-  domain_.get_corners(std::back_inserter(corners));
+  api().get_corners(std::back_inserter(corners));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cout << corners.size() << " corners to treat" << std::endl;
@@ -609,20 +938,18 @@ insert_corners()
 #endif
 
   Dt dt;
-  for ( typename Initial_corners::iterator it = corners.begin(),
-       end = corners.end() ; it != end ; ++it )
+  for ( const auto& [_,p] : corners )
   {
     if(forced_stop()) break;
-    const Bare_point& p = it->second;
     dt.insert(p);
   }
 
-  for ( typename Initial_corners::iterator cit = corners.begin(),
-          end = corners.end() ; cit != end ; ++cit )
+  Vertex_handle locate_hint_vh{};
+
+  for ( const auto& [corner_index, p] : corners )
   {
     if(forced_stop()) break;
-    const Bare_point& p = cit->second;
-    Index p_index = domain_.index_from_corner_index(cit->first);
+    Index p_index = api().index_from_corner_index(corner_index);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "\n** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
@@ -652,10 +979,8 @@ insert_corners()
       finite_incident_cells.reserve(64);
       dt.finite_incident_cells(vh, std::back_inserter(finite_incident_cells));
 
-      Dt_helpers helpers;
-      const FT nearest_sq_dist = helpers.template get_sq_distance_to_closest_vertex
-                                   <CGAL_NTS internal::Has_member_visited<typename Dt::Vertex> >(
-                                     dt, vh, finite_incident_cells);
+      const FT nearest_sq_dist =
+          Dt_helpers::get_sq_distance_to_closest_vertex(dt, vh, finite_incident_cells);
 
       w = (std::min)(w, nearest_sq_dist / FT(9));
 
@@ -664,14 +989,17 @@ insert_corners()
     }
 
     // Insert corner with ball (dim is zero because p is a corner)
-    Vertex_handle v = smart_insert_point(p, w, 0, p_index, Vertex_handle(),
+    Vertex_handle v = smart_insert_point(p, w, 0, p_index, locate_hint_vh,
                                          CGAL::Emptyset_iterator()).first;
+    locate_hint_vh = v;
+    api().register_new_corner(corner_index, v);
     CGAL_assertion(v != Vertex_handle());
+    CGAL_assertion(c3t3_.in_dimension(v) == 0);
 
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
     // we need to backup and re-set the 'is_special' marker after.
     const bool special_ball = is_special(v);
-    c3t3_.add_to_complex(v,cit->first);
+    c3t3_.add_to_complex(v, corner_index);
     if(special_ball) {
       set_special(v);
     }
@@ -683,7 +1011,8 @@ template <typename C3T3, typename MD, typename Sf, typename Df>
 typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
-             const bool special_ball /* = false */)
+             const bool special_ball /* = false */,
+             const Cell_handle ch_locate_hint) //result of locate if already known
 {
   using CGAL::Mesh_3::internal::weight_modifier;
 
@@ -702,10 +1031,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   CGAL_USE_TYPE(size_type);
 
   // Insert point
-  CGAL_assertion_code(size_type nb_vertices_before = c3t3_.triangulation().number_of_vertices());
-
-  typename GT::Construct_weighted_point_3 cwp =
-    c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
+  CGAL_assertion_code(size_type nb_vertices_before = tr().number_of_vertices());
 
   const FT wwm = use_minimal_size()
                ? (std::max)(w * weight_modifier, minimal_weight())
@@ -714,13 +1040,15 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 
   typename Tr::Locate_type lt;
   int li, lj;
-  const typename Tr::Cell_handle ch = c3t3_.triangulation().locate(wp, lt, li, lj);
-  Vertex_handle v = c3t3_.triangulation().insert(wp, lt, ch, li, lj);
+  Cell_handle ch = tr().locate(wp, lt, li, lj, ch_locate_hint);
+  const bool wp_already_is_a_vertex = (lt == Tr::VERTEX);
+
+  Vertex_handle v = tr().insert(wp, lt, ch, li, lj);
 
   // If point insertion created a hidden ball, fail
   CGAL_assertion ( Vertex_handle() != v );
-  CGAL_assertion ( lt == Tr::VERTEX ||
-                   c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
+  CGAL_assertion ( wp_already_is_a_vertex ||
+                   tr().number_of_vertices() == (nb_vertices_before+1) );
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "Insertion of ";
@@ -749,10 +1077,15 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   std::cerr << "The weight was " << w << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 
-  c3t3_.set_dimension(v, dim);
+  // Set dimension and index
+  if(!wp_already_is_a_vertex)
+  {
+    c3t3_.set_dimension(v, dim);
+    c3t3_.set_index(v, index);
+  }
+
   if(special_ball)
     set_special(v);
-  c3t3_.set_index(v, index);
 
   unchecked_vertices_.insert(v);
 
@@ -765,51 +1098,41 @@ template <typename ErasedVeOutIt>
 std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::Vertex_handle,
           ErasedVeOutIt>
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, Vertex_handle prev,
-                   ErasedVeOutIt out)
+smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
+                   Vertex_handle locate_hint_vh, ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "smart_insert_point( (" << p
             << "), w=" << w
             << ", dim=" << dim
             << ", index=" << CGAL::IO::oformat(index) << ")\n";
-  std::cerr << "triangulation dimension is " << c3t3_.triangulation().dimension() << std::endl;
+  std::cerr << "triangulation dimension is " << tr().dimension() << std::endl;
 #endif
-  const Tr& tr = c3t3_.triangulation();
-
-  typename GT::Compute_squared_distance_3 sq_distance =
-    tr.geom_traits().compute_squared_distance_3_object();
-  typename GT::Compare_weighted_squared_radius_3 cwsr =
-    tr.geom_traits().compare_weighted_squared_radius_3_object();
-  typename GT::Construct_point_3 cp =
-    tr.geom_traits().construct_point_3_object();
-  typename GT::Construct_weighted_point_3 cwp =
-    tr.geom_traits().construct_weighted_point_3_object();
-
   bool add_handle_to_unchecked = false; // add or not the new vertex to the set 'unchecked_vertices'
   bool insert_a_special_ball = false; // will be passed to the function this->insert_point
 
   const Weighted_point wp0 = cwp(p); // with weight 0, used for locate()
 
-  if ( tr.dimension() > 2 )
+  Cell_handle ch = Cell_handle();
+  if(tr().dimension() > 2)
   {
     // Check that new point will not be inside a power sphere
     typename Tr::Locate_type lt;
     int li, lj;
-    Cell_handle ch = tr.locate(wp0, lt, li, lj, prev);
+    ch = tr().locate(wp0, lt, li, lj, locate_hint_vh);
 
-    Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
-    FT sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
+    Vertex_handle nearest_vh = tr().nearest_power_vertex(p, ch);
+    FT sq_d = sq_distance(p, cp(point(nearest_vh)));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
     std::cerr << "Nearest power vertex of (" << p << ") is "
-              << &*nearest_vh << " (" << c3t3_.triangulation().point(nearest_vh) << ") "
+              << IO::oformat(nearest_vh, With_point_tag{})
               << "at distance: " << sq_d << std::endl;
 #endif
 
     // if sq_d < nearest_vh's weight
     while ( ! is_special(nearest_vh) &&
-            cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
+            cwsr(point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       CGAL_assertion( use_minimal_size() || sq_d > 0);
 
@@ -825,15 +1148,15 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
       // Adapt size
       *out++ = nearest_vh;
       Vertex_handle new_vh = change_ball_size(nearest_vh, sq_d, special_ball);
-      ch = tr.locate(wp0, lt, li, lj, new_vh);
+      ch = tr().locate(wp0, lt, li, lj, new_vh);
 
       // Iterate
-      nearest_vh = tr.nearest_power_vertex(p, ch);
-      sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
+      nearest_vh = tr().nearest_power_vertex(p, ch);
+      sq_d = sq_distance(p, cp(point(nearest_vh)));
     }
 
     if( is_special(nearest_vh) &&
-        cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
+        cwsr(point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
       w = minimal_weight_;
       insert_a_special_ball = true;
@@ -849,27 +1172,27 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     Vertex_set vertices_in_conflict_zone_set;
     std::vector<Cell_handle> cells_in_conflicts;
     Weighted_point wp = cwp(p, w);
-    tr.find_conflicts(wp, ch,
-                      CGAL::Emptyset_iterator(),
-                      std::back_inserter(cells_in_conflicts),
-                      CGAL::Emptyset_iterator());
+    tr().find_conflicts(wp, ch,
+                        CGAL::Emptyset_iterator(),
+                        std::back_inserter(cells_in_conflicts),
+                        CGAL::Emptyset_iterator());
 
     for(Cell_handle cit : cells_in_conflicts)
     {
-      for(int i=0, d=tr.dimension(); i<=d; ++i)
+      for(int i=0, d=tr().dimension(); i<=d; ++i)
       {
         const Vertex_handle v = cit->vertex(i);
-        if(c3t3_.triangulation().is_infinite(v))
+        if(tr().is_infinite(v))
           continue;
         if(!vertices_in_conflict_zone_set.insert(v).second)
           continue;
 
-        const FT sq_d = tr.min_squared_distance(p, cp(c3t3_.triangulation().point(v)));
+        const FT sq_d = tr().min_squared_distance(p, cp(point(v)));
 
         if(use_minimal_size() && sq_d < minimal_weight()) {
           insert_a_special_ball = true;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-          nearest_point = c3t3_.triangulation().point(v);
+          nearest_point = point(v);
 #endif
           min_sq_d = minimal_weight();
           if(! is_special(v))
@@ -883,7 +1206,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
           if(sq_d < min_sq_d)
           {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-            nearest_point = c3t3_.triangulation().point(v);
+            nearest_point = point(v);
 #endif
             min_sq_d = sq_d;
           }
@@ -905,23 +1228,21 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     if(lt != Tr::VERTEX) {
       using CGAL::Mesh_3::internal::weight_modifier;
       CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices;);
-      CGAL_assertion_code(ch = tr.locate(wp0, lt, li, lj, ch););
+      CGAL_assertion_code(ch = tr().locate(wp0, lt, li, lj, ch););
       CGAL_assertion_code(Weighted_point wpp = cwp(p, w*weight_modifier);)
-      CGAL_assertion_code(tr.vertices_inside_conflict_zone(wpp,
+      CGAL_assertion_code(tr().vertices_inside_conflict_zone(wpp,
                                                            ch,
                                                            std::back_inserter(hidden_vertices)));
-
       CGAL_assertion(hidden_vertices.empty());
     }
   }
-  else // tr.dimension() <= 2
+  else // tr().dimension() <= 2
   {
     // change size of existing balls which include p
-    for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
-          end = tr.finite_vertices_end() ; it != end ; ++it )
+    for (Vertex_handle it : tr().finite_vertex_handles())
     {
-      const Weighted_point& it_wp = tr.point(it);
-      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+      const Weighted_point& it_wp = point(it);
+      FT sq_d = tr().min_squared_distance(p, cp(it_wp));
       if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
         bool special_ball = false;
@@ -946,15 +1267,14 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     typename Tr::Point nearest_point;
 #endif
 
-    for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
-         end = tr.finite_vertices_end() ; it != end ; ++it )
+    for (Vertex_handle it : tr().finite_vertex_handles())
     {
-      const Weighted_point& it_wp = tr.point(it);
-      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+      const Weighted_point& it_wp = point(it);
+      FT sq_d = tr().min_squared_distance(p, cp(it_wp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-        nearest_point = c3t3_.triangulation().point(it);
+        nearest_point = point(it);
 #endif
       }
     }
@@ -991,7 +1311,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
     w = minimal_weight();
     insert_a_special_ball = true;
   }
-  Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
+
+  Vertex_handle v = insert_point(p, w, dim, index, insert_a_special_ball, ch);
+  CGAL_assertion(v != Vertex_handle());
 
   /// @TODO `insert_point` does insert in unchecked_vertices anyway!
   if ( add_handle_to_unchecked ) { unchecked_vertices_.insert(v); }
@@ -999,78 +1321,93 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
   return std::pair<Vertex_handle, ErasedVeOutIt>(v, out);
 }
 
-
 template <typename C3T3, typename MD, typename Sf, typename Df>
 void
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_balls_on_edges()
 {
-  // Get features
-  struct Feature_tuple
-  {
-    Curve_index curve_index_;
-    std::pair<Bare_point, Index> point_s_;
-    std::pair<Bare_point, Index> point_t_;
-  };
-  std::vector<Feature_tuple> input_features;
-  domain_.get_curves(std::back_inserter(input_features));
+  Vertex_handle locate_hint_vh{};
 
   // Iterate on edges
-  for (const Feature_tuple& ft : input_features)
+  auto curves = api().get_curves();
+  for (const auto& [curve_index, p_info, q_info] : curves)
   {
     if(forced_stop()) break;
-    const Curve_index& curve_index = ft.curve_index_;
-    if ( ! is_treated(curve_index) )
+    if(is_treated(curve_index)) continue;
+
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "\n** treat curve #" << curve_index << std::endl;
 #endif
-      const Bare_point& p = ft.point_s_.first;
-      const Bare_point& q = ft.point_t_.first;
-
-      const Index& p_index = ft.point_s_.second;
-      const Index& q_index = ft.point_t_.second;
+      const auto& [p, p_dim, p_index, p_position] = p_info;
 
       Vertex_handle vp,vq;
-      if ( ! domain_.is_loop(curve_index) )
+      if ( ! api().is_loop(curve_index) )
       {
-        vp = get_vertex_corner_from_point(p,p_index);
-        vq = get_vertex_corner_from_point(q,q_index);
+        const auto& [q, q_dim, q_index, q_position] = q_info;
+
+        vp = corner_vertices_.at(api().corner_index(p_index));
+        vq = corner_vertices_.at(api().corner_index(q_index));
+        api().register_curve_corner(curve_index, p_index, p_position, p_position);
+        api().register_curve_corner(curve_index, q_index, q_position, p_position);
       }
       else
       {
-        typename GT::Construct_weighted_point_3 cwp =
-          c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
-
+#if CGAL_MESH_3_PROTECTION_DEBUG & 128
+        std::cerr << "Curve #" << curve_index << " is a loop.\n";
+#endif
         // Even if the curve is a cycle, it can intersect other curves at
         // its first point (here 'p'). In that case, 'p' is a corner, even
         // if the curve is a cycle.
-        if(!c3t3_.triangulation().is_vertex(cwp(p), vp))
+        if(tr().is_vertex(cwp(p), vp))
         {
+#if CGAL_MESH_3_PROTECTION_DEBUG & 128
+          std::cerr << "vp: " << IO::oformat(vp, With_point_tag{}) << "\n";
+          std::cerr << "vp.in_dimension(): " << vp->in_dimension() << "\n";
+          std::cerr << "p_dim: " << p_dim << "\n";
+          std::cerr << "p_index: " << IO::oformat(p_index) << "\n";
+#endif
+          CGAL_assertion(vp->in_dimension() == p_dim);
+
+          if(p_dim == 0) {
+            api().register_curve_corner(curve_index, p_index, p_position, p_position);
+          }
+        }
+        else
+        {
+          CGAL_assertion(p_dim == 1);
           // if 'p' is not a corner, find out a second point 'q' on the
           // curve, "far" from 'p', and limit the radius of the ball of 'p'
           // with the third of the distance from 'p' to 'q'.
           FT p_size = query_size(p, 1, curve_index);
 
-          FT curve_length = domain_.curve_length(curve_index);
+          // warning!
+          // p_index is a corner index (corresponding dimension is 0)
+          // not a curve index (corresponding dimension is 1)
+          // curve_index is the correct one here
 
-          Bare_point other_point =
-            domain_.construct_point_on_curve(p,
-                                             curve_index,
-                                             curve_length / 2);
+          FT curve_length = api().curve_length(curve_index);
+
+          auto [other_point, _] =
+            api().construct_point_on_curve(p,
+                                           curve_index,
+                                           curve_length / 2,
+                                           p_position);
           p_size = (std::min)(p_size,
                               compute_distance(p, other_point) / 3);
-          vp = smart_insert_point(p,
-                                  CGAL::square(p_size),
-                                  1 /*dim*/,
-                                  curve_index,
-                                  Vertex_handle(),
-                                  CGAL::Emptyset_iterator()).first;
+          vp = smart_insert_on_curve(p,
+                                     CGAL::square(p_size),
+                                     curve_index,
+                                     p_position,
+                                     locate_hint_vh,
+                                     CGAL::Emptyset_iterator()).first;
         }
+
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
         vq = vp;
       }
+      locate_hint_vh = vp;
 
       // Insert balls and set treated
       // if(do_balls_intersect(vp, vq)) {
@@ -1081,34 +1418,13 @@ insert_balls_on_edges()
         insert_balls(vp, vq, curve_index, CGAL::POSITIVE, Emptyset_iterator());
       }
       set_treated(curve_index);
+//      std::stringstream s;
+//      s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
+//      debug_dump_c3t3(s.str(), c3t3_);
     }
-    // std::stringstream s;
-    // s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
-    // debug_dump_c3t3(s.str(), c3t3_);
   }
 } //end insert_balls_on_edges()
 
-
-template <typename C3T3, typename MD, typename Sf, typename Df>
-typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::Vertex_handle
-Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-get_vertex_corner_from_point(const Bare_point& p, const Index&) const
-{
-  typename GT::Construct_weighted_point_3 cwp =
-    c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
-
-  // Get vertex_handle associated to corner (dim=0) point
-  Vertex_handle v;
-  CGAL_assertion_code( bool q_found = )
-
-  // Let the weight be 0, because is_vertex only locates the point, and
-  // check that the location type is VERTEX.
-  c3t3_.triangulation().is_vertex(cwp(p), v);
-
-  CGAL_assertion( q_found );
-  CGAL_assertion(v->in_dimension() == 0);
-  return v;
-}
 
 
 template <typename C3T3, typename MD, typename Sf, typename Df>
@@ -1125,11 +1441,11 @@ insert_balls(const Vertex_handle& vp,
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
 
-  CGAL_assertion(vp != vq || domain_.is_loop(curve_index));
+  CGAL_assertion(vp != vq || api().is_loop(curve_index));
 
   // Compute geodesic distance
   const FT pq_length = (vp == vq) ?
-    domain_.curve_length(curve_index)
+    api().curve_length(curve_index)
     :
     curve_segment_length(vp, vq, curve_index, orientation);
 
@@ -1166,10 +1482,7 @@ insert_balls(const Vertex_handle& vp,
   CGAL_precondition(d > 0);
   CGAL_precondition(sp <= sq);
 
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
-  const Weighted_point& vp_wp = c3t3_.triangulation().point(vp);
+  const Weighted_point& vp_wp = point(vp);
 
 #if ! defined(CGAL_NO_PRECONDITIONS)
   if(sp < minimal_size_) {
@@ -1205,7 +1518,7 @@ insert_balls(const Vertex_handle& vp,
   // ai+1 = ai + r
   // ai+1 = a0 + r*(i+1)
   //   an = a0 + r*n
-  //   sq = sp + r + r*n
+  //   sq = sp + r + r*n = sp + r*(n+1)
   //    r = (sq-sp) / (n+1)
   //
   //   d = Sum(ai)
@@ -1218,9 +1531,9 @@ insert_balls(const Vertex_handle& vp,
   // =======================
 
   const FT d_signF = static_cast<FT>(d_sign);
-  int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
-  // if( minimal_weight() != 0 && n == 0 ) return;
+  std::size_t n = static_cast<std::size_t>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
 
+  const auto vp_pos = api().position_on_curve(vp, curve_index);
   if(nonlinear_growth_of_balls && refine_balls_iteration_nb < 3)
   {
     // This block tries not to apply the general rule that the size of
@@ -1230,7 +1543,7 @@ insert_balls(const Vertex_handle& vp,
     if(n >= internal::max_nb_vertices_to_reevaluate_size &&
        d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight())) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      const Weighted_point& vq_wp = c3t3_.triangulation().point(vq);
+      const Weighted_point& vq_wp = point(vq);
       std::cerr << "Number of to-be-inserted balls is: "
                 << n << "\n  between points ("
                 << vp_wp << ") and (" << vq_wp
@@ -1239,26 +1552,30 @@ insert_balls(const Vertex_handle& vp,
                                         curve_index, d_sign)
                 << ")\n";
 #endif
-      const Bare_point new_point =
-        domain_.construct_point_on_curve(cp(vp_wp),
-                                         curve_index,
-                                         d_signF * d / 2);
-      const int dim = 1; // new_point is on edge
-      const Index index = domain_.index_from_curve_index(curve_index);
-      const FT point_weight = CGAL::square(size_(new_point, dim, index));
+      const Bare_point p = cp(vp_wp);
+      const auto [bp, position] = //[Bare_point, Polyline_const_iterator]
+        api().construct_point_on_curve(p,
+                                       curve_index,
+                                       d_signF * d / 2,
+                                       vp_pos);
+      const Bare_point new_point = bp;
+      const int dim_1 = 1; // new_point is on edge
+      const Index index = api().index_from_curve_index(curve_index);
+      const FT point_weight = CGAL::square(size_(new_point, dim_1, index));
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "  middle point: " << new_point << std::endl;
       std::cerr << "  new weight: " << point_weight << std::endl;
 #endif
       std::pair<Vertex_handle, ErasedVeOutIt> pair =
-        smart_insert_point(new_point,
-                           point_weight,
-                           dim,
-                           index,
-                           Vertex_handle(),
-                           out);
-      if(forced_stop()) return out;
+        api().smart_insert_on_curve(new_point,
+                                    point_weight,
+                                    curve_index,
+                                    position,
+                                    vp,
+                                    out);
       const Vertex_handle new_vertex = pair.first;
+
+      if(forced_stop()) return out;
       out = pair.second;
       const FT sn = get_radius(new_vertex);
       if(sp <= sn) {
@@ -1275,7 +1592,7 @@ insert_balls(const Vertex_handle& vp,
     }
   } // nonlinear_growth_of_balls
 
-  FT r = (sq - sp) / FT(n+1);
+  const FT r = (sq - sp) / FT(n+1);// radius variation
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "  n=" << n
@@ -1284,9 +1601,9 @@ insert_balls(const Vertex_handle& vp,
 
 
   // Adjust size of steps, D = covered distance
-  FT D = sp*FT(n+1) + FT((n+1)*(n+2)) / FT(2) * r ;
+  const FT D = sp*FT(n+1) + FT((n+1)*(n+2)) / FT(2) * r ;
 
-  FT dleft_frac = d / D;
+  const FT dleft_frac = d / D;
 
   // Initialize step sizes
   FT step_size = sp + r;
@@ -1295,7 +1612,7 @@ insert_balls(const Vertex_handle& vp,
   // Initial distance
   FT pt_dist = d_signF * norm_step_size;
   Vertex_handle prev = vp;
-  const Bare_point& p = cp(c3t3_.triangulation().point(vp));
+  const Bare_point& p = cp(point(vp));
 
   // if ( (0 == n) &&
   //      ( (d >= sp+sq) || !is_sampling_dense_enough(vp, vq) ) )
@@ -1330,38 +1647,58 @@ insert_balls(const Vertex_handle& vp,
   }
 
   // Launch balls
-  for ( int i = 1 ; i <= n ; ++i )
+  auto prev_pos = vp_pos;
+#if CGAL_MESH_3_PROTECTION_DEBUG
+  if constexpr (api_version == API_version::v2) {
+    CGAL_assertion(n == 0 || vp_pos == domain().locate_point(curve_index, p));
+  }
+#endif
+  Bare_point prev_pt = p;
+  FT dist_to_prev = pt_dist;
+
+  for(std::size_t i = 1; i <= n; ++i)
   {
     // New point position
-    Bare_point new_point =
-      domain_.construct_point_on_curve(p, curve_index, pt_dist);
+    const auto [new_point, new_position]
+      = api().construct_point_on_curve(prev_pt, curve_index, dist_to_prev, prev_pos);
 
     // Weight (use as size the min between norm_step_size and linear interpolation)
-    FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
-    FT point_weight = current_size * current_size;
-
-    // Index and dimension
-    Index index = domain_.index_from_curve_index(curve_index);
-    int dim = 1; // new_point is on edge
+    const FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
+    const FT point_weight = current_size * current_size;
 
     // Insert point into c3t3
+    const std::size_t nbv = tr().number_of_vertices();
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
-      smart_insert_point(new_point, point_weight, dim, index, prev, out);
+      api().smart_insert_on_curve(new_point, point_weight, curve_index, new_position, prev, out);
+
     Vertex_handle new_vertex = pair.first;
+    if(use_minimal_size() && new_vertex == Vertex_handle())
+      continue; // insertion failed, probably hidden by existing ball
+    CGAL_assertion(new_vertex->in_dimension() == 1);
+
     out = pair.second;
 
     // Add edge to c3t3
-    if(!c3t3_.is_in_complex(prev, new_vertex)) {
+    const bool vertex_was_inserted = (tr().number_of_vertices() > nbv);
+    if(vertex_was_inserted && !c3t3_.is_in_complex(prev, new_vertex)) {
       c3t3_.add_to_complex(prev, new_vertex, curve_index);
     }
+
+    // Update step size
+    if(r > 0)
+    {
+      step_size += r;
+      norm_step_size = dleft_frac * step_size;
+      dist_to_prev = d_signF* norm_step_size;
+    }
+
+    // Increment total distance to vp
+    pt_dist += dist_to_prev;
+
+    // prepare for next for-loop round
     prev = new_vertex;
-
-    // Step size
-    step_size += r;
-    norm_step_size = dleft_frac * step_size;
-
-    // Increment distance
-    pt_dist += d_signF * norm_step_size;
+    prev_pt = new_point;
+    prev_pos = new_position;
   }
 
   // Insert last edge into c3t3
@@ -1386,8 +1723,6 @@ refine_balls()
   dump_c3t3(c3t3_, "dump-before-refine_balls");
   dump_c3t3_edges(c3t3_, "dump-before-refine_balls");
 #endif
-  Triangulation& tr = c3t3_.triangulation();
-
   // Loop
   bool restart = true;
   using CGAL::Mesh_3::internal::refine_balls_max_nb_of_loops;
@@ -1410,20 +1745,18 @@ refine_balls()
 #endif
     ++refine_balls_iteration_nb;
     restart = false;
-    boost::unordered_map<Vertex_handle, FT, Hash_fct> new_sizes;
+    CGAL::unordered_flat_map<Vertex_handle, FT, Hash_vh> new_sizes;
 
-    for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(),
-        end = tr.finite_edges_end(); eit != end; ++eit)
+    for(const Edge& e : tr().finite_edges())
     {
       if(forced_stop()) break;
-      const Vertex_handle& va = eit->first->vertex(eit->second);
-      const Vertex_handle& vb = eit->first->vertex(eit->third);
+      const auto& [va, vb] = tr().vertices(e);
       const bool is_edge_in_complex = c3t3_.is_in_complex(va,vb);
 
       if( // topology condition
           non_adjacent_but_intersect(va, vb, is_edge_in_complex)
           // approximation condition
-       || (use_distance_field() && approx_is_too_large(*eit, is_edge_in_complex)))
+       || (use_distance_field() && approx_is_too_large(e, is_edge_in_complex)))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
 
@@ -1475,13 +1808,13 @@ refine_balls()
     new_sizes.clear();
 
     // Update size of balls
-    for (const std::pair<Vertex_handle,FT>& it : new_sizes_copy)
+    for (const auto& [v, new_size] : new_sizes_copy)
     {
       if(forced_stop()) break;
-      const Vertex_handle v = it.first;
-      const FT new_size = it.second;
+
       // Set size of the ball to new value
-      if(use_minimal_size() && new_size < minimal_size_) {
+      if(use_minimal_size() && new_size < minimal_size_)
+      {
         if(!is_special(v)) {
           change_ball_size(v, minimal_weight(), true); // special ball
 
@@ -1532,17 +1865,11 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
-  typename GT::Construct_sphere_3 sphere =
-    c3t3_.triangulation().geom_traits().construct_sphere_3_object();
-  typename GT::Do_intersect_3 do_intersect =
-    c3t3_.triangulation().geom_traits().do_intersect_3_object();
-  typename GT::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-  typename GT::Compute_weight_3 cw =
-    c3t3_.triangulation().geom_traits().compute_weight_3_object();
+  auto sphere = geom_traits().construct_sphere_3_object();
+  auto do_intersect = geom_traits().do_intersect_3_object();
 
-  const Weighted_point& wa = c3t3_.triangulation().point(va);
-  const Weighted_point& wb = c3t3_.triangulation().point(vb);
+  const Weighted_point& wa = point(va);
+  const Weighted_point& wb = point(vb);
   return do_intersect(sphere(cp(wa), cw(wa)), sphere(cp(wb), cw(wb)));
 }
 
@@ -1554,18 +1881,31 @@ approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
   if ( ! is_edge_in_complex )
     return false;
 
-  const Bare_point& pa = e.first->vertex(e.second)->point().point();
-  const Bare_point& pb = e.first->vertex(e.third)->point().point();
+  Vertex_handle va = e.first->vertex(e.second);
+  Vertex_handle vb = e.first->vertex(e.third);
+
+  const Bare_point& pa = cp(point(va));
+  const Bare_point& pb = cp(point(vb));
+
+  const Curve_index curve_index = c3t3_.curve_index(e);
+  auto pa_pos = api().position_on_curve(va, curve_index);
+  auto pb_pos = api().position_on_curve(vb, curve_index);
 
   // Construct the geodesic middle point
-  const Curve_index curve_index = c3t3_.curve_index(e);
-  const FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
-  const Bare_point geodesic_middle = (signed_geodesic_distance >= FT(0))
-      ? domain_.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2)
-      : domain_.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
+  const FT signed_geodesic_distance
+      = api().signed_geodesic_distance(pa, pb, pa_pos, pb_pos, curve_index);
+  const auto [geodesic_middle, _ /*polyline_iter*/] = (signed_geodesic_distance >= FT(0))
+      ? api().construct_point_on_curve(pa,
+                                       curve_index,
+                                       signed_geodesic_distance / 2,
+                                       pa_pos)
+      : api().construct_point_on_curve(pb,
+                                       curve_index,
+                                       -signed_geodesic_distance / 2,
+                                       pb_pos);
 
   const Bare_point edge_middle = CGAL::midpoint(pa, pb);
-  const FT squared_evaluated_distance = CGAL::squared_distance(edge_middle, geodesic_middle);
+  const FT squared_evaluated_distance = sq_distance(edge_middle, geodesic_middle);
 
   // Compare distance to the distance field from criteria
   const FT max_distance_to_curve = query_distance(edge_middle, 1, curve_index);
@@ -1580,7 +1920,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   Weight w(squared_size);
 
   // Check if there is something to do
-  // if(c3t3_.triangulation().point(v).weight() == w)
+  // if(point(v).weight() == w)
   // { return v; }
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -1597,19 +1937,15 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
   // Remove incident edges from complex
-  for ( typename Adjacent_vertices::iterator vit = adjacent_vertices.begin(),
-       vend = adjacent_vertices.end() ; vit != vend ; ++vit )
+  for (const auto& [corner_vertex,_/*curve_id*/] : adjacent_vertices)
   {
-    c3t3_.remove_from_complex(v, vit->first);
+    c3t3_.remove_from_complex(v, corner_vertex);
   }
 
   // Store point data
-  typename GT::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   Index index = c3t3_.index(v);
   int dim = get_dimension(v);
-  Bare_point p = cp(c3t3_.triangulation().point(v)); // intentional copy
+  Bare_point p = cp(point(v)); // intentional copy
 
   // Remove v from the set of corners
   std::optional<Corner_index> corner_index;
@@ -1621,20 +1957,18 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
 
   unchecked_vertices_.erase(v);
   // Change v size
-  c3t3_.triangulation().remove(v);
+  Cell_handle insertion_hint = v->cell()->neighbor(v->cell()->index(v));
+  tr().remove(v);
 
-  CGAL_assertion_code(typename GT::Construct_weighted_point_3 cwp =
-                        c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();)
   CGAL_assertion_code(const Weighted_point wp = cwp(p,w);)
-  CGAL_assertion_code(Tr& tr = c3t3_.triangulation());
-  CGAL_assertion_code(Cell_handle ch = tr.locate(wp));
+  CGAL_assertion_code(Cell_handle ch = tr().locate(wp));
   CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices);
-  CGAL_assertion_code(if(tr.dimension() > 2)
-                      tr.vertices_inside_conflict_zone(wp,
-                                                       ch,
-                                                       std::back_inserter(hidden_vertices)));
+  CGAL_assertion_code(if(tr().dimension() > 2)
+                      tr().vertices_inside_conflict_zone(wp,
+                                                         ch,
+                                                         std::back_inserter(hidden_vertices)));
 
-  Vertex_handle new_v = insert_point(p, w , dim, index, special_ball);
+  Vertex_handle new_v = insert_point(p, w , dim, index, special_ball, insertion_hint);
   CGAL_assertion(hidden_vertices.empty());
 
   CGAL_assertion( (! special_ball) || is_special(new_v) );
@@ -1656,11 +1990,10 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
   }
 
   // Restore c3t3 edges
-  for ( typename Adjacent_vertices::iterator it = adjacent_vertices.begin(),
-       end = adjacent_vertices.end() ; it != end ; ++it )
+  for(const auto& [corner_vertex, curve_id] : adjacent_vertices)
   {
     // Restore connectivity in c3t3
-    c3t3_.add_to_complex(new_v, it->first, it->second);
+    c3t3_.add_to_complex(new_v, corner_vertex, curve_id);
   }
 
   // Update unchecked vertices
@@ -1753,6 +2086,9 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
     return out;
   CGAL_assertion(adjacent_vertices.back().second== curve_index);
 
+  if (use_minimal_size() && adjacent_vertices.size() < 2)
+    return out;
+
   // Walk along edge to find the edge piece which is not correctly sampled
   typedef std::list<Vertex_handle> Vertex_list;
   Vertex_list to_repopulate;
@@ -1811,26 +2147,26 @@ curve_segment_length(const Vertex_handle v1,
                      const Curve_index& curve_index,
                      const CGAL::Orientation orientation) const
 {
-  auto cp = c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   bool v1_valid_curve_index = true;
   bool v2_valid_curve_index = true;
   if(use_minimal_size())
   {
     if (get_dimension(v1) == 1)
-      v1_valid_curve_index = (domain_.curve_index(v1->index()) == curve_index);
+      v1_valid_curve_index = (api().curve_index(v1->index()) == curve_index);
     if (get_dimension(v2) == 1)
-      v2_valid_curve_index = (domain_.curve_index(v2->index()) == curve_index);
+      v2_valid_curve_index = (api().curve_index(v2->index()) == curve_index);
   }
 
-  const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
-  const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
+  const Bare_point p1 = cp(point(v1));
+  const Bare_point p2 = cp(point(v2));
 
   FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
-    ? domain_.curve_segment_length(cp(v1_wp),
-                                   cp(v2_wp),
-                                   curve_index,
-                                   orientation)
+    ? api().curve_segment_length(p1,
+                                 p2,
+                                 api().position_on_curve(v1, curve_index),
+                                 api().position_on_curve(v2, curve_index),
+                                 curve_index,
+                                 orientation)
     : compute_distance(v1, v2); //curve polyline may not be consistent
   return arc_length;
 }
@@ -1844,11 +2180,6 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
 {
   using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.curve_index(v1,v2) == curve_index);
-
-  typename GT::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-  typename GT::Compute_weight_3 cw =
-    c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
   FT arc_length = curve_segment_length(v1,
                                        v2,
@@ -1877,13 +2208,19 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
       return false;
     }
 
-    const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
-    const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
+    const Weighted_point& v1_wp = point(v1);
+    const Weighted_point& v2_wp = point(v2);
 
-    const bool cov = domain_.is_curve_segment_covered(curve_index,
-                                                      orientation,
-                                                      cp(v1_wp), cp(v2_wp),
-                                                      cw(v1_wp), cw(v2_wp));
+    const Bare_point p1 = cp(v1_wp);
+    const Bare_point p2 = cp(v2_wp);
+
+    const bool cov = api().is_curve_segment_covered(curve_index,
+                               orientation,
+                               p1, p2,
+                               cw(v1_wp), cw(v2_wp),
+                               api().position_on_curve(v1, curve_index),
+                               api().position_on_curve(v2, curve_index));
+
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     if(cov) {
       std::cerr << "      But the curve is locally covered\n";
@@ -1911,23 +2248,30 @@ orientation_of_walk(const Vertex_handle& start,
                     const Vertex_handle& next,
                     Curve_index curve_index) const
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
+  const Weighted_point& start_wp = point(start);
+  const Weighted_point& next_wp = point(next);
+  const Bare_point start_p = cp(start_wp);
+  const Bare_point next_p = cp(next_wp);
 
-  const Weighted_point& start_wp = c3t3_.triangulation().point(start);
-  const Weighted_point& next_wp = c3t3_.triangulation().point(next);
-
-  if(domain_.is_loop(curve_index)) {
+  if(api().is_loop(curve_index)) {
     // if the curve is a cycle, the direction is the direction passing
     // through the next vertex, and the next-next vertex
     Vertex_handle next_along_curve = next_vertex_along_curve(next,start,curve_index);
-    const Weighted_point& next_along_curve_wp = c3t3_.triangulation().point(next_along_curve);
+    const Weighted_point& next_along_curve_wp = point(next_along_curve);
+    const Bare_point next_along_curve_p = cp(next_along_curve_wp);
 
-    return domain_.distance_sign_along_loop(
-             cp(start_wp), cp(next_wp), cp(next_along_curve_wp), curve_index);
-  } else {
+    return api().distance_sign_along_loop(
+              start_p, next_p, next_along_curve_p, curve_index,
+              api().position_on_curve(start, curve_index),
+              api().position_on_curve(next, curve_index),
+              api().position_on_curve(next_along_curve, curve_index));
+  }
+  else
+  {
     // otherwise, the sign is just the sign of the geodesic distance
-    return domain_.distance_sign(cp(start_wp), cp(next_wp), curve_index);
+    return api().distance_sign(start_p, next_p, curve_index,
+                               api().position_on_curve(start, curve_index),
+                               api().position_on_curve(next, curve_index));
   }
 }
 
@@ -1942,8 +2286,8 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
   if(!c3t3_.is_in_complex(start, next)) {
-    std::cerr << "ERROR: the edge ( " << c3t3_.triangulation().point(start) << " , "
-              << c3t3_.triangulation().point(next) << " ) is not in complex!\n";
+    std::cerr << "ERROR: the edge ( " << point(start) << " , "
+              << point(next) << " ) is not in complex!\n";
     dump_c3t3(c3t3_, "dump-bug");
     dump_c3t3_edges(c3t3_, "dump-bug-c3t3");
   }
@@ -1988,7 +2332,7 @@ next_vertex_along_curve(const Vertex_handle& start,
 {
   CGAL_USE(curve_index);
   CGAL_precondition( c3t3_.curve_index(start, previous) == curve_index);
-  CGAL_precondition( domain_.is_loop(curve_index) ||
+  CGAL_precondition( api().is_loop(curve_index) ||
                      (! c3t3_.is_in_complex(start)) );
 
   Adjacent_vertices adjacent_vertices;
@@ -2019,7 +2363,7 @@ template <typename InputIterator, typename ErasedVeOutIt>
 ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 repopulate(InputIterator begin, InputIterator last,
-           const Curve_index& index,
+           const Curve_index& curve_index,
            const CGAL::Orientation orientation,
            ErasedVeOutIt out)
 {
@@ -2027,7 +2371,7 @@ repopulate(InputIterator begin, InputIterator last,
   std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
             << "           last=" << disp_vert(*last)  << "\n"
             << "           distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "           index=" << CGAL::IO::oformat(index) << ",\n"
+            << "           curve_index=" << CGAL::IO::oformat(curve_index) << ",\n"
             << "           orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );
@@ -2056,7 +2400,7 @@ repopulate(InputIterator begin, InputIterator last,
     std::cerr << "Removal of ";
     if(is_special(*current)) std::cerr << "SPECIAL ";
     std::cerr << "protecting ball "
-              << c3t3_.triangulation().point((*current));
+              << point((*current));
     switch(get_dimension(*current)) {
     case 0:
       std::cerr << " on corner #";
@@ -2070,12 +2414,12 @@ repopulate(InputIterator begin, InputIterator last,
     std::cerr  << CGAL::IO::oformat(c3t3_.index(*current)) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
-    c3t3_.triangulation().remove(*current);
+    api().remove(*current, curve_index);
     if(forced_stop()) return out;
   }
 
   // Repopulate edge
-  return insert_balls(*begin, *last, index, orientation, out);
+  return insert_balls(*begin, *last, curve_index, orientation, out);
 }
 
 
@@ -2185,19 +2529,15 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
   Adjacent_vertices adjacent_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(adjacent_vertices));
 
-  for ( typename Adjacent_vertices::iterator vit = adjacent_vertices.begin(),
-       vend = adjacent_vertices.end() ; vit != vend ; ++vit )
+  for(const auto& [next /*vertex*/, curve_index] : adjacent_vertices)
   {
-    const Vertex_handle& next = vit->first;
-    const Curve_index& curve_index = vit->second;
-
     CGAL_assertion_code(const Curve_index cid = c3t3_.curve_index(v, next));
     CGAL_assertion(cid == curve_index);
 
     // if `v` is incident to a cycle, it might be that the full cycle,
     // including the edge `[next, v]`, has already been processed by
     // `analyze_and_repopulate()` walking in the other direction.
-    if(domain_.is_loop(curve_index) && !c3t3_.is_in_complex(v, next))
+    if(api().is_loop(curve_index) && !c3t3_.is_in_complex(v, next))
       continue;
 
     const CGAL::Orientation orientation = orientation_of_walk(v, next, curve_index);

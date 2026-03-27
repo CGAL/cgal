@@ -15,16 +15,27 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/ImageIO.h>
 
+#ifndef ITK_LEGACY_FUTURE_REMOVE
+#  define ITK_LEGACY_FUTURE_REMOVE
+#  define CGAL_CLEANUP_ITK_LEGACY_FUTURE_REMOVE
+#endif
 #include <itkImage.h>
 #include <itkImageDuplicator.h>
 #include <itkBinaryThresholdImageFilter.h>
 #include <itkDiscreteGaussianImageFilter.h>
 #include <itkMaximumImageFilter.h>
+#ifdef CGAL_CLEANUP_ITK_LEGACY_FUTURE_REMOVE
+#  undef ITK_LEGACY_FUTURE_REMOVE
+#endif
 
-#include <iostream>
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+#  include <iostream>
+#endif
+#include <cstddef>
 #include <vector>
 #include <set>
 #include <type_traits>
@@ -162,10 +173,10 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
                    sizeof(Weights_type),                     //image word size in bytes
                    internal::get_wordkind<Weights_type>(),   //image word kind WK_FIXED, WK_FLOAT, WK_UNKNOWN
                    internal::get_sign<Weights_type>());      //image word sign
-  Weights_type* weights_ptr = (Weights_type*)(weights->data);
+  Weights_type* weights_ptr = static_cast<Weights_type*>(weights->data);
   std::fill(weights_ptr,
             weights_ptr + img_size,
-            Weights_type(0));
+            static_cast<Weights_type>(0));
   weights->tx = image.tx();
   weights->ty = image.ty();
   weights->tz = image.tz();

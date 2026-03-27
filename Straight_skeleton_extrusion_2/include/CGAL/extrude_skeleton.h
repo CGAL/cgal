@@ -30,7 +30,6 @@
 
 #include <CGAL/General_polygon_with_holes_2.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
@@ -44,6 +43,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/enum.h>
 #include <CGAL/IO/helpers.h>

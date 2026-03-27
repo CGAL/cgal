@@ -278,7 +278,7 @@ for instance, on Windows, you can download it from <A HREF="https://www.zlib.net
 
 \ceres is an open source C++ library for modeling and solving large, complicated optimization problems.
 
-In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessing package for mesh smoothing, which
+In \cgal, \ceres is used by the \ref PkgPMPRemeshing package for mesh smoothing, which
 requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
