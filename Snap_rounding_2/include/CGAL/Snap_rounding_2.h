@@ -74,7 +74,7 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 * calls the function `CGAL::vertical_slab_snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()` depending if
 * `geom_traits` is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
-* @tparam SegmentRange a range of whose value type is model of `Kernel::Segment_2`
+* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
 * @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -105,7 +105,7 @@ OutputPolylineIterator snap_rounding_2(const SegmentRange &segments,
 * calls the function `CGAL::vertical_slab_snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()` depending if
 * the parameter `geom_traits` is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
-* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
+* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
 * @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -134,10 +134,10 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 * If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
-* calls the function `CGAL::vertical_slab_snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()` depending if
-* `geom_traits` is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
+* Per default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
+* Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
-* @tparam PolygonRange a range of `CGAL::Polygon_2`
+* @tparam PolygonRange a range of `CGAL::Polygon_2`, model of Range. Its iterator type is InputIterator.
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *

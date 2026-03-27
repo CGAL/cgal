@@ -33,21 +33,26 @@ is a model of the `VerticalSlabSnapRoundingTraits_2` concept. It provides the tr
 required to perform snap rounding where the resulting points are represented
 using double precision floating-point coordinates.
 
-The template parameter `InputKernel` specifies the kernel used for the input
-geometric objects. These objects must be convertible to the types defined by
+\tparam InputKernel specifies the kernel used for the input
+geometric objects. It must model the CGAL kernel concept. These objects must be convertible to the types defined by
 `ExactKernel`.
 
-The template parameter `ExactKernel` defines the exact kernel used internally
+\tparam ExactKernel specifies the exact kernel used internally
 to perform robust geometric computations. By default, it is set to
 `CGAL::Exact_predicates_exact_constructions_kernel`. Advanced users may provide
 another exact kernel that models the CGAL kernel concept, such as
 `Cartesian<CGAL::Exact_rational>`.
 
-The template parameter `BaseTraits` specifies the underlying arrangement traits
+\tparam BaseTraits specifies the underlying arrangement traits
 class used for segment handling. By default, it is
-`Arr_segment_traits_2<ExactKernel>`.
+`Arr_segment_traits_2<ExactKernel>`. Advanced users may provide
+another traits that models `Aostraits_2` concept.
+
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
+
+\sa{CGAL::snap_rounding_2}
+\sa{CGAL::vertical_slab_snap_rounding_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Double_grid_snap_rounding_traits_2: BaseTraits{
@@ -68,10 +73,14 @@ struct Double_grid_snap_rounding_traits_2: BaseTraits{
   using Construct_segment_2 = typename Base::Construct_segment_2;
 
   using Evaluation_tag = Tag_true;
+#if DOXYGEN_RUNNING
+  using Evaluate = unspecified_type;
+#else
   using Evaluate = internal::Evaluate<FT>;
+#endif
 
-  typedef Cartesian_converter<InputKernel, ExactKernel> Converter_to_exact;
-  typedef Cartesian_converter<ExactKernel, InputKernel> Converter_from_exact;
+  using Converter_to_exact = Cartesian_converter<InputKernel, ExactKernel>;
+  using Converter_from_exact = Cartesian_converter<ExactKernel, InputKernel>;
 
   struct Evaluation{
     void operator()(const Point_2 &p) const{

@@ -29,12 +29,12 @@ The number type. This type must fulfill the requirements on
 typedef unspecified_type FT;
 
 /*!
-Models the concept `ArrTraits::Point_2`.
+Models the concept `AosTraits_2::Point_2`.
 */
 typedef unspecified_type Point_2;
 
 /*!
-Models the concept `ArrTraits::XMonotoneCurve_2`.
+Models the concept `AosTraits_2::XMonotoneCurve_2`.
 */
 typedef unspecified_type Segment_2;
 
@@ -44,7 +44,7 @@ Models the concept `HPSRTraits_2::IsoRectangle_2`
 typedef unspecified_type Iso_rectangle_2;
 
 /*!
-Models the concept `SearchTraits::Cartesian_const_iterator_2`
+Models the concept `SearchTraits::Cartesian_const_iterator_d`
 */
 typedef unspecified_type Cartesian_const_iterator_2;
 
@@ -69,7 +69,7 @@ Models the concept `HPSRTraits_2::ConstructIsoRectangle_2`.
 typedef unspecified_type Construct_iso_rectangle_2;
 
 /*!
-Models the concept `RealEmbeddableTraits::ToDouble`. The precision of this operation is
+Models the concept `RealEmbeddableTraits_::ToDouble`. The precision of this operation is
 of not high significance, as it is only used in the implementation of the
 heuristic technique to exploit a cluster of kd-trees rather than just one.
 */
@@ -101,12 +101,12 @@ Models the concept `HPSRTraits_2::MinkowskiSumWithPixel_2`.
 typedef unspecified_type Minkowski_sum_with_pixel_2;
 
 /*!
-Models the concept `ArrTraits::ConstructMinVertex_2`.
+Models the concept `AosTraits_2::ConstructMinVertex_2`.
 */
 typedef unspecified_type Construct_min_vertex_2;
 
 /*!
-Models the concept `ArrTraits::ConstructMaxVertex_2`.
+Models the concept `AosTraits_2::ConstructMaxVertex_2`.
 */
 typedef unspecified_type Construct_max_vertex_2;
 

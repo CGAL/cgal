@@ -27,20 +27,22 @@
 Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
 The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 
-\cgalCRPSection{Snap Rounding Functions}
+\cgalCRPSection{Snap Rounding Common}
 - `CGAL::snap_rounding_2()`
-- `CGAL::vertical_slab_snap_rounding_2()`
-- `CGAL::hot_pixel_snap_rounding_2()`
 
-\cgalCRPSection{Snap Rounding Traits}
-- `CGAL::Hot_pixel_snap_rounding_traits_2`
+\cgalCRPSection{Vertical Slab Snap Rounding}
+- `CGAL::vertical_slab_snap_rounding_2()`
 - `CGAL::Double_grid_snap_rounding_traits_2`
 - `CGAL::Float_grid_snap_rounding_traits_2`
 - `CGAL::Integer_grid_snap_rounding_traits_2`
 
-\cgalCRPSection{Snap Rounding Concepts}
+\cgalCRPSection{Hot Pixel Snap Rounding}
+- `CGAL::hot_pixel_snap_rounding_2()`
 - `CGAL::Hot_pixel_snap_rounding_traits_2`
-- `CGAL::Vertical_slab_snap_rounding_2`
+
+\cgalCRPSection{Snap Rounding Concepts}
+- `HotPixelSnapRoundingTraits_2`
+- `VerticalSlabSnapRoundingTraits_2`
 
 */
 

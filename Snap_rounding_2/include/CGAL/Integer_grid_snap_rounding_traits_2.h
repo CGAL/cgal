@@ -76,6 +76,9 @@ The class `Integer_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTra
 except that points are rounded to the closest point with integer coordinates.
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
+
+\sa{CGAL::snap_rounding_2}
+\sa{CGAL::vertical_slab_snap_rounding_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Integer_grid_snap_rounding_traits_2: BaseTraits{
@@ -96,7 +99,11 @@ struct Integer_grid_snap_rounding_traits_2: BaseTraits{
   using Construct_segment_2 = typename Base::Construct_segment_2;
 
   using Evaluation_tag = Tag_true;
+#if DOXYGEN_RUNNING
+  using Evaluate = unspecified_type;
+#else
   using Evaluate = internal::Evaluate<FT>;
+#endif
 
   typedef Cartesian_converter<InputKernel, ExactKernel> Converter_to_exact;
   typedef Cartesian_converter<ExactKernel, InputKernel> Converter_from_exact;

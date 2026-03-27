@@ -509,7 +509,7 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(PolygonRange  &polygons,
 *
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
-* @tparam SegmentRange a range of whose value type is model of `Kernel::Segment_2`
+* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
 * @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -537,7 +537,7 @@ OutputPolylineIterator vertical_slab_snap_rounding_2(const SegmentRange &segment
 *
 * The output is a range of segments.
 *
-* @tparam SegmentRange a range whose value type is model of `Kernel::Segment_2`
+* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
 * @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -566,7 +566,7 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
 * If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
-* @tparam PolygonRange a range of `CGAL::Polygon_2`
+* @tparam PolygonRange a range of `CGAL::Polygon_2`, model of Range. Its iterator type is InputIterator.
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *

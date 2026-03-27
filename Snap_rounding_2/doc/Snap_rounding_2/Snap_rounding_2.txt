@@ -10,12 +10,16 @@ namespace CGAL {
 
 \section Snap_rounding_2Introduction Introduction
 
-Most geometric operations, such as computing the intersection of two segments, require higher precision to represent the output than the input.
+\cgalFigureBegin{figIssue,rounding_issue_fig.svg}
+Two segments that do intersect (a), these segment with their intersection point rounded (b), This rounding may introduce new intersections.
+\cgalFigureEnd
+
+Most geometric operations, such as computing the intersection of two segments, require higher precision to represent correctly the output than the input.
 For example, if the coordinates of the segment endpoints are integers of \f$d\f$ digits, the coordinates of their intersection point
 are, in general, rational numbers with a numerator of \f$3d+O(1)\f$ digits and a denominator of \f$2d+O(1)\f$ digits.
 
 Exact constructions kernels in \cgal preserve this precision, whereas other kernels (as in most software systems) round the result. However, such rounding may produce
-self-intersections and topology changements as illustrated in \cgalFigureRef{figRoundingIssue}.
+self-intersections and topology changements as illustrated in \cgalFigureRef{figIssue}.
 
 Snap Rounding (SR) is a family of methods that convert
 arbitrary-precision arrangements of segments into a representation with reduced precision, while preventing the introduction of new intersections and
@@ -26,7 +30,7 @@ This package provides two algorithms:
 - **Vertical Slab Snap Rounding** \cgalCite{valque2024snaprounding}.
 
 The former (Hot Pixel SR) provides more predictable outputs and its iterative variant ensures a minimum distance of half a pixel between a vertex and any non-incident edge,
-while the latter (Vertical SLab SR) offers improved performance and supports a wider range of rounding schemes, including floating-point representations.
+while the latter (Vertical Slab SR) offers improved performance and supports a wider range of rounding schemes, including floating-point representations.
 
 Both methods share a similar API and can be invoked through the `CGAL::snap_rounding_2()` function.
 
@@ -89,7 +93,7 @@ An arrangement of segments before subdividing the segments (a), after subdividin
 
 Both algorithms can be invoked through the `CGAL::snap_rounding_2()` function.
 `CGAL::snap_rounding_2()` take a range of input segments and outputs either segments or polylines via an output iterator. An overload also supports as input and output polygon ranges.
-By default, the Vertical Slab Snap Rounding algorithm to double precision is used. The other method or other rounding schemes can be used depending on the traits class provided (see section \cgalSectionRef{Float_snap_rounding_Traits}).
+By default, the Vertical Slab Snap Rounding algorithm to double precision is used. The other method or other rounding schemes can be used depending on the traits class provided.
 Both methods can be accessed directly threw `CGAL::vertical_slab_snap_rounding_2()` and `CGAL::hot_pixel_snap_rounding_2` and share a similar API.
 
 The following example snaps on integers using Hot Pixel SR a instance of four segments.
@@ -115,10 +119,8 @@ snap-rounding procedures, and displays the result onto the same window
 We evaluate the different methods on two tests:
 In the first test, the segment endpoints are chosen uniformly and independantly in the unit box.
 In the second test, we generate perturbed copies of a given segment. This experiment is repeated several times using different input segments.
-
-First with segments whose endpoints are randomly and independently chosen in the unit box.
-Second with perturbated copy of a given segment, we perform this test several times with different input segments.
 The two pixel sizes for hot pixel snap rounding are chosen so that the rounding shift is of the same order of magnitude as the rounding induced by using `double` or `float` coordinates.
+
 The first test is standard but typically exhibits few, if any, rounding issues.
 The second test is deliberately designed to be difficult, as it produces a large number of rounding issues when rounding is performed naively.
 In these settings, vertical slab snap rounding significantly outperforms hot pixel snap rounding and remains in the same order of magnitude than computing the intersections without snap.

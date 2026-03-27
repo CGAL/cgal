@@ -32,12 +32,12 @@ The number type. This type must fulfill the requirements on
 typedef unspecified_type FT;
 
 /*!
-models the concept `ArrTraits::Point_2`.
+models the concept `AosTraits_2::Point_2`.
 */
 typedef unspecified_type Point_2;
 
 /*!
-models the concept `ArrTraits::XMonotoneCurve_2`.
+models the concept `AosTraits_2::XMonotoneCurve_2`.
 */
 typedef unspecified_type Segment_2;
 
