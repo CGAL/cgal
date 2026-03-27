@@ -29,6 +29,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
@@ -78,7 +79,7 @@ template <typename ConcurrencyTag,
           typename PairKey, typename Value>
 struct Hash_map_of_pairs_type
 {
-  typedef std::unordered_map<PairKey, Value, SMDS_3::details::Pair_hash> type;
+  typedef CGAL::unordered_flat_map<PairKey, Value, SMDS_3::details::Pair_hash> type;
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
