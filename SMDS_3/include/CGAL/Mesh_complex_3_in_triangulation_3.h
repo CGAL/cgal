@@ -22,13 +22,14 @@
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/disable_warnings.h>
-#include <CGAL/iterator.h>
 #include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/SMDS_3/internal/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
-#include <CGAL/Time_stamper.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Union_find.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Has_member.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Time_stamper.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/unordered_flat_map.h>
 
 #include <CGAL/IO/File_medit.h>
@@ -237,6 +238,12 @@ public:
     Index center_index_;
     Bare_point center_;
   };
+
+  // in the configuration of a cell base still providing surface pathc info storage
+  // (i.e., index, center, center index), use that instead of the C3T3 hash map
+  CGAL_GENERATE_MEMBER_DETECTOR(set_surface_patch_index);
+  static constexpr bool store_surface_patch_info_in_cell =
+    has_set_surface_patch_index<typename Tr::Cell>::value;
 
 private:
   // Type to store the edges:
@@ -486,25 +493,32 @@ public:
   void set_surface_patch_index(const Facet& f,
                                const Surface_patch_index& index) const
   {
-    // std::cout << "set " << &*(cell) << " " << i << " to " << index << " (new)" << std::endl;
-
-    if (index == Surface_patch_index())
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      surface_facet_info_.erase(f);
+      f.first->set_surface_patch_index(f.second, index);
     }
     else
     {
-#ifdef CGAL_LINKED_WITH_TBB
-      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      CGAL_assertion(false);
+      if (index == Surface_patch_index())
       {
-        typename Surface_facet_info::accessor accessor;
-        surface_facet_info_.insert(accessor, f);
-        accessor->second.surface_index_ = index;
+        // remove from the map as to avoid wasting memory
+        surface_facet_info_.erase(f);
       }
       else
-#endif
       {
-        surface_facet_info_[f].surface_index_ = index;
+#ifdef CGAL_LINKED_WITH_TBB
+        if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+        {
+          typename Surface_facet_info::accessor accessor;
+          surface_facet_info_.insert(accessor, f);
+          accessor->second.surface_index_ = index;
+        }
+        else
+#endif
+        {
+          surface_facet_info_[f].surface_index_ = index;
+        }
       }
     }
   }
@@ -521,17 +535,24 @@ public:
   void set_surface_center(const Facet& f,
                           const Bare_point& p) const
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      typename Surface_facet_info::accessor accessor;
-      surface_facet_info_.insert(accessor, f);
-      accessor->second.center_ = p;
+      f.first->set_surface_center(f.second, p);
     }
     else
-#endif
     {
-      surface_facet_info_[f].center_ = p;
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::accessor accessor;
+        surface_facet_info_.insert(accessor, f);
+        accessor->second.center_ = p;
+      }
+      else
+#endif
+      {
+        surface_facet_info_[f].center_ = p;
+      }
     }
   }
 
@@ -547,17 +568,24 @@ public:
   void set_surface_center_index(const Facet& f,
                                 const Index& index) const
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      typename Surface_facet_info::accessor accessor;
-      surface_facet_info_.insert(accessor, f);
-      accessor->second.center_index_ = index;
+      f.first->set_surface_center_index(f.second, index);
     }
     else
-#endif
     {
-      surface_facet_info_[f].center_index_ = index;
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::accessor accessor;
+        surface_facet_info_.insert(accessor, f);
+        accessor->second.center_index_ = index;
+      }
+      else
+#endif
+      {
+        surface_facet_info_[f].center_index_ = index;
+      }
     }
   }
 
@@ -573,23 +601,33 @@ public:
   void set_surface_info(const Facet& f,
                         const Facet_prop& info) const
   {
-    if (info.surface_index_ == Surface_patch_index())
+    CGAL_assertion(false);
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      surface_facet_info_.erase(f);
+      f.first->set_surface_patch_index(f.second, info.surface_index_);
+      f.first->set_facet_surface_center(f.second, info.center_);
+      f.first->set_facet_surface_center_index(f.second, info.center_index_);
     }
     else
     {
-#ifdef CGAL_LINKED_WITH_TBB
-      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      if (info.surface_index_ == Surface_patch_index())
       {
-        typename Surface_facet_info::accessor accessor;
-        surface_facet_info_.insert(accessor, f);
-        accessor->second = info;
+        surface_facet_info_.erase(f);
       }
       else
-#endif
       {
-        surface_facet_info_[f] = info;
+#ifdef CGAL_LINKED_WITH_TBB
+        if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+        {
+          typename Surface_facet_info::accessor accessor;
+          surface_facet_info_.insert(accessor, f);
+          accessor->second = info;
+        }
+        else
+#endif
+        {
+          surface_facet_info_[f] = info;
+        }
       }
     }
   }
@@ -631,20 +669,28 @@ public:
   */
   Surface_patch_index surface_patch_index(const Facet& f) const
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      typename Surface_facet_info::const_accessor accessor;
-      if (surface_facet_info_.find(accessor, f))
-        return accessor->second.surface_index_;
+      return f.first->surface_patch_index(f.second);
     }
     else
-#endif
     {
-      auto it = surface_facet_info_.find(f);
-      if (it != surface_facet_info_.end())
-        return it->second.surface_index_;
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        if (surface_facet_info_.find(accessor, f))
+          return accessor->second.surface_index_;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        if (it != surface_facet_info_.end())
+          return it->second.surface_index_;
+      }
     }
+
     return Surface_patch_index();
   }
 
@@ -660,21 +706,28 @@ public:
   {
     CGAL_precondition(is_in_complex(f));
 
-# ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      typename Surface_facet_info::const_accessor accessor;
-      CGAL_assume_code(bool found =)
-      surface_facet_info_.find(accessor, f);
-      CGAL_assume(found);
-      return accessor->second.center_;
+      return f.first->get_facet_surface_center(f.second);
     }
     else
-#endif
     {
-      auto it = surface_facet_info_.find(f);
-      CGAL_assume(it != surface_facet_info_.end());
-      return it->second.center_;
+# ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        CGAL_assume_code(bool found =)
+        surface_facet_info_.find(accessor, f);
+        CGAL_assume(found);
+        return accessor->second.center_;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        CGAL_assume(it != surface_facet_info_.end());
+        return it->second.center_;
+      }
     }
   }
 
@@ -690,21 +743,28 @@ public:
   {
     CGAL_precondition(is_in_complex(f));
 
-# ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      typename Surface_facet_info::const_accessor accessor;
-      CGAL_assume_code(bool found =)
-      surface_facet_info_.find(accessor, f);
-      CGAL_assume(found);
-      return accessor->second.center_index_;
+      return f.first->get_facet_surface_center_index(f.second);
     }
     else
-#endif
     {
-      auto it = surface_facet_info_.find(f);
-      CGAL_assume(it != surface_facet_info_.end());
-      return it->second.center_index_;
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        CGAL_assume_code(bool found =)
+        surface_facet_info_.find(accessor, f);
+        CGAL_assume(found);
+        return accessor->second.center_index_;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        CGAL_assume(it != surface_facet_info_.end());
+        return it->second.center_index_;
+      }
     }
   }
 
@@ -718,21 +778,30 @@ public:
 
   decltype(auto) surface_info(const Facet& f) const
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    if constexpr (store_surface_patch_info_in_cell)
     {
-      typename Surface_facet_info::const_accessor accessor;
-      CGAL_assume_code(bool found =)
-      surface_facet_info_.find(accessor, f);
-      CGAL_assume(found);
-      return accessor->second;
+      return Facet_prop{ f.first->surface_patch_index(f.second),
+                         f.first->get_facet_surface_center_index(f.second),
+                         f.first->get_facet_surface_center(f.second) };
     }
     else
-#endif
     {
-      auto it = surface_facet_info_.find(f);
-      CGAL_assume(it != surface_facet_info_.end());
-      return it->second;
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        CGAL_assume_code(bool found =)
+        surface_facet_info_.find(accessor, f);
+        CGAL_assume(found);
+        return accessor->second;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        CGAL_assume(it != surface_facet_info_.end());
+        return it->second;
+      }
     }
   }
 
@@ -799,7 +868,6 @@ public:
   {
     far_vertices_.push_back(vh);
   }
-
 
   void remove_isolated_vertex(Vertex_handle v)
   {
