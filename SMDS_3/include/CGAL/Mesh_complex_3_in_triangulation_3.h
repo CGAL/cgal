@@ -1058,21 +1058,7 @@ public:
   */
   bool is_in_complex(const Facet& f) const
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
-    {
-      typename Surface_facet_info::const_accessor accessor;
-      if (surface_facet_info_.find(accessor, f))
-        return !(accessor->second.surface_index_ == Surface_patch_index());
-    }
-    else
-#endif
-    {
-      auto it = surface_facet_info_.find(f);
-      if (it != surface_facet_info_.end())
-        return !(it->second.surface_index_ == Surface_patch_index());
-    }
-    return false;
+    return !(surface_patch_index(f) == Surface_patch_index());
   }
 
   /** returns true if facet (\p cell, \p i) belongs to the 2D complex
