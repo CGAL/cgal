@@ -509,7 +509,7 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(PolygonRange  &polygons,
 *
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
-* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
+* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
 * @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -521,7 +521,7 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(PolygonRange  &polygons,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
@@ -537,8 +537,8 @@ OutputPolylineIterator vertical_slab_snap_rounding_2(const SegmentRange &segment
 *
 * The output is a range of segments.
 *
-* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
-* @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
+* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
+* @tparam OutputSegmentIterator model of OutputIterator holding `geom_traits::Segment_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -549,7 +549,7 @@ OutputPolylineIterator vertical_slab_snap_rounding_2(const SegmentRange &segment
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
@@ -566,7 +566,7 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
 * If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
-* @tparam PolygonRange a range of `CGAL::Polygon_2`, model of Range. Its iterator type is InputIterator.
+* @tparam PolygonRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is model of `CGAL::Polygon_2`.
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -578,7 +578,7 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the point type of the polygons, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 * @warning a convex input polygon might no longer be convex after rounding.

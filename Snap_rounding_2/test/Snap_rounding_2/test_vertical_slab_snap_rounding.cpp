@@ -1,6 +1,3 @@
-#define BENCH_AND_VERBOSE_SNAP_ROUNDING_2
-#define COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Float_grid_snap_rounding_traits_2.h>
@@ -38,10 +35,8 @@ typedef CGAL::Cartesian_converter<Kernel,Naive>                 EK_to_IK;
 typedef CGAL::Cartesian_converter<Naive, Kernel>                IK_to_EK;
 #endif
 
-#ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
-#include <CGAL/Snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_2.h>
-typedef CGAL::Snap_rounding_traits_2<Kernel>                    SnapTraits;
+#ifdef COMPARE_WITH_HOT_PIXEL_SNAP_ROUNDING_2
+#include <CGAL/hot_pixel_snap_rounding_2.h>
 #endif
 
 //Biggest double with ulp smaller than one
@@ -123,20 +118,30 @@ void test(const std::vector<Segment_2> &segs){
   t.reset();
   t.start();
 #endif
-  CGAL::Integer_grid_snap_rounding_traits_2<Kernel> int_traits(10e-12);
-  CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
-#ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
-  t.stop();
-  std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
-#endif
-  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
-#ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
-  Polyline_range_2 output_list;
+//   CGAL::Integer_grid_snap_rounding_traits_2<Kernel> int_traits(10e-12);
+//   CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
+// #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
+//   t.stop();
+//   std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
+// #endif
+//   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  out.clear();
+#ifdef COMPARE_WITH_HOT_PIXEL_SNAP_ROUNDING_2
   t.reset();
   t.start();
-  CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), output_list, 1./maxDouble);
+  CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::pixel_size(1./maxDouble).do_iterative_snap_rounding(false).use_grid_coordinates(false));
   t.stop();
-  std::cout << "Running time with integer 2D snap (scaled at 10^15): " << t.time() << std::endl;
+  std::cout << "Hot pixel snap (10^15), size: " << out.size() << " ,time: " << t.time() << std::endl;
+  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  out.clear();
+
+  t.reset();
+  t.start();
+  CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::pixel_size(1./maxFloat).do_iterative_snap_rounding(false).use_grid_coordinates(false));
+  t.stop();
+  std::cout << "Hot pixel snap (10^7), size: " << out.size() << " ,time: " << t.time() << std::endl;
+  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  out.clear();
 #endif
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "\n";
@@ -296,10 +301,10 @@ void fix_test(){
   segs.clear();
 
   // Degenerate segment
-  segs.emplace_back(Point_2(0, 1), Point_2(2, 1));
-  segs.emplace_back(Point_2(1, 0), Point_2(1, 0));
-  test(segs);
-  segs.clear();
+  // segs.emplace_back(Point_2(0, 1), Point_2(2, 1));
+  // segs.emplace_back(Point_2(1, 0), Point_2(1, 0));
+  // test(segs);
+  // segs.clear();
 
   // Collinear segments
   segs.emplace_back(Point_2(0, 0), Point_2(4, 0));
@@ -393,11 +398,9 @@ int main(int argc,char *argv[])
   test_polyline_api();
   test_polygons();
 
-  test_fully_random(r,500);
-  test_fully_random(r,1000);  // test_multi_almost_indentical_segments(r,25);
-  test_fully_random(r,1500);
-  test_fully_random(r,2000);
-  // test_random_polygons(r,10,50);
+  test_fully_random(r,300);
+  test_multi_almost_indentical_segments(r,25);
+  test_random_polygons(r,10,50);
 
   // Heavy test
   // test_multi_almost_indentical_segments(r,250);

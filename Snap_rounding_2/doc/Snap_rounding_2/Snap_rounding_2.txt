@@ -130,14 +130,14 @@ The result of our test is summarized in the next table:
 
 | Test Case | Computing intersection<br> (Unsafe rounding) | Vertical slab SR <br> (double) | Vertical Slab SR <br> (float)  | Hot pixel SR <br>(pixel size \f$10^{-15}\f$ ) | Hot pixel SR <br>(pixel size \f$10^{-7}\f$) |
 |-----------|-------|-------|-------|-------|-------|
-| 500 Random Segments | 0.103s | 0.233s | 0.208s | 6.91s | 4.25s |
-| 1000 Random Segments | 0.379s | 1.36s | 1.23s | 1m 0s | 53.3s |
-| 2000 Random Segments | 1.45s | 4.95s | 5.22s | – | – |
-| 4000 Random Segments| 6.15s | 29.2s | 31.5s | – | – |
-| 100 Almost identical Segments | 0.016s | 0.025s | 1.37s | 0.452s | 2.00s |
-| 150 Almost identical Segments | 0.032s | 0.064 | 5.11s | 1.48s | 7.41s |
-| 200 Almost identical Segments | 0.057s | 0.125s | – | 3.48s | – |
-| 400 Almost identical Segments | 0.216s | 0.641s | – | 38.5s | – |
+| 500 Random Segments | 0.066s | 0.213s | 0.172s | 6.14s | 3.81s |
+| 1000 Random Segments | 0.241s | 0.928s | 0.769s | 52.1s | 53.5s |
+| 1500 Random Segments | 0.566s | 2.88s | 2.93s | 201s | 197s |
+| 2000 Random Segments | 1.15s | 5.37s | 5.468s | 452s | 446s |
+| 200 Almost identical Segments | 0.073s | 0.114s | 11.9s | 2.13s | 3.41s |
+| 300 Almost identical Segments | 0.133s | 0.284s | 44.1s | 8.58s | 14.2s |
+| 400 Almost identical Segments | 0.262s | 0.620s | 102s | 32.2s | 42.0s |
+| 500 Almost identical Segments | 0.404s | 1.31s | 206s | 69.2s | 87s |
 
 \subsection FSR_comp Snap Rounding Complexity
 Both methods run in \f$O(n \log n + k)\f$, where \f$n\f$ is the number of input segments

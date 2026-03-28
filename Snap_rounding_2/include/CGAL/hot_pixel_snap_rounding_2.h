@@ -789,6 +789,75 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 
 }
 
+template <class PolygonRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
+OutputIterator hot_pixel_snap_rounding_2_polygon(PolygonRange  &polygons,
+                                                 OutputIterator out,
+                                                 const NamedParameters &np = parameters::default_values())
+{
+  using Polygon_2 = typename std::iterator_traits<typename PolygonRange::iterator>::value_type;
+  using Kernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
+  using DefaultTraits = Hot_pixel_snap_rounding_traits_2<Kernel>;
+  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+  using Point_2 = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  std::vector< Segment_2 > input_segments;
+  std::vector< std::vector< Point_2 > > polylines;
+
+  // Store the indices of segment of a new polygon, segments between [ polygon_index[i] and polygon_index[i+1] [ belong to polygon i
+  std::vector< std::size_t > polygon_indices;
+
+  polygon_indices.reserve(std::distance(polygons.begin(), polygons.end()));
+  for(const Polygon_2 &P: polygons){
+    polygon_indices.push_back(input_segments.size());
+    for(std::size_t i=0; i<P.size()-1; ++i)
+      input_segments.emplace_back(P[i], P[i+1]);
+    input_segments.emplace_back(P[P.size()-1], P[0]);
+  }
+  polygon_indices.push_back(input_segments.size());
+
+  // Main algorithm
+  hot_pixel_snap_rounding(input_segments, polylines, np);
+
+  // Reassemble the polygons
+  for(std::size_t polygon_idx = 0; polygon_idx != polygon_indices.size()-1; ++polygon_idx){
+    Polygon_2 P;
+    std::size_t idx_start = polygon_indices[polygon_idx];
+    std::size_t idx_end = polygon_indices[polygon_idx+1];
+    Point_2 last_insert;
+    for(std::size_t pl_idx = idx_start; pl_idx != idx_end; ++pl_idx){
+      const auto &pl = polylines[pl_idx];
+      // The first element is not add, it is identical to the last
+
+      bool go_forward;
+      if(pl_idx == idx_start)
+        go_forward = (pl.back() == polylines[pl_idx+1].front()) || (pl.back() == polylines[pl_idx+1].back());
+      else
+        go_forward = (last_insert == pl.front());
+
+      // Add the element in forward direction
+      if(go_forward){
+        for(std::size_t i = 1; i != pl.size(); ++i)
+          P.push_back(pl[i]);
+        last_insert = pl.back();
+
+      // Add the element in backward direction
+      } else {
+        for(std::size_t i = pl.size()-1; i != 0; --i)
+          P.push_back(pl[i-1]);
+        last_insert = pl.front();
+      }
+    }
+    *out++=P;
+  }
+  return out;
+}
+
 } // namespace internal
 
 #if DOXYGEN_RUNNING
@@ -800,8 +869,8 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 *
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
-* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
-* @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
+* @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(geom_traits::Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -828,7 +897,7 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
@@ -844,8 +913,8 @@ OutputPolylineIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
 *
 * The output is a range of segments.
 *
-* @tparam SegmentRange a range of `Kernel::Segment_2`, model of Range. Its iterator type is InputIterator.
-* @tparam OutputSegmentIterator model of OutputIterator holding `Kernel::Segment_2`
+* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
+* @tparam OutputSegmentIterator model of OutputIterator holding `geom_traits::Segment_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -872,7 +941,7 @@ OutputPolylineIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
@@ -889,7 +958,7 @@ OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
 * If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
-* @tparam PolygonRange a range of `CGAL::Polygon_2`, model of Range. Its iterator type is InputIterator.
+* @tparam PolygonRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is model of `CGAL::Polygon_2`.
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -917,7 +986,7 @@ OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2`}
+*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the point type of the polygons, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 * @warning a convex input polygon might no longer be convex after rounding.
