@@ -47,9 +47,10 @@ public:
 
 private:
     typedef internal::chained_map<Data, Allocator>   Map;
-    typedef typename Map::Item                       Item;
-
+public:
+    static constexpr std::size_t min_size = Map::min_size;
 private:
+    typedef typename Map::Item                       Item;
     Hash_function  m_hash_function;
     Map            m_map;
 

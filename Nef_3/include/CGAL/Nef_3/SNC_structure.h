@@ -384,13 +384,15 @@ public:
   expensive operation.}*/
 
   SNC_structure() :
-    boundary_item_(std::nullopt), sm_boundary_item_(std::nullopt),
+    boundary_item_(std::nullopt, Boundary_item_map::min_size),
+    sm_boundary_item_(std::nullopt, Boundary_item_map::min_size),
     vertices_(), halfedges_(), halffacets_(), volumes_(),
     shalfedges_(), shalfloops_(), sfaces_() {}
   ~SNC_structure() { CGAL_NEF_TRACEN("~SNC_structure: clearing "<<this); clear(); }
 
   SNC_structure(const Self& D) :
-    boundary_item_(std::nullopt), sm_boundary_item_(std::nullopt),
+    boundary_item_(std::nullopt, Boundary_item_map::min_size),
+    sm_boundary_item_(std::nullopt, Boundary_item_map::min_size),
     vertices_(D.vertices_), halfedges_(D.halfedges_),
     halffacets_(D.halffacets_), volumes_(D.volumes_),
     shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_),
@@ -1036,9 +1038,10 @@ protected:
   void pointer_update(const Self& D);
 
   typedef std::optional<Object_iterator> Optional_object_iterator ;
+  typedef Generic_handle_map<Optional_object_iterator> Boundary_item_map;
  private:
-  Generic_handle_map<Optional_object_iterator> boundary_item_;
-  Generic_handle_map<Optional_object_iterator> sm_boundary_item_;
+  Boundary_item_map boundary_item_;
+  Boundary_item_map sm_boundary_item_;
  protected:
   Vertex_list    vertices_;
   Halfedge_list  halfedges_;

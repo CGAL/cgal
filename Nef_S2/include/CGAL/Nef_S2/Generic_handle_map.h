@@ -33,7 +33,7 @@ class Generic_handle_map : public
 { typedef Unique_hash_map<void*,I,Void_handle_hash_function> Base;
 public:
   Generic_handle_map() : Base() {}
-  Generic_handle_map(I i) : Base(i) {}
+  Generic_handle_map(I i, std::size_t n = Base::min_size) : Base(i, n) {}
 
   template <class H>
   const I& operator[](H h) const
