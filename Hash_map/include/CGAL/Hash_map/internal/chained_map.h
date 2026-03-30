@@ -78,7 +78,7 @@ private:
    }
 
 public:
-   static constexpr std::size_t min_size = 32;
+   static constexpr std::size_t min_size = 8;
    static constexpr std::size_t default_size = 512;
    typedef chained_map_elem<T>*  Item;
 
