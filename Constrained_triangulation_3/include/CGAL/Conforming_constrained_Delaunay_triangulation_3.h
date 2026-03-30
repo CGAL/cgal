@@ -1291,6 +1291,9 @@ protected:
           facet_id < end; ++facet_id)
       {
         const auto& [cell, facet_index, _] = facets[facet_id];
+        if(triangulation().is_infinite(Facet(cell, facet_index))) {
+          continue;
+        }
         for(int i = 0; i < 3; ++i) {
           points.push_back(cell->vertex(Triangulation::vertex_triple_index(facet_index, i))->point());
         } // end for each vertex of the facet
