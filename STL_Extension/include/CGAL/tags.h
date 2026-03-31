@@ -43,8 +43,17 @@ struct Null_functor {
 };
 
 // For concurrency
-struct Sequential_tag { static constexpr bool is_parallel = false; };
-struct Parallel_tag : public Sequential_tag { static constexpr bool is_parallel = true; };
+struct Sequential_tag { 
+  static constexpr bool is_parallel = false;
+  static constexpr bool is_sequential = true;
+  static constexpr bool value = false;
+};
+
+struct Parallel_tag : public Sequential_tag { 
+  static constexpr bool is_parallel = true;
+  static constexpr bool is_sequential = false;
+  static constexpr bool value = true;
+};
 
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Parallel_tag Parallel_if_available_tag;
