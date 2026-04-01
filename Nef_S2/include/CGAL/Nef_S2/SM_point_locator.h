@@ -254,7 +254,8 @@ public:
     // s now initialized
 
     Sphere_direction dso(s.sphere_circle().opposite());
-    Unique_hash_map<SHalfedge_handle,bool> visited(false);
+    typedef Unique_hash_map<SHalfedge_handle,bool> Visited_map;
+    Visited_map visited(false, this->number_of_shalfedges());
     CGAL_forall_svertices(v,*this) {
       Sphere_point vp = v->point();
       if ( (v == v_res) || s.has_on(vp) ) {
@@ -378,7 +379,8 @@ public:
       }
     } // all vertices
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> visited(false);
+    typedef Unique_hash_map<SHalfedge_handle,bool> Visited_map;
+    Visited_map visited(false, this->number_of_shalfedges());
     SHalfedge_iterator e_res;
     CGAL_forall_sedges(e,*this) {
       Sphere_segment se = segment(e);

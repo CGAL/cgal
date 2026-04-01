@@ -142,7 +142,8 @@ public:
       }
     }
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+    typedef CGAL::Unique_hash_map<SHalfedge_handle,bool> Linked_map;
+    Linked_map linked(false, this->number_of_shalfedges());
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if ( linked[e] ) continue;
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);

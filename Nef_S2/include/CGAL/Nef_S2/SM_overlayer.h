@@ -2050,7 +2050,8 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
 {
   CGAL_NEF_TRACEN("create_face_objects()");
   if(e_start != e_end) {
-    CGAL::Unique_hash_map<SHalfedge_handle,int> SFaceCycle(-1);
+    typedef CGAL::Unique_hash_map<SHalfedge_handle,int> SFaceCycle_map;
+    SFaceCycle_map SFaceCycle(-1, this->number_of_shalfedges());
     std::vector<SHalfedge_handle>  MinimalSHalfedge;
     SHalfedge_around_sface_circulator hfc(last_out_edge(v_start)),hend(hfc);
     CGAL_NEF_TRACEN("equator cycle "<<PH(hfc));
@@ -2313,8 +2314,10 @@ void SM_overlayer<Map>::simplify()
   CGAL_NEF_TRACEN("simplifying");
 
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+  typedef CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem_map;
+  Pitem_map Pitem(nullptr, this->number_of_sfaces());
+  typedef CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem_map;
+  Vitem_map Vitem(nullptr, this->number_of_svertices());
   CGAL::Union_find< SFace_handle> UF;
 
   SFace_iterator f;
@@ -2362,7 +2365,8 @@ void SM_overlayer<Map>::simplify()
     }
   }
 
-  CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+  typedef CGAL::Unique_hash_map<SHalfedge_handle,bool> Linked_map;
+  Linked_map linked(false, this->number_of_shalfedges());
   for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
     if ( linked[e] ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
