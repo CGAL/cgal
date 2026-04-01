@@ -381,9 +381,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && vi->is_valid(verb, level);
 
       SM_decorator SD(&*vi);
-      Unique_hash_map<SVertex_handle, bool> SVvisited(false);
-      Unique_hash_map<SHalfedge_handle, bool> SEvisited(false);
-      Unique_hash_map<SFace_handle, bool> SFvisited(false);
+      Unique_hash_map<SVertex_handle, bool> SVvisited(false, SD.number_of_svertices());
+      Unique_hash_map<SHalfedge_handle, bool> SEvisited(false, SD.number_of_shalfedges());
+      Unique_hash_map<SFace_handle, bool> SFvisited(false, SD.number_of_sfaces());
 
       valid = valid && SD.is_valid(SVvisited,SEvisited,SFvisited, verb, level);
 
@@ -444,7 +444,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
          << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
-    Unique_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false);
+    Unique_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false, this->number_of_shalfedges());
     Halffacet_iterator hfi;
     CGAL_forall_halffacets(hfi,*this) {
       valid = valid && hfi->is_valid(verb, level);

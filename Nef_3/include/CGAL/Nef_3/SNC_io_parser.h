@@ -1279,7 +1279,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     SFI[*sfl] = i++;
 
   Volume_iterator ci;
-  CGAL::Unique_hash_map<SFace_handle,bool> Done(false);
+  CGAL::Unique_hash_map<SFace_handle,bool> Done(false, this->sncp()->number_of_sfaces());
   find_minimal_sface_of_shell<SNC_structure> findMinSF(*this->sncp(),Done);
   CGAL_forall_volumes(ci, *this->sncp()) {
     if(sorted) {

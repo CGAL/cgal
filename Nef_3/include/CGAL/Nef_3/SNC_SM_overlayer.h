@@ -91,8 +91,8 @@ public:
     CGAL_NEF_TRACEN("simplifying");
 
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr, this->number_of_sfaces());
+    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr, this->number_of_svertices());
     CGAL::Union_find< SFace_handle> UF;
 
     SFace_iterator f;
