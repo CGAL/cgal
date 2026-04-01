@@ -26,6 +26,8 @@
 #include <CGAL/Mesh_3/Sliver_value_cache.h>
 
 #include <CGAL/FPU.h> // for CGAL::IA_force_to_double
+#include <CGAL/Default.h>
+#include <CGAL/Has_member.h>
 
 #include <vector>
 
@@ -34,17 +36,25 @@ namespace Mesh_3 {
 
 enum class Sliver_caching_policy
 {
-  ALWAYS = 0,
+  DEFAULT = 0,
+  ALWAYS,
   NEVER,
   BELOW_BOUND // Only cache values below the sliver bound
 };
 
 template<typename Tr,
          typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
-         Sliver_caching_policy caching_policy = Sliver_caching_policy::BELOW_BOUND,
+         Sliver_caching_policy caching_policy_ = Sliver_caching_policy::DEFAULT,
          typename Cell_vector_ = std::vector<typename Tr::Cell_handle> >
 class Sliver_criterion
 {
+  CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
+  Sliver_caching_policy caching_policy =
+    (caching_policy_ == Sliver_caching_policy::DEFAULT)
+      ? (has_set_sliver_value<typename Tr::Cell>::value ? Sliver_caching_policy::ALWAYS
+                                                        : Sliver_caching_policy::BELOW_BOUND)
+      : caching_policy_;
+
 public:
   typedef typename Tr::Geom_traits GT;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -89,7 +99,6 @@ public:
       return operator()(tr_.tetrahedron(cell));
     } else {
       if (cache_.has_value(cell)) {
-        std::cout << "cache hit for C#" << cell->time_stamp() << " (operator())" << std::endl;
         return cache_.get(cell);
       } else {
         // cell->sliver_value() is stored in a plain 64 bits floating point
@@ -101,12 +110,9 @@ public:
         // (see also the comment below)
         // IA_force_to_double is available in CGAL/FPU.h
         const double value = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
-        std::cout << "computed sliver value for C#" << cell->time_stamp() << " = " << value << std::endl;
-
         if (caching_policy == Sliver_caching_policy::BELOW_BOUND && value > this->sliver_bound_) {
           return value;
         } else {
-          std::cout << "cache sliver value for C#" << cell->time_stamp() << " = " << value << std::endl;
           cache_.set(cell, value);
           return value;
         }

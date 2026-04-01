@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     :
+// Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_MESH_3_SLIVER_VALUE_CACHE_H
 #define CGAL_MESH_3_SLIVER_VALUE_CACHE_H
@@ -16,21 +16,18 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Has_member.h>
+#include <CGAL/unordered_flat_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_hash_map.h>
 #endif
 
 #include <functional>
-#include <unordered_map>
 
 namespace CGAL {
 namespace Mesh_3 {
 
-// Cell must provide sliver_value(), set_sliver_value(), invalidate_sliver_value(), and sliver_cache_valid()
-// FT is the floating point type, Cell_handle is the cell handle type
-
-#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
 template <typename Cell_handle, typename FT>
 struct Sliver_value_cache_in_cell
 {
@@ -40,19 +37,25 @@ struct Sliver_value_cache_in_cell
   void invalidate(const Cell_handle& c) const { c->reset_cache_validity(); }
   void clear() const {}
 };
-#endif
 
 // Non-concurrent map-based cache
 template <typename Cell_handle, typename FT>
 struct Sliver_value_cache_map
 {
   typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
-  mutable std::unordered_map<Cell_handle, FT, Hash_fct> cache;
-  bool has_value(const Cell_handle& c) const { return cache.find(c) != cache.end(); }
-  FT get(const Cell_handle& c) const { return cache.at(c); }
-  void set(const Cell_handle& c, FT v) const { cache[c] = v; }
-  void invalidate(const Cell_handle& c) const { cache.erase(c); }
-  void clear() const { cache.clear(); }
+
+  std::shared_ptr<CGAL::unordered_flat_map<Cell_handle, FT, Hash_fct> > cache =
+      std::make_shared<CGAL::unordered_flat_map<Cell_handle, FT, Hash_fct>>();
+
+  bool has_value(const Cell_handle& c) const { return cache->find(c) != cache->end(); }
+  FT get(const Cell_handle& c) const { return cache->at(c); }
+  void set(const Cell_handle& c, FT v) const { (*cache)[c] = v; }
+
+  void invalidate(const Cell_handle& c) const {
+    cache->erase(c);
+  }
+
+  void clear() const { cache->clear(); }
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -60,31 +63,38 @@ struct Sliver_value_cache_map
 template <typename Cell_handle, typename FT>
 struct Sliver_value_cache_concurrent_map
 {
-  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
-  typedef tbb::concurrent_hash_map<Cell_handle, FT, Hash_fct> ConcurrentMap;
-  mutable ConcurrentMap cache;
+  typedef tbb::concurrent_hash_map<Cell_handle, FT> ConcurrentMap;
+
+  // Shared ownership: all copies reference the same concurrent map
+  std::shared_ptr<ConcurrentMap> cache = std::make_shared<ConcurrentMap>();
+
   bool has_value(const Cell_handle& c) const {
     typename ConcurrentMap::const_accessor acc;
-    return cache.find(acc, c);
+    return cache->find(acc, c);
   }
+
   FT get(const Cell_handle& c) const {
     typename ConcurrentMap::const_accessor acc;
-    if (cache.find(acc, c)) return acc->second;
+    if (cache->find(acc, c)) return acc->second;
     throw std::out_of_range("Cell_handle not found in concurrent cache");
   }
+
   void set(const Cell_handle& c, FT v) const {
     typename ConcurrentMap::accessor acc;
-    cache.insert(acc, c);
+    cache->insert(acc, c);
     acc->second = v;
   }
+
   void invalidate(const Cell_handle& c) const {
-    cache.erase(c);
+    cache->erase(c);
   }
-  void clear() const { cache.clear(); }
+
+  void clear() const {
+    cache->clear();
+  }
 };
 #endif
 
-#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
 // Sanity checker cache: combines in-cell and map, checks consistency
 template <typename Cell_handle, typename FT>
 struct Sliver_value_cache_sanity_checker
@@ -96,7 +106,8 @@ struct Sliver_value_cache_sanity_checker
     bool a = in_cell.has_value(c);
     bool b = map.has_value(c);
     if (a != b) {
-      std::cerr << "[Sliver_value_cache_sanity_checker] has_value mismatch: in_cell=" << a << ", map=" << b << std::endl;
+      std::cerr << "[Sliver_value_cache_sanity_checker] has_value mismatch for C#" << c->time_stamp() << " in_cell=" << a << ", map=" << b << std::endl;
+      std::cerr << "map @ " << &(map.cache) << std::endl;
       std::abort();
     }
     return a;
@@ -105,16 +116,15 @@ struct Sliver_value_cache_sanity_checker
   FT get(const Cell_handle& c) const {
     FT a = in_cell.get(c);
     FT b = map.get(c);
-    std::cout << "get sliver value of C#" << c->time_stamp() << " = " << a << std::endl;
     if (a != b) {
       std::cerr << "[Sliver_value_cache_sanity_checker] get mismatch: in_cell=" << a << ", map=" << b << std::endl;
+      std::cerr << "map @ " << &(map.cache) << std::endl;
       std::abort();
     }
     return a;
   }
 
   void set(const Cell_handle& c, FT v) const {
-    std::cout << "set sliver value of C#" << c->time_stamp() << " to " << v << std::endl;
     in_cell.set(c, v);
     map.set(c, v);
   }
@@ -129,23 +139,29 @@ struct Sliver_value_cache_sanity_checker
     map.clear();
   }
 };
-#endif
 
 // Metafunction to select the default sliver cache type for a triangulation
 template <typename Tr>
 struct Default_sliver_cache
 {
-#ifdef CGAL_MESH_3_NO_SLIVER_VALUE
-#  ifdef CGAL_LINKED_WITH_TBB
+  CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
+
+  using Cell_handle = typename Tr::Cell_handle;
+  using FT = typename Tr::Geom_traits::FT;
+
   using type = std::conditional_t<
-    std::is_same<typename Tr::Concurrency_tag, CGAL::Parallel_tag>::value,
-    Sliver_value_cache_concurrent_map<typename Tr::Cell_handle, typename Tr::Geom_traits::FT>,
-    Sliver_value_cache_map<typename Tr::Cell_handle, typename Tr::Geom_traits::FT>>;
-#  else
-  using type = Sliver_value_cache_map<typename Tr::Cell_handle, typename Tr::Geom_traits::FT>;
-#  endif
+                 has_set_sliver_value<typename Tr::Cell>::value,
+                 // if there is storage, use it
+                 // Sliver_value_cache_sanity_checker<Cell_handle, FT>,
+                 Sliver_value_cache_in_cell<Cell_handle, FT>,
+                 // otherwise, use a hash map, concurrent or not
+#ifdef CGAL_LINKED_WITH_TBB
+                   std::conditional_t<
+                     std::is_same<typename Tr::Concurrency_tag, CGAL::Parallel_tag>::value,
+                     Sliver_value_cache_concurrent_map<Cell_handle, FT>,
+                     Sliver_value_cache_map<Cell_handle, FT> > >;
 #else
-  using type = Sliver_value_cache_sanity_checker<typename Tr::Cell_handle, typename Tr::Geom_traits::FT>;
+                  Sliver_value_cache_map<Cell_handle, FT> >;
 #endif
 };
 
