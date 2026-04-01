@@ -90,7 +90,7 @@ public:
     for (auto f : c3t3.facets_in_complex())
     {
       const Bare_point p1 = cp(tr.point(f.first, (f.second + 1) & 3));
-      const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
+      const Bare_point& ball_center = c3t3.surface_center(f);
 
       const FT sqr = Th().min_squared_distance(tr, p1, ball_center);
       max_sq_facet_radius = (std::max)(max_sq_facet_radius, sqr);

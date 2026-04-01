@@ -62,9 +62,9 @@ int main (int argc, char** argv){
       c3t3.add_to_complex(cit, c3t3.subdomain_index(cit));
       for(int i=0; i < 4; ++i)
       {
-        if(cit->surface_patch_index(i)>0)
+        if(c3t3.surface_patch_index(cit, i) > 0)
         {
-          c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+          c3t3.add_to_complex(cit, i, c3t3.surface_patch_index(cit, i));
         }
       }
     }

@@ -170,9 +170,9 @@ bool build_finite_cells(C3T3& c3t3,
                                cp(tr.point(vs[2])), cp(tr.point(vs[3]))) == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
-    c->set_subdomain_index(subdomains[i]); // the cell's info keeps the reference of the tetrahedron
+    c3t3.set_subdomain_index(c, subdomains[i]); // the cell's info keeps the reference of the tetrahedron
     if(replace_domain_0 && subdomains[i] == 0)
-      c->set_subdomain_index(max_domain+1); // the cell's info keeps the reference of the tetrahedron
+      c3t3.set_subdomain_index(c, max_domain+1); // the cell's info keeps the reference of the tetrahedron
 
     // assign cells to vertices
     for(int j=0; j<4; ++j)
@@ -206,7 +206,7 @@ bool build_finite_cells(C3T3& c3t3,
         typename FacetPatchMap::const_iterator it = border_facets.find(facet);
         if(it != border_facets.end())
         {
-          c->set_surface_patch_index(j, it->second);
+          c3t3.set_surface_patch_index(c, j, it->second);
         }
         else
         {
@@ -214,9 +214,9 @@ bool build_finite_cells(C3T3& c3t3,
 
           it = border_facets.find(facet);
           if(it != border_facets.end())
-            c->set_surface_patch_index(j, it->second);
+            c3t3.set_surface_patch_index(c, j, it->second);
           else
-            c->set_surface_patch_index(j, Surface_patch_index());
+            c3t3.set_surface_patch_index(c, j, Surface_patch_index());
         }
       }
     }
@@ -300,7 +300,7 @@ bool build_infinite_cells(C3T3& c3t3,
     it->second.emplace_back(opp_c, 0);
     CGAL_assertion(it->second.size() == 2);
 
-    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
+    c3t3.set_surface_patch_index(opp_c, 0, c3t3.surface_patch_index(c, i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG

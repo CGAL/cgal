@@ -537,7 +537,7 @@ public:
   {
     if constexpr (store_surface_patch_info_in_cell)
     {
-      f.first->set_surface_center(f.second, p);
+      f.first->set_facet_surface_center(f.second, p);
     }
     else
     {
@@ -570,7 +570,7 @@ public:
   {
     if constexpr (store_surface_patch_info_in_cell)
     {
-      f.first->set_surface_center_index(f.second, index);
+      f.first->set_facet_surface_center_index(f.second, index);
     }
     else
     {

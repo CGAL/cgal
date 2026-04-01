@@ -61,7 +61,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad (const C3T3& /*c3t3*/, const Facet& f) const
+  virtual Is_bad do_is_bad (const C3T3& c3t3, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -71,7 +71,7 @@ protected:
 
     typedef typename MeshDomain::Surface_patch_index Patch_index;
 
-    const Patch_index patch_index = ch->surface_patch_index(i);
+    const Patch_index patch_index = c3t3.surface_patch_index(ch, i);
 
     typedef std::vector<Patch_index> Index_set;
 

@@ -388,7 +388,7 @@ void output_to_vtu(std::ostream& os,
   std::vector<Subdomain_index> mids;
   for( Cell_handle c : c3t3.cells_in_complex())
   {
-    mids.push_back(c->subdomain_index());
+    mids.push_back(c3t3.subdomain_index(c));
   }
 
   std::vector<std::pair<const char*, internal::Vtu_attributes > > atts;

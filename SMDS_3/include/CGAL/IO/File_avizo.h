@@ -234,7 +234,7 @@ output_to_avizo(std::ostream& os,
          end = c3t3.cells_in_complex_end();
        cit != end; ++cit)
   {
-    os << cit->subdomain_index() << "\n";
+    os << c3t3.subdomain_index(cit) << "\n";
   }
 
 } // end output_to_avizo(...)
@@ -503,7 +503,7 @@ namespace internal {
     }
 
     boost::unordered_map<std::array<int, 3>,
-      typename Tr::Cell::Surface_patch_index> empty_facets_map;
+      typename C3T3::Surface_patch_index> empty_facets_map;
 
     CGAL::SMDS_3::build_mesh_complex_with_subdomains_range(c3t3,
       points,
