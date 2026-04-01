@@ -499,7 +499,6 @@ public:
     }
     else
     {
-      CGAL_assertion(false);
       if (index == Surface_patch_index())
       {
         // remove from the map as to avoid wasting memory
@@ -601,7 +600,6 @@ public:
   void set_surface_info(const Facet& f,
                         const Facet_prop& info) const
   {
-    CGAL_assertion(false);
     if constexpr (store_surface_patch_info_in_cell)
     {
       f.first->set_surface_patch_index(f.second, info.surface_index_);
