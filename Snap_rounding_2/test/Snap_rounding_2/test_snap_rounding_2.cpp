@@ -1,10 +1,15 @@
+#define CGAL_NO_DEPRECATED_WARNING
+
 #include <CGAL/Hot_pixel_snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_traits_2.h>
 #include <CGAL/Double_grid_snap_rounding_traits_2.h>
 #include <CGAL/Float_grid_snap_rounding_traits_2.h>
 #include <CGAL/Integer_grid_snap_rounding_traits_2.h>
 #include <CGAL/Snap_rounding_2.h>
 #include <cstdlib>
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/Snap_rounding_traits_2.h>
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
@@ -54,6 +59,7 @@ void test_api(){
   out_poly.clear();
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 void test_deprecated(){
   using Deprecated_traits = CGAL::Snap_rounding_traits_2<Kernel>;
   using New_traits = CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>;
@@ -83,18 +89,19 @@ void test_deprecated(){
   assert(out_poly.size() == 7);
   out_poly.clear();
 
-  // Test deprecated API with new traits name
+  // Test deprecated API with deprecated traits
   CGAL::snap_rounding_2<Deprecated_traits> (segs.begin(), segs.end(), out_poly, 1.);
   assert(out_poly.size() == 7);
   out_poly.clear();
-
-  // Test deprecated API with deprecated traits
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 
 int main(int /*argc*/,char** /*argv*/)
 {
   test_api();
+#ifndef CGAL_NO_DEPRECATED_CODE
   test_deprecated();
+#endif // CGAL_NO_DEPRECATED_CODE
 
   return(0);
 }

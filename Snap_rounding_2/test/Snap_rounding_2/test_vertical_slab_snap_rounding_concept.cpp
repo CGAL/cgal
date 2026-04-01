@@ -1,7 +1,3 @@
-// #define DOUBLE_2D_SNAP_VERBOSE
-// #define DOUBLE_2D_SNAP_FULL_VERBOSE
-#define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
-
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>

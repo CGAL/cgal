@@ -1,3 +1,5 @@
+#define CGAL_NO_DEPRECATED_WARNING
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
