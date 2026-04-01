@@ -521,7 +521,8 @@ private:
 
   void intersect_with_edges( Halfedge_handle e0,
                              const Intersection_call_back& call_back, Segment_3& s, Node_list& nodes) const {
-    Unique_hash_map<Halfedge_handle,bool> visited(false);
+    typedef Unique_hash_map<Halfedge_handle,bool> Visited_map;
+    Visited_map visited(false, Visited_map::min_size);
     for(typename Node_list::iterator ni = nodes.begin(); ni!=nodes.end(); ++ni) {
       Node_handle n(*ni);
       for(typename Halfedge_list::const_iterator e = n->edges_begin(); e!=n->edges_end(); ++e) {
@@ -545,7 +546,8 @@ private:
 
   void intersect_with_facets( Halfedge_handle e0,
                               const Intersection_call_back& call_back,Segment_3& s, Node_list& nodes) const {
-    Unique_hash_map<Halffacet_handle,bool> visited(false);
+    typedef Unique_hash_map<Halffacet_handle,bool> Visited_map;
+    Visited_map visited(false, Visited_map::min_size);
     for(typename Node_list::iterator ni = nodes.begin(); ni!=nodes.end(); ++ni) {
       Node_handle n(*ni);
       for(typename Halffacet_list::const_iterator f = n->facets_begin(); f!=n->facets_end(); ++f) {

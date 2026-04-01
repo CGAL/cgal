@@ -693,12 +693,16 @@ public:
     ++number_of_clones;
 #endif
 
-    CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
-    CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
-    CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
-    CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
-
     SM_const_decorator E(&*vin);
+    typedef CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle> VM_map;
+    typedef CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle> EM_map;
+    typedef CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle> LM_map;
+    typedef CGAL::Unique_hash_map<SFace_const_handle, SFace_handle> FM_map;
+    VM_map VM(SVertex_handle(), E.number_of_svertices());
+    EM_map EM(SHalfedge_handle(), E.number_of_shalfedges());
+    LM_map LM(SHalfloop_handle(), E.number_of_shalfloops());
+    FM_map FM(SFace_handle(), E.number_of_sfaces());
+
     Vertex_handle vout = this->sncp()->new_vertex(vin->point(), vin->mark());
     SM_decorator D(&*vout);
 
@@ -934,6 +938,7 @@ public:
   }
 
   bool erase_redundant_vertices() {
+    std::size_t num_vertices = this->sncp()->number_of_vertices();
 
     std::list<Vertex_handle> redundant_points;
     Vertex_iterator v;
@@ -973,7 +978,8 @@ public:
       typedef std::map< Pluecker_line_3, Halfedge_list, Pluecker_line_lt>
         Pluecker_line_map;
 
-      Unique_hash_map<Vertex_handle, bool> erase_vertex(false);
+      typedef Unique_hash_map<Vertex_handle, bool> Erase_vertex_map;
+      Erase_vertex_map erase_vertex(false, num_vertices);
       std::list<Point_3> recreate;
 
       SNC_decorator D(*this);
@@ -1917,12 +1923,16 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
     ++number_of_clones;
 #endif
 
-    CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
-    CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
-    CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
-    CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
-
     SM_const_decorator E(&*vin);
+    typedef CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle> VM_map;
+    typedef CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle> EM_map;
+    typedef CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle> LM_map;
+    typedef CGAL::Unique_hash_map<SFace_const_handle, SFace_handle> FM_map;
+    VM_map VM(SVertex_handle(), E.number_of_svertices());
+    EM_map EM(SHalfedge_handle(), E.number_of_shalfedges());
+    LM_map LM(SHalfloop_handle(), E.number_of_shalfloops());
+    FM_map FM(SFace_handle(), E.number_of_sfaces());
+
     Vertex_handle vout = this->sncp()->new_vertex(vin->point(), vin->mark());
     SM_decorator D(&*vout);
 
