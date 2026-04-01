@@ -112,22 +112,28 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   return success;
 }
 
-template <class Tr, typename CellRange, typename SubdomainsRange, typename FacetPatchMap>
-bool build_finite_cells(Tr& tr,
+template <class C3T3,
+          typename CellRange,
+          typename SubdomainsRange,
+          typename FacetPatchMap>
+bool build_finite_cells(C3T3& c3t3,
                         const CellRange& finite_cells,
                         const SubdomainsRange& subdomains,
-                        const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                        boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
-                                             std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
+                        const std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
+                        boost::unordered_map<std::array<typename C3T3::Triangulation::Vertex_handle, 3>,
+                                             std::vector<std::pair<typename C3T3::Triangulation::Cell_handle, int> > >& incident_cells_map,
                         const FacetPatchMap& border_facets,
                         const bool verbose,
                         const bool replace_domain_0)
 {
+  typedef typename C3T3::Surface_patch_index                    Surface_patch_index;
+  typedef typename C3T3::Triangulation                          Tr;
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
-  typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
 
   bool success = true;
+
+  Tr& tr = c3t3.triangulation();
 
   CGAL_assertion_code(
     typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
@@ -237,18 +243,21 @@ bool add_infinite_facets_to_incident_cells_map(typename Tr::Cell_handle c,
   return b1 && b2 && b3;
 }
 
-template<class Tr>
-bool build_infinite_cells(Tr& tr,
-                          boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
-                                               std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
+template <class C3T3>
+bool build_infinite_cells(C3T3& c3t3,
+                          boost::unordered_map<std::array<typename C3T3::Triangulation::Vertex_handle, 3>,
+                                               std::vector<std::pair<typename C3T3::Triangulation::Cell_handle, int> > >& incident_cells_map,
                           const bool verbose,
                           const bool allow_non_manifold)
 {
+  typedef typename C3T3::Triangulation                             Tr;
   typedef typename Tr::Vertex_handle                               Vertex_handle;
   typedef typename Tr::Cell_handle                                 Cell_handle;
   typedef std::array<Vertex_handle, 3>                             Facet_vvv;
   typedef std::pair<Cell_handle, int>                              Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> > Incident_cells_map;
+
+  Tr& tr = c3t3.triangulation();
 
   bool success = true;
 
@@ -392,23 +401,24 @@ bool assign_neighbors(Tr& tr,
   return success;
 }
 
-template<class Tr,
+template<class C3T3,
          typename PointRange,
          typename CellRange,
          typename FacetPatchMap>
-bool build_triangulation_impl(Tr& tr,
-                              const PointRange& points,
-                              const CellRange& finite_cells,
-                              const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
-                              const FacetPatchMap& border_facets,
-                              std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                              const bool verbose,// = false,
-                              const bool replace_domain_0,// = false,
-                              const bool allow_non_manifold) // = false
+bool build_mesh_complex_impl(C3T3& c3t3,
+                             const PointRange& points,
+                             const CellRange& finite_cells,
+                             const std::vector<typename C3T3::Subdomain_index>& subdomains,
+                             const FacetPatchMap& border_facets,
+                             std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
+                             const bool verbose,// = false,
+                             const bool replace_domain_0,// = false,
+                             const bool allow_non_manifold) // = false
 {
   if (verbose)
-    std::cout << "build_triangulation_impl()..." << std::endl;
+    std::cout << "build_mesh_complex_impl()..." << std::endl;
 
+  typedef typename C3T3::Triangulation          Tr;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef std::array<Vertex_handle, 3>          Facet_vvv;
@@ -419,7 +429,10 @@ bool build_triangulation_impl(Tr& tr,
 
   CGAL_precondition(!points.empty());
 
+  Tr& tr = c3t3.triangulation();
+
   bool success = true;
+
   Incident_cells_map incident_cells_map;
 
   // id to vertex_handle
@@ -443,8 +456,8 @@ bool build_triangulation_impl(Tr& tr,
 
   if (!finite_cells.empty())
   {
-    if (!CGAL::SMDS_3::build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector,
-                                              incident_cells_map, border_facets, verbose, replace_domain_0))
+    if (!CGAL::SMDS_3::build_finite_cells(c3t3, finite_cells, subdomains, vertex_handle_vector,
+                                          incident_cells_map, border_facets, verbose, replace_domain_0))
     {
       if (verbose)
         std::cerr << "Error: build_finite_cells went wrong!" << std::endl;
@@ -455,7 +468,7 @@ bool build_triangulation_impl(Tr& tr,
       std::cout << "build finite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
     }
 
-    if (!CGAL::SMDS_3::build_infinite_cells<Tr>(tr, incident_cells_map, verbose, allow_non_manifold))
+    if (!CGAL::SMDS_3::build_infinite_cells(c3t3, incident_cells_map, verbose, allow_non_manifold))
     {
       if(verbose)
         std::cerr << "Error: build_infinite_cells went wrong!" << std::endl;
@@ -468,7 +481,7 @@ bool build_triangulation_impl(Tr& tr,
 
     tr.tds().set_dimension(3);
 
-    if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
+    if (!CGAL::SMDS_3::assign_neighbors(c3t3.triangulation(), incident_cells_map, allow_non_manifold))
     {
       if(verbose)
         std::cerr << "Error: assign_neighbors went wrong!" << std::endl;
@@ -492,25 +505,46 @@ bool build_triangulation_impl(Tr& tr,
 
 }
 
-template<class Tr,
+template<class C3T3,
          typename PointRange,
          typename CellRange,
          typename FacetPatchMap>
-bool build_triangulation_one_subdomain(Tr& tr,
-                                       const PointRange& points,
-                                       const CellRange& finite_cells,
-                                       const typename Tr::Cell::Subdomain_index& subdomain,
-                                       const FacetPatchMap& border_facets,
-                                       std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                                       const bool verbose,// = false,
-                                       const bool replace_domain_0,// = false
-                                       const bool allow_non_manifold)// = false
+bool build_mesh_complex_one_subdomain(C3T3& c3t3,
+                                      const PointRange& points,
+                                      const CellRange& finite_cells,
+                                      const typename C3T3::Subdomain_index& subdomain,
+                                      const FacetPatchMap& border_facets,
+                                      std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
+                                      const bool verbose,// = false,
+                                      const bool replace_domain_0,// = false
+                                      const bool allow_non_manifold)// = false
 {
-  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
-  return build_triangulation_impl(tr, points, finite_cells, subdomains,
-                                  border_facets, vertex_handle_vector,
-                                  verbose, replace_domain_0,
-                                  allow_non_manifold);
+  std::vector<typename C3T3::Subdomain_index> subdomains(finite_cells.size(), subdomain);
+  return build_mesh_complex_impl(c3t3, points, finite_cells, subdomains,
+                                 border_facets, vertex_handle_vector,
+                                 verbose, replace_domain_0,
+                                 allow_non_manifold);
+}
+
+template<class C3T3,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap>
+bool build_mesh_complex_one_subdomain(C3T3& c3t3,
+                                      const PointRange& points,
+                                      const CellRange& finite_cells,
+                                      const typename C3T3::Subdomain_index& subdomain,
+                                      const FacetPatchMap& border_facets,
+                                      const bool verbose,// = false,
+                                      const bool replace_domain_0,// = false
+                                      const bool allow_non_manifold)//= false
+{
+  std::vector<typename C3T3::Subdomain_index> subdomains(finite_cells.size(), subdomain);
+  std::vector<typename C3T3::Triangulation::Vertex_handle> vertex_handle_vector;
+  return build_mesh_complex_impl(c3t3, points, finite_cells, subdomains,
+                                 border_facets, vertex_handle_vector,
+                                 verbose, replace_domain_0,
+                                 allow_non_manifold);
 }
 
 template<class Tr,
@@ -526,12 +560,34 @@ bool build_triangulation_one_subdomain(Tr& tr,
                                        const bool replace_domain_0,// = false
                                        const bool allow_non_manifold)//= false
 {
-  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
-  std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
-  return build_triangulation_impl(tr, points, finite_cells, subdomains,
-                                  border_facets, vertex_handle_vector,
-                                  verbose, replace_domain_0,
-                                  allow_non_manifold);
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr> c3t3; // @fixme what if 'tr' wasn't empty...
+  bool res = build_mesh_complex_one_subdomain(c3t3, points, finite_cells, subdomain, border_facets,
+                                              verbose, replace_domain_0, allow_non_manifold);
+  tr = std::move(c3t3).triangulation();
+  return res;
+}
+
+template<class C3T3,
+         typename PointRange,
+         typename CellRange,
+         typename SubdomainsRange,
+         typename FacetPatchMap>
+bool build_mesh_complex_with_subdomains_range(C3T3& c3t3,
+                                              const PointRange& points,
+                                              const CellRange& finite_cells,
+                                              const SubdomainsRange& subdomains,
+                                              const FacetPatchMap& border_facets,
+                                              const bool verbose,// = false
+                                              const bool replace_domain_0,// = false,
+                                              const bool allow_non_manifold)
+{
+  std::vector<typename C3T3::Triangulation::Vertex_handle> vertex_handle_vector;
+  std::vector<typename C3T3::Subdomain_index> subdomains_vector(
+      subdomains.begin(), subdomains.end());
+  return build_mesh_complex_impl(c3t3, points, finite_cells, subdomains_vector, border_facets,
+                                 vertex_handle_vector,
+                                 verbose, replace_domain_0,
+                                 allow_non_manifold);
 }
 
 template<class Tr,
@@ -548,25 +604,24 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                                const bool replace_domain_0,// = false,
                                                const bool allow_non_manifold)
 {
-  std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
-  std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
-      subdomains.begin(), subdomains.end());
-  return build_triangulation_impl(tr, points, finite_cells, subdomains_vector, border_facets,
-                                  vertex_handle_vector,
-                                  verbose, replace_domain_0,
-                                  allow_non_manifold);
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr> c3t3; // @fixme what if 'tr' wasn't empty...
+  bool res = build_mesh_complex_with_subdomains_range(c3t3, points, finite_cells, subdomains, border_facets,
+                                                      verbose, replace_domain_0, allow_non_manifold);
+  tr = std::move(c3t3).triangulation();
+  return res;
 }
 
-template<class Tr>
-bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr,
-                                   const bool verbose,
-                                   const bool replace_domain_0,
-                                   const bool allow_non_manifold)
+template<class C3T3>
+bool build_mesh_complex_from_file(std::istream& is,
+                                  C3T3& c3t3,
+                                  const bool verbose,
+                                  const bool replace_domain_0,
+                                  const bool allow_non_manifold)
 {
+  using Tr = typename C3T3::Triangulation;
   using Point_3 = typename Tr::Point;
-  using Subdomain_index = typename Tr::Cell::Subdomain_index;
-  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
+  using Subdomain_index = typename C3T3::Subdomain_index;
+  using Surface_patch_index = typename C3T3::Surface_patch_index;
 
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
@@ -740,11 +795,25 @@ bool build_triangulation_from_file(std::istream& is,
 
   CGAL_assertion(finite_cells.size() == subdomains.size());
 
-  return build_triangulation_with_subdomains_range(tr,
-                                                   points, finite_cells, subdomains, border_facets,
-                                                   verbose,
-                                                   replace_domain_0 && !is_CGAL_mesh,
-                                                   allow_non_manifold);
+  return build_mesh_complex_with_subdomains_range(c3t3,
+                                                  points, finite_cells, subdomains, border_facets,
+                                                  verbose,
+                                                  replace_domain_0 && !is_CGAL_mesh,
+                                                  allow_non_manifold);
+}
+
+
+template<class Tr>
+bool build_triangulation_from_file(std::istream& is,
+                                  Tr& tr,
+                                  const bool verbose,
+                                  const bool replace_domain_0,
+                                  const bool allow_non_manifold)
+{
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr> c3t3; // @fixme what if 'tr' wasn't empty...
+  bool res = build_mesh_complex_from_file(is, c3t3, verbose, replace_domain_0, allow_non_manifold);
+  tr = std::move(c3t3).triangulation();
+  return res;
 }
 
 } // namespace SMDS_3

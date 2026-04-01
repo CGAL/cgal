@@ -428,7 +428,7 @@ public:
         subdomains.push_back(si);
       }
       std::map<Facet, int> border_facets;
-      //Preprocessing for build_triangulation
+      //Preprocessing for build_mesh_complex
       //check for orientation and swap in cells if not good.
       for(std::size_t i=0; i<finite_cells.size(); ++i)
       {
@@ -445,8 +445,8 @@ public:
         }
       }
 
-      CGAL::SMDS_3::build_triangulation_with_subdomains_range(
-        c3t3_item->c3t3().triangulation(),
+      CGAL::SMDS_3::build_mesh_complex_with_subdomains_range(
+        c3t3_item->c3t3(),
         points, finite_cells, subdomains, border_facets,
         false, false, true);
 

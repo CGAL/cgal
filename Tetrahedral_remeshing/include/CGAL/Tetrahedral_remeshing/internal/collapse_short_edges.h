@@ -113,12 +113,13 @@ public:
     // finished
     std::vector<Vertex_handle> new_vertices;
     std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
-    if (CGAL::SMDS_3::build_triangulation_impl(
-            triangulation, points, finite_cells, subdomains, border_facets,
+    if (CGAL::SMDS_3::build_mesh_complex_impl(
+            c3t3, points, finite_cells, subdomains, border_facets,
             new_vertices, /*verbose*/ false,
             /*replace_domain_0*/ false,
             /*allow_non_manifold*/false))
     {
+      const Tr& triangulation = c3t3.triangulation();
       CGAL_expensive_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
 
@@ -145,6 +146,8 @@ public:
 
   Result_type collapse()
   {
+    Tr& triangulation = c3t3.triangulation();
+
     if (not_an_edge)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -301,7 +304,7 @@ public:
   }
 
 protected:
-  Tr triangulation;
+  C3t3 c3t3;
 
   const Collapse_type collapse_type;
 

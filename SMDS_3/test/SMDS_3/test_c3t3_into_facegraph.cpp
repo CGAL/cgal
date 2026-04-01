@@ -43,7 +43,7 @@ int main (int argc, char** argv){
     return 1;
   }
   C3t3 c3t3;
-  if(CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation()))
+  if(CGAL::SMDS_3::build_mesh_complex_from_file(in, c3t3))
   {
     for( Cell_handle cit : c3t3.triangulation().finite_cell_handles())
     {

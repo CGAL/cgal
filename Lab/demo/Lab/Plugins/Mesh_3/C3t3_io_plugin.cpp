@@ -137,7 +137,7 @@ CGAL_Lab_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.completeBaseName());
       item->set_valid(false);
 
-      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
+      if(CGAL::SMDS_3::build_mesh_complex_from_file(in, item->c3t3(),
          /*verbose = */false, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
         update_c3t3(item->c3t3());
@@ -167,7 +167,7 @@ CGAL_Lab_c3t3_binary_io_plugin::load(
 
       item->setName(fileinfo.completeBaseName());
 
-      if (CGAL::IO::read_AVIZO_TETRA(in, item->c3t3().triangulation()))
+      if (CGAL::IO::read_AVIZO_TETRA(in, item->c3t3()))
       {
         update_c3t3(item->c3t3());
 
