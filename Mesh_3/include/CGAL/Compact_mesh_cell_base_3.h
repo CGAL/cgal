@@ -268,13 +268,15 @@ private:
 
 #endif // CGAL_LINKED_WITH_TBB
 
+namespace experimental {
+
 // Class Compact_mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
 template< class Point_3,
-          class Weighted_point_3,
-          class Subdomain_index_,
-          class Surface_patch_index_,
+          class WeightedPoint_3,
+          class SubdomainIndex,
+          class SurfacePatchIndex,
           class Index_,
           class TDS>
 class Compact_mesh_cell_3
@@ -282,26 +284,21 @@ class Compact_mesh_cell_3
 {
   typedef Compact_mesh_cell_base_3_base<Point_3,typename TDS::Concurrency_tag> Base;
 
-#ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
-  using Base::weighted_circumcenter_;
-#endif
-
 public:
-  typedef TDS                          Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle  Vertex_handle;
-  typedef typename TDS::Cell_handle    Cell_handle;
-  typedef typename TDS::Vertex         Vertex;
-  typedef typename TDS::Cell           Cell;
-  typedef typename TDS::Cell_data      TDS_data;
+  typedef TDS                               Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle       Vertex_handle;
+  typedef typename TDS::Cell_handle         Cell_handle;
+  typedef typename TDS::Vertex              Vertex;
+  typedef typename TDS::Cell                Cell;
+  typedef typename TDS::Cell_data           TDS_data;
 
 
   // Index Type
-  typedef Subdomain_index_      Subdomain_index;
-  typedef Surface_patch_index_  Surface_patch_index;
-  typedef Index_                Index;
+  typedef SubdomainIndex                    Subdomain_index;
+  typedef SurfacePatchIndex                 Surface_patch_index;
+  typedef Index_                            Index;
 
-  typedef Weighted_point_3      Point;
-
+  typedef WeightedPoint_3                   Point;
 
   typedef Point*                            Point_container;
   typedef Point*                            Point_iterator;
@@ -311,9 +308,9 @@ public:
   void invalidate_weighted_circumcenter_cache() const
   {
 #ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
-    if (!internal_tbb::is_null(weighted_circumcenter_)) {
-      internal_tbb::delete_circumcenter(weighted_circumcenter_);
-      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
+    if (!internal_tbb::is_null(this->weighted_circumcenter_)) {
+      internal_tbb::delete_circumcenter(this->weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(this->weighted_circumcenter_, nullptr);
     }
 #endif
   }
@@ -332,20 +329,7 @@ public:
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
     , time_stamp_(rhs.time_stamp_)
-#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
-    , sliver_value_(rhs.sliver_value_)
-# ifndef CGAL_MESH_3_NO_SLIVER_CACHE
-    , sliver_cache_validity_(false)
-# endif
-#endif
   {
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-    for(int i=0; i <4; i++){
-      surface_index_table_[i] = rhs.surface_index_table_[i];
-      surface_center_table_[i]= rhs.surface_center_table_[i];
-      surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
-    }
-#endif
   }
 
   Compact_mesh_cell_3 (Vertex_handle v0,
@@ -373,9 +357,9 @@ public:
   ~Compact_mesh_cell_3()
   {
 #ifndef CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
-    if(!internal_tbb::is_null(weighted_circumcenter_)){
-      internal_tbb::delete_circumcenter(weighted_circumcenter_);
-      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
+    if(!internal_tbb::is_null(this->weighted_circumcenter_)){
+      internal_tbb::delete_circumcenter(this->weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(this->weighted_circumcenter_, nullptr);
     }
 #endif
   }
@@ -441,8 +425,6 @@ public:
   }
 
   // SETTING
-
-
   void set_neighbor(int i, Cell_handle n)
   {
     CGAL_precondition( i >= 0 && i <= 3);
@@ -484,7 +466,6 @@ public:
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
-
 
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
   Point_iterator hidden_points_end() const { return nullptr; }
@@ -528,7 +509,7 @@ public:
 #else
     static_assert(std::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value);
-    if (internal_tbb::is_null(weighted_circumcenter_)) {
+    if (internal_tbb::is_null(this->weighted_circumcenter_)) {
       this->try_to_set_circumcenter(
         new Point_3(gt.construct_weighted_circumcenter_3_object()
                         (this->vertex(0)->point(),
@@ -540,9 +521,9 @@ public:
                                 (this->vertex(0)->point(),
                                  this->vertex(1)->point(),
                                  this->vertex(2)->point(),
-                                 this->vertex(3)->point()) == *weighted_circumcenter_);
+                                 this->vertex(3)->point()) == *(this->weighted_circumcenter_));
     }
-    return *weighted_circumcenter_;
+    return *(this->weighted_circumcenter_);
 #endif
   }
 
@@ -552,98 +533,6 @@ public:
   // Sets the index of the cell of the input complex that contains the cell
   void set_subdomain_index(const Subdomain_index& index)
   { subdomain_index_ = index; }
-
-#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
-  void set_sliver_value(double value)
-  {
-#ifndef CGAL_MESH_3_NO_SLIVER_CACHE
-    sliver_cache_validity_ = true;
-#endif
-    sliver_value_ = value;
-  }
-
-  double sliver_value() const
-  {
-    CGAL_assertion(is_cache_valid());
-    return sliver_value_;
-  }
-
-#ifdef CGAL_MESH_3_NO_SLIVER_CACHE
-  bool is_cache_valid() const { return sliver_value_ >= 0; }
-  void reset_cache_validity() { sliver_value_ = -2;  }
-#else
-  bool is_cache_valid() const { return sliver_cache_validity_; }
-  void reset_cache_validity() const { sliver_cache_validity_ = false;  }
-#endif
-#endif // CGAL_MESH_3_NO_SLIVER_VALUE
-
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
-  /// Set surface index of `facet` to `index`
-  void set_surface_patch_index(const int facet, const Surface_patch_index& index)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    surface_index_table_[facet] = index;
-  }
-
-  /// Returns surface index of facet `facet`
-  Surface_patch_index surface_patch_index(const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return surface_index_table_[facet];
-  }
-
-  /// Sets surface center of `facet` to `point`
-  void set_facet_surface_center(const int facet, const Point_3& point)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    surface_center_table_[facet] = point;
-  }
-
-  /// Returns surface center of `facet`
-  const Point_3& get_facet_surface_center(const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return surface_center_table_[facet];
-  }
-
-  /// Sets surface center index of `facet` to `index`
-  void set_facet_surface_center_index(const int facet, const Index& index)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    surface_center_index_table_[facet] = index;
-  }
-
-  /// Returns surface center of `facet`
-  Index get_facet_surface_center_index(const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return surface_center_index_table_[facet];
-  }
-
-  /// Returns true if facet lies on a surface patch
-  bool is_facet_on_surface(const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return ( !( Surface_patch_index() == surface_index_table_[facet] ));
-  }
-#endif
-
-  // -----------------------------------
-  // Backward Compatibility
-  // -----------------------------------
-#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
-  typedef Surface_patch_index   Surface_index;
-
-  void set_surface_index(const int facet, const Surface_index& index)
-  { set_surface_patch_index(facet,index); }
-
-  /// Returns surface index of facet `facet`
-  Surface_index surface_index(const int facet) const
-  { return surface_patch_index(facet); }
-#endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
-  // -----------------------------------
-  // End backward Compatibility
-  // -----------------------------------
 
   static
   std::string io_signature()
@@ -699,32 +588,181 @@ private:
 
   std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
-#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
-# ifdef CGAL_MESH_3_NO_SLIVER_CACHE
-  double sliver_value_ = -2.;
-# else
-  double sliver_value_ = 0.;
-# endif
-#endif
-
-  // -- Below is unused --
-
   //  Point_container _hidden;
 
-#ifndef CGAL_MESH_3_DO_NOT_STORE_COMPLEX_INFO_IN_CELL
+public:
+  friend std::istream& operator>>(std::istream &is, Compact_mesh_cell_3 &c)
+  {
+    Subdomain_index index;
+    if(IO::is_ascii(is))
+      is >> index;
+    else
+      read(is, index);
+    if(is) {
+      c.set_subdomain_index(index);
+    }
+    return is;
+  }
+
+  friend
+  std::ostream& operator<<(std::ostream &os, const Compact_mesh_cell_3 &c)
+  {
+    if(IO::is_ascii(os))
+      os << c.subdomain_index();
+    else
+      write(os, c.subdomain_index());
+    return os;
+  }
+
+}; // class Compact_mesh_cell_3
+
+} // namespace experimental
+
+template< class Point_3,
+          class WeightedPoint_3,
+          class SubdomainIndex,
+          class SurfacePatchIndex,
+          class Index_,
+          class TDS>
+class Compact_mesh_cell_3
+  : public experimental::Compact_mesh_cell_3<Point_3, WeightedPoint_3, SubdomainIndex,
+                                             SurfacePatchIndex, Index_, TDS>
+{
+  typedef CGAL::Compact_mesh_cell_3<Point_3, WeightedPoint_3, SubdomainIndex,
+                                    SurfacePatchIndex, Index_, TDS> Self;
+  typedef experimental::Compact_mesh_cell_3<Point_3, WeightedPoint_3, SubdomainIndex,
+                                            SurfacePatchIndex, Index_, TDS> Base;
+
+public:
+  typedef TDS                               Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle       Vertex_handle;
+  typedef typename TDS::Cell_handle         Cell_handle;
+  typedef typename TDS::Vertex              Vertex;
+  typedef typename TDS::Cell                Cell;
+  typedef typename TDS::Cell_data           TDS_data;
+
+
+  // Index Type
+  typedef SubdomainIndex                    Subdomain_index;
+  typedef SurfacePatchIndex                 Surface_patch_index;
+  typedef Index_                            Index;
+
+  typedef WeightedPoint_3                   Point;
+
+  typedef Point*                            Point_container;
+  typedef Point*                            Point_iterator;
+  typedef const Point*                      Point_const_iterator;
+
+public:
+  Compact_mesh_cell_3(const Self& rhs)
+    : Base(static_cast<const Base&>(rhs))
+    , sliver_value_(rhs.sliver_value_)
+    , sliver_cache_validity_(false)
+  {
+    for(int i=0; i <4; i++){
+      surface_index_table_[i] = rhs.surface_index_table_[i];
+      surface_center_table_[i]= rhs.surface_center_table_[i];
+      surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
+    }
+  }
+
+  template <class ... Args>
+  Compact_mesh_cell_3(Args&& ... args)
+    : Base(std::forward<Args>(args)...)
+  { }
+
+public:
+  /// Set surface index of `facet` to `index`
+  void set_surface_patch_index(const int facet, const Surface_patch_index& index)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    surface_index_table_[facet] = index;
+  }
+
+  /// Returns surface index of facet `facet`
+  Surface_patch_index surface_patch_index(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return surface_index_table_[facet];
+  }
+
+  /// Sets surface center of `facet` to `point`
+  void set_facet_surface_center(const int facet, const Point_3& point)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    surface_center_table_[facet] = point;
+  }
+
+  /// Returns surface center of `facet`
+  const Point_3& get_facet_surface_center(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return surface_center_table_[facet];
+  }
+
+  /// Sets surface center index of `facet` to `index`
+  void set_facet_surface_center_index(const int facet, const Index& index)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    surface_center_index_table_[facet] = index;
+  }
+
+  /// Returns surface center of `facet`
+  Index get_facet_surface_center_index(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return surface_center_index_table_[facet];
+  }
+
+  /// Returns true if facet lies on a surface patch
+  bool is_facet_on_surface(const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( !( Surface_patch_index() == surface_index_table_[facet] ));
+  }
+
+  // -----------------------------------
+  // Backward Compatibility
+  // -----------------------------------
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+  typedef Surface_patch_index   Surface_index;
+
+  void set_surface_index(const int facet, const Surface_index& index)
+  { set_surface_patch_index(facet,index); }
+
+  /// Returns surface index of facet `facet`
+  Surface_index surface_index(const int facet) const
+  { return surface_patch_index(facet); }
+#endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+  // -----------------------------------
+  // End backward Compatibility
+  // -----------------------------------
+
+  bool is_cache_valid() const { return sliver_cache_validity_; }
+  void reset_cache_validity() const { sliver_cache_validity_ = false; }
+
+  void set_sliver_value(double value)
+  {
+    sliver_cache_validity_ = true;
+    sliver_value_ = value;
+  }
+
+  double sliver_value() const
+  {
+    CGAL_assertion(is_cache_valid());
+    return sliver_value_;
+  }
+
+private:
   /// Stores surface_index for each facet of the cell
   std::array<Surface_patch_index, 4> surface_index_table_ = {};
   /// Stores surface center of each facet of the cell
   std::array<Point_3, 4> surface_center_table_ = {};
   /// Stores surface center index of each facet of the cell
   std::array<Index, 4> surface_center_index_table_ = {};
-#endif
 
-#ifndef CGAL_MESH_3_NO_SLIVER_VALUE
-# ifndef CGAL_MESH_3_NO_SLIVER_CACHE
+  double sliver_value_ = 0.;
   mutable bool sliver_cache_validity_ = false;
-# endif
-#endif
 
 public:
   friend std::istream& operator>>(std::istream &is, Compact_mesh_cell_3 &c)
@@ -737,38 +775,36 @@ public:
     if(is) {
       c.set_subdomain_index(index);
       for(int i = 0; i < 4; ++i)
-        {
-          Surface_patch_index i2;
-          if(IO::is_ascii(is))
-            is >> IO::iformat(i2);
-          else
-            {
-              read(is, i2);
-            }
-          // c.set_surface_patch_index(i, i2); // @tmp
-        }
+      {
+        Surface_patch_index i2;
+        if(IO::is_ascii(is))
+          is >> IO::iformat(i2);
+        else
+          {
+            read(is, i2);
+          }
+        c.set_surface_patch_index(i, i2);
+      }
     }
     return is;
   }
 
-  friend
-  std::ostream& operator<<(std::ostream &os, const Compact_mesh_cell_3 &c)
+  friend std::ostream& operator<<(std::ostream &os, const Compact_mesh_cell_3 &c)
   {
     if(IO::is_ascii(os))
       os << c.subdomain_index();
     else
       write(os, c.subdomain_index());
-    // for(int i = 0; i < 4; ++i) // @tmp
-    //   {
-    //     if(IO::is_ascii(os))
-    //       os << ' ' << IO::oformat(c.surface_patch_index(i));
-    //     else
-    //       write(os, c.surface_patch_index(i));
-    //   }
+    for(int i = 0; i < 4; ++i)
+    {
+      if(IO::is_ascii(os))
+        os << ' ' << IO::oformat(c.surface_patch_index(i));
+      else
+        write(os, c.surface_patch_index(i));
+    }
     return os;
   }
-
-};  // end class Compact_mesh_cell_3
+};
 
 /*!
 \ingroup PkgMesh3MeshClasses
@@ -815,12 +851,21 @@ public:
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
   struct Rebind_TDS {
+#ifdef CGAL_MESH_3_USE_EXPERIMENTAL_COMPACT_MESH_CELL_BASE_3
+    typedef experimental::Compact_mesh_cell_3<typename GT::Point_3,
+                                              typename GT::Weighted_point_3,
+                                              typename MD::Subdomain_index,
+                                              typename MD::Surface_patch_index,
+                                              typename MD::Index,
+                                              TDS2> Other;
+#else
     typedef Compact_mesh_cell_3<typename GT::Point_3,
                                 typename GT::Weighted_point_3,
                                 typename MD::Subdomain_index,
                                 typename MD::Surface_patch_index,
                                 typename MD::Index,
                                 TDS2> Other;
+#endif
   };
 };
 
@@ -840,12 +885,21 @@ public:
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
   struct Rebind_TDS {
+#ifdef CGAL_MESH_3_USE_EXPERIMENTAL_COMPACT_MESH_CELL_BASE_3
+    typedef experimental::Compact_mesh_cell_3<typename GT::Point_3,
+                                              typename GT::Weighted_point_3,
+                                              Subdomain_index,
+                                              Surface_patch_index,
+                                              Index,
+                                              TDS2> Other;
+#else
     typedef Compact_mesh_cell_3<typename GT::Point_3,
                                 typename GT::Weighted_point_3,
                                 Subdomain_index,
                                 Surface_patch_index,
                                 Index,
                                 TDS2> Other;
+#endif
   };
 };
 
