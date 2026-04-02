@@ -82,10 +82,6 @@ private:
   using Timer = CGAL::Real_timer;
 
 public:
-  Initializer(std::vector<std::vector<Point_3> >& input_polygons, Data_structure& data, const Parameters& parameters) :
-    m_input_polygons(input_polygons), m_data(data), m_parameters(parameters)
-  { }
-
   Initializer(std::vector<std::vector<Point_3> >& input_polygons, std::vector<typename Intersection_kernel::Plane_3>& input_planes, Data_structure& data, const Parameters& parameters) :
     m_input_polygons(input_polygons), m_input_planes(input_planes), m_data(data), m_parameters(parameters)
   {}

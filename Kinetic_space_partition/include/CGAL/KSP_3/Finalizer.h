@@ -115,13 +115,6 @@ public:
 
     merge_facets_connected_components();
 
-/*
-    if (m_parameters.debug) {
-      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
-        dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-merge-sp" + std::to_string(sp));
-      }
-    }*/
-
     create_volumes();
 
     if (m_parameters.debug) {

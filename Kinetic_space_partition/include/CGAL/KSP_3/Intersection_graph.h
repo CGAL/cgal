@@ -62,9 +62,9 @@ public:
     std::map<std::size_t, std::pair<std::size_t, std::size_t> > vertices; // Maps support plane to a pair of vertices. (Can't be just one, can't be more than two)
     Edge_property() : line(std::size_t(-1)), order(edge_counter++) { }
 
-    Edge_property(const Edge_property& e) = default;
+    Edge_property(const Edge_property &e) = default;
 
-    const Edge_property& operator=(const Edge_property& other) {
+    const Edge_property& operator=(Edge_property other) {
       line = other.line;
       faces = other.faces;
       planes = other.planes;
@@ -84,7 +84,7 @@ public:
   using Face_descriptor = std::size_t;
 
   struct lex {
-    bool operator()(const Edge_descriptor& a, const Edge_descriptor& b) const {
+    bool operator()(Edge_descriptor a, Edge_descriptor b) const {
       Edge_property* pa = (Edge_property*)a.get_property();
       Edge_property* pb = (Edge_property*)b.get_property();
       return pa->order < pb->order;
@@ -225,7 +225,7 @@ public:
   }
 
   const std::pair<Edge_descriptor, bool> add_edge(
-    const Vertex_descriptor& source, const Vertex_descriptor& target,
+    Vertex_descriptor source, Vertex_descriptor target,
     const std::size_t support_plane_idx) {
     const auto out = boost::add_edge(source, target, m_graph);
     m_graph[out.first].planes.insert(support_plane_idx);
@@ -235,7 +235,7 @@ public:
 
   template<typename IndexContainer>
   const std::pair<Edge_descriptor, bool> add_edge(
-    const Vertex_descriptor& source, const Vertex_descriptor& target,
+    Vertex_descriptor source, Vertex_descriptor target,
     const IndexContainer& support_planes_idx) {
     const auto out = boost::add_edge(source, target, m_graph);
     for (const auto support_plane_idx : support_planes_idx) {
@@ -253,7 +253,7 @@ public:
     return std::size_t(m_ifaces.size() - 1);
   }
 
-  bool add_face(std::size_t sp_idx, const Edge_descriptor& edge, const Face_descriptor& idx) {
+  bool add_face(std::size_t sp_idx, Edge_descriptor edge, Face_descriptor idx) {
     auto pair = m_graph[edge].faces.insert(std::make_pair(sp_idx, std::pair<Face_descriptor, Face_descriptor>(idx, -1)));
     if (pair.second)
       return true;
@@ -265,20 +265,20 @@ public:
     return false;
   }
 
-  void get_faces(std::size_t sp_idx, const Edge_descriptor& edge, std::pair<Face_descriptor, Face_descriptor>& pair) const {
+  void get_faces(std::size_t sp_idx, Edge_descriptor edge, std::pair<Face_descriptor, Face_descriptor>& pair) const {
     auto it = m_graph[edge].faces.find(sp_idx);
     if (it != m_graph[edge].faces.end())
       pair = it->second;
   }
 
-  Face_descriptor get_other_face(std::size_t sp_idx, const Edge_descriptor& edge, Face_descriptor face) const {
+  Face_descriptor get_other_face(std::size_t sp_idx, Edge_descriptor edge, Face_descriptor face) const {
     auto it = m_graph[edge].faces.find(sp_idx);
     if (it != m_graph[edge].faces.end())
       return (it->second.first == face) ? it->second.second : it->second.first;
     else return null_iface();
   }
 
-  Vertex_descriptor vertex(const std::set<std::size_t> planes) const {
+  Vertex_descriptor vertex(const std::set<std::size_t> &planes) const {
     auto it = m_map_vertices.find(std::vector<std::size_t>(planes.begin(), planes.end()));
     if (it != m_map_vertices.end())
       return it->second;
@@ -310,11 +310,11 @@ public:
     return m_graph[idx];
   }
 
-  void set_line(const Edge_descriptor& edge, const std::size_t line_idx) {
+  void set_line(Edge_descriptor edge, const std::size_t line_idx) {
     m_graph[edge].line = line_idx;
   }
 
-  std::size_t line(const Edge_descriptor& edge) const {
+  std::size_t line(Edge_descriptor edge) const {
     return m_graph[edge].line;
   }
 
@@ -351,7 +351,7 @@ public:
   }
 
   const std::pair<Edge_descriptor, Edge_descriptor>
-    split_edge(const Edge_descriptor& edge, const Vertex_descriptor& vertex) {
+    split_edge(Edge_descriptor edge, Vertex_descriptor vertex) {
 
     const auto source = boost::source(edge, m_graph);
     const auto target = boost::target(edge, m_graph);
@@ -394,52 +394,52 @@ public:
     return m_ifaces;
   }
 
-  const Vertex_descriptor source(const Edge_descriptor& edge) const {
+  const Vertex_descriptor source(Edge_descriptor edge) const {
     return boost::source(edge, m_graph);
   }
 
-  const Vertex_descriptor target(const Edge_descriptor& edge) const {
+  const Vertex_descriptor target(Edge_descriptor edge) const {
     return boost::target(edge, m_graph);
   }
 
-  const Vertex_descriptor other(const Edge_descriptor& edge, const Vertex_descriptor &vertex) const {
+  const Vertex_descriptor other(Edge_descriptor edge, Vertex_descriptor vertex) const {
     if (boost::target(edge, m_graph) == vertex)
       return boost::source(edge, m_graph);
     else
       return boost::target(edge, m_graph);
   }
 
-  bool is_edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
+  bool is_edge(Vertex_descriptor source, Vertex_descriptor target) const {
     return boost::edge(source, target, m_graph).second;
   }
 
-  const Edge_descriptor edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
+  const Edge_descriptor edge(Vertex_descriptor source, Vertex_descriptor target) const {
     return boost::edge(source, target, m_graph).first;
   }
 
-  decltype(auto) incident_edges(const Vertex_descriptor& vertex) const {
+  decltype(auto) incident_edges(Vertex_descriptor vertex) const {
     return CGAL::make_range(boost::out_edges(vertex, m_graph));
   }
 
-  const std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) const {
+  const std::set<std::size_t>& intersected_planes(Edge_descriptor edge) const {
     return m_graph[edge].planes;
   }
 
-  std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) {
+  std::set<std::size_t>& intersected_planes(Edge_descriptor edge) {
     return m_graph[edge].planes;
   }
 
-  const Point_3& point_3(const Vertex_descriptor& vertex) const {
+  const Point_3& point_3(Vertex_descriptor vertex) const {
     return m_graph[vertex].point;
   }
 
-  const Segment_3 segment_3(const Edge_descriptor& edge) const {
+  const Segment_3 segment_3(Edge_descriptor edge) const {
     return Segment_3(
       m_graph[boost::source(edge, m_graph)].point,
       m_graph[boost::target(edge, m_graph)].point);
   }
 
-  const Line_3 line_3(const Edge_descriptor& edge) const {
+  const Line_3 line_3(Edge_descriptor edge) const {
     return Line_3(
       m_graph[boost::source(edge, m_graph)].point,
       m_graph[boost::target(edge, m_graph)].point);

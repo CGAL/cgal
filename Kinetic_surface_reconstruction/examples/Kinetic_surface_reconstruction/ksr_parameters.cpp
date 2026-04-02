@@ -321,14 +321,23 @@ int main(const int argc, const char** argv) {
   Point_set point_set;
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
   //load_planes("GF-test/saddle_point_cloud.vg", point_set, regions);
-  std::string vg_file = parameters.data + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg";
+  std::filesystem::path path = parameters.data;
+
+  std::string vg_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg";
   std::ifstream in(vg_file);
-  //if (std::filesystem::exists(vg_file))
-    //load_planes(vg_file, point_set, regions);
+  if (std::filesystem::exists(vg_file))
+    load_planes(vg_file, point_set, regions);
     //load_planes("C:/dev/cgal/Kinetic_surface_reconstruction/examples/Kinetic_surface_reconstruction/2026-01-15-105002/hyper2sven_0_0_0.vg", point_set, regions);
     //load_planes("C:/dev/cgal/Kinetic_surface_reconstruction/examples/Kinetic_surface_reconstruction/GF-test/saddle_point_cloud.vg", point_set, regions);
+  //load_planes("C:/Data/Kinetic-Partition-3D-Benchmark/Intermediate/Lans-fine/lans_fine_input.vg", point_set, regions);
+    //load_planes("C:/Data/Kinetic-Partition-3D-Benchmark/Advanced/Meeting_room/Meetingroom_3M_input.vg", point_set, regions);
+    //load_planes("C:/Data/Kinetic-Partition-3D-Benchmark/Advanced/Asian dragon/dragon_input.vg", point_set, regions);
+     //C:\Data\Kinetic-Partition-3D-Benchmark\Advanced\Meeting_room
 
   // Input.
+
+  if (!regions.empty())
+    std::cout << regions.size() << " planar shapes loaded" << std::endl;
 
   if (regions.empty() && !parameters.data.empty())
     CGAL::IO::read_point_set(parameters.data, point_set);
@@ -396,23 +405,40 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(point_set, param);
 
+  typename KSR::LCC lcc_input;
+  /*std::ifstream lccfile("test.lcc");
+  if (lccfile.is_open()) {
+    lccfile >> lcc_input;
+    lccfile.close();
+  }*/
+
   Timer timer;
   timer.start();
 
   if (regions.empty()) {
     std::size_t num_shapes = ksr.detect_planar_shapes(param);
     std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
-    //std::cout << "writing shapes to: " << (parameters.data + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg") << std::endl;
-    //ksr.write_detected_shapes(parameters.data + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg");
   }
-  else
-    ksr.insert_planar_shapes(regions, param);
+  else if (lcc_input.template one_dart_per_cell<3>().empty())
+    ksr.insert_planar_shapes(regions);
 
-  FT after_shape_detection = timer.time();
+  FT after_shape_detection = 0;
+  FT after_partition = 0;
 
-  ksr.partition(parameters.k_intersections);
+  if (!lcc_input.template one_dart_per_cell<3>().empty())
+    ksr.insert_planar_shapes_and_linear_cell_complex(regions, lcc_input);
+  else {
+    after_shape_detection = timer.time();
 
-  FT after_partition = timer.time();
+    ksr.partition(parameters.k_intersections);
+
+    after_partition = timer.time();
+
+    const typename KSR::LCC& lcc = ksr.get_linear_cell_complex();
+    std::ofstream file("test.lcc");
+    file << lcc;
+    file.close();
+  }
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
@@ -436,7 +462,7 @@ int main(const int argc, const char** argv) {
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  std::vector<FT> lambdas{ 0.3, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99 };
+  std::vector<FT> lambdas{ 0.3, 0.4, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99 };
 
   bool non_empty = false;
 

@@ -1390,7 +1390,7 @@ public:
   decltype(auto) ivertices() const { return m_intersection_graph.vertices(); }
   decltype(auto) iedges() const { return m_intersection_graph.edges(); }
 
-  std::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
+  std::size_t line_idx(IEdge iedge) const { return m_intersection_graph.line(iedge); }
   std::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
 
   const IVertex add_ivertex(const IkPoint_3& point, const std::set<std::size_t>& support_planes_idx) {
@@ -1481,10 +1481,10 @@ public:
     m_intersection_graph.set_vertices_on_line(line_idx, std::move(sorted_vertices));
   }
 
-  const IVertex source(const IEdge& edge) const { return m_intersection_graph.source(edge); }
-  const IVertex target(const IEdge& edge) const { return m_intersection_graph.target(edge); }
+  const IVertex source(IEdge edge) const { return m_intersection_graph.source(edge); }
+  const IVertex target(IEdge edge) const { return m_intersection_graph.target(edge); }
 
-  const IVertex opposite(const IEdge& edge, const IVertex& ivertex) const {
+  const IVertex opposite(IEdge edge, IVertex ivertex) const {
     const auto out = source(edge);
     if (out == ivertex) {
       return target(edge);
@@ -1493,7 +1493,7 @@ public:
     return out;
   }
 
-  decltype(auto) incident_iedges(const IVertex& ivertex) const {
+  decltype(auto) incident_iedges(IVertex ivertex) const {
     return m_intersection_graph.incident_edges(ivertex);
   }
 
@@ -1513,11 +1513,11 @@ public:
     return support_plane(support_plane_idx).ibboxes();
   }
 
-  const std::set<std::size_t>& intersected_planes(const IEdge& iedge) const {
+  const std::set<std::size_t>& intersected_planes(IEdge iedge) const {
     return m_intersection_graph.intersected_planes(iedge);
   }
 
-  const std::set<std::size_t> intersected_planes(const IVertex& ivertex, const bool keep_bbox = true) const {
+  const std::set<std::size_t> intersected_planes(IVertex ivertex, const bool keep_bbox = true) const {
     std::set<std::size_t> out;
     for (const auto &incident_iedge : incident_iedges(ivertex)) {
       for (const auto &support_plane_idx : intersected_planes(incident_iedge)) {
@@ -1530,17 +1530,17 @@ public:
     return out;
   }
 
-  bool is_zero_length_iedge(const IVertex& a, const IVertex& b) const {
+  bool is_zero_length_iedge(IVertex a, IVertex b) const {
     const auto& p = m_intersection_graph.point_3(a);
     const auto& q = m_intersection_graph.point_3(b);
     return KSP::internal::distance(p, q) == 0;
   }
 
-  bool is_iedge(const IVertex& source, const IVertex& target) const {
+  bool is_iedge(IVertex source, IVertex target) const {
     return m_intersection_graph.is_edge(source, target);
   }
 
-  bool is_bbox_iedge(const IEdge& edge) const {
+  bool is_bbox_iedge(IEdge edge) const {
     for (const auto support_plane_idx : m_intersection_graph.intersected_planes(edge)) {
       if (support_plane_idx < 6) {
         return true;
@@ -1553,7 +1553,7 @@ public:
   **          STRINGS           **
   ********************************/
 
-  inline const std::string str(const IEdge& iedge) const {
+  inline const std::string str(IEdge iedge) const {
     std::ostringstream oss; oss << "IEdge" << iedge; return oss.str();
   }
 
@@ -1579,7 +1579,7 @@ public:
   **        CONVERSIONS         **
   ********************************/
 
-  IkPoint_2 to_2d(const std::size_t support_plane_idx, const IVertex& ivertex) const {
+  IkPoint_2 to_2d(const std::size_t support_plane_idx, IVertex ivertex) const {
     return support_plane(support_plane_idx).to_2d(point_3(ivertex));
   }
 
@@ -1607,11 +1607,11 @@ public:
     return support_plane(pvertex).point_2(pvertex.second);
   }
 
-  Point_2 point_2(const std::size_t support_plane_idx, const IVertex& ivertex) const {
+  Point_2 point_2(const std::size_t support_plane_idx, IVertex ivertex) const {
     return support_plane(support_plane_idx).to_2d(from_exact(point_3(ivertex)));
   }
 
-  IkSegment_2 segment_2(const std::size_t support_plane_idx, const IEdge& iedge) const {
+  IkSegment_2 segment_2(const std::size_t support_plane_idx, IEdge iedge) const {
     return support_plane(support_plane_idx).to_2d(segment_3(iedge));
   }
 
