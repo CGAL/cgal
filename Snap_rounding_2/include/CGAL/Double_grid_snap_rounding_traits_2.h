@@ -26,7 +26,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSnapRounding2Ref
+\ingroup Snap_rounding_vertical_slab_grp
 
 The class `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`
 is a model of the `VerticalSlabSnapRoundingTraits_2` concept. It provides the traits
@@ -34,13 +34,13 @@ required to perform snap rounding where the resulting points are represented
 using double precision floating-point coordinates.
 
 \tparam InputKernel specifies the kernel used for the input
-geometric objects. It must model the CGAL kernel concept. These objects must be convertible to the types defined by
+geometric objects. It must model the \cgal `Kernel` concept. These objects must be convertible to the types defined by
 `ExactKernel`.
 
 \tparam ExactKernel specifies the exact kernel used internally
 to perform robust geometric computations. By default, it is set to
 `CGAL::Exact_predicates_exact_constructions_kernel`. Advanced users may provide
-another exact kernel that models the CGAL kernel concept, such as
+another exact kernel that models the \cgal `Kernel` concept, such as
 `Cartesian<CGAL::Exact_rational>`.
 
 \tparam BaseTraits specifies the underlying arrangement traits
@@ -51,8 +51,10 @@ another traits that models `Aostraits_2` concept.
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
 
-\sa{CGAL::snap_rounding_2}
-\sa{CGAL::vertical_slab_snap_rounding_2}
+\sa{CGAL::snap_rounding_2()}
+\sa{CGAL::vertical_slab_snap_rounding_2()}
+\sa{CGAL::Float_grid_snap_rounding_traits_2}
+\sa{CGAL::Integer_grid_snap_rounding_traits_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Double_grid_snap_rounding_traits_2: BaseTraits{

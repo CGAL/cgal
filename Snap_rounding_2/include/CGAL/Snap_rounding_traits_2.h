@@ -17,6 +17,10 @@
 
 #include <CGAL/Hot_pixel_snap_rounding_traits_2.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Snap_rounding_traits_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Hot_pixel_snap_rounding_traits_2.h>"
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 namespace CGAL {
 
 #ifndef CGAL_NO_DEPRECATED_CODE

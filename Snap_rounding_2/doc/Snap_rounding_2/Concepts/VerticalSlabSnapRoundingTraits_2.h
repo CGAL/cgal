@@ -206,11 +206,11 @@ class ConverterToExact
   typedef unspecified_type InputPoint_2;
   typedef unspecified_type InputSegment_2;
   /*!
-  Convert input points into points of the type of the traits
+  converts a point of the input type to the point type defined by the traits
   */
   Point_2 operator()(InputPoint_2 p);
   /*!
-  Convert input segments into segments of the type of the traits
+  converts a segment of the input type to the segment type defined by the traits
   */
   Segment_2 operator()(InputSegment_2 p);
 };

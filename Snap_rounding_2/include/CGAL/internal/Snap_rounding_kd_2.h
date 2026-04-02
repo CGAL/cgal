@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-namespace internal {
+namespace Snap_Rounding_2::internal {
 
 //////////////////////
 //////////////////////
@@ -115,8 +115,8 @@ private:
   typedef typename Traits::Line_2                       Line_2;
   typedef typename Traits::Aff_transformation_2         Transformation_2;
 
-  typedef CGAL::internal::Point_with_hot_pixel_history<Traits, SAVED_OBJECT>     Point_with_hot_pixel_history_saved;
-  typedef CGAL::internal::Search_traits_kd_tree_2<Traits, Point_with_hot_pixel_history_saved>
+  typedef CGAL::Snap_Rounding_2::internal::Point_with_hot_pixel_history<Traits, SAVED_OBJECT>     Point_with_hot_pixel_history_saved;
+  typedef CGAL::Snap_Rounding_2::internal::Search_traits_kd_tree_2<Traits, Point_with_hot_pixel_history_saved>
                                                                                  Search_traits;
   typedef CGAL::Kd_tree<Search_traits>                                           Kd_tree;
   typedef CGAL::Fuzzy_iso_box<Search_traits>                                     Box;

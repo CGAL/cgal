@@ -70,15 +70,17 @@ double double_ceil(const NT &x){
 }
 
 /*!
-\ingroup PkgSnapRounding2Ref
+\ingroup Snap_rounding_vertical_slab_grp
 
 The class `Integer_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `VerticalSlabSnapRoundingTraits_2` concept. It is identical to `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
 except that points are rounded to the closest point with integer coordinates.
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
 
-\sa{CGAL::snap_rounding_2}
-\sa{CGAL::vertical_slab_snap_rounding_2}
+\sa{CGAL::snap_rounding_2()}
+\sa{CGAL::vertical_slab_snap_rounding_2()}
+\sa{CGAL::Double_grid_snap_rounding_traits_2}
+\sa{CGAL::Float_grid_snap_rounding_traits_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Integer_grid_snap_rounding_traits_2: BaseTraits{

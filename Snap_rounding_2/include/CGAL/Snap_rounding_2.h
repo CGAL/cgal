@@ -22,27 +22,27 @@ namespace CGAL {
 
   #ifndef CGAL_NO_DEPRECATED_CODE
 /*!
-\deprecated use newer API of `CGAL::snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()`
+\deprecated This function is deprecated since \cgal 6.2, use newer API of `CGAL::snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()`
 
-\ingroup PkgSnapRounding2Ref
+\ingroup Snap_rounding_common
 
 \tparam Traits must be a model of `HotPixelSnapRoundingTraits_2`.
 \tparam InputIterator must be an iterator with value type `Traits::Segment_2`.
 \tparam OutputContainer must be a container with a method `push_back(const OutputContainer::value_type& c)`,
 where `OutputContainer::value_type` must be a container with a method `push_back(const Traits::Point_2& p)`
 
-\param begin,end The first two parameters denote the iterator range
+\param begin,end denote the iterator range
 of the input segments.
 
 \param output_container is a reference to a
 container of the output polylines. Since a polyline is composed of a
 sequence of points, a polyline is a container itself.
 
-\param do_isr The fifth parameter determines whether to apply ISR or SR.
-
-\param pixel_size The fourth parameter denotes the pixel size `w`. The plane will be
+\param pixel_size denotes the pixel size `w`. The plane will be
 tiled with square pixels of width `w` such that the origin is the
 center of a pixel. `pixel_size` must have a positive value.
+
+\param do_isr determines whether to apply ISR or SR.
 
 \param int_output If set to true, the output coordinates are expressed in the integer grid (pixel indices).
 Otherwise, they are given in the input coordinate system.
@@ -59,13 +59,13 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
                                      bool int_output = true,
                                      unsigned int number_of_kd_trees = 1)
 {
-  internal::hot_pixel_snap_rounding_2<Traits>(begin, end, output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
+  Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(begin, end, output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
 }
 #endif
 
 #if DOXYGEN_RUNNING
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_common
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
@@ -96,7 +96,7 @@ OutputPolylineIterator snap_rounding_2(const SegmentRange &segments,
                                        const NamedParameters &np = parameters::default_values());
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_common
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
@@ -127,7 +127,7 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
                                       const NamedParameters &np = parameters::default_values());
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_common
 *
 * \brief subdivides and rounds a range of polygons so that their boundary segments are pairwise disjoint in their interiors.
 *
@@ -155,7 +155,7 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 * @warning a convex input polygon might no longer be convex after rounding.
 */
 template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolygonIterator snap_rounding_2(PolygonRange  &polygons,
+OutputPolygonIterator snap_rounding_2(const PolygonRange  &polygons,
                                       OutputPolygonIterator out,
                                       const NamedParameters &np = parameters::default_values());
 

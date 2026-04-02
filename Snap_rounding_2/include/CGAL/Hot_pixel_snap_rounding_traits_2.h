@@ -26,7 +26,7 @@
 namespace CGAL {
 
 /*!
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_hot_pixel_grp
 *
 *  The class `Hot_pixel_snap_rounding_traits_2<Kernel>` is a model of the
 * `HotPixelSnapRoundingTraits_2` concept.
@@ -35,9 +35,7 @@ namespace CGAL {
 *
 * This geometric kernel must provide an (arbitrary-precision) rational number type
 * (`FT`), `Point_2`, `Segment_2`, and `Iso_rectangle_2`.
-* It should be possible to cast numbers of the number type `FT` to
-* double-precision representation. That is, the function
-* `CGAL::to_double(FT)` must be supported.
+* FT must be model of `ReadEmbeddableTraits`.
 *
 * The `CGAL::to_double()` function is used to implement the operation that
 * rounds the coordinates of a point to a center of a pixel. This operation is one
@@ -51,8 +49,8 @@ namespace CGAL {
 *
 * \cgalModels{HotPixelSnapRoundingTraits_2}
 *
-\sa{CGAL::snap_rounding_2}
-\sa{CGAL::hot_pixel_snap_rounding_2}
+\sa{CGAL::snap_rounding_2()}
+\sa{CGAL::hot_pixel_snap_rounding_2()}
 */
 template<class BaseKernel>
 class Hot_pixel_snap_rounding_traits_2 :

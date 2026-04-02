@@ -5,7 +5,7 @@
 
 #include <CGAL/Real_timer.h>
 
-using K = CGAL::Exact_predicates_exact_constructions_kernel;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 using FT = K::FT;
 using Point_2 = K::Point_2;

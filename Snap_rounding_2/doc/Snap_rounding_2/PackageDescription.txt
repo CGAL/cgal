@@ -2,6 +2,18 @@
 /// \defgroup PkgSnapRounding2Concepts Concepts
 /// \ingroup PkgSnapRounding2Ref
 
+/// \defgroup Snap_rounding_common Snap Rounding Common
+/// Functions to round segments or polygons safely
+/// \ingroup PkgSnapRounding2Ref
+
+/// \defgroup Snap_rounding_hot_pixel_grp Hot pixel snap rounding
+/// Classes and functions to round segments or polygons using hot pixel SR method.
+/// \ingroup PkgSnapRounding2Ref
+
+/// \defgroup Snap_rounding_vertical_slab_grp Vertical slab snap rounding
+/// Classes and functions to round segments or polygons using vertical slab SR method.
+/// \ingroup PkgSnapRounding2Ref
+
 /*!
 \addtogroup PkgSnapRounding2Ref
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}

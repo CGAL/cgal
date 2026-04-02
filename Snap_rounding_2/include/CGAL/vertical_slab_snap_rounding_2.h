@@ -420,7 +420,7 @@ void vertical_slab_snap_rounding_2_impl(const SegmentRange &segments, PointsRang
 }
 
 template <class PolygonRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator vertical_slab_snap_rounding_2_polygon(PolygonRange  &polygons,
+OutputIterator vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygons,
                                                       OutputIterator out,
                                                       const NamedParameters &np = parameters::default_values())
 {
@@ -503,13 +503,13 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(PolygonRange  &polygons,
 
 #if DOXYGEN_RUNNING
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_vertical_slab_grp
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
-* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
+* @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
 * @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -531,13 +531,13 @@ OutputPolylineIterator vertical_slab_snap_rounding_2(const SegmentRange &segment
                                                       const NamedParameters &np = parameters::default_values());
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_vertical_slab_grp
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
 * The output is a range of segments.
 *
-* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
+* @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
 * @tparam OutputSegmentIterator model of OutputIterator holding `geom_traits::Segment_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -559,14 +559,14 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
                                                      const NamedParameters &np = parameters::default_values());
 
 /**
-* \ingroup PkgSnapRounding2Ref
+* \ingroup Snap_rounding_vertical_slab_grp
 *
 * \brief subdivides and rounds a range of polygons so that their boundary segments are pairwise disjoint in their interiors.
 *
 * If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
-* @tparam PolygonRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is model of `CGAL::Polygon_2`.
+* @tparam PolygonRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is model of `CGAL::Polygon_2`.
 * @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -584,7 +584,7 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
 * @warning a convex input polygon might no longer be convex after rounding.
 */
 template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolygonIterator vertical_slab_snap_rounding_2(PolygonRange  &polygons,
+OutputPolygonIterator vertical_slab_snap_rounding_2(const PolygonRange  &polygons,
                                                      OutputPolygonIterator out,
                                                      const NamedParameters &np = parameters::default_values());
 
