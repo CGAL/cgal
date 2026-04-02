@@ -28,4 +28,4 @@ inline constexpr bool is_instance_of_Polygon_2< CGAL::Polygon_2<K, C> > = true;
 }
 }
 
-#endif
+#endif // CGAL_SNAP_ROUNDING_HELPERS_2_H

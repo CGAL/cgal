@@ -205,7 +205,7 @@ public:
 };
 
 /*
-Scan the vertices from left to right while maintaining the status line ordering of the segments.
+scans the vertices from left to right while maintaining the status line ordering of the segments.
 Segments that are too close to a vertex are subdivided.
 */
 template <class Traits, class PointsRange , class PolylinesRange>

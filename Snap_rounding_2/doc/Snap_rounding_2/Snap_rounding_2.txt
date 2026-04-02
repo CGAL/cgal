@@ -18,11 +18,11 @@ Most geometric operations, such as computing the intersection of two segments, r
 For example, if the coordinates of the segment endpoints are integers of \f$d\f$ digits, the coordinates of their intersection point
 are, in general, rational numbers with a numerator of \f$3d+O(1)\f$ digits and a denominator of \f$2d+O(1)\f$ digits.
 
-Exact constructions kernels in \cgal preserve this precision, whereas other kernels (as in most software systems) round the result. However, such rounding may produce
+Arbitrary precision number types, such as those used in \cgal kernels providing exact constructions, enable representing these results without loss of precision. On the other hand, limited precision number types must generally round the result. However, such rounding may produce
 self-intersections and topology changements as illustrated in \cgalFigureRef{figIssue}.
 
 Snap Rounding (SR) is a family of methods that convert
-arbitrary-precision arrangements of segments into a representation with reduced precision, while preventing the introduction of new intersections and
+arbitrary-precision arrangements of segments into a representation with reduced precision while preventing the introduction of new intersections and
 preserving the topology "up to collapse". More formally, seeing the rounding as a movement, if two points became equal during the motion, their are equal at the end of the motion.
 
 This package provides two algorithms:

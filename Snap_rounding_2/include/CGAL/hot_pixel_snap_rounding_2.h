@@ -115,7 +115,7 @@ public:
 /*! */
 
 
-// a function for compare two hot pixels for the set of hot pixels
+// a function to compare two hot pixels for the set of hot pixels
 template<class Traits_>
 struct Hot_pixel_auclidian_cmp {
   typedef CGAL::internal::Hot_pixel<Traits_>    Hot_pixel;
@@ -125,7 +125,7 @@ struct Hot_pixel_auclidian_cmp {
   bool operator()(const Hot_pixel * h1, const Hot_pixel * h2) const;
 };
 
-// a function for compare two hot pixels for the set of hot pixels a
+// a function to compare two hot pixels for the set of hot pixels a
 // certain segment intersect
 template<class Traits_>
 struct Hot_pixel_dir_cmp {
@@ -880,8 +880,8 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(PolygonRange  &polygons,
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{pixel_size}
 *     \cgalParamDescription{The size of the pixel. The plane will be tiled with square pixels of that width such that the origin is the center of a pixel.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{FT(1.)}
+*     \cgalParamType{`geom_traits::FT`}
+*     \cgalParamDefault{1}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{do_iterative_snap_rounding}
 *     \cgalParamDescription{determines whether to apply Iterative Snap Rounding, see the user manual for more details.}
@@ -896,7 +896,7 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(PolygonRange  &polygons,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
+*     \cgalParamType{The traits class must be a model of `HotPixelSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd

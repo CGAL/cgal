@@ -134,7 +134,7 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 * If the input polygons are disjoint, the output polygons remain non-overlapping, although they may share vertices or edges.
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
-* Per default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
+* By default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
 * Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
 * @tparam PolygonRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is model of `CGAL::Polygon_2`.
