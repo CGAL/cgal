@@ -867,10 +867,10 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a range of polylines, where each polyline corresponds to an input segment.
+* The output is a sequence of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(geom_traits::Point_2)` function.
+* @tparam OutputPolylineIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -911,10 +911,10 @@ OutputPolylineIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a range of segments.
+* The output is a sequence of segments.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputSegmentIterator model of OutputIterator holding `geom_traits::Segment_2`
+* @tparam OutputSegmentIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` is `geom_traits::Segment_2`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -1018,21 +1018,19 @@ OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
 
     using Point_2 = typename Traits::Point_2;
     using Segment_2 = typename Traits::Segment_2;
-    using Polyline = std::vector< Point_2 >;
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    std::vector< Polyline > output_container;
     auto pixel_size = choose_parameter(get_parameter(np, internal_np::pixel_size), 1.);
     bool do_isr = choose_parameter(get_parameter(np, internal_np::do_iterative_snap_rounding), true);
     bool int_output = choose_parameter(get_parameter(np, internal_np::use_grid_coordinates), true);
     unsigned int number_of_kd_trees = 1;
 
-    Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
-
     if constexpr(std::is_same_v<OutputType, Input>){
       // Output Segments while removing duplicate ones
+      std::vector< std::vector< Point_2 > > output_container;
+      Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
 
       // Build a set with lexicographic order of the segments
       auto comp = Traits().compare_xy_2_object();
@@ -1056,7 +1054,9 @@ OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
       }
     } else {
       // Output polylines
-      for(auto &pl: output_container)
+      std::vector< OutputType > output_container;
+      Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
+      for(OutputType &pl: output_container)
         *out++ = std::move(pl);
     }
     return out;

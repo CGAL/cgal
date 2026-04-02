@@ -507,10 +507,10 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygo
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a range of polylines, where each polyline corresponds to an input segment.
+* The output is a sequence of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputPolylineIterator model of OutputIterator holding `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
+* @tparam OutputPolylineIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` must be a type that provides a `push_back(Point_2)` function.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -535,10 +535,10 @@ OutputPolylineIterator vertical_slab_snap_rounding_2(const SegmentRange &segment
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a range of segments.
+* The output is a sequence of segments.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputSegmentIterator model of OutputIterator holding `geom_traits::Segment_2`
+* @tparam OutputSegmentIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` is `geom_traits::Segment_2`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
@@ -645,7 +645,7 @@ OutputIterator vertical_slab_snap_rounding_2(const InputRange &inputs,
         OutputType new_line;
         for(std::size_t pi: poly)
           new_line.push_back(from_exact(pts[pi]));
-        *out++ = new_line;
+        *out++ = std::move(new_line);
       }
     }
     return out;

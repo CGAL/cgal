@@ -10,6 +10,19 @@ typedef CGAL::Double_grid_snap_rounding_traits_2<Epeck, Epeck>                  
 typedef CGAL::Cartesian<CGAL::Exact_rational>                                       Rational_Kernel;
 typedef CGAL::Double_grid_snap_rounding_traits_2<Rational_Kernel, Rational_Kernel>  Rational_Traits;
 
+template <typename T>
+struct minimal_output_iterator {
+    // required nested type
+    struct container_type {
+        using value_type = T;
+    };
+
+    minimal_output_iterator& operator++() { return *this; }
+    minimal_output_iterator operator++(int) { return *this; }
+    minimal_output_iterator& operator*() { return *this; }
+    minimal_output_iterator& operator=(const T&) { return *this; }
+};
+
 template<class Traits>
 struct Test{
   typedef typename Traits::Segment_2 Segment_2;
@@ -29,6 +42,9 @@ struct Test{
     Traits traits;
     CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(traits));
     assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+    // Test minimal output iterator
+    CGAL::vertical_slab_snap_rounding_2(segs, minimal_output_iterator< Segment_2 >(), CGAL::parameters::geom_traits(traits));
+    CGAL::vertical_slab_snap_rounding_2(segs, minimal_output_iterator< std::vector<Point_2> >(), CGAL::parameters::geom_traits(traits));
   }
 };
 
