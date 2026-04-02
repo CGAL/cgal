@@ -20,6 +20,18 @@
 #include <CGAL/license/Straight_skeleton_3.h>
 
 // @fixme yesterday:
+// - 57419 (perturbation failure)
+// - 168077 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
+// - 80084 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
+// - 67817 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
+// - 100638 polyhedron->is_consistent()
+// - 55583 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
+// - 153956 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
+// - 500087
+
+// writing to logs/285366.log
+// xargs: ./test_skeleton_3: terminated by signal 9
+
 
 // @fixme:
 // - handle save times at event time: merge vertices with equal position in output
@@ -231,6 +243,7 @@ private:
   using Abstract_vertex_splitter_sptr = std::shared_ptr<Abstract_vertex_splitter>;
   using Combi_vertex_splitter = algorithm::Combi_vertex_splitter<GeomTraits>;
   using Convex_vertex_splitter = algorithm::Convex_vertex_splitter<GeomTraits>;
+  using Arr_vertex_splitter = algorithm::Arr_vertex_splitter<GeomTraits>;
 
 private:
   // Events
@@ -365,6 +378,8 @@ public:
         vertex_splitter_ = Combi_vertex_splitter::create();
       } else if (s_vertex_splitter.compare("Convex_vertex_splitter") == 0) {
         vertex_splitter_ = Convex_vertex_splitter::create();
+      } else if (s_vertex_splitter.compare("Arr_vertex_splitter") == 0) {
+        vertex_splitter_ = Arr_vertex_splitter::create();
       } else {
         CGAL_SS3_SPLITTER_TRACE("Warning: option '" << s_vertex_splitter << "' not found.");
         CGAL_SS3_SPLITTER_TRACE("Using 'Combi_vertex_splitter'.");
@@ -494,6 +509,9 @@ public:
         if ((config->contains("Algorithm", "stop_after_last_save_event") &&
               config->get_Boolean("Algorithm", "stop_after_last_save_event"))) {
           time_future_bound = save_times_.back();
+#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
+          time_future_bound = save_times_.back() - 1; // @fixme workaround to actually detect events after the target
+#endif
         }
       }
     }
@@ -507,6 +525,14 @@ public:
     PQ queue;
     collect_events(polyhedron, current_time, time_future_bound, queue);
 
+#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
+    // whether the visitor or the "stop on last save event" told us to stop
+    bool asked_to_stop = false;
+
+    // difficult to say what this value should be, 't=d/v' so '1e-6 / fastest speed'?
+    const FT min_event_time_delta = 1e-6;
+#endif
+
     for (;;) {
       ++step_id_;
 
@@ -515,8 +541,12 @@ public:
 
       if (visitor_) {
         if (!visitor_->go_further(step_id_, polyhedron, current_time)) {
-          CGAL_SS3_CORE_TRACE_V(2, "Stopping on visitor request");
+          CGAL_SS3_CORE_TRACE_V(2, "Visitor requested a stop");
+#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
+          asked_to_stop = true;
+#else
           break;
+#endif
         }
       }
 
@@ -546,6 +576,18 @@ public:
 
 #ifdef CGAL_SS3_RUN_TIMERS
       CGAL_SS3_CORE_TRACE_V(2, "current elapsed time: " << timer.time());
+#endif
+
+#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
+      if (asked_to_stop) {
+        const FT event_time_delta = CGAL::abs(upcoming_event_time - current_time);
+        CGAL_SS3_CORE_TRACE_V(2, "Event delta: " << event_time_delta);
+        if (event_time_delta > min_event_time_delta) {
+          CGAL_SS3_CORE_TRACE_V(2, "Next event is far-enough away; finally stopping.");
+          IO::write_OBJ("future_peek.obj", polyhedron);
+          break;
+        }
+      }
 #endif
 
       if (visitor_) {
@@ -599,7 +641,11 @@ public:
         if (config->is_loaded() &&
             config->contains("Algorithm", "stop_after_last_save_event") &&
             config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
+#ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
+          asked_to_stop = true;
+#else
           break;
+#endif
         }
       }
 

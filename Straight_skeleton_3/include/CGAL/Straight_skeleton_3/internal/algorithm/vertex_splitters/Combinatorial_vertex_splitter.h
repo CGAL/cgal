@@ -61,7 +61,7 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using Straight_skeleton_3 = Straight_skeleton_3<GeomTraits>;
+  using Straight_skeleton_3 = CGAL::Straight_skeleton_3<GeomTraits>;
 
   using NodeWPtr = typename Straight_skeleton_3::NodeWPtr;
   using NodeSPtr = typename Straight_skeleton_3::NodeSPtr;

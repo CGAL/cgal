@@ -24,6 +24,13 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Random.h>
@@ -31,6 +38,7 @@
 #include <limits>
 #include <list>
 #include <random>
+#include <unordered_map>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
@@ -42,9 +50,13 @@ class Polyhedron_perturbation
 {
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
+  using Segment_3 = typename GeomTraits::Segment_3;
   using Vector_3 = typename GeomTraits::Vector_3;
+  using Ray_3 = typename GeomTraits::Ray_3;
   using Line_3 = typename GeomTraits::Line_3;
+  using Triangle_3 = typename GeomTraits::Triangle_3;
   using Plane_3 = typename GeomTraits::Plane_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
 private:
   using Polyhedron = HDS::Polyhedron<GeomTraits>;
@@ -64,6 +76,9 @@ private:
   using Hds_utils = algorithm::Hds_utils<GeomTraits>;
   using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
   using Self_intersection = algorithm::Self_intersection<GeomTraits>;
+
+private:
+  using Mesh = CGAL::Surface_mesh<Point_3>;
 
 private:
   struct Size_shenanigans
@@ -919,6 +934,9 @@ public:
                         o.y() + nl * d.y(),
                         o.z() + nl * d.z()};
 #else
+        // std::cout << "  Constraint Line" << std::endl;
+        // std::cout << "    " << line->point(0) << std::endl;
+        // std::cout << "    " << line->point(1) << std::endl;
         p_new = line->projection(p_nudged);
 #endif
       }
@@ -1404,10 +1422,747 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->get_plane()));
   }
 
+  // duplicated because all faces have their source here
+  static void get_clipped_plane_faces(const VertexSPtr vertex,
+                                      const Iso_cuboid_3& bbox,
+                                      std::vector<Point_3>& points,
+                                      std::vector<std::vector<std::size_t> >& triangles,
+                                      std::vector<FacetSPtr>& triangle_2_sptr)
+  {
+    using Vector_3 = typename GeomTraits::Vector_3;
+
+    for(const auto& facet_wptr : vertex->facets())
+    {
+      if(FacetSPtr facet = facet_wptr.lock())
+      {
+        const Plane_3& plane = facet->get_plane();
+
+        std::vector<Point_3> local_range;
+        auto res = CGAL::intersection(bbox, plane);
+        if (!res) {
+          // Should not happen, as bbox is constructed to contain all intersections
+          std::cerr << "no intersection between plane and bbox" << std::endl;
+          CGAL_assertion(false);
+          std::exit(1);
+        } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
+          for (int i=0; i<3; ++i) {
+            local_range.push_back((*itr)[i]);
+          }
+        } else if (const std::vector<Point_3>* ir = std::get_if<std::vector<Point_3> >(&*res)) {
+          for (const Point_3& p : *ir) {
+            local_range.push_back(p);
+          }
+        } else {
+          std::cerr << "plane/bbox intersection is not a polygon" << std::endl;
+          CGAL_assertion(false);
+          std::exit(1);
+        }
+
+        // Ensure orientation: normal of local_range must match plane's orientation
+        if(local_range.size() >= 3) {
+          Vector_3 plane_normal = plane.orthogonal_vector();
+          Vector_3 tri_normal = CGAL::cross_product(local_range[1] - local_range[0], local_range[2] - local_range[1]);
+          if(tri_normal * plane_normal < 0) {
+            std::reverse(local_range.begin(), local_range.end());
+          }
+        }
+
+        // Triangulate by fanning from the first point
+        std::size_t base_idx = points.size();
+        for(const Point_3& p : local_range) {
+          points.push_back(p);
+        }
+
+        if(local_range.size() >= 3) {
+          // Build a single polygon for triangulation
+          std::vector<std::vector<std::size_t> > polygons(1);
+          for(std::size_t i = 0; i < local_range.size(); ++i)
+            polygons.back().push_back(base_idx + i);
+
+          CGAL::Polygon_mesh_processing::triangulate_polygons(points, polygons);
+
+          for(const auto& tri : polygons) {
+            CGAL_assertion(tri.size() == 3);
+            triangles.push_back(tri);
+            triangle_2_sptr.push_back(facet);
+          }
+        }
+      }
+    }
+  }
+
+  static void apply_rand_plane_tilts_V4(const PolyhedronSPtr& polyhedron)
+  {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    CGAL_SS3_TRANSF_TRACE_V(4, "Random Plane Tilt (v4)");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    // The approach here is to do a subtle plan perturbation, and then to reconstruct a solid
+    // As long as the perturbation is small enough and the input is manifold,
+    // the only topological change that happens is a split of vertices, resulting in
+    // a degree-3-vertices-only, perturbed polyhedron.
+    //
+    // At each input high-degree vertex, we must recover a valid split from the arrangement
+    // of the perturbed planes.
+
+    // Generic approach
+    Transformation::normalize_facet_planes(polyhedron);
+
+    double range = 0.1;
+#if 0 // @tmp
+    ConfigurationSPtr config = Configuration::get_instance();
+    if (config->is_loaded()) {
+      double value = config->get_double("main", "perturbation_epsilon");
+      if (value != 0.0) {
+        range = value;
+      }
+    }
+#endif
+
+    // @todo apply a garanteed small-enough nudge
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      CGAL_SS3_TRANSF_TRACE_V(32, "Nudge F" << facet->id());
+      perturbPlaneCoefficientsNudge(facet, range);
+    }
+
+    std::list<VertexSPtr> vertices_tosplit;
+    for (const VertexSPtr& vertex : polyhedron->vertices()) {
+      if (vertex->degree() > 3) {
+        vertices_tosplit.push_back(vertex);
+      }
+    }
+
+    using Arr_vertex_splitter = algorithm::Arr_vertex_splitter<GeomTraits>;
+    using Arr_vertex_splitter_sptr = std::shared_ptr<Arr_vertex_splitter>;
+    Arr_vertex_splitter_sptr vertex_splitter = Arr_vertex_splitter::create();
+
+    for (const VertexSPtr& vertex : vertices_tosplit) {
+      CGAL_SS3_CORE_TRACE_V(1, "Splitting vertex at " << vertex->point());
+
+      vertex->sort();
+
+      // soup to be used in the arrangement
+      std::vector<Point_3> points;
+      std::vector<std::vector<std::size_t> > triangles;
+      std::vector<FacetSPtr> triangle_2_sptr;
+
+      // Compute bounding box of intersections
+      Iso_cuboid_3 bbox = Arr_vertex_splitter::compute_intersection_bbox(vertex);
+
+      // Get the triangles from the base planes, with tagged faces
+      get_clipped_plane_faces(vertex, bbox, points, triangles, triangle_2_sptr);
+      std::cout << points.size() << " points, " << triangles.size() << " triangles [base]" << std::endl;
+
+      // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
+      {
+        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > fsptr_to_faces;
+        for (std::size_t i=0; i<triangles.size(); ++i) {
+          FacetSPtr fsptr = triangle_2_sptr[i];
+          if (fsptr) {
+            fsptr_to_faces[fsptr].push_back(triangles[i]);
+          }
+        }
+        std::size_t idx = 0;
+        for (const auto& kv : fsptr_to_faces) {
+          std::ostringstream oss;
+          oss << "results/arr_base_" << idx << ".off";
+          CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
+          ++idx;
+        }
+      }
+
+      // Add the bounding box faces (@todo probably not necessary)
+#if 1
+      std::size_t base_idx = points.size();
+      points.push_back(Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin())); // v0
+      points.push_back(Point_3(bbox.xmax(), bbox.ymin(), bbox.zmin())); // v1
+      points.push_back(Point_3(bbox.xmax(), bbox.ymax(), bbox.zmin())); // v2
+      points.push_back(Point_3(bbox.xmin(), bbox.ymax(), bbox.zmin())); // v3
+      points.push_back(Point_3(bbox.xmin(), bbox.ymin(), bbox.zmax())); // v4
+      points.push_back(Point_3(bbox.xmax(), bbox.ymin(), bbox.zmax())); // v5
+      points.push_back(Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax())); // v6
+      points.push_back(Point_3(bbox.xmin(), bbox.ymax(), bbox.zmax())); // v7
+
+      // bottom face
+      triangles.push_back({base_idx+0, base_idx+2, base_idx+1});
+      triangles.push_back({base_idx+0, base_idx+3, base_idx+2});
+      // top face
+      triangles.push_back({base_idx+4, base_idx+5, base_idx+6});
+      triangles.push_back({base_idx+4, base_idx+6, base_idx+7});
+      // front face
+      triangles.push_back({base_idx+0, base_idx+1, base_idx+5});
+      triangles.push_back({base_idx+0, base_idx+5, base_idx+4});
+      // back face
+      triangles.push_back({base_idx+2, base_idx+3, base_idx+7});
+      triangles.push_back({base_idx+2, base_idx+7, base_idx+6});
+      // left face
+      triangles.push_back({base_idx+0, base_idx+4, base_idx+7});
+      triangles.push_back({base_idx+0, base_idx+7, base_idx+3});
+      // right face
+      triangles.push_back({base_idx+1, base_idx+2, base_idx+6});
+      triangles.push_back({base_idx+1, base_idx+6, base_idx+5});
+
+      triangle_2_sptr.resize(triangles.size(), nullptr);
+
+      std::cout << points.size() << " points, " << triangles.size() << " triangles [+bbox]" << std::endl;
+#endif
+
+      for (std::size_t i=0; i<triangle_2_sptr.size(); ++i) {
+        std::cout << "triangle " << i << " ==> ptr: " << triangle_2_sptr[i] << std::endl;
+      }
+
+      PMP::merge_duplicate_points_in_polygon_soup(points, triangles);
+      CGAL::IO::write_OFF("results/arr_soup.off", points, triangles, CGAL::parameters::stream_precision(17));
+
+      CGAL_assertion(triangles.size() == triangle_2_sptr.size());
+
+      std::cout << "autorefining..." << std::endl;
+      std::vector<FacetSPtr> updated_triangle_2_sptr;
+      Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(triangle_2_sptr, updated_triangle_2_sptr);
+
+      PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(autoref_visitor));
+      triangle_2_sptr = std::move(updated_triangle_2_sptr);
+      CGAL_assertion(triangles.size() == triangle_2_sptr.size());
+
+      CGAL::IO::write_OFF("results/arr_autorefined.off", points, triangles, CGAL::parameters::stream_precision(17));
+
+      for (std::size_t i=0; i<triangles.size(); ++i) {
+        std::cout << "[4] triangle " << i << " ptr: " << triangle_2_sptr[i] << std::endl;
+      }
+
+      // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
+      {
+        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > fsptr_to_faces;
+        for (std::size_t i=0; i<triangles.size(); ++i) {
+          FacetSPtr fsptr = triangle_2_sptr[i];
+          if (fsptr) {
+            fsptr_to_faces[fsptr].push_back(triangles[i]);
+          }
+        }
+        std::size_t idx = 0;
+        for (const auto& kv : fsptr_to_faces) {
+          std::ostringstream oss;
+          oss << "results/arr_autorefined_" << idx << ".off";
+          CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
+          ++idx;
+        }
+      }
+
+      std::cout << "repairing..." << std::endl;
+      Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(triangle_2_sptr);
+      PMP::merge_duplicate_polygons_in_polygon_soup(points, triangles,
+                                                    CGAL::parameters::visitor(repair_ps_visitor)
+                                                                    .erase_all_duplicates(false) /*keep one*/
+                                                                    .require_same_orientation(false)
+                                                                    .verbose(true));
+      CGAL::IO::write_OFF("results/arr_repaired.off", points, triangles, CGAL::parameters::stream_precision(17));
+
+      // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
+      {
+        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > fsptr_to_faces;
+        for (std::size_t i=0; i<triangles.size(); ++i) {
+          FacetSPtr fsptr = triangle_2_sptr[i];
+          if (fsptr) {
+            fsptr_to_faces[fsptr].push_back(triangles[i]);
+          }
+        }
+        std::size_t idx = 0;
+        for (const auto& kv : fsptr_to_faces) {
+          std::ostringstream oss;
+          oss << "results/arr_repaired_" << idx << ".off";
+          CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
+          ++idx;
+        }
+      }
+
+      CGAL_assertion(triangles.size() == triangle_2_sptr.size());
+
+      // dump only the triangles with a non nullptr
+      {
+        std::vector<std::vector<std::size_t> > input_triangles;
+        for (std::size_t i=0; i<triangles.size(); ++i) {
+          if (triangle_2_sptr[i]) {
+            input_triangles.push_back(triangles[i]);
+          }
+        }
+
+        std::cout << input_triangles.size() << " input triangles" << std::endl;
+        CGAL::IO::write_OFF("results/arr_recovered_input.off", points, input_triangles, CGAL::parameters::stream_precision(17));
+      }
+
+      using PID = std::size_t;
+      using TID = std::size_t;
+      using VID = std::size_t;
+
+      auto fill_edge_map = [](const std::vector<Point_3>& points,
+                              const std::vector<std::vector<PID> >& triangles,
+                              std::vector<std::unordered_map<PID, std::vector<TID> > >& edge_map)
+      {
+        CGAL_precondition(edge_map.size() == points.size());
+
+        // collect duplicated edges
+        for (TID ti=0; ti<triangles.size(); ++ti) {
+          for (std::size_t j=0; j<3; ++j) {
+            std::pair<PID, PID> e_pids = CGAL::make_sorted_pair(triangles[ti][j],
+                                                                triangles[ti][(j+1)%3]);
+            edge_map[e_pids.first][e_pids.second].push_back(ti);
+          }
+        }
+
+        namespace pred = CGAL::Polygon_mesh_processing::Corefinement;
+
+        for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+          for (auto& pid1_and_edges : edge_map[pid0]) {
+            std::vector<TID>& inc_triangles = pid1_and_edges.second;
+
+            if (inc_triangles.size() == 2) { // edge is only incident to a single SS3 face
+              continue;
+            }
+
+            const PID pid1 = pid1_and_edges.first;
+            CGAL_assertion(pid0 != pid1);
+
+            std::cout << "processing a non-manifold edge: " << points[pid0] << " -- " << points[pid1] << std::endl;
+
+            auto get_third_point_id = [&triangles, pid0, pid1](TID tid) -> PID
+            {
+              std::size_t third;
+
+              // need to be careful that the orientation of the edge might not match the orientation of the triangle
+              if (triangles[tid][0] == pid0 || triangles[tid][0] == pid1) {
+                if (triangles[tid][1] == pid0 || triangles[tid][1] == pid1) {
+                  third = triangles[tid][2];
+                } else {
+                  third = triangles[tid][1];
+                }
+              } else {
+                third = triangles[tid][0];
+              }
+
+              CGAL_postcondition(third != pid0 && third != pid1);
+              return third;
+            };
+
+            const Point_3& ref_pt = points.at(get_third_point_id(inc_triangles[0]));
+            auto less = [&ref_pt, &points, pid0, pid1, get_third_point_id](TID tid1, TID tid2)
+            {
+              return pred::sorted_around_edge<GeomTraits>(points.at(pid0), points.at(pid1),
+                                                          ref_pt,
+                                                          points.at(get_third_point_id(tid1)),
+                                                          points.at(get_third_point_id(tid2)));
+            };
+
+            std::sort(inc_triangles.begin()+1, inc_triangles.end(), less);
+
+            // std::cout << "Around edge [" << pid0 << " " << pid1 << "], faces are sorted: ";
+            // for(TID tid : inc_triangles)
+            //   std::cout << " " << tid;
+            // std::cout << std::endl;
+          }
+        }
+      }; // lambda 'fill_edge_map'
+
+      std::vector<std::unordered_map<PID, std::vector<TID> > > edge_map(points.size());
+      fill_edge_map(points, triangles, edge_map);
+
+      auto build_volume_CC = [](const TID seed_tid,
+                                const VID CC_ID,
+                                const bool start_from_inverted_face,
+                                const std::vector<Point_3>& points,
+                                const std::vector<std::vector<PID> >& triangles,
+                                const auto& edge_map,
+                                auto& volume_CCs,
+                                auto& face_volume_IDs)
+      {
+        std::cout << "Building volume #" << CC_ID << " from seed face " << seed_tid << std::endl;
+
+        volume_CCs.emplace_back();
+
+        std::stack<std::pair<TID, bool> > to_visit;
+        to_visit.emplace(seed_tid, start_from_inverted_face);
+
+        while (!to_visit.empty())
+        {
+          TID current_tid;
+          bool invert_face;
+          std::tie(current_tid, invert_face) = to_visit.top();
+          to_visit.pop();
+
+          std::cout << "At face " << current_tid << " [" << triangles[current_tid][0]
+                                                  << ", " << triangles[current_tid][1]
+                                                  << ", " << triangles[current_tid][2] << "], ";
+          std::cout << "invert: " << invert_face << ", ";
+          std::cout << "VIDS: " << face_volume_IDs[current_tid][0] << " " << face_volume_IDs[current_tid][1] << std::endl;
+
+          std::size_t pos = invert_face ? 0 : 1;
+          if (face_volume_IDs[current_tid][pos] == CC_ID) {
+            // already visited this facet during the flooding of this volume's boundary
+            continue;
+          }
+
+          CGAL_assertion(face_volume_IDs[current_tid][pos] == VID(-1)); // triangle should only be encountered once
+          CGAL_warning(face_volume_IDs[current_tid][(pos+1)%2] != CC_ID); // Moebius shenanigans should be an instance of a bug
+
+          volume_CCs.back().push_back(current_tid);
+
+          // mark face as visited
+          face_volume_IDs[current_tid][pos] = CC_ID;
+
+          // flood through the edges
+          for (int j=0; j<3; ++j) {
+            std::pair<PID, PID> e_pids = CGAL::make_sorted_pair(triangles[current_tid][j],
+                                                                triangles[current_tid][(j+1)%3]);
+            const std::vector<TID>& inc_triangles = edge_map.at(e_pids.first).at(e_pids.second);
+            CGAL_assertion(!inc_triangles.empty());
+
+            std::cout << "  ~~ Crossing edge [" << e_pids.first << ", " << e_pids.second << "]" << std::endl;
+            std::cout << "    pos: " << points[e_pids.first] << " " << points[e_pids.second] << std::endl;
+
+            // The faces are ordered CCW while looking from pid0.
+            // So the walking while looking from [j] depends on whether [j] is pid0 or not
+            int iter_direction = (e_pids.first == triangles[current_tid][j]) ? 1 : -1;
+            std::cout << "    iter_direction = " << iter_direction << std::endl;
+
+            // and it also depends on whether we are walking above or below the face
+            iter_direction *= invert_face ? 1 : -1;
+            std::cout << "    invert_face = " << invert_face << std::endl;
+
+            TID next_tid = current_tid;
+            for (;;) {
+              if (inc_triangles.size() == 1) {
+                std::cerr << "Warning: dangling triangle..." << std::endl;
+                std::cout << "    over the edge, the triangle is ITSELF " << current_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "], ";
+                to_visit.emplace(current_tid, !invert_face);
+                break;
+              } else if (inc_triangles.size() == 2) {
+                // we should only be there once, meaning if we do not ignore orientations,
+                // then the faces MUST be compatible
+                CGAL_assertion(next_tid == current_tid);
+
+                next_tid = (inc_triangles[0] == current_tid) ? inc_triangles[1] : inc_triangles[0];
+                std::cout << "    over the edge, the triangle is TRIVIALLY " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "], ";
+                std::cout << "VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1] << std::endl;
+                CGAL_assertion(next_tid != current_tid);
+              } else {
+                // tricky part, now
+                auto tid_it = std::find(std::begin(inc_triangles), std::end(inc_triangles), next_tid /*updates on every iteration*/);
+                CGAL_assertion(tid_it != inc_triangles.end());
+
+                if (iter_direction == 1) { // CCW
+                  std::cout << "    CCW walk" << std::endl;
+                  auto next_it = std::next(tid_it);
+                  next_tid = (next_it == inc_triangles.end()) ? inc_triangles[0] : *next_it;
+                } else { // CW
+                  std::cout << "    CW walk" << std::endl;
+                  next_tid = (tid_it == inc_triangles.begin()) ? inc_triangles.back() : *(std::prev(tid_it));
+                }
+
+                std::cout << "    over the edge, the triangle is " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "], ";
+                std::cout << "VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1] << std::endl;
+                CGAL_assertion(next_tid != current_tid);
+              }
+
+              // If the edge has the same direction in both faces (aka, the orientation changes),
+              // then we have to flip the direction of turning around the edge)
+              const auto j_it = std::find(std::begin(triangles[next_tid]),
+                                          std::end(triangles[next_tid]),
+                                          triangles[current_tid][j]);
+              CGAL_assertion(j_it != std::end(triangles[next_tid]));
+              const std::size_t pos = std::distance(std::begin(triangles[next_tid]), j_it);
+              CGAL_assertion(triangles[next_tid][pos] == triangles[current_tid][j]);
+
+              const bool flip_side = (triangles[next_tid][(pos+1)%3] == triangles[current_tid][(j+1)%3]);
+              std::cout << "    flipping? " << flip_side
+                        << " (N: " << triangles[next_tid][(pos+1)%3] << " C: " << triangles[current_tid][(j+1)%3] << ")" << std::endl;
+
+              std::cout << "Final TID = " << next_tid << std::endl;
+              if (flip_side) {
+                to_visit.emplace(next_tid, !invert_face);
+              } else {
+                to_visit.emplace(next_tid, invert_face);
+              }
+
+              break;
+            }
+          }
+        }
+      }; // lambda 'build_volume_CC'
+
+      // identify volumes in the shifting faces soup, and tag faces of the volumes
+      // that are incident to the base face(s)
+      std::vector<std::vector<TID> > volume_CCs; // range of ranges (volumes) of triangle IDs
+      std::vector<std::array<VID, 2> > face_volume_IDs(triangles.size(),
+                                                        // [0] is down, [1] is up
+                                                        std::array<VID, 2>{VID(-1), VID(-1)});
+
+      VID vid = 0;
+      for(std::size_t i=0; i<triangles.size(); ++i) {
+        // do not start from bbox faces: we will visit them anyway / we don't want the outer wrap
+        if (!triangle_2_sptr[i])
+          continue;
+        if (face_volume_IDs[i][0] == VID(-1))
+          build_volume_CC(i, vid++, true, points, triangles, edge_map, volume_CCs, face_volume_IDs);
+        if (face_volume_IDs[i][1] == VID(-1))
+          build_volume_CC(i, vid++, false, points, triangles, edge_map, volume_CCs, face_volume_IDs);
+      }
+
+      std::cout << volume_CCs.size() << " volume CCs" << std::endl;
+
+      Mesh input;
+      bool success = CGAL::IO::read_polygon_mesh("input.obj", input);
+      CGAL_assertion(success);
+
+      Mesh bb_sm;
+      make_hexahedron(Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+                      Point_3(bbox.xmax(), bbox.ymin(), bbox.zmin()),
+                      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmin()),
+                      Point_3(bbox.xmin(), bbox.ymax(), bbox.zmin()),
+                      Point_3(bbox.xmin(), bbox.ymax(), bbox.zmax()),
+                      Point_3(bbox.xmin(), bbox.ymin(), bbox.zmax()),
+                      Point_3(bbox.xmax(), bbox.ymin(), bbox.zmax()),
+                      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax()),
+                      bb_sm, CGAL::parameters::do_not_triangulate_faces(false));
+
+      Mesh input_bb_inter;
+      PMP::corefine_and_compute_intersection(input, bb_sm, input_bb_inter,
+                                             CGAL::parameters::do_not_modify(true));
+
+      FT vol_input = PMP::volume(input_bb_inter);
+      std::cout << "input volume: " << vol_input << std::endl;
+
+      enum class CC_in_out_flag
+      {
+        UNKNOWN = 0,
+        INSIDE,
+        OUTSIDE
+      };
+
+      std::vector<CC_in_out_flag> in_out_flags(volume_CCs.size());
+      std::size_t classified_CCs = 0;
+
+      std::vector<std::vector<PID> > in_triangles, out_triangles;
+
+      for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+        std::cout << "== checking CC " << i << std::endl;
+        in_out_flags[i] = CC_in_out_flag::UNKNOWN;
+
+        // build a mesh from the soup
+        std::vector<Point_3> cc_points = points;
+        std::vector<std::vector<PID> > cc_triangles;
+        for (TID tid : volume_CCs[i]) {
+          cc_triangles.push_back(triangles[tid]);
+        }
+
+        std::ostringstream oss;
+        oss << "results/volume_cc_" << i << ".off";
+        CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+        std::cout << "Wrote volume CC " << i << " with " << cc_triangles.size() << " triangles." << std::endl;
+
+        Mesh cc_sm;
+        PMP::orient_polygon_soup(points, cc_triangles);
+        CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(cc_triangles));
+        PMP::polygon_soup_to_polygon_mesh(points, cc_triangles, cc_sm);
+        CGAL_assertion(is_triangle_mesh(cc_sm) && is_closed(cc_sm) && !PMP::does_self_intersect(cc_sm));
+
+        // @tmp workaround because is_outward_oriented seems broken
+        const FT vol_full_cc = PMP::volume(cc_sm);
+        if (vol_full_cc < 0)
+          PMP::reverse_face_orientations(cc_sm);
+
+        CGAL::IO::write_polygon_mesh("results/A_" + std::to_string(i) + ".off", input, CGAL::parameters::stream_precision(17));
+        CGAL::IO::write_polygon_mesh("results/B_" + std::to_string(i) + ".off", cc_sm, CGAL::parameters::stream_precision(17));
+
+        // compute the intersection with the input mesh
+        Mesh inter;
+        PMP::corefine_and_compute_intersection(input, cc_sm, inter,
+                                               CGAL::parameters::do_not_modify(true));
+
+        CGAL::IO::write_polygon_mesh("results/inter_" + std::to_string(i) + ".off", inter, CGAL::parameters::stream_precision(17));
+
+        FT vol_cc = PMP::volume(inter);
+        std::cout << "volume of CC: " << vol_cc << std::endl;
+
+        // if the volume of the intersection is almost the same as the volume of the CC, then it's an inside component
+        if (CGAL::abs(vol_cc - vol_input) < 0.25 * vol_input) {
+          in_out_flags[i] = CC_in_out_flag::INSIDE;
+          ++classified_CCs;
+          for (TID tid : volume_CCs[i]) {
+            in_triangles.push_back(triangles[tid]);
+          }
+        } else if (vol_cc < 0.1 * vol_input) {
+          in_out_flags[i] = CC_in_out_flag::OUTSIDE;
+          ++classified_CCs;
+          for (TID tid : volume_CCs[i]) {
+            out_triangles.push_back(triangles[tid]);
+          }
+        }
+        std::cout << "CC classification: " << int(in_out_flags[i]) << std::endl;
+      }
+
+      std::cout << classified_CCs << " known CCs" << std::endl;
+
+      CGAL::IO::write_OFF("results/inside_ccs.off", points, in_triangles, CGAL::parameters::stream_precision(17));
+      CGAL::IO::write_OFF("results/outside_ccs.off", points, out_triangles, CGAL::parameters::stream_precision(17));
+
+      // Now, we want to deal with the tentative cells
+
+      // Brute force: check all possibilities and keep the one that volume closest to the target.
+
+      // Compute target volume: compute the intersection of the mesh with the bbox
+
+      // Now, try all combinations of INSIDE/OUTSIDE for UNKNOWN cells
+
+      // a valid partition has:
+      // - all cells are either inside or outside
+      // - only 1 "inside" face-connected component & 1 "outside" face-CC
+      // - no non-manifold occurences
+      auto is_valid_partition = [&](const std::vector<std::vector<TID>>& volume_CCs,
+                                   const std::vector<std::array<VID, 2>>& face_volume_IDs,
+                                   const std::vector<CC_in_out_flag>& in_out_flags,
+                                   const std::vector<std::vector<PID>>& triangles,
+                                   const std::vector<Point_3>& points,
+                                   const std::vector<std::unordered_map<PID, std::vector<TID>>>& edge_map) -> bool
+      {
+        // 1. All cells are classified
+        for(const auto& flag : in_out_flags)
+          if(flag == CC_in_out_flag::UNKNOWN)
+            return false;
+
+        // 2. Only one face-connected component for INSIDE and one for OUTSIDE
+        std::vector<TID> inside_faces, outside_faces;
+        for(std::size_t ccid = 0; ccid < volume_CCs.size(); ++ccid) {
+          if(in_out_flags[ccid] == CC_in_out_flag::INSIDE)
+            inside_faces.insert(inside_faces.end(), volume_CCs[ccid].begin(), volume_CCs[ccid].end());
+          else if(in_out_flags[ccid] == CC_in_out_flag::OUTSIDE)
+            outside_faces.insert(outside_faces.end(), volume_CCs[ccid].begin(), volume_CCs[ccid].end());
+        }
+
+        auto count_face_ccs = [&](const std::vector<TID>& faces) -> int {
+          std::unordered_set<TID> visited;
+          int ccs = 0;
+          std::unordered_set<TID> face_set(faces.begin(), faces.end());
+          for(TID tid : faces) {
+            if(visited.count(tid)) continue;
+            ++ccs;
+            std::stack<TID> stack;
+            stack.push(tid);
+            visited.insert(tid);
+            while(!stack.empty()) {
+              TID curr = stack.top(); stack.pop();
+              // For each edge of curr, find adjacent faces in the same set
+              for(int j=0; j<3; ++j) {
+                PID a = triangles[curr][j], b = triangles[curr][(j+1)%3];
+                auto it = edge_map[a].find(b);
+                if(it == edge_map[a].end()) continue;
+                for(TID nbr : it->second) {
+                  if(face_set.count(nbr) && !visited.count(nbr)) {
+                    visited.insert(nbr);
+                    stack.push(nbr);
+                  }
+                }
+              }
+            }
+          }
+          return ccs;
+        };
+
+        if(count_face_ccs(inside_faces) != 1 || count_face_ccs(outside_faces) != 1)
+          return false;
+
+        // 3. No non-manifold edges or vertices
+        // For each edge, all incident faces must have the same label or form a single contiguous block per label
+        for(PID pid0 = 0; pid0 < points.size(); ++pid0) {
+          for(const auto& [pid1, tids] : edge_map[pid0]) {
+            // For each label, check that all faces with that label are consecutive in the sorted list
+            std::vector<CC_in_out_flag> labels;
+            for(TID tid : tids) {
+              // Find which side of the face this edge is on
+              int pos = -1;
+              for(int j=0; j<3; ++j) {
+                if((triangles[tid][j] == pid0 && triangles[tid][(j+1)%3] == pid1) ||
+                   (triangles[tid][j] == pid1 && triangles[tid][(j+1)%3] == pid0)) {
+                  pos = j;
+                  break;
+                }
+              }
+              if(pos == -1) continue; // Should not happen
+              // Use the face_volume_IDs to get the CC id, then the label
+              VID ccid0 = face_volume_IDs[tid][0], ccid1 = face_volume_IDs[tid][1];
+              CC_in_out_flag flag0 = (ccid0 < in_out_flags.size()) ? in_out_flags[ccid0] : CC_in_out_flag::UNKNOWN;
+              CC_in_out_flag flag1 = (ccid1 < in_out_flags.size()) ? in_out_flags[ccid1] : CC_in_out_flag::UNKNOWN;
+              // Both sides should be classified
+              if(flag0 == CC_in_out_flag::UNKNOWN || flag1 == CC_in_out_flag::UNKNOWN)
+                return false;
+              labels.push_back(flag0);
+              labels.push_back(flag1);
+            }
+            // Check that for each label, all appearances are consecutive (no interleaving)
+            for(CC_in_out_flag label : {CC_in_out_flag::INSIDE, CC_in_out_flag::OUTSIDE}) {
+              int first = -1, last = -1, count = 0;
+              for(std::size_t i=0; i<labels.size(); ++i) {
+                if(labels[i] == label) {
+                  if(first == -1) first = i;
+                  last = i;
+                  ++count;
+                }
+              }
+              if(count > 0) {
+                for(int i=first; i<=last; ++i)
+                  if(labels[i] != label)
+                    return false; // non-manifold edge
+              }
+            }
+          }
+        }
+        // For each vertex, collect incident faces and check same as above
+        for(PID pid = 0; pid < points.size(); ++pid) {
+          std::vector<CC_in_out_flag> labels;
+          for(std::size_t tid = 0; tid < triangles.size(); ++tid) {
+            for(int j=0; j<3; ++j) {
+              if(triangles[tid][j] == pid) {
+                VID ccid0 = face_volume_IDs[tid][0], ccid1 = face_volume_IDs[tid][1];
+                CC_in_out_flag flag0 = (ccid0 < in_out_flags.size()) ? in_out_flags[ccid0] : CC_in_out_flag::UNKNOWN;
+                CC_in_out_flag flag1 = (ccid1 < in_out_flags.size()) ? in_out_flags[ccid1] : CC_in_out_flag::UNKNOWN;
+                if(flag0 == CC_in_out_flag::UNKNOWN || flag1 == CC_in_out_flag::UNKNOWN)
+                  return false;
+                labels.push_back(flag0);
+                labels.push_back(flag1);
+                break;
+              }
+            }
+          }
+          for(CC_in_out_flag label : {CC_in_out_flag::INSIDE, CC_in_out_flag::OUTSIDE}) {
+            int first = -1, last = -1, count = 0;
+            for(std::size_t i=0; i<labels.size(); ++i) {
+              if(labels[i] == label) {
+                if(first == -1) first = i;
+                last = i;
+                ++count;
+              }
+            }
+            if(count > 0) {
+              for(int i=first; i<=last; ++i)
+                if(labels[i] != label)
+                  return false; // non-manifold vertex
+            }
+          }
+        }
+        return true;
+      };
+
+
+
+      std::exit(1);
+    }
+  }
+
   // Perturbation to ensure generic configuration.
   // We always need to ensure that points are exactly on the planes of their incident facets.
   static void apply_rand_perturbation(PolyhedronSPtr& polyhedron)
   {
+    // return apply_rand_plane_tilts_V4(polyhedron);
+
     // if the input is all triangles, simply perturb points directly
     if (is_triangle_polyhedron(polyhedron))
       return rand_move_points(polyhedron);

@@ -21,7 +21,7 @@
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 
-// #define CGAL_SS3_DUMP_FILES
+#define CGAL_SS3_DUMP_FILES
 
 #define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
 #define CGAL_SS3_RUN_TIMERS
@@ -35,7 +35,7 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace internal {
 
-static unsigned int verbosity_level = 4;
+static unsigned int verbosity_level = 64;
 std::ostream* trace_stream = &std::cout;
 
 inline void set_verbosity_level(const unsigned int l) { verbosity_level = l; }

@@ -8,12 +8,12 @@ CUSTOMER=""
 DATA_PATH=/home/mrouxell/Data/Customers/${CUSTOMER}/offset_data_june_2024
 # script_test_folder
 # offset_data_june_2024
-# offset_data_july_2024
+# offset_data_july_2024 # everything is zero weight there
 # high_degree_data
 ############## DO NOT COMMIT
 
 BUILD_DIR="build-release"
-TIMEOUT_VALUE=120
+TIMEOUT_VALUE=500
 MAX_ITEM_NUMBER=400
 NUMBER_OF_THREADS=2
 OFFSET_DIRECTION="out" # in / out

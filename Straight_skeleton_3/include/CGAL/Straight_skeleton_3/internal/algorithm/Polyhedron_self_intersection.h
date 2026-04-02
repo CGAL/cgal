@@ -610,10 +610,45 @@ public:
       auto test_fo_o_coplanarity = [&](const EdgeSPtr& /*fe*/, const auto& fo,
                                        const EdgeSPtr& /*e*/, const auto& o) -> bool
       {
+#if 0
         // - fe and e do not share a vertex
         // - if the intersection is 1-dimensional, it's a real intersection because 'edge'
         // is not incident to the facet
         return CGAL::do_intersect(fo, o);
+#else
+        auto res = CGAL::intersection(fo, o);
+        if (!res) {
+          return false;
+        } else if (const Point_3* ipoint = std::get_if<Point_3>(&*res)) {
+          // tolerate the self-intersection if it's both a vertex of the facet and an endpoint of
+          // the edge
+          bool do_tolerate = false;
+          if constexpr (std::is_same_v<decltype(o), Segment_3>) {
+            do_tolerate = (*ipoint == o.source() || *ipoint == o.target());
+          } else if constexpr (std::is_same_v<decltype(o), Ray_3>) {
+            do_tolerate = (*ipoint == o.source());
+          } else {
+            CGAL_assertion(false);
+            std::exit(1);
+          }
+
+          if (!do_tolerate) {
+            return false;
+          }
+
+          do_tolerate = false;
+          for (VertexSPtr v : facet->vertices()) {
+            if (v->point() == *ipoint) {
+              do_tolerate = true;
+              break;
+            }
+          }
+
+          return do_tolerate;
+        } else {
+          return true;
+        }
+#endif
       };
 
       auto test_fe_o_coplanarity = [&](const EdgeSPtr& fe, const EdgeSPtr& e, const auto& o) -> bool

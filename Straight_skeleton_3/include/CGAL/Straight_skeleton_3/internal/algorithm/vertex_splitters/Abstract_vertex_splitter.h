@@ -50,6 +50,7 @@ public:
   // static const int VOLUME_VERTEX_SPLITTER = 3;
   // static const int WEIGHT_VERTEX_SPLITTER = 4;
   // static const int SPHERE_VERTEX_SPLITTER = 5;
+  static const int ARR_VERTEX_SPLITTER = 6;
 
 public:
   Abstract_vertex_splitter(int type = 0)
