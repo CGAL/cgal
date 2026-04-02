@@ -21,9 +21,9 @@ namespace CGAL {
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/// @private
+/// \deprecated Use Hot_pixel_snap_rounding_traits_2 instead
 template<class K>
-using Snap_rounding_traits_2 [[deprecated("Use Hot_pixel_snap_rounding_traits_2 instead")]] = Hot_pixel_snap_rounding_traits_2<K>;
+using Snap_rounding_traits_2 = Hot_pixel_snap_rounding_traits_2<K>;
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } //namespace CGAL

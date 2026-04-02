@@ -1,4 +1,4 @@
-#define CGAL_NO_DEPRECATED_WARNING
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Hot_pixel_snap_rounding_traits_2.h>
 #include <CGAL/Double_grid_snap_rounding_traits_2.h>
