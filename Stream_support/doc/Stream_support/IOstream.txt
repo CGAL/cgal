@@ -415,6 +415,11 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
     <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::write_VTP()` \endlink</td>
   </tr>
   <tr>
+    <th>\ref IOStreamGLTF "GLTF"</th>
+    <td>\link PkgStreamSupportIoFuncsGLTF `CGAL::IO::read_GLTF()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsGLTF `CGAL::IO::write_GLTF()` \endlink</td>
+  </tr>
+  <tr>
     <th>\ref IOStreamGocad "GOCAD"</th>
     <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::read_GOCAD()` \endlink</td>
     <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::write_GOCAD()` \endlink</td>

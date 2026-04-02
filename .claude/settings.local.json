@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(cmake ..)",
+      "Bash(cmake --build . --config Release --target test_GLTF)",
+      "Bash(./build/Release/test_GLTF.exe)"
     ]
   }
 }

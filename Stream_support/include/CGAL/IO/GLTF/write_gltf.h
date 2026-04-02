@@ -3,7 +3,6 @@
 #ifndef CGAL_IO_GLTF_WRITE_GLTF_H
 #define CGAL_IO_GLTF_WRITE_GLTF_H
 
-// Must be included after read_gltf.h (which pulls in tiny_gltf.h with TINYGLTF_IMPLEMENTATION).
 #include "tiny_gltf.h"
 
 #include <CGAL/IO/helpers.h>
