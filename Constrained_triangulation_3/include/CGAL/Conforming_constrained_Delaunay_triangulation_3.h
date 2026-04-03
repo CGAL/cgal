@@ -14,6 +14,7 @@
 
 #include <CGAL/IO/Color_ostream.h>
 #include <CGAL/IO/io_tags.h>
+#include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
@@ -1314,6 +1315,13 @@ protected:
       CGAL::copy_face_graph(component_mesh, link_mesh, CGAL::parameters::face_to_face_output_iterator(out_it));
       for(auto fd : new_faces) {
         put(patch_id_map, fd, static_cast<int>(component_index));
+      }
+      auto opt_kernel_center_point = CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
+      if(opt_kernel_center_point.has_value()) {
+        auto kernel_center_point = *opt_kernel_center_point;
+        std::cerr << "  - kernel center point of component " << component_index << ": " << kernel_center_point
+                  << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point())) << ")"
+                  << "\n";
       }
     } // end for each component
 
