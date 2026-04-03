@@ -156,7 +156,7 @@ tiled with one-unit square pixels.
 The package is supplied with a graphical demo program that opens a window,
 allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
-(see `<CGAL_ROOT>/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
+(see `<CGAL_ROOT>/GraphicsView/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
 
 
 \section Snap_rounding_history Implementation History

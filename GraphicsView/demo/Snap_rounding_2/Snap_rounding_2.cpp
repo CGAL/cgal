@@ -4,9 +4,7 @@
 #include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Snap_rounding_traits_2.h>
-#include <CGAL/Snap_rounding_2.h>
-#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/hot_pixel_snap_rounding_2.h>
 
 // Qt headers
 #include <QtGui>
@@ -30,7 +28,6 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-typedef CGAL::Snap_rounding_traits_2<K>     Traits;
 
 typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
@@ -175,7 +172,7 @@ MainWindow::deltaChanged(double d)
   }
   delta = d;
   output.clear();
-  CGAL::snap_rounding_2<Traits,std::list<Segment_2>::const_iterator,std::list<std::list<Point_2> > >(input.begin(), input.end(), output, delta, true, false);
+  CGAL::hot_pixel_snap_rounding_2(input, std::back_inserter(output), CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
   rgi->setDelta(delta, delta);
   Q_EMIT( changed());
 }
@@ -190,7 +187,7 @@ MainWindow::processInput(CGAL::Object o)
     if(points.size() == 2) {
       input.push_back(Segment_2(points.front(), points.back()));
       output.clear();
-      CGAL::snap_rounding_2<Traits,std::list<Segment_2>::const_iterator,std::list<std::list<Point_2> > >(input.begin(), input.end(), output, delta, true, false);
+      CGAL::hot_pixel_snap_rounding_2(input, std::back_inserter(output), CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
     }
     else {
       std::cerr << points.size() << std::endl;
@@ -282,7 +279,7 @@ MainWindow::open(QString fileName)
               std::back_inserter(input));
   }
   output.clear();
-  CGAL::snap_rounding_2<Traits,std::list<Segment_2>::const_iterator,std::list<std::list<Point_2> > >(input.begin(), input.end(), output, delta, true, false);
+  CGAL::hot_pixel_snap_rounding_2(input, std::back_inserter(output), CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
   ifs.close();
   // default cursor
   QApplication::restoreOverrideCursor();
