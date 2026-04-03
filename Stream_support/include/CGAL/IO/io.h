@@ -216,6 +216,19 @@ public:
   }
 };
 
+template <class Func>
+class Output_rep<Func, IO_manip_tag>
+{
+  Func f;
+
+public:
+  Output_rep(Func f) : f(f) {}
+  std::ostream& operator()(std::ostream& os) const
+  {
+    return f(os);
+  }
+};
+
 /*!
   \relates Output_rep
   \brief stream output of the \c Output_rep calls its \c operator().
