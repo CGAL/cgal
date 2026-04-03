@@ -801,14 +801,14 @@ public:
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
-   * @return the projected point
+   * @return the projected point, and its index
    *
    * `p` is projected as follows using normal of least square fitting plane
    * on `v` incident surface points. If `index` is specified, only
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
-  Bare_point
+  std::pair<Bare_point, Index>
   project_on_surface(const Vertex_handle& v, const Bare_point& p,
                      Surface_patch_index index = Surface_patch_index()) const;
 
@@ -1674,7 +1674,7 @@ private:
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
-  std::pair<std::optional<Plane_3>, Bare_point>
+  std::optional<std::tuple<Plane_3, Bare_point, Surface_patch_index>>
   get_least_square_surface_plane(const Vertex_handle& v,
                                  Surface_patch_index index = Surface_patch_index()) const;
 
@@ -1683,7 +1683,7 @@ private:
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
-   * @return a `std::optional` with the projected point if the projection
+   * @return a `std::optional` with the projected point and index if the projection
    * was possible, or `std::nullopt`.
    *
    * `p` is projected using the normal of least square fitting plane
@@ -1691,7 +1691,7 @@ private:
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
    */
-  std::optional<Bare_point>
+  std::optional<std::pair<Bare_point, Index>>
   project_on_surface_if_possible(const Vertex_handle& v,
                                  const Bare_point& p,
                                  Surface_patch_index index = Surface_patch_index()) const;
@@ -1700,7 +1700,7 @@ private:
    * @brief Returns the projection of `p`, using direction of
    * `projection_vector`
    */
-  Bare_point
+  std::pair<Bare_point, Index>
   project_on_surface_aux(const Bare_point& p,
                          const Bare_point& ref_point,
                          const Vector_3& projection_vector) const;
@@ -2157,6 +2157,22 @@ private:
     }
   }
 
+  auto display_vertex(Vertex_handle v) const {
+    return IO::oformat([&,v](std::ostream& os) -> std::ostream&{
+      os << IO::oformat(v, With_point_tag{});
+      if (v != Vertex_handle()) {
+        os << " (dimension: " << c3t3_.in_dimension(v)
+           << ", index.index(): " << c3t3_.index(v).index() << ")";
+      }
+      return os;
+    }, IO_manip_tag{});
+  }
+
+  auto display_vertex_at_scope_exit(std::ostream& os, Vertex_handle& v) const {
+    return make_scope_exit([&]{
+      os << "  => " << display_vertex(v) << '\n';
+    });
+  }
 
 private:
 
@@ -2460,8 +2476,7 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
                            const Cell_vector& conflict_cells )
 {
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-   std::cerr << "update_mesh_no_topo_change("
-             << (void*)(&*old_vertex) << " = " << tr_.point(old_vertex) << ",\n"
+   std::cerr << "update_mesh_no_topo_change(" << display_vertex(old_vertex) << ",\n"
              << "                            " << move << ",\n"
              << "                            " << new_position << ")" << std::endl;
 #endif
@@ -2526,8 +2541,7 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
                         bool *could_lock_zone)
 {
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-   std::cerr << "update_mesh_topo_change(" << (void*)(&*old_vertex)
-                                           << "=" << tr_.point(old_vertex)
+   std::cerr << "update_mesh_topo_change(" << display_vertex(old_vertex) << ",\n"
              << "                        " << new_position << ",\n"
              << ")" << std::endl;
 #endif
@@ -2642,9 +2656,8 @@ update_mesh(const Vertex_handle& old_vertex,
             bool fill_vertices)
 {
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-   std::cerr << "\nupdate_mesh[v2](" << (void*)(&*old_vertex)
-                                     << "=" << tr_.point(old_vertex) << ",\n"
-             << "                " << move << ")\n";
+   std::cerr << "\nupdate_mesh[v2](" << display_vertex(old_vertex) << ","
+             << "\n                " << move << ")\n";
 #endif
 
   Cell_vector outdated_cells;
@@ -2663,6 +2676,9 @@ update_mesh(const Vertex_handle& old_vertex,
                            new_vertex, modified_vertices);
   }
 
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+   std::cerr << "  update_mesh => " << display_vertex(new_vertex) << "\n";
+#endif
   return new_vertex;
 }
 
@@ -2674,6 +2690,9 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "\nrebuild_restricted_delaunay(" << outdated_cells.size() << " cells)\n";
+#endif
   typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
@@ -2774,17 +2793,19 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        ++it )
   {
     const Weighted_point& initial_position = tr_.point(*it);
-    std::optional<Bare_point> opt_new_pos = project_on_surface(*it, cp(initial_position));
+    std::optional<std::pair<Bare_point, Index>> opt_new_pos = project_on_surface_if_possible(*it, cp(initial_position));
 
     if ( opt_new_pos )
     {
+      const auto& [new_pos, index] = *opt_new_pos;
       //freezing needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(*it);
 
-      Vector_3 move(cp(initial_position), *opt_new_pos);
+      Vector_3 move(cp(initial_position), new_pos);
       Vertex_handle new_vertex = update_mesh(*it, move);
       c3t3_.set_dimension(new_vertex, 2);
+      c3t3_.set_index(new_vertex, index);
 
       moving_vertices.insert(new_vertex);
     }
@@ -2886,7 +2907,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   {
     Vertex_handle vh = it->first;
     const Weighted_point& initial_position = tr_.point(vh);
-    std::optional<Bare_point> opt_new_pos = project_on_surface(vh, cp(initial_position), it->second);
+    std::optional<std::pair<Bare_point, Index>> opt_new_pos =
+      project_on_surface_if_possible(vh, cp(initial_position), it->second);
 
     if ( opt_new_pos )
     {
@@ -2894,8 +2916,10 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(vh);
 
-      Vertex_handle new_vertex = update_mesh(vh, vector(cp(initial_position), *opt_new_pos));
+      const auto& [new_pos, index] = *opt_new_pos;
+      Vertex_handle new_vertex = update_mesh(vh, vector(cp(initial_position), new_pos));
       c3t3_.set_dimension(new_vertex, 2);
+      c3t3_.set_index(new_vertex, index);
 
       moving_vertices.insert(new_vertex);
     }
@@ -2937,8 +2961,7 @@ move_point(const Vertex_handle& old_vertex,
            DeletedCellsOutputIterator deleted_cells) const
 {
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-   std::cerr << "C3T3_helpers::move_point[v2](" << (void*)(&*old_vertex)
-                                                << " = " << tr_.point(old_vertex)  << ",\n"
+   std::cerr << "C3T3_helpers::move_point[v2](" << display_vertex(old_vertex) << ",\n"
              << "                             " << move << ")\n";
 #endif
 
@@ -2988,8 +3011,7 @@ move_point(const Vertex_handle& old_vertex,
            Moving_vertices_set& moving_vertices) const
 {
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-  std::cerr << "C3T3_helpers::move_point(" << (void*)(&*old_vertex)
-                                           << " = " << tr_.point(old_vertex)  << ",\n"
+  std::cerr << "C3T3_helpers::move_point(" << display_vertex(old_vertex) << ",\n"
             << "                         " << move << ")\n";
 #endif
 
@@ -3120,11 +3142,12 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                        Outdated_cell_set& outdated_cells_set,
                        bool *could_lock_zone) const
 {
+  Vertex_handle nv;
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-  std::cerr << "move_point_topo_change(" << (void*)(&*old_vertex)
-                                         << "=" << tr_.point(old_vertex)
-            << "                       " << new_position << ",\n"
-            << ")" << std::endl;
+  std::cerr << "move_point_topo_change(" << display_vertex(old_vertex) << ",\n"
+
+            << "                       " << new_position << ")" << std::endl;
+  auto _ = display_vertex_at_scope_exit(std::cerr, nv);
 #endif
 
   Cell_set insertion_conflict_cells;
@@ -3138,8 +3161,11 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 std::inserter(removal_conflict_cells, removal_conflict_cells.end()),
                                 could_lock_zone);
   if (insertion_conflict_cells.empty())
-    return old_vertex;//new_position coincides with an existing vertex (not old_vertex)
-                      //and old_vertex should not be removed if the nb_vertices will change
+  {
+    nv = old_vertex;
+    return nv;//new_position coincides with an existing vertex (not old_vertex)
+              //and old_vertex should not be removed if the nb_vertices will change
+  }
 
   reset_circumcenter_cache(removal_conflict_cells);
   reset_sliver_cache(removal_conflict_cells);
@@ -3147,7 +3173,10 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   reset_sliver_cache(insertion_conflict_cells);
 
   if (could_lock_zone && *could_lock_zone == false)
-    return Vertex_handle();
+  {
+    nv = {};
+    return nv;
+  }
 
   lock_outdated_cells();
   for(typename Cell_set::iterator it = insertion_conflict_cells.begin();
@@ -3159,14 +3188,14 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   unlock_outdated_cells();
 
   Cell_vector outdated_cells;
-  Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
-                                insertion_conflict_boundary[0],
-                                insertion_conflict_cells.begin(),
-                                insertion_conflict_cells.end(),
-                                removal_conflict_cells.begin(),
-                                removal_conflict_cells.end(),
-                                std::back_inserter(outdated_cells),
-                                CGAL::Emptyset_iterator()); // deleted_cells
+  nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
+           insertion_conflict_boundary[0],
+           insertion_conflict_cells.begin(),
+           insertion_conflict_cells.end(),
+           removal_conflict_cells.begin(),
+           removal_conflict_cells.end(),
+           std::back_inserter(outdated_cells),
+           CGAL::Emptyset_iterator()); // deleted_cells
 
   lock_outdated_cells();
   for(typename Cell_vector::iterator it = outdated_cells.begin();
@@ -3187,11 +3216,12 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                        OutdatedCellsOutputIterator outdated_cells,
                        DeletedCellsOutputIterator deleted_cells) const
 {
+  Vertex_handle nv;
 #ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
-  std::cerr << "move_point_topo_change with delcells(" << (void*)(&*old_vertex)
-                                                       << "=" << tr_.point(old_vertex)
+  std::cerr << "move_point_topo_change with delcells(" << display_vertex(old_vertex) << ",\n"
             << "                                     " << new_position << ",\n"
             << ")" << std::endl;
+  auto _ = display_vertex_at_scope_exit(std::cerr, nv);
 #endif
 
   Cell_set insertion_conflict_cells;
@@ -3209,16 +3239,19 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   reset_sliver_cache(insertion_conflict_cells);
 
   if(insertion_conflict_boundary.empty())
-    return old_vertex; // new_location is a vertex already
+  {
+    nv = old_vertex;
+    return nv; // new_location is a vertex already
+  }
 
-  Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
-                                insertion_conflict_boundary[0],
-                                insertion_conflict_cells.begin(),
-                                insertion_conflict_cells.end(),
-                                removal_conflict_cells.begin(),
-                                removal_conflict_cells.end(),
-                                outdated_cells,
-                                deleted_cells);
+  nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
+           insertion_conflict_boundary[0],
+           insertion_conflict_cells.begin(),
+           insertion_conflict_cells.end(),
+           removal_conflict_cells.begin(),
+           removal_conflict_cells.end(),
+           outdated_cells,
+           deleted_cells);
 
   return nv;
 }
@@ -3363,70 +3396,69 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
  * `projection_vector`
  */
 template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Bare_point
+auto
 C3T3_helpers<C3T3,MD>::
 project_on_surface_aux(const Bare_point& p,
                        const Bare_point& ref_point,
                        const Vector_3& projection_vector) const
+  -> std::pair<Bare_point, Index>
 {
   typedef typename GT::Segment_3 Segment_3;
 
   // Build a segment directed as projection_direction,
-  typename GT::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
-  typename GT::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
-  typename GT::Construct_scaled_vector_3 scale = tr_.geom_traits().construct_scaled_vector_3_object();
-  typename GT::Is_degenerate_3 is_degenerate = tr_.geom_traits().is_degenerate_3_object();
-  typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
+  auto sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
+  auto sq_length = tr_.geom_traits().compute_squared_length_3_object();
+  auto scale = tr_.geom_traits().construct_scaled_vector_3_object();
+  auto is_degenerate = tr_.geom_traits().is_degenerate_3_object();
+  auto translate = tr_.geom_traits().construct_translated_point_3_object();
+  auto opposite = tr_.geom_traits().construct_opposite_vector_3_object();
+  auto construct_segment = tr_.geom_traits().construct_segment_3_object();
 
-  typename MD::Construct_intersection construct_intersection =
-    domain_.construct_intersection_object();
+  auto construct_intersection = domain_.construct_intersection_object();
 
   const FT sq_dist = sq_distance(p, ref_point);
   const FT sq_proj_length = sq_length(projection_vector);
 
   if ( CGAL_NTS is_zero(sq_proj_length) )
-    return ref_point;
+    return {ref_point, {}};
 
   const Vector_3 projection_scaled_vector =
     scale(projection_vector, CGAL::sqrt(sq_dist / sq_proj_length));
 
   const Bare_point source = translate(p, projection_scaled_vector);
-  const Bare_point target = translate(p, - projection_scaled_vector);
+  const Bare_point target = translate(p, opposite(projection_scaled_vector));
 
-  const Segment_3 proj_segment(source, target);
+  const Segment_3 proj_segment = construct_segment(source, target);
 
   if ( is_degenerate(proj_segment) )
-    return ref_point;
+    return {ref_point, {}};
 
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-
-  typename MD::Do_intersect_surface do_intersect =
-    domain_.do_intersect_surface_object();
-
-  if ( do_intersect(proj_segment) )
-    return std::get<0>(construct_intersection(proj_segment));
-  else
-    return ref_point;
-
-#else // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
+  auto do_intersect = domain_.do_intersect_surface_object();
+  if ( !do_intersect(proj_segment) ) {
+    return {ref_point, {}};
+  }
+#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
   typedef typename MD::Intersection Intersection;
   Intersection intersection = construct_intersection(proj_segment);
-  if(std::get<2>(intersection) == 2)
-    return std::get<0>(intersection);
-  else
-    return ref_point;
 
+#ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
+  if(std::get<2>(intersection) != 2)
+    return {ref_point, {}};
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
+
+  return {std::get<0>(intersection), std::get<1>(intersection)};
 }
 
 
 template <typename C3T3, typename MD>
-std::pair<std::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
-          typename C3T3_helpers<C3T3, MD>::Bare_point>
+auto
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
                                Surface_patch_index patch_index) const
+    -> std::optional<std::tuple<Plane_3, Bare_point, Surface_patch_index>>
+
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
 
@@ -3452,15 +3484,18 @@ get_least_square_surface_plane(const Vertex_handle& v,
   // Get adjacent surface points
   std::vector<Triangle> triangles;
   typename C3T3::Facet ref_facet;
+  Surface_patch_index ref_patch_index{};
 
   for (typename C3T3::Facet f : facets)
   {
-    if ( c3t3_.is_in_complex(f) &&
-         (patch_index == Surface_patch_index() ||
-          c3t3_.surface_patch_index(f) == patch_index) )
+    if(false == c3t3_.is_in_complex(f)) continue;
+    const auto f_patch_index = c3t3_.surface_patch_index(f);
+    if(patch_index == Surface_patch_index() || f_patch_index == patch_index)
     {
-      if(ref_facet.first == Cell_handle())
+      if(ref_facet.first == Cell_handle()) {
         ref_facet = f;
+        ref_patch_index = f_patch_index;
+      }
 
       const Triangle ct = tr_.get_incident_triangle(f, v);
       triangles.push_back(ct);
@@ -3469,7 +3504,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return std::make_pair(std::nullopt, Bare_point(ORIGIN));
+    return std::nullopt;
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3485,30 +3520,53 @@ get_least_square_surface_plane(const Vertex_handle& v,
   // The surface center of a facet might have an offset in periodic triangulations
   const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
   const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);
-  return std::make_pair(plane, ref_point);
+  return std::make_tuple(plane, ref_point, ref_patch_index);
 }
 
 template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Bare_point
+auto
 C3T3_helpers<C3T3,MD>::
 project_on_surface(const Vertex_handle& v,
                    const Bare_point& p,
                    Surface_patch_index index) const
+    -> std::pair<Bare_point, Index>
 {
-  std::optional<Bare_point> opt_point =
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "project_on_surface(v: " << IO::oformat(v)
+            << ", initial_position: " << p
+            << ", surface_patch_index: " << IO::oformat(index) << ")\n";
+#endif
+  std::optional<std::pair<Bare_point, Index>> opt_point_and_index =
     project_on_surface_if_possible(v, p, index);
-  if(opt_point) return *opt_point;
-  else return p;
+  if(!opt_point_and_index) {
+    // Fallback: if projection failed, return the original point and index
+    opt_point_and_index.emplace(p, c3t3_.index(v));
+  }
+  auto& [projected_position, projected_index] = *opt_point_and_index;
+  if(projected_index == Index()) {
+    projected_index = domain_.index_from_surface_patch_index(index);
+  }
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "  => projected_position: " << projected_position
+            << ", projected_index: " << IO::oformat(projected_index) << "\n";
+#endif
+  return {projected_position, projected_index};
 }
 
 
 template <typename C3T3, typename MD>
-std::optional<typename C3T3_helpers<C3T3,MD>::Bare_point>
+auto
 C3T3_helpers<C3T3,MD>::
 project_on_surface_if_possible(const Vertex_handle& v,
                                const Bare_point& p,
                                Surface_patch_index index) const
+    -> std::optional<std::pair<Bare_point, Index>>
 {
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "project_on_surface_if_possible(v: " << IO::oformat(v)
+            << ", initial_position: " << p
+            << ", surface_patch_index: " << IO::oformat(index) << ")\n";
+#endif
   // @todo should call below if it's available...
   // return domain_.project_on_surface(p);
 
@@ -3516,21 +3574,29 @@ project_on_surface_if_possible(const Vertex_handle& v,
   typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
-  std::pair<std::optional<Plane_3>, Bare_point> pl_rp
-    = get_least_square_surface_plane(v, index);
+  auto opt_pl_rp_index = get_least_square_surface_plane(v, index);
 
-  std::optional<Plane_3> opt_plane = pl_rp.first;
-  if(!opt_plane) return std::nullopt;
+  if(!opt_pl_rp_index) {
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+    std::cerr << "  => projection failed (no plane found)\n";
+#endif
+    return std::nullopt;
+  }
+
+  auto& [plane, pl_rp, pl_index] = *opt_pl_rp_index;
 
   // Project
-  const Weighted_point& position = tr_.point(v);
-  if ( ! equal(p, cp(position)) )
-    return project_on_surface_aux(p, cp(position), opt_plane->orthogonal_vector());
-  else
-  {
-    const Bare_point& reference_point = pl_rp.second;
-    return project_on_surface_aux(p, reference_point, opt_plane->orthogonal_vector());
+  const Bare_point& position = cp(tr_.point(v));
+  const Bare_point& reference_point = equal(p, position) ? pl_rp : position;
+  auto projection = project_on_surface_aux(p, reference_point, plane.orthogonal_vector());
+  if(projection.second == Index()) {
+    projection.second = pl_index;
   }
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "  => projected_position: " << projection.first
+            << ", projected_index: " << IO::oformat(projection.second) << "\n";
+#endif
+  return projection;
 }
 
 
