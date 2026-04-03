@@ -23,7 +23,6 @@
   - CGAL::cpp11::sleep_for
 */
 
-#include <thread>
 #include <chrono>
 
 namespace CGAL {
