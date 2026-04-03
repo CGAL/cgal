@@ -381,7 +381,8 @@ SM_const_decorator<SM_>::
 number_of_sface_cycles() const
 {
   unsigned int fc_num=0;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited;
+  typedef CGAL::Unique_hash_map<SHalfedge_const_handle,bool> Visited_map;
+  Visited_map visited(false, this->number_of_shalfedges());
   SHalfedge_const_iterator e;
   CGAL_forall_shalfedges(e,*this) {
     if (visited[e]) continue;
