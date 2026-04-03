@@ -67,7 +67,7 @@ Release date: July 2026
   - [`!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#ada27f27602757133ea7b9814ada00ba3)
 - Added a new concept, [`CompareProjectionAlongDirection_3`](),
   to the [`Kernel`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html)
-  concept to compare the orderof projected points on a line. Corresponding functors in the model,
+  concept to compare the order of projected points on a line. Corresponding functors in the model,
   [`Compare_projection_along_direction_3`](),
   and free function, [`compare_projection_along_direction()`](),
   have also been added.
