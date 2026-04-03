@@ -306,6 +306,12 @@ const T& choose_parameter(const T& t, const D&)
   return t;
 }
 
+template <typename T, typename D>
+T choose_parameter(T&& t, const D&)
+{
+  return t;
+}
+
 // single parameter so that we can avoid a default construction
 template <typename D>
 D choose_parameter(const internal_np::Param_not_found&)
