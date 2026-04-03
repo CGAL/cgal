@@ -105,7 +105,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             const Kernel& k,
             const bool use_cdt,
             const bool skip_cubic_algorithm,
-            Visitor& visitor,
+            const Visitor& visitor,
             const typename Kernel::FT max_squared_distance)
 {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2

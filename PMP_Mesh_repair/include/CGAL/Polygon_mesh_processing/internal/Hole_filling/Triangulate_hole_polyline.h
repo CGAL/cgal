@@ -787,7 +787,7 @@ public:
                     const Polyline_3& Q,
                     Tracer& tracer,
                     const WeightCalculator& WC,
-                    Visitor& visitor) const
+                    const Visitor& visitor) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -877,7 +877,7 @@ private:
                       Edge_DT e,
                       const Triangulation_DT& tr,
                       const WeightCalculator& WC,
-                      Visitor& visitor,
+                      const Visitor& visitor,
                       const bool produce_incomplete) const
   {
     /**********************************************************************
@@ -1005,7 +1005,7 @@ private:
                                     const Polyline_3& Q,
                                     Tracer& tracer,
                                     const WeightCalculator& WC,
-                                    Visitor& visitor) const
+                                    const Visitor& visitor) const
   {
     typedef std::pair<int, int> Range;
     typedef std::back_insert_iterator<std::vector<Range> > Output_hole_iterator;
@@ -1119,7 +1119,7 @@ private:
                                  const Polyline_3& Q,
                                  Tracer& tracer,
                                  const WeightCalculator& WC,
-                                 Visitor& visitor) const
+                                 const Visitor& visitor) const
   {
     int n = static_cast<int>(edge_exist.size());
     LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
@@ -1175,7 +1175,7 @@ public:
                     const Polyline_3& Q,
                     Tracer& tracer,
                     const WeightCalculator& WC,
-                    Visitor& visitor) const
+                    const Visitor& visitor) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -1205,7 +1205,7 @@ public:
   void triangulate_all(const Polyline_3& P,
                        const Polyline_3& Q,
                        const WeightCalculator& WC,
-                       Visitor& visitor,
+                       const Visitor& visitor,
                        std::pair<int, int> range,
                        LookupTable<Weight>& W,
                        LookupTable<int>& lambda) const
@@ -1336,7 +1336,7 @@ template <
 bool
 triangulate_hole_polyline_with_cdt(const PointRange& points,
                                    Tracer& tracer,
-                                   Visitor& visitor,
+                                   const Visitor& visitor,
                                    const Validity_checker& is_valid,
                                    const Traits& traits,
                                    const typename Traits::FT max_squared_distance)
@@ -1543,7 +1543,7 @@ triangulate_hole_polyline(const PointRange1& points,
                           const PointRange2& third_points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
-                          Visitor& visitor,
+                          const Visitor& visitor,
                           bool use_delaunay_triangulation,
                           bool skip_cubic_algorithm,
                           const Kernel&)
