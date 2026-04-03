@@ -614,7 +614,7 @@ OutputIterator vertical_slab_snap_rounding_2(const InputRange &inputs,
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
+    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
 
     // auto to_exact=   traits.converter_to_exact_object();
     auto from_exact= traits.converter_from_exact_object();
