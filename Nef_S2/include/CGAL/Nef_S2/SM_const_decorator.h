@@ -399,7 +399,8 @@ SM_const_decorator<SM_>::
 number_of_connected_components() const
 {
   int comp_num=0;
-  CGAL::Unique_hash_map<SVertex_const_iterator,bool> visited(false);
+  typedef CGAL::Unique_hash_map<SVertex_const_iterator,bool> Visited_map;
+  Visited_map visited(false, Visited_map::min_size);
   SVertex_const_iterator v;
   CGAL_forall_svertices(v,*this) {
     if (visited[v]) continue;

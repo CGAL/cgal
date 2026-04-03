@@ -606,8 +606,8 @@ public:
   stl_seg_overlay_traits(const INPUT& in, OUTPUT& G, const GEOMETRY& k)
     : its(in.first), ite(in.second), GO(G), K(k),
     XS(compare_pnts_xy(K)), SLcmp(p_sweep,&sl,&sh,K), YS(SLcmp),
-    y2x(XS.end()), x2y(YS.end()), x2iso(0), y2y(&sl),
-    SQ(lt_pnts_xy(K)), Edge_of(0)
+    y2x(XS.end(), Y2X::min_size), x2y(YS.end(), X2Y::min_size), x2iso(0, X2iso::min_size), y2y(&sl, Y2Y::min_size),
+    SQ(lt_pnts_xy(K)), Edge_of(0, AssocEdgeMap::min_size)
   {}
 
   std::string dump_structures()
