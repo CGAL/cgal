@@ -79,7 +79,7 @@ save_c3t3(std::ostream& os
   for(const auto v : tr.finite_vertex_handles())
   {
     vertices[v] = i++;
-    os << v->point() << "\n";
+    os << tr.point(v) << "\n";
   }
 
   // write cells
@@ -242,10 +242,10 @@ bool load_c3t3(std::istream& is
 
   for(std::size_t i = 1; i <= n; i++) {
     vertices[i] = tr.tds().create_vertex();
-    FT x, y, z;//todo : deal with weight w
-    if(!(is >> x >> y >> z))
+    Point p;
+    if(!(is >> p))
       return false;
-    vertices[i]->set_point(Point(x, y, z));
+    tr.set_point(vertices[i], p);
   }
 
   // read cells and fill the TDS
