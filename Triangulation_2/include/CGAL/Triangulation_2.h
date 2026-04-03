@@ -2030,32 +2030,30 @@ fill_hole(Vertex_handle v, std::list<Edge> & hole, OutputItFaces fit)
 }
 
 template <class Gt, class Tds >
+template <class OutputItFaces>
 void
 Triangulation_2<Gt, Tds>::
-fill_hole_delaunay(std::list<Edge> & first_hole)
+fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
 {
-  typedef std::list<Edge> Hole;
-  typedef std::list<Hole> Hole_list;
-
-  Face_handle f, ff, fn;
-  int i, ii, in;
-  Hole_list hole_list;
-
-  hole_list.push_front(first_hole);
+  auto create_face = [&](auto &&... args) {
+    Face_handle newf = this->tds().create_face(std::forward<decltype(args)>(args)...);
+    *fit++ = newf;
+    return newf;
+  };
+  using Hole = std::list<Edge>;
+  std::list<Hole> hole_list{1, first_hole};
 
   while( ! hole_list.empty())
   {
     Hole& hole = hole_list.front();
 
-    typename Hole::iterator hit = hole.begin();
-
     // if the hole has only three edges, create the triangle
     if (hole.size() == 3) {
-      hit = hole.begin();
-      f = (*hit).first;        i = (*hit).second;
-      ff = (* ++hit).first;    ii = (*hit).second;
-      fn = (* ++hit).first;    in = (*hit).second;
-      create_face(f,i,ff,ii,fn,in);
+      auto hit = hole.begin();
+      auto [f0, i0] = *hit; ++hit;
+      auto [f1, i1] = *hit; ++hit;
+      auto [f2, i2] = *hit;
+      create_face(f0,i0,f1,i1,f2,i2);
       hole_list.pop_front();
       continue;
     }
@@ -2065,212 +2063,99 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
     // and the new triangle adjacent to that edge
     // cut the hole and push it back
 
+    // two helper functions:
+    auto  cw_vertex = [](Edge e) { return e.first->vertex( cw(e.second)); };
+    auto ccw_vertex = [](Edge e) { return e.first->vertex(ccw(e.second)); };
+
     // first, ensure that a neighboring face
     // whose vertices on the hole boundary are finite
     // is the first of the hole
-    bool finite= false;
-    while (!finite){
-      ff = (hole.front()).first;
-      ii = (hole.front()).second;
-      if ( is_infinite(ff->vertex(cw(ii))) ||
-           is_infinite(ff->vertex(ccw(ii)))) {
-        hole.push_back(hole.front());
-        hole.pop_front();
-      }
-      else finite=true;
+    for (auto eit = hole.begin();
+         is_infinite(cw_vertex(*eit)) || is_infinite(ccw_vertex(*eit));
+         eit = hole.begin())
+    {
+      hole.splice(hole.end(), hole, hole.begin()); // push the first element to the end of the list
     }
 
     // take the first neighboring face and pop it;
-    ff = (hole.front()).first;
-    ii =(hole.front()).second;
+    auto first_edge = hole.front();
     hole.pop_front();
 
-    Vertex_handle v0 = ff->vertex(cw(ii));
-    Vertex_handle v1 = ff->vertex(ccw(ii));
-    Vertex_handle v2 = infinite_vertex();
-    Vertex_handle v3;
-    const Point& p0 = v0->point();
-    const Point& p1 = v1->point();
+    const Vertex_handle v0 = cw_vertex(first_edge);
+    const Vertex_handle v1 = ccw_vertex(first_edge);
 
-    typename Hole::iterator hdone = hole.end();
-    hit = hole.begin();
-    typename Hole::iterator cut_after(hit);
+    // search in `hole` an edge `cut_after`, and its vertex `v2==ccw_vertex(*cut_after)`
+    // such that the triangle (v0,v1,v2) is a Delaunay triangle
+    const auto [cut_after, v2] = std::invoke([&]() {
+      const auto hole_end = hole.cend();
+      const auto hole_last_one = std::prev(hole_end);
 
-    // if tested vertex is c with respect to the vertex opposite
-    // to nullptr neighbor,
-    // stop at the before last face;
-    hdone--;
-    while( hit != hdone) {
-      fn = (*hit).first;
-      in = (*hit).second;
-      Vertex_handle vv = fn->vertex(ccw(in));
-      if (is_infinite(vv)) {
-        if(is_infinite(v2)) cut_after = hit;
-      }
-      else {     // vv is a finite vertex
-        const Point & p = vv->point();
-        if (orientation(p0,p1,p) == COUNTERCLOCKWISE) {
-          if (is_infinite(v2)) { v2=vv; v3=vv; cut_after=hit;}
-          else{
-            //
-            if (this->side_of_oriented_circle(p0,p1,v3->point(),p,true) == ON_POSITIVE_SIDE){
-              v2=vv; v3=vv; cut_after=hit;}
+      auto cut_after = hole_end;
+      Vertex_handle v2 = infinite_vertex();
+
+      const Point& p0 = v0->point();
+      const Point& p1 = v1->point();
+
+      for(auto hit = hole.cbegin(); hit != hole_last_one; ++hit)
+      {
+        const Vertex_handle vv = ccw_vertex(*hit);
+        if (is_infinite(vv)) {
+          if(is_infinite(v2)) cut_after = hit;
+        }
+        else {     // vv is a finite vertex
+          const Point& p = vv->point();
+          if (orientation(p0,p1,p) == COUNTERCLOCKWISE) {
+            if (is_infinite(v2) ||
+                this->side_of_oriented_circle(p0,p1,v2->point(),p,true) == ON_POSITIVE_SIDE) {
+              cut_after = hit; v2 = vv;
+            }
           }
         }
       }
-      ++hit;
+      return std::make_pair(cut_after, v2);
+    });
+    CGAL_assertion(cut_after != hole.cend());
+
+    // create new triangle (v0, v1, v2) and update adjacency relations
+
+    // Update the hole and push back in the Hole_List stack.
+    // If v2 belongs to the neighbor following or preceding `first_edge`:
+    //   - then the hole remain a single hole,
+    //   - otherwise it is split in two holes
+    // Note that `first_edge`, that was the `front()` of the hole, has
+    // already been popped from it.
+    const auto& [ff, ii] = first_edge;
+    if (auto [fn, in] = hole.front(); fn->vertex(ccw(in)) == v2) {
+      Face_handle newf = create_face(ff,ii,fn,in);
+      hole.front() = Edge(newf,1);
     }
-
-    // create new triangle and update adjacency relations
-    Face_handle newf;
-
-    //update the hole and push back in the Hole_List stack
-    // if v2 belongs to the neighbor following or preceding *f
-    // the hole remain a single hole
-    // otherwise it is split in two holes
-
-    fn = (hole.front()).first;
-    in = (hole.front()).second;
-    if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
-      newf = create_face(ff,ii,fn,in);
-      hole.pop_front();
-      hole.push_front(Edge( newf,1));
+    else if (auto [fn, in] = hole.back(); fn->vertex(cw(in)) == v2) {
+      Face_handle newf = create_face(fn,in,ff,ii);
+      hole.back() = Edge(newf,1);
+      hole.back() = Edge(newf,1);
     }
-    else{
-      fn = (hole.back()).first;
-      in = (hole.back()).second;
-      if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
-        newf = create_face(fn,in,ff,ii);
-        hole.pop_back();
-        hole.push_back(Edge(newf,1));
-      }
-      else {
-        // split the hole in two holes
-        newf = create_face(ff,ii,v2);
-        Hole new_hole;
-        ++cut_after;
-        while( hole.begin() != cut_after )
-        {
-          new_hole.push_back(hole.front());
-          hole.pop_front();
-        }
+    else {
+      Face_handle newf = create_face(ff,ii,v2);
 
-        hole.push_front(Edge( newf,1));
-        new_hole.push_front(Edge( newf,0));
-        hole_list.push_front(new_hole);
-      }
+      // split the hole in two holes:
+      // - transfer the range [hole.begin(), cut_after] (`cut_after` included) to `new_hole`
+      // - `hole` keeps the rest: [cut_after+1, hole.end()(
+      Hole new_hole;
+      new_hole.splice(new_hole.end(), hole, hole.begin(), std::next(cut_after));
+      new_hole.push_front(Edge(newf,0)); // close the new hole with the edge (newf, 0)
+      hole_list.push_front(new_hole);     // and push it in the stack
+
+      hole.push_front(Edge(newf,1)); // close the hole with the edge (newf, 1)
     }
   }
 }
 
 template < class Gt, class Tds >
-template <class OutputItFaces>
 void
 Triangulation_2<Gt,Tds>::
-fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
+fill_hole_delaunay(std::list<Edge> & first_hole)
 {
-  typedef typename Gt::Side_of_oriented_circle_2 In_circle;
-  typedef std::list<Edge>                        Hole;
-  typedef std::list<Hole>                        Hole_list;
-
-  In_circle in_circle = geom_traits().side_of_oriented_circle_2_object();
-
-  Face_handle f, ff, fn;
-  int i, ii, in;
-  Hole_list hole_list;
-  hole_list.push_front(first_hole);
-
-  while(!hole_list.empty()) {
-    Hole& hole = hole_list.front();
-    typename Hole::iterator hit = hole.begin();
-
-    if (hole.size() == 3) {
-      hit = hole.begin();
-      f = (*hit).first;        i = (*hit).second;
-      ff = (* ++hit).first;    ii = (*hit).second;
-      fn = (* ++hit).first;    in = (*hit).second;
-      Face_handle newf = create_face(f,i,ff,ii,fn,in);
-      *fit++ = newf;
-      hole_list.pop_front();
-      continue;
-    }
-
-    bool finite= false;
-    while (!finite){
-      ff = (hole.front()).first;
-      ii = (hole.front()).second;
-      if ( is_infinite(ff->vertex(cw(ii))) ||
-     is_infinite(ff->vertex(ccw(ii)))) {
-        hole.push_back(hole.front());
-        hole.pop_front();
-      } else finite=true;
-    }
-
-    ff = (hole.front()).first;
-    ii =(hole.front()).second;
-    hole.pop_front();
-
-    Vertex_handle v0 = ff->vertex(cw(ii));
-    Vertex_handle v1 = ff->vertex(ccw(ii));
-    Vertex_handle v2 = infinite_vertex();
-    const Point& p0 = v0->point();
-    const Point& p1 = v1->point();
-
-    typename Hole::iterator hdone = hole.end();
-    hit = hole.begin();
-    typename Hole::iterator cut_after(hit);
-
-    hdone--;
-    while( hit != hdone) {
-      fn = (*hit).first;
-      in = (*hit).second;
-      Vertex_handle vv = fn->vertex(ccw(in));
-      if (is_infinite(vv)) {
-        if(is_infinite(v2)) cut_after = hit;
-      } else {     // vv is a finite vertex
-        const Point & p = vv->point();
-        if (orientation(p0,p1,p) == CGAL::COUNTERCLOCKWISE) {
-          if (is_infinite(v2)) { v2 = vv; cut_after = hit;}
-          else{
-            if (in_circle(p0,p1,v2->point(),p) == CGAL::ON_POSITIVE_SIDE){
-              v2 = vv; cut_after = hit;
-            }
-          }
-        }
-      }
-      ++hit;
-    }
-
-    Face_handle newf;
-
-    fn = (hole.front()).first;
-    in = (hole.front()).second;
-    if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
-      newf = create_face(ff,ii,fn,in);
-      hole.pop_front();
-      hole.push_front(Edge( newf,1));
-    } else {
-      fn = (hole.back()).first;
-      in = (hole.back()).second;
-      if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
-        newf = create_face(fn,in,ff,ii);
-        hole.pop_back();
-        hole.push_back(Edge(newf,1));
-      } else {
-        newf = create_face(ff,ii,v2);
-        Hole new_hole;
-        ++cut_after;
-        while( hole.begin() != cut_after ) {
-          new_hole.push_back(hole.front());
-          hole.pop_front();
-        }
-        hole.push_front(Edge(newf, 1));
-        new_hole.push_front(Edge(newf, 0));
-        hole_list.push_front(new_hole);
-      }
-    }
-    *fit++ = newf;
-  }
+  return fill_hole_delaunay(first_hole, CGAL::Emptyset_iterator{});
 }
 
 template <class Gt, class Tds >
