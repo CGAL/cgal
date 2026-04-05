@@ -25,27 +25,50 @@ namespace CGAL {
 
 struct Void {};
 
+/// \ingroup PkgSTLExtensionUtilities
+/// Depending on bool value the class `Boolean_tag` indicates that something is `true` or `false` respectively.
 template <bool b>
 using Boolean_tag = std::bool_constant<b>;
 
+/// \ingroup PkgSTLExtensionUtilities
+/// The typedef `Tag_true` is `Boolean_tag<true>`.
 typedef Boolean_tag<true>   Tag_true;
+
+/// \ingroup PkgSTLExtensionUtilities
+/// The typedef `Tag_false` is `Boolean_tag<false>`.
 typedef Boolean_tag<false>  Tag_false;
 
 // the function check_tag is deprecated since CGAL 3.3
 inline bool check_tag( Tag_true)  {return true;}
 inline bool check_tag( Tag_false) {return false;}
 
+/// \ingroup PkgSTLExtensionUtilities
+/// General tag indicating that none of any other possible tags is valid.
 struct Null_tag {};
 
+/// \ingroup PkgSTLExtensionUtilities
+/// Class indicating the absence of a functor.
 struct Null_functor {
   typedef Null_tag result_type;
   typedef Null_tag second_argument_type;
 };
 
 // For concurrency
+
+/// \ingroup PkgSTLExtensionUtilities
+/// Tag used to disable concurrency.
+///
+/// For example, it may be used by a user to request the sequential version of an algorithm.
 struct Sequential_tag { static constexpr bool is_parallel = false; };
+
+/// \ingroup PkgSTLExtensionUtilities
+/// Tag used to enable concurrency.
+///
+/// For example, it may be used by a user to request the parallel version of an algorithm.
 struct Parallel_tag : public Sequential_tag { static constexpr bool is_parallel = true; };
 
+/// \ingroup PkgSTLExtensionUtilities
+/// This tag is a convenience typedef to `Parallel_tag` if the third party library Intel TBB has been found and linked, and to `Sequential_tag` otherwise.
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Parallel_tag Parallel_if_available_tag;
 #else
@@ -53,8 +76,17 @@ typedef CGAL::Sequential_tag Parallel_if_available_tag;
 #endif
 
 // For Surface_mesher and Mesh_3
+
+/// \ingroup PkgSTLExtensionUtilities
+/// The class `Non_manifold_tag` is a tag class used to monitor the surface meshing algorithm.
 struct Non_manifold_tag {};
+
+/// \ingroup PkgSTLExtensionUtilities
+/// The class `Manifold_tag` is a tag class used to monitor the surface meshing algorithm.
 struct Manifold_tag {};
+
+/// \ingroup PkgSTLExtensionUtilities
+/// The class `Manifold_with_boundary_tag` is a tag class used to monitor the surface meshing algorithm.
 struct Manifold_with_boundary_tag {};
 
 // A function that asserts a specific compile time tag
