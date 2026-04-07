@@ -1101,6 +1101,24 @@ public:
     return { facet_vertices , created_facets };
   }
 
+  static void
+  triangulate_facets(const PolyhedronSPtr& polyhedron)
+  {
+    CGAL_SS3_TRANSF_TRACE("Triangulate facets of polyhedron " << polyhedron->id());
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    std::list<FacetSPtr> facets_to_triangulate;
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      if (facet->vertices().size() > 3) {
+        facets_to_triangulate.push_back(facet);
+      }
+    }
+
+    for (const FacetSPtr& facet : facets_to_triangulate) {
+      triangulate_facet(facet, polyhedron);
+    }
+  }
+
   /**
     * checks if the plane is normalized
     */
