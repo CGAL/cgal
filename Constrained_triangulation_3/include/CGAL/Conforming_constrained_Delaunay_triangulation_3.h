@@ -4516,12 +4516,50 @@ public:
 
       typename CDT_2::Locate_type lt;
       int i;
-      auto fh_2d = cdt_2.locate(v->point(), lt, i);
+      const auto fh_2d = cdt_2.locate(v->point(), lt, i);
       CGAL_assertion(lt == CDT_2::VERTEX);
 
-      auto vh_2d = fh_2d->vertex(i);
+      const auto vh_2d = fh_2d->vertex(i);
       CGAL_assertion(vh_2d->info().vertex_handle_3d == v);
-      CGAL_assertion(cdt_2.point(vh_2d) == v->point());
+
+      auto fill_with_delaunay =
+          [&](auto& hole_boundary, bool is_outside_the_face) {
+            std::vector<CDT_2_edge> hole_edges(hole_boundary.begin(), hole_boundary.end());
+            if(hole_boundary.size() > 2) {
+              fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
+                auto& info = fh->info();
+                info.is_outside_the_face = is_outside_the_face;
+                info.missing_subface = true;
+                info.is_in_region = 0;
+                info.facet_3d = {};
+                *new_face_handles_out++ = fh;
+              }));
+            } else {
+              CGAL_assertion(hole_boundary.size() == 2);
+              auto [f, i] = hole_boundary.front();
+              auto [g, j] = hole_boundary.back();
+              g->set_neighbor(j, f);
+              f->set_neighbor(i, g);
+            }
+            std::for_each(hole_edges.begin(), hole_edges.end(),
+                          [&cdt_2](CDT_2_edge e) {
+                            auto [f, i] = cdt_2.mirror_edge(e);
+                            f->set_constraint(i, cdt_2.is_constrained(e));
+                          });
+          };
+      auto bore_hole_and_fill_with_delaunay =
+          [&](auto& hole_boundary, const auto faces_to_delete, bool is_outside_the_face) {
+            std::for_each(faces_to_delete.begin(), faces_to_delete.end(),
+                          [&cdt_2](CDT_2_face_handle f) { cdt_2.delete_face(f); });
+            fill_with_delaunay(hole_boundary, is_outside_the_face);
+          };
+
+      auto set_constrained = [&](CDT_2_edge e, bool is_constrained) {
+        auto [f, i] = e;
+        f->set_constraint(i, is_constrained);
+        auto [n, ni] = cdt_2.mirror_edge(e);
+        n->set_constraint(ni, is_constrained);
+      };
 
       if(vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE) {
 
@@ -4554,34 +4592,6 @@ public:
           return result;
         };
 
-        auto bore_hole_and_fill_with_delaunay =
-            [&](auto& hole_boundary, const auto faces_to_delete, bool is_outside_the_face) {
-              std::vector<CDT_2_edge> hole_edges(hole_boundary.begin(), hole_boundary.end());
-              std::for_each(faces_to_delete.begin(), faces_to_delete.end(),
-                            [&cdt_2](CDT_2_face_handle f) { cdt_2.delete_face(f); });
-              if(hole_boundary.size() > 2) {
-                fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
-                  auto& info = fh->info();
-                  info.is_outside_the_face = is_outside_the_face;
-                  info.missing_subface = true;
-                  info.is_in_region = 0;
-                  info.facet_3d = {};
-                  *new_face_handles_out++ = fh;
-                }));
-              } else {
-                CGAL_assertion(hole_boundary.size() == 2);
-                auto [f, i] = hole_boundary.front();
-                auto [g, j] = hole_boundary.back();
-                g->set_neighbor(j, f);
-                f->set_neighbor(i, g);
-              }
-              std::for_each(hole_edges.begin(), hole_edges.end(),
-                            [&cdt_2](CDT_2_edge e) {
-                              auto [f, i] = cdt_2.mirror_edge(e);
-                              f->set_constraint(i, cdt_2.is_constrained(e));
-                            });
-            };
-
         auto [hole_side_1, hole_side_1_faces_to_delete, side_1_last_incident_edge] = half_hole(vh_2d->face());
         const auto [side_1_last_face, side_1_last_edge_index] = side_1_last_incident_edge;
         const bool side_1_hole_is_outside_the_face = side_1_last_face->info().is_outside_the_face;
@@ -4597,10 +4607,8 @@ public:
         CGAL_assertion(side_1_last_incident_edge.first != side_2_last_incident_edge.first);
 
         // unmark the two constrained edges
-        side_1_last_face->set_constraint(side_1_last_edge_index, false);
-        side_2_first_face->set_constraint(side_2_first_face->index(side_1_last_face), false);
-        side_2_last_face->set_constraint(side_2_last_edge_index, false);
-        side_1_first_face->set_constraint(side_1_first_face->index(side_2_last_face), false);
+        set_constrained(side_1_last_incident_edge, false);
+        set_constrained(side_2_last_incident_edge, false);
 
         // start boring and sewing the two half-holes:
         //   - we start from side 1,
@@ -4619,26 +4627,10 @@ public:
         bore_hole_and_fill_with_delaunay(hole_side_2, hole_side_2_faces_to_delete, side_2_hole_is_outside_the_face);
 
         //  - then re-mark the edge between the two holes as a constrained edge
-        const auto [f, i] = side_1_border_edge;
-        f->set_constraint(i, true);
-        const auto n = f->neighbor(i);
-        n->set_constraint(n->index(f), true);
+        set_constrained(side_1_border_edge, true);
       } else {
         auto hole = cdt_2.make_hole(vh_2d);
-        std::vector<CDT_2_edge> hole_edges(hole.begin(), hole.end());
-        fill_hole_delaunay(cdt_2, hole, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
-          auto& info = fh->info();
-          info.is_outside_the_face = false;
-          info.missing_subface = true;
-          info.is_in_region = 0;
-          info.facet_3d = {};
-          *new_face_handles_out++ = fh;
-        }));
-        std::for_each(hole_edges.begin(), hole_edges.end(),
-                      [&cdt_2](CDT_2_edge e) {
-                        auto [f, i] = cdt_2.mirror_edge(e);
-                        f->set_constraint(i, cdt_2.is_constrained(e));
-                      });
+        fill_with_delaunay(hole, /*is_outside_the_face=*/false);
       }
       cdt_2.delete_vertex(vh_2d);
       if(!cdt_2.CT_2::is_valid(true, 3)) {
@@ -4659,6 +4651,7 @@ public:
         remove_from_cdt_2(v, type, face_id);
       }
     }
+    return new_face_handles_out;
   }
 
   void add_bbox_points_if_not_dimension_3() {
