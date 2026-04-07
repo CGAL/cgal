@@ -34,6 +34,8 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
+#include <filesystem>
+
 namespace CGAL {
 template<class F>
 struct Output_rep< ::std::array<unsigned char, 3>, F > {
