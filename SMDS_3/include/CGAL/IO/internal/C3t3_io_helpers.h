@@ -294,8 +294,8 @@ namespace internal {
     return value;
   }
 
-  NumberTypeVariant read_by_number_type(const NumberType& nt,
-                                        std::istream& is)
+  inline NumberTypeVariant read_by_number_type(const NumberType& nt,
+                                               std::istream& is)
   {
     switch(nt)
     {
@@ -325,7 +325,7 @@ namespace internal {
     return NumberTypeVariant();
   }
 
-  auto
+  inline auto
   read_simplex_and_values(const SimplexType& st,
                           const NumberType& nt,
                           const std::size_t& nb_components,
