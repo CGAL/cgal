@@ -3913,7 +3913,7 @@ public:
 
     Transformation::shift_facets(polyhedron, shift);
 
-#ifdef CGAL_SS3_DUMP_FILES
+#if 0//def CGAL_SS3_DUMP_FILES
     // below will have degeneracies since we have not yet treated the event
     static int shift_id = -1;
     IO::write_OBJ("results/shift_" + std::to_string(++shift_id) + ".obj", polyhedron,
