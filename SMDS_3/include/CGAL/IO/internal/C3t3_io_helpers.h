@@ -98,23 +98,23 @@ namespace internal {
   //////////////////////
   // portable type names for properties
   template <typename T>
-  std::string type_to_string()           { return "unknown"; }
+  inline std::string type_to_string()           { return "unknown"; }
   template <>
-  std::string type_to_string<int8_t>()   { return "int8_t"; }
+  inline std::string type_to_string<int8_t>()   { return "int8_t"; }
   template <>
-  std::string type_to_string<uint8_t>()  { return "uint8_t"; }
+  inline std::string type_to_string<uint8_t>()  { return "uint8_t"; }
   template <>
-  std::string type_to_string<int16_t>()  { return "int16_t"; }
+  inline std::string type_to_string<int16_t>()  { return "int16_t"; }
   template <>
-  std::string type_to_string<uint16_t>() { return "uint16_t"; }
+  inline std::string type_to_string<uint16_t>() { return "uint16_t"; }
   template <>
-  std::string type_to_string<int32_t>()  { return "int32_t"; }
+  inline std::string type_to_string<int32_t>()  { return "int32_t"; }
   template <>
-  std::string type_to_string<uint32_t>() { return "uint32_t"; }
+  inline std::string type_to_string<uint32_t>() { return "uint32_t"; }
   template <>
-  std::string type_to_string<int64_t>()  { return "int64_t"; }
+  inline std::string type_to_string<int64_t>()  { return "int64_t"; }
   template <>
-  std::string type_to_string<uint64_t>() { return "uint64_t"; }
+  inline std::string type_to_string<uint64_t>() { return "uint64_t"; }
 
   // in c++23, <stdfloat> will define
   // std::float16_t
