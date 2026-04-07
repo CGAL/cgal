@@ -2146,7 +2146,7 @@ private:
     const bool regularize_orthogonality = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_orthogonality), false);
     const bool regularize_parallelism = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_parallelism), false);
     const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 5);
-    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), max_distance_to_plane * 0.5);
+    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), m_max_distance_to_plane * 0.5);
 
     auto range = regions | boost::adaptors::transformed([](typename Region_growing::Primitive_and_region& pr)->Plane_3& {return pr.first; });
 
