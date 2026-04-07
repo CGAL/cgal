@@ -31,7 +31,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 #include <CGAL/Handle_hash_function.h>
-
+#include <CGAL/IO/io_tags.h>
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
