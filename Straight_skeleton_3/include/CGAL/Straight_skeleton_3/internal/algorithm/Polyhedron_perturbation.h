@@ -1548,7 +1548,7 @@ public:
 #if 0 // @tmp
     ConfigurationSPtr config = Configuration::get_instance();
     if (config->is_loaded()) {
-      double value = config->get_double("main", "perturbation_epsilon");
+      double value = config->get_double("Preprocessing", "perturbation_epsilon");
       if (value != 0.0) {
         range = value;
       }
