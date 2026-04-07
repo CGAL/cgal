@@ -20,26 +20,25 @@
 #include <CGAL/license/Straight_skeleton_3.h>
 
 // @fixme yesterday:
-// - 57419 (perturbation failure)
-// - 168077 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 80084 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 67817 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 100638 polyhedron->is_consistent()
-// - 55583 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 153956 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_)
-// - 500087
+// - 57419 (perturbation failure) -> OK
+// - 168077 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_) -> OK
+// - 80084 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_) <------------- seg fault
+// - 67817 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_) <------------- bad pertubation
+// - 100638 polyhedron->is_consistent() <------------- bad pertubation
+// - 55583 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_) -> OK
+// - 153956 Expr: !Self_intersection::has_self_intersecting_surface(polyhedron_) -> OK
+// - 500087 -> OK
 
 // writing to logs/285366.log
 // xargs: ./test_skeleton_3: terminated by signal 9
-
 
 // @fixme:
 // - handle save times at event time: merge vertices with equal position in output
 
 // @fixme later:
 // - more combinatorial checks should happen at pop time (?)
-// - double check self-intersection detection on boundaries
-// - re-using items in event handlers goes against detecting obsolete events with expired pointers
+// - re-using items in event handlers goes against detecting obsolete events with expired pointers,
+//   erase counter would be better.
 
 // @fixme latest:
 // - Fix simultaneous events still happening sometimes (likely the same event multiple times
@@ -74,7 +73,6 @@
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
 
 // @todo later:
-// - If a perturbation fails because of self-intersections, restart with a smaller epsilon
 // - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
 // - Perform facet merging using CGAL's region growing and remesh_planar_faces() ?
 // - Check for overly shared objects, redundant function calls (plane normalization, for example)

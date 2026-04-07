@@ -99,11 +99,9 @@ construct_skeleton(const TriangleMesh& tmesh,
   // borders and disconnected facet connected components
   PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np.outward_offsetting(outwards));
   CGAL_SS3_DEBUG_SPTR(p);
-
   CGAL_SS3_TRACE("Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   Perturbation::apply_rand_perturbation(p);
-
   CGAL_SS3_TRACE("Post perturbation: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   using Default_visitor = SS3i::algorithm::Default_mesh_offset_visitor<Geom_traits>;

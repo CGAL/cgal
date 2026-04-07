@@ -154,7 +154,9 @@ public:
   static bool do_all_plane_triplets_intersect(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE_V(4, "Check all 3-combinations of planes");
+
     CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     bool result = true;
     typename std::list<FacetSPtr>::iterator it_f1 = polyhedron->facets().begin();
     while (it_f1 != polyhedron->facets().end()) {
@@ -919,7 +921,7 @@ public:
       double z = CGAL::to_double(p.z()) + v_r[2];
 #endif
       Point_3 p_nudged { x, y, z };
-      CGAL_SS3_TRANSF_TRACE("base nudge: " << x << " " << y << " " << z);
+      CGAL_SS3_TRANSF_TRACE_V(32, "base nudge: " << x << " " << y << " " << z);
 
       Point_3 p_new;
 
@@ -2194,7 +2196,7 @@ public:
   // We always need to ensure that points are exactly on the planes of their incident facets.
   static void apply_rand_perturbation(PolyhedronSPtr& polyhedron)
   {
-    // return apply_rand_plane_tilts_V4(polyhedron);
+    CGAL_SS3_TRANSF_TRACE_V(4, "Applying random perturbation to the polyhedron...");
 
     // if the input is all triangles, simply perturb points directly
     if (is_triangle_polyhedron(polyhedron))
