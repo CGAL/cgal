@@ -35,8 +35,8 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace internal {
 
-static unsigned int verbosity_level = 64;
-std::ostream* trace_stream = &std::cout;
+static unsigned int verbosity_level = 8;
+static std::ostream* trace_stream = &std::cout;
 
 inline void set_verbosity_level(const unsigned int l) { verbosity_level = l; }
 inline void set_log_stream(std::ostream& out) { trace_stream = &out; }
