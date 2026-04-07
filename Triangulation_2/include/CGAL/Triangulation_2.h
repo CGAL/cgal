@@ -2035,7 +2035,7 @@ fill_hole(Vertex_handle v, std::list<Edge> & hole, OutputItFaces fit)
 }
 
 template <class Gt, class Tds, class OutputItFaces>
-void
+OutputItFaces
 fill_hole_delaunay(Triangulation_2<Gt, Tds>& tr,
                    std::list<typename Triangulation_2<Gt, Tds>::Edge>& first_hole,
                    OutputItFaces fit)
@@ -2158,6 +2158,7 @@ fill_hole_delaunay(Triangulation_2<Gt, Tds>& tr,
       hole.push_front(Edge(newf,1)); // close the hole with the edge (newf, 1)
     }
   }
+  return fit;
 }
 
 template < class Gt, class Tds >
@@ -2165,7 +2166,7 @@ void
 Triangulation_2<Gt,Tds>::
 fill_hole_delaunay(std::list<Edge> & first_hole)
 {
-  return CGAL::fill_hole_delaunay(*this, first_hole, CGAL::Emptyset_iterator{});
+  CGAL::fill_hole_delaunay(*this, first_hole, CGAL::Emptyset_iterator{});
 }
 
 template <class Gt, class Tds >
