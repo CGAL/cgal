@@ -169,7 +169,7 @@ bool write_OBJ(const std::string& filename,
             CGAL_SS3_IO_TRACE("Warning: Intersection of constraints");
             CGAL_SS3_IO_TRACE("While inserting " << v0->point() << " || " << v1->point());
             CGAL_SS3_IO_TRACE(facet->to_string());
-            CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+            CGAL_warning_msg(false, "Intersections in CDT2 are not allowed");
             return false;
           }
           ++ne;
@@ -411,7 +411,7 @@ bool write_OBJ(const std::string& filename,
           pcdt.insert_constraint(vh0, vh1);
         } catch(const typename PCDT::Intersection_of_constraints_exception&) {
           CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
-          CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+          CGAL_warning_msg(false, "Intersections in CDT2 are not allowed");
           return false;
         }
       }
@@ -423,7 +423,7 @@ bool write_OBJ(const std::string& filename,
           pcdt.insert_constraint(v_src->point(), v_tgt->point());
         } catch(const typename PCDT::Intersection_of_constraints_exception&) {
           CGAL_SS3_IO_TRACE_V(1, "Error: Intersection of constraints in sheet triangulation");
-          CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+          CGAL_warning_msg(false, "Intersections in CDT2 are not allowed");
           return false;
         }
       }
