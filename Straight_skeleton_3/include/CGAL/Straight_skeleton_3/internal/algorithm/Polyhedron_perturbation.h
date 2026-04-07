@@ -187,6 +187,39 @@ public:
     return result;
   }
 
+  /**
+   * Checks that the positions of the vertices in two polyhedra are close.
+   * Preconditions:
+   *   - Both polyhedra are non-null and have the same number of vertices.
+   *   - Vertices are assumed to be in the same order.
+   * Returns true if all corresponding vertices are within a given epsilon.
+   */
+  static bool check_perturbed_positions_proximity(const PolyhedronSPtr& poly1,
+                                                  const PolyhedronSPtr& poly2,
+                                                  double epsilon = 1e-4) // @fixme hardcoded...
+  {
+    CGAL_SS3_TRANSF_TRACE_V(4, "Check vertex promixity");
+
+    CGAL_precondition(poly1 && poly2);
+    CGAL_precondition(poly1->vertices().size() == poly2->vertices().size());
+
+    auto it1 = poly1->vertices().begin();
+    auto it2 = poly2->vertices().begin();
+    for (; it1 != poly1->vertices().end() && it2 != poly2->vertices().end(); ++it1, ++it2) {
+      const Point_3& p1 = (*it1)->point();
+      const Point_3& p2 = (*it2)->point();
+      double dx = CGAL::to_double(p1.x()) - CGAL::to_double(p2.x());
+      double dy = CGAL::to_double(p1.y()) - CGAL::to_double(p2.y());
+      double dz = CGAL::to_double(p1.z()) - CGAL::to_double(p2.z());
+      double dist2 = dx*dx + dy*dy + dz*dz;
+      if (dist2 > epsilon * epsilon) {
+        CGAL_SS3_TRANSF_TRACE_V(2, "Vertex positions too far: " << (*it1)->id() << " d2=" << dist2);
+        return false;
+      }
+    }
+    return true;
+  }
+
   static bool are_all_vertices_degree_3(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -216,21 +249,21 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(4, "Moving points randomly...");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
+    // If we are applying a random point perturbation, the mesh must be a triangle mesh.
+    // Otherwise, points will no longer be on the supporting planes of their incident facets.
+    CGAL_precondition(is_triangle_polyhedron(polyhedron));
+
     double range = 0.001;
     ConfigurationSPtr config = Configuration::get_instance();
     if (config->is_loaded()) {
-      double value = config->get_double("main", "perturbation_epsilon");
+      double value = config->get_double("Preprocessing", "perturbation_epsilon");
       if (value != 0.0) {
         range = value;
       }
     }
 
     CGAL_SS3_TRANSF_TRACE("Points will be moved randomly...");
-    CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon =" << range);
-
-    // If we are applying a random point perturbation, the mesh must be a triangle mesh.
-    // Otherwise, points will no longer be on the supporting planes of their incident facets.
-    CGAL_warning(is_triangle_polyhedron(polyhedron));
+    CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon = " << range);
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();
@@ -2184,18 +2217,38 @@ public:
     apply_rand_plane_tilts_V3(polyhedron);
 
     if (safe_mode) {
+      CGAL_SS3_TRANSF_TRACE_V(16, "Safe mode is enabled, checking validity of the perturbation...");
+
       for (;;) {
-        if (do_all_plane_pairs_intersect(polyhedron) &&
-            do_all_plane_triplets_intersect(polyhedron) &&
-            !Self_intersection::has_self_intersecting_surface(polyhedron)) {
-          CGAL_SS3_TRACE("Found a good perturbation");
+        IO::write_OBJ("results/last_perturbation.obj", polyhedron, parameters::stream_precision(17).do_not_triangulate_faces(true));
+
+        if (check_perturbed_positions_proximity(polyhedron, p_mem) &&
+            do_all_plane_pairs_intersect(polyhedron) &&
+            !Self_intersection::has_self_intersecting_surface(polyhedron) &&
+            do_all_plane_triplets_intersect(polyhedron)) {
+          CGAL_SS3_TRANSF_TRACE_V(16, "Safe mode is enabled, checking validity of the perturbation...");
           break;
         }
 
+        CGAL_SS3_TRANSF_TRACE_V(4, "Perturbation failed, retrying...");
+        CGAL_SS3_TRANSF_TRACE_V(4, "  - Proximity check: " << check_perturbed_positions_proximity(polyhedron, p_mem));
+        CGAL_SS3_TRANSF_TRACE_V(4, "  - Plane pairs intersection check: " << do_all_plane_pairs_intersect(polyhedron));
+        CGAL_SS3_TRANSF_TRACE_V(4, "  - Self-intersection check: " << !Self_intersection::has_self_intersecting_surface(polyhedron));
+        CGAL_SS3_TRANSF_TRACE_V(4, "  - Plane triplets intersection check: " << do_all_plane_triplets_intersect(polyhedron));
+
         polyhedron = p_mem->clone();
-        apply_rand_plane_tilts_V3(polyhedron);
+        if (!is_triangle_polyhedron(polyhedron)) {
+          Transformation::triangulate_facets(polyhedron);
+          p_mem = polyhedron->clone();
+        }
+
+        rand_move_points(polyhedron);
       }
     }
+
+#ifdef CGAL_SS3_DUMP_FILES
+    IO::write_OBJ("results/perturbed.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
   }
 };
 
