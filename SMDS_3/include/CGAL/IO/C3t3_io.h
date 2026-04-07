@@ -257,6 +257,7 @@ bool load_c3t3(std::istream& is
   tr.tds().read_cells(is, vertices, n, cells);
 
   // go to properties
+  bool dimension_is_a_property = false;
   do
   {
     s.clear();
@@ -270,6 +271,9 @@ bool load_c3t3(std::istream& is
         return true;
       }
     }
+
+    dimension_is_a_property = dimension_is_a_property
+                            || (s.find("vertex:dimension") != std::string::npos);
 
     std::string ppty_value_type;
     std::size_t nb_simplices;
@@ -303,6 +307,12 @@ bool load_c3t3(std::istream& is
 
   c3t3.rescan_after_load_of_triangulation();
 
+  // set dimension for each vertex
+  if(!dimension_is_a_property)
+    internal::set_vertex_dimensions(c3t3);
+
+  //todo : reset Index for each vertex
+
   return true;
 }
 
@@ -324,14 +334,14 @@ bool load_c3t3(std::istream& is
 
 
 
-/** * @ingroup PkgSMDS3IOFunctions
-  @todo implement and document */
-bool convert_old_to_new_c3t3(std::istream& is, std::ostream& os)
-{
-  // read old c3t3 from `is`
-  // write new c3t3 to `os` using `save_c3t3()`
-  return !is.fail() && !os.fail();
-}
+///** * @ingroup PkgSMDS3IOFunctions
+//  @todo implement and document */
+//bool convert_old_to_new_c3t3(std::istream& is, std::ostream& os)
+//{
+//  // read old c3t3 from `is`
+//  // write new c3t3 to `os` using `save_c3t3()`
+//  return !is.fail() && !os.fail();
+//}
 
 } // end namespace IO
 

@@ -482,6 +482,48 @@ namespace internal {
       os << vertices[v_i] << " ";
   }
 
+  template <typename C3t3>
+  void set_vertex_dimensions(C3t3& c3t3)
+  {
+    for(auto c : c3t3.triangulation().finite_cell_handles())
+    {
+      if(c3t3.is_in_complex(c))
+      {
+        for(int i = 0; i < 4; ++i)
+        {
+          c->vertex(i)->set_dimension(3);
+        }
+      }
+    }
+    for(auto f : c3t3.triangulation().finite_facets())
+    {
+      if(c3t3.is_in_complex(f))
+      {
+        for(auto v : c3t3.triangulation().vertices(f))
+        {
+          v->set_dimension(2);
+        }
+      }
+    }
+    for(auto e : c3t3.triangulation().finite_edges())
+    {
+      if(c3t3.is_in_complex(e))
+      {
+        for(auto v : c3t3.triangulation().vertices(e))
+        {
+          v->set_dimension(1);
+        }
+      }
+    }
+    for(auto v : c3t3.triangulation().finite_vertex_handles())
+    {
+      if(c3t3.is_in_complex(v))
+      {
+        v->set_dimension(0);
+      }
+    }
+  }
+
 } // end namespace internal
 } // end namespace IO
 } // end namespace CGAL
