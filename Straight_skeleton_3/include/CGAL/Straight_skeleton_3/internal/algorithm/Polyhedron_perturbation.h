@@ -108,7 +108,7 @@ private:
   static std::array<double, 3> rand_vec(double min, double max)
   {
     static std::random_device rd;
-    unsigned int s = 0; // rd()
+    unsigned int s = rd();
     // CGAL_SS3_TRANSF_TRACE("seed = " << s);
     static std::mt19937 gen(s);
     static std::uniform_real_distribution<> rdist(min, max);
