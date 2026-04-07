@@ -653,14 +653,19 @@ protected:
   template <class OutputItFaces>
   void fill_hole(Vertex_handle v, std::list<Edge> & hole, OutputItFaces fit);
 
-  template <class OutputItFaces>
-  void fill_hole_delaunay(std::list<Edge> & hole, OutputItFaces fit);
-
   void make_hole(Vertex_handle v, std::list<Edge> & hole,
                  std::set<Face_handle> &faces_set);
 
 public:
   void make_hole(Vertex_handle v, std::list<Edge> & hole);
+
+  // convenience function to get the hole
+  auto make_hole(Vertex_handle v) {
+    std::list<Edge> hole;
+    make_hole(v, hole);
+    return hole;
+  }
+
 //  template<class EdgeIt>
 //  Vertex_handle star_hole( Point p,
 //                           EdgeIt edge_begin,
@@ -2029,14 +2034,19 @@ fill_hole(Vertex_handle v, std::list<Edge> & hole, OutputItFaces fit)
   *fit++ = newf;
 }
 
-template <class Gt, class Tds >
-template <class OutputItFaces>
+template <class Gt, class Tds, class OutputItFaces>
 void
-Triangulation_2<Gt, Tds>::
-fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
+fill_hole_delaunay(Triangulation_2<Gt, Tds>& tr,
+                   std::list<typename Triangulation_2<Gt, Tds>::Edge>& first_hole,
+                   OutputItFaces fit)
 {
+  using Tr = Triangulation_2<Gt, Tds>;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Edge = typename Tr::Edge;
+  using Face_handle = typename Tr::Face_handle;
+
   auto create_face = [&](auto &&... args) {
-    Face_handle newf = this->tds().create_face(std::forward<decltype(args)>(args)...);
+    Face_handle newf = tr.tds().create_face(std::forward<decltype(args)>(args)...);
     *fit++ = newf;
     return newf;
   };
@@ -2064,14 +2074,14 @@ fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
     // cut the hole and push it back
 
     // two helper functions:
-    auto  cw_vertex = [](Edge e) { return e.first->vertex( cw(e.second)); };
-    auto ccw_vertex = [](Edge e) { return e.first->vertex(ccw(e.second)); };
+    auto  cw_vertex = [](Edge e) { return e.first->vertex( Tr::cw(e.second)); };
+    auto ccw_vertex = [](Edge e) { return e.first->vertex(Tr::ccw(e.second)); };
 
     // first, ensure that a neighboring face
     // whose vertices on the hole boundary are finite
     // is the first of the hole
     for (auto eit = hole.begin();
-         is_infinite(cw_vertex(*eit)) || is_infinite(ccw_vertex(*eit));
+         tr.is_infinite(cw_vertex(*eit)) || tr.is_infinite(ccw_vertex(*eit));
          eit = hole.begin())
     {
       hole.splice(hole.end(), hole, hole.begin()); // push the first element to the end of the list
@@ -2091,22 +2101,22 @@ fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
       const auto hole_last_one = std::prev(hole_end);
 
       auto cut_after = hole_end;
-      Vertex_handle v2 = infinite_vertex();
+      Vertex_handle v2 = tr.infinite_vertex();
 
-      const Point& p0 = v0->point();
-      const Point& p1 = v1->point();
+      const auto& p0 = v0->point();
+      const auto& p1 = v1->point();
 
       for(auto hit = hole.cbegin(); hit != hole_last_one; ++hit)
       {
         const Vertex_handle vv = ccw_vertex(*hit);
-        if (is_infinite(vv)) {
-          if(is_infinite(v2)) cut_after = hit;
+        if (tr.is_infinite(vv)) {
+          if(tr.is_infinite(v2)) cut_after = hit;
         }
         else {     // vv is a finite vertex
-          const Point& p = vv->point();
-          if (orientation(p0,p1,p) == COUNTERCLOCKWISE) {
-            if (is_infinite(v2) ||
-                this->side_of_oriented_circle(p0,p1,v2->point(),p,true) == ON_POSITIVE_SIDE) {
+          const auto& p = vv->point();
+          if (tr.orientation(p0,p1,p) == COUNTERCLOCKWISE) {
+            if (tr.is_infinite(v2) ||
+                tr.side_of_oriented_circle(p0,p1,v2->point(),p,true) == ON_POSITIVE_SIDE) {
               cut_after = hit; v2 = vv;
             }
           }
@@ -2125,11 +2135,11 @@ fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
     // Note that `first_edge`, that was the `front()` of the hole, has
     // already been popped from it.
     const auto& [ff, ii] = first_edge;
-    if (auto [fn, in] = hole.front(); fn->vertex(ccw(in)) == v2) {
+    if (auto [fn, in] = hole.front(); fn->vertex(Tr::ccw(in)) == v2) {
       Face_handle newf = create_face(ff,ii,fn,in);
       hole.front() = Edge(newf,1);
     }
-    else if (auto [fn, in] = hole.back(); fn->vertex(cw(in)) == v2) {
+    else if (auto [fn, in] = hole.back(); fn->vertex(Tr::cw(in)) == v2) {
       Face_handle newf = create_face(fn,in,ff,ii);
       hole.back() = Edge(newf,1);
       hole.back() = Edge(newf,1);
@@ -2155,7 +2165,7 @@ void
 Triangulation_2<Gt,Tds>::
 fill_hole_delaunay(std::list<Edge> & first_hole)
 {
-  return fill_hole_delaunay(first_hole, CGAL::Emptyset_iterator{});
+  return CGAL::fill_hole_delaunay(*this, first_hole, CGAL::Emptyset_iterator{});
 }
 
 template <class Gt, class Tds >
