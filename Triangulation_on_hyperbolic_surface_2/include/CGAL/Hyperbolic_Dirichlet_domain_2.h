@@ -97,7 +97,7 @@ std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hype
 
     std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realized_triangles = unfold<Traits>(triangulation);
     std::vector<Voronoi_point> dirichlet_vertices;
-    dirichlet_vertices;.reserve(realized_triangles.size());
+    dirichlet_vertices.reserve(realized_triangles.size());
     Traits gt;
     typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
     for (std::tuple<Dart_const_descriptor, Point, Point, Point>& triangle : realized_triangles){
