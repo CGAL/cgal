@@ -23,7 +23,11 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
+#ifndef CGAL_USE_CHAINED_MAP
+#include <CGAL/Hash_map/internal/linear_map.h>
+#else
 #include <CGAL/Hash_map/internal/chained_map.h>
+#endif
 #include <cstddef>
 
 namespace CGAL {
@@ -46,7 +50,11 @@ public:
     typedef Unique_hash_map<Key,Data,Hash_function,Allocator> Self;
 
 private:
+#ifndef CGAL_USE_CHAINED_MAP
+    typedef internal::linear_map<Data, Allocator>    Map;
+#else
     typedef internal::chained_map<Data, Allocator>   Map;
+#endif
     typedef typename Map::Item                       Item;
 
 private:
