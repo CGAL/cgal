@@ -4602,8 +4602,6 @@ public:
         const auto [side_2_last_face, side_2_last_edge_index] = side_2_last_incident_edge;
         const bool side_2_hole_is_outside_the_face = side_2_last_face->info().is_outside_the_face;
 
-        const auto side_1_first_face = side_2_last_face->neighbor(side_2_last_edge_index);
-
         CGAL_assertion(side_1_last_incident_edge.first != side_2_last_incident_edge.first);
 
         // unmark the two constrained edges
