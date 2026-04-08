@@ -422,12 +422,7 @@ protected:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
-  struct Facet_prop
-  {
-    Surface_patch_index surface_patch_index;
-    Index index;
-    Bare_point point;
-  };
+  typedef typename Complex3InTriangulation3::Facet_prop Facet_prop;
   typedef typename std::optional<Facet_prop> Facet_properties;
 
   /// Returns canonical facet of facet

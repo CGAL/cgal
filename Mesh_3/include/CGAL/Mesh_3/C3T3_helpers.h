@@ -1329,7 +1329,7 @@ private:
         if (c3t3.is_in_complex(Facet(c, ii)))
           surface_prop_table_[i] = c3t3.surface_info(Facet(c, ii));
         else
-          surface_prop_table_[i] = {};
+          surface_prop_table_[i] = Facet_prop();
       }
       //note c->next_intrusive() and c->previous_intrusive()
       //are lost by 'backup' and 'restore',
@@ -1344,7 +1344,7 @@ private:
       if (c3t3.is_in_complex(Facet(c, infinite_index)))
         surface_prop_table_[0] = c3t3.surface_info(Facet(c, infinite_index));
       else
-        surface_prop_table_[0] = {};
+        surface_prop_table_[0] = Facet_prop();
     }
 
   public:
