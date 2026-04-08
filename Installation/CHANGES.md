@@ -7,11 +7,11 @@ Release date: July 2026
 ### General Changes
 
 - The new list of supported compilers is:
-  - Visual C++ X.Y.Z (from Visual Studio 20XX) or later
-  - Gnu g++ X.Y.Z or later (on Linux)
-  - LLVM Clang version X.Y.Z or later (on Linux)
-  - Apple Clang compiler versions X.Y.Z and X.Y.Z (on macOS)
-- The minimal supported version of Boost is now X.Y.Z.
+  - Visual C++ 15.9, 16.10, 17.14, 18.0 (from Visual Studio 2017, 2019, 2022, and 2026) or later
+  - Gnu g++ 13.3.0 or later (on Linux)
+  - LLVM Clang version 22.0.0 or later (on Linux)
+  - Apple Clang compiler versions 14.0.0 or later (on macOS)
+- The minimal supported version of Boost is still 1.74.0, but only versions 1.79.0 or later were tested.
 
 ### [2D Alpha Wrapping](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2) (new package)
 
