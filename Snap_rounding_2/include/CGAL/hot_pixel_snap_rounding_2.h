@@ -789,10 +789,10 @@ void hot_pixel_snap_rounding_2(InputIterator begin,
 
 }
 
-template <class PolygonRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
-                                                 OutputIterator out,
-                                                 const NamedParameters &np = parameters::default_values())
+template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
+                                       OutputContainer     &out,
+                                       const NamedParameters &np = parameters::default_values())
 {
   using Polygon_2 = typename std::iterator_traits<typename PolygonRange::iterator>::value_type;
   using Kernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
@@ -853,9 +853,8 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
         last_insert = pl.front();
       }
     }
-    *out++=P;
+    out.push_back(P);
   }
-  return out;
 }
 
 } // namespace internal
@@ -867,14 +866,14 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a sequence of polylines, where each polyline corresponds to an input segment.
+* The output is a range of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputPolylineIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` must be a type that provides a `push_back(Point_2)` function.
+* @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is itself a model of the concepts `DefaultConstructible` and `BackInsertionSequence` whose value type is `geom_traits::Point_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
-* \param out the output inserter
+* \param out the output container
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -891,6 +890,11 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *   \cgalParamNBegin{use_grid_coordinates}
 *     \cgalParamDescription{If set to true, the output coordinates are expressed in the integer grid (pixel indices).
 *                           Otherwise, they are given in the input coordinate system.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{output_unique_segments}
+*     \cgalParamDescription{If set to true, the output polylines are unique pairs of distinct points represented a segment. As a result, the total number of output polylines may differ from the number of input segments.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{true}
 *   \cgalParamNEnd
@@ -901,54 +905,10 @@ OutputIterator hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolylineIterator hot_pixel_snap_rounding_2(const SegmentRange &segments,
-                                                 OutputPolylineIterator   out,
-                                                 const NamedParameters &np = parameters::default_values());
-
-/**
-* \ingroup Snap_rounding_hot_pixel_grp
-*
-* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
-*
-* The output is a sequence of segments.
-*
-* @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputSegmentIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` is `geom_traits::Segment_2`.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* \param segments the input segment range
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{pixel_size}
-*     \cgalParamDescription{The size of the pixel. The plane will be tiled with square pixels of that width such that the origin is the center of a pixel.}
-*     \cgalParamType{`geom_traits::FT`}
-*     \cgalParamDefault{1}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{do_iterative_snap_rounding}
-*     \cgalParamDescription{determines whether to apply Iterative Snap Rounding, see the user manual for more details.}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{true}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{use_grid_coordinates}
-*     \cgalParamDescription{If set to true, the output coordinates are expressed in the integer grid (pixel indices).
-*                           Otherwise, they are given in the input coordinate system.}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{true}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `HotPixelSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*/
-template <class SegmentRange , class OutputSegmentIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
-                                                OutputSegmentIterator    out,
-                                                const NamedParameters &np = parameters::default_values());
+template <class SegmentRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void hot_pixel_snap_rounding_2(const SegmentRange &segments,
+                               OutputContainer    &out,
+                               const NamedParameters &np = parameters::default_values());
 
 /**
 * \ingroup Snap_rounding_hot_pixel_grp
@@ -959,11 +919,11 @@ OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
 * @tparam PolygonRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is model of `CGAL::Polygon_2`.
-* @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
+* @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is model of `CGAL::Polygon_2`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param polygons the range of input polygons
-* \param out the output inserter
+* \param out the output container
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -991,24 +951,25 @@ OutputSegmentIterator hot_pixel_snap_rounding_2(const SegmentRange& segments,
 * \cgalNamedParamsEnd
 * @warning a convex input polygon might no longer be convex after rounding.
 */
-template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolygonIterator hot_pixel_snap_rounding_2(const PolygonRange  &polygons,
-                                                OutputPolygonIterator out,
-                                                const NamedParameters &np = parameters::default_values());
+template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void hot_pixel_snap_rounding_2(const PolygonRange  &polygons,
+                               OutputContainer     &out,
+                               const NamedParameters &np = parameters::default_values());
 
 # else
 
-template <class InputRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
-                                              OutputIterator   out,
-                                              const NamedParameters &np = parameters::default_values())
+template <class InputRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void hot_pixel_snap_rounding_2(const InputRange &inputs,
+                               OutputContainer  &out,
+                               const NamedParameters &np = parameters::default_values())
 {
   using Input = std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>;
 
   if constexpr(internal::is_instance_of_Polygon_2< Input >){
-    return Snap_Rounding_2::internal::hot_pixel_snap_rounding_2_polygon(inputs, out, np);
+    Snap_Rounding_2::internal::hot_pixel_snap_rounding_2_polygon(inputs, out, np);
+    return;
   } else {
-    using OutputType = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+    using Polyline = std::remove_cv_t<typename OutputContainer::value_type>;
 
     using Kernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>>::Kernel;
     using DefaultTraits = Hot_pixel_snap_rounding_traits_2<Kernel>;
@@ -1025,9 +986,10 @@ OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
     auto pixel_size = choose_parameter(get_parameter(np, internal_np::pixel_size), 1.);
     bool do_isr = choose_parameter(get_parameter(np, internal_np::do_iterative_snap_rounding), true);
     bool int_output = choose_parameter(get_parameter(np, internal_np::use_grid_coordinates), true);
+    bool unique_segments = choose_parameter(get_parameter(np, internal_np::output_unique_segments), false);
     unsigned int number_of_kd_trees = 1;
 
-    if constexpr(std::is_same_v<OutputType, Input>){
+    if(unique_segments){
       // Output Segments while removing duplicate ones
       std::vector< std::vector< Point_2 > > output_container;
       Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
@@ -1041,25 +1003,26 @@ OutputIterator hot_pixel_snap_rounding_2(const InputRange &inputs,
           return res == SMALLER;
         return less(a.target(), b.target());
       };
-      std::set< Segment_2, decltype(pred) > set_out_segs(pred);
-
+      std::vector< Segment_2 > out_segs;
       for(auto &poly: output_container)
         for(std::size_t i=1; i<poly.size(); ++i)
           if(less(poly[i-1], poly[i]))
-            set_out_segs.emplace(poly[i-1], poly[i]);
+            out_segs.emplace_back(poly[i-1], poly[i]);
           else
-            set_out_segs.emplace(poly[i], poly[i-1]);
-      for(auto &s: set_out_segs){
-        *out++ = s;
+            out_segs.emplace_back(poly[i], poly[i-1]);
+      std::sort(out_segs.begin(), out_segs.end(), pred);
+      auto last = std::unique(out_segs.begin(), out_segs.end());
+      out_segs.erase(last, out_segs.end());
+      for(Segment_2 &s: out_segs){
+        Polyline pl;
+        pl.push_back(std::move(s.source()));
+        pl.push_back(std::move(s.target()));
+        out.push_back(std::move(pl));
       }
     } else {
       // Output polylines
-      std::vector< OutputType > output_container;
-      Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), output_container, pixel_size, do_isr, int_output, number_of_kd_trees);
-      for(OutputType &pl: output_container)
-        *out++ = std::move(pl);
+      Snap_Rounding_2::internal::hot_pixel_snap_rounding_2<Traits>(inputs.begin(), inputs.end(), out, pixel_size, do_isr, int_output, number_of_kd_trees);
     }
-    return out;
  }
 }
 

@@ -22,10 +22,13 @@ int main()
   segs.emplace_back(Point_2(-2, 2), Point_2(2, 2));
 
   // Compute the snapped subsegments and check if they do intersect
-  std::vector< Segment_2 > out;
-  CGAL::snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(CGAL::Double_grid_snap_rounding_traits_2<Kernel>()));
-  std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
-  std::cout << "Size of the output: " << out.size() << std::endl;
+  std::vector< Polyline_2 > out;
+  CGAL::snap_rounding_2(segs, out, CGAL::parameters::geom_traits(CGAL::Double_grid_snap_rounding_traits_2<Kernel>()).output_unique_segments(true));
+  std::vector< Segment_2 > out_segs;
+  out_segs.reserve(out.size());
+  for(const Polyline_2& pl: out)
+    out_segs.emplace_back(pl[0], pl[1]);
+  std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out_segs.begin(), out_segs.end()) << std::endl;
 
   return 0;
 }

@@ -419,10 +419,10 @@ void vertical_slab_snap_rounding_2_impl(const SegmentRange &segments, PointsRang
 #endif
 }
 
-template <class PolygonRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygons,
-                                                      OutputIterator out,
-                                                      const NamedParameters &np = parameters::default_values())
+template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygons,
+                                           OutputContainer &out,
+                                           const NamedParameters &np = parameters::default_values())
 {
   using Polygon_2 = typename std::iterator_traits<typename PolygonRange::iterator>::value_type;
   using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
@@ -494,9 +494,8 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygo
         last_insert = pl.front();
       }
     }
-    *out++=P;
+    out.push_back(P);
   }
-  return out;
 }
 
 } // end of namespace internal
@@ -510,11 +509,11 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygo
 * The output is a sequence of polylines, where each polyline corresponds to an input segment.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputPolylineIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` must be a type that provides a `push_back(Point_2)` function.
+* @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is itself a model of the concepts `DefaultConstructible` and `BackInsertionSequence` whose value type is `geom_traits::Point_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
-* \param out the output inserter
+* \param out the output container
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -522,41 +521,18 @@ OutputIterator vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygo
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{output_unique_segments}
+*     \cgalParamDescription{If set to true, the output polylines are unique pairs of distinct points represented a segment. As a result, the total number of output polylines may differ from the number of input segments.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
 template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolylineIterator vertical_slab_snap_rounding_2(const SegmentRange &segments,
-                                                      OutputPolylineIterator   out,
-                                                      const NamedParameters &np = parameters::default_values());
-
-/**
-* \ingroup Snap_rounding_vertical_slab_grp
-*
-* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
-*
-* The output is a sequence of segments.
-*
-* @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputSegmentIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` is `geom_traits::Segment_2`.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* \param segments the input segment range
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*/
-template <class SegmentRange , class OutputSegmentIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments,
-                                                     OutputSegmentIterator    out,
-                                                     const NamedParameters &np = parameters::default_values());
+void vertical_slab_snap_rounding_2(const SegmentRange &segments,
+                                   OutputContainer    &out,
+                                   const NamedParameters &np = parameters::default_values());
 
 /**
 * \ingroup Snap_rounding_vertical_slab_grp
@@ -567,11 +543,11 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
 * Each output polygon is free of self-intersections but may present pinched sections.
 *
 * @tparam PolygonRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is model of `CGAL::Polygon_2`.
-* @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
+* @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is model of `CGAL::Polygon_2`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param polygons the range of input polygons
-* \param out the output inserter
+* \param out the output container
 * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -583,25 +559,25 @@ OutputSegmentIterator vertical_slab_snap_rounding_2(const SegmentRange& segments
 * \cgalNamedParamsEnd
 * @warning a convex input polygon might no longer be convex after rounding.
 */
-template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolygonIterator vertical_slab_snap_rounding_2(const PolygonRange  &polygons,
-                                                     OutputPolygonIterator out,
-                                                     const NamedParameters &np = parameters::default_values());
+template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void vertical_slab_snap_rounding_2(const PolygonRange  &polygons,
+                                   OutputContainer     &out,
+                                   const NamedParameters &np = parameters::default_values());
 
 #else
 
-template <class InputRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator vertical_slab_snap_rounding_2(const InputRange &inputs,
-                                              OutputIterator   out,
-                                              const NamedParameters &np = parameters::default_values())
+template <class InputRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void vertical_slab_snap_rounding_2(const InputRange &inputs,
+                                   OutputContainer  &out,
+                                   const NamedParameters &np = parameters::default_values())
 {
   using Input = std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>;
 
   if constexpr(internal::is_instance_of_Polygon_2< Input >){
-    return internal::vertical_slab_snap_rounding_2_polygon(inputs, out, np);
+    internal::vertical_slab_snap_rounding_2_polygon(inputs, out, np);
+    return;
   } else {
-    // using Polyline = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
-    using OutputType = std::remove_cv_t<typename OutputIterator::container_type::value_type>;
+    using Polyline = std::remove_cv_t<typename OutputContainer::value_type>;
 
     using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<typename InputRange::iterator>::value_type>>::Kernel;
     using DefaultTraits = Double_grid_snap_rounding_traits_2<InputKernel>;
@@ -615,6 +591,7 @@ OutputIterator vertical_slab_snap_rounding_2(const InputRange &inputs,
     using parameters::get_parameter;
 
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), DefaultTraits());
+    bool unique_segments = choose_parameter(get_parameter(np, internal_np::output_unique_segments), false);
 
     // auto to_exact=   traits.converter_to_exact_object();
     auto from_exact= traits.converter_from_exact_object();
@@ -628,7 +605,7 @@ OutputIterator vertical_slab_snap_rounding_2(const InputRange &inputs,
     std::cout << "Build output" << std::endl;
   #endif
 
-    if constexpr(std::is_same_v<OutputType, Input>){
+    if (unique_segments){
       // Output Segments while removing duplicate ones
       auto segment_2 = traits.construct_segment_2_object();
       std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
@@ -636,19 +613,21 @@ OutputIterator vertical_slab_snap_rounding_2(const InputRange &inputs,
         for(std::size_t i=1; i<poly.size(); ++i)
           set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
       for(auto &pair: set_out_segs){
-        *out++=from_exact(segment_2(pts[pair.first], pts[pair.second]));
+        Polyline pl;
+        pl.push_back(from_exact(pts[pair.first]));
+        pl.push_back(from_exact(pts[pair.second]));
+        out.push_back(std::move(pl));
         CGAL_assertion(pts[pair.first]!=pts[pair.second]);
       }
     } else {
       // Output polylines
       for(auto &poly: polylines){
-        OutputType new_line;
+        Polyline new_line;
         for(std::size_t pi: poly)
           new_line.push_back(from_exact(pts[pi]));
-        *out++ = std::move(new_line);
+        out.push_back(std::move(new_line));
       }
     }
-    return out;
  }
 }
 #endif

@@ -69,18 +69,18 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a sequence of polylines, where each polyline corresponds to an input segment.
+* The output is a range of polylines, where each polyline corresponds to an input segment.
 *
 * Per default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
 * Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
 * @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputPolylineIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` must be a type that provides a `push_back(Point_2)` function.
+* @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is itself a model of the concepts `DefaultConstructible` and `BackInsertionSequence` whose value type is `geom_traits::Point_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param segments the input segment range
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" including the one listed below
+* \param out the output container
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" including the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
@@ -88,43 +88,17 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 *     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`}
 *     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*/
-template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolylineIterator snap_rounding_2(const SegmentRange &segments,
-                                       OutputPolylineIterator   out,
-                                       const NamedParameters &np = parameters::default_values());
-
-/**
-* \ingroup Snap_rounding_common
-*
-* \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
-*
-* The output is a sequence of segments.
-*
-* Per default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
-* Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
-*
-* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
-* @tparam OutputSegmentIterator model of `OutputIterator` defining a `container_type`, where `container_type::value_type` is `geom_traits::Segment_2`.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* \param segments the input segment range
-* \param out the output inserter
-* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" including the one listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the segment type, using `CGAL::Kernel_traits`}
+*   \cgalParamNBegin{output_unique_segments}
+*     \cgalParamDescription{If set to true, the output polylines are unique pairs of distinct points represented a segment. As a result, the total number of output polylines may differ from the number of input segments.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{true}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template <class SegmentRange , class OutputSegmentIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
-                                      OutputSegmentIterator    out,
-                                      const NamedParameters &np = parameters::default_values());
+template <class SegmentRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+OutputContainer snap_rounding_2(const SegmentRange& segments,
+                                OutputContainer&    out,
+                                const NamedParameters &np = parameters::default_values());
 
 /**
 * \ingroup Snap_rounding_common
@@ -138,7 +112,7 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 * Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
 * @tparam PolygonRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is model of `CGAL::Polygon_2`.
-* @tparam OutputPolygonIterator model of OutputIterator holding `CGAL::Polygon_2`
+* @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is model of `CGAL::Polygon_2`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param polygons the range of input polygons
@@ -154,10 +128,10 @@ OutputSegmentIterator snap_rounding_2(const SegmentRange& segments,
 * \cgalNamedParamsEnd
 * @warning a convex input polygon might no longer be convex after rounding.
 */
-template <class PolygonRange, class OutputPolygonIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputPolygonIterator snap_rounding_2(const PolygonRange  &polygons,
-                                      OutputPolygonIterator out,
-                                      const NamedParameters &np = parameters::default_values());
+template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void snap_rounding_2(const PolygonRange  &polygons,
+                     OutputContainer      &out,
+                     const NamedParameters &np = parameters::default_values());
 
 #else
 
@@ -173,27 +147,27 @@ template <typename T>
 inline constexpr bool is_instance_of_VerticalSlabSRT_v = is_instance_of_VerticalSlabSRT<T>::value;
 }
 
-template <class InputRange , class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-OutputIterator snap_rounding_2(const InputRange &inputs,
-                               OutputIterator   out,
-                               const NamedParameters &np = parameters::default_values())
+template <class InputRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void snap_rounding_2(const InputRange &inputs,
+                     OutputContainer  &out,
+                     const NamedParameters &np = parameters::default_values())
 {
   using parameters::is_default_parameter;
 
   if constexpr(is_default_parameter<NamedParameters, internal_np::geom_traits_t>::value)
   {
-    return vertical_slab_snap_rounding_2(inputs, out, np);
+    vertical_slab_snap_rounding_2(inputs, out, np);
   }
   else
   {
     using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t, NamedParameters, int>::type;
     if constexpr(internal::is_instance_of_VerticalSlabSRT_v<Traits>)
     {
-      return vertical_slab_snap_rounding_2(inputs, out, np);
+      vertical_slab_snap_rounding_2(inputs, out, np);
     }
     else
     {
-      return hot_pixel_snap_rounding_2(inputs, out, np);
+      hot_pixel_snap_rounding_2(inputs, out, np);
     }
   }
 }

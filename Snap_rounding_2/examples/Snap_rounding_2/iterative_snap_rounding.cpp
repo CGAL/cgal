@@ -19,7 +19,7 @@ int main()
   // Generate an iterated snap-rounding representation, where the centers of
   // the hot pixels are integers, using one kd tree, which is the default:
   std::vector<Polyline_2> out;
-  CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(out));
+  CGAL::hot_pixel_snap_rounding_2(segs, out);
 
   int counter = 0;
   for(const Polyline_2 &pl: out) {

@@ -16,6 +16,7 @@ typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
 typedef Kernel::Vector_2                                        Vector_2;
 typedef std::vector<Point_2 >                                   Polyline_2;
+typedef boost::container::small_vector<Point_2, 2>              Small_polyline_2;
 typedef std::vector<Polyline_2>                                 Polyline_range_2;
 typedef Kernel::FT                                              FT;
 
@@ -82,44 +83,52 @@ void compute_subcurves_and_naive_snap(Iterator begin, Iterator end, OutRange &ou
 }
 #endif
 
+bool do_intersect(const std::vector<Small_polyline_2> &segs){
+  std::vector<Segment_2> temp;
+  for(const auto &s: segs)
+    temp.emplace_back(s[0], s[1]);
+  return CGAL::do_curves_intersect(temp.begin(), temp.end());
+}
+
 void test(const std::vector<Segment_2> &segs){
-  std::vector<Segment_2> out;
+  std::vector<Small_polyline_2> out;
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   CGAL::Real_timer t;
   std::cout << "Input size: " << segs.size() << std::endl;
+  std::vector< Segment_2 > out_segs;
   t.start();
-  compute_subcurves_and_naive_snap(segs.begin(), segs.end(), out);
+  compute_subcurves_and_naive_snap(segs.begin(), segs.end(), out_segs);
   t.stop();
-  std::cout << "Naive snap size: " << out.size() << " ,running time: " << t.time() << " and output do intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) <<std::endl;
+  std::cout << "Naive snap size: " << out_segs.size() << " ,running time: " << t.time() << " and output do intersect: " << CGAL::do_curves_intersect(out_segs.begin(), out_segs.end()) <<std::endl;
   out.clear();
   t.reset();
   t.start();
 #endif
-  CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out));
+  CGAL::vertical_slab_snap_rounding_2(segs, out, CGAL::parameters::output_unique_segments(true));
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
-  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  assert(!do_intersect(out));
   out.clear();
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.reset();
   t.start();
 #endif
   CGAL::Float_grid_snap_rounding_traits_2<Kernel> float_traits;
-  CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(float_traits)); // Slow on hard test
+  CGAL::vertical_slab_snap_rounding_2(segs, out, CGAL::parameters::geom_traits(float_traits).output_unique_segments(true)); // Slow on hard test
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.stop();
   std::cout << "Formal snap size with float: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
-  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  assert(!do_intersect(out));
   out.clear();
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   t.reset();
   t.start();
 #endif
 //   CGAL::Integer_grid_snap_rounding_traits_2<Kernel> int_traits(10e-12);
-//   CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits));
+//   CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(int_traits).output_unique_segments(true));
 // #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
 //   t.stop();
 //   std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
@@ -129,18 +138,18 @@ void test(const std::vector<Segment_2> &segs){
 #ifdef COMPARE_WITH_HOT_PIXEL_SNAP_ROUNDING_2
   t.reset();
   t.start();
-  CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::pixel_size(1./maxDouble).do_iterative_snap_rounding(false).use_grid_coordinates(false));
+  CGAL::hot_pixel_snap_rounding_2(segs, out, CGAL::parameters::pixel_size(1./maxDouble).do_iterative_snap_rounding(false).use_grid_coordinates(false).output_unique_segments(true));
   t.stop();
   std::cout << "Hot pixel snap (10^15), size: " << out.size() << " ,time: " << t.time() << std::endl;
-  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  assert(!do_intersect(out));
   out.clear();
 
   t.reset();
   t.start();
-  CGAL::hot_pixel_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::pixel_size(1./maxFloat).do_iterative_snap_rounding(false).use_grid_coordinates(false));
+  CGAL::hot_pixel_snap_rounding_2(segs, out, CGAL::parameters::pixel_size(1./maxFloat).do_iterative_snap_rounding(false).use_grid_coordinates(false).output_unique_segments(true));
   t.stop();
   std::cout << "Hot pixel snap (10^7), size: " << out.size() << " ,time: " << t.time() << std::endl;
-  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+  assert(!do_intersect(out));
   out.clear();
 #endif
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
@@ -176,7 +185,7 @@ void test_polygons(){
   polygons.push_back(b);
 
   std::vector<Polygon_2> out;
-  CGAL::vertical_slab_snap_rounding_2(polygons, std::back_inserter(out));
+  CGAL::vertical_slab_snap_rounding_2(polygons, out);
 
   assert(out.size() == 2);
   assert(out[0].size() == 5);
@@ -196,7 +205,7 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
   }
 
   std::vector<Polygon_2> out;
-  CGAL::vertical_slab_snap_rounding_2(polygons, std::back_inserter(out));
+  CGAL::vertical_slab_snap_rounding_2(polygons, out);
 
   std::vector<Segment_2> segs;
   for(const Polygon_2 &poly: out)
@@ -264,7 +273,7 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
 #endif
     std::array< Polygon_2, 1> input = {out_intersection[0].outer_boundary()};
     std::vector< Polygon_2 > snap_scene_container;
-    vertical_slab_snap_rounding_2(input, std::back_inserter(snap_scene_container));
+    vertical_slab_snap_rounding_2(input, snap_scene_container);
     snap_scene = snap_scene_container[0];
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
     t.stop();
@@ -385,7 +394,7 @@ void test_polyline_api(){
   segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
-  vertical_slab_snap_rounding_2(segs, std::back_inserter(out));
+  vertical_slab_snap_rounding_2(segs, out);
 }
 
 int main(int argc,char *argv[])

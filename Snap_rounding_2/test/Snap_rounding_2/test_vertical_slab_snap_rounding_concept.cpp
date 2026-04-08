@@ -27,6 +27,7 @@ template<class Traits>
 struct Test{
   typedef typename Traits::Segment_2 Segment_2;
   typedef typename Traits::Point_2   Point_2;
+  typedef boost::container::small_vector<Point_2, 2> Polyline_2;
 
   void fix_test(){
     std::vector<Segment_2> segs;
@@ -38,13 +39,10 @@ struct Test{
     segs.emplace_back(Point_2(5, 7), Point_2(9, 7));
     segs.emplace_back(Point_2(1,1), Point_2(3,1));
     segs.emplace_back(Point_2(1,2), Point_2(3,0));
-    std::vector<Segment_2> out;
+    std::vector<Polyline_2> out;
     Traits traits;
-    CGAL::vertical_slab_snap_rounding_2(segs, std::back_inserter(out), CGAL::parameters::geom_traits(traits));
-    assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
-    // Test minimal output iterator
-    CGAL::vertical_slab_snap_rounding_2(segs, minimal_output_iterator< Segment_2 >(), CGAL::parameters::geom_traits(traits));
-    CGAL::vertical_slab_snap_rounding_2(segs, minimal_output_iterator< std::vector<Point_2> >(), CGAL::parameters::geom_traits(traits));
+    CGAL::vertical_slab_snap_rounding_2(segs, out, CGAL::parameters::geom_traits(traits).output_unique_segments(true));
+    assert(out.size()==15);
   }
 };
 

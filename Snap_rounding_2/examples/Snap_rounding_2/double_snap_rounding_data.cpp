@@ -27,7 +27,10 @@ static int run_mesh(const Obj_data& data)
 
   CGAL::Real_timer t;
   t.start();
-  CGAL::snap_rounding_2(segs, std::back_inserter(out));
+  std::vector< boost::container::small_vector<Point_2, 2> > temp;
+  CGAL::snap_rounding_2(segs, temp, CGAL::parameters::output_unique_segments(true));
+  for(auto &s: temp)
+    out.emplace_back(s[0], s[1]);
   t.stop();
   std::cout << "Running time: " << t.time() << std::endl;
   std::cout << "Input_size: "<< segs.size() << " , Output size: " << out.size() << "s" << std::endl;

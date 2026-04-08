@@ -22,7 +22,7 @@ typedef Kernel::FT                                              FT;
 
 void test_api(){
   std::vector< Segment_2 > segs;
-  std::vector< Segment_2 > out_segs;
+  std::vector< boost::container::small_vector<Point_2, 2> > out_segs;
   std::vector< Polyline_2 > out_poly;
 
   FT e(std::pow(2, -60));
@@ -35,24 +35,24 @@ void test_api(){
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
   // Default
-  snap_rounding_2(segs, std::back_inserter(out_segs));
-  snap_rounding_2(segs, std::back_inserter(out_poly));
+  snap_rounding_2(segs, out_segs, CGAL::parameters::output_unique_segments(true));
+  snap_rounding_2(segs, out_poly);
   assert(out_segs.size() == 11);
   assert(out_poly.size() == 7);
   out_segs.clear();
   out_poly.clear();
 
   // VSSR Traits
-  snap_rounding_2(segs, std::back_inserter(out_segs), CGAL::parameters::geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
-  snap_rounding_2(segs, std::back_inserter(out_poly), CGAL::parameters::geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
+  snap_rounding_2(segs, out_segs, CGAL::parameters::output_unique_segments(true).geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
+  snap_rounding_2(segs, out_poly, CGAL::parameters::geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
   assert(out_segs.size() == 11);
   assert(out_poly.size() == 7);
   out_segs.clear();
   out_poly.clear();
 
   // HPSR Traits
-  snap_rounding_2(segs, std::back_inserter(out_segs), CGAL::parameters::geom_traits(CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>()));
-  snap_rounding_2(segs, std::back_inserter(out_poly), CGAL::parameters::geom_traits(CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>()));
+  snap_rounding_2(segs, out_segs, CGAL::parameters::output_unique_segments(true).geom_traits(CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>()));
+  snap_rounding_2(segs, out_poly, CGAL::parameters::geom_traits(CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>()));
   assert(out_segs.size() == 8);
   assert(out_poly.size() == 7);
   out_segs.clear();
@@ -65,7 +65,6 @@ void test_deprecated(){
   using New_traits = CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>;
 
   std::vector< Segment_2 > segs;
-  std::vector< Segment_2 > out_segs;
   std::vector< Polyline_2 > out_poly;
   FT e(std::pow(2, -60));
   segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
@@ -77,11 +76,8 @@ void test_deprecated(){
   segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
   // Test new API with deprecated traits
-  snap_rounding_2(segs, std::back_inserter(out_segs), CGAL::parameters::geom_traits(Deprecated_traits()));
-  snap_rounding_2(segs, std::back_inserter(out_poly), CGAL::parameters::geom_traits(Deprecated_traits()));
-  assert(out_segs.size() == 8);
+  snap_rounding_2(segs, out_poly, CGAL::parameters::geom_traits(Deprecated_traits()));
   assert(out_poly.size() == 7);
-  out_segs.clear();
   out_poly.clear();
 
   // Test deprecated API with new traits name
