@@ -68,7 +68,7 @@ typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 typedef CGAL::Poisson_mesh_domain_3<Kernel> Poisson_mesh_domain;
 typedef CGAL::Mesh_triangulation_3<Poisson_mesh_domain>::type Poisson_Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Poisson_Tr> Poisson_C3t3;
-typedef CGAL::Mesh_criteria_3<Poisson_Tr> Poisson_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Poisson_C3t3> Poisson_mesh_criteria;
 
 namespace params = CGAL::parameters;
 
