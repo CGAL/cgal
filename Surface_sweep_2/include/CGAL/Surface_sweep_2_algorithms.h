@@ -176,7 +176,10 @@ OutputIterator compute_subcurves(CurveInputIterator begin, CurveInputIterator en
   return compute_subcurves(begin, end, subcurves, mult_overlaps, traits);
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 /*! Determine whether any curves in a given range intersect pairwise.
+ * \deprecated This function is deprecated since the version 6.2 of \cgal. Use the function `CGAL::Surface_sweep_2::do_intersect()` instead.
  * \param begin An input iterator of the the range.
  * \param end A input past-the-end iterator of the range.
  * \return (true) if any pair of curves intersect; (false) otherwise.
@@ -187,11 +190,14 @@ bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end, Trait
 { return Ss2::do_intersect(begin, end, false, traits); }
 
 /*!
+ * \deprecated This function is deprecated since the version 6.2 of \cgal. Use the function `CGAL::Surface_sweep_2::do_intersect()` instead.
  */
 template <typename CurveInputIterator>
 CGAL_DEPRECATED
 bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end)
 { return Ss2::do_intersect(begin, end, false); }
+
+#endif
 
 } // namespace CGAL
 
