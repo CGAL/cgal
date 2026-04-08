@@ -39,10 +39,10 @@ namespace SMDS_3 {
 
 template<class C3T3>
 bool build_mesh_complex_from_file(std::istream& is,
-                                    C3T3& c3t3,
-                                    bool verbose = false,
-                                    bool replace_domain_0 = false,
-                                    bool allow_non_manifold = false);
+                                  C3T3& c3t3,
+                                  bool verbose = false,
+                                  bool replace_domain_0 = false,
+                                  bool allow_non_manifold = false);
 
 template<class Tr>
 bool build_triangulation_from_file(std::istream& is,
