@@ -87,7 +87,7 @@ bool do_intersect(const std::vector<Small_polyline_2> &segs){
   std::vector<Segment_2> temp;
   for(const auto &s: segs)
     temp.emplace_back(s[0], s[1]);
-  return CGAL::do_curves_intersect(temp.begin(), temp.end());
+  return CGAL::Surface_sweep_2::do_intersect(temp.begin(), temp.end(), false);
 }
 
 void test(const std::vector<Segment_2> &segs){
@@ -99,7 +99,7 @@ void test(const std::vector<Segment_2> &segs){
   t.start();
   compute_subcurves_and_naive_snap(segs.begin(), segs.end(), out_segs);
   t.stop();
-  std::cout << "Naive snap size: " << out_segs.size() << " ,running time: " << t.time() << " and output do intersect: " << CGAL::do_curves_intersect(out_segs.begin(), out_segs.end()) <<std::endl;
+  std::cout << "Naive snap size: " << out_segs.size() << " ,running time: " << t.time() << " and output do intersect: " << CGAL::Surface_sweep_2::do_intersect(out_segs.begin(), out_segs.end(), false) <<std::endl;
   out.clear();
   t.reset();
   t.start();
@@ -133,7 +133,7 @@ void test(const std::vector<Segment_2> &segs){
 //   t.stop();
 //   std::cout << "Formal snap size with integers: " << out.size() << " ,running time: " << t.time() << std::endl;
 // #endif
-//   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+//   assert(!CGAL::do_curves_intersect(out.begin(), out.end(), false));
   out.clear();
 #ifdef COMPARE_WITH_HOT_PIXEL_SNAP_ROUNDING_2
   t.reset();
@@ -225,7 +225,7 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
                                       });
   auto it = std::unique(segs.begin(), segs.end());
   segs.erase(it, segs.end());
-  assert(!CGAL::do_curves_intersect(segs.begin(), segs.end()));
+  assert(!CGAL::Surface_sweep_2::do_intersect(segs.begin(), segs.end(), false));
 }
 
 void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector_2 source, Vector_2 target){

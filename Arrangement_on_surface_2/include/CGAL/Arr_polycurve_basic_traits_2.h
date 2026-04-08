@@ -1108,11 +1108,39 @@ public:
     /*! determines whether two given \f$x\f$-monotone curves intersect.
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
-     * \return a boolean flag indicating whether the curves intersect.
+     * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
+     * \return `true` if `consider_common_endpoints` is true and `xcv1` and `xcv2` intersect or if
+     *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
+     *   and `false` otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                    bool consider_common_endpoints = true) const {
+      /* Testing collisions between polycurves (while counting common
+       * endpoints as intersections) is relatively simple.  Testing collision
+       * between polycurves while ignoring common endpoints is more challenging.
+       *
+       * First we compare the most right point of xcv1 and the most left point
+       * of xcv2 and vice verse. If the curves are disjoint we trivially return.
+       * Observe that if the most right point of one curve coincides with the
+       * most left point of the other curve, the curves intersect, but the when
+       * ignoring common endpoints they do not.
+       *
+       * Second, we find the first indices (from the left) of the subcurves of
+       * our polycurves that have common \f$x\f$-coordinates and traverse the
+       * to the right.
+       *
+       * If common endpoints are ignored, we ignore common endpoints of the
+       * first pair of subcurves of the polycurves. We also treat the last pair
+       * of subcurves the same.  When comparing all other pairs we count common
+       * endpoints as intersections. This plain procedure does not detect
+       * intersections between endpoints of subcurves, which are interior to at
+       * least one of the polycurves. Therefore, we need to check further
+       * whether endpoints coincide under certain conditions,
+       *
+       * The conditions and special testing have been carefully coded for
+       * maximum performance (while considering or ignoring common endpoints).
+       */
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      auto cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
       auto do_intersect = geom_traits->do_intersect_2_object();
       auto cmp_endpts = geom_traits->compare_endpoints_xy_2_object();
       auto cmp_xy = m_poly_traits.compare_xy_2_object();
@@ -1128,57 +1156,111 @@ public:
       const std::size_t n1 = xcv1.number_of_subcurves();
       const std::size_t n2 = xcv2.number_of_subcurves();
 
-      std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
-      std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
+      const std::size_t zero{0};
+      const std::size_t one{1};
+      const std::size_t mone(-1);
+      auto [f1, l1, d1] = (dir1 == SMALLER) ? std::make_tuple(zero, n1-1, one) : std::make_tuple(n1-1, zero, mone);
+      auto [f2, l2, d2] = (dir2 == SMALLER) ? std::make_tuple(zero, n2-1, one) : std::make_tuple(n2-1, zero, mone);
 
+      // Early ellimination
+      switch (cmp_xy(xcv1[l1], ARR_MAX_END, xcv2[f2], ARR_MIN_END)) {
+       case SMALLER: return false;
+       case EQUAL: return consider_common_endpoints;
+       default: break; // LERGER
+      }
+      switch (cmp_xy(xcv2[l2], ARR_MAX_END, xcv1[f1], ARR_MIN_END)) {
+       case SMALLER: return false;
+       case EQUAL: return consider_common_endpoints;
+       default: break; // LERGER
+      }
+
+      std::size_t i1 = f1;
+      std::size_t i2 = f2;
+
+      // Compare most left
       auto left_res = cmp_xy(xcv1[i1], ARR_MIN_END, xcv2[i2], ARR_MIN_END);
       if (left_res == SMALLER) {
         // cv1's left endpoint is to the left of xcv2's left endpoint.
-        // Locate the index i1 of the subcurve in xcv1 which contains cv2's
-        // left endpoint.
+        // Locate the index i1 of the subcurve in xcv1 which contains cv2's left endpoint.
         i1 = m_poly_traits.locate_impl(xcv1, xcv2[i2], ARR_MIN_END, All_sides_oblivious_category());
         if (i1 == Polycurve_basic_traits_2::INVALID_INDEX) return false;
-        if (cmp_y_at_x(xcv2[i2], ARR_MIN_END, xcv1[i1]) == EQUAL) return true;
+        // The following is redundant, as we test for intersections later on.
+        // if (cmp_y_at_x(xcv2[i2], ARR_MIN_END, xcv1[i1]) == EQUAL) return true;
       }
       else if (left_res == LARGER) {
         // cv1's left endpoint is to the right of cv2's left endpoint.
-        // Locate the index i2 of the subcurve in cv2 which contains cv1's
-        // left endpoint.
+        // Locate the index i2 of the subcurve in cv2 which contains cv1's left endpoint.
         i2 = m_poly_traits.locate_impl(xcv2, xcv1[i1], ARR_MIN_END, All_sides_oblivious_category());
         if (i2 == Polycurve_basic_traits_2::INVALID_INDEX) return false;
-        if (cmp_y_at_x(xcv1[i1], ARR_MIN_END, xcv2[i2]) == EQUAL) return true;
+        // The following is redundant, as we test for intersections later on.
+        // if (cmp_y_at_x(xcv1[i1], ARR_MIN_END, xcv2[i2]) == EQUAL) return true;
       }
       else {
         CGAL_assertion(left_res == EQUAL);
-        return true;
+        if (consider_common_endpoints) return true;
       }
 
-      do {
-        // std::cout << "i1, i2 = " << i1 <<", " << i2 << std::endl;
-        auto res = do_intersect(xcv1[i1], xcv2[i2]);
-        if (res) return res;
+      if (! consider_common_endpoints && ((i1 == f1) && (i2 == f2))) {
+        // Exclude the first iteration from the loop if the first subcurves of
+        // the 2 polycurves share the same X-coordinates.  (This is special in
+        // case of open intersections.)
+
+        // Check open intersections between the first subcurves.
+        if (do_intersect(xcv1[i1], xcv2[i2], false)) return true;
+        if ((n1 == 1) && (n2 == 1)) return false;
+
+        // The open sub-curves do not intersect; however, there still might be a
+        // valid intersection at the endpoints of the first subcurves, which is
+        // internal to the polycurve. We distinguich between 3 main cases. In all
+        // cases we must compare the most left vertex of the most right subcurve.
+        // 1. n1 == 1, n2 > 1
+        if ((n1 == 1) && (n2 > 1)) {
+          auto ctr_max_vertex = geom_traits->construct_max_vertex_2_object();
+          if (cmp_xy(ctr_max_vertex(xcv1[i1]), ctr_max_vertex(xcv2[i2])) == EQUAL) return true;
+          if ((left_res == LARGER) && (n2 == 2)) {
+            auto ctr_min_vertex = geom_traits->construct_min_vertex_2_object();
+            if (cmp_xy(ctr_min_vertex(xcv1[i1]), ctr_max_vertex(xcv2[i2])) == EQUAL) return true;
+          }
+        }
+        else if ((n2 == 1) && (n1 > 1)) {
+          auto ctr_max_vertex = geom_traits->construct_max_vertex_2_object();
+          if (cmp_xy(ctr_max_vertex(xcv1[i1]), ctr_max_vertex(xcv2[i2])) == EQUAL) return true;
+          if ((left_res == SMALLER) && (n1 == 2)) {
+            auto ctr_min_vertex = geom_traits->construct_min_vertex_2_object();
+            if (cmp_xy(ctr_min_vertex(xcv2[i2]), ctr_max_vertex(xcv1[i1])) == EQUAL) return true;
+          }
+        }
+        else if ((n1 == 2) && (n2 == 2)) {
+          auto ctr_max_vertex = geom_traits->construct_max_vertex_2_object();
+          if (cmp_xy(ctr_max_vertex(xcv1[i1]), ctr_max_vertex(xcv2[i2])) == EQUAL) return true;
+        }
 
         // Advance the indices
         auto right_res = cmp_xy(xcv1[i1], ARR_MAX_END, xcv2[i2], ARR_MAX_END);
         if (right_res != LARGER) {
-          if (dir1 == SMALLER) {
-            ++i1;
-            if (i1 == n1) break;
-          }
-          else {
-            if (i1 != 0) --i1;
-            else break;
-          }
+          if (i1 == l1) return false;
+          i1 += d1;
         }
         if (right_res != SMALLER) {
-          if (dir2 == SMALLER) {
-            ++i2;
-            if (i2 == n2) break;
-          }
-          else {
-            if (i2 != 0) --i2;
-            else break;
-          }
+          if (i2 == l2) return false;
+          i2 += d2;
+        }
+      }
+
+      // Traverse the polycurves
+      do {
+        auto flag = (consider_common_endpoints || (i1 != l1) || (i2 != l2));
+        if (do_intersect(xcv1[i1], xcv2[i2], flag)) return true;
+
+        // Advance the indices
+        auto right_res = cmp_xy(xcv1[i1], ARR_MAX_END, xcv2[i2], ARR_MAX_END);
+        if (right_res != LARGER) {
+          if (i1 == l1) return false;
+          i1 += d1;
+        }
+        if (right_res != SMALLER) {
+          if (i2 == l2) return false;
+          i2 += d2;
         }
       } while (true);
 
@@ -2357,8 +2439,7 @@ public:
       auto trim = geom_traits->trim_2_object();
 
       //check whether src and tgt lies on the polycurve/polycurve.
-      CGAL_precondition_code
-        (auto cmp_y_at_x_2 = m_poly_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(auto cmp_y_at_x_2 = m_poly_traits.compare_y_at_x_2_object());
       CGAL_precondition(cmp_y_at_x_2(source, xcv) == EQUAL);
       CGAL_precondition(cmp_y_at_x_2(target, xcv) == EQUAL);
 
@@ -2372,11 +2453,10 @@ public:
        * right or if the curve is oriented from left to right but points are
        * from right to left, reverse.
        */
-      auto [src, trg] =
-        (((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == LARGER) &&
-          (m_poly_traits.compare_x_2_object()(source, target) == SMALLER)) ||
-         ((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER) &&
-          (m_poly_traits.compare_x_2_object()(source, target) == LARGER))) ?
+      auto [src, trg] = (((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == LARGER) &&
+                          (m_poly_traits.compare_x_2_object()(source, target) == SMALLER)) ||
+                         ((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER) &&
+                          (m_poly_traits.compare_x_2_object()(source, target) == LARGER))) ?
         std::make_tuple(target, source) : std::make_tuple(source, target);
 
       // std::cout << "**************the new source: " << source

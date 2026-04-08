@@ -153,13 +153,8 @@ public:
     input_polylines(in),
     output_polylines(out),
     round_bounds(bounds)
-  {}
-
-  template <typename CurveIterator>
-  void sweep(CurveIterator begin, CurveIterator end) {
+  {
     output_polylines.resize(input_polylines.size());
-    Surface_sweep_2* sl = this->surface_sweep();
-    sl->sweep(begin, end);
   }
 
   bool after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */) {
@@ -167,7 +162,6 @@ public:
     if (! event->has_left_curves() && ! event->has_right_curves()) return true;
 
     auto pi = event->point();
-    Surface_sweep_2* sl = this->surface_sweep();
 
     // Insert the point in the output
     for (auto it = event->left_curves_begin(); it != event->left_curves_end(); ++it) {
@@ -186,15 +180,15 @@ public:
     // Check segments above and create a subdivision point if they are too close for safe rounding
     auto pi_above = pi;
     auto above = iter;
-    while(above != sl->status_line_end() && is_pi_closed_to_sc_and_subdivide(pi_above, *above))
+    while(above != this->status_line_end() && is_pi_closed_to_sc_and_subdivide(pi_above, *above))
       ++above;
 
     // same with segments below
     auto below = iter;
-    if(below != sl->status_line_begin()){
+    if(below != this->status_line_begin()){
       --below;
       while(is_pi_closed_to_sc_and_subdivide(pi, *below)){
-        if(below == sl->status_line_begin())
+        if(below == this->status_line_begin())
           break;
         --below;
       }
@@ -250,7 +244,7 @@ void snap_rounding_scan(PointsRange &pts, PolylinesRange &polylines, const Trait
   std::vector< Polyline > out;
   Visitor visitor(wrap_traits, pts, polylines, out, round_bounds);
   Surface_sweep surface_sweep(&wrap_traits, &visitor);
-  visitor.sweep(curves.begin(), curves.end());
+  surface_sweep.sweep(curves.begin(), curves.end());
 
   // We sort the point by y, evaluation by this operation ensure the y-order of the point is preserved after the rounding
   // Round value of y coordinates are modified in the case of a filter failure

@@ -185,6 +185,14 @@ CGAL_add_named_parameter(shuffle_planes_t, shuffle_planes, shuffle_planes)
 CGAL_add_named_parameter(use_convex_specialization_t, use_convex_specialization, use_convex_specialization)
 CGAL_add_named_parameter(faces_range_t, faces_range, faces_range)
 CGAL_add_named_parameter(allow_open_input_t, allow_open_input, allow_open_input)
+CGAL_add_named_parameter(strictly_inside_t, strictly_inside, strictly_inside)
+CGAL_add_named_parameter(maximum_number_of_voxels_t, maximum_number_of_voxels, maximum_number_of_voxels)
+CGAL_add_named_parameter(maximum_depth_t, maximum_depth, maximum_depth)
+CGAL_add_named_parameter(refitting_t, refitting, refitting)
+CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
+CGAL_add_named_parameter(maximum_number_of_convex_volumes_t, maximum_number_of_convex_volumes, maximum_number_of_convex_volumes)
+CGAL_add_named_parameter(split_at_concavity_t, split_at_concavity, split_at_concavity)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

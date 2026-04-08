@@ -216,7 +216,7 @@ private:
                               const Point_3& t,
                               Point_3& output_pt)
   {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+#ifdef CGAL_AW3_DEBUG_SPHERE_MARCHING
     std::cout << "Sphere march between " << s << " and " << t << std::endl;
 #endif
 
@@ -240,7 +240,7 @@ private:
 
     for(;;)
     {
-#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+#ifdef CGAL_AW3_DEBUG_SPHERE_MARCHING
       std::cout << "current point " << current_pt << std::endl;
       std::cout << "current dist " << current_dist << std::endl;
 #endif

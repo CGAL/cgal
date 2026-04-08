@@ -36,6 +36,7 @@ public:
     COMPARE_Y_AT_X_RIGHT_2_OP,
     MAKE_X_MONOTONE_2_OP,
     SPLIT_2_OP,
+    DO_INTERSECT_2_OP,
     INTERSECT_2_OP,
     ARE_MERGEABLE_2_OP,
     MERGE_2_OP,
@@ -90,14 +91,10 @@ public:
   using Has_left_category = typename Base::Has_left_category;
   using Has_merge_category = typename Base::Has_merge_category;
 
-  using Left_side_category =
-    typename internal::Arr_complete_left_side_category< Base >::Category;
-  using Bottom_side_category =
-    typename internal::Arr_complete_bottom_side_category< Base >::Category;
-  using Top_side_category =
-    typename internal::Arr_complete_top_side_category< Base >::Category;
-  using Right_side_category =
-    typename internal::Arr_complete_right_side_category< Base >::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category< Base >::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category< Base >::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category< Base >::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category< Base >::Category;
 
   using Point_2 = typename Base::Point_2;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -120,6 +117,7 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;
   Make_x_monotone_2 make_x_monotone_2_object() const;
   Split_2 split_2_object() const;
+  Do_intersect_2 do_intersect_2_object() const;
   Intersect_2 intersect_2_object() const;
   Are_mergeable_2 are_mergeable_2_object() const;
   Merge_2 merge_2_object() const;

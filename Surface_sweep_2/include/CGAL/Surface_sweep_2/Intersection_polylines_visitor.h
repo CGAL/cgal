@@ -37,8 +37,7 @@ namespace Surface_sweep_2 {
  */
 template <typename GeometryTraits_2, typename Points_, typename Polylines_, typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Intersection_polylines_visitor :
-    public Default_visitor<Intersection_polylines_visitor<GeometryTraits_2, Points_, Polylines_, Allocator_>,
-                           GeometryTraits_2, Allocator_> {
+    public Default_visitor<Intersection_polylines_visitor<GeometryTraits_2, Points_, Polylines_, Allocator_>, GeometryTraits_2, Allocator_> {
 public:
   using Geometry_traits_2 = GeometryTraits_2;
   using Points = Points_;
@@ -70,16 +69,6 @@ public:
 
   /*!
    */
-  template <typename CurveIterator>
-  void sweep(CurveIterator begin, CurveIterator end) {
-    m_points.reserve(2 * std::distance(begin,end));
-    m_polylines.resize(std::distance(begin,end));
-    Surface_sweep_2* sl = this->surface_sweep();
-    sl->sweep(begin, end);
-  }
-
-  /*!
-   */
   bool after_handle_event(Event* event, Status_line_iterator /* iter */, bool /* flag */) {
     if (! event->is_closed()) return true;
     if (! event->has_left_curves() && ! event->has_right_curves()) return true;
@@ -100,7 +89,7 @@ public:
       std::vector<Subcurve*> leaves;
       sc->all_leaves(std::back_inserter(leaves));
       for(auto l: leaves)
-        if(m_polylines[l->last_curve().data()].empty() || m_polylines[l->last_curve().data()].back() != id) // Maybe already by left curves
+        if(m_polylines[l->last_curve().data()].empty() || m_polylines[l->last_curve().data()].back() != id) // Maybe already added by left curves
           m_polylines[l->last_curve().data()].push_back(id);
     }
 

@@ -34,7 +34,7 @@ static int run_mesh(const Obj_data& data)
   t.stop();
   std::cout << "Running time: " << t.time() << std::endl;
   std::cout << "Input_size: "<< segs.size() << " , Output size: " << out.size() << "s" << std::endl;
-  std::cout << "Do output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << "\n" << std::endl;
+  std::cout << "Do output intersect: " << CGAL::Surface_sweep_2::do_intersect(out.begin(), out.end(), false) << "\n" << std::endl;
   return EXIT_SUCCESS;
 }
 
