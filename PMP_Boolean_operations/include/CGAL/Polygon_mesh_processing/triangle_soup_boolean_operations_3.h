@@ -537,7 +537,7 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
 
 #ifdef CGAL_BO3_TIMERS
   Real_timer timer;
-  time.start();
+  timer.start();
 #endif
   std::vector<unsigned int> input_ids(nbt_1+nbt_2, 0);
   for (std::size_t i=nbt_1; i<nbt_1+nbt_2; ++i)
@@ -547,11 +547,11 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
   //TODO: import optimisation on the triangle ranges with bboxes meshes intersection to restrict the number of intersection tests
   //TODO: import identical patches opti
   PMP::autorefine_triangle_soup(out_points, out_triangles, CGAL::parameters::concurrency_tag(Concurrency_tag())
-                                                                            .visitor(visitor));
+                                                                            .visitor(visitor).split_triangle_range_at(nbt_1));
 #ifdef CGAL_BO3_TIMERS
-  time.stop();
-  std::cout << "autorefine done in " << time.time() << "\n";
-  time.reset();
+  timer.stop();
+  std::cout << "autorefine done in " << timer.time() << "\n";
+  timer.reset();
 #endif
 #ifdef CGAL_BO_AUTOREF_DEBUG
   CGAL::IO::write_OFF("autorefined.off", out_points, out_triangles, CGAL::parameters::stream_precision(17));
