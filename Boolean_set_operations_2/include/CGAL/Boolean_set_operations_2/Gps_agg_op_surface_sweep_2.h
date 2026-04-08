@@ -81,10 +81,9 @@ public:
     using Compare_xy_2 = typename Gt2::Compare_xy_2;
 
     // Allocate all of the Subcurve objects as one block.
-    this->m_num_of_subCurves = static_cast<unsigned int>(std::distance(curves_begin, curves_end));
-    if (this->m_num_of_subCurves > 0)
-      this->m_subCurves =
-        this->m_subCurveAlloc.allocate(this->m_num_of_subCurves);
+    this->m_num_subcurves = static_cast<unsigned int>(std::distance(curves_begin, curves_end));
+    if (this->m_num_subcurves > 0)
+      this->m_subcurves = this->m_subCurveAlloc.allocate(this->m_num_subcurves);
 
 
     // Initialize the event queue using the vertices vectors. Note that these
@@ -105,8 +104,7 @@ public:
       event_type = _type_of_vertex(vh);
       if (event_type == Event::DEFAULT) continue;
 
-      event = this->_allocate_event(vh->point(), event_type,
-                                    ARR_INTERIOR, ARR_INTERIOR);
+      event = this->_allocate_event(vh->point(), event_type, ARR_INTERIOR, ARR_INTERIOR);
       // \todo When the boolean set operations are extended to support
       //       unbounded curves, we will need here a special treatment.
 
@@ -138,21 +136,17 @@ public:
         event_type = _type_of_vertex(vh);
         if (event_type == Event::DEFAULT) continue;
 
-        while ((q_iter != q_end) &&
-               (res = comp_xy(vh->point(), (*q_iter)->point())) == LARGER)
-        {
+        while ((q_iter != q_end) && (res = comp_xy(vh->point(), (*q_iter)->point())) == LARGER)
           ++q_iter;
-        }
 
         if (res == SMALLER || q_iter == q_end) {
-          event = this->_allocate_event(vh->point(), event_type,
-                                        ARR_INTERIOR, ARR_INTERIOR);
+          event = this->_allocate_event(vh->point(), event_type, ARR_INTERIOR, ARR_INTERIOR);
           // \todo When the boolean set operations are extended to support
           //       unbounded curves, we will need here a special treatment.
 
-          #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
-             event->set_finite();
-          #endif
+#ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
+          event->set_finite();
+#endif
 
           this->m_queue->insert_before(q_iter, event);
           vert_map[vh] = event;
@@ -167,20 +161,16 @@ public:
 
     // Go over all curves (which are associated with halfedges) and associate
     // them with the events we have just created.
-    std::size_t index = 0;
-    CurveInputIterator iter;
-    Halfedge_handle he;
-    Event* e_left;
-    Event* e_right;
-
-    for (iter = curves_begin; iter != curves_end; ++iter, index++) {
+    for (auto iter = curves_begin; iter != curves_end; ++iter) {
       // Get the events associated with the end-vertices of the current
       // halfedge.
-      he = iter->data().halfedge();
+      Halfedge_handle he = iter->data().halfedge();
 
       CGAL_assertion(vert_map.is_defined(he->source()));
       CGAL_assertion(vert_map.is_defined(he->target()));
 
+      Event* e_left;
+      Event* e_right;
       if ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) {
         e_left = vert_map[he->source()];
         e_right = vert_map[he->target()];
@@ -191,16 +181,15 @@ public:
       }
 
       // Create the subcurve object.
+      Subcurve* sc = this->m_subcurves + this->m_num_allocated_subcurves++;
       using Subcurve_alloc = decltype(this->m_subCurveAlloc);
-      std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc,
-                                                       this->m_subCurves + index,
-                                                       this->m_masterSubcurve);
-      (this->m_subCurves + index)->init(*iter);
-      (this->m_subCurves + index)->set_left_event(e_left);
-      (this->m_subCurves + index)->set_right_event(e_right);
+      std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc, sc, this->m_masterSubcurve);
+      sc->init(*iter);
+      sc->set_left_event(e_left);
+      sc->set_right_event(e_right);
 
-      e_right->add_curve_to_left(this->m_subCurves + index);
-      this->_add_curve_to_right(e_left, this->m_subCurves + index);
+      e_right->add_curve_to_left(sc);
+      this->_add_curve_to_right(e_left, sc);
     }
   }
 
@@ -213,10 +202,9 @@ public:
     using Compare_xy_2 = typename Gt2::Compare_xy_2;
 
     // Allocate all of the Subcurve objects as one block.
-    this->m_num_of_subCurves = std::distance(curves_begin, curves_end);
-    if (this->m_num_of_subCurves > 0)
-      this->m_subCurves =
-        this->m_subCurveAlloc.allocate(this->m_num_of_subCurves);
+    this->m_num_subcurves = std::distance(curves_begin, curves_end);
+    if (this->m_num_subcurves > 0)
+      this->m_subcurves = this->m_subCurveAlloc.allocate(this->m_num_subcurves);
 
 
     // Initialize the event queue using the vertices vectors. Note that these
@@ -243,9 +231,9 @@ public:
       // \todo When the boolean set operations are extended to support
       //       unbounded curves, we will need here a special treatment.
 
-      #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
-        event->set_finite();
-      #endif
+#ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
+      event->set_finite();
+#endif
 
       if (! first) {
         q_iter = this->m_queue->insert_after(q_iter, event);
@@ -271,15 +259,11 @@ public:
         event_type = _type_of_vertex(vh);
         if (event_type == Event::DEFAULT) continue;
 
-        while ((q_iter != q_end) &&
-               (res = comp_xy(vh->point(), (*q_iter)->point())) == LARGER)
-        {
+        while ((q_iter != q_end) && (res = comp_xy(vh->point(), (*q_iter)->point())) == LARGER)
           ++q_iter;
-        }
 
         if (res == SMALLER || q_iter == q_end) {
-          event = this->_allocate_event(vh->point(), event_type,
-                                        ARR_INTERIOR, ARR_INTERIOR);
+          event = this->_allocate_event(vh->point(), event_type, ARR_INTERIOR, ARR_INTERIOR);
           // \todo When the boolean set operations are extended to support
           //       unbounded curves, we will need here a special treatment.
 
@@ -326,14 +310,14 @@ public:
       // Create the subcurve object.
       using Subcurve_alloc = decltype(this->m_subCurveAlloc);
       std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc,
-                                                       this->m_subCurves + index,
+                                                       this->m_subcurves + index,
                                                        this->m_masterSubcurve);
-      (this->m_subCurves + index)->init(*iter);
-      (this->m_subCurves + index)->set_left_event(e_left);
-      (this->m_subCurves + index)->set_right_event(e_right);
+      (this->m_subcurves + index)->init(*iter);
+      (this->m_subcurves + index)->set_left_event(e_left);
+      (this->m_subcurves + index)->set_right_event(e_right);
 
-      e_right->add_curve_to_left(this->m_subCurves + index);
-      this->_add_curve_to_right(e_left, this->m_subCurves + index);
+      e_right->add_curve_to_left(this->m_subcurves + index);
+      this->_add_curve_to_right(e_left, this->m_subcurves + index);
     }
   }
 
@@ -357,7 +341,7 @@ public:
     this->_sweep();
     this->_complete_sweep();
     this->m_visitor->after_sweep();
-    return this->m_visitor->found_intersection();
+    return this->m_visitor->do_intersect();
   }
 
   /*! Perform the sweep. */
@@ -369,7 +353,7 @@ public:
     this->_sweep();
     this->_complete_sweep();
     this->m_visitor->after_sweep();
-    return this->m_visitor->found_intersection();
+    return this->m_visitor->do_intersect();
   }
 
 private:

@@ -1,0 +1,6 @@
+Shooting up from (1 4) : hit nothing.
+Shooting up from (4 3) : hit a vertex: 4 5
+Shooting up from (6 3) : hit nothing.
+Shooting up from (3 2) : hit an edge: 2 5 4 5
+Shooting up from (5 2) : hit an edge: 4 5 6 3
+Shooting up from (1 0) : hit an edge: 3 0 0 3

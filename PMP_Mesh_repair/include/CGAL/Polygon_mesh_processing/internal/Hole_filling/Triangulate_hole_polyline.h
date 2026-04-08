@@ -54,6 +54,28 @@
 namespace CGAL {
 namespace internal {
 
+template <class Base, class Visitor>
+struct Is_valid_compose
+{
+  Is_valid_compose(const Base& base, const Visitor& visitor)
+    : base(base)
+    , visitor(visitor)
+  {}
+
+  template<class Point_3>
+  bool operator()(const std::vector<Point_3>& pts,
+                  int v0, int v1, int v2) const
+  {
+    if (visitor.accept_triangle(v0, v1, v2))
+      return base(pts, v0, v1, v2);
+    return false;
+  }
+
+  const Base& base;
+  const Visitor& visitor;
+};
+
+
 /************************************************************************
  * Lookup tables
  ************************************************************************/
@@ -1510,7 +1532,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
 
       std::sort(is.begin(), is.end());
       lambda.put(is[0], is[2], is[1]);
-      if (!is_valid(P, is[0], is[1], is[2])) {
+      if (!is_valid(P, is[0], is[1], is[2]))
+      {
         // std::cerr << "WARNING: validity, cdt 2 falls back to the original solution!" << std::endl;
         visitor.end_planar_phase(false);
         return false;

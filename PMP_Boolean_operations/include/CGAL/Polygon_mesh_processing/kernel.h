@@ -219,6 +219,14 @@ kernel(const FaceRange& face_range,
   }
 
   if(used_to_find_a_point){
+    bool strictly_inside = choose_parameter(get_parameter(np, internal_np::strictly_inside), true);
+
+    // If we don't want a point on the surface and the kernel is degenerated, do nothing
+    if(strictly_inside && ((vertices(kernel).size()<3) || (faces(kernel).size()==1))){
+      clear(kernel);
+      return;
+    }
+
     // Get the centroid
     EPoint_3 centroid(ORIGIN);
     for(auto v: vertices(kernel))
@@ -427,16 +435,13 @@ bool has_empty_kernel(const FaceRange& face_range,
   *
   * \brief indicates whether the kernel of the given polygon mesh is empty.
   *
-  * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
-  * of the input mesh.
-  *
-  * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive description of the parameters.
+  * This is a convenience overload that calls the overload above
+  * on all faces of the mesh.
   */
 template <typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool has_empty_kernel(const PolygonMesh& pm,
-                     const CGAL_NP_CLASS& np = parameters::default_values())
+                      const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return has_empty_kernel(faces(pm), pm, np);
 }
@@ -451,6 +456,18 @@ bool has_empty_kernel(const PolygonMesh& pm,
   * of the input mesh.
   *
   * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive description of the parameters.
+  *
+  * In addition to the parameters available in `CGAL::Polygon_mesh_processing::kernel()`, the following named parameter is also available:
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{strictly_inside}
+  *     \cgalParamDescription{If set to `true`, the returned point is required to lie strictly inside
+  *         the mesh and not on its boundary. If the kernel is degenerate, this requirement
+  *         cannot be satisfied and no point is returned.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   *
   * \return `std::nullopt` if and only if the kernel is empty.
   */
@@ -482,13 +499,8 @@ kernel_point(const FaceRange& face_range,
   *
   * \brief returns a point inside the kernel of the given polygon mesh.
   *
-  * The kernel is defined as the convex polyhedron that is the intersection
-  * of all the halfspaces on the negative side of the oriented planes defined by a range of faces
-  * of the input mesh.
-  *
-  * See `CGAL::Polygon_mesh_processing::kernel()` for a comprehensive description of the parameters.
-  *
-  * \return `std::nullopt` if and only if the kernel is empty.
+  * This is a convenience overload that calls the overload above
+  * on all faces of the mesh.
   */
 template <typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>

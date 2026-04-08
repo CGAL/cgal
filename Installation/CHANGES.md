@@ -65,11 +65,11 @@ Release date: July 2026
   - [`!Has_on_unbounded_side_2::operator(Circle_2, Segment_2)`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#ab041aafd45ce93630bfe77cec24e24f3),
   - [`!Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2)`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#ab041aafd45ce93630bfe77cec24e24f3), or
   - [`!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#ada27f27602757133ea7b9814ada00ba3)
-- Added a new concept, [`CompareProjectionAlongDirection_3`](),
+- Added a new concept, [`CompareProjectionAlongDirection_3`](https://doc.cgal.org/6.2/Kernel_23/classKernel_1_1CompareProjectionAlongDirection__3.html),
   to the [`Kernel`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html)
   concept to compare the order of projected points on a line. Corresponding functors in the model,
-  [`Compare_projection_along_direction_3`](),
-  and free function, [`compare_projection_along_direction()`](),
+  [`Compare_projection_along_direction_3`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#a4b7686814790650efe8f8b6612af3b80),
+  and free function, [`compare_projection_along_direction()`](https://doc.cgal.org/6.2/Kernel_23/group__kernel__global__function.html#ga2ba880adb55cea48d3568ccd1f4765a4),
   have also been added.
 
 ### [Intersecting Sequences of dD Iso-oriented Boxes](https://doc.cgal.org/6.2/Manual/packages.html#PkgBoxIntersectionD)
@@ -87,6 +87,17 @@ Release date: July 2026
   is now a model of the new concept.
 - Added overloads of [`CGAL::draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)`](https://doc.cgal.org/6.2/Arrangement_on_surface_2/group__PkgArrangementOnSurface2Draw.html)
   that enable the drawing of arrangements induced by unbounded curves.
+- Introduced the concept `AosTraits::Do_intersect_2`. A model of this concept must provide an operator that
+  accepts two `x`-monotone curves and a boolean flag that indicates whether common endpoints should be considered or ignored.
+  The operator determines whether the curves intersect, and it can be used with an inexact-construction kernel.
+
+### [2D Intersection of Curves](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceSweep2)
+
+- The function [`CGAL::do_curves_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#gadb96b95f091371e834e3f7b4d24f7bb4), which assumed open curves, has been deprecated and replaced by
+  the function [`CGAL::Surface_sweep_2::do_intersect()`]().
+  Notice (i) the introduction of the new namespace `Surface_sweep_2`,
+  and (ii) the addition of the `closed` parameter, which defaults to `true`. To match the behavior of the
+  deprecated function, set `closed` to false.
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.2/Manual/packages.html#PkgBooleanSetOperations2)
 
@@ -108,6 +119,9 @@ Release date: July 2026
   which returns the farthest point of a convex hull in a given direction.
 - Added the class [`CGAL::Convex_hull_hierarchy_3`](https://doc.cgal.org/6.2/Convex_hull_3/structCGAL_1_1Convex__hull__hierarchy__3.html),
   which is represents a convex hull, and is optimized for use with the above functions.
+
+### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
+- Added the function `CGAL::approximate_convex_decomposition()` that computes a set of convex volumes that cover an input mesh.
 
 ### [2D Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulation2)
 
@@ -157,6 +171,14 @@ Release date: July 2026
 - The function [`CGAL::Polygon_mesh_processing::surface_intersection()`](https://doc.cgal.org/6.2/PMP_Boolean_operations/group__PMP__corefinement__grp.html#ga6e6c4a724ce19e7a207de56f3a7408ab),
   which can be used to compute the polylines that represent the intersection between
   two polyhedral surfaces has been renamed to [`CGAL::Polygon_mesh_processing::intersection_polylines()`](https://doc.cgal.org/6.2/PMP_Boolean_operations/group__PMP__corefinement__grp.html#ga7da80d8488d7a9139dcabceeb601072f).
+
+### [Polygon Mesh Processing (Meshing and Remeshing of Polygon Meshes)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPRemeshing)
+
+- **Breaking change**: Update the visitor concepts [`PMPTriangulateFaceVisitor`]()
+  and [`PMPHolefillingVisitor`]()
+  to request functions `accept_face()` and `accept_triangle()`, respectively.
+  These functions can be used to tweak the way faces and holes are triangles by black listing some candidate triangles.
+  User visitors inheriting from the default visitors do not require any update.
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.2/Manual/packages.html#PkgOrthtree)
 
