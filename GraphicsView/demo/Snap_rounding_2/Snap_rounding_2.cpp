@@ -172,7 +172,7 @@ MainWindow::deltaChanged(double d)
   }
   delta = d;
   output.clear();
-  CGAL::hot_pixel_snap_rounding_2(input, std::back_inserter(output), CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
+  CGAL::hot_pixel_snap_rounding_2(input, output, CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
   rgi->setDelta(delta, delta);
   Q_EMIT( changed());
 }
