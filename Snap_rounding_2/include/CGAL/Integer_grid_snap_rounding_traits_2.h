@@ -69,11 +69,20 @@ double double_ceil(const NT &x){
 
 }
 
+#if DOXYGEN_RUNNING
 /*!
 \ingroup Snap_rounding_vertical_slab_grp
 
-The class `Integer_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>` is a model of the `VerticalSlabSnapRoundingTraits_2` concept. It is identical to `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`,
+The class `Integer_grid_snap_rounding_traits_2<InputKernel, ExactKernel>`
+is a model of the `VerticalSlabSnapRoundingTraits_2` concept. It is identical to `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel>`,
 except that points are rounded to the closest point with integer coordinates.
+
+\tparam InputKernel specifies the kernel used for the input
+geometric objects. It must model the \cgal `Kernel` concept. These objects must be convertible to and from the types defined by
+`ExactKernel` using `CGAL::Cartesian_converter`.
+
+\tparam ExactKernel specifies the exact kernel used internally
+to compute intersections and subdivision points before to round them. It must model the \cgal `Kernel` concept.
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
 
@@ -82,9 +91,19 @@ except that points are rounded to the closest point with integer coordinates.
 \sa{CGAL::Double_grid_snap_rounding_traits_2}
 \sa{CGAL::Float_grid_snap_rounding_traits_2}
 */
+template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel>
+struct Integer_grid_snap_rounding_traits_2
+  :  Arr_segment_traits_2<ExactKernel>
+{
+  using Base = Arr_segment_traits_2<ExactKernel>;
+#else
+
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
-struct Integer_grid_snap_rounding_traits_2: BaseTraits{
+struct Integer_grid_snap_rounding_traits_2
+  : BaseTraits
+{
   using Base = BaseTraits;
+#endif
 
   using FT = typename Base::FT;
   using Target_FT = double; // For precision

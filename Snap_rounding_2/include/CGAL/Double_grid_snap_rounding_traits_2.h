@@ -25,10 +25,11 @@
 
 namespace CGAL {
 
+#if DOXYGEN_RUNNING
 /*!
 \ingroup Snap_rounding_vertical_slab_grp
 
-The class `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernel, BaseTraits>`
+The class `Double_grid_snap_rounding_traits_2<InputKernel, ExactKernels>`
 is a model of the `VerticalSlabSnapRoundingTraits_2` concept. It provides the traits
 required to perform snap rounding where the resulting points are represented
 using double precision floating-point coordinates.
@@ -38,16 +39,7 @@ geometric objects. It must model the \cgal `Kernel` concept. These objects must 
 `ExactKernel` using `CGAL::Cartesian_converter`.
 
 \tparam ExactKernel specifies the exact kernel used internally
-to compute the intersections and subdivision points before rounding them. By default, it is
-`CGAL::Exact_predicates_exact_constructions_kernel`. Advanced users may provide
-another exact kernel that models the \cgal `Kernel` concept, such as
-`Cartesian<CGAL::Exact_rational>`.
-
-\tparam BaseTraits specifies the underlying arrangement traits
-class used for segment handling. By default, it is
-`Arr_segment_traits_2<ExactKernel>`. Advanced users may provide
-another traits that models `Aostraits_2` concept, but the correctness of the algorithm is no longer guaranteed.
-
+to compute intersections and subdivision points before to round them. It must model the \cgal `Kernel` concept.
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}
 
@@ -56,11 +48,18 @@ another traits that models `Aostraits_2` concept, but the correctness of the alg
 \sa{CGAL::Float_grid_snap_rounding_traits_2}
 \sa{CGAL::Integer_grid_snap_rounding_traits_2}
 */
+template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel>
+struct Double_grid_snap_rounding_traits_2
+  :  Arr_segment_traits_2<ExactKernel>
+{
+  using Base = Arr_segment_traits_2<ExactKernel>;
+#else
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
 struct Double_grid_snap_rounding_traits_2
   : BaseTraits
 {
   using Base = BaseTraits;
+#endif
 
   using FT = typename Base::FT;
   using Target_FT = double;
