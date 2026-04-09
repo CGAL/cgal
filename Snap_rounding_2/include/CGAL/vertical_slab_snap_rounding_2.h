@@ -500,7 +500,8 @@ void vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 *
-* The output is a sequence of polylines, where each polyline corresponds to an input segment.
+* By default, each polyline of the output corresponds to an input segment. Consequently, duplicate segments may appear in the output, for instance when multiple input segments collapse.
+* When the parameter `output_unique_segments` is set to `true`, the polylines are decomposed into individual segments (represented as polylines with two points), and duplicates are removed.
 *
 * @tparam SegmentRange model of a `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
 * @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is itself a model of the concepts `DefaultConstructible` and `BackInsertionSequence` whose value type is `geom_traits::Point_2`

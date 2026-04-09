@@ -70,7 +70,8 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
 * \anchor snap_rounding_2_fct
 *
-* The output is a range of polylines, where each polyline corresponds to an input segment.
+* By default, each polyline of the output corresponds to an input segment. Consequently, duplicate segments may appear in the output, for instance when multiple input segments collapse.
+* When the parameter `output_unique_segments` is set to `true`, the polylines are decomposed into individual segments (represented as polylines with two points), and duplicates are removed.
 *
 * By default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
 * Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
