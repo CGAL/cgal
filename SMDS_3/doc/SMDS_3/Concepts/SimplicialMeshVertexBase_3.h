@@ -68,7 +68,7 @@ bool is_c2t3_cache_valid();
 /*!
 Sets the cache.
 */
-void set_c2t3_cache(std::size_t i, std::size_t j)
+void set_c2t3_cache(int i, int j)
 
 /*!
 Invalidates the cache.
