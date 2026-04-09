@@ -222,6 +222,30 @@ namespace internal {
     }
   };
 
+  template<typename C3t3>
+  class Vertex_dimension_property
+    : public Property<C3t3, typename C3t3::Vertex_handle, int>
+  {
+  public:
+    using key_type = typename C3t3::Vertex_handle;
+    using value_type = int;
+    std::string name() const {return "vertex:dimension";}
+    int number_of_components() const { return 1; }
+    std::string type() const { return type_to_string<value_type>(); }
+    int number_of_simplices(const C3t3& c3t3) const
+    {
+      return c3t3.triangulation().number_of_vertices();
+    }
+    bool has_value(const typename C3t3::Vertex_handle&, const C3t3&) const
+    {
+      return true;
+    }
+    value_type operator()(const typename C3t3::Vertex_handle& v, const C3t3&) const
+    {
+      return v->in_dimension();
+    }
+  };
+
 
 
   //////////////////////
@@ -253,7 +277,7 @@ namespace internal {
   using NumberTypeVariant = std::variant<int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t, float, double>;
 
   enum class SimplexType { vertex = 1, edge, facet, cell, unknown = 100};
-  std::size_t number_of_vertices(const SimplexType& st)
+  inline std::size_t number_of_vertices(const SimplexType& st)
   {
     return static_cast<std::size_t>(st);
   }
@@ -561,6 +585,19 @@ namespace internal {
       CGAL_assertion(v->in_dimension() == 0);
       v->set_index(ci);
     }
+  }
+
+  template<typename C3t3>
+  void finalize_c3t3(C3t3& c3t3, const bool dimension_is_a_property)
+  {
+    c3t3.rescan_after_load_of_triangulation();
+
+    // set dimension for each vertex
+    if(!dimension_is_a_property)
+      internal::set_vertex_dimensions(c3t3);
+
+    // set Index for each vertex
+    internal::set_vertex_indices(c3t3);
   }
 
 } // end namespace internal

@@ -156,11 +156,14 @@ save_c3t3(std::ostream& os
   using P = std::variant<internal::Subdomain_index_property<C3t3>,
                          internal::Surface_patch_index_property<C3t3>,
                          internal::Curve_index_property<C3t3>,
-                         internal::Corner_index_property<C3t3>>;
+                         internal::Corner_index_property<C3t3>,
+                         internal::Vertex_dimension_property<C3t3>>;
+  //note : vertex dimension is useful for example when far points are saved, with dimension -1
   std::vector<P> c3t3_properties{internal::Subdomain_index_property<C3t3>(),
                                  internal::Surface_patch_index_property<C3t3>(),
                                  internal::Curve_index_property<C3t3>(),
-                                 internal::Corner_index_property<C3t3>()};
+                                 internal::Corner_index_property<C3t3>(),
+                                 internal::Vertex_dimension_property<C3t3>()};
   return save_c3t3(os, c3t3, binary, c3t3_properties);
 }
 
@@ -267,13 +270,13 @@ bool load_c3t3(std::istream& is
         std::getline(is, s);
       if(is.eof())
       {
-        c3t3.rescan_after_load_of_triangulation();
+        internal::finalize_c3t3(c3t3, dimension_is_a_property);
         return true;
       }
     }
 
-    dimension_is_a_property = dimension_is_a_property
-                            || (s.find("vertex:dimension") != std::string::npos);
+    if(!dimension_is_a_property) //dimension not already found in the file
+      dimension_is_a_property = (s.find("vertex:dimension") != std::string::npos);
 
     std::string ppty_value_type;
     std::size_t nb_simplices;
@@ -305,14 +308,7 @@ bool load_c3t3(std::istream& is
   }
   while(!is.eof());
 
-  c3t3.rescan_after_load_of_triangulation();
-
-  // set dimension for each vertex
-  if(!dimension_is_a_property)
-    internal::set_vertex_dimensions(c3t3);
-
-  // set Index for each vertex
-  internal::set_vertex_indices(c3t3);
+  internal::finalize_c3t3(c3t3, dimension_is_a_property);
 
   return true;
 }
