@@ -48,13 +48,6 @@ template<typename Tr,
          typename Cell_vector_ = std::vector<typename Tr::Cell_handle> >
 class Sliver_criterion
 {
-  CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
-  Sliver_caching_policy caching_policy =
-    (caching_policy_ == Sliver_caching_policy::DEFAULT)
-      ? (has_set_sliver_value<typename Tr::Cell>::value ? Sliver_caching_policy::ALWAYS
-                                                        : Sliver_caching_policy::BELOW_BOUND)
-      : caching_policy_;
-
 public:
   typedef typename Tr::Geom_traits GT;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -137,13 +130,22 @@ public:
     : tr_(tr)
     , sliver_bound_(bound)
     , cache_(cache)
-  {}
+  {
+    caching_policy =
+      (caching_policy_ == Sliver_caching_policy::DEFAULT)
+        ? (has_set_sliver_value<typename Tr::Cell>::value ? Sliver_caching_policy::ALWAYS
+                                                          : Sliver_caching_policy::BELOW_BOUND)
+        : caching_policy_;
+  }
 
   virtual ~Sliver_criterion(){}
 
 protected:
   const Tr& tr_;
   double sliver_bound_;
+
+  CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
+  Sliver_caching_policy caching_policy;
   mutable Cache cache_;
 };
 
