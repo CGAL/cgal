@@ -57,7 +57,9 @@ another traits that models `Aostraits_2` concept.
 \sa{CGAL::Integer_grid_snap_rounding_traits_2}
 */
 template<typename InputKernel, typename ExactKernel = Exact_predicates_exact_constructions_kernel, typename BaseTraits = Arr_segment_traits_2<ExactKernel> >
-struct Double_grid_snap_rounding_traits_2: BaseTraits{
+struct Double_grid_snap_rounding_traits_2
+  : BaseTraits
+{
   using Base = BaseTraits;
 
   using FT = typename Base::FT;

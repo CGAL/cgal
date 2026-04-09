@@ -35,7 +35,7 @@ namespace CGAL {
 *
 * This geometric kernel must provide an (arbitrary-precision) rational number type
 * (`FT`), `Point_2`, `Segment_2`, and `Iso_rectangle_2`.
-* FT must be model of `ReadEmbeddableTraits`.
+* `FT` must be model of `RealEmbeddableTraits`.
 *
 * The `CGAL::to_double()` function is used to implement the operation that
 * rounds the coordinates of a point to a center of a pixel. This operation is one
@@ -49,7 +49,7 @@ namespace CGAL {
 *
 * \cgalModels{HotPixelSnapRoundingTraits_2}
 *
-\sa{CGAL::snap_rounding_2()}
+\sa `CGAL::snap_rounding_2()`
 \sa{CGAL::hot_pixel_snap_rounding_2()}
 */
 template<class BaseKernel>

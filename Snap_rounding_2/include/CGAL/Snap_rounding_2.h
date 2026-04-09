@@ -126,6 +126,7 @@ OutputContainer snap_rounding_2(const SegmentRange& segments,
 *     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the point type of the polygons, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
 * @warning a convex input polygon might no longer be convex after rounding.
 */
 template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
