@@ -1948,7 +1948,7 @@ private:
     }
 
     const int n = v->cached_number_of_incident_facets();
-    const int nb_components = facets.number_of_sets();
+    const int nb_components = static_cast<int>(facets.number_of_sets());
     v->set_c2t3_cache(n, nb_components);
 
     return nb_components;
