@@ -199,7 +199,7 @@ public:
   /*! obtains the number of subcurves in the status line. */
   unsigned status_line_size() const { return m_surface_sweep->status_line_size(); }
 
-  /*! checkes whether the status line is empty. */
+  /*! checks whether the status line is empty. */
   bool is_status_line_empty() const { return m_surface_sweep->is_status_line_empty(); }
 
   /*! Deallocate the given event. */

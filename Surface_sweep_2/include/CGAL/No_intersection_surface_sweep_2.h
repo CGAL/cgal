@@ -378,7 +378,7 @@ public:
    */
   std::size_t event_queue_size() const { return m_queue->size(); }
 
-  /*! Checks whather the event queue is empty.
+  /*! Checks whether the event queue is empty.
    */
   bool is_event_queue_empty() const { return m_queue->empty(); }
 

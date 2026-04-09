@@ -516,9 +516,9 @@ bool triangulate_faces(const FaceRange& face_range,
 * @see `triangulate_face()`
 * @see `triangulate_polygons()`
 */
-template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool triangulate_faces(PolygonMesh& pmesh,
-                       const NamedParameters& np = parameters::default_values())
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return triangulate_faces(faces(pmesh), pmesh, np);
 }
