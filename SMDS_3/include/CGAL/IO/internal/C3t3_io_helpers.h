@@ -64,19 +64,19 @@ namespace internal {
 //    return v;
 //  }
 //
-  bool is_cell_property(const std::string& ppty_name)
+  inline bool is_cell_property(const std::string& ppty_name)
   {
     return ppty_name.compare(0, 5, "cell:") == 0;
   }
-  bool is_facet_property(const std::string& ppty_name)
+  inline bool is_facet_property(const std::string& ppty_name)
   {
     return ppty_name.compare(0, 6, "facet:") == 0;
   }
-  bool is_edge_property(const std::string& ppty_name)
+  inline bool is_edge_property(const std::string& ppty_name)
   {
     return ppty_name.compare(0, 5, "edge:") == 0;
   }
-  bool is_vertex_property(const std::string& ppty_name)
+  inline bool is_vertex_property(const std::string& ppty_name)
   {
     return ppty_name.compare(0, 7, "vertex:") == 0;
   }
@@ -122,9 +122,9 @@ namespace internal {
   // std::float64_t
   // std::float128_t
   template <>
-  std::string type_to_string<float>() { return "float32_t"; }
+  inline std::string type_to_string<float>() { return "float32_t"; }
   template <>
-  std::string type_to_string<double>() { return "float64_t"; }
+  inline std::string type_to_string<double>() { return "float64_t"; }
 
   template <typename C3t3>
   class Subdomain_index_property
@@ -228,11 +228,11 @@ namespace internal {
   // READ PROPERTIES ///
   //////////////////////
 
-  bool read_property_header(std::istream& is,
-                            std::string& type,
-                            std::size_t& nb_simplices,
-                            std::size_t& nb_components_per_simplex,
-                            std::string& ppty_name)
+  inline bool read_property_header(std::istream& is,
+                                   std::string& type,
+                                   std::size_t& nb_simplices,
+                                   std::size_t& nb_components_per_simplex,
+                                   std::string& ppty_name)
   {
     std::string hash;
     if(IO::is_ascii(is))
@@ -258,7 +258,7 @@ namespace internal {
     return static_cast<std::size_t>(st);
   }
 
-  NumberType parse_value_type(const std::string& s)
+  inline NumberType parse_value_type(const std::string& s)
   {
     if(s == "int8_t")         return NumberType::int8;
     else if(s == "int16_t")   return NumberType::int16;
@@ -275,7 +275,7 @@ namespace internal {
     return NumberType::unknown;
   }
 
-  SimplexType parse_simplex_type(const std::string& s)
+  inline SimplexType parse_simplex_type(const std::string& s)
   {
     if(s == "vertex")     return SimplexType::vertex;
     else if(s == "edge")  return SimplexType::edge;
@@ -483,7 +483,7 @@ namespace internal {
   }
 
   template <typename C3t3>
-  void set_vertex_dimensions(C3t3& c3t3)
+  void set_vertex_dimensions(const C3t3& c3t3)
   {
     for(auto c : c3t3.triangulation().finite_cell_handles())
     {
@@ -521,6 +521,45 @@ namespace internal {
       {
         v->set_dimension(0);
       }
+    }
+  }
+
+  template <typename C3t3>
+  void set_vertex_indices(const C3t3& c3t3)
+  {
+    for(auto c : c3t3.cells_in_complex())
+    {
+      const typename C3t3::Subdomain_index sdi = c3t3.subdomain_index(c);
+      for(auto v : c3t3.triangulation().vertices(c))
+      {
+        if(v->in_dimension() == 3)
+          v->set_index(sdi);
+      }
+    }
+    for(const auto& f : c3t3.facets_in_complex())
+    {
+      const typename C3t3::Surface_patch_index spi = c3t3.surface_patch_index(f);
+      for(auto v : c3t3.triangulation().vertices(f))
+      {
+        if(v->in_dimension() == 2)
+          v->set_index(spi);
+      }
+    }
+    for(const auto& e : c3t3.edges_in_complex())
+    {
+      const auto v1v2 = c3t3.triangulation().vertices(e);
+      const typename C3t3::Curve_index ci = c3t3.curve_index(v1v2[0], v1v2[1]);
+      for(auto v : v1v2)
+      {
+        if(v->in_dimension() == 1)
+          v->set_index(ci);
+      }
+    }
+    for(const auto& v : c3t3.vertices_in_complex())
+    {
+      const typename C3t3::Corner_index ci = c3t3.corner_index(v);
+      CGAL_assertion(v->in_dimension() == 0);
+      v->set_index(ci);
     }
   }
 

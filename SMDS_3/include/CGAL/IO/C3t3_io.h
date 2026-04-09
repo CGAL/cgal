@@ -311,7 +311,8 @@ bool load_c3t3(std::istream& is
   if(!dimension_is_a_property)
     internal::set_vertex_dimensions(c3t3);
 
-  //todo : reset Index for each vertex
+  // set Index for each vertex
+  internal::set_vertex_indices(c3t3);
 
   return true;
 }
