@@ -52,33 +52,33 @@ namespace CGAL {
 \sa `CGAL::snap_rounding_2()`
 \sa{CGAL::hot_pixel_snap_rounding_2()}
 */
-template<class BaseKernel>
+template<class K>
 class Hot_pixel_snap_rounding_traits_2 :
-  public CGAL::Arr_segment_traits_2<BaseKernel> {
+  public CGAL::Arr_segment_traits_2<K> {
 
 public: // otherwise Segment_data cannot access the types
-  typedef typename BaseKernel::FT                          NT;
-  typedef typename BaseKernel::FT                          FT;
-  typedef typename BaseKernel::Point_2                     Point_2;
-  typedef typename BaseKernel::Segment_2                   Segment_2;
-  typedef typename BaseKernel::Iso_rectangle_2             Iso_rectangle_2;
-  typedef typename BaseKernel::Vector_2                    Vector_2;
-  typedef typename BaseKernel::Line_2                      Line_2;
-  typedef typename BaseKernel::Aff_transformation_2        Aff_transformation_2;
-  typedef typename BaseKernel::Direction_2                 Direction_2;
-  typedef typename BaseKernel::Construct_vertex_2          Construct_vertex_2 ;
-  typedef typename BaseKernel::Construct_segment_2         Construct_segment_2 ;
-  typedef typename BaseKernel::Construct_iso_rectangle_2   Construct_iso_rectangle_2;
-  typedef typename BaseKernel::Compare_y_2                 Compare_y_2;
+  typedef typename K::FT                          NT;
+  typedef typename K::FT                          FT;
+  typedef typename K::Point_2                     Point_2;
+  typedef typename K::Segment_2                   Segment_2;
+  typedef typename K::Iso_rectangle_2             Iso_rectangle_2;
+  typedef typename K::Vector_2                    Vector_2;
+  typedef typename K::Line_2                      Line_2;
+  typedef typename K::Aff_transformation_2        Aff_transformation_2;
+  typedef typename K::Direction_2                 Direction_2;
+  typedef typename K::Construct_vertex_2          Construct_vertex_2 ;
+  typedef typename K::Construct_segment_2         Construct_segment_2 ;
+  typedef typename K::Construct_iso_rectangle_2   Construct_iso_rectangle_2;
+  typedef typename K::Compare_y_2                 Compare_y_2;
 
-  typedef typename BaseKernel::Construct_min_vertex_2                    Construct_min_vertex_2;
-  typedef typename BaseKernel::Construct_max_vertex_2                    Construct_max_vertex_2;
-  typedef typename BaseKernel::Cartesian_const_iterator_2                Cartesian_const_iterator_2;
-  typedef typename BaseKernel::Construct_cartesian_const_iterator_2      Construct_cartesian_const_iterator_2;
+  typedef typename K::Construct_min_vertex_2                    Construct_min_vertex_2;
+  typedef typename K::Construct_max_vertex_2                    Construct_max_vertex_2;
+  typedef typename K::Cartesian_const_iterator_2                Cartesian_const_iterator_2;
+  typedef typename K::Construct_cartesian_const_iterator_2      Construct_cartesian_const_iterator_2;
 
-  typedef CGAL::Arr_segment_traits_2<BaseKernel>                         Base_traits;
-  typedef typename Base_traits::Compare_x_2                               Compare_x_2;
-  typedef CGAL::To_double<NT>                                             To_double;
+  typedef CGAL::Arr_segment_traits_2<K>                         Base_traits;
+  typedef typename Base_traits::Compare_x_2                     Compare_x_2;
+  typedef CGAL::To_double<NT>                                   To_double;
 
 public:
   /*! Functor */
@@ -135,7 +135,7 @@ public:
   /*! Functor */
   class Minkowski_sum_with_pixel_2 {
   private:
-    typedef Hot_pixel_snap_rounding_traits_2<BaseKernel>         Traits;
+    typedef Hot_pixel_snap_rounding_traits_2<K>         Traits;
     typedef std::list<Point_2>                          Point_list;
 
 
@@ -205,7 +205,7 @@ public:
       points_list.push_back(ms6);
     }
 
-    friend class Hot_pixel_snap_rounding_traits_2<BaseKernel>;
+    friend class Hot_pixel_snap_rounding_traits_2<K>;
   };
 
   /*! */
@@ -216,25 +216,25 @@ public:
 
   Construct_segment_2  construct_segment_2_object() const
   {
-    BaseKernel k;
+    K k;
     return k.construct_segment_2_object();
   }
 
   Construct_vertex_2 construct_vertex_2_object() const
   {
-    BaseKernel k;
+    K k;
     return k.construct_vertex_2_object();
   }
 
   Compare_y_2 compare_y_2_object() const
   {
-    BaseKernel k;
+    K k;
     return k.compare_y_2_object();
   }
 
   Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
   {
-    BaseKernel k;
+    K k;
     return k.construct_iso_rectangle_2_object();
   }
 

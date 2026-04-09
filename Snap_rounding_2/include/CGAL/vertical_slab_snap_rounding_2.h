@@ -523,7 +523,7 @@ void vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
-template <class SegmentRange , class OutputPolylineIterator, class NamedParameters = parameters::Default_named_parameters>
+template <class SegmentRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
 void vertical_slab_snap_rounding_2(const SegmentRange &segments,
                                    OutputContainer    &out,
                                    const NamedParameters &np = parameters::default_values());

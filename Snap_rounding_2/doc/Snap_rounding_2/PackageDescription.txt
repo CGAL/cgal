@@ -40,7 +40,7 @@ Optional parameters of the functions of this package are implemented as \ref BGL
 The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 
 \cgalCRPSection{Snap Rounding Common}
-- `CGAL::snap_rounding_2()`
+- \ref snap_rounding_2_fct "CGAL::snap_rounding_2()"
 
 \cgalCRPSection{Vertical Slab Snap Rounding}
 - `CGAL::vertical_slab_snap_rounding_2()`

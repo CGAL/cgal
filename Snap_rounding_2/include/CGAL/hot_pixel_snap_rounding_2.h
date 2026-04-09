@@ -896,7 +896,7 @@ void hot_pixel_snap_rounding_2_polygon(const PolygonRange  &polygons,
 *   \cgalParamNBegin{output_unique_segments}
 *     \cgalParamDescription{If set to true, the output polylines are unique pairs of distinct points represented a segment. As a result, the total number of output polylines may differ from the number of input segments.}
 *     \cgalParamType{Boolean}
-*     \cgalParamDefault{true}
+*     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}

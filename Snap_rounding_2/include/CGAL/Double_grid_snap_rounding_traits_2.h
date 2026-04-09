@@ -34,11 +34,11 @@ required to perform snap rounding where the resulting points are represented
 using double precision floating-point coordinates.
 
 \tparam InputKernel specifies the kernel used for the input
-geometric objects. It must model the \cgal `Kernel` concept. These objects must be convertible to the types defined by
-`ExactKernel`.
+geometric objects. It must model the \cgal `Kernel` concept. These objects must be convertible to and from the types defined by
+`ExactKernel` using `CGAL::Cartesian_converter`.
 
 \tparam ExactKernel specifies the exact kernel used internally
-to perform robust geometric computations. By default, it is set to
+to compute the intersections and subdivision points before rounding them. By default, it is
 `CGAL::Exact_predicates_exact_constructions_kernel`. Advanced users may provide
 another exact kernel that models the \cgal `Kernel` concept, such as
 `Cartesian<CGAL::Exact_rational>`.
@@ -46,7 +46,7 @@ another exact kernel that models the \cgal `Kernel` concept, such as
 \tparam BaseTraits specifies the underlying arrangement traits
 class used for segment handling. By default, it is
 `Arr_segment_traits_2<ExactKernel>`. Advanced users may provide
-another traits that models `Aostraits_2` concept.
+another traits that models `Aostraits_2` concept, but the correctness of the algorithm is no longer guaranteed.
 
 
 \cgalModels{VerticalSlabSnapRoundingTraits_2}

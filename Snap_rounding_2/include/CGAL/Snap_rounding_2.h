@@ -22,7 +22,7 @@ namespace CGAL {
 
   #ifndef CGAL_NO_DEPRECATED_CODE
 /*!
-\deprecated This function is deprecated since \cgal 6.2, use newer API of `CGAL::snap_rounding_2()` or `CGAL::hot_pixel_snap_rounding_2()`
+\deprecated This function is deprecated since \cgal 6.2, use newer API of \ref snap_rounding_2_fct "CGAL::snap_rounding_2()" or `CGAL::hot_pixel_snap_rounding_2()`
 
 \ingroup Snap_rounding_common
 
@@ -68,13 +68,14 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 * \ingroup Snap_rounding_common
 *
 * \brief subdivides and rounds a range of segments so that they are pairwise disjoint in their interiors.
+* \anchor snap_rounding_2_fct
 *
 * The output is a range of polylines, where each polyline corresponds to an input segment.
 *
-* Per default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
+* By default, this function rounds on double precision coordinates using `CGAL::vertical_slab_snap_rounding_2()`.
 * Other rounding schemes or methods can be used by providing a `geom_traits` that is model of `VerticalSlabSnapRoundingTraits_2` or `HotPixelSnapRoundingTraits_2`.
 *
-* @tparam SegmentRange model of a ConstRange whose iterator is model of ForwardIterator and whose value_type is `geom_traits::Segment_2`, where the type of geom_traits is detailed by `np::geom_traits`.
+* @tparam SegmentRange model of the concept `ConstRange` whose iterator is model of `ForwardIterator` and whose value_type is `geom_traits::Segment_2`, where the type of `geom_traits` is detailed by `np::geom_traits`.
 * @tparam OutputContainer model of the concept `BackInsertionSequence` whose value type is itself a model of the concepts `DefaultConstructible` and `BackInsertionSequence` whose value type is `geom_traits::Point_2`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -96,8 +97,8 @@ CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
 * \cgalNamedParamsEnd
 */
 template <class SegmentRange , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-OutputContainer snap_rounding_2(const SegmentRange& segments,
-                                OutputContainer&    out,
+OutputContainer snap_rounding_2(const SegmentRange &segments,
+                                OutputContainer    &out,
                                 const NamedParameters &np = parameters::default_values());
 
 /**
@@ -123,15 +124,15 @@ OutputContainer snap_rounding_2(const SegmentRange& segments,
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{The traits class must respect the concept of `VerticalSlabSnapRoundingTraits_2`}
-*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where Kernel is deduced from the point type of the polygons, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{an instance of `CGAL::Double_grid_snap_rounding_traits_2<Kernel>` where %Kernel is deduced from the point type of the polygons, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @warning a convex input polygon might no longer be convex after rounding.
 */
 template <class PolygonRange, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
-void snap_rounding_2(const PolygonRange  &polygons,
-                     OutputContainer      &out,
+void snap_rounding_2(const PolygonRange &polygons,
+                     OutputContainer    &out,
                      const NamedParameters &np = parameters::default_values());
 
 #else

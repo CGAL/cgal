@@ -8,11 +8,10 @@ namespace CGAL {
 \cgalAutoToc
 \authors Eli Packer, Leo Valque
 
-\section Snap_rounding_2Introduction Introduction
+\image html Snap_intro_fig.svg
+\image latex Snap_intro_fig.svg
 
-\cgalFigureBegin{figIssue,rounding_issue_fig.svg}
-Two segments that do intersect (a), these segment with their intersection point rounded (b), This rounding may introduce new intersections.
-\cgalFigureEnd
+\section Snap_rounding_2Introduction Introduction
 
 Most geometric operations, such as computing the intersection of two segments, require higher precision to represent correctly the output than the input.
 For example, if the coordinates of the segment endpoints are integers of \f$d\f$ digits, the coordinates of their intersection point
@@ -20,6 +19,10 @@ are, in general, rational numbers with a numerator of \f$3d+O(1)\f$ digits and a
 
 Arbitrary precision number types, such as those used in \cgal kernels providing exact constructions, enable representing these results without loss of precision. On the other hand, limited precision number types must generally round the result. However, such rounding may produce
 self-intersections and topology changements as illustrated in \cgalFigureRef{figIssue}.
+
+\cgalFigureBegin{figIssue,rounding_issue_fig.svg}
+Two segments that do intersect (a), these segment with their intersection point rounded (b), This rounding may introduce new intersections.
+\cgalFigureEnd
 
 To solve the problem of naive rounding, multiple methods have been developed converting arbitrary-precision arrangements of segments into a representation with reduced precision while preventing the introduction of new intersections and
 preserving the topology "up to collapse". More formally, seeing the rounding as a movement, if two points became equal during the motion, they must be equal at the end of the motion. This package provides two such algorithms:
@@ -30,15 +33,15 @@ It subdivides segments at the pixels that contain the vertices of the arrangemen
 The former (Hot Pixel SR) provides more predictable outputs and its iterative variant ensures a minimum distance of half a pixel between a vertex and any non-incident edge,
 while the latter (Vertical Slab SR) offers improved performance and supports a wider range of rounding schemes, including floating-point representations.
 
-Both methods share a similar API, and can be invoked through the `CGAL::snap_rounding_2()` function.
+Both methods share a similar API, and can be invoked through the \ref snap_rounding_2_fct "CGAL::snap_rounding_2()" function.
 
 \cgalFigureBegin{figsr1,sr1.png}
 An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 \cgalFigureEnd
 
-\section Snap_rounding Hot Pixel Snap Rounding and Iterated Snap Rounding Algorithm
+\section Snap_rounding Hot Pixel Snap Rounding and Iterative Snap Rounding Algorithm
 
-Hot Pixel Snap Rounding (HPSR) is a well-established method with extensive literature \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}. <em>Iterated Snap Rounding</em>
+Hot Pixel Snap Rounding (HPSR) is a well-established method with extensive literature \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}. <em>Iterative Snap Rounding</em>
 (ISR) is a refinement of Hot pixel SR in which each vertex is guaranteed to lie at least half a pixel width away from any non-incident edge
 \cgalCite{cgal:hp-isr-02}.
 
@@ -98,8 +101,7 @@ The second test is deliberately designed to be difficult, as it produces a large
 In these settings, vertical slab snap rounding significantly outperforms hot pixel snap rounding and remains of the same order of magnitude than computing the intersections without snap.
 The result of our test is summarized in the next table:
 
-@brief Average running times of snap rounding methods
-
+<center>
 | Test Case | Computing intersection<br> (Unsafe rounding) | Vertical slab SR <br> (double) | Vertical Slab SR <br> (float)  | Hot pixel SR <br>(pixel size \f$10^{-15}\f$ ) | Hot pixel SR <br>(pixel size \f$10^{-7}\f$) |
 |-----------|-------|-------|-------|-------|-------|
 | 500 Random Segments | 0.066s | 0.213s | 0.172s | 6.14s | 3.81s |
@@ -110,7 +112,7 @@ The result of our test is summarized in the next table:
 | 300 Almost identical Segments | 0.133s | 0.284s | 44.1s | 8.58s | 14.2s |
 | 400 Almost identical Segments | 0.262s | 0.620s | 102s | 32.2s | 42.0s |
 | 500 Almost identical Segments | 0.404s | 1.31s | 206s | 69.2s | 87s |
-
+</center>
 \subsection FSR_comp Snap Rounding Complexity
 Both methods run in \f$O(n \log n + k)\f$, where \f$n\f$ is the number of input segments
 and \f$k\f$ is the number of vertices created during the process. In the worst case, the number of created
@@ -118,18 +120,20 @@ vertices is \f$O(n^3)\f$, or \f$O(n^2)\f$ if the input segments are free of inte
 
 \section Snap_rounding_2API Snap Rounding API and Examples
 
-Both algorithms can be invoked through the `CGAL::snap_rounding_2()` function.
-`CGAL::snap_rounding_2()` take a range of input segments and outputs either segments or polylines via an output iterator. An overload also supports as input and output polygon ranges.
+Both algorithms can be invoked through the \ref snap_rounding_2_fct "CGAL::snap_rounding_2()" function.
+\ref snap_rounding_2_fct "CGAL::snap_rounding_2()" take a range of input segments and, by default, produces a range of polylines, each polyline corresponding to an input segment.
+Consequently, duplicate segments may appear in the output, for instance when multiple input segments collapse. When the parameter `output_unique_segments` is set to `true`,
+the polylines are decomposed into individual segments (they are represented as polylines with two points), and duplicates are removed.
+An overload also supports as input and output polygon ranges.
 By default, the Vertical Slab Snap Rounding algorithm to double precision is used. The other method or other rounding schemes can be used depending on the traits class provided.
 Specific methods also exist: `CGAL::vertical_slab_snap_rounding_2()` and `CGAL::hot_pixel_snap_rounding_2`.
 
 \subsection Float_snap_rounding_Traits Snap Rounding Traits
 
 
-Hot Pixel SR uses a traits class that models the concept `HotPixelSnapRoundingTraits_2`. The class `Hot_pixel_snap_rounding_traits_2` is the unique model of
-this concept provided.
+When using Hot Pixel SR, the traits class must be a model of `HotPixelSnapRoundingTraits_2`. The class `Hot_pixel_snap_rounding_traits_2` is such a model.
 
-Vertical slab SR uses a traits class that models the concept `VerticalSlabSnapRoundingTraits_2`. By default,
+When using Vertical Slab SR, the traits class must be a model of  `VerticalSlabSnapRoundingTraits_2`. By default,
 the traits class `Double_grid_snap_rounding_traits_2`, which rounds coordinates to double precision floating point,
 is used. The package also provides `Float_grid_snap_rounding_traits_2` and `Integer_grid_snap_rounding_traits_2`, which rounds coordinates to
 single precision floating point and integers, respectively. Other traits classes can be used to round to different representations or rounding schemes as long as
@@ -146,7 +150,7 @@ The following example snaps on double a non-trivial instance of five segments.
 
 \cgalExample{Snap_rounding_2/snap_rounding_to_double.cpp}
 
-The following example generates an Iterated SR representation
+The following example generates an Iterative SR representation
 of an arrangement of four line segments and outputs the resulting polylines in a plane
 tiled with one-unit square pixels.
 
