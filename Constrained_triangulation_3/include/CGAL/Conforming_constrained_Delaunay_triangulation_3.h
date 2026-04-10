@@ -918,10 +918,6 @@ public:
         std::cout << "Number of vertices after CDT: " << cdt_impl.number_of_vertices() << "\n\n";
       }
     }
-    move_Steiner_vertices_to_the_volume(); // TODO: check +  DO NOT COMMIT
-
-    // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
-    //                          cdt_impl.number_of_cells());
   }
 
   /*!
@@ -1108,7 +1104,7 @@ public:
    */
   CDT_3_signed_index face_constraint_index(Cell_handle ch, int i) const
   {
-    return ch->ccdt_3_data().face_constraint_index(i);
+    return cdt_impl.face_constraint_index(ch, i);
   }
 
   /*!
@@ -1118,7 +1114,7 @@ public:
    */
   CDT_3_signed_index face_constraint_index(const Facet& f) const
   {
-    return face_constraint_index(f.first, f.second);
+    return cdt_impl.face_constraint_index(f.first, f.second);
   }
 
   /*!
@@ -1193,6 +1189,15 @@ public:
   bool write_missing_segments_file(std::ostream& out) { return cdt_impl.write_missing_segments_file(out); }
   void write_all_segments_file(std::ostream& out)     { cdt_impl.write_all_segments_file(out); }
 
+  // Post-processing helpers
+  /// \brief Moves Steiner vertices on the boundary to the volume.
+  ///
+  /// This function moves Steiner vertices that lie on edges or faces
+  /// of the constrained surface to inside the volume.
+  void move_Steiner_vertices_to_the_volume() {
+    cdt_impl.move_Steiner_vertices_to_the_volume();
+  }
+
   // Lightweight accessors used by tests/tools
   size_type number_of_vertices() const              { return static_cast<size_type>(cdt_impl.number_of_vertices()); }
   size_type number_of_cells() const                 { return triangulation().number_of_cells(); }
@@ -1233,197 +1238,6 @@ public:
       out << prefix << "  - " << nb(CDT_3_vertex_type::FREE) << " free vertices\n";
       return out;
     }, IO_manip_tag{});
-  }
-
-protected:
-  template <typename Pred>
-  std::optional<Facet>
-  find_in_incident_facets(Vertex_handle v, Pred pred) const
-  {
-    boost::container::flat_set<Cell_handle, std::less<>,
-                               boost::container::small_vector<Cell_handle, 128>> found_cells;
-    boost::container::small_vector<Cell_handle, 128> cells;
-    cells.push_back(v->cell());
-    found_cells.insert(cells[0]);
-    int head=0;
-    int tail=1;
-    do {
-      Cell_handle c = cells[head];
-      for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v) continue;
-        Cell_handle next = c->neighbor(i);
-        if(c < next && pred(Facet(c, i))) {
-          return Facet(c, i);
-        }
-        if (! found_cells.insert(next).second )
-          continue;
-        cells.push_back(next);
-        ++tail;
-      }
-      ++head;
-    } while(head != tail);
-    return std::nullopt;
-  }
-
-  auto move_one_Steiner_vertex_on_face_to_the_volume(Vertex_handle v) {
-    auto is_constrained = [this](Facet f) { return is_facet_constrained(f); };
-
-    const auto face_id = v->ccdt_3_data().face_index();
-    auto incident_constrained_facet_opt = find_in_incident_facets(v, is_constrained);
-    CGAL_assertion(incident_constrained_facet_opt.has_value());
-    auto incident_constrained_facet = *incident_constrained_facet_opt;
-    CGAL_assertion(face_constraint_index(incident_constrained_facet) == face_id);
-    move_one_Steiner_vertex_to_the_volume(v);
-  }
-
-  template <typename Offsets, typename Facets>
-  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const Offsets& component_offsets, const Facets& facets) const {
-    using Point_3 = typename Traits::Point_3;
-    using Mesh = CGAL::Surface_mesh<Point_3>;
-    using face_descriptor = typename Mesh::Face_index;
-    Mesh link_mesh;
-    auto [patch_id_map, _] = link_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
-    for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
-      std::vector<Point_3> points;
-      std::vector<std::array<std::size_t, 3>> triangles;
-      std::size_t vertex_index = 0;
-      Mesh component_mesh;
-      for(std::size_t facet_id = component_offsets[component_index - 1],
-                           end = component_offsets[component_index];
-          facet_id < end; ++facet_id)
-      {
-        const auto& [cell, facet_index, _] = facets[facet_id];
-        if(triangulation().is_infinite(Facet(cell, facet_index))) {
-          continue;
-        }
-        for(int i = 0; i < 3; ++i) {
-          points.push_back(cell->vertex(Triangulation::vertex_triple_index(facet_index, i))->point());
-        } // end for each vertex of the facet
-        // swap the orientation: our facets are oriented toward the center of the star component
-        // but we want them to be oriented outward
-        triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
-        vertex_index += 3;
-      } // end for each facet in the component
-      CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
-
-      std::vector<std::pair<std::size_t, face_descriptor>> triangle_index_to_face_descriptor;
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh,
-        CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
-
-      std::vector<face_descriptor> new_faces;
-      auto out_it = boost::make_function_output_iterator(
-          [&new_faces](std::pair<face_descriptor, face_descriptor> fd_pair) { new_faces.push_back(fd_pair.second); });
-      CGAL::copy_face_graph(component_mesh, link_mesh, CGAL::parameters::face_to_face_output_iterator(out_it));
-      for(auto fd : new_faces) {
-        put(patch_id_map, fd, static_cast<int>(component_index));
-      }
-      auto opt_kernel_center_point = CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
-      if(opt_kernel_center_point.has_value()) {
-        auto kernel_center_point = *opt_kernel_center_point;
-        std::cerr << "  - kernel center point of component " << component_index << ": " << kernel_center_point
-                  << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point())) << ")"
-                  << "\n";
-      }
-    } // end for each component
-
-    std::stringstream filename;
-    filename << "dump_link_mesh_vertex" << IO::oformat(v, With_offset_tag{}) << ".ply";
-    std::ofstream out(filename.str());
-    CGAL::IO::write_PLY(out, link_mesh);
-    out.close();
-  }
-
-  auto move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
-    std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
-    std::size_t nb_of_incident_cells{0};
-    triangulation().incident_cells(
-        v, boost::make_function_output_iterator(
-               [nb_of_incident_cells_ptr = &nb_of_incident_cells](Cell_handle) { ++(*nb_of_incident_cells_ptr); }));
-    std::cerr << "  - Number of incident cells: " << nb_of_incident_cells << '\n';
-
-    enum class Type_of_facet {
-      INCIDENT,
-      OPPOSITE
-    };
-
-    struct Facet_of_star_component {
-      Cell_handle cell;
-      int index_of_opposite_vertex;
-      Type_of_facet type;
-
-      bool operator<(const Facet_of_star_component& other) const {
-        if(cell != other.cell)
-          return cell < other.cell;
-        return index_of_opposite_vertex < other.index_of_opposite_vertex;
-      }
-    };
-
-    auto register_cell_and_check_if_new =
-        [seen_cells = CGAL::unordered_flat_set<Cell_handle>{}](Cell_handle c) mutable
-        {
-          auto [_, inserted] = seen_cells.insert(c);
-          return inserted;
-        };
-
-    boost::container::small_vector<Facet_of_star_component, 128> facets_of_star_components;
-    boost::container::small_vector<std::size_t, 128> component_offsets(1);
-    boost::container::small_vector<Cell_handle, 128> cells_in_other_components;
-    auto first_cell = v->cell();
-    facets_of_star_components.emplace_back(first_cell, first_cell->index(v), Type_of_facet::OPPOSITE);
-    register_cell_and_check_if_new(first_cell);
-    auto queue_head=0u;
-    do {
-      auto [c, facet_index, facet_type] = facets_of_star_components[queue_head++];
-      if(facet_type == Type_of_facet::OPPOSITE) {
-        for (int i=0; i<4; ++i) {
-          if (c->vertex(i) == v) continue;
-          Cell_handle next = c->neighbor(i);
-          const bool facet_c_to_next_is_constrained = is_facet_constrained(Facet(c, i));
-          if(facet_c_to_next_is_constrained) {
-            facets_of_star_components.emplace_back(c, i, Type_of_facet::INCIDENT);
-            cells_in_other_components.push_back(next);
-          } else {
-            auto next_is_a_new_cell = register_cell_and_check_if_new(next);
-            if(next_is_a_new_cell) {
-              facets_of_star_components.emplace_back(next, next->index(v), Type_of_facet::OPPOSITE);
-            }
-          }
-        }
-      }
-      if(queue_head == facets_of_star_components.size()) {
-        std::cerr << "  - Partition " << component_offsets.size() << " has "
-                  << facets_of_star_components.size() - component_offsets.back() << " facets\n";
-        component_offsets.push_back(facets_of_star_components.size());
-        while(!cells_in_other_components.empty()) {
-          auto other_cell = cells_in_other_components.back();
-          cells_in_other_components.pop_back();
-          auto other_cell_is_a_new_cell = register_cell_and_check_if_new(other_cell);
-          if(other_cell_is_a_new_cell) {
-            facets_of_star_components.emplace_back(other_cell, other_cell->index(v), Type_of_facet::OPPOSITE);
-            break;
-          }
-        }
-      }
-    } while(queue_head != facets_of_star_components.size());
-
-    { // DEBUG, DO NOT COMMIT as it is
-      dump_link_mesh_of_vertex_to_ply(v, component_offsets, facets_of_star_components); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
-    }
-
-    std::cerr << "  " << "nb of components: " << component_offsets.size() - 1 << '\n';
-    std::size_t nb_of_new_2d_faces = 0;
-    cdt_impl.remove_Steiner_vertex_from_all_cdt_2(v, CGAL::Counting_output_iterator{&nb_of_new_2d_faces});
-    std::cerr << "  - number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
-  }
-
-  auto move_Steiner_vertices_to_the_volume() {
-    for(auto v: triangulation().finite_vertex_handles()) {
-      auto type = v->ccdt_3_data().vertex_type();
-      if(type == CDT_3_vertex_type::STEINER_IN_FACE)
-        move_one_Steiner_vertex_on_face_to_the_volume(v);
-      else if (type == CDT_3_vertex_type::STEINER_ON_EDGE)
-        move_one_Steiner_vertex_to_the_volume(v);
-    }
   }
 };
 
@@ -1561,6 +1375,186 @@ public:
   using Constrained_polyline_id = typename Constraint_hierarchy::Constraint_id;
 
 protected:
+
+protected:
+  template <typename Pred>
+  std::optional<Facet>
+  find_in_incident_facets(Vertex_handle v, Pred pred) const
+  {
+    boost::container::flat_set<Cell_handle, std::less<>,
+                               boost::container::small_vector<Cell_handle, 128>> found_cells;
+    boost::container::small_vector<Cell_handle, 128> cells;
+    cells.push_back(v->cell());
+    found_cells.insert(cells[0]);
+    int head=0;
+    int tail=1;
+    do {
+      Cell_handle c = cells[head];
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v) continue;
+        Cell_handle next = c->neighbor(i);
+        if(c < next && pred(Facet(c, i))) {
+          return Facet(c, i);
+        }
+        if (! found_cells.insert(next).second )
+          continue;
+        cells.push_back(next);
+        ++tail;
+      }
+      ++head;
+    } while(head != tail);
+    return std::nullopt;
+  }
+
+  auto move_one_Steiner_vertex_on_face_to_the_volume(Vertex_handle v) {
+    auto is_constrained = [this](Facet f) { return is_facet_constrained(f); };
+
+    const auto face_id = v->ccdt_3_data().face_index();
+    auto incident_constrained_facet_opt = find_in_incident_facets(v, is_constrained);
+    CGAL_assertion(incident_constrained_facet_opt.has_value());
+    auto incident_constrained_facet = *incident_constrained_facet_opt;
+    CGAL_assertion(face_constraint_index(incident_constrained_facet) == face_id);
+    move_one_Steiner_vertex_to_the_volume(v);
+  }
+
+  template <typename Offsets, typename Facets>
+  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const Offsets& component_offsets, const Facets& facets) const {
+    using Mesh = CGAL::Surface_mesh<Point_3>;
+    using face_descriptor = typename Mesh::Face_index;
+    Mesh link_mesh;
+    auto [patch_id_map, _] = link_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
+    for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
+      std::vector<Point_3> points;
+      std::vector<std::array<std::size_t, 3>> triangles;
+      std::size_t vertex_index = 0;
+      Mesh component_mesh;
+      for(std::size_t facet_id = component_offsets[component_index - 1],
+                           end = component_offsets[component_index];
+          facet_id < end; ++facet_id)
+      {
+        const auto& [cell, facet_index, _] = facets[facet_id];
+        if(tr().is_infinite(Facet(cell, facet_index))) {
+          continue;
+        }
+        for(int i = 0; i < 3; ++i) {
+          points.push_back(cell->vertex(Tds::vertex_triple_index(facet_index, i))->point());
+        } // end for each vertex of the facet
+        // swap the orientation: our facets are oriented toward the center of the star component
+        // but we want them to be oriented outward
+        triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
+        vertex_index += 3;
+      } // end for each facet in the component
+      CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
+
+      std::vector<std::pair<std::size_t, face_descriptor>> triangle_index_to_face_descriptor;
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh,
+        CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
+
+      std::vector<face_descriptor> new_faces;
+      auto out_it = boost::make_function_output_iterator(
+          [&new_faces](std::pair<face_descriptor, face_descriptor> fd_pair) { new_faces.push_back(fd_pair.second); });
+      CGAL::copy_face_graph(component_mesh, link_mesh, CGAL::parameters::face_to_face_output_iterator(out_it));
+      for(auto fd : new_faces) {
+        put(patch_id_map, fd, static_cast<int>(component_index));
+      }
+      auto opt_kernel_center_point = CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
+      if(opt_kernel_center_point.has_value()) {
+        auto kernel_center_point = *opt_kernel_center_point;
+        std::cerr << "  - kernel center point of component " << component_index << ": " << kernel_center_point
+                  << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point())) << ")"
+                  << "\n";
+      }
+    } // end for each component
+
+    std::stringstream filename;
+    filename << "dump_link_mesh_vertex" << IO::oformat(v, With_offset_tag{}) << ".ply";
+    std::ofstream out(filename.str());
+    CGAL::IO::write_PLY(out, link_mesh);
+    out.close();
+  }
+
+  auto move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
+    std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
+    std::size_t nb_of_incident_cells{0};
+    tr().incident_cells(
+        v, boost::make_function_output_iterator(
+               [nb_of_incident_cells_ptr = &nb_of_incident_cells](Cell_handle) { ++(*nb_of_incident_cells_ptr); }));
+    std::cerr << "  - Number of incident cells: " << nb_of_incident_cells << '\n';
+
+    enum class Type_of_facet {
+      INCIDENT,
+      OPPOSITE
+    };
+
+    struct Facet_of_star_component {
+      Cell_handle cell;
+      int index_of_opposite_vertex;
+      Type_of_facet type;
+
+      bool operator<(const Facet_of_star_component& other) const {
+        if(cell != other.cell)
+          return cell < other.cell;
+        return index_of_opposite_vertex < other.index_of_opposite_vertex;
+      }
+    };
+
+    auto register_cell_and_check_if_new =
+        [seen_cells = CGAL::unordered_flat_set<Cell_handle>{}](Cell_handle c) mutable
+        {
+          auto [_, inserted] = seen_cells.insert(c);
+          return inserted;
+        };
+
+    boost::container::small_vector<Facet_of_star_component, 128> facets_of_star_components;
+    boost::container::small_vector<std::size_t, 128> component_offsets(1);
+    boost::container::small_vector<Cell_handle, 128> cells_in_other_components;
+    auto first_cell = v->cell();
+    facets_of_star_components.emplace_back(first_cell, first_cell->index(v), Type_of_facet::OPPOSITE);
+    register_cell_and_check_if_new(first_cell);
+    auto queue_head=0u;
+    do {
+      auto [c, facet_index, facet_type] = facets_of_star_components[queue_head++];
+      if(facet_type == Type_of_facet::OPPOSITE) {
+        for (int i=0; i<4; ++i) {
+          if (c->vertex(i) == v) continue;
+          Cell_handle next = c->neighbor(i);
+          const bool facet_c_to_next_is_constrained = is_facet_constrained(Facet(c, i));
+          if(facet_c_to_next_is_constrained) {
+            facets_of_star_components.emplace_back(c, i, Type_of_facet::INCIDENT);
+            cells_in_other_components.push_back(next);
+          } else {
+            auto next_is_a_new_cell = register_cell_and_check_if_new(next);
+            if(next_is_a_new_cell) {
+              facets_of_star_components.emplace_back(next, next->index(v), Type_of_facet::OPPOSITE);
+            }
+          }
+        }
+      }
+      if(queue_head == facets_of_star_components.size()) {
+        std::cerr << "  - Partition " << component_offsets.size() << " has "
+                  << facets_of_star_components.size() - component_offsets.back() << " facets\n";
+        component_offsets.push_back(facets_of_star_components.size());
+        while(!cells_in_other_components.empty()) {
+          auto other_cell = cells_in_other_components.back();
+          cells_in_other_components.pop_back();
+          auto other_cell_is_a_new_cell = register_cell_and_check_if_new(other_cell);
+          if(other_cell_is_a_new_cell) {
+            facets_of_star_components.emplace_back(other_cell, other_cell->index(v), Type_of_facet::OPPOSITE);
+            break;
+          }
+        }
+      }
+    } while(queue_head != facets_of_star_components.size());
+
+    { // DEBUG, DO NOT COMMIT as it is
+      dump_link_mesh_of_vertex_to_ply(v, component_offsets, facets_of_star_components); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
+    }
+
+    std::cerr << "  " << "nb of components: " << component_offsets.size() - 1 << '\n';
+    std::size_t nb_of_new_2d_faces = 0;
+    this->remove_Steiner_vertex_from_all_cdt_2(v, CGAL::Counting_output_iterator{&nb_of_new_2d_faces});
+    std::cerr << "  - number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
+  }
 
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
     const auto face_id = static_cast<std::size_t>(cell->ccdt_3_data().face_constraint_index(facet_index));
@@ -1721,12 +1715,12 @@ public:
     switch(tr().dimension()) {
     case 3: {
       typename T_3::Conflict_tester_3 tester(p, this);
-      this->find_conflicts(ch, tester, triple_of_output_iterators);
+      tr().find_conflicts(ch, tester, triple_of_output_iterators);
       break;
     } // dim 3
     case 2: {
       typename T_3::Conflict_tester_2 tester(p, this);
-      this->find_conflicts(ch, tester, triple_of_output_iterators);
+      tr().find_conflicts(ch, tester, triple_of_output_iterators);
       break;
     } // dim 2
     default: CGAL_error();
@@ -1983,6 +1977,16 @@ public:
 
   bool is_facet_constrained(Facet f) const {
     return f.first->ccdt_3_data().is_facet_constrained(f.second);
+  }
+
+  CDT_3_signed_index face_constraint_index(Cell_handle ch, int i) const
+  {
+    return ch->ccdt_3_data().face_constraint_index(i);
+  }
+
+  CDT_3_signed_index face_constraint_index(const Facet& f) const
+  {
+    return face_constraint_index(f.first, f.second);
   }
 
   auto number_of_constrained_facets() const
@@ -2354,6 +2358,15 @@ public:
     }
   }
 
+  auto move_Steiner_vertices_to_the_volume() {
+    for(auto v: this->finite_vertex_handles()) {
+      auto type = v->ccdt_3_data().vertex_type();
+      if(type == CDT_3_vertex_type::STEINER_IN_FACE)
+        move_one_Steiner_vertex_on_face_to_the_volume(v);
+      else if (type == CDT_3_vertex_type::STEINER_ON_EDGE)
+        move_one_Steiner_vertex_to_the_volume(v);
+    }
+  }
 
 private:
 
@@ -4502,10 +4515,10 @@ public:
 
   template <typename New_CDT_2_face_handles_output_iterator>
   New_CDT_2_face_handles_output_iterator
-  remove_from_cdt_2(Vertex_handle v,
-                    CDT_3_vertex_type vertex_type,
-                    Face_index face_id,
-                    New_CDT_2_face_handles_output_iterator new_face_handles_out)
+  remove_Steiner_vertex_from_cdt_2(Vertex_handle v,
+                                   CDT_3_vertex_type vertex_type,
+                                   Face_index face_id,
+                                   New_CDT_2_face_handles_output_iterator new_face_handles_out)
   {
     dump_face(face_id);
     std::cerr << "Remove Steiner vertex " << IO::oformat(v, with_point_and_info) << " from CDT_2 of face F#" << face_id
@@ -4650,12 +4663,12 @@ public:
     const auto type = v->ccdt_3_data().vertex_type();
     if(type == CDT_3_vertex_type::STEINER_IN_FACE) {
       const auto face_id = v->ccdt_3_data().face_index();
-      new_face_handles_out = remove_from_cdt_2(v, type, face_id, new_face_handles_out);
+      new_face_handles_out = remove_Steiner_vertex_from_cdt_2(v, type, face_id, new_face_handles_out);
     }
     else if (type == CDT_3_vertex_type::STEINER_ON_EDGE) {
       const auto c_id = v->ccdt_3_data().constrained_polyline_id(*this);
       for(const auto& [_, face_id] : CGAL::make_range(this->incident_faces_to_polyline.equal_range(c_id))) {
-        new_face_handles_out = remove_from_cdt_2(v, type, face_id, new_face_handles_out);
+        new_face_handles_out = remove_Steiner_vertex_from_cdt_2(v, type, face_id, new_face_handles_out);
       }
     }
     return new_face_handles_out;
