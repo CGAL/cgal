@@ -279,8 +279,8 @@ public:
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_space_partition_3(
-    const NamedParameters& np = CGAL::parameters::default_values()) :
-    m_parameters(
+    const NamedParameters& np = CGAL::parameters::default_values())
+    : m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_input2regularized() {}
@@ -355,8 +355,8 @@ public:
   Kinetic_space_partition_3(
     const PointRange& points,
     const PolygonRange& polygons,
-    const NamedParameters& np = CGAL::parameters::default_values()) :
-    m_parameters(
+    const NamedParameters& np = CGAL::parameters::default_values())
+    : m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_input2regularized() {

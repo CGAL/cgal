@@ -133,9 +133,9 @@ private:
   std::vector<bool> m_initial_part_of_partition;
 
 public:
-  Intersection_graph() :
-    m_nb_lines_on_bbox(0)
-  { }
+  Intersection_graph()
+    : m_nb_lines_on_bbox(0)
+  {}
 
   void clear() {
     m_graph.clear();

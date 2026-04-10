@@ -86,9 +86,9 @@ public:
     using result_type   = PSimplex;
 
     const std::size_t support_plane_idx;
-    Make_PSimplex(const std::size_t sp_idx) :
-    support_plane_idx(sp_idx)
-    { }
+    Make_PSimplex(const std::size_t sp_idx)
+      : support_plane_idx(sp_idx)
+    {}
 
     const result_type operator()(const argument_type& arg) const {
       return result_type(support_plane_idx, arg);
@@ -111,10 +111,9 @@ public:
     const std::size_t support_plane_idx;
     const Mesh& mesh;
 
-    Halfedge_to_pvertex(const std::size_t sp_idx, const Mesh& m) :
-    support_plane_idx(sp_idx),
-    mesh(m)
-    { }
+    Halfedge_to_pvertex(const std::size_t sp_idx, const Mesh& m)
+      : support_plane_idx(sp_idx), mesh(m)
+    {}
 
     const result_type operator()(const argument_type& arg) const {
       return result_type(support_plane_idx, mesh.target(arg));
@@ -131,10 +130,9 @@ public:
     const std::size_t support_plane_idx;
     const Mesh& mesh;
 
-    Halfedge_to_pedge(const std::size_t sp_idx, const Mesh& m) :
-    support_plane_idx(sp_idx),
-    mesh(m)
-    { }
+    Halfedge_to_pedge(const std::size_t sp_idx, const Mesh& m)
+      : support_plane_idx(sp_idx), mesh(m)
+    {}
 
     const result_type operator()(const argument_type& arg) const {
       return result_type(support_plane_idx, mesh.edge(arg));
@@ -148,10 +146,9 @@ public:
     const std::size_t support_plane_idx;
     const Mesh& mesh;
 
-    Halfedge_to_pface(const std::size_t sp_idx, const Mesh& m) :
-    support_plane_idx(sp_idx),
-    mesh(m)
-    { }
+    Halfedge_to_pface(const std::size_t sp_idx, const Mesh& m)
+      : support_plane_idx(sp_idx), mesh(m)
+    {}
 
     const result_type operator()(const argument_type& arg) const {
       return result_type(support_plane_idx, mesh.face(arg));
@@ -233,8 +230,9 @@ private:
   std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices.
 
 public:
-  Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) {
-  }
+  Data_structure(const Parameters& parameters, const std::string &prefix)
+    : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix)
+  {}
 
   template<typename Type1, typename Type2, typename ResultType>
   static bool intersection(const Type1& t1, const Type2& t2, ResultType& result) {

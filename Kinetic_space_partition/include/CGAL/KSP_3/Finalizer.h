@@ -98,9 +98,9 @@ private:
   using Parameters = KSP::internal::Parameters_3<FT>;
 
 public:
-  Finalizer(Data_structure& data, const Parameters& parameters) :
-    m_data(data), m_parameters(parameters)
-  { }
+  Finalizer(Data_structure& data, const Parameters& parameters)
+    : m_data(data), m_parameters(parameters)
+  {}
 
   void create_polyhedra() {
     if (m_parameters.debug)

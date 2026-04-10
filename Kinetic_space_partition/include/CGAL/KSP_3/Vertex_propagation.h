@@ -96,8 +96,8 @@ private:
   };
 
 public:
-  Vertex_propagation(Data_structure& data, const Parameters& parameters) :
-    m_data(data), m_parameters(parameters), vts(data.kinetic_vertices()),
+  Vertex_propagation(Data_structure& data, const Parameters& parameters)
+    : m_data(data), m_parameters(parameters), vts(data.kinetic_vertices()),
     m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 

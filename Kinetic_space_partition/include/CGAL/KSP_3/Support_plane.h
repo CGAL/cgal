@@ -140,7 +140,8 @@ public:
   };
 
   struct Data {
-    Data(std::vector<Vertex> &vertices) : mesh(),
+    Data(std::vector<Vertex> &vertices)
+      : mesh(),
       v_ivertex_map(mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first),
       v_iedge_map(mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first),
       e_iedge_map(mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first),
@@ -202,8 +203,8 @@ public:
   //Support_plane() : m_data(std::make_shared<Data>()) {}
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane, std::vector<Vertex> &vertices) :
-    m_data(std::make_shared<Data>(vertices)) {
+  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane, std::vector<Vertex> &vertices)
+    : m_data(std::make_shared<Data>(vertices)) {
 
     From_exact from_exact;
 
@@ -228,8 +229,8 @@ public:
     add_property_maps();
   }
 
-  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox, std::vector<Vertex>& vertices) :
-    m_data(std::make_shared<Data>(vertices)) {
+  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox, std::vector<Vertex>& vertices)
+    : m_data(std::make_shared<Data>(vertices)) {
 
     From_exact from_exact;
 
@@ -257,7 +258,6 @@ public:
   }
 
   void add_property_maps() {
-
     m_data->v_ivertex_map = m_data->mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first;
     m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
     m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;
