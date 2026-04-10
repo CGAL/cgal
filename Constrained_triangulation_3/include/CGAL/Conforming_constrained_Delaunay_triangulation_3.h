@@ -3542,10 +3542,10 @@ private:
     }
     auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
 
-    std::optional<decltype(CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog))> indent_guards;
+    std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
     if(this->debug().copy_triangulation_into_hole() || this->debug().regions()) {
       std::cerr << "# upper cavity\n";
-      indent_guards.emplace(IO::make_indenting_guards("  ", std::cerr, std::cout, std::clog));
+      indent_guards.emplace(IO::make_indenting_guards("  "));
     }
     [[maybe_unused]] const auto [upper_cavity_triangulation, vertices_of_upper_cavity,
                                  map_upper_cavity_vertices_to_ambient_vertices, facets_of_upper_cavity,
@@ -3558,7 +3558,7 @@ private:
     if(this->debug().copy_triangulation_into_hole() || this->debug().regions()) {
       indent_guards.reset();
       std::cerr << "# lower cavity\n";
-      indent_guards.emplace(IO::make_indenting_guards("  ", std::cerr, std::cout, std::clog));
+      indent_guards.emplace(IO::make_indenting_guards("  "));
     }
     [[maybe_unused]] const auto [lower_cavity_triangulation, vertices_of_lower_cavity,
                                  map_lower_cavity_vertices_to_ambient_vertices, facets_of_lower_cavity,
@@ -4798,6 +4798,7 @@ public:
           std::swap(v0, v1);
         }
         if constexpr(cdt_3_can_use_cxx20_format()) if(this->debug().regions()) {
+          auto indent_guard = CGAL::IO::make_indenting_guards("| ");
           debug_dump_edge_region_intersection(face_index, region_index, fh_region, region_vertices, border_edges, intersecting_edges.size(), v0, v1,
                                               {cell, index_v0, index_v1}, triangle_vertices);
         }
@@ -4826,7 +4827,7 @@ public:
     };
 
     auto test_cell = [&](Cell_handle cell) {
-      std::optional<decltype(CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog))> indent_guards;
+      std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
       if constexpr(cdt_3_can_use_cxx20_format()) if(this->debug().regions()) {
         std::cerr << cdt_3_format("test_cell #{}\n  {}\n  {}\n  {}\n  {}\n",
             cell->time_stamp(),
@@ -4834,7 +4835,7 @@ public:
             IO::oformat(cell->vertex(1), with_point_and_info),
             IO::oformat(cell->vertex(2), with_point_and_info),
             IO::oformat(cell->vertex(3), with_point_and_info));
-        indent_guards.emplace(CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog));
+        indent_guards.emplace(CGAL::IO::make_indenting_guards("| "));
       }
       bool does_intersect = false;
       for(int i = 0; i < 4; ++i) {
@@ -4937,7 +4938,6 @@ public:
       return IO::oformat(std::forward<decltype(args)>(args)..., with_point_and_info);
     };
 
-    auto indent_guard = CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog);
     std::cerr << cdt_3_format("intersecting edge #{}: ( {}   {} )\n"
                               "intersected triangle vertices: {}\n"
                               "                               {}\n"
