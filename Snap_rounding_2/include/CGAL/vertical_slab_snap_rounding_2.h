@@ -602,7 +602,6 @@ void vertical_slab_snap_rounding_2(const InputRange &inputs,
 
     if (unique_segments){
       // Output Segments while removing duplicate ones
-      auto segment_2 = traits.construct_segment_2_object();
       std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
       for(auto &poly: polylines)
         for(std::size_t i=1; i<poly.size(); ++i)

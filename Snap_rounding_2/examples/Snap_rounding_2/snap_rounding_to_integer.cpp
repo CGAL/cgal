@@ -23,7 +23,7 @@ int main()
   out_segs.reserve(out.size());
   for(const Polyline_2& pl: out)
     out_segs.emplace_back(pl[0], pl[1]);
-  std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out_segs.begin(), out_segs.end()) << std::endl;
+  std::cout << "Does the output intersect: " << CGAL::Surface_sweep_2::do_intersect(out_segs.begin(), out_segs.end(), false) << std::endl;
 
   return 0;
 }
