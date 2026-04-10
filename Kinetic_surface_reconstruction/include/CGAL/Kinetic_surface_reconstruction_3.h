@@ -131,13 +131,13 @@ public:
   using Point_range = PointRange;
 
   using KSP = Kinetic_space_partition_3<Kernel, Intersection_kernel>;
-  using Regions = std::vector<std::pair<Plane_3, std::vector<std::size_t>>>;
+  using Regions = std::vector<std::pair<Plane_3, std::vector<typename boost::property_traits<PointMap>::key_type>>>;
 
   using Point_map = PointMap;
   using Normal_map = NormalMap;
 
   using LCC_traits = CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel>;
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_traits, typename KSP::Linear_cell_complex_min_items>;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_traits, Kinetic_linear_cell_complex_min_items<Intersection_kernel>>;
 
   /*!
     \brief creates a `Kinetic_shape_reconstruction_3` object.
@@ -783,13 +783,14 @@ private:
 
   using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
   using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
-  using Face_information = typename KSP::Linear_cell_complex_min_items::Face_attribute;
+  using Face_information = typename Kinetic_linear_cell_complex_min_items<Intersection_kernel>::Face_attribute;
 
   bool m_verbose;
   bool m_debug;
 
   std::unique_ptr<Neighbor_query> m_neighbor_query;
   std::unique_ptr<Sorting> m_sorting;
+  std::unique_ptr<Region_type> m_region_type;
   std::unique_ptr<Region_growing> m_region_growing;
   FT m_max_distance_to_plane;
 
@@ -896,9 +897,6 @@ private:
     m_face_inliers.clear();
 
     auto face_range = lcc.template one_dart_per_cell<2>();
-    std::cout << lcc.template one_dart_per_cell<0>().size() << std::endl;
-    std::cout << lcc.template one_dart_per_cell<2>().size() << std::endl;
-    std::cout << lcc.template one_dart_per_cell<3>().size() << std::endl;
     m_faces_lcc.clear();
     m_faces_lcc.reserve(face_range.size());
     m_attrib2index_lcc.clear();
@@ -1391,7 +1389,6 @@ private:
     From_exact from_exact;
     const LCC& lcc = m_lcc;
 
-//    auto& finfo = lcc.template info<2>(face);
     int ip = lcc.template info<2>(face).input_polygon_index;
     typename Intersection_kernel::Plane_3 pl = lcc.template info<2>(face).plane;
 
@@ -1435,17 +1432,11 @@ private:
               break;
           }
 
-          //std::reference_wrapper<const Face_attribute>
-
           std::reference_wrapper<const Face_information> finfo2 = lcc.template info<2>(fdh);
           if (fa == cur_fa) {
             fdh = lcc.template beta<2, 3>(fdh);
             continue;
           }
-//          auto& inf = lcc.template info<2>(fdh);
-//          bool added = false;
-
-          //write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
 
           const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
@@ -1501,9 +1492,6 @@ private:
               if (!internal)
                 break;
 
-//           if (!added)
-//             border_edges.push_back(edh);
-
           break;
         } while (fdh != edh);
         edh = lcc.template beta<1>(edh);
@@ -1526,9 +1514,6 @@ private:
       Face_attribute fa2 = lcc.template attribute<2>(edh);
       if (fa2 == lcc.null_descriptor)
         return true;
-
-//       if (debug)
-//         write_face(edh, "cur_is_border.ply");
 
       if (fa2 == fa) {
         std::cout << "should not happen" << std::endl;
@@ -2114,19 +2099,20 @@ private:
         m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(k)));
     }
 
-    Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
-      m_points,
+    m_region_type = std::unique_ptr<Region_type>(new Region_type(
       CGAL::parameters::
       maximum_distance(m_max_distance_to_plane).
       maximum_angle(max_accepted_angle).
-      minimum_region_size(min_region_size));
+      minimum_region_size(min_region_size).
+      point_map(m_point_map).
+      normal_map(m_normal_map)));
 
     if (!m_sorting) {
       m_sorting = std::unique_ptr<Sorting>(new Sorting(m_points, *m_neighbor_query, parameters::point_map(m_point_map)));
       m_sorting->sort();
     }
 
-    m_region_growing = std::unique_ptr<Region_growing>(new Region_growing(m_points, m_sorting->ordered(), *m_neighbor_query, region_type));
+    m_region_growing = std::unique_ptr<Region_growing>(new Region_growing(m_points, m_sorting->ordered(), *m_neighbor_query, *m_region_type));
     m_region_growing->detect(std::back_inserter(m_regions));
 
     if (m_verbose)
@@ -2266,7 +2252,6 @@ private:
 
       // No filtering of points per partition
       face_to_points.push_back(std::make_pair(lcc.dart_descriptor(d), std::vector<std::size_t>()));
-
 
       std::vector<Point_2> vts2d;
       vts2d.reserve(lcc.template one_dart_per_incident_cell<0, 2>(lcc.dart_descriptor(d)).size());

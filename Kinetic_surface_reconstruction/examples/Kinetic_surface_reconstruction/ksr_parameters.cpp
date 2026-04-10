@@ -314,9 +314,9 @@ int main(const int argc, const char** argv) {
   Parameters parameters;
   parse_terminal(parser, parameters);
 
-  // If no input data is provided, use input from data directory.
-//   if (parameters.data.empty())
-//     parameters.data = CGAL::data_file_path("points_3/building.ply");
+  //If no input data is provided, use input from data directory.
+  if (parameters.data.empty())
+    parameters.data = CGAL::data_file_path("points_3/building.ply");
 
   Point_set point_set;
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
@@ -324,18 +324,10 @@ int main(const int argc, const char** argv) {
   std::filesystem::path path = parameters.data;
 
   std::string vg_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg";
-  std::ifstream in(vg_file);
-  if (std::filesystem::exists(vg_file))
-    load_planes(vg_file, point_set, regions);
-    //load_planes("C:/dev/cgal/Kinetic_surface_reconstruction/examples/Kinetic_surface_reconstruction/2026-01-15-105002/hyper2sven_0_0_0.vg", point_set, regions);
-    //load_planes("C:/dev/cgal/Kinetic_surface_reconstruction/examples/Kinetic_surface_reconstruction/GF-test/saddle_point_cloud.vg", point_set, regions);
-  //load_planes("C:/Data/Kinetic-Partition-3D-Benchmark/Intermediate/Lans-fine/lans_fine_input.vg", point_set, regions);
-    //load_planes("C:/Data/Kinetic-Partition-3D-Benchmark/Advanced/Meeting_room/Meetingroom_3M_input.vg", point_set, regions);
-    //load_planes("C:/Data/Kinetic-Partition-3D-Benchmark/Advanced/Asian dragon/dragon_input.vg", point_set, regions);
-     //C:\Data\Kinetic-Partition-3D-Benchmark\Advanced\Meeting_room
+//   if (std::filesystem::exists(vg_file))
+//     load_planes(vg_file, point_set, regions);
 
   // Input.
-
   if (!regions.empty())
     std::cout << regions.size() << " planar shapes loaded" << std::endl;
 
@@ -406,21 +398,29 @@ int main(const int argc, const char** argv) {
   KSR ksr(point_set, param);
 
   typename KSR::LCC lcc_input;
-  /*std::ifstream lccfile("test.lcc");
-  if (lccfile.is_open()) {
-    lccfile >> lcc_input;
-    lccfile.close();
+  std::string lcc_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".lcc";
+/*
+  if (!regions.empty() && std::filesystem::exists(lcc_file)) {
+    std::ifstream lccfile(lcc_file);
+    if (lccfile.is_open()) {
+      lccfile >> lcc_input;
+      lccfile.close();
+    }
   }*/
 
   Timer timer;
   timer.start();
 
-  if (regions.empty()) {
-    std::size_t num_shapes = ksr.detect_planar_shapes(param);
-    std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
+  if (regions.empty())
+    ksr.detect_planar_shapes(param);
+  else if (lcc_input.template one_dart_per_cell<3>().empty() && lcc_input.template one_dart_per_cell<3>().empty())
+      ksr.insert_planar_shapes(regions);
+
+  if (lcc_input.template one_dart_per_cell<3>().empty()) {
+    std::cout << ksr.planar_shapes().size() << " planar shapes regularized into ";
+    ksr.regularize_planar_shapes(param);
+    std::cout << ksr.planar_shapes().size() << std::endl;
   }
-  else if (lcc_input.template one_dart_per_cell<3>().empty())
-    ksr.insert_planar_shapes(regions);
 
   FT after_shape_detection = 0;
   FT after_partition = 0;
@@ -434,10 +434,11 @@ int main(const int argc, const char** argv) {
 
     after_partition = timer.time();
 
+/*
     const typename KSR::LCC& lcc = ksr.get_linear_cell_complex();
-    std::ofstream file("test.lcc");
+    std::ofstream file(lcc_file);
     file << lcc;
-    file.close();
+    file.close();*/
   }
 
   std::vector<Point_3> vtx;

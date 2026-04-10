@@ -106,8 +106,8 @@ public:
   struct Vertex {
     Vertex() : sp_idx(std::size_t(-1)), queued_events(0) {}
     Vertex(std::size_t sp_idx, const IkPoint_2& p0, const IkVector_2& v, IkFT t_init = 0)
-      : sp_idx(sp_idx), p0(p0), v(v), t_init(t_init), moving(true), other(-1), constraints(), k(0),
-      face(std::size_t(-1)), ivertex(-1), itarget(-1), constraint_edge(IVertex(-1), IVertex(-1), nullptr), other_constraint_edge(IVertex(-1), IVertex(-1), nullptr), queued_events(0) {
+      : sp_idx(sp_idx), p0(p0), v(v), t_init(t_init), ivertex(-1), itarget(-1), moving(true), k(0), face(std::size_t(-1)), other(-1), constraints(),
+      constraint_edge(IVertex(-1), IVertex(-1), nullptr), other_constraint_edge(IVertex(-1), IVertex(-1), nullptr), queued_events(0) {
     }
 
     void stop(const Vertex_event &event) {
@@ -171,7 +171,6 @@ public:
     IEdge_set iedges;
     std::set<std::size_t> crossed_lines;
 
-    //std::vector<IEdge> iedges;
     std::vector<Point_2> original_vertices;
     std::vector<typename Intersection_kernel::Point_2> exact_vertices;
     std::vector<Vector_2> original_vectors;
@@ -342,7 +341,6 @@ public:
     if (h == Mesh::null_halfedge()) {
       std::cout << " NULL_HALFEDGE!";
     }
-    //std::cout << "edges: " << border.size() << std::endl;
   }
 
   Data& data() { return *m_data; }

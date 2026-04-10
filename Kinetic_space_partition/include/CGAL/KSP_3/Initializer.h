@@ -82,12 +82,15 @@ private:
   using Timer = CGAL::Real_timer;
 
 public:
-  Initializer(std::vector<std::vector<Point_3> >& input_polygons, std::vector<typename Intersection_kernel::Plane_3>& input_planes, Data_structure& data, const Parameters& parameters) :
-    m_input_polygons(input_polygons), m_input_planes(input_planes), m_data(data), m_parameters(parameters)
+  Initializer(std::vector<std::vector<Point_3> >& input_polygons,
+    std::vector<typename Intersection_kernel::Plane_3>& input_planes,
+    Data_structure& data, const Parameters& parameters, bool snap)
+    : m_input_polygons(input_polygons), m_input_planes(input_planes), m_data(data), m_parameters(parameters), m_snap(snap)
   {}
 
-  Initializer(std::vector<std::vector<IkPoint_3> >& input_polygons, std::vector<typename Intersection_kernel::Plane_3>& input_planes, Data_structure& data, const Parameters& parameters) :
-    m_input_polygons(input_polygons), m_input_planes(input_planes), m_data(data), m_parameters(parameters)
+  Initializer(std::vector<std::vector<IkPoint_3> >& input_polygons,
+    std::vector<typename Intersection_kernel::Plane_3>& input_planes, Data_structure& data, const Parameters& parameters, bool snap)
+    : m_input_polygons(input_polygons), m_input_planes(input_planes), m_data(data), m_parameters(parameters), m_snap(snap)
   {}
 
   void initialize(const std::array<typename Intersection_kernel::Point_3, 8>& bbox, std::vector<std::size_t>& input_polygons) {
@@ -125,6 +128,7 @@ public:
     create_bbox_meshes();
 
     double t5 = timer.time();
+
     // Starting from here the intersection graph is const, it won't change anymore.
     if (m_parameters.verbose)
       std::cout << "done" << std::endl;
@@ -158,6 +162,7 @@ private:
   std::vector<typename Intersection_kernel::Plane_3>& m_input_planes;
   Data_structure& m_data;
   const Parameters& m_parameters;
+  bool m_snap;
 
   void add_iface_from_iedge(std::size_t sp_idx, IEdge edge, IEdge next, bool cw) {
     IVertex s = m_data.source(edge);
@@ -478,7 +483,7 @@ private:
     std::vector<Vertex> &vts = m_data.kinetic_vertices();
     std::vector<CGAL::Oriented_side> sign;
     sign.reserve(25);
-    std::size_t counter = 0;
+
     bool plot = false;
     for (std::size_t sp_idx = 6; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
       Support_plane& sp = m_data.support_plane(sp_idx);
@@ -508,8 +513,6 @@ private:
           std::list<std::size_t> pos_side;
           if (m_data.split_polygon(poly, line_idx, pos_side))
             polygons.emplace_back(std::move(pos_side));
-
-          counter++;
         }
       }
 
@@ -555,7 +558,6 @@ private:
           bool prev_has_first = false, prev_has_second = false;
           bool next_has_first = false, next_has_second = false;
           bool add_prev = false, add_next = false;
-          std::size_t prev_constraint = std::size_t(-1), next_constraint = std::size_t(-1);
 
           // Identify right constraint by on which side of the moving edge the potential itarget is?
           if (vts[*prev].constraints.find(first) != vts[*prev].constraints.end())
@@ -947,7 +949,7 @@ private:
         const auto dir = line.to_vector();
         if (CGAL::is_zero(sp.data().exact_plane.orthogonal_vector() * dir)) {
           const std::vector<std::pair<IkFT, IVertex>>& vol = m_data.igraph().vertices_on_line(i);
-          sp.data().lines.insert(std::make_pair(i, IkLine_2(sp.to_2d(m_data.igraph().point_3(vol[0].second)), sp.to_2d(m_data.igraph().point_3(vol.back().second))))).first;
+          sp.data().lines.insert(std::make_pair(i, IkLine_2(sp.to_2d(m_data.igraph().point_3(vol[0].second)), sp.to_2d(m_data.igraph().point_3(vol.back().second)))));
         }
       }
     } // end of support plane
@@ -1107,13 +1109,12 @@ private:
     CGAL_assertion(polygon_2.size() == polygon_3.size());
   }
 
-  void restrict_to_bbox(const std::size_t support_plane_idx, std::vector<typename Intersection_kernel::Point_2>& polygon_2, bool snap = false) {
+  void restrict_to_bbox(const std::size_t support_plane_idx, std::vector<typename Intersection_kernel::Point_2>& polygon_2) {
     Support_plane &sp = m_data.support_plane(support_plane_idx);
     std::set<std::size_t> line_idx;
 
-    for (const auto &e : sp.data().iedges) {
+    for (const auto &e : sp.data().iedges)
       line_idx.insert(m_data.igraph().edge(e).line);
-    }
 
     std::vector<IkLine_2> lines;
     lines.reserve(line_idx.size());
@@ -1131,51 +1132,16 @@ private:
       CGAL_assertion(signs[i] != CGAL::ON_ORIENTED_BOUNDARY);
     }
 
-/*
-    From_exact from_exact;
-    std::ofstream poly_out(std::to_string(support_plane_idx) + "_poly_before_clip.polylines.txt");
-    poly_out << (polygon_2.size() + 1);
-    for (typename Intersection_kernel::Point_2& p : polygon_2) {
-      Point_3 p3 = from_exact(sp.to_3d(p));
-      poly_out << " " << p3;
-    }
-    Point_3 p3 = from_exact(sp.to_3d(polygon_2[0]));
-    poly_out << " " << p3 << std::endl;
-    poly_out.close();*/
+    IkPoint_3 bbox_min = m_data.point_3(IVertex(0));
+    IkPoint_3 bbox_max = m_data.point_3(IVertex(7));
 
-    for (std::size_t i = 0; i < lines.size(); i++) {
-      FT fmin = FLT_MAX, fmax = -FLT_MAX;
-      From_exact from_exact;
-      IkVector_2 dir = (lines[i].to_vector() * (FT(1.0) / CGAL::approximate_sqrt(lines[i].to_vector().squared_length())));
+    IkFT max_span = (std::max)(bbox_max.x() - bbox_min.x(), (std::max)(bbox_max.y() - bbox_min.y(), bbox_max.z() - bbox_min.z()));
 
-      for (typename Intersection_kernel::Point_2& p : polygon_2) {
-        FT t = from_exact(dir * (p - lines[i].point()));
-        fmin = (std::min)(fmin, t);
-        fmax = (std::max)(fmax, t);
-      }
+    IkFT tol2 = square(0.0000001 * max_span);
 
-      FT fspan = fmax - fmin;
-      fmin -= fspan * 0.2;
-      fmax += fspan * 0.2;
-
-/*
-      std::ofstream out(std::to_string(support_plane_idx) + "_clip_line_" + std::to_string(i) + ".poylines.txt");
-      Point_3 p1 = from_exact(sp.to_3d(lines[i].point() + (fmin * dir)));
-      Point_3 p2 = from_exact(sp.to_3d(lines[i].point() + (fmax * dir)));
-      out << 2 << " " << p1 << " " << p2 << std::endl;
-      out.close();*/
-    }
-
-    IkFT tol = 0.00001;
-    IkFT tol2 = square(tol);
-
-    int idx = 0;
     for (typename Intersection_kernel::Point_2 &p : polygon_2) {
       std::vector<std::size_t> refit;
-      std::vector<std::size_t> refit2;
       for (std::size_t i = 0; i < lines.size(); i++) {
-        Oriented_side s = lines[i].oriented_side(p);
-        //IkFT d2 = CGAL::squared_distance(lines[i], p);
         IkFT d = lines[i].a() * p.x() + lines[i].b() * p.y() + lines[i].c();
         IkFT l = CGAL::approximate_sqrt(square(lines[i].a()) + square(lines[i].b()));
         if (signs[i] == CGAL::ON_NEGATIVE_SIDE) {
@@ -1185,30 +1151,18 @@ private:
         else if (signs[i] == CGAL::ON_POSITIVE_SIDE)
           if (d < tol2 * l)
             refit.push_back(i);
-
-        if (s != signs[i] && s != CGAL::ON_ORIENTED_BOUNDARY)
-          refit2.push_back(i);
       }
       if (!refit.empty()) {
         if (refit.size() == 1) {
-/*
-          std::ofstream pout(std::to_string(support_plane_idx) + "_clipping_" + std::to_string(idx) + ".xyz");
-          pout << from_exact(sp.to_3d(p)) << std::endl;
-          pout.close();*/
           p = lines[refit.front()].projection(p);
         }
         else {
           CGAL_assertion(refit.size() == 2);
-/*
-          std::ofstream pout(std::to_string(support_plane_idx) + "_to_corner_" + std::to_string(idx) + ".xyz");
-          pout << from_exact(sp.to_3d(p)) << std::endl;
-          pout.close();*/
           auto res = CGAL::intersection(lines[refit[0]], lines[refit[1]]);
           CGAL_assertion_code(bool success = )CGAL::assign(p, res);
           CGAL_assertion(success);
         }
       }
-      idx++;
     }
     CGAL_assertion_code(
       Polygon_2<Intersection_kernel> poly(polygon_2.begin(), polygon_2.end());

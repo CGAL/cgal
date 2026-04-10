@@ -51,6 +51,37 @@
 namespace CGAL {
 
 /*!
+  \brief this class provides a minimal model of `KineticLCCItems`. It adds attributes to faces and volumes and defines the use of index-based `LinearCellComplex`.
+  */
+template<typename IntersectionTraits = CGAL::Exact_predicates_exact_constructions_kernel>
+class Kinetic_linear_cell_complex_min_items {
+public:
+  using Use_index = CGAL::Tag_true;
+  using Index_type = std::uint32_t;
+  using Intersection_kernel = IntersectionTraits;
+
+  struct Face_attribute {
+    int input_polygon_index; // Non-negative numbers represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Kinetic_space_partition_3::Face_support`.
+    typename Intersection_kernel::Plane_3 plane;
+    bool part_of_initial_polygon;
+  };
+
+  struct Volume_attribute {
+    typename Intersection_kernel::Point_3 barycenter;
+    std::size_t volume_id;
+  };
+
+  template<class LCC>
+  struct Dart_wrapper {
+    using Vertex_cell_attribute = CGAL::Cell_attribute_with_point< LCC, void>;
+    using Face_cell_attribute = CGAL::Cell_attribute<LCC, Face_attribute>;
+    using Volume_cell_attribute = CGAL::Cell_attribute<LCC, Volume_attribute>;
+
+    using Attributes = std::tuple<Vertex_cell_attribute, void, Face_cell_attribute, Volume_cell_attribute>;
+  };
+};
+
+/*!
 * \ingroup PkgKineticSpacePartitionRef
   \brief creates the kinetic partition of the bounding box of the polygons given as input data. The kinetic partition can either be initialized
   by using the default constructor \link CGAL::Kinetic_space_partition_3::Kinetic_space_partition_3() `Kinetic_space_partition_3()`\endlink, `insert()` to provide input data and `initialize()` to prepare the partition or by using the constructor with input parameters.
@@ -81,35 +112,6 @@ public:
     XMIN        = -5,
     ZMAX        = -6,
     OCTREE_FACE = -7,
-  };
-
-  /*!
-  \brief this class provides a minimal model of `KineticLCCItems`. It adds attributes to faces and volumes and defines the use of index-based `LinearCellComplex`.
-  */
-  class Linear_cell_complex_min_items {
-  public:
-    typedef CGAL::Tag_true Use_index;
-    typedef std::uint32_t Index_type;
-
-    struct Face_attribute {
-      Face_support input_polygon_index; // Non-negative numbers represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Face_support`.
-      typename Intersection_kernel::Plane_3 plane;
-      bool part_of_initial_polygon;
-    };
-
-    struct Volume_attribute {
-      typename Intersection_kernel::Point_3 barycenter;
-      std::size_t volume_id;
-    };
-
-    template<class LCC>
-    struct Dart_wrapper {
-      typedef CGAL::Cell_attribute_with_point< LCC, void > Vertex_cell_attribute;
-      typedef CGAL::Cell_attribute< LCC, Face_attribute > Face_cell_attribute;
-      typedef CGAL::Cell_attribute< LCC, Volume_attribute > Volume_cell_attribute;
-
-      typedef std::tuple<Vertex_cell_attribute, void, Face_cell_attribute, Volume_cell_attribute> Attributes;
-    };
   };
 
 private:
@@ -538,7 +540,6 @@ public:
 
     split_octree();
     m_partitions.resize(m_partition_nodes.size());
-    std::cout << m_partition_nodes.size() << " nodes" << std::endl;
     std::iota(m_partitions.begin(), m_partitions.end(), 0);
 
     for (std::size_t idx : m_partitions) {
@@ -547,7 +548,7 @@ public:
 
       partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-");
 
-      Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters);
+      Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters, m_partitions.size() != 1);
       initializer.initialize(partition.bbox, partition.input_polygons);
     }
 
@@ -562,7 +563,7 @@ public:
   \brief propagates the kinetic polygons in the initialized partition.
 
   \param k
-   maximum number of allowed intersections for each input polygon before its expansion stops.
+   maximum number of allowed intersections for each vertex of the polygon before its expansion stops.
 
   \pre initialized partition and `k != 0`
   */
@@ -599,12 +600,6 @@ public:
 
         return;
       }
-
-//       if (k == 0) { // for k = 0, we skip propagation
-//         std::cout << "k needs to be a positive number" << std::endl;
-//
-//         return;
-//       }
 
       if (m_parameters.verbose) {
         std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
@@ -692,9 +687,6 @@ public:
     make_conformal(0);
     conformal_time = timer.time();
 
-//     if (m_parameters.verbose)
-//       check_tjunctions();
-
     // Clear unused data structures
     for (std::size_t i = 0; i < m_partitions.size(); i++) {
       m_partition_nodes[i].m_data->pface_neighbors().clear();
@@ -740,7 +732,7 @@ public:
   }
 
   /*!
-   \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_space_partition_3::Linear_cell_complex_min_items`.
+   \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
@@ -882,7 +874,7 @@ public:
       faces_of_volume.clear();
     }
 
-    // Todo: Remove check if all volumes were added
+    // Check whether all volumes were added
     CGAL_assertion_code(
     for (std::size_t i = 0; i < added_volumes.size(); i++)
       if (!added_volumes[i])
@@ -1856,12 +1848,7 @@ private:
     vertices.resize(polygon.size());
     for (std::size_t i = 0; i < polygon.size(); i++) {
       VI& vi = polygon[i]->info();
-      // Is this check actually meaningless as partition indices now start at 0?
-      // Check whether they are initialized as 0 and where it is used as indicator for something.
-/*
-      if (vi.idA2.first == 0 || vi.idB2.first == 0) {
-        std::cout << "invalid vertex id" << std::endl;
-      }*/
+
       if (vi.idA2.first < vi.idB2.first)
         vertices[i] = vi.idA2;
       else if (vi.idB2.first != static_cast<std::size_t>(-1))
@@ -1885,15 +1872,6 @@ private:
       if (fh->info().id2.first != static_cast<std::size_t>(-1))
         continue;
 
-      // 4 different cases: no border edge, 1, 2 or 3
-      // Check 1, 2, 3
-      // if first is not, continue
-      // if first move in other direction? search start
-
-      // Easier approach, don't make a list of edges, but a list of vertices
-      // Find first pair of vertices, then just loop around last vertex using Face_circulator
-      // -> Triangulation only has vertices and faces, no easy way to loop over edges
-
       std::vector<Vertex_handle> face;
 
       for (std::size_t i = 0; i < 3; i++)
@@ -1907,7 +1885,6 @@ private:
       if (face.empty())
         continue;
       else {
-        //dump_point(face.back(), "last.xyz");
         Face_handle last = fh;
 
         // Mark seed face as segmented
@@ -1943,11 +1920,6 @@ private:
             eit++;
             CGAL_assertion(eit != first);
           } while (eit != first);
-          // If last vertex is equal to first vertex, stop
-          // Take last vertex and face
-          // First find index of vertex in that face
-          // Check if opposite face of next edge, if not same, add next vertex and reloop
-          // if not, check next face
 
           CGAL_assertion(face.size() < 100);
         }
@@ -1960,9 +1932,6 @@ private:
         set_face(id.idA2, id.idB2, replacedA, face);
         set_face(id.idB2, id.idA2, replacedB, face);
       }
-
-      // Checking for border edges. If opposite faces do not exist or don't have the same indices, the edge belongs to a new face.
-      // cit->neighbor(i) is the face opposite of vertex(i), meaning on the other side of the edge between vertex((i+1)%3) and vertex((i+2)%3)
     }
   }
 
@@ -2027,8 +1996,6 @@ private:
 
         int volume = static_cast<int>(c[f][e].volume);
 
-        //auto it = (c[f][e].vA < c[f][e].vB) ? constraint2edge.find(std::make_pair(c[f][e].vA, c[f][e].vB)) : constraint2edge.find(std::make_pair(c[f][e].vB, c[f][e].vA));
-
         // Extract edge
         std::vector<Index> vertices_of_edge;
         for (typename CDTplus::Vertices_in_constraint_iterator vi = cdtC.vertices_in_constraint_begin(id); vi != cdtC.vertices_in_constraint_end(id); vi++) {
@@ -2037,11 +2004,8 @@ private:
           else vertices_of_edge.push_back((*vi)->info().idA2);
         }
 
-        // Not necessary, as I am replacing vertices anyway?
         if (vertices_of_edge.size() == 2)
           continue;
-
-        //not_skipped++;
 
         // Check length of constraint
         // size 2 means it has not been split, thus there are no t-junctions.
@@ -2062,8 +2026,6 @@ private:
         int other = (n.first == volume) ? n.second : n.first;
         auto p2 = find_portal(volume, other, c[f][e].vA, c[f][e].vB, idx2);
 
-        // For cdtA, there should be two portals and for cdtB only one
-        // How to discard the traversing one?
         if (idx != static_cast<std::size_t>(-7)) {
           // Check if the portal idx is traversing.
           // The neighbors of a portal can be negative if it is not in the current face between the octree nodes.
@@ -2193,12 +2155,6 @@ private:
       make_conformal(m_octree->child(node, i));
 
     // Make itself conformal
-    // Get faces between child nodes
-    // do in inverse dimension order (like inverse splitting order, start by 2 or 1 and walk down to 0)
-    // follow cdt approach in split_octree
-
-    // Order of children?
-    // x, y, z planes can be merged independently
     for (std::size_t dim = 0; dim < 3; dim++) {
       std::vector<Index> lower, upper;
       typename Intersection_kernel::Plane_3 plane;
@@ -2206,7 +2162,6 @@ private:
       collect_opposing_faces(node, dim, lower, upper, plane);
 
       make_conformal(lower, upper, plane);
-
     }
   }
 
@@ -2357,6 +2312,56 @@ private:
       std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
   }
 };
+
+inline
+void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename Kinetic_linear_cell_complex_min_items<>::Face_attribute& fa) {
+  node.add("v.a", fa.plane.a());
+  node.add("v.b", fa.plane.b());
+  node.add("v.c", fa.plane.c());
+  node.add("v.d", fa.plane.d());
+  node.add("v.ip", fa.input_polygon_index);
+  node.add("v.poip", fa.part_of_initial_polygon);
+}
+
+inline
+void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename Kinetic_linear_cell_complex_min_items<>::Volume_attribute& va) {
+  node.add("v.x", va.barycenter.x());
+  node.add("v.y", va.barycenter.y());
+  node.add("v.z", va.barycenter.z());
+  node.add("v.id", va.volume_id);
+}
+
+template<> inline
+void read_cmap_attribute_node
+(const boost::property_tree::ptree::value_type& v, typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Point_3& val)
+{
+  double x = v.second.get<double>("x");
+  double y = v.second.get<double>("y");
+  double z = v.second.get<double>("z");
+  val = typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Point_3(x, y, z);
+}
+
+template<> inline
+void read_cmap_attribute_node
+(const boost::property_tree::ptree::value_type& v, typename Kinetic_linear_cell_complex_min_items<>::Face_attribute& fa) {
+  double a = v.second.get<double>("a");
+  double b = v.second.get<double>("b");
+  double c = v.second.get<double>("c");
+  double d = v.second.get<double>("d");
+  fa.plane = typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Plane_3(a, b, c, d);
+  fa.input_polygon_index = v.second.get<int>("ip");
+  fa.part_of_initial_polygon = v.second.get<bool>("poip");
+}
+
+template<> inline
+void read_cmap_attribute_node
+(const boost::property_tree::ptree::value_type& v, typename Kinetic_linear_cell_complex_min_items<>::Volume_attribute& va) {
+  double x = v.second.get<double>("x");
+  double y = v.second.get<double>("y");
+  double z = v.second.get<double>("z");
+  va.barycenter = typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Point_3(x, y, z);
+  va.volume_id = v.second.get<int>("id");
+}
 
 } // namespace CGAL
 

@@ -95,7 +95,6 @@ public:
     }
   };
 
-  // ToDo:: check all kind of iterators/circulators
   using PVertex_iterator = boost::transform_iterator<Make_PSimplex<PVertex>, typename Mesh::Vertex_range::iterator>;
   using PVertices = CGAL::Iterator_range<PVertex_iterator>;
 
@@ -920,7 +919,6 @@ public:
     CGAL_assertion(it != vol.end());
 
     // Check direction for choosing edge
-    IVertex res = -1;
     Support_plane& sp = m_support_planes[v.sp_idx];
     typename Intersection_kernel::Vector_3 v3d = sp.exact_plane().base1() * v.v[0] + sp.exact_plane().base2() * v.v[1];
     if (CGAL::is_positive(v3d * m_intersection_graph.line(line_idx).to_vector()))
@@ -946,7 +944,6 @@ public:
 
     const std::vector<std::pair<IkFT, IVertex> >& vol = m_intersection_graph.vertices_on_line(line_idx);
 
-    //CGAL_assertion(vol[0].first <= u && u <= vol.back().first);
     if (u < vol[0].first)
       u = vol[0].first;
     else if (vol.back().first < u)
@@ -1035,7 +1032,6 @@ public:
       return false;
     }
 
-/*
     if (zeroes) {
       std::cout << "vertex exactly on line" << std::endl;
       auto it = poly.end();
@@ -1048,7 +1044,7 @@ public:
           sign.erase(it2);
         }
       } while (it != poly.begin());
-    }*/
+    }
 
     //export_poly_line(poly, line, m_data.prefix() + std::to_string(counter) + "_" + std::to_string(sp_idx) + "_poly_" + std::to_string(i) + "_line" + std::to_string(line_idx) + ".polylines.txt");
 
@@ -1127,15 +1123,7 @@ public:
         vts[second].moving = moving;
         vts[second].other = first;
         vts[first].other = second;
-
-        // Link vertices
-        // forward constraints? if both adjacent vertices constrained by the same line -> new vertex is also constrained by the same line and not moving
-        // Add constraints -> check if there are two constraints -> not moving
       }
-    }
-    else {
-      std::cout << "pos-neg not adjacent" << std::endl;
-      // simply duplicate point
     }
 
     if (neg_pos_adjacent) {
@@ -1186,10 +1174,6 @@ public:
         vts[second].other = first;
         vts[first].other = second;
       }
-    }
-    else {
-      std::cout << "neg-pos not adjacent" << std::endl;
-      // simply duplicate point
     }
 
     return !pos.empty() && !poly.empty();
@@ -1268,7 +1252,6 @@ public:
 
   IFace locate_iface(std::size_t sp_idx, const IkPoint_2& p) const {
     const Support_plane &sp = m_support_planes[sp_idx];
-    CGAL_assertion_code(IFace face = IFace(-1);)
     for (auto& f : sp.ifaces()) {
       if (inside_iface(sp, p, f))
         return f;
@@ -1405,19 +1388,6 @@ public:
   }
 
   void add_iedge(const std::set<std::size_t>& support_planes_idx, std::vector<IVertex>& vertices) {
-/*
-    const auto source = m_intersection_graph.point_3(vertices.front());
-    std::sort(vertices.begin(), vertices.end(),
-      [&](const IVertex& a, const IVertex& b) -> bool {
-        const auto ap = m_intersection_graph.point_3(a);
-        const auto bp = m_intersection_graph.point_3(b);
-        const auto sq_dist_a = CGAL::squared_distance(source, ap);
-        const auto sq_dist_b = CGAL::squared_distance(source, bp);
-        return (sq_dist_a < sq_dist_b);
-      }
-    );
-    const auto last = m_intersection_graph.point_3(vertices.back());*/
-
     typename Intersection_kernel::Line_3 line;
     auto it = support_planes_idx.begin();
     CGAL_assertion_code(bool intersect =) intersection(m_support_planes[*it++].exact_plane(), m_support_planes[*it++].exact_plane(), line);
@@ -1444,8 +1414,6 @@ public:
     }
 
     for (std::size_t i = 0; i < sorted_vertices.size() - 1; ++i) {
-
-      //CGAL_assertion(!is_zero_length_iedge(vertices[i], vertices[i + 1]));
       const auto pair = m_intersection_graph.add_edge(
         sorted_vertices[i].second, sorted_vertices[i + 1].second, support_planes_idx);
       const auto iedge = pair.first;
@@ -1619,11 +1587,6 @@ public:
     return support_plane(support_plane_idx).to_3d(point_2);
   }
 
-/*
-  IkPoint_3 to_3d(const std::size_t support_plane_idx, const IkPoint_2& point_2) const {
-    return support_plane(support_plane_idx).to_3d(point_2);
-  }*/
-
   Point_3 point_3(const PVertex& pvertex) const {
     return support_plane(pvertex.first).point_3(pvertex.second);
   }
@@ -1655,8 +1618,6 @@ public:
     }
     CGAL_assertion(polygon.size() == points.size());
 
-    // const bool is_simple = support_plane(sp_idx).is_simple_polygon(polygon);
-    // const bool is_convex = support_plane(sp_idx).is_convex_polygon(polygon);
     const bool is_valid = support_plane(sp_idx).is_valid_polygon(polygon);
 
     if (!is_valid) {
@@ -1665,8 +1626,6 @@ public:
       }
     }
 
-    // CGAL_assertion_msg(is_simple, "ERROR: POLYGON IS NOT SIMPLE!");
-    // CGAL_assertion_msg(is_convex, "ERROR: POLYGON IS NOT CONVEX!");
     CGAL_assertion_msg(is_valid, "ERROR: POLYGON IS NOT VALID!");
     return is_valid;
   }
