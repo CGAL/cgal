@@ -895,16 +895,14 @@ protected:
   }
 
   auto constraint_extremities(Constrained_polyline_id c_id) const {
-      CGAL_assertion(std::find(this->constraint_hierarchy.constraints_begin(),
-                               this->constraint_hierarchy.constraints_end(), c_id) != this->constraint_hierarchy.constraints_end());
-      CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
-                     this->constraint_hierarchy.vertices_in_constraint_end(c_id));
+      CGAL_assertion(this->constraint_hierarchy.is_valid_constraint(c_id));
       if(debug().constraint_hierarchy()) {
         std::cerr << "constraint " << static_cast<void*>(c_id.vl_ptr()) << " has "
                   << c_id.vl_ptr()->skip_size() << " vertices\n";
       }
       const auto begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       const auto end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+      CGAL_assertion(begin != end);
       const auto c_va = *begin;
       const auto c_vb = *std::prev(end);
     return std::make_pair(c_va, c_vb);
