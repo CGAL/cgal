@@ -1157,6 +1157,13 @@ public:
   /// \name Checking
   /// These methods are mainly a debugging help for the users of advanced features.
   /// @{
+  /*!
+  \brief returns whether the triangulation is valid.
+  When `verbose` is set to `true`, messages describing the first invalidity encountered are
+  printed.
+  */
+  bool is_valid(bool verbose = false) const { return cdt_impl.is_valid(verbose); }
+
   /// @}
 
   // -----------------------
@@ -1183,7 +1190,6 @@ public:
 
   // Validation helpers
   bool is_conforming() const                        { return cdt_impl.is_conforming(); }
-  bool is_valid(bool verbose = false) const         { return cdt_impl.is_valid(verbose); }
 
   // IO helpers for debugging
   bool write_missing_segments_file(std::ostream& out) { return cdt_impl.write_missing_segments_file(out); }
