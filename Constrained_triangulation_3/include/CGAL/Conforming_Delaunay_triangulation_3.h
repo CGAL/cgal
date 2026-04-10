@@ -185,6 +185,7 @@ inline auto& tasks_manager() {
       COMPUTE_DISTANCES,
       CONFORMING,
       CDT,
+      MOVE_STEINER_VERTICES,
       OUTPUT,
       VALIDATION,
       NB_TASKS
@@ -199,6 +200,7 @@ inline auto& tasks_manager() {
       __itt_string_handle_create("CDT_3: compute distances"),
       __itt_string_handle_create("CDT_3: conforming"),
       __itt_string_handle_create("CDT_3: cdt"),
+      __itt_string_handle_create("CDT_3: move Steiner vertices"),
       __itt_string_handle_create("CDT_3: outputs"),
       __itt_string_handle_create("CDT_3: validation")
     };
@@ -237,6 +239,7 @@ inline auto& tasks_manager() {
     Scope_guard COMPUTE_DISTANCES_TASK_guard() { return make_task_scope_guard(COMPUTE_DISTANCES); }
     Scope_guard CONFORMING_TASK_guard() { return make_task_scope_guard(CONFORMING); }
     Scope_guard CDT_TASK_guard() { return make_task_scope_guard(CDT); }
+    Scope_guard MOVE_STEINER_VERTICES_TASK_guard() { return make_task_scope_guard(MOVE_STEINER_VERTICES); }
     Scope_guard OUTPUT_TASK_guard() { return make_task_scope_guard(OUTPUT); }
     Scope_guard VALIDATION_TASK_guard() { return make_task_scope_guard(VALIDATION); }
 
@@ -276,6 +279,10 @@ inline auto CDT_3_CDT_TASK_guard() {
 
 inline auto CDT_3_OUTPUT_TASK_guard() {
   return CDT_3::internal::tasks_manager().OUTPUT_TASK_guard();
+}
+
+inline auto CDT_3_MOVE_STEINER_VERTICES_TASK_guard() {
+  return CDT_3::internal::tasks_manager().MOVE_STEINER_VERTICES_TASK_guard();
 }
 
 inline auto CDT_3_VALIDATION_TASK_guard() {

@@ -741,8 +741,12 @@ int go(Mesh mesh, CDT_options options) {
 
   // Move Steiner vertices to the volume if requested
   if(options.move_Steiner_vertices_to_the_volume) {
-    auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
+    auto move_vertices_guard = CGAL::CDT_3_MOVE_STEINER_VERTICES_TASK_guard();
     cdt.move_Steiner_vertices_to_the_volume();
+    if(!options.quiet) {
+      std::cout << "[timings] moved Steiner vertices to the volume in "
+                    << move_vertices_guard.time_ms() << " ms\n";
+    }
   }
 
   return EXIT_SUCCESS;
