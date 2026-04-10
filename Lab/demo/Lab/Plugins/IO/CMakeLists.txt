@@ -27,7 +27,7 @@ target_link_libraries(nef_io_plugin PRIVATE scene_nef_polyhedron_item)
 
 cgal_lab_plugin(off_plugin OFF_io_plugin
   KEYWORDS Viewer Mesh_3 PointSetProcessing Classification PMP IO_surface_meshes)
-target_link_libraries(off_plugin PRIVATE scene_polygon_soup_item scene_points_with_normal_item scene_surface_mesh_item)
+target_link_libraries(off_plugin PRIVATE scene_polygon_soup_item scene_points_with_normal_item scene_polylines_item scene_surface_mesh_item)
 
 cgal_lab_plugin(off_to_nef_plugin OFF_to_nef_io_plugin KEYWORDS Viewer)
 target_link_libraries(off_to_nef_plugin PRIVATE scene_nef_polyhedron_item)

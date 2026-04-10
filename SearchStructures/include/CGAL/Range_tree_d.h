@@ -203,7 +203,7 @@ protected:
 
   // recursive function
   // (current,last) describe an interval of length n of sorted elements,
-  // for this interval a tree is build containing these elements.
+  // for this interval a tree is built containing these elements.
   // the most left child is returned in prevchild.
 
   template <class T>
@@ -427,7 +427,7 @@ public:
   }
 #endif
 
-  // the tree is build according to the input elements in [first,last)
+  // the tree is built according to the input elements in [first,last)
   template<class T>
   inline
   bool make_tree_impl(T first,

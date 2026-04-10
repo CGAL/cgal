@@ -199,7 +199,7 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 ///     \cgalParamDefault{an array of size `METIS_NOPTIONS` with value type `idx_t`,
 ///                       initialized using the function `METIS_SetDefaultOptions()`}
 ///     \cgalParamExtra{The many options of METIS are not described here. Instead, users should refer
-///                     to the <a href="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf">documentation</a>
+///                     to the <a href="https://github.com/KarypisLab/METIS/blob/master/manual/manual.pdf">documentation</a>
 ///                     of METIS directly.}
 ///   \cgalParamNEnd
 ///

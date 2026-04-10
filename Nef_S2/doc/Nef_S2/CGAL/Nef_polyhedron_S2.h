@@ -16,8 +16,8 @@ under the topological operations `boundary`, `closure`, and
 \cgalHeading{Parameters}
 
 \code
-template< class Nef_polyhedronTraits_S2,
-          class Nef_polyhedronItems_S2 = CGAL::SM_items,
+template< class NefPolyhedronTraits_S2,
+          class NefPolyhedronItems_S2 = CGAL::SM_items,
           class Nef_polyhedronMarks = bool >
 class Nef_polyhedron_S2;
 \endcode
@@ -30,7 +30,7 @@ modeling \f$\mathbb{Z}\f$, or `Cartesian`, `Simple_cartesian` parametrized with
 type modeling \f$\mathbb{Q}\f$.
 
 The second parameter and the third parameter are for future considerations.
-Neither `Nef_polyhedronItems_S2` nor `Nef_polyhedronMarks` is
+Neither `NefPolyhedronItems_S2` nor `Nef_polyhedronMarks` is
 specified, yet. Do not use other than the default types for these two
 template parameters.
 
@@ -38,7 +38,7 @@ template parameters.
 
 As Nef
 polyhedra are the result of forming complements and intersections
-starting from a set `H` of half-spaces that are defined by
+starting from a set `H` of halfspaces that are defined by
 oriented lines in the plane, they can be represented by an attributed
 plane map \f$ M = (V,E,F)\f$. For topological queries within `M` the
 following types and operations allow exploration access to this
@@ -46,7 +46,7 @@ structure.
 
 \cgalHeading{Input and Output}
 
-A Nef polyhedron `N` can be visualized in an open GL window. The
+A Nef polyhedron `N` can be visualized in an OpenGL window. The
 output operator is defined in the file
 `CGAL/IO/Nef_polyhedron_2_Window-stream.h`.
 
@@ -55,8 +55,8 @@ output operator is defined in the file
 Nef polyhedra are implemented on top of a halfedge data structure and
 use linear space in the number of vertices, edges and facets.
 Operations like `empty` take constant time. The operations
-`clear`, `complement`, `interior`, `closure`,
-`boundary`, `regularization`, input and output take linear
+`clear()`, `complement()`, `interior()`, `closure()`,
+`boundary()`, `regularization()`, input and output take linear
 time. All binary set operations and comparison operations take time
 \cgalBigO{n \log n} where \f$ n\f$ is the size of the output plus the size of the
 input.

@@ -361,7 +361,7 @@ public:
     Scene_item* item = items.front();
     const Scene_image_item* im_item = qobject_cast<const Scene_image_item*>(item);
 
-    point_image p_im = *im_item->image()->image();
+    CGAL::point_image p_im = *im_item->image()->image();
     bool ok = _writeImage(&p_im, fileinfo.filePath().toUtf8()) == 0;
     if(ok)
       items.pop_front();
@@ -1112,7 +1112,7 @@ bool Io_image_plugin::canLoad(QFileInfo) const
 template<typename Word>
 void convert(Image* image)
 {
-  float *f_data = (float*)ImageIO_alloc(image->xdim()*image->ydim()*image->zdim()*sizeof(float));
+  float *f_data = (float*)CGAL::ImageIO_alloc(image->xdim()*image->ydim()*image->zdim()*sizeof(float));
   Word* d_data = (Word*)(image->data());
 
   // convert image from double to float
@@ -1126,10 +1126,10 @@ void convert(Image* image)
     }
   }
 
-  ImageIO_free(d_data);
+  CGAL::ImageIO_free(d_data);
   image->image()->data = (void*)f_data;
   image->image()->wdim = 4;
-  image->image()->wordKind = WK_FLOAT;
+  image->image()->wordKind = CGAL::WK_FLOAT;
 }
 
 
@@ -1220,11 +1220,11 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
         {
           switch(raw_dialog.image_word_kind())
           {
-          case WK_FLOAT:
+          case CGAL::WK_FLOAT:
             is_gray = true;
             convert<double>(image);
             break;
-          case WK_FIXED:
+          case CGAL::WK_FIXED:
           {
             switch(raw_dialog.image_word_size())
             {

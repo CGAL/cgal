@@ -22,14 +22,14 @@ namespace CGAL {
  * by `Arr_linear_traits_2<Kernel>`.
  *
  * Note that an entire plane has no boundaries, and the projection of a
- * half-plane is an (unbounded) line. Naturally, rays and segments may occur as
+ * halfplane is an (unbounded) line. Naturally, rays and segments may occur as
  * a result of overlaying projections of several half planes. Indeed,
  * `Env_plane_traits_3` inherits from the traits class that substitutes
  * `ArrLinearTraits`, and extends it by adding operations on planes and half
  * planes.  The nested `Xy_monotone_surface_3` and `Surface_3` types refer to
  * the same type. They are constructible from a `Kernel::Plane_3` in case of an
  * entire plane, or from `Kernel::Plane_3` and `Kernel::Line_2` in case of a
- * half-plane. The line orientation determines which half is considered.
+ * halfplane. The line orientation determines which half is considered.
  *
  * \cgalModels{EnvelopeTraits_3}
  */

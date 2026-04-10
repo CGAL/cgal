@@ -5,6 +5,7 @@ Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
+Filtered_kernel
 Installation
 Intersections_2
 Intersections_3
@@ -12,10 +13,10 @@ Interval_support
 Kernel_23
 Modular_arithmetic
 Number_types
+Polygon_mesh_processing
 Profiling_tools
 Property_map
 STL_Extension
 Spatial_searching
 Stream_support
 Surface_mesh_simplification
-Polygon_mesh_processing

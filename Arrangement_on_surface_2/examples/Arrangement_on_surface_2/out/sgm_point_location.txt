@@ -1,0 +1,6 @@
+The point (-1 0 0 2) is located on a vertex: -1 0 -0 2
+The point (0 -1 0 0) is located on a vertex: -0 -1 0 0
+The point (0 0 -1 1) is located on a vertex: 0 -0 -1 1
+The point (-1 0 0 2) is located on a vertex: -1 0 -0 2
+The point (0 -1 0 0) is located on a vertex: -0 -1 0 0
+The point (0 0 -1 1) is located on a vertex: 0 -0 -1 1
