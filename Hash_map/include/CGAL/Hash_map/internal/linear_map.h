@@ -16,6 +16,8 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 
+#include <utility>
+
 namespace CGAL {
 namespace internal {
 
@@ -33,7 +35,7 @@ public:
         Value value_;
 
         static constexpr Key null_key() {
-            return (std::numeric_limits<std::size_t>::max)();
+            return (std::numeric_limits<Key>::max)();
         }
 
         Entry() : key_(null_key()) {}
@@ -43,6 +45,7 @@ public:
     };
 
     typedef Entry* Item;
+    typedef linear_map<Value, Allocator> Self;
 
 private:
     typedef std::allocator_traits<Allocator> Alloc_traits;
@@ -167,10 +170,71 @@ public:
         if (table_) deallocate_table(table_, capacity_);
     }
 
-    linear_map(const linear_map&) = delete;
-    linear_map& operator=(const linear_map&) = delete;
-    linear_map(linear_map&&) = delete;
-    linear_map& operator=(linear_map&&) = delete;
+    linear_map(const Self& other)
+        : allocator_(other.allocator_),
+          table_(nullptr),
+          capacity_(other.capacity_),
+          size_(other.size_),
+          mask_(other.mask_),
+          hash_shift_(other.hash_shift_),
+          default_value_(other.default_value_),
+          reserve_(other.reserve_) {
+        if (other.table_) {
+            table_ = allocate_table(capacity_);
+            for (std::size_t i = 0; i < capacity_; ++i) {
+                table_[i] = other.table_[i];
+            }
+        }
+    }
+
+    Self& operator=(const Self& other) {
+        if (this != &other) {
+            clear();
+
+            allocator_ = other.allocator_;
+            capacity_ = other.capacity_;
+            size_ = other.size_;
+            mask_ = other.mask_;
+            hash_shift_ = other.hash_shift_;
+            default_value_ = other.default_value_;
+            reserve_ = other.reserve_;
+
+            if (other.table_) {
+                table_ = allocate_table(capacity_);
+                for (std::size_t i = 0; i < capacity_; ++i) {
+                    table_[i] = other.table_[i];
+                }
+            }
+        }
+        return *this;
+    }
+
+    linear_map(Self&& other) noexcept(std::is_nothrow_move_constructible_v<Allocator> && std::is_nothrow_move_constructible_v<Value>)
+        : allocator_(std::move(other.allocator_)),
+          table_(std::exchange(other.table_, nullptr)),
+          capacity_(std::exchange(other.capacity_, 0)),
+          size_(std::exchange(other.size_, 0)),
+          mask_(std::exchange(other.mask_, 0)),
+          hash_shift_(std::exchange(other.hash_shift_, 0)),
+          default_value_(std::move(other.default_value_)),
+          reserve_(std::exchange(other.reserve_, 0)) {
+    }
+
+    Self& operator=(Self&& other) noexcept(std::is_nothrow_move_assignable_v<Allocator> && std::is_nothrow_move_assignable_v<Value>) {
+        if (this != &other) {
+            clear();
+
+            allocator_ = std::move(other.allocator_);
+            table_ = std::exchange(other.table_, nullptr);
+            capacity_ = std::exchange(other.capacity_, 0);
+            size_ = std::exchange(other.size_, 0);
+            mask_ = std::exchange(other.mask_, 0);
+            hash_shift_ = std::exchange(other.hash_shift_, 0);
+            default_value_ = std::move(other.default_value_);
+            reserve_ = std::exchange(other.reserve_, 0);
+        }
+        return *this;
+    }
 
     Value& xdef() { return default_value_; }
     const Value& cxdef() const { return default_value_; }
@@ -197,10 +261,11 @@ public:
      * @brief Clears all entries from the map.
      */
     void clear() {
-        if (!table_) return;
-        for (std::size_t i = 0; i < capacity_; ++i) {
-            table_[i].set_empty();
+        if (table_) {
+            deallocate_table(table_, capacity_);
+            table_ = nullptr;
         }
+        capacity_ = 0;
         size_ = 0;
     }
 
