@@ -66,33 +66,23 @@ struct Three_point_cut_plane_traits
     }
   };
 
-  struct Compute_squared_distance_3
-  {
-    using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
-    FT operator()(const Plane_3& plane, const Point_3& p)
+  struct Construct_point_on_3{
+    Point_3 operator()(const Plane_3& plane)
     {
-      // Not normalized
-      typename Kernel::Plane_3 pl(plane[0], plane[1], plane[2]);
-      return Compute_scalar_product_3()(Vector_3(ORIGIN, p), pl.orthogonal_vector())+pl.d();
+      return plane[0];
     }
   };
 
-  Oriented_side_3 oriented_side_3_object() const
-  {
-    return Oriented_side_3();
-  }
+  Oriented_side_3 oriented_side_3_object() const { return Oriented_side_3(); }
+  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const { return Construct_plane_line_intersection_point_3(); }
+  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const { return Construct_orthogonal_vector_3(); }
+  Construct_point_on_3 construct_point_on_3_object() const { return Construct_point_on_3(); }
 
-  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const
-  {
-    return Construct_plane_line_intersection_point_3();
-  }
+  using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
+  using Construct_vector_3 = typename Kernel::Construct_vector_3;
 
-  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const
-  {
-    return Construct_orthogonal_vector_3();
-  }
-
-  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
+  Compute_scalar_product_3 compute_scalar_product_3_object(){ return Kernel().compute_scalar_product_3_object(); }
+  Construct_vector_3 construct_vector_3_object(){ return Kernel().construct_vector_3_object(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect

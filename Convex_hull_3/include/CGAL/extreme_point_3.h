@@ -96,7 +96,6 @@ extreme_point_3(const PointRange& r, const Direction &dir, const NamedParameters
       Default_GT
     > ::type;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-  using Vector_3 = typename GT::Vector_3;
 
   using Default_geom_traits_converter = Cartesian_converter<Point_GT, GT>;
   using GTC=typename internal_np::Lookup_named_param_def <
@@ -106,15 +105,14 @@ extreme_point_3(const PointRange& r, const Direction &dir, const NamedParameters
     > ::type;
   GTC converter = choose_parameter<GTC>(get_parameter(np, internal_np::geom_traits_converter));
 
-  auto vector_3 = gt.construct_vector_3_object();
-  auto csp = gt.compare_scalar_product_3_object();
+  auto csp = gt.compare_projection_along_direction_3_object();
 
   typename PointRange::const_iterator argmax=r.begin();
-  Vector_3 vec_max = vector_3(ORIGIN, converter(get(point_map, *argmax)));
+  auto p_max = converter(get(point_map, *argmax));
   for(typename PointRange::const_iterator it=++r.begin(); it!=r.end(); ++it){
-    Vector_3 vec = vector_3(ORIGIN, converter(get(point_map, *it)));
-    if(csp(vec_max, dir.vector(), vec, dir.vector())==SMALLER){
-      vec_max=vec;
+    const auto& p = converter(get(point_map, *it));
+    if(csp(p_max, p, dir)==SMALLER){
+      p_max=p;
       argmax=it;
     }
   }
@@ -185,7 +183,6 @@ extreme_vertex_3(const Graph& g, const Direction &dir, const NamedParameters &np
       Default_GT
     > ::type;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-  using Vector_3 = typename GT::Vector_3;
 
   using Default_geom_traits_converter = Cartesian_converter<GraphGT, GT>;
   using GTC=typename internal_np::Lookup_named_param_def <
@@ -195,8 +192,7 @@ extreme_vertex_3(const Graph& g, const Direction &dir, const NamedParameters &np
     > ::type;
   GTC converter = choose_parameter<GTC>(get_parameter(np, internal_np::geom_traits_converter));
 
-  auto vector_3 = gt.construct_vector_3_object();
-  auto csp = gt.compare_scalar_product_3_object();
+  auto csp = gt.compare_projection_along_direction_3_object();
 
   // If the number of vertices is small, simply test all vertices
   if(vertices(g).size()<20)
@@ -204,14 +200,14 @@ extreme_vertex_3(const Graph& g, const Direction &dir, const NamedParameters &np
 
   // Walks on the mesh to find a local maximum
   vertex_descriptor argmax = *vertices(g).begin();
-  Vector_3 vec_max = vector_3(ORIGIN, converter(get(point_map,argmax)));
+  auto p_max = converter(get(point_map,argmax));
   bool is_local_max;
   do{
     is_local_max=true;
     for(auto v: vertices_around_target(argmax, g)){
-      Vector_3 vec = vector_3(ORIGIN, converter(get(point_map, v)));
-      if(csp(vec_max, dir.vector(), vec, dir.vector())==SMALLER){
-        vec_max = vec;
+      const auto& p = converter(get(point_map, v));
+      if(csp(p_max, p, dir)==SMALLER){
+        p_max = p;
         argmax = v;
         is_local_max=false; // repeat with the new vertex
         break;

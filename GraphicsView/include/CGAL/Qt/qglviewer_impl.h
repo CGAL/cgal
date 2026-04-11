@@ -2076,6 +2076,9 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     static QElapsedTimer doublePress;
 
     if (modifiers == playPathKeyboardModifiers()) {
+      if(camera()->frame()->isSpinning()){
+        camera()->frame()->stopSpinning();
+      }
       qint64 elapsed = doublePress.restart();
       if ((elapsed < 250) && (index == previousPathId_))
         camera()->resetPath(index);

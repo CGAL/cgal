@@ -1,3 +1,4 @@
+
 /// \ingroup PkgPolygonMeshProcessingConcepts
 /// \cgalConcept
 ///
@@ -7,7 +8,7 @@
 ///
 /// \cgalRefines{CopyConstructible}
 /// \cgalHasModelsBegin
-/// \cgalHasModels{CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor}
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor,CGAL::Polygon_mesh_processing::Triangulate_polygons::Default_visitor}
 /// \cgalHasModelsEnd
 
 
@@ -15,6 +16,8 @@ class PMPTriangulateFaceVisitor {
 public:
 /// Face descriptor type
 typedef unspecified_type face_descriptor;
+/// Vertex descriptor type
+typedef unspecified_type vertex_descriptor;
 
 /// @name Functions used by triangulate_face() and triangulate_faces()
 /// @{
@@ -30,6 +33,11 @@ typedef unspecified_type face_descriptor;
   /// called after creating a new triangle face `f_new` to triangulate the face passed to `before_subface_creations()`.
   /// Note that the call is placed just after a call to `add_face()` so the halfedge pointer is not set yet.
   void after_subface_created(face_descriptor f_new);
+
+  /// called before considering a triangle made of vertices `(v0,v1,v2)` to triangulate `f`.
+  /// If `false` is returned, the triangle will not be used. If `true` is returned, the triangle will be
+  /// added to the candidate triangles.
+  bool accept_face(face_descriptor f, vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2);
 
   /// @}
 
