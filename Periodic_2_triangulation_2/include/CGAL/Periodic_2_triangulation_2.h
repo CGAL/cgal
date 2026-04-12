@@ -1686,6 +1686,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::copy_triangulation(
   _domain = tr._domain;
   _edge_length_threshold = tr._edge_length_threshold;
   _too_long_edge_counter = tr._too_long_edge_counter;
+  _auto_convert_enabled = tr._auto_convert_enabled;
   if (tr.is_1_cover())
     {
       _tds = tr.tds();
@@ -1713,6 +1714,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::swap(Periodic_2_triangulation_2 &tr)
   std::swap(tr._edge_length_threshold, _edge_length_threshold);
   std::swap(tr._too_long_edges, _too_long_edges);
   std::swap(tr._too_long_edge_counter, _too_long_edge_counter);
+
+  std::swap(tr._auto_convert_enabled, _auto_convert_enabled);
 
   std::swap(tr._virtual_vertices, _virtual_vertices);
   std::swap(tr._virtual_vertices_reverse, _virtual_vertices_reverse);
