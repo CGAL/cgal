@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Efi Fogel    <efif@post.tau.ac.il>
+// Author(s): Efi Fogel      <efif@post.tau.ac.il>
+//            Shepard Liu    <shepard0liu@gmail.com>
 
 #ifndef CGAL_ARR_TRACING_TRAITS_H
 #define CGAL_ARR_TRACING_TRAITS_H
@@ -21,16 +22,1189 @@
 
 #include <iostream>
 #include <list>
+#include <type_traits>
 #include <variant>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
+#include "CGAL/Arr_has.h"
 
 namespace CGAL {
+namespace aos2 {
+namespace internal {
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_parameter_space_in_x_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_parameter_space_in_x_2<BaseTraits,
+                                     Derived,
+                                     std::enable_if_t<has_parameter_space_in_x_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve
+  * lies on a boundary of the parameter space along the \f$x\f$-axis.
+  */
+  class Parameter_space_in_x_2 {
+  private:
+    typename Base::Parameter_space_in_x_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Parameter_space_in_x_2(const Base& base, bool enabled = true) :
+      m_object(base.parameter_space_in_x_2_object()), m_enabled(enabled)
+    {}
+
+    /*! operates
+    * \param xcv the curve the end of which is tested.
+    * \param ce the curve-end identifier.
+    * \return the boundary type.
+    */
+    Arr_parameter_space operator()(const typename Base::X_monotone_curve_2& xcv, Arr_curve_end ce) const {
+      if (! m_enabled) return m_object(xcv, ce);
+      std::cout << "parameter_space_in_x" << std::endl
+                << "  xcv: " << xcv << ", ce: " << ce << std::endl;
+      Arr_parameter_space bt = m_object(xcv, ce);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+
+    /*! A functor that obtains the parameter space at a point along the
+    * \f$x\f$-axis. Every non-interior point is assumed to lie on the
+    * left-right identification. Points at the poles additionally lie on the
+    * bottom or top boundary.
+    * \param p the point.
+    * \return the parameter space at `p`.
+    */
+    Arr_parameter_space operator()(const typename Base::Point_2& p) const {
+      if (! m_enabled) return m_object(p);
+      std::cout << "parameter_space_in_x" << std::endl
+                << "  p: " << p << std::endl;
+      Arr_parameter_space bt = m_object(p);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+  };
+
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Parameter_space_in_x_2(derived->traits(), derived->parameter_space_in_x_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_parameter_space_in_y_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_parameter_space_in_y_2<BaseTraits,
+                                     Derived,
+                                     std::enable_if_t<has_parameter_space_in_y_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc
+   * lies on a boundary of the parameter space along the \f$y\f$-axis.
+   */
+  class Parameter_space_in_y_2 {
+  private:
+    typename Base::Parameter_space_in_y_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Parameter_space_in_y_2(const Base& base, bool enabled = true) :
+      m_object(base.parameter_space_in_y_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv the curve the end of which is tested.
+     * \param ce the curve-end identifier.
+     * \return the boundary type.
+     */
+    Arr_parameter_space operator()(const typename Base::X_monotone_curve_2& xcv, Arr_curve_end ce) const {
+      if (! m_enabled) return m_object(xcv, ce);
+      std::cout << "parameter_space_in_y" << std::endl
+                << "  ce: " << ce << ", xcv: " << xcv << std::endl;
+      Arr_parameter_space bt = m_object(xcv, ce);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+
+    /*! operates
+     * \param p the point.
+     * \return the boundary type.
+     */
+    Arr_parameter_space operator()(const typename Base::Point_2& p) const {
+      if (! m_enabled) return m_object(p);
+      std::cout << "parameter_space_in_y" << std::endl
+                << "  point: " << p << std::endl;
+      Arr_parameter_space bt = m_object(p);
+      std::cout << "  result: " << bt << std::endl;
+      return bt;
+    }
+  };
+
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Parameter_space_in_y_2(derived->traits(), derived->parameter_space_in_y_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_make_x_monotone_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x_monotone_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  using Curve_2 = typename Base::Curve_2;
+
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing curves into \f$x\f$-monotone curves.
+   */
+  class Make_x_monotone_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Make_x_monotone_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Make_x_monotone_2(const Base& base, bool enabled = true) :
+      m_object(base.make_x_monotone_2_object()), m_enabled(enabled) {}
+
+    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them
+     * into a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps `Point_2` or `X_monotone_curve_2` objects.
+     * \return the output iterator.
+     */
+    template<typename OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
+      if (! m_enabled) return m_object(cv, oi);
+      std::cout << "make_x_monotone" << std::endl
+                << "  cv: " << cv << std::endl;
+
+      using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
+
+      std::list<Make_x_monotone_result> container;
+      m_object(cv, std::back_inserter(container));
+      if (container.empty()) return oi;
+
+      std::size_t i = 0;
+      for (auto it = container.begin(); it != container.end(); ++it) {
+        if (const auto* xcv = std::get_if<X_monotone_curve_2>(&*it)) {
+          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
+          continue;
+        }
+
+        if (const auto* p = std::get_if<Point_2>(&*it)) {
+          std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
+          continue;
+        }
+
+        CGAL_error();
+      }
+
+      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
+      container.clear();
+      return oi;
+    }
+  };
+
+  Make_x_monotone_2 make_x_monotone_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Make_x_monotone_2(derived->traits(), derived->make_x_monotone_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_split_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_split_2<BaseTraits, Derived, std::enable_if_t<has_split_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that splits an \f$x\f$-monotone curve at a point. */
+  class Split_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Split_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Split_2(const Base& base, bool enabled = true) :
+      m_object(base.split_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv the curve to split.
+     * \param p the split point.
+     * \param xcv1 the left resulting subcurve (`p` is its right endpoint)..
+     * \param xcv2 the right resulting subcurve (`p` is its left endpoint)..
+     * \pre `p` lies on `cv` but is not one of its end-points.
+     */
+    void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
+                    X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
+      if (! m_enabled) {
+        m_object(xcv, p, xcv1, xcv2);
+        return;
+      }
+      std::cout << "split: " << std::endl
+                << "  xcv: " << xcv << std::endl
+                << "  p: " << p << std::endl;
+      m_object(xcv, p, xcv1, xcv2);
+      std::cout << "  result xcv1: " << xcv1 << std::endl
+                << "         xcv2: " << xcv2 << std::endl;
+    }
+  };
+
+  Split_2 split_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Split_2(derived->traits(), derived->split_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_do_intersect_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_do_intersect_2<BaseTraits, Derived, std::enable_if_t<has_do_intersect_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that computes intersections between two \f$x\f$-monotone curves.
+   */
+  class Do_intersect_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Do_intersect_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Do_intersect_2(const Base& base, bool enabled = true) :
+      m_object(base.do_intersect_2_object()), m_enabled(enabled) {}
+
+    /*! determines whether two given curves intersect
+     * a given output iterator.
+     * \param xcv1 the first curve.
+     * \param xcv2 the ssecond curve.
+     * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
+     * \return `true` if `consider_common_endpoints` is true and `xcv1` and `xcv2` intersect or if
+     *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
+     *   and `false` otherwise.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                    bool consider_common_endpoints = true) const {
+      if (! m_enabled) return m_object(xcv1, xcv2, consider_common_endpoints);
+
+      std::cout << "do_intersect" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl
+                << "  consider_common_endpoints: " << consider_common_endpoints << std::endl;
+      auto res = m_object(xcv1, xcv2, consider_common_endpoints);
+      std::cout << "  result: " << res << std::endl;
+      return res;
+    }
+  };
+
+  Do_intersect_2 do_intersect_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Do_intersect_2(derived->traits(), derived->do_intersect_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_intersect_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that computes intersections between two \f$x\f$-monotone curves.
+   */
+  class Intersect_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Multiplicity = typename Base::Multiplicity;
+
+  private:
+    typename Base::Intersect_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Intersect_2(const Base& base, bool enabled = true) :
+      m_object(base.intersect_2_object()), m_enabled(enabled) {}
+
+    /*! computes the intersections of the two given curves and insert them into
+     * a given output iterator.
+     * \param xcv1 the first curve.
+     * \param xcv2 the ssecond curve.
+     * \param oi the output iterator for the result. It value type is a variant
+     *           that wraps an \f$x\f$-monotone overlapping curve or a pair that
+     *           consists of the intersection point and its multiplicity.
+     * \return the past-the-end output iterator.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, OutputIterator oi) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result =
+        std::variant<Intersection_point, X_monotone_curve_2>;
+
+      if (! m_enabled) return m_object(xcv1, xcv2, oi);
+
+      std::cout << "intersect" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      std::list<Intersection_result> container;
+      m_object(xcv1, xcv2, std::back_inserter(container));
+      if (container.empty()) return oi;
+
+      std::size_t i = 0;
+      for (const auto& item : container) {
+        const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&item);
+        if (xcv != nullptr) {
+          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
+          *oi++ = *xcv;
+          continue;
+        }
+
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
+        if (ip != nullptr) {
+          std::cout << "  result[" << i++ << "]: p: " << ip->first
+                    << ", multiplicity: " << ip->second << std::endl;
+          *oi++ = *ip;
+          continue;
+        }
+      }
+
+      return oi;
+    }
+  };
+
+  Intersect_2 intersect_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Intersect_2(derived->traits(), derived->intersect_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_are_mergeable_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_are_mergeable_2<BaseTraits, Derived, std::enable_if_t<has_are_mergeable_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+
+  /*! A functor that tests whether two \f$x\f$-monotone curves can be merged. */
+  class Are_mergeable_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    const Base& m_base_traits;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Are_mergeable_2(const Base& base, bool enabled = true) :
+      m_base_traits(base), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return true if the two curve are mergeable and false otherwise.
+     * Two curves are mergeable if they have the same underlying theoretical
+     * curve.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      auto are_mergeable = m_base_traits.are_mergeable_2_object();
+      if (! m_enabled) return are_mergeable(xcv1, xcv2);
+      std::cout << "are_mergeable" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      bool mergeable = are_mergeable(xcv1, xcv2);
+      std::cout << "  result: " << mergeable << std::endl;
+      return mergeable;
+    }
+  };
+
+  Are_mergeable_2 are_mergeable_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Are_mergeable_2(derived->traits(), derived->are_mergeable_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_merge_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_merge_2<BaseTraits, Derived, std::enable_if_t<has_merge_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that merges two \f$x\f$-monotone curves into one. */
+  class Merge_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Merge_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Merge_2(const Base& base, bool enabled = true) :
+      m_object(base.merge_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param xcv the merged curve.
+     */
+    void operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, X_monotone_curve_2& xcv) const {
+      if (! m_enabled) return m_object(xcv1, xcv2, xcv);
+      std::cout << "merge" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      return m_object(xcv1, xcv2, xcv);
+      std::cout << "  result: " << xcv << std::endl;
+    }
+  };
+
+  Merge_2 merge_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Merge_2(derived->traits(), derived->merge_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_construct_opposite_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_construct_opposite_2<BaseTraits, Derived, std::enable_if_t<has_construct_opposite_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A fnuctor that constructs an opposite \f$x\f$-monotone curve. */
+  class Construct_opposite_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Construct_opposite_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Construct_opposite_2(const Base& base, bool enabled = true) :
+      m_object(base.construct_opposite_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv the curve.
+     * \return the opposite curve.
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) {
+      if (! m_enabled) return m_object(xcv);
+      std::cout << "construct_opposite" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      X_monotone_curve_2 xcv_out = m_object(xcv);
+      std::cout << "  result: " << xcv_out << std::endl;
+      return xcv;
+    }
+  };
+
+  Construct_opposite_2 construct_opposite_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Construct_opposite_2(derived->traits(), derived->construct_opposite_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_construct_point_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that constructs a point. */
+  class Construct_point_2 {
+    using Point_2 = typename Base::Point_2;
+
+  private:
+    typename Base::Construct_point_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Construct_point_2(const Base& base, bool enabled = true) :
+      m_object(base.construct_point_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param x the \f$x\f$-coordinate.
+     * \param y the \f$y\f$-coordinate.
+     * \return the constructed point.
+     */
+    Point_2 operator()(const typename Base::FT& x, const typename Base::FT& y) const {
+      if (! m_enabled) return m_object(x, y);
+      std::cout << "construct_point" << std::endl
+                << "  x: " << x << ", y: " << y << std::endl;
+      Point_2 p = m_object(x, y);
+      std::cout << "  result: " << p << std::endl;
+      return p;
+    }
+  };
+
+  Construct_point_2 construct_point_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Construct_point_2(derived->traits(), derived->construct_point_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_compare_endpoints_xy_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_compare_endpoints_xy_2<BaseTraits,
+                                     Derived,
+                                     std::enable_if_t<has_compare_endpoints_xy_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that compares the two endpoints of an \f$x\f$-monotone curve
+   * lexigoraphically.
+   */
+  class Compare_endpoints_xy_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_endpoints_xy_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Compare_endpoints_xy_2(const Base& base, bool enabled = true) :
+      m_object(base.compare_endpoints_xy_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv the curve.
+     * \return the comparison result.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv) {
+      if (! m_enabled) return m_object(xcv);
+      std::cout << "compare_endpoints_xy" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(xcv);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_endpoints_xy_2(derived->traits(), derived->compare_endpoints_xy_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_approximate_point_2 {
+  using Base = BaseTraits;
+
+protected:
+  template <typename T>
+  class Approximate_2 {
+    using Point_2 = typename Base::Point_2;
+    using Approximate_number_type = typename Base::Approximate_number_type;
+
+  public:
+    /*! a placeholder to avoid compilation errors */
+    Approximate_number_type operator()(const Point_2& p, int i) {};
+  };
+};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_approximate_point_2<BaseTraits,
+                                  Derived,
+                                  std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  using Approximate_point_2 = typename Base::Approximate_point_2;
+
+protected:
+  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone curves. */
+  template <typename T>
+  class Approximate_2 {
+    using Point_2 = typename Base::Point_2;
+
+  public:
+    /*! obtains an approximation of a point.
+      */
+    Approximate_point_2 operator()(const Point_2& p) {
+      const T* derived = static_cast<const T*>(this);
+      if (! derived->m_enabled) return derived->m_object(p);
+      std::cout << "approximate" << std::endl
+                << "  p: " << p << std::endl;
+      auto res = derived->m_object(p);
+      std::cout << "  result: " << res << std::endl;
+      return res;
+    }
+  };
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_approximate_xcv_2 {
+  using Base = BaseTraits;
+
+protected:
+  template <typename T>
+  class Approximate_2 {
+    using Point_2 = typename Base::Point_2;
+    using Approximate_number_type = typename Base::Approximate_number_type;
+
+  public:
+    /*! a placeholder to avoid compilation errors */
+    Approximate_number_type operator()(const Point_2& p, int i) {};
+  };
+};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_approximate_xcv_2<BaseTraits,
+                                Derived,
+                                std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  using Approximate_point_2 = typename Base::Approximate_point_2;
+
+protected:
+  /*! A functor that approximates \f$x\f$-monotone curves. */
+  template <typename T>
+  class Approximate_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  public:
+    /*! obtains an approximation of an \f$x\f$-monotone curve. */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
+                              OutputIterator oi, bool l2r = true) {
+      const T* derived = static_cast<const T*>(this);
+      if (! derived->m_enabled) return derived->m_object(xcv, error, oi, l2r);
+      std::cout << "approximate" << std::endl
+                << "  xcv: " << xcv << ", error: " << error
+                << ", l2r: " << l2r << std::endl;
+      std::list<Approximate_point_2> container;
+      derived->m_object(xcv, error, std::back_inserter(container), l2r);
+      if (container.empty()) return oi;
+
+      std::size_t i = 0;
+      for (const auto& point : container) {
+        std::cout << "  result[" << i++ << "]: " << point << std::endl;
+        *oi++ = point;
+      }
+      return oi;
+    }
+  };
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_approximate_xcv_2_within_bounds {
+  using Base = BaseTraits;
+
+protected:
+  template <typename T>
+  class Approximate_2 {
+    using Point_2 = typename Base::Point_2;
+    using Approximate_number_type = typename Base::Approximate_number_type;
+
+  public:
+    /*! a placeholder to avoid compilation errors */
+    Approximate_number_type operator()(const Point_2& p, int i) const {};
+  };
+};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_approximate_xcv_2_within_bounds<BaseTraits,
+                                              Derived,
+                                              std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  using Approximate_point_2 = typename Base::Approximate_point_2;
+
+protected:
+  template <typename T>
+  class Approximate_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  public:
+    /*! obtains an approximation of an \f$x\f$-monotone curve within a given bounding box. */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
+                              const Bbox_2& bbox, bool l2r = true) const {
+      const T* derived = static_cast<const T*>(this);
+      if (! derived->m_enabled) return derived->m_object(xcv, error, oi, l2r);
+      std::cout << "approximate" << std::endl
+                << "  xcv: " << xcv << ", error: " << error
+                << ", bbox: " << bbox << ", l2r: " << l2r << std::endl;
+      std::list<Approximate_point_2> container;
+      derived->m_object(xcv, error, std::back_inserter(container), bbox, l2r);
+      if (container.empty()) return oi;
+
+      std::size_t i = 0;
+      for (const auto& point : container) {
+        std::cout << "  result[" << i++ << "]: " << point << std::endl;
+        *oi++ = point;
+      }
+      return oi;
+    }
+  };
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_approximate_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_approximate_2<BaseTraits,
+                            Derived,
+                            std::enable_if_t<has_approximate_2<BaseTraits>::value>> :
+    public Tracing_approximate_point_2<BaseTraits, Derived>,
+    public Tracing_approximate_xcv_2<BaseTraits, Derived>,
+    public Tracing_approximate_xcv_2_within_bounds<BaseTraits, Derived>{
+  using Base = BaseTraits;
+
+public:
+  class Approximate_2; // forward declaration
+
+private:
+  using Tracing_approx_point = typename Tracing_approximate_point_2<Base, Derived>::template
+    Approximate_2<Approximate_2>;
+  using Tracing_approx_xcv = typename Tracing_approximate_xcv_2<Base, Derived>::template
+    Approximate_2<Approximate_2>;
+  using Tracing_approx_xcv_within_bounds = typename Tracing_approximate_xcv_2_within_bounds<Base, Derived>::template
+    Approximate_2<Approximate_2>;
+
+public:
+  using Approximate_number_type = typename Base::Approximate_number_type;
+
+  class Approximate_2 : public Tracing_approx_point,
+                        public Tracing_approx_xcv,
+                        public Tracing_approx_xcv_within_bounds {
+    using Point_2 = typename Base::Point_2;
+
+  public:
+    friend Tracing_approx_point;
+    friend Tracing_approx_xcv;
+    friend Tracing_approx_xcv_within_bounds;
+
+    using Tracing_approx_point::operator();
+    using Tracing_approx_xcv::operator();
+    using Tracing_approx_xcv_within_bounds::operator();
+
+    /*! constructs */
+    Approximate_2(const Base& base, bool enabled = true) : m_enabled(enabled), m_object(base.approximate_2_object()) {}
+
+    /*! obtains an approximation of a point coordinate.
+     * \param p the exact point.
+     * \param i the coordinate index (either 0 or 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
+     */
+    Approximate_number_type operator()(const Point_2& p, int i) {
+      if (! m_enabled) return m_object(p, i);
+      std::cout << "approximate" << std::endl
+                << "  p: " << p << ", i: " << i << std::endl;
+      auto res = m_object(p, i);
+      std::cout << "  result: " << res << std::endl;
+      return res;
+    }
+
+  private:
+    bool m_enabled;
+    typename Base::Approximate_2 m_object;
+  };
+
+  Approximate_2 approximate_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Approximate_2(derived->traits(), derived->approximate_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_is_on_x_identification_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_is_on_x_identification_2<BaseTraits,
+                                       Derived,
+                                       std::enable_if_t<has_is_on_x_identification_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that determines whether a point or curve is on
+   * \f$x\f$-identification.
+   */
+  class Is_on_x_identification_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Is_on_x_identification_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Is_on_x_identification_2(const Base& base, bool enabled = true) :
+      m_object(base.is_on_x_identification_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param p1 the point.
+     */
+    bool operator()(const Point_2& p) const {
+      if (! m_enabled) return m_object(p);
+      std::cout << "is_on_x_identification" << std::endl
+                << "  p: " << p << std::endl;
+      bool cr = m_object(p);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! operates
+     * \param xcv1 the curve.
+     */
+    bool operator()(const X_monotone_curve_2& xcv) const {
+      if (! m_enabled) return m_object(xcv);
+      std::cout << "is_on_x_identification" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      bool cr = m_object(xcv);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Is_on_x_identification_2 is_on_x_identification_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Is_on_x_identification_2(derived->traits(), derived->is_on_x_identification_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_is_on_y_identification_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_is_on_y_identification_2<BaseTraits,
+                                       Derived,
+                                       std::enable_if_t<has_is_on_y_identification_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that determines whether a point or curve is on
+   * \f$y\f$-identification.
+   */
+  class Is_on_y_identification_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Is_on_y_identification_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Is_on_y_identification_2(const Base& base, bool enabled = true) :
+      m_object(base.is_on_y_identification_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param p1 the point.
+     */
+    bool operator()(const Point_2& p) const {
+      if (! m_enabled) return m_object(p);
+      std::cout << "is_on_y_identification" << std::endl
+                << "  p: " << p << std::endl;
+      bool cr = m_object(p);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! operates
+     * \param xcv1 the curve.
+     */
+    bool operator()(const X_monotone_curve_2& xcv) const {
+      if (! m_enabled) return m_object(xcv);
+      std::cout << "is_on_y_identification" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      bool cr = m_object(xcv);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Is_on_y_identification_2 is_on_y_identification_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Is_on_y_identification_2(derived->traits(), derived->is_on_y_identification_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_compare_x_on_boundary_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_compare_x_on_boundary_2<BaseTraits,
+                                      Derived,
+                                      std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+
+  /*! A functor that compares the \f$x\f$-coordinate of two given points
+   * that lie on horizontal boundaries.
+   */
+  class Compare_x_on_boundary_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_x_on_boundary_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Compare_x_on_boundary_2(const Base& base, bool enabled = true) :
+      m_object(base.compare_x_on_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      if (! m_enabled) return m_object(p1, p2);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "  p1: " << p1 << std::endl
+                << "  p2: " << p2 << std::endl;
+      Comparison_result cr = m_object(p1, p2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! operates
+     * \param pt the point.
+     * \param xcv the curve.
+     * \param ce the curve-end.
+     */
+    Comparison_result operator()(const Point_2& pt,
+                                 const X_monotone_curve_2& xcv,
+                                 Arr_curve_end ce) {
+      if (! m_enabled) return m_object(pt, xcv, ce);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "  pt: " << pt << std::endl
+                << " xcv: " << xcv << std::endl
+                << "  ce: " << ce << std::endl;
+      Comparison_result cr = m_object(pt, xcv, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! operates
+     * \param xcv1 the first curve.
+     * \param ce1 the first curve-end.
+     * \param xcv2 the second curve.
+     * \param ce2 the second curve-end.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                 Arr_curve_end ce1,
+                                 const X_monotone_curve_2& xcv2,
+                                 Arr_curve_end ce2) {
+      if (! m_enabled) return m_object(xcv2, ce1, xcv2, ce2);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "xcv1: " << xcv1 << std::endl
+                << " ce1: " << ce1 << std::endl
+                << "xcv2: " << xcv2 << std::endl
+                << " ce2: " << ce2 << std::endl;
+      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_x_on_boundary_2(derived->traits(), derived->compare_x_on_boundary_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_compare_y_on_boundary_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_compare_y_on_boundary_2<BaseTraits,
+                                      Derived,
+                                      std::enable_if_t<has_compare_y_on_boundary_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+
+  /*! A functor that compares the \f$y\f$-coordinate of two given points
+   * that lie on vertical boundaries.
+   */
+  class Compare_y_on_boundary_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_y_on_boundary_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Compare_y_on_boundary_2(const Base& base, bool enabled = true) :
+      m_object(base.compare_y_on_boundary_2_object()),
+      m_enabled(enabled)
+    {}
+
+    /*! operates
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      if (! m_enabled) return m_object(p1, p2);
+      std::cout << "compare_y_on_boundary" << std::endl
+                << "  p1: " << p1 << std::endl
+                << "  p2: " << p2 << std::endl;
+      Comparison_result cr = m_object(p1, p2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_y_on_boundary_2(derived->traits(), derived->compare_y_on_boundary_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_compare_x_near_boundary_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_compare_x_near_boundary_2<BaseTraits,
+                                        Derived,
+                                        std::enable_if_t<has_compare_x_near_boundary_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+
+  /*! A functor that compares the \f$x\f$-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_boundary_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_x_near_boundary_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Compare_x_near_boundary_2(const Base& base, bool enabled = true) :
+      m_object(base.compare_x_near_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv1 the first curve the end of which is to be compared.
+     * \param ce1 the identifier of the end of the first curve.
+     * \param xcv2 the second curve the end of which is to be compared.
+     * \param ce2 the identifier of the end of the second curve.
+     * \return the comparison result.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                 const X_monotone_curve_2& xcv2,
+                                 Arr_curve_end ce) const {
+      if (! m_enabled) return m_object(xcv1, xcv2, ce);
+      std::cout << "compare_x_near_boundary" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl
+                << "    ce: " << ce << std::endl;
+      Comparison_result cr = m_object(xcv1, xcv2, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_x_near_boundary_2(derived->traits(), derived->compare_x_near_boundary_op());
+  }
+};
+
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_compare_y_near_boundary_2 {};
+
+template <typename BaseTraits, typename Derived>
+class Tracing_compare_y_near_boundary_2<BaseTraits,
+                                        Derived,
+                                        std::enable_if_t<has_compare_y_near_boundary_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+
+  /*! A functor that compares the \f$y\f$-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_y_near_boundary_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Compare_y_near_boundary_2(const Base& base, bool enabled = true) :
+      m_object(base.compare_y_near_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param xcv1 the first curve the end point of which is tested.
+     * \param xcv2 the second curve the end point of which is tested.
+     * \param ce the curve-end identifier.
+     * \return the comparison result.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                 const X_monotone_curve_2& xcv2,
+                                 Arr_curve_end ce) const {
+      if (! m_enabled) return m_object(xcv1, xcv2, ce);
+      std::cout << "compare_y_near_boundary" << std::endl
+                << "  ce: " << ce << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, xcv2, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_y_near_boundary_2(derived->traits(), derived->compare_y_near_boundary_op());
+  }
+};
+
+} // namespace internal
+} // namespace aos2
 
 /*! \class
- * A metadata traits-class decorator for the arrangement package. It traces the
+ * A static metadata traits-class decorator for the arrangement package. It traces the
  * invocations of traits-class functors. It is parameterized with another traits
  * class and inherits from it. For each traits method it prints out its input
  * parameters and its output result.
@@ -38,7 +1212,25 @@ namespace CGAL {
  * It models all the concepts that the original traits models.
  */
 template <typename BaseTraits>
-class Arr_tracing_traits_2 : public BaseTraits {
+class Arr_tracing_traits_2 :
+    public aos2::internal::Tracing_parameter_space_in_x_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_parameter_space_in_y_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_make_x_monotone_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_split_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_do_intersect_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_intersect_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_are_mergeable_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_merge_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_construct_opposite_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_construct_point_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_compare_endpoints_xy_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_approximate_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_is_on_x_identification_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_is_on_y_identification_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_compare_x_on_boundary_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_compare_y_on_boundary_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_compare_x_near_boundary_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_compare_y_near_boundary_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>> {
 public:
   enum Operation_id {
     COMPARE_X_2_OP = 0,
@@ -61,6 +1253,7 @@ public:
     MERGE_2_OP,
 
     CONSTRUCT_2_OPPOSITE_2_OP,
+    CONSTRUCT_POINT_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
     APPROXIMATE_2_OP,
 
@@ -82,7 +1275,9 @@ public:
 private:
   //! A set of bits that indicate whether operations should be traced.
   unsigned long long m_flags;
+  Base m_traits;
 
+public:
   bool compare_x_op() const
   { return (0 != (m_flags & (0x1ull << COMPARE_X_2_OP))); }
 
@@ -134,6 +1329,9 @@ private:
   bool construct_opposite_op() const
   { return (0 != (m_flags & (0x1ull << CONSTRUCT_2_OPPOSITE_2_OP))); }
 
+  bool construct_point_op() const
+  { return (0 != (m_flags & (0x1ull << CONSTRUCT_POINT_2_OP))); }
+
   bool compare_endpoints_xy_op() const
   { return (0 != (m_flags & (0x1ull << COMPARE_ENDPOINTS_XY_2_OP))); }
 
@@ -168,10 +1366,9 @@ private:
   bool compare_x_near_boundary_op() const
   { return (0 != (m_flags & (0x1ull << COMPARE_X_NEAR_BOUNDARY_2_OP))); }
 
-public:
   /*! constructs default. */
   template<typename ... Args>
-  Arr_tracing_traits_2(Args ... args) : Base(std::forward<Args>(args)...)
+  Arr_tracing_traits_2(Args ... args) : m_traits(std::forward<Args>(args)...)
   { enable_all_traces(); }
 
   /*! disables copy constructor. */
@@ -195,6 +1392,10 @@ public:
    */
   void disable_all_traces() { m_flags = 0x0; }
 
+  /*! obtains the traits being decorated/traced.
+   */
+  const Base& traits() const { return m_traits; }
+
   /// \name Types and functors inherited from `BaseTraits`
   //@{
 
@@ -202,18 +1403,13 @@ public:
   using Has_left_category = typename Base::Has_left_category;
   using Has_merge_category = typename Base::Has_merge_category;
 
-  using Left_side_category =
-    typename internal::Arr_complete_left_side_category< Base >::Category;
-  using Bottom_side_category =
-    typename internal::Arr_complete_bottom_side_category< Base >::Category;
-  using Top_side_category =
-    typename internal::Arr_complete_top_side_category< Base >::Category;
-  using Right_side_category =
-    typename internal::Arr_complete_right_side_category< Base >::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category< Base >::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category< Base >::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category< Base >::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category< Base >::Category;
 
   using Point_2 = typename Base::Point_2;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-  using Curve_2 = typename Base::Curve_2;
   using Multiplicity = typename Base::Multiplicity;
   //@}
 
@@ -438,7 +1634,7 @@ public:
     }
   };
 
-  /*! A functor that compares the \f$y\f$-coordinates of two
+  /*! A functor that compares compares the \f$y\f$-coordinates of two
    * \f$x\f$-monotone curves immediately to the left of their intersection
    * point.
    */
@@ -472,7 +1668,7 @@ public:
     }
   };
 
-  /*! A functor that compares the \f$y\f$-coordinates of two
+  /*! A functor that compares compares the \f$y\f$-coordinates of two
    * \f$x\f$-monotone curves immediately to the right of their intersection
    * point.
    */
@@ -506,802 +1702,35 @@ public:
     }
   };
 
-  //! \name Intersections & subdivisions
-  //@{
-
-  /*! \class Make_x_monotone_2
-   * A functor for subdividing curves into \f$x\f$-monotone curves.
-   */
-  class Make_x_monotone_2 {
-  private:
-    typename Base::Make_x_monotone_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Make_x_monotone_2(const Base& base, bool enabled = true) :
-      m_object(base.make_x_monotone_2_object()), m_enabled(enabled) {}
-
-    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them
-     * into a given output iterator.
-     * \param cv the curve.
-     * \param oi an output iterator for the result. Its value type is a variant
-     *           that wraps `Point_2` or `X_monotone_curve_2` objects.
-     * \return the output iterator.
-     */
-    template<typename OutputIterator>
-    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
-      if (! m_enabled) return m_object(cv, oi);
-      std::cout << "make_x_monotone" << std::endl
-                << "  cv: " << cv << std::endl;
-
-      using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
-
-      std::list<Make_x_monotone_result> container;
-      m_object(cv, std::back_inserter(container));
-      if (container.empty()) return oi;
-
-      std::size_t i = 0;
-      for (auto it = container.begin(); it != container.end(); ++it) {
-        if (const auto* xcv = std::get_if<X_monotone_curve_2>(&*it)) {
-          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
-          continue;
-        }
-
-        if (const auto* p = std::get_if<Point_2>(&*it)) {
-          std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
-          continue;
-        }
-
-        CGAL_error();
-      }
-
-      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
-      container.clear();
-      return oi;
-    }
-  };
-
-  /*! A functor that splits an \f$x\f$-monotone curve at a point. */
-  class Split_2 {
-  private:
-    typename Base::Split_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Split_2(const Base& base, bool enabled = true) :
-      m_object(base.split_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv the curve to split.
-     * \param p the split point.
-     * \param xcv1 the left resulting subcurve (`p` is its right endpoint)..
-     * \param xcv2 the right resulting subcurve (`p` is its left endpoint)..
-     * \pre `p` lies on `cv` but is not one of its end-points.
-     */
-    void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
-                    X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
-      if (! m_enabled) {
-        m_object(xcv, p, xcv1, xcv2);
-        return;
-      }
-      std::cout << "split: " << std::endl
-                << "  xcv: " << xcv << std::endl
-                << "  p: " << p << std::endl;
-      m_object(xcv, p, xcv1, xcv2);
-      std::cout << "  result xcv1: " << xcv1 << std::endl
-                << "         xcv2: " << xcv2 << std::endl;
-    }
-  };
-
-  /*! A functor that determines whether two \f$x\f$-monotone curves intersect.
-   */
-  class Do_intersect_2 {
-  private:
-    typename Base::Do_intersect_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Do_intersect_2(const Base& base, bool enabled = true) :
-      m_object(base.do_intersect_2_object()), m_enabled(enabled) {}
-
-    /*! determines whether two given curves intersect
-     * a given output iterator.
-     * \param xcv1 the first curve.
-     * \param xcv2 the ssecond curve.
-     * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
-     * \return `true` if `consider_common_endpoints` is true and `xcv1` and `xcv2` intersect or if
-     *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
-     *   and `false` otherwise.
-     */
-    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
-                    bool consider_common_endpoints = true) const {
-      if (! m_enabled) return m_object(xcv1, xcv2, consider_common_endpoints);
-
-      std::cout << "do_intersect" << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl
-                << "  consider_common_endpoints: " << consider_common_endpoints << std::endl;
-      auto res = m_object(xcv1, xcv2, consider_common_endpoints);
-      std::cout << "  result: " << res << std::endl;
-      return res;
-    }
-  };
-
-  /*! A functor that computes intersections between two \f$x\f$-monotone curves.
-   */
-  class Intersect_2 {
-  private:
-    typename Base::Intersect_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Intersect_2(const Base& base, bool enabled = true) :
-      m_object(base.intersect_2_object()), m_enabled(enabled) {}
-
-    /*! computes the intersections of the two given curves and insert them into
-     * a given output iterator.
-     * \param xcv1 the first curve.
-     * \param xcv2 the ssecond curve.
-     * \param oi the output iterator for the result. It value type is a variant
-     *           that wraps an \f$x\f$-monotone overlapping curve or a pair that
-     *           consists of the intersection point and its multiplicity.
-     * \return the past-the-end output iterator.
-     */
-    template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv1,
-                              const X_monotone_curve_2& xcv2,
-                              OutputIterator oi) const {
-      using Intersection_point = std::pair<Point_2, Multiplicity>;
-      using Intersection_result =
-        std::variant<Intersection_point, X_monotone_curve_2>;
-
-      if (! m_enabled) return m_object(xcv1, xcv2, oi);
-
-      std::cout << "intersect" << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl;
-      std::list<Intersection_result> container;
-      m_object(xcv1, xcv2, std::back_inserter(container));
-      if (container.empty()) return oi;
-
-      std::size_t i = 0;
-      for (const auto& item : container) {
-        const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&item);
-        if (xcv != nullptr) {
-          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
-          *oi++ = *xcv;
-          continue;
-        }
-
-        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
-        if (ip != nullptr) {
-          std::cout << "  result[" << i++ << "]: p: " << ip->first
-                    << ", multiplicity: " << ip->second << std::endl;
-          *oi++ = *ip;
-          continue;
-        }
-      }
-
-      return oi;
-    }
-  };
-
-  /*! A functor that tests whether two \f$x\f$-monotone curves can be merged. */
-  class Are_mergeable_2 {
-  private:
-    const Base& m_base_traits;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Are_mergeable_2(const Base& base, bool enabled = true) :
-      m_base_traits(base), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv1 the first curve.
-     * \param xcv2 the second curve.
-     * \return true if the two curve are mergeable and false otherwise.
-     * Two curves are mergeable if they have the same underlying theoretical
-     * curve.
-     */
-    bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const
-    { return are_mergable_2_impl<Base>(xcv1, xcv2, 0); }
-
-  private:
-    /*! The base does not have `Are_mergable_2`.
-     */
-    template <typename T>
-    bool are_mergable_2_impl(const X_monotone_curve_2& /* xcv1 */,
-                             const X_monotone_curve_2& /* xcv2 */, long) const {
-      CGAL_error();
-      return false;
-    }
-
-    /*! The base does have `Are_mergable_2`.
-     */
-    template <typename T>
-    auto are_mergable_2_impl(const X_monotone_curve_2& xcv1,
-                             const X_monotone_curve_2& xcv2, int) const ->
-    decltype(m_base_traits.are_mergeable_2_object().operator()(xcv1, xcv2)) {
-      auto are_mergeable = m_base_traits.are_mergeable_2_object();
-      if (! m_enabled) return are_mergeable(xcv1, xcv2);
-      std::cout << "are_mergeable" << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl;
-      bool mergeable = are_mergeable(xcv1, xcv2);
-      std::cout << "  result: " << mergeable << std::endl;
-      return mergeable;
-    }
-  };
-
-  /*! A functor that merges two \f$x\f$-monotone curves into one. */
-  class Merge_2 {
-  private:
-    typename Base::Merge_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Merge_2(const Base& base, bool enabled = true) :
-      m_object(base.merge_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv1 the first curve.
-     * \param xcv2 the second curve.
-     * \param xcv the merged curve.
-     */
-    void operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2,
-                    X_monotone_curve_2& xcv) const {
-      std::cout << "merge" << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl;
-      return m_object(xcv1, xcv2, xcv);
-      std::cout << "  result: " << xcv << std::endl;
-    }
-  };
-
-  /*! A fnuctor that constructs an opposite \f$x\f$-monotone curve. */
-  class Construct_opposite_2 {
-  private:
-    typename Base::Construct_opposite_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Construct_opposite_2(const Base& base, bool enabled = true) :
-      m_object(base.construct_opposite_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv the curve.
-     * \return the opposite curve.
-     */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const {
-      if (! m_enabled) return m_object(xcv);
-      std::cout << "construct_opposite" << std::endl
-                << "  xcv: " << xcv << std::endl;
-      X_monotone_curve_2 xcv_out = m_object(xcv);
-      std::cout << "  result: " << xcv_out << std::endl;
-      return xcv;
-    }
-  };
-
-  /*! A functor that compares the two endpoints of an \f$x\f$-monotone curve
-   * lexigoraphically.
-   */
-  class Compare_endpoints_xy_2 {
-  private:
-    typename Base::Compare_endpoints_xy_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Compare_endpoints_xy_2(const Base& base, bool enabled = true) :
-      m_object(base.compare_endpoints_xy_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv the curve.
-     * \return the comparison result.
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv) const {
-      if (! m_enabled) return m_object(xcv);
-      std::cout << "compare_endpoints_xy" << std::endl
-                << "  xcv: " << xcv << std::endl;
-      Comparison_result cr = m_object(xcv);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone
-   * curves.
-   */
-  class Approximate_2 {
-  private:
-    using Approximate_number_type = typename Base::Approximate_number_type;
-    using Approximate_point_2 = typename Base::Approximate_point_2;
-
-    typename Base::Approximate_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Approximate_2(const Base& base, bool enabled = true) :
-      m_object(base.approximate_2_object()), m_enabled(enabled)
-    {}
-
-    /*! obtains an approximation of a point coordinate.
-     * \param p the exact point.
-     * \param i the coordinate index (either 0 or 1).
-     * \pre `i` is either 0 or 1.
-     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
-     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
-     */
-    Approximate_number_type operator()(const Point_2& p, std::size_t i) const {
-      if (! m_enabled) return m_object(p, i);
-      std::cout << "approximate_2" << std::endl
-                << "  p: " << p << ", i: " << i << std::endl;
-      auto res = m_object(p, i);
-      std::cout << "  result: " << res << std::endl;
-      return res;
-    }
-
-    /*! obtains an approximation of a point.
-     */
-    Approximate_point_2 operator()(const Point_2& p) const {
-      if (! m_enabled) return m_object(p);
-      std::cout << "approximate_2" << std::endl
-                << "  p: " << p << std::endl;
-      auto res = m_object(p);
-      std::cout << "  result: " << res << std::endl;
-      return res;
-    }
-
-    /*! obtains an approximation of an \f$x\f$-monotone curve.
-     */
-    template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
-                              OutputIterator oi, bool l2r = true) const {
-      if (! m_enabled) return m_object(xcv, error, oi, l2r);
-      std::cout << "approximate_2" << std::endl
-                << "  xcv: " << xcv << ", error: " << error
-                << ", l2r: " << l2r << std::endl;
-      std::list<Approximate_point_2> container;
-      m_object(xcv, error, std::back_inserter(container), l2r);
-      if (container.empty()) return oi;
-
-      std::size_t i = 0;
-      for (const auto& point : container) {
-        std::cout << "  result[" << i++ << "]: " << point << std::endl;
-        *oi++ = point;
-      }
-      return oi;
-    }
-  };
-
-  // left-right
-
-  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve
-   * lies on a boundary of the parameter space along the \f$x\f$-axis.
-   */
-  class Parameter_space_in_x_2 {
-  private:
-    typename Base::Parameter_space_in_x_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Parameter_space_in_x_2(const Base& base, bool enabled = true) :
-      m_object(base.parameter_space_in_x_2_object()), m_enabled(enabled)
-    {}
-
-    /*! operates
-     * \param xcv the curve the end of which is tested.
-     * \param ce the curve-end identifier.
-     * \return the boundary type.
-     */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                                   Arr_curve_end ce) const {
-      if (! m_enabled) return m_object(xcv, ce);
-      std::cout << "parameter_space_in_x" << std::endl
-                << "  xcv: " << xcv << ", ce: " << ce << std::endl;
-      Arr_parameter_space bt = m_object(xcv, ce);
-      std::cout << "  result: " << bt << std::endl;
-      return bt;
-    }
-
-    /*! A functor that obtains the parameter space at a point along the
-     * \f$x\f$-axis. Every non-interior point is assumed to lie on the
-     * left-right identification. Points at the poles additionally lie on the
-     * bottom or top boundary.
-     * \param p the point.
-     * \return the parameter space at `p`.
-     */
-    Arr_parameter_space operator()(const Point_2& p) const {
-      if (! m_enabled) return m_object(p);
-      std::cout << "parameter_space_in_x" << std::endl
-                << "  p: " << p << std::endl;
-      Arr_parameter_space bt = m_object(p);
-      std::cout << "  result: " << bt << std::endl;
-      return bt;
-    }
-  };
-
-  /*! A functor that determines whether a point or curve is on
-   * \f$x\f$-identification.
-   */
-  class Is_on_x_identification_2 {
-  private:
-    typename Base::Is_on_x_identification_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Is_on_x_identification_2(const Base& base, bool enabled = true) :
-      m_object(base.is_on_x_identification_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param p1 the point.
-     */
-    bool operator()(const Point_2& p) const {
-      if (! m_enabled) return m_object(p);
-      std::cout << "is_on_x_identification" << std::endl
-                << "  p: " << p << std::endl;
-      bool cr = m_object(p);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! operates
-     * \param xcv1 the curve.
-     */
-    bool operator()(const X_monotone_curve_2& xcv) const {
-      if (! m_enabled) return m_object(xcv);
-      std::cout << "is_on_x_identification" << std::endl
-                << "  xcv: " << xcv << std::endl;
-      bool cr = m_object(xcv);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that compares the \f$y\f$-coordinate of two given points
-   * that lie on vertical boundaries.
-   */
-  class Compare_y_on_boundary_2 {
-  private:
-    typename Base::Compare_y_on_boundary_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Compare_y_on_boundary_2(const Base& base, bool enabled = true) :
-      m_object(base.compare_y_on_boundary_2_object()),
-      m_enabled(enabled)
-    {}
-
-    /*! operates
-     * \param p1 the first point.
-     * \param p2 the second point.
-     */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
-      if (! m_enabled) return m_object(p1, p2);
-      std::cout << "compare_y_on_boundary" << std::endl
-                << "  p1: " << p1 << std::endl
-                << "  p2: " << p2 << std::endl;
-      Comparison_result cr = m_object(p1, p2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that compares the \f$y\f$-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_y_near_boundary_2 {
-  private:
-    typename Base::Compare_y_near_boundary_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Compare_y_near_boundary_2(const Base& base, bool enabled = true) :
-      m_object(base.compare_y_near_boundary_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv1 the first curve the end point of which is tested.
-     * \param xcv2 the second curve the end point of which is tested.
-     * \param ce the curve-end identifier.
-     * \return the comparison result.
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const {
-      if (! m_enabled) return m_object(xcv1, xcv2, ce);
-      std::cout << "compare_y_near_boundary" << std::endl
-                << "  ce: " << ce << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl;
-      Comparison_result cr = m_object(xcv1, xcv2, ce);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  // bottom-top
-
-  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc
-   * lies on a boundary of the parameter space along the \f$y\f$-axis.
-   */
-  class Parameter_space_in_y_2 {
-  private:
-    typename Base::Parameter_space_in_y_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Parameter_space_in_y_2(const Base& base, bool enabled = true) :
-      m_object(base.parameter_space_in_y_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv the curve the end of which is tested.
-     * \param ce the curve-end identifier.
-     * \return the boundary type.
-     */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                             Arr_curve_end ce) const {
-      if (! m_enabled) return m_object(xcv, ce);
-        std::cout << "parameter_space_in_y" << std::endl
-                  << "  ce: " << ce << ", xcv: " << xcv << std::endl;
-      Arr_parameter_space bt = m_object(xcv, ce);
-      std::cout << "  result: " << bt << std::endl;
-      return bt;
-    }
-
-    /*! operates
-     * \param p the point.
-     * \return the boundary type.
-     */
-    Arr_parameter_space operator()(const Point_2& p) const {
-      if (! m_enabled) return m_object(p);
-        std::cout << "parameter_space_in_y" << std::endl
-                  << "  point: " << p << std::endl;
-      Arr_parameter_space bt = m_object(p);
-      std::cout << "  result: " << bt << std::endl;
-      return bt;
-    }
-  };
-
-  /*! A functor that determines whether a point or curve is on
-   * \f$y\f$-identification.
-   */
-  class Is_on_y_identification_2 {
-  private:
-    typename Base::Is_on_y_identification_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Is_on_y_identification_2(const Base& base, bool enabled = true) :
-      m_object(base.is_on_y_identification_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param p1 the point.
-     */
-    bool operator()(const Point_2& p) const {
-      if (! m_enabled) return m_object(p);
-      std::cout << "is_on_y_identification" << std::endl
-                << "  p: " << p << std::endl;
-      bool cr = m_object(p);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! operates
-     * \param xcv1 the curve.
-     */
-    bool operator()(const X_monotone_curve_2& xcv) const {
-      if (! m_enabled) return m_object(xcv);
-      std::cout << "is_on_y_identification" << std::endl
-                << "  xcv: " << xcv << std::endl;
-      bool cr = m_object(xcv);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that compares the \f$x\f$-coordinate of two given points
-   * that lie on horizontal boundaries.
-   */
-  class Compare_x_on_boundary_2 {
-  private:
-    typename Base::Compare_x_on_boundary_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Compare_x_on_boundary_2(const Base& base, bool enabled = true) :
-      m_object(base.compare_x_on_boundary_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param p1 the first point.
-     * \param p2 the second point.
-     */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
-      if (! m_enabled) return m_object(p1, p2);
-      std::cout << "compare_x_on_boundary" << std::endl
-                << "  p1: " << p1 << std::endl
-                << "  p2: " << p2 << std::endl;
-      Comparison_result cr = m_object(p1, p2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! operates
-     * \param pt the point.
-     * \param xcv the curve.
-     * \param ce the curve-end.
-     */
-    Comparison_result operator()(const Point_2& pt,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const {
-      if (! m_enabled) return m_object(pt, xcv, ce);
-      std::cout << "compare_x_on_boundary" << std::endl
-                << "  pt: " << pt << std::endl
-                << " xcv: " << xcv << std::endl
-                << "  ce: " << ce << std::endl;
-      Comparison_result cr = m_object(pt, xcv, ce);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! operates
-     * \param xcv1 the first curve.
-     * \param ce1 the first curve-end.
-     * \param xcv2 the second curve.
-     * \param ce2 the second curve-end.
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const {
-      if (! m_enabled) return m_object(xcv2, ce1, xcv2, ce2);
-      std::cout << "compare_x_on_boundary" << std::endl
-                << "xcv1: " << xcv1 << std::endl
-                << " ce1: " << ce1 << std::endl
-                << "xcv2: " << xcv2 << std::endl
-                << " ce2: " << ce2 << std::endl;
-      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that compares the \f$x\f$-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_boundary_2 {
-  private:
-    typename Base::Compare_x_near_boundary_2 m_object;
-    bool m_enabled;
-
-  public:
-    /*! constructs */
-    Compare_x_near_boundary_2(const Base& base, bool enabled = true) :
-      m_object(base.compare_x_near_boundary_2_object()), m_enabled(enabled) {}
-
-    /*! operates
-     * \param xcv1 the first curve the end of which is to be compared.
-     * \param ce1 the identifier of the end of the first curve.
-     * \param xcv2 the second curve the end of which is to be compared.
-     * \param ce2 the identifier of the end of the second curve.
-     * \return the comparison result.
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const {
-      if (! m_enabled) return m_object(xcv1, xcv2, ce);
-      std::cout << "compare_x_near_boundary 2" << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl
-                << "    ce: " << ce << std::endl;
-      Comparison_result cr = m_object(xcv1, xcv2, ce);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  //@}
-
   /// \name Obtain the appropriate functor
   //@{
 
   Compare_x_2 compare_x_2_object() const
-  { return Compare_x_2(*this, compare_x_op()); }
+  { return Compare_x_2(m_traits, compare_x_op()); }
 
   Compare_xy_2 compare_xy_2_object() const
-  { return Compare_xy_2(*this, compare_xy_op()); }
+  { return Compare_xy_2(m_traits, compare_xy_op()); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(*this, construct_min_vertex_op()); }
+  { return Construct_min_vertex_2(m_traits, construct_min_vertex_op()); }
 
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(*this, construct_max_vertex_op()); }
+  { return Construct_max_vertex_2(m_traits, construct_max_vertex_op()); }
 
   Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2(*this, is_vertical_op()); }
+  { return Is_vertical_2(m_traits, is_vertical_op()); }
 
   Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(*this, compare_y_at_x_op()); }
+  { return Compare_y_at_x_2(m_traits, compare_y_at_x_op()); }
 
   Equal_2 equal_2_object() const
-  { return Equal_2(*this, equal_points_op(), equal_curves_op()); }
+  { return Equal_2(m_traits, equal_points_op(), equal_curves_op()); }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(*this, compare_y_at_x_left_op()); }
+  { return Compare_y_at_x_left_2(m_traits, compare_y_at_x_left_op()); }
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(*this, compare_y_at_x_right_op()); }
-
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(*this, make_x_monotone_op()); }
-
-  Split_2 split_2_object() const
-  { return Split_2(*this, split_op()); }
-
-  Do_intersect_2 do_intersect_2_object() const
-  { return Do_intersect_2(*this, do_intersect_op()); }
-
-  Intersect_2 intersect_2_object() const
-  { return Intersect_2(*this, intersect_op()); }
-
-  Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(*this, are_mergeable_op()); }
-
-  Merge_2 merge_2_object() const
-  { return Merge_2(*this, merge_op()); }
-
-  Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(*this, construct_opposite_op()); }
-
-  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  { return Compare_endpoints_xy_2(*this, compare_endpoints_xy_op()); }
-
-  Approximate_2 approximate_2_object() const
-  { return Approximate_2(*this, approximate_op()); }
-
-  // left-right
-
-  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(*this, parameter_space_in_x_op()); }
-
-  Is_on_x_identification_2 is_on_x_identification_2_object() const
-  { return Is_on_x_identification_2(*this, is_on_x_identification_op()); }
-
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
-  { return Compare_y_on_boundary_2(*this, compare_y_on_boundary_op()); }
-
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(*this, compare_y_near_boundary_op()); }
-
-  // bottom-top
-
-  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(*this, parameter_space_in_y_op()); }
-
-  Is_on_y_identification_2 is_on_y_identification_2_object() const
-  { return Is_on_y_identification_2(*this, is_on_y_identification_op()); }
-
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(*this, compare_x_on_boundary_op()); }
-
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(*this, compare_x_near_boundary_op()); }
+  { return Compare_y_at_x_right_2(m_traits, compare_y_at_x_right_op()); }
 
   //@}
 };

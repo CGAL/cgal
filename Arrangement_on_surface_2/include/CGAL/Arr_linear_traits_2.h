@@ -614,15 +614,14 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const {
       CGAL_precondition(! xcv.is_degenerate());
 
-      X_monotone_curve_2 opp_xcv;
-
-      if (xcv.is_segment()) opp_xcv = Segment_2(xcv.target(), xcv.source());
-      if (xcv.is_line()) opp_xcv = Line_2(xcv.get_pt(), xcv.get_ps());
-      if (xcv.is_ray()) {
-        Point_2 opp_tgt = Point_2( -(xcv.get_pt().x()), -(xcv.get_pt().y()));
-        opp_xcv = Ray_2( xcv.source(),  opp_tgt);
-      }
-
+      X_monotone_curve_2 opp_xcv =
+        (xcv.is_segment()) ? xcv.segment().opposite() :
+        (xcv.is_line()) ? xcv.line().opposite() :
+        (xcv.is_ray()) ? xcv.ray().opposite() :
+        ([]() {
+          CGAL_error_msg("xcv is not a segment, line, or ray.");
+          return X_monotone_curve_2(); // Return default object after error
+        })();
       return opp_xcv;
     }
   };

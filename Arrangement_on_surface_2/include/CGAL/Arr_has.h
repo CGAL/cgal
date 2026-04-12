@@ -9,6 +9,7 @@
 //
 // Author(s): Efi Fogel      <efif@post.tau.ac.il>
 //            Eric Berberich <ericb@post.tau.ac.il>
+//            Shepard Liu    <shepard0liu@gmail.com>
 
 #ifndef CGAL_ARR_HAS_H
 #define CGAL_ARR_HAS_H
@@ -16,6 +17,9 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 #include <type_traits>
+
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Arr_enums.h>
 
 namespace CGAL {
 
@@ -190,6 +194,40 @@ struct has_approximate_2 : std::false_type {};
 template <typename T>
 struct has_approximate_2<T, std::void_t<typename T::Approximate_2>> : std::true_type {};
 
+template <typename, typename = std::void_t<>>
+struct has_approximate_2_point : std::false_type {};
+
+template <typename T>
+struct has_approximate_2_point
+<T,
+ std::void_t<decltype(std::declval<typename T::Approximate_2&>()(std::declval<const typename T::Point_2&>()))>> :
+    std::true_type
+{};
+
+template <typename, typename = std::void_t<>>
+struct has_approximate_2_xcv : std::false_type {};
+
+template <typename T>
+struct has_approximate_2_xcv
+<T,
+ std::void_t<decltype(std::declval<typename T::Approximate_2&>()(std::declval<const typename T::X_monotone_curve_2&>(),
+                                                                 std::declval<double>(),
+                                                                 std::declval<void*>(),
+                                                                 std::declval<bool>()))>> : std::true_type {};
+
+template <typename, typename = std::void_t<>>
+struct has_approximate_2_xcv_bounds : std::false_type
+{};
+
+template <typename T>
+struct has_approximate_2_xcv_bounds
+<T,
+ std::void_t<decltype(std::declval<typename T::Approximate_2&>()(std::declval<const typename T::X_monotone_curve_2&>(),
+                                                                 std::declval<double>(),
+                                                                 std::declval<void*>(),
+                                                                 std::declval<Bbox_2>(),
+                                                                 std::declval<bool>()))>> : std::true_type {};
+
 // Parameter_space_in_x_2
 // Helper trait to check for the presence of nested Parameter_space_in_x_2
 template <typename, typename = std::void_t<>>
@@ -252,6 +290,45 @@ struct has_compare_x_on_boundary_2 : std::false_type {};
 // Specialization if the nested type Compare_x_on_boundary_2 exists
 template <typename T>
 struct has_compare_x_on_boundary_2<T, std::void_t<typename T::Compare_x_on_boundary_2>> : std::true_type {};
+
+// Helper trait to check for the presence of nested Compare_x_on_boundary_2::operator()(Point_2, Point_2)
+template <typename, typename = std::void_t<>>
+struct has_compare_x_on_boundary_2_points : std::false_type {};
+
+// Specialization if the nested type Compare_x_on_boundary_2::operator()(Point_2, Point_2) exists
+template <typename T>
+struct has_compare_x_on_boundary_2_points<T, std::void_t<decltype(std::declval<typename T::Compare_x_on_boundary_2>()(
+    std::declval<const typename T::Point_2&>(),
+    std::declval<const typename T::Point_2&>()))>> : std::true_type {};
+
+// Helper trait to check for the presence of nested
+// Compare_x_on_boundary_2::operator()(Point_2, X_monotone_curve_2, Arr_curve_end)
+template <typename, typename = std::void_t<>>
+struct has_compare_x_on_boundary_2_point_curve_end : std::false_type {};
+
+// Specialization if the nested type
+// Compare_x_on_boundary_2::operator()(Point_2, X_monotone_curve_2, Arr_curve_end) exists
+template <typename T>
+struct has_compare_x_on_boundary_2_point_curve_end
+<T, std::void_t<decltype(std::declval<typename T::Compare_x_on_boundary_2>()(
+     std::declval<const typename T::Point_2&>(),
+     std::declval<const typename T::X_monotone_curve_2&>(),
+     std::declval<Arr_curve_end>()))>> : std::true_type {};
+
+// Helper trait to check for the presence of nested
+// Compare_x_on_boundary_2::operator()(X_monotone_curve_2, Arr_curve_end, X_monotone_curve_2, Arr_curve_end)
+template <typename, typename = std::void_t<>>
+struct has_compare_x_on_boundary_2_curve_ends : std::false_type {};
+
+// Specialization if the nested type
+// Compare_x_on_boundary_2::operator()(X_monotone_curve_2, Arr_curve_end, X_monotone_curve_2, Arr_curve_end) exists
+template <typename T>
+struct has_compare_x_on_boundary_2_curve_ends
+<T, std::void_t<decltype(std::declval<typename T::Compare_x_on_boundary_2>()(
+     std::declval<const typename T::X_monotone_curve_2&>(),
+     std::declval<Arr_curve_end>(),
+     std::declval<const typename T::X_monotone_curve_2&>(),
+     std::declval<Arr_curve_end>()))>> : std::true_type {};
 
 // Compare_x_near_boundary_2
 // Helper trait to check for the presence of nested Compare_x_near_boundary_2
