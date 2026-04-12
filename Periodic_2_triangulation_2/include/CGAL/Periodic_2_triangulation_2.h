@@ -948,6 +948,13 @@ public:
     return (_cover[0] == 1) && (_cover[1] == 1);
   }
 
+
+  /// Disables automatic conversion to 1-sheet covering
+  void disable_auto_convert() { _auto_convert_enabled = false; }
+
+  /// Enables automatic conversion to 1-sheet covering
+  void enable_auto_convert() { _auto_convert_enabled = true; }
+
   /// [Undoc] Combines two offsets, where the first offset is defined by the
   /// virtual vertex and the second by the face.
   Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
@@ -1165,7 +1172,7 @@ protected:
   {
     // Fall back to 1-cover if the criterion that the longest edge is shorter
     // than sqrt(0.166) is fulfilled.
-    if (_too_long_edge_counter == 0 && !is_1_cover())
+    if (_auto_convert_enabled && _too_long_edge_counter == 0 && !is_1_cover())
       {
         CGAL_expensive_assertion( is_valid() );
         this->convert_to_1_sheeted_covering();
@@ -1513,6 +1520,9 @@ protected:
   Too_long_edges_map _too_long_edges;
   /// Number of edges that are too long
   size_t _too_long_edge_counter;
+
+  /// Toggle to allow or prevent automatic conversion to 1-sheet covering
+  bool _auto_convert_enabled = true;
 
 private:
   /// map of offsets for periodic copies of vertices
