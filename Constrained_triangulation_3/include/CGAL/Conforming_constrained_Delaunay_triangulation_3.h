@@ -1412,17 +1412,6 @@ protected:
     return std::nullopt;
   }
 
-  auto move_one_Steiner_vertex_on_face_to_the_volume(Vertex_handle v) {
-    auto is_constrained = [this](Facet f) { return is_facet_constrained(f); };
-
-    const auto face_id = v->ccdt_3_data().face_index();
-    auto incident_constrained_facet_opt = find_in_incident_facets(v, is_constrained);
-    CGAL_assertion(incident_constrained_facet_opt.has_value());
-    auto incident_constrained_facet = *incident_constrained_facet_opt;
-    CGAL_assertion(face_constraint_index(incident_constrained_facet) == face_id);
-    move_one_Steiner_vertex_to_the_volume(v);
-  }
-
   template <typename Offsets, typename Facets>
   CGAL::Surface_mesh<Point_3>
   construct_star_component_mesh(std::size_t component_index,
@@ -1502,8 +1491,8 @@ protected:
 
   struct Star_components_facets { // output type of `collect_star_components_facets()`
     enum class Type_of_facet {
-      INCIDENT,
-      OPPOSITE
+      INCIDENT_TO_V,
+      OPPOSITE_TO_V
     };
 
     struct Facet_of_star_component {
@@ -1518,12 +1507,24 @@ protected:
       }
     };
 
-    boost::container::small_vector<Facet_of_star_component, 128> facets;
-    boost::container::small_vector<std::size_t, 128> component_offsets = {1};
+    template <typename T>
+    using small_vector = boost::container::small_vector<T, 128>;
+
+    small_vector<Facet_of_star_component> facets;
+    small_vector<std::size_t> component_offsets = {0};
+    small_vector<Face_index> face_ids_between_consecutive_components;
+    small_vector<std::array<Face_index, 2>> component_incident_constraint_face_ids;
   };
 
-  Star_components_facets collect_star_components_facets(Vertex_handle v) const {
-    Star_components_facets out;
+  Star_components_facets collect_star_components_facets(Vertex_handle v, Facet incident_constrained_facet) const {
+    const auto [first_cell, first_facet_index] = incident_constrained_facet;
+    const auto first_facet_face_id = face_constraint_index(incident_constrained_facet);
+
+    const auto vertex_Steiner_type = vertex_type(v);
+    CGAL_assertion(vertex_Steiner_type == CDT_3_vertex_type::STEINER_IN_FACE ||
+                   vertex_Steiner_type == CDT_3_vertex_type::STEINER_ON_EDGE);
+
+    Star_components_facets out; // the returned object, yet to be filled
 
     auto register_cell_and_check_if_new =
         [seen_cells = CGAL::unordered_flat_set<Cell_handle>{}](Cell_handle c) mutable
@@ -1532,75 +1533,181 @@ protected:
           return inserted;
         };
 
-    auto first_cell = v->cell();
-    out.facets.emplace_back(first_cell, first_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE);
-    register_cell_and_check_if_new(first_cell);
+    // `cells_in_other_components` is used to keep track of cells that belong to other components:
+    // when we finish processing a component, we take one of these cells (if not yet processed) to
+    // start processing the next component.
+    // -> Start with one of the facets incident to `v` that is constrained, and explore the star
+    // of `v` through unconstrained facets as long as possible;
+    boost::container::small_vector<std::pair<Cell_handle, Face_index>, 128> cells_in_other_components = {
+        { first_cell, first_facet_face_id }
+    };
 
-    boost::container::small_vector<Cell_handle, 128> cells_in_other_components;
-    // - `out.facets` is part of the result, and a queue as well, with `queue_head` as the index of
-    //   the head of the queue: popping is done by incrementing `queue_head`, and pushing is done by
-    //   adding new facets at the end of the vector.
-    // - `cells_in_other_components` is used to keep track of cells that belong to other components:
-    //   when we finish processing a component, we take one of these cells (if not yet processed) to
-    //   start processing the next one component.
-    auto queue_head = 0u;
-    do {
-      auto [c, facet_index, facet_type] = out.facets[queue_head++];
-      if(facet_type == Star_components_facets::Type_of_facet::OPPOSITE) {
-        for(int i = 0; i < 4; ++i) {
+    while(!cells_in_other_components.empty()) {
+      auto [other_cell, component_first_incident_face_id] = cells_in_other_components.back();
+      cells_in_other_components.pop_back();
+      auto other_cell_is_a_new_cell = register_cell_and_check_if_new(other_cell);
+      if(!other_cell_is_a_new_cell) continue;
+
+      // start a new component from this cell
+      out.facets.emplace_back(other_cell, other_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE_TO_V);
+
+      out.face_ids_between_consecutive_components.push_back(component_first_incident_face_id);
+      out.component_incident_constraint_face_ids.push_back({component_first_incident_face_id, -1}); // placeholder for the next component
+      auto& current_component_incident_constraint_face_ids = out.component_incident_constraint_face_ids.back();
+      cells_in_other_components.clear(); // clear it here, and fill it again with the cells opposite to a constrained
+                                         // facet during the exploration of the current component
+
+      std::cerr << "    starting a new component through face with id " << component_first_incident_face_id << '\n';
+
+      // - `out.facets` is part of the result, and a queue as well, with `queue_head` as the index of
+      //   the head of the queue: popping is done by incrementing `queue_head`, and pushing is done by
+      //   adding new facets at the end of the vector.
+      for(auto queue_head = out.facets.size() - 1; queue_head != out.facets.size(); ++queue_head) {
+        const auto [c, facet_index, facet_type] = out.facets[queue_head];
+        if(facet_type == Star_components_facets::Type_of_facet::INCIDENT_TO_V) continue;
+
+        for(int i = 0; i < 4; ++i)
+        {
+          // follow only cells in the star of `v`
           if(c->vertex(i) == v) continue;
-          Cell_handle next = c->neighbor(i);
-          const bool facet_c_to_next_is_constrained = is_facet_constrained(Facet(c, i));
+          const Cell_handle next_cell = c->neighbor(i);
+
+          const auto facet_c_to_next_is_constrained = is_facet_constrained(Facet(c, i));
           if(facet_c_to_next_is_constrained) {
-            out.facets.emplace_back(c, i, Star_components_facets::Type_of_facet::INCIDENT);
-            cells_in_other_components.push_back(next);
-          } else {
-            auto next_is_a_new_cell = register_cell_and_check_if_new(next);
+            out.facets.emplace_back(c, i, Star_components_facets::Type_of_facet::INCIDENT_TO_V);
+            const auto constrained_facet_face_id = face_constraint_index(c, i);
+            if(-1 == current_component_incident_constraint_face_ids[1] &&
+               constrained_facet_face_id != current_component_incident_constraint_face_ids[0])
+            {
+              current_component_incident_constraint_face_ids[1] = constrained_facet_face_id;
+            }
+            CGAL_assertion(constrained_facet_face_id == current_component_incident_constraint_face_ids[0] ||
+                           constrained_facet_face_id == current_component_incident_constraint_face_ids[1]);
+
+            // unless the Steiner vertex is in a face, the component will always be incident to
+            // two different constraint faces, and therefore we can prefer to push only cells that
+            // are on the other side a constraint with a different face id.
+            if(constrained_facet_face_id != component_first_incident_face_id ||
+               vertex_Steiner_type == CDT_3_vertex_type::STEINER_IN_FACE )
+            {
+              cells_in_other_components.push_back({next_cell, constrained_facet_face_id});
+            }
+          } else { // Facet(c, i), between `c` and `next_cell` is not constrained
+            auto next_is_a_new_cell = register_cell_and_check_if_new(next_cell);
             if(next_is_a_new_cell) {
-              out.facets.emplace_back(next, next->index(v), Star_components_facets::Type_of_facet::OPPOSITE);
+              out.facets.emplace_back(next_cell, next_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE_TO_V);
             }
           }
-        }
-      }
+        } // end for each facet of `c`
+      } // end while there is still a facet in the current component to process
 
-      if(queue_head == out.facets.size()) {
-        std::cerr << "  - Partition " << out.component_offsets.size() << " has "
-                  << out.facets.size() - out.component_offsets.back() << " facets\n";
-        out.component_offsets.push_back(out.facets.size());
-        while(!cells_in_other_components.empty()) {
-          auto other_cell = cells_in_other_components.back();
-          cells_in_other_components.pop_back();
-          auto other_cell_is_a_new_cell = register_cell_and_check_if_new(other_cell);
-          if(other_cell_is_a_new_cell) {
-            out.facets.emplace_back(other_cell, other_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE);
-            break;
-          }
-        }
-      }
-    } while(queue_head != out.facets.size());
+      // end of the current component reached, start a new one if there is any cell in
+      // another component that we haven't processed yet
+
+      std::cerr << "  - Star component #" << out.component_offsets.size() << " has "
+                << (out.facets.size() - out.component_offsets.back()) << " facets.\n"
+                << "    It is incident to constraint faces with ids: {"
+                << IO::oformat(current_component_incident_constraint_face_ids) << "}\n";
+
+      out.component_offsets.push_back(out.facets.size());
+
+    } // end while there is still a component to process
+
+    CGAL_assertion_code(const auto nb_of_components = out.component_incident_constraint_face_ids.size());
+
+    CGAL_assertion(false == out.facets.empty());
+    CGAL_assertion(nb_of_components > 1);
+    CGAL_assertion(out.component_offsets.size() == nb_of_components + 1);
+
+    CGAL_assertion(out.component_offsets.front() == 0);
+    CGAL_assertion(out.component_offsets.back() == out.facets.size());
+    CGAL_assertion(out.face_ids_between_consecutive_components.size() == nb_of_components);
+
+    if(vertex_Steiner_type == CDT_3_vertex_type::STEINER_IN_FACE) {
+      CGAL_assertion(nb_of_components == 2);
+      CGAL_assertion(std::all_of(out.component_incident_constraint_face_ids.begin(), out.component_incident_constraint_face_ids.end(),
+                                 [first_facet_face_id](const std::array<Face_index, 2>& face_ids)
+                                 {
+                                   return face_ids[0] == first_facet_face_id && face_ids[1] == -1;
+                                 }));
+      CGAL_assertion(std::all_of(out.face_ids_between_consecutive_components.begin(), out.face_ids_between_consecutive_components.end(),
+                                 [first_facet_face_id](const Face_index& face_id)
+                                 {
+                                   return face_id == first_facet_face_id;
+                                 }));
+    } else {
+      CGAL_assertion(vertex_Steiner_type == CDT_3_vertex_type::STEINER_ON_EDGE);
+      CGAL_assertion(std::adjacent_find(out.face_ids_between_consecutive_components.begin(),
+                                        out.face_ids_between_consecutive_components.end()) ==
+                     out.face_ids_between_consecutive_components.end());
+      CGAL_assertion(std::all_of(out.component_incident_constraint_face_ids.begin(), out.component_incident_constraint_face_ids.end(),
+                                 [](const std::array<Face_index, 2>& face_ids)
+                                 {
+                                   return face_ids[1] != -1;
+                                 }));
+    }
 
     return out;
   }
 
-  auto move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
+  bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
     std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
+
+    auto is_constrained = [this](Facet f) { return is_facet_constrained(f); };
+    const auto incident_constrained_facet_opt = find_in_incident_facets(v, is_constrained);
+    CGAL_assertion(incident_constrained_facet_opt.has_value());
+
+    const auto incident_constrained_facet = *incident_constrained_facet_opt;
+
     const auto nb_of_incident_cells = std::invoke([&]() {
       std::size_t nb_of_incident_cells{0};
       tr().incident_cells(v, CGAL::Counting_output_iterator(&nb_of_incident_cells));
       return nb_of_incident_cells;
     });
+
     std::cerr << "  - Number of incident cells: " << nb_of_incident_cells << '\n';
 
-    auto star_components = collect_star_components_facets(v);
+    const auto star_components = collect_star_components_facets(v, incident_constrained_facet);
+    const auto nb_of_star_components = star_components.component_incident_constraint_face_ids.size();
+
+    const auto components_central_points = std::invoke([&]() {
+      std::optional<boost::container::small_vector<Point_3, 8>> central_points{std::in_place};
+      central_points->reserve(nb_of_star_components);
+      for(std::size_t component_index = 1; component_index <= nb_of_star_components; ++component_index) {
+        auto component_mesh =
+            construct_star_component_mesh(component_index, star_components.component_offsets, star_components.facets);
+        auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
+        std::cerr << "  - kernel center point of component #" << component_index << ": ";
+        if(opt_kernel_center_point.has_value()) {
+          auto kernel_center_point = *opt_kernel_center_point;
+          central_points->push_back(kernel_center_point);
+          std::cerr << kernel_center_point
+                    << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point()))
+                    << ")"
+                    << "\n";
+        } else {
+          std::cerr << "none (the component is either degenerate or open) ABORT\n";
+          central_points.reset();
+          return central_points;
+        }
+      }
+      return central_points;
+    }); // end compute central points for each component
 
     { // DEBUG, DO NOT COMMIT as it is
       dump_link_mesh_of_vertex_to_ply(v, star_components.component_offsets, star_components.facets); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
     }
 
     std::cerr << "  " << "nb of components: " << star_components.component_offsets.size() - 1 << '\n';
+
+    if(!components_central_points.has_value()) {
+      std::cerr << "  - No central point could be computed for at least one of the components, aborting moving the vertex to the volume\n";
+      return false;
+    }
     std::size_t nb_of_new_2d_faces = 0;
     this->remove_Steiner_vertex_from_all_cdt_2(v, CGAL::Counting_output_iterator{&nb_of_new_2d_faces});
     std::cerr << "  - number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
+    return true;
   }
 
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
@@ -2405,13 +2512,18 @@ public:
     }
   }
 
+  auto vertex_type(Vertex_handle v) const {
+    return v->ccdt_3_data().vertex_type();
+  }
+
+  bool is_Steiner_vertex(Vertex_handle v) const {
+    auto type = vertex_type(v);
+    return type == CDT_3_vertex_type::STEINER_IN_FACE || type == CDT_3_vertex_type::STEINER_ON_EDGE;
+  }
+
   auto move_Steiner_vertices_to_the_volume() {
-    for(auto v: this->finite_vertex_handles()) {
-      auto type = v->ccdt_3_data().vertex_type();
-      if(type == CDT_3_vertex_type::STEINER_IN_FACE)
-        move_one_Steiner_vertex_on_face_to_the_volume(v);
-      else if (type == CDT_3_vertex_type::STEINER_ON_EDGE)
-        move_one_Steiner_vertex_to_the_volume(v);
+    for(auto v : this->finite_vertex_handles()) {
+      if(is_Steiner_vertex(v)) move_one_Steiner_vertex_to_the_volume(v);
     }
   }
 
@@ -4597,8 +4709,8 @@ public:
                              info.facet_3d = {};
                              *new_face_handles_out++ = fh;
                            }));
-      } else {
-        CGAL_assertion(hole_boundary.size() == 2);
+      } else { // hole_boundary.size() <= 2 (degenerated hole)
+        CGAL_assertion(hole_boundary.size() == 2); // size == 1 is not possible
         auto [f, i] = hole_boundary.front();
         auto [g, j] = hole_boundary.back();
         g->set_neighbor(j, f);
