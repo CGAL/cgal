@@ -641,9 +641,6 @@ class Tracing_approximate_point_2<BaseTraits,
                                   std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
 protected:
   /*! A functor that approximates coordinates, points, and \f$x\f$-monotone curves. */
   template <typename T>
@@ -651,9 +648,8 @@ protected:
     using Point_2 = typename Base::Point_2;
 
   public:
-    /*! obtains an approximation of a point.
-      */
-    Approximate_point_2 operator()(const Point_2& p) {
+    /*! obtains an approximation of a point. */
+    typename Base::Approximate_point_2 operator()(const Point_2& p) {
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(p);
       std::cout << "approximate" << std::endl
@@ -687,9 +683,6 @@ class Tracing_approximate_xcv_2<BaseTraits,
                                 std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
 protected:
   /*! A functor that approximates \f$x\f$-monotone curves. */
   template <typename T>
@@ -706,7 +699,7 @@ protected:
       std::cout << "approximate" << std::endl
                 << "  xcv: " << xcv << ", error: " << error
                 << ", l2r: " << l2r << std::endl;
-      std::list<Approximate_point_2> container;
+      std::list<typename Base::Approximate_point_2> container;
       derived->m_object(xcv, error, std::back_inserter(container), l2r);
       if (container.empty()) return oi;
 
@@ -742,9 +735,6 @@ class Tracing_approximate_xcv_2_within_bounds<BaseTraits,
                                               std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
 protected:
   template <typename T>
   class Approximate_2 {
@@ -760,7 +750,7 @@ protected:
       std::cout << "approximate" << std::endl
                 << "  xcv: " << xcv << ", error: " << error
                 << ", bbox: " << bbox << ", l2r: " << l2r << std::endl;
-      std::list<Approximate_point_2> container;
+      std::list<typename Base::Approximate_point_2> container;
       derived->m_object(xcv, error, std::back_inserter(container), bbox, l2r);
       if (container.empty()) return oi;
 

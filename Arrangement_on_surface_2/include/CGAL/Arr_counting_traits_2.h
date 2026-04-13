@@ -479,9 +479,6 @@ template <typename BaseTraits, typename Derived>
 class Counting_approximate_point_2<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
 protected:
   /*! A functor that approximates coordinates, points, and \f$x\f$-monotone
    * curves.
@@ -493,7 +490,7 @@ protected:
   public:
     /*! obtains an approximation of a point.
      */
-    Approximate_point_2 operator()(const Point_2& p) const {
+    typename Base::Approximate_point_2 operator()(const Point_2& p) const {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter2;
       return derived->m_object(p);
@@ -522,9 +519,6 @@ class Counting_approximate_xcv_2<BaseTraits,
                                  Derived,
                                  std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
   using Base = BaseTraits;
-
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
 
 protected:
   /*! A functor that approximates \f$x\f$-monotone curves. */
@@ -565,9 +559,6 @@ class Counting_approximate_xcv_2_within_bounds
  Derived,
  std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
   using Base = BaseTraits;
-
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
 
 protected:
   /*! A functor that approximates \f$x\f$-monotone curves within bounds. */
