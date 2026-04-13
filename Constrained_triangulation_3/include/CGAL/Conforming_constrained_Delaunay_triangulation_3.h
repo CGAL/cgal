@@ -1479,14 +1479,7 @@ protected:
     out.close();
   }
 
-  auto move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
-    std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
-    std::size_t nb_of_incident_cells{0};
-    tr().incident_cells(
-        v, boost::make_function_output_iterator(
-               [nb_of_incident_cells_ptr = &nb_of_incident_cells](Cell_handle) { ++(*nb_of_incident_cells_ptr); }));
-    std::cerr << "  - Number of incident cells: " << nb_of_incident_cells << '\n';
-
+  struct Star_components_facets { // output type of `collect_star_components_facets()`
     enum class Type_of_facet {
       INCIDENT,
       OPPOSITE
@@ -1504,6 +1497,13 @@ protected:
       }
     };
 
+    boost::container::small_vector<Facet_of_star_component, 128> facets;
+    boost::container::small_vector<std::size_t, 128> component_offsets = {1};
+  };
+
+  Star_components_facets collect_star_components_facets(Vertex_handle v) const {
+    Star_components_facets out;
+
     auto register_cell_and_check_if_new =
         [seen_cells = CGAL::unordered_flat_set<Cell_handle>{}](Cell_handle c) mutable
         {
@@ -1511,52 +1511,72 @@ protected:
           return inserted;
         };
 
-    boost::container::small_vector<Facet_of_star_component, 128> facets_of_star_components;
-    boost::container::small_vector<std::size_t, 128> component_offsets(1);
-    boost::container::small_vector<Cell_handle, 128> cells_in_other_components;
     auto first_cell = v->cell();
-    facets_of_star_components.emplace_back(first_cell, first_cell->index(v), Type_of_facet::OPPOSITE);
+    out.facets.emplace_back(first_cell, first_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE);
     register_cell_and_check_if_new(first_cell);
-    auto queue_head=0u;
+
+    boost::container::small_vector<Cell_handle, 128> cells_in_other_components;
+    // - `out.facets` is part of the result, and a queue as well, with `queue_head` as the index of
+    //   the head of the queue: popping is done by incrementing `queue_head`, and pushing is done by
+    //   adding new facets at the end of the vector.
+    // - `cells_in_other_components` is used to keep track of cells that belong to other components:
+    //   when we finish processing a component, we take one of these cells (if not yet processed) to
+    //   start processing the next one component.
+    auto queue_head = 0u;
     do {
-      auto [c, facet_index, facet_type] = facets_of_star_components[queue_head++];
-      if(facet_type == Type_of_facet::OPPOSITE) {
-        for (int i=0; i<4; ++i) {
-          if (c->vertex(i) == v) continue;
+      auto [c, facet_index, facet_type] = out.facets[queue_head++];
+      if(facet_type == Star_components_facets::Type_of_facet::OPPOSITE) {
+        for(int i = 0; i < 4; ++i) {
+          if(c->vertex(i) == v) continue;
           Cell_handle next = c->neighbor(i);
           const bool facet_c_to_next_is_constrained = is_facet_constrained(Facet(c, i));
           if(facet_c_to_next_is_constrained) {
-            facets_of_star_components.emplace_back(c, i, Type_of_facet::INCIDENT);
+            out.facets.emplace_back(c, i, Star_components_facets::Type_of_facet::INCIDENT);
             cells_in_other_components.push_back(next);
           } else {
             auto next_is_a_new_cell = register_cell_and_check_if_new(next);
             if(next_is_a_new_cell) {
-              facets_of_star_components.emplace_back(next, next->index(v), Type_of_facet::OPPOSITE);
+              out.facets.emplace_back(next, next->index(v), Star_components_facets::Type_of_facet::OPPOSITE);
             }
           }
         }
       }
-      if(queue_head == facets_of_star_components.size()) {
-        std::cerr << "  - Partition " << component_offsets.size() << " has "
-                  << facets_of_star_components.size() - component_offsets.back() << " facets\n";
-        component_offsets.push_back(facets_of_star_components.size());
+
+      if(queue_head == out.facets.size()) {
+        std::cerr << "  - Partition " << out.component_offsets.size() << " has "
+                  << out.facets.size() - out.component_offsets.back() << " facets\n";
+        out.component_offsets.push_back(out.facets.size());
         while(!cells_in_other_components.empty()) {
           auto other_cell = cells_in_other_components.back();
           cells_in_other_components.pop_back();
           auto other_cell_is_a_new_cell = register_cell_and_check_if_new(other_cell);
           if(other_cell_is_a_new_cell) {
-            facets_of_star_components.emplace_back(other_cell, other_cell->index(v), Type_of_facet::OPPOSITE);
+            out.facets.emplace_back(other_cell, other_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE);
             break;
           }
         }
       }
-    } while(queue_head != facets_of_star_components.size());
+    } while(queue_head != out.facets.size());
+
+    return out;
+  }
+
+  auto move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
+    std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
+    const auto nb_of_incident_cells = std::invoke([&]() {
+      std::size_t nb_of_incident_cells{0};
+      tr().incident_cells(v, CGAL::Counting_output_iterator(&nb_of_incident_cells));
+      return nb_of_incident_cells;
+    });
+    std::cerr << "  - Number of incident cells: " << nb_of_incident_cells << '\n';
+
+    auto star_components = collect_star_components_facets(v);
 
     { // DEBUG, DO NOT COMMIT as it is
-      dump_link_mesh_of_vertex_to_ply(v, component_offsets, facets_of_star_components); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
+      dump_link_mesh_of_vertex_to_ply(v, star_components.component_offsets, star_components.facets); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
     }
 
-    std::cerr << "  " << "nb of components: " << component_offsets.size() - 1 << '\n';
+    std::cerr << "  " << "nb of components: " << star_components.component_offsets.size() - 1 << '\n';
     std::size_t nb_of_new_2d_faces = 0;
     this->remove_Steiner_vertex_from_all_cdt_2(v, CGAL::Counting_output_iterator{&nb_of_new_2d_faces});
     std::cerr << "  - number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
