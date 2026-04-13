@@ -250,9 +250,7 @@ template <typename BaseTraits, typename Derived, typename = void>
 class Counting_intersect_2 {};
 
 template <typename BaseTraits, typename Derived>
-class Counting_intersect_2<BaseTraits,
-                           Derived,
-                           std::enable_if_t<has_intersect_2<BaseTraits>::value>> {
+class Counting_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
@@ -1339,6 +1337,7 @@ private:
     "COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP",
     "COMPARE_X_NEAR_BOUNDARY_2_OP"
   };
+
   const std::array<bool, NUMBER_OF_OPERATIONS> m_exist = {
     has_compare_x_2<Base>::value,
     has_compare_xy_2<Base>::value,
@@ -1378,6 +1377,7 @@ private:
     has_compare_x_on_boundary_2<Base>::value, // curve ends
     has_compare_x_near_boundary_2<Base>::value
   };
+
   Base m_base;
 };
 

@@ -159,15 +159,13 @@ template <typename BaseTraits, typename Derived>
 class Tracing_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x_monotone_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Curve_2 = typename Base::Curve_2;
-
   /*! \class Make_x_monotone_2
    * A functor for subdividing curves into \f$x\f$-monotone curves.
    */
   class Make_x_monotone_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Curve_2 = typename Base::Curve_2;
 
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -334,12 +332,13 @@ class Tracing_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<
   using Base = BaseTraits;
 
 public:
+  using Multiplicity = typename Base::Multiplicity;
+
   /*! A functor that computes intersections between two \f$x\f$-monotone curves.
    */
   class Intersect_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-    using Multiplicity = typename Base::Multiplicity;
 
   private:
     typename Base::Intersect_2 m_object;
@@ -1400,7 +1399,8 @@ public:
 
   using Point_2 = typename Base::Point_2;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-  using Multiplicity = typename Base::Multiplicity;
+  using Curve_2 = typename Base::Curve_2;
+
   //@}
 
   /*! A functor that compares the \f$x\f$-coordinates of two points. */
