@@ -2608,6 +2608,7 @@ private:
   {
     const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
 
+    face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
     for(const auto fh: cdt_2.all_face_handles())
     {
       if(fh->info().is_outside_the_face) continue;

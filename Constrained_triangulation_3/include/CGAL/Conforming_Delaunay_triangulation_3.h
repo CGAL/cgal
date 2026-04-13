@@ -219,7 +219,7 @@ inline auto& tasks_manager() {
         return instance->timers[task_id].time();
       }
       auto time_ms() const {
-        return instance->timers[task_id].time() / 1000.;
+        return instance->timers[task_id].time() * 1000.;
       }
       ~Scope_guard() {
         instance->timers[task_id].stop();
