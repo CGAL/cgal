@@ -4,6 +4,16 @@
 
 Release date: July 2026
 
+### [2D Alpha Wrapping (new package)](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2)
+- This component takes a polygon soup, a 2D segment soup, and/or a 2D point set as input,
+  and generates a valid (watertight, intersection-free and 1-manifold) multi-polygon that
+  strictly encloses the input. The algorithm proceeds by shrink-wrapping
+  and refining a 2D Delaunay triangulation starting from a loose bounding box of the input.
+  Two user-defined parameters, alpha and offset, offer control over the maximum size
+  of cavities where the shrink-wrapping process can enter, and the tightness
+  of the final polygon(s) to the input, respectively. Once combined, these parameters
+  provide a means to trade fidelity to the input for complexity of the output.
+
 ### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
 -   This package provides functions to compute various types of generalized barycentric coordinates
     (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
@@ -11,6 +21,8 @@ Release date: July 2026
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing) (major changes)
 
+- **Breaking change**: Update the visitor concepts `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor` to request functions `accept_face()` and `accept_triangle()`, respectively. These functions can be used to tweak the way faces and holes are triangles by black listing some candidate triangles.
+    User visitors inheriting from the default visitors do not require any update.
 -   The "Polygon Mesh Processing" package has been reorganized into several packages.
     "Polygon Mesh Processing" retains the core functionalities, while advanced and specialized features
     have been moved to dedicated packages:
@@ -25,21 +37,37 @@ Release date: July 2026
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.2/Manual/packages.html#PkgKernel23)
 - **Breaking change**: Circle_2/Segment_2, Sphere_3/Bbox_3, Sphere_3/Iso_cuboid_3 now do not consider inclusion as intersection.
   This behavior is consistent with other intersections involving Circle_2 and Sphere_3.
-  - The former behavior of `do_intersect()` can be reproduced with:
-  - `!Has_on_unbounded_side_2::operator(Circle_2, Segment_2)` or
-  - `!Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2)` or
-  - `!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`
+  The former behavior of `do_intersect()` can be reproduced with:
+    - `!Has_on_unbounded_side_2::operator(Circle_2, Segment_2)` or
+    - `!Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2)` or
+    - `!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`
+- Added a new concept, `CompareProjectionAlongDirection_3`,
+     to the 3D Kernel concepts to compare the order of projected points on a line. Corresponding functors
+     in the model (`Compare_projection_along_direction_3`) and free function (`compare_projection_along_direction()`)
+     have also been added.
 
 ### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
-
--   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+-   Introduced a Geometry Traits concept for arrangements on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
 -   Made the `Arr_linear_traits_2` a model of the new concept.
 -   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+-   Introduced the concept `AosTraits::Do_intersect_2`. A model of this concept must provide an operator that
+    accepts two `x`-monotone curves and a boolean flag that indicates whether common endpoints should be considered or ignored.
+    The operator determines whether the curves intersect, and it can be used with an inexact-construction kernel.
+
+### [2D Intersection of Curves](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceSweep2)
+
+- Deprecated `CGAL::do_curves_intersect()`, which assumed open curves. Replaced by
+    `CGAL::Surface_sweep_2::do_intersect()`. Notice (i) the introduction of the new namespace `Surface_sweep_2`,
+    and (ii) the addition of the `closed` parameter, which defaults to `true`. To match the behavior of the
+    deprecated function, set `closed` to false.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh2)
 
 - The implementation is more robust to degenerate inputs, such as polygons with microscopic edges, or nearly collinear points.
 - **Breaking change**: The concept [`DelaunayMeshTraits_2`](https://doc.cgal.org/6.2/Mesh_2/classDelaunayMeshTraits__2.html) now requires the functor `Construct_bbox_2`.
+
+### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
+- Added the function `CGAL::approximate_convex_decomposition()` that computes a set of convex volumes that cover an input mesh.
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
@@ -54,7 +82,7 @@ Release date: July 2026
 
   - added function `intersected_nodes()` with an intersection functor and a convenience overload for a ball query.
 
-### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
+### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection)
 
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) that extends the support plane of the seed face without refitting the plane to the region
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Line_segment_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Line__segment__region.html) that extends the support line of the seed segment without refitting the line to the region

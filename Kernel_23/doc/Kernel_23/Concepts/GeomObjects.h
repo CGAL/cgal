@@ -374,6 +374,7 @@ public:
   \sa `Kernel::CollinearAreOrderedAlongLine_2`
   \sa `Kernel::CollinearAreStrictlyOrderedAlongLine_2`
   \sa `Kernel::CompareDistance_2`
+  \sa `Kernel::CompareSquaredRadius_2`
   \sa `Kernel::CompareXAtY_2`
   \sa `Kernel::CompareXY_2`
   \sa `Kernel::CompareX_2`

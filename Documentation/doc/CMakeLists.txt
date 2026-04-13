@@ -465,13 +465,11 @@ else()
 endif()
 
 #special cases
-foreach(pkg "Mesher_level")
-  if(CGAL_BRANCH_BUILD)
-    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/${pkg}/include")
-  else()
+if(NOT CGAL_BRANCH_BUILD)
+  foreach(pkg "Mesher_level" "Surface_mesh_decomposition")
     set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/include")
-  endif()
-endforeach()
+  endforeach()
+endif()
 
 option(CGAL_BUILD_THREE_DOC "Build the documentation of the Three package" OFF)
 
