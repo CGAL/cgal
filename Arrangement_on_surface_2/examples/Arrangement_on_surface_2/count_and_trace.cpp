@@ -51,25 +51,25 @@ int main() {
   std::vector<Point> ps = { Point(0,0), Point(1,0), Point(0,1) };
   std::vector<Segment> segs = { Segment(ps[0], ps[1]), Segment(ps[1], ps[2]), Segment(ps[2], ps[0]) };
   CGAL::insert(seg_arr, segs.begin(), segs.end());
-  std::cout << static_cast<const Segment_cnt_traits&>(seg_traits);
+  std::cout << seg_traits.traits();
   print_arrangement_size(seg_arr);
   std::cout << std::endl;
 
-  // Geodesic_traits geodesic_traits;
-  // geodesic_traits.disable_all_traces();
-  // geodesic_traits.enable_trace(Geodesic_traits::COMPARE_XY_2_OP);
-  // auto ctr_p = geodesic_traits.construct_point_2_object();
-  // auto ctr_cv = geodesic_traits.construct_curve_2_object();
-  // std::vector<Geodesic_point> gps = { ctr_p(-1,0,0), ctr_p(0,-1,0), ctr_p(0,0,-1) };
-  // std::vector<Geodesic_curve> gas = { ctr_cv(gps[0], gps[1]), ctr_cv(gps[1], gps[2]), ctr_cv(gps[2], gps[0]) };
-  // Geodesic_arrangement geodesic_arr(&geodesic_traits);
-  // CGAL::insert(geodesic_arr, gas.begin(), gas.end());
-  // std::cout << static_cast<const Geodesic_cnt_traits&>(geodesic_traits);
-  // print_arrangement_size(geodesic_arr);
+  Geodesic_traits geodesic_traits;
+  geodesic_traits.disable_all_traces();
+  geodesic_traits.enable_trace(Geodesic_traits::COMPARE_XY_2_OP);
+  auto ctr_p = geodesic_traits.construct_point_2_object();
+  auto ctr_cv = geodesic_traits.construct_curve_2_object();
+  std::vector<Geodesic_point> gps = { ctr_p(-1,0,0), ctr_p(0,-1,0), ctr_p(0,0,-1) };
+  std::vector<Geodesic_curve> gas = { ctr_cv(gps[0], gps[1]), ctr_cv(gps[1], gps[2]), ctr_cv(gps[2], gps[0]) };
+  Geodesic_arrangement geodesic_arr(&geodesic_traits);
+  CGAL::insert(geodesic_arr, gas.begin(), gas.end());
+  std::cout << geodesic_traits.traits();
+  print_arrangement_size(geodesic_arr);
 
-  // Bezier_traits bezier_traits;
-  // bezier_traits.disable_all_traces();
-  // std::cout << static_cast<const Bezier_cnt_traits&>(bezier_traits);
+  Bezier_traits bezier_traits;
+  bezier_traits.disable_all_traces();
+  std::cout << bezier_traits.traits();
 
   return 0;
 }
