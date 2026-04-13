@@ -176,6 +176,24 @@ struct has_construct_point_2 : std::false_type {};
 template <typename T>
 struct has_construct_point_2<T, std::void_t<typename T::Construct_point_2>> : std::true_type {};
 
+// Construct_x_monotone_curve_2
+// Helper trait to check for the presence of nested Construct_x_monotone_curve_2
+template <typename, typename = std::void_t<>>
+struct has_construct_x_monotone_curve_2 : std::false_type {};
+
+// Specialization if the nested type Construct_x_monotone_curve_2 exists
+template <typename T>
+struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_2>> : std::true_type {};
+
+// Construct_curve_2
+// Helper trait to check for the presence of nested Construct_curve_2
+template <typename, typename = std::void_t<>>
+struct has_construct_curve_2 : std::false_type {};
+
+// Specialization if the nested type Construct_curve_2 exists
+template <typename T>
+struct has_construct_curve_2<T, std::void_t<typename T::Construct_curve_2>> : std::true_type {};
+
 // Compare_endpoints_xy_2
 // Helper trait to check for the presence of nested Compare_endpoints_xy_2
 template <typename, typename = std::void_t<>>

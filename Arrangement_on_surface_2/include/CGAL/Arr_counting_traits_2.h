@@ -307,8 +307,7 @@ public:
       m_object(base.are_mergeable_2_object()), m_counter(counter) {}
 
     /*! operates */
-    bool operator()(const X_monotone_curve_2& xc1,
-                    const X_monotone_curve_2& xc2) const
+    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const
     { ++m_counter; return m_object(xc1, xc2); }
   };
 
@@ -352,9 +351,11 @@ public:
   }
 };
 
+// Fallback in case `Construct_opposite_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived, typename = void>
 class Counting_construct_opposite_2 {};
 
+// The actual defintion in case `Construct_opposite_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived>
 class Counting_construct_opposite_2<BaseTraits,
                                     Derived,
@@ -376,8 +377,7 @@ public:
       m_object(base.construct_opposite_2_object()), m_counter(counter) {}
 
     /*! operates */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc)
-    { ++m_counter; return m_object(xc); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) { ++m_counter; return m_object(xc); }
   };
 
   Construct_opposite_2 construct_opposite_2_object() const {
@@ -386,13 +386,13 @@ public:
   }
 };
 
+// Fallback in case `Construct_point_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived, typename = void>
 class Counting_construct_point_2 {};
 
+// The actual defintion in case `Construct_point_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived>
-class Counting_construct_point_2<BaseTraits,
-                                 Derived,
-                                 std::enable_if_t<has_construct_point_2<BaseTraits>::value>> {
+class Counting_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
@@ -411,8 +411,7 @@ public:
 
     /*! operates */
     template <typename... Args>
-    Point_2 operator()(Args... args) const
-    { ++m_counter; return m_object(std::forward<Args>(args)...); }
+    Point_2 operator()(Args... args) const { ++m_counter; return m_object(std::forward<Args>(args)...); }
   };
 
   Construct_point_2 construct_point_2_object() const {
@@ -421,9 +420,84 @@ public:
   }
 };
 
+// Fallback in case `Construct_x_monotone_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived, typename = void>
+class Counting_construct_x_monotone_curve_2 {};
+
+// The actual defintion in case `Construct_x_monotone_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived>
+class Counting_construct_x_monotone_curve_2<BaseTraits,
+                                            Derived,
+                                            std::enable_if_t<has_construct_x_monotone_curve_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that constructs an \f$x\f$-monotone curve. */
+  class Construct_x_monotone_curve_2 {
+    using Point_2 = typename Base::Point_2;
+
+  private:
+    typename Base::Construct_x_monotone_curve_2 m_object;
+    std::size_t& m_counter;
+
+  public:
+    /*! constructs */
+    Construct_x_monotone_curve_2(const Base& base, std::size_t& counter) :
+      m_object(base.construct_x_monotone_curve_2_object()), m_counter(counter)
+    {}
+
+    /*! operates */
+    template <typename... Args>
+    Point_2 operator()(Args... args) const { ++m_counter; return m_object(std::forward<Args>(args)...); }
+  };
+
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Construct_x_monotone_curve_2(derived->traits(),
+                                        derived->m_counters[Derived::CONSTRUCT_X_MONOTONE_CURVE_2_OP]);
+  }
+};
+
+// Fallback in case `Construct_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived, typename = void>
+class Counting_construct_curve_2 {};
+
+// The actual defintion in case `Construct_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived>
+class Counting_construct_curve_2<BaseTraits, Derived, std::enable_if_t<has_construct_curve_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that constructs a curve. */
+  class Construct_curve_2 {
+    using Point_2 = typename Base::Point_2;
+
+  private:
+    typename Base::Construct_curve_2 m_object;
+    std::size_t& m_counter;
+
+  public:
+    /*! constructs */
+    Construct_curve_2(const Base& base, std::size_t& counter) :
+      m_object(base.construct_curve_2_object()), m_counter(counter)
+    {}
+
+    /*! operates */
+    template <typename... Args>
+    Point_2 operator()(Args... args) const { ++m_counter; return m_object(std::forward<Args>(args)...); }
+  };
+
+  Construct_curve_2 construct_curve_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Construct_curve_2(derived->traits(), derived->m_counters[Derived::CONSTRUCT_CURVE_2_OP]);
+  }
+};
+
+// Fallback in case `Compare_endpoints_xy_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived, typename = void>
 class Counting_compare_endpoints_xy_2 {};
 
+// The actual defintion in case `Compare_endpoints_xy_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived>
 class Counting_compare_endpoints_xy_2<BaseTraits,
                                       Derived,
@@ -447,8 +521,7 @@ public:
       m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
 
     /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc)
-    { ++m_counter; return m_object(xc); }
+    Comparison_result operator()(const X_monotone_curve_2& xc) { ++m_counter; return m_object(xc); }
   };
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
@@ -626,8 +699,7 @@ public:
       m_counter4(counter4) {}
 
     /*! obtains an approximation of a coordinate. */
-    Approximate_number_type operator()(const Point_2& p, int i)
-    { ++m_counter1; return m_object(p, i); }
+    Approximate_number_type operator()(const Point_2& p, int i) { ++m_counter1; return m_object(p, i); }
 
   private:
     typename Base::Approximate_2 m_object;
@@ -935,6 +1007,8 @@ class Arr_counting_traits_2 :
     public aos2::internal::Counting_merge_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_construct_opposite_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_construct_point_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
+    public aos2::internal::Counting_construct_x_monotone_curve_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
+    public aos2::internal::Counting_construct_curve_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_compare_endpoints_xy_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_approximate_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_is_on_x_identification_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
@@ -964,6 +1038,10 @@ class Arr_counting_traits_2 :
     aos2::internal::Counting_construct_opposite_2<Base, Arr_counting_traits_2<Base>>;
   using Counting_construct_point_2 =
     aos2::internal::Counting_construct_point_2<Base, Arr_counting_traits_2<Base>>;
+  using Counting_construct_x_monotone_curve_2 =
+    aos2::internal::Counting_construct_x_monotone_curve_2<Base, Arr_counting_traits_2<Base>>;
+  using Counting_construct_curve_2 =
+    aos2::internal::Counting_construct_curve_2<Base, Arr_counting_traits_2<Base>>;
   using Counting_compare_endpoints_xy_2 =
     aos2::internal::Counting_compare_endpoints_xy_2<Base, Arr_counting_traits_2<Base>>;
   using Counting_approximate_2 =
@@ -991,6 +1069,8 @@ class Arr_counting_traits_2 :
   friend Counting_merge_2;
   friend Counting_construct_opposite_2;
   friend Counting_construct_point_2;
+  friend Counting_construct_x_monotone_curve_2;
+  friend Counting_construct_curve_2;
   friend Counting_compare_endpoints_xy_2;
   friend Counting_approximate_2;
   friend Counting_is_on_x_identification_2;
@@ -1020,6 +1100,8 @@ public:
     MERGE_2_OP,
     CONSTRUCT_2_OPPOSITE_2_OP,
     CONSTRUCT_POINT_2_OP,
+    CONSTRUCT_X_MONOTONE_CURVE_2_OP,
+    CONSTRUCT_CURVE_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
     APPROXIMATE_2_COORD_OP,
     APPROXIMATE_2_POINT_OP,
@@ -1315,6 +1397,8 @@ private:
     "MERGE_2_OP",
     "CONSTRUCT_2_OPPOSITE_2_OP",
     "CONSTRUCT_POINT_2_OP",
+    "CONSTRUCT_X_MONOTONE_CURVE_2_OP",
+    "CONSTRUCT_CURVE_2_OP",
     "COMPARE_ENDPOINTS_XY_2_OP",
     "APPROXIMATE_2_COORD_OP",
     "APPROXIMATE_2_POINT_OP",
@@ -1357,6 +1441,8 @@ private:
     has_merge_2<Base>::value,
     has_construct_opposite_2<Base>::value,
     has_construct_point_2<Base>::value,
+    has_construct_x_monotone_curve_2<Base>::value,
+    has_construct_curve_2<Base>::value,
     has_compare_endpoints_xy_2<Base>::value,
     has_approximate_2<Base>::value, // coordinate
     has_approximate_2_point<Base>::value, // point

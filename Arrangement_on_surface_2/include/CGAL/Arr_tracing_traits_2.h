@@ -531,9 +531,11 @@ public:
   }
 };
 
+// Fallback in case `Construct_point_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived, typename = void>
 class Tracing_construct_point_2 {};
 
+// The actual defintion in case `Construct_point_2` is not defined in the base traits
 template <typename BaseTraits, typename Derived>
 class Tracing_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -570,6 +572,98 @@ public:
   Construct_point_2 construct_point_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Construct_point_2(derived->traits(), derived->construct_point_op());
+  }
+};
+
+// Fallback in case `Construct_x_monotone_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_construct_x_monotone_curve_2 {};
+
+// The actual defintion in case `Construct_x_monotone_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived>
+class Tracing_construct_x_monotone_curve_2<BaseTraits,
+                                           Derived,
+                                           std::enable_if_t<has_construct_x_monotone_curve_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that constructs a point. */
+  class Construct_x_monotone_curve_2 {
+    using Point_2 = typename Base::Point_2;
+
+  private:
+    typename Base::Construct_x_monotone_curve_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Construct_x_monotone_curve_2(const Base& base, bool enabled = true) :
+      m_object(base.construct_x_monotone_curve_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param x the \f$x\f$-coordinate.
+     * \param y the \f$y\f$-coordinate.
+     * \return the constructed point.
+     */
+    Point_2 operator()(const typename Base::FT& x, const typename Base::FT& y) const {
+      if (! m_enabled) return m_object(x, y);
+      std::cout << "construct_point" << std::endl
+                << "  x: " << x << ", y: " << y << std::endl;
+      Point_2 p = m_object(x, y);
+      std::cout << "  result: " << p << std::endl;
+      return p;
+    }
+  };
+
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Construct_x_monotone_curve_2(derived->traits(), derived->construct_point_op());
+  }
+};
+
+// Fallback in case `Construct_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived, typename = void>
+class Tracing_construct_curve_2 {};
+
+// The actual defintion in case `Construct_curve_2` is not defined in the base traits
+template <typename BaseTraits, typename Derived>
+class Tracing_construct_curve_2<BaseTraits,
+                                           Derived,
+                                           std::enable_if_t<has_construct_curve_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that constructs a point. */
+  class Construct_curve_2 {
+    using Point_2 = typename Base::Point_2;
+
+  private:
+    typename Base::Construct_curve_2 m_object;
+    bool m_enabled;
+
+  public:
+    /*! constructs */
+    Construct_curve_2(const Base& base, bool enabled = true) :
+      m_object(base.construct_curve_2_object()), m_enabled(enabled) {}
+
+    /*! operates
+     * \param x the \f$x\f$-coordinate.
+     * \param y the \f$y\f$-coordinate.
+     * \return the constructed point.
+     */
+    Point_2 operator()(const typename Base::FT& x, const typename Base::FT& y) const {
+      if (! m_enabled) return m_object(x, y);
+      std::cout << "construct_point" << std::endl
+                << "  x: " << x << ", y: " << y << std::endl;
+      Point_2 p = m_object(x, y);
+      std::cout << "  result: " << p << std::endl;
+      return p;
+    }
+  };
+
+  Construct_curve_2 construct_curve_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Construct_curve_2(derived->traits(), derived->construct_point_op());
   }
 };
 
@@ -1212,6 +1306,8 @@ class Arr_tracing_traits_2 :
     public aos2::internal::Tracing_merge_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
     public aos2::internal::Tracing_construct_opposite_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
     public aos2::internal::Tracing_construct_point_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_construct_x_monotone_curve_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
+    public aos2::internal::Tracing_construct_curve_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
     public aos2::internal::Tracing_compare_endpoints_xy_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
     public aos2::internal::Tracing_approximate_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
     public aos2::internal::Tracing_is_on_x_identification_2<BaseTraits, Arr_tracing_traits_2<BaseTraits>>,
@@ -1243,6 +1339,8 @@ public:
 
     CONSTRUCT_2_OPPOSITE_2_OP,
     CONSTRUCT_POINT_2_OP,
+    CONSTRUCT_X_MONOTONE_CURVE_2_OP,
+    CONSTRUCT_CURVE_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
     APPROXIMATE_2_OP,
 
@@ -1267,93 +1365,69 @@ private:
   Base m_traits;
 
 public:
-  bool compare_x_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_X_2_OP))); }
+  bool compare_x_op() const { return (0 != (m_flags & (0x1ull << COMPARE_X_2_OP))); }
 
-  bool compare_xy_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_XY_2_OP))); }
+  bool compare_xy_op() const { return (0 != (m_flags & (0x1ull << COMPARE_XY_2_OP))); }
 
-  bool construct_min_vertex_op() const
-  { return (0 != (m_flags & (0x1ull << CONSTRUCT_MIN_VERTEX_2_OP))); }
+  bool construct_min_vertex_op() const { return (0 != (m_flags & (0x1ull << CONSTRUCT_MIN_VERTEX_2_OP))); }
 
-  bool construct_max_vertex_op() const
-  { return (0 != (m_flags & (0x1ull << CONSTRUCT_MAX_VERTEX_2_OP))); }
+  bool construct_max_vertex_op() const { return (0 != (m_flags & (0x1ull << CONSTRUCT_MAX_VERTEX_2_OP))); }
 
-  bool is_vertical_op() const
-  { return (0 != (m_flags & (0x1ull << IS_VERTICAL_2_OP))); }
+  bool is_vertical_op() const { return (0 != (m_flags & (0x1ull << IS_VERTICAL_2_OP))); }
 
-  bool compare_y_at_x_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_2_OP))); }
+  bool compare_y_at_x_op() const { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_2_OP))); }
 
-  bool equal_points_op() const
-  { return (0 != (m_flags & (0x1ull << EQUAL_POINTS_2_OP))); }
+  bool equal_points_op() const { return (0 != (m_flags & (0x1ull << EQUAL_POINTS_2_OP))); }
 
-  bool equal_curves_op() const
-  { return (0 != (m_flags & (0x1ull << EQUAL_CURVES_2_OP))); }
+  bool equal_curves_op() const { return (0 != (m_flags & (0x1ull << EQUAL_CURVES_2_OP))); }
 
-  bool compare_y_at_x_left_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_LEFT_2_OP))); }
+  bool compare_y_at_x_left_op() const { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_LEFT_2_OP))); }
 
-  bool compare_y_at_x_right_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_RIGHT_2_OP))); }
+  bool compare_y_at_x_right_op() const { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_RIGHT_2_OP))); }
 
-  bool make_x_monotone_op() const
-  { return (0 != (m_flags & (0x1ull << MAKE_X_MONOTONE_2_OP))); }
+  bool make_x_monotone_op() const { return (0 != (m_flags & (0x1ull << MAKE_X_MONOTONE_2_OP))); }
 
-  bool split_op() const
-  { return (0 != (m_flags & (0x1ull << SPLIT_2_OP))); }
+  bool split_op() const { return (0 != (m_flags & (0x1ull << SPLIT_2_OP))); }
 
-  bool do_intersect_op() const
-  { return (0 != (m_flags & (0x1ull << DO_INTERSECT_2_OP))); }
+  bool do_intersect_op() const { return (0 != (m_flags & (0x1ull << DO_INTERSECT_2_OP))); }
 
-  bool intersect_op() const
-  { return (0 != (m_flags & (0x1ull << INTERSECT_2_OP))); }
+  bool intersect_op() const { return (0 != (m_flags & (0x1ull << INTERSECT_2_OP))); }
 
-  bool are_mergeable_op() const
-  { return (0 != (m_flags & (0x1ull << ARE_MERGEABLE_2_OP))); }
+  bool are_mergeable_op() const { return (0 != (m_flags & (0x1ull << ARE_MERGEABLE_2_OP))); }
 
-  bool merge_op() const
-  { return (0 != (m_flags & (0x1ull << MERGE_2_OP))); }
+  bool merge_op() const { return (0 != (m_flags & (0x1ull << MERGE_2_OP))); }
 
-  bool construct_opposite_op() const
-  { return (0 != (m_flags & (0x1ull << CONSTRUCT_2_OPPOSITE_2_OP))); }
+  bool construct_opposite_op() const { return (0 != (m_flags & (0x1ull << CONSTRUCT_2_OPPOSITE_2_OP))); }
 
-  bool construct_point_op() const
-  { return (0 != (m_flags & (0x1ull << CONSTRUCT_POINT_2_OP))); }
+  bool construct_point_op() const { return (0 != (m_flags & (0x1ull << CONSTRUCT_POINT_2_OP))); }
 
-  bool compare_endpoints_xy_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_ENDPOINTS_XY_2_OP))); }
+  bool construct_x_monotone_curve_op() const { return (0 != (m_flags & (0x1ull << CONSTRUCT_X_MONOTONE_CURVE_2_OP))); }
 
-  bool approximate_op() const
-  { return (0 != (m_flags & (0x1ull << APPROXIMATE_2_OP))); }
+  bool construct_curve_op() const { return (0 != (m_flags & (0x1ull << CONSTRUCT_CURVE_2_OP))); }
+
+  bool compare_endpoints_xy_op() const { return (0 != (m_flags & (0x1ull << COMPARE_ENDPOINTS_XY_2_OP))); }
+
+  bool approximate_op() const { return (0 != (m_flags & (0x1ull << APPROXIMATE_2_OP))); }
 
   // left-right
 
-  bool parameter_space_in_x_op() const
-  { return (0 != (m_flags & (0x1ull << PARAMETER_SPACE_IN_X_2_OP))); }
+  bool parameter_space_in_x_op() const { return (0 != (m_flags & (0x1ull << PARAMETER_SPACE_IN_X_2_OP))); }
 
-  bool is_on_x_identification_op() const
-  { return (0 != (m_flags & (0x1ull << IS_ON_X_IDENTIFICATION_2_OP))); }
+  bool is_on_x_identification_op() const { return (0 != (m_flags & (0x1ull << IS_ON_X_IDENTIFICATION_2_OP))); }
 
-  bool compare_y_on_boundary_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_Y_ON_BOUNDARY_2_OP))); }
+  bool compare_y_on_boundary_op() const { return (0 != (m_flags & (0x1ull << COMPARE_Y_ON_BOUNDARY_2_OP))); }
 
-  bool compare_y_near_boundary_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_Y_NEAR_BOUNDARY_2_OP))); }
+  bool compare_y_near_boundary_op() const { return (0 != (m_flags & (0x1ull << COMPARE_Y_NEAR_BOUNDARY_2_OP))); }
 
   // bottom-top
 
-  bool parameter_space_in_y_op() const
-  { return (0 != (m_flags & (0x1ull << PARAMETER_SPACE_IN_Y_2_OP))); }
+  bool parameter_space_in_y_op() const { return (0 != (m_flags & (0x1ull << PARAMETER_SPACE_IN_Y_2_OP))); }
 
-  bool is_on_y_identification_op() const
-  { return (0 != (m_flags & (0x1ull << IS_ON_Y_IDENTIFICATION_2_OP))); }
+  bool is_on_y_identification_op() const { return (0 != (m_flags & (0x1ull << IS_ON_Y_IDENTIFICATION_2_OP))); }
 
-  bool compare_x_on_boundary_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_X_ON_BOUNDARY_2_OP))); }
+  bool compare_x_on_boundary_op() const { return (0 != (m_flags & (0x1ull << COMPARE_X_ON_BOUNDARY_2_OP))); }
 
-  bool compare_x_near_boundary_op() const
-  { return (0 != (m_flags & (0x1ull << COMPARE_X_NEAR_BOUNDARY_2_OP))); }
+  bool compare_x_near_boundary_op() const { return (0 != (m_flags & (0x1ull << COMPARE_X_NEAR_BOUNDARY_2_OP))); }
 
   /*! constructs default. */
   template<typename ... Args>
@@ -1475,9 +1549,7 @@ public:
      * \return the left endpoint.
      */
     using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
-    using Return_type =
-      decltype(std::declval<Subcurve_ctr_minv>().
-               operator()(std::declval<X_monotone_curve_2>()));
+    using Return_type = decltype(std::declval<Subcurve_ctr_minv>().operator()(std::declval<X_monotone_curve_2>()));
     Return_type operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_min_vertex" << std::endl
@@ -1504,9 +1576,7 @@ public:
      * \return the right endpoint.
      */
     using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
-    using Return_type =
-      decltype(std::declval<Subcurve_ctr_maxv>().
-               operator()(std::declval<X_monotone_curve_2>()));
+    using Return_type = decltype(std::declval<Subcurve_ctr_maxv>().operator()(std::declval<X_monotone_curve_2>()));
     Return_type operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_max_vertex" << std::endl
@@ -1584,8 +1654,7 @@ public:
 
   public:
     /*! constructs */
-    Equal_2(const Base& base,
-            bool enabled_point = true, bool enabled_curve = true) :
+    Equal_2(const Base& base, bool enabled_point = true, bool enabled_curve = true) :
       m_object(base.equal_2_object()),
       m_enabled_point(enabled_point),
       m_enabled_curve(enabled_curve)
@@ -1597,8 +1666,7 @@ public:
      * \return true if the \f$x\f$-monotone curves are equal and false
      *         otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
       if (! m_enabled_curve) return m_object(xcv1, xcv2);
       std::cout << "equal 1" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
@@ -1644,8 +1712,7 @@ public:
      * \param p the reference point.
      * \return the comparison result.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  const Point_2& p) const {
       if (! m_enabled) return m_object(xcv1, xcv2, p);
       std::cout << "compare_y_at_x_left" << std::endl
@@ -1678,8 +1745,7 @@ public:
      * \param p the reference point.
      * \return the comparison result.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  const Point_2& p) const {
       if (! m_enabled) return m_object(xcv1, xcv2, p);
       std::cout << "compare_y_at_x_right" << std::endl
