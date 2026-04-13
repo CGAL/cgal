@@ -1424,37 +1424,59 @@ protected:
   }
 
   template <typename Offsets, typename Facets>
-  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const Offsets& component_offsets, const Facets& facets) const {
+  CGAL::Surface_mesh<Point_3>
+  construct_star_component_mesh(std::size_t component_index,
+                                const Offsets& component_offsets,
+                                const Facets& facets) const
+  {
+    CGAL::Surface_mesh<Point_3> component_mesh;
+    std::vector<Point_3> points;
+    std::vector<std::array<std::size_t, 3>> triangles;
+    std::size_t vertex_index = 0;
+    for(std::size_t facet_id = component_offsets[component_index - 1],
+                     end = component_offsets[component_index];
+        facet_id < end; ++facet_id)
+    {
+      const auto& [cell, facet_index, _] = facets[facet_id];
+      if(tr().is_infinite(Facet(cell, facet_index))) {
+        continue;
+      }
+      for(int i = 0; i < 3; ++i) {
+        points.push_back(cell->vertex(Tds::vertex_triple_index(facet_index, i))->point());
+      } // end for each vertex of the facet
+      // swap the orientation: our facets are oriented toward the center of the star component
+      // but we want them to be oriented outward
+      triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
+      vertex_index += 3;
+    } // end for each facet in the component
+    CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
+
+    std::vector<std::pair<std::size_t, typename CGAL::Surface_mesh<Point_3>::Face_index>>
+        triangle_index_to_face_descriptor;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
+        points,
+        triangles,
+        component_mesh,
+        CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
+    return component_mesh;
+  }
+
+  std::optional<Point_3> compute_center_point_if_possible(const CGAL::Surface_mesh<Point_3>& component_mesh) const {
+    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh, parameters::allow_open_input(true));
+  }
+
+  template <typename Offsets, typename Facets>
+  CGAL::Surface_mesh<Point_3>
+  construct_link_mesh_for_debug(const Offsets& component_offsets,
+                                const Facets& facets) const
+  {
     using Mesh = CGAL::Surface_mesh<Point_3>;
     using face_descriptor = typename Mesh::Face_index;
     Mesh link_mesh;
     auto [patch_id_map, _] = link_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
-    for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
-      std::vector<Point_3> points;
-      std::vector<std::array<std::size_t, 3>> triangles;
-      std::size_t vertex_index = 0;
-      Mesh component_mesh;
-      for(std::size_t facet_id = component_offsets[component_index - 1],
-                           end = component_offsets[component_index];
-          facet_id < end; ++facet_id)
-      {
-        const auto& [cell, facet_index, _] = facets[facet_id];
-        if(tr().is_infinite(Facet(cell, facet_index))) {
-          continue;
-        }
-        for(int i = 0; i < 3; ++i) {
-          points.push_back(cell->vertex(Tds::vertex_triple_index(facet_index, i))->point());
-        } // end for each vertex of the facet
-        // swap the orientation: our facets are oriented toward the center of the star component
-        // but we want them to be oriented outward
-        triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
-        vertex_index += 3;
-      } // end for each facet in the component
-      CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
 
-      std::vector<std::pair<std::size_t, face_descriptor>> triangle_index_to_face_descriptor;
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh,
-        CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
+    for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
+      Mesh component_mesh = construct_star_component_mesh(component_index, component_offsets, facets);
 
       std::vector<face_descriptor> new_faces;
       auto out_it = boost::make_function_output_iterator(
@@ -1463,14 +1485,13 @@ protected:
       for(auto fd : new_faces) {
         put(patch_id_map, fd, static_cast<int>(component_index));
       }
-      auto opt_kernel_center_point = CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
-      if(opt_kernel_center_point.has_value()) {
-        auto kernel_center_point = *opt_kernel_center_point;
-        std::cerr << "  - kernel center point of component " << component_index << ": " << kernel_center_point
-                  << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point())) << ")"
-                  << "\n";
-      }
-    } // end for each component
+    }
+    return link_mesh;
+  }
+
+  template <typename Offsets, typename Facets>
+  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const Offsets& component_offsets, const Facets& facets) const {
+    const auto link_mesh = construct_link_mesh_for_debug(component_offsets, facets);
 
     std::stringstream filename;
     filename << "dump_link_mesh_vertex" << IO::oformat(v, With_offset_tag{}) << ".ply";
