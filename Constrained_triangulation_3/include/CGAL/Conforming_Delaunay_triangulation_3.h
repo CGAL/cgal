@@ -94,6 +94,7 @@ struct Debug_options {
     debug_geometric_errors,
     debug_polygon_insertion,
     debug_restore_faces,
+    debug_move_Steiner_vertices,
     display_statistics,
     use_epeck_for_normals,
     use_epeck_for_Steiner_points,
@@ -152,6 +153,9 @@ struct Debug_options {
 
   bool restore_faces() const { return get(Flag::debug_restore_faces); }
   void restore_faces(bool b) { get(Flag::debug_restore_faces) = b; }
+
+  bool move_Steiner_vertices() const { return get(Flag::debug_move_Steiner_vertices); }
+  void move_Steiner_vertices(bool b) { get(Flag::debug_move_Steiner_vertices) = b; }
 
   bool display_statistics() const { return get(Flag::display_statistics); }
   void display_statistics(bool b) { get(Flag::display_statistics) = b; }

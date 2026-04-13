@@ -1557,8 +1557,9 @@ protected:
       cells_in_other_components.clear(); // clear it here, and fill it again with the cells opposite to a constrained
                                          // facet during the exploration of the current component
 
-      std::cerr << "    starting a new component through face with id " << component_first_incident_face_id << '\n';
-
+      if(this->debug().move_Steiner_vertices()) {
+        std::cerr << "  (starting a new component through face with id " << component_first_incident_face_id << ")\n";
+      }
       // - `out.facets` is part of the result, and a queue as well, with `queue_head` as the index of
       //   the head of the queue: popping is done by incrementing `queue_head`, and pushing is done by
       //   adding new facets at the end of the vector.
@@ -1604,10 +1605,12 @@ protected:
       // end of the current component reached, start a new one if there is any cell in
       // another component that we haven't processed yet
 
-      std::cerr << "  - Star component #" << out.component_offsets.size() << " has "
-                << (out.facets.size() - out.component_offsets.back()) << " facets.\n"
-                << "    It is incident to constraint faces with ids: {"
-                << IO::oformat(current_component_incident_constraint_face_ids) << "}\n";
+      if(this->debug().move_Steiner_vertices()) {
+        std::cerr << "  - Star component #" << out.component_offsets.size() << " has "
+                  << (out.facets.size() - out.component_offsets.back()) << " facets.\n"
+                  << "    It is incident to constraint faces with ids: {"
+                  << IO::oformat(current_component_incident_constraint_face_ids) << "}\n";
+      }
 
       out.component_offsets.push_back(out.facets.size());
 
@@ -1651,7 +1654,11 @@ protected:
   }
 
   bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
-    std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
+    std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
+      indent_guards.emplace(IO::make_indenting_guards("  |"));
+    }
 
     auto is_constrained = [this](Facet f) { return is_facet_constrained(f); };
     const auto incident_constrained_facet_opt = find_in_incident_facets(v, is_constrained);
@@ -1665,10 +1672,16 @@ protected:
       return nb_of_incident_cells;
     });
 
-    std::cerr << "  - Number of incident cells: " << nb_of_incident_cells << '\n';
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << "- Number of incident cells: " << nb_of_incident_cells << '\n';
+    }
 
     const auto star_components = collect_star_components_facets(v, incident_constrained_facet);
     const auto nb_of_star_components = star_components.component_incident_constraint_face_ids.size();
+
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << "- Nb of components or the star: " << star_components.component_offsets.size() - 1 << '\n';
+    }
 
     const auto components_central_points = std::invoke([&]() {
       std::optional<boost::container::small_vector<Point_3, 8>> central_points{std::in_place};
@@ -1677,16 +1690,23 @@ protected:
         auto component_mesh =
             construct_star_component_mesh(component_index, star_components.component_offsets, star_components.facets);
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
-        std::cerr << "  - kernel center point of component #" << component_index << ": ";
+        if(this->debug().move_Steiner_vertices()) {
+          std::cerr << "  - kernel center point of component #" << component_index << ": ";
+        }
         if(opt_kernel_center_point.has_value()) {
           auto kernel_center_point = *opt_kernel_center_point;
           central_points->push_back(kernel_center_point);
-          std::cerr << kernel_center_point
-                    << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point()))
+          if(this->debug().move_Steiner_vertices()) {
+            std::cerr << kernel_center_point
+                      << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point()))
                     << ")"
                     << "\n";
+          }
         } else {
-          std::cerr << "none (the component is either degenerate or open) ABORT\n";
+          if(this->debug().move_Steiner_vertices()) {
+            auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
+            std::cerr << "none (the component is either degenerate or open) ABORT\n";
+          }
           central_points.reset();
           return central_points;
         }
@@ -1694,19 +1714,22 @@ protected:
       return central_points;
     }); // end compute central points for each component
 
-    { // DEBUG, DO NOT COMMIT as it is
-      dump_link_mesh_of_vertex_to_ply(v, star_components.component_offsets, star_components.facets); // DO NOT COMMIT AS IT IS: use a debug flag to enable it
+    if(this->debug().move_Steiner_vertices()) {
+      dump_link_mesh_of_vertex_to_ply(v, star_components.component_offsets, star_components.facets);
     }
 
-    std::cerr << "  " << "nb of components: " << star_components.component_offsets.size() - 1 << '\n';
-
     if(!components_central_points.has_value()) {
-      std::cerr << "  - No central point could be computed for at least one of the components, aborting moving the vertex to the volume\n";
+      if(this->debug().move_Steiner_vertices()) {
+        auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
+        std::cerr << "- No central point could be computed for at least one of the components, aborting moving the vertex to the volume\n";
+      }
       return false;
     }
     std::size_t nb_of_new_2d_faces = 0;
     this->remove_Steiner_vertex_from_all_cdt_2(v, CGAL::Counting_output_iterator{&nb_of_new_2d_faces});
-    std::cerr << "  - number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << "- number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
+    }
     return true;
   }
 
@@ -4680,14 +4703,17 @@ public:
                                    Face_index face_id,
                                    New_CDT_2_face_handles_output_iterator new_face_handles_out)
   {
-    dump_face(face_id);
-    std::cerr << "Remove Steiner vertex " << IO::oformat(v, with_point_and_info) << " from CDT_2 of face F#" << face_id
-              << '\n';
     auto& cdt_2 = non_const_face_cdt_2(face_id);
-    if(!cdt_2.CT_2::is_valid(true, 3)) {
-      std::cerr << "ERROR: CDT_2 is not valid BEFORE removing Steiner vertex " << IO::oformat(v, with_point_and_info)
-                << " from face F#" << face_id << '\n';
-      CGAL_assertion(false);
+
+    if(this->debug().move_Steiner_vertices()) {
+      dump_face(face_id);
+      std::cerr << "  - remove Steiner vertex " << IO::oformat(v, with_point_and_info) << " from CDT_2 of face F#" << face_id
+                << '\n';
+      if(!cdt_2.CT_2::is_valid(true, 3)) {
+        std::cerr << "ERROR: CDT_2 is not valid BEFORE removing Steiner vertex " << IO::oformat(v, with_point_and_info)
+                  << " from face F#" << face_id << '\n';
+        CGAL_assertion(false);
+      }
     }
 
     typename CDT_2::Locate_type lt;
@@ -4806,12 +4832,15 @@ public:
       fill_with_delaunay(hole, /*is_outside_the_face=*/false);
     }
     cdt_2.delete_vertex(vh_2d);
-    dump_face(face_id, std::string("dump_face_") + std::to_string(face_id) + "_after_removing_Steiner_vertex_" + std::to_string(vh_2d->time_stamp()) + ".off");
+    if(this->debug().move_Steiner_vertices()) {
+      dump_face(face_id, std::string("dump_face_") + std::to_string(face_id) + "_after_removing_Steiner_vertex_" +
+                             std::to_string(vh_2d->time_stamp()) + ".off");
 
-    if(!cdt_2.CT_2::is_valid(true, 3)) {
-      std::cerr << "ERROR: CDT_2 is not valid after removing Steiner vertex " << IO::oformat(v, with_point_and_info)
-                << " from face F#" << face_id << '\n';
-      CGAL_assertion(false);
+      if(!cdt_2.CT_2::is_valid(true, 3)) {
+        std::cerr << "ERROR: CDT_2 is not valid after removing Steiner vertex " << IO::oformat(v, with_point_and_info)
+                  << " from face F#" << face_id << '\n';
+        CGAL_assertion(false);
+      }
     }
     return new_face_handles_out;
   }

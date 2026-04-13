@@ -126,6 +126,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
   --debug-Steiner-points: debug Steiner point insertion
   --debug-Steiner-points-construction: debug Steiner point construction
+  --debug-move-Steiner-vertices-to-the-volume: debug moving Steiner vertices to the volume
   --debug-input-faces: debug input faces
   --debug-missing-regions: debug missing regions
   --debug-regions: debug regions
@@ -170,6 +171,7 @@ struct CDT_options
   bool        read_mesh_with_operator             = false;
   bool        debug_Steiner_points                = false;
   bool        debug_Steiner_points_construction   = false;
+  bool        debug_move_Steiner_vertices         = false;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -256,6 +258,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       debug_Steiner_points                = true;
     } else if(arg == "--debug-Steiner-points-construction"sv) {
       debug_Steiner_points_construction   = true;
+    } else if(arg == "--debug-move-Steiner-vertices-to-the-volume"sv) {
+      debug_move_Steiner_vertices         = true;
     } else if(arg == "--debug-input-faces"sv) {
       debug_input_faces                   = true;
     } else if(arg == "--debug-missing-regions"sv) {
@@ -334,6 +338,7 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.verbose_special_cases(options.debug_verbose_special_cases);
   cdt_debug.encroaching_vertices(options.debug_encroaching_vertices);
   cdt_debug.conforming_validation(options.debug_conforming_validation);
+  cdt_debug.move_Steiner_vertices(options.debug_move_Steiner_vertices);
   cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);
@@ -746,8 +751,9 @@ int go(Mesh mesh, CDT_options options) {
     auto move_vertices_guard = CGAL::CDT_3_MOVE_STEINER_VERTICES_TASK_guard();
     cdt.move_Steiner_vertices_to_the_volume();
     if(!options.quiet) {
-      std::cout << "[timings] moved Steiner vertices to the volume in "
+      std::cout << "\n[timings] moved Steiner vertices to the volume in "
                     << move_vertices_guard.time_ms() << " ms\n";
+      std::cout << cdt.statistics() << "\n";
     }
   }
 
