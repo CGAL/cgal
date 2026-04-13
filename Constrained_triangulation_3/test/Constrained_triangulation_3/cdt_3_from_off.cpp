@@ -142,7 +142,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-restore-faces: debug face restoration process
 
   --use-finite-edges-map: use a hash map for finite edges (default: false)
-  --move-Steiner-vertices-to-the-volume: move Steiner vertices to the volume (default: false)
+  --move-Steiner-vertices-to-the-volume/--no-move-Steiner-vertices-to-the-volume: move Steiner vertices to the volume (default: true)
   --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
   --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
 
@@ -185,7 +185,7 @@ struct CDT_options
   bool        debug_polygon_insertion             = false;
   bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
-  bool        move_Steiner_vertices_to_the_volume = false;
+  bool        move_Steiner_vertices_to_the_volume = true;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
@@ -286,6 +286,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       debug_restore_faces                  = true;
     } else if(arg == "--use-finite-edges-map"sv) {
       use_finite_edges_map                = true;
+    } else if(arg == "--no-move-Steiner-vertices-to-the-volume"sv) {
+      move_Steiner_vertices_to_the_volume = false;
     } else if(arg == "--move-Steiner-vertices-to-the-volume"sv) {
       move_Steiner_vertices_to_the_volume = true;
     } else if(arg == "--no-use-epeck-for-normals"sv) {
