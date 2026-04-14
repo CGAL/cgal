@@ -12,6 +12,16 @@ Release date: July 2026
   computation of an epsilon-net of the hyperbolic surface, which is a set of
   well-distributed points on the surface controlled by the parameter epsilon.
   
+### [2D Alpha Wrapping (new package)](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2)
+- This component takes a polygon soup, a 2D segment soup, and/or a 2D point set as input,
+  and generates a valid (watertight, intersection-free and 1-manifold) multi-polygon that
+  strictly encloses the input. The algorithm proceeds by shrink-wrapping
+  and refining a 2D Delaunay triangulation starting from a loose bounding box of the input.
+  Two user-defined parameters, alpha and offset, offer control over the maximum size
+  of cavities where the shrink-wrapping process can enter, and the tightness
+  of the final polygon(s) to the input, respectively. Once combined, these parameters
+  provide a means to trade fidelity to the input for complexity of the output.
+
 ### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
 -   This package provides functions to compute various types of generalized barycentric coordinates
     (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
@@ -19,6 +29,8 @@ Release date: July 2026
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing) (major changes)
 
+- **Breaking change**: Update the visitor concepts `PMPTriangulateFaceVisitor` and `PMPHolefillingVisitor` to request functions `accept_face()` and `accept_triangle()`, respectively. These functions can be used to tweak the way faces and holes are triangles by black listing some candidate triangles.
+    User visitors inheriting from the default visitors do not require any update.
 -   The "Polygon Mesh Processing" package has been reorganized into several packages.
     "Polygon Mesh Processing" retains the core functionalities, while advanced and specialized features
     have been moved to dedicated packages:
@@ -30,26 +42,53 @@ Release date: July 2026
    `#include <CGAL/Polygon_mesh_processing/XXX.h>` do not need to be changed and will include
    the appropriate header from the new packages.
 
-### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.2/Manual/packages.html#PkgKernel23)
+- **Breaking change**: Circle_2/Segment_2, Sphere_3/Bbox_3, Sphere_3/Iso_cuboid_3 now do not consider inclusion as intersection.
+  This behavior is consistent with other intersections involving Circle_2 and Sphere_3.
+  The former behavior of `do_intersect()` can be reproduced with:
+    - `!Has_on_unbounded_side_2::operator(Circle_2, Segment_2)` or
+    - `!Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2)` or
+    - `!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`
+- Added a new concept, `CompareProjectionAlongDirection_3`,
+     to the 3D Kernel concepts to compare the order of projected points on a line. Corresponding functors
+     in the model (`Compare_projection_along_direction_3`) and free function (`compare_projection_along_direction()`)
+     have also been added.
 
--   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
+### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
+-   Introduced a Geometry Traits concept for arrangements on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
 -   Made the `Arr_linear_traits_2` a model of the new concept.
 -   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+-   Introduced the concept `AosTraits::Do_intersect_2`. A model of this concept must provide an operator that
+    accepts two `x`-monotone curves and a boolean flag that indicates whether common endpoints should be considered or ignored.
+    The operator determines whether the curves intersect, and it can be used with an inexact-construction kernel.
+
+### [2D Intersection of Curves](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceSweep2)
+
+- Deprecated `CGAL::do_curves_intersect()`, which assumed open curves. Replaced by
+    `CGAL::Surface_sweep_2::do_intersect()`. Notice (i) the introduction of the new namespace `Surface_sweep_2`,
+    and (ii) the addition of the `closed` parameter, which defaults to `true`. To match the behavior of the
+    deprecated function, set `closed` to false.
 
 ### [2D Conforming Triangulations and Meshes](https://doc.cgal.org/6.2/Manual/packages.html#PkgMesh2)
 
 - The implementation is more robust to degenerate inputs, such as polygons with microscopic edges, or nearly collinear points.
 - **Breaking change**: The concept [`DelaunayMeshTraits_2`](https://doc.cgal.org/6.2/Mesh_2/classDelaunayMeshTraits__2.html) now requires the functor `Construct_bbox_2`.
 
+### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
+- Added the function `CGAL::approximate_convex_decomposition()` that computes a set of convex volumes that cover an input mesh.
+
 ### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
 
-- **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - **New functions**: Two functions are added `CGAL::IO::read_VTK<LCC>()` and `CGAL::IO::write_VTK<LCC>()` adding the ability to read and write .vtk files (legacy ASCII) for 3D `Linear_cell_complex` (dimension 3, ambient dimension 3). These functions support per-vertex and per-volume scalar fields and handle various VTK cell types.
   - `import_from_plane_graph()` → `read_plane_graph_in_lcc()`
   - `import_from_polyhedron_3()` → `polyhedron_3_to_lcc()`
   - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
   - The old function names are still available but marked as deprecated for backward compatibility.
 
-- **New functions**: Two functions are added `CGAL::IO::read_VTK<LCC>()` and `CGAL::IO::write_VTK<LCC>()` adding the ability to read and write .vtk files (legacy ASCII) for 3D `Linear_cell_complex` (dimension 3, ambient dimension 3). These functions support per-vertex and per-volume scalar fields and handle various VTK cell types.
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.2/Manual/packages.html#PkgOrthtree)
+
+  - added function `intersected_nodes()` with an intersection functor and a convenience overload for a ball query.
 
 ### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection)
 
@@ -126,6 +165,15 @@ Release date: July 2026
 ### [Intersecting Sequences of dD Iso-oriented Boxes](https://doc.cgal.org/6.2/Manual/packages.html#PkgBoxIntersectionD)
 - The function `CGAL::box_intersection_d()` now accepts ranges with different box types.
 - Add the box type `CGAL::Box_with_info<FT, dim, Info>`, which stores a variable of type `Info` accessible via `info()`.
+
+### [3D Convex hull](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexHull3)
+
+-   Added the functions `Convex_hull::do_intersect()` to the package `Convex_hull_3`, which enable testing the intersection of two convex hulls.
+-   Added the functions `extreme_point_3()` to the package `Convex_hull_3`, which return the farthest point of a convex hull in a given direction.
+-   Added the class `Convex_hull_hierarchy` to the package `Convex_hull_3`, which represents a convex hull and is optimized for use with the above functions.
+
+### Geometric Object Generators
+- Add the function `point_and_support()` to several generators to get the last point generated point and the support element containing it. Affected generators are `Random_points_in_triangles_2`, `Random_points_in_triangles_3`, `Random_points_in_triangle_mesh_3`, `Random_points_in_tetrahedral_mesh_boundary_3`, `Random_points_in_tetrahedral_mesh_3`, `Random_points_in_triangle_soup_3`, and `Random_points_on_graph_edges_3`.
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 

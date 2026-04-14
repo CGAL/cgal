@@ -57,12 +57,20 @@ find_crossing_edge(PolygonMesh& pm,
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   using FT = typename GT::FT;
+  using Plane_3 = typename GT::Plane_3;
+  using Point_3 = typename GT::Point_3;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
   auto oriented_side = traits.oriented_side_3_object();
-  auto sq = traits.compute_squared_distance_3_object();
+  auto normal = traits.construct_orthogonal_vector_3_object();
+  auto vector = traits.construct_vector_3_object();
+  auto point_on = traits.construct_point_on_3_object();
+  auto dot = traits.compute_scalar_product_3_object();
+  auto sq = [&](const Plane_3& pl, const Point_3& p){
+    return dot(vector(point_on(pl), p), normal(pl));
+  };
 
   // ____________________ Find a crossing edge _____________________
 
@@ -80,7 +88,6 @@ find_crossing_edge(PolygonMesh& pm,
       bool is_local_max=true;
       for(auto v: vertices_around_target(src ,pm)){
         sp_trg = sq(plane, get(vpm, v));
-        CGAL_assertion(sq(plane, get(vpm, v)) == sp_trg);
         // Check if v in the direction to the plane
         if(compare(sp_src, sp_trg)==direction_to_zero){
           if(sign(sp_trg)!=direction_to_zero){
@@ -122,7 +129,7 @@ find_crossing_edge(PolygonMesh& pm,
       }
     }
 
-    // Nothing on negative side
+    // Nothing on positive side
     if(no_positive_side){
       if constexpr(!parameters::is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value){
         // Search a coplanar face
@@ -283,8 +290,6 @@ refine_convex_with_plane(PolygonMesh& pm,
   } while(target(h, pm)!=v_start || (boundaries.empty() && h!=h_start));
 
   CGAL_assertion(is_valid_polygon_mesh(pm));
-  CGAL_assertion(!boundaries.empty());
-
   return boundaries;
 }
 
@@ -443,10 +448,12 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     }
   }
 
-  // Case where the output is degenerated to a segment
+  // Case where the output is degenerated to a segment or a vertex
   if(vertices(pm).size() < 3){
-    remove_face(*faces(pm).begin(), pm);
-    for(edge_descriptor e: edges(pm))
+    if(!faces(pm).empty())
+      remove_face(*faces(pm).begin(), pm);
+    std::vector<edge_descriptor> edges_to_remove(edges(pm).begin(), edges(pm).end());
+    for(edge_descriptor e: edges_to_remove)
       remove_edge(e, pm);
     for(vertex_descriptor v: vertices(pm))
       set_halfedge(v, BGT::null_halfedge(), pm);
@@ -469,6 +476,7 @@ clip_convex(PolygonMesh& pm,
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
+  using face_descriptor = typename BGT::face_descriptor;
   using halfedge_descriptor = typename BGT::halfedge_descriptor;
   using edge_descriptor = typename BGT::edge_descriptor;
   using vertex_descriptor = typename BGT::vertex_descriptor;
@@ -530,7 +538,7 @@ clip_convex(PolygonMesh& pm,
         remove_vertex(v1, pm); // Degenerate to a point
       }
     }
-    return v0;
+    return *vertices(pm).begin();
 
   } else if(faces(pm).size()==1){
     // Dimension == 2
@@ -611,6 +619,25 @@ clip_convex(PolygonMesh& pm,
   if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return parameters::choose_parameter(parameters::get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
   const auto &boundaries =refine_convex_with_plane(pm, plane, he, np);
+  if(boundaries.empty()){ // No edges in the plane after refine, it means there are only a vertex
+    vertex_descriptor v0 = target(he, pm);
+    CGAL_assertion(oriented_side(plane, get(vpm, v0)) == ON_ORIENTED_BOUNDARY);
+    std::vector<face_descriptor> faces_to_remove(faces(pm).begin(), faces(pm).end());
+    for(face_descriptor f: faces_to_remove)
+      remove_face(f, pm);
+    std::vector<edge_descriptor> edges_to_remove(edges(pm).begin(), edges(pm).end());
+    for(edge_descriptor e: edges_to_remove)
+      remove_edge(e, pm);
+    std::vector<vertex_descriptor> vertices_to_remove;
+    vertices_to_remove.reserve(vertices(pm).size()-1);
+    for(vertex_descriptor v: vertices(pm))
+      if(v!=v0)
+        vertices_to_remove.push_back(v);
+    for(vertex_descriptor v: vertices_to_remove)
+      remove_vertex(v, pm);
+    set_halfedge(v0, BGT::null_halfedge(), pm);
+    return v0;
+  }
   return remove_bounded_region_and_fill(pm, boundaries, source(he, pm), np, plane_fd);
 }
 

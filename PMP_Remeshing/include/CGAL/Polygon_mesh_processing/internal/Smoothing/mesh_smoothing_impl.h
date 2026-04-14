@@ -386,9 +386,9 @@ private:
       // a couple % faster), but numeric differentiation should be stronger in the face
       // of difficult cases. Leaving the auto-differentiation formulation in case somebody really
       // cares about the extra speed.
-#define CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+#define CGAL_CERES_USE_NUMERIC_DIFFERENTIATION
 
-#ifdef CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+#ifdef CGAL_CERES_USE_NUMERIC_DIFFERENTIATION
       residual[0] = evaluate(x[0], y[0], z[0]);
 #else
       // Computations must be explicit so that automatic differentiation can be used
@@ -445,7 +445,7 @@ public:
       const Point_ref vip = get(vpmap_, vi);
       const Point_ref vjp = get(vpmap_, vj);
 
-#ifdef CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+#ifdef CGAL_CERES_USE_NUMERIC_DIFFERENTIATION
       ceres::CostFunction* cost_function =
         new ceres::NumericDiffCostFunction<Face_energy, ceres::CENTRAL, 1, 1, 1, 1>(new Face_energy(vip, vjp, S_av));
 #else

@@ -178,22 +178,24 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
     } while(++circ_vertex != done_vertex);
   }
 
+  using Is_valid_base = CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle;
+  Is_valid_base is_valid_base(existing_edges);
+  CGAL::internal::Is_valid_compose is_valid(is_valid_base, visitor);
+
 //#define CGAL_USE_WEIGHT_INCOMPLETE
 #ifdef CGAL_USE_WEIGHT_INCOMPLETE
   typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_incomplete<CGAL::internal::Weight_min_max_dihedral_and_area>,
-        CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
+        decltype(is_valid)> WC;
 #else
   typedef CGAL::internal::Weight_calculator<CGAL::internal::Weight_min_max_dihedral_and_area,
-        CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle> WC;
+        decltype(is_valid)> WC;
 #endif
-
-  CGAL::internal::Is_valid_existing_edges_and_degenerate_triangle is_valid(existing_edges);
 
   // fill hole using polyline function, with custom tracer for PolygonMesh
   Tracer_polyhedron<PolygonMesh, OutputIterator> tracer(out, pmesh, P_edges);
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-  if(use_cdt && triangulate_hole_polyline_with_cdt(P, tracer, visitor, is_valid, k, max_squared_distance))
+  if(use_cdt && ::CGAL::internal::triangulate_hole_polyline_with_cdt(P, tracer, visitor, is_valid, k, max_squared_distance))
     return std::make_pair(tracer.out, CGAL::internal::Weight_min_max_dihedral_and_area(0,0));
 #endif
   CGAL::internal::Weight_min_max_dihedral_and_area weight =

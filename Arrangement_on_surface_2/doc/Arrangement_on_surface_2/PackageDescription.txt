@@ -185,6 +185,7 @@ implemented as peripheral classes or as free (global) functions.
 - `AosTraits::CompareXOnBoundaryOfCurveEnd_2`
 - `AosTraits::ConstructCurve_2`
 - `AosTraits::ConstructXMonotoneCurve_2`
+- `AosTraits::DoIntersect_2`
 - `AosTraits::Equal_2`
 - `AosTraits::Intersect_2`
 - `AosTraits::IsVertical_2`
