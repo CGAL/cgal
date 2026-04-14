@@ -187,7 +187,7 @@ MainWindow::processInput(CGAL::Object o)
     if(points.size() == 2) {
       input.push_back(Segment_2(points.front(), points.back()));
       output.clear();
-      CGAL::hot_pixel_snap_rounding_2(input, std::back_inserter(output), CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
+      CGAL::hot_pixel_snap_rounding_2(input, output, CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
     }
     else {
       std::cerr << points.size() << std::endl;
@@ -279,7 +279,7 @@ MainWindow::open(QString fileName)
               std::back_inserter(input));
   }
   output.clear();
-  CGAL::hot_pixel_snap_rounding_2(input, std::back_inserter(output), CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
+  CGAL::hot_pixel_snap_rounding_2(input, output, CGAL::parameters::pixel_size(delta).use_grid_coordinates(false));
   ifs.close();
   // default cursor
   QApplication::restoreOverrideCursor();

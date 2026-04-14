@@ -53,7 +53,7 @@ detailed description see \cgalCite{cgal:hp-isr-02}.
 template<class Traits, class InputIterator, class OutputContainer>
 CGAL_DEPRECATED void snap_rounding_2(InputIterator begin,
                                      InputIterator end,
-                                     OutputContainer & output_container,
+                                     OutputContainer &output_container,
                                      typename Traits::NT pixel_size,
                                      bool do_isr = true,
                                      bool int_output = true,

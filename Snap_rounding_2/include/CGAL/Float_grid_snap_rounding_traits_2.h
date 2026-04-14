@@ -101,7 +101,7 @@ struct Float_grid_snap_rounding_traits_2
   struct Compute_squared_round_bound_2{
     double operator()(const FT &x) const{
       double inf = std::numeric_limits<double>::infinity();
-      double b=std::nextafter(std::nextafterf(to_interval(x).second, -inf) - std::nextafterf(to_interval(x).first, inf), inf);
+      double b=std::nextafter(std::nextafterf((float) to_interval(x).second, -inf) - std::nextafterf((float) to_interval(x).first, inf), inf);
       return b*b;
     }
     double operator()(const Point_2 &p) const{
