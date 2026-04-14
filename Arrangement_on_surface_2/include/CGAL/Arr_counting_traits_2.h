@@ -1219,7 +1219,9 @@ class Arr_counting_traits_2 :
     public aos2::internal::Counting_compare_y_near_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_x_on_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
     public aos2::internal::Counting_compare_x_near_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>> {
+
   using Base = BaseTraits;
+
   using Counting_parameter_space_in_x_2 =
     aos2::internal::Counting_parameter_space_in_x_2<Base, Arr_counting_traits_2<Base>>;
   using Counting_parameter_space_in_y_2 =
@@ -1337,13 +1339,16 @@ public:
     increment();
   }
 
-  /*! disables copy constructor. */
+  /*! disables copy constructor.
+   */
   Arr_counting_traits_2(const Arr_counting_traits_2&) = delete;
 
-  /*! obtains the counter of the given operation */
+  /*! obtains the counter of the given operation
+   */
   std::size_t count(Operation_id id) const { return m_counters[id]; }
 
-  /*! prints the counter associated with an operation. */
+  /*! prints the counter associated with an operation.
+   */
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const {
     if (! m_exist[id]) return os;

@@ -56,7 +56,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Parameter_space_in_x_2(const Base& base, bool enabled = true) :
       m_object(base.parameter_space_in_x_2_object()), m_enabled(enabled)
     {}
@@ -122,7 +123,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Parameter_space_in_y_2(const Base& base, bool enabled = true) :
       m_object(base.parameter_space_in_y_2_object()), m_enabled(enabled) {}
 
@@ -174,9 +176,7 @@ class Tracing_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x
   using Base = BaseTraits;
 
 public:
-  /*! \class Make_x_monotone_2
-   * A functor for subdividing curves into \f$x\f$-monotone curves.
-   */
+  //! A functor for subdividing curves into \f$x\f$-monotone curves.
   class Make_x_monotone_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -187,7 +187,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Make_x_monotone_2(const Base& base, bool enabled = true) :
       m_object(base.make_x_monotone_2_object()), m_enabled(enabled) {}
 
@@ -251,7 +252,7 @@ class Tracing_split_2<BaseTraits, Derived, std::enable_if_t<has_split_2<BaseTrai
   using Base = BaseTraits;
 
 public:
-  /*! A functor that splits an \f$x\f$-monotone curve at a point. */
+  //! A functor that splits an \f$x\f$-monotone curve at a point.
   class Split_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -261,7 +262,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Split_2(const Base& base, bool enabled = true) :
       m_object(base.split_2_object()), m_enabled(enabled) {}
 
@@ -307,8 +309,7 @@ class Tracing_do_intersect_2<BaseTraits, Derived, std::enable_if_t<has_do_inters
   using Base = BaseTraits;
 
 public:
-  /*! A functor that computes intersections between two \f$x\f$-monotone curves.
-   */
+  //! A functor that computes intersections between two \f$x\f$-monotone curves.
   class Do_intersect_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -318,7 +319,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Do_intersect_2(const Base& base, bool enabled = true) :
       m_object(base.do_intersect_2_object()), m_enabled(enabled) {}
 
@@ -367,8 +369,7 @@ class Tracing_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<
 public:
   using Multiplicity = typename Base::Multiplicity;
 
-  /*! A functor that computes intersections between two \f$x\f$-monotone curves.
-   */
+  //! A functor that computes intersections between two \f$x\f$-monotone curves.
   class Intersect_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -378,7 +379,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Intersect_2(const Base& base, bool enabled = true) :
       m_object(base.intersect_2_object()), m_enabled(enabled) {}
 
@@ -449,8 +451,7 @@ class Tracing_are_mergeable_2<BaseTraits, Derived, std::enable_if_t<has_are_merg
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that tests whether two \f$x\f$-monotone curves can be merged. */
+  //! A functor that tests whether two \f$x\f$-monotone curves can be merged.
   class Are_mergeable_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -459,7 +460,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Are_mergeable_2(const Base& base, bool enabled = true) :
       m_base_traits(base), m_enabled(enabled) {}
 
@@ -502,7 +504,7 @@ class Tracing_merge_2<BaseTraits, Derived, std::enable_if_t<has_merge_2<BaseTrai
   using Base = BaseTraits;
 
 public:
-  /*! A functor that merges two \f$x\f$-monotone curves into one. */
+  //! A functor that merges two \f$x\f$-monotone curves into one.
   class Merge_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -511,7 +513,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Merge_2(const Base& base, bool enabled = true) :
       m_object(base.merge_2_object()), m_enabled(enabled) {}
 
@@ -550,7 +553,7 @@ class Tracing_construct_opposite_2<BaseTraits, Derived, std::enable_if_t<has_con
   using Base = BaseTraits;
 
 public:
-  /*! A fnuctor that constructs an opposite \f$x\f$-monotone curve. */
+  //! A fnuctor that constructs an opposite \f$x\f$-monotone curve.
   class Construct_opposite_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -559,7 +562,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_opposite_2(const Base& base, bool enabled = true) :
       m_object(base.construct_opposite_2_object()), m_enabled(enabled) {}
 
@@ -646,7 +650,7 @@ private:
     Construct_point_2<Construct_point_2>;
 
 public:
-  /*! A functor that constructs a point. */
+  //! A functor that constructs a point.
   class Construct_point_2 : Tracing_construct_point_2_xy {
     using Point_2 = typename Base::Point_2;
 
@@ -659,7 +663,8 @@ public:
 
     using Tracing_construct_point_2_xy::operator();
 
-    /*! constructs */
+    /*! constructs
+     */
     Construct_point_2(const Base& base, bool enabled = true) :
       m_object(base.construct_point_2_object()), m_enabled(enabled) {}
 
@@ -698,7 +703,7 @@ class Tracing_construct_x_monotone_curve_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-  /*! A functor that constructs a point. */
+  //! A functor that constructs a point.
   class Construct_x_monotone_curve_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -747,7 +752,7 @@ class Tracing_construct_curve_2<BaseTraits, Derived, std::enable_if_t<has_constr
   using Base = BaseTraits;
 
 public:
-  /*! A functor that constructs a point. */
+  //! A functor that constructs a point.
   class Construct_curve_2 {
     using Curve_2 = typename Base::Curve_2;
 
@@ -796,9 +801,7 @@ class Tracing_compare_endpoints_xy_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-  /*! A functor that compares the two endpoints of an \f$x\f$-monotone curve
-   * lexigoraphically.
-   */
+  //! A functor that compares the two endpoints of an \f$x\f$-monotone curve lexigoraphically.
   class Compare_endpoints_xy_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -807,7 +810,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_endpoints_xy_2(const Base& base, bool enabled = true) :
       m_object(base.compare_endpoints_xy_2_object()), m_enabled(enabled) {}
 
@@ -858,7 +862,7 @@ class Tracing_approximate_2_point<BaseTraits, Derived,
   using Base = BaseTraits;
 
 protected:
-  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone curves. */
+  //! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
     using Point_2 = typename Base::Point_2;
@@ -903,7 +907,7 @@ class Tracing_approximate_2_xcv<BaseTraits, Derived, std::enable_if_t<has_approx
   using Base = BaseTraits;
 
 protected:
-  /*! A functor that approximates \f$x\f$-monotone curves. */
+  //! A functor that approximates \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -1025,7 +1029,8 @@ public:
     using Tracing_approx_xcv::operator();
     using Tracing_approx_xcv_within_bounds::operator();
 
-    /*! constructs */
+    /*! constructs
+     */
     Approximate_2(const Base& base, bool enabled = true) : m_enabled(enabled), m_object(base.approximate_2_object()) {}
 
     /*! obtains an approximation of a point coordinate.
@@ -1070,9 +1075,7 @@ class Tracing_is_on_x_identification_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-  /*! A functor that determines whether a point or curve is on
-   * \f$x\f$-identification.
-   */
+  //! A functor that determines whether a point or curve is on \f$x\f$-identification.
   class Is_on_x_identification_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -1082,7 +1085,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Is_on_x_identification_2(const Base& base, bool enabled = true) :
       m_object(base.is_on_x_identification_2_object()), m_enabled(enabled) {}
 
@@ -1132,9 +1136,7 @@ class Tracing_is_on_y_identification_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-  /*! A functor that determines whether a point or curve is on
-   * \f$y\f$-identification.
-   */
+  //! A functor that determines whether a point or curve is on \f$y\f$-identification.
   class Is_on_y_identification_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -1144,7 +1146,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Is_on_y_identification_2(const Base& base, bool enabled = true) :
       m_object(base.is_on_y_identification_2_object()), m_enabled(enabled) {}
 
@@ -1194,10 +1197,7 @@ class Tracing_compare_x_on_boundary_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that compares the \f$x\f$-coordinate of two given points
-   * that lie on horizontal boundaries.
-   */
+  //! A functor that compares the \f$x\f$-coordinate of two given points that lie on horizontal boundaries.
   class Compare_x_on_boundary_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -1207,7 +1207,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_x_on_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_x_on_boundary_2_object()), m_enabled(enabled) {}
 
@@ -1286,10 +1287,7 @@ class Tracing_compare_y_on_boundary_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that compares the \f$y\f$-coordinate of two given points
-   * that lie on vertical boundaries.
-   */
+  //! A functor that compares the \f$y\f$-coordinate of two given points that lie on vertical boundaries.
   class Compare_y_on_boundary_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -1299,7 +1297,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_on_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_on_boundary_2_object()),
       m_enabled(enabled)
@@ -1341,10 +1340,7 @@ class Tracing_compare_x_near_boundary_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that compares the \f$x\f$-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
+  //! A functor that compares the \f$x\f$-coordinates of curve ends near the boundary of the parameter space.
   class Compare_x_near_boundary_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -1353,7 +1349,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_x_near_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_x_near_boundary_2_object()), m_enabled(enabled) {}
 
@@ -1398,10 +1395,7 @@ class Tracing_compare_y_near_boundary_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that compares the \f$y\f$-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
+  //! A functor that compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
   class Compare_y_near_boundary_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -1410,7 +1404,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_near_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_near_boundary_2_object()), m_enabled(enabled) {}
 
@@ -1587,12 +1582,14 @@ public:
 
   bool compare_x_near_boundary_op() const { return (0 != (m_flags & (0x1ull << COMPARE_X_NEAR_BOUNDARY_2_OP))); }
 
-  /*! constructs default. */
+  /*! constructs default.
+   */
   template<typename ... Args>
   Arr_tracing_traits_2(Args ... args) : m_traits(std::forward<Args>(args)...)
   { enable_all_traces(); }
 
-  /*! disables copy constructor. */
+  /*! disables copy constructor.
+   */
   Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
   /*! enables the trace of a traits operation.
@@ -1636,14 +1633,15 @@ public:
 
   //@}
 
-  /*! A functor that compares the \f$x\f$-coordinates of two points. */
+  //! A functor that compares the \f$x\f$-coordinates of two points.
   class Compare_x_2 {
   private:
     typename Base::Compare_x_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_x_2(const Base& base, bool enabled = true) :
       m_object(base.compare_x_2_object()), m_enabled(enabled) {}
 
@@ -1663,16 +1661,15 @@ public:
     }
   };
 
-  /*! A functor that compares two points lexigoraphically: by \f$x\f$, then by
-   * \f$y\f$.
-   */
+  //! A functor that compares two points lexigoraphically: by \f$x\f$, then by \f$y\f$.
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_xy_2(const Base& base, bool enabled = true) :
       m_object(base.compare_xy_2_object()), m_enabled(enabled) {}
 
@@ -1692,14 +1689,15 @@ public:
     }
   };
 
-  /*! A functor that obtains the left endpoint of an \f$x\f$-monotone curve. */
+  //! A functor that obtains the left endpoint of an \f$x\f$-monotone curve.
   class Construct_min_vertex_2 {
   private:
     typename Base::Construct_min_vertex_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_min_vertex_2(const Base& base, bool enabled = true) :
       m_object(base.construct_min_vertex_2_object()), m_enabled(enabled) {}
 
@@ -1719,14 +1717,15 @@ public:
     }
   };
 
-  /*! A functor that obtains the right endpoint of an \f$x\f$-monotone curve. */
+  //! A functor that obtains the right endpoint of an \f$x\f$-monotone curve.
   class Construct_max_vertex_2 {
   private:
     typename Base::Construct_max_vertex_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_max_vertex_2(const Base& base, bool enabled = true) :
       m_object(base.construct_max_vertex_2_object()), m_enabled(enabled) {}
 
@@ -1746,15 +1745,15 @@ public:
     }
   };
 
-  /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical.
-   */
+  //! A functor that checks whether a given \f$x\f$-monotone curve is vertical.
   class Is_vertical_2 {
   private:
     typename Base::Is_vertical_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Is_vertical_2(const Base& base, bool enabled = true) :
       m_object(base.is_vertical_2_object()), m_enabled(enabled) {}
 
@@ -1781,7 +1780,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_at_x_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_at_x_2_object()), m_enabled(enabled) {}
 
@@ -1802,9 +1802,7 @@ public:
     }
   };
 
-  /*! A functor that checks whether two points and two \f$x\f$-monotone curves
-   * are identical.
-   */
+  //! A functor that checks whether two points and two \f$x\f$-monotone curves are identical.
   class Equal_2 {
   private:
     typename Base::Equal_2 m_object;
@@ -1812,7 +1810,8 @@ public:
     bool m_enabled_curve;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Equal_2(const Base& base, bool enabled_point = true, bool enabled_curve = true) :
       m_object(base.equal_2_object()),
       m_enabled_point(enabled_point),
@@ -1861,7 +1860,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_at_x_left_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_at_x_left_2_object()), m_enabled(enabled) {}
 
@@ -1894,7 +1894,8 @@ public:
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_at_x_right_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_at_x_right_2_object()), m_enabled(enabled) {}
 
