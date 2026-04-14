@@ -22,7 +22,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/number_utils.h>
 
 namespace CGAL {
 namespace Intersections {
@@ -37,9 +36,20 @@ intersection(const typename K::Segment_3& seg,
   // Delegate to the Iso_cuboid_3/Segment_3 intersection which uses exact
   // kernel arithmetic throughout, avoiding the to_double() precision loss
   // that the old intersection_bl() helper suffered from (issue #7124).
+  typedef typename K::Point_3 Point_3;
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type result_type;
   typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::variant_type variant_type;
+
+  // Handle degenerate segments (source == target) to avoid division by zero
+  // in Iso_cuboid_3_Segment_3_intersection which divides by a direction component.
+  if(seg.is_degenerate()) {
+    const Point_3& p = seg.source();
+    Iso_cuboid_3 ic(box);
+    if(ic.bounded_side(p) != ON_UNBOUNDED_SIDE)
+      return result_type(variant_type(p));
+    return result_type();
+  }
 
   auto res = internal::intersection(seg, Iso_cuboid_3(box), k);
   if(!res) return result_type();

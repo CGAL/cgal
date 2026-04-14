@@ -23,7 +23,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/number_utils.h>
 
 namespace CGAL {
 namespace Intersections {
