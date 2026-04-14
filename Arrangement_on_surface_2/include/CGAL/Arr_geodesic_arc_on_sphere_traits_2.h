@@ -497,7 +497,7 @@ public:
      * \param[in] y the \f$y\f$-coordinate.
      * \param[in] z the \f$z\f$-coordinate.
      */
-    Point_2 operator()(const FT& x, const FT& y, const FT& z) {
+    Point_2 operator()(const FT& x, const FT& y, const FT& z) const {
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(x, y, z);
@@ -509,7 +509,7 @@ public:
      * direction.
      * \param other the other direction.
      */
-    Point_2 operator()(const Direction_3& other) {
+    Point_2 operator()(const Direction_3& other) const {
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(other);
@@ -782,7 +782,7 @@ public:
      * \pre the source and target cannot be equal.
      * \pre the source and target cannot be the opoosite of each other.
      */
-    Curve_2 operator()(const Point_2& source, const Point_2& target) {
+    Curve_2 operator()(const Point_2& source, const Point_2& target) const {
       Curve_2 cv;
       cv.set_source(source);
       cv.set_target(target);
@@ -871,7 +871,7 @@ public:
      * \pre Both endpoints lie on the given plane.
      */
     Curve_2 operator()(const Point_2& source, const Point_2& target,
-                       const Direction_3& normal) {
+                       const Direction_3& normal) const {
       Curve_2 cv;
 
       cv.set_source(source);
