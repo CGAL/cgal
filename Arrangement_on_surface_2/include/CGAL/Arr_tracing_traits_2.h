@@ -34,12 +34,15 @@ namespace CGAL {
 namespace aos2 {
 namespace internal {
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_parameter_space_in_x_2 {};
+/// `Parameter_space_in_x_2`
+//@{
 
+//! Fallback selected `Parameter_space_in_x_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_parameter_space_in_x_2 {};
+
+//! Partial specialization selected if `BaseTraits::`Parameter_space_in_x_2 is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_parameter_space_in_x_2<BaseTraits,
-                                     Derived,
+class Tracing_parameter_space_in_x_2<BaseTraits, Derived,
                                      std::enable_if_t<has_parameter_space_in_x_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -95,12 +98,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_parameter_space_in_y_2 {};
+//@}
 
+/// `Parameter_space_in_y_2`
+//@{
+
+//! Fallback selected `Parameter_space_in_y_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_parameter_space_in_y_2 {};
+
+//! Partial specialization selected if `BaseTraits::Parameter_space_in_y_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_parameter_space_in_y_2<BaseTraits,
-                                     Derived,
+class Tracing_parameter_space_in_y_2<BaseTraits, Derived,
                                      std::enable_if_t<has_parameter_space_in_y_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -152,13 +160,20 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_make_x_monotone_2 {};
+//@}
 
+/// `Make_x_monotone_2`
+//@{
+
+//! Fallback selected `Make_x_monotone_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_make_x_monotone_2 {};
+
+//! Fallback selected `Make_x_monotone_2` is not defined in the base traits.
 template <typename BaseTraits, typename Derived>
 class Tracing_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x_monotone_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
+public:
   /*! \class Make_x_monotone_2
    * A functor for subdividing curves into \f$x\f$-monotone curves.
    */
@@ -222,9 +237,15 @@ class Tracing_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_split_2 {};
+//@}
 
+/// `Split_2`
+//@{
+
+//! Fallback selected `Split_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_split_2 {};
+
+//! Partial specialization selected if `BaseTraits::Split_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Tracing_split_2<BaseTraits, Derived, std::enable_if_t<has_split_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -272,9 +293,15 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_do_intersect_2 {};
+//@}
 
+/// `Do_intersect_2`
+//@{
+
+//! Fallback selected `Do_intersect_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_do_intersect_2 {};
+
+//! Partial specialization selected if `BaseTraits::Do_intersect_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Tracing_do_intersect_2<BaseTraits, Derived, std::enable_if_t<has_do_intersect_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -324,9 +351,15 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_intersect_2 {};
+//@}
 
+/// `Intersect_2`
+//@{
+
+//! Fallback selected `Intersect_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_intersect_2 {};
+
+//! Partial specialization selected if `BaseTraits::Intersect_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Tracing_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -401,9 +434,16 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
+//@}
+
+/// `Are_mergeable_2`
+//@{
+
+//! Fallback selected `Are_mergeable_2` is not defined in the base traits.
+template <typename, typename, typename = void>
 class Tracing_are_mergeable_2 {};
 
+//! Partial specialization selected if `BaseTraits::Are_mergeable_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Tracing_are_mergeable_2<BaseTraits, Derived, std::enable_if_t<has_are_mergeable_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -448,9 +488,15 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_merge_2 {};
+//@}
 
+/// `Merge_2`
+//@{
+
+//! Fallback selected `Merge_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_merge_2 {};
+
+//! Partial specialization selected if `BaseTraits::Merge_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Tracing_merge_2<BaseTraits, Derived, std::enable_if_t<has_merge_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -490,9 +536,15 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_construct_opposite_2 {};
+//@}
 
+/// `Construct_opposite_2`
+//@{
+
+//! Fallback selected if `Construct_opposite_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_construct_opposite_2 {};
+
+//! Partial specialization selected if `BaseTraits::Construct_opposite_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Tracing_construct_opposite_2<BaseTraits, Derived, std::enable_if_t<has_construct_opposite_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -531,18 +583,71 @@ public:
   }
 };
 
-// Fallback in case `Construct_point_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_construct_point_2 {};
+/// `Construct_point_2`
+//@{
 
-// The actual defintion in case `Construct_point_2` is not defined in the base traits
+/* Fallback selected if the functor `BaseTraits::Construct_point_2` does not define an operator that accepts the
+ * parameters `const FT&` and `const FT&`.
+ */
+template <typename, typename, typename = void>
+class Tracing_construct_point_2_xy {
+protected:
+  template <typename T>
+  class Construct_point_2 {
+  public:
+    void operator()() {}; // avoids compilation errors
+  };
+};
+
+/* Partial specialization selected if the functor `BaseTraits::Construct_point_2` defines an operator that accepts the
+ * parameters `const FT&` and `const FT&`.
+ */
 template <typename BaseTraits, typename Derived>
-class Tracing_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> {
+class Tracing_construct_point_2_xy<BaseTraits, Derived,
+                                   std::enable_if_t<has_construct_point_2_xy<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+protected:
+  //! A functor that constructs a point.
+  template <typename T>
+  class Construct_point_2 {
+    using Point_2 = typename Base::Point_2;
+
+  public:
+    /*! constructs a point.
+     */
+    template <typename FT>
+    Point_2 operator()(const FT& x, const FT& y) {
+      const T* derived = static_cast<const T*>(this);
+      if (! derived->m_enabled) return derived->m_object(x, y);
+      std::cout << "construct_point_2" << std::endl
+                << "  x: " << x << ", y: " << y << std::endl;
+      Point_2 p = m_object(x, y);
+      std::cout << "  result: " << p << std::endl;
+      return p;
+    }
+  };
+};
+
+// Fallback selected if `BaseTraits::Construct_point_2` is not defined.
+template <typename, typename, typename = void> class Tracing_construct_point_2 {};
+
+// Partial specialization selected if `BaseTraits::Construct_point_2` is defined .
+template <typename BaseTraits, typename Derived>
+class Tracing_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> :
+    public Tracing_construct_point_2_xy<BaseTraits, Derived> {
   using Base = BaseTraits;
 
 public:
+  class Construct_point_2; // forward declaration
+
+private:
+  using Tracing_construct_point_2_xy = typename Tracing_construct_point_2_xy<Base, Derived>::template
+    Construct_point_2<Construct_point_2>;
+
+public:
   /*! A functor that constructs a point. */
-  class Construct_point_2 {
+  class Construct_point_2 : Tracing_construct_point_2_xy {
     using Point_2 = typename Base::Point_2;
 
   private:
@@ -550,20 +655,23 @@ public:
     bool m_enabled;
 
   public:
+    friend Tracing_construct_point_2_xy;
+
+    using Tracing_construct_point_2_xy::operator();
+
     /*! constructs */
     Construct_point_2(const Base& base, bool enabled = true) :
       m_object(base.construct_point_2_object()), m_enabled(enabled) {}
 
     /*! operates
-     * \param x the \f$x\f$-coordinate.
-     * \param y the \f$y\f$-coordinate.
      * \return the constructed point.
      */
-    Point_2 operator()(const typename Base::FT& x, const typename Base::FT& y) const {
-      if (! m_enabled) return m_object(x, y);
-      std::cout << "construct_point" << std::endl
-                << "  x: " << x << ", y: " << y << std::endl;
-      Point_2 p = m_object(x, y);
+    template <typename... Args>
+    Point_2 operator()(Args... args) const {
+      if (! m_enabled) return m_object(std::forward<Args>(args)...);
+      std::cout << "construct_point_2" << std::endl
+                << "  parameters..." << std::endl;
+      Point_2 p = m_object(std::forward<Args>(args)...);
       std::cout << "  result: " << p << std::endl;
       return p;
     }
@@ -575,14 +683,17 @@ public:
   }
 };
 
-// Fallback in case `Construct_x_monotone_curve_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_construct_x_monotone_curve_2 {};
+//@}
 
-// The actual defintion in case `Construct_x_monotone_curve_2` is not defined in the base traits
+/// `Construct_x_monotone_curve_2`
+//@{
+
+//! Fallback selected if `Construct_x_monotone_curve_2` is not defined in the base traits
+template <typename, typename, typename = void> class Tracing_construct_x_monotone_curve_2 {};
+
+//! Partial specialization selected if `BaseTraits::Construct_x_monotone_curve_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_construct_x_monotone_curve_2<BaseTraits,
-                                           Derived,
+class Tracing_construct_x_monotone_curve_2<BaseTraits, Derived,
                                            std::enable_if_t<has_construct_x_monotone_curve_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -590,28 +701,29 @@ public:
   /*! A functor that constructs a point. */
   class Construct_x_monotone_curve_2 {
     using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
   private:
     typename Base::Construct_x_monotone_curve_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_x_monotone_curve_2(const Base& base, bool enabled = true) :
       m_object(base.construct_x_monotone_curve_2_object()), m_enabled(enabled) {}
 
     /*! operates
-     * \param x the \f$x\f$-coordinate.
-     * \param y the \f$y\f$-coordinate.
-     * \return the constructed point.
+     * \return the constructed \f$x\f$.monotone curve
      */
-    Point_2 operator()(const typename Base::FT& x, const typename Base::FT& y) const {
-      if (! m_enabled) return m_object(x, y);
-      std::cout << "construct_point" << std::endl
-                << "  x: " << x << ", y: " << y << std::endl;
-      Point_2 p = m_object(x, y);
-      std::cout << "  result: " << p << std::endl;
-      return p;
+    template <typename... Args>
+    X_monotone_curve_2 operator()(Args... args) const {
+      if (! m_enabled) return m_object(std::forward<Args>(args)...);
+      std::cout << "construct_x_monotone_curve_2" << std::endl
+                << "  parameters..." << std::endl;
+      X_monotone_curve_2 xcv = m_object(std::forward<Args>(args)...);
+      std::cout << "  result: " << xcv << std::endl;
+      return xcv;
     }
   };
 
@@ -621,43 +733,45 @@ public:
   }
 };
 
-// Fallback in case `Construct_curve_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_construct_curve_2 {};
+//@}
 
-// The actual defintion in case `Construct_curve_2` is not defined in the base traits
+/// `Construct_curve_2`
+//@{
+
+// Fallback selected if `BaseTraits::Construct_curve_2` is not defined.
+template <typename, typename, typename = void> class Tracing_construct_curve_2 {};
+
+// Partial specialization selected if `BaseTraits::Construct_curve_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_construct_curve_2<BaseTraits,
-                                           Derived,
-                                           std::enable_if_t<has_construct_curve_2<BaseTraits>::value>> {
+class Tracing_construct_curve_2<BaseTraits, Derived, std::enable_if_t<has_construct_curve_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
   /*! A functor that constructs a point. */
   class Construct_curve_2 {
-    using Point_2 = typename Base::Point_2;
+    using Curve_2 = typename Base::Curve_2;
 
   private:
     typename Base::Construct_curve_2 m_object;
     bool m_enabled;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_curve_2(const Base& base, bool enabled = true) :
       m_object(base.construct_curve_2_object()), m_enabled(enabled) {}
 
     /*! operates
-     * \param x the \f$x\f$-coordinate.
-     * \param y the \f$y\f$-coordinate.
-     * \return the constructed point.
+     * \return the constructed curve.
      */
-    Point_2 operator()(const typename Base::FT& x, const typename Base::FT& y) const {
-      if (! m_enabled) return m_object(x, y);
-      std::cout << "construct_point" << std::endl
-                << "  x: " << x << ", y: " << y << std::endl;
-      Point_2 p = m_object(x, y);
-      std::cout << "  result: " << p << std::endl;
-      return p;
+    template <typename... Args>
+    Curve_2 operator()(Args... args) const {
+      if (! m_enabled) return m_object(std::forward<Args>(args)...);
+      std::cout << "construct_curve_2" << std::endl
+                << "  parameters..." << std::endl;
+      Curve_2 cv = m_object(std::forward<Args>(args)...);
+      std::cout << "  result: " << cv << std::endl;
+      return cv;
     }
   };
 
@@ -667,12 +781,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_compare_endpoints_xy_2 {};
+//@}
 
+/// `Compare_endpoints_xy_2`
+//@{
+
+//! Fallback selected if Compare_endpoints_xy_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_compare_endpoints_xy_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_endpoints_xy_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_compare_endpoints_xy_2<BaseTraits,
-                                     Derived,
+class Tracing_compare_endpoints_xy_2<BaseTraits, Derived,
                                      std::enable_if_t<has_compare_endpoints_xy_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -712,25 +831,29 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_approximate_point_2 {
-  using Base = BaseTraits;
+//@}
 
+/// `Approximate_2`
+//@{
+
+/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
+ * does not define an operator that accepts a parameter of type `const Point_2&`.
+ */
+template <typename, typename, typename = void>
+class Tracing_approximate_2_point {
 protected:
   template <typename T>
   class Approximate_2 {
-    using Point_2 = typename Base::Point_2;
-    using Approximate_number_type = typename Base::Approximate_number_type;
-
   public:
-    /*! a placeholder to avoid compilation errors */
-    Approximate_number_type operator()(const Point_2& p, int i) {};
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
+/* Partial specialization selected if the functor `BaseTraits::Approximate_2` defines an operator that accepts a
+ * parameter of type `const Point_2&`.
+ */
 template <typename BaseTraits, typename Derived>
-class Tracing_approximate_point_2<BaseTraits,
-                                  Derived,
+class Tracing_approximate_2_point<BaseTraits, Derived,
                                   std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -741,7 +864,8 @@ protected:
     using Point_2 = typename Base::Point_2;
 
   public:
-    /*! obtains an approximation of a point. */
+    /*! obtains an approximation of a point.
+     */
     typename Base::Approximate_point_2 operator()(const Point_2& p) {
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(p);
@@ -754,26 +878,28 @@ protected:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_approximate_xcv_2 {
-  using Base = BaseTraits;
-
+/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
+ * does not define an operator that accepts three parameters of the types `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and one optional parameter
+ * of type `bool`.
+ */
+template <typename, typename, typename = void>
+class Tracing_approximate_2_xcv {
 protected:
   template <typename T>
   class Approximate_2 {
-    using Point_2 = typename Base::Point_2;
-    using Approximate_number_type = typename Base::Approximate_number_type;
-
   public:
-    /*! a placeholder to avoid compilation errors */
-    Approximate_number_type operator()(const Point_2& p, int i) {};
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
+/*! Partial specialization selected if the functor `BaseTraits::Approximate_2`
+ * defines an operator that accepts three parameters of type `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and one optional parameter
+ * of type `bool`.
+ */
 template <typename BaseTraits, typename Derived>
-class Tracing_approximate_xcv_2<BaseTraits,
-                                Derived,
-                                std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
+class Tracing_approximate_2_xcv<BaseTraits, Derived, std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 protected:
@@ -806,25 +932,28 @@ protected:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_approximate_xcv_2_within_bounds {
-  using Base = BaseTraits;
-
+/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
+ * does not define an operator that accepts four parameters of type `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`, and
+ * one optional parameter of type `bool`.
+ */
+template <typename, typename, typename = void>
+class Tracing_approximate_2_xcv_within_bounds {
 protected:
   template <typename T>
   class Approximate_2 {
-    using Point_2 = typename Base::Point_2;
-    using Approximate_number_type = typename Base::Approximate_number_type;
-
   public:
-    /*! a placeholder to avoid compilation errors */
-    Approximate_number_type operator()(const Point_2& p, int i) const {};
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
+/*! Partial specialization selected if the functor `BaseTraits::Approximate_2`
+ * defines an operator that accepts four parameters of type `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`, and
+ * one optional parameter of type `bool`.
+ */
 template <typename BaseTraits, typename Derived>
-class Tracing_approximate_xcv_2_within_bounds<BaseTraits,
-                                              Derived,
+class Tracing_approximate_2_xcv_within_bounds<BaseTraits, Derived,
                                               std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -836,8 +965,8 @@ protected:
   public:
     /*! obtains an approximation of an \f$x\f$-monotone curve within a given bounding box. */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
-                              const Bbox_2& bbox, bool l2r = true) const {
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, const Bbox_2& bbox,
+                              bool l2r = true) const {
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(xcv, error, oi, l2r);
       std::cout << "approximate" << std::endl
@@ -857,27 +986,26 @@ protected:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_approximate_2 {};
+// Fallback selected if `Approximate_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_approximate_2 {};
 
+// Partial specialization selected if `BaseTraits::Approximate_2` is defined .
 template <typename BaseTraits, typename Derived>
-class Tracing_approximate_2<BaseTraits,
-                            Derived,
-                            std::enable_if_t<has_approximate_2<BaseTraits>::value>> :
-    public Tracing_approximate_point_2<BaseTraits, Derived>,
-    public Tracing_approximate_xcv_2<BaseTraits, Derived>,
-    public Tracing_approximate_xcv_2_within_bounds<BaseTraits, Derived>{
+class Tracing_approximate_2<BaseTraits, Derived, std::enable_if_t<has_approximate_2<BaseTraits>::value>> :
+    public Tracing_approximate_2_point<BaseTraits, Derived>,
+    public Tracing_approximate_2_xcv<BaseTraits, Derived>,
+    public Tracing_approximate_2_xcv_within_bounds<BaseTraits, Derived> {
   using Base = BaseTraits;
 
 public:
   class Approximate_2; // forward declaration
 
 private:
-  using Tracing_approx_point = typename Tracing_approximate_point_2<Base, Derived>::template
+  using Tracing_approx_point = typename Tracing_approximate_2_point<Base, Derived>::template
     Approximate_2<Approximate_2>;
-  using Tracing_approx_xcv = typename Tracing_approximate_xcv_2<Base, Derived>::template
+  using Tracing_approx_xcv = typename Tracing_approximate_2_xcv<Base, Derived>::template
     Approximate_2<Approximate_2>;
-  using Tracing_approx_xcv_within_bounds = typename Tracing_approximate_xcv_2_within_bounds<Base, Derived>::template
+  using Tracing_approx_xcv_within_bounds = typename Tracing_approximate_2_xcv_within_bounds<Base, Derived>::template
     Approximate_2<Approximate_2>;
 
 public:
@@ -927,12 +1055,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_is_on_x_identification_2 {};
+//@}
 
+/// `Is_on_x_identification_2`
+//@{
+
+//! Fallback selected if `Is_on_x_identification_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_is_on_x_identification_2 {};
+
+//! Partial specialization selected if `BaseTraits::Is_on_x_identification_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_is_on_x_identification_2<BaseTraits,
-                                       Derived,
+class Tracing_is_on_x_identification_2<BaseTraits, Derived,
                                        std::enable_if_t<has_is_on_x_identification_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -984,12 +1117,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_is_on_y_identification_2 {};
+//@}
 
+/// `is_on_y_identification_2`
+//@{
+
+//! Fallback selected if `Is_on_y_identification_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_is_on_y_identification_2 {};
+
+//! Partial specialization selected if `BaseTraits::Is_on_y_identification_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_is_on_y_identification_2<BaseTraits,
-                                       Derived,
+class Tracing_is_on_y_identification_2<BaseTraits, Derived,
                                        std::enable_if_t<has_is_on_y_identification_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -1041,12 +1179,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_compare_x_on_boundary_2 {};
+//@}
 
+/// `Compare_x_on_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_x_on_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_compare_x_on_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_x_on_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_compare_x_on_boundary_2<BaseTraits,
-                                      Derived,
+class Tracing_compare_x_on_boundary_2<BaseTraits, Derived,
                                       std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -1128,12 +1271,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_compare_y_on_boundary_2 {};
+//@}
 
+/// `Compare_y_on_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_y_on_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_compare_y_on_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_y_on_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_compare_y_on_boundary_2<BaseTraits,
-                                      Derived,
+class Tracing_compare_y_on_boundary_2<BaseTraits, Derived,
                                       std::enable_if_t<has_compare_y_on_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -1178,12 +1326,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_compare_x_near_boundary_2 {};
+//@}
 
+/// `Compare_x_near_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_x_near_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_compare_x_near_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_x_near_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_compare_x_near_boundary_2<BaseTraits,
-                                        Derived,
+class Tracing_compare_x_near_boundary_2<BaseTraits, Derived,
                                         std::enable_if_t<has_compare_x_near_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -1211,8 +1364,7 @@ public:
      * \param ce2 the identifier of the end of the second curve.
      * \return the comparison result.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const {
       if (! m_enabled) return m_object(xcv1, xcv2, ce);
       std::cout << "compare_x_near_boundary" << std::endl
@@ -1231,12 +1383,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Tracing_compare_y_near_boundary_2 {};
+//@}
 
+/// `Compare_y_near_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_y_near_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Tracing_compare_y_near_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_y_near_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Tracing_compare_y_near_boundary_2<BaseTraits,
-                                        Derived,
+class Tracing_compare_y_near_boundary_2<BaseTraits, Derived,
                                         std::enable_if_t<has_compare_y_near_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -1339,6 +1496,7 @@ public:
 
     CONSTRUCT_2_OPPOSITE_2_OP,
     CONSTRUCT_POINT_2_OP,
+    CONSTRUCT_POINT_2_XY_OP,
     CONSTRUCT_X_MONOTONE_CURVE_2_OP,
     CONSTRUCT_CURVE_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
@@ -1455,9 +1613,10 @@ public:
    */
   void disable_all_traces() { m_flags = 0x0; }
 
-  /*! obtains the traits being decorated/traced.
+  /*! obtains the traits being traced.
    */
   const Base& traits() const { return m_traits; }
+  Base& traits() { return m_traits; }
 
   /// \name Types and functors inherited from `BaseTraits`
   //@{
@@ -1466,10 +1625,10 @@ public:
   using Has_left_category = typename Base::Has_left_category;
   using Has_merge_category = typename Base::Has_merge_category;
 
-  using Left_side_category = typename internal::Arr_complete_left_side_category< Base >::Category;
-  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category< Base >::Category;
-  using Top_side_category = typename internal::Arr_complete_top_side_category< Base >::Category;
-  using Right_side_category = typename internal::Arr_complete_right_side_category< Base >::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category<Base>::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Base>::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category<Base>::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category<Base>::Category;
 
   using Point_2 = typename Base::Point_2;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;

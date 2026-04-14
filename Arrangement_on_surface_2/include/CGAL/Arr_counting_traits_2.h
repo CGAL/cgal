@@ -34,12 +34,16 @@ namespace CGAL {
 namespace aos2 {
 namespace internal {
 
-template <typename BaseTraits, typename Derived, typename = void>
+/// `Parameter_space_in_x_2`
+//@{
+
+//! Fallback selected `Parameter_space_in_x_2` is not defined in the base traits.
+template <typename, typename, typename = void>
 class Counting_parameter_space_in_x_2 {};
 
+//! Partial specialization selected if `BaseTraits::`Parameter_space_in_x_2 is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_parameter_space_in_x_2<BaseTraits,
-                                      Derived,
+class Counting_parameter_space_in_x_2<BaseTraits, Derived,
                                       std::enable_if_t<has_parameter_space_in_x_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -57,20 +61,24 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Parameter_space_in_x_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.parameter_space_in_x_2_object()),
-      m_counter1(counter1),
-      m_counter2(counter2)
-    {}
+      m_object(base.parameter_space_in_x_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xc, Arr_curve_end ce) const
-    { ++m_counter1; return m_object(xc, ce); }
+    /*! operates
+     */
+    Arr_parameter_space operator()(const X_monotone_curve_2& xc, Arr_curve_end ce) const {
+      ++m_counter1;
+      return m_object(xc, ce);
+    }
 
-    /*! operates */
-    Arr_parameter_space operator()(const Point_2& p) const
-    { ++m_counter2; return m_object(p); }
+    /*! operates
+     */
+    Arr_parameter_space operator()(const Point_2& p) const {
+      ++m_counter2;
+      return m_object(p);
+    }
   };
 
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const {
@@ -81,12 +89,17 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_parameter_space_in_y_2 {};
+//@}
 
+/// `Parameter_space_in_y_2`
+//@{
+
+//! Fallback selected `Parameter_space_in_y_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_parameter_space_in_y_2 {};
+
+//! Partial specialization selected if `BaseTraits::Parameter_space_in_y_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_parameter_space_in_y_2<BaseTraits,
-                                      Derived,
+class Counting_parameter_space_in_y_2<BaseTraits, Derived,
                                       std::enable_if_t<has_parameter_space_in_y_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
@@ -104,20 +117,24 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Parameter_space_in_y_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.parameter_space_in_y_2_object()),
-      m_counter1(counter1),
-      m_counter2(counter2)
-    {}
+      m_object(base.parameter_space_in_y_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xc, Arr_curve_end ce) const
-    { ++m_counter1; return m_object(xc, ce); }
+    /*! operates
+     */
+    Arr_parameter_space operator()(const X_monotone_curve_2& xc, Arr_curve_end ce) const {
+      ++m_counter1;
+      return m_object(xc, ce);
+    }
 
-    /*! operates */
-    Arr_parameter_space operator()(const Point_2& p) const
-    { ++m_counter2; return m_object(p); }
+    /*! operates
+     */
+    Arr_parameter_space operator()(const Point_2& p) const {
+      ++m_counter2;
+      return m_object(p);
+    }
   };
 
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const {
@@ -128,20 +145,22 @@ public:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_make_x_monotone_2 {};
+//@}
 
+/// `Make_x_monotone_2`
+//@{
+
+//! Fallback selected `Make_x_monotone_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_make_x_monotone_2 {};
+
+//! Partial specialization selected if `BaseTraits::Make_x_monotone_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_make_x_monotone_2<BaseTraits,
-                                 Derived,
-                                 std::enable_if_t<has_make_x_monotone_2<BaseTraits>::value>> {
+class Counting_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x_monotone_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
 
-  /*! \class Make_x_monotone_2
-   * A functor that subdivides a curve into \f$x\f$-monotone curves.
-   */
+  //! A functor that subdivides a curve into \f$x\f$-monotone curves.
   class Make_x_monotone_2 {
     using Curve_2 = typename Base::Curve_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -151,7 +170,8 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Make_x_monotone_2(const Base& base, std::size_t& counter) :
       m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
 
@@ -173,17 +193,21 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_split_2 {};
+//@}
 
+/// `Split_2`
+//@{
+
+//! Fallback selected `Split_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_split_2 {};
+
+//! Partial specialization selected if `BaseTraits::Split_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_split_2<BaseTraits,
-                       Derived,
-                       std::enable_if_t<has_split_2<BaseTraits>::value>> {
+class Counting_split_2<BaseTraits, Derived, std::enable_if_t<has_split_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that splits an arc at a point. */
+  //! A functor that splits an \f$x\f$-monotone curve at a point.
   class Split_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -193,34 +217,40 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
-    Split_2(const Base& base, std::size_t& counter) :
-      m_object(base.split_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Split_2(const Base& base, std::size_t& counter) : m_object(base.split_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     void operator()(const X_monotone_curve_2& xc, const Point_2& p,
-                    X_monotone_curve_2& xc1, X_monotone_curve_2& xc2) const
-    { ++m_counter; m_object(xc, p, xc1, xc2); }
+                    X_monotone_curve_2& xc1, X_monotone_curve_2& xc2) const {
+      ++m_counter;
+      m_object(xc, p, xc1, xc2);
+    }
   };
 
   Split_2 split_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
-    return Split_2(derived->traits(),
-                   derived->m_counters[Derived::SPLIT_2_OP]);
+    return Split_2(derived->traits(), derived->m_counters[Derived::SPLIT_2_OP]);
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_do_intersect_2 {};
+//@}
 
+/// `Do_intersect_2`
+//@{
+
+//! Fallback selected `Do_intersect_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_do_intersect_2 {};
+
+//! Partial specialization selected if `BaseTraits::Do_intersect_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_do_intersect_2<BaseTraits,
-                              Derived,
-                              std::enable_if_t<has_do_intersect_2<BaseTraits>::value>> {
+class Counting_do_intersect_2<BaseTraits, Derived, std::enable_if_t<has_do_intersect_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that determines whether two \f$x\f$-monotone curves intersect. */
+  //! A functor that determines whether two \f$x\f$-monotone curves intersect.
   class Do_intersect_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
     using Point_2 = typename Base::Point_2;
@@ -230,14 +260,18 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Do_intersect_2(const Base& base, std::size_t& counter) :
       m_object(base.do_intersect_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2,
-                    bool consider_common_endpoints = true) const
-    { ++m_counter; return m_object(xc1, xc2, consider_common_endpoints); }
+                    bool consider_common_endpoints = true) const {
+      ++m_counter;
+      return m_object(xc1, xc2, consider_common_endpoints);
+    }
   };
 
   Do_intersect_2 do_intersect_2_object() const {
@@ -246,9 +280,15 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_intersect_2 {};
+//@}
 
+/// `Intersect_2`
+//@{
+
+//! Fallback selected `Intersect_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_intersect_2 {};
+
+//! Partial specialization selected if `BaseTraits::Intersect_2` is defined.
 template <typename BaseTraits, typename Derived>
 class Counting_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<BaseTraits>::value>> {
   using Base = BaseTraits;
@@ -256,7 +296,7 @@ class Counting_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2
 public:
   using Multiplicity = typename Base::Multiplicity;
 
-  /*! A functor that computes intersections between \f$x\f$-monotone curves. */
+  //! A functor that computes intersections between \f$x\f$-monotone curves.
   class Intersect_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
     using Point_2 = typename Base::Point_2;
@@ -266,34 +306,40 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
-    Intersect_2(const Base& base, std::size_t& counter) :
-      m_object(base.intersect_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Intersect_2(const Base& base, std::size_t& counter) : m_object(base.intersect_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, OutputIterator oi) const
-    { ++m_counter; return m_object(xc1, xc2, oi); }
+    OutputIterator operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, OutputIterator oi) const {
+      ++m_counter;
+      return m_object(xc1, xc2, oi);
+    }
   };
 
   Intersect_2 intersect_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
-    return Intersect_2(derived->traits(),
-                       derived->m_counters[Derived::INTERSECT_2_OP]);
+    return Intersect_2(derived->traits(), derived->m_counters[Derived::INTERSECT_2_OP]);
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_are_mergeable_2 {};
+//@}
 
+/// `Are_mergeable_2`
+//@{
+
+//! Fallback selected `Are_mergeable_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_are_mergeable_2 {};
+
+//! Partial specialization selected if `BaseTraits::Are_mergeable_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_are_mergeable_2<BaseTraits,
-                               Derived,
-                               std::enable_if_t<has_are_mergeable_2<BaseTraits>::value>> {
+class Counting_are_mergeable_2<BaseTraits, Derived, std::enable_if_t<has_are_mergeable_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that tests whether two \f$x\f$-monotone curves can be merged. */
+  //! A functor that tests whether two \f$x\f$-monotone curves can be merged.
   class Are_mergeable_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -302,13 +348,17 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Are_mergeable_2(const Base& base, std::size_t& counter) :
       m_object(base.are_mergeable_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const
-    { ++m_counter; return m_object(xc1, xc2); }
+    /*! operates
+     */
+    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const {
+      ++m_counter;
+      return m_object(xc1, xc2);
+    }
   };
 
   Are_mergeable_2 are_mergeable_2_object() const {
@@ -317,17 +367,21 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_merge_2 {};
+//@}
 
+/// `Merge_2`
+//@{
+
+//! Fallback selected `Merge_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_merge_2 {};
+
+//! Partial specialization selected if `BaseTraits::Merge_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_merge_2<BaseTraits,
-                       Derived,
-                       std::enable_if_t<has_merge_2<BaseTraits>::value>> {
+class Counting_merge_2<BaseTraits, Derived, std::enable_if_t<has_merge_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that merges two \f$x\f$-monotone curves into one. */
+  //! A functor that merges two \f$x\f$-monotone curves into one.
   class Merge_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -336,13 +390,15 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
-    Merge_2(const Base& base, std::size_t& counter) :
-      m_object(base.merge_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Merge_2(const Base& base, std::size_t& counter) : m_object(base.merge_2_object()), m_counter(counter) {}
 
     /*! operates */
-    void operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, X_monotone_curve_2& xc) const
-    { ++m_counter; m_object(xc1, xc2, xc); }
+    void operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, X_monotone_curve_2& xc) const {
+      ++m_counter;
+      m_object(xc1, xc2, xc);
+    }
   };
 
   Merge_2 merge_2_object() const {
@@ -351,19 +407,22 @@ public:
   }
 };
 
-// Fallback in case `Construct_opposite_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_construct_opposite_2 {};
+//@}
 
-// The actual defintion in case `Construct_opposite_2` is not defined in the base traits
+/// `Construct_opposite_2`
+//@{
+
+//! Fallback selected if `Construct_opposite_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_construct_opposite_2 {};
+
+//! Partial specialization selected if `BaseTraits::Construct_opposite_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_construct_opposite_2<BaseTraits,
-                                    Derived,
+class Counting_construct_opposite_2<BaseTraits, Derived,
                                     std::enable_if_t<has_construct_opposite_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that constructs an opposite \f$x\f$-monotone curve. */
+  //! A functor that constructs an opposite \f$x\f$-monotone curve.
   class Construct_opposite_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -372,12 +431,17 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_opposite_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_opposite_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) { ++m_counter; return m_object(xc); }
+    /*! operates
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) {
+      ++m_counter;
+      return m_object(xc);
+    }
   };
 
   Construct_opposite_2 construct_opposite_2_object() const {
@@ -386,69 +450,136 @@ public:
   }
 };
 
-// Fallback in case `Construct_point_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_construct_point_2 {};
+//@}
 
-// The actual defintion in case `Construct_point_2` is not defined in the base traits
+/// `Construct_point_2`
+//@{
+
+/*! Fallback selected if the functor `BaseTraits::Construct_point_2` does not define an operator that accepts two
+ * parameters of type `const FT&`.
+ */
+template <typename, typename, typename = void>
+class Counting_construct_point_2_xy {
+protected:
+  template <typename T>
+  class Construct_point_2 {
+  public:
+    void operator()() const {}; // avoids compilation errors
+  };
+};
+
+/*! Partial specialization selected if the functor `BaseTraits::Construct_point_2` defines an operator that accepts two
+ * parameters of type `const FT&`.
+ */
 template <typename BaseTraits, typename Derived>
-class Counting_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> {
+class Counting_construct_point_2_xy<BaseTraits, Derived,
+                                    std::enable_if_t<has_construct_point_2_xy<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+protected:
+  //! A functor that constructs a point.
+  template <typename T>
+  class Construct_point_2 {
+    using Point_2 = typename Base::Point_2;
+
+  public:
+    /*! constructs a point given two coordinates.
+     */
+    template <typename FT>
+    Point_2 operator()(const FT& x, const FT& y) {
+      const T* derived = static_cast<const T*>(this);
+      ++derived->m_counter2;
+      return derived->m_object(x, y);
+    }
+  };
+};
+
+//! Fallback selected `Construct_point_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_construct_point_2 {};
+
+//! Partial specialization selected if `BaseTraits::Construct_point_2` is defined.
+template <typename BaseTraits, typename Derived>
+class Counting_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> :
+    public Counting_construct_point_2_xy<BaseTraits, Derived> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that constructs a point. */
-  class Construct_point_2 {
+  class Construct_point_2; // forward declaration
+
+private:
+  using Counting_construct_point_2_xy = typename Counting_construct_point_2_xy<Base, Derived>::template
+    Construct_point_2<Construct_point_2>;
+
+public:
+  //! A functor that constructs a point.
+  class Construct_point_2 : public Counting_construct_point_2_xy {
     using Point_2 = typename Base::Point_2;
 
   private:
     typename Base::Construct_point_2 m_object;
-    std::size_t& m_counter;
+    std::size_t& m_counter1;
+    std::size_t& m_counter2;
 
   public:
-    /*! constructs */
-    Construct_point_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_point_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Construct_point_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
+      m_object(base.construct_point_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates */
+    /*! operates
+     * \return the constructed point.
+     */
     template <typename... Args>
-    Point_2 operator()(Args... args) const { ++m_counter; return m_object(std::forward<Args>(args)...); }
+    Point_2 operator()(Args... args) const {
+      ++m_counter1;
+      return m_object(std::forward<Args>(args)...);
+    }
   };
 
   Construct_point_2 construct_point_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
-    return Construct_point_2(derived->traits(), derived->m_counters[Derived::CONSTRUCT_POINT_2_OP]);
+    return Construct_point_2(derived->traits(),
+                             derived->m_counters[Derived::CONSTRUCT_POINT_2_OP],
+                             derived->m_counters[Derived::CONSTRUCT_POINT_2_XY_OP]);
   }
 };
 
-// Fallback in case `Construct_x_monotone_curve_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_construct_x_monotone_curve_2 {};
+//@}
 
-// The actual defintion in case `Construct_x_monotone_curve_2` is not defined in the base traits
+/// `Construct_x_monotone_curve_2`
+//@{
+
+//! Fallback selected if `Construct_x_monotone_curve_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_construct_x_monotone_curve_2 {};
+
+//! Partial specialization selected if `BaseTraits::Construct_x_monotone_curve_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_construct_x_monotone_curve_2<BaseTraits,
-                                            Derived,
+class Counting_construct_x_monotone_curve_2<BaseTraits, Derived,
                                             std::enable_if_t<has_construct_x_monotone_curve_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that constructs an \f$x\f$-monotone curve. */
+  //! A functor that constructs an \f$x\f$-monotone curve.
   class Construct_x_monotone_curve_2 {
-    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
   private:
     typename Base::Construct_x_monotone_curve_2 m_object;
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_x_monotone_curve_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_x_monotone_curve_2_object()), m_counter(counter)
-    {}
+      m_object(base.construct_x_monotone_curve_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     template <typename... Args>
-    Point_2 operator()(Args... args) const { ++m_counter; return m_object(std::forward<Args>(args)...); }
+    X_monotone_curve_2 operator()(Args... args) const {
+      ++m_counter;
+      return m_object(std::forward<Args>(args)...);
+    }
   };
 
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const {
@@ -458,33 +589,41 @@ public:
   }
 };
 
-// Fallback in case `Construct_curve_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_construct_curve_2 {};
+//@}
 
-// The actual defintion in case `Construct_curve_2` is not defined in the base traits
+/// `Construct_curve_2`
+//@{
+
+//! Fallback selected if `Construct_curve_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_construct_curve_2 {};
+
+//! Partial specialization selected if `BaseTraits::Construct_curve_2` is defined
 template <typename BaseTraits, typename Derived>
 class Counting_construct_curve_2<BaseTraits, Derived, std::enable_if_t<has_construct_curve_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that constructs a curve. */
+  //! A functor that constructs a curve.
   class Construct_curve_2 {
-    using Point_2 = typename Base::Point_2;
+    using Curve_2 = typename Base::Curve_2;
 
   private:
     typename Base::Construct_curve_2 m_object;
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_curve_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_curve_2_object()), m_counter(counter)
-    {}
+      m_object(base.construct_curve_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     template <typename... Args>
-    Point_2 operator()(Args... args) const { ++m_counter; return m_object(std::forward<Args>(args)...); }
+    Curve_2 operator()(Args... args) const {
+      ++m_counter;
+      return m_object(std::forward<Args>(args)...);
+    }
   };
 
   Construct_curve_2 construct_curve_2_object() const {
@@ -493,21 +632,22 @@ public:
   }
 };
 
-// Fallback in case `Compare_endpoints_xy_2` is not defined in the base traits
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_compare_endpoints_xy_2 {};
+//@}
 
-// The actual defintion in case `Compare_endpoints_xy_2` is not defined in the base traits
+/// `Compare_endpoints_xy_2`
+//@{
+
+//! Fallback selected if Compare_endpoints_xy_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_compare_endpoints_xy_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_endpoints_xy_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_compare_endpoints_xy_2<BaseTraits,
-                                      Derived,
+class Counting_compare_endpoints_xy_2<BaseTraits, Derived,
                                       std::enable_if_t<has_compare_endpoints_xy_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that compares the two endpoints of an \f$x\f$-monotone curve
-   * lexigoraphically.
-   */
+  //! A functor that compares the two endpoints of an \f$x\f$-monotone curve lexigoraphically.
   class Compare_endpoints_xy_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -516,12 +656,17 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_endpoints_xy_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc) { ++m_counter; return m_object(xc); }
+    /*! operates
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xc) {
+      ++m_counter;
+      return m_object(xc);
+    }
   };
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
@@ -530,30 +675,33 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_approximate_point_2 {
-  using Base = BaseTraits;
+//@}
 
+/// \name `Approximate_2`
+//@{
+
+/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
+ * does not define an operator that accepts a parameter of type `const Point_2&`.
+ */
+template <typename, typename, typename = void>
+class Counting_approximate_2_point {
 protected:
   template <typename T>
   class Approximate_2 {
-    using Point_2 = typename Base::Point_2;
-    using Approximate_number_type = typename Base::Approximate_number_type;
-
   public:
-    /*! a placeholder to avoid compilation errors */
-    Approximate_number_type operator()(const Point_2& p, int i) const {};
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
+/*! Partial specialization selected if the functor `BaseTraits::Approximate_2` defines an operator that accepts a
+ * parameter of type `const Point_2&`.
+ */
 template <typename BaseTraits, typename Derived>
-class Counting_approximate_point_2<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
+class Counting_approximate_2_point<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 protected:
-  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone
-   * curves.
-   */
+  //! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
     using Point_2 = typename Base::Point_2;
@@ -569,30 +717,32 @@ protected:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_approximate_xcv_2 {
-  using Base = BaseTraits;
-
+/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
+ * does not define an operator that accepts three parameters of the types `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and one optional parameter
+ * of type `bool`.
+ */
+template <typename, typename, typename = void>
+class Counting_approximate_2_xcv {
 protected:
   template <typename T>
   class Approximate_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-    using Approximate_number_type = typename Base::Approximate_number_type;
-
   public:
-    /*! a placeholder to avoid compilation errors */
-    Approximate_number_type operator()(const X_monotone_curve_2& xcv, int i) const {};
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
+/*! Partial specialization selected if the functor `BaseTraits::Approximate_2`
+ * defines an operator that accepts three parameters of type `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and one optional parameter
+ * of type `bool`.
+ */
 template <typename BaseTraits, typename Derived>
-class Counting_approximate_xcv_2<BaseTraits,
-                                 Derived,
-                                 std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
+class Counting_approximate_2_xcv<BaseTraits, Derived, std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 protected:
-  /*! A functor that approximates \f$x\f$-monotone curves. */
+  //! A functor that approximates \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -608,40 +758,43 @@ protected:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_approximate_xcv_2_within_bounds {
-  using Base = BaseTraits;
-
+/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
+ * does not define an operator that accepts four parameters of type `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`, and
+ * one optional parameter of type `bool`.
+ */
+template <typename, typename, typename = void>
+class Counting_approximate_2_xcv_within_bounds {
 protected:
   template <typename T>
   class Approximate_2 {
-    using Point_2 = typename Base::Point_2;
-    using Approximate_number_type = typename Base::Approximate_number_type;
-
   public:
-    /*! a placeholder to avoid compilation errors */
-    Approximate_number_type operator()(const Point_2& p, int i) {};
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
+/*! Partial specialization selected if the functor `BaseTraits::Approximate_2`
+ * defines an operator that accepts four parameters of type `const
+ * X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`, and
+ * one optional parameter of type `bool`.
+ */
 template <typename BaseTraits, typename Derived>
-class Counting_approximate_xcv_2_within_bounds
-<BaseTraits,
- Derived,
- std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
+class Counting_approximate_2_xcv_within_bounds<BaseTraits, Derived,
+                                               std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 protected:
-  /*! A functor that approximates \f$x\f$-monotone curves within bounds. */
+  //! A functor that approximates \f$x\f$-monotone curves within bounds.
   template <typename T>
   class Approximate_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
   public:
-    /*! obtains an approximation of an \f$x\f$-monotone curve within bounds. */
+    /*! obtains an approximation of an \f$x\f$-monotone curve within bounds.
+     */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
-                              const Bbox_2& bbox, bool l2r = true) {
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, const Bbox_2& bbox,
+                              bool l2r = true) {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter4;
       return derived->m_object(xcv, error, oi, bbox, l2r);
@@ -649,32 +802,32 @@ protected:
   };
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_approximate_2 {};
+//! Fallback selected if `Approximate_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_approximate_2 {};
 
+//! Partial specialization selected if `BaseTraits::Approximate_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_approximate_2<BaseTraits,
-                             Derived,
-                             std::enable_if_t<has_approximate_2<BaseTraits>::value>> :
-    public Counting_approximate_point_2<BaseTraits, Derived>,
-    public Counting_approximate_xcv_2<BaseTraits, Derived>,
-    public Counting_approximate_xcv_2_within_bounds<BaseTraits, Derived> {
+class Counting_approximate_2<BaseTraits, Derived, std::enable_if_t<has_approximate_2<BaseTraits>::value>> :
+    public Counting_approximate_2_point<BaseTraits, Derived>,
+    public Counting_approximate_2_xcv<BaseTraits, Derived>,
+    public Counting_approximate_2_xcv_within_bounds<BaseTraits, Derived> {
   using Base = BaseTraits;
 
 public:
   class Approximate_2; // forward declaration
 
 private:
-  using Counting_approx_point = typename Counting_approximate_point_2<Base, Derived>::template
+  using Counting_approx_point = typename Counting_approximate_2_point<Base, Derived>::template
     Approximate_2<Approximate_2>;
-  using Counting_approx_xcv = typename Counting_approximate_xcv_2<Base, Derived>::template
+  using Counting_approx_xcv = typename Counting_approximate_2_xcv<Base, Derived>::template
     Approximate_2<Approximate_2>;
-  using Counting_approx_xcv_within_bounds = typename Counting_approximate_xcv_2_within_bounds<Base, Derived>::template
+  using Counting_approx_xcv_within_bounds = typename Counting_approximate_2_xcv_within_bounds<Base, Derived>::template
     Approximate_2<Approximate_2>;
 
 public:
   using Approximate_number_type = typename Base::Approximate_number_type;
 
+  //! A functor that approximates a coordinates, a point, or an \f$x\f$-monotone curve.
   class Approximate_2 : public Counting_approx_point,
                         public Counting_approx_xcv,
                         public Counting_approx_xcv_within_bounds {
@@ -689,17 +842,23 @@ public:
     using Counting_approx_xcv::operator();
     using Counting_approx_xcv_within_bounds::operator();
 
-    /*! constructs */
+    /*! constructs
+     */
     Approximate_2(const Base& base, std::size_t& counter1, std::size_t& counter2,
                   std::size_t& counter3, std::size_t& counter4) :
       m_object(base.approximate_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
       m_counter3(counter3),
-      m_counter4(counter4) {}
+      m_counter4(counter4)
+    {}
 
-    /*! obtains an approximation of a coordinate. */
-    Approximate_number_type operator()(const Point_2& p, int i) { ++m_counter1; return m_object(p, i); }
+    /*! operates
+     */
+    Approximate_number_type operator()(const Point_2& p, int i) {
+      ++m_counter1;
+      return m_object(p, i);
+    }
 
   private:
     typename Base::Approximate_2 m_object;
@@ -719,19 +878,22 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_is_on_x_identification_2 {};
+//@}
 
+/// `Is_on_x_identification_2`
+//@{
+
+//! Fallback selected if `Is_on_x_identification_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_is_on_x_identification_2 {};
+
+//! Partial specialization selected if `BaseTraits::Is_on_x_identification_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_is_on_x_identification_2<BaseTraits,
-                                        Derived,
+class Counting_is_on_x_identification_2<BaseTraits, Derived,
                                         std::enable_if_t<has_is_on_x_identification_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that determines whether a point or a curve lies on an
-   * identification in x.
-   */
+  //! A functor that determines whether a point or a curve lies on an identification in x.
   class Is_on_x_identification_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -742,20 +904,27 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Is_on_x_identification_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.is_on_x_identification_2_object()),
-      m_counter1(counter1),
-      m_counter2(counter2)
-    {}
+      m_object(base.is_on_x_identification_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates */
-    bool operator()(const Point_2& p) const { ++m_counter1; return m_object(p); }
+    /*! operates
+     */
+    bool operator()(const Point_2& p) const {
+      ++m_counter1;
+      return m_object(p);
+    }
 
-    /*! operates */
-    bool operator()(const X_monotone_curve_2& xc) const { ++m_counter2; return m_object(xc); }
+    /*! operates
+     */
+    bool operator()(const X_monotone_curve_2& xc) const {
+      ++m_counter2;
+      return m_object(xc);
+    }
   };
 
+  //! obtains an `Is_on_x_identification_2` object.
   Is_on_x_identification_2 is_on_x_identification_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Is_on_x_identification_2(derived->traits(),
@@ -764,20 +933,22 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_is_on_y_identification_2 {};
+//@}
 
+/// `is_on_y_identification_2`
+//@{
+
+//! Fallback selected if `Is_on_y_identification_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_is_on_y_identification_2 {};
+
+//! Partial specialization selected if `BaseTraits::Is_on_y_identification_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_is_on_y_identification_2<BaseTraits,
-                                        Derived,
+class Counting_is_on_y_identification_2<BaseTraits, Derived,
                                         std::enable_if_t<has_is_on_y_identification_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that determines whether a point or a curve lies on an
-   * identification in \f$x\f$.
-   */
+  //! A functor that determines whether a point or a curve lies on an identification in \f$x\f$.
   class Is_on_y_identification_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -788,20 +959,25 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! constructs */
-    Is_on_y_identification_2(const Base& base,
-                             std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.is_on_y_identification_2_object()),
-      m_counter1(counter1),
-      m_counter2(counter2)
-    {}
+    /*! constructs
+     */
+    Is_on_y_identification_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
+      m_object(base.is_on_y_identification_2_object()), m_counter1(counter1),  m_counter2(counter2) {}
 
-    /*! operates */
-    bool operator()(const Point_2& p) const { ++m_counter1; return m_object(p); }
+    /*! operates
+     */
+    bool operator()(const Point_2& p) const {
+      ++m_counter1;
+      return m_object(p);
+    }
 
 
-    /*! operates */
-    bool operator()(const X_monotone_curve_2& xc) const { ++m_counter2; return m_object(xc); }
+    /*! operates
+     */
+    bool operator()(const X_monotone_curve_2& xc) const {
+      ++m_counter2;
+      return m_object(xc);
+    }
   };
 
   Is_on_y_identification_2 is_on_y_identification_2_object() const {
@@ -812,19 +988,22 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_compare_y_on_boundary_2 {};
+//@}
 
+/// `Compare_y_on_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_y_on_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_compare_y_on_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_y_on_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_compare_y_on_boundary_2<BaseTraits,
-                                       Derived,
+class Counting_compare_y_on_boundary_2<BaseTraits, Derived,
                                        std::enable_if_t<has_compare_y_on_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that compares the \f$y\f$-coordinate of two given points
-   * that lie on vertical boundaries.
-   */
+  //! A functor that compares the \f$y\f$-coordinate of two given points that lie on vertical boundaries.
   class Compare_y_on_boundary_2 {
     using Point_2 = typename Base::Point_2;
 
@@ -833,35 +1012,41 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_on_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_on_boundary_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter; return m_object(p1, p2); }
+    /*! operates
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      ++m_counter;
+      return m_object(p1, p2);
+    }
   };
 
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
-    return Compare_y_on_boundary_2(derived->traits(),
-                                   derived->m_counters[Derived::COMPARE_Y_ON_BOUNDARY_2_OP]);
+    return Compare_y_on_boundary_2(derived->traits(), derived->m_counters[Derived::COMPARE_Y_ON_BOUNDARY_2_OP]);
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_compare_y_near_boundary_2 {};
+//@}
 
+/// `Compare_y_near_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_y_near_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_compare_y_near_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_y_near_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_compare_y_near_boundary_2<BaseTraits,
-                                         Derived,
+class Counting_compare_y_near_boundary_2<BaseTraits, Derived,
                                          std::enable_if_t<has_compare_y_near_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that compares the \f$y\f$-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
+  //! A functor that compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
   class Compare_y_near_boundary_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -870,15 +1055,17 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_near_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_near_boundary_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc1,
-                                 const X_monotone_curve_2& xc2,
-                                 Arr_curve_end ce) const
-    { ++m_counter; return m_object(xc1, xc2, ce); }
+    /*! operates
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, Arr_curve_end ce) const {
+      ++m_counter;
+      return m_object(xc1, xc2, ce);
+    }
   };
 
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
@@ -887,19 +1074,21 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_x_on_boundary_2 {};
+//@}
 
+/// `Compare_x_on_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_x_on_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_x_on_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_x_on_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_x_on_boundary_2<BaseTraits,
-                               Derived,
-                               std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
+class Counting_x_on_boundary_2<BaseTraits, Derived, std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-  /*! A functor that compares the \f$x\f$-coordinate of two given points
-   * that lie on horizontal boundaries.
-   */
+  //! A functor that compares the \f$x\f$-coordinate of two given points that lie on horizontal boundaries.
   class Compare_x_on_boundary_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -911,8 +1100,9 @@ public:
     std::size_t& m_counter3;
 
   public:
-    /*! constructs */
-    Compare_x_on_boundary_2(const Base& base,  std::size_t& counter1, std::size_t& counter2, std::size_t& counter3 ) :
+    /*! constructs
+     */
+    Compare_x_on_boundary_2(const Base& base,  std::size_t& counter1, std::size_t& counter2, std::size_t& counter3) :
       m_object(base.compare_x_on_boundary_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
@@ -923,17 +1113,25 @@ public:
      * operator() (const AosTraits::Point_2 &p1, const AosTraits::Point_2 &p2)
      * is removed from AosTraits::CompareXOnBoundary_2.
      */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2)
-    { ++m_counter1; return m_object(p1, p2); }
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) {
+      ++m_counter1;
+      return m_object(p1, p2);
+    }
 
-    /*! operates */
-    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce)
-    { ++m_counter2; return m_object(pt, xcv, ce); }
+    /*! operates
+     */
+    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) {
+      ++m_counter2;
+      return m_object(pt, xcv, ce);
+    }
 
-    /*! operates */
+    /*! operates
+     */
     Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2)
-    { ++m_counter3; return m_object(xcv1, ce1, xcv2, ce2); }
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) {
+      ++m_counter3;
+      return m_object(xcv1, ce1, xcv2, ce2);
+    }
   };
 
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
@@ -945,20 +1143,22 @@ public:
   }
 };
 
-template <typename BaseTraits, typename Derived, typename = void>
-class Counting_compare_x_near_boundary_2 {};
+//@}
 
+/// `Compare_x_near_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_x_near_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_compare_x_near_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_x_near_boundary_2` is defined.
 template <typename BaseTraits, typename Derived>
-class Counting_compare_x_near_boundary_2<BaseTraits,
-                                         Derived,
+class Counting_compare_x_near_boundary_2<BaseTraits, Derived,
                                          std::enable_if_t<has_compare_x_near_boundary_2<BaseTraits>::value>> {
   using Base = BaseTraits;
 
 public:
-
-  /*! A functor that compares the \f$x\f$-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
+  //! A functor that compares the \f$x\f$-coordinates of curve ends near the boundary of the parameter space.
   class Compare_x_near_boundary_2 {
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
@@ -967,15 +1167,17 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_x_near_boundary_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_x_near_boundary_2_object()),
-      m_counter(counter)
-    {}
+      m_object(base.compare_x_near_boundary_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, Arr_curve_end ce) const
-    { ++m_counter; return m_object(xc1, xc2, ce); }
+    /*! operates
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, Arr_curve_end ce) const {
+      ++m_counter;
+      return m_object(xc1, xc2, ce);
+    }
   };
 
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
@@ -1100,6 +1302,7 @@ public:
     MERGE_2_OP,
     CONSTRUCT_2_OPPOSITE_2_OP,
     CONSTRUCT_POINT_2_OP,
+    CONSTRUCT_POINT_2_XY_OP,
     CONSTRUCT_X_MONOTONE_CURVE_2_OP,
     CONSTRUCT_CURVE_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
@@ -1171,48 +1374,46 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
-    Compare_x_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_x_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Compare_x_2(const Base& base, std::size_t& counter) : m_object(base.compare_x_2_object()), m_counter(counter) {}
 
     /*! operates */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter; return m_object(p1, p2); }
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const { ++m_counter; return m_object(p1, p2); }
   };
 
-  /*! A functor that compares two points lexigoraphically: by \f$x\f$, then by
-   * \f$y\f$. */
+  //! A functor that compares two points lexigoraphically: by \f$x\f$, then by \f$y\f$.
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
-    Compare_xy_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_xy_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Compare_xy_2(const Base& base, std::size_t& counter) : m_object(base.compare_xy_2_object()), m_counter(counter) {}
 
     /*! operates */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter; return m_object(p1, p2); }
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const { ++m_counter; return m_object(p1, p2); }
   };
 
-  /*! A functor that obtains the left endpoint of an \f$x\f$-monotone curve. */
+  //! A functor that obtains the left endpoint of an \f$x\f$-monotone curve.
   class Construct_min_vertex_2 {
   private:
     typename Base::Construct_min_vertex_2 m_object;
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_min_vertex_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_min_vertex_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
     decltype(std::declval<Subcurve_ctr_minv>().operator()(std::declval<X_monotone_curve_2>()))
-    operator()(const X_monotone_curve_2& xcv) const
-    { ++m_counter; return m_object(xcv); }
+    operator()(const X_monotone_curve_2& xcv) const { ++m_counter; return m_object(xcv); }
   };
 
   /*! A functor that obtains the right endpoint of an \f$x\f$-monotone curve. */
@@ -1222,15 +1423,16 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Construct_max_vertex_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_max_vertex_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
     decltype(std::declval<Subcurve_ctr_maxv>().operator()(std::declval<X_monotone_curve_2>()))
-    operator()(const X_monotone_curve_2& xcv) const
-    { ++m_counter; return m_object(xcv); }
+    operator()(const X_monotone_curve_2& xcv) const { ++m_counter; return m_object(xcv); }
   };
 
   /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical.
@@ -1241,13 +1443,13 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
-    Is_vertical_2(const Base& base, std::size_t& counter) :
-      m_object(base.is_vertical_2_object()), m_counter(counter) {}
+    /*! constructs
+     */
+    Is_vertical_2(const Base& base, std::size_t& counter) : m_object(base.is_vertical_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    bool operator()(const X_monotone_curve_2& xc) const
-    { ++m_counter; return m_object(xc); }
+    /*! operates
+     */
+    bool operator()(const X_monotone_curve_2& xc) const { ++m_counter; return m_object(xc); }
   };
 
   /*! A functor that compares the \f$y\f$-coordinates of a point and an
@@ -1259,11 +1461,13 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_at_x_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_2_object()), m_counter(counter) {}
 
-    /*! operates */
+    /*! operates
+     */
     Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(p, xc); }
   };
@@ -1282,11 +1486,13 @@ public:
     Equal_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
       m_object(base.equal_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates */
+    /*! operates
+     */
     bool operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter1; return m_object(p1, p2); }
 
-    /*! operates */
+    /*! operates
+     */
     bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const
     { ++m_counter2; return m_object(xc1, xc2); }
   };
@@ -1301,7 +1507,8 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_at_x_left_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_left_2_object()), m_counter(counter) {}
 
@@ -1320,7 +1527,8 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! constructs */
+    /*! constructs
+     */
     Compare_y_at_x_right_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_right_2_object()), m_counter(counter) {}
 
@@ -1370,10 +1578,14 @@ public:
     return counter;
   }
 
-  /*! cleans all operation counters */
+  /*! cleans all operation counters
+   */
   void clear_counters() { m_counters = {}; }
 
+  /*! obtains the traits being counted.
+   */
   const Base& traits() const { return m_base; }
+  Base& traits() { return m_base; }
 
 private:
   //! The operation counters
@@ -1397,6 +1609,7 @@ private:
     "MERGE_2_OP",
     "CONSTRUCT_2_OPPOSITE_2_OP",
     "CONSTRUCT_POINT_2_OP",
+    "CONSTRUCT_POINT_2_XY_OP",
     "CONSTRUCT_X_MONOTONE_CURVE_2_OP",
     "CONSTRUCT_CURVE_2_OP",
     "COMPARE_ENDPOINTS_XY_2_OP",
@@ -1441,6 +1654,7 @@ private:
     has_merge_2<Base>::value,
     has_construct_opposite_2<Base>::value,
     has_construct_point_2<Base>::value,
+    has_construct_point_2_xy<Base>::value,
     has_construct_x_monotone_curve_2<Base>::value,
     has_construct_curve_2<Base>::value,
     has_compare_endpoints_xy_2<Base>::value,
