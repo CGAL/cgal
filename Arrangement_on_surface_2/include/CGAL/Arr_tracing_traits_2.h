@@ -24,6 +24,7 @@
 #include <list>
 #include <type_traits>
 #include <variant>
+#include <memory>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
@@ -456,14 +457,14 @@ public:
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
   private:
-    const Base& m_base_traits;
+    typename Base::Are_mergeable_2 m_object;
     bool m_enabled;
 
   public:
     /*! constructs
      */
     Are_mergeable_2(const Base& base, bool enabled = true) :
-      m_base_traits(base), m_enabled(enabled) {}
+      m_object(base.are_mergeable_2_object()), m_enabled(enabled) {}
 
     /*! operates
      * \param xcv1 the first curve.
@@ -473,12 +474,11 @@ public:
      * curve.
      */
     bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
-      auto are_mergeable = m_base_traits.are_mergeable_2_object();
-      if (! m_enabled) return are_mergeable(xcv1, xcv2);
+      if (! m_enabled) return m_object(xcv1, xcv2);
       std::cout << "are_mergeable" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
                 << "  xcv2: " << xcv2 << std::endl;
-      bool mergeable = are_mergeable(xcv1, xcv2);
+      bool mergeable = m_object(xcv1, xcv2);
       std::cout << "  result: " << mergeable << std::endl;
       return mergeable;
     }
@@ -515,8 +515,7 @@ public:
   public:
     /*! constructs
      */
-    Merge_2(const Base& base, bool enabled = true) :
-      m_object(base.merge_2_object()), m_enabled(enabled) {}
+    Merge_2(const Base& base, bool enabled = true) : m_object(base.merge_2_object()), m_enabled(enabled) {}
 
     /*! operates
      * \param xcv1 the first curve.
@@ -1511,11 +1510,14 @@ public:
   };
 
   using Base = BaseTraits;
+  using Shared_base = std::shared_ptr<Base>;
 
 private:
   //! A set of bits that indicate whether operations should be traced.
   unsigned long long m_flags;
-  Base m_traits;
+
+  //! The traitse being traced
+  Shared_base m_base_traits;
 
 public:
   bool compare_x_op() const { return (0 != (m_flags & (0x1ull << COMPARE_X_2_OP))); }
@@ -1585,8 +1587,17 @@ public:
   /*! constructs default.
    */
   template<typename ... Args>
-  Arr_tracing_traits_2(Args ... args) : m_traits(std::forward<Args>(args)...)
+  Arr_tracing_traits_2(Args ... args) :
+    m_base_traits(std::make_shared<Base>(std::forward<Args>(args)...))
   { enable_all_traces(); }
+
+  /*! constructs from a shared pointer.
+   * \param[in] traits the taits being traced.
+   * We use std::move to save an atomic operation.  Observe that moving a
+   * shared_ptr simply transfers the internal pointer without touching the
+   * atomic reference counter. This is faster than a copy.
+   */
+  Arr_tracing_traits_2(Shared_base traits) : m_base_traits(std::move(traits)) { enable_all_traces(); }
 
   /*! disables copy constructor.
    */
@@ -1610,10 +1621,17 @@ public:
    */
   void disable_all_traces() { m_flags = 0x0; }
 
-  /*! obtains the traits being traced.
+  /*! obtains a const reference to the traits being traced.
    */
-  const Base& traits() const { return m_traits; }
-  Base& traits() { return m_traits; }
+  const Base& traits() const { return *m_base_traits; }
+
+  /*! obtains a reference to the traits being traced.
+   */
+  Base& traits() { return *m_base_traits; }
+
+  /*! obtains the smart pointer to the traits being traced.
+   */
+  Shared_base shared_traits() const { return m_base_traits; }
 
   /// \name Types and functors inherited from `BaseTraits`
   //@{
@@ -1922,31 +1940,31 @@ public:
   //@{
 
   Compare_x_2 compare_x_2_object() const
-  { return Compare_x_2(m_traits, compare_x_op()); }
+  { return Compare_x_2(traits(), compare_x_op()); }
 
   Compare_xy_2 compare_xy_2_object() const
-  { return Compare_xy_2(m_traits, compare_xy_op()); }
+  { return Compare_xy_2(traits(), compare_xy_op()); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(m_traits, construct_min_vertex_op()); }
+  { return Construct_min_vertex_2(traits(), construct_min_vertex_op()); }
 
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(m_traits, construct_max_vertex_op()); }
+  { return Construct_max_vertex_2(traits(), construct_max_vertex_op()); }
 
   Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2(m_traits, is_vertical_op()); }
+  { return Is_vertical_2(traits(), is_vertical_op()); }
 
   Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(m_traits, compare_y_at_x_op()); }
+  { return Compare_y_at_x_2(traits(), compare_y_at_x_op()); }
 
   Equal_2 equal_2_object() const
-  { return Equal_2(m_traits, equal_points_op(), equal_curves_op()); }
+  { return Equal_2(traits(), equal_points_op(), equal_curves_op()); }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(m_traits, compare_y_at_x_left_op()); }
+  { return Compare_y_at_x_left_2(traits(), compare_y_at_x_left_op()); }
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(m_traits, compare_y_at_x_right_op()); }
+  { return Compare_y_at_x_right_2(traits(), compare_y_at_x_right_op()); }
 
   //@}
 };

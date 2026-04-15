@@ -24,6 +24,7 @@
 #include <iostream>
 #include <atomic>
 #include <array>
+#include <memory>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
@@ -1332,9 +1333,23 @@ public:
     NUMBER_OF_OPERATIONS,
   };
 
-  /*! constructs default */
+  using Shared_base = std::shared_ptr<Base>;
+
+  /*! constructs default.
+   */
   template <typename ... Args>
-  Arr_counting_traits_2(Args ... args) : m_base(std::forward<Args>(args)...) {
+  Arr_counting_traits_2(Args ... args) : m_base_traits(std::make_shared<Base>(std::forward<Args>(args)...)) {
+    clear_counters();
+    increment();
+  }
+
+  /*! constructs from a shared pointer.
+   * \param[in] traits the taits being traced.
+   * We use std::move to save an atomic operation.  Observe that moving a
+   * shared_ptr simply transfers the internal pointer without touching the
+   * atomic reference counter. This is faster than a copy.
+   */
+  Arr_counting_traits_2(Shared_base traits) : m_base_traits(std::move(traits)) {
     clear_counters();
     increment();
   }
@@ -1543,31 +1558,31 @@ public:
   };
 
   Compare_x_2 compare_x_2_object() const
-  { return Compare_x_2(m_base, m_counters[COMPARE_X_2_OP]); }
+  { return Compare_x_2(traits(), m_counters[COMPARE_X_2_OP]); }
 
   Compare_xy_2 compare_xy_2_object() const
-  { return Compare_xy_2(m_base, m_counters[COMPARE_XY_2_OP]); }
+  { return Compare_xy_2(traits(), m_counters[COMPARE_XY_2_OP]); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(m_base, m_counters[CONSTRUCT_MIN_VERTEX_2_OP]); }
+  { return Construct_min_vertex_2(traits(), m_counters[CONSTRUCT_MIN_VERTEX_2_OP]); }
 
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(m_base, m_counters[CONSTRUCT_MAX_VERTEX_2_OP]); }
+  { return Construct_max_vertex_2(traits(), m_counters[CONSTRUCT_MAX_VERTEX_2_OP]); }
 
   Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2(m_base, m_counters[IS_VERTICAL_2_OP]); }
+  { return Is_vertical_2(traits(), m_counters[IS_VERTICAL_2_OP]); }
 
   Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(m_base, m_counters[COMPARE_Y_AT_X_2_OP]); }
+  { return Compare_y_at_x_2(traits(), m_counters[COMPARE_Y_AT_X_2_OP]); }
 
   Equal_2 equal_2_object() const
-  { return Equal_2(m_base, m_counters[EQUAL_2_POINTS_OP], m_counters[EQUAL_2_CURVES_OP]); }
+  { return Equal_2(traits(), m_counters[EQUAL_2_POINTS_OP], m_counters[EQUAL_2_CURVES_OP]); }
 
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(m_base, m_counters[COMPARE_Y_AT_X_LEFT_2_OP]); }
+  { return Compare_y_at_x_left_2(traits(), m_counters[COMPARE_Y_AT_X_LEFT_2_OP]); }
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(m_base, m_counters[COMPARE_Y_AT_X_RIGHT_2_OP]); }
+  { return Compare_y_at_x_right_2(traits(), m_counters[COMPARE_Y_AT_X_RIGHT_2_OP]); }
 
   /*! increments the construction counter.
    * \param doit indicates whether to actually increment the counter or not.
@@ -1587,10 +1602,17 @@ public:
    */
   void clear_counters() { m_counters = {}; }
 
-  /*! obtains the traits being counted.
+  /*! obtains a const reference to the traits being counted.
    */
-  const Base& traits() const { return m_base; }
-  Base& traits() { return m_base; }
+  const Base& traits() const { return *m_base_traits; }
+
+  /*! obtains a reference to the traits being counted.
+   */
+  Base& traits() { return *m_base_traits; }
+
+  /*! obtains the smart pointer to the traits being counted.
+   */
+  Shared_base shared_traits() const { return m_base_traits; }
 
 private:
   //! The operation counters
@@ -1683,7 +1705,8 @@ private:
     has_compare_x_near_boundary_2<Base>::value
   };
 
-  Base m_base;
+  //! The traitse being counted
+  Shared_base m_base_traits;
 };
 
 template <typename OutStream, class BaseTraits>
