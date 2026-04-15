@@ -12,9 +12,6 @@
 #ifndef CGAL_CONFORMING_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_CONFORMING_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 
-#include <CGAL/IO/Color_ostream.h>
-#include <CGAL/IO/io_tags.h>
-#include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
@@ -46,8 +43,10 @@
 #include <CGAL/exceptions.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/IO/Color_ostream.h>
+#include <CGAL/IO/Color_ostream.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/Indenting_ostream.h>
+#include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/iterator.h>
@@ -55,8 +54,10 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Polygon_mesh_processing/kernel.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
@@ -1641,7 +1642,7 @@ protected:
     }
 
     return out;
-  }
+  } // end collect_star_components_facets(..)
 
   bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
     std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
@@ -1721,7 +1722,7 @@ protected:
       std::cerr << "- number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
     }
     return true;
-  }
+  } // end move_one_Steiner_vertex_to_the_volume(..)
 
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
     const auto face_id = static_cast<std::size_t>(cell->ccdt_3_data().face_constraint_index(facet_index));
@@ -2772,12 +2773,15 @@ private:
 
   void search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id)
   {
-    const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
+    const CDT_2& cdt_2 = this->face_cdt_2(polygon_constraint_id);
 
-    face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
+    this->face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
     for(const auto fh: cdt_2.all_face_handles())
     {
-      if(fh->info().is_outside_the_face) continue;
+      if(fh->info().is_outside_the_face) {
+        fh->info().missing_subface = false;
+        continue;
+      }
       const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
       const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
       const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
@@ -2785,7 +2789,7 @@ private:
       int i, j, k;
       if(!tr().is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
-        face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
+        this->face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
         std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
         write_triangle(std::cerr, v0, v1, v2);
@@ -4584,10 +4588,16 @@ public:
   }
 
   void recheck_for_missing_subfaces() {
-    for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+    CGAL::Real_timer timer;
+    timer.start();
+    for(CDT_3_signed_index i = 0, end = signed_number_of_faces(); i < end; ++i) {
       if(this->face_data[i].skip_face == false) {
         search_for_missing_subfaces(i);
       }
+    }
+    if(this->debug().display_statistics()) {
+      timer.stop();
+      std::cout << "[timings] recheck_for_missing_subfaces in " << timer.time() << " s\n";
     }
   }
 
@@ -4595,8 +4605,7 @@ public:
   void restore_constrained_Delaunay(Args&&... args)
   {
     this->is_Delaunay = false;
-    for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end;
-        ++i)
+    for(CDT_3_signed_index i = 0, end = signed_number_of_faces(); i < end; ++i)
     {
       CDT_2& cdt_2 = non_const_face_cdt_2(i);
       try {
@@ -4614,7 +4623,7 @@ public:
       }
     }
     if(this->debug().input_faces()) {
-      for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
+      for(CDT_3_signed_index i = 0, end = signed_number_of_faces(); i < end; ++i) {
         dump_face(i);
       }
     }
@@ -4631,7 +4640,7 @@ public:
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
         }
         Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
-        // restart from the beginning, as the state of the triangulation has changed
+        // and then restart the loop at the beginning, to be sure that all faces are treated
         i = face_constraint_misses_subfaces_find_first();
       }
     }
@@ -4639,7 +4648,7 @@ public:
                    [](const auto& fd) { return fd.skip_face; }))
     {
       std::vector<CDT_3_signed_index> failed_faces;
-      for(CDT_3_signed_index i = 0, end = static_cast<CDT_3_signed_index>(face_data.size()); i < end; ++i) {
+      for(CDT_3_signed_index i = 0, end = signed_number_of_faces(); i < end; ++i) {
         if(face_data[i].skip_face) {
           failed_faces.push_back(i);
         }
@@ -4661,7 +4670,7 @@ public:
       throw Constrained_triangulation_insertion_exception(failed_faces);
     }
     CGAL_assertion_code(recheck_for_missing_subfaces());
-    CGAL_assertion_msg(face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
+    CGAL_assertion_msg(are_there_any_face_constraint_misses_subfaces() == false,
                        "All faces have been restored, but the triangulation is a CDT. This should not happen.");
   }
 
@@ -5405,10 +5414,8 @@ public:
   }
 
   bool write_missing_subfaces_file(std::ostream& out) {
-    const auto npos = face_constraint_misses_subfaces_npos;
-    auto i = face_constraint_misses_subfaces_find_first();
-    bool has_missing_subfaces = i != npos;
-    while(i != npos) {
+    const bool has_missing_subfaces = are_there_any_face_constraint_misses_subfaces();
+    loop_on_face_constraint_misses_subfaces([&](auto i) {
       const CDT_2& cdt = face_cdt_2(i);
       for(const auto fh: cdt.finite_face_handles()) {
         if (false == fh->info().is_outside_the_face &&
@@ -5417,8 +5424,7 @@ public:
           write_2d_triangle(out, fh);
         }
       }
-      i = face_constraint_misses_subfaces_find_next(i);
-    }
+    });
     return has_missing_subfaces;
   }
 
@@ -5448,6 +5454,10 @@ protected:
   };
 
 protected:
+  CDT_3_signed_index signed_number_of_faces() const {
+    return static_cast<CDT_3_signed_index>(face_data.size());
+  }
+
   // Accessor functions for Face_data members
   CDT_2& non_const_face_cdt_2(std::size_t face_id) {
     return face_data[face_id].cdt_2;
@@ -5536,6 +5546,21 @@ protected:
   }
   void face_constraint_misses_subfaces_reset(std::size_t pos) {
     face_constraint_misses_subfaces[pos] = false;
+  }
+
+  template <typename F>
+  auto loop_on_face_constraint_misses_subfaces(F f) const {
+    auto i = face_constraint_misses_subfaces_find_first();
+    bool has_any = i != face_constraint_misses_subfaces_npos;
+    while(i != face_constraint_misses_subfaces_npos) {
+       f(i);
+       i = face_constraint_misses_subfaces_find_next(i);
+    }
+    return has_any;
+  }
+
+  auto are_there_any_face_constraint_misses_subfaces() const {
+    return face_constraint_misses_subfaces_find_first() != face_constraint_misses_subfaces_npos;
   }
 }; // end of Conforming_constrained_Delaunay_triangulation_3_impl
 
