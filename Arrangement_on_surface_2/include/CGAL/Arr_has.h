@@ -23,7 +23,15 @@
 
 namespace CGAL {
 
-// `Compare_x_2`
+namespace detail {
+  // A type implicitly convertible to anything
+  struct any_type {
+    template <typename T>
+    operator T() const;
+  };
+}
+
+  // `Compare_x_2`
 // Fallback selected if `Compare_x_2` is not defined in the traits `T` below.
 template <typename, typename = std::void_t<>>
 struct has_compare_x_2 : std::false_type {};
@@ -186,8 +194,8 @@ struct has_construct_point_2_xy : std::false_type {};
 template <typename T>
 struct has_construct_point_2_xy<T,
                                 std::void_t<decltype(std::declval<typename T::Construct_point_2&>()
-                                                     (std::declval<typename T::FT>(),
-                                                      std::declval<typename T::FT>()))>> : std::true_type {};
+                                                     (std::declval<detail::any_type>(),
+                                                      std::declval<detail::any_type>()))>> : std::true_type {};
 
 // `Construct_x_monotone_curve_2`
 // Fallback selected if `Construct_x_monotone_curve_2` is not defined in the traits `T` below.
