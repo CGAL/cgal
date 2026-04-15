@@ -85,8 +85,8 @@ Such octagons are described in \cgalCite{aigon2005hyperbolic}.
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Triangulations Data Structure for Triangulations
 
-Our representation is edge-based instead of the usual CGAL::Triangulation_data_structure_2 used for instance in the package \ref Chapter_2D_Periodic_Hyperbolic_Triangulations "2D Periodic Hyperbolic Triangulations". This edge-based representation is more intrinsic to the surface and can handle non-simplicial triangulations, for instance a triangulation with only one vertex.
-We represent a triangulation \f$ T \f$ of a hyperbolic surface by an instance of CGAL::Combinatorial_map whose edges have complex number attributes that are cross ratios (defined shortly in the following).
+Our representation is edge-based instead of the usual `CGAL::Triangulation_data_structure_2` used for instance in the package \ref Chapter_2D_Periodic_Hyperbolic_Triangulations "2D Periodic Hyperbolic Triangulations". This edge-based representation is more intrinsic to the surface and can handle non-simplicial triangulations, for instance a triangulation with only one vertex.
+We represent a triangulation \f$ T \f$ of a hyperbolic surface by an instance of `CGAL::Combinatorial_map` whose edges have complex number attributes that are cross ratios (defined shortly in the following).
 While the triangulation \f$ T \f$ is unambiguously determined by the combinatorial map and its cross ratios, the internal representation of \f$ T \f$  contains an additional data: the anchor, to be able to lift the triangulation in the Poincaré disk \f$ \mathbb{D} \f$.
 The anchor is a lift \f$ \widetilde t \f$  in \f$ \mathbb{D} \f$ of a triangle of \f$ T \f$. The anchor is represented by the three vertices  \f$ \widetilde v_0, \widetilde v_1, \widetilde v_2 \f$  of \f$ \widetilde t \f$  in \f$ \mathbb{D} \f$, and by the dart in the combinatorial map of \f$ T \f$ corresponding to the oriented edge \f$ v_0v_1 \f$.
 A lift function is provided that computes a lift of each triangle of \f$ T \f$ in the Poincaré disk \f$ \mathbb{D} \f$, it starts from the anchor and then  recursively constructs lifts of neighboring triangles using the cross ratios. See \cgalCite{despre2022experimental} for details.
@@ -111,13 +111,23 @@ See \cgalCite{despre2022experimental} for details.
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Delaunay_Triangulations Data Structure for Delaunay Triangulations
 
-<div style="color:red">
-The data structure is enriched for Delaunay triangulations in order to be more convenient and more time efficient for the \f$ \varepsilon \f$-net algorithm or other algorithms that often have to access lifts of triangles in \f$ \mathbb{D} \f$.
-In order to have constant time access to a lift of any triangle, an anchor is associated with <em>each</em> face of the triangulation. Note that the anchors associated with adjacent triangles do not necessarily correspond to adjacent lifts
-in \f$ \mathbb{D} \f$. This implies that, when working with a lift of a triangle, if an operation requires the third vertex of an adjacent lift, its coordinates must first be computed using the cross-ratio of their common edge.
-</div>
+<div style="color:red"> The data structure is enriched for Delaunay
+triangulations in order to be more convenient and more time efficient for the
+\f$ \varepsilon \f$-net algorithm or other algorithms that often have to access
+lifts of triangles in \f$ \mathbb{D} \f$. Recall that our basic triangulation
+(i.e. non-Delaunay) only has one anchor in its data structure. This implies that
+computing a lift of a given triangle requires lifting a sequence of adjacent
+triangles from the anchor to this very triangle, an operation which is not
+constant time.
+In order to have constant time access
+to a lift of any triangle, an anchor is associated with <em>each</em> face of
+the triangulation. Note that the anchors associated with adjacent triangles do
+not necessarily correspond to adjacent lifts in \f$ \mathbb{D} \f$. This implies
+that, when working with a lift of a triangle, if an operation requires the third
+vertex of an adjacent lift, its coordinates must first be computed using the
+cross-ratio of their common edge.  </div>
 
-\subsection Subsection_Hyperbolic_Surface_Triangulations_Delaunay Delaunay Flip Algorithm
+\section Section_Hyperbolic_Surface_Triangulations_Delaunay Delaunay Flip Algorithm
 
 Let \f$ T \f$ be a triangulation of a hyperbolic surface. An edge \f$ e \f$ of \f$ T \f$ satisfies the <em>Delaunay criterion</em> if the imaginary part of its cross ratio \f$R_T(e)\f$ is non-positive.
 This definition is equivalent to the usual formulation for the triangulation lifted in \f$ \mathbb{D} \f$: there exists a disk containing  \f$ \widetilde e \f$ and that does not contain any other vertices of \f$ \widetilde T \f$ in its interior.
@@ -128,13 +138,13 @@ When a flip occurs, the cross ratios of the involved edges are modified via simp
 The <em>Delaunay flip algorithm</em> flips edges that do not satisfy the Delaunay until no more edges violate the criterion, with no preference on the order of the flips.
 This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cgalCite{despre2020flipping}.
 
-\section Section_Hyperbolic_Surface_Triangulations_Epsilon_Nets ε-nets
+\section Section_Hyperbolic_Surface_Triangulations_Epsilon_Nets Epsilon-nets
 
 <span style="color:red">NEW SECTION</span>
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Epsilon_Net_Definition Definition
 
-The notion of \f$ \varepsilon \f$-net formalizes the idea of a "well-distributed" sampling of a metic space, in our case, a hyperbolic surface.
+The notion of \f$ \varepsilon \f$-net formalizes the idea of a "well-distributed" sampling of a metric space, in our case, a hyperbolic surface.
 
 Let \f$ (X, d) \f$ be a metric space and \f$ \varepsilon > 0 \f$. A subset \f$ P \subset X \f$ is:
 
@@ -142,19 +152,46 @@ Let \f$ (X, d) \f$ be a metric space and \f$ \varepsilon > 0 \f$. A subset \f$ P
 - an \f$ \varepsilon \f$-packing if \f$ d(p, q) \geq \varepsilon \f$ for all \f$ p \neq q \in P \f$, that is, the open balls of radius \f$ \varepsilon/2 \f$ centered at the points of \f$ P \f$ are pairwise disjoint;
 - an \f$ \varepsilon \f$-net if it is both an \f$ \varepsilon \f$-covering and an \f$ \varepsilon \f$-packing.
 
-The `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` class contains the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` method that tries to compute an \f$ \varepsilon \f$-net of a hyperbolic surface, starting from an \f$ \varepsilon \f$-packing (usually, a Delaunay triangulation with a single vertex). The construction might not result in an \f$ \varepsilon \f$-net (see next section), but the method returns a Boolean indicating whether the result is a certified \f$ \varepsilon \f$-net.
+The class `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` contains the
+method `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` that tries to compute an \f$ \varepsilon \f$-net of a hyperbolic surface, starting from an \f$ \varepsilon \f$-packing (usually, a Delaunay triangulation with a single vertex). The construction might not result in an \f$ \varepsilon \f$-net (see next section), but the method returns a Boolean indicating whether the result is a certified \f$ \varepsilon \f$-net.
 
-If the result is not a certified \f$ \varepsilon \f$-net, the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::is_epsilon_covering()` and `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::is_epsilon_packing()` methods can be used to diagnose which property fails. Additionally, the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::shortest_non_loop_edge()` can be used to know the distance between the closest pair of points.
+If the result is not a certified \f$ \varepsilon \f$-net, the methods
+`CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::is_epsilon_covering()`
+and `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::is_epsilon_packing()`
+ can be used to diagnose which properties fail. Additionally, the method
+`CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::shortest_non_loop_edge()`
+returns the distance between the closest pair of points.
+
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Epsilon_Net_Algorithm Epsilon net algorithm
+
+The \f$ \varepsilon \f$-net algorithm is a Delaunay refinement algorithm that
+maintains a Delaunay triangulation.  It starts with a Delaunay triangulation of
+an \f$ \varepsilon \f$-packing of S, note that a Delaunay triangulation with a
+single vertex always satisfies this condition for any \f$ \varepsilon >0\f$.  In
+a nutshell, as long as there is a triangle with a circumradius larger than \f$
+\varepsilon \f$ in the triangulation, its circumcenter is inserted and the
+triangulation is updated: the triangle in which the circumcenter lies is first
+split into three new triangles, then the Delaunay property is retrieved using
+the Delaunay flip algorithm.
 
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Epsilon_Net_Numbers Number Type
 
-The algorithm is a Delaunay refinement algorithm that inserts the circumcenter of triangles whose circumradius is larger than \f$ \varepsilon \f$ until there is none. To ensure robustness and efficiency, this method should be used with a rational number type, such as `CGAL::Exact_rational` or `CGAL::Gmpq`.
+As explained above, the \f$ \varepsilon \f$-net algorithm iteratively inserts
+circumcenters of triangles as new vertices of the triangulation. The coordinates
+of a circumcenter is in an algebraic extension of degree 2 with respect to the
+coordinates of the points defining the triangle. To avoid using algebraic
+extensions, each coordinate of a circumcenter is rounded to the number type
+provided by the user.  To ensure robustness and efficiency, the method `epsilon_net()`  should
+be used with a rational number type, such as `CGAL::Exact_rational` or
+`CGAL::Gmpq`.  There are two cases:
 
-To avoid cascading square roots, each coordinate of a circumcenter is rounded to the number type provided by the user. There are two cases:
-
-- When the number type is <em>not</em> `CGAL::Gmpq`, each coordinate is rounded to a double precision number using the `CGAL::to_double()` function, and is then converted to the number type chosen by the user.
-- When the number type is `CGAL::Gmpq`, each coordinates is rounded to a fixed precision floating-point number `CGAL::Gmpfr`. The precision of the `CGAL::Gmpfr` numbers involved is \f$ p\times 53 \f$, where \f$ p \f$ is an integer given to the `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` method and 53 is the precision of a `double`. When \f$ p = 1 \f$, it is thus equivalent to using the `CGAL::to_double()` approximation.
+- When the number type is <em>not</em> `CGAL::Gmpq`, each coordinate is rounded to a double precision number using the function `CGAL::to_double()`, and is then converted to the number type chosen by the user.
+- When the number type is `CGAL::Gmpq`, each coordinates is rounded to a fixed
+- precision floating-point number `CGAL::Gmpfr`. The precision of the
+- `CGAL::Gmpfr` numbers involved is \f$ p\times 53 \f$, where \f$ p \f$ is an
+- integer given to the method `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::epsilon_net()` and 53 is the precision of a `double`. When \f$ p = 1 \f$, it is thus equivalent to using the `CGAL::to_double()` approximation.
 
 The algorithm does not check whether the construction is correct on the go. Instead, it only checks the correctness at the end. This is why it can happen that the result is not a certified \f$ \varepsilon \f$-net.
 The rounding method using the `CGAL::to_double()` approximation usually works for hyperbolic surfaces of genus 2 or 3 with a lage systole, but a higher precision is required to obtain a valid \f$ \varepsilon \f$-net on surfaces of higher genus.
@@ -180,10 +217,9 @@ The secondary class `CGAL::Hyperbolic_isometry_2` defines isometries in the Poin
 
 \section Visualization Visualization
 
-<div style="color:red">changé titre (Visualization of a Triangulation -> Visualization)</div>
-<div style="color:red">This package contains several demos (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which displays triangulations.</div>
+<div style="color:red">This package contains several demos (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which display triangulations.</div>
 
-The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes the lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}).
+The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes a lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}).
 
 \cgalFigureAnchor{THS2-demo-output}
 <center>
@@ -203,7 +239,7 @@ Lift, in the Poincaré disk, of the Delaunay triangulation of a 0.1-net of a gen
 \cgalFigureCaptionEnd
 </div>
 
-<div style="color:red">Additionally, the `CGAL::Dirichlet_vertices()` function can be used to display a Dirichlet domain.</div>
+<div style="color:red">Additionally, the function `CGAL::Dirichlet_vertices()` can be used to display a Dirichlet domain.</div>
 
 <div style="color:red">
 \cgalFigureAnchor{HDD2-demo-output}
@@ -215,10 +251,25 @@ Lift, in the Poincaré disk, of a Dirichlet domain of a genus two surface (from 
 \cgalFigureCaptionEnd
 </div>
 
-\section Section_Hyperbolic_Surface_Triangulations_Example Example
+\section Section_Hyperbolic_Surface_Triangulations_Example Examples
 
-The example below generates a convex fundamental domain of a surface of genus two, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, saves and prints the Delaunay triangulation.
+This first example generates a convex fundamental domain of a surface of genus
+two, triangulates the domain using the class
+`CGAL::Triangulation_on_hyperbolic_surface_2`, applies the Delaunay flip
+algorithm to the resulting triangulation, saves and prints the Delaunay
+triangulation.
 \cgalExample{Triangulation_on_hyperbolic_surface_2/Triangulation_on_hyperbolic_surface_2.cpp}
+
+
+This example generates a convex fundamental domain of a surface of genus two,
+construct its Delaunay triangulation using the class
+`CGAL::Delaunay_triangulation_on_hyperbolic_surface_2`, computes an \f$
+\varepsilon \f$-net, locates a query point in the triangulation and saves the
+Delaunay triangulation of this \f$ \varepsilon \f$-net.
+\cgalExample{Triangulation_on_hyperbolic_surface_2/Delaunay_triangulation_on_hyperbolic_surface_2.cpp}
+
+
+
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and Implementation History
 

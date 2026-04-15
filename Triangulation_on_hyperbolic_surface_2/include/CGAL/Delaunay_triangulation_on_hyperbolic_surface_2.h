@@ -66,6 +66,10 @@ public:
         FACE,
         OUTSIDE
     };
+    enum Locate_walk {
+      STRAIGHT = 0,
+      VISIBILITY,
+    };
 
     //---------- CONSTRUCTORS
     Delaunay_triangulation_on_hyperbolic_surface_2() {};
@@ -88,8 +92,8 @@ public:
 
     //---------- location and insertion
     Locate_type relative_position(Point const & query, unsigned & li, Anchor const & anch) const;
-    Anchor locate(Point const & query, bool use_visibility = false); // const ?
-    Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility = false); // const ?
+    Anchor locate(Point const & query, Locate_walk walk = STRAIGHT); // const ?
+    Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
     //---------- Delaunay related methods
     void insert(Point const & query, Anchor & hint);
@@ -124,7 +128,7 @@ private:
     Anchor locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint); // const ?
     std::vector<Dart_descriptor> insert_in_face(Point const & query, Anchor & anch);  // return dart_descriptor
     std::vector<Dart_descriptor> insert_in_edge(Point const & query, unsigned & li, Anchor & anch);
-    std::vector<Dart_descriptor> split_insert(Point const & query, Anchor & anch, bool use_visibility = false);
+    std::vector<Dart_descriptor> split_insert(Point const & query, Anchor & anch, Locate_walk walk = STRAIGHT);
 
     //---------- Delaunay related methods
     void flip(Dart_descriptor dart);
@@ -604,20 +608,20 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate(Point const & query, bool use_visibility)
+locate(Point const & query, Locate_walk walk)
 {
     Locate_type lt = OUTSIDE;
     unsigned li = 0;
     unsigned ld = 0;
-    return locate(query, lt, li, ld, anchor(), use_visibility);
+    return locate(query, lt, li, ld, anchor(), walk);
 }
 
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility)
+locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk)
 {
-    if (use_visibility) {
+    if (walk == VISIBILITY) {
         return locate_visibility_walk(query, lt, li, ld, hint);
     } else {
         return locate_straight_walk(query, lt, li, ld, hint);
@@ -724,12 +728,12 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 template<class Traits>
 std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-split_insert(Point const & query, Anchor & anch, bool use_visibility)
+split_insert(Point const & query, Anchor & anch, Locate_walk walk)
 {
     Locate_type lt = OUTSIDE;
     unsigned li = 0;
     unsigned ld = 0;
-    Anchor locate_anchor = locate(query, lt, li, ld, anch, use_visibility);
+    Anchor locate_anchor = locate(query, lt, li, ld, anch, walk);
     CGAL_precondition(lt != OUTSIDE);
 
     std::vector<Dart_descriptor> darts_of_new_anchors;
@@ -971,7 +975,7 @@ epsilon_net(double const epsilon, unsigned const p)
                 if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
                     break;  // avoid undefined behavior in case of bad approx outside of Poincaré
                 }
-                std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, true);
+                std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, VISIBILITY);
                 std::list<Dart_descriptor> darts_to_flip;
                 for (Dart_descriptor const & dart : darts_of_new_anchors) {
                     push_triangle(dart, triangles, triangles_list_mark);

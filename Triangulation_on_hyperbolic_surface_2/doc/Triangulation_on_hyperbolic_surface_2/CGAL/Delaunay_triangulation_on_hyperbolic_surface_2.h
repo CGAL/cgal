@@ -46,6 +46,9 @@ public:
   typedef Combinatorial_map<2,Delaunay_triangulation_attributes<Traits>>                                              CMap;
   typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor    Anchor;
 
+  /*!
+    must be compatible with the method  `CGAL::to_double()`.
+   */
   typedef typename Traits::FT                                         Number;
   typedef typename Traits::Complex                                    Complex_number;
 
@@ -78,10 +81,19 @@ public:
     FACE,
     OUTSIDE
   };
+
+    /*
+    The enumeration `Locate_walk` is defined to specify which walk algorithm is used when locating a point in the lifted triangulation.
+  */
+  enum Locate_walk {
+    STRAIGHT = 0,
+    VISIBILITY,
+  };
   /// @}
 
   /// \name Creation
-  /// Calls the corresponding constructor from #Base and sets an #Anchor for each face.
+  /// Calls the corresponding constructor from #Base, constructs the Delaunay
+  /// triangulation and sets an #Anchor for each face.
   /// @{
   Delaunay_triangulation_on_hyperbolic_surface_2() {};
   Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch);
@@ -141,31 +153,31 @@ public:
 
     Locates `query` in the Delaunay triangulation.
 
-    The Boolean `use_visibility` indicates whether the visibility walk algorithm is used for the point location. When `false`, the straight walk algorithm is used.
+    The enumeration `walk` indicates which walk algorithm is used when locating a point in the lifted triangulation.
   */
-  Anchor locate(Point const & query, bool use_visibility = false); // const ?
+  Anchor locate(Point const & query, Locate_walk walk = STRAIGHT); // const ?
   /*!
     Same as above.
 
-    Additionally, the point location algorithm starts from `hint` and `ld` is set to the number or triangle travarsed by the walk used for the point location algorithm.
+    Additionally, the point location algorithm starts from `hint` and `ld` is set to the number of triangles traversed by the walk used for the point location algorithm.
 
     The variables `lt` and `li` contains information about the triangle in which `query` has been found.
 
     \sa relative_position
   */
-  Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, bool use_visibility = false); // const ?
+  Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
   /*!
-    Inserts `query` in the Delaunay triangulation after having located it, starting from `hint`.
+    Inserts `p` in the Delaunay triangulation after having located it, starting from `hint`.
 
-    \pre <code>is_valid()</code> and <code>norm(Complex_number(query.x(), query.y())) < Number(1)</code>
+    \pre <code>is_valid()</code> and <code>norm(Complex_number(p.x(), p.y())) < Number(1)</code>
   */
-  void insert(Point const & query, Anchor & hint);
+  void insert(Point const & p, Anchor & hint);
 
   /*!
-    Inserts `query` in the Delaunay triangulation.
+    Inserts `p` in the Delaunay triangulation.
   */
-  void insert(Point const & query);
+  void insert(Point const & p);
   /// @}
 
   /// \name \f$ \varepsilon \f$-net
