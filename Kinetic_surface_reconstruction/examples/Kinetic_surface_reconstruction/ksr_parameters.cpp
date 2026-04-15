@@ -320,9 +320,10 @@ int main(const int argc, const char** argv) {
 
   Point_set point_set;
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
-  //load_planes("GF-test/saddle_point_cloud.vg", point_set, regions);
+  //load_planes("../GF-test/saddle_point_cloud.vg", point_set, regions);
   std::filesystem::path path = parameters.data;
 
+  //CGAL::IO::write_point_set("saddle_point.ply", point_set, CGAL::parameters::stream_precision(17).use_binary_mode(false));
   std::string vg_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".vg";
 //   if (std::filesystem::exists(vg_file))
 //     load_planes(vg_file, point_set, regions);
@@ -488,7 +489,7 @@ int main(const int argc, const char** argv) {
   std::cout << "Shape detection and initialization\nof kinetic partition:     " << after_shape_detection << " seconds!" << std::endl;
   std::cout << "Kinetic partition:        " << (after_partition - after_shape_detection) << " seconds!" << std::endl;
   std::cout << "Kinetic reconstruction:   " << (after_reconstruction - after_partition) << " seconds!" << std::endl;
-  std::cout << "Total time:               " << time << " seconds!" << std::endl << std::endl;
+  std::cout << "Total time:               " << after_reconstruction << " seconds!" << std::endl << std::endl;
 
   return (non_empty) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

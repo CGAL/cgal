@@ -51,37 +51,6 @@
 namespace CGAL {
 
 /*!
-  \brief this class provides a minimal model of `KineticLCCItems`. It adds attributes to faces and volumes and defines the use of index-based `LinearCellComplex`.
-  */
-template<typename IntersectionTraits = CGAL::Exact_predicates_exact_constructions_kernel>
-class Kinetic_linear_cell_complex_min_items {
-public:
-  using Use_index = CGAL::Tag_true;
-  using Index_type = std::uint32_t;
-  using Intersection_kernel = IntersectionTraits;
-
-  struct Face_attribute {
-    int input_polygon_index; // Non-negative numbers represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Kinetic_space_partition_3::Face_support`.
-    typename Intersection_kernel::Plane_3 plane;
-    bool part_of_initial_polygon;
-  };
-
-  struct Volume_attribute {
-    typename Intersection_kernel::Point_3 barycenter;
-    std::size_t volume_id;
-  };
-
-  template<class LCC>
-  struct Dart_wrapper {
-    using Vertex_cell_attribute = CGAL::Cell_attribute_with_point< LCC, void>;
-    using Face_cell_attribute = CGAL::Cell_attribute<LCC, Face_attribute>;
-    using Volume_cell_attribute = CGAL::Cell_attribute<LCC, Volume_attribute>;
-
-    using Attributes = std::tuple<Vertex_cell_attribute, void, Face_cell_attribute, Volume_cell_attribute>;
-  };
-};
-
-/*!
 * \ingroup PkgKineticSpacePartitionRef
   \brief creates the kinetic partition of the bounding box of the polygons given as input data. The kinetic partition can either be initialized
   by using the default constructor \link CGAL::Kinetic_space_partition_3::Kinetic_space_partition_3() `Kinetic_space_partition_3()`\endlink, `insert()` to provide input data and `initialize()` to prepare the partition or by using the constructor with input parameters.
@@ -112,6 +81,35 @@ public:
     XMIN        = -5,
     ZMAX        = -6,
     OCTREE_FACE = -7,
+  };
+
+  /*!
+  \brief this class provides a minimal model of `KineticLCCItems`. It adds attributes to faces and volumes and defines the use of index-based `LinearCellComplex`.
+  */
+  class Linear_cell_complex_min_items {
+  public:
+    using Use_index = CGAL::Tag_true;
+    using Index_type = std::uint32_t;
+
+    struct Face_attribute {
+      int input_polygon_index; // Non-negative numbers represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Kinetic_space_partition_3::Face_support`.
+      typename Intersection_kernel::Plane_3 plane;
+      bool part_of_initial_polygon;
+    };
+
+    struct Volume_attribute {
+      typename Intersection_kernel::Point_3 barycenter;
+      std::size_t volume_id;
+    };
+
+    template<class LCC>
+    struct Dart_wrapper {
+      using Vertex_cell_attribute = CGAL::Cell_attribute_with_point< LCC, void>;
+      using Face_cell_attribute = CGAL::Cell_attribute<LCC, Face_attribute>;
+      using Volume_cell_attribute = CGAL::Cell_attribute<LCC, Volume_attribute>;
+
+      using Attributes = std::tuple<Vertex_cell_attribute, void, Face_cell_attribute, Volume_cell_attribute>;
+    };
   };
 
 private:
@@ -2308,13 +2306,13 @@ private:
         idx++;
       }
 
-    if (m_parameters.verbose)
+    //if (m_parameters.verbose)
       std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
   }
 };
 
 inline
-void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename Kinetic_linear_cell_complex_min_items<>::Face_attribute& fa) {
+void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename Kinetic_space_partition_3<CGAL::Epick>::Linear_cell_complex_min_items::Face_attribute& fa) {
   node.add("v.a", fa.plane.a());
   node.add("v.b", fa.plane.b());
   node.add("v.c", fa.plane.c());
@@ -2324,7 +2322,7 @@ void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename
 }
 
 inline
-void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename Kinetic_linear_cell_complex_min_items<>::Volume_attribute& va) {
+void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename Kinetic_space_partition_3<CGAL::Epick>::Linear_cell_complex_min_items::Volume_attribute& va) {
   node.add("v.x", va.barycenter.x());
   node.add("v.y", va.barycenter.y());
   node.add("v.z", va.barycenter.z());
@@ -2333,33 +2331,32 @@ void write_cmap_attribute_node(boost::property_tree::ptree& node, const typename
 
 template<> inline
 void read_cmap_attribute_node
-(const boost::property_tree::ptree::value_type& v, typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Point_3& val)
-{
+(const boost::property_tree::ptree::value_type& v, Exact_predicates_exact_constructions_kernel::Point_3& val) {
   double x = v.second.get<double>("x");
   double y = v.second.get<double>("y");
   double z = v.second.get<double>("z");
-  val = typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Point_3(x, y, z);
+  val = Exact_predicates_exact_constructions_kernel::Point_3(x, y, z);
 }
 
 template<> inline
 void read_cmap_attribute_node
-(const boost::property_tree::ptree::value_type& v, typename Kinetic_linear_cell_complex_min_items<>::Face_attribute& fa) {
+(const boost::property_tree::ptree::value_type& v, typename Kinetic_space_partition_3<Epick>::Linear_cell_complex_min_items::Face_attribute& fa) {
   double a = v.second.get<double>("a");
   double b = v.second.get<double>("b");
   double c = v.second.get<double>("c");
   double d = v.second.get<double>("d");
-  fa.plane = typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Plane_3(a, b, c, d);
+  fa.plane = Exact_predicates_exact_constructions_kernel::Plane_3(a, b, c, d);
   fa.input_polygon_index = v.second.get<int>("ip");
   fa.part_of_initial_polygon = v.second.get<bool>("poip");
 }
 
 template<> inline
 void read_cmap_attribute_node
-(const boost::property_tree::ptree::value_type& v, typename Kinetic_linear_cell_complex_min_items<>::Volume_attribute& va) {
+(const boost::property_tree::ptree::value_type& v, typename Kinetic_space_partition_3<Epick>::Linear_cell_complex_min_items::Volume_attribute& va) {
   double x = v.second.get<double>("x");
   double y = v.second.get<double>("y");
   double z = v.second.get<double>("z");
-  va.barycenter = typename Kinetic_linear_cell_complex_min_items<>::Intersection_kernel::Point_3(x, y, z);
+  va.barycenter = Exact_predicates_exact_constructions_kernel::Point_3(x, y, z);
   va.volume_id = v.second.get<int>("id");
 }
 

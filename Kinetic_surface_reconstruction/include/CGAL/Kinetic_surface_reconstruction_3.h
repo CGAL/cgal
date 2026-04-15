@@ -137,7 +137,7 @@ public:
   using Normal_map = NormalMap;
 
   using LCC_traits = CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel>;
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_traits, Kinetic_linear_cell_complex_min_items<Intersection_kernel>>;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_traits, typename KSP::Linear_cell_complex_min_items>;
 
   /*!
     \brief creates a `Kinetic_shape_reconstruction_3` object.
@@ -469,7 +469,7 @@ public:
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void detection_and_partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
     detect_planar_shapes(np);
-    initialize_partition(np);
+    regularize_planar_shapes(np);
     partition(k);
   }
 
@@ -783,7 +783,7 @@ private:
 
   using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
   using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
-  using Face_information = typename Kinetic_linear_cell_complex_min_items<Intersection_kernel>::Face_attribute;
+  using Face_information = typename KSP::Linear_cell_complex_min_items::Face_attribute;
 
   bool m_verbose;
   bool m_debug;
@@ -1030,13 +1030,13 @@ private:
         else if (diff > 0) {
           dump_volume(i, "gc/i/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
           dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-        }
-        else {
+          }
+          else {
           dump_volume(i, "gc/n/" + std::to_string(i) + "-vol-0-0", CGAL::Color(255, 255, 255));
           dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-0-0", CGAL::Color(255, 255, 255));
+          }
         }
       }
-    }
 */
   }
 
