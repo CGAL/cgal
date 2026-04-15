@@ -23,11 +23,9 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
-#ifndef CGAL_USE_CHAINED_MAP
 #include <CGAL/Hash_map/internal/linear_map.h>
-#else
 #include <CGAL/Hash_map/internal/chained_map.h>
-#endif
+
 #include <cstddef>
 
 namespace CGAL {
