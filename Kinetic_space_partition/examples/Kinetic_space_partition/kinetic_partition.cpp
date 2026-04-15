@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 
   // Access the kinetic partition via linear cell complex.
   typedef CGAL::Linear_cell_complex_traits<3, EPECK> LCC_Traits;
-  CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_Traits, Linear_cell_complex_min_items> lcc;
+  CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_Traits, typename KSP::Linear_cell_complex_min_items> lcc;
   ksp.get_linear_cell_complex(lcc);
 
   std::vector<unsigned int> cells = { 0, 2, 3 }, count;
