@@ -16,6 +16,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/predicates.h>
+#include <CGAL/Union_find.h>
 
 #include <fstream>
 
@@ -608,6 +609,244 @@ update_output(PointRange& out_points,  TriangleRange& out_triangles, std::size_t
 
 namespace Polygon_mesh_processing
 {
+
+template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
+void compute_self_union(PointRange& points, TriangleRange& triangles)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  using namespace boolops_3;
+
+#ifdef CGAL_BO3_TIMERS
+  Real_timer timer;
+  timer.start();
+#endif
+  // TODO: convert points to EPECK if not already the case
+  using Exact_point = typename std::iterator_traits<typename PointRange::const_iterator>::value_type;
+  PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::concurrency_tag(Concurrency_tag()));
+#ifdef CGAL_BO3_TIMERS
+  timer.stop();
+  std::cout << "autorefine done in " << timer.time() << "\n";
+  timer.reset();
+#endif
+#ifdef CGAL_BO_AUTOREF_DEBUG
+  CGAL::IO::write_OFF("autorefined.off", out_points, out_triangles, CGAL::parameters::stream_precision(17));
+#endif
+
+  //TODO: use Concurrency_tagf
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  namespace pred = PMP::Corefinement;
+  //~ Selection_data data_out;
+
+  // fill edge map (TODO: move to a function)
+  typedef std::size_t PID;
+  typedef std::size_t TID;
+  std::vector< std::unordered_map<PID, std::vector<TID> > > edge_map(points.size());
+  using Boundary_edge_location = std::pair<PID, std::unordered_map<PID, std::vector<TID> >::const_iterator>;
+
+  for (TID tid=0; tid<triangles.size(); ++tid)
+  {
+    auto p = CGAL::make_sorted_pair(triangles[tid][0], triangles[tid][1]);
+    edge_map[p.first][p.second].push_back(tid);
+    p = CGAL::make_sorted_pair(triangles[tid][1], triangles[tid][2]);
+    edge_map[p.first][p.second].push_back(tid);
+    p = CGAL::make_sorted_pair(triangles[tid][2], triangles[tid][0]);
+    edge_map[p.first][p.second].push_back(tid);
+  }
+
+  // extract connected_components bounded by non-manifold edges  (TODO: move to a function)
+  std::vector<std::size_t> ccids;
+  std::vector< Boundary_edge_location > nm_edges;
+  std::vector<std::size_t> one_triangle_per_cc =
+    boolops_3::connected_components(triangles, edge_map, ccids, nm_edges);
+  std::size_t nb_cc = one_triangle_per_cc.size();
+
+
+  using UF_CC = CGAL::Union_find<std::size_t>;
+  using UF_handle = UF_CC::handle;
+
+  UF_CC uf_cc;
+  std::vector<UF_handle> uf_handles(nb_cc);
+  for (std::size_t i=0; i<nb_cc; ++i)
+    uf_handles[i]=uf_cc.make_set(i);
+
+
+  // cc -> edges
+  // TODO we need split graph into polylines I guess
+  std::vector<std::vector<Boundary_edge_location> > cc_to_edges(nb_cc);
+  std::vector<bool> pts_on_edge(points.size(), false); // TODO: fill it in autoref visitor?
+
+  for (auto [pid, it] : nm_edges)
+  {
+    std::set<std::size_t> ccs;
+    pts_on_edge[pid]=true;
+    pts_on_edge[it->first]=true;
+    for (TID tid : it->second)
+      ccs.insert(ccids[tid]);
+    for (std::size_t ccid : ccs)
+      cc_to_edges[ccid].emplace_back(pid, it);
+  }
+
+  std::size_t min_pt_id=0;
+  for (std::size_t i=1; i<points.size(); ++i)
+  {
+    if (points[min_pt_id].x()==points[i].x())
+    {
+      if (points[min_pt_id].y()==points[i].y())
+      {
+        CGAL_assertion(points[min_pt_id].z()!=points[i].z());
+        if (points[min_pt_id].z()>points[i].z()) min_pt_id=i;
+      }
+      else
+        if (points[min_pt_id].y()>points[i].y()) min_pt_id=i;
+    }
+    else
+      if (points[min_pt_id].x()>points[i].x()) min_pt_id=i;
+  }
+
+  //TODO: temporary condition assuming extreme point is manifold, need another selection method otherwise
+  CGAL_precondition(!pts_on_edge[min_pt_id]);
+
+  std::size_t selected_tid=triangles.size();
+  for (TID tid=0; tid<triangles.size(); ++tid)
+  {
+    for (int i=0;i<3;++i)
+    if (triangles[tid][i]==min_pt_id)
+    {
+      selected_tid=tid;
+      break;
+    }
+  }
+
+  //TODO: temporary condition, need another selection method is we have isolated vertices
+  CGAL_precondition(selected_tid!=triangles.size());
+
+  std::vector<bool> ccs_handled(nb_cc, false);
+  std::vector<std::size_t> cc_stack;
+  cc_stack.push_back(ccids[selected_tid]);
+
+  // main loop to classify cc
+  while(!cc_stack.empty())
+  {
+    std::size_t ccid = cc_stack.back();
+    cc_stack.pop_back();
+
+    if (ccs_handled[ccid]) continue;
+    ccs_handled[ccid]=true;
+
+    // iterate on all non-manifold edges of the current cc
+    for (auto [pid, it] : cc_to_edges[ccid])
+    {
+#ifdef CGAL_BO_AUTOREF_DEBUG
+      std::cout << "case #" << ++case_id << " looking at edge " << pid << " " << it->first << "\n";
+      std::cout << "  incident CCs:";
+      for (TID tid : it->second) std::cout << " " << ccids[tid] << "("<< input_ids[tid] <<")";
+      std::cout << "\n";
+#endif
+
+      std::vector<std::pair<int, TID>> to_sort;
+      to_sort.reserve(it->second.size());
+
+      std::size_t i0=pid, i1=it->first;
+      for (TID tid : it->second)
+      {
+        for (int i=0; i<3; ++i)
+        {
+          if (triangles[tid][i]!=i0 && triangles[tid][i]!=i1)
+            to_sort.emplace_back(i, tid);
+        }
+        if (ccids[tid]==ccid && to_sort.size()>1)
+          std::swap(to_sort.front(), to_sort.back());
+      }
+
+      std::pair<int, TID> tref=to_sort.front(); // tid is from ccid
+      if (triangles[tref.second][(tref.first+1)%3]!=i0)
+        std::swap(i0,i1);
+
+      const Exact_point& pref=points[triangles[tref.second][tref.first]];
+      const Exact_point& p0=points[i0];
+      const Exact_point& p1=points[i1];
+
+      //Considering the plane with normal vector [o_prime,o] and containing o.
+      //We define the counterclockwise order around o when looking from
+      //the side of the plane containing o_prime.
+      //We consider the portion of the plane defined by rotating a ray starting at o
+      //from the planar projection of p1 to the planar projection of p2 in
+      //counterclockwise order.
+      //The predicates indicates whether the planar projection of point q lies in this
+      //portion of the plane.
+      //Preconditions:
+      //  o_prime,o,p1 are not collinear
+      //  o_prime,o,p2 are not collinear
+      //  o_prime,o,q are not collinear
+      //  o_prime,o,p1,q are not coplanar or coplanar_orientation(o,o_prime,p1,q)==NEGATIVE
+      //  o_prime,o,p2,q are not coplanar or coplanar_orientation(o,o_prime,p2,q)==NEGATIVE
+      // template <class Kernel>
+      // bool  sorted_around_edge(
+      //  const typename Kernel::Point_3& o_prime, const typename Kernel::Point_3& o,
+      //  const typename Kernel::Point_3& p1, const typename Kernel::Point_3& p2,
+      //  const typename Kernel::Point_3& q)
+      auto less = [&tref, &pref, &points, &triangles, &p0, &p1](const std::pair<int, TID>& e1,
+                                                                const std::pair<int, TID>& e2)
+      {
+        using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+        // handling coplanar
+        //TODO: we will make several time the comparision with the same point, not sure if it is coslty. Maybe group them?
+        if (triangles[e1.second][e1.first]==triangles[e2.second][e2.first])
+          return e1.second < e2.second;
+        if (triangles[e1.second][e1.first]==triangles[tref.second][tref.first])
+          return true;
+        if (triangles[e2.second][e2.first]==triangles[tref.second][tref.first])
+          return false;
+
+        return pred::sorted_around_edge<EPECK>(p0, p1, pref,
+                                               points[triangles[e2.second][e2.first]],
+                                               points[triangles[e1.second][e1.first]]);
+      };
+
+  #ifdef CGAL_BO_AUTOREF_DEBUG
+      std::set<std::size_t> third_point;
+      for (const std::pair<int, TID>& p : to_sort)
+        third_point.insert(triangles[p.second][p.first]);
+
+      if (third_point.size()!=to_sort.size()+1)
+        std::cerr << "  presence of coplanar triangles\n";
+  #endif
+
+      std::sort(std::next(to_sort.begin()), to_sort.end(), less);
+
+      // TODO: we need to make sure orentations are compatible
+
+      std::size_t n_ccid = ccids[to_sort[1].second];
+      uf_handles[n_ccid] = uf_cc.find(uf_handles[n_ccid]);
+      uf_handles[ccid] = uf_cc.find(uf_handles[ccid]);
+      uf_cc.unify_sets(uf_handles[n_ccid], uf_handles[ccid]);
+      if (!ccs_handled[n_ccid])
+        cc_stack.push_back(n_ccid);
+    }
+  }
+
+  // mark ccids to keep
+  std::size_t ref_cc = ccids[selected_tid];
+  UF_handle ref_handle = uf_cc.find(uf_handles[ref_cc]);
+  std::vector<bool> selected_ccs(nb_cc);
+  for (std::size_t ccid=0; ccid<nb_cc; ++ccid)
+  {
+    UF_handle cc_h = uf_cc.find(uf_handles[ccid]);
+    selected_ccs[ccid] = (cc_h==ref_handle);
+  }
+
+  std::vector<bool> to_keep(triangles.size(), false);
+  std::size_t nb_out_triangles=0;
+  for (std::size_t tid=0; tid<triangles.size(); ++tid)
+  {
+    if (selected_ccs[ccids[tid]])
+    {
+      to_keep[tid]=true;
+      ++nb_out_triangles;
+    }
+  }
+  boolops_3::update_output<Concurrency_tag>(points, triangles, nb_out_triangles, to_keep);
+}
 
 template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
 void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
