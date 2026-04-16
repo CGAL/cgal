@@ -180,11 +180,12 @@ class Tracing_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x
   using Base = BaseTraits;
 
 public:
+  using Curve_2 = typename Base::Curve_2;
+
   //! A functor that subdivides a curve into \f$x\f$-monotone curves.
   class Make_x_monotone_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-    using Curve_2 = typename Base::Curve_2;
 
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -768,6 +769,16 @@ class Tracing_construct_curve_2<BaseTraits, Derived, std::enable_if_t<has_constr
 public:
   //! A functor that constructs a curve.
   class Construct_curve_2 {
+    /* Defining `Curve_2` in the outer class `Tracing_construct_curve_2` would
+     * cause an ambiguous definition because it is already defined in the
+     * (outer) class `Tracing_make_x_monotone_2`. Thus, we only define it in the
+     * inner class `Construct_curve_2`. If the base traits class does not
+     * support `Make_x_monotone_2`, `Curve_2` will end up being
+     * undefined. However, the scenario where the base traits class supports
+     * `Construct_curve_2` but does not support `Make_x_monotone_2` is
+     * unlikely. If this scenario is encountered after all, a different solution
+     * must be devised.
+     */
     using Curve_2 = typename Base::Curve_2;
 
   private:
@@ -1678,7 +1689,6 @@ public:
 
   using Point_2 = typename Base::Point_2;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-  using Curve_2 = typename Base::Curve_2;
 
   //@}
 
