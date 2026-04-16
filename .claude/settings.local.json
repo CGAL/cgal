@@ -4,7 +4,11 @@
       "Bash(powershell -Command:*)",
       "Bash(cmake ..)",
       "Bash(cmake --build . --config Release --target test_GLTF)",
-      "Bash(./build/Release/test_GLTF.exe)"
+      "Bash(./build/Release/test_GLTF.exe)",
+      "Bash(\"c:/Users/deman/vcpkg/vcpkg.exe\" list:*)",
+      "Bash(\"c:/Users/deman/vcpkg/vcpkg.exe\" search:*)",
+      "Bash(\"c:/Users/deman/vcpkg/vcpkg.exe\" install:*)",
+      "Bash(ls \"c:/Users/deman/OneDrive/Desktop/JMUGLTF/jmugltf/Lab/demo/Lab/Plugins/IO/\"*.json)"
     ]
   }
 }

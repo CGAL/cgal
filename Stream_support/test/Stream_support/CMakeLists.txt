@@ -20,6 +20,10 @@ else()
   message(STATUS "NOTICE : the LAS reader does not work with your version of Visual Studio 2017.")
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules")
+find_package(Tinygltf QUIET)
+include(CGAL_tinygltf_support)
+
 
 set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
@@ -62,8 +66,13 @@ foreach(cppfile ${cppfiles})
           target_compile_definitions(test_VTK PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
         endif()
       elseif("${cppfile}" STREQUAL "test_GLTF.cpp")
-        create_single_source_cgal_program("test_GLTF.cpp"
-          "../../include/CGAL/IO/GLTF/tiny_gltf_impl.cpp")
+        if(TARGET CGAL::tinygltf_support)
+          create_single_source_cgal_program("test_GLTF.cpp"
+            "../../include/CGAL/IO/GLTF/tiny_gltf_impl.cpp")
+          target_link_libraries(test_GLTF PRIVATE CGAL::tinygltf_support)
+        else()
+          message(STATUS "NOTICE: GLTF tests require the tinygltf library, and will not be compiled.")
+        endif()
       else()
         create_single_source_cgal_program("${cppfile}")
       endif()

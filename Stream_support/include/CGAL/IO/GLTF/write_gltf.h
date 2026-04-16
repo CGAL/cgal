@@ -3,7 +3,7 @@
 #ifndef CGAL_IO_GLTF_WRITE_GLTF_H
 #define CGAL_IO_GLTF_WRITE_GLTF_H
 
-#include "tiny_gltf.h"
+#include <tiny_gltf.h>
 
 #include <CGAL/IO/helpers.h>
 #include <CGAL/Named_function_parameters.h>

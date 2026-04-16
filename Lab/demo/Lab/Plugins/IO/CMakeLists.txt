@@ -44,6 +44,18 @@ target_link_libraries(wkt_plugin PRIVATE scene_polylines_item)
 cgal_lab_plugin(stl_plugin STL_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
 target_link_libraries(stl_plugin PRIVATE scene_surface_mesh_item scene_polygon_soup_item)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../Installation/cmake/modules")
+find_package(Tinygltf QUIET)
+include(CGAL_tinygltf_support)
+if(TARGET CGAL::tinygltf_support)
+  cgal_lab_plugin(gltf_plugin GLTF_io_plugin
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../Stream_support/include/CGAL/IO/GLTF/tiny_gltf_impl.cpp"
+    KEYWORDS Viewer PMP IO_surface_meshes)
+  target_link_libraries(gltf_plugin PRIVATE scene_surface_mesh_item scene_polygon_soup_item CGAL::tinygltf_support)
+else()
+  message(STATUS "NOTICE: the GLTF IO plugin needs the tinygltf library and will not be compiled.")
+endif()
+
 cgal_lab_plugin(surf_io_plugin Surf_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
 target_link_libraries(surf_io_plugin PRIVATE scene_surface_mesh_item)
 

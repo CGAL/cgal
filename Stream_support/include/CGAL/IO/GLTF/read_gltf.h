@@ -28,7 +28,7 @@
 #include <vector>
 #include <limits>
 
-#include "tiny_gltf.h"
+#include <tiny_gltf.h>
 
 namespace CGAL {
 namespace IO {
