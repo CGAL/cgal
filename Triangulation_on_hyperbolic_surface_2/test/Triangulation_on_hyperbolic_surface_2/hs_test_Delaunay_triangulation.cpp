@@ -62,7 +62,7 @@ int main()
     std::cout << "printing triangulation for test purposes: " << std::endl << dt;
 
     Anchor a0 = dt.locate(Point(0.5, 0.5)); // straight walk
-    Anchor a1 = dt.locate(Point(0.5, 0.5), VISIBILITY); // visibility walk
+    Anchor a1 = dt.locate(Point(0.5, 0.5), Delaunay_triangulation::VISIBILITY); // visibility walk
 
     assert(dt.anchor(a0.dart).dart == dt.anchor(a1.dart).dart); //check that both anchors correspond to the same triangle
 

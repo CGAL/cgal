@@ -5,9 +5,10 @@ namespace CGAL {
 
   This item defines attributes for edges and faces.
   Edge attributes are of type `Complex_number` representing cross-ratios.
-  Face attributes attributes are of type `Anchor` representing a lift of a triangle.
+  Face attributes are of type `Anchor` representing a lift of a triangle.
 
-  \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
+  \tparam Traits must be a model of `HyperbolicSurfaceTraits_2` and the same as
+  the one of the associated triangulation.
 
   \cgalModels{GenericMapItems}
 */
@@ -72,7 +73,7 @@ public:
   /// \name Enums
   /// @{
 
-  /*
+  /*!
     The enumeration `Locate_type` is defined to specify which case occurs when locating a point in the lifted triangulation.
   */
   enum Locate_type {
@@ -82,8 +83,16 @@ public:
     OUTSIDE
   };
 
-    /*
-    The enumeration `Locate_walk` is defined to specify which walk algorithm is used when locating a point in the lifted triangulation.
+    /*!
+    The enumeration `Locate_walk` is defined to specify which walk algorithm is
+    used when locating a point in the lifted triangulation.
+
+    The straight walk visits all triangles along the geodesic segment pq. The
+    algorithm starts by rotating around p to find a triangle incident to p
+    that has an edge intersecting the geodesic segment pq. The visibility walk
+    consists, for each visited triangle not containing q, of moving to a
+    neighbor through an edge e if q and the third vertex of the visited
+    triangle are on different sides of the geodesic line supporting e.
   */
   enum Locate_walk {
     STRAIGHT = 0,
