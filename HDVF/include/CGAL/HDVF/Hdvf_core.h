@@ -216,6 +216,8 @@ public:
      * \param K A chain complex (a model of `AbstractChainComplex`)
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param dimension_restriction Determines if perfect HDVFs are computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
+     *
+     * \exception Empty_complex If the complex `K` is empty, raises a `%std::runtime_error`.
      */
     Hdvf_core(const ChainComplex& K, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) ;
 
@@ -1145,6 +1147,15 @@ private:
 // Constructor for the Hdvf_core class
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
 Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : _K(K), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
+    // Check if the complex is non empty
+    size_t acc(K.number_of_cells(0));
+    for (int q=1; q<K.dimension(); ++q)
+        acc += K.number_of_cells(q);
+    if (acc == 0) {
+        std::cerr << "Empty complex, cannot compute HDVF_duality" << std::endl;
+        throw(std::runtime_error("Empty complex, cannot compute HDVF_duality"));
+    }
+
     // Get the dimension of the simplicial complex
     int dim = _K.dimension();
 

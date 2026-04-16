@@ -80,7 +80,7 @@ protected:
     /* \brief The chain inner representation and storage of data. */
     std::unordered_map<size_t, CoefficientRing> _chainData;
 
-    /* \brief The chain boundary. */
+    /* \brief The chain size. */
     size_t _upperBound;
 
 public:
@@ -214,7 +214,7 @@ public:
      * \return A new chain representing the result.
      */
     Sparse_chain operator+(const Sparse_chain &other) {
-        Sparse_chain newChain = *this;
+        Sparse_chain newChain(*this);
         newChain += other;
 
         return newChain;

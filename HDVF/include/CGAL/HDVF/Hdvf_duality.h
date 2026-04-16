@@ -23,7 +23,7 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/HDVF/Sub_sparse_matrix.h>
 
-//#define DEBUG
+//#define DEBUG_HDVF_DUALITY
 
 namespace CGAL {
 namespace Homological_discrete_vector_field {
@@ -110,6 +110,8 @@ public:
      * \param L A complex of a given dimension \f$n\f$ homeomorphic to \f$\mathcal B^n\f$.
      * \param K A sub complex of `L` encoded through a bitboard.
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
+     *
+     * \exception Empty_complex If the complex `L` is empty, raises a `%std::runtime_error`.
      */
     Hdvf_duality(const Chain_complex& L, Sub_chain_complex_mask<Chain_complex>& K, int hdvf_opt = OPT_FULL) ;
 
@@ -591,7 +593,16 @@ public:
 // Constructor
 template<typename ChainComplex>
 Hdvf_duality<ChainComplex>::Hdvf_duality(const ChainComplex& L, Sub_chain_complex_mask<ChainComplex>& K, int hdvf_opt) :
-Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _KCC(K), _subCC(K) {}
+Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _KCC(K), _subCC(K) {
+    // Check if the complex is non empty
+    size_t acc(L.number_of_cells(0));
+    for (int q=1; q<L.dimension(); ++q)
+        acc += L.number_of_cells(q);
+    if (acc == 0) {
+        std::cerr << "Empty complex, cannot compute HDVF_duality" << std::endl;
+        throw(std::runtime_error("Empty complex, cannot compute HDVF_duality"));
+    }
+}
 
 // find a valid Cell_pair for A in dimension q
 template<typename ChainComplex>
@@ -736,7 +747,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
 template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool verbose)
 {
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
 #endif
     // Set _subCC to K
@@ -745,12 +756,12 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<Cell_pair> tmp = Base::compute_perfect_hdvf(verbose) ;
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp.size() << " cells paired" << std::endl ;
 #endif
     _critical_K = psc_flags(CRITICAL) ;
 
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
 #endif
     // set _subCC to L-K
@@ -759,7 +770,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     std::vector<Cell_pair> tmp2 = Base::compute_perfect_hdvf(verbose) ;
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp2.size() << " cells paired" << std::endl ;
 #endif
     _critical_L_K = psc_flags(CRITICAL) ;
@@ -773,7 +784,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
 template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(bool verbose)
 {
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
 #endif
     // Set _subCC to K
@@ -782,12 +793,12 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<Cell_pair> tmp = Base::compute_rand_perfect_hdvf(verbose) ;
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp.size() << " cells paired" << std::endl ;
 #endif
     _critical_K = psc_flags(CRITICAL) ;
 
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
 #endif
     // set _subCC to L-K
@@ -796,7 +807,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     std::vector<Cell_pair> tmp2 = Base::compute_rand_perfect_hdvf(verbose) ;
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << tmp2.size() << " cells paired" << std::endl ;
 #endif
     _critical_L_K = psc_flags(CRITICAL) ;
@@ -811,7 +822,7 @@ template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
 #endif
 
@@ -831,7 +842,7 @@ template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
-#ifdef DEBUG
+#ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
 #endif
 

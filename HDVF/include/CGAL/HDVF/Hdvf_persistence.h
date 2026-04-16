@@ -240,6 +240,8 @@ public:
      * \param hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
      * \param dimension_restriction Determines if persistence is computed along any dimensions (if `dimension_restriction` is -1) or a single dimension (specified by `dimension_restrictions`)
+     *
+     * \exception Empty_complex If the complex `K` is empty, raises a `%std::runtime_error`.
      */
     Hdvf_persistence(const Chain_complex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false, int dimension_restriction = -1) ;
 
@@ -747,20 +749,26 @@ private:
 
 
 template<typename ChainComplex, typename Degree, typename Filtration_>
-Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export, int dimension_restriction) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt,dimension_restriction), _f(f), _with_export(with_export), _t(0)
-{
+Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export, int dimension_restriction) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt,dimension_restriction), _f(f), _with_export(with_export), _t(0) {
+    // Check if the complex is non empty
+    size_t acc(K.number_of_cells(0));
+    for (int q=1; q<K.dimension(); ++q)
+        acc += K.number_of_cells(q);
+    if (acc == 0) {
+        std::cerr << "Empty complex, cannot compute HDVF_duality" << std::endl;
+        throw(std::runtime_error("Empty complex, cannot compute HDVF_duality"));
+    }
+
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dimension()+1, 0) ;
     _K_to_per.resize(this->_K.dimension()+1) ;
     _per_to_K.resize(this->_K.dimension()+1) ;
-    for (int q=0; q<=this->_K.dimension(); ++q)
-    {
+    for (int q=0; q<=this->_K.dimension(); ++q) {
         _K_to_per.at(q).resize(this->_K.number_of_cells(q)) ;
         _t_dim.at(q) = 0 ;
     }
 
-    for (size_t i = 0; i<_f._filtration.size(); ++i)
-    {
+    for (size_t i = 0; i<_f._filtration.size(); ++i) {
         const Cell c(_f._filtration.at(i));
         const int q(c.second) ;
         const size_t ind_K_i(c.first) ;
@@ -771,8 +779,7 @@ Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const Chai
 
     // Init _masks
     _masks.resize(this->_K.dimension()+1) ;
-    for (int q=0; q<this->_K.dimension()+1; ++q)
-    {
+    for (int q=0; q<this->_K.dimension()+1; ++q) {
         _masks.at(q) = OSM::Bitboard(this->_K.number_of_cells(q)) ;
     }
 
@@ -780,16 +787,14 @@ Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const Chai
     std::vector<Column_matrix> _DD_per(this->_K.dimension()+1) ;
 
     // Copy _DD_col with filtration order (for dimensions q>0)
-    for (int q = 0 ; q <= this->_K.dimension(); ++q)
-    {
+    for (int q = 0 ; q <= this->_K.dimension(); ++q) {
         const std::pair<int, int> s(this->_DD_col.at(q).dimensions()) ;
         _DD_per.at(q) = Column_matrix(s.first, s.second) ;
     }
     // Set empty mask for _DD_per[0]
     _DD_per.at(0).complement();
 
-    for (int q = 1 ; q <= this->_K.dimension(); ++q)
-    {
+    for (int q = 1 ; q <= this->_K.dimension(); ++q) {
         // Cross _DD_col.at(q) and set _DD_per.at(q) coefficients on the fly
         for (OSM::Bitboard::iterator it_col = this->_DD_col.at(q).begin(); it_col != this->_DD_col.at(q).end(); ++it_col)
         {
