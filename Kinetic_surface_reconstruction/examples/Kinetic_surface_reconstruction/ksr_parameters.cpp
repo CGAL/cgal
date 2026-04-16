@@ -431,7 +431,7 @@ int main(const int argc, const char** argv) {
   else {
     after_shape_detection = timer.time();
 
-    ksr.partition(parameters.k_intersections);
+    ksr.partition(parameters.k_intersections, param);
 
     after_partition = timer.time();
 
