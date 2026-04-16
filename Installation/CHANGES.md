@@ -53,6 +53,7 @@ Release date: July 2026
 -   Introduced the concept `AosTraits::Do_intersect_2`. A model of this concept must provide an operator that
     accepts two `x`-monotone curves and a boolean flag that indicates whether common endpoints should be considered or ignored.
     The operator determines whether the curves intersect, and it can be used with an inexact-construction kernel.
+-   **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherits from it. In addition one can get and set a smart pointer to the class being decorated.
 
 ### [2D Intersection of Curves](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceSweep2)
 
