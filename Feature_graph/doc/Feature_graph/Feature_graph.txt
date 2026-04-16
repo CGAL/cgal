@@ -2,10 +2,10 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_PACKAGE_NAME
+\anchor Chapter_Feature_Graph
 \anchor chaptermine
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2, and AUTHOR3
+\author Ange Clément
 
 This chapter describes the ...
 

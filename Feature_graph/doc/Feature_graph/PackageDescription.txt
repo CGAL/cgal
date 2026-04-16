@@ -1,28 +1,34 @@
 // PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
-/// \defgroup PkgPACKAGERef Reference Manual
-/// \defgroup PkgPACKAGEConcepts Concepts
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgFeatureGraphRef Reference Manual
 
-/// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgFeatureGraphConcepts Concepts
+/// \ingroup PkgFeatureGraphRef
 
-/// \defgroup PkgPACKAGETraitsClasses Traits Classes
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgFeatureGraphDetector Feature Graph Detector
+/// \ingroup PkgFeatureGraphRef
+/// The functors in this group allows to extract the feature graph from different types of surfaces.
 
-/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgFeatureGraphSharpnessEstimator Sharpness Estimator
+/// \ingroup PkgFeatureGraphRef
+/// The functors in this group allows to estimate the sharpness on surfaces.
+
+/// \defgroup PkgFeatureGraphNormalEstimator Normal Estimator
+/// \ingroup PkgFeatureGraphRef
+/// The functors in this group allows to estimate the normal on surfaces.
 
 /*!
-\addtogroup PkgPACKAGERef
-\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
-\cgalPkgPicture{pkg-small.png}
+\addtogroup PkgFeatureGraphRef
+\cgalPkgDescriptionBegin{Feature graph,PkgFeatureGraph}
+\cgalPkgPicture{feature_graph_small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{PACKAGE AUTHOR}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
-The package provides ... }
-\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGERef}
+\cgalPkgAuthors{Ange Clément}
+\cgalPkgDesc{
+This package provides methods to extract a feature graph from three-dimensional surface data.
+A feature graph is a data structure that represent the sharp lines on the surface.
+The lines are represented as a sequence of 3D Points so that they can be used for future mesh generation.}
+\cgalPkgManuals{Chapter_Feature_Graph,PkgFeatureGraphRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
@@ -30,10 +36,49 @@ The package provides ... }
 \cgalPkgDependsOn{\ref PkgDEPENDENCY}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
 \cgalPkgShortInfoEnd
-
 \cgalPkgDescriptionEnd
+
+The feature graph is extracted in multiple steps.
+First, a sharpness evaluation is conducted on the surface elements.
+Then, from this measure, smooth elements are discarded,
+and a graph thinning process generates lines that
+are guaranteed to be positioned along the highest values of the measure.
+Finally, the result is refined with a correction step and an optimization phase
+to ensure the correct placement of lines and corners along estimated normals.
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+Concepts representing the input surfaces:
+
+- `FeatureImage_3`
+- `FaceListGraph`
+
+Secondary concepts:
+
+- `SharpnessEstimator`
+- `NormalEstimator`
+- `OptimizationParameters`
+
+\cgalCRPSection{Feature graph creation functors}
+
+- `CGAL::Detect_sharp_features_in_labelled_image()`
+- `CGAL::Detect_sharp_features_in_surface()`
+
+\cgalCRPSection{Sharpness estimators}
+
+- `CGAL::Sharpness_estimator::AmbrosioTortorelli_on_image`
+- `CGAL::Sharpness_estimator::Sharpness_estimator_on_surface`
+
+\cgalCRPSection{Normal estimators}
+
+- `CGAL::Normal_estimator::AmbrosioTortorelli_on_image`
+- `CGAL::Normal_estimator::Normal_estimator_on_surface`
+
+\cgalCRPSection{Enumerations}
+
+- `CGAL::Surface_element_type`
 
 */
