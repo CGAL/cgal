@@ -101,7 +101,8 @@ struct Float_grid_snap_rounding_traits_2
   struct Compute_squared_round_bound_2{
     double operator()(const FT &x) const{
       double inf = std::numeric_limits<double>::infinity();
-      double b=std::nextafter(std::nextafterf((float) to_interval(x).second, -inf) - std::nextafterf((float) to_interval(x).first, inf), inf);
+      // nextafterf((float)) rounds to float and take the next float, the result its guarantee to be above (resp. below) the starting value
+      double b=std::nextafter(std::nextafterf(static_cast<float>(to_interval(x).second), -inf) - std::nextafterf(static_cast<float>(to_interval(x).first), inf), inf);
       return b*b;
     }
     double operator()(const Point_2 &p) const{
@@ -115,7 +116,7 @@ struct Float_grid_snap_rounding_traits_2
 
   struct Construct_rounded_point_2{
     Target_FT operator()(const FT &x) const{
-      return (float) to_double(x);
+      return static_cast<float>(to_double(x));
     }
     Point_2 operator()(const Point_2 &p) const{
       return Point_2((*this)(p.x()),(*this)(p.y()));
