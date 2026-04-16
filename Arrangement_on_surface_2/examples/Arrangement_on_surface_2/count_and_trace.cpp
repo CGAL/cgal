@@ -11,13 +11,17 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Arr_rational_function_traits_2.h>
 
 #include "arr_print.h"
 
-#define COUNT_TRACE_ORDER 1
+// #define COUNT_TRACE_ORDER 1
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 
+// Segments
 using Segment_base_traits = CGAL::Arr_segment_traits_2<Kernel>;
 #if COUNT_TRACE_ORDER
 using Segment_cnt_traits = CGAL::Arr_counting_traits_2<Segment_base_traits>;
@@ -28,10 +32,11 @@ using Segment_trc_traits = CGAL::Arr_tracing_traits_2<Segment_base_traits>;
 using Segment_cnt_traits = CGAL::Arr_counting_traits_2<Segment_trc_traits>;
 using Segment_traits = Segment_cnt_traits;
 #endif
-
 using Segment_arrangement = CGAL::Arrangement_2<Segment_traits>;
 using Point = Segment_traits::Point_2;
 using Segment = Segment_traits::Curve_2;
+
+// Geodesic arcs
 using Geodesic_base_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 #if COUNT_TRACE_ORDER
 using Geodesic_cnt_traits = CGAL::Arr_counting_traits_2<Geodesic_base_traits>;
@@ -42,12 +47,12 @@ using Geodesic_trc_traits = CGAL::Arr_tracing_traits_2<Geodesic_base_traits>;
 using Geodesic_cnt_traits = CGAL::Arr_counting_traits_2<Geodesic_trc_traits>;
 using Geodesic_traits = Geodesic_cnt_traits;
 #endif
-
 using Topol_traits = CGAL::Arr_spherical_topology_traits_2<Geodesic_traits>;
 using Geodesic_arrangement = CGAL::Arrangement_on_surface_2<Geodesic_traits, Topol_traits>;
 using Geodesic_point = Geodesic_traits::Point_2;
 using Geodesic_curve = Geodesic_traits::Curve_2;
 
+// Bezier curves
 using Nt_traits = CGAL::CORE_algebraic_number_traits;
 using NT = Nt_traits::Rational;
 using Rational = Nt_traits::Rational;
@@ -66,6 +71,19 @@ using Bezier_cnt_traits = CGAL::Arr_counting_traits_2<Bezier_trc_traits>;
 using Bezier_traits = Bezier_cnt_traits;
 #endif
 using Bezier_arrangement = CGAL::Arrangement_2<Bezier_traits>;
+
+// Rational function arcs
+using Rat_func_number_type = CORE::BigInt;
+using Rat_func_algebraic_kernel = CGAL::Algebraic_kernel_d_1<Rat_func_number_type>;
+using Rat_func_base_traits = CGAL::Arr_rational_function_traits_2<Rat_func_algebraic_kernel>;
+using Rat_func_cnt_traits = CGAL::Arr_counting_traits_2<Rat_func_base_traits>;
+using Rat_func_trc_traits = CGAL::Arr_tracing_traits_2<Rat_func_base_traits>;
+#if COUNT_TRACE_ORDER
+using Rat_func_traits = CGAL::Arr_tracing_traits_2<Bezier_cnt_traits>;
+#else
+using Rat_func_traits = CGAL::Arr_counting_traits_2<Rat_func_trc_traits>;
+#endif
+using Rat_func_arrangement = CGAL::Arrangement_2<Rat_func_traits>;
 
 int main() {
   // Count and trace segment traits
@@ -119,6 +137,30 @@ int main() {
 #else
   bezier_traits.traits().disable_all_traces();
   std::cout << bezier_traits;
+#endif
+
+  // Count and trace rational function traits
+  auto rat_func_base_traits = std::shared_ptr<Rat_func_base_traits>(new Rat_func_base_traits);
+#if COUNT_TRACE_ORDER
+  auto rat_func_mid_traits = std::shared_ptr<Rat_func_cnt_traits>(new Rat_func_cnt_traits(rat_func_base_traits));
+#else
+  auto rat_func_mid_traits = std::shared_ptr<Rat_func_trc_traits>(new Rat_func_trc_traits(rat_func_base_traits));
+#endif
+  auto rat_func_traits = std::shared_ptr<Rat_func_traits>(new Rat_func_traits(rat_func_mid_traits));
+#if COUNT_TRACE_ORDER
+  rat_func_traits->disable_all_traces();
+  rat_func_traits->enable_trace(Rat_func_trc_traits::CONSTRUCT_POINT_2_OP);
+  rat_func_traits->enable_trace(Rat_func_trc_traits::CONSTRUCT_POINT_2_XY_OP);
+#else
+  rat_func_traits->shared_traits()->disable_all_traces();
+  rat_func_traits->shared_traits()->enable_trace(Rat_func_trc_traits::CONSTRUCT_POINT_2_OP);
+  rat_func_traits->shared_traits()->enable_trace(Rat_func_trc_traits::CONSTRUCT_POINT_2_XY_OP);
+#endif
+  rat_func_traits->construct_point_2_object()(0, 0);
+#if COUNT_TRACE_ORDER
+  std::cout << *(rat_func_traits->shared_traits();
+#else
+  std::cout << *rat_func_traits;
 #endif
 
   return 0;
