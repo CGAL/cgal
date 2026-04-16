@@ -361,7 +361,7 @@ public:
   public:
     //!
     Point_2 operator()(const Rational_function& rational_function,
-                       const Algebraic_real_1& x_coordinate)
+                       const Algebraic_real_1& x_coordinate) const
     { return Point_2(rational_function, x_coordinate); }
 
     //!
@@ -375,7 +375,7 @@ public:
     }
 
     //!
-    Point_2 operator()(const Algebraic_real_1& x, const Rational& y) {
+    Point_2 operator()(const Algebraic_real_1& x, const Rational& y) const {
       Integer y_numer;
       Integer y_denom;
       typename FT_rat_1::Decompose()(y, y_numer, y_denom);
