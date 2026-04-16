@@ -39,8 +39,7 @@ namespace internal {
 //@{
 
 //! Fallback selected `Parameter_space_in_x_2` is not defined in the base traits.
-template <typename, typename, typename = void>
-class Counting_parameter_space_in_x_2 {};
+template <typename, typename, typename = void> class Counting_parameter_space_in_x_2 {};
 
 //! Partial specialization selected if `BaseTraits::`Parameter_space_in_x_2 is defined.
 template <typename BaseTraits, typename Derived>
@@ -82,6 +81,8 @@ public:
     }
   };
 
+  /*! obtains a `Parameter_space_in_x_2` function object.
+   */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Parameter_space_in_x_2(derived->traits(),
@@ -138,6 +139,8 @@ public:
     }
   };
 
+  /*! obtains a `Parameter_space_in_y_2` function object.
+   */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Parameter_space_in_y_2(derived->traits(),
@@ -160,7 +163,6 @@ class Counting_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_
   using Base = BaseTraits;
 
 public:
-
   //! A functor that subdivides a curve into \f$x\f$-monotone curves.
   class Make_x_monotone_2 {
     using Curve_2 = typename Base::Curve_2;
@@ -176,18 +178,21 @@ public:
     Make_x_monotone_2(const Base& base, std::size_t& counter) :
       m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
 
-    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them
-     * into a given output iterator.
+    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them into a given output iterator.
      * \param cv the curve.
      * \param oi the output iterator for the result. Its value type is a variant
      *           that wraps `Point_2` or an `X_monotone_curve_2` objects.
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
-    { ++m_counter; return m_object(cv, oi); }
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
+      ++m_counter;
+      return m_object(cv, oi);
+    }
   };
 
+  /*! obtains a `Make_x_monotone_2` function object.
+   */
   Make_x_monotone_2 make_x_monotone_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Make_x_monotone_2(derived->traits(), derived->m_counters[Derived::MAKE_X_MONOTONE_2_OP]);
@@ -225,12 +230,14 @@ public:
     /*! operates
      */
     void operator()(const X_monotone_curve_2& xc, const Point_2& p,
-                    X_monotone_curve_2& xc1, X_monotone_curve_2& xc2) const {
+                    X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
       ++m_counter;
-      m_object(xc, p, xc1, xc2);
+      m_object(xc, p, xcv1, xcv2);
     }
   };
 
+  /*! obtains a `Split_2` function object.
+   */
   Split_2 split_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Split_2(derived->traits(), derived->m_counters[Derived::SPLIT_2_OP]);
@@ -266,15 +273,23 @@ public:
     Do_intersect_2(const Base& base, std::size_t& counter) :
       m_object(base.do_intersect_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! determines whether two given curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the ssecond curve.
+     * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
+     * \return `true` if `consider_common_endpoints` is true and `xcv1` and `xcv2` intersect or if
+     *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
+     *   and `false` otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2,
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                     bool consider_common_endpoints = true) const {
       ++m_counter;
-      return m_object(xc1, xc2, consider_common_endpoints);
+      return m_object(xcv1, xcv2, consider_common_endpoints);
     }
   };
 
+  /*! obtains a `Do_intersect_2` function object.
+   */
   Do_intersect_2 do_intersect_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Do_intersect_2(derived->traits(), derived->m_counters[Derived::DO_INTERSECT_2_OP]);
@@ -314,12 +329,14 @@ public:
     /*! operates
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, OutputIterator oi) const {
+    OutputIterator operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, OutputIterator oi) const {
       ++m_counter;
-      return m_object(xc1, xc2, oi);
+      return m_object(xcv1, xcv2, oi);
     }
   };
 
+  /*! obtains an `Intersect_2` function object.
+   */
   Intersect_2 intersect_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Intersect_2(derived->traits(), derived->m_counters[Derived::INTERSECT_2_OP]);
@@ -354,14 +371,20 @@ public:
     Are_mergeable_2(const Base& base, std::size_t& counter) :
       m_object(base.are_mergeable_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! determines whether two \f$x\f$-monotone curves can be merged.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return true if the two curve are mergeable and false otherwise.
+     * Two curves are mergeable if they have the same underlying theoretical curve.
      */
-    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
       ++m_counter;
-      return m_object(xc1, xc2);
+      return m_object(xcv1, xcv2);
     }
   };
 
+  /*! obtains an `Are_mergeable_2` function object.
+   */
   Are_mergeable_2 are_mergeable_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Are_mergeable_2(derived->traits(), derived->m_counters[Derived::ARE_MERGEABLE_2_OP]);
@@ -395,13 +418,19 @@ public:
      */
     Merge_2(const Base& base, std::size_t& counter) : m_object(base.merge_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    void operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, X_monotone_curve_2& xc) const {
+    /*! merges two \f$x\f$-monotone curves into one.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param xcv the merged curve.
+     */
+    void operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, X_monotone_curve_2& xcv) const {
       ++m_counter;
-      m_object(xc1, xc2, xc);
+      m_object(xcv1, xcv2, xcv);
     }
   };
 
+  /*! obtains a `Merge_2` function object.
+   */
   Merge_2 merge_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Merge_2(derived->traits(), derived->m_counters[Derived::MERGE_2_OP]);
@@ -437,7 +466,9 @@ public:
     Construct_opposite_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_opposite_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! constructs an opposite \f$x\f$-monotone curve.
+     * \param xcv the curve.
+     * \return the opposite curve.
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) {
       ++m_counter;
@@ -445,6 +476,8 @@ public:
     }
   };
 
+  /*! obtains a `Construct_opposite_2` function object.
+   */
   Construct_opposite_2 construct_opposite_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Construct_opposite_2(derived->traits(), derived->m_counters[Derived::CONSTRUCT_2_OPPOSITE_2_OP]);
@@ -486,8 +519,8 @@ protected:
   public:
     /*! constructs a point given two coordinates.
      */
-    template <typename FT>
-    Point_2 operator()(const FT& x, const FT& y) {
+    template <typename Coord1, typename Coord2>
+    Point_2 operator()(const Coord1& x, const Coord2& y) {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter2;
       return derived->m_object(x, y);
@@ -508,8 +541,8 @@ public:
   class Construct_point_2; // forward declaration
 
 private:
-  using Counting_construct_point_2_xy = typename Counting_construct_point_2_xy<Base, Derived>::template
-    Construct_point_2<Construct_point_2>;
+  using Counting_construct_point_2_xy =
+    typename Counting_construct_point_2_xy<Base, Derived>::template Construct_point_2<Construct_point_2>;
 
 public:
   //! A functor that constructs a point.
@@ -522,12 +555,16 @@ public:
     std::size_t& m_counter2;
 
   public:
+    friend Counting_construct_point_2_xy;
+
+    using Counting_construct_point_2_xy::operator();
+
     /*! constructs
      */
     Construct_point_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
       m_object(base.construct_point_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates
+    /*! constructs a point.
      * \return the constructed point.
      */
     template <typename... Args>
@@ -537,6 +574,8 @@ public:
     }
   };
 
+  /*! obtains a `Construct_point_2` function object.
+   */
   Construct_point_2 construct_point_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Construct_point_2(derived->traits(),
@@ -574,7 +613,8 @@ public:
     Construct_x_monotone_curve_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_x_monotone_curve_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! constructs an \f$x\f$-monotone curve.
+     * \return the constructed \f$x\f$.monotone curve
      */
     template <typename... Args>
     X_monotone_curve_2 operator()(Args... args) const {
@@ -583,6 +623,8 @@ public:
     }
   };
 
+  /*! obtains a `Construct_x_monotone_curve_2` function object.
+   */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Construct_x_monotone_curve_2(derived->traits(),
@@ -618,7 +660,8 @@ public:
     Construct_curve_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_curve_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! constructs a curve.
+     * \return the constructed curve.
      */
     template <typename... Args>
     Curve_2 operator()(Args... args) const {
@@ -627,6 +670,8 @@ public:
     }
   };
 
+  /*! obtains a `Construct_curve_2` function object.
+   */
   Construct_curve_2 construct_curve_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Construct_curve_2(derived->traits(), derived->m_counters[Derived::CONSTRUCT_CURVE_2_OP]);
@@ -662,7 +707,9 @@ public:
     Compare_endpoints_xy_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! compares the two endpoints of an \f$x\f$-monotone curve lexigoraphically.
+     * \param xcv the curve.
+     * \return the comparison result.
      */
     Comparison_result operator()(const X_monotone_curve_2& xc) {
       ++m_counter;
@@ -670,6 +717,8 @@ public:
     }
   };
 
+  /*! obtains a `Compare_endpoints_xy_2` function object.
+   */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Compare_endpoints_xy_2(derived->traits(), derived->m_counters[Derived::COMPARE_ENDPOINTS_XY_2_OP]);
@@ -700,6 +749,9 @@ protected:
 template <typename BaseTraits, typename Derived>
 class Counting_approximate_2_point<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
+
+public:
+  using Approximate_point_2 = typename Base::Approximate_point_2;
 
 protected:
   //! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
@@ -818,12 +870,12 @@ public:
   class Approximate_2; // forward declaration
 
 private:
-  using Counting_approx_point = typename Counting_approximate_2_point<Base, Derived>::template
-    Approximate_2<Approximate_2>;
-  using Counting_approx_xcv = typename Counting_approximate_2_xcv<Base, Derived>::template
-    Approximate_2<Approximate_2>;
-  using Counting_approx_xcv_within_bounds = typename Counting_approximate_2_xcv_within_bounds<Base, Derived>::template
-    Approximate_2<Approximate_2>;
+  using Counting_approx_point =
+    typename Counting_approximate_2_point<Base, Derived>::template Approximate_2<Approximate_2>;
+  using Counting_approx_xcv =
+    typename Counting_approximate_2_xcv<Base, Derived>::template Approximate_2<Approximate_2>;
+  using Counting_approx_xcv_within_bounds =
+    typename Counting_approximate_2_xcv_within_bounds<Base, Derived>::template Approximate_2<Approximate_2>;
 
 public:
   using Approximate_number_type = typename Base::Approximate_number_type;
@@ -854,7 +906,12 @@ public:
       m_counter4(counter4)
     {}
 
-    /*! operates
+    /*! obtains an approximation of a point coordinate.
+     * \param p the exact point.
+     * \param i the coordinate index (either 0 or 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) {
       ++m_counter1;
@@ -869,6 +926,8 @@ public:
     std::size_t& m_counter4;
   };
 
+  /*! obtains an `Approximate_2` function object.
+   */
   Approximate_2 approximate_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Approximate_2(derived->traits(),
@@ -894,7 +953,7 @@ class Counting_is_on_x_identification_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-  //! A functor that determines whether a point or a curve lies on an identification in x.
+  //! A functor that determines whether a point or a curve lies on \f$x\f$-identification curve.
   class Is_on_x_identification_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -910,14 +969,16 @@ public:
     Is_on_x_identification_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
       m_object(base.is_on_x_identification_2_object()), m_counter1(counter1), m_counter2(counter2) {}
 
-    /*! operates
+    /*! determines whether a point is on the \f$x\f$-identification curve.
+     * \param p the point.
      */
     bool operator()(const Point_2& p) const {
       ++m_counter1;
       return m_object(p);
     }
 
-    /*! operates
+    /*! determines whether a curve is on the \f$x\f$-identification curve.
+     * \param xcv the curve.
      */
     bool operator()(const X_monotone_curve_2& xc) const {
       ++m_counter2;
@@ -925,7 +986,8 @@ public:
     }
   };
 
-  //! obtains an `Is_on_x_identification_2` object.
+  /*! obtains an `Is_on_x_identification_2` function object.
+   */
   Is_on_x_identification_2 is_on_x_identification_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Is_on_x_identification_2(derived->traits(),
@@ -949,7 +1011,7 @@ class Counting_is_on_y_identification_2<BaseTraits, Derived,
   using Base = BaseTraits;
 
 public:
-  //! A functor that determines whether a point or a curve lies on an identification in \f$x\f$.
+  //! A functor that determines whether a point or a curve lies on the \f$y\f$-identification curve.
   class Is_on_y_identification_2 {
     using Point_2 = typename Base::Point_2;
     using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
@@ -965,15 +1027,16 @@ public:
     Is_on_y_identification_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
       m_object(base.is_on_y_identification_2_object()), m_counter1(counter1),  m_counter2(counter2) {}
 
-    /*! operates
+    /*! determines whether a point is on the \f$y\f$-identification curve.
+     * \param p the point.
      */
     bool operator()(const Point_2& p) const {
       ++m_counter1;
       return m_object(p);
     }
 
-
-    /*! operates
+    /*! determines whether a curve is on the \f$y\f$-identification curve.
+     * \param p the point.
      */
     bool operator()(const X_monotone_curve_2& xc) const {
       ++m_counter2;
@@ -981,11 +1044,93 @@ public:
     }
   };
 
+  /*! obtains an `Is_on_y_identification_2` function object.
+   */
   Is_on_y_identification_2 is_on_y_identification_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Is_on_y_identification_2(derived->traits(),
                                     derived->m_counters[Derived::IS_ON_Y_IDENTIFICATION_2_POINT_OP],
                                     derived->m_counters[Derived::IS_ON_Y_IDENTIFICATION_2_CURVE_OP]);
+  }
+};
+
+//@}
+
+/// `Compare_x_on_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_x_on_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_x_on_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_x_on_boundary_2` is defined.
+template <typename BaseTraits, typename Derived>
+class Counting_x_on_boundary_2<BaseTraits, Derived, std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  /*! A functor that compares the \f$x\f$-coordinate of two given points or
+   * curve ends that lie on horizontal boundaries.
+   */
+  class Compare_x_on_boundary_2 {
+    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_x_on_boundary_2 m_object;
+    std::size_t& m_counter1;
+    std::size_t& m_counter2;
+    std::size_t& m_counter3;
+
+  public:
+    /*! constructs
+     */
+    Compare_x_on_boundary_2(const Base& base,  std::size_t& counter1, std::size_t& counter2, std::size_t& counter3) :
+      m_object(base.compare_x_on_boundary_2_object()),
+      m_counter1(counter1),
+      m_counter2(counter2),
+      m_counter3(counter3)
+    {}
+
+    /*! compares the \f$x\f$-coordinate of two given points that lie on horizontal boundaries.
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) {
+      ++m_counter1;
+      return m_object(p1, p2);
+    }
+
+    /*! compares the \f$x\f$-coordinate of a given point and a given curve end that lie on horizontal boundaries.
+     * \param pt the point.
+     * \param xcv the curve.
+     * \param ce the curve-end.
+     */
+    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) {
+      ++m_counter2;
+      return m_object(pt, xcv, ce);
+    }
+
+    /*! compares the \f$x\f$-coordinate of two given curve ends that lie on horizontal boundaries.
+     * \param xcv1 the first curve.
+     * \param ce1 the first curve-end.
+     * \param xcv2 the second curve.
+     * \param ce2 the second curve-end.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) {
+      ++m_counter3;
+      return m_object(xcv1, ce1, xcv2, ce2);
+    }
+  };
+
+  /*! obtains a `Compare_x_on_boundary_2` function object.
+   */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_x_on_boundary_2(derived->traits(),
+                                   derived->m_counters[Derived::COMPARE_X_ON_BOUNDARY_2_POINTS_OP],
+                                   derived->m_counters[Derived::COMPARE_X_ON_BOUNDARY_2_POINT_CURVE_END_OP],
+                                   derived->m_counters[Derived::COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP]);
   }
 };
 
@@ -1018,7 +1163,9 @@ public:
     Compare_y_on_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_on_boundary_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! compares the \f$y\f$-coordinate of two given points that lie on vertical boundaries.
+     * \param p1 the first point.
+     * \param p2 the second point.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       ++m_counter;
@@ -1026,121 +1173,11 @@ public:
     }
   };
 
+  /*! obtains a `Compare_y_on_boundary_2` function object.
+   */
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Compare_y_on_boundary_2(derived->traits(), derived->m_counters[Derived::COMPARE_Y_ON_BOUNDARY_2_OP]);
-  }
-};
-
-//@}
-
-/// `Compare_y_near_boundary_2`
-//@{
-
-//! Fallback selected if `Compare_y_near_boundary_2` is not defined in the base traits.
-template <typename, typename, typename = void> class Counting_compare_y_near_boundary_2 {};
-
-//! Partial specialization selected if `BaseTraits::Compare_y_near_boundary_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_compare_y_near_boundary_2<BaseTraits, Derived,
-                                         std::enable_if_t<has_compare_y_near_boundary_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
-
-public:
-  //! A functor that compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
-  class Compare_y_near_boundary_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-
-  private:
-    typename Base::Compare_y_near_boundary_2 m_object;
-    std::size_t& m_counter;
-
-  public:
-    /*! constructs
-     */
-    Compare_y_near_boundary_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_y_near_boundary_2_object()), m_counter(counter) {}
-
-    /*! operates
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, Arr_curve_end ce) const {
-      ++m_counter;
-      return m_object(xc1, xc2, ce);
-    }
-  };
-
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
-    const Derived* derived = static_cast<const Derived*>(this);
-    return Compare_y_near_boundary_2(derived->traits(), derived->m_counters[Derived::COMPARE_Y_NEAR_BOUNDARY_2_OP]);
-  }
-};
-
-//@}
-
-/// `Compare_x_on_boundary_2`
-//@{
-
-//! Fallback selected if `Compare_x_on_boundary_2` is not defined in the base traits.
-template <typename, typename, typename = void> class Counting_x_on_boundary_2 {};
-
-//! Partial specialization selected if `BaseTraits::Compare_x_on_boundary_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_x_on_boundary_2<BaseTraits, Derived, std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
-
-public:
-  //! A functor that compares the \f$x\f$-coordinate of two given points that lie on horizontal boundaries.
-  class Compare_x_on_boundary_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-
-  private:
-    typename Base::Compare_x_on_boundary_2 m_object;
-    std::size_t& m_counter1;
-    std::size_t& m_counter2;
-    std::size_t& m_counter3;
-
-  public:
-    /*! constructs
-     */
-    Compare_x_on_boundary_2(const Base& base,  std::size_t& counter1, std::size_t& counter2, std::size_t& counter3) :
-      m_object(base.compare_x_on_boundary_2_object()),
-      m_counter1(counter1),
-      m_counter2(counter2),
-      m_counter3(counter3)
-    {}
-
-    /*! \todo Remove this counting decorator once
-     * operator() (const AosTraits::Point_2 &p1, const AosTraits::Point_2 &p2)
-     * is removed from AosTraits::CompareXOnBoundary_2.
-     */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) {
-      ++m_counter1;
-      return m_object(p1, p2);
-    }
-
-    /*! operates
-     */
-    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) {
-      ++m_counter2;
-      return m_object(pt, xcv, ce);
-    }
-
-    /*! operates
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) {
-      ++m_counter3;
-      return m_object(xcv1, ce1, xcv2, ce2);
-    }
-  };
-
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
-    const Derived* derived = static_cast<const Derived*>(this);
-    return Compare_x_on_boundary_2(derived->traits(),
-                                   derived->m_counters[Derived::COMPARE_X_ON_BOUNDARY_2_POINTS_OP],
-                                   derived->m_counters[Derived::COMPARE_X_ON_BOUNDARY_2_POINT_CURVE_END_OP],
-                                   derived->m_counters[Derived::COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP]);
   }
 };
 
@@ -1173,19 +1210,79 @@ public:
     Compare_x_near_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_x_near_boundary_2_object()), m_counter(counter) {}
 
-    /*! operates
+    /*! compares the \f$x\f$-coordinates of curve ends near the boundary of the parameter space.
+     * \param xcv1 the first curve the end of which is to be compared.
+     * \param ce1 the identifier of the end of the first curve.
+     * \param xcv2 the second curve the end of which is to be compared.
+     * \param ce2 the identifier of the end of the second curve.
+     * \return the comparison result.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, Arr_curve_end ce) const {
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                 Arr_curve_end ce) const {
       ++m_counter;
-      return m_object(xc1, xc2, ce);
+      return m_object(xcv1, xcv2, ce);
     }
   };
 
+  /*! obtains a `Compare_x_near_boundary_2` function object.
+   */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
     const Derived* derived = static_cast<const Derived*>(this);
     return Compare_x_near_boundary_2(derived->traits(), derived->m_counters[Derived::COMPARE_X_NEAR_BOUNDARY_2_OP]);
   }
 };
+
+//@}
+
+/// `Compare_y_near_boundary_2`
+//@{
+
+//! Fallback selected if `Compare_y_near_boundary_2` is not defined in the base traits.
+template <typename, typename, typename = void> class Counting_compare_y_near_boundary_2 {};
+
+//! Partial specialization selected if `BaseTraits::Compare_y_near_boundary_2` is defined.
+template <typename BaseTraits, typename Derived>
+class Counting_compare_y_near_boundary_2<BaseTraits, Derived,
+                                         std::enable_if_t<has_compare_y_near_boundary_2<BaseTraits>::value>> {
+  using Base = BaseTraits;
+
+public:
+  //! A functor that compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
+  class Compare_y_near_boundary_2 {
+    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  private:
+    typename Base::Compare_y_near_boundary_2 m_object;
+    std::size_t& m_counter;
+
+  public:
+    /*! constructs
+     */
+    Compare_y_near_boundary_2(const Base& base, std::size_t& counter) :
+      m_object(base.compare_y_near_boundary_2_object()), m_counter(counter) {}
+
+    /*! compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
+     * \param xcv1 the first curve the end point of which is tested.
+     * \param xcv2 the second curve the end point of which is tested.
+     * \param ce the curve-end identifier.
+     * \return the comparison result.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                 Arr_curve_end ce) const {
+      ++m_counter;
+      return m_object(xcv1, xcv2, ce);
+    }
+  };
+
+  /*! obtains a `Compare_y_near_boundary_2` function object.
+   */
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const {
+    const Derived* derived = static_cast<const Derived*>(this);
+    return Compare_y_near_boundary_2(derived->traits(), derived->m_counters[Derived::COMPARE_Y_NEAR_BOUNDARY_2_OP]);
+  }
+};
+
+//@}
 
 }
 }
@@ -1398,8 +1495,12 @@ public:
      */
     Compare_x_2(const Base& base, std::size_t& counter) : m_object(base.compare_x_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const { ++m_counter; return m_object(p1, p2); }
+    /*! operates
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      ++m_counter;
+      return m_object(p1, p2);
+    }
   };
 
   //! A functor that compares two points lexigoraphically: by \f$x\f$, then by \f$y\f$.
@@ -1413,8 +1514,12 @@ public:
      */
     Compare_xy_2(const Base& base, std::size_t& counter) : m_object(base.compare_xy_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const { ++m_counter; return m_object(p1, p2); }
+    /*! operates
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      ++m_counter;
+      return m_object(p1, p2);
+    }
   };
 
   //! A functor that obtains the left endpoint of an \f$x\f$-monotone curve.
@@ -1429,11 +1534,15 @@ public:
     Construct_min_vertex_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_min_vertex_2_object()), m_counter(counter) {}
 
+    using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
+
     /*! operates
      */
-    using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
     decltype(std::declval<Subcurve_ctr_minv>().operator()(std::declval<X_monotone_curve_2>()))
-    operator()(const X_monotone_curve_2& xcv) const { ++m_counter; return m_object(xcv); }
+    operator()(const X_monotone_curve_2& xcv) const {
+      ++m_counter;
+      return m_object(xcv);
+    }
   };
 
   /*! A functor that obtains the right endpoint of an \f$x\f$-monotone curve. */
@@ -1448,11 +1557,15 @@ public:
     Construct_max_vertex_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_max_vertex_2_object()), m_counter(counter) {}
 
+    using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
+
     /*! operates
      */
-    using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
     decltype(std::declval<Subcurve_ctr_maxv>().operator()(std::declval<X_monotone_curve_2>()))
-    operator()(const X_monotone_curve_2& xcv) const { ++m_counter; return m_object(xcv); }
+    operator()(const X_monotone_curve_2& xcv) const {
+      ++m_counter;
+      return m_object(xcv);
+    }
   };
 
   /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical.
@@ -1469,7 +1582,10 @@ public:
 
     /*! operates
      */
-    bool operator()(const X_monotone_curve_2& xc) const { ++m_counter; return m_object(xc); }
+    bool operator()(const X_monotone_curve_2& xc) const {
+      ++m_counter;
+      return m_object(xc);
+    }
   };
 
   /*! A functor that compares the \f$y\f$-coordinates of a point and an
@@ -1488,8 +1604,10 @@ public:
 
     /*! operates
      */
-    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xc) const
-    { ++m_counter; return m_object(p, xc); }
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xc) const {
+      ++m_counter;
+      return m_object(p, xc);
+    }
   };
 
   /*! A functor that checks whether two points and two \f$x\f$-monotone curves
@@ -1508,13 +1626,17 @@ public:
 
     /*! operates
      */
-    bool operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter1; return m_object(p1, p2); }
+    bool operator()(const Point_2& p1, const Point_2& p2) const {
+      ++m_counter1;
+      return m_object(p1, p2);
+    }
 
     /*! operates
      */
-    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const
-    { ++m_counter2; return m_object(xc1, xc2); }
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      ++m_counter2;
+      return m_object(xcv1, xcv2);
+    }
   };
 
   /*! A functor that compares compares the \f$y\f$-coordinates of two
@@ -1532,9 +1654,13 @@ public:
     Compare_y_at_x_left_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_left_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, const Point_2& p) const
-    { ++m_counter; return m_object(xc1, xc2, p); }
+    /*! operates
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                 const Point_2& p) const {
+      ++m_counter;
+      return m_object(xcv1, xcv2, p);
+    }
   };
 
   /*! A functor that compares compares the \f$y\f$-coordinates of two
@@ -1552,9 +1678,13 @@ public:
     Compare_y_at_x_right_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_right_2_object()), m_counter(counter) {}
 
-    /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, const Point_2& p) const
-    { ++m_counter; return m_object(xc1, xc2, p); }
+    /*! operates
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                 const Point_2& p) const {
+      ++m_counter;
+      return m_object(xcv1, xcv2, p);
+    }
   };
 
   Compare_x_2 compare_x_2_object() const
@@ -1710,8 +1840,7 @@ private:
 };
 
 template <typename OutStream, class BaseTraits>
-inline OutStream& operator<<(OutStream& os,
-                             const Arr_counting_traits_2<BaseTraits>& traits) {
+inline OutStream& operator<<(OutStream& os, const Arr_counting_traits_2<BaseTraits>& traits) {
   using Traits = Arr_counting_traits_2<BaseTraits>;
   std::size_t sum = 0;
   for (auto i = 0; i < Traits::NUMBER_OF_OPERATIONS; ++i) {
