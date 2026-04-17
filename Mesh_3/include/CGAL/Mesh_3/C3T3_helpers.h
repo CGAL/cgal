@@ -22,16 +22,25 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/use.h>
 
-#include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Mesh_3/Triangulation_helpers.h>
-#include <CGAL/Time_stamper.h>
-#include <CGAL/tuple.h>
-#include <CGAL/iterator.h>
 #include <CGAL/array.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/Default_diagonalize_traits.h>
+#include <CGAL/Dimension.h>
+#include <CGAL/functional.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/IO/io_tags.h>
+#include <CGAL/iterator.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/Object.h>
+#include <CGAL/Profile_counter.h>
+#include <CGAL/tags.h>
+#include <CGAL/Time_stamper.h>
+#include <CGAL/tuple.h>
+#include <CGAL/use.h>
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
@@ -46,9 +55,19 @@
 # include <mutex>
 #endif
 
+#include <algorithm>
+#include <array>
+#include <cstddef>
 #include <functional>
-#include <vector>
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <ostream>
 #include <set>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Mesh_3 {
