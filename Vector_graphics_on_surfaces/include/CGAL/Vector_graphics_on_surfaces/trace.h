@@ -240,7 +240,12 @@ trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<Trian
   return result;
 }
 
-
+/*!
+ *
+ *
+ *  Doc Me
+ *
+ */
 template <class TriangleMesh, class K>
 struct Placement_along_a_line
   : public Default_placement<K>
@@ -441,6 +446,12 @@ trace_geodesic_label(const CGAL::Polygon_mesh_processing::Face_location<Triangle
   return trace_geodesic_polygons<K>(center, polygons, scaling, tmesh, solver, placement);
 }
 
+/*!
+ *
+ *
+ *  Doc Me
+ *
+ */
 template <class TriangleMesh, class K>
 struct Placement_along_a_curve
   : public Default_placement<K>
