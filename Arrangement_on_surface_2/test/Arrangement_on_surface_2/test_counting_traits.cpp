@@ -127,7 +127,7 @@ void test_counting_traits(const Decorating_traits_test_objects<Ct>& objs) {
   if constexpr (has_compare_x_on_boundary_2<Ct>::value) {
     t.test_counting(Ct::COMPARE_X_ON_BOUNDARY_2_POINT_CURVE_END_OP,
                     [&]() { ct.compare_x_on_boundary_2_object()(pt, xcv_bt, xcv_bt_end); });
-    t.test_counting(Ct::COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP, 
+    t.test_counting(Ct::COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP,
                     [&]() { ct.compare_x_on_boundary_2_object()(xcv_bt, xcv_bt_end, xcv_bt, xcv_bt_end); });
   }
   if constexpr (has_compare_x_near_boundary_2<Ct>::value) {
@@ -270,7 +270,7 @@ int main() {
   test_counting_geodesic_arc_on_sphere_traits();
   test_counting_linear_traits();
   test_counting_non_caching_segment_traits();
-  // test_counting_polyline_traits(); 
+  // test_counting_polyline_traits();
   test_counting_rational_funcion_traits();
   test_counting_segment_traits();
   return 0;
