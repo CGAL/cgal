@@ -21,35 +21,69 @@ public:
 /// \name Types
 /// @{
 
-/// The point type
+/*!
+The point index type.
+*/
 typedef Point_d Point;
-/// The type for multiple points
-typedef unspecified_type Point_range;
-/// The point index type
-typedef std::size_t Point_index;
-/// The line of point index type
+/*!
+The point index type.
+\cgalModels{Index,LessThanComparable,Hashable}
+*/
+typedef unspecified_type Point_index;
+
+/*!
+\brief The type of line containing point incides.
+A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Point_index`.
+*/
 typedef unspecified_type Line;
-/// The type for multiple lines
+
+/*!
+The line index type.
+\cgalModels{Index,LessThanComparable,Hashable}
+*/
+typedef unspecified_type Line_index;
+
+/*!
+\brief The range over all points.
+A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Point`.
+*/
+typedef unspecified_type Point_range;
+/*!
+\brief The range over all lines.
+A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Line`.
+*/
 typedef unspecified_type Line_range;
 
 /// @}
 
+/// \name Accessors
+/// @{
+
+/*!
+Return the iterator range of the points of the feature graph.
+*/
+Point_range points() const;
+/*!
+Return the iterator range of the lines of the feature graph.
+*/
+Line_range lines() const;
+
+/*!
+Return the point from its index.
+\param point_index the index of the point to return.
+*/
+Point point(Point_index point_index) const;
+/*!
+Return the line from its index.
+\param line_index the index of the line to return.
+*/
+Line line(Line_index line_index) const;
+
+/// @}
+
+private:
   Point_range points;
   Line_range lines;
 };
-
-// TODO : add infos in run time (not compile time) with property maps
-
-// Feature_graph feature_graph;
-// const Line& single_line_access = feature_graph.get_line(line_index);
-// const auto& point_map = feature_graph.get_point_map();
-// for (const Line &line : feature_graph.lines) // for each on lines
-//   for (const Point_index& point_index : line)
-//    const Point &point = feature_graph.get_point(point_index); // or
-//    const Point &point = get(point_map, point_index);
-//    const InfoA& info_a = get(info_a_map, point_index); // outside of feature_graph (via property maps ?)
-//    const InfoB& info_b = get(info_b_map, point_index); // outside of feature_graph (via property maps ?)
-
-// corner iterator ? Iterating on corner is not trivial, need a marker to avoid duplicates
 
 } /* namespace CGAL */

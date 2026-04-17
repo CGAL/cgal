@@ -17,7 +17,7 @@ public:
   /// @{
 
   /*!
-  The type of the normal vector model of `Kernel::Vector_3`
+  The type of of the sharpness value.
   */
   typedef double Sharpness_value_type;
 
@@ -30,11 +30,16 @@ public:
   Constructor that pre-computes the normals on the surface.
 
   \tparam Surface a model of `FaceListGraph` that represents a surface mesh.
+  \tparam FT a model of `RealEmbeddable`
 
   \param surface the surface where the normals are evaluated.
+  \param selection_threshold a threshold on the sharpness value.
+      Elements with a sharpness value lower than this threshold are considered flat
+      and will be given a negative value.
   */
-  template <typename Surface>
-  Sharpness_estimator_on_surface(const Surface& surface);
+  template <typename Surface, typename FT = Sharpness_value_type>
+  Sharpness_estimator_on_surface(const Surface& surface, const FT& selection_threshold);
+
   // @}
 
   /// \name Functor
@@ -43,13 +48,14 @@ public:
   /*!
   Returns the sharpness value of the surface element described by a type and an index.
 
+  \tparam Element_type_tag a tag that represent the element type.
+          Can be `CGAL::Element_type::Point`, `CGAL::Element_type::line` or `CGAL::Element_type::Surface`
   \tparam Index the type of index of the element to evaluate.
 
-  \param element_type the type of the element (point, line or surface).
   \param element_index the index of the element to evaluate.
   */
-  template <typename Index>
-  Sharpness_value_type operator()(const CGAL::Surface_element_type& element_type, const Index& element_index) const;
+  template <typename Element_type_tag, typename Index>
+  Sharpness_value_type operator()(const Index& element_index) const;
 
   /// @}
 };

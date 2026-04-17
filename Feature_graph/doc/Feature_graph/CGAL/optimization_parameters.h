@@ -125,10 +125,10 @@ public:
 
 template <typename NormalEstimator = CGAL::Normal_estimator::AmbrosioTortorelli_on_image>
 class Optimization_parameters_in_image :
-public Optimization_parameters_in_image<NormalEstimator>
+public Optimization_parameters<NormalEstimator>
 {
 private:
-  typedef Optimization_parameters_in_image<NormalEstimator> Base;
+  typedef Optimization_parameters<NormalEstimator> Base;
 
 public:
 
@@ -197,7 +197,7 @@ public:
     \cgalParamSectionEnd
     \cgalParamSectionBegin{normal_estimator}
       \cgalParamDescription{a functor to evaluate the normals on elements.}
-      \cgalParamDefault{`CGAL::Normal_estimator::AmbrosioTortorelli_on_image`}
+      \cgalParamDefault{`CGAL::AmbrosioTortorelli_on_image(image).get_normal_functor()`}
     \cgalParamSectionEnd
   \cgalNamedParamsEnd
 
@@ -213,10 +213,10 @@ public:
 
 template <typename NormalEstimator = CGAL::Normal_estimator::Normal_estimator_on_surface>
 class Optimization_parameters_in_surface :
-public Optimization_parameters_in_surface<NormalEstimator>
+public Optimization_parameters<NormalEstimator>
 {
 private:
-  typedef Optimization_parameters_in_surface<NormalEstimator> Base;
+  typedef Optimization_parameters<NormalEstimator> Base;
 
 public:
 
@@ -284,7 +284,7 @@ public:
     \cgalParamSectionEnd
     \cgalParamSectionBegin{normal_estimator}
       \cgalParamDescription{a functor to evaluate the normals on elements.}
-      \cgalParamDefault{`CGAL::Normal_estimator::AmbrosioTortorelli_on_image`}
+      \cgalParamDefault{`CGAL::Normal_estimator::Normal_estimator_on_surface(surface)`}
     \cgalParamSectionEnd
   \cgalNamedParamsEnd
 

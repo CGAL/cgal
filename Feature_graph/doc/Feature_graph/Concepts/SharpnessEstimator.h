@@ -6,7 +6,7 @@ The concept 'Sharpness_estimator' describes a functor that
 extracts the sharpness value for a surface element.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Sharpness_estimator::AmbrosioTortorelli_on_image}
+\cgalHasModels{CGAL::AmbrosioTortorelli_on_image::Sharpness_functor}
 \cgalHasModels{CGAL::Sharpness_estimator::Sharpness_estimator_on_surface}
 \cgalHasModelsEnd
 
@@ -19,8 +19,9 @@ public:
 /// @{
 
   /*!
-  The type of the sharpness value.
-  It must implement `bool Sharpness_value_type::operator<(const Sharpness_value_type&) const`
+  \brief The type of the sharpness value.
+  It is a scalar constructible from the integer 0.
+  \cgalModels{RealEmbeddable}
   */
   typedef unspecified_type Sharpness_value_type;
 
@@ -35,14 +36,17 @@ public:
   while a high value implies a sharp feature.
   For two sharpness values `A` and `B`,
   the value `A` is has a higher sharpness value iff `B < A`.
+  Negative values represent smooth areas that should be erased in the
+  selection step of the feature graph extraction method.
 
+  \tparam Element_type_tag a tag that represent the element type.
+          Can be `CGAL::Element_type::Point`, `CGAL::Element_type::line` or `CGAL::Element_type::Surface`
   \tparam Index the type of index of the element to evaluate.
 
-  \param element_type the type of the element (point, line or surface).
   \param element_index the index of the element to evaluate.
   */
-  template <typename Index>
-  Sharpness_value_type operator()(const CGAL::Surface_element_type& element_type, const Index& element_index) const;
+  template <typename Element_type_tag, typename Index>
+  Sharpness_value_type operator()(const Index& element_index) const;
 
 /// @}
 

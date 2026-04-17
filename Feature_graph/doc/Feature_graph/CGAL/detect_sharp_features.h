@@ -32,21 +32,18 @@ struct Detect_sharp_features_in_labelled_image
   *   \cgalParamSectionBegin{sharpness_estimator}
   *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
-  *     \cgalParamDefault{`CGAL::Sharpness_estimator::AmbrosioTortorelli_on_image`}
-  *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{selection_threshold}
-  *     \cgalParamDescription{a threshold on the sharpness value.
-  *       Elements with a sharpness value above this threshold are considered sharp.
-  *       The selected elements determines the topology of the output feature graph.}
-  *     \cgalParamDefault{`FT(0.25)`}
+  *     \cgalParamDefault{`CGAL::AmbrosioTortorelli_on_image(image).get_sharpness_functor()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_distance}
   *     \cgalParamDescription{a threshold on the distance between lines.
   *     In the regularization step, if the maximum distance of a line to another line
   *     is less than this threshold, then the line is collapsed.
-  *     It can be a constant or a functional.
-  *     If it is a functional, it must implement
-  *     `FT operator()(const Point_3&) const`.}
+  *     It can be a constant or a functor.
+  *     If it is a functor, it must implement
+  *     <UL>
+  *       <LI> `template <typename Element_type_tag, typename Index>`
+  *       <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *     </UL>}
   *     \cgalParamDefault{`FT(4.0)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{do_optimize}
@@ -54,17 +51,18 @@ struct Detect_sharp_features_in_labelled_image
   *     \cgalParamDefault{`true`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{optimization_parameters}
-  *     \cgalParamDescription{an instance of a class model of `OptimizationParameters`.
+  *     \cgalParamDescription{an instance of `Optimization_parameters`.
   *     It describe the parameters for the optimization step.}
   *     \cgalParamDefault{`CGAL::Optimization_parameters_in_image()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-  *     It allows to retrieve a surface element from the index of a point in the output feature graph.
+  *     It allows to retrieve the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
-  *     so it must implement `put(output_pmap, point_index, std::make_pair(element_type, element_index))`
-  *     where the key type is the point index type and the value type is a pair of `CGAL::Surface_element_type` and the element index type.}
-  *     \cgalParamDefault{`CGAL::Optimization_parameters_in_image()`}
+  *     so it must implement `put(output_pmap, point_index, element_index)`
+  *     where the key type is the point index type and the value type the element index type.
+  *     The element index correspond to surface element with the tag `CGAL::Element_type::Surface`}
+  *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
   *
@@ -100,16 +98,42 @@ struct Detect_sharp_features_in_surface
   *
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
   * \cgalNamedParamsBegin
-  *   \cgalParamSectionBegin{sharpness_measure}
-  *     \cgalParamDescription{a functor that implements
-  *       `double operator()(const Element& element) const`,
-  *       where `Element` is a model of `SurfaceElement_3`,
-  *       that returns a sharpness value for that element.
+  *   \cgalParamSectionBegin{sharpness_estimator}
+  *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
-  *     \cgalParamDefault{`parameters::features(domain)`}
+  *     \cgalParamDefault{`CGAL::Sharpness_estimator::Sharpness_estimator_on_surface(surface)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{regularization_distance}
+  *     \cgalParamDescription{a threshold on the distance between lines.
+  *     In the regularization step, if the maximum distance of a line to another line
+  *     is less than this threshold, then the line is collapsed.
+  *     It can be a constant or a functional.
+  *     If it is a functor, it must implement
+  *     <UL>
+  *       <LI> `template <typename Element_type_tag, typename Index>`
+  *       <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *     </UL>}
+  *     \cgalParamDefault{`FT(0.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{do_optimize}
+  *     \cgalParamDescription{a boolean indicating if the optimization step is called.}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{optimization_parameters}
+  *     \cgalParamDescription{an instance of `Optimization_parameters`.
+  *     It describe the parameters for the optimization step.}
+  *     \cgalParamDefault{`CGAL::Optimization_parameters_in_surface()`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{point_to_element_output_map}
+  *     \cgalParamDescription{an output property map that will be filled if supplied.
+  *     It allows to retrieve the surface element where a feature graph point is embedded.
+  *     It must be a model of `WritablePropertyMap`,
+  *     so it must implement `put(output_pmap, point_index, element_index)`
+  *     where the key type is the point index type and the value type the element index type.
+  *     The element index correspond to surface element with the tag `CGAL::Element_type::Surface`}
+  *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
-  * TODO PARAMS
   *
   * \returns a `CGAL::Feature_graph<Point>`
   * containing the constructed features.

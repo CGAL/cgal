@@ -60,7 +60,11 @@ Secondary concepts:
 
 - `SharpnessEstimator`
 - `NormalEstimator`
-- `OptimizationParameters`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Feature_graph`
+- `CGAL::Optimization_parameters`
 
 \cgalCRPSection{Feature graph creation functors}
 
@@ -69,16 +73,16 @@ Secondary concepts:
 
 \cgalCRPSection{Sharpness estimators}
 
-- `CGAL::Sharpness_estimator::AmbrosioTortorelli_on_image`
+- `CGAL::AmbrosioTortorelli_on_image:Sharpness_functor`
 - `CGAL::Sharpness_estimator::Sharpness_estimator_on_surface`
 
 \cgalCRPSection{Normal estimators}
 
-- `CGAL::Normal_estimator::AmbrosioTortorelli_on_image`
+- `CGAL::AmbrosioTortorelli_on_image::Normal_functor`
 - `CGAL::Normal_estimator::Normal_estimator_on_surface`
 
-\cgalCRPSection{Enumerations}
+\cgalCRPSection{Element type tags}
 
-- `CGAL::Surface_element_type`
+- `CGAL::Element_type`
 
 */

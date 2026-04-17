@@ -8,7 +8,7 @@ namespace Normal_estimator
 
 \brief Functor that assign a normal on elements of a surface.
 
-\tparam Vector_3 the type of the normal vector.
+\tparam Vector_3 the type of the normal vector model of `Kernel::Vector_3`.
 
 \cgalModels{NormalEstimator}
 */
@@ -20,7 +20,7 @@ public:
   /// @{
 
   /*!
-  The type of the normal vector model of `Kernel::Vector_3`
+  The type of the normal vector.
   */
   typedef Vector_3 Normal_type;
 
@@ -38,21 +38,23 @@ public:
   */
   template <typename Surface>
   Normal_estimator_on_surface(const Surface& surface);
+  
   // @}
 
   /// \name Functor
   /// @{
 
   /*!
-  Returns the normal value of the surface element described by a type and an index.
+  Returns the normal vector of the surface element described by a type and an index.
 
+  \tparam Element_type_tag a tag that represent the element type.
+          Can be `CGAL::Element_type::Point`, `CGAL::Element_type::line` or `CGAL::Element_type::Surface`
   \tparam Index the type of index of the element to evaluate.
 
-  \param element_type the type of the element (point, line or surface).
   \param element_index the index of the element to evaluate.
   */
-  template <typename Index>
-  Normal_type operator()(const CGAL::Surface_element_type& element_type, const Index& element_index) const;
+  template <typename Element_type_tag, typename Index>
+  Normal_type operator()(const Index& element_index) const;
 
   /// @}
 };
