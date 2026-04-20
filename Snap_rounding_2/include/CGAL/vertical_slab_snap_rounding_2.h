@@ -464,16 +464,14 @@ void vertical_slab_snap_rounding_2_polygon(const PolygonRange  &polygons,
     Polygon_2 P;
     std::size_t idx_start = polygon_indices[polygon_idx];
     std::size_t idx_end = polygon_indices[polygon_idx+1];
-    std::size_t last_insert;
+    std::size_t last_insert = 0;
     for(std::size_t pl_idx = idx_start; pl_idx != idx_end; ++pl_idx){
       auto &pl = polylines[pl_idx];
       // The first element is not add, it is identical to the last
 
-      bool go_forward;
-      if(pl_idx == idx_start)
-        go_forward = (pl.back() == polylines[pl_idx+1].front()) || (pl.back() == polylines[pl_idx+1].back());
-      else
-        go_forward = (last_insert == pl.front());
+      bool go_forward = (pl_idx == idx_start)
+                      ? (pl.back() == polylines[pl_idx+1].front()) || (pl.back() == polylines[pl_idx+1].back())
+                      : (last_insert == pl.front());
 
       // Add the element in forward direction
       if(go_forward){
