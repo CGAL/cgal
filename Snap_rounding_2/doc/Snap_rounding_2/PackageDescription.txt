@@ -6,12 +6,12 @@
 /// Functions to round segments or polygons safely
 /// \ingroup PkgSnapRounding2Ref
 
-/// \defgroup Snap_rounding_hot_pixel_grp Hot pixel snap rounding
-/// Classes and functions to round segments or polygons using hot pixel SR method.
+/// \defgroup Snap_rounding_hot_pixel_grp Hot Pixel Snap Rounding
+/// Classes and functions to round segments or polygons using Hot Pixel SR method.
 /// \ingroup PkgSnapRounding2Ref
 
-/// \defgroup Snap_rounding_vertical_slab_grp Vertical slab snap rounding
-/// Classes and functions to round segments or polygons using vertical slab SR method.
+/// \defgroup Snap_rounding_vertical_slab_grp Vertical Slab Snap Rounding
+/// Classes and functions to round segments or polygons using Vertical Slab SR method.
 /// \ingroup PkgSnapRounding2Ref
 
 /*!
