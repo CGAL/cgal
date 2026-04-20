@@ -1324,16 +1324,6 @@ protected:
     }
   };
 
-  struct PLC_error : Error_exception {
-    int face_index;
-    int region_index;
-
-    PLC_error(std::string msg, std::string file, int line, int face_index, int region_index)
-        : Error_exception("CGAL CDT_3", msg, file, line), face_index(face_index), region_index(region_index)
-    {
-    }
-  };
-
   using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 public:
@@ -2368,6 +2358,7 @@ private:
   {
     const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
 
+    face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
     for(const auto fh: cdt_2.all_face_handles())
     {
       if(fh->info().is_outside_the_face) continue;
@@ -4043,10 +4034,6 @@ private:
         handle_error_with_region(e.what(), e.fh_2d);
         return false;
       }
-      // catch(PLC_error& e) {
-      //   handle_error_with_region(e.what(), fh_region[0]);
-      //   return false;
-      // }
     }
     return true;
   }
@@ -4180,9 +4167,11 @@ public:
     return result;
   }
 
-  void recheck_constrained_Delaunay() {
-    for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
-      search_for_missing_subfaces(i);
+  void recheck_for_missing_subfaces() {
+    for(CDT_3_signed_index i = 0, end = static_cast<CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
+      if(this->face_data[i].skip_face == false) {
+        search_for_missing_subfaces(i);
+      }
     }
   }
 
@@ -4202,7 +4191,7 @@ public:
         this->face_data[i].skip_face = true;
         dump_face_polygons(build_face_border_handles(face_borders(i)), i);
       } catch (Null_normal_error& e) {
-        std::cerr << std::string("ERROR: face F#") << std::to_string(i) + " has is degenerated.\n";
+        std::cerr << std::string("ERROR: face F#") << std::to_string(i) + " is degenerated.\n";
         std::cerr << "  details: " << e.what() << "\n";
         this->face_data[i].skip_face = true;
         dump_face_polygons(build_face_border_handles(face_borders(i)), i);
@@ -4214,42 +4203,20 @@ public:
       }
     }
     cdt_2_are_initialized = true;
-    const auto npos = face_constraint_misses_subfaces_npos;
-    auto i = face_constraint_misses_subfaces_find_first();
-    bool the_process_made_progress = false;
-    while(i != npos) {
-      try {
-        if(restore_face(static_cast <CDT_3_signed_index>(i))) {
-          face_constraint_misses_subfaces_reset(i);
-        } else {
-          if(this->debug().missing_region() || this->debug().Steiner_points()) {
-            std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
-          }
-          Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
-        }
-        the_process_made_progress = true;
-      }
-      catch(PLC_error& e) {
-        std::cerr << std::string("ERROR: PLC error with face F#") << std::to_string(e.face_index) + "\n";
-        i = face_constraint_misses_subfaces_find_next(i);
-        if(i == npos) {
-          std::cerr << "ERROR: No more missing face to restore after a PLC error\n";
-          if(this->debug().regions() || this->debug().verbose_special_cases()) {
-            dump_region(e.face_index, e.region_index);
-          }
-          throw;
-        }
-        std::cerr << "Next face is face F# " << i << '\n';
-        continue;
-      }
-      i = face_constraint_misses_subfaces_find_next(i);
 
-      // If we have made progress, we start again from the beginning.
-      // Otherwise, either we are done, or there was a full loop with
-      // only PLC errors.
-      if(i == npos && true == the_process_made_progress) {
+    for(auto i = face_constraint_misses_subfaces_find_first(); i != face_constraint_misses_subfaces_npos;
+        /* i is modified inside the loop */)
+    {
+      if(restore_face(static_cast <CDT_3_signed_index>(i))) {
+        face_constraint_misses_subfaces_reset(i);
+        i = face_constraint_misses_subfaces_find_next(i);
+      } else {
+        if(this->debug().missing_region() || this->debug().Steiner_points()) {
+          std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
+        }
+        Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
+        // restart from the beginning, as the state of the triangulation has changed
         i = face_constraint_misses_subfaces_find_first();
-        the_process_made_progress = false;
       }
     }
     if(std::any_of(begin(face_data), end(face_data),
@@ -4277,6 +4244,9 @@ public:
       // else:
       throw Constrained_triangulation_insertion_exception(failed_faces);
     }
+    CGAL_assertion_code(recheck_for_missing_subfaces());
+    CGAL_assertion_msg(face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
+                       "All faces have been restored, but the triangulation is a CDT. This should not happen.");
   }
 
   void add_bbox_points_if_not_dimension_3() {

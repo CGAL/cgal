@@ -94,7 +94,7 @@ Release date: July 2026
 ### [2D Intersection of Curves](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceSweep2)
 
 - The function [`CGAL::do_curves_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#gadb96b95f091371e834e3f7b4d24f7bb4), which assumed open curves, has been deprecated and replaced by
-  the function [`CGAL::Surface_sweep_2::do_intersect()`]().
+  the function [`CGAL::Surface_sweep_2::do_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#ga6de86b9ce9ed5537d371142716cf8adf).
   Notice (i) the introduction of the new namespace `Surface_sweep_2`,
   and (ii) the addition of the `closed` parameter, which defaults to `true`. To match the behavior of the
   deprecated function, set `closed` to false.
@@ -174,11 +174,20 @@ Release date: July 2026
 
 ### [Polygon Mesh Processing (Meshing and Remeshing of Polygon Meshes)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPRemeshing)
 
-- **Breaking change**: Update the visitor concepts [`PMPTriangulateFaceVisitor`]()
-  and [`PMPHolefillingVisitor`]()
-  to request functions `accept_face()` and `accept_triangle()`, respectively.
+- **Breaking change**: Update the visitor concepts [`PMPTriangulateFaceVisitor`](https://doc.cgal.org/6.2/Polygon_mesh_processing/classPMPTriangulateFaceVisitor.html)
+  and [`PMPHolefillingVisitor`](https://doc.cgal.org/6.2/Polygon_mesh_processing/classPMPHolefillingVisitor.html)
+  to request functions [`accept_face()`](https://doc.cgal.org/6.2/Polygon_mesh_processing/classPMPTriangulateFaceVisitor.html#a62ee542bc34faafb193147c746e07a69)
+  and [`accept_triangle()`](https://doc.cgal.org/6.2/Polygon_mesh_processing/classPMPHolefillingVisitor.html#a273b240262220abe572e42d8daef0d7a),
+  respectively.
   These functions can be used to tweak the way faces and holes are triangles by black listing some candidate triangles.
   User visitors inheriting from the default visitors do not require any update.
+
+### [Polygon Mesh Processing (Mesh Repair)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPMeshRepair)
+- Added the named parameter `erase_policy` to [`CGAL::Polygon_mesh_processing::repair_polygon_soup()`](https://doc.cgal.org/6.2/PMP_Mesh_repair/group__PMP__combinatorial__repair__grp.html#ga3b35133783759402828325b91ab559cc) and
+  [`CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`](https://doc.cgal.org/6.2/PMP_Mesh_repair/group__PMP__combinatorial__repair__grp.html#ga1f215926ed8794db827e2993d2960870).
+  This parameter offers three policies: erase all duplicates polygons,
+  keep one of the duplicates (default), and keep one iff the number of duplicates is odd.
+  The named parameter `erase_all_duplicates` is now deprecated.
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.2/Manual/packages.html#PkgOrthtree)
 

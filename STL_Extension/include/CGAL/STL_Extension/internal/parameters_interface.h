@@ -120,7 +120,7 @@ CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersectio
 CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
 CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
 CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
-CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)
+CGAL_add_named_parameter(erase_policy_t, erase_policy, erase_policy)
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
 CGAL_add_named_parameter(face_size_map_t, face_size_map, face_size_map)
 CGAL_add_named_parameter(snapping_tolerance_t, snapping_tolerance, snapping_tolerance)
@@ -193,6 +193,9 @@ CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
 CGAL_add_named_parameter(maximum_number_of_convex_volumes_t, maximum_number_of_convex_volumes, maximum_number_of_convex_volumes)
 CGAL_add_named_parameter(split_at_concavity_t, split_at_concavity, split_at_concavity)
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)
+#endif // CGAL_NO_DEPRECATED_CODE
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
