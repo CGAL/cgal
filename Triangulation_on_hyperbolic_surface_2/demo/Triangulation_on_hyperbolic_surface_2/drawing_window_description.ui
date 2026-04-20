@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>720</height>
+    <width>665</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,8 +25,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>771</width>
-      <height>671</height>
+      <width>650</width>
+      <height>650</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -38,6 +38,34 @@
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>665</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSave_As">
+    <property name="title">
+     <string>Save As...</string>
+    </property>
+    <addaction name="actionSave_as_SVG"/>
+    <addaction name="actionSave_as_PNG"/>
+   </widget>
+   <addaction name="menuSave_As"/>
+  </widget>
+  <action name="actionSave_as_SVG">
+   <property name="text">
+    <string>Save as SVG</string>
+   </property>
+  </action>
+  <action name="actionSave_as_PNG">
+   <property name="text">
+    <string>Save as PNG</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
