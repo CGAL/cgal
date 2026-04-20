@@ -28,7 +28,7 @@ namespace internal {
  * @brief A Unique_hash_map backend that wraps CGAL::unordered_flat_map.
  */
 template <typename Value, typename Allocator = CGAL_ALLOCATOR(Value)>
-class flat_map {
+class unordered_flat_map_adaptor {
 
     struct identity_hash {
         std::size_t operator()(std::size_t x) const noexcept { return x; }
@@ -40,18 +40,18 @@ public:
     typedef typename std::allocator_traits<Allocator>::template rebind_alloc<Entry> Entry_allocator;
     typedef CGAL::unordered_flat_map<Key, Value, identity_hash, std::equal_to<Key>, Entry_allocator> Map;
     typedef const Entry* Item;
-    typedef flat_map<Value, Allocator> Self;
+    typedef unordered_flat_map_adaptor<Value, Allocator> Self;
 
     static constexpr std::size_t default_size = 8;
 
-    flat_map(std::size_t reserve = default_size,
+    unordered_flat_map_adaptor(std::size_t reserve = default_size,
              const Value& default_val = Value(),
              const Allocator& allocator = Allocator())
         : map_(reserve, identity_hash(), std::equal_to<Key>(), allocator),
           default_value_(default_val) {
     }
 
-    flat_map(const Self& other)
+    unordered_flat_map_adaptor(const Self& other)
         : map_(other.map_),
           default_value_(other.default_value_) {
     }
@@ -64,7 +64,7 @@ public:
         return *this;
     }
 
-    flat_map(Self&& other) noexcept
+    unordered_flat_map_adaptor(Self&& other) noexcept
         : map_(std::move(other.map_)),
           default_value_(std::move(other.default_value_)) {
     }

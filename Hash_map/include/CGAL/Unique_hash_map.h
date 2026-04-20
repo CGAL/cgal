@@ -23,7 +23,7 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
-#include <CGAL/Hash_map/internal/flat_map.h>
+#include <CGAL/Hash_map/internal/unordered_flat_map_adaptor.h>
 #include <CGAL/Hash_map/internal/chained_map.h>
 
 #include <cstddef>
@@ -49,7 +49,7 @@ public:
 
 private:
 #ifndef CGAL_USE_CHAINED_MAP
-    typedef internal::flat_map<Data, Allocator>    Map;
+    typedef internal::unordered_flat_map_adaptor<Data, Allocator> Map;
 #else
     typedef internal::chained_map<Data, Allocator>   Map;
 #endif
