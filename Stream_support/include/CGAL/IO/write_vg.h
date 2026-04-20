@@ -42,6 +42,13 @@ namespace IO {
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{serializer}
+ *     \cgalParamDescription{serializes `Primitive` into a string to be written to `os` and provides the type of the primitive (unsigned int) and the number of written parameters.}
+ *     \cgalParamType{a function with the signature `const char* (Primitive &p, unsigned int &type, std::size_t& number_of_parameters)`}
+ *     \cgalParamDefault{The `Primitive` is not exported into `os`. Default handler are provided for `geom_traits::Plane_3` and `geom_traits::Sphere_3`}
+ *     \cgalParamExtra{The type of primitive is defined as 0: Plane, 1: Cylinder, 2: Sphere, 3: Cone, 4: Torus, 5: General}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{point_map}
  *     \cgalParamDescription{a property map associating points to the elements of the point set `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
@@ -51,13 +58,15 @@ namespace IO {
  *
  *   \cgalParamNBegin{normal_map}
  *     \cgalParamDescription{a property map associating normals to the elements of the point range}
- *     \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
  *     \cgalParamDefault{If this parameter is omitted, no normals are written to `os`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{color_map}
  *     \cgalParamDescription{a property map associating colors to the elements of the point range}
- *     \cgalParamType{a model of `ReadablePropertyMap` with value type `CGAL::Color`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and whose value type is `CGAL::Color`}
  *     \cgalParamDefault{If this parameter is omitted, no colors are written to `os`.}
  *   \cgalParamNEnd
  *
@@ -90,7 +99,7 @@ namespace IO {
  */
 
 template <typename PointRange, typename RegionRange, typename NamedParameters>
-bool write_VG(std::ofstream& os,
+bool write_VG(std::ostream& os,
               const PointRange& points,
               const RegionRange& regions,
               const NamedParameters& np = parameters::default_values()) {
@@ -107,7 +116,7 @@ bool write_VG(std::ofstream& os,
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
 
-  if (!os.is_open()) {
+  if (!os.good()) {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
@@ -153,20 +162,30 @@ bool write_VG(std::ofstream& os,
       * id1 ... idN          # N integer numbers denoting the indices of the points in this segment
       * num_children: num    # a segment/primitive/object may contain subsegment (that has the same representation as this segment)
       */
-
-      if constexpr (std::is_same<typename GeomTraits::Plane_3, Primitive>::value) {
-        os << "group_type: PLANE\n";
+      if constexpr (!(is_default_parameter<NamedParameters, internal_np::serializer_t>::value)) {
+        using Serializer = typename internal_np::Lookup_named_param_def<internal_np::serializer_t, NamedParameters, std::string>::type;
+        Serializer serializer = parameters::choose_parameter<Serializer>(parameters::get_parameter(np, internal_np::serializer));
+        unsigned int type = 5;
+        std::size_t number_of_parameters = 0;
+        std::string str = serializer(r.first, type, number_of_parameters);
+        os << "group_type: " << type << "\n";
+        os << "num_group_parameters: " << number_of_parameters << "\n";
+        os << "group_parameters: " << str << "\n";
+      }
+      else if constexpr (std::is_same<typename GeomTraits::Plane_3, Primitive>::value) {
+        os << "group_type: 0\n";
         os << "num_group_parameters: 4\n";
         os << "group_parameters: " << r.first << "\n";
       }
       else if constexpr (std::is_same<typename GeomTraits::Sphere_3, Primitive>::value) {
-        os << "group_type: SPHERE\n";
+        os << "group_type: 2\n";
         os << "num_group_parameters: 4\n";
-        os << "group_parameters: " << r.first.center() << " " << r.first.squared_radius() << "\n";
+        os << "group_parameters: " << r.first << "\n";
       }
       else {
-        os << "group_type: GENERAL\n";
+        os << "group_type: 5\n";
         os << "num_group_parameters: 0\n";
+        os << "group_parameters: \n";
       }
 
       if constexpr (!(is_default_parameter<NamedParameters, internal_np::labels_t>::value)) {
