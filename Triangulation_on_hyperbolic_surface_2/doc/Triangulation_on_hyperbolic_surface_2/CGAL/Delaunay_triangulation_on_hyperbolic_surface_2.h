@@ -5,7 +5,7 @@ namespace CGAL {
 
   This item defines attributes for edges and faces.
   Edge attributes are of type `Complex_number` representing cross-ratios.
-  Face attributes are of type `Anchor` representing a lift of a triangle.
+  Face attributes are of type `Anchor`, representing a lift of a triangle.
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2` and the same as
   the one of the associated triangulation.
@@ -153,9 +153,23 @@ public:
 
     If `query` lies inside the triangle, `li` is set to `-1`.
 
-    If `query` lies outside the triangle, `li` is set to the index of the first edge such that `query` and the third point of the triangle lies on different sides.
+    If `query` lies outside the triangle, `li` is set to the index of the first edge such that `query` and the third point of the triangle lie on different sides.
   */
   Locate_type relative_position(Point const & query, unsigned & li, Anchor const & anch) const;
+
+  /*!
+    \return the anchor representing the lift of the triangle in which `query` lies.
+
+    Locates `query` in the Delaunay triangulation.
+    The enumeration `walk` indicates which walk algorithm is used when locating a point in the lifted triangulation.
+    The point location algorithm starts from `hint` and `ld` is set to the number of triangles traversed by the walk used for the point location algorithm.
+    The variable `lt` indicates the location of `query` with respect to  the
+    lifted triangle described by the returned anchor,  `li` is an index
+    precising its location as described in the method `relative_position`.
+
+    \sa relative_position
+  */
+  Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
   /*!
     \return the anchor representing the lift of the triangle in which `query` lies.
@@ -165,16 +179,6 @@ public:
     The enumeration `walk` indicates which walk algorithm is used when locating a point in the lifted triangulation.
   */
   Anchor locate(Point const & query, Locate_walk walk = STRAIGHT); // const ?
-  /*!
-    Same as above.
-
-    Additionally, the point location algorithm starts from `hint` and `ld` is set to the number of triangles traversed by the walk used for the point location algorithm.
-
-    The variables `lt` and `li` contains information about the triangle in which `query` has been found.
-
-    \sa relative_position
-  */
-  Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
   /*!
     Inserts `p` in the Delaunay triangulation after having located it, starting from `hint`.
@@ -189,14 +193,14 @@ public:
   void insert(Point const & p);
   /// @}
 
-  /// \name \f$ \varepsilon \f$-net
+  /// \name epsilon-net
   /// @{
   /*!
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-net of the surface.
 
     Tries to compute an `epsilon`-net of the surface.
 
-    When `Number` is `CGAL::Gmpq`, the algorithm rounds the coordinate of circumcenters to `CGAL::Gmpfr` with precision `p*53`.
+    When `Number` is `CGAL::Gmpq`, the algorithm rounds the coordinates of circumcenters to `CGAL::Gmpfr` with precision `p*53`.
     When `Number` is <em>not</em> `CGAL::Gmpq`, `p` is ignored.
 
     \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>

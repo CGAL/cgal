@@ -85,12 +85,12 @@ public:
   ComplexNumber operator=(const ComplexNumber& other) const;
 
   /*!
-    writes the complex in a stream.
+    writes the (complex) number in a stream.
   */
   std::ostream& operator<<(std::ostream& s, const ComplexNumber& z);
 
   /*!
-    reads the complex from a stream.
+    reads the (complex) number from a stream.
   */
   void operator>>(std::istream& s, ComplexNumber& z);
 
@@ -100,12 +100,12 @@ public:
   /// @{
 
   /*!
-    returns the square of the modulus.
+    returns the square of the modulus of z.
   */
   FT norm(ComplexNumber z) const;
 
   /*!
-    returns the conjugate.
+    returns the conjugate of z
   */
   ComplexNumber conj(ComplexNumber z) const;
 
