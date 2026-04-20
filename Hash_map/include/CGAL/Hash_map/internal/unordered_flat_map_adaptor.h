@@ -87,9 +87,8 @@ public:
     void clear() { map_.clear(); }
 
     Value& access(Key key) {
-        auto it = map_.find(key);
-        if (it != map_.end()) return it->second;
-        return map_.emplace(key, default_value_).first->second;
+        auto [it, inserted] = map_.try_emplace(key, default_value_);
+        return it->second;
     }
 
     Item lookup(Key key) const {
