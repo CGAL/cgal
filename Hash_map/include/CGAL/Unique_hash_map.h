@@ -23,8 +23,10 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
-#include <CGAL/Hash_map/internal/chained_map.h>
+#include <CGAL/unordered_flat_map.h>
 #include <cstddef>
+#include <iostream>
+#include <iterator>
 
 namespace CGAL {
 
@@ -46,12 +48,22 @@ public:
     typedef Unique_hash_map<Key,Data,Hash_function,Allocator> Self;
 
 private:
-    typedef internal::chained_map<Data, Allocator>   Map;
-    typedef typename Map::Item                       Item;
+    typedef std::size_t internal_key;
 
-private:
+    struct identity_hash {
+        std::size_t operator()(internal_key x) const noexcept { return x; }
+    };
+
+    typedef std::pair<const internal_key, Data> entry;
+    typedef std::allocator_traits<Allocator> traits;
+    typedef typename traits::template rebind_alloc<entry> entry_allocator;
+
+    typedef CGAL::unordered_flat_map<internal_key, Data, identity_hash,
+        std::equal_to<internal_key>, entry_allocator>  Map;
+
     Hash_function  m_hash_function;
     Map            m_map;
+    Data           m_default_value;
 
     template <class It, class Iterator_category>
     void reserve_impl(It, It, Iterator_category)
@@ -64,56 +76,56 @@ private:
     }
 
 public:
+    static constexpr std::size_t default_size = 8;
 
-    Unique_hash_map() = default;
-
-    Unique_hash_map( const Data& deflt, std::size_t table_size = Map::default_size)
-        : m_map(table_size, deflt)
-    {}
-
-    Unique_hash_map( const Data& deflt,
-                     std::size_t table_size,
-                     const Hash_function& fct)
-        : m_hash_function(fct), m_map( table_size, deflt)
-    {}
-
-    Unique_hash_map( Key first1, Key beyond1, Data first2) {
-        insert( first1, beyond1, first2);
+    Unique_hash_map(const Data& deflt = Data(),
+                    std::size_t table_size = default_size,
+                    const Hash_function& fct = Hash_function())
+        : m_hash_function(fct), m_map(table_size), m_default_value(deflt) {
     }
-    Unique_hash_map( Key first1, Key beyond1, Data first2,
-                     const Data& deflt,
-                     std::size_t table_size   = 1,
-                     const Hash_function& fct = Hash_function())
-    : m_hash_function(fct), m_map(table_size, deflt) {
+
+    Unique_hash_map(Key first1, Key beyond1, Data first2,
+                    const Data& deflt = Data(),
+                    std::size_t table_size = default_size,
+                    const Hash_function& fct = Hash_function())
+    : m_hash_function(fct), m_map(table_size), m_default_value(deflt) {
         insert( first1, beyond1, first2);
     }
 
-    void reserve(std::size_t n)
-    { m_map.reserve(n); }
+    void reserve(std::size_t n) {
+        m_map.reserve(n);
+    }
 
-    Data default_value() const { return m_map.cxdef(); }
+    Data default_value() const {
+        return m_default_value;
+    }
 
-    Hash_function  hash_function() const { return m_hash_function; }
+    Hash_function hash_function() const {
+        return m_hash_function;
+    }
 
-    void clear() { m_map.clear(); }
-
-    void clear( const Data& deflt) {
+    void clear() {
         m_map.clear();
-        m_map.xdef() = deflt; }
-
-    bool is_defined( const Key& key) const {
-        return m_map.lookup( m_hash_function(key)) != 0;
     }
 
-    const Data& operator[]( const Key& key) const {
-        Item p = m_map.lookup( m_hash_function(key));
-        if ( p != 0 )
-            return m_map.inf(p);
-        return m_map.cxdef();
+    void clear(const Data& deflt) {
+        m_map.clear();
+        m_default_value = deflt;
     }
 
-    Data& operator[]( const Key& key) {
-        return m_map.access( m_hash_function(key));
+    bool is_defined(const Key& key) const {
+        return m_map.find(m_hash_function(key)) != m_map.end();
+    }
+
+    const Data& operator[](const Key& key) const {
+        auto it = m_map.find(m_hash_function(key));
+        if (it != m_map.end()) return it->second;
+        return m_default_value;
+    }
+
+    Data& operator[](const Key& key) {
+        auto [it, inserted] = m_map.try_emplace(m_hash_function(key), m_default_value);
+        return it->second;
     }
 
     Data insert( Key first1, Key beyond1, Data first2) {
@@ -124,10 +136,10 @@ public:
         return first2;
     }
 
-    void statistics() const { m_map.statistics(); }
+    void statistics() const {
+        std::cout << "CGAL::unordered_flat_map: size=" << m_map.size() << "\n";
+    }
 };
-
-
 
 } //namespace CGAL
 
