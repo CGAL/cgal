@@ -1914,7 +1914,7 @@ CGAL_INLINE_FUNCTION
 void Camera::stopAllPaths(){
     for(auto [key,value]: kfi_.asKeyValueRange()){
           if(value->interpolationIsStarted()){
-              value->resetInterpolation();
+              value->stopInterpolation();
           }
       }
 }
