@@ -39,7 +39,8 @@ public:
 };
 
 QString CGAL_Lab_gocad_plugin::nameFilters() const {
-  return "GOCAD files (*.ts)";
+  return "GOCAD files (*.ts *.ml)";
+
 }
 
 bool CGAL_Lab_gocad_plugin::canLoad(QFileInfo) const {
@@ -57,7 +58,6 @@ CGAL_Lab_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     ok = false;
     return QList<Scene_item*>();
   }
-  in.close();
 
   CGAL::Timer t;
   t.start();
