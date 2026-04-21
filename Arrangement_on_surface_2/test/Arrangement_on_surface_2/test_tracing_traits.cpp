@@ -25,10 +25,10 @@ private:
 public:
   using Operation_id = typename Tt::Operation_id;
 
-  Tracing_traits_test(Tt& ct) : m_tt(ct) 
+  Tracing_traits_test(Tt& ct) : m_tt(ct)
   { m_old_buf = redirect_cout(m_rd_stream); }
 
-  ~Tracing_traits_test() 
+  ~Tracing_traits_test()
   { restore_cout(m_old_buf); }
 
   template <typename Lambda>
@@ -63,7 +63,6 @@ void test_tracing_traits(Decorating_traits_test_objects<Tt>& objs) {
   Tracing_traits_test<Tt> t(tt);
   const auto& pt = objs.xcv_seg_pt;
   const auto& pt_lr = objs.pt_lr;
-  const auto& pt_bt = objs.pt_bt;
   const auto& cv = objs.cv;
   const auto& xcv_seg = objs.xcv_seg;
   auto seg_min = tt.construct_min_vertex_2_object()(xcv_seg);
@@ -155,7 +154,7 @@ void test_tracing_traits(Decorating_traits_test_objects<Tt>& objs) {
   if constexpr (has_compare_x_on_boundary_2<Tt>::value) {
     t.test_tracing(Tt::COMPARE_X_ON_BOUNDARY_2_OP,
                    [&]() { tt.compare_x_on_boundary_2_object()(pt, xcv_bt, xcv_bt_end); });
-    t.test_tracing(Tt::COMPARE_X_ON_BOUNDARY_2_OP, 
+    t.test_tracing(Tt::COMPARE_X_ON_BOUNDARY_2_OP,
                    [&]() { tt.compare_x_on_boundary_2_object()(xcv_bt, xcv_bt_end, xcv_bt, xcv_bt_end); });
   }
   if constexpr (has_compare_x_near_boundary_2<Tt>::value) {
@@ -302,4 +301,4 @@ int main() {
   test_tracing_rational_funcion_traits();
   test_tracing_segment_traits();
   return 0;
-} 
+}

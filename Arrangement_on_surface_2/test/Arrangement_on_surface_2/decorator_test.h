@@ -132,7 +132,6 @@ struct Algebraic_traits_decorating_test_objects : public Decorating_traits_test_
     const auto& base = this->traits.traits();
     auto ctr_cv = base.construct_curve_2_object();
     auto ctr_pt = base.construct_point_2_object();
-    auto ctr_xcv = base.construct_x_monotone_segment_2_object();
 
     auto first_x_monotone_curve = [&](const Curve_2& cv) {
       std::vector<Make_x_monotone_result> xcvs;
@@ -168,7 +167,6 @@ struct Bezier_traits_decorating_test_types {
 template <typename T>
 struct Bezier_traits_decorating_test_objects : public Decorating_traits_test_objects<T> {
   Bezier_traits_decorating_test_objects() {
-    using Base_traits = Bezier_traits_decorating_test_types::Base_traits;
     using Point_2 = typename T::Point_2;
     using Curve_2 = typename T::Curve_2;
     using X_monotone_curve_2 = typename T::X_monotone_curve_2;
@@ -221,7 +219,6 @@ struct Conic_traits_decorating_test_types {
 template <typename T>
 struct Conic_traits_decorating_test_objects : public Decorating_traits_test_objects<T> {
   Conic_traits_decorating_test_objects() {
-    using Base_traits = Conic_traits_decorating_test_types::Base_traits;
     using Point_2 = typename T::Point_2;
     using Rational = typename Conic_traits_decorating_test_types::Rational;
 
@@ -279,11 +276,6 @@ struct Geodesic_arc_on_sphere_traits_decorating_test_types {
 template <typename T>
 struct Geodesic_arc_on_sphere_traits_decorating_test_objects : public Decorating_traits_test_objects<T> {
   Geodesic_arc_on_sphere_traits_decorating_test_objects() {
-    using Point_2 = typename T::Point_2;
-    using X_monotone_curve_2 = typename T::X_monotone_curve_2;
-    using Multiplicity = typename T::Multiplicity;
-    using Approximate_point_2 = typename T::Approximate_point_2;
-
     const auto& base = this->traits.traits();
     auto ctr_pt = base.construct_point_2_object();
     auto ctr_cv = base.construct_curve_2_object();
