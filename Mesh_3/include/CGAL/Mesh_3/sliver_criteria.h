@@ -34,17 +34,23 @@
 namespace CGAL {
 namespace Mesh_3 {
 
-enum class Sliver_caching_policy
+namespace internal
 {
-  DEFAULT = 0,
-  ALWAYS,
-  NEVER,
-  BELOW_BOUND // Only cache values below the sliver bound
-};
+struct Sliver_caching_policy_tag
+{}; // Default tag for the caching policy, used to detect if the user specified a caching policy or not
+struct Sliver_caching_always_tag      : public Sliver_caching_policy_tag{};
+struct Sliver_caching_never_tag       : public Sliver_caching_policy_tag{};
+struct Sliver_caching_below_bound_tag : public Sliver_caching_policy_tag{};// Only cache values below the sliver bound
+
+CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
+} // end namespace internal
 
 template<typename Tr,
          typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
-         Sliver_caching_policy caching_policy_ = Sliver_caching_policy::DEFAULT,
+         typename SliverCachingPolicy =
+              std::conditional_t<internal::has_set_sliver_value<typename Tr::Cell>::value,
+                                 internal::Sliver_caching_always_tag,
+                                 internal::Sliver_caching_below_bound_tag>,
          typename Cell_vector_ = std::vector<typename Tr::Cell_handle> >
 class Sliver_criterion
 {
@@ -77,7 +83,7 @@ public:
 
   bool is_sliver(Cell_handle cell) const
   {
-    if (caching_policy == Sliver_caching_policy::BELOW_BOUND) {
+    if (std::is_same_v<SliverCachingPolicy, internal::Sliver_caching_below_bound_tag>) {
       return cache_.has_value(cell);
     } else {
       // if we cache everything, the operator() will return the cached value
@@ -88,7 +94,7 @@ public:
   // returns the value of the criterion for t
   virtual double operator()(Cell_handle cell) const
   {
-    if (caching_policy == Sliver_caching_policy::NEVER) {
+    if (std::is_same_v<SliverCachingPolicy, internal::Sliver_caching_never_tag>) {
       return operator()(tr_.tetrahedron(cell));
     } else {
       if (cache_.has_value(cell)) {
@@ -103,7 +109,8 @@ public:
         // (see also the comment below)
         // IA_force_to_double is available in CGAL/FPU.h
         const double value = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
-        if (caching_policy == Sliver_caching_policy::BELOW_BOUND && value > this->sliver_bound_) {
+        if (std::is_same_v<SliverCachingPolicy, internal::Sliver_caching_below_bound_tag>
+         && value > this->sliver_bound_) {
           return value;
         } else {
           cache_.set(cell, value);
@@ -130,22 +137,13 @@ public:
     : tr_(tr)
     , sliver_bound_(bound)
     , cache_(cache)
-  {
-    caching_policy =
-      (caching_policy_ == Sliver_caching_policy::DEFAULT)
-        ? (has_set_sliver_value<typename Tr::Cell>::value ? Sliver_caching_policy::ALWAYS
-                                                          : Sliver_caching_policy::BELOW_BOUND)
-        : caching_policy_;
-  }
+  {}
 
   virtual ~Sliver_criterion(){}
 
 protected:
   const Tr& tr_;
   double sliver_bound_;
-
-  CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
-  Sliver_caching_policy caching_policy;
   mutable Cache cache_;
 };
 
@@ -154,12 +152,12 @@ class Min_value;
 
 template <typename Tr,
           typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
-          Sliver_caching_policy caching_policy = Sliver_caching_policy::BELOW_BOUND>
+          typename SliverCachingPolicy = internal::Sliver_caching_below_bound_tag>
 class Min_dihedral_angle_criterion
-  : public Sliver_criterion<Tr, Cache, caching_policy>
+  : public Sliver_criterion<Tr, Cache, SliverCachingPolicy>
 {
 protected:
-  typedef Sliver_criterion<Tr, Cache, caching_policy> Base;
+  typedef Sliver_criterion<Tr, Cache, SliverCachingPolicy> Base;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
   typedef typename Base::GT             GT;
@@ -213,14 +211,14 @@ private:
 
 template <typename Tr,
           typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
-          Sliver_caching_policy caching_policy = Sliver_caching_policy::BELOW_BOUND>
+          typename SliverCachingPolicy = internal::Sliver_caching_below_bound_tag>
 class Radius_ratio_criterion
-  : public Sliver_criterion<Tr, Cache, caching_policy>
+  : public Sliver_criterion<Tr, Cache, SliverCachingPolicy>
 {
-  typedef Radius_ratio_criterion<Tr, Cache, caching_policy> Self;
+  typedef Radius_ratio_criterion<Tr, Cache, SliverCachingPolicy> Self;
 
 protected:
-  typedef Sliver_criterion<Tr, Cache, caching_policy> Base;
+  typedef Sliver_criterion<Tr, Cache, SliverCachingPolicy> Base;
   typedef typename Base::GT             GT;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
