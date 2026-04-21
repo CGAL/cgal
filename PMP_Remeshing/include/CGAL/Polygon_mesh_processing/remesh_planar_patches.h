@@ -17,6 +17,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 
 #include <CGAL/boost/graph/border.h>
@@ -813,6 +814,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                    const VertexPointMapIn& vpm_in,
                    const VertexPointMapOut& vpm_out,
                    bool do_not_triangulate_faces,
+                   bool allow_non_manifold,
                    VertexCornerMapOut vcorner_map_out,
                    FacePatchMapOut fpatch_map_out,
                    Visitor& visitor,
@@ -855,7 +857,14 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
     CGAL::IO::write_polygon_soup("soup.off", corners, faces);
     std::cout << "the output is not a valid polygon mesh!" << std::endl;
 #endif
-    return false;
+    if (allow_non_manifold)
+    {
+      decimate_success=false;
+      orient_polygon_soup(corners, faces);
+      //TODO: handle update in v2v2;
+    }
+    else
+      return false;
   }
 
   visitor(pm_out);
@@ -1427,6 +1436,14 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *      \cgalParamType{`visitor(pm_out)` must be a valid expression.}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{allow_non_manifold}
+ *      \cgalParamDescription{If the output mesh becomes non-manifold after remeshing (because of self-intersections in the input, agressive parameters, ...)
+ *                            this function will return `false`, but it is still possible to get an output by passing `true` to this parameter. In such a case,
+ *                            the function `orient_polygon_soup()` will be internally called to make the output fit into a manifold mesh but with self-intersections
+ *                            (at least where the non-maniold features were created.}
+ *      \cgalParamType{Boolean}
+ *      \cgalParamDefault{`false`}
+ *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  */
 template <typename TriangleMeshIn,
@@ -1493,6 +1510,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
     visitor = choose_parameter<Planar_segmentation::Default_visitor<PolygonMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
+  bool allow_non_manifold = choose_parameter(get_parameter(np_in, internal_np::allow_non_manifold), false);
 
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
@@ -1504,6 +1522,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
                                              face_cc_ids,
                                              vpm_in, vpm_out,
                                              do_not_triangulate_faces,
+                                             allow_non_manifold,
                                              get_parameter(np_out, internal_np::vertex_corner_map),
                                              get_parameter(np_out, internal_np::face_patch),
                                              visitor,
@@ -1604,6 +1623,14 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *      \cgalParamType{`visitor(pm_out)` must be a valid expression.}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{allow_non_manifold}
+ *      \cgalParamDescription{If the output mesh becomes non-manifold after remeshing (because of self-intersections in the input, agressive parameters, ...)
+ *                            this function will return `false`, but it is still possible to get an output by passing `true` to this parameter. In such a case,
+ *                            the function `orient_polygon_soup()` will be internally called to make the output fit into a manifold mesh but with self-intersections
+ *                            (at least where the non-maniold features were created.}
+ *      \cgalParamType{Boolean}
+ *      \cgalParamDefault{`false`}
+ *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  */
 template <typename TriangleMeshIn,
@@ -1641,6 +1668,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
     visitor = choose_parameter<Planar_segmentation::Default_visitor<PolygonMeshOut>>(get_parameter(np_out, internal_np::visitor));
 
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
+  bool allow_non_manifold = choose_parameter(get_parameter(np_in, internal_np::allow_non_manifold), false);
 
   std::vector< typename Traits::Vector_3 > face_normals;
   Planar_segmentation::init_face_normals(face_normals, nb_patches, get_parameter(np_in, internal_np::patch_normal_map));
@@ -1648,6 +1676,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
                                                     std::make_pair(nb_corners, nb_patches),
                                                     vertex_corner_map, ecm, face_patch_map, vpm_in, vpm_out,
                                                     do_not_triangulate_faces,
+                                                    allow_non_manifold,
                                                     get_parameter(np_out, internal_np::vertex_corner_map),
                                                     get_parameter(np_out, internal_np::face_patch),
                                                     visitor,
