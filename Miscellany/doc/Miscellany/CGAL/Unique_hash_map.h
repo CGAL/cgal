@@ -27,9 +27,9 @@ of type `Data` specified in the definition of `map`.
 
 \cgalHeading{Implementation}
 
-`Unique_hash_map` is implemented via a chained hashing scheme. Access
+`Unique_hash_map` is implemented via a `CGAL::unordered_flat_map`. Access
 operations `map[i]` take expected time \cgalBigO{1}. The `table_size`
-parameter passed to chained hashing can be used to avoid unnecessary
+parameter passed to `CGAL::unordered_flat_map` can be used to avoid unnecessary
 rehashing when set to the number of expected elements in the map.
 The design is derived from the \stl `hash_map` and the \leda type
 `map`. Its specialization on insertion only and unique hash values
