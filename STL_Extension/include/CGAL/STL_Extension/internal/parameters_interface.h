@@ -436,6 +436,12 @@ CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_no
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 
+//List of named parameters used in Snap_rounding_2
+CGAL_add_named_parameter(pixel_size_t, pixel_size, pixel_size)
+CGAL_add_named_parameter(do_iterative_snap_rounding_t, do_iterative_snap_rounding, do_iterative_snap_rounding)
+CGAL_add_named_parameter(use_grid_coordinates_t, use_grid_coordinates, use_grid_coordinates)
+CGAL_add_named_parameter(output_unique_segments_t, output_unique_segments, output_unique_segments)
+
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
 CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)

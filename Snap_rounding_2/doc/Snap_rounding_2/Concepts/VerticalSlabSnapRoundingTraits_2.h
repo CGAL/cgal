@@ -1,0 +1,240 @@
+
+/*!
+\ingroup PkgSnapRounding2Concepts
+\cgalConcept
+
+The concept `VerticalSlabSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
+an instance of the `geom_traits` parameter of
+the free function `CGAL::vertical_slab_snap_rounding_2()`
+and the functions derived from it.
+The list includes the nested types of the geometric primitives used in this class and
+some function object types for the required predicates on those primitives.
+
+\cgalRefines{AosTraits_2}
+
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Double_grid_snap_rounding_traits_2<Kernel>}
+\cgalHasModels{CGAL::Float_grid_snap_rounding_traits_2<Kernel>}
+\cgalHasModels{CGAL::Integer_grid_snap_rounding_traits_2<Kernel>}
+\cgalHasModelsEnd
+*/
+
+class VerticalSlabSnapRoundingTraits_2 {
+public:
+
+/// \name Types
+/// @{
+
+/*!
+The number type. This type must fulfill the requirements on
+`FieldNumberType`
+*/
+typedef unspecified_type FT;
+
+/*!
+models the concept `AosTraits_2::Point_2`.
+*/
+typedef unspecified_type Point_2;
+
+/*!
+models the concept `AosTraits_2::XMonotoneCurve_2`.
+*/
+typedef unspecified_type Segment_2;
+
+/// @}
+
+/// \name Functor Types
+/// @{
+
+/*!
+models the concept `Kernel::ConstructSource_2`.
+*/
+typedef unspecified_type Construct_source_2;
+
+/*!
+models the concept `Kernel::ConstructTarget_2`.
+*/
+typedef unspecified_type Construct_target_2;
+
+/*!
+models the concept `Kernel::ConstructSegment_2`.
+*/
+typedef unspecified_type Construct_segment_2;
+
+/*!
+models the concept `Kernel::LessXY_2`.
+*/
+typedef unspecified_type Less_xy_2;
+
+/*!
+models the concept `Kernel::LessY_2`.
+*/
+typedef unspecified_type Less_y_2;
+
+/*!
+models the concept `Kernel::Equal_2`.
+*/
+typedef unspecified_type Equal_2;
+
+/*!
+An instance of `CGAL::Boolean_tag`. If its value is `true`, `VSSRTraits_2::Evaluate` is used to compute the exact values of coordinates.
+If its value is `false` then `VSSRTraits_2::Evaluate` is not used and may be omitted.
+*/
+typedef unspecified_type Evaluation_tag;
+
+/*!
+models the concept `VSSRTraits_2::Evaluate`.
+*/
+typedef unspecified_type Evaluate;
+
+/*!
+models the concept `VSSRTraits_2::ConstructRoundedPoint_2`.
+*/
+typedef unspecified_type Construct_rounded_point_2;
+
+/*!
+models the concept `VSSRTraits_2::ComputeSquaredRoundBound_2`.
+*/
+typedef unspecified_type Compute_squared_round_bound_2;
+
+/*!
+models the concept `VSSRTraits_2::ConverterToExact`.
+*/
+typedef unspecified_type Converter_to_exact;
+
+/*!
+models the concept `VSSRTraits_2::ConverterFromExact`.
+*/
+typedef unspecified_type Converter_from_exact;
+
+/// @}
+
+/// \name Accessing Functor Objects
+/// @{
+
+Construct_source_2 construct_source_2_object();
+Construct_target_2 construct_target_2_object();
+Construct_segment_2 construct_segment_2_object();
+Less_xy_2 less_xy_2_object();
+Less_y_2 less_y_2_object();
+Construct_rounded_point_2 construct_rounded_point_2_object();
+Compute_squared_round_bound_2 compute_squared_round_bound_2_object();
+Evaluate evaluate_object();
+Converter_to_exact converter_to_exact_object();
+Converter_from_exact converter_from_exact_object();
+Equal_2 equal_2_object();
+
+
+/// @}
+
+}; /* end VerticalSlabSnapRoundingTraits_2 */
+
+
+namespace VSSRTraits_2{
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Construct_rounded_point_2 `Float_grid_snap_rounding_traits_2::Construct_rounded_point_2` \endlink}
+  \cgalHasModelsEnd
+*/
+class ConstructRoundedPoint_2
+{
+  public:
+
+  /*!
+  Given a point, constructs a point whose coordinates are rounded.
+
+  \warning To guarantee a valid result, the order of the coordinates of two
+  points `p` and `q` must be preserved:
+  \f$p.x() < q.x()\f$ implies \f$rounded(p.x()) \leq rounded(q.x()) \f$
+  (and similarly for the y coordinate).
+  \note If `Evaluation_tag` is `true`, the algorithms sort the vertices and call `Evaluate` when two vertices are likely to not respect this condition.
+  */
+  Point_2 operator()(Point_2 p);
+};
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_grid_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_grid_snap_rounding_traits_2::Compute_squared_round_bound_2` \endlink}
+  \cgalHasModelsEnd
+*/
+class ComputeSquaredRoundBound_2
+{
+  public:
+
+  /*!
+  Given a point, computes an upper bound of the squared distance between its exact coordinates and its rounded coordinates
+  */
+  double operator()(Point_2 p);
+};
+
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Float_grid_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Compute_squared_round_bound_2 `Double_grid_snap_rounding_traits_2::Squared_round_bound_2` \endlink}
+  \cgalHasModelsEnd
+*/
+class Evaluate
+{
+  public:
+
+  /*!
+  Given a point, evaluates its exact value. For example, for a point using `CGAL::Lazy_exact<CGAL::Eaxct_rational>`, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
+  */
+  void operator()(Point_2 p);
+};
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_to_exact `Float_grid_snap_rounding_traits_2::r_to_exact` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_to_exact `Double_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsEnd
+*/
+class ConverterToExact
+{
+  public:
+  typedef unspecified_type InputPoint_2;
+  typedef unspecified_type InputSegment_2;
+  /*!
+  converts a point of the input type to the point type defined by the traits
+  */
+  Point_2 operator()(InputPoint_2 p);
+  /*!
+  converts a segment of the input type to the segment type defined by the traits
+  */
+  Segment_2 operator()(InputSegment_2 p);
+};
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_from_exact `Float_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsBare{\link VerticalSlabSnapRoundingTraits_2::Converter_from_exact `Double_grid_snap_rounding_traits_2::Converter_to_exact` \endlink}
+  \cgalHasModelsEnd
+*/
+class ConverterFromExact
+{
+  public:
+  typedef unspecified_type OutputPoint_2;
+  typedef unspecified_type OutputSegment_2;
+  /*!
+  Convert points (i.e. segments) of the type of the traits into points (i.e. segments) of the output
+  */
+  OutputPoint_2 operator()(Point_2 p);
+  OutputSegment_2 operator()(Segment_2 p);
+};
+
+
+
+} /* end of namespace VSSRTraits_2 */
