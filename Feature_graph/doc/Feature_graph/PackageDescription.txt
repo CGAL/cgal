@@ -27,7 +27,7 @@
 \cgalPkgDesc{
 This package provides methods to extract a feature graph from three-dimensional surface data.
 A feature graph is a data structure that represent the sharp lines on the surface.
-The lines are represented as a sequence of 3D Points so that they can be used for future mesh generation.}
+The goal of the feature detection methods is to construct lines that can be used for future mesh generation.}
 \cgalPkgManuals{Chapter_Feature_Graph,PkgFeatureGraphRef}
 \cgalPkgSummaryEnd
 
@@ -63,26 +63,22 @@ Secondary concepts:
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Feature_graph`
-- `CGAL::Optimization_parameters`
+- `CGAL::Optimization_parameters_on_image`
+- `CGAL::Optimization_parameters_on_surface`
 
 \cgalCRPSection{Feature graph creation functors}
 
-- `CGAL::Detect_sharp_features_in_labelled_image()`
-- `CGAL::Detect_sharp_features_in_surface()`
+- `CGAL::Detect_sharp_features_on_labeled_image()`
+- `CGAL::Detect_sharp_features_on_surface()`
 
 \cgalCRPSection{Sharpness estimators}
 
-- `CGAL::AmbrosioTortorelli_on_image:Sharpness_functor`
+- `CGAL::AmbrosioTortorelli_on_image::Sharpness_functor`
 - `CGAL::Sharpness_estimator::Sharpness_estimator_on_surface`
 
 \cgalCRPSection{Normal estimators}
 
 - `CGAL::AmbrosioTortorelli_on_image::Normal_functor`
 - `CGAL::Normal_estimator::Normal_estimator_on_surface`
-
-\cgalCRPSection{Element type tags}
-
-- `CGAL::Element_type`
 
 */

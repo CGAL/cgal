@@ -5,10 +5,10 @@ namespace CGAL {
 *
 * Functor for sharp feature detection in labeled images.
 */
-struct Detect_sharp_features_in_labelled_image
+struct Detect_sharp_features_on_labeled_image
 {
   /*!
-  * \brief Detects and constructs the feature graph from a labelled image
+  * \brief detects and constructs the feature graph from a labeled image
   *
   * The feature graph has polylines that lie on the
   * sharp features of the surface defined by the image's subdomains.
@@ -21,7 +21,7 @@ struct Detect_sharp_features_in_labelled_image
   * It defines the feature graph point type.
   *
   * \tparam Image class model of `FeatureImage_3`.
-  * It represent a labelled image.
+  * It represent a labeled image.
   *
   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
@@ -34,7 +34,7 @@ struct Detect_sharp_features_in_labelled_image
   *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
   *     \cgalParamDefault{`CGAL::AmbrosioTortorelli_on_image(image).get_sharpness_functor()`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{regularization_distance}
+  *   \cgalParamSectionBegin{regularization_line_distance}
   *     \cgalParamDescription{a threshold on the distance between lines.
   *     In the regularization step, if the maximum distance of a line to another line
   *     is less than this threshold, then the line is collapsed.
@@ -46,6 +46,21 @@ struct Detect_sharp_features_in_labelled_image
   *     </UL>}
   *     \cgalParamDefault{`FT(4.0)`}
   *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{regularization_isthmus_distance}
+  *     \cgalParamDescription{a threshold on the distance of between an isthmus line and any line.
+  *     An isthmus line is bounded by a corner that is incident to only the same line.
+  *     In the regularization step, if the maximum distance of an ithmus line to another line
+  *     is less than this threshold, then the line is collapsed.
+  *     It can be a constant or a functor.
+  *     If it is a functor, it must implement
+  *     <UL>
+  *       <LI> `template <typename Element_type_tag, typename Index>`
+  *       <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *     </UL>}
+  *     \cgalParamDefault{`FT(0)`}
+  *   \cgalParamExtra{If this parameter is ommited, isthmus lines will be collapsed
+  *                   according to `parameters::regularization_line_distance`.}
+  *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{do_optimize}
   *     \cgalParamDescription{a boolean indicating if the optimization step is called.}
   *     \cgalParamDefault{`true`}
@@ -53,7 +68,7 @@ struct Detect_sharp_features_in_labelled_image
   *   \cgalParamSectionBegin{optimization_parameters}
   *     \cgalParamDescription{an instance of `Optimization_parameters`.
   *     It describe the parameters for the optimization step.}
-  *     \cgalParamDefault{`CGAL::Optimization_parameters_in_image()`}
+  *     \cgalParamDefault{`CGAL::Optimization_parameters_on_image()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
@@ -61,19 +76,18 @@ struct Detect_sharp_features_in_labelled_image
   *     It must be a model of `WritablePropertyMap`,
   *     so it must implement `put(output_pmap, point_index, element_index)`
   *     where the key type is the point index type and the value type the element index type.
-  *     The element index correspond to surface element with the tag `CGAL::Element_type::Surface`}
+  *     The element index correspond to surface element with the tag `CGAL::DimensionTag<2>`}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
   *
-  * \returns a `CGAL::Feature_graph<Point>`
+  * \returns a graph model of `VertexAndEdgeListGraph`
   * containing the constructed features.
   *
-  * \sa `Detect_sharp_features_in_surface::oprator()()`
+  * \sa `Detect_sharp_features_on_surface::oprator()()`
   */
   template<typename Point_3, typename Image, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  CGAL::Feature_graph<Point_3>
-  operator()(const Image& image, const CGAL_NP_CLASS& np = parameters::default_values()) const;
+  unspecified_type operator()(const Image& image, const CGAL_NP_CLASS& np = parameters::default_values()) const;
 };
 
 /*!
@@ -81,10 +95,10 @@ struct Detect_sharp_features_in_labelled_image
 *
 * Functor for sharp feature detection in surfaces.
 */
-struct Detect_sharp_features_in_surface
+struct Detect_sharp_features_on_surface
 {
   /*!
-  * \brief Detects and constructs the feature graph from a surface
+  * \brief detects and constructs the feature graph from a surface
   *
   * The feature graph has polylines that lie on the
   * sharp features of the surface.
@@ -107,7 +121,7 @@ struct Detect_sharp_features_in_surface
   *     \cgalParamDescription{a threshold on the distance between lines.
   *     In the regularization step, if the maximum distance of a line to another line
   *     is less than this threshold, then the line is collapsed.
-  *     It can be a constant or a functional.
+  *     It can be a constant or a functor.
   *     If it is a functor, it must implement
   *     <UL>
   *       <LI> `template <typename Element_type_tag, typename Index>`
@@ -122,7 +136,7 @@ struct Detect_sharp_features_in_surface
   *   \cgalParamSectionBegin{optimization_parameters}
   *     \cgalParamDescription{an instance of `Optimization_parameters`.
   *     It describe the parameters for the optimization step.}
-  *     \cgalParamDefault{`CGAL::Optimization_parameters_in_surface()`}
+  *     \cgalParamDefault{`CGAL::Optimization_parameters_on_surface()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
@@ -130,17 +144,16 @@ struct Detect_sharp_features_in_surface
   *     It must be a model of `WritablePropertyMap`,
   *     so it must implement `put(output_pmap, point_index, element_index)`
   *     where the key type is the point index type and the value type the element index type.
-  *     The element index correspond to surface element with the tag `CGAL::Element_type::Surface`}
+  *     The element index correspond to surface element with the tag `CGAL::DimensionTag<2>`}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
   *
-  * \returns a `CGAL::Feature_graph<Point>`
+  * \returns a graph model of `VertexAndEdgeListGraph`
   * containing the constructed features.
   */
   template<typename Point_3, typename Surface, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  CGAL::Feature_graph<Point_3>
-  operator()(const Surface& surface, const CGAL_NP_CLASS& np = parameters::default_values()) const;
+  unspecified_type operator()(const Surface& surface, const CGAL_NP_CLASS& np = parameters::default_values()) const;
 };
 
 

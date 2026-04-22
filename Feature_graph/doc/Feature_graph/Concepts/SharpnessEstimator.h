@@ -18,35 +18,35 @@ public:
 /// \name Types
 /// @{
 
-  /*!
-  \brief The type of the sharpness value.
-  It is a scalar constructible from the integer 0.
-  \cgalModels{RealEmbeddable}
-  */
-  typedef unspecified_type Sharpness_value_type;
+/*!
+\brief The type of the sharpness value.
+It is a scalar constructible from the integer 0.
+\cgalModels{RealEmbeddable}
+*/
+typedef unspecified_type Sharpness_value_type;
 
 /// @}
 
 /// \name Functor
 /// @{
 
-  /*!
-  \brief Returns the sharpness value of the surface element described by a type and an index.
-  A low sharpness value should represent a flat area,
-  while a high value implies a sharp feature.
-  For two sharpness values `A` and `B`,
-  the value `A` is has a higher sharpness value iff `B < A`.
-  Negative values represent smooth areas that should be erased in the
-  selection step of the feature graph extraction method.
+/*!
+\brief returns the sharpness value of the surface element described by a type and an index.
+A low sharpness value should represent a flat area,
+while a high value implies a sharp feature.
+For two sharpness values `A` and `B`,
+the value `A` is has a higher sharpness value iff `B < A`.
+Negative values represent smooth areas that should be erased in the
+selection step of the feature graph extraction method.
 
-  \tparam Element_type_tag a tag that represent the element type.
-          Can be `CGAL::Element_type::Point`, `CGAL::Element_type::line` or `CGAL::Element_type::Surface`
-  \tparam Index the type of index of the element to evaluate.
+\tparam DimensionTag a tag that represent the element type.
+        Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or CGAL::Dimension_tag<2>`
+\tparam Index the type of index of the element to evaluate.
 
-  \param element_index the index of the element to evaluate.
-  */
-  template <typename Element_type_tag, typename Index>
-  Sharpness_value_type operator()(const Index& element_index) const;
+\param element_index the index of the element to evaluate.
+*/
+template <typename DimensionTag, typename Index>
+Sharpness_value_type operator()(const Index& element_index) const;
 
 /// @}
 

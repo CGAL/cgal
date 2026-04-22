@@ -39,7 +39,7 @@ public:
   /// @{
 
   /*!
-  Evaluates the normal and sharpness values using the Ambrosio-Tortorelli energy optimization.
+  evaluates the normal and sharpness values using the Ambrosio-Tortorelli energy optimization.
 
   \tparam Image the image type model of `FeatureImage_3`
   \tparam FT a model of `RealEmbeddable`
@@ -58,11 +58,11 @@ public:
   /// @{
 
   /*!
-  Returns the functor that allows to retrieve the sharpness values.
+  returns the functor that allows to retrieve the sharpness values.
   */
   Sharpness_functor get_sharpness_functor() const;
   /*!
-  Returns the functor that allows to retrieve the normals.
+  returns the functor that allows to retrieve the normals.
   */
   Normal_functor get_normal_functor() const;
 

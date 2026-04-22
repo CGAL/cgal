@@ -2,7 +2,7 @@
 \ingroup PkgFeatureGraphConcepts
 \cgalConcept
 
-The concept 'Normal_estimator' describes a functor that
+The concept 'NormalEstimator' describes a functor that
 extracts the normal for a surface element.
 
 \cgalHasModelsBegin
@@ -18,27 +18,27 @@ public:
 /// \name Types
 /// @{
 
-  /*!
-  The type of the normal vector model of `Kernel::Vector_3`
-  */
-  typedef unspecified_type Normal_type;
+/*!
+The type of the normal vector model of `Kernel::Vector_3`
+*/
+typedef unspecified_type Normal_type;
 
 /// @}
 
 /// \name Functor
 /// @{
 
-  /*!
-  \brief Returns the normal vector of the surface element described by a type and an index.
+/*!
+\brief returns the normal vector of the surface element described by a type and an index.
 
-  \tparam Element_type_tag a tag that represent the element type.
-          Can be `CGAL::Element_type::Point`, `CGAL::Element_type::line` or `CGAL::Element_type::Surface`
-  \tparam Index the type of index of the element to evaluate.
+\tparam DimensionTag a tag that represent the element type.
+        Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or CGAL::Dimension_tag<2>`
+\tparam Index the type of index of the element to evaluate.
 
-  \param element_index the index of the element to evaluate.
-  */
-  template <typename Element_type_tag, typename Index>
-  Normal_type operator()(const Index& element_index) const;
+\param element_index the index of the element to evaluate.
+*/
+template <typename DimensionTag, typename Index>
+Normal_type operator()(const Index& element_index) const;
 
 /// @}
 

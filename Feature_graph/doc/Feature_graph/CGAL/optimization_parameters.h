@@ -5,15 +5,15 @@ namespace CGAL
 
 \ingroup PkgFeatureGraphRef
 
-The class `Optimization_parameters` is a model of `OptimizationParameters`.
-It describes the parameters for the optimization step.
+The class `Optimization_parameters` describes the parameters for the optimization step.
+It contains constant values and a normal estimator.
 
 \tparam Normal_estimator a model of `NormalEstimator`.
 
-\cgalModels{OptimizationParameters}
-
-\sa `CGAL::Detect_sharp_features_in_labelled_image`
-\sa `CGAL::Detect_sharp_features_in_surface`
+\sa `CGAL::Optimization_parameters_on_image`
+\sa `CGAL::Optimization_parameters_on_surface`
+\sa `CGAL::Detect_sharp_features_on_labeled_image`
+\sa `CGAL::Detect_sharp_features_on_surface`
 
 */
 
@@ -46,7 +46,7 @@ public:
   /// @{
 
   /*!
-  Construct the parameters used to optimize the feature graph placement on a suface.
+  constructs the parameters used to optimize the feature graph placement on a suface.
 
   \param maximum_iteration the maximum number of iteration of the gradient descent.
   \param start_step_size the step size at the first iteration of the gradient descent.
@@ -79,43 +79,43 @@ public:
   /// @{
 
   /*!
-  Returns the maximum number of iteration of the gradient descent.
+  returns the maximum number of iteration of the gradient descent.
   */
   Size maximum_number_of_iteration() const;
   /*!
-  Returns the step size at the first iteration of the gradient descent.
+  returns the step size at the first iteration of the gradient descent.
   */
   FT start_step_size() const;
   /*!
-  Returns the step size at the last iteration of the gradient descent.
+  returns the step size at the last iteration of the gradient descent.
   */
   FT end_step_size() const;
   /*!
-  Returns the minimum energy change to stop the gradient descent iterations.
+  returns the minimum energy change to stop the gradient descent iterations.
   */
   FT mininmum_energy_delta() const;
   /*!
-  Returns the distance to collapse adjacent points in a line during the gradient descent.
+  returns the distance to collapse adjacent points in a line during the gradient descent.
   */
   FT collapse_distance() const;
   /*!
-  Returns the smoothing factor of the energy.
+  returns the smoothing factor of the energy.
   0 means no smoothing,
   1 means that the energy will consider smoothing with the same weight
   as the displacement toward the sharp features of the surface.
   */
   FT smooth_factor() const;
   /*!
-  Returns the distance to refine the normals of elements near the sharp features.
+  returns the distance to refine the normals of elements near the sharp features.
   */
   FT refine_normal_distance() const;
   /*!
-  Returns the distance to collect elements near the sharp features
+  returns the distance to collect elements near the sharp features
   to determine the adjacent planes.
   */
   FT plane_detection_distance() const;
   /*!
-  Returns a functor that estimates the normal on an element.
+  returns a functor that estimates the normal on an element.
   */
   Normal_estimator normal_estimator() const;
 
@@ -123,8 +123,23 @@ public:
 
 };
 
+/*!
+
+\ingroup PkgFeatureGraphRef
+
+The class `Optimization_parameters_on_image` describes the parameters for the optimization step
+with default values adapted for image inputs.
+
+\tparam Normal_estimator a model of `NormalEstimator`.
+
+\sa `CGAL::Optimization_parameters_on_surface`
+\sa `CGAL::Detect_sharp_features_on_labeled_image`
+\sa `CGAL::Detect_sharp_features_on_surface`
+
+*/
+
 template <typename NormalEstimator = CGAL::Normal_estimator::AmbrosioTortorelli_on_image>
-class Optimization_parameters_in_image :
+class Optimization_parameters_on_image :
 public Optimization_parameters<NormalEstimator>
 {
 private:
@@ -151,7 +166,7 @@ public:
   /// @{
 
   /*!
-  Construct the parameters used to optimize the feature graph placement on a suface.
+  constructs the parameters used to optimize the feature graph placement on a suface.
 
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -205,14 +220,29 @@ public:
   \param normal_estimator a functor to evaluate the normals on elements.
   */
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
-  Optimization_parameters_in_image(
+  Optimization_parameters_on_image(
     const CGAL_NP_CLASS& np = parameters::default_values());
 
   /// @}
 };
 
+/*!
+
+\ingroup PkgFeatureGraphRef
+
+The class `Optimization_parameters_on_image` describes the parameters for the optimization step
+with default values adapted for surface inputs.
+
+\tparam Normal_estimator a model of `NormalEstimator`.
+
+\sa `CGAL::Optimization_parameters_on_image`
+\sa `CGAL::Detect_sharp_features_on_labeled_image`
+\sa `CGAL::Detect_sharp_features_on_surface`
+
+*/
+
 template <typename NormalEstimator = CGAL::Normal_estimator::Normal_estimator_on_surface>
-class Optimization_parameters_in_surface :
+class Optimization_parameters_on_surface :
 public Optimization_parameters<NormalEstimator>
 {
 private:
@@ -239,7 +269,7 @@ public:
   /// @{
 
   /*!
-  Construct the parameters used to optimize the feature graph placement on a suface.
+  constructs the parameters used to optimize the feature graph placement on a suface.
 
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -292,7 +322,7 @@ public:
   \param normal_estimator a functor to evaluate the normals on elements.
   */
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
-  Optimization_parameters_in_surface(
+  Optimization_parameters_on_surface(
     const CGAL_NP_CLASS& np = parameters::default_values());
 
   /// @}
