@@ -124,8 +124,8 @@ public:
     }
 
     Data& operator[](const Key& key) {
-        auto [it, inserted] = m_map.try_emplace(m_hash_function(key), m_default_value);
-        return it->second;
+        return m_map.try_emplace(
+            m_hash_function(key), m_default_value).first->second;
     }
 
     Data insert( Key first1, Key beyond1, Data first2) {
