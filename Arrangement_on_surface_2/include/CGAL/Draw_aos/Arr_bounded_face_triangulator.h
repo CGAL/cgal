@@ -158,8 +158,8 @@ private:
     auto index_to_point_with_info = [this](int idx) -> KPoint_with_index {
       return std::make_pair(to_kpoint(m_points[idx]), idx);
     };
-    auto indexes_begin = boost::make_counting_iterator<int>(0);
-    auto indexes_end = boost::make_counting_iterator<int>(m_points.size());
+    auto indexes_begin = boost::make_counting_iterator<std::size_t>(0);
+    auto indexes_end = boost::make_counting_iterator<std::size_t>(m_points.size());
     auto filtered_begin = boost::make_filter_iterator(vertex_filter, indexes_begin, indexes_end);
     auto filtered_end = boost::make_filter_iterator(vertex_filter, indexes_end, indexes_end);
     auto transformed_begin = boost::make_transform_iterator(filtered_begin, index_to_point_with_info);
