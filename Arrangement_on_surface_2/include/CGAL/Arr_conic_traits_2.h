@@ -1840,7 +1840,7 @@ public:
       return oi;
     }
 
-    /*! adds either an elliptic or a hyperbilc point.
+    /*! adds either an elliptic or a hyperbolic point.
      * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
      * In our parametric representations for ellipses and hyperbolas the
      * following holds:
@@ -1946,7 +1946,7 @@ public:
       return oi;
     }
 
-    /*! adds either an elliptic or a hyperbilc point.
+    /*! adds either an elliptic or a hyperbolic point.
      * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
      * In our parametric representations for ellipses and hyperbolas the
      * following holds:
@@ -4206,9 +4206,9 @@ public:
     auto a_sqr = numerator / (4*r_m*r_m*s_m);
     auto b_sqr = -numerator / (4*r_m*s_m*s_m);
 
-    /* If the conjugate axis of the canonical hyperbula is the 𝑌-axis, shift
-     * the canonical hyperbula by 90, essentially, converting the canonical
-     * hyperbula to one the conjugate axis of which is the 𝑋-axis, as the
+    /* If the conjugate axis of the canonical hyperbola is the 𝑌-axis, shift
+     * the canonical hyperbola by 90, essentially, converting the canonical
+     * hyperbola to one the conjugate axis of which is the 𝑋-axis, as the
      * remaining code assume that the conjugate axis is the 𝑋-axis.
      * Here,
      * 1. a_sqr = -a_sqr, b_sqr = -b_sqr, and
