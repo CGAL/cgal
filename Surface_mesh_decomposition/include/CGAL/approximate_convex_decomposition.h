@@ -1584,7 +1584,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
  * \pre `tmesh` is not self-intersecting.
  * \pre CGAL::is_closed(`tmesh`).
  *
- * \note If the input mesh is not closed, we recommand to first use the function `CGAL::alpha_wrap_3()` to generate an enclosing of the input mesh to apply this function onto.
+ * \note If the input mesh is not closed, we recommend to first use the function `CGAL::alpha_wrap_3()` to generate an enclosing of the input mesh to apply this function onto.
  *
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
