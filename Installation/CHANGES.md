@@ -11,7 +11,7 @@ Release date: July 2026
   - Gnu g++ 13.3.0 or later (on Linux)
   - LLVM Clang version 22.0.0 or later (on Linux)
   - Apple Clang compiler versions 14.0.0 or later (on macOS)
-- The minimal supported version of Boost is still 1.74.0, but only versions 1.79.0 or later were tested.
+- The minimal supported version of Boost is still 1.74.0, but only versions 1.79.0 and later were tested.
 
 ### [2D Alpha Wrapping](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2) (new package)
 
@@ -29,10 +29,8 @@ Release date: July 2026
 ### [Generalized Barycentric Coordinates 3](https://doc.cgal.org/6.2/Manual/packages.html#PkgBarycentricCoordinates3) (new package)
 
 - This package provides functions to compute various types of generalized barycentric coordinates
-  (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside closed convex
-  3D polyhedra.
-
-  See also the associated [news entry](XXX).
+  (Wachspress, mean value, discrete harmonic and tetrahedron coordinates) for points located inside
+  closed convex 3D polyhedra.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing) (major changes)
 
@@ -67,10 +65,10 @@ Release date: July 2026
   - [`!Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#ada27f27602757133ea7b9814ada00ba3)
 - Added a new concept, [`CompareProjectionAlongDirection_3`](https://doc.cgal.org/6.2/Kernel_23/classKernel_1_1CompareProjectionAlongDirection__3.html),
   to the [`Kernel`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html)
-  concept to compare the order of projected points on a line. Corresponding functors in the model,
+  concept to compare the order of point projections onto a line. Corresponding functors in the model,
   [`Compare_projection_along_direction_3`](https://doc.cgal.org/6.2/Kernel_23/classKernel.html#a4b7686814790650efe8f8b6612af3b80),
   and free function, [`compare_projection_along_direction()`](https://doc.cgal.org/6.2/Kernel_23/group__kernel__global__function.html#ga2ba880adb55cea48d3568ccd1f4765a4),
-  have also been added.
+  have been added.
 
 ### [Intersecting Sequences of dD Iso-oriented Boxes](https://doc.cgal.org/6.2/Manual/packages.html#PkgBoxIntersectionD)
 
@@ -93,16 +91,16 @@ Release date: July 2026
 
 ### [2D Intersection of Curves](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceSweep2)
 
-- The function [`CGAL::do_curves_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#gadb96b95f091371e834e3f7b4d24f7bb4), which assumed open curves, has been deprecated and replaced by
-  the function [`CGAL::Surface_sweep_2::do_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#ga6de86b9ce9ed5537d371142716cf8adf).
-  Notice (i) the introduction of the new namespace `Surface_sweep_2`,
-  and (ii) the addition of the `closed` parameter, which defaults to `true`. To match the behavior of the
-  deprecated function, set `closed` to false.
+- The function [`CGAL::do_curves_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#gadb96b95f091371e834e3f7b4d24f7bb4),
+  which assumed open curves, has been deprecated and replaced by the function [`CGAL::Surface_sweep_2::do_intersect()`](https://doc.cgal.org/6.2/Surface_sweep_2/group__PkgSurfaceSweep2Ref.html#ga6de86b9ce9ed5537d371142716cf8adf).
+  Notice: (i) the introduction of the new namespace `Surface_sweep_2`,
+  and (ii) the addition of the `closed` parameter, which defaults to `true`.
+  To match the behavior of the deprecated function, set `closed` to false.
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.2/Manual/packages.html#PkgBooleanSetOperations2)
 
 - Optimized [`do_intersect()`](https://doc.cgal.org/6.2/Boolean_set_operations_2/group__boolean__do__intersect.html):
-  - (i) made it robust even with an inexact-predicate kernel, and
+  - (i) made it robust even with an inexact-predicates kernel, and
   - (ii) made it quit once an intersection is detected. (In the past, the intersection was computed
     in one phase and examined in a subsequent phase.) This optimization somehow breaks backward compatibility
     as follows: the variants of the free function `do_intersect()` that accept a third optional parameter,
@@ -115,13 +113,10 @@ Release date: July 2026
 
 - Added the function [`CGAL::Convex_hull_3::do_intersect()`](https://doc.cgal.org/6.2/Convex_hull_3/group__PkgConvexHull3Intersections.html#gaf41281925d9bf8b5b0c6e13851d900c7),
   which can be used to test for intersection between two convex hulls.
-- Added the functions [`CGAL::extreme_point_3()`](https://doc.cgal.org/6.2/Convex_hull_3/group__PkgConvexHull3Queries.html#ga329e2cdfdc3bdf89a47073c277ce202d),
+- Added the function [`CGAL::extreme_point_3()`](https://doc.cgal.org/6.2/Convex_hull_3/group__PkgConvexHull3Queries.html#ga329e2cdfdc3bdf89a47073c277ce202d),
   which returns the farthest point of a convex hull in a given direction.
 - Added the class [`CGAL::Convex_hull_hierarchy_3`](https://doc.cgal.org/6.2/Convex_hull_3/structCGAL_1_1Convex__hull__hierarchy__3.html),
-  which is represents a convex hull, and is optimized for use with the above functions.
-
-### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
-- Added the function `CGAL::approximate_convex_decomposition()` that computes a set of convex volumes that cover an input mesh.
+  which represents a convex hull, and is optimized for the functions above.
 
 ### [2D Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulation2)
 
@@ -143,10 +138,14 @@ Release date: July 2026
   as well as the constructor of [`CGAL::Polyhedral_mesh_domain_with_features_3`](https://doc.cgal.org/6.2/Mesh_3/classCGAL_1_1Polyhedral__mesh__domain__with__features__3.html)
     that takes a filename as parameter, which were deprecated since CGAL-4.5.
 - **Breaking change**: Added the requirement for a nested type `Iso_cuboid_3` to the concept [`BisectionGeometricTraits_3`](https://doc.cgal.org/6.2/Mesh_3/classBisectionGeometricTraits__3.html).
-- Feature line protection is now significantly faster.
+- Protection of sharp edges (also known as "feature line") is now significantly faster.
 
 ### [dD Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulations)
 - Computation of convex hulls in high dimensions is now significantly faster.
+
+### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
+- Added the function `CGAL::approximate_convex_decomposition()`, which computes a set of convex volumes
+  that cover an input mesh.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing)
 
@@ -185,8 +184,8 @@ Release date: July 2026
 ### [Polygon Mesh Processing (Mesh Repair)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPMeshRepair)
 - Added the named parameter `erase_policy` to [`CGAL::Polygon_mesh_processing::repair_polygon_soup()`](https://doc.cgal.org/6.2/PMP_Mesh_repair/group__PMP__combinatorial__repair__grp.html#ga3b35133783759402828325b91ab559cc) and
   [`CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`](https://doc.cgal.org/6.2/PMP_Mesh_repair/group__PMP__combinatorial__repair__grp.html#ga1f215926ed8794db827e2993d2960870).
-  This parameter offers three policies: erase all duplicates polygons,
-  keep one of the duplicates (default), and keep one iff the number of duplicates is odd.
+  This parameter offers three policies: (i) erase all duplicates polygons,
+  (ii) keep one of the duplicates (default), and (iii) keep one iff the number of duplicates is odd.
   The named parameter `erase_all_duplicates` is now deprecated.
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.2/Manual/packages.html#PkgOrthtree)
@@ -241,7 +240,7 @@ Release date: July 2026
   - [`CGAL::Random_points_on_segment_3`](https://doc.cgal.org/6.2/Generator/classCGAL_1_1Random__points__on__segment__3.html),
   - [`CGAL::Random_points_in_triangle_soup_3`](https://doc.cgal.org/6.2/Generator/structCGAL_1_1Random__points__in__triangle__soup__3.html), and
   - [`CGAL::Random_points_on_graph_edges_3`](https://doc.cgal.org/6.2/Generator/structCGAL_1_1Random__points__on__graph__edges__3.html)
-- Added the function [`point_and_support()`]()
+- Added the function `point_and_support()`
   to several generators to get the last point generated point and the support element containing it.
   Affected generators are:
   - [`CGAL::Random_points_in_triangles_2`](https://doc.cgal.org/6.2/Generator/structCGAL_1_1Random__points__in__triangles__2.html),
