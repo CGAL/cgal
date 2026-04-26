@@ -92,7 +92,7 @@ inline constexpr FT default_extrusion_height()
 #define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 
-// The purpose of this visitor is to snap back almost-vertical (see preprocessing_weights()) edges
+// The purpose of this visitor is to snap back almost-vertical (see preprocess_weights()) edges
 // to actual vertical slabs.
 template <typename HDS, typename GeomTraits>
 typename GeomTraits::Point_2
@@ -208,7 +208,7 @@ public:
   // can't modify the position yet because we need arrange_polygons() to still work properly
   //
   // @fixme on paper one could create a polygon thin-enough w.r.t. the max weight value
-  // such thatthere is a skeleton vertex that wants to be snapped to two different sides...
+  // such that there is a skeleton vertex that wants to be snapped to two different sides...
   void on_offset_point(const Point_2& op,
                        SS_Halfedge_const_handle hook) const
   {
@@ -338,10 +338,6 @@ public:
                                   FaceRange& faces,
                                   const bool invert_faces = false)
   {
-#ifdef CGAL_SLS_DEBUG_DRAW
-    CGAL::draw(p);
-#endif
-
     CDT cdt;
 
     try
@@ -429,10 +425,6 @@ public:
       points.push_back(pcdt.point(vh));
       vh->info() = id++;
     }
-
-#ifdef CGAL_SLS_DEBUG_DRAW
-    // CGAL::draw(pcdt);
-#endif
 
     std::unordered_map<PCDT_Face_handle, bool> in_domain_map;
     boost::associative_property_map< std::unordered_map<PCDT_Face_handle, bool> > in_domain(in_domain_map);
@@ -680,7 +672,7 @@ public:
     }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-    // print_straight_skeleton(*ss_ptr);
+    Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
     CGAL::draw(*ss_ptr);
 #endif
 
@@ -776,7 +768,7 @@ public:
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      // print_straight_skeleton(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
       CGAL::draw(*ss_ptr);
 #endif
 
@@ -832,7 +824,7 @@ public:
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      // print_straight_skeleton(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
       CGAL::draw(*ss_ptr);
 #endif
 
