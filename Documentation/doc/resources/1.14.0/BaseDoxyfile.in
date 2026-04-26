@@ -461,6 +461,9 @@ ALPHABETICAL_INDEX     = NO
 # Configuration options related to the HTML output
 #---------------------------------------------------------------------------
 
+#workaround removal of jquery in recent versions of doxygen
+HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCE_DIR}/jquery.js
+
 #
 # To get valid HTML the header file that includes any scripts and style sheets
 # that Doxygen needs, which is dependent on the configuration options used (e.g.
