@@ -144,8 +144,8 @@ Release date: July 2026
 - Computation of convex hulls in high dimensions is now significantly faster.
 
 ### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
-- Added the function `CGAL::approximate_convex_decomposition()`, which computes a set of convex volumes
-  that cover an input mesh.
+- Added the function [`CGAL::approximate_convex_decomposition()`](https://doc.cgal.org/6.2/Convex_decomposition_3/group__PkgConvexDecomposition3Ref.html#ga98ed6393d56fc2eac2ad82a55af84b2f),
+  which computes a set of convex volumes that cover an input mesh.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.2/Manual/packages.html#PkgPolygonMeshProcessing)
 
@@ -160,7 +160,7 @@ Release date: July 2026
 - Added the function [`CGAL::Polygon_mesh_processing::kernel()`](https://doc.cgal.org/6.2/PMP_Boolean_operations/group__PMP__kernel__grp.html#ga778059f8efd21fb9a9ffc7ede16c5abc),
   which can be used to compute the kernel of a polygon mesh, and is significantly faster
   than halfspace intersections.
-- Added the function [`CGAL::Polygon_mesh_processing::has_empty_kernel()`](https://doc.cgal.org/6.2/PMP_Boolean_operations/group__PMP__kernel__grp.html#ga778059f8efd21fb9a9ffc7ede16c5abc),
+- Added the function [`CGAL::Polygon_mesh_processing::has_empty_kernel()`](https://doc.cgal.org/6.2/PMP_Boolean_operations/group__PMP__kernel__grp.html#gaf5b25f2dc1e3d96e9f81ed182f9600de),
   which can be used to determine if the kernel of a polygon mesh is empty.
 - Added the function [`CGAL::Polygon_mesh_processing::kernel_point()`](https://doc.cgal.org/6.2/PMP_Boolean_operations/group__PMP__kernel__grp.html#gaea657a1fbac5d35c3d51735c3ec2fede),
   which can be used to compute a single point inside the kernel of a polygon mesh.
@@ -210,21 +210,21 @@ Release date: July 2026
 
 ### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection)
 
-- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html)
+- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Plane__face__region.html)
   that extends the support plane of the seed face without refitting the plane to the region
 - Added the region type [`CGAL::Shape_detection::Polygon_mesh::Line_segment_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Line__segment__region.html)
   that extends the support line of the seed segment without refitting the line to the region
-- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html)
+- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Face__area__sorting.html)
   that provides a sorting of faces in descending order of area
 - Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Segment_length_sorting`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Segment__length__sorting.html)
   that provides a sorting of segments in descending order of length
-- Added the optional named parameter `face_normal_map` to [`CGAL::Shape_detection::Polygon_mesh::Linear_least_squares_fit_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_least__squares__plane__fit__region.html),
-  [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html);
-  and [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af)
+- Added the optional named parameter `face_normal_map` to [`CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Least__squares__plane__fit__region.html),
+  [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Plane__face__region.html);
+  and [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group__PMP__detect__features__grp.html#ga50dcd2f6295f584d2e378b57290ae2af)
   to allow the use of face normal property maps instead of calculating the face normals.
-- The [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html)
-  and [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html)
-  are now used as the default in [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af)
+- The [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Plane__face__region.html)
+  and [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Face__area__sorting.html)
+  are now used as the default in [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group__PMP__detect__features__grp.html#ga50dcd2f6295f584d2e378b57290ae2af)
 
 ### [Surface Mesh Simplification](https://doc.cgal.org/6.2/Manual/packages.html#PkgSurfaceMeshSimplification)
 
@@ -232,7 +232,7 @@ Release date: July 2026
   which improves other Garland-Heckbert strategies near sharp features.
 - **Breaking change**: [`CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h`](https://doc.cgal.org/6.2/Surface_mesh_simplification/group__PkgSurfaceMeshSimplificationRef.html#ga3f012cf5dc52d6e5ac2aea1106e4cad7)
   is is no longer deprecated and has become an alias for the current best Garland-Heckbert policy,
-  currently `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h`.
+  which is currently `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`.
 
 ### [Geometric Object Generators](https://doc.cgal.org/6.2/Generator/index.html)
 
@@ -254,7 +254,7 @@ Release date: July 2026
 ### [STL Extension](https://doc.cgal.org/6.2/Manual/packages.html#PkgSTLExtension)
 
 - Added new debugging utility for finding minimal failing test cases:
-  - [`CGAL::bisect_failures`](https://doc.cgal.org/6.2/STL_Extension/group__PkgSTLExtensionUtilities.html)
+  - [`CGAL::bisect_failures`](https://doc.cgal.org/6.2/STL_Extension/group__PkgSTLExtensionUtilities.html#gad56d708faac9063d3de057394a6d8c52)
     is a template function that uses bisection to isolate minimal failing subsets from complex input data.
 
 ### [Stream Support](https://doc.cgal.org/6.2/Manual/packages.html#PkgStreamSupport)
