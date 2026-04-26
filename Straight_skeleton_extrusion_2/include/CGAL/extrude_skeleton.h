@@ -16,6 +16,7 @@
 #include <CGAL/license/Straight_skeleton_extrusion_2.h>
 
 #ifdef CGAL_SLS_DEBUG_DRAW
+  #include <CGAL/Straight_skeleton_2/IO/print.h>
   #include <CGAL/draw_straight_skeleton_2.h>
   #include <CGAL/draw_polygon_2.h>
   #include <CGAL/draw_polygon_with_holes_2.h>
