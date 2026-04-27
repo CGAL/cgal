@@ -126,6 +126,17 @@ been inserted explicitly. Their variables are initialized to
 */
 bool is_defined( const Key& key) const;
 
+/*!
+returns true if \f$ key\f$ is
+defined in `*this`.
+*/
+bool contains(const Key& key) const;
+
+/*!
+Removes the element (if one exists) with the `key`
+and returns the number of elements removed (0 or 1).
+*/
+std::size_t erase(const Key& key);
 
 /*!
 sets the table size.

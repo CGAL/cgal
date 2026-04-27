@@ -117,6 +117,14 @@ public:
         return m_map.find(m_hash_function(key)) != m_map.end();
     }
 
+    bool contains(const Key& key) const {
+        return m_map.contains(m_hash_function(key));
+    }
+
+    std::size_t erase(const Key& key) {
+        return m_map.erase(m_hash_function(key));
+    }
+
     const Data& operator[](const Key& key) const {
         auto it = m_map.find(m_hash_function(key));
         if (it != m_map.end()) return it->second;
