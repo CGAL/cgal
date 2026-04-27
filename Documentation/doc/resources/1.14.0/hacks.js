@@ -1,4 +1,3 @@
-<script src="../Manual/jquery.js"></script>
 
 function generate_autotoc() {
     var toc = $("#autotoc").append('<ul></ul>');
