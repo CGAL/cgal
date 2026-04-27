@@ -85,7 +85,7 @@ namespace CGAL
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
-*           `Remeshing_triangulation` is a helper class that satisfies all the requirements
+*           `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` is a helper class that satisfies all the requirements
 *           of its template parameters.
 * @param sizing the target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
