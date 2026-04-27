@@ -17,6 +17,10 @@
 /// \ingroup PkgFeatureGraphRef
 /// The functors in this group allows to estimate the normal on surfaces.
 
+/// \defgroup PkgFeatureGraphParameter Parameter Class
+/// \ingroup PkgFeatureGraphRef
+/// The classes in this group provide various parameters for the feature detection
+
 /*!
 \addtogroup PkgFeatureGraphRef
 \cgalPkgDescriptionBegin{Feature graph,PkgFeatureGraph}
@@ -61,15 +65,17 @@ Secondary concepts:
 - `SharpnessEstimator`
 - `NormalEstimator`
 
-\cgalCRPSection{Classes}
-
-- `CGAL::Optimization_parameters_on_image`
-- `CGAL::Optimization_parameters_on_surface`
-
 \cgalCRPSection{Feature graph creation functors}
 
 - `CGAL::Detect_sharp_features_on_labeled_image()`
 - `CGAL::Detect_sharp_features_on_surface()`
+
+\cgalCRPSection{Parameter classes}
+
+- `CGAL::Regularization_parameters_on_image`
+- `CGAL::Regularization_parameters_on_surface`
+- `CGAL::Optimization_parameters_on_image`
+- `CGAL::Optimization_parameters_on_surface`
 
 \cgalCRPSection{Sharpness estimators}
 

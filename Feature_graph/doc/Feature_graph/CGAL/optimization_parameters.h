@@ -3,7 +3,7 @@ namespace CGAL
 
 /*!
 
-\ingroup PkgFeatureGraphRef
+\ingroup PkgFeatureGraphParameter
 
 The class `Optimization_parameters` describes the parameters for the optimization step.
 It contains constant values and a normal estimator.
@@ -125,7 +125,7 @@ public:
 
 /*!
 
-\ingroup PkgFeatureGraphRef
+\ingroup PkgFeatureGraphParameter
 
 The class `Optimization_parameters_on_image` describes the parameters for the optimization step
 with default values adapted for image inputs.
@@ -166,7 +166,7 @@ public:
   /// @{
 
   /*!
-  constructs the parameters used to optimize the feature graph placement on a suface.
+  constructs the parameters used to optimize the feature graph placement on the suface of an image.
 
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -228,7 +228,7 @@ public:
 
 /*!
 
-\ingroup PkgFeatureGraphRef
+\ingroup PkgFeatureGraphParameter
 
 The class `Optimization_parameters_on_image` describes the parameters for the optimization step
 with default values adapted for surface inputs.
