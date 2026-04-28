@@ -108,7 +108,7 @@ seg_seg_do_intersect_crossing(
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
     {
-      switch (k.orientation_2_object()(p3,p4,p2))
+      switch (make_certain(k.orientation_2_object()(p3,p4,p2)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i2);
@@ -122,7 +122,7 @@ seg_seg_do_intersect_crossing(
     }
     case RIGHT_TURN:
     {
-      switch (k.orientation_2_object()(p3,p4,p2))
+      switch (make_certain(k.orientation_2_object()(p3,p4,p2)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i2);
@@ -205,7 +205,7 @@ seg_seg_do_intersect_contained(
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
     {
-      switch (k.orientation_2_object()(p1,p2,p4))
+      switch (make_certain(k.orientation_2_object()(p1,p2,p4)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i4);
@@ -219,7 +219,7 @@ seg_seg_do_intersect_contained(
     }
     case RIGHT_TURN:
     {
-      switch (k.orientation_2_object()(p1,p2,p4))
+      switch (make_certain(k.orientation_2_object()(p1,p2,p4)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i4);
