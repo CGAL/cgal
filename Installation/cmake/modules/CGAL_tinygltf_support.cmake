@@ -1,8 +1,17 @@
 if(TINYGLTF_FOUND AND NOT TARGET CGAL::tinygltf_support)
-  add_library(CGAL::tinygltf_support INTERFACE IMPORTED)
-  #definition only needed for v2 series, off by default in v3
-  target_compile_definitions(CGAL::tinygltf_support INTERFACE TINYGLTF_NO_STB_IMAGE)
-  target_compile_definitions(CGAL::tinygltf_support INTERFACE TINYGLTF_NO_STB_IMAGE_WRITE)
-  set_target_properties(CGAL::tinygltf_support PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${TINYGLTF_INCLUDE_DIR}")
+  if (NOT nlohmann_json_FOUND)
+    find_package(nlohmann_json QUIET)
+    if (NOT nlohmann_json_FOUND)
+      message("JSON for Modern C++ (know as nlohmann_json) is required by the TinyGLTF library")
+    endif()
+  endif()
+
+  if (nlohmann_json_FOUND)
+    add_library(CGAL::tinygltf_support INTERFACE IMPORTED)
+    #definition only needed for v2 series, off by default in v3
+    target_compile_definitions(CGAL::tinygltf_support INTERFACE TINYGLTF_NO_STB_IMAGE)
+    target_compile_definitions(CGAL::tinygltf_support INTERFACE TINYGLTF_NO_STB_IMAGE_WRITE)
+    set_target_properties(CGAL::tinygltf_support PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${TINYGLTF_INCLUDE_DIR}")
+    target_link_libraries(CGAL::tinygltf_support INTERFACE nlohmann_json::nlohmann_json)
+  endif()
 endif()
