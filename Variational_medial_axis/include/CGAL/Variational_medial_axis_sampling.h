@@ -15,10 +15,6 @@
 
 #include <CGAL/license/Variational_medial_axis.h>
 
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_sphere_primitive_3.h>
-#include <CGAL/AABB_traits_3.h>
-#include <CGAL/AABB_tree.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Compact_container_with_index.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -28,7 +24,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Side_of_triangle_mesh.h>
-#include <CGAL/Fast_winding_number.h>
 #include <CGAL/point_generators_3.h>
 #include <Eigen/Dense>
 #include <algorithm>
@@ -57,7 +52,8 @@ class Medial_sphere
 public:
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
-  using Point_Index = typename Point_set_3<Point_3>::Index;
+  using Point_set = Point_set_3<Point_3>;
+  using Point_index = typename Point_set::Index;
   using Sphere_3 = typename GT::Sphere_3;
   using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
   using Sphere_ID = typename MSMesh::Sphere_ID;
@@ -68,7 +64,7 @@ public:
 
   Medial_sphere(const Sphere_3& s)
       : sphere_(s)
-      , split_point_idx_(Point_Index())
+      , split_point_idx_(Point_index())
       , error_(FT(0))
       , cluster_area_(FT(0))
       , do_not_split_(false)
@@ -76,7 +72,7 @@ public:
 
   Medial_sphere(Sphere_3&& s)
       : sphere_(std::move(s))
-      , split_point_idx_(Point_Index())
+      , split_point_idx_(Point_index())
       , error_(FT(0))
       , cluster_area_(FT(0))
       , do_not_split_(false)
@@ -84,7 +80,7 @@ public:
 
   void reset() {
     error_ = FT(0);
-    split_point_idx_ = Point_Index();
+    split_point_idx_ = Point_index();
     cluster_area_ = FT(0);
     neighbors_.clear();
     cluster_points_idx_.clear();
@@ -96,30 +92,30 @@ public:
   FT get_area() const { return cluster_area_; }
   Sphere_ID get_id() const { return id_; }
   const std::unordered_set<Sphere_ID>& get_neighbors() const { return neighbors_; }
-  Point_Index get_split_point_idx() const { return split_point_idx_; }
+  Point_index get_split_point_idx() const { return split_point_idx_; }
   FT get_error() const { return error_; }
 
   void set_center(const Point_3& p) { sphere_ = Sphere_3(p, get_radius() * get_radius()); }
   void set_radius(FT r) { sphere_ = Sphere_3(get_center(), r * r); }
   void set_cluster_area(FT area) { cluster_area_ = area; }
   void set_error(FT e) { error_ = e; }
-  void set_split_point(Point_Index idx) { split_point_idx_ = idx; }
+  void set_split_point(Point_index idx) { split_point_idx_ = idx; }
   void set_id(Sphere_ID id) { id_ = id; }
   void set_do_not_split(bool value) { do_not_split_ = value; }
-  std::vector<Point_Index>& get_cluster_points_idx() { return cluster_points_idx_; }
-  void add_cluster_point(Point_Index idx) { cluster_points_idx_.push_back(idx); }
+  std::vector<Point_index>& get_cluster_points_idx() { return cluster_points_idx_; }
+  void add_cluster_point(Point_index idx) { cluster_points_idx_.push_back(idx); }
   void accumulate_cluster_area(FT area) { cluster_area_ += area; }
   void add_neighbor(Sphere_ID id) { neighbors_.insert(id); }
-  bool can_split() const { return !do_not_split_ && split_point_idx_ != Point_Index(); }
+  bool can_split() const { return !do_not_split_ && split_point_idx_ != Point_index(); }
 
 private:
   Sphere_3 sphere_;
-  Point_Index split_point_idx_; // point chosen for split
+  Point_index split_point_idx_; // point chosen for split
   FT error_;
   FT cluster_area_;
   bool do_not_split_ = false; // flag to indicate if the sphere should not be split
   std::unordered_set<Sphere_ID> neighbors_;
-  std::vector<Point_Index> cluster_points_idx_;
+  std::vector<Point_index> cluster_points_idx_;
   Sphere_ID id_;
 };
 
@@ -510,11 +506,6 @@ private:
 ///         <b>%Default:</b> `CGAL::Sequential_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, `CGAL::Parallel_if_available_tag`
 ///
-///  @tparam AccelerationType
-///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.<br>
-///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
-///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
-///
 /// @tparam GeomTraits
 ///         a model of `Kernel`<br>
 ///         <b>%Default:</b>
@@ -539,7 +530,6 @@ private:
 
 template <typename TriangleMesh,
           typename ConcurrencyTag = Sequential_tag,
-          typename AccelerationType = KD_tree_tag,
           typename GeomTraits = Default,
           typename VertexPointMap = Default>
 class Variational_medial_axis_sampling
@@ -556,14 +546,15 @@ class Variational_medial_axis_sampling
   using MSMesh = Medial_sphere_mesh<TriangleMesh, GT>;
   using MSphere = typename MSMesh::MSphere;
   using Sphere_ID = typename MSMesh::Sphere_ID;
-  using Point_set = Point_set_3<Point_3>;
-  using Point_Index = typename Point_set::Index;
-  using KD_tree_search_traits = CGAL::Search_traits_3<GT>;
+  using Point_set = CGAL::Point_set_3<Point_3, Vector_3>;
+  using Point_index = typename Point_set::Index;
+  using Base_search_traits = CGAL::Search_traits_3<GT>;
+  using Search_traits = CGAL::Search_traits_adapter<Point_index, typename Point_set::Point_map, Base_search_traits>;
+  using KNN = CGAL::Orthogonal_k_neighbor_search<Search_traits>;
+  using Kd_tree = typename KNN::Tree;
 
-  using Tree = AABB_tree<AABB_traits_3<GT, AABB_face_graph_triangle_primitive<TriangleMesh, VPM>>>;
 
   using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   // Property map types
@@ -577,8 +568,6 @@ class Variational_medial_axis_sampling
   using Face_area_map = typename boost::property_map<TriangleMesh, Face_area_tag>::const_type;
   using Face_centroid_tag = CGAL::dynamic_face_property_t<Point_3>;
   using Face_centroid_map = typename boost::property_map<TriangleMesh, Face_centroid_tag>::const_type;
-
-  using FWN = CGAL::Fast_winding_number<TriangleMesh, Face_normal_map, Face_area_map, Face_centroid_map, Tree>;
 
 public:
 
@@ -740,10 +729,6 @@ public:
       nb_samples_ = desired_number_of_spheres_ * 100;
       // Sample the surface mesh
       sample_surface_mesh();
-      // Build AABB-tree
-      if constexpr(std::is_same_v<AccelerationType, KD_tree_tag>) {
-        tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
-      }
     }
 
     if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>) {
@@ -907,7 +892,7 @@ public:
    */
   void add_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
     auto sphere = sphere_mesh_->get_sphere(sphere_id);
-    Point_Index split_vertex = sphere.get_split_point_idx();
+    Point_index split_vertex = sphere.get_split_point_idx();
     Point_3 center = point_medial_sphere_pos_map_[split_vertex];
     FT radius = point_medial_sphere_radius_map_[split_vertex];
     sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
@@ -1020,7 +1005,7 @@ private:
     std::tie(point_error_map_, success) = tpoints_.template add_property_map<FT>("point_error", FT(0.));
     CGAL_assertion(success);
     std::tie(point_knn_map_, success) =
-        tpoints_.template add_property_map<std::vector<Point_Index>>("point_knn", std::vector<Point_Index>());
+        tpoints_.template add_property_map<std::vector<Point_index>>("point_knn", std::vector<Point_index>());
     CGAL_assertion(success);
     std::tie(point_cluster_sphere_map_, success) =
         tpoints_.template add_property_map<Sphere_ID>("point_cluster_sphere", MSMesh::INVALID_SPHERE_ID);
@@ -1029,6 +1014,7 @@ private:
 
     CGAL::Random rng(seed_);
 
+    // TODO: replace with poisson disk sampling
     CGAL::Random_points_in_triangle_mesh_3<TriangleMesh, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples_; ++i) {
       Point_3 p = *g;
@@ -1047,40 +1033,23 @@ private:
       point_area_map_[*it] = area / FT(nb_sample);
     }
 
+    // build the kd-tree from the sample points
+    kd_tree_ = std::make_unique<Kd_tree>(tpoints_.begin(), tpoints_.end(),
+                                         typename Kd_tree::Splitter(),
+                                         Search_traits(tpoints_.point_map()));
 
     // Compute k-nearest neighbors for each point
-    // The kd-tree is built temporarily here only for k-nearest neighbor search and discarded after this function
-    using Point_with_index = boost::tuple<Point_3, Point_Index>;
-    using BaseTraits = CGAL::Search_traits_3<GT>;
-    using Traits =
-        CGAL::Search_traits_adapter<Point_with_index, CGAL::Nth_of_tuple_property_map<0, Point_with_index>, BaseTraits>;
-    using KNN = CGAL::Orthogonal_k_neighbor_search<Traits>;
-    using Kd_tree = typename KNN::Tree;
-    std::vector<Point_3> points;
-    std::vector<Point_Index> indices;
-    points.reserve(tpoints_.size());
-    indices.reserve(tpoints_.size());
-    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
-      points.push_back(tpoints_.point(*it));
-      indices.push_back(*it);
+    typename KNN::Distance dist(tpoints_.point_map());
+    for(Point_index idx : tpoints_)
+    {
+      KNN knn(*kd_tree_, tpoints_.point(idx), k_, 0., true, dist/* , false */);
+      auto& neighbors = point_knn_map_[idx];
+      neighbors.clear();
+      neighbors.reserve(k_);
+      //TODO: ask Qijia if neighbors need to be sorted by distance. If not -> use non-sorted knn + if we should skip the point itself
+      for (auto it=knn.begin(); it!=knn.end(); ++it)
+        neighbors.push_back(it->first);
     }
-
-     Kd_tree tree(boost::make_zip_iterator(boost::make_tuple(points.begin(), indices.begin())),
-                 boost::make_zip_iterator(boost::make_tuple(points.end(), indices.end())));
-
-    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
-       Point_Index idx = *it;
-       const Point_3& query_point = tpoints_.point(idx);
-       KNN knn(tree, query_point, k_);
-       auto& neighbors = point_knn_map_[idx];
-       neighbors.clear();
-       neighbors.reserve(k_);
-
-       for(auto knn_it = knn.begin(); knn_it != knn.end(); ++knn_it) {
-         Point_Index neighbor_idx = boost::get<1>(knn_it->first);
-         neighbors.push_back(neighbor_idx);
-       }
-     }
   }
 
   /// Initialization that compute some global variable for the algorithm.
@@ -1117,22 +1086,11 @@ private:
       put(face_area_map_, f, area);
     }
     // Sample the surface mesh
-    tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
-    // get bounding box of the mesh
     sample_surface_mesh();
-    // Build AABB-tree
-    if constexpr(std::is_same_v<AccelerationType, KD_tree_tag>) {
-      tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
-    } else {
-      tree_->accelerate_distance_queries();
-    }
 
-    auto bbox = tree_->bbox();
-    scale_ = (std::max)(bbox.xmax() - bbox.xmin(), (std::max)(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
+    scale_ = kd_tree_->bounding_box().max_span();
     converged_threshold_ = scale_ * scale_ * 1e-5;
 
-    // Initialize the fast winding number function
-    fast_winding_number_ = std::make_unique<FWN>(tmesh_, face_normal_map_, face_area_map_, face_centroid_map_, *tree_);
     sphere_mesh_ = std::make_unique<MSMesh>();
 
     // Algorithm variables
@@ -1155,62 +1113,9 @@ private:
     return d / (2 * cos_angle);
   }
 
-  std::pair<Point_3, FT>
-  shrinking_ball_algorithm_bvh(const std::vector<face_descriptor>& incident_faces,
-                               const Point_3& p,                  // point on the surface
-                               const Vector_3& n,                 // inverse of search direction
-                               FT delta_convergence = FT(1e-5)) {
-    using face_descriptor = typename Tree::Primitive_id;
-    auto approximate_angle = GT().compute_approximate_angle_3_object();
-    delta_convergence *= scale_;
-    const FT denoise_preserve = FT(20.0); // in degree
-    const int iteration_limit = 30;
-    int j = 0;
-    FT r = FT(1.0) * scale_; // initial radius
-    Point_3 c = p - (r * n);
-    face_descriptor last_face;
-    while(true) {
-
-      auto [q_next, closest_face] = tree_->closest_point_and_primitive(c);
-      FT squared_dist = (q_next - c).squared_length();
-      if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
-        break; // convergence
-      }
-      bool should_break = false;
-      for(auto f : incident_faces) {
-        if(f == closest_face) {
-          should_break = true;
-          break; // found the face
-        }
-      }
-      if(should_break) {
-        break; // closest face is incident to the vertex
-      }
-      if(j > 0 && closest_face == last_face) {
-        break; // no change in closest face
-      }
-      FT r_next = compute_radius(p, n, q_next);
-      CGAL_assertion(CGAL::is_finite(r_next) && r_next > FT(0));
-      Point_3 c_next = p - (r_next * n);
-      FT separation_angle = approximate_angle(p - c_next, q_next - c_next);
-      if(j > 0 && separation_angle < denoise_preserve) {
-        break; // denoise preserve angle achieved
-      }
-      c = c_next;
-      r = r_next;
-      last_face = closest_face;
-      j++;
-      if(j > iteration_limit)
-        break;
-    }
-
-    return {c, r};
-  }
-
-  std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,  // point on the surface
-                                                      const Vector_3& n, // inverse of search direction
-                                                      FT delta_convergence = FT(1e-5)) {
-
+  std::pair<Point_3, FT> shrinking_ball_algorithm(const Point_3& p,  // point on the surface
+                                                  const Vector_3& n, // inverse of search direction
+                                                  FT delta_convergence = FT(1e-5)) {
     auto approximate_angle = GT().compute_approximate_angle_3_object();
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
@@ -1219,10 +1124,9 @@ private:
     FT r = FT(1.0) * scale_; // initial radius
     Point_3 c = p - (r * n);
 
+    typename KNN::Distance dist(tpoints_.point_map());
     while(true) {
-
-      auto hint = tree_->kd_tree().closest_point(c);
-      Point_3 q_next = hint.first;
+      const Point_3& q_next = tpoints_.point(KNN(*kd_tree_, c, 1, 0., true, dist, true).begin()->first);
 
       FT squared_dist = (q_next - c).squared_length();
       if(squared_dist >= (r - delta_convergence) * (r - delta_convergence) || p == q_next) {
@@ -1251,37 +1155,25 @@ private:
     return {c, r};
   }
 
-  std::pair<Point_3, FT> compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal, CGAL::KD_tree_tag) {
-
-    return shrinking_ball_algorithm_kdt(p, normal);
-  }
-
-  std::pair<Point_3, FT> compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal, CGAL::BVH_tag) {
-    auto [q, closest_face] = tree_->closest_point_and_primitive(p);
-    auto face_range = CGAL::faces_around_face(halfedge(closest_face, tmesh_), tmesh_);
-    std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
-    return shrinking_ball_algorithm_bvh(incident_faces, p, normal);
-  }
-
-  void compute_one_vertex_shrinking_ball(Point_Index idx) {
+  void compute_one_vertex_shrinking_ball(Point_index idx) {
 
     Vector_3 normal = point_normal_map_[idx];
     Point_3 p = tpoints_.point(idx);
-    auto [center, radius] = compute_shrinking_ball_impl(p, normal, AccelerationType{});
+    auto [center, radius] = shrinking_ball_algorithm(p, normal);
     point_medial_sphere_pos_map_[idx] = center;
     point_medial_sphere_radius_map_[idx] = radius;
   }
 
   void compute_shrinking_balls() {
     for(auto it = tpoints_.begin(); it!= tpoints_.end(); ++it) {
-      Point_Index idx = *it;
+      Point_index idx = *it;
       compute_one_vertex_shrinking_ball(idx);
     }
   }
 
   void assign_vertices_to_clusters() {
     for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
-      Point_Index idx = *it;
+      Point_index idx = *it;
 
       Point_3 p = tpoints_.point(idx);
       FT min_distance = (std::numeric_limits<FT>::max)();
@@ -1319,7 +1211,7 @@ private:
     for(auto& sphere : sphere_mesh_->spheres()) {
       auto& cluster_points = sphere.get_cluster_points_idx();
       if(cluster_points.size() <= 4) {
-        for(Point_Index idx : cluster_points) {
+        for(Point_index idx : cluster_points) {
           point_cluster_sphere_map_[idx] = MSMesh::INVALID_SPHERE_ID;
         }
         sphere_ids_to_remove.push_back(sphere.get_id());
@@ -1333,6 +1225,11 @@ private:
     }
   }
 
+  //TODO: disabled for now
+  // this would require to readd the AABB-tree to get points inside/outside
+  #if 1
+  void correct_sphere(MSphere& , const Eigen::Matrix<FT, 4, 1>& ) {}
+  #else
   void correct_sphere(MSphere& sphere, const Eigen::Matrix<FT, 4, 1>& optimized_sphere_params) {
     Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
     auto [cp, closest_face] = tree_->closest_point_and_primitive(optimal_center);
@@ -1343,11 +1240,12 @@ private:
     if(!fast_winding_number_->is_inside(optimal_center))
       normal = -normal; // if the center is outside, flip the normal
 
-    auto [c, r] = compute_shrinking_ball_impl(cp, normal, AccelerationType{});
+    auto [c, r] = shrinking_ball_algorithm(cp, normal);
 
     sphere.set_center(c);
     sphere.set_radius(r);
   }
+  #endif
 
   void optimize_single_sphere(MSphere& sphere, bool use_shrinking_ball_correction = false) {
     using EMat = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
@@ -1371,7 +1269,7 @@ private:
     for(int i = 0; i < 10; i++) {
       idx = 0;
 
-      for(Point_Index id : cluster_points) {
+      for(Point_index id : cluster_points) {
         Point_3 p = tpoints_.point(id);
         EVec3 pos(p.x(), p.y(), p.z());
 
@@ -1385,7 +1283,7 @@ private:
         FT a = CGAL::approximate_sqrt(point_area_map_[id]) / (k_ + FT(1.0));
         lhs += -n4 * a;
         rhs += -1.0 * ((pos - EVec3(s(0), s(1), s(2))).dot(normal_eigen) - s(3)) * a;
-        for(Point_Index neighbor_idx : point_knn_map_[id]) {
+        for(Point_index neighbor_idx : point_knn_map_[id]) {
           Point_3 pos_q = tpoints_.point(neighbor_idx);
           EVec3 pos_q_eigen(pos_q.x(), pos_q.y(), pos_q.z());
           Vector_3 n_q = point_normal_map_[neighbor_idx];
@@ -1441,7 +1339,7 @@ private:
       return FT(0.0);
     }
 
-    for(Point_Index idx : cluster_points) {
+    for(Point_index idx : cluster_points) {
       Point_3 p = tpoints_.point(idx);
       FT area = point_area_map_[idx];
       FT dist_sqem = CGAL::scalar_product(p - center, point_normal_map_[idx]) - radius;
@@ -1476,7 +1374,7 @@ private:
                       [&](const tbb::blocked_range<std::size_t>& range) {
                         for(std::size_t i = range.begin(); i != range.end(); ++i) {
 
-                          Point_Index idx = *(it + i);
+                          Point_index idx = *(it + i);
                           FT area = point_area_map_[idx];
                           Point_3 p = tpoints_.point(idx);
                           FT min_distance = (std::numeric_limits<FT>::max)();
@@ -1506,7 +1404,7 @@ private:
                         }
                       });
     for(std::size_t i = 0; i < num_points; ++i) {
-      Point_Index idx = *(it + i);
+      Point_index idx = *(it + i);
       auto& [closest_sphere_id, area] = point_assignments[i];
 
       if(closest_sphere_id != MSMesh::INVALID_SPHERE_ID) {
@@ -1519,7 +1417,7 @@ private:
     for(auto& sphere : sphere_mesh_->spheres()) {
       auto& cluster_points = sphere.get_cluster_points_idx();
       if(cluster_points.size() <= 4) {
-        for(Point_Index idx : cluster_points) {
+        for(Point_index idx : cluster_points) {
           point_cluster_sphere_map_[idx] = MSMesh::INVALID_SPHERE_ID;
         }
         sphere_ids_to_remove.push_back(sphere.get_id());
@@ -1591,12 +1489,12 @@ private:
   void update_sphere_neighbors() {
 
     for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
-      Point_Index idx = *it;
+      Point_index idx = *it;
       Sphere_ID s1 = point_cluster_sphere_map_[idx];
       if(s1 == MSMesh::INVALID_SPHERE_ID) continue;
 
-      const auto& knn = point_knn_map_[idx]; // std::vector<Point_Index>
-      for(const Point_Index& jdx : knn) {
+      const auto& knn = point_knn_map_[idx]; // std::vector<Point_index>
+      for(const Point_index& jdx : knn) {
         Sphere_ID s2 = point_cluster_sphere_map_[jdx];
         if(s2 == MSMesh::INVALID_SPHERE_ID || s1 == s2) continue;
 
@@ -1633,7 +1531,7 @@ private:
         for(Sphere_ID neighbor_id : sphere.get_neighbors()) {
           sphere_mesh_->get_sphere(neighbor_id).set_do_not_split(true);
         }
-        Point_Index split_vertex = sphere.get_split_point_idx();
+        Point_index split_vertex = sphere.get_split_point_idx();
         Point_3 center = point_medial_sphere_pos_map_[split_vertex];
         FT radius = point_medial_sphere_radius_map_[split_vertex];
         sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
@@ -1666,16 +1564,16 @@ private:
   FT total_error_;
   FT converged_threshold_;
   int k_ = 10; // number of nearest neighbors
-  std::unique_ptr<Tree> tree_;
+  std::unique_ptr<Kd_tree> kd_tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
-  std::unique_ptr<FWN> fast_winding_number_;
+
   FT scale_;
   bool verbose_;
   // Property maps
   typename Point_set::template Property_map<face_descriptor> point_from_face_map_;
   typename Point_set::template Property_map<Vector_3> point_normal_map_;
   typename Point_set::template Property_map<FT> point_area_map_;
-  typename Point_set::template Property_map<std::vector<Point_Index>> point_knn_map_;
+  typename Point_set::template Property_map<std::vector<Point_index>> point_knn_map_;
   typename Point_set::template Property_map<Point_3> point_medial_sphere_pos_map_;
   typename Point_set::template Property_map<FT> point_medial_sphere_radius_map_;
   typename Point_set::template Property_map<Sphere_ID> point_cluster_sphere_map_;

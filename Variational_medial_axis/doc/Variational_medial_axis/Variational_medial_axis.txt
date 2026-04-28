@@ -68,15 +68,7 @@ which can then be visualized in external software such as Blender.
 After the optimization step, the medial spheres may deviate slightly from the true medial axis.
 To project them back onto the medial axis, the algorithm performs a **correction step** using the **shrinking ball algorithm**,\cgalCite{ma20123d} which requires computing the **closest point** on the surface from a given position.
 
-To accelerate this closest point query, two types of spatial search structures are supported:
-
-- `CGAL::KD_tree_tag`: uses a KD-tree constructed from the surface sample points.
-- `CGAL::BVH_tag`: uses a bounding volume hierarchy (BVH) built from the faces of the input triangle mesh.
-
-The user can choose the desired structure by passing the corresponding tag via the `CGAL::parameters::acceleration_structure()` named parameter.
-The essential difference is that the KD-tree restricts sphere placement to be constrained by surface sampled points only, while the BVH allows medial spheres to touch the interior of mesh faces.
-In general, we recommend using the KD-tree (which is also the default) since the surface will be densely sampled at the beginning of the algorithm.
-
+To accelerate this closest point query, a KD-tree constructed from the surface sample points is used.
 
 \subsection VMASfree Free function
 The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified parameters.

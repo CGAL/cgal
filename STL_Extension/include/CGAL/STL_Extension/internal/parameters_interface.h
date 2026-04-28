@@ -179,7 +179,6 @@ CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
 CGAL_add_named_parameter(number_of_spheres_t, number_of_spheres, number_of_spheres)
 CGAL_add_named_parameter(lambda_t, lambda, lambda)
-CGAL_add_named_parameter(acceleration_structure_t, acceleration_structure, acceleration_structure)
 CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 

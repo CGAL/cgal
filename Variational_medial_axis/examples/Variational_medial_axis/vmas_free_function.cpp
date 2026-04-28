@@ -24,7 +24,6 @@ int main(int argc, char** argv)
       .lambda(0.2) // lambda parameter for the optimization
       .random_seed(10) // random seed for point sampling
       .concurrency_tag(CGAL::Parallel_tag{}) // use parallel execution
-      .acceleration_structure(CGAL::BVH_tag{}) // use BVH for acceleration
       .verbose(true)); // enable verbose output
   // Write skeleton to PLY file
   std::string output_filename = "skeleton.ply";

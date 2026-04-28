@@ -15,7 +15,7 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{6.2}
+\cgalPkgSince{6.3}
 \cgalPkgDependsOn{\ref PkgAABBTree}
 \cgalPkgBib{cgal:dsvvmas-h}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

@@ -135,24 +135,13 @@ bool test_correcteness() {
     return false;
   }
 
-  auto skeleton_bvh = CGAL::extract_variational_medial_skeleton(
-      mesh, CGAL::parameters::lambda(0.2).random_seed(42).number_of_spheres(300).acceleration_structure(CGAL::BVH_tag{}));
   auto skeleton_kd_tree = CGAL::extract_variational_medial_skeleton(
-      mesh, CGAL::parameters::lambda(0.2).random_seed(42).number_of_spheres(300).acceleration_structure(CGAL::KD_tree_tag{}));
+      mesh, CGAL::parameters::lambda(0.2).random_seed(42).number_of_spheres(300));
 
   std::string saved_file_bvh = CGAL::data_file_path("meshes/elephant_0.2_300_seed_42_BVH.ply");
   std::string saved_file_kd_tree = CGAL::data_file_path("meshes/elephant_0.2_300_seed_42_KD_tree.ply");
 
-  Skeleton saved_skeleton_bvh,saved_skeleton_kd_tree;
-
-  if(CGAL::IO::read_PLY(saved_skeleton_bvh, saved_file_bvh)) {
-    if(compare_skeletons(skeleton_bvh, saved_skeleton_bvh)) {
-      std::cout << "Skeletons match after reading from file." << std::endl;
-    } else {
-      std::cerr << " Skeletons do not match after reading from file." << std::endl;
-      return false;
-    }
-  }
+  Skeleton saved_skeleton_kd_tree;
 
   if(CGAL::IO::read_PLY(saved_skeleton_kd_tree, saved_file_kd_tree)) {
     if(compare_skeletons(skeleton_kd_tree, saved_skeleton_kd_tree)) {

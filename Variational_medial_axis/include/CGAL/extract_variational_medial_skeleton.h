@@ -76,12 +76,6 @@ namespace CGAL {
 ///    \cgalParamDefault{`CGAL::Sequential_tag`}
 ///    \cgalParamExtra{Use `CGAL::Parallel_tag` for parallel execution (requires TBB).}
 ///  \cgalParamNEnd
-///  \cgalParamNBegin{acceleration_structure}
-///    \cgalParamDescription{Tag indicating the type of acceleration structure to use.}
-///    \cgalParamType{Acceleration structure tag type}
-///    \cgalParamDefault{`CGAL::KD_tree_tag`}
-///    \cgalParamExtra{Use `CGAL::BVH_tag` for a bounding volume hierarchy.}
-///  \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 ///
@@ -91,9 +85,7 @@ extract_variational_medial_skeleton(const TriangleMesh& tmesh,
                                     const NamedParameters& np = parameters::default_values()) {
   typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
                                                        Sequential_tag>::type Concurrency_tag;
-  typedef typename internal_np::Lookup_named_param_def<internal_np::acceleration_structure_t, NamedParameters,
-                                                       KD_tree_tag>::type Acceleration_type;
-  using VMAS = CGAL::Variational_medial_axis_sampling<TriangleMesh, Concurrency_tag, Acceleration_type>;
+  using VMAS = CGAL::Variational_medial_axis_sampling<TriangleMesh, Concurrency_tag>;
   VMAS vmas(tmesh, np);
   vmas.sample(np);
   return vmas.skeleton();
