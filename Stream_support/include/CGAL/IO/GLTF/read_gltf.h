@@ -117,7 +117,7 @@ bool read_GLTF(const std::string& filename,
 
             // Get the stride (bytes between consecutive vertices)
             position_stride = accessor.ByteStride(bufferView);
-            
+
             // Validate and default stride based on component type
             if (position_stride == 0) {
                 if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_DOUBLE) {
@@ -134,7 +134,7 @@ bool read_GLTF(const std::string& filename,
             // Add the vertices from this primitive
             for (size_t i = 0; i < vertex_count; ++i) {
                 const unsigned char* element_ptr = base_ptr + (i * position_stride);
-                
+
                 // Bounds check
                 if (element_ptr + (accessor.componentType == TINYGLTF_COMPONENT_TYPE_DOUBLE ? sizeof(double)*3 : sizeof(float)*3) > buffer.data.data() + buffer.data.size()) {
                     if (verbose) std::cerr << "Vertex data out of bounds." << std::endl;
@@ -143,10 +143,10 @@ bool read_GLTF(const std::string& filename,
 
                 if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
                     const float* f_ptr = reinterpret_cast<const float*>(element_ptr);
-                    points.push_back(Point(static_cast<double>(f_ptr[0]), 
-                                          static_cast<double>(f_ptr[1]), 
+                    points.push_back(Point(static_cast<double>(f_ptr[0]),
+                                          static_cast<double>(f_ptr[1]),
                                           static_cast<double>(f_ptr[2])));
-                } 
+                }
                 else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_DOUBLE) {
                     // This path ensures bit-perfect identity for high-precision data
                     const double* d_ptr = reinterpret_cast<const double*>(element_ptr);
