@@ -154,33 +154,9 @@ seg_seg_do_intersect_crossing(
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
-    {
-      switch (k.orientation_2_object()(p3,p4,p2))
-      {
-        case COLLINEAR:
-          return true;
-        case RIGHT_TURN:
-          return false;
-        case LEFT_TURN:
-          return true;
-        default:
-          CGAL_unreachable();
-      }
-    }
+      return ! (k.orientation_2_object()(p3,p4,p2) == RIGHT_TURN); //   right_turn(p3,p4,p2);
     case RIGHT_TURN:
-    {
-      switch (k.orientation_2_object()(p3,p4,p2))
-      {
-        case COLLINEAR:
-          return true;
-        case RIGHT_TURN:
-          return true;
-        case LEFT_TURN:
-          return false;
-        default:
-          CGAL_unreachable();
-      }
-    }
+      return ! (k.orientation_2_object()(p3,p4,p2) == LEFT_TURN); //left_turn(p3,p4,p2);
     case COLLINEAR:
       return true;
     default:
@@ -253,33 +229,9 @@ seg_seg_do_intersect_contained(
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
-    {
-      switch (k.orientation_2_object()(p1,p2,p4))
-      {
-        case COLLINEAR:
-          return true;
-        case RIGHT_TURN:
-          return true;
-        case LEFT_TURN:
-          return false;
-        default:
-          CGAL_unreachable();
-      }
-    }
+      return ! (k.orientation_2_object()(p1,p2,p4) == LEFT_TURN); // left_turn(p1,p2,p4);
     case RIGHT_TURN:
-    {
-      switch (k.orientation_2_object()(p1,p2,p4))
-      {
-        case COLLINEAR:
-          return true;
-        case RIGHT_TURN:
-          return false;
-        case LEFT_TURN:
-          return true;
-        default:
-          CGAL_unreachable();
-      }
-    }
+      return ! (k.orientation_2_object()(p1,p2,p4) == RIGHT_TURN); // right_turn(p1,p2,p4);
     case COLLINEAR:
         return true;
     default:
