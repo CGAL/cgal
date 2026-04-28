@@ -569,6 +569,12 @@ class Variational_medial_axis_sampling
   using Face_centroid_tag = CGAL::dynamic_face_property_t<Point_3>;
   using Face_centroid_map = typename boost::property_map<TriangleMesh, Face_centroid_tag>::const_type;
 
+  std::size_t estimate_nb_of_sample_points(typename GT::FT rad)
+  {
+    auto area = Polygon_mesh_processing::area(tmesh_, parameters::vertex_point_map(vpm_));
+    return std::size_t ( std::trunc(area / ( CGAL_PI * rad * rad)+1 ) );
+  }
+
 public:
 
   /// sphere type
@@ -597,17 +603,21 @@ public:
   ///     \cgalParamType{unsigned int}
   ///     \cgalParamDefault{100}
   ///  \cgalParamNEnd
-  ///   \cgalParamNBegin{number_of_samples}
-  ///     \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
+  ///  \cgalParamNBegin{number_of_spheres}
+  ///    \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.
+  ///                          Note that this number might not be achieved if the maximum number of iterations is reached or if
+  ///                          the internal energy minimisation converged before. If not provided, the number of spheres will be
+  ///                          the one at the end of the energy minimisation or at the end of the iterations.}
+  ///    \cgalParamType{unsigned int}
+  ///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse skeletons.}
+  ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{neighbor_radius}
+  ///     \cgalParamDescription{This parameter is used to sample the input triangle mesh for the optimization process.
+  ///                           Sample points will be chosen such that it should be possible to cover the surface area
+  ///                           of the triangle mesh using circle of that radius with centered at the sample points.}
   ///     \cgalParamType{unsigned int}
-  ///     \cgalParamDefault{max(20000, number_of_spheres * 100)}
-  ///     \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
-  ///  \cgalParamNEnd
-  /// \cgalParamNBegin{number_of_iterations}
-  ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
-  ///    \cgalParamType{int}
-  ///    \cgalParamDefault{1000}
-  ///  \cgalParamNEnd
+  ///     \cgalParamDefault{A radius corresponding to 20,000 sample points}
+  ///   \cgalParamNEnd
   ///   \cgalParamNBegin{lambda}
   ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
   ///     the skeleton to extend deeper into local geometric features of the shape.}
@@ -643,10 +653,13 @@ public:
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
-    desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
-    nb_samples_ = choose_parameter(get_parameter(np, internal_np::number_of_samples), 100 * desired_number_of_spheres_);
-    nb_samples_ = (std::max)(nb_samples_, std::size_t(20000));
+    desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 0);
+    if constexpr (is_default_parameter<NamedParameters, internal_np::neighbor_radius_t>::value)
+      nb_samples_ = std::size_t(20000);
+    else
+      nb_samples_ = estimate_nb_of_sample_points(get_parameter(np, internal_np::neighbor_radius));
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
@@ -671,17 +684,21 @@ public:
    *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{number_of_spheres}
-   *     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
+   *     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.
+   *                           Note that this number might not be achieved if the maximum number of iterations is reached or if
+   *                           the internal energy minimisation converged before. If not provided, the number of spheres will be
+   *                           the one at the end of the energy minimisation or at the end of the iterations.}
    *     \cgalParamType{unsigned int}
-   *     \cgalParamDefault{100}
+   *     \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse skeletons.}
    *   \cgalParamNEnd
-   *     \cgalParamNBegin{number_of_samples}
-   *      \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
-   *      \cgalParamType{unsigned int}
-   *      \cgalParamDefault{max(20000, number_of_spheres * 100)}
-   *      \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
+   *   \cgalParamNBegin{neighbor_radius}
+   *     \cgalParamDescription{This parameter is used to sample the input triangle mesh for the optimization process.
+   *                           Sample points will be chosen such that it should be possible to cover the surface area
+   *                           of the triangle mesh using circle of that radius with centered at the sample points.}
+   *     \cgalParamType{unsigned int}
+   *     \cgalParamDefault{A radius corresponding to 20,000 sample points}
    *   \cgalParamNEnd
-   *  \cgalParamNBegin{number_of_iterations}
+   *   \cgalParamNBegin{number_of_iterations}
    *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
    *     \cgalParamType{int}
    *     \cgalParamDefault{1000}
@@ -713,18 +730,24 @@ public:
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
+
     // Extract algorithm parameters from named parameters
     desired_number_of_spheres_ =
         choose_parameter(get_parameter(np, internal_np::number_of_spheres), desired_number_of_spheres_);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), lambda_);
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), max_iteration_);
-    nb_samples_ = choose_parameter(get_parameter(np, internal_np::number_of_samples), nb_samples_);
+    if constexpr (is_default_parameter<NamedParameters, internal_np::neighbor_radius_t>::value)
+      nb_samples_ = std::size_t(20000);
+    else
+      nb_samples_ = estimate_nb_of_sample_points(get_parameter(np, internal_np::neighbor_radius));
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), verbose_);
     seed_ = choose_parameter(get_parameter(np, internal_np::random_seed), seed_);
     bool success = false;
     reset_algorithm_state();
     sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
     if(nb_samples_ < desired_number_of_spheres_ * 100) {
+      //TODO: check this is still wanted
       // Resample the surface with more points
       nb_samples_ = desired_number_of_spheres_ * 100;
       // Sample the surface mesh
@@ -867,7 +890,7 @@ public:
     bool converged = false;
     while(!converged && iteration_count_ < max_iteration) {
       converged = update_single_step(true);
-      iteration_count_++;
+      ++iteration_count_;
     }
     if(verbose_) {
       if(converged) {
@@ -1507,7 +1530,7 @@ private:
   }
 
   void split_spheres() {
-    if(sphere_mesh_->nb_spheres() >= desired_number_of_spheres_) {
+    if(desired_number_of_spheres_ > 0 && sphere_mesh_->nb_spheres() >= desired_number_of_spheres_) {
       return;
     }
     if(verbose_) {
@@ -1524,7 +1547,7 @@ private:
 
     int to_split_max = (std::min)(int(std::ceil(sphere_mesh_->nb_spheres() * 0.2)), 10);
     for(auto& sphere_id : sorted_sphere_ids) {
-      if(sphere_mesh_->nb_spheres() >= desired_number_of_spheres_)
+      if(desired_number_of_spheres_ > 0 &&  sphere_mesh_->nb_spheres() >= desired_number_of_spheres_)
         break;
       auto& sphere = sphere_mesh_->get_sphere(sphere_id);
       if(to_split_max > 0 && sphere.can_split()) {

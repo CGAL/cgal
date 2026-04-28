@@ -71,10 +71,12 @@ public:
       const FT& r1 = radii_[a];
       const FT& r2 = radii_[b];
       const FT& r3 = radii_[c];
+      /*
       const FT& r_max = r1>r2 ? (r1 > r3 ? r1 : r3) : (r2 > r3 ? r2 : r3);
-      /* if(dmin > eval_slab(c1, c2, c3, r_max, r_max, r_max,p)) {
+      if(dmin > eval_slab(c1, c2, c3, r_max, r_max, r_max,p)) {
          dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
-       }*/
+      }
+      */
       dmin = (std::min)(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
       visited_edges.insert({a, b});
       visited_edges.insert({b, c});
@@ -89,9 +91,11 @@ public:
       const Point_3& c2 = (*spheres_)[j].center();
       const FT& r1 = radii_[i];
       const FT& r2 = radii_[j];
+      /*
       const FT r_max = r1 > r2 ? r1 : r2;
-      /*if(dmin > eval_cone(c1, c2, r_max, r_max, p))
-        dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));*/
+      if(dmin > eval_cone(c1, c2, r_max, r_max, p))
+        dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
+      */
       dmin = (std::min)(dmin, eval_cone(c1, c2, r1, r2, p));
       if(dmin < 0)
         return dmin;

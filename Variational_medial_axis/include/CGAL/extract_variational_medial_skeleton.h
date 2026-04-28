@@ -39,17 +39,19 @@ namespace CGAL {
 ///
 /// \cgalNamedParamsBegin
 ///  \cgalParamNBegin{number_of_spheres}
-///    \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
+///    \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.
+///                          Note that this number might not be achieved if the maximum number of iterations is reached or if
+///                          the internal energy minimisation converged before. If not provided, the number of spheres will be
+///                          the one at the end of the energy minimisation or at the end of the iterations.}
 ///    \cgalParamType{unsigned int}
-///    \cgalParamDefault{100}
-///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse
-/// skeletons.}
+///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse skeletons.}
 ///  \cgalParamNEnd
-///   \cgalParamNBegin{number_of_samples}
-///     \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
+///   \cgalParamNBegin{neighbor_radius}
+///     \cgalParamDescription{This parameter is used to sample the input triangle mesh for the optimization process.
+///                           Sample points will be chosen such that it should be possible to cover the surface area
+///                           of the triangle mesh using circle of that radius with centered at the sample points.}
 ///     \cgalParamType{unsigned int}
-///     \cgalParamDefault{max(10000, number_of_spheres * 100)}
-///     \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
+///     \cgalParamDefault{A radius corresponding to 20,000 sample points}
 ///  \cgalParamNEnd
 ///  \cgalParamNBegin{number_of_iterations}
 ///     \cgalParamDescription{The maximum number of iterations for the optimization process.}
