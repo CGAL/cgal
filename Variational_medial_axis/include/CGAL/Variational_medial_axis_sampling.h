@@ -1064,10 +1064,10 @@ private:
     typename KNN::Distance dist(tpoints_.point_map());
     for(Point_index idx : tpoints_)
     {
-      KNN knn(*kd_tree_, tpoints_.point(idx), k_, 0., true, dist/* , false */);
+      KNN knn(*kd_tree_, tpoints_.point(idx), k_+1, 0., true, dist, false);
       auto& neighbors = point_knn_map_[idx];
       neighbors.clear();
-      neighbors.reserve(k_);
+      neighbors.reserve(k_+1);
       //TODO: ask Qijia if neighbors need to be sorted by distance. If not -> use non-sorted knn + if we should skip the point itself
       for (auto it=knn.begin(); it!=knn.end(); ++it)
         neighbors.push_back(it->first);
@@ -1306,6 +1306,7 @@ private:
         lhs += -n4 * a;
         rhs += -1.0 * ((pos - EVec3(s(0), s(1), s(2))).dot(normal_eigen) - s(3)) * a;
         for(Point_index neighbor_idx : point_knn_map_[id]) {
+          if (neighbor_idx==id) continue;
           Point_3 pos_q = tpoints_.point(neighbor_idx);
           EVec3 pos_q_eigen(pos_q.x(), pos_q.y(), pos_q.z());
           Vector_3 n_q = point_normal_map_[neighbor_idx];
