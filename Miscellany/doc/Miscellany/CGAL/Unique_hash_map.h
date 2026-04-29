@@ -36,7 +36,8 @@ The design is inspired by the \stl `unordered_map`. Its specialization
 for unique hash values allows for a more time- and space-efficient
 implementation than a general-purpose map.
 
-\ccHeading{Historical Note}
+\cgalHeading{Historical Note}
+
 Earlier versions of this class were derived from the \leda type `map`
 and implemented via a chained map scheme specialized for insertion-only
 operations, as described in \cgalCite{mn-lpcgc-00}, Chapter 5. The
