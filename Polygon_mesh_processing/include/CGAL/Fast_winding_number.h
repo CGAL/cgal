@@ -12,7 +12,7 @@
 #ifndef CGAL_FAST_WINDING_NUMBER_H
 #define CGAL_FAST_WINDING_NUMBER_H
 
-#include <CGAL/license/Variational_medial_axis.h>
+#include <CGAL/license/Polygon_mesh_processing/distance.h>
 
 #ifndef DOXYGEN_RUNNING
 #include <CGAL/AABB_traits_3.h>

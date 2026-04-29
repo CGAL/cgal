@@ -33,12 +33,15 @@ create_single_source_cgal_program("test_shape_predicates.cpp")
 create_single_source_cgal_program("issue_8730.cpp")
 create_single_source_cgal_program("issue_7164.cpp")
 
+
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_interpolated_corrected_curvatures.cpp")
+  create_single_source_cgal_program("fast_winding_number_test.cpp")
   target_link_libraries(test_interpolated_corrected_curvatures PRIVATE CGAL::Eigen3_support)
+  target_link_libraries(fast_winding_number_test PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Tests that use the Eigen library will not be compiled.")
 endif()
