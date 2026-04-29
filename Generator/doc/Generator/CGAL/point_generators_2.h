@@ -254,7 +254,7 @@ typedef const Point_2& reference;
 /// @{
 
 /*!
-creates  an input iterator `g` generating points of type `Point_2` uniformly
+creates an input iterator `g` generating points of type `Point_2` uniformly
 distributed in the half-open square with side length \f$ 2 a\f$, centered
 at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x() < a\f$ and
 \f$ -a \le p.y() < a\f$.
@@ -321,7 +321,7 @@ typedef const Point_2& reference;
 /// @{
 
  /*!
- creates  an input iterator `g` generating points of type `Point_2` uniformly
+ creates an input iterator `g` generating points of type `Point_2` uniformly
  distributed inside the triangle with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
  \f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
  Two random numbers are needed from `rnd` for each point.
@@ -331,7 +331,7 @@ typedef const Point_2& reference;
  get_default_random() );
 
  /*!
- creates  an input iterator `g` generating points of type `Point_2` uniformly
+ creates an input iterator `g` generating points of type `Point_2` uniformly
  distributed inside a triangle \f$t\f$ with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
  \f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
  Two random numbers are needed from `rnd` for each point.
@@ -406,7 +406,7 @@ typedef const Point_2& reference;
 /// @{
 
 /*!
-creates  an input iterator `g` generating points of type `Point_2` uniformly
+creates an input iterator `g` generating points of type `Point_2` uniformly
 distributed between the triangles of the triangulation. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
@@ -414,11 +414,10 @@ Random_points_in_triangle_mesh_2(const Triangulation& triangulation, Random& rnd
 get_default_random() );
 
 /*!
-returns a face containing the last point generated.
-\pre a point must have been generated before calling the function
+returns the last point generated and a handle of the face used to generate that point.
 */
-typename Triangulation::Face_handle
-last_item_picked() const;
+std::pair<Point_2,typename Triangulation::Face_handle>
+point_and_support() const;
 
 /// @}
 
@@ -483,7 +482,7 @@ last_item_picked() const;
  /// @{
 
 /*!
-creates  an input iterator `g` generating points of type `Point_2` uniformly
+creates an input iterator `g` generating points of type `Point_2` uniformly
 distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
@@ -492,11 +491,10 @@ Random_points_in_triangles_2(const TriangleRange& triangles, Random& rnd =
 get_default_random() );
 
 /*!
-returns the address of an input triangle containing the last point generated.
-\pre a point must have been generated before calling the function
+returns the last point generated and a pointer to the input triangle used to generate that point.
 */
-const Triangle_2*
-last_item_picked() const;
+std::pair<Point_2, const Triangle_2*>
+point_and_support() const;
 
 /// @}
 

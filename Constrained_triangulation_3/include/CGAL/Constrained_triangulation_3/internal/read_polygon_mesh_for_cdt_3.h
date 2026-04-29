@@ -14,12 +14,22 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Constrained_triangulation_3/internal/cdt_debug_io.h>
 #include <CGAL/Constrained_triangulation_3/internal/ostream_redirect_guard.h>
-
-#include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
 #include <CGAL/expected.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
+
+#include <boost/property_map/property_map.hpp>
+
+#include <cstddef>
+#include <iostream>
+#include <ostream>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 

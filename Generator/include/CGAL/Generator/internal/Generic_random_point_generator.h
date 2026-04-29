@@ -91,10 +91,10 @@ public:
     return weights.back();
   }
 
-  Id last_item_picked() const
+  std::pair<P,Id> point_and_support() const
   {
     CGAL_assertion(last_picked_id != std::size_t(-1));
-    return ids[last_picked_id];
+    return std::pair(this->operator*(),ids[last_picked_id]);
   }
 };
 
@@ -132,8 +132,8 @@ struct Apply_approx_sqrt
     return approximate_sqrt( static_cast<const Functor&>(*this)(t) );
   }
 };
-} //namespace internal
 
-}//namesape CGAL
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H

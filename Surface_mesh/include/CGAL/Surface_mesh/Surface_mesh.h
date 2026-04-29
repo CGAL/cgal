@@ -65,7 +65,10 @@ namespace CGAL {
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
         /// as `size_type` is an unsigned type.
-        explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
+        constexpr
+        SM_Index() : idx_((std::numeric_limits<size_type>::max)()) {}
+
+        explicit SM_Index(size_type _idx) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
@@ -126,7 +129,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Vertex_index() = default;
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
 
@@ -162,16 +165,7 @@ namespace CGAL {
     {
     public:
 
-        // Workaround for a bug in g++4.4 in ADL for function next:
-        // we provide the types needed for std::iterator_traits<Surface_mesh::halfedge_index>,
-        // although this descriptor is not an iterator.
-        typedef void iterator_category;
-        typedef void value_type;
-        typedef void difference_type;
-        typedef void pointer;
-        typedef void reference;
-
-        SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Halfedge_index() = default;
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
@@ -206,7 +200,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Face_index() = default;
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
@@ -241,7 +235,7 @@ namespace CGAL {
     public:
         typedef std::uint32_t size_type;
 
-        SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
+        SM_Edge_index() = default;
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -1009,7 +1003,6 @@ public:
     /// adds a new edge, and resizes edge and halfedge properties if necessary.
     Halfedge_index add_edge()
     {
-      Halfedge_index h0, h1;
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (edges_freelist_ != inf)){
         size_type idx = edges_freelist_;
@@ -2256,7 +2249,7 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   ///
-  /// This operator calls `write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2268,7 +2261,7 @@ private: //------------------------------------------------------- private data
   /// Extracts the surface mesh from an input stream in OFF
   /// and appends it to the surface mesh `sm`.
   ///
-  /// This operator calls `read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
