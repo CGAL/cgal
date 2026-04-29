@@ -19,7 +19,7 @@ A generalization of the skeleton is the medial axis, defined as the set of point
 In this context, each point of the medial axis can be viewed as the center of a maximal inscribed ball, often referred to as a <I>medial sphere</I>.
 
 This package implements a skeletonization algorithm \cgalCite{huang2024dynamic} that extracts a coarse, discrete approximation of the medial axis from a triangulated surface mesh without borders.
-Unlike the \ref PkgSurfaceMeshSkeletonization "Surface_mesh_skeletonization" package, which computes a purely curve-based (1D) skeleton, the output of this method is a non-manifold triangle mesh that may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a <I>medial mesh</I>.
+Unlike the \ref PkgSurfaceMeshSkeletonization package, which computes a purely curve-based (1D) skeleton, the output of this method is a non-manifold triangle mesh that may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a <I>medial mesh</I>.
 Each vertex of the resulting mesh corresponds to a medial sphere, and the edges and faces encode the adjacency relationships between these spheres.
 One can reconstruct the original mesh by interpolating between spheres according their adjacency relationships.
 For each edge, interpolating between two spheres yields a <I>medial cone</I>.
