@@ -10,7 +10,9 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Qijia Huang}
-\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis}
+\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis.
+             This approximation features a collection of bi-tangent spheres, with edges and triangles connecting there centers.
+             Spheres can be added or removed and the resulting set of edges and triangles will be updated accordingly.}
 \cgalPkgManuals{Chapter_VMAS,PkgVMASRef}
 \cgalPkgSummaryEnd
 

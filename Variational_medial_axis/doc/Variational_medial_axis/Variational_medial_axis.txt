@@ -84,7 +84,7 @@ The following example showcases the usage of this function:
 
 \cgalExample{Variational_medial_axis/vmas_free_function.cpp}
 
-\subsection VMASfunctionobject Function Object
+\subsection VMASfunctionobject Class for Advanced and Dynamic Control
 The class `CGAL::Variational_medial_axis_sampling` provides some advanced usage of the algorithm
 Several key functions are provided for algorithm control:
 - `CGAL::Variational_medial_axis_sampling::sample()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
