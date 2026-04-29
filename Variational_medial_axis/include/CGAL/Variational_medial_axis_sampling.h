@@ -23,7 +23,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
-#include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/point_generators_3.h>
 #include <Eigen/Dense>
 #include <algorithm>
@@ -1068,7 +1067,6 @@ private:
       auto& neighbors = point_knn_map_[idx];
       neighbors.clear();
       neighbors.reserve(k_+1);
-      //TODO: ask Qijia if neighbors need to be sorted by distance. If not -> use non-sorted knn + if we should skip the point itself
       for (auto it=knn.begin(); it!=knn.end(); ++it)
         neighbors.push_back(it->first);
     }
@@ -1247,27 +1245,36 @@ private:
     }
   }
 
-  //TODO: disabled for now
-  // this would require to readd the AABB-tree to get points inside/outside
-  #if 1
-  void correct_sphere(MSphere& , const Eigen::Matrix<FT, 4, 1>& ) {}
-  #else
+  // There are several ways to get a better answer:
+  // Use Side_of_triangle_mesh or winding number, to the cost of a dependency.
+  // This functor could be a template parameter for example, or a tag if it turns out to be important.
   void correct_sphere(MSphere& sphere, const Eigen::Matrix<FT, 4, 1>& optimized_sphere_params) {
     Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
-    auto [cp, closest_face] = tree_->closest_point_and_primitive(optimal_center);
-    FT len = (optimal_center - cp).squared_length();
 
-    Vector_3 normal = (cp - optimal_center) / CGAL::approximate_sqrt(len);
+    typename KNN::Distance dist(tpoints_.point_map());
+    Point_index cp_id = KNN(*kd_tree_, optimal_center, 1, 0., true, dist, true).begin()->first;
 
-    if(!fast_winding_number_->is_inside(optimal_center))
+    halfedge_descriptor h = halfedge(point_from_face_map_[cp_id], tmesh_);
+    typename GT::Triangle_3 tri(get(vpm_, source(h, tmesh_)),
+                                get(vpm_, target(h, tmesh_)),
+                                get(vpm_, target(next(h, tmesh_), tmesh_)));
+    auto cp = GT().construct_projected_point_3_object()(tri, optimal_center);
+
+    Vector_3 normal = (cp - optimal_center);
+    FT len = normal.squared_length();
+    normal = normal / CGAL::approximate_sqrt(len);
+
+    if(normal * point_normal_map_[cp_id] < 0) // approximate test to check if the sphere is inside or outside
+    {
       normal = -normal; // if the center is outside, flip the normal
+    }
+
 
     auto [c, r] = shrinking_ball_algorithm(cp, normal);
 
     sphere.set_center(c);
     sphere.set_radius(r);
   }
-  #endif
 
   void optimize_single_sphere(MSphere& sphere, bool use_shrinking_ball_correction = false) {
     using EMat = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
