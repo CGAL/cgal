@@ -556,7 +556,8 @@ private:
           std::size_t second = *(++vts[v_idx].constraints.begin());
 
           bool prev_has_first = false, prev_has_second = false;
-          bool next_has_first = false, next_has_second = false;
+          bool next_has_first = false;
+          CGAL_assertion_code(bool next_has_second = false;);
           bool add_prev = false, add_next = false;
 
           // Identify right constraint by on which side of the moving edge the potential itarget is?
@@ -567,8 +568,10 @@ private:
 
           if (vts[*next].constraints.find(first) != vts[*next].constraints.end())
             next_has_first = true;
-          if (vts[*next].constraints.find(second) != vts[*next].constraints.end())
-            next_has_second = true;
+          CGAL_assertion_code(
+            if (vts[*next].constraints.find(second) != vts[*next].constraints.end())
+              next_has_second = true;
+          );
 
           if (vts[*prev].moving && !prev_has_first && !prev_has_second)
             add_prev = true;
@@ -828,13 +831,13 @@ private:
             auto pair = m_data.igraph().edge(v.constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
 
             // Already exists? Then fill in the second spot.
-            if (!pair.second && pair.first->second.second == -1)
+            if (!pair.second && pair.first->second.second == std::size_t(-1))
               pair.first->second.second = *it;
 
             auto pair2 = m_data.igraph().edge(v.other_constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
 
             // Already exists? Then fill in the second spot.
-            if (!pair2.second && pair2.first->second.second == -1)
+            if (!pair2.second && pair2.first->second.second == std::size_t(-1))
               pair2.first->second.second = *it;
           }
         }
@@ -851,7 +854,7 @@ private:
           }
           else {
             for (std::size_t f : faces) {
-              if (m_data.inside_iface(sp, c, f)) {
+              if (m_data.inside_iface(c, f)) {
                 face = f;
 //                 if (m_parameters.debug)
 //                   std::cout << "face located by checking all: " << face << std::endl;
@@ -1164,10 +1167,9 @@ private:
         }
       }
     }
-    CGAL_assertion_code(
-      Polygon_2<Intersection_kernel> poly(polygon_2.begin(), polygon_2.end());
-    );
-    CGAL_assertion(poly.is_convex());
+    Polygon_2<Intersection_kernel> poly(polygon_2.begin(), polygon_2.end());
+    polygon_2.clear();
+    convex_hull_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(polygon_2));
   }
 
   void preprocess_polygons(std::map< std::size_t, std::pair<std::vector<typename Intersection_kernel::Point_2>, std::vector<std::size_t> > >& polygons) {

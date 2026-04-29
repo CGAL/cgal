@@ -993,22 +993,8 @@ private:
     }
 
     // Dump volumes colored by votes
-/*
     if (false) {
-      namespace fs = boost::filesystem;
-      for (fs::directory_iterator end_dir_it, it("gc/i"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (fs::directory_iterator end_dir_it, it("gc/o"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (fs::directory_iterator end_dir_it, it("gc/n"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (fs::directory_iterator end_dir_it, it("gc/all"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (std::size_t i = 0; i < m_volumes.size(); i++) {
+      for (std::size_t i = 0; i < m_cost_matrix[0].size() - 6; i++) {
         // skip 0/0 volumes? Maybe safe them a few seconds later to be able to separate them?
         CGAL::Color c;
 
@@ -1023,21 +1009,18 @@ private:
           c = CGAL::Color(0, 0, m);
         }
 
-        if (diff < 0) {
-          dump_volume(i, "gc/o/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-          dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
+        std::string fn1 = std::string("Volumes") + "/0-" + std::to_string(i) + ".ply";
+        std::string fni = std::string("Volumes") + "/i/0-" + std::to_string(i) + ".ply";
+        std::string fno = std::string("Volumes") + "/o/0-" + std::to_string(i) + ".ply";
+        if (diff > 0) {
+          //std::cout << fn1 << " " << fni << std::endl;
+          //std::filesystem::rename(fn1, fni);
         }
-        else if (diff > 0) {
-          dump_volume(i, "gc/i/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-          dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-          }
-          else {
-          dump_volume(i, "gc/n/" + std::to_string(i) + "-vol-0-0", CGAL::Color(255, 255, 255));
-          dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-0-0", CGAL::Color(255, 255, 255));
-          }
-        }
+
+        //if (diff < 0)
+          //std::filesystem::rename(fn1, fno);
       }
-*/
+      }
   }
 
   /*!

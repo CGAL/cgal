@@ -712,7 +712,7 @@ public:
 
     sort_points_by_direction(points);
     support_plane(support_plane_idx).
-    add_input_polygon(points, input_indices);
+    add_input_polygon(points);
     for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;
       m_sp2input_polygon[support_plane_idx].insert(input_index);
@@ -964,7 +964,7 @@ public:
     typename Intersection_kernel::Vector_3 v3d = sp.exact_plane().base1() * v.v[0] + sp.exact_plane().base2() * v.v[1];
     if (CGAL::is_positive(v3d * line.to_vector())) {
       if (low == high) {
-        CGAL_assertion(low < vol.size() - 2);
+        CGAL_assertion(low < signed(vol.size()) - 2);
         s = vol[low].second;
         t = vol[low + 1].second;
       }
@@ -1046,8 +1046,8 @@ public:
 
     //export_poly_line(poly, line, m_data.prefix() + std::to_string(counter) + "_" + std::to_string(sp_idx) + "_poly_" + std::to_string(i) + "_line" + std::to_string(line_idx) + ".polylines.txt");
 
-    bool pos_neg_adjacent = (last_pos + 1) % sign.size() == first_neg;
-    bool neg_pos_adjacent = (last_neg + 1) % sign.size() == first_pos;
+    bool pos_neg_adjacent = signed((last_pos + 1) % sign.size()) == first_neg;
+    bool neg_pos_adjacent = signed((last_neg + 1) % sign.size()) == first_pos;
 
     if (first_pos <= last_pos) {
       auto first = poly.begin();
@@ -1229,11 +1229,7 @@ public:
     return PFace(support_plane, fi);
   }
 
-  bool inside_iface(std::size_t sp_idx, const IkPoint_2& p, IFace f_idx) const {
-    return inside_iface(m_support_planes[sp_idx], p, f_idx);
-  }
-
-  bool inside_iface(const Support_plane& sp, const IkPoint_2& p, IFace f_idx) const {
+  bool inside_iface(const IkPoint_2& p, IFace f_idx) const {
     const typename Intersection_graph::Face_property& fp = m_intersection_graph.face(f_idx);
 
     // poly, vertices and edges in IFace are oriented ccw
@@ -1251,7 +1247,7 @@ public:
   IFace locate_iface(std::size_t sp_idx, const IkPoint_2& p) const {
     const Support_plane &sp = m_support_planes[sp_idx];
     for (auto& f : sp.ifaces()) {
-      if (inside_iface(sp, p, f))
+      if (inside_iface(p, f))
         return f;
     }
 

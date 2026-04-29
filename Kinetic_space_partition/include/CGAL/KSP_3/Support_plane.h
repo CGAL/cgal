@@ -454,8 +454,7 @@ public:
 
   template<typename Pair>
   void add_input_polygon(
-    const std::vector<Pair>& points,
-    const std::vector<std::size_t>& input_indices) {
+    const std::vector<Pair>& points) {
 
     CGAL_assertion(is_simple_polygon(points));
     CGAL_assertion(is_convex_polygon(points));
@@ -483,23 +482,17 @@ public:
     m_data->ikcentroid = CGAL::centroid(m_data->exact_vertices.begin(), m_data->exact_vertices.end(), CGAL::Dimension_tag<0>());
     m_data->centroid = from_exact(m_data->ikcentroid);
 
-    FT sum_length = FT(0);
     std::vector<typename Intersection_kernel::Vector_2> directions;
     directions.reserve(n);
 
     std::vector<std::pair<std::size_t, typename Intersection_kernel::Direction_2> > dir_vec;
 
-    FT num = 0;
     for (const auto& pair : points) {
       const auto& point = pair.first;
       directions.push_back(typename Intersection_kernel::Vector_2(m_data->ikcentroid, point));
       const FT length = CGAL::approximate_sqrt(CGAL::abs(from_exact(directions.back() * directions.back())));
-      sum_length += length;
-      num += 1;
     }
     CGAL_assertion(directions.size() == n);
-
-    sum_length = 1;
 
     dir_vec.reserve(n);
     for (std::size_t i = 0; i < n; i++)

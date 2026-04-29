@@ -342,12 +342,11 @@ private:
         IkVector_3 v1v3d = sp_other.exact_plane().base1() * v1.v[0] + sp_other.exact_plane().base2() * v1.v[1];
         IkVector_2 v1v = IkVector_2(v1v3d * sp.exact_plane().base1(), v1v3d * sp.exact_plane().base2());
         IkFT f1 = v.v * v1v;
-        double d1 = CGAL::to_double(f1);
+
         CGAL_assertion_code(
-        IkVector_3 v2v3d = sp_other.exact_plane().base1() * v2.v[0] + sp_other.exact_plane().base2() * v2.v[1];
-        IkVector_2 v2v = IkVector_2(v2v3d * sp.exact_plane().base1(), v2v3d * sp.exact_plane().base2());
-        IkFT f2 = v.v * v2v;
-        double d2 = CGAL::to_double(f2););
+          IkVector_3 v2v3d=sp_other.exact_plane().base1()*v2.v[0]+sp_other.exact_plane().base2()*v2.v[1];
+          IkVector_2 v2v=IkVector_2(v2v3d*sp.exact_plane().base1(),v2v3d*sp.exact_plane().base2()););
+
         if (v.v * v1v < 0) {
           CGAL_assertion(!v2.moving || v.v * v2v > 0); // Only one can have opposing direction
           IkPoint_2 p1 = sp.to_2d(sp_other.to_3d(v1.p0));
@@ -515,11 +514,11 @@ private:
       if (v.other == std::size_t(-1) || v_idx < v.other) {
         std::size_t adj = has_adjacent_with_same_target(v_idx);
 
-        if ((adj == -1 || vts[adj].cached_events.empty()) && v.other != -1)
+        if ((adj == std::size_t(-1) || vts[adj].cached_events.empty()) && v.other != std::size_t(-1))
           adj = has_adjacent_with_same_target(v.other);
 
         /// Does it have a constrained neighbor with the same target (= C1 event)
-        if (adj != -1 && !vts[adj].cached_events.empty()) {
+        if (adj != std::size_t(-1) && !vts[adj].cached_events.empty()) {
           auto it = vts[adj].cached_events.begin();
           while (it != vts[adj].cached_events.end()) {
             if (it->d == v.itarget)
@@ -553,7 +552,7 @@ private:
         Cached_event ce;
         Event ve;
         ve.vertex = v_idx;
-        CGAL_assertion(v.itarget != -1);
+        CGAL_assertion(v.itarget != std::size_t(-1));
         IkPoint_2 target = sp.data().exact_plane.to_2d(m_data.igraph().point_3(v.itarget));
         IkFT t1 = intersection_time(v, target);
         CGAL_assertion(t1 > time);
@@ -984,7 +983,7 @@ private:
     if (!decrement)
       return crossing.empty();
 
-    if (crossing.size() <= v.k) {
+    if (signed(crossing.size()) <= v.k) {
       v.k -= crossing.size();
       return true;
     }
@@ -1530,12 +1529,11 @@ private:
       poly.insert(next, ricochet);
 
     // Add vertices to newly covered edge
-    auto pair = m_data.igraph().edge(hit_edge).vertices.insert(std::make_pair(vts[e.vertex].sp_idx, std::pair<std::size_t, std::size_t>(e.vertex, ricochet)));
+    m_data.igraph().edge(hit_edge).vertices.insert(std::make_pair(vts[e.vertex].sp_idx, std::pair<std::size_t, std::size_t>(e.vertex, ricochet)));
 
     // vertices in already covered edge property don't need adjustment as only indices are stored
 
     // Expanding to other side of edge is still necessary (check if there is a polygon in that face)
-    // May also be an initial vertex on line, thus checking k for crossing is required
 
     std::vector<std::size_t> new_moving_vertices;
     new_moving_vertices.push_back(ricochet);
@@ -1612,7 +1610,7 @@ private:
       // Check whether a polygon needs to be created on other side of edge
       // Edge for prolongation vertex is needed anyway
       std::size_t q3_face = m_data.igraph().get_other_face(vts[e.vertex].sp_idx, vts.back().constraint_edge, other_face);
-      if (q3_face != -1 && sp.data().polygons.find(q3_face) == sp.data().polygons.end() && could_cross(vts[e.vertex].sp_idx, other_face, e.destination, e.time, vts[prolongation].constraint_edge)) {
+      if (q3_face != std::size_t(-1) && sp.data().polygons.find(q3_face) == sp.data().polygons.end() && could_cross(vts[e.vertex].sp_idx, other_face, e.destination, e.time, vts[prolongation].constraint_edge)) {
         // Create new polygon with prolongation vertex and ivertex
         m_data.init_border(q3_face);
         std::list<std::size_t>& poly_q3 = sp.data().polygons[q3_face];
@@ -1655,7 +1653,7 @@ private:
           std::swap(other, polygon);
 
         std::size_t q3_stationary = std::size_t(-1);
-        std::size_t q3_prolongation = std::size_t(-1);
+        CGAL_assertion_code(std::size_t q3_prolongation = std::size_t(-1););
         std::size_t opposite_ricochet = std::size_t(-1);
         for (std::size_t &i : polygon) {
           if (vertices[i].constraints.empty()) {
@@ -1688,7 +1686,7 @@ private:
               }
               else if (*vts.back().constraints.begin() == *vts[e.vertex].constraints.begin()) {
                 CGAL_assertion(q3_prolongation == std::size_t(-1));
-                q3_prolongation = i;
+                CGAL_assertion_code(q3_prolongation = i;);
                 //vts.back().k = vts[e.vertex].k;
                 vts.back().itarget = vts[prolongation].itarget;
                 vts.back().constraint_edge = vts[prolongation].constraint_edge;
@@ -1727,15 +1725,15 @@ private:
         m_data.igraph().edge(vts[opposite_ricochet].constraint_edge).vertices.insert(std::make_pair(vts[e.vertex].sp_idx, std::pair<std::size_t, std::size_t>(q3_stationary, opposite_ricochet)));
 
         std::size_t q4_face = m_data.igraph().get_other_face(vts[e.vertex].sp_idx, vts[e.vertex].constraint_edge, vts[e.vertex].face);
-        if (q4_face != -1 && sp.data().polygons.find(q4_face) == sp.data().polygons.end() && could_cross(vts[e.vertex].sp_idx, q3_face, e.destination, e.time, vts[opposite_ricochet].constraint_edge)) {
+        if (q4_face != std::size_t(-1) && sp.data().polygons.find(q4_face) == sp.data().polygons.end() && could_cross(vts[e.vertex].sp_idx, q3_face, e.destination, e.time, vts[opposite_ricochet].constraint_edge)) {
           // Create new polygon with prolongation vertex and ivertex
           m_data.init_border(q4_face);
           std::list<std::size_t>& poly_q4 = sp.data().polygons[q4_face];
           CGAL_assertion(poly_q4.empty());
           sp.active_polygons++;
 
-          std::size_t q4_stationary = std::size_t(-1);
-          std::size_t q4_inverse = std::size_t(-1);
+          CGAL_assertion_code(std::size_t q4_stationary = std::size_t(-1););
+          CGAL_assertion_code(std::size_t q4_inverse = std::size_t(-1););
           std::size_t q4_opposite_ricochet = std::size_t(-1);
           for (std::size_t& i : other) {
             if (vertices[i].constraints.empty())
@@ -1753,7 +1751,7 @@ private:
               vts.back().constraint_edge = vts[opposite_ricochet].constraint_edge;
               vts.back().other_constraint_edge = vts[e.vertex].constraint_edge;
               vts.back().ivertex = e.destination;
-              q4_stationary = i;
+              CGAL_assertion_code(q4_stationary = i;);
             }
             else {
               new_moving_vertices.push_back(i);
@@ -1768,7 +1766,7 @@ private:
                 }
                 else if (*vts.back().constraints.begin() == *vts[e.vertex].constraints.begin()) {
                   CGAL_assertion(q4_inverse == std::size_t(-1));
-                  q4_inverse = i;
+                  CGAL_assertion_code(q4_inverse = i;);
                   vts.back().itarget = (m_data.igraph().source(vts[e.vertex].constraint_edge) == e.destination) ? m_data.igraph().target(vts[e.vertex].constraint_edge) : m_data.igraph().source(vts[e.vertex].constraint_edge);
                   vts.back().constraint_edge = vts[e.vertex].constraint_edge;
                   vts.back().other = std::size_t(-1);
@@ -2088,8 +2086,8 @@ private:
     }
     adj_e1 = *e1_adj_it;
     adj_e2 = *e2_adj_it;
-    CGAL_assertion(adj_e1 != -1);
-    CGAL_assertion(adj_e2 != -1);
+    CGAL_assertion(adj_e1 != std::size_t(-1));
+    CGAL_assertion(adj_e2 != std::size_t(-1));
 
     std::vector<std::size_t> new_moving_vertices;
 
@@ -2120,7 +2118,7 @@ private:
       vts.emplace_back(vts[e2.vertex].sp_idx, e2.p, dir_adj_e2, e2.time);
       vts.back().constraints.insert(hit_line_idx);
       vts.back().face = vts[e2.vertex].face;
-      if (inserted_adj_e1 == -1)
+      if (inserted_adj_e1 == std::size_t(-1))
         vts.back().itarget = m_data.get_target_ivertex(vts.back(), hit_edge);
       else
         vts.back().itarget = (vts[inserted_adj_e1].itarget == m_data.igraph().source(hit_edge)) ? m_data.igraph().target(hit_edge) : m_data.igraph().source(hit_edge);
@@ -2155,7 +2153,7 @@ private:
         new_poly.push_back(vts.size() - 1);
       }
       else {
-        CGAL_assertion(inserted_adj_e1 != -1);
+        CGAL_assertion(inserted_adj_e1 != std::size_t(-1));
         vts.emplace_back(vts[e1.vertex].sp_idx, e1.p, vts[inserted_adj_e1].v, e1.time);
         vts.back().constraints = vts[inserted_adj_e1].constraints;
         vts.back().face = other_face;
@@ -2212,7 +2210,7 @@ private:
         m_data.igraph().edge(vts.back().other_constraint_edge).vertices.insert(std::make_pair(vts[e1.vertex].sp_idx, std::pair<std::size_t, std::size_t>(vts.size() - 2, vts.size() - 1)));
       }
       else {
-        CGAL_assertion(inserted_adj_e2 != -1);
+        CGAL_assertion(inserted_adj_e2 != std::size_t(-1));
         vts.emplace_back(vts[e2.vertex].sp_idx, e2.p, vts[inserted_adj_e2].v, e2.time);
         vts.back().constraints = vts[inserted_adj_e2].constraints;
         vts.back().face = other_face;
@@ -2237,11 +2235,11 @@ private:
     // insert new boundary on edge
     if (!vts[e1.vertex].constraints.empty())
       inserted_adj_e1 = e1.vertex;
-    CGAL_assertion(inserted_adj_e1 != -1);
+    CGAL_assertion(inserted_adj_e1 != std::size_t(-1));
 
     if (!vts[e2.vertex].constraints.empty())
       inserted_adj_e2 = e2.vertex;
-    CGAL_assertion(inserted_adj_e2 != -1);
+    CGAL_assertion(inserted_adj_e2 != std::size_t(-1));
 
     m_data.igraph().edge(hit_edge).vertices.insert(std::make_pair(vts[e1.vertex].sp_idx, std::pair<std::size_t, std::size_t>(inserted_adj_e1, inserted_adj_e2)));
 

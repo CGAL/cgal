@@ -52,7 +52,7 @@ bool run_test(
     //std::cout << std::endl << "--INPUT K: " << k << std::endl;
     ksp.partition(ks[i]);
 
-    CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, CGAL::Linear_cell_complex_traits<3, Kernel>, CGAL::Kinetic_linear_cell_complex_min_items<>> lcc;
+    CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, CGAL::Linear_cell_complex_traits<3, Kernel>, KSP::Linear_cell_complex_min_items> lcc;
     ksp.get_linear_cell_complex(lcc);
 
     //std::cout << "Time: " << timer.time() << " seconds." << std::endl;
