@@ -41,6 +41,10 @@ struct Hdvf_traits_2 {
     typedef typename K::FT FT;
     typedef CGAL::Bbox_2 Bbox;
     typedef typename K::Point_3 Point3;
+    /** \brief Converts a `Point` to a `Point3` for %VTK rendering.
+     *
+     * Update this function to change the projection for %VTK rendering.
+     */
     static std::function<Point3(const Point&)> to_point3;
 };
 

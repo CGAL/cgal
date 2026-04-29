@@ -41,6 +41,10 @@ struct Hdvf_traits_3 {
     typedef typename K::FT FT;
     typedef CGAL::Bbox_3 Bbox;
     typedef typename K::Point_3 Point3;
+    /** \brief Converts a `Point` to a `Point3` for %VTK rendering.
+     *
+     * By default, this function is the identity. Update it to change the projection for %VTK rendering.
+     */
     static std::function<Point3(const Point&)> to_point3;
 };
 

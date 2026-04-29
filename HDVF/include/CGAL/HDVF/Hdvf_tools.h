@@ -31,7 +31,7 @@ inline std::ostream & operator<< (std::ostream &out, const Cell_pair& p)
 }
 
 /**
- * \brief Runs an interaction loop to iterated M, W or MW operations and export the results to vtk.
+ * \brief Runs an interaction loop to iterate M, W or MW operations and export the results to vtk.
  *
  * The loop runs until the key `Q` is pressed. Otherwise, the loop asks for an operation (M, W or MW) and a cell (index and dimension).
  * Then all possible paired cells are listed and the user can chose one of them (or none).
