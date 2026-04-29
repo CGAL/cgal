@@ -262,9 +262,9 @@ public:
     }
 
     /**
-     * \brief Tests if a SparseMatrix is null.
+     * \brief Tests if a `Sparse_matrix` is null.
      *
-     * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
+     * The function return `true` is the `Sparse_matrix` is null (that is, empty) and `false` otherwise.
      */
     bool is_null()
     {
@@ -272,9 +272,9 @@ public:
     }
 
     /**
-     * \brief Tests if a SparseMatrix is empty.
+     * \brief Tests if a `Sparse_matrix` is empty.
      *
-     * The function return `true` is the SparseMatrix is empty (that is, if the number of columns or rows is null) and `false` otherwise.
+     * The function return `true` is the `Sparse_matrix` is empty (that is, if the number of columns or rows is null) and `false` otherwise.
      */
     bool is_empty()
     {

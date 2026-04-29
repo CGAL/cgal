@@ -61,10 +61,14 @@ int main(int argc, char **argv)
     hdvf.compute_perfect_hdvf();
 
     // Export K HDVF
+    std::cout << "======> K" << std::endl;
     hdvf.set_mask_K();
+    hdvf.print_reduction_sub();
     CGAL::IO::write_VTK(hdvf, *L, "tmp/res_complex_K", false) ;
     // Export L-K HDVF
+    std::cout << "======> L-K" << std::endl;
     hdvf.set_mask_L_K();
+    hdvf.print_reduction_sub();
     CGAL::IO::write_VTK(hdvf, *L, "tmp/res_cocomplex_L_K", false) ;
     // Compute pairing
     std::vector<HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();

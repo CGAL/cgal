@@ -263,7 +263,10 @@ public:
     /** \brief Gets the bitboard of the sub chain complex in dimension q. */
     inline const OSM::Bitboard& get_bitboard(int q) const
     {
-        return _sub.at(q) ;
+        if (q>0)
+            return _sub.at(q) ;
+        else
+            return OSM::Bitboard(0);
     }
 
     /** \brief Sets the bitboard of the sub chain complex in dimension q. */

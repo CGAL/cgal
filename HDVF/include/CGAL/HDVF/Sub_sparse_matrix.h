@@ -43,11 +43,14 @@ namespace OSM {
 template <typename CoefficientRing, int StorageFormat>
 class Sub_sparse_matrix : public Sparse_matrix<CoefficientRing, StorageFormat> {
 
+    /** \brief Type of the chains associated to the matrix. */
+    typedef Sparse_chain<CoefficientRing, StorageFormat> Matrix_chain;
+
 protected:
-    /** \brief A bitboard describing subchains restriction. */
+    /* \brief A bitboard describing subchains restriction. */
     Bitboard _subChains;
 
-    /** \brief A bitboard containing state of each chain (restricted to subchains). */
+    /* \brief A bitboard containing state of each chain (restricted to subchains). */
     Bitboard _subChainsStates;
 
 public:
@@ -172,6 +175,37 @@ public:
         stream << static_cast<const Sparse_matrix<CoefficientRing, StorageFormat>&>(matrix) ;
         stream << matrix._subChains << std::endl ;
         return stream ;
+    }
+
+    /**
+     * \brief Tests if a `Sub_sparse_matrix` is null.
+     *
+     * The function return `true` is the `Sub_sparse_matrix` is null (that is, all the chains in the mask are empty) and `false` otherwise.
+     */
+    bool is_null() const
+    {
+        return (_subChainsStates.begin() == _subChainsStates.end()) ;
+    }
+
+    /**
+     * \brief Tests if a `Sub_sparse_matrix` with chains restricted to a `Bitboard` is null.
+     *
+     * The function return `true` is the restricted `Sub_sparse_matrix` is null (that is, all the chains in the mask, restricted to the `Bitboard` `b` are null) and `false` otherwise.
+     */
+    bool is_null(const Bitboard& b) const
+    {
+        bool res(true);
+        // Test along chains
+        for (Bitboard::iterator it = _subChainsStates.begin(); res && (it != _subChainsStates.end()); ++it) {
+            // Checks that all non zero coefficients of the chain at index *it are out of b
+            const Matrix_chain& chain(this->_chains.at(*it));
+            for (typename Matrix_chain::const_iterator it2 = chain.begin(); it2 != chain.end(); ++it2) {
+                res = !(b.is_on(it2->first));
+                if (!res)
+                    std::cout << "is_null: " << *it << " - " << it2->first << " b.is_on : " << b.is_on(it2->first) << std::endl;
+            }
+        }
+        return res ;
     }
 };
 

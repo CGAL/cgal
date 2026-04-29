@@ -231,13 +231,40 @@ public:
     std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
 
     /**
-     * \brief Computes a "pairing" HDVF between K and L-K
+     * \brief Tests if HDVFs over `K` and `L-K` are perfect.
+     *
+     * The function returns `true` if the HDVFs over `K` and `L-K`are perfect, that is, if the reduced boundary matrix is null and `false` otherwise. The functions tests all dimensions if `dimension_restriction` is -1 (default value) and tests only dimension `dimension_restriction` otherwise.
+     *
+     *\param dimension_restriction If positive, restricts the test to a single dimension , if -1 is provided, all dimensions are tested, if -2 is provided (default) test is carried out according to the HDVF dimension restriction value.
+     */
+    bool is_perfect_hdvf(int dimension_restriction = -2) {
+        bool res = true ;
+
+        if (dimension_restriction == -2)
+            dimension_restriction = this->_dimension_restriction;
+
+        int q = (dimension_restriction==-1)?0:this->_min_dimension, max_dim = (dimension_restriction==-1)?this->_K.dimension():this->_max_dimension ;
+        while ((q<=max_dim) && res) {
+            set_mask_K();
+            res = res && this->_DD_col.at(q).is_null(_subCC.get_bitboard(q-1)) ;
+            set_mask_L_K();
+            res = res && this->_DD_col.at(q).is_null(_subCC.get_bitboard(q-1)) ;
+            ++q;
+        }
+        set_mask_K();
+        return res ;
+    }
+
+    /**
+     * \brief Computes a "pairing" HDVF between K and L-K.
      *
      * \warning Run `compute_perfect_hdvf()` first (to build perfect HDVFs over `K` and `L-K` respectively).
      *
      * The function computes a perfect HDVF over remaining critical cells. Each pair of cells inserted with the `A()` operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
+     *
+     * \exception Non_perfect_hdvfs If the HDVFs over `K` and `L-K` are not perfect, raises a `%std::runtime_error`.
      */
     std::vector<Cell_pair> compute_pairing_hdvf() ;
 
@@ -249,6 +276,8 @@ public:
      * The function computes a random perfect HDVF over remaining critical cells. Each pair of cells inserted with the `A()` operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
+     *
+     * \exception Non_perfect_hdvfs If the HDVFs over `K` and `L-K` are not perfect, raises a `%std::runtime_error`.
      */
     std::vector<Cell_pair> compute_rand_pairing_hdvf() ;
 
@@ -362,7 +391,7 @@ public:
     }
 
     /**
-     * \brief Prints the homology and cohomology reduction information for the current such chain complex.
+     * \brief Prints the homology and cohomology reduction information for the current sub chain complex.
      *
      * Prints \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
      *
@@ -474,7 +503,7 @@ public:
     /**
      * \brief Exports primary/secondary/critical labels *of the current sub chain complex* for vtk export.
      *
-     * The method exports the labels of every cells in each dimension.
+     * The method exports the labels of every cells in each dimension. Exports the label 2 (ie. NONE) for cells out of the current sub chain complex.
      *
      * \return A vector containing, for each dimension, the vector of labels by cell index.
      */
@@ -821,7 +850,6 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
 template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
 {
-    // TODO : check both HDVFs are perfect
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
 #endif
@@ -829,11 +857,19 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
     // Copy the HDVF before computing the pairing -> otherwise we loose it...
     Hdvf_duality<ChainComplex> hdvf_tmp(*this);
 
+    if (!is_perfect_hdvf()) {
+        std::cerr << "Cannot compute duality pairing: HDVFs over K or L-K not perfect" << std::endl;
+        throw(std::runtime_error("Cannot compute duality pairing: HDVFs over K or L-K not perfect"));
+    }
+
     // Create a full Sub_chain_complex_mask
     hdvf_tmp._subCC = Sub_chain_complex_mask<ChainComplex>(hdvf_tmp._L) ;
     hdvf_tmp._subCC.screen_matrices(this->_DD_col);
 
     std::vector<Cell_pair> pairing = hdvf_tmp.Base::compute_perfect_hdvf() ;
+    for (Cell_pair p : pairing) {
+        std::cout << p.sigma << " : " << _KCC.get_bit(p.dim, p.sigma) << " / " << p.tau << " : " << _KCC.get_bit(p.dim+1, p.tau) << std::endl;
+    }
     return pairing ;
 }
 
@@ -841,13 +877,18 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
 template<typename ChainComplex>
 std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
 {
-    // TODO : check both HDVFs are perfect
+    // Copy the HDVF before computing the pairing -> otherwise we loose it...
+    Hdvf_duality<ChainComplex> hdvf_tmp(*this);
+
+    if (!is_perfect_hdvf()) {
+        std::cerr << "Cannot compute duality pairing: HDVFs over K or L-K not perfect" << std::endl;
+        throw(std::runtime_error("Cannot compute duality pairing: HDVFs over K or L-K not perfect"));
+    }
+
 #ifdef DEBUG_HDVF_DUALITY
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
 #endif
 
-    // Copy the HDVF before computing the pairing -> otherwise we loose it...
-    Hdvf_duality<ChainComplex> hdvf_tmp(*this);
     // Create a full Sub_chain_complex_mask
     hdvf_tmp._subCC = Sub_chain_complex_mask<ChainComplex>(hdvf_tmp._L) ;
     hdvf_tmp._subCC.screen_matrices(this->_DD_col);
