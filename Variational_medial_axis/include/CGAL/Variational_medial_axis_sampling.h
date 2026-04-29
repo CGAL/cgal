@@ -1040,8 +1040,7 @@ private:
     // TODO: replace with poisson disk sampling
     CGAL::Random_points_in_triangle_mesh_3<TriangleMesh, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples_; ++i) {
-      Point_3 p = *g;
-      face_descriptor f = g.last_item_picked();
+      auto [p, f] = g.point_and_support();
       put(face_nb_samples_map_, f, get(face_nb_samples_map_, f) + 1);
       auto it = tpoints_.insert(p);
       point_from_face_map_[*it] = f;
