@@ -993,6 +993,7 @@ private:
     }
 
     // Dump volumes colored by votes
+/*
     if (false) {
       for (std::size_t i = 0; i < m_cost_matrix[0].size() - 6; i++) {
         // skip 0/0 volumes? Maybe safe them a few seconds later to be able to separate them?
@@ -1020,7 +1021,7 @@ private:
         //if (diff < 0)
           //std::filesystem::rename(fn1, fno);
       }
-      }
+    }*/
   }
 
   /*!
