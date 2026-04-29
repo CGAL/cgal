@@ -157,7 +157,7 @@ bool read_GOCAD(std::istream& is,
     }
   }
 
-  return end_read && nb_gocad == nb_end && (is.eof() || !is.bad());
+  return nb_gocad!=0 && end_read && nb_gocad == nb_end && (is.eof() || !is.bad());
 }
 /// \endcond
 
