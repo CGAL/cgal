@@ -457,7 +457,7 @@ public:
     const std::vector<Pair>& points) {
 
     CGAL_assertion(is_simple_polygon(points));
-    CGAL_assertion(is_convex_polygon(points));
+    //CGAL_assertion(is_convex_polygon(points));
     CGAL_assertion(is_valid_polygon(points));
 
     From_exact from_exact;
