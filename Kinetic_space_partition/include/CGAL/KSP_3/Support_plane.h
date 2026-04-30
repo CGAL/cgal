@@ -490,7 +490,6 @@ public:
     for (const auto& pair : points) {
       const auto& point = pair.first;
       directions.push_back(typename Intersection_kernel::Vector_2(m_data->ikcentroid, point));
-      const FT length = CGAL::approximate_sqrt(CGAL::abs(from_exact(directions.back() * directions.back())));
     }
     CGAL_assertion(directions.size() == n);
 

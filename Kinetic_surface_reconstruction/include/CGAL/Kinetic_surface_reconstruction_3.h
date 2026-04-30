@@ -548,10 +548,11 @@ public:
     if (m_regions.empty())
       return;
 
+    CGAL_assertion_code(
     for (const auto& pair : m_regions) {
       const std::size_t shape_idx = add_convex_hull_shape(pair.second, pair.first);
       CGAL_assertion(shape_idx != std::size_t(-1));
-    }
+    });
 
     m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
     m_kinetic_partition.initialize(np);
@@ -2119,8 +2120,6 @@ private:
     const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), m_max_distance_to_plane * 0.5);
 
     auto range = regions | boost::adaptors::transformed([](typename Region_growing::Primitive_and_region& pr)->Plane_3& {return pr.first; });
-
-    std::size_t num_shapes = regions.size();
 
     // Regularize detected planes.
 

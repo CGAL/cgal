@@ -383,12 +383,10 @@ private:
         IkVector_3 v2v3d = sp_other.exact_plane().base1() * v2.v[0] + sp_other.exact_plane().base2() * v2.v[1];
         IkVector_2 v2v = IkVector_2(v2v3d * sp.exact_plane().base1(), v2v3d * sp.exact_plane().base2());
         IkFT f2 = v.v * v2v;
-        double d2 = CGAL::to_double(f2);
         CGAL_assertion_code(
         IkVector_3 v1v3d = sp_other.exact_plane().base1() * v1.v[0] + sp_other.exact_plane().base2() * v1.v[1];
         IkVector_2 v1v = IkVector_2(v1v3d * sp.exact_plane().base1(), v1v3d * sp.exact_plane().base2());
-        IkFT f1 = v.v * v1v;
-        double d1 = CGAL::to_double(f1););
+        IkFT f1 = v.v * v1v;);
         if (v.v * v2v < 0) {
           CGAL_assertion(!v1.moving || v.v * v1v > 0); // Only one can have opposing direction
           IkPoint_2 p2 = sp.to_2d(sp_other.to_3d(v2.p0));
@@ -1886,7 +1884,7 @@ private:
     sp.active_polygons++;
 
     std::size_t q3_stationary = std::size_t(-1);
-    std::size_t q3_prolongation = std::size_t(-1);
+    CGAL_assertion_code(std::size_t q3_prolongation = std::size_t(-1););
     std::size_t opposite_ricochet = std::size_t(-1);
     for (std::size_t& i : polygon) {
       if (vertices[i].constraints.empty()) {
@@ -1918,7 +1916,7 @@ private:
           }
           else if (*vts.back().constraints.begin() == *vts[e.vertex].constraints.begin()) {
             CGAL_assertion(q3_prolongation == std::size_t(-1));
-            q3_prolongation = i;
+            CGAL_assertion_code(q3_prolongation = i;);
             //vts.back().k = vts[e.vertex].k;
             vts.back().itarget = m_data.igraph().other(prolongation_edge, e.destination);
             vts.back().constraint_edge = prolongation_edge;
@@ -1966,8 +1964,10 @@ private:
     CGAL_assertion(poly_q4.empty());
     sp.active_polygons++;
 
+    CGAL_assertion_code(
     std::size_t q4_stationary = std::size_t(-1);
-    std::size_t q4_inverse = std::size_t(-1);
+    std::size_t q4_inverse = std::size_t(-1););
+
     std::size_t q4_opposite_ricochet = std::size_t(-1);
     for (std::size_t& i : other) {
       if (vertices[i].constraints.empty())
@@ -1985,7 +1985,7 @@ private:
         vts.back().constraint_edge = vts[opposite_ricochet].constraint_edge;
         vts.back().other_constraint_edge = vts[e.vertex].constraint_edge;
         vts.back().ivertex = e.destination;
-        q4_stationary = i;
+        CGAL_assertion_code(q4_stationary = i;);
       }
       else {
         new_moving_vertices.push_back(i);
@@ -2000,7 +2000,7 @@ private:
           }
           else if (*vts.back().constraints.begin() == *vts[e.vertex].constraints.begin()) {
             CGAL_assertion(q4_inverse == std::size_t(-1));
-            q4_inverse = i;
+            CGAL_assertion_code(q4_inverse = i;);
             vts.back().itarget = (m_data.igraph().source(vts[e.vertex].constraint_edge) == e.destination) ? m_data.igraph().target(vts[e.vertex].constraint_edge) : m_data.igraph().source(vts[e.vertex].constraint_edge);
             vts.back().constraint_edge = vts[e.vertex].constraint_edge;
             vts.back().other = std::size_t(-1);
