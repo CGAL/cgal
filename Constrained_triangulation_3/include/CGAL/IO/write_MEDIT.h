@@ -95,8 +95,10 @@ void write_MEDIT(std::ostream& os,
   const bool has_plc_face_id
     = choose_parameter(get_parameter(np, internal_np::with_plc_face_id), false);
 
-  auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f)
-    { return has_plc_face_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
+  auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f) {
+    return has_plc_face_id
+         ? ccdt.face_constraint_index(f.first, f.second) + 1
+         : 1; });
 
   return SMDS_3::output_to_medit(os,
                                  tr,

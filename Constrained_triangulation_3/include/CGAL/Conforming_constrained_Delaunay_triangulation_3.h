@@ -603,6 +603,39 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 template <typename T_3>
 class Conforming_constrained_Delaunay_triangulation_3_impl;
 
+namespace internal {
+struct Pair_hash
+{
+  template <typename T1, typename T2>
+  std::size_t operator()(const std::pair<T1, T2>& p) const {
+    return boost::hash<std::pair<T1, T2>>()(p);
+  }
+  template <typename Pair>
+  std::size_t hash(const Pair& p) const {
+    return this->operator()(p);
+  }
+  template <typename T>
+  bool equal(const T& v1, const T& v2) const {
+    return v1 == v2;
+  }
+};
+
+template <typename ConcurrencyTag, typename PairKey, typename Value>
+struct Hash_map_of_pairs_type
+{
+  typedef CGAL::unordered_flat_map<PairKey, Value, internal::Pair_hash> type;
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+template <typename PairKey, typename Value>
+struct Hash_map_of_pairs_type<CGAL::Parallel_tag, PairKey, Value>
+{
+  typedef tbb::concurrent_hash_map<PairKey, Value, internal::Pair_hash> type;
+};
+#endif
+} // namespace internal
+
+
 #endif // not DOXYGEN_RUNNING
 
 /*!
@@ -1102,7 +1135,7 @@ public:
    */
   CDT_3_signed_index face_constraint_index(typename Triangulation::Cell_handle ch, int i) const
   {
-    return ch->ccdt_3_data().face_constraint_index(i);
+    return face_constraint_index(typename Triangulation::Facet(ch, i));
   }
 
   /*!
@@ -1112,7 +1145,7 @@ public:
    */
   CDT_3_signed_index face_constraint_index(const typename Triangulation::Facet& f) const
   {
-    return face_constraint_index(f.first, f.second);
+    return cdt_impl.face_constraint_index(f);
   }
 
   /*!
@@ -1265,6 +1298,19 @@ public:
   Constrained_facets_range constrained_facets() const {
     return {constrained_facets_begin(), constrained_facets_end()};
   }
+
+public: // @tmp
+  struct Facet_prop
+  {
+    CDT_3_signed_index face_id = -1;
+    void* facet_2d = nullptr;
+  };
+  using Surface_facet_info =
+      typename internal::Hash_map_of_pairs_type<Concurrency_tag,
+                                                Facet /*key*/,
+                                                Facet_prop /*value*/>::type;
+  mutable Surface_facet_info surface_facet_info_;
+
 private:
   struct CDT_2_types
   {
@@ -1339,12 +1385,52 @@ protected:
 public:
   using Constrained_polyline_id = typename Constraint_hierarchy::Constraint_id;
 
+public:
+  CDT_3_signed_index face_constraint_index(Cell_handle cell, int facet_index) const
+  {
+    return surface_facet_info_[Facet{cell, facet_index}].face_id;
+  }
+  CDT_3_signed_index face_constraint_index(const Facet& f) const
+  {
+    return face_constraint_index(f.first, f.second);
+  }
+
 protected:
+  void set_face_constraint_index(Cell_handle cell, int facet_index, CDT_3_signed_index index)
+  {
+    surface_facet_info_[Facet{cell, facet_index}].face_id = index;
+  }
+
+  template <typename CDT_2>
+  auto face_2(const CDT_2& cdt, Cell_handle cell, int facet_index) const
+  {
+    using Face = typename CDT_2::Face;
+    auto ptr = static_cast<Face*>(surface_facet_info_[Facet{cell, facet_index}].facet_2d);
+    return cdt.tds().faces().iterator_to(*ptr);
+  }
+
+  template <typename Facet_handle>
+  void set_facet_constraint(Cell_handle cell, int facet_index,
+                            CDT_3_signed_index face_id,
+                            Facet_handle facet_2d)
+  {
+    const Facet facet{cell, facet_index};
+    const auto f2d = static_cast<void*>(facet_2d == Facet_handle{} ? nullptr : std::addressof(*facet_2d));
+
+    auto surface_facet_info_it = surface_facet_info_.find(facet);
+    if(surface_facet_info_it != surface_facet_info_.end()) {
+      surface_facet_info_it->second.face_id = face_id;
+      surface_facet_info_it->second.facet_2d = f2d;
+    }
+    else {
+      surface_facet_info_.emplace(facet, Facet_prop{face_id, f2d});
+    }
+  }
 
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
-    const auto face_id = static_cast<std::size_t>(cell->ccdt_3_data().face_constraint_index(facet_index));
+    const auto face_id = static_cast<std::size_t>(face_constraint_index(cell, facet_index));
     this->face_constraint_misses_subfaces_set(face_id);
-    auto fh_2 = cell->ccdt_3_data().face_2(this->face_cdt_2(face_id), facet_index);
+    auto fh_2 = face_2(this->face_cdt_2(face_id), cell, facet_index);
     fh_2->info().facet_3d = {};
     fh_2->info().missing_subface = true;
     this->set_facet_constrained({cell, facet_index}, -1, {});
@@ -1371,7 +1457,7 @@ protected:
         for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
-            if(c->ccdt_3_data().is_facet_constrained(li)) {
+            if(self->is_facet_constrained(c, li)) {
               self->register_facet_to_be_constrained(c, li);
   #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
               std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
@@ -1572,10 +1658,10 @@ public:
     for(auto outside_facet : facets_of_cavity) {
       const auto [outside_cell, outside_face_index] = outside_facet;
       const auto mirror_facet = this->mirror_facet(outside_facet);
-      if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
-        const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
+      if(is_facet_constrained(outside_cell, outside_face_index)) {
+        const auto polygon_id = face_constraint_index(outside_cell, outside_face_index);
         const CDT_2& cdt_2 = face_cdt_2(polygon_id);
-        const auto f2d = outside_cell->ccdt_3_data().face_2(cdt_2, outside_face_index);
+        const auto f2d = face_2(cdt_2, outside_cell, outside_face_index);
         set_facet_constrained(mirror_facet, polygon_id, f2d);
       }
     }
@@ -1761,7 +1847,10 @@ public:
   }
 
   bool is_facet_constrained(Facet f) const {
-    return f.first->ccdt_3_data().is_facet_constrained(f.second);
+    return face_constraint_index(f.first, f.second) >= 0;
+  }
+  bool is_facet_constrained(Cell_handle c, int facet_index) const {
+    return face_constraint_index(c, facet_index) >= 0;
   }
 
   auto number_of_constrained_facets() const
@@ -1790,10 +1879,11 @@ public:
     CGAL_assertion(fh == CDT_2_face_handle{} || same_triangle(f, fh));
 
     const auto [c, facet_index] = f;
-    c->ccdt_3_data().set_facet_constraint(facet_index, polygon_constraint_id, fh);
+    set_facet_constraint(c, facet_index, polygon_constraint_id, fh);
+
     if(tr().dimension() > 2) {
       const auto [n, n_index] = tr().mirror_facet({c, facet_index});
-      n->ccdt_3_data().set_facet_constraint(n_index, polygon_constraint_id, fh);
+      set_facet_constraint(n, n_index, polygon_constraint_id, fh);
     }
     if(fh == CDT_2_face_handle{}) return;
 
@@ -3563,10 +3653,10 @@ private:
     auto restore_markers = [&](Facet outside_facet) {
       const auto [outside_cell, outside_face_index] = outside_facet;
       const auto mirror_facet = this->mirror_facet(outside_facet);
-      if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
-        const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
+      if(is_facet_constrained(outside_cell, outside_face_index)) {
+        const auto polygon_id = face_constraint_index(outside_cell, outside_face_index);
         const CDT_2& cdt_2 = face_cdt_2(polygon_id);
-        const auto f2d = outside_cell->ccdt_3_data().face_2(cdt_2, outside_face_index);
+        const auto f2d = face_2(cdt_2, outside_cell, outside_face_index);
         set_facet_constrained(mirror_facet, polygon_id, f2d);
       }
     };
@@ -3752,7 +3842,7 @@ private:
       }
       for(auto [cell, facet_index] : missing_faces) {
         facets_of_cavity_border.erase({cell, facet_index});
-        if(cell->ccdt_3_data().is_facet_constrained(facet_index)) {
+        if(is_facet_constrained(cell, facet_index)) {
           result.interior_constrained_faces.emplace_back(cell, facet_index);
         }
         auto is_new_cell = cells_of_cavity.insert(cell).second;
@@ -4080,7 +4170,7 @@ public:
           const auto n_index = n->index(it);
           if(!this->is_infinite(n->vertex(n_index)))
           {
-            if(!it->ccdt_3_data().is_facet_constrained(i) &&
+            if(!is_facet_constrained(it, i) &&
                this->side_of_sphere(it, n->vertex(n_index)->point()) == ON_BOUNDED_SIDE)
             {
               if(verbose) {
@@ -5092,6 +5182,20 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     }
   }
 
+  boost::unordered_map<typename Tr::Facet, std::size_t> constraint_index_map;
+  for(auto [c, index] : ccdt.triangulation().finite_facets())
+  {
+    if(ccdt.is_facet_constrained(c, index))
+    {
+      typename Tr::Facet f(c, index);
+
+      auto findex = ccdt.face_constraint_index(f);
+      constraint_index_map[f] = findex;
+      auto mirror_f = ccdt.triangulation().mirror_facet(f);
+      constraint_index_map[mirror_f] = findex;
+    }
+  }
+
   auto tr = std::move(ccdt).triangulation();
 
   using CDT_3 = Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>;
@@ -5102,16 +5206,35 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     for(auto ch : tr.all_cell_handles()) {
       ch->set_subdomain_index(0);
     }
-    for(auto [c, index] : tr.finite_facets()) {
-      if(c->ccdt_3_data().is_facet_constrained(index)) {
-        auto patch = c->ccdt_3_data().face_constraint_index(index) + 1;
-        c->set_surface_patch_index(index, patch);
+    for(const auto& f : tr.finite_facets())
+    {
+      auto f_patch_it = constraint_index_map.find(f);
+      if(f_patch_it != constraint_index_map.end())
+      {
+        const auto& patch = f_patch_it->second;
+        auto mirror_f = ccdt.triangulation().mirror_facet(f);
+
+        f.first->set_surface_patch_index(f.second, patch);
+        mirror_f.first->set_surface_patch_index(mirror_f.second, patch);
       }
     }
   } else {
     for(auto ch : tr.all_cell_handles()) {
       ch->set_subdomain_index(-1);
     }
+
+    auto is_f_constrained = [&](typename Tr::Cell_handle ch, int index) -> bool
+    {
+      typename Tr::Facet f(ch, index);
+      return constraint_index_map.find(f) != constraint_index_map.end();
+    };
+    auto f_constraint_index = [&](typename Tr::Cell_handle ch, int index) -> std::size_t
+    {
+      typename Tr::Facet f(ch, index);
+      auto it = constraint_index_map.find(f);
+      CGAL_assertion(it != constraint_index_map.end());
+      return it->second;
+    };
 
     // Use a flood algorithm to mark constrained connected components.
     // The connected component containing the infinite vertex is marked with index 0.
@@ -5123,7 +5246,10 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     int next_odd_subdomain = 1;
 
     // Function to flood-fill a connected component with a given subdomain index
-    auto flood_component = [&border](typename Tr::Cell_handle start, int subdomain_index) {
+    auto flood_component
+      = [&border, &is_f_constrained]
+        (typename Tr::Cell_handle start, int subdomain_index)
+    {
       if(start->subdomain_index() != -1)
         return;
 
@@ -5139,7 +5265,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
             typename Tr::Facet f(ch, i);
             auto n = ch->neighbor(i);
             if(n->subdomain_index() == -1) {
-              if(ch->ccdt_3_data().is_facet_constrained(i))
+              if(is_f_constrained(ch, i))
                 border.push(f);
               else
                 queue.push(n);
@@ -5186,10 +5312,10 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     for(auto f : tr.finite_facets())
     {
       auto mf = tr.mirror_facet(f);
-      if(f.first->ccdt_3_data().is_facet_constrained(f.second) ||
-          mf.first->ccdt_3_data().is_facet_constrained(mf.second))
+      if(is_f_constrained(f.first, f.second) ||
+          is_f_constrained(mf.first, mf.second))
       {
-        auto patch = f.first->ccdt_3_data().face_constraint_index(f.second) + 1;
+        auto patch = f_constraint_index(f.first, f.second) + 1;
         f.first->set_surface_patch_index(f.second, patch);
         mf.first->set_surface_patch_index(mf.second, patch);
       }
