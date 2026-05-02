@@ -31,6 +31,7 @@
 #include <map>
 
 #include <boost/math/constants/constants.hpp>
+#include <boost/math/special_functions/ellint_2.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/tags.h>
