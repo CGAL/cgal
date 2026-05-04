@@ -27,6 +27,94 @@ namespace internal {
 
 BOOST_TTI_HAS_TYPE(Point_set);
 
+template<class PointMap, bool from_np>
+struct GetPointMap {
+};
+
+template <typename PointMap>
+struct GetPointMap<PointMap, false> {
+  template <typename NamedParameters, typename PointRange>
+  PointMap operator()(NamedParameters& np, PointRange& points) {
+    using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
+    return NP_helper::get_point_map(points, np);
+  }
+};
+
+template <typename PointMap>
+struct GetPointMap<PointMap, true> {
+  template <typename NamedParameters, typename PointRange>
+  PointMap operator()(NamedParameters&, PointRange& points) { return PointMap(points); }
+};
+
+template<typename PointRange, bool is_point_set = has_type_Point_set<PointRange>::value>
+struct PointType {
+};
+
+template<typename PointRange>
+struct PointType<PointRange, false> {
+  using type = typename std::iterator_traits<typename PointRange::iterator>::value_type;
+};
+
+template<typename PointRange>
+struct PointType<PointRange, true> {
+  using type = typename PointRange::Point_type;
+};
+
+template<typename PointRange, bool is_point_set = has_type_Point_set<PointRange>::value>
+struct IndexRange {
+  IndexRange(PointRange& points) {}
+};
+
+template<typename PointRange>
+struct IndexRange<PointRange, false> {
+  using iterator = boost::counting_iterator<std::size_t>;
+  using size_type = std::size_t;
+  IndexRange(PointRange& points) : points(points) {}
+
+  iterator begin() {
+    return boost::counting_iterator<std::size_t>(0);
+  }
+
+  iterator end() {
+    return boost::counting_iterator<std::size_t>(points.size());
+  }
+
+  size_type size() const {
+    return points.size();
+  }
+
+  bool empty() const {
+    return points.empty();
+  }
+
+  PointRange& points;
+};
+
+template<typename PointRange>
+struct IndexRange<PointRange, true> {
+  using iterator = typename PointRange::iterator;
+  using size_type = std::size_t;
+  IndexRange(PointRange& points) : points(points) {}
+
+  iterator begin() {
+    return points.begin();
+  }
+
+  iterator end() {
+    return points.end();
+  }
+
+  size_type size() const {
+    return points.size();
+  }
+
+  bool empty() const {
+    return points.empty();
+  }
+
+  PointRange& points;
+};
+
 inline
 void trim(std::string& s) {
   auto l = [](int c) {return !std::isspace(c); };
@@ -45,15 +133,15 @@ bool next_line(std::istream& is, std::string& line) {
 }
 
 template <typename PointRange, typename Map>
-bool read_elements(std::istream& is, PointRange points, Map cmap, std::string& line) {
+bool read_elements(std::istream& is, PointRange &points, Map cmap, std::string& line) {
   using Type = typename boost::property_traits<Map>::value_type;
   std::istringstream ss;
   auto it = points.begin();
-  for (auto idx : points) {
+  for (auto idx : IndexRange(points)) {
     if (!internal::next_line(is, line))
       return false;
 
-    if (!std::isdigit(line[0]))
+    if (!(std::isdigit(line[0]) || line[0] == '-'))
       return false;
 
     ss.clear();
@@ -69,7 +157,7 @@ bool read_elements(std::istream& is, PointRange points, Map cmap, std::string& l
 }
 
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_colors(std::ifstream& is, PointRange points, std::string& line, const CGAL_NP_CLASS& np) {
+bool read_colors(std::ifstream& is, PointRange &points, std::string& line, const CGAL_NP_CLASS& np) {
   using parameters::is_default_parameter;
   if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::color_map_t>::value)) {
     using Color_map = typename internal_np::Lookup_named_param_def<internal_np::color_map_t, CGAL_NP_CLASS, Constant_property_map<std::size_t, Color>>::type;
@@ -82,10 +170,12 @@ bool read_colors(std::ifstream& is, PointRange points, std::string& line, const 
 }
 
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_normals(std::ifstream& is, PointRange points, std::string& line, const CGAL_NP_CLASS& np) {
+bool read_normals(std::ifstream& is, PointRange &points, std::string& line, const CGAL_NP_CLASS& np) {
   using parameters::is_default_parameter;
   using NP_helper = Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>;
-  if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>::value)) {
+  if constexpr (internal::has_type_Point_set<PointRange>::value || !(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>::value)) {
+    if (internal::has_type_Point_set<PointRange>::value)
+      points.add_normal_map();
     typename NP_helper::Normal_map normal_map = NP_helper::get_normal_map(points, np);
     return internal::read_elements(is, points, normal_map, line);
   }
@@ -136,14 +226,16 @@ bool read_normals(std::ifstream& is, PointRange points, std::string& line, const
  *
  *   \cgalParamNBegin{labels}
  *     \cgalParamDescription{a range of labels providing one label for each region.}
- *     \cgalParamType{a model of the concept `RandomAccessContainer` whose value type is `std::string` or `const char *`}
+ *     \cgalParamType{a reference to a model of the concept `RandomAccessContainer` whose value type is `std::string` or `const char *`}
  *     \cgalParamDefault{No group labels are read.}
+ *     \cgalParamExtra{a range can be passed via `std::ref` to create a reference.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{colors}
  *     \cgalParamDescription{a range of colors providing one color for each region.}
- *     \cgalParamType{a model of the concept `RandomAccessContainer` whose value type is `CGAL::Color`}
+ *     \cgalParamType{a reference to a model of the concept `RandomAccessContainer` whose value type is `CGAL::Color`.}
  *     \cgalParamDefault{No group colors are read.}
+ *     \cgalParamExtra{a range can be passed via `std::ref` to create a reference.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -165,17 +257,19 @@ bool read_VG(std::ifstream& is,
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  constexpr bool is_point_set = internal::has_type_Point_set<PointRange>::value;
-
   using NP_helper = Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>;
-  using PointMap = std::conditional_t<is_default_parameter<CGAL_NP_CLASS, internal_np::point_t>::value && !is_point_set, Random_access_property_map<PointRange>, typename NP_helper::Point_map>;
-  using Point = typename boost::property_traits<PointMap>::value_type;
+
+  constexpr bool ra_pmap = is_default_parameter<CGAL_NP_CLASS, internal_np::point_t>::value && !internal::has_type_Point_set<PointRange>::value;
+  using Point_map = std::conditional_t<ra_pmap, Random_access_property_map<PointRange>, typename NP_helper::Point_map>;
+
+  using Point = typename internal::PointType<PointRange>::type;
+  using Index = typename boost::property_traits<Point_map>::key_type;
 
   using GeomTraits = typename NP_helper::Geom_traits;
   using Region = typename std::iterator_traits<typename RegionOutputIterator::container_type::iterator>::value_type;
   using FT = typename GeomTraits::FT;
 
-  //PointMap point_map = NP_helper::get_point_map(points, np);
+  Point_map point_map = internal::GetPointMap<Point_map, ra_pmap>()(np, points);
 
   if (!is.good()) {
     std::cerr << "Error: cannot open file" << std::endl;
@@ -203,7 +297,8 @@ bool read_VG(std::ifstream& is,
   points.resize(num_points);
 
   std::size_t added = 0;
-  for (auto idx : points) {
+
+  for (auto idx : internal::IndexRange(points)) {
     if (!(internal::next_line(is, line)))
       return false;
 
@@ -211,7 +306,7 @@ bool read_VG(std::ifstream& is,
     ss.clear();
     ss.str(line);
     if (ss >> iformat(x) >> iformat(y) >> iformat(z)) {
-      put(points, idx, Point(x, y, z));
+      put(point_map, idx, Point(x, y, z));
       added++;
     }
     else {
@@ -224,9 +319,10 @@ bool read_VG(std::ifstream& is,
     return false;
   }
 
+  internal::next_line(is, line);
   ss.clear();
   ss.str(line);
-  ss >> token;/*
+  ss >> token;
 
   while (token != "num_groups" && token != "num_groups:") {
     if (token == "num_colors:" || token == "num_colors") {
@@ -236,7 +332,7 @@ bool read_VG(std::ifstream& is,
         std::cerr << "num_colors does not match num_points" << std::endl;
         return false;
       }
-      internal::read_colors(is, points, num_colors, line, np);
+      internal::read_colors(is, points, line, np);
     }
     else
       if (token == "num_normals" || token == "num_normals:") {
@@ -246,7 +342,7 @@ bool read_VG(std::ifstream& is,
           std::cerr << "num_normals does not match num_points" << std::endl;
           return false;
         }
-        internal::read_normals(is, points, num_normals, line, np);
+        internal::read_normals(is, points, line, np);
       }
       else {
         std::cerr << "Error: Expected \"num_normals:\", \"num_colors:\" or \"num_groups:\", but found " << line << std::endl;
@@ -256,7 +352,7 @@ bool read_VG(std::ifstream& is,
     ss.clear();
     ss.str(line);
     ss >> token;
-  }*/
+  }
 
   std::size_t num_groups;
   ss >> num_groups;
@@ -299,8 +395,8 @@ bool read_VG(std::ifstream& is,
         if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::labels_t>::value)) {
           using Labels = typename internal_np::Lookup_named_param_def<internal_np::labels_t, CGAL_NP_CLASS, std::vector<std::string>>::type;
           Labels labels = parameters::choose_parameter<Labels>(parameters::get_parameter(np, internal_np::labels));
-          labels.resize(i + 1); // fill missing labels with empty strings if there are not enough labels provided
-          ss >> labels[i];
+          labels.get().resize(i + 1); // fill missing labels with empty strings if there are not enough labels provided
+          ss >> labels.get()[i];
         }
         continue;
       }
@@ -309,13 +405,13 @@ bool read_VG(std::ifstream& is,
         if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::colors_t>::value)) {
           using Colors = typename internal_np::Lookup_named_param_def<internal_np::colors_t, CGAL_NP_CLASS, std::vector<Color>>::type;
           Colors colors = parameters::choose_parameter<Colors>(parameters::get_parameter(np, internal_np::colors));
-          colors.resize(i + 1); // fill missing colors with empty strings if there are not enough colors provided
+          colors.get().resize(i + 1); // fill missing colors with empty strings if there are not enough colors provided
           float r, g, b;
           ss >> r >> g >> b;
           r = std::clamp(r, 0.f, 1.f);
           g = std::clamp(g, 0.f, 1.f);
           b = std::clamp(b, 0.f, 1.f);
-          colors[i] = Color(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5));
+          colors.get()[i] = Color(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5));
         }
         continue;
       }
@@ -336,7 +432,6 @@ bool read_VG(std::ifstream& is,
 
         if (num_group_parameters > 0) {
           if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::constructor_t>::value) {
-            //typename GeomTraits::Plane_3 pl;
             ss >> region.first;
           }
           else {
@@ -465,16 +560,16 @@ bool read_VG(std::ifstream& is,
  * \returns `true` if the writing was successful, `false` otherwise.
  */
 
-template <typename PointRange, typename RegionRange, typename NamedParameters>
+template <typename PointRange, typename RegionRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VG(std::ostream& os,
   const PointRange& points,
   const RegionRange& regions,
-  const NamedParameters& np = parameters::default_values()) {
+  const CGAL_NP_CLASS& np = parameters::default_values()) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
+  using NP_helper = Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>;
   using PointMap = typename NP_helper::Const_point_map;
   using Point = typename boost::property_traits<PointMap>::value_type;
   using GeomTraits = typename NP_helper::Geom_traits;
@@ -497,9 +592,9 @@ bool write_VG(std::ostream& os,
 
   os << "\n";
 
-  if constexpr (!(is_default_parameter<NamedParameters, internal_np::color_map_t>::value)) {
+  if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::color_map_t>::value)) {
     using DummyColorMap = Constant_property_map<Point, Color>;
-    using Color_map = typename internal_np::Lookup_named_param_def<internal_np::color_map_t, NamedParameters, DummyColorMap> ::type;
+    using Color_map = typename internal_np::Lookup_named_param_def<internal_np::color_map_t, CGAL_NP_CLASS, DummyColorMap> ::type;
     Color_map color_map = parameters::choose_parameter<Color_map>(parameters::get_parameter(np, internal_np::color_map));
     os << "num_colors: " << points.size() << "\n";
     for (const auto& p : points)
@@ -507,12 +602,18 @@ bool write_VG(std::ostream& os,
     os << "\n";
   }
 
-  if constexpr (!(is_default_parameter<NamedParameters, internal_np::normal_t>::value)) {
-    typename NP_helper::Normal_map normal_map = NP_helper::get_normal_map(points, np);
-    os << "num_normals: " << points.size() << "\n";
-    for (const auto& p : points)
-      os << get(normal_map, p) << "\n";
-    os << "\n";
+  if constexpr (internal::has_type_Point_set<PointRange>::value || !(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>::value)) {
+    bool skip = false;
+    if constexpr (internal::has_type_Point_set<PointRange>::value)
+      skip = !points.has_normal_map();
+
+    if (!skip) {
+      typename NP_helper::Normal_map normal_map = NP_helper::get_normal_map(points, np);
+      os << "num_normals: " << points.size() << "\n";
+      for (const auto& p : points)
+        os << get(normal_map, p) << "\n";
+      os << "\n";
+    }
   }
 
   if (!regions.empty()) {
@@ -529,8 +630,8 @@ bool write_VG(std::ostream& os,
       * id1 ... idN          # N integer numbers denoting the indices of the points in this segment
       * num_children: num    # a segment/primitive/object may contain subsegment (that has the same representation as this segment)
       */
-      if constexpr (!(is_default_parameter<NamedParameters, internal_np::serializer_t>::value)) {
-        using Serializer = typename internal_np::Lookup_named_param_def<internal_np::serializer_t, NamedParameters, std::string>::type;
+      if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::serializer_t>::value)) {
+        using Serializer = typename internal_np::Lookup_named_param_def<internal_np::serializer_t, CGAL_NP_CLASS, std::string>::type;
         Serializer serializer = parameters::choose_parameter<Serializer>(parameters::get_parameter(np, internal_np::serializer));
         unsigned int type = 5;
         std::size_t number_of_parameters = 0;
@@ -555,15 +656,15 @@ bool write_VG(std::ostream& os,
         os << "group_parameters: \n";
       }
 
-      if constexpr (!(is_default_parameter<NamedParameters, internal_np::labels_t>::value)) {
-        using Labels = typename internal_np::Lookup_named_param_def<internal_np::labels_t, NamedParameters, std::vector<std::string>>::type;
+      if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::labels_t>::value)) {
+        using Labels = typename internal_np::Lookup_named_param_def<internal_np::labels_t, CGAL_NP_CLASS, std::vector<std::string>>::type;
         Labels labels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::labels), Labels());
         if (idx < labels.size())
           os << "group_label: " << labels[idx] << "\n";
       }
 
-      if constexpr (!(is_default_parameter<NamedParameters, internal_np::colors_t>::value)) {
-        using Colors = typename internal_np::Lookup_named_param_def<internal_np::colors_t, NamedParameters, std::vector<Color>>::type;
+      if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::colors_t>::value)) {
+        using Colors = typename internal_np::Lookup_named_param_def<internal_np::colors_t, CGAL_NP_CLASS, std::vector<Color>>::type;
         Colors colors = parameters::choose_parameter(parameters::get_parameter(np, internal_np::colors), Colors());
         if (idx < colors.size())
           os << "group_color: " << colors[idx] << "\n";
@@ -582,11 +683,11 @@ bool write_VG(std::ostream& os,
   return os.good();
 }
 
-template <typename PointRange, typename Regions, typename NamedParameters>
+template <typename PointRange, typename Regions, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VG(const std::string& filename,
   const PointRange& points,
   const Regions& regions,
-  const NamedParameters& np = parameters::default_values()) {
+  const CGAL_NP_CLASS& np = parameters::default_values()) {
   std::ofstream os(filename);
   return write_VG(os, points, regions, np);
 }
