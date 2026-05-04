@@ -2354,8 +2354,16 @@ private:
     }
   }
 
-  void search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id)
-  {
+  enum class Search_for_missing_subfaces_option {
+    DEFAULT = 0,
+    SEARCH_FOR_UNCONSTRAINED_FACETS = 1
+
+  };
+
+  bool
+  search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id,
+                              Search_for_missing_subfaces_option option = Search_for_missing_subfaces_option::DEFAULT) {
+    bool something_has_changed = false;
     const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
 
     face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
@@ -2370,6 +2378,7 @@ private:
       if(!tr().is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
         face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
+        something_has_changed = true;
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
         std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
         write_triangle(std::cerr, v0, v1, v2);
@@ -2377,9 +2386,15 @@ private:
       } else {
         fh->info().missing_subface = false;
         const int facet_index = 6 - i - j - k;
+        if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS &&
+          !is_facet_constrained({c, facet_index}))
+        {
+          something_has_changed = true;
+        }
         set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
       }
     }
+    return something_has_changed;
   }
 
   static auto region(const CDT_2& cdt_2, CDT_2_face_handle fh)
@@ -4167,12 +4182,16 @@ public:
     return result;
   }
 
-  void recheck_for_missing_subfaces() {
+  bool recheck_for_missing_subfaces() {
+    bool nothing_has_changed = true;
     for(CDT_3_signed_index i = 0, end = static_cast<CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
       if(this->face_data[i].skip_face == false) {
-        search_for_missing_subfaces(i);
+        nothing_has_changed =
+            nothing_has_changed &&
+            !search_for_missing_subfaces(i, Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS);
       }
     }
+    return nothing_has_changed;
   }
 
   template <typename ...Args>
@@ -4244,9 +4263,10 @@ public:
       // else:
       throw Constrained_triangulation_insertion_exception(failed_faces);
     }
-    CGAL_assertion_code(recheck_for_missing_subfaces());
-    CGAL_assertion_msg(face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
-                       "All faces have been restored, but the triangulation is a CDT. This should not happen.");
+    CGAL_assertion_msg(
+        recheck_for_missing_subfaces() &&
+            face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
+        "All faces have been restored, but the triangulation is still not a CDT. This should not happen.");
   }
 
   void add_bbox_points_if_not_dimension_3() {
