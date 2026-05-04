@@ -1362,11 +1362,13 @@ protected:
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
             if(c->ccdt_3_data().is_facet_constrained(li)) {
-              self->register_facet_to_be_constrained(c, li);
   #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              auto face_id = static_cast<std::size_t>(c->ccdt_3_data().face_constraint_index(li));
+              auto fh_2 = c->ccdt_3_data().face_2(self->face_cdt_2(face_id), li);
               std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
               self->write_2d_triangle(std::cerr, fh_2);
   #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              self->register_facet_to_be_constrained(c, li);
             }
           }
         }
