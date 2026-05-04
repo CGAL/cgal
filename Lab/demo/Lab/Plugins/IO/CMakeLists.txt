@@ -94,7 +94,7 @@ endif()
 cgal_lab_plugin(xyz_plugin XYZ_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(xyz_plugin PRIVATE scene_points_with_normal_item)
 
-cgal_lab_plugin(vg_plugin vg_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
+cgal_lab_plugin(vg_plugin VG_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(vg_plugin PRIVATE scene_points_with_normal_item)
 
 cgal_lab_plugin(ply_plugin PLY_io_plugin KEYWORDS Viewer PointSetProcessing Classification PMP IO_surface_meshes)
