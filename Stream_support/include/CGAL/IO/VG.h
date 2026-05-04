@@ -16,7 +16,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <boost/tti/has_member_function.hpp>
+#include <boost/tti/has_type.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -24,6 +24,8 @@
 namespace CGAL {
 namespace IO {
 namespace internal {
+
+BOOST_TTI_HAS_TYPE(Point_set);
 
 inline
 void trim(std::string& s) {
@@ -42,26 +44,12 @@ bool next_line(std::istream& is, std::string& line) {
   return true;
 }
 
-BOOST_TTI_HAS_MEMBER_FUNCTION(reserve)
-template <typename Range, bool has_reserve = has_member_function_reserve<Range, void, boost::mpl::vector<std::size_t>>::value>
-struct Reserver {
-};
-
-template <typename Range>
-struct Reserver<Range, false> {
-  void operator()(Range&, std::size_t) {}
-};
-
-template <typename Range>
-struct Reserver<Range, true> {
-  void operator()(Range& r, std::size_t n) { r.reserve(n); }
-};
-
-template <typename Map>
-bool read_elements(std::istream& is, Map cmap, std::size_t num, std::string& line) {
+template <typename PointRange, typename Map>
+bool read_elements(std::istream& is, PointRange points, Map cmap, std::string& line) {
   using Type = typename boost::property_traits<Map>::value_type;
   std::istringstream ss;
-  for (std::size_t i = 0; i < num; ++i) {
+  auto it = points.begin();
+  for (auto idx : points) {
     if (!internal::next_line(is, line))
       return false;
 
@@ -73,20 +61,20 @@ bool read_elements(std::istream& is, Map cmap, std::size_t num, std::string& lin
 
     double a, b, c;
     if (ss >> iformat(a) >> iformat(b) >> iformat(c))
-      put(cmap, i, Type(a, b, c));
+      put(cmap, idx, Type(a, b, c));
   }
   next_line(is, line);
 
   return true;
 }
 
-template <typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_colors(std::ifstream& is, std::size_t num_colors, std::string& line, const CGAL_NP_CLASS& np) {
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_colors(std::ifstream& is, PointRange points, std::string& line, const CGAL_NP_CLASS& np) {
   using parameters::is_default_parameter;
   if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::color_map_t>::value)) {
     using Color_map = typename internal_np::Lookup_named_param_def<internal_np::color_map_t, CGAL_NP_CLASS, Constant_property_map<std::size_t, Color>>::type;
     Color_map color_map = parameters::choose_parameter<Color_map>(parameters::get_parameter(np, internal_np::color_map));
-    return internal::read_elements(is, color_map, num_colors, line);
+    return internal::read_elements(is, points, color_map, line);
   }
   else while (internal::next_line(is, line) && std::isdigit(line[0]));
 
@@ -94,12 +82,12 @@ bool read_colors(std::ifstream& is, std::size_t num_colors, std::string& line, c
 }
 
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_normals(std::ifstream& is, std::size_t num_normals, std::string& line, PointRange points, const CGAL_NP_CLASS& np) {
+bool read_normals(std::ifstream& is, PointRange points, std::string& line, const CGAL_NP_CLASS& np) {
   using parameters::is_default_parameter;
   using NP_helper = Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>;
   if constexpr (!(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>::value)) {
     typename NP_helper::Normal_map normal_map = NP_helper::get_normal_map(points, np);
-    return internal::read_elements(is, normal_map, num_normals, line);
+    return internal::read_elements(is, points, normal_map, line);
   }
   else while (internal::next_line(is, line) && (std::isdigit(line[0]) || line[0] == '-'));
 
@@ -116,7 +104,7 @@ bool read_normals(std::ifstream& is, std::size_t num_normals, std::string& line,
  * \attention The format does not support binary streams.
  *
  * \tparam PointRange
- *         a model of the concepts `RandomAccessContainer` and `BackInsertionSequence` whose value type is the point type
+ *         `CGAL::Point_set_3` or a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam RegionOutputIterator type of the output iterator who must accept `std::pair<Primitive, std::vector<item>>`,
  *         where item is the key type of `Point_map`. `Primitive` needs either to implement `operator >>` to be read the input stream
  *         `is` or to provide the named parameter `constructor` described below to be created from `std::vector<FT>`.
@@ -177,10 +165,17 @@ bool read_VG(std::ifstream& is,
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  using Point = typename std::iterator_traits<typename PointRange::iterator>::value_type;
-  using GeomTraits = typename CGAL::Kernel_traits<Point>::type;
+  constexpr bool is_point_set = internal::has_type_Point_set<PointRange>::value;
+
+  using NP_helper = Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>;
+  using PointMap = std::conditional_t<is_default_parameter<CGAL_NP_CLASS, internal_np::point_t>::value && !is_point_set, Random_access_property_map<PointRange>, typename NP_helper::Point_map>;
+  using Point = typename boost::property_traits<PointMap>::value_type;
+
+  using GeomTraits = typename NP_helper::Geom_traits;
   using Region = typename std::iterator_traits<typename RegionOutputIterator::container_type::iterator>::value_type;
   using FT = typename GeomTraits::FT;
+
+  //PointMap point_map = NP_helper::get_point_map(points, np);
 
   if (!is.good()) {
     std::cerr << "Error: cannot open file" << std::endl;
@@ -205,16 +200,18 @@ bool read_VG(std::ifstream& is,
   if (num_points == 0)
     return false;
 
-  internal::Reserver<PointRange> r;
-  r(points, num_points);
+  points.resize(num_points);
 
   std::size_t added = 0;
-  while (internal::next_line(is, line)) {
+  for (auto idx : points) {
+    if (!(internal::next_line(is, line)))
+      return false;
+
     FT x, y, z;
     ss.clear();
     ss.str(line);
     if (ss >> iformat(x) >> iformat(y) >> iformat(z)) {
-      points.push_back(Point(x, y, z));
+      put(points, idx, Point(x, y, z));
       added++;
     }
     else {
@@ -229,19 +226,27 @@ bool read_VG(std::ifstream& is,
 
   ss.clear();
   ss.str(line);
-  ss >> token;
+  ss >> token;/*
 
   while (token != "num_groups" && token != "num_groups:") {
     if (token == "num_colors:" || token == "num_colors") {
       std::size_t num_colors;
       ss >> num_colors;
-      internal::read_colors(is, num_colors, line, np);
+      if (num_colors != num_points && num_colors > 0) {
+        std::cerr << "num_colors does not match num_points" << std::endl;
+        return false;
+      }
+      internal::read_colors(is, points, num_colors, line, np);
     }
     else
       if (token == "num_normals" || token == "num_normals:") {
         std::size_t num_normals;
         ss >> num_normals;
-        internal::read_normals(is, num_normals, line, points, np);
+        if (num_normals != num_points && num_normals > 0) {
+          std::cerr << "num_normals does not match num_points" << std::endl;
+          return false;
+        }
+        internal::read_normals(is, points, num_normals, line, np);
       }
       else {
         std::cerr << "Error: Expected \"num_normals:\", \"num_colors:\" or \"num_groups:\", but found " << line << std::endl;
@@ -251,7 +256,7 @@ bool read_VG(std::ifstream& is,
     ss.clear();
     ss.str(line);
     ss >> token;
-  }
+  }*/
 
   std::size_t num_groups;
   ss >> num_groups;

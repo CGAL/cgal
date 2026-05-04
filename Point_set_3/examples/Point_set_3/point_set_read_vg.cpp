@@ -78,6 +78,8 @@ bool detect_and_export_spheres() {
   std::vector<std::pair<Sphere_3, std::vector<std::size_t>>> regions2;
   std::vector<Point_3> points;
   CGAL::IO::read_VG("spheres_point_set_3.vg", points, std::back_inserter(regions2));
+  //Point_set point_set2;
+  //CGAL::IO::read_VG("spheres_point_set_3.vg", point_set2, std::back_inserter(regions2));
   CGAL_assertion(regions.size() == regions2.size());
 
   return true;
