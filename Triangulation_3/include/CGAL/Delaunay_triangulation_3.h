@@ -19,7 +19,7 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
-#include "CGAL/config.h"
+#include <CGAL/config.h>
 
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_3.h>

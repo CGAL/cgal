@@ -1239,10 +1239,47 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines{AdaptableTernaryFunction}
+  \sa `compare_squared_radius_grp`
+*/
+class CompareSquaredRadius_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    compares the squared radius of the circle of radius `0` centered at `p` to `sr`.
+    This returns \ref CGAL::EQUAL if `sr` is zero, \ref CGAL::SMALLER if `sr` is positive,
+    and \ref CGAL::LARGER if `sr` is negative.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::FT& sr);
+
+  /*!
+    compares the squared radius of the smallest circle passing through the points `p` and `q` to `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::FT& sr);
+
+  /*!
+    compares the squared radius of the circle defined by the points `p`, `q`, and `r` to `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::Point_2& r,
+                               const Kernel::FT& sr);
+
+  /// @}
+
+}; /* end Kernel::CompareSquaredRadius_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
 
   \sa `compare_squared_radius_grp`
-
 */
 class CompareSquaredRadius_3 {
 public:
@@ -1252,24 +1289,22 @@ public:
   /// @{
 
   /*!
-    compares the squared radius of the sphere of radius 0 centered
-    at `p` to `sr`.
-    This returns the opposite sign of `sr`.
+    compares the squared radius of the sphere of radius `0` centered at `p` to `sr`.
+    This returns \ref CGAL::EQUAL if `sr` is zero, \ref CGAL::SMALLER if `sr` is positive,
+    and \ref CGAL::LARGER if `sr` is negative.
   */
   Comparison_result operator()(const Kernel::Point_3& p,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p` and `q` to `sr`.
+    compares the squared radius of the smallest sphere passing through the points `p` and `q` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p`, `q`, and `r` to `sr`.
+    compares the squared radius of the smallest sphere defined by the points `p`, `q`, and `r` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
@@ -1277,8 +1312,7 @@ public:
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p`, `q`, `r`, and `s` to `sr`.
+    compares the squared radius of the sphere defined by the points `p`, `q`, `r`, and `s` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
@@ -1875,7 +1909,7 @@ public:
   /// @{
 
   /*!
-    returns an approximation of the area of `c`.
+    returns an approximation of the area bounded by `c`.
   */
   double operator()(const Kernel::Circle_3& c);
 
@@ -1992,7 +2026,7 @@ public:
   /// @{
 
   /*!
-    returns the area of `c`, divided by \f$ \pi\f$.
+    returns the area bounded by `c`, divided by \f$ \pi\f$.
   */
   Kernel::FT operator()(const Kernel::Circle_3& c);
 
@@ -3102,7 +3136,7 @@ public:
 
   /*!
   returns the squared radius of the
-  smallest sphere circle to the argument(s).
+  smallest circle to the argument(s).
   */
   Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
                          const Kernel::Weighted_point_2& qw,
@@ -6137,7 +6171,13 @@ public:
     returns the point of `t` that is the closest to `p`.
   */
   Kernel::Point_2 operator()(const Kernel::Triangle_2& t,
-                             const Kernel::Point_3& p);
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns `t`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Point_2& t,
+                             const Kernel::Point_2&);
 
   /// @}
 
@@ -6715,8 +6755,7 @@ public:
                                const Orientation & orientation = COUNTERCLOCKWISE);
 
   /*!
-    introduces a sphere initialized to the diametral sphere of
-    the circle.
+    introduces a sphere initialized to the diametral sphere of the circle.
   */
   Kernel::Sphere_3 operator()( const Kernel::Circle_3 &c);
 
@@ -8073,6 +8112,7 @@ public:
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
   \sa `CGAL::Triangle_2<Kernel>`
+  \sa `CGAL::Segment_2<Kernel>`
   \sa `::Kernel::HasOnUnboundedSide_2`
   \sa `::Kernel::HasOnBoundary_2`
   \sa `::Kernel::BoundedSide_2`
@@ -8358,6 +8398,20 @@ public:
   bool operator()(const Kernel::Circle_2&c,
                   const Kernel::Point_2&p);
 
+
+  /*!
+    returns true iff `i` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Iso_rectangle_2& i);
+
+
+  /*!
+    returns true iff `s` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Segment_2& s);
+
   /*!
     returns true iff `p` lies on the unbounded side of `i`.
   */
@@ -8401,6 +8455,12 @@ public:
   */
   bool operator()(const Kernel::Sphere_3&s,
                   const Kernel::Point_3&p);
+
+  /*!
+    returns true iff `c` lies on the unbounded side of `s`.
+  */
+  bool operator()(const Kernel::Sphere_3& s,
+                  const Kernel::Iso_cuboid_3& c);
 
   /*!
     returns true iff `p` lies on the unbounded side of `t`.
@@ -9010,6 +9070,34 @@ public:
   /// @}
 
 }; /* end Kernel::LessSignedDistanceToPlane_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines{AdaptableTernaryFunction}
+
+  \sa `CGAL::compare_projection_along_direction()`
+
+*/
+class CompareProjectionAlongDirection_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` if the projection of `p` onto
+    a line with direction `dir` precedes, coincides, or follows that of `q` in the direction pointed by `dir`.
+  */
+  Comparison_result operator()(const Kernel::Point_3 &p,
+                               const Kernel::Point_3 &q,
+                               const Kernel::Direction_3 &dir);
+
+  /// @}
+
+}; /* end Kernel::CompareScalarProduct_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects

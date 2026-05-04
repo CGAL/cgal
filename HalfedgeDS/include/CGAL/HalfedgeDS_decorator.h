@@ -235,7 +235,7 @@ public:
 
 // The following Euler operations modify consistently the combinatorial
 // structure of the halfedge data structure. The geometry remains
-// unchanged. Note that well known graph operations are also captured with
+// unchanged. Note that well-known graph operations are also captured with
 // these Euler operators, for example an edge contraction is equal to a
 // `join_vertex()' operation, or an edge removal to `join_face()'.
 //

@@ -2055,7 +2055,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     // @todo keep this?
     // try to compactify the selection region by also selecting all the faces included
     // in the bounding box of the initial selection
-    std::vector<halfedge_descriptor> stack_for_expension;
+    std::vector<halfedge_descriptor> stack_for_expansion;
 
 #ifdef CGAL_PMP_REPAIR_SI_USE_OBB_IN_COMPACTIFICATION
     std::set<Point> cc_points;
@@ -2087,14 +2087,14 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #endif
         face_descriptor nf = face(opposite(h, tmesh), tmesh);
         if(nf != boost::graph_traits<TriangleMesh>::null_face() && cc_faces.count(nf) == 0)
-          stack_for_expension.push_back(opposite(h, tmesh));
+          stack_for_expansion.push_back(opposite(h, tmesh));
       }
     }
 
-    while(!stack_for_expension.empty())
+    while(!stack_for_expansion.empty())
     {
-      halfedge_descriptor h = stack_for_expension.back();
-      stack_for_expension.pop_back();
+      halfedge_descriptor h = stack_for_expansion.back();
+      stack_for_expansion.pop_back();
       if(cc_faces.count(face(h, tmesh)) == 1)
         continue;
 
@@ -2107,11 +2107,11 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         cc_faces.insert(face(h, tmesh));
         halfedge_descriptor candidate = opposite(next(h, tmesh), tmesh);
         if(face(candidate, tmesh) != boost::graph_traits<TriangleMesh>::null_face())
-          stack_for_expension.push_back(candidate);
+          stack_for_expansion.push_back(candidate);
 
         candidate = opposite(prev(h, tmesh), tmesh);
         if(face(candidate, tmesh) != boost::graph_traits<TriangleMesh>::null_face())
-          stack_for_expension.push_back(candidate);
+          stack_for_expansion.push_back(candidate);
       }
     }
 

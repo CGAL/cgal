@@ -41,12 +41,12 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolylinRange, typename PolygonRange,
+template <typename PointRange, typename PolygonRange, typename PolylineRange,
           typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
-              PolylinRange& polylines,
               PolygonRange& polygons,
+              PolylineRange& polylines,
               VertexNormalOutputIterator,
               VertexTextureOutputIterator,
               const bool verbose = false)
@@ -266,14 +266,15 @@ bool read_OBJ(std::istream& is,
   return !is.bad();
 }
 
-template <typename PointRange, typename PolylinRange, typename PolygonRange>
+// convenience overload
+template <typename PointRange, typename PolygonRange, typename PolylineRange>
 bool read_OBJ(std::istream& is,
               PointRange& points,
-              PolylinRange& polylines,
               PolygonRange& polygons,
+              PolylineRange& polylines,
               const bool verbose = false)
 {
-  return read_OBJ(is, points, polylines, polygons,
+  return read_OBJ(is, points, polygons, polylines,
                   CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
                   verbose);
 }
@@ -322,7 +323,7 @@ bool read_OBJ(std::istream& is,
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
   std::vector<std::vector<std::size_t> > unused_polylines;
-  bool success = internal::read_OBJ(is, points, unused_polylines, polygons,
+  bool success = internal::read_OBJ(is, points, polygons, unused_polylines,
                                     CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
                                     verbose);
 
@@ -377,6 +378,25 @@ bool read_OBJ(const std::string& fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+namespace internal {
+
+template <typename PointRange,
+          typename PolygonRange,
+          typename PolylineRange,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(std::ostream& os,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const PolylineRange& polylines,
+               const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  set_ascii_mode(os); // obj is ASCII only
+  Generic_writer<std::ostream, File_writer_wavefront> writer(os);
+  return writer(points, polygons, polylines, np);
+}
+
+} // namespace internal
+
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
  *
@@ -422,9 +442,8 @@ bool write_OBJ(std::ostream& os,
 #endif
                )
 {
-  set_ascii_mode(os); // obj is ASCII only
-  Generic_writer<std::ostream, File_writer_wavefront> writer(os);
-  return writer(points, polygons, np);
+  std::vector<std::vector<std::size_t> > unused_polylines;
+  return internal::write_OBJ(os, points, polygons, unused_polylines, np);
 }
 
 /*!

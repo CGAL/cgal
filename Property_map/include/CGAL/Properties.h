@@ -132,12 +132,12 @@ public: // virtual interface of Base_property_array
         return data_.capacity();
     }
 
-    void reserve(size_t n) final
+    void reserve(size_t n) override
     {
         data_.reserve(n);
     }
 
-    void resize(size_t n) final
+    void resize(size_t n) override
     {
         data_.resize(n, value_);
     }
@@ -171,12 +171,12 @@ public: // virtual interface of Base_property_array
       }
     }
 
-    void reset(size_t idx) final
+    void reset(size_t idx) override
     {
         data_[idx] = value_;
     }
 
-    bool transfer(const Base_property_array& other) final
+    bool transfer(const Base_property_array& other) override
     {
       const auto* pa = dynamic_cast<const Property_array*>(&other);
       if(pa != nullptr){
@@ -186,7 +186,7 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) final
+    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) override
     {
       const auto* pa = dynamic_cast<const Property_array*>(&other);
       if (pa != nullptr)
@@ -198,32 +198,32 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    void shrink_to_fit() final
+    void shrink_to_fit() override
     {
         vector_type(data_).swap(data_);
     }
 
-    void swap(size_t i0, size_t i1) final
+    void swap(size_t i0, size_t i1) override
     {
         T d(data_[i0]);
         data_[i0]=data_[i1];
         data_[i1]=d;
     }
 
-    Base_property_array* clone() const final
+    Base_property_array* clone() const override
     {
         auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
 
-    Base_property_array* empty_clone() const final
+    Base_property_array* empty_clone() const override
     {
         auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         return p;
     }
 
-    const std::type_info& type() const final { return typeid(T); }
+    const std::type_info& type() const override { return typeid(T); }
 
 
 public:

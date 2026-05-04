@@ -32,7 +32,6 @@
 #include <iostream>
 #include <istream>
 #include <limits>
-#include <memory_resource>
 #include <ostream>
 #include <stack>
 #include <utility>
@@ -44,6 +43,10 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered/unordered_set_fwd.hpp>
+
+#if defined(__has_include) && __has_include(<memory_resource>)
+#include <memory_resource>
+#endif
 
 #include <CGAL/assertions.h>
 #include <CGAL/config.h>
@@ -134,7 +137,6 @@ namespace internal { namespace TDS_3{
 namespace TDS_3 {
 
 namespace internal {
-
   template <typename Handle>
   using handle_value_t = CGAL::cpp20::remove_cvref_t<decltype(*std::declval<Handle>())>;
 
@@ -142,13 +144,16 @@ namespace internal {
   class Visited_vertex {
     using Hash = CGAL::Hash_handles_with_or_without_timestamps;
     using Equal = std::equal_to<Vertex_handle>;
+#if defined(__has_include) && __has_include(<memory_resource>)
     using Allocator =  std::pmr::polymorphic_allocator<Vertex_handle>;
-
     std::array<Vertex_handle, 192> visited_vertices_buffer;
     std::pmr::monotonic_buffer_resource buffer_resource{visited_vertices_buffer.data(),
                                                         visited_vertices_buffer.size() * sizeof(Vertex_handle)};
     std::pmr::polymorphic_allocator<Vertex_handle> allocator{&buffer_resource};
     CGAL::unordered_flat_set<Vertex_handle, Hash, Equal, Allocator> visited_vertices{allocator};
+#else
+    boost::unordered::unordered_set<Vertex_handle> visited_vertices;
+#endif
   public:
     void reserve(std::size_t n) {
       visited_vertices.reserve(n);
@@ -1867,6 +1872,7 @@ public:
     return mirror_facet(c, f.second);
   }
 
+  /// @todo document?
   /// Vertex ranges defining a simplex
   static std::array<Vertex_handle, 2> vertices(const Edge& e)
   {

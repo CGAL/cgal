@@ -299,7 +299,7 @@ struct Tester
                                  const Polyhedral_tag) const
   {}
 
-  // For bissection domains, check the consistency between the subdomain
+  // For bisection domains, check the consistency between the subdomain
   // indices and the surface patch indices.
   template<typename C3t3, typename MeshDomain>
   void verify_c3t3_combinatorics(const C3t3& c3t3,
@@ -353,7 +353,7 @@ struct Tester
     }
   }
 
-  // For bissection domains, do nothing.
+  // For bisection domains, do nothing.
   template<typename C3t3, typename MeshDomain>
   double compute_hausdorff_distance(const C3t3&,
                                     const MeshDomain&,

@@ -56,6 +56,7 @@ namespace Polygon_mesh_processing {
       void end_refine_phase() const {}
       void start_fair_phase() const {}
       void end_fair_phase() const {}
+      constexpr bool accept_triangle(int,int,int) const { return true; }
     #endif
     };
   } // namespace Hole_filling
@@ -741,9 +742,14 @@ bool use_dt3 =
       choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 #endif
 
+    Hole_filling::Default_visitor default_visitor;
+    auto visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+
+    CGAL::internal::Is_not_degenerate_triangle is_valid_base;
+    CGAL::internal::Is_valid_compose is_valid(is_valid_base, visitor);
+
     typedef CGAL::internal::Weight_min_max_dihedral_and_area      Weight;
-    typedef CGAL::internal::Weight_calculator<Weight,
-                  CGAL::internal::Is_not_degenerate_triangle>  WC;
+    typedef CGAL::internal::Weight_calculator<Weight, decltype(is_valid)>  WC;
     typedef std::vector<std::pair<int, int> > Holes;
     typedef std::back_insert_iterator<Holes>  Holes_out;
 
@@ -757,17 +763,9 @@ bool use_dt3 =
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
-    Hole_filling::Default_visitor default_visitor;
-
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     if (use_cdt)
     {
-      struct Always_valid
-      {
-        bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
-      };
-      Always_valid is_valid;
-
       const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
       typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
       default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
@@ -782,7 +780,7 @@ bool use_dt3 =
       if (triangulate_hole_polyline_with_cdt(
            points,
            tracer,
-           choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
+           visitor,
            is_valid,
            choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
            max_squared_distance))
@@ -792,8 +790,8 @@ bool use_dt3 =
       }
     }
 #endif
-    triangulate_hole_polyline(points, third_points, tracer, WC(),
-                              choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
+    triangulate_hole_polyline(points, third_points, tracer, WC(is_valid),
+                              visitor,
                               use_dt3,
                               choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
