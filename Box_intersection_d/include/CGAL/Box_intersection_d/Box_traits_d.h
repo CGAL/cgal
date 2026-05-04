@@ -166,7 +166,7 @@ struct Predicate_traits_d : public BoxTraits_1{
     template<class Bp1, class Bp2>
     static bool is_lo_less_lo(Bp1 a, Bp2 b, int dim) {
         if constexpr(std::is_same_v<Bp1, Bp2>)
-            // We need to check ids if the boxes have the same types
+            // If the boxes have the same lower values and the same type, we compare their id to have a complete order
             if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
                                          std::remove_cv_t<std::remove_reference_t<Bp1>>>)
                 return BoxTraits_1::min_coord(a,dim)  < BoxTraits_1::min_coord(b,dim) ||
@@ -177,8 +177,12 @@ struct Predicate_traits_d : public BoxTraits_1{
                      ( BoxTraits_2::min_coord(a,dim) == BoxTraits_2::min_coord(b,dim) &&
                        BoxTraits_2::id(a) < BoxTraits_2::id(b) );
         else
-            return min_coord(a,dim)  < min_coord(b,dim) ||
-                 ( min_coord(a,dim) == min_coord(b,dim));
+            // If the boxes have the same lower values, we differ by the order if their types
+            if constexpr(std::is_same_v< std::remove_cv_t<std::remove_reference_t<Box_parameter_1>>,
+                                         std::remove_cv_t<std::remove_reference_t<Bp1>>>)
+                return min_coord(a,dim) <= min_coord(b,dim);
+            else
+                return min_coord(a,dim) < min_coord(b,dim);
     }
 
     template<class Bp1, class Bp2>
