@@ -1419,8 +1419,14 @@ protected:
 
     auto surface_facet_info_it = surface_facet_info_.find(facet);
     if(surface_facet_info_it != surface_facet_info_.end()) {
-      surface_facet_info_it->second.face_id = face_id;
-      surface_facet_info_it->second.facet_2d = f2d;
+      if(face_id >= 0)
+      {
+        surface_facet_info_it->second.face_id = face_id;
+        surface_facet_info_it->second.facet_2d = f2d;
+      } else
+      {
+        surface_facet_info_.erase(surface_facet_info_it);//not constrained anymore
+      }
     }
     else {
       surface_facet_info_.emplace(facet, Facet_prop{face_id, f2d});
@@ -1433,7 +1439,7 @@ protected:
     auto fh_2 = face_2(this->face_cdt_2(face_id), cell, facet_index);
     fh_2->info().facet_3d = {};
     fh_2->info().missing_subface = true;
-    this->set_facet_constrained({cell, facet_index}, -1, {});
+    this->set_facet_unconstrained({cell, facet_index});
   }
 
   void register_facet_to_be_constrained(Facet f) {
@@ -1574,6 +1580,7 @@ public:
     CGAL_assertion(lt != Locate_type::VERTEX);
     boost::container::small_vector<Cell_handle,64> cells_of_original_cavity;
     boost::container::small_vector<Facet,64> exterior_border_facets_of_original_cavity;
+    boost::container::small_vector<Facet,64> facets_of_original_cavity;
 
     auto output_iterator_to_facets = boost::make_function_output_iterator(
         [&](Facet f) { exterior_border_facets_of_original_cavity.push_back(tr().mirror_facet(f)); });
@@ -1581,7 +1588,7 @@ public:
     auto triple_of_output_iterators = make_triple(
         output_iterator_to_facets,
         std::back_inserter(cells_of_original_cavity),
-        Emptyset_iterator{});
+        std::back_inserter(facets_of_original_cavity));
 
     switch(tr().dimension()) {
     case 3: {
@@ -1603,6 +1610,14 @@ public:
     }
     for(auto [ch, _] : exterior_border_facets_of_original_cavity) {
       ch->tds_data().clear();
+    }
+    // clear the surface data from facets that are in the cavity
+    // and will be deleted
+    for(const auto& f : facets_of_original_cavity) {
+      this->set_facet_unconstrained(f);
+    }
+    for(const auto& f : exterior_border_facets_of_original_cavity) {
+      this->set_facet_unconstrained(tr().mirror_facet(f));
     }
 
     bool the_infinite_vertex_is_in_the_cavity = false;
@@ -1890,6 +1905,11 @@ public:
     if(fh != CDT_2_face_handle{}) {
       fh->info().facet_3d = f;
     }
+  }
+
+  void set_facet_unconstrained(Facet f)
+  {
+    this->set_facet_constrained(f, -1, {});
   }
 
   template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
