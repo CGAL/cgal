@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshSegmentationRef Triangulated Surface Mesh Segmentation Reference
+/// \defgroup PkgSurfaceMeshSegmentationRef Reference Manual
 
 /// \defgroup PkgSurfaceMeshSegmentationConcepts Concepts
 /// \ingroup PkgSurfaceMeshSegmentationRef

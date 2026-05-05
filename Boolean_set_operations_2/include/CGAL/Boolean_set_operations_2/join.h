@@ -7,11 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//            Ron Wein        <wein@post.tau.ac.il>
-//            Efi Fogel       <efif@post.tau.ac.il>
-//            Simon Giraudot  <simon.giraudot@geometryfactory.com>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein        <wein@post.tau.ac.il>
+//             Efi Fogel       <efif@post.tau.ac.il>
+//             Simon Giraudot  <simon.giraudot@geometryfactory.com>
 
 #ifndef CGAL_BOOLEAN_SET_OPERATIONS_2_JOIN_H
 #define CGAL_BOOLEAN_SET_OPERATIONS_2_JOIN_H
@@ -33,8 +32,7 @@
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
 #include <CGAL/type_traits/is_iterator.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
 /// \name join() functions.
 //@{
@@ -60,10 +58,9 @@ template <typename Kernel, typename Container>
 inline bool join(const Polygon_2<Kernel, Container>& pgn1,
                  const Polygon_2<Kernel, Container>& pgn2,
                  Polygon_with_holes_2<Kernel, Container>& res,
-                 Tag_false)
-{
+                 Tag_false) {
   // Use the first polygon to determine the (default) traits
-  typedef Polygon_2<Kernel, Container>                          Polygon;
+  using Polygon = Polygon_2<Kernel, Container>;
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -89,10 +86,9 @@ template <typename Kernel, typename Container>
 inline bool join(const Polygon_2<Kernel, Container>& pgn1,
                  const Polygon_with_holes_2<Kernel, Container>& pgn2,
                  Polygon_with_holes_2<Kernel, Container>& res,
-                 Tag_false)
-{
+                 Tag_false) {
   // Use the first polygon to determine the (default) traits
-  typedef Polygon_2<Kernel, Container>                          Polygon;
+  using Polygon = Polygon_2<Kernel, Container>;
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -118,10 +114,9 @@ template <typename Kernel, typename Container>
 inline bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                  const Polygon_2<Kernel, Container>& pgn2,
                  Polygon_with_holes_2<Kernel, Container>& res,
-                 Tag_false)
-{
+                 Tag_false) {
   // Use the first polygon to determine the (default) traits
-  typedef Polygon_with_holes_2<Kernel, Container>       Polygon_with_holes;
+  using Polygon_with_holes = Polygon_with_holes_2<Kernel, Container>;
   typename Gps_default_traits<Polygon_with_holes>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -147,10 +142,9 @@ template <typename Kernel, typename Container>
 inline bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                  const Polygon_with_holes_2<Kernel, Container>& pgn2,
                  Polygon_with_holes_2<Kernel, Container>& res,
-                 Tag_false)
-{
+                 Tag_false) {
   // Use the first polygon to determine the (default) traits
-  typedef Polygon_with_holes_2<Kernel, Container>       Polygon_with_holes;
+  using Polygon_with_holes = Polygon_with_holes_2<Kernel, Container>;
   typename Gps_default_traits<Polygon_with_holes>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -170,10 +164,9 @@ template <typename ArrTraits>
 inline bool
 join(const General_polygon_2<ArrTraits>& pgn1,
      const General_polygon_2<ArrTraits>& pgn2,
-     General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& res)
-{
+     General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& res) {
   // Use the first polygon to determine the (default) traits
-  typedef General_polygon_2<ArrTraits>                  Polygon;
+  using Polygon = General_polygon_2<ArrTraits>;
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -193,10 +186,9 @@ template <typename ArrTraits>
 inline bool
 join(const General_polygon_2<ArrTraits>& pgn1,
      const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn2,
-     General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& res)
-{
+     General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& res) {
   // Use the first polygon to determine the (default) traits
-  typedef General_polygon_2<ArrTraits>                  Polygon;
+  using Polygon = General_polygon_2<ArrTraits>;
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -216,11 +208,10 @@ template <typename ArrTraits>
 inline bool
 join(const General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& pgn1,
      const General_polygon_2<ArrTraits>& pgn2,
-     General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& res)
-{
+     General_polygon_with_holes_2<General_polygon_2<ArrTraits> >& res) {
   // Use the first polygon to determine the (default) traits
-  typedef General_polygon_2<ArrTraits>                  Polygon;
-  typedef General_polygon_with_holes_2<Polygon>         Polygon_with_holes;
+  using Polygon = General_polygon_2<ArrTraits>;
+  using Polygon_with_holes = General_polygon_with_holes_2<Polygon>;
   typename Gps_default_traits<Polygon_with_holes>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -237,10 +228,9 @@ inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
 template <typename Polygon_>
 inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
                  const General_polygon_with_holes_2<Polygon_>& pgn2,
-                 General_polygon_with_holes_2<Polygon_>& res)
-{
+                 General_polygon_with_holes_2<Polygon_>& res) {
   // Use the first polygon to determine the (default) traits
-  typedef General_polygon_with_holes_2<Polygon_>        Polygon_with_holes;
+  using Polygon_with_holes = General_polygon_with_holes_2<Polygon_>;
   typename Gps_default_traits<Polygon_with_holes>::Traits traits;
   return s_join(pgn1, pgn2, res, traits);
 }
@@ -253,7 +243,7 @@ inline bool join(const General_polygon_with_holes_2<Polygon_>& pgn1,
 // With Traits
 template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator join(InputIterator begin, InputIterator end,
-                           OutputIterator oi, Traits& traits, unsigned int k=5)
+                           OutputIterator oi, Traits& traits, std::size_t k = 5)
 { return r_join(begin, end, oi, traits, k); }
 
 // Without Traits
@@ -261,16 +251,15 @@ inline OutputIterator join(InputIterator begin, InputIterator end,
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator join(InputIterator begin, InputIterator end,
                            OutputIterator oi, Tag_true = Tag_true(),
-                           unsigned int k=5,
+                           std::size_t k = 5,
                            Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 { return r_join(begin, end, oi, k); }
 
 // Tag_false => do not convert to polylines
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator join(InputIterator begin, InputIterator end,
-                           OutputIterator oi, Tag_false, unsigned int k=5,
-                           Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-{
+                           OutputIterator oi, Tag_false, std::size_t k = 5,
+                           Enable_if_Polygon_2_iterator<InputIterator>* = 0) {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return r_join(begin, end, oi, traits, k);
 }
@@ -278,9 +267,8 @@ inline OutputIterator join(InputIterator begin, InputIterator end,
 // General polygons or polygons with holes
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator join(InputIterator begin, InputIterator end,
-                           OutputIterator oi, unsigned int k=5,
-                           Disable_if_Polygon_2_iterator<InputIterator>* = 0)
-{
+                           OutputIterator oi, std::size_t k = 5,
+                           Disable_if_Polygon_2_iterator<InputIterator>* = 0) {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return r_join(begin, end, oi, traits, k);
 }
@@ -291,7 +279,7 @@ template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator, typename Traits>
 inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
-                           OutputIterator oi, Traits& traits, unsigned int k=5)
+                           OutputIterator oi, Traits& traits, std::size_t k = 5)
 { return r_join(begin1, end1, begin2, end2, oi, traits, k); }
 
 // Without Traits
@@ -301,7 +289,7 @@ template <typename InputIterator1, typename InputIterator2,
 inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
                            OutputIterator oi, Tag_true = Tag_true(),
-                           unsigned int k=5,
+                           std::size_t k = 5,
                            Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 { return r_join(begin1, end1, begin2, end2, oi, k); }
 
@@ -310,9 +298,8 @@ template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator>
 inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
-                           OutputIterator oi, Tag_false, unsigned int k=5,
-                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-{
+                           OutputIterator oi, Tag_false, std::size_t k = 5,
+                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0) {
   typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_join(begin1, end1, begin2, end2, oi, traits, k);
 }
@@ -322,9 +309,8 @@ template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator>
 inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
-                           OutputIterator oi, unsigned int k=5,
-                           Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
-{
+                           OutputIterator oi, std::size_t k = 5,
+                           Disable_if_Polygon_2_iterator<InputIterator1>* = 0) {
   typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_join(begin1, end1, begin2, end2, oi, traits, k);
 }

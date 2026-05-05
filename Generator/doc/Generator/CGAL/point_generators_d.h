@@ -91,7 +91,7 @@ i.e.\ \f$ |*g| < r\f$ . \f$ 2\cdot dim+1\f$ random numbers are needed from
 `rnd` for each point.
 
 */
-Random_points_in_ball_d(int dim, double r);
+Random_points_in_ball_d(int dim, double r=1.0, Random& rnd = get_default_random());
 
 /// @}
 
@@ -103,7 +103,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_in_cube_d` is an input iterator creating points uniformly
-distributed in an half-open cube.
+distributed in a half-open cube.
 
 \cgalModels{InputIterator,PointGenerator}
 
@@ -227,7 +227,7 @@ i.e.\ \f$ |*g| == r\f$ . \f$ 2\cdot dim\f$ random numbers are needed from
 `rnd` for each point.
 
 */
-Random_points_on_sphere_d(int dim, double r, Random& rnd =
+Random_points_on_sphere_d(int dim, double r=1.0, Random& rnd =
 get_default_random());
 
 /// @}

@@ -1,4 +1,11 @@
 if((EIGEN3_FOUND OR Eigen3_FOUND) AND NOT TARGET CGAL::Eigen3_support)
+  if ("${Eigen3_VERSION}" VERSION_LESS "3.3.7")
+    set (EIGEN3_FOUND 0)
+    find_package(Eigen3 3.3.7 QUIET) # (3.3.7 or greater)
+  endif()
+endif()
+
+if((EIGEN3_FOUND OR Eigen3_FOUND) AND NOT TARGET CGAL::Eigen3_support)
   if(NOT TARGET Threads::Threads)
     find_package(Threads REQUIRED)
   endif()

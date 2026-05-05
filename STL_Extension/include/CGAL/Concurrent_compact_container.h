@@ -365,19 +365,18 @@ public:
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
-    auto erase_counter = EraseCounterStrategy<T>::erase_counter(*ret);
-    const auto ts = Time_stamper::time_stamp(ret);
-    const auto ec = EraseCounterStrategy<T>::erase_counter(ret);
-    new (ret) value_type(std::forward<Args>(args)...);
-    Time_stamper::restore_timestamp(ret, ts);
-    EraseCounterStrategy<T>::set_erase_counter(*ret, erase_counter);
-    EraseCounterStrategy<T>::restore_erase_counter(ret, ec);
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ret);
+      new (ret) value_type(std::forward<Args>(args)...);
+    }
     return finalize_insert(ret, fl);
   }
 
-  iterator insert(const T &t)
+  template <typename U>
+  iterator insert(U&& u)
   {
-    return emplace(t);
+    return emplace(std::forward<U>(u));
   }
 
   template < class InputIterator >
@@ -397,17 +396,18 @@ public:
 private:
   void erase(iterator x, FreeList * fl)
   {
+    auto ptr = &*x;
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy<T>::increment_erase_counter(*x);
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ptr);
 
-    auto ptr = &*x;
-    const auto ts = Time_stamper::time_stamp(ptr);
-    const auto ec = EraseCounterStrategy<T>::erase_counter(*x);
-    std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
-    Time_stamper::restore_timestamp(ptr, ts);
-    EraseCounterStrategy<T>::restore_erase_counter(ptr, ec);
+      std::allocator_traits<allocator_type>::destroy(m_alloc, ptr);
+    }
 
-    put_on_free_list(&*x, fl);
+
+    put_on_free_list(ptr, fl);
   }
 public:
 

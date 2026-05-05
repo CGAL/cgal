@@ -16,7 +16,7 @@
 *.py text
 *.xml text
 *.js text
-*.hmtl text
+*.html text
 *.bib text
 *.css text
 *.ui text

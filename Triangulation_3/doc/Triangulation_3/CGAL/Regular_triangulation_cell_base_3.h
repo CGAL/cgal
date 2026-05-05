@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3VertexCellClasses
 
-The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives from
+The class `Regular_triangulation_cell_base_3` derives from
 `Cb`, a cell base class of a 3D triangulation.
 It is the default cell base class of regular triangulations.
 
@@ -12,7 +12,7 @@ It is the default cell base class of regular triangulations.
 
 \tparam Cb is a cell base class from which `Regular_triangulation_cell_base_3`
 derives. It must be a model of `TriangulationCellBase_3`.
-By default, this parameter is instantiated by
+By default, this parameter is instantiated with
 `Triangulation_cell_base_3<Traits>`.
 
 \cgalModels{RegularTriangulationCellBase_3}
@@ -75,7 +75,7 @@ circumcenter is not supposed to be computed
 by the constructor `Construct_weighted_circumcenter_3` of the traits
 class, hence the returned point has no weight.
 */
-const Point_3& weighted_circumcenter(const Traits& gt = Traits()) const;
+Point_3 weighted_circumcenter(const Traits& gt = Traits()) const;
 
 /// @}
 

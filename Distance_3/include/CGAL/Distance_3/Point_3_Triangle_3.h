@@ -331,7 +331,7 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
   }
 
   // Compare first the distance to the plane, if larger we can exit early
-  typename K::Comparison_result res_p_pl = compare(squared_distance_to_plane(normal, vector(t0, pt), k), d2);
+  typename K::Comparison_result res_p_pl = ::CGAL::compare(squared_distance_to_plane(normal, vector(t0, pt), k), d2);
   if(certainly(res_p_pl==LARGER))
   {
     inside_or_far_to_the_plane=true;

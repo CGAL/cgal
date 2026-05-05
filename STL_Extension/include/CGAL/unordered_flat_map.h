@@ -29,14 +29,32 @@
 #  include <boost/unordered/unordered_flat_map.hpp>
 #  include <boost/unordered/unordered_flat_set.hpp>
 #else // Boost before 1.81.0, use the C++11 std::unordered_map
-#  include <unordered_map>
-#  include <unordered_set>
+#  include <boost/unordered_map.hpp>
+#  include <boost/unordered_set.hpp>
 #endif
 
 #include <functional> // for std::hash, std::equal_to
 #include <memory> // for std::allocator
 
 namespace CGAL {
+
+  namespace internal_is_hashable {
+    using boost::hash_value;
+
+    template <typename T, typename = void>
+    struct Has_hash_value : std::false_type {};
+
+    template <typename T>
+    using hash_value_type = decltype(hash_value(std::declval<T>()));
+    template <typename T>
+    struct Has_hash_value<T, std::void_t<hash_value_type<T>>>
+        : std::is_convertible<hash_value_type<T>, std::size_t>
+    {};
+  }
+
+  template <typename T>
+  inline constexpr bool is_hashable_v =
+      internal_is_hashable::Has_hash_value<T>::value && std::is_default_constructible_v<std::hash<T>>;
 
 template <
   typename Key,
@@ -53,9 +71,9 @@ template <
 
   using unordered_flat_map = boost::unordered_flat_map<Key, T, Hash, KeyEqual, Allocator>;
 
-#else // use the C++11 std::unordered_map
+#else // use the Boost implementation of C++11 std::unordered_map (for noexcept)
 
-  using unordered_flat_map = std::unordered_map<Key, T, Hash, KeyEqual, Allocator>;
+  using unordered_flat_map = boost::unordered_map<Key, T, Hash, KeyEqual, Allocator>;
 
 #endif
 
@@ -73,9 +91,9 @@ template <
 
   using unordered_flat_set = boost::unordered_flat_set<Key, Hash, KeyEqual, Allocator>;
 
-#else // use the C++11 std::unordered_set
+#else // use the Boost implementation of C++11 std::unordered_set (for noexcept)
 
-  using unordered_flat_set = std::unordered_set<Key, Hash, KeyEqual, Allocator>;
+  using unordered_flat_set = boost::unordered_set<Key, Hash, KeyEqual, Allocator>;
 
 #endif
 

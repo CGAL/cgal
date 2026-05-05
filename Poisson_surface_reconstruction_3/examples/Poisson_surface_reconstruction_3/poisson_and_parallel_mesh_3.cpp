@@ -7,7 +7,7 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Poisson_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
@@ -44,7 +44,7 @@ namespace params = CGAL::parameters;
 template<typename Concurrency_tag, typename PointSet>
 void poisson_reconstruction(const PointSet& points, const char* output)
 {
-  typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+  typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -111,15 +111,14 @@ void poisson_reconstruction(const PointSet& points, const char* output)
                          params::facet_size = sm_radius * average_spacing,
                          params::facet_distance = sm_distance * average_spacing);
 
-  Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+  Mesh_domain domain = Mesh_domain::create_Poisson_mesh_domain(function, bsphere,
     params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
   // Generates surface mesh with manifold option
   std::cout << "Start meshing...";
   std::cout.flush();
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      params::no_exude()
-                                             .no_perturb()
+                                      params::surface_only()
                                              .manifold_with_boundary());
 
   time.stop();

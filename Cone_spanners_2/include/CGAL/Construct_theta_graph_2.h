@@ -169,7 +169,7 @@ protected:
     /* Construct edges in one cone bounded by two directions.
 
      \param cwBound      The direction of the clockwise boundary of the cone.
-     \param ccwBound     The direction of the counter-clockwise boundary.
+     \param ccwBound     The direction of the counterclockwise boundary.
      \param g            The Theta graph to be built.
     */
     void add_edges_in_cone(const Direction_2& cwBound, const Direction_2& ccwBound, Graph_& g) {

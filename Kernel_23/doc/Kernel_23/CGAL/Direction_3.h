@@ -58,7 +58,7 @@ Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);
 /// @{
 
 /*!
-returns values, such that `d``== Direction_3<Kernel>(delta(0),delta(1),delta(2))`.
+returns values, such that `d == Direction_3<Kernel>(delta(0),delta(1),delta(2))`.
 \pre `0 <= i <= 2`.
 
 \cgalEpicExact

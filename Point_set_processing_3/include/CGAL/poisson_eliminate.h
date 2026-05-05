@@ -28,9 +28,11 @@
 
 namespace CGAL {
 
+#ifndef DOXYGEN_RUNNING
+
 namespace poisson_eliminate_impl {
 
-double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
+inline double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
   double sampleArea = domain_size / double(sample_size);
   double r_max;
   switch (dimension) {
@@ -56,6 +58,7 @@ double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double
   return r_max;
 }
 
+inline
 double get_minimum_radius(std::size_t input_size, std::size_t output_size, double beta, double gamma, double r_max) {
   double ratio = output_size / double(input_size);
   return r_max * (1 - std::pow(ratio, gamma)) * beta;
@@ -131,6 +134,7 @@ private:
   double alpha;
 };
 
+inline
 void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t heap_size, std::vector<double>& weights, std::size_t idx) {
   CGAL_assertion(idx <= heap.size());
   std::size_t child = idx * 2 + 1;
@@ -158,6 +162,7 @@ void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_po
   }
 }
 
+inline
 void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t &heap_size, std::vector<double>& weights) {
   std::swap(heap.front(), heap[heap_size - 1]);
   heap_pos[heap.front()] = 0;
@@ -211,6 +216,8 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
 };
 
 }
+
+#endif
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms

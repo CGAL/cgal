@@ -70,11 +70,11 @@ PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
 cd "${PWD}/doc/scripts"
 bash -$- ./process_doc.sh /home/cgal-testsuite/bin/doxygen_1_8_13 /home/cgal-testsuite/bin/doxygen_1_9_6 /srv/CGAL/www/Members/Manual_doxygen_test
-if head -2 ../../.scm-branch | grep -q cgal/master; then
-    rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
+if head -2 ../../.scm-branch | grep -q cgal/main; then
+    rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/main/
 fi
-if sestatus &>/dev/null && [ -d "/srv/CGAL/www/doc/master/" ] && [ -d "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}" ]; then
-    restorecon -R /srv/CGAL/www/doc/master/ /srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID} || error "restorecon command failed"
+if sestatus &>/dev/null && [ -d "/srv/CGAL/www/doc/main/" ] && [ -d "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}" ]; then
+    restorecon -R /srv/CGAL/www/doc/main/ /srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID} || error "restorecon command failed"
 else
     error "SELinux is not enabled or the paths do not exist"
 fi

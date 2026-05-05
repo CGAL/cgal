@@ -272,7 +272,8 @@ namespace internal
 template <class NT>
 struct Evaluate
 {
-  void operator()(const NT&)
+  template <class T>
+  void operator()(const T&)
   {}
 };
 } // internal namespace

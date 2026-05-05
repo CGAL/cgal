@@ -63,10 +63,10 @@ sdf_values( const TriangleMesh& triangle_mesh,
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{Shapira2008Consistent}.
- * It is possible to compute raw SDF values (without post-processing). In such a case,
+ * It is possible to compute raw SDF values (without postprocessing). In such a case,
  * -1 is used to indicate when no SDF value could be computed for a facet.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `double` as value type
@@ -108,18 +108,18 @@ sdf_values( const TriangleMesh& triangle_mesh,
 
 /*!
  * \ingroup PkgSurfaceMeshSegmentationRef
- * @brief Function post-processing raw SDF values computed per facet.
+ * @brief Function postprocessing raw SDF values computed per facet.
  *
- * Post-processing steps applied :
+ * Postprocessing steps applied :
  *   - Facets with -1 SDF values are assigned the average SDF value of their edge-adjacent neighbors.
  *     If there is still a facet having -1 SDF value, the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper.
- *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segmentation_from_sdf_values()`.
+ *     The main reason for not assigning 0 to facets with no SDF values (i.e., -1) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segmentation_from_sdf_values()`.
  *   - SDF values are smoothed with bilateral filtering.
  *   - SDF values are linearly normalized between [0,1].
  *
  * See the section \ref Surface_mesh_segmentationPostprocessing for more details.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -157,7 +157,7 @@ sdf_values_postprocessing(const TriangleMesh& triangle_mesh,
  * \note There is no direct relation between the parameter `number_of_clusters`
  * and the final number of segments after segmentation. However, setting a large number of clusters will result in a detailed segmentation of the mesh with a large number of segments.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  * @pre `number_of_clusters > 0`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -253,7 +253,7 @@ segmentation_via_sdf_values(const TriangleMesh& triangle_mesh,
  * it is more efficient to first compute the SDF values using `CGAL::sdf_values()` and use them in different calls to
  * `CGAL::segmentation_from_sdf_values()`.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  * @pre `number_of_clusters > 0`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`

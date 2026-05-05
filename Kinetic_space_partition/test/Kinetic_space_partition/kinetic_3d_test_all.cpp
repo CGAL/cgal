@@ -11,6 +11,9 @@ using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 std::size_t different = 0;
+std::size_t no_input = 0;
+std::size_t failed = 0;
+std::size_t passed = 0;
 
 template<typename Kernel, typename IntersectionKernel>
 bool run_test(
@@ -33,7 +36,7 @@ bool run_test(
     input_file_ply.close();
   else {
     std::cerr << "ERROR: can't read the OFF/PLY file " << filename << "!" << std::endl;
-    different++;
+    no_input++;
     return false;
   }
 
@@ -56,7 +59,9 @@ bool run_test(
 
     std::cout << ksp.number_of_volumes() << std::endl;
 
-    if (results[i][0] != count[0] || results[i][1] != count[2] || results[i][2] != count[3]) {
+    if (ksp.number_of_volumes() == 0)
+      failed++;
+    else if (results[i][0] != count[0] || results[i][1] != count[2] || results[i][2] != count[3]) {
       std::cout << "TEST differs: Partitioning has not expected number of vertices, faces or volumes for k = " << ks[i] << std::endl;
 
       std::cout << "Expectation:" << std::endl;
@@ -66,7 +71,10 @@ bool run_test(
 
       different++;
     }
-    else std::cout << "TEST PASSED k = " << ks[i] << " " << input_filename << std::endl;
+    else {
+      passed++;
+      std::cout << "TEST PASSED k = " << ks[i] << " " << input_filename << std::endl;
+    }
   }
 
   return true;
@@ -277,11 +285,25 @@ void run_all_tests() {
   results[2] = { 1395, 3115, 882 };
   run_test<Kernel, IntersectionKernel>("data/real-data-test/test-40-polygons.ply", { 1, 2, 3 }, results);
 
+  std::cout << "\n";
+
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
-  if (different != 0) {
-    std::cout << std::endl << kernel_name << " " << different << " TESTS differ from typical values!" << std::endl << std::endl;
+  if (no_input != 0) {
+    std::cout << kernel_name << " " << no_input << " TESTS failed due to missing input files!\n";
   }
-  std::cout << std::endl << kernel_name << " TESTS SUCCESS!" << std::endl << std::endl;
+
+  if (failed != 0) {
+    std::cout << kernel_name << " " << failed << " TESTS failed! The space partition was empty!\n";
+  }
+
+  if (different != 0) {
+    std::cout << kernel_name << " " << different << " TESTS differ from typical values!\n";
+  }
+
+  if (passed != 0)
+    std::cout << kernel_name << " " << passed << " TESTS passed!\n";
+
+  std::cout << "\n" << kernel_name << " TESTS FINISHED!" << std::endl;
 }
 
 int main(const int /* argc */, const char** /* argv */) {

@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <vector>
 #include <utility>
-#include <CGAL/config.h>      // included compiler_config.h, defining CGAL_USE_CORE, etc.
+#include <CGAL/config.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
@@ -137,7 +137,7 @@ public:
 
       The direction of the first ray can be specified by the parameter
       initial_direction, which allows the first ray to start at any direction.
-      The remaining directions are calculated in counter-clockwise order.
+      The remaining directions are calculated in counterclockwise order.
 
       \param cone_number The number of cones
       \param initial_direction The direction of the first ray

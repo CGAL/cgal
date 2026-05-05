@@ -343,7 +343,7 @@ public:
     , m_squared_facet_min_size(criteria.squared_min_radius_bound())
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
-    std::cerr << "CONS: Refine_facets_manifold_base";
+    std::cerr << "CONS: Refine_facets_manifold_base(mesh_topology = " << mesh_topology << ")";
     if(m_with_manifold_criterion) {
       if(m_with_boundary)
         std::cerr << " (with boundaries)\n";
@@ -581,7 +581,7 @@ public:
         // test if edge is in Complex
         if ( this->r_c3t3_.face_status(edge) != C3t3::NOT_IN_COMPLEX ) {
           // test if edge is not regular to store it as a "bad_edge"
-          // e.g. more than or equal to 3 incident facets (SINGULAR)
+          // e.g., more than or equal to 3 incident facets (SINGULAR)
           // or less than or equal to 1
           // (BOUNDARY only, because ISOLATED is NA)
           // This test is not efficient because

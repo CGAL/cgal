@@ -657,6 +657,42 @@ public:
   };
 
   template <typename K>
+  class Compare_squared_radius_2
+  {
+    typedef typename K::Comparison_result  Comparison_result;
+    typedef typename K::Point_2            Point_2;
+    typedef typename K::FT                 FT;
+
+  public:
+    Comparison_result
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r, const FT& ft) const
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       r.x(), r.y(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
+    }
+
+    Comparison_result
+    operator()(const Point_2& p, const Point_2& q, const FT& ft) const
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
+    }
+
+    Comparison_result
+    operator()(const Point_2&, const FT& ft) const
+    {
+      return - CGAL_NTS sign(ft);
+    }
+  };
+
+  template <typename K>
   class Compare_squared_radius_3
   {
     typedef typename K::Comparison_result  Comparison_result;
@@ -1178,11 +1214,24 @@ public:
 
     FT
     operator()( const Point_2& p, const Point_2& q) const
-    { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       num, den);
+      return num / den;
+    }
 
     FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       r.x(), r.y(),
+                       num, den);
+      return num / den;
+    }
   };
 
 } //namespace CartesianKernelFunctors
@@ -3128,6 +3177,10 @@ public:
     Point_2
     operator()(const Triangle_2& t, const Point_2& p) const
     { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
+
+    const Point_2&
+    operator()(const Point_2& p, const Point_2& q) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(p, q, K()); }
   };
 
 
@@ -3245,7 +3298,7 @@ public:
     typedef typename K::Vector_2   Vector_2;
 
   public:
-    Vector_2
+    [[nodiscard]] Vector_2
     operator()( const Vector_2& v, const FT& c) const
     {
       return Vector_2(c * v.x(), c * v.y());
@@ -3259,7 +3312,7 @@ public:
     typedef typename K::Vector_2   Vector_2;
 
   public:
-    Vector_2
+    [[nodiscard]] Vector_2
     operator()( const Vector_2& v, const FT& c) const
     {
       return Vector_2(v.x()/c, v.y()/c);
@@ -3273,7 +3326,7 @@ public:
     typedef typename K::Vector_3   Vector_3;
 
   public:
-    Vector_3
+    [[nodiscard]] Vector_3
     operator()( const Vector_3& v, const FT& c) const
     {
       return Vector_3(v.x()/c, v.y()/c, v.z()/c);
@@ -3287,7 +3340,7 @@ public:
     typedef typename K::Vector_3   Vector_3;
 
   public:
-    Vector_3
+    [[nodiscard]] Vector_3
     operator()( const Vector_3& w, const FT& c) const
     {
       return Vector_3(c * w.x(), c * w.y(), c * w.z());
@@ -3301,14 +3354,14 @@ public:
     typedef typename K::Vector_2  Vector_2;
 
   public:
-    Point_2
+    [[nodiscard]] Point_2
     operator()( const Point_2& p, const Vector_2& v) const
     {
       typename K::Construct_point_2 construct_point_2;
       return construct_point_2(p.x() + v.x(), p.y() + v.y());
     }
 
-    Point_2
+    [[nodiscard]] Point_2
     operator()( const Origin& , const Vector_2& v) const
     {
       typename K::Construct_point_2 construct_point_2;
@@ -3323,14 +3376,14 @@ public:
     typedef typename K::Vector_3  Vector_3;
 
   public:
-    Point_3
+    [[nodiscard]] Point_3
     operator()( const Point_3& p, const Vector_3& v) const
     {
       typename K::Construct_point_3 construct_point_3;
       return construct_point_3(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
     }
 
-    Point_3
+    [[nodiscard]] Point_3
     operator()( const Origin& , const Vector_3& v) const
     {
       typename K::Construct_point_3 construct_point_3;

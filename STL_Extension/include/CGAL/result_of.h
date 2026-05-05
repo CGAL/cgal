@@ -20,6 +20,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/result_of.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>
 

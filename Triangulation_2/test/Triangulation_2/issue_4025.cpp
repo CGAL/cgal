@@ -2,7 +2,7 @@
 //    https://github.com/CGAL/cgal/issues/4025
 // and then rewrote a lot, keeping the observed behavior.
 
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
@@ -15,8 +15,8 @@
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Polygon_2 = CGAL::Polygon_2<K>;
 using Itag_ = CGAL::Exact_intersections_tag;
-using Vb = CGAL::Base_with_time_stamp<CGAL::Triangulation_vertex_base_2<K>>;
-using Cb = CGAL::Base_with_time_stamp<CGAL::Constrained_triangulation_face_base_2<K>>;
+using Vb = CGAL::Triangulation_simplex_base_with_time_stamp<CGAL::Triangulation_vertex_base_2<K>>;
+using Cb = CGAL::Triangulation_simplex_base_with_time_stamp<CGAL::Constrained_triangulation_face_base_2<K>>;
 using Tds = CGAL::Triangulation_data_structure_2<Vb, Cb>;
 using CDT = CGAL::Constrained_Delaunay_triangulation_2<K, Tds, Itag_>;
 using CDTP = CGAL::Constrained_triangulation_plus_2<CDT>;

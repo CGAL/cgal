@@ -45,7 +45,7 @@ namespace CGAL
 namespace internal
 {
 
-// Post-process functions for sdf values
+// postprocess functions for sdf values
 template<class Polyhedron>
 class Postprocess_sdf_values
 {
@@ -186,7 +186,7 @@ public:
  *   -  Expectation_maximization for soft clustering
  *   -  An implementation of alpha-expansion graph cut for hard clustering
  *
- * Other than being a connector, it is also responsible for pre-process and postprocess on intermediate data, which are:
+ * Other than being a connector, it is also responsible for preprocess and postprocess on intermediate data, which are:
  *   - log-normalizing probabilities received from soft clustering
  *   - log-normalizing and calculating dihedral-angle based weights for edges
  *   - smoothing and log-normalizing sdf values received from sdf calculation (Filters.h)

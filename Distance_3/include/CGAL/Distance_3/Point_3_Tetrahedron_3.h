@@ -219,7 +219,7 @@ compare_squared_distance(const typename K::Point_3& pt,
   }
 
   if(on_bounded_side)
-    return compare(typename K::FT(0),d2);
+    return ::CGAL::compare(typename K::FT(0),d2);
 
   return res;
 }

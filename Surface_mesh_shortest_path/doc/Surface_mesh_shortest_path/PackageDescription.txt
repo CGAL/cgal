@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshShortestPathRef Triangulated Surface Mesh Geodesic Shortest Paths Reference
+/// \defgroup PkgSurfaceMeshShortestPathRef Reference Manual
 
 /// \defgroup PkgSurfaceMeshShortestPathConcepts Concepts
 /// \ingroup PkgSurfaceMeshShortestPathRef

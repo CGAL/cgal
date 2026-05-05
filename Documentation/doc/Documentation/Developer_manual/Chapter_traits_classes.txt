@@ -19,7 +19,7 @@ sections.
 
 \section secwhat_is_a_traits_class What are traits classes in CGAL?
 
-The algorithms in CGAL's basic library are implemented as function templates
+The algorithms in \cgal's basic library are implemented as function templates
 or class templates, usually having a template parameter whose name contains
 the word `Traits`.  This template parameter
 represents a concept and so has a corresponding set of requirements that

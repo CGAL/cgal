@@ -1,4 +1,4 @@
-/// \defgroup PkgHalfedgeDSRef Halfedge Data Structures Reference
+/// \defgroup PkgHalfedgeDSRef Reference Manual
 /// \defgroup PkgHalfedgeDSConcepts Concepts
 /// \ingroup PkgHalfedgeDSRef
 

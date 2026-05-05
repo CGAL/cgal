@@ -19,6 +19,9 @@ on:
 
   issue_comment:
     types: [created]
+  # push:
+  #   branches:
+  #     - main
 
 env:
   author_association: ${{ github.event.comment.author_association }}
@@ -29,6 +32,7 @@ permissions:
 
 jobs:
   pre_build_checks:
+    if: ${{ inputs.pr_number || startsWith(github.event.comment.body, '/build:') || startsWith(github.event.comment.body, '/force-build:') || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     name: Trigger the build?
     outputs:
@@ -45,9 +49,9 @@ jobs:
       - name: Check comment body
         id: check_comment_body
         env:
-          trigger_build: ${{ inputs && inputs.pr_number || startsWith(env.comment_body, '/build:') || startsWith(env.comment_body, '/force-build:') }}
-          force_build: ${{ inputs && inputs.force_build || startsWith(env.comment_body, '/force-build:') }}
-        if: inputs.pr_number || startsWith(env.comment_body, '/build:') || startsWith(env.comment_body, '/force-build:')
+          trigger_build: ${{ inputs && inputs.pr_number || startsWith(env.comment_body, '/build:') || startsWith(env.comment_body, '/force-build:')  || github.event_name == 'push'}}
+          force_build: ${{ inputs && inputs.force_build || startsWith(env.comment_body, '/force-build:') || github.event_name == 'push' }}
+        if: inputs.pr_number || startsWith(env.comment_body, '/build:') || startsWith(env.comment_body, '/force-build:') || github.event_name == 'push'
         run: |
           if [ "${trigger_build}" = "false" ]; then
             echo "No build requested"
@@ -57,11 +61,11 @@ jobs:
           echo "trigger_build=${trigger_build}" >> $GITHUB_OUTPUT
 
       - name: Check permissions
-        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (inputs.pr_number || env.author_association == 'OWNER' || env.author_association == 'MEMBER')
+        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (inputs.pr_number || github.event_name == 'push' || env.author_association == 'OWNER' || env.author_association == 'MEMBER')
         run: echo "Authorized"
 
       - name: No permissions
-        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (! inputs.pr_number && env.author_association != 'OWNER' && env.author_association != 'MEMBER' )
+        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (! inputs.pr_number && github.event_name != 'push' && env.author_association != 'OWNER' && env.author_association != 'MEMBER' )
         run: |
           echo 'ERROR: User ${{ github.actor }} is not allowed to trigger the build of the documentation with /build:* or /force-build:*'
           exit 1
@@ -70,7 +74,7 @@ jobs:
         if: ( steps.check_comment_body.outputs.trigger_build || false )
         id: get_pr_number
         env:
-          pr_number: ${{ inputs.pr_number || github.event.issue.number }}
+          pr_number: ${{ inputs.pr_number || github.event.issue.number || github.ref_name }}
         run: echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
 
       - name: Get doc version
@@ -80,8 +84,11 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ( context.payload.input && context.payload.inputs.doc_version ) {
+            if ( context.payload.inputs && context.payload.inputs.doc_version ) {
               return context.payload.inputs.doc_version
+            }
+            if ( context.eventName === 'push' ) {
+              return '.'
             }
             const body = context.payload.comment.body
             const re = /\/(force-)?build:(\w+)\s*/;
@@ -105,6 +112,12 @@ jobs:
       doc_version: ${{ needs.pre_build_checks.outputs.doc_version }}
     if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build || false) }}
     steps:
+
+      - name: Display environment variables
+        run: |
+          echo "pr_number=${{ env.pr_number }}"
+          echo "doc_version=${{ env.doc_version }}"
+          echo "force_build=${{ env.force_build }}"
 
       - name: Emoji-comment
         if: github.event_name == 'issue_comment'
@@ -163,7 +176,7 @@ jobs:
           wget --no-verbose cgal.github.io -O index.html
           if ! egrep -qF "/$PR_NUMBER/$ROUND" index.html || [ "$force" = "yes" ]; then
             #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only origin/master...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+            LIST_OF_PKGS=$(git diff --name-only origin/main...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
               echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
               exit 1
@@ -212,7 +225,7 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: address
             });
 
@@ -229,6 +242,6 @@ jobs:
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: ${{ env.pr_number }},
               body: msg
             });

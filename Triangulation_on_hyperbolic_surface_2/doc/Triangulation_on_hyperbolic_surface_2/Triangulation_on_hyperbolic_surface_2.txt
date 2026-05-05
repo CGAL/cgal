@@ -60,9 +60,9 @@ In order to perform fast and exact computations with a fundamental domain, every
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Domains Data Structure for Domains
 
-We represent every fundamental domain as a polygon in the Poincaré disk, given by the list of its vertices in counter-clockwise order and by the list of its side pairings.
+We represent every fundamental domain as a polygon in the Poincaré disk, given by the list of its vertices in counterclockwise order and by the list of its side pairings.
 This package can generate a random convex fundamental domain \f$ P \f$ of a surface of genus two, with eight vertices \f$ z_0, \dots, z_7 \in \mathbb{C} \f$.
-The vertices and the sides are in counter-clockwise order, the side between \f$ z_0 \f$ and \f$ z_1 \f$ is \f$ A \f$,  the side between \f$ z_4 \f$ and \f$ z_5 \f$ is \f$ \overline{A} \f$ and so on as on \cgalFigureRef{THS2-octagon}.  The side pairings are \f$ A \f$ with \f$\overline{A} \f$ , \f$ B \f$ with \f$ \overline{B} \f$ , \f$ C \f$ with \f$ \overline{C} \f$ and  \f$ D \f$ with \f$ \overline{D} \f$.
+The vertices and the sides are in counterclockwise order, the side between \f$ z_0 \f$ and \f$ z_1 \f$ is \f$ A \f$,  the side between \f$ z_4 \f$ and \f$ z_5 \f$ is \f$ \overline{A} \f$ and so on as on \cgalFigureRef{THS2-octagon}.  The side pairings are \f$ A \f$ with \f$\overline{A} \f$ , \f$ B \f$ with \f$ \overline{B} \f$ , \f$ C \f$ with \f$ \overline{C} \f$ and  \f$ D \f$ with \f$ \overline{D} \f$.
 
 These octagons are symmetric, i.e. \f$ z_i = -z_{i+4} \f$ for every  \f$ i \f$, where indices are modulo eight.
 Such octagons are described in \cgalCite{aigon2005hyperbolic}.

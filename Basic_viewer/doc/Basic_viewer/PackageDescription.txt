@@ -1,4 +1,4 @@
-/// \defgroup PkgBasicViewerRef Basic Viewer Reference
+/// \defgroup PkgBasicViewerRef Reference Manual
 
 /// \defgroup PkgBasicViewerConcepts Concepts
 /// \ingroup PkgBasicViewerRef
