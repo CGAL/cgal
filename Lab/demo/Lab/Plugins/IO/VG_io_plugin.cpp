@@ -57,9 +57,12 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   {
     QList<Scene_item*> list;
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
-    Scene_group_item* group = new Scene_group_item(fileinfo.baseName());
-    group->setRenderingMode(Points);
-    CGAL::Three::Three::scene()->addItem(group);
+    Scene_group_item* group = nullptr;
+    if (add_to_scene) {
+      group = new Scene_group_item(fileinfo.baseName());
+      group->setRenderingMode(Points);
+      CGAL::Three::Three::scene()->addItem(group);
+    }
 
     std::vector<QColor> distinct_colors;
     compute_deterministic_color_map(QColor(80, 250, 80), regions.size(), std::back_inserter(distinct_colors));
@@ -88,8 +91,10 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
         point_item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
 
       point_item->invalidateOpenGLBuffers();
-      CGAL::Three::Three::scene()->addItem(point_item);
-      CGAL::Three::Three::scene()->changeGroup(point_item, group);
+      if (add_to_scene) {
+        CGAL::Three::Three::scene()->addItem(point_item);
+        CGAL::Three::Three::scene()->changeGroup(point_item, group);
+      }
 
       list << point_item;
       idx++;
@@ -101,12 +106,12 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   return QList<Scene_item*>();
 }
 
-bool CGAL_Lab_vg_plugin::canSave(const CGAL::Three::Scene_item* item)
+bool CGAL_Lab_vg_plugin::canSave(const CGAL::Three::Scene_item* )
 {
   return false;//qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
-bool CGAL_Lab_vg_plugin::save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
+bool CGAL_Lab_vg_plugin::save(QFileInfo ,QList<CGAL::Three::Scene_item*>&)
 {
   return false;
 /*

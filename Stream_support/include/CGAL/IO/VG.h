@@ -62,7 +62,7 @@ struct PointType<PointRange, true> {
 
 template<typename PointRange, bool is_point_set = has_type_Point_set<PointRange>::value>
 struct IndexRange {
-  IndexRange(PointRange& points) {}
+  IndexRange(PointRange&) {}
 };
 
 template<typename PointRange>
@@ -136,7 +136,6 @@ template <typename PointRange, typename Map>
 bool read_elements(std::istream& is, PointRange &points, Map cmap, std::string& line) {
   using Type = typename boost::property_traits<Map>::value_type;
   std::istringstream ss;
-  auto it = points.begin();
   for (auto idx : IndexRange(points)) {
     if (!internal::next_line(is, line))
       return false;
@@ -263,7 +262,6 @@ bool read_VG(std::ifstream& is,
   using Point_map = std::conditional_t<ra_pmap, Random_access_property_map<PointRange>, typename NP_helper::Point_map>;
 
   using Point = typename internal::PointType<PointRange>::type;
-  using Index = typename boost::property_traits<Point_map>::key_type;
 
   using GeomTraits = typename NP_helper::Geom_traits;
   using Region = typename std::iterator_traits<typename RegionOutputIterator::container_type::iterator>::value_type;

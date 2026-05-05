@@ -153,7 +153,7 @@ bool detect_and_export_cylinders() {
     normal_map(point_set.normal_map()).
     serializer(serialize));
 
-  auto constructor = [](unsigned int& type, const std::string& params) {
+  auto constructor = [](unsigned int&, const std::string& params) {
     Cylinder cyl;
     std::stringstream ss(params);
     ss >> cyl.axis >> cyl.radius;
@@ -168,7 +168,7 @@ bool detect_and_export_cylinders() {
   return true;
 }
 
-int main(int argc, char** argv) {
+int main(int, char**) {
   if (!detect_and_export_spheres())
     return EXIT_FAILURE;
 
