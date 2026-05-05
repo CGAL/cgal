@@ -94,6 +94,7 @@ void trim(std::string &str) {
   str.erase(0, str.find_first_not_of(" "));
 }
 
+/*
 std::size_t load_planes(const std::string &filename, Point_set &ps, std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> &regions) {
   std::ifstream in(filename);
   if (!in.is_open())
@@ -300,6 +301,7 @@ std::size_t load_planes(const std::string &filename, Point_set &ps, std::vector<
 
   return group_counter;
 }
+*/
 
 int main(const int argc, const char** argv) {
   // Parameters.
@@ -462,7 +464,6 @@ int main(const int argc, const char** argv) {
     CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
-  const FT time = static_cast<FT>(timer.time());
 
   std::vector<FT> lambdas{ 0.3, 0.4, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99 };
 
