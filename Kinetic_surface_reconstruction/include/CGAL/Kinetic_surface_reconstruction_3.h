@@ -2218,14 +2218,8 @@ private:
     std::vector<Point_2> pts2d;
     pts2d.reserve(pts.size());
 
-    FT dist = 0;
-
-    for (const Point_3& p : pts) {
+    for (const Point_3& p : pts)
       pts2d.push_back(pl.to_2d(p));
-      dist += CGAL::sqrt((pl.projection(p) - p).squared_length());
-    }
-
-    dist /= pts.size();
 
     // Iterate over all faces of the lcc
     for (const Dart& d : lcc.template one_dart_per_cell<2>()) {

@@ -20,7 +20,7 @@ int main(const int, const char**) {
   // Input.
 
   Point_set point_set;
-  CGAL::IO::read_point_set("hilbert_cube.ply", point_set);
+  CGAL::IO::read_point_set(CGAL::data_file_path("points_3/building.xyz"), point_set);
 
   auto params = CGAL::parameters::maximum_distance(0.1)
     .maximum_angle(10)
