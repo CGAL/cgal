@@ -1883,6 +1883,8 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls_on_edges()
 {
+  Vertex_handle locate_hint_vh{};
+
   // Get features
   using Feature_tuple = typename MD::Get_curves_output_type;
   std::vector<Feature_tuple> input_features;
@@ -1930,7 +1932,7 @@ insert_balls_on_edges()
                                   CGAL::square(p_size),
                                   1 /*dim*/,
                                   p_index,
-                                  Vertex_handle(),
+                                  locate_hint_vh,
                                   curve_index,
                                   CGAL::Emptyset_iterator()).first;
 
@@ -1941,6 +1943,7 @@ insert_balls_on_edges()
         // the variable 'vp'.
         vq = vp;
       }
+      locate_hint_vh = vp;
 
       // Insert balls and set treated
 //      if(do_balls_intersect(vp, vq))
