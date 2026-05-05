@@ -1291,7 +1291,7 @@ private:
 
     std::vector<Point_2> points;
     points.reserve(region.size());
-    for (const auto idx : region) {
+    for (auto idx : region) {
       const auto& p = get(m_point_map, idx);
       const auto q = plane.projection(p);
       const auto point = plane.to_2d(q);
