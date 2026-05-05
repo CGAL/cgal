@@ -101,6 +101,10 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{Patch boundary edges (i.e. incident to only one face in the range) are always considered as constrained edges.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{edge_is_protected_map}
+*     \todo doc
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{vertex_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `pmesh`.}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -258,6 +262,15 @@ void isotropic_remeshing(const FaceRange& faces
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Static_boolean_property_map<edge_descriptor, false>());
 
+  typedef typename
+    internal_np::Lookup_named_param_def <
+      internal_np::edge_is_protected_t,
+      NamedParameters,
+      Static_boolean_property_map<edge_descriptor, false> // default (no protected edge pmap)
+   >::type EPMap;
+  EPMap epmap = choose_parameter(get_parameter(np, internal_np::edge_is_protected),
+                                 Static_boolean_property_map<edge_descriptor, false>());
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
@@ -287,11 +300,12 @@ void isotropic_remeshing(const FaceRange& faces
 #if !defined(CGAL_NO_PRECONDITIONS)
   if(protect)
   {
+    CGAL::OR_property_map<ECMap, EPMap> protected_edges_pmap(ecmap, epmap);
     std::string msg("Isotropic remeshing : protect_constraints cannot be set to");
     msg.append(" true with constraints larger than 4/3 * target_edge_length.");
     msg.append(" Remeshing aborted.");
     CGAL_precondition_msg(
-      internal::constraints_are_short_enough(pmesh, ecmap, fpmap, sizing),
+      internal::constraints_are_short_enough(pmesh, protected_edges_pmap, fpmap, sizing),
       msg.c_str());
   }
 #endif
@@ -304,8 +318,8 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
-  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
-    remesher(pmesh, vpmap, gt, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, EPMap, VCMap, FPMap, FIMap>
+    remesher(pmesh, vpmap, gt, protect, ecmap, epmap, vcmap, fpmap, fimap, need_aabb_tree);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -439,7 +453,17 @@ void isotropic_remeshing(const FaceRange& faces
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edge is constrained}
-*     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped, nor its endpoints moved by smoothing.}
+*     \cgalParamExtra{A constrained edge can be split and the property map is kept up-to-date.}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
+* \cgalParamNBegin{edge_is_protected_map}
+*     \cgalParamDescription{a property map containing the protected-or-not status of each edge of `pmesh`}
+*     \cgalParamType{a class model of `ReadPropertyMap`
+*                    with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+*                    as key type and `bool` as value type.}
+*     \cgalParamDefault{a default property map where no edge is protected}
+*     \cgalParamExtra{A protected edge cannot be split.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -483,6 +507,14 @@ void split_long_edges(const EdgeRange& edges
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Static_boolean_property_map<edge_descriptor, false>());
 
+  typedef typename internal_np::Lookup_named_param_def<
+      internal_np::edge_is_protected_t,
+      NamedParameters,
+      Static_boolean_property_map<edge_descriptor, false> // default (no protected edge)
+      >::type EPMap;
+  EPMap epmap = choose_parameter(get_parameter(np, internal_np::edge_is_protected),
+                                 Static_boolean_property_map<edge_descriptor, false>());
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::face_patch_t,
       NamedParameters,
@@ -492,12 +524,14 @@ void split_long_edges(const EdgeRange& edges
     get_parameter(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false));
 
-  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
-    Static_boolean_property_map<vertex_descriptor, false>, // no constraint pmap
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, EPMap,
+    Static_boolean_property_map<vertex_descriptor, false>, // no vertex constraint pmap
     FPMap,FIMap
   >
-    remesher(pmesh, vpmap, gt, false/*protect constraints*/, ecmap,
-             Static_boolean_property_map<vertex_descriptor, false>(),
+    remesher(pmesh, vpmap, gt, false/*protect constraints*/,
+             ecmap,//constraints map, kept valid
+             epmap,//protected edges map, not modified
+             Static_boolean_property_map<vertex_descriptor, false>(), // no vertex constraint pmap
              fpmap,
              fimap,
              false/*need aabb_tree*/);
