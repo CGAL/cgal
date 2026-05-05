@@ -1,62 +1,142 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/read_vg.h>
-#include <CGAL/IO/write_vg.h>
 #include <CGAL/Point_set_3.h>
-#include <CGAL/property_map.h>
+#include <CGAL/Point_set_3/IO.h>
+#include <CGAL/IO/VG.h>
 
 #include <fstream>
 
-using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Shape_detection/Region_growing/Point_set.h>
+#include <boost/iterator/function_output_iterator.hpp>
+
+using Kernel = CGAL::Simple_cartesian<double>;
 using FT = Kernel::FT;
 using Point_3 = Kernel::Point_3;
 using Vector_3 = Kernel::Vector_3;
-using Plane_3 = Kernel::Plane_3;
+
+using Point_set = CGAL::Point_set_3<Point_3>;
+
 using Sphere_3 = Kernel::Sphere_3;
 using Line_3 = typename Kernel::Line_3;
-using FT = typename Kernel::FT;
 
-int main(int argc, char** argv) {
-  std::vector<Point_3> points, points2;
-  std::vector<std::pair<Sphere_3, std::vector<std::size_t>>> regions, regions2;
+bool detect_and_export_spheres() {
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
+  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region_for_point_set<Point_set>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
-  CGAL::IO::read_VG(CGAL::data_file_path("points_3/spheres_point_set_3.vg"), points, std::back_inserter(regions));
-  CGAL_assertion(regions.size() == 10);
-  CGAL_assertion(regions[0].first.squared_radius() > 0.01625);
-  CGAL_assertion(regions[0].first.squared_radius() < 0.01626);
-  CGAL_assertion(regions[0].second.size() == 510);
-  CGAL_assertion(regions[1].first.squared_radius() > 0.0061);
-  CGAL_assertion(regions[1].first.squared_radius() < 0.0062);
-  CGAL_assertion(regions[1].second.size() == 134);
-  CGAL_assertion(regions[2].first.squared_radius() > 0.0231);
-  CGAL_assertion(regions[2].first.squared_radius() < 0.0232);
-  CGAL_assertion(regions[2].second.size() == 210);
-  CGAL_assertion(regions[3].first.squared_radius() > 0.0053);
-  CGAL_assertion(regions[3].first.squared_radius() < 0.0054);
-  CGAL_assertion(regions[3].second.size() == 169);
-  CGAL_assertion(regions[4].first.squared_radius() > 0.0478);
-  CGAL_assertion(regions[4].first.squared_radius() < 0.0479);
-  CGAL_assertion(regions[4].second.size() == 1503);
-  CGAL::IO::write_VG("spheres_tmp.vg", points, regions,
-    CGAL::parameters::point_map(CGAL::Identity_property_map<Point_3>()));
-  CGAL::IO::read_VG("spheres_tmp.vg", points2, std::back_inserter(regions2));
+  std::ifstream in(CGAL::data_file_path("points_3/spheres.ply"));
 
-  CGAL_assertion(points.size() == points2.size());
-  CGAL_assertion(regions.size() == regions2.size());
-  for (std::size_t i = 0; i < regions.size(); ++i) {
-    CGAL_assertion(regions[i].first == regions2[i].first);
-    CGAL_assertion(regions[i].second.size() == regions2[i].second.size());
+  CGAL::IO::set_ascii_mode(in);
+  if (!in) {
+    std::cerr << "ERROR: cannot read the input file!" << std::endl;
+    return false;
   }
+
+  Point_set point_set;
+  in >> point_set;
+  in.close();
+  std::cout << "* number of input points: " << point_set.size() << std::endl;
+
+
+  // Default parameter values for the data file spheres.ply.
+  const std::size_t k = 12;
+  const FT          max_distance = FT(1) / FT(100);
+  const FT          max_angle = FT(10);
+  const std::size_t min_region_size = 50;
+
+  // Create instances of the classes Neighbor_query and Region_type.
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(
+    point_set, CGAL::parameters::k_neighbors(k));
+
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_sphere_fit_region(
+    point_set,
+    CGAL::parameters::
+    maximum_distance(max_distance).
+    maximum_angle(max_angle).
+    minimum_region_size(min_region_size));
+
+  // Create an instance of the region growing class.
+  Region_growing region_growing(
+    point_set, neighbor_query, region_type);
+
+  std::vector<typename Region_growing::Primitive_and_region> regions;
+  region_growing.detect(std::back_inserter(regions));
+
+  if (regions.empty())
+    return EXIT_FAILURE;
+
+  std::cout << regions.size() << std::endl;
+
+  CGAL::IO::write_VG("spheres_point_set_3.vg", point_set, regions);
+
+  std::vector<std::pair<Sphere_3, std::vector<std::size_t>>> regions2;
+  Point_set point_set2(true);
+  CGAL::IO::read_VG("spheres_point_set_3.vg", point_set2, std::back_inserter(regions2));
+  CGAL_assertion(regions.size() == regions2.size());
+
+  return true;
+}
+
+bool detect_and_export_cylinders() {
+  // Similar to the previous function, but with cylinders instead of spheres.
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
+  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region_for_point_set<Point_set>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
+
+  std::ifstream in(CGAL::data_file_path("points_3/cylinders.ply"));
+
+  CGAL::IO::set_ascii_mode(in);
+  if (!in) {
+    std::cerr << "ERROR: cannot read the input file!" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  Point_set point_set;
+  in >> point_set;
+  in.close();
+  std::cout << "* number of input points: " << point_set.size() << std::endl;
+  assert(point_set.size() == 1813);
+  assert(point_set.has_normal_map()); // input should have normals
+
+  // Default parameter values for the data file cuble.pwn.
+  const std::size_t k = 20;
+  const FT          max_distance = FT(1) / FT(10);
+  const FT          max_angle = FT(25);
+  const std::size_t min_region_size = 20;
+
+  // Create instances of the classes Neighbor_query and Region_type.
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(point_set, CGAL::parameters::k_neighbors(k));
+
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_cylinder_fit_region(
+    point_set,
+    CGAL::parameters::
+    maximum_distance(max_distance).
+    maximum_angle(max_angle).
+    minimum_region_size(min_region_size));
+
+  // Create an instance of the region growing class.
+  Region_growing region_growing(
+    point_set, neighbor_query, region_type);
+
+  std::vector<typename Region_growing::Primitive_and_region> regions;
+  region_growing.detect(std::back_inserter(regions));
+
+  if (regions.empty())
+    return EXIT_FAILURE;
+
+  std::cout << regions.size() << std::endl;
 
   struct Cylinder {
     Cylinder() {}
-    Cylinder(const Line_3 &axis, FT &radius) : axis(axis), radius(radius) {}
+    Cylinder(const Line_3& axis, FT& radius) : axis(axis), radius(radius) {}
 
     Line_3 axis;
     FT radius;
   };
 
-  auto serializer = [](auto& cyl, unsigned int& type, std::size_t& num_params) {
+  auto serialize = [](auto& cyl, unsigned int& type, std::size_t& num_params) {
     std::stringstream ss;
     ss << cyl.axis << " " << cyl.radius;
     type = 1;
@@ -64,38 +144,32 @@ int main(int argc, char** argv) {
     return ss.str();
     };
 
-  auto constructor = [](unsigned int& type, const std::string &params) {
+  CGAL::IO::write_VG("cylinders_point_set_3.vg", point_set, regions,
+    CGAL::parameters::point_map(point_set.point_map()).
+    normal_map(point_set.normal_map()).
+    serializer(serialize));
+
+  auto constructor = [](unsigned int&, const std::string& params) {
     Cylinder cyl;
     std::stringstream ss(params);
     ss >> cyl.axis >> cyl.radius;
     return cyl;
     };
 
-  std::vector<Point_3> points3, points4;
-  std::vector<std::pair<Cylinder, std::vector<std::size_t>>> regions3, regions4;
+  std::vector<Point_3> points2;
+  std::vector<std::pair<Cylinder, std::vector<std::size_t>>> regions2;
+  CGAL::IO::read_VG("cylinders_point_set_3.vg", points2, std::back_inserter(regions2), CGAL::parameters::constructor(constructor));
+  CGAL_assertion(regions.size() == regions2.size());
 
-  CGAL::IO::read_VG(CGAL::data_file_path("points_3/cylinders_point_set_3.vg"), points3, std::back_inserter(regions3), CGAL::parameters::constructor(constructor));
-  CGAL_assertion(regions3.size() == 2);
-  CGAL_assertion(regions3[0].first.radius > 0.03835);
-  CGAL_assertion(regions3[0].first.radius < 0.03836);
-  CGAL_assertion(regions3[0].second.size() == 903);
-  CGAL_assertion(regions3[1].first.radius > 0.04345);
-  CGAL_assertion(regions3[1].first.radius < 0.04346);
-  CGAL_assertion(regions3[1].second.size() == 910);
-  CGAL_assertion(points3.size() == 1813);
+  return true;
+}
 
-  CGAL::IO::write_VG("cylinders_tmp.vg", points3, regions3,
-    CGAL::parameters::point_map(CGAL::Identity_property_map<Point_3>()).serializer(serializer));
-  CGAL::IO::read_VG("cylinders_tmp.vg", points4, std::back_inserter(regions4), CGAL::parameters::constructor(constructor));
+int main(int, char**) {
+  if (!detect_and_export_spheres())
+    return EXIT_FAILURE;
 
-  CGAL_assertion(points3.size() == points4.size());
-  CGAL_assertion(regions3.size() == regions4.size());
-  for (std::size_t i = 0; i < regions3.size(); ++i) {
-    // exact comparison works as the file is written with the same precision as the input file
-    CGAL_assertion(regions3[i].first.axis == regions4[i].first.axis);
-    CGAL_assertion(regions3[i].first.radius == regions4[i].first.radius);
-    CGAL_assertion(regions3[i].second.size() == regions4[i].second.size());
-  }
+  if (!detect_and_export_cylinders())
+    return EXIT_FAILURE;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

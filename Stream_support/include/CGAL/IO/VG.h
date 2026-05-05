@@ -188,9 +188,7 @@ bool read_normals(std::ifstream& is, PointRange &points, std::string& line, cons
 /*!
  * \ingroup PkgStreamSupportIoFuncsVG
  *
- * \brief reads the content of the input stream `is` into `points` and `regions` according to the VG (Vertex Group) format.
- *
- * \attention The format does not support binary streams.
+ * \brief reads the content of the input stream `is` into `points` and `regions` using the \ref IOStreamVG.
  *
  * \tparam PointRange
  *         `CGAL::Point_set_3` or a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -485,11 +483,11 @@ bool read_VG(std::ifstream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsVG
  *
- * \brief writes the content of `points` and `regions` to the output stream `os` in the VG (Vertex Group) format.
+ * \brief writes the content of `points` and `regions` to the output stream `os` in the \ref IOStreamVG.
  *
  * \attention The format does not support binary streams.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange `CGAL::Point_set_3` or a model of the concept RandomAccessContainer whose value type is the point type.
  * \tparam RegionRange
  *    a model of `ForwardRange` whose value type is `std::pair<Primitive, std::vector<item>>`,
  *    where item is the key type of `Point_map`. `Primitive` is the geometric primitive and needs to implement
