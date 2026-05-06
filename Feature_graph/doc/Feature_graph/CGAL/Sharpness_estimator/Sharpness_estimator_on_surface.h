@@ -21,7 +21,7 @@ public:
   */
   typedef double Sharpness_value_type;
 
-  ///@}
+  /// @}
 
   /// \name Constructor
   /// @{
@@ -40,7 +40,7 @@ public:
   template <typename Surface, typename FT = Sharpness_value_type>
   Sharpness_estimator_on_surface(const Surface& surface, const FT& selection_threshold);
 
-  // @}
+  /// @}
 
   /// \name Functor
   /// @{

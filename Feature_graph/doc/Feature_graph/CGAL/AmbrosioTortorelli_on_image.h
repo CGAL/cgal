@@ -33,7 +33,7 @@ public:
   */
   typedef unspecified_type Normal_functor;
 
-  ///@}
+  /// @}
 
   /// \name Constructor
   /// @{
@@ -52,7 +52,7 @@ public:
   template <typename Image, typename FT = Sharpness_functor::Sharpness_value_type>
   AmbrosioTortorelli_on_image(const Image& image, const FT& selection_threshold = FT(0.25));
 
-  // @}
+  /// @}
 
   /// \name Functor Accessors
   /// @{
@@ -66,7 +66,7 @@ public:
   */
   Normal_functor get_normal_functor() const;
 
-  ///@}
+  /// @}
 };
 
 } /* namespace CGAL */

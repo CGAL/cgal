@@ -24,7 +24,7 @@ public:
   */
   typedef Vector_3 Normal_type;
 
-  ///@}
+  /// @}
 
   /// \name Constructor
   /// @{
@@ -39,7 +39,7 @@ public:
   template <typename Surface>
   Normal_estimator_on_surface(const Surface& surface);
 
-  // @}
+  /// @}
 
   /// \name Functor
   /// @{
