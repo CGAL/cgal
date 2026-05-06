@@ -1277,6 +1277,7 @@ public:
   using Cell_marker = CDT_3_cell_marker;
 
   using Face_index = CDT_3_signed_index;
+  static inline constexpr Face_index INVALID_FACE_INDEX = -1;
 
   using Conforming_Dt::Conforming_Dt;
 
@@ -1570,7 +1571,7 @@ protected:
           if(facet_c_to_next_is_constrained) {
             out.facets.emplace_back(c, i, Star_components_facets::Type_of_facet::INCIDENT_TO_V);
             const auto constrained_facet_face_id = face_constraint_index(c, i);
-            if(-1 == current_component_incident_constraint_face_ids[1] &&
+            if(INVALID_FACE_INDEX == current_component_incident_constraint_face_ids[1] &&
                constrained_facet_face_id != current_component_incident_constraint_face_ids[0])
             {
               current_component_incident_constraint_face_ids[1] = constrained_facet_face_id;
@@ -1639,7 +1640,7 @@ protected:
       CGAL_assertion(std::all_of(out.component_incident_constraint_face_ids.begin(), out.component_incident_constraint_face_ids.end(),
                                  [](const std::array<Face_index, 2>& face_ids)
                                  {
-                                   return face_ids[1] != -1;
+                                   return face_ids[1] != INVALID_FACE_INDEX;
                                  }));
     }
 
@@ -2195,6 +2196,10 @@ public:
     if(fh != CDT_2_face_handle{}) {
       fh->info().facet_3d = f;
     }
+  }
+
+  auto set_facet_as_not_constrained(Facet f) {
+    return set_facet_constrained(f, INVALID_FACE_INDEX, CDT_2_face_handle{});
   }
 
   template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
