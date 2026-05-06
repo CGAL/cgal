@@ -4628,7 +4628,9 @@ public:
 
   void recheck_for_missing_subfaces() {
     CGAL::Real_timer timer;
-    timer.start();
+    if(this->debug().display_statistics()) {
+      timer.start();
+    }
     for(CDT_3_signed_index i = 0, end = signed_number_of_faces(); i < end; ++i) {
       if(this->face_data[i].skip_face == false) {
         search_for_missing_subfaces(i);
@@ -4636,7 +4638,7 @@ public:
     }
     if(this->debug().display_statistics()) {
       timer.stop();
-      std::cout << "[timings] recheck_for_missing_subfaces in " << timer.time() << " s\n";
+      std::cout << "[timings] recheck_for_missing_subfaces in " << 1000 * timer.time() << " ms\n";
     }
   }
 
