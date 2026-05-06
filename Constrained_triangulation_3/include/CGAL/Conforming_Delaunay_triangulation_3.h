@@ -182,7 +182,7 @@ namespace internal {
 
 inline auto& tasks_manager() {
   struct Tasks_manager {
-    enum {
+    enum class Tm {
       READ_INPUT = 0,
       MERGE_FACETS,
       INSERT_VERTICES,
@@ -197,7 +197,7 @@ inline auto& tasks_manager() {
 
   #if CGAL_USE_ITT
     __itt_domain* cdt_3_domain = __itt_domain_create("org.cgal.CDT_3");
-    const std::array<__itt_string_handle*, NB_TASKS> task_handles = {
+    const std::array<__itt_string_handle*, static_cast<std::size_t>(Tm::NB_TASKS)> task_handles = {
       __itt_string_handle_create("CDT_3: read input file"),
       __itt_string_handle_create("CDT_3: merge facets"),
       __itt_string_handle_create("CDT_3: insert vertices"),
@@ -209,7 +209,7 @@ inline auto& tasks_manager() {
       __itt_string_handle_create("CDT_3: validation")
     };
   #endif
-    std::array<CGAL::Real_timer, NB_TASKS> timers{};
+    std::array<CGAL::Real_timer, static_cast<std::size_t>(Tm::NB_TASKS)> timers{};
     struct Scope_guard {
       Tasks_manager *instance = nullptr;
       int task_id;
@@ -233,19 +233,19 @@ inline auto& tasks_manager() {
       }
     };
 
-    Scope_guard make_task_scope_guard(int task_id) {
-      return Scope_guard(this, task_id);
+    Scope_guard make_task_scope_guard(Tm task_id) {
+      return Scope_guard(this, static_cast<int>(task_id));
     }
 
-    Scope_guard READ_INPUT_TASK_guard() { return make_task_scope_guard(READ_INPUT); }
-    Scope_guard MERGE_FACETS_TASK_guard() { return make_task_scope_guard(MERGE_FACETS); }
-    Scope_guard INSERT_VERTICES_TASK_guard() { return make_task_scope_guard(INSERT_VERTICES); }
-    Scope_guard COMPUTE_DISTANCES_TASK_guard() { return make_task_scope_guard(COMPUTE_DISTANCES); }
-    Scope_guard CONFORMING_TASK_guard() { return make_task_scope_guard(CONFORMING); }
-    Scope_guard CDT_TASK_guard() { return make_task_scope_guard(CDT); }
-    Scope_guard MOVE_STEINER_VERTICES_TASK_guard() { return make_task_scope_guard(MOVE_STEINER_VERTICES); }
-    Scope_guard OUTPUT_TASK_guard() { return make_task_scope_guard(OUTPUT); }
-    Scope_guard VALIDATION_TASK_guard() { return make_task_scope_guard(VALIDATION); }
+    Scope_guard READ_INPUT_TASK_guard() { return make_task_scope_guard(Tm::READ_INPUT); }
+    Scope_guard MERGE_FACETS_TASK_guard() { return make_task_scope_guard(Tm::MERGE_FACETS); }
+    Scope_guard INSERT_VERTICES_TASK_guard() { return make_task_scope_guard(Tm::INSERT_VERTICES); }
+    Scope_guard COMPUTE_DISTANCES_TASK_guard() { return make_task_scope_guard(Tm::COMPUTE_DISTANCES); }
+    Scope_guard CONFORMING_TASK_guard() { return make_task_scope_guard(Tm::CONFORMING); }
+    Scope_guard CDT_TASK_guard() { return make_task_scope_guard(Tm::CDT); }
+    Scope_guard MOVE_STEINER_VERTICES_TASK_guard() { return make_task_scope_guard(Tm::MOVE_STEINER_VERTICES); }
+    Scope_guard OUTPUT_TASK_guard() { return make_task_scope_guard(Tm::OUTPUT); }
+    Scope_guard VALIDATION_TASK_guard() { return make_task_scope_guard(Tm::VALIDATION); }
 
   }; // end struct Intel_OneAPI_ITT_API
 
