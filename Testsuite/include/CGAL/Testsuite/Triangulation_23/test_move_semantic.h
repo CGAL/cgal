@@ -45,6 +45,7 @@ namespace CGAL {
         };
         // move constructor
         {
+          check_triangulation_validity(source_tr);
           Tr tr_copy(source_tr);
           check_triangulation_validity(tr_copy);
 

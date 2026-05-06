@@ -598,7 +598,9 @@ public:
 
 protected:
   static constexpr bool is_index_based = std::is_same_v<typename Tds::Storage_tag, Index_tag>;
+
   using Tds_member_type = std::conditional_t<is_index_based, std::unique_ptr<Tds>, Tds>;
+
   auto empty_tds_construction() const
   {
     if constexpr (is_index_based) {
@@ -607,6 +609,7 @@ protected:
       return Tds{};
     }
   }
+
   Tds_member_type _tds;
   GT  _gt;
   Vertex_handle _infinite_vertex; // infinite vertex
@@ -777,7 +780,12 @@ public:
     CGAL_expensive_postcondition(*this == tr);
   }
 
-  Triangulation_3(Triangulation_3&& tr) = default;
+  Triangulation_3(Triangulation_3&& tr) noexcept(true)
+    : Base(std::move(tr)), _tds(std::move(tr._tds)), _gt(std::move(tr._gt)), _infinite_vertex(tr._infinite_vertex)
+  {
+    tr._tds = empty_tds_construction();
+  }
+
 
   ~Triangulation_3() = default;
 
@@ -907,7 +915,7 @@ public:
 
     if constexpr (Tds::is_index_based) {
       auto v_idx = tds().cell_storage()[c.idx()].ivertices[i];
-      return tds().vertex_storage()[v_idx].point;
+      return tds().point(v_idx);
     } else {
       return c->vertex(i)->point();
     }
@@ -921,7 +929,7 @@ public:
   const Point& point(Cell_descriptor cd, int i) const
   {
     auto v_idx = tds().cell_storage()[cd].ivertices[i];
-    return tds().vertex_storage()[v_idx].point;
+    return tds().point(v_idx);
   }
 
   void set_point(Vertex_handle v, const Point& p)
@@ -937,7 +945,7 @@ public:
     CGAL_precondition(! is_infinite(v));
 
     if constexpr (Tds::is_index_based) {
-      return tds().vertex_storage()[v.idx()].point;
+      return tds().point(v->idx());
     } else {
       return v->point();
     }
@@ -2511,7 +2519,9 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   using Cell_handle = typename Triangulation::Cell_handle;
   using size_type = typename Triangulation::size_type;
 
-  tr.tds().clear(); // infinite vertex deleted
+  // AF:   this also removes the point property map
+  // tr.tds().clear(); // infinite vertex deleted
+  tr.tds().clear_without_removing_property_maps();
   tr._infinite_vertex = tr.tds().create_vertex();
 
   size_type n;

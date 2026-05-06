@@ -410,9 +410,6 @@ namespace internal { namespace TDS_3{
   public:
     using Vb::Vb;
     using Point = typename GT::Point_3;
-    struct Storage : public Vb::Storage {
-      typename GT::Point_3 point;
-    };
 
     template < typename TDS2 >
     struct Rebind_TDS {
@@ -420,23 +417,16 @@ namespace internal { namespace TDS_3{
       using Other = VertexWithPoint<GT,Vb2>;
     };
 
-    decltype(auto) storage() {
-      return this->tds()->vertex_storage()[this->idx()];
-    }
-
-    decltype(auto) storage() const {
-      return this->tds()->vertex_storage()[this->idx()];
-    }
 
     const Point& point() const
     {
       CGAL_assertion(this->tds()->is_removed(this->idx()) == false);
-      return storage().point;
+      return this->tds()->point(this->idx());
     }
 
     void set_point(const Point& p)
     {
-      storage().point = p;
+      this->tds()->point(this->idx()) = p;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const VertexWithPoint& v)
@@ -924,11 +914,6 @@ namespace CGAL {
     using size_type = typename Container::size_type;
     using Concurrency_tag = ConcurrencyTag;
 
-    static constexpr bool  has_point = internal::Has_nested_type_Point<Element_type>::value;
-
-    using Point = typename internal::Get_nested_type_Point<Element_type,int>::type;
-
-
     static constexpr bool is_parallel = std::is_convertible_v<Concurrency_tag, Parallel_tag>;
 #ifdef CGAL_LINKED_WITH_TBB
     struct Freelist_handler {
@@ -961,7 +946,35 @@ namespace CGAL {
     Property_map<Index_type, bool, Concurrency_tag> removed_ =
         add_property_map<bool>(prefix + std::string(":removed"), false).first;
 
-    // Property_map<Index_type, Point, Concurrency_tag> points_;
+
+    Indexed_container() = default;
+
+    Indexed_container(const Indexed_container& _rhs) { operator=(_rhs); }
+
+    // assignment: performs deep copy of property arrays
+    Indexed_container& operator=(const Indexed_container& _rhs)
+    {
+      properties_ = _rhs.properties_;
+      removed_ = properties_.template get<bool>(prefix + std::string(":removed")).value();
+      nb_of_removed_elements_ = _rhs.nb_of_removed_elements_;
+      freelist_ = _rhs.freelist_;
+      garbage_ = _rhs.garbage_;
+      storage_ = properties_.template get<Storage_type>(prefix + std::string(":storage")).value();
+      anonymous_property_nb = _rhs.anonymous_property_nb;
+      return *this;
+    }
+
+    Indexed_container(Indexed_container&& rhs)
+    : properties_(std::move(rhs.properties_)),
+      removed_(std::move(rhs.removed_)),
+      nb_of_removed_elements_(std::exchange(rhs.nb_of_removed_elements_, 0)),
+      freelist_(std::exchange(rhs.freelist_,(std::numeric_limits<size_type>::max)())),
+      garbage_(std::exchange(rhs.garbage_, false)),
+      storage_(std::move(rhs.storage_)),
+      anonymous_property_nb(std::exchange(rhs.anonymous_property_nb, 0))
+    {
+      std::cout << "Move constructor of Indexed_container\n";
+    }
 
     template <typename Key, typename T>
     struct Get_property_map {
@@ -972,13 +985,6 @@ namespace CGAL {
     template <typename U> using EraseCounterStrategy =
       internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
 
-    // Indexed_container()
-    // {
-    //   if constexpr(has_point) {
-    //   std::cout << "Indexed_container: has_point is true, adding point property map.\n";
-    //    points_ = add_property_map<Point>(prefix + std::string(":point"), Point()).first;
-    //   }
-    // }
 
     template<class T>
     std::pair<Property_map<Index_type, T, ConcurrencyTag>, bool>
@@ -1142,6 +1148,12 @@ namespace CGAL {
     using Concurrency_tag  = ConcurrencyTag;
     using Storage_tag = Index_tag;
 
+    // AF Do we have to do something like this?
+    // static constexpr bool  has_point = internal::Has_nested_type_Point<Vb>::value;
+    // using Point = typename internal::Get_nested_type_Point<Vb,int>::type;
+    using Point = typename Vb::Point;
+
+
     TDS& tds()
     {
       static_assert(std::is_base_of_v<Self, TDS>,
@@ -1210,6 +1222,7 @@ namespace CGAL {
       CGAL_assertion(vh.container() == this);
       return vh.idx();
     }
+
 
     using Facet = std::pair<Cell_handle, int>;
     using Edge = Triple<Cell_handle, int, int>;
@@ -1570,7 +1583,7 @@ namespace CGAL {
 
     /// returns an optional property map named `name` with key type `I` and value type `T`.
     template <class I, class T>
-    std::optional<Property_map<I, T>> property_map(const std::string& name) const
+    std::optional<Property_map<I, T, Concurrency_tag>> property_map(const std::string& name) const
     {
       return container<I>().properties_.template get<T>(name);
     }
@@ -1613,9 +1626,22 @@ namespace CGAL {
       return container<I>().properties_.properties();
     }
 
-    Indexed_storage() = default;
+    Indexed_storage()
+    : vertex_container_(), cell_container_(), dimension_(-2)
+    {
+      vertex_point_pmap_ = vertex_container().template add_property_map<Point>("v:point").first;
+    }
+
+    // copy constructor
     Indexed_storage(const Indexed_storage&) = default;
-    Indexed_storage(Indexed_storage&&) = default;
+
+    // move constructor
+    Indexed_storage(Indexed_storage&& rhs)
+    : vertex_container_(std::move(rhs.vertex_container_)),
+      cell_container_(std::move(rhs.cell_container_)),
+      dimension_(std::exchange(rhs.dimension_, -2))
+    {}
+
     Indexed_storage& operator=(const Indexed_storage&) = default;
     Indexed_storage& operator=(Indexed_storage&& is) = default;
 
@@ -1794,9 +1820,15 @@ namespace CGAL {
     template <class TDS_src>
     Vertex_handle copy_tds(const TDS_src & src, typename TDS_src::Vertex_handle vert)
     {
-      internal::TDS_3::Default_index_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
-      internal::TDS_3::Default_index_cell_converter<typename TDS_src::Cell,Cell>  setc;
-      return tds().copy_tds(src, vert, setv, setc);
+      vertex_container_ = src.vertex_container();
+      cell_container_ = src.cell_container();
+      dimension_ = src.dimension();
+      // internal::TDS_3::Default_index_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
+      // internal::TDS_3::Default_index_cell_converter<typename TDS_src::Cell,Cell>  setc;
+      // Vertex_handle vh = tds().copy_tds(src, vert, setv, setc);
+      vertex_point_pmap_ = this->property_map<Vertex_index, Point>("v:point").value();
+      cell_data_ = this->property_map<Cell_index, Cell_data>("c:data").value();
+      return  Vertex_handle{this, 0};
     }
 
   protected:
@@ -1822,6 +1854,32 @@ namespace CGAL {
 
     Property_map<Cell_index, Cell_data, Concurrency_tag> cell_data_ =
           cell_container().template add_property_map<Cell_data>("c:data").first;
+
+    Property_map<Vertex_index, Point, Concurrency_tag> vertex_point_pmap_;
+
+
+  public:
+    const Point& point(Vertex_handle vh) const
+    {
+      return vertex_point_pmap_[vh.idx()];
+    }
+
+    const Point& point(Vertex_index vi) const
+    {
+      return vertex_point_pmap_[vi];
+    }
+
+    Point& point(Vertex_handle vh)
+    {
+      return vertex_point_pmap_[vh.idx()];
+    }
+
+    Point& point(Vertex_index vi)
+    {
+      return vertex_point_pmap_[vi];
+    }
+
+    protected:
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )

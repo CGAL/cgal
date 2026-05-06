@@ -874,7 +874,7 @@ public:
   // typedefs which make it easier to write the partial specialization of boost::graph_traits
 
   typedef Vertex_index   vertex_index;
-  typedef P                   vertex_property_type;
+  typedef P              vertex_property_type;
   typedef Halfedge_index halfedge_index;
   typedef Edge_index     edge_index;
   typedef Face_index     face_index;
@@ -882,7 +882,7 @@ public:
   typedef Vertex_iterator     vertex_iterator;
   typedef Halfedge_iterator   halfedge_iterator;
   typedef Edge_iterator       edge_iterator;
-  typedef Face_iterator      face_iterator;
+  typedef Face_iterator       face_iterator;
   typedef CGAL::Out_edge_iterator<Self>     out_edge_iterator;
 
   typedef boost::undirected_tag             directed_category;

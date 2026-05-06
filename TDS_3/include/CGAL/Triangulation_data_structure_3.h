@@ -356,6 +356,11 @@ public:
 
   void clear();
 
+  void clear_without_removing_property_maps()
+  {
+    clear();
+  }
+
   size_type number_of_vertices() const { return vertices().size(); }
 
   int dimension() const {return _dimension;}
@@ -657,9 +662,11 @@ public:
 public:
   Triangulation_data_structure_3() = default; // default constructor
   Triangulation_data_structure_3(Tds&&) = default; // move constructor
-  Triangulation_data_structure_3(const Tds &tds) : Tds_storage() // copy constructor
+  Triangulation_data_structure_3(const Tds &tds) : Tds_storage(tds) // copy constructor
   {
-    copy_tds(tds);
+    if constexpr (! is_index_based) {
+      copy_tds(tds);
+    }
   }
 
   Tds& operator=(const Tds &tds) // copy assignment
@@ -676,6 +683,7 @@ public:
   using Tds_storage::cell_handle;
   using Tds_storage::cells;
   using Tds_storage::clear;
+  using Tds_storage::clear_without_removing_property_maps;
   using Tds_storage::create_cell;
   using Tds_storage::create_face;
   using Tds_storage::create_vertex;
@@ -4412,7 +4420,7 @@ copy_tds(const TDS_src& tds,
   CGAL_expensive_precondition( vert == Vertex_handle()
                                           || tds.is_vertex(vert) );
 
-  clear();
+  clear_without_removing_property_maps(); // AF: otherwise vertex point property map is lost
   set_dimension(tds.dimension());
 
   if(tds.number_of_vertices() == 0)

@@ -488,7 +488,7 @@ _test_cls_delaunay_3(const Triangulation &)
   v0=T2_0.insert(p6);
   v0=T2_0.insert(p7);
   v0=T2_0.insert(p8);
-  v0=T2_0.insert(p9);
+  v0=T2_0.insert(p9); // duplicate point, should not be inserted
 
   assert(T2_0.is_valid());
   assert(T2_0.dimension()==2);
