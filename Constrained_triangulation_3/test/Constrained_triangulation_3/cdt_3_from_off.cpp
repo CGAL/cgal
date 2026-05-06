@@ -44,6 +44,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -376,6 +377,11 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
   return [&cdt, &options]() {
     auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     {
+      if(std::uncaught_exceptions() > 0) {
+        std::cerr << "create_output_finalizer: an exception is being thrown, the triangulation may be left in an "
+                     "invalid state.\n";
+        return;
+      }
       auto dump_tets_to_medit = [](std::string fname,
                               const std::vector<K::Point_3> &points,
                               const std::vector<std::array<std::size_t, 4>> &indexed_tetra,
@@ -425,21 +431,24 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
       }
 
       std::vector<K::Point_3> points(cdt.number_of_vertices());
+      std::size_t idx = 0;
       for(auto v: cdt.finite_vertex_handles()) {
-        points.at(v->time_stamp() -1) = v->point();
+        // renumber the vertices: there might be holes in the numbering due to removed vertices
+        v->set_time_stamp(++idx);
+        points.at(idx - 1) = v->point();
       }
       std::vector<std::array<std::size_t, 4>> indexed_tetra;
       indexed_tetra.reserve(cdt.number_of_cells());
       for(auto ch: cdt.finite_cell_handles()) {
         if(cells_map[ch] > 0) {
-          indexed_tetra.push_back({ch->vertex(0)->time_stamp() -1,
-                                   ch->vertex(1)->time_stamp() -1,
-                                   ch->vertex(2)->time_stamp() -1,
-                                   ch->vertex(3)->time_stamp() -1});
+          indexed_tetra.push_back({ch->vertex(0)->time_stamp() - 1,
+                                   ch->vertex(1)->time_stamp() - 1,
+                                   ch->vertex(2)->time_stamp() - 1,
+                                   ch->vertex(3)->time_stamp() - 1});
         }
       }
-      std::vector<std::size_t> cell_idsl(indexed_tetra.size(), 1);
-      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_idsl);
+      std::vector<std::size_t> cell_ids(indexed_tetra.size(), 1);
+      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_ids);
     }
     {
       std::ofstream dump(options.output_filename);
