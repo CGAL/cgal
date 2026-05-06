@@ -1323,9 +1323,10 @@ private:
     };
 
     using Color_value_type = std::int8_t;
+    enum class Face_is_outside_the_face : Color_value_type { UNKNOWN = -1, INSIDE = 0, OUTSIDE = 1 };
     struct Face_info
     {
-      Color_value_type is_outside_the_face = -1;
+      Face_is_outside_the_face is_outside_the_face = Face_is_outside_the_face::UNKNOWN;
       Color_value_type is_in_region = 0;
       std::bitset<3> is_edge_also_in_3d_triangulation = 0;
       bool missing_subface = true;
@@ -1359,6 +1360,10 @@ private:
   using CDT_2_traits = typename CDT_2_types::Projection_traits;
   using CDT_2_face_handle = typename CDT_2::Face_handle;
   using CDT_2_edge = typename CDT_2::Edge;
+  using CDT_2_vertex_handle = typename CDT_2::Vertex_handle;
+  using Face_is_outside_the_face = typename CDT_2_types::Face_is_outside_the_face;
+  static inline constexpr Face_is_outside_the_face OUTSIDE = Face_is_outside_the_face::OUTSIDE;
+  static inline constexpr Face_is_outside_the_face INSIDE = Face_is_outside_the_face::INSIDE;
   static_assert(CGAL::cdt_3_msvc_2019_or_older() || CGAL::is_nothrow_movable_v<CDT_2>);
 
 protected:
@@ -2722,25 +2727,28 @@ private:
 
         for(auto fh: cdt_2.all_face_handles())
         {
-          fh->info().is_outside_the_face = -1;
+          fh->info().is_outside_the_face = Face_is_outside_the_face::UNKNOWN;
         }
         struct Face_handle_and_outside {
           CDT_2_face_handle fh;
-          bool outside;
+          Face_is_outside_the_face outside;
         };
         const auto d = cdt_2.dimension();
         std::stack<Face_handle_and_outside> stack;
-        stack.push({cdt_2.infinite_face(), true});
+        stack.push({cdt_2.infinite_face(), OUTSIDE});
         while(!stack.empty()) {
           const auto [fh, outside] = stack.top();
           stack.pop();
-          if(fh->info().is_outside_the_face == -1) {
+          if(fh->info().is_outside_the_face == Face_is_outside_the_face::UNKNOWN) {
             fh->info().is_outside_the_face = outside;
-            CGAL_assertion(!cdt_2.is_infinite(fh) || outside == true);
+            CGAL_assertion(!cdt_2.is_infinite(fh) || outside == OUTSIDE);
             for(int i = 0; i <= d; ++i) {
               const auto neighbor = fh->neighbor(i);
-              const auto new_outside = is_constrained_with_odd_nb_of_constraints(cdt_2, fh, i) ? !outside : outside;
-              if(neighbor->info().is_outside_the_face == -1) {
+              const auto new_outside =
+                  is_constrained_with_odd_nb_of_constraints(cdt_2, fh, i)
+                      ? (outside == OUTSIDE ? INSIDE : OUTSIDE)
+                      : outside;
+              if(neighbor->info().is_outside_the_face == Face_is_outside_the_face::UNKNOWN) {
                 stack.push({neighbor, new_outside});
               }
             }
@@ -2750,7 +2758,7 @@ private:
       if(this->debug().input_faces()) {
         int counter = 0;
         for(const auto fh: cdt_2.finite_face_handles()) {
-          if(!fh->info().is_outside_the_face) ++counter;
+          if(fh->info().is_outside_the_face == INSIDE) ++counter;
         }
         std::cerr << counter << " triangles(s) in the face\n";
       }
@@ -2834,7 +2842,9 @@ private:
           const auto i = unsigned(edge.second);
           return false == face->info().is_edge_also_in_3d_triangulation.test(i);
         },
-        +[](CDT_2_face_handle face_handle) { return false == face_handle->info().is_outside_the_face; });
+        +[](CDT_2_face_handle face_handle) {
+          return INSIDE == face_handle->info().is_outside_the_face;
+        });
     boost::breadth_first_search(dual, fh,
                                 boost::color_map(typename CDT_2_types::Color_map_is_in_region())
                                     .visitor(boost::make_bfs_visitor(boost::write_property(
@@ -4334,13 +4344,13 @@ private:
     [[maybe_unused]] typename CDT_2::Locate_type lt_2;
     int i;
     auto fh = cdt_2.locate(steiner_pt, lt_2, i, fh_2d);
-    CGAL_assertion(!fh->info().is_outside_the_face); CGAL_USE(fh);
+    CGAL_assertion(fh->info().is_outside_the_face == INSIDE); CGAL_USE(fh);
     const auto v_2d = non_const_cdt_2.insert(steiner_pt, fh_2d);
     v_2d->info().vertex_handle_3d = v;
     auto f_circ = cdt_2.incident_faces(v_2d);
     const auto end = f_circ;
     do {
-      f_circ->info().is_outside_the_face = false;
+      f_circ->info().is_outside_the_face = INSIDE;
     } while(++f_circ != end);
     search_for_missing_subfaces(face_index);
     return std::nullopt;
@@ -4422,7 +4432,7 @@ private:
     std::set<CDT_2_face_handle> processed_faces;
     auto& region_index = face_region_number(face_index);
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
-      if(fh->info().is_outside_the_face) continue;
+      if(fh->info().is_outside_the_face == OUTSIDE) continue;
       if(false == fh->info().missing_subface) {
         continue;
       }
@@ -4794,13 +4804,13 @@ public:
 
       auto [hole_side_1, hole_side_1_faces_to_delete, side_1_last_incident_edge] = half_hole(vh_2d->face());
       const auto [side_1_last_face, side_1_last_edge_index] = side_1_last_incident_edge;
-      const bool side_1_hole_is_outside_the_face = side_1_last_face->info().is_outside_the_face;
+      const auto side_1_hole_is_outside_the_face = side_1_last_face->info().is_outside_the_face;
 
       const auto side_2_first_face = side_1_last_face->neighbor(side_1_last_edge_index);
 
       auto [hole_side_2, hole_side_2_faces_to_delete, side_2_last_incident_edge] = half_hole(side_2_first_face);
       const auto [side_2_last_face, side_2_last_edge_index] = side_2_last_incident_edge;
-      const bool side_2_hole_is_outside_the_face = side_2_last_face->info().is_outside_the_face;
+      const auto side_2_hole_is_outside_the_face = side_2_last_face->info().is_outside_the_face;
 
       CGAL_assertion(side_1_last_incident_edge.first != side_2_last_incident_edge.first);
 
@@ -4889,7 +4899,7 @@ public:
   static void write_region_to_OFF(std::ostream& out, const CDT_2& cdt_2) {
     out.precision(17);
     auto color_fn = [](CDT_2_face_handle fh_2d) -> CGAL::IO::Color {
-      if(fh_2d->info().is_outside_the_face) return CGAL::IO::gray();
+      if(fh_2d->info().is_outside_the_face == OUTSIDE) return CGAL::IO::gray();
       if(fh_2d->info().is_in_region) {
         if(fh_2d->info().is_in_region == 1) return CGAL::IO::violet();
         else return CGAL::IO::red();
