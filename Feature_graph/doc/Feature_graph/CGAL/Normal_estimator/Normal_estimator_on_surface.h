@@ -4,13 +4,13 @@ namespace Normal_estimator
 {
 
 /*!
-\ingroup PkgFeatureGraphNormalEstimator
-
-\brief Functor that assign a normal on elements of a surface.
-
-\tparam Vector_3 the type of the normal vector model of `Kernel::Vector_3`.
-
-\cgalModels{NormalEstimator}
+* \ingroup PkgFeatureGraphNormalEstimator
+*
+* \brief Functor that assign a normal on elements of a surface.
+*
+* \tparam Vector_3 the type of the normal vector model of `Kernel::Vector_3`.
+*
+* \cgalModels{NormalEstimator}
 */
 template <typename Vector_3>
 struct Normal_estimator_on_surface
@@ -20,7 +20,7 @@ public:
   /// @{
 
   /*!
-  The type of the normal vector.
+  * The type of the normal vector.
   */
   typedef Vector_3 Normal_type;
 
@@ -30,11 +30,11 @@ public:
   /// @{
 
   /*!
-  Constructor that pre-computes the normals on the surface.
-
-  \tparam Surface a model of `FaceListGraph` that represents a surface mesh.
-
-  \param surface the surface where the normals are evaluated.
+  * Constructor that pre-computes the normals on the surface.
+  *
+  * \tparam Surface a model of `FaceListGraph` that represents a surface mesh.
+  *
+  * \param surface the surface where the normals are evaluated.
   */
   template <typename Surface>
   Normal_estimator_on_surface(const Surface& surface);
@@ -45,13 +45,13 @@ public:
   /// @{
 
   /*!
-  returns the normal vector of the surface element described by a type and an index.
-
-  \tparam DimensionTag a tag that represent the element type.
-          Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or CGAL::Dimension_tag<2>`
-  \tparam Index the type of index of the element to evaluate.
-
-  \param element_index the index of the element to evaluate.
+  * returns the normal vector of the surface element described by a type and an index.
+  *
+  * \tparam DimensionTag a tag that represent the element type.
+  *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
+  * \tparam Index the type of index of the element to evaluate.
+  *
+  * \param element_index the index of the element to evaluate.
   */
   template <typename DimensionTag, typename Index>
   Normal_type operator()(const Index& element_index) const;
