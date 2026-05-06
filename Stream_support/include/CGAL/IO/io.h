@@ -417,7 +417,7 @@ public:
 
   std::ostream& operator()( std::ostream& os) const {
     const auto mode = IO::get_mode(os);
-    const bool is_pretty = std::is_same_v<F, CGAL::Pretty_tag> || mode == IO::PRETTY;
+    const bool is_pretty = (mode != IO::BINARY && std::is_same_v<F, CGAL::Pretty_tag>) || mode == IO::PRETTY;
     const char* sep = (mode == IO::BINARY) ? "" : (is_pretty ? ", " : " ");
     if(is_pretty) os << "(";
     print_tuple_impl(os, sep, std::make_index_sequence<std::tuple_size<T>::value>{});
