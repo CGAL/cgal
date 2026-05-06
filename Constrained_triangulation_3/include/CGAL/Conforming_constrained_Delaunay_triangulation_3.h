@@ -594,6 +594,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 
     out << (v_ptr->ccdt_3_data().is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
         << (v_ptr->ccdt_3_data().is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
+        << (v_ptr->ccdt_3_data().is_Steiner_vertex_in_volume() ? "(Steiner in volume)" : "")
         << "= " << v_ptr->point();
     if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_BORDER)) out << " (region border)";
     if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_INSIDE)) out << " (inside region)";
@@ -1242,6 +1243,7 @@ public:
       out << prefix << "  - " << nb(CDT_3_vertex_type::INPUT_VERTEX) << " input vertices\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_ON_EDGE) << " Steiner vertices on edges\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_FACE) << " Steiner vertices in faces\n";
+      out << prefix << "  - " << nb(CDT_3_vertex_type::STEINER_IN_VOLUME) << " Steiner vertices in volume\n";
       out << prefix << "  - " << nb(CDT_3_vertex_type::FREE) << " free vertices\n";
       return out;
     }, IO_manip_tag{});
@@ -2530,15 +2532,29 @@ public:
     return v->ccdt_3_data().vertex_type();
   }
 
-  bool is_Steiner_vertex(Vertex_handle v) const {
-    auto type = vertex_type(v);
-    return type == CDT_3_vertex_type::STEINER_IN_FACE || type == CDT_3_vertex_type::STEINER_ON_EDGE;
+  bool is_Steiner_vertex_on_surface(Vertex_handle v) const {
+    switch(vertex_type(v)) {
+      case CDT_3_vertex_type::INPUT_VERTEX:
+      case CDT_3_vertex_type::FREE:
+      case CDT_3_vertex_type::STEINER_IN_VOLUME:
+        return false;
+      case CDT_3_vertex_type::STEINER_IN_FACE:
+      case CDT_3_vertex_type::STEINER_ON_EDGE:
+        return true;
+      default:
+        CGAL_unreachable();
+    }
   }
 
   auto move_Steiner_vertices_to_the_volume() {
+    std::vector<Vertex_handle> steiner_vertices;
     for(auto v : this->finite_vertex_handles()) {
-      if(is_Steiner_vertex(v)) move_one_Steiner_vertex_to_the_volume(v);
+      if(is_Steiner_vertex_on_surface(v)) steiner_vertices.push_back(v);
     }
+    for(auto v : steiner_vertices) {
+      move_one_Steiner_vertex_to_the_volume(v);
+    }
+    CGAL_assertion(tr().tds().is_valid(true));
   }
 
 private:
