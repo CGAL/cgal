@@ -2106,18 +2106,18 @@ fill_hole_delaunay(Triangulation_2<Gt, Tds>& tr,
       const auto& p0 = v0->point();
       const auto& p1 = v1->point();
 
-      for(auto hit = hole.cbegin(); hit != hole_last_one; ++hit)
+      for(auto hole_edge_it = hole.cbegin(); hole_edge_it != hole_last_one; ++hole_edge_it)
       {
-        const Vertex_handle vv = ccw_vertex(*hit);
+        const Vertex_handle vv = ccw_vertex(*hole_edge_it);
         if (tr.is_infinite(vv)) {
-          if(tr.is_infinite(v2)) cut_after = hit;
+          if(tr.is_infinite(v2)) cut_after = hole_edge_it;
         }
         else {     // vv is a finite vertex
           const auto& p = vv->point();
           if (tr.orientation(p0,p1,p) == COUNTERCLOCKWISE) {
             if (tr.is_infinite(v2) ||
                 tr.side_of_oriented_circle(p0,p1,v2->point(),p,true) == ON_POSITIVE_SIDE) {
-              cut_after = hit; v2 = vv;
+              cut_after = hole_edge_it; v2 = vv;
             }
           }
         }
