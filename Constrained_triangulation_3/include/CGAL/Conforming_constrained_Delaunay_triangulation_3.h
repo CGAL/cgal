@@ -1394,6 +1394,68 @@ protected:
     }, IO_manip_tag{});
   }
 
+  bool same_triple(const std::array<Vertex_handle, 3> f1_vertices,
+                   std::array<Vertex_handle, 3> f2_vertices,
+                   Orientation o = EQUAL) const
+  {
+    auto f2_it_equal_to_f_first_vertex = std::find(f2_vertices.begin(), f2_vertices.end(), f1_vertices[0]);
+    if(f2_it_equal_to_f_first_vertex == f2_vertices.end()) return false;
+    std::rotate(f2_vertices.begin(), f2_it_equal_to_f_first_vertex, f2_vertices.end());
+    CGAL_assertion(f1_vertices[0] == f2_vertices[0]);
+    if(o == NEGATIVE) {
+      return (f1_vertices[1] == f2_vertices[2] && f1_vertices[2] == f2_vertices[1]);
+    } else {
+      return (f1_vertices[1] == f2_vertices[1] && f1_vertices[2] == f2_vertices[2]);
+    }
+  }
+
+  bool same_triple(Facet f, Facet f2, Orientation o = EQUAL) const {
+    return same_triple(tr().vertices(f), tr().vertices(f2), o);
+  }
+
+  bool same_triple(Facet f, CDT_2_face_handle fh, Orientation o = EQUAL) const {
+    auto f_vertices = tr().vertices(f);
+    std::array<Vertex_handle, 3> fh_vertices{vertex_3d(fh->vertex(0)),
+                                             vertex_3d(fh->vertex(1)),
+                                             vertex_3d(fh->vertex(2))};
+    return same_triple(f_vertices, fh_vertices, o);
+  }
+
+  bool opposite_triple(Facet f, Facet f2) const {
+    return same_triple(f, f2, NEGATIVE);
+  }
+
+  void set_facet_constrained(Facet f, CDT_3_signed_index polygon_constraint_id,
+                             CDT_2_face_handle fh, [[maybe_unused]] Orientation o = EQUAL)
+  {
+    CGAL_assertion(fh == CDT_2_face_handle{} || same_triple(f, fh, o));
+    CGAL_assertion(o == EQUAL);
+
+    const auto [c, facet_index] = f;
+    c->ccdt_3_data().set_facet_constraint(facet_index, polygon_constraint_id, fh);
+    if(tr().dimension() > 2) {
+      const auto [n, n_index] = tr().mirror_facet(f);
+      n->ccdt_3_data().set_facet_constraint(n_index, polygon_constraint_id, fh);
+    }
+    if(fh != CDT_2_face_handle{}) {
+      fh->info().facet_3d = f;
+    }
+  }
+
+  auto set_facet_as_not_constrained(Facet f) {
+    return set_facet_constrained(f, INVALID_FACE_INDEX, CDT_2_face_handle{});
+  }
+
+  void set_adjacency_between_3d_facets(Facet f1, Facet f2) const {
+    tr().tds().set_adjacency(f1.first, f1.second, f2.first, f2.second);
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << cdt_3_format("Set adjacency between facets ({})=[{}] and ({})=[{}]\n",
+                                IO::oformat(f1), IO::oformat(tr().vertices(f1), with_offset),
+                                IO::oformat(f2), IO::oformat(tr().vertices(f2), with_offset));
+      CGAL_assertion(opposite_triple(f1, f2));
+    }
+  }
+
   template <typename Pred>
   std::optional<Facet>
   find_in_incident_facets(Vertex_handle v, Pred pred) const
@@ -1523,13 +1585,31 @@ protected:
 
     small_vector<Facet_of_star_component> facets;
     small_vector<std::size_t> component_offsets = {0};
-    small_vector<Face_index> face_ids_between_consecutive_components;
+    small_vector<std::size_t> nb_of_incident_facets_for_each_component;
+    small_vector<std::pair<Face_index, Orientation>> face_ids_between_consecutive_components;
     small_vector<std::array<Face_index, 2>> component_incident_constraint_face_ids;
+
+    auto component_facets_range(std::size_t component_index) const {
+      return CGAL::make_range(facets.begin() + component_offsets[component_index - 1],
+                              facets.begin() + component_offsets[component_index]);
+    }
   };
+
+  Orientation constrained_facet_orientation(const Facet& f) const {
+    const auto& cdt_2 = this->face_cdt_2(face_constraint_index(f));
+    const auto fh_2d = f.first->ccdt_3_data().face_2(cdt_2, f.second);
+    if(fh_2d->info().facet_3d == f) {
+      return CGAL::EQUAL;
+    }
+    CGAL_assertion(fh_2d->info().facet_3d == T_3::mirror_facet(f));
+    return CGAL::NEGATIVE;
+  }
 
   Star_components_facets collect_star_components_facets(Vertex_handle v, Facet incident_constrained_facet) const {
     const auto [first_cell, first_facet_index] = incident_constrained_facet;
     const auto first_facet_face_id = face_constraint_index(incident_constrained_facet);
+
+    const Orientation first_facet_orientation = constrained_facet_orientation(incident_constrained_facet);
 
     const auto vertex_Steiner_type = vertex_type(v);
     CGAL_assertion(vertex_Steiner_type == CDT_3_vertex_type::STEINER_IN_FACE ||
@@ -1549,12 +1629,13 @@ protected:
     // start processing the next component.
     // -> Start with one of the facets incident to `v` that is constrained, and explore the star
     // of `v` through unconstrained facets as long as possible;
-    boost::container::small_vector<std::pair<Cell_handle, Face_index>, 128> cells_in_other_components = {
-        { first_cell, first_facet_face_id }
+    boost::container::small_vector<std::tuple<Cell_handle, Face_index, Orientation>, 128> cells_in_other_components = {
+        { first_cell, first_facet_face_id, first_facet_orientation }
     };
 
     while(!cells_in_other_components.empty()) {
-      auto [other_cell, component_first_incident_face_id] = cells_in_other_components.back();
+      auto [other_cell, component_first_incident_face_id, component_first_facet_orientation] =
+          cells_in_other_components.back();
       cells_in_other_components.pop_back();
       auto other_cell_is_a_new_cell = register_cell_and_check_if_new(other_cell);
       if(!other_cell_is_a_new_cell) continue;
@@ -1562,8 +1643,10 @@ protected:
       // start a new component from this cell
       out.facets.emplace_back(other_cell, other_cell->index(v), Star_components_facets::Type_of_facet::OPPOSITE_TO_V);
 
-      out.face_ids_between_consecutive_components.push_back(component_first_incident_face_id);
-      out.component_incident_constraint_face_ids.push_back({component_first_incident_face_id, -1}); // placeholder for the next component
+      out.face_ids_between_consecutive_components.push_back(
+          {component_first_incident_face_id, component_first_facet_orientation});
+      out.component_incident_constraint_face_ids.push_back(
+          {component_first_incident_face_id, INVALID_FACE_INDEX}); // placeholder for the next component
       auto& current_component_incident_constraint_face_ids = out.component_incident_constraint_face_ids.back();
       cells_in_other_components.clear(); // clear it here, and fill it again with the cells opposite to a constrained
                                          // facet during the exploration of the current component
@@ -1602,7 +1685,8 @@ protected:
             if(constrained_facet_face_id != component_first_incident_face_id ||
                vertex_Steiner_type == CDT_3_vertex_type::STEINER_IN_FACE )
             {
-              cells_in_other_components.push_back({next_cell, constrained_facet_face_id});
+              const auto orientation = constrained_facet_orientation(Facet(c, i));
+              cells_in_other_components.push_back({next_cell, constrained_facet_face_id, orientation});
             }
           } else { // Facet(c, i), between `c` and `next_cell` is not constrained
             auto next_is_a_new_cell = register_cell_and_check_if_new(next_cell);
@@ -1616,21 +1700,30 @@ protected:
       // end of the current component reached, start a new one if there is any cell in
       // another component that we haven't processed yet
 
+      // reorder the component to that incident facets are first
+      const auto component_offset = out.component_offsets.back();
+      const auto begin_it = out.facets.begin() + component_offset;
+      const auto incident_facets_end = std::partition(begin_it, out.facets.end(), [](const auto& facet_info) {
+        return facet_info.type == Star_components_facets::Type_of_facet::INCIDENT_TO_V;
+      });
+
+      out.nb_of_incident_facets_for_each_component.push_back(std::distance(begin_it, incident_facets_end));
+      out.component_offsets.push_back(out.facets.size());
+
       if(this->debug().move_Steiner_vertices()) {
-        std::cerr << "  - Star component #" << out.component_offsets.size() << " has "
-                  << (out.facets.size() - out.component_offsets.back()) << " facets.\n"
+        std::cerr << "- Star component #" << out.nb_of_incident_facets_for_each_component.size()
+                  << " has:\n  - "
+                  << (out.facets.size() - component_offset) << " total facets,\n  - "
+                  << out.nb_of_incident_facets_for_each_component.back() << " facets incident to the vertex.\n"
                   << "    It is incident to constraint faces with ids: {"
                   << IO::oformat(current_component_incident_constraint_face_ids) << "}\n";
       }
-
-      out.component_offsets.push_back(out.facets.size());
-
     } // end while there is still a component to process
 
     CGAL_assertion_code(const auto nb_of_components = out.component_incident_constraint_face_ids.size());
 
     CGAL_assertion(false == out.facets.empty());
-    CGAL_assertion(nb_of_components > 1);
+    CGAL_assertion(nb_of_components >= 1);
     CGAL_assertion(out.component_offsets.size() == nb_of_components + 1);
 
     CGAL_assertion(out.component_offsets.front() == 0);
@@ -1642,19 +1735,20 @@ protected:
       CGAL_assertion(std::all_of(out.component_incident_constraint_face_ids.begin(), out.component_incident_constraint_face_ids.end(),
                                  [first_facet_face_id](const std::array<Face_index, 2>& face_ids)
                                  {
-                                   return face_ids[0] == first_facet_face_id && face_ids[1] == -1;
+                                   return face_ids[0] == first_facet_face_id && face_ids[1] == INVALID_FACE_INDEX;
                                  }));
       CGAL_assertion(std::all_of(out.face_ids_between_consecutive_components.begin(), out.face_ids_between_consecutive_components.end(),
-                                 [first_facet_face_id](const Face_index& face_id)
+                                 [first_facet_face_id](const std::pair<Face_index, Orientation>& face_id_orientation)
                                  {
-                                   return face_id == first_facet_face_id;
+                                   return face_id_orientation.first == first_facet_face_id;
                                  }));
     } else {
       CGAL_assertion(vertex_Steiner_type == CDT_3_vertex_type::STEINER_ON_EDGE);
       CGAL_assertion(std::adjacent_find(out.face_ids_between_consecutive_components.begin(),
                                         out.face_ids_between_consecutive_components.end()) ==
                      out.face_ids_between_consecutive_components.end());
-      CGAL_assertion(std::all_of(out.component_incident_constraint_face_ids.begin(), out.component_incident_constraint_face_ids.end(),
+      CGAL_assertion(nb_of_components == 1 ||
+                     std::all_of(out.component_incident_constraint_face_ids.begin(), out.component_incident_constraint_face_ids.end(),
                                  [](const std::array<Face_index, 2>& face_ids)
                                  {
                                    return face_ids[1] != INVALID_FACE_INDEX;
@@ -1664,6 +1758,473 @@ protected:
     return out;
   } // end collect_star_components_facets(..)
 
+  template <typename New_CDT_2_face_handles_output_iterator, typename Map_from_hole_edge_to_facet_3d>
+  std::pair<New_CDT_2_face_handles_output_iterator, Facet>
+  fill_cdt_2_hole_with_delaunay(CDT_2& cdt_2,
+                                Face_index face_index,
+                                CDT_3_vertex_type vertex_type,
+                                std::list<CDT_2_edge>& hole_boundary,
+                                const Map_from_hole_edge_to_facet_3d& map_from_hole_edge_to_facet_3d,
+                                Face_is_outside_the_face is_outside_the_face,
+                                New_CDT_2_face_handles_output_iterator new_face_handles_out)
+  {
+    const bool is_a_half_hole = vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE;
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << cdt_3_format("Filling {}hole in CDT_2 with {} edges, is_outside_the_face = {}\n",
+                                is_a_half_hole ? "half " : "", hole_boundary.size(),
+                                enum_cast<int>(is_outside_the_face));
+    }
+    const auto at_scope_exit_guard =
+        make_scope_exit([&cdt_2, hole_edges = std::vector(hole_boundary.begin(), hole_boundary.end())]() {
+          if(std::uncaught_exceptions() > 0) {
+            std::cerr << "WARNING: an exception is being thrown while filling the hole, the triangulation may be left "
+                         "in an invalid state.\n";
+            return;
+          }
+          // restore the constrained/unconstrained status of edges, from a copy of `hole_boundary`.
+          std::for_each(hole_edges.begin(), hole_edges.end(), [&cdt_2](CDT_2_edge e) {
+            auto [f, i] = cdt_2.mirror_edge(e);
+            f->set_constraint(i, cdt_2.is_constrained(e));
+          });
+        });
+
+    if(hole_boundary.size() <= 2) {              // degenerated hole
+      CGAL_assertion(hole_boundary.size() == 2); // size == 1 is not possible
+      auto [f0, i0] = hole_boundary.front();
+      auto [f1, i1] = hole_boundary.back();
+      cdt_2.tds().set_adjacency(f1, i1, f0, i0);
+      return {new_face_handles_out, {}};
+    }
+
+    if(is_outside_the_face == OUTSIDE) {
+      CGAL::fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
+                                 auto& info = fh->info();
+                                 info.is_outside_the_face = OUTSIDE;
+                                 info.missing_subface = false;
+                                 info.is_in_region = 0;
+                                 info.facet_3d = {};
+                               }));
+      return {new_face_handles_out, {}};
+    }
+
+    const CDT_2_face_handle half_hole_neighbor_face = is_a_half_hole ? hole_boundary.back().first : CDT_2_face_handle{};
+    Facet half_hole_front_facet{Cell_handle{}, 0};
+
+    std::for_each(hole_boundary.begin(), hole_boundary.end(),
+                  [](const CDT_2_edge& e) { e.first->info().is_in_region = 0; });
+
+    const auto [outside_2d_face, outside_2d_index] = hole_boundary.front();
+    const auto first_2d_face = outside_2d_face->neighbor(outside_2d_index);
+    const auto v0 = vertex_3d(outside_2d_face->vertex(cdt_2.cw(outside_2d_index)));
+    const auto v1 = vertex_3d(outside_2d_face->vertex(cdt_2.ccw(outside_2d_index)));
+    const auto [front_cell, front_index] = first_2d_face->info().facet_3d;
+    CGAL_assertion(front_cell != Cell_handle{});
+    const auto [back_cell, back_index] = tr().mirror_facet({front_cell, front_index});
+
+    const Vertex_handle v_front = front_cell->vertex(6 - front_index - front_cell->index(v0) - front_cell->index(v1));
+    const Vertex_handle v_back = back_cell->vertex(6 - back_index - back_cell->index(v0) - back_cell->index(v1));
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << cdt_3_format("  - first_2d_face has vertices ( {} ,\n"
+                                "                                 {} ,\n"
+                                "                                 {} )\n",
+                                display_vert(vertex_3d(first_2d_face->vertex(0))),
+                                display_vert(vertex_3d(first_2d_face->vertex(1))),
+                                display_vert(vertex_3d(first_2d_face->vertex(2))));
+      const auto vertices = tr().vertices(Facet{front_cell, front_index});
+      std::cerr << cdt_3_format("  - front_cell is ({}) with vertices:\n"
+                                "                               - {}\n"
+                                "                               - {}\n"
+                                "                               - {}\n"
+                                "                               - (4th vertex: {})\n",
+                                IO::oformat(front_cell),
+                                display_vert(vertices[0]),
+                                display_vert(vertices[1]),
+                                display_vert(vertices[2]),
+                                display_vert(front_cell->vertex(front_index)));
+      std::cerr << "  - front vertex is " << display_vert(v_front)
+                << "\n  - back vertex is "<< display_vert(v_back) << '\n';
+    }
+
+    auto action_for_each_new_2d_face = [&](CDT_2_face_handle fh_2d) {
+      auto& info = fh_2d->info();
+      info.is_outside_the_face = INSIDE;
+      info.missing_subface = false;
+      info.is_in_region = 1;
+
+      const auto v1 = vertex_3d(fh_2d->vertex(0));
+      const auto v2 = vertex_3d(fh_2d->vertex(1));
+      const auto v3 = vertex_3d(fh_2d->vertex(2));
+
+      if(this->debug().move_Steiner_vertices()) {
+        std::cerr << cdt_3_format("- new CDT_2 face with 3D vertices ( {} ,\n"
+                                  "                                    {} ,\n"
+                                  "                                    {} )\n",
+                                  display_vert(v1),
+                                  display_vert(v2),
+                                  display_vert(v3));
+      }
+
+      const auto new_front_cell = tr().tds().create_cell(v1, v2, v3, v_front);
+      CGAL_assertion(tr().orientation(v1->point(), v2->point(), v3->point(), v_front->point()) > 0); // DO NOT COMMIT (expansive assertion)
+      const auto new_back_cell = tr().tds().create_cell(v1, v3, v2, v_back);
+      CGAL_assertion(tr().orientation(v1->point(), v3->point(), v2->point(), v_back->point()) > 0); // DO NOT COMMIT (expansive assertion)
+      set_adjacency_between_3d_facets({new_front_cell, 3}, {new_back_cell, 3});
+      set_facet_constrained({new_front_cell, 3}, face_index, fh_2d);
+
+      for(int i = 0; i < 3; ++i) {
+        const CDT_2_face_handle neighbor_2d = fh_2d->neighbor(i);
+
+        if(neighbor_2d == CDT_2_face_handle{}) {
+          // this edge of `fh_2d` is not yet connected
+          continue;
+        } else if(neighbor_2d == half_hole_neighbor_face) {
+          // this edge of `fh_2d` is dandling to be connected to the other part of the half hole
+          CGAL_assertion(half_hole_front_facet.first == Cell_handle{}); // only one edge of the hole can be a half hole
+          half_hole_front_facet = {new_front_cell, i};
+          if(this->debug().move_Steiner_vertices()) {
+            auto new_front_cell_i_vertices = tr().vertices(Facet{new_front_cell, i});
+            std::cerr << cdt_3_format("  - the 3D facet (new_front_cell={}, i={}) is ON THE BORDER of the half hole:\n"
+                                      "      {}\n"
+                                      "      {}\n"
+                                      "      {}\n"
+                                      "      (fourth vertex of its cell: {})\n"
+                                      , IO::oformat(new_front_cell), i
+                                      , display_vert(new_front_cell_i_vertices[0])
+                                      , display_vert(new_front_cell_i_vertices[1])
+                                      , display_vert(new_front_cell_i_vertices[2])
+                                      , display_vert(new_front_cell->vertex(i)));
+            }
+          continue;
+        }
+        // else
+        CGAL_assertion(new_front_cell->neighbor(i) == Cell_handle{}); // facet (new_front_cell, i) is no yet connected
+        const bool neighbor_2d_is_in_the_star = neighbor_2d->info().is_in_region;
+        const auto [neighbor_front_cell_3d, neighbor_front_index_3d] =
+            neighbor_2d_is_in_the_star ? neighbor_2d->info().facet_3d
+                                       : map_from_hole_edge_to_facet_3d.at({neighbor_2d, neighbor_2d->index(fh_2d)});
+        CGAL_assertion(neighbor_front_cell_3d != Cell_handle{});
+
+        const auto neighbor_back_cell_3d = neighbor_front_cell_3d->neighbor(neighbor_front_index_3d);
+
+        const auto fh_index_in_neighbor_2d =
+            neighbor_2d_is_in_the_star ? neighbor_2d->index(fh_2d) : neighbor_front_index_3d;
+
+        if(this->debug().move_Steiner_vertices()) {
+          std::cerr << cdt_3_format("  - the 2D face fh_2d->neighbor(i={}) IS{} in region. Its 3D vertices are:\n"
+                                    "      {}\n"
+                                    "      {}\n"
+                                    "      {}\n"
+                                    , i, (neighbor_2d_is_in_the_star ? "" : " NOT")
+                                    , display_vert(vertex_3d(neighbor_2d->vertex(0)))
+                                    , display_vert(vertex_3d(neighbor_2d->vertex(1)))
+                                    , display_vert(vertex_3d(neighbor_2d->vertex(2))));
+          auto new_front_cell_i_vertices = tr().vertices(Facet{new_front_cell, i});
+          std::cerr << cdt_3_format("    - the 3D facet (new_front_cell={}, i={}) is\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        (fourth vertex of its cell: {})\n"
+                                    , IO::oformat(new_front_cell), i
+                                    , display_vert(new_front_cell_i_vertices[0])
+                                    , display_vert(new_front_cell_i_vertices[1])
+                                    , display_vert(new_front_cell_i_vertices[2])
+                                    , display_vert(new_front_cell->vertex(i)));
+          auto neighbor_front_cell_3d_vertices = tr().vertices(Facet{neighbor_front_cell_3d, fh_index_in_neighbor_2d});
+          std::cerr << cdt_3_format("    - the 3D facet (neighbor_front_cell_3d={}, fh_index_in_neighbor_2d={}) is\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        (fourth vertex of its cell: {})\n"
+                                    , IO::oformat(neighbor_front_cell_3d), fh_index_in_neighbor_2d
+                                    , display_vert(neighbor_front_cell_3d_vertices[0])
+                                    , display_vert(neighbor_front_cell_3d_vertices[1])
+                                    , display_vert(neighbor_front_cell_3d_vertices[2])
+                                    , display_vert(neighbor_front_cell_3d->vertex(fh_index_in_neighbor_2d)));
+        } // end of debug output
+
+        set_adjacency_between_3d_facets({new_front_cell, i}, {neighbor_front_cell_3d, fh_index_in_neighbor_2d});
+
+        const int back_cell_i = (3 - i) % 3; // the index of the neighbor in `new_back_cell` is deduced from the
+                                             // fact that `new_back_cell` was created with vertices in reversed
+                                             // order compared to `new_front_cell`
+        const int back_cell_fh_index_in_neighbor_2d = neighbor_2d_is_in_the_star
+                                                          ? (3 - fh_index_in_neighbor_2d) % 3
+                                                          : neighbor_back_cell_3d->index(neighbor_front_cell_3d);
+
+        if(this->debug().move_Steiner_vertices()) {
+          auto new_back_cell_vertices = tr().vertices(Facet{new_back_cell, back_cell_i});
+          std::cerr << cdt_3_format("    - the 3D facet (new_back_cell={}, back_cell_i={}) is\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        (fourth vertex of its cell: {})\n"
+                                    , IO::oformat(new_back_cell), back_cell_i
+                                    , display_vert(new_back_cell_vertices[0])
+                                    , display_vert(new_back_cell_vertices[1])
+                                    , display_vert(new_back_cell_vertices[2])
+                                    , display_vert(new_back_cell->vertex(back_cell_i)));
+          auto neighbor_back_cell_3d_vertices = tr().vertices(Facet{neighbor_back_cell_3d, back_cell_fh_index_in_neighbor_2d});
+          std::cerr << cdt_3_format("    - the 3D facet (neighbor_back_cell_3d={}, back_cell_fh_index_in_neighbor_2d={}) is\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        {}\n"
+                                    "        (fourth vertex of its cell: {})\n"
+                                    , IO::oformat(neighbor_back_cell_3d), back_cell_fh_index_in_neighbor_2d
+                                    , display_vert(neighbor_back_cell_3d_vertices[0])
+                                    , display_vert(neighbor_back_cell_3d_vertices[1])
+                                    , display_vert(neighbor_back_cell_3d_vertices[2])
+                                    , display_vert(neighbor_back_cell_3d->vertex(back_cell_fh_index_in_neighbor_2d)));
+        } // end of debug output
+
+        set_adjacency_between_3d_facets({new_back_cell, back_cell_i},
+                                        {neighbor_back_cell_3d, back_cell_fh_index_in_neighbor_2d});
+      }
+
+
+      *new_face_handles_out++ = fh_2d;
+    }; // end of `action_for_each_new_2d_face`
+    CGAL::fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator(action_for_each_new_2d_face));
+    return {new_face_handles_out, half_hole_front_facet};
+  }
+
+  template <typename New_CDT_2_face_handles_output_iterator>
+  std::tuple<New_CDT_2_face_handles_output_iterator, Facet, Facet>
+  remove_Steiner_vertex_from_cdt_2(Vertex_handle v,
+                                   CDT_3_vertex_type vertex_type,
+                                   Face_index face_id,
+                                   New_CDT_2_face_handles_output_iterator new_face_handles_out)
+  {
+    std::tuple<New_CDT_2_face_handles_output_iterator, Facet, Facet> result{new_face_handles_out, {}, {}};
+    auto& [new_face_handles_out_it, half_hole_front_facet, second_half_hole_front_facet] = result;
+    auto& mutable_cdt_2 = non_const_face_cdt_2(face_id);
+    const auto& cdt_2 = mutable_cdt_2;
+
+    typename CDT_2::Locate_type lt;
+    int i;
+    const auto fh_2d = cdt_2.locate(v->point(), lt, i);
+    CGAL_assertion(lt == CDT_2::VERTEX);
+
+    const auto vh_2d = fh_2d->vertex(i);
+    CGAL_assertion(vertex_3d(vh_2d) == v);
+
+    if(this->debug().move_Steiner_vertices()) {
+      using std::begin; using std::end;
+      std::for_each(begin(cdt_2.all_face_handles()), end(cdt_2.all_face_handles()),
+                    [](CDT_2_face_handle fh) {
+                      fh->info().is_in_region = 0;
+                    });
+      auto face_circ = cdt_2.incident_faces(vh_2d);
+      const auto done = face_circ;
+      auto nb_of_incident_faces = 0u;
+      do {
+        face_circ->info().is_in_region = 1;
+        ++nb_of_incident_faces;
+      } while(++face_circ != done);
+      dump_face(face_id);
+      std::cerr << "  - remove Steiner vertex " << display_vert(v) << " from CDT_2 of face F#" << face_id
+                << " (nb of incident faces: " << nb_of_incident_faces << ")\n";
+      if(!cdt_2.CT_2::is_valid(true, 3)) {
+        std::cerr << "ERROR: CDT_2 is not valid BEFORE removing Steiner vertex " << display_vert(v)
+                  << " from face F#" << face_id << '\n';
+        CGAL_error_msg("Aborting due to invalid CDT_2");
+      }
+    }
+    auto indent_guard = IO::make_indenting_guards(this->debug().move_Steiner_vertices() ? 4 : 0);
+
+    auto map_from_hole_edges_to_incident_3d_facets = [&](const auto& hole_boundary_begin, const auto& hole_boundary_end,
+                                                         Face_is_outside_the_face is_outside_the_face) {
+      CGAL::unordered_flat_map<CDT_2_edge, Facet, boost::hash<CDT_2_edge>> map;
+      if(is_outside_the_face == OUTSIDE)
+        return map;
+
+      for(auto it = hole_boundary_begin; it != hole_boundary_end; ++it) {
+        auto [fh_2d, index] = *it;
+        CGAL_assertion(cdt_2.tds().is_face(fh_2d)); // DO NOT COMMIT (expansive assertion: O(n) in the size of the cdt_2)
+        const auto neighbor_2d_inside_star = fh_2d->neighbor(index);
+        CGAL_assertion(cdt_2.tds().is_face(neighbor_2d_inside_star)); // DO NOT COMMIT (expansive assertion: O(n) in the size of the cdt_2)
+        const auto facet_3d = neighbor_2d_inside_star->info().facet_3d;
+        CGAL_assertion(facet_3d.first != Cell_handle{});
+        [[maybe_unused]] auto [_, inserted] = map.insert({{fh_2d, index}, facet_3d});
+        CGAL_assertion(inserted);
+        if(this->debug().move_Steiner_vertices()) {
+          auto vertices = tr().vertices(facet_3d);
+          std::cerr << cdt_3_format("in the star restricted to the polygon, 3D facet\n"
+                                    "  {}\n"
+                                    "  {}\n"
+                                    "  {}\n",
+                                    display_vert(vertices[0]), display_vert(vertices[1]), display_vert(vertices[2]));
+        }
+      }
+      return map;
+    };
+
+    auto bore_hole_and_fill_with_delaunay = [&](CDT_3_vertex_type vertex_type, auto& hole_boundary,
+                                                const auto& faces_to_delete,
+                                                Face_is_outside_the_face is_outside_the_face) {
+      if(this->debug().move_Steiner_vertices()) {
+        std::cerr << "The star of " << display_vert(v) << " in the CDT_2 of face F#" << face_id << " has a component "
+                  << (is_outside_the_face == OUTSIDE ? "OUTSIDE the face " : "") << "with "
+                  << hole_boundary.size() << " edges, and " << faces_to_delete.size() << " faces:\n";
+        for(const auto& fh_2d : faces_to_delete) {
+          std::cerr << cdt_3_format("- CDT_2 face with 3D vertices ( {} ,\n"
+                                    "                                {} ,\n"
+                                    "                                {} )\n",
+                                    display_vert(vertex_3d(fh_2d->vertex(0))),
+                                    display_vert(vertex_3d(fh_2d->vertex(1))),
+                                    display_vert(vertex_3d(fh_2d->vertex(2))));
+        }
+      } // end of debug output
+
+      // if the vertex is a Steiner point on an edge, the hole is a half-hole, and the last boundary
+      // edge is not part of the original hole boundary.
+      const auto hole_boundary_end =
+          vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE ? std::prev(hole_boundary.end()) : hole_boundary.end();
+
+      const auto hole_boundary_map =
+          map_from_hole_edges_to_incident_3d_facets(hole_boundary.begin(), hole_boundary_end, is_outside_the_face);
+      std::for_each(faces_to_delete.begin(), faces_to_delete.end(),
+                    [&mutable_cdt_2](CDT_2_face_handle f) { mutable_cdt_2.delete_face(f); });
+      return fill_cdt_2_hole_with_delaunay(mutable_cdt_2, face_id, vertex_type, hole_boundary, hole_boundary_map,
+                                           is_outside_the_face, new_face_handles_out);
+    };
+
+    auto set_constrained = [&](CDT_2_edge e, bool is_constrained) {
+      auto [f, i] = e;
+      f->set_constraint(i, is_constrained);
+      auto [n, ni] = cdt_2.mirror_edge(e);
+      n->set_constraint(ni, is_constrained);
+    };
+
+    if(vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE) {
+
+      auto first_constrained_edge_circulator_before_face = [&](CDT_2_face_handle incident_fh) {
+        auto edge_circulator = cdt_2.incident_edges(vh_2d, incident_fh);
+        --edge_circulator; // take the edge before `incident_fh`
+        CGAL_assertion_code(const auto done = edge_circulator);
+        while(!cdt_2.is_constrained(*edge_circulator)) {
+          --edge_circulator;
+          CGAL_assertion(edge_circulator != done);
+        }
+        return edge_circulator;
+      };
+
+      auto advance_circulator_until_next_constrained_edge = [&](auto& edge_circulator, auto func) {
+        CGAL_assertion_code(const auto done = edge_circulator);
+        do {
+          ++edge_circulator;
+          func(*edge_circulator);
+          CGAL_assertion(edge_circulator != done);
+        } while(!cdt_2.is_constrained(*edge_circulator));
+        return edge_circulator;
+      };
+
+      auto half_hole = [&](CDT_2_face_handle incident_fh) {
+        struct Result
+        {
+          std::list<CDT_2_edge> hole_side;
+          boost::container::small_vector<CDT_2_face_handle, 16> to_delete;
+          CDT_2_edge last_incident_edge;
+        } result;
+        auto edge_circulator = first_constrained_edge_circulator_before_face(incident_fh);
+        result.last_incident_edge =
+            *advance_circulator_until_next_constrained_edge(edge_circulator, [&](CDT_2_edge current_edge) {
+              const auto [f, i] = current_edge;
+              result.to_delete.push_back(f);
+              const auto edge_opposite_to_v = cdt_2.mirror_edge(CDT_2_edge{f, cdt_2.cw(i)});
+              result.hole_side.push_back(edge_opposite_to_v);
+              const auto [n, ni] = edge_opposite_to_v;
+              n->vertex(cdt_2.cw(ni))->set_face(n);
+              n->vertex(cdt_2.ccw(ni))->set_face(n);
+            });
+        return result;
+      };
+
+      auto [hole_side_1, hole_side_1_faces_to_delete, side_1_last_incident_edge] = half_hole(vh_2d->face());
+      const auto [side_1_last_face, side_1_last_edge_index] = side_1_last_incident_edge;
+      const auto side_1_hole_is_outside_the_face = side_1_last_face->info().is_outside_the_face;
+
+      const auto side_2_first_face = side_1_last_face->neighbor(side_1_last_edge_index);
+
+      auto [hole_side_2, hole_side_2_faces_to_delete, side_2_last_incident_edge] = half_hole(side_2_first_face);
+      const auto [side_2_last_face, side_2_last_edge_index] = side_2_last_incident_edge;
+      const auto side_2_hole_is_outside_the_face = side_2_last_face->info().is_outside_the_face;
+
+      CGAL_assertion(side_1_last_incident_edge.first != side_2_last_incident_edge.first);
+
+      // unmark the two constrained edges
+      set_constrained(side_1_last_incident_edge, false);
+      set_constrained(side_2_last_incident_edge, false);
+
+      // start boring and sewing the two half-holes:
+      //   - we start from side 1,
+      //   - `side_2_last_face` will temporarily be modified to close `hole_side_1`
+      const auto v1 = side_1_last_face->vertex(cdt_2.ccw(side_1_last_edge_index));
+      side_2_last_face->set_vertex(cdt_2.cw(side_2_last_edge_index), v1);
+      hole_side_1.push_back(side_2_last_incident_edge);
+
+      //   - bore the hole on side 1, and fill it with CDT triangles
+      auto [out_it, facet_side_1] = bore_hole_and_fill_with_delaunay(
+          vertex_type, hole_side_1, hole_side_1_faces_to_delete, side_1_hole_is_outside_the_face);
+      new_face_handles_out = out_it;
+      CGAL_assertion(side_1_hole_is_outside_the_face == OUTSIDE || facet_side_1.first != Cell_handle{});
+
+      //  - now the edge opposite to `(side_2_last_face, side_2_last_edge_index)` is on the border of the hole
+      //    `hole_side_2`, so we can start sewing from there
+      const auto side_1_border_edge = cdt_2.mirror_edge(CDT_2_edge{side_2_last_face, side_2_last_edge_index});
+      hole_side_2.push_back(side_1_border_edge);
+      auto [out_it_2, facet_side_2] = bore_hole_and_fill_with_delaunay(
+          vertex_type, hole_side_2, hole_side_2_faces_to_delete, side_2_hole_is_outside_the_face);
+      new_face_handles_out = out_it_2;
+      CGAL_assertion(side_2_hole_is_outside_the_face == OUTSIDE || facet_side_2.first != Cell_handle{});
+
+      half_hole_front_facet = facet_side_1;
+      second_half_hole_front_facet = facet_side_2;
+
+      //  - then re-mark the edge between the two holes as a constrained edge
+      set_constrained(side_1_border_edge, true);
+    } else { // if vertex_type != CDT_3_vertex_type::STEINER_ON_EDGE
+      CGAL_assertion(vertex_type == CDT_3_vertex_type::STEINER_IN_FACE);
+
+      auto [hole_boundary, faces_to_delete] = std::invoke([&]() {
+        struct Result
+        {
+          std::list<CDT_2_edge> hole_boundary;
+          boost::container::small_vector<CDT_2_face_handle, 16> to_delete;
+        } result;
+        auto face_circulator = cdt_2.incident_faces(vh_2d);
+        const auto done = face_circulator;
+        do {
+          const CDT_2_face_handle fh_2d = face_circulator;
+          auto v_index = fh_2d->index(vh_2d);
+          CDT_2_edge opposite_edge = cdt_2.mirror_edge(CDT_2_edge{fh_2d, v_index});
+          auto adjacent_vertex = fh_2d->vertex(cdt_2.cw(v_index));
+          adjacent_vertex->set_face(opposite_edge.first);
+          result.hole_boundary.push_back(opposite_edge);
+          result.to_delete.push_back(fh_2d);
+        } while(++face_circulator != done);
+        return result;
+      });
+
+      auto [out_it, facet] =
+          bore_hole_and_fill_with_delaunay(vertex_type, hole_boundary, faces_to_delete, INSIDE);
+      new_face_handles_out = out_it;
+      CGAL_assertion(facet.first == Cell_handle{});
+    }
+    mutable_cdt_2.delete_vertex(vh_2d);
+    if(this->debug().move_Steiner_vertices()) {
+      dump_face(face_id, std::string("dump_face_") + std::to_string(face_id) + "_after_removing_Steiner_vertex_" +
+                             std::to_string(vh_2d->time_stamp()) + ".off");
+
+      if(!cdt_2.CT_2::is_valid(true, 3)) {
+        std::cerr << "ERROR: CDT_2 is not valid after removing Steiner vertex " << IO::oformat(v, with_point_and_info)
+                  << " from face F#" << face_id << '\n';
+        CGAL_assertion(false);
+      }
+    }
+    new_face_handles_out_it = new_face_handles_out;
+    return result;
+  } // end of `remove_Steiner_vertex_from_cdt_2`
+
   bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
     std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
     if(this->debug().move_Steiner_vertices()) {
@@ -1671,8 +2232,8 @@ protected:
       indent_guards.emplace(IO::make_indenting_guards("  |"));
     }
 
-    auto is_constrained = [this](Facet f) { return is_facet_constrained(f); };
-    const auto incident_constrained_facet_opt = find_in_incident_facets(v, is_constrained);
+    const auto incident_constrained_facet_opt =
+        find_in_incident_facets(v, [this](Facet f) { return is_facet_constrained(f); });
     CGAL_assertion(incident_constrained_facet_opt.has_value());
 
     const auto incident_constrained_facet = *incident_constrained_facet_opt;
@@ -1693,6 +2254,13 @@ protected:
     if(this->debug().move_Steiner_vertices()) {
       std::cerr << "- Nb of components or the star: " << star_components.component_offsets.size() - 1 << '\n';
     }
+    if(nb_of_star_components == 1) {
+      if(this->debug().move_Steiner_vertices()) {
+        auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
+        std::cerr << "- Only one component in the star, cannot move the vertex to the volume, aborting\n";
+      }
+      return false;
+    }
 
     const auto components_central_points = std::invoke([&]() {
       std::optional<boost::container::small_vector<Point_3, 8>> central_points{std::in_place};
@@ -1702,7 +2270,10 @@ protected:
             construct_star_component_mesh(component_index, star_components.component_offsets, star_components.facets);
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
         if(this->debug().move_Steiner_vertices()) {
-          std::cerr << "  - kernel center point of component #" << component_index << ": ";
+          std::cerr << "  - incident constraint faces ids of component #" << component_index << ": {"
+                    << IO::oformat(star_components.component_incident_constraint_face_ids[component_index - 1])
+                    << "}\n";
+          std::cerr << "    kernel center point of component #" << component_index << ": ";
         }
         if(opt_kernel_center_point.has_value()) {
           auto kernel_center_point = *opt_kernel_center_point;
@@ -1737,11 +2308,132 @@ protected:
       }
       return false;
     }
+    CGAL_assertion(components_central_points->size() == nb_of_star_components);
+    boost::container::small_vector<Vertex_handle, 2> new_center_vertices;
+    new_center_vertices.reserve(nb_of_star_components);
+
+    for(std::size_t component_index = 1; component_index <= nb_of_star_components; ++component_index)
+    {
+      const auto star_component_new_center_vertex = tr().tds().create_vertex();
+      star_component_new_center_vertex->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::STEINER_IN_VOLUME);
+      star_component_new_center_vertex->set_point((*components_central_points)[component_index - 1]);
+      new_center_vertices.push_back(star_component_new_center_vertex);
+
+      const auto& component_facets = star_components.component_facets_range(component_index);
+      for(const auto& [cell, facet_index, facet_type] : component_facets) {
+        if(facet_type == Star_components_facets::Type_of_facet::INCIDENT_TO_V) {
+          continue;
+        }
+        cell->set_vertex(facet_index, star_component_new_center_vertex);
+
+        // now unconstrain the facets of `cell` that were incident to `v`, because they are now
+        // incident to `star_component_new_center_vertex` instead of `v`.
+        for(int i = 0; i < 3; ++i) {
+          const auto incident_facet_index = Tds::vertex_triple_index(facet_index, i);
+          set_facet_as_not_constrained(Facet{cell, incident_facet_index});
+        }
+      } // end for each facet of the current component, which are now all incident to `star_component_new_center_vertex`
+      using std::begin;
+      star_component_new_center_vertex->set_cell(begin(component_facets)->cell); // cell of the first facet
+    } // loop on each component of the star of `v`
+
+    auto other_side_of_cdt_2 = [&](const Facet& facet, Face_index face_id) -> Facet {
+      const auto [cell, facet_index] = facet;
+      for(int i = 0; i < 3; ++i) {
+        const auto other_facet_index = Tds::vertex_triple_index(facet_index, i);
+        if(face_constraint_index(Facet{cell, other_facet_index}) == face_id) {
+          const auto opposite_vertex = cell->vertex(facet_index);
+          const auto neighbor_cell = cell->neighbor(other_facet_index);
+          return Facet{neighbor_cell, neighbor_cell->index(opposite_vertex)};
+        }
+      }
+      CGAL_error();
+    };
+
     std::size_t nb_of_new_2d_faces = 0;
-    this->remove_Steiner_vertex_from_all_cdt_2(v, CGAL::Counting_output_iterator{&nb_of_new_2d_faces});
+    CGAL::Counting_output_iterator output_iterator{&nb_of_new_2d_faces};
+
+    const auto v_type = vertex_type(v);
+    if(v_type == CDT_3_vertex_type::STEINER_IN_FACE) {
+      CGAL_assertion(star_components.component_incident_constraint_face_ids.size() == 2);
+      const auto& [face_id, orientation] = star_components.face_ids_between_consecutive_components.front();
+      auto [new_output_iterator, half_hole_front_facet, second_half_hole_front_facet] =
+          remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, output_iterator);
+      output_iterator = new_output_iterator;
+    } else {
+      CGAL_assertion(v_type == CDT_3_vertex_type::STEINER_ON_EDGE);
+      std::optional<Facet> previous_facet_to_reconnect_opt;
+      std::optional<Facet> last_facet_to_reconnect_to_opt;
+      for(std::size_t component_index = 0, end = star_components.face_ids_between_consecutive_components.size();
+           component_index < end; ++component_index)
+      {
+        const auto& [face_id, orientation] = star_components.face_ids_between_consecutive_components[component_index];
+        if(this->debug().move_Steiner_vertices()) {
+          std::cerr << "Component " << (component_index+1) << " with center "
+                    << display_vert(new_center_vertices[component_index]) << "\n";
+          std::cerr << "Now remove the Steiner vertex from the CDT_2 of face with id " << face_id << " (orientation: "
+                    << (orientation == CGAL::NEGATIVE ? "negative" : "positive") << ")\n";
+        }
+        auto [new_output_iterator, half_hole_front_facet, second_half_hole_front_facet] =
+            remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, output_iterator);
+        output_iterator = new_output_iterator;
+
+        Facet facet_to_reconnect = half_hole_front_facet;
+        if(facet_to_reconnect.first == Cell_handle{}) {
+          facet_to_reconnect = second_half_hole_front_facet;
+        }
+        CGAL_assertion(facet_to_reconnect.first != Cell_handle{});
+        if(true == facet_to_reconnect.first->has_vertex(new_center_vertices[component_index])) {
+          facet_to_reconnect = other_side_of_cdt_2(facet_to_reconnect, face_id);
+        }
+        if(this->debug().move_Steiner_vertices()) {
+          auto vertices = this->vertices(facet_to_reconnect);
+          std::cerr << cdt_3_format("The facet ({}) to reconnect in the 3D triangulation is:\n"
+                                    "  - {}\n"
+                                    "  - {}\n"
+                                    "  - {}\n"
+                                    "  - (4th vertex: {})\n",
+                                    IO::oformat(facet_to_reconnect),
+                                    display_vert(vertices[0]),
+                                    display_vert(vertices[1]),
+                                    display_vert(vertices[2]),
+                                    display_vert(facet_to_reconnect.first->vertex(facet_to_reconnect.second)));
+          auto other_facet = other_side_of_cdt_2(facet_to_reconnect, face_id);
+          vertices = this->vertices(other_facet);
+          std::cerr << cdt_3_format("The facet ({}) on the other side of the CDT_2 is:\n"
+                                    "  - {}\n"
+                                    "  - {}\n"
+                                    "  - {}\n"
+                                    "  - (4th vertex: {})\n",
+                                    IO::oformat(other_facet),
+                                    display_vert(vertices[0]),
+                                    display_vert(vertices[1]),
+                                    display_vert(vertices[2]),
+                                    display_vert(other_facet.first->vertex(other_facet.second)));
+        }
+
+        if(!last_facet_to_reconnect_to_opt.has_value()) {
+          last_facet_to_reconnect_to_opt = facet_to_reconnect;
+          CGAL_assertion(previous_facet_to_reconnect_opt.has_value() == false);
+        }
+        if(previous_facet_to_reconnect_opt.has_value()) {
+          set_adjacency_between_3d_facets(*previous_facet_to_reconnect_opt, facet_to_reconnect);
+        }
+        previous_facet_to_reconnect_opt = other_side_of_cdt_2(facet_to_reconnect, face_id);
+      }
+      CGAL_assertion(previous_facet_to_reconnect_opt.has_value());
+      CGAL_assertion(last_facet_to_reconnect_to_opt.has_value());
+      set_adjacency_between_3d_facets(*previous_facet_to_reconnect_opt, *last_facet_to_reconnect_to_opt);
+    }
+
     if(this->debug().move_Steiner_vertices()) {
       std::cerr << "- number of new 2D faces created in the CDT: " << nb_of_new_2d_faces << '\n';
     }
+
+    tr().tds().delete_vertex(v);
+
+    CGAL_assertion(this->debug().move_Steiner_vertices() == false || tr().tds().is_valid(true)); // DO NOT COMMIT
+
     return true;
   } // end move_one_Steiner_vertex_to_the_volume(..)
 
@@ -2180,42 +2872,6 @@ public:
   {
     return std::count_if(tr().all_facets_begin(), tr().all_facets_end(),
                          [this](auto f) { return is_facet_constrained(f); });
-  }
-
-  bool same_triangle(Facet f, CDT_2_face_handle fh) const {
-    return true;
-    const auto [c, facet_index] = f;
-    std::array<Vertex_handle, 3> f_vertices{c->vertex(tr().vertex_triple_index(facet_index,0)),
-                                            c->vertex(tr().vertex_triple_index(facet_index,1)),
-                                            c->vertex(tr().vertex_triple_index(facet_index,2))};
-    std::sort(f_vertices.begin(), f_vertices.end());
-    std::array<Vertex_handle, 3> fh_vertices{fh->vertex(0)->info().vertex_handle_3d,
-                                             fh->vertex(1)->info().vertex_handle_3d,
-                                             fh->vertex(2)->info().vertex_handle_3d};
-    std::sort(fh_vertices.begin(), fh_vertices.end());
-    return (f_vertices == fh_vertices);
-  }
-
-  void set_facet_constrained(Facet f, CDT_3_signed_index polygon_constraint_id,
-                             CDT_2_face_handle fh)
-  {
-    CGAL_assertion(fh == CDT_2_face_handle{} || same_triangle(f, fh));
-
-    const auto [c, facet_index] = f;
-    c->ccdt_3_data().set_facet_constraint(facet_index, polygon_constraint_id, fh);
-    if(tr().dimension() > 2) {
-      const auto [n, n_index] = tr().mirror_facet({c, facet_index});
-      n->ccdt_3_data().set_facet_constraint(n_index, polygon_constraint_id, fh);
-    }
-    if(fh == CDT_2_face_handle{}) return;
-
-    if(fh != CDT_2_face_handle{}) {
-      fh->info().facet_3d = f;
-    }
-  }
-
-  auto set_facet_as_not_constrained(Facet f) {
-    return set_facet_constrained(f, INVALID_FACE_INDEX, CDT_2_face_handle{});
   }
 
   template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
@@ -3910,15 +4566,17 @@ private:
           continue; // we might be in a sliver in the plane of the polygon
         const auto [fh_2d, reverse_orientation] = *is_facet;
         if(this->debug().regions()) facets_of_polygon.push_back(f);
-        const auto vt_aux = this->make_vertex_triple(f);
         auto vt = T_3::make_canonical_oriented_mapped_triple(map_cavity_vertices_to_ambient_vertices, f);
+        if(reverse_orientation == is_upper_cavity) {
           std::swap(vt[1], vt[2]);
         }
-        auto new_cell = this->tds().create_cell();
+        auto new_cell = this->tds().create_cell(vt[0], vt[1], vt[2], this->infinite_vertex());
         pseudo_cells.emplace_back(new_cell, fh_2d);
-        new_cell->set_vertices(vt[0], vt[1], vt[2], this->infinite_vertex());
-        CGAL_assertion(static_cast<bool>(facet_is_facet_of_cdt_2(*this, {new_cell, 3}, cdt_2)));
-        add_to_outer_map(vt, {new_cell, 3}, "pseudo ");
+        Facet new_facet{new_cell, 3};
+        CGAL_assertion_code(const auto new_facet_is_2d = facet_is_facet_of_cdt_2(*this, new_facet, cdt_2));
+        CGAL_assertion(new_facet_is_2d.has_value() &&
+                       new_facet_is_2d->fh == fh_2d && new_facet_is_2d->reversed_orientation != is_upper_cavity);
+        add_to_outer_map(vt, new_facet, "pseudo ");
       }
       if(this->debug().regions()) {
         std::ofstream out(cdt_3_format("dump_{}_pseudo_cells_region_{}_{}.off", is_upper_cavity ? "upper" : "lower",
@@ -3957,12 +4615,12 @@ private:
     std::vector<std::pair<Facet, CDT_2_face_handle>> new_constrained_facets;
     new_constrained_facets.reserve(pseudo_cells.size());
     for(const auto& [c, fh_2d] : pseudo_cells) {
-      const Facet f = this->mirror_facet({c, 3});
-      new_constrained_facets.emplace_back(f, fh_2d);
-      CGAL_assertion(static_cast<bool>(facet_is_facet_of_cdt_2(*this, f, cdt_2)));
-      auto vt = this->make_vertex_triple(f);
-      this->make_canonical_oriented_triple(vt);
-      add_to_outer_map(vt, f, "pseudo ");
+      const Facet f{c, 3};
+      const Facet opposite_f = this->mirror_facet(f);
+      new_constrained_facets.emplace_back(opposite_f, fh_2d);
+      CGAL_assertion(static_cast<bool>(facet_is_facet_of_cdt_2(*this, opposite_f, cdt_2)));
+      auto vt = T_3::make_canonical_oriented_triple(opposite_f);
+      add_to_outer_map(vt, opposite_f, "pseudo ");
       this->tds().delete_cell(c);
     }
     fill_outer_map_of_cavity(lower_cavity_triangulation, facets_of_lower_cavity);
@@ -4013,7 +4671,7 @@ private:
     std::for_each(facets_of_upper_cavity.begin(), facets_of_upper_cavity.end(), restore_markers);
 
     for(const auto& [f, f2d] : new_constrained_facets) {
-      set_facet_constrained(f, face_index, f2d);
+      set_facet_constrained(T_3::mirror_facet(f), face_index, f2d);
       f2d->info().missing_subface = false;
     }
     CGAL_assume(!this->debug().validity() || this->is_valid(true));
@@ -4724,173 +5382,6 @@ public:
     CGAL_assertion_code(recheck_for_missing_subfaces());
     CGAL_assertion_msg(are_there_any_face_constraint_misses_subfaces() == false,
                        "All faces have been restored, but the triangulation is a CDT. This should not happen.");
-  }
-
-  template <typename New_CDT_2_face_handles_output_iterator>
-  New_CDT_2_face_handles_output_iterator
-  remove_Steiner_vertex_from_cdt_2(Vertex_handle v,
-                                   CDT_3_vertex_type vertex_type,
-                                   Face_index face_id,
-                                   New_CDT_2_face_handles_output_iterator new_face_handles_out)
-  {
-    auto& cdt_2 = non_const_face_cdt_2(face_id);
-
-    if(this->debug().move_Steiner_vertices()) {
-      dump_face(face_id);
-      std::cerr << "  - remove Steiner vertex " << IO::oformat(v, with_point_and_info) << " from CDT_2 of face F#" << face_id
-                << '\n';
-      if(!cdt_2.CT_2::is_valid(true, 3)) {
-        std::cerr << "ERROR: CDT_2 is not valid BEFORE removing Steiner vertex " << IO::oformat(v, with_point_and_info)
-                  << " from face F#" << face_id << '\n';
-        CGAL_assertion(false);
-      }
-    }
-
-    typename CDT_2::Locate_type lt;
-    int i;
-    const auto fh_2d = cdt_2.locate(v->point(), lt, i);
-    CGAL_assertion(lt == CDT_2::VERTEX);
-
-    const auto vh_2d = fh_2d->vertex(i);
-    CGAL_assertion(vh_2d->info().vertex_handle_3d == v);
-
-    auto fill_with_delaunay = [&](auto& hole_boundary, bool is_outside_the_face) {
-      const std::vector<CDT_2_edge> hole_edges(hole_boundary.begin(), hole_boundary.end());
-      if(hole_boundary.size() > 2) {
-        fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
-                             auto& info = fh->info();
-                             info.is_outside_the_face = is_outside_the_face;
-                             info.missing_subface = true;
-                             info.is_in_region = 0;
-                             info.facet_3d = {};
-                             *new_face_handles_out++ = fh;
-                           }));
-      } else { // hole_boundary.size() <= 2 (degenerated hole)
-        CGAL_assertion(hole_boundary.size() == 2); // size == 1 is not possible
-        auto [f, i] = hole_boundary.front();
-        auto [g, j] = hole_boundary.back();
-        g->set_neighbor(j, f);
-        f->set_neighbor(i, g);
-      }
-      std::for_each(hole_edges.begin(), hole_edges.end(), [&cdt_2](CDT_2_edge e) {
-        auto [f, i] = cdt_2.mirror_edge(e);
-        f->set_constraint(i, cdt_2.is_constrained(e));
-      });
-    };
-    auto bore_hole_and_fill_with_delaunay = [&](auto& hole_boundary, const auto& faces_to_delete,
-                                                bool is_outside_the_face) {
-      std::for_each(faces_to_delete.begin(), faces_to_delete.end(),
-                    [&cdt_2](CDT_2_face_handle f) { cdt_2.delete_face(f); });
-      fill_with_delaunay(hole_boundary, is_outside_the_face);
-    };
-
-    auto set_constrained = [&](CDT_2_edge e, bool is_constrained) {
-      auto [f, i] = e;
-      f->set_constraint(i, is_constrained);
-      auto [n, ni] = cdt_2.mirror_edge(e);
-      n->set_constraint(ni, is_constrained);
-    };
-
-    if(vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE) {
-
-      auto half_hole = [&](CDT_2_face_handle incident_fh) {
-        struct Result
-        {
-          std::list<CDT_2_edge> hole_side;
-          boost::container::small_vector<CDT_2_face_handle, 16> to_delete;
-          CDT_2_edge last_incident_edge;
-        } result;
-        auto edge_circulator = cdt_2.incident_edges(vh_2d, incident_fh);
-        --edge_circulator;
-        CGAL_assertion_code(auto done = edge_circulator);
-        while(!cdt_2.is_constrained(*edge_circulator)) {
-          --edge_circulator;
-          CGAL_assertion(edge_circulator != done);
-        }
-        CGAL_assertion_code(done = edge_circulator);
-        do {
-          ++edge_circulator;
-          const auto [f, i] = *edge_circulator;
-          result.to_delete.push_back(f);
-          const auto edge = cdt_2.mirror_edge(CDT_2_edge{f, cdt_2.cw(i)});
-          result.hole_side.push_back(edge);
-          const auto [n, ni] = edge;
-          n->vertex(cdt_2.cw(ni))->set_face(n);
-          n->vertex(cdt_2.ccw(ni))->set_face(n);
-          CGAL_assertion(edge_circulator != done);
-        } while(!cdt_2.is_constrained(*edge_circulator));
-        result.last_incident_edge = *edge_circulator;
-        return result;
-      };
-
-      auto [hole_side_1, hole_side_1_faces_to_delete, side_1_last_incident_edge] = half_hole(vh_2d->face());
-      const auto [side_1_last_face, side_1_last_edge_index] = side_1_last_incident_edge;
-      const auto side_1_hole_is_outside_the_face = side_1_last_face->info().is_outside_the_face;
-
-      const auto side_2_first_face = side_1_last_face->neighbor(side_1_last_edge_index);
-
-      auto [hole_side_2, hole_side_2_faces_to_delete, side_2_last_incident_edge] = half_hole(side_2_first_face);
-      const auto [side_2_last_face, side_2_last_edge_index] = side_2_last_incident_edge;
-      const auto side_2_hole_is_outside_the_face = side_2_last_face->info().is_outside_the_face;
-
-      CGAL_assertion(side_1_last_incident_edge.first != side_2_last_incident_edge.first);
-
-      // unmark the two constrained edges
-      set_constrained(side_1_last_incident_edge, false);
-      set_constrained(side_2_last_incident_edge, false);
-
-      // start boring and sewing the two half-holes:
-      //   - we start from side 1,
-      //   - `side_2_last_face` will temporarily be modified to close `hole_side_1`
-      const auto v1 = side_1_last_face->vertex(cdt_2.ccw(side_1_last_edge_index));
-      side_2_last_face->set_vertex(cdt_2.cw(side_2_last_edge_index), v1);
-      hole_side_1.push_back(side_2_last_incident_edge);
-
-      //   - bore the hole on side 1, and fill it with CDT triangles
-      bore_hole_and_fill_with_delaunay(hole_side_1, hole_side_1_faces_to_delete, side_1_hole_is_outside_the_face);
-
-      //  - now the edge opposite to `(side_2_last_face, side_2_last_edge_index)` is on the border of the hole
-      //    `hole_side_2`, so we can start sewing from there
-      const auto side_1_border_edge = cdt_2.mirror_edge(CDT_2_edge{side_2_last_face, side_2_last_edge_index});
-      hole_side_2.push_back(side_1_border_edge);
-      bore_hole_and_fill_with_delaunay(hole_side_2, hole_side_2_faces_to_delete, side_2_hole_is_outside_the_face);
-
-      //  - then re-mark the edge between the two holes as a constrained edge
-      set_constrained(side_1_border_edge, true);
-    } else {
-      auto hole = cdt_2.make_hole(vh_2d);
-      fill_with_delaunay(hole, /*is_outside_the_face=*/false);
-    }
-    cdt_2.delete_vertex(vh_2d);
-    if(this->debug().move_Steiner_vertices()) {
-      dump_face(face_id, std::string("dump_face_") + std::to_string(face_id) + "_after_removing_Steiner_vertex_" +
-                             std::to_string(vh_2d->time_stamp()) + ".off");
-
-      if(!cdt_2.CT_2::is_valid(true, 3)) {
-        std::cerr << "ERROR: CDT_2 is not valid after removing Steiner vertex " << IO::oformat(v, with_point_and_info)
-                  << " from face F#" << face_id << '\n';
-        CGAL_assertion(false);
-      }
-    }
-    return new_face_handles_out;
-  }
-
-  template <typename New_CDT_2_face_handles_output_iterator>
-  auto remove_Steiner_vertex_from_all_cdt_2(Vertex_handle v,
-                                            New_CDT_2_face_handles_output_iterator new_face_handles_out)
-  {
-    const auto type = v->ccdt_3_data().vertex_type();
-    if(type == CDT_3_vertex_type::STEINER_IN_FACE) {
-      const auto face_id = v->ccdt_3_data().face_index();
-      new_face_handles_out = remove_Steiner_vertex_from_cdt_2(v, type, face_id, new_face_handles_out);
-    }
-    else if (type == CDT_3_vertex_type::STEINER_ON_EDGE) {
-      const auto c_id = v->ccdt_3_data().constrained_polyline_id(*this);
-      for(const auto& [_, face_id] : CGAL::make_range(this->incident_faces_to_polyline.equal_range(c_id))) {
-        new_face_handles_out = remove_Steiner_vertex_from_cdt_2(v, type, face_id, new_face_handles_out);
-      }
-    }
-    return new_face_handles_out;
   }
 
   void add_bbox_points() {
