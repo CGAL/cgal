@@ -138,6 +138,7 @@
 #include <stdexcept>
 #include <string_view>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -589,8 +590,12 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 
   std::ostream& operator()(std::ostream& out) const {
     auto v_ptr = this->it.operator->();
+    if(v_ptr == nullptr) 
+      return out << "nullptr";
+    if(Time_stamper::time_stamp(v_ptr) == 0)
+      return out << "# = infinite_vertex()";
+
     out << Time_stamper::display_id(v_ptr, offset);
-    if(v_ptr == nullptr) return out;
 
     out << (v_ptr->ccdt_3_data().is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
         << (v_ptr->ccdt_3_data().is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
@@ -1662,7 +1667,7 @@ protected:
   bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
     std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
     if(this->debug().move_Steiner_vertices()) {
-      std::cerr << "Moving Steiner vertex " << IO::oformat(v, With_point_and_info_tag{}) << " to the volume\n";
+      std::cerr << "Moving Steiner vertex " << display_vert(v) << " to the volume\n";
       indent_guards.emplace(IO::make_indenting_guards("  |"));
     }
 
@@ -1727,7 +1732,8 @@ protected:
     if(!components_central_points.has_value()) {
       if(this->debug().move_Steiner_vertices()) {
         auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightRed>(std::cerr);
-        std::cerr << "- No central point could be computed for at least one of the components, aborting moving the vertex to the volume\n";
+        std::cerr << "- No central point could be computed for at least one of the components, aborting moving the "
+                     "vertex to the volume\n";
       }
       return false;
     }
@@ -1745,7 +1751,7 @@ protected:
     auto fh_2 = cell->ccdt_3_data().face_2(this->face_cdt_2(face_id), facet_index);
     fh_2->info().facet_3d = {};
     fh_2->info().missing_subface = true;
-    this->set_facet_constrained({cell, facet_index}, -1, {});
+    this->set_facet_as_not_constrained({cell, facet_index});
   }
 
   void register_facet_to_be_constrained(Facet f) {
@@ -2656,6 +2662,8 @@ private:
         vertex_3d(vh_2d) = v;
         return vh_2d;
       };
+
+      vertex_3d(cdt_2.infinite_vertex()) = this->infinite_vertex();
 
       for(const auto& handles : vec_of_handles)
       {
