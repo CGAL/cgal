@@ -220,94 +220,110 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       return std::string(*++it);
     };
     std::string_view arg = *it;
-    if(arg == "--merge-facets"sv) {
-      merge_facets                        = true;
-    } else if(arg == "--no-merge-facets"sv) {
-      merge_facets                        = false;
-    } else if(arg == "--reject-self-intersections"sv) {
-      reject_self_intersections           = true;
-    } else if(arg == "--no-repair"sv) {
-      repair_mesh                         = false;
-    } else if(arg == "--read-mesh-with-operator"sv) {
-      read_mesh_with_operator             = true;
-    } else if(arg == "--merge-facets-old"sv) {
-      merge_facets                        = true;
-      merge_facets_old_method             = true;
-    } else if(arg == "--bisect"sv) {
-      bisect_failures                     = true;
-    } else if(arg == "--dump-patches-after-merge"sv) {
-      dump_patches_after_merge_filename   = get_next_arg_or_error_out();
-    } else if(arg == "--dump-patches-borders-prefix"sv) {
-      dump_patches_borders_prefix         = get_next_arg_or_error_out();
-    } else if(arg == "--dump-surface-mesh-after-merge"sv) {
-      dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
-    } else if(arg == "--dump-after-conforming"sv) {
-      dump_after_conforming_filename      = get_next_arg_or_error_out();
-    } else if(arg == "--vertex-vertex-epsilon"sv) {
-      vertex_vertex_epsilon               = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--segment-vertex-epsilon"sv) {
-      segment_vertex_epsilon              = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--coplanar-polygon-max-angle"sv) {
-      coplanar_polygon_max_angle          = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--coplanar-polygon-max-distance"sv) {
-      coplanar_polygon_max_distance       = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--quiet"sv) {
-      quiet                               = true;
-    } else if(arg == "--no-is-valid"sv) {
-      call_is_valid                       = false;
-    } else if(arg == "--debug-Steiner-points"sv) {
-      debug_Steiner_points                = true;
-    } else if(arg == "--debug-Steiner-points-construction"sv) {
-      debug_Steiner_points_construction   = true;
-    } else if(arg == "--debug-move-Steiner-vertices-to-the-volume"sv) {
-      debug_move_Steiner_vertices         = true;
-    } else if(arg == "--debug-input-faces"sv) {
-      debug_input_faces                   = true;
-    } else if(arg == "--debug-missing-regions"sv) {
-      debug_missing_regions               = true;
-    } else if(arg == "--debug-regions"sv) {
-      debug_regions                       = true;
-    } else if(arg == "--debug_copy_triangulation_into_hole"sv) {
-      debug_copy_triangulation_into_hole  = true;
-    } else if(arg == "--debug-validity"sv) {
-      debug_validity                      = true;
-    } else if(arg == "--debug-finite-edges-map"sv) {
-      debug_finite_edges_map              = true;
-    } else if(arg == "--debug-subconstraints-to-conform"sv) {
-      debug_subconstraints_to_conform     = true;
-    } else if(arg == "--debug-verbose-special-cases"sv) {
-      debug_verbose_special_cases         = true;
-    } else if(arg == "--debug-encroaching-vertices"sv) {
-      debug_encroaching_vertices          = true;
-    } else if(arg == "--debug-conforming-validation"sv) {
-      debug_conforming_validation         = true;
-    } else if(arg == "--debug-constraint-hierarchy"sv) {
-      debug_constraint_hierarchy          = true;
-    } else if(arg == "--debug-geometric-errors"sv) {
-      debug_geometric_errors              = true;
-    } else if(arg == "--debug-polygon-insertion"sv) {
-      debug_polygon_insertion             = true;
-    } else if(arg == "--debug-restore-faces"sv) {
-      debug_restore_faces                  = true;
-    } else if(arg == "--use-finite-edges-map"sv) {
-      use_finite_edges_map                = true;
-    } else if(arg == "--no-move-Steiner-vertices-to-the-volume"sv) {
-      move_Steiner_vertices_to_the_volume = false;
-    } else if(arg == "--move-Steiner-vertices-to-the-volume"sv) {
-      move_Steiner_vertices_to_the_volume = true;
-    } else if(arg == "--no-use-epeck-for-normals"sv) {
-      use_epeck_for_normals               = false;
-    } else if(arg == "--no-use-epeck-for-Steiner-points"sv) {
-      use_epeck_for_Steiner_points        = false;
-    } else if(arg == "--use-epeck-for-normals"sv) {
-      use_epeck_for_normals               = true;
-    } else if(arg == "--use-epeck-for-Steiner-points"sv) {
-      use_epeck_for_Steiner_points        = true;
-    } else if(arg == "--verbose"sv || arg == "-V"sv) {
+    bool enable = true;
+    bool arg_is_a_long_option = false;
+    if(arg.starts_with("--no-")) {
+      enable = false;
+      arg_is_a_long_option = true;
+      arg.remove_prefix(5);
+    } else if(arg.starts_with("--")) {
+      arg_is_a_long_option = true;
+      arg.remove_prefix(2);
+    }
+    if(arg_is_a_long_option) {
+      if(arg == "merge-facets"sv) {
+        merge_facets                        = enable;
+      } else if(arg == "no-merge-facets"sv) {
+        merge_facets                        = false;
+      } else if(arg == "reject-self-intersections"sv) {
+        reject_self_intersections           = enable;
+      } else if(arg == "no-repair"sv) {
+        repair_mesh                         = false;
+      } else if(arg == "read-mesh-with-operator"sv) {
+        read_mesh_with_operator             = enable;
+      } else if(arg == "merge-facets-old"sv) {
+        merge_facets                        = enable;
+        merge_facets_old_method             = enable;
+      } else if(arg == "bisect"sv) {
+        bisect_failures                     = enable;
+      } else if(arg == "dump-patches-after-merge"sv) {
+        dump_patches_after_merge_filename   = get_next_arg_or_error_out();
+      } else if(arg == "dump-patches-borders-prefix"sv) {
+        dump_patches_borders_prefix         = get_next_arg_or_error_out();
+      } else if(arg == "dump-surface-mesh-after-merge"sv) {
+        dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
+      } else if(arg == "dump-after-conforming"sv) {
+        dump_after_conforming_filename      = get_next_arg_or_error_out();
+      } else if(arg == "vertex-vertex-epsilon"sv) {
+        vertex_vertex_epsilon               = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "segment-vertex-epsilon"sv) {
+        segment_vertex_epsilon              = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "coplanar-polygon-max-angle"sv) {
+        coplanar_polygon_max_angle          = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "coplanar-polygon-max-distance"sv) {
+        coplanar_polygon_max_distance       = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "quiet"sv) {
+        quiet                               = enable;
+      } else if(arg == "no-is-valid"sv) {
+        call_is_valid                       = false;
+      } else if(arg == "debug-Steiner-points"sv) {
+        debug_Steiner_points                = enable;
+      } else if(arg == "debug-Steiner-points-construction"sv) {
+        debug_Steiner_points_construction   = enable;
+      } else if(arg == "debug-move-Steiner-vertices-to-the-volume"sv) {
+        debug_move_Steiner_vertices         = enable;
+      } else if(arg == "debug-input-faces"sv) {
+        debug_input_faces                   = enable;
+      } else if(arg == "debug-missing-regions"sv) {
+        debug_missing_regions               = enable;
+      } else if(arg == "debug-regions"sv) {
+        debug_regions                       = enable;
+      } else if(arg == "debug_copy_triangulation_into_hole"sv) {
+        debug_copy_triangulation_into_hole  = enable;
+      } else if(arg == "debug-validity"sv) {
+        debug_validity                      = enable;
+      } else if(arg == "debug-finite-edges-map"sv) {
+        debug_finite_edges_map              = enable;
+      } else if(arg == "debug-subconstraints-to-conform"sv) {
+        debug_subconstraints_to_conform     = enable;
+      } else if(arg == "debug-verbose-special-cases"sv) {
+        debug_verbose_special_cases         = enable;
+      } else if(arg == "debug-encroaching-vertices"sv) {
+        debug_encroaching_vertices          = enable;
+      } else if(arg == "debug-conforming-validation"sv) {
+        debug_conforming_validation         = enable;
+      } else if(arg == "debug-constraint-hierarchy"sv) {
+        debug_constraint_hierarchy          = enable;
+      } else if(arg == "debug-geometric-errors"sv) {
+        debug_geometric_errors              = enable;
+      } else if(arg == "debug-polygon-insertion"sv) {
+        debug_polygon_insertion             = enable;
+      } else if(arg == "debug-restore-faces"sv) {
+        debug_restore_faces                  = enable;
+      } else if(arg == "use-finite-edges-map"sv) {
+        use_finite_edges_map                = enable;
+      } else if(arg == "no-move-Steiner-vertices-to-the-volume"sv) {
+        move_Steiner_vertices_to_the_volume = false;
+      } else if(arg == "move-Steiner-vertices-to-the-volume"sv) {
+        move_Steiner_vertices_to_the_volume = enable;
+      } else if(arg == "no-use-epeck-for-normals"sv) {
+        use_epeck_for_normals               = false;
+      } else if(arg == "no-use-epeck-for-Steiner-points"sv) {
+        use_epeck_for_Steiner_points        = false;
+      } else if(arg == "use-epeck-for-normals"sv) {
+        use_epeck_for_normals               = enable;
+      } else if(arg == "use-epeck-for-Steiner-points"sv) {
+        use_epeck_for_Steiner_points        = enable;
+      } else if(arg == "verbose"sv || arg == "-V"sv) {
+        ++verbose_level;
+      } else if(arg == "help"sv || arg == "-h"sv) {
+        need_help                           = enable;
+      }
+    } else if(arg == "-V"sv) {
       ++verbose_level;
-    } else if(arg == "--help"sv || arg == "-h"sv) {
-      need_help                           = true;
-    } else if(arg[0] == '-') {
+    } else if(arg == "-h"sv) {
+      need_help                             = true;
+    } else if(arg.starts_with('-')) {
       error("unknown option "sv, arg);
     } else {
       switch(positional) {
