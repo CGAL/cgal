@@ -2814,12 +2814,8 @@ private:
         fh->info().missing_subface = false;
         continue;
       }
-      const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-      const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-      const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-      Cell_handle c;
-      int i, j, k;
-      if(!tr().is_facet(v0, v1, v2, c, i, j, k)) {
+      auto is_facet = this->is_2d_face_also_a_3d_facet(fh);
+      if(!is_facet) {
         fh->info().missing_subface = true;
         this->face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
@@ -2830,9 +2826,9 @@ private:
         write_triangle(std::cerr, v0, v1, v2);
 #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
       } else {
+        const auto [facet, orient] = *is_facet;
         fh->info().missing_subface = false;
-        const int facet_index = 6 - i - j - k;
-        set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
+        set_facet_constrained(facet, polygon_constraint_id, fh, orient);
       }
     }
   }
@@ -3561,14 +3557,10 @@ private:
                 const auto mirror_edge = cdt_2.mirror_edge({fh, i});
                 fh->set_constraint(i, mirror_edge.first->is_constrained(mirror_edge.second));
               }
-              int i, j, k;
-              Cell_handle c;
-              [[maybe_unused]] bool fh_is_3d_facet = tr().is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                                                                   fh->vertex(1)->info().vertex_handle_3d,
-                                                                   fh->vertex(2)->info().vertex_handle_3d,
-                                                                   c, i, j, k);
-              CGAL_assertion(fh_is_3d_facet);
-              set_facet_constrained({c, 6-i-j-k}, face_index, fh);
+              const auto fh_is_3d_facet = is_2d_face_also_a_3d_facet(fh);
+              CGAL_assertion(fh_is_3d_facet.has_value());
+              const auto [facet, orient] = *fh_is_3d_facet;
+              set_facet_constrained(facet, face_index, fh, orient);
               fh->info().missing_subface = false;
             }
             return true;
@@ -4064,6 +4056,38 @@ private:
       return std::nullopt;
   }
 
+  std::optional<std::pair<Facet, Orientation>>
+  is_2d_face_also_a_3d_facet(CDT_2_face_handle fh_2d) const
+  {
+    const auto v0 = vertex_3d(fh_2d->vertex(0));
+    const auto v1 = vertex_3d(fh_2d->vertex(1));
+    const auto v2 = vertex_3d(fh_2d->vertex(2));
+    typename T_3::Cell_handle c;
+    std::array<int, 3> indices;
+    const bool is_facet = tr().is_facet(v0, v1, v2, c, indices[0], indices[1], indices[2]);
+    if(is_facet) {
+      const int facet_index = 6 - indices[0] - indices[1] - indices[2];
+      auto it = std::min_element(indices.begin(), indices.end());
+      std::rotate(indices.begin(), it, indices.end());
+      const std::array<int, 3> vertex_triple_index = { tr().vertex_triple_index(facet_index, 0),
+                                                       tr().vertex_triple_index(facet_index, 1),
+                                                       tr().vertex_triple_index(facet_index, 2) };
+      CGAL_assertion(indices[0] == vertex_triple_index[0]);
+      CGAL_assertion((indices[1] == vertex_triple_index[1] && indices[2] == vertex_triple_index[2]) ||
+                     (indices[1] == vertex_triple_index[2] && indices[2] == vertex_triple_index[1]));
+      Orientation orient = indices[1] == vertex_triple_index[1] ? CGAL::EQUAL : CGAL::NEGATIVE;
+
+      Facet facet{c, facet_index};
+      if(orient == CGAL::NEGATIVE) {
+        facet = this->mirror_facet(facet);
+      }
+      CGAL_assertion(same_triple(facet, fh_2d));
+      return std::make_pair(facet, CGAL::EQUAL);
+    } else {
+      return std::nullopt;
+    }
+  }
+
   auto edge_of_cdt_2(const CDT_2& cdt_2, const Vertex_handle va, const Vertex_handle vb) const
       -> std::optional<typename CDT_2::Edge>
   {
@@ -4427,14 +4451,11 @@ private:
       if(false == fh->info().missing_subface) {
         continue;
       }
-      Cell_handle c;
-      int i, j, k;
-      if(tr().is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                       fh->vertex(1)->info().vertex_handle_3d,
-                       fh->vertex(2)->info().vertex_handle_3d, c, i, j, k))
+      const auto is_facet_opt = is_2d_face_also_a_3d_facet(fh);
+      if(is_facet_opt)
       {
-        const int facet_index = 6 - i - j - k;
-        set_facet_constrained({c, facet_index}, face_index, fh);
+        const auto [facet, orientation] = *is_facet_opt;
+        set_facet_constrained(facet, face_index, fh, orientation);
         fh->info().missing_subface = false;
         continue;
       }
