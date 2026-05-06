@@ -5695,6 +5695,8 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
   using TDS = typename CDT_3::Triangulation::Triangulation_data_structure;
   static_assert(std::is_same_v<decltype(tr), Triangulation_3<Traits, TDS>>);
 
+  static  constexpr int INVALID_SUBDOMAIN_INDEX = -1;
+
   if(tr.dimension() < 3) {
     for(auto ch : tr.all_cell_handles()) {
       ch->set_subdomain_index(0);
@@ -5707,7 +5709,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     }
   } else {
     for(auto ch : tr.all_cell_handles()) {
-      ch->set_subdomain_index(-1);
+      ch->set_subdomain_index(INVALID_SUBDOMAIN_INDEX);
     }
 
     // Use a flood algorithm to mark constrained connected components.
@@ -5721,7 +5723,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
 
     // Function to flood-fill a connected component with a given subdomain index
     auto flood_component = [&border](typename Tr::Cell_handle start, int subdomain_index) {
-      if(start->subdomain_index() != -1)
+      if(start->subdomain_index() != INVALID_SUBDOMAIN_INDEX)
         return;
 
       std::stack<typename Tr::Cell_handle> queue;
@@ -5730,12 +5732,12 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
       while(!queue.empty()) {
         auto ch = queue.top();
         queue.pop();
-        if(ch->subdomain_index() == -1) {
+        if(ch->subdomain_index() == INVALID_SUBDOMAIN_INDEX) {
           ch->set_subdomain_index(subdomain_index);
           for(int i = 0; i < 4; i++) {
             typename Tr::Facet f(ch, i);
             auto n = ch->neighbor(i);
-            if(n->subdomain_index() == -1) {
+            if(n->subdomain_index() == INVALID_SUBDOMAIN_INDEX) {
               if(ch->ccdt_3_data().is_facet_constrained(i))
                 border.push(f);
               else
@@ -5755,7 +5757,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
         auto f = border.top();
         border.pop();
         auto n = f.first->neighbor(f.second);
-        if(n->subdomain_index() == -1) {
+        if(n->subdomain_index() == INVALID_SUBDOMAIN_INDEX) {
           // If we are coming from an even subdomain, use next odd, and vice versa
           bool from_even = (f.first->subdomain_index() % 2 == 0);
           int next_index = from_even ? next_odd_subdomain : next_even_subdomain;
@@ -5769,7 +5771,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
 
       bool found_unvisited = false;
       for(auto ch : tr.finite_cell_handles()) {
-        if(ch->subdomain_index() == -1) {
+        if(ch->subdomain_index() == INVALID_SUBDOMAIN_INDEX) {
           flood_component(ch, next_even_subdomain);
           next_even_subdomain += 2;
           found_unvisited = true;
