@@ -4653,6 +4653,9 @@ public:
       if(restore_face(static_cast <CDT_3_signed_index>(i))) {
         face_constraint_misses_subfaces_reset(i);
         i = face_constraint_misses_subfaces_find_next(i);
+        if(i == face_constraint_misses_subfaces_npos) {
+          i = face_constraint_misses_subfaces_find_first();
+        }
       } else {
         if(this->debug().missing_region() || this->debug().Steiner_points()) {
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
