@@ -188,7 +188,7 @@ bool read_normals(std::ifstream& is, PointRange &points, std::string& line, cons
 /*!
  * \ingroup PkgStreamSupportIoFuncsVG
  *
- * \brief reads the content of the input stream `is` into `points` and `regions` using the \ref IOStreamVG.
+ * \brief reads the content of the input stream `is` into `points` and `rout` using the \ref IOStreamVG.
  *
  * \tparam PointRange
  *         `CGAL::Point_set_3` or a model of the concept `RandomAccessContainer` whose value type is the point type.
