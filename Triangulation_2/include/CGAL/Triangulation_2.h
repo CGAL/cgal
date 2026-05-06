@@ -2142,7 +2142,6 @@ fill_hole_delaunay(Triangulation_2<Gt, Tds>& tr,
     else if (auto [fn, in] = hole.back(); fn->vertex(Tr::cw(in)) == v2) {
       Face_handle newf = create_face(fn,in,ff,ii);
       hole.back() = Edge(newf,1);
-      hole.back() = Edge(newf,1);
     }
     else {
       Face_handle newf = create_face(ff,ii,v2);
@@ -2157,7 +2156,7 @@ fill_hole_delaunay(Triangulation_2<Gt, Tds>& tr,
 
       hole.push_front(Edge(newf,1)); // close the hole with the edge (newf, 1)
     }
-  }
+  } // while( ! hole_list.empty())
   return fit;
 }
 
