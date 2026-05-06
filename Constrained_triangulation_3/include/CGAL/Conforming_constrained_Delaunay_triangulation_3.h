@@ -2055,7 +2055,7 @@ public:
       put(tr_vertex_pmap, v, vh);
     }
 
-    add_bbox_points_if_not_dimension_3();
+    add_bbox_points();
 
     if(this->debug().display_statistics()) {
 
@@ -4885,26 +4885,29 @@ public:
     return new_face_handles_out;
   }
 
+  void add_bbox_points() {
+    const auto bbox = CGAL::bbox_3(this->points_begin(), this->points_end(), this->geom_traits());
+    double d_x = bbox.xmax() - bbox.xmin();
+    double d_y = bbox.ymax() - bbox.ymin();
+    double d_z = bbox.zmax() - bbox.zmin();
+
+    const double d = (std::max)({d_x, d_y, d_z});
+
+    using Point = typename T_3::Point_3;
+
+    this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
+    this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
+    this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
+    this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
+    this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
+    this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
+    this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
+    this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
+  }
+
   void add_bbox_points_if_not_dimension_3() {
     if(this->dimension() != 3) {
-      const auto bbox = CGAL::bbox_3(this->points_begin(), this->points_end(), this->geom_traits());
-      double d_x = bbox.xmax() - bbox.xmin();
-      double d_y = bbox.ymax() - bbox.ymin();
-      double d_z = bbox.zmax() - bbox.zmin();
-
-      const double d = (std::max)({d_x, d_y, d_z});
-
-      using Point = typename T_3::Point_3;
-
-      this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
-      this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
-      this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
-      this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
-      this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
-      this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
-      this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
-      this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
-
+      add_bbox_points();
       CGAL_assertion(this->dimension() == 3);
     }
   }
