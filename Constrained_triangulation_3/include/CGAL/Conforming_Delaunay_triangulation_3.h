@@ -334,10 +334,9 @@ protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
   auto display_vert(Vertex_handle v) const{
-    std::stringstream os;
-    os.precision(17);
-    os << IO::oformat(v, with_point);
-    return os.str();
+    return IO::oformat([&](std::ostream& os) -> auto& {
+      return os << IO::oformat(v, with_point);
+    }, IO_manip_tag{});
   }
 
   auto display_subcstr(Subconstraint subconstraint) const {
