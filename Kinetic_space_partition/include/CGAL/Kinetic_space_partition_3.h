@@ -2305,9 +2305,7 @@ private:
         }
         idx++;
       }
-
-    //if (m_parameters.verbose)
-      std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
+    std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
   }
 };
 

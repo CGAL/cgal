@@ -374,9 +374,8 @@ private:
     std::vector<CGAL::Epick::Point_2> pts2d;
     pts2d.reserve(region.size());
     auto pmap = m_pwn_item->point_set()->point_map();
-    for (const auto idx : region) {
-      const auto& p = get(pmap, idx);
-      const auto q = plane.projection(p);
+    for (auto idx : region) {
+      const auto q = plane.projection(get(pmap, idx));
       const auto point = plane.to_2d(q);
       pts2d.push_back(point);
     }
@@ -386,7 +385,7 @@ private:
     CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
 
     std::vector<CGAL::Epick::Point_3> polygon;
-    for (const auto& p : ch) {
+    for (auto& p : ch) {
       const auto point = plane.to_3d(p);
       polygon.push_back(point);
     }

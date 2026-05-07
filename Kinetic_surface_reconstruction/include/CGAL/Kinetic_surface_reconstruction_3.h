@@ -548,11 +548,10 @@ public:
     if (m_regions.empty())
       return;
 
-    CGAL_assertion_code(
     for (const auto& pair : m_regions) {
       const std::size_t shape_idx = add_convex_hull_shape(pair.second, pair.first);
       CGAL_assertion(shape_idx != std::size_t(-1));
-    });
+    }
 
     m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
     m_kinetic_partition.initialize(np);
