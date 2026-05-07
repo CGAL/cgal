@@ -1,11 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-INPUT += \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Feature_graph/Normal_estimator/Normal_estimator_on_surface.h  \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Feature_graph/Sharpness_estimator/Sharpness_estimator_on_surface.h  \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Feature_graph/AmbrosioTortorelli_on_image.h  \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/detect_sharp_features.h  \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/optimization_parameters.h  \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/regularization_parameters.h
-
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Feature graph"
