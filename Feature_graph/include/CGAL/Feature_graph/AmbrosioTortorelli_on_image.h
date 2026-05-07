@@ -13,6 +13,8 @@
 #ifndef CGAL_FEATURE_GRAPH_AMBROSIOTORTORELLI_ON_IMAGE_H
 #define CGAL_FEATURE_GRAPH_AMBROSIOTORTORELLI_ON_IMAGE_H
 
+#include <CGAL/license/Feature_graph.h>
+
 namespace CGAL {
 
 namespace Feature_graph {

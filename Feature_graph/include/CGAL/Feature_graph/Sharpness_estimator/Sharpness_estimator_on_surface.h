@@ -13,6 +13,8 @@
 #ifndef CGAL_FEATURE_GRAPH_SHARPNESS_ESTIMATOR_ON_SURFACE_H
 #define CGAL_FEATURE_GRAPH_SHARPNESS_ESTIMATOR_ON_SURFACE_H
 
+#include <CGAL/license/Feature_graph.h>
+
 namespace CGAL {
 
 namespace Feature_graph {

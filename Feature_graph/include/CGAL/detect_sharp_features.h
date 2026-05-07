@@ -13,6 +13,8 @@
 #ifndef CGAL_DETECT_SHARP_FEATURES_H
 #define CGAL_DETECT_SHARP_FEATURES_H
 
+#include <CGAL/license/Feature_graph.h>
+
 namespace CGAL {
 
 /*!

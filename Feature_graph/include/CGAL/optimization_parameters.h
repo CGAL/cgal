@@ -13,6 +13,8 @@
 #ifndef CGAL_OPTIMIZATION_PARAMETERS_H
 #define CGAL_OPTIMIZATION_PARAMETERS_H
 
+#include <CGAL/license/Feature_graph.h>
+
 namespace CGAL
 {
 
