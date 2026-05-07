@@ -194,11 +194,17 @@ do_intersect(const typename K::Triangle_3& t,
   const Point_3& p = point_on(s,0);
   const Point_3& q = point_on(s,1);
 
-  Orientation abcp, abcq;
+#if 1
   std::pair<Orientation,Orientation> abcp_abcq = orientation(a,b,c,p,q);
 
-  // const Orientation abcp = orientation(a,b,c,p);
-  // const Orientation abcq = orientation(a,b,c,q);
+  const Orientation abcp = abcp_abcq.first;
+  const Orientation abcq = abcp_abcq.second;
+  CGAL_assertion(orientation(a,b,c,p) == abcp);
+  CGAL_assertion(orientation(a,b,c,q) == abcq);
+#else
+const Orientation abcp = orientation(a,b,c,p);
+const Orientation abcq = orientation(a,b,c,q);
+#endif
 
   switch ( abcp ) {
   case POSITIVE:

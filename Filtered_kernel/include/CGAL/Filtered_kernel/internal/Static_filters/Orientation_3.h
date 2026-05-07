@@ -110,10 +110,9 @@ public:
           if (maxz < apsz) maxz = apsz;
           if (maxz < aptz) maxz = aptz;
 #endif
-          std::pair<double,double> det = CGAL::determinants(pqx, pqy, pqz,
-                                                            prx, pry, prz,
-                                                            psx, psy, psz,
-                                                            ptx, pty, ptz);
+          std::pair<double,double> det = CGAL::determinants(pqx, pqy, pqz, ptx,
+                                                            prx, pry, prz, pty,
+                                                            psx, psy, psz, ptz);
 
           double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
 

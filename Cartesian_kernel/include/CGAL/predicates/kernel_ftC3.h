@@ -117,10 +117,10 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<std::pair<Orientation,Orientation>, FT>::type
 orientationsC3(const FT &px, const FT &py, const FT &pz,
-              const FT &qx, const FT &qy, const FT &qz,
-              const FT &rx, const FT &ry, const FT &rz,
-              const FT &sx, const FT &sy, const FT &sz,
-              const FT &tx, const FT &ty, const FT &tz)
+               const FT &qx, const FT &qy, const FT &qz,
+               const FT &rx, const FT &ry, const FT &rz,
+               const FT &sx, const FT &sy, const FT &sz,
+               const FT &tx, const FT &ty, const FT &tz)
 {
   return sign_of_determinants<FT>(qx-px,rx-px,sx-px,tx-px,
                                   qy-py,ry-py,sy-py,ty-py,
