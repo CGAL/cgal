@@ -1691,6 +1691,12 @@ protected:
     return Vertex_triple{m[t[0]], m[t[1]], m[t[2]]};
   }
 
+  template <class Functor, class Triple>
+  static Vertex_triple apply_functor(Functor& f, const Triple& t) {
+    const auto& [t0, t1, t2] = t;
+    return Vertex_triple{f(t0), f(t1), f(t2)};
+  }
+
   template <class Map>
   static Vertex_triple make_canonical_oriented_mapped_triple(Map& m, const Facet& f) {
     return make_canonical_oriented_triple(apply_map(m, make_vertex_triple(f)));

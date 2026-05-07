@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2024  GeometryFactory Sarl (France).
+// Copyright (c) 2019-2026  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -1439,6 +1439,7 @@ protected:
     }
     if(fh != CDT_2_face_handle{}) {
       fh->info().facet_3d = f;
+      fh->info().missing_subface = false;
     }
   }
 
@@ -2468,11 +2469,13 @@ protected:
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
             if(c->ccdt_3_data().is_facet_constrained(li)) {
-              self->register_facet_to_be_constrained(c, li);
   #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              auto face_id = static_cast<std::size_t>(c->ccdt_3_data().face_constraint_index(li));
+              auto fh_2 = c->ccdt_3_data().face_2(self->face_cdt_2(face_id), li);
               std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
               self->write_2d_triangle(std::cerr, fh_2);
   #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              self->register_facet_to_be_constrained(c, li);
             }
           }
         }
@@ -3467,8 +3470,16 @@ private:
     }
   }
 
-  void search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id)
-  {
+  enum class Search_for_missing_subfaces_option {
+    DEFAULT = 0,
+    SEARCH_FOR_UNCONSTRAINED_FACETS = 1
+
+  };
+
+  bool
+  search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id,
+                              Search_for_missing_subfaces_option option = Search_for_missing_subfaces_option::DEFAULT) {
+    bool something_has_changed = false;
     const CDT_2& cdt_2 = this->face_cdt_2(polygon_constraint_id);
 
     this->face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
@@ -3478,23 +3489,48 @@ private:
         fh->info().missing_subface = false;
         continue;
       }
+      const auto v0 = vertex_3d(fh->vertex(0));
+      const auto v1 = vertex_3d(fh->vertex(1));
+      const auto v2 = vertex_3d(fh->vertex(2));
       auto is_facet = this->is_2d_face_also_a_3d_facet(fh);
       if(!is_facet) {
         fh->info().missing_subface = true;
         this->face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
+        something_has_changed = true;
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-        const auto v0 = vertex_3d(fh->vertex(0));
-        const auto v1 = vertex_3d(fh->vertex(1));
-        const auto v2 = vertex_3d(fh->vertex(2));
         std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
         write_triangle(std::cerr, v0, v1, v2);
 #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
       } else {
         const auto [facet, orient] = *is_facet;
         fh->info().missing_subface = false;
+        if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS &&
+          !is_facet_constrained(facet))
+        {
+          something_has_changed = true;
+          if(this->debug().restore_faces()) {
+            std::cerr << "Unconstrained facet in polygon #" << polygon_constraint_id
+                      << " with vertices: " << this->display_vert(v0) << ", " << this->display_vert(v1) << ", "
+                      << this->display_vert(v2) << '\n';
+          }
+        }
         set_facet_constrained(facet, polygon_constraint_id, fh, orient);
       }
     }
+    if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS && something_has_changed) {
+      std::cerr << "ERROR: Some unconstrained facets were found in polygon #" << polygon_constraint_id << '\n';
+    }
+    if(this->debug().restore_faces() && something_has_changed) {
+      std::cerr << "Some missing subfaces were found in polygon #" << polygon_constraint_id << ".\n";
+      for(const auto fh: cdt_2.all_face_handles())
+      {
+        if(fh->info().is_outside_the_face == OUTSIDE || !fh->info().missing_subface) continue;
+        const auto [v0, v1, v2] = this->apply_functor(vertex_3d, cdt_2.vertices(fh));
+        std::cerr << "  - missing triangle with vertices " << this->display_vert(v0) << ", " << this->display_vert(v1)
+                  << ", " << this->display_vert(v2) << '\n';
+      }
+    }
+    return something_has_changed;
   }
 
   static auto region(const CDT_2& cdt_2, CDT_2_face_handle fh)
@@ -5292,20 +5328,20 @@ public:
     return result;
   }
 
-  void recheck_for_missing_subfaces() {
+  bool recheck_for_missing_subfaces() {
     CGAL::Real_timer timer;
     if(this->debug().display_statistics()) {
       timer.start();
     }
+    bool nothing_has_changed = true;
     for(CDT_3_signed_index i = 0, end = signed_number_of_faces(); i < end; ++i) {
       if(this->face_data[i].skip_face == false) {
-        search_for_missing_subfaces(i);
+        nothing_has_changed =
+            nothing_has_changed &&
+            !search_for_missing_subfaces(i, Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS);
       }
     }
-    if(this->debug().display_statistics()) {
-      timer.stop();
-      std::cout << "[timings] recheck_for_missing_subfaces in " << 1000 * timer.time() << " ms\n";
-    }
+    return nothing_has_changed;
   }
 
   template <typename ...Args>
@@ -5340,9 +5376,21 @@ public:
         /* i is modified inside the loop */)
     {
       if(restore_face(static_cast <CDT_3_signed_index>(i))) {
-        face_constraint_misses_subfaces_reset(i);
+        // then check for missing subfaces, because restoring a region can perturb subfaces of the
+        // same face
+        const CDT_2& cdt_2 = face_cdt_2(i);
+        if(std::any_of(begin(cdt_2.finite_face_handles()), end(cdt_2.finite_face_handles()),
+                       [](const auto& fh) {
+                         return fh->info().is_outside_the_face == INSIDE && fh->info().missing_subface;
+                       }))
+        {
+          face_constraint_misses_subfaces_set(i);
+        } else {
+          face_constraint_misses_subfaces_reset(i);
+        }
         i = face_constraint_misses_subfaces_find_next(i);
         if(i == face_constraint_misses_subfaces_npos) {
+          // check again from the start, because restoring a face can alter constrained facets in other faces
           i = face_constraint_misses_subfaces_find_first();
         }
       } else {
@@ -5379,9 +5427,10 @@ public:
       // else:
       throw Constrained_triangulation_insertion_exception(failed_faces);
     }
-    CGAL_assertion_code(recheck_for_missing_subfaces());
-    CGAL_assertion_msg(are_there_any_face_constraint_misses_subfaces() == false,
-                       "All faces have been restored, but the triangulation is a CDT. This should not happen.");
+    CGAL_assertion_msg(
+        recheck_for_missing_subfaces() &&
+            are_there_any_face_constraint_misses_subfaces() == false,
+        "All faces have been restored, but the triangulation is still not a CDT. This should not happen.");
   }
 
   void add_bbox_points() {
