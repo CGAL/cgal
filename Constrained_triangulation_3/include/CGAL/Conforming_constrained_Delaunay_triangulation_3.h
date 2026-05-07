@@ -1791,6 +1791,7 @@ public:
 
     if(fh != CDT_2_face_handle{}) {
       fh->info().facet_3d = f;
+      fh->info().missing_subface = false;
     }
   }
 
@@ -4249,7 +4250,16 @@ public:
         /* i is modified inside the loop */)
     {
       if(restore_face(static_cast <CDT_3_signed_index>(i))) {
-        face_constraint_misses_subfaces_reset(i);
+        // then check for missing subfaces, because restoring a region can perturb subfaces of the
+        // same face
+        const CDT_2& cdt_2 = face_cdt_2(i);
+        if(std::any_of(begin(cdt_2.finite_face_handles()), end(cdt_2.finite_face_handles()),
+                       [](const auto& fh) { return !fh->info().is_outside_the_face && fh->info().missing_subface; }))
+        {
+          face_constraint_misses_subfaces_set(i);
+        } else {
+          face_constraint_misses_subfaces_reset(i);
+        }
         i = face_constraint_misses_subfaces_find_next(i);
         if(i == face_constraint_misses_subfaces_npos) {
           // check again from the start, because restoring a face can alter constrained facets in other faces
