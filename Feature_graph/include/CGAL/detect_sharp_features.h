@@ -1,9 +1,26 @@
+// Copyright (c) 2026 GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Ange Clement
+
+#ifndef CGAL_DETECT_SHARP_FEATURES_H
+#define CGAL_DETECT_SHARP_FEATURES_H
+
 namespace CGAL {
 
 /*!
 * \ingroup PkgFeatureGraphDetector
 *
 * Functor for sharp feature detection in labeled images.
+*
+* \sa `Detect_sharp_features_on_surface`
 */
 struct Detect_sharp_features_on_labeled_image
 {
@@ -32,7 +49,7 @@ struct Detect_sharp_features_on_labeled_image
   *   \cgalParamSectionBegin{sharpness_estimator}
   *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
-  *     \cgalParamDefault{`CGAL::AmbrosioTortorelli_on_image(image).get_sharpness_functor()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).get_sharpness_functor()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_parameters}
   *     \cgalParamDescription{an instance of `CGAL::Regularization_parameters`.
@@ -61,8 +78,6 @@ struct Detect_sharp_features_on_labeled_image
   *
   * \returns a graph model of `VertexAndEdgeListGraph`
   * containing the constructed features.
-  *
-  * \sa `Detect_sharp_features_on_surface::oprator()()`
   */
   template<typename Point_3, typename Image, typename CGAL_NP_TEMPLATE_PARAMETERS>
   unspecified_type operator()(const Image& image, const CGAL_NP_CLASS& np = parameters::default_values()) const;
@@ -72,6 +87,8 @@ struct Detect_sharp_features_on_labeled_image
 * \ingroup PkgFeatureGraphDetector
 *
 * Functor for sharp feature detection in surfaces.
+*
+* \sa `Detect_sharp_features_on_labeled_image`
 */
 struct Detect_sharp_features_on_surface
 {
@@ -93,7 +110,7 @@ struct Detect_sharp_features_on_surface
   *   \cgalParamSectionBegin{sharpness_estimator}
   *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
-  *     \cgalParamDefault{`CGAL::Sharpness_estimator::Sharpness_estimator_on_surface(surface)`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface(surface)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_parameters}
   *     \cgalParamDescription{an instance of `CGAL::Regularization_parameters`.
@@ -129,3 +146,5 @@ struct Detect_sharp_features_on_surface
 
 
 } /* namespace CGAL */
+
+#endif // CGAL_DETECT_SHARP_FEATURES_H

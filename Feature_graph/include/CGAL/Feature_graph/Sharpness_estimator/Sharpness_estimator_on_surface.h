@@ -1,4 +1,21 @@
+// Copyright (c) 2026 GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Ange Clement
+
+#ifndef CGAL_FEATURE_GRAPH_SHARPNESS_ESTIMATOR_ON_SURFACE_H
+#define CGAL_FEATURE_GRAPH_SHARPNESS_ESTIMATOR_ON_SURFACE_H
+
 namespace CGAL {
+
+namespace Feature_graph {
 
 namespace Sharpness_estimator
 {
@@ -62,4 +79,8 @@ public:
 
 } /* namespace Sharpness_estimator */
 
+} /* namespace Feature_graph */
+
 } /* namespace CGAL */
+
+#endif // CGAL_FEATURE_GRAPH_SHARPNESS_ESTIMATOR_ON_SURFACE_H

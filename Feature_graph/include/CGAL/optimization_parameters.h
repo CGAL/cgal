@@ -1,3 +1,18 @@
+// Copyright (c) 2026 GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Ange Clement
+
+#ifndef CGAL_OPTIMIZATION_PARAMETERS_H
+#define CGAL_OPTIMIZATION_PARAMETERS_H
+
 namespace CGAL
 {
 
@@ -212,12 +227,10 @@ public:
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{normal_estimator}
   *     \cgalParamDescription{a functor to evaluate the normals on elements.}
-  *     \cgalParamDefault{`CGAL::AmbrosioTortorelli_on_image(image).get_normal_functor()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).get_normal_functor()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
   *
-  * \param plane_detection_distance
-  * \param normal_estimator a functor to evaluate the normals on elements.
   */
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
   Optimization_parameters_on_image(
@@ -314,12 +327,10 @@ public:
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{normal_estimator}
   *     \cgalParamDescription{a functor to evaluate the normals on elements.}
-  *     \cgalParamDefault{`CGAL::Normal_estimator::Normal_estimator_on_surface(surface)`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Normal_estimator::Normal_estimator_on_surface(surface)`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
   *
-  * \param plane_detection_distance
-  * \param normal_estimator a functor to evaluate the normals on elements.
   */
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
   Optimization_parameters_on_surface(
@@ -329,3 +340,5 @@ public:
 };
 
 } /* namespace CGAL */
+
+#endif // CGAL_OPTIMIZATION_PARAMETERS_H

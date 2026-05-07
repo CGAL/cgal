@@ -1,5 +1,5 @@
 namespace CGAL {
-/*!
+/* (not ready for doxygen)
 
 \mainpage User Manual
 \anchor Chapter_Feature_Graph

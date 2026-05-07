@@ -1,4 +1,21 @@
+// Copyright (c) 2026 GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Ange Clement
+
+#ifndef CGAL_FEATURE_GRAPH_AMBROSIOTORTORELLI_ON_IMAGE_H
+#define CGAL_FEATURE_GRAPH_AMBROSIOTORTORELLI_ON_IMAGE_H
+
 namespace CGAL {
+
+namespace Feature_graph {
 
 /*!
 * \ingroup PkgFeatureGraphRef
@@ -69,4 +86,8 @@ public:
   /// @}
 };
 
+} /* namespace Feature_graph */
+
 } /* namespace CGAL */
+
+#endif // CGAL_FEATURE_GRAPH_AMBROSIOTORTORELLI_ON_IMAGE_H

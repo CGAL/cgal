@@ -36,9 +36,7 @@ The goal of the feature detection methods is to construct lines that can be used
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgSince{6.2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
