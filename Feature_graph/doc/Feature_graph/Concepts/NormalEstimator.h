@@ -7,8 +7,8 @@
 * extracts the normal for a surface element.
 *
 * \cgalHasModelsBegin
-* \cgalHasModels{CGAL::AmbrosioTortorelli_on_image::Normal_functor}
-* \cgalHasModels{CGAL::Normal_estimator::Normal_estimator_on_surface}
+* \cgalHasModels{CGAL::Feature_graph::AmbrosioTortorelli_on_image::Normal_functor}
+* \cgalHasModels{CGAL::Feature_graph::Normal_estimator::Normal_estimator_on_surface}
 * \cgalHasModelsEnd
 *
 */

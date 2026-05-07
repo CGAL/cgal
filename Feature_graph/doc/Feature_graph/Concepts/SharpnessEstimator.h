@@ -6,8 +6,8 @@
 * extracts the sharpness value for a surface element.
 *
 * \cgalHasModelsBegin
-* \cgalHasModels{CGAL::AmbrosioTortorelli_on_image::Sharpness_functor}
-* \cgalHasModels{CGAL::Sharpness_estimator::Sharpness_estimator_on_surface}
+* \cgalHasModels{CGAL::Feature_graph::AmbrosioTortorelli_on_image::Sharpness_functor}
+* \cgalHasModels{CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface}
 * \cgalHasModelsEnd
 *
 */
