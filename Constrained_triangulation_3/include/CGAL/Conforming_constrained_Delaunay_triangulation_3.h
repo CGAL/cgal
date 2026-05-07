@@ -2392,8 +2392,28 @@ private:
           !is_facet_constrained({c, facet_index}))
         {
           something_has_changed = true;
+          if(this->debug().restore_faces()) {
+            std::cerr << "Unconstrained facet in polygon #" << polygon_constraint_id
+                      << " with vertices: " << this->display_vert(v0) << ", " << this->display_vert(v1) << ", "
+                      << this->display_vert(v2) << '\n';
+          }
         }
         set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
+      }
+    }
+    if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS && something_has_changed) {
+      std::cerr << "ERROR: Some unconstrained facets were found in polygon #" << polygon_constraint_id << '\n';
+    }
+    if(this->debug().restore_faces() && something_has_changed) {
+      std::cerr << "Some missing subfaces were found in polygon #" << polygon_constraint_id << ".\n";
+      for(const auto fh: cdt_2.all_face_handles())
+      {
+        if(fh->info().is_outside_the_face || !fh->info().missing_subface) continue;
+        const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
+        const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
+        const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+        std::cerr << "  - missing triangle with vertices " << this->display_vert(v0) << ", " << this->display_vert(v1)
+                  << ", " << this->display_vert(v2) << '\n';
       }
     }
     return something_has_changed;
