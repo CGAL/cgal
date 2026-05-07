@@ -590,7 +590,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 
   std::ostream& operator()(std::ostream& out) const {
     auto v_ptr = this->it.operator->();
-    if(v_ptr == nullptr) 
+    if(v_ptr == nullptr)
       return out << "nullptr";
     if(Time_stamper::time_stamp(v_ptr) == 0)
       return out << "# = infinite_vertex()";
