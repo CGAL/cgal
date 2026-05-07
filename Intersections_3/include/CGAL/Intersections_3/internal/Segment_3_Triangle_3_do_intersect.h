@@ -194,8 +194,11 @@ do_intersect(const typename K::Triangle_3& t,
   const Point_3& p = point_on(s,0);
   const Point_3& q = point_on(s,1);
 
-  const Orientation abcp = orientation(a,b,c,p);
-  const Orientation abcq = orientation(a,b,c,q);
+  Orientation abcp, abcq;
+  std::pair<Orientation,Orientation> abcp_abcq = orientation(a,b,c,p,q);
+
+  // const Orientation abcp = orientation(a,b,c,p);
+  // const Orientation abcq = orientation(a,b,c,q);
 
   switch ( abcp ) {
   case POSITIVE:

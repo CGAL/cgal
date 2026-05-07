@@ -41,6 +41,130 @@ class Orientation_3
 public:
   using Base::operator();
 
+  std::pair<Orientation,Orientation>
+  operator()(const Point_3 &p, const Point_3 &q,
+             const Point_3 &r, const Point_3 &s, const Point_3 &t) const
+  {
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_3", tmp);
+
+      double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
+
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(p.z(), pz) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(q.z(), qz) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+          fit_in_double(r.z(), rz) &&
+          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
+          fit_in_double(s.z(), sz) &&
+          fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
+          fit_in_double(t.z(), tz))
+      {
+          CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+          double pqx = qx - px;
+          double pqy = qy - py;
+          double pqz = qz - pz;
+          double prx = rx - px;
+          double pry = ry - py;
+          double prz = rz - pz;
+          double psx = sx - px;
+          double psy = sy - py;
+          double psz = sz - pz;
+          double ptx = tx - px;
+          double pty = ty - py;
+          double ptz = tz - pz;
+
+          // CGAL::abs uses fabs on platforms where it is faster than (a<0)?-a:a
+          // Then semi-static filter.
+
+          double maxx = CGAL::abs(pqx);
+          double maxy = CGAL::abs(pqy);
+          double maxz = CGAL::abs(pqz);
+
+          double aprx = CGAL::abs(prx);
+          double apsx = CGAL::abs(psx);
+          double aptx = CGAL::abs(ptx);
+
+          double apry = CGAL::abs(pry);
+          double apsy = CGAL::abs(psy);
+          double apty = CGAL::abs(pty);
+
+          double aprz = CGAL::abs(prz);
+          double apsz = CGAL::abs(psz);
+          double aptz = CGAL::abs(ptz);
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+
+          maxx = mmax(maxx, aprx, apsx); // todo add aptx etc
+          maxy = mmax(maxy, apry, apsy);
+          maxz = mmax(maxz, aprz, apsz);
+#else
+          if (maxx < aprx) maxx = aprx;
+          if (maxx < apsx) maxx = apsx;
+          if (maxx < aptx) maxx = aptx;
+          if (maxy < apry) maxy = apry;
+          if (maxy < apsy) maxy = apsy;
+          if (maxy < apty) maxy = apty;
+          if (maxz < aprz) maxz = aprz;
+          if (maxz < apsz) maxz = apsz;
+          if (maxz < aptz) maxz = aptz;
+#endif
+          std::pair<double,double> det = CGAL::determinants(pqx, pqy, pqz,
+                                                            prx, pry, prz,
+                                                            psx, psy, psz,
+                                                            ptx, pty, ptz);
+
+          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+#if 0
+          CGAL::Min<double> mmin;
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+#else
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+#endif
+#else
+          // Sort maxx < maxy < maxz.
+          if (maxx > maxz)
+              std::swap(maxx, maxz);
+          if (maxy > maxz)
+              std::swap(maxy, maxz);
+          else if (maxy < maxx)
+              std::swap(maxx, maxy);
+#endif
+          std::pair<Orientation,Orientation> res = std::make_pair(ZERO,ZERO);
+          // Protect against underflow in the computation of eps.
+          if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
+            if (maxx == 0)
+              return res; // AF: check that is correct as we added point t
+          }
+          // Protect against overflow in the computation of det.
+          else if (maxz < 1e102) /* cbrt(max_double [hadamard]/4) */ {
+            int nresults = 0;
+             if (det.first > eps)  { res.first = POSITIVE; nresults++; }
+             else if (det.first < -eps) { res.first = NEGATIVE; nresults++; }
+             if(nresults == 1){
+               if(det.second > eps) { res.second = POSITIVE; nresults++;}
+               else if (det.second < -eps) { res.second = NEGATIVE;nresults++;}
+             }
+             if(nresults == 2){
+                return res;
+             }
+          }
+
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+    }
+      Base::operator()(p, q, r, s, t);
+
+      return std::make_pair(ZERO,ZERO);
+  }
+
+
+
   Orientation
   operator()(const Point_3 &p, const Point_3 &q,
              const Point_3 &r, const Point_3 &s) const

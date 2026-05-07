@@ -112,6 +112,21 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
                                  sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
 }
 
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<std::pair<Orientation,Orientation>, FT>::type
+orientationsC3(const FT &px, const FT &py, const FT &pz,
+              const FT &qx, const FT &qy, const FT &qz,
+              const FT &rx, const FT &ry, const FT &rz,
+              const FT &sx, const FT &sy, const FT &sz,
+              const FT &tx, const FT &ty, const FT &tz)
+{
+  return sign_of_determinants<FT>(qx-px,rx-px,sx-px,tx-px,
+                                  qy-py,ry-py,sy-py,ty-py,
+                                  qz-pz,rz-pz,sz-pz,tz-pz);
+}
+
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Orientation, FT>::type
@@ -121,8 +136,8 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
               const FT &sx, const FT &sy, const FT &sz)
 {
   return sign_of_determinant<FT>(qx-px,rx-px,sx-px,
-                                    qy-py,ry-py,sy-py,
-                                    qz-pz,rz-pz,sz-pz);
+                                 qy-py,ry-py,sy-py,
+                                 qz-pz,rz-pz,sz-pz);
 }
 
 template < class FT >
