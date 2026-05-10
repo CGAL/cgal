@@ -100,21 +100,27 @@ public:
           maxy = mmax(maxy, apry, apsy);
           maxz = mmax(maxz, aprz, apsz);
 #else
+
+
           if (maxx < aprx) maxx = aprx;
+          double maxxt = maxx;
           if (maxx < apsx) maxx = apsx;
-          if (maxx < aptx) maxx = aptx;
+          if (maxxt < aptx) maxxt = aptx;
           if (maxy < apry) maxy = apry;
+          double maxyt = maxy;
           if (maxy < apsy) maxy = apsy;
-          if (maxy < apty) maxy = apty;
+          if (maxyt < apty) maxyt= apty;
           if (maxz < aprz) maxz = aprz;
+          double maxzt = maxz;
           if (maxz < apsz) maxz = apsz;
-          if (maxz < aptz) maxz = aptz;
+          if (maxzt < aptz) maxzt = aptz;
 #endif
           std::pair<double,double> det = CGAL::determinants(pqx, pqy, pqz, ptx,
                                                             prx, pry, prz, pty,
                                                             psx, psy, psz, ptz);
 
-          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+          double epss = 5.1107127829973299e-15 * maxx * maxy * maxz;
+          double epst = 5.1107127829973299e-15 * maxxt * maxyt * maxzt;
 
 #ifdef CGAL_USE_SSE2_MAX
 #if 0
@@ -136,30 +142,33 @@ public:
               std::swap(maxx, maxy);
 #endif
           std::pair<Orientation,Orientation> res = std::make_pair(ZERO,ZERO);
+          bool first = false;
+          bool second = false;
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
             if (maxx == 0)
-              return res; // AF: check that is correct as we added point t
+              first = true;
+          }
+          if (maxxt < 1e-97) /* cbrt(min_double/eps) */ {
+            if (maxxt == 0)
+              second = true;
           }
           // Protect against overflow in the computation of det.
-          else if (maxz < 1e102) /* cbrt(max_double [hadamard]/4) */ {
-            int nresults = 0;
-             if (det.first > eps)  { res.first = POSITIVE; nresults++; }
-             else if (det.first < -eps) { res.first = NEGATIVE; nresults++; }
-             if(nresults == 1){
-               if(det.second > eps) { res.second = POSITIVE; nresults++;}
-               else if (det.second < -eps) { res.second = NEGATIVE;nresults++;}
-             }
-             if(nresults == 2){
-                return res;
-             }
+          if ((!first) && (maxz < 1e102)) /* cbrt(max_double [hadamard]/4) */ {
+             if (det.first > epss)  { res.first = POSITIVE; first = true;}
+             else if (det.first < -epss) { res.first = NEGATIVE; first = true;}
           }
 
+          if((! second) && (maxzt < 1e102)){
+            if (det.second > epst) { res.second = POSITIVE; second = true;}
+               else if (det.second < -epst) { res.second = NEGATIVE; second = true;}
+          }
+          if(first && second){
+            return res;
+          }
+          }
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-    }
-      Base::operator()(p, q, r, s, t);
-
-      return std::make_pair(ZERO,ZERO);
+    return Base::operator()(p, q, r, s, t);
   }
 
 
