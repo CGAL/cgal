@@ -19,6 +19,29 @@ endfunction()
 
 set(CGAL_FOUND FALSE)
 cgal_detect_branch_build(BRANCH_BUILD)
+# Fix for issue #9441:
+# When building CGAL from its own source tree (branch build),
+# CGAL_DEV_MODE should default to ON so developers automatically
+# get internal warnings and proper include path behavior.
+# Users can override with -DCGAL_DEV_MODE=OFF.
+if(BRANCH_BUILD)
+  set(_cgal_dev_mode_default ON)
+elseif(DEFINED ENV{CGAL_DEV_MODE})
+  set(_cgal_dev_mode_default "$ENV{CGAL_DEV_MODE}")
+else()
+  set(_cgal_dev_mode_default OFF)
+endif()
+
+option(CGAL_DEV_MODE
+  "Enable CGAL developer mode (auto-ON when building from CGAL source tree)"
+  "${_cgal_dev_mode_default}")
+
+if(CGAL_DEV_MODE AND _cgal_dev_mode_default)
+  message(WARNING
+    "CGAL_DEV_MODE is ON because you are building from the CGAL source "
+    "tree. To disable it, pass -DCGAL_DEV_MODE=OFF to CMake or unset "
+    "the CGAL_DEV_MODE environment variable.")
+endif()
 if(BRANCH_BUILD)
   set(CGAL_ROOT ${CGAL_CONFIG_DIR})
   get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
