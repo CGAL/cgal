@@ -212,12 +212,11 @@ public:
       merge_faces = true;
     }
 
-    if (!merge_faces) {
-      return IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
-    }
+    PolyhedronSPtr polyhedron = IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
+    if (!merge_faces)
+      return polyhedron;
 
 #if 1
-    PolyhedronSPtr polyhedron = IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
 
 #if 0
     // this actually makes things worse because we want to merge almost coplanar facets afterwards,
