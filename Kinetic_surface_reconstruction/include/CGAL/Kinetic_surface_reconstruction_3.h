@@ -549,7 +549,7 @@ public:
       return;
 
     for (const auto& pair : m_regions) {
-      const std::size_t shape_idx = add_convex_hull_shape(pair.second, pair.first);
+      CGAL_assertion_code(const std::size_t shape_idx =)add_convex_hull_shape(pair.second, pair.first);
       CGAL_assertion(shape_idx != std::size_t(-1));
     }
 
