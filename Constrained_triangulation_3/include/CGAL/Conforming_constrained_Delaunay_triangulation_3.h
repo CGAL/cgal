@@ -2049,10 +2049,12 @@ protected:
         CGAL_assertion(inserted);
         if(this->debug().move_Steiner_vertices()) {
           auto vertices = tr().vertices(facet_3d);
-          std::cerr << cdt_3_format("in the star restricted to the polygon, 3D facet\n"
+          std::cerr << cdt_3_format("for the hole edge ({}, {}), the 3D facet is\n"
                                     "  {}\n"
                                     "  {}\n"
                                     "  {}\n",
+                                    display_vert(vertex_3d(fh_2d->vertex(cdt_2.cw(index)))),
+                                    display_vert(vertex_3d(fh_2d->vertex(cdt_2.ccw(index)))),
                                     display_vert(vertices[0]), display_vert(vertices[1]), display_vert(vertices[2]));
         }
       }
