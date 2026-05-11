@@ -1900,9 +1900,10 @@ protected:
         // else
         CGAL_assertion(new_front_cell->neighbor(i) == Cell_handle{}); // facet (new_front_cell, i) is no yet connected
         const bool neighbor_2d_is_in_the_star = neighbor_2d->info().is_in_region;
+        const auto mirror_index = cdt_2.cw(neighbor_2d->index(fh_2d->vertex(cdt_2.cw(i))));
         const auto [neighbor_front_cell_3d, neighbor_front_index_3d] =
             neighbor_2d_is_in_the_star ? neighbor_2d->info().facet_3d
-                                       : map_from_hole_edge_to_facet_3d.at({neighbor_2d, neighbor_2d->index(fh_2d)});
+                                       : map_from_hole_edge_to_facet_3d.at({neighbor_2d, mirror_index});
         CGAL_assertion(neighbor_front_cell_3d != Cell_handle{});
 
         const auto neighbor_back_cell_3d = neighbor_front_cell_3d->neighbor(neighbor_front_index_3d);
