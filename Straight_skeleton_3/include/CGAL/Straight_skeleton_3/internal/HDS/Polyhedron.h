@@ -1458,6 +1458,16 @@ public:
         this->facet_origin_ = facet_origin;
       }
 
+      std::size_t get_input_face_id() const
+      {
+        return this->input_face_id_;
+      }
+
+      void set_input_face_id(const std::size_t input_face_id)
+      {
+        this->input_face_id_ = input_face_id;
+      }
+
       const FT& get_speed() const
       {
         CGAL_assertion(speed_ >= 0);
@@ -1496,6 +1506,8 @@ public:
 
     protected:
       FacetWPtr facet_origin_;
+      std::size_t input_face_id_; // descriptor at std::next(faces(input).begin(), input_face_id_)
+
       FT speed_;
 
       Plane_3 base_plane_;

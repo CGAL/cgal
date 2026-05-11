@@ -1075,6 +1075,9 @@ public:
     // Speed of the subdivided facet is applied to all the subfacets
     const FT& parent_speed = Hds_utils::get_speed(facet);
 
+    // Carry over the ID of the input
+    const std::size_t input_face_id = Hds_utils::get_input_face_id(facet);
+
     polyhedron->remove_facet(facet);
 
     // Create new facets and edges for each triangle
@@ -1089,11 +1092,14 @@ public:
       VertexSPtr v2 = fh->vertex(2)->info();
       std::vector<VertexSPtr> verts = {v0, v1, v2};
       FacetSPtr new_facet = Facet::create(verts);
+
       Plane_3 plane { v0->point(), v1->point(), v2->point() };
       new_facet->set_plane(plane);
       normalize_plane_coefficients(new_facet);
+
       SkelFacetDataSPtr new_data = Skeleton_facet_data::create(new_facet);
       new_data->set_speed(parent_speed);
+      new_data->set_input_face_id(input_face_id);
       polyhedron->add_facet(new_facet);
       created_facets.push_back(new_facet);
     }

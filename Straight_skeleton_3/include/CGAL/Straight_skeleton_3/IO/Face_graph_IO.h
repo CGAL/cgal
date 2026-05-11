@@ -167,6 +167,7 @@ public:
 
       SkelFacetDataSPtr data = Skeleton_facet_data::create(facet);
       data->set_speed(weight);
+      data->set_input_face_id(facet_id_new);
     }
 
     for (const EdgeSPtr& edge : result->edges()) {
@@ -353,11 +354,16 @@ public:
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
                                         CGAL::Constant_property_map<std::size_t, double>(1.0));
 
+    auto f2i = choose_parameter(get_parameter(np, internal_np::face_to_face_map),
+                                boost::make_assoc_property_map(std::map<face_descriptor, std::size_t>()));
+
     for (const FacetSPtr& facet : polyhedron->facets()) {
       CGAL_assertion(facet->id() != -1);
       CGAL_assertion(facet->edges().size() >= 3);
 
       double speed = CGAL::to_double(Hds_utils::get_speed(facet));
+      std::size_t input_face_id = Hds_utils::get_input_face_id(facet);
+      CGAL_SS3_IO_TRACE_V(16, "Saving facet " << facet->id() << " with speed " << speed << " and input face id " << input_face_id);
 
       Vector_3 n = facet->get_plane().orthogonal_vector();
       CGAL_assertion(n != CGAL::NULL_VECTOR);
@@ -439,6 +445,7 @@ public:
         }
 
         put(weight_pmap, sm_f, speed);
+        put(f2i, sm_f, input_face_id);
       }
     }
 

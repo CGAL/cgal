@@ -317,6 +317,36 @@ public:
     return data->get_facet_origin();
   }
 
+  static void set_facet_origin(const FacetSPtr& facet,
+                               const FacetSPtr& facet_origin)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_SS3_DEBUG_SPTR(facet_origin);
+    CGAL_precondition(facet->has_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->set_facet_origin(facet_origin);
+  }
+
+  static std::size_t get_input_face_id(const FacetSPtr& facet)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_precondition(facet->has_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
+    CGAL_SS3_DEBUG_SPTR(data);
+    return data->get_input_face_id();
+  }
+
+  static void set_input_face_id(const FacetSPtr& facet,
+                                const std::size_t input_face_id)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_precondition(facet->has_data());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->set_input_face_id(input_face_id);
+  }
+
   static const Plane_3& get_base_plane(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);

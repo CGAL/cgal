@@ -30,6 +30,140 @@
 
 namespace CGAL {
 
+namespace {
+
+template<typename TriangleMeshIn, typename PolygonMeshOut, typename Geom_traits>
+struct Output_processor
+{
+  using face_descriptor_in = typename boost::graph_traits<TriangleMeshIn>::face_descriptor;
+  using face_descriptor_out = typename boost::graph_traits<PolygonMeshOut>::face_descriptor;
+
+  using Polyhedron = typename CGAL::Straight_skeletons_3::internal::HDS::Polyhedron<Geom_traits>;
+  using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
+
+  using FaceGraphIO = typename CGAL::Straight_skeletons_3::IO::FaceGraphIO<Geom_traits>;
+
+  using FT = typename Geom_traits::FT;
+
+  // Helper to process a single result with given named parameters
+  template <typename NamedParameters>
+  static bool process_one(std::size_t result_index,
+                          const std::vector<PolyhedronSPtr>& results_p,
+                          const std::vector<FT>& save_times,
+                          const TriangleMeshIn& tmesh,
+                          std::vector<PolygonMeshOut>& results,
+                          bool outwards,
+                          const NamedParameters& np_out)
+  {
+    using parameters::is_default_parameter;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    const FT& save_time = save_times[result_index];
+
+    auto do_triangulate = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
+
+    std::unordered_map<face_descriptor_out, std::size_t> of2fi;
+    auto of2fi_pm = boost::make_assoc_property_map(of2fi);
+
+    CGAL_SS3_TRACE("Post processing of result @ time: " << save_time)
+
+    PolyhedronSPtr result_p = results_p[result_index];
+    CGAL_assertion(result_p && result_p->is_consistent());
+
+    CGAL_SS3_TRACE("At time: " << save_time << ", Polyhedron with " << result_p->vertices().size()
+                      << " vertices and " << result_p->facets().size() << " faces");
+
+    PolygonMeshOut result_t;
+    bool success = FaceGraphIO::save(result_p, result_t,
+                                      CGAL::parameters::do_not_triangulate_faces(do_triangulate)
+                                                       .face_to_face_map(of2fi_pm));
+    if (!success) {
+      CGAL_SS3_TRACE_V(1, "Error: failed to convert back to Surface_mesh");
+      return false;
+    }
+
+    std::unordered_map<face_descriptor_out, face_descriptor_in> def_f2f;
+    auto def_f2f_pm = boost::make_assoc_property_map(def_f2f);
+    auto f2f = choose_parameter(get_parameter(np_out, internal_np::face_to_face_map), def_f2f_pm);
+
+    std::cout << "f2f is provided? " << !(is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value) << std::endl;
+
+    for (face_descriptor_out fo : faces(result_t)) {
+      std::size_t index = get(of2fi_pm, fo);
+      std::cout << "index of output face " << fo << " is " << index << std::endl;
+      CGAL_assertion(index < num_faces(tmesh));
+      face_descriptor_in fi = *(std::next(faces(tmesh).begin(), index));
+      put(f2f, fo, fi);
+    }
+
+    CGAL_postcondition(result_t.is_valid());
+    CGAL_postcondition(is_valid_face_graph(result_t));
+    CGAL_postcondition(CGAL::is_closed(result_t));
+    CGAL_postcondition(CGAL::is_triangle_mesh(result_t));
+    CGAL_postcondition(!CGAL::Polygon_mesh_processing::has_degenerate_faces(result_t));
+    CGAL_postcondition(!CGAL::Polygon_mesh_processing::does_self_intersect(result_t));
+
+    CGAL_SS3_TRACE("At time: " << save_time << ", Surface_mesh with " << num_vertices(result_t)
+                      << " vertices and " << num_faces(result_t) << " faces");
+
+    if (outwards) {
+      CGAL_SS3_TRACE("Reversing face orientations...");
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(result_t);
+    }
+
+    results.push_back(result_t);
+
+    return true;
+  }
+
+  // Base case: no more named parameters, use defaults for remaining results
+  static bool process(std::size_t result_index,
+                      const std::vector<PolyhedronSPtr>& results_p,
+                      const std::vector<FT>& save_times,
+                      const TriangleMeshIn& tmesh,
+                      std::vector<PolygonMeshOut>& results,
+                      bool outwards)
+  {
+    std::cout << "process(" << result_index << ", default NP)" << std::endl;
+
+    if (result_index >= results_p.size())
+      return true;
+
+    // the variadic was shorter than the number of results, so we use default parameters for the remaining ones
+    if (!process_one(result_index, results_p, save_times, tmesh, results, outwards, parameters::default_values()))
+      return false;
+
+    return process(result_index + 1, results_p, save_times, tmesh, results, outwards);
+  }
+
+  // Recursive case: process one result with the first named parameter, then recurse with remaining
+  template<typename FirstNP, typename... RestNPs>
+  static bool process(std::size_t result_index,
+                      const std::vector<PolyhedronSPtr>& results_p,
+                      const std::vector<FT>& save_times,
+                      const TriangleMeshIn& tmesh,
+                      std::vector<PolygonMeshOut>& results,
+                      bool outwards,
+                      const FirstNP& first_np,
+                      const RestNPs&... rest_nps)
+  {
+    std::cout << "process(" << result_index << ")" << std::endl;
+    std::cout << "f2f is provided? " << !(parameters::is_default_parameter<FirstNP, internal_np::face_to_face_map_t>::value) << std::endl;
+
+    if (result_index >= results_p.size())
+      return true;  // All results processed successfully
+
+    if (!process_one(result_index, results_p, save_times, tmesh, results, outwards, first_np))
+      return false;
+
+    // the variadic was shorter than the number of results, so we use default parameters for the remaining ones
+    return process(result_index + 1, results_p, save_times, tmesh, results, outwards, rest_nps...);
+  }
+};
+
+} // namespace
+
 /*!
  * \ingroup PkgStraightSkeleton3OffsettingFunctions
  *
@@ -101,7 +235,7 @@ namespace CGAL {
  *     \cgalParamExtra{Note that sometimes faces must be triangulated as to be representable in
  *                     a halfedge data structure, for example faces with holes.}
  *    \cgalParamNEnd
- *    \cgalParamNBegin{face_weight_map}
+ *    \cgalParamNBegin{face_to_face_map}
  *     \cgalParamDescription{a property map filled by this function, associating to an output face
  *                           its corresponding input face.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `std::pair<boost::graph_traits<PolygonMeshOut>::%face_descriptor, const PolygonMeshOut&>`
@@ -118,16 +252,20 @@ namespace CGAL {
 template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename FT,
           typename NamedParametersIn = parameters::Default_named_parameters,
-          typename NamedParametersOut = parameters::Default_named_parameters>
+          typename... NamedParametersOut>
 bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh,
                                                      const std::vector<FT>& save_times, // intentional copy
                                                      std::vector<PolygonMeshOut>& results,
                                                      const NamedParametersIn& np_in = parameters::default_values(),
-                                                     const NamedParametersOut& np_out = parameters::default_values())
+                                                     const NamedParametersOut&... nps_out)
 {
   namespace SS3i = CGAL::Straight_skeletons_3::internal;
   namespace SS3io = CGAL::Straight_skeletons_3::IO;
   namespace PMP = CGAL::Polygon_mesh_processing;
+
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+  using parameters::choose_parameter;
 
   using Geom_traits = typename GetGeomTraits<TriangleMeshIn, NamedParametersIn>::type;
 
@@ -135,6 +273,9 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
   using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
+
+  using face_descriptor_in = typename boost::graph_traits<TriangleMeshIn>::face_descriptor;
+  using face_descriptor_out = typename boost::graph_traits<PolygonMeshOut>::face_descriptor;
 
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
@@ -167,43 +308,10 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
     return false;
   }
 
-  for (std::size_t i=0; i<results_p.size(); ++i) {
-    const FT& save_time = save_times[i];
-
-    CGAL_SS3_TRACE("Post processing of result @ " << save_time)
-
-    PolyhedronSPtr result_p = results_p[i];
-    CGAL_assertion(result_p && result_p->is_consistent());
-
-    CGAL_SS3_TRACE("At time: " << save_time << ", Polyhedron with " << result_p->vertices().size()
-                     << " vertices and " << result_p->facets().size() << " faces");
-
-    // Convert back to Surface_mesh structure to save the results.
-    // This could be avoided if a polygonal output was prefered, but then we
-    // need some specific conversion code.
-    PolygonMeshOut result_t;
-    bool success = FaceGraphIO::save(result_p, result_t, np_out);
-    if (!success) {
-      CGAL_SS3_TRACE_V(1, "Error: failed to convert back to Surface_mesh");
-      return false;
-    }
-
-    CGAL_postcondition(result_t.is_valid());
-    CGAL_postcondition(is_valid_face_graph(result_t));
-    CGAL_postcondition(CGAL::is_closed(result_t));
-    CGAL_postcondition(CGAL::is_triangle_mesh(result_t));
-    CGAL_postcondition(!PMP::has_degenerate_faces(result_t));
-    CGAL_postcondition(!PMP::does_self_intersect(result_t));
-
-    CGAL_SS3_TRACE("At time: " << save_time << ", Surface_mesh with " << num_vertices(result_t)
-                     << " vertices and " << num_faces(result_t) << " faces");
-
-    if (outwards) {
-      CGAL_SS3_TRACE("Reversing face orientations...");
-      PMP::reverse_face_orientations(result_t);
-    }
-
-    results.push_back(result_t);
+  // Start recursive processing with all named parameters
+  using OutputProcessor = Output_processor<TriangleMeshIn, PolygonMeshOut, Geom_traits>;
+  if (!OutputProcessor::process(0, results_p, save_times, tmesh, results, outwards, nps_out...)) {
+    return false;
   }
 
   return true;
