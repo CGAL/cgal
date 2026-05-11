@@ -15,6 +15,7 @@
 #include <CGAL/license/Constrained_triangulation_3.h>
 #include <CGAL/draw_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
+#include <CGAL/Constrained_triangulation_3_types.h>
 #include <CGAL/type_traits.h>
 #include <algorithm>
 
