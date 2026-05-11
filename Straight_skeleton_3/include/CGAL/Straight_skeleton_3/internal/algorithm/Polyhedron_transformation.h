@@ -983,7 +983,7 @@ public:
     // The tag is a template parameter because for debugging outputs,
   // we might want to tolerate intersections
   template <typename CDT2Tag>
-  static auto triangulate_facet(const FacetSPtr& facet)
+  static auto construct_facet_triangulation(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
 
@@ -1063,7 +1063,7 @@ public:
     facet->sort_vertices();
 
     using CDT2_Tag = CGAL::No_constraint_intersection_tag;
-    auto pcdt = triangulate_facet<CDT2_Tag>(facet);
+    auto pcdt = construct_facet_triangulation<CDT2_Tag>(facet);
 
     using PCDT = decltype(pcdt);
     using PCDT_FH = typename PCDT::Face_handle;
