@@ -6,14 +6,16 @@ project(Straight_skeleton_3_Examples)
 
 find_package(CGAL REQUIRED)
 
-# create a target per cppfile
-file(
-  GLOB cppfiles
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}")
-endforeach()
+create_single_source_cgal_program("create_offset_of_non_triangle_polyhedron.cpp")
+create_single_source_cgal_program("create_offset_polyhedra.cpp")
+create_single_source_cgal_program("create_straight_skeleton_3.cpp")
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StraightSkel.ini
-               ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini COPYONLY)
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("create_offset_and_remesh.cpp")
+  target_link_libraries(create_offset_and_remesh PRIVATE CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: Several examples require the Eigen library, and will not be compiled.")
+endif()
