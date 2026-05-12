@@ -35,7 +35,7 @@ public:
     Z2(char i=0) : _i(i ? 1 : 0 ) {}
 
     // Copy constructor
-    Z2(const Z2& a) : _i(a._i) {}
+    Z2(const Z2& a) = default;
 
     /** \brief Returns 2 (ie.\ p such that `Z2`=\f$\mathbb Z/2\mathbb Z\f$). */
     char operator() () { return char(2); }

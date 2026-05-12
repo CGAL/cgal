@@ -22,7 +22,7 @@ typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> 
 typedef Sparse_matrix_base::Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 typedef Sparse_matrix_base::Sparse_matrix_type<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
-int main(int argc, char **argv)
+int main()
 {
 #if 1
     std::cerr << "-- Test Sparse_matrices read/write" << std::endl;

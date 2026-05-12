@@ -234,7 +234,7 @@ public:
     void eye (size_t nrows, size_t  ncols) {
         *this = Sparse_matrix_template(nrows, ncols);
         size_t nmin((nrows< ncols)?nrows:ncols);
-        for (int i=0; i<nmin; ++i)
+        for (std::size_t i=0; i<nmin; ++i)
             set_coefficient(i, i, 1);
     }
 
@@ -253,15 +253,7 @@ public:
      *
      * \pre The matrices must have the same type.
      */
-    Sparse_matrix_template& operator=(const Sparse_matrix_template& otherToCopy)
-    {
-        _chainsStates = otherToCopy._chainsStates;
-        _size = otherToCopy._size;
-        _chains = otherToCopy._chains;
-
-        return *this;
-    }
-
+    Sparse_matrix_template& operator=(const Sparse_matrix_template& otherToCopy) = default;
 
     /**
      * \brief Cleans a SparseMatrix (set all coefficients to zero).
@@ -2003,7 +1995,7 @@ std::ostream& write_matrix (const Sparse_matrix_template<_CT, OSM::COLUMN, SCT>&
     // Output the number of coefficients
     out << vec_i.size() << std::endl ;
     // Output all coefficients : i j val
-    for (int n=0; n<vec_i.size(); ++n)
+    for (std::size_t n=0; n<vec_i.size(); ++n)
         out << vec_i.at(n) << " " << vec_j.at(n) << " " << vec_val.at(n) << std::endl ;
     return out ;
 }
@@ -2033,7 +2025,7 @@ std::ostream& write_matrix (const Sparse_matrix_template<_CT, OSM::ROW, SCT>& M,
     // Output the number of coefficients
     out << vec_i.size() << std::endl ;
     // Output all coefficients : i j val
-    for (int n=0; n<vec_i.size(); ++n)
+    for (std::size_t n=0; n<vec_i.size(); ++n)
         out << vec_i.at(n) << " " << vec_j.at(n) << " " << vec_val.at(n) << std::endl ;
     return out ;
 }

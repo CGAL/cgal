@@ -84,11 +84,12 @@ protected:
     /* \brief Type of data stored in the chain: map between indices and coefficients. */
     typedef std::pair<size_t, CoefficientRing> pair;
 
+    /* \brief The chain size. */
+    size_t _upperBound;
+
     /* \brief The chain inner representation and storage of data. */
     std::unordered_map<size_t, CoefficientRing> _chainData;
 
-    /* \brief The chain size. */
-    size_t _upperBound;
 
 public:
     /**
@@ -493,7 +494,7 @@ public:
      * \param index The index to check.
      * \return True if the data is null at given index.
      */
-    const bool is_null(size_t index) const {
+    bool is_null(size_t index) const {
         return _chainData.find(index) == _chainData.end();
     }
 
@@ -502,7 +503,7 @@ public:
      *
      * \return True if the chain is null.
      */
-    const bool is_null() const {
+    bool is_null() const {
         return _chainData.size() == 0;
     }
 
@@ -891,8 +892,6 @@ void write_chain (Sparse_chain<_CT, _SF> chain, std::string filename) {
 
 template <typename _CT, int _SF>
 std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in) {
-    using Chain_type = Sparse_chain<_CT, _SF>;
-
     // Read and check type
     int type ;
     in >> type;

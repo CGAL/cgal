@@ -121,7 +121,7 @@ public:
          * \brief Iterator dereference.
          * \returns A not-null index on the billboard or past-the-end index.
          */
-        const std::size_t operator*() const { return index; }
+        std::size_t operator*() const { return index; }
 
         /**
          * \brief Prefix incrementation. Finds the next not-null index.
@@ -173,9 +173,9 @@ public:
 
     private:
         std::size_t index;
-        std::size_t arrayIndex;
         std::size_t size;
         std::vector<std::uint64_t> iteratedBoards;
+        std::size_t arrayIndex;
     };
 
     /**
@@ -220,7 +220,7 @@ public:
          * \brief Iterator dereference.
          * \returns A not-null index on the billboard or past-the-end index.
          */
-        const std::size_t operator*() const { return index; }
+        std::size_t operator*() const { return index; }
 
         /**
          * \brief Prefix incrementation. Finds the next not-null index.
@@ -255,7 +255,7 @@ public:
                 do {
                     std::size_t bb(iteratedBoards[arrayIndex]) ;
                     if (bb == 0)
-                        innerIndex == 64 ;
+                        innerIndex = 64 ;
                     else
                     {
                         // Compute MSB1
@@ -303,9 +303,9 @@ public:
 
     private:
         std::size_t index;
-        std::size_t arrayIndex;
         std::size_t size;
         std::vector<std::uint64_t> iteratedBoards;
+        std::size_t arrayIndex;
     };
 
     /**
@@ -445,7 +445,7 @@ public:
     friend std::istream& operator>>(std::istream &_stream, Bitboard &_bitboard) {
         _bitboard = Bitboard(_bitboard.size()); // Erase _bitboard
         // Read bits
-        for (int i=0; i<_bitboard.size(); ++i) {
+        for (std::size_t i=0; i<_bitboard.size(); ++i) {
             char c ;
             _stream >> c;
             if ((c != '0') && (c != '1')) {
@@ -711,7 +711,7 @@ public:
      */
     bool operator==(const Bitboard& other) const {
         bool res(_size == other._size);
-        for (int i=0; res &&(i<boards.size()); ++i)
+        for (std::size_t i=0; res &&(i<boards.size()); ++i)
             res = res && (boards.at(i) == other.boards.at(i));
         return res;
     }
