@@ -42,7 +42,7 @@ determinant(
  const RT& a00,  const RT& a01,  const RT& a02,
  const RT& a10,  const RT& a11,  const RT& a12,
  const RT& a20,  const RT& a21,  const RT& a22)
-{
+ {
 // First compute the det2x2
   const RT m01 = a00*a11 - a10*a01;
   const RT m02 = a00*a21 - a20*a01;

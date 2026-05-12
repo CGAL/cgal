@@ -199,8 +199,10 @@ do_intersect(const typename K::Triangle_3& t,
 
   const Orientation abcp = abcp_abcq.first;
   const Orientation abcq = abcp_abcq.second;
-  CGAL_assertion(orientation(a,b,c,p) == abcp);
-  CGAL_assertion(orientation(a,b,c,q) == abcq);
+  CGAL_assertion_code(const Orientation abcpbis = orientation(a,b,c,p);)
+  CGAL_assertion_code(const Orientation abcqbis = orientation(a,b,c,q);)
+  CGAL_assertion(abcpbis == abcp);
+  CGAL_assertion(abcqbis == abcq);
 #else
 const Orientation abcp = orientation(a,b,c,p);
 const Orientation abcq = orientation(a,b,c,q);
