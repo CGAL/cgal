@@ -1274,6 +1274,7 @@ public:
   using Geom_traits = typename T_3::Geom_traits;
   using Point_3 = typename T_3::Point;
   using Segment_3 = typename Geom_traits::Segment_3;
+  using Triangle_3 = typename Geom_traits::Triangle_3;
   using Vector_3 = typename Geom_traits::Vector_3;
   using Locate_type = typename T_3::Locate_type;
   using size_type = typename T_3::size_type;
@@ -1486,21 +1487,24 @@ protected:
     return std::nullopt;
   }
 
-  template <typename Offsets, typename Facets>
+  template <typename Components, typename Map>
   CGAL::Surface_mesh<Point_3>
   construct_star_component_mesh(std::size_t component_index,
-                                const Offsets& component_offsets,
-                                const Facets& facets) const
+                                  const Components& components,
+                                  const Map& map_from_incident_constraint_face_id_to_new_triangles) const
   {
     CGAL::Surface_mesh<Point_3> component_mesh;
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3>> triangles;
     std::size_t vertex_index = 0;
-    for(std::size_t facet_id = component_offsets[component_index - 1],
-                     end = component_offsets[component_index];
+    for(std::size_t facet_id = components.component_offsets[component_index - 1],
+                         end = components.component_offsets[component_index];
         facet_id < end; ++facet_id)
     {
-      const auto& [cell, facet_index, _] = facets[facet_id];
+      const auto& [cell, facet_index, type] = components.facets[facet_id];
+      if(type == Star_components_facets::Type_of_facet::INCIDENT_TO_V) {
+        continue;
+      }
       if(tr().is_infinite(Facet(cell, facet_index))) {
         continue;
       }
@@ -1512,15 +1516,20 @@ protected:
       triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
       vertex_index += 3;
     } // end for each facet in the component
+    const auto& incident_face_ids = components.component_incident_constraint_face_ids[component_index - 1];
+    for(auto face_id : incident_face_ids) {
+      const auto& new_triangles = map_from_incident_constraint_face_id_to_new_triangles.at(face_id);
+      for(const auto& triangle : new_triangles) {
+        points.push_back(triangle[0]);
+        points.push_back(triangle[1]);
+        points.push_back(triangle[2]);
+        triangles.push_back({vertex_index, vertex_index + 1, vertex_index + 2});
+        vertex_index += 3;
+      }
+    }
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
-
-    std::vector<std::pair<std::size_t, typename CGAL::Surface_mesh<Point_3>::Face_index>>
-        triangle_index_to_face_descriptor;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
-        points,
-        triangles,
-        component_mesh,
-        CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(triangle_index_to_face_descriptor)));
+    CGAL::Polygon_mesh_processing::orient_polygon_soup(points, triangles);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh);
     return component_mesh;
   }
 
@@ -1528,18 +1537,19 @@ protected:
     return CGAL::Polygon_mesh_processing::kernel_point(component_mesh, parameters::allow_open_input(true));
   }
 
-  template <typename Offsets, typename Facets>
+  template <typename Components, typename Map>
   CGAL::Surface_mesh<Point_3>
-  construct_link_mesh_for_debug(const Offsets& component_offsets,
-                                const Facets& facets) const
+  construct_link_mesh_for_debug(const Components& components,
+                                const Map& map_from_incident_constraint_face_id_to_new_triangles) const
   {
     using Mesh = CGAL::Surface_mesh<Point_3>;
     using face_descriptor = typename Mesh::Face_index;
     Mesh link_mesh;
     auto [patch_id_map, _] = link_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
 
-    for(std::size_t component_index = 1; component_index < component_offsets.size(); ++component_index) {
-      Mesh component_mesh = construct_star_component_mesh(component_index, component_offsets, facets);
+    for(std::size_t component_index = 1; component_index < components.component_offsets.size(); ++component_index) {
+      Mesh component_mesh = construct_star_component_mesh(component_index, components,
+                                                          map_from_incident_constraint_face_id_to_new_triangles);
 
       std::vector<face_descriptor> new_faces;
       auto out_it = boost::make_function_output_iterator(
@@ -1552,9 +1562,12 @@ protected:
     return link_mesh;
   }
 
-  template <typename Offsets, typename Facets>
-  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v, const Offsets& component_offsets, const Facets& facets) const {
-    const auto link_mesh = construct_link_mesh_for_debug(component_offsets, facets);
+  template <typename Components, typename Map>
+  void dump_link_mesh_of_vertex_to_ply(Vertex_handle v,
+                                       const Components& components,
+                                       const Map& map_from_incident_constraint_face_id_to_new_triangles) const {
+    const auto link_mesh =
+        construct_link_mesh_for_debug(components, map_from_incident_constraint_face_id_to_new_triangles);
 
     std::stringstream filename;
     filename << "dump_link_mesh_vertex" << IO::oformat(v, With_offset_tag{}) << ".ply";
@@ -1759,7 +1772,9 @@ protected:
     return out;
   } // end collect_star_components_facets(..)
 
-  template <typename New_CDT_2_face_handles_output_iterator, typename Map_from_hole_edge_to_facet_3d>
+  enum Run_mode { NORMAL_RUN, DRY_RUN };
+
+  template <typename CDT_2, typename New_CDT_2_face_handles_output_iterator, typename Map_from_hole_edge_to_facet_3d>
   std::pair<New_CDT_2_face_handles_output_iterator, Facet>
   fill_cdt_2_hole_with_delaunay(CDT_2& cdt_2,
                                 Face_index face_index,
@@ -1767,7 +1782,8 @@ protected:
                                 std::list<CDT_2_edge>& hole_boundary,
                                 const Map_from_hole_edge_to_facet_3d& map_from_hole_edge_to_facet_3d,
                                 Face_is_outside_the_face is_outside_the_face,
-                                New_CDT_2_face_handles_output_iterator new_face_handles_out)
+                                New_CDT_2_face_handles_output_iterator new_face_handles_out,
+                                Run_mode run_mode = NORMAL_RUN)
   {
     const bool is_a_half_hole = vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE;
     if(this->debug().move_Steiner_vertices()) {
@@ -1985,7 +2001,16 @@ protected:
 
       *new_face_handles_out++ = fh_2d;
     }; // end of `action_for_each_new_2d_face`
-    CGAL::fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator(action_for_each_new_2d_face));
+    switch(run_mode) {
+    case NORMAL_RUN:
+      CGAL::fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator(action_for_each_new_2d_face));
+      break;
+    case DRY_RUN:
+      CGAL::fill_hole_delaunay(cdt_2, hole_boundary, new_face_handles_out);
+      break;
+    default:
+      CGAL_unreachable();
+    }
     return {new_face_handles_out, half_hole_front_facet};
   }
 
@@ -1994,12 +2019,20 @@ protected:
   remove_Steiner_vertex_from_cdt_2(Vertex_handle v,
                                    CDT_3_vertex_type vertex_type,
                                    Face_index face_id,
-                                   New_CDT_2_face_handles_output_iterator new_face_handles_out)
+                                   New_CDT_2_face_handles_output_iterator new_face_handles_out,
+                                   Run_mode run_mode = NORMAL_RUN)
   {
     std::tuple<New_CDT_2_face_handles_output_iterator, Facet, Facet> result{new_face_handles_out, {}, {}};
     auto& [new_face_handles_out_it, half_hole_front_facet, second_half_hole_front_facet] = result;
-    auto& mutable_cdt_2 = non_const_face_cdt_2(face_id);
-    const auto& cdt_2 = mutable_cdt_2;
+
+    using CDT_2_base = typename CDT_2::Triangulation;
+    auto& original_mutable_cdt_2 = static_cast<CDT_2_base&>(non_const_face_cdt_2(face_id));
+    std::unique_ptr<CDT_2_base> cdt_2_copy_ptr{};
+    if(run_mode == DRY_RUN) {
+      cdt_2_copy_ptr.reset(new CDT_2_base(original_mutable_cdt_2));
+    }
+    auto& mutable_cdt_2 = (run_mode == DRY_RUN) ? *cdt_2_copy_ptr : original_mutable_cdt_2;
+    const auto & cdt_2 = mutable_cdt_2;
 
     typename CDT_2::Locate_type lt;
     int i;
@@ -2089,7 +2122,7 @@ protected:
       std::for_each(faces_to_delete.begin(), faces_to_delete.end(),
                     [&mutable_cdt_2](CDT_2_face_handle f) { mutable_cdt_2.delete_face(f); });
       return fill_cdt_2_hole_with_delaunay(mutable_cdt_2, face_id, vertex_type, hole_boundary, hole_boundary_map,
-                                           is_outside_the_face, new_face_handles_out);
+                                           is_outside_the_face, new_face_handles_out, run_mode);
     };
 
     auto set_constrained = [&](CDT_2_edge e, bool is_constrained) {
@@ -2170,7 +2203,8 @@ protected:
       auto [out_it, facet_side_1] = bore_hole_and_fill_with_delaunay(
           vertex_type, hole_side_1, hole_side_1_faces_to_delete, side_1_hole_is_outside_the_face);
       new_face_handles_out = out_it;
-      CGAL_assertion(side_1_hole_is_outside_the_face == OUTSIDE || facet_side_1.first != Cell_handle{});
+      CGAL_assertion(run_mode == DRY_RUN ||
+                     side_1_hole_is_outside_the_face == OUTSIDE || facet_side_1.first != Cell_handle{});
 
       //  - now the edge opposite to `(side_2_last_face, side_2_last_edge_index)` is on the border of the hole
       //    `hole_side_2`, so we can start sewing from there
@@ -2179,7 +2213,8 @@ protected:
       auto [out_it_2, facet_side_2] = bore_hole_and_fill_with_delaunay(
           vertex_type, hole_side_2, hole_side_2_faces_to_delete, side_2_hole_is_outside_the_face);
       new_face_handles_out = out_it_2;
-      CGAL_assertion(side_2_hole_is_outside_the_face == OUTSIDE || facet_side_2.first != Cell_handle{});
+      CGAL_assertion(run_mode == DRY_RUN ||
+                     side_2_hole_is_outside_the_face == OUTSIDE || facet_side_2.first != Cell_handle{});
 
       half_hole_front_facet = facet_side_1;
       second_half_hole_front_facet = facet_side_2;
@@ -2264,13 +2299,42 @@ protected:
       }
       return false;
     }
+    const auto v_type = vertex_type(v);
+
+    std::map<Face_index, std::vector<Triangle_3>> map_from_incident_constraint_face_id_to_new_triangles;
+
+    auto dry_run_output_iterator = [&](Face_index face_id) {
+      auto* triangles_for_this_face_ptr = &map_from_incident_constraint_face_id_to_new_triangles[face_id];
+      std::function<void(CDT_2_face_handle)> func = [&,triangles_for_this_face_ptr](CDT_2_face_handle fh_2d) {
+        const auto v1 = vertex_3d(fh_2d->vertex(0));
+        const auto v2 = vertex_3d(fh_2d->vertex(1));
+        const auto v3 = vertex_3d(fh_2d->vertex(2));
+        triangles_for_this_face_ptr->emplace_back(v1->point(), v2->point(), v3->point());
+      };
+      return boost::make_function_output_iterator(func);
+    };
+
+    if(v_type == CDT_3_vertex_type::STEINER_IN_FACE) {
+      CGAL_assertion(star_components.component_incident_constraint_face_ids.size() == 2);
+      [[maybe_unused]] const auto& [face_id, _] = star_components.face_ids_between_consecutive_components.front();
+      remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, dry_run_output_iterator(face_id), DRY_RUN);
+    } else {
+      CGAL_assertion(v_type == CDT_3_vertex_type::STEINER_ON_EDGE);
+      for(std::size_t component_index = 0, end = star_components.face_ids_between_consecutive_components.size();
+          component_index < end; ++component_index)
+      {
+        const auto& [face_id, _] = star_components.face_ids_between_consecutive_components[component_index];
+
+        remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, dry_run_output_iterator(face_id), DRY_RUN);
+      }
+    }
 
     const auto components_central_points = std::invoke([&]() {
       std::optional<boost::container::small_vector<Point_3, 8>> central_points{std::in_place};
       central_points->reserve(nb_of_star_components);
       for(std::size_t component_index = 1; component_index <= nb_of_star_components; ++component_index) {
-        auto component_mesh =
-            construct_star_component_mesh(component_index, star_components.component_offsets, star_components.facets);
+        auto component_mesh = construct_star_component_mesh(component_index, star_components,
+                                                            map_from_incident_constraint_face_id_to_new_triangles);
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
         if(this->debug().move_Steiner_vertices()) {
           std::cerr << "  - incident constraint faces ids of component #" << component_index << ": {"
@@ -2300,7 +2364,7 @@ protected:
     }); // end compute central points for each component
 
     if(this->debug().move_Steiner_vertices()) {
-      dump_link_mesh_of_vertex_to_ply(v, star_components.component_offsets, star_components.facets);
+      dump_link_mesh_of_vertex_to_ply(v, star_components, map_from_incident_constraint_face_id_to_new_triangles);
     }
 
     if(!components_central_points.has_value()) {
@@ -2356,7 +2420,6 @@ protected:
     std::size_t nb_of_new_2d_faces = 0;
     CGAL::Counting_output_iterator output_iterator{&nb_of_new_2d_faces};
 
-    const auto v_type = vertex_type(v);
     if(v_type == CDT_3_vertex_type::STEINER_IN_FACE) {
       CGAL_assertion(star_components.component_incident_constraint_face_ids.size() == 2);
       const auto& [face_id, orientation] = star_components.face_ids_between_consecutive_components.front();
