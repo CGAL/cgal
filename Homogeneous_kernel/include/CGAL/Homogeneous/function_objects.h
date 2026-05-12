@@ -4355,6 +4355,7 @@ namespace HomogeneousKernelFunctors {
       return std::make_pair( (*this)(p, q, r, s), (*this)(p, q, r, t) );
     }
 
+    Orientation
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     {
