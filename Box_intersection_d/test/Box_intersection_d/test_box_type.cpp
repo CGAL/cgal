@@ -21,8 +21,8 @@ Bb random_box(CGAL::Random& r){
 
     double x2 = r.get_double(min, max);
     double y2 = r.get_double(min, max);
-    return Bb(std::min(x1, x2), std::min(y1, y2),
-              std::max(x1, x2), std::max(y1, y2));
+    return Bb((std::min)(x1, x2), (std::min)(y1, y2),
+              (std::max)(x1, x2), (std::max)(y1, y2));
 }
 
 void random_test(CGAL::Random& r){
