@@ -115,8 +115,10 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
             for( int dim = 1; dim <= last_dim; ++dim )
                 if constexpr( in_order )
+                {
                     if( !Traits::does_intersect( *p, *i, dim ) )
                         goto no_intersection;
+                }
                 else
                     if( !Traits::does_intersect( *i, *p, dim ) )
                         goto no_intersection;
