@@ -1818,6 +1818,7 @@ private:
           halfedges_around_target(he, mesh_))
       {
         if(!is_border(h, mesh_) &&
+           is_triangle(h, mesh_) &&
            is_degenerate_triangle_face(face(h, mesh_), mesh_,
                                        parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(gt_)))
