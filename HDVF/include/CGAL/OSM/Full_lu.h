@@ -35,21 +35,27 @@ The class `Full_lu` implements LU decomposition via full pivoting for an `OSM::S
 
  In order to take advantage of the sparse structure of matrices, internal computations are carried out over ROW matrices. Hence, given a COLUMN matrix \f$A\f$, the algorithm actually factors \f$A^t\f$ and performs further computations (`inverse()`, `solve()` ...) based on the decomposition of \f$A^t\f$. As a consequence, in order to optimise searches, pivots are visited row-wise (which is unusual).
 
- \tparam Sparse_matrix Type of the argument Sparse_matrix.
+ \tparam SparseMatrix Type of the argument Sparse_matrix.
  */
-template <typename SparseMatrix>
+template <typename CoefficientRing, int StorageFormat, typename SparseMatrix>
 class Full_lu {
 public:
-    /** \brief Type of the argument Sparse_matrix. */
-    typedef SparseMatrix Sparse_matrix;
     /** \brief Type of underlying coefficient ring. */
-    typedef typename Sparse_matrix::Coefficient_ring Coefficient_ring;
+    typedef CoefficientRing Coefficient_ring;
+    /** \brief Type of input matrix. */
+    typedef SparseMatrix::template Sparse_matrix_type<Coefficient_ring, StorageFormat> Sparse_matrix_arg;
+//    /** \brief Type of `Sparse_matrix`. */
+//    template <int _SF>
+//    using Sparse_matrix_type = SparseMatrix::template Sparse_matrix_type<CoefficientType,_SF>;
+//    /** \brief Type of `Sparse_matrix` underlying chains. */
+//    template <int _SF>
+//    using Sparse_chain_type = SparseMatrix::template Sparse_chain_type<_CT,_SF>;
 
 protected:
     /* \brief Type of row matrices used internally. */
-    using Row_matrix = OSM::Sparse_matrix<Coefficient_ring, ROW>;
+    using Row_matrix = SparseMatrix::template Sparse_matrix_type<Coefficient_ring, OSM::ROW>;
     /* \brief Type of row chains used internally. */
-    using Row_chain = OSM::Sparse_chain<Coefficient_ring, ROW>;
+    using Row_chain = SparseMatrix::template Sparse_matrix_type<Coefficient_ring, ROW>;
     // Inner representation of the decomposition
     Row_matrix _P, _Q, _L, _U;
     // Storage format of initial matrix
@@ -65,13 +71,13 @@ private:
     std::pair<size_t, size_t> choose_pivot(const Row_matrix& U, size_t k, bool& invert_found) const;
 
 public:
-    /** \brief Constructor from a Sparse_matrix.
+    /** \brief Constructor from a sparse matrix.
      *
-     * \param A Sparse_matrix to decompose.
+     * \param A sparse matrix to decompose.
      *
      * \exception Invalid_matrix If the matrix `A`is not square, raises a `%std::invalid_argument`.
      */
-    Full_lu(const Sparse_matrix& A);
+    Full_lu(const SparseMatrix::template Sparse_matrix_type<CoefficientRing, StorageFormat>& A);
 
     /** \brief Performs a full LU decomposition over an `IntegralDomainWithoutDivision` coefficient ring.
      *
@@ -83,16 +89,16 @@ public:
      *
      * \param B Right-hand side matrix of the system.
      */
-    Sparse_matrix solve(const Sparse_matrix& B) {
+    Sparse_matrix_arg solve(const Sparse_matrix_arg& B) {
         if (_computed) {
             if (_storage_format == ROW) {
-                Sparse_matrix Z(forward_substitution_L(_L, _P*B));
-                Sparse_matrix Y(backward_substitution_U(_U, Z));
+                Sparse_matrix_arg Z(forward_substitution_L(_L, _P*B));
+                Sparse_matrix_arg Y(backward_substitution_U(_U, Z));
                 return _Q*Y;
             }
             else {
-                Sparse_matrix Z(forward_substitution_L(Row_matrix(_U.transpose()), _Q.transpose()*B));
-                Sparse_matrix Y(backward_substitution_U(Row_matrix(_L.transpose()), Z));
+                Sparse_matrix_arg Z(forward_substitution_L(Row_matrix(_U.transpose()), _Q.transpose()*B));
+                Sparse_matrix_arg Y(backward_substitution_U(Row_matrix(_L.transpose()), Z));
                 return _P.transpose()*Y;
             }
         }
@@ -105,7 +111,7 @@ public:
 protected:
     // Solves UX = B where U is an upper matrix and B a Sparse_matrix
     // Pre: the matrix U must be invertible (over the Coefficient_ring)
-    Sparse_matrix backward_substitution_U(const Row_matrix& U, const Sparse_matrix& B) {
+    Sparse_matrix_arg backward_substitution_U(const Row_matrix& U, const Sparse_matrix_arg& B) {
         Row_matrix X(B.dimensions());
         // Init X_n
         Coefficient_ring un1n1_inv(get_coefficient(U,_n-1,_n-1).inverse());
@@ -113,7 +119,7 @@ protected:
         // Backward compute rows of X
         for (int i=_n-2; i>=0; --i) {
             Coefficient_ring uii_inv(get_coefficient(U,i,i).inverse());
-            Row_chain Xi(get_row(B, i)*uii_inv);
+            Row_chain Xi = get_row(B, i)*uii_inv;
             for (int j=i+1; j<_n; ++j) {
                 Xi -= cget_row(X,j) * get_coefficient(U, i, j) * uii_inv;
             }
@@ -124,7 +130,7 @@ protected:
 
     // Solves LX = B where L is a lower matrix and B a Sparse_matrix
     // Pre: the matrix L must be invertible (over the Coefficient_ring)
-    Sparse_matrix forward_substitution_L(const Row_matrix& L, const Sparse_matrix& B) {
+    Sparse_matrix_arg forward_substitution_L(const Row_matrix& L, const Sparse_matrix_arg& B) {
         Row_matrix X(B.dimensions());
         // Init X_0
         Coefficient_ring l00_inv(get_coefficient(L,0,0).inverse());
@@ -165,7 +171,7 @@ public:
      *
      * \warning For solving linear systems \f$AX=B\f$, please use `Full_lu<Matrix_type>(A).solve(B)` (which is more efficient than computing \f$A^{-1}\times B\f$).
      */
-    Sparse_matrix inverse() {
+    Sparse_matrix_arg inverse() {
         if (_computed) {
             Row_matrix B;
             B.eye(_n, _n);
@@ -178,48 +184,48 @@ public:
     }
 
     /** \brief Output L, U, P, Q matrices to a stream. */
-    template <typename _SM>
-    friend std::ostream& operator<< (std::ostream& out, const Full_lu<_SM>& lu);
+    template <typename CR, int SF, typename SM>
+    friend std::ostream& operator<< (std::ostream& out, const Full_lu<CR, SF, SM>& lu);
 
     /** \brief Returns L. **/
-    const Sparse_matrix& matrix_L() {
+    const Sparse_matrix_arg& matrix_L() {
         // If the initial matrix A was COLUMN, the decomposition is that of A^t
         if (_storage_format == ROW)
             return _L;
         else
-            return Sparse_matrix(_U.transpose());
+            return Sparse_matrix_arg(_U.transpose());
     }
 
     /** \brief Returns U. **/
-    const Sparse_matrix& matrix_U() {
+    const Sparse_matrix_arg& matrix_U() {
         // If the initial matrix A was COLUMN, the decomposition is that of A^t
         if (_storage_format == ROW)
             return _U;
         else
-            return Sparse_matrix(_L.transpose());
+            return Sparse_matrix_arg(_L.transpose());
     }
 
     /** \brief Returns P. **/
-    const Sparse_matrix& matrix_P() {
+    const Sparse_matrix_arg& matrix_P() {
         // If the initial matrix A was COLUMN, the decomposition is that of A^t
         if (_storage_format == ROW)
             return _P;
         else
-            return Sparse_matrix(_Q.transpose());
+            return Sparse_matrix_arg(_Q.transpose());
     }
 
     /** \brief Returns Q. **/
-    const Sparse_matrix& matrix_Q() {
+    const Sparse_matrix_arg& matrix_Q() {
         // If the initial matrix A was COLUMN, the decomposition is that of A^t
         if (_storage_format == ROW)
             return _Q;
         else
-            return Sparse_matrix(_P.transpose());
+            return Sparse_matrix_arg(_P.transpose());
     }
 };
 
-template <typename SparseMatrix>
-Full_lu<SparseMatrix>::Full_lu(const Sparse_matrix& A) {
+template <typename CoefficientRing, int StorageFormat, typename SparseMatrix>
+Full_lu<CoefficientRing, StorageFormat, SparseMatrix>::Full_lu(const SparseMatrix::template Sparse_matrix_type<CoefficientRing, StorageFormat>& A) {
     _storage_format = A.storage_format();
     // Checks that A is square
     size_t nrows(A.dimensions().first), ncols(A.dimensions().second);
@@ -242,8 +248,8 @@ Full_lu<SparseMatrix>::Full_lu(const Sparse_matrix& A) {
     _rank = 0;
 }
 
-template <typename SparseMatrix>
-std::pair<size_t, size_t> Full_lu<SparseMatrix>::choose_pivot(const typename Full_lu<SparseMatrix>::Row_matrix& U, size_t k, bool& invert_found) const {
+template <typename CoefficientRing, int StorageFormat, typename SparseMatrix>
+std::pair<size_t, size_t> Full_lu<CoefficientRing, StorageFormat, SparseMatrix>::choose_pivot(const typename Full_lu<CoefficientRing, StorageFormat, SparseMatrix>::Row_matrix& U, size_t k, bool& invert_found) const {
     // Find an invertible element or checks if the smallest absolute value of coefficients in the sub_matrix k.._n, k.._n divides all other elements
     invert_found = false;
     // Visit row by row to use the sparse matrix optimisation
@@ -270,8 +276,8 @@ std::pair<size_t, size_t> Full_lu<SparseMatrix>::choose_pivot(const typename Ful
         return std::pair<size_t, size_t>(min_i,min_j);
 }
 
-template <typename SparseMatrix>
-size_t Full_lu<SparseMatrix>::compute() {
+template <typename CoefficientRing, int StorageFormat, typename SparseMatrix>
+size_t Full_lu<CoefficientRing, StorageFormat, SparseMatrix>::compute() {
     bool invertible(true);
     // Gaussian elimination
     int k=0;
@@ -315,8 +321,8 @@ size_t Full_lu<SparseMatrix>::compute() {
     return k;
 }
 
-template <typename _SM>
-inline std::ostream& operator<< (std::ostream& out, const Full_lu<_SM>& lu) {
+template <typename CoefficientRing, int StorageFormat, typename SparseMatrix>
+inline std::ostream& operator<< (std::ostream& out, const Full_lu<CoefficientRing,StorageFormat,SparseMatrix>& lu) {
     out << "L:" << std::endl;
     out << lu._L;
     out << "U:" << std::endl;

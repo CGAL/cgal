@@ -55,6 +55,10 @@ public:
     /*!  Type of the coefficient ring */
     typedef CoefficientRing Coefficient_ring;
 
+    /** \brief Type of derived sparse matrices. */
+    template <typename CT, int SF>
+    using Sparse_matrix_derived = OSM::Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<CT, SF>;
+
     /*!
      Type of chains iterators.
      */
@@ -70,7 +74,10 @@ public:
     template <typename _CT, int _CTF>
     friend class Sparse_chain;
 
-    template <typename _CT, int _CTF>
+    template <typename _CT, int _CTF, template <typename, int> typename _SCT>
+    friend class Sparse_matrix_template;
+
+    template <template <typename, int> typename _SCT>
     friend class Sparse_matrix;
 
 protected:
@@ -115,6 +122,7 @@ public:
        : _upperBound(otherToCopy._upperBound),  _chainData(otherToCopy._chainData)
     {}
 
+
     /**
      * \brief Assignment.
      *
@@ -126,6 +134,18 @@ public:
 
         return *this;
     }
+
+//    /**
+//     * \brief Assignment.
+//     *
+//     * \pre Chains must have the same `CoefficientRing`.
+//     */
+//    Sparse_chain& operator=(Sparse_chain otherToCopy) {
+//        _upperBound = otherToCopy._upperBound;
+//        _chainData = otherToCopy._chainData;
+//
+//        return *this;
+//    }
 
     /**
      * \brief Size of the chain
@@ -288,7 +308,7 @@ public:
      * \return The result of the matrix multiplication, column-based.
      */
     template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
+    friend Sparse_matrix_derived<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
 
     /** \relates Sparse_chain
      *
@@ -306,7 +326,7 @@ public:
      * \return The result of the matrix multiplication, row-based.
      */
     template <typename _CT>
-    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
+    friend Sparse_matrix_derived<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
 
     /** \relates Sparse_chain
      *
@@ -713,8 +733,8 @@ private:
 
 // COLUMN chain x ROW chain -> COLUMN matrix
 template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
-    Sparse_matrix<_CT, COLUMN> matrix(column._upperBound, row._upperBound);
+Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
+    Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, COLUMN> matrix(column._upperBound, row._upperBound);
 
     for (std::pair<size_t, _CT> pair : row._chainData) {
         Sparse_chain<_CT, COLUMN> tmp(pair.second * column);
@@ -726,8 +746,8 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, co
 
 // COLUMN chain x ROW chain -> ROW matrix
 template <typename _CT>
-Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
-    Sparse_matrix<_CT, ROW> matrix(column._upperBound, row._upperBound);
+Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
+    Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<_CT, ROW> matrix(column._upperBound, row._upperBound);
 
     for (std::pair<size_t, _CT> pair : column._chainData) {
         Sparse_chain<_CT, ROW> tmp(row * pair.second);

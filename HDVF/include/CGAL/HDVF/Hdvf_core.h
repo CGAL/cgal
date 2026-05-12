@@ -90,12 +90,11 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
  \cgalModels{HDVF}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
- \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Sparse_chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
  \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::Sparse_matrix`), providing the type of sparse matrices used.
  */
 
 
-template<typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix>
+template<typename ChainComplex, typename SparseMatrixType = OSM::Sparse_matrix<OSM::Sparse_chain>>
 class Hdvf_core {
 public:
     /*! \brief Type of the underlying chain complex. */
@@ -104,25 +103,32 @@ public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
+/** \brief Template type of underlying sparse chains. */
+    template <typename CR, int SF>
+    using Sparse_chain_base = SparseMatrixType::template Sparse_chain_type<CR, SF>;
+
+    /** \brief Template type of underlying sparse matrices. */
+    template <typename CR, int SF>
+    using Sparse_matrix_base = SparseMatrixType::template Sparse_matrix_type<CR, SF>;
     /*!
      Type of column-major chains
      */
-    typedef ChainType<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+    typedef SparseMatrixType::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN>::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains
      */
-    typedef ChainType<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
+    typedef SparseMatrixType::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW>::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef SparseMatrixType<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+    typedef SparseMatrixType::template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef SparseMatrixType<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
+    typedef SparseMatrixType::template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
 protected:
     /* \brief Flags of the cells.
@@ -308,9 +314,9 @@ protected:
 
     // Extract M(flag_cols)|flag_rows (dimension q_row, q_col for rows and cols respectively)
     // Row version
-    Sub_matrix_data<OSM::Sparse_matrix<Coefficient_ring, OSM::ROW> > extract_sub(const OSM::Sparse_matrix<Coefficient_ring, OSM::ROW>& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
-        using Matrix_type = OSM::Sparse_matrix<Coefficient_ring, OSM::ROW>;
-        using Chain_type = OSM::Sparse_chain<Coefficient_ring, OSM::ROW>;
+    Sub_matrix_data<Sparse_matrix_base<Coefficient_ring, OSM::ROW> > extract_sub(const Sparse_matrix_base<Coefficient_ring, OSM::ROW>& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
+        using Matrix_type = Sparse_matrix_base<Coefficient_ring, OSM::ROW>;
+        using Chain_type = Sparse_chain_base<Coefficient_ring, OSM::ROW>;
         using Sub_data_type = Sub_matrix_data<Matrix_type>;
         // Create the sub matrix
         Matrix_type res(number_of_cells_by_flag(flag_rows, q_rows), number_of_cells_by_flag(flag_cols, q_cols));
@@ -352,9 +358,9 @@ protected:
         return sub;
     }
     // Column version
-    Sub_matrix_data<OSM::Sparse_matrix<Coefficient_ring, OSM::COLUMN> > extract_sub(const OSM::Sparse_matrix<Coefficient_ring, OSM::COLUMN>& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
-        using Matrix_type = OSM::Sparse_matrix<Coefficient_ring, OSM::COLUMN>;
-        using Chain_type = OSM::Sparse_chain<Coefficient_ring, OSM::COLUMN>;
+    Sub_matrix_data<Sparse_matrix_base<Coefficient_ring, OSM::COLUMN> > extract_sub(const Sparse_matrix_base<Coefficient_ring, OSM::COLUMN>& M, int q_rows, int q_cols, PSC_flag flag_rows, PSC_flag flag_cols) {
+        using Matrix_type = Sparse_matrix_base<Coefficient_ring, OSM::COLUMN>;
+        using Chain_type = Sparse_chain_base<Coefficient_ring, OSM::COLUMN>;
         using Sub_data_type = Sub_matrix_data<Matrix_type>;
         // Create the sub matrix
         Matrix_type res(number_of_cells_by_flag(flag_rows, q_rows), number_of_cells_by_flag(flag_cols, q_cols));
