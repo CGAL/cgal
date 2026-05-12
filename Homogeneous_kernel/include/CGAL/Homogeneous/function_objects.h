@@ -4347,7 +4347,14 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Sphere_3       Sphere_3;
 
   public:
-    Orientation
+
+    std::pair<Orientation, Orientation>
+    operator()( const Point_3& p, const Point_3& q,
+                const Point_3& r, const Point_3& s, const Point_3& t) const
+    {
+      return std::make_pair( (*this)(p, q, r, s), (*this)(p, q, r, t) );
+    }
+
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     {
