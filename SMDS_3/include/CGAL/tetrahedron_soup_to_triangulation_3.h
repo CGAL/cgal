@@ -201,10 +201,10 @@ namespace CGAL {
     Default_facet_map empty_map;
     Default_subdomains subdomain_indices(tets.size(), Subdomain_index(1));
 
-    const Facet_map_ref_type facets = choose_parameter(
+    Facet_map_ref_type facets = choose_parameter(
           get_parameter_reference(np, internal_np::surface_facets),
           empty_map);
-    const Subdomains_ref_type subdomains = choose_parameter(
+    Subdomains_ref_type subdomains = choose_parameter(
           get_parameter_reference(np, internal_np::subdomain_indices),
           subdomain_indices);
     const bool non_manifold = choose_parameter(
