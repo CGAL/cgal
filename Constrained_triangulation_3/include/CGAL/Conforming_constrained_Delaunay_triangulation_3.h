@@ -2230,11 +2230,10 @@ protected:
   } // end of `remove_Steiner_vertex_from_cdt_2`
 
   bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
-    std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
     if(this->debug().move_Steiner_vertices()) {
       std::cerr << "Moving Steiner vertex " << display_vert(v) << " to the volume\n";
-      indent_guards.emplace(IO::make_indenting_guards("  |"));
     }
+    auto indent_guards = CGAL::IO::make_indenting_guards(this->debug().move_Steiner_vertices() ? "| " : "");
 
     const auto incident_constrained_facet_opt =
         find_in_incident_facets(v, [this](Facet f) { return is_facet_constrained(f); });
@@ -5586,7 +5585,6 @@ public:
     };
 
     auto test_cell = [&](Cell_handle cell) {
-      std::optional<decltype(CGAL::IO::make_indenting_guards("| "))> indent_guards;
       if constexpr(cdt_3_can_use_cxx20_format()) if(this->debug().regions()) {
         std::cerr << cdt_3_format("test_cell #{}\n  {}\n  {}\n  {}\n  {}\n",
             cell->time_stamp(),
@@ -5594,8 +5592,8 @@ public:
             IO::oformat(cell->vertex(1), with_point_and_info),
             IO::oformat(cell->vertex(2), with_point_and_info),
             IO::oformat(cell->vertex(3), with_point_and_info));
-        indent_guards.emplace(CGAL::IO::make_indenting_guards("| "));
       }
+      auto indent_guards = CGAL::IO::make_indenting_guards(this->debug().regions() ? "| " : "");
       bool does_intersect = false;
       for(int i = 0; i < 4; ++i) {
         const auto v0 = cell->vertex(i);

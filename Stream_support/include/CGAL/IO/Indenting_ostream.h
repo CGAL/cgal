@@ -237,6 +237,10 @@ public:
       , original_buf_(stream.rdbuf())
       , indenting_buf_(*original_buf_, indent_string)
   {
+    if(indent_string.empty()) {
+      // No indentation, just use the original buffer
+      return;
+    }
     if(auto old_buf = dynamic_cast<streambuf_type*>(original_buf_)) {
       original_indent_string_ = old_buf->indent_string();
       old_buf->set_indent_string(original_indent_string_ + indent_string);
