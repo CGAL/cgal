@@ -19,6 +19,7 @@
 #define CGAL_DETERMINANT_H
 
 #include <CGAL/kernel_config.h>
+#include <utility>
 
 namespace CGAL {
 
