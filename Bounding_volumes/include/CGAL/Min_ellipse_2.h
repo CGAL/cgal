@@ -196,7 +196,7 @@ class Min_ellipse_2 {
     Support_point_iterator
     support_points_end( ) const
     {
-        return( support_points.cend());
+        return( support_points.cbegin() + n_support_points);
     }
 
     // random access for support points
