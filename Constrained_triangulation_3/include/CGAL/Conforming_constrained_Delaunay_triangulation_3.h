@@ -2335,6 +2335,14 @@ protected:
       for(std::size_t component_index = 1; component_index <= nb_of_star_components; ++component_index) {
         auto component_mesh = construct_star_component_mesh(component_index, star_components,
                                                             map_from_incident_constraint_face_id_to_new_triangles);
+        if(this->debug().move_Steiner_vertices()) {
+          std::ostringstream ss;
+          ss << "dump_vertex_" << IO::oformat(v) << "_component_" << component_index << ".off";
+          const std::string filename = ss.str();
+          std::ofstream out(filename);
+          out.precision(17);
+          out << component_mesh;
+        }
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
         if(this->debug().move_Steiner_vertices()) {
           std::cerr << "  - incident constraint faces ids of component #" << component_index << ": {"
