@@ -1534,7 +1534,7 @@ protected:
   }
 
   std::optional<Point_3> compute_center_point_if_possible(const CGAL::Surface_mesh<Point_3>& component_mesh) const {
-    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh, parameters::allow_open_input(true));
+    return CGAL::Polygon_mesh_processing::kernel_point(component_mesh);
   }
 
   template <typename Components, typename Map>
