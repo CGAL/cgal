@@ -153,9 +153,14 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    P_Vertex_map  output_vertex_set(poly_first, poly_last, traits);
 
    if (output_vertex_set.polygons_overlap()) return false;
-
+#ifdef CGAL_PARTITION_CHECK_DEBUG
    int poly_num = 0;
-   for (; poly_first != poly_last; poly_first++, poly_num++)
+   #endif
+   for (; poly_first != poly_last; poly_first++
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+      , poly_num++
+#endif
+   )
    {
       vtx_begin = (*poly_first).vertices_begin();
       vtx_end = (*poly_first).vertices_end();

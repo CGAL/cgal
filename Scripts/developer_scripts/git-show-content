@@ -14,13 +14,13 @@ and show for each the weight of the commit.
 [HEAD] is the head of the branch you want to display.
 Its default value is 'HEAD'.
 
-[BASE] is the base of the range. Its default value is 'cgal/master'.
+[BASE] is the base of the range. Its default value is 'cgal/main'.
 EOF
     exit 0
 fi
 
 commit=${1:-HEAD}
-base=${2:-cgal/master}
+base=${2:-cgal/main}
 
 function reset() {
     git update-ref -d refs/cgal/git-show-content

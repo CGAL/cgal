@@ -128,7 +128,7 @@ BOOST_FIXTURE_TEST_CASE( skip_all_case, Fixture )
                                 skips.begin(), skips.end());
 }
 
-BOOST_AUTO_TEST_CASE( test_continous_insert )
+BOOST_AUTO_TEST_CASE( test_continuous_insert )
 {
 
 }

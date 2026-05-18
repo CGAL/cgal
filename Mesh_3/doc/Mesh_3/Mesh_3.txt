@@ -21,8 +21,8 @@ and/or subdivided in several subdomains.
 
 Boundary and subdivision surfaces are either
 smooth or piecewise smooth surfaces, formed with planar or curved surface patches.
-Surfaces may exhibit 1-dimensional features (e.g. crease edges)
-and 0-dimensional features (e.g. singular points as corners
+Surfaces may exhibit 1-dimensional features (e.g., crease edges)
+and 0-dimensional features (e.g., singular points as corners
 tips, cusps or darts), that have to be fairly
 approximated in the mesh.
 
@@ -176,7 +176,7 @@ To some extent, the user may tune the Delaunay refinement
 to a prescribed trade-off
 between mesh quality and mesh density.
 The mesh density refers to the number of mesh vertices and cells,
-i.e.\ to the complexity of the mesh.
+i.e., to the complexity of the mesh.
 The mesh quality referred to here is measured by the radius edge
 ratio of surface facets end mesh cells, where the radius edge ratio of
 a simplex (triangle or tetrahedron) is the ratio between its circumradius
@@ -184,7 +184,7 @@ and its shortest edge length.
 
 \subsection Mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
 
-If the domain description includes 0 dimensional features,
+If the domain description includes 0-dimensional features,
 the corresponding points are inserted into the Delaunay triangulation
 from the start.
 
@@ -249,7 +249,7 @@ of the Delaunay triangulation of the mesh vertices,
 hence the name `ODT` which is an abbreviation for *Optimal Delaunay Triangulation*.
 
 \cgalFigureBegin{mesh_3paraboloid,paraboloid.jpg}
-The one dimensional illustration of the mesh energy minimized by ODT (left) and Lloyd (right) smoothers.
+The 1-dimensional illustration of the mesh energy minimized by ODT (left) and Lloyd (right) smoothers.
 \cgalFigureEnd
 
 The Lloyd optimizer is known to be blind to the occurrence of slivers in the mesh
@@ -282,7 +282,7 @@ optimization processes.
 Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh.
 \cgalFigureEnd
 
-\subsection Mesh_3PostProcessing Post-processing
+\subsection Mesh_3PostProcessing Postprocessing
 
 The tetrahedral mesh generation algorithm by Delaunay refinement provided by this package
 does not guarantee that all the vertices of the output mesh are actually present in the final mesh.
@@ -336,7 +336,7 @@ The following sections describe the different template parameters
 The template parameter `C3T3` is required to be a model of
 the concept
 `MeshComplex_3InTriangulation_3`, a data structure devised to
-represent a three dimensional complex embedded in a 3D
+represent a 3-dimensional complex embedded in a 3D
 triangulation. In both functions, an instance of type `C3T3` is used to maintain the current
 approximating simplicial mesh
 and to represent the final 3D mesh at the end
@@ -384,7 +384,7 @@ represented in the mesh or not, using the following parameters:
 <UL>
 <LI>\link parameters::features() `parameters::features(domain)` \endlink
 sets features according to the domain,
-i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
+i.e., 0 and 1-dimensional features are taken into account if `domain` is a
 `MeshDomainWithFeatures_3`.
 <LI>`parameters::no_features()` prevents the representation
 of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation
@@ -710,8 +710,8 @@ The domain is therefore a multi-domain
 where each subdomain corresponds to a specific tissue.
 
 In the following example, the image is read from the file
-`liver.inr.gz` which is encoded in the format of the library Inrimage
-`https://www-pequan.lip6.fr/~bereziat/inrimage/`.
+`liver.inr.gz` which is encoded in the format of the
+<a href="https://gitlab.lip6.fr/inrimage/inrimage">InrImage library</a>.
 The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 
 \cgalExample{Mesh_3/mesh_3D_image.cpp}
@@ -894,13 +894,13 @@ The first modification is the type of the mesh domain. Instead of being
 \snippet Mesh_3/mesh_3D_image_with_features.cpp Domain definition
 
 In the %main() function, the domain is created with an additional argument - a
-dedicated functor that computes the one-dimensional features, which are then
+dedicated functor that computes the 1-dimensional features, which are then
 added to the domain.
 
 \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
 
 The `CGAL::Mesh_3::Detect_features_in_image` functor is defined in its own
-header file. It computes the one-dimensional features that correspond to the
+header file. It computes the 1-dimensional features that correspond to the
 intersections of the bounding box of the image with the surfaces defined by the
 image, as well as polylines that lie at the intersection of three or more
 subdomains (including the outside). It then constructs a graph of these polyline
@@ -991,7 +991,7 @@ are driven by the size component of `Mesh_edge_criteria_3`
 (see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
 The ideal size can be computed using
 `Sizing_field_with_aabb_tree` that helps start the feature protection
-and one-dimensional meshing process with a good initial guess.
+and 1-dimensional meshing process with a good initial guess.
 To fit the protecting balls requirements,
 no protecting ball can have its radius
 larger than half of the distance from the corresponding vertex (its center),

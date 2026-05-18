@@ -17,6 +17,7 @@
 
 
 #include <CGAL/basic.h>
+#include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_S2/Sphere_point.h>
 
 namespace CGAL {

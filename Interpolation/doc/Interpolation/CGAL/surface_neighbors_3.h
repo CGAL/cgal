@@ -73,7 +73,7 @@ surface_neighbors_3(InputIterator first, InputIterator beyond,
                     const Kernel& K);
 
 /*!
-Same as above only that the traits class must be instantiated by
+Same as above only that the traits class must be instantiated with
 the user. `ITraits` must be equivalent to
 `Voronoi_intersection_2_traits_3<K>`.
 */
@@ -115,7 +115,7 @@ surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
                               const Kernel& kernel);
 
 /*!
-Same as above only that the traits class must be instantiated by the user.
+Same as above only that the traits class must be instantiated with the user.
 `ITraits` must be equivalent to `Voronoi_intersection_2_traits_3<K>`. There is no
 parameter `max_distance`.
 */

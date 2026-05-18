@@ -39,7 +39,8 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup PMP_meshing_grp
+* \ingroup PMP_global_remeshing_grp
+*
 * @brief remeshes a surface triangle mesh following the Delaunay refinement
 * algorithm described in the \ref PkgMesh3 package.
 *

@@ -63,9 +63,6 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(T3_demo)
 
-  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-  cgal_add_compilation_test(T3_demo)
-
 else(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(TRIANGULATION_3_MISSING_DEPS "")

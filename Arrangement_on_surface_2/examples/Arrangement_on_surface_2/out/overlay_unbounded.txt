@@ -1,0 +1,9 @@
+The overlay faces are:
+  D1 (unbounded).
+  C1 (unbounded).
+  C2 (bounded).
+  B2 (bounded).
+  A2 (bounded).
+  D2 (bounded).
+  B1 (unbounded).
+  A1 (unbounded).

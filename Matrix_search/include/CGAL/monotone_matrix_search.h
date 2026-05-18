@@ -68,13 +68,13 @@ monotone_matrix_search(
 
   // table to store the reduction permutation:
   // (incl. sentinel)
-  int* reduction_table = new int[ M_new->number_of_rows() + 1];
+  std::vector<int> reduction_table(M_new->number_of_rows() + 1);
 
   if ( M_new->number_of_rows() < M_new->number_of_columns()) {
     // set sentinel:
     reduction_table[M_new->number_of_rows()] =
       M.number_of_columns() - 1;
-    _reduce_matrix( *M_new, reduction_table, compare_strictly);
+    _reduce_matrix( *M_new, reduction_table.data(), compare_strictly);
     CGAL_assertion(
       M_new->number_of_columns() == M_new->number_of_rows());
 
@@ -97,7 +97,7 @@ monotone_matrix_search(
 
   // table to store the rmax values of M_new:
   // (incl. sentinel)
-  int* t_new = new int[M_new->number_of_rows() + 1];
+  std::vector<int> t_new(M_new->number_of_rows() + 1);
   t_new[M_new->number_of_rows()] = M_new->number_of_columns();
 
   if ( M_new->number_of_rows() == 1)
@@ -105,7 +105,7 @@ monotone_matrix_search(
     // we have just one element ==> no choice
     t_new[0] = 0;
   else
-    monotone_matrix_search( *M_new, t_new);
+    monotone_matrix_search( *M_new, t_new.data());
 
 
   // and conquer
@@ -132,8 +132,6 @@ monotone_matrix_search(
   } while ( ++j < M.number_of_rows());
 
   delete M_new;
-  delete[] t_new;
-  delete[] reduction_table;
 
 } // monotone_matrix_search( M, t)
 

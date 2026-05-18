@@ -75,7 +75,7 @@ fintest.close();
  fout<<"Classification(\"Arrangement\",\" Conics\",\" BoundedArcs\",\"Rnd\",\"1\",\"Jan-2006\")"<<std::endl;
  fout <<std::endl;
  converter(fin,fout);
- std::cout<<"convertation-finished"<<std::endl;
+ std::cout<<"conversion-finished"<<std::endl;
  fin.close();
  fout.close();
  std::cout<<"files closing-finished"<<std::endl;

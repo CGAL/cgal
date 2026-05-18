@@ -1,0 +1,67 @@
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
+
+cmake_minimum_required(VERSION 3.12...3.31)
+project(PMP_Mesh_repair_Tests)
+
+# CGAL and its components
+find_package(CGAL REQUIRED COMPONENTS Core)
+
+create_single_source_cgal_program("orient_polygon_mesh_test.cpp")
+create_single_source_cgal_program("orient_polygon_soup_test.cpp")
+create_single_source_cgal_program("test_is_polygon_soup_a_polygon_mesh.cpp")
+create_single_source_cgal_program("test_stitching.cpp")
+create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
+create_single_source_cgal_program("test_does_bound_a_volume.cpp")
+create_single_source_cgal_program("test_orient_cc.cpp")
+create_single_source_cgal_program("test_merging_border_vertices.cpp")
+create_single_source_cgal_program("test_repair_polygon_soup.cpp")
+create_single_source_cgal_program("test_pmp_manifoldness.cpp")
+create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
+create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
+create_single_source_cgal_program("test_pmp_repair_degeneracies.cpp")
+create_single_source_cgal_program("test_pmp_snapping.cpp")
+create_single_source_cgal_program("test_pmp_snapping_elementary.cpp")
+create_single_source_cgal_program("test_pmp_non_conforming_snapping.cpp")
+create_single_source_cgal_program("test_remove_caps_needles.cpp")
+create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
+create_single_source_cgal_program("test_split_volume.cpp")
+create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
+#  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
+
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp")
+  target_link_libraries(triangulate_hole_Polyhedron_3_no_delaunay_test PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
+  target_link_libraries(triangulate_hole_Polyhedron_3_test PRIVATE CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: Tests that use the Eigen library will not be compiled.")
+endif()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(orient_polygon_soup_test PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Tests will use sequential code.")
+endif()
+
+
+find_package(Ceres QUIET)
+include(CGAL_Ceres_support)
+if(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
+#  target_compile_definitions(test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER)
+#  target_link_libraries(test_pmp_repair_self_intersections PRIVATE CGAL::Eigen3_support CGAL::Ceres_support)
+else()
+  message(STATUS "NOTICE: Tests are not using Ceres.")
+endif()
+
+if(CGAL_ENABLE_TESTING AND TARGET CGAL::Eigen3_support)
+  set_tests_properties(
+    "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
+    "execution   of  triangulate_hole_Polyhedron_3_test"
+    PROPERTIES RESOURCE_LOCK Triangulation_with_hole)
+endif()
