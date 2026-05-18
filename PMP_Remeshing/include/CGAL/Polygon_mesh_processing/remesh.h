@@ -102,8 +102,13 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{edge_is_protected_map}
-*     \todo doc
-*   \cgalParamNEnd
+ *     \cgalParamDescription{a property map containing the protected-or-not status of each edge of `pmesh`}
+ *     \cgalParamType{a class model of `ReadPropertyMap`
+ *                    with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type.}
+ *     \cgalParamDefault{a default property map where no edge is protected}
+ *     \cgalParamExtra{A protected edge cannot be split, collapsed, flipped, nor its endpoints moved by smoothing.}
+ *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `pmesh`.}
