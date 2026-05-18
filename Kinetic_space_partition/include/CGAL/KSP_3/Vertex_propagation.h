@@ -106,7 +106,7 @@ public:
 
     for (Vertex &v : vts) {
       if (v.moving)
-        v.k = k;
+        v.k = static_cast<int>(k);
     }
 
     initialize_queue();
@@ -982,7 +982,7 @@ private:
       return crossing.empty();
 
     if (signed(crossing.size()) <= v.k) {
-      v.k -= crossing.size();
+      v.k -= static_cast<int>(crossing.size());
       return true;
     }
     else {

@@ -947,7 +947,7 @@ public:
     else if (vol.back().first < u)
       u = vol.back().first;
 
-    int low = 0, high = vol.size() - 1;
+    int low = 0, high = static_cast<int>(vol.size() - 1);
     while (low < high - 1) {
       int mid = (low + high) >> 1;
       if (u == vol[mid].first) {
@@ -1010,15 +1010,15 @@ public:
     for (std::size_t v = 0; v < sign.size(); v++) {
       if (sign[v] == CGAL::ON_POSITIVE_SIDE) {
         if (sign[(v + 1) % sign.size()] != CGAL::ON_POSITIVE_SIDE)
-          last_pos = v;
+          last_pos = static_cast<int>(v);
         if (sign[(v + sign.size() - 1) % sign.size()] != CGAL::ON_POSITIVE_SIDE)
-          first_pos = v;
+          first_pos = static_cast<int>(v);
       }
       else if (sign[v] == CGAL::ON_NEGATIVE_SIDE) {
         if (sign[(v + 1) % sign.size()] != CGAL::ON_NEGATIVE_SIDE)
-          last_neg = v;
+          last_neg = static_cast<int>(v);
         if (sign[(v + sign.size() - 1) % sign.size()] != CGAL::ON_NEGATIVE_SIDE)
-          first_neg = v;
+          first_neg = static_cast<int>(v);
       }
       else if (sign[v] == CGAL::ON_ORIENTED_BOUNDARY)
         zeroes++;
@@ -1068,7 +1068,7 @@ public:
       pos.splice(pos.begin(), std::move(poly), first, poly.end());
       pos.splice(pos.end(), std::move(poly), poly.begin(), last);
       first_neg = 0;
-      last_neg = poly.size() - 1;
+      last_neg = static_cast<int>(poly.size() - 1);
     }
 
     auto first_neg_it = poly.begin();
