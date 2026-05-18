@@ -1067,7 +1067,7 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      if constexpr(has_constrained_edges())
+      if constexpr(std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
       {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
         std::cout << " using tangential relaxation with weights equal to 1";
